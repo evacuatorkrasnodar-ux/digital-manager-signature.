@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-labelledby="title desc">
+<title id="title">Cinematic Plasma Signature</title><desc id="desc">Полупрозрачные белоснежные ленты из стекла, окружающие глубокую сферу.</desc>
+<defs>
+ <radialGradient id="aura"><stop offset="0" stop-color="#c9d9ff" stop-opacity=".28"/><stop offset=".57" stop-color="#b7d1ff" stop-opacity=".15"/><stop offset="1" stop-color="#dbe8ff" stop-opacity="0"/></radialGradient>
+ <radialGradient id="core" cx=".4" cy=".32" r=".77"><stop stop-color="#26354b" stop-opacity=".82"/><stop offset=".45" stop-color="#101928" stop-opacity=".9"/><stop offset=".72" stop-color="#050a15" stop-opacity=".94"/><stop offset="1" stop-color="#607ca8" stop-opacity=".48"/></radialGradient>
+ <radialGradient id="coreReflect" cx=".22" cy=".07" r=".9"><stop stop-color="#fff" stop-opacity=".52"/><stop offset=".24" stop-color="#cadbff" stop-opacity=".1"/><stop offset=".68" stop-color="#c1d8ff" stop-opacity="0"/><stop offset=".97" stop-color="#c3dbff" stop-opacity=".35"/></radialGradient>
+ <linearGradient id="frost" x1=".03" y1=".08" x2=".91" y2=".95"><stop stop-color="#fff" stop-opacity=".18"/><stop offset=".14" stop-color="#d8eaff" stop-opacity=".84"/><stop offset=".33" stop-color="#fff" stop-opacity=".27"/><stop offset=".53" stop-color="#eef7ff" stop-opacity=".94"/><stop offset=".7" stop-color="#83a0cf" stop-opacity=".2"/><stop offset=".89" stop-color="#fff" stop-opacity=".76"/><stop offset="1" stop-color="#aac6ef" stop-opacity=".19"/></linearGradient>
+ <linearGradient id="ribbon1" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f9fdff" stop-opacity=".05"/><stop offset=".16" stop-color="#fff" stop-opacity=".76"/><stop offset=".27" stop-color="#e2edff" stop-opacity=".18"/><stop offset=".43" stop-color="#a5c3e9" stop-opacity=".47"/><stop offset=".58" stop-color="#fff" stop-opacity=".94"/><stop offset=".72" stop-color="#ebf4ff" stop-opacity=".31"/><stop offset=".93" stop-color="#f8fcff" stop-opacity=".8"/><stop offset="1" stop-color="#c8ddff" stop-opacity=".1"/></linearGradient>
+ <linearGradient id="ribbon2" x1=".1" y1=".85" x2=".9" y2=".08"><stop stop-color="#a7c1ee" stop-opacity=".25"/><stop offset=".17" stop-color="#fff" stop-opacity=".94"/><stop offset=".35" stop-color="#cde4ff" stop-opacity=".17"/><stop offset=".58" stop-color="#e3f1ff" stop-opacity=".61"/><stop offset=".74" stop-color="#fff" stop-opacity=".89"/><stop offset=".92" stop-color="#b2cbf4" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+ <linearGradient id="ribbon3" x1=".0" y1=".4" x2="1" y2=".7"><stop stop-color="#fff" stop-opacity=".63"/><stop offset=".27" stop-color="#c5d9f5" stop-opacity=".18"/><stop offset=".51" stop-color="#fff" stop-opacity=".82"/><stop offset=".7" stop-color="#90afd7" stop-opacity=".24"/><stop offset="1" stop-color="#fff" stop-opacity=".76"/></linearGradient>
+ <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".11"/><stop offset=".23" stop-color="#fff" stop-opacity=".85"/><stop offset=".44" stop-color="#8daedb" stop-opacity=".15"/><stop offset=".77" stop-color="#fff" stop-opacity=".93"/><stop offset="1" stop-color="#daeaff" stop-opacity=".13"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="7"/></filter>
+ <filter id="pin"><feGaussianBlur stdDeviation="1.5"/></filter>
+ <clipPath id="ball"><circle cx="260" cy="256" r="180"/></clipPath>
+ <style>
+ .veil{transform-origin:260px 256px;animation:veil 16s ease-in-out infinite}
+ .veil-two{transform-origin:260px 256px;animation:veilTwo 19s ease-in-out infinite}
+ .spark{animation:twinkle 8s ease-in-out infinite}
+ @keyframes veil{0%,100%{transform:rotate(-1.7deg) scale(1)}50%{transform:rotate(1.7deg) scale(1.016)}}
+ @keyframes veilTwo{0%,100%{transform:rotate(1.2deg) scale(1)}50%{transform:rotate(-1.5deg) scale(.99)}}
+ @keyframes twinkle{0%,100%{opacity:.55}50%{opacity:.9}}
+ @media(prefers-reduced-motion:reduce){.veil,.veil-two,.spark{animation:none}}
+ </style>
+</defs>
+<ellipse cx="260" cy="446" rx="142" ry="17" fill="#bacff4" opacity=".18" filter="url(#blur)"/>
+<circle cx="260" cy="256" r="235" fill="url(#aura)"/>
+<circle cx="260" cy="256" r="184" fill="url(#core)"/>
+<circle cx="260" cy="256" r="179" fill="url(#coreReflect)"/>
+<!-- Rear transparent glass: uninterrupted surfaces with internal light -->
+<g clip-path="url(#ball)">
+ <path d="M79 302C104 175 235 83 356 134C425 163 474 267 429 359C445 249 395 175 328 160C227 139 131 205 79 302Z" fill="url(#ribbon1)" opacity=".88"/>
+ <path d="M130 146C260 58 422 149 438 260C450 370 339 428 250 430C364 398 412 318 402 248C389 160 248 105 130 146Z" fill="url(#ribbon2)" opacity=".68"/>
+ <path d="M116 167C191 84 333 76 409 155C450 196 460 261 434 311C437 220 380 156 310 145C223 133 153 161 116 167Z" fill="url(#frost)" opacity=".77"/>
+ <path d="M91 298C137 408 281 458 397 378C454 335 459 269 438 213C420 302 349 383 273 390C178 405 112 338 91 298Z" fill="url(#ribbon3)" opacity=".68"/>
+ <g class="veil-two">
+ <path d="M100 342C178 410 320 397 392 316C438 266 447 201 420 145C448 236 357 350 275 364C195 379 134 358 100 342Z" fill="url(#ribbon2)" opacity=".96"/>
+ <path d="M100 342C178 410 320 397 392 316" stroke="#fff" stroke-opacity=".47" stroke-width="3" fill="none"/>
+ <path d="M118 166C218 116 344 143 408 231C446 281 444 339 408 385C422 318 383 251 329 213C268 168 189 150 118 166Z" fill="url(#ribbon3)" opacity=".5"/>
+ </g>
+</g>
+<!-- External refraction boundary -->
+<circle cx="260" cy="256" r="180.2" fill="none" stroke="url(#edge)" stroke-width="4.3"/>
+<circle cx="260" cy="256" r="174" fill="none" stroke="#d3e6ff" stroke-width="1.6" stroke-opacity=".42"/>
+<path d="M97 183C149 94 279 58 372 111" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".75" filter="url(#pin)"/>
+<path d="M125 386C221 470 371 434 417 352" fill="none" stroke="#e9f4ff" stroke-opacity=".77" stroke-width="3.8" filter="url(#pin)"/>
+<!-- Broad front surfaces, glass ribbons with glowing edges -->
+<g class="veil">
+ <path d="M99 312C148 368 229 394 319 360C400 330 434 262 430 193C461 293 395 387 311 415C216 449 125 394 99 312Z" fill="url(#ribbon1)" opacity=".96"/>
+ <path d="M100 312C157 388 260 399 339 343C388 308 424 256 430 193" fill="none" stroke="#fbfdff" stroke-opacity=".67" stroke-width="5.2" stroke-linecap="round"/>
+ <path d="M114 203C185 93 316 98 395 164C425 189 436 214 439 234C411 187 336 144 273 149C199 154 150 183 114 203Z" fill="url(#ribbon2)" opacity=".94"/>
+ <path d="M114 203C208 88 341 113 406 172" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="5" stroke-linecap="round"/>
+ <path d="M105 235C135 152 243 110 325 143C399 173 433 257 412 335C409 246 354 194 287 184C212 175 151 201 105 235Z" fill="url(#ribbon3)" opacity=".72"/>
+ <path d="M112 247C174 192 261 173 327 206C394 239 407 330 376 388C396 300 330 248 267 241C203 231 151 251 112 247Z" fill="url(#frost)" opacity=".44"/>
+ </g>
+<!-- Natural specular glass reflections -->
+<path d="M138 127C214 80 302 78 365 111" stroke="#fff" stroke-opacity=".52" stroke-width="3.3" stroke-linecap="round" fill="none" filter="url(#pin)"/>
+<path d="M119 346C149 409 222 440 286 437" stroke="#fff" stroke-opacity=".4" stroke-width="2" fill="none"/>
+<path d="M395 144C454 218 442 312 394 373" stroke="#e8f3ff" stroke-opacity=".55" stroke-width="2.8" fill="none"/>
+<g class="spark" fill="#fff" opacity=".65"><circle cx="170" cy="142" r="1.4"/><circle cx="364" cy="172" r="1.1"/><circle cx="151" cy="352" r=".8"/><circle cx="406" cy="332" r="1"/><circle cx="218" cy="393" r="1.2"/></g>
+</svg>
