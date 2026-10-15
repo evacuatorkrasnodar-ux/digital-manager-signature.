@@ -37,6 +37,8 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma::after{
  z-index:4;
  background:
+   /* A nearly invisible veil is in front of the text, not painted on the orb. */
+   radial-gradient(ellipse 73% 70% at 51% 50%,rgba(226,239,252,.095),rgba(211,228,247,.05) 61%,transparent 98%),
    radial-gradient(ellipse 70% 60% at 28% 14%,rgba(244,249,255,.14),transparent 71%),
    radial-gradient(ellipse 66% 57% at 82% 93%,rgba(173,212,247,.1),transparent 68%),
    radial-gradient(circle at 50% 50%,transparent 56%,rgba(207,232,255,.035) 73%,rgba(210,231,255,.14) 89%,transparent 100%);
@@ -50,6 +52,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 }
 :root[data-theme=light] .plasma::after{
  background:
+   radial-gradient(ellipse 73% 70% at 51% 50%,rgba(251,253,255,.18),rgba(250,253,255,.085) 61%,transparent 98%),
    radial-gradient(ellipse 70% 60% at 28% 14%,rgba(255,255,255,.31),transparent 70%),
    radial-gradient(ellipse 64% 57% at 83% 93%,rgba(255,255,255,.21),transparent 69%),
    radial-gradient(circle at center,transparent 58%,rgba(255,255,255,.06) 74%,rgba(244,250,255,.24) 90%,transparent 100%);
@@ -85,10 +88,17 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-/* Content now floats behind front glass rather than above the sphere.
-   Subtle optical saturation keeps the depth readable in either theme. */
-.signal.is-appearing{filter:saturate(.91)}
-:root[data-theme=light] .signal.is-appearing{filter:saturate(.88)}
+/* Slight optical defocus makes the messaging look INSIDE glass instead of
+   sharp lettering glued to its surface. Only notice content is defocused:
+   the approved plasma SVG is never blurred. */
+.signal.is-appearing{filter:blur(.56px) saturate(.93)}
+.signal.is-care.is-appearing{filter:blur(.68px) saturate(.92)}
+.signal.is-event.is-appearing{filter:blur(.42px) saturate(.95)}
+.signal.is-brand.is-appearing{filter:blur(.36px) saturate(.96)}
+:root[data-theme=light] .signal.is-appearing{filter:blur(.48px) saturate(.94)}
+:root[data-theme=light] .signal.is-care.is-appearing{filter:blur(.58px) saturate(.94)}
+:root[data-theme=light] .signal.is-event.is-appearing{filter:blur(.36px) saturate(.96)}
+:root[data-theme=light] .signal.is-brand.is-appearing{filter:blur(.32px) saturate(.97)}
 /* SEYVEO Orb Language: one restrained cinematic vocabulary for every orb message.
    Only the notice content animates; the approved plasma SVG remains untouched. */
 .signal.is-event{width:108px;height:108px}
