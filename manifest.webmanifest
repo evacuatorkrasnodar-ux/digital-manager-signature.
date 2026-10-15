@@ -10,6 +10,12 @@
   "lang": "ru",
   "icons": [
     {
+      "src": "assets/apple-touch-icon.png?v=1",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "assets/app-icon.svg?v=1",
       "sizes": "any",
       "type": "image/svg+xml",
