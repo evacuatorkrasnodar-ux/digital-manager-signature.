@@ -24,19 +24,22 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 
 
 
-/* Transient, understated glass notification. No permanent badge on the orb. */
-.signal{position:absolute;z-index:3;top:50%;left:50%;width:52px;height:52px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.94);color:#f4f8ff}
-.signal svg{display:block;width:39px;height:39px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px #ffffff2b)}
-.signal.is-appearing{animation:glass-notice 3.8s ease-in-out 1 both}
-:root[data-theme=light] .signal{color:#52677f}
-:root[data-theme=light] .signal svg{filter:drop-shadow(0 1px 2px #ffffff55)}
-@keyframes glass-notice{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.93)}
-  21%{opacity:.43;transform:translate(-50%,-50%) scale(1)}
-  58%{opacity:.5;transform:translate(-50%,-50%) scale(1)}
-  100%{opacity:0;transform:translate(-50%,-50%) scale(.99)}
+/* One transient frosted-glass notice. The orb and its light remain unchanged. */
+.signal{position:absolute;z-index:3;top:50%;left:50%;width:72px;height:72px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%);color:#eff5fc}
+.signal svg{display:block;width:54px;height:54px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.signal svg rect,.signal svg circle{fill:#eaf2fc;fill-opacity:.18;stroke-opacity:.75;stroke-width:1.7}
+.signal svg path{stroke-opacity:.78}
+.signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
+:root[data-theme=light] .signal{color:#536882}
+:root[data-theme=light] .signal svg rect,:root[data-theme=light] .signal svg circle{fill:#849ab5;fill-opacity:.19;stroke-opacity:.73}
+@keyframes glass-mist{
+  0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
+  24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
+  42%,57%{opacity:.68;filter:blur(.45px);transform:translate(-50%,-50%) scale(1)}
+  81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
+  100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
 }
-@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.36;transform:translate(-50%,-50%)}}
+@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}}
 
 
 
@@ -156,21 +159,18 @@ const glassPaths={
   check:'<circle cx="24" cy="24" r="13.5"/><path d="m17 24 5 5 9-10"/>'
 };
 const glassIcon=type=>glassPaths[type]?'<svg viewBox="0 0 48 48" aria-hidden="true">'+glassPaths[type]+'</svg>':'';
-let noticeKey=null,noticeStartTimer=null,noticeStopTimer=null;
+let noticeKey=null,noticeClearTimer=null;
 function transientNotice(key,type){
   if(noticeKey===key)return;
   noticeKey=key;
-  clearTimeout(noticeStartTimer);clearTimeout(noticeStopTimer);
+  clearTimeout(noticeClearTimer);
   const el=$('signal');
   el.classList.remove('is-appearing');
   el.innerHTML=glassIcon(type);
   if(!type)return;
-  noticeStartTimer=setTimeout(()=>{
-    el.classList.remove('is-appearing');
-    void el.offsetWidth;
-    el.classList.add('is-appearing');
-    noticeStopTimer=setTimeout(()=>el.classList.remove('is-appearing'),3800);
-  },key.startsWith('approval:')?60:480);
+  void el.offsetWidth;
+  el.classList.add('is-appearing');
+  noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
 }
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popup(title,description,scenario=false){$('infoTitle').textContent=title;$('infoText').textContent=description;$('scenarioRestart').hidden=!scenario;if(!$('info').open)$('info').showModal()}
