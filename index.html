@@ -94,13 +94,19 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 .assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 2px 6px #02060f4a);transition:transform .15s ease,filter .22s ease}
 .assistant-button:active{transform:translateX(-50%) scale(.965)}
 .assistant-button:focus-visible{outline:2px solid var(--text);outline-offset:4px}
+/* In rest: clear glass. On press: a brief icy reflection. Only while listening: a gentle blue breath. */
+.assistant-button::after{content:"";position:absolute;inset:3px;border-radius:50%;pointer-events:none;opacity:0;box-shadow:0 0 0 1px #b5d7ff50,0 0 10px 2px #91c9ff40;transition:opacity .48s ease-out}
+.assistant-button:active::after{opacity:.48;transition-duration:.12s}
+.assistant-button.listening::after{animation:assistant-ice-breath 3.4s ease-in-out infinite}
+@keyframes assistant-ice-breath{0%,100%{opacity:.13}50%{opacity:.43}}
+:root[data-theme=light] .assistant-button::after{box-shadow:0 0 0 1px #8bb8ec55,0 0 10px 2px #87b9ed36}
+@media(prefers-reduced-motion:reduce){.assistant-button.listening::after{animation:none;opacity:.27}.assistant-button::after{transition:none}}
 .button-art{width:74px;height:74px;display:block;overflow:visible}
 .button-art .center-face{fill:url(#button-night)}
 .button-art .button-rim{stroke:url(#rim-night)}
 .button-art .voice-bars{stroke:#f9fbff;stroke-width:2.85;stroke-linecap:round;fill:none}
 .button-art .voice-dot{fill:#f9fbff}
-.assistant-button.listening{filter:drop-shadow(0 0 11px #b2d3ffad)}
-.assistant-button.listening .button-rim{stroke:#eff8ff}
+.assistant-button.listening .button-rim{stroke:#ddeafb}
 .assistant-button.listening .voice-bars{animation:speaking 850ms ease-in-out infinite alternate;transform-origin:37px 37px}
 @keyframes speaking{from{transform:scaleY(.7)}to{transform:scaleY(1.14)}}
 .ask-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
