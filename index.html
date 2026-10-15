@@ -17,49 +17,31 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .home-main{flex:1;display:flex;flex-direction:column}
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:20px 0 14px;min-height:385px}
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer;--orb-duration:7.4s}
-.plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
+.plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none;clip-path:circle(40.5% at 50% 50%)}
 
-/* SEYVEO — BLACK VELVET · CINEMATIC MATERIALIZATION
-   One unchanged sphere, one notice, one deliberately paced reveal.
-   Front glass stays mostly transparent at centre and more visible at its rim. */
+/* SEYVEO · OPTICAL CLEANUP
+   One original sphere SVG supplies all animated glass. No second sphere. */
 .plasma:has(>.signal.is-moment.is-appearing){--orb-duration:8s}
-.plasma-front-glass{
- position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
- z-index:5;pointer-events:none;user-select:none;-webkit-user-select:none;
- opacity:0;
- -webkit-mask-image:radial-gradient(circle closest-side,rgba(0,0,0,.08) 0%,
-   rgba(0,0,0,.12) 45%,rgba(0,0,0,.56) 68%,transparent 84%);
- mask-image:radial-gradient(circle closest-side,rgba(0,0,0,.08) 0%,
-   rgba(0,0,0,.12) 45%,rgba(0,0,0,.56) 68%,transparent 84%);
-}
-.plasma:has(>.signal.is-appearing:not(.is-brand))>.plasma-front-glass{
- animation:orb-surge-glass var(--orb-duration) linear both;
-}
 /* The content rests optically behind front glass, rather than over the shell. */
 .signal{
  position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;
  display:grid;place-items:center;pointer-events:none;opacity:0;
  transform:translate(-50%,-50%);isolation:isolate;
 }
-.signal::before,.signal::after{
- content:"";position:absolute;inset:-24%;z-index:-1;border-radius:50%;
- pointer-events:none;opacity:0;
-}
-/* Slow internal white-silver illumination; no external flashes or lasers. */
+/* Centered inner light cannot bleed beyond the sphere, even for long text. */
 .signal::before{
- background:radial-gradient(circle at 50% 50%,
- rgba(252,253,255,.22) 0%,rgba(233,242,255,.075) 30%,transparent 71%);
-}
-.signal::after{
- background:radial-gradient(ellipse at 33% 24%,
- rgba(255,255,255,.15) 0%,rgba(228,240,255,.045) 32%,transparent 60%);
+ content:"";position:absolute;left:50%;top:50%;width:132px;height:132px;
+ transform:translate(-50%,-50%);z-index:-1;border-radius:50%;
+ pointer-events:none;opacity:0;
+ background:radial-gradient(circle,rgba(251,253,255,.15),rgba(234,241,255,.035) 42%,transparent 72%);
 }
 .signal.is-appearing:not(.is-brand){
- animation:orb-cinematic var(--orb-duration) linear both;
+ animation:orb-cinematic var(--orb-duration) cubic-bezier(.42,0,.22,1) both;
  will-change:transform,opacity;
 }
-.signal.is-appearing:not(.is-brand)::before{animation:orb-surge-core var(--orb-duration) linear both}
-.signal.is-appearing:not(.is-brand)::after{animation:orb-surge-reflection var(--orb-duration) linear both}
+.signal.is-appearing:not(.is-brand)::before{
+ animation:orb-surge-core var(--orb-duration) ease-in-out both;
+}
 .signal svg{display:block;width:94px;height:94px}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px;isolation:auto}
@@ -78,53 +60,22 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-/* BLACK VELVET · CINEMATIC MATERIALIZATION
-   Begin quietly, let the internal light awaken, gently resolve the text
-   to a crisp optical plane, hold for reading, then retreat.
-   Existing glass and notice layers only; no text blur or stacked transforms. */
+/* SEYVEO · SILENT REVEAL
+   One compositor-friendly timeline per notification; no nested animations. */
 .signal.is-event{width:108px;height:108px}
 .signal.is-clock .moment-time{font-weight:580;letter-spacing:.015em}
 :root:not([data-theme=light]) .signal.is-clock .moment-time{text-shadow:0 0 12px #dcecff33}
 @keyframes orb-cinematic{
- 0%,7%{opacity:0;transform:translate(-50%,-50%) scale(.84)}
- 16%{opacity:.12;transform:translate(-50%,-50%) scale(.87);
-     animation-timing-function:cubic-bezier(.2,.15,.22,1)}
- 47%{opacity:1;transform:translate(-50%,-50%) scale(1);
-     animation-timing-function:linear}
- 77%{opacity:1;transform:translate(-50%,-50%) scale(1);
-     animation-timing-function:cubic-bezier(.45,0,.65,1)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.91)}
+ 0%,8%{opacity:0;transform:translate(-50%,-50%) scale(.94)}
+ 42%,74%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+ 100%{opacity:0;transform:translate(-50%,-50%) scale(.97)}
 }
 @keyframes orb-surge-core{
- 0%,11%,100%{opacity:0}
- 26%{opacity:.13}
- 42%{opacity:.64}
- 58%{opacity:.30}
- 77%{opacity:.17}
- 91%{opacity:.04}
+ 0%,10%,100%{opacity:0}
+ 38%{opacity:.42}
+ 72%{opacity:.22}
+ 90%{opacity:.06}
 }
-@keyframes orb-surge-reflection{
- 0%,18%,100%{opacity:0}
- 34%{opacity:.12}
- 49%{opacity:.48}
- 66%{opacity:.27}
- 81%{opacity:.12}
-}
-@keyframes orb-surge-glass{
- 0%,12%,100%{opacity:0}
- 30%{opacity:.22}
- 51%,76%{opacity:.68}
- 93%{opacity:.14}
-}
-/* Lettering fades on the same stage, without independently scaling or moving. */
-.signal.is-appearing:not(.is-brand) :is(.moment-time,.moment-date,.moment-care,.glass-figure){
- animation:orb-surge-type 2.45s cubic-bezier(.23,.1,.24,1) both;
-}
-.signal.is-appearing .moment-time{animation-delay:.80s}
-.signal.is-appearing .moment-date{animation-delay:1.43s}
-.signal.is-appearing .moment-care{animation-delay:.92s}
-.signal.is-event.is-appearing .glass-figure{animation-delay:.9s}
-@keyframes orb-surge-type{0%,12%{opacity:0}100%{opacity:1}}
 /* Exact original 15 Oct glass-mist keyframes; used by company alone. */
 @keyframes glass-mist{
   0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
@@ -140,9 +91,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  .signal.is-brand.is-appearing{
   animation:none;opacity:.82;filter:none;transform:translate(-50%,-50%);
  }
- .signal.is-appearing:not(.is-brand)::before,.signal.is-appearing:not(.is-brand)::after{animation:none;opacity:.16}
- .signal.is-appearing:not(.is-brand) :is(.moment-time,.moment-date,.moment-care,.glass-figure){animation:none;opacity:1}
- .plasma:has(>.signal.is-appearing:not(.is-brand))>.plasma-front-glass{animation:none;opacity:.55}
+ .signal.is-appearing:not(.is-brand)::before{animation:none;opacity:.16}
 }
 /* Time and gentle self-care use only the existing transient sphere layer. */
 .signal.is-moment{width:min(225px,76%);height:112px}
@@ -298,7 +247,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span><img id="plasmaGlass" class="plasma-front-glass" src="assets/plasma-signature.svg?v=11" alt="" aria-hidden="true" draggable="false" width="440" height="440"></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -740,9 +689,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()})
 function render(){
 progressDemoTasks();
 document.documentElement.dataset.theme=state.theme;
-const plasmaVisual=$('plasmaVisual'),plasmaGlass=$('plasmaGlass'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
 if(plasmaVisual.getAttribute('src')!==plasmaSource)plasmaVisual.setAttribute('src',plasmaSource);
-if(plasmaGlass.getAttribute('src')!==plasmaSource)plasmaGlass.setAttribute('src',plasmaSource);
 $('greeting').textContent=greeting();
 const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
