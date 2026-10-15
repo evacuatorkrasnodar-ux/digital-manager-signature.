@@ -10,24 +10,29 @@
 <filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
 <clipPath id="clip"><circle cx="260" cy="250" r="175"/></clipPath>
 <style>
-/* Living glass — slow independent motion; the sphere itself stays in place. */
-.g-a,.g-b{transform-origin:260px 250px}
-.g-a{animation:flow-a 16s ease-in-out infinite alternate}
-.g-b{animation:flow-b 21s ease-in-out infinite alternate}
-.glass-glint{animation:soft-glint 11s ease-in-out infinite alternate}
-.glass-glint--late{animation-delay:-5.5s}
+/* Living glass: independent inner currents; fixed spherical shell and silhouette. */
+.g-a,.g-b{transform-box:view-box;transform-origin:260px 250px;will-change:transform,opacity}
+.g-a{animation:flow-a 9.5s ease-in-out infinite alternate}
+.g-b{animation:flow-b 12.5s ease-in-out infinite alternate}
+.glass-glint{animation:soft-glint 6.8s ease-in-out infinite alternate}
+.glass-glint--late{animation-delay:-3.4s}
 @keyframes flow-a{
-  0%{transform:translate(-2px,1px) rotate(-2.4deg) scale(.993);opacity:.83}
-  50%{transform:translate(0,0) rotate(.1deg) scale(1);opacity:.96}
-  100%{transform:translate(2px,-1px) rotate(2.8deg) scale(1.008);opacity:1}
+  0%{transform:translate(-5px,3px) rotate(-6deg) scale(.986);opacity:.69}
+  48%{transform:translate(2px,-2px) rotate(1.2deg) scale(1.004);opacity:1}
+  100%{transform:translate(6px,-4px) rotate(6deg) scale(1.014);opacity:.84}
 }
 @keyframes flow-b{
-  0%{transform:translate(2px,-1px) rotate(2.5deg) scale(1.004);opacity:.89}
-  50%{transform:translate(0,1px) rotate(.1deg) scale(1);opacity:1}
-  100%{transform:translate(-2px,1px) rotate(-2.8deg) scale(.995);opacity:.79}
+  0%{transform:translate(5px,-4px) rotate(5.5deg) scale(1.011);opacity:.79}
+  53%{transform:translate(-1px,2px) rotate(-1.6deg) scale(.997);opacity:1}
+  100%{transform:translate(-6px,4px) rotate(-6deg) scale(.984);opacity:.65}
 }
-@keyframes soft-glint{0%,100%{opacity:.55}48%{opacity:1}}
-@media(prefers-reduced-motion:reduce){.g-a,.g-b,.glass-glint{animation:none}}
+@keyframes soft-glint{
+  0%{opacity:.18}
+  38%{opacity:.95}
+  65%{opacity:.48}
+  100%{opacity:.82}
+}
+@media(prefers-reduced-motion:reduce){.g-a,.g-b,.glass-glint{animation:none;will-change:auto}}
 </style>
 </defs>
 <circle cx="260" cy="250" r="244" fill="url(#amb)"/>
