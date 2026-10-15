@@ -116,9 +116,39 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 .ask-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
 .voice-hint{position:fixed;z-index:42;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));max-width:min(420px,calc(100% - 48px));border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px #0004;color:var(--text);padding:10px 15px;font-size:12px;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .2s,transform .2s}
 .voice-hint.active{opacity:1;transform:translate(-50%,0)}
-.prompt{position:fixed;z-index:35;left:50%;bottom:calc(119px + env(safe-area-inset-bottom) + var(--keyboard-offset,0px));transform:translateX(-50%);width:min(440px,calc(100% - 32px));display:flex;gap:8px;margin:0;background:var(--card);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:24px;padding:7px 8px 7px 16px;box-shadow:0 10px 26px #0004;align-items:center}
-.prompt[hidden]{display:none}.prompt input{flex:1;min-width:0;background:transparent;color:var(--text);border:0;outline:0;font:inherit;font-size:16px}
-.prompt button{flex:none;width:38px;height:38px;border:0;border-radius:50%;background:var(--card2);color:var(--text);font-size:17px}
+.prompt{position:fixed;z-index:35;left:50%;bottom:calc(119px + env(safe-area-inset-bottom) + var(--keyboard-offset,0px));transform:translateX(-50%);width:min(440px,calc(100% - 32px));margin:0;display:flex;align-items:center;gap:8px;background:var(--card);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:25px;padding:8px 9px 8px 16px;box-shadow:0 10px 26px #0004;transition:width .23s ease,border-radius .23s ease}
+.prompt[hidden]{display:none}
+.prompt textarea{flex:1;min-width:0;min-height:38px;max-height:116px;line-height:24px;padding:7px 0;box-sizing:border-box;resize:none;overflow-y:auto;background:transparent;color:var(--text);border:0;outline:0;font:inherit;font-size:16px;letter-spacing:normal}
+.prompt textarea::placeholder{color:var(--secondary);opacity:.8}
+.composer-compact{display:flex;gap:8px;align-items:center;flex:none}
+.composer-icon{width:38px;height:38px;padding:0;flex:none;display:grid;place-items:center;border:0;border-radius:50%;background:var(--card2);color:var(--text);cursor:pointer}
+.composer-icon svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.composer-icon:focus-visible,.composer-tool:focus-visible,.composer-more button:focus-visible{outline:2px solid var(--secondary);outline-offset:2px}
+.composer-head,.composer-actions,.composer-more{display:none}
+.prompt.expanded{width:min(520px,calc(100% - 24px));height:min(62dvh,510px);max-height:calc(100dvh - var(--keyboard-offset,0px) - 145px);padding:16px;gap:12px;flex-direction:column;align-items:stretch;border-radius:28px;background:var(--card);box-shadow:0 20px 60px #0005}
+.prompt.expanded .composer-compact{display:none}
+.prompt.expanded .composer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px}
+.composer-head strong{font-size:13px;font-weight:650;color:var(--text)}
+.composer-head .composer-icon{width:32px;height:32px}
+.prompt.expanded textarea{display:block;width:100%;min-height:85px;max-height:none;height:auto;flex:1;padding:12px;border-radius:17px;background:var(--card2);border:1px solid var(--soft-line);font-size:15px;line-height:1.55}
+.prompt.expanded .composer-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.composer-tool{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:2px 0;background:transparent;border:0;color:var(--secondary);cursor:pointer;font:inherit}
+.composer-tool span{display:grid;place-items:center;width:39px;height:39px;border:1px solid var(--soft-line);border-radius:50%;background:var(--card2);color:var(--text)}
+.composer-tool svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.composer-tool small{font-size:10px;line-height:1.2;white-space:nowrap}
+.prompt.expanded .composer-more:not([hidden]){display:flex;gap:7px;flex-wrap:wrap}
+.composer-more button{background:var(--card2);color:var(--text);border:1px solid var(--soft-line);border-radius:14px;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
+.prompt .composer-status:not([hidden]){display:block;color:var(--secondary);font-size:11px;min-height:13px}
+.composer-status[hidden]{display:none!important}
+.notes-dialog{width:min(440px,calc(100% - 30px))}
+.notes-list{display:flex;flex-direction:column;gap:9px;max-height:45dvh;overflow:auto}
+.note-item{padding:12px;border-radius:16px;background:var(--card2);border:1px solid var(--soft-line)}
+.note-item p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.5;max-height:88px;overflow:hidden;margin:5px 0 9px;color:var(--text)}
+.note-item small{font-size:10px;color:var(--secondary)}
+.note-item-actions{display:flex;gap:10px;margin-top:8px}
+.note-item-actions button{border:0;background:transparent;color:var(--text);font-size:12px;padding:5px;cursor:pointer}
+@media(max-height:650px){.prompt.expanded{height:50dvh;min-height:170px}.prompt.expanded textarea{min-height:40px;padding:8px}.composer-tool span{width:33px;height:33px}.composer-tool small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.prompt{transition:none}}
 :root[data-theme=light] .dock{--dock-surface:#f8faffc7;--dock-glint:#fff;box-shadow:inset 0 14px 18px -18px #fff,inset 0 -17px 24px -23px #7790b650,0 12px 30px #425a8225}
 :root[data-theme=light] .assistant-button{filter:drop-shadow(0 2px 7px #506ea033)}
 :root[data-theme=light] .button-art .center-face{fill:url(#button-day)}
@@ -129,7 +159,20 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden><input id="question" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"><button type="submit" aria-label="Отправить">➤</button><button id="hideInput" type="button" aria-label="Скрыть поле">×</button></form></main><footer class="dock" aria-label="Нижняя панель">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+<div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
+<textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
+<div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+<div class="composer-actions">
+<button class="composer-tool" type="submit" aria-label="Отправить управляющему"><span><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></span><small>Отправить</small></button>
+<button class="composer-tool" type="button" id="saveNote"><span><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v6h8V4M8 20v-7h8v7"/></svg></span><small>Блокнот</small></button>
+<button class="composer-tool" type="button" id="shareText"><span><svg viewBox="0 0 24 24"><path d="M12 15V3m0 0-4 4m4-4 4 4M5 13v7h14v-7"/></svg></span><small>Поделиться</small></button>
+<button class="composer-tool" type="button" id="printText"><span><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 14h12v7H6zM17 12h.01"/></svg></span><small>Печать</small></button>
+<button class="composer-tool" type="button" id="moreComposer" aria-expanded="false"><span><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span><small>Ещё</small></button>
+</div>
+<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
+<small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
+</form></main><footer class="dock" aria-label="Нижняя панель">
 <span class="nav-item nav-home active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></span>
 <span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
@@ -152,7 +195,7 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info"><h2 id="infoTitle"></h2><p id="infoText"></p><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info"><h2 id="infoTitle"></h2><p id="infoText"></p><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Новая запись</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -289,21 +332,136 @@ else if(/реклам|бюджет|расход|финанс/.test(v))answer=sto
 else if(/истори|сделал|выполн|согласов/.test(v))answer=state.history.length?'Последние согласования:\n'+state.history.slice(-5).reverse().map(h=>'✓ '+h.label).join('\n'):'Пока не было согласованных действий. Примерные события показаны ниже на главной.';
 else if(/важн|сегодня|задач|дела|срочн/.test(v))answer=current?'Сейчас требует решения: '+current.card+'.\n'+current.subtitle:'Сейчас всё спокойно. В этом сценарии открытых решений нет.';
 else answer='В этом прототипе я могу показать письмо, встречу, расходы или историю решений. Свободный разговор и выполнение настоящих поручений появятся после подключения ИИ и ваших сервисов.';
-popup('Ответ помощника · сценарий',answer);$('question').value='';
+popup('Ответ помощника · сценарий',answer);$('question').value='';syncComposer();closeComposer();
 });
 $('infoClose').addEventListener('click',()=>$('info').close());
+/* One adaptive composer, separate local draft and notebook stores. */
+const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
+const composer=$('ask'),question=$('question');
+let composerIdle=null,composerStatusTimer=null;
+function composerMessage(message){
+  const status=$('composerStatus');
+  clearTimeout(composerStatusTimer);
+  status.textContent=message;
+  status.hidden=!message;
+  if(message)composerStatusTimer=setTimeout(()=>{status.hidden=true},2800);
+}
+function saveDraft(){try{if(question.value)localStorage.setItem(DRAFT_KEY,question.value);else localStorage.removeItem(DRAFT_KEY)}catch{}}
+function restoreDraft(){try{question.value=localStorage.getItem(DRAFT_KEY)||''}catch{question.value=''}}
+function armComposerIdle(){
+  clearTimeout(composerIdle);
+  if(!composer.hidden&&!question.value.trim()&&!composer.classList.contains('expanded'))
+    composerIdle=setTimeout(()=>{if(!question.value.trim()&&!composer.classList.contains('expanded'))closeComposer()},15000);
+}
+function expandComposer(){
+  composer.classList.add('expanded');
+  question.style.height='';
+  $('composerMore').hidden=true;
+  $('moreComposer').setAttribute('aria-expanded','false');
+  clearTimeout(composerIdle);
+}
+function syncComposer(){
+  saveDraft();
+  if(composer.classList.contains('expanded'))return;
+  question.style.height='auto';
+  const pixels=question.scrollHeight;
+  question.style.height=Math.min(pixels,116)+'px';
+  if(pixels>94||question.value.length>175)expandComposer();
+  else armComposerIdle();
+}
+function openComposer(){
+  composer.hidden=false;
+  syncComposer();
+  armComposerIdle();
+}
+function closeComposer(){
+  saveDraft();
+  clearTimeout(composerIdle);
+  composer.hidden=true;
+  composer.classList.remove('expanded');
+  question.style.height='';
+  $('composerMore').hidden=true;
+  $('moreComposer').setAttribute('aria-expanded','false');
+  question.blur();
+  $('composerStatus').hidden=true;
+}
+function getNotes(){
+  try{const v=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]');return Array.isArray(v)?v.filter(n=>n&&typeof n.text==='string'&&typeof n.id==='string').slice(0,100):[]}catch{return []}
+}
+function putNotes(list){
+  try{localStorage.setItem(NOTES_KEY,JSON.stringify(list.slice(0,100)));return true}catch{return false}
+}
+function renderNotes(){
+  const container=$('notesList');container.replaceChildren();
+  const notes=getNotes();
+  if(!notes.length){const p=document.createElement('p');p.textContent='Пока записей нет. Сохраните текст из редактора.';container.append(p);return}
+  notes.forEach(note=>{
+    const card=document.createElement('div');card.className='note-item';
+    const date=document.createElement('small');date.textContent=new Date(note.createdAt).toLocaleString('ru-RU');
+    const content=document.createElement('p');content.textContent=note.text;
+    const controls=document.createElement('div');controls.className='note-item-actions';
+    const open=document.createElement('button');open.type='button';open.textContent='Открыть';
+    open.addEventListener('click',()=>{$('notesDialog').close();question.value=note.text;openComposer();expandComposer();question.focus()});
+    const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
+    remove.addEventListener('click',()=>{if(putNotes(getNotes().filter(n=>n.id!==note.id)))renderNotes()});
+    controls.append(open,remove);card.append(date,content,controls);container.append(card);
+  });
+}
+function openNotes(){renderNotes();if(!$('notesDialog').open)$('notesDialog').showModal()}
+function composerText(){const v=question.value.trim();if(!v)composerMessage('Сначала напишите текст');return v}
+$('saveNote').addEventListener('click',()=>{
+  const value=composerText();if(!value)return;
+  const record={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now()};
+  if(putNotes([record,...getNotes()]))composerMessage('Сохранено в «Мои записи» · на этом устройстве');
+  else composerMessage('Не удалось сохранить запись');
+});
+$('moreComposer').addEventListener('click',()=>{
+  const more=$('composerMore');more.hidden=!more.hidden;
+  $('moreComposer').setAttribute('aria-expanded',String(!more.hidden));
+});
+$('viewNotes').addEventListener('click',openNotes);
+$('notesClose').addEventListener('click',()=>$('notesDialog').close());
+$('notesNew').addEventListener('click',()=>{$('notesDialog').close();question.value='';syncComposer();openComposer();expandComposer();question.focus()});
+$('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
+$('collapseComposer').addEventListener('click',closeComposer);
+$('copyText').addEventListener('click',async()=>{
+  const value=composerText();if(!value)return;
+  try{await navigator.clipboard.writeText(value);composerMessage('Текст скопирован')}
+  catch{question.focus();question.select();composerMessage('Выделите и скопируйте текст')};
+});
+$('shareText').addEventListener('click',async()=>{
+  const value=composerText();if(!value)return;
+  if(navigator.share){try{await navigator.share({title:'SEYVEO',text:value});composerMessage('Готово')}catch(e){if(e.name!=='AbortError')composerMessage('Не получилось поделиться')}}else{
+    try{await navigator.clipboard.writeText(value);composerMessage('Текст скопирован — можно отправить')}catch{composerMessage('Поделиться недоступно: выделите текст и скопируйте')};
+  }
+});
+$('printText').addEventListener('click',()=>{
+  const value=composerText();if(!value)return;
+  const win=window.open('','_blank');if(!win){composerMessage('Разрешите всплывающие окна для печати');return}
+  win.opener=null;
+  win.document.open();
+  win.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title><style>body{font:16px/1.6 system-ui,sans-serif;max-width:740px;margin:40px auto;padding:16px;color:#172033}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><pre>'+escapeHtml(value)+'</pre></body></html>');
+  win.document.close();win.focus();win.print();
+});
+question.addEventListener('input',syncComposer);
+question.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey&&(!composer.classList.contains('expanded')||e.ctrlKey||e.metaKey)){
+    e.preventDefault();composer.requestSubmit();
+  }
+});
+
 const fab=$('assistantButton'),inputPanel=$('ask'),hint=$('voiceHint');let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false;
 let hintTimeout=null;
 function setHint(value){hint.textContent=value;hint.classList.add('active');clearTimeout(hintTimeout);hintTimeout=setTimeout(()=>{if(!fab.classList.contains('listening'))hint.classList.remove('active')},value.startsWith('Слушаю')?6000:2800)}
 function updateKeyboard(){const v=window.visualViewport;if(!v)return;const shift=Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop));document.documentElement.style.setProperty('--keyboard-offset',shift+'px')}
 if(window.visualViewport){window.visualViewport.addEventListener('resize',updateKeyboard);window.visualViewport.addEventListener('scroll',updateKeyboard)}window.addEventListener('resize',updateKeyboard);updateKeyboard();
 function stopVoice(){if(recognition){try{recognition.stop()}catch{}recognition=null}fab.classList.remove('listening')}
-function startVoice(){started=true;held=true;const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){setHint('Распознавание речи недоступно в этом браузере. Нажмите, чтобы написать.');return}try{const sr=new Speech();recognition=sr;sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;sr.onresult=e=>{const phrase=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();if(phrase){inputPanel.hidden=false;$('question').value=phrase;setHint('Речь распознана. Проверьте текст перед отправкой.')}};sr.onerror=e=>setHint('Голосовой ввод: '+(e.error==='not-allowed'?'нет разрешения на микрофон':e.error));sr.onend=()=>{fab.classList.remove('listening');recognition=null};sr.start();fab.classList.add('listening');setHint('Слушаю… отпустите, чтобы закончить')}catch{setHint('Не удалось включить голосовой ввод. Используйте текст.')}} 
+function startVoice(){started=true;held=true;const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){setHint('Распознавание речи недоступно в этом браузере. Нажмите, чтобы написать.');return}try{const sr=new Speech();recognition=sr;sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;sr.onresult=e=>{const phrase=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();if(phrase){question.value=phrase;openComposer();syncComposer();setHint('Речь распознана. Проверьте текст перед отправкой.')}};sr.onerror=e=>setHint('Голосовой ввод: '+(e.error==='not-allowed'?'нет разрешения на микрофон':e.error));sr.onend=()=>{fab.classList.remove('listening');recognition=null};sr.start();fab.classList.add('listening');setHint('Слушаю… отпустите, чтобы закончить')}catch{setHint('Не удалось включить голосовой ввод. Используйте текст.')}} 
 fab.addEventListener('pointerdown',e=>{if(e.button!==0)return;started=false;held=false;clearTimeout(holdTimer);holdTimer=setTimeout(startVoice,500)});
 function endPress(){clearTimeout(holdTimer);if(held){suppressClick=true;setTimeout(()=>suppressClick=false,350);stopVoice();held=false}}
 fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',endPress);fab.addEventListener('pointerleave',endPress);
 fab.addEventListener('contextmenu',e=>e.preventDefault());
-fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}inputPanel.hidden=!inputPanel.hidden;if(!inputPanel.hidden){hint.classList.remove('active');requestAnimationFrame(()=>{$('question').focus();updateKeyboard()})}else setHint('Нажмите — написать · удерживайте — говорить')});
-$('hideInput').addEventListener('click',()=>{inputPanel.hidden=true;$('question').blur();hint.classList.remove('active')});
-render();showDailyBrand()})();
+fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
+$('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
+restoreDraft();render();showDailyBrand()})();
 </script></body></html>
