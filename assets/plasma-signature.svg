@@ -68,5 +68,4 @@
 <path class="glass-glint" d="M100 203C146 97 256 68 348 112C403 137 432 173 443 223" fill="none" stroke="#f7fbff" stroke-opacity=".45" stroke-width="9" filter="url(#halo)"/>
 </g>
 <circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
-<path d="M103 190C143 115 213 79 287 75" fill="none" stroke="#f7fbff" stroke-opacity=".7" stroke-width="3.6" stroke-linecap="round" filter="url(#soft)"/>
 </svg>
