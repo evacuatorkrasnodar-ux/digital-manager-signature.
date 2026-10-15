@@ -28,7 +28,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
+.signal.is-appearing{animation:orb-cinematic 5.2s .16s cubic-bezier(.22,.7,.28,1) both;will-change:opacity,transform}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
@@ -45,14 +45,35 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-@keyframes glass-mist{
-  0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
-  24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
-  42%,57%{opacity:.78;filter:blur(0);transform:translate(-50%,-50%) scale(1)}
-  81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
-  100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
+/* SEYVEO Orb Language: one restrained cinematic vocabulary for every orb message.
+   Only the notice content animates; the approved plasma SVG remains untouched. */
+.signal.is-event{width:108px;height:108px}
+.signal.is-appearing :is(.brand-mark,.brand-word,.brand-specialty,.moment-time,.moment-date,.moment-care,.glass-figure){animation:orb-compose 1.05s cubic-bezier(.21,.72,.21,1) both}
+.signal.is-appearing .brand-mark{animation-delay:.14s}
+.signal.is-appearing .brand-word{animation-delay:.57s}
+.signal.is-appearing .brand-specialty{animation-delay:1.02s}
+.signal.is-appearing .moment-time{animation-delay:.24s;animation-duration:1.15s}
+.signal.is-appearing .moment-date{animation-delay:.71s}
+.signal.is-appearing .moment-care{animation-delay:.4s;animation-duration:1.25s}
+.signal.is-event.is-appearing .glass-figure{animation-delay:.3s}
+.signal.is-clock .moment-time{font-weight:580;letter-spacing:.015em}
+:root:not([data-theme=light]) .signal.is-clock .moment-time{text-shadow:0 0 12px #dcecff4d}
+@keyframes orb-cinematic{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.955)}
+  14%{opacity:.92;transform:translate(-50%,-50%) scale(.987)}
+  35%,67%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  83%{opacity:.64;transform:translate(-50%,-50%) scale(1.007)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.025)}
 }
-@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}.signal.is-brand.is-appearing{opacity:.82}}
+@keyframes orb-compose{
+  0%{opacity:0;clip-path:inset(0 100% 0 0);transform:translateY(5px) scale(.985);filter:blur(2px)}
+  53%{opacity:.83;filter:blur(.5px)}
+  100%{opacity:1;clip-path:inset(0 0 0 0);transform:translateY(0) scale(1);filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ .signal.is-appearing,.signal.is-brand.is-appearing,.signal.is-moment.is-appearing{animation:none;opacity:.88;transform:translate(-50%,-50%)}
+ .signal.is-appearing :is(.brand-mark,.brand-word,.brand-specialty,.moment-time,.moment-date,.moment-care,.glass-figure){animation:none;clip-path:none;opacity:1;filter:none;transform:none}
+}
 /* Time and gentle self-care use only the existing transient sphere layer. */
 .signal.is-moment{width:min(225px,76%);height:112px}
 .signal.is-moment.is-appearing{animation-duration:5.8s;animation-delay:0s}
@@ -67,7 +88,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .care-setting input{appearance:auto;width:18px;height:18px;flex:none;accent-color:var(--text);cursor:pointer}
 .care-setting small{font-size:var(--type-caption);line-height:1.5;color:var(--secondary)}
 .care-preview-button{width:100%;margin-top:6px;flex:none}
-@media(prefers-reduced-motion:reduce){.signal.is-moment.is-appearing{animation:none;opacity:.78}}
+/* Motion-reduction preferences are handled by the shared Orb Language rules. */
 
 
 
@@ -244,7 +265,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div id="careSetting" class="care-setting" hidden><label for="careToggle">Забота о себе<input id="careToggle" type="checkbox" checked></label><small>Небольшие предложения об отдыхе примерно раз в час, пока SEYVEO открыт. Можно отключить в любой момент.</small><button id="previewSphere" type="button" class="btn care-preview-button">Посмотреть в сфере</button></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div id="careSetting" class="care-setting" hidden><label for="careToggle">Забота о себе<input id="careToggle" type="checkbox" checked></label><small>Небольшие предложения об отдыхе примерно раз в час, пока SEYVEO открыт. Можно отключить в любой момент.</small><button id="previewSphere" type="button" class="btn care-preview-button">Посмотреть все эффекты в сфере</button></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -341,12 +362,33 @@ function transientNotice(key,type){
   clearTimeout(brandClearTimer);
   clearTimeout(momentClearTimer);
   const el=$('signal');
-  el.classList.remove('is-appearing','is-brand','is-moment');
+  el.classList.remove('is-appearing','is-brand','is-moment','is-event','is-clock','is-care');
+  if(!type){el.replaceChildren();return}
   el.innerHTML=glassIcon(type,'orb');
-  if(!type)return;
+  el.classList.add('is-event');
   void el.offsetWidth;
   el.classList.add('is-appearing');
-  noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
+  noticeClearTimer=setTimeout(()=>{
+    if(!el.classList.contains('is-event'))return;
+    el.classList.remove('is-appearing','is-event');
+    el.replaceChildren();
+  },5500);
+}
+function displayBrandSignature(){
+  const el=$('signal');
+  clearTimeout(noticeClearTimer);
+  clearTimeout(brandClearTimer);
+  clearTimeout(momentClearTimer);
+  el.classList.remove('is-brand','is-appearing','is-moment','is-event','is-clock','is-care');
+  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
+  el.classList.add('is-brand');
+  void el.offsetWidth;
+  el.classList.add('is-appearing');
+  brandClearTimer=setTimeout(()=>{
+    if(!el.classList.contains('is-brand'))return;
+    el.classList.remove('is-brand','is-appearing');
+    el.replaceChildren();
+  },BRAND_DURATION_MS);
 }
 function showBrandSignature(reason='ambient'){
   if(document.hidden)return false;
@@ -364,22 +406,9 @@ function showBrandSignature(reason='ambient'){
     scheduleNextBrand(60000);
     return false;
   }
-  const el=$('signal');
-  clearTimeout(noticeClearTimer);
-  clearTimeout(brandClearTimer);
-  clearTimeout(momentClearTimer);
-  el.classList.remove('is-brand','is-appearing','is-moment');
-  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
-  el.classList.add('is-brand');
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
+  displayBrandSignature();
   brandFallback={day:progress.day,count:progress.count+1,lastAt:now};
   try{localStorage.setItem(BRAND_STORE_KEY,JSON.stringify(brandFallback))}catch{}
-  brandClearTimer=setTimeout(()=>{
-    if(!el.classList.contains('is-brand'))return;
-    el.classList.remove('is-brand','is-appearing');
-    el.replaceChildren();
-  },BRAND_DURATION_MS);
   if(brandFallback.count<BRAND_MAX_DAILY)scheduleNextBrand(BRAND_GAP_MS+1000);
   else clearTimeout(brandNextTimer);
   return true;
@@ -426,10 +455,11 @@ function momentDisplay(kind,parts,force=false){
     clearTimeout(brandClearTimer);
     clearTimeout(noticeClearTimer);
     clearTimeout(momentClearTimer);
-    el.classList.remove('is-brand','is-appearing','is-moment');
+    el.classList.remove('is-brand','is-appearing','is-moment','is-event','is-clock','is-care');
   }
   clearTimeout(momentClearTimer);
-  el.classList.remove('is-moment','is-appearing');
+  el.classList.remove('is-moment','is-appearing','is-clock','is-care');
+  el.classList.add(kind==='clock'?'is-clock':'is-care');
   const wrapper=document.createElement('span');
   wrapper.className='moment-content';
   for(const [className,copy] of parts){
@@ -444,7 +474,7 @@ function momentDisplay(kind,parts,force=false){
   el.classList.add('is-appearing');
   momentClearTimer=setTimeout(()=>{
     if(!el.classList.contains('is-moment'))return;
-    el.classList.remove('is-moment','is-appearing');
+    el.classList.remove('is-moment','is-appearing','is-clock','is-care');
     el.replaceChildren();
   },5900);
   return true;
@@ -460,15 +490,38 @@ function previewSphereMoments(){
   clearTimeout(previewSequenceTimer);
   $('info').close();
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
-  previewSequenceTimer=setTimeout(()=>{
-    if(document.hidden)return;
-    const started=momentDisplay('clock',clockMomentParts(),true);
-    if(!started)return;
-    previewSequenceTimer=setTimeout(()=>{
-      if(document.hidden)return;
-      momentDisplay('care',[['moment-care',wellnessPhrases[0]]]);
-    },6400);
-  },550);
+  // A single user-initiated preview of all four Orb Language states.
+  // Preview never consumes daily brand or wellness quotas.
+  const sequence=[
+    ()=>momentDisplay('clock',clockMomentParts(),true),
+    ()=>momentDisplay('care',[['moment-care',wellnessPhrases[0]]],true),
+    ()=>{
+      if(document.hidden)return false;
+      clearTimeout(brandClearTimer);
+      clearTimeout(momentClearTimer);
+      const el=$('signal');
+      el.classList.remove('is-brand','is-appearing','is-moment','is-clock','is-care','is-event');
+      el.innerHTML=glassIcon('mail','orb');
+      el.classList.add('is-event');
+      void el.offsetWidth;
+      el.classList.add('is-appearing');
+      clearTimeout(noticeClearTimer);
+      noticeClearTimer=setTimeout(()=>{
+        if(!el.classList.contains('is-event'))return;
+        el.classList.remove('is-event','is-appearing');
+        el.replaceChildren();
+      },5500);
+      return true;
+    },
+    ()=>{if(document.hidden)return false;displayBrandSignature();return true}
+  ];
+  let step=0;
+  function next(){
+    if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]'))return;
+    if(!sequence[step++]())return;
+    if(step<sequence.length)previewSequenceTimer=setTimeout(next,6600);
+  }
+  previewSequenceTimer=setTimeout(next,550);
 }
 $('previewSphere').addEventListener('click',previewSphereMoments);
 function scheduleClock(delay){
@@ -646,7 +699,7 @@ $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
 $('openCarePreview').addEventListener('click',()=>{
-  popup('Часы и забота','Время, дата и небольшие советы могут мягко появляться внутри сферы, а потом растворяться. Нажмите «Посмотреть в сфере», чтобы увидеть их сейчас.',false);
+  popup('Часы и забота','Единый язык сферы: часы, забота, уведомление и знак SEYVEO. Нажмите «Посмотреть все эффекты в сфере» — элементы появятся по очереди.',false);
   $('careSetting').hidden=false;
   $('careToggle').checked=wellnessEnabled();
 });
