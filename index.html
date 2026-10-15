@@ -26,15 +26,15 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 
 
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
-.signal{position:absolute;z-index:3;top:50%;left:50%;width:72px;height:72px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
-.signal svg{display:block;width:54px;height:54px}
+.signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
+.signal svg{display:block;width:94px;height:94px}
 .signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
-/* Shared material for the orb's fleeting notice and the permanent card icons. */
+/* Single shared frosted-glass material for orb notices and event cards. */
 .glass-figure{overflow:visible}
-.glass-figure .glass-detail{fill:none;stroke:#edf4fc;stroke-opacity:.79;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.72;stroke-width:1.2;stroke-linecap:round}
-:root[data-theme=light] .glass-figure .glass-detail{stroke:#5d7088;stroke-opacity:.83}
-:root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.89}
+.glass-figure .glass-detail{fill:none;stroke:#edf4fc;stroke-opacity:.84;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
+:root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
+:root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
 @keyframes glass-mist{
   0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
   24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
@@ -161,20 +161,48 @@ try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
-/* Four glass objects. All gradients are local to each SVG; no duplicate assets or legacy glyphs. */
+/* One sculpted frosted-glass icon family, reused by the sphere and cards. */
 const glassArt={
-  mail:(fill,edge)=>'<rect x="8" y="13" width="32" height="23" rx="5.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.85"/><rect x="9.7" y="14.7" width="28.6" height="19.6" rx="4.2" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".9"/><path class="glass-detail" d="m10.5 17 11.6 9a3.1 3.1 0 0 0 3.8 0l11.6-9"/><path class="glass-detail" stroke-opacity=".4" d="m11 33 9.4-8M37 33l-9.4-8"/><path class="glass-specular" d="M13 15.7h19"/>',
-  calendar:(fill,edge)=>'<rect x="10" y="11" width="28" height="28" rx="5.3" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.85"/><path d="M11 19.5h26" stroke="#fff" stroke-opacity=".34" stroke-width="2"/><path class="glass-detail" d="M18 9v6M30 9v6M11 20h26M17 27h5M27 27h4M17 33h5"/><path class="glass-specular" d="M12.8 16.8v-1.6q0-2.2 2.3-2.2h1.1"/>',
-  budget:(fill,edge)=>'<circle cx="24" cy="24" r="15.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.9"/><circle cx="24" cy="24" r="13.8" fill="none" stroke="#fff" stroke-opacity=".19" stroke-width=".9"/><path class="glass-detail" stroke-width="2" d="m15.8 29.1 5.4-5.7 4.7 3.3 6.3-8.2M27.9 18.5h4.3v4.2"/><path class="glass-specular" d="M13.4 19.2a12.5 12.5 0 0 1 12.7-8.8"/>',
-  check:(fill,edge)=>'<circle cx="24" cy="24" r="15.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.9"/><circle cx="24" cy="24" r="13.8" fill="none" stroke="#fff" stroke-opacity=".19" stroke-width=".9"/><path class="glass-detail" stroke-width="2.3" d="m16.6 24.1 5.4 5.4 9.6-10"/><path class="glass-specular" d="M13.4 19.2a12.5 12.5 0 0 1 12.7-8.8"/>'
+  mail:id=>
+    '<rect x="6" y="12.1" width="36" height="25.8" rx="7" fill="url(#'+id+'-rim)"/>'+
+    '<rect x="8" y="14.1" width="32" height="21.9" rx="5.2" fill="url(#'+id+'-frost)" stroke="#fff" stroke-opacity=".30" stroke-width=".7"/>'+
+    '<path d="M9.8 17.3 21.5 26.3q2.5 1.9 5 0l11.7-9V17q0-1.4-2.3-1.4H12.1q-2.3 0-2.3 1.4Z" fill="url(#'+id+'-fold)" stroke="#eef6ff" stroke-opacity=".55" stroke-width=".8"/>'+
+    '<path class="glass-detail" d="M10.2 18.4 21.8 27q2.2 1.6 4.4 0l11.6-8.6M10.3 33.2l10.3-7.3m17.1 7.3-10.3-7.3"/>'+
+    '<path class="glass-specular" d="M13.1 14.9h21.7M8.7 30.3v-11M14 36.5h20"/>',
+  calendar:id=>
+    '<rect x="7" y="9" width="34" height="31" rx="7" fill="url(#'+id+'-rim)"/>'+
+    '<rect x="9" y="11" width="30" height="27.1" rx="5.3" fill="url(#'+id+'-frost)" stroke="#fff" stroke-opacity=".32" stroke-width=".8"/>'+
+    '<path d="M9 18.8h30v-3.2a4.6 4.6 0 0 0-4.6-4.6H13.6A4.6 4.6 0 0 0 9 15.6Z" fill="url(#'+id+'-fold)"/>'+
+    '<path class="glass-detail" d="M9.4 19.4h29.2M17 7.4v7.4m14-7.4v7.4M16.5 26.8h5m6 0h4.5m-15.5 5.7h5m6 0h4.5"/>'+
+    '<path class="glass-specular" d="M13.3 11.8h5M10.4 22.3v11M13.7 38.2h20.2"/>',
+  budget:id=>
+    '<circle cx="24" cy="24" r="18.1" fill="url(#'+id+'-rim)"/>'+
+    '<circle cx="24" cy="24" r="15.7" fill="url(#'+id+'-frost)" stroke="#fff" stroke-opacity=".35" stroke-width=".85"/>'+
+    '<path d="M13.2 27.9 20.7 20.4l5.6 4.4 8.3-10.1v10.6l-8.3 6.2-5.6-4.4-7.5 7.4Z" fill="url(#'+id+'-fold)" opacity=".58"/>'+
+    '<path class="glass-detail" stroke-width="2.15" d="m14.8 28.7 6.5-6.9 5.5 4.3 7-9m-5.5.1h5.5v5.6"/>'+
+    '<path class="glass-specular" d="M12.7 17.6a15 15 0 0 1 20-6.9M14.7 36a14 14 0 0 0 14 2"/>',
+  check:id=>
+    '<circle cx="24" cy="24" r="18.1" fill="url(#'+id+'-rim)"/>'+
+    '<circle cx="24" cy="24" r="15.7" fill="url(#'+id+'-frost)" stroke="#fff" stroke-opacity=".35" stroke-width=".85"/>'+
+    '<path d="m14.3 25 6.7 6.8 13.5-14.5-2.8-2.6-11 11.8-3.9-4.3Z" fill="url(#'+id+'-fold)" opacity=".73"/>'+
+    '<path class="glass-detail" stroke-width="2.5" d="m15.4 24.8 5.7 5.7 12-12.8"/>'+
+    '<path class="glass-specular" d="M12.7 17.6a15 15 0 0 1 20-6.9M14.7 36a14 14 0 0 0 14 2"/>'
 };
 function glassIcon(type,place='card'){
   if(!Object.prototype.hasOwnProperty.call(glassArt,type))return '';
   const id='glass-'+place+'-'+type;
   return '<svg class="glass-figure" viewBox="0 0 48 48" aria-hidden="true"><defs>'+
-    '<linearGradient id="'+id+'-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".52"/><stop offset=".4" stop-color="#cbdced" stop-opacity=".20"/><stop offset="1" stop-color="#8fa5bb" stop-opacity=".33"/></linearGradient>'+
-    '<linearGradient id="'+id+'-edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".92"/><stop offset=".47" stop-color="#9aafc7" stop-opacity=".37"/><stop offset="1" stop-color="#71849c" stop-opacity=".84"/></linearGradient>'+
-    '</defs>'+glassArt[type](id+'-fill',id+'-edge')+'</svg>';
+    '<linearGradient id="'+id+'-rim" x1="0%" y1="0%" x2="90%" y2="100%">'+
+      '<stop stop-color="#fff" stop-opacity=".96"/><stop offset=".22" stop-color="#edf5fc" stop-opacity=".81"/>'+
+      '<stop offset=".57" stop-color="#91a9c2" stop-opacity=".65"/><stop offset=".79" stop-color="#f8fbff" stop-opacity=".88"/>'+
+      '<stop offset="1" stop-color="#6d819c" stop-opacity=".74"/></linearGradient>'+
+    '<linearGradient id="'+id+'-frost" x1="0%" y1="0%" x2="90%" y2="100%">'+
+      '<stop stop-color="#fcfeff" stop-opacity=".72"/><stop offset=".44" stop-color="#e1ebf5" stop-opacity=".49"/>'+
+      '<stop offset=".76" stop-color="#bbcddd" stop-opacity=".43"/><stop offset="1" stop-color="#9bafc5" stop-opacity=".58"/></linearGradient>'+
+    '<linearGradient id="'+id+'-fold" x1="0%" y1="0%" x2="90%" y2="100%">'+
+      '<stop stop-color="#fff" stop-opacity=".70"/><stop offset=".53" stop-color="#dae7f4" stop-opacity=".38"/>'+
+      '<stop offset="1" stop-color="#90a7c0" stop-opacity=".56"/></linearGradient>'+
+    '</defs>'+glassArt[type](id)+'</svg>';
 }
 let noticeKey=null,noticeClearTimer=null;
 function transientNotice(key,type){
