@@ -26,7 +26,7 @@
 .button-art{width:74px;height:74px;display:block;overflow:visible}
 .button-art .center-face{fill:url(#button-night)}
 .button-art .button-rim{stroke:url(#rim-night)}
-.button-art .voice-bars{stroke:#f9fbff;stroke-width:3.25;stroke-linecap:round;fill:none}
+.button-art .voice-bars{stroke:#f9fbff;stroke-width:2.85;stroke-linecap:round;fill:none}
 .button-art .voice-dot{fill:#f9fbff}
 .button-art .face-reflection{opacity:.57}
 .button-art .bottom-reflection{opacity:.8}
@@ -65,10 +65,13 @@
 <circle cx="37" cy="37" r="34.8" fill="#182537" fill-opacity=".25"/>
 <circle cx="37" cy="37" r="34.1" fill="none" class="button-rim" stroke-width="0.8"/>
 <circle cx="37" cy="37" r="30.6" class="center-face"/>
-<g class="voice-bars">
-  <path d="M27 35v4M32 30v14M37 24.5v25M42 30v14M47 35v4"/>
+<g class="wave-mark" transform="translate(37 37) scale(.72) translate(-37 -37)">
+  <g class="voice-bars">
+    <path d="M27 35v4M32 30v14M37 24.5v25M42 30v14M47 35v4"/>
+  </g>
+  <circle class="voice-dot" cx="21.2" cy="37" r="1.5"/>
+  <circle class="voice-dot" cx="52.8" cy="37" r="1.5"/>
 </g>
-<circle class="voice-dot" cx="21.2" cy="37" r="1.65"/><circle class="voice-dot" cx="52.8" cy="37" r="1.65"/>
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
