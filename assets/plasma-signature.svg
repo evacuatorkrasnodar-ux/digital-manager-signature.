@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 30 440 440" role="img" aria-label="Полупрозрачная стеклянная плазма">
 <defs>
-<radialGradient id="amb"><stop stop-color="#d3e6ff" stop-opacity=".2"/><stop offset=".7" stop-color="#d3e6ff" stop-opacity=".08"/><stop offset="1" stop-color="#d3e6ff" stop-opacity="0"/></radialGradient>
 <radialGradient id="body" cx=".44" cy=".38" r=".74"><stop stop-color="#202b3f"/><stop offset=".38" stop-color="#0c1322"/><stop offset=".73" stop-color="#08101e"/><stop offset="1" stop-color="#2b3f5d"/></radialGradient>
 <radialGradient id="edgewash" cx=".48" cy=".45" r=".52"><stop offset=".53" stop-color="#f7fbff" stop-opacity="0"/><stop offset=".78" stop-color="#f7fbff" stop-opacity=".04"/><stop offset=".92" stop-color="#d3e6ff" stop-opacity=".18"/><stop offset="1" stop-color="#f7fbff" stop-opacity=".45"/></radialGradient>
 <linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff" stop-opacity=".09"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".84"/><stop offset=".36" stop-color="#94b8eb" stop-opacity=".27"/><stop offset=".56" stop-color="#f7fbff" stop-opacity=".97"/><stop offset=".79" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".15"/></linearGradient>
@@ -35,7 +34,6 @@
 @media(prefers-reduced-motion:reduce){.g-a,.g-b,.glass-glint{animation:none;will-change:auto}}
 </style>
 </defs>
-<circle cx="260" cy="250" r="244" fill="url(#amb)" opacity=".72"/>
 <circle cx="260" cy="250" r="176" fill="url(#body)"/>
 <circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
 <g clip-path="url(#clip)">
@@ -74,5 +72,5 @@
 <circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
 <path d="M103 190C143 115 213 79 287 75" fill="none" stroke="#f7fbff" stroke-opacity=".7" stroke-width="3.6" stroke-linecap="round" filter="url(#soft)"/>
 <path d="M153 399C214 437 315 440 382 391" fill="none" stroke="#f7fbff" stroke-opacity=".42" stroke-width="3.2" stroke-linecap="round" filter="url(#soft)"/>
-<ellipse cx="260" cy="448" rx="80" ry="6.5" fill="#d3e6ff" opacity=".055" filter="url(#halo)"/>
+<ellipse cx="260" cy="448" rx="68" ry="5" fill="#d3e6ff" opacity=".025" filter="url(#halo)"/>
 </svg>
