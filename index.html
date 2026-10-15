@@ -16,14 +16,14 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .round{height:41px;width:41px;background:var(--card);border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:19px}
 .home-main{flex:1;display:flex;flex-direction:column}
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:20px 0 14px;min-height:385px}
-.plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer;--orb-duration:5.2s}
+.plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer;--orb-duration:7.4s}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 
-/* SEYVEO — BLACK VELVET · CINEMATIC SURGE
-   One unchanged sphere, one notice and one synchronized reveal.
+/* SEYVEO — BLACK VELVET · CINEMATIC MATERIALIZATION
+   One unchanged sphere, one notice, one deliberately paced reveal.
    Front glass stays mostly transparent at centre and more visible at its rim. */
-.plasma:has(>.signal.is-brand.is-appearing){--orb-duration:6.1s}
-.plasma:has(>.signal.is-moment.is-appearing){--orb-duration:5.8s}
+.plasma:has(>.signal.is-brand.is-appearing){--orb-duration:8.5s}
+.plasma:has(>.signal.is-moment.is-appearing){--orb-duration:8s}
 .plasma-front-glass{
  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
  z-index:5;pointer-events:none;user-select:none;-webkit-user-select:none;
@@ -77,53 +77,56 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-/* Anticipation → internal ignition → crystalline reveal → hold → retreat.
-   Smooth compositor-friendly motion; no transform or blur on nested lettering. */
+/* BLACK VELVET · CINEMATIC MATERIALIZATION
+   Begin quietly, let the internal light awaken, gently resolve the text
+   to a crisp optical plane, hold for reading, then retreat.
+   Existing glass and notice layers only; no text blur or stacked transforms. */
 .signal.is-event{width:108px;height:108px}
 .signal.is-clock .moment-time{font-weight:580;letter-spacing:.015em}
 :root:not([data-theme=light]) .signal.is-clock .moment-time{text-shadow:0 0 12px #dcecff33}
 @keyframes orb-cinematic{
- 0%,8%{opacity:0;transform:translate(-50%,-50%) scale(.82)}
- 16%{opacity:.10;transform:translate(-50%,-50%) scale(.86);
-     animation-timing-function:cubic-bezier(.18,.66,.26,1)}
- 44%{opacity:1;transform:translate(-50%,-50%) scale(1);
+ 0%,7%{opacity:0;transform:translate(-50%,-50%) scale(.84)}
+ 16%{opacity:.12;transform:translate(-50%,-50%) scale(.87);
+     animation-timing-function:cubic-bezier(.2,.15,.22,1)}
+ 47%{opacity:1;transform:translate(-50%,-50%) scale(1);
      animation-timing-function:linear}
- 74%{opacity:1;transform:translate(-50%,-50%) scale(1);
-     animation-timing-function:cubic-bezier(.43,0,.72,1)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.90)}
+ 77%{opacity:1;transform:translate(-50%,-50%) scale(1);
+     animation-timing-function:cubic-bezier(.45,0,.65,1)}
+ 100%{opacity:0;transform:translate(-50%,-50%) scale(.91)}
 }
 @keyframes orb-surge-core{
- 0%,7%,100%{opacity:0}
- 20%{opacity:.14}
- 34%{opacity:.95}
- 52%{opacity:.38}
- 72%{opacity:.22}
- 88%{opacity:.08}
+ 0%,11%,100%{opacity:0}
+ 26%{opacity:.13}
+ 42%{opacity:.64}
+ 58%{opacity:.30}
+ 77%{opacity:.17}
+ 91%{opacity:.04}
 }
 @keyframes orb-surge-reflection{
- 0%,15%,100%{opacity:0}
- 35%{opacity:.72}
- 57%{opacity:.30}
- 75%{opacity:.18}
+ 0%,18%,100%{opacity:0}
+ 34%{opacity:.12}
+ 49%{opacity:.48}
+ 66%{opacity:.27}
+ 81%{opacity:.12}
 }
 @keyframes orb-surge-glass{
- 0%,9%,100%{opacity:0}
- 30%{opacity:.34}
- 48%,75%{opacity:.72}
- 93%{opacity:.18}
+ 0%,12%,100%{opacity:0}
+ 30%{opacity:.22}
+ 51%,76%{opacity:.68}
+ 93%{opacity:.14}
 }
-/* Opacity-only letterpress: staggered title beats with no secondary movement. */
+/* Lettering fades on the same stage, without independently scaling or moving. */
 .signal.is-appearing :is(.brand-mark,.brand-word,.brand-specialty,.moment-time,.moment-date,.moment-care,.glass-figure){
- animation:orb-surge-type 1.6s ease-out both;
+ animation:orb-surge-type 2.45s cubic-bezier(.23,.1,.24,1) both;
 }
-.signal.is-appearing .brand-mark{animation-delay:.42s}
-.signal.is-appearing .brand-word{animation-delay:.78s}
-.signal.is-appearing .brand-specialty{animation-delay:1.14s}
-.signal.is-appearing .moment-time{animation-delay:.56s}
-.signal.is-appearing .moment-date{animation-delay:1.03s}
-.signal.is-appearing .moment-care{animation-delay:.62s}
-.signal.is-event.is-appearing .glass-figure{animation-delay:.63s}
-@keyframes orb-surge-type{0%,10%{opacity:0}100%{opacity:1}}
+.signal.is-appearing .brand-mark{animation-delay:.68s}
+.signal.is-appearing .brand-word{animation-delay:1.06s}
+.signal.is-appearing .brand-specialty{animation-delay:1.48s}
+.signal.is-appearing .moment-time{animation-delay:.80s}
+.signal.is-appearing .moment-date{animation-delay:1.43s}
+.signal.is-appearing .moment-care{animation-delay:.92s}
+.signal.is-event.is-appearing .glass-figure{animation-delay:.9s}
+@keyframes orb-surge-type{0%,12%{opacity:0}100%{opacity:1}}
 @media(prefers-reduced-motion:reduce){
  .signal.is-appearing,.signal.is-brand.is-appearing,.signal.is-moment.is-appearing{
   animation:none;opacity:1;transform:translate(-50%,-50%);
@@ -391,7 +394,7 @@ function glassIcon(type,place='card'){
     '</defs>'+glassArt[type](id)+'</svg>';
 }
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
-const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=6200;
+const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=8600;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
@@ -429,7 +432,7 @@ function transientNotice(key,type){
     if(!el.classList.contains('is-event'))return;
     el.classList.remove('is-appearing','is-event');
     el.replaceChildren();
-  },5500);
+  },7500);
 }
 function displayBrandSignature(){
   const el=$('signal');
@@ -533,7 +536,7 @@ function momentDisplay(kind,parts,force=false){
     if(!el.classList.contains('is-moment'))return;
     el.classList.remove('is-moment','is-appearing','is-clock','is-care');
     el.replaceChildren();
-  },5900);
+  },8100);
   return true;
 }
 function clockMomentParts(){
@@ -567,7 +570,7 @@ function previewSphereMoments(){
         if(!el.classList.contains('is-event'))return;
         el.classList.remove('is-event','is-appearing');
         el.replaceChildren();
-      },5500);
+      },7500);
       return true;
     },
     ()=>{if(document.hidden)return false;displayBrandSignature();return true}
@@ -576,7 +579,7 @@ function previewSphereMoments(){
   function next(){
     if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]'))return;
     if(!sequence[step++]())return;
-    if(step<sequence.length)previewSequenceTimer=setTimeout(next,6600);
+    if(step<sequence.length)previewSequenceTimer=setTimeout(next,9300);
   }
   previewSequenceTimer=setTimeout(next,550);
 }
