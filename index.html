@@ -19,6 +19,46 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 
+/* SEYVEO Orb Depth: original plasma is the back of the orb.
+   Fog is behind the messages; delicate front glass is above them.
+   SVG artwork, geometry, and idle visuals stay untouched. */
+.plasma::before,.plasma::after{
+ content:"";position:absolute;left:50%;top:50%;
+ width:79.55%;aspect-ratio:1;border-radius:50%;
+ transform:translate(-50%,-50%);opacity:0;pointer-events:none;
+ transition:opacity .55s ease-out;
+}
+.plasma::before{
+ z-index:2;
+ background:radial-gradient(circle at 50% 48%,rgba(199,222,251,.12) 0%,rgba(194,217,246,.055) 32%,transparent 68%);
+ -webkit-mask-image:radial-gradient(circle,#000 56%,transparent 95%);
+ mask-image:radial-gradient(circle,#000 56%,transparent 95%);
+}
+.plasma::after{
+ z-index:4;
+ background:
+   radial-gradient(ellipse 70% 60% at 28% 14%,rgba(244,249,255,.14),transparent 71%),
+   radial-gradient(ellipse 66% 57% at 82% 93%,rgba(173,212,247,.1),transparent 68%),
+   radial-gradient(circle at 50% 50%,transparent 56%,rgba(207,232,255,.035) 73%,rgba(210,231,255,.14) 89%,transparent 100%);
+ -webkit-mask-image:radial-gradient(circle,#000 74%,transparent 100%);
+ mask-image:radial-gradient(circle,#000 74%,transparent 100%);
+}
+.plasma:has(>.signal.is-appearing)::before,
+.plasma:has(>.signal.is-appearing)::after{opacity:1}
+:root[data-theme=light] .plasma::before{
+ background:radial-gradient(circle at center,rgba(255,255,255,.19),rgba(255,255,255,.055) 38%,transparent 70%);
+}
+:root[data-theme=light] .plasma::after{
+ background:
+   radial-gradient(ellipse 70% 60% at 28% 14%,rgba(255,255,255,.31),transparent 70%),
+   radial-gradient(ellipse 64% 57% at 83% 93%,rgba(255,255,255,.21),transparent 69%),
+   radial-gradient(circle at center,transparent 58%,rgba(255,255,255,.06) 74%,rgba(244,250,255,.24) 90%,transparent 100%);
+}
+@media(prefers-reduced-motion:reduce){
+ .plasma::before,.plasma::after{transition:none}
+}
+
+
 
 
 
@@ -45,6 +85,10 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
+/* Content now floats behind front glass rather than above the sphere.
+   Subtle optical saturation keeps the depth readable in either theme. */
+.signal.is-appearing{filter:saturate(.91)}
+:root[data-theme=light] .signal.is-appearing{filter:saturate(.88)}
 /* SEYVEO Orb Language: one restrained cinematic vocabulary for every orb message.
    Only the notice content animates; the approved plasma SVG remains untouched. */
 .signal.is-event{width:108px;height:108px}
