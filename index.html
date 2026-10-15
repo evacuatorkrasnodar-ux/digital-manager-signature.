@@ -29,6 +29,11 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
 .signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
+/* The company name appears briefly once per local day. No permanent mark in the orb. */
+.signal.is-brand{width:215px}
+.signal.is-brand.is-appearing{animation-duration:5s;animation-delay:0s}
+.brand-word{font-size:26px;font-weight:640;letter-spacing:.19em;padding-left:.19em;white-space:nowrap;line-height:1.1;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#90a6c0 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme=light] .brand-word{color:#5e718a;background:linear-gradient(150deg,#42566e 8%,#7790aa 52%,#405774 94%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 /* Single shared frosted-glass material for orb notices and event cards. */
 .glass-figure{overflow:visible}
 .glass-figure .glass-detail{fill:none;stroke:#edf4fc;stroke-opacity:.84;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -204,19 +209,48 @@ function glassIcon(type,place='card'){
       '<stop offset="1" stop-color="#90a7c0" stop-opacity=".56"/></linearGradient>'+
     '</defs>'+glassArt[type](id)+'</svg>';
 }
+const BRAND_DAY_KEY='dm-seyveo-daily-v1';
+let brandDayThisPage=null,brandClearTimer=null;
 let noticeKey=null,noticeClearTimer=null;
 function transientNotice(key,type){
   if(noticeKey===key)return;
   noticeKey=key;
   clearTimeout(noticeClearTimer);
+  clearTimeout(brandClearTimer);
   const el=$('signal');
-  el.classList.remove('is-appearing');
+  el.classList.remove('is-appearing','is-brand');
   el.innerHTML=glassIcon(type,'orb');
   if(!type)return;
   void el.offsetWidth;
   el.classList.add('is-appearing');
   noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
 }
+function showDailyBrand(){
+  if(document.hidden)return;
+  const now=new Date();
+  const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  if(brandDayThisPage===today)return;
+  try{if(localStorage.getItem(BRAND_DAY_KEY)===today)return}catch{}
+  brandDayThisPage=today;
+  const el=$('signal');
+  clearTimeout(noticeClearTimer);
+  clearTimeout(brandClearTimer);
+  el.classList.remove('is-appearing');
+  el.classList.add('is-brand');
+  el.innerHTML='<span class="brand-word">SEYVEO</span>';
+  void el.offsetWidth;
+  el.classList.add('is-appearing');
+  try{localStorage.setItem(BRAND_DAY_KEY,today)}catch{}
+  brandClearTimer=setTimeout(()=>{
+    if(!el.classList.contains('is-brand'))return;
+    el.classList.remove('is-brand','is-appearing');
+    el.textContent='';
+    noticeKey=null;
+    const story=stories[state.index];
+    transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
+  },5100);
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)showDailyBrand()});
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popup(title,description,scenario=false){$('infoTitle').textContent=title;$('infoText').textContent=description;$('scenarioRestart').hidden=!scenario;if(!$('info').open)$('info').showModal()}
 function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман'}
@@ -272,5 +306,5 @@ fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',
 fab.addEventListener('contextmenu',e=>e.preventDefault());
 fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}inputPanel.hidden=!inputPanel.hidden;if(!inputPanel.hidden){hint.classList.remove('active');requestAnimationFrame(()=>{$('question').focus();updateKeyboard()})}else setHint('Нажмите — написать · удерживайте — говорить')});
 $('hideInput').addEventListener('click',()=>{inputPanel.hidden=true;$('question').blur();hint.classList.remove('active')});
-render()})();
+render();showDailyBrand()})();
 </script></body></html>
