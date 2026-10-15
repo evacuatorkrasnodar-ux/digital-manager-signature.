@@ -19,6 +19,21 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 
+/* The decisive depth layer: a second pass of the exact APPROVED animated
+   sphere sits in front of notices. Its translucent center makes messages
+   appear behind genuine glass and moving filaments, not above an icon.
+   This image is invisible when the sphere carries no message. */
+.plasma-front-glass{
+ position:absolute;inset:0;width:100%;height:100%;
+ object-fit:contain;z-index:5;pointer-events:none;user-select:none;
+ -webkit-user-select:none;
+ opacity:0;
+ -webkit-mask-image:radial-gradient(circle closest-side at 50% 50%,rgba(0,0,0,.51) 0%,rgba(0,0,0,.54) 46%,rgba(0,0,0,.90) 73%,transparent 84%);
+ mask-image:radial-gradient(circle closest-side at 50% 50%,rgba(0,0,0,.51) 0%,rgba(0,0,0,.54) 46%,rgba(0,0,0,.90) 73%,transparent 84%);
+ transition:opacity .55s ease;
+}
+.plasma:has(>.signal.is-appearing)>.plasma-front-glass{opacity:.7}
+@media(prefers-reduced-motion:reduce){.plasma-front-glass{transition:none}}
 /* SEYVEO Orb Depth: original plasma is the back of the orb.
    Fog is behind the messages; delicate front glass is above them.
    SVG artwork, geometry, and idle visuals stay untouched. */
@@ -283,7 +298,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span><img id="plasmaGlass" class="plasma-front-glass" src="assets/plasma-signature.svg?v=11" alt="" aria-hidden="true" draggable="false" width="440" height="440"></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -725,8 +740,9 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()})
 function render(){
 progressDemoTasks();
 document.documentElement.dataset.theme=state.theme;
-const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+const plasmaVisual=$('plasmaVisual'),plasmaGlass=$('plasmaGlass'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
 if(plasmaVisual.getAttribute('src')!==plasmaSource)plasmaVisual.setAttribute('src',plasmaSource);
+if(plasmaGlass.getAttribute('src')!==plasmaSource)plasmaGlass.setAttribute('src',plasmaSource);
 $('greeting').textContent=greeting();
 const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
