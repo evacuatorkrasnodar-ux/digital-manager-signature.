@@ -29,11 +29,16 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
 .signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
-/* The company name appears briefly once per local day. No permanent mark in the orb. */
-.signal.is-brand{width:215px}
-.signal.is-brand.is-appearing{animation-duration:5s;animation-delay:0s}
-.brand-word{font-size:26px;font-weight:640;letter-spacing:.19em;padding-left:.19em;white-space:nowrap;line-height:1.1;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#90a6c0 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
+.signal.is-brand{width:min(220px,76%);height:126px}
+.signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
+.brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
+.brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
+.brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand-specialty{display:block;font-size:9px;font-weight:550;line-height:1.35;letter-spacing:.11em;white-space:nowrap;color:#d0deed}
+:root[data-theme=light] .brand-mark{filter:brightness(.81) contrast(1.2) drop-shadow(0 1px 1px #50658028)}
 :root[data-theme=light] .brand-word{color:#5e718a;background:linear-gradient(150deg,#42566e 8%,#7790aa 52%,#405774 94%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme=light] .brand-specialty{color:#52657d}
 /* Single shared frosted-glass material for orb notices and event cards. */
 .glass-figure{overflow:visible}
 .glass-figure .glass-detail{fill:none;stroke:#edf4fc;stroke-opacity:.84;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -47,7 +52,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
   81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
   100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
 }
-@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}}
+@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}.signal.is-brand.is-appearing{opacity:.82}}
 
 
 
@@ -287,9 +292,28 @@ function glassIcon(type,place='card'){
       '<stop offset="1" stop-color="#90a7c0" stop-opacity=".56"/></linearGradient>'+
     '</defs>'+glassArt[type](id)+'</svg>';
 }
-const BRAND_DAY_KEY='dm-seyveo-daily-v1';
-let brandDayThisPage=null,brandClearTimer=null;
+const BRAND_STORE_KEY='dm-seyveo-signature-v2';
+const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=6200;
+let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
+let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
+function brandToday(){
+  const d=new Date();
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function brandProgress(){
+  const day=brandToday();
+  let data=brandFallback;
+  try{const saved=JSON.parse(localStorage.getItem(BRAND_STORE_KEY)||'null');if(saved&&typeof saved==='object')data=saved}catch{}
+  const count=data.day===day&&Number.isInteger(data.count)?Math.min(BRAND_MAX_DAILY,Math.max(0,data.count)):0;
+  const lastAt=data.day===day&&Number.isFinite(data.lastAt)?data.lastAt:0;
+  return {day,count,lastAt};
+}
+function scheduleNextBrand(ms){
+  clearTimeout(brandNextTimer);
+  if(brandProgress().count>=BRAND_MAX_DAILY)return;
+  brandNextTimer=setTimeout(()=>{showBrandSignature('ambient')},Math.max(500,ms));
+}
 function transientNotice(key,type){
   if(noticeKey===key)return;
   noticeKey=key;
@@ -303,32 +327,55 @@ function transientNotice(key,type){
   el.classList.add('is-appearing');
   noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
 }
-function showDailyBrand(){
-  if(document.hidden)return;
-  const now=new Date();
-  const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
-  if(brandDayThisPage===today)return;
-  try{if(localStorage.getItem(BRAND_DAY_KEY)===today)return}catch{}
-  brandDayThisPage=today;
+function showBrandSignature(reason='ambient'){
+  if(document.hidden)return false;
+  const progress=brandProgress(),now=Date.now();
+  if(progress.count>=BRAND_MAX_DAILY)return false;
+  const elapsed=now-progress.lastAt;
+  if(progress.count>0&&elapsed<BRAND_GAP_MS){
+    scheduleNextBrand(BRAND_GAP_MS-elapsed+1000);
+    return false;
+  }
+  // Never cover typing, an open dialog, voice listening or a fresh event notice.
+  const busy=!$('ask').hidden||!!document.querySelector('dialog[open]')||$('assistantButton').classList.contains('listening');
+  const busyNotice=$('signal').classList.contains('is-appearing')&&!$('signal').classList.contains('is-brand');
+  if(busy||(busyNotice&&reason!=='launch')){
+    scheduleNextBrand(60000);
+    return false;
+  }
   const el=$('signal');
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
-  el.classList.remove('is-appearing');
+  el.classList.remove('is-brand','is-appearing');
+  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
   el.classList.add('is-brand');
-  el.innerHTML='<span class="brand-word">SEYVEO</span>';
   void el.offsetWidth;
   el.classList.add('is-appearing');
-  try{localStorage.setItem(BRAND_DAY_KEY,today)}catch{}
+  brandFallback={day:progress.day,count:progress.count+1,lastAt:now};
+  try{localStorage.setItem(BRAND_STORE_KEY,JSON.stringify(brandFallback))}catch{}
   brandClearTimer=setTimeout(()=>{
     if(!el.classList.contains('is-brand'))return;
     el.classList.remove('is-brand','is-appearing');
-    el.textContent='';
-    noticeKey=null;
-    const story=stories[state.index];
-    transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
-  },5100);
+    el.replaceChildren();
+  },BRAND_DURATION_MS);
+  if(brandFallback.count<BRAND_MAX_DAILY)scheduleNextBrand(BRAND_GAP_MS+1000);
+  else clearTimeout(brandNextTimer);
+  return true;
 }
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)showDailyBrand()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    brandHiddenAt=Date.now();
+    clearTimeout(brandNextTimer);
+    return;
+  }
+  const progress=brandProgress();
+  if(!progress.count||brandHiddenAt!==null&&Date.now()-brandHiddenAt>=25*60*1000){
+    showBrandSignature(progress.count?'return':'launch');
+  }else if(progress.count<BRAND_MAX_DAILY){
+    scheduleNextBrand(Math.max(1000,progress.lastAt+BRAND_GAP_MS-Date.now()+1000));
+  }
+  brandHiddenAt=null;
+});
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popup(title,description,scenario=false){
   $('infoTitle').textContent=title;
@@ -358,7 +405,7 @@ function progressDemoTasks(){
       task.status='done';task.doneAt=now;changed=true;
     }
   }
-  if(changed)save();
+  if(changed){save();setTimeout(()=>showBrandSignature('completed'),COMPLETION_VISIBLE_MS+900)}
 }
 function activeTasks(){
   const now=Date.now();
@@ -557,5 +604,5 @@ fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',
 fab.addEventListener('contextmenu',e=>e.preventDefault());
 fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();showDailyBrand()})();
+restoreDraft();render();showBrandSignature('launch')})();
 </script></body></html>
