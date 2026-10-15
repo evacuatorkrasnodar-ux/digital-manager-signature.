@@ -35,7 +35,7 @@
 @media(prefers-reduced-motion:reduce){.g-a,.g-b,.glass-glint{animation:none;will-change:auto}}
 </style>
 </defs>
-<circle cx="260" cy="250" r="244" fill="url(#amb)"/>
+<circle cx="260" cy="250" r="244" fill="url(#amb)" opacity=".72"/>
 <circle cx="260" cy="250" r="176" fill="url(#body)"/>
 <circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
 <g clip-path="url(#clip)">
@@ -74,5 +74,5 @@
 <circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
 <path d="M103 190C143 115 213 79 287 75" fill="none" stroke="#fdfdff" stroke-opacity=".7" stroke-width="3.6" stroke-linecap="round" filter="url(#soft)"/>
 <path d="M153 399C214 437 315 440 382 391" fill="none" stroke="#fdfdff" stroke-opacity=".42" stroke-width="3.2" stroke-linecap="round" filter="url(#soft)"/>
-<ellipse cx="260" cy="448" rx="99" ry="9" fill="#9ab5e5" opacity=".1" filter="url(#halo)"/>
+<ellipse cx="260" cy="448" rx="80" ry="6.5" fill="#9ab5e5" opacity=".055" filter="url(#halo)"/>
 </svg>
