@@ -101,7 +101,10 @@ dialog::backdrop{background:#000a;backdrop-filter:blur(7px)}
 dialog h2{font-size:var(--type-heading);font-weight:660;line-height:1.25;letter-spacing:-.025em;margin:0 0 12px}
 dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;line-height:1.6;margin:0}
 /* Written answers: the orb identifies the manager; the brand remains in the header. */
-.reply-thread{display:flex;flex-direction:column;gap:17px;min-width:0}
+.reply-thread{display:flex;flex-direction:column;gap:12px;min-width:0}
+.chat-messages{display:flex;flex-direction:column;gap:17px;max-height:min(48dvh,490px);overflow-y:auto;overscroll-behavior:contain;padding:3px 3px 9px 0;scrollbar-width:thin}
+.chat-empty{font-size:var(--type-body-compact);line-height:1.5;color:var(--secondary);padding:14px 0}
+.chat-messages .reply-user,.chat-messages .reply-assistant{flex-shrink:0}
 .reply-user{align-self:flex-end;max-width:88%;padding:11px 14px;background:var(--card2);border:1px solid var(--soft-line);border-radius:17px 17px 5px 17px}
 .reply-user .reply-speaker{display:block;margin-bottom:4px;text-align:right}
 .reply-speaker{font-size:var(--type-caption);font-weight:600;letter-spacing:.01em;color:var(--secondary)}
@@ -199,7 +202,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button class="composer-tool" type="button" id="printText"><span><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 14h12v7H6zM17 12h.01"/></svg></span><small>Печать</small></button>
 <button class="composer-tool" type="button" id="moreComposer" aria-expanded="false"><span><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span><small>Ещё</small></button>
 </div>
-<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
+<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="openChatHistory">Переписка</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
 </form></main><footer class="dock" aria-label="Нижняя панель">
 <span class="nav-item nav-home active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></span>
@@ -224,7 +227,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -377,24 +380,74 @@ document.addEventListener('visibilitychange',()=>{
   brandHiddenAt=null;
 });
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+/* Local demo conversation. Each manager reply has the official tiny plasma avatar. */
+const CHAT_KEY='seyveo-chat-v1';
+let conversation=[];
+try{
+  const stored=JSON.parse(localStorage.getItem(CHAT_KEY)||'[]');
+  if(Array.isArray(stored))conversation=stored.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.text==='string').slice(-80);
+}catch{}
+function saveConversation(){
+  conversation=conversation.slice(-80);
+  try{localStorage.setItem(CHAT_KEY,JSON.stringify(conversation))}catch{}
+}
+function chatElement(role,text){
+  const row=document.createElement('div');
+  const name=document.createElement('span');name.className='reply-speaker';
+  name.textContent=role==='assistant'?'Управляющий':'Роман';
+  const content=document.createElement('div');content.className='reply-content';
+  content.textContent=text;
+  if(role==='user'){
+    row.className='reply-user';
+    row.append(name,content);
+  }else{
+    row.className='reply-assistant';
+    const avatar=document.createElement('span');avatar.className='reply-avatar';avatar.setAttribute('aria-hidden','true');
+    const image=document.createElement('img');
+    image.src=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+    image.alt='';image.width=60;image.height=60;image.loading='lazy';
+    avatar.append(image);
+    const body=document.createElement('div');body.className='reply-assistant-body';body.append(name,content);
+    row.append(avatar,body);
+  }
+  return row;
+}
+function renderConversation(){
+  const messages=$('chatMessages');
+  messages.replaceChildren();
+  if(!conversation.length){
+    const empty=document.createElement('div');empty.className='chat-empty';
+    empty.textContent='Здесь будут ваши сообщения и ответы управляющего.';
+    messages.append(empty);
+  }else{
+    const fragment=document.createDocumentFragment();
+    for(const m of conversation)fragment.append(chatElement(m.role,m.text));
+    messages.append(fragment);
+  }
+  requestAnimationFrame(()=>{messages.scrollTop=messages.scrollHeight});
+}
+function openConversation(){
+  $('infoTitle').textContent='Переписка';
+  $('infoText').hidden=true;
+  $('replyThread').hidden=false;
+  $('scenarioRestart').hidden=true;
+  $('continueChat').hidden=false;
+  renderConversation();
+  if(!$('info').open)$('info').showModal();
+}
 function popup(title,description,scenario=false){
   $('infoTitle').textContent=title;
   $('replyThread').hidden=true;
   $('infoText').hidden=false;
   $('infoText').textContent=description;
   $('scenarioRestart').hidden=!scenario;
+  $('continueChat').hidden=true;
   if(!$('info').open)$('info').showModal();
 }
 function showWrittenReply(userText,assistantText){
-  $('infoTitle').textContent='Диалог';
-  $('infoText').hidden=true;
-  $('replyThread').hidden=false;
-  $('scenarioRestart').hidden=true;
-  $('userReplyText').textContent=userText;
-  $('assistantReplyText').textContent=assistantText;
-  const orb=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
-  if($('miniAssistantOrb').getAttribute('src')!==orb)$('miniAssistantOrb').setAttribute('src',orb);
-  if(!$('info').open)$('info').showModal();
+  conversation.push({role:'user',text:userText},{role:'assistant',text:assistantText});
+  saveConversation();
+  openConversation();
 }
 function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман · SEYVEO'}
 const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
@@ -476,6 +529,11 @@ else answer='В этом прототипе я могу показать пис�
 closeComposer();showWrittenReply(q,answer);question.value='';syncComposer();
 });
 $('infoClose').addEventListener('click',()=>$('info').close());
+$('continueChat').addEventListener('click',()=>{
+  $('info').close();
+  openComposer();
+  requestAnimationFrame(()=>{question.focus();updateKeyboard()});
+});
 /* One adaptive composer, separate local draft and notebook stores. */
 const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
 const composer=$('ask'),question=$('question');
@@ -561,6 +619,7 @@ $('moreComposer').addEventListener('click',()=>{
   $('moreComposer').setAttribute('aria-expanded',String(!more.hidden));
 });
 $('viewNotes').addEventListener('click',openNotes);
+$('openChatHistory').addEventListener('click',()=>{closeComposer();openConversation()});
 $('notesClose').addEventListener('click',()=>$('notesDialog').close());
 $('notesNew').addEventListener('click',()=>{$('notesDialog').close();openComposer();expandComposer();question.focus()});
 $('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
