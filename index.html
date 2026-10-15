@@ -177,7 +177,7 @@ function popup(title,description,scenario=false){$('infoTitle').textContent=titl
 function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман'}
 function render(){
 document.documentElement.dataset.theme=state.theme;
-const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=9':'assets/plasma-signature.svg?v=10';
+const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=10':'assets/plasma-signature.svg?v=10';
 if(plasmaVisual.getAttribute('src')!==plasmaSource)plasmaVisual.setAttribute('src',plasmaSource);
 $('greeting').textContent=greeting();
 const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
