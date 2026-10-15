@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-label="Полупрозрачная стеклянная плазма">
+<defs>
+<radialGradient id="amb"><stop stop-color="#9ab5e5" stop-opacity=".14"/><stop offset=".7" stop-color="#9ab5e5" stop-opacity=".08"/><stop offset="1" stop-color="#9ab5e5" stop-opacity="0"/></radialGradient>
+<radialGradient id="body" cx=".44" cy=".38" r=".74"><stop stop-color="#f8faff"/><stop offset=".38" stop-color="#ebf0fc"/><stop offset=".76" stop-color="#d5e2f6"/><stop offset="1" stop-color="#adc3e5"/></radialGradient>
+<radialGradient id="edgewash" cx=".48" cy=".45" r=".52"><stop offset=".53" stop-color="#fdfdff" stop-opacity="0"/><stop offset=".78" stop-color="#fdfdff" stop-opacity=".04"/><stop offset=".92" stop-color="#9ab5e5" stop-opacity=".18"/><stop offset="1" stop-color="#fdfdff" stop-opacity=".45"/></radialGradient>
+<linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fdfdff" stop-opacity=".09"/><stop offset=".17" stop-color="#fdfdff" stop-opacity=".84"/><stop offset=".36" stop-color="#8ba9d6" stop-opacity=".27"/><stop offset=".56" stop-color="#fdfdff" stop-opacity=".97"/><stop offset=".79" stop-color="#fdfdff" stop-opacity=".58"/><stop offset="1" stop-color="#8ba9d6" stop-opacity=".15"/></linearGradient>
+<linearGradient id="silk" x1=".13" y1=".15" x2=".87" y2=".95"><stop stop-color="#fdfdff" stop-opacity="0"/><stop offset=".13" stop-color="#fdfdff" stop-opacity=".39"/><stop offset=".35" stop-color="#8ba9d6" stop-opacity=".06"/><stop offset=".6" stop-color="#fdfdff" stop-opacity=".18"/><stop offset=".8" stop-color="#fdfdff" stop-opacity=".58"/><stop offset="1" stop-color="#fdfdff" stop-opacity="0"/></linearGradient>
+<linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8ba9d6" stop-opacity=".22"/><stop offset=".17" stop-color="#fdfdff" stop-opacity=".95"/><stop offset=".36" stop-color="#fdfdff" stop-opacity=".16"/><stop offset=".69" stop-color="#fdfdff" stop-opacity=".3"/><stop offset=".88" stop-color="#fdfdff" stop-opacity=".96"/><stop offset="1" stop-color="#8ba9d6" stop-opacity=".33"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="3.6"/></filter>
+<filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
+<clipPath id="clip"><circle cx="260" cy="250" r="175"/></clipPath>
+<style>.g-a,.g-b{transform-origin:260px 250px}.g-a{animation:flow-a 20s ease-in-out infinite alternate}.g-b{animation:flow-b 23s ease-in-out infinite alternate}
+@keyframes flow-a{from{transform:rotate(-1.5deg) scale(.998)}to{transform:rotate(1.4deg) scale(1.004)}}
+@keyframes flow-b{from{transform:rotate(1.2deg)}to{transform:rotate(-1.4deg)}}
+@media(prefers-reduced-motion:reduce){.g-a,.g-b{animation:none}}</style>
+</defs>
+<circle cx="260" cy="250" r="244" fill="url(#amb)"/>
+<circle cx="260" cy="250" r="176" fill="url(#body)"/>
+<circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
+<g clip-path="url(#clip)">
+<g class="g-b" fill="url(#silk)">
+<path d="M99 254C124 155 206 101 316 111C392 120 445 187 448 257C418 181 358 150 290 156C194 164 140 222 99 254Z" opacity=".53"/>
+<path d="M102 290C142 372 254 422 358 373C421 343 445 268 431 210C438 312 347 386 264 375C183 367 134 329 102 290Z" opacity=".41"/>
+<path d="M133 143C236 71 370 121 423 221C442 255 446 290 431 330C422 239 353 169 276 162C215 154 159 161 133 143Z" opacity=".43"/>
+</g>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" filter="url(#soft)" opacity=".73">
+<path d="M104 270C172 93 314 87 425 228" stroke-width="11"/>
+<path d="M115 315C212 435 352 411 431 281" stroke-width="8"/>
+<path d="M134 143C231 106 328 168 398 335" stroke-width="7"/>
+<path d="M103 327C126 393 215 436 323 421" stroke-width="11"/></g>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M101 278C128 188 204 118 288 112C348 109 394 150 427 229" stroke-width="2.9" opacity="0.92"/>
+<path d="M105 276C157 162 254 127 331 163C384 189 418 249 428 306" stroke-width="1.25" opacity="0.51"/>
+<path d="M117 211C165 124 272 89 352 125C397 145 426 197 436 255" stroke-width="2" opacity="0.7"/>
+<path d="M130 139C232 110 351 181 403 314" stroke-width="1.55" opacity="0.53"/>
+<path d="M160 110C255 99 354 192 404 335" stroke-width="1.15" opacity="0.52"/>
+<path d="M109 327C176 402 291 415 378 348C417 318 439 278 444 229" stroke-width="2.7" opacity="0.77"/>
+<path d="M116 315C209 399 326 413 406 334C431 308 442 278 445 249" stroke-width="1.35" opacity="0.51"/>
+<path d="M123 349C177 432 305 451 394 366" stroke-width="2.55" opacity="0.86"/>
+<path d="M101 322C122 392 218 426 315 414C385 408 428 347 435 297" stroke-width="1.1" opacity="0.42"/>
+</g>
+<g class="g-b" fill="none" stroke="url(#filament)" stroke-linecap="round">
+<path d="M111 212C199 125 261 174 310 246C341 295 367 348 414 378" stroke-width="2.8" opacity="0.86"/>
+<path d="M109 238C179 152 260 160 332 228C379 273 386 345 421 371" stroke-width="1.1" opacity="0.45"/>
+<path d="M129 177C219 155 266 236 301 286C332 329 376 361 414 371" stroke-width="1.65" opacity="0.5"/>
+<path d="M133 403C192 338 214 260 278 175C315 126 368 120 403 153" stroke-width="1.75" opacity="0.46"/>
+<path d="M141 416C201 332 216 240 300 157C348 112 399 143 426 196" stroke-width="1.1" opacity="0.42"/>
+<path d="M99 273C145 353 228 409 331 414C388 416 431 373 440 309" stroke-width="1.65" opacity="0.48"/>
+</g>
+<path d="M100 203C146 97 256 68 348 112C403 137 432 173 443 223" fill="none" stroke="#fdfdff" stroke-opacity=".45" stroke-width="9" filter="url(#halo)"/>
+<path d="M113 352C162 425 274 454 377 389C413 367 433 327 442 287" fill="none" stroke="#fdfdff" stroke-opacity=".56" stroke-width="11" filter="url(#halo)"/>
+</g>
+<circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
+<path d="M103 190C143 115 213 79 287 75" fill="none" stroke="#fdfdff" stroke-opacity=".7" stroke-width="3.6" stroke-linecap="round" filter="url(#soft)"/>
+<path d="M153 399C214 437 315 440 382 391" fill="none" stroke="#fdfdff" stroke-opacity=".42" stroke-width="3.2" stroke-linecap="round" filter="url(#soft)"/>
+<ellipse cx="260" cy="448" rx="99" ry="9" fill="#9ab5e5" opacity=".1" filter="url(#halo)"/>
+</svg>
