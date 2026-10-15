@@ -42,26 +42,30 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* Living Cinema experiment: only the manually previewed moments and notices.
    Original orb SVG, glass-mist keyframes and SEYVEO branding are unchanged.
    No blur filters, duplicated orb, or added moving glass. */
-.signal.is-preview.is-living{width:min(212px,68%);height:108px}
-.signal.is-preview.is-living .preview-care{font-size:clamp(12px,3.8vw,15px)}
+.signal.is-preview.is-living{width:min(226px,76%);height:112px}
+.signal.is-preview.is-living .preview-care{font-size:15px}
 .signal.is-appearing.is-living.signal--moment,
 .signal.is-appearing.is-living.signal--care{
- animation:living-moment 7.6s cubic-bezier(.45,0,.2,1) both;
- will-change:transform,opacity;
+ animation:living-moment 8.2s linear both;
+ will-change:opacity;
 }
 .signal.is-appearing.is-living.signal--notice{
- animation:living-notice 4.6s cubic-bezier(.45,0,.2,1) both;
- will-change:transform,opacity;
+ animation:living-notice 5.2s linear both;
+ will-change:opacity;
 }
+/* Never animate a moving or blurred plane: hold the text perfectly still.
+   Separate easing for materialization and dissolution, and a real silent end. */
 @keyframes living-moment{
- 0%,10%{opacity:0;transform:translate(-50%,-50%) scale(.92)}
- 46%,73%{opacity:.93;transform:translate(-50%,-50%) scale(1)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.975)}
+ 0%,7%{opacity:0;animation-timing-function:cubic-bezier(.35,0,.2,1)}
+ 43%{opacity:.94;animation-timing-function:linear}
+ 70%{opacity:.94;animation-timing-function:cubic-bezier(.65,0,.72,1)}
+ 96%,100%{opacity:0}
 }
 @keyframes living-notice{
- 0%,8%{opacity:0;transform:translate(-50%,-50%) scale(.95)}
- 38%,65%{opacity:.91;transform:translate(-50%,-50%) scale(1)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.985)}
+ 0%,6%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 35%{opacity:.94;animation-timing-function:linear}
+ 67%{opacity:.94;animation-timing-function:cubic-bezier(.66,0,.76,1)}
+ 96%,100%{opacity:0}
 }
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
@@ -545,7 +549,7 @@ function previewSphereMoments(){
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
   const el=$('signal');
   const steps=[
-    {kind:'moment',duration:mode==='living'?7700:5900,build(){
+    {kind:'moment',duration:mode==='living'?8300:5900,build(){
       const now=new Date();
       const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
       const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
@@ -559,7 +563,7 @@ function previewSphereMoments(){
       }
       el.replaceChildren(moment);
     }},
-    {kind:'care',duration:mode==='living'?7700:5900,build(){
+    {kind:'care',duration:mode==='living'?8300:5900,build(){
       const moment=document.createElement('span');
       moment.className='preview-moment';
       const line=document.createElement('span');
@@ -568,7 +572,7 @@ function previewSphereMoments(){
       moment.append(line);
       el.replaceChildren(moment);
     }},
-    {kind:'notice',duration:mode==='living'?4700:5900,build(){
+    {kind:'notice',duration:mode==='living'?5300:5900,build(){
       el.innerHTML=glassIcon('mail','orb');
     }},
     {kind:'brand',duration:6400,build(){
