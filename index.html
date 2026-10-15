@@ -80,6 +80,17 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 .activity-title{font-size:12.5px;color:var(--text);line-height:1.35;flex:1}
 .activity-meta{font-size:11px;color:var(--secondary);white-space:nowrap}
 .activity-empty{padding:14px 0;font-size:12px;color:var(--secondary)}
+.timeline-history{border:0;background:none;color:var(--secondary);font:inherit;font-size:11px;padding:5px 0 5px 10px;cursor:pointer}
+.timeline-history:hover,.timeline-history:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.activity-row .activity-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.activity-info .activity-title{flex:none}
+.activity-status{font-size:10px;color:var(--secondary)}
+.activity-row[data-status=done] .activity-icon{color:var(--secondary)}
+.activity-row[data-status=failed] .activity-icon{color:var(--text);border-style:dashed}
+.activity-row .activity-meta{align-self:center}
+.history-list{max-height:48dvh;overflow:auto}
+.history-list .activity-row{padding:12px 0}
+.history-notice{font-size:11px;line-height:1.45;color:var(--secondary);margin:4px 0 14px}
 dialog{width:min(420px,calc(100% - 34px));max-height:min(75dvh,680px);overflow:auto;border:1px solid var(--line);border-radius:23px;background:var(--card);color:var(--text);padding:23px;box-shadow:0 20px 65px #0007}
 dialog::backdrop{background:#000a;backdrop-filter:blur(7px)}
 dialog h2{font-size:20px;font-weight:660;letter-spacing:-.02em;margin:0 0 12px}
@@ -159,7 +170,7 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -195,7 +206,7 @@ dialog p{font-size:14px;color:var(--secondary);white-space:pre-line;line-height:
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info"><h2 id="infoTitle"></h2><p id="infoText"></p><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info"><h2 id="infoTitle"></h2><p id="infoText"></p><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -204,7 +215,19 @@ const stories=[
 {type:'budget',kicker:'Нашёл возможность сэкономить',title:'Роман, расходы на рекламу растут',subtitle:'Проверил показатели. Есть предложение, как вернуть бюджет под контроль.',card:'Рекламный бюджет',meta:'SEYVEO · реклама +18% (сценарий)',tag:'Изменение лимита только после согласования',approve:'Согласовать лимит',approved:'Лимит расходов согласован',detail:'В вымышленном отчёте расходы на рекламу выросли на 18%, а количество обращений осталось прежним.\n\nПредлагаю временно снизить дневной лимит на 10% и проверить результат через три дня.\n\nНикаких реальных рекламных кампаний или платежей приложение не меняет.'}
 ];
 const state={theme:'dark',index:0,history:[]};
-try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=raw.theme==='light'?'light':'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?raw.history.filter(h=>h&&typeof h.label==='string'&&typeof h.time==='string').slice(-12):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=previous.theme==='light'?'light':'dark';if(Array.isArray(previous.activity))state.history=previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''}));}}}catch{}
+const EXECUTION_DEMO_MS=5500,COMPLETION_VISIBLE_MS=2600;
+let taskTransitionTimer=null;
+function normalizeHistory(items){
+  return items.filter(h=>h&&typeof h.label==='string'&&typeof h.time==='string').slice(-100).map((h,i)=>({
+    id:typeof h.id==='string'?h.id:'legacy-'+i,
+    label:h.label,time:h.time,
+    // Old approval-only records stay approved, never retroactively "executed".
+    status:['working','done','failed','approved'].includes(h.status)?h.status:'approved',
+    startedAt:Number.isFinite(h.startedAt)?h.startedAt:0,
+    doneAt:Number.isFinite(h.doneAt)?h.doneAt:0
+  }));
+}
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=raw.theme==='light'?'light':'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?normalizeHistory(raw.history):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=previous.theme==='light'?'light':'dark';if(Array.isArray(previous.activity))state.history=normalizeHistory(previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''})));}}}catch{}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
@@ -296,7 +319,42 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)showDailyB
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popup(title,description,scenario=false){$('infoTitle').textContent=title;$('infoText').textContent=description;$('scenarioRestart').hidden=!scenario;if(!$('info').open)$('info').showModal()}
 function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман · SEYVEO'}
+const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
+function progressDemoTasks(){
+  const now=Date.now();let changed=false;
+  for(const task of state.history){
+    if(task.status==='working'&&task.startedAt&&now-task.startedAt>=EXECUTION_DEMO_MS){
+      task.status='done';task.doneAt=now;changed=true;
+    }
+  }
+  if(changed)save();
+}
+function activeTasks(){
+  const now=Date.now();
+  return state.history.filter(h=>h.status==='working'||h.status==='failed'||(h.status==='done'&&h.doneAt&&now-h.doneAt<COMPLETION_VISIBLE_MS)).slice(-3).reverse();
+}
+function taskRow(h){
+  const status=taskStatusText[h.status]||taskStatusText.approved;
+  const symbol=h.status==='working'?'◷':h.status==='failed'?'!':'✓';
+  return '<div class="activity-row" data-status="'+escapeHtml(h.status)+'"><span class="activity-icon" aria-hidden="true">'+symbol+'</span><div class="activity-info"><span class="activity-title">'+escapeHtml(h.label)+'</span><span class="activity-status">'+escapeHtml(status)+'</span></div><span class="activity-meta">'+escapeHtml(h.time)+'</span></div>';
+}
+function renderHistory(){
+  const el=$('historyList');
+  el.innerHTML=state.history.length?state.history.slice().reverse().map(taskRow).join(''):'<div class="activity-empty">В истории пока нет поручений.</div>';
+}
+function scheduleTaskProgress(){
+  clearTimeout(taskTransitionTimer);
+  const now=Date.now();
+  let wait=Infinity;
+  for(const task of state.history){
+    if(task.status==='working'&&task.startedAt)wait=Math.min(wait,Math.max(0,task.startedAt+EXECUTION_DEMO_MS-now));
+    if(task.status==='done'&&task.doneAt)wait=Math.min(wait,Math.max(0,task.doneAt+COMPLETION_VISIBLE_MS-now));
+  }
+  if(Number.isFinite(wait))taskTransitionTimer=setTimeout(render,Math.max(25,wait+25));
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 function render(){
+progressDemoTasks();
 document.documentElement.dataset.theme=state.theme;
 const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
 if(plasmaVisual.getAttribute('src')!==plasmaSource)plasmaVisual.setAttribute('src',plasmaSource);
@@ -306,22 +364,27 @@ $('stage').dataset.mode=mode;
 transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
 $('kicker').textContent=confirmation?'Согласовано':isCalm?'Всё под контролем':story.kicker;
 $('headline').textContent=confirmation?confirmation.approved:isCalm?'Роман, сейчас всё спокойно':story.title;
-$('subline').textContent=confirmation?'Я сохранил решение в истории сценария. Реальные сервисы не изменены.':isCalm?'Все вопросы разобраны. Новые решения появятся здесь, когда потребуется ваше участие.':story.subtitle;
-$('dynamic').innerHTML=confirmation?'<div class="approval-note">Решение записано в сценарии</div>':isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
+$('subline').textContent=confirmation?'Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.':isCalm?'Все вопросы разобраны. Новые решения появятся здесь, когда потребуется ваше участие.':story.subtitle;
+$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 $('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>approve(story));
-const items=state.history.slice(-3).reverse();
-$('activityList').innerHTML=items.length?items.map(h=>'<div class="activity-row"><span class="activity-icon" aria-hidden="true">✓</span><span class="activity-title">'+escapeHtml(h.label)+'</span><span class="activity-meta">'+escapeHtml(h.time)+'</span></div>').join(''):'<div class="activity-row"><span class="activity-icon" aria-hidden="true">↗</span><span class="activity-title">Обновлена аналитика продаж</span><span class="activity-meta">пример</span></div><div class="activity-row"><span class="activity-icon" aria-hidden="true">▤</span><span class="activity-title">Подготовлен отчёт по рекламе</span><span class="activity-meta">пример</span></div>';
+const items=activeTasks();
+$('activityList').innerHTML=items.length?items.map(taskRow).join(''):'<div class="activity-empty">Сейчас нет поручений в работе.</div>';
+if($('historyDialog').open)renderHistory();
+scheduleTaskProgress();
 }
 function approve(story){
 if(confirmation)return;
-state.history.push({label:story.approved,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});
-state.history=state.history.slice(-12);state.index=Math.min(stories.length,state.index+1);confirmation=story;save();render();
+state.history.push({id:'task-'+Date.now()+'-'+Math.random().toString(36).slice(2),label:story.approved,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),status:'working',startedAt:Date.now(),doneAt:0});
+state.history=state.history.slice(-100);
+state.index=Math.min(stories.length,state.index+1);confirmation=story;save();render();
 clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=null;render()},1700);
 }
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
+$('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
+$('historyClose').addEventListener('click',()=>$('historyDialog').close());
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
-$('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
+$('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 $('orb').addEventListener('click',()=>{if(confirmation){popup('Решение записано',confirmation.approved+'. Это действие выполнено только в сценарии.');return}const current=stories[state.index];popup(current?current.card:'Управляющий на связи',current?current.detail:'Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.')});
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
 const v=q.toLowerCase();const current=stories[state.index];
