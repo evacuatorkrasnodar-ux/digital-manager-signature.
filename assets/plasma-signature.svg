@@ -10,27 +10,27 @@
 <filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
 <clipPath id="clip"><circle cx="260" cy="250" r="175"/></clipPath>
 <style>
-/* Living glass: independent inner currents; fixed spherical shell and silhouette. */
+/* Two independent inner glass currents; the shell, rim and size never move. */
 .g-a,.g-b{transform-box:view-box;transform-origin:260px 250px;will-change:transform,opacity}
-.g-a{animation:flow-a 9.5s ease-in-out infinite alternate}
-.g-b{animation:flow-b 12.5s ease-in-out infinite alternate}
-.glass-glint{animation:soft-glint 6.8s ease-in-out infinite alternate}
-.glass-glint--late{animation-delay:-3.4s}
+.g-a{animation:flow-a 7.2s ease-in-out infinite alternate}
+.g-b{animation:flow-b 9.1s ease-in-out infinite alternate}
+.glass-glint{animation:soft-glint 5.2s ease-in-out infinite alternate}
+.glass-glint--late{animation-delay:-2.6s}
 @keyframes flow-a{
-  0%{transform:translate(-5px,3px) rotate(-6deg) scale(.986);opacity:.69}
-  48%{transform:translate(2px,-2px) rotate(1.2deg) scale(1.004);opacity:1}
-  100%{transform:translate(6px,-4px) rotate(6deg) scale(1.014);opacity:.84}
+  0%{transform:translate(-9px,5px) rotate(-9deg) scale(.98);opacity:.68}
+  48%{transform:translate(1px,-2px) rotate(.8deg) scale(1.003);opacity:1}
+  100%{transform:translate(9px,-6px) rotate(9deg) scale(1.02);opacity:.83}
 }
 @keyframes flow-b{
-  0%{transform:translate(5px,-4px) rotate(5.5deg) scale(1.011);opacity:.79}
-  53%{transform:translate(-1px,2px) rotate(-1.6deg) scale(.997);opacity:1}
-  100%{transform:translate(-6px,4px) rotate(-6deg) scale(.984);opacity:.65}
+  0%{transform:translate(8px,-7px) rotate(8deg) scale(1.018);opacity:.83}
+  52%{transform:translate(-2px,2px) rotate(-1.8deg) scale(.998);opacity:1}
+  100%{transform:translate(-10px,6px) rotate(-9deg) scale(.98);opacity:.64}
 }
 @keyframes soft-glint{
-  0%{opacity:.18}
-  38%{opacity:.95}
-  65%{opacity:.48}
-  100%{opacity:.82}
+  0%{opacity:.12}
+  38%{opacity:1}
+  65%{opacity:.3}
+  100%{opacity:.88}
 }
 @media(prefers-reduced-motion:reduce){.g-a,.g-b,.glass-glint{animation:none;will-change:auto}}
 </style>
