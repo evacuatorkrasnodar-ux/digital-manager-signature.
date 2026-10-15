@@ -1,60 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-labelledby="title desc">
-<title id="title">Cinematic Plasma Signature</title><desc id="desc">Полупрозрачные белоснежные ленты из стекла, окружающие глубокую сферу.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-label="Полупрозрачная стеклянная плазма">
 <defs>
- <radialGradient id="aura"><stop offset="0" stop-color="#c9d9ff" stop-opacity=".28"/><stop offset=".57" stop-color="#b7d1ff" stop-opacity=".15"/><stop offset="1" stop-color="#dbe8ff" stop-opacity="0"/></radialGradient>
- <radialGradient id="core" cx=".4" cy=".32" r=".77"><stop stop-color="#26354b" stop-opacity=".82"/><stop offset=".45" stop-color="#101928" stop-opacity=".9"/><stop offset=".72" stop-color="#050a15" stop-opacity=".94"/><stop offset="1" stop-color="#607ca8" stop-opacity=".48"/></radialGradient>
- <radialGradient id="coreReflect" cx=".22" cy=".07" r=".9"><stop stop-color="#fff" stop-opacity=".52"/><stop offset=".24" stop-color="#cadbff" stop-opacity=".1"/><stop offset=".68" stop-color="#c1d8ff" stop-opacity="0"/><stop offset=".97" stop-color="#c3dbff" stop-opacity=".35"/></radialGradient>
- <linearGradient id="frost" x1=".03" y1=".08" x2=".91" y2=".95"><stop stop-color="#fff" stop-opacity=".18"/><stop offset=".14" stop-color="#d8eaff" stop-opacity=".84"/><stop offset=".33" stop-color="#fff" stop-opacity=".27"/><stop offset=".53" stop-color="#eef7ff" stop-opacity=".94"/><stop offset=".7" stop-color="#83a0cf" stop-opacity=".2"/><stop offset=".89" stop-color="#fff" stop-opacity=".76"/><stop offset="1" stop-color="#aac6ef" stop-opacity=".19"/></linearGradient>
- <linearGradient id="ribbon1" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#f9fdff" stop-opacity=".05"/><stop offset=".16" stop-color="#fff" stop-opacity=".76"/><stop offset=".27" stop-color="#e2edff" stop-opacity=".18"/><stop offset=".43" stop-color="#a5c3e9" stop-opacity=".47"/><stop offset=".58" stop-color="#fff" stop-opacity=".94"/><stop offset=".72" stop-color="#ebf4ff" stop-opacity=".31"/><stop offset=".93" stop-color="#f8fcff" stop-opacity=".8"/><stop offset="1" stop-color="#c8ddff" stop-opacity=".1"/></linearGradient>
- <linearGradient id="ribbon2" x1=".1" y1=".85" x2=".9" y2=".08"><stop stop-color="#a7c1ee" stop-opacity=".25"/><stop offset=".17" stop-color="#fff" stop-opacity=".94"/><stop offset=".35" stop-color="#cde4ff" stop-opacity=".17"/><stop offset=".58" stop-color="#e3f1ff" stop-opacity=".61"/><stop offset=".74" stop-color="#fff" stop-opacity=".89"/><stop offset=".92" stop-color="#b2cbf4" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
- <linearGradient id="ribbon3" x1=".0" y1=".4" x2="1" y2=".7"><stop stop-color="#fff" stop-opacity=".63"/><stop offset=".27" stop-color="#c5d9f5" stop-opacity=".18"/><stop offset=".51" stop-color="#fff" stop-opacity=".82"/><stop offset=".7" stop-color="#90afd7" stop-opacity=".24"/><stop offset="1" stop-color="#fff" stop-opacity=".76"/></linearGradient>
- <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".11"/><stop offset=".23" stop-color="#fff" stop-opacity=".85"/><stop offset=".44" stop-color="#8daedb" stop-opacity=".15"/><stop offset=".77" stop-color="#fff" stop-opacity=".93"/><stop offset="1" stop-color="#daeaff" stop-opacity=".13"/></linearGradient>
- <filter id="blur"><feGaussianBlur stdDeviation="7"/></filter>
- <filter id="pin"><feGaussianBlur stdDeviation="1.5"/></filter>
- <clipPath id="ball"><circle cx="260" cy="256" r="180"/></clipPath>
- <style>
- .veil{transform-origin:260px 256px;animation:veil 16s ease-in-out infinite}
- .veil-two{transform-origin:260px 256px;animation:veilTwo 19s ease-in-out infinite}
- .spark{animation:twinkle 8s ease-in-out infinite}
- @keyframes veil{0%,100%{transform:rotate(-1.7deg) scale(1)}50%{transform:rotate(1.7deg) scale(1.016)}}
- @keyframes veilTwo{0%,100%{transform:rotate(1.2deg) scale(1)}50%{transform:rotate(-1.5deg) scale(.99)}}
- @keyframes twinkle{0%,100%{opacity:.55}50%{opacity:.9}}
- @media(prefers-reduced-motion:reduce){.veil,.veil-two,.spark{animation:none}}
- </style>
+<radialGradient id="amb"><stop stop-color="#d3e6ff" stop-opacity=".2"/><stop offset=".7" stop-color="#d3e6ff" stop-opacity=".08"/><stop offset="1" stop-color="#d3e6ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="body" cx=".44" cy=".38" r=".74"><stop stop-color="#202b3f"/><stop offset=".38" stop-color="#0c1322"/><stop offset=".73" stop-color="#08101e"/><stop offset="1" stop-color="#2b3f5d"/></radialGradient>
+<radialGradient id="edgewash" cx=".48" cy=".45" r=".52"><stop offset=".53" stop-color="#f7fbff" stop-opacity="0"/><stop offset=".78" stop-color="#f7fbff" stop-opacity=".04"/><stop offset=".92" stop-color="#d3e6ff" stop-opacity=".18"/><stop offset="1" stop-color="#f7fbff" stop-opacity=".45"/></radialGradient>
+<linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff" stop-opacity=".09"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".84"/><stop offset=".36" stop-color="#94b8eb" stop-opacity=".27"/><stop offset=".56" stop-color="#f7fbff" stop-opacity=".97"/><stop offset=".79" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".15"/></linearGradient>
+<linearGradient id="silk" x1=".13" y1=".15" x2=".87" y2=".95"><stop stop-color="#f7fbff" stop-opacity="0"/><stop offset=".13" stop-color="#f7fbff" stop-opacity=".39"/><stop offset=".35" stop-color="#94b8eb" stop-opacity=".06"/><stop offset=".6" stop-color="#f7fbff" stop-opacity=".18"/><stop offset=".8" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#f7fbff" stop-opacity="0"/></linearGradient>
+<linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#94b8eb" stop-opacity=".22"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".95"/><stop offset=".36" stop-color="#f7fbff" stop-opacity=".16"/><stop offset=".69" stop-color="#f7fbff" stop-opacity=".3"/><stop offset=".88" stop-color="#f7fbff" stop-opacity=".96"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".33"/></linearGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="3.6"/></filter>
+<filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
+<clipPath id="clip"><circle cx="260" cy="250" r="175"/></clipPath>
+<style>.g-a,.g-b{transform-origin:260px 250px}.g-a{animation:flow-a 20s ease-in-out infinite alternate}.g-b{animation:flow-b 23s ease-in-out infinite alternate}
+@keyframes flow-a{from{transform:rotate(-1.5deg) scale(.998)}to{transform:rotate(1.4deg) scale(1.004)}}
+@keyframes flow-b{from{transform:rotate(1.2deg)}to{transform:rotate(-1.4deg)}}
+@media(prefers-reduced-motion:reduce){.g-a,.g-b{animation:none}}</style>
 </defs>
-<ellipse cx="260" cy="446" rx="142" ry="17" fill="#bacff4" opacity=".18" filter="url(#blur)"/>
-<circle cx="260" cy="256" r="235" fill="url(#aura)"/>
-<circle cx="260" cy="256" r="184" fill="url(#core)"/>
-<circle cx="260" cy="256" r="179" fill="url(#coreReflect)"/>
-<!-- Rear transparent glass: uninterrupted surfaces with internal light -->
-<g clip-path="url(#ball)">
- <path d="M79 302C104 175 235 83 356 134C425 163 474 267 429 359C445 249 395 175 328 160C227 139 131 205 79 302Z" fill="url(#ribbon1)" opacity=".88"/>
- <path d="M130 146C260 58 422 149 438 260C450 370 339 428 250 430C364 398 412 318 402 248C389 160 248 105 130 146Z" fill="url(#ribbon2)" opacity=".68"/>
- <path d="M116 167C191 84 333 76 409 155C450 196 460 261 434 311C437 220 380 156 310 145C223 133 153 161 116 167Z" fill="url(#frost)" opacity=".77"/>
- <path d="M91 298C137 408 281 458 397 378C454 335 459 269 438 213C420 302 349 383 273 390C178 405 112 338 91 298Z" fill="url(#ribbon3)" opacity=".68"/>
- <g class="veil-two">
- <path d="M100 342C178 410 320 397 392 316C438 266 447 201 420 145C448 236 357 350 275 364C195 379 134 358 100 342Z" fill="url(#ribbon2)" opacity=".96"/>
- <path d="M100 342C178 410 320 397 392 316" stroke="#fff" stroke-opacity=".47" stroke-width="3" fill="none"/>
- <path d="M118 166C218 116 344 143 408 231C446 281 444 339 408 385C422 318 383 251 329 213C268 168 189 150 118 166Z" fill="url(#ribbon3)" opacity=".5"/>
- </g>
+<circle cx="260" cy="250" r="244" fill="url(#amb)"/>
+<circle cx="260" cy="250" r="176" fill="url(#body)"/>
+<circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
+<g clip-path="url(#clip)">
+<g class="g-b" fill="url(#silk)">
+<path d="M99 254C124 155 206 101 316 111C392 120 445 187 448 257C418 181 358 150 290 156C194 164 140 222 99 254Z" opacity=".53"/>
+<path d="M102 290C142 372 254 422 358 373C421 343 445 268 431 210C438 312 347 386 264 375C183 367 134 329 102 290Z" opacity=".41"/>
+<path d="M133 143C236 71 370 121 423 221C442 255 446 290 431 330C422 239 353 169 276 162C215 154 159 161 133 143Z" opacity=".43"/>
 </g>
-<!-- External refraction boundary -->
-<circle cx="260" cy="256" r="180.2" fill="none" stroke="url(#edge)" stroke-width="4.3"/>
-<circle cx="260" cy="256" r="174" fill="none" stroke="#d3e6ff" stroke-width="1.6" stroke-opacity=".42"/>
-<path d="M97 183C149 94 279 58 372 111" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".75" filter="url(#pin)"/>
-<path d="M125 386C221 470 371 434 417 352" fill="none" stroke="#e9f4ff" stroke-opacity=".77" stroke-width="3.8" filter="url(#pin)"/>
-<!-- Broad front surfaces, glass ribbons with glowing edges -->
-<g class="veil">
- <path d="M99 312C148 368 229 394 319 360C400 330 434 262 430 193C461 293 395 387 311 415C216 449 125 394 99 312Z" fill="url(#ribbon1)" opacity=".96"/>
- <path d="M100 312C157 388 260 399 339 343C388 308 424 256 430 193" fill="none" stroke="#fbfdff" stroke-opacity=".67" stroke-width="5.2" stroke-linecap="round"/>
- <path d="M114 203C185 93 316 98 395 164C425 189 436 214 439 234C411 187 336 144 273 149C199 154 150 183 114 203Z" fill="url(#ribbon2)" opacity=".94"/>
- <path d="M114 203C208 88 341 113 406 172" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="5" stroke-linecap="round"/>
- <path d="M105 235C135 152 243 110 325 143C399 173 433 257 412 335C409 246 354 194 287 184C212 175 151 201 105 235Z" fill="url(#ribbon3)" opacity=".72"/>
- <path d="M112 247C174 192 261 173 327 206C394 239 407 330 376 388C396 300 330 248 267 241C203 231 151 251 112 247Z" fill="url(#frost)" opacity=".44"/>
- </g>
-<!-- Natural specular glass reflections -->
-<path d="M138 127C214 80 302 78 365 111" stroke="#fff" stroke-opacity=".52" stroke-width="3.3" stroke-linecap="round" fill="none" filter="url(#pin)"/>
-<path d="M119 346C149 409 222 440 286 437" stroke="#fff" stroke-opacity=".4" stroke-width="2" fill="none"/>
-<path d="M395 144C454 218 442 312 394 373" stroke="#e8f3ff" stroke-opacity=".55" stroke-width="2.8" fill="none"/>
-<g class="spark" fill="#fff" opacity=".65"><circle cx="170" cy="142" r="1.4"/><circle cx="364" cy="172" r="1.1"/><circle cx="151" cy="352" r=".8"/><circle cx="406" cy="332" r="1"/><circle cx="218" cy="393" r="1.2"/></g>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" filter="url(#soft)" opacity=".73">
+<path d="M104 270C172 93 314 87 425 228" stroke-width="11"/>
+<path d="M115 315C212 435 352 411 431 281" stroke-width="8"/>
+<path d="M134 143C231 106 328 168 398 335" stroke-width="7"/>
+<path d="M103 327C126 393 215 436 323 421" stroke-width="11"/></g>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M101 278C128 188 204 118 288 112C348 109 394 150 427 229" stroke-width="2.9" opacity="0.92"/>
+<path d="M105 276C157 162 254 127 331 163C384 189 418 249 428 306" stroke-width="1.25" opacity="0.51"/>
+<path d="M117 211C165 124 272 89 352 125C397 145 426 197 436 255" stroke-width="2" opacity="0.7"/>
+<path d="M130 139C232 110 351 181 403 314" stroke-width="1.55" opacity="0.53"/>
+<path d="M160 110C255 99 354 192 404 335" stroke-width="1.15" opacity="0.52"/>
+<path d="M109 327C176 402 291 415 378 348C417 318 439 278 444 229" stroke-width="2.7" opacity="0.77"/>
+<path d="M116 315C209 399 326 413 406 334C431 308 442 278 445 249" stroke-width="1.35" opacity="0.51"/>
+<path d="M123 349C177 432 305 451 394 366" stroke-width="2.55" opacity="0.86"/>
+<path d="M101 322C122 392 218 426 315 414C385 408 428 347 435 297" stroke-width="1.1" opacity="0.42"/>
+</g>
+<g class="g-b" fill="none" stroke="url(#filament)" stroke-linecap="round">
+<path d="M111 212C199 125 261 174 310 246C341 295 367 348 414 378" stroke-width="2.8" opacity="0.86"/>
+<path d="M109 238C179 152 260 160 332 228C379 273 386 345 421 371" stroke-width="1.1" opacity="0.45"/>
+<path d="M129 177C219 155 266 236 301 286C332 329 376 361 414 371" stroke-width="1.65" opacity="0.5"/>
+<path d="M133 403C192 338 214 260 278 175C315 126 368 120 403 153" stroke-width="1.75" opacity="0.46"/>
+<path d="M141 416C201 332 216 240 300 157C348 112 399 143 426 196" stroke-width="1.1" opacity="0.42"/>
+<path d="M99 273C145 353 228 409 331 414C388 416 431 373 440 309" stroke-width="1.65" opacity="0.48"/>
+</g>
+<path d="M100 203C146 97 256 68 348 112C403 137 432 173 443 223" fill="none" stroke="#f7fbff" stroke-opacity=".45" stroke-width="9" filter="url(#halo)"/>
+<path d="M113 352C162 425 274 454 377 389C413 367 433 327 442 287" fill="none" stroke="#f7fbff" stroke-opacity=".56" stroke-width="11" filter="url(#halo)"/>
+</g>
+<circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
+<path d="M103 190C143 115 213 79 287 75" fill="none" stroke="#f7fbff" stroke-opacity=".7" stroke-width="3.6" stroke-linecap="round" filter="url(#soft)"/>
+<path d="M153 399C214 437 315 440 382 391" fill="none" stroke="#f7fbff" stroke-opacity=".42" stroke-width="3.2" stroke-linecap="round" filter="url(#soft)"/>
+<ellipse cx="260" cy="448" rx="99" ry="9" fill="#d3e6ff" opacity=".1" filter="url(#halo)"/>
 </svg>
