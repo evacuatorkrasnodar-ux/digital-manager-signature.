@@ -55,17 +55,17 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 }
 /* Never animate a moving or blurred plane: hold the text perfectly still.
    Separate easing for materialization and dissolution, and a real silent end. */
+/* Two uninterrupted fade curves: no zero-opacity pause, no held end frames.
+   Midpoint changes direction with zero velocity rather than a sudden stop. */
 @keyframes living-moment{
- 0%,7%{opacity:0;animation-timing-function:cubic-bezier(.35,0,.2,1)}
- 43%{opacity:.94;animation-timing-function:linear}
- 70%{opacity:.94;animation-timing-function:cubic-bezier(.65,0,.72,1)}
- 96%,100%{opacity:0}
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
 }
 @keyframes living-notice{
- 0%,6%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
- 35%{opacity:.94;animation-timing-function:linear}
- 67%{opacity:.94;animation-timing-function:cubic-bezier(.66,0,.76,1)}
- 96%,100%{opacity:0}
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
 }
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
@@ -349,6 +349,7 @@ let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
 let previewSequenceTimer=null,previewRunning=false,previewMode='classic';
+let previewFrameId=null;
 function brandToday(){
   const d=new Date();
   return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -518,6 +519,7 @@ $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light
 const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','signal--moment','signal--care','signal--notice','signal--brand'];
 function stopEffectsPreview(){
   clearTimeout(previewSequenceTimer);
+  cancelAnimationFrame(previewFrameId);
   previewRunning=false;
   const button=$('previewEffects');
   button.textContent='Эффекты';
@@ -594,8 +596,16 @@ function previewSphereMoments(){
     if(step.kind==='moment'||step.kind==='care')el.classList.add('is-preview');
     if(mode==='living'&&step.kind!=='brand')el.classList.add('is-living');
     step.build();
-    void el.offsetWidth;
-    el.classList.add('is-appearing');
+    // CSS layout flush on a blurred SVG was causing a visible hitch on iOS.
+    // Start Living Cinema on the next compositor frame instead.
+    if(mode==='living'&&step.kind!=='brand'){
+      previewFrameId=requestAnimationFrame(()=>{
+        if(previewRunning)el.classList.add('is-appearing');
+      });
+    }else{
+      void el.offsetWidth;
+      el.classList.add('is-appearing');
+    }
     previewSequenceTimer=setTimeout(showNext,step.duration);
   }
   previewSequenceTimer=setTimeout(showNext,400);
