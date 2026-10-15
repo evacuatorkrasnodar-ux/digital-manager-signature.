@@ -25,17 +25,19 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 
 
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
-.signal{position:absolute;z-index:3;top:50%;left:50%;width:72px;height:72px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%);color:#eff5fc}
-.signal svg{display:block;width:54px;height:54px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.signal svg rect,.signal svg circle{fill:#eaf2fc;fill-opacity:.18;stroke-opacity:.75;stroke-width:1.7}
-.signal svg path{stroke-opacity:.78}
+.signal{position:absolute;z-index:3;top:50%;left:50%;width:72px;height:72px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
+.signal svg{display:block;width:54px;height:54px}
 .signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
-:root[data-theme=light] .signal{color:#536882}
-:root[data-theme=light] .signal svg rect,:root[data-theme=light] .signal svg circle{fill:#849ab5;fill-opacity:.19;stroke-opacity:.73}
+/* Shared material for the orb's fleeting notice and the permanent card icons. */
+.glass-figure{overflow:visible}
+.glass-figure .glass-detail{fill:none;stroke:#edf4fc;stroke-opacity:.79;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.72;stroke-width:1.2;stroke-linecap:round}
+:root[data-theme=light] .glass-figure .glass-detail{stroke:#5d7088;stroke-opacity:.83}
+:root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.89}
 @keyframes glass-mist{
   0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
   24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
-  42%,57%{opacity:.68;filter:blur(.45px);transform:translate(-50%,-50%) scale(1)}
+  42%,57%{opacity:.78;filter:blur(0);transform:translate(-50%,-50%) scale(1)}
   81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
   100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
 }
@@ -52,7 +54,7 @@ h1{font-size:28px;margin:0;font-weight:690;letter-spacing:-.05em}
 :root[data-theme=light] .decision-card{background:linear-gradient(150deg,#fff, #fafbfd)}
 .card-main{display:flex;align-items:center;gap:12px}
 .event-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:15px;background:var(--card2);border:1px solid var(--soft-line);color:var(--secondary)}
-.event-icon svg{display:block;width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px #ffffff18)}
+.event-icon svg{display:block;width:28px;height:28px}
 .event-copy{flex:1;min-width:0}
 .event-copy strong{display:block;font-size:14px;font-weight:630;letter-spacing:-.01em}
 .event-copy small{display:block;font-size:12px;color:var(--secondary);margin-top:4px;line-height:1.4}
@@ -152,13 +154,21 @@ try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
-const glassPaths={
-  mail:'<rect x="9" y="14" width="30" height="20" rx="4.5"/><path d="m11 16 13 10 13-10"/>',
-  calendar:'<rect x="10" y="12" width="28" height="26" rx="4.5"/><path d="M10 20h28M18 9v7M30 9v7M17 27h5M27 27h4M17 33h5"/>',
-  budget:'<circle cx="24" cy="24" r="13.5"/><path d="m17 28 5-5 4 3 6-8M28 18h4v4"/>',
-  check:'<circle cx="24" cy="24" r="13.5"/><path d="m17 24 5 5 9-10"/>'
+/* Four glass objects. All gradients are local to each SVG; no duplicate assets or legacy glyphs. */
+const glassArt={
+  mail:(fill,edge)=>'<rect x="8" y="13" width="32" height="23" rx="5.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.85"/><rect x="9.7" y="14.7" width="28.6" height="19.6" rx="4.2" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".9"/><path class="glass-detail" d="m10.5 17 11.6 9a3.1 3.1 0 0 0 3.8 0l11.6-9"/><path class="glass-detail" stroke-opacity=".4" d="m11 33 9.4-8M37 33l-9.4-8"/><path class="glass-specular" d="M13 15.7h19"/>',
+  calendar:(fill,edge)=>'<rect x="10" y="11" width="28" height="28" rx="5.3" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.85"/><path d="M11 19.5h26" stroke="#fff" stroke-opacity=".34" stroke-width="2"/><path class="glass-detail" d="M18 9v6M30 9v6M11 20h26M17 27h5M27 27h4M17 33h5"/><path class="glass-specular" d="M12.8 16.8v-1.6q0-2.2 2.3-2.2h1.1"/>',
+  budget:(fill,edge)=>'<circle cx="24" cy="24" r="15.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.9"/><circle cx="24" cy="24" r="13.8" fill="none" stroke="#fff" stroke-opacity=".19" stroke-width=".9"/><path class="glass-detail" stroke-width="2" d="m15.8 29.1 5.4-5.7 4.7 3.3 6.3-8.2M27.9 18.5h4.3v4.2"/><path class="glass-specular" d="M13.4 19.2a12.5 12.5 0 0 1 12.7-8.8"/>',
+  check:(fill,edge)=>'<circle cx="24" cy="24" r="15.5" fill="url(#'+fill+')" stroke="url(#'+edge+')" stroke-width="1.9"/><circle cx="24" cy="24" r="13.8" fill="none" stroke="#fff" stroke-opacity=".19" stroke-width=".9"/><path class="glass-detail" stroke-width="2.3" d="m16.6 24.1 5.4 5.4 9.6-10"/><path class="glass-specular" d="M13.4 19.2a12.5 12.5 0 0 1 12.7-8.8"/>'
 };
-const glassIcon=type=>glassPaths[type]?'<svg viewBox="0 0 48 48" aria-hidden="true">'+glassPaths[type]+'</svg>':'';
+function glassIcon(type,place='card'){
+  if(!Object.prototype.hasOwnProperty.call(glassArt,type))return '';
+  const id='glass-'+place+'-'+type;
+  return '<svg class="glass-figure" viewBox="0 0 48 48" aria-hidden="true"><defs>'+
+    '<linearGradient id="'+id+'-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".52"/><stop offset=".4" stop-color="#cbdced" stop-opacity=".20"/><stop offset="1" stop-color="#8fa5bb" stop-opacity=".33"/></linearGradient>'+
+    '<linearGradient id="'+id+'-edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".92"/><stop offset=".47" stop-color="#9aafc7" stop-opacity=".37"/><stop offset="1" stop-color="#71849c" stop-opacity=".84"/></linearGradient>'+
+    '</defs>'+glassArt[type](id+'-fill',id+'-edge')+'</svg>';
+}
 let noticeKey=null,noticeClearTimer=null;
 function transientNotice(key,type){
   if(noticeKey===key)return;
@@ -166,7 +176,7 @@ function transientNotice(key,type){
   clearTimeout(noticeClearTimer);
   const el=$('signal');
   el.classList.remove('is-appearing');
-  el.innerHTML=glassIcon(type);
+  el.innerHTML=glassIcon(type,'orb');
   if(!type)return;
   void el.offsetWidth;
   el.classList.add('is-appearing');
