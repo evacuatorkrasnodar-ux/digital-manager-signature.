@@ -20,14 +20,16 @@
 .nav-item svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .nav-item.active{color:var(--text);font-weight:650}
 .nav-home{left:15%}.nav-home svg{fill:currentColor;stroke-width:1.1}.nav-tasks{left:34%}.nav-manage{left:85%}
-.assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 4px 12px #7c9dc43a);transition:transform .15s ease,filter .22s ease}
+.assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 1px 4px #c7dcff44) drop-shadow(0 5px 10px #02060f61);transition:transform .15s ease,filter .22s ease}
 .assistant-button:active{transform:translateX(-50%) scale(.965)}
 .assistant-button:focus-visible{outline:2px solid var(--text);outline-offset:4px}
 .button-art{width:74px;height:74px;display:block;overflow:visible}
-.button-art .center-face{fill:url(#button-night)}.button-art .button-rim{stroke:url(#rim-night)}
-.button-art .voice-bars{stroke:#f3f8ff;stroke-width:3.1;stroke-linecap:round;fill:none}
-.button-art .voice-dot{fill:#f3f8ff}
-.button-art .face-reflection{opacity:.47}
+.button-art .center-face{fill:url(#button-night)}
+.button-art .button-rim{stroke:url(#rim-night);filter:drop-shadow(0 0 2px #e0edff83)}
+.button-art .voice-bars{stroke:#f9fbff;stroke-width:3.25;stroke-linecap:round;fill:none}
+.button-art .voice-dot{fill:#f9fbff}
+.button-art .face-reflection{opacity:.57}
+.button-art .bottom-reflection{opacity:.8}
 .assistant-button.listening{filter:drop-shadow(0 0 11px #b2d3ffad)}
 .assistant-button.listening .button-rim{stroke:#eff8ff}
 .assistant-button.listening .voice-bars{animation:speaking 850ms ease-in-out infinite alternate;transform-origin:37px 37px}
@@ -39,12 +41,12 @@
 .prompt[hidden]{display:none}.prompt input{flex:1;min-width:0;background:transparent;color:var(--text);border:0;outline:0;font:inherit;font-size:16px}
 .prompt button{flex:none;width:38px;height:38px;border:0;border-radius:50%;background:var(--card2);color:var(--text);font-size:17px}
 :root[data-theme=light] .dock{--dock-stroke:#ffffffef;--dock-surface:#f8faffc7;--dock-glint:#fff;box-shadow:inset 0 1px 1px #fff,0 12px 30px #425a8225}
-:root[data-theme=light] .assistant-button{filter:drop-shadow(0 4px 12px #6d93d04c)}
+:root[data-theme=light] .assistant-button{filter:drop-shadow(0 1px 5px #aac8fa85) drop-shadow(0 5px 12px #506ea042)}
 :root[data-theme=light] .button-art .center-face{fill:url(#button-day)}
-:root[data-theme=light] .button-art .button-rim{stroke:url(#rim-day)}
+:root[data-theme=light] .button-art .button-rim{stroke:url(#rim-day);filter:drop-shadow(0 0 2px #72a7f27f)}
 :root[data-theme=light] .button-art .voice-bars{stroke:#243b68}
 :root[data-theme=light] .button-art .voice-dot{fill:#243b68}
-:root[data-theme=light] .button-art .face-reflection{opacity:.3}
+:root[data-theme=light] .button-art .face-reflection{opacity:.38}
 @media(max-width:355px){.nav-home{left:14%}.nav-tasks{left:32%}.nav-manage{left:87%}.nav-item{min-width:58px;font-size:9.5px}}
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}}
 .demo{margin-top:12px;text-align:center}.demo button{border:0;color:var(--secondary);font-size:11px;padding:10px;background:transparent}.activity{padding:13px 15px;margin-top:10px}.activity strong{font-size:12px}.activity p{margin:6px 0 0;font-size:12px;line-height:1.4;color:var(--secondary)}dialog{width:min(410px,calc(100% - 34px));border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--text);padding:22px}dialog::backdrop{background:#0009;backdrop-filter:blur(4px)}dialog h2{margin-top:0}dialog p{color:var(--secondary);line-height:1.55;font-size:14px}@keyframes arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}@media(max-height:760px){.stage{min-height:370px}.plasma{width:245px;height:245px;min-width:0;min-height:0}.message{min-height:100px}}
@@ -52,19 +54,29 @@
 <span class="nav-item nav-home active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></span>
 <span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
-<svg class="button-art" viewBox="0 0 74 74" aria-hidden="true"><defs>
-<linearGradient id="rim-night" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9e6fa"/><stop offset=".24" stop-color="#faffff"/><stop offset=".52" stop-color="#a9c3ec"/><stop offset=".75" stop-color="#ffffff"/><stop offset="1" stop-color="#687eaa"/></linearGradient>
-<linearGradient id="rim-day" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5bce5"/><stop offset=".25" stop-color="#f9fdff"/><stop offset=".61" stop-color="#638ed8"/><stop offset=".85" stop-color="#edf4ff"/><stop offset="1" stop-color="#739bdc"/></linearGradient>
-<radialGradient id="button-night" cx=".32" cy=".18" r=".92"><stop stop-color="#26354c"/><stop offset=".31" stop-color="#111b2c"/><stop offset=".72" stop-color="#080d17"/><stop offset="1" stop-color="#1b2231"/></radialGradient>
-<radialGradient id="button-day" cx=".28" cy=".19" r=".95"><stop stop-color="#fff"/><stop offset=".39" stop-color="#f3f6fc"/><stop offset=".78" stop-color="#dce5f7"/><stop offset="1" stop-color="#adbfdf"/></radialGradient>
-<linearGradient id="soft-reflection" x1="0" y1="0" x2=".95" y2="1"><stop stop-color="#fff" stop-opacity=".8"/><stop offset=".35" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<svg class="button-art" viewBox="0 0 74 74" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="rim-night" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9bddb"/><stop offset=".16" stop-color="#fbfdff"/><stop offset=".35" stop-color="#b8c8e7"/><stop offset=".54" stop-color="#7e95bb"/><stop offset=".75" stop-color="#f8faff"/><stop offset=".91" stop-color="#a4b9d7"/><stop offset="1" stop-color="#7086ae"/></linearGradient>
+  <linearGradient id="rim-day" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8caee0"/><stop offset=".2" stop-color="#faffff"/><stop offset=".45" stop-color="#99beef"/><stop offset=".66" stop-color="#4278c9"/><stop offset=".82" stop-color="#f4f9ff"/><stop offset="1" stop-color="#789bd2"/></linearGradient>
+  <radialGradient id="button-night" cx=".35" cy=".2" r=".92"><stop offset="0" stop-color="#2c384e"/><stop offset=".26" stop-color="#1b2638"/><stop offset=".56" stop-color="#101726"/><stop offset=".84" stop-color="#080e19"/><stop offset="1" stop-color="#1c2739"/></radialGradient>
+  <radialGradient id="button-day" cx=".37" cy=".22" r=".94"><stop offset="0" stop-color="#ffffff"/><stop offset=".41" stop-color="#f9fbff"/><stop offset=".73" stop-color="#e9f0fa"/><stop offset=".92" stop-color="#cedbef"/><stop offset="1" stop-color="#bbcdea"/></radialGradient>
+  <linearGradient id="rim-depth" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".57"/><stop offset=".35" stop-color="#8da7d4" stop-opacity=".22"/><stop offset=".7" stop-color="#121d31" stop-opacity=".45"/><stop offset="1" stop-color="#f3f9ff" stop-opacity=".85"/></linearGradient>
+  <linearGradient id="sheen" x1=".14" y1="0" x2=".68" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".68"/><stop offset=".45" stop-color="#eaf4ff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="lower-sheen" x1="0" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#a7c7ff" stop-opacity="0"/><stop offset=".44" stop-color="#fff" stop-opacity=".23"/><stop offset="1" stop-color="#fff" stop-opacity=".66"/></linearGradient>
 </defs>
-<circle cx="37" cy="37" r="36" fill="#8b9fbc" fill-opacity=".14"/>
-<circle cx="37" cy="37" r="34.4" fill="none" class="button-rim" stroke-width="2.5"/>
-<circle cx="37" cy="37" r="31" class="center-face"/>
-<circle cx="37" cy="37" r="30.6" fill="none" stroke="#f8fbff" stroke-opacity=".27" stroke-width=".7"/>
-<path class="face-reflection" d="M15 25C20 12 31 9 42 9" fill="none" stroke="url(#soft-reflection)" stroke-width="4.3" stroke-linecap="round"/>
-<g class="voice-bars"><path d="M26 35v4M32 30v14M37 24v26M42 30v14M48 35v4"/></g><circle class="voice-dot" cx="21" cy="37" r="1.6"/><circle class="voice-dot" cx="53" cy="37" r="1.6"/>
+<circle cx="37" cy="37" r="36" fill="#d8e7ff" fill-opacity=".07"/>
+<circle cx="37" cy="37" r="34.8" fill="#182537" fill-opacity=".25"/>
+<circle cx="37" cy="37" r="34.1" fill="none" class="button-rim" stroke-width="2.35"/>
+<circle cx="37" cy="37" r="32.5" fill="none" stroke="url(#rim-depth)" stroke-width=".75"/>
+<circle cx="37" cy="37" r="30.6" class="center-face"/>
+<circle cx="37" cy="37" r="30" fill="none" class="lens-edge" stroke="#e7f1ff" stroke-opacity=".24" stroke-width=".7"/>
+<path class="face-reflection" d="M15 27C18 16 27 11 39 11C47 11 54 15 59 20" fill="none" stroke="url(#sheen)" stroke-width="3.1" stroke-linecap="round"/>
+<path d="M16 48C19 58 28 64 39 64C46 64 53 61 57 56" fill="none" class="bottom-reflection" stroke="url(#lower-sheen)" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M19 19A25.5 25.5 0 0 1 55 19" fill="none" stroke="#ffffff" stroke-opacity=".19" stroke-width=".65"/>
+<g class="voice-bars">
+  <path d="M27 35v4M32 30v14M37 24.5v25M42 30v14M47 35v4"/>
+</g>
+<circle class="voice-dot" cx="21.2" cy="37" r="1.65"/><circle class="voice-dot" cx="52.8" cy="37" r="1.65"/>
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
