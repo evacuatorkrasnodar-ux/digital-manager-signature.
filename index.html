@@ -31,14 +31,20 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .plasma:has(>.signal.is-appearing)>.plasma-front-glass{opacity:.76}
 @media(prefers-reduced-motion:reduce){.plasma-front-glass{transition:none}}
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
-.signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%);isolation:isolate;perspective:620px}
-.signal::before{content:"";position:absolute;inset:-16%;z-index:-1;border-radius:50%;pointer-events:none;background:radial-gradient(ellipse at center,rgba(230,244,255,.14),rgba(206,227,255,.045) 43%,transparent 72%);opacity:0;transform:scale(.45)}
-.signal.is-appearing::before{animation:orb-depth-illumination 5.2s ease-in-out both}
-.signal.is-brand.is-appearing::before{animation-duration:6.1s}
-.signal.is-moment.is-appearing::before{animation-duration:5.8s}
-@keyframes orb-depth-illumination{0%,100%{opacity:0;transform:scale(.38)} 26%{opacity:.25;transform:scale(.7)} 48%,68%{opacity:.7;transform:scale(1)} 86%{opacity:.18;transform:scale(.78)}}
+.signal{
+ position:absolute;z-index:3;top:50%;left:50%;
+ width:108px;height:108px;display:grid;place-items:center;
+ pointer-events:none;opacity:0;transform:translate(-50%,-50%);
+}
+/* A stationary light well is carried by the same notice, not animated separately. */
+.signal::before{
+ content:"";position:absolute;inset:-15%;z-index:-1;
+ border-radius:50%;pointer-events:none;
+ background:radial-gradient(circle,rgba(239,247,255,.11),rgba(227,238,252,.035) 40%,transparent 74%);
+ opacity:.42;
+}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing{animation:orb-cinematic 5.2s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform,filter}
+.signal.is-appearing{animation:orb-cinematic 5.2s both;will-change:opacity,transform}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
@@ -57,38 +63,37 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
 /* Deep Reveal keeps text sharply focused once it reaches the viewing plane.
    Depth is suggested by its entrance motion, not persistent defocus. */
-/* SEYVEO Deep Reveal — unified cinematic choreography.
-   Light begins at the vanishing point, the message travels through the sphere,
-   resolves sharp, then retreats; no permanently blurred typography. */
+/* SEYVEO · Silent Depth — one timeline, one moving layer.
+   No nested transforms, animated blur, delayed child animations or second
+   choreography. Only opacity and compositor-friendly transforms change. */
 .signal.is-event{width:108px;height:108px}
-.signal.is-appearing :is(.brand-mark,.brand-word,.brand-specialty,.moment-time,.moment-date,.moment-care,.glass-figure){animation:orb-compose 1.75s cubic-bezier(.16,1,.3,1) both}
-.signal.is-appearing .brand-mark{animation-delay:.18s}
-.signal.is-appearing .brand-word{animation-delay:.48s}
-.signal.is-appearing .brand-specialty{animation-delay:.86s}
-.signal.is-appearing .moment-time{animation-delay:.17s}
-.signal.is-appearing .moment-date{animation-delay:.48s}
-.signal.is-appearing .moment-care{animation-delay:.2s}
-.signal.is-event.is-appearing .glass-figure{animation-delay:.22s}
 .signal.is-clock .moment-time{font-weight:580;letter-spacing:.015em}
 :root:not([data-theme=light]) .signal.is-clock .moment-time{text-shadow:0 0 12px #dcecff4d}
 @keyframes orb-cinematic{
- 0%{opacity:0;transform:translate(-50%,-50%) scale(.43) translateY(12px);filter:blur(7px) brightness(.55)}
- 12%{opacity:.25;transform:translate(-50%,-50%) scale(.55) translateY(9px);filter:blur(4px) brightness(.72)}
- 33%{opacity:.86;transform:translate(-50%,-50%) scale(.86) translateY(3px);filter:blur(.9px) brightness(1.2)}
- 47%,70%{opacity:1;transform:translate(-50%,-50%) scale(1);filter:blur(0) brightness(1)}
- 86%{opacity:.6;transform:translate(-50%,-50%) scale(.82) translateY(3px);filter:blur(1px) brightness(.88)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.48) translateY(11px);filter:blur(5px) brightness(.6)}
-}
-@keyframes orb-compose{
- 0%{opacity:0;transform:translateY(12px) scale(.78);filter:blur(4px)}
- 36%{opacity:.16;filter:blur(2px)}
- 77%{opacity:1;transform:translateY(-1px) scale(1.015);filter:blur(0)}
- 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) translateY(9px) scale(.87);
+    animation-timing-function:cubic-bezier(.32,0,.18,1);
+  }
+  34%{
+    opacity:1;
+    transform:translate(-50%,-50%) translateY(0) scale(1);
+    animation-timing-function:linear;
+  }
+  74%{
+    opacity:1;
+    transform:translate(-50%,-50%) translateY(0) scale(1);
+    animation-timing-function:cubic-bezier(.57,0,.72,1);
+  }
+  100%{
+    opacity:0;
+    transform:translate(-50%,-50%) translateY(7px) scale(.94);
+  }
 }
 @media(prefers-reduced-motion:reduce){
- .signal.is-appearing,.signal.is-brand.is-appearing,.signal.is-moment.is-appearing{animation:none;opacity:1;transform:translate(-50%,-50%);filter:none}
- .signal.is-appearing::before{animation:none;opacity:.2;transform:none}
- .signal.is-appearing :is(.brand-mark,.brand-word,.brand-specialty,.moment-time,.moment-date,.moment-care,.glass-figure){animation:none;clip-path:none;opacity:1;filter:none;transform:none}
+  .signal.is-appearing,.signal.is-brand.is-appearing,.signal.is-moment.is-appearing{
+    animation:none;opacity:1;transform:translate(-50%,-50%);
+  }
 }
 /* Time and gentle self-care use only the existing transient sphere layer. */
 .signal.is-moment{width:min(225px,76%);height:112px}
