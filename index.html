@@ -31,6 +31,14 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
+/* Preview typography uses the original glass-mist, without changing it. */
+.signal.is-preview{width:min(226px,76%);height:112px}
+.preview-moment{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;text-align:center;line-height:1.35;color:#e3eefb}
+.preview-time{font-size:27px;letter-spacing:-.025em;font-weight:580;font-variant-numeric:tabular-nums}
+.preview-date{font-size:12px;letter-spacing:.01em;font-weight:540;color:#c8d8eb}
+.preview-care{font-size:15px;font-weight:560;line-height:1.45;text-wrap:balance}
+:root[data-theme=light] .preview-moment{color:#344b69}
+:root[data-theme=light] .preview-date{color:#506884}
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
@@ -85,6 +93,8 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .activity-title{font-size:var(--type-body-compact);font-weight:480;color:var(--text);line-height:1.4;flex:1}
 .activity-meta{font-size:var(--type-caption);line-height:1.35;color:var(--secondary);white-space:nowrap}
 .activity-empty{padding:14px 0;font-size:var(--type-label);line-height:1.4;color:var(--secondary)}
+.timeline-options{display:flex;align-items:center;gap:4px;flex:none}
+.timeline-head .timeline-title{min-width:0}
 .timeline-history{border:0;background:none;color:var(--secondary);font:inherit;font-size:var(--type-caption);line-height:1.35;padding:5px 0 5px 10px;cursor:pointer}
 .timeline-history:hover,.timeline-history:focus-visible{text-decoration:underline;text-underline-offset:3px}
 .activity-row .activity-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
@@ -188,7 +198,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="previewEffects" class="timeline-history" type="button" aria-label="Посмотреть эффекты появления в сфере" aria-pressed="false">Эффекты</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -292,11 +302,13 @@ function glassIcon(type,place='card'){
       '<stop offset="1" stop-color="#90a7c0" stop-opacity=".56"/></linearGradient>'+
     '</defs>'+glassArt[type](id)+'</svg>';
 }
+const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
 const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=6200;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
+let previewSequenceTimer=null,previewRunning=false;
 function brandToday(){
   const d=new Date();
   return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -315,6 +327,7 @@ function scheduleNextBrand(ms){
   brandNextTimer=setTimeout(()=>{showBrandSignature('ambient')},Math.max(500,ms));
 }
 function transientNotice(key,type){
+  if(previewRunning)return;
   if(noticeKey===key)return;
   noticeKey=key;
   clearTimeout(noticeClearTimer);
@@ -329,6 +342,7 @@ function transientNotice(key,type){
 }
 function showBrandSignature(reason='ambient'){
   if(document.hidden)return false;
+  if(previewRunning){scheduleNextBrand(60000);return false;}
   const progress=brandProgress(),now=Date.now();
   if(progress.count>=BRAND_MAX_DAILY)return false;
   const elapsed=now-progress.lastAt;
@@ -347,7 +361,7 @@ function showBrandSignature(reason='ambient'){
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
   el.classList.remove('is-brand','is-appearing');
-  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
+  el.innerHTML=BRAND_LOCKUP_HTML;
   el.classList.add('is-brand');
   void el.offsetWidth;
   el.classList.add('is-appearing');
@@ -459,6 +473,79 @@ state.index=Math.min(stories.length,state.index+1);confirmation=story;save();ren
 clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=null;render()},1700);
 }
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
+/* Manual showcase: all four previews use the original glass-mist animation.
+   This does not update the brand's daily usage counter. */
+function stopEffectsPreview(){
+  clearTimeout(previewSequenceTimer);
+  previewRunning=false;
+  const btn=$('previewEffects');
+  btn.textContent='Эффекты';
+  btn.setAttribute('aria-pressed','false');
+  const el=$('signal');
+  el.classList.remove('is-appearing','is-brand','is-preview');
+  el.replaceChildren();
+  noticeKey=null;
+  const story=stories[state.index];
+  transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
+}
+function previewSphereMoments(){
+  if(previewRunning){stopEffectsPreview();return}
+  if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]'))return;
+  clearTimeout(noticeClearTimer);
+  clearTimeout(brandClearTimer);
+  previewRunning=true;
+  const btn=$('previewEffects');
+  btn.textContent='Остановить';
+  btn.setAttribute('aria-pressed','true');
+  $('orb').scrollIntoView({block:'center',behavior:'smooth'});
+  const el=$('signal');
+  const steps=[
+    ()=>{
+      const now=new Date();
+      const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+      const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+      const moment=document.createElement('span');
+      moment.className='preview-moment';
+      for(const [cls,value] of [['preview-time',hour],['preview-date',date]]){
+        const line=document.createElement('span');
+        line.className=cls;
+        line.textContent=value;
+        moment.append(line);
+      }
+      el.classList.add('is-preview');
+      el.replaceChildren(moment);
+    },
+    ()=>{
+      const moment=document.createElement('span');
+      moment.className='preview-moment';
+      const line=document.createElement('span');
+      line.className='preview-care';
+      line.textContent='Роман, минутка для себя?';
+      moment.append(line);
+      el.classList.add('is-preview');
+      el.replaceChildren(moment);
+    },
+    ()=>{el.innerHTML=glassIcon('mail','orb')},
+    ()=>{el.classList.add('is-brand');el.innerHTML=BRAND_LOCKUP_HTML}
+  ];
+  let step=0;
+  function showNext(){
+    if(!previewRunning)return;
+    if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]')){
+      stopEffectsPreview();return;
+    }
+    if(step===steps.length){stopEffectsPreview();return}
+    el.classList.remove('is-appearing','is-brand','is-preview');
+    el.replaceChildren();
+    steps[step++]();
+    void el.offsetWidth;
+    el.classList.add('is-appearing');
+    previewSequenceTimer=setTimeout(showNext,step===steps.length?6400:5900);
+  }
+  previewSequenceTimer=setTimeout(showNext,400);
+}
+$('previewEffects').addEventListener('click',previewSphereMoments);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&previewRunning)stopEffectsPreview()});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
