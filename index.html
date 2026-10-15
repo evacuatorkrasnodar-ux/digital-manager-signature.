@@ -66,6 +66,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .care-setting label{display:flex;align-items:center;justify-content:space-between;gap:14px;color:var(--text);font-size:var(--type-body-compact);font-weight:600;cursor:pointer}
 .care-setting input{appearance:auto;width:18px;height:18px;flex:none;accent-color:var(--text);cursor:pointer}
 .care-setting small{font-size:var(--type-caption);line-height:1.5;color:var(--secondary)}
+.care-preview-button{width:100%;margin-top:6px;flex:none}
 @media(prefers-reduced-motion:reduce){.signal.is-moment.is-appearing{animation:none;opacity:.78}}
 
 
@@ -91,7 +92,8 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 :root[data-theme=light] .btn.primary{background:#16243a;color:white;border-color:#16243a}
 .approval-note{font-size:var(--type-label);line-height:1.45;text-align:center;color:var(--secondary);margin:3px 0 6px;animation:arrive .25s ease-out}
 .timeline{margin:20px 1px 0;padding:0 2px}
-.timeline-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 4px}
+.timeline-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
+.timeline-options{display:flex;align-items:center;gap:6px;white-space:nowrap;flex:none}
 .timeline-title{font-family:inherit;font-size:var(--type-label);font-weight:650;line-height:1.35;letter-spacing:0;color:var(--text);text-align:left;background:none;border:0;padding:0;cursor:pointer}
 .timeline-title:hover{text-decoration:underline;text-decoration-color:var(--secondary);text-underline-offset:3px}
 .activity-list{display:flex;flex-direction:column}
@@ -206,7 +208,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -242,7 +244,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div id="careSetting" class="care-setting" hidden><label for="careToggle">Забота о себе<input id="careToggle" type="checkbox" checked></label><small>Небольшие предложения об отдыхе примерно раз в час, пока SEYVEO открыт. Можно отключить в любой момент.</small></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div id="careSetting" class="care-setting" hidden><label for="careToggle">Забота о себе<input id="careToggle" type="checkbox" checked></label><small>Небольшие предложения об отдыхе примерно раз в час, пока SEYVEO открыт. Можно отключить в любой момент.</small><button id="previewSphere" type="button" class="btn care-preview-button">Посмотреть в сфере</button></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -417,9 +419,15 @@ function canShowMoment(){
     !$('assistantButton').classList.contains('listening')&&
     !$('signal').classList.contains('is-appearing');
 }
-function momentDisplay(kind,parts){
-  if(!canShowMoment())return false;
+function momentDisplay(kind,parts,force=false){
+  if(document.hidden||!force&&!canShowMoment())return false;
   const el=$('signal');
+  if(force){
+    clearTimeout(brandClearTimer);
+    clearTimeout(noticeClearTimer);
+    clearTimeout(momentClearTimer);
+    el.classList.remove('is-brand','is-appearing','is-moment');
+  }
   clearTimeout(momentClearTimer);
   el.classList.remove('is-moment','is-appearing');
   const wrapper=document.createElement('span');
@@ -441,14 +449,33 @@ function momentDisplay(kind,parts){
   },5900);
   return true;
 }
+function clockMomentParts(){
+  const now=new Date();
+  const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  return [['moment-time',hour],['moment-date',date]];
+}
+let previewSequenceTimer=null;
+function previewSphereMoments(){
+  clearTimeout(previewSequenceTimer);
+  $('info').close();
+  $('orb').scrollIntoView({block:'center',behavior:'smooth'});
+  previewSequenceTimer=setTimeout(()=>{
+    if(document.hidden)return;
+    const started=momentDisplay('clock',clockMomentParts(),true);
+    if(!started)return;
+    previewSequenceTimer=setTimeout(()=>{
+      if(document.hidden)return;
+      momentDisplay('care',[['moment-care',wellnessPhrases[0]]]);
+    },6400);
+  },550);
+}
+$('previewSphere').addEventListener('click',previewSphereMoments);
 function scheduleClock(delay){
   clearTimeout(clockTimer);
   if(document.hidden)return;
   clockTimer=setTimeout(()=>{
-    const now=new Date();
-    const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-    const displayed=momentDisplay('clock',[['moment-time',hour],['moment-date',date]]);
+    const displayed=momentDisplay('clock',clockMomentParts());
     scheduleClock(displayed?CLOCK_REPEAT_MS:45000);
   },delay);
 }
@@ -474,7 +501,7 @@ $('careToggle').addEventListener('change',e=>{
 });
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
-    clearTimeout(clockTimer);clearTimeout(wellnessTimer);
+    clearTimeout(clockTimer);clearTimeout(wellnessTimer);clearTimeout(previewSequenceTimer);
   }else{
     scheduleClock(13000);
     scheduleWellness(WELLNESS_INTERVAL_MS);
@@ -618,6 +645,11 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
+$('openCarePreview').addEventListener('click',()=>{
+  popup('Часы и забота','Время, дата и небольшие советы могут мягко появляться внутри сферы, а потом растворяться. Нажмите «Посмотреть в сфере», чтобы увидеть их сейчас.',false);
+  $('careSetting').hidden=false;
+  $('careToggle').checked=wellnessEnabled();
+});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 $('orb').addEventListener('click',()=>{if(confirmation){popup('Решение записано',confirmation.approved+'. Это действие выполнено только в сценарии.');return}const current=stories[state.index];popup(current?current.card:'Управляющий на связи',current?current.detail:'Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.')});
