@@ -16,37 +16,22 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .round{height:41px;width:41px;background:var(--card);border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:19px}
 .home-main{flex:1;display:flex;flex-direction:column}
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:20px 0 14px;min-height:385px}
-.plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer;--orb-duration:7.4s}
-.plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none;clip-path:circle(40.5% at 50% 50%)}
+.plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
+.plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 
-/* SEYVEO · OPTICAL CLEANUP
-   One original sphere SVG supplies all animated glass. No second sphere. */
-.plasma:has(>.signal.is-moment.is-appearing){--orb-duration:8s}
-/* The content rests optically behind front glass, rather than over the shell. */
-.signal{
- position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;
- display:grid;place-items:center;pointer-events:none;opacity:0;
- transform:translate(-50%,-50%);isolation:isolate;
-}
-/* Centered inner light cannot bleed beyond the sphere, even for long text. */
-.signal::before{
- content:"";position:absolute;left:50%;top:50%;width:132px;height:132px;
- transform:translate(-50%,-50%);z-index:-1;border-radius:50%;
- pointer-events:none;opacity:0;
- background:radial-gradient(circle,rgba(251,253,255,.15),rgba(234,241,255,.035) 42%,transparent 72%);
-}
-.signal.is-appearing:not(.is-brand){
- animation:orb-cinematic var(--orb-duration) cubic-bezier(.42,0,.22,1) both;
- will-change:transform,opacity;
-}
-.signal.is-appearing:not(.is-brand)::before{
- animation:orb-surge-core var(--orb-duration) ease-in-out both;
-}
+
+
+
+
+
+
+/* One transient frosted-glass notice. The orb and its light remain unchanged. */
+.signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
+.signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
-.signal.is-brand{width:min(220px,76%);height:126px;isolation:auto}
-/* The original full studio signature from 55svg / commit 0f43d233. */
-.signal.is-brand.is-appearing{animation:glass-mist 6.1s 0s ease-in-out both}
+.signal.is-brand{width:min(220px,76%);height:126px}
+.signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
 .brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -60,23 +45,6 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-/* SEYVEO · SILENT REVEAL
-   One compositor-friendly timeline per notification; no nested animations. */
-.signal.is-event{width:108px;height:108px}
-.signal.is-clock .moment-time{font-weight:580;letter-spacing:.015em}
-:root:not([data-theme=light]) .signal.is-clock .moment-time{text-shadow:0 0 12px #dcecff33}
-@keyframes orb-cinematic{
- 0%,8%{opacity:0;transform:translate(-50%,-50%) scale(.94)}
- 42%,74%{opacity:1;transform:translate(-50%,-50%) scale(1)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(.97)}
-}
-@keyframes orb-surge-core{
- 0%,10%,100%{opacity:0}
- 38%{opacity:.42}
- 72%{opacity:.22}
- 90%{opacity:.06}
-}
-/* Exact original 15 Oct glass-mist keyframes; used by company alone. */
 @keyframes glass-mist{
   0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
   24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
@@ -84,30 +52,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
   81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
   100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
 }
-@media(prefers-reduced-motion:reduce){
- .signal.is-appearing:not(.is-brand){
-  animation:none;opacity:1;transform:translate(-50%,-50%);
- }
- .signal.is-brand.is-appearing{
-  animation:none;opacity:.82;filter:none;transform:translate(-50%,-50%);
- }
- .signal.is-appearing:not(.is-brand)::before{animation:none;opacity:.16}
-}
-/* Time and gentle self-care use only the existing transient sphere layer. */
-.signal.is-moment{width:min(225px,76%);height:112px}
-.moment-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;padding:0 4px;text-align:center;line-height:1.35;color:#e3eefb;text-shadow:0 1px 3px #03111d52}
-.moment-time{font-size:27px;letter-spacing:-.025em;font-weight:580;font-variant-numeric:tabular-nums}
-.moment-date{font-size:12px;font-weight:540;letter-spacing:.01em;color:#c8d8eb}
-.moment-care{font-size:15px;font-weight:560;line-height:1.5;max-width:212px;text-wrap:balance}
-:root[data-theme=light] .moment-content{color:#344b69;text-shadow:none}
-:root[data-theme=light] .moment-date{color:#506884}
-.care-setting{border-top:1px solid var(--soft-line);margin-top:19px;padding-top:15px;display:flex;flex-direction:column;gap:7px}
-.care-setting label{display:flex;align-items:center;justify-content:space-between;gap:14px;color:var(--text);font-size:var(--type-body-compact);font-weight:600;cursor:pointer}
-.care-setting input{appearance:auto;width:18px;height:18px;flex:none;accent-color:var(--text);cursor:pointer}
-.care-setting small{font-size:var(--type-caption);line-height:1.5;color:var(--secondary)}
-.care-preview-button{width:100%;margin-top:6px;flex:none}
-/* Motion-reduction preferences are handled by the shared Orb Language rules. */
-
+@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}.signal.is-brand.is-appearing{opacity:.82}}
 
 
 
@@ -131,8 +76,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 :root[data-theme=light] .btn.primary{background:#16243a;color:white;border-color:#16243a}
 .approval-note{font-size:var(--type-label);line-height:1.45;text-align:center;color:var(--secondary);margin:3px 0 6px;animation:arrive .25s ease-out}
 .timeline{margin:20px 1px 0;padding:0 2px}
-.timeline-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
-.timeline-options{display:flex;align-items:center;gap:6px;white-space:nowrap;flex:none}
+.timeline-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 4px}
 .timeline-title{font-family:inherit;font-size:var(--type-label);font-weight:650;line-height:1.35;letter-spacing:0;color:var(--text);text-align:left;background:none;border:0;padding:0;cursor:pointer}
 .timeline-title:hover{text-decoration:underline;text-decoration-color:var(--secondary);text-underline-offset:3px}
 .activity-list{display:flex;flex-direction:column}
@@ -157,17 +101,14 @@ dialog::backdrop{background:#000a;backdrop-filter:blur(7px)}
 dialog h2{font-size:var(--type-heading);font-weight:660;line-height:1.25;letter-spacing:-.025em;margin:0 0 12px}
 dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;line-height:1.6;margin:0}
 /* Written answers: the orb identifies the manager; the brand remains in the header. */
-.reply-thread{display:flex;flex-direction:column;gap:12px;min-width:0}
-.chat-messages{display:flex;flex-direction:column;gap:17px;max-height:min(48dvh,490px);overflow-y:auto;overscroll-behavior:contain;padding:3px 3px 9px 0;scrollbar-width:thin}
-.chat-empty{font-size:var(--type-body-compact);line-height:1.5;color:var(--secondary);padding:14px 0}
-.chat-messages .reply-user,.chat-messages .reply-assistant{flex-shrink:0}
+.reply-thread{display:flex;flex-direction:column;gap:17px;min-width:0}
 .reply-user{align-self:flex-end;max-width:88%;padding:11px 14px;background:var(--card2);border:1px solid var(--soft-line);border-radius:17px 17px 5px 17px}
 .reply-user .reply-speaker{display:block;margin-bottom:4px;text-align:right}
 .reply-speaker{font-size:var(--type-caption);font-weight:600;letter-spacing:.01em;color:var(--secondary)}
 .reply-content{white-space:pre-wrap;overflow-wrap:anywhere;font-size:var(--type-body);line-height:1.55;color:var(--text)}
 .reply-assistant{display:flex;gap:11px;align-items:flex-start;max-width:100%}
-.reply-avatar{width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;overflow:visible;border-radius:50%}
-.reply-avatar img{display:block;width:60px;height:60px;max-width:none;aspect-ratio:1;flex:none;object-fit:contain;pointer-events:none}
+.reply-avatar{width:42px;height:42px;flex:none;display:grid;place-items:center;overflow:hidden;border-radius:50%}
+.reply-avatar img{display:block;width:60px;height:60px;flex:none;object-fit:contain}
 .reply-assistant-body{min-width:0;flex:1}
 .reply-assistant-body .reply-speaker{display:block;margin:2px 0 7px;color:var(--text)}
 .reply-assistant-body .reply-content{padding:12px 14px;border:1px solid var(--soft-line);border-radius:5px 17px 17px 17px;background:var(--card2)}
@@ -247,7 +188,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><div class="timeline-options"><button id="openCarePreview" class="timeline-history" type="button" aria-label="Часы и забота — настройки и просмотр в сфере">Часы · забота</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -258,7 +199,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button class="composer-tool" type="button" id="printText"><span><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 14h12v7H6zM17 12h.01"/></svg></span><small>Печать</small></button>
 <button class="composer-tool" type="button" id="moreComposer" aria-expanded="false"><span><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span><small>Ещё</small></button>
 </div>
-<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="openChatHistory">Переписка</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
+<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
 </form></main><footer class="dock" aria-label="Нижняя панель">
 <span class="nav-item nav-home active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></span>
@@ -283,7 +224,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-label="Переписка с управляющим"></div><div class="reply-system">Демонстрационные ответы · ИИ и сервисы пока не подключены</div></div><div id="careSetting" class="care-setting" hidden><label for="careToggle">Забота о себе<input id="careToggle" type="checkbox" checked></label><small>Небольшие предложения об отдыхе примерно раз в час, пока SEYVEO открыт. Можно отключить в любой момент.</small><button id="previewSphere" type="button" class="btn care-preview-button">Посмотреть все эффекты в сфере</button></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="continueChat" class="btn" type="button" hidden>Написать</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -378,35 +319,13 @@ function transientNotice(key,type){
   noticeKey=key;
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
-  clearTimeout(momentClearTimer);
   const el=$('signal');
-  el.classList.remove('is-appearing','is-brand','is-moment','is-event','is-clock','is-care');
-  if(!type){el.replaceChildren();return}
+  el.classList.remove('is-appearing','is-brand');
   el.innerHTML=glassIcon(type,'orb');
-  el.classList.add('is-event');
+  if(!type)return;
   void el.offsetWidth;
   el.classList.add('is-appearing');
-  noticeClearTimer=setTimeout(()=>{
-    if(!el.classList.contains('is-event'))return;
-    el.classList.remove('is-appearing','is-event');
-    el.replaceChildren();
-  },7500);
-}
-function displayBrandSignature(){
-  const el=$('signal');
-  clearTimeout(noticeClearTimer);
-  clearTimeout(brandClearTimer);
-  clearTimeout(momentClearTimer);
-  el.classList.remove('is-brand','is-appearing','is-moment','is-event','is-clock','is-care');
-  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
-  el.classList.add('is-brand');
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
-  brandClearTimer=setTimeout(()=>{
-    if(!el.classList.contains('is-brand'))return;
-    el.classList.remove('is-brand','is-appearing');
-    el.replaceChildren();
-  },BRAND_DURATION_MS);
+  noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
 }
 function showBrandSignature(reason='ambient'){
   if(document.hidden)return false;
@@ -424,9 +343,21 @@ function showBrandSignature(reason='ambient'){
     scheduleNextBrand(60000);
     return false;
   }
-  displayBrandSignature();
+  const el=$('signal');
+  clearTimeout(noticeClearTimer);
+  clearTimeout(brandClearTimer);
+  el.classList.remove('is-brand','is-appearing');
+  el.innerHTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
+  el.classList.add('is-brand');
+  void el.offsetWidth;
+  el.classList.add('is-appearing');
   brandFallback={day:progress.day,count:progress.count+1,lastAt:now};
   try{localStorage.setItem(BRAND_STORE_KEY,JSON.stringify(brandFallback))}catch{}
+  brandClearTimer=setTimeout(()=>{
+    if(!el.classList.contains('is-brand'))return;
+    el.classList.remove('is-brand','is-appearing');
+    el.replaceChildren();
+  },BRAND_DURATION_MS);
   if(brandFallback.count<BRAND_MAX_DAILY)scheduleNextBrand(BRAND_GAP_MS+1000);
   else clearTimeout(brandNextTimer);
   return true;
@@ -445,211 +376,25 @@ document.addEventListener('visibilitychange',()=>{
   }
   brandHiddenAt=null;
 });
-/* Quiet local-time glance + opt-in self-care, without tracking health data. */
-const WELLNESS_PREF_KEY='seyveo-wellness-v1',WELLNESS_DAY_KEY='seyveo-wellness-day-v1';
-const CLOCK_REPEAT_MS=45*60*1000,WELLNESS_INTERVAL_MS=60*60*1000,WELLNESS_MAX_PER_DAY=3;
-let momentClearTimer=null,clockTimer=null,wellnessTimer=null;
-const wellnessPhrases=['Роман, минутка для себя?','Глазам тоже нужен отдых.','Небольшая пауза — тоже польза.','Можно немного размяться.','Спокойный вдох. Мягкий выдох.'];
-function wellnessEnabled(){
-  try{return localStorage.getItem(WELLNESS_PREF_KEY)!=='off'}catch{return true}
-}
-function wellnessDay(){
-  const key=brandToday();
-  try{
-    const v=JSON.parse(localStorage.getItem(WELLNESS_DAY_KEY)||'null');
-    if(v&&v.day===key&&Number.isInteger(v.count))return {day:key,count:Math.max(0,Math.min(WELLNESS_MAX_PER_DAY,v.count))};
-  }catch{}
-  return {day:key,count:0};
-}
-function canShowMoment(){
-  return !document.hidden&&$('ask').hidden&&!document.querySelector('dialog[open]')&&
-    !$('assistantButton').classList.contains('listening')&&
-    !$('signal').classList.contains('is-appearing');
-}
-function momentDisplay(kind,parts,force=false){
-  if(document.hidden||!force&&!canShowMoment())return false;
-  const el=$('signal');
-  if(force){
-    clearTimeout(brandClearTimer);
-    clearTimeout(noticeClearTimer);
-    clearTimeout(momentClearTimer);
-    el.classList.remove('is-brand','is-appearing','is-moment','is-event','is-clock','is-care');
-  }
-  clearTimeout(momentClearTimer);
-  el.classList.remove('is-moment','is-appearing','is-clock','is-care');
-  el.classList.add(kind==='clock'?'is-clock':'is-care');
-  const wrapper=document.createElement('span');
-  wrapper.className='moment-content';
-  for(const [className,copy] of parts){
-    const line=document.createElement('span');
-    line.className=className;
-    line.textContent=copy;
-    wrapper.append(line);
-  }
-  el.replaceChildren(wrapper);
-  el.classList.add('is-moment');
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
-  momentClearTimer=setTimeout(()=>{
-    if(!el.classList.contains('is-moment'))return;
-    el.classList.remove('is-moment','is-appearing','is-clock','is-care');
-    el.replaceChildren();
-  },8100);
-  return true;
-}
-function clockMomentParts(){
-  const now=new Date();
-  const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-  const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-  return [['moment-time',hour],['moment-date',date]];
-}
-let previewSequenceTimer=null;
-function previewSphereMoments(){
-  clearTimeout(previewSequenceTimer);
-  $('info').close();
-  $('orb').scrollIntoView({block:'center',behavior:'smooth'});
-  // A single user-initiated preview of all four Orb Language states.
-  // Preview never consumes daily brand or wellness quotas.
-  const sequence=[
-    ()=>momentDisplay('clock',clockMomentParts(),true),
-    ()=>momentDisplay('care',[['moment-care',wellnessPhrases[0]]],true),
-    ()=>{
-      if(document.hidden)return false;
-      clearTimeout(brandClearTimer);
-      clearTimeout(momentClearTimer);
-      const el=$('signal');
-      el.classList.remove('is-brand','is-appearing','is-moment','is-clock','is-care','is-event');
-      el.innerHTML=glassIcon('mail','orb');
-      el.classList.add('is-event');
-      void el.offsetWidth;
-      el.classList.add('is-appearing');
-      clearTimeout(noticeClearTimer);
-      noticeClearTimer=setTimeout(()=>{
-        if(!el.classList.contains('is-event'))return;
-        el.classList.remove('is-event','is-appearing');
-        el.replaceChildren();
-      },7500);
-      return true;
-    },
-    ()=>{if(document.hidden)return false;displayBrandSignature();return true}
-  ];
-  let step=0;
-  function next(){
-    if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]'))return;
-    if(!sequence[step++]())return;
-    if(step<sequence.length)previewSequenceTimer=setTimeout(next,9300);
-  }
-  previewSequenceTimer=setTimeout(next,550);
-}
-$('previewSphere').addEventListener('click',previewSphereMoments);
-function scheduleClock(delay){
-  clearTimeout(clockTimer);
-  if(document.hidden)return;
-  clockTimer=setTimeout(()=>{
-    const displayed=momentDisplay('clock',clockMomentParts());
-    scheduleClock(displayed?CLOCK_REPEAT_MS:45000);
-  },delay);
-}
-function scheduleWellness(delay){
-  clearTimeout(wellnessTimer);
-  if(document.hidden||!wellnessEnabled()||wellnessDay().count>=WELLNESS_MAX_PER_DAY)return;
-  wellnessTimer=setTimeout(()=>{
-    if(!wellnessEnabled()||document.hidden)return;
-    const progress=wellnessDay();
-    if(progress.count>=WELLNESS_MAX_PER_DAY)return;
-    if(!momentDisplay('care',[['moment-care',wellnessPhrases[progress.count%wellnessPhrases.length]]])){
-      scheduleWellness(60000);
-      return;
-    }
-    try{localStorage.setItem(WELLNESS_DAY_KEY,JSON.stringify({day:progress.day,count:progress.count+1}))}catch{}
-    scheduleWellness(WELLNESS_INTERVAL_MS);
-  },delay);
-}
-$('careToggle').addEventListener('change',e=>{
-  try{localStorage.setItem(WELLNESS_PREF_KEY,e.target.checked?'on':'off')}catch{}
-  clearTimeout(wellnessTimer);
-  if(e.target.checked)scheduleWellness(WELLNESS_INTERVAL_MS);
-});
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){
-    clearTimeout(clockTimer);clearTimeout(wellnessTimer);clearTimeout(previewSequenceTimer);
-  }else{
-    scheduleClock(13000);
-    scheduleWellness(WELLNESS_INTERVAL_MS);
-  }
-});
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-/* Local demo conversation. Each manager reply has the official tiny plasma avatar. */
-const CHAT_KEY='seyveo-chat-v1';
-let conversation=[];
-try{
-  const stored=JSON.parse(localStorage.getItem(CHAT_KEY)||'[]');
-  if(Array.isArray(stored))conversation=stored.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.text==='string').slice(-80);
-}catch{}
-function saveConversation(){
-  conversation=conversation.slice(-80);
-  try{localStorage.setItem(CHAT_KEY,JSON.stringify(conversation))}catch{}
-}
-function chatElement(role,text){
-  const row=document.createElement('div');
-  const name=document.createElement('span');name.className='reply-speaker';
-  name.textContent=role==='assistant'?'Управляющий':'Роман';
-  const content=document.createElement('div');content.className='reply-content';
-  content.textContent=text;
-  if(role==='user'){
-    row.className='reply-user';
-    row.append(name,content);
-  }else{
-    row.className='reply-assistant';
-    const avatar=document.createElement('span');avatar.className='reply-avatar';avatar.setAttribute('aria-hidden','true');
-    const image=document.createElement('img');
-    image.src=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
-    image.alt='';image.width=60;image.height=60;image.loading='lazy';
-    avatar.append(image);
-    const body=document.createElement('div');body.className='reply-assistant-body';body.append(name,content);
-    row.append(avatar,body);
-  }
-  return row;
-}
-function renderConversation(){
-  const messages=$('chatMessages');
-  messages.replaceChildren();
-  if(!conversation.length){
-    const empty=document.createElement('div');empty.className='chat-empty';
-    empty.textContent='Здесь будут ваши сообщения и ответы управляющего.';
-    messages.append(empty);
-  }else{
-    const fragment=document.createDocumentFragment();
-    for(const m of conversation)fragment.append(chatElement(m.role,m.text));
-    messages.append(fragment);
-  }
-  requestAnimationFrame(()=>{messages.scrollTop=messages.scrollHeight});
-}
-function openConversation(){
-  $('infoTitle').textContent='Переписка';
-  $('infoText').hidden=true;
-  $('replyThread').hidden=false;
-  $('scenarioRestart').hidden=true;
-  $('careSetting').hidden=true;
-  $('continueChat').hidden=false;
-  renderConversation();
-  if(!$('info').open)$('info').showModal();
-}
 function popup(title,description,scenario=false){
   $('infoTitle').textContent=title;
   $('replyThread').hidden=true;
   $('infoText').hidden=false;
   $('infoText').textContent=description;
   $('scenarioRestart').hidden=!scenario;
-  $('careSetting').hidden=!scenario;
-  $('careToggle').checked=wellnessEnabled();
-  $('continueChat').hidden=true;
   if(!$('info').open)$('info').showModal();
 }
 function showWrittenReply(userText,assistantText){
-  conversation.push({role:'user',text:userText},{role:'assistant',text:assistantText});
-  saveConversation();
-  openConversation();
+  $('infoTitle').textContent='Диалог';
+  $('infoText').hidden=true;
+  $('replyThread').hidden=false;
+  $('scenarioRestart').hidden=true;
+  $('userReplyText').textContent=userText;
+  $('assistantReplyText').textContent=assistantText;
+  const orb=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+  if($('miniAssistantOrb').getAttribute('src')!==orb)$('miniAssistantOrb').setAttribute('src',orb);
+  if(!$('info').open)$('info').showModal();
 }
 function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман · SEYVEO'}
 const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
@@ -716,11 +461,6 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
-$('openCarePreview').addEventListener('click',()=>{
-  popup('Часы и забота','Единый язык сферы: часы, забота, уведомление и знак SEYVEO. Нажмите «Посмотреть все эффекты в сфере» — элементы появятся по очереди.',false);
-  $('careSetting').hidden=false;
-  $('careToggle').checked=wellnessEnabled();
-});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 $('orb').addEventListener('click',()=>{if(confirmation){popup('Решение записано',confirmation.approved+'. Это действие выполнено только в сценарии.');return}const current=stories[state.index];popup(current?current.card:'Управляющий на связи',current?current.detail:'Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.')});
@@ -736,11 +476,6 @@ else answer='В этом прототипе я могу показать пис�
 closeComposer();showWrittenReply(q,answer);question.value='';syncComposer();
 });
 $('infoClose').addEventListener('click',()=>$('info').close());
-$('continueChat').addEventListener('click',()=>{
-  $('info').close();
-  openComposer();
-  requestAnimationFrame(()=>{question.focus();updateKeyboard()});
-});
 /* One adaptive composer, separate local draft and notebook stores. */
 const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
 const composer=$('ask'),question=$('question');
@@ -826,7 +561,6 @@ $('moreComposer').addEventListener('click',()=>{
   $('moreComposer').setAttribute('aria-expanded',String(!more.hidden));
 });
 $('viewNotes').addEventListener('click',openNotes);
-$('openChatHistory').addEventListener('click',()=>{closeComposer();openConversation()});
 $('notesClose').addEventListener('click',()=>$('notesDialog').close());
 $('notesNew').addEventListener('click',()=>{$('notesDialog').close();openComposer();expandComposer();question.focus()});
 $('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
@@ -870,5 +604,5 @@ fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',
 fab.addEventListener('contextmenu',e=>e.preventDefault());
 fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();showBrandSignature('launch');scheduleClock(13000);scheduleWellness(WELLNESS_INTERVAL_MS)})();
+restoreDraft();render();showBrandSignature('launch')})();
 </script></body></html>
