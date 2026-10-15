@@ -348,7 +348,7 @@ function scheduleTaskProgress(){
   let wait=Infinity;
   for(const task of state.history){
     if(task.status==='working'&&task.startedAt)wait=Math.min(wait,Math.max(0,task.startedAt+EXECUTION_DEMO_MS-now));
-    if(task.status==='done'&&task.doneAt)wait=Math.min(wait,Math.max(0,task.doneAt+COMPLETION_VISIBLE_MS-now));
+    if(task.status==='done'&&task.doneAt&&task.doneAt+COMPLETION_VISIBLE_MS>now)wait=Math.min(wait,task.doneAt+COMPLETION_VISIBLE_MS-now);
   }
   if(Number.isFinite(wait))taskTransitionTimer=setTimeout(render,Math.max(25,wait+25));
 }
