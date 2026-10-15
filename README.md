@@ -1,1 +1,1 @@
-# digital-manager-signature.
+# digital-manager-signature
