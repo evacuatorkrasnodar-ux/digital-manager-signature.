@@ -1,23 +1,23 @@
 /* SEYVEO · approved silver waves with a restrained emerald velvet tile.
    Brand-only accent; does not recolor the interface, orb or dock. */
 #homeHeader button.seyveo-brand-trigger{
- display:flex;align-items:center;justify-content:flex-start;gap:12px;
- height:64px;width:auto;max-width:calc(100% - 54px);flex:0 1 auto;
- background:transparent;border:0;padding:0;border-radius:18px;text-align:left;
+ display:flex;align-items:center;justify-content:flex-start;gap:9px;
+ height:44px;width:auto;max-width:calc(100% - 54px);flex:0 1 auto;
+ background:transparent;border:0;padding:0;border-radius:12px;text-align:left;
  -webkit-tap-highlight-color:transparent
 }
 #homeHeader .seyveo-brand-trigger img{
- display:block;width:64px;height:64px;flex:none;object-fit:contain;
+ display:block;width:44px;height:44px;flex:none;object-fit:contain;
  filter:none!important;
 }
-#homeHeader .seyveo-brand-caption{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}
+#homeHeader .seyveo-brand-caption{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0}
 #homeHeader .seyveo-brand-name{
- color:#f2f4f4;font-size:20px;font-weight:560;line-height:1.08;
- letter-spacing:.21em;padding-left:.21em;white-space:nowrap
+ color:#f2f4f4;font-size:14px;font-weight:560;line-height:1.16;
+ letter-spacing:.11em;padding-left:.11em;white-space:nowrap
 }
 #homeHeader .seyveo-brand-specialty{
- display:block;color:#a5afae;font-size:9px;line-height:1.25;font-weight:500;
- letter-spacing:.045em;white-space:nowrap
+ display:block;color:#a5afae;font-size:9px;line-height:1.28;font-weight:460;
+ letter-spacing:.015em;white-space:nowrap
 }
 :root[data-theme=light] #homeHeader .seyveo-brand-name{color:#253035}
 :root[data-theme=light] #homeHeader .seyveo-brand-specialty{color:#55666b}
@@ -28,9 +28,9 @@
 #signal.is-brand .brand-mark{width:98px;height:46px;object-fit:contain}
 :root[data-theme=light] #signal.is-brand .brand-mark{filter:none}
 @media(max-width:370px){
- #homeHeader button.seyveo-brand-trigger{gap:8px;height:56px}
- #homeHeader .seyveo-brand-trigger img{width:56px;height:56px}
- #homeHeader .seyveo-brand-name{font-size:18px;letter-spacing:.18em;padding-left:.18em}
- #homeHeader .seyveo-brand-specialty{font-size:8.2px;letter-spacing:.01em}
+ #homeHeader button.seyveo-brand-trigger{gap:8px;height:40px}
+ #homeHeader .seyveo-brand-trigger img{width:40px;height:40px}
+ #homeHeader .seyveo-brand-name{font-size:13px;letter-spacing:.09em;padding-left:.09em}
+ #homeHeader .seyveo-brand-specialty{font-size:8.4px;letter-spacing:0}
 }
 @media(prefers-reduced-motion:reduce){#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:1}}
