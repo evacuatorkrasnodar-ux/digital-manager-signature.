@@ -54,7 +54,7 @@
 .seyveo-tier-devmark{flex:none;font-size:10px;color:var(--secondary);padding:5px 8px;border:1px solid var(--line);border-radius:15px;background:var(--card2)}
 .seyveo-tier-intro{font-size:12px!important;line-height:1.5!important;color:var(--secondary);margin:11px 0 13px!important;white-space:normal!important}
 .seyveo-tier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-.seyveo-tier-choice{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:115px;padding:12px 9px 10px;border:1px solid var(--line);border-radius:15px;background:var(--card2);color:var(--text);text-align:left}
+.seyveo-tier-choice{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:115px;padding:12px 9px 10px;border:1px solid var(--line);border-radius:var(--seyveo-radius-choice,18px);background:var(--card2);color:var(--text);text-align:left}
 .seyveo-tier-choice>span{font-size:9px;letter-spacing:.08em;font-weight:620;color:var(--secondary)}
 .seyveo-tier-choice strong{display:block;font-size:19px;line-height:1.14;margin:9px 0 7px;letter-spacing:-.035em;font-weight:690}
 .seyveo-tier-choice small{color:var(--secondary);font-size:10px;line-height:1.35;min-height:2.7em}
@@ -69,7 +69,7 @@
 .seyveo-tier-detail li{position:relative;padding-left:16px;color:var(--secondary);font-size:12px;line-height:1.4}
 .seyveo-tier-detail li::before{content:"·";position:absolute;left:2px;color:var(--text);font-weight:700}
 .seyveo-tier-steps{display:flex;gap:8px;margin-top:12px}
-.seyveo-tier-steps button{flex:1;min-height:36px;font-size:11px;font-weight:600;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:10px}
+.seyveo-tier-steps button{flex:1;min-height:var(--seyveo-action-hit,44px);font-size:11px;font-weight:600;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:var(--seyveo-radius-action,999px)}
 .seyveo-tier-steps button:disabled{opacity:.42;cursor:default}
 .seyveo-tier-life{display:flex;align-items:center;gap:10px;margin:10px 0 0;padding:11px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
 .seyveo-tier-life-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border:1px solid var(--line);border-radius:50%;font-size:19px}
