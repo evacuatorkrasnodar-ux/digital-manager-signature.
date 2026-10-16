@@ -41,25 +41,50 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .signal.is-living.is-appearing.signal--notice .reveal-plane{
  animation:living-notice 5.2s linear both;will-change:opacity
 }
+/* SEYVEO · CINEMATIC DEPTH | experimental brand reveal.
+   Artwork and sphere are unchanged; only the interior brand is choreographed.
+   Paint all elements first and animate compositor-friendly opacity/transforms.
+   The light is clipped to the brand stage, never outside the approved orb. */
 .signal.is-pearl .pearl-stage{
  position:relative;isolation:isolate;display:grid;place-items:center;
  box-sizing:border-box;width:100%;height:100%;opacity:0;
- overflow:hidden;border-radius:22px;
- transform:translate3d(0,0,0);backface-visibility:hidden
+ overflow:hidden;border-radius:24px;
+ transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl .pearl-stage::before{
- content:"";position:absolute;left:50%;top:50%;
- width:172px;height:98px;border-radius:50%;z-index:-1;pointer-events:none;
- opacity:0;transform:translate(-50%,-50%) scale(.48);
- background:radial-gradient(ellipse,rgba(244,250,255,.33),rgba(182,215,240,.1) 44%,transparent 77%)
+ content:"";position:absolute;left:50%;top:50%;z-index:-1;
+ width:174px;height:108px;border-radius:50%;pointer-events:none;
+ opacity:0;transform:translate3d(-50%,-50%,0) scale(.7);
+ background:radial-gradient(ellipse,rgba(250,253,255,.22),rgba(194,220,242,.09) 42%,transparent 73%)
+}
+.signal.is-pearl .pearl-stage::after{
+ content:"";position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;
+ width:30px;height:122px;border-radius:50%;opacity:0;
+ background:linear-gradient(90deg,transparent,rgba(246,251,255,.13) 46%,transparent);
+ transform:translate3d(-115px,-50%,0);
+}
+.signal.is-pearl .brand-lockup{position:relative;z-index:1}
+.signal.is-pearl :is(.brand-mark,.brand-word,.brand-specialty){
+ opacity:0;backface-visibility:hidden
 }
 .signal.is-pearl.is-appearing .pearl-stage{
- animation:pearl-brand 7.4s linear both;will-change:opacity
+ animation:cinema-stage 9.3s linear both
 }
 .signal.is-pearl.is-appearing .pearl-stage::before{
- animation:pearl-light 7.4s linear both
+ animation:cinema-inner-light 9.3s linear both
 }
-
+.signal.is-pearl.is-appearing .pearl-stage::after{
+ animation:cinema-reflection 9.3s linear both
+}
+.signal.is-pearl.is-appearing .brand-mark{
+ animation:cinema-mark 9.3s linear both
+}
+.signal.is-pearl.is-appearing .brand-word{
+ animation:cinema-word 9.3s linear both
+}
+.signal.is-pearl.is-appearing .brand-specialty{
+ animation:cinema-specialty 9.3s linear both
+}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 /* Calm Living Cinema typography stays at the approved sizes. */
@@ -94,22 +119,48 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
  100%{opacity:0}
 }
-@keyframes pearl-brand{
- 0%{opacity:0;transform:scale(.975)}
- 46%{opacity:.98;transform:scale(1)}
- 68%{opacity:.98;transform:scale(1)}
- 100%{opacity:0;transform:scale(1.012)}
+@keyframes cinema-stage{
+ 0%{opacity:0}
+ 7%{opacity:1}
+ 78%{opacity:1;animation-timing-function:cubic-bezier(.42,0,.65,1)}
+ 100%{opacity:0}
 }
-@keyframes pearl-light{
- 0%{opacity:0;transform:translate(-50%,-50%) scale(.48)}
- 46%{opacity:.53;transform:translate(-50%,-50%) scale(1)}
- 68%{opacity:.33;transform:translate(-50%,-50%) scale(1.09)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}
+@keyframes cinema-inner-light{
+ 0%,7%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.7)}
+ 34%{opacity:.52;transform:translate3d(-50%,-50%,0) scale(1)}
+ 62%{opacity:.28;transform:translate3d(-50%,-50%,0) scale(1.08)}
+ 100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(1.14)}
+}
+@keyframes cinema-mark{
+ 0%,12%{opacity:0;transform:translate3d(0,8px,0) scale(.93);animation-timing-function:cubic-bezier(.2,.6,.25,1)}
+ 36%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 81%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 100%{opacity:0;transform:translate3d(0,-3px,0) scale(1)}
+}
+@keyframes cinema-word{
+ 0%,24%{opacity:0;transform:translate3d(0,7px,0);animation-timing-function:cubic-bezier(.2,.68,.27,1)}
+ 49%{opacity:1;transform:translate3d(0,0,0)}
+ 81%{opacity:1;transform:translate3d(0,0,0)}
+ 100%{opacity:0;transform:translate3d(0,-2px,0)}
+}
+@keyframes cinema-specialty{
+ 0%,39%{opacity:0;transform:translate3d(0,4px,0);animation-timing-function:cubic-bezier(.2,.68,.27,1)}
+ 59%{opacity:.97;transform:translate3d(0,0,0)}
+ 81%{opacity:.97;transform:translate3d(0,0,0)}
+ 100%{opacity:0;transform:translate3d(0,-2px,0)}
+}
+@keyframes cinema-reflection{
+ 0%,34%{opacity:0;transform:translate3d(-115px,-50%,0);animation-timing-function:cubic-bezier(.28,.12,.36,1)}
+ 51%{opacity:.38;transform:translate3d(-25px,-50%,0)}
+ 69%{opacity:0;transform:translate3d(95px,-50%,0)}
+ 100%{opacity:0;transform:translate3d(95px,-50%,0)}
 }
 @media(prefers-reduced-motion:reduce){
  .signal.is-living.is-appearing .reveal-plane,
  .signal.is-pearl.is-appearing .pearl-stage{animation:none;opacity:.86;transform:none}
- .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.2}
+ .signal.is-pearl.is-appearing .pearl-stage :is(.brand-mark,.brand-word,.brand-specialty){animation:none;opacity:1;transform:none}
+ .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.2;transform:translate3d(-50%,-50%,0)}
+ .signal.is-pearl.is-appearing .pearl-stage::after{animation:none;opacity:0}
 }
 
 
@@ -249,7 +300,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="previewEffects" class="timeline-history" type="button" aria-label="Посмотреть эффекты появления в сфере" aria-pressed="false">Эффекты</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="previewBrand" class="timeline-history" type="button" aria-label="Сразу показать фирменное появление SEYVEO" aria-pressed="false">Логотип</button><button id="previewEffects" class="timeline-history" type="button" aria-label="Посмотреть эффекты появления в сфере" aria-pressed="false">Эффекты</button><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -355,7 +406,7 @@ function glassIcon(type,place='card'){
 }
 const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
-const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=7600;
+const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=9500;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
@@ -563,19 +614,22 @@ function stopEffectsPreview(){
   const btn=$('previewEffects');
   btn.textContent='Эффекты';
   btn.setAttribute('aria-pressed','false');
+  const brandBtn=$('previewBrand');
+  brandBtn.textContent='Логотип';
+  brandBtn.setAttribute('aria-pressed','false');
   const el=$('signal');
   resetSignal(el);
   // Do not re-trigger the current mail/check notice once the demo finishes.
   const story=stories[state.index];
   noticeKey=confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none';
 }
-function previewSphereMoments(){
+function previewSphereMoments(onlyBrand=false){
   if(previewRunning){stopEffectsPreview();return}
   if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]'))return;
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
   previewRunning=true;
-  const btn=$('previewEffects');
+  const btn=$(onlyBrand?'previewBrand':'previewEffects');
   btn.textContent='Остановить';
   btn.setAttribute('aria-pressed','true');
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
@@ -610,17 +664,18 @@ function previewSphereMoments(){
       content.innerHTML=glassIcon('mail','orb');
       return content;
     }},
-    {kind:'brand',duration:7600}
+    {kind:'brand',duration:9500}
   ];
+  const scenes=onlyBrand?steps.filter(scene=>scene.kind==='brand'):steps;
   let step=0;
   function showNext(){
     if(!previewRunning)return;
     if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]')){
       stopEffectsPreview();return;
     }
-    if(step===steps.length){stopEffectsPreview();return}
+    if(step===scenes.length){stopEffectsPreview();return}
     resetSignal(el);
-    const scene=steps[step++];
+    const scene=scenes[step++];
     if(scene.kind==='brand')pearlContent(el);
     else{
       livingContent(el,scene.kind,scene.make());
@@ -634,7 +689,8 @@ function previewSphereMoments(){
   }
   previewSequenceTimer=setTimeout(showNext,400);
 }
-$('previewEffects').addEventListener('click',previewSphereMoments);
+$('previewEffects').addEventListener('click',()=>previewSphereMoments(false));
+$('previewBrand').addEventListener('click',()=>previewSphereMoments(true));
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&previewRunning)stopEffectsPreview();
 });
