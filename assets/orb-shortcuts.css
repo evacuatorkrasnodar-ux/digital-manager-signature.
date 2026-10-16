@@ -1,4 +1,4 @@
-/* SEYVEO · Black/White Velvet v4 — deliberately asymmetric icon orbit.
+/* SEYVEO · Black/White Velvet v5 — deliberately asymmetric icon orbit.
    Follow the approved screenshot, not a four-corner grid.
    Only the independent icon overlay is styled: existing sphere is untouched. */
 
@@ -34,6 +34,36 @@
   touch-action:manipulation;
   pointer-events:auto;
   transition:transform .16s ease,border-color .16s ease;
+}
+
+
+/* SEYVEO Silk Touch: momentary glass press without idle animation.
+   Pseudo-highlight is clipped inside the button and never captures touch. */
+#stage .orb-shortcut{overflow:hidden;isolation:isolate}
+#stage .orb-shortcut::before{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  opacity:.24;
+  background:radial-gradient(ellipse 75% 45% at 45% 6%,rgba(245,251,255,.22),transparent 88%);
+  transition:opacity .15s ease;
+}
+#stage .orb-shortcut svg{position:relative;z-index:1}
+#stage .orb-shortcut:is(:active,.is-silk-touched){
+  transform:translateY(1px) scale(.962);
+  border-color:rgba(244,249,255,.53);
+  box-shadow:inset 0 2px 5px rgba(1,5,13,.26),0 0 16px rgba(173,200,245,.20),0 3px 10px rgba(0,0,0,.13);
+}
+#stage .orb-shortcut:is(:active,.is-silk-touched)::before{opacity:.82}
+:root[data-theme=light] #stage .orb-shortcut:is(:active,.is-silk-touched){
+  border-color:rgba(80,123,188,.52);
+  background:linear-gradient(150deg,rgba(230,240,255,.92),rgba(206,219,242,.75));
+  box-shadow:inset 0 2px 6px rgba(57,91,151,.10),0 0 15px rgba(116,151,211,.16);
+}
+@media(prefers-reduced-motion:reduce){
+  #stage .orb-shortcut::before{transition:none}
 }
 
 #stage .orb-shortcut svg{
