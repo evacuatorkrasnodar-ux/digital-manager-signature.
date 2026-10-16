@@ -80,7 +80,7 @@ function fillAgenda(target,items,emptyTitle,emptyCaption){
   target.append(empty);
  }else for(const item of items)target.append(createEntry(item));
 }
-function dayButton(day,week=false){
+function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  const key=format(day),today=format(new Date());
  const btn=text('button','cal-day');btn.type='button';
  btn.dataset.calendarDate=key;
@@ -88,28 +88,28 @@ function dayButton(day,week=false){
  btn.dataset.selected=String(key===iso());
  btn.dataset.weekend=String(day.getDay()===0||day.getDay()===6);
  if(!week)btn.dataset.outside=String(day.getMonth()!==focus.getMonth());
- btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+', '+dayItems(key).length+' записей');
+ btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+', '+(calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length)+' записей');
  if(week)btn.append(text('small','',weekday[(day.getDay()+6)%7]));
  btn.append(text('span','cal-day-number',String(day.getDate())));
  const dots=text('span','cal-day-dots');
- if(events().some(x=>x.date===key))dots.append(text('i',''));
- if(tasks().some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
+ if(calendarEvents.some(x=>x.date===key))dots.append(text('i',''));
+ if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
  btn.append(dots);return btn;
 }
 function renderMonth(){
  const selected=new Date(focus.getFullYear(),focus.getMonth(),1);
  const grid=$('calendarMonthGrid');grid.replaceChildren();
- const first=monday(selected);
+ const first=monday(selected),calendarEvents=events(),personalTasks=tasks();
  const total=Math.ceil((((new Date(focus.getFullYear(),focus.getMonth()+1,0)).getDate())+(selected.getDay()+6)%7)/7)*7;
- for(let i=0;i<total;i++)grid.append(dayButton(step(first,i)));
+ for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
  $('calendarDay').hidden=true;
 }
 function renderWeek(){
- const mondayStart=monday(focus),root=$('calendarWeekGrid');
+ const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=events(),personalTasks=tasks();
  root.replaceChildren();
- for(let i=0;i<7;i++)root.append(dayButton(step(mondayStart,i),true));
+ for(let i=0;i<7;i++)root.append(dayButton(step(mondayStart,i),true,calendarEvents,personalTasks));
  $('calendarMonth').hidden=true;
  $('calendarWeek').hidden=false;
  $('calendarDay').hidden=true;
