@@ -427,7 +427,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
    left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
  }
 }
-</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=4"><link rel="stylesheet" href="assets/home-velvet.css?v=6"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=11"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></button><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
+</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=4"><link rel="stylesheet" href="assets/home-velvet.css?v=6"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=11"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></button><div class="heading"><h1>Мой день</h1></div><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
 <defs>
@@ -1007,7 +1007,59 @@ function showWrittenReply(userText,assistantText){
   if($('miniAssistantOrb').getAttribute('src')!==orb)$('miniAssistantOrb').setAttribute('src',orb);
   if(!$('info').open)$('info').showModal();
 }
-function greeting(){const h=new Date().getHours();return(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Роман · SEYVEO'}
+/* SEYVEO · one home voice. Pending decisions take precedence;
+   when the demo finishes, the greeting gives way to real local to-dos. */
+function daypartGreeting(){
+  const h=new Date().getHours();
+  return h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';
+}
+function ownerDisplayName(){
+  try{
+    const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+    const name=typeof profile?.name==='string'?profile.name.trim().replace(/\s+/g,' ').slice(0,32):'';
+    return name||'Роман';
+  }catch{return 'Роман'}
+}
+function localTaskBrief(){
+  try{
+    const all=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');
+    const open=Array.isArray(all)?all.filter(t=>t&&typeof t.title==='string'&&!t.done):[];
+    const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+    const due=open.filter(t=>typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
+      .sort((a,b)=>a.due.localeCompare(b.due));
+    return {count:open.length,dueToday:due.filter(t=>t.due===today).length,overdue:due.filter(t=>t.due<today).length,first:due[0]?.title||''};
+  }catch{return {count:0,dueToday:0,overdue:0,first:''}}
+}
+function syncHomeVoice(){
+  const story=stories[state.index],name=ownerDisplayName(),brief=localTaskBrief();
+  let kicker,headline,subline;
+  if(confirmation){
+    kicker='Согласовано';
+    headline=confirmation.approved;
+    subline='Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.';
+  }else if(story){
+    kicker=story.kicker;
+    headline=story.title;
+    subline=story.subtitle;
+  }else if(brief.overdue){
+    kicker='Ваш план · требует внимания';
+    headline=name+', есть дело с прошедшим сроком';
+    subline='«'+brief.first+'». Посмотрите личные дела, когда будет удобно.';
+  }else if(brief.dueToday){
+    kicker='Ваш план на сегодня';
+    headline=name+', на сегодня есть дело';
+    subline='«'+brief.first+'». Остальные записи — в разделе «Дела».';
+  }else{
+    kicker=brief.count?'Ваш день':'Всё под контролем';
+    headline=daypartGreeting()+', '+name;
+    subline=brief.count
+      ?'Личных дел в планах: '+brief.count+'. Решений от управляющего сейчас нет.'
+      :'Новых решений сейчас нет. SEYVEO на связи.';
+  }
+  $('kicker').textContent=kicker;
+  $('headline').textContent=headline;
+  $('subline').textContent=subline;
+}
 const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
 function progressDemoTasks(){
   const now=Date.now();let changed=false;
@@ -1060,16 +1112,18 @@ function scheduleTaskProgress(){
   if(Number.isFinite(wait))taskTransitionTimer=setTimeout(render,Math.max(25,wait+25));
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+window.addEventListener('seyveo:tasks-changed',syncHomeVoice);
+window.addEventListener('seyveo:profile-changed',syncHomeVoice);
+window.addEventListener('storage',event=>{
+  if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1'].includes(event.key))syncHomeVoice();
+});
 function render(){
 progressDemoTasks();
 applyTheme();
-$('greeting').textContent=greeting();
 const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
 transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
-$('kicker').textContent=confirmation?'Согласовано':isCalm?'Всё под контролем':story.kicker;
-$('headline').textContent=confirmation?confirmation.approved:isCalm?'Роман, сейчас всё спокойно':story.title;
-$('subline').textContent=confirmation?'Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.':isCalm?'Все вопросы разобраны. Новые решения появятся здесь.':story.subtitle;
+syncHomeVoice();
 $('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'<div class="demo-replay"><span>Демо завершено.</span><button type="button" id="replayDemo">Повторить ›</button></div>':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 $('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>approve(story));
