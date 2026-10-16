@@ -1202,6 +1202,19 @@ else if(/важн|сегодня|задач|дела|срочн/.test(v))answer=
 else answer='В этом прототипе я могу показать письмо, встречу, расходы или историю решений. Свободный разговор и выполнение настоящих поручений появятся после подключения ИИ и ваших сервисов.';
 closeComposer();showWrittenReply(q,answer);question.value='';syncComposer();
 });
+/* Match SEYVEO's existing modal backdrop behavior for read-only panels.
+   Only clicks OUTSIDE the dialog rectangle dismiss it; taps on its padding
+   or scrolling content must not unexpectedly close the window.
+   Microphone consent stays explicit: Cancel/Enable or native Escape. */
+for(const id of ['info','historyDialog','notesDialog']){
+  const dialog=$(id);
+  dialog.addEventListener('click',event=>{
+    if(!dialog.open||event.target!==dialog)return;
+    const bounds=dialog.getBoundingClientRect();
+    if(event.clientX<bounds.left||event.clientX>bounds.right||
+       event.clientY<bounds.top||event.clientY>bounds.bottom)dialog.close();
+  });
+}
 $('infoClose').addEventListener('click',()=>$('info').close());
 /* One adaptive composer, separate local draft and notebook stores. */
 const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
