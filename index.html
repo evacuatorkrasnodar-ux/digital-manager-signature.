@@ -418,6 +418,10 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-roadmap-item strong{display:block;font-size:13px;line-height:1.4;font-weight:590;color:var(--text)}
 .manage-roadmap-item p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--secondary);white-space:normal}
 
+/* Product promise without decorative banners or a second marketing screen. */
+.manage-roadmap-principle{display:flex;flex-direction:column;gap:4px;border:1px solid var(--soft-line);border-radius:15px;background:var(--card2);padding:11px 13px;margin:0 0 15px}
+.manage-roadmap-principle strong{font-size:13px;line-height:1.38;font-weight:630;letter-spacing:-.014em;color:var(--text)}
+.manage-roadmap-principle span{font-size:11.5px;line-height:1.46;color:var(--secondary)}
 /* Roadmap of all SEYVEO ideas: readable, searchable, foldable, touch-safe. */
 .manage-roadmap-dialog{width:min(520px,calc(100% - 26px));max-height:min(85dvh,790px)}
 .manage-roadmap-toolbar{display:flex;flex-direction:column;gap:10px;margin:4px 0 16px}
@@ -769,7 +773,8 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </div>
 </dialog><dialog id="manageRoadmapDialog" class="manage-dialog manage-roadmap-dialog" aria-labelledby="manageRoadmapTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть карту развития"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="manageRoadmapTitle">Карта развития</h2>
-<p class="manage-dialog-desc">Все идеи SEYVEO — без повторов. Видно, что уже есть в коде, что пока демонстрация и что предстоит создать.</p>
+<div class="manage-roadmap-principle"><strong>Ты решаешь, куда идти.</strong><span>SEYVEO делает всё остальное — в пределах твоих разрешений.</span></div>
+<p class="manage-dialog-desc">Один управляющий вместо сложной CRM. Здесь собраны идеи, рабочие функции, демонстрации и будущие этапы.</p>
 <div class="manage-roadmap-toolbar">
 <strong id="manageRoadmapProgress" class="manage-roadmap-progress" role="status" aria-live="polite">Загружаю карту…</strong>
 <input type="search" id="manageRoadmapSearch" class="manage-roadmap-search" placeholder="Найти идею или функцию" aria-label="Поиск по карте развития" autocomplete="off">
