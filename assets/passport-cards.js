@@ -4,6 +4,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
+const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),companyTrigger=$('homeCompanyTrigger');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
 const KEY='seyveo-company-passport-v1';
@@ -200,9 +201,42 @@ $('seyveoPreviewHigher').addEventListener('click',()=>{
 });
 window.addEventListener('storage',event=>{if(event.key===DEV_PREVIEW_KEY)drawPreview()});
 drawPreview();
+/* Restore the original header behavior: logo opens developer passport, person icon opens company card.
+   Exactly one preview at a time; there is no duplicate Management entry. */
+function closeHeaderPassport(){
+ if(!previewBox)return;
+ previewBox.hidden=true;
+ brand.hidden=true;company.hidden=true;
+ brandTrigger?.setAttribute('aria-expanded','false');
+ companyTrigger?.setAttribute('aria-expanded','false');
+}
+function toggleHeaderPassport(which){
+ if(!previewBox)return;
+ const trigger=which==='studio'?brandTrigger:companyTrigger;
+ const card=which==='studio'?brand:company;
+ const wasOpen=!previewBox.hidden&&!card.hidden;
+ closeHeaderPassport();
+ if(wasOpen)return;
+ previewBox.hidden=false;card.hidden=false;
+ trigger?.setAttribute('aria-expanded','true');
+}
+brandTrigger?.addEventListener('click',()=>toggleHeaderPassport('studio'));
+companyTrigger?.addEventListener('click',()=>toggleHeaderPassport('company'));
+document.addEventListener('pointerdown',event=>{
+ if(previewBox?.hidden)return;
+ if(previewBox.contains(event.target)||brandTrigger?.contains(event.target)||companyTrigger?.contains(event.target))return;
+ closeHeaderPassport();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!previewBox?.hidden&&!studio.open&&!dialog.open){closeHeaderPassport();}
+});
+window.addEventListener('hashchange',closeHeaderPassport);
+$('seyveoCompanyEditTop')?.addEventListener('click',()=>{
+ const field=form.elements.namedItem('name');
+ if(field&&typeof field.focus==='function')field.focus();
+});
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
-$('openCompanySettings')?.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
 $('seyveoCompanyType').addEventListener('change',toggleType);
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
