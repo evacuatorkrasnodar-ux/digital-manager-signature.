@@ -315,6 +315,29 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 }
 @keyframes manage-enter{from{opacity:0}to{opacity:1}}
 @keyframes manage-theme-show{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+/* Unified Black Velvet - Дела uses Управление surface and typography. */
+#tasksPage[hidden]{display:none!important}
+.tasks-main{flex:1;min-width:0;padding:11px 0 18px}
+.tasks-heading{margin-bottom:21px}
+.tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:15px;background:var(--card2)}
+.tasks-switch button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:39px;min-width:0;padding:9px 4px;border:0;border-radius:11px;background:transparent;color:var(--secondary);font-size:13px;font-weight:570;line-height:1.3}
+.tasks-switch button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 2px 7px #0002,inset 0 0 0 1px var(--soft-line)}
+.tasks-switch span{font-size:11px;font-weight:450;font-variant-numeric:tabular-nums;color:var(--secondary)}
+.tasks-switch button:focus-visible{outline:2px solid var(--text);outline-offset:-3px}
+.tasks-group{margin-bottom:10px}
+.tasks-records{min-height:83px}
+.tasks-records .activity-row{padding:14px 15px;min-width:0}
+.tasks-records .activity-row:last-child{border-bottom:0}
+.tasks-records .activity-row .activity-title{font-size:14px;line-height:1.35;font-weight:550;overflow-wrap:anywhere}
+.tasks-records .activity-row .activity-icon{width:31px;height:31px}
+.tasks-records .activity-row .activity-meta{font-variant-numeric:tabular-nums}
+.tasks-empty{min-height:83px;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:18px 16px}
+.tasks-empty strong{font-size:14px;font-weight:550;color:var(--text)}
+.tasks-empty small{font-size:12px;color:var(--secondary);line-height:1.5}
+.tasks-note{margin:15px 5px 0;color:var(--secondary);font-size:12px;line-height:1.55}
+@media(max-width:355px){.tasks-switch button{font-size:12px}.tasks-records .activity-row{padding:13px 11px;gap:9px}}
+@media(prefers-reduced-motion:no-preference){.tasks-main:not([hidden]){animation:manage-enter .22s ease-out both}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -354,9 +377,17 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button type="button" data-theme-choice="light" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-light" aria-hidden="true"></span><span class="manage-text"><strong>Светлая</strong><small>White Velvet</small></span><span class="manage-theme-check" aria-hidden="true">✓</span></button>
 </div>
 <p id="manageThemeNote" class="manage-theme-note" aria-live="polite">Выбрана тёмная тема Black Velvet.</p>
-</section></main><footer class="dock" aria-label="Нижняя панель">
+</section></main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
+<header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Все поручения — в одном месте.</p></header>
+<div class="tasks-switch" role="group" aria-label="Просмотр поручений">
+<button type="button" data-tasks-tab="working" aria-pressed="true">В работе <span id="tasksCountWorking" aria-hidden="true">0</span></button>
+<button type="button" data-tasks-tab="history" aria-pressed="false">История <span id="tasksCountHistory" aria-hidden="true">0</span></button>
+</div>
+<section class="manage-group tasks-group" aria-labelledby="tasksGroupHeading"><h2 id="tasksGroupHeading">В работе</h2><div class="manage-card tasks-records" id="tasksRecords" aria-label="Поручения"></div></section>
+<p class="tasks-note">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p>
+</main><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
-<span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
+<button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></button>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
 <svg class="button-art" viewBox="0 0 74 74" aria-hidden="true" focusable="false">
 <defs>
@@ -536,7 +567,7 @@ function transientNotice(key,type){
   });
 }
 function showBrandSignature(reason='ambient'){
-  if(document.hidden)return false;
+  if(document.hidden||$('homePage').hidden)return false;
   const progress=brandProgress(),now=Date.now();
   if(progress.count>=BRAND_MAX_DAILY)return false;
   const elapsed=now-progress.lastAt;
@@ -627,6 +658,27 @@ function renderHistory(){
   const el=$('historyList');
   el.innerHTML=state.history.length?state.history.slice().reverse().map(taskRow).join(''):'<div class="activity-empty">В истории пока нет поручений.</div>';
 }
+let tasksView='working';
+function renderTasksPage(){
+  const active=state.history.filter(h=>h.status==='working'||h.status==='failed');
+  const history=state.history.filter(h=>h.status!=='working'&&h.status!=='failed');
+  const list=(tasksView==='working'?active:history).slice().reverse();
+  $('tasksCountWorking').textContent=String(active.length);
+  $('tasksCountHistory').textContent=String(history.length);
+  document.querySelectorAll('[data-tasks-tab]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(button.dataset.tasksTab===tasksView));
+  });
+  $('tasksGroupHeading').textContent=tasksView==='working'?'В работе':'История поручений';
+  const emptyTitle=tasksView==='working'?'Пока нет поручений в работе':'История пока пуста';
+  const emptyDescription=tasksView==='working'
+    ?'Согласуйте действие на главной — оно появится здесь.'
+    :'Выполненные и согласованные действия появятся здесь.';
+  $('tasksRecords').innerHTML=list.length?list.map(taskRow).join(''):
+    '<div class="tasks-empty"><strong>'+emptyTitle+'</strong><small>'+emptyDescription+'</small></div>';
+}
+document.querySelectorAll('[data-tasks-tab]').forEach(button=>button.addEventListener('click',()=>{
+  if(button.dataset.tasksTab!==tasksView){tasksView=button.dataset.tasksTab;renderTasksPage();}
+}));
 function scheduleTaskProgress(){
   clearTimeout(taskTransitionTimer);
   const now=Date.now();
@@ -654,6 +706,7 @@ $('resolve')?.addEventListener('click',()=>approve(story));
 const items=activeTasks();
 $('activityList').innerHTML=items.length?items.map(taskRow).join(''):'<div class="activity-empty">Сейчас нет поручений в работе.</div>';
 if($('historyDialog').open)renderHistory();
+if(!$('tasksPage').hidden)renderTasksPage();
 scheduleTaskProgress();
 }
 function approve(story){
@@ -690,24 +743,36 @@ document.querySelectorAll('[data-manage-topic]').forEach(button=>{
   });
 });
 function syncAppPage(){
-  const theme=location.hash==='#manage-theme',manage=location.hash==='#manage'||theme;
-  $('homeHeader').hidden=manage;
-  $('homePage').hidden=manage;
+  const theme=location.hash==='#manage-theme';
+  const manage=location.hash==='#manage'||theme;
+  const tasks=location.hash==='#tasks';
+  const home=!manage&&!tasks;
+  $('homeHeader').hidden=!home;
+  $('homePage').hidden=!home;
   $('managePage').hidden=!manage;
+  $('tasksPage').hidden=!tasks;
   $('manageOverview').hidden=theme;
   $('manageThemeScreen').hidden=!theme;
-  $('navHome').classList.toggle('active',!manage);
-  $('navManage').classList.toggle('active',manage);
-  if(manage){$('navManage').setAttribute('aria-current','page');$('navHome').removeAttribute('aria-current')}
-  else{$('navHome').setAttribute('aria-current','page');$('navManage').removeAttribute('aria-current')}
-  document.title=theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
-  if(manage)$('signal').classList.remove('is-appearing');
+  const current=tasks?'navTasks':manage?'navManage':'navHome';
+  for(const id of ['navHome','navTasks','navManage']){
+    $(id).classList.toggle('active',id===current);
+    if(id===current)$(id).setAttribute('aria-current','page');
+    else $(id).removeAttribute('aria-current');
+  }
+  document.title=tasks?'Дела · SEYVEO':theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  if(!home)$('signal').classList.remove('is-appearing');
+  if(tasks){progressDemoTasks();renderTasksPage();scheduleTaskProgress();}
   window.scrollTo(0,0);
 }
-$('navHome').addEventListener('click',()=>{
-  if(location.hash==='#manage'||location.hash==='#manage-theme')
-    history.pushState(null,'',location.pathname+location.search);
+function goHome(){
+  if(location.hash)history.pushState(null,'',location.pathname+location.search);
   syncAppPage();
+}
+$('navHome').addEventListener('click',goHome);
+$('navTasks').addEventListener('click',()=>{
+  if(location.hash==='#tasks'){renderTasksPage();return;}
+  tasksView=state.history.some(h=>h.status==='working'||h.status==='failed')?'working':'history';
+  location.hash='tasks';
 });
 $('navManage').addEventListener('click',()=>{if(location.hash!=='#manage')location.hash='manage';else syncAppPage()});
 // Focus the new screen's heading only for deliberate in-app navigation.
@@ -867,12 +932,12 @@ function setHint(value){hint.textContent=value;hint.classList.add('active');clea
 function updateKeyboard(){const v=window.visualViewport;if(!v)return;const shift=Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop));document.documentElement.style.setProperty('--keyboard-offset',shift+'px')}
 if(window.visualViewport){window.visualViewport.addEventListener('resize',updateKeyboard);window.visualViewport.addEventListener('scroll',updateKeyboard)}window.addEventListener('resize',updateKeyboard);updateKeyboard();
 function stopVoice(){if(recognition){try{recognition.stop()}catch{}recognition=null}fab.classList.remove('listening')}
-function startVoice(){started=true;held=true;const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){setHint('Распознавание речи недоступно в этом браузере. Нажмите, чтобы написать.');return}try{const sr=new Speech();recognition=sr;sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;sr.onresult=e=>{const phrase=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();if(phrase){question.value=phrase;openComposer();setHint('Речь распознана. Проверьте текст перед отправкой.')}};sr.onerror=e=>setHint('Голосовой ввод: '+(e.error==='not-allowed'?'нет разрешения на микрофон':e.error));sr.onend=()=>{fab.classList.remove('listening');recognition=null};sr.start();fab.classList.add('listening');setHint('Слушаю… отпустите, чтобы закончить')}catch{setHint('Не удалось включить голосовой ввод. Используйте текст.')}} 
+function startVoice(){started=true;held=true;if($('homePage').hidden)goHome();const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){setHint('Распознавание речи недоступно в этом браузере. Нажмите, чтобы написать.');return}try{const sr=new Speech();recognition=sr;sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;sr.onresult=e=>{const phrase=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();if(phrase){question.value=phrase;openComposer();setHint('Речь распознана. Проверьте текст перед отправкой.')}};sr.onerror=e=>setHint('Голосовой ввод: '+(e.error==='not-allowed'?'нет разрешения на микрофон':e.error));sr.onend=()=>{fab.classList.remove('listening');recognition=null};sr.start();fab.classList.add('listening');setHint('Слушаю… отпустите, чтобы закончить')}catch{setHint('Не удалось включить голосовой ввод. Используйте текст.')}} 
 fab.addEventListener('pointerdown',e=>{if(e.button!==0)return;started=false;held=false;clearTimeout(holdTimer);holdTimer=setTimeout(startVoice,500)});
 function endPress(){clearTimeout(holdTimer);if(held){suppressClick=true;setTimeout(()=>suppressClick=false,350);stopVoice();held=false}}
 fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',endPress);fab.addEventListener('pointerleave',endPress);
 fab.addEventListener('contextmenu',e=>e.preventDefault());
-fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
+fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if($('homePage').hidden)goHome();if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();syncAppPage();if(location.hash!=='#manage'&&location.hash!=='#manage-theme')showBrandSignature('launch')})();
+restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
 </script></body></html>
