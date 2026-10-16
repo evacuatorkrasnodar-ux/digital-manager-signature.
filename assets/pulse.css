@@ -1,6 +1,6 @@
 /* SEYVEO · Pulse developer preview · Black / White Velvet.
    A compact preview using coherent model events, never bank/CRM claims. */
-.seyveo-pulse-dialog{width:min(450px,calc(100% - 28px));max-height:min(82dvh,800px);padding:24px 20px 20px}
+.seyveo-pulse-dialog{width:min(450px,calc(100% - 28px));max-height:min(82dvh,800px,calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding:24px 20px 20px}
 .seyveo-pulse-dialog h2{margin:0 45px 7px 0}
 .pulse-eyebrow{font-size:10px;font-weight:650;letter-spacing:.11em;color:var(--secondary);text-transform:uppercase;margin:0 45px 8px}
 .pulse-intro{font-size:12.5px!important;line-height:1.5!important;margin:0 0 17px!important;color:var(--secondary)}
