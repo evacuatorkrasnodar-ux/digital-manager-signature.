@@ -127,8 +127,8 @@
 #stage .orb-shortcut--notes{right:10%;bottom:6%}
 
 #stage .orb-shortcut:active{
-  transform:scale(.95);
-  border-color:rgba(244,249,255,.6);
+  transform:translateY(1px) scale(.962);
+  border-color:rgba(244,249,255,.53);
 }
 #stage .orb-shortcut:focus-visible{
   outline:2px solid var(--text);
