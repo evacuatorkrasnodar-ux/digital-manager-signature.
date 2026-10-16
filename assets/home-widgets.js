@@ -251,6 +251,9 @@ catalog.addEventListener('pointerup',event=>{
  }
 });
 catalog.addEventListener('pointercancel',clearDrag);
+// Management's Clients entry shows the SAME overview used by Picture, not a
+// second client database, duplicate dashboard or a fictional CRM.
+window.addEventListener('seyveo:open-clients',()=>detail('clients'));
 window.addEventListener('seyveo:picture-period',event=>{picturePeriod=event.detail?.period||'today';renderHome()});
 window.addEventListener('seyveo:tasks-changed',renderHome);
 window.addEventListener('seyveo:notes-changed',renderHome);
