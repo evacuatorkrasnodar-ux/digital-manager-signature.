@@ -45,3 +45,38 @@
 .seyveo-passport-status{min-height:1em;font-size:12px;line-height:1.45;color:var(--secondary);margin:10px 0!important;white-space:normal!important}
 .seyveo-passport-notice{padding:11px 12px;border:1px solid var(--soft-line);background:var(--card2);border-radius:13px;font-size:11px!important;line-height:1.5!important;color:var(--secondary)}
 @media(max-width:355px){.seyveo-passport-grid{gap:6px}.seyveo-passport-card{height:148px;padding:12px 10px 15px}.seyveo-passport-card-head img,.seyveo-passport-card-icon{width:25px;height:25px}.seyveo-passport-card-titles strong{font-size:12px}.seyveo-passport-arrow{width:19px;height:19px}}
+
+/* Product family preview. Developer sees every level; no paywall or fictional entitlement. */
+.seyveo-tier-section{border-top:1px solid var(--soft-line);margin-top:18px;padding-top:18px}
+.seyveo-tier-top{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.seyveo-tier-eyebrow{display:block;font-size:9px;font-weight:650;letter-spacing:.12em;color:var(--secondary);margin-bottom:5px}
+.seyveo-tier-top h3{font-size:17px;font-weight:660;letter-spacing:-.03em;margin:0;line-height:1.2}
+.seyveo-tier-devmark{flex:none;font-size:10px;color:var(--secondary);padding:5px 8px;border:1px solid var(--line);border-radius:15px;background:var(--card2)}
+.seyveo-tier-intro{font-size:12px!important;line-height:1.5!important;color:var(--secondary);margin:11px 0 13px!important;white-space:normal!important}
+.seyveo-tier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.seyveo-tier-choice{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:115px;padding:12px 9px 10px;border:1px solid var(--line);border-radius:15px;background:var(--card2);color:var(--text);text-align:left}
+.seyveo-tier-choice>span{font-size:9px;letter-spacing:.08em;font-weight:620;color:var(--secondary)}
+.seyveo-tier-choice strong{display:block;font-size:19px;line-height:1.14;margin:9px 0 7px;letter-spacing:-.035em;font-weight:690}
+.seyveo-tier-choice small{color:var(--secondary);font-size:10px;line-height:1.35;min-height:2.7em}
+.seyveo-tier-choice em{font-size:10px;color:var(--secondary);font-style:normal;line-height:1.25;margin-top:auto;padding-top:8px}
+.seyveo-tier-choice[aria-pressed=true]{border-color:color-mix(in srgb,var(--text) 60%,var(--line));background:linear-gradient(156deg,#edf5ff16,transparent 64%),var(--card)}
+.seyveo-tier-choice[aria-pressed=true] em{color:var(--text);font-weight:650}
+.seyveo-tier-detail{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:13px 13px 11px}
+.seyveo-tier-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.seyveo-tier-detail-head strong{font-size:13px;font-weight:660;letter-spacing:-.015em}
+.seyveo-tier-detail-head span{color:var(--secondary);font-size:10px;white-space:nowrap}
+.seyveo-tier-detail ul{list-style:none;margin:11px 0 10px;padding:0;display:flex;flex-direction:column;gap:8px}
+.seyveo-tier-detail li{position:relative;padding-left:16px;color:var(--secondary);font-size:12px;line-height:1.4}
+.seyveo-tier-detail li::before{content:"·";position:absolute;left:2px;color:var(--text);font-weight:700}
+.seyveo-tier-steps{display:flex;gap:8px;margin-top:12px}
+.seyveo-tier-steps button{flex:1;min-height:36px;font-size:11px;font-weight:600;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:10px}
+.seyveo-tier-steps button:disabled{opacity:.42;cursor:default}
+.seyveo-tier-life{display:flex;align-items:center;gap:10px;margin:10px 0 0;padding:11px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+.seyveo-tier-life-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border:1px solid var(--line);border-radius:50%;font-size:19px}
+.seyveo-tier-life>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.seyveo-tier-life strong{font-size:12px;font-weight:620}
+.seyveo-tier-life small{font-size:10px;line-height:1.45;color:var(--secondary)}
+.seyveo-tier-life-state{font-size:10px;color:var(--secondary);flex:none}
+.seyveo-tier-honesty{font-size:11px!important;line-height:1.5!important;color:var(--secondary);margin:12px 0 0!important;white-space:normal!important}
+.seyveo-tier-choice:focus-visible,.seyveo-tier-steps button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+@media(max-width:370px){.seyveo-tier-choice{padding:11px 7px 9px}.seyveo-tier-choice strong{font-size:17px}.seyveo-tier-choice small,.seyveo-tier-choice em{font-size:9px}.seyveo-tier-life-state{display:none}}
