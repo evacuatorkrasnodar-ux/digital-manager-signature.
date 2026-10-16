@@ -359,6 +359,9 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .tasks-empty strong{font-size:14px;font-weight:550;color:var(--text)}
 .tasks-empty small{font-size:12px;color:var(--secondary);line-height:1.5}
 .tasks-note{margin:15px 5px 0;color:var(--secondary);font-size:12px;line-height:1.55}
+.tasks-demo-info{border:0;background:none;color:var(--text);text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:3px;font:inherit;font-weight:570;padding:4px 0;cursor:pointer}
+.tasks-demo-info:hover{text-decoration-color:currentColor}
+.tasks-demo-info:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:3px}
 @media(max-width:355px){.tasks-switch button{font-size:12px}.tasks-records .activity-row{padding:13px 11px;gap:9px}}
 @media(prefers-reduced-motion:no-preference){.tasks-main:not([hidden]){animation:manage-enter .22s ease-out both}}
 
@@ -481,7 +484,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button>
 </section><section class="timeline" id="workTimeline" hidden aria-label="Активные поручения управляющего"><div class="timeline-head"><h2 class="timeline-title">В работе у SEYVEO</h2></div><div id="activityList" class="activity-list"></div></section>
 <section class="personal-brief" id="personalBrief" hidden aria-labelledby="personalBriefTitle">
-<div class="personal-brief-head"><div><small>ВАШИ ДЕЛА · НА ЭТОМ УСТРОЙСТВЕ</small><strong id="personalBriefTitle">Мой день</strong> <span id="personalBriefCount" class="personal-brief-count" hidden></span></div><button id="personalAddHome" class="personal-brief-add" type="button">+ Добавить</button></div>
+<div class="personal-brief-head"><div><small>ВАШИ ДЕЛА · НА ЭТОМ УСТРОЙСТВЕ</small><strong id="personalBriefTitle">Ближайшие дела</strong> <span id="personalBriefCount" class="personal-brief-count" hidden></span></div><button id="personalAddHome" class="personal-brief-add" type="button">+ Добавить</button></div>
 <div id="personalBriefList" class="personal-brief-list" aria-live="polite"></div>
 </section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
@@ -529,7 +532,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <p id="manageThemeNote" class="manage-theme-note" aria-live="polite">Выбрана тёмная тема Black Velvet.</p>
 </section>
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
-<header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Все поручения — в одном месте.</p></header>
+<header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Личные дела и поручения SEYVEO — в одном месте.</p></header>
 <section class="personal-tasks-panel" aria-labelledby="personalTasksTitle">
 <div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div>
 <div id="personalTaskList" class="manage-card personal-tasks-list" aria-live="polite"><p class="personal-tasks-empty">Личные дела пока не созданы.</p></div>
