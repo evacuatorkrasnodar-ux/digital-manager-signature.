@@ -33,6 +33,14 @@ function range(){
 function sum(rows){
   return rows.reduce((a,r)=>({leads:a.leads+r.leads,sales:a.sales+r.sales,revenue:a.revenue+r.revenue,cost:a.cost+r.cost}),{leads:0,sales:0,revenue:0,cost:0});
 }
+// Stable read-only source for the developer Home widgets.
+ // Return a fresh aggregate, never a mutable ledger or simulated bank connection.
+ window.SEYVEO_PULSE_DEMO=Object.freeze({
+  snapshot(scope='today'){
+   const days={today:1,week:7,month:30,year:365}[scope]||1;
+   return Object.freeze(sum(ledger.filter(row=>row.age<days)));
+  }
+ });
 function periodLabels(n){
   if(period==='today')return ['00','04','08','12','16','20'];
   if(period==='week')return ['−6','−5','−4','−3','−2','−1','Сег.'];
