@@ -1,4 +1,4 @@
-/* SEYVEO · Pearl Mist v5 · layered depth and tap-only focus reveal INSIDE the existing glass sphere.
+/* SEYVEO · Pearl Mist v6 · layered depth and tap-only focus reveal INSIDE the existing glass sphere.
    Three soft gradients, composited for a few seconds after a real orb press.
    No videos, canvas, WebGL, perpetual motion, or changes to sphere art. */
 
@@ -92,21 +92,9 @@
   100%{opacity:0;transform:translate3d(7%,-21%,0) rotate(25deg) scale(1.17)}
 }
 
-/* Black Velvet — Deep Reveal: a subtle optical focus pull, no extra fog.
-   aria-expanded is only true when a real tap opens the manager reply,
-   leaving the automatic brand presentation undisturbed. */
-#orb[aria-expanded="true"] .signal.is-pearl.is-appearing .pearl-stage{
-  transform-origin:center center;
-  animation:seyveo-logo-depth 9.3s linear both;
-}
-@keyframes seyveo-logo-depth{
-  0%{transform:translate3d(0,7px,0) scale(.895);filter:blur(3px)}
-  18%{transform:translate3d(0,5px,0) scale(.93);filter:blur(2px)}
-  36%{transform:translate3d(0,2px,0) scale(.975);filter:blur(.65px)}
-  52%{transform:translate3d(0,0,0) scale(1);filter:blur(0)}
-  80%{transform:translate3d(0,0,0) scale(1);filter:blur(0)}
-  100%{transform:translate3d(0,-1px,0) scale(1.012);filter:blur(0)}
-}
+/* Logo no longer animates its entire container on tap. The existing
+   cinema-mark/word/specialty opacity sequence in index.html remains in place:
+   it reveals the logo smoothly without scale, position shift or GPU blur. */
 
 /* White Velvet: mist still visible, but it never stains the bright plasma. */
 :root[data-theme=light] #orb .orb-mist-cloud--a{
@@ -128,11 +116,6 @@
     radial-gradient(ellipse 33% 30% at 80% 50%,rgba(168,193,228,.27),transparent 100%);
 }
 @media(prefers-reduced-motion:reduce){
-  #orb[aria-expanded="true"] .signal.is-pearl.is-appearing .pearl-stage{
-    animation:none!important;
-    filter:none!important;
-    transform:none!important;
-  }
   #orb .orb-mist,
   #orb .orb-mist-cloud{animation:none!important;opacity:0!important}
 }
