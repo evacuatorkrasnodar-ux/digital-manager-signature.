@@ -71,7 +71,7 @@
     press(button);
     // Fires synchronously from the user's click; no duplicate audio engine.
     document.dispatchEvent(new Event('seyveo:silk-touch'));
-    if(action==='tasks')window.dispatchEvent(new Event('seyveo:decision-shortcut'));
+    if(action==='tasks')window.dispatchEvent(new Event('seyveo:results-shortcut'));
     else if(action==='activity')window.dispatchEvent(new Event('seyveo:pulse-open'));
     else target.click();
   });
