@@ -12,7 +12,7 @@ const roadmap=[
    ['Заметки и данные','Локальные записи, черновики и экспорт копии.'],
    ['Паспорта SEYVEO и компании','Верхний логотип открывает паспорт SEYVEO, значок пользователя — карточку компании. Изменение реквизитов, отправка и печать доступны в самой карточке, без отдельной строки в Управлении.'],
    ['Предпросмотр Business Start / Pro / Max','В паспорте продукта видны все уровни, задачи каждого и переходы вверх и вниз; выбор сохраняется локально только как режим просмотра разработчика. Life остаётся отдельным.'],
-   ['Чистая Главная','Сфера, умное сообщение и нужные рекомендации; дублирующий ряд направления, личных дел и подключений удалён. Настройки и дела доступны в своих разделах.']
+   ['Главная для работы · Картина для данных','На Главной — сфера, рекомендации и действия. Показатели, клиенты, расходы и графики вынесены в «Картину» с выбором карточек.']
  ]},
  {status:'Пробный режим',name:'Проверяем',items:[
    ['Умный текст под сферой','Единое сообщение SEYVEO: рекомендации, подтверждения, реальные локальные дела и приветствие по времени суток. Правовые новости пока только в учебном сценарии.'],
@@ -67,7 +67,8 @@ const KEYS=Object.freeze({
  notes:'seyveo-notes-v1',
  draft:'seyveo-draft-v1',
  tasks:'seyveo-personal-tasks-v1',
- company:'seyveo-company-passport-v1'
+ company:'seyveo-company-passport-v1',
+ pictureWidgets:'seyveo-home-widgets-v1'
 });
 function read(key){
  try{return localStorage.getItem(key)}catch{return null}
@@ -82,6 +83,7 @@ function snapshot(){
  const draft=read(KEYS.draft);
  const tasks=parsed(read(KEYS.tasks),[]);
  const company=parsed(read(KEYS.company),null);
+ const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
  const rawTierPreview=read('seyveo-developer-tier-preview-v1');
  const developerTierPreview=['start','pro','max'].includes(rawTierPreview)?rawTierPreview:null;
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
@@ -94,6 +96,7 @@ function snapshot(){
   notes:Array.isArray(notes)?notes:[],
   personalTasks:Array.isArray(tasks)?tasks:[],
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
+  pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
   developerTierPreview,
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
@@ -118,6 +121,7 @@ function drawData(){
   ['Мои записи',String(countOf(record.notes))],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
+  ['Моя картина',record.pictureWidgets?String(record.pictureWidgets.ids.length)+' выбранных':'Стандартный набор'],
   ['Предпросмотр уровня',record.developerTierPreview?'Business '+({start:'Start',pro:'Pro',max:'Max'}[record.developerTierPreview]):'По умолчанию · Pro'],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
