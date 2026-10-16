@@ -51,7 +51,7 @@ function drawPreview(){
  lower.textContent=index>0?'← '+TIERS[index-1].short:'Начало линейки';
  higher.textContent=index<TIERS.length-1?'↑ '+TIERS[index+1].short:'Флагман MAX';
  const summary=$('seyveoPassportPreviewTier');
- if(summary)summary.textContent='Предпросмотр '+tier.short;
+ if(summary)summary.textContent=tier.short;
 }
 
 const LABELS={npd:'Самозанятый',ip:'Индивидуальный предприниматель',org:'Организация'};
