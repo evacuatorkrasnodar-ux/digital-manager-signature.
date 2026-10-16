@@ -1,4 +1,4 @@
-/* SEYVEO · Black/White Velvet v3 — deliberately asymmetric icon orbit.
+/* SEYVEO · Black/White Velvet v4 — deliberately asymmetric icon orbit.
    Follow the approved screenshot, not a four-corner grid.
    Only the independent icon overlay is styled: existing sphere is untouched. */
 
@@ -48,13 +48,15 @@
   pointer-events:none;
 }
 
-/* An imperfect circle, intentionally.
-   Clockwise: calendar (10–11), tasks (1–2), notes (4–5), activity (7–8).
-   Lower buttons sit in the lower arc instead of across the sphere's equator. */
-#stage .orb-shortcut--calendar{left:0%;top:16%}
-#stage .orb-shortcut--tasks{right:0%;top:20%}
-#stage .orb-shortcut--activity{left:-2%;bottom:9%}
-#stage .orb-shortcut--notes{right:1%;bottom:3%}
+/* Measured against the supplied iPhone screenshot: the visible sphere sits inside
+   the transparent edge of its original SVG. Position the BUTTON CENTERS
+   tangential to its outer ring, not on the overlay's distant outer corners.
+   Deliberate angular offsets preserve the imperfect circular arrangement.
+   No orbital animation and no changes to the existing plasma element. */
+#stage .orb-shortcut--calendar{left:8%;top:16%}
+#stage .orb-shortcut--tasks{right:5%;top:20%}
+#stage .orb-shortcut--activity{left:8%;bottom:9%}
+#stage .orb-shortcut--notes{right:10%;bottom:6%}
 
 #stage .orb-shortcut:active{
   transform:scale(.95);
@@ -75,20 +77,19 @@
   border-color:rgba(70,106,169,.5);
 }
 
-/* Keep an accessible touch area. On narrower phones the orbit contracts a little
-   while maintaining four distinct heights (never line up in pairs). */
+/* Preserve useful 44px tap targets and asymmetry on smaller iPhones. */
 @media(max-width:375px){
   #stage .orb-shortcut svg{width:20px;height:20px}
-  #stage .orb-shortcut--calendar{left:0%;top:16%}
-  #stage .orb-shortcut--tasks{right:0%;top:21%}
-  #stage .orb-shortcut--activity{left:-1%;bottom:10%}
-  #stage .orb-shortcut--notes{right:0%;bottom:4%}
+  #stage .orb-shortcut--calendar{left:7%;top:16%}
+  #stage .orb-shortcut--tasks{right:5%;top:21%}
+  #stage .orb-shortcut--activity{left:7%;bottom:9%}
+  #stage .orb-shortcut--notes{right:9%;bottom:7%}
 }
 @media(max-width:345px){
-  #stage .orb-shortcut--calendar{left:0%;top:17%}
-  #stage .orb-shortcut--tasks{right:0%;top:22%}
-  #stage .orb-shortcut--activity{left:0%;bottom:12%}
-  #stage .orb-shortcut--notes{right:0%;bottom:6%}
+  #stage .orb-shortcut--calendar{left:6%;top:17%}
+  #stage .orb-shortcut--tasks{right:4%;top:22%}
+  #stage .orb-shortcut--activity{left:6%;bottom:10%}
+  #stage .orb-shortcut--notes{right:8%;bottom:8%}
 }
 @media(prefers-reduced-motion:reduce){
   #stage .orb-shortcut{transition:none}
