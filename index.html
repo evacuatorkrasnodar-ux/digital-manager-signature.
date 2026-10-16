@@ -1,6 +1,8 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#090a0c"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник. Главная с демонстрационными сценариями."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=4"><link rel="icon" type="image/svg+xml" href="assets/official-logo.svg?v=5"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=2"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-kerning:normal;--type-display:28px;--type-heading:22px;--type-body:15px;--type-body-compact:14px;--type-label:13px;--type-caption:12px;--type-eyebrow:11px;color-scheme:dark;--bg:#080a0e;--card:#171b23;--card2:#222835;--text:#f6f8fc;--secondary:#9faaba;--line:#353b47;--glass:#e3eefa;--shadow:#0007;--soft-line:#ffffff17}
 :root[data-theme=light]{color-scheme:light;--bg:#f4f6fa;--card:#fff;--card2:#f2f5f9;--text:#192132;--secondary:#687489;--line:#e3e7ee;--glass:#344a70;--shadow:#8797b226;--soft-line:#1d30401b}
+/* SEYVEO shape vocabulary: one shared language, not one shape for all buttons. */
+:root{--seyveo-radius-action:999px;--seyveo-radius-choice:18px;--seyveo-radius-segment:14px;--seyveo-radius-icon:50%;--seyveo-action-hit:44px}
 *{box-sizing:border-box}
 html,body{min-height:100%;margin:0;background:var(--bg);color:var(--text)}
 body{-webkit-font-smoothing:antialiased}
@@ -135,7 +137,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .event-copy small{display:block;font-size:var(--type-label);color:var(--secondary);margin-top:4px;line-height:1.45}
 .card-tag{font-size:var(--type-caption);line-height:1.4;letter-spacing:.005em;color:var(--secondary);border-top:1px solid var(--soft-line);margin-top:14px;padding-top:11px}
 .actions{display:flex;gap:9px;margin-top:13px}
-.btn{padding:11px 12px;border:1px solid var(--line);background:var(--card2);border-radius:14px;flex:1;font-size:var(--type-body-compact);font-weight:590;line-height:1.3;min-height:43px}
+.btn{padding:11px 14px;border:1px solid var(--line);background:var(--card2);border-radius:var(--seyveo-radius-action);flex:1;font-size:var(--type-body-compact);font-weight:590;line-height:1.3;min-height:var(--seyveo-action-hit)}
 .btn.primary{background:#eaf1fb;color:#152032;border-color:#eaf1fb}
 :root[data-theme=light] .btn.primary{background:#16243a;color:white;border-color:#16243a}
 .approval-note{font-size:var(--type-label);line-height:1.45;text-align:center;color:var(--secondary);margin:3px 0 6px;animation:arrive .25s ease-out}
@@ -241,7 +243,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .composer-tool svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .composer-tool small{font-size:var(--type-eyebrow);line-height:1.25;white-space:nowrap}
 .prompt.expanded .composer-more:not([hidden]){display:flex;gap:7px;flex-wrap:wrap}
-.composer-more button{background:var(--card2);color:var(--text);border:1px solid var(--soft-line);border-radius:14px;padding:8px 10px;font:inherit;font-size:var(--type-label);line-height:1.3;cursor:pointer}
+.composer-more button{background:var(--card2);color:var(--text);border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-action);padding:9px 13px;min-height:var(--seyveo-action-hit);font:inherit;font-size:var(--type-label);line-height:1.3;cursor:pointer}
 .prompt .composer-status:not([hidden]){display:block;color:var(--secondary);font-size:var(--type-caption);line-height:1.35;min-height:13px}
 .composer-status[hidden]{display:none!important}
 .notes-dialog{width:min(440px,calc(100% - 30px))}
@@ -277,7 +279,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-heading>p:last-child{margin:0;color:var(--secondary);font-size:13px;line-height:1.45}
 .manage-group{margin:0 0 20px}
 .manage-group h2{margin:0 0 9px;padding-left:6px;font-size:12px;font-weight:600;line-height:1.4;letter-spacing:.005em;color:var(--secondary)}
-.manage-card,.manage-theme-list{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:inset 0 1px 0 #ffffff08}
+.manage-card,.manage-theme-list{background:var(--card);border:1px solid var(--line);border-radius:var(--seyveo-radius-choice);overflow:hidden;box-shadow:inset 0 1px 0 #ffffff08}
 .manage-row{position:relative;display:flex;align-items:center;gap:10px;min-height:62px;width:100%;padding:12px 15px;
  background:transparent;border:0;text-align:left;color:var(--text);transition:background-color .16s ease}
 .manage-row+.manage-row::before{content:"";position:absolute;top:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
@@ -329,8 +331,8 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 #tasksPage[hidden]{display:none!important}
 .tasks-main{flex:1;min-width:0;padding:11px 0 18px}
 .tasks-heading{margin-bottom:21px}
-.tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:15px;background:var(--card2)}
-.tasks-switch button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:39px;min-width:0;padding:9px 4px;border:0;border-radius:11px;background:transparent;color:var(--secondary);font-size:13px;font-weight:570;line-height:1.3}
+.tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-choice);background:var(--card2)}
+.tasks-switch button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:39px;min-width:0;padding:9px 4px;border:0;border-radius:var(--seyveo-radius-segment);background:transparent;color:var(--secondary);font-size:13px;font-weight:570;line-height:1.3}
 .tasks-switch button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 2px 7px #0002,inset 0 0 0 1px var(--soft-line)}
 .tasks-switch span{font-size:11px;font-weight:450;font-variant-numeric:tabular-nums;color:var(--secondary)}
 .tasks-switch button:focus-visible{outline:2px solid var(--text);outline-offset:-3px}
@@ -352,7 +354,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .wake-voice-status[hidden]{display:none!important}
 .wake-voice-status{position:fixed;z-index:41;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:9px;max-width:calc(100% - 36px);padding:6px 8px 6px 12px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--text);box-shadow:0 8px 26px #0003;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:12px;white-space:nowrap}
 .wake-voice-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--text);opacity:.65}
-.wake-voice-status button{flex:none;border:1px solid var(--soft-line);border-radius:14px;padding:6px 9px;background:var(--card2);color:var(--text);font:inherit;font-size:11px}
+.wake-voice-status button{flex:none;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-action);padding:6px 11px;background:var(--card2);color:var(--text);font:inherit;font-size:11px}
 .wake-voice-status button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .assistant-button.wake-ready::before{opacity:.32;transform:scale(1.035)}
 .assistant-button.wake-awake::before{animation:assistant-velvet-halo 2.1s ease-in-out infinite}
