@@ -6,7 +6,10 @@
 *{box-sizing:border-box}
 html,body{min-height:100%;margin:0;background:var(--bg);color:var(--text)}
 body{-webkit-font-smoothing:antialiased}
-.app{max-width:530px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;padding:calc(24px + env(safe-area-inset-top)) 20px calc(148px + env(safe-area-inset-bottom))}
+.app{max-width:530px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;padding:calc(24px + env(safe-area-inset-top, 0px)) max(20px,calc(12px + env(safe-area-inset-right, 0px))) calc(148px + env(safe-area-inset-bottom, 0px)) max(20px,calc(12px + env(safe-area-inset-left, 0px)))}
+/* Preserve display-cutout space in iOS PWA and supported Android browser views.
+   Portrait keeps our original 20px sides; landscape reserves the camera/notch edge. */
+@media(max-width:649px){.app{padding-top:calc(16px + env(safe-area-inset-top, 0px))}}
 button{font:inherit;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:2px solid #b3c4e7;outline-offset:3px}
 .top{display:flex;align-items:center;gap:12px}
@@ -17,7 +20,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .greeting{font-size:var(--type-body-compact);line-height:1.4;color:var(--secondary);margin:5px 0 0}
 
 .home-main{flex:1;display:flex;flex-direction:column}
-.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:20px 0 14px;min-height:385px}
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:8px 0 14px;min-height:385px}
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
 .plasma-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none;filter:none}
 
@@ -122,7 +125,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 
 
 
-.message{text-align:center;width:100%;max-width:385px;margin:-3px auto 0;min-height:106px}
+.message{text-align:center;width:100%;max-width:385px;margin:-7px auto 0;min-height:106px}
 .kicker{font-size:var(--type-eyebrow);font-weight:580;line-height:1.45;letter-spacing:.13em;color:var(--secondary);text-transform:uppercase}
 .message h2{font-size:var(--type-heading);font-weight:660;line-height:1.27;letter-spacing:-.03em;margin:10px 0 8px}
 .message p{font-size:var(--type-body-compact);color:var(--secondary);line-height:1.5;margin:0}
@@ -264,8 +267,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 :root[data-theme=light] .button-art .voice-dot{fill:#243b68}
 @media(max-width:355px){.nav-home{left:14%}.nav-tasks{left:32%}.nav-manage{left:87%}.nav-item{min-width:58px;font-size:9.5px}}
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
-@media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
-@media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
+@media(max-height:760px){.stage{min-height:333px;padding-top:4px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
+@media(min-height:920px){.stage{min-height:455px;padding-top:18px}}
 
 
 /* SEYVEO Management · Black Velvet, shared theme tokens, one cohesive material. */
