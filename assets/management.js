@@ -84,7 +84,7 @@ const roadmap=[
  ]},
  {id:'life',name:'Личная жизнь, качество и безопасность',items:[
   ['life','SEYVEO Life','Личные планы, дела, дом, семья и здоровье доступны параллельно любому бизнес-уровню.','plan'],
-  ['calendar','Полноценный календарь','День, неделя, месяц, встречи, сроки и подключаемые календари. Сейчас есть только дела с датой.','plan'],
+  ['calendar','Локальный календарь','День, неделя, месяц, сроки; события с датой и временем, совместный обзор с личными делами. Внешние календари не подключены.','ready'],
   ['health','Здоровье и забота','Шаги, пульс, давление и забота о близких через разрешённые источники, без выдуманной синхронизации.','plan'],
   ['family','Семейные пространства','Общие события и дела с отдельными личными правами доступа и согласием участников.','plan'],
   ['transitions','Переход между этапами','Life ↔ Business Start / Pro / Max с сохранением личных данных и безопасным отключением рабочих связей.','plan'],
@@ -178,6 +178,7 @@ const KEYS=Object.freeze({
  notes:'seyveo-notes-v1',
  draft:'seyveo-draft-v1',
  tasks:'seyveo-personal-tasks-v1',
+ calendarEvents:'seyveo-calendar-events-v1',
  company:'seyveo-company-passport-v1',
  pictureWidgets:'seyveo-home-widgets-v1',
  roadmapProgress:'seyveo-roadmap-progress-v1'
@@ -194,6 +195,7 @@ function snapshot(){
  const oldState=parsed(read(KEYS.previous),null);
  const draft=read(KEYS.draft);
  const tasks=parsed(read(KEYS.tasks),[]);
+ const calendarEvents=parsed(read(KEYS.calendarEvents),[]);
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
  const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
@@ -208,6 +210,7 @@ function snapshot(){
   oldState:oldState&&typeof oldState==='object'&&!Array.isArray(oldState)?oldState:null,
   notes:Array.isArray(notes)?notes:[],
   personalTasks:Array.isArray(tasks)?tasks:[],
+  calendarEvents:Array.isArray(calendarEvents)?calendarEvents:[],
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
   roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
@@ -234,6 +237,7 @@ function drawData(){
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Мои записи',String(countOf(record.notes))],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
+  ['Календарь',String(countOf(record.calendarEvents))+' локальных событий'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
   ['Моя картина',record.pictureWidgets?String(record.pictureWidgets.ids.length)+' выбранных':'Стандартный набор'],
   ['Карта развития',String(roadmapCounts().checked)+' из '+String(roadmapCounts().total)+' отмечено'],
