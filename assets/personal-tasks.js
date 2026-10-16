@@ -74,6 +74,7 @@ function render(){
  else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Здесь будут ваши настоящие дела — не демосценарии.'));
  $('personalBriefCount').textContent=open.length?String(open.length):'';
  $('personalBriefCount').hidden=!open.length;
+ window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
 function openDialog(){
  form.reset();$('personalTaskStatus').textContent='';
