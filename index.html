@@ -380,11 +380,11 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <h2 id="manage-feedback-title">Отклик</h2>
 <div class="manage-card">
 <label class="manage-feedback-row" for="feedbackSound">
-<span class="manage-text"><strong>Звук нажатий</strong><small>Тихий короткий щелчок</small></span>
+<span class="manage-text"><strong>Звук важных действий</strong><small>Мягкий бархатный отклик без лишних щелчков</small></span>
 <input id="feedbackSound" class="manage-native-switch" type="checkbox" switch autocomplete="off">
 </label>
 <label class="manage-feedback-row" for="feedbackHaptic">
-<span class="manage-text"><strong>Тактильный отклик</strong><small>Короткое касание, если поддерживается</small></span>
+<span class="manage-text"><strong>Тактильный отклик</strong><small>Лёгкое касание при выборе и подтверждении</small></span>
 <input id="feedbackHaptic" class="manage-native-switch" type="checkbox" switch autocomplete="off" checked aria-describedby="feedbackSupport">
 </label>
 </div>
@@ -486,50 +486,56 @@ try{
   }
 }catch{}
 let clickAudioContext=null,clickNoiseBuffer=null,lastClickAt=0;
-function clickSound(){
+// A discreet velvet tap: low-passed felt texture and a short, rounded tone.
+// Played only for meaningful completed actions and explicit user selections.
+function clickSound(kind='select'){
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return;
   try{
     if(!clickAudioContext)clickAudioContext=new AC();
     const ctx=clickAudioContext;
     if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-    const t=ctx.currentTime;
+    const t=ctx.currentTime+.002;
+    const confirm=kind==='confirm';
     if(!clickNoiseBuffer){
-      clickNoiseBuffer=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*.018)),ctx.sampleRate);
+      clickNoiseBuffer=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*.030)),ctx.sampleRate);
       const data=clickNoiseBuffer.getChannelData(0);
       let seed=81327;
       for(let i=0;i<data.length;i++){
         seed=(seed*1664525+1013904223)>>>0;
-        data[i]=((seed/4294967296)*2-1)*(1-i/data.length);
+        data[i]=((seed/4294967296)*2-1)*Math.pow(1-i/data.length,2);
       }
     }
-    const noise=ctx.createBufferSource();noise.buffer=clickNoiseBuffer;
-    const high=ctx.createBiquadFilter();high.type='highpass';high.frequency.value=1700;
-    const light=ctx.createGain();light.gain.setValueAtTime(.0001,t);
-    light.gain.exponentialRampToValueAtTime(.018,t+.001);
-    light.gain.exponentialRampToValueAtTime(.0001,t+.018);
-    noise.connect(high);high.connect(light);light.connect(ctx.destination);
-    noise.start(t);noise.stop(t+.019);
+    const texture=ctx.createBufferSource();texture.buffer=clickNoiseBuffer;
+    const felt=ctx.createBiquadFilter();felt.type='lowpass';felt.frequency.value=950;felt.Q.value=.5;
+    const rustle=ctx.createGain();
+    rustle.gain.setValueAtTime(.00001,t);
+    rustle.gain.exponentialRampToValueAtTime(confirm?.0035:.0025,t+.003);
+    rustle.gain.exponentialRampToValueAtTime(.00001,t+.028);
+    texture.connect(felt);felt.connect(rustle);rustle.connect(ctx.destination);
+    texture.start(t);texture.stop(t+.03);
     const tap=ctx.createOscillator();tap.type='sine';
-    tap.frequency.setValueAtTime(235,t);
-    tap.frequency.exponentialRampToValueAtTime(145,t+.023);
-    const body=ctx.createGain();body.gain.setValueAtTime(.0001,t);
-    body.gain.exponentialRampToValueAtTime(.015,t+.002);
-    body.gain.exponentialRampToValueAtTime(.0001,t+.025);
+    tap.frequency.setValueAtTime(confirm?187:174,t);
+    tap.frequency.exponentialRampToValueAtTime(confirm?123:116,t+.034);
+    const body=ctx.createGain();
+    body.gain.setValueAtTime(.00001,t);
+    body.gain.exponentialRampToValueAtTime(confirm?.011:.008,t+.004);
+    body.gain.exponentialRampToValueAtTime(.00001,t+.042);
     tap.connect(body);body.connect(ctx.destination);
-    tap.start(t);tap.stop(t+.028);
+    tap.start(t);tap.stop(t+.044);
   }catch{}
 }
-function clickHaptic(){
+function clickHaptic(kind='select'){
   if(!feedbackPrefs.haptic||typeof navigator.vibrate!=='function')return;
-  try{navigator.vibrate(8)}catch{}
+  try{navigator.vibrate(kind==='confirm'?9:6)}catch{}
 }
-function playFeedback(){
+function playFeedback(kind='select'){
+  if(!feedbackPrefs.sound&&!feedbackPrefs.haptic)return;
   const now=performance.now();
-  if(now-lastClickAt<90)return;
+  if(now-lastClickAt<240)return;
   lastClickAt=now;
-  if(feedbackPrefs.sound)clickSound();
-  clickHaptic();
+  if(feedbackPrefs.sound)clickSound(kind);
+  clickHaptic(kind);
 }
 function storeFeedback(){
   try{localStorage.setItem(FEEDBACK_KEY,JSON.stringify(feedbackPrefs))}catch{}
@@ -546,15 +552,6 @@ $('feedbackHaptic').addEventListener('change',event=>{
   storeFeedback();
   if(feedbackPrefs.haptic)clickHaptic();
 });
-// Apply feedback only to deliberate taps on buttons, not to scrolling, typing,
-// speech hold gestures, synthetic clicks or background updates.
-document.addEventListener('click',event=>{
-  if(!event.isTrusted)return;
-  const button=event.target.closest('button');
-  if(!button||button.disabled||button.id==='assistantButton')return;
-  if(!feedbackPrefs.sound&&!feedbackPrefs.haptic)return;
-  playFeedback();
-},true);
 
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
@@ -815,6 +812,7 @@ scheduleTaskProgress();
 }
 function approve(story){
 if(confirmation)return;
+playFeedback('confirm');
 state.history.push({id:'task-'+Date.now()+'-'+Math.random().toString(36).slice(2),label:story.approved,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),status:'working',startedAt:Date.now(),doneAt:0});
 state.history=state.history.slice(-100);
 state.index=Math.min(stories.length,state.index+1);confirmation=story;save();render();
@@ -823,6 +821,7 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 document.querySelectorAll('[data-theme-choice]').forEach(button=>{
   button.addEventListener('click',()=>{
     if(state.theme===button.dataset.themeChoice)return;
+    playFeedback('select');
     state.theme=button.dataset.themeChoice;
     save();applyTheme();
   });
@@ -904,6 +903,7 @@ $('scenarioInfo').addEventListener('click',()=>popup('Как работает э
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 $('orb').addEventListener('click',()=>{if(confirmation){popup('Решение записано',confirmation.approved+'. Это действие выполнено только в сценарии.');return}const current=stories[state.index];popup(current?current.card:'Управляющий на связи',current?current.detail:'Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.')});
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
+playFeedback('confirm');
 const v=q.toLowerCase();const current=stories[state.index];
 let answer;
 if(/письм|клиент|ответ/.test(v))answer=stories[0].detail;
@@ -992,7 +992,7 @@ function composerText(){const v=question.value.trim();if(!v)composerMessage('С�
 $('saveNote').addEventListener('click',()=>{
   const value=composerText();if(!value)return;
   const record={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now()};
-  if(putNotes([record,...getNotes()]))composerMessage('Сохранено в «Мои записи» · на этом устройстве');
+  if(putNotes([record,...getNotes()])){playFeedback('confirm');composerMessage('Сохранено в «Мои записи» · на этом устройстве')}
   else composerMessage('Не удалось сохранить запись');
 });
 $('moreComposer').addEventListener('click',()=>{
