@@ -12,6 +12,7 @@ const roadmap=[
    ['Заметки и данные','Локальные записи, черновики и экспорт копии.']
  ]},
  {status:'Пробный режим',name:'Проверяем',items:[
+   ['Первое знакомство SEYVEO','Компактный выбор Life / Business Start / Business Pro / Business Max и необязательное имя. Сохраняются только на этом устройстве; пока это не настоящий разговор с ИИ.'],
    ['Обращение по имени «SEYVEO»','Прототип в открытой PWA после согласия. Надёжную работу на iPhone и беззвучное ожидание ещё нужно проверить.']
  ]},
  {status:'В планах',name:'Следующие этапы',items:[
@@ -69,6 +70,7 @@ function snapshot(){
  const notes=parsed(read(KEYS.notes),[]);
  const oldState=parsed(read(KEYS.previous),null);
  const draft=read(KEYS.draft);
+ const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
  return {
   product:'SEYVEO',
   exportedAt:new Date().toISOString(),
@@ -76,7 +78,8 @@ function snapshot(){
   state:state&&typeof state==='object'&&!Array.isArray(state)?state:{},
   oldState:oldState&&typeof oldState==='object'&&!Array.isArray(oldState)?oldState:null,
   notes:Array.isArray(notes)?notes:[],
-  draft:typeof draft==='string'?draft:''
+  draft:typeof draft==='string'?draft:'',
+  introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
  };
 }
 function countOf(list){return Array.isArray(list)?list.length:0}
@@ -84,6 +87,7 @@ function drawData(){
  const record=snapshot(),list=$('manageDataSummary');
  list.replaceChildren();
  const parts=[
+  ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Мои записи',String(countOf(record.notes))],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
