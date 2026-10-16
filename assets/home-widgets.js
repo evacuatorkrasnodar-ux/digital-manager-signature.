@@ -3,9 +3,10 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const home=$('homeWidgetArea'),grid=$('homeWidgetGrid'),config=$('homeWidgetsManageDialog');
+const home=$('pictureWidgetArea'),grid=$('homeWidgetGrid'),config=$('homeWidgetsManageDialog');
 const catalog=$('homeWidgetsCatalog'),details=$('homeWidgetDetails');
 if(!home||!grid||!config||!catalog||!details)return;
+// Keep saved settings when migrating from Home to Picture.
 const KEY='seyveo-home-widgets-v1';
 const PROFILE='seyveo-first-acquaintance-v1';
 const CATALOG=Object.freeze([
@@ -63,10 +64,11 @@ function update(next){
  if(!persist()){selected=previous;return}
  renderHome();renderCatalog();
 }
+let picturePeriod='today';
 function demo(){
  const source=window.SEYVEO_PULSE_DEMO;
  return source&&typeof source.snapshot==='function'
-  ?source.snapshot('today')
+  ?source.snapshot(picturePeriod)
   :{leads:0,sales:0,revenue:0,cost:0};
 }
 function tasks(){
@@ -80,9 +82,9 @@ function notes(){
 function info(id){
  const item=BY_ID[id];
  const data=demo(),count=tasks().length;
- if(id==='clients')return {label:item.label,value:num.format(data.leads),hint:'Обратились сегодня · демо'};
- if(id==='orders')return {label:item.label,value:num.format(data.sales),hint:'Отмечены сегодня · демо'};
- if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за сегодня · демо'};
+ if(id==='clients')return {label:item.label,value:num.format(data.leads),hint:'Обращений за период · демо'};
+ if(id==='orders')return {label:item.label,value:num.format(data.sales),hint:'Заказов за период · демо'};
+ if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за период · демо'};
  if(id==='plan')return {label:item.label,value:String(count),hint:count?'Нужно сделать · на устройстве':'Пока всё спокойно'};
  return {label:item.label,value:String(notes()),hint:'Сохранено на устройстве'};
 }
@@ -98,9 +100,6 @@ function icon(name){
 function renderHome(){
  grid.replaceChildren();
  home.hidden=selected.length===0;
- // Never show the automatic personal-tasks preview beside an installed Plan widget.
- const brief=$('personalBrief');
- if(brief)brief.hidden=selected.includes('plan')||tasks().length===0;
  for(const id of selected){
   const data=info(id),item=BY_ID[id],button=create('button','home-widget-card'+(id==='money'?' home-widget-card--wide':''));
   button.type='button';button.dataset.homeWidget=id;
@@ -153,12 +152,12 @@ function renderCatalog(){
 function rowsFor(id,datum){
  const unconverted=Math.max(0,datum.leads-datum.sales);
  if(id==='clients')return [
-  ['Обратились сегодня',num.format(datum.leads)],
+  ['Обращения за период',num.format(datum.leads)],
   ['Стали заказами',num.format(datum.sales)],
   ['Пока без отмеченного заказа',num.format(unconverted)]
  ];
  if(id==='orders')return [
-  ['Заказов сегодня',num.format(datum.sales)],
+  ['Заказов за период',num.format(datum.sales)],
   ['На сумму',rub(datum.revenue)],
   ['Обращений',num.format(datum.leads)]
  ];
@@ -172,7 +171,7 @@ function detail(id){
  if(!['clients','orders','money'].includes(id))return;
  const datum=demo(),copy={
   clients:['Клиенты','Кто обращается и сколько заказов получилось','Это пример того, как SEYVEO сможет замечать обращения и помогать не терять клиентов. Пока живых подключений нет.'],
-  orders:['Заказы','Что удалось продать сегодня','Суммы взяты из того же учебного набора, что показывает «Пульс». Это не сведения из кассы или CRM.'],
+  orders:['Заказы','Что удалось продать за период','Суммы взяты из того же учебного набора, что показывает «Пульс». Это не сведения из кассы или CRM.'],
   money:['Деньги','Как идут продажи и расходы','Разница между учебными продажами и расходами — не банковский баланс и не подтверждённая бухгалтерская прибыль.']
  }[id];
  $('homeWidgetDetailTitle').textContent=copy[0];
@@ -268,6 +267,7 @@ catalog.addEventListener('pointerup',event=>{
  }
 });
 catalog.addEventListener('pointercancel',clearDrag);
+window.addEventListener('seyveo:picture-period',event=>{picturePeriod=event.detail?.period||'today';renderHome()});
 window.addEventListener('seyveo:tasks-changed',renderHome);
 window.addEventListener('seyveo:notes-changed',renderHome);
 window.addEventListener('seyveo:profile-changed',()=>{
