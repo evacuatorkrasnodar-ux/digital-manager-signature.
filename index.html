@@ -28,7 +28,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing:not(.is-living):not(.is-silk){animation:glass-mist 5.2s .25s ease-in-out both}
+.signal.is-appearing:not(.is-brand):not(.is-living):not(.is-silk){animation:glass-mist 5.2s .25s ease-in-out both}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 /* Preview typography uses the original glass-mist, without changing it. */
@@ -109,7 +109,24 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  .signal.is-appearing.is-silk .silk-plane{animation:none;opacity:.9}
  .signal.is-appearing.is-silk .silk-plane::before{animation:none;opacity:.18}
 }
-.signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
+/* Studio logo in the experiment: paint first, animate only its opacity.
+   The original SEYVEO logo artwork, lockup, size and sphere are untouched.
+   Unlike glass-mist, this animation never recomputes blur or scale. */
+.signal.is-brand{opacity:1;filter:none;transform:translate(-50%,-50%)}
+.signal.is-brand .brand-lockup{opacity:0}
+.signal.is-brand.is-appearing .brand-lockup{
+ animation:brand-smooth-reveal 6.1s linear both;
+ will-change:opacity
+}
+@keyframes brand-smooth-reveal{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.96;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .signal.is-brand.is-appearing .brand-lockup{animation:none;opacity:.82}
+}
+
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
 .brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -387,7 +404,7 @@ function glassIcon(type,place='card'){
 const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
 const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=6200;
-let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
+let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null,brandFrameId=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
 let previewSequenceTimer=null,previewRunning=false,previewMode='classic';
@@ -415,6 +432,7 @@ function transientNotice(key,type){
   noticeKey=key;
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
+  cancelAnimationFrame(brandFrameId);
   const el=$('signal');
   el.classList.remove('is-appearing','is-brand');
   el.innerHTML=glassIcon(type,'orb');
@@ -443,11 +461,19 @@ function showBrandSignature(reason='ambient'){
   const el=$('signal');
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
+  cancelAnimationFrame(brandFrameId);
   el.classList.remove('is-brand','is-appearing');
   el.innerHTML=BRAND_LOCKUP_HTML;
   el.classList.add('is-brand');
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
+  // Keep the brand text hidden through two paint opportunities.
+  // This avoids restarting the original blur/scale animation on iOS Safari.
+  brandFrameId=requestAnimationFrame(()=>{
+    if(!el.classList.contains('is-brand')||document.hidden)return;
+    brandFrameId=requestAnimationFrame(()=>{
+      if(el.classList.contains('is-brand')&&!document.hidden)
+        el.classList.add('is-appearing');
+    });
+  });
   brandFallback={day:progress.day,count:progress.count+1,lastAt:now};
   try{localStorage.setItem(BRAND_STORE_KEY,JSON.stringify(brandFallback))}catch{}
   brandClearTimer=setTimeout(()=>{
@@ -648,7 +674,7 @@ function previewSphereMoments(){
       el.append(plane);
     }
     // Let iOS paint the static content before starting the smooth fade.
-    if(mode!=='classic'&&step.kind!=='brand'){
+    if(mode!=='classic'||step.kind==='brand'){
       previewFrameId=requestAnimationFrame(()=>{
         if(!previewRunning)return;
         previewFrameId=requestAnimationFrame(()=>{
