@@ -73,3 +73,87 @@ dialog :is(button,input,textarea,select):focus-visible {
     transition:none;
   }
 }
+
+/* SEYVEO · one signature close. The 44px touch target stays generous,
+   while its 36px velvet face is quieter than the old filled disc. */
+button.seyveo-close-control,
+.onboard-dismiss.seyveo-close-control,
+#stage .orb-info-close.seyveo-close-control{
+  -webkit-appearance:none;
+  appearance:none;
+  position:relative;
+  display:grid;
+  place-items:center;
+  flex:none;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--secondary);
+  isolation:isolate;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .18s ease;
+}
+button.seyveo-close-control::before{
+  content:"";
+  position:absolute;
+  inset:4px;
+  border-radius:50%;
+  pointer-events:none;
+  background:linear-gradient(150deg,rgba(255,255,255,.027),rgba(255,255,255,.008) 75%),rgba(20,24,31,.38);
+  box-shadow:inset 0 0 0 1px rgba(228,235,245,.085),inset 0 1px 0 rgba(255,255,255,.045);
+  transition:background-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+button.seyveo-close-control svg.seyveo-close-glyph{
+  position:relative;
+  display:block;
+  width:18px;
+  height:18px;
+  flex:none;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+button.seyveo-close-control svg.seyveo-close-glyph path{
+  fill:none;
+  stroke:inherit;
+  stroke-width:inherit;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+button.seyveo-close-control:active::before{transform:scale(.93);background-color:rgba(130,145,165,.10)}
+button.seyveo-close-control:focus-visible{outline:2px solid var(--text);outline-offset:1px}
+@media(hover:hover) and (pointer:fine){
+  button.seyveo-close-control:hover{color:var(--text)}
+  button.seyveo-close-control:hover::before{
+    box-shadow:inset 0 0 0 1px rgba(228,235,245,.14),inset 0 1px 0 rgba(255,255,255,.075);
+  }
+}
+:root[data-theme=light] button.seyveo-close-control::before{
+  background:linear-gradient(145deg,rgba(255,255,255,.55),rgba(235,240,248,.20)),rgba(95,115,145,.035);
+  box-shadow:inset 0 0 0 1px rgba(52,69,93,.105),inset 0 1px 0 rgba(255,255,255,.75);
+}
+:root[data-theme=light] button.seyveo-close-control{color:#697488}
+/* Absolute positions belong to their own cards, not the global layout. */
+dialog > button.seyveo-dialog-close{position:absolute;top:13px;right:13px;z-index:2}
+dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
+#seyveoCompanyDialog > button.seyveo-dialog-close ~ .seyveo-passport-dialog-head{
+  padding-right:43px;
+  flex-wrap:wrap;
+}
+#stage .orb-info-close.seyveo-close-control{
+  position:absolute;
+  top:10px;
+  right:10px;
+}
+.composer-icon.seyveo-close-control{width:38px;height:38px}
+.composer-icon.seyveo-close-control::before{inset:2px}
+@media(prefers-reduced-motion:reduce){
+  button.seyveo-close-control,button.seyveo-close-control::before{transition:none}
+}
