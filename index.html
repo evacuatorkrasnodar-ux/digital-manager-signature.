@@ -266,7 +266,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 
 /* SEYVEO Management · Black Velvet, shared theme tokens, one cohesive material. */
-#homeHeader[hidden],#homePage[hidden],#managePage[hidden],#manageOverview[hidden],#manageThemeScreen[hidden],#manageFeedbackScreen[hidden]{display:none!important}
+#homeHeader[hidden],#homePage[hidden],#managePage[hidden],#manageOverview[hidden],#manageThemeScreen[hidden]{display:none!important}
 button.nav-item{background:transparent;border:0;padding:0;-webkit-appearance:none;appearance:none}
 button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;border-radius:7px}
 .manage-main{flex:1;min-width:0;padding:11px 0 17px}
@@ -348,14 +348,6 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 @media(max-width:355px){.tasks-switch button{font-size:12px}.tasks-records .activity-row{padding:13px 11px;gap:9px}}
 @media(prefers-reduced-motion:no-preference){.tasks-main:not([hidden]){animation:manage-enter .22s ease-out both}}
 
-/* Native-feel feedback controls: use Apple's real switch, no fake green toggles or animation layers. */
-.manage-feedback-row{position:relative;display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 15px;color:var(--text);cursor:pointer}
-.manage-feedback-row+.manage-feedback-row::before{content:"";position:absolute;top:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
-.manage-feedback-row .manage-text{pointer-events:none}
-.manage-native-switch{flex:none;cursor:pointer;accent-color:#bdc9d6;min-width:48px;min-height:30px;max-width:56px;margin:0}
-.manage-native-switch:focus-visible{outline:2px solid var(--text);outline-offset:3px}
-.manage-feedback-caption{font-size:11px;line-height:1.55;color:var(--secondary);margin:9px 10px 0}
-@media(max-width:355px){.manage-feedback-row{padding:10px 12px;gap:9px}.manage-native-switch{min-width:42px}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -383,7 +375,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
 <button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" type="button" data-manage-topic="privacy"><span class="manage-text"><strong>Данные и безопасность</strong><small>Разрешения и личная информация</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" type="button" id="openManageFeedback"><span class="manage-text"><strong>Звук и отклик</strong><small>Тихие сигналы и тактильные ощущения</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+
 </div></section>
 <p class="manage-footnote">SEYVEO · IT · AI · AUTOMATION<br>Подключения и расширенные функции появятся в следующих версиях.</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
@@ -396,15 +388,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </div>
 <p id="manageThemeNote" class="manage-theme-note" aria-live="polite">Выбрана тёмная тема Black Velvet.</p>
 </section>
-<section id="manageFeedbackScreen" class="manage-theme-screen" hidden aria-labelledby="manageFeedbackTitle">
-<header class="manage-theme-head"><button type="button" id="manageFeedbackBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageFeedbackTitle" tabindex="-1">Звук и отклик</h2></header>
-<p class="manage-theme-intro">Незаметные детали, которые делают управление приятнее.</p>
-<div class="manage-card">
-<label class="manage-feedback-row" for="feedbackSound"><span class="manage-text"><strong>Звук важных действий</strong><small>Мягкий отклик в особенные моменты</small></span><input id="feedbackSound" class="manage-native-switch" type="checkbox" switch autocomplete="off"></label>
-<label class="manage-feedback-row" for="feedbackHaptic"><span class="manage-text"><strong>Тактильный отклик</strong><small>Лёгкое касание, если устройство поддерживает</small></span><input id="feedbackHaptic" class="manage-native-switch" type="checkbox" switch autocomplete="off" checked aria-describedby="feedbackSupport"></label>
-</div>
-<p class="manage-feedback-caption" id="feedbackSupport">Системный звук включения микрофона контролирует iOS. В веб-приложении управляемая вибрация на iPhone может быть недоступна.</p>
-</section></main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
+</main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
 <header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Все поручения — в одном месте.</p></header>
 <div class="tasks-switch" role="group" aria-label="Просмотр поручений">
 <button type="button" data-tasks-tab="working" aria-pressed="true">В работе <span id="tasksCountWorking" aria-hidden="true">0</span></button>
@@ -479,16 +463,9 @@ function normalizeHistory(items){
 }
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=['auto','light','dark'].includes(raw.theme)?raw.theme:'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?normalizeHistory(raw.history):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=['auto','light','dark'].includes(previous.theme)?previous.theme:'dark';if(Array.isArray(previous.activity))state.history=normalizeHistory(previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''})));}}}catch{}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
-/* A tiny opt-in UI feedback engine. No media downloads or sound while idle. */
-const FEEDBACK_KEY='dm-seyveo-feedback-v1';
-const feedbackPrefs={sound:false,haptic:true};
-try{
-  const stored=JSON.parse(localStorage.getItem(FEEDBACK_KEY)||'null');
-  if(stored&&typeof stored==='object'){
-    feedbackPrefs.sound=stored.sound===true;
-    feedbackPrefs.haptic=stored.haptic!==false;
-  }
-}catch{}
+/* SEYVEO Velvet Touch: discreet feedback with no extra menu or app override.
+   Sound routes through system audio; supported haptics follow device capabilities.
+   A PWA cannot read the iPhone silent switch, unlike a future native app. */
 let clickAudioContext=null,clickNoiseBuffer=null,lastClickAt=0;
 // A discreet velvet tap: low-passed felt texture and a short, rounded tone.
 // Played only for meaningful completed actions and explicit user selections.
@@ -530,32 +507,16 @@ function clickSound(kind='select'){
   }catch{}
 }
 function clickHaptic(kind='select'){
-  if(!feedbackPrefs.haptic||typeof navigator.vibrate!=='function')return;
+  if(typeof navigator.vibrate!=='function')return;
   try{navigator.vibrate(kind==='confirm'?9:6)}catch{}
 }
 function playFeedback(kind='select'){
-  if(!feedbackPrefs.sound&&!feedbackPrefs.haptic)return;
   const now=performance.now();
   if(now-lastClickAt<240)return;
   lastClickAt=now;
-  if(feedbackPrefs.sound)clickSound(kind);
+  clickSound(kind);
   clickHaptic(kind);
 }
-function storeFeedback(){
-  try{localStorage.setItem(FEEDBACK_KEY,JSON.stringify(feedbackPrefs))}catch{}
-}
-$('feedbackSound').checked=feedbackPrefs.sound;
-$('feedbackHaptic').checked=feedbackPrefs.haptic;
-$('feedbackSound').addEventListener('change',event=>{
-  feedbackPrefs.sound=event.currentTarget.checked;
-  storeFeedback();
-  if(feedbackPrefs.sound)clickSound(); // Preview only after the explicit user tap.
-});
-$('feedbackHaptic').addEventListener('change',event=>{
-  feedbackPrefs.haptic=event.currentTarget.checked;
-  storeFeedback();
-  if(feedbackPrefs.haptic)clickHaptic();
-});
 
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
@@ -849,24 +810,24 @@ document.querySelectorAll('[data-manage-topic]').forEach(button=>{
 });
 function syncAppPage(){
   const theme=location.hash==='#manage-theme';
-  const feedback=location.hash==='#manage-feedback';
-  const manage=location.hash==='#manage'||theme||feedback;
+  // Upgrade old saved/bookmarked settings URL to the streamlined overview.
+  if(location.hash==='#manage-feedback')history.replaceState(null,'',location.pathname+location.search+'#manage');
+  const manage=location.hash==='#manage'||theme;
   const tasks=location.hash==='#tasks';
   const home=!manage&&!tasks;
   $('homeHeader').hidden=!home;
   $('homePage').hidden=!home;
   $('managePage').hidden=!manage;
   $('tasksPage').hidden=!tasks;
-  $('manageOverview').hidden=theme||feedback;
+  $('manageOverview').hidden=theme;
   $('manageThemeScreen').hidden=!theme;
-  $('manageFeedbackScreen').hidden=!feedback;
   const current=tasks?'navTasks':manage?'navManage':'navHome';
   for(const id of ['navHome','navTasks','navManage']){
     $(id).classList.toggle('active',id===current);
     if(id===current)$(id).setAttribute('aria-current','page');
     else $(id).removeAttribute('aria-current');
   }
-  document.title=tasks?'Дела · SEYVEO':theme?'Тема · SEYVEO':feedback?'Звук и отклик · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  document.title=tasks?'Дела · SEYVEO':theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
   if(!home)$('signal').classList.remove('is-appearing');
   if(tasks){progressDemoTasks();renderTasksPage();scheduleTaskProgress();}
   window.scrollTo(0,0);
@@ -891,8 +852,6 @@ function manageRoute(hash,target){
 }
 $('openManageTheme').addEventListener('click',()=>manageRoute('#manage-theme','manageThemeTitle'));
 $('manageThemeBack').addEventListener('click',()=>manageRoute('#manage','manageTitle'));
-$('openManageFeedback').addEventListener('click',()=>manageRoute('#manage-feedback','manageFeedbackTitle'));
-$('manageFeedbackBack').addEventListener('click',()=>manageRoute('#manage','manageTitle'));
 function onManageRouteChange(){
   syncAppPage();
   if(manageFocusTarget){
