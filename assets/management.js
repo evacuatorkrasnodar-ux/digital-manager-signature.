@@ -85,7 +85,8 @@ const roadmap=[
  {id:'life',name:'Личная жизнь, качество и безопасность',items:[
   ['life','SEYVEO Life','Личные планы, дела, дом, семья и здоровье доступны параллельно любому бизнес-уровню.','plan'],
   ['calendar','Локальный календарь','День, неделя, месяц, сроки; события с датой и временем, совместный обзор с личными делами. Внешние календари не подключены.','ready'],
-  ['health','Здоровье и забота','Шаги, пульс, давление и забота о близких через разрешённые источники, без выдуманной синхронизации.','plan'],
+  ['life_spaces','Личные пространства календаря','Ручные записи Здоровья, Заботы и Моего мира с датами; Блокнот связан с календарём, нет внешней синхронизации.','ready'],
+  ['health','Здоровье и забота','Будущие адаптеры Health, шагов, пульса, давления и приватные функции Заботы; ручные записи уже доступны.','plan'],
   ['family','Семейные пространства','Общие события и дела с отдельными личными правами доступа и согласием участников.','plan'],
   ['transitions','Переход между этапами','Life ↔ Business Start / Pro / Max с сохранением личных данных и безопасным отключением рабочих связей.','plan'],
   ['security','Разрешения и защита данных','Секреты вне клиентского кода, минимальные разрешения, журнал действий и отзыв доступа.','plan'],
@@ -179,6 +180,7 @@ const KEYS=Object.freeze({
  draft:'seyveo-draft-v1',
  tasks:'seyveo-personal-tasks-v1',
  calendarEvents:'seyveo-calendar-events-v1',
+ lifeSpaces:'seyveo-life-spaces-v1',
  company:'seyveo-company-passport-v1',
  pictureWidgets:'seyveo-home-widgets-v1',
  roadmapProgress:'seyveo-roadmap-progress-v1'
@@ -196,6 +198,7 @@ function snapshot(){
  const draft=read(KEYS.draft);
  const tasks=parsed(read(KEYS.tasks),[]);
  const calendarEvents=parsed(read(KEYS.calendarEvents),[]);
+ const lifeSpaces=parsed(read(KEYS.lifeSpaces),[]);
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
  const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
@@ -211,6 +214,7 @@ function snapshot(){
   notes:Array.isArray(notes)?notes:[],
   personalTasks:Array.isArray(tasks)?tasks:[],
   calendarEvents:Array.isArray(calendarEvents)?calendarEvents:[],
+  lifeSpaces:Array.isArray(lifeSpaces)?lifeSpaces:[],
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
   roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
@@ -238,6 +242,7 @@ function drawData(){
   ['Мои записи',String(countOf(record.notes))],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Календарь',String(countOf(record.calendarEvents))+' локальных событий'],
+  ['Личные пространства',String(countOf(record.lifeSpaces))+' записей'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
   ['Моя картина',record.pictureWidgets?String(record.pictureWidgets.ids.length)+' выбранных':'Стандартный набор'],
   ['Карта развития',String(roadmapCounts().checked)+' из '+String(roadmapCounts().total)+' отмечено'],
