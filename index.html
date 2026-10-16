@@ -338,6 +338,15 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .tasks-note{margin:15px 5px 0;color:var(--secondary);font-size:12px;line-height:1.55}
 @media(max-width:355px){.tasks-switch button{font-size:12px}.tasks-records .activity-row{padding:13px 11px;gap:9px}}
 @media(prefers-reduced-motion:no-preference){.tasks-main:not([hidden]){animation:manage-enter .22s ease-out both}}
+
+/* Native-feel feedback controls: use Apple's real switch, no fake green toggles or animation layers. */
+.manage-feedback-row{position:relative;display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 15px;color:var(--text);cursor:pointer}
+.manage-feedback-row+.manage-feedback-row::before{content:"";position:absolute;top:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
+.manage-feedback-row .manage-text{pointer-events:none}
+.manage-native-switch{flex:none;cursor:pointer;accent-color:#bdc9d6;min-width:48px;min-height:30px;max-width:56px;margin:0}
+.manage-native-switch:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+.manage-feedback-caption{font-size:11px;line-height:1.55;color:var(--secondary);margin:9px 10px 0}
+@media(max-width:355px){.manage-feedback-row{padding:10px 12px;gap:9px}.manage-native-switch{min-width:42px}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -367,6 +376,20 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" type="button" data-manage-topic="privacy"><span class="manage-text"><strong>Данные и безопасность</strong><small>Разрешения и личная информация</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 </div></section>
+<section class="manage-group" aria-labelledby="manage-feedback-title">
+<h2 id="manage-feedback-title">Отклик</h2>
+<div class="manage-card">
+<label class="manage-feedback-row" for="feedbackSound">
+<span class="manage-text"><strong>Звук нажатий</strong><small>Тихий короткий щелчок</small></span>
+<input id="feedbackSound" class="manage-native-switch" type="checkbox" switch autocomplete="off">
+</label>
+<label class="manage-feedback-row" for="feedbackHaptic">
+<span class="manage-text"><strong>Тактильный отклик</strong><small>Короткое касание, если поддерживается</small></span>
+<input id="feedbackHaptic" class="manage-native-switch" type="checkbox" switch autocomplete="off" checked aria-describedby="feedbackSupport">
+</label>
+</div>
+<p class="manage-feedback-caption" id="feedbackSupport">На iPhone обычные веб-кнопки не поддерживают управляемую вибрацию. Стандартные переключатели могут давать системный тактильный щелчок.</p>
+</section>
 <p class="manage-footnote">SEYVEO · IT · AI · AUTOMATION<br>Подключения и расширенные функции появятся в следующих версиях.</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
@@ -452,6 +475,87 @@ function normalizeHistory(items){
 }
 try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=['auto','light','dark'].includes(raw.theme)?raw.theme:'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?normalizeHistory(raw.history):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=['auto','light','dark'].includes(previous.theme)?previous.theme:'dark';if(Array.isArray(previous.activity))state.history=normalizeHistory(previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''})));}}}catch{}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
+/* A tiny opt-in UI feedback engine. No media downloads or sound while idle. */
+const FEEDBACK_KEY='dm-seyveo-feedback-v1';
+const feedbackPrefs={sound:false,haptic:true};
+try{
+  const stored=JSON.parse(localStorage.getItem(FEEDBACK_KEY)||'null');
+  if(stored&&typeof stored==='object'){
+    feedbackPrefs.sound=stored.sound===true;
+    feedbackPrefs.haptic=stored.haptic!==false;
+  }
+}catch{}
+let clickAudioContext=null,clickNoiseBuffer=null,lastClickAt=0;
+function clickSound(){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  try{
+    if(!clickAudioContext)clickAudioContext=new AC();
+    const ctx=clickAudioContext;
+    if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+    const t=ctx.currentTime;
+    if(!clickNoiseBuffer){
+      clickNoiseBuffer=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*.018)),ctx.sampleRate);
+      const data=clickNoiseBuffer.getChannelData(0);
+      let seed=81327;
+      for(let i=0;i<data.length;i++){
+        seed=(seed*1664525+1013904223)>>>0;
+        data[i]=((seed/4294967296)*2-1)*(1-i/data.length);
+      }
+    }
+    const noise=ctx.createBufferSource();noise.buffer=clickNoiseBuffer;
+    const high=ctx.createBiquadFilter();high.type='highpass';high.frequency.value=1700;
+    const light=ctx.createGain();light.gain.setValueAtTime(.0001,t);
+    light.gain.exponentialRampToValueAtTime(.018,t+.001);
+    light.gain.exponentialRampToValueAtTime(.0001,t+.018);
+    noise.connect(high);high.connect(light);light.connect(ctx.destination);
+    noise.start(t);noise.stop(t+.019);
+    const tap=ctx.createOscillator();tap.type='sine';
+    tap.frequency.setValueAtTime(235,t);
+    tap.frequency.exponentialRampToValueAtTime(145,t+.023);
+    const body=ctx.createGain();body.gain.setValueAtTime(.0001,t);
+    body.gain.exponentialRampToValueAtTime(.015,t+.002);
+    body.gain.exponentialRampToValueAtTime(.0001,t+.025);
+    tap.connect(body);body.connect(ctx.destination);
+    tap.start(t);tap.stop(t+.028);
+  }catch{}
+}
+function clickHaptic(){
+  if(!feedbackPrefs.haptic||typeof navigator.vibrate!=='function')return;
+  try{navigator.vibrate(8)}catch{}
+}
+function playFeedback(){
+  const now=performance.now();
+  if(now-lastClickAt<90)return;
+  lastClickAt=now;
+  if(feedbackPrefs.sound)clickSound();
+  clickHaptic();
+}
+function storeFeedback(){
+  try{localStorage.setItem(FEEDBACK_KEY,JSON.stringify(feedbackPrefs))}catch{}
+}
+$('feedbackSound').checked=feedbackPrefs.sound;
+$('feedbackHaptic').checked=feedbackPrefs.haptic;
+$('feedbackSound').addEventListener('change',event=>{
+  feedbackPrefs.sound=event.currentTarget.checked;
+  storeFeedback();
+  if(feedbackPrefs.sound)clickSound(); // Preview only after the explicit user tap.
+});
+$('feedbackHaptic').addEventListener('change',event=>{
+  feedbackPrefs.haptic=event.currentTarget.checked;
+  storeFeedback();
+  if(feedbackPrefs.haptic)clickHaptic();
+});
+// Apply feedback only to deliberate taps on buttons, not to scrolling, typing,
+// speech hold gestures, synthetic clicks or background updates.
+document.addEventListener('click',event=>{
+  if(!event.isTrusted)return;
+  const button=event.target.closest('button');
+  if(!button||button.disabled||button.id==='assistantButton')return;
+  if(!feedbackPrefs.sound&&!feedbackPrefs.haptic)return;
+  playFeedback();
+},true);
+
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
 /* One sculpted frosted-glass icon family, reused by the sphere and cards. */
