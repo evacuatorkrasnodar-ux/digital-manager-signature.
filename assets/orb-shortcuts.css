@@ -1,4 +1,4 @@
-/* SEYVEO · Black/White Velvet: four meaningful actions around the EXISTING sphere.
+/* SEYVEO · Black/White Velvet v2: four meaningful actions hugging the EXISTING sphere.
    Independent overlay: no modifications to orb art, visual effects or animations. */
 #stage .orb-shortcuts{
   position:absolute;
@@ -43,10 +43,12 @@
   stroke-linejoin:round;
   pointer-events:none;
 }
-#stage .orb-shortcut--calendar{left:0;top:13%}
-#stage .orb-shortcut--tasks{right:0;top:13%}
-#stage .orb-shortcut--activity{left:0;bottom:14%}
-#stage .orb-shortcut--notes{right:0;bottom:14%}
+/* Placement aligned to the *visible* sphere in the iPhone screenshot.
+   Source image has transparent margin: bottom controls must be lifted. */
+#stage .orb-shortcut--calendar{left:9%;top:13%}
+#stage .orb-shortcut--tasks{right:9%;top:13%}
+#stage .orb-shortcut--activity{left:9%;bottom:37%}
+#stage .orb-shortcut--notes{right:9%;bottom:37%}
 #stage .orb-shortcut:active{transform:scale(.94);border-color:rgba(243,248,255,.5)}
 #stage .orb-shortcut:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 :root[data-theme=light] #stage .orb-shortcut{
@@ -60,12 +62,12 @@
   #stage .orb-shortcut{width:43px;height:43px}
   #stage .orb-shortcut svg{width:21px;height:21px}
   #stage .orb-shortcut--calendar,#stage .orb-shortcut--tasks{top:12%}
-  #stage .orb-shortcut--activity,#stage .orb-shortcut--notes{bottom:13%}
+  #stage .orb-shortcut--activity,#stage .orb-shortcut--notes{bottom:37%}
 }
 @media(max-width:345px){
   #stage .orb-shortcut{width:42px;height:42px}
-  #stage .orb-shortcut--calendar,#stage .orb-shortcut--activity{left:0}
-  #stage .orb-shortcut--tasks,#stage .orb-shortcut--notes{right:0}
+  #stage .orb-shortcut--calendar,#stage .orb-shortcut--activity{left:7%}
+  #stage .orb-shortcut--tasks,#stage .orb-shortcut--notes{right:7%}
 }
 @media(prefers-reduced-motion:reduce){
   #stage .orb-shortcut{transition:none}
