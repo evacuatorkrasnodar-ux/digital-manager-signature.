@@ -1,22 +1,22 @@
 {
   "id": "./",
-  "name": "Цифровой управляющий",
-  "short_name": "Управляющий",
+  "name": "SEYVEO · Цифровой управляющий",
+  "short_name": "SEYVEO",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0a0e15",
-  "theme_color": "#0a0e15",
+  "background_color": "#050b0c",
+  "theme_color": "#080a0e",
   "lang": "ru",
   "icons": [
     {
-      "src": "assets/official-logo.svg?v=5",
+      "src": "assets/app-icon.svg?v=4",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "assets/app-icon-maskable.svg?v=3",
+      "src": "assets/app-icon-maskable.svg?v=4",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
