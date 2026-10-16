@@ -28,7 +28,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing:not(.is-living){animation:glass-mist 5.2s .25s ease-in-out both}
+.signal.is-appearing:not(.is-living):not(.is-silk){animation:glass-mist 5.2s .25s ease-in-out both}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 /* Preview typography uses the original glass-mist, without changing it. */
