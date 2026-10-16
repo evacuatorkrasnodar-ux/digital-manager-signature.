@@ -121,6 +121,9 @@ $('pictureBreakdownDialog').addEventListener('click',event=>{
  const rect=dialog.getBoundingClientRect();
  if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();
 });
+$('pictureFullReport')?.addEventListener('click',()=>{
+ window.dispatchEvent(new CustomEvent('seyveo:pulse-open',{detail:{period}}));
+});
 document.querySelectorAll('[data-picture-period]').forEach(button=>button.addEventListener('click',()=>{
  if(period===button.dataset.picturePeriod)return;
  period=button.dataset.picturePeriod;render();
