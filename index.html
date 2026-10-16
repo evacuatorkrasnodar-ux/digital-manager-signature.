@@ -269,18 +269,36 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-group h2{font-size:12px;font-weight:630;line-height:1.4;letter-spacing:.012em;color:var(--secondary);margin:0 0 10px;padding-left:5px}
 .manage-card{border:1px solid var(--line);border-radius:21px;overflow:hidden;background:var(--card);box-shadow:inset 0 1px 0 #ffffff07,0 12px 28px var(--shadow)}
 .manage-row{background:transparent;border:0;width:100%;min-height:68px;display:flex;align-items:center;text-align:left;gap:12px;padding:14px 18px;color:var(--text)}
-.manage-row+.manage-row,.manage-theme-block+.manage-row{border-top:1px solid var(--soft-line)}
+.manage-row+.manage-row{border-top:1px solid var(--soft-line)}
 .manage-row:active{background:var(--card2)}
 .manage-text{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
 .manage-text strong{font-size:14px;font-weight:620;line-height:1.3;letter-spacing:-.015em}
 .manage-text small{font-size:12px;line-height:1.4;color:var(--secondary);font-weight:450}
 .manage-chevron{font-size:25px;font-weight:300;line-height:1;color:var(--secondary);opacity:.8}
-.manage-theme-block{padding:17px 17px 16px}
-.manage-theme-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin-top:16px;border-radius:14px;background:var(--card2);border:1px solid var(--soft-line)}
-.manage-theme-choices button{min-height:38px;background:transparent;border:0;border-radius:10px;color:var(--secondary);font-size:12px;font-weight:590;line-height:1.25;padding:7px 3px}
-.manage-theme-choices button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 2px 8px #0002,inset 0 0 0 1px var(--soft-line)}
-.manage-theme-choices button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.manage-theme-note{margin:12px 2px 0;font-size:11px;line-height:1.5;color:var(--secondary)}
+
+/* Compact appearance selection, following the approved original Management layout. */
+#manageOverview[hidden],#manageThemeScreen[hidden]{display:none!important}
+.manage-theme-value{flex:none;margin-left:auto;font-size:12px;color:var(--secondary);white-space:nowrap}
+.manage-theme-screen{padding-bottom:10px}
+.manage-theme-head{margin:0 0 10px}
+.manage-theme-back{display:flex;align-items:center;gap:2px;min-height:44px;margin:0 0 13px;padding:0;border:0;background:transparent;color:var(--text);font-size:14px;font-weight:530}
+.manage-theme-back svg{height:21px;width:21px;display:block}
+.manage-theme-head h2{font-size:31px;letter-spacing:-.045em;font-weight:680;line-height:1.16;margin:0}
+.manage-theme-intro{color:var(--secondary);font-size:13px;line-height:1.5;margin:0 0 20px}
+.manage-theme-list{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.manage-theme-choice{display:flex;align-items:center;gap:12px;position:relative;min-height:64px;width:100%;padding:10px 16px;background:transparent;border:0;color:var(--text);text-align:left}
+.manage-theme-choice:not(:last-child)::after{content:"";position:absolute;bottom:0;left:16px;right:0;height:1px;background:var(--soft-line)}
+.manage-theme-choice:active{background:var(--card2)}
+.manage-theme-choice .manage-text strong{font-size:15px;font-weight:550}
+.manage-theme-swatch{flex:none;width:31px;height:31px;border-radius:50%;border:1px solid var(--line)}
+.manage-theme-swatch-auto{background:linear-gradient(90deg,#080a0e 50%,#f4f6fa 50%)}
+.manage-theme-swatch-dark{background:radial-gradient(circle at 30% 25%,#414851,#111721 62%,#030406)}
+.manage-theme-swatch-light{background:linear-gradient(140deg,#fff,#dce3ea)}
+.manage-theme-check{display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:50%;border:1.4px solid var(--secondary);font-size:0;color:transparent}
+.manage-theme-choice[aria-pressed=true] .manage-theme-check{background:var(--text);border-color:var(--text);font-size:15px;color:var(--bg);font-weight:700}
+.manage-theme-note{margin:13px 11px 0;color:var(--secondary);font-size:12px;line-height:1.55}
+@media(prefers-reduced-motion:no-preference){.manage-theme-screen:not([hidden]){animation:manage-theme-show .24s ease-out both}}
+@keyframes manage-theme-show{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .manage-footnote{text-align:center;font-size:11px;line-height:1.8;color:var(--secondary);margin:4px 0;opacity:.78}
 @media(prefers-reduced-motion:no-preference){.manage-main:not([hidden]){animation:manage-enter .24s ease-out both}}
 @keyframes manage-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -298,22 +316,32 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
 </form></main><main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
+<div id="manageOverview">
 <header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НАСТРОЙКИ</p><h1 id="manageTitle">Управление</h1><p>Всё важное — в одном месте.</p></header>
+<section class="manage-group" aria-labelledby="manageThemeLabel">
+<h2 id="manageThemeLabel">Оформление</h2>
+<div class="manage-card"><button type="button" id="openManageTheme" class="manage-row">
+<span class="manage-text"><strong>Тема</strong><small>Оформление и внешний вид</small></span>
+<span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span>
+</button></div></section>
 <section class="manage-group" aria-labelledby="manage-assistant"><h2 id="manage-assistant">Мой управляющий</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="personality"><span class="manage-text"><strong>Общение и характер</strong><small>Имя, обращение и стиль разговора</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="voice"><span class="manage-text"><strong>Голос и микрофон</strong><small>Голосовое общение с SEYVEO</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Подключения</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="accounts"><span class="manage-text"><strong>Почта и календарь</strong><small>Сервисы пока не подключены</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="business"><span class="manage-text"><strong>Мессенджеры и CRM</strong><small>Подключения в разработке</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-abilities"><h2 id="manage-abilities">Возможности</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="insights"><span class="manage-text"><strong>Анализ и рекомендации</strong><small>Интеллектуальные подсказки</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="execution"><span class="manage-text"><strong>Исполнение поручений</strong><small>Действия с подтверждением</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
-<div class="manage-theme-block"><div class="manage-text"><strong>Оформление</strong><small>Выберите тему приложения</small></div>
-<div class="manage-theme-choices" role="group" aria-label="Тема приложения">
-<button type="button" data-theme-choice="auto" aria-pressed="false">Авто</button>
-<button type="button" data-theme-choice="light" aria-pressed="false">Светлая</button>
-<button type="button" data-theme-choice="dark" aria-pressed="true">Тёмная</button>
-</div><p class="manage-theme-note" id="manageThemeNote">Авто — оформление как в системе.</p></div>
 <button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" type="button" data-manage-topic="privacy"><span class="manage-text"><strong>Данные и безопасность</strong><small>Разрешения и личная информация</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 </div></section>
 <p class="manage-footnote">SEYVEO · IT · AI · AUTOMATION<br>Подключения и расширенные функции появятся в следующих версиях.</p>
-</main><footer class="dock" aria-label="Нижняя панель">
+</div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
+<header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle">Тема</h2></header>
+<p class="manage-theme-intro">Выберите оформление приложения.</p>
+<div class="manage-theme-list" role="group" aria-label="Тема приложения">
+<button type="button" data-theme-choice="auto" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-auto" aria-hidden="true"></span><span class="manage-text"><strong>Авто</strong><small>Как в системе</small></span><span class="manage-theme-check" aria-hidden="true">✓</span></button>
+<button type="button" data-theme-choice="dark" class="manage-theme-choice" aria-pressed="true"><span class="manage-theme-swatch manage-theme-swatch-dark" aria-hidden="true"></span><span class="manage-text"><strong>Тёмная</strong><small>Black Velvet</small></span><span class="manage-theme-check" aria-hidden="true">✓</span></button>
+<button type="button" data-theme-choice="light" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-light" aria-hidden="true"></span><span class="manage-text"><strong>Светлая</strong><small>White Velvet</small></span><span class="manage-theme-check" aria-hidden="true">✓</span></button>
+</div>
+<p id="manageThemeNote" class="manage-theme-note" aria-live="polite">Выбрана тёмная тема Black Velvet.</p>
+</section></main><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
 <span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
@@ -359,6 +387,8 @@ function applyTheme(){
   });
   const note=$('manageThemeNote');
   if(note)note.textContent=state.theme==='auto'?'Авто · сейчас '+(resolved==='dark'?'тёмная':'светлая')+' тема. Меняется вместе с системой.':state.theme==='dark'?'Тёмная тема · Black Velvet.':'Светлая тема · White Velvet.';
+  const summary=$('manageThemeSummary');
+  if(summary)summary.textContent=state.theme==='auto'?'Авто':state.theme==='light'?'Светлая':'Тёмная';
 }
 
 const EXECUTION_DEMO_MS=5500,COMPLETION_VISIBLE_MS=2600;
@@ -644,23 +674,28 @@ document.querySelectorAll('[data-manage-topic]').forEach(button=>{
   });
 });
 function syncAppPage(){
-  const manage=location.hash==='#manage';
+  const theme=location.hash==='#manage-theme',manage=location.hash==='#manage'||theme;
   $('homeHeader').hidden=manage;
   $('homePage').hidden=manage;
   $('managePage').hidden=!manage;
+  $('manageOverview').hidden=theme;
+  $('manageThemeScreen').hidden=!theme;
   $('navHome').classList.toggle('active',!manage);
   $('navManage').classList.toggle('active',manage);
-  if(manage){$('navManage').setAttribute('aria-current','page');$('navHome').removeAttribute('aria-current');}
-  else{$('navHome').setAttribute('aria-current','page');$('navManage').removeAttribute('aria-current');}
-  document.title=manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  if(manage){$('navManage').setAttribute('aria-current','page');$('navHome').removeAttribute('aria-current')}
+  else{$('navHome').setAttribute('aria-current','page');$('navManage').removeAttribute('aria-current')}
+  document.title=theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
   if(manage)$('signal').classList.remove('is-appearing');
   window.scrollTo(0,0);
 }
 $('navHome').addEventListener('click',()=>{
-  if(location.hash==='#manage')history.pushState(null,'',location.pathname+location.search);
+  if(location.hash==='#manage'||location.hash==='#manage-theme')
+    history.pushState(null,'',location.pathname+location.search);
   syncAppPage();
 });
 $('navManage').addEventListener('click',()=>{if(location.hash!=='#manage')location.hash='manage';else syncAppPage()});
+$('openManageTheme').addEventListener('click',()=>{location.hash='manage-theme'});
+$('manageThemeBack').addEventListener('click',()=>{location.hash='manage'});
 window.addEventListener('hashchange',syncAppPage);
 
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
@@ -808,5 +843,5 @@ fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',
 fab.addEventListener('contextmenu',e=>e.preventDefault());
 fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();syncAppPage();if(location.hash!=='#manage')showBrandSignature('launch')})();
+restoreDraft();render();syncAppPage();if(location.hash!=='#manage'&&location.hash!=='#manage-theme')showBrandSignature('launch')})();
 </script></body></html>
