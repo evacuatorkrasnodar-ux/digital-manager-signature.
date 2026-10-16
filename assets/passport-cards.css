@@ -1,0 +1,47 @@
+/* SEYVEO Passports v1 — original asymmetric matched Black Velvet cards.
+   Old project used as a visual reference only: no CSS, paths, assets or code transferred. */
+.seyveo-passport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:3px 0 0}
+.seyveo-passport-card{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;min-width:0;height:154px;overflow:hidden;padding:14px 12px 16px;border:0;border-radius:23px;background:linear-gradient(152deg,rgba(255,255,255,.11),rgba(255,255,255,.025) 56%),var(--card);color:var(--text);text-align:left;-webkit-tap-highlight-color:transparent;transition:filter .18s ease,transform .18s ease}
+.seyveo-passport-card--studio{-webkit-clip-path:url(#seyveoCardLeftClip);clip-path:url(#seyveoCardLeftClip)}
+.seyveo-passport-card--company{-webkit-clip-path:url(#seyveoCardRightClip);clip-path:url(#seyveoCardRightClip)}
+.seyveo-passport-card:active{filter:brightness(1.12);transform:scale(.989)}
+.seyveo-passport-border{position:absolute;z-index:2;pointer-events:none;inset:0;width:100%;height:100%;fill:none;stroke:var(--line);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.seyveo-passport-card::before{content:"";position:absolute;pointer-events:none;inset:0;background:radial-gradient(ellipse at 45% -20%,rgba(227,237,255,.11),transparent 60%);opacity:.8}
+.seyveo-passport-card-head{position:relative;z-index:3;display:flex;align-items:center;gap:7px;min-width:0}
+.seyveo-passport-card-head img{width:28px;height:28px;object-fit:contain;flex:none}
+.seyveo-passport-card-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--soft-line);background:var(--card2);font-size:14px;flex:none;color:var(--text)}
+.seyveo-passport-card-titles{display:flex;flex:1;flex-direction:column;min-width:0;gap:3px}
+.seyveo-passport-card-titles strong{font-size:13px;font-weight:650;line-height:1.25;letter-spacing:-.02em;overflow-wrap:anywhere}
+.seyveo-passport-card-titles small{font-size:9px;line-height:1.35;color:var(--secondary);letter-spacing:.02em;overflow-wrap:anywhere}
+.seyveo-passport-arrow{width:21px;height:21px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--card2);color:var(--text);box-shadow:inset 0 1px 0 #ffffff22;font-size:17px;line-height:1}
+.seyveo-passport-card-foot{position:relative;z-index:3;display:flex;flex-direction:column;gap:4px}
+.seyveo-passport-card-foot span{font-size:11px;font-weight:590;line-height:1.35}
+.seyveo-passport-card-foot small{font-size:10px;line-height:1.35;color:var(--secondary)}
+.seyveo-passport-card--studio .seyveo-passport-card-foot{padding-left:27px}
+.seyveo-passport-card--company .seyveo-passport-card-foot{padding-right:27px}
+.seyveo-passport-helper{margin:9px 3px 0;color:var(--secondary);font-size:11px;line-height:1.5}
+.seyveo-passport-card:focus-visible{outline:2px solid var(--text);outline-offset:4px}
+:root[data-theme=light] .seyveo-passport-card{background:linear-gradient(142deg,rgba(255,255,255,.9),rgba(231,238,251,.87));box-shadow:inset 0 1px 0 #fff}
+.seyveo-passport-modal{width:min(480px,calc(100% - 30px));max-height:88dvh;padding:22px 19px 21px}
+.seyveo-passport-brand{display:flex;align-items:center;gap:13px;padding:16px;margin:8px 0 15px;border:1px solid var(--line);border-radius:17px;background:var(--card2)}
+.seyveo-passport-brand img{width:52px;height:52px;object-fit:contain;flex:none}
+.seyveo-passport-brand strong{display:block;font-size:18px;font-weight:670;letter-spacing:-.035em}
+.seyveo-passport-brand small{display:block;margin-top:4px;color:var(--secondary);font-size:11px;line-height:1.5}
+.seyveo-passport-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--soft-line)}
+.seyveo-passport-row span{flex:0 0 38%;font-size:12px;color:var(--secondary);line-height:1.45}
+.seyveo-passport-row strong{flex:1;text-align:right;font-size:12px;line-height:1.45;font-weight:570;overflow-wrap:anywhere}
+.seyveo-passport-subtitle{font-size:12px!important;line-height:1.55!important;color:var(--secondary);margin:4px 0 14px!important}
+.seyveo-passport-controls{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+.seyveo-passport-controls .btn{min-width:0;font-size:12px}
+.seyveo-passport-section{margin:16px 0 12px;font-size:13px;font-weight:620}
+.seyveo-passport-form{border-top:1px solid var(--soft-line);padding-top:12px}
+.seyveo-passport-form label{display:block;font-size:12px;font-weight:580;color:var(--secondary);margin:0 0 12px}
+.seyveo-passport-form input,.seyveo-passport-form select{display:block;width:100%;height:43px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--text);padding:8px 12px;font:inherit;font-size:14px;margin-top:7px}
+.seyveo-passport-form details{margin:7px 0 16px;border:1px solid var(--line);padding:12px;border-radius:13px}
+.seyveo-passport-form summary{cursor:pointer;font-size:12px;color:var(--text);font-weight:580}
+.seyveo-passport-form details label:first-of-type{margin-top:13px}
+.seyveo-passport-form [hidden]{display:none!important}
+.seyveo-passport-form .btn{width:100%}
+.seyveo-passport-status{min-height:1em;font-size:12px;line-height:1.45;color:var(--secondary);margin:10px 0!important;white-space:normal!important}
+.seyveo-passport-notice{padding:11px 12px;border:1px solid var(--soft-line);background:var(--card2);border-radius:13px;font-size:11px!important;line-height:1.5!important;color:var(--secondary)}
+@media(max-width:355px){.seyveo-passport-grid{gap:6px}.seyveo-passport-card{height:148px;padding:12px 10px 15px}.seyveo-passport-card-head img,.seyveo-passport-card-icon{width:25px;height:25px}.seyveo-passport-card-titles strong{font-size:12px}.seyveo-passport-arrow{width:19px;height:19px}}
