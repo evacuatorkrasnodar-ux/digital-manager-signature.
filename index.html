@@ -28,10 +28,14 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing:not(.is-brand):not(.is-living):not(.is-silk):not(.is-stage-fx){animation:glass-mist 5.2s .25s ease-in-out both}
+/* Lightweight Classic: no animated blur or scale on the glass orb. */
+.signal.is-appearing:not(.is-brand):not(.is-living):not(.is-silk):not(.is-stage-fx):not(.is-classic-preview){animation:classic-clean 5.2s linear both}
+.signal.is-classic-preview{opacity:1;transform:translate(-50%,-50%);filter:none}
+.signal.is-classic-preview .classic-plane{display:grid;place-items:center;width:100%;height:100%;opacity:0;transform:translateZ(0);backface-visibility:hidden}
+.signal.is-classic-preview.is-appearing .classic-plane{animation:classic-clean 5.2s linear both;will-change:opacity}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
-/* Preview typography uses the original glass-mist, without changing it. */
+/* All preview typography keeps its original approved sizing. */
 .signal.is-preview{width:min(226px,76%);height:112px}
 .preview-moment{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;text-align:center;line-height:1.35;color:#e3eefb}
 .preview-time{font-size:27px;letter-spacing:-.025em;font-weight:580;font-variant-numeric:tabular-nums}
@@ -111,7 +115,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 }
 /* Studio logo in the experiment: paint first, animate only its opacity.
    The original SEYVEO logo artwork, lockup, size and sphere are untouched.
-   Unlike glass-mist, this animation never recomputes blur or scale. */
+   Its fade never recomputes blur or scale. */
 .signal.is-brand{opacity:1;filter:none;transform:translate(-50%,-50%)}
 .signal.is-brand .brand-lockup{opacity:0}
 .signal.is-brand.is-appearing:not(.is-stage-fx) .brand-lockup{
@@ -221,12 +225,11 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-@keyframes glass-mist{
-  0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
-  24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
-  42%,57%{opacity:.78;filter:blur(0);transform:translate(-50%,-50%) scale(1)}
-  81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
-  100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
+/* Continuous rise and fall; no expensive per-frame SVG blur or frozen hold. */
+@keyframes classic-clean{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.84;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.85;filter:none;transform:translate(-50%,-50%)}.signal.is-brand.is-appearing{opacity:.82}}
 
@@ -681,7 +684,7 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
 /* Living Cinema experiment. A single existing preview controller dispatches
    either the original glass-mist or minimal opacity/scale choreography. */
-const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-silk','is-stage-fx','fx--pearl','fx--sweep','fx--iris','fx--rise','signal--moment','signal--care','signal--notice','signal--brand'];
+const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-silk','is-classic-preview','is-stage-fx','fx--pearl','fx--sweep','fx--iris','fx--rise','signal--moment','signal--care','signal--notice','signal--brand'];
 function stopEffectsPreview(){
   clearTimeout(previewSequenceTimer);
   cancelAnimationFrame(previewFrameId);
@@ -691,10 +694,12 @@ function stopEffectsPreview(){
   button.setAttribute('aria-pressed','false');
   const el=$('signal');
   el.classList.remove(...PREVIEW_SIGNAL_CLASSES);
+  el.style.removeProperty('--fx-time');
   el.replaceChildren();
-  noticeKey=null;
+  // Ending a showcase must not replay the current mail/check icon.
+  // A real new scenario has a different key and will still trigger its notice.
   const story=stories[state.index];
-  transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
+  noticeKey=confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none';
 }
 function setPreviewMode(mode){
   if(!['classic','living','silk','pearl','sweep','iris','rise'].includes(mode))return;
@@ -770,8 +775,15 @@ function previewSphereMoments(){
     if(step.kind==='moment'||step.kind==='care')el.classList.add('is-preview');
     if(mode==='living'&&step.kind!=='brand')el.classList.add('is-living');
     if(mode==='silk'&&step.kind!=='brand')el.classList.add('is-silk');
+    if(mode==='classic'&&step.kind!=='brand')el.classList.add('is-classic-preview');
     if(newMode)el.classList.add('is-stage-fx','fx--'+mode);
     step.build();
+    if(mode==='classic'&&step.kind!=='brand'){
+      const plane=document.createElement('span');
+      plane.className='classic-plane';
+      plane.append(...el.childNodes);
+      el.append(plane);
+    }
     if(newMode){
       el.style.setProperty('--fx-time',Math.max(1000,step.duration-200)+'ms');
       const plane=document.createElement('span');
@@ -785,21 +797,15 @@ function previewSphereMoments(){
       plane.append(...el.childNodes);
       el.append(plane);
     }
-    // Let iOS paint the static content before starting the smooth fade.
-    if(mode!=='classic'||step.kind==='brand'){
+    // All modes now use the same frame-safe compositor start (including Classic).
+    previewFrameId=requestAnimationFrame(()=>{
+      if(!previewRunning)return;
       previewFrameId=requestAnimationFrame(()=>{
         if(!previewRunning)return;
-        previewFrameId=requestAnimationFrame(()=>{
-          if(!previewRunning)return;
-          el.classList.add('is-appearing');
-          previewSequenceTimer=setTimeout(showNext,step.duration);
-        });
+        el.classList.add('is-appearing');
+        previewSequenceTimer=setTimeout(showNext,step.duration);
       });
-    }else{
-      void el.offsetWidth;
-      el.classList.add('is-appearing');
-      previewSequenceTimer=setTimeout(showNext,step.duration);
-    }
+    });
   }
   previewSequenceTimer=setTimeout(showNext,400);
 }
