@@ -1,6 +1,21 @@
-/* SEYVEO · Orb reply v2 (Black Velvet / White Velvet).
+/* SEYVEO · Orb reply v3 (Black Velvet / White Velvet).
    Card grows below the sphere without moving its anchored position.
    No changes to orb art, shortcut orbit, or original Deep Reveal. */
+/* Desktop scrollbar stability.
+   Expanding the reply can create a vertical scrollbar. On Windows, classic
+   scrollbars shrink the layout viewport and shift a centered .app by ~8px.
+   Reserve symmetrical gutter even before content becomes scrollable, keeping
+   the orb and header at exactly the same horizontal position. */
+@media (min-width:650px){
+  html{scrollbar-gutter:stable both-edges}
+}
+/* Old desktop engines without scrollbar-gutter still need a reserved track. */
+@supports not (scrollbar-gutter:stable){
+  @media (min-width:650px){
+    html{overflow-y:scroll}
+  }
+}
+
 /* Avoid re-centering the orb as the reply card changes the stage height.
    Keep the orb anchored to its pre-click position on both desktop and phone. */
 #stage{
