@@ -16,7 +16,7 @@ const roadmap=[
  ]},
  {status:'Пробный режим',name:'Проверяем',items:[
    ['Умный текст под сферой','Единое сообщение SEYVEO: рекомендации, подтверждения, реальные локальные дела и приветствие по времени суток. Правовые новости пока только в учебном сценарии.'],
-   ['Пульс SEYVEO · демо','Примерная бизнес-аналитика: обращения, продажи, выручка, расходы, прибыль, конверсия и периоды. Из единого набора учебных событий, без внешних подключений.'],
+   ['Подробный отчёт в «Картине»','Дополнительный просмотр учебного Пульса: обращения, заказы, суммы продаж и расходов, динамика. Источник один, внешние сервисы не подключены.'],
    ['Первое знакомство SEYVEO','Компактный выбор Life / Business Start / Business Pro / Business Max и необязательное имя. Сохраняются только на этом устройстве; пока это не настоящий разговор с ИИ.'],
    ['Обращение по имени «SEYVEO»','Прототип в открытой PWA после согласия. Надёжную работу на iPhone и беззвучное ожидание ещё нужно проверить.']
  ]},
@@ -149,6 +149,12 @@ function saveFile(){
   $('manageExportStatus').textContent='Не удалось создать копию. Проверьте разрешения браузера.';
  }
 }
+// Working tools lead to EXISTING useful screens, not empty imitation modules.
+$('openManageClients')?.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-clients')));
+$('openManageCalendar')?.addEventListener('click',()=>{
+ // Full calendar grid is a future milestone; real due dates already work in Tasks.
+ document.getElementById('navTasks')?.click();
+});
 $('openManageRoadmap').addEventListener('click',()=>{drawRoadmap();roadmapDialog.showModal()});
 $('manageRoadmapClose').addEventListener('click',()=>roadmapDialog.close());
 $('openManageConnections').addEventListener('click',()=>connect.showModal());
