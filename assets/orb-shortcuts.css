@@ -1,6 +1,6 @@
-/* SEYVEO · Black/White Velvet v10 — softly illuminated, almost weightless orb companions.
+/* SEYVEO · Black/White Velvet v11 — softly illuminated, almost weightless orb companions.
    The approved asymmetric orbit, real actions and Silk Touch are unchanged.
-   44px touch targets with 36px nearly transparent glass discs. */
+   44px touch targets with restored 38px transparent glass discs. */
 
 /* A single quiet switch in Management > Appearance, not a new settings page. */
 #seyveoSilkSoundToggle .seyveo-silk-switch{
@@ -62,7 +62,7 @@
   pointer-events:none;
 }
 
-/* Invisible 44px tap target; only a 36px ultra-light silver glass disc is visible. */
+/* Invisible 44px tap target; restored 38px light silver glass disc. */
 #stage .orb-shortcut{
   position:absolute;
   display:grid;
@@ -87,7 +87,7 @@
 #stage .orb-shortcut::before{
   content:"";
   position:absolute;
-  inset:4px;
+  inset:3px;
   border:1px solid rgba(237,245,255,.42);
   border-radius:inherit;
   pointer-events:none;
@@ -98,7 +98,7 @@
 #stage .orb-shortcut::after{
   content:"";
   position:absolute;
-  inset:5px;
+  inset:4px;
   border-radius:inherit;
   pointer-events:none;
   background:radial-gradient(ellipse 78% 43% at 42% 7%,rgba(255,255,255,.15),transparent 95%);
@@ -118,7 +118,7 @@
 }
 
 /* The visual SVG rim has radius 39.9% of orb width. Buttons have a
-   36px visible disc within a 44px hit target. These intentionally offset
+   38px visible disc within a 44px hit target. These intentionally offset
    angles keep each *visible disc* just beyond the glass ring. */
 #stage .orb-shortcut--calendar{left:3.5%;top:14%}
 #stage .orb-shortcut--tasks{right:2%;top:18%}
