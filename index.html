@@ -400,13 +400,13 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 
 /* SEYVEO · unified close glyph and cutout-safe overlay geometry.
    Scoped to real close controls; original orb, dock and layout stay unchanged. */
-:where(#orbInfoClose,#collapseComposer,#onboardClose) .seyveo-close-glyph{
+:where(#collapseComposer,#onboardClose) .seyveo-close-glyph{
  display:block;width:18px;height:18px;flex:none;overflow:visible;
  fill:none;stroke:currentColor;stroke-width:1.8;
  stroke-linecap:round;stroke-linejoin:round;
  transform:none;pointer-events:none;
 }
-:where(#orbInfoClose,#collapseComposer,#onboardClose) .seyveo-close-glyph path{
+:where(#collapseComposer,#onboardClose) .seyveo-close-glyph path{
  fill:none;stroke:inherit;stroke-width:inherit;
  stroke-linecap:round;stroke-linejoin:round;
 }
@@ -427,7 +427,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
    left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
  }
 }
-</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=4"><link rel="stylesheet" href="assets/home-velvet.css?v=6"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=11"><link rel="stylesheet" href="assets/orb-reply.css?v=4"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></button><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
+</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=4"><link rel="stylesheet" href="assets/home-velvet.css?v=6"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=11"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></button><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
 <defs>
@@ -456,20 +456,13 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Посмотреть ответ управляющего" aria-controls="orbInfoCard" aria-expanded="false"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"><span class="orb-mist-cloud orb-mist-cloud--a"></span><span class="orb-mist-cloud orb-mist-cloud--b"></span><span class="orb-mist-cloud orb-mist-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button><nav id="orbShortcuts" class="orb-shortcuts" aria-label="Действия вокруг сферы">
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"><span class="orb-mist-cloud orb-mist-cloud--a"></span><span class="orb-mist-cloud orb-mist-cloud--b"></span><span class="orb-mist-cloud orb-mist-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button><nav id="orbShortcuts" class="orb-shortcuts" aria-label="Действия вокруг сферы">
 <button class="orb-shortcut orb-shortcut--calendar" type="button" data-orb-action="calendar" title="Запланировать дело" aria-label="Запланировать дело"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17M8 14h2.5M13 14h2.5M8 17h2.5"/></svg></button>
 <button class="orb-shortcut orb-shortcut--tasks" type="button" data-orb-action="tasks" title="Мои дела" aria-label="Открыть мои дела"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m7.4 12 3.2 3.2 6.2-6.5"/></svg></button>
 <button class="orb-shortcut orb-shortcut--activity" type="button" data-orb-action="activity" title="История поручений" aria-label="Открыть историю поручений"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V15M9.5 19.5v-8M14.5 19.5v-12M19.5 19.5v-15"/></svg></button>
 <button class="orb-shortcut orb-shortcut--notes" type="button" data-orb-action="notes" title="Мои записи" aria-label="Открыть мои записи"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.8h8l4.5 4.5V21H6zM14 2.8v5h4.5M9 12h6M9 15.5h6M9 19h4"/></svg></button>
 </nav></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div>
-<article id="orbInfoCard" class="orb-info-card" role="region" aria-labelledby="orbInfoTitle" hidden>
-<button id="orbInfoClose" class="orb-info-close seyveo-close-control" type="button" aria-label="Закрыть ответ управляющего">
-<svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>
-</button>
-<span class="orb-info-label">SEYVEO · УПРАВЛЯЮЩИЙ</span>
-<h2 id="orbInfoTitle" class="orb-info-title">Управляющий на связи</h2>
-<p id="orbInfoText" class="orb-info-content">Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.</p>
-</article></section><div id="dynamic" class="dynamic" aria-live="polite"></div>
+</section><div id="dynamic" class="dynamic" aria-live="polite"></div>
 <section class="seyveo-status" aria-label="Состояние личного пространства SEYVEO">
 <button type="button" id="homePathStatus" class="seyveo-status-side" aria-label="Изменить направление SEYVEO">
 <span class="seyveo-status-overline">Направление</span>
@@ -921,7 +914,7 @@ function showBrandSignature(reason='ambient'){
     return false;
   }
   // Never cover typing, an open dialog, voice listening or a fresh event notice.
-  const busy=!$('ask').hidden||!!document.querySelector('dialog[open]')||$('assistantButton').classList.contains('listening')||!$('orbInfoCard').hidden;
+  const busy=!$('ask').hidden||!!document.querySelector('dialog[open]')||$('assistantButton').classList.contains('listening');
   const busyNotice=$('signal').classList.contains('signal--notice');
   if(busy||(busyNotice&&reason!=='launch')){
     scheduleNextBrand(60000);
@@ -1077,7 +1070,6 @@ transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.ind
 $('kicker').textContent=confirmation?'Согласовано':isCalm?'Всё под контролем':story.kicker;
 $('headline').textContent=confirmation?confirmation.approved:isCalm?'Роман, сейчас всё спокойно':story.title;
 $('subline').textContent=confirmation?'Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.':isCalm?'Все вопросы разобраны. Новые решения появятся здесь.':story.subtitle;
-if(!$('orbInfoCard').hidden)updateOrbInfo();
 $('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'<div class="demo-replay"><span>Демо завершено.</span><button type="button" id="replayDemo">Повторить ›</button></div>':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 $('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>approve(story));
@@ -1127,7 +1119,15 @@ function syncAppPage(){
     else $(id).removeAttribute('aria-current');
   }
   document.title=tasks?'Дела · SEYVEO':theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
-  if(!home){$('signal').classList.remove('is-appearing');closeOrbInfo();}
+  if(!home){
+    $('signal').classList.remove('is-appearing');
+    stopPearlMist();
+    if(orbTapBrandActive){
+      clearTimeout(brandClearTimer);
+      orbTapBrandActive=false;
+      if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
+    }
+  }
   if(tasks){progressDemoTasks();renderTasksPage();scheduleTaskProgress();}
   window.scrollTo(0,0);
 }
@@ -1164,35 +1164,13 @@ window.addEventListener('hashchange',onManageRouteChange);
 $('showHistory').addEventListener('click',()=>{if(location.hash!=='#tasks')location.hash='tasks';});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
-function updateOrbInfo(){
-  const story=stories[state.index];
-  const title=confirmation?'Решение записано':story?story.card:'Управляющий на связи';
-  const description=confirmation?confirmation.approved+'. Это действие выполнено только в сценарии.':story?story.detail:'Сейчас нет вопросов, которые требуют вашего решения. В этом сценарии все поручения согласованы.';
-  $('orbInfoTitle').textContent=title;
-  $('orbInfoText').textContent=description;
-}
-function closeOrbInfo(){
-  stopPearlMist();
-  if(orbTapBrandActive){
-    clearTimeout(brandClearTimer);
-    orbTapBrandActive=false;
-    if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
-  }
-  $('orbInfoCard').hidden=true;
-  $('stage').querySelector('.message').hidden=false;
-  $('orb').setAttribute('aria-expanded','false');
-}
+// The sphere is a living signature, not a second copy of the recommendation.
+ // Each tap restarts the approved Pearl Mist + Black Velvet Deep Reveal.
+ // The status text below the sphere stays visible; details remain in «Подробнее».
 $('orb').addEventListener('click',()=>{
-  // A second tap closes this little inline card; never stacks multiple dialogs.
-  if(!$('orbInfoCard').hidden){closeOrbInfo();return}
-  updateOrbInfo();
-  $('stage').querySelector('.message').hidden=true;
-  $('orbInfoCard').hidden=false;
-  $('orb').setAttribute('aria-expanded','true');
   startPearlMist();
   revealOrbBrandOnTap();
 });
-$('orbInfoClose').addEventListener('click',closeOrbInfo);
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
 playFeedback('confirm');
 const v=q.toLowerCase();const current=stories[state.index];
