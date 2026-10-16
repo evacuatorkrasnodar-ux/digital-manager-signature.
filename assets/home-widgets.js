@@ -199,9 +199,6 @@ $('openHomeWidgetsManage').addEventListener('click',()=>{
 });
 $('homeWidgetsClose').addEventListener('click',()=>config.close());
 $('homeWidgetDetailClose').addEventListener('click',()=>details.close());
-$('homeWidgetDetailPulse').addEventListener('click',()=>{
- details.close();window.dispatchEvent(new Event('seyveo:pulse-open'));
-});
 for(const modal of [config,details])modal.addEventListener('click',event=>{
  if(event.target!==modal)return;
  const rect=modal.getBoundingClientRect();
