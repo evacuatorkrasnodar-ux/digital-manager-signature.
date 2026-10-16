@@ -71,7 +71,7 @@ function render(){
  }
  summary.replaceChildren();
  if(open.length)open.slice(0,2).forEach(task=>summary.append(row(task,true)));
- else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Здесь будут ваши настоящие дела — не демосценарии.'));
+ else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Личных дел пока нет.'));
  $('personalBriefCount').textContent=open.length?String(open.length):'';
  $('personalBriefCount').hidden=!open.length;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
