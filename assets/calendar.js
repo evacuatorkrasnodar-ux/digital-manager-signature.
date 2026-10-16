@@ -269,4 +269,6 @@ window.addEventListener('seyveo:calendar-open',()=>{render()});
 window.addEventListener('seyveo:tasks-changed',()=>{if(!page.hidden)render()});
 window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS)&&!page.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!page.hidden)render()});
+// A saved #calendar URL may be active before this script initializes.
+if(!page.hidden)render();
 })();
