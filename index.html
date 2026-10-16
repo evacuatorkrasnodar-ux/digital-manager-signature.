@@ -217,7 +217,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .assistant-button.listening .button-rim{stroke:#ddeafb}
 .assistant-button.listening .voice-bars{animation:speaking 1.5s ease-in-out infinite alternate;transform-origin:37px 37px}
 @keyframes speaking{from{transform:scaleY(.88)}to{transform:scaleY(1.08)}}
-.ask-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
+.ask-caption{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
 .voice-hint{position:fixed;z-index:42;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));max-width:min(420px,calc(100% - 48px));border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px #0004;color:var(--text);padding:10px 15px;font-size:12px;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .2s,transform .2s}
 .voice-hint.active{opacity:1;transform:translate(-50%,0)}
 .prompt{position:fixed;z-index:35;left:50%;bottom:calc(119px + env(safe-area-inset-bottom) + var(--keyboard-offset,0px));transform:translateX(-50%);width:min(440px,calc(100% - 32px));margin:0;display:flex;align-items:center;gap:8px;background:var(--card);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:25px;padding:8px 9px 8px 16px;box-shadow:0 10px 26px #0004;transition:width .23s ease,border-radius .23s ease}
