@@ -7,6 +7,52 @@ const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
 const KEY='seyveo-company-passport-v1';
+const DEV_PREVIEW_KEY='seyveo-developer-tier-preview-v1';
+const TIERS=Object.freeze([
+  {id:'start',name:'Business Start',short:'START',
+   audience:'Начинаю своё дело',
+   features:['Проверка бизнес-идеи','Расчёты и план запуска','Первые клиенты'],
+   state:'В планах'},
+  {id:'pro',name:'Business Pro',short:'PRO',
+   audience:'У меня работает компания',
+   features:['Всё из Start','Клиенты, поручения и процессы','Финансы и бизнес-аналитика'],
+   state:'В планах'},
+  {id:'max',name:'Business Max',short:'MAX',
+   audience:'Несколько команд и направлений',
+   features:['Всё из Pro','Филиалы и роли сотрудников','Координация и масштабная автоматизация'],
+   state:'В планах'}
+]);
+function readPreview(){
+ try{const raw=localStorage.getItem(DEV_PREVIEW_KEY);return TIERS.some(t=>t.id===raw)?raw:'pro'}
+ catch{return 'pro'}
+}
+function setPreview(next){
+ if(!TIERS.some(t=>t.id===next))return;
+ try{localStorage.setItem(DEV_PREVIEW_KEY,next)}catch{}
+ drawPreview();
+ window.dispatchEvent(new CustomEvent('seyveo:plan-preview-changed',{detail:{tier:next}}));
+}
+function drawPreview(){
+ const id=readPreview(),tier=TIERS.find(t=>t.id===id)||TIERS[1],index=TIERS.indexOf(tier);
+ for(const button of studio.querySelectorAll('[data-seyveo-preview-tier]')){
+   const active=button.dataset.seyveoPreviewTier===id;
+   button.setAttribute('aria-pressed',String(active));
+   const status=button.querySelector('[data-seyveo-current]');if(status)status.textContent=active?'Смотрим':'Посмотреть';
+ }
+ const tierName=$('seyveoPreviewName'),features=$('seyveoPreviewFeatures');
+ if(tierName)tierName.textContent='SEYVEO '+tier.name;
+ if(features){
+   features.replaceChildren();
+   tier.features.forEach(item=>{const li=document.createElement('li');li.textContent=item;features.append(li)});
+ }
+ const lower=$('seyveoPreviewLower'),higher=$('seyveoPreviewHigher');
+ lower.disabled=index===0;higher.disabled=index===TIERS.length-1;
+ lower.textContent=index>0?'← '+TIERS[index-1].short:'Начало линейки';
+ higher.textContent=index<TIERS.length-1?'↑ '+TIERS[index+1].short:'Флагман MAX';
+ const summary=$('seyveoPassportPreviewTier');
+ if(summary)summary.textContent='Предпросмотр '+tier.short;
+}
+
 const LABELS={npd:'Самозанятый',ip:'Индивидуальный предприниматель',org:'Организация'};
 const PROPS=[
  ['name','Название для клиентов'],['legalName','Полное имя / юридическое наименование'],
@@ -67,6 +113,7 @@ function openCompany(){
 }
 function openStudio(){
  status(studio,'');
+ drawPreview();
  if(!studio.open)studio.showModal();
 }
 function validate(card){
@@ -99,7 +146,10 @@ function plain(kind){
   'Продукт: Цифровой управляющий',
   'Фирменная подпись: SEYVEO · IT · AI · AUTOMATION',
   'Сборка: демонстрационная версия',
-  'Подписка и лицензия: не подтверждены',
+  'Линейка: SEYVEO Business Start → Business Pro → Business Max',
+  'SEYVEO Life: отдельное направление, доступное вместе с бизнес-уровнем',
+  'Предпросмотр разработчика: '+(TIERS.find(t=>t.id===readPreview())||TIERS[1]).name,
+  'Подписка и лицензия: не подключены. Предпросмотр не является покупкой',
   'Подключённый ИИ и внешние сервисы: отсутствуют',
   'Сведения о продукте представлены в приложении'
  ].join('\n');
@@ -139,6 +189,17 @@ function print(kind){
  try{win.focus();win.print()}catch{}
  status(active,'Открыта версия для печати. Если окно печати не появилось, нажмите «Распечатать» в новой вкладке.');
 }
+for(const button of studio.querySelectorAll('[data-seyveo-preview-tier]')){
+ button.addEventListener('click',()=>setPreview(button.dataset.seyveoPreviewTier));
+}
+$('seyveoPreviewLower').addEventListener('click',()=>{
+ const index=TIERS.findIndex(t=>t.id===readPreview());if(index>0)setPreview(TIERS[index-1].id);
+});
+$('seyveoPreviewHigher').addEventListener('click',()=>{
+ const index=TIERS.findIndex(t=>t.id===readPreview());if(index>=0&&index<TIERS.length-1)setPreview(TIERS[index+1].id);
+});
+window.addEventListener('storage',event=>{if(event.key===DEV_PREVIEW_KEY)drawPreview()});
+drawPreview();
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
