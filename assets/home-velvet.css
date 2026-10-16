@@ -1,4 +1,4 @@
-/* SEYVEO · Home Velvet v4
+/* SEYVEO · Home Velvet v5
    Three restrained dashboard tiles as in the approved Black/White Velvet reference.
    No changes to protected sphere, animations, passports, header, dock or dialogs. */
 #homePage{
@@ -229,6 +229,43 @@
   #homePage .seyveo-status-center small{font-size:8px}
   #homePage .demo-replay{padding:8px 11px}
   #homePage .demo-replay button{font-size:11px}
+}
+
+/* When nothing needs attention, the Home must not be a stack of empty panels.
+   Keep History, Add and Open all actions; real content automatically expands.
+   :has() supported in modern iOS Safari; older browsers retain readable fallback. */
+#homePage .timeline:has(.activity-empty){
+  padding:12px 18px;
+  border-radius:999px;
+}
+#homePage .timeline:has(.activity-empty) .timeline-head{
+  margin:0;
+  min-height:30px;
+}
+#homePage .timeline:has(.activity-empty) .activity-empty{
+  display:none;
+}
+#homePage .personal-brief:has(.personal-brief-empty){
+  margin-top:10px;
+  padding:13px 18px 11px;
+  border-radius:34px;
+}
+#homePage .personal-brief:has(.personal-brief-empty) .personal-brief-head{
+  margin-bottom:1px;
+}
+#homePage .personal-brief:has(.personal-brief-empty) .personal-brief-empty{
+  display:none;
+}
+#homePage .personal-brief:has(.personal-brief-empty) .personal-brief-footer{
+  margin-top:4px;
+  padding-top:8px;
+}
+@media(max-width:375px){
+  #homePage .timeline:has(.activity-empty){padding:10px 14px}
+  #homePage .personal-brief:has(.personal-brief-empty){
+    padding:12px 15px 10px;
+    border-radius:30px;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
