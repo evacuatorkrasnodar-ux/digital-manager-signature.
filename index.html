@@ -348,10 +348,19 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 @media(max-width:355px){.tasks-switch button{font-size:12px}.tasks-records .activity-row{padding:13px 11px;gap:9px}}
 @media(prefers-reduced-motion:no-preference){.tasks-main:not([hidden]){animation:manage-enter .22s ease-out both}}
 
+/* Opt-in hands-free preview: no idle animation, subtle status while the mic is active. */
+.wake-voice-status[hidden]{display:none!important}
+.wake-voice-status{position:fixed;z-index:41;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:9px;max-width:calc(100% - 36px);padding:6px 8px 6px 12px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--text);box-shadow:0 8px 26px #0003;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:12px;white-space:nowrap}
+.wake-voice-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--text);opacity:.65}
+.wake-voice-status button{flex:none;border:1px solid var(--soft-line);border-radius:14px;padding:6px 9px;background:var(--card2);color:var(--text);font:inherit;font-size:11px}
+.wake-voice-status button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.assistant-button.wake-ready::before{opacity:.32;transform:scale(1.035)}
+.assistant-button.wake-awake::before{animation:assistant-velvet-halo 2.1s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.assistant-button.wake-awake::before{animation:none;opacity:.48}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
-<div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+<div class="composer-compact"><button type="button" id="wakeVoiceStart" class="composer-icon" aria-label="Обращение по имени SEYVEO" title="Обращение по имени"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
 <div class="composer-actions">
 <button class="composer-tool" type="submit" aria-label="Отправить управляющему"><span><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></span><small>Отправить</small></button>
 <button class="composer-tool" type="button" id="saveNote"><span><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v6h8V4M8 20v-7h8v7"/></svg></span><small>Блокнот</small></button>
@@ -359,7 +368,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button class="composer-tool" type="button" id="printText"><span><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 17H4V9h16v8h-2M6 14h12v7H6zM17 12h.01"/></svg></span><small>Печать</small></button>
 <button class="composer-tool" type="button" id="moreComposer" aria-expanded="false"><span><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span><small>Ещё</small></button>
 </div>
-<div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
+<div class="composer-more" id="composerMore" hidden><button type="button" id="wakeVoiceMore">Обращение по имени</button><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
 </form></main><main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
 <div id="manageOverview">
@@ -370,7 +379,6 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="manage-text"><strong>Тема</strong><small>Оформление и внешний вид</small></span>
 <span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span>
 </button></div></section>
-<section class="manage-group" aria-labelledby="manage-assistant"><h2 id="manage-assistant">Мой управляющий</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="voice"><span class="manage-text"><strong>Голос и микрофон</strong><small>Голосовое общение с SEYVEO</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Подключения</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="accounts"><span class="manage-text"><strong>Почта и календарь</strong><small>Сервисы пока не подключены</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="business"><span class="manage-text"><strong>Мессенджеры и CRM</strong><small>Подключения в разработке</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
 <button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
@@ -419,7 +427,13 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
-</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle">
+<h2 id="wakeVoiceConsentTitle">Обращение по имени</h2>
+<p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
+<p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
+<div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
+</dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -795,7 +809,6 @@ const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
 if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
 else systemThemeQuery.addListener(onSystemThemeChange);
 const manageInfo={
- voice:['Голос и микрофон','Здесь будут параметры голоса. Разрешения на микрофон сейчас задаются браузером и устройством.'],
  accounts:['Почта и календарь','Почта и календарь пока не подключены. В будущем здесь можно будет выбрать сервисы и разрешения.'],
  business:['Мессенджеры и CRM','Подключения мессенджеров и CRM ещё разрабатываются.'],
  notifications:['Уведомления','Настройки оповещений появятся позже. Пока уведомления показываются только в демонстрационных сценариях.'],
@@ -1022,6 +1035,7 @@ function stopVoice(){
   fab.setAttribute('aria-pressed','false');
 }
 function startVoice(){
+  window.dispatchEvent(new Event('seyveo:manual-voice')); // Stop optional wake mode before manual recording.
   started=true;held=true;
   fab.classList.remove('pressing');
   if($('homePage').hidden)goHome();
@@ -1115,4 +1129,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script></body></html>
