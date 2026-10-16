@@ -1,5 +1,5 @@
-/* SEYVEO Home Widgets v1 · local selection + one demo ledger.
-   Default business = Clients, Orders, Money. No duplicate settings status cards. */
+/* SEYVEO Picture Widgets · saved selection and one demo ledger.
+   Quiet metrics inside Picture; clean Home remains reserved for decisions. */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -10,20 +10,13 @@ if(!home||!grid||!config||!catalog||!details)return;
 const KEY='seyveo-home-widgets-v1';
 const PROFILE='seyveo-first-acquaintance-v1';
 const CATALOG=Object.freeze([
- {id:'clients',label:'Клиенты',desc:'Сколько человек обратилось',icon:'users'},
- {id:'orders',label:'Заказы',desc:'Сколько договорённостей о покупке',icon:'bag'},
- {id:'money',label:'Деньги',desc:'На какую сумму продажи и расходы',icon:'wallet'},
- {id:'plan',label:'Ближайшие дела',desc:'Ваши личные дела и сроки',icon:'calendar'},
- {id:'notes',label:'Записи',desc:'Блокнот и сохранённые мысли',icon:'note'}
+ {id:'clients',label:'Клиенты',desc:'Сколько человек обратилось'},
+ {id:'orders',label:'Заказы',desc:'Сколько договорённостей о покупке'},
+ {id:'money',label:'Деньги',desc:'На какую сумму продажи и расходы'},
+ {id:'plan',label:'Ближайшие дела',desc:'Ваши личные дела и сроки'},
+ {id:'notes',label:'Записи',desc:'Блокнот и сохранённые мысли'}
 ]);
 const BY_ID=Object.fromEntries(CATALOG.map(x=>[x.id,x]));
-const icons={
- users:'<circle cx="8" cy="8" r="2.5"/><circle cx="16" cy="8.5" r="2"/><path d="M2.8 19v-1.6c0-3.1 2-4.7 5.2-4.7s5.2 1.6 5.2 4.7V19M14.5 13.5c3.1-.2 5.2 1.4 5.2 4.6V19"/>',
- bag:'<path d="M4.5 8h15l-1.1 12h-13L4.5 8ZM9 9V7a3 3 0 0 1 6 0v2"/>',
- wallet:'<rect x="3" y="5.5" width="18" height="14" rx="3"/><path d="M3.5 9h17M15 14h2.5"/>',
- calendar:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17M8 14h2.5M13 14h2.5"/>',
- note:'<path d="M6 2.8h8l4.5 4.5V21H6zM14 2.8v5h4.5M9 12h6M9 15.5h6M9 19h4"/>'
-};
 const num=new Intl.NumberFormat('ru-RU');
 const rub=value=>num.format(value)+' ₽';
 const create=(tag,klass,text)=>{
@@ -87,15 +80,6 @@ function info(id){
  if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за период · демо'};
  if(id==='plan')return {label:item.label,value:String(count),hint:count?'Нужно сделать · на устройстве':'Пока всё спокойно'};
  return {label:item.label,value:String(notes()),hint:'Сохранено на устройстве'};
-}
-function icon(name){
- const holder=create('span','home-widget-icon');
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('viewBox','0 0 24 24');
- svg.setAttribute('aria-hidden','true');
- // Only static paths declared by this module, not user-provided content.
- svg.innerHTML=icons[name]||icons.note;
- holder.append(svg);return holder;
 }
 const moneyCompact=value=>{
  if(value>=1000000)return (value/1000000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' млн ₽';
