@@ -1,6 +1,6 @@
-/* SEYVEO · Black/White Velvet v6 — crystal-light orb companions.
+/* SEYVEO · Black/White Velvet v7 — softly illuminated, almost weightless orb companions.
    The approved asymmetric orbit, real actions and Silk Touch are unchanged.
-   44px interactive targets with a visually smaller 40px glass disc. */
+   44px interactive targets with visually delicate 38px luminous glass discs. */
 
 /* A single quiet switch in Management > Appearance, not a new settings page. */
 #seyveoSilkSoundToggle .seyveo-silk-switch{
@@ -54,7 +54,7 @@
   pointer-events:none;
 }
 
-/* Invisible 44px touch box; all visual weight lives in the inset 40px glass. */
+/* Invisible 44px touch box; a smaller 38px lit-glass disc floats within it. */
 #stage .orb-shortcut{
   position:absolute;
   display:grid;
@@ -79,28 +79,28 @@
 #stage .orb-shortcut::before{
   content:"";
   position:absolute;
-  inset:2px;
-  border:1px solid rgba(234,242,255,.47);
+  inset:3px;
+  border:1px solid rgba(237,245,255,.38);
   border-radius:inherit;
   pointer-events:none;
-  background:linear-gradient(150deg,rgba(218,232,255,.15),rgba(121,147,189,.075) 53%,rgba(14,23,39,.20));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 9px rgba(187,212,249,.11),0 2px 8px rgba(0,0,0,.08);
+  background:linear-gradient(145deg,rgba(237,245,255,.29),rgba(178,203,239,.18) 55%,rgba(152,181,218,.11));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 9px rgba(191,214,246,.09);
   transition:background .16s ease,box-shadow .16s ease;
 }
 #stage .orb-shortcut::after{
   content:"";
   position:absolute;
-  inset:3px;
+  inset:4px;
   border-radius:inherit;
   pointer-events:none;
-  background:radial-gradient(ellipse 70% 38% at 42% 8%,rgba(255,255,255,.14),transparent 95%);
+  background:radial-gradient(ellipse 78% 43% at 42% 7%,rgba(255,255,255,.25),transparent 95%);
 }
 #stage .orb-shortcut svg{
   position:relative;
   z-index:1;
   display:block;
-  width:19px;
-  height:19px;
+  width:18px;
+  height:18px;
   fill:none;
   stroke:currentColor;
   stroke-width:1.65;
@@ -120,8 +120,8 @@
   transform:translateY(1px) scale(.965);
 }
 #stage .orb-shortcut:is(:active,.is-silk-touched)::before{
-  background:linear-gradient(150deg,rgba(238,245,255,.24),rgba(125,154,205,.13) 62%,rgba(20,30,48,.20));
-  box-shadow:inset 0 2px 4px rgba(2,8,18,.16),0 0 13px rgba(190,220,255,.23);
+  background:linear-gradient(150deg,rgba(246,250,255,.39),rgba(181,207,244,.24) 70%,rgba(144,171,214,.14));
+  box-shadow:inset 0 1px 4px rgba(14,32,56,.09),0 0 12px rgba(190,220,255,.19);
 }
 #stage .orb-shortcut:focus-visible{
   outline:2px solid var(--text);
@@ -130,9 +130,9 @@
 
 :root[data-theme=light] #stage .orb-shortcut{color:#284574}
 :root[data-theme=light] #stage .orb-shortcut::before{
-  border-color:rgba(91,126,185,.36);
-  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(214,226,246,.30));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 8px rgba(115,155,220,.09),0 2px 7px rgba(40,68,116,.055);
+  border-color:rgba(98,131,185,.30);
+  background:linear-gradient(145deg,rgba(255,255,255,.83),rgba(229,239,253,.48));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.88),0 0 9px rgba(115,155,220,.07);
 }
 :root[data-theme=light] #stage .orb-shortcut::after{
   background:radial-gradient(ellipse 70% 38% at 42% 8%,rgba(255,255,255,.58),transparent 95%);
