@@ -98,6 +98,9 @@ function icon(name){
 function renderHome(){
  grid.replaceChildren();
  home.hidden=selected.length===0;
+ // Never show the automatic personal-tasks preview beside an installed Plan widget.
+ const brief=$('personalBrief');
+ if(brief)brief.hidden=selected.includes('plan')||tasks().length===0;
  for(const id of selected){
   const data=info(id),item=BY_ID[id],button=create('button','home-widget-card'+(id==='money'?' home-widget-card--wide':''));
   button.type='button';button.dataset.homeWidget=id;
@@ -266,6 +269,7 @@ catalog.addEventListener('pointerup',event=>{
 });
 catalog.addEventListener('pointercancel',clearDrag);
 window.addEventListener('seyveo:tasks-changed',renderHome);
+window.addEventListener('seyveo:notes-changed',renderHome);
 window.addEventListener('seyveo:profile-changed',()=>{
  if(safeRead(KEY)===null)selected=defaults();
  renderHome();renderCatalog();
