@@ -12,7 +12,6 @@
 /* Text hierarchy: SF-like restraint, still readable on compact phones.
    No change to orb position, effects, or native browser text zoom. */
 #homeHeader h1{font-weight:660;letter-spacing:-.043em}
-#homeHeader .greeting{font-size:13.5px;line-height:1.42;letter-spacing:-.007em}
 #homePage .message .kicker{font-size:10.5px;font-weight:590;letter-spacing:.12em}
 #homePage .message h2{
   font-size:var(--type-heading);
@@ -20,7 +19,6 @@
 }
 #homePage .message p{font-size:14px;line-height:1.5}
 @media(max-width:375px){
-  #homeHeader .greeting{font-size:12.5px}
   #homePage .message h2{font-size:21px}
 }
 
