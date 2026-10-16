@@ -43,23 +43,32 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 }
 .signal.is-pearl .pearl-stage{
  position:relative;isolation:isolate;display:grid;place-items:center;
- box-sizing:border-box;width:100%;height:100%;opacity:0;
- overflow:hidden;border-radius:22px;
- transform:translate3d(0,0,0);backface-visibility:hidden
+ box-sizing:border-box;width:100%;height:100%;
+ opacity:1;overflow:hidden;border-radius:24px;
+ transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl .pearl-stage::before{
- content:"";position:absolute;left:50%;top:50%;
- width:172px;height:98px;border-radius:50%;z-index:-1;pointer-events:none;
- opacity:0;transform:translate(-50%,-50%) scale(.48);
- background:radial-gradient(ellipse,rgba(244,250,255,.33),rgba(182,215,240,.1) 44%,transparent 77%)
+ content:"";position:absolute;left:50%;top:50%;z-index:-1;
+ width:174px;height:108px;border-radius:50%;pointer-events:none;
+ opacity:0;transform:translate3d(-50%,-50%,0);
+ background:radial-gradient(ellipse,rgba(250,253,255,.22),rgba(194,220,242,.09) 42%,transparent 73%)
 }
-.signal.is-pearl.is-appearing .pearl-stage{
- animation:pearl-brand 7.4s linear both;will-change:opacity
+.signal.is-pearl .brand-lockup{position:relative;z-index:1}
+.signal.is-pearl :is(.brand-mark,.brand-word,.brand-specialty){
+ opacity:0;transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl.is-appearing .pearl-stage::before{
- animation:pearl-light 7.4s linear both
+ animation:cinema-inner-light 9.3s linear both
 }
-
+.signal.is-pearl.is-appearing .brand-mark{
+ animation:cinema-mark 9.3s linear both;will-change:opacity
+}
+.signal.is-pearl.is-appearing .brand-word{
+ animation:cinema-word 9.3s linear both;will-change:opacity
+}
+.signal.is-pearl.is-appearing .brand-specialty{
+ animation:cinema-specialty 9.3s linear both;will-change:opacity
+}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 /* Calm Living Cinema typography stays at the approved sizes. */
@@ -70,7 +79,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .preview-care{font-size:15px;font-weight:560;line-height:1.45;text-wrap:balance}
 :root[data-theme=light] .preview-moment{color:#344b69}
 :root[data-theme=light] .preview-date{color:#506884}
-/* SEYVEO brand is always the Pearl Bloom signature. */
+/* SEYVEO brand: approved Silk Motion cinematic sequence. */
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
 .brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -94,22 +103,35 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
  100%{opacity:0}
 }
-@keyframes pearl-brand{
- 0%{opacity:0;transform:scale(.975)}
- 46%{opacity:.98;transform:scale(1)}
- 68%{opacity:.98;transform:scale(1)}
- 100%{opacity:0;transform:scale(1.012)}
+@keyframes cinema-inner-light{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+ 35%{opacity:.45;animation-timing-function:cubic-bezier(.45,0,.65,1)}
+ 72%{opacity:.20;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
 }
-@keyframes pearl-light{
- 0%{opacity:0;transform:translate(-50%,-50%) scale(.48)}
- 46%{opacity:.53;transform:translate(-50%,-50%) scale(1)}
- 68%{opacity:.33;transform:translate(-50%,-50%) scale(1.09)}
- 100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}
+@keyframes cinema-mark{
+ 0%,8%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 36%{opacity:1}
+ 77%{opacity:1;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
+}
+@keyframes cinema-word{
+ 0%,20%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 49%{opacity:1}
+ 77%{opacity:1;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
+}
+@keyframes cinema-specialty{
+ 0%,32%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 60%{opacity:.97}
+ 77%{opacity:.97;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){
  .signal.is-living.is-appearing .reveal-plane,
  .signal.is-pearl.is-appearing .pearl-stage{animation:none;opacity:.86;transform:none}
- .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.2}
+ .signal.is-pearl.is-appearing .pearl-stage :is(.brand-mark,.brand-word,.brand-specialty){animation:none;opacity:1;transform:none}
+ .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.20;transform:translate3d(-50%,-50%,0)}
 }
 
 
@@ -355,7 +377,7 @@ function glassIcon(type,place='card'){
 }
 const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
-const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=7600;
+const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=9500;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
@@ -610,7 +632,7 @@ function previewSphereMoments(){
       content.innerHTML=glassIcon('mail','orb');
       return content;
     }},
-    {kind:'brand',duration:7600}
+    {kind:'brand',duration:9500}
   ];
   let step=0;
   function showNext(){
