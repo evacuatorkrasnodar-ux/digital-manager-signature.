@@ -1,4 +1,4 @@
-/* SEYVEO · Black/White Velvet v8 — softly illuminated, almost weightless orb companions.
+/* SEYVEO · Black/White Velvet v9 — softly illuminated, almost weightless orb companions.
    The approved asymmetric orbit, real actions and Silk Touch are unchanged.
    44px interactive targets with visually delicate 38px luminous glass discs. */
 
@@ -117,11 +117,13 @@
   pointer-events:none;
 }
 
-/* These exact positions were approved; DO NOT adjust them in visual polish. */
-#stage .orb-shortcut--calendar{left:8%;top:16%}
-#stage .orb-shortcut--tasks{right:5%;top:20%}
-#stage .orb-shortcut--activity{left:8%;bottom:9%}
-#stage .orb-shortcut--notes{right:10%;bottom:6%}
+/* The visual SVG rim has radius 39.9% of orb width. Buttons have a
+   38px visible disc within a 44px hit target. These intentionally offset
+   angles keep each *visible disc* just beyond the glass ring. */
+#stage .orb-shortcut--calendar{left:3.5%;top:14%}
+#stage .orb-shortcut--tasks{right:2%;top:18%}
+#stage .orb-shortcut--activity{left:7.5%;bottom:10%}
+#stage .orb-shortcut--notes{right:10.5%;bottom:8%}
 
 /* Silk Touch: the same quiet click/light when actually pressed. */
 #stage .orb-shortcut:is(:active,.is-silk-touched){
@@ -150,19 +152,35 @@
   box-shadow:inset 0 2px 5px rgba(59,102,171,.10),0 0 12px rgba(122,165,230,.16);
 }
 
-/* Same asymmetry on narrow iPhones and same accessible touch target. */
+/* Narrow iPhones need a touch more room around a smaller visible ring. */
 @media(max-width:375px){
   #stage .orb-shortcut svg{width:18px;height:18px}
-  #stage .orb-shortcut--calendar{left:7%;top:16%}
-  #stage .orb-shortcut--tasks{right:5%;top:21%}
-  #stage .orb-shortcut--activity{left:7%;bottom:9%}
-  #stage .orb-shortcut--notes{right:9%;bottom:7%}
+  #stage .orb-shortcut--calendar{left:-1%;top:10%}
+  #stage .orb-shortcut--tasks{right:-3%;top:15%}
+  #stage .orb-shortcut--activity{left:3%;bottom:5%}
+  #stage .orb-shortcut--notes{right:7%;bottom:3%}
 }
-@media(max-width:345px){
-  #stage .orb-shortcut--calendar{left:6%;top:17%}
-  #stage .orb-shortcut--tasks{right:4%;top:22%}
-  #stage .orb-shortcut--activity{left:6%;bottom:10%}
-  #stage .orb-shortcut--notes{right:8%;bottom:8%}
+/* Safari's compact viewport scales the orb to 272px while keeping the
+   actual orb/shortcuts wrapper aligned. Compensate for the fixed 44px
+   button targets so the circles clear the rim rather than overlap it. */
+@media(max-height:760px){
+  #stage .orb-shortcut--calendar{left:2%;top:14%}
+  #stage .orb-shortcut--tasks{right:0%;top:19%}
+  #stage .orb-shortcut--activity{left:6%;bottom:9%}
+  #stage .orb-shortcut--notes{right:10%;bottom:6%}
+}
+@media(max-height:760px) and (max-width:375px){
+  #stage .orb-shortcut--calendar{left:-1%;top:10%}
+  #stage .orb-shortcut--tasks{right:-3%;top:15%}
+  #stage .orb-shortcut--activity{left:3%;bottom:5%}
+  #stage .orb-shortcut--notes{right:7%;bottom:3%}
+}
+/* Large orbs: follow the same curve instead of drifting too far away. */
+@media(min-height:761px) and (min-width:400px){
+  #stage .orb-shortcut--calendar{left:5%;top:15%}
+  #stage .orb-shortcut--tasks{right:4%;top:19%}
+  #stage .orb-shortcut--activity{left:9%;bottom:11%}
+  #stage .orb-shortcut--notes{right:12%;bottom:9%}
 }
 @media(prefers-reduced-motion:reduce){
   #stage .orb-shortcut,
