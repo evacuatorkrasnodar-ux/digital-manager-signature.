@@ -185,4 +185,6 @@ window.addEventListener('storage',event=>{
  if(event.key===KEY&&dialog.open)renderList();
  if(event.key===KEY)window.dispatchEvent(new Event('seyveo:spaces-changed'));
 });
+// #calendar can be the first screen loaded; repaint after data providers mount.
+if(!$('calendarPage').hidden)window.dispatchEvent(new Event('seyveo:spaces-changed'));
 })();
