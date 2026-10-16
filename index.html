@@ -474,7 +474,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"><span class="orb-mist-cloud orb-mist-cloud--a"></span><span class="orb-mist-cloud orb-mist-cloud--b"></span><span class="orb-mist-cloud orb-mist-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button><nav id="orbShortcuts" class="orb-shortcuts" aria-label="Действия вокруг сферы">
 <button class="orb-shortcut orb-shortcut--calendar" type="button" data-orb-action="calendar" title="Запланировать дело" aria-label="Запланировать дело"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17M8 14h2.5M13 14h2.5M8 17h2.5"/></svg></button>
 <button class="orb-shortcut orb-shortcut--tasks" type="button" data-orb-action="tasks" title="Результаты SEYVEO" aria-label="Показать результаты работы SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m7.4 12 3.2 3.2 6.2-6.5"/></svg></button>
-<button class="orb-shortcut orb-shortcut--activity" type="button" data-orb-action="activity" title="Пульс SEYVEO" aria-label="Открыть демонстрационный Пульс SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V15M9.5 19.5v-8M14.5 19.5v-12M19.5 19.5v-15"/></svg></button>
+<button class="orb-shortcut orb-shortcut--activity" type="button" data-orb-action="activity" title="Короткий вывод SEYVEO" aria-label="Что SEYVEO заметил в цифрах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V15M9.5 19.5v-8M14.5 19.5v-12M19.5 19.5v-15"/></svg></button>
 <button class="orb-shortcut orb-shortcut--notes" type="button" data-orb-action="notes" title="Мои записи" aria-label="Открыть мои записи"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.8h8l4.5 4.5V21H6zM14 2.8v5h4.5M9 12h6M9 15.5h6M9 19h4"/></svg></button>
 </nav></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div>
 </section>
@@ -1349,6 +1349,21 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('hashchange',closeResultsGlance);
 
+// Four satellite actions stay unique: the chart beside the orb offers just
+// a quick verbal observation. The full numbers live ONLY in «Картина».
+let pictureInsightTimer=null;
+window.addEventListener('seyveo:picture-insight',()=>{
+ const snapshot=window.SEYVEO_PULSE_DEMO?.snapshot('today');
+ if(!snapshot)return;
+ clearTimeout(pictureInsightTimer);
+ $('kicker').textContent='SEYVEO · Короткий вывод · демо';
+ $('headline').textContent=snapshot.leads+' обращений — '+snapshot.sales+' заказов';
+ const noOrder=Math.max(0,snapshot.leads-snapshot.sales);
+ $('subline').textContent=noOrder
+  ?'По '+noOrder+' обращениям пока не отмечен заказ. Стоит проверить их статус.'
+  :'Все обращения в учебном примере стали заказами.';
+ pictureInsightTimer=setTimeout(syncHomeVoice,4600);
+});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 // The sphere is a living signature, not a second copy of the recommendation.
@@ -1621,4 +1636,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=4"></script><script src="assets/pulse.js?v=4"></script><script src="assets/picture.js?v=1"></script><script src="assets/home-widgets.js?v=3"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=5"></script><script src="assets/pulse.js?v=4"></script><script src="assets/picture.js?v=2"></script><script src="assets/home-widgets.js?v=3"></script></body></html>
