@@ -28,10 +28,41 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing{animation:glass-mist 5.2s .25s ease-in-out both}
+/* SEYVEO live effects: content only, the approved sphere stays untouched. */
+.signal.is-living,.signal.is-pearl{opacity:1;filter:none;transform:translate(-50%,-50%)}
+.signal.is-living .reveal-plane{
+ display:grid;place-items:center;width:100%;height:100%;
+ opacity:0;transform:translateZ(0);backface-visibility:hidden
+}
+.signal.is-living.is-appearing.signal--moment .reveal-plane,
+.signal.is-living.is-appearing.signal--care .reveal-plane{
+ animation:living-calm 8.2s linear both;will-change:opacity
+}
+.signal.is-living.is-appearing.signal--notice .reveal-plane{
+ animation:living-notice 5.2s linear both;will-change:opacity
+}
+.signal.is-pearl .pearl-stage{
+ position:relative;isolation:isolate;display:grid;place-items:center;
+ box-sizing:border-box;width:100%;height:100%;opacity:0;
+ overflow:hidden;border-radius:22px;
+ transform:translate3d(0,0,0);backface-visibility:hidden
+}
+.signal.is-pearl .pearl-stage::before{
+ content:"";position:absolute;left:50%;top:50%;
+ width:172px;height:98px;border-radius:50%;z-index:-1;pointer-events:none;
+ opacity:0;transform:translate(-50%,-50%) scale(.48);
+ background:radial-gradient(ellipse,rgba(244,250,255,.33),rgba(182,215,240,.1) 44%,transparent 77%)
+}
+.signal.is-pearl.is-appearing .pearl-stage{
+ animation:pearl-brand 7.4s linear both;will-change:opacity
+}
+.signal.is-pearl.is-appearing .pearl-stage::before{
+ animation:pearl-light 7.4s linear both
+}
+
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
-/* Preview typography uses the original glass-mist, without changing it. */
+/* Calm Living Cinema typography stays at the approved sizes. */
 .signal.is-preview{width:min(226px,76%);height:112px}
 .preview-moment{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;text-align:center;line-height:1.35;color:#e3eefb}
 .preview-time{font-size:27px;letter-spacing:-.025em;font-weight:580;font-variant-numeric:tabular-nums}
@@ -39,7 +70,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .preview-care{font-size:15px;font-weight:560;line-height:1.45;text-wrap:balance}
 :root[data-theme=light] .preview-moment{color:#344b69}
 :root[data-theme=light] .preview-date{color:#506884}
-.signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
+/* SEYVEO brand is always the Pearl Bloom signature. */
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
 .brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -53,14 +84,34 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .glass-figure .glass-specular{fill:none;stroke:#fff;stroke-opacity:.76;stroke-width:1.2;stroke-linecap:round}
 :root[data-theme=light] .glass-figure .glass-detail{stroke:#61758c;stroke-opacity:.8}
 :root[data-theme=light] .glass-figure .glass-specular{stroke:#fff;stroke-opacity:.92}
-@keyframes glass-mist{
-  0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.9)}
-  24%{opacity:.33;filter:blur(5px);transform:translate(-50%,-50%) scale(.97)}
-  42%,57%{opacity:.78;filter:blur(0);transform:translate(-50%,-50%) scale(1)}
-  81%{opacity:.25;filter:blur(4px);transform:translate(-50%,-50%) scale(1.02)}
-  100%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.02)}
+@keyframes living-calm{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
 }
-@media(prefers-reduced-motion:reduce){.signal.is-appearing{animation:none;opacity:.43;filter:none}.signal.is-brand.is-appearing{opacity:.82}}
+@keyframes living-notice{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
+ 100%{opacity:0}
+}
+@keyframes pearl-brand{
+ 0%{opacity:0;transform:scale(.975)}
+ 46%{opacity:.98;transform:scale(1)}
+ 68%{opacity:.98;transform:scale(1)}
+ 100%{opacity:0;transform:scale(1.012)}
+}
+@keyframes pearl-light{
+ 0%{opacity:0;transform:translate(-50%,-50%) scale(.48)}
+ 46%{opacity:.53;transform:translate(-50%,-50%) scale(1)}
+ 68%{opacity:.33;transform:translate(-50%,-50%) scale(1.09)}
+ 100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}
+}
+@media(prefers-reduced-motion:reduce){
+ .signal.is-living.is-appearing .reveal-plane,
+ .signal.is-pearl.is-appearing .pearl-stage{animation:none;opacity:.86;transform:none}
+ .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.2}
+}
+
 
 
 
@@ -304,11 +355,37 @@ function glassIcon(type,place='card'){
 }
 const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=5" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
-const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=6200;
+const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=7600;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
-let previewSequenceTimer=null,previewRunning=false;
+let previewSequenceTimer=null,previewRunning=false,revealFrameId=null;
+const SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-pearl','signal--notice','signal--moment','signal--care'];
+function resetSignal(el){
+  cancelAnimationFrame(revealFrameId);
+  el.classList.remove(...SIGNAL_CLASSES);
+  el.replaceChildren();
+}
+function afterTwoFrames(fn){
+  revealFrameId=requestAnimationFrame(()=>{
+    revealFrameId=requestAnimationFrame(fn);
+  });
+}
+function livingContent(el,kind,element){
+  el.classList.add('is-living','signal--'+kind);
+  const layer=document.createElement('span');
+  layer.className='reveal-plane';
+  layer.append(element);
+  el.append(layer);
+}
+function pearlContent(el){
+  el.classList.add('is-brand','is-pearl');
+  const layer=document.createElement('span');
+  layer.className='pearl-stage';
+  layer.innerHTML=BRAND_LOCKUP_HTML;
+  el.append(layer);
+}
+
 function brandToday(){
   const d=new Date();
   return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -333,12 +410,18 @@ function transientNotice(key,type){
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
   const el=$('signal');
-  el.classList.remove('is-appearing','is-brand');
-  el.innerHTML=glassIcon(type,'orb');
+  resetSignal(el);
   if(!type)return;
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
-  noticeClearTimer=setTimeout(()=>el.classList.remove('is-appearing'),5500);
+  const content=document.createElement('span');
+  content.innerHTML=glassIcon(type,'orb');
+  livingContent(el,'notice',content);
+  afterTwoFrames(()=>{
+    if(previewRunning||!el.classList.contains('signal--notice'))return;
+    el.classList.add('is-appearing');
+    noticeClearTimer=setTimeout(()=>{
+      if(el.classList.contains('signal--notice')&&!previewRunning)resetSignal(el);
+    },5300);
+  });
 }
 function showBrandSignature(reason='ambient'){
   if(document.hidden)return false;
@@ -352,7 +435,7 @@ function showBrandSignature(reason='ambient'){
   }
   // Never cover typing, an open dialog, voice listening or a fresh event notice.
   const busy=!$('ask').hidden||!!document.querySelector('dialog[open]')||$('assistantButton').classList.contains('listening');
-  const busyNotice=$('signal').classList.contains('is-appearing')&&!$('signal').classList.contains('is-brand');
+  const busyNotice=$('signal').classList.contains('signal--notice');
   if(busy||(busyNotice&&reason!=='launch')){
     scheduleNextBrand(60000);
     return false;
@@ -360,17 +443,16 @@ function showBrandSignature(reason='ambient'){
   const el=$('signal');
   clearTimeout(noticeClearTimer);
   clearTimeout(brandClearTimer);
-  el.classList.remove('is-brand','is-appearing');
-  el.innerHTML=BRAND_LOCKUP_HTML;
-  el.classList.add('is-brand');
-  void el.offsetWidth;
-  el.classList.add('is-appearing');
+  resetSignal(el);
+  pearlContent(el);
+  afterTwoFrames(()=>{
+    if(el.classList.contains('is-pearl')&&!previewRunning&&!document.hidden)
+      el.classList.add('is-appearing');
+  });
   brandFallback={day:progress.day,count:progress.count+1,lastAt:now};
   try{localStorage.setItem(BRAND_STORE_KEY,JSON.stringify(brandFallback))}catch{}
   brandClearTimer=setTimeout(()=>{
-    if(!el.classList.contains('is-brand'))return;
-    el.classList.remove('is-brand','is-appearing');
-    el.replaceChildren();
+    if(el.classList.contains('is-pearl')&&!previewRunning)resetSignal(el);
   },BRAND_DURATION_MS);
   if(brandFallback.count<BRAND_MAX_DAILY)scheduleNextBrand(BRAND_GAP_MS+1000);
   else clearTimeout(brandNextTimer);
@@ -473,8 +555,8 @@ state.index=Math.min(stories.length,state.index+1);confirmation=story;save();ren
 clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=null;render()},1700);
 }
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
-/* Manual showcase: all four previews use the original glass-mist animation.
-   This does not update the brand's daily usage counter. */
+/* Show the two approved effects with the existing demonstration button.
+   Demo playback never updates the brand's daily appearance counter. */
 function stopEffectsPreview(){
   clearTimeout(previewSequenceTimer);
   previewRunning=false;
@@ -482,11 +564,10 @@ function stopEffectsPreview(){
   btn.textContent='Эффекты';
   btn.setAttribute('aria-pressed','false');
   const el=$('signal');
-  el.classList.remove('is-appearing','is-brand','is-preview');
-  el.replaceChildren();
-  noticeKey=null;
+  resetSignal(el);
+  // Do not re-trigger the current mail/check notice once the demo finishes.
   const story=stories[state.index];
-  transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
+  noticeKey=confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none';
 }
 function previewSphereMoments(){
   if(previewRunning){stopEffectsPreview();return}
@@ -500,33 +581,36 @@ function previewSphereMoments(){
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
   const el=$('signal');
   const steps=[
-    ()=>{
+    {kind:'moment',duration:8300,make(){
       const now=new Date();
-      const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-      const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
       const moment=document.createElement('span');
       moment.className='preview-moment';
-      for(const [cls,value] of [['preview-time',hour],['preview-date',date]]){
+      for(const [cls,val] of [
+        ['preview-time',now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})],
+        ['preview-date',now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})]
+      ]){
         const line=document.createElement('span');
         line.className=cls;
-        line.textContent=value;
+        line.textContent=val;
         moment.append(line);
       }
-      el.classList.add('is-preview');
-      el.replaceChildren(moment);
-    },
-    ()=>{
+      return moment;
+    }},
+    {kind:'care',duration:8300,make(){
       const moment=document.createElement('span');
       moment.className='preview-moment';
       const line=document.createElement('span');
       line.className='preview-care';
       line.textContent='Роман, минутка для себя?';
       moment.append(line);
-      el.classList.add('is-preview');
-      el.replaceChildren(moment);
-    },
-    ()=>{el.innerHTML=glassIcon('mail','orb')},
-    ()=>{el.classList.add('is-brand');el.innerHTML=BRAND_LOCKUP_HTML}
+      return moment;
+    }},
+    {kind:'notice',duration:5300,make(){
+      const content=document.createElement('span');
+      content.innerHTML=glassIcon('mail','orb');
+      return content;
+    }},
+    {kind:'brand',duration:7600}
   ];
   let step=0;
   function showNext(){
@@ -535,17 +619,25 @@ function previewSphereMoments(){
       stopEffectsPreview();return;
     }
     if(step===steps.length){stopEffectsPreview();return}
-    el.classList.remove('is-appearing','is-brand','is-preview');
-    el.replaceChildren();
-    steps[step++]();
-    void el.offsetWidth;
-    el.classList.add('is-appearing');
-    previewSequenceTimer=setTimeout(showNext,step===steps.length?6400:5900);
+    resetSignal(el);
+    const scene=steps[step++];
+    if(scene.kind==='brand')pearlContent(el);
+    else{
+      livingContent(el,scene.kind,scene.make());
+      if(scene.kind==='moment'||scene.kind==='care')el.classList.add('is-preview');
+    }
+    afterTwoFrames(()=>{
+      if(!previewRunning)return;
+      el.classList.add('is-appearing');
+      previewSequenceTimer=setTimeout(showNext,scene.duration);
+    });
   }
   previewSequenceTimer=setTimeout(showNext,400);
 }
 $('previewEffects').addEventListener('click',previewSphereMoments);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&previewRunning)stopEffectsPreview()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden&&previewRunning)stopEffectsPreview();
+});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
