@@ -3,8 +3,47 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const connect=$('manageConnectionsDialog'),dataDialog=$('manageDataDialog');
-if(!connect||!dataDialog)return;
+const connect=$('manageConnectionsDialog'),dataDialog=$('manageDataDialog'),roadmapDialog=$('manageRoadmapDialog');
+if(!connect||!dataDialog||!roadmapDialog)return;
+const roadmap=[
+ {status:'Работает',name:'Уже в SEYVEO',items:[
+   ['Black Velvet и темы','Главная сфера и оформление, автоматическая, тёмная и светлая темы.'],
+   ['Дела и история','Демонстрационные поручения со статусами и историей; реальные внешние действия пока не выполняются.'],
+   ['Заметки и данные','Локальные записи, черновики и экспорт копии.']
+ ]},
+ {status:'Пробный режим',name:'Проверяем',items:[
+   ['Обращение по имени «SEYVEO»','Прототип в открытой PWA после согласия. Надёжную работу на iPhone и беззвучное ожидание ещё нужно проверить.']
+ ]},
+ {status:'В планах',name:'Следующие этапы',items:[
+   ['Настоящий интеллект','Подключить ИИ, который отвечает по контексту, отличает факты от предположений и адаптирует общение.'],
+   ['Память управляющего','Предпочтения, контекст бизнеса, согласие и возможность контролировать сохранённое.'],
+   ['Полноценный голос','Разговор, естественная речь и перебивание; системная активация — по возможностям платформы.'],
+   ['Реальные подключения','Почта, календарь, сообщения, CRM и другие источники — с подтверждённой авторизацией и отзывом доступа.'],
+   ['Автопилот и разрешения','Самостоятельно замечать события, готовить решения и выполнять только разрешённые шаги с журналом результатов.'],
+   ['Мастерская','Создание персональных инструментов и расчётов из разговора с управляющим.'],
+   ['Универсальный бизнес','Поддержка разных отраслей, процессов и ролей без отдельных приложений для каждой сферы.'],
+   ['Нативное приложение','Тесты на устройствах, системный тактильный отклик и подготовка публикации в магазинах приложений.']
+ ]}
+];
+function drawRoadmap(){
+ const body=$('manageRoadmapBody');body.replaceChildren();
+ for(const group of roadmap){
+  const section=document.createElement('section');section.className='manage-roadmap-group';
+  const head=document.createElement('div');head.className='manage-roadmap-group-head';
+  const title=document.createElement('h3');title.textContent=group.name;
+  const badge=document.createElement('span');badge.textContent=group.status;
+  head.append(title,badge);
+  const list=document.createElement('div');list.className='manage-roadmap-list';
+  for(const [name,description] of group.items){
+   const item=document.createElement('article');item.className='manage-roadmap-item';
+   const strong=document.createElement('strong');strong.textContent=name;
+   const p=document.createElement('p');p.textContent=description;
+   item.append(strong,p);list.append(item);
+  }
+  section.append(head,list);body.append(section);
+ }
+}
+
 const KEYS=Object.freeze({
  app:'dm-signature-living-v2',
  previous:'dm-signature-living-v1',
@@ -64,12 +103,14 @@ function saveFile(){
   $('manageExportStatus').textContent='Не удалось создать копию. Проверьте разрешения браузера.';
  }
 }
+$('openManageRoadmap').addEventListener('click',()=>{drawRoadmap();roadmapDialog.showModal()});
+$('manageRoadmapClose').addEventListener('click',()=>roadmapDialog.close());
 $('openManageConnections').addEventListener('click',()=>connect.showModal());
 $('manageConnectionsClose').addEventListener('click',()=>connect.close());
 $('openManageData').addEventListener('click',()=>{drawData();dataDialog.showModal()});
 $('manageDataClose').addEventListener('click',()=>dataDialog.close());
 $('manageExportData').addEventListener('click',saveFile);
-for(const dialog of [connect,dataDialog]){
+for(const dialog of [connect,dataDialog,roadmapDialog]){
  dialog.addEventListener('click',event=>{
   if(event.target===dialog){dialog.close()}
  });
