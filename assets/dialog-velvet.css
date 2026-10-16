@@ -140,6 +140,7 @@ button.seyveo-close-control:focus-visible{outline:2px solid var(--text);outline-
   box-shadow:inset 0 0 0 1px rgba(52,69,93,.105),inset 0 1px 0 rgba(255,255,255,.75);
 }
 :root[data-theme=light] button.seyveo-close-control{color:#697488}
+:root[data-theme=light] #stage .orb-info-close.seyveo-close-control{background:transparent;border:0}
 /* Absolute positions belong to their own cards, not the global layout. */
 dialog > button.seyveo-dialog-close{position:absolute;top:13px;right:13px;z-index:2}
 dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
