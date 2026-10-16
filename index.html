@@ -430,7 +430,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
    left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
  }
 }
-</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=7"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=11"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=1"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/results-glance.css?v=1"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=3"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
+</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=7"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=1"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=3"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
 <defs>
@@ -471,24 +471,9 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"><span class="orb-mist-cloud orb-mist-cloud--a"></span><span class="orb-mist-cloud orb-mist-cloud--b"></span><span class="orb-mist-cloud orb-mist-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button><nav id="orbShortcuts" class="orb-shortcuts" aria-label="Действия вокруг сферы">
-<button class="orb-shortcut orb-shortcut--calendar" type="button" data-orb-action="calendar" title="Запланировать дело" aria-label="Запланировать дело"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17M8 14h2.5M13 14h2.5M8 17h2.5"/></svg></button>
-<button class="orb-shortcut orb-shortcut--tasks" type="button" data-orb-action="tasks" title="Результаты SEYVEO" aria-label="Показать результаты работы SEYVEO"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m7.4 12 3.2 3.2 6.2-6.5"/></svg></button>
-<button class="orb-shortcut orb-shortcut--activity" type="button" data-orb-action="activity" title="Короткий вывод SEYVEO" aria-label="Что SEYVEO заметил в цифрах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V15M9.5 19.5v-8M14.5 19.5v-12M19.5 19.5v-15"/></svg></button>
-<button class="orb-shortcut orb-shortcut--notes" type="button" data-orb-action="notes" title="Мои записи" aria-label="Открыть мои записи"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.8h8l4.5 4.5V21H6zM14 2.8v5h4.5M9 12h6M9 15.5h6M9 19h4"/></svg></button>
-</nav></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"><span class="orb-mist-cloud orb-mist-cloud--a"></span><span class="orb-mist-cloud orb-mist-cloud--b"></span><span class="orb-mist-cloud orb-mist-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div>
 </section>
-<section id="orbResultsPeek" class="results-glance" hidden role="status" aria-live="polite" aria-atomic="true" aria-label="Краткие результаты работы SEYVEO">
-<p class="results-eyebrow">SEYVEO · Результаты · Демо</p>
-<h3>Что сделал управляющий</h3>
-<div class="results-grid">
-<div class="results-metric"><strong id="resultDoneCount">0</strong><small>Исполнено</small></div>
-<div class="results-metric"><strong id="resultWorkingCount">0</strong><small>В работе</small></div>
-<div class="results-metric"><strong id="resultApprovedCount">0</strong><small>Согласовано</small></div>
-</div>
-<div class="results-last"><small id="resultLastLabel">Последнее действие</small><strong id="resultLastText">Пока нет результатов</strong></div>
-<small class="results-footnote">Учебный сценарий · реальные сервисы не меняются</small>
-</section>
+
 <div id="dynamic" class="dynamic" aria-live="polite"></div>
 <section class="timeline" id="workTimeline" hidden aria-label="Активные поручения управляющего"><div class="timeline-head"><h2 class="timeline-title">В работе у SEYVEO</h2></div><div id="activityList" class="activity-list"></div></section>
 <section class="personal-brief" id="personalBrief" hidden aria-labelledby="personalBriefTitle">
@@ -538,25 +523,31 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </dialog>
 <main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
 <div id="manageOverview">
-<header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НАСТРОЙКИ</p><h1 id="manageTitle" tabindex="-1">Управление</h1><p>Всё важное — в одном месте.</p></header><p id="manageLiveSummary" class="manage-live-summary" aria-live="polite">Личные дела и выбранное направление сохраняются на вашем устройстве. ИИ пока не подключён.</p><section class="manage-group" aria-labelledby="manage-personal-label">
-<h2 id="manage-personal-label">Мой SEYVEO</h2>
-<div class="manage-card"><button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">Имя и жизненный этап</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> КОМАНДНЫЙ ЦЕНТР</p><h1 id="manageTitle" tabindex="-1">Управление</h1><p>Ваши инструменты и возможности SEYVEO.</p></header>
+<p id="manageLiveSummary" class="manage-live-summary" aria-live="polite">Ваши дела и настройки сохраняются на этом устройстве. Внешние сервисы пока не подключены.</p>
+<section class="manage-group" aria-labelledby="manage-tools-label">
+<h2 id="manage-tools-label">Работа и планирование</h2>
+<div class="manage-card">
+<button class="manage-row" type="button" id="openManageClients"><span class="manage-text"><strong>Клиенты</strong><small>Обращения и заказы · учебный обзор</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" id="openManageCalendar"><span class="manage-text"><strong>Календарь и планы</strong><small>Встречи и сроки · пока через «Дела»</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" id="openHomeWidgetsManage"><span class="manage-text"><strong>Моя картина</strong><small>Выбрать показатели и их порядок</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div>
+</section>
+<section class="manage-group" aria-labelledby="manage-personal-label">
+<h2 id="manage-personal-label">Мой управляющий</h2>
+<div class="manage-card">
+<button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">Имя и жизненный этап</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Почта, сервисы и источники данных</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div>
+</section>
+<section class="manage-group" aria-labelledby="manage-app">
+<h2 id="manage-app">Приложение · настройки</h2>
+<div class="manage-card">
+<button type="button" id="openManageTheme" class="manage-row"><span class="manage-text"><strong>Тема</strong><small>Black Velvet и White Velvet</small></span><span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button type="button" id="seyveoSilkSoundToggle" class="manage-row" aria-pressed="true" aria-label="Звук касаний: включён"><span class="manage-text"><strong>Звук касаний</strong><small>Мягкое нажатие · Silk Touch</small></span><span id="seyveoSilkSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span></button>
+<button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Развитие SEYVEO</strong><small>Что уже работает и что появится дальше</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
 </div></section>
-<section class="manage-group" aria-labelledby="manageThemeLabel">
-<h2 id="manageThemeLabel">Оформление</h2>
-<div class="manage-card"><button type="button" id="openManageTheme" class="manage-row">
-<span class="manage-text"><strong>Тема</strong><small>Оформление и внешний вид</small></span>
-<span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span>
-</button><button type="button" id="seyveoSilkSoundToggle" class="manage-row" aria-pressed="true" aria-label="Звук касаний: включён">
-<span class="manage-text"><strong>Звук касаний</strong><small>Мягкое нажатие · Silk Touch</small></span>
-<span id="seyveoSilkSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span>
-</button></div></section>
-<section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Сервисы</h2><div class="manage-card"><button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Источники данных и доступ к сервисам</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
-<section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card"><button class="manage-row" type="button" id="openHomeWidgetsManage"><span class="manage-text"><strong>Моя картина</strong><small>Какие показатели и инструменты показывать</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-</div></section>
-
-<section class="manage-group" aria-labelledby="manage-roadmap-label"><h2 id="manage-roadmap-label">Развитие</h2>
-<div class="manage-card"><button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Карта развития</strong><small>Что готово, что проверяем и что впереди</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <p class="manage-footnote">SEYVEO · BLACK VELVET</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
@@ -1230,7 +1221,7 @@ const items=activeTasks();
 $('activityList').innerHTML=items.map(taskRow).join('');
 $('workTimeline').hidden=items.length===0;
 if(!$('tasksPage').hidden)renderTasksPage();
-if(!$('orbResultsPeek').hidden)drawResultsGlance();
+
 scheduleTaskProgress();
 }
 function approve(story){
@@ -1319,61 +1310,6 @@ function onManageRouteChange(){
 window.addEventListener('hashchange',onManageRouteChange);
 
 $('showHistory').addEventListener('click',()=>{if(location.hash!=='#tasks')location.hash='tasks';});
-/* The check by the orb is a glance at RESULTS, not another recommendation,
-   a history page or a second «Дела» entry. */
-let resultsGlanceTimer=null;
-function closeResultsGlance(){
-  clearTimeout(resultsGlanceTimer);
-  resultsGlanceTimer=null;
-  $('orbResultsPeek').hidden=true;
-}
-function drawResultsGlance(){
-  const counts={done:0,working:0,approved:0,failed:0};
-  for(const entry of state.history){
-    if(Object.prototype.hasOwnProperty.call(counts,entry.status))counts[entry.status]++;
-  }
-  $('resultDoneCount').textContent=String(counts.done);
-  $('resultWorkingCount').textContent=String(counts.working);
-  $('resultApprovedCount').textContent=String(counts.approved);
-  const last=state.history[state.history.length-1];
-  $('resultLastLabel').textContent=last?'Последнее поручение':'Пока без результатов';
-  $('resultLastText').textContent=last
-    ?last.label+' · '+(taskStatusText[last.status]||taskStatusText.approved)
-    :'Согласуйте первое действие — здесь появится результат управляющего.';
-}
-window.addEventListener('seyveo:results-shortcut',()=>{
-  if(!$('orbResultsPeek').hidden){closeResultsGlance();return}
-  progressDemoTasks();
-  drawResultsGlance();
-  $('orbResultsPeek').hidden=false;
-  clearTimeout(resultsGlanceTimer);
-  resultsGlanceTimer=setTimeout(closeResultsGlance,8500);
-});
-document.addEventListener('pointerdown',event=>{
-  if($('orbResultsPeek').hidden)return;
-  if($('orbResultsPeek').contains(event.target)||event.target.closest('[data-orb-action="tasks"]'))return;
-  closeResultsGlance();
-});
-document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!$('orbResultsPeek').hidden)closeResultsGlance();
-});
-window.addEventListener('hashchange',closeResultsGlance);
-
-// Four satellite actions stay unique: the chart beside the orb offers just
-// a quick verbal observation. The full numbers live ONLY in «Картина».
-let pictureInsightTimer=null;
-window.addEventListener('seyveo:picture-insight',()=>{
- const snapshot=window.SEYVEO_PULSE_DEMO?.snapshot('today');
- if(!snapshot)return;
- clearTimeout(pictureInsightTimer);
- $('kicker').textContent='SEYVEO · Короткий вывод · демо';
- $('headline').textContent=snapshot.leads+' обращений — '+snapshot.sales+' заказов';
- const noOrder=Math.max(0,snapshot.leads-snapshot.sales);
- $('subline').textContent=noOrder
-  ?'По '+noOrder+' обращениям пока не отмечен заказ. Стоит проверить их статус.'
-  :'Все обращения в учебном примере стали заказами.';
- pictureInsightTimer=setTimeout(syncHomeVoice,4600);
-});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 // The sphere is a living signature, not a second copy of the recommendation.
@@ -1650,4 +1586,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=5"></script><script src="assets/pulse.js?v=4"></script><script src="assets/picture.js?v=3"></script><script src="assets/home-widgets.js?v=5"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=4"></script><script src="assets/picture.js?v=3"></script><script src="assets/home-widgets.js?v=5"></script></body></html>
