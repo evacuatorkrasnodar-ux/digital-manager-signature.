@@ -256,49 +256,96 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
 
 
-/* SEYVEO iPhone-inspired Black Velvet Settings / isolated experiment */
+
+/* SEYVEO Black Velvet · approved image-reference interpretation, isolated experiment. */
 #homeHeader[hidden],#homePage[hidden],#managePage[hidden],#manageOverview[hidden],#manageAppearance[hidden]{display:none!important}
 button.nav-item{background:transparent;border:0;padding:0;-webkit-appearance:none;appearance:none}
 button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;border-radius:7px}
-.manage-main{flex:1;min-width:0;padding:5px 0 26px}
-.settings-heading{padding:22px 0 18px}
-.settings-eyebrow{color:var(--secondary);font-size:10px;font-weight:620;letter-spacing:.16em;margin:0 0 14px}
-.settings-heading h1{font-size:34px;font-weight:710;line-height:1.12;letter-spacing:-.052em;margin:0}
-.settings-heading>p:last-child{font-size:13px;color:var(--secondary);margin:10px 0 0}
-.settings-profile{width:100%;min-height:82px;display:flex;gap:12px;align-items:center;padding:14px 13px;border:1px solid var(--line);border-radius:17px;background:var(--card);text-align:left}
-.settings-profile-art{width:48px;height:48px;display:grid;place-items:center;flex:none;border:1px solid var(--soft-line);border-radius:13px;background:linear-gradient(135deg,#e7f1fb1a,#8f9bad08)}
-.settings-profile-art img{display:block;width:36px;height:36px}
-.settings-profile-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.settings-profile-text strong{font-size:16px;font-weight:670;letter-spacing:.025em}
-.settings-profile-text small{color:var(--secondary);font-size:11px;line-height:1.4}
-.settings-group{margin:24px 0 0}
-.settings-group h2{font-size:11px;font-weight:620;color:var(--secondary);letter-spacing:.042em;margin:0 0 9px 12px}
-.settings-surface,.settings-choice-list{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
-.settings-row{position:relative;background:none;border:0;color:var(--text);width:100%;min-height:54px;padding:10px 12px;display:flex;align-items:center;gap:11px;text-align:left}
-.settings-row:not(:last-child)::after{content:"";position:absolute;bottom:0;left:51px;right:0;height:1px;background:var(--soft-line)}
-.settings-row:active,.settings-profile:active,.settings-choice:active{background:var(--card2)}
-.settings-icon{width:28px;height:28px;display:grid;place-items:center;flex:none;color:#dae3ec;border-radius:8px;background:linear-gradient(140deg,#e6f0fb2c,#8495a614);border:1px solid #dde8f011}
-.settings-icon svg{width:17px;height:17px;display:block}
-:root[data-theme=light] .settings-icon{background:linear-gradient(145deg,#e7eef6,#d5e0ec);color:#384e66;border-color:#cbd9e5}
-.settings-copy{display:flex;flex-direction:column;gap:3px;align-items:flex-start;flex:1;min-width:0;color:var(--text)}
-.settings-copy strong{font-size:14px;font-weight:550;line-height:1.3;letter-spacing:-.013em}
-.settings-copy small{font-size:11px;line-height:1.35;color:var(--secondary)}
-.settings-value{font-size:12px;color:var(--secondary);white-space:nowrap}
-.settings-chevron{font-size:23px;line-height:1;color:var(--secondary);opacity:.7;font-weight:300}
-.settings-footnote{color:var(--secondary);opacity:.7;font-size:11px;line-height:1.7;text-align:center;margin:29px 8px 2px}
-.settings-back{display:inline-flex;align-items:center;gap:3px;min-height:44px;margin:4px 0 21px;padding:0;border:0;background:transparent;color:var(--text);font-size:14px;font-weight:550}
-.settings-back svg{width:20px;height:20px}
-.manage-appearance h2{font-size:30px;font-weight:710;line-height:1.13;letter-spacing:-.045em;margin:0 0 10px}
-.settings-detail-sub{font-size:13px;color:var(--secondary);margin:0 0 25px}
-.settings-choice{position:relative;display:flex;align-items:center;gap:10px;min-height:66px;width:100%;border:0;background:none;color:var(--text);padding:12px 16px;text-align:left}
-.settings-choice:not(:last-child)::after{content:"";position:absolute;height:1px;background:var(--soft-line);bottom:0;left:16px;right:0}
-.settings-choice .settings-copy strong{font-size:15px}
-.settings-tick{color:var(--text);font-size:19px;font-weight:650;opacity:0}
-.settings-choice[aria-pressed=true] .settings-tick{opacity:1}
-.settings-theme-info{margin:16px 12px 0;color:var(--secondary);font-size:12px;line-height:1.5}
-.settings-detail-footnote{margin:15px 12px 0;color:var(--secondary);font-size:11px;opacity:.7;line-height:1.5}
-@media(prefers-reduced-motion:no-preference){.manage-overview:not([hidden]),.manage-appearance:not([hidden]){animation:settings-arrive .3s cubic-bezier(.2,.67,.3,1) both}}
-@keyframes settings-arrive{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.manage-main{flex:1;min-width:0;padding:6px 0 26px;color:var(--text)}
+.manage-overview{min-height:560px;display:flex;flex-direction:column}
+.signature-title{font-size:38px;font-weight:740;line-height:1.12;letter-spacing:-.055em;margin:28px 10px 29px}
+.signature-intro{display:flex;flex-direction:column;gap:11px}
+.signature-card{position:relative;display:flex;align-items:center;gap:15px;min-height:86px;
+ width:100%;padding:15px 15px;text-align:left;color:var(--text);border:1px solid var(--line);
+ border-radius:17px;background:linear-gradient(145deg,#e8edf30b,transparent 52%),var(--card);
+ box-shadow:inset 0 1px 0 #ffffff10,0 5px 16px #00000018}
+.signature-card:active,.signature-theme-option:active,.signature-settings-row:active{background:var(--card2)}
+.signature-card-icon{width:49px;height:49px;flex:none;display:grid;place-items:center;
+ border-radius:13px;background:linear-gradient(146deg,#e5edf719,#b9c7d10d);
+ border:1px solid var(--soft-line);color:var(--text)}
+.signature-card-icon svg{height:26px;width:26px}
+.signature-card-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;min-width:0;gap:5px}
+.signature-card-copy strong{font-size:18px;line-height:1.2;font-weight:650;letter-spacing:-.025em}
+.signature-card-copy small{font-size:12px;line-height:1.35;color:var(--secondary)}
+.signature-chevron{display:grid;place-items:center;font-size:27px;font-weight:300;color:var(--secondary);opacity:.85;line-height:1;margin-left:auto}
+.signature-mantra{margin:auto 0 25px;text-align:center;padding:68px 10px 12px;color:var(--secondary)}
+.signature-mantra svg{display:block;height:37px;width:37px;margin:auto;opacity:.83;stroke-width:1.15}
+.signature-mantra p{font-size:14px;line-height:1.8;font-weight:400;margin:19px 0 0}
+.signature-titlebar{position:relative;display:flex;align-items:center;min-height:50px;margin:5px 0 12px}
+.signature-back{display:grid;place-items:center;flex:none;width:45px;height:45px;border:0;background:transparent;color:var(--text);padding:8px}
+.signature-back svg{display:block;width:23px;height:23px}
+.signature-titlebar h2{font-size:29px;font-weight:700;letter-spacing:-.045em;margin:0 0 0 10px}
+.signature-section{margin:0 0 25px}
+.signature-section h3{color:var(--secondary);font-size:11px;font-weight:560;letter-spacing:.035em;margin:0 0 9px 12px}
+.signature-panel{border:1px solid var(--line);border-radius:17px;overflow:hidden;
+ background:linear-gradient(150deg,#e7f0f90d,transparent 63%),var(--card);
+ box-shadow:inset 0 1px 0 #ffffff0a}
+.signature-theme-option{width:100%;min-height:59px;padding:10px 18px 10px 20px;
+ border:0;background:none;display:flex;align-items:center;gap:17px;color:var(--text);text-align:left;
+ font-size:16px;font-weight:500;position:relative}
+.signature-theme-option:not(:last-child)::after,.signature-settings-row:not(:last-child)::after{
+ content:"";position:absolute;bottom:0;right:17px;left:17px;height:1px;background:var(--soft-line)}
+.signature-swatch{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);flex:none;
+ box-shadow:inset 0 1px 2px #ffffff42}
+.signature-swatch-midnight{background:radial-gradient(circle at 33% 23%,#333b42,#10151b 43%,#010205 81%)}
+.signature-swatch-daylight{background:linear-gradient(145deg,#fff,#f5f5fa 51%,#cfd1d6)}
+.signature-swatch-system{background:linear-gradient(90deg,#07090d 0 50%,#fafafa 50% 100%);border-color:#66717b}
+.signature-radio{width:23px;height:23px;border:1.6px solid var(--secondary);
+ border-radius:50%;margin-left:auto;display:grid;place-items:center;flex:none;font-size:15px;line-height:1}
+.signature-radio>span{display:none}
+.signature-theme-option[aria-pressed=true] .signature-radio{background:var(--text);border-color:var(--text);color:var(--bg)}
+.signature-theme-option[aria-pressed=true] .signature-radio>span{display:block;font-weight:700}
+.signature-settings-row{display:flex;align-items:center;gap:15px;width:100%;min-height:58px;
+ background:transparent;border:0;text-align:left;color:var(--text);padding:10px 18px 10px 22px;position:relative}
+.signature-settings-icon{flex:none;width:30px;height:30px;display:grid;place-items:center;color:var(--text)}
+.signature-settings-icon svg{height:26px;width:26px;stroke-width:1.5}
+.signature-settings-title{font-size:15px;font-weight:500}
+.signature-preview-section{margin-bottom:7px}
+.signature-preview{height:198px;position:relative;isolation:isolate;overflow:hidden;
+ border:1px solid var(--line);border-radius:18px;display:flex;align-items:flex-end;
+ background:radial-gradient(ellipse at 45% 15%,#b7c3d012,transparent 55%),linear-gradient(145deg,#151a22,#080a0f 65%);
+ color:#f2f4f7}
+.signature-preview::before{content:"";position:absolute;inset:-40px 12% 0 -15%;
+ background:linear-gradient(130deg,transparent 37%,#e1e9f00b 38%,transparent 41%,#dfeaf009 61%,transparent 64%);
+ transform:rotate(-8deg);pointer-events:none;z-index:-1}
+.signature-preview-copy{position:relative;z-index:2;display:flex;flex-direction:column;gap:13px;
+ margin:0 0 29px 18px;max-width:45%;min-width:0}
+.signature-preview-copy strong{font-size:17px;font-weight:630;line-height:1.2}
+.signature-preview-copy span{font-size:12px;line-height:1.58;color:#acb2be}
+.signature-mini-phone{position:absolute;right:12px;top:24px;width:43%;max-width:171px;height:230px;
+ background:linear-gradient(153deg,#1a1e26,#050709);
+ border:3px solid #969ba1;border-bottom:0;border-radius:32px 32px 0 0;
+ box-shadow:inset 0 0 0 3px #050609,0 0 0 2px #272d35,0 10px 26px #0009;overflow:hidden}
+.signature-phone-island{position:absolute;top:9px;left:34%;width:32%;height:14px;background:#000;border-radius:10px}
+.signature-phone-status{font-size:9px;margin:9px 14px 25px;font-weight:600;display:flex;justify-content:space-between}
+.signature-phone-rows{padding:3px 9px;display:flex;flex-direction:column;gap:7px}
+.signature-phone-rows>div{display:flex;align-items:center;gap:9px;background:#171b20;border:1px solid #ffffff14;border-radius:11px;padding:10px 8px;min-height:34px}
+.signature-phone-rows b{font-size:14px;font-weight:400}
+.signature-phone-rows i{height:5px;min-width:0;flex:1;border-radius:4px;background:#30343b}
+.signature-phone-rows em{font-size:11px;font-style:normal}
+.signature-phone-homebar{position:absolute;bottom:14px;left:33%;right:33%;height:4px;background:#c4c8cf;border-radius:4px}
+:root[data-theme=light] .signature-preview{background:linear-gradient(145deg,#e8edf3,#b9c4d1);color:#273447}
+:root[data-theme=light] .signature-preview-copy span{color:#5b6574}
+:root[data-theme=light] .signature-mini-phone{background:linear-gradient(155deg,#edf2f7,#cbd5e0);border-color:#68778a}
+:root[data-theme=light] .signature-phone-rows>div{background:#e3e8ee;border-color:#a7b4c175;color:#2b3c4f}
+:root[data-theme=light] .signature-phone-rows i{background:#bec7d1}
+.signature-disclaimer{text-align:center;color:var(--secondary);font-size:11px;line-height:1.5;margin:19px 12px}
+@media(max-width:360px){.signature-title{font-size:35px}.signature-card-copy strong{font-size:17px}
+.signature-card{min-height:80px}.signature-preview-copy strong{font-size:15px}
+.signature-preview-copy span{font-size:11px}.signature-mini-phone{width:42%;right:9px}}
+@media(prefers-reduced-motion:no-preference){
+.manage-overview:not([hidden]),.manage-appearance:not([hidden]){animation:settings-fade-in .34s cubic-bezier(.22,.62,.27,1) both}}
+@keyframes settings-fade-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -313,20 +360,42 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
 </form></main><main id="managePage" class="manage-main" hidden aria-labelledby="manageTitle">
-<div id="manageOverview" class="manage-overview"><header class="settings-heading"><p class="settings-eyebrow">SEYVEO · НАСТРОЙКИ</p><h1 id="manageTitle">Управление</h1><p>Всё под вашим контролем.</p></header>
-<button class="settings-profile" type="button" data-manage-topic="profile"><span class="settings-profile-art"><img src="assets/official-logo.svg?v=5" width="36" height="36" alt=""></span><span class="settings-profile-text"><strong>SEYVEO</strong><small>Ваш цифровой управляющий · демо</small></span><span class="settings-chevron" aria-hidden="true">›</span></button>
-<section class="settings-group"><h2>МОЙ УПРАВЛЯЮЩИЙ</h2><div class="settings-surface"><button type="button" class="settings-row" data-manage-topic="personality"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5.4 20c0-4 2.6-6.2 6.6-6.2s6.6 2.2 6.6 6.2"/></svg></span><span class="settings-copy"><strong>Общение и характер</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button><button type="button" class="settings-row" data-manage-topic="voice"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 11v2"/></svg></span><span class="settings-copy"><strong>Голос и микрофон</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button></div></section>
-<section class="settings-group"><h2>ПОДКЛЮЧЕНИЯ</h2><div class="settings-surface"><button type="button" class="settings-row" data-manage-topic="accounts"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m5 8 7 5 7-5"/></svg></span><span class="settings-copy"><strong>Почта и календарь</strong><small>Не подключены</small></span><span class="settings-chevron" aria-hidden="true">›</span></button><button type="button" class="settings-row" data-manage-topic="business"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 15-2 2a4 4 0 0 1-5-6l5-5a4 4 0 0 1 6 0M16 9l2-2a4 4 0 0 1 5 6l-5 5a4 4 0 0 1-6 0M9 15l6-6"/></svg></span><span class="settings-copy"><strong>Мессенджеры и CRM</strong><small>Не подключены</small></span><span class="settings-chevron" aria-hidden="true">›</span></button></div></section>
-<section class="settings-group"><h2>ВОЗМОЖНОСТИ</h2><div class="settings-surface"><button type="button" class="settings-row" data-manage-topic="insights"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5v14h16M7 15l4-5 3 2 5-7"/></svg></span><span class="settings-copy"><strong>Анализ и рекомендации</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button><button type="button" class="settings-row" data-manage-topic="execution"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 3 3 5-6"/></svg></span><span class="settings-copy"><strong>Исполнение поручений</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button></div></section>
-<section class="settings-group"><h2>ПРИЛОЖЕНИЕ</h2><div class="settings-surface"><button type="button" class="settings-row" data-manage-topic="appearance"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16Z"/></svg></span><span class="settings-copy"><strong>Оформление</strong></span><span class="settings-value" id="manageThemeSummary">Тёмная</span><span class="settings-chevron" aria-hidden="true">›</span></button><button type="button" class="settings-row" data-manage-topic="notifications"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0v5l2 2H4l2-2ZM10 20h4"/></svg></span><span class="settings-copy"><strong>Уведомления</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button><button type="button" class="settings-row" data-manage-topic="privacy"><span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="settings-copy"><strong>Данные и безопасность</strong></span><span class="settings-chevron" aria-hidden="true">›</span></button></div></section>
-<p class="settings-footnote">SEYVEO · IT · AI · AUTOMATION<br>Предварительный дизайн · Black Velvet</p></div>
+<div id="manageOverview" class="manage-overview">
+ <h1 class="signature-title" id="manageTitle">Управление</h1>
+ <div class="signature-intro">
+  <button class="signature-card" type="button" data-manage-topic="appearance"><span class="signature-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19 17.7 5.3a2 2 0 0 1 2.9 2.9L7 21H3v-4Z"/><path d="m12.4 10.6 3 3M7.5 15.5l3 3"/></svg></span><span class="signature-card-copy"><strong>Тема</strong><small>Оформление и внешний вид</small></span><span class="signature-chevron" aria-hidden="true">›</span></button>
+  <button class="signature-card" type="button" data-manage-topic="app"><span class="signature-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.6" y="3.6" width="7" height="7" rx="1.5"/><rect x="13.4" y="3.6" width="7" height="7" rx="1.5"/><rect x="3.6" y="13.4" width="7" height="7" rx="1.5"/><rect x="13.4" y="13.4" width="7" height="7" rx="1.5"/></svg></span><span class="signature-card-copy"><strong>Приложение</strong><small>Загрузка, знакомство, подключения</small></span><span class="signature-chevron" aria-hidden="true">›</span></button>
+  <button class="signature-card" type="button" data-manage-topic="manager"><span class="signature-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-4M8 20V11M12 20V6M16 20V9M20 20V4"/></svg></span><span class="signature-card-copy"><strong>Управляющий</strong><small>Анализ, рекомендации, исполнение</small></span><span class="signature-chevron" aria-hidden="true">›</span></button>
+ </div>
+ <div class="signature-mantra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V11c0-4-4-8-9-8v4c0 6 4 8 9 8m0 0c0-5 4-10 9-10v4c0 6-5 9-9 9"/></svg><p>Меньше картинок. Меньше лазеров.<br>Больше минимализма.</p></div>
+</div>
 <div id="manageAppearance" class="manage-appearance" hidden aria-labelledby="manageAppearanceTitle">
-<button type="button" id="manageBack" class="settings-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m15 5-7 7 7 7"/></svg>Управление</button>
-<h2 id="manageAppearanceTitle">Оформление</h2><p class="settings-detail-sub">Выберите, как должен выглядеть SEYVEO.</p>
-<div class="settings-choice-list" role="group" aria-label="Выбор темы">
-<button type="button" class="settings-choice" data-theme-choice="auto" aria-pressed="false"><span class="settings-copy"><strong>Авто</strong><small>Как в системе</small></span><span class="settings-tick" aria-hidden="true">✓</span></button><button type="button" class="settings-choice" data-theme-choice="light" aria-pressed="false"><span class="settings-copy"><strong>Светлая</strong><small>White Velvet</small></span><span class="settings-tick" aria-hidden="true">✓</span></button><button type="button" class="settings-choice" data-theme-choice="dark" aria-pressed="true"><span class="settings-copy"><strong>Тёмная</strong><small>Black Velvet</small></span><span class="settings-tick" aria-hidden="true">✓</span></button>
-</div><p class="settings-theme-info" id="manageThemeNote">Авто — оформление как в системе.</p>
-<p class="settings-detail-footnote">В режиме «Авто» приложение следует теме iPhone или компьютера.</p></div></main><footer class="dock" aria-label="Нижняя панель">
+ <div class="signature-titlebar"><button type="button" id="manageBack" aria-label="Назад к управлению" class="signature-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 4-8 8 8 8"/></svg></button><h2 id="manageAppearanceTitle">Тема</h2></div>
+ <section class="signature-section" aria-label="Оформление">
+  <h3>ОФОРМЛЕНИЕ</h3>
+  <div class="signature-panel signature-theme-options" role="group" aria-label="Выбор темы">
+   <button type="button" class="signature-theme-option" data-theme-choice="dark" aria-pressed="true"><span class="signature-swatch signature-swatch-midnight" aria-hidden="true"></span><span>Black Velvet</span><span class="signature-radio" aria-hidden="true"><span>✓</span></span></button><button type="button" class="signature-theme-option" data-theme-choice="light" aria-pressed="false"><span class="signature-swatch signature-swatch-daylight" aria-hidden="true"></span><span>Светлая</span><span class="signature-radio" aria-hidden="true"><span>✓</span></span></button><button type="button" class="signature-theme-option" data-theme-choice="auto" aria-pressed="false"><span class="signature-swatch signature-swatch-system" aria-hidden="true"></span><span>Системная</span><span class="signature-radio" aria-hidden="true"><span>✓</span></span></button>
+  </div>
+ </section>
+ <section class="signature-section" aria-label="Настройки оформления">
+  <h3>НАСТРОЙКИ ОФОРМЛЕНИЯ</h3>
+  <div class="signature-panel signature-settings-options">
+   <button class="signature-settings-row" type="button" data-manage-topic="plasma"><span class="signature-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.8 2.35 6.9L21 12l-6.65 2.3L12 21.2 9.65 14.3 3 12l6.65-2.3Z"/><path d="m19.2 2 0 2m-1-1h2"/></svg></span><span class="signature-settings-title">Плазма</span><span class="signature-chevron" aria-hidden="true">›</span></button>
+   <button class="signature-settings-row" type="button" data-manage-topic="dock"><span class="signature-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3.7"/><path d="M7.5 17.4h9"/></svg></span><span class="signature-settings-title">Док</span><span class="signature-chevron" aria-hidden="true">›</span></button>
+   <button class="signature-settings-row" type="button" data-manage-topic="animations"><span class="signature-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 2 2.2 6.5L19 11l-6.8 2.3L10 20l-2.2-6.7L1 11l6.8-2.5Z"/><path d="m19 16 1.2 3.1L23 20l-2.8 1.1L19 24l-1.1-2.9L15 20l2.9-.9Z"/></svg></span><span class="signature-settings-title">Анимации</span><span class="signature-chevron" aria-hidden="true">›</span></button>
+   <button class="signature-settings-row" type="button" data-manage-topic="transparency"><span class="signature-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="10.5" r="7.4"/><circle cx="15.7" cy="14.6" r="7.2"/></svg></span><span class="signature-settings-title">Прозрачность</span><span class="signature-chevron" aria-hidden="true">›</span></button>
+  </div>
+ </section>
+ <section class="signature-section signature-preview-section" aria-label="Предпросмотр темы">
+  <h3>ПРЕДПРОСМОТР</h3>
+  <div class="signature-preview" aria-label="Миниатюра выбранной темы">
+   <div class="signature-preview-copy"><strong id="themePreviewName">Black Velvet</strong><span id="manageThemeNote">Спокойный стиль.<br>Чистый интерфейс.<br>Максимум сути.</span></div>
+   <div class="signature-mini-phone" aria-hidden="true"><div class="signature-phone-island"></div><div class="signature-phone-status">9:41 <span>▂ ▅ ▇</span></div><div class="signature-phone-rows"><div><b>⌂</b><i></i><em>⌄</em></div><div><b>▦</b><i></i></div><div><b>▥</b><i></i></div></div><div class="signature-phone-homebar"></div></div>
+  </div>
+ </section>
+ <p class="signature-disclaimer">Настройки плазмы, дока и анимаций пока показаны как концепция.</p>
+</div>
+</main><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
 <span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
@@ -371,8 +440,9 @@ function applyTheme(){
     button.setAttribute('aria-pressed',String(button.dataset.themeChoice===state.theme));
   });
   const note=$('manageThemeNote');
-  if(note)note.textContent=state.theme==='auto'?'Авто · сейчас '+(resolved==='dark'?'тёмная':'светлая')+' тема. Меняется вместе с системой.':state.theme==='dark'?'Тёмная тема · Black Velvet.':'Светлая тема · White Velvet.';
-  const summary=$('manageThemeSummary');if(summary)summary.textContent=state.theme==='auto'?'Авто':state.theme==='light'?'Светлая':'Тёмная';
+  if(note)note.innerHTML=resolved==='dark'?'Спокойный стиль.<br>Чистый интерфейс.<br>Максимум сути.':'Лёгкий стиль.<br>Чистый интерфейс.<br>Максимум сути.';
+  const title=$('themePreviewName');
+  if(title)title.textContent=state.theme==='auto'?'Системная':state.theme==='light'?'Светлая':'Black Velvet';
 }
 
 const EXECUTION_DEMO_MS=5500,COMPLETION_VISIBLE_MS=2600;
@@ -642,15 +712,12 @@ const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
 if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
 else systemThemeQuery.addListener(onSystemThemeChange);
 const manageInfo={
- personality:['Общение и характер','Здесь будет выбор имени, обращения и характера общения. Пока интеллект работает в демонстрационном режиме.'],
- voice:['Голос и микрофон','Здесь будут параметры голоса. Разрешения на микрофон сейчас задаются браузером и устройством.'],
- accounts:['Почта и календарь','Почта и календарь пока не подключены. В будущем здесь можно будет выбрать сервисы и разрешения.'],
- business:['Мессенджеры и CRM','Подключения мессенджеров и CRM ещё разрабатываются.'],
- insights:['Анализ и рекомендации','Настройки реального анализа появятся после подключения интеллекта. Сейчас доступна демонстрация сценариев.'],
- execution:['Исполнение поручений','Позже здесь будет настройка согласования действий. Сейчас реальные операции во внешних сервисах не выполняются.'],
- notifications:['Уведомления','Настройки оповещений появятся позже. Пока уведомления показываются только в демонстрационных сценариях.'],
- privacy:['Данные и безопасность','Здесь будет управление разрешениями и личной информацией. Внешние сервисы пока не подключены.'],
- profile:['SEYVEO · Цифровой управляющий','Это демонстрационная версия. Учётная запись и настройки профиля появятся после подключения персонального интеллекта.']
+ app:['Приложение','Здесь появятся загрузка, знакомство, подключение сервисов и управление учётной записью. Сейчас это демонстрационный экран.'],
+ manager:['Управляющий','Здесь будут анализ, рекомендации, выполнение поручений и согласование действий. Реальный интеллект пока не подключён.'],
+ plasma:['Плазма','В утверждённом SEYVEO плазма уже настроена. Позже здесь можно будет управлять её поведением, не меняя фирменный рисунок. Это предварительный экран.'],
+ dock:['Док','Фирменный док уже утверждён. Параметры дока будут доступны здесь после согласования оформления.'],
+ animations:['Анимации','В SEYVEO уже используется Silk Motion. Дополнительные настройки анимаций появятся позднее.'],
+ transparency:['Прозрачность','Здесь можно будет настроить прозрачность элементов Black Velvet. Пока это демонстрационный пункт.']
 };
 document.querySelectorAll('[data-manage-topic]').forEach(button=>{
   button.addEventListener('click',()=>{
@@ -671,7 +738,7 @@ function syncAppPage(){
   $('navManage').classList.toggle('active',manage);
   if(manage){$('navManage').setAttribute('aria-current','page');$('navHome').removeAttribute('aria-current');}
   else{$('navHome').setAttribute('aria-current','page');$('navManage').removeAttribute('aria-current');}
-  document.title=appearance?'Оформление · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  document.title=appearance?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
   if(manage)$('signal').classList.remove('is-appearing');
   window.scrollTo(0,0);
 }
