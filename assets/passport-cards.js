@@ -202,6 +202,7 @@ window.addEventListener('storage',event=>{if(event.key===DEV_PREVIEW_KEY)drawPre
 drawPreview();
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
+$('openCompanySettings')?.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
 $('seyveoCompanyType').addEventListener('change',toggleType);
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
