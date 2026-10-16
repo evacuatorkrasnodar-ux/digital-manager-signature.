@@ -131,6 +131,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .message p{font-size:var(--type-body-compact);color:var(--secondary);line-height:1.5;margin:0}
 .dynamic{width:100%}
 .decision-card{width:100%;padding:16px 17px 14px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(155deg,#ffffff07,transparent 54%),var(--card);box-shadow:0 8px 24px var(--shadow);animation:arrive .26s ease-out}
+.decision-card.is-spotlight{outline:1px solid var(--text);outline-offset:3px}
 :root[data-theme=light] .decision-card{background:linear-gradient(150deg,#fff, #fafbfd)}
 .card-main{display:flex;align-items:center;gap:12px}
 .event-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:15px;background:var(--card2);border:1px solid var(--soft-line);color:var(--secondary)}
@@ -1246,6 +1247,25 @@ function onManageRouteChange(){
 window.addEventListener('hashchange',onManageRouteChange);
 
 $('showHistory').addEventListener('click',()=>{if(location.hash!=='#tasks')location.hash='tasks';});
+// Orbital check = current required decision, never a second 'Дела' link.
+let decisionShortcutTimer=null;
+window.addEventListener('seyveo:decision-shortcut',()=>{
+  clearTimeout(decisionShortcutTimer);
+  const story=stories[state.index],card=$('dynamic').querySelector('.decision-card');
+  if(story&&!confirmation&&card){
+    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    card.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+    card.classList.add('is-spotlight');
+    decisionShortcutTimer=setTimeout(()=>card.classList.remove('is-spotlight'),1300);
+    return;
+  }
+  if(confirmation){syncHomeVoice();return}
+  $('kicker').textContent='Всё под контролем';
+  $('headline').textContent='Решений на согласовании сейчас нет';
+  $('subline').textContent='Новые рекомендации появятся здесь. Я на связи.';
+  decisionShortcutTimer=setTimeout(syncHomeVoice,3200);
+});
+
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
 $('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 // The sphere is a living signature, not a second copy of the recommendation.
@@ -1518,4 +1538,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/home-snapshot.js?v=1"></script><script src="assets/passport-cards.js?v=4"></script><script src="assets/orb-shortcuts.js?v=2"></script><script src="assets/pulse.js?v=1"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/home-snapshot.js?v=1"></script><script src="assets/passport-cards.js?v=4"></script><script src="assets/orb-shortcuts.js?v=3"></script><script src="assets/pulse.js?v=1"></script></body></html>
