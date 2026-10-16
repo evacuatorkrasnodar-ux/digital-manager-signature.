@@ -81,12 +81,28 @@
 .seyveo-tier-choice:focus-visible,.seyveo-tier-steps button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 @media(max-width:370px){.seyveo-tier-choice{padding:11px 7px 9px}.seyveo-tier-choice strong{font-size:17px}.seyveo-tier-choice small,.seyveo-tier-choice em{font-size:9px}.seyveo-tier-life-state{display:none}}
 
-/* Two signature passports live on Home as before; don't reposition the orb. */
-.home-passports{margin:19px 1px 2px;min-width:0}
-.home-passports-title{margin:0 0 10px 5px;font-size:12px;font-weight:620;line-height:1.4;letter-spacing:.005em;color:var(--secondary)}
-.home-passports .seyveo-passport-grid{margin:0;gap:11px}
-.home-passports .seyveo-passport-card{height:154px}
-@media(max-width:355px){
- .home-passports .seyveo-passport-grid{gap:8px}
- .home-passports .seyveo-passport-card{height:149px}
-}
+/* Top-of-Home passports, matching the old interaction, not an inline card row.
+   The logo and user icon are the two independent triggers. */
+.top#homeHeader{position:relative;z-index:45}
+button.mark.home-brand-trigger{display:grid;place-items:center;flex:none;border:0;background:transparent;padding:0;border-radius:50%;cursor:pointer}
+button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
+.home-profile-trigger{display:grid;place-items:center;flex:none;width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:linear-gradient(145deg,#edf5ff0b,transparent 70%),var(--card);color:var(--text);box-shadow:inset 0 1px 0 #ffffff0f;padding:0;cursor:pointer}
+.home-profile-trigger svg{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.home-profile-trigger[aria-expanded=true]{background:var(--card2)}
+.home-brand-trigger[aria-expanded=true]{filter:brightness(1.1)}
+.home-passports{position:absolute;z-index:65;right:0;top:calc(100% + 10px);width:min(215px,calc(100vw - 48px));margin:0;padding:0}
+.home-passports[hidden]{display:none!important}
+.home-passports .seyveo-passport-grid{display:block;margin:0;min-width:0}
+.home-passports .seyveo-passport-card{width:100%;height:155px;padding:12px 13px 16px;box-shadow:0 16px 36px #0009;transition:opacity .17s ease}
+.home-passports .seyveo-passport-card[hidden]{display:none!important}
+.home-passports .seyveo-passport-border{stroke:color-mix(in srgb,var(--text) 28%,var(--line))}
+.home-passports .seyveo-passport-card-foot{margin-top:auto}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-card-foot{padding-left:27px}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-foot{padding-right:27px}
+.home-profile-trigger:focus-visible,.home-brand-trigger:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+/* Editing remains inside the same company passport, reachable from its title. */
+.seyveo-passport-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.seyveo-passport-dialog-head h2{margin:0;min-width:0}
+.seyveo-passport-edit-top{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;min-height:34px;padding:5px 9px;border:1px solid var(--line);border-radius:17px;background:var(--card2);color:var(--text);font-size:11px;font-weight:590}
+.seyveo-passport-edit-top svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:355px){.home-passports{width:min(205px,calc(100vw - 42px))}.home-passports .seyveo-passport-card{height:151px}}
