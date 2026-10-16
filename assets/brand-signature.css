@@ -1,0 +1,36 @@
+/* SEYVEO · approved silver waves with a restrained emerald velvet tile.
+   Brand-only accent; does not recolor the interface, orb or dock. */
+#homeHeader button.seyveo-brand-trigger{
+ display:flex;align-items:center;justify-content:flex-start;gap:12px;
+ height:64px;width:auto;max-width:calc(100% - 54px);flex:0 1 auto;
+ background:transparent;border:0;padding:0;border-radius:18px;text-align:left;
+ -webkit-tap-highlight-color:transparent
+}
+#homeHeader .seyveo-brand-trigger img{
+ display:block;width:64px;height:64px;flex:none;object-fit:contain;
+ filter:none!important;
+}
+#homeHeader .seyveo-brand-caption{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}
+#homeHeader .seyveo-brand-name{
+ color:#f2f4f4;font-size:20px;font-weight:560;line-height:1.08;
+ letter-spacing:.21em;padding-left:.21em;white-space:nowrap
+}
+#homeHeader .seyveo-brand-specialty{
+ display:block;color:#a5afae;font-size:9px;line-height:1.25;font-weight:500;
+ letter-spacing:.045em;white-space:nowrap
+}
+:root[data-theme=light] #homeHeader .seyveo-brand-name{color:#253035}
+:root[data-theme=light] #homeHeader .seyveo-brand-specialty{color:#55666b}
+#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:.90}
+#homeHeader .seyveo-brand-trigger:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+/* The two-wave mark is now landscape; give it room to read inside Pearl Mist.
+   The existing reveal timing and central glass sphere are unchanged. */
+#signal.is-brand .brand-mark{width:98px;height:46px;object-fit:contain}
+:root[data-theme=light] #signal.is-brand .brand-mark{filter:none}
+@media(max-width:370px){
+ #homeHeader button.seyveo-brand-trigger{gap:8px;height:56px}
+ #homeHeader .seyveo-brand-trigger img{width:56px;height:56px}
+ #homeHeader .seyveo-brand-name{font-size:18px;letter-spacing:.18em;padding-left:.18em}
+ #homeHeader .seyveo-brand-specialty{font-size:8.2px;letter-spacing:.01em}
+}
+@media(prefers-reduced-motion:reduce){#homeHeader .seyveo-brand-trigger:hover .seyveo-brand-name{opacity:1}}
