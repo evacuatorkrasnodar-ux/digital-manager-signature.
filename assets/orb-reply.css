@@ -1,6 +1,13 @@
-/* SEYVEO · Orb reply (Black Velvet / White Velvet).
-   A small contextual answer directly below the sphere, never a modal.
-   No styles for the orb itself, the orbit icons, or Deep Reveal. */
+/* SEYVEO · Orb reply v2 (Black Velvet / White Velvet).
+   Card grows below the sphere without moving its anchored position.
+   No changes to orb art, shortcut orbit, or original Deep Reveal. */
+/* Avoid re-centering the orb as the reply card changes the stage height.
+   Keep the orb anchored to its pre-click position on both desktop and phone. */
+#stage{
+  justify-content:flex-start;
+  overflow-anchor:none;
+}
+#stage .orb-cluster{flex:0 0 auto}
 
 #stage .orb-info-card{
   position:relative;
@@ -80,9 +87,10 @@
   border-color:rgba(72,95,135,.12);
   background:rgba(92,121,169,.05);
 }
+/* Fade the answer without moving or blurring a large layer while Pearl Mist runs. */
 @keyframes orb-reply-appear{
-  from{opacity:0;transform:translate3d(0,7px,0);filter:blur(3px)}
-  to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}
+  from{opacity:0}
+  to{opacity:1}
 }
 @media(max-width:375px){
   #stage .orb-info-card{padding:17px 18px 16px;border-radius:29px}
