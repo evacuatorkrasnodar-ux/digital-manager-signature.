@@ -1,0 +1,29 @@
+/* SEYVEO · Scroll Calm
+   Remove visible scrollbar rails and the desktop gutter that re-centers the
+   app as page content grows/shrinks. Keep real wheel, touch, keyboard and
+   long-dialog scrolling fully functional. The sphere and dock are untouched. */
+
+/* Overrides the old desktop scrollbar-gutter:stable both-edges rule. With
+   scrollbars visually suppressed, reserving a track would only waste space. */
+html {
+  overflow-y:auto;
+  scrollbar-gutter:auto;
+}
+
+/* Firefox / browsers implementing CSS Scrollbars. */
+html,
+html * {
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+/* Chromium, Safari, desktop/PWA WebKit. */
+html::-webkit-scrollbar,
+html *::-webkit-scrollbar {
+  display:none;
+  width:0;
+  height:0;
+}
+
+/* Do not use overflow:hidden: short and long pages must remain navigable.
+   In particular, onboarding, passports, notes and editors still scroll. */
