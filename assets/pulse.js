@@ -58,7 +58,7 @@ function render(){
   $('pulseSales').textContent=num.format(total.sales);
   $('pulseRevenue').textContent=rub(total.revenue);
   $('pulseProfit').textContent=rub(total.revenue-total.cost);
-  $('pulseIncomeLabel').textContent='Отмечено продаж · ДЕМО';
+  $('pulseIncomeLabel').textContent='Выручка · ДЕМО';
   const bins=chartRows(),max=Math.max(1,...bins.map(x=>x.revenue)),labels=periodLabels();
   const graph=$('pulseChart');
   graph.replaceChildren();
