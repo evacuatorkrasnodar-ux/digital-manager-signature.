@@ -6,9 +6,7 @@
   if(!cluster)return;
   const actions=Object.freeze({
     calendar:'personalAddHome', // local task with due-date field
-    tasks:'navTasks',           // real tasks screen
-    activity:'showHistory',     // demonstration assignment history
-    notes:'viewNotes'           // real locally saved text notes
+    notes:'viewNotes'           // locally saved notes
   });
 
   /* Local sound preference; also honors immediate changes in private mode. */
@@ -65,12 +63,16 @@
   cluster.addEventListener('click',event=>{
     const button=findButton(event);
     if(!button||button.disabled)return;
-    const id=actions[button.dataset.orbAction];
-    const target=id&&document.getElementById(id);
-    if(!target||target.disabled)return;
+    const action=button.dataset.orbAction;
+    const id=actions[action];
+    const target=id?document.getElementById(id):null;
+    if(!target&&!['tasks','activity'].includes(action))return;
+    if(target?.disabled)return;
     press(button);
     // Fires synchronously from the user's click; no duplicate audio engine.
     document.dispatchEvent(new Event('seyveo:silk-touch'));
-    target.click();
+    if(action==='tasks')window.dispatchEvent(new Event('seyveo:decision-shortcut'));
+    else if(action==='activity')window.dispatchEvent(new Event('seyveo:pulse-open'));
+    else target.click();
   });
 })();
