@@ -370,7 +370,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="manage-text"><strong>Тема</strong><small>Оформление и внешний вид</small></span>
 <span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span>
 </button></div></section>
-<section class="manage-group" aria-labelledby="manage-assistant"><h2 id="manage-assistant">Мой управляющий</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="personality"><span class="manage-text"><strong>Общение и характер</strong><small>Имя, обращение и стиль разговора</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="voice"><span class="manage-text"><strong>Голос и микрофон</strong><small>Голосовое общение с SEYVEO</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-assistant"><h2 id="manage-assistant">Мой управляющий</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="voice"><span class="manage-text"><strong>Голос и микрофон</strong><small>Голосовое общение с SEYVEO</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Подключения</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="accounts"><span class="manage-text"><strong>Почта и календарь</strong><small>Сервисы пока не подключены</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="business"><span class="manage-text"><strong>Мессенджеры и CRM</strong><small>Подключения в разработке</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
 <button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
@@ -795,7 +795,6 @@ const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
 if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
 else systemThemeQuery.addListener(onSystemThemeChange);
 const manageInfo={
- personality:['Общение и характер','Здесь будет выбор имени, обращения и характера общения. Пока интеллект работает в демонстрационном режиме.'],
  voice:['Голос и микрофон','Здесь будут параметры голоса. Разрешения на микрофон сейчас задаются браузером и устройством.'],
  accounts:['Почта и календарь','Почта и календарь пока не подключены. В будущем здесь можно будет выбрать сервисы и разрешения.'],
  business:['Мессенджеры и CRM','Подключения мессенджеров и CRM ещё разрабатываются.'],
