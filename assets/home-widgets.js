@@ -97,23 +97,26 @@ function icon(name){
  svg.innerHTML=icons[name]||icons.note;
  holder.append(svg);return holder;
 }
+const moneyCompact=value=>{
+ if(value>=1000000)return (value/1000000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' млн ₽';
+ if(value>=1000)return (value/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})+' тыс. ₽';
+ return rub(value);
+};
 function renderHome(){
  grid.replaceChildren();
  home.hidden=selected.length===0;
  for(const id of selected){
-  const data=info(id),item=BY_ID[id],button=create('button','home-widget-card'+(id==='money'?' home-widget-card--wide':''));
+  const data=info(id),button=create('button','home-widget-card picture-metric'+(id==='money'?' picture-metric--money':''));
   button.type='button';button.dataset.homeWidget=id;
-  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть');
-  const top=create('span','home-widget-top'),label=create('span','home-widget-label',data.label);
-  top.append(label,icon(item.icon));
-  const value=create('strong','home-widget-value',data.value);
-  const note=create('small','home-widget-note',data.hint);
+  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть подробности');
+  const label=create('span','home-widget-label',id==='money'?'Продано':data.label);
+  const value=create('strong','home-widget-value',id==='money'?moneyCompact(demo().revenue):data.value);
   const arrow=create('span','home-widget-arrow');
   arrow.setAttribute('aria-hidden','true');
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('viewBox','0 0 24 24');
-  svg.innerHTML='<path d="M6.5 17.5 17 7M8 7h9v9"/>';
-  arrow.append(svg);button.append(top,value,note,arrow);grid.append(button);
+  svg.innerHTML='<path d="m9 6 6 6-6 6"/>';
+  arrow.append(svg);button.append(label,value,arrow);grid.append(button);
  }
 }
 function renderCatalog(){
