@@ -1276,7 +1276,7 @@ function drawResultsGlance(){
     if(Object.prototype.hasOwnProperty.call(counts,entry.status))counts[entry.status]++;
   }
   $('resultDoneCount').textContent=String(counts.done);
-  $('resultWorkingCount').textContent=String(counts.working+counts.failed);
+  $('resultWorkingCount').textContent=String(counts.working);
   $('resultApprovedCount').textContent=String(counts.approved);
   const last=state.history[state.history.length-1];
   $('resultLastLabel').textContent=last?'Последнее поручение':'Пока без результатов';
@@ -1574,4 +1574,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=3"></script><script src="assets/pulse.js?v=2"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=13"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=4"></script><script src="assets/pulse.js?v=2"></script></body></html>
