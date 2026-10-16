@@ -380,7 +380,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-roadmap-item strong{display:block;font-size:13px;line-height:1.4;font-weight:590;color:var(--text)}
 .manage-roadmap-item p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--secondary);white-space:normal}
 .manage-live-summary{margin:-8px 3px 20px;padding:9px 12px;border:1px solid var(--soft-line);background:var(--card2);border-radius:12px;color:var(--secondary);font-size:11px;line-height:1.55}
-</style><link rel="stylesheet" href="assets/onboarding.css?v=1"><link rel="stylesheet" href="assets/personal-tasks.css?v=2"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div>
+</style><link rel="stylesheet" href="assets/onboarding.css?v=1"><link rel="stylesheet" href="assets/personal-tasks.css?v=2"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=2"></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div>
 <section class="seyveo-status" aria-label="Состояние личного пространства SEYVEO">
 <button type="button" id="homePathStatus" class="seyveo-status-side" aria-label="Изменить направление SEYVEO">
 <span class="seyveo-status-overline">Направление</span>
@@ -442,7 +442,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="seyveo-passport-card-titles"><strong>SEYVEO</strong><small>IT · AI · AUTOMATION</small></span>
 <span class="seyveo-passport-arrow" aria-hidden="true">›</span>
 </span>
-<span class="seyveo-passport-card-foot"><span>Паспорт продукта</span><small>Цифровой управляющий</small></span>
+<span class="seyveo-passport-card-foot"><span>Паспорт продукта</span><small id="seyveoPassportPreviewTier">Предпросмотр PRO</small></span>
 </button>
 <button type="button" id="seyveoCompanyPassport" class="seyveo-passport-card seyveo-passport-card--company" aria-label="Открыть карточку своей компании">
 <svg class="seyveo-passport-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M 11 1.2 C 4.4 1.2 1.4 6.4 1.4 14.2 L 1.4 42 C 1.4 51 4 55 10 56 C 17 57.5 19.4 64.4 19.4 73.3 L 19.4 88.2 C 19.4 96.4 24.1 98.8 31.8 98.8 L 89 98.8 C 96.2 98.8 98.8 94.1 98.8 86.5 L 98.8 14 C 98.8 5.4 95 1.2 88 1.2 Z" transform="translate(100 0) scale(-1 1)" vector-effect="non-scaling-stroke"/></svg>
@@ -539,6 +539,25 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="seyveo-passport-row"><span>Стадия</span><strong>Демонстрационная версия</strong></div>
 <div class="seyveo-passport-row"><span>Подписка</span><strong>Не подключена</strong></div>
 <div class="seyveo-passport-row"><span>ИИ и сервисы</span><strong>Пока не подключены</strong></div>
+<section class="seyveo-tier-section" aria-labelledby="seyveoTiersTitle">
+<div class="seyveo-tier-top"><div><span class="seyveo-tier-eyebrow">ЛИНЕЙКА ПРОДУКТОВ</span><h3 id="seyveoTiersTitle">Вся линейка SEYVEO</h3></div><span class="seyveo-tier-devmark">Предпросмотр</span></div>
+<p class="seyveo-tier-intro">Уровни видны сразу. Нажми на любой, чтобы посмотреть его задачи и перейти к следующему — пока без оформления подписки.</p>
+<div class="seyveo-tier-grid" role="group" aria-label="Бизнес-уровни для предпросмотра">
+<button type="button" class="seyveo-tier-choice" data-seyveo-preview-tier="start" aria-pressed="false"><span>BUSINESS</span><strong>Start</strong><small>От идеи к запуску</small><em data-seyveo-current>Посмотреть</em></button>
+<button type="button" class="seyveo-tier-choice" data-seyveo-preview-tier="pro" aria-pressed="true"><span>BUSINESS</span><strong>Pro</strong><small>Работающий бизнес</small><em data-seyveo-current>Смотрим</em></button>
+<button type="button" class="seyveo-tier-choice" data-seyveo-preview-tier="max" aria-pressed="false"><span>BUSINESS</span><strong>Max</strong><small>Большая компания</small><em data-seyveo-current>Посмотреть</em></button>
+</div>
+<div class="seyveo-tier-detail" aria-live="polite">
+<div class="seyveo-tier-detail-head"><strong id="seyveoPreviewName">SEYVEO Business Pro</strong><span>В планах</span></div>
+<ul id="seyveoPreviewFeatures"><li>Всё из Start</li><li>Клиенты, поручения и процессы</li><li>Финансы и бизнес-аналитика</li></ul>
+<div class="seyveo-tier-steps" role="group" aria-label="Переход между уровнями">
+<button id="seyveoPreviewLower" type="button">← START</button>
+<button id="seyveoPreviewHigher" type="button">↑ MAX</button>
+</div>
+</div>
+<div class="seyveo-tier-life"><span class="seyveo-tier-life-icon" aria-hidden="true">♡</span><span><strong>SEYVEO Life</strong><small>Личная жизнь · всегда рядом, независимо от Business</small></span><span class="seyveo-tier-life-state">Отдельно</span></div>
+<p class="seyveo-tier-honesty">Режим разработчика: показываем все будущие уровни и возможности. Выбор меняет только предпросмотр паспорта, не тариф, не оплату и не доступ к функциям.</p>
+</section>
 <p class="seyveo-passport-notice" style="margin-top:14px">Паспорт описывает продукт, а не является свидетельством регистрации компании или подтверждением лицензии.</p>
 <div class="seyveo-passport-controls"><button type="button" class="btn" id="seyveoStudioShare">Поделиться</button><button type="button" class="btn" id="seyveoStudioPrint">Распечатать</button></div>
 <p class="seyveo-passport-status" data-passport-status role="status" aria-live="polite"></p>
@@ -1294,4 +1313,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=9"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=2"></script><script src="assets/home-snapshot.js?v=1"></script><script src="assets/passport-cards.js?v=1"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=9"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=2"></script><script src="assets/home-snapshot.js?v=1"></script><script src="assets/passport-cards.js?v=2"></script></body></html>
