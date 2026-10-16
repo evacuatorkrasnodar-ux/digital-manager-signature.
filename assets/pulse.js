@@ -57,7 +57,9 @@ function render(){
   $('pulseLeads').textContent=num.format(total.leads);
   $('pulseSales').textContent=num.format(total.sales);
   $('pulseRevenue').textContent=rub(total.revenue);
+  $('pulseCosts').textContent=rub(total.cost);
   $('pulseProfit').textContent=rub(total.revenue-total.cost);
+  $('pulseConversion').textContent=(total.leads?Math.round(total.sales*1000/total.leads)/10:0).toLocaleString('ru-RU')+'%';
   $('pulseIncomeLabel').textContent='Выручка · ДЕМО';
   const bins=chartRows(),max=Math.max(1,...bins.map(x=>x.revenue)),labels=periodLabels();
   const graph=$('pulseChart');
