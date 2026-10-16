@@ -39,6 +39,38 @@ function sum(rows){
   snapshot(scope='today'){
    const days={today:1,week:7,month:30,year:365}[scope]||1;
    return Object.freeze(sum(ledger.filter(row=>row.age<days)));
+  },
+  picture(scope='today'){
+   const days={today:1,week:7,month:30,year:365}[scope]||1;
+   const rows=ledger.filter(row=>row.age<days),total=sum(rows);
+   const sources=[
+     {name:'Поиск',leads:0,sales:0,revenue:0},
+     {name:'Соцсети',leads:0,sales:0,revenue:0},
+     {name:'По рекомендации',leads:0,sales:0,revenue:0}
+   ];
+   const costs=[
+     {name:'Реклама',value:0},
+     {name:'Работа и материалы',value:0},
+     {name:'Сервисы',value:0}
+   ];
+   for(const row of rows){
+     for(let i=0;i<row.leads;i++)sources[(row.age+row.hour+i)%3].leads++;
+     const per=Math.floor(row.revenue/Math.max(1,row.sales));
+     for(let i=0;i<row.sales;i++){
+       const channel=sources[(row.age+row.hour+i)%3];
+       channel.sales++;
+       channel.revenue+=per+(i===row.sales-1?row.revenue-per*row.sales:0);
+     }
+     const ads=Math.round(row.cost*.43),work=Math.round(row.cost*.39);
+     costs[0].value+=ads;costs[1].value+=work;costs[2].value+=row.cost-ads-work;
+   }
+   const labels=scope==='today'?['00','04','08','12','16','20']:scope==='week'?['−6','−5','−4','−3','−2','−1','Сегодня']:scope==='month'?['30д','24д','18д','12д','6д']:['12м','11м','10м','9м','8м','7м','6м','5м','4м','3м','2м','1м'];
+   const bins=Array.from({length:labels.length},()=>({leads:0,sales:0,revenue:0,cost:0}));
+   for(const row of rows){
+     const index=scope==='today'?Math.min(5,Math.floor(row.hour/4)):Math.min(bins.length-1,Math.floor((days-1-row.age)*bins.length/days));
+     for(const key of ['leads','sales','revenue','cost'])bins[index][key]+=row[key];
+   }
+   return {total,sources,costs,trend:bins.map((entry,i)=>({...entry,label:labels[i]}))};
   }
  });
 function periodLabels(n){
