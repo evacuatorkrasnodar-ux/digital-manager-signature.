@@ -82,6 +82,8 @@ function render(){
  else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Личных дел пока нет.'));
  $('personalBriefCount').textContent=open.length?String(open.length):'';
  $('personalBriefCount').hidden=!open.length;
+ // Keep personal tasks in Дела; show their compact Home preview only if pending.
+ $('personalBrief').hidden=open.length===0;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
 function openDialog(){
@@ -114,7 +116,6 @@ form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
 $('personalAddTasks').addEventListener('click',openDialog);
 $('personalTaskCancel').addEventListener('click',()=>dialog.close());
-$('personalGoTasks').addEventListener('click',()=>{location.hash='tasks';window.scrollTo(0,0)});
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
