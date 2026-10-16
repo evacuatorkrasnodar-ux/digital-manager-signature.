@@ -53,3 +53,113 @@
 #picturePage .home-widget-arrow{bottom:10px}
 #picturePage #pictureWidgetArea[hidden]{display:none!important}
 @media(max-width:370px){#picturePage .home-widget-card{min-height:99px;padding:11px}#picturePage .home-widget-value{font-size:21px}}
+
+
+/* Picture v2 — one quiet summary, not three outsized promo tiles. */
+.picture-head{margin:8px 0 16px}
+.picture-head h1{font-size:25px;line-height:1.15;font-weight:575;letter-spacing:-.033em;margin-bottom:6px}
+.picture-head p:last-child{font-size:12.5px}
+.picture-tabs{margin-bottom:15px;border-radius:17px}
+.picture-tabs button[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--line),0 1px 3px var(--shadow)}
+#picturePage #pictureWidgetArea{margin:0}
+#picturePage .home-widgets-heading{margin:0 1px 10px}
+#picturePage .home-widgets-heading h2{font-size:13px;font-weight:600}
+#picturePage .home-widgets-caption{font-size:9.5px;letter-spacing:.025em}
+#picturePage .home-widgets-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+ border:1px solid var(--line);border-radius:22px;overflow:hidden;
+ background:linear-gradient(147deg,rgba(240,247,255,.03),transparent 76%),var(--card);
+ box-shadow:inset 0 1px 0 #ffffff0a
+}
+#picturePage .home-widget-card.picture-metric{
+ display:flex;position:relative;flex-direction:column;justify-content:center;
+ gap:9px;min-width:0;width:100%;height:auto;min-height:100px;padding:14px 9px 19px;
+ text-align:center;border:0;border-radius:0;
+ background:transparent;box-shadow:none;transform:none
+}
+#picturePage .picture-metric:not(:nth-child(3n)){border-right:1px solid var(--soft-line)}
+#picturePage .picture-metric:nth-child(n+4){border-top:1px solid var(--soft-line)}
+#picturePage .picture-metric .home-widget-label{
+ display:block;line-height:1.25;font-size:11px;font-weight:495;color:var(--secondary)
+}
+#picturePage .picture-metric .home-widget-value{
+ display:block;min-width:0;font-size:25px;font-weight:635;letter-spacing:-.035em;
+ line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+#picturePage .picture-metric--money .home-widget-value{
+ font-size:clamp(11px,3.3vw,16px);font-weight:615;letter-spacing:-.022em
+}
+#picturePage .picture-metric .home-widget-arrow{
+ position:absolute;right:50%;bottom:5px;transform:translateX(50%);
+ width:12px;height:12px;opacity:.62
+}
+#picturePage .picture-metric .home-widget-arrow svg{width:12px;height:12px;stroke-width:1.4}
+#picturePage .home-widget-card.picture-metric:focus-visible{outline:2px solid var(--text);outline-offset:-3px;z-index:2}
+#picturePage .home-widget-card.picture-metric:active{background:var(--card2)}
+.picture-quick-insight{
+ display:flex;gap:10px;align-items:baseline;margin:11px 1px 0;
+ padding:0 1px;color:var(--secondary);font-size:11.5px;line-height:1.48
+}
+.picture-quick-insight[hidden]{display:none!important}
+.picture-quick-insight-mark{
+ flex:none;color:var(--text);font-size:10px;font-weight:640;letter-spacing:.05em
+}
+.picture-quick-insight p{margin:0;font-size:11.5px;line-height:1.5;color:var(--secondary)}
+.picture-section{margin-top:24px}
+.picture-section h2{font-size:13.5px;font-weight:605;line-height:1.4;margin-bottom:10px}
+.picture-chart-box,.picture-breakdown{border-radius:21px}
+.picture-chart-box{padding:15px 14px 13px}
+.picture-chart-intro{margin:0 0 14px;color:var(--secondary);font-size:11px;line-height:1.4}
+.picture-bars{height:123px;gap:5px}
+.picture-bin{
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+ gap:8px;height:100%;min-width:0;margin:0;padding:0 2px;border:0;border-radius:10px;
+ background:transparent;color:var(--secondary);cursor:pointer
+}
+.picture-bin-track{
+ width:100%;height:96px;display:flex;align-items:flex-end;justify-content:center;
+ background:repeating-linear-gradient(to top,transparent 0,transparent calc(33.333% - 1px),var(--soft-line) calc(33.333% - 1px),var(--soft-line) 33.333%)
+}
+.picture-bin-bar{
+ width:min(15px,44%);min-width:6px;border-radius:8px 8px 3px 3px;
+ background:linear-gradient(180deg,rgba(242,246,250,.94),rgba(125,136,151,.65));
+ opacity:.86;transition:opacity .17s ease,filter .17s ease
+}
+.picture-bin:active .picture-bin-bar,.picture-bin:focus-visible .picture-bin-bar{opacity:1;filter:brightness(1.15)}
+.picture-bin:focus-visible{outline:2px solid var(--text);outline-offset:0}
+.picture-bin small{font-size:9px;color:var(--secondary)}
+.picture-breakdown{padding:3px 14px}
+.picture-split-row{
+ position:relative;display:flex;flex-direction:column;gap:8px;width:100%;
+ padding:13px 0;border:0;border-radius:0;background:transparent;color:var(--text);
+ text-align:left;cursor:pointer
+}
+.picture-split-row:focus-visible{outline:2px solid var(--text);outline-offset:-2px}
+.picture-split-row:active{filter:brightness(1.13)}
+.picture-split-label{display:flex;gap:10px;align-items:baseline;justify-content:space-between;font-size:12px}
+.picture-split-label strong{padding-right:13px;font-weight:600;font-size:11.5px}
+.picture-split-row::after{
+ content:"›";position:absolute;right:0;top:12px;color:var(--secondary);
+ font-size:15px;line-height:1
+}
+.picture-split-track{height:3px;display:block;border-radius:9px;background:var(--card2);overflow:hidden}
+.picture-split-fill{display:block;height:100%;border-radius:inherit;background:var(--secondary);opacity:.83}
+.picture-subnote{margin:8px 2px 0;font-size:10.5px}
+.picture-footnote{font-size:10.5px;line-height:1.55;margin:20px 2px 10px}
+.picture-detail-dialog{width:min(410px,calc(100% - 28px));padding:23px 17px 18px}
+.picture-detail-dialog h2{font-size:21px;line-height:1.2;font-weight:630;margin:8px 35px 6px 0}
+.picture-detail-sub{font-size:12px;line-height:1.5;color:var(--secondary);margin:0 0 15px}
+.picture-detail-explain{font-size:11.5px;line-height:1.55;color:var(--secondary);margin:14px 1px 2px}
+:root[data-theme=light] .picture-bin-bar{
+ background:linear-gradient(180deg,#73889a,#bcc8d3)
+}
+@media(max-width:370px){
+ .picture-head h1{font-size:24px}
+ #picturePage .home-widget-card.picture-metric{padding:12px 5px 17px;min-height:91px}
+ #picturePage .picture-metric .home-widget-label{font-size:10.5px}
+ #picturePage .picture-metric .home-widget-value{font-size:23px}
+ #picturePage .picture-metric--money .home-widget-value{font-size:11px}
+ .picture-bars{gap:3px}
+ .picture-quick-insight{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){.picture-bin-bar{transition:none}}
