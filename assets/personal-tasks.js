@@ -48,8 +48,16 @@ function row(item,compact=false){
    checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
    checkbox.setAttribute('aria-pressed',String(item.done));
    section.append(checkbox,label);
-   const remove=element('button','personal-task-delete','×');
+   const remove=element('button','personal-task-delete');
    remove.type='button';remove.dataset.taskDelete=item.id;remove.setAttribute('aria-label','Удалить дело: '+item.title);
+   // The same centered, symmetrical vector X as all SEYVEO close controls.
+   const cross=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   cross.setAttribute('class','seyveo-close-glyph');
+   cross.setAttribute('viewBox','0 0 24 24');
+   cross.setAttribute('aria-hidden','true');
+   const strokes=document.createElementNS('http://www.w3.org/2000/svg','path');
+   strokes.setAttribute('d','M7 7l10 10M17 7 7 17');
+   cross.append(strokes);remove.append(cross);
    section.append(remove);
  }else{
    section.append(label);
