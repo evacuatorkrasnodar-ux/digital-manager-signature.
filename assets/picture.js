@@ -31,8 +31,11 @@ function render(){
  $('pictureTitle').textContent=life?'Картина дня':'Картина бизнеса';
  $('pictureLead').textContent=life?'Ваши записи, дела и выбранные инструменты в одном месте.':'Понятно о клиентах, заказах и деньгах.';
  body.hidden=life;
+ $('pictureBusinessCharts').hidden=life;
  $('pictureLifeNote').hidden=!life;
+ $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent=life?'ВАШИ ИНСТРУМЕНТЫ':'ДЕМО · ВАШ ВЫБОР';
  if(life)return;
+ window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
  const result=businessData();
  if(!result)return;
  const {total,trend,sources,costs}=result;
