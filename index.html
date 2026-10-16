@@ -477,7 +477,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
    left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
  }
 }
-</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=7"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=1"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=4"><link rel="stylesheet" href="assets/calendar.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><button id="homeCalendarTrigger" class="home-profile-trigger home-calendar-trigger" type="button" aria-label="Календарь: открыть дела и планы" title="Календарь и планы"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.8" y="5.3" width="16.4" height="15.2" rx="2.8"/><path d="M8 3.4v4M16 3.4v4M3.8 10h16.4M8 14.1h2.5M13.5 14.1H16M8 17.4h2.5"/></svg></button><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button></div>
+</style><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=3"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=7"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=5"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=1"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=1"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=4"><link rel="stylesheet" href="assets/calendar.css?v=1"><link rel="stylesheet" href="assets/calendar-spaces.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><button id="homeCalendarTrigger" class="home-profile-trigger home-calendar-trigger" type="button" aria-label="Календарь: открыть дела и планы" title="Календарь и планы"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.8" y="5.3" width="16.4" height="15.2" rx="2.8"/><path d="M8 3.4v4M16 3.4v4M3.8 10h16.4M8 14.1h2.5M13.5 14.1H16M8 17.4h2.5"/></svg></button><button id="homeCompanyTrigger" class="home-profile-trigger" type="button" aria-label="Показать карточку компании" aria-expanded="false" aria-controls="homePassportPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-4.1 2.5-6.3 7-6.3s7 2.2 7 6.3"/></svg></button></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
 <defs>
@@ -640,6 +640,16 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <p id="calendarDeadlineCount" class="cal-event-label"></p><div id="calendarDeadlineList"></div>
 </section>
 <button id="calendarAddTask" type="button" class="cal-day-fab">＋ Добавить дело со сроком</button>
+<section class="calendar-spaces" aria-labelledby="calendarSpacesHeading">
+<div class="calendar-spaces-head"><h2 id="calendarSpacesHeading">Личное пространство</h2><span>Рядом с вашим временем</span></div>
+<div id="calendarSpaces" class="calendar-spaces-grid">
+<button type="button" class="calendar-space-button" data-calendar-space="notes" aria-label="Открыть Блокнот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button>
+<button type="button" class="calendar-space-button" data-calendar-space="health" aria-label="Открыть Здоровье"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button>
+<button type="button" class="calendar-space-button" data-calendar-space="care" aria-label="Открыть Заботу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота ♡</span></button>
+<button type="button" class="calendar-space-button" data-calendar-space="world" aria-label="Открыть Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Мой мир</span></button>
+</div>
+<p class="calendar-spaces-note">Нажмите на раздел, чтобы открыть свои записи. В календаре отмечаются только записи, для которых указана дата.</p>
+</section>
 <p class="cal-hint">События и личные дела сохраняются на этом устройстве. Письма, внешние календари и напоминания пока не подключены.</p>
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
 <header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Личные дела и поручения SEYVEO — в одном месте.</p></header>
@@ -678,7 +688,28 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button type="button" id="navPicture" class="nav-item nav-picture" aria-label="Картина"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V14M9.5 19.5V9.5M14.5 19.5v-6M19.5 19.5V5"/></svg><span>Картина</span></button>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="calendarEventDialog" class="cal-form-dialog" aria-labelledby="calendarEventTitleHeading">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="calendarSpaceDialog" class="cal-space-dialog" aria-labelledby="calendarSpaceTitleHeading">
+<button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть личное пространство"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+<h2 id="calendarSpaceTitleHeading">Личное пространство</h2>
+<p id="calendarSpaceIntro">Ваши записи на этом устройстве</p>
+<div class="cal-space-toolbar"><small id="calendarSpaceCount">Нет записей</small><button id="calendarSpaceAdd" type="button">＋ Добавить</button></div>
+<div id="calendarSpaceList" class="cal-space-list" aria-label="Ваши записи"></div>
+<div id="calendarSpaceForm" class="calendar-space-edit" data-show="false" hidden>
+<h3 id="calendarSpaceFormTitle">Новая запись</h3>
+<form id="calendarSpaceFormFields">
+<label><span id="calendarSpaceNameLabel">Название</span><input id="calendarSpaceTitle" type="text" maxlength="110" required autocomplete="off"></label>
+<div class="calendar-space-date-row">
+<label>Раздел<select id="calendarSpaceKind"></select></label>
+<label>Дата · необязательно<input id="calendarSpaceDate" type="date"></label>
+</div>
+<label id="calendarSpaceAnnualLabel" class="calendar-space-annual"><input id="calendarSpaceAnnual" type="checkbox" checked>Каждый год · для дней рождения</label>
+<label>Подробности · необязательно<textarea id="calendarSpaceDetail" maxlength="500" rows="3" placeholder="Только то, что хотите сохранить"></textarea></label>
+<div class="calendar-space-actions"><button id="calendarSpaceDelete" type="button" hidden>Удалить</button><button id="calendarSpaceCancel" type="button">Отмена</button><button type="submit" class="primary">Сохранить</button></div>
+<small id="calendarSpaceStatus" class="calendar-space-status" role="status" aria-live="polite"></small>
+</form></div>
+<small id="calendarSpacePrivacy" class="calendar-space-privacy">Записи только на устройстве</small>
+<button type="button" id="calendarSpaceClose" class="cal-space-close">Готово</button>
+</dialog><dialog id="calendarEventDialog" class="cal-form-dialog" aria-labelledby="calendarEventTitleHeading">
 <button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть событие"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="calendarEventTitleHeading">Новое событие</h2><p>Запись сохранится только на вашем устройстве. Ничего не будет отправлено другим людям.</p>
 <form id="calendarEventForm">
@@ -1527,7 +1558,12 @@ function renderNotes(){
     open.addEventListener('click',()=>{$('notesDialog').close();question.value=note.text;openComposer();expandComposer();question.focus()});
     const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
     remove.addEventListener('click',()=>{if(putNotes(getNotes().filter(n=>n.id!==note.id)))renderNotes()});
-    controls.append(open,remove);card.append(date,content,controls);container.append(card);
+    const schedule=document.createElement('button');schedule.type='button';schedule.textContent='В календарь';
+    schedule.addEventListener('click',()=>{
+      $('notesDialog').close();
+      window.dispatchEvent(new CustomEvent('seyveo:calendar-plan-note',{detail:{text:note.text}}));
+    });
+    controls.append(open,schedule,remove);card.append(date,content,controls);container.append(card);
   });
 }
 function openNotes(){renderNotes();if(!$('notesDialog').open)$('notesDialog').showModal()}
@@ -1543,8 +1579,9 @@ $('moreComposer').addEventListener('click',()=>{
   $('moreComposer').setAttribute('aria-expanded',String(!more.hidden));
 });
 $('viewNotes').addEventListener('click',openNotes);
+window.addEventListener('seyveo:notes-open',openNotes);
 $('notesClose').addEventListener('click',()=>$('notesDialog').close());
-$('notesNew').addEventListener('click',()=>{$('notesDialog').close();openComposer();expandComposer();question.focus()});
+$('notesNew').addEventListener('click',()=>{$('notesDialog').close();if(location.hash==='#calendar')goHome();openComposer();expandComposer();question.focus()});
 $('clearText').addEventListener('click',()=>{question.value='';syncComposer();composerMessage('Поле очищено')});
 $('collapseComposer').addEventListener('click',closeComposer);
 $('copyText').addEventListener('click',async()=>{
@@ -1695,4 +1732,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=17"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/calendar.js?v=4"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=17"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/calendar.js?v=5"></script><script src="assets/calendar-spaces.js?v=1"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
