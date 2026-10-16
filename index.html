@@ -71,6 +71,44 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
  100%{opacity:0}
 }
+/* Silk Reveal is an isolated third preview, with no animated blur or extra orb. */
+.signal.is-silk{opacity:1;transform:translate(-50%,-50%);filter:none}
+.signal.is-silk.signal--moment,.signal.is-silk.signal--care{width:min(226px,76%);height:112px}
+.signal.is-silk .silk-plane{
+ position:relative;display:grid;place-items:center;width:100%;height:100%;
+ opacity:0;isolation:isolate;backface-visibility:hidden
+}
+.signal.is-silk .silk-plane::before{
+ content:"";position:absolute;left:50%;top:50%;width:132px;height:78px;
+ margin-left:-66px;margin-top:-39px;border-radius:50%;z-index:-1;
+ pointer-events:none;opacity:0;
+ background:radial-gradient(ellipse,rgba(251,253,255,.2) 0%,rgba(232,242,255,.075) 38%,transparent 75%)
+}
+.signal.is-appearing.is-silk.signal--moment .silk-plane,
+.signal.is-appearing.is-silk.signal--care .silk-plane{
+ animation:silk-materialize 9s linear both
+}
+.signal.is-appearing.is-silk.signal--notice .silk-plane{
+ animation:silk-materialize 5.8s linear both
+}
+.signal.is-appearing.is-silk .silk-plane::before{
+ animation:silk-illumination var(--silk-speed,9s) linear both
+}
+.signal.is-silk.signal--notice{--silk-speed:5.8s}
+@keyframes silk-materialize{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.34,.06,.62,.96)}
+ 52%{opacity:.96;animation-timing-function:cubic-bezier(.4,.04,.71,.9)}
+ 100%{opacity:0}
+}
+@keyframes silk-illumination{
+ 0%{opacity:0;transform:translate3d(-10px,0,0);animation-timing-function:ease-in-out}
+ 51%{opacity:.42;transform:translate3d(0,0,0);animation-timing-function:ease-in-out}
+ 100%{opacity:0;transform:translate3d(10px,0,0)}
+}
+@media(prefers-reduced-motion:reduce){
+ .signal.is-appearing.is-silk .silk-plane{animation:none;opacity:.9}
+ .signal.is-appearing.is-silk .silk-plane::before{animation:none;opacity:.18}
+}
 .signal.is-brand.is-appearing{animation-duration:6.1s;animation-delay:0s}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
@@ -132,8 +170,8 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .fx-compare{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 0 12px;border-bottom:1px solid var(--soft-line)}
 .fx-compare-label{font-size:var(--type-caption);color:var(--secondary);line-height:1.45}
 .fx-compare-label small{font-size:10px;opacity:.72}
-.fx-modes{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:15px;background:var(--card2)}
-.fx-modes button{border:0;border-radius:11px;background:transparent;color:var(--secondary);padding:7px 10px;font-size:11px;line-height:1.25;font-weight:600}
+.fx-modes{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:15px;background:var(--card2);max-width:100%;flex-wrap:wrap}
+.fx-modes button{border:0;border-radius:11px;background:transparent;color:var(--secondary);padding:7px 9px;font-size:11px;line-height:1.25;font-weight:600;white-space:nowrap;cursor:pointer}
 .fx-modes button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 1px 6px #0002}
 .fx-modes button:focus-visible{outline:2px solid #b3c4e7;outline-offset:2px}
 .activity-row .activity-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
@@ -241,7 +279,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <span class="fx-compare-label">Появление в сфере <small>эксперимент</small></span>
 <div class="fx-modes" role="group" aria-label="Режим появления">
 <button id="fxClassic" type="button" aria-pressed="true">Classic</button>
-<button id="fxLiving" type="button" aria-pressed="false">Living Cinema</button>
+<button id="fxLiving" type="button" aria-pressed="false">Living Cinema</button><button id="fxSilk" type="button" aria-pressed="false">Silk Reveal</button>
 </div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -520,7 +558,7 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
 /* Living Cinema experiment. A single existing preview controller dispatches
    either the original glass-mist or minimal opacity/scale choreography. */
-const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','signal--moment','signal--care','signal--notice','signal--brand'];
+const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-silk','signal--moment','signal--care','signal--notice','signal--brand'];
 function stopEffectsPreview(){
   clearTimeout(previewSequenceTimer);
   cancelAnimationFrame(previewFrameId);
@@ -536,11 +574,12 @@ function stopEffectsPreview(){
   transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
 }
 function setPreviewMode(mode){
-  if(mode!=='classic'&&mode!=='living')return;
+  if(!['classic','living','silk'].includes(mode))return;
   if(previewRunning)stopEffectsPreview();
   previewMode=mode;
   $('fxClassic').setAttribute('aria-pressed',String(mode==='classic'));
   $('fxLiving').setAttribute('aria-pressed',String(mode==='living'));
+  $('fxSilk').setAttribute('aria-pressed',String(mode==='silk'));
 }
 function previewSphereMoments(){
   if(previewRunning){stopEffectsPreview();return}
@@ -549,13 +588,14 @@ function previewSphereMoments(){
   clearTimeout(brandClearTimer);
   previewRunning=true;
   const mode=previewMode;
+  const interval=(classic,living,silk)=>mode==='silk'?silk:mode==='living'?living:classic;
   const button=$('previewEffects');
   button.textContent='Остановить';
   button.setAttribute('aria-pressed','true');
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
   const el=$('signal');
   const steps=[
-    {kind:'moment',duration:mode==='living'?8300:5900,build(){
+    {kind:'moment',duration:interval(5900,8300,9100),build(){
       const now=new Date();
       const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
       const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
@@ -569,7 +609,7 @@ function previewSphereMoments(){
       }
       el.replaceChildren(moment);
     }},
-    {kind:'care',duration:mode==='living'?8300:5900,build(){
+    {kind:'care',duration:interval(5900,8300,9100),build(){
       const moment=document.createElement('span');
       moment.className='preview-moment';
       const line=document.createElement('span');
@@ -578,7 +618,7 @@ function previewSphereMoments(){
       moment.append(line);
       el.replaceChildren(moment);
     }},
-    {kind:'notice',duration:mode==='living'?5300:5900,build(){
+    {kind:'notice',duration:interval(5900,5300,5900),build(){
       el.innerHTML=glassIcon('mail','orb');
     }},
     {kind:'brand',duration:6400,build(){
@@ -599,10 +639,16 @@ function previewSphereMoments(){
     if(step.kind==='brand')el.classList.add('is-brand');
     if(step.kind==='moment'||step.kind==='care')el.classList.add('is-preview');
     if(mode==='living'&&step.kind!=='brand')el.classList.add('is-living');
+    if(mode==='silk'&&step.kind!=='brand')el.classList.add('is-silk');
     step.build();
-    // Render the new content fully before starting opacity on its own layer.
-    // Two frame boundaries prevent iOS Safari from skipping the first frames.
-    if(mode==='living'&&step.kind!=='brand'){
+    if(mode==='silk'&&step.kind!=='brand'){
+      const plane=document.createElement('span');
+      plane.className='silk-plane';
+      plane.append(...el.childNodes);
+      el.append(plane);
+    }
+    // Let iOS paint the static content before starting the smooth fade.
+    if(mode!=='classic'&&step.kind!=='brand'){
       previewFrameId=requestAnimationFrame(()=>{
         if(!previewRunning)return;
         previewFrameId=requestAnimationFrame(()=>{
@@ -621,6 +667,7 @@ function previewSphereMoments(){
 }
 $('fxClassic').addEventListener('click',()=>setPreviewMode('classic'));
 $('fxLiving').addEventListener('click',()=>setPreviewMode('living'));
+$('fxSilk').addEventListener('click',()=>setPreviewMode('silk'));
 $('previewEffects').addEventListener('click',previewSphereMoments);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&previewRunning)stopEffectsPreview()});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
