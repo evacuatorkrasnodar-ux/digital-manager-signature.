@@ -1,4 +1,4 @@
-/* SEYVEO · Pearl Mist v3 · restored restrained tap-only atmosphere INSIDE the existing glass sphere.
+/* SEYVEO · Pearl Mist v4 · layered depth and tap-only focus reveal INSIDE the existing glass sphere.
    Three soft gradients, composited for a few seconds after a real orb press.
    No videos, canvas, WebGL, perpetual motion, or changes to sphere art. */
 
@@ -27,18 +27,24 @@
   filter:blur(7px);
 }
 #orb .orb-mist-cloud--a{
+  filter:blur(9px);
+  transform-origin:54% 66%;
   background:
     radial-gradient(ellipse 38% 26% at 28% 65%,rgba(248,252,255,.65),transparent 100%),
     radial-gradient(ellipse 49% 31% at 57% 54%,rgba(202,223,250,.47),transparent 100%),
     radial-gradient(ellipse 35% 23% at 76% 43%,rgba(246,251,255,.38),transparent 100%);
 }
 #orb .orb-mist-cloud--b{
+  filter:blur(6px);
+  transform-origin:38% 48%;
   background:
     radial-gradient(ellipse 42% 19% at 69% 67%,rgba(246,251,255,.59),transparent 100%),
     radial-gradient(ellipse 33% 38% at 37% 43%,rgba(176,207,247,.29),transparent 100%),
     radial-gradient(ellipse 37% 23% at 55% 29%,rgba(255,255,255,.37),transparent 100%);
 }
 #orb .orb-mist-cloud--c{
+  filter:blur(4px);
+  transform-origin:62% 36%;
   background:
     radial-gradient(ellipse 54% 22% at 52% 77%,rgba(240,248,255,.50),transparent 100%),
     radial-gradient(ellipse 39% 19% at 32% 32%,rgba(255,255,255,.32),transparent 100%),
@@ -84,6 +90,22 @@
   31%{opacity:.78;transform:translate3d(4%,3%,0) rotate(7deg) scale(1.04)}
   68%{opacity:.84;transform:translate3d(-3%,-16%,0) rotate(18deg) scale(1.11)}
   100%{opacity:0;transform:translate3d(7%,-21%,0) rotate(25deg) scale(1.17)}
+}
+
+/* Black Velvet — Deep Reveal: a subtle optical focus pull, no extra fog.
+   aria-expanded is only true when a real tap opens the manager reply,
+   leaving the automatic brand presentation undisturbed. */
+#orb[aria-expanded="true"] .signal.is-pearl.is-appearing .pearl-stage{
+  transform-origin:center center;
+  animation:seyveo-logo-depth 9.3s linear both;
+}
+@keyframes seyveo-logo-depth{
+  0%{transform:translate3d(0,7px,0) scale(.895);filter:blur(3px)}
+  18%{transform:translate3d(0,5px,0) scale(.93);filter:blur(2px)}
+  36%{transform:translate3d(0,2px,0) scale(.975);filter:blur(.65px)}
+  52%{transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+  80%{transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+  100%{transform:translate3d(0,-1px,0) scale(1.012);filter:blur(0)}
 }
 
 /* White Velvet: mist still visible, but it never stains the bright plasma. */
@@ -157,6 +179,11 @@ html[data-seyveo-effects="off"] #stage .orb-info-card{animation:none}
 #seyveoBatterySaverToggle:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 
 @media(prefers-reduced-motion:reduce){
+  #orb[aria-expanded="true"] .signal.is-pearl.is-appearing .pearl-stage{
+    animation:none!important;
+    filter:none!important;
+    transform:none!important;
+  }
   #orb .orb-mist,
   #orb .orb-mist-cloud{animation:none!important;opacity:0!important}
   #seyveoBatterySaverToggle .seyveo-effect-switch,
