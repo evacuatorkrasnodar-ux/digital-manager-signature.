@@ -132,8 +132,9 @@ document.querySelectorAll('[data-pulse-period]').forEach(button=>button.addEvent
   document.dispatchEvent(new Event('seyveo:silk-touch'));
   render();
 }));
-window.addEventListener('seyveo:pulse-open',()=>{
-  period='today';render();
+window.addEventListener('seyveo:pulse-open',event=>{
+  period=periods.includes(event.detail?.period)?event.detail.period:'today';
+  render();
   if(!dialog.open)dialog.showModal();
 });
 dialog.addEventListener('click',event=>{
