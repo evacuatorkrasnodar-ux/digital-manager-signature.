@@ -76,9 +76,18 @@ function store(card){try{localStorage.setItem(KEY,JSON.stringify(card));return t
 const clean=value=>String(value||'').trim();
 function status(dialogEl,message){const s=dialogEl.querySelector('[data-passport-status]');if(s)s.textContent=message}
 function fillPreview(){
- const record=load();
- $('seyveoCompanyPreviewName').textContent=record.name||'Моя компания';
- $('seyveoCompanyPreviewDesc').textContent=record.name?(record.city||LABELS[record.type]||'Компания'):'Добавьте данные';
+ const record=load(),saved=!!clean(record.name);
+ // A developer-only sample; real company records remain completely untouched.
+ let previewPerson='Роман';
+ try{
+  const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+  if(typeof profile?.name==='string'&&clean(profile.name))previewPerson=clean(profile.name).slice(0,60);
+ }catch{}
+ $('seyveoCompanyPreviewName').textContent=saved?record.name:'Студия SEYVEO';
+ $('seyveoCompanyPreviewDesc').textContent=saved?(record.city||LABELS[record.type]||'Компания'):'Карточка организации · демо';
+ $('seyveoCompanyPreviewOwner').textContent=saved?(record.owner||record.legalName||'Представитель не указан'):previewPerson;
+ $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
+ $('seyveoCompanySample').hidden=saved;
 }
 function selectedRows(card){
  const allowed=card.type==='org'?['name','legalName','owner','industry','city','inn','kpp','ogrn','address','phone','email','website','bank','account','bik','corr']:
@@ -217,6 +226,7 @@ function toggleHeaderPassport(which){
  const wasOpen=!previewBox.hidden&&!card.hidden;
  closeHeaderPassport();
  if(wasOpen)return;
+ previewBox.dataset.side=which;
  previewBox.hidden=false;card.hidden=false;
  trigger?.setAttribute('aria-expanded','true');
 }
@@ -246,6 +256,9 @@ $('seyveoStudioPrint').addEventListener('click',()=>print('studio'));
 $('seyveoCompanyShare').addEventListener('click',()=>share('company'));
 $('seyveoCompanyPrint').addEventListener('click',()=>print('company'));
 for(const d of [studio,dialog])d.addEventListener('click',e=>{if(e.target===d)d.close()});
-window.addEventListener('storage',e=>{if(e.key===KEY)fillPreview()});
+window.addEventListener('storage',e=>{
+ if([KEY,'seyveo-first-acquaintance-v1'].includes(e.key))fillPreview();
+});
+window.addEventListener('seyveo:profile-changed',fillPreview);
 fillPreview();
 })();
