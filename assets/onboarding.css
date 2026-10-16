@@ -3,7 +3,8 @@
 .onboard-dialog::backdrop{background:rgba(4,6,9,.82);backdrop-filter:blur(13px)}
 .onboard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .onboard-eyebrow{display:block;color:var(--secondary);font-size:10px;letter-spacing:.12em;font-weight:620;margin:0 0 12px}
-.onboard-dismiss{flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:var(--seyveo-radius-icon,50%);background:radial-gradient(circle,var(--card2) 17px,transparent 18px);font-size:22px;line-height:1;color:var(--secondary)}
+.onboard-dismiss{flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:var(--seyveo-radius-icon,50%);background:radial-gradient(circle,var(--card2) 17px,transparent 18px);color:var(--secondary)}
+.onboard-dismiss svg.seyveo-close-glyph{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .onboard-title{font-size:25px!important;letter-spacing:-.04em;line-height:1.13!important;font-weight:670!important;margin:0 0 9px!important}
 .onboard-intro{font-size:13px!important;line-height:1.6!important;color:var(--secondary);margin:0 0 18px!important}
 .onboard-field{display:block;font-size:12px;font-weight:580;color:var(--secondary);margin:0 0 16px}
