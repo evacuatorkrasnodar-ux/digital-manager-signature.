@@ -41,49 +41,37 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .signal.is-living.is-appearing.signal--notice .reveal-plane{
  animation:living-notice 5.2s linear both;will-change:opacity
 }
-/* SEYVEO · CINEMATIC DEPTH | experimental brand reveal.
-   Artwork and sphere are unchanged; only the interior brand is choreographed.
-   Paint all elements first and animate compositor-friendly opacity/transforms.
-   The light is clipped to the brand stage, never outside the approved orb. */
+/* SEYVEO CINEMATIC DEPTH · Silk Motion (experiment).
+   The sphere, SVG artwork, layout and brand lockup are unchanged.
+   Logo/word/tagline are stationary; only composited opacity animates.
+   No SVG blur, no scale, no moving gradients and no outer light spill. */
 .signal.is-pearl .pearl-stage{
  position:relative;isolation:isolate;display:grid;place-items:center;
- box-sizing:border-box;width:100%;height:100%;opacity:0;
- overflow:hidden;border-radius:24px;
+ box-sizing:border-box;width:100%;height:100%;
+ opacity:1;overflow:hidden;border-radius:24px;
  transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl .pearl-stage::before{
  content:"";position:absolute;left:50%;top:50%;z-index:-1;
  width:174px;height:108px;border-radius:50%;pointer-events:none;
- opacity:0;transform:translate3d(-50%,-50%,0) scale(.7);
+ opacity:0;transform:translate3d(-50%,-50%,0);
  background:radial-gradient(ellipse,rgba(250,253,255,.22),rgba(194,220,242,.09) 42%,transparent 73%)
-}
-.signal.is-pearl .pearl-stage::after{
- content:"";position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;
- width:30px;height:122px;border-radius:50%;opacity:0;
- background:linear-gradient(90deg,transparent,rgba(246,251,255,.13) 46%,transparent);
- transform:translate3d(-115px,-50%,0);
 }
 .signal.is-pearl .brand-lockup{position:relative;z-index:1}
 .signal.is-pearl :is(.brand-mark,.brand-word,.brand-specialty){
- opacity:0;backface-visibility:hidden
-}
-.signal.is-pearl.is-appearing .pearl-stage{
- animation:cinema-stage 9.3s linear both
+ opacity:0;transform:translateZ(0);backface-visibility:hidden
 }
 .signal.is-pearl.is-appearing .pearl-stage::before{
  animation:cinema-inner-light 9.3s linear both
 }
-.signal.is-pearl.is-appearing .pearl-stage::after{
- animation:cinema-reflection 9.3s linear both
-}
 .signal.is-pearl.is-appearing .brand-mark{
- animation:cinema-mark 9.3s linear both
+ animation:cinema-mark 9.3s linear both;will-change:opacity
 }
 .signal.is-pearl.is-appearing .brand-word{
- animation:cinema-word 9.3s linear both
+ animation:cinema-word 9.3s linear both;will-change:opacity
 }
 .signal.is-pearl.is-appearing .brand-specialty{
- animation:cinema-specialty 9.3s linear both
+ animation:cinema-specialty 9.3s linear both;will-change:opacity
 }
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
@@ -119,48 +107,37 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
  100%{opacity:0}
 }
-@keyframes cinema-stage{
- 0%{opacity:0}
- 7%{opacity:1}
- 78%{opacity:1;animation-timing-function:cubic-bezier(.42,0,.65,1)}
+/* Overlapping entrances with eased velocity and one shared gentle exit.
+   The hold is deliberate for readability, without movement or light jumps. */
+@keyframes cinema-inner-light{
+ 0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+ 35%{opacity:.45;animation-timing-function:cubic-bezier(.45,0,.65,1)}
+ 72%{opacity:.20;animation-timing-function:cubic-bezier(.55,0,.75,1)}
  100%{opacity:0}
 }
-@keyframes cinema-inner-light{
- 0%,7%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.7)}
- 34%{opacity:.52;transform:translate3d(-50%,-50%,0) scale(1)}
- 62%{opacity:.28;transform:translate3d(-50%,-50%,0) scale(1.08)}
- 100%{opacity:0;transform:translate3d(-50%,-50%,0) scale(1.14)}
-}
 @keyframes cinema-mark{
- 0%,12%{opacity:0;transform:translate3d(0,8px,0) scale(.93);animation-timing-function:cubic-bezier(.2,.6,.25,1)}
- 36%{opacity:1;transform:translate3d(0,0,0) scale(1)}
- 81%{opacity:1;transform:translate3d(0,0,0) scale(1)}
- 100%{opacity:0;transform:translate3d(0,-3px,0) scale(1)}
+ 0%,8%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 36%{opacity:1}
+ 77%{opacity:1;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
 }
 @keyframes cinema-word{
- 0%,24%{opacity:0;transform:translate3d(0,7px,0);animation-timing-function:cubic-bezier(.2,.68,.27,1)}
- 49%{opacity:1;transform:translate3d(0,0,0)}
- 81%{opacity:1;transform:translate3d(0,0,0)}
- 100%{opacity:0;transform:translate3d(0,-2px,0)}
+ 0%,20%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 49%{opacity:1}
+ 77%{opacity:1;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
 }
 @keyframes cinema-specialty{
- 0%,39%{opacity:0;transform:translate3d(0,4px,0);animation-timing-function:cubic-bezier(.2,.68,.27,1)}
- 59%{opacity:.97;transform:translate3d(0,0,0)}
- 81%{opacity:.97;transform:translate3d(0,0,0)}
- 100%{opacity:0;transform:translate3d(0,-2px,0)}
-}
-@keyframes cinema-reflection{
- 0%,34%{opacity:0;transform:translate3d(-115px,-50%,0);animation-timing-function:cubic-bezier(.28,.12,.36,1)}
- 51%{opacity:.38;transform:translate3d(-25px,-50%,0)}
- 69%{opacity:0;transform:translate3d(95px,-50%,0)}
- 100%{opacity:0;transform:translate3d(95px,-50%,0)}
+ 0%,32%{opacity:0;animation-timing-function:cubic-bezier(.32,0,.2,1)}
+ 60%{opacity:.97}
+ 77%{opacity:.97;animation-timing-function:cubic-bezier(.55,0,.75,1)}
+ 100%{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){
  .signal.is-living.is-appearing .reveal-plane,
  .signal.is-pearl.is-appearing .pearl-stage{animation:none;opacity:.86;transform:none}
  .signal.is-pearl.is-appearing .pearl-stage :is(.brand-mark,.brand-word,.brand-specialty){animation:none;opacity:1;transform:none}
- .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.2;transform:translate3d(-50%,-50%,0)}
- .signal.is-pearl.is-appearing .pearl-stage::after{animation:none;opacity:0}
+ .signal.is-pearl.is-appearing .pearl-stage::before{animation:none;opacity:.20;transform:translate3d(-50%,-50%,0)}
 }
 
 
