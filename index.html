@@ -868,7 +868,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <h2 id="manageDataTitle">Мои данные</h2>
 <p class="manage-dialog-desc">Записи и черновики этой версии сохраняются локально в браузере. Здесь можно посмотреть их объём и сохранить копию.</p>
 <div class="manage-data-list" id="manageDataSummary" aria-label="Локальные данные"></div>
-<p class="manage-dialog-note">Копия содержит локальные записи и, если вы их заполнили, реквизиты компании. Храните файл в надёжном месте. Пароли и подключения внешних сервисов не включены.</p>
+<p class="manage-dialog-note">Копия содержит записи календаря, Блокнота, личных пространств (в том числе сведения о здоровье, если вы их внесли) и реквизиты компании. Файл JSON не зашифрован — храните его в защищённом месте и не передавайте посторонним. Пароли и подключения внешних сервисов не включены.</p>
 <div class="info-actions"><button id="manageExportData" type="button" class="btn">Сохранить копию</button><button id="manageDataClose" type="button" class="btn primary">Закрыть</button></div>
 <small id="manageExportStatus" class="manage-dialog-status" role="status" aria-live="polite"></small>
 </dialog><dialog id="info" aria-labelledby="infoTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть ответ"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отмена обращения по имени"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
@@ -1555,7 +1555,7 @@ function renderNotes(){
     const content=document.createElement('p');content.textContent=note.text;
     const controls=document.createElement('div');controls.className='note-item-actions';
     const open=document.createElement('button');open.type='button';open.textContent='Открыть';
-    open.addEventListener('click',()=>{$('notesDialog').close();question.value=note.text;openComposer();expandComposer();question.focus()});
+    open.addEventListener('click',()=>{$('notesDialog').close();if(location.hash==='#calendar')goHome();question.value=note.text;openComposer();expandComposer();question.focus()});
     const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
     remove.addEventListener('click',()=>{if(putNotes(getNotes().filter(n=>n.id!==note.id)))renderNotes()});
     const schedule=document.createElement('button');schedule.type='button';schedule.textContent='В календарь';
