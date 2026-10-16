@@ -1,6 +1,6 @@
-/* SEYVEO · Black/White Velvet v5 — deliberately asymmetric icon orbit.
-   Follow the approved screenshot, not a four-corner grid.
-   Only the independent icon overlay is styled: existing sphere is untouched. */
+/* SEYVEO · Black/White Velvet v6 — crystal-light orb companions.
+   The approved asymmetric orbit, real actions and Silk Touch are unchanged.
+   44px interactive targets with a visually smaller 40px glass disc. */
 
 /* A single quiet switch in Management > Appearance, not a new settings page. */
 #seyveoSilkSoundToggle .seyveo-silk-switch{
@@ -40,6 +40,7 @@
 }
 
 
+
 #stage .orb-shortcuts{
   position:absolute;
   z-index:5;
@@ -53,6 +54,7 @@
   pointer-events:none;
 }
 
+/* Invisible 44px touch box; all visual weight lives in the inset 40px glass. */
 #stage .orb-shortcut{
   position:absolute;
   display:grid;
@@ -62,52 +64,43 @@
   min-width:44px;
   min-height:44px;
   padding:0;
-  border:1px solid rgba(218,231,255,.36);
+  border:0;
   border-radius:50%;
-  color:#eef3ff;
-  background:linear-gradient(150deg,rgba(106,125,158,.31),rgba(13,18,31,.70) 78%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 12px rgba(153,184,239,.10),0 4px 14px rgba(0,0,0,.21);
+  color:#ebf2ff;
+  background:transparent;
+  box-shadow:none;
+  isolation:isolate;
   -webkit-tap-highlight-color:transparent;
   cursor:pointer;
   touch-action:manipulation;
   pointer-events:auto;
-  transition:transform .16s ease,border-color .16s ease;
+  transition:transform .16s cubic-bezier(.2,.65,.25,1);
 }
-
-
-/* SEYVEO Silk Touch: momentary glass press without idle animation.
-   Pseudo-highlight is clipped inside the button and never captures touch. */
-#stage .orb-shortcut{overflow:hidden;isolation:isolate}
 #stage .orb-shortcut::before{
   content:"";
   position:absolute;
-  inset:1px;
+  inset:2px;
+  border:1px solid rgba(234,242,255,.47);
   border-radius:inherit;
   pointer-events:none;
-  opacity:.24;
-  background:radial-gradient(ellipse 75% 45% at 45% 6%,rgba(245,251,255,.22),transparent 88%);
-  transition:opacity .15s ease;
+  background:linear-gradient(150deg,rgba(218,232,255,.15),rgba(121,147,189,.075) 53%,rgba(14,23,39,.20));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 9px rgba(187,212,249,.11),0 2px 8px rgba(0,0,0,.08);
+  transition:background .16s ease,box-shadow .16s ease;
 }
-#stage .orb-shortcut svg{position:relative;z-index:1}
-#stage .orb-shortcut:is(:active,.is-silk-touched){
-  transform:translateY(1px) scale(.962);
-  border-color:rgba(244,249,255,.53);
-  box-shadow:inset 0 2px 5px rgba(1,5,13,.26),0 0 16px rgba(173,200,245,.20),0 3px 10px rgba(0,0,0,.13);
+#stage .orb-shortcut::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:radial-gradient(ellipse 70% 38% at 42% 8%,rgba(255,255,255,.14),transparent 95%);
 }
-#stage .orb-shortcut:is(:active,.is-silk-touched)::before{opacity:.82}
-:root[data-theme=light] #stage .orb-shortcut:is(:active,.is-silk-touched){
-  border-color:rgba(80,123,188,.52);
-  background:linear-gradient(150deg,rgba(230,240,255,.92),rgba(206,219,242,.75));
-  box-shadow:inset 0 2px 6px rgba(57,91,151,.10),0 0 15px rgba(116,151,211,.16);
-}
-@media(prefers-reduced-motion:reduce){
-  #stage .orb-shortcut::before{transition:none}
-}
-
 #stage .orb-shortcut svg{
+  position:relative;
+  z-index:1;
   display:block;
-  width:21px;
-  height:21px;
+  width:19px;
+  height:19px;
   fill:none;
   stroke:currentColor;
   stroke-width:1.65;
@@ -116,38 +109,42 @@
   pointer-events:none;
 }
 
-/* Measured against the supplied iPhone screenshot: the visible sphere sits inside
-   the transparent edge of its original SVG. Position the BUTTON CENTERS
-   tangential to its outer ring, not on the overlay's distant outer corners.
-   Deliberate angular offsets preserve the imperfect circular arrangement.
-   No orbital animation and no changes to the existing plasma element. */
+/* These exact positions were approved; DO NOT adjust them in visual polish. */
 #stage .orb-shortcut--calendar{left:8%;top:16%}
 #stage .orb-shortcut--tasks{right:5%;top:20%}
 #stage .orb-shortcut--activity{left:8%;bottom:9%}
 #stage .orb-shortcut--notes{right:10%;bottom:6%}
 
-#stage .orb-shortcut:active{
-  transform:translateY(1px) scale(.962);
-  border-color:rgba(244,249,255,.53);
+/* Silk Touch: the same quiet click/light when actually pressed. */
+#stage .orb-shortcut:is(:active,.is-silk-touched){
+  transform:translateY(1px) scale(.965);
+}
+#stage .orb-shortcut:is(:active,.is-silk-touched)::before{
+  background:linear-gradient(150deg,rgba(238,245,255,.24),rgba(125,154,205,.13) 62%,rgba(20,30,48,.20));
+  box-shadow:inset 0 2px 4px rgba(2,8,18,.16),0 0 13px rgba(190,220,255,.23);
 }
 #stage .orb-shortcut:focus-visible{
   outline:2px solid var(--text);
   outline-offset:3px;
 }
 
-:root[data-theme=light] #stage .orb-shortcut{
-  border-color:rgba(97,127,178,.29);
-  color:#243e72;
-  background:linear-gradient(150deg,rgba(255,255,255,.76),rgba(224,233,250,.49));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 0 12px rgba(132,164,214,.10),0 4px 13px rgba(44,72,121,.09);
+:root[data-theme=light] #stage .orb-shortcut{color:#284574}
+:root[data-theme=light] #stage .orb-shortcut::before{
+  border-color:rgba(91,126,185,.36);
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(214,226,246,.30));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 8px rgba(115,155,220,.09),0 2px 7px rgba(40,68,116,.055);
 }
-:root[data-theme=light] #stage .orb-shortcut:active{
-  border-color:rgba(70,106,169,.5);
+:root[data-theme=light] #stage .orb-shortcut::after{
+  background:radial-gradient(ellipse 70% 38% at 42% 8%,rgba(255,255,255,.58),transparent 95%);
+}
+:root[data-theme=light] #stage .orb-shortcut:is(:active,.is-silk-touched)::before{
+  background:linear-gradient(145deg,rgba(251,253,255,.93),rgba(195,215,243,.47));
+  box-shadow:inset 0 2px 5px rgba(59,102,171,.10),0 0 12px rgba(122,165,230,.16);
 }
 
-/* Preserve useful 44px tap targets and asymmetry on smaller iPhones. */
+/* Same asymmetry on narrow iPhones and same accessible touch target. */
 @media(max-width:375px){
-  #stage .orb-shortcut svg{width:20px;height:20px}
+  #stage .orb-shortcut svg{width:18px;height:18px}
   #stage .orb-shortcut--calendar{left:7%;top:16%}
   #stage .orb-shortcut--tasks{right:5%;top:21%}
   #stage .orb-shortcut--activity{left:7%;bottom:9%}
@@ -160,5 +157,8 @@
   #stage .orb-shortcut--notes{right:8%;bottom:8%}
 }
 @media(prefers-reduced-motion:reduce){
-  #stage .orb-shortcut{transition:none}
+  #stage .orb-shortcut,
+  #stage .orb-shortcut::before,
+  #seyveoSilkSoundToggle .seyveo-silk-switch,
+  #seyveoSilkSoundToggle .seyveo-silk-switch::before{transition:none}
 }
