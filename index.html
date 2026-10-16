@@ -191,23 +191,32 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .nav-item.active{color:var(--text);font-weight:650}
 .nav-home{left:15%}.nav-home svg{fill:currentColor;stroke-width:1.1}.nav-tasks{left:34%}.nav-manage{left:85%}
 .assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 2px 6px #02060f4a);transition:transform .15s ease,filter .22s ease}
-.assistant-button:active{transform:translateX(-50%) scale(.965)}
+.assistant-button:active,.assistant-button.pressing{transform:translateX(-50%) scale(.955)}
+.assistant-button.arming{transform:translateX(-50%) scale(.98)}
+.assistant-button.listening{transform:translateX(-50%) scale(1)}
 .assistant-button:focus-visible{outline:2px solid var(--text);outline-offset:4px}
-/* In rest: clear glass. On press: a brief icy reflection. Only while listening: a gentle blue breath. */
-.assistant-button::after{content:"";position:absolute;inset:3px;border-radius:50%;pointer-events:none;opacity:0;box-shadow:0 0 0 1px #b5d7ff50,0 0 10px 2px #91c9ff40;transition:opacity .48s ease-out}
-.assistant-button:active::after{opacity:.48;transition-duration:.12s}
-.assistant-button.listening::after{animation:assistant-ice-breath 3.4s ease-in-out infinite}
-@keyframes assistant-ice-breath{0%,100%{opacity:.13}50%{opacity:.43}}
-:root[data-theme=light] .assistant-button::after{box-shadow:0 0 0 1px #8bb8ec55,0 0 10px 2px #87b9ed36}
-@media(prefers-reduced-motion:reduce){.assistant-button.listening::after{animation:none;opacity:.27}.assistant-button::after{transition:none}}
+/* Velvet Voice: a quiet pearl halo, no particles, lasers or continuous audio. */
+.assistant-button::before{content:"";position:absolute;inset:-4px;border:1px solid rgba(246,249,255,.34);border-radius:50%;opacity:0;pointer-events:none;transform:scale(.89);transition:opacity .3s ease,transform .48s cubic-bezier(.22,.9,.35,1)}
+.assistant-button.pressing::before{opacity:.32;transform:scale(1.015)}
+.assistant-button.arming::before{opacity:.52;transform:scale(1.055)}
+.assistant-button.listening::before{animation:assistant-velvet-halo 3s ease-in-out infinite}
+@keyframes assistant-velvet-halo{0%,100%{opacity:.25;transform:scale(1.015)}50%{opacity:.59;transform:scale(1.09)}}
+.assistant-button::after{content:"";position:absolute;inset:3px;border-radius:50%;pointer-events:none;opacity:0;box-shadow:0 0 0 1px rgba(244,249,255,.22),0 0 12px 2px rgba(238,246,255,.12);transition:opacity .52s ease-out}
+.assistant-button.pressing::after{opacity:.25;transition-duration:.14s}
+.assistant-button.arming::after{opacity:.35}
+.assistant-button.listening::after{animation:assistant-velvet-breath 3s ease-in-out infinite}
+@keyframes assistant-velvet-breath{0%,100%{opacity:.17}50%{opacity:.42}}
+:root[data-theme=light] .assistant-button::before{border-color:rgba(108,130,152,.45)}
+:root[data-theme=light] .assistant-button::after{box-shadow:0 0 0 1px rgba(120,145,170,.3),0 0 9px 2px rgba(130,157,182,.12)}
+@media(prefers-reduced-motion:reduce){.assistant-button.listening::before,.assistant-button.listening::after{animation:none;opacity:.3;transform:scale(1.03)}.assistant-button::before,.assistant-button::after{transition:none}}
 .button-art{width:74px;height:74px;display:block;overflow:visible}
 .button-art .center-face{fill:url(#button-night)}
 .button-art .button-rim{stroke:url(#rim-night)}
 .button-art .voice-bars{stroke:#f9fbff;stroke-width:2.85;stroke-linecap:round;fill:none}
 .button-art .voice-dot{fill:#f9fbff}
 .assistant-button.listening .button-rim{stroke:#ddeafb}
-.assistant-button.listening .voice-bars{animation:speaking 850ms ease-in-out infinite alternate;transform-origin:37px 37px}
-@keyframes speaking{from{transform:scaleY(.7)}to{transform:scaleY(1.14)}}
+.assistant-button.listening .voice-bars{animation:speaking 1.5s ease-in-out infinite alternate;transform-origin:37px 37px}
+@keyframes speaking{from{transform:scaleY(.88)}to{transform:scaleY(1.08)}}
 .ask-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
 .voice-hint{position:fixed;z-index:42;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));max-width:min(420px,calc(100% - 48px));border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px #0004;color:var(--text);padding:10px 15px;font-size:12px;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .2s,transform .2s}
 .voice-hint.active{opacity:1;transform:translate(-50%,0)}
@@ -411,7 +420,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </main><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
 <button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></button>
-<button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
+<button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint" aria-pressed="false">
 <svg class="button-art" viewBox="0 0 74 74" aria-hidden="true" focusable="false">
 <defs>
   <linearGradient id="rim-night" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9bddb"/><stop offset=".16" stop-color="#fbfdff"/><stop offset=".35" stop-color="#b8c8e7"/><stop offset=".54" stop-color="#7e95bb"/><stop offset=".75" stop-color="#f8faff"/><stop offset=".91" stop-color="#a4b9d7"/><stop offset="1" stop-color="#7086ae"/></linearGradient>
@@ -1030,18 +1039,125 @@ question.addEventListener('keydown',e=>{
   }
 });
 
-const fab=$('assistantButton'),inputPanel=$('ask'),hint=$('voiceHint');let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false;
+const fab=$('assistantButton'),inputPanel=$('ask'),hint=$('voiceHint');
+let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false;
 let hintTimeout=null;
-function setHint(value){hint.textContent=value;hint.classList.add('active');clearTimeout(hintTimeout);hintTimeout=setTimeout(()=>{if(!fab.classList.contains('listening'))hint.classList.remove('active')},value.startsWith('Слушаю')?6000:2800)}
-function updateKeyboard(){const v=window.visualViewport;if(!v)return;const shift=Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop));document.documentElement.style.setProperty('--keyboard-offset',shift+'px')}
-if(window.visualViewport){window.visualViewport.addEventListener('resize',updateKeyboard);window.visualViewport.addEventListener('scroll',updateKeyboard)}window.addEventListener('resize',updateKeyboard);updateKeyboard();
-function stopVoice(){if(recognition){try{recognition.stop()}catch{}recognition=null}fab.classList.remove('listening')}
-function startVoice(){started=true;held=true;if($('homePage').hidden)goHome();const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){setHint('Распознавание речи недоступно в этом браузере. Нажмите, чтобы написать.');return}try{const sr=new Speech();recognition=sr;sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;sr.onresult=e=>{const phrase=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();if(phrase){question.value=phrase;openComposer();setHint('Речь распознана. Проверьте текст перед отправкой.')}};sr.onerror=e=>setHint('Голосовой ввод: '+(e.error==='not-allowed'?'нет разрешения на микрофон':e.error));sr.onend=()=>{fab.classList.remove('listening');recognition=null};sr.start();fab.classList.add('listening');setHint('Слушаю… отпустите, чтобы закончить')}catch{setHint('Не удалось включить голосовой ввод. Используйте текст.')}} 
-fab.addEventListener('pointerdown',e=>{if(e.button!==0)return;started=false;held=false;clearTimeout(holdTimer);holdTimer=setTimeout(startVoice,500)});
-function endPress(){clearTimeout(holdTimer);if(held){suppressClick=true;setTimeout(()=>suppressClick=false,350);stopVoice();held=false}}
-fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',endPress);fab.addEventListener('pointerleave',endPress);
+function setHint(value){
+  hint.textContent=value;hint.classList.add('active');
+  clearTimeout(hintTimeout);
+  hintTimeout=setTimeout(()=>{if(!fab.classList.contains('listening'))hint.classList.remove('active')},
+    value.startsWith('Слушаю')?6000:2800);
+}
+function updateKeyboard(){
+  const v=window.visualViewport;if(!v)return;
+  const shift=Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop));
+  document.documentElement.style.setProperty('--keyboard-offset',shift+'px');
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',updateKeyboard);
+  window.visualViewport.addEventListener('scroll',updateKeyboard);
+}
+window.addEventListener('resize',updateKeyboard);updateKeyboard();
+function stopVoice(){
+  if(recognition){
+    const sr=recognition;recognition=null;
+    try{sr.stop()}catch{}
+  }
+  fab.classList.remove('pressing','arming','listening');
+  fab.setAttribute('aria-pressed','false');
+}
+function startVoice(){
+  started=true;held=true;
+  fab.classList.remove('pressing');
+  if($('homePage').hidden)goHome();
+  const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Speech){
+    fab.classList.remove('arming');
+    setHint('Распознавание речи недоступно. Нажмите, чтобы написать.');
+    return;
+  }
+  try{
+    const sr=new Speech();recognition=sr;
+    sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;
+    sr.onstart=()=>{
+      if(recognition!==sr)return;
+      if(!held){try{sr.stop()}catch{}return}
+      fab.classList.remove('arming');
+      fab.classList.add('listening');
+      fab.setAttribute('aria-pressed','true');
+      // Don't play any additional beep over the iPhone's native microphone sound.
+      clickHaptic('select');
+      setHint('Слушаю… отпустите, чтобы закончить');
+    };
+    sr.onresult=e=>{
+      if(recognition&&recognition!==sr)return;
+      const phrase=Array.from(e.results).map(result=>result[0]?.transcript||'').join(' ').trim();
+      if(phrase){
+        question.value=phrase;openComposer();
+        setHint('Речь распознана. Проверьте текст перед отправкой.');
+      }
+    };
+    sr.onerror=e=>{
+      if(recognition&&recognition!==sr)return;
+      fab.classList.remove('arming','listening');
+      fab.setAttribute('aria-pressed','false');
+      const message=e.error==='not-allowed'?'Нет разрешения на микрофон':
+        e.error==='no-speech'?'Не расслышал. Попробуйте ещё раз.':
+        e.error==='aborted'?'Голосовой ввод остановлен':
+        'Голосовой ввод: '+e.error;
+      setHint(message);
+    };
+    sr.onend=()=>{
+      if(recognition===sr){
+        recognition=null;held=false;
+        fab.classList.remove('arming','listening');
+        fab.setAttribute('aria-pressed','false');
+      }
+    };
+    fab.classList.add('arming');
+    setHint('Включаю микрофон…');
+    sr.start();
+  }catch{
+    recognition=null;
+    fab.classList.remove('arming','listening');
+    fab.setAttribute('aria-pressed','false');
+    setHint('Не удалось включить голосовой ввод. Используйте текст.');
+  }
+}
+fab.addEventListener('pointerdown',e=>{
+  if(e.button!==0||e.isPrimary===false)return;
+  started=false;held=false;clearTimeout(holdTimer);
+  fab.classList.add('pressing');
+  holdTimer=setTimeout(startVoice,500);
+});
+function endPress(){
+  clearTimeout(holdTimer);
+  fab.classList.remove('pressing');
+  if(held){
+    const wasListening=fab.classList.contains('listening');
+    suppressClick=true;
+    setTimeout(()=>suppressClick=false,350);
+    held=false;
+    stopVoice();
+    if(wasListening)setHint('Распознаю сказанное…');
+  }
+}
+fab.addEventListener('pointerup',endPress);
+fab.addEventListener('pointercancel',endPress);
+fab.addEventListener('pointerleave',endPress);
 fab.addEventListener('contextmenu',e=>e.preventDefault());
-fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if($('homePage').hidden)goHome();if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)endPress()});
+fab.addEventListener('click',()=>{
+  if(suppressClick||started){started=false;return}
+  if($('homePage').hidden)goHome();
+  if(inputPanel.hidden){
+    openComposer();hint.classList.remove('active');
+    playFeedback('select');
+    requestAnimationFrame(()=>{question.focus();updateKeyboard()});
+  }else{
+    closeComposer();setHint('Нажмите — написать · удерживайте — говорить');
+  }
+});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
 </script></body></html>
