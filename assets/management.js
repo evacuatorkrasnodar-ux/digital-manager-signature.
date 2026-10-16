@@ -10,6 +10,7 @@ const roadmap=[
    ['Black Velvet и темы','Главная сфера и оформление, автоматическая, тёмная и светлая темы.'],
    ['Дела и история','Демонстрационные поручения со статусами и историей; реальные внешние действия пока не выполняются.'],
    ['Заметки и данные','Локальные записи, черновики и экспорт копии.'],
+   ['Паспорта SEYVEO и компании','Две новые фирменные карточки с зеркальным изгибом. Паспорт продукта, сохранение реквизитов компании, отправка и печать. Данные на устройстве.'],
    ['Мой обзор на Главной','Работающая компактная панель: выбранное направление, реальные личные дела и честный статус подключений. Каждая область открывает своё управление.']
  ]},
  {status:'Пробный режим',name:'Проверяем',items:[
@@ -59,7 +60,8 @@ const KEYS=Object.freeze({
  previous:'dm-signature-living-v1',
  notes:'seyveo-notes-v1',
  draft:'seyveo-draft-v1',
- tasks:'seyveo-personal-tasks-v1'
+ tasks:'seyveo-personal-tasks-v1',
+ company:'seyveo-company-passport-v1'
 });
 function read(key){
  try{return localStorage.getItem(key)}catch{return null}
@@ -73,6 +75,7 @@ function snapshot(){
  const oldState=parsed(read(KEYS.previous),null);
  const draft=read(KEYS.draft);
  const tasks=parsed(read(KEYS.tasks),[]);
+ const company=parsed(read(KEYS.company),null);
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
  return {
   product:'SEYVEO',
@@ -82,6 +85,7 @@ function snapshot(){
   oldState:oldState&&typeof oldState==='object'&&!Array.isArray(oldState)?oldState:null,
   notes:Array.isArray(notes)?notes:[],
   personalTasks:Array.isArray(tasks)?tasks:[],
+  companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
  };
@@ -104,6 +108,7 @@ function drawData(){
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Мои записи',String(countOf(record.notes))],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
+  ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
   ['Данные', 'На этом устройстве']
