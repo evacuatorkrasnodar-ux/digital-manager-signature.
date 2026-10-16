@@ -1,4 +1,4 @@
-/* SEYVEO · Pearl Mist · tap-only atmosphere INSIDE the existing glass sphere.
+/* SEYVEO · Pearl Mist v2 · luminous flowing tap-only atmosphere INSIDE the existing glass sphere.
    Three soft gradients, composited for a few seconds after a real orb press.
    No videos, canvas, WebGL, perpetual motion, or changes to sphere art. */
 
@@ -45,26 +45,38 @@
     radial-gradient(ellipse 33% 30% at 80% 50%,rgba(199,219,251,.39),transparent 100%);
 }
 
+#orb .orb-mist-cloud--d{
+  /* One extra wisp makes the mist feel volumetric, without a render loop. */
+  filter:blur(5px);
+  background:
+    radial-gradient(ellipse 64% 14% at 35% 43%,rgba(246,251,255,.78),transparent 100%),
+    radial-gradient(ellipse 55% 12% at 71% 62%,rgba(211,230,255,.65),transparent 100%),
+    radial-gradient(ellipse 34% 33% at 51% 50%,rgba(255,255,255,.25),transparent 100%);
+}
+
 /* The fog gathers, crosses the middle, then recedes as Deep Reveal
    makes the SEYVEO logo focus behind the glass. */
 #orb .orb-mist.is-breathing{
-  animation:seyveo-mist-veil 5s linear both;
+  animation:seyveo-mist-veil 5.8s linear both;
 }
 #orb .orb-mist.is-breathing .orb-mist-cloud--a{
-  animation:seyveo-mist-drift-a 5s ease-in-out both;
+  animation:seyveo-mist-drift-a 5.8s ease-in-out both;
 }
 #orb .orb-mist.is-breathing .orb-mist-cloud--b{
-  animation:seyveo-mist-drift-b 5s ease-in-out both;
+  animation:seyveo-mist-drift-b 5.8s ease-in-out both;
 }
 #orb .orb-mist.is-breathing .orb-mist-cloud--c{
-  animation:seyveo-mist-drift-c 5s ease-in-out both;
+  animation:seyveo-mist-drift-c 5.8s ease-in-out both;
+}
+#orb .orb-mist.is-breathing .orb-mist-cloud--d{
+  animation:seyveo-mist-drift-d 5.8s ease-in-out both;
 }
 @keyframes seyveo-mist-veil{
   0%{opacity:0}
-  14%{opacity:.74}
-  34%{opacity:.91}
-  57%{opacity:.74}
-  77%{opacity:.34}
+  12%{opacity:.80}
+  34%{opacity:1}
+  59%{opacity:.87}
+  80%{opacity:.34}
   100%{opacity:0}
 }
 @keyframes seyveo-mist-drift-a{
@@ -86,6 +98,14 @@
   100%{opacity:0;transform:translate3d(7%,-21%,0) rotate(25deg) scale(1.17)}
 }
 
+@keyframes seyveo-mist-drift-d{
+  0%{opacity:.05;transform:translate3d(-21%,25%,0) rotate(-22deg) scale(.74)}
+  29%{opacity:.74;transform:translate3d(-8%,4%,0) rotate(-5deg) scale(.98)}
+  59%{opacity:1;transform:translate3d(11%,-9%,0) rotate(13deg) scale(1.14)}
+  83%{opacity:.37;transform:translate3d(18%,-16%,0) rotate(23deg) scale(1.24)}
+  100%{opacity:0;transform:translate3d(21%,-24%,0) rotate(28deg) scale(1.3)}
+}
+
 /* White Velvet: mist still visible, but it never stains the bright plasma. */
 :root[data-theme=light] #orb .orb-mist-cloud--a{
   background:
@@ -99,13 +119,72 @@
     radial-gradient(ellipse 33% 38% at 37% 43%,rgba(255,255,255,.75),transparent 100%),
     radial-gradient(ellipse 37% 23% at 55% 29%,rgba(162,192,228,.25),transparent 100%);
 }
+:root[data-theme=light] #orb .orb-mist-cloud--d{
+  background:
+    radial-gradient(ellipse 64% 14% at 35% 43%,rgba(139,169,212,.44),transparent 100%),
+    radial-gradient(ellipse 55% 12% at 71% 62%,rgba(255,255,255,.81),transparent 100%),
+    radial-gradient(ellipse 34% 33% at 51% 50%,rgba(141,176,225,.22),transparent 100%);
+}
 :root[data-theme=light] #orb .orb-mist-cloud--c{
   background:
     radial-gradient(ellipse 54% 22% at 52% 77%,rgba(175,198,230,.34),transparent 100%),
     radial-gradient(ellipse 39% 19% at 32% 32%,rgba(255,255,255,.78),transparent 100%),
     radial-gradient(ellipse 33% 30% at 80% 50%,rgba(168,193,228,.27),transparent 100%);
 }
+/* Power saving disables decorative movement, not the task buttons or card. */
+html[data-seyveo-effects="off"] #orb .orb-mist{
+  display:none!important;
+  animation:none!important;
+}
+html[data-seyveo-effects="off"] .signal.is-pearl.is-appearing .pearl-stage,
+html[data-seyveo-effects="off"] .signal.is-pearl.is-appearing .pearl-stage::before,
+html[data-seyveo-effects="off"] .signal.is-pearl.is-appearing .pearl-stage :is(.brand-mark,.brand-word,.brand-specialty){
+  animation:none!important;
+}
+html[data-seyveo-effects="off"] .signal.is-pearl.is-appearing .pearl-stage{
+  opacity:1;
+  transform:none;
+}
+html[data-seyveo-effects="off"] .signal.is-pearl.is-appearing .pearl-stage :is(.brand-mark,.brand-word,.brand-specialty){
+  opacity:1;
+  transform:none;
+}
+html[data-seyveo-effects="off"] #stage .orb-info-card{animation:none}
+
+/* Quiet iOS-style switch in Management > Application. */
+#seyveoBatterySaverToggle .seyveo-effect-switch{
+  display:inline-flex;
+  flex:none;
+  align-items:center;
+  width:35px;
+  height:22px;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--card2);
+  transition:background .16s ease,border-color .16s ease;
+}
+#seyveoBatterySaverToggle .seyveo-effect-switch::before{
+  content:"";
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--secondary);
+  transition:transform .16s ease,background .16s ease;
+}
+#seyveoBatterySaverToggle[aria-pressed="true"] .seyveo-effect-switch{
+  border-color:color-mix(in srgb,var(--text) 40%,var(--line));
+  background:color-mix(in srgb,var(--text) 15%,var(--card2));
+}
+#seyveoBatterySaverToggle[aria-pressed="true"] .seyveo-effect-switch::before{
+  transform:translateX(13px);
+  background:var(--text);
+}
+#seyveoBatterySaverToggle:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
 @media(prefers-reduced-motion:reduce){
   #orb .orb-mist,
   #orb .orb-mist-cloud{animation:none!important;opacity:0!important}
+  #seyveoBatterySaverToggle .seyveo-effect-switch,
+  #seyveoBatterySaverToggle .seyveo-effect-switch::before{transition:none}
 }
