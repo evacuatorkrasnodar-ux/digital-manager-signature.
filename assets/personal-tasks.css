@@ -1,0 +1,32 @@
+/* SEYVEO Personal Tasks — compact original Black Velvet work surface. */
+.personal-brief{margin:19px 1px 2px;padding:15px 16px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(150deg,#ffffff06,transparent 65%),var(--card);box-shadow:inset 0 1px 0 #ffffff07}
+.personal-brief-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.personal-brief-head small{display:block;font-size:10px;color:var(--secondary);letter-spacing:.1em;margin-bottom:5px;font-weight:600}
+.personal-brief-head strong{font-size:15px;font-weight:630;letter-spacing:-.02em}
+.personal-brief-add,.personal-tasks-add{font:inherit;border:1px solid var(--line);background:var(--card2);border-radius:12px;min-height:37px;padding:7px 11px;font-size:12px;font-weight:600;white-space:nowrap;color:var(--text)}
+.personal-brief-list{display:flex;flex-direction:column;gap:0}
+.personal-brief-row{border-top:1px solid var(--soft-line);padding:10px 0 9px;min-width:0}
+.personal-task-content{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.personal-task-content strong{font-size:13px;font-weight:550;line-height:1.4;overflow-wrap:anywhere}
+.personal-task-content small{font-size:11px;color:var(--secondary);line-height:1.4}
+.personal-brief-empty,.personal-tasks-empty{margin:2px 0 9px;color:var(--secondary);font-size:13px;line-height:1.5}
+.personal-brief-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:10px;border-top:1px solid var(--soft-line)}
+.personal-brief-more{font:inherit;border:0;background:transparent;padding:6px 0;font-size:12px;color:var(--secondary)}
+.personal-brief-count{border:1px solid var(--line);background:var(--card2);border-radius:10px;min-width:22px;text-align:center;padding:3px 6px;font-size:11px;color:var(--secondary)}
+.personal-tasks-panel{margin-bottom:26px}
+.personal-tasks-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}
+.personal-tasks-head h2{margin:0;font-size:13px;font-weight:620;color:var(--secondary)}
+.personal-tasks-list{padding:4px 14px 10px}
+.personal-list-title{font-size:11px;color:var(--secondary);font-weight:600;margin:13px 0 4px}
+.personal-task-row{display:flex;align-items:center;gap:11px;min-height:56px;padding:9px 0;border-bottom:1px solid var(--soft-line)}
+.personal-task-check{flex:none;width:26px;height:26px;border-radius:50%;background:transparent;border:1px solid var(--line);font-size:16px;display:grid;place-items:center}
+.personal-task-check[aria-pressed=true]{background:var(--card2);border-color:var(--secondary)}
+.personal-task-content .is-done{text-decoration:line-through;opacity:.6}
+.personal-task-delete{border:0;background:transparent;color:var(--secondary);font-size:20px;padding:6px 7px;line-height:1;flex:none}
+.personal-task-dialog{max-width:410px}
+.personal-task-dialog label{display:block;margin:12px 0 15px;font-size:12px;color:var(--secondary)}
+.personal-task-dialog input{display:block;margin-top:8px;width:100%;height:46px;padding:0 12px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--text)}
+.personal-task-actions{display:flex;gap:10px;margin-top:16px}
+.personal-task-dialog small{display:block;font-size:12px;color:var(--secondary);margin-top:10px}
+:is(.personal-brief-add,.personal-tasks-add,.personal-task-check,.personal-task-delete,.personal-brief-more):focus-visible{outline:2px solid var(--text);outline-offset:2px}
+@media(max-width:350px){.personal-brief{padding:13px}.personal-brief-head strong{font-size:13px}.personal-brief-add{padding:6px 8px}}
