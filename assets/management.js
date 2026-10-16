@@ -86,6 +86,16 @@ function snapshot(){
  };
 }
 function countOf(list){return Array.isArray(list)?list.length:0}
+function updateLiveSummary(){
+ const text=$('manageLiveSummary');if(!text)return;
+ const tasks=parsed(read(KEYS.tasks),[]);
+ const count=Array.isArray(tasks)?tasks.filter(t=>t&&typeof t.title==='string'&&t.done!==true).length:0;
+ const profile=parsed(read('seyveo-first-acquaintance-v1'),null);
+ const names={life:'Life',start:'Business Start',pro:'Business Pro',max:'Business Max'};
+ const stage=profile&&names[profile.focus]?names[profile.focus]:'Не выбрано';
+ text.textContent='Личные дела: '+count+' · Направление: '+stage+' · ИИ и внешние сервисы пока не подключены';
+}
+
 function drawData(){
  const record=snapshot(),list=$('manageDataSummary');
  list.replaceChildren();
@@ -126,6 +136,13 @@ $('manageConnectionsClose').addEventListener('click',()=>connect.close());
 $('openManageData').addEventListener('click',()=>{drawData();dataDialog.showModal()});
 $('manageDataClose').addEventListener('click',()=>dataDialog.close());
 $('manageExportData').addEventListener('click',saveFile);
+window.addEventListener('seyveo:tasks-changed',updateLiveSummary);
+window.addEventListener('seyveo:profile-changed',updateLiveSummary);
+window.addEventListener('hashchange',updateLiveSummary);
+window.addEventListener('storage',event=>{
+ if([KEYS.tasks,'seyveo-first-acquaintance-v1'].includes(event.key))updateLiveSummary();
+});
+updateLiveSummary();
 for(const dialog of [connect,dataDialog,roadmapDialog]){
  dialog.addEventListener('click',event=>{
   if(event.target===dialog){dialog.close()}
