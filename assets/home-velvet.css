@@ -202,7 +202,6 @@
   --home-glint:rgba(255,255,255,.5);
   --home-depth:0 6px 20px rgba(41,59,79,.07);
 }
-:root[data-theme=light] #homePage .seyveo-status-dial,
 :root[data-theme=light] #homePage .timeline-history,
 :root[data-theme=light] #homePage .personal-brief-add,
 :root[data-theme=light] #homePage .activity-icon{
