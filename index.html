@@ -381,6 +381,36 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-roadmap-item p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--secondary);white-space:normal}
 .manage-live-summary{margin:-8px 3px 20px;padding:9px 12px;border:1px solid var(--soft-line);background:var(--card2);border-radius:12px;color:var(--secondary);font-size:11px;line-height:1.55}
 </style><link rel="stylesheet" href="assets/onboarding.css?v=1"><link rel="stylesheet" href="assets/personal-tasks.css?v=2"><link rel="stylesheet" href="assets/home-snapshot.css?v=1"><link rel="stylesheet" href="assets/passport-cards.css?v=2"></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div>
+<section class="home-passports" aria-labelledby="seyveoPassportHeading">
+<h2 id="seyveoPassportHeading" class="home-passports-title">Наши карточки</h2>
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
+<defs>
+<clipPath id="seyveoCardLeftClip" clipPathUnits="objectBoundingBox"><path d="M .11 .012 C .044 .012 .014 .064 .014 .142 L .014 .42 C .014 .51 .04 .55 .1 .56 C .17 .575 .194 .644 .194 .733 L .194 .882 C .194 .964 .241 .988 .318 .988 L .89 .988 C .962 .988 .988 .941 .988 .865 L .988 .14 C .988 .054 .95 .012 .88 .012 Z"/></clipPath>
+<clipPath id="seyveoCardRightClip" clipPathUnits="objectBoundingBox"><path d="M .11 .012 C .044 .012 .014 .064 .014 .142 L .014 .42 C .014 .51 .04 .55 .1 .56 C .17 .575 .194 .644 .194 .733 L .194 .882 C .194 .964 .241 .988 .318 .988 L .89 .988 C .962 .988 .988 .941 .988 .865 L .988 .14 C .988 .054 .95 .012 .88 .012 Z" transform="translate(1 0) scale(-1 1)"/></clipPath>
+</defs></svg>
+
+<div class="seyveo-passport-grid">
+<button type="button" id="seyveoBrandPassport" class="seyveo-passport-card seyveo-passport-card--studio" aria-label="Паспорт продукта SEYVEO">
+<svg class="seyveo-passport-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M 11 1.2 C 4.4 1.2 1.4 6.4 1.4 14.2 L 1.4 42 C 1.4 51 4 55 10 56 C 17 57.5 19.4 64.4 19.4 73.3 L 19.4 88.2 C 19.4 96.4 24.1 98.8 31.8 98.8 L 89 98.8 C 96.2 98.8 98.8 94.1 98.8 86.5 L 98.8 14 C 98.8 5.4 95 1.2 88 1.2 Z" vector-effect="non-scaling-stroke"/></svg>
+<span class="seyveo-passport-card-head">
+<img src="assets/official-logo.svg?v=3" alt="" width="28" height="28">
+<span class="seyveo-passport-card-titles"><strong>SEYVEO</strong><small>IT · AI · AUTOMATION</small></span>
+<span class="seyveo-passport-arrow" aria-hidden="true">›</span>
+</span>
+<span class="seyveo-passport-card-foot"><span>Паспорт продукта</span><small id="seyveoPassportPreviewTier">Предпросмотр PRO</small></span>
+</button>
+<button type="button" id="seyveoCompanyPassport" class="seyveo-passport-card seyveo-passport-card--company" aria-label="Открыть карточку своей компании">
+<svg class="seyveo-passport-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M 11 1.2 C 4.4 1.2 1.4 6.4 1.4 14.2 L 1.4 42 C 1.4 51 4 55 10 56 C 17 57.5 19.4 64.4 19.4 73.3 L 19.4 88.2 C 19.4 96.4 24.1 98.8 31.8 98.8 L 89 98.8 C 96.2 98.8 98.8 94.1 98.8 86.5 L 98.8 14 C 98.8 5.4 95 1.2 88 1.2 Z" transform="translate(100 0) scale(-1 1)" vector-effect="non-scaling-stroke"/></svg>
+<span class="seyveo-passport-card-head">
+<span class="seyveo-passport-card-icon" aria-hidden="true">⌂</span>
+<span class="seyveo-passport-card-titles"><strong id="seyveoCompanyPreviewName">Моя компания</strong><small id="seyveoCompanyPreviewDesc">Добавьте данные</small></span>
+<span class="seyveo-passport-arrow" aria-hidden="true">›</span>
+</span>
+<span class="seyveo-passport-card-foot"><span>Карточка компании</span><small>Поделиться · печать</small></span>
+</button>
+</div>
+</section>
+
 <section class="seyveo-status" aria-label="Состояние личного пространства SEYVEO">
 <button type="button" id="homePathStatus" class="seyveo-status-side" aria-label="Изменить направление SEYVEO">
 <span class="seyveo-status-overline">Направление</span>
@@ -425,37 +455,6 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Сервисы</h2><div class="manage-card"><button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Источники данных и доступ к сервисам</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card"><button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 
-<section class="manage-group" aria-labelledby="seyveoPassportHeading">
-<h2 id="seyveoPassportHeading">Паспорта</h2>
-
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
-<defs>
-<clipPath id="seyveoCardLeftClip" clipPathUnits="objectBoundingBox"><path d="M .11 .012 C .044 .012 .014 .064 .014 .142 L .014 .42 C .014 .51 .04 .55 .1 .56 C .17 .575 .194 .644 .194 .733 L .194 .882 C .194 .964 .241 .988 .318 .988 L .89 .988 C .962 .988 .988 .941 .988 .865 L .988 .14 C .988 .054 .95 .012 .88 .012 Z"/></clipPath>
-<clipPath id="seyveoCardRightClip" clipPathUnits="objectBoundingBox"><path d="M .11 .012 C .044 .012 .014 .064 .014 .142 L .014 .42 C .014 .51 .04 .55 .1 .56 C .17 .575 .194 .644 .194 .733 L .194 .882 C .194 .964 .241 .988 .318 .988 L .89 .988 C .962 .988 .988 .941 .988 .865 L .988 .14 C .988 .054 .95 .012 .88 .012 Z" transform="translate(1 0) scale(-1 1)"/></clipPath>
-</defs></svg>
-
-<div class="seyveo-passport-grid">
-<button type="button" id="seyveoBrandPassport" class="seyveo-passport-card seyveo-passport-card--studio" aria-label="Паспорт продукта SEYVEO">
-<svg class="seyveo-passport-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M 11 1.2 C 4.4 1.2 1.4 6.4 1.4 14.2 L 1.4 42 C 1.4 51 4 55 10 56 C 17 57.5 19.4 64.4 19.4 73.3 L 19.4 88.2 C 19.4 96.4 24.1 98.8 31.8 98.8 L 89 98.8 C 96.2 98.8 98.8 94.1 98.8 86.5 L 98.8 14 C 98.8 5.4 95 1.2 88 1.2 Z" vector-effect="non-scaling-stroke"/></svg>
-<span class="seyveo-passport-card-head">
-<img src="assets/official-logo.svg?v=3" alt="" width="28" height="28">
-<span class="seyveo-passport-card-titles"><strong>SEYVEO</strong><small>IT · AI · AUTOMATION</small></span>
-<span class="seyveo-passport-arrow" aria-hidden="true">›</span>
-</span>
-<span class="seyveo-passport-card-foot"><span>Паспорт продукта</span><small id="seyveoPassportPreviewTier">Предпросмотр PRO</small></span>
-</button>
-<button type="button" id="seyveoCompanyPassport" class="seyveo-passport-card seyveo-passport-card--company" aria-label="Открыть карточку своей компании">
-<svg class="seyveo-passport-border" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M 11 1.2 C 4.4 1.2 1.4 6.4 1.4 14.2 L 1.4 42 C 1.4 51 4 55 10 56 C 17 57.5 19.4 64.4 19.4 73.3 L 19.4 88.2 C 19.4 96.4 24.1 98.8 31.8 98.8 L 89 98.8 C 96.2 98.8 98.8 94.1 98.8 86.5 L 98.8 14 C 98.8 5.4 95 1.2 88 1.2 Z" transform="translate(100 0) scale(-1 1)" vector-effect="non-scaling-stroke"/></svg>
-<span class="seyveo-passport-card-head">
-<span class="seyveo-passport-card-icon" aria-hidden="true">⌂</span>
-<span class="seyveo-passport-card-titles"><strong id="seyveoCompanyPreviewName">Моя компания</strong><small id="seyveoCompanyPreviewDesc">Добавьте данные</small></span>
-<span class="seyveo-passport-arrow" aria-hidden="true">›</span>
-</span>
-<span class="seyveo-passport-card-foot"><span>Карточка компании</span><small>Поделиться · печать</small></span>
-</button>
-</div>
-<p class="seyveo-passport-helper">Нажмите на карточку, чтобы посмотреть сведения. Реквизиты компании сохраняются на вашем устройстве.</p>
-</section>
 <section class="manage-group" aria-labelledby="manage-roadmap-label"><h2 id="manage-roadmap-label">Развитие</h2>
 <div class="manage-card"><button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Карта развития</strong><small>Что готово, что проверяем и что впереди</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <p class="manage-footnote">SEYVEO · BLACK VELVET</p>
