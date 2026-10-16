@@ -5,61 +5,165 @@
 const $=id=>document.getElementById(id);
 const connect=$('manageConnectionsDialog'),dataDialog=$('manageDataDialog'),roadmapDialog=$('manageRoadmapDialog');
 if(!connect||!dataDialog||!roadmapDialog)return;
+
+/* CURATED PRODUCT ROADMAP — present-day SEYVEO.
+ * Ideas distilled from FUTURE V5, the project passport, three archived
+ * prototypes and docs/SEYVEO-IDEAS-MASTER.md. Archive code is NOT reused.
+ * ready = interface/local function present in code (not phone-certified);
+ * demo = working demonstration only; plan = NOT implemented.
+ * A user's checkbox is an independent local progress annotation.
+ */
 const roadmap=[
- {status:'Работает',name:'Уже в SEYVEO',items:[
-   ['Black Velvet и темы','Главная сфера и оформление, автоматическая, тёмная и светлая темы.'],
-   ['Дела и история','Демонстрационные поручения со статусами и историей; реальные внешние действия пока не выполняются.'],
-   ['Заметки и данные','Локальные записи, черновики и экспорт копии.'],
-   ['Паспорта SEYVEO и компании','Верхний логотип открывает паспорт SEYVEO, значок пользователя — карточку компании. Изменение реквизитов, отправка и печать доступны в самой карточке, без отдельной строки в Управлении.'],
-   ['Предпросмотр Business Start / Pro / Max','В паспорте продукта видны все уровни, задачи каждого и переходы вверх и вниз; выбор сохраняется локально только как режим просмотра разработчика. Life остаётся отдельным.'],
-   ['Главная для работы · Картина для данных','На Главной — сфера, рекомендации и действия. Показатели, клиенты, расходы и графики вынесены в «Картину» с выбором карточек.']
+ {id:'foundation',name:'Основа SEYVEO',items:[
+  ['velvet','Black Velvet / White Velvet','Единая тёмная и светлая тема, стеклянные элементы, кнопки и бережное движение.','ready'],
+  ['sphere','Сфера и единое обращение','Центральная плазма, фирменные появления и одно понятное сообщение под ней.','ready'],
+  ['navigation','Четыре раздела и Спросить','Главная для решений, Дела, Картина, Управление и центральная кнопка общения.','ready'],
+  ['records','Мои дела со сроками','Создание, выполнение и хранение личных дел на устройстве. Календарная сетка ещё впереди.','ready'],
+  ['notes','Мои записи и черновики','Локальный блокнот, сохранение заметок и текстовых черновиков.','ready'],
+  ['passports','Паспорта продукта и компании','Две отдельные карточки, реквизиты компании, печать и отправка.','ready'],
+  ['backup','Сохранение копии данных','Выгрузка локальных записей, поручений и настроек.','ready'],
+  ['first_meeting','Знакомство с управляющим','Выбор Life / Business Start / Pro / Max и имени в локальном сценарии, пока не настоящий разговор с ИИ.','demo'],
+  ['decision_flow','Рекомендация → решение → история','Учебное согласование поручения, статус выполнения и журнал действий без реальной отправки.','demo'],
+  ['developer_picture','Картина бизнеса и Пульс','Клиенты, заказы, продажи, расходы и графики из единого учебного набора с фильтрами.','demo'],
+  ['picture_layout','Своя Картина','Выбор и перестановка доступных карточек с сохранением на устройстве.','ready'],
+  ['touch_voice','Звук касаний и пробное голосовое обращение','Silk Touch на поддерживаемых устройствах; голосовое обращение пока прототип.','demo']
  ]},
- {status:'Пробный режим',name:'Проверяем',items:[
-   ['Умный текст под сферой','Единое сообщение SEYVEO: рекомендации, подтверждения, реальные локальные дела и приветствие по времени суток. Правовые новости пока только в учебном сценарии.'],
-   ['Подробный отчёт в «Картине»','Дополнительный просмотр учебного Пульса: обращения, заказы, суммы продаж и расходов, динамика. Источник один, внешние сервисы не подключены.'],
-   ['Первое знакомство SEYVEO','Компактный выбор Life / Business Start / Business Pro / Business Max и необязательное имя. Сохраняются только на этом устройстве; пока это не настоящий разговор с ИИ.'],
-   ['Обращение по имени «SEYVEO»','Прототип в открытой PWA после согласия. Надёжную работу на iPhone и беззвучное ожидание ещё нужно проверить.']
+ {id:'sales',name:'Продажи · следующий приоритет',items:[
+  ['business_events','Единая модель бизнес-событий','Одно событие связывает обращение, клиента, источник, предложение, заказ, оплату и действия управляющего.','plan'],
+  ['sales_center','Продажи на человеческом языке','Сегодня: обращения, заказы, продажи и фактические поступления — строго разные показатели.','plan'],
+  ['sales_funnel','Путь клиента до покупки','Обращение → квалификация → предложение → продажа; видно, где остановились.','plan'],
+  ['sales_sources','Откуда приходят покупатели','VK, Telegram, MAX, OK, Дзен, сайт, Avito и другие каналы с проверенной атрибуцией.','plan'],
+  ['sales_waiting','Кто ждёт ответа','Новые, ожидающие, готовые купить и потерянные клиенты; сроки реакции.','plan'],
+  ['sales_losses','Где теряем продажи','Причины отказов, незавершённые предложения и этапы с самым большим оттоком.','plan'],
+  ['sales_explain','Почему продажи изменились','Понятное объяснение роста или падения на основании реальных событий, без выдуманных причин.','plan'],
+  ['sales_actions','Следующий шаг с клиентом','Подготовить ответ или предложение, напомнить, создать дело; отправлять только по правилам.','plan'],
+  ['sales_finance_link','Продажи связаны с деньгами','Каждый заказ передаёт сумму продажи в учёт; оплаты отдельно подтверждаются источником.','plan'],
+  ['sales_promo_link','Продажи связаны с продвижением','Сохранять источник каждого заказа и видеть, какие каналы действительно работают.','plan']
  ]},
- {status:'В планах',name:'Следующие этапы',items:[
-   ['SEYVEO Business Start','Создание бизнеса: анализ идеи, затраты, план, сайт через SEYVEO Site, подготовка соцсетей и продвижения, первые заявки и дальнейшее управление. Сильный продукт, а не урезанный Pro. В планах.'],
-   ['SEYVEO Site — собственный конструктор','Отдельная подписка на сайт: создание в диалоге, предпросмотр, публикация, размещение и обновление сайта на нашей платформе. Также используется в Business Start, Pro и Max. Разработка впереди.'],
-   ['SEYVEO Studio — сайты под ключ','Отдельная услуга: создание и настройка сайта с контролем специалиста на том же конструкторе SEYVEO Site. Без дублирования платформы. В планах.'],
-   ['Подписка на размещение и перенос сайта','При отказе от помощника предложить самостоятельное размещение. Домен и клиентские данные принадлежат клиенту; публикация собственного сайта SEYVEO зависит от оплаченного хостинга. Экспорт и правила уведомления — отдельные задачи.'],
-   ['SEYVEO Business Pro','Для действующей компании: обращения, процессы, финансы, сотрудники и разрешённая автоматизация. В планах.'],
-   ['SEYVEO Business Max','Флагман для сложных компаний: филиалы, роли, согласования и масштабная автоматизация. В планах.'],
-   ['SEYVEO Life','Повседневная жизнь, семья, планы и личные дела. Доступен одновременно с любым уровнем Business. В планах.'],
-   ['Переход между жизненными этапами','Life → Business Start → Business Pro → Business Max и обратно. Без потери личных данных, с разрешением на архивирование и отключение рабочих источников.'],
-   ['Настоящий интеллект','Подключить ИИ, который отвечает по контексту, отличает факты от предположений и адаптирует общение.'],
-   ['Память управляющего','Предпочтения, личный и рабочий контекст, согласие и возможность контролировать сохранённое.'],
-   ['Полноценный голос','Разговор, естественная речь и перебивание; системная активация — по возможностям платформы.'],
-   ['Реальные подключения','Почта, календарь, сообщения, CRM и другие источники — с подтверждённой авторизацией и отзывом доступа.'],
-   ['Автопилот и разрешения','Самостоятельно замечать события, готовить решения и выполнять только разрешённые шаги с журналом результатов.'],
-   ['Мастерская','Создание персональных инструментов и расчётов из разговора с управляющим.'],
-   ['Личная жизнь и новые этапы','Календарь, семья, дом, поездки и повседневные дела. Если человек перестаёт вести бизнес, личный помощник остаётся с ним.'],
-   ['Семейные пространства','Общие события и поручения только с согласия участников. У каждого своя приватная информация.'],
-   ['Знакомство без анкет','SEYVEO узнаёт потребности человека через разговор — личные, рабочие или смешанные.'],
-   ['Универсальный бизнес','Поддержка разных отраслей, процессов и ролей без отдельных приложений для каждой сферы.'],
-   ['Нативное приложение','Тесты на устройствах, системный тактильный отклик и подготовка публикации в магазинах приложений.']
+ {id:'intelligence',name:'Интеллект и самостоятельность',items:[
+  ['real_brain','Настоящий интеллект','Понимает контекст, объясняет источники и отличает факт от предположения; пока не подключён.','plan'],
+  ['business_memory','Память бизнеса · Business Memory Graph','Предпочтения, прошлые решения, клиенты и связи событий с согласиями и управляемым хранением.','plan'],
+  ['business_twin','Единая модель бизнеса · Business Twin','Связывать клиентов, продажи, деньги, рекламу и процессы, чтобы объяснять взаимное влияние. Не отдельный старый экран.','plan'],
+  ['business_simulator','Сценарии «а если?»','Проверять изменение цены, рекламы, спроса или нового канала; явно показывать допущения, не гарантии.','plan'],
+  ['cause_analysis','Причины и прогнозы · Brain','Сопоставлять события, находить корневую причину и осторожно рассчитывать варианты развития.','plan'],
+  ['autonomy_rules','Автопилот и правила · Rules','Отдельные границы самостоятельности по расходам, рекламе, ценам, ответам и подписи.','plan'],
+  ['eyes','Цифровой след · Eyes','Наблюдение за доступными сайтом, соцсетями, площадками, CRM, рекламой и финансами через разрешённые связи.','plan'],
+  ['hands','Разрешённые действия · Hands','Подготовил → показал → получил право → выполнил → подтвердил результат; защищённый серверный контур.','plan'],
+  ['explain_actions','Отчёт «Я уже сделал»','Что заметил, какой был план, что выполнено, что осталось человеку; без повторного списка кнопок.','plan'],
+  ['opportunities','Возможности и рост · Opportunity Engine','Сам находить новые каналы, товары, спрос и варианты улучшений, объяснять пользу и риск.','plan'],
+  ['regulatory','Законы, налоги и сроки','Проверять официальные источники, дату, отношение к конкретному бизнесу и предлагать действие.','plan'],
+  ['voice','Полноценный разговор · Voice','Голос, перебивание, естественный диалог и разрешения без скрытого фонового прослушивания.','plan']
+ ]},
+ {id:'business',name:'Операции, финансы и связи',items:[
+  ['finance','Деньги без путаницы','Раздельно продажи, полученные платежи, расходы, обязательства, остаток и рассчитанную прибыль.','plan'],
+  ['payments','Счета и платежи','Проверка регулярных счетов, сравнение расходов, подготовка оплаты и обязательное подтверждение.','plan'],
+  ['documents','Документы и подпись','Договоры, акты, счета, декларации; проверка изменений, черновик, PDF, печать и разрешённая подпись.','plan'],
+  ['mail','Единые входящие','Рабочая почта и сообщения связываются с клиентами, заказами, документами и поручениями.','plan'],
+  ['channels','Подключения · связи','Авторизация почты, календарей, банков, CRM, рекламы и площадок с отзывом доступа. Сейчас нет реальных связей.','plan'],
+  ['marketplaces','Маркетплейсы и объявления','Ozon, Wildberries, Яндекс Маркет, Avito: цены, остатки, отзывы, реклама и заказы.','plan'],
+  ['promotion','Продвижение и реклама','Сайт, соцсети, публикации, бюджет и эффективность; управляющий рекомендует и действует по правилам.','plan'],
+  ['inside_business','Бизнес внутри','Товары, остатки, поставщики, команда, процессы и автоматизация рутинных задач.','plan'],
+  ['tax_inspector','Налоговый помощник','Напоминать о декларациях, платежах, сроках и изменениях со ссылкой на официальный источник.','plan'],
+  ['director_brief','Штаб управляющего','Короткая планёрка: что произошло, что важно сегодня, одно решение и следующая работа. Не отдельная стена карточек.','plan']
+ ]},
+ {id:'builder',name:'Создать и развивать бизнес',items:[
+  ['business_builder','Business Builder · с нуля','Идея → рынок → название → сайт → контент → каналы → первые клиенты → управление.','plan'],
+  ['idea_validation','Проверка бизнес-идеи','Рынок, конкуренты, спрос, экономика и риски простыми словами без гарантии успеха.','plan'],
+  ['business_start','SEYVEO Business Start','Полезный полный путь запуска бизнеса, а не искусственно урезанный Pro.','plan'],
+  ['business_pro','SEYVEO Business Pro','Действующая компания: клиенты, продажи, финансы, процессы и разрешённые интеграции.','plan'],
+  ['business_max','SEYVEO Business Max','Команды, роли, филиалы, согласования и сложные автоматизированные процессы.','plan'],
+  ['site_builder','SEYVEO Site','Отдельный конструктор сайтов, предпросмотр, публикация и размещение с ясными правами клиента.','plan'],
+  ['studio','SEYVEO Studio','Услуги создания сайтов под ключ поверх той же платформы, без второго конструктора.','plan'],
+  ['hosting_exit','Размещение и перенос сайтов','Честные условия подписки, уведомление о прекращении размещения, доступный экспорт данных и домен клиента.','plan'],
+  ['personal_tools','Мастерская своих инструментов','Создание личной карточки, расчёта или рабочего инструмента по описанию, без дублирующих экранов.','plan']
+ ]},
+ {id:'life',name:'Личная жизнь, качество и безопасность',items:[
+  ['life','SEYVEO Life','Личные планы, дела, дом, семья и здоровье доступны параллельно любому бизнес-уровню.','plan'],
+  ['calendar','Полноценный календарь','День, неделя, месяц, встречи, сроки и подключаемые календари. Сейчас есть только дела с датой.','plan'],
+  ['health','Здоровье и забота','Шаги, пульс, давление и забота о близких через разрешённые источники, без выдуманной синхронизации.','plan'],
+  ['family','Семейные пространства','Общие события и дела с отдельными личными правами доступа и согласием участников.','plan'],
+  ['transitions','Переход между этапами','Life ↔ Business Start / Pro / Max с сохранением личных данных и безопасным отключением рабочих связей.','plan'],
+  ['security','Разрешения и защита данных','Секреты вне клиентского кода, минимальные разрешения, журнал действий и отзыв доступа.','plan'],
+  ['mobile_tests','Проверка на телефонах','iPhone X, вырез камеры, safe-area, неподвижный док, светлая тема и производительность.','plan'],
+  ['native','Нативное приложение','Подготовка iOS/Android, системные разрешения, тактильный отклик и доступность.','plan']
  ]}
 ];
+const ROADMAP_KEY='seyveo-roadmap-progress-v1';
+function loadRoadmapMarks(){
+ try{
+  const data=JSON.parse(localStorage.getItem(ROADMAP_KEY)||'null');
+  return data&&data.version===1&&data.marks&&typeof data.marks==='object'&&!Array.isArray(data.marks)?data.marks:{};
+ }catch{return {}}
+}
+let roadmapMarks=loadRoadmapMarks();
+const roadmapAll=roadmap.flatMap(group=>group.items.map(([id,name,desc,stage])=>({id,name,desc,stage})));
+function roadmapChecked(item){
+ return Object.prototype.hasOwnProperty.call(roadmapMarks,item.id)?roadmapMarks[item.id]===true:item.stage==='ready';
+}
+function roadmapCounts(){
+ return {total:roadmapAll.length,checked:roadmapAll.filter(roadmapChecked).length,demo:roadmapAll.filter(x=>x.stage==='demo').length,planned:roadmapAll.filter(x=>x.stage==='plan').length};
+}
+function roadmapCountLabel(){
+ const n=roadmapCounts();
+ $('manageRoadmapProgress').textContent='Отмечено: '+n.checked+' из '+n.total+' · Демо: '+n.demo+' · В планах: '+n.planned;
+}
 function drawRoadmap(){
- const body=$('manageRoadmapBody');body.replaceChildren();
+ const body=$('manageRoadmapBody'),search=$('manageRoadmapSearch')?.value.trim().toLocaleLowerCase('ru')||'';
+ const pending=$('manageRoadmapOnlyPending')?.checked===true;
+ body.replaceChildren();
+ let displayed=0;
  for(const group of roadmap){
-  const section=document.createElement('section');section.className='manage-roadmap-group';
-  const head=document.createElement('div');head.className='manage-roadmap-group-head';
-  const title=document.createElement('h3');title.textContent=group.name;
-  const badge=document.createElement('span');badge.textContent=group.status;
-  head.append(title,badge);
+  const matching=group.items.map(([id,name,desc,stage])=>({id,name,desc,stage}))
+   .filter(item=>(!pending||!roadmapChecked(item))&&(!search||(item.name+' '+item.desc).toLocaleLowerCase('ru').includes(search)));
+  if(!matching.length)continue;
+  displayed+=matching.length;
+  const section=document.createElement('details');section.className='manage-roadmap-group';
+  section.open=!!search||pending||group.id==='foundation'||group.id==='sales';
+  const summary=document.createElement('summary');summary.className='manage-roadmap-group-head';
+  const title=document.createElement('strong');title.textContent=group.name;
+  const count=document.createElement('span');count.textContent=matching.length+' пунктов';
+  summary.append(title,count);
   const list=document.createElement('div');list.className='manage-roadmap-list';
-  for(const [name,description] of group.items){
-   const item=document.createElement('article');item.className='manage-roadmap-item';
-   const strong=document.createElement('strong');strong.textContent=name;
-   const p=document.createElement('p');p.textContent=description;
-   item.append(strong,p);list.append(item);
+  for(const item of matching){
+   const line=document.createElement('label');line.className='manage-roadmap-item';
+   line.dataset.roadmapId=item.id;
+   const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.className='manage-roadmap-check';
+   checkbox.checked=roadmapChecked(item);checkbox.dataset.roadmapCheck=item.id;
+   checkbox.setAttribute('aria-label','Отметить выполненным: '+item.name);
+   const content=document.createElement('span');content.className='manage-roadmap-copy';
+   const itemTitle=document.createElement('strong');itemTitle.textContent=item.name;
+   const itemDesc=document.createElement('span');itemDesc.textContent=item.desc;
+   const status=document.createElement('span');status.className='manage-roadmap-stage';
+   status.textContent=({ready:'Есть в коде · проверить на устройстве',demo:'Демо / прототип',plan:'В планах'})[item.stage];
+   content.append(itemTitle,itemDesc,status);line.append(checkbox,content);list.append(line);
   }
-  section.append(head,list);body.append(section);
+  section.append(summary,list);body.append(section);
+ }
+ if(!displayed){
+  const empty=document.createElement('p');empty.className='manage-roadmap-empty';
+  empty.textContent='По этому запросу ничего не найдено. Попробуйте другое слово или отключите фильтр.';
+  body.append(empty);
+ }
+ roadmapCountLabel();
+}
+function roadmapSaveMark(id,value){
+ const item=roadmapAll.find(x=>x.id===id);if(!item)return;
+ const marks={...roadmapMarks,[id]:value};
+ try{localStorage.setItem(ROADMAP_KEY,JSON.stringify({version:1,marks}));roadmapMarks=marks;
+  $('manageRoadmapSaved').textContent='Отметка сохранена на этом устройстве';
+  roadmapCountLabel();
+  if($('manageRoadmapOnlyPending').checked)drawRoadmap();
+ }catch{
+  $('manageRoadmapSaved').textContent='Не удалось сохранить отметку';
+  drawRoadmap();
  }
 }
+$('manageRoadmapBody').addEventListener('change',event=>{
+ const cb=event.target.closest('input[data-roadmap-check]');
+ if(cb)roadmapSaveMark(cb.dataset.roadmapCheck,cb.checked);
+});
+$('manageRoadmapSearch').addEventListener('input',drawRoadmap);
+$('manageRoadmapOnlyPending').addEventListener('change',drawRoadmap);
 
 const KEYS=Object.freeze({
  app:'dm-signature-living-v2',
