@@ -57,7 +57,8 @@ const KEYS=Object.freeze({
  app:'dm-signature-living-v2',
  previous:'dm-signature-living-v1',
  notes:'seyveo-notes-v1',
- draft:'seyveo-draft-v1'
+ draft:'seyveo-draft-v1',
+ tasks:'seyveo-personal-tasks-v1'
 });
 function read(key){
  try{return localStorage.getItem(key)}catch{return null}
@@ -70,6 +71,7 @@ function snapshot(){
  const notes=parsed(read(KEYS.notes),[]);
  const oldState=parsed(read(KEYS.previous),null);
  const draft=read(KEYS.draft);
+ const tasks=parsed(read(KEYS.tasks),[]);
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
  return {
   product:'SEYVEO',
@@ -78,6 +80,7 @@ function snapshot(){
   state:state&&typeof state==='object'&&!Array.isArray(state)?state:{},
   oldState:oldState&&typeof oldState==='object'&&!Array.isArray(oldState)?oldState:null,
   notes:Array.isArray(notes)?notes:[],
+  personalTasks:Array.isArray(tasks)?tasks:[],
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
  };
@@ -89,6 +92,7 @@ function drawData(){
  const parts=[
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Мои записи',String(countOf(record.notes))],
+  ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
   ['Данные', 'На этом устройстве']
