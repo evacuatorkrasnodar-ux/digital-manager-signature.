@@ -23,9 +23,9 @@
   function overview(){
     const old=existing();
     const label=$('onboardManageSummary');
-    label.textContent=old?(old.name?trim(old.name,24)+' · ':'')+CHOICES[old.focus]:'Не настроено';
+    label.textContent=old?CHOICES[old.focus]:'Не настроено';
     const sub=$('onboardManageDescription');
-    sub.textContent=old?'Имя и жизненный этап · сохранено на устройстве':'Имя и жизненный этап';
+    sub.textContent=old?(old.name?'Для '+trim(old.name,22)+' · можно изменить':'Имя и жизненный этап · сохранено'):'Имя и жизненный этап';
   }
   function show(){
     const old=existing();
@@ -81,6 +81,6 @@
       if(document.hidden||location.hash||document.querySelector('dialog[open]'))return;
       if(!existing()&&safeRead(SKIPPED)!=='1')show();
     };
-    setTimeout(openFirst,1600);
+    setTimeout(openFirst,10000);
   }
 })();
