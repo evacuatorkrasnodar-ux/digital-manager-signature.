@@ -82,13 +82,15 @@
   background:rgba(255,255,255,.035);
   color:var(--secondary);
 }
-#stage .orb-info-close svg{
-  width:17px;
-  height:17px;
+#stage .orb-info-close svg.seyveo-close-glyph{
+  display:block;
+  width:18px;
+  height:18px;
   fill:none;
   stroke:currentColor;
   stroke-width:1.8;
   stroke-linecap:round;
+  stroke-linejoin:round;
   pointer-events:none;
 }
 #stage .orb-info-close:active{background:rgba(255,255,255,.095)}
