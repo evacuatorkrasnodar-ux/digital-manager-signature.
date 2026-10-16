@@ -470,10 +470,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button></div></section>
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Сервисы</h2><div class="manage-card"><button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Источники данных и доступ к сервисам</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card"><button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button id="seyveoBatterySaverToggle" type="button" class="manage-row" aria-pressed="false" aria-label="Экономия батареи: выключена">
-<span class="manage-text"><strong>Экономия батареи</strong><small>Без тумана и кинематографических эффектов</small></span>
-<span id="seyveoBatterySaverState" class="manage-theme-value">Выкл.</span><span class="seyveo-effect-switch" aria-hidden="true"></span>
-</button></div></section>
+</div></section>
 
 <section class="manage-group" aria-labelledby="manage-roadmap-label"><h2 id="manage-roadmap-label">Развитие</h2>
 <div class="manage-card"><button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Карта развития</strong><small>Что готово, что проверяем и что впереди</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
@@ -647,7 +644,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
-</dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script src="assets/orb-effects.js?v=1"></script><script>
+</dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
 const stories=[
@@ -841,7 +838,6 @@ function brandProgress(){
 }
 function scheduleNextBrand(ms){
   clearTimeout(brandNextTimer);
-  if(document.documentElement.dataset.seyveoEffects==='off')return;
   if(brandProgress().count>=BRAND_MAX_DAILY)return;
   brandNextTimer=setTimeout(()=>{showBrandSignature('ambient')},Math.max(500,ms));
 }
@@ -865,7 +861,6 @@ function transientNotice(key,type){
   });
 }
 function showBrandSignature(reason='ambient'){
-  if(document.documentElement.dataset.seyveoEffects==='off')return false;
   if(document.hidden||$('homePage').hidden)return false;
   const progress=brandProgress(),now=Date.now();
   if(progress.count>=BRAND_MAX_DAILY)return false;
@@ -908,7 +903,6 @@ function stopPearlMist(){
   $('orbMist')?.classList.remove('is-breathing');
 }
 function startPearlMist(){
-  if(document.documentElement.dataset.seyveoEffects==='off')return;
   const layer=$('orbMist');
   if(!layer)return;
   stopPearlMist();
@@ -933,19 +927,8 @@ function revealOrbBrandOnTap(){
   brandClearTimer=setTimeout(()=>{
     if(el.classList.contains('is-pearl'))resetSignal(el);
     orbTapBrandActive=false;
-  },document.documentElement.dataset.seyveoEffects==='off'?1800:BRAND_DURATION_MS);
+  },BRAND_DURATION_MS);
 }
-document.addEventListener('seyveo:effects-change',event=>{
-  if(!event.detail?.enabled){
-    stopPearlMist();
-    clearTimeout(brandNextTimer);
-    clearTimeout(brandClearTimer);
-    orbTapBrandActive=false;
-    if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
-  }else if(!document.hidden&&!$('homePage').hidden){
-    scheduleNextBrand(180000);
-  }
-});
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     brandHiddenAt=Date.now();
