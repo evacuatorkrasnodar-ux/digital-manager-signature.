@@ -357,6 +357,17 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .assistant-button.wake-ready::before{opacity:.32;transform:scale(1.035)}
 .assistant-button.wake-awake::before{animation:assistant-velvet-halo 2.1s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){.assistant-button.wake-awake::before{animation:none;opacity:.48}}
+/* SEYVEO Management: quiet lists with true connection status and real local data. */
+.manage-dialog .manage-dialog-desc{margin:0 0 17px;color:var(--secondary);font-size:13px;line-height:1.55}
+.manage-service-list,.manage-data-list{border:1px solid var(--line);border-radius:17px;background:var(--card2);overflow:hidden;margin:0 0 17px}
+.manage-service-item,.manage-data-item{display:flex;justify-content:space-between;gap:12px;align-items:center;min-height:54px;padding:12px 14px;font-size:13px;color:var(--text)}
+.manage-service-item+.manage-service-item,.manage-data-item+.manage-data-item{border-top:1px solid var(--soft-line)}
+.manage-service-item span,.manage-data-item span{line-height:1.4;min-width:0}
+.manage-service-item strong,.manage-data-item strong{font-weight:550;font-size:12px;color:var(--secondary);white-space:nowrap;text-align:right}
+.manage-dialog .info-actions{margin-top:17px;flex-wrap:wrap}
+.manage-dialog-note{margin:0 0 6px!important;font-size:12px!important;line-height:1.55!important}
+.manage-dialog-status{display:block;min-height:14px;margin-top:14px;color:var(--secondary);font-size:12px;line-height:1.45}
+@media(max-width:355px){.manage-service-item,.manage-data-item{padding:11px 12px}}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -379,13 +390,9 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="manage-text"><strong>Тема</strong><small>Оформление и внешний вид</small></span>
 <span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span>
 </button></div></section>
-<section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Подключения</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="accounts"><span class="manage-text"><strong>Почта и календарь</strong><small>Сервисы пока не подключены</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="business"><span class="manage-text"><strong>Мессенджеры и CRM</strong><small>Подключения в разработке</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
-<section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
-<button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" type="button" data-manage-topic="privacy"><span class="manage-text"><strong>Данные и безопасность</strong><small>Разрешения и личная информация</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-
-</div></section>
-<p class="manage-footnote">SEYVEO · IT · AI · AUTOMATION<br>Подключения и расширенные функции появятся в следующих версиях.</p>
+<section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Сервисы</h2><div class="manage-card"><button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Источники данных и доступ к сервисам</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card"><button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<p class="manage-footnote">SEYVEO · BLACK VELVET</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
 <p class="manage-theme-intro">Выберите оформление приложения.</p>
@@ -428,7 +435,25 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="manageConnectionsDialog" class="manage-dialog" aria-labelledby="manageConnectionsTitle">
+<h2 id="manageConnectionsTitle">Подключения</h2>
+<p class="manage-dialog-desc">SEYVEO будет работать только с теми источниками, к которым вы предоставите доступ. Сейчас внешние сервисы не подключены.</p>
+<div class="manage-service-list" aria-label="Статус источников">
+<div class="manage-service-item"><span>Почта и календарь</span><strong>Не подключено</strong></div>
+<div class="manage-service-item"><span>Мессенджеры и CRM</span><strong>Не подключено</strong></div>
+<div class="manage-service-item"><span>Финансы и документы</span><strong>Не подключено</strong></div>
+</div>
+<p class="manage-dialog-note">Здесь будут отображаться проверенные подключения, разрешения и возможность отозвать доступ. Пока приложение не читает внешние данные.</p>
+<div class="info-actions"><button id="manageConnectionsClose" type="button" class="btn primary">Закрыть</button></div>
+</dialog>
+<dialog id="manageDataDialog" class="manage-dialog" aria-labelledby="manageDataTitle">
+<h2 id="manageDataTitle">Мои данные</h2>
+<p class="manage-dialog-desc">Записи и черновики этой версии сохраняются локально в браузере. Здесь можно посмотреть их объём и сохранить копию.</p>
+<div class="manage-data-list" id="manageDataSummary" aria-label="Локальные данные"></div>
+<p class="manage-dialog-note">Копия содержит ваши локальные записи. Храните её в надёжном месте. Пароли и подключения внешних сервисов не включены.</p>
+<div class="info-actions"><button id="manageExportData" type="button" class="btn">Сохранить копию</button><button id="manageDataClose" type="button" class="btn primary">Закрыть</button></div>
+<small id="manageExportStatus" class="manage-dialog-status" role="status" aria-live="polite"></small>
+</dialog><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle">
 <h2 id="wakeVoiceConsentTitle">Обращение по имени</h2>
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
@@ -808,18 +833,6 @@ document.querySelectorAll('[data-theme-choice]').forEach(button=>{
 const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
 if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
 else systemThemeQuery.addListener(onSystemThemeChange);
-const manageInfo={
- accounts:['Почта и календарь','Почта и календарь пока не подключены. В будущем здесь можно будет выбрать сервисы и разрешения.'],
- business:['Мессенджеры и CRM','Подключения мессенджеров и CRM ещё разрабатываются.'],
- notifications:['Уведомления','Настройки оповещений появятся позже. Пока уведомления показываются только в демонстрационных сценариях.'],
- privacy:['Данные и безопасность','Здесь будет управление разрешениями и личной информацией. Внешние сервисы пока не подключены.']
-};
-document.querySelectorAll('[data-manage-topic]').forEach(button=>{
-  button.addEventListener('click',()=>{
-    const entry=manageInfo[button.dataset.manageTopic];
-    if(entry)popup(entry[0],entry[1]);
-  });
-});
 function syncAppPage(){
   const theme=location.hash==='#manage-theme';
   // Upgrade old saved/bookmarked settings URL to the streamlined overview.
@@ -1129,4 +1142,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=1"></script></body></html>
