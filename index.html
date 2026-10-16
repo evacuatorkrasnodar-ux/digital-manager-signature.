@@ -368,6 +368,17 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-dialog-note{margin:0 0 6px!important;font-size:12px!important;line-height:1.55!important}
 .manage-dialog-status{display:block;min-height:14px;margin-top:14px;color:var(--secondary);font-size:12px;line-height:1.45}
 @media(max-width:355px){.manage-service-item,.manage-data-item{padding:11px 12px}}
+/* One compact doorway to the product roadmap, without non-functional switches. */
+.manage-roadmap-dialog{max-height:min(83dvh,740px);overscroll-behavior:contain}
+.manage-roadmap-body{display:flex;flex-direction:column;gap:22px;margin-bottom:20px}
+.manage-roadmap-group-head{display:flex;justify-content:space-between;align-items:baseline;gap:9px;margin:0 2px 9px}
+.manage-roadmap-group-head h3{font-size:13px;font-weight:620;letter-spacing:-.01em;color:var(--text);margin:0}
+.manage-roadmap-group-head span{font-size:11px;font-weight:520;white-space:nowrap;color:var(--secondary)}
+.manage-roadmap-list{background:var(--card2);border:1px solid var(--line);border-radius:17px;overflow:hidden}
+.manage-roadmap-item{padding:12px 14px}
+.manage-roadmap-item+.manage-roadmap-item{border-top:1px solid var(--soft-line)}
+.manage-roadmap-item strong{display:block;font-size:13px;line-height:1.4;font-weight:590;color:var(--text)}
+.manage-roadmap-item p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--secondary);white-space:normal}
 </style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
@@ -392,6 +403,8 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button></div></section>
 <section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Сервисы</h2><div class="manage-card"><button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Источники данных и доступ к сервисам</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card"><button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-roadmap-label"><h2 id="manage-roadmap-label">Развитие</h2>
+<div class="manage-card"><button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Карта развития</strong><small>Что готово, что проверяем и что впереди</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
 <p class="manage-footnote">SEYVEO · BLACK VELVET</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
@@ -435,7 +448,14 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="manageConnectionsDialog" class="manage-dialog" aria-labelledby="manageConnectionsTitle">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="manageRoadmapDialog" class="manage-dialog manage-roadmap-dialog" aria-labelledby="manageRoadmapTitle">
+<h2 id="manageRoadmapTitle">Карта развития</h2>
+<p class="manage-dialog-desc">Ничего не потеряем: здесь видны готовые функции, пробные решения и будущие возможности SEYVEO.</p>
+<div id="manageRoadmapBody" class="manage-roadmap-body"></div>
+<p class="manage-dialog-note">Это план проекта, а не настройки. Функция считается готовой только после реализации и проверки. Обновляем карту вместе с разработкой.</p>
+<div class="info-actions"><button id="manageRoadmapClose" type="button" class="btn primary">Закрыть</button></div>
+</dialog>
+<dialog id="manageConnectionsDialog" class="manage-dialog" aria-labelledby="manageConnectionsTitle">
 <h2 id="manageConnectionsTitle">Подключения</h2>
 <p class="manage-dialog-desc">SEYVEO будет работать только с теми источниками, к которым вы предоставите доступ. Сейчас внешние сервисы не подключены.</p>
 <div class="manage-service-list" aria-label="Статус источников">
@@ -1142,4 +1162,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=1"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=2"></script></body></html>
