@@ -2,6 +2,44 @@
    Follow the approved screenshot, not a four-corner grid.
    Only the independent icon overlay is styled: existing sphere is untouched. */
 
+/* A single quiet switch in Management > Appearance, not a new settings page. */
+#seyveoSilkSoundToggle .seyveo-silk-switch{
+  display:inline-flex;
+  align-items:center;
+  flex:none;
+  width:35px;
+  height:22px;
+  margin-left:0;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--card2);
+  transition:background .17s ease,border-color .17s ease;
+}
+#seyveoSilkSoundToggle .seyveo-silk-switch::before{
+  content:"";
+  display:block;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--secondary);
+  transition:transform .17s ease,background .17s ease;
+}
+#seyveoSilkSoundToggle[aria-pressed=true] .seyveo-silk-switch{
+  background:color-mix(in srgb,var(--text) 16%,var(--card2));
+  border-color:color-mix(in srgb,var(--text) 38%,var(--line));
+}
+#seyveoSilkSoundToggle[aria-pressed=true] .seyveo-silk-switch::before{
+  transform:translateX(13px);
+  background:var(--text);
+}
+#seyveoSilkSoundToggle:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+  #seyveoSilkSoundToggle .seyveo-silk-switch,
+  #seyveoSilkSoundToggle .seyveo-silk-switch::before{transition:none}
+}
+
+
 #stage .orb-shortcuts{
   position:absolute;
   z-index:5;
