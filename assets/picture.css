@@ -39,3 +39,17 @@
 .picture-subnote{margin:7px 0 0;color:var(--secondary);font-size:11px;line-height:1.45}
 @media(max-width:370px){.picture-bars{gap:4px}.picture-chart-box,.picture-breakdown,.picture-insight{padding-left:12px;padding-right:12px}.picture-head h1{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.picture-bin-bar{transition:none}}
+
+/* Smaller typographic summaries, not the oversized Home dashboard tiles. */
+#picturePage .home-widgets-grid{gap:9px}
+#picturePage .home-widget-card{min-height:105px;border-radius:18px;padding:12px 13px;background:var(--card);box-shadow:inset 0 1px 0 #ffffff07}
+#picturePage .home-widget-card--wide{min-height:99px}
+#picturePage .home-widget-top{margin-bottom:8px}
+#picturePage .home-widget-icon{width:25px;height:25px}
+#picturePage .home-widget-icon svg{width:15px;height:15px}
+#picturePage .home-widget-value{font-size:23px;letter-spacing:-.037em}
+#picturePage .home-widget-card--wide .home-widget-value{font-size:24px}
+#picturePage .home-widget-note{font-size:10.5px;margin-top:6px}
+#picturePage .home-widget-arrow{bottom:10px}
+#picturePage #pictureWidgetArea[hidden]{display:none!important}
+@media(max-width:370px){#picturePage .home-widget-card{min-height:99px;padding:11px}#picturePage .home-widget-value{font-size:21px}}
