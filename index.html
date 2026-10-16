@@ -28,7 +28,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 /* One transient frosted-glass notice. The orb and its light remain unchanged. */
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
-.signal.is-appearing:not(.is-brand):not(.is-living):not(.is-silk){animation:glass-mist 5.2s .25s ease-in-out both}
+.signal.is-appearing:not(.is-brand):not(.is-living):not(.is-silk):not(.is-stage-fx){animation:glass-mist 5.2s .25s ease-in-out both}
 /* SEYVEO studio signature: transient, lightweight, and fully inside the approved plasma. */
 .signal.is-brand{width:min(220px,76%);height:126px}
 /* Preview typography uses the original glass-mist, without changing it. */
@@ -114,7 +114,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
    Unlike glass-mist, this animation never recomputes blur or scale. */
 .signal.is-brand{opacity:1;filter:none;transform:translate(-50%,-50%)}
 .signal.is-brand .brand-lockup{opacity:0}
-.signal.is-brand.is-appearing .brand-lockup{
+.signal.is-brand.is-appearing:not(.is-stage-fx) .brand-lockup{
  animation:brand-smooth-reveal 6.1s linear both;
  will-change:opacity
 }
@@ -127,6 +127,86 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
  .signal.is-brand.is-appearing .brand-lockup{animation:none;opacity:.82}
 }
 
+/* SEYVEO CINEMA LAB — four standalone scenes.
+   The approved sphere and logo assets never move. All glow is internal to
+   the 220px stage; avoid blur filters, lasers, duplicate SVGs and light leaks. */
+.signal.is-stage-fx{
+ opacity:1;transform:translate(-50%,-50%);filter:none
+}
+.signal.is-stage-fx.signal--moment,.signal.is-stage-fx.signal--care{width:min(226px,76%);height:112px}
+.signal.is-stage-fx.is-brand .brand-lockup{opacity:1}
+.signal.is-stage-fx .fx-stage{
+ position:relative;isolation:isolate;display:grid;place-items:center;
+ width:100%;height:100%;opacity:0;box-sizing:border-box;
+ transform:translate3d(0,0,0);backface-visibility:hidden
+}
+.signal.is-stage-fx .fx-stage::before,
+.signal.is-stage-fx .fx-stage::after{
+ position:absolute;content:"";pointer-events:none;z-index:-1;opacity:0
+}
+.signal.is-stage-fx :is(.preview-time,.brand-word){text-shadow:0 0 18px rgba(235,246,255,.10)}
+.signal.is-stage-fx .preview-time{font-size:30px}
+/* Pearl Bloom — a soft luminous core opens behind the typography. */
+.signal.fx--pearl .fx-stage::before{
+ width:172px;height:98px;left:50%;top:50%;border-radius:50%;
+ background:radial-gradient(ellipse,rgba(244,250,255,.33),rgba(182,215,240,.1) 44%,transparent 77%);
+ transform:translate(-50%,-50%) scale(.48)
+}
+.signal.fx--pearl.is-appearing .fx-stage{animation:fx-pearl var(--fx-time,7s) linear both}
+.signal.fx--pearl.is-appearing .fx-stage::before{animation:fx-pearl-light var(--fx-time,7s) linear both}
+@keyframes fx-pearl{
+ 0%{opacity:0;transform:scale(.975)}
+ 46%{opacity:.98;transform:scale(1)}
+ 68%{opacity:.98;transform:scale(1)}
+ 100%{opacity:0;transform:scale(1.012)}
+}
+@keyframes fx-pearl-light{
+ 0%{opacity:0;transform:translate(-50%,-50%) scale(.48)}
+ 46%{opacity:.53;transform:translate(-50%,-50%) scale(1)}
+ 68%{opacity:.33;transform:translate(-50%,-50%) scale(1.09)}
+ 100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}
+}
+/* Silver Wave — broad silver reflection travels across the lettering. */
+.signal.fx--sweep .fx-stage::after{
+ width:115px;height:100%;top:0;left:50%;border-radius:50%;
+ background:radial-gradient(ellipse,rgba(249,251,255,.28) 0%,rgba(213,230,249,.09) 45%,transparent 76%);
+ transform:translate3d(-172px,0,0)
+}
+.signal.fx--sweep.is-appearing .fx-stage{animation:fx-sweep var(--fx-time,7s) linear both}
+.signal.fx--sweep.is-appearing .fx-stage::after{animation:fx-sweep-light var(--fx-time,7s) linear both}
+@keyframes fx-sweep{
+ 0%{opacity:0}
+ 38%{opacity:.98}
+ 70%{opacity:.98}
+ 100%{opacity:0}
+}
+@keyframes fx-sweep-light{
+ 0%{opacity:0;transform:translate3d(-172px,0,0)}
+ 20%{opacity:.4;transform:translate3d(-112px,0,0)}
+ 54%{opacity:.55;transform:translate3d(-45px,0,0)}
+ 83%{opacity:.25;transform:translate3d(30px,0,0)}
+ 100%{opacity:0;transform:translate3d(90px,0,0)}
+}
+/* Iris Cinema — a discreet elliptical aperture uncovers the inner message. */
+.signal.fx--iris.is-appearing .fx-stage{animation:fx-iris var(--fx-time,7s) linear both}
+@keyframes fx-iris{
+ 0%{opacity:0;clip-path:ellipse(0% 12% at 50% 50%)}
+ 42%{opacity:.97;clip-path:ellipse(85% 92% at 50% 50%)}
+ 68%{opacity:.97;clip-path:ellipse(85% 92% at 50% 50%)}
+ 100%{opacity:0;clip-path:ellipse(0% 12% at 50% 50%)}
+}
+/* Velvet Rise — near-immaterial drift upward through dark glass. */
+.signal.fx--rise.is-appearing .fx-stage{animation:fx-rise var(--fx-time,7s) linear both}
+@keyframes fx-rise{
+ 0%{opacity:0;transform:translate3d(0,13px,0) scale(.955)}
+ 40%{opacity:.98;transform:translate3d(0,0,0) scale(1)}
+ 68%{opacity:.98;transform:translate3d(0,0,0) scale(1)}
+ 100%{opacity:0;transform:translate3d(0,-10px,0) scale(1.015)}
+}
+@media(prefers-reduced-motion:reduce){
+ .signal.is-stage-fx .fx-stage{animation:none!important;opacity:.9;transform:none;clip-path:none}
+ .signal.is-stage-fx .fx-stage::before,.signal.is-stage-fx .fx-stage::after{animation:none!important;opacity:0}
+}
 .brand-lockup{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;text-align:center}
 .brand-mark{display:block;width:57px;height:57px;object-fit:contain;filter:drop-shadow(0 1px 1px #ffffff15)}
 .brand-word{display:block;font-size:24px;font-weight:640;letter-spacing:.17em;padding-left:.17em;white-space:nowrap;line-height:1.05;color:#eaf2fc;background:linear-gradient(150deg,#fff 8%,#d9e5f2 43%,#9aafc6 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -191,6 +271,10 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .fx-modes button{border:0;border-radius:11px;background:transparent;color:var(--secondary);padding:7px 9px;font-size:11px;line-height:1.25;font-weight:600;white-space:nowrap;cursor:pointer}
 .fx-modes button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 1px 6px #0002}
 .fx-modes button:focus-visible{outline:2px solid #b3c4e7;outline-offset:2px}
+.fx-scene-label{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--secondary);font-weight:560}
+.fx-scene-label select{max-width:190px;border:1px solid var(--line);border-radius:11px;padding:7px 9px;font:inherit;font-size:11px;color:var(--text);background:var(--card2)}
+.fx-modes button{transition:background-color .2s,color .2s}
+@media(max-width:410px){.fx-compare{align-items:stretch}.fx-modes{width:100%}.fx-scene-label{justify-content:space-between;width:100%}}
 .activity-row .activity-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
 .activity-info .activity-title{flex:none}
 .activity-status{font-size:var(--type-caption);line-height:1.4;color:var(--secondary)}
@@ -297,7 +381,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div class="fx-modes" role="group" aria-label="Режим появления">
 <button id="fxClassic" type="button" aria-pressed="true">Classic</button>
 <button id="fxLiving" type="button" aria-pressed="false">Living Cinema</button><button id="fxSilk" type="button" aria-pressed="false">Silk Reveal</button>
-</div></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+<button id="fxPearl" type="button" aria-pressed="false">Pearl Bloom</button>
+<button id="fxSweep" type="button" aria-pressed="false">Silver Wave</button>
+<button id="fxIris" type="button" aria-pressed="false">Iris Cinema</button>
+<button id="fxRise" type="button" aria-pressed="false">Velvet Rise</button>
+</div>
+<label class="fx-scene-label" for="fxScene">Показывать
+<select id="fxScene" aria-label="Что показывать в сфере">
+<option value="brand" selected>Логотип SEYVEO</option>
+<option value="moment">Часы и дата</option>
+<option value="care">Забота</option>
+<option value="notice">Уведомление</option>
+<option value="all">Все эффекты по очереди</option>
+</select></label></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -584,7 +680,7 @@ clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=n
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
 /* Living Cinema experiment. A single existing preview controller dispatches
    either the original glass-mist or minimal opacity/scale choreography. */
-const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-silk','signal--moment','signal--care','signal--notice','signal--brand'];
+const PREVIEW_SIGNAL_CLASSES=['is-appearing','is-brand','is-preview','is-living','is-silk','is-stage-fx','fx--pearl','fx--sweep','fx--iris','fx--rise','signal--moment','signal--care','signal--notice','signal--brand'];
 function stopEffectsPreview(){
   clearTimeout(previewSequenceTimer);
   cancelAnimationFrame(previewFrameId);
@@ -600,12 +696,16 @@ function stopEffectsPreview(){
   transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
 }
 function setPreviewMode(mode){
-  if(!['classic','living','silk'].includes(mode))return;
+  if(!['classic','living','silk','pearl','sweep','iris','rise'].includes(mode))return;
   if(previewRunning)stopEffectsPreview();
   previewMode=mode;
   $('fxClassic').setAttribute('aria-pressed',String(mode==='classic'));
   $('fxLiving').setAttribute('aria-pressed',String(mode==='living'));
   $('fxSilk').setAttribute('aria-pressed',String(mode==='silk'));
+  $('fxPearl').setAttribute('aria-pressed',String(mode==='pearl'));
+  $('fxSweep').setAttribute('aria-pressed',String(mode==='sweep'));
+  $('fxIris').setAttribute('aria-pressed',String(mode==='iris'));
+  $('fxRise').setAttribute('aria-pressed',String(mode==='rise'));
 }
 function previewSphereMoments(){
   if(previewRunning){stopEffectsPreview();return}
@@ -614,14 +714,15 @@ function previewSphereMoments(){
   clearTimeout(brandClearTimer);
   previewRunning=true;
   const mode=previewMode;
-  const interval=(classic,living,silk)=>mode==='silk'?silk:mode==='living'?living:classic;
+  const newMode=['pearl','sweep','iris','rise'].includes(mode);
+  const interval=(classic,living,silk,cinema)=>newMode?cinema:mode==='silk'?silk:mode==='living'?living:classic;
   const button=$('previewEffects');
   button.textContent='Остановить';
   button.setAttribute('aria-pressed','true');
   $('orb').scrollIntoView({block:'center',behavior:'smooth'});
   const el=$('signal');
   const steps=[
-    {kind:'moment',duration:interval(5900,8300,9100),build(){
+    {kind:'moment',duration:interval(5900,8300,9100,7600),build(){
       const now=new Date();
       const hour=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
       const date=now.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
@@ -635,7 +736,7 @@ function previewSphereMoments(){
       }
       el.replaceChildren(moment);
     }},
-    {kind:'care',duration:interval(5900,8300,9100),build(){
+    {kind:'care',duration:interval(5900,8300,9100,7600),build(){
       const moment=document.createElement('span');
       moment.className='preview-moment';
       const line=document.createElement('span');
@@ -644,29 +745,39 @@ function previewSphereMoments(){
       moment.append(line);
       el.replaceChildren(moment);
     }},
-    {kind:'notice',duration:interval(5900,5300,5900),build(){
+    {kind:'notice',duration:interval(5900,5300,5900,6200),build(){
       el.innerHTML=glassIcon('mail','orb');
     }},
-    {kind:'brand',duration:6400,build(){
+    {kind:'brand',duration:newMode?7500:6400,build(){
       el.innerHTML=BRAND_LOCKUP_HTML;
     }}
   ];
+  const requestedScene=$('fxScene').value;
+  const selectedSteps=requestedScene==='all'?steps:steps.filter(step=>step.kind===requestedScene);
   let index=0;
   function showNext(){
     if(!previewRunning)return;
     if(document.hidden||!$('ask').hidden||document.querySelector('dialog[open]')){
       stopEffectsPreview();return;
     }
-    if(index===steps.length){stopEffectsPreview();return}
+    if(index===selectedSteps.length){stopEffectsPreview();return}
     el.classList.remove(...PREVIEW_SIGNAL_CLASSES);
     el.replaceChildren();
-    const step=steps[index++];
+    const step=selectedSteps[index++];
     el.classList.add('signal--'+step.kind);
     if(step.kind==='brand')el.classList.add('is-brand');
     if(step.kind==='moment'||step.kind==='care')el.classList.add('is-preview');
     if(mode==='living'&&step.kind!=='brand')el.classList.add('is-living');
     if(mode==='silk'&&step.kind!=='brand')el.classList.add('is-silk');
+    if(newMode)el.classList.add('is-stage-fx','fx--'+mode);
     step.build();
+    if(newMode){
+      el.style.setProperty('--fx-time',Math.max(1000,step.duration-200)+'ms');
+      const plane=document.createElement('span');
+      plane.className='fx-stage';
+      plane.append(...el.childNodes);
+      el.append(plane);
+    }
     if(mode==='silk'&&step.kind!=='brand'){
       const plane=document.createElement('span');
       plane.className='silk-plane';
@@ -694,6 +805,10 @@ function previewSphereMoments(){
 $('fxClassic').addEventListener('click',()=>setPreviewMode('classic'));
 $('fxLiving').addEventListener('click',()=>setPreviewMode('living'));
 $('fxSilk').addEventListener('click',()=>setPreviewMode('silk'));
+$('fxPearl').addEventListener('click',()=>setPreviewMode('pearl'));
+$('fxSweep').addEventListener('click',()=>setPreviewMode('sweep'));
+$('fxIris').addEventListener('click',()=>setPreviewMode('iris'));
+$('fxRise').addEventListener('click',()=>setPreviewMode('rise'));
 $('previewEffects').addEventListener('click',previewSphereMoments);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&previewRunning)stopEffectsPreview()});
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
