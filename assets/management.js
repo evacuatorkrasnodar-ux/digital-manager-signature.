@@ -172,7 +172,8 @@ const KEYS=Object.freeze({
  draft:'seyveo-draft-v1',
  tasks:'seyveo-personal-tasks-v1',
  company:'seyveo-company-passport-v1',
- pictureWidgets:'seyveo-home-widgets-v1'
+ pictureWidgets:'seyveo-home-widgets-v1',
+ roadmapProgress:'seyveo-roadmap-progress-v1'
 });
 function read(key){
  try{return localStorage.getItem(key)}catch{return null}
@@ -188,6 +189,7 @@ function snapshot(){
  const tasks=parsed(read(KEYS.tasks),[]);
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
+ const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
  const rawTierPreview=read('seyveo-developer-tier-preview-v1');
  const developerTierPreview=['start','pro','max'].includes(rawTierPreview)?rawTierPreview:null;
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
@@ -201,6 +203,7 @@ function snapshot(){
   personalTasks:Array.isArray(tasks)?tasks:[],
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
+  roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
   developerTierPreview,
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
@@ -226,6 +229,7 @@ function drawData(){
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
   ['Моя картина',record.pictureWidgets?String(record.pictureWidgets.ids.length)+' выбранных':'Стандартный набор'],
+  ['Карта развития',String(roadmapCounts().checked)+' из '+String(roadmapCounts().total)+' отмечено'],
   ['Предпросмотр уровня',record.developerTierPreview?'Business '+({start:'Start',pro:'Pro',max:'Max'}[record.developerTierPreview]):'По умолчанию · Pro'],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
@@ -271,6 +275,7 @@ window.addEventListener('seyveo:profile-changed',updateLiveSummary);
 window.addEventListener('hashchange',updateLiveSummary);
 window.addEventListener('storage',event=>{
  if([KEYS.tasks,'seyveo-first-acquaintance-v1'].includes(event.key))updateLiveSummary();
+ if(event.key===ROADMAP_KEY){roadmapMarks=loadRoadmapMarks();if(roadmapDialog.open)drawRoadmap()}
 });
 updateLiveSummary();
 for(const dialog of [connect,dataDialog,roadmapDialog]){
