@@ -80,3 +80,13 @@
 .seyveo-tier-honesty{font-size:11px!important;line-height:1.5!important;color:var(--secondary);margin:12px 0 0!important;white-space:normal!important}
 .seyveo-tier-choice:focus-visible,.seyveo-tier-steps button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 @media(max-width:370px){.seyveo-tier-choice{padding:11px 7px 9px}.seyveo-tier-choice strong{font-size:17px}.seyveo-tier-choice small,.seyveo-tier-choice em{font-size:9px}.seyveo-tier-life-state{display:none}}
+
+/* Two signature passports live on Home as before; don't reposition the orb. */
+.home-passports{margin:19px 1px 2px;min-width:0}
+.home-passports-title{margin:0 0 10px 5px;font-size:12px;font-weight:620;line-height:1.4;letter-spacing:.005em;color:var(--secondary)}
+.home-passports .seyveo-passport-grid{margin:0;gap:11px}
+.home-passports .seyveo-passport-card{height:154px}
+@media(max-width:355px){
+ .home-passports .seyveo-passport-grid{gap:8px}
+ .home-passports .seyveo-passport-card{height:149px}
+}
