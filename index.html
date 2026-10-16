@@ -379,7 +379,12 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-roadmap-item+.manage-roadmap-item{border-top:1px solid var(--soft-line)}
 .manage-roadmap-item strong{display:block;font-size:13px;line-height:1.4;font-weight:590;color:var(--text)}
 .manage-roadmap-item p{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--secondary);white-space:normal}
-</style><link rel="stylesheet" href="assets/onboarding.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+</style><link rel="stylesheet" href="assets/onboarding.css?v=1"><link rel="stylesheet" href="assets/personal-tasks.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section>
+<section class="personal-brief" id="personalBrief" aria-labelledby="personalBriefTitle">
+<div class="personal-brief-head"><div><small>ВАШИ ДЕЛА · НА ЭТОМ УСТРОЙСТВЕ</small><strong id="personalBriefTitle">Мой день</strong></div><button id="personalAddHome" class="personal-brief-add" type="button">+ Добавить</button></div>
+<div id="personalBriefList" class="personal-brief-list" aria-live="polite"><p class="personal-brief-empty">Здесь будут ваши личные дела.</p></div>
+<div class="personal-brief-footer"><button id="personalGoTasks" class="personal-brief-more" type="button">Открыть все дела ›</button><span id="personalBriefCount" class="personal-brief-count" hidden></span></div>
+</section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="button" id="wakeVoiceStart" class="composer-icon" aria-label="Обращение по имени SEYVEO" title="Обращение по имени"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -420,11 +425,15 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section>
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
 <header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Все поручения — в одном месте.</p></header>
-<div class="tasks-switch" role="group" aria-label="Просмотр поручений">
+<section class="personal-tasks-panel" aria-labelledby="personalTasksTitle">
+<div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div>
+<div id="personalTaskList" class="manage-card personal-tasks-list" aria-live="polite"><p class="personal-tasks-empty">Личные дела пока не созданы.</p></div>
+</section>
+<div class="tasks-switch" role="group" aria-label="Демонстрационные поручения">
 <button type="button" data-tasks-tab="working" aria-pressed="true">В работе <span id="tasksCountWorking" aria-hidden="true">0</span></button>
 <button type="button" data-tasks-tab="history" aria-pressed="false">История <span id="tasksCountHistory" aria-hidden="true">0</span></button>
 </div>
-<section class="manage-group tasks-group" aria-labelledby="tasksGroupHeading"><h2 id="tasksGroupHeading">В работе</h2><div class="manage-card tasks-records" id="tasksRecords" aria-label="Поручения"></div></section>
+<section class="manage-group tasks-group" aria-labelledby="tasksGroupHeading"><h2 id="tasksGroupHeading">Демонстрационные поручения</h2><div class="manage-card tasks-records" id="tasksRecords" aria-label="Поручения"></div></section>
 <p class="tasks-note">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p>
 </main><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
@@ -450,7 +459,15 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="onboardDialog" class="onboard-dialog" aria-labelledby="onboardTitle" aria-describedby="onboardIntro">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="personalTaskDialog" class="personal-task-dialog" aria-labelledby="personalTaskDialogTitle">
+<h2 id="personalTaskDialogTitle">Новое дело</h2><p>Это настоящая личная запись. Она сохранится только на вашем устройстве.</p>
+<form id="personalTaskForm">
+<label>Что нужно сделать?<input id="personalTaskTitle" type="text" maxlength="140" autocomplete="off" required placeholder="Например, позвонить маме"></label>
+<label>Срок · необязательно<input id="personalTaskDue" type="date"></label>
+<div class="personal-task-actions"><button class="btn" id="personalTaskCancel" type="button">Отмена</button><button class="btn primary" type="submit">Сохранить</button></div>
+<small id="personalTaskStatus" role="status" aria-live="polite"></small>
+</form></dialog>
+<dialog id="onboardDialog" class="onboard-dialog" aria-labelledby="onboardTitle" aria-describedby="onboardIntro">
 <div class="onboard-top"><div><span class="onboard-eyebrow">SEYVEO / ЗНАКОМСТВО</span><h2 id="onboardTitle" class="onboard-title">Давай познакомимся.</h2></div><button id="onboardClose" class="onboard-dismiss" type="button" aria-label="Закрыть знакомство">×</button></div>
 <p id="onboardIntro" class="onboard-intro">Я SEYVEO — твой будущий цифровой управляющий. С чего начнём? Можно выбрать сейчас, а изменить потом.</p>
 <form id="onboardForm">
@@ -844,9 +861,10 @@ transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.ind
 $('kicker').textContent=confirmation?'Согласовано':isCalm?'Всё под контролем':story.kicker;
 $('headline').textContent=confirmation?confirmation.approved:isCalm?'Роман, сейчас всё спокойно':story.title;
 $('subline').textContent=confirmation?'Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.':isCalm?'Все вопросы разобраны. Новые решения появятся здесь, когда потребуется ваше участие.':story.subtitle;
-$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
+$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'<div class="demo-replay"><span>Три примера пройдены. Это демонстрация возможностей SEYVEO.</span><button type="button" id="replayDemo">Посмотреть снова ›</button></div>':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 $('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>approve(story));
+$('replayDemo')?.addEventListener('click',()=>{state.index=0;confirmation=null;save();render()});
 const items=activeTasks();
 $('activityList').innerHTML=items.length?items.map(taskRow).join(''):'<div class="activity-empty">Сейчас нет поручений в работе.</div>';
 if($('historyDialog').open)renderHistory();
@@ -1181,4 +1199,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=6"></script><script src="assets/onboarding.js?v=2"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=6"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=1"></script></body></html>
