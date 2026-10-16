@@ -841,6 +841,7 @@ function brandProgress(){
 }
 function scheduleNextBrand(ms){
   clearTimeout(brandNextTimer);
+  if(document.documentElement.dataset.seyveoEffects==='off')return;
   if(brandProgress().count>=BRAND_MAX_DAILY)return;
   brandNextTimer=setTimeout(()=>{showBrandSignature('ambient')},Math.max(500,ms));
 }
@@ -938,11 +939,9 @@ document.addEventListener('seyveo:effects-change',event=>{
   if(!event.detail?.enabled){
     stopPearlMist();
     clearTimeout(brandNextTimer);
-    if(orbTapBrandActive){
-      clearTimeout(brandClearTimer);
-      orbTapBrandActive=false;
-      if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
-    }
+    clearTimeout(brandClearTimer);
+    orbTapBrandActive=false;
+    if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
   }else if(!document.hidden&&!$('homePage').hidden){
     scheduleNextBrand(180000);
   }
