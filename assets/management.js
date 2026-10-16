@@ -10,7 +10,8 @@ const roadmap=[
    ['Black Velvet и темы','Главная сфера и оформление, автоматическая, тёмная и светлая темы.'],
    ['Дела и история','Демонстрационные поручения со статусами и историей; реальные внешние действия пока не выполняются.'],
    ['Заметки и данные','Локальные записи, черновики и экспорт копии.'],
-   ['Паспорта SEYVEO и компании','Две новые фирменные карточки с зеркальным изгибом. Паспорт продукта, сохранение реквизитов компании, отправка и печать. Данные на устройстве.'],
+   ['Паспорта SEYVEO и компании','Две фирменные карточки: сведения студии, локальная карточка компании, отправка и печать.'],
+   ['Предпросмотр Business Start / Pro / Max','В паспорте продукта видны все уровни, задачи каждого и переходы вверх и вниз; выбор сохраняется локально только как режим просмотра разработчика. Life остаётся отдельным.'],
    ['Мой обзор на Главной','Работающая компактная панель: выбранное направление, реальные личные дела и честный статус подключений. Каждая область открывает своё управление.']
  ]},
  {status:'Пробный режим',name:'Проверяем',items:[
@@ -76,6 +77,8 @@ function snapshot(){
  const draft=read(KEYS.draft);
  const tasks=parsed(read(KEYS.tasks),[]);
  const company=parsed(read(KEYS.company),null);
+ const rawTierPreview=read('seyveo-developer-tier-preview-v1');
+ const developerTierPreview=['start','pro','max'].includes(rawTierPreview)?rawTierPreview:null;
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
  return {
   product:'SEYVEO',
@@ -86,6 +89,7 @@ function snapshot(){
   notes:Array.isArray(notes)?notes:[],
   personalTasks:Array.isArray(tasks)?tasks:[],
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
+  developerTierPreview,
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
  };
@@ -109,6 +113,7 @@ function drawData(){
   ['Мои записи',String(countOf(record.notes))],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
+  ['Предпросмотр уровня',record.developerTierPreview?'Business '+({start:'Start',pro:'Pro',max:'Max'}[record.developerTierPreview]):'По умолчанию · Pro'],
   ['Черновик',record.draft.trim()?'Сохранён':'Нет'],
   ['Поручения в истории',String(countOf(record.state.history))],
   ['Данные', 'На этом устройстве']
