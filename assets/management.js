@@ -264,12 +264,6 @@ function saveFile(){
   $('manageExportStatus').textContent='Не удалось создать копию. Проверьте разрешения браузера.';
  }
 }
-// Working tools lead to EXISTING useful screens, not empty imitation modules.
-$('openManageClients')?.addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:open-clients')));
-$('openManageCalendar')?.addEventListener('click',()=>{
- // Full calendar grid is a future milestone; real due dates already work in Tasks.
- document.getElementById('navTasks')?.click();
-});
 $('openManageRoadmap').addEventListener('click',()=>{drawRoadmap();roadmapDialog.showModal()});
 $('manageRoadmapClose').addEventListener('click',()=>roadmapDialog.close());
 $('openManageConnections').addEventListener('click',()=>connect.showModal());
