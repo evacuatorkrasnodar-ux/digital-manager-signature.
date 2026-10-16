@@ -460,7 +460,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button class="orb-shortcut orb-shortcut--notes" type="button" data-orb-action="notes" title="Мои записи" aria-label="Открыть мои записи"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.8h8l4.5 4.5V21H6zM14 2.8v5h4.5M9 12h6M9 15.5h6M9 19h4"/></svg></button>
 </nav></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div>
 <article id="orbInfoCard" class="orb-info-card" role="region" aria-labelledby="orbInfoTitle" hidden>
-<button id="orbInfoClose" class="orb-info-close" type="button" aria-label="Закрыть ответ управляющего">
+<button id="orbInfoClose" class="orb-info-close seyveo-close-control" type="button" aria-label="Закрыть ответ управляющего">
 <svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>
 </button>
 <span class="orb-info-label">SEYVEO · УПРАВЛЯЮЩИЙ</span>
@@ -487,7 +487,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
-<div class="composer-compact"><button type="button" id="wakeVoiceStart" class="composer-icon" aria-label="Обращение по имени SEYVEO" title="Обращение по имени"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<div class="composer-compact"><button type="button" id="wakeVoiceStart" class="composer-icon" aria-label="Обращение по имени SEYVEO" title="Обращение по имени"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon seyveo-close-control" aria-label="Закрыть поле"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
 <div class="composer-actions">
 <button class="composer-tool" type="submit" aria-label="Отправить управляющему"><span><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></span><small>Отправить</small></button>
 <button class="composer-tool" type="button" id="saveNote"><span><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v6h8V4M8 20v-7h8v7"/></svg></span><small>Блокнот</small></button>
@@ -565,7 +565,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <span class="ask-caption" aria-hidden="true">Спросить</span>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="personalTaskDialog" class="personal-task-dialog" aria-labelledby="personalTaskDialogTitle">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><dialog id="personalTaskDialog" class="personal-task-dialog" aria-labelledby="personalTaskDialogTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть новое дело"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="personalTaskDialogTitle">Новое дело</h2><p>Это настоящая личная запись. Она сохранится только на вашем устройстве.</p>
 <form id="personalTaskForm">
 <label>Что нужно сделать?<input id="personalTaskTitle" type="text" maxlength="140" autocomplete="off" required placeholder="Например, позвонить маме"></label>
@@ -574,7 +574,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <small id="personalTaskStatus" role="status" aria-live="polite"></small>
 </form></dialog>
 <dialog id="onboardDialog" class="onboard-dialog" aria-labelledby="onboardTitle" aria-describedby="onboardIntro">
-<div class="onboard-top"><div><span class="onboard-eyebrow">SEYVEO / ЗНАКОМСТВО</span><h2 id="onboardTitle" class="onboard-title">Давай познакомимся.</h2></div><button id="onboardClose" class="onboard-dismiss" type="button" aria-label="Закрыть знакомство"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<div class="onboard-top"><div><span class="onboard-eyebrow">SEYVEO / ЗНАКОМСТВО</span><h2 id="onboardTitle" class="onboard-title">Давай познакомимся.</h2></div><button id="onboardClose" class="onboard-dismiss seyveo-close-control" type="button" aria-label="Закрыть знакомство"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
 <p id="onboardIntro" class="onboard-intro">Я SEYVEO — твой будущий цифровой управляющий. С чего начнём? Можно выбрать сейчас, а изменить потом.</p>
 <form id="onboardForm">
 <label class="onboard-field" for="onboardName">Как мне к тебе обращаться? <span style="font-weight:400">· необязательно</span>
@@ -591,7 +591,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </form>
 </dialog>
 
-<dialog id="seyveoStudioDialog" class="seyveo-passport-modal" aria-labelledby="seyveoStudioTitle">
+<dialog id="seyveoStudioDialog" class="seyveo-passport-modal" aria-labelledby="seyveoStudioTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть паспорт SEYVEO"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="seyveoStudioTitle">Паспорт SEYVEO</h2>
 <p class="seyveo-passport-subtitle">Сведения о студии и продукте · текущая демонстрационная версия.</p>
 <div class="seyveo-passport-brand"><img src="assets/official-logo.svg?v=3" alt="" width="52" height="52"><div><strong>SEYVEO</strong><small>Технологическая студия искусственного интеллекта и автоматизации<br>IT · AI · AUTOMATION</small></div></div>
@@ -624,7 +624,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="info-actions"><button type="button" class="btn primary" id="seyveoStudioClose">Закрыть</button></div>
 </dialog>
 
-<dialog id="seyveoCompanyDialog" class="seyveo-passport-modal" aria-labelledby="seyveoCompanyTitle">
+<dialog id="seyveoCompanyDialog" class="seyveo-passport-modal" aria-labelledby="seyveoCompanyTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть карточку компании"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <div class="seyveo-passport-dialog-head"><h2 id="seyveoCompanyTitle">Карточка компании</h2><button id="seyveoCompanyEditTop" class="seyveo-passport-edit-top" type="button" aria-label="Перейти к редактированию реквизитов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.6-1 10.5-10.6a2.4 2.4 0 0 0-3.4-3.4L5.3 15.6 4 20Z"/><path d="m14.7 6.2 3.3 3.3"/></svg>Изменить</button></div>
 <p class="seyveo-passport-subtitle">Реквизиты для клиентов и партнёров. Вы решаете, что заполнить и кому отправить.</p>
 <div id="seyveoCompanyRows"></div>
@@ -658,14 +658,14 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <p class="seyveo-passport-notice">Данные хранятся только на этом устройстве и не проверяются по ФНС. Перед отправкой проверьте получателя и содержимое.</p>
 <div class="info-actions"><button type="button" class="btn primary" id="seyveoCompanyClose">Закрыть</button></div>
 </dialog>
-<dialog id="manageRoadmapDialog" class="manage-dialog manage-roadmap-dialog" aria-labelledby="manageRoadmapTitle">
+<dialog id="manageRoadmapDialog" class="manage-dialog manage-roadmap-dialog" aria-labelledby="manageRoadmapTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть карту развития"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="manageRoadmapTitle">Карта развития</h2>
 <p class="manage-dialog-desc">Ничего не потеряем: здесь видны готовые функции, пробные решения и будущие возможности SEYVEO.</p>
 <div id="manageRoadmapBody" class="manage-roadmap-body"></div>
 <p class="manage-dialog-note">Это план проекта, а не настройки. Функция считается готовой только после реализации и проверки. Обновляем карту вместе с разработкой.</p>
 <div class="info-actions"><button id="manageRoadmapClose" type="button" class="btn primary">Закрыть</button></div>
 </dialog>
-<dialog id="manageConnectionsDialog" class="manage-dialog" aria-labelledby="manageConnectionsTitle">
+<dialog id="manageConnectionsDialog" class="manage-dialog" aria-labelledby="manageConnectionsTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть подключения"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="manageConnectionsTitle">Подключения</h2>
 <p class="manage-dialog-desc">SEYVEO будет работать только с теми источниками, к которым вы предоставите доступ. Сейчас внешние сервисы не подключены.</p>
 <div class="manage-service-list" aria-label="Статус источников">
@@ -676,21 +676,26 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <p class="manage-dialog-note">Здесь будут отображаться проверенные подключения, разрешения и возможность отозвать доступ. Пока приложение не читает внешние данные.</p>
 <div class="info-actions"><button id="manageConnectionsClose" type="button" class="btn primary">Закрыть</button></div>
 </dialog>
-<dialog id="manageDataDialog" class="manage-dialog" aria-labelledby="manageDataTitle">
+<dialog id="manageDataDialog" class="manage-dialog" aria-labelledby="manageDataTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть мои данные"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="manageDataTitle">Мои данные</h2>
 <p class="manage-dialog-desc">Записи и черновики этой версии сохраняются локально в браузере. Здесь можно посмотреть их объём и сохранить копию.</p>
 <div class="manage-data-list" id="manageDataSummary" aria-label="Локальные данные"></div>
 <p class="manage-dialog-note">Копия содержит локальные записи и, если вы их заполнили, реквизиты компании. Храните файл в надёжном месте. Пароли и подключения внешних сервисов не включены.</p>
 <div class="info-actions"><button id="manageExportData" type="button" class="btn">Сохранить копию</button><button id="manageDataClose" type="button" class="btn primary">Закрыть</button></div>
 <small id="manageExportStatus" class="manage-dialog-status" role="status" aria-live="polite"></small>
-</dialog><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle">
+</dialog><dialog id="info" aria-labelledby="infoTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть ответ"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть историю поручений"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="wakeVoiceConsent" class="notes-dialog" aria-labelledby="wakeVoiceConsentTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отмена обращения по имени"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="wakeVoiceConsentTitle">Обращение по имени</h2>
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
-</dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
+</dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть мои записи"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
+/* One accessible close action for all dialog header X buttons.
+   Onboarding retains its existing skip/save behavior. */
+document.querySelectorAll('dialog > button.seyveo-dialog-close').forEach(button=>{
+  button.addEventListener('click',()=>button.closest('dialog')?.close());
+});
 const stories=[
 {type:'mail',kicker:'Нужно ваше решение',title:'Роман, клиент ждёт ответа',subtitle:'Проверил условия и подготовил предложение. Осталось ваше согласование.',card:'Ответ клиенту',meta:'SEYVEO · обращение клиента (сценарий)',tag:'Черновик ответа готов к согласованию',approve:'Согласовать ответ',approved:'Ответ клиенту согласован',detail:'Клиент запросил стоимость и сроки запуска проекта.\n\nПредлагаемый ответ:\n«Добрый день! Подготовили предварительное предложение. Можем обсудить детали завтра после 12:00. Подтвердите, пожалуйста, удобное время».\n\nВ этом сценарии сообщение не отправляется.'},
 {type:'calendar',kicker:'В календаре пересечение',title:'Роман, две встречи совпали',subtitle:'Нашёл свободное окно. Перенос не затронет остальные планы.',card:'Перенести встречу',meta:'SEYVEO · встреча 14:30 → 16:00 (сценарий)',tag:'Время проверено в примере календаря',approve:'Согласовать перенос',approved:'Перенос встречи согласован',detail:'На 14:30 в примере календаря запланированы две встречи.\n\nПредлагаю перенести беседу с партнёром на 16:00, сохранив длительность 45 минут.\n\nЭто симуляция: реальный календарь не меняется.'},
