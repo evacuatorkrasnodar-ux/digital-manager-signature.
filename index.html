@@ -13,7 +13,7 @@ button:focus-visible{outline:2px solid #b3c4e7;outline-offset:3px}
 .heading{flex:1;min-width:0}
 h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;letter-spacing:-.045em}
 .greeting{font-size:var(--type-body-compact);line-height:1.4;color:var(--secondary);margin:5px 0 0}
-.round{height:41px;width:41px;background:var(--card);border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:19px}
+
 .home-main{flex:1;display:flex;flex-direction:column}
 .stage{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:20px 0 14px;min-height:385px}
 .plasma{position:relative;isolation:isolate;display:grid;place-items:center;flex:none;width:min(81vw,342px);height:min(81vw,342px);min-width:240px;min-height:240px;border:0;background:transparent;padding:0;cursor:pointer}
@@ -254,7 +254,37 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:9px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:32px}}
-</style></head><body><div class="app"><header class="top"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div><button id="theme" class="round" aria-label="Переключить тему">◐</button></header><main class="home-main"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
+
+/* SEYVEO: Black Velvet Management screen · same palette and dock as Home */
+#homeHeader[hidden],#homePage[hidden],#managePage[hidden]{display:none!important}
+button.nav-item{background:transparent;border:0;padding:0;-webkit-appearance:none;appearance:none}
+button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;border-radius:7px}
+.manage-main{flex:1;min-width:0;padding:10px 0 15px}
+.manage-heading{margin:9px 0 30px}
+.manage-caption{margin:0 0 13px;color:var(--secondary);font-size:10px;letter-spacing:.16em;font-weight:630}
+.manage-caption span{opacity:.45;margin:0 6px}
+.manage-heading h1{font-size:32px;line-height:1.12;font-weight:690;letter-spacing:-.045em;margin:0 0 9px}
+.manage-heading>p:last-child{margin:0;font-size:14px;color:var(--secondary);line-height:1.4}
+.manage-group{margin:0 0 25px}
+.manage-group h2{font-size:12px;font-weight:630;line-height:1.4;letter-spacing:.012em;color:var(--secondary);margin:0 0 10px;padding-left:5px}
+.manage-card{border:1px solid var(--line);border-radius:21px;overflow:hidden;background:var(--card);box-shadow:inset 0 1px 0 #ffffff07,0 12px 28px var(--shadow)}
+.manage-row{background:transparent;border:0;width:100%;min-height:68px;display:flex;align-items:center;text-align:left;gap:12px;padding:14px 18px;color:var(--text)}
+.manage-row+.manage-row,.manage-theme-block+.manage-row{border-top:1px solid var(--soft-line)}
+.manage-row:active{background:var(--card2)}
+.manage-text{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.manage-text strong{font-size:14px;font-weight:620;line-height:1.3;letter-spacing:-.015em}
+.manage-text small{font-size:12px;line-height:1.4;color:var(--secondary);font-weight:450}
+.manage-chevron{font-size:25px;font-weight:300;line-height:1;color:var(--secondary);opacity:.8}
+.manage-theme-block{padding:17px 17px 16px}
+.manage-theme-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin-top:16px;border-radius:14px;background:var(--card2);border:1px solid var(--soft-line)}
+.manage-theme-choices button{min-height:38px;background:transparent;border:0;border-radius:10px;color:var(--secondary);font-size:12px;font-weight:590;line-height:1.25;padding:7px 3px}
+.manage-theme-choices button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 2px 8px #0002,inset 0 0 0 1px var(--soft-line)}
+.manage-theme-choices button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.manage-theme-note{margin:12px 2px 0;font-size:11px;line-height:1.5;color:var(--secondary)}
+.manage-footnote{text-align:center;font-size:11px;line-height:1.8;color:var(--secondary);margin:4px 0;opacity:.78}
+@media(prefers-reduced-motion:no-preference){.manage-main:not([hidden]){animation:manage-enter .24s ease-out both}}
+@keyframes manage-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+</style></head><body><div class="app"><header class="top" id="homeHeader"><div class="mark" aria-hidden="true"><img src="assets/official-logo.svg?v=3" alt="" width="42" height="42"></div><div class="heading"><h1>Мой день</h1><p class="greeting" id="greeting">Доброе утро, Роман · SEYVEO</p></div></header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><button id="orb" class="plasma" aria-label="Посмотреть, что предлагает управляющий"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=11" alt="" draggable="false" width="440" height="440"><span id="signal" class="signal" aria-hidden="true"></span></button><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p></div></section><div id="dynamic" class="dynamic" aria-live="polite"></div><section class="timeline" aria-label="Работа управляющего"><div class="timeline-head"><button id="scenarioInfo" class="timeline-title" type="button" aria-label="Работа управляющего — информация о демонстрационных данных" title="О демонстрационных данных">Работа управляющего</button><span class="timeline-options"><button id="showHistory" class="timeline-history" type="button" aria-label="Открыть историю поручений">История</button></span></div><div id="activityList" class="activity-list"></div></section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
 <div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon" aria-label="Закрыть поле"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -267,8 +297,24 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 <div class="composer-more" id="composerMore" hidden><button type="button" id="copyText">Копировать</button><button type="button" id="viewNotes">Мои записи</button><button type="button" id="clearText">Очистить текст</button></div>
 <small class="composer-status" id="composerStatus" role="status" aria-live="polite" hidden></small>
-</form></main><footer class="dock" aria-label="Нижняя панель">
-<span class="nav-item nav-home active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></span>
+</form></main><main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
+<header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НАСТРОЙКИ</p><h1 id="manageTitle">Управление</h1><p>Всё важное — в одном месте.</p></header>
+<section class="manage-group" aria-labelledby="manage-assistant"><h2 id="manage-assistant">Мой управляющий</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="personality"><span class="manage-text"><strong>Общение и характер</strong><small>Имя, обращение и стиль разговора</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="voice"><span class="manage-text"><strong>Голос и микрофон</strong><small>Голосовое общение с SEYVEO</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-connect"><h2 id="manage-connect">Подключения</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="accounts"><span class="manage-text"><strong>Почта и календарь</strong><small>Сервисы пока не подключены</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="business"><span class="manage-text"><strong>Мессенджеры и CRM</strong><small>Подключения в разработке</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-abilities"><h2 id="manage-abilities">Возможности</h2><div class="manage-card"><button class="manage-row" type="button" data-manage-topic="insights"><span class="manage-text"><strong>Анализ и рекомендации</strong><small>Интеллектуальные подсказки</small></span><span class="manage-chevron" aria-hidden="true">›</span></button><button class="manage-row" type="button" data-manage-topic="execution"><span class="manage-text"><strong>Исполнение поручений</strong><small>Действия с подтверждением</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section>
+<section class="manage-group" aria-labelledby="manage-app"><h2 id="manage-app">Приложение</h2><div class="manage-card">
+<div class="manage-theme-block"><div class="manage-text"><strong>Оформление</strong><small>Выберите тему приложения</small></div>
+<div class="manage-theme-choices" role="group" aria-label="Тема приложения">
+<button type="button" data-theme-choice="auto" aria-pressed="false">Авто</button>
+<button type="button" data-theme-choice="light" aria-pressed="false">Светлая</button>
+<button type="button" data-theme-choice="dark" aria-pressed="true">Тёмная</button>
+</div><p class="manage-theme-note" id="manageThemeNote">Авто — оформление как в системе.</p></div>
+<button class="manage-row" type="button" data-manage-topic="notifications"><span class="manage-text"><strong>Уведомления</strong><small>Настройки оповещений</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" data-manage-topic="privacy"><span class="manage-text"><strong>Данные и безопасность</strong><small>Разрешения и личная информация</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div></section>
+<p class="manage-footnote">SEYVEO · IT · AI · AUTOMATION<br>Подключения и расширенные функции появятся в следующих версиях.</p>
+</main><footer class="dock" aria-label="Нижняя панель">
+<button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
 <span class="nav-item nav-tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></span>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Нажмите, чтобы написать. Удерживайте, чтобы говорить" aria-describedby="voiceHint">
 <svg class="button-art" viewBox="0 0 74 74" aria-hidden="true" focusable="false">
@@ -289,7 +335,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </g>
 </svg></button>
 <span class="ask-caption" aria-hidden="true">Спросить</span>
-<span class="nav-item nav-manage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></span>
+<button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div></div><dialog id="info" aria-labelledby="infoTitle"><h2 id="infoTitle"></h2><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><div class="reply-user"><span class="reply-speaker">Роман</span><div class="reply-content" id="userReplyText"></div></div><div class="reply-assistant"><span class="reply-avatar" aria-hidden="true"><img id="miniAssistantOrb" src="assets/plasma-signature.svg?v=11" alt="" width="60" height="60"></span><div class="reply-assistant-body"><span class="reply-speaker">Управляющий</span><div class="reply-content" id="assistantReplyText"></div></div></div><div class="reply-system">Пример ответа · ИИ и сервисы пока не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="historyDialog" class="notes-dialog" aria-label="История поручений"><h2>История поручений</h2><p class="history-notice">Демонстрационные действия. Реальные письма, календари и финансы не изменяются.</p><div id="historyList" class="history-list"></div><div class="info-actions"><button id="historyClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="notesDialog" class="notes-dialog" aria-label="Мои записи"><h2>Мои записи</h2><div id="notesList" class="notes-list"></div><div class="info-actions"><button id="notesNew" class="btn" type="button">Вернуться к тексту</button><button id="notesClose" class="btn primary" type="button">Закрыть</button></div></dialog><script>
 (()=>{'use strict';
 const KEY='dm-signature-living-v2',OLD_KEY='dm-signature-living-v1', $=id=>document.getElementById(id);
@@ -299,6 +345,22 @@ const stories=[
 {type:'budget',kicker:'Нашёл возможность сэкономить',title:'Роман, расходы на рекламу растут',subtitle:'Проверил показатели. Есть предложение, как вернуть бюджет под контроль.',card:'Рекламный бюджет',meta:'SEYVEO · реклама +18% (сценарий)',tag:'Изменение лимита только после согласования',approve:'Согласовать лимит',approved:'Лимит расходов согласован',detail:'В вымышленном отчёте расходы на рекламу выросли на 18%, а количество обращений осталось прежним.\n\nПредлагаю временно снизить дневной лимит на 10% и проверить результат через три дня.\n\nНикаких реальных рекламных кампаний или платежей приложение не меняет.'}
 ];
 const state={theme:'dark',index:0,history:[]};
+const systemThemeQuery=window.matchMedia('(prefers-color-scheme: dark)');
+const effectiveTheme=()=>state.theme==='auto'?(systemThemeQuery.matches?'dark':'light'):state.theme;
+function applyTheme(){
+  const resolved=effectiveTheme();
+  document.documentElement.dataset.theme=resolved;
+  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+  for(const id of ['plasmaVisual','miniAssistantOrb']){
+    const el=$(id);if(el&&el.getAttribute('src')!==svg)el.setAttribute('src',svg);
+  }
+  document.querySelectorAll('[data-theme-choice]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(button.dataset.themeChoice===state.theme));
+  });
+  const note=$('manageThemeNote');
+  if(note)note.textContent=state.theme==='auto'?'Авто · сейчас '+(resolved==='dark'?'тёмная':'светлая')+' тема. Меняется вместе с системой.':state.theme==='dark'?'Тёмная тема · Black Velvet.':'Светлая тема · White Velvet.';
+}
+
 const EXECUTION_DEMO_MS=5500,COMPLETION_VISIBLE_MS=2600;
 let taskTransitionTimer=null;
 function normalizeHistory(items){
@@ -311,7 +373,7 @@ function normalizeHistory(items){
     doneAt:Number.isFinite(h.doneAt)?h.doneAt:0
   }));
 }
-try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=raw.theme==='light'?'light':'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?normalizeHistory(raw.history):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=previous.theme==='light'?'light':'dark';if(Array.isArray(previous.activity))state.history=normalizeHistory(previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''})));}}}catch{}
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&typeof raw==='object'){state.theme=['auto','light','dark'].includes(raw.theme)?raw.theme:'dark';state.index=Number.isInteger(raw.index)?Math.max(0,Math.min(stories.length,raw.index)):0;state.history=Array.isArray(raw.history)?normalizeHistory(raw.history):[]}else{const previous=JSON.parse(localStorage.getItem(OLD_KEY)||'null');if(previous&&typeof previous==='object'){state.theme=['auto','light','dark'].includes(previous.theme)?previous.theme:'dark';if(Array.isArray(previous.activity))state.history=normalizeHistory(previous.activity.filter(a=>typeof a==='string').slice(-3).map(a=>({label:a.replace(/^✓ /,'').replace(/ — демонстрационное действие$/,'')+' · прошлый сценарий',time:''})));}}}catch{}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}};
 let confirmation=null,confirmationTimer=null;
 /* Each new demo event gets a brief, glass-outline notification, never a permanent overlay. */
@@ -491,7 +553,7 @@ function showWrittenReply(userText,assistantText){
   $('scenarioRestart').hidden=true;
   $('userReplyText').textContent=userText;
   $('assistantReplyText').textContent=assistantText;
-  const orb=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
+  const orb=effectiveTheme()==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
   if($('miniAssistantOrb').getAttribute('src')!==orb)$('miniAssistantOrb').setAttribute('src',orb);
   if(!$('info').open)$('info').showModal();
 }
@@ -532,9 +594,7 @@ function scheduleTaskProgress(){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 function render(){
 progressDemoTasks();
-document.documentElement.dataset.theme=state.theme;
-const plasmaVisual=$('plasmaVisual'),plasmaSource=state.theme==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
-if(plasmaVisual.getAttribute('src')!==plasmaSource)plasmaVisual.setAttribute('src',plasmaSource);
+applyTheme();
 $('greeting').textContent=greeting();
 const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
@@ -557,7 +617,52 @@ state.history=state.history.slice(-100);
 state.index=Math.min(stories.length,state.index+1);confirmation=story;save();render();
 clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=null;render()},1700);
 }
-$('theme').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();render()});
+document.querySelectorAll('[data-theme-choice]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    if(state.theme===button.dataset.themeChoice)return;
+    state.theme=button.dataset.themeChoice;
+    save();applyTheme();
+  });
+});
+const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
+if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
+else systemThemeQuery.addListener(onSystemThemeChange);
+const manageInfo={
+ personality:['Общение и характер','Здесь будет выбор имени, обращения и характера общения. Пока интеллект работает в демонстрационном режиме.'],
+ voice:['Голос и микрофон','Здесь будут параметры голоса. Разрешения на микрофон сейчас задаются браузером и устройством.'],
+ accounts:['Почта и календарь','Почта и календарь пока не подключены. В будущем здесь можно будет выбрать сервисы и разрешения.'],
+ business:['Мессенджеры и CRM','Подключения мессенджеров и CRM ещё разрабатываются.'],
+ insights:['Анализ и рекомендации','Настройки реального анализа появятся после подключения интеллекта. Сейчас доступна демонстрация сценариев.'],
+ execution:['Исполнение поручений','Позже здесь будет настройка согласования действий. Сейчас реальные операции во внешних сервисах не выполняются.'],
+ notifications:['Уведомления','Настройки оповещений появятся позже. Пока уведомления показываются только в демонстрационных сценариях.'],
+ privacy:['Данные и безопасность','Здесь будет управление разрешениями и личной информацией. Внешние сервисы пока не подключены.']
+};
+document.querySelectorAll('[data-manage-topic]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const entry=manageInfo[button.dataset.manageTopic];
+    if(entry)popup(entry[0],entry[1]);
+  });
+});
+function syncAppPage(){
+  const manage=location.hash==='#manage';
+  $('homeHeader').hidden=manage;
+  $('homePage').hidden=manage;
+  $('managePage').hidden=!manage;
+  $('navHome').classList.toggle('active',!manage);
+  $('navManage').classList.toggle('active',manage);
+  if(manage){$('navManage').setAttribute('aria-current','page');$('navHome').removeAttribute('aria-current');}
+  else{$('navHome').setAttribute('aria-current','page');$('navManage').removeAttribute('aria-current');}
+  document.title=manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  if(manage)$('signal').classList.remove('is-appearing');
+  window.scrollTo(0,0);
+}
+$('navHome').addEventListener('click',()=>{
+  if(location.hash==='#manage')history.pushState(null,'',location.pathname+location.search);
+  syncAppPage();
+});
+$('navManage').addEventListener('click',()=>{if(location.hash!=='#manage')location.hash='manage';else syncAppPage()});
+window.addEventListener('hashchange',syncAppPage);
+
 $('showHistory').addEventListener('click',()=>{progressDemoTasks();renderHistory();if(!$('historyDialog').open)$('historyDialog').showModal()});
 $('historyClose').addEventListener('click',()=>$('historyDialog').close());
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
@@ -703,5 +808,5 @@ fab.addEventListener('pointerup',endPress);fab.addEventListener('pointercancel',
 fab.addEventListener('contextmenu',e=>e.preventDefault());
 fab.addEventListener('click',()=>{if(suppressClick||started){started=false;return}if(inputPanel.hidden){openComposer();hint.classList.remove('active');requestAnimationFrame(()=>{question.focus();updateKeyboard()})}else{closeComposer();setHint('Нажмите — написать · удерживайте — говорить')}});
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();showBrandSignature('launch')})();
+restoreDraft();render();syncAppPage();if(location.hash!=='#manage')showBrandSignature('launch')})();
 </script></body></html>
