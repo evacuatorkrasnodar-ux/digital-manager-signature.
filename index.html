@@ -44,12 +44,16 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
    No blur filters, duplicated orb, or added moving glass. */
 .signal.is-preview.is-living{width:min(226px,76%);height:112px}
 .signal.is-preview.is-living .preview-care{font-size:15px}
-.signal.is-appearing.is-living.signal--moment,
-.signal.is-appearing.is-living.signal--care{
+/* Keep the text's geometry permanently still. Only the already-mounted
+   content layer fades; the parent never animates, blurs or scales. */
+.signal.is-living{opacity:1;transform:translate(-50%,-50%);filter:none}
+.signal.is-living :is(.preview-moment,.glass-figure){opacity:0;transform:translateZ(0);backface-visibility:hidden}
+.signal.is-appearing.is-living.signal--moment .preview-moment,
+.signal.is-appearing.is-living.signal--care .preview-moment{
  animation:living-moment 8.2s linear both;
  will-change:opacity;
 }
-.signal.is-appearing.is-living.signal--notice{
+.signal.is-appearing.is-living.signal--notice .glass-figure{
  animation:living-notice 5.2s linear both;
  will-change:opacity;
 }
@@ -596,17 +600,22 @@ function previewSphereMoments(){
     if(step.kind==='moment'||step.kind==='care')el.classList.add('is-preview');
     if(mode==='living'&&step.kind!=='brand')el.classList.add('is-living');
     step.build();
-    // CSS layout flush on a blurred SVG was causing a visible hitch on iOS.
-    // Start Living Cinema on the next compositor frame instead.
+    // Render the new content fully before starting opacity on its own layer.
+    // Two frame boundaries prevent iOS Safari from skipping the first frames.
     if(mode==='living'&&step.kind!=='brand'){
       previewFrameId=requestAnimationFrame(()=>{
-        if(previewRunning)el.classList.add('is-appearing');
+        if(!previewRunning)return;
+        previewFrameId=requestAnimationFrame(()=>{
+          if(!previewRunning)return;
+          el.classList.add('is-appearing');
+          previewSequenceTimer=setTimeout(showNext,step.duration);
+        });
       });
     }else{
       void el.offsetWidth;
       el.classList.add('is-appearing');
+      previewSequenceTimer=setTimeout(showNext,step.duration);
     }
-    previewSequenceTimer=setTimeout(showNext,step.duration);
   }
   previewSequenceTimer=setTimeout(showNext,400);
 }
