@@ -336,7 +336,18 @@ function showTimeAlternatives(){
   choices.append(chip);
  }
 }
+/* Render the same calm date label on iPhone and desktop without relying on
+   Safari's inconsistent internal layout for input[type=date]. */
+function syncEventDateDisplay(){
+ const input=$('calendarEventDate'),display=$('calendarDateDisplay');
+ const date=at(input.value);
+ display.textContent=date
+  ?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(date)
+  :'Выбрать дату';
+ input.closest('.cal-date-control').dataset.filled=String(Boolean(date));
+}
 function showEventTimeHint(){
+ syncEventDateDisplay();
  const status=$('calendarEventStatus');
  showTimeAlternatives();
  const conflict=timeCollision($('calendarEventDate').value,$('calendarEventTime').value,editing);
