@@ -63,7 +63,7 @@ host.innerHTML=`
    </div>
    <div data-pw-panel="eyes" hidden>
     <header class="pw-panel-head"><h3>Отдых для глаз</h3><p>Короткий перерыв по правилу 20–20–20.</p></header>
-    <div class="pw-center"><div class="pw-eye" aria-hidden="true">${icon('eyes')}</div><strong id="pwEyeStage">Посмотрите вдаль</strong><p id="pwEyeTip">На предмет примерно в шести метрах или дальше.</p><output id="pwEyeClock" class="pw-clock">01:00</output><div class="pw-actions"><button type="button" id="pwEyeStart" class="pw-primary">Начать</button><button type="button" id="pwEyeStop" hidden>Завершить</button></div></div>
+    <div class="pw-center"><div id="pwEye" class="pw-eye" aria-hidden="true">${icon('eyes')}</div><strong id="pwEyeStage">Посмотрите вдаль</strong><p id="pwEyeTip">На предмет примерно в шести метрах или дальше.</p><output id="pwEyeClock" class="pw-clock">01:00</output><div class="pw-actions"><button type="button" id="pwEyeStart" class="pw-primary">Начать</button><button type="button" id="pwEyeStop" hidden>Завершить</button></div></div>
     <p class="pw-caption">Перерывы помогают снизить зрительное напряжение, но не исправляют зрение.</p>
    </div>
    <div data-pw-panel="steps" hidden>
