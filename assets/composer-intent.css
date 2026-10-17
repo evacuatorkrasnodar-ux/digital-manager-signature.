@@ -65,3 +65,66 @@
 #assistantChatHistoryDialog .assistant-chat-bottom{display:flex;gap:8px;flex:none;margin-top:11px}
 #assistantChatHistoryDialog .assistant-chat-bottom button{flex:1;min-height:44px;min-width:0;font-size:12px}
 #assistantChatHistoryDialog .assistant-chat-bottom button[hidden]{display:none!important}
+
+/* SEYVEO iPhone composer v4: free the writing area while the iOS keyboard is
+   open. Normal dock, homepage, sphere and composer geometry are unchanged. */
+@media(max-width:700px){
+ html.seyveo-composer-keyboard .dock{
+   visibility:hidden!important;
+   pointer-events:none!important;
+ }
+ html.seyveo-composer-keyboard #voiceHint{visibility:hidden!important}
+ html.seyveo-composer-keyboard #ask.prompt{
+   bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
+   transition:none!important;
+ }
+ html.seyveo-composer-keyboard #ask.prompt.expanded{
+   --writing-headroom:max(56px,calc(env(safe-area-inset-top,0px) + 12px));
+   height:max(150px,calc(var(--composer-visible-height,100dvh) - var(--writing-headroom) - 16px))!important;
+   max-height:max(150px,calc(var(--composer-visible-height,100dvh) - var(--writing-headroom) - 16px))!important;
+   min-height:0!important;
+   padding:10px 12px!important;
+   gap:6px!important;
+   overflow:hidden!important;
+   overscroll-behavior:contain;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-head{
+   min-height:36px!important;
+   flex:0 0 36px!important;
+ }
+ html.seyveo-composer-keyboard #ask.expanded #collapseComposer{
+   height:36px!important;width:36px!important;min-height:36px!important;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-modes button{
+   min-height:30px;padding:5px 9px;
+ }
+ html.seyveo-composer-keyboard #ask.expanded #question{
+   flex:1 1 auto!important;
+   min-height:48px!important;
+   height:auto!important;
+   max-height:none!important;
+   padding:10px!important;
+   font-size:16px!important;
+   overflow-y:auto!important;
+   -webkit-overflow-scrolling:touch;
+   overscroll-behavior:contain;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-actions{
+   flex:0 0 42px!important;
+   grid-template-columns:repeat(4,minmax(0,1fr));
+   gap:8px;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-tool{
+   height:42px!important;min-height:42px!important;
+   padding:0;gap:0;justify-content:center;align-items:center;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-tool span{
+   width:38px!important;height:38px!important;
+   min-width:38px!important;min-height:38px!important;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-tool small{display:none!important}
+ html.seyveo-composer-keyboard #ask.expanded .composer-more:not([hidden]){
+   flex:none;max-height:78px;overflow:auto;
+ }
+ html.seyveo-composer-keyboard #ask.expanded .composer-status{flex:none}
+}
