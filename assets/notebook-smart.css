@@ -83,3 +83,14 @@
  #notesDialog.notes-dialog{padding:18px 13px 15px}
  #notesDialog .note-item-actions>button{padding-inline:6px}
 }
+
+/* Inline More button; submenu occupies full card width and only opens on tap. */
+#notesDialog .note-item-actions>.note-more-button{
+ display:grid;place-items:center;flex:none;max-width:none;
+ box-sizing:border-box;width:44px;height:44px;
+ margin-left:auto;padding:0;border:1px solid var(--soft-line);
+ border-radius:50%;background:var(--card);
+ color:var(--secondary);font-size:21px;line-height:1;letter-spacing:1px;
+}
+#notesDialog .note-item-actions>.note-more-button[aria-expanded=true]{color:var(--text);border-color:var(--line)}
+#notesDialog .note-more-options[hidden]{display:none!important}
