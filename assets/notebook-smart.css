@@ -103,3 +103,60 @@
 #noteReviewDialog.note-review-dialog textarea{min-height:92px;max-height:27dvh;padding:11px 12px;font-size:16px;line-height:1.45}
 #noteReviewDialog.note-review-dialog .info-actions{margin-top:7px}
 #notesDialog.notes-dialog .note-empty{margin:8px 0 1px}
+
+
+/* SEYVEO Notebook · saved text deserves an actual reading page, not a 90px preview. */
+#noteReadDialog.note-read-dialog[open]{
+ display:flex;flex-direction:column;
+ box-sizing:border-box;width:min(540px,calc(100vw - 26px));
+ height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ min-height:0;overflow:hidden;padding:19px 17px 15px;
+}
+#noteReadDialog .note-read-head{flex:none;min-width:0;margin:0 50px 12px 0}
+#noteReadDialog .note-read-head h2{margin:0 0 5px;font-size:21px;font-weight:610;line-height:1.3}
+#noteReadDialog .note-read-head small{font-size:11px;line-height:1.45;color:var(--secondary)}
+#noteReadDialog .note-read-content{
+ display:block;box-sizing:border-box;
+ flex:1 1 auto;min-width:0;min-height:0;
+ padding:15px 14px;border:1px solid var(--soft-line);border-radius:15px;
+ background:var(--card2);color:var(--text);
+ font-size:16px;line-height:1.65;font-weight:450;
+ white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ user-select:text;-webkit-user-select:text;
+}
+#noteReadDialog .note-read-content:focus-visible{outline:2px solid var(--text);outline-offset:-2px}
+#noteReadDialog .note-read-actions{display:flex;align-items:center;gap:8px;flex:none;margin-top:11px}
+#noteReadDialog .note-read-actions>button{flex:1;min-width:0;min-height:44px}
+/* Keep the list compact, but the full text is now one tap away. */
+#notesDialog .note-item p{max-height:104px}
+/* Long imported OCR text and existing notes get a near-full-screen editor.
+   The empty-note form stays compact. iOS keyboard can shrink the viewport. */
+#noteReviewDialog.note-review-dialog[data-note-mode="edit"][open],
+#noteReviewDialog.note-review-dialog[data-note-mode="draft"][open]{
+ display:flex;flex-direction:column;box-sizing:border-box;
+ height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ min-height:0;overflow:hidden;
+}
+#noteReviewDialog[data-note-mode="edit"] form,
+#noteReviewDialog[data-note-mode="draft"] form{
+ display:flex;flex:1 1 auto;flex-direction:column;min-height:0;
+}
+#noteReviewDialog[data-note-mode="edit"] textarea,
+#noteReviewDialog[data-note-mode="draft"] textarea{
+ flex:1 1 auto;min-height:0;max-height:none;resize:none;
+ overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+#noteReviewDialog[data-note-mode="edit"] .info-actions,
+#noteReviewDialog[data-note-mode="draft"] .info-actions{flex:none}
+@media(max-height:550px){
+ #noteReadDialog.note-read-dialog[open],
+ #noteReviewDialog.note-review-dialog[data-note-mode="edit"][open],
+ #noteReviewDialog.note-review-dialog[data-note-mode="draft"][open]{
+  height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  max-height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+ }
+}
