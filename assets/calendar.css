@@ -293,11 +293,11 @@
 #calendarEventDialog .cal-form-columns>.cal-field,
 #calendarEventDialog .cal-form-columns>.cal-time-field{min-width:0}
 #calendarEventDialog .cal-date-display{font-size:15px;padding-inline:6px}
-#calendarEventDialog .cal-time-display{font-size:15px;padding:10px 34px 10px 11px}
+#calendarEventDialog .cal-time-display{font-size:15px;padding:10px 48px 10px 11px}
 #calendarEventDialog .cal-time-clear{
- min-width:30px;width:30px;min-height:32px;height:32px;
- right:6px;bottom:6px;padding:0;
- border-radius:50%;font-size:20px;line-height:1;
+ min-width:44px;width:44px;min-height:44px;height:44px;
+ right:0;bottom:0;padding:0;
+ border-radius:13px;font-size:20px;line-height:1;
 }
 #calendarEventDialog .cal-kind legend{
  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
