@@ -203,6 +203,32 @@
 .cal-timing-hint{margin:0;color:var(--secondary);font-size:11px;line-height:1.45}
 
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
+/* Keep Save/Cancel reachable when duration, road and reminders expand on iPhone.
+   Scroll remains native inside the event dialog; no page or dock movement. */
+#calendarEventDialog{
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ scroll-padding-block-end:82px;
+}
+#calendarEventDialog .cal-dialog-actions{
+ position:sticky;
+ z-index:3;
+ bottom:-17px;
+ flex-shrink:0;
+ margin:3px -18px -17px;
+ padding:12px 18px 17px;
+ background:var(--card);
+ border-top:1px solid var(--soft-line);
+ box-shadow:0 -9px 18px -18px rgba(0,0,0,.7);
+}
+#calendarEventDialog .cal-dialog-actions .btn{
+ min-height:44px;
+}
+/* Prevent the footer from borrowing space from any personal task modal. */
+@media(max-height:540px){
+ #calendarEventDialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+}
 .cal-dialog-actions .btn{flex:1;min-height:44px}
 .cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
 .cal-form-status{font-size:11px;line-height:1.45;color:var(--secondary)}
