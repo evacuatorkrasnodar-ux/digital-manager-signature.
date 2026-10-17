@@ -75,9 +75,9 @@ function notes(){
 function info(id){
  const item=BY_ID[id];
  const data=demo(),count=tasks().length;
- if(id==='clients')return {label:item.label,value:num.format(data.leads),hint:'Обращений за период · демо'};
- if(id==='orders')return {label:item.label,value:num.format(data.sales),hint:'Заказов за период · демо'};
- if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за период · демо'};
+ if(id==='clients')return {label:item.label,value:num.format(data.leads),hint:'Обращений за период'};
+ if(id==='orders')return {label:item.label,value:num.format(data.sales),hint:'Заказов за период'};
+ if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за период'};
  if(id==='plan')return {label:item.label,value:String(count),hint:count?'Нужно сделать · на устройстве':'Пока всё спокойно'};
  return {label:item.label,value:String(notes()),hint:'Сохранено на устройстве'};
 }
@@ -150,20 +150,21 @@ function rowsFor(id,datum){
  ];
  return [
   ['Продажи на сумму',rub(datum.revenue)],
-  ['Учебные расходы',rub(datum.cost)],
+  ['Расходы',rub(datum.cost)],
   ['Разница',rub(datum.revenue-datum.cost)]
  ];
 }
 function detail(id){
  if(!['clients','orders','money'].includes(id))return;
  const datum=demo(),copy={
-  clients:['Клиенты','Кто обращается и сколько заказов получилось','Это пример того, как SEYVEO сможет замечать обращения и помогать не терять клиентов. Пока живых подключений нет.'],
-  orders:['Заказы','Что удалось продать за период','Суммы взяты из того же учебного набора, что показывает «Пульс». Это не сведения из кассы или CRM.'],
-  money:['Деньги','Как идут продажи и расходы','Разница между учебными продажами и расходами — не банковский баланс и не подтверждённая бухгалтерская прибыль.']
+  clients:['Клиенты','Кто обращается и сколько заказов получилось'],
+  orders:['Заказы','Что удалось продать за период'],
+  money:['Деньги','Как идут продажи и расходы']
  }[id];
  $('homeWidgetDetailTitle').textContent=copy[0];
  $('homeWidgetDetailSub').textContent=copy[1];
- $('homeWidgetDetailCopy').textContent=copy[2];
+ $('homeWidgetDetailCopy').textContent='';
+ $('homeWidgetDetailCopy').hidden=true;
  const root=$('homeWidgetDetailRows');root.replaceChildren();
  for(const [name,value] of rowsFor(id,datum)){
   const row=create('div','home-widget-detail-row');
