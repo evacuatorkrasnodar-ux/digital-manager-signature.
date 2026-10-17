@@ -55,6 +55,7 @@ function events(){
   kind:x.kind==='business'?'business':'personal',
   duration:[30,60,90,120].includes(Number(x.duration))?Number(x.duration):0,
   travel:[0,15,30,60].includes(Number(x.travel))?Number(x.travel):0,
+  remind:[15,30,60].includes(Number(x.remind))?Number(x.remind):0,
   note:typeof x.note==='string'?x.note.slice(0,600):'',
   createdAt:typeof x.createdAt==='string'?x.createdAt:'',
   updatedAt:typeof x.updatedAt==='string'?x.updatedAt:''
@@ -102,6 +103,7 @@ function createEntry(item){
    (item.kind==='business'?'Работа':'Личное')
    +(item.duration?(' · '+(item.duration===30?'30 мин':item.duration===60?'1 ч':item.duration===90?'1 ч 30 мин':'2 ч')):'')
    +(item.travel?' · дорога по '+item.travel+' мин':'')
+   +(item.remind?' · напомнить за '+(item.remind===60?'1 ч':item.remind+' мин'):'')
    +(item.note?' · '+item.note:'');
  copy.append(title,text('small','',subtitle));
  btn.append(clock,copy,text('span','cal-entry-chevron','›'));
@@ -183,8 +185,34 @@ function timeCollision(date,time,exceptID=null){
  if(!time||!at(date))return null;
  return events().find(item=>item.date===date&&item.time===time&&item.id!==exceptID)||null;
 }
+/* Local in-app reminders only, not background push notifications. */
+function upcomingReminder(nowDate=new Date(),records=events()){
+ const now=nowDate.getTime();
+ const active=[];
+ for(const item of records){
+  if(!item||!item.time||![15,30,60].includes(Number(item.remind)))continue;
+  const date=at(item.date);
+  if(!date)continue;
+  const parts=item.time.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+  if(!parts)continue;
+  const begins=new Date(date.getFullYear(),date.getMonth(),date.getDate(),Number(parts[1]),Number(parts[2])).getTime();
+  const remaining=begins-now;
+  if(remaining<0||remaining>Number(item.remind)*60*1000)continue;
+  active.push({...item,remaining});
+ }
+ return active.sort((a,b)=>a.remaining-b.remaining||a.title.localeCompare(b.title,'ru'))[0]||null;
+}
 function smartSuggestion(todayDate=new Date()){
  const today=format(todayDate),selected=iso();
+ const dueReminder=upcomingReminder(todayDate);
+ if(dueReminder){
+  const remaining=Math.max(0,Math.ceil(dueReminder.remaining/60000));
+  return{
+   kind:'event',id:dueReminder.id,action:'Открыть',
+   message:remaining===0?'Сейчас начинается «'+dueReminder.title.slice(0,55)+'».':
+    'Через '+remaining+' мин: «'+dueReminder.title.slice(0,55)+'».'
+  };
+ }
  const entries=events().filter(item=>item.date===selected&&item.time);
  const times=new Map();
  for(const entry of entries){
@@ -251,6 +279,15 @@ function planningValues(){
  const travel=Number(form.querySelector('input[name="calendarTravel"]:checked')?.value||0);
  return {duration,travel};
 }
+function reminderValue(){
+ const selection=Number(form.querySelector('input[name="calendarReminder"]:checked')?.value||0);
+ return [15,30,60].includes(selection)?selection:0;
+}
+function setReminder(value){
+ const chosen=[15,30,60].includes(Number(value))?Number(value):0;
+ const radio=form.querySelector('input[name="calendarReminder"][value="'+chosen+'"]');
+ if(radio)radio.checked=true;
+}
 function choosePlanning(duration,travel){
  const d=form.querySelector('input[name="calendarDuration"][value="'+duration+'"]')||
   form.querySelector('input[name="calendarDuration"][value="0"]');
@@ -265,7 +302,8 @@ function syncPlanningLabel(){
  const duration=planningValues().duration,travel=planningValues().travel;
  $('calendarEventTiming').hidden=!clock;
  const length=duration===30?'30 мин':duration===60?'1 ч':duration===90?'1 ч 30 мин':duration===120?'2 ч':'не указана';
- $('calendarEventTimingLabel').textContent='Длительность: '+length+' · '+(travel?'дорога по '+travel+' мин':'дорога не учтена');
+ $('calendarEventTimingLabel').textContent='Длительность: '+length+' · '+(travel?'дорога по '+travel+' мин':'дорога не учтена')
+  +(reminderValue()?' · напомнить за '+(reminderValue()===60?'1 ч':reminderValue()+' мин'):'');
 }
 function showTimeAlternatives(){
  const box=$('calendarTimeOptions'),choices=$('calendarTimeOptionsChoices');
@@ -452,6 +490,7 @@ function openEvent(id=null){
  $('calendarEventDate').value=item?.date||iso();
  $('calendarEventTime').value=item?.time||'';
  choosePlanning(item?item.duration:60,item?item.travel:0);
+ setReminder(item?item.remind:0);
  $('calendarEventTiming').open=false;
  syncTimeDisplay();
  setEventKind(item?.kind||'personal');
@@ -473,6 +512,7 @@ function onSubmit(e){
  const kind=getEventKind();
  const settings=planningValues();
  const duration=clock?settings.duration:0,travel=clock?settings.travel:0;
+ const remind=clock?reminderValue():0;
  const status=$('calendarEventStatus');
  if(!name){status.textContent='Укажите название события.';return}
  if(!at(date)){status.textContent='Выберите правильную дату.';return}
@@ -490,7 +530,7 @@ function onSubmit(e){
  }
  const now=new Date().toISOString();
  const entry={id:old?.id||'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
-  title:name,date,time:clock,kind,duration,travel,note,createdAt:old?.createdAt||now,updatedAt:now};
+  title:name,date,time:clock,kind,duration,travel,remind,note,createdAt:old?.createdAt||now,updatedAt:now};
  const next=old?all.map(x=>x.id===old.id?entry:x):[...all,entry];
  if(!saveEvents(next)){status.textContent='Не удалось сохранить событие. Проверьте память браузера.';return}
  $('calendarEventDialog').close();
@@ -544,7 +584,7 @@ form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
 for(const eName of ['input','change'])$('calendarEventDate').addEventListener(eName,showEventTimeHint);
-for(const name of ['calendarDuration','calendarTravel']){
+for(const name of ['calendarDuration','calendarTravel','calendarReminder']){
  form.querySelectorAll('input[name="'+name+'"]').forEach(input=>
   input.addEventListener('change',()=>{syncPlanningLabel();showEventTimeHint()})
  );
@@ -620,6 +660,8 @@ window.addEventListener('seyveo:calendar-plan-note',event=>{
 window.addEventListener('seyveo:tasks-changed',()=>{if(!page.hidden)render()});
 window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS)&&!page.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!page.hidden)render()});
+// Browser timers may pause on iOS when the app is not visible. No background guarantee.
+window.setInterval(()=>{if(!page.hidden&&!document.hidden)renderAdvice()},60*1000);
 // A saved #calendar URL may be active before this script initializes.
 if(!page.hidden)render();
 })();
