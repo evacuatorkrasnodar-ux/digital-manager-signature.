@@ -2,17 +2,34 @@
    Basic stroke smoothing only; handwriting correction needs a future AI service. */
 (function(){
 'use strict';
-const W=840,H=1188,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000;
+const W=840,H=1188,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
 const tools=['pen','pencil','eraser'],patterns=['blank','lines','dots'];
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
+const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
+const photoCache=new Map();
+function photoImage(photo,redraw){
+ if(!photo)return null;
+ let entry=photoCache.get(photo);
+ if(!entry){
+  const image=new Image();entry={image,ready:false,callbacks:[]};
+  if(photoCache.size>=5)photoCache.delete(photoCache.keys().next().value);
+  photoCache.set(photo,entry);
+  image.onload=()=>{entry.ready=true;for(const callback of entry.callbacks.splice(0))callback()};
+  image.onerror=()=>{for(const callback of entry.callbacks.splice(0))callback()};
+  image.src=photo;
+ }
+ if(redraw&&!entry.ready)entry.callbacks.push(redraw);
+ return entry.ready?entry.image:null;
+}
 const clamp=(n,max)=>Math.max(0,Math.min(max,Math.round(Number(n)||0)));
 function normalize(obj){
  const p=obj&&typeof obj==='object'?obj:{};
  return{pattern:patterns.includes(p.pattern)?p.pattern:'blank',
+ photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
  .map(stroke=>({tool:stroke.tool,points:stroke.points.slice(0,MAX_POINTS)
@@ -43,6 +60,14 @@ function paint(target,obj,background=false){
  ctx.save();ctx.setTransform(target.width/W,0,0,target.height/H,0,0);
  ctx.clearRect(0,0,W,H);for(const s of p.strokes)paintStroke(ctx,s);
  if(background){
+  const photo=p.photo;
+  const bitmap=photoImage(photo,()=>paint(target,p,true));
+  if(bitmap){
+   ctx.save();ctx.globalCompositeOperation='destination-over';
+   const scale=Math.min(W/bitmap.naturalWidth,H/bitmap.naturalHeight);
+   const w=bitmap.naturalWidth*scale,h=bitmap.naturalHeight*scale;
+   ctx.drawImage(bitmap,(W-w)/2,(H-h)/2,w,h);ctx.restore();
+  }
   // Add the template beneath strokes so the eraser never damages the paper.
   ctx.save();ctx.globalCompositeOperation='destination-over';
   ctx.strokeStyle='rgba(95,110,136,.18)';ctx.fillStyle='rgba(95,110,136,.22)';
@@ -54,6 +79,8 @@ function paint(target,obj,background=false){
 }
 function render(){
  sheet.dataset.pattern=data.pattern;pattern.value=data.pattern;
+ if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
+ if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
  paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
 }
 function report(text){status.textContent=text||''}
@@ -114,7 +141,7 @@ dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть
 dialog.addEventListener('close',()=>{pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
- if(!data.strokes.length){report('Напишите или нарисуйте что-нибудь.');return}
+ if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
  const api=window.SEYVEO_NOTES_API,list=api?.getNotes();
  if(!api||!list){report('Блокнот недоступен.');return}
  const page=normalize(data);
@@ -127,12 +154,14 @@ $('notePaperSave').addEventListener('click',()=>{
  if(!api.putNotes(updated)){report('Не хватает места для сохранения. Лист пока открыт.');return}
  changed=false;dialog.close();
 });
-function png(p){
- const out=document.createElement('canvas');out.width=W;out.height=H;paint(out,p,true);return out.toDataURL('image/png');
+async function png(p){
+ if(p?.photo)await new Promise(resolve=>{const image=photoImage(p.photo,resolve);if(image)resolve()});
+ const out=document.createElement('canvas');out.width=W;out.height=H;
+ paint(out,p,true);return out.toDataURL('image/png');
 }
-function share(note){
+async function share(note){
  try{
-  const encoded=png(note.paper);
+  const encoded=await png(note.paper);
   if(typeof File!=='undefined'&&navigator.share&&navigator.canShare){
    const decoded=atob(encoded.split(',')[1]),bytes=new Uint8Array(decoded.length);
    for(let i=0;i<decoded.length;i++)bytes[i]=decoded.charCodeAt(i);
@@ -147,11 +176,11 @@ function share(note){
   window.SEYVEO_NOTES_API?.message('Лист подготовлен как PNG.');
  }catch{window.SEYVEO_NOTES_API?.message('Не удалось подготовить изображение.')}
 }
-function print(note){
+async function print(note){
  const win=window.open('','_blank');
  if(!win){window.SEYVEO_NOTES_API?.message('Разрешите новое окно для печати.');return}
  try{
-  const encoded=png(note.paper);win.opener=null;win.document.open();
+  const encoded=await png(note.paper);win.opener=null;win.document.open();
   win.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO Paper</title>'
    +'<style>@page{size:A4;margin:10mm}body{margin:0}img{display:block;max-width:100%;max-height:95vh;margin:auto}</style></head>'
    +'<body><img id="page" alt="Лист" src="'+encoded+'"></body></html>');
@@ -160,5 +189,52 @@ function print(note){
   if(picture.complete)show();else picture.addEventListener('load',show,{once:true});
  }catch{try{win.close()}catch{}window.SEYVEO_NOTES_API?.message('Печать не удалась.')}
 }
-window.SEYVEO_PAPER=Object.freeze({open,preview:(target,p)=>paint(target,p,true),share,print,normalize});
+/* Camera and gallery: image stays local, compressed and stored with this page.
+   No photo is uploaded. Only one picture per page to respect iPhone storage. */
+async function compressPhoto(file){
+ if(!file||!file.type.startsWith('image/')||file.type==='image/svg+xml'||file.size>15*1024*1024)
+  throw new Error('Выберите фотографию размером до 15 МБ.');
+ const url=URL.createObjectURL(file);
+ try{
+  const bitmap=await new Promise((resolve,reject)=>{
+   const image=new Image();image.onload=()=>resolve(image);
+   image.onerror=()=>reject(new Error('Не удалось открыть изображение.'));
+   image.src=url;
+  });
+  const temp=document.createElement('canvas');
+  const ctx=temp.getContext('2d');if(!ctx)throw new Error('Браузер не может обработать фото.');
+  for(const maxSide of [1050,850,700,560]){
+   const factor=Math.min(1,maxSide/Math.max(bitmap.naturalWidth,bitmap.naturalHeight));
+   temp.width=Math.max(1,Math.round(bitmap.naturalWidth*factor));
+   temp.height=Math.max(1,Math.round(bitmap.naturalHeight*factor));
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,temp.width,temp.height);
+   ctx.drawImage(bitmap,0,0,temp.width,temp.height);
+   for(const quality of [.78,.62,.48]){
+    const encoded=temp.toDataURL('image/jpeg',quality);
+    if(encoded.length<MAX_PHOTO)return encoded;
+   }
+  }
+  throw new Error('Фотография слишком большая для локального Блокнота.');
+ }finally{URL.revokeObjectURL(url)}
+}
+async function importPhoto(file){
+ if(!file)return;
+ report('Готовлю фотографию…');
+ try{
+  const image=await compressPhoto(file);
+  data.photo=image;data.pattern='blank';changed=true;render();
+  report('Фото добавлено. Можно писать поверх и сохранить лист.');
+ }catch(error){report(error?.message||'Не получилось добавить фотографию.')}
+}
+$('notePaperAddPhoto')?.addEventListener('click',()=>photoFile?.click());
+photoFile?.addEventListener('change',()=>{
+ const file=photoFile.files?.[0];photoFile.value='';
+ if(file)importPhoto(file);
+});
+$('notePaperRemovePhoto')?.addEventListener('click',()=>{
+ if(!data.photo)return;
+ if(!window.confirm('Убрать фотографию с листа? Штрихи останутся.'))return;
+ data.photo='';changed=true;render();report('Фотография убрана.');
+});
+window.SEYVEO_PAPER=Object.freeze({open,preview:(target,p)=>paint(target,p,true),share,print,normalize,importPhoto,compressPhoto});
 })();
