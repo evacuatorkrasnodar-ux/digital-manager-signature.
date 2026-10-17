@@ -136,3 +136,8 @@
  #calendarPersonalTools .pw-breath-disc,#calendarPersonalTools .pw-progress span,#calendarPersonalTools .pw-arrow{transition:none!important}
 }
 :root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#bcc7d652 60%,#a8b4c012)}
+
+#calendarPersonalTools .pw-cycle-privacy{margin:15px 0 0;padding:11px 12px;border:1px solid var(--soft-line);border-radius:15px}
+#calendarPersonalTools .pw-cycle-privacy summary{cursor:pointer;font-size:11px;color:var(--secondary);font-weight:530}
+#calendarPersonalTools .pw-cycle-privacy p{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
+#calendarPersonalTools .pw-cycle-privacy .pw-actions{justify-content:flex-start;margin-bottom:0}
