@@ -198,9 +198,16 @@
  #picturePage .picture-tabs button{
    min-height:44px;font-size:12px;border-radius:13px
  }
- #picturePage .home-widgets-heading{margin:0 1px 7px}
- #picturePage .home-widgets-heading h2{font-size:13px}
- #picturePage .home-widgets-caption{font-size:9px}
+ #picturePage .home-widgets-heading{
+   display:flex;align-items:center;justify-content:space-between;
+   gap:8px;min-width:0;margin:0 1px 7px
+ }
+ #picturePage .home-widgets-heading h2{font-size:13px;min-width:0;flex:1 1 auto}
+ #picturePage .home-widgets-caption{
+   display:block;flex:0 1 auto;min-width:0;max-width:48%;
+   white-space:normal;overflow-wrap:normal;word-break:normal;
+   text-align:right;font-size:9px;line-height:1.3;letter-spacing:.01em
+ }
  #picturePage .home-widgets-grid{border-radius:19px}
  #picturePage .home-widget-card.picture-metric{
    gap:5px;min-height:83px;padding:10px 6px 17px
@@ -216,7 +223,7 @@
  }
  #picturePage .picture-metric .home-widget-arrow{bottom:4px;opacity:.63}
  #picturePage .picture-quick-insight{
-   gap:8px;align-items:baseline;margin:8px 1px 0;
+   gap:8px;align-items:baseline;margin:6px 1px 0;
    font-size:11.5px;line-height:1.43
  }
  #picturePage .picture-quick-insight-mark{
@@ -225,9 +232,9 @@
  #picturePage .picture-quick-insight p{
    font-size:11.5px;line-height:1.43
  }
- #picturePage .picture-section{margin-top:16px}
+ #picturePage .picture-section{margin-top:10px}
  #picturePage .picture-section h2{
-   font-size:13.5px;font-weight:605;line-height:1.35;margin-bottom:8px
+   font-size:13.5px;font-weight:605;line-height:1.35;margin-bottom:7px
  }
  #picturePage .picture-chart-box{
    padding:11px 12px 9px;border-radius:19px
@@ -253,7 +260,7 @@
  }
  #picturePage .picture-split-row::after{top:9px}
  #picturePage .picture-subnote{
-   margin:7px 2px 0;font-size:10.5px;line-height:1.45
+   margin:6px 2px 0;font-size:10.5px;line-height:1.45
  }
  #picturePage .picture-full-report{
    min-height:56px;margin:17px 0 3px;
