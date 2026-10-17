@@ -103,6 +103,20 @@
 #calendarPage .cal-actions .cal-day-fab[hidden]{display:none!important}
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
 .cal-hint{font-size:11px;color:var(--secondary);line-height:1.5;margin:18px 2px 0}
+/* No additional permanent card: lightweight support details at the very bottom. */
+.cal-push-check{margin:9px 2px 0;color:var(--secondary);font-size:11px;line-height:1.55}
+.cal-push-check summary{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;min-height:36px;list-style:none;cursor:pointer;color:var(--secondary);font-size:11px}
+.cal-push-check summary::before{content:"";display:inline-block;flex:none;width:6px;height:6px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(-45deg);transition:transform .18s ease}
+.cal-push-check[open] summary::before{transform:rotate(45deg)}
+.cal-push-check summary::-webkit-details-marker{display:none}
+.cal-push-check summary::marker{content:""}
+.cal-push-check summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.cal-push-check p{margin:4px 0 9px;max-width:44ch}
+.cal-push-check button{min-height:40px;min-width:130px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);font:inherit;font-size:11px;cursor:pointer}
+.cal-push-check button:disabled{opacity:.6;cursor:default}
+.cal-push-check button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.cal-push-check [hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.cal-push-check summary::before{transition:none}}
 /* The app shell already reserves room for the shared fixed dock.
    Avoid doubling that space at the foot of the calendar. */
 .cal-deadline-section{margin:18px 0}
