@@ -118,7 +118,6 @@ function offer(){
  }catch{}
  $('wakeVoiceConsent').showModal();
 }
-$('wakeVoiceStart').addEventListener('click',offer);
 $('wakeVoiceMore').addEventListener('click',offer);
 $('wakeVoiceStop').addEventListener('click',()=>stop('Ожидание имени выключено'));
 $('wakeVoiceCancel').addEventListener('click',()=>$('wakeVoiceConsent').close());
