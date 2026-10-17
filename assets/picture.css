@@ -30,10 +30,9 @@
 .picture-split-fill{display:block;height:100%;width:var(--split-width,0%);border-radius:inherit;background:var(--secondary)}
 .picture-insight strong{display:block;font-size:13px;font-weight:630;margin-bottom:7px}
 .picture-insight p{color:var(--secondary);font-size:12.5px;line-height:1.56;margin:0}
-.picture-footnote{color:var(--secondary);font-size:11px;line-height:1.55;margin:18px 2px}
 .picture-empty{font-size:13px;color:var(--secondary);line-height:1.55;margin-top:12px}
 .picture-empty[hidden],#pictureBusiness[hidden]{display:none!important}
-#picturePage #pictureWidgetArea{margin:0}
+
 #picturePage .home-widgets-heading .home-widgets-caption{letter-spacing:.03em}
 #picturePage .home-widgets-grid{margin-top:10px}
 .picture-subnote{margin:7px 0 0;color:var(--secondary);font-size:11px;line-height:1.45}
@@ -109,7 +108,6 @@
 .picture-section h2{font-size:13.5px;font-weight:605;line-height:1.4;margin-bottom:10px}
 .picture-chart-box,.picture-breakdown{border-radius:21px}
 .picture-chart-box{padding:15px 14px 13px}
-.picture-chart-intro{margin:0 0 14px;color:var(--secondary);font-size:11px;line-height:1.4}
 .picture-bars{height:123px;gap:5px}
 .picture-bin{
  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
@@ -145,7 +143,6 @@
 .picture-split-track{height:3px;display:block;border-radius:9px;background:var(--card2);overflow:hidden}
 .picture-split-fill{display:block;height:100%;border-radius:inherit;background:var(--secondary);opacity:.83}
 .picture-subnote{margin:8px 2px 0;font-size:10.5px}
-.picture-footnote{font-size:10.5px;line-height:1.55;margin:20px 2px 10px}
 .picture-detail-dialog{width:min(410px,calc(100% - 28px));padding:23px 17px 18px}
 .picture-detail-dialog h2{font-size:21px;line-height:1.2;font-weight:630;margin:8px 35px 6px 0}
 .picture-detail-sub{font-size:12px;line-height:1.5;color:var(--secondary);margin:0 0 15px}
@@ -239,9 +236,6 @@
  #picturePage .picture-chart-box{
    padding:11px 12px 9px;border-radius:19px
  }
- #picturePage .picture-chart-intro{
-   margin:0 0 6px;font-size:11px;line-height:1.35
- }
  #picturePage .picture-bars{height:91px;gap:5px}
  #picturePage .picture-bin{gap:5px}
  #picturePage .picture-bin-track{height:69px}
@@ -266,8 +260,7 @@
    min-height:56px;margin:17px 0 3px;
    padding:10px 14px;border-radius:18px
  }
- #picturePage .picture-footnote{margin:15px 2px 8px}
-}
+ }
 @media (max-width:360px){
  #picturePage .picture-head h1{font-size:23px}
  #picturePage .home-widget-card.picture-metric{
