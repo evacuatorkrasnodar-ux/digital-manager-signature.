@@ -353,6 +353,13 @@ gestureArea.addEventListener('touchend',event=>{
  move(dx<0?1:-1);
 },{passive:true});
 gestureArea.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:true});
+function setEventKind(kind){
+ const radio=form.querySelector('input[name="calendarEventKind"][value="'+(kind==='business'?'business':'personal')+'"]');
+ if(radio)radio.checked=true;
+}
+function getEventKind(){
+ return form.querySelector('input[name="calendarEventKind"]:checked')?.value==='business'?'business':'personal';
+}
 function openEvent(id=null){
  const item=id?events().find(x=>x.id===id):null;editing=item?.id||null;
  form.reset();
@@ -360,7 +367,8 @@ function openEvent(id=null){
  $('calendarEventName').value=item?.title||'';
  $('calendarEventDate').value=item?.date||iso();
  $('calendarEventTime').value=item?.time||'';
- $('calendarEventKind').value=item?.kind||'personal';
+ setEventKind(item?.kind||'personal');
+ $('calendarEventExtra').open=Boolean(item?.note);
  $('calendarEventNote').value=item?.note||'';
  $('calendarDeleteEvent').hidden=!item;
  $('calendarEventStatus').textContent='';
@@ -375,7 +383,7 @@ function onSubmit(e){
  const name=$('calendarEventName').value.trim().replace(/\s+/g,' ').slice(0,140);
  const date=$('calendarEventDate').value,clock=$('calendarEventTime').value;
  const note=$('calendarEventNote').value.trim().slice(0,600);
- const kind=$('calendarEventKind').value==='business'?'business':'personal';
+ const kind=getEventKind();
  const status=$('calendarEventStatus');
  if(!name){status.textContent='Укажите название события.';return}
  if(!at(date)){status.textContent='Выберите правильную дату.';return}
@@ -468,7 +476,7 @@ window.addEventListener('seyveo:calendar-from-ask',event=>{
   $('calendarEventName').value=plan.title.slice(0,140);
   $('calendarEventDate').value=plan.date;
   $('calendarEventTime').value=plan.time||'';
-  $('calendarEventKind').value='personal';
+  setEventKind('personal');
   showEventTimeHint();
   if(!$('calendarEventStatus').dataset.smartCollision)
    $('calendarEventStatus').textContent='SEYVEO подготовил событие. Проверьте дату и время, затем сохраните.';
@@ -479,7 +487,10 @@ window.addEventListener('seyveo:calendar-plan-note',event=>{
  if(location.hash!=='#calendar')location.hash='#calendar';
  openEvent();
  $('calendarEventName').value=value.replace(/\s+/g,' ').slice(0,140);
- if(value.length>140)$('calendarEventNote').value=value.slice(140,740);
+ if(value.length>140){
+  $('calendarEventNote').value=value.slice(140,740);
+  $('calendarEventExtra').open=true;
+ }
 });
 window.addEventListener('seyveo:tasks-changed',()=>{if(!page.hidden)render()});
 window.addEventListener('storage',event=>{if((event.key===STORE||event.key===TASKS)&&!page.hidden)render()});
