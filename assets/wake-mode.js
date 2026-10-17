@@ -44,10 +44,10 @@ function deliver(text){
  const phrase=String(text||'').trim();
  if(!phrase)return;
  stop();
- const question=$('question');
- question.value=phrase;
- question.dispatchEvent(new Event('input',{bubbles:true}));
- $('ask').requestSubmit(); // Reuses demo responses; never sends real-world actions.
+ // The wake phrase is a voice conversation, not an instruction to open
+ // the text composer. The shared interpreter opens only requested previews.
+ if(typeof window.SEYVEO_VOICE_EXECUTE==='function')window.SEYVEO_VOICE_EXECUTE(phrase);
+ else hint('Помощник ещё загружается. Попробуйте снова.');
 }
 function handleSpeech(text){
  if(!active||document.hidden||location.hash)return;
