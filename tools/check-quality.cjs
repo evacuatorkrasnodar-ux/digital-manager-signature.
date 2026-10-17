@@ -70,13 +70,14 @@ function balancedCSS(input){
 }
 for(const name of cssPaths){
  if(!balancedCSS(read(name)))failures.push('Unbalanced CSS or unterminated quote/comment: '+name);
+ if(/,\s*\}/.test(read(name)))failures.push('Malformed trailing selector comma: '+name);
 }
 const inlineStyles=[...html.matchAll(/<style(?:\s[^>]*)?>([\s\S]*?)<\/style>/gi)]
  .map(m=>m[1]).filter(x=>x.trim());
 for(let i=0;i<inlineStyles.length;i++){
  if(!balancedCSS(inlineStyles[i]))failures.push('Unbalanced CSS in index.html style block #'+(i+1));
 }
-check(!failures.some(s=>s.startsWith('Unbalanced CSS')),
+check(!failures.some(s=>s.startsWith('Unbalanced CSS')||s.startsWith('Malformed trailing selector comma')),
  'CSS syntax structure ('+cssPaths.length+' files, '+inlineStyles.length+' inline)');
 const referencedIds=new Set();
 for(const name of scriptPaths.filter(x=>x.startsWith('assets/'))){
