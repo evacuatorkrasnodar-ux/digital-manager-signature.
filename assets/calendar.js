@@ -684,9 +684,17 @@ window.addEventListener('seyveo:calendar-from-ask',event=>{
 });
 window.addEventListener('seyveo:calendar-plan-note',event=>{
  const value=String(event.detail?.text||'').trim();
+ const preferredDate=String(event.detail?.date||'');
  if(location.hash!=='#calendar')location.hash='#calendar';
  openEvent();
  $('calendarEventName').value=value.replace(/\s+/g,' ').slice(0,140);
+ // Weekday dates from Notebook are ONLY a proposed date in the review form.
+ const isRealDate=/^\d{4}-\d{2}-\d{2}$/.test(preferredDate)&&
+  Boolean(at(preferredDate));
+ if(isRealDate){
+  $('calendarEventDate').value=preferredDate;
+  $('calendarEventDate').dispatchEvent(new Event('change',{bubbles:true}));
+ }
  if(value.length>140){
   $('calendarEventNote').value=value.slice(140,740);
   $('calendarEventExtra').open=true;
