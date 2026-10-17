@@ -422,7 +422,10 @@ function routeTask(id){
 }
 function addTask(){
  $('personalAddTasks')?.click();
- const field=$('personalTaskDue');if(field)field.value=iso();
+ const field=$('personalTaskDue');if(field){
+  field.value=iso();
+  field.dispatchEvent(new Event('input',{bubbles:true}));
+ }
 }
 $('calendarAdd').addEventListener('click',()=>openEvent());
 $('calendarAddInline').addEventListener('click',()=>openEvent());
