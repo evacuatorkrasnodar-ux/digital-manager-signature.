@@ -529,7 +529,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section><form class="prompt" id="ask" hidden aria-label="Редактор SEYVEO">
 <div class="composer-head"><strong>Новый текст</strong><button id="collapseComposer" type="button" class="composer-icon" aria-label="Свернуть редактор"><svg viewBox="0 0 24 24"><path d="M7 10h10M10 7l-3 3 3 3M14 7l3 3-3 3"/></svg></button></div>
 <textarea id="question" rows="1" aria-label="Сообщение управляющему" placeholder="Напишите управляющему…" autocomplete="off"></textarea>
-<div class="composer-compact"><button type="button" id="wakeVoiceStart" class="composer-icon" aria-label="Голосовой ввод" title="Говорить"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8"/></svg></button><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon seyveo-close-control" aria-label="Закрыть поле"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
+<div class="composer-compact"><button type="submit" class="composer-icon" aria-label="Отправить управляющему"><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></button><button id="hideInput" type="button" class="composer-icon seyveo-close-control" aria-label="Закрыть поле"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
 <div class="composer-actions">
 <button class="composer-tool" type="submit" aria-label="Отправить управляющему"><span><svg viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/></svg></span><small>Отправить</small></button>
 <button class="composer-tool" type="button" id="saveNote"><span><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v6h8V4M8 20v-7h8v7"/></svg></span><small>Блокнот</small></button>
@@ -1619,7 +1619,7 @@ question.addEventListener('keydown',e=>{
 });
 
 const fab=$('assistantButton'),inputPanel=$('ask'),hint=$('voiceHint');
-let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false,tapVoice=false;
+let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false;
 let hintTimeout=null;
 function setHint(value){
   hint.textContent=value;hint.classList.add('active');
@@ -1638,23 +1638,21 @@ if(window.visualViewport){
 }
 window.addEventListener('resize',updateKeyboard);updateKeyboard();
 function stopVoice(){
-  if(recognition){
-    const sr=recognition;recognition=null;
-    try{sr.stop()}catch{}
-  }
-  tapVoice=false;
+  /* stop() lets Web Speech deliver its final result asynchronously.
+     Do not clear recognition here: onresult may arrive after finger-up. */
+  if(recognition){try{recognition.stop()}catch{}}
   fab.classList.remove('pressing','arming','listening');
   fab.setAttribute('aria-pressed','false');
 }
-function startVoice(tap=false){
+function startVoice(){
   window.dispatchEvent(new Event('seyveo:manual-voice')); // Stop optional wake mode before manual recording.
-  started=!tap;held=!tap;tapVoice=tap;
+  started=true;held=true;
   fab.classList.remove('pressing');
   if($('homePage').hidden)goHome();
   const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!Speech){
     fab.classList.remove('arming');
-    held=false;tapVoice=false;
+    held=false;
     openComposer();
     question.focus({preventScroll:true});
     composerMessage('Браузер не поддерживает распознавание. Используйте микрофон клавиатуры iPhone и нажмите «Отправить».');
@@ -1663,26 +1661,25 @@ function startVoice(tap=false){
   }
   try{
     const sr=new Speech();recognition=sr;
-    let speechDelivered=false;
+    let speechDelivered=false,speechFailed=false;
     sr.lang='ru-RU';sr.interimResults=false;sr.continuous=false;
     sr.onstart=()=>{
       if(recognition!==sr)return;
-      if(!held&&!tapVoice){try{sr.stop()}catch{}return}
+      if(!held){try{sr.stop()}catch{}return}
       fab.classList.remove('arming');
       fab.classList.add('listening');
       fab.setAttribute('aria-pressed','true');
       // Don't play any additional beep over the iPhone's native microphone sound.
       clickHaptic('select');
-      setHint(tapVoice?'Слушаю… произнесите команду.':'Слушаю… отпустите, чтобы закончить');
+      setHint('Слушаю… отпустите, чтобы закончить');
     };
     sr.onresult=e=>{
       if(recognition&&recognition!==sr)return;
       const phrase=Array.from(e.results).map(result=>result[0]?.transcript||'').join(' ').trim();
-      if(!phrase)return;
+      if(!phrase||speechDelivered)return;
       speechDelivered=true;
       question.value=phrase;
       question.dispatchEvent(new Event('input',{bubbles:true}));
-      if(tapVoice){try{sr.stop()}catch{}}
       // Only calendar instructions flow directly to the prefilled REVIEW form.
       // Other dictation remains visible for the person to check and send.
       if(window.SEYVEO_CALENDAR_NL?.(phrase)){
@@ -1697,7 +1694,7 @@ function startVoice(tap=false){
     sr.onerror=e=>{
       if(speechDelivered)return;
       if(recognition&&recognition!==sr)return;
-      tapVoice=false;held=false;
+      speechFailed=true;held=false;
       fab.classList.remove('arming','listening');
       fab.setAttribute('aria-pressed','false');
       const message=e.error==='not-allowed'||e.error==='service-not-allowed'?'Нет разрешения на распознавание речи':
@@ -1710,16 +1707,21 @@ function startVoice(tap=false){
     };
     sr.onend=()=>{
       if(recognition===sr){
-        recognition=null;held=false;tapVoice=false;
+        recognition=null;held=false;
         fab.classList.remove('arming','listening');
         fab.setAttribute('aria-pressed','false');
+        if(!speechDelivered&&!speechFailed&&!document.hidden){
+          openComposer();
+          composerMessage('Не расслышал команду. Попробуйте ещё раз или продиктуйте через клавиатуру iPhone.');
+          setHint('Не удалось распознать речь.');
+        }
       }
     };
     fab.classList.add('arming');
     setHint('Включаю микрофон…');
     sr.start();
   }catch{
-    recognition=null;tapVoice=false;held=false;
+    recognition=null;held=false;
     fab.classList.remove('arming','listening');
     fab.setAttribute('aria-pressed','false');
     openComposer();
@@ -1727,21 +1729,11 @@ function startVoice(tap=false){
     setHint('Не удалось включить голосовой ввод.');
   }
 }
-/* A single tap on the editor microphone starts dictation where supported.
-   Wake-by-name stays separately in the «Ещё» menu. */
-$('wakeVoiceStart').addEventListener('click',()=>{
-  if(recognition){
-    stopVoice();
-    setHint('Завершаю запись…');
-    return;
-  }
-  startVoice(true);
-});
 fab.addEventListener('pointerdown',e=>{
   if(e.button!==0||e.isPrimary===false)return;
   started=false;held=false;clearTimeout(holdTimer);
   fab.classList.add('pressing');
-  holdTimer=setTimeout(()=>startVoice(false),500);
+  holdTimer=setTimeout(startVoice,500);
 });
 function endPress(){
   clearTimeout(holdTimer);
