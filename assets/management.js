@@ -20,6 +20,9 @@ const roadmap=[
   ['navigation','Четыре раздела и Спросить','Главная для решений, Дела, Картина, Управление и центральная кнопка общения.','ready'],
   ['records','Мои дела со сроками','Создание, выполнение и хранение личных дел на устройстве. Календарная сетка ещё впереди.','ready'],
   ['notes','Мои записи и черновики','Локальный блокнот, сохранение заметок и текстовых черновиков.','ready'],
+  ['composer_modes','Два режима одного поля · Спросить / В Блокнот','Явный выбор: отправить вопрос управляющему или сохранить личный текст. При наборе длинного текста открывается большой редактор.','ready'],
+  ['composer_export','Редактор длинного текста · отправка и печать','Для письма и заметки доступны печать и системное «Поделиться» без отдельной страницы ввода.','ready'],
+  ['assistant_chat_history','История вопросов управляющему','Локальная история отправленных запросов и демонстрационных ответов, чтение без дублирующего поля ввода. Реальный ИИ пока не подключён.','ready'],
   ['passports','Паспорта продукта и компании','Две отдельные карточки, реквизиты компании, печать и отправка.','ready'],
   ['backup','Сохранение копии данных','Выгрузка локальных записей, поручений и настроек.','ready'],
   ['first_meeting','Знакомство с управляющим','Выбор Life / Business Start / Pro / Max и имени в локальном сценарии, пока не настоящий разговор с ИИ.','demo'],
@@ -197,6 +200,7 @@ const KEYS=Object.freeze({
  previous:'dm-signature-living-v1',
  notes:'seyveo-notes-v1',
  draft:'seyveo-draft-v1',
+  assistantChatHistory:'seyveo-assistant-chat-history-v1',
  tasks:'seyveo-personal-tasks-v1',
  calendarEvents:'seyveo-calendar-events-v1',
  lifeSpaces:'seyveo-life-spaces-v1',
@@ -215,6 +219,7 @@ function snapshot(){
  const notes=parsed(read(KEYS.notes),[]);
  const oldState=parsed(read(KEYS.previous),null);
  const draft=read(KEYS.draft);
+ const chatHistory=parsed(read(KEYS.assistantChatHistory),[]);
  const tasks=parsed(read(KEYS.tasks),[]);
  const calendarEvents=parsed(read(KEYS.calendarEvents),[]);
  const lifeSpaces=parsed(read(KEYS.lifeSpaces),[]);
@@ -231,6 +236,7 @@ function snapshot(){
   state:state&&typeof state==='object'&&!Array.isArray(state)?state:{},
   oldState:oldState&&typeof oldState==='object'&&!Array.isArray(oldState)?oldState:null,
   notes:Array.isArray(notes)?notes:[],
+   assistantChatHistory:Array.isArray(chatHistory)?chatHistory.filter(row=>row&&typeof row.q==='string'&&typeof row.a==='string').slice(-60):[],
   personalTasks:Array.isArray(tasks)?tasks:[],
   calendarEvents:Array.isArray(calendarEvents)?calendarEvents:[],
   lifeSpaces:Array.isArray(lifeSpaces)?lifeSpaces:[],
@@ -259,6 +265,7 @@ function drawData(){
  const parts=[
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
   ['Мои записи',String(countOf(record.notes))],
+   ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Календарь',String(countOf(record.calendarEvents))+' локальных событий'],
   ['Личные пространства',String(countOf(record.lifeSpaces))+' записей'],
