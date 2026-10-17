@@ -58,7 +58,7 @@
 #calendarHealthOverview[hidden]{display:none!important}
 #calendarHealthOverview.cal-health-overview{margin:0 0 16px}
 #calendarHealthOverview .cal-health-tiles{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
 }
 #calendarHealthOverview .cal-health-tile{
  display:flex;position:relative;flex-direction:column;
