@@ -74,6 +74,7 @@
 .cal-week-grid .cal-day{min-height:65px;justify-content:center;gap:6px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
 .cal-day-summary{margin:10px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+#calendarView[data-mode=day] .cal-day-summary{margin-top:0}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
 .cal-holiday-note{display:flex;align-items:center;gap:8px;margin:-1px 1px 9px;color:var(--text);font-size:12px;line-height:1.45}
@@ -108,10 +109,9 @@
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
 /* The app shell already reserves room for the shared fixed dock.
    Avoid doubling that space at the foot of the calendar. */
-.cal-deadline-section{margin:18px 0}
+.cal-deadline-section{margin:12px 0}
 .cal-deadline-section h3{font-size:13px;font-weight:610;line-height:1.45;margin:0 0 9px}
 .cal-deadline-section .cal-agenda{margin-bottom:11px}
-.cal-deadlines-intro{font-size:12px;color:var(--secondary);line-height:1.55;margin:4px 0 20px}
 .cal-form-dialog{width:min(430px,calc(100vw - 28px));max-height:min(85dvh,720px);padding:22px 18px 17px}
 .cal-form-dialog h2{margin:0 34px 7px 0;font-weight:625;font-size:21px;line-height:1.25}
 .cal-form-dialog>p{margin:0 20px 13px 0;color:var(--secondary);font-size:12px;line-height:1.5}
