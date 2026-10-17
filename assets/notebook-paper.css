@@ -99,3 +99,6 @@
 @media(max-height:590px){
  #notePaperDialog.paper-editor-dialog[open]{height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
 }
+
+/* iPhone paper toolbar: keep every control below the back arrow. */
+#notePaperDialog .paper-head{min-height:46px;box-sizing:border-box;padding-bottom:6px}
