@@ -73,7 +73,7 @@
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:77px;justify-content:center;gap:10px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
-.cal-day-summary{margin:8px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cal-day-summary{margin:10px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
 .cal-holiday-note{display:flex;align-items:center;gap:8px;margin:-1px 1px 9px;color:var(--text);font-size:12px;line-height:1.45}
