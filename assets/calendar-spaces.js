@@ -96,7 +96,7 @@ function renderList(){
  renderHealthOverview();
  const count=items.length;
  const ending=count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей';
- $('calendarSpaceCount').textContent=current==='health'?count+' '+ending:count+' '+ending;
+ $('calendarSpaceCount').textContent=count+' '+ending;
  if(!items.length){
   const empty=dom('p','calendar-space-empty',current==='health'
    ?'Выберите показатель выше, чтобы внести первую запись.'
