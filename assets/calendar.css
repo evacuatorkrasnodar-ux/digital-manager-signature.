@@ -68,10 +68,10 @@
 .cal-day-dots i.cal-dot-task{background:var(--text)}
 .cal-day-dots i.cal-dot-holiday{width:6px;height:6px;flex:none;border-radius:1.4px;background:var(--text);transform:rotate(45deg);opacity:.85}
 .cal-day[data-holiday=rest] .cal-day-dots i.cal-dot-holiday{background:transparent;border:1px solid var(--text);opacity:.8}
-.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:1px solid var(--line);border-radius:20px;padding:9px 4px;background:var(--card)}
-.cal-week-grid::before{top:9px;right:4px;bottom:9px;width:calc((100% - 8px) * 2 / 7)}
+.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:1px solid var(--line);border-radius:20px;padding:7px 4px;background:var(--card)}
+.cal-week-grid::before{top:7px;right:4px;bottom:7px;width:calc((100% - 8px) * 2 / 7)}
 .cal-week-grid>.cal-day{z-index:1}
-.cal-week-grid .cal-day{min-height:77px;justify-content:center;gap:10px}
+.cal-week-grid .cal-day{min-height:65px;justify-content:center;gap:6px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
 .cal-day-summary{margin:10px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
@@ -90,7 +90,7 @@
 .cal-agenda{padding:3px 14px;border:1px solid var(--line);border-radius:21px;background:var(--card);min-width:0}
 .cal-entry{display:flex;align-items:center;width:100%;gap:12px;padding:13px 0;text-align:left;color:var(--text);border:0;background:transparent;min-height:63px}
 .cal-entry+.cal-entry{border-top:1px solid var(--soft-line)}
-.cal-entry-time{flex:none;width:49px;font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums}
+.cal-entry-time{flex:0 0 61px;width:61px;white-space:nowrap;font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums}
 .cal-entry-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
 .cal-entry-copy strong{font-size:12.5px;font-weight:605;line-height:1.35;overflow-wrap:anywhere}
 .cal-entry-copy small{font-size:10.5px;color:var(--secondary);line-height:1.45;overflow-wrap:anywhere}
