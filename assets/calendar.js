@@ -146,7 +146,6 @@ function renderMonth(){
  for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
- $('calendarDay').hidden=true;
 }
 function renderWeek(){
  const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=events(),personalTasks=tasks();
@@ -154,17 +153,14 @@ function renderWeek(){
  for(let i=0;i<7;i++)root.append(dayButton(step(mondayStart,i),true,calendarEvents,personalTasks));
  $('calendarMonth').hidden=true;
  $('calendarWeek').hidden=false;
- $('calendarDay').hidden=true;
 }
 function renderDay(){
  $('calendarMonth').hidden=true;
  $('calendarWeek').hidden=true;
- $('calendarDay').hidden=false;
- $('calendarDayFull').textContent=niceFirst(fmtShort.format(focus));
 }
 function renderAgenda(){
  const list=dayItems(iso());
- $('calendarSelectedTitle').textContent=niceFirst(fmtShort.format(focus));
+ $('calendarSelectedTitle').textContent=mode==='day'?'Планы на день':niceFirst(fmtShort.format(focus));
  const count=list.length;
  $('calendarSelectedCount').textContent=count
   ?count+' '+(count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей')
@@ -435,7 +431,7 @@ function revealSelectedDay(){
 function updateFocus(date){focus=new Date(date.getFullYear(),date.getMonth(),date.getDate());render()}
 function animatePeriod(direction){
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- const surface=mode==='month'?$('calendarMonth'):mode==='week'?$('calendarWeek'):$('calendarDay');
+ const surface=mode==='month'?$('calendarMonth'):mode==='week'?$('calendarWeek'):document.querySelector('#calendarPage .cal-day-summary');
  if(!surface||surface.hidden)return;
  surface.classList.remove('cal-swipe-next','cal-swipe-prev');
  void surface.offsetWidth;
