@@ -457,6 +457,23 @@ $('calendarEventDialog').addEventListener('click',event=>{
 window.SEYVEO_CALENDAR_DATE=iso;
 window.addEventListener('seyveo:calendar-open',()=>{render()});
 window.addEventListener('seyveo:spaces-changed',()=>{if(!page.hidden)render()});
+/* Assistant scheduling requests prepare a draft, never save without approval. */
+window.addEventListener('seyveo:calendar-from-ask',event=>{
+ const plan=event.detail;
+ if(!plan||plan.status!=='ready'||!at(plan.date)||typeof plan.title!=='string')return;
+ if(location.hash!=='#calendar')location.hash='#calendar';
+ window.requestAnimationFrame(()=>{
+  updateFocus(at(plan.date));
+  openEvent();
+  $('calendarEventName').value=plan.title.slice(0,140);
+  $('calendarEventDate').value=plan.date;
+  $('calendarEventTime').value=plan.time||'';
+  $('calendarEventKind').value='personal';
+  showEventTimeHint();
+  if(!$('calendarEventStatus').dataset.smartCollision)
+   $('calendarEventStatus').textContent='SEYVEO подготовил событие. Проверьте дату и время, затем сохраните.';
+ });
+});
 window.addEventListener('seyveo:calendar-plan-note',event=>{
  const value=String(event.detail?.text||'').trim();
  if(location.hash!=='#calendar')location.hash='#calendar';
