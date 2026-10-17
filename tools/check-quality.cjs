@@ -26,8 +26,20 @@ function findFiles(dir,extension){
 }
 const html=read('index.html');
 const markupIds=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
-const ids=new Set(markupIds);
-check(ids.size===markupIds.length,'Unique HTML element IDs');
+/* Health/Care has one self-contained, static HTML template mounted in the
+ * existing personal dialog. Validate its IDs rather than requiring copies in
+ * index.html. The six generated card labels use the same reusable factory. */
+const wellnessSource=read('assets/personal-wellness.js');
+const wellnessTemplate=wellnessSource.match(/host\.innerHTML=`([\s\S]*?)`;/);
+const componentIds=wellnessTemplate
+ ?[...wellnessTemplate[1].matchAll(/\bid=["']([\w-]+)["']/g)].map(m=>m[1]):[];
+const generatedCardIds=[...wellnessSource.matchAll(/btn\('([\w-]+)'/g)].map(m=>'pwCard'+m[1]);
+const dynamicIds=[...componentIds,...generatedCardIds];
+const ids=new Set([...markupIds,...dynamicIds]);
+check(new Set(markupIds).size===markupIds.length,'Unique HTML element IDs');
+check(Boolean(wellnessTemplate)&&new Set(dynamicIds).size===dynamicIds.length&&
+ dynamicIds.every(id=>!markupIds.includes(id)),
+ 'Unique mounted Health and Care component IDs');
 const references=[...html.matchAll(/\b(?:src|href)=["']([^"']+)["']/g)]
  .map(m=>m[1].split(/[?#]/)[0]).filter(ref=>
   ref&& !/^(https?:|data:|mailto:|tel:|blob:|\/|#)/i.test(ref)
