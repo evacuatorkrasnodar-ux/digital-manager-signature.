@@ -507,7 +507,16 @@ function openEvent(id=null){
  const dialog=$('calendarEventDialog');
  if(!dialog.open)dialog.showModal();
  showEventTimeHint();
- $('calendarEventName').focus({preventScroll:true});
+ // iOS sometimes restores the previous scroll offset of a reopened dialog.
+ // Only desktop auto-focuses: focusing a text input on touch Safari may jump
+ // the form past the title/name and unexpectedly open the software keyboard.
+ const body=dialog.querySelector('.cal-form-scroll');
+ if(body){
+  body.scrollTop=0;
+  window.requestAnimationFrame(()=>{if(dialog.open)body.scrollTop=0});
+ }
+ if(window.matchMedia('(pointer:fine)').matches)
+  $('calendarEventName').focus({preventScroll:true});
 }
 function onSubmit(e){
  e.preventDefault();
