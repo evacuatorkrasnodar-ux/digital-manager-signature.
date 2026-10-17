@@ -1,0 +1,220 @@
+/* SEYVEO · secondary-screen finishing pass v1.
+   Keep the approved Home, central sphere and dock untouched.
+   Layout/typography only; data, handlers and saved entries are unchanged. */
+
+/* SMART CALENDAR — breathable but not oversized. */
+@media(max-width:649px){
+ #calendarPage.calendar-main{padding-top:6px}
+ #calendarPage .calendar-header{margin:4px 0 12px;gap:10px}
+ #calendarPage .calendar-kicker{margin-bottom:6px!important;font-weight:575}
+ #calendarPage .calendar-header h1{
+  font-size:26px;line-height:1.18;letter-spacing:-.036em;
+  font-weight:590;margin-bottom:5px
+ }
+ #calendarPage .calendar-header p:not(.calendar-kicker){font-size:12px;line-height:1.42}
+ #calendarPage .cal-round{
+  width:44px;height:44px;min-height:44px;min-width:44px
+ }
+ #calendarPage .cal-periods{
+  margin-bottom:10px;padding:3px;gap:3px;border-radius:17px
+ }
+ #calendarPage .cal-periods button{
+  min-height:44px;border-radius:13px;font-weight:545
+ }
+ #calendarPage .cal-nav{margin:0 1px 5px;min-height:44px}
+ #calendarPage .cal-nav h2{font-size:16px;font-weight:590}
+ #calendarPage .cal-nav .cal-period-title{
+  display:inline-flex;align-items:center;min-height:44px
+ }
+ #calendarPage .cal-day-summary{margin:10px 1px 6px}
+ #calendarPage .cal-day-summary h2{font-size:13.5px;font-weight:590}
+ #calendarPage .cal-agenda{border-radius:19px;padding-inline:13px}
+ #calendarPage .cal-entry{gap:9px;min-height:55px;padding:10px 0}
+ #calendarPage .cal-entry-copy{gap:3px}
+ #calendarPage .cal-entry-copy strong{font-weight:575}
+ #calendarPage .cal-empty{padding:21px 12px}
+ #calendarPage .cal-advice{margin-top:8px;padding:10px 12px;border-radius:16px}
+ #calendarPage .cal-advice-action,
+ #calendarPage .cal-day-fab,
+ #calendarPage .cal-push-check button{min-height:44px}
+ #calendarPage .cal-hint{margin-top:12px}
+}
+#calendarEventDialog.cal-form-dialog[open]{
+ border-radius:25px;
+ max-height:min(94svh,calc(100svh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))
+}
+#calendarEventDialog .cal-field :is(input,textarea){
+ border-radius:15px;background:var(--card2)
+}
+#calendarEventDialog .cal-field textarea{
+ resize:none;max-height:155px;overflow-y:auto
+}
+#calendarEventDialog .cal-form-scroll{
+ -webkit-overflow-scrolling:touch;overscroll-behavior:contain
+}
+#calendarEventDialog .cal-dialog-actions .btn{
+ min-height:44px;border-radius:999px
+}
+
+/* PERSONAL SPACE: Health, Care, My World, Documents — shared sheet. */
+#calendarPage .calendar-spaces{margin-bottom:11px}
+#calendarPage .calendar-spaces-head{margin-bottom:7px}
+#calendarPage .calendar-spaces-head h2{
+ font-size:13px;font-weight:570;letter-spacing:-.014em
+}
+#calendarPage .calendar-spaces-grid{
+ gap:3px;padding:3px;border-radius:18px
+}
+#calendarPage .calendar-space-button{
+ min-height:60px;gap:5px;border-radius:14px
+}
+#calendarPage .calendar-space-button svg{
+ width:20px;height:20px;stroke-width:1.55
+}
+#calendarPage .calendar-space-button span{
+ font-size:10px;font-weight:535
+}
+#calendarSpaceDialog.cal-space-dialog[open]{
+ box-sizing:border-box;
+ width:min(450px,calc(100vw - 24px));
+ max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ max-height:min(88svh,calc(100svh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ padding:20px 17px 15px;border-radius:24px;
+ overflow-y:auto;overscroll-behavior:contain
+}
+#calendarSpaceDialog h2{
+ font-size:21px;font-weight:580;letter-spacing:-.03em
+}
+#calendarSpaceDialog>p{margin-bottom:12px}
+#calendarSpaceDialog .cal-space-toolbar{margin-bottom:9px}
+#calendarSpaceDialog .cal-space-toolbar button{
+ min-height:44px;border-radius:999px;font-weight:540
+}
+#calendarSpaceDialog .cal-space-list{
+ border-radius:18px;border-color:var(--soft-line)
+}
+#calendarSpaceDialog .calendar-space-record{
+ min-height:55px;padding:9px 12px;gap:9px
+}
+#calendarSpaceDialog .calendar-space-record-copy{gap:3px}
+#calendarSpaceDialog .calendar-space-record-copy strong{font-weight:565}
+#calendarSpaceDialog .calendar-space-edit{
+ gap:11px;margin-top:13px;padding-top:13px
+}
+#calendarSpaceDialog .calendar-space-edit :is(input,select,textarea){
+ box-sizing:border-box;min-height:44px;
+ border-radius:14px;font-size:16px
+}
+#calendarSpaceDialog .calendar-space-edit textarea{
+ resize:none;min-height:96px;max-height:160px;overflow-y:auto
+}
+#calendarSpaceDialog .calendar-space-actions button,
+#calendarSpaceDialog .cal-space-close{
+ min-height:44px;border-radius:999px
+}
+#calendarSpaceDialog .calendar-space-privacy{
+ margin:11px 0;font-size:10px;line-height:1.45
+}
+
+/* MANAGEMENT — settings are beautiful when easy to scan. */
+@media(max-width:649px){
+ #managePage.manage-main{padding-top:6px}
+ #managePage .manage-heading{margin:5px 0 15px}
+ #managePage .manage-heading .manage-caption{
+  margin-bottom:7px;font-weight:575
+ }
+ #managePage .manage-heading h1{
+  font-size:27px;font-weight:590;line-height:1.16;
+  letter-spacing:-.038em;margin-bottom:6px
+ }
+ #managePage .manage-heading>p:last-child{
+  font-size:12.5px;line-height:1.45
+ }
+ #managePage .manage-live-summary{
+  margin:0 0 14px;padding:10px 12px;
+  font-size:11px;line-height:1.45;border-radius:15px
+ }
+ #managePage .manage-group{margin-bottom:15px}
+ #managePage .manage-group h2{
+  margin-bottom:7px;padding-left:3px;
+  font-size:12px;font-weight:570
+ }
+ #managePage .manage-card{border-radius:19px}
+ #managePage .manage-row{min-height:58px;padding:10px 13px;gap:10px}
+ #managePage .manage-text strong{font-weight:570;letter-spacing:-.01em}
+ #managePage .manage-text small{line-height:1.4}
+}
+
+/* PULSE — professional short diagnosis, not bulky duplicate boxes. */
+.seyveo-pulse-dialog[open]{
+ box-sizing:border-box;
+ max-height:min(87svh,calc(100svh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ padding:21px 17px 16px;border-radius:25px;
+ overscroll-behavior:contain
+}
+.seyveo-pulse-dialog h2{
+ font-size:22px;font-weight:590;letter-spacing:-.033em
+}
+.seyveo-pulse-dialog .pulse-periods{
+ gap:3px;padding:3px;margin-bottom:12px;border-radius:17px
+}
+.seyveo-pulse-dialog .pulse-periods button{
+ min-height:44px;border-radius:13px
+}
+.seyveo-pulse-dialog .pulse-grid{gap:8px;margin-bottom:12px}
+.seyveo-pulse-dialog .pulse-stat{
+ min-height:77px;padding:11px 12px 10px;gap:5px;border-radius:18px
+}
+.seyveo-pulse-dialog .pulse-stat strong{
+ font-size:22px;font-weight:605
+}
+.seyveo-pulse-dialog .pulse-chart-box{
+ padding:12px;border-radius:18px;margin-bottom:12px
+}
+.seyveo-pulse-dialog .pulse-chart-head{margin-bottom:7px}
+.seyveo-pulse-dialog .pulse-insight{
+ padding:12px;border-radius:17px;margin-bottom:10px
+}
+
+/* FIRST LAUNCH — thin typography and generous 44px actions. */
+.onboard-dialog[open]{
+ box-sizing:border-box;
+ max-height:min(90svh,calc(100svh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ border-radius:25px;padding:21px 18px 16px;
+ overscroll-behavior:contain
+}
+.onboard-dialog .onboard-title{
+ font-weight:605!important;letter-spacing:-.036em
+}
+.onboard-dialog .onboard-intro{margin-bottom:15px!important}
+.onboard-dialog .onboard-field{margin-bottom:13px}
+.onboard-dialog .onboard-field input{
+ box-sizing:border-box;min-height:46px;border-radius:15px;font-size:16px
+}
+.onboard-dialog .onboard-options-list{border-radius:18px}
+.onboard-dialog .onboard-option{min-height:58px;padding:10px 13px}
+.onboard-dialog .onboard-actions button{
+ min-height:44px;border-radius:999px;font-weight:545
+}
+
+/* WHITE VELVET — quiet white paper surfaces, graphite text. */
+:root[data-theme=light] #calendarPage :is(.cal-month,.cal-agenda,.calendar-spaces-grid),
+:root[data-theme=light] #calendarSpaceDialog .cal-space-list,
+:root[data-theme=light] #managePage .manage-card,
+:root[data-theme=light] .seyveo-pulse-dialog :is(.pulse-stat,.pulse-chart-box),
+:root[data-theme=light] .onboard-dialog .onboard-options-list{
+ background:#fff;border-color:rgba(48,66,88,.12)
+}
+:root[data-theme=light] #calendarSpaceDialog .calendar-space-edit :is(input,select,textarea),
+:root[data-theme=light] #calendarEventDialog .cal-field :is(input,textarea),
+:root[data-theme=light] .onboard-dialog .onboard-field input{
+ background:#fff;border-color:rgba(48,66,88,.14)
+}
+@media(max-width:370px){
+ #calendarSpaceDialog.cal-space-dialog[open]{padding:17px 12px 13px}
+ #calendarSpaceDialog .calendar-space-date-row{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage .calendar-space-button,
+ #managePage .manage-row{transition:none}
+}
