@@ -91,7 +91,7 @@ if(typeof ResizeObserver!=='undefined'&&stage){
  observer.observe(stage);
 }
 function render(){
- sheet.dataset.pattern=data.pattern;pattern.value=data.pattern;
+ sheet.dataset.pattern=data.pattern;pattern.value=data.pattern;syncPatternMenu();
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
  if($('notePaperRemovePhoto'))$('notePaperRemovePhoto').hidden=!data.photo;
  paint(canvas,data);$('notePaperUndo').disabled=!data.strokes.length;
@@ -138,9 +138,49 @@ canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('[data-paper-tool]').forEach(btn=>btn.addEventListener('click',()=>selectTool(btn.dataset.paperTool)));
 pattern.addEventListener('change',()=>{if(!patterns.includes(pattern.value))return;data.pattern=pattern.value;changed=true;render()});
+/* Glass-pattern picker. The original hidden select remains the only paper
+   template value so saved notes and rendering logic stay unchanged. */
+const patternTrigger=$('notePaperPatternTrigger');
+const patternMenu=$('notePaperPatternMenu');
+const patternLabel=$('notePaperPatternLabel');
+const patternChoices=Array.from(patternMenu.querySelectorAll('[data-paper-pattern]'));
+function closePatternMenu(restoreFocus=false){
+ patternMenu.hidden=true;
+ patternTrigger.setAttribute('aria-expanded','false');
+ if(restoreFocus)patternTrigger.focus({preventScroll:true});
+}
+function syncPatternMenu(){
+ const current=patterns.includes(pattern.value)?pattern.value:'blank';
+ const active=patternChoices.find(item=>item.dataset.paperPattern===current);
+ patternLabel.textContent=active?.textContent||'Чистая';
+ patternChoices.forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.paperPattern===current)));
+}
+patternTrigger.addEventListener('click',()=>{
+ const opening=patternMenu.hidden;
+ patternMenu.hidden=!opening;
+ patternTrigger.setAttribute('aria-expanded',String(opening));
+ if(opening)syncPatternMenu();
+});
+patternChoices.forEach(item=>item.addEventListener('click',()=>{
+ const choice=item.dataset.paperPattern;
+ if(!patterns.includes(choice))return;
+ pattern.value=choice;
+ pattern.dispatchEvent(new Event('change',{bubbles:true}));
+ closePatternMenu(true);
+}));
+document.addEventListener('pointerdown',event=>{
+ if(!patternMenu.hidden&&!event.target.closest('.paper-pattern-control'))closePatternMenu();
+});
+dialog.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!patternMenu.hidden){
+  event.preventDefault();event.stopPropagation();closePatternMenu(true);
+ }
+});
+
 $('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;data.strokes.pop();changed=true;render();report('Последний штрих отменён.')});
 function open(note=null){
  data=normalize(note?.paper);editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
+ closePatternMenu();
  $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
  if(!dialog.open)dialog.showModal();
  requestAnimationFrame(()=>{fitPaper();render()});
@@ -151,7 +191,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{closePatternMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
