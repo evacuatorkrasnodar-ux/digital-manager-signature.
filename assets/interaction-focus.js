@@ -4,6 +4,10 @@
 (()=>{
   'use strict';
   const root=document.documentElement;
+  // iPhone may programmatically focus a dialog button before the first tap.
+  if(window.matchMedia?.('(hover:none) and (pointer:coarse)').matches){
+    root.dataset.seyveoInput='touch';
+  }
   const touch=()=>root.dataset.seyveoInput='touch';
   document.addEventListener('pointerdown',event=>{
     if(event.pointerType==='touch'||event.pointerType==='pen')touch();
