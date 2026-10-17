@@ -160,3 +160,12 @@
   max-height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
  }
 }
+
+/* Preserved poems: never invent line wrapping; scroll sideways only if needed. */
+#noteReadDialog .note-read-content[data-preserve-lines="true"]{
+ white-space:pre;overflow-wrap:normal;word-break:normal;overflow-x:auto;
+ -webkit-overflow-scrolling:touch;tab-size:4;
+}
+#noteReviewDialog #noteReviewText[wrap=off]{
+ white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4;
+}
