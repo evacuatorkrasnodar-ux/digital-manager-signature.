@@ -202,7 +202,8 @@
  height:44px;min-height:44px;padding:0;
 }
 #notePaperDialog .paper-toolbar-primary .paper-pattern-control{
- position:relative;flex:1 1 0;min-width:70px;max-width:none;
+ position:relative;flex:0 0 120px;width:120px;
+ min-width:120px;max-width:120px;margin-left:auto;
 }
 #notePaperDialog .paper-pattern-menu:not([hidden]){z-index:40}
 #notePaperDialog .paper-toolbar-secondary #notePaperRemovePhoto[hidden]{display:none!important}
@@ -250,7 +251,18 @@
  #notePaperDialog .paper-toolbar-primary > button{
   flex-basis:42px;width:42px;min-width:42px;max-width:42px;
  }
- #notePaperDialog .paper-toolbar-primary .paper-pattern-control{min-width:69px}
+ #notePaperDialog .paper-toolbar-primary .paper-pattern-control{
+  flex:0 0 108px;width:108px;min-width:108px;max-width:108px;
+ }
+}
+@media(max-width:340px){
+ #notePaperDialog .paper-toolbar-primary{gap:2px}
+ #notePaperDialog .paper-toolbar-primary > button{
+  flex-basis:40px;width:40px;min-width:40px;max-width:40px;
+ }
+ #notePaperDialog .paper-toolbar-primary .paper-pattern-control{
+  flex:0 0 96px;width:96px;min-width:96px;max-width:96px;
+ }
 }
 :root[data-theme=light] #notePaperDialog .paper-color-menu:not([hidden]){
  box-shadow:0 12px 28px rgba(56,69,85,.18),inset 0 1px 0 rgba(255,255,255,.8);
