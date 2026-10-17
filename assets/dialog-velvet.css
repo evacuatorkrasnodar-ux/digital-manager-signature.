@@ -287,3 +287,55 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
   border-color:rgba(48,64,83,.1);
   box-shadow:0 1px 2px rgba(35,50,70,.035);
 }
+
+/* SEYVEO single dialog history v3.
+   The original silver-glass close button and its common SVG are retained.
+   History is a quiet text action, not another decorative icon or panel. */
+#info.is-reply #infoTitle{
+  margin-right:119px;
+}
+#info.is-reply .reply-history-button:not([hidden]){
+  position:absolute;
+  z-index:2;
+  top:14px;
+  right:57px;
+  box-sizing:border-box;
+  display:grid;
+  place-items:center;
+  min-height:38px;
+  padding:0 9px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:var(--secondary);
+  font:inherit;
+  font-size:12px;
+  font-weight:470;
+  letter-spacing:0;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#info.is-reply .reply-history-button:active{background:var(--card2)}
+#info.is-reply .reply-history-button:focus-visible{
+  outline:2px solid var(--text);
+  outline-offset:2px;
+}
+#info.is-reply > button.seyveo-close-control.seyveo-dialog-close{
+  /* Explicitly use the existing shared 44px hit area and 36px glass face. */
+  box-sizing:border-box;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+}
+#info.is-reply > button.seyveo-dialog-close svg.seyveo-close-glyph{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+@media(max-width:370px){
+  #info.is-reply #infoTitle{margin-right:115px}
+  #info.is-reply .reply-history-button:not([hidden]){right:52px;padding:0 5px;font-size:11px}
+}
