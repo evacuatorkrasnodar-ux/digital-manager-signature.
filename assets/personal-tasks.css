@@ -119,3 +119,12 @@
  #tasksPage .personal-tasks-head{gap:6px}
  #tasksPage .personal-tasks-add{padding:8px 10px}
 }
+
+/* Storage errors belong in SEYVEO, not native browser alert windows. */
+#tasksPage .personal-tasks-notice{
+ margin:8px 2px 0;padding:10px 12px;
+ border:1px solid var(--soft-line);border-radius:13px;
+ color:var(--secondary);background:var(--card2);
+ font-size:12px;line-height:1.5;
+}
+#tasksPage .personal-tasks-notice[hidden]{display:none!important}
