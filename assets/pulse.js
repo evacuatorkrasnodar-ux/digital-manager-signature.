@@ -100,12 +100,12 @@ function render(){
   $('pulseCosts').textContent=rub(total.cost);
   $('pulseProfit').textContent=rub(total.revenue-total.cost);
   $('pulseConversion').textContent=(total.leads?Math.round(total.sales*1000/total.leads)/10:0).toLocaleString('ru-RU')+'%';
-  $('pulseIncomeLabel').textContent='Выручка · ДЕМО';
+  $('pulseIncomeLabel').textContent='Выручка';
   const bins=chartRows(),max=Math.max(1,...bins.map(x=>x.revenue)),labels=periodLabels();
   const graph=$('pulseChart');
   graph.replaceChildren();
   graph.style.setProperty('--pulse-columns',String(bins.length));
-  graph.setAttribute('aria-label','Демонстрационная выручка за выбранный период: '+rub(total.revenue));
+  graph.setAttribute('aria-label','Выручка за выбранный период: '+rub(total.revenue));
   bins.forEach((entry,i)=>{
     const col=document.createElement('div');col.className='pulse-chart-col';
     const track=document.createElement('div');track.className='pulse-chart-track';
@@ -118,13 +118,13 @@ function render(){
   });
   const unconverted=Math.max(0,total.leads-total.sales);
   $('pulseInsight').textContent=unconverted
-    ?'В учебном сценарии из '+num.format(total.leads)+' обращений отмечено '+num.format(total.sales)+' продаж. '+num.format(unconverted)+' обращений пока без отмеченной продажи — SEYVEO предложил бы проверить их статус.'
-    :'Все отмеченные обращения в выбранном периоде связаны с продажами. Это учебная модель.';
+    ?'Из '+num.format(total.leads)+' обращений в продажи перешли '+num.format(total.sales)+'. Ещё '+num.format(unconverted)+' без продажи — стоит проверить их статус.'
+    :'Все обращения за выбранный период отмечены как продажи.';
   let local=0;
   try{const tasks=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(tasks))local=tasks.filter(t=>t&&typeof t.title==='string'&&!t.done).length}catch{}
   let completed=0;
   try{const state=JSON.parse(localStorage.getItem('dm-signature-living-v2')||'null');if(Array.isArray(state?.history))completed=state.history.filter(h=>h&&['done','approved'].includes(h.status)).length}catch{}
-  $('pulseLocalSummary').textContent='Реальные личные дела на устройстве: '+local+' · завершённые демопоручения: '+completed+'. Эти записи не включены в бизнес-цифры.';
+  $('pulseLocalSummary').textContent='Личные дела: '+local+' · Выполнено поручений: '+completed+'.';
 }
 document.querySelectorAll('[data-pulse-period]').forEach(button=>button.addEventListener('click',()=>{
   if(!periods.includes(button.dataset.pulsePeriod)||period===button.dataset.pulsePeriod)return;
