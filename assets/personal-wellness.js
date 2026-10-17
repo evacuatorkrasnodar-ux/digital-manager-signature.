@@ -44,6 +44,10 @@ const icon=(name)=>({
 const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false">'+icon(key)+'<strong>'+label+'</strong><small id="pwCard'+key+'">'+sub+'</small></button>';
 host.innerHTML=`
  <section id="pwCare">
+  <button type="button" class="pw-care-back" id="pwCareBack" hidden aria-label="Вернуться к инструментам заботы">
+   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>
+   <span>Все инструменты</span>
+  </button>
   <div class="pw-tiles">${btn('breath','Дыхание','1–5 минут')}${btn('water','Вода','Мой баланс')}${btn('eyes','Глаза','Минута отдыха')}${btn('steps','Шаги','Сегодня')}</div>
   <section id="pwCareDetail" class="pw-detail" hidden>
    <div data-pw-panel="breath" hidden>
@@ -120,12 +124,23 @@ function setInputDefaults(){
  }
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
 }
+function setCareFocus(focused){
+ const active=Boolean(focused&&space==='care');
+ $('pwCare').classList.toggle('is-focused',active);
+ $('pwCareBack').hidden=!active;
+ const dialog=$('calendarSpaceDialog');
+ dialog.dataset.careFocus=String(active);
+ // The sheet is the only scroller. Bring every mini-tool into view
+ // without a second overlay, a nested scroll region or keyboard jumps.
+ if(active)dialog.scrollTop=0;
+}
 function resetTools(){
  stopSession(false); careTool='';healthTool='';notice('');
  $('pwCareDetail').hidden=true;$('pwHealthDetail').hidden=true;
  host.querySelectorAll('[data-pw-panel]').forEach(el=>el.hidden=true);
  host.querySelectorAll('[data-pw-tool]').forEach(el=>el.setAttribute('aria-pressed','false'));
  $('pwCycleDetail').hidden=true;$('pwCycleOpen').setAttribute('aria-expanded','false');
+ setCareFocus(false);
 }
 function openSpace(view){
  if(view!=='care'&&view!=='health'){host.hidden=true;resetTools();space='';return;}
@@ -137,6 +152,7 @@ function openSpace(view){
 }
 function resetCareTools(){
  careTool='';$('pwCareDetail').hidden=true;
+ setCareFocus(false);
  host.querySelectorAll('[data-pw-panel]').forEach(p=>{
   if(['water','breath','eyes','steps'].includes(p.dataset.pwPanel))p.hidden=true;
  });
@@ -163,6 +179,7 @@ function openTool(key){
   if(care===['water','breath','eyes','steps'].includes(p.dataset.pwTool))
    p.setAttribute('aria-pressed',String(!active&&p.dataset.pwTool===key));
  });
+ if(care)setCareFocus(!active);
  if(!active&&care&&key==='steps')fillSteps();
  if(!active)notice('');
 }
@@ -374,6 +391,15 @@ function recordCycle(e){
 }
 host.addEventListener('click',event=>{
  const btn=event.target.closest('button');if(!btn)return;
+ if(btn.id==='pwCareBack'){
+  if(session)stopSession(false);
+  resetCareTools();
+  $('pwCycleDetail').hidden=true;
+  $('pwCycleOpen').setAttribute('aria-expanded','false');
+  $('calendarSpaceDialog').scrollTop=0;
+  notice('');
+  return;
+ }
  if(btn.dataset.pwTool){openTool(btn.dataset.pwTool);return;}
  if(btn.dataset.pwWater){updateWater(Number(btn.dataset.pwWater));return;}
  if(btn.id==='pwWaterUndo'){if(lastWater&&lastWaterDate===today())updateWater(-lastWater);return;}
@@ -383,7 +409,8 @@ host.addEventListener('click',event=>{
  if(btn.id==='pwCycleOpen'){
   const panel=$('pwCycleDetail'),opening=panel.hidden;
   panel.hidden=!opening;btn.setAttribute('aria-expanded',String(opening));
-  if(opening){resetCareTools();stopSession(false);}
+  if(opening){resetCareTools();stopSession(false);setCareFocus(true);}
+  else setCareFocus(false);
   return;
  }
  if(btn.id==='pwCycleEnable'){
