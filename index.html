@@ -1852,19 +1852,25 @@ $('noteReviewDialog').addEventListener('close',()=>{
 $('noteReviewForm').addEventListener('submit',event=>{
  event.preventDefault();const text=$('noteReviewText').value.trim().slice(0,2500);
  if(!text){$('noteReviewStatus').textContent='Напишите, какую мысль сохранить.';$('noteReviewStatus').hidden=false;return}
- const old=getNotes();let next;
+ const old=getNotes();let next,created=null;
+ const showAfterSave=!editingNoteID&&$('noteReviewDialog').dataset.noteMode==='draft';
  if(editingNoteID){
   if(!old.some(note=>note.id===editingNoteID)){
    $('noteReviewStatus').textContent='Эта запись больше не найдена.';$('noteReviewStatus').hidden=false;return;
   }
   next=old.map(note=>note.id===editingNoteID?{...note,text,updatedAt:Date.now()}:note);
- }else next=[{id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now()},...old];
+ }else{
+  created={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now()};
+  next=[created,...old];
+ }
  if(!putNotes(next)){
   $('noteReviewStatus').textContent='Не удалось сохранить. Проверьте память устройства.';
   $('noteReviewStatus').hidden=false;return;
  }
  playFeedback('confirm');
- editingNoteID=null;$('noteReviewDialog').close();openNotes();
+ editingNoteID=null;$('noteReviewDialog').close();
+ if(showAfterSave&&created)openNoteRead(created);
+ else openNotes();
 });
 function composerText(){const v=question.value.trim();if(!v)composerMessage('Сначала напишите текст');return v}
 $('saveNote').addEventListener('click',()=>{
