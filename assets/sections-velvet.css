@@ -16,16 +16,12 @@
   width:44px;height:44px;min-height:44px;min-width:44px
  }
  #calendarPage .cal-periods{
-  margin-bottom:10px;padding:3px;gap:3px;border-radius:17px
+  padding:3px;gap:3px;border-radius:17px
  }
  #calendarPage .cal-periods button{
   min-height:44px;border-radius:13px;font-weight:545
  }
- #calendarPage .cal-nav{margin:0 1px 5px;min-height:44px}
  #calendarPage .cal-nav h2{font-size:16px;font-weight:590}
- #calendarPage .cal-nav .cal-period-title{
-  display:inline-flex;align-items:center;min-height:44px
- }
  #calendarPage .cal-day-summary{margin:10px 1px 6px}
  #calendarPage .cal-day-summary h2{font-size:13.5px;font-weight:590}
  #calendarPage .cal-agenda{border-radius:19px;padding-inline:13px}
@@ -34,8 +30,6 @@
  #calendarPage .cal-entry-copy strong{font-weight:575}
  #calendarPage .cal-empty{padding:21px 12px}
  #calendarPage .cal-advice{margin-top:8px;padding:10px 12px;border-radius:16px}
- #calendarPage .cal-advice-action,
- #calendarPage .cal-day-fab,
 }
 #calendarEventDialog.cal-form-dialog[open]{
  border-radius:25px;
