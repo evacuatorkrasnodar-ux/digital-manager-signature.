@@ -132,16 +132,14 @@ function renderDay(){
 function renderAgenda(){
  const list=dayItems(iso());
  $('calendarSelectedTitle').textContent=niceFirst(fmtShort.format(focus));
- $('calendarSelectedCount').textContent=list.length?(list.length+' записей'):'Нет записей';
- fillAgenda($('calendarAgenda'),list,'На этот день пока ничего нет','Можно оставить время свободным или добавить встречу.');
- const undone=tasks().filter(x=>x.date===iso()&&!x.done).length;
- const nowKey=format(new Date());
- const notes=list.filter(x=>x.source==='event').length;
- const spaces=list.filter(x=>x.source==='space').length;
- $('calendarInsight').textContent=undone
-  ?'На выбранную дату '+undone+' '+(undone===1?'дело':'дел')+' со сроком. SEYVEO сохранит всё в общем списке «Дела».'
-  :notes||spaces?'На выбранную дату '+(notes+spaces)+' записей. Здесь вместе события и выбранные личные записи — без копирования данных.'
-  :iso()===nowKey?'Сегодня свободно — можно спокойно заняться важным.':'На выбранную дату пока ничего не запланировано.';
+ const count=list.length;
+ $('calendarSelectedCount').textContent=count
+  ?count+' '+(count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей')
+  :'Нет записей';
+ const agenda=$('calendarAgenda');
+ agenda.hidden=count===0;
+ if(count)fillAgenda(agenda,list);
+ else agenda.replaceChildren();
 }
 function renderDeadlines(){
  const today=format(new Date()),tomorrow=format(step(new Date(),1)),weekEnd=format(step(new Date(),7));
@@ -178,6 +176,8 @@ function render(){
  const deadline=mode==='deadlines';
  $('calendarView').hidden=deadline;
  $('calendarDeadlineView').hidden=!deadline;
+ $('calendarAddInline').hidden=deadline;
+ document.querySelector('#calendarPage .cal-actions').dataset.deadlines=String(deadline);
  document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.calendarMode===mode)));
  $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus)):
   mode==='week'?fmtLong.format(monday(focus)).replace(/\s+\d{4}\s*г?\.?/,'')+' — '+fmtLong.format(step(monday(focus),6)):
