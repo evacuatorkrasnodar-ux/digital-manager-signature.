@@ -420,7 +420,22 @@ function syncTimeDisplay(){
  const value=input.value;
  display.textContent=value||'Указать время';
  input.closest('.cal-time-control').dataset.filled=String(Boolean(value));
+ $('calendarClearTime').hidden=!value;
  syncPlanningLabel();
+}
+/* Some iOS pickers briefly insert the current hour when they open.  Only keep
+   that transient value if the native picker reports an actual change. */
+let timePickerBaseline='',timePickerChanged=false;
+function beginNativeTimePick(){
+ timePickerBaseline=$('calendarEventTime').value;
+ timePickerChanged=false;
+}
+function finishNativeTimePick(){
+ const field=$('calendarEventTime');
+ if(!timePickerChanged&&field.value!==timePickerBaseline)
+  field.value=timePickerBaseline;
+ syncTimeDisplay();
+ showEventTimeHint();
 }
 function setEventKind(kind){
  const radio=form.querySelector('input[name="calendarEventKind"][value="'+(kind==='business'?'business':'personal')+'"]');
@@ -543,8 +558,16 @@ $('calendarTimeOptionsChoices').addEventListener('click',event=>{
  syncTimeDisplay();
  showEventTimeHint();
 });
-for(const eventName of ['input','change','blur'])$('calendarEventTime').addEventListener(eventName,()=>{
- syncTimeDisplay();showEventTimeHint();
+$('calendarEventTime').addEventListener('focus',beginNativeTimePick);
+$('calendarEventTime').addEventListener('change',()=>{timePickerChanged=true;syncTimeDisplay();showEventTimeHint()});
+$('calendarEventTime').addEventListener('input',()=>{syncTimeDisplay();showEventTimeHint()});
+$('calendarEventTime').addEventListener('blur',finishNativeTimePick);
+$('calendarClearTime').addEventListener('click',()=>{
+ const field=$('calendarEventTime');
+ field.value='';
+ timePickerBaseline='';timePickerChanged=false;
+ syncTimeDisplay();
+ showEventTimeHint();
 });
 $('calendarAdviceAction').addEventListener('click',()=>{
  if(!currentAdvice)return;
