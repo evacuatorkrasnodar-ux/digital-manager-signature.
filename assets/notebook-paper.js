@@ -4,11 +4,13 @@
 'use strict';
 const W=840,H=1188,MAX_STROKES=250,MAX_POINTS=1300,MAX_BYTES=350000,MAX_PHOTO=155000;
 const tools=['pen','pencil','eraser'],patterns=['blank','lines','dots'];
+const COLORS=['#171e29','#556174','#27609b','#c54a51','#258463','#7954a3'];
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
 const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
+let activeColor=COLORS[0];
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
 const photoCache=new Map();
 function photoImage(photo,redraw){
@@ -32,7 +34,7 @@ function normalize(obj){
  photo:typeof p.photo==='string'&&p.photo.length<MAX_PHOTO&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:'',
  strokes:(Array.isArray(p.strokes)?p.strokes:[]).slice(0,MAX_STROKES)
  .filter(stroke=>stroke&&tools.includes(stroke.tool)&&Array.isArray(stroke.points))
- .map(stroke=>({tool:stroke.tool,points:stroke.points.slice(0,MAX_POINTS)
+ .map(stroke=>({tool:stroke.tool,color:COLORS.includes(stroke.color)?stroke.color:undefined,points:stroke.points.slice(0,MAX_POINTS)
  .filter(point=>Array.isArray(point)&&point.length>=2&&Number.isFinite(Number(point[0]))&&Number.isFinite(Number(point[1])))
  .map(point=>[clamp(point[0],W),clamp(point[1],H),clamp(point.length>2?point[2]:50,100)])}))};
 }
@@ -41,7 +43,8 @@ function paintStroke(ctx,s){
  const erase=s.tool==='eraser',base=erase?28:s.tool==='pencil'?3.5:4.8;
  ctx.save();ctx.globalCompositeOperation=erase?'destination-out':'source-over';
  ctx.lineJoin='round';ctx.lineCap='round';
- ctx.strokeStyle=ctx.fillStyle=erase?'#111':s.tool==='pencil'?'rgba(32,39,52,.62)':'#171e29';
+ const chosen=COLORS.includes(s.color)?s.color:null;
+ ctx.strokeStyle=ctx.fillStyle=erase?'#111':chosen?(s.tool==='pencil'?chosen+'a3':chosen):s.tool==='pencil'?'rgba(32,39,52,.62)':'#171e29';
  const width=p=>base*(erase?1:.65+.007*p);
  const pts=s.points;
  if(pts.length===1){
@@ -110,7 +113,7 @@ function down(e){
  if(e.pointerType==='pen')penTime=Date.now()+2800;
  if(e.pointerType==='touch'&&Date.now()<penTime)return;
  if(data.strokes.length>=MAX_STROKES){report('Лист заполнен. Начните следующий.');return}
- e.preventDefault();pointerID=e.pointerId;pending={tool:currentTool(),points:[point(e)]};
+ e.preventDefault();pointerID=e.pointerId;pending={tool:currentTool(),color:activeColor,points:[point(e)]};
  try{canvas.setPointerCapture(e.pointerId)}catch{}
 }
 function move(e){
@@ -156,6 +159,7 @@ function syncPatternMenu(){
  patternChoices.forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.paperPattern===current)));
 }
 patternTrigger.addEventListener('click',()=>{
+ closeColorMenu();
  const opening=patternMenu.hidden;
  patternMenu.hidden=!opening;
  patternTrigger.setAttribute('aria-expanded',String(opening));
@@ -172,15 +176,53 @@ document.addEventListener('pointerdown',event=>{
  if(!patternMenu.hidden&&!event.target.closest('.paper-pattern-control'))closePatternMenu();
 });
 dialog.addEventListener('keydown',event=>{
- if(event.key==='Escape'&&!patternMenu.hidden){
+ if(event.key==='Escape'&&!colorMenu.hidden){
+  event.preventDefault();event.stopPropagation();closeColorMenu(true);
+ }else if(event.key==='Escape'&&!patternMenu.hidden){
   event.preventDefault();event.stopPropagation();closePatternMenu(true);
  }
+});
+
+
+/* Color picker: store an allowlisted color per stroke. Old notes without
+   a color still render exactly as before. Eraser behavior is unchanged. */
+const colorTrigger=$('notePaperColorTrigger');
+const colorMenu=$('notePaperColorMenu');
+const colorDot=$('notePaperColorDot');
+const colorChoices=Array.from(colorMenu.querySelectorAll('[data-paper-color]'));
+function syncColorMenu(){
+ colorDot.style.backgroundColor=activeColor;
+ colorChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.paperColor===activeColor)));
+}
+function closeColorMenu(restoreFocus=false){
+ colorMenu.hidden=true;
+ colorTrigger.setAttribute('aria-expanded','false');
+ if(restoreFocus)colorTrigger.focus({preventScroll:true});
+}
+colorTrigger.addEventListener('click',()=>{
+ closePatternMenu();
+ const opening=colorMenu.hidden;
+ colorMenu.hidden=!opening;
+ colorTrigger.setAttribute('aria-expanded',String(opening));
+ if(opening)syncColorMenu();
+});
+colorChoices.forEach(button=>button.addEventListener('click',()=>{
+ if(!COLORS.includes(button.dataset.paperColor))return;
+ activeColor=button.dataset.paperColor;
+ syncColorMenu();
+ if(currentTool()==='eraser')selectTool('pen');
+ closeColorMenu(true);
+}));
+document.addEventListener('pointerdown',event=>{
+ if(!colorMenu.hidden&&!event.target.closest('.paper-color-control'))closeColorMenu();
 });
 
 $('notePaperUndo').addEventListener('click',()=>{if(!data.strokes.length)return;data.strokes.pop();changed=true;render();report('Последний штрих отменён.')});
 function open(note=null){
  data=normalize(note?.paper);editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
- closePatternMenu();
+ closePatternMenu();closeColorMenu();
+ activeColor=[...data.strokes].reverse().find(stroke=>COLORS.includes(stroke.color))?.color||COLORS[0];
+ syncColorMenu();
  $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
  if(!dialog.open)dialog.showModal();
  requestAnimationFrame(()=>{fitPaper();render()});
@@ -191,7 +233,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{closePatternMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
