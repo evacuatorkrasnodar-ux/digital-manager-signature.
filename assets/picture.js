@@ -36,7 +36,7 @@ function render(){
  $('pictureBusinessCharts').hidden=life;
  $('pictureLifeNote').hidden=!life;
  $('pictureQuickInsight').hidden=life;
- $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent=life?'ВАШИ ИНСТРУМЕНТЫ':'ДЕМО · ВАШ ВЫБОР';
+ $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent=life?'ВАШИ ИНСТРУМЕНТЫ':'ВАШ ВЫБОР';
  if(life)return;
  window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
  const result=businessData();
@@ -54,7 +54,7 @@ function render(){
   track.append(bar);col.append(track,label);plot.append(col);
  }
  plot.setAttribute('role','group');
- plot.setAttribute('aria-label','Учебные продажи за период: нажмите на столбец для подробностей');
+ plot.setAttribute('aria-label','Продажи за период: нажмите на столбец для подробностей');
  const sourceList=$('pictureSources');sourceList.replaceChildren();
  sources.forEach((source,index)=>row(sourceList,source.name,source.leads+' обращений',total.leads?source.leads*100/total.leads:0,'source',index));
  const expenses=$('pictureExpenses');expenses.replaceChildren();
@@ -63,14 +63,15 @@ function render(){
  $('pictureSummary').textContent=total.leads
    ?'Из '+num.format(total.leads)+' обращений '+num.format(total.sales)+' стали заказами. '+(incomplete?'Стоит проверить оставшиеся '+num.format(incomplete)+'.':'Все обращения отмечены как заказы.')
    :'В выбранный период обращений нет.';
- $('pictureMoneyDifference').textContent='Разница между продажами и расходами: '+rub(total.revenue-total.cost)+'. Это не сумма поступлений на счёт.';
+ $('pictureMoneyDifference').textContent='Разница продаж и расходов: '+rub(total.revenue-total.cost);
 }
 // Drill down from a number, a source, an expense, or one chart column.
 function openBreakdown(title,subtitle,values,explanation){
  const dialog=$('pictureBreakdownDialog'),list=$('pictureBreakdownRows');
  $('pictureBreakdownTitle').textContent=title;
  $('pictureBreakdownSub').textContent=subtitle;
- $('pictureBreakdownExplain').textContent=explanation;
+ $('pictureBreakdownExplain').textContent=explanation||'';
+ $('pictureBreakdownExplain').hidden=!explanation;
  list.replaceChildren();
  for(const [label,value] of values){
   const r=clean('div','home-widget-detail-row');
@@ -88,8 +89,8 @@ $('pictureBars').addEventListener('click',event=>{
   ['Обращения',num.format(item.leads)],
   ['Заказы',num.format(item.sales)],
   ['Продажи на сумму',rub(item.revenue)],
-  ['Учебные расходы',rub(item.cost)]
- ],'Все показатели взяты из одного учебного набора событий. Это не реальные платежи или кассовые операции.');
+  ['Расходы',rub(item.cost)]
+ ],'');
 });
 for(const [group,id] of [['source','pictureSources'],['cost','pictureExpenses']]){
  $(id).addEventListener('click',event=>{
@@ -99,18 +100,18 @@ for(const [group,id] of [['source','pictureSources'],['cost','pictureExpenses']]
   const index=Number(button.dataset.pictureIndex);
   if(group==='source'){
    const item=picture.sources[index];if(!item)return;
-   openBreakdown(item.name,'Как клиенты нашли компанию · демо',[
+   openBreakdown(item.name,'Как клиенты нашли компанию',[
     ['Обращений',num.format(item.leads)],
     ['Стали заказами',num.format(item.sales)],
     ['Продано на сумму',rub(item.revenue)]
-   ],'Распределение по источникам смоделировано для демонстрации. Рекламные кабинеты и CRM не подключены.');
+   ],'');
   }else{
    const item=picture.costs[index];if(!item)return;
    const percent=picture.total.cost?Math.round(item.value*100/picture.total.cost):0;
-   openBreakdown(item.name,'Категория расходов · демо',[
+   openBreakdown(item.name,'Категория расходов',[
     ['Расходы',rub(item.value)],
     ['Доля всех расходов',percent+'%']
-   ],'Это примерная категория расходов, а не список проведённых банковских платежей. Детализация по реальным операциям появится после подключения источника.');
+   ],'');
   }
  });
 }
