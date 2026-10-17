@@ -200,7 +200,9 @@ function startSession(kind){
  if(session){
   session.paused=!session.paused;session.last=performance.now();
   button.textContent=session.paused?'Продолжить':'Пауза';
-  if(isBreath&&session.paused)$('pwBreathRing').className='pw-breath-ring';
+  clearInterval(timer);timer=0;
+  if(session.paused){if(isBreath)$('pwBreathRing').className='pw-breath-ring';}
+  else{tick();timer=setInterval(tick,180);}
   return;
  }
  session={kind,elapsed:0,total:isBreath?Number($('pwBreathDuration').value)*60:60,paused:false,last:performance.now()};
@@ -427,6 +429,7 @@ $('calendarSpaceDialog').addEventListener('close',()=>{stopSession(false);resetT
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&session&&!session.paused){
   session.paused=true;session.last=performance.now();
+  clearInterval(timer);timer=0;
   $(session.kind==='breath'?'pwBreathStart':'pwEyeStart').textContent='Продолжить';
   $('pwBreathRing').className='pw-breath-ring';
  }
