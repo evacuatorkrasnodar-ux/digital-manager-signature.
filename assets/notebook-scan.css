@@ -44,3 +44,19 @@
 #noteScanDialog .paper-scan-consent-actions{display:flex;gap:8px}
 #noteScanDialog .paper-scan-consent-actions button{min-height:44px;flex:1;min-width:0;font-size:12px}
 @media(max-width:370px){#noteScanDialog.paper-scan-dialog{padding:16px 13px 13px}#noteScanDialog .paper-scan-inputs{gap:6px}#noteScanDialog .paper-scan-inputs label{font-size:11.5px;padding:8px 5px}}
+
+
+/* Photo to text · keep poetry lines as printed, with a compact native switch. */
+#noteScanDialog .paper-scan-line-mode{
+ display:flex;align-items:center;gap:10px;
+ box-sizing:border-box;min-height:44px;padding:5px 2px;margin:2px 0 9px;
+ color:var(--text);cursor:pointer;
+}
+#noteScanDialog .paper-scan-line-mode input{
+ appearance:auto;-webkit-appearance:checkbox;
+ flex:none;width:19px;height:19px;min-width:19px;min-height:19px;
+ accent-color:var(--text);margin:0;
+}
+#noteScanDialog .paper-scan-line-mode span{display:flex;flex-direction:column;gap:1px;font-size:12.5px;line-height:1.35}
+#noteScanDialog .paper-scan-line-mode small{font-size:11px;font-weight:400;line-height:1.25;color:var(--secondary)}
+#noteScanDialog #noteScanText[wrap=off]{white-space:pre;overflow-x:auto;overflow-wrap:normal}
