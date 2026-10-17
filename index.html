@@ -1370,6 +1370,7 @@ function showWrittenReply(userText,assistantText){
   $('scenarioRestart').hidden=true;
   $('userReplyText').textContent=userText;
   $('assistantReplyText').textContent=assistantText;
+ window.SEYVEO_CHAT_HISTORY?.add({question:userText,answer:assistantText});
   const orb=effectiveTheme()==='light'?'assets/plasma-signature-light.svg?v=11':'assets/plasma-signature.svg?v=11';
   if($('miniAssistantOrb').getAttribute('src')!==orb)$('miniAssistantOrb').setAttribute('src',orb);
   if(!$('info').open)$('info').showModal();
@@ -1602,11 +1603,21 @@ $('orb').addEventListener('click',()=>{
   revealOrbBrandOnTap();
 });
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
+if(composerMode==='notes'){
+ const record={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:question.value.replace(/^\n+|\n+$/g,''),createdAt:Date.now()};
+ if(!putNotes([record,...getNotes()])){composerMessage('Не удалось сохранить. Проверьте память устройства.');return}
+ playFeedback('confirm');
+ question.value='';closeComposer();syncComposer();openNoteRead(record);
+ return;
+}
 const draft=window.SEYVEO_CALENDAR_NL?.(q);
 if(draft){
  playFeedback('confirm');
  closeComposer();question.value='';syncComposer();
- if(draft.status==='ready')window.dispatchEvent(new CustomEvent('seyveo:calendar-from-ask',{detail:draft}));
+ if(draft.status==='ready'){
+ window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик события в календаре для проверки. Пока не сохранено.',kind:'draft'});
+ window.dispatchEvent(new CustomEvent('seyveo:calendar-from-ask',{detail:draft}));
+}
  else showWrittenReply(q,draft.message);
  return;
 }
@@ -1614,7 +1625,10 @@ const noteDraft=window.SEYVEO_NOTE_NL?.(q);
 if(noteDraft){
  playFeedback('confirm');
  closeComposer();question.value='';syncComposer();
- if(noteDraft.status==='ready')openNoteReview(noteDraft.text);
+ if(noteDraft.status==='ready'){
+ window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик для Блокнота. Сохранение только после подтверждения.',kind:'draft'});
+ openNoteReview(noteDraft.text);
+}
  else showWrittenReply(q,noteDraft.message);
  return;
 }
@@ -1646,7 +1660,7 @@ $('infoClose').addEventListener('click',()=>$('info').close());
 /* One adaptive composer, separate local draft and notebook stores. */
 const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
 const composer=$('ask'),question=$('question');
-let composerIdle=null,composerStatusTimer=null;
+let composerIdle=null,composerStatusTimer=null,composerMode='ask';
 function composerMessage(message){
   const status=$('composerStatus');
   clearTimeout(composerStatusTimer);
@@ -1674,7 +1688,7 @@ function syncComposer(){
   question.style.height='auto';
   const pixels=question.scrollHeight;
   question.style.height=Math.min(pixels,116)+'px';
-  if(pixels>94||question.value.length>175)expandComposer();
+  if(pixels>94||question.value.length>135||question.value.includes('\n'))expandComposer();
   else armComposerIdle();
 }
 function openComposer(){
@@ -1693,6 +1707,24 @@ function closeComposer(){
   question.blur();
   $('composerStatus').hidden=true;
 }
+function setComposerMode(mode){
+ composerMode=mode==='notes'?'notes':'ask';
+ const notes=composerMode==='notes';
+ composer.dataset.composerMode=composerMode;
+ $('composerModeAsk').setAttribute('aria-pressed',String(!notes));
+ $('composerModeNotes').setAttribute('aria-pressed',String(notes));
+ question.placeholder=notes?'Напишите заметку…':'Напишите управляющему…';
+ question.setAttribute('aria-label',notes?'Новая заметка для Блокнота':'Сообщение управляющему');
+ $('composerTitle').textContent=notes?'Новая заметка':'Вопрос управляющему';
+ $('composerMainLabel').textContent=notes?'Сохранить':'Спросить';
+ $('composerMainAction').setAttribute('aria-label',notes?'Сохранить в Блокнот':'Отправить вопрос управляющему');
+ $('composerCompactSend').setAttribute('aria-label',notes?'Сохранить в Блокнот':'Отправить вопрос управляющему');
+ syncComposer();
+}
+$('composerModeAsk').addEventListener('click',()=>setComposerMode('ask'));
+$('composerModeNotes').addEventListener('click',()=>setComposerMode('notes'));
+$('composerExpandManual').addEventListener('click',()=>{expandComposer();question.focus({preventScroll:true})});
+$('composerHistory').addEventListener('click',()=>{closeComposer();window.SEYVEO_CHAT_HISTORY?.open()});
 function getNotes(){
   try{const v=JSON.parse(localStorage.getItem(NOTES_KEY)||'[]');return Array.isArray(v)?v.filter(n=>n&&typeof n.text==='string'&&typeof n.id==='string').slice(0,100):[]}catch{return []}
 }
@@ -1888,10 +1920,8 @@ $('noteReviewForm').addEventListener('submit',event=>{
 });
 function composerText(){const v=question.value.trim();if(!v)composerMessage('Сначала напишите текст');return v}
 $('saveNote').addEventListener('click',()=>{
-  const value=composerText();if(!value)return;
-  const record={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:value,createdAt:Date.now()};
-  if(putNotes([record,...getNotes()])){playFeedback('confirm');composerMessage('Сохранено в «Мои записи» · на этом устройстве')}
-  else composerMessage('Не удалось сохранить запись');
+ const value=composerText();if(!value)return;
+ openNoteReview(question.value);
 });
 $('moreComposer').addEventListener('click',()=>{
   const more=$('composerMore');more.hidden=!more.hidden;
@@ -1943,7 +1973,7 @@ $('printText').addEventListener('click',()=>{
 });
 question.addEventListener('input',syncComposer);
 question.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey&&(!composer.classList.contains('expanded')||e.ctrlKey||e.metaKey)){
+  if(e.key==='Enter'&&!e.shiftKey&&(e.ctrlKey||e.metaKey||composerMode==='ask'&&!composer.classList.contains('expanded'))){
     e.preventDefault();composer.requestSubmit();
   }
 });
@@ -2096,5 +2126,5 @@ fab.addEventListener('click',()=>{
   }
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
+restoreDraft();setComposerMode('ask');render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
 </script><script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=19"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=2"></script><script src="assets/notebook-paper.js?v=3"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=26"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
