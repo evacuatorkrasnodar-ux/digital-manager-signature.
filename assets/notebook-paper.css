@@ -43,3 +43,59 @@
  margin:4px 0 8px;background:#fff;border-radius:4px}
 @media(max-width:370px){.paper-toolbar{gap:4px}.paper-toolbar button,.paper-toolbar select{padding:8px 10px}.paper-editor-dialog{padding:16px 12px 12px}}
 @media(prefers-reduced-motion:reduce){.paper-choice-item,.paper-toolbar button{transition:none}}
+
+/* SEYVEO Paper polish · full visible page and quiet glass tools on iPhone X. */
+.paper-choice-dialog{padding:18px 17px 15px}
+.paper-choice-dialog h2{font-size:21px;margin-bottom:5px}
+.paper-choice-dialog>p{margin-bottom:8px}
+.paper-choice-list{gap:7px;margin:10px 0 2px}
+.paper-choice-item{min-height:64px;padding:10px 12px;border-radius:15px;gap:12px}
+.paper-choice-icon{width:36px;height:44px;font-size:19px;border-radius:7px}
+.paper-choice-item strong{font-size:13px;font-weight:590}
+.paper-choice-item small{font-size:11px;line-height:1.3;margin-top:2px}
+#notePaperDialog.paper-editor-dialog[open]{
+ height:min(88dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:min(88dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ display:flex;flex-direction:column;overflow:hidden;padding:16px 15px 13px;
+}
+#notePaperDialog .paper-head{padding-bottom:6px}
+#notePaperDialog .paper-head h2{font-size:21px}
+#notePaperDialog .paper-toolbar{gap:5px;align-items:center;justify-content:flex-start;padding:5px 0 9px;flex:none}
+#notePaperDialog .paper-toolbar button{
+ display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
+ min-width:44px;min-height:44px;padding:0;
+ border-radius:14px;-webkit-tap-highlight-color:transparent;
+}
+#notePaperDialog .paper-toolbar button svg{
+ display:block;width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}
+#notePaperDialog .paper-toolbar button[aria-pressed=true]{
+ background:var(--card2);border-color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+}
+#notePaperDialog .paper-toolbar select{
+ flex:1 1 98px;width:auto;min-width:98px;max-width:158px;height:44px;
+ border-radius:14px;padding:8px 12px;font-size:12px;
+}
+#notePaperDialog .paper-stage{
+ display:flex;justify-content:center;align-items:center;
+ min-width:0;min-height:0;flex:1 1 auto;
+ margin:0;padding:2px;overflow:hidden;overscroll-behavior:contain;
+}
+#notePaperDialog .paper-sheet{
+ display:block;position:relative;flex:0 0 auto;
+ max-width:100%;max-height:100%;margin:0;
+ aspect-ratio:210/297;border-radius:3px;overflow:hidden;
+}
+#notePaperDialog .paper-actions{padding-top:9px;gap:8px}
+#notePaperDialog .paper-actions button{min-height:44px}
+#notePaperDialog .paper-status{min-height:0;padding-top:4px}
+#notePaperDialog .paper-status:empty{display:none}
+@media(max-width:370px){
+ #notePaperDialog.paper-editor-dialog[open]{padding:14px 11px 11px}
+ #notePaperDialog .paper-toolbar{gap:4px}
+ #notePaperDialog .paper-toolbar button{flex-basis:44px}
+}
+@media(max-height:590px){
+ #notePaperDialog.paper-editor-dialog[open]{height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+}
