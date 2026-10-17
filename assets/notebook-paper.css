@@ -126,14 +126,20 @@
 #notePaperDialog .paper-head{min-height:46px;box-sizing:border-box;padding-bottom:6px}
 
 /* Black Velvet: integrated paper templates without native square select. */
-#notePaperDialog .paper-toolbar{position:relative;isolation:isolate}
+#notePaperDialog .paper-toolbar{
+ position:relative;z-index:6;isolation:isolate;
+ flex-wrap:nowrap;gap:4px;
+}
+/* Keep the canvas behind the open glass menu, without changing paper size. */
+#notePaperDialog .paper-stage{position:relative;z-index:0}
 #notePaperDialog .paper-pattern-control{
- position:relative;z-index:4;display:flex;flex:1 1 126px;min-width:96px;max-width:185px;
+ position:relative;z-index:7;display:flex;
+ flex:1 1 0;min-width:76px;max-width:none;
 }
 #notePaperDialog .paper-toolbar .paper-pattern-trigger{
- display:flex!important;align-items:center;justify-content:space-between;gap:7px;
- flex:1 1 auto!important;width:100%!important;max-width:none;min-width:0;height:44px;min-height:44px;
- padding:0 12px!important;
+ display:flex!important;align-items:center;justify-content:space-between;gap:4px;
+ flex:1 1 0!important;width:100%!important;max-width:none;min-width:0;height:44px;min-height:44px;
+ padding:0 8px!important;
  background:var(--card)!important;color:var(--text);font-size:12px;font-weight:520;
  border:1px solid var(--line);border-radius:14px;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
@@ -145,8 +151,8 @@
 }
 #notePaperDialog .paper-toolbar .paper-pattern-trigger[aria-expanded=true]{background:var(--card2)!important}
 #notePaperDialog .paper-pattern-menu:not([hidden]){
- display:grid;position:absolute;z-index:8;right:0;top:calc(100% + 8px);
- min-width:150px;width:max-content;max-width:210px;
+ display:grid;position:absolute;z-index:30;right:0;top:calc(100% + 6px);
+ min-width:148px;width:max-content;max-width:210px;
  padding:5px;border:1px solid var(--line);border-radius:16px;
  background:var(--card);color:var(--text);
  box-shadow:0 12px 32px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
@@ -167,8 +173,9 @@
 #notePaperDialog #notePaperPattern[hidden]{display:none!important}
 #notePaperDialog .paper-head h2{color:var(--text);background:transparent!important;font-weight:580}
 @media(max-width:370px){
- #notePaperDialog .paper-pattern-control{flex-basis:112px;max-width:none}
- #notePaperDialog .paper-toolbar .paper-pattern-trigger{padding:0 9px!important}
+ #notePaperDialog .paper-toolbar{gap:3px}
+ #notePaperDialog .paper-pattern-control{flex-basis:0;min-width:73px;max-width:none}
+ #notePaperDialog .paper-toolbar .paper-pattern-trigger{padding:0 7px!important}
 }
 :root[data-theme=light] #notePaperDialog .paper-pattern-menu:not([hidden]){
  box-shadow:0 10px 30px rgba(60,72,89,.16),inset 0 1px 0 rgba(255,255,255,.8);
