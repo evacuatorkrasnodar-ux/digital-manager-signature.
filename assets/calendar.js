@@ -214,10 +214,41 @@ function revealSelectedDay(){
  });
 }
 function updateFocus(date){focus=new Date(date.getFullYear(),date.getMonth(),date.getDate());render()}
+function animatePeriod(direction){
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const surface=mode==='month'?$('calendarMonth'):mode==='week'?$('calendarWeek'):$('calendarDay');
+ if(!surface||surface.hidden)return;
+ surface.classList.remove('cal-swipe-next','cal-swipe-prev');
+ void surface.offsetWidth;
+ surface.classList.add(direction>0?'cal-swipe-next':'cal-swipe-prev');
+}
 function move(direction){
+ if(mode==='deadlines')return;
  const d=mode==='day'?step(focus,direction):mode==='week'?step(focus,direction*7):new Date(focus.getFullYear(),focus.getMonth()+direction,Math.min(focus.getDate(),new Date(focus.getFullYear(),focus.getMonth()+direction+1,0).getDate()));
  updateFocus(d);
+ animatePeriod(direction);
 }
+/* Vertical document scrolling stays native. Only horizontal gestures
+   inside the calendar change the selected day, week or month. */
+const gestureArea=$('calendarView');
+let calendarTouch=null,lastCalendarSwipe=0;
+gestureArea.addEventListener('touchstart',event=>{
+ if(page.hidden||mode==='deadlines'||event.touches.length!==1){calendarTouch=null;return}
+ const point=event.touches[0];
+ calendarTouch={id:point.identifier,x:point.clientX,y:point.clientY,time:Date.now()};
+},{passive:true});
+gestureArea.addEventListener('touchend',event=>{
+ if(!calendarTouch)return;
+ const start=calendarTouch;calendarTouch=null;
+ if(page.hidden||mode==='deadlines')return;
+ const point=Array.from(event.changedTouches).find(t=>t.identifier===start.id);
+ if(!point)return;
+ const dx=point.clientX-start.x,dy=point.clientY-start.y;
+ if(Math.abs(dx)<52||Math.abs(dx)<Math.abs(dy)*1.4||Date.now()-start.time>1400)return;
+ lastCalendarSwipe=Date.now();
+ move(dx<0?1:-1);
+},{passive:true});
+gestureArea.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:true});
 function openEvent(id=null){
  const item=id?events().find(x=>x.id===id):null;editing=item?.id||null;
  form.reset();
@@ -276,13 +307,13 @@ $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
 $('calendarPrev').addEventListener('click',()=>{if(mode==='deadlines')return;move(-1)});
 $('calendarNext').addEventListener('click',()=>{if(mode==='deadlines')return;move(1)});
-$('calendarToday').addEventListener('click',()=>{updateFocus(new Date());if(mode==='deadlines'){mode='day';render()}});
+$('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
 document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.addEventListener('click',()=>{
  mode=btn.dataset.calendarMode;render();
 }));
 for(const id of ['calendarMonthGrid','calendarWeekGrid']){
  $(id).addEventListener('click',event=>{
-  const day=event.target.closest('[data-calendar-date]');if(!day)return;
+  const day=event.target.closest('[data-calendar-date]');if(!day||Date.now()-lastCalendarSwipe<400)return;
   const chosen=at(day.dataset.calendarDate);if(!chosen)return;
   updateFocus(chosen);
   revealSelectedDay();
