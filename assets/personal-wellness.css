@@ -3,6 +3,28 @@
 #calendarPersonalTools[hidden],#calendarPersonalTools [hidden]{display:none!important}
 #calendarPersonalTools{display:block;margin:0 0 13px;color:var(--text);font-family:inherit}
 #calendarPersonalTools *{box-sizing:border-box}
+/* Focus mode: a tool occupies the existing sheet instead of opening below
+   the four shortcuts. iOS Safari has only one scroll container (the dialog). */
+#calendarSpaceDialog[data-care-focus=true] #calendarSpaceIntro,
+#calendarSpaceDialog[data-care-focus=true] #calendarSpaceJournal,
+#calendarSpaceDialog[data-care-focus=true] #calendarSpacePrivacy,
+#calendarSpaceDialog[data-care-focus=true] #calendarSpaceClose{display:none!important}
+#calendarPersonalTools #pwCare.is-focused>.pw-tiles,
+#calendarPersonalTools #pwCare.is-focused>#pwCycleOpen{display:none!important}
+#calendarPersonalTools .pw-care-back{
+ display:inline-flex;align-items:center;gap:9px;min-height:42px;
+ margin:0 0 9px;padding:7px 12px 7px 9px;
+ border:1px solid var(--soft-line);border-radius:999px;background:var(--card2);
+ color:var(--text);font:inherit;font-size:12px;font-weight:520;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation
+}
+#calendarPersonalTools .pw-care-back svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;
+ stroke-linecap:round;stroke-linejoin:round
+}
+#calendarPersonalTools #pwCare.is-focused>.pw-detail{
+ margin-bottom:0
+}
 #calendarPersonalTools .pw-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0 12px}
 #calendarPersonalTools .pw-card{
  display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
@@ -157,7 +179,13 @@
 #calendarPersonalTools .pw-eye.is-running{
  transform:scale(1.07);background:radial-gradient(circle,#bfcfe12a,transparent 75%)
 }
-#calendarPersonalTools .pw-eye svg{width:53px;height:53px;stroke:var(--text);fill:none;stroke-width:1.5;stroke-linejoin:round}
+#calendarPersonalTools .pw-eye svg{width:53px;height:53px;stroke:var(--text);fill:none;stroke-width:1.5;stroke-linejoin:round;transform-origin:center}
+#calendarPersonalTools .pw-eye.is-running svg{animation:pw-eye-focus 7s ease-in-out infinite}
+@keyframes pw-eye-focus{
+ 0%,100%{transform:scale(.92);opacity:.86}
+ 43%{transform:scale(1.07);opacity:1}
+ 52%{transform:scale(1.07);opacity:1}
+}
 #calendarPersonalTools .pw-progress{
  height:6px;margin:11px 0 15px;border-radius:99px;background:var(--soft-line);overflow:hidden
 }
@@ -220,7 +248,8 @@
 @media(prefers-reduced-motion:reduce){
  #calendarPersonalTools .pw-breath-disc,#calendarPersonalTools .pw-progress span,#calendarPersonalTools .pw-arrow,
  #calendarPersonalTools .pw-card,#calendarPersonalTools .pw-detail,#calendarPersonalTools .pw-wide-row,
- #calendarPersonalTools .pw-water-liquid,#calendarPersonalTools .pw-eye{animation:none!important;transition:none!important}
+ #calendarPersonalTools .pw-water-liquid,#calendarPersonalTools .pw-eye,
+ #calendarPersonalTools .pw-eye svg{animation:none!important;transition:none!important}
  #calendarPersonalTools .pw-breath-ring.is-active .pw-breath-disc{transform:scale(.92)}
 }
 :root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#dbe3edcf 30%,#c5d0df52 64%,#c2cedb12)}
