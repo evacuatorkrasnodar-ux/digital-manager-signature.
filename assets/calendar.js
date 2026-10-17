@@ -196,6 +196,8 @@ function revealSelectedDay(){
   if(page.hidden||mode==='deadlines')return;
   const agenda=$('calendarAgenda'),dock=document.querySelector('footer.dock');
   if(!agenda||!dock)return;
+  /* Empty days need no forced page jump: keep the month and personal menu in view. */
+  if(!agenda.querySelector('.cal-entry'))return;
   const first=agenda.querySelector('.cal-entry, .cal-empty');
   const agendaBox=agenda.getBoundingClientRect();
   const itemBox=first?.getBoundingClientRect();
