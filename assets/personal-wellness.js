@@ -32,7 +32,7 @@ function load(){
   return base;
  }catch{return def()}
 }
-let state=load(),space='',careTool='',healthTool='',session=null,timer=0,lastWater=0;
+let state=load(),space='',careTool='',healthTool='',session=null,timer=0,lastWater=0,lastWaterDate='';
 const icon=(name)=>({
  breath:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 12c5-6 10-5 11 0s-3 7-6 4M3 22c8-6 13-4 15 0s-3 6-6 4M17 7c5-4 10-3 11 2s-3 6-6 5"/></svg>',
  water:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C12 9 8 15 8 20a8 8 0 0 0 16 0c0-5-4-11-8-17Z"/><path d="M12 21c0 2 2 4 4 4"/></svg>',
@@ -79,7 +79,7 @@ host.innerHTML=`
    <div id="pwCycleBody" hidden>
     <div class="pw-number"><strong id="pwCycleNext">—</strong><small>Ориентировочное следующее начало</small></div>
     <form id="pwCycleForm"><div class="pw-inline"><label>Начало<input id="pwCycleDate" type="date" required></label><label>Обычно дней<input id="pwCycleLength" type="number" min="21" max="45" step="1" inputmode="numeric" required value="28"></label><button type="submit" class="pw-primary">Записать</button></div></form>
-    <div id="pwCycleList" class="pw-list"></div><p class="pw-caption">Прогноз приблизительный: не использовать для контрацепции или диагноза.</p>
+    <div id="pwCycleList" class="pw-list"></div><p class="pw-caption">Прогноз приблизительный: не использовать для контрацепции или диагноза.</p><details class="pw-cycle-privacy"><summary>Данные календаря</summary><p>Можно отключить календарь без удаления истории или удалить все его даты с этого устройства.</p><div class="pw-actions"><button type="button" id="pwCycleDisable">Отключить</button><button type="button" id="pwCycleErase">Удалить историю</button></div></details>
    </div>
   </section>
  </section>
@@ -128,14 +128,27 @@ function resetTools(){
 }
 function openSpace(view){
  if(view!=='care'&&view!=='health'){host.hidden=true;resetTools();space='';return;}
- if(space!==view)resetTools();
+ if(space!==view){resetTools();lastWater=0;lastWaterDate='';}
  space=view;host.hidden=false;
  $('pwCare').hidden=view!=='care';$('pwHealth').hidden=view!=='health';
  setInputDefaults();
  state=load();render();
 }
+function resetCareTools(){
+ careTool='';$('pwCareDetail').hidden=true;
+ host.querySelectorAll('[data-pw-panel]').forEach(p=>{
+  if(['water','breath','eyes','steps'].includes(p.dataset.pwPanel))p.hidden=true;
+ });
+ host.querySelectorAll('[data-pw-tool]').forEach(p=>{
+  if(['water','breath','eyes','steps'].includes(p.dataset.pwTool))p.setAttribute('aria-pressed','false');
+ });
+}
 function openTool(key){
  if(session)stopSession(false);
+ if(['water','breath','eyes','steps'].includes(key)){
+  $('pwCycleDetail').hidden=true;
+  $('pwCycleOpen').setAttribute('aria-expanded','false');
+ }
  const care=['water','breath','eyes','steps'].includes(key);
  const holder=$(care?'pwCareDetail':'pwHealthDetail');
  const active=care?careTool===key:healthTool===key;
@@ -225,13 +238,13 @@ function renderWater(){
  $('pwWaterProgress').style.width=pct+'%';
  $('pwWaterProgress').parentElement.setAttribute('aria-valuenow',String(pct));
  if(document.activeElement!==$('pwWaterGoalInput'))$('pwWaterGoalInput').value=state.waterGoal||'';
- $('pwWaterUndo').disabled=lastWater<=0;
+ $('pwWaterUndo').disabled=lastWater<=0||lastWaterDate!==today();
 }
 function updateWater(amount){
  if(!Number.isInteger(amount))return;
  const now=today();
  if(save(d=>{d.water[now]=Math.max(0,Math.min(20000,(Number(d.water[now])||0)+amount));})){
-  lastWater=amount>0?amount:0;
+  lastWater=amount>0?amount:0;lastWaterDate=amount>0?now:'';
   renderWater();notice(amount>0?'Вода добавлена.':'Последнее добавление отменено.');
  }
 }
@@ -346,19 +359,28 @@ host.addEventListener('click',event=>{
  const btn=event.target.closest('button');if(!btn)return;
  if(btn.dataset.pwTool){openTool(btn.dataset.pwTool);return;}
  if(btn.dataset.pwWater){updateWater(Number(btn.dataset.pwWater));return;}
- if(btn.id==='pwWaterUndo'){if(lastWater)updateWater(-lastWater);return;}
+ if(btn.id==='pwWaterUndo'){if(lastWater&&lastWaterDate===today())updateWater(-lastWater);return;}
  if(btn.id==='pwWaterSaveGoal'){saveGoal();return;}
  if(btn.id==='pwBreathStart'||btn.id==='pwEyeStart'){startSession(btn.id==='pwBreathStart'?'breath':'eyes');return;}
  if(btn.id==='pwBreathStop'||btn.id==='pwEyeStop'){stopSession(false);return;}
  if(btn.id==='pwCycleOpen'){
   const panel=$('pwCycleDetail'),opening=panel.hidden;
   panel.hidden=!opening;btn.setAttribute('aria-expanded',String(opening));
-  if(opening)stopSession(false);
+  if(opening){resetCareTools();stopSession(false);}
   return;
  }
  if(btn.id==='pwCycleEnable'){
   if(!$('pwCycleCheck').checked)return;
   if(save(d=>d.cycleEnabled=true)){renderCycle();notice('Календарь включён только на этом устройстве.');}return;
+ }
+ if(btn.id==='pwCycleDisable'){
+  if(save(d=>d.cycleEnabled=false)){renderCycle();$('pwCycleCheck').checked=false;$('pwCycleEnable').disabled=true;notice('Календарь отключён. История сохранена на устройстве.');}return;
+ }
+ if(btn.id==='pwCycleErase'){
+  if(!confirm('Удалить все даты женского цикла на этом устройстве? Без резервной копии восстановить не получится.'))return;
+  if(save(d=>{d.cycles=[];d.cycleEnabled=false;})){
+   renderCycle();$('pwCycleCheck').checked=false;$('pwCycleEnable').disabled=true;notice('Даты цикла удалены.');
+  }return;
  }
  if(btn.dataset.pwTaken){
   if(save(d=>d.medLogs[btn.dataset.pwTaken+'|'+today()]='taken')){renderMeds();notice('Приём отмечен.');}return;
@@ -393,6 +415,12 @@ $('pwSleepForm').addEventListener('submit',recordSleep);
 $('pwCycleForm').addEventListener('submit',recordCycle);
 $('pwCycleCheck').addEventListener('change',()=>$('pwCycleEnable').disabled=!$('pwCycleCheck').checked);
 window.addEventListener('seyveo:space-opened',event=>openSpace(event.detail?.space));
+window.addEventListener('seyveo:care-steps-open',event=>{
+ if(space!=='care')openSpace('care');
+ const date=event.detail?.date;
+ if(dateOk(date))$('pwStepsDate').value=date;
+ openTool('steps');
+});
 window.addEventListener('seyveo:spaces-changed',()=>{if(space==='care')renderSteps()});
 window.addEventListener('storage',event=>{if(event.key===KEY){state=load();if(!host.hidden)render()}});
 $('calendarSpaceDialog').addEventListener('close',()=>{stopSession(false);resetTools();space='';host.hidden=true});
