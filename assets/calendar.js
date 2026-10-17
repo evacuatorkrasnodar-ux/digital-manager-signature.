@@ -197,6 +197,12 @@ function smartSuggestion(todayDate=new Date()){
   message:late.length===1?'Срок одного дела уже прошёл. Стоит проверить его.':'Просрочено '+late.length+' дел. Стоит проверить сроки.',
   action:'Сроки'
  };
+ const shortGap=window.SEYVEO_CALENDAR_TIME?.tightPair(entries,selected);
+ if(shortGap)return{
+  kind:'event',id:shortGap.second.id,
+  message:'Между событиями в '+shortGap.first.time+' и '+shortGap.second.time+' меньше часа. Проверь график.',
+  action:'Проверить'
+ };
  const soon=pending.filter(item=>item.date>=today&&item.date<=format(step(todayDate,3)));
  if(soon.length){
   const n=soon.length,day=soon[0].date;
@@ -233,8 +239,31 @@ function renderAdvice(){
  $('calendarAdviceText').textContent=currentAdvice.message;
  $('calendarAdviceAction').textContent=currentAdvice.action;
 }
+function showTimeAlternatives(){
+ const box=$('calendarTimeOptions'),choices=$('calendarTimeOptionsChoices');
+ const date=$('calendarEventDate').value,time=$('calendarEventTime').value;
+ const engine=window.SEYVEO_CALENDAR_TIME;
+ const nearby=engine?.nearest(events(),date,time,editing)||null;
+ box.hidden=!nearby;
+ choices.replaceChildren();
+ if(!nearby)return;
+ $('calendarTimeOptionsMessage').textContent=(nearby.minutesApart===0?'В это время уже есть событие':'Рядом событие в '+nearby.time)
+  +' — «'+nearby.title.slice(0,65)+'». Можно рассмотреть:';
+ const slots=engine.suggestions(events(),date,time,editing);
+ if(!slots.length){
+  $('calendarTimeOptionsMessage').textContent+=' Других вариантов с 09:00 до 19:00 не нашлось.';
+  return;
+ }
+ for(const option of slots){
+  const chip=text('button','',option);chip.type='button';
+  chip.dataset.calendarSuggestedTime=option;
+  chip.setAttribute('aria-label','Предложенное время '+option);
+  choices.append(chip);
+ }
+}
 function showEventTimeHint(){
  const status=$('calendarEventStatus');
+ showTimeAlternatives();
  const conflict=timeCollision($('calendarEventDate').value,$('calendarEventTime').value,editing);
  if(conflict){
   status.dataset.smartCollision='true';
@@ -399,6 +428,8 @@ function onSubmit(e){
  if(!old&&all.length>=MAX){status.textContent='Сохранено 300 событий. Для новых удалите ненужные старые.';return}
  const conflict=timeCollision(date,clock,old?.id||null);
  if(conflict&&!window.confirm('В '+clock+' уже записано «'+conflict.title+'». Сохранить ещё одно событие на то же время?'))return;
+ const nearby=!conflict?window.SEYVEO_CALENDAR_TIME?.nearest(all,date,clock,old?.id||null):null;
+ if(nearby&&!window.confirm('Рядом событие в '+nearby.time+' — «'+nearby.title+'». Продолжительность встреч неизвестна. Оставить время '+clock+'?'))return;
  const now=new Date().toISOString();
  const entry={id:old?.id||'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
   title:name,date,time:clock,kind,note,createdAt:old?.createdAt||now,updatedAt:now};
@@ -454,7 +485,16 @@ for(const id of ['calendarAgenda','calendarDeadlineList']){
 form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
-$('calendarEventDate').addEventListener('input',showEventTimeHint);
+for(const eName of ['input','change'])$('calendarEventDate').addEventListener(eName,showEventTimeHint);
+$('calendarTimeOptionsChoices').addEventListener('click',event=>{
+ const choice=event.target.closest('[data-calendar-suggested-time]');
+ if(!choice)return;
+ const chosen=choice.dataset.calendarSuggestedTime;
+ if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(chosen))return;
+ $('calendarEventTime').value=chosen;
+ syncTimeDisplay();
+ showEventTimeHint();
+});
 for(const eventName of ['input','change','blur'])$('calendarEventTime').addEventListener(eventName,()=>{
  syncTimeDisplay();showEventTimeHint();
 });
