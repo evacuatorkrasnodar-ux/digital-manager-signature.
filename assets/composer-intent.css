@@ -1,0 +1,56 @@
+/* SEYVEO Composer · two explicit intents, one field, no extra dock button. */
+#ask.prompt:not(.expanded){flex-wrap:wrap;align-items:center;row-gap:5px;padding:9px 10px 9px 13px}
+#ask .composer-intent{display:flex;flex:0 0 100%;width:100%;min-width:0;align-items:center;justify-content:space-between;gap:8px}
+#ask .composer-modes{display:flex;align-items:center;gap:3px;padding:3px;border:1px solid var(--soft-line);border-radius:14px;background:var(--card2)}
+#ask .composer-modes button{min-height:36px;min-width:0;padding:7px 11px;border:0;border-radius:11px;background:transparent;color:var(--secondary);font:inherit;font-size:11.5px;font-weight:540;white-space:nowrap;cursor:pointer}
+#ask .composer-modes button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+#ask .composer-history-open{margin-left:auto;min-height:44px;min-width:44px;padding:5px 7px;border:0;background:transparent;color:var(--secondary);font:inherit;font-size:11.5px;cursor:pointer;text-align:center}
+#ask .composer-history-open:focus-visible,#ask .composer-modes button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+#ask .composer-compact{margin-left:0}
+#ask .composer-expand-manual{display:grid;place-items:center;width:38px;height:38px;min-width:38px;min-height:38px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--secondary);cursor:pointer}
+#ask .composer-expand-manual svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+#ask.expanded .composer-expand-manual{display:none}
+#ask.expanded .composer-intent{flex:0 0 auto}
+#ask.expanded .composer-head{order:-2}
+#ask.expanded .composer-intent{order:-1}
+#ask.expanded textarea{order:0;min-height:0;font-size:16px}
+#ask.expanded .composer-actions{order:1}
+#ask.expanded .composer-more{order:2}
+#ask.expanded .composer-status{order:3}
+#ask[data-composer-mode=notes] #saveNote{display:none}
+#ask[data-composer-mode=notes].expanded .composer-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+#ask .composer-tool{min-height:56px}
+#ask .composer-tool span{width:42px;height:42px}
+#ask .composer-tool small{font-size:10px;letter-spacing:0}
+@media(max-width:360px){
+ #ask .composer-modes button{padding:7px 9px;font-size:11px}
+ #ask .composer-history-open{font-size:10.5px;padding:4px 3px}
+ #ask .composer-tool span{width:39px;height:39px}
+}
+@media(max-height:630px){
+ #ask.expanded{height:min(66dvh,480px);max-height:calc(100dvh - var(--keyboard-offset,0px) - 135px)}
+}
+/* History is a quiet reader, never another conversation composer. */
+#assistantChatHistoryDialog.assistant-chat-history[open]{
+ display:flex;flex-direction:column;box-sizing:border-box;
+ width:min(500px,calc(100vw - 24px));
+ height:min(84dvh,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:min(84dvh,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ padding:18px 15px 15px;overflow:hidden
+}
+#assistantChatHistoryDialog .assistant-chat-head{flex:none;margin:0 46px 12px 0}
+#assistantChatHistoryDialog .assistant-chat-head h2{margin:0 0 5px;font-size:21px;font-weight:610}
+#assistantChatHistoryDialog .assistant-chat-head small{font-size:11px;line-height:1.4;color:var(--secondary)}
+#assistantChatHistoryDialog .assistant-chat-items{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
+#assistantChatHistoryDialog .assistant-chat-item{border:1px solid var(--line);border-radius:15px;background:var(--card2);overflow:hidden}
+#assistantChatHistoryDialog .assistant-chat-summary{list-style:none;display:flex;flex-direction:column;gap:6px;padding:13px;cursor:pointer}
+#assistantChatHistoryDialog .assistant-chat-summary::-webkit-details-marker{display:none}
+#assistantChatHistoryDialog .assistant-chat-question{color:var(--text);font-size:13px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+#assistantChatHistoryDialog .assistant-chat-time{color:var(--secondary);font-size:10.5px}
+#assistantChatHistoryDialog .assistant-chat-detail{padding:2px 13px 14px;border-top:1px solid var(--soft-line);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+#assistantChatHistoryDialog .assistant-chat-full-question,#assistantChatHistoryDialog .assistant-chat-answer{white-space:pre-wrap;margin-top:11px;color:var(--text)}
+#assistantChatHistoryDialog .assistant-chat-answer-label{display:block;margin-top:13px;font-size:11px;color:var(--secondary)}
+#assistantChatHistoryDialog .assistant-chat-empty{font-size:13px;line-height:1.5;color:var(--secondary)}
+#assistantChatHistoryDialog .assistant-chat-bottom{display:flex;gap:8px;flex:none;margin-top:11px}
+#assistantChatHistoryDialog .assistant-chat-bottom button{flex:1;min-height:44px;min-width:0;font-size:12px}
+#assistantChatHistoryDialog .assistant-chat-bottom button[hidden]{display:none!important}
