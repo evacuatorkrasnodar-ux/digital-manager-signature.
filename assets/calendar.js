@@ -299,11 +299,15 @@ function choosePlanning(duration,travel){
 }
 function syncPlanningLabel(){
  const clock=$('calendarEventTime').value;
- const duration=planningValues().duration,travel=planningValues().travel;
+ const duration=planningValues().duration,travel=planningValues().travel,remind=reminderValue();
  $('calendarEventTiming').hidden=!clock;
- const length=duration===30?'30 мин':duration===60?'1 ч':duration===90?'1 ч 30 мин':duration===120?'2 ч':'не указана';
- $('calendarEventTimingLabel').textContent='Длительность: '+length+' · '+(travel?'дорога по '+travel+' мин':'дорога не учтена')
-  +(reminderValue()?' · напомнить за '+(reminderValue()===60?'1 ч':reminderValue()+' мин'):'');
+ const length=duration===30?'30 мин':duration===60?'1 час':duration===90?'1,5 часа':duration===120?'2 часа':'Не указана';
+ const road=travel?travel===60?'1 час':travel+' мин':'Без запаса';
+ const reminder=remind?remind===60?'За 1 час':'За '+remind+' мин':'Выключено';
+ $('calendarEventTimingValue').textContent=length+' · '+(travel?'дорога '+travel+' мин':'без дороги')+(remind?' · напомнить':'');
+ $('calendarDurationValue').textContent=length;
+ $('calendarTravelValue').textContent=road;
+ $('calendarReminderValue').textContent=reminder;
 }
 function showTimeAlternatives(){
  const box=$('calendarTimeOptions'),choices=$('calendarTimeOptionsChoices');
@@ -492,6 +496,7 @@ function openEvent(id=null){
  choosePlanning(item?item.duration:60,item?item.travel:0);
  setReminder(item?item.remind:0);
  $('calendarEventTiming').open=false;
+ form.querySelectorAll('.cal-timing-setting').forEach(section=>{section.open=false});
  syncTimeDisplay();
  setEventKind(item?.kind||'personal');
  $('calendarEventExtra').open=Boolean(item?.note);
@@ -584,9 +589,19 @@ form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
 for(const eName of ['input','change'])$('calendarEventDate').addEventListener(eName,showEventTimeHint);
+/* Keep only one settings row open and close after any confirmed selection. */
+const timingRows=Array.from(form.querySelectorAll('.cal-timing-setting'));
+timingRows.forEach(row=>row.addEventListener('toggle',()=>{
+ if(row.open)timingRows.forEach(other=>{if(other!==row)other.open=false});
+}));
 for(const name of ['calendarDuration','calendarTravel','calendarReminder']){
  form.querySelectorAll('input[name="'+name+'"]').forEach(input=>
-  input.addEventListener('change',()=>{syncPlanningLabel();showEventTimeHint()})
+  input.addEventListener('change',()=>{
+   syncPlanningLabel();
+   showEventTimeHint();
+   const row=input.closest('.cal-timing-setting');
+   if(row)row.open=false;
+  })
  );
 }
 $('calendarTimeOptionsChoices').addEventListener('click',event=>{
