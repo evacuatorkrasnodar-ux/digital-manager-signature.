@@ -7,6 +7,29 @@ const page=$('calendarPage'),form=$('calendarEventForm');
 if(!page||!form)return;
 const STORE='seyveo-calendar-events-v1',TASKS='seyveo-personal-tasks-v1',MAX=300;
 const weekday=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+/* Federal public holidays in article 112 of the Russian Labour Code.
+   Only 2026 transfer days are encoded; future transfer schedules require new official acts. */
+const FEDERAL_HOLIDAYS={
+ '01-01':'Новогодние каникулы','01-02':'Новогодние каникулы','01-03':'Новогодние каникулы',
+ '01-04':'Новогодние каникулы','01-05':'Новогодние каникулы','01-06':'Новогодние каникулы',
+ '01-07':'Рождество Христово','01-08':'Новогодние каникулы',
+ '02-23':'День защитника Отечества','03-08':'Международный женский день',
+ '05-01':'Праздник Весны и Труда','05-09':'День Победы',
+ '06-12':'День России','11-04':'День народного единства'
+};
+const TRANSFER_DAYS_2026={
+ '01-09':'Перенесённый выходной (с 3 января)',
+ '03-09':'Выходной после 8 Марта',
+ '05-11':'Выходной после Дня Победы',
+ '12-31':'Перенесённый выходной (с 4 января)'
+};
+function publicHoliday(date){
+ const key=format(date).slice(5);
+ const publicName=FEDERAL_HOLIDAYS[key];
+ if(publicName)return {name:publicName,kind:'public'};
+ const transferred=date.getFullYear()===2026?TRANSFER_DAYS_2026[key]:null;
+ return transferred?{name:transferred,kind:'rest'}:null;
+}
 const format=(date)=>[date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
 const at=(str)=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(str||''))return null;const [y,m,d]=str.split('-').map(Number);const v=new Date(y,m-1,d);return v.getFullYear()===y&&v.getMonth()+1===m&&v.getDate()===d?v:null};
 const step=(day,n)=>new Date(day.getFullYear(),day.getMonth(),day.getDate()+n);
@@ -88,18 +111,21 @@ function fillAgenda(target,items,emptyTitle,emptyCaption){
  }else for(const item of items)target.append(createEntry(item));
 }
 function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
- const key=format(day),today=format(new Date());
+ const key=format(day),today=format(new Date()),holiday=publicHoliday(day);
  const btn=text('button','cal-day');btn.type='button';
  btn.dataset.calendarDate=key;
  btn.dataset.today=String(key===today);
  btn.dataset.selected=String(key===iso());
  btn.dataset.weekend=String(day.getDay()===0||day.getDay()===6);
+ if(holiday)btn.dataset.holiday=holiday.kind;
  if(!week)btn.dataset.outside=String(day.getMonth()!==focus.getMonth());
  const personal=window.SEYVEO_SPACES?.calendarItems(key)||[];
- btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+', '+(calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length)+' записей');
+ const records=calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length;
+ btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+(holiday?' · '+holiday.name:'')+' · '+records+' записей');
  if(week)btn.append(text('small','',weekday[(day.getDay()+6)%7]));
  btn.append(text('span','cal-day-number',String(day.getDate())));
  const dots=text('span','cal-day-dots');
+ if(holiday)dots.append(text('i','cal-dot-holiday'));
  if(calendarEvents.some(x=>x.date===key))dots.append(text('i',''));
  if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
  if(personal.length)dots.append(text('i','cal-dot-life'));
@@ -136,6 +162,12 @@ function renderAgenda(){
  $('calendarSelectedCount').textContent=count
   ?count+' '+(count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей')
   :'Нет записей';
+ const holiday=publicHoliday(focus),holidayNote=$('calendarHoliday');
+ holidayNote.hidden=!holiday;
+ if(holiday){
+  holidayNote.dataset.kind=holiday.kind;
+  $('calendarHolidayName').textContent=holiday.name;
+ }else $('calendarHolidayName').textContent='';
  const agenda=$('calendarAgenda');
  agenda.hidden=count===0;
  if(count)fillAgenda(agenda,list);
@@ -305,8 +337,6 @@ $('calendarBack').addEventListener('click',()=>{$('navTasks').click()});
 $('calendarAdd').addEventListener('click',()=>openEvent());
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
-$('calendarPrev').addEventListener('click',()=>{if(mode==='deadlines')return;move(-1)});
-$('calendarNext').addEventListener('click',()=>{if(mode==='deadlines')return;move(1)});
 $('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
 document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.addEventListener('click',()=>{
  mode=btn.dataset.calendarMode;render();
