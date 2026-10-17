@@ -8,7 +8,58 @@ const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
 let selected=null,localURL='',running=false,session=0,loading=null,consented=false;
-const consentBox=$('noteScanConsent');
+const consentBox=$('noteScanConsent'),keepLines=$('noteScanKeepLines');
+/* Preserve OCR's real line breaks. Reject ONLY short, symbol-heavy phone
+   status-bar garbage at the very start; never guess the meaning of a poem. */
+function cleanPhoneHeader(value){
+ const lines=String(value||'').replace(/\r\n?/g,'\n').split('\n');
+ let removed=0;
+ while(removed<2&&removed<lines.length){
+  const first=lines[removed].trim();
+  if(!first){removed++;continue}
+  const status=first.match(/^(\d{1,2}[:.]\d{2})\s+(.{2,52})$/);
+  if(!status)break;
+  const tail=status[2];
+  const hasUI= /[@#$%&=|\\\/<>~]|\b(?:wifi|lte|5g|4g|wl|io|o2)\b/i.test(tail);
+  const letters=(tail.match(/[А-ЯЁа-яё]/g)||[]).length;
+  const codeCount=(tail.match(/[A-Za-z0-9]/g)||[]).length;
+  if(!hasUI||letters>0||codeCount>20)break;
+  removed++;break;
+ }
+ return{value:lines.slice(removed).join('\n').trim(),removed:removed>0};
+}
+/* Tesseract v7 blocks → paragraphs → original OCR lines with vertical gaps.
+   Fallback to data.text on unsupported/broken block geometry. */
+function textInOriginalLines(data){
+ const blocks=data&&Array.isArray(data.blocks)?data.blocks:[];
+ const lines=[];
+ for(const block of blocks){
+  for(const paragraph of block.paragraphs||[]){
+   for(const line of paragraph.lines||[]){
+    const content=String(line?.text||'').replace(/\r\n?/g,'\n').trimEnd();
+    if(!content.trim())continue;
+    const box=line?.bbox||{};
+    lines.push({text:content,top:Number(box.y0),bottom:Number(box.y1)});
+   }
+  }
+ }
+ if(lines.length<2)return String(data?.text||'').replace(/\r\n?/g,'\n');
+ const heights=lines.map(line=>line.bottom-line.top).filter(n=>Number.isFinite(n)&&n>0);
+ const typical=heights.length?heights.sort((a,b)=>a-b)[Math.floor(heights.length/2)]:0;
+ let output='';
+ for(let i=0;i<lines.length;i++){
+  const line=lines[i];
+  if(i>0){
+   const previous=lines[i-1],gap=line.top-previous.bottom;
+   // A visible stanza/paragraph gap should stay a blank line.
+   output+='\n';
+   if(typical>0&&Number.isFinite(gap)&&gap>typical*1.1)output+='\n';
+  }
+  output+=line.text;
+ }
+ return output;
+}
+window.SEYVEO_SCANNER_FORMAT=Object.freeze({cleanPhoneHeader,textInOriginalLines});
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
@@ -42,7 +93,7 @@ function loadEngine(){
 }
 async function recognize(){
  if(running||!selected)return;
- const file=selected,token=++session;
+ const file=selected,token=++session,retainLines=keepLines?.checked!==false;
  running=true;button.disabled=true;
  let worker=null;
  try{
@@ -55,12 +106,22 @@ async function recognize(){
     message('Распознавание: '+Math.round(info.progress*100)+'%');
   }});
   if(token!==session)return;
-  const result=await worker.recognize(file);
+  if(typeof worker.setParameters==='function'){
+   await worker.setParameters({
+    tessedit_pageseg_mode:retainLines?'6':'3',
+    preserve_interword_spaces:retainLines?'1':'0'
+   });
+  }
+  if(token!==session)return;
+  // Block geometry is requested only for line-preserving mode.
+  const result=await worker.recognize(file,{},retainLines?{blocks:true}:undefined);
   if(token!==session||!dialog.open)return;
-  const found=String(result?.data?.text||'').trim();
+  const raw=retainLines?textInOriginalLines(result?.data):String(result?.data?.text||'');
+  const clean=cleanPhoneHeader(raw);
+  const found=clean.value;
   if(!found){message('Текст не обнаружен. Попробуйте другое фото или перепишите вручную.');return}
   text.value=found.slice(0,2500);
-  message('Текст распознан. Исправьте возможные ошибки перед переносом.');
+  message(clean.removed?'Убрана похожая на панель телефона строка. Проверьте текст и переносы.':'Текст распознан. Проверьте строки и возможные ошибки.');
  }catch(error){
   if(token===session&&dialog.open)message((error?.message||'Не удалось распознать текст.')+' Можно набрать его вручную.');
  }finally{
