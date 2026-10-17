@@ -17,35 +17,32 @@
 #notesDialog.notes-dialog{
  width:min(430px,calc(100vw - 28px));
  max-height:min(86dvh,720px);
- box-sizing:border-box;padding:21px 18px 17px;
+ box-sizing:border-box;
  overflow-y:auto;overscroll-behavior:contain;
 }
-#notesDialog .notes-head{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;margin:0 44px 12px 0}
-#notesDialog .notes-head h2{margin:0;font-weight:610;line-height:1.25;letter-spacing:-.025em}
+#notesDialog .notes-head{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0 44px 12px 0}
+#notesDialog .notes-head h2{margin:0;line-height:1.25;letter-spacing:-.025em}
 #notesDialog .notes-new{
- display:inline-flex;align-items:center;justify-content:center;min-height:40px;
- padding:6px 13px;border:1px solid var(--line);border-radius:999px;
- background:var(--card2);color:var(--text);font:inherit;font-size:12px;
- font-weight:540;cursor:pointer;
+ display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;
 }
 #notesDialog .notes-list{
- display:flex;flex-direction:column;gap:9px;
- max-height:min(58dvh,540px);min-width:0;
- padding:1px 0 3px;overscroll-behavior:contain;
+ display:flex;flex-direction:column;
+ max-height:min(58dvh,540px);min-width:0;overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
 }
 #notesDialog .note-item{
- min-width:0;padding:12px 13px 10px;
- border:1px solid var(--line);border-radius:17px;
+ min-width:0;
+ border:1px solid var(--line);
  background:var(--card2);
 }
-#notesDialog .note-item small{display:block;color:var(--secondary);font-size:11px;line-height:1.4}
+#notesDialog .note-item small{display:block;color:var(--secondary);line-height:1.4}
 #notesDialog .note-item p{
  margin:7px 0 9px;max-height:90px;
  font-size:14px;line-height:1.45;font-weight:450;letter-spacing:0;
  color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;
 }
-#notesDialog .note-item-actions{display:flex;align-items:center;gap:5px;min-width:0;margin:0}
+#notesDialog .note-item-actions{display:flex;align-items:center;min-width:0;margin:0}
 #notesDialog .note-item-actions>button{
  flex:none;min-height:44px;max-width:42%;
  padding:8px 10px;border:0;border-radius:11px;
@@ -60,11 +57,11 @@
 #notesDialog .note-more-options button{min-width:0;padding:7px 3px;
  border:1px solid var(--soft-line);
  background:var(--card);color:var(--text);
- font:inherit;font-size:11px;line-height:1.2;cursor:pointer;
+ font:inherit;line-height:1.2;cursor:pointer;
 }
 #notesDialog .note-more-options button.note-delete{color:var(--secondary)}
 #notesDialog :is(button,summary):focus-visible{outline:2px solid var(--text);outline-offset:2px}
-#notesDialog .note-empty{margin:8px 0 4px;color:var(--secondary);line-height:1.5}
+#notesDialog .note-empty{color:var(--secondary);line-height:1.5}
 #notesDialog #notesStatus{margin:10px 0 0;font-size:11px;line-height:1.45;color:var(--secondary)}
 #notesDialog #notesStatus[hidden]{display:none!important}
 @media(max-width:360px){
@@ -74,7 +71,7 @@
 
 /* Inline More button; submenu occupies full card width and only opens on tap. */
 #notesDialog .note-item-actions>.note-more-button{
- display:grid;place-items:center;flex:none;max-width:none;
+ display:grid;place-items:center;max-width:none;
  box-sizing:border-box;padding:0;border:1px solid var(--soft-line);background:var(--card);font-size:21px;line-height:1;letter-spacing:1px;
 }
 #notesDialog .note-item-actions>.note-more-button[aria-expanded=true]{color:var(--text);border-color:var(--line)}
@@ -93,18 +90,17 @@
 /* SEYVEO Notebook · saved text deserves an actual reading page, not a 90px preview. */
 #noteReadDialog.note-read-dialog[open]{width:min(540px,calc(100vw - 26px));
  height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding:19px 17px 15px;
+ max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
 }
 #noteReadDialog .note-read-head{margin:0 50px 12px 0}
-#noteReadDialog .note-read-head h2{margin:0 0 5px;font-size:21px;font-weight:610;line-height:1.3}
-#noteReadDialog .note-read-head small{line-height:1.45;color:var(--secondary)}
-#noteReadDialog .note-read-content{
- padding:15px 14px;border:1px solid var(--soft-line);border-radius:15px;
- background:var(--card2);line-height:1.65;word-break:normal;
+#noteReadDialog .note-read-head h2{line-height:1.3}
+#noteReadDialog .note-read-head small{color:var(--secondary)}
+#noteReadDialog .note-read-content{border:1px solid var(--soft-line);
+ background:var(--card2);word-break:normal;
 }
 #noteReadDialog .note-read-content:focus-visible{outline:2px solid var(--text);outline-offset:-2px}
-#noteReadDialog .note-read-actions{gap:8px;margin-top:11px}
-#noteReadDialog .note-read-actions>button{flex:1;min-height:44px}
+#noteReadDialog .note-read-actions{margin-top:11px}
+#noteReadDialog .note-read-actions>button{min-height:44px}
 /* Keep the list compact, but the full text is now one tap away. */
 #notesDialog .note-item p{max-height:104px}
 /* Long imported OCR text and existing notes get a near-full-screen editor.
@@ -214,10 +210,8 @@
  font-size:13px;line-height:1.6;
 }
 #noteReadDialog .note-read-head h2{
- font-size:21px;font-weight:580;letter-spacing:-.028em;
 }
 #noteReadDialog .note-read-content{
- padding:20px 18px 24px;border-radius:18px;line-height:1.72;
 }
 #noteReadDialog .note-read-actions button{
  min-height:46px;border-radius:999px;
