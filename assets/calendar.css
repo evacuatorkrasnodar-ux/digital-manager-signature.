@@ -69,7 +69,7 @@
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:77px;justify-content:center;gap:10px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
-.cal-day-summary{margin:14px 1px 9px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cal-day-summary{margin:8px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
 .cal-holiday-note{display:flex;align-items:center;gap:8px;margin:-1px 1px 9px;color:var(--text);font-size:12px;line-height:1.45}
@@ -91,7 +91,7 @@
 .cal-day-fab{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);padding:8px 15px;font-size:12px;font-weight:590}
 .cal-day-fab:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Compact paired actions; the original velvet dock retains its geometry. */
-#calendarPage .cal-actions{display:flex;align-items:stretch;gap:9px;margin-top:13px}
+#calendarPage .cal-actions{display:flex;align-items:stretch;gap:9px;margin-top:8px}
 #calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:8px 7px;border-radius:999px;font-size:clamp(10.5px,2.8vw,12px);font-weight:550;white-space:nowrap}
 #calendarPage .cal-actions .cal-day-fab[hidden]{display:none!important}
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
