@@ -1,0 +1,14 @@
+/* SEYVEO · Notebook confirmation, shared Black Velvet tokens.
+   New notes use the existing local notebook storage and list. */
+.note-review-dialog{width:min(420px,calc(100vw - 28px));max-height:min(86dvh,640px);padding:22px 19px 18px;overflow-y:auto}
+.note-review-dialog h2{margin:0 38px 7px 0;font-weight:620;font-size:21px;line-height:1.3}
+.note-review-dialog>p{margin:0 35px 17px 0;font-size:12px;line-height:1.5;color:var(--secondary)}
+.note-review-dialog form{display:flex;flex-direction:column;gap:8px;min-width:0}
+.note-review-dialog label{font-size:12px;color:var(--secondary);line-height:1.45}
+.note-review-dialog textarea{display:block;width:100%;box-sizing:border-box;min-height:110px;max-height:36dvh;padding:12px 13px;border:1px solid var(--line);border-radius:14px;color:var(--text);background:var(--card2);font:inherit;font-size:16px;line-height:1.5;resize:vertical;outline:0;overflow-y:auto}
+.note-review-dialog textarea:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.note-review-dialog .info-actions{display:flex;gap:9px;margin-top:9px}
+.note-review-dialog .info-actions .btn{flex:1;min-height:44px;min-width:0}
+.note-review-dialog #noteReviewStatus{font-size:11px;line-height:1.4;color:var(--secondary)}
+.note-review-dialog #noteReviewStatus[hidden]{display:none!important}
+@media(max-height:540px){.note-review-dialog{max-height:calc(100dvh - 24px);padding:17px 15px 14px}.note-review-dialog textarea{min-height:75px}}
