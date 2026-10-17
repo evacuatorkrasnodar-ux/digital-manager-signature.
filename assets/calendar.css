@@ -26,15 +26,27 @@
  #calendarView .cal-swipe-next{animation:cal-arrive-next .22s cubic-bezier(.2,.7,.2,1) both}
  #calendarView .cal-swipe-prev{animation:cal-arrive-prev .22s cubic-bezier(.2,.7,.2,1) both}
 }
-.cal-month{border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,rgba(255,255,255,.035),transparent 65%),var(--card);overflow:hidden;padding:6px 6px 5px}
+/* Velvet weekend rails: continuous and very quiet, never individual tiles. */
+.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.042);border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,rgba(255,255,255,.035),transparent 65%),var(--card);overflow:hidden;padding:6px 6px 5px}
+.cal-month::before,.cal-week-grid::before{
+ content:"";position:absolute;z-index:0;pointer-events:none;
+ top:6px;right:6px;bottom:5px;width:calc((100% - 12px) * 2 / 7);
+ border-radius:14px;
+ background:linear-gradient(to right,
+ var(--cal-weekend-tint) 0 calc(50% - 2px),
+ transparent calc(50% - 2px) calc(50% + 2px),
+ var(--cal-weekend-tint) calc(50% + 2px) 100%);
+}
+.cal-month>.cal-weekdays,.cal-month>.cal-month-grid{position:relative;z-index:1}
+:root[data-theme=light] .cal-month,:root[data-theme=light] .cal-week-grid{--cal-weekend-tint:rgba(37,48,64,.052)}
 .cal-weekdays,.cal-month-grid,.cal-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
 .cal-weekdays{margin:0 0 3px}
 .cal-weekdays span{font-size:10px;color:var(--secondary);text-align:center;padding:6px 0;font-weight:530}
-.cal-weekdays span:nth-child(n+6){color:var(--text);opacity:.77;border-radius:9px;background:rgba(195,205,220,.055)}
+.cal-weekdays span:nth-child(n+6){color:var(--text);opacity:.77}
 .cal-month-grid{grid-auto-rows:minmax(42px,auto)}
 .cal-day{display:flex;position:relative;flex-direction:column;gap:3px;align-items:center;justify-content:flex-start;min-width:0;min-height:42px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:4px 2px 3px;font-size:12px;line-height:1.1}
 .cal-day[data-outside=true]{color:var(--secondary);opacity:.42}
-.cal-day[data-weekend=true]{color:var(--secondary);background:rgba(195,205,220,.045)}
+.cal-day[data-weekend=true]{color:var(--secondary)}
 .cal-day[data-selected=true]{background:var(--card2);box-shadow:inset 0 0 0 1px var(--line)}
 .cal-day[data-holiday=public] .cal-day-number{color:var(--text);font-weight:675}
 .cal-day[data-holiday=rest] .cal-day-number{color:var(--text);font-weight:565}
@@ -47,7 +59,9 @@
 .cal-day-dots i.cal-dot-task{background:var(--text)}
 .cal-day-dots i.cal-dot-holiday{width:6px;height:6px;flex:none;border-radius:1.4px;background:var(--text);transform:rotate(45deg);opacity:.85}
 .cal-day[data-holiday=rest] .cal-day-dots i.cal-dot-holiday{background:transparent;border:1px solid var(--text);opacity:.8}
-.cal-week-grid{border:1px solid var(--line);border-radius:20px;padding:9px 4px;background:var(--card)}
+.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.042);border:1px solid var(--line);border-radius:20px;padding:9px 4px;background:var(--card)}
+.cal-week-grid::before{top:9px;right:4px;bottom:9px;width:calc((100% - 8px) * 2 / 7)}
+.cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:77px;justify-content:center;gap:10px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
 .cal-day-summary{margin:14px 1px 9px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
