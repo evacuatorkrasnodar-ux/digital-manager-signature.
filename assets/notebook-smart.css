@@ -12,3 +12,74 @@
 .note-review-dialog #noteReviewStatus{font-size:11px;line-height:1.4;color:var(--secondary)}
 .note-review-dialog #noteReviewStatus[hidden]{display:none!important}
 @media(max-height:540px){.note-review-dialog{max-height:calc(100dvh - 24px);padding:17px 15px 14px}.note-review-dialog textarea{min-height:75px}}
+
+/* Unified Notebook list: no bulky bottom navigation or outdated close glyph. */
+#notesDialog.notes-dialog{
+ width:min(430px,calc(100vw - 28px));
+ max-height:min(86dvh,720px);
+ box-sizing:border-box;padding:21px 18px 17px;
+ overflow-y:auto;overscroll-behavior:contain;
+}
+#notesDialog .notes-head{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;margin:0 44px 12px 0}
+#notesDialog .notes-head h2{margin:0;font-size:22px;font-weight:610;line-height:1.25;letter-spacing:-.025em}
+#notesDialog .notes-new{
+ display:inline-flex;align-items:center;justify-content:center;min-height:40px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);color:var(--text);font:inherit;font-size:12px;
+ font-weight:540;cursor:pointer;
+}
+#notesDialog .notes-list{
+ display:flex;flex-direction:column;gap:9px;
+ max-height:min(58dvh,540px);min-width:0;
+ padding:1px 0 3px;overflow-y:auto;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+}
+#notesDialog .note-item{
+ min-width:0;padding:12px 13px 10px;
+ border:1px solid var(--line);border-radius:17px;
+ background:var(--card2);
+}
+#notesDialog .note-item small{display:block;color:var(--secondary);font-size:11px;line-height:1.4}
+#notesDialog .note-item p{
+ margin:7px 0 9px;max-height:90px;
+ font-size:14px;line-height:1.45;font-weight:450;letter-spacing:0;
+ color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;
+}
+#notesDialog .note-item-actions{display:flex;align-items:center;gap:5px;min-width:0;margin:0}
+#notesDialog .note-item-actions>button{
+ flex:none;min-height:44px;max-width:42%;
+ padding:8px 10px;border:0;border-radius:11px;
+ background:transparent;color:var(--text);font:inherit;
+ font-size:12px;font-weight:540;cursor:pointer;
+}
+#notesDialog .note-item-actions>button:first-child{padding-left:0}
+#notesDialog .note-menu{position:relative;flex:none;margin-left:auto}
+#notesDialog .note-menu>summary{
+ display:grid;place-items:center;box-sizing:border-box;
+ width:44px;height:44px;border:1px solid var(--soft-line);
+ border-radius:50%;background:var(--card);
+ color:var(--secondary);font-size:22px;line-height:1;
+ letter-spacing:1px;cursor:pointer;list-style:none;
+}
+#notesDialog .note-menu>summary::marker{content:""}
+#notesDialog .note-menu>summary::-webkit-details-marker{display:none}
+#notesDialog .note-menu[open]>summary{border-color:var(--line);color:var(--text)}
+#notesDialog .note-more-options{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:5px;padding:7px 0 0;min-width:0;
+}
+#notesDialog .note-more-options button{
+ min-height:44px;min-width:0;padding:7px 3px;
+ border:1px solid var(--soft-line);border-radius:12px;
+ background:var(--card);color:var(--text);
+ font:inherit;font-size:11px;line-height:1.2;cursor:pointer;
+}
+#notesDialog .note-more-options button.note-delete{color:var(--secondary)}
+#notesDialog :is(button,summary):focus-visible{outline:2px solid var(--text);outline-offset:2px}
+#notesDialog .note-empty{margin:8px 0 4px;color:var(--secondary);font-size:13px;line-height:1.5}
+#notesDialog #notesStatus{margin:10px 0 0;font-size:11px;line-height:1.45;color:var(--secondary)}
+#notesDialog #notesStatus[hidden]{display:none!important}
+@media(max-width:360px){
+ #notesDialog.notes-dialog{padding:18px 13px 15px}
+ #notesDialog .note-item-actions>button{padding-inline:6px}
+}
