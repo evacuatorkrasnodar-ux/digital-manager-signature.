@@ -8,8 +8,8 @@
 .paper-choice-dialog>p,.paper-editor-dialog>p{margin:0 35px 13px 0;color:var(--secondary);font-size:12px;line-height:1.5}
 /* Three actions, one restrained Black/White Velvet vocabulary. */
 .paper-choice-list{display:grid;margin:11px 0 3px}
-.paper-choice-item{display:flex;align-items:center;gap:12px;width:100%;padding:9px 13px;
- border:1px solid rgba(230,237,246,.11);border-radius:17px;
+.paper-choice-item{display:flex;align-items:center;gap:12px;width:100%;
+ border:1px solid rgba(230,237,246,.11);
  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.008)),var(--card);
  color:var(--text);text-align:left;font:inherit;cursor:pointer;
  -webkit-tap-highlight-color:transparent;transition:border-color .16s ease,background-color .16s ease,transform .14s ease}
@@ -82,7 +82,7 @@
 }
 #notePaperDialog .paper-head{padding-bottom:6px}
 #notePaperDialog .paper-head h2{font-size:21px}
-#notePaperDialog .paper-toolbar{gap:5px;align-items:center;justify-content:flex-start;padding:5px 0 9px;flex:none}
+#notePaperDialog .paper-toolbar{justify-content:flex-start;flex:none}
 #notePaperDialog .paper-toolbar button{
  display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
  min-width:44px;min-height:44px;padding:0;
@@ -128,7 +128,7 @@
 /* Black Velvet: integrated paper templates without native square select. */
 #notePaperDialog .paper-toolbar{
  position:relative;z-index:6;isolation:isolate;
- flex-wrap:nowrap;gap:4px;
+ flex-wrap:nowrap;
 }
 /* Keep the canvas behind the open glass menu, without changing paper size. */
 #notePaperDialog .paper-stage{position:relative;z-index:0}
