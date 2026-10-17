@@ -244,9 +244,13 @@ function renderWater(){
 }
 function updateWater(amount){
  if(!Number.isInteger(amount))return;
- const now=today();
- if(save(d=>{d.water[now]=Math.max(0,Math.min(20000,(Number(d.water[now])||0)+amount));})){
-  lastWater=amount>0?amount:0;lastWaterDate=amount>0?now:'';
+ const day=today(),previous=Math.max(0,Math.min(20000,Number(state.water[day])||0));
+ // Undo only the amount actually recorded, even near the daily storage limit.
+ const next=Math.max(0,Math.min(20000,previous+amount));
+ if(next===previous){notice('Значение воды не изменилось.');return;}
+ if(save(d=>{d.water[day]=next;})){
+  lastWater=amount>0?next-previous:0;
+  lastWaterDate=amount>0?day:'';
   renderWater();notice(amount>0?'Вода добавлена.':'Последнее добавление отменено.');
  }
 }
