@@ -1663,6 +1663,7 @@ function notesMessage(message){
  const status=$('notesStatus');status.textContent=message||'';status.hidden=!message;
 }
 async function shareNote(note){
+ if(note.paper){window.SEYVEO_PAPER?.share(note);return}
  if(navigator.share){
   try{await navigator.share({title:'Моя запись · SEYVEO',text:note.text});notesMessage('Готово.');return}
   catch(error){if(error?.name==='AbortError')return}
@@ -1674,6 +1675,7 @@ async function shareNote(note){
  }catch{notesMessage('Не удалось отправить. Откройте заметку, чтобы скопировать текст.')}
 }
 function printNote(note){
+ if(note.paper){window.SEYVEO_PAPER?.print(note);return}
  const popup=window.open('','_blank');
  if(!popup){notesMessage('Для печати разрешите открытие нового окна.');return}
  try{
@@ -1697,12 +1699,24 @@ function renderNotes(){
  }
  notes.forEach(note=>{
   const card=document.createElement('article');card.className='note-item';
+  if(note.paper)card.classList.add('paper-note');
   const date=document.createElement('small');const when=new Date(note.updatedAt||note.createdAt);
   date.textContent=Number.isNaN(when.getTime())?'Моя запись':when.toLocaleString('ru-RU');
-  const content=document.createElement('p');content.textContent=note.text;
+  const content=document.createElement('p');content.textContent=note.paper?'Рукописный лист':note.text;
+  let thumbnail=null;
+  if(note.paper){
+   thumbnail=document.createElement('canvas');thumbnail.className='note-paper-preview';
+   thumbnail.width=210;thumbnail.height=297;
+   thumbnail.setAttribute('aria-label','Предпросмотр рукописного листа');
+   window.SEYVEO_PAPER?.preview(thumbnail,note.paper);
+  }
   const controls=document.createElement('div');controls.className='note-item-actions';
   const open=document.createElement('button');open.type='button';open.textContent='Открыть';
-  open.addEventListener('click',()=>{$('notesDialog').close();openNoteReview(note.text,note.id)});
+  open.addEventListener('click',()=>{
+   $('notesDialog').close();
+   if(note.paper)window.SEYVEO_PAPER?.open(note);
+   else openNoteReview(note.text,note.id);
+  });
   const hint=window.SEYVEO_NOTE_SCHEDULE_HINT?.(note.text)||null;
   const calendar=document.createElement('button');calendar.type='button';
   calendar.textContent=hint?'На '+hint.label+'?':'В календарь';
@@ -1740,8 +1754,12 @@ function renderNotes(){
    container.querySelectorAll('.note-more-button').forEach(el=>el.setAttribute('aria-expanded','false'));
    menu.hidden=!expanding;more.setAttribute('aria-expanded',String(expanding));
   });
-  controls.append(open,calendar,more);
-  card.append(date,content,controls,menu);container.append(card);
+  controls.append(open);
+  if(!note.paper)controls.append(calendar);
+  controls.append(more);
+  card.append(date,content);
+  if(thumbnail)card.append(thumbnail);
+  card.append(controls,menu);container.append(card);
  });
 }
 function openNotes(){renderNotes();if(!$('notesDialog').open)$('notesDialog').showModal()}
