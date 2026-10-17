@@ -1,0 +1,19 @@
+/* SEYVEO · iPhone touch focus v1
+   iOS Safari can retain :focus-visible after tapping buttons. Remove only
+   that temporary bright halo after TOUCH, not our glass face, active choice,
+   hover styling, or keyboard accessibility. */
+html[data-seyveo-input="touch"] :is(
+  button,
+  summary,
+  a[href],
+  [role="button"],
+  [role="tab"]
+):focus{
+  outline:none!important;
+  outline-offset:0!important;
+}
+@media(hover:none) and (pointer:coarse){
+  :is(button,summary,a[href],[role="button"],[role="tab"]){
+    -webkit-tap-highlight-color:transparent;
+  }
+}
