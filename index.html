@@ -741,7 +741,14 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <label><input type="radio" name="calendarTravel" value="30"><span>30 мин</span></label>
 <label><input type="radio" name="calendarTravel" value="60"><span>1 час</span></label>
 </div></fieldset>
-<p class="cal-timing-hint">Запас до и после встречи. Маршрут пока не рассчитывается.</p>
+<fieldset class="cal-timing-field"><legend>Напоминание в приложении</legend>
+<div class="cal-timing-choices">
+<label><input type="radio" name="calendarReminder" value="0" checked><span>Без напоминания</span></label>
+<label><input type="radio" name="calendarReminder" value="15"><span>За 15 мин</span></label>
+<label><input type="radio" name="calendarReminder" value="30"><span>За 30 мин</span></label>
+<label><input type="radio" name="calendarReminder" value="60"><span>За 1 час</span></label>
+</div></fieldset>
+<p class="cal-timing-hint">Дорога задаётся вручную. Напоминание видно только в открытом календаре; push пока нет.</p>
 </div>
 </details>
 <div id="calendarTimeOptions" class="cal-time-options" hidden aria-label="Возможные часы встречи">
@@ -1807,4 +1814,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=20"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
+</script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=21"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
