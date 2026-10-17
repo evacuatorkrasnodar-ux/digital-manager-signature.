@@ -122,6 +122,15 @@
 .cal-time-display{display:block;min-width:0;padding:10px 12px;color:var(--secondary);font-size:16px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .cal-time-control[data-filled=true] .cal-time-display{color:var(--text)}
 .cal-time-control:focus-within{outline:2px solid var(--text);outline-offset:2px}
+/* A compact separate action prevents the transparent native picker swallowing Clear. */
+.cal-time-field{position:relative;min-width:0}
+.cal-time-field>.cal-field{min-width:0}
+.cal-time-field .cal-time-display{padding-right:83px}
+.cal-time-clear{position:absolute;z-index:2;right:5px;bottom:3px;min-width:66px;min-height:39px;padding:5px 9px;border:0;border-radius:999px;background:rgba(255,255,255,.035);color:var(--secondary);font:inherit;font-size:12px;cursor:pointer}
+.cal-time-clear[hidden]{display:none!important}
+.cal-time-clear:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+:root[data-theme=light] .cal-time-clear{background:rgba(20,28,40,.045)}
+
 /* No extra card unless a chosen time is near a saved start time. */
 .cal-time-options{display:flex;flex-direction:column;gap:6px;min-width:0;padding:9px 11px;border:1px solid var(--soft-line);border-radius:13px;background:var(--card)}
 .cal-time-options[hidden]{display:none!important}
@@ -150,8 +159,25 @@
 .cal-extra .cal-field{margin-top:2px}
 /* Calm optional planning controls. No native select chevrons or giant panels. */
 .cal-timing[hidden]{display:none!important}
-.cal-timing summary{min-height:39px;font-size:12px;line-height:1.4}
-.cal-timing-content{display:flex;flex-direction:column;gap:12px;padding:4px 0 8px}
+/* Tappable velvet disclosure; subtle chrome without oversized arrows. */
+.cal-timing summary{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ box-sizing:border-box;width:100%;min-height:48px;margin:0;
+ padding:11px 13px;border:1px solid var(--line);border-radius:14px;
+ background:linear-gradient(145deg,rgba(255,255,255,.024),transparent 70%),var(--card2);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+ color:var(--secondary);font-size:12px;font-weight:540;line-height:1.4;
+ transition:background-color .18s ease,border-color .18s ease;
+}
+.cal-timing summary::after{
+ content:"";display:block;flex:none;width:7px;height:7px;
+ margin:0 3px 3px 0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:rotate(45deg);opacity:.65;transition:transform .18s ease,margin .18s ease;
+}
+.cal-timing[open] summary::after{transform:rotate(225deg);margin:4px 3px 0 0}
+.cal-timing[open] summary{color:var(--text);border-color:var(--line)}
+:root[data-theme=light] .cal-timing summary{box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+.cal-timing-content{display:flex;flex-direction:column;gap:12px;padding:12px 3px 5px}
 .cal-timing-field{min-width:0;margin:0;padding:0;border:0}
 .cal-timing-field legend{margin:0 0 6px;padding:0;font-size:12px;color:var(--secondary)}
 .cal-timing-choices{display:flex;flex-wrap:wrap;gap:6px}
@@ -181,4 +207,4 @@
  .cal-agenda{padding:3px 12px}.cal-entry{gap:9px}
  .cal-form-columns{grid-template-columns:minmax(0,1fr)}
 }
-@media(prefers-reduced-motion:reduce){.cal-day,.cal-entry,.cal-round{transition:none}}
+@media(prefers-reduced-motion:reduce){.cal-day,.cal-entry,.cal-round,.cal-timing summary,.cal-timing summary::after{transition:none}}
