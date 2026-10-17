@@ -36,8 +36,6 @@
  #calendarPage .cal-advice{margin-top:8px;padding:10px 12px;border-radius:16px}
  #calendarPage .cal-advice-action,
  #calendarPage .cal-day-fab,
- #calendarPage .cal-push-check button{min-height:44px}
- #calendarPage .cal-hint{margin-top:12px}
 }
 #calendarEventDialog.cal-form-dialog[open]{
  border-radius:25px;
@@ -218,3 +216,32 @@
  #calendarPage .calendar-space-button,
  #managePage .manage-row{transition:none}
 }
+
+/* Notifications belong in Management. Native details stays accessible. */
+#managePage .manage-notification-check{border-top:1px solid var(--soft-line)}
+#managePage .manage-notification-check>summary.manage-row{
+ display:flex;box-sizing:border-box;cursor:pointer;
+ min-height:58px;list-style:none;
+}
+#managePage .manage-notification-check>summary::-webkit-details-marker{display:none}
+#managePage .manage-notification-check>summary::marker{content:""}
+#managePage .manage-notification-check[open]>summary .manage-chevron{transform:rotate(90deg)}
+#managePage .manage-notification-check>summary:focus-visible{
+ outline:2px solid var(--text);outline-offset:-3px
+}
+#managePage .manage-notification-body{
+ padding:0 14px 15px;color:var(--secondary);
+ font-size:12px;line-height:1.5
+}
+#managePage .manage-notification-body p{margin:0 0 10px}
+#managePage .manage-notification-body button{
+ min-height:44px;padding:9px 15px;
+ border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);color:var(--text);
+ font:inherit;font-weight:550
+}
+#managePage .manage-notification-body button:disabled{opacity:.55}
+#managePage .manage-notification-body button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+#managePage .manage-notification-body [hidden]{display:none!important}
