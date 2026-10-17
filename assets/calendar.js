@@ -92,7 +92,7 @@ function createEntry(item){
   btn.dataset.calendarSpaceRecord=item.id;
   btn.setAttribute('aria-label','Открыть '+item.label+': '+item.title);
  }else{
-  clock.textContent=item.time||'Весь день';btn.dataset.calendarEvent=item.id;
+  clock.textContent=item.time||'Весь\u00a0день';btn.dataset.calendarEvent=item.id;
   btn.setAttribute('aria-label','Открыть событие: '+item.title);
  }
  const copy=text('span','cal-entry-copy');
@@ -383,12 +383,12 @@ function renderDeadlines(){
   section.append(list);root.append(section);
  }
  if(!count)root.append(text('p','cal-empty','Сроков и предстоящих событий пока нет. Здесь появятся дела с датой и ваши встречи.'));
- $('calendarDeadlineCount').textContent=count+' записей требуют обзора';
 }
 function render(){
  if(page.hidden)return;
  const deadline=mode==='deadlines';
  $('calendarView').hidden=deadline;
+ $('calendarView').dataset.mode=mode;
  $('calendarDeadlineView').hidden=!deadline;
  $('calendarAddInline').hidden=deadline;
  document.querySelector('#calendarPage .cal-actions').dataset.deadlines=String(deadline);
