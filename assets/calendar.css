@@ -57,6 +57,8 @@
 .cal-day-fab{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);padding:8px 15px;font-size:12px;font-weight:590}
 .cal-day-fab:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .cal-hint{font-size:11px;color:var(--secondary);line-height:1.5;margin:18px 2px 0}
+/* Leave a comfortable scroll runway for the fixed global dock on iPhone PWA. */
+#calendarPage .cal-hint{margin-bottom:calc(52px + env(safe-area-inset-bottom,0px))}
 .cal-deadline-section{margin:18px 0}
 .cal-deadline-section h3{font-size:13px;font-weight:610;line-height:1.45;margin:0 0 9px}
 .cal-deadline-section .cal-agenda{margin-bottom:11px}
