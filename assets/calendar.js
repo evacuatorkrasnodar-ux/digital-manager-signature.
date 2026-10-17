@@ -333,7 +333,6 @@ function addTask(){
  $('personalAddTasks')?.click();
  const field=$('personalTaskDue');if(field)field.value=iso();
 }
-$('calendarBack').addEventListener('click',()=>{$('navTasks').click()});
 $('calendarAdd').addEventListener('click',()=>openEvent());
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
