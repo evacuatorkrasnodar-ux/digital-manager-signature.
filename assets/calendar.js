@@ -188,6 +188,29 @@ function render(){
  if(mode==='day')renderDay();
  renderAgenda();
 }
+/* Reveal the first selected-day entry above the shared fixed dock on compact phones.
+   No dock movement, permanent scroll lock, or automatic jump on initial page load. */
+function revealSelectedDay(){
+ if(page.hidden||mode==='deadlines')return;
+ window.requestAnimationFrame(()=>{
+  if(page.hidden||mode==='deadlines')return;
+  const agenda=$('calendarAgenda'),dock=document.querySelector('footer.dock');
+  if(!agenda||!dock)return;
+  const first=agenda.querySelector('.cal-entry, .cal-empty');
+  const agendaBox=agenda.getBoundingClientRect();
+  const itemBox=first?.getBoundingClientRect();
+  const viewportBottom=window.visualViewport
+   ? window.visualViewport.offsetTop+window.visualViewport.height
+   : window.innerHeight;
+  const availableBottom=Math.min(dock.getBoundingClientRect().top,viewportBottom)-14;
+  const wantedBottom=itemBox?Math.min(itemBox.bottom,itemBox.top+76):agendaBox.top+66;
+  if(wantedBottom<=availableBottom)return;
+  window.scrollBy({
+   top:Math.ceil(wantedBottom-availableBottom),
+   behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'
+  });
+ });
+}
 function updateFocus(date){focus=new Date(date.getFullYear(),date.getMonth(),date.getDate());render()}
 function move(direction){
  const d=mode==='day'?step(focus,direction):mode==='week'?step(focus,direction*7):new Date(focus.getFullYear(),focus.getMonth()+direction,Math.min(focus.getDate(),new Date(focus.getFullYear(),focus.getMonth()+direction+1,0).getDate()));
@@ -260,6 +283,7 @@ for(const id of ['calendarMonthGrid','calendarWeekGrid']){
   const day=event.target.closest('[data-calendar-date]');if(!day)return;
   const chosen=at(day.dataset.calendarDate);if(!chosen)return;
   updateFocus(chosen);
+  revealSelectedDay();
  });
 }
 for(const id of ['calendarAgenda','calendarDeadlineList']){
