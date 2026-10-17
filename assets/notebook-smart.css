@@ -94,3 +94,12 @@
 }
 #notesDialog .note-item-actions>.note-more-button[aria-expanded=true]{color:var(--text);border-color:var(--line)}
 #notesDialog .note-more-options[hidden]{display:none!important}
+
+/* Compact note editor — same measured language as SEYVEO Calendar. */
+#noteReviewDialog.note-review-dialog{padding:19px 17px 15px;max-height:min(86dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))}
+#noteReviewDialog.note-review-dialog h2{font-size:21px;margin-bottom:6px}
+#noteReviewDialog.note-review-dialog>p{margin:0 40px 12px 0;font-size:11.5px;line-height:1.42}
+#noteReviewDialog.note-review-dialog form{gap:6px}
+#noteReviewDialog.note-review-dialog textarea{min-height:92px;max-height:27dvh;padding:11px 12px;font-size:16px;line-height:1.45}
+#noteReviewDialog.note-review-dialog .info-actions{margin-top:7px}
+#notesDialog.notes-dialog .note-empty{margin:8px 0 1px}
