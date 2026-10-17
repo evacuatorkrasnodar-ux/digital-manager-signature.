@@ -6,6 +6,9 @@ const $=id=>document.getElementById(id);
 const list=$('personalTaskList'),summary=$('personalBriefList'),dialog=$('personalTaskDialog');
 const form=$('personalTaskForm'),input=$('personalTaskTitle'),date=$('personalTaskDue');
 if(!list||!summary||!dialog||!form||!input||!date)return;
+const notice=$('personalTasksNotice');
+function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
+function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
@@ -65,6 +68,7 @@ function row(item,compact=false){
  return section;
 }
 function render(){
+ clearTaskError();
  const all=read(),open=all.filter(item=>!item.done)
  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||a.createdAt.localeCompare(b.createdAt));
  const done=all.filter(item=>item.done).reverse();
@@ -121,10 +125,10 @@ function change(id,del=false){
  const all=read(),target=all.find(item=>item.id===id);if(!target)return;
  if(del){
    if(!window.confirm('Удалить дело «'+target.title+'»?'))return;
-   if(!save(all.filter(item=>item.id!==id))){window.alert('Не удалось удалить запись.');return}
+   if(!save(all.filter(item=>item.id!==id))){showTaskError('Не удалось удалить дело. Проверьте память устройства.');return}
  }else{
    target.done=!target.done;target.doneAt=target.done?new Date().toISOString():'';
-   if(!save(all)){window.alert('Не удалось сохранить изменение.');return}
+   if(!save(all)){showTaskError('Не удалось сохранить изменение. Проверьте память устройства.');return}
  }
  render();
 }
