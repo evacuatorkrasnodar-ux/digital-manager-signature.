@@ -129,3 +129,62 @@
  }
  html.seyveo-composer-keyboard #ask.expanded .composer-status{flex:none}
 }
+
+/* SEYVEO stable typing v6.
+   No outer-panel auto growth. Compact is exactly one row; expanded has a
+   viewport-sized shell and the textarea takes the remaining height. */
+@media(max-width:700px){
+ #ask.prompt:not(.expanded){
+   height:56px!important;
+   min-height:56px!important;
+   max-height:56px!important;
+   overflow:hidden!important;
+ }
+ #ask.prompt:not(.expanded) #question{
+   box-sizing:border-box;
+   height:38px!important;
+   min-height:38px!important;
+   max-height:38px!important;
+   flex:1 1 0%!important;
+   overflow-y:auto!important;
+   resize:none!important;
+ }
+ #ask.prompt.expanded{
+   /* Small viewport units do not fluctuate with the Safari address bar. */
+   height:min(62svh,510px)!important;
+   max-height:calc(100svh - 145px)!important;
+   min-height:0!important;
+   overflow:hidden!important;
+ }
+ #ask.prompt.expanded #question{
+   flex:1 1 0%!important;
+   height:0!important;
+   min-height:0!important;
+   max-height:none!important;
+   resize:none!important;
+   overflow-y:auto!important;
+   -webkit-overflow-scrolling:touch;
+   overscroll-behavior:contain;
+ }
+ /* Reuse the keyboard-anchored dimensions without allowing text length to
+    influence the surrounding panel; the shell alone receives the viewport. */
+ html.seyveo-composer-keyboard #ask.prompt.expanded{
+   height:max(150px,calc(var(--composer-visible-height,100svh) - var(--writing-headroom) - 16px))!important;
+   max-height:max(150px,calc(var(--composer-visible-height,100svh) - var(--writing-headroom) - 16px))!important;
+ }
+ html.seyveo-composer-keyboard #ask.prompt.expanded #question{
+   flex:1 1 0%!important;
+   height:0!important;
+   min-height:0!important;
+ }
+ #ask.prompt.expanded .composer-more:not([hidden]){
+   max-height:90px;
+   overflow-y:auto;
+   overscroll-behavior:contain;
+ }
+ #ask.prompt.expanded .composer-status:not([hidden]){
+   flex:none;
+   max-height:38px;
+   overflow-y:auto;
+ }
+}
