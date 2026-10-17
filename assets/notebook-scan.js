@@ -7,12 +7,14 @@ const $=id=>document.getElementById(id);
 const dialog=$('noteScanDialog');if(!dialog)return;
 const preview=$('noteScanPreview'),status=$('noteScanStatus'),text=$('noteScanText'),
  button=$('noteScanRecognize');
-let selected=null,localURL='',running=false,session=0,loading=null;
+let selected=null,localURL='',running=false,session=0,loading=null,consented=false;
+const consentBox=$('noteScanConsent');
 function message(s){status.textContent=s||''}
 function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
- selected=null;clearURL();preview.removeAttribute('src');preview.hidden=true;
- text.value='';button.disabled=true;message('Фото остаётся на устройстве. Текст обязательно проверьте.');
+ selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
+ if(consentBox)consentBox.hidden=true;
+ text.value='';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
 }
 function open(){if(dialog.open)return;reset();dialog.showModal()}
 function select(file){
@@ -20,7 +22,8 @@ function select(file){
  if(!file.type.startsWith('image/')||file.type==='image/svg+xml'||file.size>15*1024*1024){
   message('Выберите обычную фотографию до 15 МБ.');return;
  }
- selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
+ session++;selected=file;clearURL();localURL=URL.createObjectURL(file);preview.src=localURL;
+ if(consentBox)consentBox.hidden=true;
  preview.hidden=false;button.disabled=running;message('Фото готово. Нажмите «Распознать» или перепишите текст вручную.');
 }
 function loadEngine(){
@@ -39,7 +42,6 @@ function loadEngine(){
 }
 async function recognize(){
  if(running||!selected)return;
- if(!window.confirm('Для распознавания загрузятся файлы Tesseract.js и языковые модели из интернета. Фото обрабатывается в браузере. Продолжить?'))return;
  const file=selected,token=++session;
  running=true;button.disabled=true;
  let worker=null;
@@ -86,7 +88,24 @@ for(const id of ['noteScanCamera','noteScanGallery']){
   select(file);
  });
 }
-button.addEventListener('click',recognize);
+button.addEventListener('click',()=>{
+ if(running||!selected)return;
+ if(!consented){
+  consentBox.hidden=false;
+  $('noteScanConsentYes').focus({preventScroll:true});
+  return;
+ }
+ recognize();
+});
+$('noteScanConsentNo').addEventListener('click',()=>{
+ consentBox.hidden=true;
+ button.focus({preventScroll:true});
+});
+$('noteScanConsentYes').addEventListener('click',()=>{
+ if(!selected||running)return;
+ consented=true;consentBox.hidden=true;
+ recognize();
+});
 $('noteScanCancel').addEventListener('click',cancel);
 $('noteScanToText').addEventListener('click',toNote);
 $('noteScanToPaper').addEventListener('click',toPaper);
