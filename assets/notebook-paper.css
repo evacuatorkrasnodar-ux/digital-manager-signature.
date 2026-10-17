@@ -184,15 +184,15 @@
 /* SEYVEO Paper v7 — two calm toolbar rows, keep the paper selector on the
    RIGHT of pen tools even on iPhone X. A photo-only trash icon, never a label. */
 #notePaperDialog .paper-toolbar{
- display:flex;flex-direction:column;align-items:stretch;gap:5px;
- padding:5px 0 8px;
+ display:flex;flex-direction:column;align-items:stretch;gap:3px;
+ padding:4px 0 6px;
 }
 #notePaperDialog .paper-toolbar-primary{
  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
  position:relative;z-index:7;min-width:0;
 }
 #notePaperDialog .paper-toolbar-secondary{
- display:flex;flex-wrap:nowrap;align-items:center;gap:6px;
+ display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
  position:relative;z-index:6;min-height:44px;
 }
 #notePaperDialog .paper-toolbar-primary > button,
@@ -209,9 +209,9 @@
 #notePaperDialog .paper-toolbar-secondary #notePaperRemovePhoto[hidden]{display:none!important}
 #notePaperDialog .paper-color-control{position:relative;z-index:7;display:flex;flex:0 0 44px}
 #notePaperDialog .paper-color-dot{
- display:block;width:19px;height:19px;border-radius:50%;
- background:#171e29;border:2px solid rgba(245,248,252,.55);
- box-shadow:0 0 0 1px rgba(180,191,205,.28),inset 0 0 0 1px rgba(0,0,0,.17);
+ display:block;width:19px;height:19px;box-sizing:border-box;border-radius:50%;
+ background:#171e29;border:2px solid rgba(244,247,251,.95);
+ box-shadow:0 0 0 1px rgba(158,171,190,.55),0 1px 4px rgba(4,10,20,.12);
 }
 #notePaperDialog .paper-color-menu:not([hidden]){
  position:absolute;top:calc(100% + 7px);left:0;z-index:45;
@@ -266,4 +266,20 @@
 }
 :root[data-theme=light] #notePaperDialog .paper-color-menu:not([hidden]){
  box-shadow:0 12px 28px rgba(56,69,85,.18),inset 0 1px 0 rgba(255,255,255,.8);
+}
+/* White Velvet: polished but quiet chrome around the selected ink.
+   The color remains true and all hit targets stay at 44px. */
+:root[data-theme=light] #notePaperDialog .paper-color-dot{
+ border-color:#fff;
+ box-shadow:0 0 0 1px rgba(113,128,150,.6),
+            0 2px 5px rgba(42,55,75,.10);
+}
+:root[data-theme=light] #notePaperDialog .paper-toolbar-secondary > button,
+:root[data-theme=light] #notePaperDialog .paper-color-control > button{
+ border-color:rgba(114,132,155,.19);
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog .paper-color-control button{
+  transition:none!important;
+ }
 }
