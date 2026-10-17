@@ -164,10 +164,16 @@ function updateHealthPlaceholder(){
 }
 function open(space,id=null,selectedDate=''){
  if(!META[space])return;
+ const legacyStep=id&&read().find(row=>row.id===id&&row.kind==='Шаги'&&row.space==='health');
+ if(legacyStep){
+  open('care');
+  window.dispatchEvent(new CustomEvent('seyveo:care-steps-open',{detail:{date:legacyStep.date}}));
+  return;
+ }
  current=space;editing=id;
  dialog.dataset.space=space;
  const journal=$('calendarSpaceJournal');
- if(journal)journal.open=space!=='care';
+ if(journal)journal.open=space!=='care'||Boolean(id);
  $('calendarSpaceForm').dataset.show=id?'true':'false';
  $('calendarSpaceDate').dataset.selectedDate=selectedDate;
  $('calendarSpaceTitleHeading').textContent=META[space].name;
