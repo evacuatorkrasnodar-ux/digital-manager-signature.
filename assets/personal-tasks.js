@@ -86,9 +86,25 @@ function render(){
  $('personalBrief').hidden=open.length===0;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
+function syncDueDateDisplay(){
+ const display=$('personalTaskDueDisplay'),control=date.closest('.personal-task-date-control');
+ if(!display||!control)return;
+ const value=date.value;
+ let label='Выбрать дату';
+ if(/^\d{4}-\d{2}-\d{2}$/.test(value)){
+  const [year,month,day]=value.split('-').map(Number);
+  const parsed=new Date(year,month-1,day);
+  if(parsed.getFullYear()===year&&parsed.getMonth()===month-1&&parsed.getDate()===day)
+   label=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric'}).format(parsed);
+ }
+ display.textContent=label;
+ control.dataset.filled=String(label!=='Выбрать дату');
+}
+for(const eventName of ['input','change','blur'])date.addEventListener(eventName,syncDueDateDisplay);
 function openDialog(){
- form.reset();$('personalTaskStatus').textContent='';
+ form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
+ window.requestAnimationFrame(syncDueDateDisplay);
  input.focus({preventScroll:true});
 }
 function put(e){
