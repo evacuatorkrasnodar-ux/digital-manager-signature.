@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id),dialog=$('calendarSpaceDialog');
 if(!dialog||!$('calendarSpaces'))return;
 const KEY='seyveo-life-spaces-v1',MAX=240;
 const META=Object.freeze({
- health:{name:'Здоровье',desc:'Ваши записи о самочувствии и показателях',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80 или хорошее самочувствие'},
+ health:{name:'Здоровье',desc:'Показатели и самочувствие — в одном месте',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80'},
  care:{name:'Забота ♡',desc:'Личные напоминания о себе и близких',kinds:['О себе','О близких','Личное','Другое'],placeholder:'Например, записаться на приём'},
  world:{name:'Мой мир',desc:'Люди и события, которые дороги вам',kinds:['День рождения','Важная дата','Человек','Другое'],placeholder:'Например, мама'}
 });
@@ -65,12 +65,42 @@ function upcoming(start,end){
 }
 window.SEYVEO_SPACES=Object.freeze({calendarItems,upcoming});
 let current='health',editing=null;
+const healthUnits=Object.freeze({
+ 'Давление':['calHealthPressureValue','calHealthPressureDate'],
+ 'Пульс':['calHealthPulseValue','calHealthPulseDate'],
+ 'Шаги':['calHealthStepsValue','calHealthStepsDate']
+});
+function renderHealthOverview(){
+ const overview=$('calendarHealthOverview');
+ overview.hidden=current!=='health';
+ if(current!=='health')return;
+ const records=read().filter(x=>x.space==='health');
+ const formatted=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'});
+ for(const [kind,[valueId,dateId]] of Object.entries(healthUnits)){
+  const matching=records.filter(x=>x.kind===kind);
+  // Existing entries have no modification timestamp: use their most recent
+  // recorded date, then original storage order. Never invent a value.
+  const latest=matching.map((item,index)=>({item,index})).sort((a,b)=>
+   (b.item.date||'').localeCompare(a.item.date||'')||b.index-a.index
+  )[0]?.item;
+  $(valueId).textContent=latest?latest.title:'—';
+  $(dateId).textContent=latest?(latest.date?formatted.format(new Date(latest.date+'T12:00:00')):'Без даты'):'Нет записей';
+ }
+}
 function renderList(){
  const root=$('calendarSpaceList');root.replaceChildren();
- const items=read().filter(x=>x.space===current).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
- $('calendarSpaceCount').textContent=items.length+' записей · только на этом устройстве';
+ const items=read().filter(x=>x.space===current).sort((a,b)=>
+  current==='health'?(b.date||'').localeCompare(a.date||''):
+   (a.date||'9999').localeCompare(b.date||'9999')
+ );
+ renderHealthOverview();
+ const count=items.length;
+ const ending=count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей';
+ $('calendarSpaceCount').textContent=current==='health'?count+' '+ending:count+' '+ending;
  if(!items.length){
-  const empty=dom('p','calendar-space-empty','Пока нет записей. Здесь будет только то, что вы внесёте сами.');
+  const empty=dom('p','calendar-space-empty',current==='health'
+   ?'Выберите показатель выше, чтобы внести первую запись.'
+   :'Пока нет записей. Здесь будет только то, что вы внесёте сами.');
   root.append(empty);return;
  }
  for(const item of items){
@@ -88,7 +118,7 @@ function renderForm(){
  const item=read().find(x=>x.id===editing&&x.space===current);
  $('calendarSpaceForm').hidden=!editing&&$('calendarSpaceForm').dataset.show!=='true';
  $('calendarSpaceFormTitle').textContent=item?'Изменить запись':'Новая запись';
- $('calendarSpaceNameLabel').textContent=current==='world'?'Человек или событие':current==='health'?'Показатель или запись':'Что важно не забыть?';
+ $('calendarSpaceNameLabel').textContent=current==='world'?'Человек или событие':current==='health'?'Значение или запись':'Что важно не забыть?';
  $('calendarSpaceTitle').placeholder=META[current].placeholder;
  $('calendarSpaceDelete').hidden=!item;
  $('calendarSpaceAnnualLabel').hidden=current!=='world';
@@ -107,6 +137,12 @@ function renderForm(){
   $('calendarSpaceFormFields').reset();
   $('calendarSpaceDate').value=$('calendarSpaceDate').dataset.selectedDate||'';
  }
+ updateHealthPlaceholder();
+}
+function updateHealthPlaceholder(){
+ if(current!=='health')return;
+ const examples={'Давление':'Например, 120/80','Пульс':'Например, 72 уд/мин','Шаги':'Например, 6200','Самочувствие':'Как вы себя чувствуете?'};
+ $('calendarSpaceTitle').placeholder=examples[$('calendarSpaceKind').value]||'Ваша запись';
 }
 function open(space,id=null,selectedDate=''){
  if(!META[space])return;
@@ -116,17 +152,22 @@ function open(space,id=null,selectedDate=''){
  $('calendarSpaceTitleHeading').textContent=META[space].name;
  $('calendarSpaceIntro').textContent=META[space].desc;
  $('calendarSpacePrivacy').textContent=space==='health'
-   ?'Показатели вводятся вручную и хранятся в браузере без шифрования. Это не медицинский совет и не синхронизация с Apple Health.'
+   ?'Ручной ввод. Данные хранятся в браузере без шифрования, без связи с Apple Health. Не для медицинских решений.'
    :space==='care'
    ?'Личные записи остаются в этом браузере без шифрования. Отправка другим людям и напоминания пока не подключены.'
    :'Даты и имена хранятся только в этом браузере без шифрования. При выборе «Каждый год» день рождения появится ежегодно.';
  $('calendarSpaceStatus').textContent='';
+ $('calendarSpaceAdd').textContent=space==='health'?'＋ Запись':'＋ Добавить';
  renderList();renderForm();
  if(!dialog.open)dialog.showModal();
  if(id)$('calendarSpaceTitle').focus({preventScroll:true});
 }
-function add(){
+function add(kind=null){
  editing=null;$('calendarSpaceForm').dataset.show='true';renderForm();
+ if(typeof kind==='string'&&current==='health'&&healthUnits[kind]){
+  $('calendarSpaceKind').value=kind;
+  updateHealthPlaceholder();
+ }
  $('calendarSpaceTitle').focus({preventScroll:true});
 }
 function save(event){
@@ -170,7 +211,12 @@ $('calendarSpaceList').addEventListener('click',event=>{
  const row=event.target.closest('[data-space-record]');
  if(row)open(current,row.dataset.spaceRecord,window.SEYVEO_CALENDAR_DATE?.()||'');
 });
-$('calendarSpaceAdd').addEventListener('click',add);
+$('calendarSpaceAdd').addEventListener('click',()=>add());
+$('calendarHealthOverview').addEventListener('click',event=>{
+ const quick=event.target.closest('[data-health-quick]');
+ if(quick)add(quick.dataset.healthQuick);
+});
+$('calendarSpaceKind').addEventListener('change',updateHealthPlaceholder);
 $('calendarSpaceFormFields').addEventListener('submit',save);
 $('calendarSpaceCancel').addEventListener('click',()=>{
  editing=null;$('calendarSpaceForm').dataset.show='false';renderForm();
