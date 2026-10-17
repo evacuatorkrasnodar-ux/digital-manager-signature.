@@ -204,6 +204,7 @@ const KEYS=Object.freeze({
  tasks:'seyveo-personal-tasks-v1',
  calendarEvents:'seyveo-calendar-events-v1',
  lifeSpaces:'seyveo-life-spaces-v1',
+ privateWellness:'seyveo-private-health-care-v1',
  company:'seyveo-company-passport-v1',
  pictureWidgets:'seyveo-home-widgets-v1',
  roadmapProgress:'seyveo-roadmap-progress-v1'
@@ -223,6 +224,7 @@ function snapshot(){
  const tasks=parsed(read(KEYS.tasks),[]);
  const calendarEvents=parsed(read(KEYS.calendarEvents),[]);
  const lifeSpaces=parsed(read(KEYS.lifeSpaces),[]);
+ const privateWellness=parsed(read(KEYS.privateWellness),null);
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
  const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
@@ -240,6 +242,7 @@ function snapshot(){
   personalTasks:Array.isArray(tasks)?tasks:[],
   calendarEvents:Array.isArray(calendarEvents)?calendarEvents:[],
   lifeSpaces:Array.isArray(lifeSpaces)?lifeSpaces:[],
+  privateWellness:privateWellness&&typeof privateWellness==='object'&&!Array.isArray(privateWellness)?privateWellness:null,
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
   roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
@@ -269,6 +272,7 @@ function drawData(){
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
   ['Календарь',String(countOf(record.calendarEvents))+' локальных событий'],
   ['Личные пространства',String(countOf(record.lifeSpaces))+' записей'],
+  ['Здоровье и забота',record.privateWellness?'Личный журнал сохранён':'Без дополнительных записей'],
   ['Карточка компании',record.companyPassport&&record.companyPassport.name?'Заполнена':'Не заполнена'],
   ['Моя картина',record.pictureWidgets?String(record.pictureWidgets.ids.length)+' выбранных':'Стандартный набор'],
   ['Карта развития',String(roadmapCounts().checked)+' из '+String(roadmapCounts().total)+' отмечено'],
