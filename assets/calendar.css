@@ -248,11 +248,18 @@
 #calendarEventDialog .cal-form-scroll{
  display:flex;flex-direction:column;gap:11px;
  flex:1 1 auto;min-height:0;min-width:0;
- overflow-y:auto;overscroll-behavior:contain;
+ box-sizing:border-box;
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
- scroll-padding-bottom:20px;
- padding:2px 2px 15px;
- margin:-2px -2px 0;
+ scroll-padding-top:12px;scroll-padding-bottom:20px;
+ padding:5px 8px 16px;
+ margin:-5px -8px 0;
+}
+#calendarEventDialog .cal-form-scroll > *{
+ min-width:0;max-width:100%;box-sizing:border-box;
+}
+#calendarEventDialog .cal-form-scroll input[type=date]{
+ display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
 }
 #calendarEventDialog .cal-dialog-actions{
  display:flex;align-items:center;gap:8px;
