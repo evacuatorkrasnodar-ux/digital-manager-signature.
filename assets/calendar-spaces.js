@@ -115,6 +115,11 @@ function renderList(){
  const count=items.length;
  const ending=count%10===1&&count%100!==11?'запись':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'записи':'записей';
  $('calendarSpaceCount').textContent=count+' '+ending;
+ const journalLabel=$('calendarSpaceJournal')?.querySelector('summary');
+ if(journalLabel){
+  const name=current==='health'?'История измерений':current==='care'?'Другие записи':'Личные записи';
+  journalLabel.textContent=count?name+' · '+count:name;
+ }
  if(!items.length){
   const empty=dom('p','calendar-space-empty',current==='health'
    ?'Выберите показатель выше, чтобы внести первую запись.'
@@ -173,7 +178,13 @@ function open(space,id=null,selectedDate=''){
  current=space;editing=id;
  dialog.dataset.space=space;
  const journal=$('calendarSpaceJournal');
- if(journal)journal.open=space!=='care'||Boolean(id);
+ if(journal){
+  // The metric tiles are the primary actions; the full log stays one tap away.
+  // Editing an existing record still opens the journal immediately.
+  journal.open=space==='world'||Boolean(id);
+  const title=journal.querySelector('summary');
+  if(title)title.textContent=space==='health'?'История измерений':space==='care'?'Другие записи':'Личные записи';
+ }
  $('calendarSpaceForm').dataset.show=id?'true':'false';
  $('calendarSpaceDate').dataset.selectedDate=selectedDate;
  $('calendarSpaceTitleHeading').textContent=META[space].name;
