@@ -1603,6 +1603,11 @@ $('orb').addEventListener('click',()=>{
 });
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
 if(composerMode==='notes'){
+ if(!composer.classList.contains('expanded')){
+  expandComposer();
+  composerMessage('Проверьте заметку и нажмите «Сохранить».');
+  return;
+ }
  const record={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text:question.value.replace(/^\n+|\n+$/g,''),createdAt:Date.now()};
  if(!putNotes([record,...getNotes()])){composerMessage('Не удалось сохранить. Проверьте память устройства.');return}
  playFeedback('confirm');
@@ -1657,7 +1662,7 @@ for(const id of ['info','notesDialog']){
 }
 $('infoClose').addEventListener('click',()=>$('info').close());
 /* One adaptive composer, separate local draft and notebook stores. */
-const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1';
+const DRAFT_KEY='seyveo-draft-v1',NOTES_KEY='seyveo-notes-v1',COMPOSER_MODE_KEY='seyveo-composer-mode-v1';
 const composer=$('ask'),question=$('question');
 let composerIdle=null,composerStatusTimer=null,composerMode='ask',composerManuallyCollapsed=false;
 function composerMessage(message){
@@ -1667,8 +1672,23 @@ function composerMessage(message){
   status.hidden=!message;
   if(message)composerStatusTimer=setTimeout(()=>{status.hidden=true},2800);
 }
-function saveDraft(){try{if(question.value)localStorage.setItem(DRAFT_KEY,question.value);else localStorage.removeItem(DRAFT_KEY)}catch{}}
-function restoreDraft(){try{question.value=localStorage.getItem(DRAFT_KEY)||''}catch{question.value=''}}
+function saveDraft(){
+ try{
+  if(question.value){
+   localStorage.setItem(DRAFT_KEY,question.value);
+   if(composerMode==='notes')localStorage.setItem(COMPOSER_MODE_KEY,'notes');
+   else localStorage.removeItem(COMPOSER_MODE_KEY);
+  }else{
+   localStorage.removeItem(DRAFT_KEY);localStorage.removeItem(COMPOSER_MODE_KEY);
+  }
+ }catch{}
+}
+function restoreDraft(){
+ try{
+  question.value=localStorage.getItem(DRAFT_KEY)||'';
+  composerMode=question.value&&localStorage.getItem(COMPOSER_MODE_KEY)==='notes'?'notes':'ask';
+ }catch{question.value='';composerMode='ask'}
+}
 function armComposerIdle(){
   clearTimeout(composerIdle);
   if(!composer.hidden&&!question.value.trim()&&!composer.classList.contains('expanded'))
@@ -1685,8 +1705,10 @@ function expandComposer(){
 function collapseComposer(){
   composerManuallyCollapsed=true;
   composer.classList.remove('expanded');
-  // The compact line always has one unambiguous action: ask the assistant.
-  setComposerMode('ask',true);
+  // A hidden "send" button must never accidentally submit private note text
+  // as a question. Keep pending notes in their original mode.
+  if(composerMode!=='notes'||!question.value.trim())setComposerMode('ask',true);
+  else $('composerCompactSend').setAttribute('aria-label','Развернуть заметку перед сохранением');
   syncComposer();
 }
 function syncComposer(){
@@ -1714,7 +1736,7 @@ function closeComposer(){
   $('moreComposer').setAttribute('aria-expanded','false');
   question.blur();
   $('composerStatus').hidden=true;
-  setComposerMode('ask',true);
+  if(composerMode!=='notes'||!question.value.trim())setComposerMode('ask',true);
 }
 function setComposerMode(mode,skipSync=false){
  composerMode=mode==='notes'?'notes':'ask';
@@ -2142,5 +2164,5 @@ fab.addEventListener('click',()=>{
   }
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
-restoreDraft();setComposerMode('ask');render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
+restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
 </script><script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=20"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=2"></script><script src="assets/notebook-paper.js?v=3"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=26"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
