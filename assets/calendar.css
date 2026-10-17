@@ -232,31 +232,42 @@
 @media(prefers-reduced-motion:reduce){.cal-timing>summary::after,.cal-timing-setting>summary::after{transition:none}}
 
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
-/* Keep Save/Cancel reachable when duration, road and reminders expand on iPhone.
-   Scroll remains native inside the event dialog; no page or dock movement. */
-#calendarEventDialog{
- overflow-y:auto;
- overscroll-behavior:contain;
+/* Modal body scrolls independently; Save/Cancel never cover event fields.
+   Keep the approved global dock and all other dialogs untouched. */
+#calendarEventDialog[open]{
+ display:flex;flex-direction:column;
+ max-height:min(85dvh,calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ overflow:hidden;
+}
+#calendarEventDialog > h2,
+#calendarEventDialog > p{flex:none}
+#calendarEventDialog form{
+ display:flex;flex-direction:column;gap:0;
+ flex:1 1 auto;min-height:0;
+}
+#calendarEventDialog .cal-form-scroll{
+ display:flex;flex-direction:column;gap:11px;
+ flex:1 1 auto;min-height:0;min-width:0;
+ overflow-y:auto;overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
- scroll-padding-block-end:82px;
+ scroll-padding-bottom:20px;
+ padding:2px 2px 15px;
+ margin:-2px -2px 0;
 }
 #calendarEventDialog .cal-dialog-actions{
- position:sticky;
- z-index:3;
- bottom:-17px;
- flex-shrink:0;
- margin:3px -18px -17px;
+ display:flex;align-items:center;gap:8px;
+ position:relative;z-index:2;flex:none;
+ margin:0 -18px -17px;
  padding:12px 18px 17px;
  background:var(--card);
  border-top:1px solid var(--soft-line);
  box-shadow:0 -9px 18px -18px rgba(0,0,0,.7);
 }
-#calendarEventDialog .cal-dialog-actions .btn{
- min-height:44px;
-}
-/* Prevent the footer from borrowing space from any personal task modal. */
+#calendarEventDialog .cal-dialog-actions .btn{min-height:44px}
 @media(max-height:540px){
- #calendarEventDialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+ #calendarEventDialog[open]{
+  max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+ }
 }
 .cal-dialog-actions .btn{flex:1;min-height:44px}
 .cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
