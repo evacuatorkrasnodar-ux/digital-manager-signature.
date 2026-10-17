@@ -116,6 +116,12 @@
 .cal-field{display:flex;flex-direction:column;gap:6px;min-width:0;color:var(--secondary);font-size:12px;line-height:1.5}
 .cal-field input,.cal-field textarea{display:block;width:100%;min-width:0;min-height:45px;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:var(--card2);font:inherit;font-size:16px;outline:0;color-scheme:inherit}
 .cal-field textarea{min-height:80px;resize:vertical}
+/* Display a dependable time label on iPhone while retaining its native picker. */
+.cal-time-control{position:relative;display:flex;align-items:center;min-width:0;min-height:45px;box-sizing:border-box;border:1px solid var(--line);border-radius:13px;background:var(--card2);overflow:hidden}
+.cal-time-control input[type=time]{position:absolute;inset:0;z-index:1;width:100%;height:100%;min-height:45px;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
+.cal-time-display{display:block;min-width:0;padding:10px 12px;color:var(--secondary);font-size:16px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.cal-time-control[data-filled=true] .cal-time-display{color:var(--text)}
+.cal-time-control:focus-within{outline:2px solid var(--text);outline-offset:2px}
 .cal-field :is(input,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .cal-form-columns{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;min-width:0}
 /* One quiet segmented choice, with native radios and no iOS select arrows. */
@@ -137,7 +143,8 @@
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
 .cal-dialog-actions .btn{flex:1;min-height:44px}
 .cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
-.cal-form-status{font-size:11px;line-height:1.45;min-height:17px;color:var(--secondary)}
+.cal-form-status{font-size:11px;line-height:1.45;color:var(--secondary)}
+.cal-form-status:empty{display:none}
 .cal-event-label{font-size:10px;text-align:center;color:var(--secondary);margin-top:6px}
 #calendarView[hidden],#calendarDeadlineView[hidden]{display:none!important}
 :root[data-theme=light] .cal-day[data-today=true] .cal-day-number{color:#fff}
