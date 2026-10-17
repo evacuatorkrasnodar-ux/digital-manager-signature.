@@ -53,6 +53,8 @@ function events(){
   id:x.id,title:x.title.trim().slice(0,140),date:x.date,
   time:/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time||'')?x.time:'',
   kind:x.kind==='business'?'business':'personal',
+  duration:[30,60,90,120].includes(Number(x.duration))?Number(x.duration):0,
+  travel:[0,15,30,60].includes(Number(x.travel))?Number(x.travel):0,
   note:typeof x.note==='string'?x.note.slice(0,600):'',
   createdAt:typeof x.createdAt==='string'?x.createdAt:'',
   updatedAt:typeof x.updatedAt==='string'?x.updatedAt:''
@@ -97,7 +99,10 @@ function createEntry(item){
  if(item.done)title.style.textDecoration='line-through';
  const subtitle=item.source==='task'?(item.done?'Завершено · личное дело':'Личное дело · изменить в «Делах»'):
    item.source==='space'?(item.label+' · '+item.kind+(item.note?' · '+item.note:'')):
-   (item.kind==='business'?'Работа':'Личное')+(item.note?' · '+item.note:'');
+   (item.kind==='business'?'Работа':'Личное')
+   +(item.duration?(' · '+(item.duration===30?'30 мин':item.duration===60?'1 ч':item.duration===90?'1 ч 30 мин':'2 ч')):'')
+   +(item.travel?' · дорога по '+item.travel+' мин':'')
+   +(item.note?' · '+item.note:'');
  copy.append(title,text('small','',subtitle));
  btn.append(clock,copy,text('span','cal-entry-chevron','›'));
  return btn;
@@ -200,7 +205,9 @@ function smartSuggestion(todayDate=new Date()){
  const shortGap=window.SEYVEO_CALENDAR_TIME?.tightPair(entries,selected);
  if(shortGap)return{
   kind:'event',id:shortGap.second.id,
-  message:'Между событиями в '+shortGap.first.time+' и '+shortGap.second.time+' меньше часа. Проверь график.',
+  message:shortGap.kind==='overlap'
+   ?'События в '+shortGap.first.time+' и '+shortGap.second.time+' пересекаются с учётом длительности и дороги.'
+   :'События в '+shortGap.first.time+' и '+shortGap.second.time+' близко друг к другу. Проверь длительность.',
   action:'Проверить'
  };
  const soon=pending.filter(item=>item.date>=today&&item.date<=format(step(todayDate,3)));
@@ -239,17 +246,43 @@ function renderAdvice(){
  $('calendarAdviceText').textContent=currentAdvice.message;
  $('calendarAdviceAction').textContent=currentAdvice.action;
 }
+function planningValues(){
+ const duration=Number(form.querySelector('input[name="calendarDuration"]:checked')?.value||0);
+ const travel=Number(form.querySelector('input[name="calendarTravel"]:checked')?.value||0);
+ return {duration,travel};
+}
+function choosePlanning(duration,travel){
+ const d=form.querySelector('input[name="calendarDuration"][value="'+duration+'"]')||
+  form.querySelector('input[name="calendarDuration"][value="0"]');
+ const t=form.querySelector('input[name="calendarTravel"][value="'+travel+'"]')||
+  form.querySelector('input[name="calendarTravel"][value="0"]');
+ if(d)d.checked=true;
+ if(t)t.checked=true;
+ syncPlanningLabel();
+}
+function syncPlanningLabel(){
+ const clock=$('calendarEventTime').value;
+ const duration=planningValues().duration,travel=planningValues().travel;
+ $('calendarEventTiming').hidden=!clock;
+ const length=duration===30?'30 мин':duration===60?'1 ч':duration===90?'1 ч 30 мин':duration===120?'2 ч':'не указана';
+ $('calendarEventTimingLabel').textContent='Длительность: '+length+' · '+(travel?'дорога по '+travel+' мин':'дорога не учтена');
+}
 function showTimeAlternatives(){
  const box=$('calendarTimeOptions'),choices=$('calendarTimeOptionsChoices');
  const date=$('calendarEventDate').value,time=$('calendarEventTime').value;
  const engine=window.SEYVEO_CALENDAR_TIME;
- const nearby=engine?.nearest(events(),date,time,editing)||null;
+ const settings=planningValues();
+ const nearby=engine?.nearest(events(),date,time,editing,settings)||null;
  box.hidden=!nearby;
  choices.replaceChildren();
  if(!nearby)return;
- $('calendarTimeOptionsMessage').textContent=(nearby.minutesApart===0?'В это время уже есть событие':'Рядом событие в '+nearby.time)
-  +' — «'+nearby.title.slice(0,65)+'». Можно рассмотреть:';
- const slots=engine.suggestions(events(),date,time,editing);
+ const notice=nearby.kindOfIssue==='same'
+  ?'В это время уже записано событие'
+  :nearby.kindOfIssue==='overlap'
+    ?'Время занято с учётом длительности и дороги'
+    :'Время может быть занято: у одной встречи не указана длительность';
+ $('calendarTimeOptionsMessage').textContent=notice+' — «'+nearby.title.slice(0,65)+'» ('+nearby.time+'). Возможные варианты:';
+ const slots=engine.suggestions(events(),date,time,editing,new Date(),settings);
  if(!slots.length){
   $('calendarTimeOptionsMessage').textContent+=' Других вариантов с 09:00 до 19:00 не нашлось.';
   return;
@@ -387,6 +420,7 @@ function syncTimeDisplay(){
  const value=input.value;
  display.textContent=value||'Указать время';
  input.closest('.cal-time-control').dataset.filled=String(Boolean(value));
+ syncPlanningLabel();
 }
 function setEventKind(kind){
  const radio=form.querySelector('input[name="calendarEventKind"][value="'+(kind==='business'?'business':'personal')+'"]');
@@ -402,6 +436,8 @@ function openEvent(id=null){
  $('calendarEventName').value=item?.title||'';
  $('calendarEventDate').value=item?.date||iso();
  $('calendarEventTime').value=item?.time||'';
+ choosePlanning(item?item.duration:60,item?item.travel:0);
+ $('calendarEventTiming').open=false;
  syncTimeDisplay();
  setEventKind(item?.kind||'personal');
  $('calendarEventExtra').open=Boolean(item?.note);
@@ -420,6 +456,8 @@ function onSubmit(e){
  const date=$('calendarEventDate').value,clock=$('calendarEventTime').value;
  const note=$('calendarEventNote').value.trim().slice(0,600);
  const kind=getEventKind();
+ const settings=planningValues();
+ const duration=clock?settings.duration:0,travel=clock?settings.travel:0;
  const status=$('calendarEventStatus');
  if(!name){status.textContent='Укажите название события.';return}
  if(!at(date)){status.textContent='Выберите правильную дату.';return}
@@ -428,11 +466,16 @@ function onSubmit(e){
  if(!old&&all.length>=MAX){status.textContent='Сохранено 300 событий. Для новых удалите ненужные старые.';return}
  const conflict=timeCollision(date,clock,old?.id||null);
  if(conflict&&!window.confirm('В '+clock+' уже записано «'+conflict.title+'». Сохранить ещё одно событие на то же время?'))return;
- const nearby=!conflict?window.SEYVEO_CALENDAR_TIME?.nearest(all,date,clock,old?.id||null):null;
- if(nearby&&!window.confirm('Рядом событие в '+nearby.time+' — «'+nearby.title+'». Продолжительность встреч неизвестна. Оставить время '+clock+'?'))return;
+ const nearby=!conflict?window.SEYVEO_CALENDAR_TIME?.nearest(all,date,clock,old?.id||null,{duration,travel}):null;
+ if(nearby){
+  const notice=nearby.kindOfIssue==='overlap'
+   ?'Встречи пересекаются с учётом длительности и дороги.'
+   :'Длительность одной встречи неизвестна. Время может быть занято.';
+  if(!window.confirm(notice+' Рядом «'+nearby.title+'» ('+nearby.time+'). Всё равно сохранить '+clock+'?'))return;
+ }
  const now=new Date().toISOString();
  const entry={id:old?.id||'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
-  title:name,date,time:clock,kind,note,createdAt:old?.createdAt||now,updatedAt:now};
+  title:name,date,time:clock,kind,duration,travel,note,createdAt:old?.createdAt||now,updatedAt:now};
  const next=old?all.map(x=>x.id===old.id?entry:x):[...all,entry];
  if(!saveEvents(next)){status.textContent='Не удалось сохранить событие. Проверьте память браузера.';return}
  $('calendarEventDialog').close();
@@ -486,6 +529,11 @@ form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
 for(const eName of ['input','change'])$('calendarEventDate').addEventListener(eName,showEventTimeHint);
+for(const name of ['calendarDuration','calendarTravel']){
+ form.querySelectorAll('input[name="'+name+'"]').forEach(input=>
+  input.addEventListener('change',()=>{syncPlanningLabel();showEventTimeHint()})
+ );
+}
 $('calendarTimeOptionsChoices').addEventListener('click',event=>{
  const choice=event.target.closest('[data-calendar-suggested-time]');
  if(!choice)return;
