@@ -122,6 +122,14 @@
 .cal-time-display{display:block;min-width:0;padding:10px 12px;color:var(--secondary);font-size:16px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .cal-time-control[data-filled=true] .cal-time-display{color:var(--text)}
 .cal-time-control:focus-within{outline:2px solid var(--text);outline-offset:2px}
+/* No extra card unless a chosen time is near a saved start time. */
+.cal-time-options{display:flex;flex-direction:column;gap:6px;min-width:0;padding:9px 11px;border:1px solid var(--soft-line);border-radius:13px;background:var(--card)}
+.cal-time-options[hidden]{display:none!important}
+.cal-time-options-message{font-size:12px;line-height:1.4;color:var(--text);overflow-wrap:anywhere}
+.cal-time-options-choices{display:flex;flex-wrap:wrap;gap:7px}
+.cal-time-options-choices button{min-width:66px;min-height:40px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);font:inherit;font-size:12px;font-weight:550}
+.cal-time-options-choices button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.cal-time-options small{font-size:10px;line-height:1.45;color:var(--secondary)}
 .cal-field :is(input,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .cal-form-columns{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;min-width:0}
 /* One quiet segmented choice, with native radios and no iOS select arrows. */
