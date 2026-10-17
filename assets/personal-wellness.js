@@ -183,6 +183,7 @@ function stopSession(done=false){
   $('pwBreathStage').textContent=done?'Пауза завершена':'Вдох — 4 сек. · выдох — 6 сек.';
   $('pwBreathClock').textContent=done?'00:00':clock(Number($('pwBreathDuration').value)*60);
  }else{
+  $('pwEye').classList.remove('is-running');
   $('pwEyeStart').textContent='Начать';$('pwEyeStop').hidden=true;
   $('pwEyeClock').textContent=done?'00:00':'01:00';
   $('pwEyeStage').textContent=done?'Пауза завершена':eyeStages[0].name;
@@ -202,13 +203,19 @@ function startSession(kind){
   session.paused=!session.paused;session.last=performance.now();
   button.textContent=session.paused?'Продолжить':'Пауза';
   clearInterval(timer);timer=0;
-  if(session.paused){if(isBreath)$('pwBreathRing').className='pw-breath-ring is-paused';}
-  else{tick();timer=setInterval(tick,180);}
+  if(session.paused){
+   if(isBreath)$('pwBreathRing').className='pw-breath-ring is-paused';
+   else $('pwEye').classList.remove('is-running');
+  }else{
+   if(!isBreath)$('pwEye').classList.add('is-running');
+   tick();timer=setInterval(tick,180);
+  }
   return;
  }
  session={kind,elapsed:0,total:isBreath?Number($('pwBreathDuration').value)*60:60,paused:false,last:performance.now()};
  button.textContent='Пауза';$(isBreath?'pwBreathStop':'pwEyeStop').hidden=false;
  if(isBreath)$('pwBreathDuration').disabled=true;
+ else $('pwEye').classList.add('is-running');
  tick();
  timer=setInterval(tick,180);
 }
@@ -439,7 +446,8 @@ document.addEventListener('visibilitychange',()=>{
   session.paused=true;session.last=performance.now();
   clearInterval(timer);timer=0;
   $(session.kind==='breath'?'pwBreathStart':'pwEyeStart').textContent='Продолжить';
-  $('pwBreathRing').className='pw-breath-ring is-paused';
+  if(session.kind==='breath')$('pwBreathRing').className='pw-breath-ring is-paused';
+  else $('pwEye').classList.remove('is-running');
  }
  if(!document.hidden&&space){state=load();setInputDefaults();render();}
 });
