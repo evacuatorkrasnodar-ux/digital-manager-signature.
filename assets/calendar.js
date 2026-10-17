@@ -353,6 +353,12 @@ gestureArea.addEventListener('touchend',event=>{
  move(dx<0?1:-1);
 },{passive:true});
 gestureArea.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:true});
+function syncTimeDisplay(){
+ const input=$('calendarEventTime'),display=$('calendarTimeDisplay');
+ const value=input.value;
+ display.textContent=value||'Указать время';
+ input.closest('.cal-time-control').dataset.filled=String(Boolean(value));
+}
 function setEventKind(kind){
  const radio=form.querySelector('input[name="calendarEventKind"][value="'+(kind==='business'?'business':'personal')+'"]');
  if(radio)radio.checked=true;
@@ -367,6 +373,7 @@ function openEvent(id=null){
  $('calendarEventName').value=item?.title||'';
  $('calendarEventDate').value=item?.date||iso();
  $('calendarEventTime').value=item?.time||'';
+ syncTimeDisplay();
  setEventKind(item?.kind||'personal');
  $('calendarEventExtra').open=Boolean(item?.note);
  $('calendarEventNote').value=item?.note||'';
@@ -444,7 +451,10 @@ for(const id of ['calendarAgenda','calendarDeadlineList']){
 form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
-for(const id of ['calendarEventDate','calendarEventTime'])$(id).addEventListener('input',showEventTimeHint);
+$('calendarEventDate').addEventListener('input',showEventTimeHint);
+for(const eventName of ['input','change','blur'])$('calendarEventTime').addEventListener(eventName,()=>{
+ syncTimeDisplay();showEventTimeHint();
+});
 $('calendarAdviceAction').addEventListener('click',()=>{
  if(!currentAdvice)return;
  const advice=currentAdvice;
@@ -476,6 +486,7 @@ window.addEventListener('seyveo:calendar-from-ask',event=>{
   $('calendarEventName').value=plan.title.slice(0,140);
   $('calendarEventDate').value=plan.date;
   $('calendarEventTime').value=plan.time||'';
+  syncTimeDisplay();
   setEventKind('personal');
   showEventTimeHint();
   if(!$('calendarEventStatus').dataset.smartCollision)
