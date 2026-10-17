@@ -49,11 +49,12 @@ host.innerHTML=`
    <div data-pw-panel="breath" hidden>
     <header class="pw-panel-head"><h3>Минута спокойствия</h3><p>Дышите в комфортном ритме. Без задержек.</p></header>
     <div class="pw-inline"><label>Длительность<select id="pwBreathDuration"><option value="1">1 минута</option><option value="3">3 минуты</option><option value="5">5 минут</option></select></label></div>
-    <div class="pw-center"><div id="pwBreathRing" class="pw-breath-ring" aria-hidden="true"><div class="pw-breath-disc"></div></div><strong id="pwBreathStage">Вдох — 4 сек. · выдох — 6 сек.</strong><output id="pwBreathClock" class="pw-clock">01:00</output><div class="pw-actions"><button type="button" id="pwBreathStart" class="pw-primary">Начать</button><button type="button" id="pwBreathStop" hidden>Завершить</button></div></div>
+    <div class="pw-center"><div id="pwBreathRing" class="pw-breath-ring is-preview" aria-hidden="true"><span class="pw-breath-aura"></span><span class="pw-breath-orbit"></span><div class="pw-breath-disc"><span class="pw-breath-core"></span></div></div><strong id="pwBreathStage">Вдох — 4 сек. · выдох — 6 сек.</strong><output id="pwBreathClock" class="pw-clock">01:00</output><div class="pw-actions"><button type="button" id="pwBreathStart" class="pw-primary">Начать</button><button type="button" id="pwBreathStop" hidden>Завершить</button></div></div>
     <p class="pw-caption">При головокружении или дискомфорте остановитесь и дышите как обычно.</p>
    </div>
    <div data-pw-panel="water" hidden>
     <header class="pw-panel-head"><h3>Водный баланс</h3><p>Отмечайте только то, что действительно выпили.</p></header>
+    <div class="pw-water-scene" aria-hidden="true"><svg class="pw-water-figure" viewBox="0 0 120 150" focusable="false"><defs><clipPath id="pwWaterClip"><path d="M60 8C51 24 23 62 23 88a37 37 0 0 0 74 0C97 62 69 24 60 8Z"/></clipPath></defs><g clip-path="url(#pwWaterClip)"><rect id="pwWaterFill" x="0" y="150" width="120" height="150" class="pw-water-liquid"/><path class="pw-water-shine" d="M40 95c-1 15 7 24 16 29"/></g><path class="pw-water-outline" d="M60 8C51 24 23 62 23 88a37 37 0 0 0 74 0C97 62 69 24 60 8Z"/></svg><small id="pwWaterFigureCaption">Задайте цель для индикатора</small></div>
     <div class="pw-number"><strong id="pwWaterValue">0 мл</strong><small id="pwWaterGoalText">Цель не задана</small></div>
     <div class="pw-progress" role="progressbar" aria-label="Выполнено от личной цели" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="pwWaterProgress"></span></div>
     <div class="pw-actions"><button type="button" class="pw-primary" data-pw-water="250">+ 250 мл</button><button type="button" data-pw-water="150">+ 150 мл</button><button type="button" data-pw-water="500">+ 500 мл</button><button type="button" id="pwWaterUndo" disabled>Отменить</button></div>
@@ -176,7 +177,7 @@ function stopSession(done=false){
  const old=session;session=null;
  if(!old)return;
  if(old.kind==='breath'){
-  $('pwBreathRing').className='pw-breath-ring';
+  $('pwBreathRing').className='pw-breath-ring is-preview';
   $('pwBreathDuration').disabled=false;
   $('pwBreathStart').textContent='Начать';$('pwBreathStop').hidden=true;
   $('pwBreathStage').textContent=done?'Пауза завершена':'Вдох — 4 сек. · выдох — 6 сек.';
@@ -201,7 +202,7 @@ function startSession(kind){
   session.paused=!session.paused;session.last=performance.now();
   button.textContent=session.paused?'Продолжить':'Пауза';
   clearInterval(timer);timer=0;
-  if(session.paused){if(isBreath)$('pwBreathRing').className='pw-breath-ring';}
+  if(session.paused){if(isBreath)$('pwBreathRing').className='pw-breath-ring is-paused';}
   else{tick();timer=setInterval(tick,180);}
   return;
  }
@@ -219,7 +220,7 @@ function tick(){
  const remain=clock(session.total-session.elapsed);
  if(session.kind==='breath'){
   const inhale=session.elapsed%10<4,ring=$('pwBreathRing');
-  const cls='pw-breath-ring '+(inhale?'inhale':'exhale');
+  const cls='pw-breath-ring is-active '+(inhale?'inhale':'exhale');
   if(ring.className!==cls)ring.className=cls;
   $('pwBreathStage').textContent=inhale?'Плавный вдох':'Спокойный выдох';
   $('pwBreathClock').textContent=remain;
@@ -237,6 +238,9 @@ function renderWater(){
  $('pwCardwater').textContent=ml?format(ml)+' мл сегодня':'Мой баланс';
  $('pwWaterGoalText').textContent=state.waterGoal?'Цель: '+format(state.waterGoal)+' мл':'Цель не задана';
  const pct=state.waterGoal?Math.min(100,Math.round(ml/state.waterGoal*100)):0;
+ // Animate the fill only on a real water/goal change; no continuous repaint.
+ $('pwWaterFill').setAttribute('y',String(Math.round(150-150*pct/100)));
+ $('pwWaterFigureCaption').textContent=state.waterGoal?pct+'% от личной цели':'Задайте цель для индикатора';
  $('pwWaterProgress').style.width=pct+'%';
  $('pwWaterProgress').parentElement.setAttribute('aria-valuenow',String(pct));
  if(document.activeElement!==$('pwWaterGoalInput'))$('pwWaterGoalInput').value=state.waterGoal||'';
@@ -435,7 +439,7 @@ document.addEventListener('visibilitychange',()=>{
   session.paused=true;session.last=performance.now();
   clearInterval(timer);timer=0;
   $(session.kind==='breath'?'pwBreathStart':'pwEyeStart').textContent='Продолжить';
-  $('pwBreathRing').className='pw-breath-ring';
+  $('pwBreathRing').className='pw-breath-ring is-paused';
  }
  if(!document.hidden&&space){state=load();setInputDefaults();render();}
 });
