@@ -1680,10 +1680,16 @@ function renderNotes(){
   const controls=document.createElement('div');controls.className='note-item-actions';
   const open=document.createElement('button');open.type='button';open.textContent='Открыть';
   open.addEventListener('click',()=>{$('notesDialog').close();openNoteReview(note.text,note.id)});
-  const calendar=document.createElement('button');calendar.type='button';calendar.textContent='В календарь';
+  const hint=window.SEYVEO_NOTE_SCHEDULE_HINT?.(note.text)||null;
+  const calendar=document.createElement('button');calendar.type='button';
+  calendar.textContent=hint?'На '+hint.label+'?':'В календарь';
+  calendar.setAttribute('aria-label',hint?'Предложить дату '+hint.label+' для события в календаре':'Подготовить событие в календаре');
+  calendar.title=hint?'SEYVEO предлагает дату · событие сохранится только после подтверждения':'Открыть черновик события';
   calendar.addEventListener('click',()=>{
    $('notesDialog').close();
-   window.dispatchEvent(new CustomEvent('seyveo:calendar-plan-note',{detail:{text:note.text}}));
+   window.dispatchEvent(new CustomEvent('seyveo:calendar-plan-note',{
+    detail:{text:note.text,...(hint?{date:hint.date}:{})}
+   }));
   });
   const more=document.createElement('button');more.type='button';more.className='note-more-button';
   more.textContent='•••';more.setAttribute('aria-label','Ещё действия с записью');
@@ -1945,4 +1951,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=1"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=25"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
+</script><script src="assets/wake-mode.js?v=2"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=5"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=2"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=26"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
