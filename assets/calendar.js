@@ -173,6 +173,77 @@ function renderAgenda(){
  if(count)fillAgenda(agenda,list);
  else agenda.replaceChildren();
 }
+/* Smart Calendar v1: local rule-based assistance, not an external AI model. */
+function timeCollision(date,time,exceptID=null){
+ if(!time||!at(date))return null;
+ return events().find(item=>item.date===date&&item.time===time&&item.id!==exceptID)||null;
+}
+function smartSuggestion(todayDate=new Date()){
+ const today=format(todayDate),selected=iso();
+ const entries=events().filter(item=>item.date===selected&&item.time);
+ const times=new Map();
+ for(const entry of entries){
+  if(times.has(entry.time))return{
+   kind:'event',id:entry.id,
+   message:'На '+entry.time+' записано несколько событий. Проверь, хватает ли времени.',
+   action:'Проверить'
+  };
+  times.set(entry.time,entry);
+ }
+ const pending=tasks().filter(item=>!item.done&&item.date).sort((a,b)=>a.date.localeCompare(b.date));
+ const late=pending.filter(item=>item.date<today);
+ if(late.length)return{
+  kind:'deadlines',
+  message:late.length===1?'Срок одного дела уже прошёл. Стоит проверить его.':'Просрочено '+late.length+' дел. Стоит проверить сроки.',
+  action:'Сроки'
+ };
+ const soon=pending.filter(item=>item.date>=today&&item.date<=format(step(todayDate,3)));
+ if(soon.length){
+  const n=soon.length,day=soon[0].date;
+  const when=day===today?'сегодня':day===format(step(todayDate,1))?'завтра':'в ближайшие три дня';
+  return{
+   kind:'deadlines',
+   message:n===1?'Срок одного дела — '+when+'.':'Ближайшее из '+n+' дел со сроком — '+when+'. Проверь план.',
+   action:'Сроки'
+  };
+ }
+ const tomorrow=format(step(todayDate,1));
+ const meeting=events().filter(item=>item.date===tomorrow&&item.time).sort((a,b)=>a.time.localeCompare(b.time))[0];
+ if(meeting)return{
+  kind:'event',id:meeting.id,
+  message:'Завтра в '+meeting.time+' запланировано «'+meeting.title.slice(0,48)+'».',
+  action:'Открыть'
+ };
+ /* Only important dates in My World; do not interpret private health records. */
+ const upcoming=window.SEYVEO_SPACES?.upcoming(today,format(step(todayDate,7)))||[];
+ const birthday=upcoming.find(item=>item.space==='world'&&item.kind==='День рождения'&&item.date>=today);
+ if(birthday)return{
+  kind:'day',date:birthday.date,
+  message:birthday.date===today?'Сегодня важная дата: '+birthday.title.slice(0,48)+'.':'Скоро день рождения: '+birthday.title.slice(0,48)+'.',
+  action:'К дате'
+ };
+ return null;
+}
+let currentAdvice=null;
+function renderAdvice(){
+ const panel=$('calendarAdvice');
+ currentAdvice=mode==='deadlines'?null:smartSuggestion();
+ panel.hidden=!currentAdvice;
+ if(!currentAdvice){$('calendarAdviceText').textContent='';return}
+ $('calendarAdviceText').textContent=currentAdvice.message;
+ $('calendarAdviceAction').textContent=currentAdvice.action;
+}
+function showEventTimeHint(){
+ const status=$('calendarEventStatus');
+ const conflict=timeCollision($('calendarEventDate').value,$('calendarEventTime').value,editing);
+ if(conflict){
+  status.dataset.smartCollision='true';
+  status.textContent='На это время уже есть «'+conflict.title.slice(0,65)+'». Проверьте совпадение.';
+ }else if(status.dataset.smartCollision==='true'){
+  status.textContent='';
+  delete status.dataset.smartCollision;
+ }
+}
 function renderDeadlines(){
  const today=format(new Date()),tomorrow=format(step(new Date(),1)),weekEnd=format(step(new Date(),7));
  const all=[
@@ -214,11 +285,12 @@ function render(){
  $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus)):
   mode==='week'?fmtLong.format(monday(focus)).replace(/\s+\d{4}\s*г?\.?/,'')+' — '+fmtLong.format(step(monday(focus),6)):
   mode==='day'?niceFirst(fmtShort.format(focus)):'Сроки';
- if(deadline){renderDeadlines();return}
+ if(deadline){renderDeadlines();renderAdvice();return}
  if(mode==='month')renderMonth();
  if(mode==='week')renderWeek();
  if(mode==='day')renderDay();
  renderAgenda();
+ renderAdvice();
 }
 /* Reveal the first selected-day entry above the shared fixed dock on compact phones.
    No dock movement, permanent scroll lock, or automatic jump on initial page load. */
@@ -292,8 +364,10 @@ function openEvent(id=null){
  $('calendarEventNote').value=item?.note||'';
  $('calendarDeleteEvent').hidden=!item;
  $('calendarEventStatus').textContent='';
+ delete $('calendarEventStatus').dataset.smartCollision;
  const dialog=$('calendarEventDialog');
  if(!dialog.open)dialog.showModal();
+ showEventTimeHint();
  $('calendarEventName').focus({preventScroll:true});
 }
 function onSubmit(e){
@@ -308,6 +382,8 @@ function onSubmit(e){
  if(clock&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(clock)){status.textContent='Проверьте время.';return}
  const all=events(),old=all.find(x=>x.id===editing);
  if(!old&&all.length>=MAX){status.textContent='Сохранено 300 событий. Для новых удалите ненужные старые.';return}
+ const conflict=timeCollision(date,clock,old?.id||null);
+ if(conflict&&!window.confirm('В '+clock+' уже записано «'+conflict.title+'». Сохранить ещё одно событие на то же время?'))return;
  const now=new Date().toISOString();
  const entry={id:old?.id||'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
   title:name,date,time:clock,kind,note,createdAt:old?.createdAt||now,updatedAt:now};
@@ -360,6 +436,21 @@ for(const id of ['calendarAgenda','calendarDeadlineList']){
 form.addEventListener('submit',onSubmit);
 $('calendarDeleteEvent').addEventListener('click',deleteEvent);
 $('calendarEventCancel').addEventListener('click',()=>$('calendarEventDialog').close());
+for(const id of ['calendarEventDate','calendarEventTime'])$(id).addEventListener('input',showEventTimeHint);
+$('calendarAdviceAction').addEventListener('click',()=>{
+ if(!currentAdvice)return;
+ const advice=currentAdvice;
+ if(advice.kind==='event')openEvent(advice.id);
+ else if(advice.kind==='deadlines'){
+  mode='deadlines';render();
+  window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ }else if(advice.kind==='day'){
+  const day=at(advice.date);if(!day)return;
+  if(mode==='deadlines')mode='month';
+  updateFocus(day);
+  revealSelectedDay();
+ }
+});
 $('calendarEventDialog').addEventListener('click',event=>{
  if(event.target===$('calendarEventDialog'))$('calendarEventDialog').close();
 });
