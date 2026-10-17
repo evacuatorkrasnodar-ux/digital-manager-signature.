@@ -169,3 +169,112 @@
 #noteReviewDialog #noteReviewText[wrap=off]{
  white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4;
 }
+
+/* SEYVEO Notebook polish v7 — a quiet reading/writing surface, not tool cards.
+   Actions remain available inside the existing accessible More menu. */
+#notesDialog.notes-dialog{
+ padding:21px 17px 16px;
+ max-height:min(88svh,calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 22px));
+}
+#notesDialog .notes-head{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;
+ column-gap:8px;row-gap:3px;align-items:center;
+ margin:0 44px 14px 0;
+}
+#notesDialog .notes-head h2{
+ grid-area:1 / 1;font-size:22px;font-weight:575;letter-spacing:-.033em;
+}
+#notesDialog .notes-count{
+ grid-area:2 / 1;margin:0;color:var(--secondary);font-size:11px;line-height:1.35;
+}
+#notesDialog .notes-new{
+ grid-area:1 / 2 / 3 / 3;min-height:44px;
+ padding:8px 11px;font-weight:535;white-space:nowrap;
+}
+#notesDialog .notes-list{
+ gap:0;padding:0 13px;max-height:min(60svh,550px);
+ border:1px solid var(--soft-line);border-radius:20px;
+ background:var(--card);overflow-y:auto;overflow-x:hidden;
+}
+#notesDialog .note-item{
+ padding:12px 0 11px;border:0;border-radius:0;background:transparent;
+}
+#notesDialog .note-item + .note-item{border-top:1px solid var(--soft-line)}
+#notesDialog .note-item small{font-size:10.5px;line-height:1.4}
+#notesDialog .note-item-actions{gap:6px;margin:3px 0 0}
+#notesDialog .note-item-actions>.note-open{
+ flex:1 1 auto;display:flex;flex-direction:column;align-items:flex-start;
+ justify-content:center;max-width:none;min-height:44px;min-width:0;
+ border:0;border-radius:8px;background:transparent;
+ text-align:left;padding:2px 0;
+}
+#notesDialog .note-open p{
+ margin:0;max-height:none;
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+ overflow:hidden;white-space:pre-line;overflow-wrap:anywhere;
+ font-size:14.5px;font-weight:535;line-height:1.48;letter-spacing:-.009em;
+ color:var(--text);
+}
+#notesDialog .note-item-actions>.note-more-button{
+ flex:0 0 44px;min-width:44px;width:44px;height:44px;
+ margin-left:auto;border:0;border-radius:50%;
+ background:transparent;color:var(--secondary);
+}
+#notesDialog .note-item-actions>.note-more-button[aria-expanded=true]{
+ background:var(--card2);border-color:transparent;
+}
+#notesDialog .note-more-options:not([hidden]){
+ grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ padding:8px 0 1px;
+}
+#notesDialog .note-more-options button{
+ min-height:44px;font-size:11.5px;border-radius:12px;
+}
+#notesDialog .note-paper-preview{
+ width:auto;max-width:110px;max-height:85px;margin:6px 0 0;
+ border:1px solid var(--soft-line);border-radius:6px;
+ box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+#notesDialog .note-empty{
+ margin:0;padding:30px 6px;text-align:center;
+ font-size:13px;line-height:1.6;
+}
+#noteReadDialog .note-read-head h2{
+ font-size:21px;font-weight:580;letter-spacing:-.028em;
+}
+#noteReadDialog .note-read-content{
+ padding:20px 18px 24px;border-radius:18px;
+ font-size:16px;line-height:1.72;
+}
+#noteReadDialog .note-read-actions button{
+ min-height:46px;border-radius:999px;
+}
+#noteReviewDialog.note-review-dialog[data-note-mode="new"] textarea{
+ box-sizing:border-box;
+ min-height:155px;height:clamp(155px,32svh,260px);max-height:260px;
+ resize:none;overflow:auto;overscroll-behavior:contain;
+ padding:15px 14px;border-radius:18px;
+ font-size:16px;line-height:1.65;
+}
+#noteReviewDialog.note-review-dialog textarea{
+ border-color:var(--soft-line);background:var(--card2);
+}
+#noteReviewDialog .info-actions .btn{border-radius:999px}
+@media(max-width:370px){
+ #notesDialog .notes-head{margin-right:39px;column-gap:5px}
+ #notesDialog .notes-new{padding:8px 9px;font-size:11px}
+ #notesDialog .notes-list{padding:0 10px}
+ #noteReadDialog .note-read-content{padding:16px 13px}
+}
+@media(max-height:570px){
+ #noteReviewDialog.note-review-dialog[data-note-mode="new"] textarea{
+  height:125px;min-height:125px;
+ }
+}
+:root[data-theme=light] #notesDialog .notes-list{
+ background:#fff;border-color:rgba(45,61,80,.11);
+}
+:root[data-theme=light] #noteReadDialog .note-read-content,
+:root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{
+ background:#fff;border-color:rgba(45,61,80,.12);
+}
