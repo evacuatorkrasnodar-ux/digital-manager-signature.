@@ -7,8 +7,8 @@ const $=id=>document.getElementById(id),dialog=$('calendarSpaceDialog');
 if(!dialog||!$('calendarSpaces'))return;
 const KEY='seyveo-life-spaces-v1',MAX=240;
 const META=Object.freeze({
- health:{name:'Здоровье',desc:'Показатели и самочувствие — в одном месте',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80'},
- care:{name:'Забота ♡',desc:'Личные напоминания о себе и близких',kinds:['О себе','О близких','Личное','Другое'],placeholder:'Например, записаться на приём'},
+ health:{name:'Здоровье',desc:'Давление, пульс, лекарства и сон',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80'},
+ care:{name:'Забота ♡',desc:'Дыхание, вода, шаги, отдых для глаз и цикл',kinds:['О себе','О близких','Личное','Другое'],placeholder:'Например, записаться на приём'},
  world:{name:'Мой мир',desc:'Люди и события, которые дороги вам',kinds:['День рождения','Важная дата','Человек','Другое'],placeholder:'Например, мама'}
 });
 const raw=()=>{try{return localStorage.getItem(KEY)}catch{return null}};
@@ -63,12 +63,30 @@ function upcoming(start,end){
  }
  return ans;
 }
-window.SEYVEO_SPACES=Object.freeze({calendarItems,upcoming});
+
+/* The old space log remains the only source for steps. No migration or duplicate key. */
+function stepsFor(date){
+ if(!dateValid(date))return null;
+ const rows=read().filter(x=>x.space==='health'&&x.kind==='Шаги'&&x.date===date);
+ return rows[rows.length-1]||null;
+}
+function saveSteps(date,steps){
+ if(!dateValid(date))return false;
+ const now=new Date(),max=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+ if(date>max)return false;
+ if(!Number.isInteger(steps)||steps<0||steps>200000)return false;
+ const all=read(),existing=stepsFor(date),row=existing?{
+  ...existing,title:String(steps)
+ }:{id:'space-steps-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+  space:'health',kind:'Шаги',title:String(steps),date,detail:'',yearless:false};
+ if(!existing&&all.length>=MAX)return false;
+ return store(existing?all.map(x=>x.id===existing.id?row:x):[...all,row]);
+}
+window.SEYVEO_SPACES=Object.freeze({calendarItems,upcoming,stepsFor,saveSteps});
 let current='health',editing=null;
 const healthUnits=Object.freeze({
  'Давление':['calHealthPressureValue','calHealthPressureDate'],
- 'Пульс':['calHealthPulseValue','calHealthPulseDate'],
- 'Шаги':['calHealthStepsValue','calHealthStepsDate']
+ 'Пульс':['calHealthPulseValue','calHealthPulseDate']
 });
 function renderHealthOverview(){
  const overview=$('calendarHealthOverview');
@@ -89,7 +107,7 @@ function renderHealthOverview(){
 }
 function renderList(){
  const root=$('calendarSpaceList');root.replaceChildren();
- const items=read().filter(x=>x.space===current).sort((a,b)=>
+ const items=read().filter(x=>x.space===current&&!(current==='health'&&x.kind==='Шаги')).sort((a,b)=>
   current==='health'?(b.date||'').localeCompare(a.date||''):
    (a.date||'9999').localeCompare(b.date||'9999')
  );
@@ -124,7 +142,7 @@ function renderForm(){
  $('calendarSpaceAnnualLabel').hidden=current!=='world';
  $('calendarSpaceAnnual').disabled=current!=='world';
  const kind=$('calendarSpaceKind');kind.replaceChildren();
- for(const k of META[current].kinds){
+ for(const k of META[current].kinds.filter(k=>!(current==='health'&&k==='Шаги'))){
   const opt=dom('option','',k);opt.value=k;kind.append(opt);
  }
  if(item){
@@ -147,6 +165,9 @@ function updateHealthPlaceholder(){
 function open(space,id=null,selectedDate=''){
  if(!META[space])return;
  current=space;editing=id;
+ dialog.dataset.space=space;
+ const journal=$('calendarSpaceJournal');
+ if(journal)journal.open=space!=='care';
  $('calendarSpaceForm').dataset.show=id?'true':'false';
  $('calendarSpaceDate').dataset.selectedDate=selectedDate;
  $('calendarSpaceTitleHeading').textContent=META[space].name;
@@ -160,6 +181,7 @@ function open(space,id=null,selectedDate=''){
  $('calendarSpaceAdd').textContent=space==='health'?'＋ Запись':'＋ Добавить';
  renderList();renderForm();
  if(!dialog.open)dialog.showModal();
+ window.dispatchEvent(new CustomEvent('seyveo:space-opened',{detail:{space}}));
  if(id)$('calendarSpaceTitle').focus({preventScroll:true});
 }
 function add(kind=null){
