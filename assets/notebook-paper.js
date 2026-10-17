@@ -7,7 +7,7 @@ const tools=['pen','pencil','eraser'],patterns=['blank','lines','dots'];
 const $=id=>document.getElementById(id);
 const dialog=$('notePaperDialog'),canvas=$('notePaperCanvas');
 if(!dialog||!canvas||!canvas.getContext('2d'))return;
-const sheet=$('notePaperSheet'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
+const sheet=$('notePaperSheet'),stage=$('notePaperStage'),pattern=$('notePaperPattern'),status=$('notePaperStatus');
 let data={pattern:'blank',strokes:[]},editID=null,pending=null,pointerID=null,changed=false,penTime=0,returnToList=false;
 const photoView=$('notePaperPhotoPreview'),photoFile=$('notePaperPhotoFile');
 const photoCache=new Map();
@@ -77,6 +77,19 @@ function paint(target,obj,background=false){
  }
  ctx.restore();
 }
+function fitPaper(){
+ if(!dialog.open||!stage||!sheet)return;
+ const rect=stage.getBoundingClientRect();
+ if(rect.width<100||rect.height<100)return;
+ const width=Math.max(90,Math.floor(Math.min(rect.width-6,(rect.height-6)*W/H)));
+ const height=Math.floor(width*H/W);
+ sheet.style.width=width+'px';sheet.style.height=height+'px';
+}
+window.addEventListener('resize',()=>{if(dialog.open)requestAnimationFrame(fitPaper)});
+if(typeof ResizeObserver!=='undefined'&&stage){
+ const observer=new ResizeObserver(()=>{if(dialog.open)fitPaper()});
+ observer.observe(stage);
+}
 function render(){
  sheet.dataset.pattern=data.pattern;pattern.value=data.pattern;
  if(photoView){photoView.hidden=!data.photo;if(data.photo&&photoView.src!==data.photo)photoView.src=data.photo;if(!data.photo)photoView.removeAttribute('src')}
@@ -130,7 +143,7 @@ function open(note=null){
  data=normalize(note?.paper);editID=note?.id||null;changed=false;pending=null;pointerID=null;penTime=0;returnToList=true;
  $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
  if(!dialog.open)dialog.showModal();
- requestAnimationFrame(render);
+ requestAnimationFrame(()=>{fitPaper();render()});
 }
 function discard(){
  if(changed&&!window.confirm('Закрыть лист без сохранения?'))return;
