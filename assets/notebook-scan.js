@@ -65,7 +65,7 @@ function clearURL(){if(localURL){URL.revokeObjectURL(localURL);localURL=''}}
 function reset(){
  selected=null;consented=false;clearURL();preview.removeAttribute('src');preview.hidden=true;
  if(consentBox)consentBox.hidden=true;
- text.value='';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
+ text.value='';text.wrap=keepLines?.checked!==false?'off':'soft';button.disabled=true;message('Фото остаётся на устройстве. Проверьте текст перед сохранением.');
 }
 function open(){if(dialog.open)return;reset();dialog.showModal()}
 function select(file){
@@ -131,8 +131,8 @@ async function recognize(){
 }
 function cancel(){dialog.close()}
 function toNote(){
- const value=text.value.trim();
- if(!value){message('Сначала распознайте текст или введите его вручную.');return}
+ const value=keepLines?.checked!==false?text.value.replace(/^\n+|\n+$/g,''):text.value.trim();
+ if(!value.trim()){message('Сначала распознайте текст или введите его вручную.');return}
  dialog.close();
  window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false});
 }
@@ -149,6 +149,7 @@ for(const id of ['noteScanCamera','noteScanGallery']){
   select(file);
  });
 }
+keepLines?.addEventListener('change',()=>{text.wrap=keepLines.checked?'off':'soft'});
 button.addEventListener('click',()=>{
  if(running||!selected)return;
  if(!consented){
