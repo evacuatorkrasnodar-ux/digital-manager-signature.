@@ -1460,6 +1460,14 @@ $('orb').addEventListener('click',()=>{
   revealOrbBrandOnTap();
 });
 $('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;
+const draft=window.SEYVEO_CALENDAR_NL?.(q);
+if(draft){
+ playFeedback('confirm');
+ closeComposer();question.value='';syncComposer();
+ if(draft.status==='ready')window.dispatchEvent(new CustomEvent('seyveo:calendar-from-ask',{detail:draft}));
+ else showWrittenReply(q,draft.message);
+ return;
+}
 playFeedback('confirm');
 const v=q.toLowerCase();const current=stories[state.index];
 let answer;
@@ -1732,4 +1740,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/calendar.js?v=13"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
+</script><script src="assets/wake-mode.js?v=1"></script><script src="assets/management.js?v=18"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=4"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/calendar.js?v=14"></script><script src="assets/calendar-spaces.js?v=2"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=5"></script><script src="assets/picture.js?v=4"></script><script src="assets/home-widgets.js?v=7"></script></body></html>
