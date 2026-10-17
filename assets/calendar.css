@@ -271,11 +271,58 @@
 @media(prefers-reduced-motion:reduce){.cal-timing>summary::after,.cal-timing-setting>summary::after{transition:none}}
 
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
+/* SEYVEO compact event editor: zero inner scrolling at normal iPhone X height,
+   including the three planner rows. Native pickers and 44px hit targets remain.
+   Smaller screens, large text and expanded notes may still scroll safely. */
+#calendarEventDialog[open]{
+ max-height:min(94dvh,calc(100dvh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+}
+#calendarEventDialog.cal-form-dialog{padding:18px 18px 14px}
+#calendarEventDialog>h2{margin-bottom:12px}
+#calendarEventDialog .cal-form-primary{padding:0 3px 8px}
+#calendarEventDialog .cal-form-scroll{
+ gap:8px;
+ padding-top:3px;
+ padding-bottom:7px;
+ scroll-padding-bottom:12px;
+}
+#calendarEventDialog .cal-form-columns{
+ grid-template-columns:minmax(0,1.58fr) minmax(0,1fr);
+ gap:8px;align-items:end;
+}
+#calendarEventDialog .cal-form-columns>.cal-field,
+#calendarEventDialog .cal-form-columns>.cal-time-field{min-width:0}
+#calendarEventDialog .cal-date-display{font-size:15px;padding-inline:6px}
+#calendarEventDialog .cal-time-display{font-size:15px;padding:10px 34px 10px 11px}
+#calendarEventDialog .cal-time-clear{
+ min-width:30px;width:30px;min-height:32px;height:32px;
+ right:6px;bottom:6px;padding:0;
+ border-radius:50%;font-size:20px;line-height:1;
+}
+#calendarEventDialog .cal-kind legend{
+ position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
+}
+#calendarEventDialog .cal-kind-options{padding:2px}
+#calendarEventDialog .cal-kind-option span{min-height:44px}
+#calendarEventDialog .cal-timing-content{padding-top:6px;padding-bottom:0}
+#calendarEventDialog .cal-timing-setting>summary{min-height:44px;padding-block:8px}
+#calendarEventDialog .cal-dialog-actions{
+ margin-bottom:-14px;padding-top:9px;padding-bottom:14px;
+}
+@media(max-width:370px){
+ #calendarEventDialog .cal-form-columns{grid-template-columns:minmax(0,1fr)}
+ #calendarEventDialog .cal-date-display{font-size:16px}
+}
+@media(max-height:640px){
+ #calendarEventDialog[open]{max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+}
+
 /* Modal body scrolls independently; Save/Cancel never cover event fields.
    Keep the approved global dock and all other dialogs untouched. */
 #calendarEventDialog[open]{
  display:flex;flex-direction:column;
- max-height:min(85dvh,calc(100dvh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:min(94dvh,calc(100dvh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
  overflow:hidden;
 }
 #calendarEventDialog > h2,
@@ -285,14 +332,14 @@
  flex:1 1 auto;min-height:0;
 }
 #calendarEventDialog .cal-form-scroll{
- display:flex;flex-direction:column;gap:11px;
+ display:flex;flex-direction:column;gap:8px;
  flex:1 1 auto;min-height:0;min-width:0;
  box-sizing:border-box;
  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
- scroll-padding-top:12px;scroll-padding-bottom:20px;
- padding:5px 8px 16px;
- margin:-5px -8px 0;
+ scroll-padding-top:10px;scroll-padding-bottom:12px;
+ padding:3px 8px 7px;
+ margin:-3px -8px 0;
 }
 #calendarEventDialog .cal-form-scroll > *{
  min-width:0;max-width:100%;box-sizing:border-box;
@@ -303,8 +350,8 @@
 #calendarEventDialog .cal-dialog-actions{
  display:flex;align-items:center;gap:8px;
  position:relative;z-index:2;flex:none;
- margin:0 -18px -17px;
- padding:12px 18px 17px;
+ margin:0 -18px -14px;
+ padding:9px 18px 14px;
  background:var(--card);
  border-top:1px solid var(--soft-line);
  box-shadow:0 -9px 18px -18px rgba(0,0,0,.7);
