@@ -109,13 +109,14 @@
    -webkit-overflow-scrolling:touch;
    overscroll-behavior:contain;
  }
+ /* Compact visual icons retain a full 44px finger target on iPhone. */
  html.seyveo-composer-keyboard #ask.expanded .composer-actions{
-   flex:0 0 42px!important;
+   flex:0 0 44px!important;
    grid-template-columns:repeat(4,minmax(0,1fr));
    gap:8px;
  }
  html.seyveo-composer-keyboard #ask.expanded .composer-tool{
-   height:42px!important;min-height:42px!important;
+   height:44px!important;min-height:44px!important;
    padding:0;gap:0;justify-content:center;align-items:center;
  }
  html.seyveo-composer-keyboard #ask.expanded .composer-tool span{
