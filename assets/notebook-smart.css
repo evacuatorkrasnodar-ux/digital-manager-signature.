@@ -278,3 +278,88 @@
 :root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{
  background:#fff;border-color:rgba(45,61,80,.12);
 }
+
+/* SEYVEO Notebook spacious workspace v8.
+   A proper notebook fills the useful screen instead of floating as a small
+   middle-of-screen alert. The toolbar remains accessible while notes scroll. */
+#notesDialog.notes-dialog[open]{
+ display:flex;flex-direction:column;
+ box-sizing:border-box;
+ width:min(540px,calc(100vw - 24px));
+ max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ height:min(840px,calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px));
+ max-height:min(840px,calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px));
+ min-height:0;
+ overflow:hidden;
+ border-radius:26px;
+ padding:21px 17px 17px;
+}
+#notesDialog.notes-dialog[open] .notes-head{
+ flex:none;margin-bottom:13px;
+}
+#notesDialog.notes-dialog[open] .notes-list{
+ box-sizing:border-box;
+ flex:1 1 auto;min-height:0;
+ max-height:none;
+ overflow-y:auto;overflow-x:hidden;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+}
+#notesDialog.notes-dialog[open] .notes-list.is-empty{
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ padding:0 17px;
+ background:transparent;
+ border-color:transparent;
+}
+#notesDialog.notes-dialog[open] .note-empty{
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:12px;
+ width:100%;max-width:275px;
+ margin:0;padding:0;
+ text-align:center;font-size:13px;
+ line-height:1.55;color:var(--secondary);
+}
+#notesDialog .note-empty-mark{
+ box-sizing:border-box;
+ display:grid;place-items:center;
+ width:61px;height:61px;
+ border:1px solid var(--soft-line);border-radius:21px;
+ background:var(--card2);color:var(--secondary);
+}
+#notesDialog .note-empty-mark svg{
+ display:block;width:30px;height:30px;
+ fill:none;stroke:currentColor;stroke-width:1.35;
+ stroke-linejoin:round;stroke-linecap:round;
+}
+#notesDialog .note-empty strong{
+ font-size:16px;font-weight:565;line-height:1.3;
+ color:var(--text);letter-spacing:-.022em;
+}
+#notesDialog .note-empty span:last-child{
+ font-size:12px;line-height:1.55;
+}
+:root[data-theme=light] #notesDialog.notes-dialog[open] .notes-list.is-empty{
+ background:transparent;border-color:transparent;
+}
+:root[data-theme=light] #notesDialog .note-empty-mark{
+ background:rgba(90,110,135,.045);
+ border-color:rgba(60,77,97,.13);
+}
+@media(max-width:370px){
+ #notesDialog.notes-dialog[open]{
+  width:calc(100vw - 16px);
+  max-width:calc(100vw - 16px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+  padding:18px 12px 13px;
+ }
+ #notesDialog.notes-dialog[open] .notes-head{margin-right:41px}
+}
+@media(max-height:540px){
+ #notesDialog.notes-dialog[open]{
+  height:calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 14px);
+  max-height:calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 14px);
+ }
+ #notesDialog .note-empty-mark{width:48px;height:48px;border-radius:16px}
+ #notesDialog .note-empty-mark svg{width:25px;height:25px}
+ #notesDialog .note-empty{gap:8px}
+}
