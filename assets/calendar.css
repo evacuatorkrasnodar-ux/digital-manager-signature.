@@ -148,6 +148,20 @@
 .cal-extra summary:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:8px}
 .cal-extra[open] summary{color:var(--text)}
 .cal-extra .cal-field{margin-top:2px}
+/* Calm optional planning controls. No native select chevrons or giant panels. */
+.cal-timing[hidden]{display:none!important}
+.cal-timing summary{min-height:39px;font-size:12px;line-height:1.4}
+.cal-timing-content{display:flex;flex-direction:column;gap:12px;padding:4px 0 8px}
+.cal-timing-field{min-width:0;margin:0;padding:0;border:0}
+.cal-timing-field legend{margin:0 0 6px;padding:0;font-size:12px;color:var(--secondary)}
+.cal-timing-choices{display:flex;flex-wrap:wrap;gap:6px}
+.cal-timing-choices label{position:relative;display:block;cursor:pointer}
+.cal-timing-choices input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.cal-timing-choices span{display:grid;place-items:center;min-height:42px;padding:0 11px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:12px;font-weight:530;color:var(--secondary);white-space:nowrap}
+.cal-timing-choices input:checked+span{background:var(--card2);box-shadow:inset 0 0 0 1px var(--line);color:var(--text)}
+.cal-timing-choices input:focus-visible+span{outline:2px solid var(--text);outline-offset:2px}
+.cal-timing-hint{margin:0;color:var(--secondary);font-size:11px;line-height:1.45}
+
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
 .cal-dialog-actions .btn{flex:1;min-height:44px}
 .cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
