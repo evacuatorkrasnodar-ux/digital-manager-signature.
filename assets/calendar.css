@@ -109,16 +109,32 @@
 .cal-deadline-section h3{font-size:13px;font-weight:610;line-height:1.45;margin:0 0 9px}
 .cal-deadline-section .cal-agenda{margin-bottom:11px}
 .cal-deadlines-intro{font-size:12px;color:var(--secondary);line-height:1.55;margin:4px 0 20px}
-.cal-form-dialog{width:min(430px,calc(100vw - 28px));max-height:min(85dvh,720px);padding:24px 18px 18px}
+.cal-form-dialog{width:min(430px,calc(100vw - 28px));max-height:min(85dvh,720px);padding:22px 18px 17px}
 .cal-form-dialog h2{margin:0 34px 7px 0;font-weight:625;font-size:21px;line-height:1.25}
-.cal-form-dialog>p{margin:0 20px 17px 0;color:var(--secondary);font-size:12px;line-height:1.5}
-.cal-form-dialog form{display:flex;flex-direction:column;gap:14px}
-.cal-field{display:flex;flex-direction:column;gap:6px;color:var(--secondary);font-size:12px;line-height:1.5}
-.cal-field input,.cal-field select,.cal-field textarea{width:100%;min-height:45px;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:var(--card2);font:inherit;font-size:14px;outline:0;color-scheme:inherit}
+.cal-form-dialog>p{margin:0 20px 13px 0;color:var(--secondary);font-size:12px;line-height:1.5}
+.cal-form-dialog form{display:flex;flex-direction:column;gap:11px}
+.cal-field{display:flex;flex-direction:column;gap:6px;min-width:0;color:var(--secondary);font-size:12px;line-height:1.5}
+.cal-field input,.cal-field textarea{display:block;width:100%;min-width:0;min-height:45px;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:var(--card2);font:inherit;font-size:16px;outline:0;color-scheme:inherit}
 .cal-field textarea{min-height:80px;resize:vertical}
-.cal-field :is(input,select,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.cal-form-columns{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
-.cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:5px}
+.cal-field :is(input,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.cal-form-columns{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;min-width:0}
+/* One quiet segmented choice, with native radios and no iOS select arrows. */
+.cal-kind{min-width:0;padding:0;margin:0;border:0}
+.cal-kind legend{padding:0;margin:0 0 6px;color:var(--secondary);font-size:12px;line-height:1.5}
+.cal-kind-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:3px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.cal-kind-option{position:relative;display:block;min-width:0;cursor:pointer}
+.cal-kind-option input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
+.cal-kind-option span{display:grid;place-items:center;min-height:42px;border-radius:11px;color:var(--secondary);font-size:13px;font-weight:550}
+.cal-kind-option input:checked+span{background:var(--card2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+.cal-kind-option input:focus-visible+span{outline:2px solid var(--text);outline-offset:2px}
+.cal-extra{min-width:0}
+.cal-extra summary{display:flex;align-items:center;max-width:100%;min-height:42px;width:max-content;list-style:none;cursor:pointer;color:var(--secondary);font-size:12px}
+.cal-extra summary::-webkit-details-marker{display:none}
+.cal-extra summary::marker{content:""}
+.cal-extra summary:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:8px}
+.cal-extra[open] summary{color:var(--text)}
+.cal-extra .cal-field{margin-top:2px}
+.cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
 .cal-dialog-actions .btn{flex:1;min-height:44px}
 .cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
 .cal-form-status{font-size:11px;line-height:1.45;min-height:17px;color:var(--secondary)}
@@ -134,6 +150,6 @@
  .cal-day{padding:4px 1px 3px;min-height:42px}.cal-day-number{min-width:23px;height:23px}
  .cal-nav h2{font-size:15px}
  .cal-agenda{padding:3px 12px}.cal-entry{gap:9px}
- .cal-form-columns{grid-template-columns:1fr 1fr;gap:8px}
+ .cal-form-columns{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.cal-day,.cal-entry,.cal-round{transition:none}}
