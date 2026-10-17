@@ -9,8 +9,16 @@
  gap:7px;min-width:0;min-height:109px;padding:14px 13px;border-radius:20px;
  border:1px solid var(--soft-line);background:var(--card2);color:var(--text);
  text-align:left;box-shadow:inset 0 1px 0 #ffffff0b;
- -webkit-tap-highlight-color:transparent;touch-action:manipulation
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+ transition:transform .25s cubic-bezier(.2,.75,.25,1),border-color .25s ease,background .25s ease;
+ animation:pw-appear .5s cubic-bezier(.16,1,.3,1) both
 }
+#calendarPersonalTools .pw-card:nth-child(2){animation-delay:55ms}
+#calendarPersonalTools .pw-card:nth-child(3){animation-delay:105ms}
+#calendarPersonalTools .pw-card:nth-child(4){animation-delay:150ms}
+#calendarPersonalTools .pw-card:active{transform:scale(.975)}
+#calendarPersonalTools .pw-card svg{transition:transform .4s cubic-bezier(.16,1,.3,1)}
+#calendarPersonalTools .pw-card[aria-pressed=true] svg{transform:scale(1.07)}
 #calendarPersonalTools .pw-card svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.84}
 #calendarPersonalTools .pw-card strong{font-size:13px;font-weight:560;line-height:1.25;letter-spacing:-.014em}
 #calendarPersonalTools .pw-card small{font-size:10.5px;font-weight:440;color:var(--secondary);line-height:1.25}
@@ -23,7 +31,8 @@
 #calendarPersonalTools .pw-detail{
  padding:16px 14px 14px;margin:0 0 12px;
  border:1px solid var(--line);border-radius:21px;
- background:var(--card);box-shadow:inset 0 1px 0 #ffffff0b
+ background:var(--card);box-shadow:inset 0 1px 0 #ffffff0b;
+ animation:pw-reveal .38s cubic-bezier(.16,1,.3,1) both
 }
 #calendarPersonalTools .pw-panel-head{margin:0 0 14px}
 #calendarPersonalTools :is(.pw-panel-head h3,#pwCycleDetail h3){margin:0 0 5px;font-size:16px;font-weight:560;letter-spacing:-.028em}
@@ -57,22 +66,96 @@
 #calendarPersonalTools .pw-center>strong{min-height:20px;font-size:13px;font-weight:545;letter-spacing:-.015em}
 #calendarPersonalTools .pw-center>p{min-height:35px;font-size:11.5px;line-height:1.45;color:var(--secondary);margin:0;max-width:260px}
 #calendarPersonalTools .pw-clock{font-size:27px;font-weight:475;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums}
+/* A living pearl — no lasers, particles or continuous blur rendering. */
 #calendarPersonalTools .pw-breath-ring{
- width:160px;height:160px;display:grid;place-items:center;
- border-radius:50%;border:1px solid var(--line);
- background:radial-gradient(circle,rgba(188,207,225,.09),transparent 71%)
+ position:relative;isolation:isolate;overflow:visible;
+ width:186px;height:186px;display:grid;place-items:center;
+ border-radius:50%;border:1px solid color-mix(in srgb,var(--text) 17%,transparent);
+ background:radial-gradient(circle,rgba(194,211,228,.13),rgba(171,190,210,.03) 64%,transparent 74%)
+}
+#calendarPersonalTools .pw-breath-aura{
+ position:absolute;inset:8px;border-radius:50%;
+ background:radial-gradient(circle,rgba(224,234,244,.26),rgba(190,209,227,.055) 57%,transparent 71%);
+ opacity:.5;pointer-events:none
+}
+#calendarPersonalTools .pw-breath-orbit{
+ position:absolute;inset:25px;border:1px solid color-mix(in srgb,var(--text) 18%,transparent);
+ border-radius:50%;opacity:.55;pointer-events:none
 }
 #calendarPersonalTools .pw-breath-disc{
- width:67%;height:67%;border-radius:50%;border:1px solid var(--line);
- background:radial-gradient(circle at 34% 28%,#fafcff88,#b4c0d020 58%,transparent 84%);
- box-shadow:inset 0 1px 16px #ffffff26,0 0 18px #d5dfed14;
- transform:scale(.86);transition:none
+ position:relative;display:grid;place-items:center;
+ width:65%;aspect-ratio:1;border-radius:50%;
+ border:1px solid color-mix(in srgb,var(--text) 43%,transparent);
+ background:radial-gradient(circle at 36% 25%,rgba(254,255,255,.92),rgba(219,227,237,.56) 27%,rgba(164,185,205,.18) 60%,rgba(200,215,232,.035) 82%);
+ box-shadow:inset 0 2px 14px rgba(255,255,255,.4),0 0 25px rgba(202,224,242,.22),0 9px 22px rgba(0,0,0,.09);
+ transform:scale(.82);transition:transform 6s cubic-bezier(.45,.05,.55,.95);pointer-events:none
 }
-#calendarPersonalTools .pw-breath-ring.inhale .pw-breath-disc{transform:scale(1.2);transition:transform 4s ease-in-out}
-#calendarPersonalTools .pw-breath-ring.exhale .pw-breath-disc{transform:scale(.86);transition:transform 6s ease-in-out}
+#calendarPersonalTools .pw-breath-core{
+ width:48%;height:48%;border-radius:50%;
+ background:radial-gradient(circle,rgba(255,255,255,.76),rgba(242,247,253,.18) 56%,transparent 72%);
+ opacity:.55;pointer-events:none
+}
+/* Preview lives only while the breathing panel is open and a session is idle. */
+#calendarPersonalTools .pw-breath-ring.is-preview .pw-breath-disc{
+ animation:pw-pearl-preview 10s cubic-bezier(.45,.05,.55,.95) infinite
+}
+#calendarPersonalTools .pw-breath-ring.is-preview .pw-breath-aura{
+ animation:pw-aura-preview 10s ease-in-out infinite
+}
+#calendarPersonalTools .pw-breath-ring.is-active.inhale .pw-breath-disc{
+ transform:scale(1.19);transition-duration:4s
+}
+#calendarPersonalTools .pw-breath-ring.is-active.exhale .pw-breath-disc{
+ transform:scale(.82);transition-duration:6s
+}
+#calendarPersonalTools .pw-breath-ring.is-active.inhale .pw-breath-aura{
+ opacity:.86;transition:opacity 4s ease
+}
+#calendarPersonalTools .pw-breath-ring.is-active.exhale .pw-breath-aura{
+ opacity:.34;transition:opacity 6s ease
+}
+#calendarPersonalTools .pw-breath-ring.is-paused .pw-breath-disc{transition:none;transform:scale(.9)}
+/* Drop-shaped glass: fill height is a true share of the user's own goal. */
+#calendarPersonalTools .pw-water-scene{
+ display:grid;justify-items:center;gap:2px;margin:4px 0 9px;text-align:center
+}
+#calendarPersonalTools .pw-water-figure{
+ display:block;width:117px;height:146px;overflow:visible;
+ filter:drop-shadow(0 7px 15px rgba(163,190,216,.13))
+}
+#calendarPersonalTools .pw-water-liquid{
+ fill:var(--text);opacity:.69;transition:y .85s cubic-bezier(.22,.78,.22,1)
+}
+#calendarPersonalTools .pw-water-shine{
+ fill:none;stroke:var(--text);stroke-width:1.5;stroke-linecap:round;opacity:.3
+}
+#calendarPersonalTools .pw-water-outline{
+ fill:rgba(183,201,219,.07);stroke:color-mix(in srgb,var(--text) 65%,transparent);stroke-width:1.15
+}
+#calendarPersonalTools .pw-water-scene small{font-size:10.5px;color:var(--secondary);line-height:1.35}
+@keyframes pw-pearl-preview{
+ 0%,100%{transform:scale(.82)}
+ 40%{transform:scale(1.13)}
+}
+@keyframes pw-aura-preview{
+ 0%,100%{opacity:.33;transform:scale(.9)}
+ 40%{opacity:.82;transform:scale(1.16)}
+}
+@keyframes pw-appear{
+ from{opacity:0;transform:translate3d(0,7px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes pw-reveal{
+ from{opacity:0;transform:translate3d(0,8px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
 #calendarPersonalTools .pw-eye{
  width:100px;height:100px;display:grid;place-items:center;border:1px solid var(--line);
- border-radius:50%;background:radial-gradient(circle,#bfcfe119,transparent 75%)
+ border-radius:50%;background:radial-gradient(circle,#bfcfe119,transparent 75%);
+ transition:transform .55s ease,background .55s ease
+}
+#calendarPersonalTools .pw-eye.is-running{
+ transform:scale(1.07);background:radial-gradient(circle,#bfcfe12a,transparent 75%)
 }
 #calendarPersonalTools .pw-eye svg{width:53px;height:53px;stroke:var(--text);fill:none;stroke-width:1.5;stroke-linejoin:round}
 #calendarPersonalTools .pw-progress{
@@ -86,8 +169,10 @@
  display:flex;width:100%;align-items:center;gap:12px;
  margin:4px 0 10px;padding:12px 13px;min-height:66px;
  border:1px solid var(--line);border-radius:19px;background:var(--card2);
- text-align:left;color:var(--text)
+ text-align:left;color:var(--text);
+ transition:background .25s ease,border-color .25s ease,transform .2s ease
 }
+#calendarPersonalTools .pw-wide-row:active{transform:scale(.988)}
 #calendarPersonalTools .pw-symbol{font-size:21px;line-height:1;color:var(--text)}
 #calendarPersonalTools .pw-wide-row>span:nth-child(2){display:grid;gap:4px;flex:1;min-width:0}
 #calendarPersonalTools .pw-wide-row strong{font-size:13px;font-weight:560}
@@ -133,9 +218,12 @@
  #calendarPersonalTools .pw-list-row{padding:9px}
 }
 @media(prefers-reduced-motion:reduce){
- #calendarPersonalTools .pw-breath-disc,#calendarPersonalTools .pw-progress span,#calendarPersonalTools .pw-arrow{transition:none!important}
+ #calendarPersonalTools .pw-breath-disc,#calendarPersonalTools .pw-progress span,#calendarPersonalTools .pw-arrow,
+ #calendarPersonalTools .pw-card,#calendarPersonalTools .pw-detail,#calendarPersonalTools .pw-wide-row,
+ #calendarPersonalTools .pw-water-liquid,#calendarPersonalTools .pw-eye{animation:none!important;transition:none!important}
+ #calendarPersonalTools .pw-breath-ring.is-active .pw-breath-disc{transform:scale(.92)}
 }
-:root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#bcc7d652 60%,#a8b4c012)}
+:root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#dbe3edcf 30%,#c5d0df52 64%,#c2cedb12)}
 
 #calendarPersonalTools .pw-cycle-privacy{margin:15px 0 0;padding:11px 12px;border:1px solid var(--soft-line);border-radius:15px}
 #calendarPersonalTools .pw-cycle-privacy summary{cursor:pointer;font-size:11px;color:var(--secondary);font-weight:530}
