@@ -2053,20 +2053,19 @@ function startVoice(){
       const phrase=Array.from(e.results).map(result=>result[0]?.transcript||'').join(' ').trim();
       if(!phrase||speechDelivered)return;
       speechDelivered=true;
-      question.value=phrase;
+      const writingNote=composerMode==='notes';
+      // Dictation in Notebook mode extends the user's writing, never replaces
+      // their unfinished note or silently switches into Assistant mode.
+      question.value=writingNote&&question.value.trim()?question.value.replace(/\s+$/,'')+'\n'+phrase:phrase;
       question.dispatchEvent(new Event('input',{bubbles:true}));
-      // Only calendar instructions flow directly to the prefilled REVIEW form.
-      // Other dictation remains visible for the person to check and send.
-      const calendarCommand=window.SEYVEO_CALENDAR_NL?.(phrase);
-      const notebookCommand=!calendarCommand&&window.SEYVEO_NOTE_NL?.(phrase);
+      const calendarCommand=!writingNote&&window.SEYVEO_CALENDAR_NL?.(phrase);
+      const notebookCommand=!writingNote&&!calendarCommand&&window.SEYVEO_NOTE_NL?.(phrase);
       if(calendarCommand||notebookCommand){
-        // Explicit spoken commands always go to the assistant, even if writing a note earlier.
-        setComposerMode('ask');
         inputPanel.requestSubmit();
         setHint(calendarCommand?'Проверьте подготовленное событие.':'Проверьте мысль перед сохранением.');
       }else{
         openComposer();
-        composerMessage('Речь распознана · проверьте текст и нажмите «Отправить».');
+        composerMessage(writingNote?'Речь распознана · проверьте текст и нажмите «Сохранить».':'Речь распознана · проверьте текст и нажмите «Отправить».');
         setHint('Речь распознана. Проверьте текст.');
       }
     };
