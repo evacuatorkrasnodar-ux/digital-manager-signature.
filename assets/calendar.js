@@ -471,7 +471,7 @@ gestureArea.addEventListener('touchcancel',()=>{calendarTouch=null},{passive:tru
 function syncTimeDisplay(){
  const input=$('calendarEventTime'),display=$('calendarTimeDisplay');
  const value=input.value;
- display.textContent=value||'Указать время';
+ display.textContent=value||'Выбрать';
  input.closest('.cal-time-control').dataset.filled=String(Boolean(value));
  $('calendarClearTime').hidden=!value;
  syncPlanningLabel();
