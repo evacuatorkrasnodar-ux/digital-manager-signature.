@@ -26,7 +26,7 @@ function cleanPhoneHeader(value){
   if(!hasUI||letters>0||codeCount>20)break;
   removed++;break;
  }
- return{value:lines.slice(removed).join('\n').trim(),removed:removed>0};
+ return{value:lines.slice(removed).join('\n').replace(/^\n+|\n+$/g,''),removed:removed>0};
 }
 /* Tesseract v7 blocks → paragraphs → original OCR lines with vertical gaps.
    Fallback to data.text on unsupported/broken block geometry. */
@@ -120,7 +120,7 @@ async function recognize(){
   const clean=cleanPhoneHeader(raw);
   const found=clean.value;
   if(!found){message('Текст не обнаружен. Попробуйте другое фото или перепишите вручную.');return}
-  text.value=found.slice(0,2500);
+  text.value=found.slice(0,8000);
   message(clean.removed?'Убрана похожая на панель телефона строка. Проверьте текст и переносы.':'Текст распознан. Проверьте строки и возможные ошибки.');
  }catch(error){
   if(token===session&&dialog.open)message((error?.message||'Не удалось распознать текст.')+' Можно набрать его вручную.');
@@ -134,7 +134,7 @@ function toNote(){
  const value=text.value.trim();
  if(!value){message('Сначала распознайте текст или введите его вручную.');return}
  dialog.close();
- window.SEYVEO_NOTES_API?.reviewText(value.slice(0,2500));
+ window.SEYVEO_NOTES_API?.reviewText(value.slice(0,8000),{preserveLines:keepLines?.checked!==false});
 }
 function toPaper(){
  if(!selected){message('Сначала выберите изображение.');return}
