@@ -186,3 +186,94 @@
 
 @media(prefers-reduced-motion:reduce){
 }
+
+
+/* SEYVEO — Quiet Signal. A single calm flourish under the idle greeting,
+   never a text field, card, progress meter or permanent animation.
+   No position / size changes to the approved orb, stage or dock. */
+#homePage .seyveo-quiet-signal{
+ --quiet-metal:rgba(217,230,246,.76);
+ --quiet-pearl:#eff7ff;
+ position:relative;
+ display:block;
+ width:min(150px,52vw);
+ height:15px;
+ margin:13px auto 0;
+ padding:0;
+ pointer-events:none;
+ overflow:visible;
+}
+#homePage .seyveo-quiet-signal[hidden]{display:none!important}
+#homePage .quiet-signal-line{
+ position:absolute;
+ top:7px;
+ height:1px;
+ width:50%;
+ opacity:.87;
+ transform:scaleX(1);
+}
+#homePage .quiet-signal-line--left{
+ right:50%;
+ transform-origin:right center;
+ background:linear-gradient(to right,transparent,var(--quiet-metal));
+}
+#homePage .quiet-signal-line--right{
+ left:50%;
+ transform-origin:left center;
+ background:linear-gradient(to left,transparent,var(--quiet-metal));
+}
+#homePage .quiet-signal-pearl{
+ position:absolute;z-index:1;
+ left:50%;top:7.5px;
+ width:4px;height:4px;border-radius:50%;
+ background:var(--quiet-pearl);
+ box-shadow:0 0 0 1px rgba(230,242,255,.16),0 0 10px rgba(211,233,255,.38);
+ transform:translate(-50%,-50%);
+}
+#homePage .quiet-signal-pearl::after{
+ content:"";position:absolute;
+ left:50%;top:50%;width:26px;height:9px;border-radius:50%;
+ background:radial-gradient(ellipse,rgba(219,235,251,.31),transparent 72%);
+ transform:translate(-50%,-50%);
+ opacity:.23;
+}
+:root[data-theme=light] #homePage .seyveo-quiet-signal{
+ --quiet-metal:rgba(77,99,127,.68);
+ --quiet-pearl:#526b87;
+}
+:root[data-theme=light] #homePage .quiet-signal-pearl{
+ box-shadow:0 0 0 1px rgba(58,82,112,.18),0 0 9px rgba(75,106,146,.17);
+}
+:root[data-theme=light] #homePage .quiet-signal-pearl::after{
+ background:radial-gradient(ellipse,rgba(90,126,165,.21),transparent 72%);
+}
+@media(prefers-reduced-motion:no-preference){
+ #homePage .seyveo-quiet-signal:not([hidden]) .quiet-signal-line{
+  animation:seyveo-quiet-line 1.28s cubic-bezier(.19,.78,.22,1) both;
+ }
+ #homePage .seyveo-quiet-signal:not([hidden]) .quiet-signal-pearl{
+  animation:seyveo-quiet-pearl 1.62s cubic-bezier(.24,.8,.24,1) both;
+ }
+ #homePage .seyveo-quiet-signal:not([hidden]) .quiet-signal-pearl::after{
+  animation:seyveo-quiet-halo 1.8s ease-out both;
+ }
+ @keyframes seyveo-quiet-line{
+  0%,14%{opacity:0;transform:scaleX(0)}
+  72%{opacity:.89;transform:scaleX(1)}
+  100%{opacity:.87;transform:scaleX(1)}
+ }
+ @keyframes seyveo-quiet-pearl{
+  0%,22%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  58%{opacity:1;transform:translate(-50%,-50%) scale(1.5)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+ }
+ @keyframes seyveo-quiet-halo{
+  0%,23%{opacity:0}
+  54%{opacity:.75}
+  100%{opacity:.23}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage .seyveo-quiet-signal *,
+ #homePage .seyveo-quiet-signal *::after{animation:none!important;transition:none!important}
+}
