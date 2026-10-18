@@ -5,6 +5,35 @@
 const $=id=>document.getElementById(id);
 const connect=$('manageConnectionsDialog'),dataDialog=$('manageDataDialog'),roadmapDialog=$('manageRoadmapDialog');
 if(!connect||!dataDialog||!roadmapDialog)return;
+/* Discreet companion behavior, NOT authentication or encrypted storage.
+   A deliberate opt-in on this device; "off" unless explicitly enabled. */
+const DISCREET_KEY='seyveo-discreet-mode-v1';
+function readDiscreetMode(){
+ try{return localStorage.getItem(DISCREET_KEY)==='on'}catch{return false}
+}
+function paintDiscreetMode(){
+ const enabled=readDiscreetMode();
+ window.SEYVEO_DISCREET_MODE=enabled;
+ const toggle=$('seyveoDiscreetToggle'),status=$('seyveoDiscreetState');
+ if(!toggle||!status)return;
+ toggle.setAttribute('aria-pressed',String(enabled));
+ toggle.setAttribute('aria-label','Рядом люди: '+(enabled?'включено':'выключено'));
+ status.textContent=enabled?'Вкл.':'Выкл.';
+}
+paintDiscreetMode();
+$('seyveoDiscreetToggle')?.addEventListener('click',()=>{
+ const enabled=!readDiscreetMode();
+ try{localStorage.setItem(DISCREET_KEY,enabled?'on':'off')}
+ catch{
+  // Do not pretend the preference stuck if browser storage failed.
+  paintDiscreetMode();return;
+ }
+ if(enabled){try{window.speechSynthesis?.cancel()}catch{}}
+ paintDiscreetMode();
+});
+window.addEventListener('storage',event=>{
+ if(event.key===DISCREET_KEY)paintDiscreetMode();
+});
 
 /* CURATED PRODUCT ROADMAP — present-day SEYVEO.
  * Ideas distilled from FUTURE V5, the project passport, three archived
