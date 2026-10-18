@@ -5,24 +5,22 @@
 #calendarPersonalTools *{box-sizing:border-box}
 /* Focus mode: a tool occupies the existing sheet instead of opening below
    the four shortcuts. iOS Safari has only one scroll container (the dialog). */
-#calendarSpaceDialog[data-care-focus=true] #calendarSpaceIntro,
-#calendarSpaceDialog[data-care-focus=true] #calendarSpaceJournal,
-#calendarSpaceDialog[data-care-focus=true] #calendarSpacePrivacy,
-#calendarSpaceDialog[data-care-focus=true] #calendarSpaceClose{display:none!important}
-#calendarPersonalTools #pwCare.is-focused>.pw-tiles,
+#calendarSpaceDialog:is([data-care-focus=true],[data-health-focus=true]) :is(#calendarSpaceIntro,#calendarSpaceJournal,#calendarSpacePrivacy,#calendarSpaceClose){display:none!important}
+#calendarSpaceDialog[data-health-focus=true] #calendarHealthOverview{display:none!important}
+#calendarPersonalTools :is(#pwCare,#pwHealth).is-focused>.pw-tiles,
 #calendarPersonalTools #pwCare.is-focused>#pwCycleOpen{display:none!important}
-#calendarPersonalTools .pw-care-back{
+#calendarPersonalTools .pw-tool-back{
  display:inline-flex;align-items:center;gap:9px;min-height:42px;
  margin:0 0 9px;padding:7px 12px 7px 9px;
  border:1px solid var(--soft-line);border-radius:999px;background:var(--card2);
  color:var(--text);font:inherit;font-size:12px;font-weight:520;
  -webkit-tap-highlight-color:transparent;touch-action:manipulation
 }
-#calendarPersonalTools .pw-care-back svg{
+#calendarPersonalTools .pw-tool-back svg{
  width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;
  stroke-linecap:round;stroke-linejoin:round
 }
-#calendarPersonalTools #pwCare.is-focused>.pw-detail{
+#calendarPersonalTools :is(#pwCare,#pwHealth).is-focused>.pw-detail{
  margin-bottom:0
 }
 #calendarPersonalTools .pw-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0 12px}
