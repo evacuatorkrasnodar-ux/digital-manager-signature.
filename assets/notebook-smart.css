@@ -431,3 +431,56 @@
  #noteReadDialog .note-read-head{margin-bottom:8px;padding-bottom:9px}
  #noteReadDialog .note-read-actions{padding-top:8px}
 }
+
+/* SEYVEO Living Intelligence · opt-in note suggestion.
+   One collapsed hint; the full note remains the main reading surface. */
+#noteReadDialog .note-smart-insight{
+ box-sizing:border-box;flex:none;min-width:0;margin:9px 0 0;
+ padding:0 12px;border:1px solid var(--soft-line);
+ border-radius:17px;background:var(--card2);
+ color:var(--text)
+}
+#noteReadDialog .note-smart-insight[hidden],
+#noteReadDialog .note-smart-actions button[hidden]{display:none!important}
+#noteReadDialog .note-smart-insight summary{
+ display:flex;align-items:center;gap:9px;min-height:44px;
+ list-style:none;cursor:pointer;font-size:11.5px;font-weight:545;line-height:1.4;
+ -webkit-tap-highlight-color:transparent
+}
+#noteReadDialog .note-smart-insight summary::-webkit-details-marker{display:none}
+#noteReadDialog .note-smart-symbol{
+ display:grid;place-items:center;flex:none;width:25px;height:25px;
+ border:1px solid var(--soft-line);border-radius:50%;
+ font-size:17px;font-weight:400
+}
+#noteReadDialog .note-smart-insight summary>span:nth-child(2){flex:1;min-width:0}
+#noteReadDialog .note-smart-chevron{
+ flex:none;color:var(--secondary);font-size:19px;
+ transition:transform .2s ease
+}
+#noteReadDialog .note-smart-insight[open] .note-smart-chevron{transform:rotate(180deg)}
+#noteReadDialog .note-smart-body{
+ padding:0 1px 12px;border-top:1px solid var(--soft-line);
+ font-size:11.5px;line-height:1.5
+}
+#noteReadDialog .note-smart-body p{margin:10px 0 4px;color:var(--text)}
+#noteReadDialog .note-smart-body small{display:block;margin:0 0 10px;color:var(--secondary)}
+#noteReadDialog .note-smart-actions{
+ display:flex;flex-wrap:wrap;align-items:center;gap:7px
+}
+#noteReadDialog .note-smart-actions button{
+ min-height:44px;min-width:0;padding:8px 13px;
+ border:1px solid var(--line);border-radius:999px;
+ background:var(--card);color:var(--text);
+ font:inherit;font-size:11.5px;font-weight:540;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#noteReadDialog .note-smart-actions button:first-child{
+ background:var(--text);border-color:var(--text);color:var(--bg)
+}
+#noteReadDialog .note-smart-insight :is(summary,button):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+@media(prefers-reduced-motion:reduce){
+ #noteReadDialog .note-smart-chevron{transition:none}
+}
