@@ -20,7 +20,7 @@ const FIRST=!safeGet(KEY)&&![
 const steps=[
  {name:'Привет! Я SEYVEO.',body:'Покажу, как со мной общаться и где искать нужное. Одно действие за раз — всё просто.',target:'orb',button:'Начать',label:'ПЕРВОЕ ЗНАКОМСТВО'},
  {name:'Вот ваш помощник',body:'Нажмите на центральную кнопку внизу. Она откроет поле для вопроса.',target:'assistantButton',button:'Дальше',hint:'Нажмите подсвеченную кнопку'},
- {name:'Можно просто написать',body:'Например: «Что у меня сегодня?». Нажмите «Попробовать пример» — я сам покажу, как это работает.',target:'question',button:'Попробовать пример',hint:'Можно также написать свой вопрос'},
+ {name:'Можно просто написать',body:'Например: «Что у меня сегодня?». Нажмите «Попробовать пример» — я сам покажу, как это работает.',target:'ask',button:'Попробовать пример',hint:'Можно также написать свой вопрос'},
  {name:'Вот как я отвечаю',body:'Сфера мягко оживает, а ответ появляется под ней. В истории разговор можно найти снова.',target:'orb',button:'Показать разделы',hint:'Ответ — пока демонстрационный'},
  {name:'Дела',body:'Здесь ваши задачи, поручения и история. Нажмите «Дела» в нижней панели.',target:'navTasks',button:'Дальше',hint:'Попробуйте нажать кнопку'},
  {name:'Картина',body:'Здесь показатели бизнеса. Пока часть цифр демонстрационная. Нажмите «Картина».',target:'navPicture',button:'Дальше',hint:'Здесь видно состояние дел'},
@@ -117,6 +117,9 @@ function update(){
  if(step===2){
   const q=$('question');
   if(document.activeElement===q)q.blur();
+  // Opening the real composer may schedule a keyboard focus on the next
+  // animation frame; release it for a clear first-help card on iPhone.
+  setTimeout(()=>{if(active&&step===2&&document.activeElement===q){q.blur();scheduleLayout()}},160);
   if($('composerModeNotes')?.getAttribute('aria-pressed')==='true')
     $('composerModeAsk')?.click();
  }
@@ -151,7 +154,7 @@ function finish(){
  active=false;ui.hidden=true;cleanPaint();
  if(!$('homeWorldPopover')?.hidden)$('homeWorldTrigger')?.click();
  // Don't force navigation or erase text drafts; respect where the lesson ends.
- if(previousFocus?.isConnected&&previousFocus.id==='openFirstHelp'){
+ if(previousFocus?.isConnected&&previousFocus.id==='openFirstHelp'&&!$('managePage')?.hidden){
   previousFocus.focus({preventScroll:true});
  }
 }
@@ -163,6 +166,7 @@ function start(){
  navigateHome();
  step=0;active=true;ui.hidden=false;feedback();
  update();
+ document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'text'}}));
 }
 function example(){
  const input=$('question'),form=$('ask');
