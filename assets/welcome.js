@@ -20,6 +20,8 @@ const focusChoices=[...dialog.querySelectorAll('[data-welcome-focus]')];
 const progress=$('welcomeProgress'),next=$('welcomeNext'),back=$('welcomeBack'),skip=$('welcomeSkip');
 const error=$('welcomeError');
 const demoEntry=$('openWelcomeDemo'),overline=$('welcomeOverline'),disclaimer=$('welcomeDisclaimer');
+const openingSecond=$('welcomeOpeningQuoteSecond');
+const OPENING_DURATION_MS=5200;
 function available(){
  return !read(PROFILE)&&!read(SKIPPED)&&!read(SEEN)&&!LEGACY.some(key=>read(key)!==null);
 }
@@ -79,6 +81,10 @@ function dismiss(){
 function beginOpening(){
  if(openingTimer!==null)return;
  dialog.classList.remove('is-cinematic');
+ // Exactly the original business phrase; life-only mode speaks to personal goals.
+ openingSecond.textContent=focus==='life'
+  ?'Большие возможности для вашей жизни.'
+  :'Гигантский скачок для вашего бизнеса.';
  dialog.classList.add('is-opening');
  const isPreview=preview;
  next.disabled=true;back.disabled=true;skip.disabled=true;
@@ -95,7 +101,7 @@ function beginOpening(){
  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
   finish();return;
  }
- openingTimer=setTimeout(finish,1800);
+ openingTimer=setTimeout(finish,OPENING_DURATION_MS);
 }
 function save(){
  if(preview){beginOpening();return}
