@@ -6,6 +6,7 @@
 const $=id=>document.getElementById(id);
 const rail=$('assistantQuickrail'),track=$('assistantQuickTrack'),pips=$('assistantQuickPages');
 const dialog=$('assistantQuickSettings'),list=$('assistantQuickSettingsList');
+const demoTrack=$('assistantQuickPreviewTrack'),demoPips=$('assistantQuickPreviewPages'),demoHint=$('assistantQuickPreviewHint');
 if(!rail||!track||!pips||!dialog||!list)return;
 const KEY='seyveo-assistant-quick-actions-v1',MAX=8;
 const DEFAULT=['event','note','history','notes'];
@@ -100,10 +101,39 @@ function updatePips(){
   pips.append(el);
  }
 }
+function updateDemoPips(){
+ if(!demoTrack||!demoPips)return;
+ const total=Math.max(1,selected.length-2);
+ const slot=demoTrack.firstElementChild?.getBoundingClientRect().width||demoTrack.clientWidth/3||1;
+ const page=Math.min(total-1,Math.max(0,Math.round(demoTrack.scrollLeft/slot)));
+ demoPips.replaceChildren();demoPips.hidden=total<=1;
+ for(let i=0;i<total;i++){
+  const dot=document.createElement('span');dot.className='assistant-quick-preview-dot';
+  if(i===page)dot.classList.add('is-current');
+  demoPips.append(dot);
+ }
+}
+function renderDemo(){
+ if(!demoTrack)return;
+ const elements=selected.map(id=>{
+  const button=buttonFor(id);
+  delete button.dataset.quickAction;
+  button.dataset.quickPreview=id;
+  button.setAttribute('aria-label','Показать описание: '+byId.get(id).name);
+  return button;
+ });
+ demoTrack.replaceChildren(...elements);
+ demoTrack.dataset.count=String(selected.length);
+ demoTrack.scrollLeft=0;
+ if(demoHint)demoHint.textContent='Листайте пальцем или нажмите на значок. В образце команды не запускаются.';
+ requestAnimationFrame(updateDemoPips);
+}
 function render(){
  track.replaceChildren(...selected.map(buttonFor));
  rail.dataset.count=String(selected.length);
- track.scrollLeft=0;requestAnimationFrame(updatePips);
+ track.scrollLeft=0;
+ renderDemo();
+ requestAnimationFrame(updatePips);
 }
 let gesture=null,suppressSwipeClick=false;
 track.addEventListener('click',event=>{
@@ -138,6 +168,41 @@ track.addEventListener('keydown',event=>{
  feedback();
 });
 window.addEventListener('resize',updatePips);
+if(demoTrack){
+ let origin=null,suppressDemoClick=false;
+ demoTrack.addEventListener('click',event=>{
+  if(suppressDemoClick){event.preventDefault();suppressDemoClick=false;return}
+  const button=event.target.closest('button[data-quick-preview]');
+  if(!button)return;
+  const item=byId.get(button.dataset.quickPreview);
+  if(!item)return;
+  demoHint.textContent=item.name+' — '+item.description+'. Это только образец.';
+  feedback();
+ });
+ demoTrack.addEventListener('pointerdown',event=>{
+  if(event.pointerType==='mouse')return;
+  suppressDemoClick=false;origin={x:event.clientX,y:event.clientY};
+ });
+ demoTrack.addEventListener('pointerup',event=>{
+  if(!origin)return;
+  const dx=event.clientX-origin.x,dy=event.clientY-origin.y;
+  if(Math.abs(dx)>28&&Math.abs(dx)>Math.abs(dy)*1.35){
+   suppressDemoClick=true;feedback();
+   setTimeout(()=>{suppressDemoClick=false},350);
+  }
+  origin=null;
+ });
+ demoTrack.addEventListener('pointercancel',()=>{origin=null});
+ demoTrack.addEventListener('scroll',()=>requestAnimationFrame(updateDemoPips),{passive:true});
+ demoTrack.addEventListener('keydown',event=>{
+  if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return;
+  event.preventDefault();
+  const slot=demoTrack.firstElementChild?.getBoundingClientRect().width||100;
+  demoTrack.scrollBy({left:slot*(event.key==='ArrowRight'?1:-1),behavior:'smooth'});
+  feedback();
+ });
+ window.addEventListener('resize',updateDemoPips);
+}
 function rowFor(item,chosen,index){
  const row=document.createElement('div');row.className='assistant-quick-setting-row';
  row.dataset.quickSetting=item.id;
@@ -169,6 +234,7 @@ function renderSettings(){
 $('openAssistantQuickSettings').addEventListener('click',()=>{
  $('assistantQuickSettingsStatus').textContent='';
  renderSettings();dialog.showModal();
+ requestAnimationFrame(updateDemoPips);
 });
 $('assistantQuickSettingsClose').addEventListener('click',()=>dialog.close());
 $('assistantQuickSettingsDone').addEventListener('click',()=>dialog.close());
