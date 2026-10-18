@@ -23,7 +23,7 @@ function available(){
  return !read(PROFILE)&&!read(SKIPPED)&&!read(SEEN)&&!LEGACY.some(key=>read(key)!==null);
 }
 function markOptions(){
- brandChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeAssistant===assistant)));
+ brandChoices.forEach(button=>button.setAttribute('aria-pressed',String(!trim(other.value,40)&&button.dataset.welcomeAssistant===assistant)));
  focusChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeFocus===focus)));
 }
 function assistantName(){return trim(other.value,40)||assistant}
@@ -57,12 +57,12 @@ function dismiss(){
  close();
 }
 function save(){
- const assistantName=assistantName();
- const voice=({'Феликс':'male','Филя':'male','Мелисса':'female','Мили':'female'})[assistantName]||null;
- const aliases=assistantName==='Феликс'?['Феликс','Филя']:assistantName==='Мелисса'?['Мелисса','Мили']:assistantName?[assistantName]:[];
+ const selectedName=assistantName();
+ const voice=({'Феликс':'male','Филя':'male','Мелисса':'female','Мили':'female'})[selectedName]||null;
+ const aliases=selectedName==='Феликс'?['Феликс','Филя']:selectedName==='Мелисса'?['Мелисса','Мили']:selectedName?[selectedName]:[];
  const now=new Date().toISOString();
  const profile={
-  schemaVersion:1,name:trim(user.value,60),assistantName,assistantVoice:voice,
+  schemaVersion:1,name:trim(user.value,60),assistantName:selectedName,assistantVoice:voice,
   assistantAliases:aliases,focus,lifeIncluded:true,
   createdAt:now,updatedAt:now
  };
@@ -79,9 +79,7 @@ brandChoices.forEach(button=>button.addEventListener('click',()=>{
  assistant=button.dataset.welcomeAssistant;
  other.value='';markOptions();
 }));
-other.addEventListener('input',()=>{
- brandChoices.forEach(button=>button.setAttribute('aria-pressed','false'));
-});
+other.addEventListener('input',markOptions);
 focusChoices.forEach(button=>button.addEventListener('click',()=>{
  focus=button.dataset.welcomeFocus;markOptions();
 }));
