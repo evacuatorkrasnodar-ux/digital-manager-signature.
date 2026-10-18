@@ -126,6 +126,10 @@ function setInputDefaults(){
 }
 function setCareFocus(focused){
  const active=Boolean(focused&&space==='care');
+ // An iPhone keyboard must close before its input is hidden from the sheet.
+ const focusedElement=document.activeElement;
+ if(focusedElement&&host.contains(focusedElement)&&
+    focusedElement.matches('input,textarea,select'))focusedElement.blur();
  $('pwCare').classList.toggle('is-focused',active);
  $('pwCareBack').hidden=!active;
  const dialog=$('calendarSpaceDialog');
@@ -179,7 +183,12 @@ function openTool(key){
   if(care===['water','breath','eyes','steps'].includes(p.dataset.pwTool))
    p.setAttribute('aria-pressed',String(!active&&p.dataset.pwTool===key));
  });
- if(care)setCareFocus(!active);
+ if(care){
+  setCareFocus(!active);
+  // The chosen tile is hidden in focused mode: move the accessibility focus
+  // to the visible back control without making Safari scroll the document.
+  if(!active)$('pwCareBack').focus({preventScroll:true});
+ }
  if(!active&&care&&key==='steps')fillSteps();
  if(!active)notice('');
 }
@@ -393,10 +402,15 @@ host.addEventListener('click',event=>{
  const btn=event.target.closest('button');if(!btn)return;
  if(btn.id==='pwCareBack'){
   if(session)stopSession(false);
+  const previous=careTool;
+  const wasCycle=!$('pwCycleDetail').hidden;
   resetCareTools();
   $('pwCycleDetail').hidden=true;
   $('pwCycleOpen').setAttribute('aria-expanded','false');
   $('calendarSpaceDialog').scrollTop=0;
+  const target=wasCycle?$('pwCycleOpen'):
+    host.querySelector('[data-pw-tool="'+previous+'"]');
+  if(target)target.focus({preventScroll:true});
   notice('');
   return;
  }
@@ -409,8 +423,10 @@ host.addEventListener('click',event=>{
  if(btn.id==='pwCycleOpen'){
   const panel=$('pwCycleDetail'),opening=panel.hidden;
   panel.hidden=!opening;btn.setAttribute('aria-expanded',String(opening));
-  if(opening){resetCareTools();stopSession(false);setCareFocus(true);}
-  else setCareFocus(false);
+  if(opening){
+   resetCareTools();stopSession(false);setCareFocus(true);
+   $('pwCareBack').focus({preventScroll:true});
+  }else setCareFocus(false);
   return;
  }
  if(btn.id==='pwCycleEnable'){
