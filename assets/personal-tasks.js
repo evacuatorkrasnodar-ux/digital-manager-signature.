@@ -156,6 +156,53 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  $('personalTaskStatus').textContent='SEYVEO заметил возможное дело в заметке. Проверьте название и срок, затем сохраните.';
  input.focus({preventScroll:true});
 });
+/* Explicit one-click approval of up to five tasks from a reviewed Notebook plan.
+   Same local task store and renderer as the normal task editor. Atomic write,
+   existing and within-plan duplicates are skipped; never truncate old tasks. */
+window.addEventListener('seyveo:tasks-plan-batch',event=>{
+ const detail=event.detail;
+ if(!detail||!Array.isArray(detail.items)||!detail.items.length||detail.items.length>5){
+  if(detail)detail.result={status:'invalid',message:'Не удалось прочитать план.'};
+  return;
+ }
+ const all=read(),seen=new Set(all.map(item=>
+  item.title.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU')+'|'+item.due));
+ const pending=[];
+ let duplicates=0;
+ for(const draft of detail.items){
+  if(!draft||typeof draft.title!=='string'||typeof draft.due!=='string'){
+   detail.result={status:'invalid',message:'Проверьте текст дел и сроки.'};return;
+  }
+  const title=draft.title.trim().replace(/\s+/g,' ').slice(0,140);
+  const due=draft.due;
+  if(!title||(due&&!strDate(due))){
+   detail.result={status:'invalid',message:'Проверьте текст дел и даты.'};return;
+  }
+  const key=title.toLocaleLowerCase('ru-RU')+'|'+due;
+  if(seen.has(key)){duplicates++;continue}
+  seen.add(key);pending.push({title,due});
+ }
+ if(!pending.length){
+  detail.result={status:'already',added:0,duplicates,
+   message:'Такие дела уже есть. Повторно ничего не добавлено.'};return;
+ }
+ if(all.length+pending.length>MAX){
+  detail.result={status:'full',added:0,duplicates,
+   message:'Для плана не хватает места в списке дел. Освободите место и повторите.'};return;
+ }
+ const stamp=Date.now(),createdAt=new Date(stamp).toISOString();
+ const next=all.concat(pending.map((draft,index)=>({
+  id:'personal-'+stamp+'-'+index+'-'+Math.random().toString(36).slice(2,9),
+  title:draft.title,due:draft.due,done:false,createdAt,doneAt:''
+ })));
+ if(!save(next)){
+  detail.result={status:'error',added:0,duplicates,
+   message:'Не удалось сохранить план. Проверьте память устройства.'};return;
+ }
+ render();
+ detail.result={status:'saved',added:pending.length,duplicates,
+  message:'Добавлено в Дела: '+pending.length+(duplicates?' · уже были: '+duplicates:'')+'.'};
+});
 window.addEventListener('storage',event=>{if(event.key===KEY)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 render();
