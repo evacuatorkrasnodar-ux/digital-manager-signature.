@@ -142,3 +142,100 @@
 @media(prefers-reduced-motion:reduce){
  #calendarHealthOverview .cal-health-tile:active{transform:none}
 }
+
+/* SEYVEO Life / Мой мир — one honest workspace to test actual local data.
+   Source contacts are shown, not copied. No fake locks or connected accounts. */
+#calendarSpaceDialog .seyveo-world-hub{display:grid;gap:13px;margin:1px 0 17px;min-width:0}
+#calendarSpaceDialog .seyveo-world-hub[hidden]{display:none!important}
+#calendarSpaceDialog .world-hub-intro{
+ padding:12px 13px;border:1px solid var(--soft-line);
+ border-radius:16px;background:var(--card2)
+}
+#calendarSpaceDialog .world-hub-kicker{
+ display:block;color:var(--secondary);font-size:10px;
+ font-weight:560;letter-spacing:.075em;line-height:1.25
+}
+#calendarSpaceDialog .world-hub-intro p{
+ margin:6px 0 0;color:var(--secondary);font-size:11.5px;line-height:1.5
+}
+#calendarSpaceDialog .world-people{
+ min-width:0;padding:13px 13px 4px;border:1px solid var(--line);
+ border-radius:19px;background:var(--card)
+}
+#calendarSpaceDialog .world-hub-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ min-width:0;margin-bottom:9px
+}
+#calendarSpaceDialog .world-hub-heading>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#calendarSpaceDialog .world-hub-heading h3{
+ margin:0;font-size:14px;font-weight:585;line-height:1.3;letter-spacing:-.02em
+}
+#calendarSpaceDialog .world-hub-heading small{
+ font-size:10.5px;line-height:1.4;color:var(--secondary)
+}
+#calendarSpaceDialog :is(#worldManageContacts,#worldAllContacts,.world-person-call){
+ display:inline-flex;justify-content:center;align-items:center;
+ min-height:44px;max-width:100%;padding:9px 12px;
+ border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);color:var(--text);
+ font:inherit;font-size:11.5px;font-weight:545;line-height:1.35;
+ text-align:center;-webkit-appearance:none;appearance:none;
+ touch-action:manipulation
+}
+#calendarSpaceDialog .world-people-list{
+ display:flex;flex-direction:column;min-width:0;
+ border-top:1px solid var(--soft-line)
+}
+#calendarSpaceDialog .world-people-empty{
+ margin:0;padding:13px 3px;color:var(--secondary);
+ font-size:12px;line-height:1.5
+}
+#calendarSpaceDialog .world-person-row{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:8px;min-width:0;padding:7px 0;
+ border-bottom:1px solid var(--soft-line)
+}
+#calendarSpaceDialog .world-person-info{
+ display:flex;flex:1;flex-direction:column;min-width:0;gap:3px
+}
+#calendarSpaceDialog .world-person-info strong{
+ font-size:12.5px;font-weight:560;line-height:1.35;overflow-wrap:anywhere
+}
+#calendarSpaceDialog .world-person-info small{
+ font-size:11px;line-height:1.3;color:var(--secondary);overflow-wrap:anywhere
+}
+#calendarSpaceDialog .world-person-call{flex:none;min-width:89px}
+#calendarSpaceDialog #worldAllContacts{
+ width:100%;justify-content:space-between;gap:7px;
+ margin:5px 0 4px;padding:9px 3px;border-color:transparent;
+ border-radius:10px;background:transparent;color:var(--secondary);
+ font-size:11px;text-align:left
+}
+#calendarSpaceDialog .world-connection-state{
+ display:flex;flex-direction:column;min-width:0;
+ padding:3px 12px;border:1px solid var(--soft-line);
+ border-radius:17px;background:var(--card2)
+}
+#calendarSpaceDialog .world-connection-state>div{
+ display:flex;flex-wrap:wrap;align-items:baseline;
+ justify-content:space-between;gap:4px 9px;
+ padding:10px 0;min-width:0
+}
+#calendarSpaceDialog .world-connection-state>div+div{border-top:1px solid var(--soft-line)}
+#calendarSpaceDialog .world-connection-state strong{
+ color:var(--text);font-size:11.5px;font-weight:545;line-height:1.4
+}
+#calendarSpaceDialog .world-connection-state small{
+ color:var(--secondary);font-size:10.5px;line-height:1.4
+}
+#calendarSpaceDialog :is(#worldManageContacts,#worldAllContacts,.world-person-call):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+@media(max-width:370px){
+ #calendarSpaceDialog .world-people{padding:11px 10px 4px;border-radius:16px}
+ #calendarSpaceDialog .world-hub-heading{gap:5px}
+ #calendarSpaceDialog .world-hub-heading h3{font-size:13px}
+ #calendarSpaceDialog #worldManageContacts{padding:8px 10px;font-size:11px}
+ #calendarSpaceDialog .world-person-call{min-width:82px;padding:8px 9px}
+ #calendarSpaceDialog .world-connection-state{padding:2px 10px}
+}
