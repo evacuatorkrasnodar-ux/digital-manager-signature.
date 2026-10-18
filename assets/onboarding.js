@@ -6,6 +6,23 @@
   const dialog=$('onboardDialog'),entry=$('openOnboarding'),form=$('onboardForm');
   if(!dialog||!entry||!form)return;
   const PROFILE='seyveo-first-acquaintance-v1';
+  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Милисса':'female','Боня':'male','Торик':'male','Бэйси':'female'});
+  const nameInput=$('onboardAssistantName'),voiceInput=$('onboardAssistantVoice');
+  const nameChoices=[...form.querySelectorAll('[data-assistant-name]')];
+  function markName(){
+    const value=trim(nameInput.value,40);
+    nameChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.assistantName===value)));
+  }
+  nameChoices.forEach(button=>button.addEventListener('click',()=>{
+    nameInput.value=button.dataset.assistantName;
+    voiceInput.value=ASSISTANT_NAMES[button.dataset.assistantName];
+    markName();
+  }));
+  nameInput.addEventListener('input',()=>{
+    const defaultVoice=ASSISTANT_NAMES[trim(nameInput.value,40)];
+    if(defaultVoice)voiceInput.value=defaultVoice;
+    markName();
+  });
   const SKIPPED='seyveo-first-acquaintance-skipped-v1';
   const CHOICES=Object.freeze({
     life:'Life',start:'Business Start',pro:'Business Pro',max:'Business Max'
@@ -25,11 +42,14 @@
     const label=$('onboardManageSummary');
     label.textContent=old?CHOICES[old.focus]:'Не настроено';
     const sub=$('onboardManageDescription');
-    sub.textContent=old?(old.name?'Для '+trim(old.name,22)+' · можно изменить':'Имя и жизненный этап · сохранено'):'Имя и жизненный этап';
+    sub.textContent=old?(old.assistantName?'Помощник '+trim(old.assistantName,22)+' · можно изменить':old.name?'Для '+trim(old.name,22)+' · можно изменить':'Имя, голос и жизненный этап · сохранено'):'Имя, голос и жизненный этап';
   }
   function show(){
     const old=existing();
     $('onboardName').value=old?.name||'';
+    nameInput.value=old?.assistantName||'';
+    voiceInput.value=old?.assistantVoice==='female'?'female':'male';
+    markName();
     const focus=CHOICES[old?.focus]?old.focus:'life';
     const radio=form.querySelector('input[name="onboardFocus"][value="'+focus+'"]');
     if(radio)radio.checked=true;
@@ -50,6 +70,9 @@
     const value={
       schemaVersion:1,
       name:trim($('onboardName').value,60),
+      assistantName:trim(nameInput.value,40),
+      assistantVoice:voiceInput.value==='female'?'female':'male',
+      assistantAliases:trim(nameInput.value,40)==='Феликс'?['Феликс','Филя']:trim(nameInput.value,40)?[trim(nameInput.value,40)]:[],
       focus,
       lifeIncluded:true,
       updatedAt:new Date().toISOString(),
