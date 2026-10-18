@@ -146,6 +146,49 @@ function setInputDefaults(){
   const el=$(id);el.max=today();if(!el.value||el.value>today())el.value=today();
  }
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
+ syncMedTimeLabel();
+}
+/* Theme-aware clock inside the existing medicine sheet. The saved HH:MM value
+   stays identical to the original medication model. */
+const TIME_24=/^([01]\d|2[0-3]):[0-5]\d$/;
+function syncMedTimeLabel(){
+ const value=$('pwMedTime').value;
+ $('pwMedTimeOpenValue').textContent=TIME_24.test(value)?value:'Выбрать';
+}
+function closeMedTimePicker(){
+ const panel=$('pwMedTimePicker');
+ if(panel.hidden)return;
+ const focus=document.activeElement;
+ if(focus&&panel.contains(focus))focus.blur();
+ panel.hidden=true;
+ $('pwMedTimeOpen').setAttribute('aria-expanded','false');
+}
+function openMedTimePicker(){
+ const value=TIME_24.test($('pwMedTime').value)?$('pwMedTime').value:'09:00';
+ $('pwMedHour').value=String(Number(value.slice(0,2)));
+ $('pwMedMinute').value=String(Number(value.slice(3,5)));
+ $('pwMedTimePicker').hidden=false;
+ $('pwMedTimeOpen').setAttribute('aria-expanded','true');
+ notice('');
+}
+function adjustMedTime(part,delta){
+ const isHour=part==='hour',field=$(isHour?'pwMedHour':'pwMedMinute'),modulo=isHour?24:60;
+ const raw=field.value.trim();
+ const value=/^\d{1,2}$/.test(raw)?Number(raw):0;
+ field.value=String(((value+delta)%modulo+modulo)%modulo);
+}
+function confirmMedTime(){
+ const hour=$('pwMedHour').value.trim(),minute=$('pwMedMinute').value.trim();
+ if(!/^\d{1,2}$/.test(hour)||!/^\d{1,2}$/.test(minute)
+  ||Number(hour)>23||Number(minute)>59){
+  notice('Укажите часы 0–23 и минуты 0–59.');
+  return;
+ }
+ $('pwMedTime').value=pad(Number(hour))+':'+pad(Number(minute));
+ syncMedTimeLabel();
+ closeMedTimePicker();
+ $('pwMedTimeOpen').focus({preventScroll:true});
+ notice('');
 }
 const CARE_TOOLS=new Set(['water','breath','eyes','steps']);
 function setToolFocus(section,focused){
@@ -160,6 +203,7 @@ function setToolFocus(section,focused){
  if(active)dialog.scrollTop=0;
 }
 function resetTools(){
+ closeMedTimePicker();
  stopSession(false);careTool='';healthTool='';notice('');
  $('pwCareDetail').hidden=true;$('pwHealthDetail').hidden=true;
  host.querySelectorAll('[data-pw-panel]').forEach(el=>el.hidden=true);
@@ -175,6 +219,7 @@ function openSpace(view){
  setInputDefaults();state=load();render();
 }
 function resetSectionTools(section){
+ closeMedTimePicker();
  const care=section==='care';
  if(care)careTool='';else healthTool='';
  $(care?'pwCareDetail':'pwHealthDetail').hidden=true;
@@ -187,6 +232,7 @@ function resetSectionTools(section){
  });
 }
 function openTool(key){
+ closeMedTimePicker();
  if(session)stopSession(false);
  const care=CARE_TOOLS.has(key),section=care?'care':'health';
  if(care){
@@ -407,6 +453,7 @@ function recordMed(e){
  if(!name||!dose||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){notice('Проверьте название, дозировку и время.');return;}
  if(state.medications.length>=60){notice('Лимит назначений — 60 записей.');return;}
  if(save(d=>d.medications.push({id:'med-'+Date.now()+'-'+Math.random().toString(36).slice(2),name,dose,time}))){
+  closeMedTimePicker();
   $('pwMedForm').reset();setInputDefaults();renderMeds();notice('Запись сохранена на устройстве.');
  }
 }
@@ -474,6 +521,23 @@ host.addEventListener('click',event=>{
    button.setAttribute('aria-pressed',String(button===btn)));
   return;
  }
+ if(btn.id==='pwMedTimeOpen'){
+  if($('pwMedTimePicker').hidden)openMedTimePicker();
+  else closeMedTimePicker();
+  return;
+ }
+ if(btn.dataset.pwTimeAdjust){
+  const [part,delta]=btn.dataset.pwTimeAdjust.split(':');
+  if(['hour','minute'].includes(part)&&['-1','1'].includes(delta))
+   adjustMedTime(part,Number(delta));
+  return;
+ }
+ if(btn.id==='pwMedTimeCancel'){
+  closeMedTimePicker();
+  $('pwMedTimeOpen').focus({preventScroll:true});
+  return;
+ }
+ if(btn.id==='pwMedTimeDone'){confirmMedTime();return;}
  if(btn.dataset.pwTool){openTool(btn.dataset.pwTool);return;}
  if(btn.dataset.pwWater){updateWater(Number(btn.dataset.pwWater));return;}
  if(btn.id==='pwWaterUndo'){if(lastWater&&lastWaterDate===today())updateWater(-lastWater);return;}
