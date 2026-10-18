@@ -245,3 +245,95 @@
 @media(prefers-reduced-motion:reduce){
   #assistantQuickrail.assistant-quickrail{animation:none}
 }
+
+/* SEYVEO Silk Swipe · flat, native horizontal pages with snap. */
+#assistantQuickrail.assistant-quickrail{
+ display:flex;flex-direction:column;gap:1px;padding:4px 5px 3px;
+}
+#assistantQuickrail .assistant-quick-track{
+ display:flex;align-items:stretch;min-width:0;width:100%;
+ overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+ scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none;overscroll-behavior-x:contain;
+ border-radius:15px;touch-action:pan-x pan-y;
+}
+#assistantQuickrail .assistant-quick-track::-webkit-scrollbar{display:none}
+#assistantQuickrail .assistant-quick-track .assistant-quick-item{
+ flex:0 0 33.333333%;scroll-snap-align:start;
+}
+#assistantQuickrail[data-count="1"] .assistant-quick-track .assistant-quick-item{flex-basis:100%}
+#assistantQuickrail[data-count="2"] .assistant-quick-track .assistant-quick-item{flex-basis:50%}
+#assistantQuickrail .assistant-quick-pages{
+ display:flex;justify-content:center;align-items:center;gap:4px;
+ min-height:7px;pointer-events:none;
+}
+#assistantQuickrail .assistant-quick-pages[hidden]{display:none!important}
+#assistantQuickrail .assistant-quick-dot{
+ width:4px;height:4px;border-radius:50%;background:var(--secondary);opacity:.35;
+ transition:width .19s ease,opacity .19s ease;
+}
+#assistantQuickrail .assistant-quick-dot.is-current{width:11px;border-radius:5px;opacity:.8}
+@media(prefers-reduced-motion:reduce){
+ #assistantQuickrail .assistant-quick-track{scroll-behavior:auto}
+ #assistantQuickrail .assistant-quick-dot{transition:none}
+}
+/* Editor geometry, native viewport keyboard anchors and sphere are unchanged. */
+#assistantQuickSettings.assistant-quick-settings{
+ box-sizing:border-box;width:min(450px,calc(100vw - 24px));
+ max-height:min(84dvh,calc(100dvh - 24px - env(safe-area-inset-top,0px)));
+ margin:auto;padding:17px 15px 13px;overflow-y:auto;overscroll-behavior:contain;
+ border:1px solid var(--line);border-radius:25px;color:var(--text);
+ background:var(--card);box-shadow:0 18px 55px rgba(0,0,0,.27);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+}
+#assistantQuickSettings::backdrop{background:rgba(0,0,0,.52);backdrop-filter:blur(4px)}
+#assistantQuickSettings .assistant-quick-settings-head{
+ display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;
+}
+#assistantQuickSettings .assistant-quick-settings-head small{font-size:10px;letter-spacing:.12em;color:var(--secondary)}
+#assistantQuickSettings .assistant-quick-settings-head h2{margin:5px 0 8px;font-size:21px;font-weight:590;letter-spacing:-.035em}
+#assistantQuickSettings .assistant-quick-settings-head p{margin:0;color:var(--secondary);font-size:12px;line-height:1.5}
+#assistantQuickSettings .assistant-quick-settings-close{
+ flex:none;display:grid;place-items:center;width:44px;height:44px;
+ border:1px solid var(--line);border-radius:50%;background:var(--card2);
+}
+#assistantQuickSettings .assistant-quick-settings-close svg{
+ width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#assistantQuickSettings .assistant-quick-settings-list{display:flex;flex-direction:column;gap:6px}
+#assistantQuickSettings .assistant-quick-setting-row{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:53px;
+ padding:8px 10px;border:1px solid var(--soft-line);border-radius:15px;background:var(--card2);
+}
+#assistantQuickSettings .assistant-quick-setting-label{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+#assistantQuickSettings .assistant-quick-setting-label strong{font-size:12.5px;font-weight:580}
+#assistantQuickSettings .assistant-quick-setting-label small{font-size:10.5px;color:var(--secondary);line-height:1.32}
+#assistantQuickSettings .assistant-quick-setting-controls{display:flex;gap:5px;flex:none}
+#assistantQuickSettings .assistant-quick-setting-row button{
+ flex:none;min-width:39px;min-height:39px;padding:6px 9px;
+ border:1px solid var(--line);border-radius:12px;background:var(--card);
+ font:inherit;font-size:15px;color:var(--text);
+}
+#assistantQuickSettings .assistant-quick-setting-row button[data-quick-edit=add]{font-size:11.5px}
+#assistantQuickSettings .assistant-quick-setting-row button:disabled{opacity:.33;cursor:default}
+#assistantQuickSettings .assistant-quick-setting-section{
+ margin:12px 3px 3px;color:var(--secondary);font-size:11px;letter-spacing:.04em;
+}
+#assistantQuickSettings .assistant-quick-settings-footer{display:flex;gap:9px;margin-top:15px}
+#assistantQuickSettings .assistant-quick-settings-footer button{
+ flex:1;min-width:0;min-height:44px;border-radius:15px;border:1px solid var(--line);
+ background:var(--card2);font:inherit;font-size:12px;
+}
+#assistantQuickSettings .assistant-quick-settings-footer #assistantQuickSettingsDone{
+ color:var(--bg);background:var(--text);border-color:var(--text);
+}
+#assistantQuickSettings .assistant-quick-settings-status{
+ min-height:15px;margin:8px 2px 0;font-size:11px;color:var(--secondary);
+}
+@media(max-width:345px){
+ #assistantQuickSettings.assistant-quick-settings{padding:13px 10px}
+ #assistantQuickSettings .assistant-quick-setting-row{padding:7px 6px}
+ #assistantQuickSettings .assistant-quick-setting-controls{gap:3px}
+ #assistantQuickSettings .assistant-quick-setting-row button{min-width:36px;padding:5px 7px}
+}
