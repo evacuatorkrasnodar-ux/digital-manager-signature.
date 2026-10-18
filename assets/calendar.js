@@ -691,6 +691,12 @@ window.addEventListener('seyveo:calendar-plan-note',event=>{
   $('calendarEventDate').value=preferredDate;
   $('calendarEventDate').dispatchEvent(new Event('change',{bubbles:true}));
  }
+ const proposedTime=String(event.detail?.time||'');
+ if(isRealDate&&/^([01]\\d|2[0-3]):[0-5]\\d$/.test(proposedTime)){
+  $('calendarEventTime').value=proposedTime;
+  syncTimeDisplay();
+  showEventTimeHint();
+ }
  if(value.length>140){
   $('calendarEventNote').value=value.slice(140,740);
   $('calendarEventExtra').open=true;
