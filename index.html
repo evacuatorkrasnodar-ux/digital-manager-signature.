@@ -666,7 +666,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
 <header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Личные дела и поручения SEYVEO — в одном месте.</p></header>
 <section class="personal-tasks-panel" aria-labelledby="personalTasksTitle">
-<div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><div class="personal-tasks-head-actions"><button id="seyveoContactsOpen" class="personal-contacts-open" type="button">Контакты</button><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div></div>
+<div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div>
 <div id="personalTaskList" class="manage-card personal-tasks-list" aria-live="polite"><p class="personal-tasks-empty">Личные дела пока не созданы.</p></div>
 <p id="personalTasksNotice" class="personal-tasks-notice" role="status" aria-live="polite" hidden></p>
 </section>
@@ -724,6 +724,19 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
  </div>
 </section>
 <section id="calendarPersonalTools" class="pw-root" aria-label="Личные инструменты" hidden></section>
+<section id="seyveoWorldHub" class="seyveo-world-hub" aria-label="Мой мир · люди и связи" hidden>
+ <div class="world-hub-intro"><span class="world-hub-kicker">SEYVEO / МОЙ МИР</span><p>Ваши люди, важные даты и общение. Сейчас всё доступно для проверки — защита разделов ещё не подключена.</p></div>
+ <section class="world-people" aria-labelledby="worldPeopleHeading">
+  <div class="world-hub-heading"><div><h3 id="worldPeopleHeading">Мои люди</h3><small id="worldContactsSummary">Контакты SEYVEO · 0</small></div><button id="worldManageContacts" type="button">＋ Контакт</button></div>
+  <div id="worldPeopleList" class="world-people-list" aria-label="Мои контакты SEYVEO" aria-live="polite"></div>
+  <button id="worldAllContacts" class="world-all-contacts" type="button">Открыть справочник и изменить номера <span aria-hidden="true">↗</span></button>
+ </section>
+ <div class="world-connection-state" aria-label="Источники для тестирования">
+  <div><strong>Контакты SEYVEO</strong><small>Ручные записи · работают</small></div>
+  <div><strong>Контакты iPhone</strong><small>Не подключены · требуется интеграция</small></div>
+  <div><strong>Почта и сообщения</strong><small>Не подключены · доступа к перепискам нет</small></div>
+ </div>
+</section>
 <details id="calendarSpaceJournal" open><summary>Личные записи</summary><div class="pw-journal-body"><div class="cal-space-toolbar"><small id="calendarSpaceCount">Нет записей</small><button id="calendarSpaceAdd" type="button">＋ Добавить</button></div>
 <div id="calendarSpaceList" class="cal-space-list" aria-label="Ваши записи"></div>
 <div id="calendarSpaceForm" class="calendar-space-edit" data-show="false" hidden>
@@ -829,7 +842,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <dialog id="seyveoContactsDialog" class="cal-form-dialog personal-contacts-dialog" aria-labelledby="seyveoContactsTitle">
  <button type="button" class="seyveo-close-control seyveo-dialog-close" id="seyveoContactsClose" aria-label="Закрыть контакты"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
  <h2 id="seyveoContactsTitle">Мои контакты</h2>
- <p class="personal-contacts-intro">Небольшой личный справочник SEYVEO. Системные контакты iPhone не читаются.</p>
+ <p class="personal-contacts-intro">Люди из «Моего мира». Сейчас контакты можно сохранить только в SEYVEO; телефонная книга iPhone и вариант «в оба места» появятся после системной интеграции.</p>
  <div class="personal-contacts-privacy">Номера хранятся в браузере на этом устройстве <strong>без шифрования</strong>. Добавляйте контакты только с согласия их владельцев. Вы можете удалить их в любое время.</div>
  <form id="seyveoContactForm" autocomplete="off">
   <label>Имя<input id="seyveoContactName" type="text" maxlength="70" placeholder="Например, Юля" required autocomplete="off"></label>
