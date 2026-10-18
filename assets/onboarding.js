@@ -82,5 +82,6 @@
       if(!existing()&&safeRead(SKIPPED)!=='1')show();
     };
     setTimeout(openFirst,10000);
+    window.addEventListener('seyveo:first-help-finished',openFirst);
   }
 })();
