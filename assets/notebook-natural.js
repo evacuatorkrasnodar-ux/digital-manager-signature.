@@ -36,19 +36,25 @@ function dateHintFromNote(input,now=new Date()){
  return {date:date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate()),
   label:rel?rel[1]:week[1]};
 }
-/* One conservative, local suggestion per note. Multiple instructions or vague
-   dates are left untouched; every resulting action opens a review form. */
-function actionHintFromNote(input,now=new Date()){
+/* Safe local suggestions: an explicit single action, or a small action plan.
+   Nothing is stored or sent elsewhere until the person reviews and confirms. */
+const ACTION_WORDS='позвонить|позвони|позвоню|созвониться|встретиться|встреча|встречу|встречаемся|подготовить|отправить|купить|забрать|оплатить|написать|записаться|обсудить|проверить|сделать|заказать|напомнить|согласовать|поговорить';
+const ACTION=new RegExp('(?:^|[\\s,(])(?:'+ACTION_WORDS+')(?=\\s|[,.!?;:]|$)','i');
+const MEETING=/(?:^|[\s,(])(?:встретиться|встреча|встречу|встречаемся)(?=\s|[,.!?;:]|$)/i;
+function actionClauses(input){
  const raw=String(input||'').trim();
- if(!raw||raw.length>8000)return null;
- const clauses=raw.split(/[\n;]|[.!?](?=\s|$)/)
+ if(!raw||raw.length>8000)return [];
+ // Commas only divide a note when a new actionable verb follows them.
+ const re=new RegExp(',\\s*(?=(?:'+ACTION_WORDS+')(?:\\s|[,.!?;:]|$))','i');
+ return raw.split(/[\n;]|[.!?](?=\s|$)/).flatMap(part=>part.split(re))
   .map(value=>value.replace(/^\s*[-•\d.)]+\s*/,'').trim())
   .filter(Boolean).slice(0,30);
- const action=/(?:^|[\s,(])(?:позвонить|позвони|позвоню|созвониться|позвонить|встретиться|встреча|встречу|встречаемся|подготовить|отправить|купить|забрать|оплатить|написать|записаться|обсудить|проверить|сделать|заказать|напомнить|согласовать|поговорить)(?=\s|[,.!?;:]|$)/i;
- const candidates=clauses.filter(text=>action.test(text));
+}
+function actionHintFromNote(input,now=new Date()){
+ const candidates=actionClauses(input).filter(text=>ACTION.test(text));
  if(candidates.length!==1)return null;
  const phrase=candidates[0].slice(0,280);
- const event=/(?:^|[\s,(])(?:встретиться|встреча|встречу|встречаемся)(?=\s|[,.!?;:]|$)/i.test(phrase);
+ const event=MEETING.test(phrase);
  const hint=dateHintFromNote(phrase,now);
  // For precise clock times use the existing Calendar's editable review form.
  const timeMatch=phrase.match(/(?:^|\s)в\s+([01]?\d|2[0-3]):([0-5]\d)(?=\s|[,!?.]|$)/);
@@ -60,6 +66,24 @@ function actionHintFromNote(input,now=new Date()){
   ...(hint&&time?{time}:{}),
  };
 }
+/* A single plan of 2–5 clear tasks. Mixed meeting/task notes are left for
+   individual review; never quietly convert a meeting into a to-do. */
+function taskPlanFromNote(input,now=new Date()){
+ const candidates=actionClauses(input).filter(text=>ACTION.test(text));
+ if(candidates.length<2||candidates.length>5||candidates.some(text=>MEETING.test(text)))return null;
+ const seen=new Set(),items=[];
+ for(const phrase of candidates){
+  const hint=dateHintFromNote(phrase,now);
+  const title=phrase.slice(0,140).trim();
+  const due=hint?.date||'';
+  const key=title.toLocaleLowerCase('ru-RU').replace(/\s+/g,' ')+'|'+due;
+  if(seen.has(key))continue;
+  seen.add(key);
+  items.push({title,due});
+ }
+ return items.length>=2?{items}:null;
+}
+window.SEYVEO_NOTE_TASK_PLAN=taskPlanFromNote;
 window.SEYVEO_NOTE_ACTION_HINT=actionHintFromNote;
 window.SEYVEO_NOTE_SCHEDULE_HINT=dateHintFromNote;
 window.SEYVEO_NOTE_NL=parseNoteInstruction;
