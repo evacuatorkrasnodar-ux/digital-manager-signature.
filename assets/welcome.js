@@ -60,7 +60,7 @@ function playSignatureSound(){
  try{
   const ctx=signatureContext&&signatureContext.state!=='closed'
    ?signatureContext:(signatureContext=new AC());
-  if(ctx.state==='suspended'){
+  if(ctx.state!=='running'){
    const resumed=ctx.resume();
    if(resumed&&typeof resumed.catch==='function')resumed.catch(()=>{});
   }
