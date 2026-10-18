@@ -48,7 +48,7 @@ function assistantNames(){
    aliases=profile.assistantAliases.filter(name=>typeof name==='string').slice(0,5).map(name=>name.trim().slice(0,40));
  }catch{}
  // Compatibility with the name shown in early preview builds.
- if(preferred==='Милисса'){preferred='Мелисса';aliases=['Милисса','Мили',...aliases]}
+ if(preferred==='Милисса'){preferred='Мелисса';aliases=['Мили','Милисса',...aliases]}
  if(preferred==='Феликс')aliases=['Филя',...aliases];
  if(preferred==='Мелисса')aliases=['Мили',...aliases];
  return [...new Set([preferred,...aliases].filter(name=>normalize(name).length>=2))];
