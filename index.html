@@ -522,6 +522,11 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section>
 
 <div id="dynamic" class="dynamic" aria-live="polite"></div>
+<button id="homeLifeEntry" class="home-life-entry" type="button" aria-label="Открыть Личное пространство: Календарь, Блокнот, Здоровье, Забота и Мой мир">
+ <span class="home-life-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="2.4"/></svg></span>
+ <span class="home-life-copy"><small>ВАШЕ ЛИЧНОЕ ПРОСТРАНСТВО</small><strong>Мой мир и всё важное</strong><span>Календарь · Блокнот · Здоровье · Забота</span></span>
+ <span class="home-life-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
+</button>
 <section class="timeline" id="workTimeline" hidden aria-label="Активные поручения управляющего"><div class="timeline-head"><h2 class="timeline-title">В работе у SEYVEO</h2></div><div id="activityList" class="activity-list"></div></section>
 <section class="personal-brief" id="personalBrief" hidden aria-labelledby="personalBriefTitle">
 <div class="personal-brief-head"><div><small>ВАШИ ДЕЛА · НА ЭТОМ УСТРОЙСТВЕ</small><strong id="personalBriefTitle">Ближайшие дела</strong> <span id="personalBriefCount" class="personal-brief-count" hidden></span></div><button id="personalAddHome" class="personal-brief-add" type="button">+ Добавить</button></div>
@@ -619,21 +624,30 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </div>
 <p id="manageThemeNote" class="manage-theme-note" aria-live="polite">Выбрана тёмная тема Black Velvet.</p>
 </section>
+</main><main class="life-main" id="lifePage" hidden aria-labelledby="lifeTitle">
+<header class="life-heading">
+<button class="life-back" id="lifeBack" type="button" aria-label="Вернуться на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Главная</span></button>
+<p class="life-eyebrow">SEYVEO / LIFE</p><h1 id="lifeTitle" tabindex="-1">Личное пространство</h1>
+<p class="life-description">Всё важное — без лишних переходов. SEYVEO соединяет события и записи, сохраняя ваши решения за вами.</p>
+</header>
+<section class="calendar-spaces" aria-labelledby="calendarSpacesHeading">
+<div class="calendar-spaces-head"><h2 id="calendarSpacesHeading">Ваши разделы</h2></div>
+<div id="calendarSpaces" class="calendar-spaces-grid">
+<button type="button" class="calendar-space-button" data-calendar-space="calendar" aria-label="Открыть Календарь"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13.5 14h2"/></svg><span>Календарь</span><small>События и планы</small></button>
+<button type="button" class="calendar-space-button" data-calendar-space="notes" aria-label="Открыть Блокнот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span><small>Записи и идеи</small></button>
+<button type="button" class="calendar-space-button" data-calendar-space="health" aria-label="Открыть Здоровье"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span><small>Ваши показатели</small></button>
+<button type="button" class="calendar-space-button" data-calendar-space="care" aria-label="Открыть Заботу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span><small>Внимание к себе</small></button>
+<button type="button" class="calendar-space-button" data-calendar-space="world" aria-label="Открыть Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Мой мир</span><small>Люди и важные даты</small></button>
+</div>
+</section>
+<p class="life-footnote">Сохранённые записи остались на месте. Защита данных пока не подключена.</p>
 </main><main class="calendar-main" id="calendarPage" hidden aria-labelledby="calendarTitle">
 <header class="calendar-header">
 <div><p class="calendar-kicker">SEYVEO / ВРЕМЯ И ПЛАНЫ</p><h1 id="calendarTitle" tabindex="-1">Календарь</h1><p>Встречи, сроки и дела — без лишнего шума.</p></div>
 <div class="calendar-header-actions">
 <button id="calendarAdd" type="button" class="cal-round calendar-header-add" aria-label="Добавить событие"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 </div></header>
-<section class="calendar-spaces" aria-labelledby="calendarSpacesHeading">
-<div class="calendar-spaces-head"><h2 id="calendarSpacesHeading">Личное пространство</h2></div>
-<div id="calendarSpaces" class="calendar-spaces-grid">
-<button type="button" class="calendar-space-button" data-calendar-space="notes" aria-label="Открыть Блокнот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button>
-<button type="button" class="calendar-space-button" data-calendar-space="health" aria-label="Открыть Здоровье"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button>
-<button type="button" class="calendar-space-button" data-calendar-space="care" aria-label="Открыть Заботу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button>
-<button type="button" class="calendar-space-button" data-calendar-space="world" aria-label="Открыть Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Мой мир</span></button>
-</div>
-</section>
+
 <div class="cal-periods" role="group" aria-label="Вид календаря">
 <button type="button" data-calendar-mode="day" aria-pressed="false">День</button>
 <button type="button" data-calendar-mode="week" aria-pressed="false">Неделя</button>
@@ -1624,13 +1638,15 @@ function syncAppPage(){
   const tasks=location.hash==='#tasks';
   const picture=location.hash==='#picture';
   const calendar=location.hash==='#calendar';
-  const home=!manage&&!tasks&&!picture&&!calendar;
+  const life=location.hash==='#life';
+  const home=!manage&&!tasks&&!picture&&!calendar&&!life;
   $('homeHeader').hidden=!home;
   $('homePage').hidden=!home;
   $('managePage').hidden=!manage;
   $('tasksPage').hidden=!tasks;
   $('picturePage').hidden=!picture;
   $('calendarPage').hidden=!calendar;
+  $('lifePage').hidden=!life;
   $('manageOverview').hidden=theme;
   $('manageThemeScreen').hidden=!theme;
   const current=tasks||calendar?'navTasks':manage?'navManage':picture?'navPicture':'navHome';
@@ -1639,7 +1655,7 @@ function syncAppPage(){
     if(id===current)$(id).setAttribute('aria-current','page');
     else $(id).removeAttribute('aria-current');
   }
-  document.title=calendar?'Календарь · SEYVEO':tasks?'Дела · SEYVEO':picture?'Картина · SEYVEO':theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
+  document.title=life?'Личное пространство · SEYVEO':calendar?'Календарь · SEYVEO':tasks?'Дела · SEYVEO':picture?'Картина · SEYVEO':theme?'Тема · SEYVEO':manage?'Управление · SEYVEO':'Цифровой управляющий · Living Interface';
   if(!home){
     $('signal').classList.remove('is-appearing');
     stopPearlMist();
@@ -1665,6 +1681,8 @@ $('navTasks').addEventListener('click',()=>{
   location.hash='tasks';
 });
 $('homeCalendarTrigger').addEventListener('click',()=>{if(location.hash!=='#calendar')location.hash='calendar';else syncAppPage()});
+$('homeLifeEntry').addEventListener('click',()=>{if(location.hash!=='#life')location.hash='life';else syncAppPage()});
+$('lifeBack').addEventListener('click',goHome);
 $('navPicture').addEventListener('click',()=>{if(location.hash!=='#picture')location.hash='picture';else syncAppPage()});
 $('navManage').addEventListener('click',()=>{if(location.hash!=='#manage')location.hash='manage';else syncAppPage()});
 // Focus the new screen's heading only for deliberate in-app navigation.
