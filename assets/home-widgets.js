@@ -103,6 +103,22 @@ function renderHome(){
   arrow.append(svg);button.append(label,value,arrow);grid.append(button);
  }
 }
+function renderConfigPreview(){
+ const preview=$('homeWidgetsMiniPreview');
+ if(!preview)return;
+ preview.replaceChildren();
+ // Fixed illustrative numbers; never fake actual sales or personal records.
+ const examples={clients:'12',orders:'8',money:'48 тыс. ₽',plan:'3',notes:'5'};
+ if(!selected.length){
+  preview.append(create('p','manage-picture-example-empty','Ничего не выбрано. Добавьте карточку из списка ниже.'));
+  return;
+ }
+ for(const id of selected){
+  const tile=create('div','manage-picture-example-tile');
+  tile.append(create('span','',BY_ID[id].label),create('strong','',examples[id]));
+  preview.append(tile);
+ }
+}
 function renderCatalog(){
  catalog.replaceChildren();
  const choices=[...selected,...CATALOG.map(x=>x.id).filter(x=>!selected.includes(x))];
@@ -135,6 +151,7 @@ function renderCatalog(){
   row.append(copy,buttons);catalog.append(row);
  }
  $('homeWidgetsManageCount').textContent=String(selected.length);
+ renderConfigPreview();
 }
 function rowsFor(id,datum){
  const unconverted=Math.max(0,datum.leads-datum.sales);
