@@ -661,7 +661,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
 <header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОРУЧЕНИЯ</p><h1 id="tasksTitle">Дела</h1><p>Личные дела и поручения SEYVEO — в одном месте.</p></header>
 <section class="personal-tasks-panel" aria-labelledby="personalTasksTitle">
-<div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div>
+<div class="personal-tasks-head"><h2 id="personalTasksTitle">Мои личные дела</h2><div class="personal-tasks-head-actions"><button id="seyveoContactsOpen" class="personal-contacts-open" type="button">Контакты</button><button id="personalAddTasks" class="personal-tasks-add" type="button">+ Добавить дело</button></div></div>
 <div id="personalTaskList" class="manage-card personal-tasks-list" aria-live="polite"><p class="personal-tasks-empty">Личные дела пока не созданы.</p></div>
 <p id="personalTasksNotice" class="personal-tasks-notice" role="status" aria-live="polite" hidden></p>
 </section>
@@ -821,6 +821,29 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="personal-task-actions"><button class="btn" id="personalTaskCancel" type="button">Отмена</button><button class="btn primary" type="submit">Сохранить</button></div>
 <small id="personalTaskStatus" role="status" aria-live="polite"></small>
 </form></dialog>
+<dialog id="seyveoContactsDialog" class="cal-form-dialog personal-contacts-dialog" aria-labelledby="seyveoContactsTitle">
+ <button type="button" class="seyveo-close-control seyveo-dialog-close" id="seyveoContactsClose" aria-label="Закрыть контакты"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
+ <h2 id="seyveoContactsTitle">Мои контакты</h2>
+ <p class="personal-contacts-intro">Небольшой личный справочник SEYVEO. Системные контакты iPhone не читаются.</p>
+ <div class="personal-contacts-privacy">Номера хранятся в браузере на этом устройстве <strong>без шифрования</strong>. Добавляйте контакты только с согласия их владельцев. Вы можете удалить их в любое время.</div>
+ <form id="seyveoContactForm" autocomplete="off">
+  <label>Имя<input id="seyveoContactName" type="text" maxlength="70" placeholder="Например, Юля" required autocomplete="off"></label>
+  <label>Телефон<input id="seyveoContactPhone" type="tel" inputmode="tel" maxlength="35" placeholder="+7 999 123-45-67" required autocomplete="off"></label>
+  <div class="personal-contacts-form-actions"><button id="seyveoContactCancel" type="button" hidden>Отмена</button><button id="seyveoContactSave" type="submit">Сохранить контакт</button></div>
+ </form>
+ <p id="seyveoContactStatus" class="personal-contacts-status" role="status" aria-live="polite"></p>
+ <div id="seyveoContactsList" class="personal-contacts-list" aria-label="Сохранённые контакты"></div>
+</dialog>
+<dialog id="seyveoCallDialog" class="cal-form-dialog personal-call-dialog" aria-labelledby="seyveoCallTitle">
+ <button type="button" class="seyveo-close-control seyveo-dialog-close" id="seyveoCallClose" aria-label="Закрыть звонок"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
+ <h2 id="seyveoCallTitle">Позвонить</h2>
+ <p class="personal-call-help">Выберите номер. iPhone предложит открыть приложение «Телефон»; само дело не будет отмечено выполненным.</p>
+ <label class="personal-call-search-label">Найти контакт<input id="seyveoCallSearch" type="search" maxlength="70" autocomplete="off" placeholder="Поиск по имени"></label>
+ <div id="seyveoCallList" class="personal-call-list" aria-label="Контакты для звонка"></div>
+ <div class="personal-call-picked" id="seyveoCallPicked" hidden><small>Выбран контакт</small><strong id="seyveoCallPickedName"></strong><span id="seyveoCallPickedPhone"></span></div>
+ <p id="seyveoCallStatus" class="personal-contacts-status" role="status" aria-live="polite"></p>
+ <div class="personal-call-actions"><button id="seyveoCallAddContact" type="button">+ Контакт</button><a id="seyveoCallDial" href="#" role="button" hidden>Позвонить</a></div>
+</dialog>
 <dialog id="onboardDialog" class="onboard-dialog" aria-labelledby="onboardTitle" aria-describedby="onboardIntro">
 <div class="onboard-top"><div><span class="onboard-eyebrow">SEYVEO / ЗНАКОМСТВО</span><h2 id="onboardTitle" class="onboard-title">Давай познакомимся.</h2></div><button id="onboardClose" class="onboard-dismiss seyveo-close-control" type="button" aria-label="Закрыть знакомство"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
 <p id="onboardIntro" class="onboard-intro">Я SEYVEO — твой будущий цифровой управляющий. С чего начнём? Можно выбрать сейчас, а изменить потом.</p>
