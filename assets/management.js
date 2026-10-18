@@ -231,6 +231,7 @@ const KEYS=Object.freeze({
  draft:'seyveo-draft-v1',
   assistantChatHistory:'seyveo-assistant-chat-history-v1',
  tasks:'seyveo-personal-tasks-v1',
+ contacts:'seyveo-private-contacts-v1',
  calendarEvents:'seyveo-calendar-events-v1',
  lifeSpaces:'seyveo-life-spaces-v1',
  privateWellness:'seyveo-private-health-care-v1',
@@ -251,6 +252,7 @@ function snapshot(){
  const draft=read(KEYS.draft);
  const chatHistory=parsed(read(KEYS.assistantChatHistory),[]);
  const tasks=parsed(read(KEYS.tasks),[]);
+ const contacts=parsed(read(KEYS.contacts),[]);
  const calendarEvents=parsed(read(KEYS.calendarEvents),[]);
  const lifeSpaces=parsed(read(KEYS.lifeSpaces),[]);
  const privateWellness=parsed(read(KEYS.privateWellness),null);
@@ -269,6 +271,8 @@ function snapshot(){
   notes:Array.isArray(notes)?notes:[],
    assistantChatHistory:Array.isArray(chatHistory)?chatHistory.filter(row=>row&&typeof row.q==='string'&&typeof row.a==='string').slice(-60):[],
   personalTasks:Array.isArray(tasks)?tasks:[],
+  privateContacts:Array.isArray(contacts)?contacts.filter(c=>
+   c&&typeof c.id==='string'&&typeof c.name==='string'&&typeof c.phone==='string').slice(0,40):[],
   calendarEvents:Array.isArray(calendarEvents)?calendarEvents:[],
   lifeSpaces:Array.isArray(lifeSpaces)?lifeSpaces:[],
   privateWellness:privateWellness&&typeof privateWellness==='object'&&!Array.isArray(privateWellness)?privateWellness:null,
@@ -299,6 +303,7 @@ function drawData(){
   ['Мои записи',String(countOf(record.notes))],
    ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
+  ['Мой мир · Контакты',String(countOf(record.privateContacts))+' контактов'],
   ['Календарь',String(countOf(record.calendarEvents))+' локальных событий'],
   ['Личные пространства',String(countOf(record.lifeSpaces))+' записей'],
   ['Здоровье и забота',record.privateWellness?'Личный журнал сохранён':'Без дополнительных записей'],
