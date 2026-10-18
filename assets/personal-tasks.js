@@ -104,7 +104,9 @@ function writeContacts(list){
 }
 function showContactStatus(message){contactStatus.textContent=message||'';}
 function callTargetFromTask(title){
- const match=String(title||'').trim().match(/^(?:позвонить|позвони|перезвонить|набрать)\s+(?:по\s+телефону\s+)?(.+)$/i);
+ // Notebook can retain a leading day: «В четверг позвонить Андрею».
+ const phrase=String(title||'').trim().replace(/^(?:(?:сегодня|завтра|послезавтра)\s+|(?:в|во|на)\s+(?:понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье)\s+)/i,'');
+ const match=phrase.match(/^(?:позвонить|позвони|перезвонить|набрать)\s+(?:по\s+телефону\s+)?(.+)$/i);
  if(!match)return '';
  const target=match[1].split(/[,;.!?\n]/)[0]
   .replace(/\s+(?:завтра|послезавтра|сегодня|по\s+поводу|насч[её]т|чтобы|в\s+\d{1,2}(?::\d{2})?)(?:\s.*)?$/i,'')
