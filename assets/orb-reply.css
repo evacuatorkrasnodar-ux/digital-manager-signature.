@@ -81,3 +81,76 @@
  #orb.seyveo-presence-speaking .orb-reply-presence{opacity:.18}
  #orb.seyveo-presence-ack .orb-reply-presence{animation:none!important;opacity:.15}
 }
+
+/* SEYVEO Answer Together v1.
+   Typed assistant responses appear in the status space BELOW the approved
+   sphere instead of opening a full-screen modal above it. The sphere's
+   dimensions, anchor, image and Deep Reveal are never changed. */
+#stage.has-inline-reply>.message{display:none}
+#stage .orb-inline-reply{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ width:min(100%,385px);max-width:100%;min-width:0;
+ margin:1px auto 0;padding:12px 14px 12px;
+ border:1px solid var(--line);
+ border-radius:21px;
+ color:var(--text);
+ background:linear-gradient(155deg,rgba(255,255,255,.044),transparent 65%),var(--card);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 7px 20px rgba(0,0,0,.13);
+ animation:seyveo-inline-answer-appear .26s ease-out both;
+}
+#stage .orb-inline-reply[hidden]{display:none!important}
+#stage .orb-inline-reply-head{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ min-height:40px;
+}
+#stage .orb-inline-reply-heading{
+ display:flex;align-items:center;gap:7px;min-width:0;flex:1;flex-wrap:wrap;
+}
+#stage .orb-inline-reply-mark{
+ width:9px;height:9px;flex:none;border:1px solid rgba(239,245,253,.8);
+ border-radius:50%;background:radial-gradient(circle at 37% 30%,#fff,#c9d8e8 65%,#7f99b5);
+ box-shadow:0 0 0 2px rgba(226,236,251,.06);
+}
+#stage .orb-inline-reply-heading strong{
+ min-width:0;font-size:12px;line-height:1.3;font-weight:585;letter-spacing:-.008em;
+}
+#stage .orb-inline-reply-heading small{
+ flex-basis:100%;padding-left:16px;
+ font-size:10px;font-weight:420;line-height:1.15;color:var(--secondary);
+}
+#stage .orb-inline-reply-buttons{display:flex;gap:4px;flex:none;align-items:center}
+#stage .orb-inline-reply-buttons button{
+ display:grid;place-items:center;flex:none;width:40px;height:40px;
+ padding:0;border:1px solid var(--soft-line);
+ border-radius:50%;background:var(--card2);color:var(--text);
+}
+#stage .orb-inline-reply-buttons button svg{
+ width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#stage .orb-inline-reply-text{
+ min-width:0;max-height:min(170px,27svh);
+ overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ margin:9px 0 2px;padding:9px 2px 3px 0;border-top:1px solid var(--soft-line);
+ color:var(--text);font-size:13px;line-height:1.58;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ scrollbar-width:thin;
+}
+#stage .orb-inline-reply-text:focus-visible{
+ outline:1px solid var(--secondary);outline-offset:2px;border-radius:5px;
+}
+@keyframes seyveo-inline-answer-appear{
+ from{opacity:0;transform:translateY(5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+:root[data-theme=light] #stage .orb-inline-reply{
+ background:linear-gradient(155deg,#fff,rgba(247,249,252,.96));
+ box-shadow:0 6px 18px rgba(92,107,127,.09);
+}
+@media(max-height:740px){
+ #stage .orb-inline-reply{padding:9px 11px;border-radius:18px}
+ #stage .orb-inline-reply-text{max-height:110px;font-size:12.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #stage .orb-inline-reply{animation:none}
+}
