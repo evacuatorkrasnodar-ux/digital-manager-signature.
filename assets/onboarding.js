@@ -78,7 +78,7 @@
     .some(key=>safeRead(key)!==null);
   if(!established&&!existing()&&safeRead(SKIPPED)!=='1'){
     const openFirst=()=>{
-      if(document.hidden||location.hash||document.querySelector('dialog[open]'))return;
+      if(document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
       if(!existing()&&safeRead(SKIPPED)!=='1')show();
     };
     setTimeout(openFirst,10000);
