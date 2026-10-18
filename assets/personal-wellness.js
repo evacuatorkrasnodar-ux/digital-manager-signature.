@@ -317,7 +317,8 @@ function fillSteps(){const entry=getStep($('pwStepsDate').value),n=stepCount(ent
 function renderMeds(){
  const rows=$('pwMedList');rows.replaceChildren();
  const meds=state.medications.filter(row=>row&&typeof row.name==='string').slice().sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
- $('pwCardmeds').textContent=meds.length?meds.length+' по расписанию':'По назначению';
+ const completed=meds.filter(row=>state.medLogs[row.id+'|'+today()]==='taken').length;
+ $('pwCardmeds').textContent=meds.length?completed+' из '+meds.length+' отмечено':'Нет назначений';
  if(!meds.length)rows.append(text('p','Пока нет записанных назначений.','pw-empty'));
  for(const row of meds){
   const wrap=document.createElement('article');wrap.className='pw-list-row';
@@ -325,7 +326,12 @@ function renderMeds(){
   info.append(text('strong',(row.time||'—')+' · '+row.name),text('small',row.dose||''));
   const done=state.medLogs[row.id+'|'+today()]==='taken';
   const buttons=document.createElement('div');buttons.className='pw-row-actions';
-  const take=text('button',done?'✓ Принято':'Отметить приём');take.type='button';take.disabled=done;take.dataset.pwTaken=row.id;
+  const take=text('button',done?'✓ Принято':'Отметить приём');
+  take.type='button';take.dataset.pwTaken=row.id;
+  take.classList.add('pw-taken');
+  take.setAttribute('aria-pressed',String(done));
+  take.setAttribute('aria-label',done?'Снять отметку о приёме: '+row.name:'Отметить приём: '+row.name);
+  take.title=done?'Нажмите, чтобы исправить ошибочную отметку':'';
   const del=text('button','Удалить');del.type='button';del.dataset.pwDelMed=row.id;
   buttons.append(take,del);wrap.append(info,buttons);rows.append(wrap);
  }
@@ -333,7 +339,8 @@ function renderMeds(){
 function renderSleep(){
  const rows=$('pwSleepList');rows.replaceChildren();
  const data=state.sleep.filter(r=>r&&dateOk(r.date)).slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,50);
- $('pwCardsleep').textContent=data.length?data.length+' записей':'Личный дневник';
+ // A quick glance at the last entered night, never a guessed measurement.
+ $('pwCardsleep').textContent=data.length?String(data[0].hours).replace('.',',')+' ч · '+stamp(data[0].date):'Нет записей';
  if(!data.length){rows.append(text('p','Добавьте первую запись сна.','pw-empty'));return;}
  const names={good:'Хорошо',normal:'Обычно',poor:'Беспокойно'};
  for(const row of data){
@@ -452,7 +459,19 @@ host.addEventListener('click',event=>{
   }return;
  }
  if(btn.dataset.pwTaken){
-  if(save(d=>d.medLogs[btn.dataset.pwTaken+'|'+today()]='taken')){renderMeds();notice('Приём отмечен.');}return;
+  const key=btn.dataset.pwTaken+'|'+today();
+  const wasTaken=state.medLogs[key]==='taken';
+  if(save(d=>{
+   if(wasTaken)delete d.medLogs[key];
+   else d.medLogs[key]='taken';
+  })){
+   renderMeds();
+   // Keep focus in the same row after replacing the button, without scrolling.
+   const row=host.querySelector('[data-pw-taken="'+CSS.escape(btn.dataset.pwTaken)+'"]');
+   if(row)row.focus({preventScroll:true});
+   notice(wasTaken?'Отметка о приёме отменена.':'Приём отмечен.');
+  }
+  return;
  }
  if(btn.dataset.pwDelMed){
   if(!confirm('Удалить назначение из личного журнала?'))return;
