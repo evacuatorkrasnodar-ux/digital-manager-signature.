@@ -141,6 +141,14 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .message h2{font-size:var(--type-heading);font-weight:660;line-height:1.27;letter-spacing:-.03em;margin:10px 0 8px}
 .message p{font-size:var(--type-body-compact);color:var(--secondary);line-height:1.5;margin:0}
 .dynamic{width:100%}
+.dynamic[hidden],.demo-replay-action[hidden]{display:none!important}
+/* Quiet, clearly clickable replay action; no card/field silhouette in calm state. */
+.demo-replay-action{display:flex;justify-content:flex-end;width:100%;padding:2px 3px 0;margin:0}
+.demo-replay-action button{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:7px 5px;border:0;border-radius:10px;background:transparent;color:var(--secondary);font:inherit;font-size:var(--type-label);font-weight:520;line-height:1.2;cursor:pointer}
+.demo-replay-action button svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.demo-replay-action button:hover{color:var(--text)}
+.demo-replay-action button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
 .decision-card{width:100%;padding:16px 17px 14px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(155deg,#ffffff07,transparent 54%),var(--card);box-shadow:0 8px 24px var(--shadow);animation:arrive .26s ease-out}
 .decision-card.is-spotlight{outline:1px solid var(--text);outline-offset:3px}
 :root[data-theme=light] .decision-card{background:linear-gradient(150deg,#fff, #fafbfd)}
@@ -601,6 +609,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section>
 
 <div id="dynamic" class="dynamic" aria-live="polite"></div>
+<div id="demoReplayAction" class="demo-replay-action" hidden><button type="button" id="replayDemo" aria-label="Повторить демонстрационные рекомендации"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11a8.5 8.5 0 1 1 2.8 6.3M3.5 4.5v6.7h6.7"/></svg><span>Повторить демо</span></button></div>
 
 <section class="timeline" id="workTimeline" hidden aria-label="Активные поручения управляющего"><div class="timeline-head"><h2 class="timeline-title">В работе у SEYVEO</h2></div><div id="activityList" class="activity-list"></div></section>
 <section class="personal-brief" id="personalBrief" hidden aria-labelledby="personalBriefTitle">
@@ -1813,7 +1822,9 @@ const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?
 $('stage').dataset.mode=mode;
 transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
 syncHomeVoice();
-$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'<div class="demo-replay"><span>Демо завершено.</span><button type="button" id="replayDemo">Повторить ›</button></div>':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
+$('dynamic').hidden=isCalm;
+$('demoReplayAction').hidden=!isCalm;
+$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 $('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>approve(story));
 $('replayDemo')?.addEventListener('click',()=>{state.index=0;confirmation=null;save();render()});
