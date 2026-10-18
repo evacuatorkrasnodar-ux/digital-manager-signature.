@@ -230,11 +230,13 @@ function startSession(kind){
   button.textContent=session.paused?'Продолжить':'Пауза';
   clearInterval(timer);timer=0;
   if(session.paused){
-   if(isBreath)$('pwBreathRing').className='pw-breath-ring is-paused';
+   // Keep the current breathing animation frame instead of shrinking the pearl.
+   if(isBreath)$('pwBreathRing').classList.add('is-paused');
    else $('pwEye').classList.remove('is-running');
   }else{
-   if(!isBreath)$('pwEye').classList.add('is-running');
-   tick();timer=setInterval(tick,180);
+   if(isBreath)$('pwBreathRing').classList.remove('is-paused');
+   else $('pwEye').classList.add('is-running');
+   tick();timer=setInterval(tick,250);
   }
   return;
  }
@@ -243,7 +245,7 @@ function startSession(kind){
  if(isBreath)$('pwBreathDuration').disabled=true;
  else $('pwEye').classList.add('is-running');
  tick();
- timer=setInterval(tick,180);
+ timer=setInterval(tick,250);
 }
 function tick(){
  if(!session||session.paused)return;
@@ -253,16 +255,19 @@ function tick(){
  const remain=clock(session.total-session.elapsed);
  if(session.kind==='breath'){
   const inhale=session.elapsed%10<4,ring=$('pwBreathRing');
-  const cls='pw-breath-ring is-active '+(inhale?'inhale':'exhale');
-  if(ring.className!==cls)ring.className=cls;
-  $('pwBreathStage').textContent=inhale?'Плавный вдох':'Спокойный выдох';
-  $('pwBreathClock').textContent=remain;
+  // CSS owns the whole 4s/6s cycle; the timer only labels the current phase.
+  if(!ring.classList.contains('is-active'))ring.className='pw-breath-ring is-active';
+  const stage=inhale?'Плавный вдох':'Спокойный выдох';
+  if($('pwBreathStage').textContent!==stage)$('pwBreathStage').textContent=stage;
+  if($('pwBreathClock').textContent!==remain)$('pwBreathClock').textContent=remain;
  }else{
   let elapsed=session.elapsed,index=0;
   while(index<eyeStages.length-1&&elapsed>=eyeStages[index].seconds){elapsed-=eyeStages[index].seconds;index++;}
-  $('pwEyeStage').textContent=eyeStages[index].name;
-  $('pwEyeTip').textContent=eyeStages[index].tip;
-  $('pwEyeClock').textContent=remain;
+  if($('pwEyeStage').textContent!==eyeStages[index].name)
+   $('pwEyeStage').textContent=eyeStages[index].name;
+  if($('pwEyeTip').textContent!==eyeStages[index].tip)
+   $('pwEyeTip').textContent=eyeStages[index].tip;
+  if($('pwEyeClock').textContent!==remain)$('pwEyeClock').textContent=remain;
  }
 }
 function renderWater(){
@@ -489,7 +494,7 @@ document.addEventListener('visibilitychange',()=>{
   session.paused=true;session.last=performance.now();
   clearInterval(timer);timer=0;
   $(session.kind==='breath'?'pwBreathStart':'pwEyeStart').textContent='Продолжить';
-  if(session.kind==='breath')$('pwBreathRing').className='pw-breath-ring is-paused';
+  if(session.kind==='breath')$('pwBreathRing').classList.add('is-paused');
   else $('pwEye').classList.remove('is-running');
  }
  if(!document.hidden&&space){state=load();setInputDefaults();render();}
