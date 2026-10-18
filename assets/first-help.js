@@ -253,7 +253,9 @@ window.SEYVEO_FIRST_HELP={start,isActive:()=>active};
 // On first fresh local launch, existing owner-acquaintance has priority.
 // Existing installations are NOT interrupted. Mark the invitation as seen
 // only after it is actually offered, including when dismissed.
-if(FIRST){
+if(FIRST&&!document.getElementById('welcomeDialog')){
+ // On new installations First Light replaces the automatic long tour.
+ // The complete coach remains available from Management on demand.
  const offer=()=>{
   if(safeGet(KEY)||active||document.hidden||location.hash||document.querySelector('dialog[open]'))return;
   seen();start();
