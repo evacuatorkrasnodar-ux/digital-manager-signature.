@@ -47,6 +47,13 @@
  background:radial-gradient(circle at 30% 28%,#fff,#d6e5fa 61%,#8da6c9);
  box-shadow:0 0 0 3px rgba(197,219,248,.10);
 }
+#firstHelpCoach[data-success="yes"] .first-help-badge::before{
+ box-shadow:0 0 0 3px rgba(197,219,248,.17),0 0 12px rgba(217,236,255,.36);
+}
+#firstHelpCoach .first-help-panel:focus{outline:none}
+#firstHelpCoach .first-help-panel:focus-visible{
+ outline:2px solid rgba(196,218,246,.68);outline-offset:3px;
+}
 #firstHelpCoach .first-help-count{
  font-size:10px;white-space:nowrap;color:var(--help-muted);
  font-variant-numeric:tabular-nums;
