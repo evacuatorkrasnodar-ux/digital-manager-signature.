@@ -10,7 +10,7 @@ const notice=$('personalTasksNotice');
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
-let pendingSourceNoteId='';
+let pendingSourceNoteId='',justCompletedTaskId='';
 function safeNoteId(value){return typeof value==='string'&&value.length>0&&value.length<=128?value:'';}
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
@@ -39,6 +39,43 @@ function displayDate(item){
  const label=strDate(item.due);if(!label)return '';
  const current=new Date(),today=[current.getFullYear(),String(current.getMonth()+1).padStart(2,'0'),String(current.getDate()).padStart(2,'0')].join('-');
  return item.due<today?'Срок прошёл · '+label:item.due===today?'Сегодня':'До '+label;
+}
+/* Suggest only a next EXPLICIT instruction from the same current note.
+   Ignore already saved tasks (even completed), ambiguous notes and old relative
+   dates. The suggestion exists only after a user's completion tap. */
+function taskKey(value){return String(value||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');}
+function findContinuation(item,all){
+ if(!item?.done||!item.sourceNoteId||typeof window.SEYVEO_NOTE_TASK_PLAN!=='function')return null;
+ const notes=window.SEYVEO_NOTES_API?.getNotes?.();
+ const origin=Array.isArray(notes)?notes.find(note=>note.id===item.sourceNoteId):null;
+ if(!origin||origin.paper||origin.preserveLines)return null;
+ const plan=window.SEYVEO_NOTE_TASK_PLAN(origin.text);
+ if(!plan||!Array.isArray(plan.items))return null;
+ const index=plan.items.findIndex(part=>taskKey(part.title)===taskKey(item.title));
+ if(index<0)return null;
+ const stored=new Set(all.map(part=>taskKey(part.title)));
+ for(const candidate of plan.items.slice(index+1)){
+  if(typeof candidate?.title==='string'&&!stored.has(taskKey(candidate.title))){
+   // Relative dates in old notes must not be reinterpreted as future dates.
+   return {title:candidate.title.slice(0,140),sourceNoteId:item.sourceNoteId};
+  }
+ }
+ return null;
+}
+function continuationPrompt(item,action){
+ const card=element('section','personal-task-continuation');
+ card.setAttribute('aria-label','SEYVEO предлагает следующий шаг');
+ const head=element('strong','personal-task-continuation-title','✧ SEYVEO · Продолжение дела');
+ const description=element('p','','После выполнения «'+item.title+'» в исходной заметке осталось ещё одно поручение:');
+ const suggestion=element('p','personal-task-continuation-next',action.title);
+ const buttons=element('div','personal-task-continuation-actions');
+ const prepare=element('button','personal-task-continuation-prepare','Подготовить');
+ prepare.type='button';prepare.dataset.taskNext=item.id;
+ const dismiss=element('button','personal-task-continuation-dismiss','Не сейчас');
+ dismiss.type='button';dismiss.dataset.taskNextDismiss='true';
+ buttons.append(prepare,dismiss);
+ card.append(head,description,suggestion,buttons);
+ return card;
 }
 function row(item,compact=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');section.dataset.taskId=item.id;
@@ -90,6 +127,12 @@ function render(){
   if(done.length){const head=element('h3','personal-list-title','Выполнено · '+done.length);list.append(head);
    done.slice(0,30).forEach(task=>list.append(row(task)))}
  }
+ // Offer a single short-lived continuation only for the task just completed.
+ const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
+ if(completed){
+  const action=findContinuation(completed,all);
+  if(action)list.prepend(continuationPrompt(completed,action));
+ }
  summary.replaceChildren();
  if(open.length)open.slice(0,2).forEach(task=>summary.append(row(task,true)));
  else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Личных дел пока нет.'));
@@ -130,7 +173,7 @@ function put(e){
  const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,done:false,createdAt:new Date().toISOString(),doneAt:'',
  ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
- pendingSourceNoteId='';
+ pendingSourceNoteId='';justCompletedTaskId='';
  dialog.close();render();
 }
 function change(id,del=false){
@@ -142,6 +185,7 @@ function change(id,del=false){
    target.done=!target.done;target.doneAt=target.done?new Date().toISOString():'';
    if(!save(all)){showTaskError('Не удалось сохранить изменение. Проверьте память устройства.');return}
  }
+ justCompletedTaskId=!del&&target.done?target.id:'';
  render();
 }
 form.addEventListener('submit',put);
@@ -152,6 +196,21 @@ list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
  else if(btn.dataset.taskDelete)change(btn.dataset.taskDelete,true);
+ else if(btn.dataset.taskNextDismiss){
+  justCompletedTaskId='';render();
+ }
+ else if(btn.dataset.taskNext){
+  const completed=read().find(item=>item.id===btn.dataset.taskNext&&item.done);
+  const suggestion=completed?findContinuation(completed,read()):null;
+  if(!suggestion){justCompletedTaskId='';render();showTaskError('Следующее поручение уже создано или исходная заметка изменилась.');return;}
+  justCompletedTaskId='';
+  openDialog();
+  input.value=suggestion.title;
+  pendingSourceNoteId=suggestion.sourceNoteId;
+  date.value='';syncDueDateDisplay();
+  $('personalTaskStatus').textContent='Из исходной заметки. Проверьте текст и укажите срок, если он нужен. Сохранение — только по вашему решению.';
+  input.focus({preventScroll:true});
+ }
  else if(btn.dataset.taskOrigin){
   const target=read().find(row=>row.id===btn.dataset.taskOrigin);
   if(!target?.sourceNoteId)return;
@@ -222,11 +281,12 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
   detail.result={status:'error',added:0,duplicates,
    message:'Не удалось сохранить план. Проверьте память устройства.'};return;
  }
+ justCompletedTaskId='';
  render();
  detail.result={status:'saved',added:pending.length,duplicates,
   message:'Добавлено в Дела: '+pending.length+(duplicates?' · уже были: '+duplicates:'')+'.'};
 });
-window.addEventListener('storage',event=>{if(event.key===KEY)render()});
+window.addEventListener('storage',event=>{if(event.key===KEY){justCompletedTaskId='';render()}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 render();
 })();
