@@ -28,7 +28,7 @@ const steps=[
  {name:'Мой мир',body:'Глобус наверху открывает личные разделы: календарь, блокнот, здоровье, заботу и людей. Нажмите на него.',target:'homeWorldTrigger',button:'Дальше',hint:'Личное — отдельно от бизнеса'},
  {name:'Готово! Вы умеете главное.',body:'Нажать. Спросить. Получить ответ. Остальное подскажу по ходу работы. А если забудете — повторите урок в «Управлении».',target:'orb',button:'Закончить',label:'ВЫ УЖЕ ЗНАКОМЫ'}
 ];
-let active=false,step=0,previousFocus=null,previousHash='',lastHighlight=null;
+let active=false,step=0,previousFocus=null,lastSuccess='';
 let reflow=0;
 function safeGet(k){try{return localStorage.getItem(k)}catch{return null}}
 function seen(){try{localStorage.setItem(KEY,'1')}catch{}}
@@ -44,7 +44,6 @@ function navigateHome(){
 function cleanPaint(){
  for(const e of shades){e.style.cssText='';e.hidden=true}
  spot.hidden=true;
- lastHighlight=null;
 }
 function rectFor(target){
  if(!target)return null;
@@ -83,7 +82,6 @@ function layout(){
   shade(shades[3],0,endY,vw,Math.max(0,offset+vh-endY));
   spot.hidden=false;
   Object.assign(spot.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});
-  lastHighlight=target;
  }else{
   cleanPaint();
   shade(shades[0],0,offset,vw,vh);
@@ -134,9 +132,11 @@ function update(){
   $('question').value.trim()!=='Что у меня сегодня?'||
   $('composerModeNotes')?.getAttribute('aria-pressed')==='true'
  );
- $('firstHelpHint').textContent=blockedExample
+ const hint=blockedExample
   ?'У вас уже есть собственный текст. Не буду его изменять. Можно продолжить без примера.'
   :steps[step].hint||'Можете пропустить знакомство в любой момент';
+ $('firstHelpHint').textContent=lastSuccess?lastSuccess+' · '+hint:hint;
+ ui.dataset.success=lastSuccess?'yes':'no';
  go.textContent=blockedExample?'Пропустить пример':steps[step].button;
  back.hidden=step===0;
  progress.replaceChildren(...steps.map((_,i)=>{
@@ -146,9 +146,13 @@ function update(){
  }));
  ui.dataset.step=String(step);
  scheduleLayout();
+ // Move the reading cursor to the changed guidance, not to an unrelated
+ // behind-the-tour control. Touch users see the same real highlighted UI.
+ try{panel.focus({preventScroll:true})}catch{}
 }
-function setStep(index){
+function setStep(index,success=''){
  if(!active)return;
+ lastSuccess=success;
  step=Math.max(0,Math.min(steps.length-1,index));
  if(step===3&&!$('orbInlineReply')?.hidden){
   document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'text'}}));
@@ -169,9 +173,8 @@ function start(){
  if(active)return;
  if(document.querySelector('dialog[open]'))return;
  previousFocus=document.activeElement;
- previousHash=location.hash;
  navigateHome();
- step=0;active=true;ui.hidden=false;feedback();
+ step=0;lastSuccess='';active=true;ui.hidden=false;feedback();
  update();
  document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'text'}}));
 }
@@ -197,7 +200,7 @@ function example(){
  // If the host returned a different kind of editor (such as a calendar
  // review), don't falsely claim that the sphere just replied.
  if($('orbInlineReply')?.hidden)return setStep(4);
- setStep(3);
+ setStep(3,'Отлично, вы получили первый ответ!');
 }
 function next(){
  feedback();
@@ -218,17 +221,23 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Escape'){e.stopPropagation();finish()}
 });
 $('assistantButton')?.addEventListener('click',()=>{
- if(active&&step===1)setTimeout(()=>setStep(2),100);
+ if(active&&step===1)setTimeout(()=>setStep(2,'Отлично, вы открыли помощника!'),100);
 });
 $('ask')?.addEventListener('submit',()=>{
  if(active&&step===2&&$('composerModeAsk')?.getAttribute('aria-pressed')==='true'){
-  setTimeout(()=>{if(active&&step===2)setStep(3)},120);
+  setTimeout(()=>{if(active&&step===2&&$('orbInlineReply')&&!$('orbInlineReply').hidden)
+    setStep(3,'Отлично, вы получили ответ!')},120);
  }
 },true);
-for(const [id,index] of [['navTasks',5],['navPicture',6],['navManage',7],['homeWorldTrigger',8]]){
+for(const [id,index,success] of [
+ ['navTasks',5,'Вы открыли Дела!'],
+ ['navPicture',6,'Вы открыли Картину!'],
+ ['navManage',7,'Вы открыли Управление!'],
+ ['homeWorldTrigger',8,'Вы нашли Мой мир!']
+]){
  $(id)?.addEventListener('click',()=>{
   if(!active||step!==index-1)return;
-  setTimeout(()=>{if(active&&step===index-1)setStep(index)},80);
+  setTimeout(()=>{if(active&&step===index-1)setStep(index,success)},80);
  });
 }
 window.addEventListener('resize',scheduleLayout,{passive:true});
@@ -253,7 +262,7 @@ if(FIRST){
   if(fired)return;
   fired=true;setTimeout(offer,1200);
  };
- const timer=setTimeout(()=>{
+ setTimeout(()=>{
   if(onboard?.open){
    onboard.addEventListener('close',once,{once:true});
    // Opening other dialogs is never required for this feature.
