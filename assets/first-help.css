@@ -1,0 +1,140 @@
+/* SEYVEO · Первая помощь · Black / White Velvet
+   Quiet guided spotlight. No lasers, photographs, WebGL or repeating effects.
+   All anchors are measured; the original orb, dock, keyboard stay unchanged. */
+#firstHelpCoach[hidden]{display:none!important}
+#firstHelpCoach{
+ position:fixed;inset:0;z-index:190;pointer-events:none;
+ --help-surface:rgba(24,27,34,.975);
+ --help-tint:rgba(236,243,252,.09);
+ --help-edge:rgba(237,244,252,.18);
+ --help-ink:#f5f7fc;
+ --help-muted:#aeb8c8;
+}
+#firstHelpCoach .first-help-shade{
+ position:fixed;background:rgba(4,7,12,.58);pointer-events:none;
+ z-index:1;transition:opacity .2s ease;
+}
+#firstHelpCoach .first-help-shade[hidden]{display:none!important}
+#firstHelpCoach .first-help-spot{
+ position:fixed;z-index:2;pointer-events:none;
+ border:1.5px solid rgba(241,249,255,.9);
+ border-radius:18px;
+ box-shadow:0 0 0 4px rgba(178,204,236,.19),inset 0 0 0 1px rgba(255,255,255,.28),0 0 22px rgba(181,209,247,.16);
+ transition:left .18s ease,top .18s ease,width .18s ease,height .18s ease;
+}
+#firstHelpCoach .first-help-spot[hidden]{display:none!important}
+#firstHelpCoach .first-help-panel{
+ position:fixed;z-index:3;pointer-events:auto;
+ display:flex;flex-direction:column;min-width:0;
+ padding:15px 16px 13px;border-radius:23px;
+ border:1px solid var(--help-edge);
+ color:var(--help-ink);background:var(--help-surface);
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+ box-shadow:0 18px 44px rgba(0,0,0,.33),inset 0 1px 0 rgba(255,255,255,.07);
+ overflow-y:auto;max-height:min(335px,54dvh);
+ animation:first-help-arrive .24s ease-out both;
+}
+#firstHelpCoach .first-help-top{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ margin:0 0 9px;
+}
+#firstHelpCoach .first-help-badge{
+ display:inline-flex;align-items:center;gap:7px;min-width:0;
+ color:var(--help-muted);font-size:9px;font-weight:570;letter-spacing:.105em;
+}
+#firstHelpCoach .first-help-badge::before{
+ content:"";display:block;width:8px;height:8px;flex:none;border-radius:50%;
+ background:radial-gradient(circle at 30% 28%,#fff,#d6e5fa 61%,#8da6c9);
+ box-shadow:0 0 0 3px rgba(197,219,248,.10);
+}
+#firstHelpCoach .first-help-count{
+ font-size:10px;white-space:nowrap;color:var(--help-muted);
+ font-variant-numeric:tabular-nums;
+}
+#firstHelpCoach .first-help-panel h2{
+ font-size:21px;font-weight:620;letter-spacing:-.042em;line-height:1.21;
+ margin:0 0 8px;color:var(--help-ink);
+}
+#firstHelpCoach .first-help-copy{
+ margin:0;color:var(--help-muted);font-size:13px;line-height:1.5;font-weight:425;
+}
+#firstHelpCoach .first-help-hint{
+ min-height:16px;margin:10px 0 0;
+ font-size:10.5px;line-height:1.35;color:var(--help-muted);
+}
+#firstHelpCoach .first-help-progress{
+ display:flex;align-items:center;gap:4px;width:100%;min-height:3px;
+ margin:12px 0 11px;
+}
+#firstHelpCoach .first-help-progress span{
+ flex:1;min-width:0;height:3px;border-radius:999px;background:rgba(191,207,226,.2);
+ transition:background .19s ease;
+}
+#firstHelpCoach .first-help-progress span.is-active{
+ background:linear-gradient(90deg,#a9c4e6,#f5f8fd);
+}
+#firstHelpCoach .first-help-actions{
+ display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;
+}
+#firstHelpCoach .first-help-actions button{
+ min-height:40px;display:inline-flex;align-items:center;justify-content:center;
+ border-radius:999px;padding:8px 13px;
+ font:inherit;font-size:12px;font-weight:550;
+ border:1px solid var(--help-edge);
+ background:rgba(255,255,255,.06);color:var(--help-ink);
+}
+#firstHelpCoach .first-help-actions button:focus-visible{
+ outline:2px solid #e7f1ff;outline-offset:3px;
+}
+#firstHelpCoach #firstHelpNext{
+ min-width:100px;background:rgba(246,250,255,.95);color:#192335;
+ border-color:transparent;
+}
+#firstHelpCoach #firstHelpExit{
+ margin-right:auto;background:transparent;
+ border-color:transparent;color:var(--help-muted);
+}
+#firstHelpCoach #firstHelpBack[hidden]{display:none!important}
+:root[data-theme=light] #firstHelpCoach{
+ --help-surface:rgba(253,254,255,.985);
+ --help-edge:rgba(82,104,136,.15);
+ --help-ink:#182435;
+ --help-muted:#66748a;
+}
+:root[data-theme=light] #firstHelpCoach .first-help-shade{background:rgba(38,51,70,.33)}
+:root[data-theme=light] #firstHelpCoach .first-help-spot{
+ border-color:rgba(255,255,255,.95);
+ box-shadow:0 0 0 4px rgba(117,147,182,.27),0 0 20px rgba(88,123,160,.22);
+}
+:root[data-theme=light] #firstHelpCoach .first-help-panel{
+ box-shadow:0 17px 40px rgba(60,82,112,.18),inset 0 1px 0 #fff;
+}
+:root[data-theme=light] #firstHelpCoach .first-help-progress span{
+ background:rgba(82,108,137,.16);
+}
+:root[data-theme=light] #firstHelpCoach .first-help-progress span.is-active{
+ background:linear-gradient(90deg,#8eaccf,#536c8a);
+}
+:root[data-theme=light] #firstHelpCoach .first-help-actions button{
+ background:rgba(73,95,125,.06);
+}
+:root[data-theme=light] #firstHelpCoach #firstHelpNext{
+ background:#25384f;color:#fff;
+}
+:root[data-theme=light] #firstHelpCoach #firstHelpExit{background:transparent}
+@keyframes first-help-arrive{
+ from{opacity:0;transform:translate3d(0,5px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(max-width:370px){
+ #firstHelpCoach .first-help-panel{padding:12px 13px;border-radius:20px}
+ #firstHelpCoach .first-help-panel h2{font-size:19px}
+ #firstHelpCoach .first-help-copy{font-size:12.5px}
+ #firstHelpCoach .first-help-actions button{padding:7px 10px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ #firstHelpCoach .first-help-panel{animation:none}
+ #firstHelpCoach .first-help-spot,
+ #firstHelpCoach .first-help-progress span,
+ #firstHelpCoach .first-help-shade{transition:none}
+}
