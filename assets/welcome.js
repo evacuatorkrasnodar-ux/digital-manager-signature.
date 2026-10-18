@@ -22,6 +22,106 @@ const error=$('welcomeError');
 const demoEntry=$('openWelcomeDemo'),overline=$('welcomeOverline'),disclaimer=$('welcomeDisclaimer');
 const openingSecond=$('welcomeOpeningQuoteSecond');
 const OPENING_DURATION_MS=5200;
+const SIGNATURE_SOUND_KEY='seyveo-signature-sound-v1';
+const soundToggle=$('seyveoSignatureSoundToggle'),soundState=$('seyveoSignatureSoundState');
+let signatureContext=null,signatureOutput=null;
+function soundEnabled(){return read(SIGNATURE_SOUND_KEY)!=='off'}
+function soundAllowed(){
+ return soundEnabled()
+  &&read('seyveo-discreet-mode-v1')!=='on'
+  &&window.SEYVEO_DISCREET_MODE!==true
+  &&!document.hidden;
+}
+function paintSoundSetting(){
+ if(!soundToggle||!soundState)return;
+ const enabled=soundEnabled();
+ soundToggle.setAttribute('aria-pressed',String(enabled));
+ soundToggle.setAttribute('aria-label','Фирменный звук: '+(enabled?'включён':'выключен'));
+ soundState.textContent=enabled?'Вкл.':'Выкл.';
+}
+function stopSignatureSound(){
+ const output=signatureOutput,ctx=signatureContext;
+ signatureOutput=null;
+ if(!output||!ctx)return;
+ try{
+  const now=ctx.currentTime;
+  output.gain.cancelScheduledValues(now);
+  output.gain.setTargetAtTime(.00001,now,.022);
+ }catch{}
+}
+/* Original five-note SEYVEO sonic signature — D, A, F-sharp, A, D.
+   Quiet, non-looping sine/soft harmonic voices with gentle envelopes;
+   logo notes first, closing chord as the user's founding words appear.
+   Starts only within the user's final button click, no permission requested. */
+function playSignatureSound(){
+ if(!soundAllowed())return;
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)return; // Graceful silence on unsupported or restricted iOS browsers.
+ try{
+  const ctx=signatureContext&&signatureContext.state!=='closed'
+   ?signatureContext:(signatureContext=new AC());
+  if(ctx.state==='suspended'){
+   const resumed=ctx.resume();
+   if(resumed&&typeof resumed.catch==='function')resumed.catch(()=>{});
+  }
+  stopSignatureSound();
+  const t=ctx.currentTime+.045;
+  const master=ctx.createGain();
+  master.gain.setValueAtTime(.00001,t);
+  master.gain.linearRampToValueAtTime(.034,t+.19);
+  master.gain.setValueAtTime(.034,t+3.8);
+  master.gain.exponentialRampToValueAtTime(.00001,t+4.8);
+  master.connect(ctx.destination);
+  signatureOutput=master;
+  const score=[
+   [293.665,.15,1.30,.42],  // D4, logo emerges
+   [440.000,.49,1.45,.30],  // A4, silver overtone
+   [369.994,2.24,1.45,.34],// F#4, the first line
+   [440.000,2.76,1.40,.32],// A4, the leap begins
+   [587.330,3.24,1.40,.40] // D5, signature resolves
+  ];
+  score.forEach(([pitch,offset,duration,level],i)=>{
+   const start=t+offset,end=start+duration;
+   const env=ctx.createGain();
+   env.gain.setValueAtTime(.00001,start);
+   env.gain.linearRampToValueAtTime(level,start+.085);
+   env.gain.exponentialRampToValueAtTime(.00001,end);
+   env.connect(master);
+   const voice=ctx.createOscillator();
+   voice.type='sine';
+   voice.frequency.setValueAtTime(pitch,start);
+   voice.connect(env);
+   // Subtle harmonic shimmer, never a sharp metallic chime.
+   const shimmer=ctx.createOscillator(),shimmerLevel=ctx.createGain();
+   shimmer.type='triangle';
+   shimmer.frequency.setValueAtTime(pitch*2,start);
+   shimmerLevel.gain.value=.065;
+   shimmer.connect(shimmerLevel);
+   shimmerLevel.connect(env);
+   voice.start(start);voice.stop(end+.04);
+   shimmer.start(start);shimmer.stop(end+.04);
+   if(i===score.length-1)voice.onended=()=>{
+    try{master.disconnect()}catch{}
+    if(signatureOutput===master)signatureOutput=null;
+   };
+  });
+ }catch{stopSignatureSound()}
+}
+soundToggle?.addEventListener('click',()=>{
+ const enabled=!soundEnabled();
+ if(!store(SIGNATURE_SOUND_KEY,enabled?'on':'off')){paintSoundSetting();return}
+ if(!enabled)stopSignatureSound();
+ paintSoundSetting();
+});
+window.addEventListener('storage',event=>{
+ if(event.key!==SIGNATURE_SOUND_KEY&&event.key!=='seyveo-discreet-mode-v1')return;
+ if(event.key===SIGNATURE_SOUND_KEY)paintSoundSetting();
+ if(!soundAllowed())stopSignatureSound();
+});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden)stopSignatureSound();
+});
+paintSoundSetting();
 function available(){
  return !read(PROFILE)&&!read(SKIPPED)&&!read(SEEN)&&!LEGACY.some(key=>read(key)!==null);
 }
@@ -65,6 +165,7 @@ function playSignature(){
  dialog.classList.add('is-cinematic');
 }
 function close(){
+ stopSignatureSound();
  if(openingTimer!==null){clearTimeout(openingTimer);openingTimer=null}
  dialog.classList.remove('is-cinematic','is-opening');
  if(dialog.open)dialog.close();
@@ -88,6 +189,10 @@ function beginOpening(){
  dialog.classList.add('is-opening');
  const isPreview=preview;
  next.disabled=true;back.disabled=true;skip.disabled=true;
+ // WebAudio must be unlocked inside this explicit button gesture on iOS.
+ // Never play on automatic launch, skip, or a non-interactive background task.
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ if(!reduced)playSignatureSound();
  const finish=()=>{
   if(openingTimer!==null){clearTimeout(openingTimer);openingTimer=null}
   close();
