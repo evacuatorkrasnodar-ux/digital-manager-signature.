@@ -25,3 +25,18 @@
 .onboard-actions .onboard-save{background:var(--text);color:var(--bg);border-color:var(--text)}
 .onboard-status{display:block;min-height:0;margin-top:10px;font-size:12px;line-height:1.4;color:var(--secondary)}
 @media(prefers-reduced-motion:no-preference){.onboard-dialog[open]{animation:onboard-appear .25s cubic-bezier(.22,.75,.28,1)}@keyframes onboard-appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
+
+/* Assistant naming: compact Black Velvet choices, theme-aware and accessible. */
+.onboard-names{min-width:0;border:0;margin:0 0 17px;padding:0}
+.onboard-names legend{font-size:12px;color:var(--secondary);padding:0 0 7px;font-weight:590}
+.onboard-names legend span{font-weight:400}
+.onboard-name-hint{font-size:11px!important;line-height:1.5!important;color:var(--secondary);margin:0 0 10px!important}
+.onboard-name-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:13px}
+.onboard-name-choice{min-width:0;min-height:55px;text-align:left;padding:9px 11px;background:var(--card2);border:1px solid var(--line);border-radius:var(--seyveo-radius-choice,18px);color:var(--text);cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.onboard-name-choice strong{font-size:13px;font-weight:550;line-height:1.2}
+.onboard-name-choice small{font-size:10px;line-height:1.25;color:var(--secondary)}
+.onboard-name-choice[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.onboard-name-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.onboard-assistant-custom{margin-bottom:10px}
+.onboard-voice-field{margin-bottom:8px}
+.onboard-voice-field select{display:block;width:100%;height:44px;margin-top:8px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--text);font:inherit;font-size:14px}
