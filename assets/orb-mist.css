@@ -51,7 +51,7 @@
     radial-gradient(ellipse 33% 30% at 80% 50%,rgba(199,219,251,.39),transparent 100%);
 }
 
-/* The fog gathers, crosses the middle, then recedes as Deep Reveal
+/* A restrained mist brightens inside the glass, then gently recedes as Deep Reveal
    makes the SEYVEO logo focus behind the glass. */
 #orb .orb-mist.is-breathing{
   animation:seyveo-mist-veil 5s linear both;
@@ -66,30 +66,30 @@
   animation:seyveo-mist-drift-c 5s ease-in-out both;
 }
 @keyframes seyveo-mist-veil{
-  0%{opacity:0}
-  14%{opacity:.55}
-  34%{opacity:.72}
-  57%{opacity:.60}
-  77%{opacity:.23}
-  100%{opacity:0}
+ 0%{opacity:0}
+ 14%{opacity:.26}
+ 34%{opacity:.50}
+ 57%{opacity:.38}
+ 77%{opacity:.12}
+ 100%{opacity:0}
 }
 @keyframes seyveo-mist-drift-a{
-  0%{opacity:.22;transform:translate3d(-13%,20%,0) rotate(-12deg) scale(.86)}
-  38%{opacity:1;transform:translate3d(-1%,1%,0) rotate(6deg) scale(1.09)}
-  70%{opacity:.78;transform:translate3d(9%,-10%,0) rotate(15deg) scale(1.17)}
-  100%{opacity:.15;transform:translate3d(16%,-16%,0) rotate(23deg) scale(1.21)}
+ 0%{opacity:.10;transform:translate3d(-3%,5%,0) scale(.98)}
+ 38%{opacity:.56;transform:translate3d(0,1%,0) scale(1.01)}
+ 70%{opacity:.43;transform:translate3d(3%,-3%,0) scale(1.025)}
+ 100%{opacity:0;transform:translate3d(4%,-5%,0) scale(1.03)}
 }
 @keyframes seyveo-mist-drift-b{
-  0%{opacity:.16;transform:translate3d(16%,16%,0) rotate(18deg) scale(.88)}
-  39%{opacity:.83;transform:translate3d(0,-3%,0) rotate(-8deg) scale(1.12)}
-  74%{opacity:.58;transform:translate3d(-13%,-12%,0) rotate(-17deg) scale(1.18)}
-  100%{opacity:0;transform:translate3d(-17%,-19%,0) rotate(-23deg) scale(1.2)}
+ 0%{opacity:.08;transform:translate3d(4%,4%,0) scale(.98)}
+ 39%{opacity:.46;transform:translate3d(0,-1%,0) scale(1.01)}
+ 74%{opacity:.40;transform:translate3d(-3%,-3%,0) scale(1.02)}
+ 100%{opacity:0;transform:translate3d(-4%,-4%,0) scale(1.03)}
 }
 @keyframes seyveo-mist-drift-c{
-  0%{opacity:.07;transform:translate3d(-5%,25%,0) rotate(-8deg) scale(.79)}
-  31%{opacity:.78;transform:translate3d(4%,3%,0) rotate(7deg) scale(1.04)}
-  68%{opacity:.84;transform:translate3d(-3%,-16%,0) rotate(18deg) scale(1.11)}
-  100%{opacity:0;transform:translate3d(7%,-21%,0) rotate(25deg) scale(1.17)}
+ 0%{opacity:.07;transform:translate3d(-2%,4%,0) scale(.98)}
+ 31%{opacity:.42;transform:translate3d(1%,1%,0) scale(1)}
+ 68%{opacity:.44;transform:translate3d(-1%,-3%,0) scale(1.015)}
+ 100%{opacity:0;transform:translate3d(2%,-4%,0) scale(1.02)}
 }
 
 /* Logo no longer animates its entire container on tap. The existing
