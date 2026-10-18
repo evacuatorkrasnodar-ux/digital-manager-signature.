@@ -1772,6 +1772,10 @@ const onSystemThemeChange=()=>{if(state.theme==='auto')applyTheme()};
 if(systemThemeQuery.addEventListener)systemThemeQuery.addEventListener('change',onSystemThemeChange);
 else systemThemeQuery.addListener(onSystemThemeChange);
 function syncAppPage(){
+  // Leaving Home dismisses only the floating editor, never its content.
+  // closeComposer() persists both the draft and its Notes/Ask intent,
+  // releases the iOS keyboard, and leaves the approved dock untouched.
+  if(location.hash&&$('ask')&&!$('ask').hidden)closeComposer();
   const theme=location.hash==='#manage-theme';
   // Upgrade old saved/bookmarked settings URL to the streamlined overview.
   if(location.hash==='#manage-feedback')history.replaceState(null,'',location.pathname+location.search+'#manage');
