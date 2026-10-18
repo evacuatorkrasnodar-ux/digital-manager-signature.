@@ -73,7 +73,7 @@ host.innerHTML=`
    <div data-pw-panel="steps" hidden>
     <header class="pw-panel-head"><h3>Мои шаги</h3><p>Без автоматического считывания с телефона.</p></header>
     <div class="pw-number"><strong id="pwStepsValue">—</strong><small id="pwStepsSource">Сегодня нет записи</small></div>
-    <form id="pwStepsForm" class="pw-inline"><label>Дата<input id="pwStepsDate" type="date" required></label><label>Шагов<input id="pwStepsInput" type="number" min="0" max="200000" step="1" inputmode="numeric" required placeholder="Например, 6500"></label><button type="submit" class="pw-primary">Сохранить</button></form>
+    <form id="pwStepsForm" class="pw-inline pw-date-fields"><label>Дата<input id="pwStepsDate" type="date" required></label><label>Шагов<input id="pwStepsInput" type="number" min="0" max="200000" step="1" inputmode="numeric" required placeholder="Например, 6500"></label><button type="submit" class="pw-primary">Сохранить</button></form>
     <div id="pwStepsWeek" class="pw-week"></div>
     <p class="pw-caption">Прежние записи шагов сохранены. Одна текущая запись на выбранный день.</p>
    </div>
@@ -83,7 +83,7 @@ host.innerHTML=`
    <div id="pwCycleConsent"><h3>Личный календарь</h3><p>Даты цикла — чувствительные данные. Они хранятся без шифрования только в этом браузере. На общем устройстве их могут увидеть другие люди.</p><label class="pw-consent"><input id="pwCycleCheck" type="checkbox"> Я понимаю и хочу включить календарь</label><button id="pwCycleEnable" type="button" class="pw-primary" disabled>Включить</button></div>
    <div id="pwCycleBody" hidden>
     <div class="pw-number"><strong id="pwCycleNext">—</strong><small>Ориентировочное следующее начало</small></div>
-    <form id="pwCycleForm"><div class="pw-inline"><label>Начало<input id="pwCycleDate" type="date" required></label><label>Обычно дней<input id="pwCycleLength" type="number" min="21" max="45" step="1" inputmode="numeric" required value="28"></label><button type="submit" class="pw-primary">Записать</button></div></form>
+    <form id="pwCycleForm"><div class="pw-inline pw-date-fields"><label>Начало<input id="pwCycleDate" type="date" required></label><label>Обычно дней<input id="pwCycleLength" type="number" min="21" max="45" step="1" inputmode="numeric" required value="28"></label><button type="submit" class="pw-primary">Записать</button></div></form>
     <div id="pwCycleList" class="pw-list"></div><p class="pw-caption">Прогноз приблизительный: не использовать для контрацепции или диагноза.</p><details class="pw-cycle-privacy"><summary>Данные календаря</summary><p>Можно отключить календарь без удаления истории или удалить все его даты с этого устройства.</p><div class="pw-actions"><button type="button" id="pwCycleDisable">Отключить</button><button type="button" id="pwCycleErase">Удалить историю</button></div></details>
    </div>
   </section>
@@ -100,7 +100,7 @@ host.innerHTML=`
    </div>
    <div data-pw-panel="sleep" hidden>
     <header class="pw-panel-head"><h3>Дневник сна</h3><p>Личные записи, не медицинский анализ.</p></header>
-    <form id="pwSleepForm" class="pw-form"><div class="pw-inline"><label>Дата пробуждения<input id="pwSleepDate" type="date" required></label><label>Часов<input id="pwSleepHours" type="number" min=".5" max="24" step=".5" inputmode="decimal" required placeholder="7.5"></label></div><div class="pw-inline"><label>Как спалось<select id="pwSleepQuality"><option value="normal">Обычно</option><option value="good">Хорошо</option><option value="poor">Беспокойно</option></select></label><button type="submit" class="pw-primary">Сохранить</button></div></form>
+    <form id="pwSleepForm" class="pw-form"><div class="pw-inline pw-date-fields"><label>Дата пробуждения<input id="pwSleepDate" type="date" required></label><label>Часов<input id="pwSleepHours" type="number" min=".5" max="24" step=".5" inputmode="decimal" required placeholder="7.5"></label></div><div class="pw-inline"><label>Как спалось<select id="pwSleepQuality"><option value="normal">Обычно</option><option value="good">Хорошо</option><option value="poor">Беспокойно</option></select></label><button type="submit" class="pw-primary">Сохранить</button></div></form>
     <div id="pwSleepList" class="pw-list"></div>
    </div>
   </section>
