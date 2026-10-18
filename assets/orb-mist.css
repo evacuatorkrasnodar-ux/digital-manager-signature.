@@ -1,205 +1,82 @@
-/* SEYVEO · Black/White Velvet · Pearl Smoke
-   The original SVG sphere is never repainted or transformed.
-   Only this clipped inner layer appears on a user gesture or assistant state.
-   No canvas, particles, orbit lines, filters on the glass shell or idle animation. */
-
+/* SEYVEO · Inner Glass Response, Black / White Velvet.
+   The approved plasma SVG, shell, rim, placement and Deep Reveal are untouched.
+   One restrained refraction replaces the former stacked white fog layers.
+   Only appears on a tap, while listening, or when the assistant responds. */
 #orb .orb-mist{
-  position:absolute;
-  z-index:2;
-  inset:12%;
-  display:block;
-  overflow:hidden;
-  border-radius:50%;
-  pointer-events:none;
-  opacity:0;
-  -webkit-mask-image:radial-gradient(circle,#000 0 63%,rgba(0,0,0,.92) 76%,transparent 98%);
-  mask-image:radial-gradient(circle,#000 0 63%,rgba(0,0,0,.92) 76%,transparent 98%);
+ position:absolute;z-index:2;inset:12%;display:block;overflow:hidden;
+ border-radius:50%;pointer-events:none;opacity:0;
+ -webkit-mask-image:radial-gradient(circle,#000 0 65%,rgba(0,0,0,.96) 77%,transparent 97%);
+ mask-image:radial-gradient(circle,#000 0 65%,rgba(0,0,0,.96) 77%,transparent 97%);
 }
-#orb .orb-mist-cloud{
-  position:absolute;
-  inset:-9%;
-  display:block;
-  border-radius:50%;
-  pointer-events:none;
-  opacity:0;
-  filter:blur(9px);
-}
-#orb .orb-mist-cloud--a{
-  background:
-    radial-gradient(ellipse 53% 39% at 40% 67%,rgba(246,250,255,.72),transparent 100%),
-    radial-gradient(ellipse 48% 40% at 61% 49%,rgba(229,241,253,.55),transparent 100%),
-    radial-gradient(ellipse 43% 34% at 36% 35%,rgba(255,255,255,.32),transparent 100%);
-}
-#orb .orb-mist-cloud--b{
-  filter:blur(12px);
-  background:
-    radial-gradient(ellipse 55% 43% at 64% 67%,rgba(249,252,255,.61),transparent 100%),
-    radial-gradient(ellipse 47% 37% at 31% 53%,rgba(211,228,246,.48),transparent 100%),
-    radial-gradient(ellipse 41% 38% at 53% 23%,rgba(247,251,255,.30),transparent 100%);
-}
-#orb .orb-mist-cloud--c{
-  filter:blur(7px);
-  background:
-    radial-gradient(ellipse 43% 33% at 51% 43%,rgba(255,255,255,.40),transparent 100%),
-    radial-gradient(ellipse 48% 35% at 50% 75%,rgba(220,237,253,.42),transparent 100%);
-}
-/* A little light is embedded IN the fog, never a flash on the rim. */
+/* A broad frosted internal reflection, not an orbit, blob, colored shell or laser.
+   The image and outer 12% of the sphere never move. */
 #orb .orb-mist::after{
-  content:"";
-  position:absolute;
-  z-index:1;
-  inset:5%;
-  display:block;
-  border-radius:50%;
-  pointer-events:none;
-  opacity:0;
-  /* A symmetric frost-blue reflection deep INSIDE the glass.
-     No isolated bright spot, color wash or external halo. */
-  background:radial-gradient(circle at 50% 50%,
-    rgba(255,255,255,.035) 0%,
-    rgba(247,251,255,.065) 43%,
-    rgba(206,234,255,.38) 64%,
-    rgba(166,209,248,.22) 78%,
-    transparent 96%);
+ content:"";position:absolute;inset:1%;border-radius:50%;
+ pointer-events:none;
+ background:radial-gradient(circle at 50% 50%,
+  rgba(235,248,255,.025) 0%,rgba(214,239,255,.06) 47%,
+  rgba(174,219,252,.30) 61%,rgba(173,219,254,.62) 72%,
+  rgba(237,250,255,.16) 81%,transparent 93%);
+ filter:blur(2px);
+ transform:scale(.98);
 }
-
-/* Single tap or an answer: fog slowly fills the entire inner glass,
-   stays for a moment, then dissolves without an abrupt blink. */
+/* White Velvet needs contrast, not additional white haze. */
+:root[data-theme=light] #orb .orb-mist::after{
+ background:radial-gradient(circle at 50% 50%,
+  rgba(57,96,149,.02) 0%,rgba(67,106,161,.045) 47%,
+  rgba(72,115,169,.24) 61%,rgba(59,102,156,.53) 72%,
+  rgba(91,139,192,.13) 81%,transparent 93%);
+}
+/* The one-time Pearl Mist gesture and quiet text acknowledgment. */
 #orb .orb-mist.is-breathing,
 #orb.seyveo-presence-ack .orb-mist{
-  animation:seyveo-smoke-once 5.6s ease-in-out both;
-}
-#orb .orb-mist.is-breathing .orb-mist-cloud--a,
-#orb.seyveo-presence-ack .orb-mist-cloud--a{
-  animation:seyveo-smoke-a 5.6s ease-in-out both;
-}
-#orb .orb-mist.is-breathing .orb-mist-cloud--b,
-#orb.seyveo-presence-ack .orb-mist-cloud--b{
-  animation:seyveo-smoke-b 5.6s ease-in-out both;
-}
-#orb .orb-mist.is-breathing .orb-mist-cloud--c,
-#orb.seyveo-presence-ack .orb-mist-cloud--c{
-  animation:seyveo-smoke-c 5.6s ease-in-out both;
+ animation:seyveo-glass-answer 5.6s ease-in-out both;
 }
 #orb .orb-mist.is-breathing::after,
 #orb.seyveo-presence-ack .orb-mist::after{
-  animation:seyveo-smoke-light 5.6s ease-in-out both;
+ animation:seyveo-glass-depth 5.6s ease-in-out both;
 }
-
-/* While listening or speaking, the same smoke remains gently alive.
-   It stops immediately when the interaction ends, never in idle mode. */
-#orb.seyveo-presence-listening .orb-mist,
+/* Listening = slow breath; speaking = slightly quicker, clearly distinguishable. */
+#orb.seyveo-presence-listening .orb-mist{
+ animation:seyveo-glass-listen 3.9s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-listening .orb-mist::after{
+ animation:seyveo-glass-breathe 3.9s ease-in-out infinite alternate;
+}
 #orb.seyveo-presence-speaking .orb-mist{
-  animation:seyveo-smoke-hold 8s ease-in-out infinite alternate;
+ animation:seyveo-glass-speak 2.7s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-speaking .orb-mist::after{
+ animation:seyveo-glass-breathe 2.7s ease-in-out infinite alternate;
 }
 #orb.seyveo-presence-finish .orb-mist{
-  animation:seyveo-smoke-exit .85s ease-out both;
+ animation:seyveo-glass-finish .85s ease-out both;
 }
-#orb.seyveo-presence-finish .orb-mist-cloud--a{opacity:.82}
-#orb.seyveo-presence-finish .orb-mist-cloud--b{opacity:.67}
-#orb.seyveo-presence-finish .orb-mist-cloud--c{opacity:.54}
-#orb.seyveo-presence-finish .orb-mist::after{opacity:.18}
-
-#orb.seyveo-presence-listening .orb-mist-cloud--a,
-#orb.seyveo-presence-speaking .orb-mist-cloud--a{
-  animation:seyveo-smoke-a 9s ease-in-out infinite alternate;
+@keyframes seyveo-glass-answer{
+ 0%{opacity:0}19%{opacity:.75}43%,64%{opacity:1}84%{opacity:.52}100%{opacity:0}
 }
-#orb.seyveo-presence-listening .orb-mist-cloud--b,
-#orb.seyveo-presence-speaking .orb-mist-cloud--b{
-  animation:seyveo-smoke-b 11s ease-in-out infinite alternate;
+@keyframes seyveo-glass-depth{
+ 0%,100%{transform:scale(.96)}
+ 50%{transform:scale(1.035)}
 }
-#orb.seyveo-presence-listening .orb-mist-cloud--c,
-#orb.seyveo-presence-speaking .orb-mist-cloud--c{
-  animation:seyveo-smoke-c 10s ease-in-out infinite alternate;
+@keyframes seyveo-glass-listen{
+ from{opacity:.65}to{opacity:.96}
 }
-#orb.seyveo-presence-listening .orb-mist::after,
-#orb.seyveo-presence-speaking .orb-mist::after{
-  animation:seyveo-smoke-light-hold 8s ease-in-out infinite alternate;
+@keyframes seyveo-glass-speak{
+ from{opacity:.77}to{opacity:1}
 }
-
-@keyframes seyveo-smoke-once{
-  0%{opacity:0}
-  16%{opacity:.25}
-  48%{opacity:.84}
-  69%{opacity:.91}
-  84%{opacity:.51}
-  100%{opacity:0}
+@keyframes seyveo-glass-breathe{
+ from{transform:scale(.965)}to{transform:scale(1.025)}
 }
-@keyframes seyveo-smoke-hold{
-  0%{opacity:.63}
-  100%{opacity:.89}
-}
-@keyframes seyveo-smoke-exit{
-  from{opacity:.7}
-  to{opacity:0}
-}
-@keyframes seyveo-smoke-a{
-  0%{opacity:.12;transform:translate3d(-5%,13%,0) scale(.88)}
-  48%{opacity:.86;transform:translate3d(0,0,0) scale(1.02)}
-  100%{opacity:.62;transform:translate3d(3%,-3%,0) scale(1.07)}
-}
-@keyframes seyveo-smoke-b{
-  0%{opacity:.09;transform:translate3d(8%,12%,0) scale(.90)}
-  55%{opacity:.76;transform:translate3d(0,-1%,0) scale(1)}
-  100%{opacity:.63;transform:translate3d(-4%,-5%,0) scale(1.06)}
-}
-@keyframes seyveo-smoke-c{
-  0%{opacity:.08;transform:translate3d(-2%,10%,0) scale(.9)}
-  51%{opacity:.65;transform:translate3d(1%,0,0) scale(1.02)}
-  100%{opacity:.50;transform:translate3d(2%,-5%,0) scale(1.07)}
-}
-/* Slightly brighter existing internal pearl reflection; no added blob,
-   no shell filter and no brighter external rim. */
-@keyframes seyveo-smoke-light{
-  0%,18%{opacity:0}
-  52%{opacity:.40}
-  70%{opacity:.44}
-  100%{opacity:0}
-}
-@keyframes seyveo-smoke-light-hold{
-  from{opacity:.23}
-  to{opacity:.38}
-}
-
-/* Keep the smoke pearl-white in dark mode; the light mode uses a quiet
-   silver-gray shadow so it is still visible on the white original sphere. */
-:root[data-theme=light] #orb .orb-mist-cloud--a{
-  background:
-    radial-gradient(ellipse 53% 39% at 40% 67%,rgba(135,159,187,.50),transparent 100%),
-    radial-gradient(ellipse 48% 40% at 61% 49%,rgba(252,253,255,.69),transparent 100%),
-    radial-gradient(ellipse 43% 34% at 36% 35%,rgba(177,195,214,.35),transparent 100%);
-}
-:root[data-theme=light] #orb .orb-mist-cloud--b{
-  background:
-    radial-gradient(ellipse 55% 43% at 64% 67%,rgba(160,180,201,.43),transparent 100%),
-    radial-gradient(ellipse 47% 37% at 31% 53%,rgba(255,255,255,.70),transparent 100%);
-}
-:root[data-theme=light] #orb .orb-mist-cloud--c{
-  background:
-    radial-gradient(ellipse 43% 33% at 51% 43%,rgba(113,145,175,.27),transparent 100%),
-    radial-gradient(ellipse 48% 35% at 50% 75%,rgba(251,252,255,.62),transparent 100%);
-}
-:root[data-theme=light] #orb .orb-mist::after{
-  background:radial-gradient(circle at 50% 50%,
-    rgba(255,255,255,.02) 0%,
-    rgba(228,236,246,.045) 43%,
-    rgba(146,185,222,.24) 64%,
-    rgba(151,192,231,.15) 78%,
-    transparent 96%);
+@keyframes seyveo-glass-finish{
+ from{opacity:.78}to{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){
-  #orb .orb-mist,
-  #orb .orb-mist-cloud,
-  #orb .orb-mist::after{animation:none!important;transform:none!important}
-  #orb .orb-mist.is-breathing,
-  #orb.seyveo-presence-ack .orb-mist,
-  #orb.seyveo-presence-listening .orb-mist,
-  #orb.seyveo-presence-speaking .orb-mist{opacity:.45}
-  #orb :is(.orb-mist.is-breathing,.orb-mist) .orb-mist-cloud--a,
-  #orb.seyveo-presence-ack .orb-mist-cloud--a,
-  #orb.seyveo-presence-listening .orb-mist-cloud--a,
-  #orb.seyveo-presence-speaking .orb-mist-cloud--a{opacity:.60}
-  #orb.seyveo-presence-ack .orb-mist::after,
-  #orb.seyveo-presence-listening .orb-mist::after,
-  #orb.seyveo-presence-speaking .orb-mist::after{opacity:.14}
+ #orb .orb-mist,
+ #orb .orb-mist::after{animation:none!important;transition:none!important;transform:none!important}
+ #orb .orb-mist.is-breathing,
+ #orb.seyveo-presence-ack .orb-mist,
+ #orb.seyveo-presence-listening .orb-mist,
+ #orb.seyveo-presence-speaking .orb-mist{opacity:.8}
+ #orb.seyveo-presence-finish .orb-mist{opacity:0}
 }
