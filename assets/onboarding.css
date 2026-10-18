@@ -38,5 +38,3 @@
 .onboard-name-choice[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
 .onboard-name-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .onboard-assistant-custom{margin-bottom:10px}
-.onboard-voice-field{margin-bottom:8px}
-.onboard-voice-field select{display:block;width:100%;height:44px;margin-top:8px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--text);font:inherit;font-size:14px}
