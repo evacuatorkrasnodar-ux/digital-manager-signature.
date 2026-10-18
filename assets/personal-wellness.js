@@ -52,7 +52,9 @@ host.innerHTML=`
   <section id="pwCareDetail" class="pw-detail" hidden>
    <div data-pw-panel="breath" hidden>
     <header class="pw-panel-head"><h3>Минута спокойствия</h3><p>Дышите в комфортном ритме. Без задержек.</p></header>
-    <div class="pw-inline"><label>Длительность<select id="pwBreathDuration"><option value="1">1 минута</option><option value="3">3 минуты</option><option value="5">5 минут</option></select></label></div>
+    <div class="pw-segment-field"><span class="pw-control-label">Длительность</span><div class="pw-segments" role="group" aria-label="Длительность практики">
+     <button type="button" data-pw-duration="1" aria-pressed="true">1 мин</button><button type="button" data-pw-duration="3" aria-pressed="false">3 мин</button><button type="button" data-pw-duration="5" aria-pressed="false">5 мин</button>
+    </div><input id="pwBreathDuration" type="hidden" value="1"></div>
     <div class="pw-center"><div id="pwBreathRing" class="pw-breath-ring is-preview" aria-hidden="true"><span class="pw-breath-aura"></span><span class="pw-breath-orbit"></span><div class="pw-breath-disc"><span class="pw-breath-core"></span></div></div><strong id="pwBreathStage">Вдох — 4 сек. · выдох — 6 сек.</strong><output id="pwBreathClock" class="pw-clock">01:00</output><div class="pw-actions"><button type="button" id="pwBreathStart" class="pw-primary">Начать</button><button type="button" id="pwBreathStop" hidden>Завершить</button></div></div>
     <p class="pw-caption">При головокружении или дискомфорте остановитесь и дышите как обычно.</p>
    </div>
@@ -100,7 +102,9 @@ host.innerHTML=`
    </div>
    <div data-pw-panel="sleep" hidden>
     <header class="pw-panel-head"><h3>Дневник сна</h3><p>Личные записи, не медицинский анализ.</p></header>
-    <form id="pwSleepForm" class="pw-form"><div class="pw-inline pw-date-fields"><label>Дата пробуждения<input id="pwSleepDate" type="date" required></label><label>Часов<input id="pwSleepHours" type="number" min=".5" max="24" step=".5" inputmode="decimal" required placeholder="7.5"></label></div><div class="pw-inline"><label>Как спалось<select id="pwSleepQuality"><option value="normal">Обычно</option><option value="good">Хорошо</option><option value="poor">Беспокойно</option></select></label><button type="submit" class="pw-primary">Сохранить</button></div></form>
+    <form id="pwSleepForm" class="pw-form"><div class="pw-inline pw-date-fields"><label>Дата пробуждения<input id="pwSleepDate" type="date" required></label><label>Часов<input id="pwSleepHours" type="number" min=".5" max="24" step=".5" inputmode="decimal" required placeholder="7.5"></label></div><div class="pw-segment-field"><span class="pw-control-label">Как спалось</span><div class="pw-segments" role="group" aria-label="Качество сна">
+     <button type="button" data-pw-sleep-quality="good" aria-pressed="false">Хорошо</button><button type="button" data-pw-sleep-quality="normal" aria-pressed="true">Обычно</button><button type="button" data-pw-sleep-quality="poor" aria-pressed="false">Беспокойно</button>
+    </div><input type="hidden" id="pwSleepQuality" value="normal"></div><button type="submit" class="pw-primary">Сохранить</button></form>
     <div id="pwSleepList" class="pw-list"></div>
    </div>
   </section>
@@ -200,6 +204,7 @@ function stopSession(done=false){
  if(old.kind==='breath'){
   $('pwBreathRing').className='pw-breath-ring is-preview';
   $('pwBreathDuration').disabled=false;
+  host.querySelectorAll('[data-pw-duration]').forEach(button=>button.disabled=false);
   $('pwBreathStart').textContent='Начать';$('pwBreathStop').hidden=true;
   $('pwBreathStage').textContent=done?'Пауза завершена':'Вдох — 4 сек. · выдох — 6 сек.';
   $('pwBreathClock').textContent=done?'00:00':clock(Number($('pwBreathDuration').value)*60);
@@ -237,7 +242,10 @@ function startSession(kind){
  }
  session={kind,elapsed:0,total:isBreath?Number($('pwBreathDuration').value)*60:60,paused:false,last:performance.now()};
  button.textContent='Пауза';$(isBreath?'pwBreathStop':'pwEyeStop').hidden=false;
- if(isBreath)$('pwBreathDuration').disabled=true;
+ if(isBreath){
+  $('pwBreathDuration').disabled=true;
+  host.querySelectorAll('[data-pw-duration]').forEach(button=>button.disabled=true);
+ }
  else $('pwEye').classList.add('is-running');
  tick();
  timer=setInterval(tick,250);
@@ -428,6 +436,24 @@ host.addEventListener('click',event=>{
   const target=host.querySelector('[data-pw-tool="'+previous+'"]');
   if(target)target.focus({preventScroll:true});
   notice('');
+  return;
+ }
+ if(btn.dataset.pwDuration){
+  if(session)return;
+  const duration=Number(btn.dataset.pwDuration);
+  if(![1,3,5].includes(duration))return;
+  $('pwBreathDuration').value=String(duration);
+  host.querySelectorAll('[data-pw-duration]').forEach(button=>
+   button.setAttribute('aria-pressed',String(button===btn)));
+  $('pwBreathDuration').dispatchEvent(new Event('change',{bubbles:true}));
+  return;
+ }
+ if(btn.dataset.pwSleepQuality){
+  const quality=btn.dataset.pwSleepQuality;
+  if(!['good','normal','poor'].includes(quality))return;
+  $('pwSleepQuality').value=quality;
+  host.querySelectorAll('[data-pw-sleep-quality]').forEach(button=>
+   button.setAttribute('aria-pressed',String(button===btn)));
   return;
  }
  if(btn.dataset.pwTool){openTool(btn.dataset.pwTool);return;}
