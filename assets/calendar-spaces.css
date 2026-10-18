@@ -56,13 +56,13 @@
 /* Health inside Personal Space: glanceable real entered values, never examples.
    Scoped exclusively to the existing shared dialog when Health is active. */
 #calendarHealthOverview[hidden]{display:none!important}
-#calendarHealthOverview.cal-health-overview{margin:0 0 16px}
+#calendarHealthOverview.cal-health-overview{margin:0 0 8px}
 #calendarHealthOverview .cal-health-tiles{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
 }
 #calendarHealthOverview .cal-health-tile{
  display:flex;position:relative;flex-direction:column;
- align-items:flex-start;gap:7px;min-width:0;min-height:122px;
+ align-items:flex-start;gap:7px;min-width:0;min-height:114px;
  box-sizing:border-box;padding:15px 11px 12px;
  border:1px solid var(--soft-line);border-radius:19px;
  background:var(--card2);color:var(--text);
