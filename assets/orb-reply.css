@@ -9,79 +9,6 @@
 }
 #stage .orb-cluster{flex:0 0 auto}
 
-/* SEYVEO Presence v1 · an answer briefly moves light INSIDE the approved
-   Pearl Mist sphere. The SVG, rim, size, anchor and Deep Reveal stay intact.
-   Only opacity and tiny internal shifts animate: no outward halo or lasers. */
-#orb .orb-reply-presence{
- position:absolute;z-index:2;inset:12%;display:block;overflow:hidden;
- border-radius:50%;pointer-events:none;opacity:0;
- -webkit-mask-image:radial-gradient(circle,#000 0 50%,rgba(0,0,0,.88) 72%,transparent 96%);
- mask-image:radial-gradient(circle,#000 0 50%,rgba(0,0,0,.88) 72%,transparent 96%);
- transition:opacity .75s ease-out;
-}
-#orb .orb-reply-presence::before,
-#orb .orb-reply-presence::after{
- content:"";position:absolute;inset:2%;border-radius:50%;
- pointer-events:none;filter:blur(7px);
-}
-#orb .orb-reply-presence::before{
- background:
-  radial-gradient(ellipse 34% 25% at 38% 36%,rgba(255,255,255,.51),transparent 94%),
-  radial-gradient(ellipse 39% 30% at 72% 57%,rgba(211,229,252,.43),transparent 96%);
- opacity:.86;
-}
-#orb .orb-reply-presence::after{
- background:
-  radial-gradient(ellipse 45% 25% at 41% 69%,rgba(244,250,255,.48),transparent 92%),
-  radial-gradient(ellipse 23% 33% at 65% 37%,rgba(209,224,247,.39),transparent 97%);
- opacity:.67;
-}
-#orb.seyveo-presence-speaking .orb-reply-presence{opacity:.85}
-#orb.seyveo-presence-speaking .orb-reply-presence::before{
- animation:seyveo-presence-drift-a 8.5s ease-in-out infinite alternate;
-}
-#orb.seyveo-presence-speaking .orb-reply-presence::after{
- animation:seyveo-presence-drift-b 10.5s ease-in-out infinite alternate;
-}
-#orb.seyveo-presence-ack .orb-reply-presence{
- animation:seyveo-presence-once 2.25s cubic-bezier(.3,.1,.4,1) both;
-}
-#orb.seyveo-presence-ack .orb-reply-presence::before{
- animation:seyveo-presence-drift-a 4.7s ease-in-out both;
-}
-#orb.seyveo-presence-finish .orb-reply-presence{opacity:.12}
-@keyframes seyveo-presence-drift-a{
- 0%{transform:translate3d(-2%,2%,0);opacity:.40}
- 48%{transform:translate3d(1%,-1%,0);opacity:.70}
- 100%{transform:translate3d(2%,-2%,0);opacity:.49}
-}
-@keyframes seyveo-presence-drift-b{
- 0%{transform:translate3d(2%,-2%,0);opacity:.25}
- 54%{transform:translate3d(-1%,1%,0);opacity:.62}
- 100%{transform:translate3d(-2%,2%,0);opacity:.32}
-}
-@keyframes seyveo-presence-once{
- 0%{opacity:0}22%{opacity:.82}57%{opacity:.59}100%{opacity:0}
-}
-/* White Velvet retains a barely colored inner shadow, never a tinted shell. */
-:root[data-theme=light] #orb .orb-reply-presence::before{
- background:
-  radial-gradient(ellipse 34% 25% at 38% 36%,rgba(136,169,205,.32),transparent 94%),
-  radial-gradient(ellipse 39% 30% at 72% 57%,rgba(245,249,255,.61),transparent 96%);
-}
-:root[data-theme=light] #orb .orb-reply-presence::after{
- background:
-  radial-gradient(ellipse 45% 25% at 41% 69%,rgba(153,181,216,.27),transparent 92%),
-  radial-gradient(ellipse 23% 33% at 65% 37%,rgba(250,252,255,.66),transparent 97%);
-}
-@media(prefers-reduced-motion:reduce){
- #orb .orb-reply-presence{transition:none!important}
- #orb .orb-reply-presence::before,
- #orb .orb-reply-presence::after{animation:none!important;transform:none!important}
- #orb.seyveo-presence-speaking .orb-reply-presence{opacity:.18}
- #orb.seyveo-presence-ack .orb-reply-presence{animation:none!important;opacity:.15}
-}
-
 /* SEYVEO Answer Together v1.
    Typed assistant responses appear in the status space BELOW the approved
    sphere instead of opening a full-screen modal above it. The sphere's
@@ -155,50 +82,6 @@
  #stage .orb-inline-reply{animation:none}
 }
 
-/* Deep Reveal response: no drawn squiggles or moving line overlays.
-   Only a diffuse, softly breathing reflection INSIDE the stationary sphere. */
-#orb .orb-presence-matter{
- position:absolute;inset:8%;display:block;border-radius:50%;
- pointer-events:none;opacity:0;
- background:
-  radial-gradient(ellipse 43% 29% at 40% 39%,rgba(255,255,255,.38),transparent 97%),
-  radial-gradient(ellipse 38% 31% at 66% 64%,rgba(236,245,253,.25),transparent 97%);
- filter:blur(11px);
-}
-#orb.seyveo-presence-ack .orb-presence-matter{
- animation:seyveo-deep-reveal-light 4.7s ease-in-out both;
-}
-#orb.seyveo-presence-ack .orb-reply-presence{
- animation:seyveo-presence-once 4.7s ease-in-out both;
-}
-#orb.seyveo-presence-speaking .orb-presence-matter{
- opacity:.48;animation:seyveo-deep-reveal-speaking 7.5s ease-in-out infinite alternate;
-}
-#orb.seyveo-presence-finish .orb-presence-matter{
- opacity:0;transition:opacity .6s ease-out;
-}
-@keyframes seyveo-deep-reveal-light{
- 0%,100%{opacity:0;transform:translate3d(0,1%,0)}
- 28%{opacity:.52;transform:translate3d(0,0,0)}
- 60%{opacity:.46;transform:translate3d(1%,-1%,0)}
- 85%{opacity:.22;transform:translate3d(0,-1%,0)}
-}
-@keyframes seyveo-deep-reveal-speaking{
- from{opacity:.32;transform:translate3d(-1%,1%,0)}
- to{opacity:.56;transform:translate3d(1%,-1%,0)}
-}
-:root[data-theme=light] #orb .orb-presence-matter{
- background:
-  radial-gradient(ellipse 43% 29% at 40% 39%,rgba(103,143,180,.24),transparent 97%),
-  radial-gradient(ellipse 38% 31% at 66% 64%,rgba(249,252,255,.62),transparent 97%);
-}
-@media(prefers-reduced-motion:reduce){
- #orb.seyveo-presence-ack .orb-presence-matter,
- #orb.seyveo-presence-speaking .orb-presence-matter{
-  animation:none!important;transform:none!important;opacity:.22!important;
- }
- #orb .orb-presence-matter{transition:none!important}
-}
 #stage .orb-inline-reply-footer{
  display:flex;justify-content:flex-end;align-items:center;
  padding-top:6px;margin-top:3px;
