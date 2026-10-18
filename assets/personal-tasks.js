@@ -10,13 +10,16 @@ const notice=$('personalTasksNotice');
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
+let pendingSourceNoteId='';
+function safeNoteId(value){return typeof value==='string'&&value.length>0&&value.length<=128?value:'';}
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
  let raw=null;try{raw=localStorage.getItem(KEY)}catch{}
  return safeParse(raw).filter(item=>item&&typeof item.id==='string'&&typeof item.title==='string')
  .slice(-MAX).map(item=>({id:item.id,title:item.title.trim().slice(0,140),
  due:/^\d{4}-\d{2}-\d{2}$/.test(item.due)?item.due:'',done:item.done===true,
- createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:''}));
+ createdAt:typeof item.createdAt==='string'?item.createdAt:'',doneAt:typeof item.doneAt==='string'?item.doneAt:'',
+ ...(safeNoteId(item.sourceNoteId)?{sourceNoteId:item.sourceNoteId}:{})}));
 }
 function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-MAX)));return true}
@@ -46,6 +49,12 @@ function row(item,compact=false){
  const due=displayDate(item);
  if(due||item.done){const info=element('small','',item.done?'Завершено':due);label.append(info)}
  if(!compact){
+   if(item.sourceNoteId){
+    const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
+    origin.type='button';origin.dataset.taskOrigin=item.id;
+    origin.setAttribute('aria-label','Открыть исходную заметку для дела: '+item.title);
+    label.append(origin);
+   }
    const checkbox=element('button','personal-task-check',item.done?'✓':'');
    checkbox.type='button';checkbox.dataset.taskToggle=item.id;
    checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
@@ -106,6 +115,7 @@ function syncDueDateDisplay(){
 }
 for(const eventName of ['input','change','blur'])date.addEventListener(eventName,syncDueDateDisplay);
 function openDialog(){
+ pendingSourceNoteId='';
  form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
@@ -117,8 +127,10 @@ function put(e){
  if(!title){$('personalTaskStatus').textContent='Напишите, что нужно сделать.';input.focus();return}
  const all=read();
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
- const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,done:false,createdAt:new Date().toISOString(),doneAt:''}];
+ const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,done:false,createdAt:new Date().toISOString(),doneAt:'',
+ ...(pendingSourceNoteId?{sourceNoteId:pendingSourceNoteId}:{})}];
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
+ pendingSourceNoteId='';
  dialog.close();render();
 }
 function change(id,del=false){
@@ -140,6 +152,14 @@ list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
  else if(btn.dataset.taskDelete)change(btn.dataset.taskDelete,true);
+ else if(btn.dataset.taskOrigin){
+  const target=read().find(row=>row.id===btn.dataset.taskOrigin);
+  if(!target?.sourceNoteId)return;
+  const detail={id:target.sourceNoteId};
+  window.dispatchEvent(new CustomEvent('seyveo:note-open-source',{detail}));
+  if(detail.result?.status!=='opened')
+   showTaskError(detail.result?.message||'Не удалось открыть исходную заметку.');
+ }
 });
 dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
 /* Prepared from a Notebook note; the existing task form is the only
@@ -150,6 +170,7 @@ window.addEventListener('seyveo:task-plan-note',event=>{
  if(!title)return;
  openDialog();
  input.value=title;
+ pendingSourceNoteId=safeNoteId(draft.sourceNoteId);
  const requested=typeof draft.date==='string'?draft.date:'';
  if(strDate(requested))date.value=requested;
  syncDueDateDisplay();
@@ -165,6 +186,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
   if(detail)detail.result={status:'invalid',message:'Не удалось прочитать план.'};
   return;
  }
+ const sourceNoteId=safeNoteId(detail.sourceNoteId);
  const all=read(),seen=new Set(all.map(item=>
   item.title.replace(/\s+/g,' ').trim().toLocaleLowerCase('ru-RU')+'|'+item.due));
  const pending=[];
@@ -193,7 +215,8 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
  const stamp=Date.now(),createdAt=new Date(stamp).toISOString();
  const next=all.concat(pending.map((draft,index)=>({
   id:'personal-'+stamp+'-'+index+'-'+Math.random().toString(36).slice(2,9),
-  title:draft.title,due:draft.due,done:false,createdAt,doneAt:''
+  title:draft.title,due:draft.due,done:false,createdAt,doneAt:'',
+  ...(sourceNoteId?{sourceNoteId}:{})
  })));
  if(!save(next)){
   detail.result={status:'error',added:0,duplicates,
