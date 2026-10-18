@@ -32,7 +32,7 @@ function acknowledge(){
  // Restart the full visible cycle after each response, including quiet mode.
  void orb.offsetWidth;
  orb.classList.add('seyveo-presence-ack');
- timer=setTimeout(clear,4800);
+ timer=setTimeout(clear,5800);
 }
 function speak(){
  if(!hasHome())return;
