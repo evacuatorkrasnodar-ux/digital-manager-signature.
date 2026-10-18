@@ -124,19 +124,28 @@
 #calendarPersonalTools .pw-breath-ring.is-preview .pw-breath-aura{
  animation:pw-aura-preview 10s ease-in-out infinite
 }
-#calendarPersonalTools .pw-breath-ring.is-active.inhale .pw-breath-disc{
- transform:scale(1.19);transition-duration:4s
+/* One GPU-composited 10s cycle: 4s inhale, 6s exhale.
+   Pause freezes exactly at the current frame (including the glow). */
+#calendarPersonalTools .pw-breath-ring.is-active .pw-breath-disc{
+ animation:pw-pearl-session 10s linear infinite;
+ transition:none
 }
-#calendarPersonalTools .pw-breath-ring.is-active.exhale .pw-breath-disc{
- transform:scale(.82);transition-duration:6s
+#calendarPersonalTools .pw-breath-ring.is-active .pw-breath-aura{
+ animation:pw-aura-session 10s linear infinite
 }
-#calendarPersonalTools .pw-breath-ring.is-active.inhale .pw-breath-aura{
- opacity:.86;transition:opacity 4s ease
+#calendarPersonalTools .pw-breath-ring.is-active.is-paused :is(.pw-breath-disc,.pw-breath-aura){
+ animation-play-state:paused
 }
-#calendarPersonalTools .pw-breath-ring.is-active.exhale .pw-breath-aura{
- opacity:.34;transition:opacity 6s ease
+@keyframes pw-pearl-session{
+ 0%{transform:scale(.82);animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
+ 40%{transform:scale(1.19);animation-timing-function:cubic-bezier(.45,.05,.55,.95)}
+ 100%{transform:scale(.82)}
 }
-#calendarPersonalTools .pw-breath-ring.is-paused .pw-breath-disc{transition:none;transform:scale(.9)}
+@keyframes pw-aura-session{
+ 0%{opacity:.34;transform:scale(.94);animation-timing-function:ease-in-out}
+ 40%{opacity:.85;transform:scale(1.1);animation-timing-function:ease-in-out}
+ 100%{opacity:.34;transform:scale(.94)}
+}
 /* Drop-shaped glass: fill height is a true share of the user's own goal. */
 #calendarPersonalTools .pw-water-scene{
  display:grid;justify-items:center;gap:2px;margin:4px 0 9px;text-align:center
