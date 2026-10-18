@@ -97,16 +97,7 @@
   dialog.addEventListener('click',event=>{if(event.target===dialog)skip()});
   window.addEventListener('storage',event=>{if(event.key===PROFILE)overview()});
   overview();
-  // A truly new local installation receives a single optional introduction.
-  // Existing demo users remain undisturbed, even if they never completed onboarding.
-  const established=['dm-signature-living-v2','dm-signature-living-v1','seyveo-notes-v1']
-    .some(key=>safeRead(key)!==null);
-  if(!established&&!existing()&&safeRead(SKIPPED)!=='1'){
-    const openFirst=()=>{
-      if(document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
-      if(!existing()&&safeRead(SKIPPED)!=='1')show();
-    };
-    setTimeout(openFirst,10000);
-    window.addEventListener('seyveo:first-help-finished',openFirst);
-  }
+  // First-install welcome is handled separately by welcome.js.
+  // Keep this compact editor available from Management for existing users.
+  window.addEventListener('seyveo:profile-changed',overview);
 })();
