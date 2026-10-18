@@ -142,6 +142,20 @@ list.addEventListener('click',e=>{
  else if(btn.dataset.taskDelete)change(btn.dataset.taskDelete,true);
 });
 dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+/* Prepared from a Notebook note; the existing task form is the only
+   writer and still requires the person's explicit Save action. */
+window.addEventListener('seyveo:task-plan-note',event=>{
+ const draft=event.detail||{};
+ const title=typeof draft.title==='string'?draft.title.trim().replace(/\s+/g,' ').slice(0,140):'';
+ if(!title)return;
+ openDialog();
+ input.value=title;
+ const requested=typeof draft.date==='string'?draft.date:'';
+ if(strDate(requested))date.value=requested;
+ syncDueDateDisplay();
+ $('personalTaskStatus').textContent='SEYVEO заметил возможное дело в заметке. Проверьте название и срок, затем сохраните.';
+ input.focus({preventScroll:true});
+});
 window.addEventListener('storage',event=>{if(event.key===KEY)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 render();
