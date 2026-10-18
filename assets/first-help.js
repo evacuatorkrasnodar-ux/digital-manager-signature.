@@ -127,7 +127,7 @@ function update(){
  count.textContent=(step+1)+' / '+steps.length;
  title.textContent=steps[step].name;
  text.textContent=steps[step].body;
- badge.textContent=steps[step].label||'МОЙ ПЕРВЫЙ ШАГ';
+ badge.textContent=steps[step].label||(lastSuccess?'ПОЛУЧИЛОСЬ':'ПОДСКАЗКА SEYVEO');
  const blockedExample=step===2&&!!$('question')?.value.trim()&&(
   $('question').value.trim()!=='Что у меня сегодня?'||
   $('composerModeNotes')?.getAttribute('aria-pressed')==='true'
