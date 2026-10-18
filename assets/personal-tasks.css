@@ -185,3 +185,155 @@
  font-size:12px;line-height:1.5;
 }
 #tasksPage .personal-tasks-notice[hidden]{display:none!important}
+
+/* SEYVEO Contacts v1 · local, opt-in phone directory and native tel: action.
+   No bright gradients or extra dock controls; both Velvet themes share tokens. */
+#tasksPage .personal-tasks-head-actions{
+ display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:7px
+}
+#tasksPage .personal-contacts-open{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;min-width:0;padding:8px 11px;
+ border:1px solid var(--soft-line);border-radius:999px;
+ background:var(--card2);color:var(--text);
+ font:inherit;font-size:12px;font-weight:525;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#tasksPage .personal-task-call-title{
+ display:inline-flex;align-items:center;align-self:flex-start;
+ gap:7px;max-width:100%;min-width:0;
+ min-height:44px;margin:-5px 0 -5px -7px;padding:5px 7px;
+ border:0;border-radius:10px;background:transparent;
+ color:var(--text);font:inherit;font-size:13px;font-weight:560;
+ line-height:1.45;text-align:left;overflow-wrap:anywhere;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#tasksPage .personal-task-call-title::after{
+ content:'↗';flex:none;font-size:13px;line-height:1;opacity:.58
+}
+#tasksPage .personal-task-call-title:active{background:var(--card2)}
+#tasksPage .personal-task-call-title:focus-visible,
+#tasksPage .personal-contacts-open:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+#tasksPage .personal-task-call-title.is-done{text-decoration:line-through;opacity:.65}
+@media(max-width:365px){
+ #tasksPage .personal-tasks-head{align-items:flex-start;gap:7px}
+ #tasksPage .personal-tasks-head-actions{gap:5px}
+ #tasksPage .personal-contacts-open,
+ #tasksPage .personal-tasks-head-actions .personal-tasks-add{
+  font-size:11.5px;padding:7px 9px
+ }
+}
+.personal-contacts-dialog[open],.personal-call-dialog[open]{
+ box-sizing:border-box;width:min(440px,calc(100vw - 24px));
+ max-height:min(88dvh,calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ padding:22px 18px 18px;border-radius:24px;
+ background:var(--card);color:var(--text)
+}
+.personal-contacts-dialog h2,.personal-call-dialog h2{
+ margin:0 38px 8px 0;font-size:21px;font-weight:585;
+ letter-spacing:-.027em;line-height:1.25;color:var(--text)
+}
+.personal-contacts-intro,.personal-call-help{
+ margin:0 30px 12px 0;font-size:12px;line-height:1.5;color:var(--secondary)
+}
+.personal-contacts-privacy{
+ margin:0 0 13px;padding:11px 12px;
+ border:1px solid var(--soft-line);border-radius:14px;
+ background:var(--card2);color:var(--secondary);
+ font-size:11px;line-height:1.5
+}
+.personal-contacts-privacy strong{font-weight:620;color:var(--text)}
+#seyveoContactForm{display:flex;flex-direction:column;gap:11px;margin:0}
+#seyveoContactForm label,.personal-call-search-label{
+ display:flex;flex-direction:column;gap:6px;min-width:0;
+ margin:0;font-size:11.5px;line-height:1.4;color:var(--secondary)
+}
+#seyveoContactForm input,#seyveoCallSearch{
+ display:block;box-sizing:border-box;width:100%;min-width:0;
+ min-height:46px;margin:0;padding:10px 12px;border:1px solid var(--line);
+ border-radius:14px;background:var(--card2);color:var(--text);
+ font:inherit;font-size:16px;line-height:1.35;outline:0;
+ -webkit-appearance:none;appearance:none
+}
+#seyveoContactForm input:focus-visible,#seyveoCallSearch:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+.personal-contacts-form-actions,.personal-call-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:2px 0 0
+}
+.personal-contacts-form-actions button,.personal-call-actions :is(button,a){
+ display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+ padding:9px 14px;border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);color:var(--text);font:inherit;
+ font-size:12px;font-weight:540;line-height:1.35;text-align:center;
+ text-decoration:none;-webkit-appearance:none;appearance:none;
+ touch-action:manipulation
+}
+#seyveoContactSave,#seyveoCallDial{
+ flex:1 1 135px;background:var(--text);border-color:var(--text);color:var(--bg)
+}
+.personal-contacts-form-actions [hidden],.personal-call-actions [hidden],
+#seyveoCallPicked[hidden]{display:none!important}
+.personal-contacts-status{
+ margin:10px 0;font-size:11.5px;line-height:1.5;color:var(--secondary)
+}
+.personal-contacts-status:empty{display:none}
+.personal-contacts-list{
+ display:grid;gap:0;min-width:0;
+ margin-top:12px;padding:0;border-top:1px solid var(--soft-line)
+}
+.personal-contacts-item{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:9px;padding:10px 0;
+ border-bottom:1px solid var(--soft-line);min-width:0
+}
+.personal-contacts-info{display:grid;gap:3px;min-width:130px;flex:1}
+.personal-contacts-info strong{
+ font-size:12.5px;font-weight:565;line-height:1.4;
+ color:var(--text);overflow-wrap:anywhere
+}
+.personal-contacts-info small{font-size:11px;color:var(--secondary);line-height:1.35}
+.personal-contacts-row-actions{display:flex;align-items:center;gap:4px}
+.personal-contacts-row-actions button{
+ min-height:44px;padding:9px 10px;border:0;border-radius:11px;
+ background:transparent;color:var(--secondary);font:inherit;font-size:11px;
+ font-weight:530;touch-action:manipulation
+}
+.personal-contacts-row-actions button:active{background:var(--card2)}
+.personal-contacts-empty{
+ margin:12px 0;color:var(--secondary);font-size:12px;line-height:1.5
+}
+.personal-call-list{
+ display:grid;gap:6px;min-height:0;max-height:170px;
+ margin:10px 0;padding:1px;overflow-y:auto;overscroll-behavior:contain
+}
+.personal-call-choice{
+ display:flex;flex-wrap:wrap;justify-content:space-between;
+ align-items:center;gap:8px;min-width:0;min-height:46px;
+ padding:9px 11px;border:1px solid var(--soft-line);
+ border-radius:13px;background:var(--card2);color:var(--text);
+ font:inherit;text-align:left;touch-action:manipulation
+}
+.personal-call-choice[aria-pressed=true]{border-color:var(--text)}
+.personal-call-choice strong{
+ font-size:12.5px;font-weight:550;overflow-wrap:anywhere
+}
+.personal-call-choice small{font-size:11px;color:var(--secondary)}
+.personal-call-picked{
+ display:grid;gap:3px;margin:11px 0 8px;
+ padding:10px 12px;border:1px solid var(--soft-line);
+ border-radius:13px;background:var(--card2)
+}
+.personal-call-picked small{font-size:10.5px;color:var(--secondary)}
+.personal-call-picked strong{font-size:13px;font-weight:560;color:var(--text)}
+.personal-call-picked span{font-size:12px;color:var(--secondary)}
+.personal-contacts-dialog :is(button,a):focus-visible,
+.personal-call-dialog :is(button,a):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage .personal-task-call-title{transition:none}
+}
