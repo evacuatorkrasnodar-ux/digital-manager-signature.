@@ -85,6 +85,14 @@
 #orb.seyveo-presence-speaking .orb-mist{
   animation:seyveo-smoke-hold 8s ease-in-out infinite alternate;
 }
+#orb.seyveo-presence-finish .orb-mist{
+  animation:seyveo-smoke-exit .85s ease-out both;
+}
+#orb.seyveo-presence-finish .orb-mist-cloud--a{opacity:.82}
+#orb.seyveo-presence-finish .orb-mist-cloud--b{opacity:.67}
+#orb.seyveo-presence-finish .orb-mist-cloud--c{opacity:.54}
+#orb.seyveo-presence-finish .orb-mist::after{opacity:.18}
+
 #orb.seyveo-presence-listening .orb-mist-cloud--a,
 #orb.seyveo-presence-speaking .orb-mist-cloud--a{
   animation:seyveo-smoke-a 9s ease-in-out infinite alternate;
@@ -113,6 +121,10 @@
 @keyframes seyveo-smoke-hold{
   0%{opacity:.63}
   100%{opacity:.89}
+}
+@keyframes seyveo-smoke-exit{
+  from{opacity:.7}
+  to{opacity:0}
 }
 @keyframes seyveo-smoke-a{
   0%{opacity:.12;transform:translate3d(-5%,13%,0) scale(.88)}
