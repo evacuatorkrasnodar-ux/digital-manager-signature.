@@ -11,7 +11,20 @@ let timer=0;
 const hasHome=()=>!document.hidden&&!home.hidden;
 function clear(){
  clearTimeout(timer);timer=0;
- orb.classList.remove('seyveo-presence-speaking','seyveo-presence-ack','seyveo-presence-finish');
+ orb.classList.remove('seyveo-presence-speaking','seyveo-presence-ack','seyveo-presence-finish','seyveo-presence-listening');
+}
+// Microphone listening has its own sustained, smoke-only state.
+function listen(){
+ if(!hasHome())return;
+ clear();
+ orb.classList.add('seyveo-presence-listening');
+ // iOS may omit the recognition end callback: do not leave smoke active forever.
+ timer=setTimeout(clear,70000);
+}
+function endListening(){
+ if(!orb.classList.contains('seyveo-presence-listening'))return;
+ orb.classList.remove('seyveo-presence-listening');
+ clearTimeout(timer);timer=0;
 }
 function acknowledge(){
  if(!hasHome())return;
@@ -38,7 +51,9 @@ function finish(){
 }
 document.addEventListener('seyveo:assistant-presence',event=>{
  const phase=event.detail?.phase;
- if(phase==='speaking')speak();
+ if(phase==='listening')listen();
+ else if(phase==='listening-end')endListening();
+ else if(phase==='speaking')speak();
  else if(phase==='end')finish();
  else if(phase==='text')acknowledge();
  else if(phase==='ack')acknowledge();
