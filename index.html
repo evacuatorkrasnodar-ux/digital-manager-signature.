@@ -983,9 +983,16 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="note-read-head"><h2 id="noteReadTitle">Моя запись</h2><small id="noteReadDate"></small></div>
 <div id="noteReadContent" class="note-read-content" tabindex="0" aria-label="Полный текст сохранённой записи"></div>
 <details id="noteSmartInsight" class="note-smart-insight" hidden>
-<summary><span class="note-smart-symbol" aria-hidden="true">✧</span><span>SEYVEO заметил возможное действие</span><span class="note-smart-chevron" aria-hidden="true">⌄</span></summary>
-<div class="note-smart-body"><p id="noteSmartDescription"></p><small>Это предположение по тексту. Ничего не создаётся без вашего подтверждения.</small>
-<div class="note-smart-actions"><button id="noteSmartTask" type="button">Подготовить дело</button><button id="noteSmartEvent" type="button">В календарь</button></div></div>
+<summary><span class="note-smart-symbol" aria-hidden="true">✧</span><span id="noteSmartHeading">SEYVEO заметил возможное действие</span><span class="note-smart-chevron" aria-hidden="true">⌄</span></summary>
+<div class="note-smart-body">
+ <div id="noteSmartSingle"><p id="noteSmartDescription"></p><small>Это предположение по тексту. Ничего не создаётся без вашего подтверждения.</small>
+  <div class="note-smart-actions"><button id="noteSmartTask" type="button">Подготовить дело</button><button id="noteSmartEvent" type="button">В календарь</button></div>
+ </div>
+ <div id="noteSmartPlan" hidden><p>Проверьте предполагаемые дела. Снимите галочки с лишних.</p><div id="noteSmartPlanList" class="note-smart-plan-list"></div>
+  <button id="noteSmartSavePlan" class="note-smart-plan-save" type="button">Добавить выбранные в Дела</button>
+  <p id="noteSmartPlanStatus" class="note-smart-plan-status" role="status" aria-live="polite"></p>
+ </div>
+</div>
 </details>
 <div class="note-read-actions"><button id="noteReadEdit" class="btn" type="button">Изменить</button><button id="noteReadDone" class="btn primary" type="button">Готово</button></div>
 </dialog>
@@ -1939,14 +1946,41 @@ function renderNotes(){
 }
 function openNotes(){renderNotes();if(!$('notesDialog').open)$('notesDialog').showModal()}
 /* Reading is separate from editing: open long OCR documents without the keyboard. */
-let readingNoteID=null,readerToEditor=false,readerToAction=false,noteActionDraft=null;
+let readingNoteID=null,readerToEditor=false,readerToAction=false,noteActionDraft=null,noteTaskPlan=null;
+function renderNotePlan(items){
+ const list=$('noteSmartPlanList');
+ list.replaceChildren();
+ items.forEach((item,index)=>{
+  const label=document.createElement('label');label.className='note-smart-plan-item';
+  const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=true;
+  checkbox.dataset.notePlanIndex=String(index);
+  const copy=document.createElement('span');copy.className='note-smart-plan-copy';
+  const name=document.createElement('strong');name.textContent=item.title;copy.append(name);
+  if(item.due){
+   const [year,month,day]=item.due.split('-').map(Number);
+   const date=new Date(year,month-1,day);
+   const time=document.createElement('small');
+   time.textContent='До '+new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'}).format(date);
+   copy.append(time);
+  }
+  label.append(checkbox,copy);list.append(label);
+ });
+ $('noteSmartPlanStatus').textContent='';
+ $('noteSmartSavePlan').disabled=false;
+}
 function openNoteRead(note){
  if(!note||note.paper)return;
  const dlg=$('noteReadDialog');
  readingNoteID=note.id;readerToEditor=false;readerToAction=false;
- noteActionDraft=window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
+ // Poems with preserved line breaks remain pure text, with no task guesses.
+ noteTaskPlan=note.preserveLines?null:window.SEYVEO_NOTE_TASK_PLAN?.(note.text)||null;
+ noteActionDraft=noteTaskPlan?null:window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
  const insight=$('noteSmartInsight');
- insight.hidden=!noteActionDraft;insight.open=false;
+ insight.hidden=!noteActionDraft&&!noteTaskPlan;insight.open=false;
+ $('noteSmartHeading').textContent=noteTaskPlan?'SEYVEO заметил несколько дел':'SEYVEO заметил возможное действие';
+ $('noteSmartSingle').hidden=Boolean(noteTaskPlan);
+ $('noteSmartPlan').hidden=!noteTaskPlan;
+ if(noteTaskPlan)renderNotePlan(noteTaskPlan.items);
  if(noteActionDraft){
   const {type,dateLabel}=noteActionDraft;
   const when=dateLabel?' · '+dateLabel:'';
@@ -1980,6 +2014,20 @@ function prepareNoteAction(action){
 }
 $('noteSmartTask').addEventListener('click',()=>prepareNoteAction('task'));
 $('noteSmartEvent').addEventListener('click',()=>prepareNoteAction('calendar'));
+$('noteSmartSavePlan').addEventListener('click',()=>{
+ const plan=noteTaskPlan;
+ if(!plan)return;
+ const selected=Array.from($('noteSmartPlanList').querySelectorAll('input[data-note-plan-index]:checked'))
+  .map(control=>plan.items[Number(control.dataset.notePlanIndex)]).filter(Boolean);
+ if(!selected.length){
+  $('noteSmartPlanStatus').textContent='Выберите хотя бы одно дело.';return;
+ }
+ const detail={items:selected};
+ window.dispatchEvent(new CustomEvent('seyveo:tasks-plan-batch',{detail}));
+ const result=detail.result||{status:'error',message:'Не удалось связаться с разделом «Дела».'};
+ $('noteSmartPlanStatus').textContent=result.message;
+ if(result.status==='saved')$('noteSmartSavePlan').disabled=true;
+});
 $('noteReadEdit').addEventListener('click',()=>{
  const note=getNotes().find(item=>item.id===readingNoteID);
  if(!note||note.paper)return;
@@ -1990,7 +2038,7 @@ $('noteReadEdit').addEventListener('click',()=>{
 $('noteReadDialog').addEventListener('close',()=>{
  readingNoteID=null;
  const returnToList=!readerToEditor&&!readerToAction;
- readerToEditor=false;readerToAction=false;noteActionDraft=null;
+ readerToEditor=false;readerToAction=false;noteActionDraft=null;noteTaskPlan=null;
  if(returnToList&&!$('noteReviewDialog').open)openNotes();
 });
 window.SEYVEO_NOTES_API=Object.freeze({getNotes,putNotes,openNotes,message:notesMessage,reviewText:(value,options)=>openNoteReview(value,null,options)});
