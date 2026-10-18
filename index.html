@@ -2262,11 +2262,11 @@ function handleSpokenAssistant(raw){
  if(!phrase)return;
  // A neutral shared joke is never a secret answer or a way to unlock data.
  if(window.SEYVEO_DISCREET_MODE===true &&
-  /(?:^|[\\s,!.?])(?:сейвео[,\\s]+)?между нами(?:[\\s,!.?]|$)/i.test(phrase)){
+  /(?:^|[\s,!.?])(?:сейвео[,\s]+)?между нами(?:[\s,!.?]|$)/i.test(phrase)){
   speakNeutralAside();return;
  }
  if(window.SEYVEO_DISCREET_MODE===true &&
-  /(?:^|\\s)(?:открой|покажи)\\s+(?:мой мир|личное пространство)(?:[\\s,.!?]|$)/i.test(phrase)){
+  /(?:^|\s)(?:открой|покажи)\s+(?:мой мир|личное пространство)(?:[\s,.!?]|$)/i.test(phrase)){
   speakNeutralAside();return;
  }
  const calendarDraft=window.SEYVEO_CALENDAR_NL?.(phrase);
