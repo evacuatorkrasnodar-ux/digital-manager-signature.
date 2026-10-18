@@ -163,6 +163,7 @@ function finish(){
  if(!active)return;
  seen();
  active=false;ui.hidden=true;cleanPaint();
+ window.dispatchEvent(new Event('seyveo:first-help-finished'));
  if(!$('homeWorldPopover')?.hidden)$('homeWorldTrigger')?.click();
  // Don't force navigation or erase text drafts; respect where the lesson ends.
  if(previousFocus?.isConnected&&previousFocus.id==='openFirstHelp'&&!$('managePage')?.hidden){
