@@ -193,7 +193,24 @@ function openCall(targetName){
  if(matches.length>1)callStatus.textContent='Найдено несколько похожих имён. Выберите нужный номер.';
  else if(!matches.length)callStatus.textContent='Номер не найден. Выберите контакт из списка или добавьте новый.';
 }
-$('seyveoContactsOpen').addEventListener('click',()=>{callTargetName='';openContacts()});
+/* The only contact directory now lives under Мой мир.
+   Reuse the same local data and editors; never migrate or duplicate numbers. */
+window.addEventListener('seyveo:contacts-open',()=>{
+ callTargetName='';openContacts();
+});
+window.addEventListener('seyveo:contacts-read',event=>{
+ if(event.detail)event.detail.items=readContacts();
+});
+window.addEventListener('seyveo:contact-call',event=>{
+ const entry=readContacts().find(c=>c.id===event.detail?.id);
+ if(!entry)return;
+ openCall(entry.name);
+ chooseCallContact(entry.id);
+ $('seyveoCallTitle').textContent='Позвонить · '+entry.name;
+});
+function contactsChanged(){
+ window.dispatchEvent(new Event('seyveo:contacts-changed'));
+}
 /* Header close controls use the shared SEYVEO dialog handler. */
 $('seyveoContactCancel').addEventListener('click',()=>{resetContactForm();showContactStatus('');renderContacts()});
 $('seyveoContactForm').addEventListener('submit',event=>{
@@ -213,6 +230,7 @@ $('seyveoContactForm').addEventListener('submit',event=>{
  if(!writeContacts(updated)){showContactStatus('Не удалось сохранить контакт. Проверьте память устройства.');return;}
  const resume=returnToCall;
  resetContactForm();renderContacts();showContactStatus('Контакт сохранён на этом устройстве.');
+ contactsChanged();
  if(resume){returnToCall=false;contactsDialog.close();openCall(callTargetName);}
 });
 $('seyveoContactsList').addEventListener('click',event=>{
@@ -233,6 +251,7 @@ $('seyveoContactsList').addEventListener('click',event=>{
    showContactStatus('Не удалось удалить контакт.');return;
   }
   resetContactForm();renderContacts();showContactStatus('Контакт удалён с устройства.');
+  contactsChanged();
  }
 });
 $('seyveoCallList').addEventListener('click',event=>{
@@ -255,6 +274,7 @@ window.addEventListener('storage',event=>{
  if(event.key===CONTACT_KEY){
   if(contactsDialog.open)renderContacts();
   if(callDialog.open)chooseCallContact(chosenContact);
+  contactsChanged();
  }
 });
 function row(item,compact=false){
