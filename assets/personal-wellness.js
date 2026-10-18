@@ -106,25 +106,8 @@ host.innerHTML=`
   <section id="pwHealthDetail" class="pw-detail" hidden>
    <div data-pw-panel="meds" hidden>
     <header class="pw-panel-head"><h3>Приём лекарств</h3><p>Только по вашему расписанию, без рекомендаций по дозировкам.</p></header>
-    <form id="pwMedForm" class="pw-form"><label>Название<input id="pwMedName" type="text" maxlength="90" required placeholder="Из назначения"></label><div class="pw-inline"><label>Доза по назначению<input id="pwMedDose" maxlength="80" required placeholder="Как назначено"></label><div class="pw-time-field"><span class="pw-control-label">Время</span>
-     <button type="button" class="pw-time-trigger" id="pwMedTimeOpen" aria-expanded="false" aria-controls="pwMedTimePicker" aria-label="Выбрать время приёма"><span id="pwMedTimeOpenValue">09:00</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
-     <input type="hidden" id="pwMedTime" value="09:00"></div></div>
-    <div class="pw-time-picker" id="pwMedTimePicker" hidden>
-     <div class="pw-time-picker-head"><strong>Выберите время</strong><small>24-часовой формат</small></div>
-     <div class="pw-time-columns">
-      <div class="pw-time-column"><span>Часы</span><div class="pw-time-stepper">
-       <button type="button" data-pw-time-adjust="hour:-1" aria-label="Уменьшить часы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button>
-       <input id="pwMedHour" type="number" inputmode="numeric" min="0" max="23" step="1" aria-label="Часы от 0 до 23" value="9">
-       <button type="button" data-pw-time-adjust="hour:1" aria-label="Увеличить часы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button>
-      </div></div>
-      <div class="pw-time-column"><span>Минуты</span><div class="pw-time-stepper">
-       <button type="button" data-pw-time-adjust="minute:-1" aria-label="Уменьшить минуты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button>
-       <input id="pwMedMinute" type="number" inputmode="numeric" min="0" max="59" step="1" aria-label="Минуты от 0 до 59" value="0">
-       <button type="button" data-pw-time-adjust="minute:1" aria-label="Увеличить минуты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button>
-      </div></div>
-     </div>
-     <div class="pw-time-picker-actions"><button id="pwMedTimeCancel" type="button">Отмена</button><button id="pwMedTimeDone" type="button" class="pw-primary">Готово</button></div>
-    </div><button type="submit" class="pw-primary">Добавить</button></form>
+    <form id="pwMedForm" class="pw-form"><label>Название<input id="pwMedName" type="text" maxlength="90" required placeholder="Из назначения"></label><div class="pw-inline"><label>Доза по назначению<input id="pwMedDose" maxlength="80" required placeholder="Как назначено"></label><label class="pw-time-field"><span class="pw-control-label">Время</span><input id="pwMedTime" type="time" value="09:00" required step="60" aria-label="Время приёма лекарства"></label></div>
+    <button type="submit" class="pw-primary">Добавить</button></form>
     <div id="pwMedList" class="pw-list"></div>
     <p class="pw-caption">Отметки сохраняются вручную. Push-напоминаний при закрытом приложении нет. Пропуск не означает, что дозу нужно удваивать.</p>
    </div>
@@ -156,50 +139,8 @@ function setInputDefaults(){
   const el=$(id);el.max=today();if(!el.value||el.value>today())el.value=today();
  }
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
- syncMedTimeLabel();
 }
-/* Theme-aware clock inside the existing medicine sheet. The saved HH:MM value
-   stays identical to the original medication model. */
-const TIME_24=/^([01]\d|2[0-3]):[0-5]\d$/;
-function syncMedTimeLabel(){
- const value=$('pwMedTime').value;
- $('pwMedTimeOpenValue').textContent=TIME_24.test(value)?value:'Выбрать';
-}
-function closeMedTimePicker(){
- const panel=$('pwMedTimePicker');
- if(panel.hidden)return;
- const focus=document.activeElement;
- if(focus&&panel.contains(focus))focus.blur();
- panel.hidden=true;
- $('pwMedTimeOpen').setAttribute('aria-expanded','false');
-}
-function openMedTimePicker(){
- const value=TIME_24.test($('pwMedTime').value)?$('pwMedTime').value:'09:00';
- $('pwMedHour').value=String(Number(value.slice(0,2)));
- $('pwMedMinute').value=String(Number(value.slice(3,5)));
- $('pwMedTimePicker').hidden=false;
- $('pwMedTimeOpen').setAttribute('aria-expanded','true');
- notice('');
-}
-function adjustMedTime(part,delta){
- const isHour=part==='hour',field=$(isHour?'pwMedHour':'pwMedMinute'),modulo=isHour?24:60;
- const raw=field.value.trim();
- const value=/^\d{1,2}$/.test(raw)?Number(raw):0;
- field.value=String(((value+delta)%modulo+modulo)%modulo);
-}
-function confirmMedTime(){
- const hour=$('pwMedHour').value.trim(),minute=$('pwMedMinute').value.trim();
- if(!/^\d{1,2}$/.test(hour)||!/^\d{1,2}$/.test(minute)
-  ||Number(hour)>23||Number(minute)>59){
-  notice('Укажите часы 0–23 и минуты 0–59.');
-  return;
- }
- $('pwMedTime').value=pad(Number(hour))+':'+pad(Number(minute));
- syncMedTimeLabel();
- closeMedTimePicker();
- $('pwMedTimeOpen').focus({preventScroll:true});
- notice('');
-}
+/* iOS / browser native time wheel; pwMedTime remains saved as HH:MM. */
 const CARE_TOOLS=new Set(['water','breath','eyes','steps']);
 function setToolFocus(section,focused){
  const care=section==='care',active=Boolean(focused&&space===section);
@@ -213,7 +154,6 @@ function setToolFocus(section,focused){
  if(active)dialog.scrollTop=0;
 }
 function resetTools(){
- closeMedTimePicker();
  stopSession(false);careTool='';healthTool='';notice('');
  $('pwCareDetail').hidden=true;$('pwHealthDetail').hidden=true;
  host.querySelectorAll('[data-pw-panel]').forEach(el=>el.hidden=true);
@@ -229,7 +169,6 @@ function openSpace(view){
  setInputDefaults();state=load();render();
 }
 function resetSectionTools(section){
- closeMedTimePicker();
  const care=section==='care';
  if(care)careTool='';else healthTool='';
  $(care?'pwCareDetail':'pwHealthDetail').hidden=true;
@@ -242,7 +181,6 @@ function resetSectionTools(section){
  });
 }
 function openTool(key){
- closeMedTimePicker();
  if(session)stopSession(false);
  const care=CARE_TOOLS.has(key),section=care?'care':'health';
  if(care){
@@ -493,7 +431,6 @@ function recordMed(e){
  if(!name||!dose||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){notice('Проверьте название, дозировку и время.');return;}
  if(state.medications.length>=60){notice('Лимит назначений — 60 записей.');return;}
  if(save(d=>d.medications.push({id:'med-'+Date.now()+'-'+Math.random().toString(36).slice(2),name,dose,time}))){
-  closeMedTimePicker();
   $('pwMedForm').reset();setInputDefaults();renderMeds();notice('Запись сохранена на устройстве.');
  }
 }
@@ -561,23 +498,6 @@ host.addEventListener('click',event=>{
    button.setAttribute('aria-pressed',String(button===btn)));
   return;
  }
- if(btn.id==='pwMedTimeOpen'){
-  if($('pwMedTimePicker').hidden)openMedTimePicker();
-  else closeMedTimePicker();
-  return;
- }
- if(btn.dataset.pwTimeAdjust){
-  const [part,delta]=btn.dataset.pwTimeAdjust.split(':');
-  if(['hour','minute'].includes(part)&&['-1','1'].includes(delta))
-   adjustMedTime(part,Number(delta));
-  return;
- }
- if(btn.id==='pwMedTimeCancel'){
-  closeMedTimePicker();
-  $('pwMedTimeOpen').focus({preventScroll:true});
-  return;
- }
- if(btn.id==='pwMedTimeDone'){confirmMedTime();return;}
  if(btn.dataset.pwTool){openTool(btn.dataset.pwTool);return;}
  if(btn.dataset.pwWater){updateWater(Number(btn.dataset.pwWater));return;}
  if(btn.id==='pwWaterUndo'){if(lastWater&&lastWaterDate===today())updateWater(-lastWater);return;}
