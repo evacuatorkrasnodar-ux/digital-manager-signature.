@@ -192,8 +192,7 @@ function openCall(targetName){
  else if(!matches.length)callStatus.textContent='Номер не найден. Выберите контакт из списка или добавьте новый.';
 }
 $('seyveoContactsOpen').addEventListener('click',()=>{callTargetName='';openContacts()});
-$('seyveoContactsClose').addEventListener('click',()=>contactsDialog.close());
-$('seyveoCallClose').addEventListener('click',()=>callDialog.close());
+/* Header close controls use the shared SEYVEO dialog handler. */
 $('seyveoContactCancel').addEventListener('click',()=>{resetContactForm();showContactStatus('');renderContacts()});
 $('seyveoContactForm').addEventListener('submit',event=>{
  event.preventDefault();
@@ -242,6 +241,11 @@ $('seyveoCallAddContact').addEventListener('click',()=>openContacts(true));
 $('seyveoCallDial').addEventListener('click',event=>{
  const c=readContacts().find(x=>x.id===chosenContact);
  if(!c){event.preventDefault();chooseCallContact('');return;}
+ if($('seyveoCallDial').getAttribute('href')!=='tel:'+c.phone){
+  event.preventDefault();chooseCallContact(c.id);
+  callStatus.textContent='Номер контакта изменился. Проверьте и нажмите ещё раз.';
+  return;
+ }
  // Do not treat opening Phone as evidence the call actually connected.
  callStatus.textContent='Откройте «Телефон» и подтвердите вызов. Дело останется незавершённым.';
 });
