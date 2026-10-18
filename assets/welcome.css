@@ -207,9 +207,9 @@
 }
 
 
-/* SEYVEO — First Awakening: only after the welcome's final action.
-   Uses the very same approved official-logo.svg shown INSIDE the Home plasma.
-   The actual Home orb, shell, SVG, position and dock are not modified. */
+/* SEYVEO — First Awakening · founding signature.
+   The first-install finale preserves the user's original business line exactly.
+   It uses the official logo from inside the plasma; the Home orb is untouched. */
 #welcomeDialog .welcome-opening{
  position:absolute;inset:0;z-index:5;display:grid;place-items:center;
  background:#090b0f;pointer-events:none;visibility:hidden;opacity:0;
@@ -218,14 +218,19 @@
  visibility:visible;opacity:1;pointer-events:auto;
 }
 #welcomeDialog .welcome-opening-stage{
- position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;
- justify-content:center;text-align:center;gap:5px;
- width:min(100%,340px);padding:24px 15px;
+ position:relative;isolation:isolate;width:min(100%,365px);
+ min-height:290px;max-width:calc(100% - 32px);
+ text-align:center;
 }
 #welcomeDialog .welcome-opening-light{
- position:absolute;inset:4% -9%;z-index:-1;border-radius:50%;pointer-events:none;
- background:radial-gradient(ellipse at 50% 50%,rgba(247,252,255,.20) 0%,rgba(207,229,250,.09) 37%,transparent 74%);
- filter:blur(13px);opacity:.24;
+ position:absolute;inset:-12% -13%;z-index:-1;border-radius:50%;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 50%,rgba(247,252,255,.17) 0%,rgba(207,229,250,.07) 37%,transparent 74%);
+ filter:blur(15px);opacity:.24;
+}
+#welcomeDialog .welcome-opening-brand,
+#welcomeDialog .welcome-opening-quote{
+ position:absolute;inset:0;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:6px;
 }
 #welcomeDialog .welcome-opening-mark{
  width:clamp(126px,38vw,168px);height:clamp(58px,20vw,79px);
@@ -241,12 +246,25 @@
  font-size:10px;font-weight:550;line-height:1.4;letter-spacing:.12em;
  white-space:nowrap;color:#cddded;
 }
-#welcomeDialog .welcome-opening-tagline{
- margin-top:25px;font-size:12px;font-weight:400;letter-spacing:.07em;color:#b1bdcb;
+#welcomeDialog .welcome-opening-quote{
+ gap:17px;opacity:0;padding:16px 0;
+}
+#welcomeDialog .welcome-opening-quote-first{
+ display:block;font-size:clamp(14px,3.75vw,17px);font-weight:400;
+ line-height:1.55;letter-spacing:-.012em;color:#c6ced8;
+}
+#welcomeDialog .welcome-opening-quote-second{
+ display:block;max-width:335px;font-size:clamp(24px,6.3vw,31px);
+ font-weight:500;letter-spacing:-.035em;line-height:1.2;color:#f5f8fd;
+ text-wrap:balance;
+}
+#welcomeDialog .welcome-opening-quote-signature{
+ display:block;margin-top:19px;font-size:11px;font-weight:560;
+ letter-spacing:.25em;padding-left:.25em;color:#aabacd;
 }
 :root[data-theme=light] #welcomeDialog .welcome-opening{background:#f6f7f9}
 :root[data-theme=light] #welcomeDialog .welcome-opening-light{
- background:radial-gradient(ellipse at 50% 50%,rgba(144,171,204,.22),rgba(109,142,176,.10) 40%,transparent 74%);
+ background:radial-gradient(ellipse at 50% 50%,rgba(144,171,204,.20),rgba(109,142,176,.08) 40%,transparent 74%);
 }
 :root[data-theme=light] #welcomeDialog .welcome-opening-word{
  color:#526b86;background:linear-gradient(150deg,#334b66 8%,#758ea8 49%,#3b5673 94%);
@@ -254,43 +272,73 @@
 }
 :root[data-theme=light] #welcomeDialog .welcome-opening-mark{filter:brightness(.82) contrast(1.19)}
 :root[data-theme=light] #welcomeDialog .welcome-opening-specialty,
-:root[data-theme=light] #welcomeDialog .welcome-opening-tagline{color:#52657d}
+:root[data-theme=light] #welcomeDialog .welcome-opening-quote-first,
+:root[data-theme=light] #welcomeDialog .welcome-opening-quote-signature{color:#52657d}
+:root[data-theme=light] #welcomeDialog .welcome-opening-quote-second{color:#24384f}
 @media(prefers-reduced-motion:no-preference){
  #welcomeDialog.is-opening .welcome-opening{
-  animation:welcome-awakening-veil 1.8s ease-in-out both;
+  animation:welcome-awakening-veil 5.2s ease-in-out both;
  }
- #welcomeDialog.is-opening .welcome-opening-stage{
-  animation:welcome-awakening-stage 1.8s cubic-bezier(.21,.62,.2,1) both;
+ #welcomeDialog.is-opening .welcome-opening-brand{
+  animation:welcome-awakening-brand 5.2s cubic-bezier(.23,.63,.22,1) both;
  }
  #welcomeDialog.is-opening .welcome-opening-light{
-  animation:welcome-awakening-light 1.8s ease-in-out both;
+  animation:welcome-awakening-light 5.2s ease-in-out both;
  }
- #welcomeDialog.is-opening .welcome-opening-tagline{
-  animation:welcome-awakening-tagline 1.8s ease-in-out both;
+ #welcomeDialog.is-opening .welcome-opening-quote{
+  animation:welcome-awakening-quote 5.2s ease-in-out both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-quote-first{
+  animation:welcome-awakening-first 5.2s cubic-bezier(.22,.7,.2,1) both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-quote-second{
+  animation:welcome-awakening-second 5.2s cubic-bezier(.22,.7,.2,1) both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-quote-signature{
+  animation:welcome-awakening-signature 5.2s ease-in-out both;
  }
  @keyframes welcome-awakening-veil{
-  0%{opacity:0}15%,82%{opacity:1}100%{opacity:.02}
+  0%{opacity:0}8%,92%{opacity:1}100%{opacity:0}
  }
- @keyframes welcome-awakening-stage{
-  0%{opacity:0;filter:blur(9px);transform:translateY(12px) scale(.91)}
-  30%{opacity:.96;filter:blur(1px);transform:translateY(1px) scale(1.01)}
-  48%,76%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
-  100%{opacity:0;filter:blur(5px);transform:translateY(-8px) scale(1.035)}
+ @keyframes welcome-awakening-brand{
+  0%{opacity:0;filter:blur(11px);transform:translateY(12px) scale(.91)}
+  16%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+  31%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+  45%,100%{opacity:0;filter:blur(9px);transform:translateY(-8px) scale(1.05)}
  }
  @keyframes welcome-awakening-light{
-  0%{opacity:0;transform:scale(.6)}
-  42%{opacity:.85;transform:scale(1.08)}
-  78%{opacity:.32;transform:scale(1.25)}
-  100%{opacity:0;transform:scale(1.35)}
+  0%{opacity:0;transform:scale(.65)}
+  22%{opacity:.65;transform:scale(1.04)}
+  48%{opacity:.16;transform:scale(1.24)}
+  100%{opacity:0;transform:scale(1.3)}
  }
- @keyframes welcome-awakening-tagline{
-  0%,21%{opacity:0;transform:translateY(5px)}
-  53%,76%{opacity:.95;transform:translateY(0)}
-  100%{opacity:0;transform:translateY(-3px)}
+ @keyframes welcome-awakening-quote{
+  0%,34%{opacity:0}
+  46%,90%{opacity:1}
+  100%{opacity:0}
+ }
+ @keyframes welcome-awakening-first{
+  0%,33%{opacity:0;filter:blur(7px);transform:translateY(9px)}
+  47%,92%{opacity:1;filter:blur(0);transform:translateY(0)}
+  100%{opacity:0;filter:blur(3px);transform:translateY(-4px)}
+ }
+ @keyframes welcome-awakening-second{
+  0%,43%{opacity:0;filter:blur(10px);transform:translateY(12px)}
+  57%,92%{opacity:1;filter:blur(0);transform:translateY(0)}
+  100%{opacity:0;filter:blur(3px);transform:translateY(-4px)}
+ }
+ @keyframes welcome-awakening-signature{
+  0%,53%{opacity:0}
+  67%,92%{opacity:.84}
+  100%{opacity:0}
  }
 }
+/* Accessibility: render final words immediately if the user requests reduced motion. */
 @media(prefers-reduced-motion:reduce){
- #welcomeDialog .welcome-opening,#welcomeDialog .welcome-opening *{
+ #welcomeDialog .welcome-opening,
+ #welcomeDialog .welcome-opening *{
   animation:none!important;transition:none!important;transform:none!important;
  }
+ #welcomeDialog .welcome-opening-brand{display:none}
+ #welcomeDialog .welcome-opening-quote{opacity:1}
 }
