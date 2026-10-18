@@ -65,7 +65,17 @@ host.innerHTML=`
     <div class="pw-progress" role="progressbar" aria-label="Выполнено от личной цели" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="pwWaterProgress"></span></div>
     <div class="pw-actions"><button type="button" class="pw-primary" data-pw-water="250">+ 250 мл</button><button type="button" data-pw-water="150">+ 150 мл</button><button type="button" data-pw-water="500">+ 500 мл</button><button type="button" id="pwWaterUndo" disabled>Отменить</button></div>
     <div class="pw-inline"><label>Моя цель, мл / день<input id="pwWaterGoalInput" type="number" inputmode="numeric" min="250" max="6000" step="50" placeholder="Необязательно"></label><button type="button" id="pwWaterSaveGoal">Сохранить</button></div>
-    <p class="pw-caption">Цель индивидуальна. Не пейте через силу; если врач ограничил жидкости, следуйте назначению.</p>
+    <section class="pw-water-insight" aria-labelledby="pwWaterInsightHeading">
+     <div class="pw-insight-head"><span class="pw-insight-mark" aria-hidden="true">✧</span><h4 id="pwWaterInsightHeading">SEYVEO · Умная забота</h4><small>По вашим записям</small></div>
+     <p id="pwWaterAdvice" class="pw-insight-advice" aria-live="polite"></p>
+     <p id="pwWaterWeek" class="pw-insight-week"></p>
+     <details class="pw-insight-explain"><summary>Почему такая подсказка?</summary>
+      <p>Я вижу только вручную внесённые миллилитры. Неотмеченные напитки не учитываются, пропуски не означают, что вы ничего не пили. Личная цель — ориентир, не медицинская норма. Если врач назначил ограничение жидкости, следуйте его плану.</p>
+      <p>Общие рекомендации: NHS — 6–8 стаканов <em>жидкости</em> как ориентир, с поправкой на обстоятельства; Национальные академии США — данные о <em>всей</em> воде, включая пищу. Эти величины не являются автоматической целью для вашего счётчика.</p>
+      <div class="pw-insight-sources"><a href="https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/water-drinks-nutrition/" target="_blank" rel="noopener noreferrer">NHS · питьевой режим ↗</a><a href="https://www.nationalacademies.org/read/10925/chapter/2" target="_blank" rel="noopener noreferrer">Национальные академии ↗</a></div>
+     </details>
+    </section>
+    <p class="pw-caption">Это общая справочная информация, не медицинская оценка. Не пейте через силу; если врач ограничил жидкость, следуйте назначению.</p>
    </div>
    <div data-pw-panel="eyes" hidden>
     <header class="pw-panel-head"><h3>Отдых для глаз</h3><p>Короткий перерыв по правилу 20–20–20.</p></header>
@@ -350,6 +360,36 @@ function renderWater(){
  $('pwWaterProgress').parentElement.setAttribute('aria-valuenow',String(pct));
  if(document.activeElement!==$('pwWaterGoalInput'))$('pwWaterGoalInput').value=state.waterGoal||'';
  $('pwWaterUndo').disabled=lastWater<=0||lastWaterDate!==today();
+ renderWaterInsights(ml);
+}
+/* Explain only the user's own entries. No assumed drinking amount, diagnosis
+   or invented 2L target; absent days are missing observations, not zero intake. */
+function renderWaterInsights(ml){
+ const goal=state.waterGoal;
+ let advice;
+ if(!goal){
+  advice=ml>0
+   ?'Вы отметили '+format(ml)+' мл. Это только внесённые напитки, а не вся выпитая за день жидкость. Личную цель можно задать по желанию.'
+   :'Начните с записи напитков, когда вам удобно. Личная цель необязательна — универсальной нормы «2 литра для всех» нет.';
+ }else if(!ml){
+  advice='У вас задан личный ориентир '+format(goal)+' мл. Сегодня записей пока нет — это не означает, что вы ничего не пили.';
+ }else if(ml>=goal){
+  advice='По вашим записям личная цель достигнута. Не нужно пить сверх желания ради цифры в приложении.';
+ }else{
+  advice='По записям пока не достигнут ваш личный ориентир. Проверьте, все ли напитки внесены: неполный дневник не показывает обезвоживание.';
+ }
+ $('pwWaterAdvice').textContent=advice;
+ const recorded=[];
+ for(let offset=0;offset<7;offset++){
+  const day=new Date();day.setHours(12,0,0,0);day.setDate(day.getDate()-offset);
+  const amount=Number(state.water[dateKey(day)]);
+  if(Number.isFinite(amount)&&amount>0)recorded.push(Math.min(20000,amount));
+ }
+ $('pwWaterWeek').textContent=recorded.length>=3
+  ?'За последние 7 дней есть записи за '+recorded.length+' дн. Среднее по дням с записями — '+format(Math.round(recorded.reduce((sum,n)=>sum+n,0)/recorded.length))+' мл. Пропуски в среднее не включены.'
+  :recorded.length
+   ?'За последние 7 дней записи есть за '+recorded.length+' дн. Для обзора привычек пока мало данных; пропуски не считаю нулём.'
+   :'За последнюю неделю записей нет. Это не означает отсутствие питья.';
 }
 function updateWater(amount){
  if(!Number.isInteger(amount))return;
