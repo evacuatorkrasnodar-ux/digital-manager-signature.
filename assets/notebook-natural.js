@@ -36,6 +36,31 @@ function dateHintFromNote(input,now=new Date()){
  return {date:date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate()),
   label:rel?rel[1]:week[1]};
 }
+/* One conservative, local suggestion per note. Multiple instructions or vague
+   dates are left untouched; every resulting action opens a review form. */
+function actionHintFromNote(input,now=new Date()){
+ const raw=String(input||'').trim();
+ if(!raw||raw.length>8000)return null;
+ const clauses=raw.split(/[\n;]|[.!?](?=\s|$)/)
+  .map(value=>value.replace(/^\s*[-•\d.)]+\s*/,'').trim())
+  .filter(Boolean).slice(0,30);
+ const action=/(?:^|[\s,(])(?:позвонить|позвони|позвоню|созвониться|позвонить|встретиться|встреча|встречу|встречаемся|подготовить|отправить|купить|забрать|оплатить|написать|записаться|обсудить|проверить|сделать|заказать|напомнить|согласовать|поговорить)(?=\s|[,.!?;:]|$)/i;
+ const candidates=clauses.filter(text=>action.test(text));
+ if(candidates.length!==1)return null;
+ const phrase=candidates[0].slice(0,280);
+ const event=/(?:^|[\s,(])(?:встретиться|встреча|встречу|встречаемся)(?=\s|[,.!?;:]|$)/i.test(phrase);
+ const hint=dateHintFromNote(phrase,now);
+ // For precise clock times use the existing Calendar's editable review form.
+ const timeMatch=phrase.match(/(?:^|\s)в\s+([01]?\d|2[0-3]):([0-5]\d)(?=\s|[,!?.]|$)/);
+ const time=timeMatch?String(Number(timeMatch[1])).padStart(2,'0')+':'+timeMatch[2]:'';
+ return{
+  type:event?'event':'task',
+  title:phrase.slice(0,140),
+  ...(hint?{date:hint.date,dateLabel:hint.label}:{}),
+  ...(hint&&time?{time}:{}),
+ };
+}
+window.SEYVEO_NOTE_ACTION_HINT=actionHintFromNote;
 window.SEYVEO_NOTE_SCHEDULE_HINT=dateHintFromNote;
 window.SEYVEO_NOTE_NL=parseNoteInstruction;
 })();
