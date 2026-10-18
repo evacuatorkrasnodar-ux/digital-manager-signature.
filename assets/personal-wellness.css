@@ -89,6 +89,85 @@
  color-scheme:inherit;text-align:left
 }
 #calendarPersonalTools .pw-inline button{flex:none}
+
+/* SEYVEO inline clock: themed by the actual app tokens, not the OS picker.
+   Fits the original medicine form and shares the dialog's only scroller. */
+#calendarPersonalTools input[type=hidden]{display:none!important}
+#calendarPersonalTools .pw-inline .pw-time-field{
+ display:grid;align-content:end;gap:6px;flex:1 1 125px;min-width:0
+}
+#calendarPersonalTools .pw-time-trigger{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ box-sizing:border-box;width:100%;min-height:48px;padding:9px 12px 9px 14px;
+ border:1px solid var(--line);border-radius:16px;
+ background:var(--card2);color:var(--text);font:inherit;font-size:16px;
+ font-weight:500;letter-spacing:-.012em;font-variant-numeric:tabular-nums;
+ text-align:left;touch-action:manipulation;-webkit-appearance:none;appearance:none
+}
+#calendarPersonalTools .pw-time-trigger svg{
+ width:17px;height:17px;flex:none;fill:none;stroke:var(--secondary);
+ stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+ transition:transform .2s ease
+}
+#calendarPersonalTools .pw-time-trigger[aria-expanded=true] svg{transform:rotate(180deg)}
+#calendarPersonalTools .pw-time-picker{
+ padding:14px 13px 13px;margin:2px 0 6px;border:1px solid var(--soft-line);
+ border-radius:19px;background:var(--card2);
+ animation:pw-reveal .24s cubic-bezier(.16,1,.3,1) both
+}
+#calendarPersonalTools .pw-time-picker-head{
+ display:flex;align-items:baseline;justify-content:space-between;
+ flex-wrap:wrap;gap:6px;margin:0 0 12px
+}
+#calendarPersonalTools .pw-time-picker-head strong{
+ color:var(--text);font-size:13px;font-weight:570;letter-spacing:-.018em
+}
+#calendarPersonalTools .pw-time-picker-head small{color:var(--secondary);font-size:10px}
+#calendarPersonalTools .pw-time-columns{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px;max-width:286px;margin:0 auto 14px
+}
+#calendarPersonalTools .pw-time-column{
+ display:grid;min-width:0;gap:5px;text-align:center
+}
+#calendarPersonalTools .pw-time-column>span{font-size:11px;color:var(--secondary)}
+#calendarPersonalTools .pw-time-stepper{display:grid;gap:5px;min-width:0}
+#calendarPersonalTools .pw-time-stepper button{
+ display:grid;place-items:center;width:100%;min-height:44px;
+ border:1px solid var(--soft-line);border-radius:13px;
+ background:var(--card);color:var(--text);
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#calendarPersonalTools .pw-time-stepper button svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round
+}
+#calendarPersonalTools .pw-time-stepper input{
+ box-sizing:border-box;display:block;width:100%;min-width:0;min-height:56px;
+ padding:7px 3px;text-align:center;font:inherit;font-size:27px;
+ font-weight:460;font-variant-numeric:tabular-nums;letter-spacing:-.04em;
+ border:1px solid var(--line);border-radius:13px;
+ color:var(--text);background:var(--card);color-scheme:inherit;
+ -moz-appearance:textfield;appearance:textfield
+}
+#calendarPersonalTools .pw-time-picker-actions{
+ display:flex;justify-content:space-between;gap:10px
+}
+#calendarPersonalTools .pw-time-picker-actions button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:10px 17px;border:1px solid var(--line);
+ border-radius:999px;background:var(--card);color:var(--text);
+ font:inherit;font-size:12.5px;font-weight:535;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#calendarPersonalTools .pw-time-picker-actions button.pw-primary{
+ background:var(--text);border-color:var(--text);color:var(--bg)
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPersonalTools .pw-time-picker{animation:none}
+ #calendarPersonalTools .pw-time-trigger svg{transition:none}
+}
+
 /* Finite choices are an Apple-like three-way switch, not a platform dropdown. */
 #calendarPersonalTools .pw-segment-field{display:grid;gap:8px;min-width:0;margin:12px 0 10px}
 #calendarPersonalTools .pw-control-label{font-size:11.5px;line-height:1.4;color:var(--secondary)}
