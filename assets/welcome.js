@@ -12,13 +12,14 @@ const LEGACY=['dm-signature-living-v2','dm-signature-living-v1','seyveo-notes-v1
 const read=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
-let step=0,assistant='Феликс',focus='life';
+let step=0,assistant='Феликс',focus='life',preview=false,previewTrigger=null;
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
 const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
 const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
 const focusChoices=[...dialog.querySelectorAll('[data-welcome-focus]')];
 const progress=$('welcomeProgress'),next=$('welcomeNext'),back=$('welcomeBack'),skip=$('welcomeSkip');
 const error=$('welcomeError');
+const demoEntry=$('openWelcomeDemo'),overline=$('welcomeOverline'),disclaimer=$('welcomeDisclaimer');
 function available(){
  return !read(PROFILE)&&!read(SKIPPED)&&!read(SEEN)&&!LEGACY.some(key=>read(key)!==null);
 }
@@ -36,8 +37,10 @@ function render(){
   for(let i=1;i<=3;i++){const dot=document.createElement('span');dot.className=i<=step?'is-current':'';progress.append(dot)}
  }
  back.hidden=step===0;
- next.textContent=step===0?'Начать знакомство':step===4?'Открыть SEYVEO':'Продолжить';
- skip.textContent=step===4?'Вернуться позже':'Пропустить знакомство';
+ next.textContent=step===0?(preview?'Начать демо':'Начать знакомство'):step===4?(preview?'Закрыть демо':'Открыть SEYVEO'):'Продолжить';
+ skip.textContent=preview?'Выйти из демо':step===4?'Вернуться позже':'Пропустить знакомство';
+ if(overline)overline.textContent=preview?'ДЕМО · ПЕРВЫЙ ЗАПУСК':'AI AUTOMATION';
+ if(disclaimer)disclaimer.textContent=preview?'Это только просмотр · настройки не сохраняются':'Без доступа к контактам, микрофону и другим данным';
  error.textContent='';
  markOptions();
  if(step===4){
@@ -50,13 +53,17 @@ function render(){
 function setStep(i){step=Math.max(0,Math.min(4,i));render()}
 function close(){
  if(dialog.open)dialog.close();
+ const fromDemo=preview,trigger=previewTrigger;
+ preview=false;previewTrigger=null;
+ if(fromDemo&&trigger?.isConnected)try{trigger.focus({preventScroll:true})}catch{}
  window.dispatchEvent(new Event('seyveo:welcome-finished'));
 }
 function dismiss(){
- store(SEEN,'1');store(SKIPPED,'1');
+ if(!preview){store(SEEN,'1');store(SKIPPED,'1')}
  close();
 }
 function save(){
+ if(preview){close();return}
  const selectedName=assistantName();
  const voice=({'Феликс':'male','Филя':'male','Мелисса':'female','Мили':'female'})[selectedName]||null;
  const aliases=selectedName==='Феликс'?['Феликс','Филя']:selectedName==='Мелисса'?['Мелисса','Мили']:selectedName?[selectedName]:[];
@@ -86,11 +93,19 @@ focusChoices.forEach(button=>button.addEventListener('click',()=>{
 next.addEventListener('click',()=>{
  if(step<4)setStep(step+1);else save();
 });
+function startPreview(){
+ if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
+ preview=true;previewTrigger=demoEntry;
+ assistant='Феликс';focus='life';user.value='';other.value='';
+ setStep(0);
+ try{dialog.showModal()}catch{preview=false;previewTrigger=null}
+}
+demoEntry?.addEventListener('click',startPreview);
 back.addEventListener('click',()=>{if(step>0)setStep(step-1)});
 skip.addEventListener('click',dismiss);
 dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss()});
 function tryOpen(){
- if(dialog.open||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
+ if(dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
  setStep(0);
  try{dialog.showModal()}catch{}
