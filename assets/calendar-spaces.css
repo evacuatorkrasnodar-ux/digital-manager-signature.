@@ -53,6 +53,26 @@
  .cal-space-dialog{padding:21px 13px 15px}
  .calendar-space-date-row{gap:7px}
 }
+/* A measurement is an action, not a second journal underneath empty history.
+   Reuse the original editable form and storage; hide the surrounding overview. */
+#calendarSpaceDialog[data-measure-focus=true] :is(
+ #calendarSpaceIntro,#calendarHealthOverview,#calendarPersonalTools,
+ #calendarSpaceClose,.cal-space-toolbar,.cal-space-list
+){display:none!important}
+#calendarSpaceDialog[data-measure-focus=true] #calendarSpaceJournal>summary{display:none!important}
+#calendarSpaceDialog[data-measure-focus=true] #calendarSpaceJournal{
+ margin:0;padding:16px 14px 14px;
+ border:1px solid var(--soft-line);border-radius:20px;background:var(--card)
+}
+#calendarSpaceDialog[data-measure-focus=true] .calendar-space-edit{
+ margin:0;padding:0;border:0
+}
+@media(max-width:600px){
+ #calendarSpaceDialog[data-measure-focus=true] .calendar-space-date-row{
+  grid-template-columns:minmax(0,1fr);gap:10px
+ }
+ #calendarSpaceDialog[data-measure-focus=true] .calendar-space-date-row>*{min-width:0}
+}
 /* Health inside Personal Space: glanceable real entered values, never examples.
    Scoped exclusively to the existing shared dialog when Health is active. */
 #calendarHealthOverview[hidden]{display:none!important}
