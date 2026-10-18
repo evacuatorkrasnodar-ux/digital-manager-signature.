@@ -158,7 +158,11 @@ function renderForm(){
   $('calendarSpaceAnnual').checked=item.yearless;
  }else{
   $('calendarSpaceFormFields').reset();
-  $('calendarSpaceDate').value=$('calendarSpaceDate').dataset.selectedDate||'';
+  const stamp=$('calendarSpaceDate').dataset.selectedDate;
+  const now=new Date();
+  const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  // New measurements get a date by default; personal dates remain optional.
+  $('calendarSpaceDate').value=stamp||(current==='health'?today:'');
  }
  updateHealthPlaceholder();
 }
@@ -202,6 +206,9 @@ function open(space,id=null,selectedDate=''){
  if(id)$('calendarSpaceTitle').focus({preventScroll:true});
 }
 function add(kind=null){
+ // Health overview and history share this single form; reveal it before focus.
+ const journal=$('calendarSpaceJournal');
+ if(journal&&!journal.open)journal.open=true;
  editing=null;$('calendarSpaceForm').dataset.show='true';renderForm();
  if(typeof kind==='string'&&current==='health'&&healthUnits[kind]){
   $('calendarSpaceKind').value=kind;
