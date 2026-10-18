@@ -1,14 +1,13 @@
 /* SEYVEO — Presence, a restrained response state for the existing glass sphere.
    No independent AI, audio, microphone, canvas or persistent animation.
-   Text replies acknowledge once; speech follows utterance lifecycle.
-   This controller never moves the orb, changes its art, or touches the dock. */
+   Text replies now appear alongside the sphere: respond immediately.
+   Speech remains connected to the utterance lifecycle. */
 (()=>{
 'use strict';
 const orb=document.getElementById('orb');
 const home=document.getElementById('homePage');
-const replyDialog=document.getElementById('info');
-if(!orb||!home||!replyDialog)return;
-let timer=0,pendingTextReply=false;
+if(!orb||!home)return;
+let timer=0;
 const hasHome=()=>!document.hidden&&!home.hidden;
 function clear(){
  clearTimeout(timer);timer=0;
@@ -41,22 +40,13 @@ document.addEventListener('seyveo:assistant-presence',event=>{
  const phase=event.detail?.phase;
  if(phase==='speaking')speak();
  else if(phase==='end')finish();
- else if(phase==='text'){
-  // Text answers use an existing modal; show the subtle acknowledgment
-  // when it closes, so the effect is actually visible rather than obscured.
-  if(replyDialog.open){pendingTextReply=true;return}
-  acknowledge();
- }else if(phase==='ack')acknowledge();
+ else if(phase==='text')acknowledge();
+ else if(phase==='ack')acknowledge();
  else if(phase==='stop')clear();
 });
-replyDialog.addEventListener('close',()=>{
- if(!pendingTextReply)return;
- pendingTextReply=false;
- requestAnimationFrame(acknowledge);
-});
-window.addEventListener('hashchange',()=>{pendingTextReply=false;clear()});
+window.addEventListener('hashchange',clear);
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden){pendingTextReply=false;clear()}
+ if(document.hidden)clear();
 });
 window.addEventListener('pagehide',clear);
 })();
