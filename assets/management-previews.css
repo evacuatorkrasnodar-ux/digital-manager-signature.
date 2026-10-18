@@ -1,0 +1,205 @@
+/* SEYVEO / Management Examples v1
+   Real layout previews only where a setting benefits from demonstration.
+   Quiet Black/White Velvet; no repeating loops or new photographic assets. */
+.manage-preview-eyebrow{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ font-size:9.5px;line-height:1.4;letter-spacing:.075em;
+ color:var(--secondary);font-weight:560;
+}
+.manage-preview-eyebrow small{
+ font-size:10px;font-weight:420;letter-spacing:0;text-align:right;
+}
+.manage-preview-eyebrow strong{font-size:9.5px;font-weight:600;letter-spacing:.08em}
+/* Preview mode of the actual favorite-action bar.
+   Shares the stored ordering and icon vocabulary with the dock-adjacent bar,
+   but actions are intentionally never executed inside the editor. */
+#assistantQuickSettings .assistant-quick-preview{
+ margin:4px 0 19px;padding:13px 11px 12px;
+ border:1px solid var(--soft-line);border-radius:20px;
+ background:linear-gradient(152deg,rgba(255,255,255,.04),transparent 58%),var(--card2);
+}
+#assistantQuickSettings .assistant-quick-preview .manage-preview-eyebrow{margin:0 2px 10px}
+#assistantQuickSettings .assistant-quick-preview-shell{display:flex;flex-direction:column;gap:8px}
+#assistantQuickSettings .assistant-quick-preview-track{
+ box-sizing:border-box;display:flex;width:100%;min-width:0;
+ overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+ -webkit-overflow-scrolling:touch;scroll-behavior:smooth;
+ scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;
+ padding:4px 0;min-height:54px;border:1px solid var(--line);border-radius:17px;
+ background:var(--card);box-shadow:inset 0 1px 0 #ffffff08;
+}
+#assistantQuickSettings .assistant-quick-preview-track::-webkit-scrollbar{display:none}
+#assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item{
+ flex:0 0 33.333333%;min-width:0;min-height:44px;
+ display:flex;justify-content:center;align-items:center;gap:5px;
+ scroll-snap-align:start;padding:7px 4px;
+ border:0;border-radius:13px;color:var(--text);background:transparent;
+ font:inherit;font-size:11px;font-weight:540;letter-spacing:-.016em;
+ touch-action:manipulation;
+}
+#assistantQuickSettings .assistant-quick-preview-track[data-count="1"] .assistant-quick-item{flex-basis:100%}
+#assistantQuickSettings .assistant-quick-preview-track[data-count="2"] .assistant-quick-item{flex-basis:50%}
+#assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item svg{
+ display:block;flex:none;width:16px;height:16px;
+ fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+#assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item span{
+ min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item:active,
+#assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item:focus-visible{
+ background:var(--card2);
+}
+#assistantQuickSettings .assistant-quick-preview-pages{
+ display:flex;align-items:center;justify-content:center;gap:4px;min-height:6px;pointer-events:none;
+}
+#assistantQuickSettings .assistant-quick-preview-pages[hidden]{display:none!important}
+#assistantQuickSettings .assistant-quick-preview-dot{
+ display:block;width:4px;height:4px;border-radius:6px;
+ opacity:.38;background:var(--secondary);
+ transition:width .18s ease,opacity .18s ease;
+}
+#assistantQuickSettings .assistant-quick-preview-dot.is-current{width:12px;opacity:.86}
+#assistantQuickSettings .assistant-quick-preview-composer{
+ display:flex;align-items:center;justify-content:space-between;gap:7px;
+ height:35px;padding:0 10px 0 13px;border:1px solid var(--line);border-radius:15px;
+ background:var(--card);color:var(--secondary);font-size:11px;font-weight:430;
+}
+#assistantQuickSettings .assistant-quick-preview-composer svg{
+ width:16px;height:16px;fill:none;stroke:var(--text);stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#assistantQuickSettings .assistant-quick-preview-hint{
+ margin:9px 3px 0;min-height:31px;
+ font-size:10.5px;line-height:1.45;color:var(--secondary);
+}
+#assistantQuickSettings .assistant-quick-settings-list-head{
+ display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+ padding:0 2px;margin:0 0 9px;
+}
+#assistantQuickSettings .assistant-quick-settings-list-head strong{font-size:13px;font-weight:580}
+#assistantQuickSettings .assistant-quick-settings-list-head small{
+ font-size:10px;color:var(--secondary);text-align:right;line-height:1.4;
+}
+/* Picture catalog: reorder the actual chosen cards in a small read-only mockup. */
+#homeWidgetsManageDialog .manage-picture-example{
+ margin:4px 0 18px;padding:13px 11px 12px;
+ border:1px solid var(--soft-line);border-radius:19px;background:var(--card2);
+}
+#homeWidgetsManageDialog .manage-picture-example .manage-preview-eyebrow{margin:0 2px 11px}
+#homeWidgetsManageDialog .manage-picture-example-grid{
+ display:flex;gap:6px;width:100%;min-width:0;
+ overflow-x:auto;overscroll-behavior-x:contain;
+ -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
+ scrollbar-width:none;
+}
+#homeWidgetsManageDialog .manage-picture-example-grid::-webkit-scrollbar{display:none}
+#homeWidgetsManageDialog .manage-picture-example-tile{
+ box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;
+ flex:0 0 105px;min-width:0;min-height:73px;padding:10px 8px;
+ border:1px solid var(--line);border-radius:13px;background:var(--card);
+ scroll-snap-align:start;
+}
+#homeWidgetsManageDialog .manage-picture-example-tile span{
+ font-size:10px;line-height:1.3;color:var(--secondary);
+}
+#homeWidgetsManageDialog .manage-picture-example-tile strong{
+ font-size:16px;line-height:1.3;font-weight:615;letter-spacing:-.035em;margin-top:8px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#homeWidgetsManageDialog .manage-picture-example-empty{
+ color:var(--secondary);font-size:11px;line-height:1.45;margin:5px 0;
+}
+/* Compact illustrations under the discreet-mode setting, not extra buttons. */
+#manageOverview .manage-preview-inline{
+ margin:1px 12px 13px;padding:11px 12px 10px;
+ border:1px solid var(--soft-line);border-radius:17px;background:var(--card2);
+}
+#manageOverview .manage-preview-exchange{
+ display:flex;flex-direction:column;gap:6px;margin-top:10px;
+}
+#manageOverview .manage-preview-person{
+ align-self:flex-start;max-width:96%;padding:7px 9px;
+ border:1px solid var(--line);border-radius:10px 10px 10px 3px;
+ font-size:11px;color:var(--secondary);background:var(--card);
+}
+#manageOverview .manage-preview-assistant{
+ align-self:flex-end;max-width:96%;padding:8px 10px;
+ border:1px solid var(--line);border-radius:10px 10px 3px 10px;
+ font-size:11px;line-height:1.45;color:var(--text);background:var(--card);
+ transition:opacity .18s ease;
+}
+#manageOverview .manage-preview-inline>p{
+ margin:10px 1px 0;font-size:10px;line-height:1.5;color:var(--secondary);
+}
+/* Theme demonstration follows the current root variables, as does the app. */
+#manageThemeScreen .manage-theme-example{
+ margin:0 0 19px;padding:12px;border:1px solid var(--line);border-radius:20px;
+ background:var(--card2);
+}
+#manageThemeScreen .manage-theme-example .manage-preview-eyebrow{margin:0 1px 11px}
+#manageThemeScreen .manage-theme-example-surface{
+ padding:12px 13px;border:1px solid var(--line);border-radius:17px;
+ background:var(--card);box-shadow:inset 0 1px 0 #ffffff0a;
+}
+#manageThemeScreen .manage-theme-example-head{
+ display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;
+ letter-spacing:.09em;color:var(--text);
+}
+#manageThemeScreen .manage-theme-example-mark{
+ display:block;width:23px;height:23px;border-radius:50%;
+ border:1px solid var(--line);
+ background:radial-gradient(circle at 37% 33%,#f8fbff,#cad4e0 41%,#6d7889 78%,#373e49 100%);
+ box-shadow:inset 0 1px 1px #fff5;
+}
+#manageThemeScreen .manage-theme-example-dot{
+ width:5px;height:5px;margin-left:auto;border-radius:50%;background:var(--secondary);
+ opacity:.62;
+}
+#manageThemeScreen .manage-theme-example-box{
+ display:flex;align-items:center;gap:9px;min-height:55px;
+ margin-top:11px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;
+ background:var(--card2);
+}
+#manageThemeScreen .manage-theme-example-box strong{
+ min-width:0;font-size:12px;font-weight:580;letter-spacing:-.012em;
+}
+#manageThemeScreen .manage-theme-example-box small{
+ min-width:0;margin-left:auto;font-size:10px;color:var(--secondary);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#manageThemeScreen .manage-theme-example-action{
+ font-size:19px;line-height:1;color:var(--secondary);
+}
+/* Future source permissions: a schematic, not a fake connection status. */
+#manageConnectionsDialog .manage-connection-example{
+ margin:12px 0 16px;padding:12px;border:1px solid var(--soft-line);
+ border-radius:18px;background:var(--card2);
+}
+#manageConnectionsDialog .manage-connection-example-flow{
+ display:flex;align-items:center;justify-content:center;gap:5px;
+ width:100%;min-width:0;margin:12px 0 10px;
+}
+#manageConnectionsDialog .manage-connection-example-flow span{
+ flex:1 1 auto;min-width:0;display:grid;place-items:center;min-height:42px;
+ padding:5px;border:1px solid var(--line);border-radius:11px;
+ background:var(--card);font-size:10px;text-align:center;
+ line-height:1.25;color:var(--text);
+}
+#manageConnectionsDialog .manage-connection-example-flow b{
+ flex:none;font-weight:400;font-size:15px;color:var(--secondary);
+}
+#manageConnectionsDialog .manage-connection-example>small{
+ display:block;color:var(--secondary);font-size:10px;line-height:1.4;
+}
+@media(max-width:375px){
+ #assistantQuickSettings .assistant-quick-preview{padding:11px 8px}
+ #assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item{gap:4px;padding:6px 3px;font-size:10px}
+ #assistantQuickSettings .assistant-quick-preview-track .assistant-quick-item svg{width:15px;height:15px}
+ #manageThemeScreen .manage-theme-example-box small{max-width:43%;text-align:right}
+}
+@media(prefers-reduced-motion:reduce){
+ #assistantQuickSettings .assistant-quick-preview-track{scroll-behavior:auto}
+ #assistantQuickSettings .assistant-quick-preview-dot,
+ #manageOverview .manage-preview-assistant{transition:none}
+}
