@@ -44,7 +44,7 @@ const icon=(name)=>({
 const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false">'+icon(key)+'<strong>'+label+'</strong><small id="pwCard'+key+'">'+sub+'</small></button>';
 host.innerHTML=`
  <section id="pwCare">
-  <button type="button" class="pw-care-back" id="pwCareBack" hidden aria-label="Вернуться к инструментам заботы">
+  <button type="button" class="pw-tool-back" id="pwCareBack" hidden aria-label="Вернуться к инструментам заботы">
    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>
    <span>Все инструменты</span>
   </button>
@@ -89,6 +89,7 @@ host.innerHTML=`
   </section>
  </section>
  <section id="pwHealth" hidden>
+  <button id="pwHealthBack" type="button" class="pw-tool-back" hidden aria-label="Вернуться к показателям здоровья"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Все показатели</span></button>
   <div class="pw-tiles pw-health-tiles">${btn('meds','Лекарства','По назначению')}${btn('sleep','Сон','Личный дневник')}</div>
   <section id="pwHealthDetail" class="pw-detail" hidden>
    <div data-pw-panel="meds" hidden>
@@ -124,71 +125,65 @@ function setInputDefaults(){
  }
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
 }
-function setCareFocus(focused){
- const active=Boolean(focused&&space==='care');
- // An iPhone keyboard must close before its input is hidden from the sheet.
- const focusedElement=document.activeElement;
- if(focusedElement&&host.contains(focusedElement)&&
-    focusedElement.matches('input,textarea,select'))focusedElement.blur();
- $('pwCare').classList.toggle('is-focused',active);
- $('pwCareBack').hidden=!active;
+const CARE_TOOLS=new Set(['water','breath','eyes','steps']);
+function setToolFocus(section,focused){
+ const care=section==='care',active=Boolean(focused&&space===section);
+ const element=document.activeElement;
+ // A field must release the keyboard before the sheet changes height.
+ if(element&&host.contains(element)&&element.matches('input,textarea,select'))element.blur();
+ $(care?'pwCare':'pwHealth').classList.toggle('is-focused',active);
+ $(care?'pwCareBack':'pwHealthBack').hidden=!active;
  const dialog=$('calendarSpaceDialog');
- dialog.dataset.careFocus=String(active);
- // The sheet is the only scroller. Bring every mini-tool into view
- // without a second overlay, a nested scroll region or keyboard jumps.
+ dialog.dataset[care?'careFocus':'healthFocus']=String(active);
  if(active)dialog.scrollTop=0;
 }
 function resetTools(){
- stopSession(false); careTool='';healthTool='';notice('');
+ stopSession(false);careTool='';healthTool='';notice('');
  $('pwCareDetail').hidden=true;$('pwHealthDetail').hidden=true;
  host.querySelectorAll('[data-pw-panel]').forEach(el=>el.hidden=true);
  host.querySelectorAll('[data-pw-tool]').forEach(el=>el.setAttribute('aria-pressed','false'));
  $('pwCycleDetail').hidden=true;$('pwCycleOpen').setAttribute('aria-expanded','false');
- setCareFocus(false);
+ setToolFocus('care',false);setToolFocus('health',false);
 }
 function openSpace(view){
  if(view!=='care'&&view!=='health'){host.hidden=true;resetTools();space='';return;}
  if(space!==view){resetTools();lastWater=0;lastWaterDate='';}
  space=view;host.hidden=false;
  $('pwCare').hidden=view!=='care';$('pwHealth').hidden=view!=='health';
- setInputDefaults();
- state=load();render();
+ setInputDefaults();state=load();render();
 }
-function resetCareTools(){
- careTool='';$('pwCareDetail').hidden=true;
- setCareFocus(false);
+function resetSectionTools(section){
+ const care=section==='care';
+ if(care)careTool='';else healthTool='';
+ $(care?'pwCareDetail':'pwHealthDetail').hidden=true;
+ setToolFocus(section,false);
  host.querySelectorAll('[data-pw-panel]').forEach(p=>{
-  if(['water','breath','eyes','steps'].includes(p.dataset.pwPanel))p.hidden=true;
+  if(CARE_TOOLS.has(p.dataset.pwPanel)===care)p.hidden=true;
  });
  host.querySelectorAll('[data-pw-tool]').forEach(p=>{
-  if(['water','breath','eyes','steps'].includes(p.dataset.pwTool))p.setAttribute('aria-pressed','false');
+  if(CARE_TOOLS.has(p.dataset.pwTool)===care)p.setAttribute('aria-pressed','false');
  });
 }
 function openTool(key){
  if(session)stopSession(false);
- if(['water','breath','eyes','steps'].includes(key)){
+ const care=CARE_TOOLS.has(key),section=care?'care':'health';
+ if(care){
   $('pwCycleDetail').hidden=true;
   $('pwCycleOpen').setAttribute('aria-expanded','false');
  }
- const care=['water','breath','eyes','steps'].includes(key);
  const holder=$(care?'pwCareDetail':'pwHealthDetail');
- const active=care?careTool===key:healthTool===key;
+ const active=(care?careTool:healthTool)===key;
  if(care)careTool=active?'':key;else healthTool=active?'':key;
  holder.hidden=active;
  host.querySelectorAll('[data-pw-panel]').forEach(p=>{
-  if(p.dataset.pwPanel===key&&active)p.hidden=true;
-  else if(care===['water','breath','eyes','steps'].includes(p.dataset.pwPanel))p.hidden=p.dataset.pwPanel!==(active?'':key);
+  if(CARE_TOOLS.has(p.dataset.pwPanel)===care)p.hidden=active||p.dataset.pwPanel!==key;
  });
  host.querySelectorAll('[data-pw-tool]').forEach(p=>{
-  if(care===['water','breath','eyes','steps'].includes(p.dataset.pwTool))
+  if(CARE_TOOLS.has(p.dataset.pwTool)===care)
    p.setAttribute('aria-pressed',String(!active&&p.dataset.pwTool===key));
  });
- if(care){
-  setCareFocus(!active);
-  // The chosen tile is hidden in focused mode: move the accessibility focus
-  // to the visible back control without making Safari scroll the document.
-  if(!active)$('pwCareBack').focus({preventScroll:true});
- }
+ setToolFocus(section,!active);
+ if(!active)$(care?'pwCareBack':'pwHealthBack').focus({preventScroll:true});
  if(!active&&care&&key==='steps')fillSteps();
  if(!active)notice('');
 }
@@ -409,12 +404,21 @@ host.addEventListener('click',event=>{
   if(session)stopSession(false);
   const previous=careTool;
   const wasCycle=!$('pwCycleDetail').hidden;
-  resetCareTools();
+  resetSectionTools('care');
   $('pwCycleDetail').hidden=true;
   $('pwCycleOpen').setAttribute('aria-expanded','false');
   $('calendarSpaceDialog').scrollTop=0;
   const target=wasCycle?$('pwCycleOpen'):
     host.querySelector('[data-pw-tool="'+previous+'"]');
+  if(target)target.focus({preventScroll:true});
+  notice('');
+  return;
+ }
+ if(btn.id==='pwHealthBack'){
+  const previous=healthTool;
+  resetSectionTools('health');
+  $('calendarSpaceDialog').scrollTop=0;
+  const target=host.querySelector('[data-pw-tool="'+previous+'"]');
   if(target)target.focus({preventScroll:true});
   notice('');
   return;
@@ -429,9 +433,9 @@ host.addEventListener('click',event=>{
   const panel=$('pwCycleDetail'),opening=panel.hidden;
   panel.hidden=!opening;btn.setAttribute('aria-expanded',String(opening));
   if(opening){
-   resetCareTools();stopSession(false);setCareFocus(true);
+   resetSectionTools('care');stopSession(false);setToolFocus('care',true);
    $('pwCareBack').focus({preventScroll:true});
-  }else setCareFocus(false);
+  }else setToolFocus('care',false);
   return;
  }
  if(btn.id==='pwCycleEnable'){
