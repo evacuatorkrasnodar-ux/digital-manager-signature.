@@ -44,33 +44,3 @@
  position:relative;display:grid;place-items:center;flex:none;
  width:max-content;max-width:100%
 }
-
-/* SEYVEO Tactile Home · a small satin-glass home button, not a second dock
-   control. The middle glass button remains reserved for the assistant.
-   Transform only the home pictogram: do not animate dock position. */
-#navHome svg{
- box-sizing:border-box;
- width:33px;height:33px;padding:7px;
- border:1px solid rgba(225,238,253,.20);
- border-radius:50%;
- background:linear-gradient(155deg,rgba(246,251,255,.10),rgba(255,255,255,.008) 65%),var(--card2);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 2px 6px rgba(0,0,0,.20);
- transform:scale(1);
- transform-origin:center;
- transition:transform .14s cubic-bezier(.2,.7,.3,1),box-shadow .14s ease;
-}
-#navHome:active svg{
- transform:scale(.91);
- box-shadow:inset 0 2px 7px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.10);
-}
-#navHome.active svg{border-color:rgba(241,247,255,.32)}
-:root[data-theme=light] #navHome svg{
- border-color:rgba(90,110,132,.24);
- background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(224,233,245,.58)),var(--card2);
- box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(88,110,145,.13);
-}
-:root[data-theme=light] #navHome.active svg{border-color:rgba(76,96,120,.40)}
-:root[data-theme=light] #navHome:active svg{
- box-shadow:inset 0 2px 6px rgba(84,105,134,.16),0 1px 1px rgba(88,110,145,.10);
-}
-@media(prefers-reduced-motion:reduce){#navHome svg{transition:none}}
