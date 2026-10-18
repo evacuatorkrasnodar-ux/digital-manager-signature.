@@ -23,6 +23,27 @@
 /* Preserve the 26px visible check-circle, but provide a 44px touch target. */
 .personal-task-check::before{content:"";position:absolute;inset:-9px;border-radius:50%}
 .personal-task-check[aria-pressed=true]{background:var(--card2);border-color:var(--secondary)}
+/* Links a task to its original local note; compact Home preview stays unchanged. */
+#tasksPage .personal-tasks-list .personal-task-origin{
+ display:inline-flex;align-items:center;align-self:flex-start;gap:5px;
+ min-height:44px;max-width:100%;padding:7px 10px;
+ margin:1px 0 0 -10px;
+ border:1px solid transparent;border-radius:999px;
+ background:transparent;color:var(--secondary);
+ font:inherit;font-size:11px;font-weight:530;letter-spacing:-.01em;
+ line-height:1.35;text-align:left;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation;
+}
+#tasksPage .personal-tasks-list .personal-task-origin::before{
+ content:'↗';display:inline-block;font-size:13px;line-height:1;
+ color:var(--secondary);opacity:.86;
+}
+#tasksPage .personal-tasks-list .personal-task-origin:active{
+ background:var(--card2);border-color:var(--soft-line);
+}
+#tasksPage .personal-tasks-list .personal-task-origin:focus-visible{
+ outline:2px solid var(--text);outline-offset:1px;
+}
 .personal-task-content .is-done{text-decoration:line-through;opacity:.6}
 .personal-task-delete{flex:none;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:var(--seyveo-radius-icon,50%);background:transparent;color:var(--secondary);padding:0}
 .personal-task-delete svg.seyveo-close-glyph{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
