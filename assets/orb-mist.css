@@ -141,15 +141,17 @@
   51%{opacity:.65;transform:translate3d(1%,0,0) scale(1.02)}
   100%{opacity:.50;transform:translate3d(2%,-5%,0) scale(1.07)}
 }
+/* Slightly brighter existing internal pearl reflection; no added blob,
+   no shell filter and no brighter external rim. */
 @keyframes seyveo-smoke-light{
   0%,18%{opacity:0}
-  52%{opacity:.20}
-  70%{opacity:.25}
+  52%{opacity:.28}
+  70%{opacity:.33}
   100%{opacity:0}
 }
 @keyframes seyveo-smoke-light-hold{
-  from{opacity:.10}
-  to{opacity:.23}
+  from{opacity:.15}
+  to{opacity:.28}
 }
 
 /* Keep the smoke pearl-white in dark mode; the light mode uses a quiet
