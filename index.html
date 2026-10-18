@@ -982,6 +982,11 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <button id="noteReadBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Вернуться к записям"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <div class="note-read-head"><h2 id="noteReadTitle">Моя запись</h2><small id="noteReadDate"></small></div>
 <div id="noteReadContent" class="note-read-content" tabindex="0" aria-label="Полный текст сохранённой записи"></div>
+<details id="noteSmartInsight" class="note-smart-insight" hidden>
+<summary><span class="note-smart-symbol" aria-hidden="true">✧</span><span>SEYVEO заметил возможное действие</span><span class="note-smart-chevron" aria-hidden="true">⌄</span></summary>
+<div class="note-smart-body"><p id="noteSmartDescription"></p><small>Это предположение по тексту. Ничего не создаётся без вашего подтверждения.</small>
+<div class="note-smart-actions"><button id="noteSmartTask" type="button">Подготовить дело</button><button id="noteSmartEvent" type="button">В календарь</button></div></div>
+</details>
 <div class="note-read-actions"><button id="noteReadEdit" class="btn" type="button">Изменить</button><button id="noteReadDone" class="btn primary" type="button">Готово</button></div>
 </dialog>
 <dialog id="noteModeDialog" class="notes-dialog paper-choice-dialog" aria-labelledby="noteModeTitle">
@@ -1934,11 +1939,20 @@ function renderNotes(){
 }
 function openNotes(){renderNotes();if(!$('notesDialog').open)$('notesDialog').showModal()}
 /* Reading is separate from editing: open long OCR documents without the keyboard. */
-let readingNoteID=null,readerToEditor=false;
+let readingNoteID=null,readerToEditor=false,readerToAction=false,noteActionDraft=null;
 function openNoteRead(note){
  if(!note||note.paper)return;
  const dlg=$('noteReadDialog');
- readingNoteID=note.id;readerToEditor=false;
+ readingNoteID=note.id;readerToEditor=false;readerToAction=false;
+ noteActionDraft=window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
+ const insight=$('noteSmartInsight');
+ insight.hidden=!noteActionDraft;insight.open=false;
+ if(noteActionDraft){
+  const {type,dateLabel}=noteActionDraft;
+  const when=dateLabel?' · '+dateLabel:'';
+  $('noteSmartDescription').textContent=(type==='event'?'В записи может быть встреча':'В записи может быть дело')+when+'.';
+  $('noteSmartEvent').hidden=type!=='event'&&!noteActionDraft.date;
+ }
  $('noteReadContent').textContent=note.text;
  $('noteReadContent').dataset.preserveLines=note.preserveLines?'true':'false';
  const stamp=new Date(note.updatedAt||note.createdAt);
@@ -1951,6 +1965,21 @@ function closeNoteRead(){
 }
 $('noteReadBack').addEventListener('click',closeNoteRead);
 $('noteReadDone').addEventListener('click',closeNoteRead);
+function prepareNoteAction(action){
+ const draft=noteActionDraft;
+ if(!draft)return;
+ readerToAction=true;
+ closeNoteRead();
+ if(action==='task'){
+  window.dispatchEvent(new CustomEvent('seyveo:task-plan-note',
+   {detail:{title:draft.title,...(draft.date?{date:draft.date}:{})}}));
+ }else if(action==='calendar'){
+  window.dispatchEvent(new CustomEvent('seyveo:calendar-plan-note',
+   {detail:{text:draft.title,...(draft.date?{date:draft.date}:{}),...(draft.time?{time:draft.time}:{})}}));
+ }
+}
+$('noteSmartTask').addEventListener('click',()=>prepareNoteAction('task'));
+$('noteSmartEvent').addEventListener('click',()=>prepareNoteAction('calendar'));
 $('noteReadEdit').addEventListener('click',()=>{
  const note=getNotes().find(item=>item.id===readingNoteID);
  if(!note||note.paper)return;
@@ -1960,7 +1989,8 @@ $('noteReadEdit').addEventListener('click',()=>{
 });
 $('noteReadDialog').addEventListener('close',()=>{
  readingNoteID=null;
- const returnToList=!readerToEditor;readerToEditor=false;
+ const returnToList=!readerToEditor&&!readerToAction;
+ readerToEditor=false;readerToAction=false;noteActionDraft=null;
  if(returnToList&&!$('noteReviewDialog').open)openNotes();
 });
 window.SEYVEO_NOTES_API=Object.freeze({getNotes,putNotes,openNotes,message:notesMessage,reviewText:(value,options)=>openNoteReview(value,null,options)});
@@ -2320,4 +2350,4 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=3"></script><script src="assets/management.js?v=20"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=6"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=2"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=28"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=7"></script><script src="assets/personal-wellness.js?v=12"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=8"></script><script src="assets/interaction-focus.js?v=1"></script></body></html>
+</script><script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=3"></script><script src="assets/management.js?v=20"></script><script src="assets/onboarding.js?v=2"></script><script src="assets/personal-tasks.js?v=7"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=3"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=28"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=7"></script><script src="assets/personal-wellness.js?v=12"></script><script src="assets/passport-cards.js?v=6"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=8"></script><script src="assets/interaction-focus.js?v=1"></script></body></html>
