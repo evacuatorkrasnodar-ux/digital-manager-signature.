@@ -40,7 +40,7 @@
 }
 #firstHelpCoach .first-help-badge{
  display:inline-flex;align-items:center;gap:7px;min-width:0;
- color:var(--help-muted);font-size:9px;font-weight:570;letter-spacing:.105em;
+ color:var(--help-muted);font-size:10px;font-weight:570;letter-spacing:.095em;
 }
 #firstHelpCoach .first-help-badge::before{
  content:"";display:block;width:8px;height:8px;flex:none;border-radius:50%;
@@ -55,7 +55,7 @@
  outline:2px solid rgba(196,218,246,.68);outline-offset:3px;
 }
 #firstHelpCoach .first-help-count{
- font-size:10px;white-space:nowrap;color:var(--help-muted);
+ font-size:12px;white-space:nowrap;color:var(--help-muted);
  font-variant-numeric:tabular-nums;
 }
 #firstHelpCoach .first-help-panel h2{
@@ -63,11 +63,11 @@
  margin:0 0 8px;color:var(--help-ink);
 }
 #firstHelpCoach .first-help-copy{
- margin:0;color:var(--help-muted);font-size:13px;line-height:1.5;font-weight:425;
+ margin:0;color:var(--help-muted);font-size:15px;line-height:1.52;font-weight:425;
 }
 #firstHelpCoach .first-help-hint{
  min-height:16px;margin:10px 0 0;
- font-size:10.5px;line-height:1.35;color:var(--help-muted);
+ font-size:12px;line-height:1.4;color:var(--help-muted);
 }
 #firstHelpCoach .first-help-progress{
  display:flex;align-items:center;gap:4px;width:100%;min-height:3px;
@@ -84,7 +84,7 @@
  display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap;
 }
 #firstHelpCoach .first-help-actions button{
- min-height:40px;display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;display:inline-flex;align-items:center;justify-content:center;
  border-radius:999px;padding:8px 13px;
  font:inherit;font-size:12px;font-weight:550;
  border:1px solid var(--help-edge);
@@ -136,7 +136,7 @@
 @media(max-width:370px){
  #firstHelpCoach .first-help-panel{padding:12px 13px;border-radius:20px}
  #firstHelpCoach .first-help-panel h2{font-size:19px}
- #firstHelpCoach .first-help-copy{font-size:12.5px}
+ #firstHelpCoach .first-help-copy{font-size:14px}
  #firstHelpCoach .first-help-actions button{padding:7px 10px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){
