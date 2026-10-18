@@ -140,7 +140,9 @@ function renderList(){
 function renderForm(){
  const item=read().find(x=>x.id===editing&&x.space===current);
  $('calendarSpaceForm').hidden=!editing&&$('calendarSpaceForm').dataset.show!=='true';
- $('calendarSpaceFormTitle').textContent=item?'Изменить запись':'Новая запись';
+ $('calendarSpaceFormTitle').textContent=current==='health'?
+  (item?'Изменить измерение':'Новое измерение'):
+  (item?'Изменить запись':'Новая запись');
  $('calendarSpaceNameLabel').textContent=current==='world'?'Человек или событие':current==='health'?'Значение или запись':'Что важно не забыть?';
  $('calendarSpaceTitle').placeholder=META[current].placeholder;
  $('calendarSpaceDelete').hidden=!item;
@@ -171,6 +173,31 @@ function updateHealthPlaceholder(){
  const examples={'Давление':'Например, 120/80','Пульс':'Например, 72 уд/мин','Шаги':'Например, 6200','Самочувствие':'Как вы себя чувствуете?'};
  $('calendarSpaceTitle').placeholder=examples[$('calendarSpaceKind').value]||'Ваша запись';
 }
+function measurementFocus(active){
+ const enabled=Boolean(active&&current==='health');
+ dialog.dataset.measureFocus=String(enabled);
+ $('calendarMeasureBack').hidden=!enabled;
+ if(enabled){
+  $('calendarSpaceJournal').open=true;
+  dialog.scrollTop=0;
+ }
+}
+function leaveMeasurement(message=''){
+ const active=document.activeElement;
+ if(active&&dialog.contains(active)&&active.matches('input,textarea,select'))active.blur();
+ const category=$('calendarSpaceKind').value;
+ editing=null;
+ $('calendarSpaceForm').dataset.show='false';
+ measurementFocus(false);
+ $('calendarSpaceJournal').open=false;
+ renderList();renderForm();
+ $('calendarSpaceStatus').textContent=message;
+ dialog.scrollTop=0;
+ // The user returns to the overview, not a hidden form field.
+ const target=[...$('calendarHealthOverview').querySelectorAll('[data-health-quick]')]
+  .find(node=>node.dataset.healthQuick===category)||$('calendarSpaceClose');
+ target.focus({preventScroll:true});
+}
 function open(space,id=null,selectedDate=''){
  if(!META[space])return;
  const legacyStep=id&&read().find(row=>row.id===id&&row.kind==='Шаги'&&row.space==='health');
@@ -181,6 +208,7 @@ function open(space,id=null,selectedDate=''){
  }
  current=space;editing=id;
  dialog.dataset.space=space;
+ measurementFocus(false);
  const journal=$('calendarSpaceJournal');
  if(journal){
   // The metric tiles are the primary actions; the full log stays one tap away.
@@ -194,7 +222,7 @@ function open(space,id=null,selectedDate=''){
  $('calendarSpaceTitleHeading').textContent=META[space].name;
  $('calendarSpaceIntro').textContent=META[space].desc;
  $('calendarSpacePrivacy').textContent=space==='health'
-   ?'Ручной ввод. Данные хранятся в браузере без шифрования, без связи с Apple Health. Не для медицинских решений.'
+   ?'Ручной ввод, без шифрования. Apple Health не подключён. Не для медицинских решений.'
    :space==='care'
    ?'Личные записи остаются в этом браузере без шифрования. Отправка другим людям и напоминания пока не подключены.'
    :'Даты и имена хранятся только в этом браузере без шифрования. При выборе «Каждый год» день рождения появится ежегодно.';
@@ -203,7 +231,11 @@ function open(space,id=null,selectedDate=''){
  renderList();renderForm();
  if(!dialog.open)dialog.showModal();
  window.dispatchEvent(new CustomEvent('seyveo:space-opened',{detail:{space}}));
- if(id)$('calendarSpaceTitle').focus({preventScroll:true});
+ if(id&&space==='health'){
+  measurementFocus(true);
+  $('calendarMeasureBack').focus({preventScroll:true});
+ }else if(id)$('calendarSpaceTitle').focus({preventScroll:true});
+ else dialog.scrollTop=0;
 }
 function add(kind=null){
  // Health overview and history share this single form; reveal it before focus.
@@ -214,7 +246,10 @@ function add(kind=null){
   $('calendarSpaceKind').value=kind;
   updateHealthPlaceholder();
  }
- $('calendarSpaceTitle').focus({preventScroll:true});
+ if(current==='health'){
+  measurementFocus(true);
+  $('calendarMeasureBack').focus({preventScroll:true});
+ }else $('calendarSpaceTitle').focus({preventScroll:true});
 }
 function save(event){
  event.preventDefault();
@@ -233,15 +268,23 @@ function save(event){
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
  if(!store(updated)){status.textContent='Не удалось сохранить. Проверьте память браузера.';return}
- editing=null;$('calendarSpaceForm').dataset.show='false';renderList();renderForm();
- status.textContent='Сохранено на этом устройстве';
+ if(current==='health'&&dialog.dataset.measureFocus==='true'){
+  leaveMeasurement('Сохранено на этом устройстве');
+ }else{
+  editing=null;$('calendarSpaceForm').dataset.show='false';renderList();renderForm();
+  status.textContent='Сохранено на этом устройстве';
+ }
 }
 function remove(){
  const old=read().find(x=>x.id===editing&&x.space===current);
  if(!old||!window.confirm('Удалить запись «'+old.title+'»?'))return;
  if(!store(read().filter(x=>x.id!==old.id))){$('calendarSpaceStatus').textContent='Не удалось удалить';return}
- editing=null;$('calendarSpaceForm').dataset.show='false';renderList();renderForm();
- $('calendarSpaceStatus').textContent='Запись удалена';
+ if(current==='health'&&dialog.dataset.measureFocus==='true'){
+  leaveMeasurement('Запись удалена');
+ }else{
+  editing=null;$('calendarSpaceForm').dataset.show='false';renderList();renderForm();
+  $('calendarSpaceStatus').textContent='Запись удалена';
+ }
 }
 $('calendarSpaces').addEventListener('click',event=>{
  const button=event.target.closest('[data-calendar-space]');
@@ -265,10 +308,18 @@ $('calendarHealthOverview').addEventListener('click',event=>{
 $('calendarSpaceKind').addEventListener('change',updateHealthPlaceholder);
 $('calendarSpaceFormFields').addEventListener('submit',save);
 $('calendarSpaceCancel').addEventListener('click',()=>{
+ if(current==='health'&&dialog.dataset.measureFocus==='true'){
+  leaveMeasurement();return;
+ }
  editing=null;$('calendarSpaceForm').dataset.show='false';renderForm();
 });
+$('calendarMeasureBack').addEventListener('click',()=>leaveMeasurement());
 $('calendarSpaceDelete').addEventListener('click',remove);
 $('calendarSpaceClose').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('close',()=>{
+ dialog.dataset.measureFocus='false';
+ $('calendarMeasureBack').hidden=true;
+});
 dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
 window.addEventListener('seyveo:space-edit',event=>{
  const {space,id}=event.detail||{};if(META[space])open(space,id,window.SEYVEO_CALENDAR_DATE?.()||'');
