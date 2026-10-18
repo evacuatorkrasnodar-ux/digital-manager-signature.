@@ -6,7 +6,7 @@
   const dialog=$('onboardDialog'),entry=$('openOnboarding'),form=$('onboardForm');
   if(!dialog||!entry||!form)return;
   const PROFILE='seyveo-first-acquaintance-v1';
-  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Милисса':'female'});
+  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Мелисса':'female'});
   const nameInput=$('onboardAssistantName'),voiceInput=$('onboardAssistantVoice');
   const nameChoices=[...form.querySelectorAll('[data-assistant-name]')];
   function markName(){
@@ -34,7 +34,10 @@
   function existing(){
     try{
       const value=JSON.parse(safeRead(PROFILE)||'null');
-      return value&&typeof value==='object'&&CHOICES[value.focus]?value:null;
+      if(!value||typeof value!=='object'||!CHOICES[value.focus])return null;
+      // Old preview spelling stays compatible without rewriting stored preferences.
+      if(value.assistantName==='Милисса')return {...value,assistantName:'Мелисса',assistantAliases:['Мелисса','Мили']};
+      return value;
     }catch{return null}
   }
   function overview(){
@@ -72,7 +75,7 @@
       name:trim($('onboardName').value,60),
       assistantName:trim(nameInput.value,40),
       assistantVoice:voiceInput.value==='female'?'female':'male',
-      assistantAliases:trim(nameInput.value,40)==='Феликс'?['Феликс','Филя']:trim(nameInput.value,40)?[trim(nameInput.value,40)]:[],
+      assistantAliases:trim(nameInput.value,40)==='Феликс'?['Феликс','Филя']:trim(nameInput.value,40)==='Мелисса'?['Мелисса','Мили']:trim(nameInput.value,40)?[trim(nameInput.value,40)]:[],
       focus,
       lifeIncluded:true,
       updatedAt:new Date().toISOString(),
