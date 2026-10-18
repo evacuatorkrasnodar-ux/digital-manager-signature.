@@ -70,7 +70,11 @@
  box-sizing:border-box;
  width:min(450px,calc(100vw - 24px));
  max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
- max-height:min(88svh,calc(100svh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ /* A fixed top anchor prevents shorter Health/Care panels jumping down the
+    iPhone screen; only the dialog scrolls when content is taller. */
+ top:max(10svh,calc(env(safe-area-inset-top,0px) + 14px));
+ bottom:auto;margin:0 auto;
+ max-height:min(74svh,calc(90svh - 24px - env(safe-area-inset-bottom,0px)));
  padding:20px 17px 15px;border-radius:24px;
  overflow-y:auto;overscroll-behavior:contain
 }
