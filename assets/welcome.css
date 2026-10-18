@@ -205,3 +205,92 @@
  #welcomeDialog .welcome-signature-name,
  #welcomeDialog .welcome-signature-sub{opacity:1;transform:none;filter:none}
 }
+
+
+/* SEYVEO — First Awakening: only after the welcome's final action.
+   Uses the very same approved official-logo.svg shown INSIDE the Home plasma.
+   The actual Home orb, shell, SVG, position and dock are not modified. */
+#welcomeDialog .welcome-opening{
+ position:absolute;inset:0;z-index:5;display:grid;place-items:center;
+ background:#090b0f;pointer-events:none;visibility:hidden;opacity:0;
+}
+#welcomeDialog.is-opening .welcome-opening{
+ visibility:visible;opacity:1;pointer-events:auto;
+}
+#welcomeDialog .welcome-opening-stage{
+ position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;
+ justify-content:center;text-align:center;gap:5px;
+ width:min(100%,340px);padding:24px 15px;
+}
+#welcomeDialog .welcome-opening-light{
+ position:absolute;inset:4% -9%;z-index:-1;border-radius:50%;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 50%,rgba(247,252,255,.20) 0%,rgba(207,229,250,.09) 37%,transparent 74%);
+ filter:blur(13px);opacity:.24;
+}
+#welcomeDialog .welcome-opening-mark{
+ width:clamp(126px,38vw,168px);height:clamp(58px,20vw,79px);
+ object-fit:contain;max-width:100%;
+}
+#welcomeDialog .welcome-opening-word{
+ font-size:clamp(32px,8vw,43px);font-weight:640;line-height:1.08;
+ letter-spacing:.17em;padding-left:.17em;white-space:nowrap;
+ color:#f5f9ff;background:linear-gradient(150deg,#fff 8%,#d9e5f2 48%,#9aafc6 90%);
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+#welcomeDialog .welcome-opening-specialty{
+ font-size:10px;font-weight:550;line-height:1.4;letter-spacing:.12em;
+ white-space:nowrap;color:#cddded;
+}
+#welcomeDialog .welcome-opening-tagline{
+ margin-top:25px;font-size:12px;font-weight:400;letter-spacing:.07em;color:#b1bdcb;
+}
+:root[data-theme=light] #welcomeDialog .welcome-opening{background:#f6f7f9}
+:root[data-theme=light] #welcomeDialog .welcome-opening-light{
+ background:radial-gradient(ellipse at 50% 50%,rgba(144,171,204,.22),rgba(109,142,176,.10) 40%,transparent 74%);
+}
+:root[data-theme=light] #welcomeDialog .welcome-opening-word{
+ color:#526b86;background:linear-gradient(150deg,#334b66 8%,#758ea8 49%,#3b5673 94%);
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+:root[data-theme=light] #welcomeDialog .welcome-opening-mark{filter:brightness(.82) contrast(1.19)}
+:root[data-theme=light] #welcomeDialog .welcome-opening-specialty,
+:root[data-theme=light] #welcomeDialog .welcome-opening-tagline{color:#52657d}
+@media(prefers-reduced-motion:no-preference){
+ #welcomeDialog.is-opening .welcome-opening{
+  animation:welcome-awakening-veil 1.8s ease-in-out both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-stage{
+  animation:welcome-awakening-stage 1.8s cubic-bezier(.21,.62,.2,1) both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-light{
+  animation:welcome-awakening-light 1.8s ease-in-out both;
+ }
+ #welcomeDialog.is-opening .welcome-opening-tagline{
+  animation:welcome-awakening-tagline 1.8s ease-in-out both;
+ }
+ @keyframes welcome-awakening-veil{
+  0%{opacity:0}15%,82%{opacity:1}100%{opacity:.02}
+ }
+ @keyframes welcome-awakening-stage{
+  0%{opacity:0;filter:blur(9px);transform:translateY(12px) scale(.91)}
+  30%{opacity:.96;filter:blur(1px);transform:translateY(1px) scale(1.01)}
+  48%,76%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+  100%{opacity:0;filter:blur(5px);transform:translateY(-8px) scale(1.035)}
+ }
+ @keyframes welcome-awakening-light{
+  0%{opacity:0;transform:scale(.6)}
+  42%{opacity:.85;transform:scale(1.08)}
+  78%{opacity:.32;transform:scale(1.25)}
+  100%{opacity:0;transform:scale(1.35)}
+ }
+ @keyframes welcome-awakening-tagline{
+  0%,21%{opacity:0;transform:translateY(5px)}
+  53%,76%{opacity:.95;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-3px)}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #welcomeDialog .welcome-opening,#welcomeDialog .welcome-opening *{
+  animation:none!important;transition:none!important;transform:none!important;
+ }
+}
