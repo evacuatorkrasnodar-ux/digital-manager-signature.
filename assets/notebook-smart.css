@@ -15,13 +15,14 @@
 
 /* Unified Notebook list: no bulky bottom navigation or outdated close glyph. */
 #notesDialog.notes-dialog{
- width:min(430px,calc(100vw - 28px));
- max-height:min(86dvh,720px);
  box-sizing:border-box;
+ width:min(450px,calc(100vw - 24px));
+ max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ max-height:min(86svh,calc(100svh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
  overflow-y:auto;overscroll-behavior:contain;
 }
 #notesDialog .notes-head{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0 44px 12px 0}
-#notesDialog .notes-head h2{margin:0;line-height:1.25;letter-spacing:-.025em}
+#notesDialog .notes-head h2{margin:0;font-size:21px;font-weight:580;line-height:1.25;letter-spacing:-.03em}
 #notesDialog .notes-new{
  display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;
  background:var(--card2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;
@@ -79,7 +80,7 @@
 
 /* Compact note editor — same measured language as SEYVEO Calendar. */
 #noteReviewDialog.note-review-dialog{padding:19px 17px 15px;max-height:min(86dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))}
-#noteReviewDialog.note-review-dialog h2{font-size:21px;margin-bottom:6px}
+#noteReviewDialog.note-review-dialog h2{font-size:21px;font-weight:580;letter-spacing:-.03em;margin-bottom:6px}
 #noteReviewDialog.note-review-dialog>p{margin:0 40px 12px 0;font-size:11.5px;line-height:1.42}
 #noteReviewDialog.note-review-dialog form{gap:6px}
 #noteReviewDialog.note-review-dialog textarea{min-height:92px;max-height:27dvh;padding:11px 12px;font-size:16px;line-height:1.45}
@@ -93,7 +94,7 @@
  max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
 }
 #noteReadDialog .note-read-head{margin:0 50px 12px 0}
-#noteReadDialog .note-read-head h2{line-height:1.3}
+#noteReadDialog .note-read-head h2{font-size:21px;font-weight:580;line-height:1.3;letter-spacing:-.03em}
 #noteReadDialog .note-read-head small{color:var(--secondary)}
 #noteReadDialog .note-read-content{border:1px solid var(--soft-line);
  background:var(--card2);word-break:normal;
