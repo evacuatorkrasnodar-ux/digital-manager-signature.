@@ -183,6 +183,9 @@ function example(){
  // The guide must never overwrite an existing user draft or silently
  // convert a note into an assistant message.
  if(existing&&(existing!=='Что у меня сегодня?'||isNote)){
+  // Use the existing close control: it saves the draft, dismisses the
+  // keyboard/composer and exposes the real navigation dock for the tour.
+  if(!$('ask')?.hidden)$('hideInput')?.click();
   return setStep(4);
  }
  if(isNote)$('composerModeAsk')?.click();
