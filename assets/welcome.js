@@ -24,7 +24,12 @@ const openingSecond=$('welcomeOpeningQuoteSecond');
 const OPENING_DURATION_MS=5200;
 const SIGNATURE_SOUND_KEY='seyveo-signature-sound-v1';
 const soundToggle=$('seyveoSignatureSoundToggle'),soundState=$('seyveoSignatureSoundState');
-let signatureContext=null,signatureOutput=null;
+/* SEYVEO Signature Sound · First Awakening Cinema Edition.
+   An ORIGINAL mastered stereo WAV, recorded as a standalone app asset.
+   One browser media element: no live oscillator beeps, loops or network APIs.
+   Safari plays only on the owner's explicit final button gesture. */
+const SIGNATURE_SOUND_ASSET='assets/seyveo-first-awakening-cinema.wav?v=1';
+let signatureAudio=null;
 function soundEnabled(){return read(SIGNATURE_SOUND_KEY)!=='off'}
 function soundAllowed(){
  return soundEnabled()
@@ -39,73 +44,33 @@ function paintSoundSetting(){
  soundToggle.setAttribute('aria-label','Фирменный звук: '+(enabled?'включён':'выключен'));
  soundState.textContent=enabled?'Вкл.':'Выкл.';
 }
-function stopSignatureSound(){
- const output=signatureOutput,ctx=signatureContext;
- signatureOutput=null;
- if(!output||!ctx)return;
+function prepareSignatureSound(){
+ if(!soundAllowed()||!window.Audio)return;
+ if(signatureAudio)return;
  try{
-  const now=ctx.currentTime;
-  output.gain.cancelScheduledValues(now);
-  output.gain.setTargetAtTime(.00001,now,.022);
- }catch{}
+  const audio=new window.Audio(SIGNATURE_SOUND_ASSET);
+  audio.preload='auto';
+  audio.loop=false;
+  audio.volume=.80;
+  signatureAudio=audio;
+  if(typeof audio.load==='function')audio.load();
+ }catch{signatureAudio=null}
 }
-/* Original five-note SEYVEO sonic signature — D, A, F-sharp, A, D.
-   Quiet, non-looping sine/soft harmonic voices with gentle envelopes;
-   logo notes first, closing chord as the user's founding words appear.
-   Starts only within the user's final button click, no permission requested. */
+function stopSignatureSound(){
+ if(!signatureAudio)return;
+ try{signatureAudio.pause();signatureAudio.currentTime=0}catch{}
+}
 function playSignatureSound(){
  if(!soundAllowed())return;
- const AC=window.AudioContext||window.webkitAudioContext;
- if(!AC)return; // Graceful silence on unsupported or restricted iOS browsers.
+ prepareSignatureSound();
+ if(!signatureAudio)return;
  try{
-  const ctx=signatureContext&&signatureContext.state!=='closed'
-   ?signatureContext:(signatureContext=new AC());
-  if(ctx.state!=='running'){
-   const resumed=ctx.resume();
-   if(resumed&&typeof resumed.catch==='function')resumed.catch(()=>{});
-  }
-  stopSignatureSound();
-  const t=ctx.currentTime+.045;
-  const master=ctx.createGain();
-  master.gain.setValueAtTime(.00001,t);
-  master.gain.linearRampToValueAtTime(.034,t+.19);
-  master.gain.setValueAtTime(.034,t+3.8);
-  master.gain.exponentialRampToValueAtTime(.00001,t+4.8);
-  master.connect(ctx.destination);
-  signatureOutput=master;
-  const score=[
-   [293.665,.15,1.30,.42],  // D4, logo emerges
-   [440.000,.49,1.45,.30],  // A4, silver overtone
-   [369.994,2.24,1.45,.34],// F#4, the first line
-   [440.000,2.76,1.40,.32],// A4, the leap begins
-   [587.330,3.24,1.40,.40] // D5, signature resolves
-  ];
-  score.forEach(([pitch,offset,duration,level],i)=>{
-   const start=t+offset,end=start+duration;
-   const env=ctx.createGain();
-   env.gain.setValueAtTime(.00001,start);
-   env.gain.linearRampToValueAtTime(level,start+.085);
-   env.gain.exponentialRampToValueAtTime(.00001,end);
-   env.connect(master);
-   const voice=ctx.createOscillator();
-   voice.type='sine';
-   voice.frequency.setValueAtTime(pitch,start);
-   voice.connect(env);
-   // Subtle harmonic shimmer, never a sharp metallic chime.
-   const shimmer=ctx.createOscillator(),shimmerLevel=ctx.createGain();
-   shimmer.type='triangle';
-   shimmer.frequency.setValueAtTime(pitch*2,start);
-   shimmerLevel.gain.value=.065;
-   shimmer.connect(shimmerLevel);
-   shimmerLevel.connect(env);
-   voice.start(start);voice.stop(end+.04);
-   shimmer.start(start);shimmer.stop(end+.04);
-   if(i===score.length-1)voice.onended=()=>{
-    try{master.disconnect()}catch{}
-    if(signatureOutput===master)signatureOutput=null;
-   };
-  });
- }catch{stopSignatureSound()}
+  // Both calls occur directly inside the user click, never inside a timer.
+  signatureAudio.pause();
+  signatureAudio.currentTime=0;
+  const started=signatureAudio.play();
+  if(started&&typeof started.catch==='function')started.catch(()=>{});
+ }catch{}
 }
 soundToggle?.addEventListener('click',()=>{
  const enabled=!soundEnabled();
@@ -245,7 +210,7 @@ function startPreview(){
  preview=true;previewTrigger=demoEntry;
  assistant='Феликс';focus='life';user.value='';other.value='';
  setStep(0);
- try{dialog.showModal();playSignature()}catch{preview=false;previewTrigger=null}
+ try{dialog.showModal();playSignature();prepareSignatureSound()}catch{preview=false;previewTrigger=null}
 }
 demoEntry?.addEventListener('click',startPreview);
 back.addEventListener('click',()=>{if(openingTimer!==null)return;if(step>0)setStep(step-1)});
@@ -263,7 +228,7 @@ function tryOpen(){
  if(dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
  setStep(0);
- try{dialog.showModal();playSignature()}catch{}
+ try{dialog.showModal();playSignature();prepareSignatureSound()}catch{}
 }
 window.addEventListener('pageshow',()=>setTimeout(tryOpen,900));
 window.addEventListener('seyveo:first-help-finished',()=>setTimeout(tryOpen,600));
