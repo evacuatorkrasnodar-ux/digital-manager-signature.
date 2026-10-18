@@ -38,27 +38,27 @@
 }
 #orb.seyveo-presence-speaking .orb-reply-presence{opacity:.85}
 #orb.seyveo-presence-speaking .orb-reply-presence::before{
- animation:seyveo-presence-drift-a 2.6s ease-in-out infinite alternate;
+ animation:seyveo-presence-drift-a 8.5s ease-in-out infinite alternate;
 }
 #orb.seyveo-presence-speaking .orb-reply-presence::after{
- animation:seyveo-presence-drift-b 3.05s ease-in-out infinite alternate;
+ animation:seyveo-presence-drift-b 10.5s ease-in-out infinite alternate;
 }
 #orb.seyveo-presence-ack .orb-reply-presence{
  animation:seyveo-presence-once 2.25s cubic-bezier(.3,.1,.4,1) both;
 }
 #orb.seyveo-presence-ack .orb-reply-presence::before{
- animation:seyveo-presence-drift-a 2.2s ease-in-out both;
+ animation:seyveo-presence-drift-a 4.7s ease-in-out both;
 }
 #orb.seyveo-presence-finish .orb-reply-presence{opacity:.12}
 @keyframes seyveo-presence-drift-a{
- 0%{transform:translate3d(-5%,5%,0);opacity:.54}
- 48%{transform:translate3d(3%,-2%,0);opacity:.9}
- 100%{transform:translate3d(6%,-5%,0);opacity:.65}
+ 0%{transform:translate3d(-2%,2%,0);opacity:.40}
+ 48%{transform:translate3d(1%,-1%,0);opacity:.70}
+ 100%{transform:translate3d(2%,-2%,0);opacity:.49}
 }
 @keyframes seyveo-presence-drift-b{
- 0%{transform:translate3d(5%,-4%,0);opacity:.3}
- 54%{transform:translate3d(-2%,2%,0);opacity:.75}
- 100%{transform:translate3d(-6%,5%,0);opacity:.4}
+ 0%{transform:translate3d(2%,-2%,0);opacity:.25}
+ 54%{transform:translate3d(-1%,1%,0);opacity:.62}
+ 100%{transform:translate3d(-2%,2%,0);opacity:.32}
 }
 @keyframes seyveo-presence-once{
  0%{opacity:0}22%{opacity:.82}57%{opacity:.59}100%{opacity:0}
