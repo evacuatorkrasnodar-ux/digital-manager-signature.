@@ -71,6 +71,147 @@
 @keyframes seyveo-glass-finish{
  from{opacity:.78}to{opacity:0}
 }
+
+/* Voice presence: one very diffuse glass smoke with the existing frost-blue
+   reflection. Wide, soft field prevents the circular blobs seen previously. */
+#orb .orb-mist::before{
+ content:"";position:absolute;inset:4%;border-radius:50%;pointer-events:none;
+ background:radial-gradient(ellipse 74% 67% at 50% 54%,
+  rgba(229,241,254,.23) 0%,rgba(218,238,252,.11) 49%,transparent 100%);
+ filter:blur(10px);
+ opacity:.65;
+}
+:root[data-theme=light] #orb .orb-mist::before{
+ background:radial-gradient(ellipse 74% 67% at 50% 54%,
+  rgba(82,121,164,.24) 0%,rgba(115,149,184,.11) 49%,transparent 100%);
+}
+#orb.seyveo-presence-ack .orb-mist::before{
+ animation:seyveo-voice-fog-once 5.6s ease-in-out both;
+}
+#orb.seyveo-presence-listening .orb-mist::before{
+ animation:seyveo-voice-fog-hold 6.8s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-speaking .orb-mist::before{
+ animation:seyveo-voice-fog-hold 5.4s ease-in-out infinite alternate;
+}
+@keyframes seyveo-voice-fog-once{
+ 0%,100%{opacity:.10;transform:scale(.98)}
+ 44%,64%{opacity:.82;transform:scale(1.035)}
+}
+@keyframes seyveo-voice-fog-hold{
+ from{opacity:.47;transform:scale(.97)}
+ to{opacity:.80;transform:scale(1.03)}
+}
+
+/* The signature's original pearl-smoke language, reserved ONLY for the logo.
+   This layer never appears with voice states or while the orb is idle. */
+#orb .orb-logo-mist{
+ position:absolute;z-index:2;inset:12%;display:block;overflow:hidden;
+ border-radius:50%;pointer-events:none;opacity:0;
+ -webkit-mask-image:radial-gradient(circle,#000 0 61%,rgba(0,0,0,.91) 78%,transparent 97%);
+ mask-image:radial-gradient(circle,#000 0 61%,rgba(0,0,0,.91) 78%,transparent 97%);
+}
+#orb .orb-logo-cloud{
+ position:absolute;inset:-9%;display:block;border-radius:50%;
+ pointer-events:none;opacity:0;filter:blur(9px);
+}
+#orb .orb-logo-cloud--a{
+ background:
+ radial-gradient(ellipse 53% 39% at 40% 67%,rgba(246,250,255,.72),transparent 100%),
+ radial-gradient(ellipse 48% 40% at 61% 49%,rgba(229,241,253,.55),transparent 100%),
+ radial-gradient(ellipse 43% 34% at 36% 35%,rgba(255,255,255,.32),transparent 100%);
+}
+#orb .orb-logo-cloud--b{
+ filter:blur(12px);
+ background:
+ radial-gradient(ellipse 55% 43% at 64% 67%,rgba(249,252,255,.61),transparent 100%),
+ radial-gradient(ellipse 47% 37% at 31% 53%,rgba(211,228,246,.48),transparent 100%),
+ radial-gradient(ellipse 41% 38% at 53% 23%,rgba(247,251,255,.30),transparent 100%);
+}
+#orb .orb-logo-cloud--c{
+ filter:blur(7px);
+ background:
+ radial-gradient(ellipse 43% 33% at 51% 43%,rgba(255,255,255,.40),transparent 100%),
+ radial-gradient(ellipse 48% 35% at 50% 75%,rgba(220,237,253,.42),transparent 100%);
+}
+#orb .orb-logo-mist::after{
+ content:"";position:absolute;inset:5%;border-radius:50%;
+ pointer-events:none;opacity:0;
+ background:radial-gradient(ellipse 35% 31% at 47% 43%,
+  rgba(255,255,255,.70),rgba(237,247,255,.17) 62%,transparent 100%);
+}
+#orb .orb-logo-mist.is-breathing{
+ animation:seyveo-pearl-signature 7.8s ease-in-out both;
+}
+#orb .orb-logo-mist.is-breathing .orb-logo-cloud--a{
+ animation:seyveo-pearl-cloud-a 7.8s ease-in-out both;
+}
+#orb .orb-logo-mist.is-breathing .orb-logo-cloud--b{
+ animation:seyveo-pearl-cloud-b 7.8s ease-in-out both;
+}
+#orb .orb-logo-mist.is-breathing .orb-logo-cloud--c{
+ animation:seyveo-pearl-cloud-c 7.8s ease-in-out both;
+}
+#orb .orb-logo-mist.is-breathing::after{
+ animation:seyveo-pearl-center 7.8s ease-in-out both;
+}
+/* The signature has priority over voice refraction; no opaque double layer. */
+#orb.seyveo-logo-reveal .orb-mist{animation:none!important;opacity:0!important}
+@keyframes seyveo-pearl-signature{
+ 0%{opacity:0}15%{opacity:.26}43%,67%{opacity:.88}85%{opacity:.42}100%{opacity:0}
+}
+@keyframes seyveo-pearl-cloud-a{
+ 0%{opacity:.10;transform:translate3d(-5%,10%,0) scale(.89)}
+ 48%{opacity:.83;transform:translate3d(0,0,0) scale(1.02)}
+ 100%{opacity:.45;transform:translate3d(3%,-3%,0) scale(1.07)}
+}
+@keyframes seyveo-pearl-cloud-b{
+ 0%{opacity:.08;transform:translate3d(8%,11%,0) scale(.90)}
+ 55%{opacity:.72;transform:translate3d(0,-1%,0) scale(1)}
+ 100%{opacity:.46;transform:translate3d(-4%,-5%,0) scale(1.05)}
+}
+@keyframes seyveo-pearl-cloud-c{
+ 0%{opacity:.06;transform:translate3d(-2%,10%,0) scale(.91)}
+ 51%{opacity:.58;transform:translate3d(1%,0,0) scale(1.02)}
+ 100%{opacity:.40;transform:translate3d(2%,-5%,0) scale(1.06)}
+}
+@keyframes seyveo-pearl-center{
+ 0%,17%{opacity:0}52%{opacity:.19}70%{opacity:.22}100%{opacity:0}
+}
+:root[data-theme=light] #orb .orb-logo-cloud--a{
+ background:
+ radial-gradient(ellipse 53% 39% at 40% 67%,rgba(135,159,187,.50),transparent 100%),
+ radial-gradient(ellipse 48% 40% at 61% 49%,rgba(252,253,255,.69),transparent 100%),
+ radial-gradient(ellipse 43% 34% at 36% 35%,rgba(177,195,214,.35),transparent 100%);
+}
+:root[data-theme=light] #orb .orb-logo-cloud--b{
+ background:
+ radial-gradient(ellipse 55% 43% at 64% 67%,rgba(160,180,201,.43),transparent 100%),
+ radial-gradient(ellipse 47% 37% at 31% 53%,rgba(255,255,255,.70),transparent 100%);
+}
+:root[data-theme=light] #orb .orb-logo-cloud--c{
+ background:
+ radial-gradient(ellipse 43% 33% at 51% 43%,rgba(113,145,175,.27),transparent 100%),
+ radial-gradient(ellipse 48% 35% at 50% 75%,rgba(251,252,255,.62),transparent 100%);
+}
+:root[data-theme=light] #orb .orb-logo-mist::after{
+ background:radial-gradient(ellipse 35% 31% at 47% 43%,rgba(255,255,255,.84),rgba(230,239,249,.18) 62%,transparent 100%);
+}
+@media(prefers-reduced-motion:reduce){
+ #orb .orb-mist::before,
+ #orb .orb-logo-mist,
+ #orb .orb-logo-cloud,
+ #orb .orb-logo-mist::after{animation:none!important;transform:none!important}
+ #orb.seyveo-presence-ack .orb-mist::before,
+ #orb.seyveo-presence-listening .orb-mist::before,
+ #orb.seyveo-presence-speaking .orb-mist::before{opacity:.7}
+ #orb .orb-logo-mist.is-breathing{opacity:.56}
+ #orb .orb-logo-mist.is-breathing .orb-logo-cloud--a{opacity:.65}
+ #orb .orb-logo-mist.is-breathing .orb-logo-cloud--b{opacity:.40}
+ #orb .orb-logo-mist.is-breathing .orb-logo-cloud--c{opacity:.40}
+ #orb .orb-logo-mist.is-breathing::after{opacity:.18}
+}
+
 @media(prefers-reduced-motion:reduce){
  #orb .orb-mist,
  #orb .orb-mist::after{animation:none!important;transition:none!important;transform:none!important}
