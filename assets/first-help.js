@@ -53,6 +53,9 @@ function rectFor(target){
  const vw=document.documentElement.clientWidth||window.innerWidth;
  const vh=window.visualViewport?.height||window.innerHeight;
  const offset=window.visualViewport?.offsetTop||0;
+ // An offscreen target cannot be meaningfully spotlighted; show a centered
+ // explanation instead of a marker outside the user's visible viewport.
+ if(r.right<=0||r.left>=vw||r.bottom<=offset||r.top>=offset+vh)return null;
  const x=Math.max(4,r.left-7),y=Math.max(offset+4,r.top-7);
  const right=Math.min(vw-4,r.right+7),bottom=Math.min(offset+vh-4,r.bottom+7);
  return {x,y,w:Math.max(0,right-x),h:Math.max(0,bottom-y),vw,top:offset,vh};
@@ -87,7 +90,7 @@ function layout(){
  }
  // Position a small lesson card away from the highlighted control; preserve
  // the dock, orb and viewport inset. No layout changes to the underlying app.
- const cardW=Math.min(vw-28,344);
+ const cardW=Math.max(220,Math.min(vw-28,344));
  const cardH=panel.offsetHeight||205;
  const pad=12;
  const lower=r?r.y+r.h+15:offset+vh*.46;
@@ -120,8 +123,6 @@ function update(){
   // Opening the real composer may schedule a keyboard focus on the next
   // animation frame; release it for a clear first-help card on iPhone.
   setTimeout(()=>{if(active&&step===2&&document.activeElement===q){q.blur();scheduleLayout()}},160);
-  if($('composerModeNotes')?.getAttribute('aria-pressed')==='true')
-    $('composerModeAsk')?.click();
  }
  if(step===7&&$('homeWorldPopover')&&!$('homeWorldPopover').hidden)
   $('homeWorldTrigger')?.click();
@@ -129,8 +130,14 @@ function update(){
  title.textContent=steps[step].name;
  text.textContent=steps[step].body;
  badge.textContent=steps[step].label||'МОЙ ПЕРВЫЙ ШАГ';
- $('firstHelpHint').textContent=steps[step].hint||'Можете пропустить знакомство в любой момент';
- go.textContent=steps[step].button;
+ const blockedExample=step===2&&!!$('question')?.value.trim()&&(
+  $('question').value.trim()!=='Что у меня сегодня?'||
+  $('composerModeNotes')?.getAttribute('aria-pressed')==='true'
+ );
+ $('firstHelpHint').textContent=blockedExample
+  ?'У вас уже есть собственный текст. Не буду его изменять. Можно продолжить без примера.'
+  :steps[step].hint||'Можете пропустить знакомство в любой момент';
+ go.textContent=blockedExample?'Пропустить пример':steps[step].button;
  back.hidden=step===0;
  progress.replaceChildren(...steps.map((_,i)=>{
   const dot=document.createElement('span');
@@ -170,19 +177,23 @@ function start(){
 }
 function example(){
  const input=$('question'),form=$('ask');
- if(!input||!form)return setStep(3);
- if(input.value.trim()&&input.value.trim()!=='Что у меня сегодня?'){
-  $('firstHelpHint').textContent='Здесь уже есть ваш текст. Отправьте его сами или очистите поле, чтобы использовать пример.';
-  return;
+ if(!input||!form)return setStep(4);
+ const existing=input.value.trim();
+ const isNote=$('composerModeNotes')?.getAttribute('aria-pressed')==='true';
+ // The guide must never overwrite an existing user draft or silently
+ // convert a note into an assistant message.
+ if(existing&&(existing!=='Что у меня сегодня?'||isNote)){
+  return setStep(4);
  }
- if($('composerModeAsk')?.getAttribute('aria-pressed')!=='true')
-  $('composerModeAsk')?.click();
+ if(isNote)$('composerModeAsk')?.click();
  input.value='Что у меня сегодня?';
  input.dispatchEvent(new Event('input',{bubbles:true}));
  try{form.requestSubmit()}catch{
   $('composerCompactSend')?.click();
  }
- // submit handlers run synchronously; keep the actual demo reply.
+ // If the host returned a different kind of editor (such as a calendar
+ // review), don't falsely claim that the sphere just replied.
+ if($('orbInlineReply')?.hidden)return setStep(4);
  setStep(3);
 }
 function next(){
