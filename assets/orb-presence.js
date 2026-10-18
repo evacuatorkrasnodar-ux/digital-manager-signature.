@@ -25,6 +25,11 @@ function endListening(){
  if(!orb.classList.contains('seyveo-presence-listening'))return;
  orb.classList.remove('seyveo-presence-listening');
  clearTimeout(timer);timer=0;
+ // Release the smoke softly after the finger leaves the microphone.
+ if(hasHome()){
+  orb.classList.add('seyveo-presence-finish');
+  timer=setTimeout(clear,900);
+ }
 }
 function acknowledge(){
  if(!hasHome())return;
