@@ -193,6 +193,18 @@
  min-height:44px;border-radius:999px;font-weight:545
 }
 
+/* Native iOS date/time wheels belong to the selected SEYVEO theme, not
+   to an unrelated OS appearance.  The controls stay native and accessible.
+   Safari owns its picker chrome, so CSS selects its supported color scheme. */
+:root[data-theme=light] :is(#calendarEventDialog,#calendarSpaceDialog),
+:root[data-theme=light] :is(#calendarEventDialog,#calendarSpaceDialog) :is(input[type=date],input[type=time],select){
+ color-scheme:light
+}
+:root:not([data-theme=light]) :is(#calendarEventDialog,#calendarSpaceDialog),
+:root:not([data-theme=light]) :is(#calendarEventDialog,#calendarSpaceDialog) :is(input[type=date],input[type=time],select){
+ color-scheme:dark
+}
+
 /* WHITE VELVET — quiet white paper surfaces, graphite text. */
 :root[data-theme=light] #calendarPage :is(.cal-month,.cal-agenda,.calendar-spaces-grid),
 :root[data-theme=light] #calendarSpaceDialog .cal-space-list,
