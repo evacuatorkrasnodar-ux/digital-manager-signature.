@@ -63,11 +63,13 @@
 #calendarPersonalTools :is(.pw-panel-head p,#pwCycleDetail p){margin:0;font-size:11.5px;line-height:1.48;color:var(--secondary)}
 #calendarPersonalTools .pw-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;margin:13px 0}
 #calendarPersonalTools :is(.pw-actions button,.pw-inline button,.pw-form>button,.pw-list-row button,#pwCycleEnable){
- min-height:42px;padding:10px 13px;
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:10px 14px;
  border:1px solid var(--line);border-radius:999px;
  background:var(--card2);color:var(--text);
- font-family:inherit;font-size:12px;font-weight:540;
- line-height:1.2;touch-action:manipulation
+ font-family:inherit;font-size:12.5px;font-weight:535;
+ line-height:1.2;letter-spacing:-.012em;text-align:center;white-space:nowrap;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
 }
 #calendarPersonalTools button.pw-primary{
  background:var(--text);color:var(--bg);border-color:var(--text)
@@ -80,12 +82,51 @@
  font-size:11px;color:var(--secondary);line-height:1.25
 }
 #calendarPersonalTools .pw-inline :is(input,select),#calendarPersonalTools .pw-form input{
- display:block;width:100%;min-width:0;min-height:44px;padding:9px 10px;
- font:inherit;font-size:16px;border:1px solid var(--line);border-radius:13px;
+ display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;
+ padding:10px 14px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;
+ border:1px solid var(--line);border-radius:16px;
  background:var(--card2);color:var(--text);
- color-scheme:inherit
+ color-scheme:inherit;text-align:left
 }
 #calendarPersonalTools .pw-inline button{flex:none}
+/* Finite choices are an Apple-like three-way switch, not a platform dropdown. */
+#calendarPersonalTools .pw-segment-field{display:grid;gap:8px;min-width:0;margin:12px 0 10px}
+#calendarPersonalTools .pw-control-label{font-size:11.5px;line-height:1.4;color:var(--secondary)}
+#calendarPersonalTools .pw-segments{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
+ padding:4px;border:1px solid var(--soft-line);border-radius:19px;
+ background:var(--card2)
+}
+#calendarPersonalTools .pw-segments button{
+ box-sizing:border-box;min-width:0;min-height:44px;padding:7px 3px;
+ border:1px solid transparent;border-radius:15px;
+ background:transparent;color:var(--secondary);
+ font:inherit;font-size:12px;font-weight:520;line-height:1.2;
+ -webkit-appearance:none;appearance:none;
+ text-align:center;white-space:nowrap;touch-action:manipulation;
+ transition:background .18s ease,color .18s ease,border-color .18s ease
+}
+#calendarPersonalTools .pw-segments button[aria-pressed=true]{
+ background:var(--card);border-color:var(--soft-line);color:var(--text);
+ box-shadow:0 1px 4px var(--shadow),inset 0 1px 0 #ffffff12
+}
+#calendarPersonalTools .pw-segments button:disabled{opacity:.56}
+/* Native date/number pickers remain functional, but their fields look consistent. */
+#calendarPersonalTools input[type=number]{-moz-appearance:textfield;appearance:textfield;font-variant-numeric:tabular-nums}
+#calendarPersonalTools input[type=number]::-webkit-inner-spin-button,
+#calendarPersonalTools input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#calendarPersonalTools input[type=date]::-webkit-date-and-time-value{text-align:left}
+#calendarPersonalTools input[type=date]::-webkit-datetime-edit{padding:0}
+#calendarPersonalTools [data-pw-panel=water] .pw-actions{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px
+}
+#calendarPersonalTools [data-pw-panel=water] .pw-actions button{
+ min-width:0;width:100%;padding-inline:5px;font-size:12px;
+ font-variant-numeric:tabular-nums
+}
+#calendarPersonalTools [data-pw-panel=water] #pwWaterUndo{
+ grid-column:1 / -1;justify-self:center;width:auto;min-width:120px
+}
 #calendarSpaceDialog > .pw-tool-back[hidden]{display:none!important}
 /* iOS date pickers have a native minimum content width. Never squeeze them
    beside another control: preserve a full tappable row on narrow screens. */
@@ -275,6 +316,7 @@
 @media(prefers-reduced-motion:reduce){
  #calendarPersonalTools .pw-breath-disc,#calendarPersonalTools .pw-progress span,#calendarPersonalTools .pw-arrow,
  #calendarPersonalTools .pw-card,#calendarPersonalTools .pw-detail,#calendarPersonalTools .pw-wide-row,
+ #calendarPersonalTools .pw-segments button,
  #calendarPersonalTools .pw-water-liquid,#calendarPersonalTools .pw-eye,
  #calendarPersonalTools .pw-eye svg{animation:none!important;transition:none!important}
  #calendarPersonalTools .pw-breath-ring.is-active .pw-breath-disc{transform:scale(.92)}
