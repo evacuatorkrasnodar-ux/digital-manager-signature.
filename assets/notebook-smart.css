@@ -484,3 +484,47 @@
 @media(prefers-reduced-motion:reduce){
  #noteReadDialog .note-smart-chevron{transition:none}
 }
+
+/* Several tasks share the same single Notebook suggestion, not a new screen. */
+#noteReadDialog .note-smart-insight[open]{
+ max-height:min(48svh,355px);overflow-y:auto;overscroll-behavior:contain
+}
+#noteReadDialog .note-smart-body #noteSmartSingle[hidden],
+#noteReadDialog .note-smart-body #noteSmartPlan[hidden]{display:none!important}
+#noteReadDialog .note-smart-plan-list{
+ display:grid;gap:0;margin:6px 0 12px;
+ border:1px solid var(--soft-line);border-radius:13px;
+ overflow:hidden;background:var(--card);
+}
+#noteReadDialog .note-smart-plan-item{
+ display:flex;gap:10px;align-items:flex-start;
+ min-width:0;padding:10px 11px;cursor:pointer
+}
+#noteReadDialog .note-smart-plan-item+.note-smart-plan-item{border-top:1px solid var(--soft-line)}
+#noteReadDialog .note-smart-plan-item input{
+ flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--text)
+}
+#noteReadDialog .note-smart-plan-copy{display:grid;min-width:0;gap:3px;overflow-wrap:anywhere}
+#noteReadDialog .note-smart-plan-copy strong{
+ font-size:12px;line-height:1.4;font-weight:525;color:var(--text)
+}
+#noteReadDialog .note-smart-plan-copy small{
+ font-size:10px;line-height:1.35;color:var(--secondary)
+}
+#noteReadDialog .note-smart-plan-save{
+ display:inline-flex;align-items:center;justify-content:center;
+ width:100%;min-height:44px;padding:10px 12px;
+ border:1px solid var(--text);border-radius:999px;
+ background:var(--text);color:var(--bg);
+ font:inherit;font-size:12px;font-weight:550;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#noteReadDialog .note-smart-plan-save:disabled{opacity:.48}
+#noteReadDialog .note-smart-body .note-smart-plan-status{
+ min-height:0;margin:8px 0 0;font-size:11px;color:var(--secondary);line-height:1.45
+}
+#noteReadDialog .note-smart-plan-status:empty{display:none}
+#noteReadDialog .note-smart-plan-item:focus-within{outline:2px solid var(--text);outline-offset:-2px}
+@media(max-width:370px){
+ #noteReadDialog .note-smart-insight[open]{max-height:44svh}
+}
