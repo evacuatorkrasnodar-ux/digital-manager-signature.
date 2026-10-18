@@ -255,3 +255,19 @@
  outline:2px solid var(--text);outline-offset:2px
 }
 #managePage .manage-notification-body [hidden]{display:none!important}
+
+/* Between Us · disclose that the discreet voice switch is not a data lock. */
+#managePage .manage-discreet-note{
+ box-sizing:border-box;margin:0;padding:8px 15px 12px;
+ border-top:1px solid var(--soft-line);
+ color:var(--secondary);background:var(--card2);
+ font-size:11px;line-height:1.48;
+}
+#managePage #seyveoDiscreetToggle .manage-text{min-width:0}
+#managePage #seyveoDiscreetToggle[aria-pressed=true] .seyveo-silk-switch{
+ opacity:1;
+}
+@media(max-width:360px){
+ #managePage .manage-discreet-note{padding-inline:12px}
+ #managePage #seyveoDiscreetToggle .manage-theme-value{font-size:11px}
+}
