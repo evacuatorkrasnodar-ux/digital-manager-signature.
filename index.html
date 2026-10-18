@@ -681,6 +681,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <h2 id="manage-personal-label">Мой управляющий</h2>
 <div class="manage-card">
 <button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">Имя и жизненный этап</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" id="openWelcomeDemo"><span class="manage-text"><strong>Демо приветствия</strong><small>Посмотреть первый запуск без изменения настроек</small></span><span class="manage-theme-value">Смотреть</span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" id="openFirstHelp" type="button"><span class="manage-text"><strong>Первая помощь</strong><small>Показать, где что находится и как обратиться к помощнику</small></span><span class="manage-theme-value">Начать</span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Почта, сервисы и источники данных</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button type="button" id="seyveoDiscreetToggle" class="manage-row" aria-pressed="false" aria-label="Рядом люди: выключено">
@@ -998,7 +999,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </dialog>
 <dialog id="welcomeDialog" aria-modal="true" aria-label="Первое знакомство с SEYVEO">
 <div class="welcome-shell">
-<header class="welcome-head"><span class="welcome-brand">seyveo</span><span class="welcome-overline">AI AUTOMATION</span></header>
+<header class="welcome-head"><span class="welcome-brand">seyveo</span><span id="welcomeOverline" class="welcome-overline">AI AUTOMATION</span></header>
 <div id="welcomeProgress" class="welcome-progress" aria-label="Шаги знакомства" hidden></div>
 <main class="welcome-main" id="welcomeMain">
 <section class="welcome-step welcome-intro" data-welcome-step="0" aria-labelledby="welcomeIntroTitle">
@@ -1048,7 +1049,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <footer class="welcome-bottom">
  <p id="welcomeError" class="welcome-error" role="status" aria-live="polite"></p>
  <div class="welcome-actions"><button id="welcomeBack" type="button" class="welcome-secondary" aria-label="Предыдущий шаг" hidden>←</button><button id="welcomeNext" type="button" class="welcome-primary">Начать знакомство</button></div>
- <div class="welcome-bottomline"><button id="welcomeSkip" class="welcome-skip" type="button">Пропустить знакомство</button><span class="welcome-disclaimer">Без доступа к контактам, микрофону и другим данным</span></div>
+ <div class="welcome-bottomline"><button id="welcomeSkip" class="welcome-skip" type="button">Пропустить знакомство</button><span id="welcomeDisclaimer" class="welcome-disclaimer">Без доступа к контактам, микрофону и другим данным</span></div>
 </footer>
 </div></dialog>
 
@@ -2858,4 +2859,4 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
 <div id="firstHelpProgress" class="first-help-progress" aria-hidden="true"></div>
 <div class="first-help-actions"><button id="firstHelpExit" type="button">Пропустить</button><button id="firstHelpBack" type="button" hidden>Назад</button><button id="firstHelpNext" type="button">Начать</button></div>
 </section></section>
-<script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=5"></script><script src="assets/management.js?v=22"></script><script src="assets/onboarding.js?v=7"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=9"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/management-previews.js?v=1"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/welcome.js?v=1"></script></body></html>
+<script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=5"></script><script src="assets/management.js?v=22"></script><script src="assets/onboarding.js?v=7"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=9"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/management-previews.js?v=1"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/welcome.js?v=2"></script></body></html>
