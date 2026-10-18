@@ -1794,7 +1794,7 @@ function syncAppPage(){
   $('lifePage').hidden=!life;
   $('manageOverview').hidden=theme;
   $('manageThemeScreen').hidden=!theme;
-  const current=tasks||calendar?'navTasks':manage?'navManage':picture?'navPicture':'navHome';
+  const current=tasks?'navTasks':manage?'navManage':picture?'navPicture':home?'navHome':null;
   for(const id of ['navHome','navTasks','navPicture','navManage']){
     $(id).classList.toggle('active',id===current);
     if(id===current)$(id).setAttribute('aria-current','page');
@@ -1820,7 +1820,11 @@ function goHome(){
   if(location.hash)history.pushState(null,'',location.pathname+location.search);
   syncAppPage();
 }
-$('navHome').addEventListener('click',goHome);
+$('navHome').addEventListener('click',()=>{
+  // Tactile Home action: one press, one destination. Never hijack the assistant.
+  playFeedback('select');
+  goHome();
+});
 $('navTasks').addEventListener('click',()=>{
   if(location.hash==='#tasks'){renderTasksPage();return;}
   tasksView=state.history.some(h=>h.status==='working'||h.status==='failed')?'working':'history';
