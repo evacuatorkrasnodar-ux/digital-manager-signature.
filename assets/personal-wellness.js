@@ -96,7 +96,25 @@ host.innerHTML=`
   <section id="pwHealthDetail" class="pw-detail" hidden>
    <div data-pw-panel="meds" hidden>
     <header class="pw-panel-head"><h3>Приём лекарств</h3><p>Только по вашему расписанию, без рекомендаций по дозировкам.</p></header>
-    <form id="pwMedForm" class="pw-form"><label>Название<input id="pwMedName" type="text" maxlength="90" required placeholder="Из назначения"></label><div class="pw-inline"><label>Доза по назначению<input id="pwMedDose" maxlength="80" required placeholder="Как назначено"></label><label>Время<input id="pwMedTime" type="time" required></label></div><button type="submit" class="pw-primary">Добавить</button></form>
+    <form id="pwMedForm" class="pw-form"><label>Название<input id="pwMedName" type="text" maxlength="90" required placeholder="Из назначения"></label><div class="pw-inline"><label>Доза по назначению<input id="pwMedDose" maxlength="80" required placeholder="Как назначено"></label><div class="pw-time-field"><span class="pw-control-label">Время</span>
+     <button type="button" class="pw-time-trigger" id="pwMedTimeOpen" aria-expanded="false" aria-controls="pwMedTimePicker" aria-label="Выбрать время приёма"><span id="pwMedTimeOpenValue">09:00</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></button>
+     <input type="hidden" id="pwMedTime" value="09:00"></div></div>
+    <div class="pw-time-picker" id="pwMedTimePicker" hidden>
+     <div class="pw-time-picker-head"><strong>Выберите время</strong><small>24-часовой формат</small></div>
+     <div class="pw-time-columns">
+      <div class="pw-time-column"><span>Часы</span><div class="pw-time-stepper">
+       <button type="button" data-pw-time-adjust="hour:-1" aria-label="Уменьшить часы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button>
+       <input id="pwMedHour" type="number" inputmode="numeric" min="0" max="23" step="1" aria-label="Часы от 0 до 23" value="9">
+       <button type="button" data-pw-time-adjust="hour:1" aria-label="Увеличить часы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div></div>
+      <div class="pw-time-column"><span>Минуты</span><div class="pw-time-stepper">
+       <button type="button" data-pw-time-adjust="minute:-1" aria-label="Уменьшить минуты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button>
+       <input id="pwMedMinute" type="number" inputmode="numeric" min="0" max="59" step="1" aria-label="Минуты от 0 до 59" value="0">
+       <button type="button" data-pw-time-adjust="minute:1" aria-label="Увеличить минуты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button>
+      </div></div>
+     </div>
+     <div class="pw-time-picker-actions"><button id="pwMedTimeCancel" type="button">Отмена</button><button id="pwMedTimeDone" type="button" class="pw-primary">Готово</button></div>
+    </div><button type="submit" class="pw-primary">Добавить</button></form>
     <div id="pwMedList" class="pw-list"></div>
     <p class="pw-caption">Отметки сохраняются вручную. Push-напоминаний при закрытом приложении нет. Пропуск не означает, что дозу нужно удваивать.</p>
    </div>
