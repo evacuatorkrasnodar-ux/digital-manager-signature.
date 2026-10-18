@@ -69,6 +69,11 @@ function execute(plan){
   const message='Сначала закройте открытое окно. Затем покажу нужный раздел.';
   notice(message);return {ok:false,message};
  }
+ // Close the EXISTING composer, whose close handler persists any unfinished
+ // draft. This also releases the iPhone keyboard before changing screens.
+ if($('ask')&&!$('ask').hidden){
+  $('hideInput')?.click();
+ }
  let succeeded=false;
  const space=key=>document.querySelector('#calendarSpaces [data-calendar-space="'+key+'"]');
  switch(plan.tool){
