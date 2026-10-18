@@ -586,6 +586,11 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <div class="manage-card">
 <button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">Имя и жизненный этап</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
 <button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Почта, сервисы и источники данных</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button type="button" id="seyveoDiscreetToggle" class="manage-row" aria-pressed="false" aria-label="Рядом люди: выключено">
+ <span class="manage-text"><strong>Между нами · Рядом люди</strong><small>Не зачитывать личное вслух · тихие и нейтральные ответы</small></span>
+ <span id="seyveoDiscreetState" class="manage-theme-value">Выкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span>
+</button>
+<p class="manage-discreet-note">Не скрывает записи на экране и не заменяет пароль или Face ID. Это режим деликатного общения, не защита данных.</p>
 </div>
 </section>
 <section class="manage-group" aria-labelledby="manage-app">
@@ -2202,9 +2207,40 @@ question.addEventListener('keydown',e=>{
 /* Quiet voice: dialog stays invisible on Home. Text is shown only for
    explicit writing/calendar actions. Speech is optional and supported by
    the browser; history remains available from the expanded typed composer. */
+/* "Рядом люди" never reads personal content aloud. A playful, generic
+   response is only available on an explicit "между нами" voice request.
+   This is communication etiquette, NOT identity verification or a lock. */
+const NEUTRAL_ASIDES=[
+ 'Пингвин снова забыл галстук. Продолжим без лишних подробностей?',
+ 'Кот занял кресло директора. Заседание временно закрыто.',
+ 'Наш капитан сегодня без карты. Зато с отличным чувством юмора.'
+];
+let neutralAsideIndex=0;
+function nextNeutralAside(){
+ const text=NEUTRAL_ASIDES[neutralAsideIndex%NEUTRAL_ASIDES.length];
+ neutralAsideIndex++;
+ return text;
+}
+function speakNeutralAside(){
+ const text=nextNeutralAside();
+ try{
+  window.speechSynthesis?.cancel();
+  if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
+   const voice=new SpeechSynthesisUtterance(text);
+   voice.lang='ru-RU';voice.rate=.98;
+   window.speechSynthesis.speak(voice);
+  }
+ }catch{}
+ setHint(text);
+}
 function speakAssistantReply(message){
  const response=String(message||'').trim();
  if(!response)return;
+ if(window.SEYVEO_DISCREET_MODE===true){
+  try{window.speechSynthesis?.cancel()}catch{}
+  setHint('SEYVEO рядом · отвечаю без озвучивания.');
+  return;
+ }
  const SpeechWindow=window.speechSynthesis;
  if(!SpeechWindow||!window.SpeechSynthesisUtterance){
    setHint('Ответ сохранён в истории.');
@@ -2224,6 +2260,15 @@ function speakAssistantReply(message){
 function handleSpokenAssistant(raw){
  const phrase=String(raw||'').trim();
  if(!phrase)return;
+ // A neutral shared joke is never a secret answer or a way to unlock data.
+ if(window.SEYVEO_DISCREET_MODE===true &&
+  /(?:^|[\\s,!.?])(?:сейвео[,\\s]+)?между нами(?:[\\s,!.?]|$)/i.test(phrase)){
+  speakNeutralAside();return;
+ }
+ if(window.SEYVEO_DISCREET_MODE===true &&
+  /(?:^|\\s)(?:открой|покажи)\\s+(?:мой мир|личное пространство)(?:[\\s,.!?]|$)/i.test(phrase)){
+  speakNeutralAside();return;
+ }
  const calendarDraft=window.SEYVEO_CALENDAR_NL?.(phrase);
  if(calendarDraft){
    if(calendarDraft.status==='ready'){
