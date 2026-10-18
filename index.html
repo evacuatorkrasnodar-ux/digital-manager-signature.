@@ -1974,7 +1974,7 @@ function openNoteRead(note){
  readingNoteID=note.id;readerToEditor=false;readerToAction=false;
  // Poems with preserved line breaks remain pure text, with no task guesses.
  noteTaskPlan=note.preserveLines?null:window.SEYVEO_NOTE_TASK_PLAN?.(note.text)||null;
- noteActionDraft=noteTaskPlan?null:window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
+ noteActionDraft=note.preserveLines||noteTaskPlan?null:window.SEYVEO_NOTE_ACTION_HINT?.(note.text)||null;
  const insight=$('noteSmartInsight');
  insight.hidden=!noteActionDraft&&!noteTaskPlan;insight.open=false;
  $('noteSmartHeading').textContent=noteTaskPlan?'SEYVEO заметил несколько дел':'SEYVEO заметил возможное действие';
