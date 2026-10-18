@@ -5,7 +5,8 @@
 const $=id=>document.getElementById(id);
 const list=$('personalTaskList'),summary=$('personalBriefList'),dialog=$('personalTaskDialog');
 const form=$('personalTaskForm'),input=$('personalTaskTitle'),date=$('personalTaskDue');
-if(!list||!summary||!dialog||!form||!input||!date)return;
+const contactsDialog=$('seyveoContactsDialog'),callDialog=$('seyveoCallDialog');
+if(!list||!summary||!dialog||!form||!input||!date||!contactsDialog||!callDialog)return;
 const notice=$('personalTasksNotice');
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
@@ -77,10 +78,189 @@ function continuationPrompt(item,action){
  card.append(head,description,suggestion,buttons);
  return card;
 }
+/* A deliberately small manual directory, not access to iPhone contacts.
+   Private names/numbers remain in unencrypted localStorage: disclose this in UI.
+   Only a native tel: link opened by the person's tap can initiate a call. */
+const CONTACT_KEY='seyveo-private-contacts-v1',CONTACT_MAX=40;
+let editingContact='',deleteContact='',callTargetName='',chosenContact='',returnToCall=false;
+const contactName=$('seyveoContactName'),contactPhone=$('seyveoContactPhone');
+const contactStatus=$('seyveoContactStatus'),callStatus=$('seyveoCallStatus');
+function cleanPhone(raw){
+ const value=String(raw||'').replace(/[\s().\-\u2010-\u2015]/g,'');
+ return /^\+?\d{7,15}$/.test(value)?value:'';
+}
+function cleanName(raw){return String(raw||'').trim().replace(/\s+/g,' ').slice(0,70);}
+function contactKey(value){return cleanName(value).toLocaleLowerCase('ru-RU');}
+function readContacts(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(CONTACT_KEY)||'[]');
+  return Array.isArray(raw)?raw.filter(x=>x&&typeof x.id==='string'&&
+   typeof x.name==='string'&&typeof x.phone==='string'&&cleanName(x.name)&&cleanPhone(x.phone))
+   .slice(0,CONTACT_MAX).map(x=>({id:x.id,name:cleanName(x.name),phone:cleanPhone(x.phone)})):[];
+ }catch{return []}
+}
+function writeContacts(list){
+ try{localStorage.setItem(CONTACT_KEY,JSON.stringify(list));return true}catch{return false}
+}
+function showContactStatus(message){contactStatus.textContent=message||'';}
+function callTargetFromTask(title){
+ const match=String(title||'').trim().match(/^(?:позвонить|позвони|перезвонить|набрать)\s+(?:по\s+телефону\s+)?(.+)$/i);
+ if(!match)return '';
+ const target=match[1].split(/[,;.!?\n]/)[0]
+  .replace(/\s+(?:завтра|послезавтра|сегодня|по\s+поводу|насч[её]т|чтобы|в\s+\d{1,2}(?::\d{2})?)(?:\s.*)?$/i,'')
+  .trim();
+ return target.length>0&&target.length<=70&&!/\d{4}/.test(target)?target:'';
+}
+function contactForms(name){
+ const key=contactKey(name),forms=new Set([key]);
+ if(key==='юля'||key==='юлия')return new Set(['юля','юлия','юле','юли','юлю','юлии','юлию']);
+ if(key.includes(' '))return forms;
+ if(key.endsWith('ия')){for(const end of ['и','ю','е'])forms.add(key.slice(0,-1)+end);}
+ else if(key.endsWith('я')){for(const end of ['е','и','ю'])forms.add(key.slice(0,-1)+end);}
+ else if(key.endsWith('а')){for(const end of ['е','у','ы','и'])forms.add(key.slice(0,-1)+end);}
+ else if(key.endsWith('й')){for(const end of ['ю','я'])forms.add(key.slice(0,-1)+end);}
+ else if(key.endsWith('ь'))forms.add(key.slice(0,-1)+'и');
+ else if(key.length>3){forms.add(key+'у');forms.add(key+'а');}
+ return forms;
+}
+function matchingContacts(target,rows){
+ const query=contactKey(target);
+ return rows.filter(c=>contactForms(c.name).has(query));
+}
+function renderContacts(){
+ const rows=readContacts(),target=$('seyveoContactsList');target.replaceChildren();
+ if(!rows.length){target.append(element('p','personal-contacts-empty','Здесь пока нет контактов. Добавьте первый номер вручную.'));return;}
+ for(const c of rows){
+  const row=element('div','personal-contacts-item');const details=element('div','personal-contacts-info');
+  details.append(element('strong','',c.name),element('small','',c.phone));
+  const actions=element('div','personal-contacts-row-actions');
+  const edit=element('button','','Изменить');edit.type='button';edit.dataset.contactEdit=c.id;
+  const del=element('button','','Удалить');del.type='button';del.dataset.contactDelete=c.id;
+  if(deleteContact===c.id){del.textContent='Подтвердить';del.setAttribute('aria-label','Подтвердить удаление контакта '+c.name);}
+  actions.append(edit,del);row.append(details,actions);target.append(row);
+ }
+}
+function resetContactForm(){
+ editingContact='';deleteContact='';
+ $('seyveoContactForm').reset();
+ $('seyveoContactSave').textContent='Сохранить контакт';
+ $('seyveoContactCancel').hidden=true;
+}
+function openContacts(fromCall=false){
+ if(callDialog.open)callDialog.close();
+ returnToCall=Boolean(fromCall);
+ resetContactForm();showContactStatus('');
+ renderContacts();
+ if(!contactsDialog.open)contactsDialog.showModal();
+}
+function renderCallList(){
+ const rows=readContacts(),query=contactKey($('seyveoCallSearch').value);
+ const target=$('seyveoCallList');target.replaceChildren();
+ const visible=rows.filter(c=>!query||contactKey(c.name).includes(query));
+ if(!visible.length){target.append(element('p','personal-contacts-empty',rows.length?'Совпадений не найдено.':'Пока нет контактов. Добавьте номер вручную.'));return;}
+ for(const c of visible){
+  const button=element('button','personal-call-choice');button.type='button';
+  button.dataset.callChoice=c.id;button.setAttribute('aria-pressed',String(chosenContact===c.id));
+  button.append(element('strong','',c.name),element('small','',c.phone));target.append(button);
+ }
+}
+function chooseCallContact(id){
+ const entry=readContacts().find(c=>c.id===id);
+ chosenContact=entry?.id||'';
+ const picked=$('seyveoCallPicked'),dial=$('seyveoCallDial');
+ picked.hidden=!entry;dial.hidden=!entry;
+ if(entry){
+  $('seyveoCallPickedName').textContent=entry.name;
+  $('seyveoCallPickedPhone').textContent=entry.phone;
+  dial.href='tel:'+entry.phone;
+  dial.setAttribute('aria-label','Позвонить контакту '+entry.name);
+  callStatus.textContent='Нажмите «Позвонить». iPhone предложит подтвердить вызов.';
+ }else{
+  dial.removeAttribute('href');callStatus.textContent='Выберите контакт, чтобы подготовить звонок.';
+ }
+ renderCallList();
+}
+function openCall(targetName){
+ callTargetName=String(targetName||'').slice(0,70);
+ chosenContact='';
+ $('seyveoCallTitle').textContent='Позвонить'+(callTargetName?' · '+callTargetName:'');
+ $('seyveoCallSearch').value='';
+ if(!callDialog.open)callDialog.showModal();
+ const matches=matchingContacts(callTargetName,readContacts());
+ chooseCallContact(matches.length===1?matches[0].id:'');
+ if(matches.length>1)callStatus.textContent='Найдено несколько похожих имён. Выберите нужный номер.';
+ else if(!matches.length)callStatus.textContent='Номер не найден. Выберите контакт из списка или добавьте новый.';
+}
+$('seyveoContactsOpen').addEventListener('click',()=>{callTargetName='';openContacts()});
+$('seyveoContactsClose').addEventListener('click',()=>contactsDialog.close());
+$('seyveoCallClose').addEventListener('click',()=>callDialog.close());
+$('seyveoContactCancel').addEventListener('click',()=>{resetContactForm();showContactStatus('');renderContacts()});
+$('seyveoContactForm').addEventListener('submit',event=>{
+ event.preventDefault();
+ const name=cleanName(contactName.value),phone=cleanPhone(contactPhone.value);
+ if(name.length<2||!phone){showContactStatus('Проверьте имя и номер: от 7 до 15 цифр, допускается «+».');return;}
+ const existing=readContacts();
+ if(existing.some(c=>c.id!==editingContact&&contactKey(c.name)===contactKey(name)&&c.phone===phone)){
+  showContactStatus('Такой контакт уже сохранён.');return;
+ }
+ if(!editingContact&&existing.length>=CONTACT_MAX){
+  showContactStatus('В справочнике не больше 40 контактов.');return;
+ }
+ const updated=editingContact
+  ?existing.map(c=>c.id===editingContact?{...c,name,phone}:c)
+  :[...existing,{id:'contact-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),name,phone}];
+ if(!writeContacts(updated)){showContactStatus('Не удалось сохранить контакт. Проверьте память устройства.');return;}
+ const resume=returnToCall;
+ resetContactForm();renderContacts();showContactStatus('Контакт сохранён на этом устройстве.');
+ if(resume){returnToCall=false;contactsDialog.close();openCall(callTargetName);}
+});
+$('seyveoContactsList').addEventListener('click',event=>{
+ const b=event.target.closest('button');if(!b)return;
+ const rows=readContacts();
+ if(b.dataset.contactEdit){
+  const c=rows.find(x=>x.id===b.dataset.contactEdit);if(!c)return;
+  deleteContact='';editingContact=c.id;
+  contactName.value=c.name;contactPhone.value=c.phone;
+  $('seyveoContactSave').textContent='Сохранить изменения';
+  $('seyveoContactCancel').hidden=false;
+  showContactStatus('Измените имя или номер и сохраните.');
+  renderContacts();contactName.focus({preventScroll:true});
+ }else if(b.dataset.contactDelete){
+  const id=b.dataset.contactDelete;
+  if(deleteContact!==id){deleteContact=id;showContactStatus('Нажмите «Подтвердить» для удаления.');renderContacts();return;}
+  if(!writeContacts(rows.filter(x=>x.id!==id))){
+   showContactStatus('Не удалось удалить контакт.');return;
+  }
+  resetContactForm();renderContacts();showContactStatus('Контакт удалён с устройства.');
+ }
+});
+$('seyveoCallList').addEventListener('click',event=>{
+ const b=event.target.closest('button[data-call-choice]');if(b)chooseCallContact(b.dataset.callChoice);
+});
+$('seyveoCallSearch').addEventListener('input',renderCallList);
+$('seyveoCallAddContact').addEventListener('click',()=>openContacts(true));
+$('seyveoCallDial').addEventListener('click',event=>{
+ const c=readContacts().find(x=>x.id===chosenContact);
+ if(!c){event.preventDefault();chooseCallContact('');return;}
+ // Do not treat opening Phone as evidence the call actually connected.
+ callStatus.textContent='Откройте «Телефон» и подтвердите вызов. Дело останется незавершённым.';
+});
+window.addEventListener('storage',event=>{
+ if(event.key===CONTACT_KEY){
+  if(contactsDialog.open)renderContacts();
+  if(callDialog.open)chooseCallContact(chosenContact);
+ }
+});
 function row(item,compact=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');section.dataset.taskId=item.id;
  const label=element('span','personal-task-content');
- const name=element('strong','',item.title);
+ const callTo=!compact?callTargetFromTask(item.title):'';
+ const name=element(callTo?'button':'strong',callTo?'personal-task-call-title':'',item.title);
+ if(callTo){
+  name.type='button';name.dataset.taskCall=item.id;
+  name.setAttribute('aria-label','Подготовить звонок: '+callTo);
+  name.title='Открыть контакты и подготовить звонок';
+ }
  if(item.done)name.classList.add('is-done');
  label.append(name);
  const due=displayDate(item);
@@ -195,6 +375,11 @@ $('personalTaskCancel').addEventListener('click',()=>dialog.close());
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
+ else if(btn.dataset.taskCall){
+  const task=read().find(x=>x.id===btn.dataset.taskCall);
+  const target=task?callTargetFromTask(task.title):'';
+  if(target)openCall(target);
+ }
  else if(btn.dataset.taskDelete)change(btn.dataset.taskDelete,true);
  else if(btn.dataset.taskNextDismiss){
   justCompletedTaskId='';render();
