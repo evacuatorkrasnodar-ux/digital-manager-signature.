@@ -51,7 +51,12 @@ function openSpace(id){
 function perform(id){
  if(id==='note'){
   if($('ask').dataset.composerMode==='notes')$('composerExpandManual').click();
-  else $('composerModeNotes').click();
+  else{
+   $('composerModeNotes').click();
+   // Keep the existing keyboard workflow: choosing Note must not require
+   // another tap in the text field or induce page scrolling on iPhone.
+   requestAnimationFrame(()=>$('question').focus({preventScroll:true}));
+  }
   return;
  }
  if(id==='event'){
@@ -100,20 +105,27 @@ function render(){
  rail.dataset.count=String(selected.length);
  track.scrollLeft=0;requestAnimationFrame(updatePips);
 }
+let gesture=null,suppressSwipeClick=false;
 track.addEventListener('click',event=>{
+ if(suppressSwipeClick){suppressSwipeClick=false;event.preventDefault();return}
  const button=event.target.closest('button[data-quick-action]');
  if(!button)return;
  feedback();perform(button.dataset.quickAction);
 });
-let gesture=null;
 track.addEventListener('pointerdown',event=>{
+ suppressSwipeClick=false;
  if(event.pointerType==='mouse')return;
  gesture={x:event.clientX,y:event.clientY};
 });
 track.addEventListener('pointerup',event=>{
  if(!gesture)return;
  const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
- if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.4)feedback();
+ if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.4){
+  suppressSwipeClick=true;
+  feedback();
+  // iOS may deliver a click to the swiped element after touchend.
+  setTimeout(()=>{suppressSwipeClick=false},350);
+ }
  gesture=null;
 });
 track.addEventListener('pointercancel',()=>{gesture=null});
