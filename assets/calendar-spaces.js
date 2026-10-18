@@ -337,11 +337,18 @@ $('calendarSpaces').addEventListener('click',event=>{
  const button=event.target.closest('[data-calendar-space]');
  if(!button)return;
  const name=button.dataset.calendarSpace;
+ if(name==='calendar'){
+  if(location.hash!=='#calendar')location.hash='calendar';
+  return;
+ }
  if(name==='notes'){
   window.dispatchEvent(new Event('seyveo:notes-open'));
   return;
  }
- open(name,null,window.SEYVEO_CALENDAR_DATE?.()||'');
+ // Personal screens are standalone now, and shouldn't inherit a stale
+ // selected date from the Calendar while opened from SEYVEO Life.
+ const selectedDate=$('calendarPage').hidden?'':(window.SEYVEO_CALENDAR_DATE?.()||'');
+ open(name,null,selectedDate);
 });
 $('calendarSpaceList').addEventListener('click',event=>{
  const row=event.target.closest('[data-space-record]');
