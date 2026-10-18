@@ -1003,7 +1003,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <input id="onboardAssistantName" type="text" maxlength="40" placeholder="Как назовёте помощника?" autocomplete="off"></label>
 <label class="onboard-field onboard-voice-field" for="onboardAssistantVoice">Предпочтительный голос
 <select id="onboardAssistantVoice"><option value="male">Мужской</option><option value="female">Женский</option></select></label>
-<p class="onboard-name-hint">Имя и голос можно изменить позже. Голос пока только предпочтение — озвучивание будет подключено отдельно.</p>
+<p class="onboard-name-hint">Имя и голос можно изменить позже. Если подходящего голоса на устройстве нет, прозвучит системный.</p>
 </fieldset>
 <fieldset class="onboard-options"><legend>Что для тебя сейчас главное?</legend><div class="onboard-options-list">
 <label class="onboard-option"><input type="radio" name="onboardFocus" value="life" checked><span class="onboard-choice"><strong>Повседневная жизнь</strong><small>SEYVEO Life · всегда рядом</small></span></label>
@@ -2457,6 +2457,25 @@ let presenceSpeechRevision=0;
 function notifyOrbPresence(phase){
  document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase}}));
 }
+// Browser voices do not expose a reliable gender field. Select only known
+// Russian voice names for the saved preference; otherwise use system default.
+function applyAssistantSpeechVoice(utterance){
+ try{
+  const saved=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+  const preference=saved?.assistantVoice;
+  if(preference!=='male'&&preference!=='female')return;
+  const voices=window.speechSynthesis?.getVoices?.()||[];
+  const known=preference==='female'
+   ?['milena','милена','tatyana','татьяна','irina','ирина','olga','ольга','anna','анна']
+   :['yuri','yury','юрий','георгий','georgiy','georgy','dmitry','дмитрий','pavel','павел'];
+  const match=voices.find(v=>{
+   const lang=String(v.lang||'').toLowerCase();
+   const name=String(v.name||'').toLowerCase();
+   return /^ru(?:[-_]|$)/.test(lang)&&known.some(part=>name.includes(part));
+  });
+  if(match)utterance.voice=match;
+ }catch{}
+}
 function speakNeutralAside(){
  const text=nextNeutralAside();
  ++presenceSpeechRevision;
@@ -2465,7 +2484,7 @@ function speakNeutralAside(){
   window.speechSynthesis?.cancel();
   if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
    const voice=new SpeechSynthesisUtterance(text);
-   voice.lang='ru-RU';voice.rate=.98;
+   voice.lang='ru-RU';voice.rate=.98;applyAssistantSpeechVoice(voice);
    window.speechSynthesis.speak(voice);
   }
  }catch{}
@@ -2494,6 +2513,7 @@ function speakAssistantReply(message){
    const utterance=new SpeechSynthesisUtterance(response.slice(0,520));
    utterance.lang='ru-RU';
    utterance.rate=.98;
+   applyAssistantSpeechVoice(utterance);
    const onStart=()=>{if(revision===presenceSpeechRevision)notifyOrbPresence('speaking')};
    const onFinish=()=>{if(revision===presenceSpeechRevision)notifyOrbPresence('end')};
    utterance.onstart=onStart;
@@ -2768,4 +2788,4 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
 <div id="firstHelpProgress" class="first-help-progress" aria-hidden="true"></div>
 <div class="first-help-actions"><button id="firstHelpExit" type="button">Пропустить</button><button id="firstHelpBack" type="button" hidden>Назад</button><button id="firstHelpNext" type="button">Начать</button></div>
 </section></section>
-<script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=3"></script><script src="assets/management.js?v=22"></script><script src="assets/onboarding.js?v=6"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=9"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/management-previews.js?v=1"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script></body></html>
+<script src="assets/assistant-chat-history.js?v=1"></script><script src="assets/wake-mode.js?v=4"></script><script src="assets/management.js?v=22"></script><script src="assets/onboarding.js?v=6"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=9"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/management-previews.js?v=1"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script></body></html>
