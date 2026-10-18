@@ -53,7 +53,14 @@
   border-radius:50%;
   pointer-events:none;
   opacity:0;
-  background:radial-gradient(ellipse 35% 31% at 47% 43%,rgba(255,255,255,.70),rgba(237,247,255,.17) 62%,transparent 100%);
+  /* A symmetric frost-blue reflection deep INSIDE the glass.
+     No isolated bright spot, color wash or external halo. */
+  background:radial-gradient(circle at 50% 50%,
+    rgba(255,255,255,.035) 0%,
+    rgba(247,251,255,.065) 43%,
+    rgba(206,234,255,.38) 64%,
+    rgba(166,209,248,.22) 78%,
+    transparent 96%);
 }
 
 /* Single tap or an answer: fog slowly fills the entire inner glass,
@@ -145,13 +152,13 @@
    no shell filter and no brighter external rim. */
 @keyframes seyveo-smoke-light{
   0%,18%{opacity:0}
-  52%{opacity:.28}
-  70%{opacity:.33}
+  52%{opacity:.40}
+  70%{opacity:.44}
   100%{opacity:0}
 }
 @keyframes seyveo-smoke-light-hold{
-  from{opacity:.15}
-  to{opacity:.28}
+  from{opacity:.23}
+  to{opacity:.38}
 }
 
 /* Keep the smoke pearl-white in dark mode; the light mode uses a quiet
@@ -173,7 +180,12 @@
     radial-gradient(ellipse 48% 35% at 50% 75%,rgba(251,252,255,.62),transparent 100%);
 }
 :root[data-theme=light] #orb .orb-mist::after{
-  background:radial-gradient(ellipse 35% 31% at 47% 43%,rgba(255,255,255,.84),rgba(230,239,249,.18) 62%,transparent 100%);
+  background:radial-gradient(circle at 50% 50%,
+    rgba(255,255,255,.02) 0%,
+    rgba(228,236,246,.045) 43%,
+    rgba(146,185,222,.24) 64%,
+    rgba(151,192,231,.15) 78%,
+    transparent 96%);
 }
 @media(prefers-reduced-motion:reduce){
   #orb .orb-mist,
