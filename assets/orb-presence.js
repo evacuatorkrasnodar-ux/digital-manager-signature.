@@ -14,15 +14,15 @@ function clear(){
  orb.classList.remove('seyveo-presence-speaking','seyveo-presence-ack','seyveo-presence-finish');
 }
 function acknowledge(){
- if(!hasHome()||window.SEYVEO_DISCREET_MODE===true)return;
+ if(!hasHome())return;
  clear();
- // Restart the short acknowledgement, even after consecutive text replies.
+ // Restart the full visible cycle after each response, including quiet mode.
  void orb.offsetWidth;
  orb.classList.add('seyveo-presence-ack');
- timer=setTimeout(clear,2300);
+ timer=setTimeout(clear,4800);
 }
 function speak(){
- if(!hasHome()||window.SEYVEO_DISCREET_MODE===true)return;
+ if(!hasHome())return;
  clear();
  orb.classList.add('seyveo-presence-speaking');
  // Some iOS/Web Speech implementations never deliver the final event.
