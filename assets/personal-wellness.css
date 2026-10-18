@@ -278,6 +278,69 @@
  40%{opacity:.85;transform:scale(1.1);animation-timing-function:ease-in-out}
  100%{opacity:.34;transform:scale(.94)}
 }
+/* SEYVEO Life · transparent local insight, not an invented medical diagnosis.
+   Readable in both Velvet themes, no bright warning colors or extra overlays. */
+#calendarPersonalTools .pw-water-insight{
+ margin:16px 0 4px;padding:14px 14px 12px;
+ border:1px solid var(--soft-line);border-radius:18px;
+ background:var(--card2);box-shadow:inset 0 1px 0 #ffffff09
+}
+#calendarPersonalTools .pw-insight-head{
+ display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap
+}
+#calendarPersonalTools .pw-insight-mark{
+ display:grid;place-items:center;flex:none;width:22px;height:22px;
+ border:1px solid var(--soft-line);border-radius:50%;
+ color:var(--text);font-size:15px;line-height:1
+}
+#calendarPersonalTools .pw-insight-head h4{
+ margin:0;flex:1;min-width:120px;color:var(--text);
+ font-size:12.5px;font-weight:565;letter-spacing:-.016em;line-height:1.3
+}
+#calendarPersonalTools .pw-insight-head small{
+ font-size:10px;line-height:1.3;color:var(--secondary)
+}
+#calendarPersonalTools .pw-insight-advice{
+ margin:10px 0 7px;font-size:12px;line-height:1.5;color:var(--text)
+}
+#calendarPersonalTools .pw-insight-week{
+ margin:0 0 10px;font-size:11px;line-height:1.5;color:var(--secondary)
+}
+#calendarPersonalTools .pw-insight-explain{
+ padding-top:9px;border-top:1px solid var(--soft-line)
+}
+#calendarPersonalTools .pw-insight-explain summary{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:8px;min-height:40px;list-style:none;cursor:pointer;
+ color:var(--text);font-size:11.5px;font-weight:535
+}
+#calendarPersonalTools .pw-insight-explain summary::-webkit-details-marker{display:none}
+#calendarPersonalTools .pw-insight-explain summary::after{
+ content:'';display:block;flex:none;width:7px;height:7px;
+ border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:rotate(45deg);transition:transform .2s ease
+}
+#calendarPersonalTools .pw-insight-explain[open] summary::after{
+ transform:translateY(3px) rotate(225deg)
+}
+#calendarPersonalTools .pw-insight-explain p{
+ margin:8px 0;font-size:11px;line-height:1.55;color:var(--secondary)
+}
+#calendarPersonalTools .pw-insight-sources{
+ display:grid;gap:2px;margin-top:7px
+}
+#calendarPersonalTools .pw-insight-sources a{
+ display:flex;align-items:center;min-height:40px;
+ font-size:11px;line-height:1.4;text-decoration:underline;
+ text-decoration-color:var(--soft-line);text-underline-offset:3px;color:var(--text)
+}
+#calendarPersonalTools .pw-insight-explain summary:focus-visible,
+#calendarPersonalTools .pw-insight-sources a:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;border-radius:6px
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPersonalTools .pw-insight-explain summary::after{transition:none}
+}
 /* Drop-shaped glass: fill height is a true share of the user's own goal. */
 #calendarPersonalTools .pw-water-scene{
  display:grid;justify-items:center;gap:2px;margin:2px 0 6px;text-align:center
