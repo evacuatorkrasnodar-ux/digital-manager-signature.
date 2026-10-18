@@ -6,7 +6,7 @@
   const dialog=$('onboardDialog'),entry=$('openOnboarding'),form=$('onboardForm');
   if(!dialog||!entry||!form)return;
   const PROFILE='seyveo-first-acquaintance-v1';
-  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Милисса':'female','Боня':'male','Торик':'male','Бэйси':'female'});
+  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Милисса':'female'});
   const nameInput=$('onboardAssistantName'),voiceInput=$('onboardAssistantVoice');
   const nameChoices=[...form.querySelectorAll('[data-assistant-name]')];
   function markName(){
