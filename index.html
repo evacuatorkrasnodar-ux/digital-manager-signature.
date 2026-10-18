@@ -478,46 +478,74 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
  }
 }
 
-/* My World: one small silver-glass header button and a temporary velvet sheet. */
+/* SEYVEO / My World · compact anchored menu, not a floating sheet.
+   Keep the five existing destinations and their click behavior intact.
+   Stay inside the viewport even on zoomed desktop and iPhone X. */
 #homeHeader{position:relative;z-index:45}
 #homeHeader .home-world-anchor{position:relative;display:flex;align-items:center}
 #homeHeader .home-world-trigger svg{width:22px;height:22px;stroke-width:1.5}
 #homeHeader .home-world-popover{
- position:absolute;z-index:60;top:calc(100% + 12px);right:-49px;
- width:min(296px,calc(100vw - 40px));max-height:min(355px,calc(100dvh - 100px - env(safe-area-inset-top,0px)));
+ position:absolute;z-index:60;top:calc(100% + 9px);right:0;
+ box-sizing:border-box;width:min(236px,calc(100vw - 24px));
+ max-width:calc(100vw - 24px);
+ max-height:min(260px,calc(100dvh - 105px - env(safe-area-inset-top,0px)));
  overflow-y:auto;overscroll-behavior:contain;
- padding:15px;border:1px solid rgba(220,234,250,.20);border-radius:24px;
- background:linear-gradient(154deg,rgba(246,250,255,.095),transparent 48%),rgba(25,29,37,.96);
- -webkit-backdrop-filter:blur(26px) saturate(125%);backdrop-filter:blur(26px) saturate(125%);
- box-shadow:0 16px 45px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.10);
- transform-origin:84% 0;animation:home-world-arrive .21s cubic-bezier(.2,.8,.2,1) both;
+ padding:11px;border:1px solid rgba(226,237,251,.17);border-radius:19px;
+ background:rgba(21,23,29,.975);
+ -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+ box-shadow:0 12px 32px rgba(0,0,0,.29),inset 0 1px 0 rgba(255,255,255,.055);
+ transform-origin:100% 0;animation:home-world-arrive .17s ease-out both;
 }
 #homeHeader .home-world-popover[hidden]{display:none!important}
-#homeHeader .home-world-title{padding:2px 3px 12px}
-#homeHeader .home-world-title h2{margin:0;font-size:17px;font-weight:585;letter-spacing:-.035em;line-height:1.28}
-#homeHeader .home-world-title p{margin:4px 0 0;font-size:11.5px;line-height:1.4;color:var(--secondary)}
-#homeHeader .home-world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#homeHeader .home-world-title{padding:0 3px 9px}
+#homeHeader .home-world-title h2{margin:0;font-size:14px;font-weight:580;letter-spacing:-.018em;line-height:1.27}
+#homeHeader .home-world-title p{margin:2px 0 0;font-size:10px;line-height:1.35;color:var(--secondary)}
+#homeHeader .home-world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 #homeHeader .home-world-choice{
- min-width:0;min-height:63px;padding:10px 9px;
- display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;
- background:rgba(220,233,248,.047);border:1px solid rgba(230,239,252,.105);border-radius:16px;
- text-align:left;color:var(--text);font-size:12.5px;line-height:1.22;font-weight:535;letter-spacing:-.012em;
- transition:background .17s ease,transform .17s ease;
+ min-width:0;min-height:48px;padding:8px 7px;
+ display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;
+ background:rgba(236,243,251,.045);border:1px solid rgba(227,238,252,.09);
+ border-radius:12px;
+ text-align:left;color:var(--text);font-size:11px;line-height:1.23;
+ font-weight:530;letter-spacing:-.014em;
+ transition:background .15s ease;
 }
-#homeHeader .home-world-choice svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;opacity:.88}
-#homeHeader .home-world-choice:active{transform:scale(.973);background:rgba(230,240,253,.11)}
+#homeHeader .home-world-choice span:not(.home-world-choice-chevron){
+ min-width:0;overflow-wrap:normal;white-space:nowrap;
+}
+#homeHeader .home-world-choice svg{
+ width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;
+ stroke-linejoin:round;stroke-linecap:round;opacity:.9;
+}
+#homeHeader .home-world-choice:active{background:rgba(230,240,253,.12)}
 #homeHeader .home-world-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-#homeHeader .home-world-choice-wide{grid-column:1/-1;min-height:48px;flex-direction:row;align-items:center;justify-content:flex-start;gap:11px;padding:9px 13px}
-#homeHeader .home-world-choice-chevron{display:block;margin-left:auto;color:var(--secondary);font-size:19px;font-weight:350}
-:root[data-theme=light] #homeHeader .home-world-popover{
- border-color:rgba(72,91,117,.17);
- background:linear-gradient(155deg,rgba(255,255,255,.96),rgba(243,247,251,.96));
- box-shadow:0 13px 34px rgba(52,66,90,.17),inset 0 1px 0 #fff;
+#homeHeader .home-world-choice-wide{
+ grid-column:1/-1;min-height:43px;gap:9px;padding:8px 11px;
 }
-:root[data-theme=light] #homeHeader .home-world-choice{background:rgba(78,99,130,.048);border-color:rgba(72,91,117,.11)}
-:root[data-theme=light] #homeHeader .home-world-choice:active{background:rgba(78,99,130,.12)}
-@keyframes home-world-arrive{from{opacity:0;transform:translateY(-5px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-@media(prefers-reduced-motion:reduce){#homeHeader .home-world-popover{animation:none}#homeHeader .home-world-choice{transition:none}}
+#homeHeader .home-world-choice-chevron{
+ display:block;margin-left:auto;color:var(--secondary);font-size:17px;font-weight:350;
+}
+:root[data-theme=light] #homeHeader .home-world-popover{
+ border-color:rgba(72,91,117,.15);
+ background:rgba(252,253,255,.98);
+ box-shadow:0 10px 27px rgba(52,66,90,.14),inset 0 1px 0 #fff;
+}
+:root[data-theme=light] #homeHeader .home-world-choice{
+ background:rgba(85,106,136,.048);border-color:rgba(72,91,117,.10);
+}
+:root[data-theme=light] #homeHeader .home-world-choice:active{background:rgba(78,99,130,.13)}
+@keyframes home-world-arrive{
+ from{opacity:0;transform:translateY(-4px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@media(max-width:380px){
+ #homeHeader .home-world-popover{width:min(230px,calc(100vw - 20px));padding:10px}
+ #homeHeader .home-world-choice{font-size:10.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homeHeader .home-world-popover{animation:none}
+ #homeHeader .home-world-choice{transition:none}
+}
 </style><link rel="stylesheet" href="assets/composer-intent.css?v=9"><link rel="stylesheet" href="assets/onboarding.css?v=2"><link rel="stylesheet" href="assets/personal-tasks.css?v=11"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=7"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=8"><link rel="stylesheet" href="assets/orb-mist.css?v=6"><link rel="stylesheet" href="assets/dialog-velvet.css?v=3"><link rel="stylesheet" href="assets/notebook-smart.css?v=13"><link rel="stylesheet" href="assets/notebook-paper.css?v=10"><link rel="stylesheet" href="assets/notebook-scan.css?v=5"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=2"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=9"><link rel="stylesheet" href="assets/calendar.css?v=32"><link rel="stylesheet" href="assets/calendar-spaces.css?v=10"><link rel="stylesheet" href="assets/sections-velvet.css?v=7"><link rel="stylesheet" href="assets/personal-wellness.css?v=10"><link rel="stylesheet" href="assets/interaction-focus.css?v=1"><link rel="stylesheet" href="assets/management-previews.css?v=1"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-world-trigger" type="button" aria-label="Мой мир: выбрать раздел" title="Мой мир" aria-haspopup="true" aria-expanded="false" aria-controls="homeWorldPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c-4.5 4.5-4.5 12.1 0 16.6M12 3.7c4.5 4.5 4.5 12.1 0 16.6"/></svg></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13.5 14h2"/></svg><span>Календарь</span></button><button type="button" class="home-world-choice" data-world-space="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="world"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Люди и связи</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
