@@ -8,3 +8,76 @@
   overflow-anchor:none;
 }
 #stage .orb-cluster{flex:0 0 auto}
+
+/* SEYVEO Presence v1 · an answer briefly moves light INSIDE the approved
+   Pearl Mist sphere. The SVG, rim, size, anchor and Deep Reveal stay intact.
+   Only opacity and tiny internal shifts animate: no outward halo or lasers. */
+#orb .orb-reply-presence{
+ position:absolute;z-index:2;inset:12%;display:block;overflow:hidden;
+ border-radius:50%;pointer-events:none;opacity:0;
+ -webkit-mask-image:radial-gradient(circle,#000 0 50%,rgba(0,0,0,.88) 72%,transparent 96%);
+ mask-image:radial-gradient(circle,#000 0 50%,rgba(0,0,0,.88) 72%,transparent 96%);
+ transition:opacity .75s ease-out;
+}
+#orb .orb-reply-presence::before,
+#orb .orb-reply-presence::after{
+ content:"";position:absolute;inset:2%;border-radius:50%;
+ pointer-events:none;filter:blur(7px);
+}
+#orb .orb-reply-presence::before{
+ background:
+  radial-gradient(ellipse 34% 25% at 38% 36%,rgba(255,255,255,.51),transparent 94%),
+  radial-gradient(ellipse 39% 30% at 72% 57%,rgba(211,229,252,.43),transparent 96%);
+ opacity:.86;
+}
+#orb .orb-reply-presence::after{
+ background:
+  radial-gradient(ellipse 45% 25% at 41% 69%,rgba(244,250,255,.48),transparent 92%),
+  radial-gradient(ellipse 23% 33% at 65% 37%,rgba(209,224,247,.39),transparent 97%);
+ opacity:.67;
+}
+#orb.seyveo-presence-speaking .orb-reply-presence{opacity:.85}
+#orb.seyveo-presence-speaking .orb-reply-presence::before{
+ animation:seyveo-presence-drift-a 2.6s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-speaking .orb-reply-presence::after{
+ animation:seyveo-presence-drift-b 3.05s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-ack .orb-reply-presence{
+ animation:seyveo-presence-once 2.25s cubic-bezier(.3,.1,.4,1) both;
+}
+#orb.seyveo-presence-ack .orb-reply-presence::before{
+ animation:seyveo-presence-drift-a 2.2s ease-in-out both;
+}
+#orb.seyveo-presence-finish .orb-reply-presence{opacity:.12}
+@keyframes seyveo-presence-drift-a{
+ 0%{transform:translate3d(-5%,5%,0);opacity:.54}
+ 48%{transform:translate3d(3%,-2%,0);opacity:.9}
+ 100%{transform:translate3d(6%,-5%,0);opacity:.65}
+}
+@keyframes seyveo-presence-drift-b{
+ 0%{transform:translate3d(5%,-4%,0);opacity:.3}
+ 54%{transform:translate3d(-2%,2%,0);opacity:.75}
+ 100%{transform:translate3d(-6%,5%,0);opacity:.4}
+}
+@keyframes seyveo-presence-once{
+ 0%{opacity:0}22%{opacity:.82}57%{opacity:.59}100%{opacity:0}
+}
+/* White Velvet retains a barely colored inner shadow, never a tinted shell. */
+:root[data-theme=light] #orb .orb-reply-presence::before{
+ background:
+  radial-gradient(ellipse 34% 25% at 38% 36%,rgba(136,169,205,.32),transparent 94%),
+  radial-gradient(ellipse 39% 30% at 72% 57%,rgba(245,249,255,.61),transparent 96%);
+}
+:root[data-theme=light] #orb .orb-reply-presence::after{
+ background:
+  radial-gradient(ellipse 45% 25% at 41% 69%,rgba(153,181,216,.27),transparent 92%),
+  radial-gradient(ellipse 23% 33% at 65% 37%,rgba(250,252,255,.66),transparent 97%);
+}
+@media(prefers-reduced-motion:reduce){
+ #orb .orb-reply-presence{transition:none!important}
+ #orb .orb-reply-presence::before,
+ #orb .orb-reply-presence::after{animation:none!important;transform:none!important}
+ #orb.seyveo-presence-speaking .orb-reply-presence{opacity:.18}
+ #orb.seyveo-presence-ack .orb-reply-presence{animation:none!important;opacity:.15}
+}
