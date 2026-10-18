@@ -154,3 +154,106 @@
 @media(prefers-reduced-motion:reduce){
  #stage .orb-inline-reply{animation:none}
 }
+
+/* Living Presence v2 · visible but still internal, sober and touch-friendly.
+   Light forms move WITHIN the original glass artwork; its position and rim
+   never move. The faint v1 mist alone was not legible on some monitors. */
+#orb .orb-presence-matter{
+ position:absolute;inset:7%;display:block;border-radius:50%;
+ background:
+  radial-gradient(ellipse 41% 25% at 35% 42%,rgba(255,255,255,.61),transparent 100%),
+  radial-gradient(ellipse 28% 42% at 67% 58%,rgba(239,247,255,.48),transparent 100%),
+  radial-gradient(ellipse 38% 20% at 54% 76%,rgba(223,235,247,.32),transparent 100%);
+ opacity:0;filter:blur(12px);pointer-events:none;
+}
+#orb .orb-presence-filaments{
+ position:absolute;z-index:2;left:13%;top:25%;width:74%;height:50%;
+ display:block;overflow:visible;pointer-events:none;
+ fill:none;stroke:rgba(251,253,255,.89);stroke-width:2.1;
+ stroke-linecap:round;stroke-linejoin:round;
+ filter:drop-shadow(0 0 4px rgba(255,255,255,.46));
+ opacity:0;
+}
+#orb .orb-presence-filaments path:nth-child(2){stroke-width:1.4;opacity:.76}
+#orb .orb-presence-filaments path:nth-child(3){stroke-width:1.2;opacity:.57}
+#orb.seyveo-presence-ack .orb-presence-filaments{
+ animation:seyveo-visible-presence-lines 4.7s ease-in-out both;
+}
+#orb.seyveo-presence-ack .orb-presence-matter{
+ animation:seyveo-visible-presence-matter 4.7s ease-in-out both;
+}
+#orb.seyveo-presence-ack .orb-reply-presence{
+ animation:seyveo-presence-once 4.7s ease-in-out both;
+}
+#orb.seyveo-presence-speaking .orb-presence-filaments{
+ opacity:.85;animation:seyveo-present-speaking 2.1s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-speaking .orb-presence-matter{
+ opacity:.8;animation:seyveo-present-matter 2.8s ease-in-out infinite alternate;
+}
+#orb.seyveo-presence-finish .orb-presence-filaments,
+#orb.seyveo-presence-finish .orb-presence-matter{
+ opacity:0;transition:opacity .6s ease-out;
+}
+@keyframes seyveo-visible-presence-lines{
+ 0%{opacity:0;transform:translate3d(-3%,3%,0)}
+ 15%{opacity:.76;transform:translate3d(-1%,1%,0)}
+ 42%{opacity:1;transform:translate3d(3%,-2%,0)}
+ 70%{opacity:.86;transform:translate3d(-1%,2%,0)}
+ 88%{opacity:.35;transform:translate3d(1%,-1%,0)}
+ 100%{opacity:0;transform:none}
+}
+@keyframes seyveo-visible-presence-matter{
+ 0%{opacity:0;transform:translate3d(-5%,4%,0)}
+ 20%{opacity:.83;transform:translate3d(1%,-2%,0)}
+ 53%{opacity:1;transform:translate3d(5%,1%,0)}
+ 80%{opacity:.52;transform:translate3d(-2%,-3%,0)}
+ 100%{opacity:0;transform:none}
+}
+@keyframes seyveo-present-speaking{
+ from{opacity:.64;transform:translate3d(-3%,3%,0)}
+ to{opacity:1;transform:translate3d(3%,-3%,0)}
+}
+@keyframes seyveo-present-matter{
+ from{opacity:.55;transform:translate3d(-4%,2%,0)}
+ to{opacity:.93;transform:translate3d(4%,-2%,0)}
+}
+/* White Velvet: distinct cool silver without a colored outer halo. */
+:root[data-theme=light] #orb .orb-presence-filaments{
+ stroke:rgba(70,104,136,.83);
+ filter:drop-shadow(0 0 3px rgba(255,255,255,.55));
+}
+:root[data-theme=light] #orb .orb-presence-matter{
+ background:
+  radial-gradient(ellipse 41% 25% at 35% 42%,rgba(110,146,177,.48),transparent 100%),
+  radial-gradient(ellipse 28% 42% at 67% 58%,rgba(251,253,255,.92),transparent 100%),
+  radial-gradient(ellipse 38% 20% at 54% 76%,rgba(140,175,206,.34),transparent 100%);
+}
+/* Make all states visible even when OS animation effects are disabled. */
+@media(prefers-reduced-motion:reduce){
+ #orb.seyveo-presence-ack .orb-presence-filaments,
+ #orb.seyveo-presence-speaking .orb-presence-filaments{
+  animation:none!important;opacity:.84!important;transform:none!important;
+ }
+ #orb.seyveo-presence-ack .orb-presence-matter,
+ #orb.seyveo-presence-speaking .orb-presence-matter{
+  animation:none!important;opacity:.74!important;transform:none!important;
+ }
+ #orb .orb-presence-filaments,
+ #orb .orb-presence-matter{transition:none!important}
+}
+#stage .orb-inline-reply-footer{
+ display:flex;justify-content:flex-end;align-items:center;
+ padding-top:6px;margin-top:3px;
+}
+#stage .orb-inline-reply-replay{
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;
+ min-height:36px;max-width:100%;padding:5px 10px;
+ color:var(--secondary);background:transparent;border:1px solid var(--soft-line);
+ border-radius:999px;font:inherit;font-size:11px;letter-spacing:-.006em;
+}
+#stage .orb-inline-reply-replay svg{
+ width:15px;height:15px;flex:none;fill:none;stroke:currentColor;
+ stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
+#stage .orb-inline-reply-replay:hover{color:var(--text);background:var(--card2)}
