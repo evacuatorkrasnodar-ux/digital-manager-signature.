@@ -50,8 +50,20 @@ function render(){
    :'Начнём с того, что тебе важно.';
  }
 }
-function setStep(i){step=Math.max(0,Math.min(4,i));render()}
+function setStep(i){
+ const nextStep=Math.max(0,Math.min(4,i));
+ step=nextStep;render();
+ if(step!==0)dialog.classList.remove('is-cinematic');
+ else if(dialog.open)playSignature();
+}
+function playSignature(){
+ // Replaying the intro uses its own isolated animation. Never touch Home plasma.
+ dialog.classList.remove('is-cinematic');
+ void $('welcomeIntroTitle').offsetWidth;
+ dialog.classList.add('is-cinematic');
+}
 function close(){
+ dialog.classList.remove('is-cinematic');
  if(dialog.open)dialog.close();
  const fromDemo=preview,trigger=previewTrigger;
  preview=false;previewTrigger=null;
@@ -98,7 +110,7 @@ function startPreview(){
  preview=true;previewTrigger=demoEntry;
  assistant='Феликс';focus='life';user.value='';other.value='';
  setStep(0);
- try{dialog.showModal()}catch{preview=false;previewTrigger=null}
+ try{dialog.showModal();playSignature()}catch{preview=false;previewTrigger=null}
 }
 demoEntry?.addEventListener('click',startPreview);
 back.addEventListener('click',()=>{if(step>0)setStep(step-1)});
@@ -108,7 +120,7 @@ function tryOpen(){
  if(dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
  setStep(0);
- try{dialog.showModal()}catch{}
+ try{dialog.showModal();playSignature()}catch{}
 }
 window.addEventListener('pageshow',()=>setTimeout(tryOpen,900));
 window.addEventListener('seyveo:first-help-finished',()=>setTimeout(tryOpen,600));
