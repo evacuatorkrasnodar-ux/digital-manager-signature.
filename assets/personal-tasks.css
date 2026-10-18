@@ -23,6 +23,42 @@
 /* Preserve the 26px visible check-circle, but provide a 44px touch target. */
 .personal-task-check::before{content:"";position:absolute;inset:-9px;border-radius:50%}
 .personal-task-check[aria-pressed=true]{background:var(--card2);border-color:var(--secondary)}
+/* Living Intelligence · one quiet continuation after a confirmed completion.
+   Rendered only in Tasks, never in Home or the dock. */
+#tasksPage .personal-task-continuation{
+ margin:8px 0 13px;padding:14px 14px 12px;
+ border:1px solid var(--soft-line);border-radius:18px;
+ background:var(--card2);color:var(--text);
+ box-shadow:inset 0 1px 0 #ffffff09
+}
+#tasksPage .personal-task-continuation-title{
+ display:block;font-size:12.5px;font-weight:570;
+ letter-spacing:-.018em;line-height:1.4
+}
+#tasksPage .personal-task-continuation p{
+ margin:8px 0 0;font-size:11.5px;line-height:1.5;
+ color:var(--secondary);overflow-wrap:anywhere
+}
+#tasksPage .personal-task-continuation .personal-task-continuation-next{
+ color:var(--text);font-size:12.5px;font-weight:530;line-height:1.5
+}
+#tasksPage .personal-task-continuation-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px
+}
+#tasksPage .personal-task-continuation-actions button{
+ display:inline-flex;justify-content:center;align-items:center;
+ min-height:44px;min-width:0;padding:10px 16px;
+ border:1px solid var(--line);border-radius:999px;
+ background:transparent;color:var(--text);
+ font:inherit;font-size:12px;font-weight:540;
+ -webkit-appearance:none;appearance:none;touch-action:manipulation
+}
+#tasksPage .personal-task-continuation-actions .personal-task-continuation-prepare{
+ background:var(--text);border-color:var(--text);color:var(--bg)
+}
+#tasksPage .personal-task-continuation-actions button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
 /* Links a task to its original local note; compact Home preview stays unchanged. */
 #tasksPage .personal-tasks-list .personal-task-origin{
  display:inline-flex;align-items:center;align-self:flex-start;gap:5px;
