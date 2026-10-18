@@ -210,8 +210,8 @@ $('seyveoPreviewHigher').addEventListener('click',()=>{
 });
 window.addEventListener('storage',event=>{if(event.key===DEV_PREVIEW_KEY)drawPreview()});
 drawPreview();
-/* Restore the original header behavior: logo opens developer passport, person icon opens company card.
-   Exactly one preview at a time; there is no duplicate Management entry. */
+/* The logo keeps the studio passport preview. Company details now open
+   directly from the business overview, without another Home header button. */
 function closeHeaderPassport(){
  if(!previewBox)return;
  previewBox.hidden=true;
@@ -231,7 +231,10 @@ function toggleHeaderPassport(which){
  trigger?.setAttribute('aria-expanded','true');
 }
 brandTrigger?.addEventListener('click',()=>toggleHeaderPassport('studio'));
-companyTrigger?.addEventListener('click',()=>toggleHeaderPassport('company'));
+$('pictureCompanyOpen')?.addEventListener('click',()=>{
+ closeHeaderPassport();
+ openCompany();
+});
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
  if(previewBox.contains(event.target)||brandTrigger?.contains(event.target)||companyTrigger?.contains(event.target))return;
