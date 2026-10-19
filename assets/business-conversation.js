@@ -8,6 +8,7 @@
 const $=id=>document.getElementById(id);
 const cta=$('orbInlineBusinessAction');
 if(!cta)return;
+let pending=null; // one immediate follow-up, no writes until owner confirms
 const INDUSTRIES=Object.freeze({
  auto:'автоуслуги',beauty:'красота и уход',retail:'розничная торговля',
  ecommerce:'интернет-магазин',construction:'строительство и ремонт',
@@ -94,7 +95,28 @@ function help(question){
  const catalog=/(?:изучи|изучить|проверь|посмотри|улучш|проанализир|как|анализ|покажи)/i.test(q)&&/(?:витрин|каталог|ассортимент|товар|карточк|интернет-магазин|маркетплейс|ozon|озон|wildberries)/i.test(q);
  const metrics=/(?:сколько|какая|какой|посчитай|покажи|статистик|показател|аналитик)/i.test(q)&&/(?:заказ|заяв|продаж|выручк|прибыл|расход|конверси|клиент)/i.test(q);
  const askBusiness=/^(?:(?:сейвео|seyveo)[,: ]+)?(?:помоги|хочу|нужно|давай|как)\s+(?:мне\s+)?(?:разобрать|организовать|управлять|наладить)\s+(?:мой|моим|нашим|мой\s+)?\s*бизнес/i.test(q);
- if(!(isKnowledge||connect||sales||costs||catalog||metrics||askBusiness))return null;
+ if(!(isKnowledge||connect||sales||costs||catalog||metrics||askBusiness)){
+  // Only the immediately requested answer is treated as a business draft.
+  // Unrelated messages clear this temporary state.
+  const expected=pending;pending=null;
+  const reply=raw.replace(/[.!?]+$/,'').trim();
+  if(expected==='description'&&reply.length>=8&&reply.length<=1000&&
+     !/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\s|otp|код\s+доступа|секретн)/i.test(reply)){
+   return {kind:'description-draft',
+    answer:'Понял ваше описание бизнеса:\n«'+clean(reply,260)+'».\n\nЯ ещё не сохранил его. Проверьте текст и подтвердите в Карте бизнеса.',
+    action:oneAction('description','Проверить и сохранить описание',{value:reply})};
+  }
+  if(expected==='weekly'){
+   const match=reply.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').match(/^(?:(?:примерно|около|порядка|у нас|было|получили)\s+)*(\d{1,6})(?:\s+(?:заявок|заявки|заявка|обращений|обращения|обращение|лидов|лида|лид))?(?:\s+(?:в|за)\s+(?:последнюю\s+)?недел[юеи])?$/);
+   if(match){
+    const value=Number(match[1]);
+    return {kind:'weekly-draft',
+     answer:'Вы указали около '+value+' новых обращений за неделю.\n\nЭто ваш ориентир, а не подтверждённая статистика CRM. Сохранить его в Карте бизнеса?',
+     action:oneAction('weekly','Сохранить '+value+' обращений в неделю',{value})};
+   }
+  }
+  return null;
+ }
  const map=getMap();
  if(isKnowledge){
   const overview=shortFacts(map);
@@ -115,13 +137,17 @@ function help(question){
  const facts=shortFacts(map),knownSource=mainSource(map);
  const linkKnown=confirmedStorefront(map);
  if(sales){
-  let question=knownSource==='crm'?'Сколько новых обращений было за последнюю неделю и сколько из них стали заказами?':
-   knownSource==='marketplace'||knownSource==='site'?'Откуда сейчас приходят заказы и сколько примерно получаете за неделю?':
-   'Откуда приходят заявки и где вы отмечаете, какие превратились в заказы?';
-  return {kind:'sales',answer:facts+'\n\nДля роста продаж сначала нужно определить исходную точку. '+question+'\n\n'+
+  const weekly=map.weeklyRequests;
+  const knownCount=weekly&&Number.isSafeInteger(weekly.value)&&weekly.value>=0;
+  const question=knownCount
+   ?'Следующий вопрос: сколько из этих обращений стало оплаченными заказами? Пока этих данных нет.'
+   :'Сколько новых заявок или обращений было за последние 7 дней? Можно ответить одним числом.';
+  return {kind:'sales',awaitingWeekly:!knownCount,answer:facts+'\n\n'+
+   (knownCount?'Вы сообщили ориентир: около '+weekly.value+' обращений за неделю (не данные CRM).\n\n':'')+
+   'Для роста продаж нужна исходная точка. '+question+'\n\n'+
    (linkKnown?'Сведения об одной витрине сохранены, но это не статистика продаж. ':'')+
-   'Сейчас я не вижу реальные заявки или выручку — источники только указаны, но не подключены.\n\nНачнём с одного ответа и затем выберем следующий шаг.',
-   action:oneAction('map','Уточнить данные о продажах')};
+   'Сейчас SEYVEO не читает реальные заявки или выручку — сервисы ещё не подключены.',
+   action:oneAction('map','Карта бизнеса')};
  }
  if(costs){
   return {kind:'finance',answer:facts+'\n\nПредлагаю начать с одного вопроса: какие три статьи расходов сейчас самые крупные?\n\nБез подтверждённых сумм и доступа к учёту я не могу назвать ваши потери или обещать экономию. Сначала соберём структуру затрат и только затем будем выбирать решения.',
@@ -139,7 +165,11 @@ function help(question){
     action:oneAction('map','Добавить ссылку на витрину')};
  }
  if(metrics){
-  return {kind:'metrics',answer:facts+'\n\nПока я не могу достоверно назвать число заказов, прибыль или конверсию: доступ к статистике и финансам не подключён.\n\nПредлагаю начать с ваших ориентиров за последнюю неделю или месяц, а затем определить необходимый источник данных.',
+  const weekly=map.weeklyRequests;
+  const known=weekly&&Number.isSafeInteger(weekly.value)&&weekly.value>=0
+   ?'Со слов владельца сохранён ориентир: около '+weekly.value+' обращений за неделю. Это не онлайн-статистика.\n\n':'';
+  return {kind:'metrics',answer:facts+'\n\n'+known+
+   'Пока я не могу достоверно назвать число заказов, прибыль или конверсию: доступ к статистике и финансам не подключён.\n\nМожно уточнить другие показатели и затем выбрать подходящий источник данных.',
    action:oneAction('map','Уточнить показатели')};
  }
  return {kind:'business',answer:facts+'\n\nДавайте сначала обозначим вашу ближайшую цель. Тогда я смогу предложить нужный следующий вопрос и источник данных. Я пока работаю с локально указанными сведениями, не с настоящей бизнес-аналитикой.',
@@ -153,9 +183,11 @@ function reset(){
 }
 function show(result){
  reset();
+ pending=result?.kind==='business-start'?'description':
+  result?.kind==='sales'&&result.awaitingWeekly?'weekly':null;
  if(!result?.action)return;
  const action=result.action;
- if(!['map','source','connections'].includes(action.kind))return;
+ if(!['map','source','connections','description','weekly'].includes(action.kind))return;
  currentAction=action;
  cta.textContent=clean(action.label,54);
  cta.hidden=false;
@@ -163,9 +195,19 @@ function show(result){
 cta.addEventListener('click',()=>{
  const action=currentAction;if(!action)return;
  let done=false;
- if(action.kind==='map'||action.kind==='source'){
-  const args=action.kind==='source'?{sourcePrefill:{url:action.url,type:action.type}}:{};
+ if(['map','source','description'].includes(action.kind)){
+  const args=action.kind==='source'?{sourcePrefill:{url:action.url,type:action.type}}:
+   action.kind==='description'?{aboutPrefill:action.value}:{};
   done=window.SEYVEO_BUSINESS_MAP?.open?.(args)===true;
+ }else if(action.kind==='weekly'){
+  const result=window.SEYVEO_BUSINESS_MAP?.saveWeeklyRequests?.(action.value);
+  if(result?.ok){
+   $('orbInlineReplyText').textContent=result.message+
+    '\n\nЭто введённый вами ориентир, а не данные из внешних сервисов.';
+   done=true;
+  }else{
+   $('orbInlineReplyText').textContent=result?.message||'Не удалось сохранить показатель. Проверьте Карту бизнеса.';
+  }
  }else if(action.kind==='connections'){
   const page=$('navManage');
   if(page){page.click();
@@ -174,6 +216,7 @@ cta.addEventListener('click',()=>{
   }
  }
  if(done){
+  if(action.kind==='weekly'){reset();return}
   const close=$('orbInlineReplyClose');if(close)close.click();
   reset();
  }
