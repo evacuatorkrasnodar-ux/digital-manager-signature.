@@ -186,12 +186,13 @@ btnAction.addEventListener('click',resultAction);
 btnDone.addEventListener('click',()=>close(preview?null:(saved?'completed':'later')));
 $('firstMinuteLater').addEventListener('click',()=>close(preview?null:'later'));
 entry?.addEventListener('click',()=>{
- // Business paths now lead with knowledge gathering instead of a demo notebook.
- const p=profile();
- if(['start','pro','max'].includes(p.focus)&&window.SEYVEO_BUSINESS_MAP){
-  window.SEYVEO_BUSINESS_MAP.open({preview:true,trigger:entry,fromStart:true});return;
+ // Always let developers preview BOTH business scenarios without touching data.
+ // Existing personal first-step fallback remains available if the map fails to load.
+ if(window.SEYVEO_BUSINESS_MAP){
+  window.SEYVEO_BUSINESS_MAP.open({preview:true,trigger:entry});
+  return;
  }
- start(true,p.focus);
+ const p=profile();start(true,p.focus);
 });
 window.addEventListener('seyveo:first-minute-ready',event=>{
  if(event.detail?.source!=='first-launch')return;
