@@ -30,6 +30,7 @@ jobs:
           node --check server/http.mjs
           node --check server/chat-local.mjs
           node --check server/browser-local.mjs
+          node --check server/real-app-local.mjs
           node --check server/local-web/app.js
       - name: Run safe offline tests
         run: node --test server/tests/*.test.mjs
