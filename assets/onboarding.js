@@ -6,9 +6,9 @@
   const dialog=$('onboardDialog'),entry=$('openOnboarding'),form=$('onboardForm');
   if(!dialog||!entry||!form)return;
   const PROFILE='seyveo-first-acquaintance-v1';
-  // The voice follows the chosen name automatically. Custom names use the
-  // system voice, so there is no hidden uneditable male/female setting.
-  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Филя':'male','Мелисса':'female','Мили':'female'});
+  // Presets from the approved naming concept. These are gender preferences,
+  // not guaranteed synthetic voice models (availability varies by OS).
+  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Филя':'male','Милисса':'female','Мили':'female','Бэйси':'female','Боня':'male','Торик':'male'});
   const nameInput=$('onboardAssistantName');
   const nameChoices=[...form.querySelectorAll('[data-assistant-name]')];
   function markName(){
@@ -35,7 +35,7 @@
       const value=JSON.parse(safeRead(PROFILE)||'null');
       if(!value||typeof value!=='object'||!CHOICES[value.focus])return null;
       // Old preview spelling stays compatible without rewriting stored preferences.
-      if(value.assistantName==='Милисса')return {...value,assistantName:'Мелисса',assistantAliases:['Мелисса','Мили']};
+      if(value.assistantName==='Мелисса')return {...value,assistantName:'Милисса',assistantAliases:['Милисса','Мили','Мелисса']};
       return value;
     }catch{return null}
   }
@@ -74,7 +74,7 @@
       name:trim($('onboardName').value,60),
       assistantName,
       assistantVoice:ASSISTANT_NAMES[assistantName]||null,
-      assistantAliases:assistantName==='Феликс'?['Феликс','Филя']:assistantName==='Мелисса'?['Мелисса','Мили']:assistantName?[assistantName]:[],
+      assistantAliases:assistantName==='Феликс'?['Феликс','Филя']:assistantName==='Милисса'?['Милисса','Мили','Мелисса']:assistantName?[assistantName]:[],
       focus,
       lifeIncluded:true,
       updatedAt:new Date().toISOString(),

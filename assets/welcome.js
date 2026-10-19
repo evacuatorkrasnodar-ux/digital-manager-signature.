@@ -12,12 +12,14 @@ const LEGACY=['dm-signature-living-v2','dm-signature-living-v1','seyveo-notes-v1
 const read=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
-let step=0,assistant='Феликс',focus='life',preview=false,previewTrigger=null,openingTimer=null;
+let step=0,assistant='Феликс',assistantVoice='male',focus='life',preview=false,previewTrigger=null,openingTimer=null;
 let tourIndex=-1,tourVisited=false;
 const tour=window.SEYVEO_WELCOME_TOUR;
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
 const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
 const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
+const voiceChoices=[...dialog.querySelectorAll('[data-welcome-voice]')];
+const suggestedVoice=Object.freeze({'Феликс':'male','Филя':'male','Милисса':'female','Мили':'female','Бэйси':'female','Боня':'male','Торик':'male'});
 const focusChoices=[...dialog.querySelectorAll('[data-welcome-focus]')];
 const progress=$('welcomeProgress'),next=$('welcomeNext'),back=$('welcomeBack'),skip=$('welcomeSkip');
 const error=$('welcomeError');
@@ -94,10 +96,11 @@ function available(){
 }
 function markOptions(){
  brandChoices.forEach(button=>button.setAttribute('aria-pressed',String(!trim(other.value,40)&&button.dataset.welcomeAssistant===assistant)));
+ voiceChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeVoice===assistantVoice)));
  focusChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeFocus===focus)));
 }
 function assistantName(){return trim(other.value,40)||assistant}
-function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Мелисса'?'Мили':name}
+function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Милисса'?'Мили':name}
 function render(){
  dialog.classList.toggle('is-film',tourIndex>=0);
  panels.forEach((panel,index)=>{panel.hidden=tourIndex>=0||index!==step});
@@ -193,8 +196,8 @@ function beginOpening(){
 function save(){
  if(preview){beginOpening();return}
  const selectedName=assistantName();
- const voice=({'Феликс':'male','Филя':'male','Мелисса':'female','Мили':'female'})[selectedName]||null;
- const aliases=selectedName==='Феликс'?['Феликс','Филя']:selectedName==='Мелисса'?['Мелисса','Мили']:selectedName?[selectedName]:[];
+ const voice=assistantVoice;
+ const aliases=selectedName==='Феликс'?['Феликс','Филя']:selectedName==='Милисса'?['Милисса','Мили','Мелисса']:selectedName?[selectedName]:[];
  const now=new Date().toISOString();
  const profile={
   schemaVersion:1,name:trim(user.value,60),assistantName:selectedName,assistantVoice:voice,
@@ -212,9 +215,19 @@ function save(){
 }
 brandChoices.forEach(button=>button.addEventListener('click',()=>{
  assistant=button.dataset.welcomeAssistant;
+ assistantVoice=suggestedVoice[assistant]||assistantVoice;
  other.value='';markOptions();
 }));
+voiceChoices.forEach(button=>button.addEventListener('click',()=>{
+ assistantVoice=button.dataset.welcomeVoice;
+ markOptions();tour?.previewVoice?.(assistantVoice);
+}));
 other.addEventListener('input',markOptions);
+window.addEventListener('seyveo:film-voice-selected',event=>{
+ const gender=event.detail?.gender,name=event.detail?.name;
+ if(!['male','female'].includes(gender)||!['Феликс','Милисса'].includes(name))return;
+ assistant=name;assistantVoice=gender;other.value='';markOptions();
+});
 focusChoices.forEach(button=>button.addEventListener('click',()=>{
  focus=button.dataset.welcomeFocus;markOptions();
 }));
@@ -232,7 +245,7 @@ function startPreview(){
  if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  preview=true;previewTrigger=demoEntry;
  tourIndex=-1;tourVisited=false;tour?.reset();
- assistant='Феликс';focus='life';user.value='';other.value='';
+ assistant='Феликс';assistantVoice='male';focus='life';user.value='';other.value='';
  setStep(0);
  try{dialog.showModal();playSignature();prepareSignatureSound()}catch{preview=false;previewTrigger=null}
 }

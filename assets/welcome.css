@@ -342,3 +342,26 @@
  #welcomeDialog .welcome-opening-brand{display:none}
  #welcomeDialog .welcome-opening-quote{opacity:1}
 }
+
+/* First acquaintance · approved five names and voice preview.
+   Scroll only within welcome content; stable controls and safe areas. */
+#welcomeDialog .welcome-choices{gap:8px;margin-top:15px}
+#welcomeDialog .welcome-choices .welcome-choice{min-height:63px;border-radius:16px;padding:11px 13px;gap:4px}
+#welcomeDialog .welcome-choices .welcome-choice strong{font-size:14px}
+#welcomeDialog .welcome-choices .welcome-choice small{font-size:11px}
+#welcomeDialog .welcome-voice-field{display:flex;flex-direction:column;gap:9px;margin-top:16px;color:#c4cedb;font-size:12px}
+#welcomeDialog .welcome-voice-buttons{display:flex;gap:8px}
+#welcomeDialog .welcome-voice-buttons button{flex:1;min-height:43px;border:1px solid #566477;border-radius:999px;background:#ffffff09;color:#dfe9f7;font:inherit;font-size:11px}
+#welcomeDialog .welcome-voice-buttons button[aria-pressed=true]{background:#eef4ff17;border-color:#d8e6f9}
+#welcomeDialog .welcome-voice-field>small{font-size:10px;line-height:1.5;color:#9ba9bb}
+:root[data-theme=light] #welcomeDialog .welcome-voice-field{color:#435469}
+:root[data-theme=light] #welcomeDialog .welcome-voice-buttons button{background:#eaf0f6;color:#283e57;border-color:#c3d0de}
+:root[data-theme=light] #welcomeDialog .welcome-voice-buttons button[aria-pressed=true]{background:#dae5f2;border-color:#768faa}
+:root[data-theme=light] #welcomeDialog .welcome-voice-field>small{color:#64758b}
+@media(max-height:740px){
+ #welcomeDialog .welcome-step[data-welcome-step="2"]{padding-top:8px;padding-bottom:8px}
+ #welcomeDialog .welcome-step[data-welcome-step="2"] .welcome-description{font-size:12px;line-height:1.45}
+ #welcomeDialog .welcome-step[data-welcome-step="2"] .welcome-field{margin-top:12px}
+ #welcomeDialog .welcome-step[data-welcome-step="2"] .welcome-choices{margin-top:13px}
+ #welcomeDialog .welcome-step[data-welcome-step="2"] .welcome-choice{min-height:55px}
+}

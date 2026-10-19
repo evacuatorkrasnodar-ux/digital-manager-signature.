@@ -220,3 +220,249 @@
 :root[data-theme=light] #welcomeDialog .film-caption-label{color:#66798e}
 :root[data-theme=light] #welcomeDialog .film-progress span{background:#a7b5c5}
 :root[data-theme=light] #welcomeDialog .film-progress .is-current{background:#243b54}
+
+
+
+/* FIRST LOOK FILM · Extended cinematic scenes, voice casting, nine-chapter story */
+#welcomeDialog .film-voice-choices{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ width:min(100%,370px);margin:14px auto 0;text-align:left;
+}
+#welcomeDialog .film-voice-choices>span,
+#welcomeDialog .film-voice-status{grid-column:1/-1;text-align:center;font-size:9px;letter-spacing:.07em;color:#a5b5c7}
+#welcomeDialog .film-voice-choices button{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ border-radius:16px;min-height:51px;padding:8px;border:1px solid #63738b66;
+ background:#ffffff08;color:#eef4fc;font:inherit;
+}
+#welcomeDialog .film-voice-choices button strong{font-weight:540;font-size:13px}
+#welcomeDialog .film-voice-choices button small{font-size:10px;color:#9facbc}
+#welcomeDialog .film-voice-choices button[aria-pressed=true]{background:#e7f0fe18;border-color:#d1e2f2aa}
+#welcomeDialog .film-voice-status{min-height:15px;line-height:1.35;letter-spacing:0}
+#welcomeDialog .film-chat-name{font-size:11px;color:#afc2d8}
+#welcomeDialog .film-live-chat{
+ display:flex;flex-direction:column;justify-content:center;gap:11px;
+ width:min(100%,520px);margin:auto;min-height:0;
+}
+#welcomeDialog .film-chat-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;letter-spacing:.08em}
+#welcomeDialog .film-tag{font-size:10px;color:#b6c6d8}
+#welcomeDialog .film-chat-orb{width:clamp(100px,19vmin,165px);height:clamp(100px,19vmin,165px);margin:0 auto}
+#welcomeDialog .film-chat-orb img{width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-chat-bubble{
+ border-radius:20px;max-width:90%;padding:14px 17px;background:#212a36c9;
+ border:1px solid #7f97b83a;box-shadow:inset 0 1px 0 #ffffff0a;
+}
+#welcomeDialog .film-chat-bubble-user{align-self:flex-end;border-bottom-right-radius:6px}
+#welcomeDialog .film-chat-bubble-assistant{align-self:flex-start;background:#e8eef612;border-bottom-left-radius:6px}
+#welcomeDialog .film-chat-bubble small{display:block;font-size:9px;letter-spacing:.12em;color:#a9b9cf;margin-bottom:7px}
+#welcomeDialog .film-chat-bubble p{margin:0;color:#edf4fe;font-size:13px;line-height:1.5}
+#welcomeDialog .film-chat-save,.film-action-run{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ width:100%;min-height:47px;padding:12px 18px;border:1px solid #d5e5f4b9;border-radius:999px;
+ background:#dbe7f6;color:#202c3b;font:inherit;font-size:12px;font-weight:530;
+}
+#welcomeDialog .film-chat-save:disabled,.film-action-run:disabled{opacity:.72}
+#welcomeDialog .film-result-text{font-size:11px;line-height:1.5;color:#b8d1ea;margin:5px 0 0}
+#welcomeDialog .film-result-text[hidden]{display:none!important}
+#welcomeDialog .film-action-stage{
+ width:min(100%,530px);margin:auto;display:flex;flex-direction:column;gap:12px;
+}
+#welcomeDialog .film-action-brand{display:flex;align-items:center;gap:16px;margin:0 0 8px}
+#welcomeDialog .film-action-orb{width:90px;height:90px;flex:none}
+#welcomeDialog .film-action-orb img{width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-action-brand>span{font-size:11px;letter-spacing:.08em;color:#c0d0e0;line-height:1.6}
+#welcomeDialog .film-action-chain{
+ border:1px solid #8090a84c;border-radius:23px;background:#171c27cf;
+ padding:12px 18px;box-shadow:0 20px 50px #0003;
+}
+#welcomeDialog .film-action-chain>div{display:flex;align-items:center;gap:14px;min-height:73px;padding:9px 0}
+#welcomeDialog .film-action-chain>div+div{border-top:1px solid #d3e6ff1a}
+#welcomeDialog .film-action-number{font-size:10px;letter-spacing:.13em;color:#a6b7cd;flex:none}
+#welcomeDialog .film-action-chain p{flex:1;margin:0}
+#welcomeDialog .film-action-chain strong{display:block;font-size:15px;font-weight:520;color:#ecf3fc}
+#welcomeDialog .film-action-chain small{display:block;font-size:11px;margin-top:5px;color:#aabbd0;line-height:1.45}
+#welcomeDialog .film-action-status{display:grid;place-items:center;width:24px;height:24px;flex:none;border:1px solid #8c9fb461;border-radius:50%;font-size:13px;color:#ecf6ff}
+#welcomeDialog .film-action-footnote{display:block;text-align:center;font-size:10px;color:#95a4b8;line-height:1.4}
+#welcomeDialog .film-clients-stage{
+ width:min(100%,550px);margin:auto;padding:clamp(17px,3vw,26px);
+ border:1px solid #697a9248;border-radius:29px;
+ background:linear-gradient(145deg,#414c5b29,transparent 64%),#151a22e8;
+}
+#welcomeDialog .film-clients-top{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+#welcomeDialog .film-clients-top>span{font-size:9px;letter-spacing:.13em;color:#9fb0c4}
+#welcomeDialog .film-clients-top strong{font-size:clamp(18px,4.5vw,26px);font-weight:420;letter-spacing:-.03em}
+#welcomeDialog .film-clients-top small{font-size:11px;color:#afc0d1}
+#welcomeDialog .film-client-sources{display:flex;flex-direction:column;gap:15px}
+#welcomeDialog .film-client-row-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+#welcomeDialog .film-client-row-head span{font-size:12px;color:#dbe6f4}
+#welcomeDialog .film-client-row-head strong{font-weight:480;font-size:11px;color:#b4c5da}
+#welcomeDialog .film-client-track{height:9px;border:1px solid #dae8ff1a;border-radius:999px;overflow:hidden;background:#ffffff13}
+#welcomeDialog .film-client-fill{display:block;height:100%;width:var(--source-width,0%);border-radius:999px;background:linear-gradient(90deg,#859ab5,#eaf2ff)}
+#welcomeDialog .film-client-idea{display:flex;gap:11px;align-items:flex-start;border-top:1px solid #ffffff1d;margin-top:22px;padding-top:16px}
+#welcomeDialog .film-client-idea span{font-size:21px;color:#e7f2ff}
+#welcomeDialog .film-client-idea p{margin:0;font-size:12px;line-height:1.55;color:#c9d8ea}
+#welcomeDialog .film-client-tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}
+#welcomeDialog .film-client-tools span{padding:7px 11px;border:1px solid #a2b3cc3e;border-radius:999px;font-size:10px;color:#becde0}
+#welcomeDialog .film-client-disclaimer{font-size:10px;color:#9eacbc;line-height:1.4;margin:15px 0 0}
+#welcomeDialog .film-devices-stage{position:relative;width:min(100%,690px);margin:auto;padding:3px 0 0}
+#welcomeDialog .film-device-screen{background:#171d28;border:1px solid #b3c2d57f;box-shadow:inset 0 1px 0 #fff2,0 20px 40px #0006;overflow:hidden}
+#welcomeDialog .film-device-desktop{margin:auto;width:82%;height:clamp(135px,25vmin,245px);border-radius:14px 14px 5px 5px;padding:12px}
+#welcomeDialog .film-device-top{display:flex;align-items:center;gap:5px;margin-bottom:9px}
+#welcomeDialog .film-device-top span{font-size:9px;letter-spacing:.14em;flex:1;color:#d8e6fa}
+#welcomeDialog .film-device-top i{display:block;width:5px;height:5px;background:#7d8ba1;border-radius:50%}
+#welcomeDialog .film-device-content{display:grid;grid-template-columns:23% 1fr 21%;gap:9px;height:85%}
+#welcomeDialog .film-device-side{border-right:1px solid #ffffff14;padding-top:15px}
+#welcomeDialog .film-device-side span{display:block;width:80%;height:5px;background:#8494aa46;border-radius:4px;margin-bottom:11px}
+#welcomeDialog .film-device-main strong{font-size:clamp(9px,1.8vw,14px);font-weight:520}
+#welcomeDialog .film-device-chart{display:flex;align-items:flex-end;gap:5px;height:42%;border-bottom:1px solid #ffffff31;margin:13px 0}
+#welcomeDialog .film-device-chart b{flex:1;background:linear-gradient(180deg,#e9f3ff,#879bb6);border-radius:3px 3px 0 0;height:45%}
+#welcomeDialog .film-device-chart b:nth-child(2){height:70%}
+#welcomeDialog .film-device-chart b:nth-child(3){height:55%}
+#welcomeDialog .film-device-chart b:nth-child(4){height:85%}
+#welcomeDialog .film-device-chart b:nth-child(5){height:61%}
+#welcomeDialog .film-device-chart b:nth-child(6){height:96%}
+#welcomeDialog .film-device-lines span{display:block;height:5px;background:#afc3de33;border-radius:4px;margin:8px 0;width:90%}
+#welcomeDialog .film-device-lines span:last-child{width:62%}
+#welcomeDialog .film-device-aside{display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #ffffff18;border-radius:11px;padding:5px}
+#welcomeDialog .film-device-orb{width:clamp(26px,5vmin,54px);height:clamp(26px,5vmin,54px)}
+#welcomeDialog .film-device-orb img{width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-device-aside small{font-size:9px;color:#d9e8fa}
+#welcomeDialog .film-device-aside span{display:block;background:#aebed242;height:4px;width:87%;border-radius:4px}
+#welcomeDialog .film-device-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;width:65%;margin:-7px auto 0}
+#welcomeDialog .film-device-tablet{width:60%;height:clamp(90px,15vmin,150px);border-radius:12px;padding:12px}
+#welcomeDialog .film-device-tablet>span,#welcomeDialog .film-device-phone>span{font-size:9px;letter-spacing:.1em;color:#c7d8eb}
+#welcomeDialog .film-device-tablet strong{display:block;font-size:11px;font-weight:510;margin:8px 0 10px}
+#welcomeDialog .film-device-tablet div i{display:block;background:#f0f5fb1b;border-radius:6px;height:9px;width:100%;margin:6px 0}
+#welcomeDialog .film-device-phone{width:35%;height:clamp(110px,19vmin,190px);border-radius:17px;padding:11px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+#welcomeDialog .film-device-phone div{height:50%;width:65%}
+#welcomeDialog .film-device-phone img{width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-device-phone small{font-size:8px;color:#afbfce}
+#welcomeDialog .film-device-note{max-width:510px;margin:16px auto 0;font-size:11px;line-height:1.5;color:#afbdce;text-align:center}
+@media(prefers-reduced-motion:no-preference){
+ #welcomeDialog .film-chat-bubble-user{animation:film-arrive .9s .2s both}
+ #welcomeDialog .film-chat-bubble-assistant{animation:film-arrive .9s 1s both}
+ #welcomeDialog .film-chat-orb{animation:film-pearl-emerge 2s both}
+ #welcomeDialog .film-action-chain>div{animation:film-arrive .75s both}
+ #welcomeDialog .film-action-chain>div:nth-child(2){animation-delay:.22s}
+ #welcomeDialog .film-action-chain>div:nth-child(3){animation-delay:.45s}
+ #welcomeDialog .film-client-fill{transform-origin:left;animation:film-fill-in 1.65s cubic-bezier(.2,.78,.22,1) both}
+ #welcomeDialog .film-client-row:nth-child(2) .film-client-fill{animation-delay:.2s}
+ #welcomeDialog .film-client-row:nth-child(3) .film-client-fill{animation-delay:.4s}
+ #welcomeDialog .film-device-desktop{animation:film-reveal-card 1.1s both}
+ #welcomeDialog .film-device-tablet{animation:film-reveal-card 1.1s .32s both}
+ #welcomeDialog .film-device-phone{animation:film-reveal-card 1.1s .62s both}
+ @keyframes film-fill-in{from{transform:scaleX(.02)}to{transform:scaleX(1)}}
+}
+@media(max-width:410px){
+ #welcomeDialog .film-live-chat{gap:8px}
+ #welcomeDialog .film-chat-orb{height:98px;width:98px}
+ #welcomeDialog .film-chat-bubble{padding:11px 13px}
+ #welcomeDialog .film-chat-bubble p{font-size:12px}
+ #welcomeDialog .film-action-brand{margin-bottom:1px}
+ #welcomeDialog .film-action-orb{height:62px;width:62px}
+ #welcomeDialog .film-action-chain>div{min-height:61px}
+ #welcomeDialog .film-clients-stage{padding:13px}
+ #welcomeDialog .film-client-sources{gap:11px}
+ #welcomeDialog .film-clients-top{margin-bottom:10px}
+ #welcomeDialog .film-device-bottom{gap:14px}
+}
+@media(max-height:735px){
+ #welcomeDialog .film-chat-orb{width:75px;height:75px}
+ #welcomeDialog .film-action-chain>div{min-height:53px;padding:5px 0}
+ #welcomeDialog .film-action-chain small{font-size:10px}
+ #welcomeDialog .film-clients-top{margin-bottom:8px}
+ #welcomeDialog .film-client-sources{gap:8px}
+ #welcomeDialog .film-client-idea{margin-top:10px;padding-top:10px}
+ #welcomeDialog .film-client-tools{margin-top:8px}
+ #welcomeDialog .film-client-disclaimer{margin-top:7px}
+ #welcomeDialog .film-device-desktop{height:125px}
+ #welcomeDialog .film-device-phone{height:103px}
+ #welcomeDialog .film-device-tablet{height:87px}
+}
+:root[data-theme=light] #welcomeDialog .film-voice-choices button,
+:root[data-theme=light] #welcomeDialog .film-chat-bubble,
+:root[data-theme=light] #welcomeDialog .film-action-chain,
+:root[data-theme=light] #welcomeDialog .film-clients-stage{background:#fff;color:#213247;border-color:#b8c9db}
+:root[data-theme=light] #welcomeDialog .film-voice-choices button strong,
+:root[data-theme=light] #welcomeDialog .film-chat-bubble p,
+:root[data-theme=light] #welcomeDialog .film-action-chain strong,
+:root[data-theme=light] #welcomeDialog .film-clients-top strong{color:#27364b}
+:root[data-theme=light] #welcomeDialog .film-action-chain small,
+:root[data-theme=light] #welcomeDialog .film-device-note,
+:root[data-theme=light] #welcomeDialog .film-client-disclaimer{color:#56697e}
+
+
+
+/* SEYVEO · Future story chapters. These screens present the product vision. */
+#welcomeDialog .film-story-surface{width:min(100%,550px);margin:auto;position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:clamp(16px,3vw,25px)}
+#welcomeDialog .film-story-eyebrow{font-size:10px;color:#b5c4d8;letter-spacing:.14em}
+#welcomeDialog .film-story-surface h3{font-size:clamp(23px,5vw,36px);font-weight:380;letter-spacing:-.04em;line-height:1.15;margin:0}
+#welcomeDialog .film-story-surface>p{font-size:12.5px;color:#beccdc;line-height:1.6;max-width:470px;margin:0}
+#welcomeDialog .film-story-note{color:#a7b5c8;font-size:10.5px;line-height:1.55;margin:6px auto}
+#welcomeDialog .future-label,#welcomeDialog .film-feature-status{display:block;color:#94a9c3;font-size:9px;letter-spacing:.075em;line-height:1.6}
+#welcomeDialog .film-private-orb,#welcomeDialog .film-recharge-orb,#welcomeDialog .film-friend-orb{height:clamp(75px,15vmin,135px);width:clamp(75px,15vmin,135px)}
+#welcomeDialog :is(.film-private-orb,.film-recharge-orb,.film-friend-orb) img{width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-private-sheet{width:min(100%,440px);border:1px solid #94a7c148;border-radius:26px;background:#151b26dd;padding:17px 20px;text-align:left;box-shadow:inset 0 1px 0 #ffffff11}
+#welcomeDialog .film-private-sheet>div:first-child{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#welcomeDialog .film-private-sheet>div:first-child>span{font-size:27px;color:#eaf3ff}
+#welcomeDialog .film-private-sheet strong{font-size:15px;font-weight:530;flex:1}
+#welcomeDialog .film-private-sheet small{font-size:10px;color:#aabbce}
+#welcomeDialog .film-private-lines{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0}
+#welcomeDialog .film-private-lines span{border-radius:999px;border:1px solid #aec1da3c;padding:7px 11px;font-size:10px;color:#cbdaed}
+#welcomeDialog .film-private-reply{padding:13px;border-radius:14px;background:#d4e4fb14;color:#f0f5fc;font-size:12px;line-height:1.5}
+#welcomeDialog .film-private-reply small{display:block;margin-top:5px;line-height:1.45}
+#welcomeDialog .film-paper-preview{width:min(100%,410px);border-radius:9px;padding:21px 22px 17px;background:#e9eef5;color:#1d2939;text-align:left;box-shadow:0 20px 70px #0007;transform:rotate(-1deg)}
+#welcomeDialog .film-paper-label{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.1em;color:#66778b}
+#welcomeDialog .film-paper-label small{font-size:9px}
+#welcomeDialog .film-paper-typed{min-height:75px;margin:24px 0 12px;font-size:16px;line-height:1.65;font-family:Georgia,serif;color:#29374b}
+#welcomeDialog .film-paper-ink{height:1px;background:#b4c0cf}
+#welcomeDialog .film-paper-options{display:flex;justify-content:space-between;gap:7px;margin-top:15px}
+#welcomeDialog .film-paper-options span{border-radius:999px;background:#d6e0ec;padding:7px 10px;font-size:9px;color:#354960}
+#welcomeDialog .film-notebook-voice{display:flex;align-items:flex-start;gap:10px;max-width:440px;text-align:left}
+#welcomeDialog .film-notebook-voice span{font-size:20px}
+#welcomeDialog .film-notebook-voice p{font-size:12px;line-height:1.55;color:#c4d2e4;margin:0}
+#welcomeDialog .film-legal-alert{width:min(100%,480px);display:flex;align-items:flex-start;gap:15px;text-align:left;padding:18px;border:1px solid #8da3be51;border-radius:22px;background:#222c396e}
+#welcomeDialog .film-legal-alert>span{font-size:23px;color:#f0f5ff}
+#welcomeDialog .film-legal-alert strong{display:block;font-size:15px;font-weight:510}
+#welcomeDialog .film-legal-alert small{display:block;margin-top:7px;color:#a3b7ce;font-size:9px;letter-spacing:.07em}
+#welcomeDialog .film-legal-alert p{font-size:12px;line-height:1.55;color:#d2deed;margin:12px 0 0}
+#welcomeDialog .film-legal-steps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:5px auto}
+#welcomeDialog .film-legal-steps span{padding:8px 10px;border-radius:999px;border:1px solid #91a7c14c;font-size:10px;color:#d2e0ef}
+#welcomeDialog .film-recharge-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(100%,460px)}
+#welcomeDialog .film-recharge-columns>div{border-radius:22px;border:1px solid #9daec548;padding:18px;background:#ffffff09;text-align:center}
+#welcomeDialog .film-recharge-columns span{font-size:24px;display:block;margin-bottom:8px}
+#welcomeDialog .film-recharge-columns strong{font-size:16px;font-weight:540;display:block}
+#welcomeDialog .film-recharge-columns small{font-size:10px;color:#bdcbdc;line-height:1.5;display:block;margin-top:6px}
+#welcomeDialog .film-quote{color:#e5effd;font-size:17px;font-weight:360;letter-spacing:-.02em;line-height:1.45;padding-top:4px}
+#welcomeDialog .film-friend-choices{width:min(100%,450px);display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+#welcomeDialog .film-friend-choices button{padding:10px 12px;min-height:41px;border:1px solid #a3b6cf61;border-radius:999px;background:#ffffff08;color:#dceafa;font-size:11px;font:inherit}
+#welcomeDialog .film-friend-choices button[aria-pressed=true]{border-color:#e5edf8;background:#e7f0fc20}
+#welcomeDialog .film-friend-reply{width:min(100%,450px);padding:16px;border:1px solid #ffffff29;border-radius:18px;background:#ffffff09;font-size:12px;color:#deebfa;line-height:1.55}
+#welcomeDialog .film-finale-vision{max-width:475px;margin:4px auto 12px;border:1px solid #d3e6ff3c;padding:14px 18px;border-radius:21px;background:#ffffff09}
+#welcomeDialog .film-finale-vision span{display:block;font-size:9px;letter-spacing:.13em;color:#b2c6df}
+#welcomeDialog .film-finale-vision b{display:block;font-weight:480;font-size:17px;margin:5px 0}
+#welcomeDialog .film-finale-vision small{display:block;font-size:10px;letter-spacing:0;line-height:1.45;color:#9eafc4}
+#welcomeDialog .film-finale-next{font-size:9px;color:#bbcce0;line-height:1.5;letter-spacing:.07em}
+@media(max-height:760px){
+ #welcomeDialog .film-story-surface{gap:8px;padding:8px}
+ #welcomeDialog :is(.film-private-orb,.film-recharge-orb,.film-friend-orb){width:63px;height:63px}
+ #welcomeDialog .film-story-surface h3{font-size:23px}
+ #welcomeDialog .film-private-sheet{padding:11px 13px}
+ #welcomeDialog .film-private-lines{margin:9px 0}
+ #welcomeDialog .film-paper-preview{padding:14px}
+ #welcomeDialog .film-paper-typed{min-height:55px;margin:10px 0}
+ #welcomeDialog .film-recharge-columns>div{padding:10px}
+ #welcomeDialog .film-finale-vision{padding:9px 12px}
+ #welcomeDialog .film-final-inner>p{margin:9px 0}
+}
+@media(prefers-reduced-motion:no-preference){
+ #welcomeDialog .film-private-sheet,#welcomeDialog .film-legal-alert{animation:film-arrive .9s .35s both}
+ #welcomeDialog .film-paper-preview{animation:film-paper-in 1.5s .2s both}
+ #welcomeDialog .film-finale-vision{animation:film-arrive .9s .5s both}
+ @keyframes film-paper-in{from{opacity:0;filter:blur(8px);transform:translateY(19px) rotate(-4deg) scale(.94)}to{opacity:1;filter:blur(0);transform:rotate(-1deg)}}
+}
+:root[data-theme=light] #welcomeDialog :is(.film-private-sheet,.film-legal-alert,.film-recharge-columns>div,.film-friend-reply,.film-finale-vision){background:#fff;color:#24384f;border-color:#b9c9db}
+:root[data-theme=light] #welcomeDialog :is(.film-private-reply,.film-legal-alert p,.film-quote,.film-recharge-columns strong,.film-friend-reply,.film-finale-vision b){color:#27384f}
+:root[data-theme=light] #welcomeDialog .film-story-surface>p,
+:root[data-theme=light] #welcomeDialog .film-feature-status,
+:root[data-theme=light] #welcomeDialog .film-story-note{color:#586b80}
