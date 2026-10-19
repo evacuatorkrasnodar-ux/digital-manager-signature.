@@ -1,0 +1,41 @@
+name: SEYVEO Agent Core Safety Checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/agent/**'
+      - 'server/tests/agent-planner.test.mjs'
+      - 'server/tests/real-app-local.test.mjs'
+      - 'server/tests/iphone-private-gateway.test.mjs'
+      - 'server/real-app-local.mjs'
+      - 'server/http.mjs'
+      - 'server/iphone-private-gateway.mjs'
+      - '.github/workflows/agent-core.yml'
+  pull_request:
+    paths:
+      - 'server/agent/**'
+      - 'server/tests/agent-planner.test.mjs'
+      - 'server/tests/real-app-local.test.mjs'
+      - 'server/tests/iphone-private-gateway.test.mjs'
+      - 'server/real-app-local.mjs'
+      - 'server/http.mjs'
+      - 'server/iphone-private-gateway.mjs'
+      - '.github/workflows/agent-core.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  agent-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Agent planning checks
+        run: node --test server/tests/agent-planner.test.mjs
+      - name: Real application and private iPhone agent route checks
+        run: node --test server/tests/real-app-local.test.mjs server/tests/iphone-private-gateway.test.mjs
+      - name: Static agent CLI smoke test
+        run: node server/agent/try-agent.mjs "Создай встречу завтра в 12:00"
