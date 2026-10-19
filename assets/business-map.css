@@ -151,3 +151,53 @@
  @keyframes business-map-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 }
 @media(prefers-reduced-motion:reduce){#businessMapDialog *{animation:none!important;transition:none!important}}
+
+/* Deliberate next questions: quiet dividers, no extra dashboard cards. */
+#businessMapDialog .business-map-advice{display:flex;flex-direction:column;gap:0}
+#businessMapDialog .business-map-advice-row{
+ padding:12px 0;border-top:1px solid rgba(232,238,247,.12);
+}
+#businessMapDialog .business-map-advice-row strong{
+ display:block;font-size:13px;font-weight:530;line-height:1.4;color:inherit;
+}
+#businessMapDialog .business-map-advice-row p{
+ margin:5px 0 9px;font-size:11.5px;line-height:1.54;color:#a8b6c7;
+}
+#businessMapDialog .business-map-advice-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+#businessMapDialog .business-map-advice-actions button{
+ min-height:35px;font-size:11.5px;font-weight:500;cursor:pointer;
+}
+#businessMapDialog .business-map-advice-go{
+ border:1px solid rgba(219,230,246,.23);border-radius:11px;
+ padding:7px 13px;color:#ebf2fb;background:rgba(255,255,255,.09);
+}
+#businessMapDialog .business-map-advice-dismiss{
+ border:0;padding:6px 7px;background:transparent;color:#a0b0c1;
+}
+#businessMapDialog .business-map-advice-more{
+ font-size:11px;line-height:1.45;color:#9facbb;margin:7px 0 0;
+}
+#businessMapDialog :is(.business-map-guide-link,.business-map-reset){
+ display:block;min-height:39px;padding:8px 2px;
+ border:0;background:transparent;color:#b7cce0;font-size:11.5px;
+ text-align:left;text-decoration:underline;text-decoration-color:rgba(184,206,230,.25);
+ text-underline-offset:3px;cursor:pointer;
+}
+#businessMapDialog .business-map-guide-link{margin:5px 0 10px}
+#businessMapDialog [hidden]{display:none!important}
+:root[data-theme=light] #businessMapDialog .business-map-advice-row{border-color:rgba(56,78,108,.14)}
+:root[data-theme=light] #businessMapDialog .business-map-advice-row p,
+:root[data-theme=light] #businessMapDialog .business-map-advice-more{color:#617388}
+:root[data-theme=light] #businessMapDialog .business-map-advice-go{
+ background:#fff;color:#344961;border-color:#c3cfdc
+}
+:root[data-theme=light] #businessMapDialog :is(.business-map-advice-dismiss,.business-map-guide-link,.business-map-reset){color:#526b86}
+#manageConnectionsDialog .manage-connection-advice{
+ margin:11px 0 16px;padding:12px 13px;border-radius:14px;
+ border:1px solid var(--soft-line);background:var(--card2);
+}
+#manageConnectionsDialog .manage-connection-advice strong{display:block;font-size:13px;font-weight:560;line-height:1.4}
+#manageConnectionsDialog .manage-connection-advice p{
+ font-size:12px;line-height:1.54;color:var(--secondary);margin:7px 0 0;
+}
+#manageConnectionsDialog .manage-connection-advice[hidden]{display:none!important}
