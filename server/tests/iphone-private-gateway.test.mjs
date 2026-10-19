@@ -54,6 +54,11 @@ test('owner alone can load the real app and stream local answer, never private f
   if(req.url==='/'){
    res.writeHead(200,{'content-type':'text/html','content-security-policy':"default-src 'none'; connect-src 'self'"});
    res.end('<main id="homePage"><button id="orb">SEYVEO</button></main>');
+  }else if(req.url==='/api/seyveo-agent-plan'){
+   let json='';for await(const chunk of req)json+=chunk.toString('utf8');
+   assert.equal(JSON.parse(json).message,'Создай встречу в календаре');
+   res.writeHead(200,{'content-type':'application/json; charset=utf-8'});
+   res.end(JSON.stringify({intent:'calendar',executed:false,tool:'calendar.draft'}));
   }else if(req.url==='/api/seyveo-stream'){
    let payload='';for await(const chunk of req)payload+=chunk.toString();
    assert.equal(JSON.parse(payload).message,'Привет, Феликс!');
@@ -89,6 +94,12 @@ test('owner alone can load the real app and stream local answer, never private f
    ...headers(),origin,'content-type':'text/plain'
   },body:'bad'});
   assert.equal(wrongType.status,415);
+  const planned=await get(port,'/api/seyveo-agent-plan',{method:'POST',headers:{
+   ...headers(),origin,'content-type':'application/json'
+  },body:JSON.stringify({message:'Создай встречу в календаре'})});
+  assert.equal(planned.status,200);
+  assert.equal(JSON.parse(planned.body).intent,'calendar');
+  assert.equal(JSON.parse(planned.body).executed,false);
   const stream=await get(port,'/api/seyveo-stream',{method:'POST',headers:{
    ...headers(),origin,'content-type':'application/json'
   },body:JSON.stringify({message:'Привет, Феликс!'})});
