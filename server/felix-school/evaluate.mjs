@@ -7,6 +7,7 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import {safeInstruction} from '../hybrid-core.mjs';
+import {coachMessage} from './lesson-coach.mjs';
 
 export const FELIX_EXAM_SUITES=Object.freeze({baseline:'./eval-cases.json',batch2:'./exam-batch2.json'});
 
@@ -58,6 +59,7 @@ export async function evaluateLocalFelix({live=false,limit=3,suite='baseline',fe
    body:JSON.stringify({model,stream:false,keep_alive:'15m',
     messages:[
      {role:'system',content:safeInstruction('Феликс')},
+     ...(coachMessage(item.input)?[coachMessage(item.input)]:[]),
      {role:'user',content:item.input}
     ],options:{num_predict:180,num_ctx:2048,num_thread:8,temperature:0.2}})
   });
