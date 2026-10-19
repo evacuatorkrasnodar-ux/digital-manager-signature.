@@ -99,6 +99,7 @@ function markOptions(){
 function assistantName(){return trim(other.value,40)||assistant}
 function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Мелисса'?'Мили':name}
 function render(){
+ dialog.classList.toggle('is-film',tourIndex>=0);
  panels.forEach((panel,index)=>{panel.hidden=tourIndex>=0||index!==step});
  tour?.render(tourIndex);
  progress.hidden=tourIndex>=0||step===0||step===4;
@@ -142,7 +143,7 @@ function playSignature(){
 function close(){
  stopSignatureSound();
  if(openingTimer!==null){clearTimeout(openingTimer);openingTimer=null}
- dialog.classList.remove('is-cinematic','is-opening');
+ dialog.classList.remove('is-cinematic','is-opening','is-film');
  if(dialog.open)dialog.close();
  const fromDemo=preview,trigger=previewTrigger;
  preview=false;previewTrigger=null;tourIndex=-1;tourVisited=false;
@@ -246,9 +247,25 @@ skip.addEventListener('click',()=>{
  if(!preview&&(tourIndex>=0||step===0)){setStep(1);return}
  dismiss();
 });
+/* Film controls reuse the existing one-time welcome state machine.
+   They never bypass profile consent, and previews never write settings. */
+window.addEventListener('seyveo:film-next',()=>{
+ if(!dialog.open||tourIndex<0)return;
+ if(tourIndex<(tour?.count||5)-1)setTour(tourIndex+1);
+ else setStep(1);
+});
+window.addEventListener('seyveo:film-back',()=>{
+ if(!dialog.open||tourIndex<0)return;
+ if(tourIndex>0)setTour(tourIndex-1);
+ else setStep(0);
+});
+window.addEventListener('seyveo:film-skip',()=>{
+ if(dialog.open&&tourIndex>=0)setStep(1);
+});
 dialog.addEventListener('cancel',event=>{
  event.preventDefault();
  if(openingTimer!==null)return;
+ if(tourIndex>=0){setStep(1);return}
  dismiss();
 });
 window.addEventListener('pagehide',()=>{

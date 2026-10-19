@@ -1,52 +1,222 @@
-/* SEYVEO First Look · quiet Black Velvet tour in existing welcome dialog. */
-#welcomeDialog .welcome-tour[hidden],#welcomeDialog .tour-scene[hidden]{display:none!important}
-#welcomeDialog .welcome-tour{width:100%;margin:auto 0}
-#welcomeDialog .tour-count{display:flex;justify-content:space-between;gap:10px;margin-bottom:16px;color:#a3afbe;font-size:9px;line-height:1.5;letter-spacing:.075em}
-#welcomeDialog .tour-count small{color:#8694a5;font-size:9px;text-align:right}
-#welcomeDialog .tour-scene .welcome-title{font-size:clamp(26px,7vw,36px);margin-bottom:11px}
-#welcomeDialog .tour-scene .welcome-description{font-size:12.5px;line-height:1.55}
-#welcomeDialog .tour-scene .welcome-kicker{margin-bottom:11px}
-#welcomeDialog .tour-card{padding:17px;margin-top:18px;border-radius:23px;border:1px solid #343b47;background:linear-gradient(156deg,#ffffff09,transparent 70%),#191c23}
-#welcomeDialog .tour-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:15px;color:#cad3df;font-size:11px}
-#welcomeDialog .tour-top small{font-size:9px;color:#9eabbb;letter-spacing:.09em}
-#welcomeDialog .tour-title{display:block;font-size:19px;font-weight:510;line-height:1.25;letter-spacing:-.024em}
-#welcomeDialog .tour-card>p:not(.tour-feedback):not(.tour-fine){font-size:12px;color:#bbc6d2;line-height:1.55;margin:11px 0 14px}
-#welcomeDialog .tour-actions{display:flex;gap:7px;flex-wrap:wrap}
-#welcomeDialog .tour-actions button{flex:1;min-width:116px;min-height:44px;border-radius:999px;padding:9px 10px;background:#262c35;color:#e8eef6;border:1px solid #424b58;font:inherit;font-size:11px;cursor:pointer}
-#welcomeDialog .tour-actions .tour-accent{background:#edf2f8;color:#1c2532;border-color:#edf2f8}
-#welcomeDialog .tour-actions button:disabled{opacity:.72}
-#welcomeDialog .tour-feedback{font-size:11px;line-height:1.55;color:#bdc7d3;margin:12px 0 0}
-#welcomeDialog .tour-feedback:empty{display:none}
-#welcomeDialog .tour-periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:14px}
-#welcomeDialog .tour-periods button{min-height:39px;border-radius:999px;font:inherit;font-size:11px;border:1px solid #3c4653;color:#cbd5e1;background:#29303a;cursor:pointer}
-#welcomeDialog .tour-periods button[aria-pressed=true]{background:#e6edf7;border-color:#e6edf7;color:#1d2734}
-#welcomeDialog .tour-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:15px}
-#welcomeDialog .tour-figures>div{min-width:0}
-#welcomeDialog .tour-figures small{display:block;font-size:10px;color:#a9b6c5;margin-bottom:4px}
-#welcomeDialog .tour-figures strong{display:block;font-size:clamp(14px,4vw,18px);font-weight:520;letter-spacing:-.02em;white-space:nowrap}
-#welcomeDialog .tour-chart{height:111px;display:flex;align-items:stretch;gap:4px}
-#welcomeDialog .tour-column{display:flex;flex-direction:column;flex:1;min-width:0;gap:7px}
-#welcomeDialog .tour-track{height:87px;display:flex;align-items:flex-end;border-bottom:1px solid #4b5563}
-#welcomeDialog .tour-bar{display:block;width:100%;max-width:32px;margin:0 auto;min-height:0;background:linear-gradient(180deg,#f2f6fb,#75869a);border-radius:5px 5px 0 0}
-#welcomeDialog .tour-column small{color:#a5b1bf;font-size:8.5px;text-align:center;white-space:nowrap}
-#welcomeDialog .tour-fine{margin:13px 0 0;font-size:10.5px;line-height:1.55;color:#a4b0be}
-#welcomeDialog .tour-world{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-#welcomeDialog .tour-world button{min-height:45px;border-radius:13px;border:1px solid #3b4553;background:#29313c;color:#eaf0f6;font:inherit;font-size:11.5px;cursor:pointer}
-#welcomeDialog .tour-world button:last-child{grid-column:1/-1}
-#welcomeDialog .tour-world button[aria-pressed=true]{background:#384454;border-color:#e0e8f3}
-#welcomeDialog .tour-world-text{margin:15px 0 0;border-top:1px solid #3d4654;padding-top:13px;font-size:12px;line-height:1.55;color:#c8d3df;min-height:56px}
-#welcomeDialog .tour-next{list-style:none;padding:0;margin:0}
-#welcomeDialog .tour-next li{display:flex;gap:13px;padding:12px 0;border-bottom:1px solid #38414c;color:#dce4ef;font-size:12px;line-height:1.55}
-#welcomeDialog .tour-next li:first-child{padding-top:0}
-#welcomeDialog .tour-next li:last-child{border-bottom:0}
-#welcomeDialog .tour-next li span{font-size:10px;letter-spacing:.1em;color:#97a7ba}
-#welcomeDialog .welcome-tour button:focus-visible{outline:2px solid #d7e4f4;outline-offset:2px}
-:root[data-theme=light] #welcomeDialog .tour-card{background:#fff;border-color:#d9e1ea}
-:root[data-theme=light] #welcomeDialog .tour-title,:root[data-theme=light] #welcomeDialog .tour-top,:root[data-theme=light] #welcomeDialog .tour-next li{color:#263549}
-:root[data-theme=light] #welcomeDialog .tour-count,:root[data-theme=light] #welcomeDialog .tour-count small,:root[data-theme=light] #welcomeDialog .tour-top small,:root[data-theme=light] #welcomeDialog .tour-fine,:root[data-theme=light] #welcomeDialog .tour-feedback,:root[data-theme=light] #welcomeDialog .tour-world-text,:root[data-theme=light] #welcomeDialog .tour-card>p:not(.tour-feedback):not(.tour-fine){color:#526274}
-:root[data-theme=light] #welcomeDialog .tour-actions button,:root[data-theme=light] #welcomeDialog .tour-periods button,:root[data-theme=light] #welcomeDialog .tour-world button{background:#edf1f5;color:#2b3b50;border-color:#d9e1ea}
-:root[data-theme=light] #welcomeDialog .tour-actions .tour-accent,:root[data-theme=light] #welcomeDialog .tour-periods button[aria-pressed=true]{background:#2c4158;border-color:#2c4158;color:#fff}
-:root[data-theme=light] #welcomeDialog .tour-world button[aria-pressed=true]{background:#dce5ef;border-color:#7f96b0}
-:root[data-theme=light] #welcomeDialog .tour-track,:root[data-theme=light] #welcomeDialog .tour-world-text,:root[data-theme=light] #welcomeDialog .tour-next li{border-color:#dbe3ec}
-@media(max-width:355px),(max-height:735px){#welcomeDialog .tour-count{margin-bottom:9px}#welcomeDialog .tour-card{margin-top:11px;padding:12px}#welcomeDialog .tour-top{margin-bottom:10px}#welcomeDialog .tour-chart{height:85px}#welcomeDialog .tour-track{height:63px}#welcomeDialog .tour-scene .welcome-title{font-size:24px}}
-@media(prefers-reduced-motion:reduce){#welcomeDialog .welcome-tour *{animation:none!important;transition:none!important}}
+/* SEYVEO · First Look Film v2 · cinematic full-screen tour.
+ * Only active inside the introductory dialog. Home, dock and sphere untouched.
+ */
+#welcomeDialog.is-film,#welcomeDialog.is-film::backdrop{background:#07090d;color:#f7f9fc}
+#welcomeDialog.is-film .welcome-shell{width:100%;max-width:none;padding:0;height:100%;overflow:hidden}
+#welcomeDialog.is-film .welcome-head,
+#welcomeDialog.is-film .welcome-bottom,
+#welcomeDialog.is-film .welcome-progress{display:none!important}
+#welcomeDialog.is-film .welcome-main{display:block;padding:0;margin:0;width:100%;height:100%;min-height:0;overflow:hidden;flex:1}
+#welcomeDialog.is-film .welcome-tour{display:block;height:100%;width:100%;margin:0;overflow:hidden}
+#welcomeDialog .welcome-tour[hidden]{display:none!important}
+#welcomeDialog .film{
+ position:relative;isolation:isolate;display:grid;
+ grid-template-rows:auto auto minmax(0,1fr) auto auto auto;
+ width:100%;height:100%;min-height:0;min-width:0;
+ padding:calc(env(safe-area-inset-top,0px) + 18px)
+  max(18px,calc(env(safe-area-inset-right,0px) + 17px))
+  calc(env(safe-area-inset-bottom,0px) + 11px)
+  max(18px,calc(env(safe-area-inset-left,0px) + 17px));
+ background:
+  radial-gradient(ellipse 45% 44% at 52% 45%,rgba(151,169,197,.055),transparent 81%),
+  radial-gradient(ellipse 55% 70% at 50% 75%,#14192155,transparent 84%),
+  #080a0f;
+}
+#welcomeDialog .film::before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(125deg,transparent 0%,#ffffff05 44%,transparent 69%);
+ opacity:.6;
+}
+#welcomeDialog .film-header{width:min(100%,1110px);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:37px}
+#welcomeDialog .film-brand{font-size:16px;letter-spacing:.19em;font-weight:560}
+#welcomeDialog .film-brand small{display:block;font-size:7.5px;letter-spacing:.18em;font-weight:450;color:#9aa9bb;margin-top:5px}
+#welcomeDialog .film-header-controls{display:flex;align-items:center;gap:8px}
+#welcomeDialog .film-header-controls button{min-height:39px;border:1px solid #3d45527a;background:#ffffff08;color:#cbd4df;border-radius:999px;padding:7px 13px;font:inherit;font-size:11px}
+#welcomeDialog .film-header-controls #filmVoice[aria-pressed=true]{border-color:#a5b4c8;background:#ffffff16;color:#f4f8ff}
+#welcomeDialog .film-intro{width:min(100%,900px);margin:0 auto;padding:clamp(13px,2.6vh,27px) 0 9px;text-align:center}
+#welcomeDialog .film-chapter{display:block;font-size:10px;font-weight:480;letter-spacing:.17em;color:#b1bac8;margin-bottom:11px}
+#welcomeDialog .film-intro h2{margin:0 auto;font-size:clamp(27px,5vw,57px);font-weight:350;letter-spacing:-.055em;line-height:1.14;max-width:900px;text-wrap:balance}
+#welcomeDialog .film-intro>p{margin:10px auto 0;max-width:690px;font-size:clamp(12px,1.4vw,15px);line-height:1.55;color:#a8b3c1}
+#welcomeDialog .film-screen{min-width:0;min-height:0;width:100%;position:relative;display:flex;align-items:stretch;justify-content:center;overflow:hidden}
+#welcomeDialog .film-scene[hidden]{display:none!important}
+#welcomeDialog .film-scene{width:100%;height:100%;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:5px 0 7px}
+#welcomeDialog .film-orb-stage{width:clamp(220px,34vmin,365px);height:clamp(220px,34vmin,365px);max-width:78%;position:relative;display:grid;place-items:center;isolation:isolate}
+#welcomeDialog .film-orb-stage>img{width:100%;height:100%;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 0 22px #e6f3ff20)}
+#welcomeDialog .film-orb-aura{position:absolute;inset:-22%;border-radius:50%;background:radial-gradient(circle,#d6e6fa23 0,transparent 65%);filter:blur(16px);z-index:-1}
+#welcomeDialog .film-orb-signal{position:absolute;z-index:2;padding:9px 14px;border:1px solid #d9eaff48;border-radius:999px;font-size:11px;white-space:nowrap;color:#e6eef8;background:#111921b8;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#welcomeDialog .film-orb-signal-one{left:-27%;top:30%}
+#welcomeDialog .film-orb-signal-two{right:-28%;bottom:26%}
+#welcomeDialog .film-stage-sub{display:flex;align-items:center;justify-content:center;gap:14px;color:#95a3b3;font-size:10px;letter-spacing:.12em;margin-top:20px;text-align:center}
+#welcomeDialog .film-dot{width:4px;height:4px;background:#a0b3ca;border-radius:50%}
+#welcomeDialog .film-mock-home,.film-picture-screen,.film-world-screen{
+ position:relative;width:min(100%,590px);margin:auto;padding:clamp(16px,3vw,24px);
+ border:1px solid #4d596a66;border-radius:clamp(24px,4vw,35px);
+ background:linear-gradient(153deg,#3339454a,transparent 61%),rgba(17,21,28,.88);
+ box-shadow:0 26px 85px #0006,inset 0 1px 0 #ffffff0e;
+}
+#welcomeDialog .film-mock-head,.film-picture-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#welcomeDialog .film-mock-head>span:first-child{font-size:15px;font-weight:620;letter-spacing:.13em}
+#welcomeDialog .film-mock-head small{font-size:9px;color:#98a8bb}
+#welcomeDialog .film-day,.film-picture-live{font-size:9px;letter-spacing:.12em;color:#9eacbd}
+#welcomeDialog .film-mini-assistant{display:flex;align-items:center;gap:13px;margin:12px 0}
+#welcomeDialog .film-mini-orb{width:66px;height:66px;flex:none}
+#welcomeDialog .film-mini-orb img,.film-world-orb img,.film-final-orb img{display:block;width:100%;height:100%;object-fit:contain}
+#welcomeDialog .film-mini-assistant strong{display:block;font-size:16px;font-weight:550;line-height:1.25}
+#welcomeDialog .film-mini-assistant small{display:block;margin-top:5px;color:#adb8c7;font-size:11px;line-height:1.4}
+#welcomeDialog .film-recommendation{padding:15px 16px;border-radius:22px;border:1px solid #6f7f9450;background:#e5eff90a;box-shadow:inset 0 1px 0 #ffffff08}
+#welcomeDialog .film-recommendation>span{display:block;font-size:9px;letter-spacing:.105em;color:#b0becf;margin-bottom:10px}
+#welcomeDialog .film-recommendation h3{font-weight:530;font-size:clamp(18px,4vw,23px);line-height:1.23;letter-spacing:-.026em;margin:0}
+#welcomeDialog .film-recommendation>p{font-size:12px;color:#b5c0cf;line-height:1.55;margin:9px 0 13px}
+#welcomeDialog .film-card-actions{display:flex;gap:8px}
+#welcomeDialog .film-card-actions button{min-width:0;flex:1;min-height:42px;border:1px solid #64708380;border-radius:999px;background:#ffffff08;padding:8px 9px;color:#f0f4fb;font:inherit;font-size:11px}
+#welcomeDialog .film-card-actions .film-primary{background:#edf2f9;color:#1b2430;border-color:#edf2f9}
+#welcomeDialog .film-card-actions button:disabled{opacity:.7}
+#welcomeDialog .film-card-detail,.film-card-done{border-top:1px solid #ffffff22;margin-top:13px;padding-top:12px;color:#d2dcea;font-size:11px;line-height:1.55}
+#welcomeDialog .film-card-detail[hidden],#welcomeDialog .film-card-done[hidden]{display:none!important}
+#welcomeDialog .film-mock-dock{display:flex;gap:7px;justify-content:space-around;align-items:center;margin:17px auto 0;max-width:410px;opacity:.75}
+#welcomeDialog .film-mock-dock>span{font-size:10px;color:#b3bed0}
+#welcomeDialog .film-dock-pearl{border:1px solid #a9b7c8;border-radius:50%;width:31px;height:31px;display:grid;place-items:center;color:#eef5ff!important;box-shadow:inset 0 0 10px #e5f4ff40;font-size:9px!important}
+#welcomeDialog .film-picture-head strong{display:block;font-size:20px;line-height:1.2;font-weight:520;margin-top:4px}
+#welcomeDialog .film-picture-head small{font-size:9px;letter-spacing:.11em;color:#a5b5c5}
+#welcomeDialog .film-periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:15px 0;padding:4px;border:1px solid #ffffff19;border-radius:999px}
+#welcomeDialog .film-periods button{border:0;min-height:35px;border-radius:999px;color:#a9b9c9;background:transparent;font:inherit;font-size:11px}
+#welcomeDialog .film-periods button[aria-pressed=true]{background:#edf3fa;color:#202b39}
+#welcomeDialog .film-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 16px;padding:2px 0 12px}
+#welcomeDialog .film-stats>div{min-width:0}
+#welcomeDialog .film-stats small{display:block;color:#a4b1c0;font-size:10px;margin-bottom:4px}
+#welcomeDialog .film-stats strong{display:block;font-size:clamp(15px,3.5vw,22px);font-weight:560;letter-spacing:-.04em;white-space:nowrap}
+#welcomeDialog .film-chart-heading{display:flex;justify-content:space-between;gap:12px;margin:3px 0 7px}
+#welcomeDialog .film-chart-heading span{font-size:11px;color:#d5dce7}
+#welcomeDialog .film-chart-heading small{font-size:10px;color:#9dabbc}
+#welcomeDialog .film-chart{height:130px;display:flex;align-items:stretch;gap:5px}
+#welcomeDialog .film-bar-col{display:flex;min-width:0;flex:1;flex-direction:column;gap:6px}
+#welcomeDialog .film-bar-track{height:107px;border-bottom:1px solid #59647566;display:flex;align-items:flex-end}
+#welcomeDialog .film-bar{display:block;width:100%;max-width:34px;margin:0 auto;height:var(--height,0%);border-radius:5px 5px 1px 1px;background:linear-gradient(180deg,#f5f9ff,#91a1b5 72%,#4a5a70)}
+#welcomeDialog .film-bar-col small{font-size:9px;color:#a4b0bf;white-space:nowrap;text-align:center}
+#welcomeDialog .film-insight{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:9px 0 0;border-top:1px solid #ffffff20}
+#welcomeDialog .film-insight span{font-size:17px;color:#d9e7f9}
+#welcomeDialog .film-insight p{margin:0;color:#bbc7d6;font-size:10.5px;line-height:1.5}
+#welcomeDialog .film-world-screen{width:min(100%,560px)}
+#welcomeDialog .film-world-header{display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:18px}
+#welcomeDialog .film-world-orb{width:88px;height:88px}
+#welcomeDialog .film-world-header span{font-size:9px;letter-spacing:.15em;color:#a7b6c8}
+#welcomeDialog .film-world-header strong{font-size:21px;line-height:1.23;letter-spacing:-.03em;font-weight:510;text-align:center}
+#welcomeDialog .film-world-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#welcomeDialog .film-world-options button{display:flex;align-items:center;gap:9px;min-width:0;min-height:50px;border:1px solid #52607270;border-radius:16px;padding:10px;text-align:left;background:#ffffff08;color:#e6edf7;font:inherit;font-size:12px}
+#welcomeDialog .film-world-options button>span{display:grid;place-items:center;width:25px;height:25px;flex:none;font-size:19px;font-weight:350;color:#e6effb}
+#welcomeDialog .film-world-options button:last-child{grid-column:1 / -1}
+#welcomeDialog .film-world-options button[aria-pressed=true]{border-color:#bacbe3;background:#eaf2ff18}
+#welcomeDialog .film-world-focus{border-top:1px solid #ffffff28;margin-top:14px;padding-top:14px;min-height:73px}
+#welcomeDialog .film-world-focus small{font-size:9px;letter-spacing:.11em;color:#bdcadd}
+#welcomeDialog .film-world-focus p{margin:7px 0 0;color:#d2ddea;font-size:12px;line-height:1.55}
+#welcomeDialog .film-final-inner{max-width:550px;text-align:center;margin:auto;display:flex;flex-direction:column;align-items:center}
+#welcomeDialog .film-final-orb{width:clamp(135px,24vmin,235px);height:clamp(135px,24vmin,235px);margin:0 auto 14px}
+#welcomeDialog .film-final-inner small{font-size:10px;letter-spacing:.13em;color:#b0bccb}
+#welcomeDialog .film-final-inner strong{display:block;margin:12px 0 0;font-size:clamp(27px,5.8vw,53px);line-height:1.12;font-weight:380;letter-spacing:-.045em}
+#welcomeDialog .film-final-inner p{font-size:clamp(13px,1.5vw,16px);color:#b4bece;line-height:1.6;margin:16px auto;max-width:480px}
+#welcomeDialog .film-final-inner>span{font-size:11px;color:#a9b6c7;line-height:1.4}
+#welcomeDialog .film-narration{width:min(100%,720px);margin:0 auto;border-top:1px solid #ffffff1c;padding:12px 0 10px;min-height:83px;text-align:center}
+#welcomeDialog .film-caption-label{font-size:9px;letter-spacing:.14em;color:#98a9bd}
+#welcomeDialog .film-narration p{margin:7px 0 0;font-size:12px;line-height:1.55;color:#d3dfed}
+#welcomeDialog .film-footer{width:min(100%,720px);margin:0 auto;display:flex;align-items:center;gap:11px;min-height:55px}
+#welcomeDialog .film-footer>button{flex:none;border:1px solid #6775895e;background:#ffffff0a;color:#e4ecf7;border-radius:999px;min-width:43px;min-height:43px;font:inherit;font-size:13px}
+#welcomeDialog .film-footer #filmBack{font-size:26px;font-weight:300}
+#welcomeDialog .film-footer #filmBack:disabled{opacity:.3}
+#welcomeDialog .film-footer #filmNext{min-width:126px;padding:9px 16px;border-color:#edf2fa;background:#edf2fa;color:#1b2532;font-size:12px}
+#welcomeDialog .film-footer #filmNext span{padding-left:5px}
+#welcomeDialog .film-footer #filmPause{font-size:16px}
+#welcomeDialog .film-progress{display:flex;justify-content:center;align-items:center;gap:6px;flex:1}
+#welcomeDialog .film-progress span{height:3px;flex:1;max-width:28px;border-radius:999px;background:#566173}
+#welcomeDialog .film-progress .is-current{background:#fff}
+#welcomeDialog .film-progress .is-done{background:#b0bfd3}
+#welcomeDialog .film-disclaimer{text-align:center;margin-top:3px;font-size:9px;letter-spacing:.055em;color:#8e9eb1;line-height:1.4}
+#welcomeDialog .film button:focus-visible{outline:2px solid #eff5ff;outline-offset:3px}
+
+/* A film-like scene change: light, depth and timed movement; not lasers or orbits. */
+@media(prefers-reduced-motion:no-preference){
+ #welcomeDialog .film-scene:not([hidden]){animation:film-arrive .85s cubic-bezier(.2,.7,.2,1) both}
+ #welcomeDialog .film-intro h2,#welcomeDialog .film-intro p{animation:film-heading .7s cubic-bezier(.2,.7,.2,1) both}
+ #welcomeDialog .film-orb-stage>img{animation:film-pearl-emerge 2.8s cubic-bezier(.22,.64,.17,1) both}
+ #welcomeDialog .film-orb-signal-one{animation:film-signal-in 2.2s 1s both}
+ #welcomeDialog .film-orb-signal-two{animation:film-signal-in 2.2s 1.55s both}
+ #welcomeDialog .film-recommendation{animation:film-reveal-card 1.15s .25s both}
+ #welcomeDialog .film-mini-assistant{animation:film-heading .9s .1s both}
+ #welcomeDialog .film-bar{transform-origin:bottom;animation:film-bars-grow 1.15s cubic-bezier(.21,.83,.22,1) both}
+ #welcomeDialog .film-bar-col:nth-child(2n) .film-bar{animation-delay:.08s}
+ #welcomeDialog .film-bar-col:nth-child(3n) .film-bar{animation-delay:.16s}
+ #welcomeDialog .film-world-options button{animation:film-heading .7s both}
+ #welcomeDialog .film-world-options button:nth-child(2){animation-delay:.12s}
+ #welcomeDialog .film-world-options button:nth-child(3){animation-delay:.24s}
+ #welcomeDialog .film-world-options button:nth-child(4){animation-delay:.36s}
+ #welcomeDialog .film-world-options button:nth-child(5){animation-delay:.48s}
+ #welcomeDialog .film-final-orb{animation:film-pearl-emerge 2s both}
+ @keyframes film-arrive{from{opacity:0;filter:blur(12px);transform:translateY(20px) scale(.978)}to{opacity:1;filter:blur(0);transform:none}}
+ @keyframes film-heading{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+ @keyframes film-pearl-emerge{0%{opacity:0;filter:blur(22px);transform:scale(.78)}55%{opacity:1;filter:blur(3px);transform:scale(1.045)}100%{filter:blur(0);transform:scale(1)}}
+ @keyframes film-signal-in{from{opacity:0;filter:blur(9px);transform:translateY(7px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+ @keyframes film-reveal-card{from{opacity:0;filter:blur(7px);transform:translateY(16px)}to{opacity:1;filter:blur(0);transform:none}}
+ @keyframes film-bars-grow{from{transform:scaleY(.02);opacity:.1}to{transform:scaleY(1);opacity:1}}
+}
+/* Keep orientation and notches predictable on compact iPhones, including iPhone X. */
+@media(max-width:410px){
+ #welcomeDialog .film{padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-right:max(12px,env(safe-area-inset-right,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
+ #welcomeDialog .film-intro{padding:11px 0 8px}
+ #welcomeDialog .film-intro h2{font-size:27px}
+ #welcomeDialog .film-intro>p{font-size:12px;margin-top:7px}
+ #welcomeDialog .film-recommendation{padding:12px}
+ #welcomeDialog .film-mini-assistant{margin:8px 0}
+ #welcomeDialog .film-mini-orb{width:55px;height:55px}
+ #welcomeDialog .film-mock-home,#welcomeDialog .film-picture-screen,#welcomeDialog .film-world-screen{padding:13px}
+ #welcomeDialog .film-world-orb{width:70px;height:70px}
+ #welcomeDialog .film-world-options button{min-height:45px;padding:7px}
+ #welcomeDialog .film-chart{height:106px}
+ #welcomeDialog .film-bar-track{height:84px}
+ #welcomeDialog .film-narration{min-height:68px;padding:8px 0}
+ #welcomeDialog .film-narration p{font-size:11px;line-height:1.45}
+ #welcomeDialog .film-footer{gap:7px}
+ #welcomeDialog .film-footer #filmNext{min-width:110px;padding:7px 10px}
+ #welcomeDialog .film-progress span{max-width:21px}
+ #welcomeDialog .film-disclaimer{font-size:8px}
+}
+@media(max-height:710px){
+ #welcomeDialog .film-intro{padding-top:6px;padding-bottom:4px}
+ #welcomeDialog .film-orb-stage{width:205px;height:205px}
+ #welcomeDialog .film-mini-orb{width:40px;height:40px}
+ #welcomeDialog .film-chart{height:87px}
+ #welcomeDialog .film-bar-track{height:66px}
+ #welcomeDialog .film-stats{gap:7px;padding-bottom:8px}
+ #welcomeDialog .film-world-orb{width:48px;height:48px}
+ #welcomeDialog .film-world-header{margin-bottom:9px}
+ #welcomeDialog .film-world-options button{min-height:38px}
+ #welcomeDialog .film-final-orb{width:125px;height:125px}
+ #welcomeDialog .film-narration{min-height:58px}
+}
+@media(prefers-reduced-motion:reduce){
+ #welcomeDialog .film *,#welcomeDialog .film *::before,#welcomeDialog .film *::after{animation:none!important;transition:none!important;filter:none!important}
+}
+/* Theme parity: film stays cinematic, with a clear white-velvet alternative. */
+:root[data-theme=light] #welcomeDialog.is-film,
+:root[data-theme=light] #welcomeDialog.is-film::backdrop{background:#f4f6fa;color:#203046}
+:root[data-theme=light] #welcomeDialog .film{background:radial-gradient(ellipse at 50% 45%,#dce5f070,transparent 77%),#f4f6fa;color:#203046}
+:root[data-theme=light] #welcomeDialog .film-intro>p,
+:root[data-theme=light] #welcomeDialog .film-narration p,
+:root[data-theme=light] #welcomeDialog .film-final-inner p{color:#506277}
+:root[data-theme=light] #welcomeDialog .film-mock-home,
+:root[data-theme=light] #welcomeDialog .film-picture-screen,
+:root[data-theme=light] #welcomeDialog .film-world-screen{background:#fff;border-color:#c9d4e1;box-shadow:0 20px 60px #33445512}
+:root[data-theme=light] #welcomeDialog .film-recommendation{background:#f5f8fb;border-color:#cdd9e6}
+:root[data-theme=light] #welcomeDialog .film-recommendation>p,
+:root[data-theme=light] #welcomeDialog .film-mini-assistant small,
+:root[data-theme=light] #welcomeDialog .film-world-focus p{color:#48596f}
+:root[data-theme=light] #welcomeDialog .film-world-options button,
+:root[data-theme=light] #welcomeDialog .film-card-actions button{background:#ecf1f6;border-color:#c9d5e4;color:#2a3c52}
+:root[data-theme=light] #welcomeDialog .film-card-actions .film-primary{background:#273a50;color:#fff}
+:root[data-theme=light] #welcomeDialog .film-header-controls button,
+:root[data-theme=light] #welcomeDialog .film-footer>button:not(#filmNext){background:#e6ecf3;border-color:#c9d4e0;color:#30435b}
+:root[data-theme=light] #welcomeDialog .film-footer #filmNext,
+:root[data-theme=light] #welcomeDialog .film-periods button[aria-pressed=true]{background:#2c4159;color:#fff}
+:root[data-theme=light] #welcomeDialog .film-chapter,
+:root[data-theme=light] #welcomeDialog .film-disclaimer,
+:root[data-theme=light] #welcomeDialog .film-caption-label{color:#66798e}
+:root[data-theme=light] #welcomeDialog .film-progress span{background:#a7b5c5}
+:root[data-theme=light] #welcomeDialog .film-progress .is-current{background:#243b54}
