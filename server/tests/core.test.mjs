@@ -105,3 +105,10 @@ test('Felix and Milissa distinguish the assistant name from the person',()=>{
  assert.match(safeInstruction('Феликс'),/не называй его Феликсом/);
  assert.match(safeInstruction('Милисса'),/Ты Милисса/);
 });
+
+test('Felix handles typos and preserves original text formatting',()=>{
+ const prompt=safeInstruction('Феликс');
+ assert.match(prompt,/опечатки/);
+ assert.match(prompt,/раскладке клавиатуры/);
+ assert.match(prompt,/переносы строк/);
+});
