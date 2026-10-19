@@ -13,6 +13,8 @@ const read=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
 let step=0,assistant='Феликс',focus='life',preview=false,previewTrigger=null,openingTimer=null;
+let tourIndex=-1,tourVisited=false;
+const tour=window.SEYVEO_WELCOME_TOUR;
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
 const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
 const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
@@ -97,17 +99,19 @@ function markOptions(){
 function assistantName(){return trim(other.value,40)||assistant}
 function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Мелисса'?'Мили':name}
 function render(){
- panels.forEach((panel,index)=>{panel.hidden=index!==step});
- progress.hidden=step===0||step===4;
+ panels.forEach((panel,index)=>{panel.hidden=tourIndex>=0||index!==step});
+ tour?.render(tourIndex);
+ progress.hidden=tourIndex>=0||step===0||step===4;
  progress.replaceChildren();
  if(!progress.hidden){
   for(let i=1;i<=3;i++){const dot=document.createElement('span');dot.className=i<=step?'is-current':'';progress.append(dot)}
  }
- back.hidden=step===0;
- next.textContent=step===0?(preview?'Начать демо':'Начать знакомство'):step===4?(preview?'Показать открытие':'Открыть SEYVEO'):'Продолжить';
- skip.textContent=preview?'Выйти из демо':step===4?'Вернуться позже':'Пропустить знакомство';
- if(overline)overline.textContent=preview?'ДЕМО · ПЕРВЫЙ ЗАПУСК':'AI AUTOMATION';
- if(disclaimer)disclaimer.textContent=preview?'Это только просмотр · настройки не сохраняются':'Без доступа к контактам, микрофону и другим данным';
+ back.hidden=step===0&&tourIndex<0;
+ next.textContent=tourIndex>=0?(tourIndex===(tour?.count||4)-1?'Давай знакомиться':'Дальше'):
+  step===0?'Посмотреть возможности':step===4?(preview?'Показать открытие':'Открыть SEYVEO'):'Продолжить';
+ skip.textContent=preview?'Выйти из демо':tourIndex>=0?'Пропустить показ':step===0?'Сразу к знакомству':step===4?'Вернуться позже':'Пропустить знакомство';
+ if(overline)overline.textContent=tourIndex>=0?'ПРИМЕР · НЕ ВАШИ ДАННЫЕ':preview?'ДЕМО · ПЕРВЫЙ ЗАПУСК':'AI AUTOMATION';
+ if(disclaimer)disclaimer.textContent=tourIndex>=0?'Учебный пример · ничего не сохраняется':preview?'Это только просмотр · настройки не сохраняются':'Без доступа к контактам, микрофону и другим данным';
  error.textContent='';
  markOptions();
  if(step===4){
@@ -118,10 +122,16 @@ function render(){
  }
 }
 function setStep(i){
+ tourIndex=-1;
  const nextStep=Math.max(0,Math.min(4,i));
  step=nextStep;render();
  if(step!==0)dialog.classList.remove('is-cinematic');
  else if(dialog.open)playSignature();
+}
+function setTour(index){
+ if(!tour)return setStep(1);
+ tourIndex=Math.max(0,Math.min(tour.count-1,index));tourVisited=true;step=0;
+ render();dialog.classList.remove('is-cinematic');
 }
 function playSignature(){
  // Replaying the intro uses its own isolated animation. Never touch Home plasma.
@@ -135,7 +145,8 @@ function close(){
  dialog.classList.remove('is-cinematic','is-opening');
  if(dialog.open)dialog.close();
  const fromDemo=preview,trigger=previewTrigger;
- preview=false;previewTrigger=null;
+ preview=false;previewTrigger=null;tourIndex=-1;tourVisited=false;
+ tour?.reset();tour?.render(-1);
  if(fromDemo&&trigger?.isConnected)try{trigger.focus({preventScroll:true})}catch{}
  window.dispatchEvent(new Event('seyveo:welcome-finished'));
 }
@@ -208,18 +219,33 @@ focusChoices.forEach(button=>button.addEventListener('click',()=>{
 }));
 next.addEventListener('click',()=>{
  if(openingTimer!==null)return;
+ if(tourIndex>=0){
+  if(tourIndex<(tour?.count||4)-1)setTour(tourIndex+1);
+  else setStep(1);
+  return;
+ }
+ if(step===0){setTour(0);return}
  if(step<4)setStep(step+1);else save();
 });
 function startPreview(){
  if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  preview=true;previewTrigger=demoEntry;
+ tourIndex=-1;tourVisited=false;tour?.reset();
  assistant='Феликс';focus='life';user.value='';other.value='';
  setStep(0);
  try{dialog.showModal();playSignature();prepareSignatureSound()}catch{preview=false;previewTrigger=null}
 }
 demoEntry?.addEventListener('click',startPreview);
-back.addEventListener('click',()=>{if(openingTimer!==null)return;if(step>0)setStep(step-1)});
-skip.addEventListener('click',dismiss);
+back.addEventListener('click',()=>{
+ if(openingTimer!==null)return;
+ if(tourIndex>=0){if(tourIndex===0)setStep(0);else setTour(tourIndex-1);return}
+ if(step===1&&tourVisited){setTour((tour?.count||4)-1);return}
+ if(step>0)setStep(step-1);
+});
+skip.addEventListener('click',()=>{
+ if(!preview&&(tourIndex>=0||step===0)){setStep(1);return}
+ dismiss();
+});
 dialog.addEventListener('cancel',event=>{
  event.preventDefault();
  if(openingTimer!==null)return;
@@ -232,6 +258,7 @@ window.addEventListener('pagehide',()=>{
 function tryOpen(){
  if(dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
+ tourIndex=-1;tourVisited=false;tour?.reset();
  setStep(0);
  try{dialog.showModal();playSignature();prepareSignatureSound()}catch{}
 }

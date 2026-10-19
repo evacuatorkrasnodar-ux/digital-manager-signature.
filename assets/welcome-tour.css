@@ -1,0 +1,52 @@
+/* SEYVEO First Look · quiet Black Velvet tour in existing welcome dialog. */
+#welcomeDialog .welcome-tour[hidden],#welcomeDialog .tour-scene[hidden]{display:none!important}
+#welcomeDialog .welcome-tour{width:100%;margin:auto 0}
+#welcomeDialog .tour-count{display:flex;justify-content:space-between;gap:10px;margin-bottom:16px;color:#a3afbe;font-size:9px;line-height:1.5;letter-spacing:.075em}
+#welcomeDialog .tour-count small{color:#8694a5;font-size:9px;text-align:right}
+#welcomeDialog .tour-scene .welcome-title{font-size:clamp(26px,7vw,36px);margin-bottom:11px}
+#welcomeDialog .tour-scene .welcome-description{font-size:12.5px;line-height:1.55}
+#welcomeDialog .tour-scene .welcome-kicker{margin-bottom:11px}
+#welcomeDialog .tour-card{padding:17px;margin-top:18px;border-radius:23px;border:1px solid #343b47;background:linear-gradient(156deg,#ffffff09,transparent 70%),#191c23}
+#welcomeDialog .tour-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:15px;color:#cad3df;font-size:11px}
+#welcomeDialog .tour-top small{font-size:9px;color:#9eabbb;letter-spacing:.09em}
+#welcomeDialog .tour-title{display:block;font-size:19px;font-weight:510;line-height:1.25;letter-spacing:-.024em}
+#welcomeDialog .tour-card>p:not(.tour-feedback):not(.tour-fine){font-size:12px;color:#bbc6d2;line-height:1.55;margin:11px 0 14px}
+#welcomeDialog .tour-actions{display:flex;gap:7px;flex-wrap:wrap}
+#welcomeDialog .tour-actions button{flex:1;min-width:116px;min-height:44px;border-radius:999px;padding:9px 10px;background:#262c35;color:#e8eef6;border:1px solid #424b58;font:inherit;font-size:11px;cursor:pointer}
+#welcomeDialog .tour-actions .tour-accent{background:#edf2f8;color:#1c2532;border-color:#edf2f8}
+#welcomeDialog .tour-actions button:disabled{opacity:.72}
+#welcomeDialog .tour-feedback{font-size:11px;line-height:1.55;color:#bdc7d3;margin:12px 0 0}
+#welcomeDialog .tour-feedback:empty{display:none}
+#welcomeDialog .tour-periods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:14px}
+#welcomeDialog .tour-periods button{min-height:39px;border-radius:999px;font:inherit;font-size:11px;border:1px solid #3c4653;color:#cbd5e1;background:#29303a;cursor:pointer}
+#welcomeDialog .tour-periods button[aria-pressed=true]{background:#e6edf7;border-color:#e6edf7;color:#1d2734}
+#welcomeDialog .tour-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:15px}
+#welcomeDialog .tour-figures>div{min-width:0}
+#welcomeDialog .tour-figures small{display:block;font-size:10px;color:#a9b6c5;margin-bottom:4px}
+#welcomeDialog .tour-figures strong{display:block;font-size:clamp(14px,4vw,18px);font-weight:520;letter-spacing:-.02em;white-space:nowrap}
+#welcomeDialog .tour-chart{height:111px;display:flex;align-items:stretch;gap:4px}
+#welcomeDialog .tour-column{display:flex;flex-direction:column;flex:1;min-width:0;gap:7px}
+#welcomeDialog .tour-track{height:87px;display:flex;align-items:flex-end;border-bottom:1px solid #4b5563}
+#welcomeDialog .tour-bar{display:block;width:100%;max-width:32px;margin:0 auto;min-height:0;background:linear-gradient(180deg,#f2f6fb,#75869a);border-radius:5px 5px 0 0}
+#welcomeDialog .tour-column small{color:#a5b1bf;font-size:8.5px;text-align:center;white-space:nowrap}
+#welcomeDialog .tour-fine{margin:13px 0 0;font-size:10.5px;line-height:1.55;color:#a4b0be}
+#welcomeDialog .tour-world{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#welcomeDialog .tour-world button{min-height:45px;border-radius:13px;border:1px solid #3b4553;background:#29313c;color:#eaf0f6;font:inherit;font-size:11.5px;cursor:pointer}
+#welcomeDialog .tour-world button:last-child{grid-column:1/-1}
+#welcomeDialog .tour-world button[aria-pressed=true]{background:#384454;border-color:#e0e8f3}
+#welcomeDialog .tour-world-text{margin:15px 0 0;border-top:1px solid #3d4654;padding-top:13px;font-size:12px;line-height:1.55;color:#c8d3df;min-height:56px}
+#welcomeDialog .tour-next{list-style:none;padding:0;margin:0}
+#welcomeDialog .tour-next li{display:flex;gap:13px;padding:12px 0;border-bottom:1px solid #38414c;color:#dce4ef;font-size:12px;line-height:1.55}
+#welcomeDialog .tour-next li:first-child{padding-top:0}
+#welcomeDialog .tour-next li:last-child{border-bottom:0}
+#welcomeDialog .tour-next li span{font-size:10px;letter-spacing:.1em;color:#97a7ba}
+#welcomeDialog .welcome-tour button:focus-visible{outline:2px solid #d7e4f4;outline-offset:2px}
+:root[data-theme=light] #welcomeDialog .tour-card{background:#fff;border-color:#d9e1ea}
+:root[data-theme=light] #welcomeDialog .tour-title,:root[data-theme=light] #welcomeDialog .tour-top,:root[data-theme=light] #welcomeDialog .tour-next li{color:#263549}
+:root[data-theme=light] #welcomeDialog .tour-count,:root[data-theme=light] #welcomeDialog .tour-count small,:root[data-theme=light] #welcomeDialog .tour-top small,:root[data-theme=light] #welcomeDialog .tour-fine,:root[data-theme=light] #welcomeDialog .tour-feedback,:root[data-theme=light] #welcomeDialog .tour-world-text,:root[data-theme=light] #welcomeDialog .tour-card>p:not(.tour-feedback):not(.tour-fine){color:#526274}
+:root[data-theme=light] #welcomeDialog .tour-actions button,:root[data-theme=light] #welcomeDialog .tour-periods button,:root[data-theme=light] #welcomeDialog .tour-world button{background:#edf1f5;color:#2b3b50;border-color:#d9e1ea}
+:root[data-theme=light] #welcomeDialog .tour-actions .tour-accent,:root[data-theme=light] #welcomeDialog .tour-periods button[aria-pressed=true]{background:#2c4158;border-color:#2c4158;color:#fff}
+:root[data-theme=light] #welcomeDialog .tour-world button[aria-pressed=true]{background:#dce5ef;border-color:#7f96b0}
+:root[data-theme=light] #welcomeDialog .tour-track,:root[data-theme=light] #welcomeDialog .tour-world-text,:root[data-theme=light] #welcomeDialog .tour-next li{border-color:#dbe3ec}
+@media(max-width:355px),(max-height:735px){#welcomeDialog .tour-count{margin-bottom:9px}#welcomeDialog .tour-card{margin-top:11px;padding:12px}#welcomeDialog .tour-top{margin-bottom:10px}#welcomeDialog .tour-chart{height:85px}#welcomeDialog .tour-track{height:63px}#welcomeDialog .tour-scene .welcome-title{font-size:24px}}
+@media(prefers-reduced-motion:reduce){#welcomeDialog .welcome-tour *{animation:none!important;transition:none!important}}
