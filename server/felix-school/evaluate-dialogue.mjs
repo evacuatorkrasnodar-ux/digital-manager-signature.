@@ -62,6 +62,7 @@ export async function evaluateDialogue({live=false,limit=3,fetchImpl=fetch,log=c
  if(!/^[A-Za-z0-9._:-]{1,64}$/u.test(model))throw Error('invalid-model');
  let passed=0;
  for(const item of selected){
+  const coaching=coachMessage(item.input);
   const result=await fetchImpl(MODEL_URL,{
    method:'POST',headers:{'content-type':'application/json'},
    signal:AbortSignal.timeout(130000),
@@ -69,7 +70,7 @@ export async function evaluateDialogue({live=false,limit=3,fetchImpl=fetch,log=c
     model,stream:false,keep_alive:'15m',
     messages:[
      {role:'system',content:safeInstruction('Феликс')},
-     ...(coachMessage(item.input)?[coachMessage(item.input)]:[]),
+     ...(coaching?[coaching]:[]),
      ...item.history,
      {role:'user',content:item.input}
     ],
