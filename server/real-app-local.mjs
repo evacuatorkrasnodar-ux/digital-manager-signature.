@@ -42,7 +42,7 @@ function safe(req){
 async function readQuestion(req,{withHistory=false}={}){
  let size=0;const chunks=[];
  for await(const chunk of req){
-  size+=chunk.length;if(size>8192)throw Error('large');
+  size+=chunk.length;if(size>(withHistory?20000:8192))throw Error('large');
   chunks.push(chunk);
  }
  const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
@@ -94,7 +94,7 @@ export function createRealLocalServer({memoryStore}={}){
    let data;
    try{
     let size=0;const chunks=[];
-    for await(const chunk of req){size+=chunk.length;if(size>(withHistory?20000:8192))throw Error('large');chunks.push(chunk)}
+    for await(const chunk of req){size+=chunk.length;if(size>8192)throw Error('large');chunks.push(chunk)}
     data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
     if(!data||typeof data!=='object'||Array.isArray(data))throw Error('invalid');
    }catch{send(res,400,{error:'Неверный запрос к памяти.'});return}
