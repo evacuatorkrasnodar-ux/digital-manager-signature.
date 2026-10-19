@@ -9,7 +9,7 @@ import {resolve} from 'node:path';
 import {safeInstruction} from '../hybrid-core.mjs';
 import {coachMessage} from './lesson-coach.mjs';
 
-export const FELIX_EXAM_SUITES=Object.freeze({baseline:'./eval-cases.json',batch2:'./exam-batch2.json',batch4:'./exam-batch4-business.json'});
+export const FELIX_EXAM_SUITES=Object.freeze({baseline:'./eval-cases.json',batch2:'./exam-batch2.json',batch4:'./exam-batch4-business.json',batch5:'./exam-batch5-judgment.json'});
 
 export function gradeAnswer(text,patterns){
  if(typeof text!=='string'||!Array.isArray(patterns)||!patterns.length)
@@ -17,6 +17,17 @@ export function gradeAnswer(text,patterns){
  return patterns.map(pattern=>({
   pattern,pass:new RegExp(pattern,'iu').test(text)
  }));
+}
+/** Weak lexical checks only: positive patterns AND optional forbidden claims.
+ * Do not treat matching words as a validated factual answer.
+ */
+export function judgeAnswer(text,item){
+ const positive=gradeAnswer(text,item.patterns);
+ const negative=(item.mustNot||[]).map(pattern=>({
+  pattern,pass:!new RegExp(pattern,'iu').test(text)
+ }));
+ return Object.freeze({pass:positive.every(v=>v.pass)&&negative.every(v=>v.pass),
+  positive,negative});
 }
 export function validateCases(data){
  if(data?.version!==1||!Array.isArray(data.cases)||data.cases.length<1||data.cases.length>60)
@@ -29,7 +40,9 @@ export function validateCases(data){
    throw Error('Invalid prompt in Felix school.');
   if(!Array.isArray(item.patterns)||item.patterns.length<1||item.patterns.length>6)
    throw Error('Invalid patterns.');
-  for(const pattern of item.patterns){
+  if(item.mustNot!==undefined&&(!Array.isArray(item.mustNot)||item.mustNot.length>6))
+   throw Error('Invalid forbidden patterns.');
+  for(const pattern of [...item.patterns,...(item.mustNot||[])]){
    if(typeof pattern!=='string'||pattern.length>130)throw Error('Invalid pattern.');
    new RegExp(pattern,'iu');
   }
@@ -67,10 +80,11 @@ export async function evaluateLocalFelix({live=false,limit=3,suite='baseline',fe
   if(!reply.ok)throw Error('Ollama unavailable: HTTP '+reply.status);
   const result=await reply.json();
   const text=typeof result.message?.content==='string'?result.message.content:'';
-  const signals=gradeAnswer(text,item.patterns);
-  const ok=signals.every(s=>s.pass);
-  if(ok)passed++;
-  log((ok?'PASS':'REVIEW')+' · '+item.id+' · '+signals.filter(s=>!s.pass).map(s=>s.pattern).join(', '));
+  const judgment=judgeAnswer(text,item);
+  if(judgment.pass)passed++;
+  const missed=[...judgment.positive.filter(v=>!v.pass).map(v=>v.pattern),
+   ...judgment.negative.filter(v=>!v.pass).map(v=>'forbidden: '+v.pattern)];
+  log((judgment.pass?'PASS':'REVIEW')+' · '+item.id+' · '+missed.join(', '));
  }
  log('Felix School '+suite+' diagnostics: '+passed+'/'+selected.length+' checks matched. Human review is required.');
  return {status:'evaluated',passed,total:selected.length};
