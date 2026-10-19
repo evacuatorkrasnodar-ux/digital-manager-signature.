@@ -499,7 +499,19 @@ function start(options={}){
  if(preview)data=fresh(inferred);
  const initial=!stored&&focus!=='start'&&!['pro','max'].includes(focus);
  try{dialog.showModal()}catch{return false}
- markStep(options.fromStart||(!stored&&['start','pro','max'].includes(focus))?'about':initial?'choose':stored?'map':'choose');
+ // A business link supplied in conversation is only a DRAFT.
+ // The owner must still press "Добавить сведения" before local storage writes.
+ const draft=options.sourcePrefill;
+ const valid=typeof draft?.url==='string'&&typeof draft?.type==='string'&&
+  byType(draft.type)&&STOREFRONT_TYPES.has(draft.type)&&publicPageUrl(draft.url)===draft.url&&
+  draft.url.length<=180;
+ if(valid){
+  sourceType=draft.type;
+  markStep('source');
+  field.value=draft.url;
+ }else{
+  markStep(options.fromStart||(!stored&&['start','pro','max'].includes(focus))?'about':initial?'choose':stored?'map':'choose');
+ }
  return true;
 }
 function finish(){
