@@ -1,5 +1,13 @@
 # SEYVEO Intelligence · Hybrid Core
 
+## Частное подключение настоящего Феликса к iPhone (подготовлено)
+
+Подготовлен закрытый HTTPS-маршрут через Tailscale Serve, **не** через Funnel: iPhone → HTTPS tailnet → loopback-шлюз на 127.0.0.1:8791 → существующая настоящая Главная SEYVEO с Ollama на 127.0.0.1:8790. Это не новая тестовая страница, а исходный index.html приложения, но **на отдельном частном адресе**, а не публичном GitHub Pages. Физическое соединение с iPhone ещё не проверено.
+
+Новые файлы: server/iphone-private-gateway.mjs, server/start-felix-iphone-private.cmd, server/tests/iphone-private-gateway.test.mjs и инструкция docs/SEYVEO-IPHONE-PRIVATE.md. Шлюз требует точный домен *.ts.net и логин владельца из Tailscale Serve, проверяет адрес/источник/маршруты, не хранит секреты в браузере и не позволяет открывать папку server. Node слушает только loopback. Для теста: node --test server/tests/iphone-private-gateway.test.mjs.
+
+**Не включать Funnel, не пробрасывать порты на роутере, не выдавать этот этап за публичный production-сервис.** Подробная инструкция: [SEYVEO-IPHONE-PRIVATE.md](../docs/SEYVEO-IPHONE-PRIVATE.md).
+
 Подготовлено **собственное серверное ядро** SEYVEO. Владелец установил `qwen3:4b-instruct` в Ollama на Windows и получил настоящий локальный ответ; **подключение нового кода на его ПК ещё не проверено**. Облачный GPT-6 по-прежнему не подключён.
 
 - `hybrid-core.mjs`: локальный / облачный маршрут и защита.
