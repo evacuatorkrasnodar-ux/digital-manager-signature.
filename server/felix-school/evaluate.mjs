@@ -4,6 +4,8 @@
  * The regex checks are crude diagnostic signals, not quality guarantees.
  */
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {resolve} from 'node:path';
 import {safeInstruction} from '../hybrid-core.mjs';
 
 export function gradeAnswer(text,patterns){
@@ -66,7 +68,7 @@ export async function evaluateLocalFelix({live=false,limit=3,fetchImpl=fetch,log
  log('Felix School diagnostics: '+passed+'/'+selected.length+' checks matched. Human review is required.');
  return {status:'evaluated',passed,total:selected.length};
 }
-if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1].replaceAll('\\','/')).href){
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const args=process.argv.slice(2);
  const live=args.includes('--live');
  const limitFlag=args.find(a=>/^--limit=\d+$/.test(a));
