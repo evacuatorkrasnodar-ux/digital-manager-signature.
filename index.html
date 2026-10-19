@@ -1562,6 +1562,7 @@ const stories=[
 {type:'legal',kicker:'Правовой обзор · демо',title:'Роман, есть правовая тема для проверки',subtitle:'Подготовил учебный обзор требований для бизнеса. Реальные новости законов пока не подключены.',card:'Проверка требований',meta:'SEYVEO · учебный правовой сценарий',tag:'Сначала источник и дата вступления в силу',approve:'Согласовать проверку',approved:'Правовая проверка согласована',detail:'Это демонстрация будущего мониторинга законодательства SEYVEO, а не утверждение о принятом законе.\n\nВ реальном режиме управляющий должен найти официальную публикацию, установить дату вступления в силу, проверить применимость к вашей деятельности и подготовить конкретные действия.\n\nПока источник не подключён, юридическая проверка и действия не выполняются.'}
 ];
 const state={theme:'dark',index:0,history:[]};
+let demoReplayInProgress=false; // Optional demo only; owner-based guidance comes first.
 const systemThemeQuery=window.matchMedia('(prefers-color-scheme: dark)');
 const effectiveTheme=()=>state.theme==='auto'?(systemThemeQuery.matches?'dark':'light'):state.theme;
 function applyTheme(){
@@ -1933,13 +1934,42 @@ function localTaskBrief(){
     return {count:open.length,dueToday:due.filter(t=>t.due===today).length,overdue:due.filter(t=>t.due<today).length,first:due[0]?.title||''};
   }catch{return {count:0,dueToday:0,overdue:0,first:''}}
 }
+/* A single helpful suggestion, from local owner-supplied data only.
+   No online intelligence, third-party access or automatic execution. */
+function homeBusinessAdvice(){
+ if(confirmation||demoReplayInProgress)return null;
+ const api=window.SEYVEO_BUSINESS_MAP;
+ if(!api?.getState?.())return null;
+ const next=api.getAdvice?.()?.[0];
+ if(!next||!['about','goal','industry','workflow','source','connect'].includes(next.kind))return null;
+ return next;
+}
+function openHomeAdvice(advice){
+ if(!advice)return;
+ let opened=false;
+ if(advice.kind==='connect'){
+  // Global dialog opens over Home; no need to visit Management.
+  window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:advice.type||''}}));
+  opened=$('manageConnectionsDialog')?.open===true;
+ }else{
+  opened=window.SEYVEO_BUSINESS_MAP?.open?.({
+   guideStep:advice.kind,guideType:advice.type||'',
+   trigger:$('resolve')
+  })===true;
+ }
+ if(opened)playFeedback('select');
+}
 function syncHomeVoice(){
-  const story=stories[state.index],name=ownerDisplayName(),brief=localTaskBrief();
+  const story=stories[state.index],name=ownerDisplayName(),brief=localTaskBrief(),advice=homeBusinessAdvice();
   let kicker,headline,subline;
   if(confirmation){
     kicker='Согласовано';
     headline=confirmation.approved;
     subline='Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.';
+  }else if(advice){
+    kicker='Рекомендация · для вашего бизнеса';
+    headline=name+', есть один полезный шаг';
+    subline='Предложение по вашей Карте бизнеса, а не по данным подключённых сервисов.';
   }else if(story){
     kicker=story.kicker;
     headline=story.title;
@@ -2025,29 +2055,46 @@ window.addEventListener('storage',event=>{
 function render(){
 progressDemoTasks();
 applyTheme();
-const story=stories[state.index],isCalm=!story&&!confirmation,mode=confirmation?'action':isCalm?'calm':'attention';
+const advice=homeBusinessAdvice(),story=stories[state.index],visibleStory=advice?null:story;
+const isCalm=!visibleStory&&!advice&&!confirmation;
+const mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
-transientNotice(confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',confirmation?'check':story?story.type:null);
+transientNotice(advice?'none':confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',
+ advice?null:confirmation?'check':story?story.type:null);
 syncHomeVoice();
 $('dynamic').hidden=isCalm;
-$('demoReplayAction').hidden=!isCalm;
-$('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
-$('inspect')?.addEventListener('click',()=>popup(story.card,story.detail));
-$('resolve')?.addEventListener('click',()=>approve(story));
-$('replayDemo')?.addEventListener('click',()=>{state.index=0;confirmation=null;save();render()});
+$('demoReplayAction').hidden=!(isCalm||advice);
+if(advice){
+ $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon('budget')+'</span><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>Рекомендация · по вашей Карте бизнеса</small></div></div><div class="card-tag">'+escapeHtml(advice.why)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+(advice.kind==='connect'?'Как подключить':'Начать')+'</button></div></article>';
+}else{
+ $('dynamic').innerHTML=confirmation?'<div class="approval-note">Поручение передано в работу · демо</div>':
+  isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
+}
+$('inspect')?.addEventListener('click',()=>advice?
+ popup(advice.title,advice.why+'\\n\\nЭто рекомендация на основе сохранённой вами Карты бизнеса. Доступа к внешним сервисам и самостоятельного исполнения пока нет.'):
+ popup(story.card,story.detail));
+$('resolve')?.addEventListener('click',()=>advice?openHomeAdvice(advice):approve(story));
+$('replayDemo')?.addEventListener('click',()=>{
+ demoReplayInProgress=true;
+ state.index=0;confirmation=null;save();render();
+});
 const items=activeTasks();
 $('activityList').innerHTML=items.map(taskRow).join('');
 $('workTimeline').hidden=items.length===0;
 if(!$('tasksPage').hidden)renderTasksPage();
-
 scheduleTaskProgress();
 }
+window.addEventListener('seyveo:business-map-changed',render);
+// The local Business Map module loads after the main script.
+window.addEventListener('load',render,{once:true});
 function approve(story){
 if(confirmation)return;
 playFeedback('confirm');
 state.history.push({id:'task-'+Date.now()+'-'+Math.random().toString(36).slice(2),label:story.approved,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),status:'working',startedAt:Date.now(),doneAt:0});
 state.history=state.history.slice(-100);
-state.index=Math.min(stories.length,state.index+1);confirmation=story;save();render();
+state.index=Math.min(stories.length,state.index+1);
+if(state.index>=stories.length)demoReplayInProgress=false;
+confirmation=story;save();render();
 clearTimeout(confirmationTimer);confirmationTimer=setTimeout(()=>{confirmation=null;render()},1700);
 }
 document.querySelectorAll('[data-theme-choice]').forEach(button=>{
@@ -2170,7 +2217,7 @@ window.addEventListener('hashchange',onManageRouteChange);
 
 $('showHistory').addEventListener('click',()=>{if(location.hash!=='#tasks')location.hash='tasks';});
 $('scenarioInfo').addEventListener('click',()=>popup('Как работает этот сценарий','Это главная Романа — самозанятого, работающего под брендом SEYVEO.\n\nПока почта, календарь и другие бизнес-сервисы не подключены: письма, встречи, расходы и действия ниже — примеры будущей работы управляющего. Ничего не отправляется, не оплачивается и не меняется в реальных сервисах.\n\nВы можете пройти сценарий заново.',true));
-$('scenarioRestart').addEventListener('click',()=>{clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
+$('scenarioRestart').addEventListener('click',()=>{demoReplayInProgress=true;clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 // The sphere is a living signature, not a second copy of the recommendation.
  // Each tap restarts the approved Pearl Mist + Black Velvet Deep Reveal.
  // The status text below the sphere stays visible; details remain in «Подробнее».

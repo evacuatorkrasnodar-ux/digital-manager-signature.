@@ -525,6 +525,12 @@ function start(options={}){
   field.value=draft.url;
  }else if(aboutValid){
   markStep('about');field.value=aboutDraft;
+ }else if(!preview&&options.guideStep==='source'&&byType(options.guideType)){
+  sourceType=options.guideType;markStep('source');
+ }else if(!preview&&['about','goal','industry','workflow'].includes(options.guideStep)){
+  const step=options.guideStep==='industry'?'sector':options.guideStep;
+  if(step==='sector')sectorReturn='map';
+  markStep(step);
  }else{
   markStep(options.fromStart||(!stored&&['start','pro','max'].includes(focus))?'about':initial?'choose':stored?'map':'choose');
  }
