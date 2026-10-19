@@ -54,6 +54,14 @@ test('owner alone can load the real app and stream local answer, never private f
   if(req.url==='/'){
    res.writeHead(200,{'content-type':'text/html','content-security-policy':"default-src 'none'; connect-src 'self'"});
    res.end('<main id="homePage"><button id="orb">SEYVEO</button></main>');
+  }else if(req.url==='/api/seyveo-intelligence-catalog'){
+   res.writeHead(200,{'content-type':'application/json'});
+   res.end(JSON.stringify({mode:'architecture-preview',capabilities:[{id:'business'}]}));
+  }else if(req.url==='/api/seyveo-intelligence-preview'){
+   let json='';for await(const chunk of req)json+=chunk.toString();
+   assert.equal(JSON.parse(json).message,'Создай встречу завтра');
+   res.writeHead(200,{'content-type':'application/json'});
+   res.end(JSON.stringify({status:'preview-only',safety:{executed:false}}));
   }else if(req.url==='/api/seyveo-agent-review'){
    let json='';for await(const chunk of req)json+=chunk.toString();
    assert.equal(JSON.parse(json).file,'server/agent/planner.mjs');
@@ -99,6 +107,18 @@ test('owner alone can load the real app and stream local answer, never private f
    ...headers(),origin,'content-type':'text/plain'
   },body:'bad'});
   assert.equal(wrongType.status,415);
+  const cat=await get(port,'/api/seyveo-intelligence-catalog',{headers:headers()});
+  assert.equal(cat.status,200);
+  assert.equal(JSON.parse(cat.body).mode,'architecture-preview');
+  const prev=await get(port,'/api/seyveo-intelligence-preview',{method:'POST',headers:{
+   ...headers(),origin,'content-type':'application/json'
+  },body:JSON.stringify({message:'Создай встречу завтра'})});
+  assert.equal(prev.status,200);
+  assert.equal(JSON.parse(prev.body).safety.executed,false);
+  const outsider=await get(port,'/api/seyveo-intelligence-preview',{method:'POST',headers:{
+   ...headers(),origin,'tailscale-user-login':'outsider@example.com','content-type':'application/json'
+  },body:JSON.stringify({message:'Создай встречу завтра'})});
+  assert.equal(outsider.status,403);
   const inspected=await get(port,'/api/seyveo-agent-review',{method:'POST',headers:{
    ...headers(),origin,'content-type':'application/json'
   },body:JSON.stringify({file:'server/agent/planner.mjs'})});
