@@ -1,0 +1,81 @@
+/* SEYVEO · Adaptive Workspace v1.
+ * The Home composition (sphere, brand, reply, dock) is deliberately untouched.
+ * Broader canvas applies only while a work section is visibly open.
+ * No JavaScript, browser-specific APIs, storage or app permissions.
+ */
+
+/* Tablet: let real work breathe while keeping one legible column.
+   The installed iPhone PWA keeps its exact original geometry. */
+@media (min-width:700px){
+ .app:has(> :is(#managePage,#tasksPage,#picturePage,#calendarPage,#lifePage):not([hidden])){
+  max-width:min(100%,850px);
+  padding-left:clamp(26px,5vw,54px);
+  padding-right:clamp(26px,5vw,54px);
+ }
+ #picturePage .picture-head,
+ #managePage .manage-heading,
+ #tasksPage .tasks-heading{max-width:760px}
+ #picturePage .picture-tabs{max-width:640px}
+ #picturePage .picture-metric .home-widget-value{
+  font-size:clamp(23px,2.6vw,29px);
+ }
+ #picturePage .picture-metric--money .home-widget-value{
+  font-size:clamp(15px,1.8vw,21px);
+ }
+}
+
+/* Wide desktop / large Windows tablets.
+   Home remains the approved narrow cinematic composition. */
+@media (min-width:1024px){
+ .app:has(> :is(#managePage,#picturePage):not([hidden])){
+  max-width:1130px;
+  padding-left:clamp(42px,5vw,70px);
+  padding-right:clamp(42px,5vw,70px);
+ }
+ .app:has(> #tasksPage:not([hidden])){max-width:940px}
+
+ /* The existing groups are kept intact; no duplicated settings. */
+ #manageOverview{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:24px;
+  align-items:start;
+ }
+ #manageOverview > :is(.manage-heading,#manageLiveSummary,.manage-footnote){
+  grid-column:1 / -1;
+ }
+ #manageOverview > .manage-group:first-of-type{grid-column:1 / -1}
+ #manageOverview > .manage-group{min-width:0}
+ #manageOverview > .manage-group .manage-card{min-width:0}
+ #manageOverview .manage-text small{overflow-wrap:anywhere}
+ #manageThemeScreen{max-width:650px;margin-inline:auto}
+
+ /* A proper analytics workspace: primary chart above two comparisons. */
+ #picturePage #pictureBusinessCharts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:22px;
+  row-gap:0;
+  align-items:start;
+ }
+ #picturePage #pictureBusinessCharts > .picture-section:first-child,
+ #picturePage #pictureBusinessCharts > .picture-full-report{grid-column:1 / -1}
+ #picturePage #pictureBusinessCharts > .picture-section{min-width:0}
+ #picturePage .picture-chart-box{padding:23px 25px}
+ #picturePage .picture-breakdown{padding-left:19px;padding-right:19px}
+ #picturePage .picture-bars{gap:10px}
+}
+
+/* Keyboard/mouse is optional: tablet touch targets remain roomy. */
+@media(hover:hover) and (pointer:fine) and (min-width:700px){
+ #picturePage .picture-tabs button:hover,
+ #picturePage .picture-full-report:hover,
+ #managePage .manage-row:hover{background:var(--card2)}
+}
+
+/* Landscape tablets should not force desktop columns at awkward heights. */
+@media (max-height:560px) and (orientation:landscape){
+ .app:has(> :is(#managePage,#tasksPage,#picturePage,#calendarPage,#lifePage):not([hidden])){
+  padding-top:calc(12px + env(safe-area-inset-top,0px));
+ }
+}
