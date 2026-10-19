@@ -6,6 +6,7 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/tests/business-math.test.mjs'
       - 'server/felix-school/**'
       - 'server/hybrid-core.mjs'
       - 'server/tests/felix-persona.test.mjs'
@@ -30,6 +31,7 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/tests/business-math.test.mjs'
       - 'server/felix-school/**'
       - 'server/hybrid-core.mjs'
       - 'server/tests/felix-persona.test.mjs'
@@ -73,6 +75,10 @@ jobs:
         run: node server/felix-school/evaluate.mjs --suite=batch4 --limit=12
       - name: Felix batch 3 multi-turn offline exam readiness
         run: node server/felix-school/evaluate-dialogue.mjs --limit=12
+      - name: Felix deterministic business calculator unit tests
+        run: node --test server/tests/business-math.test.mjs
+      - name: Felix offline business calculator demonstration
+        run: node server/intelligence/business-math-demo.mjs
       - name: Agent planning and read-only code review tests
         run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs server/tests/research-school.test.mjs
       - name: Real application and private iPhone agent route checks
