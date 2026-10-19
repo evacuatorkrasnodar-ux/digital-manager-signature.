@@ -164,8 +164,13 @@ function beginOpening(){
   next.disabled=false;back.disabled=false;skip.disabled=false;
   // Only the real first launch gives the EXISTING Home plasma one gentle response.
   // Management preview never changes profile, navigates away or touches the sphere.
-  if(!isPreview&&!document.hidden&&!$('homePage')?.hidden){
-   document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'ack'}}));
+  if(!isPreview){
+   if(!document.hidden&&!$('homePage')?.hidden){
+    document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'ack'}}));
+   }
+   // Only after a successfully completed REAL first acquaintance.
+   // Demos, skipped onboarding, and existing installations are not interrupted.
+   window.dispatchEvent(new CustomEvent('seyveo:first-minute-ready',{detail:{source:'first-launch'}}));
   }
  };
  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
