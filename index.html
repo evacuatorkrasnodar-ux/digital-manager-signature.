@@ -1911,7 +1911,7 @@ function showWrittenReply(userText,assistantText){
   turns.push({question:userText,answer:assistantText});
   if(turns.length>8)turns.splice(0,turns.length-8);
   const panel=$('orbInlineReplyText');
-  panel.textContent=turns.map(t=>'Вы:\\n'+t.question+'\\n\\nSEYVEO:\\n'+t.answer).join('\\n\\n──────────\\n\\n');
+  panel.textContent=turns.map(t=>'Вы:\n'+t.question+'\n\nSEYVEO:\n'+t.answer).join('\n\n──────────\n\n');
   $('orbInlineReply').hidden=false;
   panel.scrollTop=panel.scrollHeight;
   $('stage').classList.add('has-inline-reply');
