@@ -343,7 +343,39 @@ function saveFile(){
 }
 $('openManageRoadmap').addEventListener('click',()=>{drawRoadmap();roadmapDialog.showModal()});
 $('manageRoadmapClose').addEventListener('click',()=>roadmapDialog.close());
-$('openManageConnections').addEventListener('click',()=>connect.showModal());
+
+// An informational handoff only; no OAuth initiation, no app passwords.
+const connectionEducation=Object.freeze({
+ site:['Сайт компании','Для статистики посещений понадобится отдельно поддерживаемый доступ к аналитике сайта. Простой адрес сайта не раскрывает эти данные.'],
+ yandex:['Яндекс Бизнес','Для отзывов и статистики потребуется проверенный способ авторизации и ваше согласие. Сейчас SEYVEO не получает данные карточки.'],
+ gis:['2ГИС','Для автоматических данных потребуется поддерживаемое официальное подключение. Указание карточки само по себе ничего не разрешает.'],
+ avito:['Авито','Для заявок и сообщений понадобится отдельное официальное разрешение. SEYVEO сейчас не читает Авито.'],
+ vk:['ВКонтакте','Доступ к сообществу и сообщениям должен предоставляться отдельно и только на выбранные права. Личная переписка автоматически не читается.'],
+ telegram:['Telegram','Доступ к каналу или боту потребует явного согласия. Не передавайте коды входа или ключи ботов в поле описания.'],
+ crm:['CRM','Для анализа воронки потребуется разрешение на конкретные данные заявок и этапы сделок. Пока доступ к CRM отсутствует.'],
+ marketplace:['Маркетплейсы','Доступ к заказам и остаткам будет возможен только после проверки официальной интеграции с конкретной площадкой.'],
+ mail:['Почта','Для анализа рабочих обращений понадобится разрешение на доступ к нужному почтовому ящику. Пароль от почты вводить в SEYVEO нельзя.'],
+ ads:['Реклама','Статистика расходов и обращений появится лишь при подключении поддерживаемого рекламного кабинета с ограниченными правами.'],
+ accounting:['Бухгалтерия / 1С','Документы и финансовые отчёты относятся к чувствительным данным: понадобится отдельное подтверждение и настройка доступа.'],
+ bank:['Банк','Банковские операции и счета не читаются. В будущем — только официальное разрешение и минимально необходимые права, без пароля или кодов.'],
+ other:['Другой сервис','Перед подключением нужно проверить официальный способ авторизации, запрашиваемые права и возможность отключить доступ.']
+});
+function explainConnection(type){
+ const guide=$('manageConnectionAdvice');
+ const chosen=connectionEducation[type];
+ guide.hidden=!chosen;
+ if(!chosen)return;
+ $('manageConnectionAdviceTitle').textContent=chosen[0]+' · доступ не подключён';
+ $('manageConnectionAdviceText').textContent=chosen[1]+
+ ' Следующий шаг — проверить официальную интеграцию. Сейчас доступен только просмотр схемы подключения.';
+}
+window.addEventListener('seyveo:connection-help',event=>{
+ const type=typeof event.detail?.type==='string'?event.detail.type:'';
+ explainConnection(type);
+ if(!connect.open)try{connect.showModal()}catch{}
+});
+
+$('openManageConnections').addEventListener('click',()=>{explainConnection('');connect.showModal()});
 $('manageConnectionsClose').addEventListener('click',()=>connect.close());
 $('openManageData').addEventListener('click',()=>{drawData();dataDialog.showModal()});
 $('manageDataClose').addEventListener('click',()=>dataDialog.close());
