@@ -26,7 +26,7 @@ const byType=id=>TYPES.find(item=>item.id===id);
 const safeRead=key=>{try{return localStorage.getItem(key)}catch{return null}};
 const store=(key,value)=>{try{localStorage.setItem(key,value);return true}catch{return false}};
 const norm=(text,max)=>String(text||'').replace(/\s+/g,' ').trim().slice(0,max);
-const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',resources:[],updatedAt:''});
+const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',resources:[],dismissed:[],updatedAt:''});
 function load(){
  try{
   const saved=JSON.parse(safeRead(STORE)||'null');
@@ -35,14 +35,14 @@ function load(){
    x&&byType(x.type)&&typeof x.value==='string'&&x.value.length<=200
   ).slice(0,20).map(x=>({type:x.type,value:norm(x.value,180)})).filter(x=>x.value):[];
   return {version:1,mode:saved.mode,description:norm(saved.description,1000),
-   goal:norm(saved.goal,320),resources,updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:''};
+   goal:norm(saved.goal,320),resources,dismissed:Array.isArray(saved.dismissed)?[...new Set(saved.dismissed.filter(x=>typeof x==='string'&&byType(x)))].slice(0,TYPES.length):[],updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:''};
  }catch{return null}
 }
 function ownerFocus(){
  try{const x=JSON.parse(safeRead(PROFILE)||'null');return x?.focus}catch{return null}
 }
 function clone(x){return {version:1,mode:x.mode,description:x.description,goal:x.goal,
- resources:x.resources.map(row=>({...row})),updatedAt:x.updatedAt}}
+ resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],updatedAt:x.updatedAt}}
 let data=fresh('existing'),preview=false,firstLaunch=false,view='choose',sourceType='',origin=null;
 const title=$('businessMapTitle'),sub=$('businessMapLead'),status=$('businessMapStatus');
 const field=$('businessMapInput'),form=$('businessMapForm'),inputLabel=$('businessMapInputLabel'),inputHelp=$('businessMapInputHelp');
@@ -129,23 +129,118 @@ function drawCategories(){
   ?'Указано ресурсов: '+data.resources.length+' · доступ к ним ещё не подключён.'
   :'Пока не указан ни один источник. Начните с самого полезного.';
 }
-function nextMissing(){
- if(!data.description)return 'Расскажите, чем занимается компания и кто ваши клиенты.';
- if(!data.goal)return 'Уточните главную цель — это поможет расставлять приоритеты.';
- const unique=new Set(data.resources.map(x=>x.type));
- for(const id of ['site','yandex','avito','crm','accounting']){
-  if(!unique.has(id)){
-   const titles={site:'сайт компании',yandex:'Яндекс Бизнес',avito:'Авито',crm:'CRM с заявками',accounting:'бухгалтерскую систему'};
-   return 'Следующий возможный источник: '+titles[id]+'. Укажите его, только если используете.';
-  }
+/* Transparent, deterministic needs engine. These are questions, not inferred facts.
+   The user's current goal influences ORDER only; it never proves a missing
+   resource is required. Explicit declines are respected until reset. */
+const WHY=Object.freeze({
+ site:'Адрес сайта поможет сопоставить описание услуг и онлайн-представительство. Для чтения статистики понадобится отдельное разрешённое подключение.',
+ yandex:'Карточка на картах поможет учитывать локальную видимость и обращения. Отзывы и показатели пока не читаются.',
+ gis:'Поможет учитывать присутствие компании на картах и контактные данные. Сейчас SEYVEO не читает этот сервис.',
+ avito:'Поможет понять, используется ли Авито для привлечения обращений. Сообщения и статистика не читаются.',
+ vk:'Поможет учесть сообщество как канал общения с клиентами. Переписки без подключения недоступны.',
+ telegram:'Поможет учесть канал или рабочие обращения. Личная переписка не будет запрашиваться автоматически.',
+ crm:'Путь заявки и этапы продажи помогут находить потерянные обращения. Для чтения CRM в будущем потребуется отдельное разрешение.',
+ marketplace:'Поможет учитывать продажи через маркетплейсы. Заказы и остатки сейчас не загружаются.',
+ mail:'Поможет учитывать почту как источник обращений. Содержимое писем нельзя читать без отдельного согласия.',
+ ads:'Поможет понимать, из каких рекламных каналов приходят клиенты. Расходы и результаты пока не загружаются.',
+ accounting:'Поможет в будущем сопоставлять доходы и расходы, если владелец предоставит доступ. Сейчас финансовые документы не читаются.',
+ bank:'Поможет в будущем сверять денежные потоки с заказами. Ни реквизиты, ни операции сейчас не запрашиваются.',
+ other:'Поможет не потерять важный рабочий инструмент. Возможности подключения нужно проверять отдельно.'
+});
+const TOPIC=Object.freeze({
+ customers:['crm','site','yandex','vk','avito','ads','mail','telegram','gis'],
+ finance:['accounting','bank','crm','ads','site'],
+ operations:['crm','mail','accounting','site','telegram'],
+ start:['site','yandex','vk','ads','crm','accounting'],
+ general:['site','crm','yandex','mail','accounting','ads']
+});
+function prioritySources(){
+ if(data.mode==='start')return TOPIC.start;
+ const goal=data.goal.toLocaleLowerCase('ru-RU');
+ if(/клиент|заказ|заяв|продаж|трафик|реклам|лид|покупател/.test(goal))return TOPIC.customers;
+ if(/доход|расход|финанс|налог|прибыл|выручк|бюджет|денег|затрат/.test(goal))return TOPIC.finance;
+ if(/процесс|сотруд|скорост|поручен|организ|автомат|срок/.test(goal))return TOPIC.operations;
+ return TOPIC.general;
+}
+function recommendations(){
+ const items=[];
+ if(!data.description)items.push({kind:'about',title:data.mode==='start'?'Опишите будущий бизнес':'Расскажите о компании',
+  why:'SEYVEO нужно знать сферу деятельности, город и клиентов, прежде чем советовать инструменты.'});
+ if(!data.goal)items.push({kind:'goal',title:'Назовите главную цель',
+  why:'Цель помогает выбирать вопросы по приоритету вместо случайных рекомендаций.'});
+ const present=new Set(data.resources.map(x=>x.type)),dismissed=new Set(data.dismissed||[]);
+ for(const type of prioritySources()){
+  if(present.has(type)||dismissed.has(type))continue;
+  const t=byType(type);if(!t)continue;
+  items.push({kind:'source',type,title:'Пользуетесь «'+t.name+'»?',why:WHY[type]});
  }
- return 'Уточните, какие данные о клиентах, продажах и расходах вам доступны.';
+ const ready=prioritySources().filter(type=>present.has(type));
+ for(const type of [...ready,...data.resources.map(x=>x.type).filter(x=>!ready.includes(x))]){
+  if(items.some(x=>x.kind==='connect'&&x.type===type))continue;
+  const t=byType(type);if(!t)continue;
+  items.push({kind:'connect',type,title:t.name+' указан · доступа пока нет',
+   why:WHY[type]+' Сейчас можно только посмотреть порядок будущего безопасного подключения.'});
+ }
+ return items;
+}
+function adviceAction(button){
+ const action=button.dataset.businessAdviceAction,source=button.dataset.businessAdviceType;
+ if(action==='about'||action==='goal'){markStep(action);return}
+ if(action==='source'&&byType(source)){sourceType=source;markStep('source');return}
+ if(action==='dismiss'&&byType(source)){
+  if(!(data.dismissed||[]).includes(source)){
+   data.dismissed.push(source);
+   if(!save())data.dismissed=data.dismissed.filter(x=>x!==source);
+  }
+  markStep('map');return;
+ }
+ if(action==='restore'){
+  const before=[...data.dismissed];data.dismissed=[];
+  if(!save())data.dismissed=before;
+  markStep('map');return;
+ }
+ if(action==='connect'||action==='connection-guide'){
+  // No token flow exists. The existing Management screen explains consent
+  // and explicitly says no actual service is linked.
+  finish();
+  $('navManage')?.click();
+  window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:byType(source)?source:''}}));
+ }
+}
+function drawAdvice(){
+ const box=$('businessMapAdvice');if(!box)return;
+ box.replaceChildren();
+ const list=recommendations(),shown=list.slice(0,3);
+ for(const item of shown){
+  const row=document.createElement('div');row.className='business-map-advice-row';
+  const line=document.createElement('strong');line.textContent=item.title;
+  const why=document.createElement('p');why.textContent=item.why;
+  const controls=document.createElement('div');controls.className='business-map-advice-actions';
+  const act=document.createElement('button');act.type='button';act.className='business-map-advice-go';
+  act.dataset.businessAdviceAction=item.kind;
+  if(item.type)act.dataset.businessAdviceType=item.type;
+  act.textContent=item.kind==='about'||item.kind==='goal'?'Ответить':item.kind==='connect'?'Как будет подключаться':'Указать ресурс';
+  controls.append(act);
+  if(item.kind==='source'){
+   const skip=document.createElement('button');skip.type='button';skip.className='business-map-advice-dismiss';
+   skip.textContent='Не использую';skip.dataset.businessAdviceAction='dismiss';
+   skip.dataset.businessAdviceType=item.type;controls.append(skip);
+  }
+  row.append(line,why,controls);box.append(row);
+ }
+ $('businessMapNext').textContent=shown.length
+  ?'Начать можно с одного вопроса. Остальные сведения добавим постепенно.'
+  :'Пока новых вопросов нет. Можно уточнить описание, цели или добавить ресурс.';
+ $('businessMapAdviceRemaining').textContent=list.length>shown.length
+  ?'Ещё предложений: '+(list.length-shown.length)+'. Они появятся после следующих ответов.':'';
+ const restore=$('businessMapRestoreSuggestions');
+ if(restore)restore.hidden=!data.dismissed?.length;
 }
 function drawMap(){
  $('businessMapAboutText').textContent=data.description||'Вы ещё не рассказали о своём деле.';
  $('businessMapGoalText').textContent=data.goal||'Цель пока не указана.';
  $('businessMapMapMode').textContent=data.mode==='start'?'Бизнес с нуля':'Действующий бизнес';
- $('businessMapNext').textContent=nextMissing();
+ drawAdvice();
  const list=$('businessMapResourceList');list.replaceChildren();
  if(!data.resources.length){
   const p=document.createElement('p');p.className='business-map-empty';p.textContent='Ресурсы ещё не указаны.';list.append(p);
@@ -195,7 +290,8 @@ function submit(evt){
    status.textContent='Этот ресурс уже есть в карте.';return;
   }
   data.resources.push({type:sourceType,value:text});
-  if(!save()){data.resources.pop();return}
+  const declined=[...data.dismissed];data.dismissed=data.dismissed.filter(id=>id!==sourceType);
+  if(!save()){data.resources.pop();data.dismissed=declined;return}
   markStep('map');
  }
 }
@@ -246,6 +342,11 @@ $('businessMapAddSource').addEventListener('click',()=>markStep('sources'));
 $('businessMapEditAbout').addEventListener('click',()=>markStep('about'));
 $('businessMapEditGoal').addEventListener('click',()=>markStep('goal'));
 $('businessMapFinish').addEventListener('click',finish);
+$('businessMapAdvice')?.addEventListener('click',event=>{
+ const button=event.target.closest?.('[data-business-advice-action]');if(button)adviceAction(button);
+});
+$('businessMapConnectionGuide')?.addEventListener('click',()=>adviceAction({dataset:{businessAdviceAction:'connection-guide'}}));
+$('businessMapRestoreSuggestions')?.addEventListener('click',()=>adviceAction({dataset:{businessAdviceAction:'restore'}}));
 $('businessMapResourceList').addEventListener('click',event=>{
  const button=event.target.closest?.('[data-business-remove]');if(!button)return;
  const index=Number(button.dataset.businessRemove);
