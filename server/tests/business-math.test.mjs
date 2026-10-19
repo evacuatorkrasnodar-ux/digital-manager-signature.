@@ -90,7 +90,7 @@ test('input contracts reject unknown metrics, unknown fields and missing fields'
 });
 test('disallow invalid decimal notation, fractional counts and huge numbers',()=>{
  for(const value of [NaN,Infinity,-1,'-1','1e4','0x10','abc','3.141','01','1,5',{},null]){
-  assert.throws(()=>calculateBusiness('revenue',{unitPrice:value,quantity:1}),value);
+  assert.throws(()=>calculateBusiness('revenue',{unitPrice:value,quantity:1}));
  }
  for(const value of [-3,0.5,'1.5','2e5','01',10000001,'999999999999']){
   assert.throws(()=>calculateBusiness('revenue',{unitPrice:1,quantity:value}),String(value));
