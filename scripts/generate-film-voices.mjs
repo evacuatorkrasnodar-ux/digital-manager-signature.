@@ -47,3 +47,28 @@ for(const name of names){
  }
 }
 console.log('Generated '+generated+' tracks; skipped '+skipped+' already present.');
+
+// Publish an explicit list of MP3 files that exist on disk.
+// The PWA checks this before playback so nonexistent files never produce 404s.
+const present={felix:[],milissa:[]};
+for(const voice of Object.keys(present)){
+ for(let index=0;index<scenes.length;index++){
+  const filename=resolve(base,'assets/film-voices',voice,String(index+1).padStart(2,'0')+'.mp3');
+  try{if((await stat(filename)).size>2000)present[voice].push(index+1)}catch{}
+ }
+}
+const manifestPath=resolve(base,'assets/film-voices/availability.js');
+await writeFile(manifestPath,
+ '// SEYVEO generated narration availability; updated with published MP3 tracks.\n'+
+ 'window.SEYVEO_FILM_VOICES=Object.freeze('+JSON.stringify(present)+');\n');
+console.log('Voice manifest updated:',JSON.stringify(present));
+// Bust the browser cache for the updated availability list when manually
+// publishing new tracks. This also updates the installed PWA's HTML.
+const indexPath=resolve(base,'index.html');
+let html=await readFile(indexPath,'utf8');
+const latest=String(Date.now());
+const re=/assets\/film-voices\/availability\.js\?v=\d+/;
+if(!re.test(html))throw Error('Availability script tag missing in index.html');
+html=html.replace(re,'assets/film-voices/availability.js?v='+latest);
+await writeFile(indexPath,html);
+console.log('Updated availability cache revision '+latest);

@@ -217,7 +217,15 @@ let active=-1,period='month',voice=true,playing=true,timer=null,sceneTimers=[];
 let voiceMode='male',voiceDiagnostic='',narrationAudio=null,audioScene=-1,previewMode=false;
 const unavailableAudio=new Set();
 const voiceName=()=>voiceMode==='female'?'Милисса':'Феликс';
-const assetFor=(mode,scene)=>'assets/film-voices/'+(mode==='female'?'milissa':'felix')+'/'+String(scene+1).padStart(2,'0')+'.mp3';
+const voiceSlug=mode=>mode==='female'?'milissa':'felix';
+const audioKey=(mode,scene)=>voiceSlug(mode)+'/'+String(scene+1).padStart(2,'0');
+const availability=mode=>{
+ const tracks=window.SEYVEO_FILM_VOICES?.[voiceSlug(mode)];
+ return Array.isArray(tracks)?tracks:[];
+};
+const hasNarration=(mode,scene)=>
+ availability(mode).includes(scene+1)&&!unavailableAudio.has(audioKey(mode,scene));
+const assetFor=(mode,scene)=>'assets/film-voices/'+audioKey(mode,scene)+'.mp3';
 function clearSceneTimers(){
  for(const token of sceneTimers)clearTimeout(token);
  sceneTimers=[];
@@ -242,13 +250,20 @@ function updateVoiceStatus(){
  if(span)span.textContent=voice?'Выключить звук':'Включить голос';
  const caption=root.querySelector('.film-caption-label');
  if(caption)caption.textContent=voiceName().toUpperCase()+' · РАССКАЗ';
+ const count=availability(voiceMode).length;
  if(status)status.textContent=voiceDiagnostic||
-  (unavailableAudio.has(voiceMode)?'Естественная озвучка ещё не добавлена. Фильм идёт автоматически с титрами.':
-   'Нейросетевая озвучка (ИИ). Если аудиофайлы пока не загружены, фильм идёт с титрами.');
+  (count===0?'Записи этого голоса ещё не загружены. Фильм автоматически идёт с субтитрами.':
+   count<scenes.length?'ИИ-озвучка доступна для '+count+' из '+scenes.length+' глав. Остальные идут с субтитрами.':
+   'Нейросетевая озвучка готова. Голос создан ИИ.');
 }
 function narrate(){
  stopVoice();voiceDiagnostic='';updateVoiceStatus();
- if(!voice||active<0||document.hidden||window.SEYVEO_DISCREET_MODE===true||unavailableAudio.has(voiceMode))return;
+ if(!voice||active<0||document.hidden||window.SEYVEO_DISCREET_MODE===true)return;
+ if(!hasNarration(voiceMode,active)){
+  // No attempt to fetch an MP3 that has not been published.
+  voiceDiagnostic='Для этой главы запись ещё не создана — фильм продолжается с субтитрами.';
+  updateVoiceStatus();return;
+ }
  if(typeof window.Audio!=='function')return;
  const scene=active,mode=voiceMode;
  try{
@@ -257,8 +272,8 @@ function narrate(){
   audio.onloadedmetadata=()=>{if(active===scene&&voiceMode===mode&&playing)schedule()};
   audio.onerror=()=>{
    if(active!==scene||voiceMode!==mode)return;
-   unavailableAudio.add(mode);
-   voiceDiagnostic='Естественная озвучка пока не загружена. Продолжаю кино без роботического голоса.';
+   unavailableAudio.add(audioKey(mode,scene));
+   voiceDiagnostic='Аудиозапись этой главы не загрузилась. Продолжаю фильм с субтитрами.';
    stopVoice();updateVoiceStatus();schedule();
   };
   audio.onended=()=>{if(active===scene&&playing)schedule()};
@@ -303,7 +318,7 @@ function setPlaying(value){
   clearTimeout(timer);timer=null;clearSceneTimers();
   try{narrationAudio?.pause()}catch{}
  }else{
-  if(narrationAudio&&narrationAudio.paused){
+  if(narrationAudio&&audioScene===active&&active>=0&&narrationAudio.paused){
    const resumed=narrationAudio.play();
    if(resumed?.catch)resumed.catch(()=>{});
   }
@@ -480,6 +495,12 @@ function previewVoice(gender){
  if(gender!=='male'&&gender!=='female')return;
  const status=document.getElementById('welcomeVoiceStatus');
  voiceMode=gender;
+ if(!hasNarration(gender,0)){
+  // Preview is a silent choice until the studio sample is available.
+  stopVoice();
+  if(status)status.textContent='Запись ещё не создана. Голос выбран, демонстрация идёт без роботического звука.';
+  return;
+ }
  if(typeof window.Audio!=='function'){
   if(status)status.textContent='Голос можно выбрать. Естественная озвучка ещё подготавливается.';
   return;
@@ -489,7 +510,7 @@ function previewVoice(gender){
   const mode=voiceMode,audio=narrationAudio||new window.Audio();narrationAudio=audio;audioScene=-1;
   audio.src=assetFor(mode,0);
   audio.volume=.92;audio.onerror=()=>{
-   unavailableAudio.add(mode);stopVoice();
+   unavailableAudio.add(audioKey(mode,0));stopVoice();
    if(status)status.textContent='Фирменная нейросетевая озвучка пока не добавлена. Системный роботический голос не используется.';
   };
   audio.onended=()=>{stopVoice()};
