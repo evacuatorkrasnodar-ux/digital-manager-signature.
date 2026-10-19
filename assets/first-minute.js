@@ -13,7 +13,7 @@ const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false
 const choiceBox=$('firstMinuteChoices'),form=$('firstMinuteForm'),input=$('firstMinuteInput');
 const results=$('firstMinuteResult'),plan=$('firstMinutePlan');
 const btnAction=$('firstMinuteResultAction'),btnDone=$('firstMinuteDone');
-let active=false,preview=false,choice='',focus='life',draft='',saved=false;
+let active=false,preview=false,choice='',focus='life',draft='',saved=false,returnToManage=false;
 function profile(){
  try{const p=JSON.parse(read(PROFILE)||'null');return p&&typeof p==='object'?p:{}}catch{return {}}
 }
@@ -32,13 +32,15 @@ function setResult(title,description){
  $('firstMinuteResultTitle').textContent=title;
  $('firstMinuteResultText').textContent=description;
 }
-function close(mark){
+function close(mark,restorePreview=true){
  if(!active)return;
+ const backToManage=restorePreview&&preview&&returnToManage;
  if(!preview&&mark)store(KEY,mark);
- active=false;preview=false;choice='';saved=false;draft='';
+ active=false;preview=false;returnToManage=false;choice='';saved=false;draft='';
  home.classList.remove('first-minute-active');
  root.hidden=true;input.value='';
  showView('choose');
+ if(backToManage)$('navManage')?.click();
 }
 function start(isDemo,focusOverride){
  if(active)return;
@@ -49,6 +51,7 @@ function start(isDemo,focusOverride){
  const p=profile();focus=['life','start','pro','max'].includes(focusOverride)?focusOverride:
   ['life','start','pro','max'].includes(p.focus)?p.focus:'life';
  preview=!!isDemo;
+ returnToManage=preview&&!$('managePage')?.hidden;
  active=true;choice='';saved=false;draft='';
  $('navHome')?.click();
  home.classList.add('first-minute-active');
@@ -66,10 +69,16 @@ function start(isDemo,focusOverride){
  input.value='';
  plan.replaceChildren();plan.hidden=true;
  showView('choose');
- // Natural scroll only when the compact sheet isn't already visible.
+ // Only scroll if the lower edge is obscured by the dock on a small phone;
+ // never force a jump when the compact card is already fully visible.
  setTimeout(()=>{
   if(!active)return;
-  try{root.scrollIntoView({block:'nearest',behavior:'smooth'})}catch{}
+  try{
+   const rect=root.getBoundingClientRect();
+   const viewport=window.visualViewport;
+   const bottom=(viewport?(viewport.offsetTop+viewport.height):window.innerHeight)-95;
+   if(rect.bottom>bottom+3)root.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }catch{}
  },320);
 }
 function choose(selected){
@@ -186,5 +195,5 @@ window.addEventListener('seyveo:first-minute-ready',event=>{
  // Let the plasma finish its signature before the first question.
  setTimeout(()=>{if(!active&&!document.hidden)start(false)},650);
 });
-window.addEventListener('pagehide',()=>{if(active)close(null)});
+window.addEventListener('pagehide',()=>{if(active)close(null,false)});
 })();
