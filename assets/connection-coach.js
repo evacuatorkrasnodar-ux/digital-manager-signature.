@@ -175,6 +175,46 @@ let topic='site',purpose='learn',mode='owner',showOtherServices=false;
 const choices=$('connectionCoachChoices'),detail=$('connectionCoachDetails');
 const result=$('connectionCoachResult');
 const map=()=>window.SEYVEO_BUSINESS_MAP?.getState?.()||null;
+/* Suggestions use only the business owner's existing, local facts.
+ * They are not an AI assessment and cannot enable a service. */
+const SECTOR_START=Object.freeze({
+ auto:['maps','avito','crm'],beauty:['maps','vk','crm'],
+ retail:['maps','marketplace','crm'],ecommerce:['marketplace','site','crm'],
+ construction:['maps','avito','crm'],food:['maps','site','crm'],
+ services:['site','maps','crm'],other:['site','crm','mail']
+});
+const SECTOR_NAMES=Object.freeze({
+ auto:'автоуслуг',beauty:'красоты и ухода',retail:'розничной торговли',
+ ecommerce:'интернет-магазина',construction:'строительства и ремонта',
+ food:'кафе и ресторанов',services:'профессиональных услуг',other:'вашего дела'
+});
+function recommendations(){
+ const profile=map();
+ const sector=typeof profile?.industry==='string'&&SECTOR_START[profile.industry]
+  ?profile.industry:'';
+ const resources=Array.isArray(profile?.resources)?profile.resources:[];
+ const known=[...new Set(resources.map(x=>canonical(x?.type)).filter(Boolean))];
+ if(!sector&&!known.length)return null;
+ const types=[...new Set([...known,...(SECTOR_START[sector]||['site','maps','crm'])])].slice(0,3);
+ return {sector,types,known:new Set(known)};
+}
+function renderPersonal(){
+ const host=$('connectionCoachPersonal'),rec=recommendations();
+ host.hidden=!rec;
+ if(!rec)return;
+ $('connectionCoachPersonalTitle').textContent=rec.sector
+  ?'Для '+SECTOR_NAMES[rec.sector]+' я бы начал с этого:'
+  :'Вы уже указали эти ресурсы — начнём с них:';
+ const list=$('connectionCoachPersonalChoices');
+ list.replaceChildren();
+ for(const type of rec.types){
+  const button=document.createElement('button');
+  button.type='button';button.dataset.coachRecommend=type;
+  button.textContent=LABELS[type]+(rec.known.has(type)?' · указан':' · изучить');
+  button.setAttribute('aria-label',LABELS[type]+(rec.known.has(type)?', указан в Карте бизнеса':', рекомендация'));
+  list.append(button);
+ }
+}
 function context(type){
  const data=map();
  if(!data?.resources?.length)return 'SEYVEO пока не знает, какие сервисы вы используете. Это нормально — познакомимся постепенно.';
@@ -222,6 +262,7 @@ function render(){
  const data=TOPICS[topic];if(!data)return;
  detail.hidden=false;
  updateChips();
+ renderPersonal();
  $('connectionCoachSelected').textContent=purpose==='promote'?'ПРИВЛЕЧЕНИЕ КЛИЕНТОВ · ПЛАН':'ПОДКЛЮЧЕНИЕ · ОБЪЯСНЕНИЕ';
  $('connectionCoachName').textContent=data.name;
  $('connectionCoachPlain').textContent=data.what+'\n\n'+data.benefit;
@@ -255,11 +296,19 @@ function setType(id){
 }
 function start(options={}){
  purpose=options.goal==='promote'?'promote':'learn';
- mode=options.specialist===true?'specialist':'owner';topic=canonical(options.type)||'site';
+ mode=options.specialist===true?'specialist':'owner';topic=canonical(options.type)||recommendations()?.types[0]||'site';
  showOtherServices=EXTRA_ORDER.includes(topic);
  render();
  return true;
 }
+$('connectionCoachPersonalChoices').addEventListener('click',event=>{
+ const button=event.target.closest?.('[data-coach-recommend]');
+ if(!button)return;
+ const type=canonical(button.dataset.coachRecommend);
+ if(!type)return;
+ showOtherServices=EXTRA_ORDER.includes(type);
+ setType(type);
+});
 choices.addEventListener('click',event=>{
  const more=event.target.closest?.('[data-coach-more]');
  if(more){

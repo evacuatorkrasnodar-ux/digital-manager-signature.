@@ -33,6 +33,28 @@
 #manageConnectionsDialog .connection-coach-help{
  color:var(--secondary);line-height:1.55;font-size:12px;margin:11px 0 13px;
 }
+#manageConnectionsDialog .connection-coach-personal{
+ margin:10px 0 17px;padding:13px 12px 12px;border-radius:16px;
+ border:1px solid var(--soft-line);background:var(--card2);
+}
+#manageConnectionsDialog .connection-coach-personal-title{
+ margin:0 0 10px;color:var(--text);font-size:12.5px;line-height:1.5;
+ font-weight:450;
+}
+#manageConnectionsDialog .connection-coach-personal-choices{
+ display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;
+}
+#manageConnectionsDialog .connection-coach-personal-choices button{
+ min-height:40px;padding:8px 11px;border:1px solid var(--soft-line);
+ border-radius:999px;background:transparent;color:var(--text);
+ font-size:11.6px;white-space:normal;text-align:left;
+}
+#manageConnectionsDialog .connection-coach-personal-choices button:active{
+ background:rgba(220,229,241,.09);
+}
+#manageConnectionsDialog .connection-coach-personal small{
+ display:block;font-size:10.7px;color:var(--secondary);line-height:1.6;
+}
 #manageConnectionsDialog .connection-coach-choices{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
 }
