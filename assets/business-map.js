@@ -29,7 +29,7 @@ function publicPageUrl(text){
   const u=new URL(String(text||'').trim());
   if(u.protocol!=='https:'||u.username||u.password||(u.port&&u.port!=='443'))return '';
   const h=u.hostname.toLowerCase();
-  if(!h||!h.includes('.')||h==='localhost'||h.endsWith('.local')||h.endsWith('.internal')||
+  if(!h||!h.includes('.')||!/[a-z\u00a1-\uffff]/i.test(h)||h==='localhost'||h.endsWith('.local')||h.endsWith('.internal')||
      h.endsWith('.localhost')||h.startsWith('[')||/^(?:10|127|0|169\.254|192\.168)\./.test(h)||
      /^172\.(?:1[6-9]|2\d|3[01])\./.test(h))return '';
   if(/[?&](?:token|auth|password|secret|key|api[_-]?key|access[_-]?token|session|code|signature)=/i.test(u.search))return '';
@@ -408,9 +408,21 @@ function drawMap(){
   const page=STOREFRONT_TYPES.has(item.type)?publicPageUrl(item.value):'';
   const observed=page?(data.storefronts||[]).find(x=>x.url===page):null;
   small.textContent=item.value+' · '+(observed
-   ?observed.method==='owner'?'ассортимент со слов владельца':'публичная страница просмотрена · проверьте сведения'
+   ?observed.method==='owner'?'ассортимент со слов владельца':'публичная страница · подтверждено вами'
    :'данные об источнике, не подключение');
   text.append(strong,small);
+  if(observed){
+   const observation=document.createElement('p');
+   observation.className='business-map-stored-assortment';
+   const products=observed.products.slice(0,5).join(' · ');
+   const described=observed.summary||observed.title;
+   observation.textContent=products
+    ?'Витрина: '+products+(observed.products.length>5?' · …':'')
+    :described
+      ?'Описание: '+described.slice(0,175)
+      :'Сведения о странице подтверждены владельцем.';
+   text.append(observation);
+  }
   const controls=document.createElement('span');controls.className='business-map-resource-controls';
   if(page){
    const inspect=document.createElement('button');inspect.type='button';inspect.dataset.businessInspect=String(i);
@@ -428,7 +440,7 @@ function drawMap(){
 }
 function acceptable(value){
  if(!value)return false;
- if(/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\s|otp|pin[ =:]|код\s+доступа|секретн)/i.test(value))return false;
+ if(/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\s|otp|pin[ =:]|код\s+доступа|секретн|[?&](?:token|auth|password|secret|key|session|code|signature)=)/i.test(value))return false;
  if(/\bhttps?:\/\/[^\s/]*@/i.test(value))return false;
  if(/[\r\n<>]/.test(value))return false;
  // These entries are plain labels, NEVER activated links or credentials.
