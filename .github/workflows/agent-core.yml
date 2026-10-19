@@ -9,6 +9,7 @@ on:
       - 'server/felix-school/**'
       - 'server/hybrid-core.mjs'
       - 'server/tests/felix-persona.test.mjs'
+      - 'server/tests/felix-batch2.test.mjs'
       - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
@@ -26,6 +27,7 @@ on:
       - 'server/felix-school/**'
       - 'server/hybrid-core.mjs'
       - 'server/tests/felix-persona.test.mjs'
+      - 'server/tests/felix-batch2.test.mjs'
       - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
@@ -47,8 +49,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Felix persona, safety and dialogue guidance tests
-        run: node --test server/tests/felix-persona.test.mjs server/tests/core.test.mjs
+      - name: Felix persona, safety, batch 2 and dialogue guidance tests
+        run: node --test server/tests/felix-persona.test.mjs server/tests/felix-batch2.test.mjs server/tests/felix-school.test.mjs server/tests/core.test.mjs
+      - name: Felix batch 2 offline exam readiness
+        run: node server/felix-school/evaluate.mjs --suite=batch2 --limit=20
       - name: Agent planning and read-only code review tests
         run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs server/tests/research-school.test.mjs
       - name: Real application and private iPhone agent route checks
