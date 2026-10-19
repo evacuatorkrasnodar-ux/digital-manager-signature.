@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'server/agent/**'
+      - 'server/intelligence/**'
+      - 'server/tests/intelligence-architecture.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
@@ -15,6 +17,8 @@ on:
   pull_request:
     paths:
       - 'server/agent/**'
+      - 'server/intelligence/**'
+      - 'server/tests/intelligence-architecture.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
@@ -36,7 +40,7 @@ jobs:
         with:
           node-version: '24'
       - name: Agent planning and read-only code review tests
-        run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs
+        run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs
       - name: Real application and private iPhone agent route checks
         run: node --test server/tests/real-app-local.test.mjs server/tests/iphone-private-gateway.test.mjs
       - name: Static agent CLI smoke test
