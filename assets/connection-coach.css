@@ -1,0 +1,134 @@
+/* SEYVEO · one friendly connections coach inside existing Management dialog.
+ * Premium Black Velvet, safe on narrow iPhones; no new bottom dock or orb styles.
+ */
+#manageConnectionsDialog .connection-coach{
+ margin:14px 0 13px;padding:0;border:0;color:var(--text);
+}
+#manageConnectionsDialog .connection-coach [hidden]{display:none!important}
+#manageConnectionsDialog .connection-coach-kicker{
+ font-size:10px;font-weight:520;letter-spacing:.15em;color:var(--secondary);
+ margin:17px 0 9px;
+}
+#manageConnectionsDialog .connection-coach-goals{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ margin:10px 0;
+}
+#manageConnectionsDialog .connection-coach button{
+ font:inherit;font-size:12px;line-height:1.4;cursor:pointer;
+ min-width:0;-webkit-tap-highlight-color:transparent;
+}
+#manageConnectionsDialog .connection-coach :is(button,a):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#manageConnectionsDialog .connection-coach-goals button,
+#manageConnectionsDialog .connection-coach-modes button{
+ color:var(--secondary);background:var(--card2);
+ border:1px solid var(--soft-line);border-radius:13px;
+ padding:11px 9px;min-height:44px;text-align:center;
+}
+#manageConnectionsDialog .connection-coach :is(.connection-coach-goals,.connection-coach-modes) button[aria-pressed=true]{
+ border-color:rgba(206,221,240,.55);background:rgba(215,227,243,.085);
+ color:var(--text);
+}
+#manageConnectionsDialog .connection-coach-help{
+ color:var(--secondary);line-height:1.55;font-size:12px;margin:11px 0 13px;
+}
+#manageConnectionsDialog .connection-coach-choices{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+#manageConnectionsDialog .connection-coach-choices button{
+ min-height:39px;border-radius:12px;border:1px solid var(--soft-line);
+ background:var(--card2);color:var(--text);
+ padding:9px 10px;text-align:left;
+}
+#manageConnectionsDialog .connection-coach-choices button[aria-pressed=true]{
+ border-color:rgba(207,224,246,.55);background:rgba(222,234,248,.09);
+}
+#manageConnectionsDialog #connectionCoachDetails{
+ margin-top:17px;padding-top:1px;
+ border-top:1px solid var(--soft-line);
+}
+#manageConnectionsDialog .connection-coach h3{
+ color:var(--text);font-size:22px;line-height:1.23;
+ letter-spacing:-.042em;font-weight:410;margin:7px 0 9px;
+}
+#manageConnectionsDialog .connection-coach-plain{
+ white-space:pre-wrap;overflow-wrap:anywhere;font-size:12.7px;
+ line-height:1.65;color:var(--text);margin:4px 0 11px;
+}
+#manageConnectionsDialog .connection-coach-relevance{
+ border-left:2px solid rgba(188,207,229,.37);padding:4px 0 4px 10px;
+ color:var(--secondary);font-size:11.5px;line-height:1.55;margin:9px 0 15px;
+}
+#manageConnectionsDialog .connection-coach-modes{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+ margin:12px 0 15px;
+}
+#manageConnectionsDialog .connection-coach-modes button{
+ font-size:11.5px;padding:10px 6px;min-height:43px;
+}
+#manageConnectionsDialog .connection-coach-steps{
+ list-style:none;counter-reset:connection-step;
+ padding:0;margin:12px 0 9px;
+}
+#manageConnectionsDialog .connection-coach-steps li{
+ counter-increment:connection-step;
+ display:flex;align-items:flex-start;gap:12px;
+ border-top:1px solid var(--soft-line);
+ padding:12px 1px;color:var(--text);
+ font-size:12.2px;line-height:1.56;overflow-wrap:anywhere;
+}
+#manageConnectionsDialog .connection-coach-steps li::before{
+ content:counter(connection-step,decimal-leading-zero);flex:none;
+ font-size:10px;line-height:1.8;letter-spacing:.04em;
+ color:var(--secondary);font-weight:550;
+}
+#manageConnectionsDialog .connection-coach-safety{
+ color:var(--secondary);font-size:11.1px;line-height:1.6;margin:7px 0 14px;
+}
+#manageConnectionsDialog .connection-coach-actions{
+ display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 5px;
+}
+#manageConnectionsDialog .connection-coach-actions button{
+ min-height:42px;flex:1;min-width:125px;
+ border:1px solid rgba(219,232,249,.3);
+ background:var(--card2);color:var(--text);
+ border-radius:13px;padding:9px 10px;font-size:12px;
+}
+#manageConnectionsDialog #connectionCoachNote{
+ color:#1c2735;background:#f0f4f9;border-color:#f0f4f9;
+}
+#manageConnectionsDialog #connectionCoachResult{
+ color:var(--secondary);font-size:11px;line-height:1.5;
+ margin:8px 0 4px;min-height:16px;
+}
+#manageConnectionsDialog .connection-coach-details{
+ border-top:1px solid var(--soft-line);
+ padding:10px 0 0;margin:16px 0 5px;
+}
+#manageConnectionsDialog .connection-coach-details summary{
+ color:var(--secondary);font-size:12px;cursor:pointer;
+ min-height:30px;
+}
+#manageConnectionsDialog .connection-coach-details[open] .manage-connection-example{margin-top:12px}
+#manageConnectionsDialog .connection-coach-details[open] .manage-service-list{margin-top:9px}
+:root[data-theme=light] #manageConnectionsDialog .connection-coach :is(
+ .connection-coach-goals button[aria-pressed=true],
+ .connection-coach-modes button[aria-pressed=true],
+ .connection-coach-choices button[aria-pressed=true]){
+ border-color:rgba(59,83,112,.4);
+ background:#e9eef4;
+}
+:root[data-theme=light] #manageConnectionsDialog #connectionCoachNote{
+ background:#2d4056;color:#fff;border-color:#2d4056;
+}
+@media(max-width:355px){
+ #manageConnectionsDialog .connection-coach button{font-size:11.2px}
+ #manageConnectionsDialog .connection-coach-choices{gap:6px}
+ #manageConnectionsDialog .connection-coach-goals{gap:6px}
+ #manageConnectionsDialog .connection-coach-modes button{font-size:11px}
+ #manageConnectionsDialog .connection-coach-actions button{min-width:110px}
+}
+@media(prefers-reduced-motion:reduce){
+ #manageConnectionsDialog .connection-coach *{animation:none!important;transition:none!important}
+}
