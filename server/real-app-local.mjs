@@ -13,6 +13,7 @@ import {validateHistory} from './local-dialogue.mjs';
 import {planAgentTask} from './agent/planner.mjs';
 import {reviewApprovedFile} from './agent/code-review.mjs';
 import {intelligenceCatalog,intelligencePlan} from './intelligence/architecture.mjs';
+import {businessChatAnswer} from './intelligence/business-chat.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -223,6 +224,18 @@ export function createRealLocalServer({memoryStore}={}){
    let message;
    try{message=await readQuestion(req,{withHistory:true})}
    catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   // Explicit closed-form numeric commands are resolved locally without Ollama.
+   // Never parse unlabeled values from free-form conversation.
+   const math=businessChatAnswer(message.message);
+   if(math){
+    count++;
+    res.writeHead(200,{...HEADERS,
+     'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
+    res.end(JSON.stringify({type:'delta',text:math.text})+'\n'+
+     JSON.stringify({type:'done',model:null,source:'business-math',
+      mathStatus:math.status,cloud:false,executed:false})+'\n');
+    return;
+   }
    count++;busy=true;
    const controller=new AbortController();
    const disconnected=()=>{if(!res.writableEnded)controller.abort()};
@@ -266,6 +279,13 @@ export function createRealLocalServer({memoryStore}={}){
    let message;
    try{message=await readQuestion(req)}
    catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   const math=businessChatAnswer(message);
+   if(math){
+    count++;
+    send(res,200,{text:math.text,source:'business-math',status:math.status,
+     model:null,cloud:false,executed:false});
+    return;
+   }
    count++;busy=true;
    try{
     const result=await respond({message,mode:'private',allowCloud:false,assistantName:'Феликс'});
