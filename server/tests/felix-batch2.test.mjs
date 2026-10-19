@@ -51,7 +51,10 @@ test('offline exam preview requires neither Ollama nor any paid API',async()=>{
  assert.equal(info.status,'dry-run');
  assert.equal(info.total,20);
  assert.equal(contacted,false);
- assert.deepEqual(Object.keys(FELIX_EXAM_SUITES).sort(),['baseline','batch2']);
+ assert.equal(FELIX_EXAM_SUITES.baseline,'./eval-cases.json');
+ assert.equal(FELIX_EXAM_SUITES.batch2,'./exam-batch2.json');
+ assert.ok(Object.values(FELIX_EXAM_SUITES).every(path=>/^\.\/[a-z0-9-]+\.json$/u.test(path)));
+ assert.equal(new Set(Object.values(FELIX_EXAM_SUITES)).size,Object.keys(FELIX_EXAM_SUITES).length);
 });
 test('exam rejects arbitrary suite paths, overlong exam requests and unsafe limits',async()=>{
  await assert.rejects(()=>evaluateLocalFelix({suite:'../../secrets',live:false,log:()=>{}}),/invalid-exam-suite/);
