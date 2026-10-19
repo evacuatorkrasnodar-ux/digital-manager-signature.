@@ -309,3 +309,9 @@
 @media(max-width:375px){
  #businessMapDialog .business-map-storefront-actions>*{min-width:125px}
 }
+
+#businessMapDialog .business-map-stored-assortment{
+ margin:7px 0 0;max-width:100%;font-size:11px;line-height:1.54;
+ color:#b4c5d6;overflow-wrap:anywhere;white-space:normal;
+}
+:root[data-theme=light] #businessMapDialog .business-map-stored-assortment{color:#566e85}
