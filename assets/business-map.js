@@ -208,6 +208,10 @@ function markStep(next){
   sub.textContent='Чем больше известно об источниках заявок и инструментах, тем полезнее будут будущие рекомендации.';
   drawCategories();
  }else if(view==='storefront'){
+  // The long Business Map may be scrolled far down. The new reader always
+  // starts from its first control, without touching Home or the fixed dock.
+  const surface=dialog.querySelector?.('.business-map-main');
+  if(surface)surface.scrollTop=0;
   title.textContent='Изучить публичную витрину';
   sub.textContent='Сначала попробую прочитать открытую страницу. Подтверждённые вами сведения можно сохранить в карту.';
  }else if(view==='map'){
