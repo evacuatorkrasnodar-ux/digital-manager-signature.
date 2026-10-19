@@ -53,13 +53,14 @@ export async function evaluateLocalFelix({live=false,limit=3,suite='baseline',fe
  if(!/^[a-zA-Z0-9._:-]{1,64}$/.test(model))throw Error('Invalid model.');
  let passed=0;
  for(const item of selected){
+  const coaching=coachMessage(item.input);
   const reply=await fetchImpl('http://127.0.0.1:11434/api/chat',{
    method:'POST',headers:{'content-type':'application/json'},
    signal:AbortSignal.timeout(130000),
    body:JSON.stringify({model,stream:false,keep_alive:'15m',
     messages:[
      {role:'system',content:safeInstruction('Феликс')},
-     ...(coachMessage(item.input)?[coachMessage(item.input)]:[]),
+     ...(coaching?[coaching]:[]),
      {role:'user',content:item.input}
     ],options:{num_predict:180,num_ctx:2048,num_thread:8,temperature:0.2}})
   });
