@@ -2,6 +2,7 @@
    Never resize or replace the approved sphere and dock. */
 #homePage .first-minute[hidden],
 #homePage .first-minute-choices[hidden],
+#homePage .first-minute-later[hidden],
 #homePage .first-minute-result[hidden],
 #homePage #firstMinuteForm[hidden],
 #homePage #firstMinutePlan[hidden]{display:none!important}
