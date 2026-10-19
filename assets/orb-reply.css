@@ -125,3 +125,39 @@
 @media(prefers-reduced-motion:reduce){
  #stage .orb-inline-business-action{transition:none!important}
 }
+
+/* SEYVEO · seamless dialogue on the REAL application Home.
+   No new pane, no overlay and no changes to the approved plasma geometry.
+   Local Ollama keeps its existing transport and session memory. */
+#stage .orb-inline-reply{
+  width:min(100%,440px);margin:9px auto 0;padding:10px 2px 14px;
+  border:0;border-radius:0;background:transparent;box-shadow:none;
+  animation:seyveo-dialogue-soft-in .38s cubic-bezier(.2,.7,.2,1) both;
+}
+#stage .orb-inline-reply-head{min-height:34px}
+#stage .orb-inline-reply-heading small{display:none!important}
+#stage .orb-inline-reply-heading strong{font-size:12px;font-weight:520;color:var(--secondary)}
+#stage .orb-inline-reply-text{
+  max-height:min(40svh,360px);margin:7px 0 1px;
+  padding:8px 0 5px;border-top:0;
+  background:transparent;color:var(--text);
+  font-size:14.5px;line-height:1.75;
+  overflow-wrap:anywhere;scrollbar-width:none;
+}
+#stage .orb-inline-reply-footer:has(>.orb-inline-business-action[hidden]){
+  display:none;
+}
+@keyframes seyveo-dialogue-soft-in{
+  from{opacity:0;transform:translate3d(0,7px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+:root[data-theme=light] #stage .orb-inline-reply{
+  background:transparent;box-shadow:none;
+}
+@media(max-height:740px){
+  #stage .orb-inline-reply{padding:6px 2px 10px}
+  #stage .orb-inline-reply-text{max-height:min(34svh,240px);font-size:13.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  #stage .orb-inline-reply{animation:none}
+}
