@@ -28,5 +28,6 @@ jobs:
           node --check server/providers.mjs
           node --check server/brain.mjs
           node --check server/http.mjs
+          node --check server/chat-local.mjs
       - name: Run safe offline tests
         run: node --test server/tests/*.test.mjs

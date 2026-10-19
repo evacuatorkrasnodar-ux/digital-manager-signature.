@@ -3,7 +3,8 @@
  * Requests are single-turn only and never receive local business records.
  */
 import {CLOUD_MODELS,MAX_OUTPUT_TOKENS,safeInstruction} from './hybrid-core.mjs';
-const TIMEOUT_MS=20000;
+const CLOUD_TIMEOUT_MS=20000;
+const LOCAL_TIMEOUT_MS=120000;
 const readText=value=>String(value||'').trim().slice(0,14000);
 const configuredLocal=()=>process.env.SEYVEO_ENABLE_LOCAL==='1';
 const configuredCloud=()=>process.env.SEYVEO_ENABLE_CLOUD==='1'&&Boolean(process.env.OPENAI_API_KEY);
@@ -13,7 +14,7 @@ export function availableModels(){
 export async function askLocal(message,{name='Феликс'}={}){
  if(!configuredLocal())throw Error('local-not-configured');
  // Fixed loopback endpoint: no caller-controlled URL, prevents arbitrary SSRF.
- const model=(process.env.SEYVEO_LOCAL_MODEL||'gpt-oss:20b').trim();
+ const model=(process.env.SEYVEO_LOCAL_MODEL||'qwen3:4b-instruct').trim();
  if(!/^[a-zA-Z0-9._:-]{1,64}$/.test(model))throw Error('invalid-local-model');
  const response=await fetch('http://127.0.0.1:11434/api/chat',{
   method:'POST',
@@ -26,7 +27,7 @@ export async function askLocal(message,{name='Феликс'}={}){
    ],
    options:{num_predict:MAX_OUTPUT_TOKENS}
   }),
-  signal:AbortSignal.timeout(TIMEOUT_MS)
+  signal:AbortSignal.timeout(LOCAL_TIMEOUT_MS)
  });
  if(!response.ok)throw Error('local-model-error');
  const data=await response.json();
@@ -53,7 +54,7 @@ export async function askCloud(message,{name='Феликс',model=CLOUD_MODELS.e
     {role:'user',content:[{type:'input_text',text:message}]}
    ]
   }),
-  signal:AbortSignal.timeout(TIMEOUT_MS)
+  signal:AbortSignal.timeout(CLOUD_TIMEOUT_MS)
  });
  // Never echo the remote response body: it may contain private metadata.
  if(!response.ok)throw Error('cloud-model-error-'+response.status);

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeMessage,decide,classify,MAX_MESSAGE_CHARS,responseUnavailable} from '../hybrid-core.mjs';
-import {askCloud,availableModels} from '../providers.mjs';
+import {normalizeMessage,decide,classify,MAX_MESSAGE_CHARS,responseUnavailable,safeInstruction} from '../hybrid-core.mjs';
+import {askCloud,askLocal,availableModels} from '../providers.mjs';
 import {respond} from '../brain.mjs';
 
 test('rejects empty and excessive messages',()=>{
@@ -73,4 +73,35 @@ test('cloud adapter sends server-side key and never stores prompts at OpenAI',as
   if(oldKey===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=oldKey;
   if(oldFlag===undefined)delete process.env.SEYVEO_ENABLE_CLOUD;else process.env.SEYVEO_ENABLE_CLOUD=oldFlag;
  }
+});
+
+test('Felix uses installed Ollama qwen3 model on loopback by default',async()=>{
+ const beforeFlag=process.env.SEYVEO_ENABLE_LOCAL;
+ const beforeModel=process.env.SEYVEO_LOCAL_MODEL;
+ const beforeFetch=globalThis.fetch;
+ process.env.SEYVEO_ENABLE_LOCAL='1';
+ delete process.env.SEYVEO_LOCAL_MODEL;
+ let recorded=null;
+ globalThis.fetch=async (url,opts)=>{
+  recorded={url,opts};
+  return {ok:true,json:async()=>({message:{content:'Привет, я Феликс.'}})};
+ };
+ try{
+  const result=await askLocal('Привет!',{name:'Феликс'});
+  assert.equal(result.model,'qwen3:4b-instruct');
+  assert.equal(result.text,'Привет, я Феликс.');
+  assert.equal(recorded.url,'http://127.0.0.1:11434/api/chat');
+  const input=JSON.parse(recorded.opts.body);
+  assert.equal(input.model,'qwen3:4b-instruct');
+  assert.equal(input.messages[1].content,'Привет!');
+  assert.match(input.messages[0].content,/не имя пользователя/);
+ }finally{
+  globalThis.fetch=beforeFetch;
+  if(beforeFlag===undefined)delete process.env.SEYVEO_ENABLE_LOCAL;else process.env.SEYVEO_ENABLE_LOCAL=beforeFlag;
+  if(beforeModel===undefined)delete process.env.SEYVEO_LOCAL_MODEL;else process.env.SEYVEO_LOCAL_MODEL=beforeModel;
+ }
+});
+test('Felix and Milissa distinguish the assistant name from the person',()=>{
+ assert.match(safeInstruction('Феликс'),/не называй его Феликсом/);
+ assert.match(safeInstruction('Милисса'),/Ты Милисса/);
 });
