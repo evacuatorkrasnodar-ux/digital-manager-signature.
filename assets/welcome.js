@@ -238,11 +238,32 @@ next.addEventListener('click',()=>{
   else setStep(1);
   return;
  }
- if(step===0){setTour(0);return}
+ if(step===0){
+  const cinema=window.SEYVEO_LIVE_SHOWCASE;
+  if(!cinema?.start){setTour(0);return}
+  const wasPreview=preview,oldHash=location.hash;
+  stopSignatureSound();
+  dialog.classList.remove('is-cinematic','is-film');
+  dialog.close();
+  const accepted=cinema.start({preview:wasPreview,returnHash:oldHash,onFinish:()=>{
+   if(wasPreview){
+    // This Management preview never saves or overwrites a profile.
+    close();
+   }else{
+    // Reopen the existing REAL first-launch questionnaire after the film.
+    setStep(1);
+    if(!dialog.open)try{dialog.showModal()}catch{}
+   }
+  }});
+  if(!accepted&& !dialog.open){
+   try{dialog.showModal();setTour(0)}catch{}
+  }
+  return;
+ }
  if(step<4)setStep(step+1);else save();
 });
 function startPreview(){
- if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
+ if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive()||window.SEYVEO_LIVE_SHOWCASE?.isActive())return;
  preview=true;previewTrigger=demoEntry;
  tourIndex=-1;tourVisited=false;tour?.reset();
  assistant='Феликс';assistantVoice='male';focus='life';user.value='';other.value='';
@@ -287,7 +308,7 @@ window.addEventListener('pagehide',()=>{
  if(openingTimer!==null){close();next.disabled=false;back.disabled=false;skip.disabled=false}
 });
 function tryOpen(){
- if(dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
+ if(window.SEYVEO_LIVE_SHOWCASE?.isActive()||dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
  tourIndex=-1;tourVisited=false;tour?.reset();
  setStep(0);
