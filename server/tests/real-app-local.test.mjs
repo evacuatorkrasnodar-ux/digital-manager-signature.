@@ -71,6 +71,27 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.equal(proposed.executed,false);
   assert.equal(proposed.executionAllowed,false);
   assert.deepEqual(proposed.toolsUsed,[]);
+  const review=await request('/api/seyveo-agent-review',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{file:'server/agent/planner.mjs'}
+  });
+  assert.equal(review.status,200);
+  const inspected=JSON.parse(review.body);
+  assert.equal(inspected.file,'server/agent/planner.mjs');
+  assert.equal(inspected.sourceReturned,false);
+  assert.equal(inspected.executed,false);
+  assert.equal(inspected.testsRun,false);
+  assert.equal(inspected.sha256.length,64);
+  const blockedReview=await request('/api/seyveo-agent-review',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{file:'server/local-memory.mjs'}
+  });
+  assert.equal(blockedReview.status,400);
+  const foreignReview=await request('/api/seyveo-agent-review',{
+   method:'POST',headers:{origin:'https://stranger.invalid','content-type':'application/json'},
+   data:{file:'index.html'}
+  });
+  assert.equal(foreignReview.status,403);
   const deniedPlan=await request('/api/seyveo-agent-plan',{
    method:'POST',headers:{origin:'https://untrusted.invalid','content-type':'application/json'},
    data:{message:'Оплати счёт'}
@@ -103,6 +124,7 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.match(home.body,/\/api\/seyveo-stream/);
   assert.match(home.body,/Запомни/);
   assert.match(home.body,/api\/seyveo-memory/);
+  assert.match(home.body,/api\/seyveo-agent-review/);
   assert.match(home.headers['content-security-policy'],/connect-src 'self'/);
   assert.match(home.headers['content-security-policy'],/manifest-src 'self'/);
   const manifest=await request('/manifest.webmanifest');
