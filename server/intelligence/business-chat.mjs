@@ -54,7 +54,8 @@ function fieldValue(part,label){
 }
 function parseFields(details,fields){
  if(details.length>330||/[\r\n\t]/u.test(details))return null;
- const parts=details.split(/\s*,\s*|\s+и\s+/iu).map(s=>s.trim());
+ // A decimal comma (125,50) is not a field delimiter.
+ const parts=details.split(/,\s*(?=[а-яё])|\s+и\s+/iu).map(s=>s.trim());
  const keys=Object.keys(fields);
  if(parts.length!==keys.length||parts.some(s=>!s))return null;
  const parsed={};
