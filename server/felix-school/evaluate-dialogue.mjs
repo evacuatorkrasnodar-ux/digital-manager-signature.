@@ -8,6 +8,7 @@ import {resolve} from 'node:path';
 import {safeInstruction} from '../hybrid-core.mjs';
 import {validateHistory} from '../local-dialogue.mjs';
 import {gradeAnswer} from './evaluate.mjs';
+import {coachMessage} from './lesson-coach.mjs';
 
 const MODEL_URL='http://127.0.0.1:11434/api/chat';
 export const DIALOGUE_EXAM_FILE=new URL('./exam-batch3-dialogue.json',import.meta.url);
@@ -68,6 +69,7 @@ export async function evaluateDialogue({live=false,limit=3,fetchImpl=fetch,log=c
     model,stream:false,keep_alive:'15m',
     messages:[
      {role:'system',content:safeInstruction('Феликс')},
+     ...(coachMessage(item.input)?[coachMessage(item.input)]:[]),
      ...item.history,
      {role:'user',content:item.input}
     ],
