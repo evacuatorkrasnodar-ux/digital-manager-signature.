@@ -237,7 +237,8 @@ const KEYS=Object.freeze({
  privateWellness:'seyveo-private-health-care-v1',
  company:'seyveo-company-passport-v1',
  pictureWidgets:'seyveo-home-widgets-v1',
- roadmapProgress:'seyveo-roadmap-progress-v1'
+ roadmapProgress:'seyveo-roadmap-progress-v1',
+ businessMap:'seyveo-business-map-v1'
 });
 function read(key){
  try{return localStorage.getItem(key)}catch{return null}
@@ -259,6 +260,7 @@ function snapshot(){
  const company=parsed(read(KEYS.company),null);
  const pictureWidgets=parsed(read(KEYS.pictureWidgets),null);
  const roadmapProgress=parsed(read(KEYS.roadmapProgress),null);
+ const businessMap=parsed(read(KEYS.businessMap),null);
  const rawTierPreview=read('seyveo-developer-tier-preview-v1');
  const developerTierPreview=['start','pro','max'].includes(rawTierPreview)?rawTierPreview:null;
  const introduction=parsed(read('seyveo-first-acquaintance-v1'),null);
@@ -279,6 +281,7 @@ function snapshot(){
   companyPassport:company&&typeof company==='object'&&!Array.isArray(company)?company:null,
   pictureWidgets:pictureWidgets&&Array.isArray(pictureWidgets.ids)?pictureWidgets:null,
   roadmapProgress:roadmapProgress&&roadmapProgress.version===1&&roadmapProgress.marks?roadmapProgress:null,
+  businessMap:businessMap&&businessMap.version===1&&typeof businessMap.description==='string'?businessMap:null,
   developerTierPreview,
   draft:typeof draft==='string'?draft:'',
   introduction:introduction&&typeof introduction==='object'&&!Array.isArray(introduction)?introduction:null
@@ -300,6 +303,7 @@ function drawData(){
  list.replaceChildren();
  const parts=[
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
+  ['Карта бизнеса',record.businessMap?(record.businessMap.resources?.length||0)+' источников · локально':'Пока не заполнена'],
   ['Мои записи',String(countOf(record.notes))],
    ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
