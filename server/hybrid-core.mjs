@@ -2,6 +2,8 @@
  * A transport-neutral brain for a future privately authenticated backend.
  * No networking, storage or model calls happen in this module.
  */
+import {felixPersonaInstruction} from './felix-school/persona.mjs';
+
 export const VALID_MODES=Object.freeze(['auto','private','cloud']);
 export const CLOUD_MODELS=Object.freeze({
  economical:'gpt-6-luna',
@@ -78,7 +80,8 @@ export function safeInstruction(name='Феликс'){
   'Никогда не утверждай, что отправил письмо, оплатил счёт, изменил данные или выполнил реальное поручение без отчёта подтверждённого инструмента.',
   'Для финансовых, юридических и медицинских тем объясняй неопределённость и необходимость проверки.',
   'Предлагай следующий безопасный шаг; не заявляй о разрешениях, которых не предоставили.',
-  'Нельзя выполнять действия вне этого разговора. Сейчас тебе доступны только текстовые ответы.'
+  'Нельзя выполнять действия вне этого разговора. Сейчас тебе доступны только текстовые ответы.',
+  felixPersonaInstruction()
  ].join(' ');
 }
 export function responseUnavailable(plan){
