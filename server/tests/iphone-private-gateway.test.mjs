@@ -54,6 +54,11 @@ test('owner alone can load the real app and stream local answer, never private f
   if(req.url==='/'){
    res.writeHead(200,{'content-type':'text/html','content-security-policy':"default-src 'none'; connect-src 'self'"});
    res.end('<main id="homePage"><button id="orb">SEYVEO</button></main>');
+  }else if(req.url==='/api/seyveo-agent-review'){
+   let json='';for await(const chunk of req)json+=chunk.toString();
+   assert.equal(JSON.parse(json).file,'server/agent/planner.mjs');
+   res.writeHead(200,{'content-type':'application/json'});
+   res.end(JSON.stringify({file:'server/agent/planner.mjs',executed:false,sourceReturned:false}));
   }else if(req.url==='/api/seyveo-agent-plan'){
    let json='';for await(const chunk of req)json+=chunk.toString('utf8');
    assert.equal(JSON.parse(json).message,'Создай встречу в календаре');
@@ -94,6 +99,16 @@ test('owner alone can load the real app and stream local answer, never private f
    ...headers(),origin,'content-type':'text/plain'
   },body:'bad'});
   assert.equal(wrongType.status,415);
+  const inspected=await get(port,'/api/seyveo-agent-review',{method:'POST',headers:{
+   ...headers(),origin,'content-type':'application/json'
+  },body:JSON.stringify({file:'server/agent/planner.mjs'})});
+  assert.equal(inspected.status,200);
+  assert.equal(JSON.parse(inspected.body).sourceReturned,false);
+  assert.equal(JSON.parse(inspected.body).executed,false);
+  const deniedInspector=await get(port,'/api/seyveo-agent-review',{method:'POST',headers:{
+   ...headers(),'tailscale-user-login':'other@example.com',origin,'content-type':'application/json'
+  },body:JSON.stringify({file:'index.html'})});
+  assert.equal(deniedInspector.status,403);
   const planned=await get(port,'/api/seyveo-agent-plan',{method:'POST',headers:{
    ...headers(),origin,'content-type':'application/json'
   },body:JSON.stringify({message:'Создай встречу в календаре'})});
