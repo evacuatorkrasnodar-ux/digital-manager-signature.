@@ -265,6 +265,7 @@ skip.addEventListener('click',()=>{
 window.addEventListener('seyveo:film-next',()=>{
  if(!dialog.open||tourIndex<0)return;
  if(tourIndex<(tour?.count||5)-1)setTour(tourIndex+1);
+ else if(preview)dismiss();
  else setStep(1);
 });
 window.addEventListener('seyveo:film-back',()=>{

@@ -1,0 +1,52 @@
+name: SEYVEO film voices (manual only)
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Generate only chapter 01 as a sample, or all 14 chapters'
+        required: true
+        default: sample
+        type: choice
+        options: [sample, full]
+      voice:
+        description: 'Choose whose narration to create'
+        required: true
+        default: both
+        type: choice
+        options: [both, felix, milissa]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check secret
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo 'Set OPENAI_API_KEY in repository Actions secrets before running this paid generator.'
+            exit 1
+          fi
+      - name: Generate Russian neural voiceovers
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/generate-film-voices.mjs --${{ inputs.scope }} --voice ${{ inputs.voice }}
+      - name: Commit prepared audio assets
+        run: |
+          git config user.name 'SEYVEO film studio'
+          git config user.email 'actions@users.noreply.github.com'
+          git add assets/film-voices
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add SEYVEO film voiceovers (AI generated)'
+            git push
+          else
+            echo 'Audio files already present.'
+          fi

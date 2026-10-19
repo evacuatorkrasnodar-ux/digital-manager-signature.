@@ -466,3 +466,15 @@
 :root[data-theme=light] #welcomeDialog .film-story-surface>p,
 :root[data-theme=light] #welcomeDialog .film-feature-status,
 :root[data-theme=light] #welcomeDialog .film-story-note{color:#586b80}
+
+/* Film v4: no required tapping. Progress and optional pause only. */
+#welcomeDialog.is-film .film-footer #filmBack,
+#welcomeDialog.is-film .film-footer #filmNext{display:none!important}
+#welcomeDialog.is-film .film-footer .film-progress{min-height:44px;gap:7px}
+#welcomeDialog.is-film .film-footer .film-progress span{max-width:25px}
+#welcomeDialog.is-film .film-voice-status{line-height:1.45;max-width:340px;margin-inline:auto}
+#welcomeDialog.is-film .film-voice-choices>span{letter-spacing:.04em}
+#welcomeDialog.is-film .film-disclaimer{letter-spacing:.04em}
+@media(prefers-reduced-motion:reduce){
+ #welcomeDialog.is-film .film-scene{scroll-behavior:auto!important}
+}

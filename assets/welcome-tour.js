@@ -20,7 +20,7 @@ root.innerHTML=`
  <span>КТО ПРОВЕДЁТ ЭКСКУРСИЮ?</span>
  <button type="button" data-film-voice="male" aria-pressed="true"><strong>Феликс</strong><small>Мужской голос</small></button>
  <button type="button" data-film-voice="female" aria-pressed="false"><strong>Милисса</strong><small>Женский голос</small></button>
- <small id="filmVoiceStatus" class="film-voice-status" role="status">Нажми на голос, чтобы услышать рассказ. Без звука тоже можно смотреть.</small>
+ <small id="filmVoiceStatus" class="film-voice-status" role="status">Фильм идёт сам. При желании выбери рассказчика. Озвучка создана ИИ.</small>
 </div><div class="film-stage-sub"><span>ОДИН ПОМОЩНИК</span><span class="film-dot"></span><span>ВСЕ ТВОИ ДЕЛА</span></div>
   </section>
   <section class="film-scene film-talk" data-film-scene="1" hidden>
@@ -185,7 +185,7 @@ root.innerHTML=`
  </main>
  <div class="film-narration" aria-live="polite"><span class="film-caption-label">ФЕЛИКС · РАССКАЗ</span><p id="filmCaption">Представь помощника, которому можно просто сказать, что тебе нужно.</p></div>
  <footer class="film-footer"><button id="filmBack" type="button" aria-label="Предыдущая сцена">‹</button><div id="filmProgress" class="film-progress" aria-label="Ход демонстрации"></div><button id="filmNext" type="button">Дальше <span>›</span></button><button id="filmPause" type="button" aria-pressed="false" aria-label="Остановить автоматический показ">Ⅱ</button></footer>
- <div class="film-disclaimer">ПРЕЗЕНТАЦИЯ БУДУЩЕГО SEYVEO · ПЛАНИРУЕМЫЕ ФУНКЦИИ ПОКА НЕ РАБОТАЮТ</div>
+ <div class="film-disclaimer">ФИЛЬМ ИДЁТ АВТОМАТИЧЕСКИ · ЧАСТЬ ВОЗМОЖНОСТЕЙ ЕЩЁ В РАЗРАБОТКЕ</div>
 </div>`;
 const $=id=>root.querySelector('#'+id);
 const scenes=[...root.querySelectorAll('[data-film-scene]')];
@@ -213,73 +213,85 @@ const worldText={
  people:['ЛЮДИ И СВЯЗИ','Близкие, знакомые и контакты. Телефонную книгу без разрешения не читаем.']
 };
 const number=new Intl.NumberFormat('ru-RU'),rub=x=>number.format(x)+' ₽';
-let active=-1,period='month',voice=false,playing=true,timer=null,lastUtterance=null,sceneTimers=[];
-let voiceMode='male',voiceDiagnostic='';
-const VOICE_CANDIDATES=Object.freeze({
- male:['yuri','yury','юрий','georgiy','georgy','георгий','dmitry','dmitri','дмитрий','pavel','павел','alexander','александр','maxim','максим','male'],
- female:['milena','милена','milissa','милисса','tatyana','tatiana','татьяна','irina','ирина','olga','ольга','anna','анна','katya','катя','victoria','виктория','female']
-});
+let active=-1,period='month',voice=true,playing=true,timer=null,sceneTimers=[];
+let voiceMode='male',voiceDiagnostic='',narrationAudio=null,audioScene=-1,previewMode=false;
+const unavailableAudio=new Set();
 const voiceName=()=>voiceMode==='female'?'Милисса':'Феликс';
+const assetFor=(mode,scene)=>'assets/film-voices/'+(mode==='female'?'milissa':'felix')+'/'+String(scene+1).padStart(2,'0')+'.mp3';
 function clearSceneTimers(){
  for(const token of sceneTimers)clearTimeout(token);
  sceneTimers=[];
 }
-function afterScene(ms,callback){sceneTimers.push(setTimeout(()=>{if(active>=0)callback()},ms))}
-function stopVoice(){
- if(window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}
- lastUtterance=null;
+function afterScene(ms,callback){
+ sceneTimers.push(setTimeout(()=>{if(active>=0&&playing&&!document.hidden)callback()},ms));
 }
-function findNarrationVoice(){
- const voices=window.speechSynthesis?.getVoices?.()||[];
- const russian=voices.filter(v=>/^ru(?:[-_]|$)/i.test(String(v.lang||'')));
- const list=VOICE_CANDIDATES[voiceMode];
- const known=russian.find(v=>list.some(part=>String(v.name||'').toLowerCase().includes(part)));
- if(known)return {voice:known,confirmed:true};
- if(russian.length)return {voice:russian[0],confirmed:false};
- return {voice:null,confirmed:false};
+function stopVoice(){
+ if(narrationAudio){
+  try{
+   narrationAudio.onerror=null;narrationAudio.onended=null;narrationAudio.onloadedmetadata=null;
+   narrationAudio.pause();narrationAudio.removeAttribute('src');narrationAudio.load();
+  }catch{}
+ }
+ narrationAudio=null;audioScene=-1;
 }
 function updateVoiceStatus(){
  const button=$('filmVoice'),status=$('filmVoiceStatus');
- const selected=voiceName(),found=findNarrationVoice();
  root.querySelectorAll('[data-film-voice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filmVoice===voiceMode)));
  button.setAttribute('aria-pressed',String(voice));
- button.querySelector('span').textContent=voice?'Выключить звук':'Слушать';
+ const span=button.querySelector('span');
+ if(span)span.textContent=voice?'Выключить звук':'Включить голос';
  const caption=root.querySelector('.film-caption-label');
- if(caption)caption.textContent=selected.toUpperCase()+' · РАССКАЗ';
- if(status){
-  status.textContent=voiceDiagnostic||(found.confirmed?'Голос '+selected+' найден на устройстве. Нажми, чтобы услышать.':
-   found.voice?'На устройстве не найден голос '+selected+'. Будет использован доступный русский системный голос.':
-   'На устройстве пока нет доступного русского голоса. Текст рассказа останется на экране.');
- }
+ if(caption)caption.textContent=voiceName().toUpperCase()+' · РАССКАЗ';
+ if(status)status.textContent=voiceDiagnostic||
+  (unavailableAudio.has(voiceMode)?'Естественная озвучка ещё не добавлена. Фильм идёт автоматически с титрами.':
+   'Нейросетевая озвучка (ИИ). Если аудиофайлы пока не загружены, фильм идёт с титрами.');
 }
 function narrate(){
- stopVoice();updateVoiceStatus();
- if(!voice||active<0||document.hidden||window.SEYVEO_DISCREET_MODE===true||!window.SpeechSynthesisUtterance||!window.speechSynthesis)return;
- const found=findNarrationVoice();
- if(!found.voice){voiceDiagnostic='Русский голос недоступен. Рассказ можно читать по субтитрам.';updateVoiceStatus();return}
- voiceDiagnostic=found.confirmed?'':'Это системный русский голос; он может не совпадать с выбранным мужским или женским.';
- updateVoiceStatus();
+ stopVoice();voiceDiagnostic='';updateVoiceStatus();
+ if(!voice||active<0||document.hidden||window.SEYVEO_DISCREET_MODE===true||unavailableAudio.has(voiceMode))return;
+ if(typeof window.Audio!=='function')return;
+ const scene=active,mode=voiceMode;
  try{
-  const words=scenesCopy[active][3].replace(/Феликс/g,voiceName());
-  const say=new window.SpeechSynthesisUtterance(words);
-  say.lang='ru-RU';say.rate=.94;say.volume=.83;
-  say.voice=found.voice;lastUtterance=say;
-  say.onerror=()=>{voiceDiagnostic='Озвучка не запустилась. Рассказ доступен текстом.';updateVoiceStatus()};
-  window.speechSynthesis.speak(say);
- }catch{voiceDiagnostic='На этом устройстве озвучивание недоступно.';updateVoiceStatus()}
+  const audio=new window.Audio();narrationAudio=audio;audioScene=scene;
+  audio.preload='auto';audio.volume=.92;
+  audio.onloadedmetadata=()=>{if(active===scene&&voiceMode===mode&&playing)schedule()};
+  audio.onerror=()=>{
+   if(active!==scene||voiceMode!==mode)return;
+   unavailableAudio.add(mode);
+   voiceDiagnostic='Естественная озвучка пока не загружена. Продолжаю кино без роботического голоса.';
+   stopVoice();updateVoiceStatus();schedule();
+  };
+  audio.onended=()=>{if(active===scene&&playing)schedule()};
+  audio.src=assetFor(mode,scene);
+  const started=audio.play();
+  if(started&&typeof started.catch==='function'){
+   started.catch(()=>{
+    if(active!==scene||voiceMode!==mode)return;
+    voiceDiagnostic='На этом устройстве звук требует касания. Кино продолжится с титрами.';
+    stopVoice();updateVoiceStatus();schedule();
+   });
+  }
+ }catch{
+  voiceDiagnostic='Видеопрезентация идёт с титрами. Естественная озвучка пока недоступна.';
+  stopVoice();updateVoiceStatus();
+ }
 }
 function chooseVoice(mode){
- if(!['male','female'].includes(mode))return;
+ if(mode!=='male'&&mode!=='female')return;
  voiceMode=mode;voice=true;voiceDiagnostic='';
  window.dispatchEvent(new CustomEvent('seyveo:film-voice-selected',{detail:{name:voiceName(),gender:mode}}));
  updateVoiceStatus();narrate();
 }
 function schedule(){
  clearTimeout(timer);timer=null;
- if(!playing||active<0||active>=scenes.length-1||document.hidden)return;
+ if(!playing||active<0||document.hidden)return;
  const chars=scenesCopy[active][3].length;
- // Spoken Russian + room for cinematic transitions; no one must tap to continue.
- const time=Math.max(17000,Math.min(30000,Math.round(chars/11*1000)+3400));
+ // Never require pressing Next, including the final chapter.
+ // If a studio audio file exists, do not cut it off before the narration finishes.
+ const readTime=Math.max(18000,Math.min(32000,Math.round(chars/11*1000)+4700));
+ const audioLength=(narrationAudio&&audioScene===active&&
+   Number.isFinite(narrationAudio.duration))?Math.ceil(narrationAudio.duration*1000+2200):0;
+ const time=Math.max(readTime,audioLength);
  timer=setTimeout(()=>window.dispatchEvent(new Event('seyveo:film-next')),time);
 }
 function setPlaying(value){
@@ -287,7 +299,16 @@ function setPlaying(value){
  $('filmPause').setAttribute('aria-pressed',String(!playing));
  $('filmPause').textContent=playing?'Ⅱ':'▶';
  $('filmPause').setAttribute('aria-label',playing?'Приостановить показ':'Продолжить показ');
- schedule();
+ if(!playing){
+  clearTimeout(timer);timer=null;clearSceneTimers();
+  try{narrationAudio?.pause()}catch{}
+ }else{
+  if(narrationAudio&&narrationAudio.paused){
+   const resumed=narrationAudio.play();
+   if(resumed?.catch)resumed.catch(()=>{});
+  }
+  schedule();runSceneAuto(active);
+ }
 }
 function pauseInteraction(){if(playing)setPlaying(false)}
 function renderChart(){
@@ -393,9 +414,15 @@ function render(index){
  if(index===8)renderClients();
  runSceneAuto(index);
  narrate();schedule();
+ const scene=scenes[index];
+ // On short phone screens the film scrolls the shot itself, never asks for a swipe.
+ afterScene(3900,()=>{
+  if(active!==index||!scene||scene.scrollHeight<=scene.clientHeight+24)return;
+  try{scene.scrollTo({top:scene.scrollHeight-scene.clientHeight,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}catch{}
+ });
 }
 function reset(){
- clearTimeout(timer);timer=null;clearSceneTimers();stopVoice();active=-1;period='month';playing=true;voice=false;voiceMode='male';voiceDiagnostic='';
+ clearTimeout(timer);timer=null;clearSceneTimers();stopVoice();active=-1;period='month';playing=true;voice=true;voiceMode='male';voiceDiagnostic='';
  $('filmVoice').setAttribute('aria-pressed','false');updateVoiceStatus();
  $('filmDetail').hidden=true;$('filmDetails').setAttribute('aria-expanded','false');
  $('filmDone').hidden=true;$('filmApprove').disabled=false;$('filmApprove').textContent='Согласовать · демо';
@@ -442,7 +469,7 @@ $('filmActionRun').addEventListener('click',()=>{
  pauseInteraction();$('filmActionRun').disabled=true;$('filmActionRun').textContent='Учебное действие выполнено';
  $('filmActionStatus').textContent='✓';$('filmActionResult').hidden=false;
 });
-if(window.speechSynthesis?.addEventListener)window.speechSynthesis.addEventListener('voiceschanged',()=>{updateVoiceStatus();if(voice&&active>=0&&!document.hidden&&findNarrationVoice().voice&&!lastUtterance)narrate()});
+// Narration is supplied only by mastered audio files, never browser speechSynthesis.
 $('filmPause').addEventListener('click',()=>setPlaying(!playing));
 $('filmNext').addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:film-next')));
 $('filmBack').addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:film-back')));
@@ -450,23 +477,30 @@ $('filmExit').addEventListener('click',()=>window.dispatchEvent(new Event('seyve
 document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(timer);clearSceneTimers();stopVoice()}else if(active>=0){narrate();schedule();runSceneAuto(active)}});
 window.addEventListener('pagehide',()=>{clearTimeout(timer);clearSceneTimers();stopVoice()});
 function previewVoice(gender){
- if(!['male','female'].includes(gender))return;
- voiceMode=gender;
+ if(gender!=='male'&&gender!=='female')return;
  const status=document.getElementById('welcomeVoiceStatus');
- stopVoice();
- const found=findNarrationVoice();
- if(!found.voice||!window.SpeechSynthesisUtterance||!window.speechSynthesis){
-  if(status)status.textContent='Подходящий русский голос на устройстве не обнаружен. Голос пока можно только выбрать.';
+ voiceMode=gender;
+ if(typeof window.Audio!=='function'){
+  if(status)status.textContent='Голос можно выбрать. Естественная озвучка ещё подготавливается.';
   return;
  }
- if(status)status.textContent=found.confirmed?'Предварительное звучание выбранного голоса.':
-  'На устройстве нет подтверждённого голоса этого типа. Это предварительный системный вариант.';
+ stopVoice();
  try{
-  const say=new window.SpeechSynthesisUtterance('Привет! Я '+voiceName()+'. Давай познакомимся!');
-  say.voice=found.voice;say.lang='ru-RU';say.rate=.94;say.volume=.83;
-  lastUtterance=say;window.speechSynthesis.speak(say);
- }catch{if(status)status.textContent='Предпросмотр голоса на этом устройстве недоступен.'}
+  const mode=voiceMode,audio=new window.Audio(assetFor(mode,0));narrationAudio=audio;audioScene=-1;
+  audio.volume=.92;audio.onerror=()=>{
+   unavailableAudio.add(mode);stopVoice();
+   if(status)status.textContent='Фирменная нейросетевая озвучка пока не добавлена. Системный роботический голос не используется.';
+  };
+  audio.onended=()=>{stopVoice()};
+  const result=audio.play();
+  if(result?.catch)result.catch(()=>{
+   if(status)status.textContent='Для прослушивания потребуется разрешить звук. Пока можно выбрать голос.';
+  });
+  if(status)status.textContent='Предпросмотр голоса: аудио создано искусственным интеллектом.';
+ }catch{
+  if(status)status.textContent='Нейросетевая озвучка пока недоступна. Голос можно выбрать.';
+ }
 }
-window.SEYVEO_WELCOME_TOUR=Object.freeze({render,reset,previewVoice,count:scenes.length});
+window.SEYVEO_WELCOME_TOUR=Object.freeze({render,reset,previewVoice,count:scenes.length,narrations:scenesCopy.map(v=>v[3])});
 reset();
 })();
