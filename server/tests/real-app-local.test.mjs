@@ -26,7 +26,7 @@ test('Original main page is rendered unchanged except local reply integration',a
  assert.match(adapted,/src="assets\/plasma-signature.svg\?v=13"/);
  assert.match(adapted,/id="homePage"/);
  assert.match(adapted,/window\.SEYVEO_LOCAL_PENDING=true/);
- assert.match(adapted,/\/api\/seyveo-ask/);
+ assert.match(adapted,/\/api\/seyveo-stream/);
  assert.doesNotMatch(adapted,/const answer=getDemoAnswer\(q\)/);
  assert.equal(original.includes('window.SEYVEO_LOCAL_PENDING'),false);
  assert.throws(()=>adaptOriginalHome('A fake homepage'),/handler changed/);
@@ -45,7 +45,7 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   const home=await request('/');
   assert.equal(home.status,200);
   assert.match(home.body,/id="orb"/);
-  assert.match(home.body,/\/api\/seyveo-ask/);
+  assert.match(home.body,/\/api\/seyveo-stream/);
   assert.match(home.headers['content-security-policy'],/connect-src 'self'/);
   const svg=await request('/assets/plasma-signature.svg?v=13');
   assert.equal(svg.status,200);

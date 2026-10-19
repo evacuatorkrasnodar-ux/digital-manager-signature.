@@ -19,7 +19,8 @@ function mockReader(parts){
 test('Adaptive token budget chooses short, regular and business responses',()=>{
  assert.equal(localOptionsFor('Ответь коротко: кто ты?').num_predict,110);
  assert.equal(localOptionsFor('Привет!').num_predict,150);
- assert.equal(localOptionsFor('Расскажи что-нибудь интересное о путешествиях и городах в свободной форме').num_predict,200);
+ assert.equal(localOptionsFor('Расскажи что-нибудь интересное о путешествиях и городах в свободной форме').num_predict,150);
+ assert.equal(localOptionsFor('Расскажи об обычных занятиях, свободном времени, путешествиях, городах, красивых местах и неторопливом отдыхе без дополнительных условий').num_predict,200);
  assert.equal(localOptionsFor('Предложи три конкретных шага найти клиентов для SEYVEO').num_predict,320);
  assert.equal(localOptionsFor('Подробно объясни но ответь коротко').num_predict,110);
  assert.equal(localOptionsFor('Привет').num_ctx,2048);
