@@ -105,7 +105,13 @@ function orderedSectorSources(map){
 const safeRead=key=>{try{return localStorage.getItem(key)}catch{return null}};
 const store=(key,value)=>{try{localStorage.setItem(key,value);return true}catch{return false}};
 const norm=(text,max)=>String(text||'').replace(/\s+/g,' ').trim().slice(0,max);
-const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',industry:'',industryAnswer:'',resources:[],dismissed:[],storefronts:[],updatedAt:''});
+const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',industry:'',industryAnswer:'',weeklyRequests:null,resources:[],dismissed:[],storefronts:[],updatedAt:''});
+function validWeeklyRequests(x){
+ if(!x||typeof x!=='object')return null;
+ const n=x.value;
+ if(!Number.isSafeInteger(n)||n<0||n>1000000||x.source!=='owner')return null;
+ return {value:n,source:'owner',period:'week',recordedAt:typeof x.recordedAt==='string'?x.recordedAt.slice(0,35):''};
+}
 function load(){
  try{
   const saved=JSON.parse(safeRead(STORE)||'null');
@@ -117,6 +123,7 @@ function load(){
    goal:norm(saved.goal,320),
    industry:byIndustry(saved.industry)?saved.industry:'',
    industryAnswer:norm(saved.industryAnswer,500),
+   weeklyRequests:validWeeklyRequests(saved.weeklyRequests),
    resources,dismissed:Array.isArray(saved.dismissed)?[...new Set(saved.dismissed.filter(x=>typeof x==='string'&&byType(x)))].slice(0,TYPES.length):[],storefronts:cleanStorefronts(saved.storefronts),updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:''};
  }catch{return null}
 }
@@ -125,7 +132,7 @@ function ownerFocus(){
 }
 function clone(x){return {version:1,mode:x.mode,description:x.description,goal:x.goal,
  industry:byIndustry(x.industry)?x.industry:'',industryAnswer:norm(x.industryAnswer,500),
- resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],storefronts:cleanStorefronts(x.storefronts),updatedAt:x.updatedAt}}
+ weeklyRequests:validWeeklyRequests(x.weeklyRequests),resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],storefronts:cleanStorefronts(x.storefronts),updatedAt:x.updatedAt}}
 let data=fresh('existing'),preview=false,firstLaunch=false,view='choose',sourceType='',origin=null,sectorReturn='goal';
 const title=$('businessMapTitle'),sub=$('businessMapLead'),status=$('businessMapStatus');
 const field=$('businessMapInput'),form=$('businessMapForm'),inputLabel=$('businessMapInputLabel'),inputHelp=$('businessMapInputHelp');
@@ -400,6 +407,10 @@ function drawMap(){
  $('businessMapWorkflowText').textContent=selected
   ?(data.industryAnswer||'Рабочий процесс пока не описан.')
   :'После уточнения направления SEYVEO задаст профильный вопрос.';
+ const weekly=validWeeklyRequests(data.weeklyRequests);
+ $('businessMapWeeklyRequests').textContent=weekly
+  ?'Около '+weekly.value+' обращений за неделю · со слов владельца, не онлайн-статистика'
+  :'Пока неизвестно · помощник может уточнить в разговоре';
  drawAdvice();
  const list=$('businessMapResourceList');list.replaceChildren();
  if(!data.resources.length){
@@ -501,6 +512,9 @@ function start(options={}){
  try{dialog.showModal()}catch{return false}
  // A business link supplied in conversation is only a DRAFT.
  // The owner must still press "Добавить сведения" before local storage writes.
+ const aboutDraft=typeof options.aboutPrefill==='string'?options.aboutPrefill.trim():'';
+ const aboutValid=aboutDraft.length>=8&&aboutDraft.length<=1000&&
+  !/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\\s|otp|код\\s+доступа)/i.test(aboutDraft);
  const draft=options.sourcePrefill;
  const valid=typeof draft?.url==='string'&&typeof draft?.type==='string'&&
   byType(draft.type)&&STOREFRONT_TYPES.has(draft.type)&&publicPageUrl(draft.url)===draft.url&&
@@ -509,6 +523,8 @@ function start(options={}){
   sourceType=draft.type;
   markStep('source');
   field.value=draft.url;
+ }else if(aboutValid){
+  markStep('about');field.value=aboutDraft;
  }else{
   markStep(options.fromStart||(!stored&&['start','pro','max'].includes(focus))?'about':initial?'choose':stored?'map':'choose');
  }
@@ -610,8 +626,21 @@ entry.addEventListener('click',()=>start({trigger:entry}));
 
 window.addEventListener('storage',event=>{if(event.key===STORE)updateEntry()});
 window.addEventListener('pagehide',()=>{if(dialog.open)dialog.close()});
+function saveOwnerWeeklyRequests(value){
+ if(dialog.open||preview)return {ok:false,message:'Закройте Карту бизнеса, чтобы сохранить ответ из чата.'};
+ const n=Number(value);
+ if(!Number.isSafeInteger(n)||n<0||n>1000000)return {ok:false,message:'Неверное количество обращений.'};
+ const current=load();
+ if(!current||!current.description)return {ok:false,message:'Сначала расскажите о бизнесе в Карте.'};
+ const previous=data;
+ data=clone(current);
+ data.weeklyRequests={value:n,source:'owner',period:'week',recordedAt:new Date().toISOString()};
+ if(!save()){data=previous;return {ok:false,message:'Не удалось сохранить сведения на устройстве.'}}
+ return {ok:true,message:'Сохранено: около '+n+' обращений в неделю, со слов владельца.'};
+}
 window.SEYVEO_BUSINESS_MAP=Object.freeze({
  open:start,
+ saveWeeklyRequests:saveOwnerWeeklyRequests,
  getState:()=>{const stored=load();return stored?clone(stored):null},
  getAdvice:()=>{const stored=load();return stored?recommendations(stored).map(item=>({kind:item.kind,type:item.type||'',title:item.title,why:item.why})):[]}
 });
