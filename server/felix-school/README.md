@@ -124,4 +124,6 @@ node server/felix-school/evaluate-dialogue.mjs --live --limit=12
 node --test server/tests/lesson-coach.test.mjs server/tests/local-stream.test.mjs
 ```
 
+Оба экзаменатора (`evaluate.mjs` и `evaluate-dialogue.mjs`) теперь вызывают тот же `coachMessage()`, что и действующий локальный Ollama. Для сравнения влияния подсказок экзамен можно повторить с `SEYVEO_LESSON_COACH=0` и без этой переменной. **Ни один живой экзамен модели пока не выполнен.**
+
 Включение этого механизма **не запускает ночное самообучение**, не открывает доступ в интернет и не сохраняет содержимое чужих разговоров.
