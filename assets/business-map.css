@@ -243,3 +243,69 @@
 :root[data-theme=light] #businessMapDialog .business-map-industry-choice[data-industry-state="confirmed"]{
  border-color:#6987a7
 }
+
+/* Public storefront · a calm, consent-only continuation of Business Map. */
+#businessMapDialog .business-map-storefront-label{
+ color:#9eacc0;font-size:10px;font-weight:500;letter-spacing:.14em;margin:11px 0 5px;
+}
+#businessMapDialog .business-map-storefront-address{
+ font-size:12px;line-height:1.5;color:#ebf1fa;overflow-wrap:anywhere;margin:0 0 11px;
+}
+#businessMapDialog .business-map-storefront-explain,
+#businessMapDialog .business-map-storefront-message,
+#businessMapDialog .business-map-storefront-previous{
+ font-size:11.5px;line-height:1.56;color:#aab9c9;margin:0 0 13px;
+}
+#businessMapDialog .business-map-storefront-actions{
+ display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:15px 0 12px;
+}
+#businessMapDialog .business-map-storefront-actions>*{
+ display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
+ flex:1;min-width:130px;text-align:center;font-size:12px;
+}
+#businessMapDialog .business-map-storefront-result{
+ border-top:1px solid rgba(223,233,246,.13);padding-top:14px;margin-top:10px;
+}
+#businessMapDialog .business-map-storefront-result h3{font-size:14px;font-weight:540;margin:0 0 7px}
+#businessMapDialog .business-map-storefront-found-title{
+ font-size:13px;line-height:1.5;color:inherit;margin:0 0 7px;
+}
+#businessMapDialog .business-map-storefront-found-description{
+ font-size:12px;line-height:1.6;color:#b0c0d0;margin:0 0 12px;
+}
+#businessMapDialog .business-map-storefront-products{padding:0 0 0 17px;margin:5px 0 15px}
+#businessMapDialog .business-map-storefront-products li{
+ color:#dce7f2;font-size:12px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere;
+}
+#businessMapDialog .business-map-storefront-manual{
+ margin:15px 0;border-top:1px solid rgba(223,233,246,.13);padding-top:17px;
+}
+#businessMapDialog .business-map-storefront-manual label{
+ display:block;font-size:12.5px;line-height:1.4;margin:0 0 10px;color:inherit;
+}
+#businessMapDialog .business-map-storefront-manual textarea{
+ width:100%;min-height:85px;max-height:170px;resize:vertical;border-radius:13px;
+ border:1px solid rgba(228,236,247,.24);padding:11px 12px;
+ background:#1b2028;color:#f5f7fa;outline:0;font-size:16px;line-height:1.5;
+}
+#businessMapDialog .business-map-storefront-manual button{margin-top:9px;width:100%}
+#businessMapDialog .business-map-storefront-back{margin:12px 0 9px}
+#businessMapDialog .business-map-resource-controls{
+ display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex:none;
+}
+#businessMapDialog .business-map-resource-controls button{
+ padding:6px 2px;min-height:30px;text-decoration:underline;
+ text-decoration-color:rgba(206,222,241,.19);text-underline-offset:3px;
+}
+#businessMapDialog .business-map-resource-controls button[data-business-remove]{
+ text-decoration:none;opacity:.78;
+}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-address,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-found-description,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-products li{color:#384b62}
+:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-explain,.business-map-storefront-message,.business-map-storefront-previous,.business-map-storefront-label){color:#64768b}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-manual textarea{background:#fff;color:#26364b;border-color:#c6d0dc}
+:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-result,.business-map-storefront-manual){border-color:#d4deea}
+@media(max-width:375px){
+ #businessMapDialog .business-map-storefront-actions>*{min-width:125px}
+}
