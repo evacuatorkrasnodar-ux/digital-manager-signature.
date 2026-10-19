@@ -203,7 +203,7 @@ function start(options={}){
  if(dialog.open||document.querySelector('dialog[open]'))return false;
  preview=options.preview===true;firstLaunch=options.firstLaunch===true;
  origin=options.trigger||null;
- const focus=ownerFocus(),stored=load();
+ const focus=ownerFocus(),stored=preview?null:load();
  const inferred=focus==='start'?'start':'existing';
  data=stored?clone(stored):fresh(inferred);
  if(preview)data=fresh(inferred);
