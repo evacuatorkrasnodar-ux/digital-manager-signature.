@@ -60,12 +60,16 @@ const INDUSTRY_CLUES=Object.freeze([
  ['construction',/строительств|стройк|строительн.{0,10}компан|ремонт\s+(?:квартир|домов|офисов)|отделочн.{0,8}работ|монтажн.{0,8}работ/i],
  ['food',/кафе|ресторан|кофейн|пекарн|пиццери|столов|доставк.{0,12}еды|кондитерск/i],
  ['retail',/магазин|розничн.{0,10}торговл|торгов.{0,10}точк|прода.{0,10}товар/i],
- ['services',/агентств|консалтин|студия|репетитор|бухгалтерск.{0,8}услуг|юридическ.{0,8}услуг/i]
+ ['services',/агентств|консалтин|репетитор|бухгалтерск.{0,8}услуг|юридическ.{0,8}услуг/i]
 ]);
 function guessIndustry(description){
  const text=String(description||'').slice(0,1000);
- const candidates=INDUSTRY_CLUES.filter(([,regex])=>regex.test(text));
- return candidates.length===1?candidates[0][0]:''; // ambiguous: ask, never guess
+ const candidates=INDUSTRY_CLUES.filter(([,regex])=>regex.test(text)).map(([id])=>id);
+ // "Интернет-магазин" also contains the generic word "магазин".
+ // Treat that overlap as one clue, not two conflicting professions.
+ const distinct=candidates.includes('ecommerce')
+  ?candidates.filter(id=>id!=='retail'):candidates;
+ return distinct.length===1?distinct[0]:''; // ambiguous: ask, never guess
 }
 function orderedSectorSources(map){
  const sector=byIndustry(map.industry);
@@ -208,6 +212,7 @@ function drawIndustryChoices(){
  for(const industry of options){
   const button=document.createElement('button');button.type='button';button.className='business-map-industry-choice';
   button.dataset.businessIndustry=industry.id;
+  button.dataset.industryState=industry.id===selected?'confirmed':industry.id===guessed?'proposed':'normal';
   const name=document.createElement('strong');name.textContent=industry.name;
   const detail=document.createElement('small');
   detail.textContent=industry.id===selected?'✓ Подтверждено вами':
@@ -402,7 +407,8 @@ function submit(evt){
   if(!norm(value,1000)){status.textContent='Расскажите хотя бы одной фразой, чем занимаетесь.';return}
   data.description=norm(value,1000);
   if(!save())return;
-  sectorReturn='goal';
+  if(byIndustry(data.industry)){markStep('map');return}
+  sectorReturn=(data.goal||data.resources.length)?'map':'goal';
   markStep('sector');
  }else if(view==='goal'){
   data.goal=norm(value,320);
