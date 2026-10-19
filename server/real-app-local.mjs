@@ -35,9 +35,19 @@ function send(res,status,data){
  res.end(JSON.stringify(data));
 }
 function safe(req){
- return req.headers.host===HOST+':'+PORT &&
- (!req.headers.origin||req.headers.origin===ORIGIN) &&
- (!req.headers['sec-fetch-site']||['same-origin','none'].includes(req.headers['sec-fetch-site']));
+ // A cross-site LINK can open the local Home, but must never authorize
+ // external scripts, API calls, state changes or access from the network.
+ if(req.headers.host!==HOST+':'+PORT)return false;
+ if(req.headers.origin&&req.headers.origin!==ORIGIN)return false;
+ const site=req.headers['sec-fetch-site'];
+ if(!site||site==='same-origin'||site==='none')return true;
+ const pathname=(req.url||'').split('?')[0];
+ // Chrome sets Sec-Fetch-Site: cross-site on a link from ChatGPT.
+ // A top-level document navigation is safe to display without CORS.
+ return req.method==='GET'&&
+  (pathname==='/'||pathname==='/index.html')&&
+  req.headers['sec-fetch-mode']==='navigate'&&
+  req.headers['sec-fetch-dest']==='document';
 }
 async function readQuestion(req,{withHistory=false}={}){
  let size=0;const chunks=[];

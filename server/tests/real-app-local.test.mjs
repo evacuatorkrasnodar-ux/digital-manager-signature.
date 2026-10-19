@@ -54,6 +54,29 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
  try{
   const home=await request('/');
   assert.equal(home.status,200);
+  // Opening localhost from a ChatGPT link is a cross-site top-level NAVIGATION.
+  // This may load Home, but nothing else may be called cross-site.
+  const externalLink=await request('/',{headers:{
+   'sec-fetch-site':'cross-site','sec-fetch-mode':'navigate',
+   'sec-fetch-dest':'document'
+  }});
+  assert.equal(externalLink.status,200);
+  const externalScript=await request('/assets/orb-reply.css',{headers:{
+   'sec-fetch-site':'cross-site','sec-fetch-mode':'no-cors',
+   'sec-fetch-dest':'style'
+  }});
+  assert.equal(externalScript.status,403);
+  const externalApi=await request('/api/seyveo-stream',{
+   method:'POST',headers:{
+    origin:ORIGIN,'sec-fetch-site':'cross-site',
+    'content-type':'application/json'
+   },data:{message:'Строго запрещённый запрос'}
+  });
+  assert.equal(externalApi.status,403);
+  const forgedHost=await request('/',{headers:{
+   host:'malicious.example:8790','sec-fetch-mode':'navigate','sec-fetch-dest':'document'
+  }});
+  assert.equal(forgedHost.status,403);
   assert.match(home.body,/id="orb"/);
   assert.match(home.body,/\/api\/seyveo-stream/);
   assert.match(home.body,/Запомни/);
