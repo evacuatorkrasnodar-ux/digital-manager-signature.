@@ -1919,7 +1919,9 @@ function showWrittenReply(userText,assistantText){
   // Desktop users may be scrolled down to the fixed composer. Bring the
   // response and sphere back into view only after the intentional submit.
   // Never auto-scroll during typing, which would make the iPhone keyboard jump.
-  const wasScrolled=window.scrollY>64;
+  // Never pull the page away from the iPhone caret while its keyboard is active.
+  const wasScrolled=window.scrollY>64 && document.activeElement!==question &&
+    !document.documentElement.classList.contains('seyveo-composer-keyboard');
   if(wasScrolled){
     const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     requestAnimationFrame(()=>window.scrollTo({top:0,behavior:reduce?'instant':'smooth'}));
