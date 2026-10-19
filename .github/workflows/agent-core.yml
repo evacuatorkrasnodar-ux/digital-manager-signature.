@@ -6,6 +6,7 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
@@ -19,6 +20,7 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
@@ -40,10 +42,12 @@ jobs:
         with:
           node-version: '24'
       - name: Agent planning and read-only code review tests
-        run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs
+        run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs server/tests/research-school.test.mjs
       - name: Real application and private iPhone agent route checks
         run: node --test server/tests/real-app-local.test.mjs server/tests/iphone-private-gateway.test.mjs
       - name: Static agent CLI smoke test
         run: node server/agent/try-agent.mjs "Создай встречу завтра в 12:00"
       - name: Code review CLI smoke test
         run: node server/agent/check-code.mjs server/agent/planner.mjs
+      - name: Felix research school offline preview (no web access)
+        run: node server/intelligence/study.mjs --source=web-standards
