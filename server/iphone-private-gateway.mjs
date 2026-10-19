@@ -12,7 +12,7 @@ const LOCAL_ORIGIN='http://127.0.0.1:8790';
 const MAX_BODY=20480;
 const METHODS=Object.freeze({
  GET:new Set(['/','/index.html','/manifest.webmanifest','/api/seyveo-status','/api/seyveo-memory']),
- POST:new Set(['/api/seyveo-stream','/api/seyveo-ask','/api/seyveo-memory','/api/seyveo-agent-plan'])
+ POST:new Set(['/api/seyveo-stream','/api/seyveo-ask','/api/seyveo-memory','/api/seyveo-agent-plan','/api/seyveo-agent-review'])
 });
 
 export function gatewayConfig(env=process.env){
