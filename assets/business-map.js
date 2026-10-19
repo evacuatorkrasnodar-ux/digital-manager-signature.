@@ -56,8 +56,14 @@ function save(){
  return true;
 }
 function updateEntry(){
- const s=load(),label=$('businessMapManageSummary');
+ const s=load(),label=$('businessMapManageSummary'),prompt=$('businessMapManagePrompt');
  if(label)label.textContent=s?(s.resources.length+' источн. · '+(s.description?'есть описание':'нужно описание')):'Начать';
+ if(prompt){
+  const suggestion=s?recommendations(s)[0]:null;
+  prompt.textContent=s
+   ?suggestion?'Следующий вопрос: '+suggestion.title:'Сведения сохранены. Можно продолжить знакомство.'
+   :'Расскажите о компании, целях и используемых ресурсах';
+ }
 }
 function markStep(next){
  view=next;status.textContent='';
@@ -154,28 +160,28 @@ const TOPIC=Object.freeze({
  start:['site','yandex','vk','ads','crm','accounting'],
  general:['site','crm','yandex','mail','accounting','ads']
 });
-function prioritySources(){
- if(data.mode==='start')return TOPIC.start;
- const goal=data.goal.toLocaleLowerCase('ru-RU');
+function prioritySources(map=data){
+ if(map.mode==='start')return TOPIC.start;
+ const goal=map.goal.toLocaleLowerCase('ru-RU');
  if(/клиент|заказ|заяв|продаж|трафик|реклам|лид|покупател/.test(goal))return TOPIC.customers;
  if(/доход|расход|финанс|налог|прибыл|выручк|бюджет|денег|затрат/.test(goal))return TOPIC.finance;
  if(/процесс|сотруд|скорост|поручен|организ|автомат|срок/.test(goal))return TOPIC.operations;
  return TOPIC.general;
 }
-function recommendations(){
+function recommendations(map=data){
  const items=[];
- if(!data.description)items.push({kind:'about',title:data.mode==='start'?'Опишите будущий бизнес':'Расскажите о компании',
+ if(!map.description)items.push({kind:'about',title:map.mode==='start'?'Опишите будущий бизнес':'Расскажите о компании',
   why:'SEYVEO нужно знать сферу деятельности, город и клиентов, прежде чем советовать инструменты.'});
- if(!data.goal)items.push({kind:'goal',title:'Назовите главную цель',
+ if(!map.goal)items.push({kind:'goal',title:'Назовите главную цель',
   why:'Цель помогает выбирать вопросы по приоритету вместо случайных рекомендаций.'});
- const present=new Set(data.resources.map(x=>x.type)),dismissed=new Set(data.dismissed||[]);
- for(const type of prioritySources()){
+ const present=new Set(map.resources.map(x=>x.type)),dismissed=new Set(map.dismissed||[]);
+ for(const type of prioritySources(map)){
   if(present.has(type)||dismissed.has(type))continue;
   const t=byType(type);if(!t)continue;
   items.push({kind:'source',type,title:'Пользуетесь «'+t.name+'»?',why:WHY[type]});
  }
- const ready=prioritySources().filter(type=>present.has(type));
- for(const type of [...ready,...data.resources.map(x=>x.type).filter(x=>!ready.includes(x))]){
+ const ready=prioritySources(map).filter(type=>present.has(type));
+ for(const type of [...ready,...map.resources.map(x=>x.type).filter(x=>!ready.includes(x))]){
   if(items.some(x=>x.kind==='connect'&&x.type===type))continue;
   const t=byType(type);if(!t)continue;
   items.push({kind:'connect',type,title:t.name+' указан · доступа пока нет',
@@ -360,6 +366,10 @@ entry.addEventListener('click',()=>start({trigger:entry}));
 
 window.addEventListener('storage',event=>{if(event.key===STORE)updateEntry()});
 window.addEventListener('pagehide',()=>{if(dialog.open)dialog.close()});
-window.SEYVEO_BUSINESS_MAP=Object.freeze({open:start,getState:()=>{const stored=load();return stored?clone(stored):null}});
+window.SEYVEO_BUSINESS_MAP=Object.freeze({
+ open:start,
+ getState:()=>{const stored=load();return stored?clone(stored):null},
+ getAdvice:()=>{const stored=load();return stored?recommendations(stored).map(item=>({kind:item.kind,type:item.type||'',title:item.title,why:item.why})):[]}
+});
 updateEntry();
 })();
