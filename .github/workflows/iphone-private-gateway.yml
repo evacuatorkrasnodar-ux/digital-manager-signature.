@@ -1,0 +1,27 @@
+name: SEYVEO Private iPhone Gateway Checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/iphone-private-gateway.mjs'
+      - 'server/tests/iphone-private-gateway.test.mjs'
+      - '.github/workflows/iphone-private-gateway.yml'
+  pull_request:
+    paths:
+      - 'server/iphone-private-gateway.mjs'
+      - 'server/tests/iphone-private-gateway.test.mjs'
+      - '.github/workflows/iphone-private-gateway.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  private-gateway-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check private iPhone gateway tests
+        run: node --test server/tests/iphone-private-gateway.test.mjs
