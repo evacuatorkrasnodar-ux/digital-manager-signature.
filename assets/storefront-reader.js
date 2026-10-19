@@ -14,7 +14,85 @@ const saveButton=$('businessMapStorefrontSave'),manualInput=$('businessMapStoref
 const note=$('businessMapStorefrontPrevious');
 let current=null,obtained=null,controller=null,reading=false,round=0;
 const norm=(text,limit)=>String(text||'').replace(/\s+/g,' ').trim().slice(0,limit);
+/* The checklist only reflects one visible page (or a direct owner statement).
+   Do not call this an audit of products, ranking, SEO, prices or inventory. */
+const auditBox=$('businessMapStorefrontAudit'),auditList=$('businessMapStorefrontAuditList');
+const auditSave=$('businessMapStorefrontAuditSave');
+let audit=null,isDemo=false;
+function auditIdeas(info){
+ const fromPage=info.method==='public-page';
+ const ideas=[];
+ if(fromPage){
+  if(!info.title)ideas.push(['Уточнить название витрины',
+    'Название не найдено в доступной разметке этой страницы. Проверьте, понятно ли оно посетителю.']);
+  else ideas.push(['Проверить название витрины',
+    'Найдено название: «'+norm(info.title,92)+'». Убедитесь, что оно соответствует вашему магазину.']);
+  if(!info.summary)ideas.push(['Проверить описание магазина',
+    'Описание не удалось получить с этой страницы. Проверьте, понятно ли клиенту, что вы предлагаете.']);
+  else if(info.summary.length<80)ideas.push(['Дополнить описание, если нужно',
+    'В открытых данных этой страницы описание короткое. Уточните преимущества, ассортимент и условия покупки.']);
+  else ideas.push(['Проверить полноту описания',
+    'Описание получено. Проверьте, хватает ли сведений о доставке и условиях покупки.']);
+  if(!info.products.length)ideas.push(['Уточнить ассортимент',
+    'Названия товаров в структурированных данных этой страницы не обнаружены. Это не означает, что товаров нет.']);
+  else ideas.push(['Проверить карточки найденных товаров',
+    'В открытой разметке этой страницы найдено '+info.products.length+' наименований. Проверьте их названия, характеристики и фотографии.']);
+ }else{
+  ideas.push(['Уточнить ассортимент',
+   'Описание предоставлено вами. Попросите SEYVEO изучить доступную публичную страницу, когда сайт разрешит чтение.']);
+  ideas.push(['Проверить карточки товаров или услуг',
+   'Убедитесь, что покупатель видит понятные названия, фотографии и характеристики. По вашему описанию это нельзя подтвердить.']);
+ }
+ ideas.push(['Данные о реальных продажах',
+  'По одной странице невозможно узнать конверсию, спрос, остатки и результат рекламы. Для этого понадобятся отдельные данные и разрешения.']);
+ return ideas.slice(0,4);
+}
+function renderAudit(info,confirmed=false){
+ if(!info){audit=null;auditBox.hidden=true;auditSave.hidden=true;return}
+ const safe={method:info.method==='owner'?'owner':'public-page',
+  url:current||'',title:norm(info.title,140),summary:norm(info.summary,580),
+  products:Array.isArray(info.products)?info.products.slice(0,8).map(x=>norm(x,100)).filter(Boolean):[]};
+ audit={...safe,ideas:auditIdeas(safe),confirmed:!!confirmed};
+ auditList.replaceChildren();
+ for(const [heading,explanation] of audit.ideas){
+  const item=document.createElement('div');item.className='business-map-storefront-audit-item';
+  const title=document.createElement('strong');title.textContent=heading;
+  const description=document.createElement('p');description.textContent=explanation;
+  item.append(title,description);auditList.append(item);
+ }
+ $('businessMapStorefrontAuditBasis').textContent=safe.method==='owner'
+  ?'По описанию владельца':'По одной публичной странице';
+ auditBox.hidden=false;
+ auditSave.hidden=isDemo||!confirmed;
+ $('businessMapStorefrontAuditStatus').textContent=confirmed
+  ?'Сведения подтверждены. План можно сохранить отдельно.':'Предварительная оценка. Сначала подтвердите сведения выше.';
+}
+auditSave.addEventListener('click',()=>{
+ if(!audit||!audit.confirmed||isDemo)return;
+ const api=window.SEYVEO_NOTES_API;
+ if(!api||typeof api.getNotes!=='function'||typeof api.putNotes!=='function'){
+  $('businessMapStorefrontAuditStatus').textContent='Блокнот пока недоступен.';return
+ }
+ const notes=api.getNotes();
+ if(notes.length>=100){
+  $('businessMapStorefrontAuditStatus').textContent='В Блокноте уже 100 записей. Освободите место перед сохранением.';return
+ }
+ const lines=['SEYVEO · План проверки витрины','',
+  'Источник: '+audit.url,
+  audit.method==='owner'?'Основание: описание со слов владельца':'Основание: публичные данные одной страницы',
+  '','Вопросы для проверки:'];
+ for(const [headline,reason] of audit.ideas)lines.push('• '+headline,'  '+reason);
+ lines.push('','Это предварительный список вопросов, не анализ всего каталога или продаж.');
+ const record={id:'storefront-check-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),
+  text:lines.join('\n'),createdAt:Date.now(),preserveLines:true};
+ if(!api.putNotes([record,...notes])){
+  $('businessMapStorefrontAuditStatus').textContent='Не удалось сохранить план. Проверьте память устройства.';return
+ }
+ $('businessMapStorefrontAuditStatus').textContent='План проверки сохранён в Блокноте.';
+ auditSave.hidden=true;
+});
 function clearResult(){
+ renderAudit(null);
  obtained=null;
  title.textContent='';summary.textContent='';
  productList.replaceChildren();
@@ -22,6 +100,7 @@ function clearResult(){
 }
 function setResult(found){
  obtained=found;
+ renderAudit({...found,method:'public-page'},false);
  title.textContent=found.title||'Название страницы не найдено';
  summary.textContent=found.summary||'Описание страницы не найдено.';
  productList.replaceChildren();
@@ -41,6 +120,7 @@ function stop(){
 }
 window.addEventListener('seyveo:storefront-open',event=>{
  stop();clearResult();manualInput.value='';
+ isDemo=event.detail?.preview===true;
  current=event.detail?.url||null;
  if(!current)return;
  address.textContent=current;
@@ -52,8 +132,10 @@ window.addEventListener('seyveo:storefront-open',event=>{
   ?'Ранее сохранено со слов владельца: ':'Ранее сохранено после проверки страницы: ')+
   (old.summary||old.title||old.products.join(', ')).slice(0,350):'Пока нет сохранённого описания витрины.';
  $('businessMapStorefrontPrevious').hidden=false;
+ if(old)renderAudit(old,true);
 });
 window.addEventListener('pagehide',stop);
+$('businessMapDialog')?.addEventListener('close',stop);
 $('businessMapStorefrontBack').addEventListener('click',()=>{stop();current=null});
 function validProductName(value){return norm(value,100)}
 function parsePage(html){
@@ -129,6 +211,7 @@ scanButton.addEventListener('click',async()=>{
   if(id!==round)return;
   const found=parsePage(html);
   if(!found.title&&!found.summary&&!found.products.length){
+   renderAudit({...found,method:'public-page'},false);
    status.textContent='Страница открылась, но публичное описание и товары не обнаружены. Можно рассказать об ассортименте вручную.';
   }else{
    setResult(found);
@@ -151,7 +234,7 @@ saveButton.addEventListener('click',()=>{
  const detail={url:current,method:'public-page',...obtained};
  window.dispatchEvent(new CustomEvent('seyveo:storefront-save',{detail}));
  status.textContent=detail.result?.message||'Не удалось сохранить сведения.';
- if(detail.result?.ok){saveButton.hidden=true;note.textContent='Данные обновлены после вашей проверки.'}
+ if(detail.result?.ok){saveButton.hidden=true;note.textContent='Данные обновлены после вашей проверки.';renderAudit({...obtained,method:'public-page'},true)}
 });
 $('businessMapStorefrontManualSave').addEventListener('click',()=>{
  const info=norm(manualInput.value,580);
@@ -163,6 +246,6 @@ $('businessMapStorefrontManualSave').addEventListener('click',()=>{
  const detail={url:current,method:'owner',summary:info,title:'Ассортимент со слов владельца',products:[]};
  window.dispatchEvent(new CustomEvent('seyveo:storefront-save',{detail}));
  status.textContent=detail.result?.message||'Не удалось сохранить сведения.';
- if(detail.result?.ok){note.textContent='Записано со слов владельца.';manualInput.value='';clearResult()}
+ if(detail.result?.ok){note.textContent='Записано со слов владельца.';manualInput.value='';clearResult();renderAudit(detail,true)}
 });
 })();
