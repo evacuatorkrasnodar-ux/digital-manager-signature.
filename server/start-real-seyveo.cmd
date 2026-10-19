@@ -10,6 +10,7 @@ if errorlevel 1 (
 set "SEYVEO_ENABLE_LOCAL=1"
 set "SEYVEO_ENABLE_CLOUD=0"
 set "SEYVEO_LOCAL_MODEL=qwen3:4b-instruct"
+set "SEYVEO_LOCAL_THREADS=8"
 echo.
 echo SEYVEO approved Home with local Ollama.
 echo Open http://127.0.0.1:8790/

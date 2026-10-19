@@ -79,6 +79,42 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.equal(data.executed,false);
   assert.equal(received.url,'http://127.0.0.1:11434/api/chat');
   assert.equal(JSON.parse(received.opts.body).model,'qwen3:4b-instruct');
+  // Stream must deliver model tokens through the original page endpoint.
+  const packets=[
+   {message:{role:'assistant',content:'Наш '},done:false},
+   {message:{role:'assistant',content:'Феликс отвечает.'},done:false},
+   {message:{role:'assistant',content:''},done:true}
+  ];
+  const encoder=new TextEncoder();
+  let captured=null;
+  globalThis.fetch=async(url,opts)=>{
+   captured={url,opts};
+   return {ok:true,body:new ReadableStream({
+    start(ctrl){
+     for(const packet of packets)ctrl.enqueue(encoder.encode(JSON.stringify(packet)+'\n'));
+     ctrl.close();
+    }
+   })};
+  };
+  const stream=await request('/api/seyveo-stream',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Ответь коротко'}
+  });
+  assert.equal(stream.status,200);
+  assert.match(stream.headers['content-type'],/application\/x-ndjson/);
+  const events=stream.body.trim().split('\n').map(x=>JSON.parse(x));
+  assert.deepEqual(events.map(x=>x.type),['delta','delta','done']);
+  assert.equal(events[0].text+events[1].text,'Наш Феликс отвечает.');
+  assert.equal(events[2].cloud,false);
+  assert.equal(events[2].executed,false);
+  assert.equal(captured.url,'http://127.0.0.1:11434/api/chat');
+  assert.equal(JSON.parse(captured.opts.body).stream,true);
+  const forged=await request('/api/seyveo-stream',{
+   method:'POST',
+   headers:{origin:'https://evil.example','content-type':'application/json'},
+   data:{message:'Привет'}
+  });
+  assert.equal(forged.status,403);
   const rejectedBody=await request('/api/seyveo-ask',{
    method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
    data:{message:''}

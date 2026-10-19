@@ -7,6 +7,7 @@ import {readFile} from 'node:fs/promises';
 import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
+import {askLocalStream} from './local-stream.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -16,7 +17,7 @@ const HEADERS={
  'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 };
 const ANCHOR="const answer=getDemoAnswer(q);\ncloseComposer();showWrittenReply(q,answer);question.value='';syncComposer();";
-const BRIDGE="if(window.SEYVEO_LOCAL_PENDING){composerMessage('Феликс ещё отвечает.');return}\nwindow.SEYVEO_LOCAL_PENDING=true;\ncloseComposer();question.value='';syncComposer();\nwindow.SEYVEO_BUSINESS_DIALOG?.reset?.();\n$('orbInlineReplyText').textContent='Феликс думает…';\n$('orbInlineReply').hidden=false;\n$('stage').classList.add('has-inline-reply');\ndocument.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'listening'}}));\nfetch('/api/seyveo-ask',{\n method:'POST',credentials:'same-origin',\n headers:{'content-type':'application/json'},\n body:JSON.stringify({message:q})\n}).then(async res=>{\n const d=await res.json();\n return res.ok?(d.text||'Нет ответа.'):(d.error||'Не удалось получить ответ.');\n}).catch(()=> 'Не удалось связаться с локальным Феликсом. Проверь Ollama.')\n.then(answer=>{\n $('orbInlineReplyText').textContent=answer;\n $('orbInlineReplyText').scrollTop=0;\n document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'text'}}));\n}).finally(()=>{window.SEYVEO_LOCAL_PENDING=false});\nreturn;";
+const BRIDGE="if(window.SEYVEO_LOCAL_PENDING){composerMessage('Феликс ещё отвечает.');return}\nwindow.SEYVEO_LOCAL_PENDING=true;\ncloseComposer();question.value='';syncComposer();\nwindow.SEYVEO_BUSINESS_DIALOG?.reset?.();\nconst panel=$('orbInlineReplyText');\npanel.textContent='Феликс думает…';\n$('orbInlineReply').hidden=false;\n$('stage').classList.add('has-inline-reply');\ndocument.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'listening'}}));\n(async()=>{\n const response=await fetch('/api/seyveo-stream',{\n  method:'POST',credentials:'same-origin',\n  headers:{'content-type':'application/json'},\n  body:JSON.stringify({message:q})\n });\n if(!response.ok){\n  const problem=await response.json().catch(()=>({}));\n  throw Error(problem.error||'Не удалось запустить ответ.');\n }\n if(!response.body)throw Error('Браузер не поддерживает потоковый ответ.');\n const reader=response.body.getReader();\n const decoder=new TextDecoder('utf-8');\n let carry='',answer='',finished=false;\n const consume=line=>{\n  if(!line.trim())return;\n  const part=JSON.parse(line);\n  if(part.type==='delta'&&typeof part.text==='string'){\n   answer+=part.text;\n   panel.textContent=answer;\n   panel.scrollTop=panel.scrollHeight;\n  }else if(part.type==='done'){finished=true}\n  else if(part.type==='error')throw Error(part.text||'Феликс не завершил ответ.');\n };\n while(true){\n  const next=await reader.read();\n  if(next.done)break;\n  carry+=decoder.decode(next.value,{stream:true});\n  let i;\n  while((i=carry.indexOf('\\n'))!==-1){\n   const line=carry.slice(0,i);\n   carry=carry.slice(i+1);\n   consume(line);\n  }\n }\n carry+=decoder.decode();\n if(carry.trim())consume(carry);\n if(!finished)throw Error('Соединение прервано до окончания ответа.');\n if(!answer.trim())throw Error('Феликс не прислал ответ.');\n})().catch(err=>{\n if(panel.textContent==='Феликс думает…')panel.textContent=err.message||'Нет связи с Ollama.';\n else panel.textContent+='\\n\\n[Ответ прерван. Можно повторить вопрос.]';\n}).finally(()=>{\n window.SEYVEO_LOCAL_PENDING=false;\n document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'text'}}));\n});\nreturn;";
 export function adaptOriginalHome(html){
  const parts=html.split(ANCHOR);
  if(parts.length!==2)throw Error('SEYVEO Home handler changed; bridge not applied.');
@@ -72,6 +73,48 @@ export function createRealLocalServer(){
    return;
   }
   if(req.method==='GET'&&path==='/sw.js'){send(res,404,{error:'Service worker disabled.'});return}
+  if(req.method==='POST'&&path==='/api/seyveo-stream'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!String(req.headers['content-type']||'').startsWith('application/json')){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   const now=Math.floor(Date.now()/60000);
+   if(minute!==now){minute=now;count=0}
+   if(count>=12){send(res,429,{error:'Подожди минуту перед следующим вопросом.'});return}
+   if(busy){send(res,429,{error:'Феликс ещё отвечает.'});return}
+   let message;
+   try{message=await readQuestion(req)}
+   catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   count++;busy=true;
+   const controller=new AbortController();
+   const disconnected=()=>{if(!res.writableEnded)controller.abort()};
+   res.on('close',disconnected);
+   try{
+    res.writeHead(200,{
+     ...HEADERS,
+     'content-type':'application/x-ndjson; charset=utf-8',
+     'x-accel-buffering':'no'
+    });
+    res.flushHeaders();
+    const result=await askLocalStream(message,{
+     name:'Феликс',signal:controller.signal,
+     onDelta:token=>{
+      if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
+     }
+    });
+    if(!res.destroyed)res.end(JSON.stringify({
+     type:'done',model:result.model,cloud:false,executed:false
+    })+'\n');
+   }catch{
+    if(!res.destroyed)res.end(JSON.stringify({
+     type:'error',text:'Феликс не смог завершить ответ. Проверь Ollama.'
+    })+'\n');
+   }finally{
+    busy=false;
+    res.off('close',disconnected);
+   }
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-ask'){
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
