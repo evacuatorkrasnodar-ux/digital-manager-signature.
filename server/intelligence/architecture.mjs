@@ -87,9 +87,10 @@ export function intelligencePlan(message,{mode='auto',allowCloud=false}={},avail
    route:cloudEligible?'cloud':choice.route==='cloud'?'unavailable':choice.route,
    reason:choice.reason,
    providerCalled:false,
+   routeVerified:false,
    cloudConsent:cloudEligible,
-   cloudProviderConnected:availability.cloud===true,
-   localModelConnected:availability.local===true
+   cloudProviderConfigured:availability.cloud===true,
+   localModelConfigured:availability.local===true
   }),
   safety:Object.freeze({
    privateData:localOnly,
