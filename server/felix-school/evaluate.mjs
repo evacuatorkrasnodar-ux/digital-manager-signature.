@@ -9,7 +9,7 @@ import {resolve} from 'node:path';
 import {safeInstruction} from '../hybrid-core.mjs';
 import {coachMessage} from './lesson-coach.mjs';
 
-export const FELIX_EXAM_SUITES=Object.freeze({baseline:'./eval-cases.json',batch2:'./exam-batch2.json'});
+export const FELIX_EXAM_SUITES=Object.freeze({baseline:'./eval-cases.json',batch2:'./exam-batch2.json',batch4:'./exam-batch4-business.json'});
 
 export function gradeAnswer(text,patterns){
  if(typeof text!=='string'||!Array.isArray(patterns)||!patterns.length)
