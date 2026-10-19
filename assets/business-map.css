@@ -218,7 +218,12 @@
 #businessMapDialog .business-map-industry-choice small{
  font-size:10.5px;line-height:1.35;color:#a2b3c5;
 }
-#businessMapDialog .business-map-industry-choice:has(small:first-child){border-color:rgba(245,245,248,.4)}
+#businessMapDialog .business-map-industry-choice[data-industry-state="proposed"]{
+ border-color:rgba(198,216,237,.44);background:rgba(210,222,239,.055);
+}
+#businessMapDialog .business-map-industry-choice[data-industry-state="confirmed"]{
+ border-color:rgba(198,216,237,.65);
+}
 #businessMapDialog .business-map-overview-row .business-map-overview-title{
  margin:16px 0 6px;
 }
@@ -230,4 +235,11 @@
 @media(max-width:345px){
  #businessMapDialog .business-map-industry-choices{gap:7px}
  #businessMapDialog .business-map-industry-choice{padding:9px 10px;min-height:73px}
+}
+
+:root[data-theme=light] #businessMapDialog .business-map-industry-choice[data-industry-state="proposed"]{
+ border-color:#91a6bd;background:#f0f4f8
+}
+:root[data-theme=light] #businessMapDialog .business-map-industry-choice[data-industry-state="confirmed"]{
+ border-color:#6987a7
 }
