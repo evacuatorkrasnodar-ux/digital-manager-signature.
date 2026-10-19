@@ -61,7 +61,12 @@
  margin:9px 0 2px;padding:9px 2px 3px 0;border-top:1px solid var(--soft-line);
  color:var(--text);font-size:13px;line-height:1.58;
  white-space:pre-wrap;overflow-wrap:anywhere;
- scrollbar-width:thin;
+ /* Invisible scrollbar; scrolling via wheel, touch, keys still works. */
+ scrollbar-width:none;
+ -ms-overflow-style:none;
+}
+#stage .orb-inline-reply-text::-webkit-scrollbar{
+ display:none;width:0;height:0;
 }
 #stage .orb-inline-reply-text:focus-visible{
  outline:1px solid var(--secondary);outline-offset:2px;border-radius:5px;
