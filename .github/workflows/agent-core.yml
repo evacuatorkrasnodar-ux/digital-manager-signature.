@@ -6,6 +6,9 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/felix-school/**'
+      - 'server/hybrid-core.mjs'
+      - 'server/tests/felix-persona.test.mjs'
       - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
@@ -20,6 +23,9 @@ on:
       - 'server/agent/**'
       - 'server/intelligence/**'
       - 'server/tests/intelligence-architecture.test.mjs'
+      - 'server/felix-school/**'
+      - 'server/hybrid-core.mjs'
+      - 'server/tests/felix-persona.test.mjs'
       - 'server/tests/research-school.test.mjs'
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
@@ -41,6 +47,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Felix persona, safety and dialogue guidance tests
+        run: node --test server/tests/felix-persona.test.mjs server/tests/core.test.mjs
       - name: Agent planning and read-only code review tests
         run: node --test server/tests/agent-planner.test.mjs server/tests/code-review.test.mjs server/tests/intelligence-architecture.test.mjs server/tests/research-school.test.mjs
       - name: Real application and private iPhone agent route checks
