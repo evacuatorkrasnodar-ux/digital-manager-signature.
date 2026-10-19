@@ -59,6 +59,28 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
  try{
   const home=await request('/');
   assert.equal(home.status,200);
+  assert.match(home.body,/\/api\/seyveo-intelligence-catalog/);
+  const catalogResponse=await request('/api/seyveo-intelligence-catalog');
+  assert.equal(catalogResponse.status,200);
+  const capabilities=JSON.parse(catalogResponse.body);
+  assert.equal(capabilities.mode,'architecture-preview');
+  assert.ok(capabilities.capabilities.length>=18);
+  assert.equal(capabilities.limits.productionReady,false);
+  const previewResponse=await request('/api/seyveo-intelligence-preview',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Создай встречу в календаре завтра'}
+  });
+  assert.equal(previewResponse.status,200);
+  const blueprint=JSON.parse(previewResponse.body);
+  assert.equal(blueprint.task.capability,'calendar');
+  assert.equal(blueprint.safety.executed,false);
+  assert.equal(blueprint.intelligence.providerCalled,false);
+  assert.equal(blueprint.readyToExecute,false);
+  const rejectedPreview=await request('/api/seyveo-intelligence-preview',{
+   method:'POST',headers:{origin:'https://other.invalid','content-type':'application/json'},
+   data:{message:'Покажи мне контакты'}
+  });
+  assert.equal(rejectedPreview.status,403);
   // The planner is a separate real-app API, not a fake completion.
   const planned=await request('/api/seyveo-agent-plan',{
    method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
