@@ -169,7 +169,9 @@ function acceptable(value){
  if(/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\s|otp|pin[ =:]|код\s+доступа|секретн)/i.test(value))return false;
  if(/\bhttps?:\/\/[^\s/]*@/i.test(value))return false;
  if(/[\r\n<>]/.test(value))return false;
- if(/https?:\/\//i.test(value)&&!/^(https:\/\/[^\s]+|[^\s]+)$/i.test(value))return false;
+ // These entries are plain labels, NEVER activated links or credentials.
+ // Reject executable/unknown schemes instead of storing misleading addresses.
+ if(/^[a-z][\w+.-]*:/i.test(value)&&!/^https:\/\//i.test(value))return false;
  return true;
 }
 function submit(evt){
