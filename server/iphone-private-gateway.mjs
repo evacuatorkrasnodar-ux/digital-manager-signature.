@@ -4,6 +4,8 @@
  * Not a public multi-user backend; never configure router port forwarding.
  */
 import {createServer,request as httpRequest} from 'node:http';
+import {fileURLToPath} from 'node:url';
+import {resolve} from 'node:path';
 
 const LOOPBACK='127.0.0.1';
 const LOCAL_ORIGIN='http://127.0.0.1:8790';
@@ -57,12 +59,13 @@ function send(res,status,error){
  res.end(JSON.stringify({error}));
 }
 async function readBody(req){
- const parts=[];let size=0;
+ const parts=[];let size=0,tooLarge=false;
  for await(const chunk of req){
   size+=chunk.length;
-  if(size>MAX_BODY)throw Error('body-too-large');
+  if(size>MAX_BODY){tooLarge=true;continue}
   parts.push(chunk);
  }
+ if(tooLarge)throw Error('body-too-large');
  return Buffer.concat(parts);
 }
 
@@ -114,7 +117,7 @@ export function createIphoneGateway({config=gatewayConfig(),upstreamPort=8790}={
  });
 }
 
-if(process.argv[1]&&process.argv[1]===new URL(import.meta.url).pathname){
+if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const settings=gatewayConfig();
  const server=createIphoneGateway({config:settings});
  server.requestTimeout=135000;
