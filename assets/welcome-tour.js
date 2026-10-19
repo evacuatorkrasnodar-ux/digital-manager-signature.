@@ -232,7 +232,7 @@ function stopVoice(){
    narrationAudio.pause();narrationAudio.removeAttribute('src');narrationAudio.load();
   }catch{}
  }
- narrationAudio=null;audioScene=-1;
+ audioScene=-1;
 }
 function updateVoiceStatus(){
  const button=$('filmVoice'),status=$('filmVoiceStatus');
@@ -252,7 +252,7 @@ function narrate(){
  if(typeof window.Audio!=='function')return;
  const scene=active,mode=voiceMode;
  try{
-  const audio=new window.Audio();narrationAudio=audio;audioScene=scene;
+  const audio=narrationAudio||new window.Audio();narrationAudio=audio;audioScene=scene;
   audio.preload='auto';audio.volume=.92;
   audio.onloadedmetadata=()=>{if(active===scene&&voiceMode===mode&&playing)schedule()};
   audio.onerror=()=>{
@@ -469,7 +469,7 @@ $('filmActionRun').addEventListener('click',()=>{
  pauseInteraction();$('filmActionRun').disabled=true;$('filmActionRun').textContent='Учебное действие выполнено';
  $('filmActionStatus').textContent='✓';$('filmActionResult').hidden=false;
 });
-// Narration is supplied only by mastered audio files, never browser speechSynthesis.
+// Narration is supplied only by mastered audio tracks.
 $('filmPause').addEventListener('click',()=>setPlaying(!playing));
 $('filmNext').addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:film-next')));
 $('filmBack').addEventListener('click',()=>window.dispatchEvent(new Event('seyveo:film-back')));
@@ -486,7 +486,8 @@ function previewVoice(gender){
  }
  stopVoice();
  try{
-  const mode=voiceMode,audio=new window.Audio(assetFor(mode,0));narrationAudio=audio;audioScene=-1;
+  const mode=voiceMode,audio=narrationAudio||new window.Audio();narrationAudio=audio;audioScene=-1;
+  audio.src=assetFor(mode,0);
   audio.volume=.92;audio.onerror=()=>{
    unavailableAudio.add(mode);stopVoice();
    if(status)status.textContent='Фирменная нейросетевая озвучка пока не добавлена. Системный роботический голос не используется.';
