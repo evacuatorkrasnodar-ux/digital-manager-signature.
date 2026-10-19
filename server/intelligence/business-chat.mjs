@@ -37,6 +37,10 @@ const METRICS=Object.freeze({
  },example:'расходы на рекламу 8000 и 4 новых клиента'}
 });
 const names=Object.keys(METRICS).sort((a,b)=>b.length-a.length);
+const COMMAND_HEAD=new RegExp(
+ '^(?:(?:филя|феликс)[,\\s]+)?(?:посчитай|рассчитай|вычисли)\\s+('+
+ names.join('|')+')(?=\\s|:|$)','iu'
+);
 const COMMAND=new RegExp(
  '^(?:(?:филя|феликс)[,\\s]+)?(?:посчитай|рассчитай|вычисли)\\s+('+
  names.join('|')+')(?::\\s*(.*))?\\s*$','iu'
@@ -80,9 +84,16 @@ function fmtInput(key,value){return key+' = '+value}
  */
 export function businessChatAnswer(message){
  if(typeof message!=='string'||message.length>600)return null;
- const match=message.trim().match(COMMAND);
- if(!match)return null;
- const kind=METRICS[match[1].toLowerCase()];
+ const input=message.trim();
+ const head=input.match(COMMAND_HEAD);
+ if(!head)return null;
+ const kind=METRICS[head[1].toLowerCase()];
+ const match=input.match(COMMAND);
+ if(!match)return Object.freeze({
+  status:'needs-details',metric:kind.key,modelCalled:false,executed:false,
+  text:'В расчёте есть лишний текст или неоднозначные условия. Ничего не вычисляю.\\n'+
+   'Пример: «Филя, посчитай '+head[1]+': '+kind.example+'».'
+ });
  const raw=match[2]?.trim()||'';
  const values=parseFields(raw,kind.fields);
  if(!values){
