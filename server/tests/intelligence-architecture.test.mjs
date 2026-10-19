@@ -40,6 +40,7 @@ test('no-cloud consent blocks selection even if cloud is technically ready',()=>
  assert.equal(yes.intelligence.route,'cloud');
  assert.equal(yes.intelligence.cloudConsent,true);
  assert.equal(yes.intelligence.providerCalled,false);
+ assert.equal(yes.intelligence.routeVerified,false);
  assert.equal(yes.safety.executed,false);
 });
 test('sensitive requests never become cloud calls, even with explicit cloud mode',()=>{
@@ -63,8 +64,8 @@ test('dangerous operations stay blocked regardless of model availability',()=>{
 test('unconnected models are disclosed, not fabricated',()=>{
  const plan=intelligencePlan('Привет, Филя',{allowCloud:false},{local:false,cloud:false});
  assert.equal(plan.intelligence.route,'unavailable');
- assert.equal(plan.intelligence.localModelConnected,false);
- assert.equal(plan.intelligence.cloudProviderConnected,false);
+ assert.equal(plan.intelligence.localModelConfigured,false);
+ assert.equal(plan.intelligence.cloudProviderConfigured,false);
  assert.equal(plan.intelligence.providerCalled,false);
 });
 test('approval language in user text cannot authorize side effects',()=>{
@@ -74,4 +75,14 @@ test('approval language in user text cannot authorize side effects',()=>{
  assert.equal(plan.safety.approvalGranted,false);
  assert.equal(plan.safety.executed,false);
  assert.equal(plan.readyToExecute,false);
+});
+
+test('high-stakes topics prefer local even if cloud access was approved',()=>{
+ for(const request of ['Оплати счёт','Подпиши договор за меня','Переведи деньги']){
+  const out=intelligencePlan(request,{mode:'cloud',allowCloud:true},{local:true,cloud:true});
+  assert.equal(out.intelligence.route,'local',request);
+  assert.equal(out.intelligence.cloudConsent,false,request);
+  assert.equal(out.status,'blocked',request);
+  assert.equal(out.readyToExecute,false);
+ }
 });
