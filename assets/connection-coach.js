@@ -167,10 +167,11 @@ const TOPICS=Object.freeze({
  }
 });
 const ORDER=['site','vk','telegram','marketplace','maps','avito','crm','ads'];
-const LABELS=Object.freeze({site:'Сайт',vk:'ВКонтакте',telegram:'Telegram',marketplace:'Ozon / WB',maps:'Карты',avito:'Авито',crm:'CRM',ads:'Реклама'});
+const EXTRA_ORDER=['mail','accounting','bank'];
+const LABELS=Object.freeze({site:'Сайт',vk:'ВКонтакте',telegram:'Telegram',marketplace:'Ozon / WB',maps:'Карты',avito:'Авито',crm:'CRM',ads:'Реклама',mail:'Рабочая почта',accounting:'Бухгалтерия / 1С',bank:'Банк'});
 const canonical=type=>type==='yandex'||type==='gis'?'maps':TOPICS[type]?type:'';
 const safeNoteText=value=>String(value||'').replace(/\s+/g,' ').trim().slice(0,500);
-let topic='site',purpose='learn',mode='owner';
+let topic='site',purpose='learn',mode='owner',showOtherServices=false;
 const choices=$('connectionCoachChoices'),detail=$('connectionCoachDetails');
 const result=$('connectionCoachResult');
 const map=()=>window.SEYVEO_BUSINESS_MAP?.getState?.()||null;
@@ -188,12 +189,18 @@ function context(type){
 }
 function updateChips(){
  choices.replaceChildren();
- for(const id of ORDER){
+ for(const id of showOtherServices?[...ORDER,...EXTRA_ORDER]:ORDER){
   const button=document.createElement('button');
   button.type='button';button.dataset.coachType=id;button.textContent=LABELS[id];
   button.setAttribute('aria-pressed',String(id===topic));
   choices.append(button);
  }
+ const more=document.createElement('button');
+ more.type='button';more.className='connection-coach-more';
+ more.dataset.coachMore='true';
+ more.textContent=showOtherServices?'Скрыть дополнительные сервисы':'Ещё: почта, банк, 1С';
+ more.setAttribute('aria-expanded',String(showOtherServices));
+ choices.append(more);
  $('connectionCoachLearn').setAttribute('aria-pressed',String(purpose==='learn'));
  $('connectionCoachPromote').setAttribute('aria-pressed',String(purpose==='promote'));
  $('connectionCoachSelf').setAttribute('aria-pressed',String(mode==='owner'));
@@ -204,6 +211,11 @@ function updateChips(){
 }
 function steps(){
  const data=TOPICS[topic];
+ if(mode==='specialist'&&purpose==='promote')return [
+  'Задача: привлечь реальные обращения через '+data.name+'. Сначала согласовать цель, исходные показатели и критерии результата.',
+  ...data.promo,
+  'Подготовить проверку результатов и понятный отчёт владельцу. Публикации, новые права доступа и любые расходы — только после отдельного согласования.'
+ ];
  return mode==='specialist'?data.specialist:purpose==='promote'?data.promo:data.start;
 }
 function render(){
@@ -244,11 +256,22 @@ function setType(id){
 function start(options={}){
  purpose=options.goal==='promote'?'promote':'learn';
  mode=options.specialist===true?'specialist':'owner';topic=canonical(options.type)||'site';
+ showOtherServices=EXTRA_ORDER.includes(topic);
  render();
  return true;
 }
 choices.addEventListener('click',event=>{
- const button=event.target.closest?.('[data-coach-type]');if(button)setType(button.dataset.coachType);
+ const more=event.target.closest?.('[data-coach-more]');
+ if(more){
+  showOtherServices=!showOtherServices;
+  if(!showOtherServices&&EXTRA_ORDER.includes(topic))topic='site';
+  render();return;
+ }
+ const button=event.target.closest?.('[data-coach-type]');
+ if(button){
+  if(!EXTRA_ORDER.includes(button.dataset.coachType))showOtherServices=false;
+  setType(button.dataset.coachType);
+ }
 });
 $('connectionCoachLearn').addEventListener('click',()=>{purpose='learn';render()});
 $('connectionCoachPromote').addEventListener('click',()=>{purpose='promote';render()});

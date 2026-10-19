@@ -41,6 +41,10 @@
  background:var(--card2);color:var(--text);
  padding:9px 10px;text-align:left;
 }
+#manageConnectionsDialog .connection-coach-choices .connection-coach-more{
+ grid-column:1/-1;text-align:center;min-height:42px;
+ font-size:11.5px;color:var(--secondary);background:transparent;
+}
 #manageConnectionsDialog .connection-coach-choices button[aria-pressed=true]{
  border-color:rgba(207,224,246,.55);background:rgba(222,234,248,.09);
 }
