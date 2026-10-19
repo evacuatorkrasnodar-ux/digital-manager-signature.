@@ -28,8 +28,8 @@ export function adaptOriginalHome(html){
  let served=parts.join(BRIDGE).replace('Демо · ИИ не подключён</small>','Локальный ИИ · Qwen3 4B</small>');
  // In the LOCAL copy only: keep the composer awake after the first question.
  const armIdle='function armComposerIdle(){';
- const voiceFallback='  const answer=getDemoAnswer(phrase);';
- const boot=' restoreDraft();setComposerMode(composerMode);render();syncAppPage();';
+ const voiceFallback=' const answer=getDemoAnswer(phrase);';
+ const boot='restoreDraft();setComposerMode(composerMode);render();syncAppPage();';
  if(!served.includes(armIdle)||!served.includes(voiceFallback)||!served.includes(boot))
   throw Error('Original Home voice/composer anchors changed; refusing adaptation.');
  served=served.replace(armIdle,armIdle+'if(window.SEYVEO_LOCAL_CHAT_ACTIVE)return;');
