@@ -281,3 +281,65 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   await rm(dir,{recursive:true,force:true});
  }
 });
+
+test('Business math commands in local chat are exact, offline and refuse incomplete inputs',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'seyveo-math-'));
+ const server=createRealLocalServer({memoryStore:createMemoryStore(join(dir,'notes.json'))});
+ await new Promise((resolve,reject)=>{
+  server.once('error',reject);
+  server.listen(PORT,HOST,resolve);
+ });
+ const oldFetch=globalThis.fetch,oldLocal=process.env.SEYVEO_ENABLE_LOCAL;
+ process.env.SEYVEO_ENABLE_LOCAL='0';
+ let calls=0;
+ globalThis.fetch=async()=>{calls++;throw Error('Ollama must not be requested for math')};
+ try{
+  const stream=await request('/api/seyveo-stream',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Филя, посчитай конверсию: 600 посетителей и 18 заказов'}
+  });
+  assert.equal(stream.status,200);
+  assert.match(stream.headers['content-type'],/application\/x-ndjson/);
+  const events=stream.body.trim().split('\n').map(JSON.parse);
+  assert.deepEqual(events.map(e=>e.type),['delta','done']);
+  assert.match(events[0].text,/3\.00\s*%/);
+  assert.match(events[0].text,/не достоверность цифр/);
+  assert.equal(events[1].source,'business-math');
+  assert.equal(events[1].mathStatus,'calculated');
+  assert.equal(events[1].model,null);
+  assert.equal(events[1].cloud,false);
+  assert.equal(events[1].executed,false);
+  const answer=await request('/api/seyveo-ask',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Филя, посчитай выручку: цена 125,50 и количество 3'}
+  });
+  assert.equal(answer.status,200);
+  const parsed=JSON.parse(answer.body);
+  assert.equal(parsed.status,'calculated');
+  assert.equal(parsed.source,'business-math');
+  assert.match(parsed.text,/376\.50\s*₽/);
+  const incomplete=await request('/api/seyveo-stream',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Филя, посчитай прибыль: выручка 90000'}
+  });
+  assert.equal(incomplete.status,200);
+  const partialEvents=incomplete.body.trim().split('\n').map(JSON.parse);
+  assert.equal(partialEvents.at(-1).mathStatus,'needs-details');
+  assert.match(partialEvents[0].text,/не буду угадывать/);
+  const foreign=await request('/api/seyveo-stream',{
+   method:'POST',headers:{origin:'https://untrusted.invalid','content-type':'application/json'},
+   data:{message:'Филя, посчитай конверсию: 600 посетителей и 18 заказов'}
+  });
+  assert.equal(foreign.status,403);
+  assert.equal(calls,0);
+  const memory=await request('/api/seyveo-memory');
+  assert.equal(memory.status,200);
+  assert.deepEqual(JSON.parse(memory.body).items,[]);
+ }finally{
+  globalThis.fetch=oldFetch;
+  if(oldLocal===undefined)delete process.env.SEYVEO_ENABLE_LOCAL;
+  else process.env.SEYVEO_ENABLE_LOCAL=oldLocal;
+  await new Promise(resolve=>server.close(resolve));
+  await rm(dir,{recursive:true,force:true});
+ }
+});
