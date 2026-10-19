@@ -23,6 +23,28 @@ const TYPES=[
  {id:'other',name:'Другое',reason:'Ещё один рабочий ресурс'}
 ];
 const byType=id=>TYPES.find(item=>item.id===id);
+const STOREFRONT_TYPES=new Set(['site','marketplace','avito','vk','yandex','gis','other']);
+function publicPageUrl(text){
+ try{
+  const u=new URL(String(text||'').trim());
+  if(u.protocol!=='https:'||u.username||u.password||(u.port&&u.port!=='443'))return '';
+  const h=u.hostname.toLowerCase();
+  if(!h||!h.includes('.')||h==='localhost'||h.endsWith('.local')||h.endsWith('.internal')||
+     h.endsWith('.localhost')||h.startsWith('[')||/^(?:10|127|0|169\.254|192\.168)\./.test(h)||
+     /^172\.(?:1[6-9]|2\d|3[01])\./.test(h))return '';
+  if(/[?&](?:token|auth|password|secret|key|api[_-]?key|access[_-]?token|session|code|signature)=/i.test(u.search))return '';
+  u.search='';u.hash='';
+  return u.href.length<=200?u.href:'';
+ }catch{return ''}
+}
+function cleanStorefronts(items){
+ if(!Array.isArray(items))return [];
+ return items.slice(-8).filter(x=>x&&publicPageUrl(x.url)&&['owner','public-page'].includes(x.method))
+ .map(x=>({url:publicPageUrl(x.url),method:x.method,
+  title:norm(x.title,140),summary:norm(x.summary,580),
+  products:Array.isArray(x.products)?x.products.slice(0,8).map(v=>norm(v,100)).filter(Boolean):[],
+  capturedAt:typeof x.capturedAt==='string'?x.capturedAt.slice(0,35):''}));
+}
 /* A sector is NEVER assumed to be confirmed by a keyword match.
    This tiny local heuristic only proposes a choice, not a factual label.
    No AI inference, web request or transmission of business descriptions. */
@@ -83,7 +105,7 @@ function orderedSectorSources(map){
 const safeRead=key=>{try{return localStorage.getItem(key)}catch{return null}};
 const store=(key,value)=>{try{localStorage.setItem(key,value);return true}catch{return false}};
 const norm=(text,max)=>String(text||'').replace(/\s+/g,' ').trim().slice(0,max);
-const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',industry:'',industryAnswer:'',resources:[],dismissed:[],updatedAt:''});
+const fresh=mode=>({version:1,mode:mode==='start'?'start':'existing',description:'',goal:'',industry:'',industryAnswer:'',resources:[],dismissed:[],storefronts:[],updatedAt:''});
 function load(){
  try{
   const saved=JSON.parse(safeRead(STORE)||'null');
@@ -95,7 +117,7 @@ function load(){
    goal:norm(saved.goal,320),
    industry:byIndustry(saved.industry)?saved.industry:'',
    industryAnswer:norm(saved.industryAnswer,500),
-   resources,dismissed:Array.isArray(saved.dismissed)?[...new Set(saved.dismissed.filter(x=>typeof x==='string'&&byType(x)))].slice(0,TYPES.length):[],updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:''};
+   resources,dismissed:Array.isArray(saved.dismissed)?[...new Set(saved.dismissed.filter(x=>typeof x==='string'&&byType(x)))].slice(0,TYPES.length):[],storefronts:cleanStorefronts(saved.storefronts),updatedAt:typeof saved.updatedAt==='string'?saved.updatedAt:''};
  }catch{return null}
 }
 function ownerFocus(){
@@ -103,11 +125,11 @@ function ownerFocus(){
 }
 function clone(x){return {version:1,mode:x.mode,description:x.description,goal:x.goal,
  industry:byIndustry(x.industry)?x.industry:'',industryAnswer:norm(x.industryAnswer,500),
- resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],updatedAt:x.updatedAt}}
+ resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],storefronts:cleanStorefronts(x.storefronts),updatedAt:x.updatedAt}}
 let data=fresh('existing'),preview=false,firstLaunch=false,view='choose',sourceType='',origin=null,sectorReturn='goal';
 const title=$('businessMapTitle'),sub=$('businessMapLead'),status=$('businessMapStatus');
 const field=$('businessMapInput'),form=$('businessMapForm'),inputLabel=$('businessMapInputLabel'),inputHelp=$('businessMapInputHelp');
-const pages={choose:$('businessMapChoose'),sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,sources:$('businessMapSources'),map:$('businessMapOverview')};
+const pages={choose:$('businessMapChoose'),sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,sources:$('businessMapSources'),map:$('businessMapOverview'),storefront:$('businessMapStorefront')};
 function save(){
  if(preview)return true;
  const next=clone(data);next.updatedAt=new Date().toISOString();
@@ -185,6 +207,9 @@ function markStep(next){
   title.textContent='Какие ресурсы уже используете?';
   sub.textContent='Чем больше известно об источниках заявок и инструментах, тем полезнее будут будущие рекомендации.';
   drawCategories();
+ }else if(view==='storefront'){
+  title.textContent='Изучить публичную витрину';
+  sub.textContent='Сначала попробую прочитать открытую страницу. Подтверждённые вами сведения можно сохранить в карту.';
  }else if(view==='map'){
   title.textContent='SEYVEO начинает понимать ваше дело';
   sub.textContent='Это карта того, что вы рассказали, а не автоматический анализ или подключение сервисов.';
@@ -200,7 +225,7 @@ function markStep(next){
   view==='sector'?'02 · СФЕРА ДЕЯТЕЛЬНОСТИ':
   view==='goal'?'02 · ЦЕЛИ':
   view==='sources'||view==='source'?'03 · РЕСУРСЫ':
-  view==='workflow'?'04 · РАБОЧИЙ ПРОЦЕСС':'КАРТА БИЗНЕСА';
+  view==='workflow'?'04 · РАБОЧИЙ ПРОЦЕСС':view==='storefront'?'ПУБЛИЧНАЯ ВИТРИНА':'КАРТА БИЗНЕСА';
 }
 function drawIndustryChoices(){
  const box=$('businessMapIndustryChoices');if(!box)return;
@@ -380,11 +405,22 @@ function drawMap(){
   const text=document.createElement('div');const strong=document.createElement('strong');
   strong.textContent=byType(item.type)?.name||'Ресурс';
   const small=document.createElement('small');
-  small.textContent=item.value+' · данные об источнике, не подключение';
+  const page=STOREFRONT_TYPES.has(item.type)?publicPageUrl(item.value):'';
+  const observed=page?(data.storefronts||[]).find(x=>x.url===page):null;
+  small.textContent=item.value+' · '+(observed
+   ?observed.method==='owner'?'ассортимент со слов владельца':'публичная страница просмотрена · проверьте сведения'
+   :'данные об источнике, не подключение');
   text.append(strong,small);
+  const controls=document.createElement('span');controls.className='business-map-resource-controls';
+  if(page){
+   const inspect=document.createElement('button');inspect.type='button';inspect.dataset.businessInspect=String(i);
+   inspect.textContent=observed?'Обновить сведения':'Изучить витрину';
+   controls.append(inspect);
+  }
   const remove=document.createElement('button');remove.type='button';remove.dataset.businessRemove=String(i);
   remove.textContent='Убрать';remove.setAttribute('aria-label','Убрать '+strong.textContent);
-  row.append(text,remove);list.append(row);
+  controls.append(remove);
+  row.append(text,controls);list.append(row);
  }
  $('businessMapCount').textContent=data.resources.length
   ?'Указано источников: '+data.resources.length+'. Подключений к сервисам пока нет.'
@@ -495,12 +531,45 @@ $('businessMapAddSource').addEventListener('click',()=>markStep('sources'));
 $('businessMapEditAbout').addEventListener('click',()=>markStep('about'));
 $('businessMapEditGoal').addEventListener('click',()=>markStep('goal'));
 $('businessMapFinish').addEventListener('click',finish);
+$('businessMapStorefrontBack').addEventListener('click',()=>markStep('map'));
+window.addEventListener('seyveo:storefront-save',event=>{
+ const detail=event.detail;
+ if(view!=='storefront'||!detail||!publicPageUrl(detail.url))return;
+ const address=publicPageUrl(detail.url);
+ if(!data.resources.some(x=>STOREFRONT_TYPES.has(x.type)&&publicPageUrl(x.value)===address)){
+  detail.result={ok:false,message:'Эта ссылка больше не указана в карте бизнеса.'};return;
+ }
+ const observation={url:address,method:detail.method==='owner'?'owner':'public-page',
+  title:norm(detail.title,140),summary:norm(detail.summary,580),
+  products:Array.isArray(detail.products)?detail.products.slice(0,8).map(x=>norm(x,100)).filter(Boolean):[],
+  capturedAt:new Date().toISOString()};
+ if(!observation.summary&&!observation.title&&!observation.products.length){
+  detail.result={ok:false,message:'Пока нет сведений для сохранения.'};return;
+ }
+ const before=[...data.storefronts];
+ data.storefronts=[...data.storefronts.filter(x=>x.url!==address),observation].slice(-8);
+ if(!save()){data.storefronts=before;detail.result={ok:false,message:'Не удалось сохранить наблюдения. Проверьте память устройства.'};return}
+ detail.result={ok:true,message:preview?'Демо: сведения видны только в этом просмотре.':'Сведения сохранены в Карте бизнеса.'};
+});
+window.addEventListener('seyveo:storefront-leave',()=>{if(dialog.open&&view==='storefront')markStep('map')});
 $('businessMapAdvice')?.addEventListener('click',event=>{
  const button=event.target.closest?.('[data-business-advice-action]');if(button)adviceAction(button);
 });
 $('businessMapConnectionGuide')?.addEventListener('click',()=>adviceAction({dataset:{businessAdviceAction:'connection-guide'}}));
 $('businessMapRestoreSuggestions')?.addEventListener('click',()=>adviceAction({dataset:{businessAdviceAction:'restore'}}));
 $('businessMapResourceList').addEventListener('click',event=>{
+ const inspect=event.target.closest?.('[data-business-inspect]');
+ if(inspect){
+  const idx=Number(inspect.dataset.businessInspect),source=data.resources[idx];
+  const url=source&&STOREFRONT_TYPES.has(source.type)?publicPageUrl(source.value):'';
+  if(url){
+   markStep('storefront');
+   window.dispatchEvent(new CustomEvent('seyveo:storefront-open',{
+    detail:{url,type:source.type,existing:(data.storefronts||[]).find(x=>x.url===url)||null,preview}
+   }));
+  }
+  return;
+ }
  const button=event.target.closest?.('[data-business-remove]');if(!button)return;
  const index=Number(button.dataset.businessRemove);
  if(!Number.isInteger(index)||index<0||index>=data.resources.length)return;
