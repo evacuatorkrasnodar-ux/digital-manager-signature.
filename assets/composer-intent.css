@@ -337,3 +337,28 @@
  #assistantQuickSettings .assistant-quick-setting-controls{gap:3px}
  #assistantQuickSettings .assistant-quick-setting-row button{min-width:36px;padding:5px 7px}
 }
+
+/* iPhone conversation: honour the *visible* keyboard area instead of
+   squeezing transcript, orb and action rail into the same narrow viewport.
+   When the keyboard closes, the approved Home sphere reappears unchanged. */
+@media(max-width:700px){
+ html.seyveo-composer-keyboard #assistantQuickrail{
+   display:none!important;
+ }
+ html.seyveo-composer-keyboard #stage.has-inline-reply{
+   min-height:0;
+   padding:0 0 4px;
+ }
+ html.seyveo-composer-keyboard #stage.has-inline-reply > .orb-cluster{
+   display:none!important;
+ }
+ html.seyveo-composer-keyboard #stage.has-inline-reply .orb-inline-reply{
+   margin-top:0;
+   animation:none;
+ }
+ html.seyveo-composer-keyboard #stage.has-inline-reply .orb-inline-reply-text{
+   max-height:max(88px,calc(var(--composer-visible-height,50svh) - 208px));
+   overflow-y:auto;
+   overscroll-behavior:contain;
+ }
+}
