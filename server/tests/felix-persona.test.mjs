@@ -13,7 +13,7 @@ test('all Felix persona rules are shared with the active system prompt',()=>{
  for(const rule of FELIX_PERSONA_RULES)assert.ok(prompt.includes(rule));
  assert.match(prompt,/чувством юмора/);
  assert.match(prompt,/Не соглашайся автоматически/);
- assert.match(prompt,/не в каждом ответе/i);
+ assert.match(prompt,/Не шути в каждом ответе/);
  assert.match(prompt,/разрешен|разрешен|разрешения|разрешений/i);
 });
 test('Felix never jokes about emergencies or money and never fakes tools',()=>{
