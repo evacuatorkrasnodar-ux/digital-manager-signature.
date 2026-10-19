@@ -315,3 +315,48 @@
  color:#b4c5d6;overflow-wrap:anywhere;white-space:normal;
 }
 :root[data-theme=light] #businessMapDialog .business-map-stored-assortment{color:#566e85}
+
+/* SEYVEO · First catalog review. A quiet editorial checklist, not an invented rating. */
+#businessMapDialog .business-map-storefront-audit{
+ padding:15px 0 11px;
+ border-top:1px solid rgba(223,233,246,.13);
+ border-bottom:1px solid rgba(223,233,246,.13);
+ margin:12px 0 6px;
+}
+#businessMapDialog .business-map-storefront-audit-head{
+ display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+ margin:0 0 8px;
+}
+#businessMapDialog .business-map-storefront-audit-head span{
+ letter-spacing:.14em;font-size:10px;font-weight:530;color:#b9c9d9;
+}
+#businessMapDialog .business-map-storefront-audit-head small{
+ font-size:10px;font-weight:410;color:#90a0b1;text-align:right;
+}
+#businessMapDialog .business-map-storefront-audit-item{
+ border-top:1px solid rgba(223,233,246,.09);padding:11px 0 10px;
+}
+#businessMapDialog .business-map-storefront-audit-item strong{
+ display:block;font-size:12.5px;line-height:1.4;font-weight:520;color:inherit;
+}
+#businessMapDialog .business-map-storefront-audit-item p{
+ margin:5px 0 0;font-size:11.5px;color:#a9b8c7;line-height:1.58;
+}
+#businessMapDialog .business-map-storefront-audit-limit,
+#businessMapDialog .business-map-storefront-audit-status{
+ font-size:10.5px;line-height:1.56;color:#a4b3c3;margin:9px 0 0;
+}
+#businessMapDialog #businessMapStorefrontAuditSave{
+ margin:12px 0 0;width:100%;
+}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-item{
+ border-color:#d6dee8;
+}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-head span,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-item p,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-limit,
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-status{
+ color:#596d83;
+}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-head small{color:#75879a}
