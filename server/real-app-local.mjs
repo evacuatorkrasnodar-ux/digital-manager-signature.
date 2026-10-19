@@ -10,6 +10,7 @@ import {respond} from './brain.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {createMemoryStore,memoryContext} from './local-memory.mjs';
 import {validateHistory} from './local-dialogue.mjs';
+import {planAgentTask} from './agent/planner.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -102,6 +103,22 @@ export function createRealLocalServer({memoryStore}={}){
    return;
   }
   if(req.method==='GET'&&path==='/sw.js'){send(res,404,{error:'Service worker disabled.'});return}
+  // Read-only SEYVEO Agent Core: returns a proposed plan, never executes tools.
+  if(req.method==='POST'&&path==='/api/seyveo-agent-plan'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   const now=Math.floor(Date.now()/60000);
+   if(minute!==now){minute=now;count=0}
+   if(count>=24){send(res,429,{error:'Слишком много запросов.'});return}
+   count++;
+   try{
+    const message=await readQuestion(req);
+    send(res,200,planAgentTask(message));
+   }catch{send(res,400,{error:'Нужен текст поручения до 4000 символов.'})}
+   return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-memory'){
    try{send(res,200,{items:await memories.list(),local:true})}
    catch{send(res,500,{error:'Не удалось прочитать память. Файл не изменён.'})}
