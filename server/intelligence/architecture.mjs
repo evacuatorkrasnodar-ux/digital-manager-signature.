@@ -17,7 +17,7 @@ export const FELIX_CAPABILITIES=Object.freeze([
  blueprint('intelligence','Интеллект','Выбор локальной модели и GPT по разрешениям','server-adapter'),
  blueprint('dialogue','Диалог','Память контекста одной беседы','prototype'),
  blueprint('memory','Память','Только добровольно подтверждённые локальные факты','prototype','private'),
- blueprint('knowledge','Знания','Проверенные источники и документы по явному доступу'),
+ blueprint('knowledge','Знания','Прототип чтения двух разрешённых открытых источников; без автоматической памяти','prototype'),
  blueprint('learning','Обучение','Школа Феликса, тесты, будущая настройка модели','prototype'),
  blueprint('business','Бизнес','Стратегия, клиенты, продажи, процессы и отчёты'),
  blueprint('development','Разработка','Чтение ограниченного кода и предложения изменений','prototype'),
