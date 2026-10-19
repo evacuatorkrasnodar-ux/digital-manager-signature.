@@ -4,7 +4,7 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const dialog=$('businessMapDialog'),entry=$('openBusinessMap'),demoEntry=$('openBusinessMapDemo');
+const dialog=$('businessMapDialog'),entry=$('openBusinessMap');
 if(!dialog||!entry)return;
 const STORE='seyveo-business-map-v1',PROFILE='seyveo-first-acquaintance-v1',FIRST='seyveo-first-minute-state-v1';
 const TYPES=[
@@ -357,7 +357,7 @@ $('businessMapResourceList').addEventListener('click',event=>{
  markStep('map');
 });
 entry.addEventListener('click',()=>start({trigger:entry}));
-demoEntry?.addEventListener('click',()=>start({preview:true,trigger:demoEntry}));
+
 window.addEventListener('storage',event=>{if(event.key===STORE)updateEntry()});
 window.addEventListener('pagehide',()=>{if(dialog.open)dialog.close()});
 window.SEYVEO_BUSINESS_MAP=Object.freeze({open:start,getState:()=>{const stored=load();return stored?clone(stored):null}});
