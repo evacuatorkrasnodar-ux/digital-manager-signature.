@@ -3,6 +3,7 @@
  * Requests are single-turn only and never receive local business records.
  */
 import {CLOUD_MODELS,MAX_OUTPUT_TOKENS,safeInstruction} from './hybrid-core.mjs';
+import {coachMessage} from './felix-school/lesson-coach.mjs';
 const CLOUD_TIMEOUT_MS=20000;
 const LOCAL_TIMEOUT_MS=120000;
 const readText=value=>String(value||'').trim().slice(0,14000);
@@ -12,6 +13,7 @@ export function availableModels(){
  return Object.freeze({local:configuredLocal(),cloud:configuredCloud()});
 }
 export async function askLocal(message,{name='Феликс'}={}){
+ const coaching=coachMessage(message);
  if(!configuredLocal())throw Error('local-not-configured');
  // Fixed loopback endpoint: no caller-controlled URL, prevents arbitrary SSRF.
  const model=(process.env.SEYVEO_LOCAL_MODEL||'qwen3:4b-instruct').trim();
@@ -23,6 +25,7 @@ export async function askLocal(message,{name='Феликс'}={}){
    model,stream:false,
    messages:[
     {role:'system',content:safeInstruction(name)},
+    ...(coaching?[coaching]:[]),
     {role:'user',content:message}
    ],
    options:{num_predict:MAX_OUTPUT_TOKENS}
