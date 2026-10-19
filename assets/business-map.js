@@ -107,6 +107,7 @@ function markStep(next){
   drawMap();
  }
  $('businessMapBack').hidden=view==='choose'||view==='map';
+ $('businessMapSkipGoal').hidden=view!=='goal';
  $('businessMapLater').textContent=preview?'Закрыть демо':'Продолжить позже';
  $('businessMapProgress').textContent=preview?'ДЕМО · БЕЗ СОХРАНЕНИЯ':
   view==='choose'?'НАЧАЛО ЗНАКОМСТВА':
