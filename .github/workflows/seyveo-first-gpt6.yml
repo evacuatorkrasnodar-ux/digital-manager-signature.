@@ -1,0 +1,30 @@
+name: SEYVEO · First GPT-6 answer (manual)
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  private-first-connection:
+    if: github.repository == 'evacuatorkrasnodar-ux/digital-manager-signature.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SEYVEO_ENABLE_CLOUD: '1'
+      SEYVEO_GPT6_SMOKE_CONSENT: 'yes'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify key is configured
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY is missing. Set it under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+      - name: Exactly one first-answer request
+        run: node server/verify-gpt6.mjs
