@@ -73,3 +73,6 @@
 
 /* A prior reply is never allowed to overlap the one-time first-step flow. */
 #homePage.first-minute-active #orbInlineReply{display:none!important}
+
+/* Keep first-use action clear of iPhone home indicator and fixed dock. */
+#homePage .first-minute{scroll-margin-bottom:calc(env(safe-area-inset-bottom,0px) + 96px)}
