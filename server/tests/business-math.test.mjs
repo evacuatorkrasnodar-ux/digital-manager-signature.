@@ -93,7 +93,7 @@ test('disallow invalid decimal notation, fractional counts and huge numbers',()=
   assert.throws(()=>calculateBusiness('revenue',{unitPrice:value,quantity:1}));
  }
  for(const value of [-3,0.5,'1.5','2e5','01',10000001,'999999999999']){
-  assert.throws(()=>calculateBusiness('revenue',{unitPrice:1,quantity:value}),String(value));
+  assert.throws(()=>calculateBusiness('revenue',{unitPrice:1,quantity:value}));
  }
  assert.throws(()=>calculateBusiness('revenue',{unitPrice:1000000000,quantity:10000000}),/calculation-overflow/);
 });
