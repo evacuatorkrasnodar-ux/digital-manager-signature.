@@ -6,6 +6,7 @@
 import {createServer} from 'node:http';
 import {timingSafeEqual} from 'node:crypto';
 import {respond} from './brain.mjs';
+import {planAgentTask} from './agent/planner.mjs';
 const hostname='127.0.0.1';
 const port=Number(process.env.SEYVEO_DEV_PORT||8787);
 const token=process.env.SEYVEO_DEV_TOKEN||'';
@@ -58,7 +59,7 @@ const app=createServer(async (req,res)=>{
  if(req.url==='/health'&&req.method==='GET'){
   reply(res,200,{service:'seyveo-intelligence',mode:'local-development',ready:true});return;
  }
- if(req.url!=='/v1/brain'||req.method!=='POST'){
+ if(!['/v1/brain','/v1/plan'].includes(req.url)||req.method!=='POST'){
   reply(res,404,{error:'not-found'});return;
  }
  if(!validOrigin(req.headers.origin)||req.headers['sec-fetch-site']==='cross-site'){
@@ -73,7 +74,7 @@ const app=createServer(async (req,res)=>{
  try{
   const body=await readJson(req);
   if(typeof body!=='object'||body===null||Array.isArray(body))throw Error('bad-json');
-  const result=await respond(body);
+  const result=req.url==='/v1/plan'?planAgentTask(body.message):await respond(body);
   reply(res,200,result);
  }catch(error){
   reply(res,error?.message==='too-large'?413:400,{error:'invalid-request'});
