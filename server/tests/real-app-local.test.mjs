@@ -36,6 +36,11 @@ test('Original main page is rendered unchanged except local reply integration',a
  assert.match(adapted,/history:chat\.turns\.slice\(-3\)/);
  assert.match(adapted,/const newDialogue=/);
  assert.match(adapted,/panel\.textContent=header\+answer/);
+ assert.match(adapted,/window\.SEYVEO_LOCAL_CHAT_ACTIVE=true/);
+ assert.match(adapted,/window\.SEYVEO_LOCAL_VOICE_BRIDGE=/);
+ assert.match(adapted,/seyveoLocalMicCompact/);
+ assert.match(adapted,/seyveoLocalMicExpanded/);
+ assert.doesNotMatch(adapted,/window\.SEYVEO_LOCAL_PENDING=true;\s*closeComposer\(\)/);
  assert.doesNotMatch(adapted,/const answer=getDemoAnswer\(q\)/);
  assert.equal(original.includes('window.SEYVEO_LOCAL_PENDING'),false);
  assert.throws(()=>adaptOriginalHome('A fake homepage'),/handler changed/);
@@ -82,6 +87,10 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.match(home.body,/Запомни/);
   assert.match(home.body,/api\/seyveo-memory/);
   assert.match(home.headers['content-security-policy'],/connect-src 'self'/);
+  assert.match(home.headers['content-security-policy'],/manifest-src 'self'/);
+  const manifest=await request('/manifest.webmanifest');
+  assert.equal(manifest.status,200);
+  assert.match(manifest.headers['content-type'],/application\/manifest\+json/);
   const svg=await request('/assets/plasma-signature.svg?v=13');
   assert.equal(svg.status,200);
   assert.match(svg.body,/Полупрозрачная стеклянная плазма/);
