@@ -59,6 +59,23 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
  try{
   const home=await request('/');
   assert.equal(home.status,200);
+  // The planner is a separate real-app API, not a fake completion.
+  const planned=await request('/api/seyveo-agent-plan',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Создай встречу в календаре завтра'}
+  });
+  assert.equal(planned.status,200);
+  const proposed=JSON.parse(planned.body);
+  assert.equal(proposed.intent,'calendar');
+  assert.equal(proposed.tool,'calendar.draft');
+  assert.equal(proposed.executed,false);
+  assert.equal(proposed.executionAllowed,false);
+  assert.deepEqual(proposed.toolsUsed,[]);
+  const deniedPlan=await request('/api/seyveo-agent-plan',{
+   method:'POST',headers:{origin:'https://untrusted.invalid','content-type':'application/json'},
+   data:{message:'Оплати счёт'}
+  });
+  assert.equal(deniedPlan.status,403);
   // Opening localhost from a ChatGPT link is a cross-site top-level NAVIGATION.
   // This may load Home, but nothing else may be called cross-site.
   const externalLink=await request('/',{headers:{
