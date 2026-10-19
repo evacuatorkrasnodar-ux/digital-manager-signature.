@@ -1,0 +1,32 @@
+name: SEYVEO Intelligence smoke tests
+on:
+  push:
+    paths:
+      - 'server/**'
+      - '.github/workflows/hybrid-core-check.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+      - '.github/workflows/hybrid-core-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-hybrid-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check server/hybrid-core.mjs
+          node --check server/providers.mjs
+          node --check server/brain.mjs
+          node --check server/http.mjs
+      - name: Run safe offline tests
+        run: node --test server/tests/*.test.mjs
