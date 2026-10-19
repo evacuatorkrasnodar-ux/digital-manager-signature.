@@ -69,7 +69,8 @@ export function intelligencePlan(message,{mode='auto',allowCloud=false}={},avail
  const info=FELIX_CAPABILITIES.find(item=>item.id===capability);
  // Private and sensitive domains are local-only until a reviewed data policy exists.
  // Regex classification alone is not sufficient consent to transmit user records.
- const localOnly=signals.private||info.privacy==='private'||info.privacy==='sensitive';
+ const localOnly=signals.private||signals.highStakes||task.status==='blocked'||
+  info.privacy==='private'||info.privacy==='sensitive';
  const choice=decide(request,{mode:localOnly?'private':mode,
   allowCloud:!localOnly&&allowCloud},availability);
  const cloudEligible=choice.route==='cloud'&&!localOnly&&allowCloud===true;
@@ -92,7 +93,7 @@ export function intelligencePlan(message,{mode='auto',allowCloud=false}={},avail
   }),
   safety:Object.freeze({
    privateData:localOnly,
-   sensitiveTopic:info.privacy==='sensitive'||signals.private,
+   sensitiveTopic:info.privacy==='sensitive'||signals.private||signals.highStakes,
    approvalRequired:task.approval.required||signals.highStakes,
    approvalGranted:false,executed:false,
    externalCallsMade:0,toolsUsed:[],changesMade:[]
