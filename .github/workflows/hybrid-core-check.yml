@@ -32,6 +32,7 @@ jobs:
           node --check server/browser-local.mjs
           node --check server/real-app-local.mjs
           node --check server/local-stream.mjs
+          node --check server/local-memory.mjs
           node --check server/local-web/app.js
       - name: Run safe offline tests
         run: node --test server/tests/*.test.mjs

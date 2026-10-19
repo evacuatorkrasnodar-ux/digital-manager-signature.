@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createMemoryStore} from '../local-memory.mjs';
 import {request as httpRequest} from 'node:http';
 import {Script} from 'node:vm';
 import {createRealLocalServer,adaptOriginalHome} from '../real-app-local.mjs';
@@ -26,6 +29,9 @@ test('Original main page is rendered unchanged except local reply integration',a
  assert.match(adapted,/src="assets\/plasma-signature.svg\?v=13"/);
  assert.match(adapted,/id="homePage"/);
  assert.match(adapted,/window\.SEYVEO_LOCAL_PENDING=true/);
+ const form=adapted.slice(adapted.indexOf("$('ask').addEventListener('submit'"));
+ assert.ok(form.indexOf('const memo=')>=0);
+ assert.ok(form.indexOf('const memo=')<form.indexOf("if(composerMode==='notes')"));
  assert.match(adapted,/\/api\/seyveo-stream/);
  assert.doesNotMatch(adapted,/const answer=getDemoAnswer\(q\)/);
  assert.equal(original.includes('window.SEYVEO_LOCAL_PENDING'),false);
@@ -35,7 +41,8 @@ test('Original main page is rendered unchanged except local reply integration',a
 });
 
 test('Actual app with private Ollama is served on loopback and refuses foreign requests',async()=>{
- const server=createRealLocalServer();
+ const dir=await mkdtemp(join(tmpdir(),'seyveo-http-memory-'));
+ const server=createRealLocalServer({memoryStore:createMemoryStore(join(dir,'notes.json'))});
  await new Promise((resolve,reject)=>{
   server.once('error',reject);
   server.listen(PORT,HOST,resolve);
@@ -46,6 +53,8 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.equal(home.status,200);
   assert.match(home.body,/id="orb"/);
   assert.match(home.body,/\/api\/seyveo-stream/);
+  assert.match(home.body,/Запомни/);
+  assert.match(home.body,/api\/seyveo-memory/);
   assert.match(home.headers['content-security-policy'],/connect-src 'self'/);
   const svg=await request('/assets/plasma-signature.svg?v=13');
   assert.equal(svg.status,200);
@@ -79,6 +88,29 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.equal(data.executed,false);
   assert.equal(received.url,'http://127.0.0.1:11434/api/chat');
   assert.equal(JSON.parse(received.opts.body).model,'qwen3:4b-instruct');
+  // Explicit memory is server-side and only saved on command.
+  const empty=await request('/api/seyveo-memory');
+  assert.equal(empty.status,200);
+  assert.deepEqual(JSON.parse(empty.body).items,[]);
+  const forbidden=await request('/api/seyveo-memory',{
+   method:'POST',headers:{origin:'https://bad.example','content-type':'application/json'},
+   data:{action:'add',text:'Недоверенная заметка'}
+  });
+  assert.equal(forbidden.status,403);
+  const secret=await request('/api/seyveo-memory',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'add',text:'Пароль к почте: 123456789'}
+  });
+  assert.equal(secret.status,400);
+  const saved=await request('/api/seyveo-memory',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'add',text:'Наш первый проект — автоматизация заявок.'}
+  });
+  assert.equal(saved.status,200);
+  const memo=JSON.parse(saved.body).items;
+  assert.equal(memo.length,1);
+  assert.equal(memo[0].text,'Наш первый проект — автоматизация заявок.');
+
   // Stream must deliver model tokens through the original page endpoint.
   const packets=[
    {message:{role:'assistant',content:'Наш '},done:false},
@@ -109,12 +141,19 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   assert.equal(events[2].executed,false);
   assert.equal(captured.url,'http://127.0.0.1:11434/api/chat');
   assert.equal(JSON.parse(captured.opts.body).stream,true);
+  assert.match(JSON.parse(captured.opts.body).messages[1].content,/автоматизация заявок/);
   const forged=await request('/api/seyveo-stream',{
    method:'POST',
    headers:{origin:'https://evil.example','content-type':'application/json'},
    data:{message:'Привет'}
   });
   assert.equal(forged.status,403);
+  const removed=await request('/api/seyveo-memory',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'remove',id:memo[0].id}
+  });
+  assert.equal(removed.status,200);
+  assert.deepEqual(JSON.parse(removed.body).items,[]);
   const rejectedBody=await request('/api/seyveo-ask',{
    method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
    data:{message:''}
@@ -123,5 +162,6 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
  }finally{
   globalThis.fetch=oldFetch;
   await new Promise(resolve=>server.close(resolve));
+  await rm(dir,{recursive:true,force:true});
  }
 });
