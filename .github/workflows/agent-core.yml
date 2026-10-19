@@ -11,6 +11,7 @@ on:
       - 'server/tests/felix-persona.test.mjs'
       - 'server/tests/felix-batch2.test.mjs'
       - 'server/tests/felix-batch3.test.mjs'
+      - 'server/tests/felix-batch4.test.mjs'
       - 'server/tests/lesson-coach.test.mjs'
       - 'server/providers.mjs'
       - 'server/local-stream.mjs'
@@ -33,6 +34,7 @@ on:
       - 'server/tests/felix-persona.test.mjs'
       - 'server/tests/felix-batch2.test.mjs'
       - 'server/tests/felix-batch3.test.mjs'
+      - 'server/tests/felix-batch4.test.mjs'
       - 'server/tests/lesson-coach.test.mjs'
       - 'server/providers.mjs'
       - 'server/local-stream.mjs'
@@ -58,11 +60,13 @@ jobs:
         with:
           node-version: '24'
       - name: Felix persona, safety, batch 2 and dialogue guidance tests
-        run: node --test server/tests/felix-persona.test.mjs server/tests/felix-batch2.test.mjs server/tests/felix-batch3.test.mjs server/tests/felix-school.test.mjs server/tests/core.test.mjs
+        run: node --test server/tests/felix-persona.test.mjs server/tests/felix-batch2.test.mjs server/tests/felix-batch3.test.mjs server/tests/felix-batch4.test.mjs server/tests/felix-school.test.mjs server/tests/core.test.mjs
       - name: Lesson coach and local streaming tests
         run: node --test server/tests/lesson-coach.test.mjs server/tests/local-stream.test.mjs
       - name: Felix batch 2 offline exam readiness
         run: node server/felix-school/evaluate.mjs --suite=batch2 --limit=20
+      - name: Felix business batch 4 offline exam readiness
+        run: node server/felix-school/evaluate.mjs --suite=batch4 --limit=12
       - name: Felix batch 3 multi-turn offline exam readiness
         run: node server/felix-school/evaluate-dialogue.mjs --limit=12
       - name: Agent planning and read-only code review tests
