@@ -186,14 +186,25 @@ btnAction.addEventListener('click',resultAction);
 btnDone.addEventListener('click',()=>close(preview?null:(saved?'completed':'later')));
 $('firstMinuteLater').addEventListener('click',()=>close(preview?null:'later'));
 entry?.addEventListener('click',()=>{
- // Management replay is always isolated and never creates real tasks/notes.
- const p=profile();start(true,p.focus);
+ // Business paths now lead with knowledge gathering instead of a demo notebook.
+ const p=profile();
+ if(['start','pro','max'].includes(p.focus)&&window.SEYVEO_BUSINESS_MAP){
+  window.SEYVEO_BUSINESS_MAP.open({preview:true,trigger:entry,fromStart:true});return;
+ }
+ start(true,p.focus);
 });
 window.addEventListener('seyveo:first-minute-ready',event=>{
  if(event.detail?.source!=='first-launch')return;
  if(read(KEY))return;
  // Let the plasma finish its signature before the first question.
- setTimeout(()=>{if(!active&&!document.hidden)start(false)},650);
+ setTimeout(()=>{
+  if(active||document.hidden)return;
+  const owner=profile();
+  if(['start','pro','max'].includes(owner.focus)&&window.SEYVEO_BUSINESS_MAP){
+   window.SEYVEO_BUSINESS_MAP.open({firstLaunch:true,fromStart:true});return;
+  }
+  start(false);
+ },650);
 });
 window.addEventListener('pagehide',()=>{if(active)close(null,false)});
 })();
