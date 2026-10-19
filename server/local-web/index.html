@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>SEYVEO Intelligence · Феликс (локально)</title>
+<link rel="stylesheet" href="/style.css">
+<script defer src="/app.js"></script>
+</head>
+<body>
+<main class="shell">
+ <header class="top">
+  <div class="mark"><span class="brand">seyveo</span><span class="subtitle">intelligence · local</span></div>
+  <div class="status" id="status" role="status" aria-live="polite">Проверяю модель…</div>
+ </header>
+ <section class="hero" aria-label="Локальный помощник">
+  <div class="orb" aria-hidden="true"><div class="orb-inner"></div></div>
+  <p class="eyebrow">SEYVEO INTELLIGENCE</p>
+  <h1>Феликс</h1>
+  <p class="description">Первый локальный интеллект нашей студии.</p>
+  <p class="note">Тестовая страница только на этом компьютере. Без GPT-6, облака и доступа к личным данным.</p>
+ </section>
+ <section class="conversation" aria-label="Разговор с Феликсом">
+  <div id="messages" class="messages" aria-live="polite" aria-relevant="additions text">
+   <div class="bubble assistant"><span class="speaker">Феликс</span>Привет! Я готов помочь с вопросами и идеями. Пока умею отвечать текстом — ничего не изменяю и не отправляю.</div>
+  </div>
+  <form id="composer" autocomplete="off">
+   <label for="question" class="sr-only">Вопрос Феликсу</label>
+   <textarea id="question" rows="2" maxlength="4000" placeholder="Напиши Феликсу…" required></textarea>
+   <button id="submit" type="submit">Отправить <span aria-hidden="true">↗</span></button>
+  </form>
+  <p class="footer">Каждый вопрос обрабатывается отдельно, история не сохраняется. Чтобы остановить сервер, нажми Ctrl+C в чёрном окне.</p>
+ </section>
+</main>
+</body>
+</html>

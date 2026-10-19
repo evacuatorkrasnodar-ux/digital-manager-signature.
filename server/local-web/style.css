@@ -1,0 +1,34 @@
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f1f1f3;background:#111115;letter-spacing:.01em}
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;background:radial-gradient(ellipse at 50% 9%,#282830 0%,#16161a 40%,#101013 95%)}
+.shell{max-width:740px;min-height:100svh;margin:0 auto;padding:24px 20px 30px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mark{display:flex;flex-direction:column;gap:3px}
+.brand{font-size:22px;font-weight:400;letter-spacing:.1em}
+.subtitle{font-size:10px;letter-spacing:.23em;color:#aaaab5;text-transform:uppercase}
+.status{font-size:12px;color:#dedee6;border:1px solid #4b4b54;background:#222228;border-radius:24px;padding:9px 12px;max-width:52%;text-align:center}
+.status.ready{border-color:#555e59}
+.status.error{color:#ffc6c6;border-color:#695454}
+.hero{text-align:center;margin:auto 0 0}
+.orb{height:138px;width:138px;margin:16px auto 22px;border-radius:50%;position:relative;background:radial-gradient(circle at 33% 24%,white 0%,#fbfbfd 26%,#b6bfd6 59%,#5a6589 75%,#222637 100%);box-shadow:0 0 27px #e4ecff20,0 0 72px #8e94b422,inset 0 3px 18px #fff}
+.orb-inner{position:absolute;inset:27px;border-radius:50%;background:radial-gradient(circle at 45% 40%,#e9e9f8a3,#c7cbd055 60%,transparent 72%);filter:blur(10px)}
+.eyebrow{color:#a9a9b4;letter-spacing:.24em;font-size:10px;margin:0 0 7px}
+h1{font-size:29px;line-height:1.2;font-weight:400;margin:0}
+.description{color:#d9d9e0;margin:11px 0 0;font-size:14px}
+.note{color:#9b9ba6;font-size:12px;line-height:1.6;max-width:430px;margin:10px auto}
+.conversation{background:#1b1b21b8;border:1px solid #ffffff1c;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:14px;margin:auto 0 0}
+.messages{height:min(37vh,320px);min-height:165px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:5px 3px}
+.bubble{white-space:pre-wrap;overflow-wrap:anywhere;max-width:92%;border-radius:17px;padding:12px 14px;font-size:13px;line-height:1.58}
+.bubble.assistant{align-self:flex-start;background:#292930;border:1px solid #ffffff18}
+.bubble.user{align-self:flex-end;background:#3a3a43;border:1px solid #ffffff15}
+.speaker{display:block;font-size:11px;color:#bfc0ce;margin-bottom:5px}
+form{display:flex;align-items:end;gap:9px;border:1px solid #ffffff21;border-radius:19px;padding:8px;background:#232329}
+textarea{font:inherit;font-size:14px;line-height:1.5;resize:vertical;flex:1;min-width:0;color:#fff;background:transparent;border:0;outline:0;padding:7px 8px;max-height:190px}
+textarea::placeholder{color:#b1b1bd}
+button{border:1px solid #c7c7d5;background:#ebebf2;color:#202027;font:inherit;font-size:13px;cursor:pointer;border-radius:999px;padding:13px 15px;min-width:110px}
+button:disabled{opacity:.52;cursor:default}
+button:focus-visible,textarea:focus-visible{outline:2px solid #cbd6ff;outline-offset:3px}
+.footer{text-align:center;font-size:11px;color:#8a8a98;line-height:1.5;margin:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-width:540px){.shell{padding:18px 12px}.conversation{border-radius:20px;padding:10px}.orb{width:116px;height:116px}.status{font-size:10px}button{min-width:90px;padding:11px}}
+@media(prefers-reduced-motion:no-preference){.orb{animation:glow 8s ease-in-out infinite}@keyframes glow{50%{box-shadow:0 0 35px #e4ecff36,0 0 80px #8e94b42d,inset 0 3px 18px #fff}}}
