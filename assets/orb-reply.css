@@ -97,3 +97,26 @@
  stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
 }
 #stage .orb-inline-reply-replay:hover{color:var(--text);background:var(--card2)}
+
+/* SEYVEO · contextual action inside the EXISTING sphere reply.
+   Show one owner-controlled next step instead of adding another menu. */
+#stage .orb-inline-reply:has(.orb-inline-business-action:not([hidden])) .orb-inline-reply-replay{
+ display:none!important;
+}
+#stage .orb-inline-business-action{
+ flex:1;min-height:41px;max-width:100%;min-width:0;padding:9px 14px;
+ border-radius:13px;border:1px solid rgba(234,242,252,.48);
+ color:var(--text);background:rgba(240,246,255,.095);
+ font:inherit;font-size:12px;font-weight:540;line-height:1.35;
+ letter-spacing:.005em;cursor:pointer;white-space:normal;text-align:center;
+}
+#stage .orb-inline-business-action[hidden]{display:none!important}
+#stage .orb-inline-business-action:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+:root[data-theme=light] #stage .orb-inline-business-action{
+ background:#fff;border-color:rgba(54,70,93,.25);color:#25374a
+}
+@media(prefers-reduced-motion:reduce){
+ #stage .orb-inline-business-action{transition:none!important}
+}
