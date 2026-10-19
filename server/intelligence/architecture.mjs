@@ -64,11 +64,15 @@ export function intelligenceCatalog(){
 export function intelligencePlan(message,{mode='auto',allowCloud=false}={},availability={}){
  const request=normalizeMessage(message);
  const signals=classify(request);
- const choice=decide(request,{mode,allowCloud},availability);
  const task=planAgentTask(request);
  const capability=TOOL_TO_CAPABILITY[task.tool]||'dialogue';
  const info=FELIX_CAPABILITIES.find(item=>item.id===capability);
- const cloudEligible=choice.route==='cloud'&&!signals.private&&allowCloud===true;
+ // Private and sensitive domains are local-only until a reviewed data policy exists.
+ // Regex classification alone is not sufficient consent to transmit user records.
+ const localOnly=signals.private||info.privacy==='private'||info.privacy==='sensitive';
+ const choice=decide(request,{mode:localOnly?'private':mode,
+  allowCloud:!localOnly&&allowCloud},availability);
+ const cloudEligible=choice.route==='cloud'&&!localOnly&&allowCloud===true;
  return Object.freeze({
   version:INTELLIGENCE_VERSION,
   request,
@@ -87,7 +91,7 @@ export function intelligencePlan(message,{mode='auto',allowCloud=false}={},avail
    localModelConnected:availability.local===true
   }),
   safety:Object.freeze({
-   privateData:signals.private,
+   privateData:localOnly,
    sensitiveTopic:info.privacy==='sensitive'||signals.private,
    approvalRequired:task.approval.required||signals.highStakes,
    approvalGranted:false,executed:false,
