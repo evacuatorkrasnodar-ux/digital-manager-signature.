@@ -53,7 +53,7 @@ function start(isDemo,focusOverride){
  $('navHome')?.click();
  home.classList.add('first-minute-active');
  root.hidden=false;
- $('firstMinuteTitle').textContent=(nameFor(p)==='друг'?'':nameFor(p)+', ')+'начнём с полезного?';
+ $('firstMinuteTitle').textContent=nameFor(p)==='друг'?'Начнём с полезного?':nameFor(p)+', начнём с полезного?';
  $('firstMinuteLead').textContent=focus==='life'
   ?'Выберите одно действие — и SEYVEO поможет сохранить результат.'
   :'Выберите первый шаг. Без анкет и лишних настроек.';
@@ -109,10 +109,14 @@ function finishSaved(kind){
  showView('result');
  plan.hidden=true;
  if(kind==='task'){
-  setResult(preview?'Дело готово · демо':'Дело сохранено','Теперь у вас есть первый конкретный шаг. Его можно увидеть в разделе «Дела».');
+  setResult(preview?'Дело готово · демо':'Дело сохранено',preview
+   ?'Это предварительный просмотр. В настоящие Дела ничего не добавлено.'
+   :'Теперь у вас есть первый конкретный шаг. Его можно увидеть в разделе «Дела».');
   btnAction.textContent=preview?'Закрыть демо':'Открыть Дела';
  }else{
-  setResult(preview?'Запись готова · демо':'Запись сохранена','Ваш первый результат находится в Блокноте и остаётся на этом устройстве.');
+  setResult(preview?'Запись готова · демо':'Запись сохранена',preview
+   ?'Это предварительный просмотр. Блокнот и другие данные не изменены.'
+   :'Ваш первый результат находится в Блокноте и остаётся на этом устройстве.');
   btnAction.textContent=preview?'Закрыть демо':'Открыть Блокнот';
  }
 }
@@ -157,9 +161,10 @@ function resultAction(){
   finishSaved('note');
   return;
  }
- close(preview?null:'completed');
- if(preview)return;
- if(choice==='task')$('navTasks')?.click();
+ const savedChoice=choice,wasPreview=preview;
+ close(wasPreview?null:'completed');
+ if(wasPreview)return;
+ if(savedChoice==='task')$('navTasks')?.click();
  else window.SEYVEO_NOTES_API?.openNotes?.();
 }
 choiceBox.addEventListener('click',event=>{
