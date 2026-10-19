@@ -69,3 +69,6 @@
  @keyframes seyveo-first-minute-arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 }
 @media(prefers-reduced-motion:reduce){#homePage .first-minute{animation:none!important;transition:none!important}}
+
+/* A prior reply is never allowed to overlap the one-time first-step flow. */
+#homePage.first-minute-active #orbInlineReply{display:none!important}
