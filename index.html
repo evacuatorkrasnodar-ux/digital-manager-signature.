@@ -1970,7 +1970,7 @@ function syncHomeVoice(){
     kicker='Рекомендация · для вашего бизнеса';
     headline=name+', есть один полезный шаг';
     subline='Предложение по вашей Карте бизнеса, а не по данным подключённых сервисов.';
-  }else if(story){
+  }else if(story&&(demoReplayInProgress||!window.SEYVEO_BUSINESS_MAP?.getState?.())){
     kicker=story.kicker;
     headline=story.title;
     subline=story.subtitle;
@@ -2055,12 +2055,14 @@ window.addEventListener('storage',event=>{
 function render(){
 progressDemoTasks();
 applyTheme();
-const advice=homeBusinessAdvice(),story=stories[state.index],visibleStory=advice?null:story;
+const advice=homeBusinessAdvice(),story=stories[state.index];
+const ownerHasMap=!demoReplayInProgress&&!!window.SEYVEO_BUSINESS_MAP?.getState?.();
+const visibleStory=ownerHasMap?null:story;
 const isCalm=!visibleStory&&!advice&&!confirmation;
 const mode=confirmation?'action':isCalm?'calm':'attention';
 $('stage').dataset.mode=mode;
-transientNotice(advice?'none':confirmation?'approval:'+state.index:story?'scenario:'+state.index:'none',
- advice?null:confirmation?'check':story?story.type:null);
+transientNotice(confirmation?'approval:'+state.index:visibleStory?'scenario:'+state.index:'none',
+ confirmation?'check':visibleStory?visibleStory.type:null);
 syncHomeVoice();
 $('dynamic').hidden=isCalm;
 $('demoReplayAction').hidden=!(isCalm||advice);
@@ -2071,7 +2073,7 @@ if(advice){
   isCalm?'':'<article class="decision-card"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon(story.type)+'</span><div class="event-copy"><strong>'+escapeHtml(story.card)+'</strong><small>'+escapeHtml(story.meta)+'</small></div></div><div class="card-tag">'+escapeHtml(story.tag)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+escapeHtml(story.approve)+'</button></div></article>';
 }
 $('inspect')?.addEventListener('click',()=>advice?
- popup(advice.title,advice.why+'\\n\\nЭто рекомендация на основе сохранённой вами Карты бизнеса. Доступа к внешним сервисам и самостоятельного исполнения пока нет.'):
+ popup(advice.title,advice.why+'\n\nЭто рекомендация на основе сохранённой вами Карты бизнеса. Доступа к внешним сервисам и самостоятельного исполнения пока нет.'):
  popup(story.card,story.detail));
 $('resolve')?.addEventListener('click',()=>advice?openHomeAdvice(advice):approve(story));
 $('replayDemo')?.addEventListener('click',()=>{
