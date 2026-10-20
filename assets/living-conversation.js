@@ -79,6 +79,8 @@ function close(){
  header.hidden=true;
  syncMic(false);
  if(!form.hidden)$('hideInput')?.click();
+ // The user explicitly exited the conversation; restore Home idle behavior.
+ window.SEYVEO_DEMO_CHAT_ACTIVE=false;
  if(!reply.hidden)$('orbInlineReplyClose')?.click();
  else {
    const original=stage.querySelector('.message');
@@ -87,6 +89,38 @@ function close(){
    quiet.hidden=$('kicker')?.textContent!=='На связи';
  }
 }
+async function copyReply(value){
+ try{
+   if(!navigator.clipboard?.writeText)throw new Error('clipboard unavailable');
+   await navigator.clipboard.writeText(value);
+   status('Ответ скопирован',1800);
+ }catch{
+   // Keep the text visible for native manual selection when permission is denied.
+   status('Выделите текст ответа для копирования',2800);
+ }
+}
+function saveReplyToNotes(value){
+ const api=window.SEYVEO_NOTES_API;
+ if(typeof api?.reviewText!=='function'){
+   status('Блокнот пока недоступен',2800);return;
+ }
+ // The owner reviews and explicitly saves the text in the existing Notebook.
+ api.reviewText(value,{preserveLines:true});
+}
+function replyAction(label,icon,onClick){
+ const button=document.createElement('button');
+ button.type='button';
+ button.className='seyveo-conversation-reply-action';
+ button.setAttribute('aria-label',label);
+ button.innerHTML=icon;
+ const textLabel=document.createElement('span');
+ textLabel.textContent=label;
+ button.append(textLabel);
+ button.addEventListener('click',onClick);
+ return button;
+}
+const COPY_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg>';
+const NOTE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5h11l3 3V21H5zM16 3.5V7h3M8.5 11h7M8.5 15h7M8.5 19h4"/></svg>';
 function renderTurns(turns){
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
@@ -101,12 +135,31 @@ function renderTurns(turns){
      const body=document.createElement('div');
      body.className='seyveo-conversation-body';
      body.textContent=String(value||'');
-     item.append(label,body);nodes.push(item);
+     item.append(label,body);
+     if(who==='sayvi'&&String(value||'').trim()){
+       const actions=document.createElement('div');
+       actions.className='seyveo-conversation-reply-actions';
+       const answer=String(value);
+       actions.append(
+         replyAction('Копировать',COPY_ICON,()=>copyReply(answer)),
+         replyAction('В Блокнот',NOTE_ICON,()=>saveReplyToNotes(answer))
+       );
+       item.append(actions);
+     }
+     nodes.push(item);
    }
  });
  text.replaceChildren(...nodes);
  if(atBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
+// On Home, a short assistant tap opens a compact choice, not the conversation.
+ // Writing starts when the person explicitly taps the text field.
+ const question=$('question');
+ question?.addEventListener('focus',()=>{
+   if(form.hidden||root.classList.contains('seyveo-conversation'))return;
+   if(form.dataset.composerMode==='notes')return;
+   open();
+ });
 $('seyveoConversationBack').addEventListener('click',close);
 $('seyveoConversationHistory').addEventListener('click',()=>window.SEYVEO_CHAT_HISTORY?.open());
 document.addEventListener('seyveo:assistant-presence',e=>{
