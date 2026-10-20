@@ -888,17 +888,16 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </section>
 <section id="calendarPersonalTools" class="pw-root" aria-label="Личные инструменты" hidden></section>
 <section id="seyveoWorldHub" class="seyveo-world-hub" aria-label="Мой мир · люди и связи" hidden>
- <div class="world-hub-intro"><span class="world-hub-kicker">SEYVEO / МОЙ МИР</span><p>Ваши люди, важные даты и общение. Сейчас всё доступно для проверки — защита разделов ещё не подключена.</p></div>
  <section class="world-people" aria-labelledby="worldPeopleHeading">
-  <div class="world-hub-heading"><div><h3 id="worldPeopleHeading">Мои люди</h3><small id="worldContactsSummary">Контакты SEYVEO · 0</small></div><button id="worldManageContacts" type="button">＋ Контакт</button></div>
-  <div id="worldPeopleList" class="world-people-list" aria-label="Мои контакты SEYVEO" aria-live="polite"></div>
-  <button id="worldAllContacts" class="world-all-contacts" type="button">Открыть справочник и изменить номера <span aria-hidden="true">↗</span></button>
+  <div class="world-hub-heading"><div><h3 id="worldPeopleHeading">Люди и связи</h3><small id="worldContactsSummary">0 контактов</small></div><button id="worldManageContacts" type="button" aria-label="Добавить контакт" title="Добавить контакт">＋</button></div>
+  <div id="worldPeopleList" class="world-people-list" aria-label="Контакты SEYVEO" aria-live="polite"></div>
  </section>
- <div class="world-connection-state" aria-label="Источники для тестирования">
-  <div><strong>Контакты SEYVEO</strong><small>Ручные записи · работают</small></div>
-  <div><strong>Контакты iPhone</strong><small>Не подключены · требуется интеграция</small></div>
-  <div><strong>Почта и сообщения</strong><small>Не подключены · доступа к перепискам нет</small></div>
- </div>
+ <section class="world-connection-state" aria-labelledby="worldConnectionsHeading">
+  <h3 id="worldConnectionsHeading">Подключения</h3>
+  <div><strong>Контакты SEYVEO</strong><small class="world-connection-ready">Доступно</small></div>
+  <div><strong>Контакты iPhone</strong><small>Не подключено</small></div>
+  <div><strong>Почта и сообщения</strong><small>Не подключено</small></div>
+ </section>
 </section>
 <details id="calendarSpaceJournal" open><summary>Личные записи</summary><div class="pw-journal-body"><div class="cal-space-toolbar"><small id="calendarSpaceCount">Нет записей</small><button id="calendarSpaceAdd" type="button">＋ Добавить</button></div>
 <div id="calendarSpaceList" class="cal-space-list" aria-label="Ваши записи"></div>
