@@ -19,6 +19,9 @@
  content:' · · ·';letter-spacing:.08em;animation:seyveo-thinking-fade 1.2s ease-in-out infinite alternate;
 }
 @keyframes seyveo-thinking-fade{from{opacity:.3}to{opacity:1}}
+/* Logo Deep Reveal is for Home only. Never paint its large lockup over
+   the compact sphere when the user is talking to Sayvi. */
+html.seyveo-conversation #orb :is(#signal,#orbLogoMist){display:none!important}
 html.seyveo-conversation #homeHeader{display:none!important}
 html.seyveo-conversation .dock{
  visibility:hidden!important;pointer-events:none!important;opacity:0!important;
@@ -84,6 +87,25 @@ html.seyveo-conversation #ask.expanded #seyveoConversationMicLarge{display:grid}
  html.seyveo-conversation #ask:not(.expanded) .composer-compact{gap:4px}
  html.seyveo-conversation #ask:not(.expanded) #seyveoConversationMic{width:34px;height:38px}
 }
+/* Under each Sayvi answer: quiet actions, no giant message bubble. */
+.seyveo-conversation-reply-actions{
+ display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:5px 0 0 -6px;
+}
+.seyveo-conversation-reply-action{
+ display:inline-flex;align-items:center;gap:6px;min-height:38px;
+ padding:7px 9px;border:0;border-radius:12px;
+ background:transparent;color:var(--secondary);font:inherit;font-size:11.5px;
+ cursor:pointer;touch-action:manipulation;
+}
+.seyveo-conversation-reply-action svg{
+ display:block;width:16px;height:16px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;
+}
+.seyveo-conversation-reply-action:active{background:var(--card2);color:var(--text)}
+.seyveo-conversation-reply-action:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+/* Home assistant: the compact composer offers typing or mic without forcing
+   a full conversation. It is the SAME composer and microphone implementation. */
+html:not(.seyveo-conversation) #ask:not(.expanded) #seyveoConversationMic{display:grid}
 @media(prefers-reduced-motion:reduce){
  .seyveo-conversation-heading span.is-processing::after{animation:none}
 }
