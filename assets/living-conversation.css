@@ -275,3 +275,29 @@ html.seyveo-conversation .seyveo-reply-more>summary:focus-visible{
   width:39px;min-width:39px;height:42px;
  }
 }
+
+/* iPhone viewport stability v1: Safari's 100dvh changes with toolbar motion.
+   Use the *small* stable viewport for the Home and Conversation shell only;
+   the other app pages, approved dock and sphere artwork are unchanged. */
+@media(max-width:700px){
+ .app:has(#homePage:not([hidden])){
+   min-height:100svh;
+ }
+ /* The old keyboard rule removed the sphere from layout entirely, so the
+    transcript jumped upward and then down again on blur. Keep its exact
+    compact chat footprint even while the native iPhone keyboard is open. */
+ html.seyveo-conversation.seyveo-composer-keyboard #stage.has-inline-reply>.orb-cluster{
+   display:block!important;
+ }
+ html.seyveo-conversation.seyveo-composer-keyboard #stage.has-inline-reply .orb-inline-reply-text{
+   max-height:max(82px,calc(var(--composer-visible-height,55svh) - 290px));
+   overflow-y:auto;
+   overscroll-behavior:contain;
+ }
+ /* Native keyboard owns the movement; no extra floating-panel animations. */
+ html.seyveo-composer-keyboard #ask.prompt,
+ html.seyveo-composer-keyboard #stage .orb-inline-reply{
+   transition:none!important;
+   animation:none!important;
+ }
+}
