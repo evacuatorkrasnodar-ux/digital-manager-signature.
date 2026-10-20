@@ -121,11 +121,11 @@ html.seyveo-conversation .seyveo-conversation-turn--you{
  margin-bottom:15px;padding:0 3px;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
- position:relative;gap:5px;
- margin:0 0 15px;
- padding:11px 12px 7px;
+ position:relative;gap:3px;
+ margin:0 0 14px;
+ padding:9px 11px 5px;
  border:1px solid var(--seyveo-emerald-border);
- border-radius:17px;
+ border-radius:16px;
  background:
    linear-gradient(150deg,rgba(66,114,103,.19),rgba(25,49,46,.09) 46%,transparent 83%),
    var(--seyveo-emerald-panel);
@@ -135,10 +135,11 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-s
  color:var(--seyveo-emerald-text);font-size:12px;font-weight:610;letter-spacing:.015em;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
- color:var(--text);font-size:15px;line-height:1.54;
+ color:var(--text);font-size:15px;line-height:1.46;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
- margin:0 0 0 -5px;
+ margin:0;
+ padding:0;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-action{
  color:var(--secondary);
@@ -218,8 +219,12 @@ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
    Real copy / private feedback / share / speech, Notebook inside More.
    No new dock, no unrelated Home changes. */
 html.seyveo-conversation .seyveo-conversation-reply-actions{
- display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin:0 0 0 -7px;
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:nowrap;gap:0;margin:0;padding:0;width:100%;min-width:0;
+ overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+ overscroll-behavior-x:contain;
 }
+html.seyveo-conversation .seyveo-conversation-reply-actions::-webkit-scrollbar{display:none}
 html.seyveo-conversation .seyveo-conversation-reply-action,
 html.seyveo-conversation .seyveo-reply-more>summary{
  box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
@@ -270,9 +275,12 @@ html.seyveo-conversation .seyveo-reply-more>summary:focus-visible{
  outline:2px solid var(--seyveo-emerald-text);outline-offset:2px;
 }
 @media(max-width:355px){
+ /* Small iPhones keep usable touch areas. Icons can scroll horizontally
+    rather than creating a second row that makes every card taller. */
+ html.seyveo-conversation .seyveo-conversation-reply-actions{justify-content:flex-start}
  html.seyveo-conversation .seyveo-conversation-reply-action,
  html.seyveo-conversation .seyveo-reply-more>summary{
-  width:39px;min-width:39px;height:42px;
+  width:42px;min-width:42px;height:42px;
  }
 }
 
