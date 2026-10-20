@@ -2428,8 +2428,9 @@ function armComposerIdle(){
     },15000);
 }
 function expandComposer(){
-  // Only an explicit expand tap (or a Notes save that needs review) may
-  // open this large writer. Typing itself never triggers expansion.
+  // A large writing surface belongs exclusively to Notes/Notebook.
+  // In Ask mode, including on Home, never resurrect the old second editor.
+  if(composerMode!=='notes')return;
   composerManuallyCollapsed=false;
   composer.classList.add('expanded');
   $('assistantQuickrail').hidden=true;
@@ -2451,6 +2452,8 @@ function collapseComposer(){
 }
 function syncComposer(){
   saveDraft();
+  // Heal any stale Ask expansion from before this UX decision.
+  if(composerMode==='ask'&&composer.classList.contains('expanded'))composer.classList.remove('expanded');
   // Chat grows to four lines and scrolls within the same field.
   // Manual expansion is deliberately respected until Collapse is pressed.
   const isLivingChat=document.documentElement.classList.contains('seyveo-conversation')
@@ -2508,6 +2511,7 @@ function closeComposer(){
 function setComposerMode(mode,skipSync=false){
  composerMode=mode==='notes'?'notes':'ask';
  const notes=composerMode==='notes';
+ if(!notes&&composer.classList.contains('expanded'))composer.classList.remove('expanded');
  composer.dataset.composerMode=composerMode;
  $('composerModeAsk').setAttribute('aria-pressed',String(!notes));
  $('composerModeNotes').setAttribute('aria-pressed',String(notes));
@@ -2522,9 +2526,12 @@ function setComposerMode(mode,skipSync=false){
 $('composerModeAsk').addEventListener('click',()=>setComposerMode('ask'));
 $('composerModeNotes').addEventListener('click',()=>setComposerMode('notes'));
 $('composerExpandManual').addEventListener('click',()=>{
-  // One and the same draft: opt in to a large writing surface.
-  // If Ask mode is active, the existing Sayvi conversation remains behind it.
-  expandComposer();
+  if(composerMode==='notes'){
+    expandComposer();
+  }else{
+    // The arrow is a shortcut to the ONE chat, never a second Ask editor.
+    window.SEYVEO_CONVERSATION?.open();
+  }
   question.focus({preventScroll:true});
 });
 $('composerHistory').addEventListener('click',()=>{
