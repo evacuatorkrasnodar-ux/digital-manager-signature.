@@ -39,7 +39,7 @@ const composerHead=$('ask').querySelector('.composer-head');
 if(compact)compact.insertBefore(microphone('seyveoConversationMic'),compact.querySelector('#composerCompactSend'));
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
-let statusTimer=0;
+let statusTimer=0,speakingNow=false;
 function status(value,duration=0){
  const label=$('seyveoConversationStatus');
  if(!label)return;
@@ -116,11 +116,14 @@ document.addEventListener('seyveo:assistant-presence',e=>{
    if(root.classList.contains('seyveo-conversation'))status('Сэйви слушает…');
    syncMic(true);
  }
- else if(phase==='listening-end'){status('На связи');syncMic(false);}
+ else if(phase==='listening-end'){if(!speakingNow)status('На связи');syncMic(false);}
  else if(phase==='thinking'){open();status('Сэйви думает…');}
- else if(phase==='speaking'){status('Сэйви отвечает…');}
- else if(phase==='text'||phase==='end'||phase==='ack'){status('На связи',500);}
- else if(phase==='stop'){status('На связи');syncMic(false);}
+ else if(phase==='speaking'){speakingNow=true;status('Сэйви отвечает…');}
+ else if(phase==='text'||phase==='end'||phase==='ack'){
+   if(phase==='end')speakingNow=false;
+   if(!speakingNow)status('На связи',500);
+ }
+ else if(phase==='stop'){speakingNow=false;status('На связи');syncMic(false);}
 });
 window.addEventListener('hashchange',()=>{
  if(home.hidden||location.hash && !['','#home'].includes(location.hash)){
