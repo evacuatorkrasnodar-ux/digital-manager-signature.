@@ -169,13 +169,13 @@ html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) 
  background:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
  color:#e8fff5;border-color:rgba(157,216,199,.37);
 }
-:root[data-theme=light] html.seyveo-conversation{
+html.seyveo-conversation[data-theme=light]{
  --seyveo-emerald-text:#2d6c60;
  --seyveo-emerald-border:rgba(67,116,102,.22);
  --seyveo-emerald-panel:rgba(233,244,240,.95);
  --seyveo-emerald-active:#25695b;
 }
-:root[data-theme=light] html.seyveo-conversation .seyveo-conversation-turn--sayvi{
+html.seyveo-conversation[data-theme=light] .seyveo-conversation-turn--sayvi{
  background:linear-gradient(145deg,rgba(170,205,192,.34),transparent 82%),var(--seyveo-emerald-panel);
  box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 7px 19px rgba(57,82,75,.07);
 }
