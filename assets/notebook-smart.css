@@ -400,10 +400,12 @@
 #noteReadDialog .note-read-actions>button:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
-/* The original preformatted scroll behavior takes precedence here. */
+/* Preserve every intentional newline (poems, OCR), but still wrap long
+   lines to the device width. Older Sayvi replies were mistakenly marked
+   no-wrap; reading them must not require horizontal scrolling. */
 #noteReadDialog .note-read-content[data-preserve-lines="true"]{
- white-space:pre;overflow-wrap:normal;word-break:normal;
- overflow-x:auto;tab-size:4;
+ white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+ overflow-x:hidden;tab-size:4;
 }
 :root[data-theme=light] #noteReadDialog .note-read-content{
  background:transparent;border-color:transparent;box-shadow:none;
