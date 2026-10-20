@@ -1,0 +1,14 @@
+node_modules/
+.expo/
+dist/
+build/
+ios/
+android/
+*.log
+.env
+.env.*
+!.env.example
+*.sqlite
+*.db
+*.db-wal
+*.db-shm
