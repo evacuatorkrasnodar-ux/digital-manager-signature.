@@ -66,7 +66,7 @@
   // Gentle single-word inflection match: рекламу / реклама, клиента / клиент.
   if(/^[а-яё]{5,}$/iu.test(keyword))variants.push(keyword.replace(/[уеыаои]$/u,''));
   const matched=raw
-   .filter(x=>x&&x.paper!==true&&typeof x.text==='string'&&variants.some(part=>part.length>=3&&x.text.toLocaleLowerCase('ru-RU').includes(part)))
+   .filter(x=>x&&!x.paper&&typeof x.text==='string'&&variants.some(part=>part.length>=3&&x.text.toLocaleLowerCase('ru-RU').includes(part)))
    .slice(0,MAX_NOTES)
    .map(x=>{
     const text=plain(x.text);
