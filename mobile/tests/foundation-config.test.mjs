@@ -44,7 +44,7 @@ test('vault sets PRAGMA key before every SQLCipher read and fails closed', async
  assert.match(fn, /if \(!cipher\?\.cipher_version\) throw/);
  assert.match(fn, /if \(check\?\.quick_check !== 'ok'\) throw/);
  assert.match(fn, /if \(firstProvision\)/);
- assert.match(fn, /INSERT INTO vault_meta/);
+ assert.match(fn, /INSERT OR IGNORE INTO vault_meta/);
  assert.match(fn, /Original encrypted vault not found/);
  assert.match(fn, /if \(marker\?\.value !== '1'\) throw/);
 });
