@@ -71,7 +71,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      # GitHub-hosted Ubuntu runners already include Android SDK and accepted licenses.
+      # Avoid setup-android auto-downloading a newer cmdline-tools package,
+      # which failed during sdkmanager --licenses before compilation.
+      - name: Verify preinstalled Android SDK
+        run: |
+          test -d "${ANDROID_HOME:?Android SDK missing}"
+          echo "Android SDK: $ANDROID_HOME"
+          test -x "$ANDROID_HOME/platform-tools/adb"
       - name: Install mobile dependencies
         run: npm install --no-audit --no-fund
       - name: Generate native Android project with SQLCipher plugin
