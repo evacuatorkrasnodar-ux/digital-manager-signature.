@@ -45,7 +45,17 @@ export function adaptOriginalHome(html){
  const entry="$('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;";
  const locations=served.split(entry);
  if(locations.length!==2)throw Error('SEYVEO Home composer changed; memory patch refused.');
- return locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/felix-action-journal.js?v=1" defer></script><script src="assets/felix-personal-context.js?v=1" defer></script></head>').replace('</head>',"<style id=\"seyveo-local-voice-style\">\n #ask #seyveoLocalMicCompact,#ask #seyveoLocalMicExpanded{\n  display:grid;place-items:center;flex:none;width:40px;height:40px;min-width:40px;\n  padding:0;border:1px solid var(--soft-line);border-radius:50%;\n  background:var(--card2);color:var(--text);cursor:pointer;\n }\n #ask #seyveoLocalMicCompact:focus-visible,#ask #seyveoLocalMicExpanded:focus-visible{outline:2px solid currentColor;outline-offset:2px}\n #ask.prompt:not(.expanded) #seyveoLocalMicExpanded,#ask.expanded #seyveoLocalMicCompact{display:none!important}\n</style>"+'</head>');
+ let adapted=locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/felix-action-journal.js?v=1" defer></script><script src="assets/felix-personal-context.js?v=1" defer></script></head>').replace('</head>',"<style id=\"seyveo-local-voice-style\">\n #ask #seyveoLocalMicCompact,#ask #seyveoLocalMicExpanded{\n  display:grid;place-items:center;flex:none;width:40px;height:40px;min-width:40px;\n  padding:0;border:1px solid var(--soft-line);border-radius:50%;\n  background:var(--card2);color:var(--text);cursor:pointer;\n }\n #ask #seyveoLocalMicCompact:focus-visible,#ask #seyveoLocalMicExpanded:focus-visible{outline:2px solid currentColor;outline-offset:2px}\n #ask.prompt:not(.expanded) #seyveoLocalMicExpanded,#ask.expanded #seyveoLocalMicCompact{display:none!important}\n</style>"+'</head>');
+ // Do not duplicate personal assistant draft text into the existing persistent
+ // chat-history store. Only normal public app interactions retain prior behavior.
+ const calHistory="window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик события в календаре для проверки. Пока не сохранено.',kind:'draft'});";
+ const noteHistory="window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик для Блокнота. Сохранение только после подтверждения.',kind:'draft'});";
+ if(adapted.split(calHistory).length!==2||adapted.split(noteHistory).length!==2)
+  throw Error('SEYVEO private draft history anchors changed; refusing adaptation.');
+ adapted=adapted.replace(entry,entry+'\\nconst localPrivateDraft=window.SEYVEO_LOCAL_PRIVATE_DRAFT===true;window.SEYVEO_LOCAL_PRIVATE_DRAFT=false;');
+ adapted=adapted.replace(calHistory,'if(!localPrivateDraft)'+calHistory);
+ adapted=adapted.replace(noteHistory,'if(!localPrivateDraft)'+noteHistory);
+ return adapted;
 }
 function send(res,status,data){
  res.writeHead(status,{...HEADERS,'content-type':'application/json; charset=utf-8'});
