@@ -94,6 +94,9 @@ function revealExisting(){
 function open(){
  if(home.hidden)return;
  root.classList.add('seyveo-conversation');
+ // A chat is a persistent view, not a timed Home shortcut. Also cancel any
+ // idle timer that was armed before opening the conversation.
+ window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
  header.hidden=false;
  revealExisting();
  // One and the same original pearl line, under the compact sphere.
@@ -142,6 +145,7 @@ function replyAction(label,icon,onClick){
  button.type='button';
  button.className='seyveo-conversation-reply-action';
  button.setAttribute('aria-label',label);
+ button.title=label;
  button.innerHTML=icon;
  const textLabel=document.createElement('span');
  textLabel.textContent=label;
@@ -151,6 +155,79 @@ function replyAction(label,icon,onClick){
 }
 const COPY_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg>';
 const NOTE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5h11l3 3V21H5zM16 3.5V7h3M8.5 11h7M8.5 15h7M8.5 19h4"/></svg>';
+const UP_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v10H4V10h3Zm0 0 5-7c1-1.3 3-.5 3 1v4h4a2 2 0 0 1 1.95 2.5l-2 9A2 2 0 0 1 17 21H7"/></svg>';
+const DOWN_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14V4H4v10h3Zm0 0 5 7c1 1.3 3 .5 3-1v-4h4a2 2 0 0 0 1.95-2.5l-2-9A2 2 0 0 0 17 3H7"/></svg>';
+const SHARE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v7h14v-7"/></svg>';
+const SOUND_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM17 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/></svg>';
+const MORE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
+
+async function shareReply(value){
+ try{
+   if(navigator.share){await navigator.share({title:'Ответ Сэйви',text:value});return}
+   await navigator.clipboard.writeText(value);
+   status('Текст скопирован — его можно отправить',2000);
+ }catch(error){
+   if(error?.name!=='AbortError')status('Поделиться не удалось — используйте копирование',2800);
+ }
+}
+function readReply(value){
+ const speak=window.SEYVEO_CONVERSATION_READ_REPLY;
+ if(typeof speak==='function')speak(value);
+ else status('Озвучивание недоступно',2300);
+}
+// Feedback is a personal mark on this device, not a model training signal.
+const VOTES_KEY='seyveo-local-reply-feedback-v1';
+function replyKey(turn){
+ const source=String(turn.question||'')+'\u241F'+String(turn.answer||'');
+ let hash=2166136261;
+ for(let i=0;i<source.length;i++){
+   hash=Math.imul(hash^source.charCodeAt(i),16777619);
+ }
+ return (hash>>>0).toString(36);
+}
+function voteFor(key){
+ try{return JSON.parse(localStorage.getItem(VOTES_KEY)||'{}')?.[key]||null}
+ catch{return null}
+}
+function saveVote(key,value){
+ try{
+   const raw=JSON.parse(localStorage.getItem(VOTES_KEY)||'{}');
+   const map=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
+   delete map[key];if(value)map[key]=value;
+   const entries=Object.entries(map).slice(-120);
+   localStorage.setItem(VOTES_KEY,JSON.stringify(Object.fromEntries(entries)));
+   return true;
+ }catch{return false}
+}
+function makeFeedbackActions(turn){
+ const key=replyKey(turn);
+ const useful=replyAction('Полезный ответ',UP_ICON,()=>set('up'));
+ const notUseful=replyAction('Ответ не подошёл',DOWN_ICON,()=>set('down'));
+ function refresh(){
+   const vote=voteFor(key);
+   useful.setAttribute('aria-pressed',String(vote==='up'));
+   notUseful.setAttribute('aria-pressed',String(vote==='down'));
+ }
+ function set(next){
+   const selected=voteFor(key)===next?null:next;
+   if(!saveVote(key,selected)){status('Не удалось сохранить оценку',2000);return}
+   refresh();status('Отметка сохранена только на этом устройстве',1700);
+ }
+ refresh();return [useful,notUseful];
+}
+function moreReplyActions(value){
+ const details=document.createElement('details');
+ details.className='seyveo-reply-more';
+ const summary=document.createElement('summary');
+ summary.innerHTML=MORE_ICON;
+ summary.title='Ещё действия';summary.setAttribute('aria-label','Ещё действия с ответом');
+ const content=document.createElement('div');
+ content.className='seyveo-reply-more-menu';
+ const note=replyAction('В Блокнот',NOTE_ICON,()=>{details.open=false;saveReplyToNotes(value)});
+ content.append(note);
+ details.append(summary,content);
+ return details;
+}
 function renderTurns(turns){
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
@@ -172,7 +249,10 @@ function renderTurns(turns){
        const answer=String(value);
        actions.append(
          replyAction('Копировать',COPY_ICON,()=>copyReply(answer)),
-         replyAction('В Блокнот',NOTE_ICON,()=>saveReplyToNotes(answer))
+         ...makeFeedbackActions(turn),
+         replyAction('Поделиться',SHARE_ICON,()=>shareReply(answer)),
+         replyAction('Озвучить',SOUND_ICON,()=>readReply(answer)),
+         moreReplyActions(answer)
        );
        item.append(actions);
      }
