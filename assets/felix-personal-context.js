@@ -62,12 +62,15 @@
   try{raw=noteAPI.getNotes()}catch{return 'Не удалось прочитать Блокнот. Ничего не изменено.';}
   if(!Array.isArray(raw))return 'Не удалось прочитать Блокнот. Ничего не изменено.';
   const keyword=term.toLocaleLowerCase('ru-RU');
+  const variants=[keyword];
+  // Gentle single-word inflection match: рекламу / реклама, клиента / клиент.
+  if(/^[а-яё]{5,}$/iu.test(keyword))variants.push(keyword.replace(/[уеыаои]$/u,''));
   const matched=raw
-   .filter(x=>x&&x.paper!==true&&typeof x.text==='string'&&x.text.toLocaleLowerCase('ru-RU').includes(keyword))
+   .filter(x=>x&&x.paper!==true&&typeof x.text==='string'&&variants.some(part=>part.length>=3&&x.text.toLocaleLowerCase('ru-RU').includes(part)))
    .slice(0,MAX_NOTES)
    .map(x=>{
     const text=plain(x.text);
-    const at=text.toLocaleLowerCase('ru-RU').indexOf(keyword);
+    const at=Math.max(0,variants.map(part=>text.toLocaleLowerCase('ru-RU').indexOf(part)).find(pos=>pos>=0)??0);
     const snippet=at<0?text.slice(0,210):text.slice(Math.max(0,at-35),Math.max(0,at-35)+210);
     return '• '+(snippet.length<text.length?'…':'')+snippet+(snippet.length<text.length?'…':'');
    });
