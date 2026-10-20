@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "SEYVEO",
+    "slug": "seyveo-mobile",
+    "scheme": "seyveo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.seyveo.digitalmanager",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.seyveo.digitalmanager",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Разрешить SEYVEO использовать Face ID для защиты личного хранилища."
+        }
+      ]
+    ],
+    "extra": {
+      "phase": "M1-security-foundation",
+      "cloudBackupEnabled": false
+    }
+  }
+}
