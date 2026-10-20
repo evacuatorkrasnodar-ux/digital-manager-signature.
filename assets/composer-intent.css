@@ -206,6 +206,17 @@
   animation:assistant-quick-appear .21s cubic-bezier(.2,.8,.2,1) both;
 }
 #assistantQuickrail[hidden]{display:none!important}
+/* While the user writes, unobtrusively dismiss favorites above the composer.
+   Visibility also removes invisible buttons from keyboard/tab navigation.
+   The fixed rail remains out of document flow; the dock never shifts. */
+#assistantQuickrail.assistant-quickrail.is-writing{
+  opacity:0;visibility:hidden;pointer-events:none;
+  animation:none!important;
+  transition:opacity .18s ease,visibility 0s linear .18s;
+}
+@media(prefers-reduced-motion:reduce){
+  #assistantQuickrail.assistant-quickrail.is-writing{transition:none}
+}
 #assistantQuickrail .assistant-quick-item{
   box-sizing:border-box;min-width:0;min-height:44px;
   display:flex;align-items:center;justify-content:center;gap:7px;
