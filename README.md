@@ -1,7 +1,7 @@
 # SEYVEO — «Цифровой управляющий»
 
 
-> **20.10.2026 — проверочный конвейер Mobile Native Foundation:** добавлены [GitHub Actions для Android/iOS](.github/workflows/mobile-native.yml) (Node-тесты, типы, JavaScript-сборки; тяжёлый Android debug APK — только по ручному запуску) и новые проверки SQLCipher, отсутствия автоматического Android Backup и защиты от незаметной подмены утраченной базы пустой. **11 тестов настроены**, но реальные Native APK/IPA и криптография на устройстве **пока не подтверждены**. [Инструкция](mobile/README.md).
+> **20.10.2026 — проверочный конвейер Mobile Native Foundation:** добавлены [GitHub Actions для Android/iOS](.github/workflows/mobile-native.yml) (Node-тесты, типы, JavaScript-сборки; тяжёлый Android debug APK — только по ручному запуску) и новые проверки SQLCipher, отсутствия автоматического Android Backup и защиты от незаметной подмены утраченной базы пустой. **13 тестов настроены**, но реальные Native APK/IPA и криптография на устройстве **пока не подтверждены**. [Инструкция](mobile/README.md).
 
 
 
