@@ -13,8 +13,6 @@ const read=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
 let step=0,assistant='Феликс',assistantVoice='male',focus='life',preview=false,previewTrigger=null,openingTimer=null;
-let tourIndex=-1,tourVisited=false;
-const tour=null; // Legacy film disabled: one standalone presentation only.
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
 const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
 const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
@@ -102,20 +100,19 @@ function markOptions(){
 function assistantName(){return trim(other.value,40)||assistant}
 function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Милисса'?'Мили':name}
 function render(){
- dialog.classList.toggle('is-film',tourIndex>=0);
- panels.forEach((panel,index)=>{panel.hidden=tourIndex>=0||index!==step});
- tour?.render(tourIndex);
- progress.hidden=tourIndex>=0||step===0||step===4;
+ panels.forEach((panel,index)=>{panel.hidden=index!==step});
+ progress.hidden=step===0||step===4;
  progress.replaceChildren();
- if(!progress.hidden){
-  for(let i=1;i<=3;i++){const dot=document.createElement('span');dot.className=i<=step?'is-current':'';progress.append(dot)}
+ if(!progress.hidden)for(let i=1;i<=3;i++){
+  const dot=document.createElement('span');
+  dot.className=i<=step?'is-current':'';
+  progress.append(dot);
  }
- back.hidden=step===0&&tourIndex<0;
- next.textContent=tourIndex>=0?(tourIndex===(tour?.count||4)-1?'Давай знакомиться':'Дальше'):
-  step===0?'Посмотреть возможности':step===4?(preview?'Показать открытие':'Открыть SEYVEO'):'Продолжить';
- skip.textContent=preview?'Выйти из демо':tourIndex>=0?'Пропустить показ':step===0?'Сразу к знакомству':step===4?'Вернуться позже':'Пропустить знакомство';
- if(overline)overline.textContent=tourIndex>=0?'ПРИМЕР · НЕ ВАШИ ДАННЫЕ':preview?'ДЕМО · ПЕРВЫЙ ЗАПУСК':'AI AUTOMATION';
- if(disclaimer)disclaimer.textContent=tourIndex>=0?'Учебный пример · ничего не сохраняется':preview?'Это только просмотр · настройки не сохраняются':'Без доступа к контактам, микрофону и другим данным';
+ back.hidden=step===0;
+ next.textContent=step===0?'Посмотреть возможности':step===4?(preview?'Показать открытие':'Открыть SEYVEO'):'Продолжить';
+ skip.textContent=preview?'Выйти из демо':step===0?'Сразу к знакомству':step===4?'Вернуться позже':'Пропустить знакомство';
+ if(overline)overline.textContent=preview?'ДЕМО · ПЕРВЫЙ ЗАПУСК':'AI AUTOMATION';
+ if(disclaimer)disclaimer.textContent=preview?'Это только просмотр · настройки не сохраняются':'Без доступа к контактам, микрофону и другим данным';
  error.textContent='';
  markOptions();
  if(step===4){
@@ -126,16 +123,10 @@ function render(){
  }
 }
 function setStep(i){
- tourIndex=-1;
  const nextStep=Math.max(0,Math.min(4,i));
  step=nextStep;render();
  if(step!==0)dialog.classList.remove('is-cinematic');
  else if(dialog.open)playSignature();
-}
-function setTour(index){
- if(!tour)return setStep(1);
- tourIndex=Math.max(0,Math.min(tour.count-1,index));tourVisited=true;step=0;
- render();dialog.classList.remove('is-cinematic');
 }
 function playSignature(){
  // Replaying the intro uses its own isolated animation. Never touch Home plasma.
@@ -149,8 +140,7 @@ function close(){
  dialog.classList.remove('is-cinematic','is-opening','is-film');
  if(dialog.open)dialog.close();
  const fromDemo=preview,trigger=previewTrigger;
- preview=false;previewTrigger=null;tourIndex=-1;tourVisited=false;
- tour?.reset();tour?.render(-1);
+ preview=false;previewTrigger=null;
  if(fromDemo&&trigger?.isConnected)try{trigger.focus({preventScroll:true})}catch{}
  window.dispatchEvent(new Event('seyveo:welcome-finished'));
 }
@@ -223,21 +213,11 @@ voiceChoices.forEach(button=>button.addEventListener('click',()=>{
  markOptions();tour?.previewVoice?.(assistantVoice);
 }));
 other.addEventListener('input',markOptions);
-window.addEventListener('seyveo:film-voice-selected',event=>{
- const gender=event.detail?.gender,name=event.detail?.name;
- if(!['male','female'].includes(gender)||!['Феликс','Милисса'].includes(name))return;
- assistant=name;assistantVoice=gender;other.value='';markOptions();
-});
 focusChoices.forEach(button=>button.addEventListener('click',()=>{
  focus=button.dataset.welcomeFocus;markOptions();
 }));
 next.addEventListener('click',()=>{
  if(openingTimer!==null)return;
- if(tourIndex>=0){
-  if(tourIndex<(tour?.count||4)-1)setTour(tourIndex+1);
-  else setStep(1);
-  return;
- }
  if(step===0){
   const cinema=window.SEYVEO_PREMIERE;
   if(!cinema?.start){setStep(1);return}
@@ -256,34 +236,15 @@ next.addEventListener('click',()=>{
 });
 back.addEventListener('click',()=>{
  if(openingTimer!==null)return;
- if(tourIndex>=0){if(tourIndex===0)setStep(0);else setTour(tourIndex-1);return}
- if(step===1&&tourVisited){setTour((tour?.count||4)-1);return}
  if(step>0)setStep(step-1);
 });
 skip.addEventListener('click',()=>{
- if(!preview&&(tourIndex>=0||step===0)){setStep(1);return}
+ if(!preview&&step===0){setStep(1);return}
  dismiss();
-});
-/* Film controls reuse the existing one-time welcome state machine.
-   They never bypass profile consent, and previews never write settings. */
-window.addEventListener('seyveo:film-next',()=>{
- if(!dialog.open||tourIndex<0)return;
- if(tourIndex<(tour?.count||5)-1)setTour(tourIndex+1);
- else if(preview)dismiss();
- else setStep(1);
-});
-window.addEventListener('seyveo:film-back',()=>{
- if(!dialog.open||tourIndex<0)return;
- if(tourIndex>0)setTour(tourIndex-1);
- else setStep(0);
-});
-window.addEventListener('seyveo:film-skip',()=>{
- if(dialog.open&&tourIndex>=0)setStep(1);
 });
 dialog.addEventListener('cancel',event=>{
  event.preventDefault();
  if(openingTimer!==null)return;
- if(tourIndex>=0){setStep(1);return}
  dismiss();
 });
 window.addEventListener('pagehide',()=>{
@@ -293,7 +254,6 @@ window.addEventListener('pagehide',()=>{
 function tryOpen(){
  if(window.SEYVEO_PREMIERE?.isActive()||dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
- tourIndex=-1;tourVisited=false;tour?.reset();
  setStep(0);
  try{dialog.showModal();playSignature();prepareSignatureSound()}catch{}
 }
