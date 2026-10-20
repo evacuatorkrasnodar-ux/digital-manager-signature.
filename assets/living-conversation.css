@@ -186,7 +186,10 @@ html.seyveo-conversation[data-theme=light] .seyveo-conversation-turn--sayvi{
 /* Living Conversation · one writer with two intentional sizes.
    Compact grows to four lines. The arrow opens the SAME writer only by tap;
    Notes keeps its large editing tools. No automatic pop-up on typing. */
-html.seyveo-conversation #ask:not(.expanded) #composerExpandManual{display:grid}
+/* In the single chat, never offer the duplicate large Ask editor.
+   The Home arrow still opens chat; the Notes mode may expand by choice. */
+html.seyveo-conversation #ask[data-composer-mode="ask"]:not(.expanded) #composerExpandManual{display:none!important}
+html.seyveo-conversation #ask[data-composer-mode="notes"]:not(.expanded) #composerExpandManual{display:grid}
 html.seyveo-conversation #ask.prompt:not(.expanded){
  box-sizing:border-box;
  height:auto!important;
