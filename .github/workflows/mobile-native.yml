@@ -1,0 +1,88 @@
+name: SEYVEO Mobile · Native Foundation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-native.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seyveo-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile-validation:
+    name: Native configuration, types and bundles
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install mobile dependencies
+        run: npm install --no-audit --no-fund
+      - name: Verify package compatibility
+        run: npx expo install --check
+      - name: Security foundation tests
+        run: npm test
+      - name: TypeScript safety
+        run: npm run check
+      - name: Android JavaScript bundle
+        run: npx expo export --platform android --output-dir dist-android
+      - name: iOS JavaScript bundle (not an IPA)
+        run: npx expo export --platform ios --output-dir dist-ios
+
+  android-debug-apk:
+    name: Android native debug APK (manual run only)
+    if: github.event_name == 'workflow_dispatch'
+    needs: mobile-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install mobile dependencies
+        run: npm install --no-audit --no-fund
+      - name: Generate native Android project with SQLCipher plugin
+        run: npx expo prebuild --platform android --clean --no-install
+      - name: Compile unsigned debug APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew :app:assembleDebug --no-daemon
+      - name: Publish development artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: seyveo-mobile-m1-android-debug
+          path: mobile/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 3
