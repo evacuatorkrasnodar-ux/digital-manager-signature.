@@ -50,7 +50,9 @@ jobs:
 
   android-debug-apk:
     name: Android native debug APK (manual run only)
-    if: github.event_name == 'workflow_dispatch'
+    # Heavy APK build runs only on explicit manual dispatch or one signed-off
+    # owner request commit. Other ordinary pushes never compile an APK.
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.event.head_commit.message, '[android-build-request]')) }}
     needs: mobile-validation
     runs-on: ubuntu-latest
     timeout-minutes: 45
