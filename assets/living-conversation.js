@@ -134,11 +134,26 @@ async function copyReply(value){
 }
 function saveReplyToNotes(value){
  const api=window.SEYVEO_NOTES_API;
- if(typeof api?.reviewText!=='function'){
+ if(typeof api?.getNotes!=='function'||typeof api?.putNotes!=='function'){
    status('Блокнот пока недоступен',2800);return;
  }
- // The owner reviews and explicitly saves the text in the existing Notebook.
- api.reviewText(value,{preserveLines:true});
+ const content=String(value||'').trim();
+ if(!content){status('Нет текста для сохранения',2200);return}
+ if(content.length>8000){
+   status('Ответ слишком длинный для одной записи',2800);return;
+ }
+ // Choosing "В Блокнот" is the explicit save action. Keep the original
+ // paragraph breaks but DO NOT mark conversational prose as no-wrap poetry.
+ const prior=api.getNotes();
+ if(prior[0]?.text===content&&Date.now()-prior[0].createdAt<10000){
+   status('Уже сохранено в Блокнот',2000);return;
+ }
+ const note={
+   id:String(Date.now())+'-'+Math.random().toString(36).slice(2),
+   text:content,createdAt:Date.now()
+ };
+ if(api.putNotes([note,...prior]))status('Сохранено в Блокнот',2200);
+ else status('Не удалось сохранить. Проверьте память устройства.',3200);
 }
 function replyAction(label,icon,onClick){
  const button=document.createElement('button');
