@@ -8,6 +8,7 @@ test('mobile native build enables real SQLCipher and supports both phone systems
  const app = JSON.parse(await read('app.json')).expo;
  assert.equal(app.plugins.find(p => p[0] === 'expo-sqlite')?.[1].useSQLCipher, true);
  assert.equal(app.extra.cloudBackupEnabled, false);
+ assert.equal(app.android.allowBackup, false, 'Android OS backups must remain off until encrypted Cloud Bridge exists');
  assert.ok(app.ios.bundleIdentifier);
  assert.ok(app.android.package);
  assert.ok(app.plugins.some(p => p[0] === 'expo-secure-store'));
@@ -42,6 +43,10 @@ test('vault sets PRAGMA key before every SQLCipher read and fails closed', async
  assert.ok(keyAt >= 0 && keyAt < cipherAt && cipherAt < quickAt && quickAt < createAt);
  assert.match(fn, /if \(!cipher\?\.cipher_version\) throw/);
  assert.match(fn, /if \(check\?\.quick_check !== 'ok'\) throw/);
+ assert.match(fn, /if \(firstProvision\)/);
+ assert.match(fn, /INSERT INTO vault_meta/);
+ assert.match(fn, /Original encrypted vault not found/);
+ assert.match(fn, /if \(marker\?\.value !== '1'\) throw/);
 });
 
 test('new screen never claims encrypted storage without native verification', async () => {
