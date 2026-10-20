@@ -4,7 +4,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
-const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),companyTrigger=$('homeCompanyTrigger');
+const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
 const KEY='seyveo-company-passport-v1';
@@ -217,27 +217,24 @@ function closeHeaderPassport(){
  previewBox.hidden=true;
  brand.hidden=true;company.hidden=true;
  brandTrigger?.setAttribute('aria-expanded','false');
- companyTrigger?.setAttribute('aria-expanded','false');
 }
-function toggleHeaderPassport(which){
+function toggleHeaderPassport(){
  if(!previewBox)return;
- const trigger=which==='studio'?brandTrigger:companyTrigger;
- const card=which==='studio'?brand:company;
- const wasOpen=!previewBox.hidden&&!card.hidden;
+ const wasOpen=!previewBox.hidden&&!brand.hidden;
  closeHeaderPassport();
  if(wasOpen)return;
- previewBox.dataset.side=which;
- previewBox.hidden=false;card.hidden=false;
- trigger?.setAttribute('aria-expanded','true');
+ previewBox.dataset.side='studio';
+ previewBox.hidden=false;brand.hidden=false;
+ brandTrigger?.setAttribute('aria-expanded','true');
 }
-brandTrigger?.addEventListener('click',()=>toggleHeaderPassport('studio'));
+brandTrigger?.addEventListener('click',toggleHeaderPassport);
 $('pictureCompanyOpen')?.addEventListener('click',()=>{
  closeHeaderPassport();
  openCompany();
 });
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
- if(previewBox.contains(event.target)||brandTrigger?.contains(event.target)||companyTrigger?.contains(event.target))return;
+ if(previewBox.contains(event.target)||brandTrigger?.contains(event.target))return;
  closeHeaderPassport();
 });
 document.addEventListener('keydown',event=>{

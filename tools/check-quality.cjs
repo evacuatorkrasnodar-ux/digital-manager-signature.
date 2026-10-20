@@ -25,7 +25,10 @@ function findFiles(dir,extension){
  });
 }
 const html=read('index.html');
-const markupIds=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+// Inline application scripts contain mutually exclusive HTML strings. They
+// are not elements of the document until a branch renders into a container.
+const staticMarkup=html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,'');
+const markupIds=[...staticMarkup.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
 /* Health/Care has one self-contained, static HTML template mounted in the
  * existing personal dialog. Validate its IDs rather than requiring copies in
  * index.html. The six generated card labels use the same reusable factory. */
@@ -91,13 +94,22 @@ for(let i=0;i<inlineStyles.length;i++){
 }
 check(!failures.some(s=>s.startsWith('Unbalanced CSS')||s.startsWith('Malformed trailing selector comma')),
  'CSS syntax structure ('+cssPaths.length+' files, '+inlineStyles.length+' inline)');
+// DOM nodes mounted by feature modules (tour, conversation, notifications)
+// do not appear in index.html. Recognize their literal declarations without
+// exempting references to removed controls.
+const declaredModuleIds=new Set();
+for(const name of scriptPaths.filter(x=>x.startsWith('assets/'))){
+ const source=read(name);
+ for(const match of source.matchAll(/\bid=["']([\w-]+)["']/g))declaredModuleIds.add(match[1]);
+ for(const match of source.matchAll(/\.id\s*=\s*["']([\w-]+)["']/g))declaredModuleIds.add(match[1]);
+}
 const referencedIds=new Set();
 for(const name of scriptPaths.filter(x=>x.startsWith('assets/'))){
  for(const m of read(name).matchAll(/(?:getElementById\(|\$\()\s*['"]([\w-]+)['"]\s*\)/g)){
   if(m[1]!=='page')referencedIds.add(m[1]); // dynamically created print window
  }
 }
-const missingIds=[...referencedIds].filter(id=>!ids.has(id));
+const missingIds=[...referencedIds].filter(id=>!ids.has(id)&&!declaredModuleIds.has(id));
 check(missingIds.length===0,'Static JavaScript DOM IDs exist'+(missingIds.length?': '+missingIds.join(', '):''));
 check(html.includes("seyveo-notes-v1")&&read('assets/personal-tasks.js').includes('seyveo-personal-tasks-v1'),
  'Persistent notebook and personal-task storage keys preserved');
