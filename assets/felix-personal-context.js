@@ -89,7 +89,29 @@
   }catch{return Object.freeze({kind:intent.kind,localOnly:true,modelCalled:false,cloud:false,executed:false,
     text:'Не удалось прочитать локальные записи. Данные не менялись.'});}
  }
- root.SEYVEO_FELIX_CONTEXT=Object.freeze({parse,answer});
+ // Delegate create requests to the ORIGINAL reviewed Calendar/Notebook handlers.
+ // This removes only the wake-name "Филя/Феликс" before the approved handlers.
+ // NO direct localStorage writes, modal bypass, network call or pretend execution.
+ function draftCommand(message){
+  if(typeof message!=='string'||message.length>2500)return null;
+  const match=message.trim().match(/^(?:филя|феликс)\s*[,!:.]?\s+([\s\S]+)$/iu);
+  if(!match)return null;
+  const command=match[1].trim();
+  if(!command)return null;
+  const calendar=/^(?:запиши|запланируй|назначь|добавь|создай|поставь)(?=\s|$)/iu.test(command)
+   ?root.SEYVEO_CALENDAR_NL?.(command):null;
+  if(calendar&&(calendar.status==='ready'||calendar.status==='clarify'))
+   return Object.freeze({kind:'calendar-draft',command,status:calendar.status});
+  // "Филя, запомни: ..." is reserved for memory rather than the Notebook.
+  const notePrefix=/^(?:(?:запомни|запомните)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани|добавь)\s+(?:это\s+)?(?:в\s+)?(?:мой\s+)?(?:блокнот|заметки))(?=\s|$|[,:.!?—–-])/iu;
+  if(!notePrefix.test(command))return null;
+  // The original parser flattens line breaks; do not mangle poems or notes.
+  if(/[\r\n]/u.test(command))return null;
+  const note=root.SEYVEO_NOTE_NL?.(command);
+  return note&&(note.status==='ready'||note.status==='clarify')
+   ?Object.freeze({kind:'note-draft',command,status:note.status}):null;
+ }
+ root.SEYVEO_FELIX_CONTEXT=Object.freeze({parse,answer,draftCommand});
  // Local Felix only: intercept supported commands before the existing
  // composer submit handler. This leaves the approved public index.html untouched.
  // Explicitly requested personal snippets are NEVER added to model chat history.
@@ -101,7 +123,17 @@
    if(!question)return;
    const q=question.value.trim();
    const result=answer(q);
-   if(!result)return;
+   if(!result){
+    const proposed=draftCommand(q);
+    if(!proposed)return;
+    // Do not overwrite an active reply or attempt to save while busy.
+    if(root.SEYVEO_LOCAL_PENDING)return;
+    // The ORIGINAL app handles the preview and explicit Save button.
+    // Let its existing submit handler run; nothing is auto-saved.
+    question.value=proposed.command;
+    question.dispatchEvent(new Event('input',{bubbles:true}));
+    return;
+   }
    event.preventDefault();
    event.stopImmediatePropagation();
    const panel=root.document.getElementById('orbInlineReplyText');
