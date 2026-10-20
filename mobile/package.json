@@ -9,11 +9,12 @@
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
     "check": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.ts"
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "expo": "~58.0.0",
     "expo-crypto": "~58.0.7",
+    "expo-dev-client": "~58.0.14",
     "expo-secure-store": "~58.0.2",
     "expo-sqlite": "~58.0.13",
     "expo-status-bar": "~58.0.3",
