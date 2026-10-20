@@ -5,7 +5,6 @@
 <linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff" stop-opacity=".09"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".84"/><stop offset=".36" stop-color="#94b8eb" stop-opacity=".27"/><stop offset=".56" stop-color="#f7fbff" stop-opacity=".97"/><stop offset=".79" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".15"/></linearGradient>
 <linearGradient id="silk" x1=".13" y1=".15" x2=".87" y2=".95"><stop stop-color="#f7fbff" stop-opacity="0"/><stop offset=".13" stop-color="#f7fbff" stop-opacity=".39"/><stop offset=".35" stop-color="#94b8eb" stop-opacity=".06"/><stop offset=".6" stop-color="#f7fbff" stop-opacity=".18"/><stop offset=".8" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#f7fbff" stop-opacity="0"/></linearGradient>
 <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#94b8eb" stop-opacity=".22"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".95"/><stop offset=".36" stop-color="#f7fbff" stop-opacity=".16"/><stop offset=".69" stop-color="#f7fbff" stop-opacity=".3"/><stop offset=".88" stop-color="#f7fbff" stop-opacity=".96"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".33"/></linearGradient>
-<radialGradient id="innerMist" cx=".49" cy=".48" r=".58"><stop offset="0" stop-color="#dcecff" stop-opacity=".10"/><stop offset=".46" stop-color="#8db5e5" stop-opacity=".045"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="3.6"/></filter>
 <filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
 <clipPath id="clip"><circle cx="260" cy="250" r="175"/></clipPath>
@@ -37,21 +36,36 @@
 <circle cx="260" cy="250" r="176" fill="url(#body)"/>
 <circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
 <g clip-path="url(#clip)">
-<circle cx="260" cy="250" r="166" fill="url(#innerMist)"/>
 <g class="g-b" fill="url(#silk)">
 <path d="M99 254C124 155 206 101 316 111C392 120 445 187 448 257C418 181 358 150 290 156C194 164 140 222 99 254Z" opacity=".53"/>
 <path d="M102 290C142 372 254 422 358 373C421 343 445 268 431 210C438 312 347 386 264 375C183 367 134 329 102 290Z" opacity=".23"/>
 <path d="M133 143C236 71 370 121 423 221C442 255 446 290 431 330C422 239 353 169 276 162C215 154 159 161 133 143Z" opacity=".43"/>
 </g>
-<!-- Diffuse volume replaces the former intersecting metal-like arcs. -->
-<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" filter="url(#soft)" opacity=".28">
-<path d="M111 282C142 170 229 123 312 139C384 153 422 218 429 274" stroke-width="13"/>
-<path d="M137 353C202 413 312 410 382 352" stroke-width="11" opacity=".56"/>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" filter="url(#soft)" opacity=".73">
+<path d="M104 270C172 93 314 87 425 228" stroke-width="11"/>
+<path d="M115 315C212 435 352 411 431 281" stroke-width="4.8"/>
+<path d="M134 143C231 106 328 168 398 335" stroke-width="7"/>
+<path d="M103 327C126 393 215 436 323 421" stroke-width="6"/></g>
+<g class="g-a" fill="none" stroke="url(#filament)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M101 278C128 188 204 118 288 112C348 109 394 150 427 229" stroke-width="2.9" opacity="0.92"/>
+<path d="M105 276C157 162 254 127 331 163C384 189 418 249 428 306" stroke-width="1.25" opacity="0.36"/>
+<path d="M117 211C165 124 272 89 352 125C397 145 426 197 436 255" stroke-width="2" opacity="0.7"/>
+<path d="M130 139C232 110 351 181 403 314" stroke-width="1.55" opacity="0.53"/>
+
+<path d="M109 327C176 402 291 415 378 348C417 318 439 278 444 229" stroke-width="1.8" opacity="0.57"/>
+
+<path d="M123 349C177 432 305 451 394 366" stroke-width="1.7" opacity="0.6"/>
+
 </g>
-<g class="g-b" fill="none" stroke="url(#filament)" stroke-linecap="round" opacity=".20">
-<path d="M119 275C157 172 244 143 317 164C381 184 415 240 420 295" stroke-width="1.3"/>
+<g class="g-b" fill="none" stroke="url(#filament)" stroke-linecap="round">
+<path d="M111 212C199 125 261 174 310 246C341 295 367 348 414 378" stroke-width="2.35" opacity="0.57"/>
+
+
+<path d="M133 403C192 338 214 260 278 175C315 126 368 120 403 153" stroke-width="1.45" opacity="0.28"/>
+
+<path d="M99 273C145 353 228 409 331 414C388 416 431 373 440 309" stroke-width="1.4" opacity="0.34"/>
 </g>
-<path class="glass-glint" d="M100 203C146 97 256 68 348 112C403 137 432 173 443 223" fill="none" stroke="#f7fbff" stroke-opacity=".26" stroke-width="7" filter="url(#halo)"/>
+<path class="glass-glint" d="M100 203C146 97 256 68 348 112C403 137 432 173 443 223" fill="none" stroke="#f7fbff" stroke-opacity=".45" stroke-width="9" filter="url(#halo)"/>
 </g>
-<circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="1.85" opacity=".78"/>
+<circle cx="260" cy="250" r="175.4" fill="none" stroke="url(#rim)" stroke-width="2.25" opacity=".88"/>
 </svg>
