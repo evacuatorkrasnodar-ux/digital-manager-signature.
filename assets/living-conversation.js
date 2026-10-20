@@ -22,6 +22,24 @@ form.addEventListener('click',event=>{
 });
 updateSendAccent();
 
+// Rehydrate the SAME thread from the current local history after a reload.
+// Do not make an independent second conversation store.
+if(!Array.isArray(window.SEYVEO_DEMO_CHAT_TURNS)||
+   !window.SEYVEO_DEMO_CHAT_TURNS.length){
+ const saved=window.SEYVEO_CHAT_HISTORY?.recent?.(30);
+ window.SEYVEO_DEMO_CHAT_TURNS=Array.isArray(saved)?saved:[];
+}
+window.addEventListener('seyveo:chat-history-cleared',()=>{
+ window.SEYVEO_DEMO_CHAT_TURNS=[];
+ text.replaceChildren();
+ reply.hidden=true;
+ stage.classList.remove('has-inline-reply');
+ if(root.classList.contains('seyveo-conversation')){
+   if(quiet.parentElement!==stage)stage.insertBefore(quiet,reply);
+   quiet.hidden=false;
+ }
+});
+
 const header=document.createElement('header');
 header.id='seyveoConversationHeader';
 header.className='seyveo-conversation-header';
