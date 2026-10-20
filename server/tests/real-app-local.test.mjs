@@ -43,6 +43,9 @@ test('Original main page is rendered unchanged except local reply integration',a
  assert.doesNotMatch(adapted,/window\.SEYVEO_LOCAL_PENDING=true;\s*closeComposer\(\)/);
  assert.doesNotMatch(adapted,/const answer=getDemoAnswer\(q\)/);
  assert.equal(original.includes('window.SEYVEO_LOCAL_PENDING'),false);
+ assert.equal(original.includes('felix-personal-context.js'),false);
+ assert.equal((adapted.match(/assets\/felix-personal-context\.js\?v=1/g)||[]).length,1);
+ assert.match(adapted,/<script src="assets\/felix-personal-context\.js\?v=1" defer><\/script>/);
  assert.throws(()=>adaptOriginalHome('A fake homepage'),/handler changed/);
  const inlineScripts=[...adapted.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g)].map(m=>m[1]).filter(v=>v.trim());
  for(const inline of inlineScripts)new Script(inline);
