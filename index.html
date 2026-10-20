@@ -2782,7 +2782,8 @@ function openNoteReview(value,id=null,options=null){
  $('noteReviewTitle').textContent=id?'Изменить запись':value?'Запомнить мысль':'Новая заметка';
  dlg.dataset.noteMode=id?'edit':String(value||'').length>150?'draft':'new';
  $('noteReviewText').value=String(value||'').slice(0,8000);
- $('noteReviewText').wrap=reviewPreserveLines?'off':'soft';
+ // Soft wrapping affects only display; existing paragraph breaks are preserved.
+ $('noteReviewText').wrap='soft';
  $('noteReviewStatus').textContent='';$('noteReviewStatus').hidden=true;
  if(!dlg.open)dlg.showModal();
 }
