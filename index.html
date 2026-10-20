@@ -1914,7 +1914,7 @@ function showWrittenReply(userText,assistantText){
   // Local Ollama streaming uses its own bridge and is not modified here.
   const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
   turns.push({question:userText,answer:assistantText});
-  if(turns.length>8)turns.splice(0,turns.length-8);
+  if(turns.length>30)turns.splice(0,turns.length-30);
   const panel=$('orbInlineReplyText');
   // Separate user text and the pearl-toned Sayvi answer without message bubbles.
   window.SEYVEO_CONVERSATION?.open();
@@ -2423,6 +2423,9 @@ function armComposerIdle(){
     composerIdle=setTimeout(()=>{if(!question.value.trim()&&!composer.classList.contains('expanded'))closeComposer()},15000);
 }
 function expandComposer(){
+  // Only notes need a full writing surface; chat replies use the compact
+  // auto-growing composer beneath the persistent conversation.
+  if(composerMode!=='notes'&&document.documentElement.classList.contains('seyveo-conversation'))return;
   composerManuallyCollapsed=false;
   composer.classList.add('expanded');
   $('assistantQuickrail').hidden=true;
@@ -2444,12 +2447,23 @@ function collapseComposer(){
 }
 function syncComposer(){
   saveDraft();
+  // Chat may contain long questions, but must never turn into a giant editor.
+  // Grow its one field up to four lines, then scroll INSIDE the textarea.
+  const isLivingChat=document.documentElement.classList.contains('seyveo-conversation')
+    && composerMode==='ask' && !composer.hidden;
+  if(isLivingChat){
+    if(composer.classList.contains('expanded'))composer.classList.remove('expanded');
+    const lineHeight=parseFloat(getComputedStyle(question).lineHeight)||24;
+    const contentHeight=question.scrollHeight;
+    const height=Math.min(112,Math.max(38,contentHeight,Math.ceil(lineHeight+12)));
+    composer.style.setProperty('--sayvi-draft-height',height+'px');
+  }else composer.style.removeProperty('--sayvi-draft-height');
   // The favorites panel is useful before typing, not over an active draft.
   // Its fixed position is never changed, keeping the dock and keyboard stable.
   syncQuickrailVisibility();
   // A compact field stays the same size; after roughly two VISUAL lines
   // of wrapped text, expand once. Never resize the expanded panel by content.
-  if(composer.classList.contains('expanded'))return;
+  if(composer.classList.contains('expanded')||isLivingChat)return;
   question.style.height='';
   if(!composerManuallyCollapsed&&!composer.hidden){
     const computed=getComputedStyle(question);
@@ -2504,7 +2518,15 @@ function setComposerMode(mode,skipSync=false){
 }
 $('composerModeAsk').addEventListener('click',()=>setComposerMode('ask'));
 $('composerModeNotes').addEventListener('click',()=>setComposerMode('notes'));
-$('composerExpandManual').addEventListener('click',()=>{expandComposer();question.focus({preventScroll:true})});
+$('composerExpandManual').addEventListener('click',()=>{
+  if(composerMode!=='notes'){
+    // No separate large assistant editor: go straight to the single chat.
+    window.SEYVEO_CONVERSATION?.open();
+    question.focus({preventScroll:true});
+    return;
+  }
+  expandComposer();question.focus({preventScroll:true});
+});
 $('composerHistory').addEventListener('click',()=>{
   question.blur();
   window.SEYVEO_CHAT_HISTORY?.open();
