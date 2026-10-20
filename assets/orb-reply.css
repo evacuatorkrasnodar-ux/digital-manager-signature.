@@ -134,6 +134,14 @@
   border:0;border-radius:0;background:transparent;box-shadow:none;
   animation:seyveo-dialogue-soft-in .38s cubic-bezier(.2,.7,.2,1) both;
 }
+/* In dialogue the SAME quiet pearl divider moves from the greeting
+   directly under the orb. The transcript follows it, not an overlay. */
+#stage.has-inline-reply .orb-inline-reply{margin-top:0}
+#stage.has-inline-reply .orb-inline-reply > .seyveo-quiet-signal{
+  flex:0 0 auto;
+  width:min(160px,50vw);
+  margin:0 auto 10px;
+}
 #stage .orb-inline-reply-head{min-height:34px}
 #stage .orb-inline-reply-heading small{display:none!important}
 #stage .orb-inline-reply-heading strong{font-size:12px;font-weight:520;color:var(--secondary)}
