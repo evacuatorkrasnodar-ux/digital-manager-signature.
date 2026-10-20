@@ -264,6 +264,15 @@ next.addEventListener('click',()=>{
 });
 function startPreview(){
  if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive()||window.SEYVEO_LIVE_SHOWCASE?.isActive())return;
+ // The Management demo opens its one guided view directly. Do not stack the
+ // first-launch dialog on top of the living application preview.
+ const cinema=window.SEYVEO_LIVE_SHOWCASE;
+ if(cinema?.start){
+  const returnTo=location.hash, trigger=demoEntry;
+  if(cinema.start({preview:true,returnHash:returnTo,onFinish:()=>{
+   if(trigger?.isConnected)try{trigger.focus({preventScroll:true})}catch{}
+  }}))return;
+ }
  preview=true;previewTrigger=demoEntry;
  tourIndex=-1;tourVisited=false;tour?.reset();
  assistant='Феликс';assistantVoice='male';focus='life';user.value='';other.value='';

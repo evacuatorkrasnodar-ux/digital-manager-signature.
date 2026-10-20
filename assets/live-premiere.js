@@ -5,7 +5,7 @@
 const $=id=>document.getElementById(id);
 const $q=selector=>document.querySelector(selector);
 const beats=[
- ['01 · ЗНАКОМСТВО','Привет! Я Феликс.','Я помогу управлять делами и находить время для жизни.','#orb','',0,5400],
+ ['01 · ЗНАКОМСТВО','Привет! Я Сэй.','Я помогу управлять делами и находить время для жизни.','#orb','',0,5400],
  ['02 · ПОМОЩНИК','Одна кнопка.','Просто расскажи, что хочешь сделать. Я помогу превратить просьбу в дело.','#assistantButton','',0,4200],
  ['03 · РЕКОМЕНДАЦИИ','Замечать главное.','Три клиента ждут ответа. Посмотри, как выглядит моя рекомендация.','#dynamic','',1,5400],
  ['04 · СОГЛАСОВАНИЕ','Решение остаётся за тобой.','Я подготовил черновики. Согласовываем действие — только в учебном примере.','#dynamic','',2,4600],
@@ -67,32 +67,33 @@ function navigate(kind){
 }
 function spotlight(selector){
  if(!host)return;
- const mark=host.querySelector('.live-mark-spot'),pointer=host.querySelector('.live-virtual-tap');
- const node=$q(selector),r=node?.getBoundingClientRect();
- if(!r||r.width<5||r.height<5||r.bottom<1||r.top>innerHeight){
-  mark.hidden=true;pointer.hidden=true;return;
+ const mark=host.querySelector('.live-mark-spot');
+ const node=selector?$q(selector):null;
+ const r=node?.getBoundingClientRect();
+ const vp=window.visualViewport;
+ const visibleTop=Math.max(0,vp?.offsetTop||0);
+ const visibleBottom=visibleTop+(vp?.height||innerHeight);
+ if(!r||r.width<5||r.height<5||r.bottom<=visibleTop||r.top>=visibleBottom){
+  mark.hidden=true;return;
  }
- mark.hidden=false;pointer.hidden=false;
- const x=Math.max(6,r.left-7),y=Math.max(6,r.top-7);
- Object.assign(mark.style,{left:x+'px',top:y+'px',width:Math.min(innerWidth-12,r.width+14)+'px',height:Math.min(innerHeight-12,r.height+14)+'px'});
- const px=Math.min(innerWidth-18,Math.max(16,r.left+r.width*.72));
- const py=Math.min(innerHeight-18,Math.max(16,r.top+r.height*.6));
- pointer.style.transform='translate3d('+px+'px,'+py+'px,0)';
- pointer.classList.remove('is-clicking');
- delay(700,()=>{pointer.classList.add('is-clicking');delay(280,()=>pointer.classList.remove('is-clicking'))});
+ mark.hidden=false;
+ const x=Math.max(6,r.left-6),y=Math.max(visibleTop+6,r.top-6);
+ Object.assign(mark.style,{
+  left:x+'px',top:y+'px',
+  width:Math.max(0,Math.min(innerWidth-x-6,r.width+12))+'px',
+  height:Math.max(0,Math.min(visibleBottom-y-6,r.height+12))+'px'
+ });
 }
 function example(n){
  const box=host?.querySelector('.live-example');if(!box)return;
  box.hidden=!n;
- if(!n){box.replaceChildren();return}
- const [tag,title,copy,left,right]=samples[n];
  box.replaceChildren();
+ if(!n)return;
+ const [tag,title,copy]=samples[n];
  const label=document.createElement('span');label.className='live-label';label.textContent=tag;
  const h=document.createElement('strong');h.textContent=title;
  const p=document.createElement('p');p.textContent=copy;
- const choices=document.createElement('div');choices.className='live-chips';
- for(const name of [left,right]){const x=document.createElement('span');x.textContent=name;choices.append(x)}
- box.append(label,h,p,choices);
+ box.append(label,h,p);
 }
 function show(next){
  if(!live)return;
@@ -105,7 +106,7 @@ function show(next){
  host.querySelector('.live-text').textContent=copy;
  host.querySelector('.live-progress-inner').style.width=((next+1)*100/beats.length)+'%';
  example(sampleId);
- spotlight(sampleId&&target==='#dynamic'?'.live-example':
+ spotlight(target==='#dynamic'?null:
   action==='calendar'?'#homeWorldPopover [data-world-space="calendar"]':target);
  if(action){
   delay(1050,()=>{
@@ -137,12 +138,12 @@ function start(options={}){
  host.innerHTML=[
  '<div class="live-top"><span class="live-brand">SEYVEO<small>AI AUTOMATION</small></span>',
  '<span class="live-index"></span><button type="button" class="live-exit">Пропустить</button></div>',
- '<div class="live-mark-spot" hidden></div><div class="live-virtual-tap" hidden><span></span></div>',
- '<div class="live-example" hidden></div>',
- '<div class="live-caption" aria-live="polite"><span class="live-meta">ФЕЛИКС · ЗНАКОМСТВО</span>',
+ '<div class="live-mark-spot" hidden></div>',
+ '<section class="live-caption" aria-live="polite"><span class="live-meta">SEYVEO · ДЕМО-ПОКАЗ</span>',
  '<strong class="live-heading"></strong><p class="live-text"></p>',
- '<div class="live-foot"><span>♪ SEYVEO · титры</span><button type="button" class="live-pause">Пауза</button></div></div>',
- '<div class="live-progress"><div class="live-progress-inner"></div></div>'
+ '<div class="live-example" hidden></div>',
+ '<div class="live-foot"><span>SEYVEO · учебные примеры</span><button type="button" class="live-pause">Пауза</button></div>',
+ '<div class="live-progress"><div class="live-progress-inner"></div></div></section>'
  ].join('');
  document.body.append(host);
  document.documentElement.classList.add('seyveo-showcase-running');
