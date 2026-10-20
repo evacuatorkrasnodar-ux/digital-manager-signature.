@@ -214,9 +214,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .nav-item{position:absolute;bottom:32px;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;min-width:65px;color:var(--secondary);font-size:10.5px;font-weight:500;white-space:nowrap;line-height:1}
 .nav-item svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .nav-item.active{color:var(--text);font-weight:650}
-.nav-home{left:10%}.nav-home svg{fill:currentColor;stroke-width:1.1}.nav-tasks{left:30%}.nav-picture{left:70%}.nav-manage{left:90%}
+/* Four equal visual steps around the fixed center assistant; inset outer items from the rounded dock edges. */
+.nav-home{left:12%}.nav-home svg{fill:currentColor;stroke-width:1.1}.nav-tasks{left:31%}.nav-picture{left:69%}.nav-manage{left:88%}
 .nav-picture.active{color:var(--text)}
-@media(max-width:360px){.nav-item{min-width:58px;font-size:10px}.nav-manage{left:89%}.nav-home{left:11%}}
+@media(max-width:360px){.nav-item{min-width:54px;font-size:10px}}
 .assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 2px 6px #02060f4a);transition:transform .15s ease,filter .22s ease}
 .assistant-button:active,.assistant-button.pressing{transform:translateX(-50%) scale(.955)}
 .assistant-button.arming{transform:translateX(-50%) scale(.98)}
@@ -287,7 +288,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 :root[data-theme=light] .button-art .button-rim{stroke:url(#rim-day);stroke-width:.82}
 :root[data-theme=light] .button-art .voice-bars{stroke:#243b68}
 :root[data-theme=light] .button-art .voice-dot{fill:#243b68}
-@media(max-width:355px){.nav-home{left:14%}.nav-tasks{left:32%}.nav-manage{left:87%}.nav-item{min-width:58px;font-size:9.5px}}
+@media(max-width:355px){.nav-item{min-width:54px;font-size:9.5px}}
 @media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:4px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:18px}}
