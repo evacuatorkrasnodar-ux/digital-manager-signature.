@@ -2428,9 +2428,8 @@ function armComposerIdle(){
     },15000);
 }
 function expandComposer(){
-  // Only notes need a full writing surface; chat replies use the compact
-  // auto-growing composer beneath the persistent conversation.
-  if(composerMode!=='notes'&&document.documentElement.classList.contains('seyveo-conversation'))return;
+  // Only an explicit expand tap (or a Notes save that needs review) may
+  // open this large writer. Typing itself never triggers expansion.
   composerManuallyCollapsed=false;
   composer.classList.add('expanded');
   $('assistantQuickrail').hidden=true;
@@ -2452,12 +2451,11 @@ function collapseComposer(){
 }
 function syncComposer(){
   saveDraft();
-  // Chat may contain long questions, but must never turn into a giant editor.
-  // Grow its one field up to four lines, then scroll INSIDE the textarea.
+  // Chat grows to four lines and scrolls within the same field.
+  // Manual expansion is deliberately respected until Collapse is pressed.
   const isLivingChat=document.documentElement.classList.contains('seyveo-conversation')
-    && composerMode==='ask' && !composer.hidden;
+    && composerMode==='ask' && !composer.hidden && !composer.classList.contains('expanded');
   if(isLivingChat){
-    if(composer.classList.contains('expanded'))composer.classList.remove('expanded');
     // Measure from the minimum height so clearing/sending a long message
     // also shrinks the field instead of leaving an empty tall composer.
     composer.style.setProperty('--sayvi-draft-height','38px');
@@ -2471,20 +2469,10 @@ function syncComposer(){
   // The favorites panel is useful before typing, not over an active draft.
   // Its fixed position is never changed, keeping the dock and keyboard stable.
   syncQuickrailVisibility();
-  // A compact field stays the same size; after roughly two VISUAL lines
-  // of wrapped text, expand once. Never resize the expanded panel by content.
+  // Never open the large editor automatically, even for wrapped lines.
+  // The expand control is the only deliberate path (besides a Notes save).
   if(composer.classList.contains('expanded')||isLivingChat)return;
   question.style.height='';
-  if(!composerManuallyCollapsed&&!composer.hidden){
-    const computed=getComputedStyle(question);
-    const lineHeight=parseFloat(computed.lineHeight)||24;
-    const padding=(parseFloat(computed.paddingTop)||0)+(parseFloat(computed.paddingBottom)||0);
-    const wrappedLines=Math.ceil(Math.max(0,question.scrollHeight-padding-1)/lineHeight);
-    if(wrappedLines>=2){
-      expandComposer();
-      return;
-    }
-  }
   armComposerIdle();
 }
 function openComposer(){
@@ -2534,13 +2522,10 @@ function setComposerMode(mode,skipSync=false){
 $('composerModeAsk').addEventListener('click',()=>setComposerMode('ask'));
 $('composerModeNotes').addEventListener('click',()=>setComposerMode('notes'));
 $('composerExpandManual').addEventListener('click',()=>{
-  if(composerMode!=='notes'){
-    // No separate large assistant editor: go straight to the single chat.
-    window.SEYVEO_CONVERSATION?.open();
-    question.focus({preventScroll:true});
-    return;
-  }
-  expandComposer();question.focus({preventScroll:true});
+  // One and the same draft: opt in to a large writing surface.
+  // If Ask mode is active, the existing Sayvi conversation remains behind it.
+  expandComposer();
+  question.focus({preventScroll:true});
 });
 $('composerHistory').addEventListener('click',()=>{
   question.blur();
