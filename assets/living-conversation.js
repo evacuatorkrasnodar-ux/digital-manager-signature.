@@ -230,7 +230,7 @@ function makeFeedbackActions(turn){
  }
  refresh();return [useful,notUseful];
 }
-function moreReplyActions(value){
+function moreReplyActions(){
  const details=document.createElement('details');
  details.className='seyveo-reply-more';
  const summary=document.createElement('summary');
@@ -238,8 +238,10 @@ function moreReplyActions(value){
  summary.title='Ещё действия';summary.setAttribute('aria-label','Ещё действия с ответом');
  const content=document.createElement('div');
  content.className='seyveo-reply-more-menu';
- const note=replyAction('В Блокнот',NOTE_ICON,()=>{details.open=false;saveReplyToNotes(value)});
- content.append(note);
+ const hint=document.createElement('span');
+ hint.className='seyveo-reply-more-hint';
+ hint.textContent='Здесь появятся дополнительные действия';
+ content.append(hint);
  details.append(summary,content);
  return details;
 }
@@ -267,7 +269,8 @@ function renderTurns(turns){
          ...makeFeedbackActions(turn),
          replyAction('Поделиться',SHARE_ICON,()=>shareReply(answer)),
          replyAction('Озвучить',SOUND_ICON,()=>readReply(answer)),
-         moreReplyActions(answer)
+         replyAction('В Блокнот',NOTE_ICON,()=>saveReplyToNotes(answer)),
+         moreReplyActions()
        );
        item.append(actions);
      }
@@ -277,14 +280,8 @@ function renderTurns(turns){
  text.replaceChildren(...nodes);
  if(atBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
-// On Home, a short assistant tap opens a compact choice, not the conversation.
- // Writing starts when the person explicitly taps the text field.
- const question=$('question');
- question?.addEventListener('focus',()=>{
-   if(form.hidden||root.classList.contains('seyveo-conversation'))return;
-   if(form.dataset.composerMode==='notes')return;
-   open();
- });
+// Writing inside the Home input must NOT open the full conversation.
+ // Only ↗, an explicit microphone action or sending a message opens chat.
 $('seyveoConversationBack').addEventListener('click',close);
 $('seyveoConversationHistory').addEventListener('click',()=>window.SEYVEO_CHAT_HISTORY?.open());
 document.addEventListener('seyveo:assistant-presence',e=>{
