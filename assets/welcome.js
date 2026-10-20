@@ -14,7 +14,7 @@ const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
 let step=0,assistant='Феликс',assistantVoice='male',focus='life',preview=false,previewTrigger=null,openingTimer=null;
 let tourIndex=-1,tourVisited=false;
-const tour=window.SEYVEO_WELCOME_TOUR;
+const tour=null; // Legacy film disabled: one standalone presentation only.
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
 const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
 const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
@@ -23,7 +23,7 @@ const suggestedVoice=Object.freeze({'Феликс':'male','Филя':'male','М�
 const focusChoices=[...dialog.querySelectorAll('[data-welcome-focus]')];
 const progress=$('welcomeProgress'),next=$('welcomeNext'),back=$('welcomeBack'),skip=$('welcomeSkip');
 const error=$('welcomeError');
-const demoEntry=$('openWelcomeDemo'),overline=$('welcomeOverline'),disclaimer=$('welcomeDisclaimer');
+const overline=$('welcomeOverline'),disclaimer=$('welcomeDisclaimer');
 const openingSecond=$('welcomeOpeningQuoteSecond');
 const OPENING_DURATION_MS=5200;
 const SIGNATURE_SOUND_KEY='seyveo-signature-sound-v1';
@@ -239,47 +239,21 @@ next.addEventListener('click',()=>{
   return;
  }
  if(step===0){
-  const cinema=window.SEYVEO_LIVE_SHOWCASE;
-  if(!cinema?.start){setTour(0);return}
-  const wasPreview=preview,oldHash=location.hash;
+  const cinema=window.SEYVEO_PREMIERE;
+  if(!cinema?.start){setStep(1);return}
   stopSignatureSound();
   dialog.classList.remove('is-cinematic','is-film');
   dialog.close();
-  const accepted=cinema.start({preview:wasPreview,returnHash:oldHash,onFinish:()=>{
-   if(wasPreview){
-    // This Management preview never saves or overwrites a profile.
-    close();
-   }else{
-    // Reopen the existing REAL first-launch questionnaire after the film.
-    setStep(1);
-    if(!dialog.open)try{dialog.showModal()}catch{}
-   }
-  }});
-  if(!accepted&& !dialog.open){
-   try{dialog.showModal();setTour(0)}catch{}
-  }
+  const resumeOnboarding=()=>{
+   setStep(1);
+   if(!dialog.open)try{dialog.showModal()}catch{}
+  };
+  const accepted=cinema.start({onFinish:resumeOnboarding});
+  if(!accepted)resumeOnboarding();
   return;
  }
  if(step<4)setStep(step+1);else save();
 });
-function startPreview(){
- if(dialog.open||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive()||window.SEYVEO_LIVE_SHOWCASE?.isActive())return;
- // The Management demo opens its one guided view directly. Do not stack the
- // first-launch dialog on top of the living application preview.
- const cinema=window.SEYVEO_LIVE_SHOWCASE;
- if(cinema?.start){
-  const returnTo=location.hash, trigger=demoEntry;
-  if(cinema.start({preview:true,returnHash:returnTo,onFinish:()=>{
-   if(trigger?.isConnected)try{trigger.focus({preventScroll:true})}catch{}
-  }}))return;
- }
- preview=true;previewTrigger=demoEntry;
- tourIndex=-1;tourVisited=false;tour?.reset();
- assistant='Феликс';assistantVoice='male';focus='life';user.value='';other.value='';
- setStep(0);
- try{dialog.showModal();playSignature();prepareSignatureSound()}catch{preview=false;previewTrigger=null}
-}
-demoEntry?.addEventListener('click',startPreview);
 back.addEventListener('click',()=>{
  if(openingTimer!==null)return;
  if(tourIndex>=0){if(tourIndex===0)setStep(0);else setTour(tourIndex-1);return}
@@ -317,7 +291,7 @@ window.addEventListener('pagehide',()=>{
  if(openingTimer!==null){close();next.disabled=false;back.disabled=false;skip.disabled=false}
 });
 function tryOpen(){
- if(window.SEYVEO_LIVE_SHOWCASE?.isActive()||dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
+ if(window.SEYVEO_PREMIERE?.isActive()||dialog.open||preview||!available()||document.hidden||location.hash||document.querySelector('dialog[open]')||window.SEYVEO_FIRST_HELP?.isActive())return;
  // The setup is never imposed on existing owners and never requests permissions.
  tourIndex=-1;tourVisited=false;tour?.reset();
  setStep(0);
