@@ -46,6 +46,9 @@ test('Original main page is rendered unchanged except local reply integration',a
  assert.equal(original.includes('felix-personal-context.js'),false);
  assert.equal((adapted.match(/assets\/felix-personal-context\.js\?v=1/g)||[]).length,1);
  assert.match(adapted,/<script src="assets\/felix-personal-context\.js\?v=1" defer><\/script>/);
+ assert.equal((adapted.match(/assets\/felix-action-journal\.js\?v=1/g)||[]).length,1);
+ assert.ok(adapted.indexOf('assets/felix-action-journal.js?v=1')<adapted.indexOf('assets/felix-personal-context.js?v=1'));
+ assert.equal(original.includes('felix-action-journal.js'),false);
  assert.throws(()=>adaptOriginalHome('A fake homepage'),/handler changed/);
  const inlineScripts=[...adapted.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g)].map(m=>m[1]).filter(v=>v.trim());
  for(const inline of inlineScripts)new Script(inline);
