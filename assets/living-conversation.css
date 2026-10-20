@@ -44,7 +44,8 @@ html.seyveo-conversation #stage .orb-inline-reply{
  width:100%;padding:0 2px 14px;margin:0 auto;
 }
 html.seyveo-conversation #stage .orb-inline-reply > .seyveo-quiet-signal{margin:5px auto 12px}
-html.seyveo-conversation #stage .orb-inline-reply-head{padding:0 0 5px}
+/* Header controls live above the sphere; do not duplicate them beside replies. */
+html.seyveo-conversation #stage .orb-inline-reply-head{display:none!important}
 html.seyveo-conversation #orbInlineReplyTitle{font-size:12px;font-weight:520;color:var(--secondary)}
 html.seyveo-conversation #stage .orb-inline-reply-text{
  min-height:0;max-height:max(120px,calc(100svh - 335px - env(safe-area-inset-bottom,0px)));
