@@ -148,6 +148,7 @@
      root.SEYVEO_FELIX_JOURNAL?.begin(proposed.kind==='calendar-draft'?'calendar':'note');
     // The ORIGINAL app handles the preview and explicit Save button.
     // Let its existing submit handler run; nothing is auto-saved.
+    root.SEYVEO_LOCAL_PRIVATE_DRAFT=true; // one submit only; no private draft in Chat History
     question.value=proposed.command;
     question.dispatchEvent(new Event('input',{bubbles:true}));
     return;
