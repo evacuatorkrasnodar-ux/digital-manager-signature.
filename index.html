@@ -2420,7 +2420,12 @@ function armComposerIdle(){
   // Once a conversation starts, the editor stays open until dismissed by the user.
   if(window.SEYVEO_DEMO_CHAT_ACTIVE||document.documentElement.classList.contains('seyveo-conversation'))return;
   if(!composer.hidden&&!question.value.trim()&&!composer.classList.contains('expanded'))
-    composerIdle=setTimeout(()=>{if(!question.value.trim()&&!composer.classList.contains('expanded'))closeComposer()},15000);
+    composerIdle=setTimeout(()=>{
+      // A chooser on Home may close, but a conversation never does.
+      // Recheck when firing: this timer may have been armed before chat opened.
+      if(document.documentElement.classList.contains('seyveo-conversation')||window.SEYVEO_DEMO_CHAT_ACTIVE)return;
+      if(!question.value.trim()&&!composer.classList.contains('expanded'))closeComposer();
+    },15000);
 }
 function expandComposer(){
   // Only notes need a full writing surface; chat replies use the compact
@@ -2491,6 +2496,11 @@ function openComposer(){
   syncQuickrailVisibility();
   armComposerIdle();
 }
+// The single chat owns a permanently visible text field; never steal focus.
+window.SEYVEO_CONVERSATION_ENSURE_INPUT=()=>{
+  if(composer.hidden)openComposer();
+  clearTimeout(composerIdle);
+};
 function closeComposer(){
   saveDraft();
   clearTimeout(composerIdle);
@@ -2978,6 +2988,8 @@ function speakAssistantReply(message){
    setHint('Ответ сохранён в истории.');
  }
 }
+// Use the same speech voice and discreet-mode behavior for audio replay.
+window.SEYVEO_CONVERSATION_READ_REPLY=(message)=>speakAssistantReply(message);
 function handleSpokenAssistant(raw){
  const phrase=String(raw||'').trim();
  if(!phrase)return;
