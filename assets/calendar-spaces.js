@@ -105,19 +105,24 @@ function renderWorldHub(){
  const contacts=worldContacts();
  const holder=$('worldPeopleList');
  holder.replaceChildren();
- $('worldContactsSummary').textContent='Контакты SEYVEO · '+contacts.length;
+ const n=contacts.length;
+ $('worldContactsSummary').textContent=n+' '+(n%10===1&&n%100!==11?'контакт':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'контакта':'контактов');
  if(!contacts.length){
-  holder.append(dom('p','world-people-empty','Здесь появятся ваши контакты. Для начала добавьте человека в SEYVEO.'));
+  holder.append(dom('p','world-people-empty','Пока нет контактов. Добавьте первого человека кнопкой ＋.'));
   return;
  }
  for(const entry of contacts){
   const row=dom('div','world-person-row');
-  const text=dom('span','world-person-info');
-  text.append(dom('strong','',entry.name),dom('small','',entry.phone));
-  const call=dom('button','world-person-call','Позвонить');
+  // Open the same existing contact directory: no duplicate editor or store.
+  const detail=dom('button','world-person-info');
+  detail.type='button';detail.dataset.worldOpen=entry.id;
+  detail.setAttribute('aria-label','Открыть справочник: '+entry.name);
+  detail.append(dom('strong','',entry.name),dom('small','',entry.phone));
+  const call=dom('button','world-person-call');
   call.type='button';call.dataset.worldCall=entry.id;
-  call.setAttribute('aria-label','Подготовить звонок: '+entry.name);
-  row.append(text,call);
+  call.title='Позвонить';call.setAttribute('aria-label','Подготовить звонок: '+entry.name);
+  call.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 3.8c-.3-.7-1.1-1-1.8-.7L3.5 4a2 2 0 0 0-1.1 2.3 19 19 0 0 0 15.3 15.3 2 2 0 0 0 2.3-1.1l.9-1.9c.3-.7 0-1.5-.7-1.8l-4-1.6c-.6-.2-1.2-.1-1.6.4L13 17a15 15 0 0 1-6-6l1.4-1.6c.4-.4.6-1 .4-1.6z"/></svg>';
+  row.append(detail,call);
   holder.append(row);
  }
 }
@@ -151,7 +156,7 @@ function renderList(){
  $('calendarSpaceCount').textContent=count+' '+ending;
  const journalLabel=$('calendarSpaceJournal')?.querySelector('summary');
  if(journalLabel){
-  const name=current==='health'?'История измерений':current==='care'?'Другие записи':'Важные даты и записи';
+  const name=current==='health'?'История измерений':current==='care'?'Другие записи':current==='world'?'Важные даты':'Личные записи';
   journalLabel.textContent=count?name+' · '+count:name;
  }
  if(!items.length){
@@ -247,7 +252,9 @@ function open(space,id=null,selectedDate=''){
  if(journal){
   // The metric tiles are the primary actions; the full log stays one tap away.
   // Editing an existing record still opens the journal immediately.
-  journal.open=space==='world'||Boolean(id);
+  // Important dates remain available, but do not expand a third heavy panel
+  // by default on the World overview; edits still reveal the journal.
+  journal.open=Boolean(id);
   const title=journal.querySelector('summary');
   if(title)title.textContent=space==='health'?'История измерений':space==='care'?'Другие записи':'Важные даты и записи';
  }
@@ -323,12 +330,14 @@ function remove(){
 $('worldManageContacts').addEventListener('click',()=>{
  window.dispatchEvent(new Event('seyveo:contacts-open'));
 });
-$('worldAllContacts').addEventListener('click',()=>{
- window.dispatchEvent(new Event('seyveo:contacts-open'));
-});
 $('worldPeopleList').addEventListener('click',event=>{
- const button=event.target.closest('button[data-world-call]');
- if(button)window.dispatchEvent(new CustomEvent('seyveo:contact-call',{detail:{id:button.dataset.worldCall}}));
+ const call=event.target.closest('button[data-world-call]');
+ if(call){
+  window.dispatchEvent(new CustomEvent('seyveo:contact-call',{detail:{id:call.dataset.worldCall}}));
+  return;
+ }
+ const detail=event.target.closest('button[data-world-open]');
+ if(detail)window.dispatchEvent(new Event('seyveo:contacts-open'));
 });
 window.addEventListener('seyveo:contacts-changed',()=>{
  if(current==='world'&&dialog.open)renderWorldHub();
