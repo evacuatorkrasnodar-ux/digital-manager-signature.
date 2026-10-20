@@ -143,6 +143,9 @@
     }
     // Do not overwrite an active reply or attempt to save while busy.
     if(root.SEYVEO_LOCAL_PENDING)return;
+    // Record only safe metadata. A later actual local save must prove completion.
+    if(proposed.status==='ready')
+     root.SEYVEO_FELIX_JOURNAL?.begin(proposed.kind==='calendar-draft'?'calendar':'note');
     // The ORIGINAL app handles the preview and explicit Save button.
     // Let its existing submit handler run; nothing is auto-saved.
     question.value=proposed.command;
