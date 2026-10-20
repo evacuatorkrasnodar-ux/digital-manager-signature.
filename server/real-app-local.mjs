@@ -52,7 +52,7 @@ export function adaptOriginalHome(html){
  const noteHistory="window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик для Блокнота. Сохранение только после подтверждения.',kind:'draft'});";
  if(adapted.split(calHistory).length!==2||adapted.split(noteHistory).length!==2)
   throw Error('SEYVEO private draft history anchors changed; refusing adaptation.');
- adapted=adapted.replace(entry,entry+'\\nconst localPrivateDraft=window.SEYVEO_LOCAL_PRIVATE_DRAFT===true;window.SEYVEO_LOCAL_PRIVATE_DRAFT=false;');
+ adapted=adapted.replace(entry,entry+'\nconst localPrivateDraft=window.SEYVEO_LOCAL_PRIVATE_DRAFT===true;window.SEYVEO_LOCAL_PRIVATE_DRAFT=false;');
  adapted=adapted.replace(calHistory,'if(!localPrivateDraft)'+calHistory);
  adapted=adapted.replace(noteHistory,'if(!localPrivateDraft)'+noteHistory);
  return adapted;
