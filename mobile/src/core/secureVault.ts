@@ -36,18 +36,29 @@ async function randomHex(bytes: number): Promise<string> {
   return Array.from(buffer, x => x.toString(16).padStart(2, '0')).join('');
 }
 
-async function confirmCipher(identity: VaultIdentity): Promise<void> {
+async function confirmCipher(identity: VaultIdentity, firstProvision = false): Promise<void> {
   const db = await SQLite.openDatabaseAsync(identity.database);
   try {
     // MUST be the first SQL statement after opening this connection.
-    // hexKey is generated from a CSPRNG and validated as [a-f0-9]{64}.
+    // hexKey comes exclusively from a CSPRNG and is strictly hex-validated.
     await db.execAsync("PRAGMA key = '" + identity.hexKey + "';");
-    // An ordinary unencrypted SQLite build must fail closed.
+    // A standard unencrypted SQLite build MUST fail closed.
     const cipher = await db.getFirstAsync<{ cipher_version: string }>('PRAGMA cipher_version');
     if (!cipher?.cipher_version) throw new Error('SQLCipher unavailable');
     const check = await db.getFirstAsync<{ quick_check: string }>('PRAGMA quick_check');
     if (check?.quick_check !== 'ok') throw new Error('Vault integrity check failed');
-    await db.execAsync('CREATE TABLE IF NOT EXISTS vault_meta (id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);');
+
+    // IMPORTANT: a missing database may otherwise be silently recreated by
+    // openDatabaseAsync() with the correct key, concealing loss of user data.
+    // Only the explicit first-time setup may create the schema and marker.
+    if (firstProvision) {
+      await db.execAsync('CREATE TABLE vault_meta (id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);');
+      await db.runAsync('INSERT INTO vault_meta (id, value) VALUES (?, ?)', 'schema', '1');
+    }
+    const marker = await db.getFirstAsync<{ value: string }>(
+      'SELECT value FROM vault_meta WHERE id = ?', 'schema'
+    );
+    if (marker?.value !== '1') throw new Error('Original encrypted vault not found');
   } finally {
     await db.closeAsync();
   }
@@ -68,6 +79,7 @@ export async function inspectVault(): Promise<VaultStatus> {
 export async function initializeVault(): Promise<VaultStatus> {
   try {
     let identity = await readIdentity();
+    const firstProvision = identity === null;
     if (!identity) {
       // A fresh random DB name avoids silently overwriting any orphaned
       // encrypted database after device credentials are lost.
@@ -81,7 +93,7 @@ export async function initializeVault(): Promise<VaultStatus> {
         keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
       });
     }
-    await confirmCipher(identity);
+    await confirmCipher(identity, firstProvision);
     return 'ready';
   } catch {
     return 'unavailable';
