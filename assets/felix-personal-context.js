@@ -90,4 +90,42 @@
     text:'Не удалось прочитать локальные записи. Данные не менялись.'});}
  }
  root.SEYVEO_FELIX_CONTEXT=Object.freeze({parse,answer});
+ // Local Felix only: intercept supported commands before the existing
+ // composer submit handler. This leaves the approved public index.html untouched.
+ // Explicitly requested personal snippets are NEVER added to model chat history.
+ if(root.document?.addEventListener){
+  root.document.addEventListener('submit',event=>{
+   const form=event.target;
+   if(form?.id!=='ask'||form.dataset?.composerMode==='notes')return;
+   const question=root.document.getElementById('question');
+   if(!question)return;
+   const q=question.value.trim();
+   const result=answer(q);
+   if(!result)return;
+   event.preventDefault();
+   event.stopImmediatePropagation();
+   const panel=root.document.getElementById('orbInlineReplyText');
+   const overlay=root.document.getElementById('orbInlineReply');
+   const stage=root.document.getElementById('stage');
+   if(!panel||!overlay||!stage)return;
+   if(root.SEYVEO_LOCAL_PENDING){
+    panel.textContent='Феликс ещё отвечает. Попробуй снова после ответа.';
+    return;
+   }
+   const history=Array.isArray(root.SEYVEO_LOCAL_DIALOGUE?.turns)
+    ?root.SEYVEO_LOCAL_DIALOGUE.turns.slice(-3):[];
+   const previous=history.map(t=>'Вы:\n'+t.q+'\n\nФеликс:\n'+t.a).join('\n\n────────────\n\n');
+   panel.textContent=(previous?previous+'\n\n────────────\n\n':'')+
+    'Вы:\n'+q+'\n\nФеликс:\n'+result.text;
+   panel.scrollTop=panel.scrollHeight;
+   overlay.hidden=false;
+   stage.classList.add('has-inline-reply');
+   question.value='';
+   root.SEYVEO_LOCAL_CHAT_ACTIVE=true;
+   root.SEYVEO_LOCAL_VOICE_NEXT=false;
+   question.dispatchEvent(new Event('input',{bubbles:true}));
+   // Do not call chat.turns.push, chat-history.add, fetch or Ollama.
+   // That would disclose results in a later unrelated prompt.
+  },true);
+ }
 })(typeof window!=='undefined'?window:globalThis);
