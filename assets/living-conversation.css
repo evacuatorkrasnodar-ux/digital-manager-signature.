@@ -52,9 +52,9 @@ html.seyveo-conversation #stage .orb-inline-reply-head{display:none!important}
 html.seyveo-conversation #orbInlineReplyTitle{font-size:12px;font-weight:520;color:var(--secondary)}
 html.seyveo-conversation #stage .orb-inline-reply-text{
  min-height:0;max-height:max(120px,calc(100svh - 335px - env(safe-area-inset-bottom,0px)));
- margin:0;padding:0 2px 20px;border:0;overflow-y:auto;overscroll-behavior:contain;
+ margin:0;padding:0 2px 8px;border:0;overflow-y:auto;overscroll-behavior:contain;
 }
-.seyveo-conversation-turn{display:flex;flex-direction:column;gap:6px;margin:0 0 23px}
+.seyveo-conversation-turn{display:flex;flex-direction:column;gap:5px;margin:0 0 16px}
 .seyveo-conversation-speaker{color:var(--secondary);font-size:11px;letter-spacing:.035em;font-weight:560}
 .seyveo-conversation-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.65}
 .seyveo-conversation-turn--you .seyveo-conversation-body{color:var(--text)}
@@ -118,14 +118,14 @@ html.seyveo-conversation{
  --seyveo-emerald-active:#a7d7c9;
 }
 html.seyveo-conversation .seyveo-conversation-turn--you{
- margin-bottom:22px;padding:0 5px 0 4px;
+ margin-bottom:15px;padding:0 3px;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
- position:relative;gap:9px;
- margin:0 0 24px;
- padding:15px 15px 11px;
+ position:relative;gap:5px;
+ margin:0 0 15px;
+ padding:11px 12px 7px;
  border:1px solid var(--seyveo-emerald-border);
- border-radius:19px;
+ border-radius:17px;
  background:
    linear-gradient(150deg,rgba(66,114,103,.19),rgba(25,49,46,.09) 46%,transparent 83%),
    var(--seyveo-emerald-panel);
@@ -135,7 +135,7 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-s
  color:var(--seyveo-emerald-text);font-size:12px;font-weight:610;letter-spacing:.015em;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
- color:var(--text);font-size:15px;line-height:1.68;
+ color:var(--text);font-size:15px;line-height:1.54;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
  margin:0 0 0 -5px;
@@ -218,7 +218,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
    Real copy / private feedback / share / speech, Notebook inside More.
    No new dock, no unrelated Home changes. */
 html.seyveo-conversation .seyveo-conversation-reply-actions{
- display:flex;align-items:center;flex-wrap:wrap;gap:3px;margin:2px 0 0 -7px;
+ display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin:0 0 0 -7px;
 }
 html.seyveo-conversation .seyveo-conversation-reply-action,
 html.seyveo-conversation .seyveo-reply-more>summary{
