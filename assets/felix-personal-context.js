@@ -106,10 +106,13 @@
   const notePrefix=/^(?:(?:запомни|запомните)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани|добавь)\s+(?:это\s+)?(?:в\s+)?(?:мой\s+)?(?:блокнот|заметки))(?=\s|$|[,:.!?—–-])/iu;
   if(!notePrefix.test(command))return null;
   // The original parser flattens line breaks; do not mangle poems or notes.
-  if(/[\r\n]/u.test(command))return null;
+  if(/[\r\n]/u.test(command))return Object.freeze({kind:'draft-clarify',status:'clarify',
+   text:'Для текста с переносами строк выбери «В Блокнот» или большой редактор: там строки сохраняются. Я ничего не отправлял и не записывал.'});
   const note=root.SEYVEO_NOTE_NL?.(command);
   return note&&(note.status==='ready'||note.status==='clarify')
-   ?Object.freeze({kind:'note-draft',command,status:note.status}):null;
+   ?Object.freeze({kind:'note-draft',command,status:note.status})
+   :Object.freeze({kind:'draft-clarify',status:'clarify',
+    text:'Не удалось подготовить заметку. Открой Блокнот и проверь текст перед сохранением.'});
  }
  root.SEYVEO_FELIX_CONTEXT=Object.freeze({parse,answer,draftCommand});
  // Local Felix only: intercept supported commands before the existing
@@ -126,6 +129,13 @@
    if(!result){
     const proposed=draftCommand(q);
     if(!proposed)return;
+    if(proposed.kind==='draft-clarify'){
+     event.preventDefault();event.stopImmediatePropagation();
+     const panel=root.document.getElementById('orbInlineReplyText');
+     const overlay=root.document.getElementById('orbInlineReply');
+     if(panel&&overlay){panel.textContent=proposed.text;overlay.hidden=false;}
+     return;
+    }
     // Do not overwrite an active reply or attempt to save while busy.
     if(root.SEYVEO_LOCAL_PENDING)return;
     // The ORIGINAL app handles the preview and explicit Save button.
