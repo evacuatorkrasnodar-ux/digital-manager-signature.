@@ -9,6 +9,18 @@ const home=$('homePage'),stage=$('stage'),orb=$('orb');
 const form=$('ask'),reply=$('orbInlineReply'),text=$('orbInlineReplyText');
 const quiet=$('quietSignal');
 if(!home||!stage||!orb||!form||!reply||!text||!quiet)return;
+// The send accent tracks actual text, not focus or an invented busy state.
+function updateSendAccent(){
+ form.classList.toggle('seyveo-has-text',
+   form.dataset.composerMode!=='notes' && !!$('question')?.value.trim());
+}
+$('question')?.addEventListener('input',updateSendAccent);
+form.addEventListener('submit',()=>queueMicrotask(updateSendAccent));
+form.addEventListener('click',event=>{
+ if(event.target.closest('#composerModeAsk,#composerModeNotes,#clearText'))
+   queueMicrotask(updateSendAccent);
+});
+updateSendAccent();
 
 const header=document.createElement('header');
 header.id='seyveoConversationHeader';
