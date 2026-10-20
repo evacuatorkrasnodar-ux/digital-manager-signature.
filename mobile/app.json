@@ -13,7 +13,8 @@
     },
     "android": {
       "package": "com.seyveo.digitalmanager",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "allowBackup": false
     },
     "plugins": [
       [
