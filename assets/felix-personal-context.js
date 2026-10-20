@@ -98,10 +98,15 @@
   if(!match)return null;
   const command=match[1].trim();
   if(!command)return null;
-  const calendar=/^(?:запиши|запланируй|назначь|добавь|создай|поставь)(?=\s|$)/iu.test(command)
-   ?root.SEYVEO_CALENDAR_NL?.(command):null;
+  const hasCalendarVerb=/^(?:запиши|запланируй|назначь|добавь|создай|поставь)(?=\s|$)/iu.test(command);
+  const calendar=hasCalendarVerb?root.SEYVEO_CALENDAR_NL?.(command):null;
   if(calendar&&(calendar.status==='ready'||calendar.status==='clarify'))
    return Object.freeze({kind:'calendar-draft',command,status:calendar.status});
+  // An explicit event request must never be sent to Qwen just because its
+  // on-device calendar parser is missing or cannot interpret the instruction.
+  if(hasCalendarVerb&&/встреч|календар|расписани|событи|звонок|при[её]м/iu.test(command))
+   return Object.freeze({kind:'draft-clarify',status:'clarify',
+    text:'Не удалось подготовить событие. Открой Календарь и проверь дату и время. Ничего не сохранено и не отправлено.'});
   // "Филя, запомни: ..." is reserved for memory rather than the Notebook.
   const notePrefix=/^(?:(?:запомни|запомните)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани)\s+(?:(?:эту|мою|важную)\s+)?(?:мысль|идею|заметку)|(?:запиши|сохрани|добавь)\s+(?:это\s+)?(?:в\s+)?(?:мой\s+)?(?:блокнот|заметки))(?=\s|$|[,:.!?—–-])/iu;
   if(!notePrefix.test(command))return null;
