@@ -3046,7 +3046,7 @@ function setHint(value){
 /* Unified iOS writing viewport: hide our dock only while the keyboard is
    visible. The native keyboard is never replaced or artificially resized. */
 let composerRestingHeight=Math.max(window.innerHeight,window.visualViewport?.height||0);
-let composerKeyboardFrame=0,composerKeyboardTimer=0,composerKeyboardLayout=null;
+let composerKeyboardFrame=0,composerKeyboardTimer=0,composerKeyboardCloseTimer=0,composerKeyboardLayout=null;
 function measureComposerViewport(){
  const v=window.visualViewport;
  return {
@@ -3069,6 +3069,29 @@ function updateKeyboard(){
  const shrunk=composerRestingHeight-measure.height>150;
  const opened=!composer.hidden&&(focused||already)&&(measure.shift>115||shrunk);
  if(!opened){
+  // iOS sometimes reports a transient full-height viewport while moving
+  // its toolbar/caret. Do not repeatedly dismiss and restore the chat UI.
+  if(already&&focused&&!composer.hidden){
+   if(!composerKeyboardCloseTimer){
+    composerKeyboardCloseTimer=setTimeout(()=>{
+     composerKeyboardCloseTimer=0;
+     const settled=measureComposerViewport();
+     if(document.activeElement!==question||composer.hidden){
+      scheduleKeyboardUpdate();return;
+     }
+     if(settled.shift>110||composerRestingHeight-settled.height>140){
+      scheduleKeyboardUpdate();return;
+     }
+     clearTimeout(composerKeyboardTimer);composerKeyboardTimer=0;
+     composerKeyboardLayout=null;
+     root.classList.remove('seyveo-composer-keyboard');
+     root.style.setProperty('--keyboard-offset','0px');
+     root.style.removeProperty('--composer-visible-height');
+    },240);
+   }
+   return;
+  }
+  clearTimeout(composerKeyboardCloseTimer);composerKeyboardCloseTimer=0;
   clearTimeout(composerKeyboardTimer);
   composerKeyboardTimer=0;
   composerKeyboardLayout=null;
@@ -3078,6 +3101,7 @@ function updateKeyboard(){
   if(!focused)composerRestingHeight=Math.max(window.innerHeight,measure.height);
   return;
  }
+ clearTimeout(composerKeyboardCloseTimer);composerKeyboardCloseTimer=0;
  if(!already)root.classList.add('seyveo-composer-keyboard');
  if(!composerKeyboardLayout){
   applyComposerKeyboardLayout(measure);
