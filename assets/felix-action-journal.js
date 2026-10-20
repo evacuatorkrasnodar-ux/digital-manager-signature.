@@ -19,7 +19,9 @@
  let active=null,volatile=[];
  function read(){
   try{
-   const data=JSON.parse(root.localStorage?.getItem(KEY)||'[]');
+   const saved=root.localStorage?.getItem(KEY);
+   if(!saved)return volatile.slice(); // quota/read-only storage: session-only journal
+   const data=JSON.parse(saved);
    return Array.isArray(data)?data.filter(x=>x&&typeof x.id==='string'&&
     Object.hasOwn(DISPLAY,x.status)&&Object.hasOwn(LABEL,x.kind))
     .slice(-MAX):[];
