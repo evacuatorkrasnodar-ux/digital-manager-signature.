@@ -2327,8 +2327,7 @@ if(contextual){
  return;
 }
 playFeedback('confirm');
-// Prototype answers are synchronous; this is a request state, not a claimed AI reasoning trace.
-document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'thinking'}}));
+// This demo answer is synchronous; do not simulate AI thinking.
 const answer=getDemoAnswer(q);
 closeComposer();showWrittenReply(q,answer);question.value='';syncComposer();
 window.SEYVEO_DEMO_CHAT_ACTIVE=true;
@@ -2987,6 +2986,8 @@ function handleSpokenAssistant(raw){
  }
  const answer=getDemoAnswer(phrase);
  showWrittenReply(phrase,answer);
+ // Voice requests must leave both text entry and mic available afterwards.
+ if(composer.hidden)openComposer();
  speakAssistantReply(answer);
 }
 window.SEYVEO_VOICE_EXECUTE=handleSpokenAssistant;
@@ -3157,9 +3158,12 @@ function startVoice(){
   }
 }
 // Tap to speak inside Living Conversation; Home dock keeps press-and-hold.
+window.SEYVEO_CONVERSATION_STOP_VOICE=()=>{
+  if(recognition||held){held=false;stopVoice();}
+};
 window.SEYVEO_CONVERSATION_TOGGLE_VOICE=()=>{
   if(recognition||held||fab.classList.contains('listening')||fab.classList.contains('arming')){
-    held=false;stopVoice();return;
+    window.SEYVEO_CONVERSATION_STOP_VOICE();return;
   }
   question.blur();
   startVoice();
