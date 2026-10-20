@@ -105,8 +105,12 @@ async function exam(){
   controls.noteReviewDialog.open=false;
   listeners.get('note:close')?.();
  }
+ function cancelCalendar(){
+  controls.calendarEventDialog.open=false;
+  listeners.get('cal:close')?.();
+ }
  const journal=root.SEYVEO_FELIX_JOURNAL;
- return {beginFromFelix,saveCalendar,saveNote,journal,root,controls,memory,
+ return {beginFromFelix,saveCalendar,saveNote,cancelCalendar,journal,root,controls,memory,
   fireSubmit,tick,get network(){return requests},get writes(){return storageWrites},
   get notes(){return notes}};
 }
@@ -147,13 +151,10 @@ test('Closing unsaved Calendar draft is cancelled rather than completed',async()
  const app=await exam();
  app.beginFromFelix('Филя, запиши встречу 23.10.2030 в 12:30');
  assert.equal(app.journal.entries().at(-1).status,'awaiting_confirmation');
- app.controls.calendarEventDialog.open=false;
- // Native <dialog> close event, not a successful Save event.
- app.root.document.getElementById('calendarEventDialog');
- app.controls.calendarEventDialog.open=false;
- // Simulate user cancellation, ensuring no event can be created.
- app.journal.entries();
+ app.cancelCalendar();
+ assert.equal(app.journal.entries().at(-1).status,'cancelled');
  assert.equal(app.memory.has('seyveo-calendar-events-v1'),false);
+ assert.match(app.journal.format(),/Отменено/u);
 });
 test('Journal command is local read-only and does not call Qwen or copy note content',async()=>{
  const app=await exam();
