@@ -210,3 +210,61 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #question::-webkit-scrollbar
 html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
  align-self:flex-end;
 }
+
+/* Living Conversation v3 · quietly useful response actions.
+   Real copy / private feedback / share / speech, Notebook inside More.
+   No new dock, no unrelated Home changes. */
+html.seyveo-conversation .seyveo-conversation-reply-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:3px;margin:2px 0 0 -7px;
+}
+html.seyveo-conversation .seyveo-conversation-reply-action,
+html.seyveo-conversation .seyveo-reply-more>summary{
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+ width:42px;min-width:42px;height:42px;min-height:42px;
+ padding:0;border:0;border-radius:13px;background:transparent;
+ color:var(--secondary);cursor:pointer;touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+}
+html.seyveo-conversation .seyveo-conversation-reply-action svg,
+html.seyveo-conversation .seyveo-reply-more>summary svg{
+ width:19px;height:19px;stroke-width:1.65;display:block;
+ fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;
+}
+html.seyveo-conversation .seyveo-conversation-reply-actions>.seyveo-conversation-reply-action>span{
+ display:none!important;
+}
+html.seyveo-conversation .seyveo-conversation-reply-action[aria-pressed=true]{
+ color:var(--seyveo-emerald-text);background:rgba(96,145,130,.13);
+}
+html.seyveo-conversation .seyveo-conversation-reply-action:hover,
+html.seyveo-conversation .seyveo-reply-more>summary:hover{
+ color:var(--text);background:rgba(150,180,169,.085);
+}
+html.seyveo-conversation .seyveo-reply-more{margin:0;padding:0;min-width:42px;}
+html.seyveo-conversation .seyveo-reply-more>summary{
+ list-style:none;user-select:none;
+}
+html.seyveo-conversation .seyveo-reply-more>summary::-webkit-details-marker{display:none}
+html.seyveo-conversation .seyveo-reply-more[open]{
+ flex-basis:100%;min-width:100%;
+}
+html.seyveo-conversation .seyveo-reply-more[open]>summary{margin-left:auto}
+html.seyveo-conversation .seyveo-reply-more-menu{
+ display:flex;align-items:center;gap:5px;min-height:43px;padding:4px 8px;
+ border:1px solid var(--seyveo-emerald-border);border-radius:12px;
+ background:var(--card2);
+}
+html.seyveo-conversation .seyveo-reply-more-menu .seyveo-conversation-reply-action{
+ width:auto;min-width:0;padding:0 10px;gap:8px;
+ font-size:12px;color:var(--text);
+}
+html.seyveo-conversation .seyveo-reply-more-menu .seyveo-conversation-reply-action span{display:inline!important}
+html.seyveo-conversation .seyveo-reply-more>summary:focus-visible{
+ outline:2px solid var(--seyveo-emerald-text);outline-offset:2px;
+}
+@media(max-width:355px){
+ html.seyveo-conversation .seyveo-conversation-reply-action,
+ html.seyveo-conversation .seyveo-reply-more>summary{
+  width:39px;min-width:39px;height:42px;
+ }
+}
