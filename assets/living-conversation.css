@@ -109,3 +109,76 @@ html:not(.seyveo-conversation) #ask:not(.expanded) #seyveoConversationMic{displa
 @media(prefers-reduced-motion:reduce){
  .seyveo-conversation-heading span.is-processing::after{animation:none}
 }
+/* SEYVEO · signature emerald glass. Borrow only the muted green depth from
+   the silver-wave brand tile; all paragraphs remain readable Black Velvet. */
+html.seyveo-conversation{
+ --seyveo-emerald-text:#acd5c9;
+ --seyveo-emerald-border:rgba(133,194,178,.24);
+ --seyveo-emerald-panel:rgba(15,34,33,.90);
+ --seyveo-emerald-active:#a7d7c9;
+}
+html.seyveo-conversation .seyveo-conversation-turn--you{
+ margin-bottom:22px;padding:0 5px 0 4px;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi{
+ position:relative;gap:9px;
+ margin:0 0 24px;
+ padding:15px 15px 11px;
+ border:1px solid var(--seyveo-emerald-border);
+ border-radius:19px;
+ background:
+   linear-gradient(150deg,rgba(66,114,103,.19),rgba(25,49,46,.09) 46%,transparent 83%),
+   var(--seyveo-emerald-panel);
+ box-shadow:inset 0 1px 0 rgba(217,249,238,.045),0 8px 23px rgba(0,0,0,.11);
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-speaker{
+ color:var(--seyveo-emerald-text);font-size:12px;font-weight:610;letter-spacing:.015em;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
+ color:var(--text);font-size:15px;line-height:1.68;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
+ margin:0 0 0 -5px;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-action{
+ color:var(--secondary);
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-action:focus-visible{
+ outline-color:var(--seyveo-emerald-active);
+}
+html.seyveo-conversation .seyveo-conversation-heading span.is-processing{
+ color:var(--seyveo-emerald-text);
+}
+/* The send glyph becomes a brand accent only when real text is ready. */
+html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerCompactSend{
+ background:rgba(74,108,100,.17);
+ color:#9bbab2;
+ border:1px solid rgba(128,176,162,.14);
+ transition:background .2s ease,color .2s ease,box-shadow .2s ease;
+}
+html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerCompactSend{
+ background:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
+ border-color:rgba(157,216,199,.37);
+ color:#e8fff5;
+ box-shadow:inset 0 1px 0 rgba(228,255,245,.13);
+}
+html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerMainAction>span{
+ color:var(--seyveo-emerald-text);border-color:var(--seyveo-emerald-border);
+}
+html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerMainAction>span{
+ background:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
+ color:#e8fff5;border-color:rgba(157,216,199,.37);
+}
+:root[data-theme=light] html.seyveo-conversation{
+ --seyveo-emerald-text:#2d6c60;
+ --seyveo-emerald-border:rgba(67,116,102,.22);
+ --seyveo-emerald-panel:rgba(233,244,240,.95);
+ --seyveo-emerald-active:#25695b;
+}
+:root[data-theme=light] html.seyveo-conversation .seyveo-conversation-turn--sayvi{
+ background:linear-gradient(145deg,rgba(170,205,192,.34),transparent 82%),var(--seyveo-emerald-panel);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 7px 19px rgba(57,82,75,.07);
+}
+@media(prefers-reduced-motion:reduce){
+ html.seyveo-conversation #composerCompactSend{transition:none!important}
+}
