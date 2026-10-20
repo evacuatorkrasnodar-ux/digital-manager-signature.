@@ -262,6 +262,10 @@ html.seyveo-conversation .seyveo-reply-more-menu .seyveo-conversation-reply-acti
  font-size:12px;color:var(--text);
 }
 html.seyveo-conversation .seyveo-reply-more-menu .seyveo-conversation-reply-action span{display:inline!important}
+html.seyveo-conversation .seyveo-reply-more-hint{
+ color:var(--secondary);font-size:12px;line-height:1.45;
+ padding:6px 4px;overflow-wrap:anywhere;
+}
 html.seyveo-conversation .seyveo-reply-more>summary:focus-visible{
  outline:2px solid var(--seyveo-emerald-text);outline-offset:2px;
 }
