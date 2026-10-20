@@ -94,7 +94,7 @@
  // NO direct localStorage writes, modal bypass, network call or pretend execution.
  function draftCommand(message){
   if(typeof message!=='string'||message.length>2500)return null;
-  const match=message.trim().match(/^(?:филя|феликс)\s*[,!:.]?\s+([\s\S]+)$/iu);
+  const match=message.trim().match(/^(?:филя|феликс)(?:\s*[,!:.]\s*|\s+)([\s\S]+)$/iu);
   if(!match)return null;
   const command=match[1].trim();
   if(!command)return null;
