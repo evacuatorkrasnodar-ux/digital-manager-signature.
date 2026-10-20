@@ -298,25 +298,34 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 #homeHeader[hidden],#homePage[hidden],#managePage[hidden],#manageOverview[hidden],#manageThemeScreen[hidden]{display:none!important}
 button.nav-item{background:transparent;border:0;padding:0;-webkit-appearance:none;appearance:none}
 button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;border-radius:7px}
-.manage-main{flex:1;min-width:0;padding:11px 0 17px}
-.manage-heading{margin:9px 0 25px}
-.manage-caption{margin:0 0 12px;color:var(--secondary);font-size:10px;font-weight:630;letter-spacing:.14em}
-.manage-caption span{margin:0 6px;opacity:.45}
-.manage-heading h1{margin:0 0 8px;font-size:31px;font-weight:690;line-height:1.12;letter-spacing:-.045em}
-.manage-heading>p:last-child{margin:0;color:var(--secondary);font-size:13px;line-height:1.45}
-.manage-group{margin:0 0 20px}
-.manage-group h2{margin:0 0 9px;padding-left:6px;font-size:12px;font-weight:600;line-height:1.4;letter-spacing:.005em;color:var(--secondary)}
+.manage-main{flex:1;min-width:0;padding:10px 0 20px}
+.manage-heading{margin:12px 0 20px}
+.manage-caption{margin:0 0 11px;color:var(--secondary);font-size:9.5px;font-weight:500;letter-spacing:.16em}
+.manage-caption span{margin:0 5px;opacity:.45}
+.manage-heading h1{margin:0 0 8px;font-size:31px;font-weight:490;line-height:1.12;letter-spacing:-.042em}
+.manage-heading>p:last-child{margin:0;color:var(--secondary);font-size:12px;line-height:1.45}
+.manage-group{margin:0 0 22px}
+.manage-group h2{margin:0 0 9px;padding-left:6px;font-size:11px;font-weight:510;line-height:1.4;letter-spacing:.01em;color:var(--secondary)}
 .manage-card,.manage-theme-list{background:var(--card);border:1px solid var(--line);border-radius:var(--seyveo-radius-choice);overflow:hidden;box-shadow:inset 0 1px 0 #ffffff08}
-.manage-row{position:relative;display:flex;align-items:center;gap:10px;min-height:62px;width:100%;padding:12px 15px;
- background:transparent;border:0;text-align:left;color:var(--text);transition:background-color .16s ease}
+.manage-row{position:relative;display:flex;align-items:center;gap:10px;min-height:59px;width:100%;padding:11px 15px;background:transparent;border:0;text-align:left;color:var(--text);transition:background-color .16s ease}
 .manage-row+.manage-row::before{content:"";position:absolute;top:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
 .manage-row:active,.manage-theme-choice:active{background:var(--card2)}
-.manage-text{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
-.manage-text strong{font-size:14px;font-weight:590;line-height:1.32;letter-spacing:-.013em}
-.manage-text small{font-size:12px;font-weight:450;line-height:1.36;color:var(--secondary)}
+.manage-text{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.manage-text strong{font-size:14px;font-weight:530;line-height:1.35;letter-spacing:-.015em}
+.manage-text small{font-size:11.5px;font-weight:410;line-height:1.35;color:var(--secondary)}
 .manage-chevron{position:relative;display:grid;place-items:center;width:19px;height:24px;flex:none;font-size:0;line-height:0;color:var(--secondary);opacity:.72}
 .manage-chevron::before{content:"";display:block;width:7px;height:7px;border-top:1.7px solid currentColor;border-right:1.7px solid currentColor;transform:translate(-2px,0) rotate(45deg)}
-.manage-theme-value{flex:none;margin-left:auto;color:var(--secondary);font-size:12px;line-height:1.3;white-space:nowrap}
+.manage-theme-value{flex:none;margin-left:auto;color:var(--secondary);font-size:11.5px;line-height:1.3;white-space:nowrap}
+.manage-extras{margin:1px 0 16px}
+.manage-extras>summary{list-style:none;cursor:pointer;display:flex;align-items:center;min-height:58px;gap:10px;padding:10px 15px;border:1px solid var(--line);border-radius:var(--seyveo-radius-choice);background:var(--card);color:var(--text)}
+.manage-extras>summary::-webkit-details-marker,.manage-notification-check>summary::-webkit-details-marker{display:none}
+.manage-extras>summary .manage-chevron,.manage-notification-check>summary .manage-chevron{transition:transform .2s ease}
+.manage-extras[open]>summary .manage-chevron,.manage-notification-check[open]>summary .manage-chevron{transform:rotate(90deg)}
+.manage-extras>summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.manage-extra-card{margin-top:8px}
+.manage-notification-check{border-top:1px solid var(--soft-line)}
+.manage-notification-check>summary{cursor:pointer;list-style:none}
+.manage-footnote{max-width:380px;margin:17px auto 0;color:var(--secondary);text-align:center;font-size:10px;line-height:1.6;opacity:.7}
 /* Management working tools: Clients and Calendar intentionally side by side. */
 
 .manage-theme-screen{padding:3px 0 13px}
@@ -455,7 +464,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .manage-roadmap-saved{display:block;min-height:16px;margin:3px 2px 10px;font-size:11px;line-height:1.35;color:var(--secondary)}
 .manage-roadmap-empty{padding:12px;color:var(--secondary);font-size:12px;line-height:1.5}
 @media(max-width:365px){.manage-roadmap-dialog{padding-left:13px;padding-right:13px}.manage-roadmap-group-head{padding:11px}.manage-roadmap-item{padding:11px;gap:9px}.manage-roadmap-copy strong{font-size:12px}}
-.manage-live-summary{margin:-8px 3px 20px;padding:9px 12px;border:1px solid var(--soft-line);background:var(--card2);border-radius:12px;color:var(--secondary);font-size:11px;line-height:1.55}
+.manage-live-summary{margin:-4px 3px 20px;padding:0 4px;color:var(--secondary);font-size:10.5px;line-height:1.6;opacity:.8}
 
 /* SEYVEO · unified close glyph and cutout-safe overlay geometry.
    Scoped to real close controls; original orb, dock and layout stay unchanged. */
@@ -696,50 +705,43 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </dialog>
 <main class="manage-main" id="managePage" hidden aria-labelledby="manageTitle">
 <div id="manageOverview">
-<header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> КОМАНДНЫЙ ЦЕНТР</p><h1 id="manageTitle" tabindex="-1">Управление</h1><p>Ваши инструменты и возможности SEYVEO.</p></header>
-<p id="manageLiveSummary" class="manage-live-summary" aria-live="polite">Ваши дела и настройки сохраняются на этом устройстве. Внешние сервисы пока не подключены.</p>
-<section class="manage-group" aria-labelledby="manage-tools-label">
-<h2 id="manage-tools-label">Рабочие инструменты</h2>
-<div class="manage-card"><button class="manage-row" type="button" id="openHomeWidgetsManage"><span class="manage-text"><strong>Моя картина</strong><small>Выбрать показатели и их порядок</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div>
-</section>
-<section class="manage-group" aria-labelledby="manage-personal-label">
-<h2 id="manage-personal-label">Мой управляющий</h2>
-<div class="manage-card">
-<button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">Имя и жизненный этап</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" type="button" id="openWelcomeDemo"><span class="manage-text"><strong>Презентация SEYVEO</strong><small>Один ролик · 9 сцен · без сохранения данных</small></span><span class="manage-theme-value">Смотреть</span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" id="openBusinessMap" type="button"><span class="manage-text"><strong>Карта бизнеса</strong><small id="businessMapManagePrompt">Расскажите о компании, целях и используемых ресурсах</small></span><span id="businessMapManageSummary" class="manage-theme-value">Начать</span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" id="openFirstHelp" type="button"><span class="manage-text"><strong>Первая помощь</strong><small>Показать, где что находится и как обратиться к помощнику</small></span><span class="manage-theme-value">Начать</span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения и продвижение</strong><small>Разобраться с сайтом, соцсетями и рабочими сервисами</small></span><span class="manage-theme-value">Нет</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<header class="manage-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НАСТРОЙКИ</p><h1 id="manageTitle" tabindex="-1">Управление</h1><p>Всё важное — на своём месте.</p></header>
+<p id="manageLiveSummary" class="manage-live-summary" aria-live="polite">Дела и настройки сохраняются на этом устройстве.</p>
+<section class="manage-group" aria-labelledby="manage-personal-label"><h2 id="manage-personal-label">Личное и работа</h2><div class="manage-card">
+<button class="manage-row" type="button" id="openOnboarding"><span class="manage-text"><strong>Знакомство</strong><small id="onboardManageDescription">О вас и ваших задачах</small></span><span id="onboardManageSummary" class="manage-theme-value">Не настроено</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" id="openBusinessMap" type="button"><span class="manage-text"><strong>Карта бизнеса</strong><small id="businessMapManagePrompt">Компания, цели и ресурсы</small></span><span id="businessMapManageSummary" class="manage-theme-value">Начать</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" id="openManageConnections" type="button"><span class="manage-text"><strong>Подключения</strong><small>Сайт, соцсети и рабочие сервисы</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div></section>
+<section class="manage-group" aria-labelledby="manage-interface-label"><h2 id="manage-interface-label">Внешний вид</h2><div class="manage-card">
+<button type="button" id="openManageTheme" class="manage-row"><span class="manage-text"><strong>Тема</strong><small>Black Velvet и White Velvet</small></span><span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" id="openHomeWidgetsManage"><span class="manage-text"><strong>Моя картина</strong><small>Карточки и показатели</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button type="button" id="openAssistantQuickSettings" class="manage-row"><span class="manage-text"><strong>Панель помощника</strong><small>Порядок быстрых действий</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div></section>
+<section class="manage-group" aria-labelledby="manage-data-label"><h2 id="manage-data-label">Приватность и данные</h2><div class="manage-card">
 <button type="button" id="seyveoDiscreetToggle" class="manage-row" aria-pressed="false" aria-label="Рядом люди: выключено">
- <span class="manage-text"><strong>Между нами · Рядом люди</strong><small>Не зачитывать личное вслух · тихие и нейтральные ответы</small></span>
+ <span class="manage-text"><strong>Рядом люди</strong><small>Тихие ответы · не блокировка экрана</small></span>
  <span id="seyveoDiscreetState" class="manage-theme-value">Выкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span>
 </button>
-<p class="manage-discreet-note">Не скрывает записи на экране и не заменяет пароль или Face ID. Это режим деликатного общения, не защита данных.</p>
-<div class="manage-preview-inline" id="manageDiscreetPreview" aria-label="Пример деликатного ответа">
-<div class="manage-preview-eyebrow"><span>КАК ЭТО ВЫГЛЯДИТ</span><small id="manageDiscreetPreviewMode">Обычный режим</small></div>
-<div class="manage-preview-exchange"><span class="manage-preview-person">Вы: «Что у меня сегодня?»</span><span class="manage-preview-assistant" id="manageDiscreetPreviewReply">SEYVEO покажет ответ на экране.</span></div>
-<p>Это иллюстрация поведения, не защита экрана или данных.</p>
-</div>
-</div>
-</section>
-<section class="manage-group" aria-labelledby="manage-app">
-<h2 id="manage-app">Приложение · настройки</h2>
-<div class="manage-card">
-<button type="button" id="openManageTheme" class="manage-row"><span class="manage-text"><strong>Тема</strong><small>Black Velvet и White Velvet</small></span><span id="manageThemeSummary" class="manage-theme-value">Тёмная</span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button type="button" id="openAssistantQuickSettings" class="manage-row"><span class="manage-text"><strong>Панель помощника</strong><small>Выбор и порядок быстрых действий</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button type="button" id="seyveoSilkSoundToggle" class="manage-row" aria-pressed="true" aria-label="Звук касаний: включён"><span class="manage-text"><strong>Звук касаний</strong><small>Мягкое нажатие · Silk Touch</small></span><span id="seyveoSilkSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span></button>
-<button type="button" id="seyveoSignatureSoundToggle" class="manage-row" aria-pressed="true" aria-label="Фирменный звук: включён"><span class="manage-text"><strong>Фирменный звук</strong><small>Первое знакомство и демо · SEYVEO Signature Sound</small></span><span id="seyveoSignatureSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span></button>
 <button class="manage-row" id="openManageData" type="button"><span class="manage-text"><strong>Мои данные</strong><small>Локальные записи и сохранение копии</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
-<button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Развитие SEYVEO</strong><small>Что уже работает и что появится дальше</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div></section>
+<section class="manage-group" aria-labelledby="manage-about-label"><h2 id="manage-about-label">О SEYVEO</h2><div class="manage-card">
+<button class="manage-row" id="openFirstHelp" type="button"><span class="manage-text"><strong>Первая помощь</strong><small>Как пользоваться приложением</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" type="button" id="openWelcomeDemo"><span class="manage-text"><strong>Презентация SEYVEO</strong><small>Фирменный ролик · 9 сцен</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+<button class="manage-row" id="openManageRoadmap" type="button"><span class="manage-text"><strong>Карта развития</strong><small>Что уже работает и что впереди</small></span><span class="manage-chevron" aria-hidden="true">›</span></button>
+</div></section>
+<details class="manage-extras">
+ <summary><span class="manage-text"><strong>Дополнительно</strong><small>Звуки и проверка уведомлений</small></span><span class="manage-chevron" aria-hidden="true">›</span></summary>
+ <div class="manage-card manage-extra-card"><button type="button" id="seyveoSilkSoundToggle" class="manage-row" aria-pressed="true" aria-label="Звук касаний: включён"><span class="manage-text"><strong>Звук касаний</strong><small>Silk Touch</small></span><span id="seyveoSilkSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span></button>
+<button type="button" id="seyveoSignatureSoundToggle" class="manage-row" aria-pressed="true" aria-label="Фирменный звук: включён"><span class="manage-text"><strong>Фирменный звук</strong><small>Звук знакомства SEYVEO</small></span><span id="seyveoSignatureSoundState" class="manage-theme-value">Вкл.</span><span class="seyveo-silk-switch" aria-hidden="true"></span></button>
 <details class="manage-notification-check">
-<summary class="manage-row"><span class="manage-text"><strong>Уведомления</strong><small>Проверка поддержки на устройстве</small></span><span class="manage-chevron" aria-hidden="true">›</span></summary>
+<summary class="manage-row"><span class="manage-text"><strong>Проверка уведомлений</strong><small>Диагностика поддержки устройства</small></span><span class="manage-chevron" aria-hidden="true">›</span></summary>
 <div class="manage-notification-body">
-<p>Проверка фоновых уведомлений без запроса разрешения.</p>
+<p>Проверка поддержки без запроса разрешения.</p>
 <button id="calendarPushCheck" type="button">Проверить поддержку</button>
 <p id="calendarPushCheckResult" role="status" aria-live="polite" hidden></p>
-</div></details>
-</div></section>
-<p class="manage-footnote">SEYVEO · BLACK VELVET</p>
+</div></details></div>
+</details>
+<p class="manage-footnote">Данные остаются на этом устройстве · ИИ и внешние сервисы пока не подключены</p>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>Управление</button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
 <p class="manage-theme-intro">Выберите оформление приложения.</p>
@@ -3317,4 +3319,4 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
 <div id="firstHelpProgress" class="first-help-progress" aria-hidden="true"></div>
 <div class="first-help-actions"><button id="firstHelpExit" type="button">Пропустить</button><button id="firstHelpBack" type="button" hidden>Назад</button><button id="firstHelpNext" type="button">Начать</button></div>
 </section></section>
-<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=22"></script><script src="assets/onboarding.js?v=8"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/management-previews.js?v=1"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/business-map.js?v=12"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=4"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=15"></script><script src="assets/living-conversation.js?v=9"></script></body></html>
+<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=23"></script><script src="assets/onboarding.js?v=8"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/business-map.js?v=12"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=4"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=15"></script><script src="assets/living-conversation.js?v=9"></script></body></html>

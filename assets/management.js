@@ -314,9 +314,9 @@ function updateLiveSummary(){
  const tasks=parsed(read(KEYS.tasks),[]);
  const count=Array.isArray(tasks)?tasks.filter(t=>t&&typeof t.title==='string'&&t.done!==true).length:0;
  const profile=parsed(read('seyveo-first-acquaintance-v1'),null);
- const names={life:'Life',start:'Business Start',pro:'Business Pro',max:'Business Max'};
+ const names={life:'Личные дела',start:'Начинаю бизнес',pro:'Свой бизнес',max:'Команда'};
  const stage=profile&&names[profile.focus]?names[profile.focus]:'Не выбрано';
- text.textContent='Личные дела: '+count+' · Направление: '+stage+' · ИИ и внешние сервисы пока не подключены';
+ text.textContent='Дела в работе: '+count+' · Ваш сценарий: '+stage;
 }
 
 function drawData(){
