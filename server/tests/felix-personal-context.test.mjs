@@ -162,3 +162,96 @@ test('pending local request does not reveal private data inside a competing answ
  assert.ok(!calls.nodes.panel.textContent.includes('Секретная'));
  assert.equal(calls.nodes.question.value,'Найди заметку про рекламу');
 });
+
+
+async function loadWithDraftParsers(options={}){
+ const env=setup(options);
+ const context={
+  window:env.window,
+  Event:class Event{constructor(type){this.type=type}}
+ };
+ for(const name of ['calendar-natural.js','notebook-natural.js','felix-personal-context.js']){
+  const source=await readFile(new URL('../../assets/'+name,import.meta.url),'utf8');
+  runInNewContext(source,context,{filename:name,timeout:1500});
+ }
+ return {...env,context:env.window.SEYVEO_FELIX_CONTEXT};
+}
+
+test('Felix can prepare a real Calendar/Notebook draft without a second storage implementation',async()=>{
+ const {window,context}=await loadWithDraftParsers();
+ const examples=[
+  ['Филя, запиши встречу завтра в 10:00','calendar-draft','запиши встречу завтра в 10:00'],
+  ['Филя запиши встречу завтра в 10:00','calendar-draft','запиши встречу завтра в 10:00'],
+  ['Феликс, назначь встречу на 23 октября в 12:30','calendar-draft','назначь встречу на 23 октября в 12:30'],
+  ['Филя, запомни мысль: проверить рекламу','note-draft','запомни мысль: проверить рекламу'],
+  ['Филя, запиши в блокнот: подготовить письмо','note-draft','запиши в блокнот: подготовить письмо']
+ ];
+ for(const [q,kind,command] of examples){
+  const match=context.draftCommand(q);
+  assert.equal(match?.kind,kind,q);
+  assert.equal(match.command,command,q);
+  assert.equal(match.status,'ready',q);
+ }
+ assert.equal(window.SEYVEO_NOTE_NL('запомни мысль: проверить рекламу').text,'проверить рекламу');
+ const expected=window.SEYVEO_CALENDAR_NL('запиши встречу завтра в 10:00',new Date(2026,9,20));
+ assert.equal(expected.date,'2026-10-21');
+ assert.equal(expected.time,'10:00');
+});
+
+test('draft aliases only change the question so existing app displays review before Save',async()=>{
+ const {context,window,calls}=await loadWithDraftParsers({withDocument:true});
+ const form={id:'ask',dataset:{composerMode:'ask'}};
+ const event={target:form,preventDefault(){throw Error('draft must reach existing handler')},
+  stopImmediatePropagation(){throw Error('draft must reach existing handler')}};
+ for(const [q,expected] of [
+  ['Филя, запиши встречу завтра в 10:00','запиши встречу завтра в 10:00'],
+  ['Филя, запомни мысль: проверить рекламу','запомни мысль: проверить рекламу']
+ ]){
+  calls.nodes.question.value=q;
+  calls.submit(event);
+  assert.equal(calls.nodes.question.value,expected);
+ }
+ assert.equal(calls.writes,0);
+ assert.equal(calls.network,0);
+ assert.equal(window.SEYVEO_LOCAL_DIALOGUE.turns.length,0);
+ assert.equal(calls.nodes.overlay.hidden,true);
+ assert.equal(context.draftCommand('Привет, Филя'),null);
+ assert.equal(context.draftCommand('Филя, запомни: это для памяти'),null);
+});
+
+test('multiline note drafts preserve original text and never leak to model',async()=>{
+ const {calls,window,context}=await loadWithDraftParsers({withDocument:true});
+ const phrase='Филя, запомни мысль:\nПервая строка\nВторая строка';
+ const selected=context.draftCommand(phrase);
+ assert.equal(selected.kind,'draft-clarify');
+ calls.nodes.question.value=phrase;
+ let stopped=0;
+ calls.submit({target:{id:'ask',dataset:{composerMode:'ask'}},
+  preventDefault(){stopped++},stopImmediatePropagation(){stopped++}});
+ assert.equal(stopped,2);
+ assert.equal(calls.nodes.question.value,phrase);
+ assert.match(calls.nodes.panel.textContent,/переносами строк/u);
+ assert.equal(calls.nodes.overlay.hidden,false);
+ assert.equal(window.SEYVEO_LOCAL_DIALOGUE.turns.length,0);
+ assert.equal(calls.network,0);
+ assert.equal(calls.writes,0);
+});
+
+test('missing local parser safely refuses explicit event and note drafts',async()=>{
+ const {context,window}=await load({withDocument:true});
+ assert.equal(context.draftCommand('Филя, запиши встречу завтра в 10:00')?.kind,'draft-clarify');
+ assert.equal(context.draftCommand('Филя, запомни мысль: проверить рекламу')?.kind,'draft-clarify');
+ assert.equal(context.draftCommand('Филя, расскажи анекдот'),null);
+ assert.equal(context.draftCommand('Филя, заплати клиенту'),null);
+ assert.equal(context.draftCommand('Филя, сохрани в блокнот: секрет')?.kind,'draft-clarify');
+});
+
+test('draft capture does not execute in the direct-notes composer mode',async()=>{
+ const {calls}=await loadWithDraftParsers({withDocument:true});
+ calls.nodes.question.value='Филя, запиши встречу завтра в 10:00';
+ let blocked=0;
+ calls.submit({target:{id:'ask',dataset:{composerMode:'notes'}},
+  preventDefault(){blocked++},stopImmediatePropagation(){blocked++}});
+ assert.equal(blocked,0);
+ assert.equal(calls.nodes.question.value,'Филя, запиши встречу завтра в 10:00');
+});
