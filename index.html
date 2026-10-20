@@ -595,7 +595,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 </button>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=13" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true" hidden><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=14" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Нужно ваше решение</div><h2 id="headline">Роман, клиент ждёт ответа</h2><p id="subline">Я подготовил предложение. Осталось согласовать.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true" hidden><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <section id="firstMinute" class="first-minute" hidden aria-labelledby="firstMinuteTitle">
  <p class="first-minute-eyebrow">SEYVEO <span aria-hidden="true">·</span> ПЕРВАЯ МИНУТА</p>
  <h2 id="firstMinuteTitle">Начнём с полезного?</h2>
@@ -1586,7 +1586,7 @@ function applyTheme(){
   // Keep the browser's top chrome consistent with the selected app theme.
   const browserTheme=document.querySelector('meta[name="theme-color"]');
   if(browserTheme)browserTheme.setAttribute('content',resolved==='light'?'#f4f6fa':'#080a0e');
-  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=13':'assets/plasma-signature.svg?v=13';
+  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=14':'assets/plasma-signature.svg?v=14';
   for(const id of ['plasmaVisual']){
     const el=$(id);if(el&&el.getAttribute('src')!==svg)el.setAttribute('src',svg);
   }
