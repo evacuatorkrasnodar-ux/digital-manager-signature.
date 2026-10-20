@@ -18,6 +18,12 @@ function save(items){
  try{localStorage.setItem(KEY,JSON.stringify(items.slice(-LIMIT)));return true}
  catch{return false}
 }
+// One existing local journal also restores the continuous Sayvi conversation.
+// Read only actual saved turns; never mix in the separate Notebook drafts.
+function recent(limit=30){
+ const count=Math.min(LIMIT,Math.max(1,Number(limit)||30));
+ return load().slice(-count).map(row=>({question:row.q,answer:row.a}));
+}
 function add({question,answer,kind}){
  const q=String(question||'').trim(),a=String(answer||'').trim();
  if(!q)return false;
@@ -64,8 +70,9 @@ $('assistantChatHistoryDone').addEventListener('click',()=>dialog.close());
 $('assistantChatHistoryClear').addEventListener('click',()=>{
  if(!window.confirm('Удалить историю вопросов помощнику на этом устройстве? Заметки в Блокноте останутся.'))return;
  if(!save([])){$('assistantChatHistoryCount').textContent='Не удалось удалить историю.';return}
+ window.dispatchEvent(new Event('seyveo:chat-history-cleared'));
  render();
 });
 window.addEventListener('storage',e=>{if(e.key===KEY&&dialog.open)render()});
-window.SEYVEO_CHAT_HISTORY=Object.freeze({open,add,render});
+window.SEYVEO_CHAT_HISTORY=Object.freeze({open,add,render,recent});
 })();
