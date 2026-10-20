@@ -183,10 +183,10 @@ html.seyveo-conversation[data-theme=light] .seyveo-conversation-turn--sayvi{
  html.seyveo-conversation #composerCompactSend{transition:none!important}
 }
 
-/* Living Conversation v2 · one writing surface. Never open the old giant
-   question editor when chatting; keep it for Notes only. The textarea grows
-   to four lines, then scrolls internally without changing the dock/keyboard. */
-html.seyveo-conversation #ask:not(.expanded) #composerExpandManual{display:none!important}
+/* Living Conversation · one writer with two intentional sizes.
+   Compact grows to four lines. The arrow opens the SAME writer only by tap;
+   Notes keeps its large editing tools. No automatic pop-up on typing. */
+html.seyveo-conversation #ask:not(.expanded) #composerExpandManual{display:grid}
 html.seyveo-conversation #ask.prompt:not(.expanded){
  box-sizing:border-box;
  height:auto!important;
