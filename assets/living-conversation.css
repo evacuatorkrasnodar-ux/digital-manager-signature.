@@ -182,3 +182,31 @@ html.seyveo-conversation[data-theme=light] .seyveo-conversation-turn--sayvi{
 @media(prefers-reduced-motion:reduce){
  html.seyveo-conversation #composerCompactSend{transition:none!important}
 }
+
+/* Living Conversation v2 · one writing surface. Never open the old giant
+   question editor when chatting; keep it for Notes only. The textarea grows
+   to four lines, then scrolls internally without changing the dock/keyboard. */
+html.seyveo-conversation #ask:not(.expanded) #composerExpandManual{display:none!important}
+html.seyveo-conversation #ask.prompt:not(.expanded){
+ box-sizing:border-box;
+ height:auto!important;
+ min-height:56px!important;
+ max-height:146px!important;
+ overflow:visible!important;
+ align-items:flex-end;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ box-sizing:border-box;
+ height:var(--sayvi-draft-height,38px)!important;
+ min-height:38px!important;
+ max-height:112px!important;
+ flex:1 1 0%!important;
+ resize:none!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain;
+ scrollbar-width:none;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question::-webkit-scrollbar{display:none}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
+ align-self:flex-end;
+}
