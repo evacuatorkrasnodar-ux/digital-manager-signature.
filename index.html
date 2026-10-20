@@ -2453,10 +2453,15 @@ function syncComposer(){
     && composerMode==='ask' && !composer.hidden;
   if(isLivingChat){
     if(composer.classList.contains('expanded'))composer.classList.remove('expanded');
-    const lineHeight=parseFloat(getComputedStyle(question).lineHeight)||24;
-    const contentHeight=question.scrollHeight;
-    const height=Math.min(112,Math.max(38,contentHeight,Math.ceil(lineHeight+12)));
-    composer.style.setProperty('--sayvi-draft-height',height+'px');
+    // Measure from the minimum height so clearing/sending a long message
+    // also shrinks the field instead of leaving an empty tall composer.
+    composer.style.setProperty('--sayvi-draft-height','38px');
+    if(question.value){
+      const lineHeight=parseFloat(getComputedStyle(question).lineHeight)||24;
+      const contentHeight=question.scrollHeight;
+      const height=Math.min(112,Math.max(38,contentHeight,Math.ceil(lineHeight+12)));
+      composer.style.setProperty('--sayvi-draft-height',height+'px');
+    }
   }else composer.style.removeProperty('--sayvi-draft-height');
   // The favorites panel is useful before typing, not over an active draft.
   // Its fixed position is never changed, keeping the dock and keyboard stable.
