@@ -22,6 +22,8 @@ on:
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
+      - 'server/tests/felix-personal-context.test.mjs'
+      - 'assets/felix-personal-context.js'
       - 'server/tests/iphone-private-gateway.test.mjs'
       - 'server/real-app-local.mjs'
       - 'server/http.mjs'
@@ -48,6 +50,8 @@ on:
       - 'server/tests/agent-planner.test.mjs'
       - 'server/tests/code-review.test.mjs'
       - 'server/tests/real-app-local.test.mjs'
+      - 'server/tests/felix-personal-context.test.mjs'
+      - 'assets/felix-personal-context.js'
       - 'server/tests/iphone-private-gateway.test.mjs'
       - 'server/real-app-local.mjs'
       - 'server/http.mjs'
@@ -77,6 +81,8 @@ jobs:
         run: node server/felix-school/evaluate.mjs --suite=batch4 --limit=12
       - name: Felix batch 3 multi-turn offline exam readiness
         run: node server/felix-school/evaluate-dialogue.mjs --limit=12
+      - name: Felix local personal context privacy and draft safety tests
+        run: node --test server/tests/felix-personal-context.test.mjs
       - name: Felix deterministic business calculator and chat parser tests
         run: node --test server/tests/business-math.test.mjs server/tests/business-chat.test.mjs
       - name: Felix offline business calculator demonstration
