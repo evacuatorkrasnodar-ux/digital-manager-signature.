@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as SQLite from 'expo-sqlite';
 
 const KEY_NAME = 'seyveo.personal.vault.v1';
-type VaultIdentity = { version: 1; database: string; hexKey: string };
+type VaultIdentity = { version: 1; database: string; hexKey: string; stage?: 'provisioning' | 'ready' };
 export type VaultStatus = 'needs-setup' | 'ready' | 'unavailable';
 
 function validIdentity(value: unknown): value is VaultIdentity {
@@ -17,7 +17,8 @@ function validIdentity(value: unknown): value is VaultIdentity {
     typeof data.database === 'string' &&
     /^seyveo-[a-f0-9]{32}\.db$/.test(data.database) &&
     typeof data.hexKey === 'string' &&
-    /^[a-f0-9]{64}$/.test(data.hexKey);
+    /^[a-f0-9]{64}$/.test(data.hexKey) &&
+    (data.stage === undefined || data.stage === 'ready' || data.stage === 'provisioning');
 }
 
 async function readIdentity(): Promise<VaultIdentity | null> {
@@ -52,8 +53,10 @@ async function confirmCipher(identity: VaultIdentity, firstProvision = false): P
     // openDatabaseAsync() with the correct key, concealing loss of user data.
     // Only the explicit first-time setup may create the schema and marker.
     if (firstProvision) {
-      await db.execAsync('CREATE TABLE vault_meta (id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);');
-      await db.runAsync('INSERT INTO vault_meta (id, value) VALUES (?, ?)', 'schema', '1');
+      // The setup marker can be retried if process termination interrupted
+      // provisioning. No user records are allowed while stage=provisioning.
+      await db.execAsync('CREATE TABLE IF NOT EXISTS vault_meta (id TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);');
+      await db.runAsync('INSERT OR IGNORE INTO vault_meta (id, value) VALUES (?, ?)', 'schema', '1');
     }
     const marker = await db.getFirstAsync<{ value: string }>(
       'SELECT value FROM vault_meta WHERE id = ?', 'schema'
@@ -67,7 +70,7 @@ async function confirmCipher(identity: VaultIdentity, firstProvision = false): P
 export async function inspectVault(): Promise<VaultStatus> {
   try {
     const identity = await readIdentity();
-    if (!identity) return 'needs-setup';
+    if (!identity || identity.stage === 'provisioning') return 'needs-setup';
     await confirmCipher(identity);
     return 'ready';
   } catch {
@@ -79,21 +82,30 @@ export async function inspectVault(): Promise<VaultStatus> {
 export async function initializeVault(): Promise<VaultStatus> {
   try {
     let identity = await readIdentity();
-    const firstProvision = identity === null;
     if (!identity) {
       // A fresh random DB name avoids silently overwriting any orphaned
       // encrypted database after device credentials are lost.
       identity = {
         version: 1,
         database: 'seyveo-' + await randomHex(16) + '.db',
-        hexKey: await randomHex(32)
+        hexKey: await randomHex(32),
+        stage: 'provisioning'
       };
       // If SecureStore cannot persist this key, don't create the DB.
       await SecureStore.setItemAsync(KEY_NAME, JSON.stringify(identity), {
         keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
       });
     }
-    await confirmCipher(identity, firstProvision);
+    if (identity.stage === 'provisioning') {
+      // Validate the encrypted DB BEFORE transitioning to ready. SecureStore
+      // must record that final transition; a failed write remains recoverable.
+      await confirmCipher(identity, true);
+      await SecureStore.setItemAsync(KEY_NAME, JSON.stringify({...identity, stage: 'ready'}), {
+        keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
+      });
+    } else {
+      await confirmCipher(identity, false);
+    }
     return 'ready';
   } catch {
     return 'unavailable';
