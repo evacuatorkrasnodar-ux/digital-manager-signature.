@@ -5,12 +5,14 @@ import { stripTypeScriptTypes } from 'node:module';
 
 // Pure protocol examination with simulated Expo device services.
 // It is NOT a real native SQLCipher or Keychain/Keystore test.
-async function fixture({ cipherAvailable = true, secureStoreWritable = true } = {}) {
+async function fixture({ cipherAvailable = true, secureStoreWritable = true, failReadyWriteOnce = false, failInsertOnce = false } = {}) {
   const secureValues = new Map();
   const databases = new Map();
   const commands = [];
   let counter = 0;
   let opened = 0;
+  let failReady = failReadyWriteOnce;
+  let failInsert = failInsertOnce;
 
   const Crypto = {
     async getRandomBytesAsync(length) {
@@ -23,6 +25,10 @@ async function fixture({ cipherAvailable = true, secureStoreWritable = true } = 
     async getItemAsync(key) { return secureValues.get(key) ?? null; },
     async setItemAsync(key, value) {
       if (!secureStoreWritable) throw Error('SecureStore write failed');
+      if (failReady && JSON.parse(value).stage === 'ready') {
+        failReady = false;
+        throw Error('Interrupted before final ready state');
+      }
       secureValues.set(key, value);
     }
   };
@@ -39,11 +45,12 @@ async function fixture({ cipherAvailable = true, secureStoreWritable = true } = 
             const m = sql.match(/^PRAGMA key = '([a-f0-9]{64})';$/);
             if (!m) throw Error('Invalid database key');
             currentKey = m[1];
-          } else if (sql.startsWith('CREATE TABLE vault_meta')) {
+          } else if (sql.startsWith('CREATE TABLE IF NOT EXISTS vault_meta')) {
             if (!cipherAvailable) throw Error('Cannot provision without cipher');
-            if (file.created) throw Error('Duplicate schema');
-            file.created = true;
-            file.key = currentKey;
+            if (!file.created) {
+              file.created = true;
+              file.key = currentKey;
+            }
           }
         },
         async getFirstAsync(query) {
@@ -61,10 +68,14 @@ async function fixture({ cipherAvailable = true, secureStoreWritable = true } = 
           throw Error('Unrecognized read in fixture');
         },
         async runAsync(query, id, value) {
-          if (query !== 'INSERT INTO vault_meta (id, value) VALUES (?, ?)' || id !== 'schema')
+          if (query !== 'INSERT OR IGNORE INTO vault_meta (id, value) VALUES (?, ?)' || id !== 'schema')
             throw Error('Unexpected insert');
           if (file.key !== currentKey) throw Error('Wrong key');
-          file.marker = value;
+          if (failInsert) {
+            failInsert = false;
+            throw Error('Interrupted during first insert');
+          }
+          if (!file.marker) file.marker = value;
         },
         async closeAsync() {}
       };
@@ -90,6 +101,7 @@ test('new vault requires explicit provisioning and persists encrypted marker', a
   const identity = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
   assert.match(identity.database, /^seyveo-[a-f0-9]{32}\.db$/);
   assert.match(identity.hexKey, /^[a-f0-9]{64}$/);
+  assert.equal(identity.stage, 'ready');
   assert.equal(d.databases.get(identity.database).marker, '1');
   assert.equal(d.commands[0], 'PRAGMA key [redacted]');
   assert.equal(d.commands.includes('PRAGMA quick_check'), true);
@@ -108,7 +120,8 @@ test('device missing its original encrypted database NEVER reports ready or recr
 test('an unencrypted SQLite build is rejected before provisioning personal data', async () => {
   const d = await fixture({ cipherAvailable: false });
   assert.equal(await d.initializeVault(), 'unavailable');
-  assert.equal(await d.inspectVault(), 'unavailable');
+  // Setup remains resumable, but this build still cannot provision encryption.
+  assert.equal(await d.inspectVault(), 'needs-setup');
   assert.ok([...d.databases.values()].every(x => !x.created));
 });
 
@@ -135,4 +148,31 @@ test('a different 256-bit key cannot unlock previously provisioned vault', async
   d.secureValues.set(key, JSON.stringify(existing));
   assert.equal(await d.inspectVault(), 'unavailable');
   assert.equal(d.databases.get(existing.database).marker, '1');
+});
+
+test('a failed final SecureStore commit resumes provisioning without creating a new key', async () => {
+  const d = await fixture({ failReadyWriteOnce: true });
+  assert.equal(await d.initializeVault(), 'unavailable');
+  const pending = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
+  assert.equal(pending.stage, 'provisioning');
+  assert.equal(await d.inspectVault(), 'needs-setup');
+  assert.equal(await d.initializeVault(), 'ready');
+  const recovered = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
+  assert.equal(recovered.stage, 'ready');
+  assert.equal(recovered.hexKey, pending.hexKey);
+  assert.equal(recovered.database, pending.database);
+  assert.equal(d.databases.size, 1);
+  assert.equal(await d.inspectVault(), 'ready');
+});
+
+test('interrupted metadata insertion can retry without losing the existing encryption key', async () => {
+  const d = await fixture({ failInsertOnce: true });
+  assert.equal(await d.initializeVault(), 'unavailable');
+  const pending = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
+  assert.equal(pending.stage, 'provisioning');
+  assert.equal(await d.initializeVault(), 'ready');
+  const ready = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
+  assert.equal(ready.database, pending.database);
+  assert.equal(ready.hexKey, pending.hexKey);
+  assert.equal(d.databases.get(ready.database).marker, '1');
 });
