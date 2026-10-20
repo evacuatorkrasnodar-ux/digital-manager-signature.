@@ -38,7 +38,7 @@ function NativeFoundation() {
         <Text style={styles.subtitle}>ai automation</Text>
         <View style={styles.section}>
           <Text style={styles.eyebrow}>M1 · МОБИЛЬНАЯ ОСНОВА</Text>
-          <Text style={styles.headline}>Личный интеллект.\nВаши данные.</Text>
+          <Text style={styles.headline}>Личный интеллект. Ваши данные.</Text>
           <Text style={styles.description}>
             Мы готовим настоящее приложение SEYVEO для iOS и Android.
             Ваше личное пространство будет находиться на устройстве.
