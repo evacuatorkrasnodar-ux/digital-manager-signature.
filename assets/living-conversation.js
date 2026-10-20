@@ -73,6 +73,8 @@ function open(){
  status('На связи');
 }
 function close(){
+ // A conversation may be recording: never leave the microphone active on exit.
+ window.SEYVEO_CONVERSATION_STOP_VOICE?.();
  root.classList.remove('seyveo-conversation');
  header.hidden=true;
  syncMic(false);
@@ -109,7 +111,11 @@ $('seyveoConversationBack').addEventListener('click',close);
 $('seyveoConversationHistory').addEventListener('click',()=>window.SEYVEO_CHAT_HISTORY?.open());
 document.addEventListener('seyveo:assistant-presence',e=>{
  const phase=e.detail?.phase;
- if(phase==='listening'){open();status('Сэйви слушает…');syncMic(true);}
+ if(phase==='listening'){
+   // Never hide the pressed Home dock while a hold-to-talk gesture is active.
+   if(root.classList.contains('seyveo-conversation'))status('Сэйви слушает…');
+   syncMic(true);
+ }
  else if(phase==='listening-end'){status('На связи');syncMic(false);}
  else if(phase==='thinking'){open();status('Сэйви думает…');}
  else if(phase==='speaking'){status('Сэйви отвечает…');}
