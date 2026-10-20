@@ -54,6 +54,7 @@ async function fixture({ cipherAvailable = true, secureStoreWritable = true, fai
           }
         },
         async getFirstAsync(query) {
+          commands.push(query); // read operations also matter for the integrity exam
           if (query === 'PRAGMA cipher_version')
             return cipherAvailable ? { cipher_version: '4.6.1' } : null;
           if (query === 'PRAGMA quick_check') {
