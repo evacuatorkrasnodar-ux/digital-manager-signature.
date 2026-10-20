@@ -2003,7 +2003,7 @@ function syncHomeVoice(){
     headline=name+', на сегодня есть дело';
     subline='«'+brief.first+'». Остальные записи — в разделе «Дела».';
   }else{
-    kicker=brief.count?'Ваш день':'Всё под контролем';
+    kicker=brief.count?'Ваш день':'На связи';
     headline=daypartGreeting()+', '+name;
     subline=brief.count
       ?'Личных дел в планах: '+brief.count+'. Решений от управляющего сейчас нет.'
@@ -2013,7 +2013,7 @@ function syncHomeVoice(){
   $('headline').textContent=headline;
   $('subline').textContent=subline;
   // Signal appears only in the genuinely quiet state, never for urgent personal tasks.
-  $('quietSignal').hidden=kicker!=='Всё под контролем';
+  $('quietSignal').hidden=kicker!=='На связи';
 }
 const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
 function progressDemoTasks(){
@@ -2085,7 +2085,8 @@ transientNotice(confirmation?'approval:'+state.index:visibleStory?'scenario:'+st
  confirmation?'check':visibleStory?visibleStory.type:null);
 syncHomeVoice();
 $('dynamic').hidden=isCalm;
-$('demoReplayAction').hidden=!(isCalm||advice);
+// Demo replay remains accessible in scenario details, not on the Home screen.
+ $('demoReplayAction').hidden=true;
 if(advice){
  $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true"><div class="card-main"><span class="event-icon" aria-hidden="true">'+glassIcon('budget')+'</span><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>Рекомендация · по вашей Карте бизнеса</small></div></div><div class="card-tag">'+escapeHtml(advice.why)+'</div><div class="actions"><button class="btn" id="inspect" type="button">Подробнее</button><button class="btn primary" id="resolve" type="button">'+(advice.kind==='connect'?'Как подключить':'Начать')+'</button></div></article>';
 }else{
