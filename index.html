@@ -1936,7 +1936,7 @@ function showWrittenReply(userText,assistantText){
   // Never pull the page away from the iPhone caret while its keyboard is active.
   const wasScrolled=window.scrollY>64 && document.activeElement!==question &&
     !document.documentElement.classList.contains('seyveo-composer-keyboard');
-  if(wasScrolled){
+  if(wasScrolled&&!document.documentElement.classList.contains('seyveo-conversation')){
     const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     requestAnimationFrame(()=>window.scrollTo({top:0,behavior:reduce?'instant':'smooth'}));
   }
@@ -2327,18 +2327,20 @@ if(noteDraft){
 const contextual=window.SEYVEO_BUSINESS_DIALOG?.understand(q);
 if(contextual){
  playFeedback('confirm');
- closeComposer();showWrittenReply(q,contextual.answer);
- window.SEYVEO_BUSINESS_DIALOG.show(contextual);
+ // Preserve the iPhone's active keyboard while the conversation appears.
  question.value='';syncComposer();
+ showWrittenReply(q,contextual.answer);
+ window.SEYVEO_BUSINESS_DIALOG.show(contextual);
  return;
 }
 playFeedback('confirm');
 // This demo answer is synchronous; do not simulate AI thinking.
 const answer=getDemoAnswer(q);
-closeComposer();showWrittenReply(q,answer);question.value='';syncComposer();
+// Keep one focused composer. Blur/close/reopen/refocus made Safari bounce
+// the keyboard and shifted both the conversation and floating input.
+question.value='';syncComposer();
+showWrittenReply(q,answer);
 window.SEYVEO_DEMO_CHAT_ACTIVE=true;
-openComposer();
-question.focus({preventScroll:true});
 });
 /* Match SEYVEO's existing modal backdrop behavior for read-only panels.
    Only clicks OUTSIDE the dialog rectangle dismiss it; taps on its padding
