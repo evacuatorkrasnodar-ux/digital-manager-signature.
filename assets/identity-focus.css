@@ -344,3 +344,14 @@
 :root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-plan-expiry{color:#53645c}
 :root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-crown{stroke:#465c52}
 :root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-business-icon svg{stroke:#53685c}
+
+
+/* Business glyph: one fine outline, no second rounded square. */
+#seyveoCompanyDialog .seyveo-owner-business-icon{
+ width:24px;height:30px;min-width:24px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+}
+#seyveoCompanyDialog .seyveo-owner-business-icon svg{
+ width:21px;height:21px;stroke-width:1.35;
+}
