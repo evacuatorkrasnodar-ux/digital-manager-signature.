@@ -4,7 +4,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const brand=$('seyveoBrandPassport'),company=$('seyveoCompanyPassport');
-const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger');
+const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),ownerTrigger=$('homeWorldTrigger');
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
 const KEY='seyveo-company-passport-v1';
@@ -83,9 +83,10 @@ function fillPreview(){
   const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
   if(typeof profile?.name==='string'&&clean(profile.name))previewPerson=clean(profile.name).slice(0,60);
  }catch{}
- $('seyveoCompanyPreviewName').textContent=saved?record.name:'Студия SEYVEO';
- $('seyveoCompanyPreviewDesc').textContent=saved?(record.city||LABELS[record.type]||'Компания'):'Карточка организации · демо';
- $('seyveoCompanyPreviewOwner').textContent=saved?(record.owner||record.legalName||'Представитель не указан'):previewPerson;
+ const owner=saved?(record.owner||record.legalName||previewPerson):previewPerson;
+ $('seyveoCompanyPreviewName').textContent=owner;
+ $('seyveoCompanyPreviewDesc').textContent=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
+ $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
  $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
  $('seyveoCompanySample').hidden=saved;
 }
@@ -217,24 +218,38 @@ function closeHeaderPassport(){
  previewBox.hidden=true;
  brand.hidden=true;company.hidden=true;
  brandTrigger?.setAttribute('aria-expanded','false');
+ ownerTrigger?.setAttribute('aria-expanded','false');
 }
 function toggleHeaderPassport(){
  if(!previewBox)return;
  const wasOpen=!previewBox.hidden&&!brand.hidden;
  closeHeaderPassport();
  if(wasOpen)return;
+ window.SEYVEO_CLOSE_WORLD_MENU?.();
  previewBox.dataset.side='studio';
  previewBox.hidden=false;brand.hidden=false;
  brandTrigger?.setAttribute('aria-expanded','true');
 }
+function toggleOwnerPassport(){
+ if(!previewBox)return;
+ const wasOpen=!previewBox.hidden&&!company.hidden;
+ closeHeaderPassport();
+ if(wasOpen)return;
+ window.SEYVEO_CLOSE_WORLD_MENU?.();
+ fillPreview();
+ previewBox.dataset.side='company';
+ previewBox.hidden=false;company.hidden=false;
+ ownerTrigger?.setAttribute('aria-expanded','true');
+}
 brandTrigger?.addEventListener('click',toggleHeaderPassport);
+ownerTrigger?.addEventListener('click',toggleOwnerPassport);
 $('pictureCompanyOpen')?.addEventListener('click',()=>{
  closeHeaderPassport();
  openCompany();
 });
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
- if(previewBox.contains(event.target)||brandTrigger?.contains(event.target))return;
+ if(previewBox.contains(event.target)||brandTrigger?.contains(event.target)||ownerTrigger?.contains(event.target))return;
  closeHeaderPassport();
 });
 document.addEventListener('keydown',event=>{
