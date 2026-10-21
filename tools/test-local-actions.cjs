@@ -36,7 +36,7 @@ assert.equal(calendar[0].remindAtStart,true);
 assert.equal(handle('Сэйви, напомни завтра в 8 позвонить маме').status,'already');
 assert.equal(handle('Напомни завтра в 15:00 позвонить маме').status,'already');
 assert.equal(handle('Запиши встречу завтра в 15:00').status,'saved');
-assert.equal(calendar[0].time,'15:00');
+assert.equal(calendar[1].time,'15:00');
 assert.equal(handle('Запиши встречу завтра в 15:00').status,'already');
 assert.equal(handle('Запомни мысль: новая идея').status,'saved');
 assert.equal(notes[0].text,'Новая идея');
