@@ -147,3 +147,26 @@
   transition:none!important;
  }
 }
+
+/* Future v3 · One quiet, confirmation-only rim. No idle decoration. */
+#calendarPage #calendarAgenda,
+#calendarPage #calendarDeadlineList,
+#tasksPage #personalTaskList{position:relative}
+#calendarPage #calendarAgenda.seyveo-future-ack::after,
+#calendarPage #calendarDeadlineList.seyveo-future-ack::after,
+#tasksPage #personalTaskList.seyveo-future-ack::after{
+ content:"";position:absolute;inset:0;z-index:1;
+ border-radius:inherit;pointer-events:none;
+ box-shadow:inset 0 0 0 1.5px var(--future-ink);
+ animation:seyveo-future-ack 980ms ease-out both;
+}
+@keyframes seyveo-future-ack{
+ 0%{opacity:0}25%{opacity:.58}100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage #calendarAgenda.seyveo-future-ack::after,
+ #calendarPage #calendarDeadlineList.seyveo-future-ack::after,
+ #tasksPage #personalTaskList.seyveo-future-ack::after{
+  animation:none;display:none;
+ }
+}
