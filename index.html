@@ -208,44 +208,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .info-actions .btn{min-height:45px}
 [hidden]{display:none!important}
 @keyframes arrive{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-/* Dock signature: a single source of truth for dark and light themes */
-.dock{position:fixed;z-index:30;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));height:88px;border-radius:44px;border:0;background:linear-gradient(154deg,rgba(226,237,252,.065),transparent 49%),var(--dock-surface,rgba(17,21,29,.88));-webkit-backdrop-filter:blur(22px) saturate(112%);backdrop-filter:blur(22px) saturate(112%);box-shadow:inset 0 0 0 1px rgba(222,236,255,.11),inset 0 1px 0 rgba(255,255,255,.095),inset 0 13px 18px -19px rgba(233,242,255,.17),0 10px 27px rgba(0,0,0,.30)}
-.dock::before{content:"";position:absolute;pointer-events:none;inset:0;border-radius:inherit;background:radial-gradient(ellipse 68% 55% at 50% -13%,var(--dock-glint,rgba(230,241,255,.17)),transparent 82%);opacity:.28}
-.nav-item{position:absolute;bottom:32px;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;min-width:65px;color:var(--secondary);font-size:10.5px;font-weight:500;white-space:nowrap;line-height:1}
-.nav-item svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
-.nav-item.active{color:var(--text);font-weight:650}
-/* Four equal visual steps around the fixed center assistant; inset outer items from the rounded dock edges. */
-.nav-home{left:12%}.nav-home svg{fill:currentColor;stroke-width:1.1}.nav-tasks{left:31%}.nav-picture{left:69%}.nav-manage{left:88%}
-.nav-picture.active{color:var(--text)}
-@media(max-width:360px){.nav-item{min-width:54px;font-size:10px}}
-.assistant-button{position:absolute;z-index:2;top:-19px;left:50%;transform:translateX(-50%);width:74px;height:74px;padding:0;display:grid;place-items:center;background:transparent;border:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;filter:drop-shadow(0 2px 6px #02060f4a);transition:transform .15s ease,filter .22s ease}
-.assistant-button:active,.assistant-button.pressing{transform:translateX(-50%) scale(.955)}
-.assistant-button.arming{transform:translateX(-50%) scale(.98)}
-.assistant-button.listening{transform:translateX(-50%) scale(1)}
-.assistant-button:focus-visible{outline:2px solid var(--text);outline-offset:4px}
-/* Velvet Voice: a quiet pearl halo, no particles, lasers or continuous audio. */
-.assistant-button::before{content:"";position:absolute;inset:-4px;border:1px solid rgba(246,249,255,.34);border-radius:50%;opacity:0;pointer-events:none;transform:scale(.89);transition:opacity .3s ease,transform .48s cubic-bezier(.22,.9,.35,1)}
-.assistant-button.pressing::before{opacity:.32;transform:scale(1.015)}
-.assistant-button.arming::before{opacity:.52;transform:scale(1.055)}
-.assistant-button.listening::before{animation:assistant-velvet-halo 3s ease-in-out infinite}
-@keyframes assistant-velvet-halo{0%,100%{opacity:.25;transform:scale(1.015)}50%{opacity:.59;transform:scale(1.09)}}
-.assistant-button::after{content:"";position:absolute;inset:3px;border-radius:50%;pointer-events:none;opacity:0;box-shadow:0 0 0 1px rgba(244,249,255,.22),0 0 12px 2px rgba(238,246,255,.12);transition:opacity .52s ease-out}
-.assistant-button.pressing::after{opacity:.25;transition-duration:.14s}
-.assistant-button.arming::after{opacity:.35}
-.assistant-button.listening::after{animation:assistant-velvet-breath 3s ease-in-out infinite}
-@keyframes assistant-velvet-breath{0%,100%{opacity:.17}50%{opacity:.42}}
-:root[data-theme=light] .assistant-button::before{border-color:rgba(108,130,152,.45)}
-:root[data-theme=light] .assistant-button::after{box-shadow:0 0 0 1px rgba(120,145,170,.3),0 0 9px 2px rgba(130,157,182,.12)}
-@media(prefers-reduced-motion:reduce){.assistant-button.listening::before,.assistant-button.listening::after{animation:none;opacity:.3;transform:scale(1.03)}.assistant-button::before,.assistant-button::after{transition:none}}
-.button-art{width:74px;height:74px;display:block;overflow:visible}
-.button-art .center-face{fill:url(#button-night)}
-.button-art .button-rim{stroke:url(#rim-night)}
-.button-art .voice-bars{stroke:#f9fbff;stroke-width:2.85;stroke-linecap:round;fill:none}
-.button-art .voice-dot{fill:#f9fbff}
-.assistant-button.listening .button-rim{stroke:#ddeafb}
-.assistant-button.listening .voice-bars{animation:speaking 1.5s ease-in-out infinite alternate;transform-origin:37px 37px}
-@keyframes speaking{from{transform:scaleY(.88)}to{transform:scaleY(1.08)}}
-.ask-caption{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);pointer-events:none;color:var(--secondary);font-size:10.5px;white-space:nowrap}
+/* Single dock geometry: assets/floating-navigation.css */
 .voice-hint{position:fixed;z-index:42;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));max-width:min(420px,calc(100% - 48px));border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px #0004;color:var(--text);padding:10px 15px;font-size:12px;line-height:1.35;text-align:center;opacity:0;pointer-events:none;transform:translate(-50%,8px);transition:opacity .2s,transform .2s}
 .voice-hint.active{opacity:1;transform:translate(-50%,0)}
 .prompt{position:fixed;z-index:35;left:50%;bottom:calc(119px + env(safe-area-inset-bottom) + var(--keyboard-offset,0px));transform:translateX(-50%);width:min(440px,calc(100% - 32px));margin:0;display:flex;align-items:center;gap:8px;background:var(--card);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:25px;padding:8px 9px 8px 16px;box-shadow:0 10px 26px #0004;transition:width .23s ease,border-radius .23s ease}
@@ -282,22 +245,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .note-item-actions button{border:0;background:transparent;color:var(--text);font-size:var(--type-label);line-height:1.35;padding:5px;cursor:pointer}
 @media(max-height:650px){.prompt.expanded{height:50dvh;min-height:170px}.prompt.expanded textarea{min-height:40px;padding:8px}.composer-tool span{width:33px;height:33px}.composer-tool small{font-size:var(--type-eyebrow)}}
 @media(prefers-reduced-motion:reduce){.prompt{transition:none}}
-:root[data-theme=light] .dock{--dock-surface:rgba(249,251,254,.90);--dock-glint:rgba(255,255,255,.85);background:linear-gradient(160deg,rgba(255,255,255,.48),transparent 55%),var(--dock-surface);box-shadow:inset 0 0 0 1px rgba(92,119,154,.15),inset 0 1px 0 rgba(255,255,255,.95),0 9px 24px rgba(70,96,133,.115)}
-:root[data-theme=light] .assistant-button{filter:drop-shadow(0 2px 7px #506ea033)}
-:root[data-theme=light] .button-art .center-face{fill:url(#button-day)}
-:root[data-theme=light] .button-art .button-rim{stroke:url(#rim-day);stroke-width:.82}
-:root[data-theme=light] .button-art .voice-bars{stroke:#243b68}
-:root[data-theme=light] .button-art .voice-dot{fill:#243b68}
-@media(max-width:355px){.nav-item{min-width:54px;font-size:9.5px}}
-@media(prefers-reduced-motion:reduce){.assistant-button,.voice-hint{transition:none}.assistant-button.listening .voice-bars{animation:none}*,*:before,*:after{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.voice-hint{transition:none}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media(max-height:760px){.stage{min-height:333px;padding-top:4px}.plasma{width:min(70vw,272px);height:min(70vw,272px);min-width:0;min-height:0}.message{min-height:94px}}
 @media(min-height:920px){.stage{min-height:455px;padding-top:18px}}
 
 
 /* SEYVEO Management · Black Velvet, shared theme tokens, one cohesive material. */
 #homeHeader[hidden],#homePage[hidden],#managePage[hidden],#manageOverview[hidden],#manageThemeScreen[hidden]{display:none!important}
-button.nav-item{background:transparent;border:0;padding:0;-webkit-appearance:none;appearance:none}
-button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;border-radius:7px}
 .manage-main{flex:1;min-width:0;padding:10px 0 20px}
 .manage-heading{margin:12px 0 20px}
 .manage-caption{margin:0 0 11px;color:var(--secondary);font-size:9.5px;font-weight:500;letter-spacing:.16em}
@@ -405,9 +359,6 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 .wake-voice-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--text);opacity:.65}
 .wake-voice-status button{flex:none;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-action);padding:6px 11px;background:var(--card2);color:var(--text);font:inherit;font-size:11px}
 .wake-voice-status button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.assistant-button.wake-ready::before{opacity:.32;transform:scale(1.035)}
-.assistant-button.wake-awake::before{animation:assistant-velvet-halo 2.1s ease-in-out infinite}
-@media(prefers-reduced-motion:reduce){.assistant-button.wake-awake::before{animation:none;opacity:.48}}
 /* SEYVEO Management: quiet lists with true connection status and real local data. */
 .manage-dialog .manage-dialog-desc{margin:0 0 17px;color:var(--secondary);font-size:13px;line-height:1.55}
 .manage-service-list,.manage-data-list{border:1px solid var(--line);border-radius:17px;background:var(--card2);overflow:hidden;margin:0 0 17px}
@@ -486,7 +437,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 /* In landscape, reserve the asymmetric camera island/notch sides for
    floating controls; portrait geometry and the approved sphere stay intact. */
 @media (orientation:landscape) and (max-height:650px){
- .dock,.prompt{
+ .prompt{
    width:min(440px,calc(100vw - 32px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));
    left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2);
  }
@@ -564,7 +515,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
  #homeHeader .home-world-popover{animation:none}
  #homeHeader .home-world-choice{transition:none}
 }
-</style><link rel="stylesheet" href="assets/composer-intent.css?v=11"><link rel="stylesheet" href="assets/onboarding.css?v=4"><link rel="stylesheet" href="assets/welcome.css?v=5"><link rel="stylesheet" href="assets/first-minute.css?v=2"><link rel="stylesheet" href="assets/business-map.css?v=7"><link rel="stylesheet" href="assets/connection-coach.css?v=3"><link rel="stylesheet" href="assets/personal-tasks.css?v=12"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=8"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=16"><link rel="stylesheet" href="assets/orb-mist.css?v=13"><link rel="stylesheet" href="assets/dialog-velvet.css?v=3"><link rel="stylesheet" href="assets/notebook-smart.css?v=15"><link rel="stylesheet" href="assets/notebook-paper.css?v=10"><link rel="stylesheet" href="assets/notebook-scan.css?v=5"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=2"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=9"><link rel="stylesheet" href="assets/calendar.css?v=32"><link rel="stylesheet" href="assets/calendar-reminders.css?v=1"><link rel="stylesheet" href="assets/calendar-spaces.css?v=11"><link rel="stylesheet" href="assets/sections-velvet.css?v=7"><link rel="stylesheet" href="assets/personal-wellness.css?v=11"><link rel="stylesheet" href="assets/interaction-focus.css?v=1"><link rel="stylesheet" href="assets/management-previews.css?v=1"><link rel="stylesheet" href="assets/first-help.css?v=3"><link rel="stylesheet" href="assets/assistant-intents.css?v=1"><link rel="stylesheet" href="assets/adaptive-workspace.css?v=1"><link rel="stylesheet" href="assets/seyveo-premiere.css?v=1"><link rel="stylesheet" href="assets/living-conversation.css?v=13"><link rel="stylesheet" href="assets/conversation-refined.css?v=6"><link rel="stylesheet" href="assets/floating-navigation.css?v=7"><link rel="stylesheet" href="assets/future-surfaces.css?v=4"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-world-trigger" type="button" aria-label="Мой мир: выбрать раздел" title="Мой мир" aria-haspopup="true" aria-expanded="false" aria-controls="homeWorldPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c-4.5 4.5-4.5 12.1 0 16.6M12 3.7c4.5 4.5 4.5 12.1 0 16.6"/></svg></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13.5 14h2"/></svg><span>Календарь</span></button><button type="button" class="home-world-choice" data-world-space="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="world"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Люди и связи</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
+</style><link rel="stylesheet" href="assets/composer-intent.css?v=11"><link rel="stylesheet" href="assets/onboarding.css?v=4"><link rel="stylesheet" href="assets/welcome.css?v=5"><link rel="stylesheet" href="assets/first-minute.css?v=2"><link rel="stylesheet" href="assets/business-map.css?v=7"><link rel="stylesheet" href="assets/connection-coach.css?v=3"><link rel="stylesheet" href="assets/personal-tasks.css?v=12"><link rel="stylesheet" href="assets/passport-cards.css?v=7"><link rel="stylesheet" href="assets/home-velvet.css?v=8"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=16"><link rel="stylesheet" href="assets/orb-mist.css?v=13"><link rel="stylesheet" href="assets/dialog-velvet.css?v=3"><link rel="stylesheet" href="assets/notebook-smart.css?v=15"><link rel="stylesheet" href="assets/notebook-paper.css?v=10"><link rel="stylesheet" href="assets/notebook-scan.css?v=5"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=2"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=9"><link rel="stylesheet" href="assets/calendar.css?v=32"><link rel="stylesheet" href="assets/calendar-reminders.css?v=1"><link rel="stylesheet" href="assets/calendar-spaces.css?v=11"><link rel="stylesheet" href="assets/sections-velvet.css?v=7"><link rel="stylesheet" href="assets/personal-wellness.css?v=11"><link rel="stylesheet" href="assets/interaction-focus.css?v=1"><link rel="stylesheet" href="assets/management-previews.css?v=1"><link rel="stylesheet" href="assets/first-help.css?v=3"><link rel="stylesheet" href="assets/assistant-intents.css?v=1"><link rel="stylesheet" href="assets/adaptive-workspace.css?v=1"><link rel="stylesheet" href="assets/seyveo-premiere.css?v=1"><link rel="stylesheet" href="assets/living-conversation.css?v=13"><link rel="stylesheet" href="assets/conversation-refined.css?v=6"><link rel="stylesheet" href="assets/floating-navigation.css?v=8"><link rel="stylesheet" href="assets/future-surfaces.css?v=4"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-world-trigger" type="button" aria-label="Мой мир: выбрать раздел" title="Мой мир" aria-haspopup="true" aria-expanded="false" aria-controls="homeWorldPopover"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c-4.5 4.5-4.5 12.1 0 16.6M12 3.7c4.5 4.5 4.5 12.1 0 16.6"/></svg></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13.5 14h2"/></svg><span>Календарь</span></button><button type="button" class="home-world-choice" data-world-space="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="world"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Люди и связи</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Паспорт SEYVEO или карточка компании">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
 <defs>
@@ -857,7 +808,6 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
   <circle class="voice-dot" cx="52.8" cy="37" r="1.5"/>
 </g>
 </svg><span class="dock-assistant-label" aria-hidden="true">Сэйви</span></button>
-<span class="ask-caption" aria-hidden="true">Помощник</span>
 <button type="button" id="navPicture" class="nav-item nav-picture" aria-label="Картина"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5V14M9.5 19.5V9.5M14.5 19.5v-6M19.5 19.5V5"/></svg><span>Картина</span></button>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><dialog id="assistantQuickSettings" class="assistant-quick-settings" aria-labelledby="assistantQuickSettingsTitle">
