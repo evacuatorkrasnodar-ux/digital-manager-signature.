@@ -660,6 +660,46 @@ $('calendarEventDialog').addEventListener('click',event=>{
 window.SEYVEO_CALENDAR_DATE=iso;
 window.addEventListener('seyveo:calendar-open',()=>{render()});
 window.addEventListener('seyveo:spaces-changed',()=>{if(!page.hidden)render()});
+/* Explicit assistant appointments: save local appointments immediately when
+ * well-defined; ask for clarification on clashes or missing meeting time.
+ * The source store and rendering stay owned by Calendar, not the assistant. */
+window.addEventListener('seyveo:calendar-save-from-ask',event=>{
+ const plan=event.detail;
+ if(!plan||plan.status!=='ready')return;
+ const title=typeof plan.title==='string'?plan.title.trim().replace(/\s+/g,' ').slice(0,140):'';
+ const date=typeof plan.date==='string'?plan.date:'';
+ const time=typeof plan.time==='string'?plan.time:'';
+ const finish=(status,message)=>{plan.result={status,message}};
+ if(!title||!at(date)||time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){
+  finish('clarify','Уточни, пожалуйста, название, день или время события.');return;
+ }
+ if(!time&&/\b(?:встреча|встречу|звонок|при[её]м|собеседование)\b/i.test(title)){
+  finish('clarify','Во сколько будет встреча? Назови время, и я запишу её.');return;
+ }
+ const all=events();
+ const identity=t=>t.trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
+ if(all.some(x=>x.date===date&&x.time===time&&identity(x.title)===identity(title))){
+  finish('already','Такое событие уже сохранено.');return;
+ }
+ if(all.length>=MAX){finish('full','В календаре уже 300 событий. Для новых нужно освободить место.');return;}
+ if(time){
+  const collides=timeCollision(date,time);
+  const near=window.SEYVEO_CALENDAR_TIME?.nearest(all,date,time,null,{duration:60,travel:0});
+  if(collides||near){
+   const titleOf=(collides||near).title.slice(0,60);
+   finish('clarify','В это время уже есть или близко другое событие — «'+titleOf+'». Назови другое время или открой календарь.');return;
+  }
+ }
+ const now=new Date().toISOString();
+ const entry={
+  id:'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
+  title,date,time,kind:'personal',duration:0,travel:0,remind:0,note:'',createdAt:now,updatedAt:now
+ };
+ if(!saveEvents([...all,entry])){finish('error','Не удалось сохранить событие. Проверь память устройства.');return;}
+ if(!page.hidden)updateFocus(at(date));
+ window.dispatchEvent(new Event('seyveo:calendar-changed'));
+ finish('saved','Событие добавлено в календарь.');
+});
 /* Assistant scheduling requests prepare a draft, never save without approval. */
 window.addEventListener('seyveo:calendar-from-ask',event=>{
  const plan=event.detail;

@@ -22,3 +22,7 @@ jobs:
         run: node tools/check-quality.cjs
       - name: Test local calendar reminders
         run: node tools/test-calendar-reminders.cjs
+      - name: Test spoken and typed task commands
+        run: node tools/test-task-natural.cjs
+      - name: Test one-step local actions
+        run: node tools/test-local-actions.cjs

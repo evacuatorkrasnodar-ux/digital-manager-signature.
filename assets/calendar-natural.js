@@ -8,7 +8,7 @@ const sentence=s=>s.charAt(0).toLocaleUpperCase('ru-RU')+s.slice(1);
 function parseCalendarInstruction(input,now=new Date()){
  const request=String(input||'').trim().replace(/\s+/g,' ').slice(0,500);
  const lower=request.toLocaleLowerCase('ru-RU');
- const intro=lower.match(/^(?:(?:seyveo|сейвео)[,!\s]+)?(?:пожалуйста[,\s]+)?(запиши|запланируй|назначь|добавь|создай|поставь)(?=\s|$|[,!?.:])/);
+ const intro=lower.match(/^(?:(?:сэйви|сейви|сэй|сей|seyveo|сейвео)[,!\s]+)?(?:пожалуйста[,\s]+)?(запиши|запланируй|назначь|добавь|создай|поставь)(?=\s|$|[,!?.:])/);
  if(!intro)return null;
  let body=request.slice(intro[0].length).trim();
  const bodyLower=body.toLocaleLowerCase('ru-RU');

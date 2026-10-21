@@ -4,7 +4,7 @@
 function parseNoteInstruction(input){
  const phrase=String(input||'').trim().replace(/\s+/g,' ').slice(0,2800);
  if(!phrase)return null;
- let body=phrase.replace(/^(?:seyveo|сейвео|севео|сейво)\s*[,!:.]?\s*/i,'')
+ let body=phrase.replace(/^(?:сэйви|сейви|сэй|сей|seyveo|сейвео|севео|сейво)\s*[,!:.]?\s*/i,'')
   .replace(/^пожалуйста[,\s]*/i,'').trim();
  const boundary='(?=\\s|$|[,:.!?—–-])';
  const cmds=[
