@@ -2,24 +2,20 @@
  * Workspaces only; never repaint Home plasma, chat, or dock geometry.
  * No lasers, glowing grids or looping decoration. */
 :root{
- --future-edge:rgba(163,224,194,.18);
- --future-wash:rgba(87,170,128,.12);
- --future-soft:rgba(216,249,228,.065);
- --future-ink:#a8dfbd;
+ --future-edge:rgba(185,197,217,.18);
+ --future-wash:rgba(141,157,187,.075);
+ --future-soft:rgba(232,239,250,.060);
+ --future-ink:#c9d3e1;
  --future-shadow:rgba(0,0,0,.13);
 }
 :root[data-theme=light]{
- --future-edge:rgba(41,117,79,.18);
- --future-wash:rgba(75,157,115,.075);
+ --future-edge:rgba(95,113,141,.18);
+ --future-wash:rgba(110,130,158,.055);
  --future-soft:rgba(255,255,255,.65);
- --future-ink:#267356;
- --future-shadow:rgba(37,89,59,.055);
+ --future-ink:#50627b;
+ --future-shadow:rgba(51,66,89,.055);
 }
-:is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage):not([hidden]){
- background-image:radial-gradient(ellipse 95% 215px at 50% 0,var(--future-wash),transparent 84%);
- background-repeat:no-repeat;
- background-size:100% 315px;
-}
+/* Deliberately no ambient page-wide tint: flat Black / White Velvet. */
 :is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage) h1{
  font-weight:530!important;letter-spacing:-.047em!important;
 }
@@ -94,12 +90,12 @@
 /* Future v2 · One tactile language for working screens only.
  * Touch highlights do not move controls, alter geometry or animate at idle. */
 :root{
- --future-touch:rgba(83,159,119,.155);
- --future-touch-shadow:rgba(2,16,10,.12);
+ --future-touch:rgba(147,162,188,.13);
+ --future-touch-shadow:rgba(10,15,27,.12);
 }
 :root[data-theme=light]{
- --future-touch:rgba(49,132,90,.105);
- --future-touch-shadow:rgba(21,62,41,.065);
+ --future-touch:rgba(94,113,143,.10);
+ --future-touch-shadow:rgba(35,50,73,.065);
 }
 /* Calendar and Life use the same quiet glass rim as the other workspaces. */
 #calendarPage :is(.cal-month,.cal-week-grid,.calendar-spaces-grid),
