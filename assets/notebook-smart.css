@@ -531,3 +531,11 @@
 @media(max-width:370px){
  #noteReadDialog .note-smart-insight[open]{max-height:44svh}
 }
+
+
+/* Unified Experience: notebook grows with notes; preserves scrolling on overflow. */
+#notesDialog.notes-dialog[open]{height:auto;max-height:min(840px,calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px))}
+#notesDialog.notes-dialog[open] .notes-list:not(.is-empty){flex:0 1 auto;max-height:calc(100svh - 155px)}
+#notesDialog.notes-dialog[open] .notes-list.is-empty{flex:1 1 auto;min-height:220px}
+#notesDialog .note-open p{font-weight:420!important;line-height:1.47}
+@media(max-height:540px){#notesDialog.notes-dialog[open]{height:auto;max-height:calc(100svh - 14px)}}
