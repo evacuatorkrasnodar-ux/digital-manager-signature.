@@ -70,8 +70,8 @@ function microphone(id){
 const compact=$('ask').querySelector('.composer-compact');
 const composerHead=$('ask').querySelector('.composer-head');
 if(compact)compact.insertBefore(microphone('seyveoConversationMic'),compact.querySelector('#composerCompactSend'));
-// One quiet down-arrow INSIDE the chat writer. It closes the conversation,
-// restores Home and preserves any unsent draft via the existing close routine.
+// One quiet down-arrow INSIDE the chat writer only dismisses the keyboard.
+// Back and History now live in the SAME composer row, with a passive Sayvi name.
 const fold=document.createElement('button');
 fold.type='button';fold.id='seyveoComposerFold';
 fold.className='composer-icon seyveo-composer-fold';
