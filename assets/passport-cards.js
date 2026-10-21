@@ -287,8 +287,8 @@ const status=$('seyveoAvatarStatus'),entry=$('seyveoCompanyAvatarEdit');
 if(!picker||!gallery||!file||!entry)return;
 const KEY='seyveo-owner-avatar-v1';
 const OPTIONS=[
- ['onyx','Оникс'],['silver','Серебро'],['orbit','Орбита'],
- ['prism','Призма'],['silhouette','Силуэт'],['monogram','Монограмма']
+ ['onyx','Оникс'],['silver','Серебро'],['line','Контур'],
+ ['velvet','Бархат'],['silhouette','Силуэт'],['monogram','Монограмма']
 ];
 const valid=new Set(OPTIONS.map(item=>item[0]));
 function getInitials(){
