@@ -89,3 +89,61 @@
   animation:none!important;
  }
 }
+
+
+/* Future v2 · One tactile language for working screens only.
+ * Touch highlights do not move controls, alter geometry or animate at idle. */
+:root{
+ --future-touch:rgba(83,159,119,.155);
+ --future-touch-shadow:rgba(2,16,10,.12);
+}
+:root[data-theme=light]{
+ --future-touch:rgba(49,132,90,.105);
+ --future-touch-shadow:rgba(21,62,41,.065);
+}
+/* Calendar and Life use the same quiet glass rim as the other workspaces. */
+#calendarPage :is(.cal-month,.cal-week-grid,.calendar-spaces-grid),
+#lifePage .calendar-spaces-grid{
+ border-color:var(--future-edge)!important;
+ box-shadow:inset 0 1px 0 var(--future-soft),0 5px 17px var(--future-shadow)!important;
+}
+#calendarPage .calendar-space-button{
+ border-color:var(--future-edge)!important;
+ background-image:linear-gradient(155deg,var(--future-soft),transparent 66%)!important;
+}
+/* Actual actions respond to a finger, keyboard or pointer.
+ * Dense day cells and the Home/assistant dock are intentionally excluded. */
+#calendarPage :is(.calendar-space-button,.cal-periods button,.cal-advice-action,.cal-day-fab),
+#picturePage :is(.picture-tabs button,.picture-full-report),
+#tasksPage :is(.tasks-switch button,.personal-tasks-add,.personal-task-origin),
+#lifePage :is(.calendar-space-button,.life-back),
+#managePage :is(.manage-row,.manage-theme-choice,.manage-theme-back){
+ -webkit-tap-highlight-color:transparent;
+ transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+#calendarPage :is(.calendar-space-button,.cal-periods button,.cal-advice-action,.cal-day-fab):active:not(:disabled),
+#picturePage :is(.picture-tabs button,.picture-full-report):active:not(:disabled),
+#tasksPage :is(.tasks-switch button,.personal-tasks-add,.personal-task-origin):active:not(:disabled),
+#lifePage :is(.calendar-space-button,.life-back):active:not(:disabled),
+#managePage :is(.manage-row,.manage-theme-choice,.manage-theme-back):active:not(:disabled){
+ background-color:var(--future-touch)!important;
+ box-shadow:inset 0 0 0 1px var(--future-edge),
+            inset 0 2px 7px var(--future-touch-shadow)!important;
+}
+#calendarPage :is(.calendar-space-button,.cal-advice-action,.cal-day-fab):focus-visible,
+#picturePage :is(.picture-full-report,.picture-tabs button):focus-visible,
+#tasksPage :is(.tasks-switch button,.personal-tasks-add,.personal-task-origin):focus-visible,
+#lifePage :is(.life-back,.calendar-space-button):focus-visible,
+#managePage :is(.manage-theme-choice,.manage-theme-back):focus-visible{
+ outline:2px solid var(--future-ink)!important;
+ outline-offset:2px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage :is(.calendar-space-button,.cal-periods button,.cal-advice-action,.cal-day-fab),
+ #picturePage :is(.picture-tabs button,.picture-full-report),
+ #tasksPage :is(.tasks-switch button,.personal-tasks-add,.personal-task-origin),
+ #lifePage :is(.calendar-space-button,.life-back),
+ #managePage :is(.manage-row,.manage-theme-choice,.manage-theme-back){
+  transition:none!important;
+ }
+}
