@@ -170,6 +170,17 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  }
 }
 
+/* iOS Home Screen: one shared position token across ALL tabs.
+ * Standalone WebKit already accounts for part of the home-indicator inset
+ * in its fixed viewport. Subtract the top inset only in portrait standalone,
+ * clamp above zero to keep the entire rounded dock visible. This changes no
+ * workspace-specific geometry and leaves Safari's native position intact. */
+@media(max-width:700px) and (orientation:portrait){
+ html.seyveo-standalone:not(.seyveo-conversation){
+  --seyveo-dock-bottom:max(2px,calc(8px + env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)));
+ }
+}
+
 /* One viewport model for every installed PWA workspace, not one per tab.
  * Scroll the content inside the fixed .app frame; the ONE body-level dock
  * remains outside this scroll surface. Chat has its own keyboard viewport. */
