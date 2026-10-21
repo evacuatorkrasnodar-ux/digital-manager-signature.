@@ -43,7 +43,7 @@ assert.ok(!css.includes('data-seyveo-view="home"'),'No Home-only dock overrides'
 const inline=html.slice(html.indexOf('<style>'),html.indexOf('</style>'));
 assert.doesNotMatch(inline,/\.dock\s*\{|\.nav-item\s*\{|\.assistant-button\s*\{/,'No obsolete inline dock geometry or overlays');
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'One persistent dock in the DOM');
-assert.ok(html.includes('assets/conversation-refined.css?v=6'),'Chat fixes are cache-busted');
+assert.ok(html.includes('assets/conversation-refined.css?v=7'),'Open Canvas chat CSS is cache-busted');
 assert.ok(!chatCss.includes('seyveo-name-thinking'),'Sayvi letters no longer move');
 assert.ok(chatCss.includes('animation:none!important;transform:none!important;opacity:1!important'),'Sayvi name is fixed');
 assert.ok(chatCss.includes('animation:seyveo-dot-thinking .78s ease-in-out infinite'),'Only nearby dots retain working animation');
