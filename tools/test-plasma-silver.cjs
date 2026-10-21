@@ -18,12 +18,10 @@ for(const [label,svg] of [['dark',dark],['light',light]]){
 }
 assert.match(dark,/<stop stop-color="#202b3f"\/>/,'Original dark graphite restored');
 assert.match(light,/<stop stop-color="#f8faff"\/>/,'Original White Velvet pearl body restored');
-assert.match(light,/<radialGradient id="pearl-core" cx="\.49" cy="\.52" r="\.57">/,'One soft inner pearl core, no thickened stripes');
-assert.match(light,/<stop stop-color="#253246" stop-opacity="\.56"\/>/,'Core has actual graphite depth');
-assert.match(light,/<circle cx="260" cy="250" r="168" fill="url\(#pearl-core\)"\/>/,'Core lives inside unchanged glass shell');
-assert.match(light,/<stop offset="\.36" stop-color="#7f93ab" stop-opacity="\.44"\/>/,'Historical gentle silver filaments restored');
-assert.match(light,/<stop offset="\.13" stop-color="#fdfdff" stop-opacity="\.39"\/>/,'Historical flowing pearl silk restored');
-assert.doesNotMatch(light,/#53677c|#64788e|#566b81|#6c7e91/,'No new dark stripe palette');
+assert.doesNotMatch(light,/pearl-core|#253246|#51637b|#859bb1/,'No artificial smoky inner core');
+assert.ok(light.includes('<stop offset=".36" stop-color="#7f93ab" stop-opacity=".44"/>'),'Original transparent filaments');
+assert.ok(light.includes('<stop offset=".13" stop-color="#fdfdff" stop-opacity=".39"/>'),'Original soft silk');
+assert.equal((light.match(/<circle cx="260" cy="250"/g)||[]).length,3,'Original body, edgewash and rim only');
 assert.equal(html.split('plasma-signature.svg?v=18').length-1,2,'Dark asset version linked in HTML and theme handler');
-assert.equal(html.split('plasma-signature-light.svg?v=20').length-1,1,'Light asset version linked in theme handler');
+assert.equal(html.split('plasma-signature-light.svg?v=21').length-1,1,'Light asset version linked in theme handler');
 console.log('PASS SEYVEO original silver sphere and both themes');
