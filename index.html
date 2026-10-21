@@ -1513,7 +1513,7 @@ function applyTheme(){
   // Keep the browser's top chrome consistent with the selected app theme.
   const browserTheme=document.querySelector('meta[name="theme-color"]');
   if(browserTheme)browserTheme.setAttribute('content',resolved==='light'?'#f4f6fa':'#080a0e');
-  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=19':'assets/plasma-signature.svg?v=18';
+  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=20':'assets/plasma-signature.svg?v=18';
   for(const id of ['plasmaVisual']){
     const el=$(id);if(el&&el.getAttribute('src')!==svg)el.setAttribute('src',svg);
   }
