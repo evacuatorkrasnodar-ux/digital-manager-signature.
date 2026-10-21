@@ -11,8 +11,8 @@ assert.equal(dueReminders([due],before-1).length,0,'Do not notify before lead ti
 assert.equal(dueReminders([due],before).length,1,'Notify at chosen lead time');
 assert.equal(dueReminders([due],middle)[0].item.id,'a','Notify inside lead window');
 assert.equal(dueReminders([due],at(day,12,30)).length,0,'No stale alert at/after start');
-assert.equal(dueReminders([due,other],at(day,12,30)).length,0,'No alert after first, before second');
-assert.equal(dueReminders([due,other],at(day,12,31)).length,0,'Do not show past appointments');
+assert.equal(dueReminders([due,other],at(day,12,30))[0].item.id,'b','Second event becomes due when first begins');
+assert.equal(dueReminders([due,other],at(day,12,31)).length,1,'Keep upcoming event visible inside its lead window');
 assert.equal(dueReminders([due,other],at(day,12,42))[0].item.id,'b','Later event triggered');
 assert.equal(dueReminders([due],middle,new Set([reminderKey(due)])).length,0,'Once per session');
 assert.equal(dueReminders([{...due,date:'2026-02-30'}],middle).length,0,'Reject impossible date');
