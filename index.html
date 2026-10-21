@@ -1205,20 +1205,21 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div class="seyveo-account-summary-head"><span>МОЯ ПОДПИСКА · ПРИМЕР</span><span class="seyveo-account-mock-pill">Демо</span></div>
 <h3 id="seyveoAccountCurrentPlan">Business Pro</h3>
 <p id="seyveoAccountPlanDesc">Для действующего бизнеса</p>
-<div class="seyveo-account-summary-rows"><div><span>Статус</span><strong>Образец активного тарифа</strong></div><div><span>Оплаченный период до</span><strong>21 ноября 2026 · пример</strong></div><div><span>Продление</span><strong id="seyveoAccountRenewValue">Автоматическое · пример</strong></div></div>
+<div class="seyveo-account-summary-rows"><div><span>Статус</span><strong>Образец активного тарифа</strong></div><div><span>Оплаченный период до</span><strong id="seyveoAccountSampleExpiry">21 ноября 2026 · пример</strong></div><div><span>Продление</span><strong id="seyveoAccountRenewValue">Автоматическое · пример</strong></div></div>
 <button type="button" class="seyveo-account-primary" data-seyveo-account-go="plans">Управлять тарифом</button>
 </article>
 <div class="seyveo-account-quiet-row"><span>История платежей и чеки</span><button type="button" data-seyveo-account-go="billing">Посмотреть <span aria-hidden="true">›</span></button></div>
 </section>
 <section class="seyveo-account-panel" data-seyveo-account-panel="plans" aria-label="Выбор тарифа" hidden>
 <div class="seyveo-account-section-head"><h3>Выберите возможности</h3><p>Тарифы ниже — макеты будущих уровней. Стоимость ещё не утверждена.</p></div>
+<div class="seyveo-account-period" role="group" aria-label="Период подписки в примере"><button type="button" data-seyveo-period="month" aria-pressed="true">Месяц</button><button type="button" data-seyveo-period="year" aria-pressed="false">Год</button></div>
 <div id="seyveoAccountTierCards" class="seyveo-account-tier-list"></div>
 <div class="seyveo-account-choice-note" id="seyveoAccountTierMessage" aria-live="polite">Выбор не изменяет доступ в приложении.</div>
 <button type="button" id="seyveoAccountApplyPlan" class="seyveo-account-primary">Применить только в примере</button>
 </section>
 <section class="seyveo-account-panel" data-seyveo-account-panel="billing" aria-label="Оплата и продление" hidden>
 <div class="seyveo-account-section-head"><h3>Оплата и продление</h3><p>Здесь в будущем будут способы оплаты, даты списаний и чеки.</p></div>
-<div class="seyveo-account-billing-card"><div class="seyveo-account-billing-row"><div><strong>Автопродление</strong><small id="seyveoAccountAutoLabel">Включено в примере</small></div><button id="seyveoAccountAutoRenew" type="button" role="switch" aria-checked="true" aria-label="Автопродление в примере" class="seyveo-account-switch"><span></span></button></div><div class="seyveo-account-billing-row"><div><strong>Следующая дата</strong><small>21 ноября 2026 · условная</small></div><span id="seyveoAccountBillingStatus">Будет продлено · пример</span></div><div class="seyveo-account-billing-row"><div><strong>Банковская карта</strong><small>Платёжный сервис ещё не подключён</small></div><span>Нет карты</span></div></div>
+<div class="seyveo-account-billing-card"><div class="seyveo-account-billing-row"><div><strong>Автопродление</strong><small id="seyveoAccountAutoLabel">Включено в примере</small></div><button id="seyveoAccountAutoRenew" type="button" role="switch" aria-checked="true" aria-label="Автопродление в примере" class="seyveo-account-switch"><span></span></button></div><div class="seyveo-account-billing-row"><div><strong>Следующая дата</strong><small id="seyveoAccountSampleNextDate">21 ноября 2026 · условная</small></div><span id="seyveoAccountBillingStatus">Будет продлено · пример</span></div><div class="seyveo-account-billing-row"><div><strong>Банковская карта</strong><small>Платёжный сервис ещё не подключён</small></div><span>Нет карты</span></div></div>
 <button type="button" id="seyveoAccountTryCheckout" class="seyveo-account-secondary">Посмотреть, как будет проходить продление</button>
 <div id="seyveoAccountCheckoutPreview" class="seyveo-account-checkout" hidden><strong>Подтверждение продления · пример</strong><p>Пользователь сначала увидит тариф, точную сумму, период и правила продления, затем подтвердит оплату на защищённой странице провайдера. Сейчас здесь нет ни платежей, ни переходов в банк.</p><button id="seyveoAccountCloseCheckout" type="button">Понятно</button></div>
 <div class="seyveo-account-section-head seyveo-account-history-head"><h3>История платежей</h3><p>Нет реальных операций. После оплаты здесь появятся дата, сумма, статус и чек.</p></div>
