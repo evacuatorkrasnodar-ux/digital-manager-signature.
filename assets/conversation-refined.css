@@ -57,7 +57,7 @@ html.seyveo-conversation #stage .orb-inline-reply-text{
  flex:1 1 auto;box-sizing:border-box;
  width:100%;height:100%!important;min-height:0!important;
  max-height:none!important;overflow-y:auto!important;overflow-x:hidden;
- margin:0!important;padding:9px 2px 16px!important;
+ margin:0!important;padding:5px 2px 10px!important;
  scrollbar-width:none;
  -webkit-overflow-scrolling:touch;
  overscroll-behavior:contain;
@@ -77,12 +77,12 @@ html.seyveo-conversation .seyveo-chat-welcome p{
 }
 html.seyveo-conversation .seyveo-conversation-turn{
  box-sizing:border-box;max-width:100%;
- min-width:0;display:flex;flex-direction:column;gap:6px;
- margin:0 0 18px;
+ min-width:0;display:flex;flex-direction:column;gap:4px;
+ margin:0 0 11px;
 }
 html.seyveo-conversation .seyveo-conversation-turn--you{
  align-self:flex-end;width:max-content;max-width:min(88%,420px);
- margin:5px 0 20px auto;padding:11px 15px 12px;
+ margin:3px 0 12px auto;padding:9px 12px 10px;
  color:#f7f9fc;
  background:linear-gradient(145deg,#2a4569,#1d324e);
  border:1px solid rgba(176,205,236,.18);
@@ -97,7 +97,7 @@ html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-bod
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
  align-self:stretch;width:100%;max-width:100%;
- gap:6px;margin:0 0 22px!important;padding:0 2px!important;
+ gap:4px;margin:0 0 12px!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;
  background:none!important;box-shadow:none!important;
 }
@@ -105,7 +105,7 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-s
  color:var(--secondary);font-size:11px;font-weight:540;letter-spacing:.015em;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
- color:var(--text)!important;font-size:15px;line-height:1.65;
+ color:var(--text)!important;font-size:15px;line-height:1.55;
  font-weight:410;white-space:pre-wrap;overflow-wrap:anywhere;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
@@ -133,9 +133,11 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  align-items:stretch!important;justify-content:center;
  gap:1px!important;
  width:min(518px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
- min-height:94px!important;height:auto!important;max-height:168px!important;
- padding:11px 12px 9px!important;
- bottom:calc(12px + env(safe-area-inset-bottom,0px) + var(--keyboard-offset,0px))!important;
+ min-height:84px!important;height:auto!important;max-height:158px!important;
+ padding:6px 10px 5px!important;
+ /* On iPhone X: env(bottom)=34px -> 22px from the physical edge.
+    Preserve the rounded border and the home-indicator gesture region. */
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
  border:1px solid var(--line)!important;
  border-radius:25px!important;
  background:linear-gradient(155deg,rgba(220,230,245,.065),transparent 72%),var(--card)!important;
@@ -322,10 +324,10 @@ html.seyveo-conversation #stage > .orb-inline-reply{
 html.seyveo-conversation .seyveo-conversation-user-group{
  display:flex;flex-direction:column;align-items:flex-end;
  width:100%;max-width:100%;min-width:0;
- gap:0;margin:3px 0 15px;
+ gap:0;margin:1px 0 7px;
 }
 html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-turn--you{
- align-self:flex-end;margin:0 0 1px auto!important;
+ align-self:flex-end;margin:0 0 0 auto!important;
  max-width:min(88%,420px);width:max-content;
 }
 html.seyveo-conversation .seyveo-conversation-user-actions{
@@ -338,7 +340,7 @@ html.seyveo-conversation .seyveo-conversation-user-actions .seyveo-conversation-
 }
 html.seyveo-conversation .seyveo-conversation-reply-actions{
  justify-content:flex-start!important;align-items:center;
- gap:1px!important;margin:2px 0 0!important;
+ gap:1px!important;margin:0!important;
  min-height:40px!important;padding:0!important;
  overflow-x:auto;scrollbar-width:none;
 }
