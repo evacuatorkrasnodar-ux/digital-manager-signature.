@@ -39,11 +39,12 @@ function portrait(width,height,safeBottom){
  const pad=compact?5:7,gap=compact?1:3;
  const cell=(dockWidth-2-2*pad-gap*4)/5;
  const top=height-(safeBottom+8)-64;
- const center=width/2; // centered fixed dock, third equal-width grid column
+ const dockLeft=(width-dockWidth)/2;
+ const assistantCenter=dockLeft+1+pad+2*(cell+gap)+cell/2;
  assert.ok(cell>=44,'Each tab stays at least 44px wide');
  assert.ok(top>0,'Dock fits portrait screen');
  assert.ok(safeBottom+8>safeBottom,'Dock clears home indicator safe area');
- assert.ok(Math.abs(center-width/2)<.001,'Sayvi stays horizontally centered');
+ assert.ok(Math.abs(assistantCenter-width/2)<.001,'Sayvi stays horizontally centered');
  return {width,height,safeBottom,dockWidth,cell:Math.round(cell*10)/10,dockTop:top,dockBottom:height-safeBottom-8};
 }
 const iPhoneX=portrait(375,812,34);
