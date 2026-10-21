@@ -170,3 +170,38 @@
   animation:none;display:none;
  }
 }
+
+
+/* Future v4 · One contextual decision in Tasks, shown only for real due dates. */
+#tasksPage #tasksContextFocus[hidden]{display:none!important}
+#tasksPage .tasks-context-focus{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ box-sizing:border-box;min-width:0;padding:10px 11px 10px 14px;margin:0 0 15px;
+ border:1px solid var(--future-edge);border-radius:18px;
+ background:linear-gradient(125deg,var(--future-wash),transparent 68%),var(--card);
+ box-shadow:inset 0 1px 0 var(--future-soft);
+}
+#tasksPage .tasks-context-copy{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+#tasksPage .tasks-context-kicker{
+ color:var(--future-ink);font-size:10px;font-weight:550;
+ letter-spacing:.035em;line-height:1.35
+}
+#tasksPage .tasks-context-copy strong{
+ color:var(--text);font-size:13px;font-weight:540;
+ line-height:1.35;letter-spacing:-.015em;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+#tasksPage .tasks-context-open{
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;
+ min-height:44px;min-width:76px;padding:9px 11px;
+ font:inherit;font-weight:540;font-size:11px;white-space:nowrap;
+ color:var(--text);border:1px solid var(--future-edge);border-radius:999px;
+ background:var(--card2);-webkit-tap-highlight-color:transparent;
+}
+#tasksPage .tasks-context-open:active{background:var(--future-touch)}
+#tasksPage .tasks-context-open:focus-visible{outline:2px solid var(--future-ink);outline-offset:2px}
+#tasksPage .personal-task-row{scroll-margin-bottom:108px}
+@media(max-width:360px){
+ #tasksPage .tasks-context-focus{padding:9px 8px 9px 11px;gap:7px}
+ #tasksPage .tasks-context-open{min-width:68px;padding-inline:8px}
+}
