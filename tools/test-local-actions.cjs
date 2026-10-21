@@ -39,5 +39,5 @@ assert.equal(notes[0].text,'Новая идея');
 assert.equal(handle('Запомни мысль: новая идея').status,'already');
 assert.equal(handle('Вызови такси'),null,'Do not pretend to book taxis');
 assert.equal(handle('Сделай покупку'),null,'Do not pretend to shop');
-assert.equal(handle('Привет, Сэйви').status,null);
+assert.equal(handle('Привет, Сэйви'),null,'Greetings are not actions');
 console.log('SEYVEO direct local actions: 12 checks passed');
