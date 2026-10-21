@@ -278,7 +278,8 @@ window.addEventListener('seyveo:profile-changed',fillPreview);
 fillPreview();
 })();
 
-/* SEYVEO Signature Avatars · local-only, independent of company records. */
+/* SEYVEO Black Velvet · Signature Portrait.
+   Only one local avatar value, with graceful migration from former presets. */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -287,10 +288,13 @@ const status=$('seyveoAvatarStatus'),entry=$('seyveoCompanyAvatarEdit');
 if(!picker||!gallery||!file||!entry)return;
 const KEY='seyveo-owner-avatar-v1';
 const OPTIONS=[
- ['onyx','Оникс'],['silver','Серебро'],['line','Контур'],
- ['velvet','Бархат'],['silhouette','Силуэт'],['monogram','Монограмма']
+ ['monogram','Инициалы','Лаконичный личный знак'],
+ ['silhouette','Силуэт','Сдержанный силуэт'],
+ ['line','Контур','Графическая линия'],
+ ['velvet','Бархат','Мягкая светотень']
 ];
 const valid=new Set(OPTIONS.map(item=>item[0]));
+const renamed={onyx:'silhouette',silver:'line',orbit:'line',prism:'velvet'};
 function getInitials(){
  let name='Роман';
  try{
@@ -298,21 +302,25 @@ function getInitials(){
   if(typeof profile?.name==='string'&&profile.name.trim())name=profile.name.trim();
  }catch{}
  const words=name.split(/\s+/).filter(Boolean);
- return (words.length>1?words.slice(0,2).map(x=>x[0]).join(''):name.slice(0,2)).toLocaleUpperCase('ru-RU');
+ return (words.length>1?words.slice(0,2).map(x=>x[0]).join(''):name.slice(0,1)).toLocaleUpperCase('ru-RU');
 }
 function read(){
  try{
   const obj=JSON.parse(localStorage.getItem(KEY)||'null');
-  if(obj?.kind==='preset'&&valid.has(obj.id))return obj;
+  if(obj?.kind==='preset'){
+   const id=renamed[obj.id]||obj.id;
+   if(valid.has(id))return {kind:'preset',id};
+  }
   if(obj?.kind==='photo'&&typeof obj.data==='string'&&obj.data.length<320000
-    &&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(obj.data))return obj;
+     &&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(obj.data))return obj;
  }catch{}
- return {kind:'preset',id:'onyx'};
+ return {kind:'preset',id:'monogram'};
 }
 let choice=read();
 function paintAvatar(node,data){
  if(!node)return;
- node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.id)+(node.id==='seyveoOwnerAvatarPreview'?' seyveo-owner-avatar':'');
+ node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.id)
+   +(node.id==='seyveoOwnerAvatarPreview'?' seyveo-owner-avatar':'');
  node.replaceChildren();
  if(data.kind==='photo'){
   const img=document.createElement('img');img.alt='';img.src=data.data;node.append(img);
@@ -322,21 +330,27 @@ function paintAvatar(node,data){
  }
 }
 function paint(){
- paintAvatar($('seyveoHeaderAvatar'),choice);
- paintAvatar($('seyveoOwnerAvatarPreview'),choice);
+ for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoAvatarHero']){
+  paintAvatar($(id),choice);
+ }
+ const selected=choice.kind==='photo'?['Фото','Ваше изображение']:
+   (OPTIONS.find(([id])=>id===choice.id)||OPTIONS[0]).slice(1);
+ const title=$('seyveoAvatarHeroName'),sub=$('seyveoAvatarHeroHint');
+ if(title)title.textContent=selected[0];
+ if(sub)sub.textContent=selected[1];
  for(const b of gallery.querySelectorAll('button[data-avatar]')){
   b.setAttribute('aria-pressed',String(choice.kind==='preset'&&choice.id===b.dataset.avatar));
  }
 }
 function save(next){
  try{localStorage.setItem(KEY,JSON.stringify(next))}
- catch{status.textContent='Недостаточно памяти устройства. Аватар не сохранён.';return false}
+ catch{status.textContent='Не удалось сохранить на устройстве. Проверьте свободное место.';return false}
  choice=next;paint();window.dispatchEvent(new Event('seyveo:avatar-changed'));return true;
 }
 for(const [id,name] of OPTIONS){
  const b=document.createElement('button');b.type='button';
  b.className='seyveo-avatar-choice';b.dataset.avatar=id;
- b.setAttribute('aria-label','Выбрать аватар «'+name+'»');
+ b.setAttribute('aria-label','Выбрать образ: '+name);
  const icon=document.createElement('span');paintAvatar(icon,{kind:'preset',id});
  const caption=document.createElement('small');caption.textContent=name;
  b.append(icon,caption);gallery.append(b);
@@ -344,13 +358,17 @@ for(const [id,name] of OPTIONS){
 gallery.addEventListener('click',event=>{
  const b=event.target.closest('button[data-avatar]');
  if(!b||!valid.has(b.dataset.avatar))return;
- if(save({kind:'preset',id:b.dataset.avatar})){status.textContent='Аватар выбран. Он хранится только на этом устройстве.';picker.close()}
+ if(save({kind:'preset',id:b.dataset.avatar})){
+  status.textContent='Образ выбран и сохранён на этом устройстве.';
+ }
 });
 entry.addEventListener('click',()=>{status.textContent='';paint();picker.showModal()});
 $('seyveoAvatarPickPhoto')?.addEventListener('click',()=>file.click());
 $('seyveoAvatarClose')?.addEventListener('click',()=>picker.close());
 $('seyveoAvatarReset')?.addEventListener('click',()=>{
- if(save({kind:'preset',id:'monogram'})){status.textContent='Выбрана монограмма без фотографии.';picker.close()}
+ if(save({kind:'preset',id:'monogram'})){
+  status.textContent='Показаны инициалы без фотографии.';
+ }
 });
 file.addEventListener('change',()=>{
  const imageFile=file.files?.[0];file.value='';
@@ -373,7 +391,9 @@ file.addEventListener('change',()=>{
     ctx.drawImage(img,(img.naturalWidth-side)/2,(img.naturalHeight-side)/2,side,side,0,0,256,256);
     const data=canvas.toDataURL('image/jpeg',.78);
     if(data.length>320000)throw Error('photo too large');
-    if(save({kind:'photo',data})){status.textContent='Фото сохранено только на этом устройстве.';picker.close()}
+    if(save({kind:'photo',data})){
+     status.textContent='Фотография сохранена только на этом устройстве.';
+    }
    }catch{status.textContent='Не удалось подготовить фотографию. Попробуйте другую.'}
   };
   img.src=String(reader.result||'');
