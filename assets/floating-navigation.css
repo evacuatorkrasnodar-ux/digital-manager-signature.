@@ -170,14 +170,14 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  }
 }
 
-/* iOS Home Screen: one shared position token across ALL tabs.
- * Standalone WebKit already accounts for part of the home-indicator inset
- * in its fixed viewport. Subtract the top inset only in portrait standalone,
- * clamp above zero to keep the entire rounded dock visible. This changes no
- * workspace-specific geometry and leaves Safari's native position intact. */
+/* One dock, one bottom token on every PWA workspace.
+ * iOS standalone can report safe-area-inset-top as zero even with a notch;
+ * never subtract that top inset to position something at the BOTTOM.
+ * Keep a reliable visible margin inside the home-indicator area; Safari and
+ * fullscreen chat retain their separate, already-tested layout behavior. */
 @media(max-width:700px) and (orientation:portrait){
  html.seyveo-standalone:not(.seyveo-conversation){
-  --seyveo-dock-bottom:max(2px,calc(8px + env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)));
+  --seyveo-dock-bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 12px));
  }
 }
 
