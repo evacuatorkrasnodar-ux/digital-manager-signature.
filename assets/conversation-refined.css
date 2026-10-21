@@ -97,7 +97,7 @@ html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-bod
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
  align-self:stretch;width:100%;max-width:100%;
- gap:3px;margin:0 0 7px!important;padding:0 2px!important;
+ gap:3px;margin:0 0 4px!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;
  background:none!important;box-shadow:none!important;
 }
@@ -324,7 +324,7 @@ html.seyveo-conversation #stage > .orb-inline-reply{
 html.seyveo-conversation .seyveo-conversation-user-group{
  display:flex;flex-direction:column;align-items:flex-end;
  width:100%;max-width:100%;min-width:0;
- gap:0;margin:0 0 3px;
+ gap:0;margin:0;
 }
 html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-turn--you{
  align-self:flex-end;margin:0 0 0 auto!important;
@@ -333,14 +333,14 @@ html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-tu
 html.seyveo-conversation .seyveo-conversation-user-actions{
  display:flex;justify-content:flex-end;align-items:center;
  gap:1px;min-height:40px;width:auto;
- margin:0 2px 0 auto;padding:0;
+ margin:-4px 2px -7px auto;padding:0;
 }
 html.seyveo-conversation .seyveo-conversation-user-actions .seyveo-conversation-reply-action{
  color:var(--secondary);
 }
 html.seyveo-conversation .seyveo-conversation-reply-actions{
  justify-content:flex-start!important;align-items:center;
- gap:1px!important;margin:0!important;
+ gap:1px!important;margin:-2px 0 -6px!important;
  min-height:40px!important;padding:0!important;
  overflow-x:auto;scrollbar-width:none;
 }
