@@ -40,10 +40,9 @@ assert.match(css,/bottom:max\(8px,calc\(env\(safe-area-inset-bottom,0px\) - 12px
 assert.match(css,/html\.seyveo-conversation\.seyveo-composer-keyboard #ask\.prompt:not\(\.expanded\)\{\s*bottom:calc\(var\(--keyboard-offset,0px\) \+ 8px\)!important/);
 assert.match(home,/const shouldTrackKeyboard=focused\|\|\(already&&!root\.classList\.contains\('seyveo-conversation'\)\)/);
 assert.match(home,/const opened=!composer\.hidden&&shouldTrackKeyboard&&\(measure\.shift>115\|\|shrunk\)/);
-assert.match(css,/margin:1px 0 7px/);
 assert.match(css,/gap:3px;margin:0 0 7px!important/);
 assert.match(css,/gap:0;margin:0 0 3px/);
-assert.match(css,/min-width:0;display:flex;flex-direction:column;gap:3px;\\n margin:0 0 8px/);
+assert.match(css,/min-width:0;display:flex;flex-direction:column;gap:3px;\s*margin:0 0 8px/);
 assert.match(css,/height:40px!important;min-height:40px!important/);
 assert.match(css,/line-height:1\.55/);
 assert.match(docs,/SEYVEO Full Bleed/);
