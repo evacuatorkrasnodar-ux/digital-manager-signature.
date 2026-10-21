@@ -39,6 +39,11 @@ document.addEventListener('seyveo:assistant-presence',event=>{
   root.dataset.seyveoPresence=states[phase];
  }
 });
+// A Home navigation may use history.pushState (no hashchange event).
+// Observe the actual workspace visibility so view changes always stay in sync.
+const pages=list.map(([,id])=>document.getElementById(id)).filter(Boolean);
+const observer=new MutationObserver(()=>queueMicrotask(sync));
+for(const page of pages)observer.observe(page,{attributes:true,attributeFilter:['hidden']});
 window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
 window.addEventListener('pageshow',sync);
 document.addEventListener('visibilitychange',()=>{
