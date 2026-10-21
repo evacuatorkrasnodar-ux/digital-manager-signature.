@@ -276,7 +276,7 @@ html.seyveo-conversation .seyveo-conversation-name>span:not(.seyveo-name-dots){
  display:inline-block;will-change:auto;
 }
 html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span:not(.seyveo-name-dots){
- animation:seyveo-name-thinking 1.3s ease-in-out infinite;
+ animation:seyveo-name-thinking .74s ease-in-out infinite;
 }
 html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span:nth-child(2){animation-delay:.10s}
 html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span:nth-child(3){animation-delay:.20s}
@@ -291,7 +291,7 @@ html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-name
 html.seyveo-conversation .seyveo-name-dots i{
  display:block;width:4px;height:4px;flex:none;border-radius:50%;
  background:var(--seyveo-emerald-text,#a7d7c9);
- animation:seyveo-dot-thinking 1.15s ease-in-out infinite;
+ animation:seyveo-dot-thinking .78s ease-in-out infinite;
 }
 html.seyveo-conversation .seyveo-name-dots i:nth-child(2){animation-delay:.16s}
 html.seyveo-conversation .seyveo-name-dots i:nth-child(3){animation-delay:.32s}
