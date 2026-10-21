@@ -166,3 +166,13 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
   -webkit-overflow-scrolling:touch;
  }
 }
+
+/* iOS standalone Home: the fixed containing viewport may exclude the top
+ * status-bar safe inset, leaving an extra notch-sized void BELOW the dock.
+ * Compensate only here. Other workspaces keep their approved 8px + bottom
+ * safe-area offset; keyboard and conversation are deliberately excluded. */
+@media (max-width:700px) and (orientation:portrait){
+ html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation):not(.seyveo-composer-keyboard) .dock{
+  bottom:calc(8px + env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px))!important;
+ }
+}
