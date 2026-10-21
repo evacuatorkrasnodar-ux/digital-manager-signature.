@@ -17,7 +17,9 @@ for(const [label,svg] of [['dark',dark],['light',light]]){
  assert.match(svg,/@media\(prefers-reduced-motion:reduce\)/,label+' respects reduced motion');
 }
 assert.match(dark,/<stop stop-color="#202b3f"\/>/,'Original dark graphite restored');
-assert.match(light,/<stop stop-color="#f8faff"\/>/,'Original pearl glass restored');
+assert.match(light,/<stop stop-color="#f3f6fa"\/>/,'White Velvet remains pearl silver');
+assert.match(light,/#53677c.*stop-opacity="\.62"/,'White Velvet inner stream has readable graphite contrast');
+assert.match(light,/#64788e.*stop-opacity="\.37"/,'White Velvet inner silk current is visible');
 assert.equal(html.split('plasma-signature.svg?v=18').length-1,2,'Dark asset version linked in HTML and theme handler');
-assert.equal(html.split('plasma-signature-light.svg?v=18').length-1,1,'Light asset version linked in theme handler');
+assert.equal(html.split('plasma-signature-light.svg?v=19').length-1,1,'Light asset version linked in theme handler');
 console.log('PASS SEYVEO original silver sphere and both themes');
