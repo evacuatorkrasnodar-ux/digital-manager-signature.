@@ -266,3 +266,15 @@
 :root[data-theme=light] #seyveoCompanyDialog .seyveo-business-kind-choices input:checked+span{
  background:#ffffffc9;box-shadow:0 2px 6px rgba(30,40,33,.08);
 }
+
+
+/* The right-hand mini passport is also the subscription status glance. */
+.home-passports .seyveo-passport-card--company #seyveoCompanyPreviewSubscription{
+ color:#ccd6d1;font-weight:520;letter-spacing:-.01em;
+}
+.home-passports .seyveo-passport-card--company .seyveo-passport-mini-facts .seyveo-passport-line:last-child svg{
+ stroke:#b5c5bd;
+}
+:root[data-theme=light] .home-passports .seyveo-passport-card--company #seyveoCompanyPreviewSubscription{
+ color:#465a50;
+}
