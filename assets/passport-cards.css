@@ -374,3 +374,247 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 #seyveoAvatarStatus{min-height:0;margin:11px 0 0;font-size:11px}
 #seyveoCompanyAvatarEdit{min-height:44px}
 @media(max-width:360px){.seyveo-avatar-gallery{gap:6px}.seyveo-avatar-choice{min-height:104px}.seyveo-avatar-choice .seyveo-avatar{width:53px;height:53px}}
+
+
+/* Black Velvet Signature Portrait v2: shared dimension and material language.
+   The top-right tile pairs with the 44/40 px studio mark — never a target ring. */
+#homeHeader .home-owner-trigger,
+#homeHeader .home-owner-trigger[aria-expanded=true]{
+ box-sizing:border-box;width:44px;height:44px;min-width:44px;min-height:44px;
+ display:grid;place-items:center;padding:0;overflow:visible;
+ border:0;border-radius:14px;background:transparent;box-shadow:none;
+}
+#homeHeader #seyveoHeaderAvatar{
+ box-sizing:border-box;width:44px;height:44px;min-width:44px;min-height:44px;
+ border-radius:14px;border:1px solid rgba(207,224,217,.12);
+}
+#homeHeader .home-owner-trigger[aria-expanded=true] #seyveoHeaderAvatar{
+ border-color:rgba(226,236,231,.31);
+}
+@media(max-width:370px){
+ #homeHeader .home-owner-trigger,
+ #homeHeader .home-owner-trigger[aria-expanded=true],
+ #homeHeader #seyveoHeaderAvatar{
+  width:40px;height:40px;min-width:40px;min-height:40px;
+ }
+}
+
+/* Minimal portrait tiles; no stacked circles, halos, or crystal outlines. */
+.seyveo-avatar{
+ background:linear-gradient(148deg,#313a39 0%,#202827 48%,#121918 100%);
+ border:1px solid rgba(218,231,224,.14);border-radius:15px;
+ box-shadow:inset 0 1px 0 rgba(247,251,247,.075);
+}
+.seyveo-avatar--monogram{
+ background:linear-gradient(155deg,#202a28,#0d1715 78%);
+}
+.seyveo-avatar--monogram::before,.seyveo-avatar--monogram::after{
+ content:none!important;
+}
+.seyveo-avatar-initials{
+ font-size:clamp(17px,4.3vw,23px);font-weight:380;line-height:1;letter-spacing:-.025em;
+ color:#e8efea;
+}
+#seyveoHeaderAvatar .seyveo-avatar-initials{font-size:18px;font-weight:390}
+.seyveo-avatar--silhouette{
+ background:linear-gradient(145deg,#394341,#18211f);
+}
+.seyveo-avatar--silhouette::before{
+ top:19%;left:35%;width:30%;height:29%;border-radius:50%;
+ background:linear-gradient(150deg,#d5ded8,#8f9f98);
+ box-shadow:none;
+}
+.seyveo-avatar--silhouette::after{
+ bottom:7%;left:18%;width:64%;height:42%;
+ border-radius:51% 51% 13% 13%;
+ background:linear-gradient(156deg,#8fa19a,#455952 88%);
+}
+.seyveo-avatar--line{background:linear-gradient(153deg,#323d39,#121c19)}
+.seyveo-avatar--line::before{
+ width:67%;height:1px;top:41%;left:17%;background:#b9cbc0;
+ opacity:.86;transform:rotate(-29deg);box-shadow:none;
+}
+.seyveo-avatar--line::after{
+ width:43%;height:1px;top:60%;left:28%;
+ background:#899f91;opacity:.80;transform:rotate(21deg);box-shadow:none;
+}
+.seyveo-avatar--velvet{background:linear-gradient(155deg,#39423f,#121a17 85%)}
+.seyveo-avatar--velvet::before{
+ left:25%;top:17%;width:45%;height:64%;border-radius:52% 46% 55% 44%;
+ background:linear-gradient(155deg,rgba(237,242,235,.56),rgba(167,186,173,.07) 87%);
+ transform:rotate(22deg);
+}
+.seyveo-avatar--velvet::after{
+ left:38%;top:26%;width:34%;height:56%;border-radius:46% 53% 42% 56%;
+ background:linear-gradient(180deg,rgba(231,238,228,.15),rgba(128,157,137,.25));
+ transform:rotate(-17deg);
+}
+.seyveo-avatar--photo{background:#1d2622}
+.seyveo-avatar--photo img{width:100%;height:100%;object-fit:cover}
+
+/* Precisely paired, mirrored passport geometry. */
+.home-passports .seyveo-passport-card--studio,
+.home-passports .seyveo-passport-card--company{
+ width:100%;height:222px;padding:15px 15px 13px;
+ background:linear-gradient(155deg,#242a29,#1b2220 64%,#111816);
+ box-shadow:0 12px 29px rgba(0,0,0,.40),inset 0 1px 0 rgba(247,250,247,.065);
+}
+.home-passports .seyveo-passport-card--company{
+ background:linear-gradient(205deg,#242a29,#1b2220 64%,#111816);
+}
+.home-passports .seyveo-passport-card--studio::before,
+.home-passports .seyveo-passport-card--company::before{
+ opacity:.36;background:radial-gradient(ellipse at 50% -30%,rgba(226,235,228,.10),transparent 62%);
+}
+.home-passports .seyveo-passport-card--company .seyveo-owner-avatar{
+ width:38px;height:38px;min-width:38px;min-height:38px;flex:none;
+ margin-left:auto;border-radius:12px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-owner-avatar .seyveo-avatar-initials{font-size:16px}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-head{
+ min-height:42px;gap:9px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-titles strong,
+.home-passports .seyveo-passport-card--studio .seyveo-passport-card-titles strong{
+ font-size:15.5px;font-weight:510;letter-spacing:-.02em;
+}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-titles small{
+ font-size:10px;letter-spacing:.008em;
+}
+.home-passports .seyveo-passport-card--company .seyveo-company-divider{
+ margin:15px 45px 11px 0;
+}
+.home-passports .seyveo-passport-card--company .seyveo-company-facts{
+ gap:9px;margin-right:45px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-company-fact{
+ min-height:23px;font-size:11.5px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-company-more{
+ font-size:11.5px;font-weight:510;letter-spacing:-.01em;
+}
+.home-passports .seyveo-passport-card--company .seyveo-passport-arrow{
+ width:30px;height:30px;
+ background:rgba(222,231,225,.055);
+ border-color:rgba(214,225,219,.20);box-shadow:none;
+}
+@media(max-width:355px){
+ .home-passports .seyveo-passport-card--studio,
+ .home-passports .seyveo-passport-card--company{
+  height:218px;padding:14px 12px 13px;
+ }
+ .home-passports .seyveo-passport-card--company .seyveo-company-facts{
+  margin-right:42px;gap:8px;
+ }
+ .home-passports .seyveo-passport-card--company .seyveo-company-fact{font-size:10.5px}
+}
+:root[data-theme=light] .home-passports .seyveo-passport-card--studio,
+:root[data-theme=light] .home-passports .seyveo-passport-card--company{
+ background:linear-gradient(150deg,#f7f9f7,#e9eeeb);
+ box-shadow:0 12px 23px rgba(32,46,38,.11);
+}
+:root[data-theme=light] #homeHeader .home-owner-trigger{
+ border:0;background:transparent;box-shadow:none;
+}
+
+/* Compact, restrained avatar studio: one preview and four choices. */
+.seyveo-avatar-dialog{
+ box-sizing:border-box;width:min(394px,calc(100vw - 24px));
+ max-width:calc(100vw - 24px);max-height:min(82dvh,610px);
+ padding:21px 18px 17px;border-radius:25px;overflow-y:auto;
+}
+.seyveo-avatar-dialog-heading{margin:0 0 15px}
+.seyveo-avatar-eyebrow{
+ display:block;margin:0 0 7px;color:var(--secondary);
+ font-size:9.5px;font-weight:510;letter-spacing:.15em;
+}
+.seyveo-avatar-dialog h2{
+ margin:0 0 3px;font-size:22px;font-weight:510;
+ letter-spacing:-.037em;line-height:1.2;
+}
+.seyveo-avatar-dialog #seyveoAvatarIntro{
+ margin:0;font-size:11.5px;line-height:1.45;color:var(--secondary);
+}
+.seyveo-avatar-hero{
+ display:flex;align-items:center;gap:14px;
+ min-height:88px;padding:11px 13px;margin-bottom:12px;
+ border-top:1px solid var(--soft-line);border-bottom:1px solid var(--soft-line);
+}
+.seyveo-avatar-hero .seyveo-avatar{
+ width:66px;height:66px;min-width:66px;min-height:66px;flex:none;
+ border-radius:19px;
+}
+.seyveo-avatar-hero .seyveo-avatar-initials{font-size:25px}
+.seyveo-avatar-hero-text{
+ display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;
+}
+.seyveo-avatar-hero-text strong{
+ font-size:15px;font-weight:510;letter-spacing:-.023em;line-height:1.3;
+}
+.seyveo-avatar-hero-text small{
+ color:var(--secondary);font-size:11px;line-height:1.4;
+}
+.seyveo-avatar-gallery{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:7px;margin:0 0 13px;
+}
+.seyveo-avatar-choice{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:7px;min-width:0;min-height:99px;padding:9px 4px 8px;
+ background:transparent;border:1px solid transparent;border-radius:15px;
+ color:var(--text);font:inherit;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+.seyveo-avatar-choice .seyveo-avatar{
+ width:49px;height:49px;min-width:49px;min-height:49px;
+ flex:none;border-radius:15px;
+}
+.seyveo-avatar-choice .seyveo-avatar-initials{font-size:18px}
+.seyveo-avatar-choice small{
+ font-size:10px;color:var(--secondary);line-height:1.24;font-weight:470;
+ white-space:normal;overflow-wrap:anywhere;
+}
+.seyveo-avatar-choice[aria-pressed=true]{
+ background:rgba(224,231,224,.045);
+ border-color:rgba(225,233,225,.20);
+}
+.seyveo-avatar-choice[aria-pressed=true] small{color:var(--text)}
+.seyveo-avatar-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.seyveo-avatar-dialog-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.seyveo-avatar-dialog-actions button{
+ min-width:0;min-height:44px;flex:auto;
+ border:1px solid var(--line);border-radius:999px;
+ background:var(--card2);box-shadow:none;color:var(--text);
+ font:inherit;font-size:12px;font-weight:500;padding:9px 12px;
+}
+.seyveo-avatar-dialog-actions #seyveoAvatarClose{
+ grid-column:1/-1;background:var(--text);color:var(--bg);
+ border-color:var(--text);font-weight:540;
+}
+.seyveo-avatar-dialog-actions button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+.seyveo-avatar-dialog-actions input[hidden]{display:none!important}
+.seyveo-avatar-dialog #seyveoAvatarStatus{
+ min-height:0;margin:8px 0 0;font-size:10.5px;line-height:1.4;color:var(--secondary);
+}
+.seyveo-avatar-dialog #seyveoAvatarStatus:empty{display:none}
+.seyveo-avatar-dialog .seyveo-avatar-privacy{
+ margin:11px 1px 0;color:var(--secondary);font-size:10px;
+ line-height:1.4;text-align:center;
+}
+:root[data-theme=light] .seyveo-avatar-choice[aria-pressed=true]{
+ background:rgba(49,70,57,.055);border-color:rgba(61,80,68,.18);
+}
+@media(max-width:355px){
+ .seyveo-avatar-dialog{padding:17px 13px 14px}
+ .seyveo-avatar-gallery{gap:3px}
+ .seyveo-avatar-choice{min-height:94px;padding:7px 2px}
+ .seyveo-avatar-choice .seyveo-avatar{width:45px;height:45px;min-width:45px;min-height:45px}
+ .seyveo-avatar-choice small{font-size:9.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .seyveo-avatar-choice,.seyveo-avatar{transition:none!important}
+}
