@@ -87,9 +87,13 @@ function fillPreview(){
  // Demo may show Roman, but filled user records must not inherit sample identities.
  const owner=saved?(clean(record.owner)||profilePerson||(record.type!=='org'?clean(record.legalName):'')||'Владелец'):(profilePerson||'Роман');
  $('seyveoCompanyPreviewName').textContent=owner;
- $('seyveoCompanyPreviewDesc').textContent=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
+ const desc=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
+ $('seyveoCompanyPreviewDesc').textContent=desc;
+ if($('seyveoCompanyTitle'))$('seyveoCompanyTitle').textContent=owner;
+ if($('seyveoOwnerDialogKind'))$('seyveoOwnerDialogKind').textContent=desc;
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
- $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
+ const plan=$('seyveoCompanyPreviewSubscription');
+ if(plan)plan.textContent='Подписка не подключена · демо';
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
@@ -112,6 +116,8 @@ function drawRows(){
  $('seyveoCompanyNotFilled').hidden=!!card.name;
 }
 function toggleType(){
+ const selected=form.querySelector('input[name="companyTypeChoice"]:checked');
+ if(selected)$('seyveoCompanyType').value=selected.value;
  const type=$('seyveoCompanyType').value;
  form.querySelectorAll('[data-passport-type]').forEach(w=>{
    const visible=w.dataset.passportType.split(' ').includes(type);
@@ -123,7 +129,12 @@ function openCompany(){
  const record=load();
  for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
  $('seyveoCompanyType').value=record.type||'npd';
+ const radio=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
+ if(radio)radio.checked=true;
  toggleType();drawRows();status(dialog,'');
+ const details=$('seyveoCompanyDetails');
+ if(details)details.open=false;
+ fillPreview();
  if(!dialog.open)dialog.showModal();
 }
 function openStudio(){
@@ -261,13 +272,15 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('hashchange',closeHeaderPassport);
 $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
+ const details=$('seyveoCompanyDetails');
+ if(details)details.open=true;
  const field=form.elements.namedItem('name');
  if(field&&typeof field.focus==='function')field.focus();
 });
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
-$('seyveoCompanyType').addEventListener('change',toggleType);
+form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',toggleType));
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
 $('seyveoStudioShare').addEventListener('click',()=>share('studio'));
@@ -343,7 +356,7 @@ function paintAvatar(node,data){
  }
 }
 function paint(){
- for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoAvatarHero']){
+ for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoOwnerDialogAvatar','seyveoAvatarHero']){
   paintAvatar($(id),choice);
  }
  const selected=choice.kind==='photo'?['Фото','Ваше изображение']:
