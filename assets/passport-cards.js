@@ -29,6 +29,16 @@ function load(){
 function store(card){try{localStorage.setItem(KEY,JSON.stringify(card));return true}catch{return false}}
 const clean=value=>String(value||'').trim();
 function status(dialogEl,message){const s=dialogEl.querySelector('[data-passport-status]');if(s)s.textContent=message}
+function syncOwnerSubscription(){
+ const demo=window.SEYVEO_GET_ACCOUNT_PREVIEW?.();
+ const active=!!demo?.activated;
+ const mini=$('seyveoCompanyPreviewSubscription');
+ const full=$('seyveoOwnerAccessPlan');
+ const hint=$('seyveoOwnerAccessHint');
+ if(mini)mini.textContent=active?(demo.short+' · до '+demo.expirationShort+' · демо'):'Нет подписки · демо';
+ if(full)full.textContent=active?(demo.plan+' · до '+demo.expires):'Подписка не подключена';
+ if(hint)hint.textContent=active?'Активна в примере · реальной оплаты нет':'Демонстрационный доступ · списаний нет';
+}
 function fillPreview(){
  const record=load(),saved=!!clean(record.name);
  // A developer-only sample; real company records remain completely untouched.
@@ -46,8 +56,7 @@ function fillPreview(){
  if($('seyveoCompanyTitle'))$('seyveoCompanyTitle').textContent=owner;
  if($('seyveoOwnerDialogKind'))$('seyveoOwnerDialogKind').textContent=desc;
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
- const plan=$('seyveoCompanyPreviewSubscription');
- if(plan)plan.textContent='Нет подписки · демо';
+ syncOwnerSubscription();
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
@@ -248,6 +257,7 @@ window.addEventListener('storage',e=>{
  if([KEY,'seyveo-first-acquaintance-v1'].includes(e.key))fillPreview();
 });
 window.addEventListener('seyveo:profile-changed',fillPreview);
+window.addEventListener('seyveo:account-preview-changed',syncOwnerSubscription);
 window.addEventListener('seyveo:avatar-letter-ready',fillPreview);
 fillPreview();
 })();
