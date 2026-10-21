@@ -17,7 +17,7 @@ assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
 assert.match(css,/--seyveo-dock-bottom:max\(2px,calc\(8px \+ env\(safe-area-inset-bottom,0px\) - env\(safe-area-inset-top,0px\)\)\)/,'One shared portrait standalone dock offset with visible rim');
 assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\)\{/,'Standalone offset scoped to all app workspaces');
 assert.ok(!css.includes('data-seyveo-view="home"'),'No page-by-page dock patches');
-assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"|bottom:max\(/);
+assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/,'No per-page dock offsets');
 assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\) \.app\{/);
 assert.match(css,/position:fixed!important;\s*inset:0!important;/);
 assert.match(css,/overflow-y:auto!important;/,'All installed PWA pages can scroll');
