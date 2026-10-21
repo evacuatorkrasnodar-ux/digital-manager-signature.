@@ -312,7 +312,7 @@ function read(){
 let choice=read();
 function paintAvatar(node,data){
  if(!node)return;
- node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.id);
+ node.className='seyveo-avatar seyveo-avatar--'+(data.kind==='photo'?'photo':data.id)+(node.id==='seyveoOwnerAvatarPreview'?' seyveo-owner-avatar':'');
  node.replaceChildren();
  if(data.kind==='photo'){
   const img=document.createElement('img');img.alt='';img.src=data.data;node.append(img);
@@ -347,6 +347,7 @@ gallery.addEventListener('click',event=>{
  if(save({kind:'preset',id:b.dataset.avatar})){status.textContent='Аватар выбран. Он хранится только на этом устройстве.';picker.close()}
 });
 entry.addEventListener('click',()=>{status.textContent='';paint();picker.showModal()});
+$('seyveoAvatarPickPhoto')?.addEventListener('click',()=>file.click());
 $('seyveoAvatarClose')?.addEventListener('click',()=>picker.close());
 $('seyveoAvatarReset')?.addEventListener('click',()=>{
  if(save({kind:'preset',id:'monogram'})){status.textContent='Выбрана монограмма без фотографии.';picker.close()}
