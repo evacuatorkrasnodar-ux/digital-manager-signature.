@@ -87,9 +87,9 @@ html.seyveo-conversation .seyveo-conversation-turn{
 html.seyveo-conversation .seyveo-conversation-turn--you{
  align-self:flex-end;width:max-content;max-width:min(92%,460px);
  margin:2px 0 9px auto;padding:7px 11px 8px;
- color:#ecefeb;
- background:linear-gradient(150deg,rgba(43,51,47,.96),rgba(28,35,32,.96));
- border:1px solid rgba(150,180,163,.13);
+ color:#eceeed;
+ background:linear-gradient(150deg,#2a2d2e,#242728);
+ border:1px solid rgba(210,216,213,.10);
  border-radius:18px 18px 7px 18px;
  box-shadow:none;
 }
@@ -120,8 +120,8 @@ html.seyveo-conversation .seyveo-reply-more>summary{
  border-radius:50%;
 }
 :root[data-theme=light].seyveo-conversation .seyveo-conversation-turn--you{
- color:#28342e;background:linear-gradient(155deg,#edf1ed,#e5ebe6);
- border:1px solid rgba(104,139,116,.14);
+ color:#293031;background:linear-gradient(155deg,#eff1f0,#e7eae8);
+ border:1px solid rgba(80,88,85,.12);
  box-shadow:none;
 }
 /* SEYVEO Full Bleed: the capsule sits only 6px from a portrait screen edge.
@@ -516,4 +516,34 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
   min-width:40px;
  }
+}
+
+/* Signature controls v2: quiet neutral buttons; emerald only for live actions. */
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoComposerFold,#seyveoConversationMic,#composerCompactSend){
+ background:rgba(170,177,173,.075)!important;
+ border:1px solid var(--soft-line)!important;
+ color:var(--secondary)!important;
+ box-shadow:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
+ border-radius:50%!important;
+}
+html.seyveo-conversation #ask.prompt.seyveo-has-text:not(.expanded) #composerCompactSend{
+ background:var(--text)!important;border-color:var(--text)!important;
+ color:var(--bg)!important;box-shadow:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic[aria-pressed="true"]{
+ background:rgba(77,124,105,.18)!important;
+ border-color:rgba(115,169,150,.44)!important;
+ color:var(--seyveo-emerald-text,#a7d7c9)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-stop-action{
+ background:rgba(77,124,105,.20)!important;
+ border-color:rgba(115,169,150,.44)!important;
+ color:var(--seyveo-emerald-text,#a7d7c9)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoComposerFold,#seyveoConversationMic,#composerCompactSend):focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px;
 }
