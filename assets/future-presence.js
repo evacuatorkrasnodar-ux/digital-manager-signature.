@@ -44,10 +44,36 @@ document.addEventListener('seyveo:assistant-presence',event=>{
 const pages=list.map(([,id])=>document.getElementById(id)).filter(Boolean);
 const observer=new MutationObserver(()=>queueMicrotask(sync));
 for(const page of pages)observer.observe(page,{attributes:true,attributeFilter:['hidden']});
+
+/* Acknowledgement only after a successful local save; never fake progress. */
+const confirmationTargets={
+ calendar:{page:'calendarPage',main:'calendarAgenda',fallback:'calendarDeadlineList'},
+ tasks:{page:'tasksPage',main:'personalTaskList'}
+};
+let confirmSurface=null,confirmTimer=0;
+function clearConfirmation(){
+ if(confirmTimer){clearTimeout(confirmTimer);confirmTimer=0;}
+ if(confirmSurface){confirmSurface.classList.remove('seyveo-future-ack');confirmSurface=null;}
+}
+window.addEventListener('seyveo:future-committed',event=>{
+ const info=confirmationTargets[event.detail?.area];
+ if(!info||document.hidden)return;
+ const page=document.getElementById(info.page);
+ if(!page||page.hidden)return;
+ const normal=document.getElementById(info.main);
+ const surface=normal?.getClientRects().length?normal:
+  info.fallback?document.getElementById(info.fallback):null;
+ if(!surface?.getClientRects().length)return;
+ clearConfirmation();
+ if(reduced?.matches)return;
+ confirmSurface=surface;
+ surface.classList.add('seyveo-future-ack');
+ confirmTimer=window.setTimeout(clearConfirmation,1050);
+});
 window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
 window.addEventListener('pageshow',sync);
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden){animation?.cancel?.();animation=null;root.dataset.seyveoPresence='idle'}
+ if(document.hidden){animation?.cancel?.();animation=null;clearConfirmation();root.dataset.seyveoPresence='idle'}
  else sync();
 });
 queueMicrotask(sync);
