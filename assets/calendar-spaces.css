@@ -400,3 +400,12 @@
 @media(prefers-reduced-motion:reduce){
  #lifePage .calendar-space-button,.home-life-entry{transition:none}
 }
+
+
+/* Unified Experience: calm World nested surfaces; preserve private data and controls. */
+#calendarSpaceDialog[data-space=world] .world-people,
+#calendarSpaceDialog[data-space=world] .world-connection-state{box-shadow:none;background:rgba(180,190,183,.035)}
+#calendarSpaceDialog[data-space=world] .world-hub-heading h3,
+#calendarSpaceDialog[data-space=world] .world-person-info strong{font-weight:510}
+:root[data-theme=light] #calendarSpaceDialog[data-space=world] .world-people,
+:root[data-theme=light] #calendarSpaceDialog[data-space=world] .world-connection-state{background:rgba(80,94,83,.04)}
