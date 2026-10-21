@@ -17,6 +17,7 @@
 }
 .dock{
  position:fixed!important;
+ z-index:30!important;
  left:50%!important;right:auto!important;
  bottom:var(--seyveo-dock-bottom)!important;
  transform:translateX(-50%)!important;
@@ -154,6 +155,13 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  .dock{width:calc(100% - 20px)!important;padding:4px 5px!important;gap:1px!important}
  .dock>.nav-item{font-size:9px!important;letter-spacing:-.035em!important}
  .dock>.assistant-button .dock-assistant-label{font-size:9px}
+}
+/* Landscape notch sides: keep the SAME dock, never create a second one. */
+@media(orientation:landscape) and (max-height:650px){
+ .dock{
+  width:min(392px,calc(100vw - 28px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+  left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2)!important;
+ }
 }
 /* Never displace the safe-area protected dock on iPhone X and later. */
 @media(prefers-reduced-motion:reduce){
