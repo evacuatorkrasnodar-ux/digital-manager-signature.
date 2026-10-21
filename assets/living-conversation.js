@@ -67,6 +67,17 @@ function microphone(id){
 const compact=$('ask').querySelector('.composer-compact');
 const composerHead=$('ask').querySelector('.composer-head');
 if(compact)compact.insertBefore(microphone('seyveoConversationMic'),compact.querySelector('#composerCompactSend'));
+// One quiet down-arrow INSIDE the chat writer. It closes the conversation,
+// restores Home and preserves any unsent draft via the existing close routine.
+const fold=document.createElement('button');
+fold.type='button';fold.id='seyveoComposerFold';
+fold.className='composer-icon seyveo-composer-fold';
+fold.title='Свернуть переписку';
+fold.setAttribute('aria-label','Свернуть переписку на Главную');
+fold.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+fold.addEventListener('click',()=>close());
+if(compact)compact.insertBefore(fold,compact.querySelector('#hideInput'));
+
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
 let statusTimer=0,speakingNow=false;
