@@ -556,6 +556,7 @@ function onSubmit(e){
  if(!saveEvents(next)){status.textContent='Не удалось сохранить событие. Проверьте память браузера.';return}
  $('calendarEventDialog').close();
  updateFocus(at(date));window.dispatchEvent(new Event('seyveo:calendar-changed'));
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'calendar'}}));
 }
 function deleteEvent(){
  const old=events().find(x=>x.id===editing);if(!old)return;
@@ -563,6 +564,7 @@ function deleteEvent(){
  const rest=events().filter(x=>x.id!==old.id);
  if(!saveEvents(rest)){$('calendarEventStatus').textContent='Не удалось удалить событие.';return}
  $('calendarEventDialog').close();render();window.dispatchEvent(new Event('seyveo:calendar-changed'));
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'calendar'}}));
 }
 function routeTask(id){
  // The task exists only in existing Personal Tasks: never duplicate its data.
