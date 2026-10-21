@@ -78,12 +78,14 @@ function status(dialogEl,message){const s=dialogEl.querySelector('[data-passport
 function fillPreview(){
  const record=load(),saved=!!clean(record.name);
  // A developer-only sample; real company records remain completely untouched.
- let previewPerson='Роман';
+ let profilePerson='';
  try{
   const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-  if(typeof profile?.name==='string'&&clean(profile.name))previewPerson=clean(profile.name).slice(0,60);
+  if(typeof profile?.name==='string'&&clean(profile.name))profilePerson=clean(profile.name).slice(0,60);
  }catch{}
- const owner=saved?(record.owner||record.legalName||previewPerson):previewPerson;
+ // A company's legal name is never a substitute for the human owner's name.
+ // Demo may show Roman, but filled user records must not inherit sample identities.
+ const owner=saved?(clean(record.owner)||profilePerson||(record.type!=='org'?clean(record.legalName):'')||'Владелец'):(profilePerson||'Роман');
  $('seyveoCompanyPreviewName').textContent=owner;
  $('seyveoCompanyPreviewDesc').textContent=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
