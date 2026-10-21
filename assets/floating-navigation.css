@@ -140,3 +140,29 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
   transition:none!important;animation:none!important;
  }
 }
+
+
+/* iOS Home-screen PWA only — root scrolling can detach WebKit's fixed dock.
+ * Isolate Home scrolling inside .app; footer.dock stays outside this scroller.
+ * Other pages, Safari browser tabs and chat deliberately keep their layout. */
+@media(max-width:700px){
+ html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation){
+  height:100%!important;
+  overflow:hidden!important;
+  overscroll-behavior-y:none!important;
+ }
+ html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation) body{
+  height:100%!important;
+  overflow:hidden!important;
+  overscroll-behavior-y:none!important;
+ }
+ html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation) .app{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  min-height:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+ }
+}
