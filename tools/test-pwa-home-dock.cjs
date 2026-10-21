@@ -19,6 +19,23 @@ assert.match(css,/overscroll-behavior-y:contain/,'Home scroller contains bounce'
 assert.match(css,/bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)!important/,'Dock offset remains approved');
 assert.match(html,/assets\/future-presence\.js\?v=3/,'New standalone state module referenced');
 
+/* The reported iPhone XR/11-size screenshot shows a dock raised by roughly
+ * one top notch inset. This correction is ONLY for installed portrait Home. */
+const notchScope='html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation):not(.seyveo-composer-keyboard) .dock';
+assert.ok(css.includes(notchScope),'Top inset fix is scoped to Home only and avoids the keyboard');
+assert.match(css,/@media \(max-width:700px\) and \(orientation:portrait\)/,'Portrait only notch compensation');
+assert.match(css,/bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\) - env\(safe-area-inset-top,0px\)\)!important/,'Notch top inset compensated');
+assert.ok(!css.includes('html.seyveo-standalone[data-seyveo-view="manage"] .dock'),'Management bottom remains untouched');
+assert.match(html,/assets\/floating-navigation\.css\?v=5/,'PWA uses refreshed dock styles');
+function expectedDockBottom(viewportBottom,bottomInset,topInset,standaloneHome){
+ const cssBottom=8+bottomInset-(standaloneHome?topInset:0);
+ return viewportBottom-cssBottom;
+}
+assert.equal(expectedDockBottom(848,34,48,true),854,'Home PWA aligns with physical screen bottom at 896px');
+assert.equal(expectedDockBottom(896,34,48,false),854,'Management keeps its original lower position');
+assert.equal(expectedDockBottom(768,34,44,true),770,'iPhone X notch correction aligns with Management position');
+
+
 function simulatedView({mediaStandalone=false,appleStandalone=false,view='home',conversation=false}={}){
  const pages=Object.fromEntries(['calendar','picture','tasks','life','manage','home'].map(name=>
   [name+'Page',{hidden:view!==name}]));
