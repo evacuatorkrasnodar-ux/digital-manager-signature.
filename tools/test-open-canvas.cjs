@@ -23,10 +23,17 @@ assert.match(css,/#ask\.prompt:not\(\.expanded\) \.seyveo-conversation-heading\{
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoComposerFold\{\s*order:4!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoConversationMic\{\s*order:5!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #composerCompactSend\{\s*order:6!important/);
-assert.match(home,/assets\/conversation-refined\.css\?v=7/);
+assert.match(home,/assets\/conversation-refined\.css\?v=8/);
 assert.match(home,/assets\/living-conversation\.js\?v=15/);
 assert.equal((home.match(/<form class="prompt" id="ask"/g)||[]).length,1);
 assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
 assert.match(docs,/SEYVEO Open Canvas/);
 assert.match(docs,/Invisible Header/);
-console.log('SEYVEO Open Canvas: single composer, unique controls, no top header, correct assets.');
+// SEYVEO Full Bleed: remove unnecessary horizontal gutters only inside chat.
+assert.match(css,/max\(8px,env\(safe-area-inset-right,0px\)\)/);
+assert.match(css,/max\(8px,env\(safe-area-inset-left,0px\)\)/);
+assert.match(css,/width:min\(518px,calc\(100vw - 12px - env\(safe-area-inset-left,0px\) - env\(safe-area-inset-right,0px\)\)\)/);
+assert.match(css,/padding:calc\(env\(safe-area-inset-top,0px\) \+ 8px\)/);
+assert.match(css,/padding:11px 12px 9px!important/);
+assert.match(docs,/SEYVEO Full Bleed/);
+console.log('SEYVEO Open Canvas + Full Bleed: one composer, safe width and header-free chat.');
