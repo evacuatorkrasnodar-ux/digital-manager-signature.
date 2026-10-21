@@ -1162,43 +1162,20 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
  <span class="welcome-signature-sub">IT · AI · AUTOMATION</span>
 </div>
  <span class="welcome-kicker">ЦИФРОВОЙ УПРАВЛЯЮЩИЙ</span>
- <h2 id="welcomeIntroTitle" class="welcome-title">Привет! Я SEYVEO.</h2>
+ <h2 id="welcomeIntroTitle" class="welcome-title">Привет, я Сэйви.</h2>
  <p class="welcome-description">Сначала покажу, как мы сможем работать вместе. Затем познакомимся по-настоящему — без сложных настроек.</p>
 </section>
 
 <section class="welcome-step" data-welcome-step="1" aria-labelledby="welcomePersonTitle" hidden>
- <span class="welcome-kicker">01 / 03 · ТЫ</span>
+ <span class="welcome-kicker">01 / 02 · ТЫ</span>
  <h2 id="welcomePersonTitle" class="welcome-title">Как мне к тебе обращаться?</h2>
  <p class="welcome-description">Можно просто назвать имя. Фамилия и личные данные не нужны.</p>
  <label class="welcome-field" for="welcomePersonName">Твоё имя · необязательно
   <input id="welcomePersonName" class="welcome-input" type="text" maxlength="60" autocomplete="given-name" placeholder="Например, Роман">
  </label>
 </section>
-<section class="welcome-step" data-welcome-step="2" aria-labelledby="welcomeAssistantTitle" hidden>
- <span class="welcome-kicker">02 / 03 · ПОМОЩНИК</span>
- <h2 id="welcomeAssistantTitle" class="welcome-title">А как будут звать меня?</h2>
- <p class="welcome-description">Выбери имя, которое приятно произносить. При желании придумай своё.</p>
- <div class="welcome-choices" role="group" aria-label="Имя помощника">
-  <button type="button" class="welcome-choice" data-welcome-assistant="Феликс" aria-pressed="true"><strong>Феликс</strong><small>Можно Филя</small></button>
-  <button type="button" class="welcome-choice" data-welcome-assistant="Милисса" aria-pressed="false"><strong>Милисса</strong><small>Женский голос · Мили</small></button>
-  <button type="button" class="welcome-choice" data-welcome-assistant="Бэйси" aria-pressed="false"><strong>Бэйси</strong><small>Женский голос</small></button>
-  <button type="button" class="welcome-choice" data-welcome-assistant="Боня" aria-pressed="false"><strong>Боня</strong><small>Мужской голос</small></button>
-  <button type="button" class="welcome-choice" data-welcome-assistant="Торик" aria-pressed="false"><strong>Торик</strong><small>Мужской голос</small></button>
- </div>
- <label class="welcome-field" for="welcomeCustomName">Или своё имя · необязательно
-  <input id="welcomeCustomName" class="welcome-input" type="text" maxlength="40" autocomplete="off" placeholder="Напиши, как меня назвать">
- </label>
- <div class="welcome-voice-field">
-  <span>Какой голос тебе ближе?</span>
-  <div class="welcome-voice-buttons" role="group" aria-label="Выбрать и послушать голос помощника">
-   <button type="button" data-welcome-voice="male" aria-pressed="true">Мужской · послушать</button>
-   <button type="button" data-welcome-voice="female" aria-pressed="false">Женский · послушать</button>
-  </div>
-  <small id="welcomeVoiceStatus" role="status">Пример озвучивания зависит от доступных голосов устройства.</small>
- </div>
-</section>
 <section class="welcome-step" data-welcome-step="3" aria-labelledby="welcomeFocusTitle" hidden>
- <span class="welcome-kicker">03 / 03 · ТВОЙ ПУТЬ</span>
+ <span class="welcome-kicker">02 / 02 · ТВОЙ ПУТЬ</span>
  <h2 id="welcomeFocusTitle" class="welcome-title">С чего начнём?</h2>
  <p class="welcome-description">Это только отправная точка. Личные разделы всегда останутся доступны.</p>
  <div class="welcome-focus" role="group" aria-label="Главная цель">
@@ -1211,7 +1188,7 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 <section class="welcome-step" data-welcome-step="4" aria-labelledby="welcomeFinishTitle" hidden>
  <span class="welcome-kicker">ЗНАКОМСТВО СОСТОЯЛОСЬ</span>
  <h2 id="welcomeFinishTitle" class="welcome-title">Приятно познакомиться.</h2>
- <p class="welcome-description">Я <span id="welcomeFinalAssistant" class="welcome-final-name">Филя</span>. <span id="welcomeFinalMessage">Начнём с того, что тебе важно.</span></p>
+ <p class="welcome-description">Я <span id="welcomeFinalAssistant" class="welcome-final-name">Сэйви</span>. <span id="welcomeFinalMessage">Начнём с того, что тебе важно.</span></p>
  <div class="welcome-finish-note">Всё можно изменить позже в «Управлении». Пока это демонстрационная версия: ИИ и внешние сервисы ещё не подключены, реальные действия без тебя не выполняются.</div>
 </section>
 </main>
@@ -1239,23 +1216,10 @@ button.nav-item:focus-visible{outline:2px solid var(--text);outline-offset:5px;b
 
 <dialog id="onboardDialog" class="onboard-dialog" aria-labelledby="onboardTitle" aria-describedby="onboardIntro">
 <div class="onboard-top"><div><span class="onboard-eyebrow">SEYVEO / ЗНАКОМСТВО</span><h2 id="onboardTitle" class="onboard-title">Давай познакомимся.</h2></div><button id="onboardClose" class="onboard-dismiss seyveo-close-control" type="button" aria-label="Закрыть знакомство"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button></div>
-<p id="onboardIntro" class="onboard-intro">Я SEYVEO — твой будущий цифровой управляющий. С чего начнём? Можно выбрать сейчас, а изменить потом.</p>
+<p id="onboardIntro" class="onboard-intro">Я Сэйви — твой будущий цифровой управляющий. С чего начнём? Это можно изменить позже.</p>
 <form id="onboardForm">
 <label class="onboard-field" for="onboardName">Как мне к тебе обращаться? <span style="font-weight:400">· необязательно</span>
 <input id="onboardName" type="text" maxlength="60" placeholder="Например, Алексей" autocomplete="given-name"></label>
-<fieldset class="onboard-names"><legend>Как зовут вашего помощника? <span>· необязательно</span></legend>
-<p class="onboard-name-hint">Выберите подсказку или придумайте собственное имя.</p>
-<div class="onboard-name-grid" id="onboardNameChoices">
-<button type="button" class="onboard-name-choice" data-assistant-name="Феликс" data-voice="male" aria-pressed="false"><strong>Феликс</strong><small>Филя</small></button>
-<button type="button" class="onboard-name-choice" data-assistant-name="Милисса" data-voice="female" aria-pressed="false"><strong>Милисса</strong><small>Мили</small></button>
-<button type="button" class="onboard-name-choice" data-assistant-name="Бэйси" data-voice="female" aria-pressed="false"><strong>Бэйси</strong><small>Женский голос</small></button>
-<button type="button" class="onboard-name-choice" data-assistant-name="Боня" data-voice="male" aria-pressed="false"><strong>Боня</strong><small>Мужской голос</small></button>
-<button type="button" class="onboard-name-choice" data-assistant-name="Торик" data-voice="male" aria-pressed="false"><strong>Торик</strong><small>Мужской голос</small></button>
-</div>
-<label class="onboard-field onboard-assistant-custom" for="onboardAssistantName">Или своё имя
-<input id="onboardAssistantName" type="text" maxlength="40" placeholder="Как назовёте помощника?" autocomplete="off"></label>
-<p class="onboard-name-hint">Имя можно изменить позже. Если подходящего голоса на устройстве нет, прозвучит системный.</p>
-</fieldset>
 <fieldset class="onboard-options"><legend>Что для тебя сейчас главное?</legend><div class="onboard-options-list">
 <label class="onboard-option"><input type="radio" name="onboardFocus" value="life" checked><span class="onboard-choice"><strong>Повседневная жизнь</strong><small>SEYVEO Life · всегда рядом</small></span></label>
 <label class="onboard-option"><input type="radio" name="onboardFocus" value="start"><span class="onboard-choice"><strong>Хочу открыть своё дело</strong><small>SEYVEO Business Start</small></span></label>
@@ -2948,17 +2912,12 @@ let presenceSpeechRevision=0;
 function notifyOrbPresence(phase){
  document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase}}));
 }
-// Browser voices do not expose a reliable gender field. Select only known
-// Russian voice names for the saved preference; otherwise use system default.
+// Until our own licensed female voice is ready, the PWA may use a
+// suitable system Russian voice. No user-facing gender/voice selector.
 function applyAssistantSpeechVoice(utterance){
  try{
-  const saved=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-  const preference=saved?.assistantVoice;
-  if(preference!=='male'&&preference!=='female')return;
+  const known=['milena','милена','tatyana','татьяна','irina','ирина','olga','ольга','anna','анна'];
   const voices=window.speechSynthesis?.getVoices?.()||[];
-  const known=preference==='female'
-   ?['milena','милена','tatyana','татьяна','irina','ирина','olga','ольга','anna','анна']
-   :['yuri','yury','юрий','георгий','georgiy','georgy','dmitry','дмитрий','pavel','павел'];
   const match=voices.find(v=>{
    const lang=String(v.lang||'').toLowerCase();
    const name=String(v.name||'').toLowerCase();
@@ -3319,4 +3278,4 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
 <div id="firstHelpProgress" class="first-help-progress" aria-hidden="true"></div>
 <div class="first-help-actions"><button id="firstHelpExit" type="button">Пропустить</button><button id="firstHelpBack" type="button" hidden>Назад</button><button id="firstHelpNext" type="button">Начать</button></div>
 </section></section>
-<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=23"></script><script src="assets/onboarding.js?v=8"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/business-map.js?v=12"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=4"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=15"></script><script src="assets/living-conversation.js?v=9"></script></body></html>
+<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=23"></script><script src="assets/onboarding.js?v=9"></script><script src="assets/personal-tasks.js?v=13"></script><script src="assets/calendar-natural.js?v=1"></script><script src="assets/notebook-natural.js?v=4"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=29"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=7"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=3"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=3"></script><script src="assets/business-map.js?v=12"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=4"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=16"></script><script src="assets/living-conversation.js?v=9"></script></body></html>

@@ -12,12 +12,9 @@ const LEGACY=['dm-signature-living-v2','dm-signature-living-v1','seyveo-notes-v1
 const read=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
 const trim=(s,n)=>String(s||'').trim().replace(/\s+/g,' ').slice(0,n);
-let step=0,assistant='Феликс',assistantVoice='male',focus='life',preview=false,previewTrigger=null,openingTimer=null;
+let step=0,focus='life',preview=false,previewTrigger=null,openingTimer=null;
 const panels=[...dialog.querySelectorAll('[data-welcome-step]')];
-const intro=$('welcomeIntroTitle'),user=$('welcomePersonName'),other=$('welcomeCustomName');
-const brandChoices=[...dialog.querySelectorAll('[data-welcome-assistant]')];
-const voiceChoices=[...dialog.querySelectorAll('[data-welcome-voice]')];
-const suggestedVoice=Object.freeze({'Феликс':'male','Филя':'male','Милисса':'female','Мили':'female','Бэйси':'female','Боня':'male','Торик':'male'});
+const intro=$('welcomeIntroTitle'),user=$('welcomePersonName');
 const focusChoices=[...dialog.querySelectorAll('[data-welcome-focus]')];
 const progress=$('welcomeProgress'),next=$('welcomeNext'),back=$('welcomeBack'),skip=$('welcomeSkip');
 const error=$('welcomeError');
@@ -93,17 +90,13 @@ function available(){
  return !read(PROFILE)&&!read(SKIPPED)&&!read(SEEN)&&!LEGACY.some(key=>read(key)!==null);
 }
 function markOptions(){
- brandChoices.forEach(button=>button.setAttribute('aria-pressed',String(!trim(other.value,40)&&button.dataset.welcomeAssistant===assistant)));
- voiceChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeVoice===assistantVoice)));
  focusChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.welcomeFocus===focus)));
 }
-function assistantName(){return trim(other.value,40)||assistant}
-function nickname(){const name=assistantName();return name==='Феликс'?'Филя':name==='Милисса'?'Мили':name}
 function render(){
- panels.forEach((panel,index)=>{panel.hidden=index!==step});
+ panels.forEach(panel=>{panel.hidden=Number(panel.dataset.welcomeStep)!==step});
  progress.hidden=step===0||step===4;
  progress.replaceChildren();
- if(!progress.hidden)for(let i=1;i<=3;i++){
+ if(!progress.hidden)for(let i=1;i<=2;i++){
   const dot=document.createElement('span');
   dot.className=i<=step?'is-current':'';
   progress.append(dot);
@@ -116,7 +109,7 @@ function render(){
  error.textContent='';
  markOptions();
  if(step===4){
-  $('welcomeFinalAssistant').textContent=nickname();
+  $('welcomeFinalAssistant').textContent='Сэйви';
   $('welcomeFinalMessage').textContent=trim(user.value,60)
    ?'Рад знакомству, '+trim(user.value,60)+'. Начнём с того, что тебе важно.'
    :'Начнём с того, что тебе важно.';
@@ -185,9 +178,9 @@ function beginOpening(){
 }
 function save(){
  if(preview){beginOpening();return}
- const selectedName=assistantName();
- const voice=assistantVoice;
- const aliases=selectedName==='Феликс'?['Феликс','Филя']:selectedName==='Милисса'?['Милисса','Мили','Мелисса']:selectedName?[selectedName]:[];
+ const selectedName='Сэйви';
+ const voice='female'; // Temporary profile preference, not the future recorded SEYVEO voice.
+ const aliases=['Сэйви','Сэй','SEYVEO'];
  const now=new Date().toISOString();
  const profile={
   schemaVersion:1,name:trim(user.value,60),assistantName:selectedName,assistantVoice:voice,
@@ -203,16 +196,6 @@ function save(){
  window.dispatchEvent(new CustomEvent('seyveo:profile-changed',{detail:{focus}}));
  beginOpening();
 }
-brandChoices.forEach(button=>button.addEventListener('click',()=>{
- assistant=button.dataset.welcomeAssistant;
- assistantVoice=suggestedVoice[assistant]||assistantVoice;
- other.value='';markOptions();
-}));
-voiceChoices.forEach(button=>button.addEventListener('click',()=>{
- assistantVoice=button.dataset.welcomeVoice;
- markOptions();tour?.previewVoice?.(assistantVoice);
-}));
-other.addEventListener('input',markOptions);
 focusChoices.forEach(button=>button.addEventListener('click',()=>{
  focus=button.dataset.welcomeFocus;markOptions();
 }));
@@ -232,11 +215,15 @@ next.addEventListener('click',()=>{
   if(!accepted)resumeOnboarding();
   return;
  }
- if(step<4)setStep(step+1);else save();
+ if(step===1)setStep(3);
+ else if(step===3)setStep(4);
+ else if(step===4)save();
 });
 back.addEventListener('click',()=>{
  if(openingTimer!==null)return;
- if(step>0)setStep(step-1);
+ if(step===4)setStep(3);
+ else if(step===3)setStep(1);
+ else if(step===1)setStep(0);
 });
 skip.addEventListener('click',()=>{
  if(!preview&&step===0){setStep(1);return}

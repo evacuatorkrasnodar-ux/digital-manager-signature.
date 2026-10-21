@@ -6,22 +6,6 @@
   const dialog=$('onboardDialog'),entry=$('openOnboarding'),form=$('onboardForm');
   if(!dialog||!entry||!form)return;
   const PROFILE='seyveo-first-acquaintance-v1';
-  // Presets from the approved naming concept. These are gender preferences,
-  // not guaranteed synthetic voice models (availability varies by OS).
-  const ASSISTANT_NAMES=Object.freeze({'Феликс':'male','Филя':'male','Милисса':'female','Мили':'female','Бэйси':'female','Боня':'male','Торик':'male'});
-  const nameInput=$('onboardAssistantName');
-  const nameChoices=[...form.querySelectorAll('[data-assistant-name]')];
-  function markName(){
-    const value=trim(nameInput.value,40);
-    nameChoices.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.assistantName===value)));
-  }
-  nameChoices.forEach(button=>button.addEventListener('click',()=>{
-    nameInput.value=button.dataset.assistantName;
-    markName();
-  }));
-  nameInput.addEventListener('input',()=>{
-    markName();
-  });
   const SKIPPED='seyveo-first-acquaintance-skipped-v1';
   const CHOICES=Object.freeze({
     life:'Life',start:'Business Start',pro:'Business Pro',max:'Business Max'
@@ -34,8 +18,6 @@
     try{
       const value=JSON.parse(safeRead(PROFILE)||'null');
       if(!value||typeof value!=='object'||!CHOICES[value.focus])return null;
-      // Old preview spelling stays compatible without rewriting stored preferences.
-      if(value.assistantName==='Мелисса')return {...value,assistantName:'Милисса',assistantAliases:['Милисса','Мили','Мелисса']};
       return value;
     }catch{return null}
   }
@@ -44,13 +26,11 @@
     const label=$('onboardManageSummary');
     label.textContent=old?CHOICES[old.focus]:'Не настроено';
     const sub=$('onboardManageDescription');
-    sub.textContent=old?(old.assistantName?'Помощник '+trim(old.assistantName,22)+' · можно изменить':old.name?'Для '+trim(old.name,22)+' · можно изменить':'Имя помощника и жизненный этап · сохранено'):'Имя помощника и жизненный этап';
+    sub.textContent=old?(old.name?'Для '+trim(old.name,22)+' · настройки сохранены':'Ваш сценарий · сохранено'):'Имя и жизненный сценарий';
   }
   function show(){
     const old=existing();
     $('onboardName').value=old?.name||'';
-    nameInput.value=old?.assistantName||'';
-    markName();
     const focus=CHOICES[old?.focus]?old.focus:'life';
     const radio=form.querySelector('input[name="onboardFocus"][value="'+focus+'"]');
     if(radio)radio.checked=true;
@@ -68,13 +48,13 @@
     const focus=form.querySelector('input[name="onboardFocus"]:checked')?.value;
     if(!CHOICES[focus])return;
     const current=existing();
-    const assistantName=trim(nameInput.value,40);
+    const assistantName='Сэйви';
     const value={
       schemaVersion:1,
       name:trim($('onboardName').value,60),
       assistantName,
-      assistantVoice:ASSISTANT_NAMES[assistantName]||null,
-      assistantAliases:assistantName==='Феликс'?['Феликс','Филя']:assistantName==='Милисса'?['Милисса','Мили','Мелисса']:assistantName?[assistantName]:[],
+      assistantVoice:'female',
+      assistantAliases:['Сэйви','Сэй','SEYVEO'],
       focus,
       lifeIncluded:true,
       updatedAt:new Date().toISOString(),
