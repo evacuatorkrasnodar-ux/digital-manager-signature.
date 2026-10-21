@@ -36,8 +36,8 @@ function syncOwnerSubscription(){
  const full=$('seyveoOwnerAccessPlan');
  const hint=$('seyveoOwnerAccessHint');
  if(mini)mini.textContent=active?(demo.short+' · до '+demo.expirationShort+' · демо'):'Нет подписки · демо';
- if(full)full.textContent=active?(demo.plan+' · до '+demo.expires):'Подписка не подключена';
- if(hint)hint.textContent=active?'Активна в примере · реальной оплаты нет':'Демонстрационный доступ · списаний нет';
+ if(full)full.textContent=active?demo.plan:'Подписка не подключена';
+ if(hint)hint.textContent=active?('Активна до '+demo.expires+' · демо, без списаний'):'Демонстрационный доступ · списаний нет';
 }
 function fillPreview(){
  const record=load(),saved=!!clean(record.name);
