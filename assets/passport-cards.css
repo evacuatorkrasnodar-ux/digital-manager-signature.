@@ -710,3 +710,10 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
  .home-passports .seyveo-passport-card--studio,
  .home-passports .seyveo-passport-card--company{height:148px}
 }
+
+/* Identity architecture: one round owner avatar, no duplicate portrait in business. */
+#homeHeader #seyveoHeaderAvatar,
+#homeHeader #seyveoHeaderAvatar::before,
+#homeHeader #seyveoHeaderAvatar::after{border-radius:50%!important}
+#homeHeader #seyveoHeaderAvatar img{border-radius:50%;object-fit:cover}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-head{align-items:center}
