@@ -1,0 +1,26 @@
+/* SEYVEO · Quiet local reminders (visible web app only). */
+.seyveo-reminder{
+ position:fixed;
+ z-index:65;
+ top:calc(env(safe-area-inset-top,0px) + 12px);
+ right:max(14px,env(safe-area-inset-right,0px));
+ width:min(392px,calc(100vw - 28px));
+ padding:16px 17px 13px;
+ border:1px solid var(--line,rgba(232,240,255,.22));
+ border-radius:20px;
+ color:var(--text,#eef3fa);
+ background:var(--card,#141820);
+ box-shadow:0 14px 38px rgba(0,0,0,.28);
+ font-family:inherit;box-sizing:border-box;
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+}
+.seyveo-reminder *{box-sizing:border-box}
+.seyveo-reminder-caption{display:block;font-size:9px;letter-spacing:.13em;color:var(--secondary,#abb8c7)}
+.seyveo-reminder-title{display:block;font-size:15px;font-weight:530;line-height:1.35;letter-spacing:-.018em;margin-top:9px;overflow-wrap:anywhere}
+.seyveo-reminder-copy{font-size:11px;line-height:1.5;color:var(--secondary,#abb8c7);margin:6px 0 13px}
+.seyveo-reminder-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.seyveo-reminder-actions button{min-height:44px;border:1px solid var(--line,rgba(232,240,255,.22));border-radius:999px;background:var(--card2,rgba(255,255,255,.05));color:var(--text,#eef3fa);font:inherit;font-size:12px;padding:10px 15px;cursor:pointer}
+.seyveo-reminder-actions button:first-child{border-color:var(--soft-line,rgba(255,255,255,.28));font-weight:540}
+.seyveo-reminder-actions button:focus-visible{outline:2px solid var(--text,#eef3fa);outline-offset:2px}
+@media(max-width:600px){.seyveo-reminder{left:14px;right:14px;width:auto;top:calc(env(safe-area-inset-top,0px) + 10px)}}
+@media(prefers-reduced-motion:reduce){.seyveo-reminder *{transition:none!important;animation:none!important}}

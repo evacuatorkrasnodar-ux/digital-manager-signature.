@@ -20,3 +20,5 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Test local calendar reminders
+        run: node tools/test-calendar-reminders.cjs

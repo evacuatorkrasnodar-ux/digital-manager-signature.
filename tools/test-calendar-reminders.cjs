@@ -1,0 +1,23 @@
+/* SEYVEO calendar reminder v1: deterministic, offline, no browser required. */
+'use strict';
+const assert=require('node:assert/strict');
+const {reminderTime,reminderKey,dueReminders}=require('../assets/calendar-reminders.js');
+const at=(date,h,m)=>new Date(date.getFullYear(),date.getMonth(),date.getDate(),h,m).getTime();
+const day=new Date(2026,9,21);
+const due={id:'a',title:'Встреча',date:'2026-10-21',time:'12:30',remind:30};
+const other={id:'b',title:'Позвонить',date:'2026-10-21',time:'12:45',remind:15};
+const before=at(day,12,0),middle=at(day,12,10);
+assert.equal(dueReminders([due],before-1).length,0,'Do not notify before lead time');
+assert.equal(dueReminders([due],before).length,1,'Notify at chosen lead time');
+assert.equal(dueReminders([due],middle)[0].item.id,'a','Notify inside lead window');
+assert.equal(dueReminders([due],at(day,12,30)).length,0,'No stale alert at/after start');
+assert.equal(dueReminders([due,other],at(day,12,30)).length,0,'No alert after first, before second');
+assert.equal(dueReminders([due,other],at(day,12,31)).length,0,'Do not show past appointments');
+assert.equal(dueReminders([due,other],at(day,12,42))[0].item.id,'b','Later event triggered');
+assert.equal(dueReminders([due],middle,new Set([reminderKey(due)])).length,0,'Once per session');
+assert.equal(dueReminders([{...due,date:'2026-02-30'}],middle).length,0,'Reject impossible date');
+assert.equal(dueReminders([{...due,time:'25:30'}],middle).length,0,'Reject invalid time');
+assert.equal(dueReminders([{...due,remind:0}],middle).length,0,'Respect disabled reminder');
+assert.equal(dueReminders([{...due,id:null}],middle).length,0,'Reject malformed item');
+assert.equal(reminderTime({...due,date:'2026-10-21'}),at(day,12,30),'Local date/time');
+console.log('SEYVEO calendar reminders: 13 checks passed');
