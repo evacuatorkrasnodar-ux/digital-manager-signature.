@@ -4,16 +4,16 @@
  * 'Картина' is now the fourth visible dock action; no duplicate Home shortcut.
  * All rules are scoped to the existing footer, not the Home plasma or chat. */
 :root{
- --seyveo-nav-ink:#dfe5ed;
- --seyveo-nav-glass:rgba(15,18,24,.90);
- --seyveo-nav-line:rgba(225,234,248,.14);
+ --seyveo-nav-ink:#e1e5e2;
+ --seyveo-nav-glass:rgba(18,20,20,.92);
+ --seyveo-nav-line:rgba(225,231,226,.14);
  --seyveo-dock-height:56px;
  --seyveo-dock-bottom:calc(8px + env(safe-area-inset-bottom,0px));
 }
 :root[data-theme="light"]{
- --seyveo-nav-ink:#304257;
+ --seyveo-nav-ink:#303937;
  --seyveo-nav-glass:rgba(250,252,251,.92);
- --seyveo-nav-line:rgba(93,112,141,.18);
+ --seyveo-nav-line:rgba(96,109,102,.18);
 }
 .dock{
  position:fixed!important;
@@ -62,11 +62,11 @@
 .dock>.nav-item span{display:block;white-space:nowrap}
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
- background:rgba(184,198,218,.075)!important;
+ background:rgba(194,201,196,.075)!important;
  font-weight:530!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
- background:rgba(97,118,145,.075)!important;
+ background:rgba(97,109,102,.075)!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -101,17 +101,17 @@
  filter:drop-shadow(0 1px 3px rgba(0,0,0,.18))!important;
  transition:transform .18s ease!important;
 }
-.dock>.assistant-button .button-art .center-face{fill:#232b37!important}
-.dock>.assistant-button .button-art .voice-bars{stroke:#dfe5ed!important}
-.dock>.assistant-button .button-art .voice-dot{fill:#dfe5ed!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e3e9f0!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#42546a!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#42546a!important}
+.dock>.assistant-button .button-art .center-face{fill:#242829!important}
+.dock>.assistant-button .button-art .voice-bars{stroke:#e1e5e2!important}
+.dock>.assistant-button .button-art .voice-dot{fill:#e1e5e2!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e7eae8!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#49554f!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#49554f!important}
 .dock>.assistant-button:is(:active,.pressing,.arming) .button-art{
  transform:scale(.945)!important;
 }
 .dock>.assistant-button.listening{
- background:rgba(179,194,216,.085)!important;
+ background:rgba(104,157,134,.13)!important;
 }
 .dock>.assistant-button:focus-visible,
 .dock>.nav-item:focus-visible{
