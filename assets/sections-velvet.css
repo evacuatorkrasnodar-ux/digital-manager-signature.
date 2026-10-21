@@ -271,3 +271,8 @@
  #managePage .manage-discreet-note{padding-inline:12px}
  #managePage #seyveoDiscreetToggle .manage-theme-value{font-size:11px}
 }
+
+/* Settings typography: Apple-like quiet rows, unchanged touch areas. */
+#managePage .manage-text strong{font-weight:510;letter-spacing:-.018em}
+#managePage .manage-group h2{font-weight:480}
+#managePage .manage-card{box-shadow:none}
