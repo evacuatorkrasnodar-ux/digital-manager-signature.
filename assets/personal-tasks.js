@@ -381,6 +381,7 @@ function put(e){
  if(!save(next)){$('personalTaskStatus').textContent='Не удалось сохранить. Проверьте память браузера.';return}
  pendingSourceNoteId='';justCompletedTaskId='';
  dialog.close();render();
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
 function change(id,del=false){
  const all=read(),target=all.find(item=>item.id===id);if(!target)return;
@@ -393,6 +394,7 @@ function change(id,del=false){
  }
  justCompletedTaskId=!del&&target.done?target.id:'';
  render();
+ window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
 form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
