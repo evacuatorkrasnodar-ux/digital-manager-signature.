@@ -19,8 +19,8 @@ const plans=Object.freeze([
 const demoState={
  company:'sample',
  companies:{
-  sample:{plan:'pro',selected:'pro',renew:true,period:'month'},
-  second:{plan:'start',selected:'start',renew:false,period:'year'}
+  sample:{plan:'pro',selected:'pro',renew:false,period:'month',activated:false},
+  second:{plan:'start',selected:'start',renew:false,period:'year',activated:false}
  }
 };
 const safeText=(s,max=80)=>typeof s==='string'?s.trim().slice(0,max):'';
@@ -63,7 +63,7 @@ function renderPlans(){
   const subtitle=document.createElement('small');subtitle.textContent=item.features;
   body.append(name,subtitle);
   const note=document.createElement('em');
-  note.textContent=item.id===current().plan?'Пример':'Вариант';
+  note.textContent=current().activated&&item.id===current().plan?'Пример':'Вариант';
   button.append(mark,body,note);
   tierHost.append(button);
  }
@@ -71,24 +71,34 @@ function renderPlans(){
 function render(){
  const state=current();
  const plan=plans.find(item=>item.id===state.plan)||plans[1];
- $('seyveoAccountCurrentPlan').textContent=plan.title;
- $('seyveoAccountPlanDesc').textContent=plan.detail+' · SEYVEO Life включён';
- const monthly=state.period==='month';
- const date=monthly?'21 ноября 2026':'21 октября 2027';
- $('seyveoAccountSampleExpiry').textContent=date+' · пример';
- $('seyveoAccountSampleNextDate').textContent=date+' · условная';
- dialog.querySelectorAll('[data-seyveo-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.seyveoPeriod===state.period)));
+ const simulated=state.activated;
+ $('seyveoAccountCurrentPlan').textContent=simulated?plan.title:'Нет подписки';
+ $('seyveoAccountPlanDesc').textContent=simulated
+  ?plan.detail+' · только пример · SEYVEO Life включён'
+  :'Демонстрационный доступ · списаний нет';
+ $('seyveoAccountExampleStatus').textContent=simulated
+  ?'Пример активной подписки':'Подписка не подключена';
+ const date=state.period==='month'?'21 ноября 2026':'21 октября 2027';
+ $('seyveoAccountSampleExpiry').textContent=simulated?date+' · пример':'—';
+ $('seyveoAccountSampleNextDate').textContent=simulated?date+' · условная':'Нет запланированного платежа';
+ dialog.querySelectorAll('[data-seyveo-period]').forEach(button=>
+  button.setAttribute('aria-pressed',String(button.dataset.seyveoPeriod===state.period)));
  const auto=$('seyveoAccountAutoRenew');
  auto.setAttribute('aria-checked',String(state.renew));
- $('seyveoAccountAutoLabel').textContent=state.renew?'Включено в примере':'Выключено в примере';
- $('seyveoAccountRenewValue').textContent=state.renew?'Автоматическое · пример':'Ручное · пример';
- $('seyveoAccountBillingStatus').textContent=state.renew?'Будет продлено · пример':'Без автосписания';
+ $('seyveoAccountAutoLabel').textContent=!simulated?'Пока подписки нет':
+  state.renew?'Включено только в примере':'Выключено в примере';
+ $('seyveoAccountRenewValue').textContent=!simulated?'Не настроено':
+  state.renew?'Автоматическое · пример':'Ручное · пример';
+ $('seyveoAccountBillingStatus').textContent=!simulated?'Без списаний':
+  state.renew?'Пример автопродления':'Без автосписания';
  const selectedPlan=plans.find(item=>item.id===state.selected)||plans[1];
- $('seyveoAccountTierMessage').textContent=state.selected===state.plan
-   ?'Показан тариф этого примера. Реальная подписка не подключена.'
-   :'Выбрано: '+selectedPlan.title+'. Нажмите ниже, чтобы изменить только пример.';
+ $('seyveoAccountTierMessage').textContent=!simulated
+  ?'Тарифы в разработке. Выберите вариант и нажмите ниже для просмотра будущего статуса.'
+  :state.selected===state.plan
+   ?'Показан оплаченный тариф в примере. Реальной подписки нет.'
+   :'Выбрано: '+selectedPlan.title+'. Применение изменит только этот пример.';
  const manageLabel=$('seyveoAccountManageBadge');
- if(manageLabel)manageLabel.textContent='Пример';
+ if(manageLabel)manageLabel.textContent='Демо';
  renderPlans();
 }
 function selectTab(name){
@@ -121,6 +131,10 @@ function open(fromOwner=false){
 function close(){
  if(dialog.open)dialog.close();
 }
+window.SEYVEO_OPEN_ACCOUNT_DEMO=(tab='overview')=>{
+ open(false);
+ selectTab(tab);
+};
 management.addEventListener('click',()=>open(false));
 owner.addEventListener('click',()=>open(true));
 $('seyveoAccountClose').addEventListener('click',close);
@@ -150,6 +164,7 @@ companyPicker.addEventListener('change',()=>{
 $('seyveoAccountApplyPlan').addEventListener('click',()=>{
  const state=current();
  state.plan=state.selected;
+ state.activated=true;
  render();
  $('seyveoAccountTierMessage').textContent='Готово: '+(plans.find(item=>item.id===state.plan)?.title||'')+
   ' применён только в демонстрации. Оплаты и изменения реального доступа нет.';
