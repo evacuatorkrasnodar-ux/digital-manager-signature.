@@ -141,15 +141,32 @@ function close(){
    quiet.hidden=$('kicker')?.textContent!=='На связи';
  }
 }
-async function copyReply(value){
+async function copyTextValue(value,label='Ответ'){
  try{
    if(!navigator.clipboard?.writeText)throw new Error('clipboard unavailable');
    await navigator.clipboard.writeText(value);
-   status('Ответ скопирован',1800);
+   status(label+' скопирован'+(label==='Ответ'?'':'о'),1800);
  }catch{
-   // Keep the text visible for native manual selection when permission is denied.
-   status('Выделите текст ответа для копирования',2800);
+   status('Выделите текст для копирования',2800);
  }
+}
+function copyReply(value){return copyTextValue(value,'Ответ')}
+function reviseQuestion(value){
+ const input=$('question');
+ if(!input)return;
+ const original=String(value||'').trim(),draft=input.value.trim();
+ if(!original)return;
+ // Never throw away a different unsent draft while replaying an older question.
+ if(draft&&draft!==original){
+   status('Сначала отправьте или очистите текущий черновик',2800);
+   return;
+ }
+ window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
+ input.value=original;
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+ input.focus({preventScroll:true});
+ input.setSelectionRange(original.length,original.length);
+ status('Измени текст и отправь',1600);
 }
 function saveReplyToNotes(value){
  const api=window.SEYVEO_NOTES_API;
@@ -193,7 +210,7 @@ const UP_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v10H4V1
 const DOWN_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14V4H4v10h3Zm0 0 5 7c1 1.3 3 .5 3-1v-4h4a2 2 0 0 0 1.95-2.5l-2-9A2 2 0 0 0 17 3H7"/></svg>';
 const SHARE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0-4 4m4-4 4 4M5 13v7h14v-7"/></svg>';
 const SOUND_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM17 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/></svg>';
-const MORE_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
+const EDIT_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17-.5 3.5L7 20l12-12-3-3L4 17Zm10.5-10.5 3 3M4 12V5h7"/></svg>';
 
 async function shareReply(value){
  try{
@@ -249,21 +266,6 @@ function makeFeedbackActions(turn){
  }
  refresh();return [useful,notUseful];
 }
-function moreReplyActions(){
- const details=document.createElement('details');
- details.className='seyveo-reply-more';
- const summary=document.createElement('summary');
- summary.innerHTML=MORE_ICON;
- summary.title='Ещё действия';summary.setAttribute('aria-label','Ещё действия с ответом');
- const content=document.createElement('div');
- content.className='seyveo-reply-more-menu';
- const hint=document.createElement('span');
- hint.className='seyveo-reply-more-hint';
- hint.textContent='Здесь появятся дополнительные действия';
- content.append(hint);
- details.append(summary,content);
- return details;
-}
 function renderTurns(turns){
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
@@ -279,7 +281,23 @@ function renderTurns(turns){
      body.className='seyveo-conversation-body';
      body.textContent=String(value||'');
      item.append(label,body);
-     if(who==='sayvi'&&String(value||'').trim()){
+     if(who==='you'){
+       // The message bubble and its quiet actions are separate siblings:
+       // copy/edit must sit BELOW the owner's bubble, never inside it.
+       const group=document.createElement('div');
+       group.className='seyveo-conversation-user-group';
+       const userActions=document.createElement('div');
+       userActions.className='seyveo-conversation-user-actions';
+       const ownText=String(value||'');
+       userActions.append(
+         replyAction('Копировать свой вопрос',COPY_ICON,()=>copyTextValue(ownText,'Сообщение')),
+         replyAction('Изменить и отправить заново',EDIT_ICON,()=>reviseQuestion(ownText))
+       );
+       group.append(item,userActions);
+       nodes.push(group);
+       continue;
+     }
+     if(String(value||'').trim()){
        const actions=document.createElement('div');
        actions.className='seyveo-conversation-reply-actions';
        const answer=String(value);
@@ -288,8 +306,7 @@ function renderTurns(turns){
          ...makeFeedbackActions(turn),
          replyAction('Поделиться',SHARE_ICON,()=>shareReply(answer)),
          replyAction('Озвучить',SOUND_ICON,()=>readReply(answer)),
-         replyAction('В Блокнот',NOTE_ICON,()=>saveReplyToNotes(answer)),
-         moreReplyActions()
+         replyAction('В Блокнот',NOTE_ICON,()=>saveReplyToNotes(answer))
        );
        item.append(actions);
      }

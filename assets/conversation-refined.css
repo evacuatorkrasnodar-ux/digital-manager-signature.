@@ -308,3 +308,74 @@ html.seyveo-conversation .seyveo-name-dots i:nth-child(3){animation-delay:.32s}
  html.seyveo-conversation .seyveo-name-dots i{animation:none!important}
  html.seyveo-conversation .seyveo-name-dots i{opacity:1}
 }
+
+/* SEYVEO Conversation v6: no sphere in the CHAT.
+ * Old iPhone keyboard rules had higher specificity and could resurrect it.
+ * Keep the original Home sphere in DOM and visible after chat closes. */
+html.seyveo-conversation #stage > #orbCluster,
+html.seyveo-conversation.seyveo-composer-keyboard #stage.has-inline-reply > #orbCluster,
+html.seyveo-conversation #stage #orb{
+ display:none!important;
+}
+html.seyveo-conversation #stage > .orb-inline-reply{
+ flex:1 1 auto;min-height:0!important;
+}
+/* Compact ChatGPT-inspired actions — 34px visual icons with a calm
+ * 40px touch area on iPhones. No empty overflow menu, no tooltips as labels. */
+html.seyveo-conversation .seyveo-conversation-user-group{
+ display:flex;flex-direction:column;align-items:flex-end;
+ width:100%;max-width:100%;min-width:0;
+ gap:0;margin:3px 0 15px;
+}
+html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-turn--you{
+ align-self:flex-end;margin:0 0 1px auto!important;
+ max-width:min(88%,420px);width:max-content;
+}
+html.seyveo-conversation .seyveo-conversation-user-actions{
+ display:flex;justify-content:flex-end;align-items:center;
+ gap:1px;min-height:40px;width:auto;
+ margin:0 2px 0 auto;padding:0;
+}
+html.seyveo-conversation .seyveo-conversation-user-actions .seyveo-conversation-reply-action{
+ color:var(--secondary);
+}
+html.seyveo-conversation .seyveo-conversation-reply-actions{
+ justify-content:flex-start!important;align-items:center;
+ gap:1px!important;margin:2px 0 0!important;
+ min-height:40px!important;padding:0!important;
+ overflow-x:auto;scrollbar-width:none;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action{
+ box-sizing:border-box;
+ display:inline-flex;align-items:center;justify-content:center;
+ width:38px!important;min-width:38px!important;
+ height:40px!important;min-height:40px!important;
+ flex:0 0 38px;padding:0!important;margin:0!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;
+ color:var(--secondary);
+ opacity:.78;transition:color .18s ease,background-color .18s ease,opacity .18s ease;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
+ width:16px!important;height:16px!important;
+ stroke-width:1.6!important;
+ fill:none!important;stroke:currentColor;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action>span{
+ display:none!important;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:active,
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:hover{
+ opacity:1;color:var(--text);
+ background:rgba(116,166,143,.095)!important;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action[aria-pressed="true"]{
+ opacity:1;color:var(--seyveo-emerald-text,#a7d7c9);
+ background:rgba(72,134,106,.13)!important;
+}
+html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:focus-visible{
+ outline:2px solid var(--seyveo-emerald-text,#a7d7c9)!important;outline-offset:1px;
+}
+@media(prefers-reduced-motion:reduce){
+ html.seyveo-conversation .seyveo-conversation-reply-action{transition:none!important}
+}
