@@ -56,6 +56,10 @@ function fillPreview(){
  if($('seyveoCompanyTitle'))$('seyveoCompanyTitle').textContent=owner;
  if($('seyveoOwnerDialogKind'))$('seyveoOwnerDialogKind').textContent=desc;
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
+ const businessName=$('seyveoOwnerBusinessName');
+ if(businessName)businessName.textContent=(saved?record.name:'SEYVEO')+' · Карточка и управление';
+ const companyLabel=$('seyveoOwnerCompanyLabel');
+ if(companyLabel)companyLabel.textContent=saved?record.name:'Карточка бизнеса';
  syncOwnerSubscription();
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
@@ -97,6 +101,7 @@ function openCompany(){
  toggleType();drawRows();status(dialog,'');
  const details=$('seyveoCompanyDetails');
  if(details)details.open=false;
+ dialog.classList.remove('seyveo-business-open');
  const editor=$('seyveoOwnerCompanyEditor');
  if(editor)editor.hidden=true;
  $('seyveoCompanyEditTop')?.setAttribute('aria-expanded','false');
@@ -215,6 +220,7 @@ $('pictureCompanyOpen')?.addEventListener('click',()=>{
  openCompany();
  const details=$('seyveoCompanyDetails');
  if(details)details.open=true;
+ dialog.classList.add('seyveo-business-open');
 });
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
@@ -237,6 +243,18 @@ $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
   const field=form.elements.namedItem('name');
   if(field&&typeof field.focus==='function')field.focus({preventScroll:true});
  }
+});
+$('seyveoOwnerBusinessOpen')?.addEventListener('click',()=>{
+ const details=$('seyveoCompanyDetails');
+ if(details)details.open=true;
+ dialog.classList.add('seyveo-business-open');
+ dialog.scrollTop=0;
+});
+$('seyveoCompanyDetails')?.querySelector('summary')?.addEventListener('click',event=>{
+ event.preventDefault();
+ dialog.classList.remove('seyveo-business-open');
+ $('seyveoCompanyDetails').open=false;
+ dialog.scrollTop=0;
 });
 brand.addEventListener('click',openStudio);
 $('seyveoStudioSeePlans')?.addEventListener('click',()=>{
