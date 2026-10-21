@@ -1,0 +1,27 @@
+/* SEYVEO Context Focus — deterministic Node regression tests. */
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const source=fs.readFileSync(path.resolve(__dirname,'../assets/context-focus.js'),'utf8');
+const context={window:{},Date};
+vm.runInNewContext(source,context,{filename:'context-focus.js'});
+const pick=context.window.SEYVEO_CONTEXT_FOCUS.selectTask;
+const now=new Date(2026,9,21,11,25);
+const task=(id,due,done=false)=>({id,title:'Дело '+id,due,done,createdAt:'2026-10-20'});
+assert.equal(pick([],now),null,'empty tasks');
+assert.equal(pick([task('none','')],now),null,'no deadline, no priority');
+assert.equal(pick([task('far','2026-10-25')],now),null,'more than three days is quiet');
+assert.equal(pick([task('three','2026-10-24')],now).when,'Срок в ближайшие дни');
+assert.equal(pick([task('tomorrow','2026-10-22')],now).when,'Срок завтра');
+assert.equal(pick([task('today','2026-10-21')],now).when,'Срок сегодня');
+assert.equal(pick([task('overdue','2026-10-20')],now).when,'Срок прошёл');
+assert.equal(pick([task('done','2026-10-19',true),task('today','2026-10-21')],now).id,'today');
+assert.equal(pick([task('tomorrow','2026-10-22'),task('late','2026-10-19'),task('today','2026-10-21')],now).id,'late');
+assert.equal(pick([task('invalid','2026-02-31'),task('today','2026-10-21')],now).id,'today');
+assert.equal(pick([task('today','2026-10-21')],new Date('invalid')),null);
+const items=[task('later','2026-10-22'),task('today','2026-10-21')];
+pick(items,now);
+assert.equal(items[0].id,'later','input order remains intact');
+console.log('PASS SEYVEO Context Focus (12 assertions)');
