@@ -202,3 +202,9 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
   -webkit-overflow-scrolling:touch;
  }
 }
+
+/* Black Velvet final polish: quiet selected tab and neutral Home capsule. */
+.dock>.nav-item.active{background:rgba(211,219,213,.042)!important;font-weight:490!important}
+:root[data-theme="light"] .dock>.nav-item.active{background:rgba(68,81,73,.055)!important}
+html:not(.seyveo-conversation) #ask.prompt:not(.expanded){background:rgba(23,26,27,.95)!important;border-color:rgba(207,216,210,.14)!important}
+:root[data-theme="light"]:not(.seyveo-conversation) #ask.prompt:not(.expanded){background:rgba(247,248,246,.96)!important;border-color:rgba(64,79,69,.13)!important}
