@@ -195,3 +195,152 @@
  background:#f7f9f7!important;border-color:rgba(38,59,47,.17);
  box-shadow:0 19px 42px rgba(30,52,38,.15);
 }
+
+
+/* Roman owner identity · signature v2. Override legacy decorative layers. */
+#seyveoCompanyDialog.seyveo-owner-profile-dialog{
+ width:min(385px,calc(100vw - 26px));max-width:calc(100vw - 26px);
+ padding:22px 19px 15px!important;max-height:min(80dvh,610px);
+ background:#181c1e!important;border-radius:25px!important;
+}
+#seyveoCompanyDialog .seyveo-owner-profile-top{
+ margin:0 0 12px;min-height:60px;
+}
+#seyveoCompanyDialog .seyveo-owner-profile-identity{
+ display:block;min-width:0;
+}
+#seyveoCompanyDialog .seyveo-owner-profile-intro{
+ display:flex;gap:5px;align-items:flex-start;
+}
+#seyveoCompanyDialog .seyveo-owner-profile-eyebrow{
+ font-size:9px;font-weight:450;letter-spacing:.105em;
+}
+#seyveoCompanyDialog #seyveoCompanyTitle{
+ font-size:25px!important;font-weight:480!important;
+ letter-spacing:-.035em;line-height:1.2;
+}
+#seyveoCompanyDialog #seyveoOwnerDialogKind{
+ font-size:12px;font-weight:430;
+}
+#seyveoCompanyDialog .seyveo-owner-profile-close{
+ width:44px;height:44px;min-width:44px;min-height:44px;
+}
+#seyveoCompanyDialog #seyveoOwnerDialogAvatar{display:none!important}
+#seyveoCompanyDialog #seyveoCompanyAvatarEdit[hidden]{display:none!important}
+#seyveoCompanyDialog .seyveo-owner-business-link{
+ -webkit-appearance:none;appearance:none;
+ display:flex;align-items:center;gap:12px;
+ width:100%;min-height:74px;padding:11px 1px;
+ background:transparent;border:0;border-top:1px solid var(--soft-line);
+ border-bottom:1px solid var(--soft-line);
+ color:var(--text);font:inherit;text-align:left;
+}
+#seyveoCompanyDialog .seyveo-owner-business-icon{
+ display:grid;place-items:center;width:40px;height:40px;
+ flex:none;background:rgba(220,231,226,.045);
+ border:1px solid rgba(208,222,214,.12);border-radius:13px;
+}
+#seyveoCompanyDialog .seyveo-owner-business-icon svg{
+ width:20px;height:20px;fill:none;stroke:#cbd4d0;stroke-width:1.45;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoCompanyDialog .seyveo-owner-business-text{
+ display:flex;flex:1;flex-direction:column;min-width:0;gap:5px;
+}
+#seyveoCompanyDialog .seyveo-owner-business-text strong{
+ font-size:14px;font-weight:520;line-height:1.3;color:var(--text);
+}
+#seyveoCompanyDialog .seyveo-owner-business-text small{
+ color:var(--secondary);font-size:11px;font-weight:425;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#seyveoCompanyDialog .seyveo-owner-chevron{
+ font-size:21px;font-weight:350;color:var(--secondary);
+}
+#seyveoCompanyDialog .seyveo-owner-plan-link{
+ -webkit-appearance:none;appearance:none;display:flex;
+ flex-direction:column;align-items:stretch;text-align:left;
+ width:100%;margin:0;padding:18px 1px 9px;gap:9px;
+ color:var(--text);background:transparent;border:0;
+ font:inherit;cursor:pointer;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-eyebrow{
+ color:var(--secondary);font-size:9px;letter-spacing:.085em;
+ font-weight:490;line-height:1.4;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-heading{
+ display:flex;align-items:center;gap:11px;min-width:0;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-heading strong{
+ font-size:24px;font-weight:510;line-height:1.15;
+ letter-spacing:-.035em;color:var(--text);
+}
+#seyveoCompanyDialog .seyveo-owner-crown{
+ display:block;width:20px;height:20px;flex:none;
+ fill:none;stroke:#e0e5e2;stroke-width:1.35;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-expiry{
+ color:#bcc8c1;font-size:11.5px;line-height:1.45;
+ font-weight:420;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-foot{
+ display:flex;align-items:center;justify-content:space-between;
+ width:100%;min-height:42px;padding-top:9px;
+ border-top:1px solid var(--soft-line);
+ color:var(--secondary);font-size:11px;font-weight:460;
+}
+#seyveoCompanyDialog .seyveo-owner-plan-foot span{
+ font-size:21px;font-weight:350;color:var(--text);
+}
+#seyveoCompanyDialog .seyveo-owner-business-view{display:none!important}
+#seyveoCompanyDialog.seyveo-business-open .seyveo-owner-profile-top,
+#seyveoCompanyDialog.seyveo-business-open .seyveo-owner-business-link,
+#seyveoCompanyDialog.seyveo-business-open .seyveo-owner-plan-link{
+ display:none!important;
+}
+#seyveoCompanyDialog.seyveo-business-open .seyveo-owner-business-view{
+ display:block!important;
+}
+#seyveoCompanyDialog .seyveo-owner-business-view>summary{
+ display:flex;align-items:center;min-height:44px;
+ padding:0 1px 12px;cursor:pointer;list-style:none;
+ border-bottom:1px solid var(--soft-line);
+}
+#seyveoCompanyDialog .seyveo-owner-business-view>summary::-webkit-details-marker{display:none}
+#seyveoCompanyDialog .seyveo-owner-business-back{
+ display:flex;align-items:center;gap:10px;
+ color:var(--text);font-size:16px;font-weight:500;
+}
+#seyveoCompanyDialog .seyveo-owner-business-back>span{
+ display:grid;place-items:center;
+ width:35px;height:35px;border:1px solid var(--soft-line);
+ background:var(--card2);border-radius:50%;
+ font-size:26px;line-height:1;font-weight:280;
+}
+#seyveoCompanyDialog .seyveo-owner-business-view .seyveo-owner-company-content{
+ border:0;padding-top:17px;
+}
+#seyveoCompanyDialog .seyveo-owner-business-view .seyveo-owner-company-heading{
+ margin-bottom:4px;
+}
+#seyveoCompanyDialog .seyveo-owner-business-view .seyveo-owner-company-heading strong{
+ font-size:14px;font-weight:515;
+}
+#seyveoCompanyDialog :is(.seyveo-owner-business-link,.seyveo-owner-plan-link,.seyveo-owner-business-view>summary):focus-visible{
+ outline:2px solid var(--text);outline-offset:3px;
+ border-radius:10px;
+}
+@media(max-width:375px){
+ #seyveoCompanyDialog.seyveo-owner-profile-dialog{
+  width:calc(100vw - 22px);max-width:calc(100vw - 22px);
+  padding-inline:16px!important;
+ }
+ #seyveoCompanyDialog .seyveo-owner-plan-heading strong{font-size:23px}
+}
+:root[data-theme=light] #seyveoCompanyDialog.seyveo-owner-profile-dialog{
+ background:#f8faf8!important;
+}
+:root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-plan-expiry{color:#53645c}
+:root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-crown{stroke:#465c52}
+:root[data-theme=light] #seyveoCompanyDialog .seyveo-owner-business-icon svg{stroke:#53685c}
