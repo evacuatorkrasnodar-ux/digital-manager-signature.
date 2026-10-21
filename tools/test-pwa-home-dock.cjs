@@ -14,6 +14,7 @@ const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 assert.match(css,/--seyveo-dock-bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)/);
 assert.match(css,/\.dock\{\s*position:fixed!important;\s*z-index:30!important;/);
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
+assert.match(css,/--seyveo-dock-height:56px/,'Shared dock compact height');
 assert.ok(css.includes('--seyveo-dock-bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 12px))'),'All installed PWA screens share the same unclipped low dock offset');
 assert.doesNotMatch(css,/--seyveo-dock-bottom:[^;]*safe-area-inset-top/,'Bottom of the viewport never depends on top notch inset');
 const dockOffset=bottomSafeArea=>Math.max(18,bottomSafeArea-12);
@@ -27,7 +28,7 @@ assert.match(css,/position:fixed!important;\s*inset:0!important;/);
 assert.match(css,/overflow-y:auto!important;/,'All installed PWA pages can scroll');
 assert.match(css,/overscroll-behavior-y:contain/);
 assert.match(css,/-webkit-overflow-scrolling:touch/);
-assert.match(html,/assets\/floating-navigation\.css\?v=11/);
+assert.match(html,/assets\/floating-navigation\.css\?v=12/);
 assert.match(html,/assets\/future-presence\.js\?v=4/);
 assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is not inside app scroller');
 
