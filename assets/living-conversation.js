@@ -32,11 +32,14 @@ if(!Array.isArray(window.SEYVEO_DEMO_CHAT_TURNS)||
 window.addEventListener('seyveo:chat-history-cleared',()=>{
  window.SEYVEO_DEMO_CHAT_TURNS=[];
  text.replaceChildren();
- reply.hidden=true;
- stage.classList.remove('has-inline-reply');
  if(root.classList.contains('seyveo-conversation')){
-   if(quiet.parentElement!==stage)stage.insertBefore(quiet,reply);
-   quiet.hidden=false;
+   renderTurns([]);
+   reply.hidden=false;
+   stage.classList.add('has-inline-reply');
+   quiet.hidden=true;
+ }else{
+   reply.hidden=true;
+   stage.classList.remove('has-inline-reply');
  }
 });
 
@@ -97,26 +100,27 @@ function syncMic(on){
 }
 function revealExisting(){
  const turns=window.SEYVEO_DEMO_CHAT_TURNS||[];
- if(!turns.length||!reply.hidden)return;
- renderTurns(turns);
+ // Empty thread gets an ordinary welcome line, not another fullscreen overlay.
+ if(reply.hidden)renderTurns(turns);
  reply.hidden=false;
  stage.classList.add('has-inline-reply');
 }
 function open(){
  if(home.hidden)return;
  root.classList.add('seyveo-conversation');
- // A chat is a persistent view, not a timed Home shortcut. Also cancel any
- // idle timer that was armed before opening the conversation.
+ // Reuse the original writer and the existing saved thread.
  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
  header.hidden=false;
  revealExisting();
- // One and the same original pearl line, under the compact sphere.
- if(reply.hidden && quiet.parentElement!==stage)stage.insertBefore(quiet,reply);
- if(!reply.hidden && quiet.parentElement!==reply)reply.prepend(quiet);
- quiet.hidden=false;
+ // The orb is still the centre of Home. Full chat is deliberately text-first.
+ quiet.hidden=true;
  status('На связи');
+ queueChatGeometry();
 }
 function close(){
+ root.style.removeProperty('--sayvi-chat-height');
+ root.style.removeProperty('--sayvi-chat-top');
+ root.style.removeProperty('--sayvi-composer-space');
  // A conversation may be recording: never leave the microphone active on exit.
  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
  root.classList.remove('seyveo-conversation');
@@ -288,9 +292,58 @@ function renderTurns(turns){
      nodes.push(item);
    }
  });
+ if(!turns.length){
+   const welcome=document.createElement('div');
+   welcome.className='seyveo-chat-welcome';
+   const heading=document.createElement('strong');
+   heading.textContent='Сэйви на связи';
+   const hint=document.createElement('p');
+   hint.textContent='Напиши, что нужно сделать, или просто поговорим.';
+   welcome.append(heading,hint);
+   nodes.push(welcome);
+ }
  text.replaceChildren(...nodes);
  if(atBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
+// Only the chat shell follows iPhone's *visible* viewport.
+// Keep its header, transcript and composer in separate layers: typing never
+// pushes the entire page or repositions the approved Home artwork.
+let chatFrame=0;
+function syncChatGeometry(){
+ if(!root.classList.contains('seyveo-conversation'))return;
+ const viewport=window.visualViewport;
+ const height=Math.max(280,Math.round(viewport?.height||window.innerHeight));
+ const top=Math.max(0,Math.round(viewport?.offsetTop||0));
+ root.style.setProperty('--sayvi-chat-height',height+'px');
+ root.style.setProperty('--sayvi-chat-top',top+'px');
+ // A ResizeObserver measures the same native textarea/form that already owns
+ // input and drafts. The transcript shortens as the composer grows upwards.
+ const composerHeight=Math.ceil(form.getBoundingClientRect().height);
+ root.style.setProperty('--sayvi-composer-space',(composerHeight+30)+'px');
+}
+function queueChatGeometry(){
+ if(chatFrame)return;
+ chatFrame=requestAnimationFrame(()=>{chatFrame=0;syncChatGeometry()});
+}
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',queueChatGeometry);
+ window.visualViewport.addEventListener('scroll',queueChatGeometry);
+}
+window.addEventListener('resize',queueChatGeometry);
+$('question')?.addEventListener('input',queueChatGeometry);
+$('question')?.addEventListener('focus',()=>{
+ queueChatGeometry();
+ setTimeout(queueChatGeometry,200);
+});
+$('question')?.addEventListener('blur',()=>{
+ queueChatGeometry();
+ setTimeout(queueChatGeometry,250);
+});
+if(typeof ResizeObserver==='function'){
+ const observer=new ResizeObserver(queueChatGeometry);
+ observer.observe(form);
+}
+
 // Writing inside the Home input must NOT open the full conversation.
  // Only ↗, an explicit microphone action or sending a message opens chat.
 $('seyveoConversationBack').addEventListener('click',close);
@@ -314,6 +367,9 @@ document.addEventListener('seyveo:assistant-presence',e=>{
 window.addEventListener('hashchange',()=>{
  if(home.hidden||location.hash && !['','#home'].includes(location.hash)){
    root.classList.remove('seyveo-conversation');
+   root.style.removeProperty('--sayvi-chat-height');
+   root.style.removeProperty('--sayvi-chat-top');
+   root.style.removeProperty('--sayvi-composer-space');
    header.hidden=true;syncMic(false);
  }
 });
