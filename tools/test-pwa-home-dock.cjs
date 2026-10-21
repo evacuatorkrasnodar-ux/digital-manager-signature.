@@ -24,16 +24,18 @@ assert.match(html,/assets\/future-presence\.js\?v=3/,'New standalone state modul
 const notchScope='html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation):not(.seyveo-composer-keyboard) .dock';
 assert.ok(css.includes(notchScope),'Top inset fix is scoped to Home only and avoids the keyboard');
 assert.match(css,/@media \(max-width:700px\) and \(orientation:portrait\)/,'Portrait only notch compensation');
-assert.match(css,/bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\) - env\(safe-area-inset-top,0px\)\)!important/,'Notch top inset compensated');
+assert.match(css,/bottom:max\(8px,calc\(8px \+ env\(safe-area-inset-bottom,0px\) - env\(safe-area-inset-top,0px\)\)\)!important/,'Notch compensation never clips the dock below the fixed viewport');
 assert.ok(!css.includes('html.seyveo-standalone[data-seyveo-view="manage"] .dock'),'Management bottom remains untouched');
-assert.match(html,/assets\/floating-navigation\.css\?v=5/,'PWA uses refreshed dock styles');
+assert.match(html,/assets\/floating-navigation\.css\?v=6/,'PWA uses refreshed dock styles');
 function expectedDockBottom(viewportBottom,bottomInset,topInset,standaloneHome){
- const cssBottom=8+bottomInset-(standaloneHome?topInset:0);
+ const cssBottom=standaloneHome?Math.max(8,8+bottomInset-topInset):8+bottomInset;
  return viewportBottom-cssBottom;
 }
-assert.equal(expectedDockBottom(848,34,48,true),854,'Home PWA aligns with physical screen bottom at 896px');
+assert.equal(expectedDockBottom(848,34,48,true),840,'Installed Home dock stays 8px INSIDE the clipped viewport');
 assert.equal(expectedDockBottom(896,34,48,false),854,'Management keeps its original lower position');
-assert.equal(expectedDockBottom(768,34,44,true),770,'iPhone X notch correction aligns with Management position');
+assert.equal(expectedDockBottom(768,34,44,true),760,'iPhone X Home stays fully inside the fixed viewport');
+assert.equal(expectedDockBottom(848,34,48,true)<848,true,'The lower rounded rim remains visible');
+assert.equal(expectedDockBottom(848,34,0,true),806,'Safe-area compensation still works when top inset is unavailable');
 
 
 function simulatedView({mediaStandalone=false,appleStandalone=false,view='home',conversation=false}={}){
