@@ -8,8 +8,9 @@ const rail=$('assistantQuickrail'),track=$('assistantQuickTrack'),pips=$('assist
 const dialog=$('assistantQuickSettings'),list=$('assistantQuickSettingsList');
 const demoTrack=$('assistantQuickPreviewTrack'),demoPips=$('assistantQuickPreviewPages'),demoHint=$('assistantQuickPreviewHint');
 if(!rail||!track||!pips||!dialog||!list)return;
-const KEY='seyveo-assistant-quick-actions-v1',MAX=8;
-const DEFAULT=['event','note','history','notes'];
+const KEY='seyveo-assistant-quick-actions-v1',MAX=9;
+const WORLD_MIGRATION='seyveo-world-quickrail-migrated-v1';
+const DEFAULT=['event','note','history','world','notes'];
 const ITEMS=[
  ['event','Встреча','Создать событие','<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M12 12.5v5M9.5 15h5"/>'],
  ['note','Заметка','Написать заметку','<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6"/>'],
@@ -37,6 +38,18 @@ let selected=load();
 function save(){
  try{localStorage.setItem(KEY,JSON.stringify(selected));return true}catch{return false}
 }
+/* Add the personal menu to existing saved favorites once, without erasing choices.
+   Later user customizations remain respected. */
+try{
+ if(localStorage.getItem(WORLD_MIGRATION)!=='done'){
+  if(!selected.includes('world')){
+   selected.splice(Math.min(3,selected.length),0,'world');
+   selected=[...new Set(selected)].slice(0,MAX);
+   save();
+  }
+  localStorage.setItem(WORLD_MIGRATION,'done');
+ }
+}catch{}
 function feedback(){
  // Existing Silk Touch respects the user's sound preference. iOS browsers
  // cannot promise hardware haptics; never fake vibrations or emit loud audio.
@@ -72,7 +85,10 @@ function perform(id){
  if(id==='notes'){
   closeComposer();window.dispatchEvent(new Event('seyveo:notes-open'));return;
  }
- if(['world','health','care'].includes(id)){
+ if(id==='world'){
+  closeComposer();window.SEYVEO_TOGGLE_WORLD_MENU?.();return;
+ }
+ if(['health','care'].includes(id)){
   closeComposer();openSpace(id);return;
  }
  if(['calendar','tasks','picture'].includes(id)){
