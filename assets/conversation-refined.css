@@ -333,14 +333,14 @@ html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-tu
 html.seyveo-conversation .seyveo-conversation-user-actions{
  display:flex;justify-content:flex-end;align-items:center;
  gap:1px;min-height:40px;width:auto;
- margin:-4px 2px -7px auto;padding:0;
+ margin:-5px 2px -7px auto;padding:0;
 }
 html.seyveo-conversation .seyveo-conversation-user-actions .seyveo-conversation-reply-action{
  color:var(--secondary);
 }
 html.seyveo-conversation .seyveo-conversation-reply-actions{
  justify-content:flex-start!important;align-items:center;
- gap:1px!important;margin:-2px 0 -6px!important;
+ gap:1px!important;margin:-4px 0 -6px!important;
  min-height:40px!important;padding:0!important;
  overflow-x:auto;scrollbar-width:none;
 }
@@ -366,11 +366,13 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:active,
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:hover{
  opacity:1;color:var(--text);
- background:rgba(116,166,143,.095)!important;
+ /* Do not inflate the apparent height of the icon bar with a filled tile. */
+ background:transparent!important;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action[aria-pressed="true"]{
+ /* Feedback stays selected through color and aria-pressed, without a green tile. */
  opacity:1;color:var(--seyveo-emerald-text,#a7d7c9);
- background:rgba(72,134,106,.13)!important;
+ background:transparent!important;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action:focus-visible{
  outline:2px solid var(--seyveo-emerald-text,#a7d7c9)!important;outline-offset:1px;
@@ -423,6 +425,12 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-
  html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span{animation:none!important}
 }
 
+/* SEYVEO Quiet Flow v4 · compact feedback.
+ * Restore the visual rhythm shown in the owner's screenshots: selected thumbs
+ * remain mint-colored, never surrounded by an oversized green rectangle.
+ * Move action rows just 1–2px closer to their messages. Keep 38x40px
+ * click targets, readable text and separation between adjacent turns.
+ */
 /* SEYVEO Quiet Flow v2 · compact conversation rhythm.
  * Reduce only invisible gaps between turns: retain 15px reading text,
  * its 1.55 line height and the existing 40px action hit areas.
