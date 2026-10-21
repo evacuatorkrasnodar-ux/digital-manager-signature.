@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Check read-only Windows server readiness logic
+        run: node --test server/tests/check-seyveo-pc.test.mjs
       - name: Test original silver plasma in dark and light themes
         run: node tools/test-plasma-silver.cjs
       - name: Test installed PWA Home scrolling and dock isolation
