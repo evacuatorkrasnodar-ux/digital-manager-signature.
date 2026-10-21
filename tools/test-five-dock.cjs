@@ -15,7 +15,8 @@ const slots=[
  ['#navPicture',4],['nav-manage',5]
 ];
 for(const [selector,position] of slots){
- const rule=css.split('.dock>'+selector+'{')[1]?.split('}')[0];
+ const cssSelector=selector.startsWith('#')?selector:'.'+selector;
+ const rule=css.split('.dock>'+cssSelector+'{')[1]?.split('}')[0];
  assert.ok(rule,selector+' CSS placement exists');
  assert.ok(rule.includes('grid-column:'+position+'!important'),selector+' has the correct column');
  assert.ok(rule.includes('grid-row:1!important'),selector+' stays on the same row');
