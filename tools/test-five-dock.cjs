@@ -34,7 +34,7 @@ for(const id of expected){
  assert.ok(at>last,id+' keeps left-to-right DOM order');
  last=at;
 }
-assert.match(html,/assets\/floating-navigation\.css\?v=9/,'app loads v9 stylesheet');
+assert.match(html,/assets\/floating-navigation\.css\?v=10/,'app loads v10 stylesheet');
 assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is a direct body child, not in scrolling app');
 assert.ok(!html.includes('id="homePictureTrigger"'),'No duplicate Picture control on Home');
 assert.ok(!html.includes("$('homePictureTrigger')"),'No dead Picture handler on Home');
