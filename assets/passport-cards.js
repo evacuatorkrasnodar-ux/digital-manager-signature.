@@ -80,12 +80,13 @@ function openCompany(){
  const record=load();
  for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
  $('seyveoCompanyType').value=record.type||'npd';
+ const chosen=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
+ if(chosen)chosen.checked=true;
  toggleType();drawRows();status(dialog,'');
  if(!dialog.open)dialog.showModal();
 }
 function openStudio(){
  status(studio,'');
- drawPreview();
  if(!studio.open)studio.showModal();
 }
 function validate(card){
@@ -118,10 +119,7 @@ function plain(kind){
   'Продукт: Цифровой управляющий',
   'Фирменная подпись: SEYVEO · IT · AI · AUTOMATION',
   'Сборка: демонстрационная версия',
-  'Линейка: SEYVEO Business Start → Business Pro → Business Max',
-  'SEYVEO Life: отдельное направление, доступное вместе с бизнес-уровнем',
-  'Предпросмотр разработчика: '+(TIERS.find(t=>t.id===readPreview())||TIERS[1]).name,
-  'Подписка и лицензия: не подключены. Предпросмотр не является покупкой',
+  'Подписка: оформляется в разделе Управление',
   'Подключённый ИИ и внешние сервисы: отсутствуют',
   'Сведения о продукте представлены в приложении'
  ].join('\n');
@@ -213,7 +211,9 @@ $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
-$('seyveoCompanyType').addEventListener('change',toggleType);
+form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{
+ $('seyveoCompanyType').value=input.value;toggleType();
+}));
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
 $('seyveoStudioShare').addEventListener('click',()=>share('studio'));
