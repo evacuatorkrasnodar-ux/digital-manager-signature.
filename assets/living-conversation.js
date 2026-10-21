@@ -84,6 +84,51 @@ if(compact)compact.insertBefore(fold,compact.querySelector('#hideInput'));
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
 let statusTimer=0,speakingNow=false;
+const sendButton=$('composerCompactSend');
+const sendIcon=sendButton?.innerHTML||'';
+const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
+let activeAction=null;
+// Busy only while there is a real cancelable task or an active spoken reply.
+// A future streaming AI can reuse this interface with an AbortController.
+function syncActionButton(){
+ if(!sendButton)return;
+ const busy=Boolean(activeAction);
+ sendButton.classList.toggle('seyveo-stop-action',busy);
+ sendButton.type=busy?'button':'submit';
+ sendButton.innerHTML=busy?stopIcon:sendIcon;
+ sendButton.title=busy?'Остановить действие':'Отправить Сэйви';
+ sendButton.setAttribute('aria-label',busy?'Остановить действие':
+   form.dataset.composerMode==='notes'?'Сохранить в Блокнот':'Отправить Сэйви');
+}
+function finishAction(){
+ if(!activeAction)return;
+ activeAction=null;
+ syncActionButton();
+ if(!speakingNow)status('На связи');
+}
+function cancelAction(){
+ if(!activeAction)return false;
+ const active=activeAction;
+ activeAction=null;
+ syncActionButton();
+ try{active.cancel?.()}catch{}
+ speakingNow=false;
+ status('Остановлено',1200);
+ return true;
+}
+function beginAction(cancel){
+ if(activeAction)return false;
+ activeAction={kind:'queued',cancel};
+ syncActionButton();
+ status('Сэйви обрабатывает…');
+ return true;
+}
+sendButton?.addEventListener('click',event=>{
+ if(!activeAction)return;
+ event.preventDefault();
+ event.stopImmediatePropagation();
+ cancelAction();
+});
 function status(value,duration=0){
  const label=$('seyveoConversationStatus');
  if(!label)return;
@@ -122,6 +167,7 @@ function open(){
  queueChatGeometry();
 }
 function close(){
+ if(activeAction)cancelAction();
  root.style.removeProperty('--sayvi-chat-height');
  root.style.removeProperty('--sayvi-chat-top');
  root.style.removeProperty('--sayvi-composer-space');
@@ -378,12 +424,26 @@ document.addEventListener('seyveo:assistant-presence',e=>{
  }
  else if(phase==='listening-end'){if(!speakingNow)status('На связи');syncMic(false);}
  else if(phase==='thinking'){open();status('Сэйви думает…');}
- else if(phase==='speaking'){speakingNow=true;status('Сэйви отвечает…');}
- else if(phase==='text'||phase==='end'||phase==='ack'){
-   if(phase==='end')speakingNow=false;
-   if(!speakingNow)status('На связи',500);
+ else if(phase==='speaking'){
+   speakingNow=true;
+   if(root.classList.contains('seyveo-conversation')&&!activeAction){
+     activeAction={kind:'speech',cancel:()=>window.SEYVEO_CONVERSATION_STOP_SPEECH?.()};
+     syncActionButton();
+   }
+   status('Сэйви отвечает…');
  }
- else if(phase==='stop'){speakingNow=false;status('На связи');syncMic(false);}
+ else if(phase==='text'||phase==='end'||phase==='ack'){
+   if(phase==='end'){
+     speakingNow=false;
+     if(activeAction?.kind==='speech')finishAction();
+   }
+   if(!activeAction&&!speakingNow)status('На связи',500);
+ }
+ else if(phase==='stop'){
+   speakingNow=false;
+   if(activeAction?.kind==='speech')finishAction();
+   status('На связи');syncMic(false);
+ }
 });
 window.addEventListener('hashchange',()=>{
  if(home.hidden||location.hash && !['','#home'].includes(location.hash)){
@@ -393,6 +453,10 @@ window.addEventListener('hashchange',()=>{
    root.style.removeProperty('--sayvi-composer-space');
    header.hidden=true;syncMic(false);
  }
+});
+window.SEYVEO_CHAT_ACTIVITY=Object.freeze({
+ begin:beginAction,finish:finishAction,cancel:cancelAction,
+ isBusy:()=>Boolean(activeAction)
 });
 window.SEYVEO_CONVERSATION={open,close,renderTurns,status};
 })();

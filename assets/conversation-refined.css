@@ -379,3 +379,47 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
 @media(prefers-reduced-motion:reduce){
  html.seyveo-conversation .seyveo-conversation-reply-action{transition:none!important}
 }
+
+/* SEYVEO Chat v7 · perfectly symmetric header, no fake thinking state.
+ * 44px mirrored controls keep the title on the screen's true center line. */
+html.seyveo-conversation #seyveoConversationHeader{
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ align-items:center!important;justify-items:center!important;
+ gap:0!important;
+}
+html.seyveo-conversation #seyveoConversationHeader>button:first-child{justify-self:start}
+html.seyveo-conversation #seyveoConversationHeader>button:last-child{justify-self:end}
+html.seyveo-conversation #seyveoConversationHeader>.seyveo-conversation-heading{
+ justify-self:center!important;align-self:center!important;
+ max-width:100%;gap:2px;min-width:0;text-align:center;
+}
+html.seyveo-conversation .seyveo-conversation-heading .seyveo-conversation-name{
+ padding-right:0!important;margin:0 auto!important;
+ justify-content:center!important;
+ transform:none!important;
+}
+html.seyveo-conversation .seyveo-conversation-name .seyveo-name-dots{
+ left:calc(100% + 6px)!important;right:auto!important;
+}
+html.seyveo-conversation #seyveoConversationStatus{
+ text-align:center;display:block;width:100%;
+ font-size:11px;line-height:1.4;min-height:15px;
+}
+html.seyveo-conversation .seyveo-conversation-heading span.is-processing::after{
+ content:none!important;animation:none!important;
+}
+/* The square means something real: tap to cancel a queued action or stop
+ * speech playback. A finished response always restores the send plane. */
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-stop-action{
+ background:linear-gradient(145deg,#3c977d,#226953)!important;
+ border-color:rgba(177,232,206,.48)!important;
+ color:#f2fff8!important;
+ box-shadow:inset 0 1px 0 rgba(240,255,246,.18)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-stop-action svg{
+ display:block!important;width:20px;height:20px;
+ fill:currentColor!important;stroke:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span{animation:none!important}
+}
