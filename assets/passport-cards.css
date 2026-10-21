@@ -659,7 +659,54 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 
 /* Artwork variant: optimized generated silver silhouette. Initials stay live text. */
 .seyveo-avatar--silhouette{
- background:#111518 url("owner-silhouette-signature.svg?v=1") center / cover no-repeat;
+ background:#111518 url("owner-silhouette-signature.svg?v=2") center / cover no-repeat;
 }
 .seyveo-avatar--silhouette::before,
 .seyveo-avatar--silhouette::after{display:none!important}
+
+
+
+/* Refined illustrated passport v5.
+   Restore pictograms in a smaller, richer original velvet card. */
+.home-passports{
+ width:min(262px,calc(100vw - 36px));
+}
+.home-passports .seyveo-passport-card--studio,
+.home-passports .seyveo-passport-card--company{
+ height:152px;
+ background:linear-gradient(150deg,#303536 0%,#212728 52%,#141a1b 100%);
+ box-shadow:0 13px 32px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.095);
+}
+.home-passports .seyveo-passport-card--company{
+ background:linear-gradient(210deg,#303536 0%,#212728 52%,#141a1b 100%);
+}
+.home-passports .seyveo-passport-mini-facts{
+ gap:4px;padding:6px 0 0;margin:5px 0 5px;
+}
+.home-passports .seyveo-passport-mini-facts>.seyveo-passport-line{
+ display:grid;grid-template-columns:17px minmax(0,1fr);
+ align-items:center;gap:7px;min-height:19px;overflow:hidden;
+}
+.home-passports .seyveo-passport-line>svg{
+ display:block;width:16px;height:16px;flex:none;
+ fill:none;stroke:#b8c5c8;stroke-width:1.45;
+ stroke-linecap:round;stroke-linejoin:round;
+ opacity:.94;
+}
+.home-passports .seyveo-passport-line>span{
+ min-width:0;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;font-size:11px;line-height:1.25;
+}
+.home-passports .seyveo-passport-activity>svg{stroke:#9dc2b1}
+.home-passports .seyveo-passport-card-link{
+ font-size:11px;letter-spacing:.005em;
+}
+:root[data-theme=light] .home-passports .seyveo-passport-card--studio,
+:root[data-theme=light] .home-passports .seyveo-passport-card--company{
+ background:linear-gradient(150deg,#f9fbfa,#e6ebe9);
+}
+@media(max-width:355px){
+ .home-passports{width:min(255px,calc(100vw - 32px))}
+ .home-passports .seyveo-passport-card--studio,
+ .home-passports .seyveo-passport-card--company{height:148px}
+}
