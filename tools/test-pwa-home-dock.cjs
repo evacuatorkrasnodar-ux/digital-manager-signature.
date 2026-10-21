@@ -1,5 +1,5 @@
-/* SEYVEO Standalone Home dock — WebKit scroll isolation regression.
- * Simulates view switching, not a substitute for an iPhone PWA test. */
+/* SEYVEO shared dock + unified installed-PWA scrolling regression.
+ * Static and simulated browser checks do not replace testing on iPhone. */
 'use strict';
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -10,94 +10,80 @@ const css=fs.readFileSync(path.join(rootDir,'assets/floating-navigation.css'),'u
 const source=fs.readFileSync(path.join(rootDir,'assets/future-presence.js'),'utf8');
 const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 
-const selector='.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation)';
-assert.equal(css.split(selector).length-1,4,'Root, body, app and the dock correction share the standalone Home scope');
-assert.match(css,/@media\(max-width:700px\)/,'Small viewport only');
-assert.match(css,/overflow-y:auto!important;/,'Home content remains scrollable');
-assert.match(css,/-webkit-overflow-scrolling:touch/,'Native touch scrolling preserved');
-assert.match(css,/overscroll-behavior-y:contain/,'Home scroller contains bounce');
-assert.match(css,/bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)!important/,'Dock offset remains approved');
-assert.match(html,/assets\/future-presence\.js\?v=3/,'New standalone state module referenced');
+// The dock does not have a different geometry for Home or Management.
+assert.match(css,/--seyveo-dock-bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)/);
+assert.match(css,/\.dock\{\s*position:fixed!important;\s*z-index:30!important;/);
+assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
+assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"|bottom:max\(/);
+assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\) \.app\{/);
+assert.match(css,/position:fixed!important;\s*inset:0!important;/);
+assert.match(css,/overflow-y:auto!important;/,'All installed PWA pages can scroll');
+assert.match(css,/overscroll-behavior-y:contain/);
+assert.match(css,/-webkit-overflow-scrolling:touch/);
+assert.match(html,/assets\/floating-navigation\.css\?v=8/);
+assert.match(html,/assets\/future-presence\.js\?v=4/);
+assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is not inside app scroller');
 
-/* The reported iPhone XR/11-size screenshot shows a dock raised by roughly
- * one top notch inset. This correction is ONLY for installed portrait Home. */
-const notchScope='html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation):not(.seyveo-composer-keyboard) .dock';
-assert.ok(css.includes(notchScope),'Top inset fix is scoped to Home only and avoids the keyboard');
-assert.match(css,/@media \(max-width:700px\) and \(orientation:portrait\)/,'Portrait only notch compensation');
-assert.match(css,/bottom:max\(1px,calc\(8px \+ env\(safe-area-inset-bottom,0px\) - env\(safe-area-inset-top,0px\)\)\)!important/,'Notch compensation retains at least 1px for the dock rim');
-assert.ok(!css.includes('html.seyveo-standalone[data-seyveo-view="manage"] .dock'),'Management bottom remains untouched');
-assert.match(html,/assets\/floating-navigation\.css\?v=7/,'PWA uses refreshed dock styles');
-function expectedDockBottom(viewportBottom,bottomInset,topInset,standaloneHome){
- const cssBottom=standaloneHome?Math.max(1,8+bottomInset-topInset):8+bottomInset;
- return viewportBottom-cssBottom;
-}
-assert.equal(expectedDockBottom(848,34,48,true),847,'Installed Home dock recovers 7px but retains its full glass rim');
-assert.equal(expectedDockBottom(896,34,48,false),854,'Management keeps its original lower position');
-assert.equal(expectedDockBottom(768,34,44,true),767,'iPhone X Home remains inside the fixed viewport');
-assert.equal(expectedDockBottom(848,34,48,true)<848,true,'The lower rounded rim remains visible');
-assert.equal(expectedDockBottom(848,34,0,true),806,'Safe-area compensation still works when top inset is unavailable');
-
-
-function simulatedView({mediaStandalone=false,appleStandalone=false,view='home',conversation=false}={}){
- const pages=Object.fromEntries(['calendar','picture','tasks','life','manage','home'].map(name=>
-  [name+'Page',{hidden:view!==name}]));
- const docRoot={
-  dataset:{},
-  classList:{
-   values:new Set(conversation?['seyveo-conversation']:[]),
-   toggle(key,value){if(value)this.values.add(key);else this.values.delete(key)},
-   contains(key){return this.values.has(key)}
-  }
- };
+function simulate({mediaStandalone=false,appleStandalone=false,view='home',chat=false}={}){
+ const pages=Object.fromEntries(['calendar','picture','tasks','life','manage','home'].map(n=>
+  [n+'Page',{hidden:n!==view}]));
+ const classes=new Set(chat?['seyveo-conversation']:[]);
+ const root={dataset:{},classList:{
+  toggle(k,val){val?classes.add(k):classes.delete(k)},
+  contains:k=>classes.has(k)
+ }};
  const app={scrollTop:123};
  const queued=[];
- let mutated=null;
+ let observe=null;
  const document={
-  documentElement:docRoot,hidden:false,
-  getElementById:id=>pages[id]||null,
-  querySelector:selector=>selector==='.app'?app:null,
+  documentElement:root,hidden:false,
+  getElementById:k=>pages[k]||null,
+  querySelector:k=>k==='.app'?app:null,
   addEventListener(){}
  };
  const window={
   navigator:{standalone:appleStandalone},
-  matchMedia:query=>({matches:query.includes('display-mode: standalone')?mediaStandalone:false}),
+  matchMedia:q=>({matches:q.includes('display-mode: standalone')?mediaStandalone:false}),
   addEventListener(){}
  };
- const globals={
-  window,document,
-  MutationObserver:class{constructor(callback){mutated=callback}observe(){}},
-  queueMicrotask:callback=>queued.push(callback),
-  requestAnimationFrame:callback=>queued.push(callback),
-  clearTimeout(){},
-  setTimeout(){return 1}
+ const context={
+  document,window,
+  MutationObserver:class {constructor(callback){observe=callback}observe(){}},
+  queueMicrotask:fn=>queued.push(fn),
+  requestAnimationFrame:fn=>queued.push(fn),
+  clearTimeout(){},setTimeout(){return 1}
  };
- vm.runInNewContext(source,globals,{filename:'future-presence.js'});
+ vm.runInNewContext(source,context,{filename:'future-presence.js'});
  while(queued.length)queued.shift()();
- return {
-  root:docRoot,
-  app,
-  changeTo(name){
-   for(const [id,page] of Object.entries(pages))page.hidden=(id!==name+'Page');
-   mutated();
-   while(queued.length)queued.shift()();
-  }
- };
+ return {root,app,changeTo(name){
+  for(const [id,page] of Object.entries(pages))page.hidden=id!==name+'Page';
+  observe();
+  while(queued.length)queued.shift()();
+ }};
 }
-const safari=simulatedView();
-assert.equal(safari.root.classList.contains('seyveo-standalone'),false);
-assert.equal(safari.root.dataset.seyveoView,'home');
-assert.equal(safari.app.scrollTop,123,'Safari Home retains normal scroll model');
-const installed=simulatedView({mediaStandalone:true});
-assert.equal(installed.root.classList.contains('seyveo-standalone'),true);
-assert.equal(installed.app.scrollTop,0,'Standalone Home resets inner scroller');
-const legacy=simulatedView({appleStandalone:true});
-assert.equal(legacy.root.classList.contains('seyveo-standalone'),true,'Older iOS standalone detection works');
-const manage=simulatedView({mediaStandalone:true,view:'manage'});
-assert.equal(manage.root.dataset.seyveoView,'manage');
-assert.equal(manage.app.scrollTop,123,'Management does not use isolated Home scroller');
-manage.changeTo('home');
-assert.equal(manage.root.dataset.seyveoView,'home');
-assert.equal(manage.app.scrollTop,0,'Returning from Management resets Home inner scroller');
-const chat=simulatedView({mediaStandalone:true,conversation:true});
-assert.equal(chat.app.scrollTop,123,'Conversation does not reset its scroll context');
-console.log('PASS standalone Home root isolation, Safari, Manage, and Chat states');
+const browser=simulate();
+assert.equal(browser.root.classList.contains('seyveo-standalone'),false,'Normal Safari keeps its scrolling');
+assert.equal(browser.root.dataset.seyveoView,'home');
+assert.equal(browser.app.scrollTop,123,'Safari app scroll stays untouched');
+const installedHome=simulate({mediaStandalone:true});
+assert.equal(installedHome.root.classList.contains('seyveo-standalone'),true);
+assert.equal(installedHome.app.scrollTop,0,'Standalone Home resets its own scroller');
+installedHome.app.scrollTop=88;
+installedHome.changeTo('manage');
+assert.equal(installedHome.root.dataset.seyveoView,'manage');
+assert.equal(installedHome.app.scrollTop,0,'Management uses SAME standalone scroll frame');
+installedHome.app.scrollTop=95;
+installedHome.changeTo('picture');
+assert.equal(installedHome.app.scrollTop,0,'Picture uses SAME standalone scroll frame');
+installedHome.app.scrollTop=112;
+installedHome.changeTo('calendar');
+assert.equal(installedHome.app.scrollTop,0,'Calendar uses SAME standalone scroll frame');
+installedHome.app.scrollTop=76;
+installedHome.changeTo('home');
+assert.equal(installedHome.app.scrollTop,0,'Home return uses SAME scroll frame');
+const legacyIOS=simulate({appleStandalone:true,view:'tasks'});
+assert.equal(legacyIOS.root.classList.contains('seyveo-standalone'),true,'Older iOS standalone flag still supported');
+assert.equal(legacyIOS.app.scrollTop,0,'Tasks reset on older standalone iOS');
+const chat=simulate({mediaStandalone:true,chat:true});
+assert.equal(chat.app.scrollTop,123,'Full chat retains its keyboard/transcript scrolling');
+console.log('PASS one fixed dock; unified PWA Home / Management / Picture / Calendar / Tasks scroll');
