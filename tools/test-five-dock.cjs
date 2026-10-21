@@ -7,6 +7,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const css=fs.readFileSync(path.join(root,'assets/floating-navigation.css'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const chatCss=fs.readFileSync(path.join(root,'assets/conversation-refined.css'),'utf8');
 
 assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
 assert.match(css,/bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
@@ -31,7 +32,16 @@ for(const id of expected){
  assert.ok(at>last,id+' keeps left-to-right DOM order');
  last=at;
 }
-assert.match(html,/assets\/floating-navigation\.css\?v=2/,'app loads v2 stylesheet');
+assert.match(html,/assets\/floating-navigation\.css\?v=3/,'app loads v3 stylesheet');
+assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is a direct body child, not in scrolling app');
+assert.ok(!html.includes('id="homePictureTrigger"'),'No duplicate Picture control on Home');
+assert.ok(!html.includes("$('homePictureTrigger')"),'No dead Picture handler on Home');
+assert.ok(!css.includes('home-picture-trigger'),'Removed Home-only Picture styles');
+assert.ok(html.includes('assets/conversation-refined.css?v=6'),'Chat fixes are cache-busted');
+assert.ok(!chatCss.includes('seyveo-name-thinking'),'Sayvi letters no longer move');
+assert.ok(chatCss.includes('animation:none!important;transform:none!important;opacity:1!important'),'Sayvi name is fixed');
+assert.ok(chatCss.includes('animation:seyveo-dot-thinking .78s ease-in-out infinite'),'Only nearby dots retain working animation');
+assert.ok(chatCss.includes('.seyveo-conversation-heading.is-processing .seyveo-name-dots{opacity:1}'),'Dots activate only on real work');
 
 function portrait(width,height,safeBottom){
  // CSS has a 1px border each side, 7px horizontal padding, 3px column gaps.
