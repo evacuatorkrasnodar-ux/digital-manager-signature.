@@ -217,3 +217,23 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
  .seyveo-company-fact{font-size:11px;gap:8px}
 }
 
+
+/* SEYVEO Black Velvet polish: keep signature curved passport silhouette. */
+.home-passports .seyveo-passport-card--studio{
+ background:linear-gradient(154deg,rgba(255,255,255,.055),transparent 62%),linear-gradient(150deg,#222729,#171b1d 60%,#121617);
+ box-shadow:0 12px 30px rgba(0,0,0,.43),inset 0 1px 0 rgba(255,255,255,.075);
+}
+.home-passports .seyveo-passport-card--studio::before{
+ background:radial-gradient(ellipse at 18% 0%,rgba(223,233,224,.055),transparent 61%);
+}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-card-titles strong{
+ font-weight:520;letter-spacing:-.015em;
+}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-arrow{
+ background:rgba(222,231,225,.055);border-color:rgba(214,225,219,.20);
+ box-shadow:none;
+}
+:root[data-theme=light] .home-passports .seyveo-passport-card--studio{
+ background:linear-gradient(145deg,#fafbf9,#e9edeb);
+ box-shadow:0 12px 24px rgba(32,44,36,.12);
+}
