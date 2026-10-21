@@ -89,7 +89,8 @@ function fillPreview(){
  $('seyveoCompanyPreviewName').textContent=owner;
  $('seyveoCompanyPreviewDesc').textContent=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
- $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
+ const industryPreview=$('seyveoCompanyPreviewIndustry');
+ if(industryPreview)industryPreview.textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
