@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Test branded inner plasma in dark and light themes
+        run: node tools/test-plasma-colors.cjs
       - name: Test installed PWA Home scrolling and dock isolation
         run: node tools/test-pwa-home-dock.cjs
       - name: Test centered five-button dock on iPhone X
