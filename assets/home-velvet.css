@@ -297,3 +297,7 @@
  background:rgba(245,247,245,.90)!important;
  border-color:rgba(70,85,75,.12)!important;
 }
+
+/* Personal world: lighter nested buttons, same dimensions and routes. */
+#homeHeader .home-world-choice{background:rgba(230,236,231,.035);border-color:rgba(217,226,219,.085);box-shadow:none;font-weight:500}
+:root[data-theme=light] #homeHeader .home-world-choice{background:rgba(80,96,84,.04);border-color:rgba(80,96,84,.10)}
