@@ -8,6 +8,24 @@ const form=$('personalTaskForm'),input=$('personalTaskTitle'),date=$('personalTa
 const contactsDialog=$('seyveoContactsDialog'),callDialog=$('seyveoCallDialog');
 if(!list||!summary||!dialog||!form||!input||!date||!contactsDialog||!callDialog)return;
 const notice=$('personalTasksNotice');
+const focusPanel=$('tasksContextFocus'),focusWhen=$('tasksContextWhen'),focusTitle=$('tasksContextTitle'),focusOpen=$('tasksContextOpen');
+function renderContext(open){
+ if(!focusPanel||!focusWhen||!focusTitle||!focusOpen)return;
+ const priority=window.SEYVEO_CONTEXT_FOCUS?.selectTask(open)||null;
+ focusPanel.hidden=!priority;
+ if(!priority){focusOpen.dataset.focusTask='';return}
+ focusWhen.textContent=priority.when;
+ focusTitle.textContent=priority.title;
+ focusOpen.dataset.focusTask=priority.id;
+}
+focusOpen?.addEventListener('click',()=>{
+ const id=focusOpen.dataset.focusTask;
+ if(!id||$('tasksPage')?.hidden)return;
+ const row=[...list.querySelectorAll('.personal-task-row[data-task-id]')].find(item=>item.dataset.taskId===id);
+ if(!row)return;
+ row.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ row.querySelector('[data-task-toggle]')?.focus({preventScroll:true});
+});
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
@@ -346,6 +364,7 @@ function render(){
  $('personalBriefCount').hidden=!open.length;
  // Keep personal tasks in Дела; show their compact Home preview only if pending.
  $('personalBrief').hidden=open.length===0;
+ renderContext(open);
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
 function syncDueDateDisplay(){
@@ -500,6 +519,7 @@ window.addEventListener('seyveo:tasks-plan-batch',event=>{
   message:'Добавлено в Дела: '+pending.length+(duplicates?' · уже были: '+duplicates:'')+'.'};
 });
 window.addEventListener('storage',event=>{if(event.key===KEY){justCompletedTaskId='';render()}});
+window.addEventListener('hashchange',()=>{if(!$('tasksPage')?.hidden)render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 render();
 })();
