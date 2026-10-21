@@ -3,6 +3,11 @@
 (()=>{
 'use strict';
 const root=document.documentElement;
+// Home-screen iOS WebKit can drift fixed elements while the root document scrolls.
+// Safari tabs and ordinary workspaces must keep their existing scrolling model.
+const standalone=Boolean(window.matchMedia?.('(display-mode: standalone)').matches
+ || window.navigator?.standalone===true);
+root.classList.toggle('seyveo-standalone',standalone);
 const list=[
  ['calendar','calendarPage','.calendar-header'],
  ['picture','picturePage','.picture-head'],
@@ -19,6 +24,12 @@ function sync(){
  root.dataset.seyveoView=name;
  if(name===current)return;
  current=name;
+ // Standalone Home scrolls only its content; return to the top on navigation.
+ // Do not reset normal Safari tabs or the still-open conversation transcript.
+ if(standalone&&name==='home'&&!root.classList.contains('seyveo-conversation')){
+  const app=document.querySelector('.app');
+  if(app)app.scrollTop=0;
+ }
  animation?.cancel?.();animation=null;
  if(!active?.[2]||reduced?.matches||document.hidden)return;
  const heading=document.querySelector('#'+active[1]+' '+active[2]);
