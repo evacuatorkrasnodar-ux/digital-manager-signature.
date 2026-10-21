@@ -48,7 +48,7 @@ header.id='seyveoConversationHeader';
 header.className='seyveo-conversation-header';
 header.hidden=true;
 header.innerHTML='<button type="button" id="seyveoConversationBack" aria-label="Вернуться на Главную" title="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>'+
- '<div class="seyveo-conversation-heading"><strong>Сэйви</strong><span id="seyveoConversationStatus" role="status" aria-live="polite">На связи</span></div>'+
+ '<div class="seyveo-conversation-heading"><strong class="seyveo-conversation-name" aria-label="Сэйви"><span aria-hidden="true">С</span><span aria-hidden="true">э</span><span aria-hidden="true">й</span><span aria-hidden="true">в</span><span aria-hidden="true">и</span><span class="seyveo-name-dots" aria-hidden="true"><i></i><i></i><i></i></span></strong><span id="seyveoConversationStatus" role="status" aria-live="polite">На связи</span></div>'+
  '<button type="button" id="seyveoConversationHistory" aria-label="История бесед" title="История"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/></svg></button>';
 home.insertBefore(header,stage);
 
@@ -89,7 +89,11 @@ function status(value,duration=0){
  if(!label)return;
  clearTimeout(statusTimer);
  label.textContent=value||'На связи';
- label.classList.toggle('is-processing',/думает|слушает|отвечает/i.test(value||''));
+ // Only a real assistant activity phase animates her name; the heading has
+ // fixed geometry so speech/typing will never shift the input or header.
+ const active=/думает|слушает|отвечает|пишет|печатает|обрабатывает/i.test(value||'');
+ label.classList.toggle('is-processing',active);
+ label.closest('.seyveo-conversation-heading')?.classList.toggle('is-processing',active);
  if(duration)statusTimer=setTimeout(()=>status('На связи'),duration);
 }
 function syncMic(on){
