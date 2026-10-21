@@ -1,11 +1,11 @@
-/* SEYVEO Feather Chat v1: regular-weight text, quiet cool-graphite bubbles.
+/* SEYVEO Feather Chat v1: regular-weight text, neutral velvet graphite with a restrained SEYVEO emerald undertone.
  * The user's text retains its original line breaks; Sayvi remains unboxed.
  * Touch controls, geometry, keyboard and Home dock are unchanged.
  */
 /* SEYVEO Conversation · Black Velvet v4
  * ChatGPT-inspired interaction pattern, unmistakably our own design.
  * Scoped to .seyveo-conversation: Home orb, dock and other pages unchanged.
- * User: muted blue bubbles; Sayvi: clean flowing text. One native textarea.
+ * User: quiet graphite bubbles, subtle emerald undertone; Sayvi: clean flowing text. One native textarea.
  */
 html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
@@ -87,9 +87,9 @@ html.seyveo-conversation .seyveo-conversation-turn{
 html.seyveo-conversation .seyveo-conversation-turn--you{
  align-self:flex-end;width:max-content;max-width:min(92%,460px);
  margin:2px 0 9px auto;padding:7px 11px 8px;
- color:#e8edf5;
- background:linear-gradient(150deg,rgba(51,70,96,.87),rgba(34,49,69,.89));
- border:1px solid rgba(176,205,236,.10);
+ color:#ecefeb;
+ background:linear-gradient(150deg,rgba(43,51,47,.96),rgba(28,35,32,.96));
+ border:1px solid rgba(150,180,163,.13);
  border-radius:18px 18px 7px 18px;
  box-shadow:none;
 }
@@ -120,8 +120,8 @@ html.seyveo-conversation .seyveo-reply-more>summary{
  border-radius:50%;
 }
 :root[data-theme=light].seyveo-conversation .seyveo-conversation-turn--you{
- color:#23344d;background:linear-gradient(155deg,#eef3f9,#e6edf6);
- border:1px solid rgba(76,116,161,.12);
+ color:#28342e;background:linear-gradient(155deg,#edf1ed,#e5ebe6);
+ border:1px solid rgba(104,139,116,.14);
  box-shadow:none;
 }
 /* SEYVEO Full Bleed: the capsule sits only 6px from a portrait screen edge.
