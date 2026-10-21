@@ -1,6 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict');
 const {understand}=require('../assets/task-natural.js');
+const reminderGrammar=require('../assets/reminder-dialogue.js');
 const now=new Date(2026,9,21,10,0);
 const originalDate=Date;
 const handlers={};
@@ -8,6 +9,7 @@ global.CustomEvent=class{constructor(name,options){this.type=name;this.detail=op
 const notes=[];
 global.window={
  SEYVEO_TASK_NL:message=>understand(message,now),
+ SEYVEO_REMINDER_NL:{fromPhrase:phrase=>reminderGrammar.fromPhrase(phrase,now),followup:(phrase,pending)=>reminderGrammar.followup(phrase,pending,now)},
  SEYVEO_CALENDAR_NL:message=>/^запиши встречу завтра в 15:00$/i.test(message)?
   {status:'ready',title:'Встреча',date:'2026-10-22',time:'15:00'}:null,
  SEYVEO_NOTE_NL:message=>message==='Запомни мысль: новая идея'?
@@ -27,10 +29,12 @@ handlers['seyveo:calendar-save-from-ask']=detail=>{
  if(calendar.some(x=>x.title===detail.title)){detail.result={status:'already'};return}
  calendar.push({...detail});detail.result={status:'saved'};
 };
-assert.equal(handle('Сэйви, напомни завтра позвонить маме').status,'saved');
-assert.deepEqual(tasks,[{title:'позвонить маме',due:'2026-10-22'}]);
-assert.equal(handle('Сэйви, напомни завтра позвонить маме').status,'already');
-assert.equal(handle('Напомни завтра в 15:00 позвонить маме').status,'clarify');
+assert.equal(handle('Сэйви, напомни позвонить маме').status,'clarify');
+assert.equal(handle('завтра 8').status,'saved');
+assert.equal(calendar[0].time,'08:00');
+assert.equal(calendar[0].remindAtStart,true);
+assert.equal(handle('Сэйви, напомни завтра в 8 позвонить маме').status,'already');
+assert.equal(handle('Напомни завтра в 15:00 позвонить маме').status,'already');
 assert.equal(handle('Запиши встречу завтра в 15:00').status,'saved');
 assert.equal(calendar[0].time,'15:00');
 assert.equal(handle('Запиши встречу завтра в 15:00').status,'already');
@@ -50,4 +54,10 @@ assert.equal(executePlan({kind:'calendar',draft:{status:'ready',title:'Звон�
 assert.equal(executePlan({kind:'task',draft:{status:'ready',title:'',date:''}}).status,'invalid');
 assert.equal(executePlan({kind:'taxi',draft:{status:'ready',title:'До аэропорта'}}).status,'unsupported');
 assert.equal(executePlan(null).status,'unsupported');
-console.log('SEYVEO local actions: 23 checks passed');
+assert.equal(handle('Напомни купить хлеб').status,'clarify');
+assert.equal(handle('отмени').status,'cancelled');
+assert.equal(handle('завтра 8'),null,'No stale context after cancelling');
+assert.equal(handle('Напомни завтра купить хлеб').status,'clarify');
+assert.equal(handle('в 9').status,'saved');
+assert.equal(handle('завтра'),null,'Context cleared after saving');
+console.log('SEYVEO local actions: contextual reminders and executor checks passed');

@@ -20,4 +20,10 @@ assert.equal(dueReminders([{...due,time:'25:30'}],middle).length,0,'Reject inval
 assert.equal(dueReminders([{...due,remind:0}],middle).length,0,'Respect disabled reminder');
 assert.equal(dueReminders([{...due,id:null}],middle).length,0,'Reject malformed item');
 assert.equal(reminderTime({...due,date:'2026-10-21'}),at(day,12,30),'Local date/time');
-console.log('SEYVEO calendar reminders: 13 checks passed');
+const atMoment={id:'exact',title:'Позвонить маме',date:'2026-10-21',time:'08:00',remind:-1};
+assert.equal(dueReminders([atMoment],at(day,7,59)).length,0,'No premature at-time banner');
+assert.equal(dueReminders([atMoment],at(day,8,0)).length,1,'Show at start');
+assert.equal(dueReminders([atMoment],at(day,8,1)).length,1,'Allow short visible-app grace');
+assert.equal(dueReminders([atMoment],at(day,8,3)).length,0,'No stale alert after grace');
+assert.equal(dueReminders([atMoment],at(day,8,0),new Set([reminderKey(atMoment)])).length,0,'No repeat in session');
+console.log('SEYVEO calendar reminders: 18 checks passed');

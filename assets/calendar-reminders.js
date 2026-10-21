@@ -13,7 +13,7 @@ function reminderTime(item){
  if(!item||typeof item.id!=='string'||typeof item.title!=='string')return null;
  const d=DATE.exec(String(item.date||'')),t=TIME.exec(String(item.time||''));
  const lead=Number(item.remind);
- if(!d||!t||![15,30,60].includes(lead))return null;
+ if(!d||!t||![-1,15,30,60].includes(lead))return null;
  const year=Number(d[1]),month=Number(d[2]),day=Number(d[3]);
  const hour=Number(t[1]),minute=Number(t[2]);
  const start=new Date(year,month-1,day,hour,minute);
@@ -31,8 +31,10 @@ function dueReminders(list,now=Date.now(),seen=new Set()){
  for(const item of list.slice(-300)){
   const when=reminderTime(item);
   if(when===null||seen.has(reminderKey(item)))continue;
-  const until=when-timestamp,lead=Number(item.remind)*60000;
-  if(until<=0||until>lead)continue;
+  const until=when-timestamp,lead=Number(item.remind);
+  // -1 means at the exact event time. A short grace window covers iOS
+  // timer throttling when the app becomes visible, not closed-app pushes.
+  if(lead===-1?(until>0||until<=-120000):(until<=0||until>lead*60000))continue;
   ready.push({item,when,until,key:reminderKey(item)});
  }
  return ready.sort((a,b)=>a.when-b.when||String(a.item.title).localeCompare(String(b.item.title),'ru'));

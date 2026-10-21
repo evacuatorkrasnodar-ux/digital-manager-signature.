@@ -55,7 +55,7 @@ function events(){
   kind:x.kind==='business'?'business':'personal',
   duration:[30,60,90,120].includes(Number(x.duration))?Number(x.duration):0,
   travel:[0,15,30,60].includes(Number(x.travel))?Number(x.travel):0,
-  remind:[15,30,60].includes(Number(x.remind))?Number(x.remind):0,
+  remind:[-1,15,30,60].includes(Number(x.remind))?Number(x.remind):0,
   note:typeof x.note==='string'?x.note.slice(0,600):'',
   createdAt:typeof x.createdAt==='string'?x.createdAt:'',
   updatedAt:typeof x.updatedAt==='string'?x.updatedAt:''
@@ -103,7 +103,7 @@ function createEntry(item){
    (item.kind==='business'?'Работа':'Личное')
    +(item.duration?(' · '+(item.duration===30?'30 мин':item.duration===60?'1 ч':item.duration===90?'1 ч 30 мин':'2 ч')):'')
    +(item.travel?' · дорога по '+item.travel+' мин':'')
-   +(item.remind?' · напомнить за '+(item.remind===60?'1 ч':item.remind+' мин'):'')
+   +(item.remind===-1?' · напомнить в момент':item.remind?' · напомнить за '+(item.remind===60?'1 ч':item.remind+' мин'):'')
    +(item.note?' · '+item.note:'');
  copy.append(title,text('small','',subtitle));
  btn.append(clock,copy,text('span','cal-entry-chevron','›'));
@@ -186,14 +186,14 @@ function upcomingReminder(nowDate=new Date(),records=events()){
  const now=nowDate.getTime();
  const active=[];
  for(const item of records){
-  if(!item||!item.time||![15,30,60].includes(Number(item.remind)))continue;
+  if(!item||!item.time||![-1,15,30,60].includes(Number(item.remind)))continue;
   const date=at(item.date);
   if(!date)continue;
   const parts=item.time.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
   if(!parts)continue;
   const begins=new Date(date.getFullYear(),date.getMonth(),date.getDate(),Number(parts[1]),Number(parts[2])).getTime();
   const remaining=begins-now;
-  if(remaining<0||remaining>Number(item.remind)*60*1000)continue;
+  if(Number(item.remind)===-1?(remaining>0||remaining< -120000):(remaining<=0||remaining>Number(item.remind)*60*1000))continue;
   active.push({...item,remaining});
  }
  return active.sort((a,b)=>a.remaining-b.remaining||a.title.localeCompare(b.title,'ru'))[0]||null;
@@ -277,10 +277,10 @@ function planningValues(){
 }
 function reminderValue(){
  const selection=Number(form.querySelector('input[name="calendarReminder"]:checked')?.value||0);
- return [15,30,60].includes(selection)?selection:0;
+ return [-1,15,30,60].includes(selection)?selection:0;
 }
 function setReminder(value){
- const chosen=[15,30,60].includes(Number(value))?Number(value):0;
+ const chosen=[-1,15,30,60].includes(Number(value))?Number(value):0;
  const radio=form.querySelector('input[name="calendarReminder"][value="'+chosen+'"]');
  if(radio)radio.checked=true;
 }
@@ -299,7 +299,7 @@ function syncPlanningLabel(){
  $('calendarEventTiming').hidden=!clock;
  const length=duration===30?'30 мин':duration===60?'1 час':duration===90?'1,5 часа':duration===120?'2 часа':'Не указана';
  const road=travel?travel===60?'1 час':travel+' мин':'Без запаса';
- const reminder=remind?remind===60?'За 1 час':'За '+remind+' мин':'Выключено';
+ const reminder=remind===-1?'В момент события':remind?remind===60?'За 1 час':'За '+remind+' мин':'Выключено';
  $('calendarEventTimingValue').textContent=length+' · '+(travel?'дорога '+travel+' мин':'без дороги')+(remind?' · напомнить':'');
  $('calendarDurationValue').textContent=length;
  $('calendarTravelValue').textContent=road;
@@ -669,6 +669,7 @@ window.addEventListener('seyveo:calendar-save-from-ask',event=>{
  const title=typeof plan.title==='string'?plan.title.trim().replace(/\s+/g,' ').slice(0,140):'';
  const date=typeof plan.date==='string'?plan.date:'';
  const time=typeof plan.time==='string'?plan.time:'';
+ const atTime=plan.remindAtStart===true;
  const finish=(status,message)=>{plan.result={status,message}};
  if(!title||!at(date)||time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){
   finish('clarify','Уточни, пожалуйста, название, день или время события.');return;
@@ -678,7 +679,14 @@ window.addEventListener('seyveo:calendar-save-from-ask',event=>{
  }
  const all=events();
  const identity=t=>t.trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
- if(all.some(x=>x.date===date&&x.time===time&&identity(x.title)===identity(title))){
+ const existing=all.find(x=>x.date===date&&x.time===time&&identity(x.title)===identity(title));
+ if(existing){
+  if(atTime&&existing.remind!==-1){
+   const revised=all.map(x=>x.id===existing.id?{...x,remind:-1,updatedAt:new Date().toISOString()}:x);
+   if(!saveEvents(revised)){finish('error','Не удалось включить напоминание.');return}
+   window.dispatchEvent(new Event('seyveo:calendar-changed'));
+   finish('saved','Напоминание включено для существующего события.');return;
+  }
   finish('already','Такое событие уже сохранено.');return;
  }
  if(all.length>=MAX){finish('full','В календаре уже 300 событий. Для новых нужно освободить место.');return;}
@@ -693,7 +701,7 @@ window.addEventListener('seyveo:calendar-save-from-ask',event=>{
  const now=new Date().toISOString();
  const entry={
   id:'calendar-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
-  title,date,time,kind:'personal',duration:0,travel:0,remind:0,note:'',createdAt:now,updatedAt:now
+  title,date,time,kind:'personal',duration:0,travel:0,remind:atTime?-1:0,note:'',createdAt:now,updatedAt:now
  };
  if(!saveEvents([...all,entry])){finish('error','Не удалось сохранить событие. Проверь память устройства.');return;}
  if(!page.hidden)updateFocus(at(date));

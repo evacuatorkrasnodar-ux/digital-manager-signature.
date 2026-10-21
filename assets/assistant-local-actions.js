@@ -17,11 +17,13 @@ function execute(kind,draft){
   return {kind,status:result.status||'error',message:result.message||'Не удалось добавить дело.'};
  }
  if(kind==='calendar'){
-  const detail={status:'ready',title:draft.title,date:draft.date,time:draft.time||''};
+  const detail={status:'ready',title:draft.title,date:draft.date,time:draft.time||'',remindAtStart:draft.remindAtStart===true};
   window.dispatchEvent(new CustomEvent('seyveo:calendar-save-from-ask',{detail}));
   const result=detail.result||{status:'error',message:'Календарь пока недоступен.'};
-  if(result.status==='saved')return {kind,status:'saved',message:'Готово! Записала в календарь: «'+draft.title+'» · '+draft.date+(draft.time?' в '+draft.time:'')+'.'};
-  if(result.status==='already')return {kind,status:'already',message:'Это событие уже есть в календаре. Повторно не записываю.'};
+  if(result.status==='saved')return {kind,status:'saved',message:draft.remindAtStart===true
+   ?'Готово! Напоминание «'+draft.title+'» на '+draft.date+' в '+draft.time+' записано. Оно появится, если SEYVEO открыт.'
+   :'Готово! Записала в календарь: «'+draft.title+'» · '+draft.date+(draft.time?' в '+draft.time:'')+'.'};
+  if(result.status==='already')return {kind,status:'already',message:draft.remindAtStart===true?'Это напоминание уже есть в календаре.':'Это событие уже есть в календаре. Повторно не записываю.'};
   return {kind,status:result.status||'error',message:result.message||'Не удалось записать событие.'};
  }
  if(kind==='note'){
@@ -65,7 +67,52 @@ function executePlan(plan){
  }
  return execute(kind,draft);
 }
+/* Short-lived unfinished conversational intent. The same typed and voice
+ * entry point uses this. Session-only memory; no second calendar store. */
+const CONTEXT_KEY='seyveo-pending-reminder-v1';
+let pendingReminder=null;
+try{
+ const item=JSON.parse(sessionStorage.getItem(CONTEXT_KEY)||'null');
+ if(item&&typeof item.title==='string'&&Date.now()-item.at<20*60000)pendingReminder=item;
+}catch{}
+function rememberReminder(value){
+ pendingReminder=value?{title:value.title,date:value.date||'',time:value.time||'',at:Date.now()}:null;
+ try{
+  if(pendingReminder)sessionStorage.setItem(CONTEXT_KEY,JSON.stringify(pendingReminder));
+  else sessionStorage.removeItem(CONTEXT_KEY);
+ }catch{}
+}
+function processReminder(phrase){
+ const grammar=window.SEYVEO_REMINDER_NL;
+ if(!grammar)return null;
+ const fresh=grammar.fromPhrase(phrase);
+ const response=fresh||grammar.followup(phrase,pendingReminder);
+ if(!response){
+  if(pendingReminder)rememberReminder(null);
+  return null;
+ }
+ if(response.status==='cancelled'){
+  rememberReminder(null);return response;
+ }
+ if(response.status==='clarify'){
+  if(response.title)rememberReminder(response);
+  else rememberReminder(null);
+  return response;
+ }
+ if(response.status==='ready'){
+  const result=executePlan({kind:'calendar',draft:{
+   status:'ready',title:response.title,date:response.date,
+   time:response.time,remindAtStart:true
+  }});
+  if(result.status==='saved'||result.status==='already')rememberReminder(null);
+  else rememberReminder(response);
+  return result;
+ }
+ return response;
+}
 function handle(raw){
+ const reminder=processReminder(String(raw||'').trim());
+ if(reminder)return reminder;
  const phrase=typeof raw==='string'?raw.trim():'';
  if(!phrase)return null;
  const sequence=[

@@ -26,3 +26,5 @@ jobs:
         run: node tools/test-task-natural.cjs
       - name: Test one-step local actions
         run: node tools/test-local-actions.cjs
+      - name: Test multi-turn reminder conversations
+        run: node tools/test-reminder-dialogue.cjs
