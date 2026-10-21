@@ -85,7 +85,7 @@ fold.addEventListener('click',()=>{
  queueChatGeometry();
 });
 if(compact){
- const mic=$('seyveoConversationMic');
+ const mic=compact.querySelector('.seyveo-conversation-mic');
  compact.insertBefore(fold,mic);
  // Reuse the actual original header controls and live assistant status.
  // These nodes remain hidden on Home and in the expanded Notes editor.
