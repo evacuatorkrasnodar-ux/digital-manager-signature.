@@ -7,6 +7,8 @@
  --seyveo-nav-green:#a7d5bd;
  --seyveo-nav-glass:rgba(15,20,22,.89);
  --seyveo-nav-line:rgba(211,236,222,.13);
+ --seyveo-dock-height:64px;
+ --seyveo-dock-bottom:calc(8px + env(safe-area-inset-bottom,0px));
 }
 :root[data-theme="light"]{
  --seyveo-nav-green:#296b56;
@@ -16,7 +18,7 @@
 .dock{
  position:fixed!important;
  left:50%!important;right:auto!important;
- bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+ bottom:var(--seyveo-dock-bottom)!important;
  transform:translateX(-50%)!important;
  display:grid!important;
  grid-template-columns:repeat(5,minmax(0,1fr))!important;
@@ -24,7 +26,7 @@
  justify-items:stretch!important;
  gap:3px!important;
  width:min(392px,calc(100% - 28px))!important;
- height:64px!important;min-height:64px!important;
+ height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:4px 7px!important;
  border-radius:26px!important;
  border:1px solid var(--seyveo-nav-line)!important;
@@ -121,13 +123,32 @@
  outline:2px solid var(--seyveo-nav-green)!important;outline-offset:2px!important;
 }
 .dock>.ask-caption{display:none!important}
+/* Inline v1 dock art consolidated here: no old 88px floating dock. */
+.dock>.nav-item{-webkit-appearance:none!important;appearance:none!important}
+.dock>.nav-item svg{
+ stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;fill:none;
+}
+.dock>.nav-home svg{fill:currentColor}
+.dock>.assistant-button .button-art{display:block!important;overflow:visible!important}
+.dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
+.dock>.assistant-button .button-art .voice-bars{stroke-width:2.85;stroke-linecap:round;fill:none}
+.dock>.assistant-button.listening .voice-bars{
+ animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
+ transform-origin:37px 37px;
+}
+@keyframes seyveo-dock-speaking{
+ from{transform:scaleY(.88)}to{transform:scaleY(1.08)}
+}
+@media(prefers-reduced-motion:reduce){
+ .dock>.assistant-button.listening .voice-bars{animation:none!important}
+}
 /* Hint and single Home composer follow the new dock height. Conversation
    keyboard geometry has stronger scoped rules and is unchanged. */
 .voice-hint{
- bottom:calc(87px + env(safe-area-inset-bottom,0px))!important;
+ bottom:calc(var(--seyveo-dock-bottom) + var(--seyveo-dock-height) + 15px)!important;
 }
 html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
- bottom:calc(84px + env(safe-area-inset-bottom,0px) + var(--keyboard-offset,0px))!important;
+ bottom:calc(var(--seyveo-dock-bottom) + var(--seyveo-dock-height) + 12px + var(--keyboard-offset,0px))!important;
 }
 @media(max-width:355px){
  .dock{width:calc(100% - 20px)!important;padding:4px 5px!important;gap:1px!important}
@@ -141,22 +162,20 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  }
 }
 
-
-/* iOS Home-screen PWA only — root scrolling can detach WebKit's fixed dock.
- * Isolate Home scrolling inside .app; footer.dock stays outside this scroller.
- * Other pages, Safari browser tabs and chat deliberately keep their layout. */
+/* One viewport model for every installed PWA workspace, not one per tab.
+ * Scroll the content inside the fixed .app frame; the ONE body-level dock
+ * remains outside this scroll surface. Chat has its own keyboard viewport. */
 @media(max-width:700px){
- html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation){
-  height:100%!important;
-  overflow:hidden!important;
+ html.seyveo-standalone:not(.seyveo-conversation),
+ html.seyveo-standalone:not(.seyveo-conversation) body{
+  height:100%!important;overflow:hidden!important;
   overscroll-behavior-y:none!important;
  }
- html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation) body{
-  height:100%!important;
-  overflow:hidden!important;
-  overscroll-behavior-y:none!important;
- }
- html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation) .app{
+ html.seyveo-standalone:not(.seyveo-conversation) .app{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  max-width:530px;
   height:100dvh!important;
   max-height:100dvh!important;
   min-height:0!important;
@@ -164,15 +183,5 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
   overflow-y:auto!important;
   overscroll-behavior-y:contain;
   -webkit-overflow-scrolling:touch;
- }
-}
-
-/* Standalone Home fixes the fixed-viewport offset seen on iPhone.
- * The v6 8px clamp left Home about 14px above Management; negative bottom
- * values clipped the glass rim. Keep a 1px in-viewport guard and recover 7px
- * of that difference without altering any other workspace or the dock size. */
-@media (max-width:700px) and (orientation:portrait){
- html.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation):not(.seyveo-composer-keyboard) .dock{
-  bottom:max(1px,calc(8px + env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px)))!important;
  }
 }
