@@ -32,7 +32,7 @@ function dueReminders(list,now=Date.now(),seen=new Set()){
   const when=reminderTime(item);
   if(when===null||seen.has(reminderKey(item)))continue;
   const until=when-timestamp,lead=Number(item.remind)*60000;
-  if(until<0||until>lead)continue;
+  if(until<=0||until>lead)continue;
   ready.push({item,when,until,key:reminderKey(item)});
  }
  return ready.sort((a,b)=>a.when-b.when||String(a.item.title).localeCompare(String(b.item.title),'ru'));
