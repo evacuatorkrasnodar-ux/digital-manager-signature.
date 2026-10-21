@@ -39,6 +39,32 @@ function execute(kind,draft){
  }
  return null;
 }
+/* Stable tool contract: a future AI may return a structured plan
+ * {kind:'task'|'calendar'|'note', draft:{status:'ready', ...}}.
+ * All writes still go through the SAME local validators/stores; the AI
+ * never writes the browser data directly. External operations are excluded. */
+function executePlan(plan){
+ if(!plan||typeof plan!=='object'||Array.isArray(plan)||
+    !['task','calendar','note'].includes(plan.kind))
+  return {status:'unsupported',message:'Это действие пока не подключено.'};
+ const {kind,draft}=plan;
+ if(!draft||typeof draft!=='object'||draft.status!=='ready')
+  return {kind,status:'invalid',message:'Недостаточно данных для выполнения.'};
+ if(kind==='note'){
+  if(typeof draft.text!=='string'||!draft.text.trim()||draft.text.length>2500)
+   return {kind,status:'invalid',message:'Уточни, что сохранить в Блокнот.'};
+ }else{
+  if(typeof draft.title!=='string'||!draft.title.trim()||draft.title.length>140)
+   return {kind,status:'invalid',message:'Уточни название поручения.'};
+  if(typeof draft.date!=='string'||(draft.date&&!/^\d{4}-\d{2}-\d{2}$/.test(draft.date)))
+   return {kind,status:'invalid',message:'Уточни дату поручения.'};
+  if(kind==='calendar'&&(
+   !draft.date||typeof draft.time!=='string'||
+   draft.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(draft.time)
+  ))return {kind,status:'invalid',message:'Уточни день и время события.'};
+ }
+ return execute(kind,draft);
+}
 function handle(raw){
  const phrase=typeof raw==='string'?raw.trim():'';
  if(!phrase)return null;
@@ -53,6 +79,6 @@ function handle(raw){
  }
  return null;
 }
-window.SEYVEO_LOCAL_ACTIONS=Object.freeze({handle});
-if(typeof module!=='undefined'&&module.exports)module.exports={handle,execute};
+window.SEYVEO_LOCAL_ACTIONS=Object.freeze({handle,executePlan});
+if(typeof module!=='undefined'&&module.exports)module.exports={handle,execute,executePlan};
 })();

@@ -15,7 +15,7 @@ global.window={
  SEYVEO_NOTES_API:{getNotes:()=>notes,putNotes:items=>{notes.splice(0,notes.length,...items);return true}},
  dispatchEvent:e=>{handlers[e.type]?.(e.detail);return true}
 };
-const {handle}=require('../assets/assistant-local-actions.js');
+const {handle,executePlan}=require('../assets/assistant-local-actions.js');
 let tasks=[];
 handlers['seyveo:tasks-plan-batch']=detail=>{
  const item=detail.items[0];
@@ -40,4 +40,14 @@ assert.equal(handle('Запомни мысль: новая идея').status,'al
 assert.equal(handle('Вызови такси'),null,'Do not pretend to book taxis');
 assert.equal(handle('Сделай покупку'),null,'Do not pretend to shop');
 assert.equal(handle('Привет, Сэйви'),null,'Greetings are not actions');
-console.log('SEYVEO direct local actions: 12 checks passed');
+assert.equal(executePlan({kind:'task',draft:{status:'ready',title:'Проверить счёт',date:'2026-10-23'}}).status,'saved');
+assert.equal(tasks.at(-1).title,'Проверить счёт');
+assert.equal(executePlan({kind:'task',draft:{status:'ready',title:'Проверить счёт',date:'2026-10-23'}}).status,'already');
+assert.equal(executePlan({kind:'note',draft:{status:'ready',text:'Идея для завтра'}}).status,'saved');
+assert.equal(notes[0].text,'Идея для завтра');
+assert.equal(executePlan({kind:'calendar',draft:{status:'ready',title:'Звонок',date:'2026-10-22',time:'14:00'}}).status,'saved');
+assert.equal(executePlan({kind:'calendar',draft:{status:'ready',title:'Звонок',date:'',time:'14:00'}}).status,'invalid');
+assert.equal(executePlan({kind:'task',draft:{status:'ready',title:'',date:''}}).status,'invalid');
+assert.equal(executePlan({kind:'taxi',draft:{status:'ready',title:'До аэропорта'}}).status,'unsupported');
+assert.equal(executePlan(null).status,'unsupported');
+console.log('SEYVEO local actions: 23 checks passed');
