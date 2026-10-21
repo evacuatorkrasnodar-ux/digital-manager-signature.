@@ -415,3 +415,82 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-
 @media(prefers-reduced-motion:reduce){
  html.seyveo-conversation .seyveo-conversation-heading.is-processing .seyveo-conversation-name>span{animation:none!important}
 }
+
+/* SEYVEO Open Canvas v1 · Invisible Header.
+ * The assistant transcript starts immediately below the notch-safe area.
+ * Reuse ONE composer row: Back · History · Sayvi · keyboard · mic · send.
+ * No top panel, second input, dock edit or idle animation. */
+html.seyveo-conversation #seyveoConversationHeader{
+ display:none!important;min-height:0!important;height:0!important;
+ padding:0!important;margin:0!important;border:0!important;
+ background:none!important;box-shadow:none!important;
+}
+/* Navigation is invisible on Home and in the expanded Notes editor. */
+#ask #seyveoConversationBack,
+#ask #seyveoConversationHistory,
+#ask .seyveo-conversation-heading{display:none!important}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
+ display:flex!important;align-items:center!important;
+ justify-content:space-between!important;
+ gap:4px!important;min-width:0;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory){
+ box-sizing:border-box;display:grid!important;place-items:center;
+ order:1;flex:0 0 38px;width:38px;height:38px;min-width:38px;min-height:38px;
+ margin:0!important;padding:0;border:1px solid var(--soft-line);
+ border-radius:50%;background:var(--card2);color:var(--text);
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationBack{order:1}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationHistory{order:2}
+html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
+ display:flex!important;flex:1 1 auto;order:3;align-items:center;justify-content:center;
+ min-width:43px;max-width:none;margin:0!important;padding:0!important;
+ gap:0;white-space:nowrap;pointer-events:none;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-name{
+ display:inline-flex;align-items:center;position:relative;
+ width:auto;max-width:100%;padding:0!important;margin:0!important;
+ font-size:11px;font-weight:520;letter-spacing:.015em;
+ line-height:1.4;color:var(--secondary);transform:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ .seyveo-conversation-name>span:not(.seyveo-name-dots){font-size:inherit;line-height:inherit}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationStatus{
+ position:absolute!important;width:1px!important;height:1px!important;
+ padding:0!important;margin:-1px!important;overflow:hidden!important;
+ clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoComposerFold{
+ order:4!important;flex:0 0 38px;margin:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
+ order:5!important;flex:0 0 39px;margin:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
+ order:6!important;flex:0 0 39px;margin:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory) svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory):active{
+ background:var(--future-touch,var(--card))!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+@media(max-width:350px){
+ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{gap:3px!important}
+ html.seyveo-conversation #ask.prompt:not(.expanded)
+  :is(#seyveoConversationBack,#seyveoConversationHistory){
+  width:36px;height:36px;min-width:36px;min-height:36px;flex-basis:36px;
+ }
+ html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
+  min-width:40px;
+ }
+}
