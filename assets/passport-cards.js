@@ -8,6 +8,52 @@ const previewBox=$('homePassportPopover'),brandTrigger=$('homeBrandTrigger'),own
 const form=$('seyveoCompanyForm'),dialog=$('seyveoCompanyDialog'),studio=$('seyveoStudioDialog');
 if(!brand||!company||!form||!dialog||!studio)return;
 const KEY='seyveo-company-passport-v1';
+const DEV_PREVIEW_KEY='seyveo-developer-tier-preview-v1';
+const TIERS=Object.freeze([
+  {id:'start',name:'Business Start',short:'START',
+   audience:'Начинаю своё дело',
+   features:['Проверка бизнес-идеи','Расчёты и план запуска','Первые клиенты'],
+   state:'В планах'},
+  {id:'pro',name:'Business Pro',short:'PRO',
+   audience:'У меня работает компания',
+   features:['Всё из Start','Клиенты, поручения и процессы','Финансы и бизнес-аналитика'],
+   state:'В планах'},
+  {id:'max',name:'Business Max',short:'MAX',
+   audience:'Несколько команд и направлений',
+   features:['Всё из Pro','Филиалы и роли сотрудников','Координация и масштабная автоматизация'],
+   state:'В планах'}
+]);
+function readPreview(){
+ try{const raw=localStorage.getItem(DEV_PREVIEW_KEY);return TIERS.some(t=>t.id===raw)?raw:'pro'}
+ catch{return 'pro'}
+}
+function setPreview(next){
+ if(!TIERS.some(t=>t.id===next))return;
+ try{localStorage.setItem(DEV_PREVIEW_KEY,next)}catch{}
+ drawPreview();
+ window.dispatchEvent(new CustomEvent('seyveo:plan-preview-changed',{detail:{tier:next}}));
+}
+function drawPreview(){
+ const id=readPreview(),tier=TIERS.find(t=>t.id===id)||TIERS[1],index=TIERS.indexOf(tier);
+ for(const button of studio.querySelectorAll('[data-seyveo-preview-tier]')){
+   const active=button.dataset.seyveoPreviewTier===id;
+   button.setAttribute('aria-pressed',String(active));
+   const status=button.querySelector('[data-seyveo-current]');if(status)status.textContent=active?'Смотрим':'Посмотреть';
+ }
+ const tierName=$('seyveoPreviewName'),features=$('seyveoPreviewFeatures');
+ if(tierName)tierName.textContent='SEYVEO '+tier.name;
+ if(features){
+   features.replaceChildren();
+   tier.features.forEach(item=>{const li=document.createElement('li');li.textContent=item;features.append(li)});
+ }
+ const lower=$('seyveoPreviewLower'),higher=$('seyveoPreviewHigher');
+ lower.disabled=index===0;higher.disabled=index===TIERS.length-1;
+ lower.textContent=index>0?'← '+TIERS[index-1].short:'Начало линейки';
+ higher.textContent=index<TIERS.length-1?'↑ '+TIERS[index+1].short:'Флагман MAX';
+ const summary=$('seyveoPassportPreviewTier');
+ if(summary)summary.textContent=tier.short;
+}
+
 const LABELS={npd:'Самозанятый',ip:'Индивидуальный предприниматель',org:'Организация'};
 const PROPS=[
  ['name','Название для клиентов'],['legalName','Полное имя / юридическое наименование'],
@@ -29,16 +75,6 @@ function load(){
 function store(card){try{localStorage.setItem(KEY,JSON.stringify(card));return true}catch{return false}}
 const clean=value=>String(value||'').trim();
 function status(dialogEl,message){const s=dialogEl.querySelector('[data-passport-status]');if(s)s.textContent=message}
-function syncOwnerSubscription(){
- const demo=window.SEYVEO_GET_ACCOUNT_PREVIEW?.();
- const active=!!demo?.activated;
- const mini=$('seyveoCompanyPreviewSubscription');
- const full=$('seyveoOwnerAccessPlan');
- const hint=$('seyveoOwnerAccessHint');
- if(mini)mini.textContent=active?(demo.short+' · до '+demo.expirationShort+' · демо'):'Нет подписки · демо';
- if(full)full.textContent=active?demo.plan:'Подписка не подключена';
- if(hint)hint.textContent=active?('Активна до '+demo.expires+' · демо, без списаний'):'Демонстрационный доступ · списаний нет';
-}
 function fillPreview(){
  const record=load(),saved=!!clean(record.name);
  // A developer-only sample; real company records remain completely untouched.
@@ -51,16 +87,9 @@ function fillPreview(){
  // Demo may show Roman, but filled user records must not inherit sample identities.
  const owner=saved?(clean(record.owner)||profilePerson||(record.type!=='org'?clean(record.legalName):'')||'Владелец'):(profilePerson||'Роман');
  $('seyveoCompanyPreviewName').textContent=owner;
- const desc=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
- $('seyveoCompanyPreviewDesc').textContent=desc;
- if($('seyveoCompanyTitle'))$('seyveoCompanyTitle').textContent=owner;
- if($('seyveoOwnerDialogKind'))$('seyveoOwnerDialogKind').textContent=desc;
+ $('seyveoCompanyPreviewDesc').textContent=saved?((LABELS[record.type]||'Владелец')+(record.city?' · '+record.city:'')):'Владелец · демо';
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
- const businessName=$('seyveoOwnerBusinessName');
- if(businessName)businessName.textContent=(saved?record.name:'SEYVEO')+' · Карточка и управление';
- const companyLabel=$('seyveoOwnerCompanyLabel');
- if(companyLabel)companyLabel.textContent=saved?record.name:'Карточка бизнеса';
- syncOwnerSubscription();
+ $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
@@ -83,8 +112,6 @@ function drawRows(){
  $('seyveoCompanyNotFilled').hidden=!!card.name;
 }
 function toggleType(){
- const selected=form.querySelector('input[name="companyTypeChoice"]:checked');
- if(selected)$('seyveoCompanyType').value=selected.value;
  const type=$('seyveoCompanyType').value;
  form.querySelectorAll('[data-passport-type]').forEach(w=>{
    const visible=w.dataset.passportType.split(' ').includes(type);
@@ -96,20 +123,12 @@ function openCompany(){
  const record=load();
  for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
  $('seyveoCompanyType').value=record.type||'npd';
- const radio=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
- if(radio)radio.checked=true;
  toggleType();drawRows();status(dialog,'');
- const details=$('seyveoCompanyDetails');
- if(details)details.open=false;
- dialog.classList.remove('seyveo-business-open');
- const editor=$('seyveoOwnerCompanyEditor');
- if(editor)editor.hidden=true;
- $('seyveoCompanyEditTop')?.setAttribute('aria-expanded','false');
- fillPreview();
  if(!dialog.open)dialog.showModal();
 }
 function openStudio(){
  status(studio,'');
+ drawPreview();
  if(!studio.open)studio.showModal();
 }
 function validate(card){
@@ -142,8 +161,10 @@ function plain(kind){
   'Продукт: Цифровой управляющий',
   'Фирменная подпись: SEYVEO · IT · AI · AUTOMATION',
   'Сборка: демонстрационная версия',
-  'Направления: SEYVEO Life и Business Start, Pro, Max',
-  'Уровни подписки описаны в разделе «Аккаунт и подписка»',
+  'Линейка: SEYVEO Business Start → Business Pro → Business Max',
+  'SEYVEO Life: отдельное направление, доступное вместе с бизнес-уровнем',
+  'Предпросмотр разработчика: '+(TIERS.find(t=>t.id===readPreview())||TIERS[1]).name,
+  'Подписка и лицензия: не подключены. Предпросмотр не является покупкой',
   'Подключённый ИИ и внешние сервисы: отсутствуют',
   'Сведения о продукте представлены в приложении'
  ].join('\n');
@@ -183,6 +204,17 @@ function print(kind){
  try{win.focus();win.print()}catch{}
  status(active,'Открыта версия для печати. Если окно печати не появилось, нажмите «Распечатать» в новой вкладке.');
 }
+for(const button of studio.querySelectorAll('[data-seyveo-preview-tier]')){
+ button.addEventListener('click',()=>setPreview(button.dataset.seyveoPreviewTier));
+}
+$('seyveoPreviewLower').addEventListener('click',()=>{
+ const index=TIERS.findIndex(t=>t.id===readPreview());if(index>0)setPreview(TIERS[index-1].id);
+});
+$('seyveoPreviewHigher').addEventListener('click',()=>{
+ const index=TIERS.findIndex(t=>t.id===readPreview());if(index>=0&&index<TIERS.length-1)setPreview(TIERS[index+1].id);
+});
+window.addEventListener('storage',event=>{if(event.key===DEV_PREVIEW_KEY)drawPreview()});
+drawPreview();
 /* The logo keeps the studio passport preview. Company details now open
    directly from the business overview, without another Home header button. */
 function closeHeaderPassport(){
@@ -218,9 +250,6 @@ ownerTrigger?.addEventListener('click',toggleOwnerPassport);
 $('pictureCompanyOpen')?.addEventListener('click',()=>{
  closeHeaderPassport();
  openCompany();
- const details=$('seyveoCompanyDetails');
- if(details)details.open=true;
- dialog.classList.add('seyveo-business-open');
 });
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
@@ -232,38 +261,13 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('hashchange',closeHeaderPassport);
 $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
- const details=$('seyveoCompanyDetails');
- if(details)details.open=true;
- const editor=$('seyveoOwnerCompanyEditor');
- if(!editor)return;
- const opening=editor.hidden;
- editor.hidden=!opening;
- $('seyveoCompanyEditTop').setAttribute('aria-expanded',String(opening));
- if(opening){
-  const field=form.elements.namedItem('name');
-  if(field&&typeof field.focus==='function')field.focus({preventScroll:true});
- }
-});
-$('seyveoOwnerBusinessOpen')?.addEventListener('click',()=>{
- const details=$('seyveoCompanyDetails');
- if(details)details.open=true;
- dialog.classList.add('seyveo-business-open');
- dialog.scrollTop=0;
-});
-$('seyveoCompanyDetails')?.querySelector('summary')?.addEventListener('click',event=>{
- event.preventDefault();
- dialog.classList.remove('seyveo-business-open');
- $('seyveoCompanyDetails').open=false;
- dialog.scrollTop=0;
+ const field=form.elements.namedItem('name');
+ if(field&&typeof field.focus==='function')field.focus();
 });
 brand.addEventListener('click',openStudio);
-$('seyveoStudioSeePlans')?.addEventListener('click',()=>{
- studio.close();
- window.SEYVEO_OPEN_ACCOUNT_DEMO?.('plans');
-});
 company.addEventListener('click',openCompany);
 form.addEventListener('submit',save);
-form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',toggleType));
+$('seyveoCompanyType').addEventListener('change',toggleType);
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
 $('seyveoStudioShare').addEventListener('click',()=>share('studio'));
@@ -275,7 +279,6 @@ window.addEventListener('storage',e=>{
  if([KEY,'seyveo-first-acquaintance-v1'].includes(e.key))fillPreview();
 });
 window.addEventListener('seyveo:profile-changed',fillPreview);
-window.addEventListener('seyveo:account-preview-changed',syncOwnerSubscription);
 window.addEventListener('seyveo:avatar-letter-ready',fillPreview);
 fillPreview();
 })();
@@ -340,7 +343,7 @@ function paintAvatar(node,data){
  }
 }
 function paint(){
- for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoOwnerDialogAvatar','seyveoAvatarHero']){
+ for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoAvatarHero']){
   paintAvatar($(id),choice);
  }
  const selected=choice.kind==='photo'?['Фото','Ваше изображение']:
