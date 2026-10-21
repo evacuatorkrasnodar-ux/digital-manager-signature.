@@ -75,11 +75,24 @@ if(compact)compact.insertBefore(microphone('seyveoConversationMic'),compact.quer
 const fold=document.createElement('button');
 fold.type='button';fold.id='seyveoComposerFold';
 fold.className='composer-icon seyveo-composer-fold';
-fold.title='Свернуть переписку';
-fold.setAttribute('aria-label','Свернуть переписку на Главную');
+fold.title='Скрыть клавиатуру';
+fold.setAttribute('aria-label','Скрыть клавиатуру');
 fold.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
-fold.addEventListener('click',()=>close());
-if(compact)compact.insertBefore(fold,compact.querySelector('#hideInput'));
+// Open Canvas: the arrow only dismisses typing; Back alone leaves the thread.
+fold.addEventListener('click',()=>{
+ const field=$('question');
+ if(field&&document.activeElement===field)field.blur();
+ queueChatGeometry();
+});
+if(compact){
+ const mic=$('seyveoConversationMic');
+ compact.insertBefore(fold,mic);
+ // Reuse the actual original header controls and live assistant status.
+ // These nodes remain hidden on Home and in the expanded Notes editor.
+ compact.insertBefore($('seyveoConversationBack'),compact.firstChild);
+ compact.insertBefore($('seyveoConversationHistory'),fold);
+ compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),fold);
+}
 
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
@@ -373,8 +386,8 @@ function renderTurns(turns){
  if(atBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
 // Only the chat shell follows iPhone's *visible* viewport.
-// Keep its header, transcript and composer in separate layers: typing never
-// pushes the entire page or repositions the approved Home artwork.
+// Open Canvas has no top header: transcript and composer stay separate while
+// typing; the Home sphere and dock are unchanged outside the conversation.
 let chatFrame=0;
 function syncChatGeometry(){
  if(!root.classList.contains('seyveo-conversation'))return;
