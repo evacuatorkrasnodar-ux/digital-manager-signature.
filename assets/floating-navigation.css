@@ -4,16 +4,16 @@
  * 'Картина' is now the fourth visible dock action; no duplicate Home shortcut.
  * All rules are scoped to the existing footer, not the Home plasma or chat. */
 :root{
- --seyveo-nav-green:#a7d5bd;
- --seyveo-nav-glass:rgba(15,20,22,.89);
- --seyveo-nav-line:rgba(211,236,222,.13);
+ --seyveo-nav-ink:#dfe5ed;
+ --seyveo-nav-glass:rgba(15,18,24,.90);
+ --seyveo-nav-line:rgba(225,234,248,.14);
  --seyveo-dock-height:64px;
  --seyveo-dock-bottom:calc(8px + env(safe-area-inset-bottom,0px));
 }
 :root[data-theme="light"]{
- --seyveo-nav-green:#296b56;
+ --seyveo-nav-ink:#304257;
  --seyveo-nav-glass:rgba(250,252,251,.92);
- --seyveo-nav-line:rgba(62,111,91,.16);
+ --seyveo-nav-line:rgba(93,112,141,.18);
 }
 .dock{
  position:fixed!important;
@@ -61,12 +61,12 @@
 }
 .dock>.nav-item span{display:block;white-space:nowrap}
 .dock>.nav-item.active{
- color:var(--seyveo-nav-green)!important;
- background:rgba(87,145,115,.105)!important;
+ color:var(--seyveo-nav-ink)!important;
+ background:rgba(184,198,218,.075)!important;
  font-weight:530!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
- background:rgba(50,117,89,.075)!important;
+ background:rgba(97,118,145,.075)!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -98,30 +98,30 @@
  width:39px!important;height:39px!important;
  max-width:39px!important;max-height:39px!important;
  flex:0 0 39px!important;
- filter:drop-shadow(0 1px 3px rgba(15,45,32,.16))!important;
+ filter:drop-shadow(0 1px 3px rgba(0,0,0,.18))!important;
  transition:transform .18s ease!important;
 }
-.dock>.assistant-button .button-art .center-face{fill:#192e28!important}
-.dock>.assistant-button .button-art .voice-bars{stroke:#b1ddc5!important}
-.dock>.assistant-button .button-art .voice-dot{fill:#b1ddc5!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e2f1e8!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#306b55!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#306b55!important}
+.dock>.assistant-button .button-art .center-face{fill:#232b37!important}
+.dock>.assistant-button .button-art .voice-bars{stroke:#dfe5ed!important}
+.dock>.assistant-button .button-art .voice-dot{fill:#dfe5ed!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e3e9f0!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#42546a!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#42546a!important}
 .dock>.assistant-button .dock-assistant-label{
  display:block!important;font-size:10px;line-height:1.05;
  font-weight:550;letter-spacing:-.018em;
- color:var(--seyveo-nav-green);
+ color:var(--seyveo-nav-ink);
  white-space:nowrap;pointer-events:none;
 }
 .dock>.assistant-button:is(:active,.pressing,.arming) .button-art{
  transform:scale(.945)!important;
 }
 .dock>.assistant-button.listening{
- background:rgba(79,151,111,.10)!important;
+ background:rgba(179,194,216,.085)!important;
 }
 .dock>.assistant-button:focus-visible,
 .dock>.nav-item:focus-visible{
- outline:2px solid var(--seyveo-nav-green)!important;outline-offset:2px!important;
+ outline:2px solid var(--seyveo-nav-ink)!important;outline-offset:2px!important;
 }
 /* Inline v1 dock art consolidated here: no old 88px floating dock. */
 .dock>.nav-item{-webkit-appearance:none!important;appearance:none!important}
