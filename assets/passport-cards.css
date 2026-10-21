@@ -636,3 +636,11 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 :root[data-theme=light] #seyveoCompanyDialog #seyveoCompanyInitial{
  background:linear-gradient(150deg,#f7f8f7,#e1e8e4);
 }
+
+
+/* Artwork variant: optimized generated silver silhouette. Initials stay live text. */
+.seyveo-avatar--silhouette{
+ background:#111518 url("owner-silhouette-signature.svg?v=1") center / cover no-repeat;
+}
+.seyveo-avatar--silhouette::before,
+.seyveo-avatar--silhouette::after{display:none!important}
