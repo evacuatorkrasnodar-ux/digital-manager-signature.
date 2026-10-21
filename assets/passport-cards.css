@@ -256,7 +256,7 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 /* SEYVEO Unified Portrait · mirrored business identity opposite the studio.
    Keep the protected chrome logo, sphere and original asymmetrical clip paths. */
 #homeHeader .home-owner-trigger{
- width:52px;height:52px;flex:none;padding:3px;
+ width:44px;height:44px;flex:none;padding:3px;
  border-radius:50%;background:rgba(31,35,37,.93);
  border-color:rgba(225,234,227,.15);
 }
@@ -287,12 +287,27 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
  box-shadow:0 0 13px rgba(226,236,230,.18);
 }
 .seyveo-avatar--silver::after{width:19%;height:19%;border-radius:50%;background:#d5e5e0;right:20%;top:20%}
-.seyveo-avatar--orbit{background:radial-gradient(circle,#3a464a,#111518 72%)}
-.seyveo-avatar--orbit::before{width:65%;height:65%;border-radius:50%;border:2px solid #b9c9c8;transform:rotate(-27deg) scaleX(.63);box-shadow:0 0 10px #c9d7d340}
-.seyveo-avatar--orbit::after{width:25%;height:25%;border-radius:50%;background:radial-gradient(circle at 28% 25%,#f5f7f3,#829998 75%);box-shadow:0 0 12px #c9d7d340}
-.seyveo-avatar--prism{background:radial-gradient(circle at 24% 22%,#3a4248,#141a1d 78%)}
-.seyveo-avatar--prism::before{width:62%;height:70%;clip-path:polygon(50% 0,96% 40%,70% 100%,26% 100%,4% 40%);background:linear-gradient(125deg,#dee4e1 2%,#6b7e83 48%,#222e33 55%,#b7c3c0 88%)}
-.seyveo-avatar--prism::after{width:23%;height:65%;transform:rotate(26deg);background:linear-gradient(90deg,transparent,#ffffff32,transparent)}
+.seyveo-avatar--line{background:radial-gradient(circle at 28% 18%,#40494a,#151a1b 74%)}
+.seyveo-avatar--line::before{
+ width:73%;height:1.5px;border-radius:4px;top:42%;left:14%;
+ background:linear-gradient(90deg,transparent,#d7e1dc 38%,#9cadaa 76%,transparent);
+ transform:rotate(-24deg);box-shadow:0 9px 12px #e1ede42c;
+}
+.seyveo-avatar--line::after{
+ width:45%;height:1.5px;border-radius:4px;top:62%;left:28%;
+ background:linear-gradient(90deg,transparent,#bdceca,transparent);transform:rotate(18deg);
+}
+.seyveo-avatar--velvet{background:radial-gradient(circle at 20% 15%,#444b4a,#151919 78%)}
+.seyveo-avatar--velvet::before{
+ width:47%;height:63%;left:25%;top:16%;border-radius:52% 45% 52% 48%;
+ background:linear-gradient(145deg,rgba(233,240,234,.72),rgba(121,140,135,.19) 74%);
+ transform:rotate(24deg);
+}
+.seyveo-avatar--velvet::after{
+ width:39%;height:57%;left:37%;top:24%;border-radius:46% 56% 48% 54%;
+ background:linear-gradient(160deg,rgba(215,227,218,.10),rgba(190,207,196,.42));
+ transform:rotate(-25deg);
+}
 .seyveo-avatar--silhouette{background:radial-gradient(circle at 22% 16%,#535e60,#171d20 78%)}
 .seyveo-avatar--silhouette::before{background:linear-gradient(140deg,#dce5e0,#a6b2b0)}
 .seyveo-avatar--silhouette::after{background:linear-gradient(152deg,#aab6b1,#596767 70%)}
