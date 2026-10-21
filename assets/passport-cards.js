@@ -93,7 +93,7 @@ function fillPreview(){
  if($('seyveoOwnerDialogKind'))$('seyveoOwnerDialogKind').textContent=desc;
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
  const plan=$('seyveoCompanyPreviewSubscription');
- if(plan)plan.textContent='Подписка не подключена · демо';
+ if(plan)plan.textContent='Нет подписки · демо';
  $('seyveoCompanySample').hidden=saved;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
