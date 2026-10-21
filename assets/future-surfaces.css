@@ -1,0 +1,91 @@
+/* SEYVEO Black Velvet Future v1.
+ * Workspaces only; never repaint Home plasma, chat, or dock geometry.
+ * No lasers, glowing grids or looping decoration. */
+:root{
+ --future-edge:rgba(163,224,194,.18);
+ --future-wash:rgba(87,170,128,.12);
+ --future-soft:rgba(216,249,228,.065);
+ --future-ink:#a8dfbd;
+ --future-shadow:rgba(0,0,0,.13);
+}
+:root[data-theme=light]{
+ --future-edge:rgba(41,117,79,.18);
+ --future-wash:rgba(75,157,115,.075);
+ --future-soft:rgba(255,255,255,.65);
+ --future-ink:#267356;
+ --future-shadow:rgba(37,89,59,.055);
+}
+:is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage):not([hidden]){
+ background-image:radial-gradient(ellipse 95% 215px at 50% 0,var(--future-wash),transparent 84%);
+ background-repeat:no-repeat;
+ background-size:100% 315px;
+}
+:is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage) h1{
+ font-weight:530!important;letter-spacing:-.047em!important;
+}
+:is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage)
+ :is(.calendar-kicker,.manage-caption,.life-eyebrow){
+ letter-spacing:.11em;font-weight:530;
+}
+:is(#calendarPage,#picturePage,#tasksPage,#lifePage,#managePage)
+ :is(.calendar-kicker,.manage-caption,.life-eyebrow)::before{
+ content:"";display:inline-block;
+ width:5px;height:5px;margin-right:8px;border-radius:50%;
+ vertical-align:middle;background:var(--future-ink);
+ box-shadow:0 0 0 3px var(--future-wash);
+}
+#managePage :is(.manage-card,.manage-theme-list),
+#tasksPage :is(.personal-tasks-list,.tasks-records),
+#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight),
+#calendarPage :is(.cal-agenda,.cal-advice),
+#lifePage .calendar-space-button{
+ border-color:var(--future-edge)!important;
+ background-color:var(--card)!important;
+ background-image:linear-gradient(155deg,var(--future-soft),transparent 63%)!important;
+ box-shadow:inset 0 1px 0 var(--future-soft),0 5px 17px var(--future-shadow)!important;
+}
+#managePage .manage-card,
+#tasksPage :is(.personal-tasks-list,.tasks-records){border-radius:22px!important}
+#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight){border-radius:23px!important}
+#calendarPage .cal-agenda{border-radius:22px!important}
+#calendarPage .cal-periods button[aria-pressed=true],
+#picturePage .picture-tabs button[aria-pressed=true],
+#tasksPage .tasks-switch button[aria-pressed=true]{
+ color:var(--text)!important;
+ background:var(--future-wash)!important;
+ box-shadow:inset 0 0 0 1px var(--future-edge)!important;
+}
+#managePage .manage-row:focus-visible,
+#picturePage button:focus-visible,
+#calendarPage button:focus-visible,
+#tasksPage button:focus-visible,
+#lifePage .calendar-space-button:focus-visible{
+ outline:2px solid var(--future-ink)!important;outline-offset:2px;
+}
+@media(hover:hover) and (pointer:fine){
+ #managePage .manage-row:hover,
+ #calendarPage .cal-periods button:hover,
+ #lifePage .calendar-space-button:hover{
+  background-color:var(--future-wash)!important;
+ }
+}
+/* Only actual voice/assistant events activate this living signal. */
+:root[data-seyveo-presence=listening] .dock>.assistant-button,
+:root[data-seyveo-presence=thinking] .dock>.assistant-button,
+:root[data-seyveo-presence=speaking] .dock>.assistant-button{
+ background:var(--future-wash)!important;
+}
+:root[data-seyveo-presence=listening] .dock>.assistant-button .button-art,
+:root[data-seyveo-presence=thinking] .dock>.assistant-button .button-art,
+:root[data-seyveo-presence=speaking] .dock>.assistant-button .button-art{
+ animation:seyveo-future-presence 1.8s ease-in-out infinite!important;
+}
+@keyframes seyveo-future-presence{
+ 0%,100%{opacity:1}
+ 50%{opacity:.69}
+}
+@media(prefers-reduced-motion:reduce){
+ :root[data-seyveo-presence] .dock>.assistant-button .button-art{
+  animation:none!important;
+ }
+}
