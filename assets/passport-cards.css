@@ -525,3 +525,114 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 @media(prefers-reduced-motion:reduce){
  .seyveo-avatar-choice,.seyveo-avatar{transition:none!important}
 }
+
+
+/* SEYVEO Signature Passports · minimal paired summaries v3.
+   Both previews have the same compact dimensions and a mirrored shallow notch.
+   Full records, actions, and editing only appear after Подробнее. */
+.home-passports .seyveo-passport-card--studio{
+ -webkit-clip-path:url(#seyveoCardRightClip);clip-path:url(#seyveoCardRightClip);
+}
+.home-passports .seyveo-passport-card--company{
+ -webkit-clip-path:url(#seyveoCardLeftClip);clip-path:url(#seyveoCardLeftClip);
+}
+.home-passports .seyveo-passport-card--studio,
+.home-passports .seyveo-passport-card--company{
+ box-sizing:border-box;width:100%;height:158px;
+ padding:14px 15px 12px;
+ justify-content:flex-start;gap:0;
+}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-card-head,
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-head{
+ min-height:38px;max-height:42px;gap:9px;flex:none;
+}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-card-titles strong,
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-titles strong{
+ font-size:15px;font-weight:510;line-height:1.18;
+}
+.home-passports .seyveo-passport-mini-facts{
+ position:relative;z-index:3;
+ display:flex;flex-direction:column;justify-content:center;
+ gap:6px;flex:1 1 auto;min-height:0;
+ padding:8px 23px 4px 0;margin:0;
+ color:var(--secondary);font-size:11px;line-height:1.32;
+}
+.home-passports .seyveo-passport-mini-facts > span{
+ display:flex;align-items:center;gap:6px;min-width:0;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.home-passports .seyveo-passport-mini-facts strong{
+ color:var(--text);font-weight:540;
+}
+.home-passports .seyveo-passport-mini-facts--company{
+ padding-left:24px;padding-right:0;
+}
+.home-passports .seyveo-passport-activity{color:#9bbbae}
+.home-passports .seyveo-studio-led{
+ width:8px;height:8px;min-width:8px;margin:0 2px 0 0;
+ background:#a4c5b9;box-shadow:none;
+}
+.home-passports .seyveo-passport-card-link{
+ position:relative;z-index:3;
+ display:block;flex:none;align-self:flex-start;
+ padding:2px 2px 1px 0;
+ color:var(--text);font-size:11.5px;font-weight:540;
+ line-height:1.25;letter-spacing:-.01em;
+}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-link{
+ margin-left:24px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-owner-avatar{
+ width:33px;height:33px;min-width:33px;min-height:33px;
+ margin-left:auto;border-radius:11px;
+}
+.home-passports .seyveo-passport-card--company .seyveo-owner-avatar .seyveo-avatar-initials{font-size:15px}
+.home-passports .seyveo-company-sample[hidden],
+.home-passports [hidden]{display:none!important}
+.home-passports .seyveo-passport-card--studio .seyveo-passport-arrow,
+.home-passports .seyveo-passport-card--company .seyveo-passport-arrow{display:none!important}
+.home-passports .seyveo-passport-card:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+@media(max-width:355px){
+ .home-passports .seyveo-passport-card--studio,
+ .home-passports .seyveo-passport-card--company{
+  height:154px;padding:12px 12px 10px;
+ }
+ .home-passports .seyveo-passport-mini-facts{font-size:10.3px}
+ .home-passports .seyveo-passport-card-link{font-size:11px}
+}
+
+/* One letter or silhouette (plus optional real photo), never a two-letter logo. */
+.seyveo-avatar-dialog .seyveo-avatar-gallery{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;margin:0 0 13px;
+}
+.seyveo-avatar-dialog .seyveo-avatar-choice{
+ min-height:105px;gap:7px;padding:10px 8px 9px;
+ border-radius:16px;
+}
+.seyveo-avatar-dialog .seyveo-avatar-choice .seyveo-avatar{
+ width:55px;height:55px;min-width:55px;min-height:55px;
+ border-radius:15px;
+}
+.seyveo-avatar-dialog .seyveo-avatar-choice small{
+ font-size:11px;font-weight:490;
+}
+.seyveo-avatar-dialog .seyveo-avatar-hero{min-height:77px;padding:10px 11px}
+.seyveo-avatar-dialog .seyveo-avatar-hero .seyveo-avatar{
+ width:59px;height:59px;min-width:59px;min-height:59px;
+}
+#seyveoCompanyDialog .seyveo-company-dialog-identity{
+ display:flex;align-items:center;gap:10px;min-width:0;
+}
+#seyveoCompanyDialog #seyveoCompanyInitial{
+ display:grid;place-items:center;flex:none;
+ width:38px;height:38px;border:1px solid rgba(221,230,225,.2);
+ border-radius:12px;
+ background:linear-gradient(150deg,#323639,#151719);
+ font-size:20px;font-weight:440;color:var(--text);
+}
+:root[data-theme=light] #seyveoCompanyDialog #seyveoCompanyInitial{
+ background:linear-gradient(150deg,#f7f8f7,#e1e8e4);
+}
