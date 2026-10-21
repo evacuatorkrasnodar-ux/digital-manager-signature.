@@ -1,9 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 30 440 440" role="img" aria-label="Полупрозрачная стеклянная плазма">
 <defs>
-<radialGradient id="body" cx=".44" cy=".38" r=".74"><stop stop-color="#202b3f"/><stop offset=".38" stop-color="#0c1322"/><stop offset=".73" stop-color="#08101e"/><stop offset="1" stop-color="#2b3f5d"/></radialGradient>
+<radialGradient id="body" cx=".44" cy=".38" r=".74"><stop stop-color="#1b2d30"/><stop offset=".38" stop-color="#0c191b"/><stop offset=".73" stop-color="#081314"/><stop offset="1" stop-color="#293f45"/></radialGradient>
+<radialGradient id="inner-emerald" cx=".42" cy=".48" r=".68"><stop stop-color="#346459" stop-opacity=".25"/><stop offset=".46" stop-color="#1d443b" stop-opacity=".12"/><stop offset=".87" stop-color="#0d2724" stop-opacity="0"/></radialGradient>
 <radialGradient id="edgewash" cx=".48" cy=".45" r=".52"><stop offset=".53" stop-color="#f7fbff" stop-opacity="0"/><stop offset=".78" stop-color="#f7fbff" stop-opacity=".04"/><stop offset=".92" stop-color="#d3e6ff" stop-opacity=".18"/><stop offset="1" stop-color="#f7fbff" stop-opacity=".45"/></radialGradient>
-<linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff" stop-opacity=".09"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".84"/><stop offset=".36" stop-color="#94b8eb" stop-opacity=".27"/><stop offset=".56" stop-color="#f7fbff" stop-opacity=".97"/><stop offset=".79" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".15"/></linearGradient>
-<linearGradient id="silk" x1=".13" y1=".15" x2=".87" y2=".95"><stop stop-color="#f7fbff" stop-opacity="0"/><stop offset=".13" stop-color="#f7fbff" stop-opacity=".39"/><stop offset=".35" stop-color="#94b8eb" stop-opacity=".06"/><stop offset=".6" stop-color="#f7fbff" stop-opacity=".18"/><stop offset=".8" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#f7fbff" stop-opacity="0"/></linearGradient>
+<linearGradient id="filament" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff" stop-opacity=".09"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".84"/><stop offset=".36" stop-color="#9dc2b3" stop-opacity=".24"/><stop offset=".56" stop-color="#f7fbff" stop-opacity=".97"/><stop offset=".79" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#8db8ad" stop-opacity=".13"/></linearGradient>
+<linearGradient id="silk" x1=".13" y1=".15" x2=".87" y2=".95"><stop stop-color="#f7fbff" stop-opacity="0"/><stop offset=".13" stop-color="#f7fbff" stop-opacity=".39"/><stop offset=".35" stop-color="#7eb29f" stop-opacity=".08"/><stop offset=".6" stop-color="#f7fbff" stop-opacity=".18"/><stop offset=".8" stop-color="#f7fbff" stop-opacity=".58"/><stop offset="1" stop-color="#f7fbff" stop-opacity="0"/></linearGradient>
 <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#94b8eb" stop-opacity=".22"/><stop offset=".17" stop-color="#f7fbff" stop-opacity=".95"/><stop offset=".36" stop-color="#f7fbff" stop-opacity=".16"/><stop offset=".69" stop-color="#f7fbff" stop-opacity=".3"/><stop offset=".88" stop-color="#f7fbff" stop-opacity=".96"/><stop offset="1" stop-color="#94b8eb" stop-opacity=".33"/></linearGradient>
 <filter id="soft"><feGaussianBlur stdDeviation="3.6"/></filter>
 <filter id="halo"><feGaussianBlur stdDeviation="7"/></filter>
@@ -34,6 +35,7 @@
 </style>
 </defs>
 <circle cx="260" cy="250" r="176" fill="url(#body)"/>
+<circle cx="260" cy="250" r="174" fill="url(#inner-emerald)"/>
 <circle cx="260" cy="250" r="175.2" fill="url(#edgewash)"/>
 <g clip-path="url(#clip)">
 <g class="g-b" fill="url(#silk)">
