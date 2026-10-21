@@ -11,7 +11,7 @@ const source=fs.readFileSync(path.join(rootDir,'assets/future-presence.js'),'utf
 const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 
 const selector='.seyveo-standalone[data-seyveo-view="home"]:not(.seyveo-conversation)';
-assert.equal(css.split(selector).length-1,3,'Root, body, and app are isolated only on standalone Home');
+assert.equal(css.split(selector).length-1,4,'Root, body, app and the dock correction share the standalone Home scope');
 assert.match(css,/@media\(max-width:700px\)/,'Small viewport only');
 assert.match(css,/overflow-y:auto!important;/,'Home content remains scrollable');
 assert.match(css,/-webkit-overflow-scrolling:touch/,'Native touch scrolling preserved');
