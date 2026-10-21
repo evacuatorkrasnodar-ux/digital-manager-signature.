@@ -251,3 +251,111 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 :root[data-theme=light] .home-passports .seyveo-passport-card--studio{
  background:linear-gradient(145deg,#f7f8f7,#e8ece9);
 }
+
+
+/* SEYVEO Unified Portrait · mirrored business identity opposite the studio.
+   Keep the protected chrome logo, sphere and original asymmetrical clip paths. */
+#homeHeader .home-owner-trigger{
+ width:52px;height:52px;flex:none;padding:3px;
+ border-radius:50%;background:rgba(31,35,37,.93);
+ border-color:rgba(225,234,227,.15);
+}
+#homeHeader .home-owner-trigger[aria-expanded=true]{border-color:rgba(226,234,230,.30)}
+.seyveo-avatar{
+ position:relative;display:grid;place-items:center;overflow:hidden;isolation:isolate;
+ width:100%;height:100%;min-width:0;min-height:0;border-radius:50%;
+ background:radial-gradient(circle at 30% 20%,#343e41,#15191c 70%);
+ border:1px solid rgba(225,233,230,.19);
+ box-sizing:border-box;
+}
+.seyveo-avatar::before,.seyveo-avatar::after{
+ content:"";display:block;position:absolute;pointer-events:none;
+}
+.seyveo-avatar--onyx::before,.seyveo-avatar--silhouette::before{
+ top:18%;left:35%;width:30%;height:29%;border-radius:48%;
+ background:linear-gradient(145deg,#e5e9e5,#6e8181 64%,#283238);
+ box-shadow:0 0 12px rgba(227,237,229,.11);
+}
+.seyveo-avatar--onyx::after,.seyveo-avatar--silhouette::after{
+ bottom:6%;left:17%;width:66%;height:41%;border-radius:54% 54% 12% 12%;
+ background:linear-gradient(153deg,#9aa9a8,#3c4c50 64%,#1c2428);
+}
+.seyveo-avatar--silver{background:radial-gradient(circle at 24% 12%,#5c686b,#202629 70%)}
+.seyveo-avatar--silver::before{
+ width:70%;height:70%;border:2px solid rgba(229,239,234,.77);
+ border-radius:50%;transform:rotate(-27deg) scaleX(.66);
+ box-shadow:0 0 13px rgba(226,236,230,.18);
+}
+.seyveo-avatar--silver::after{width:19%;height:19%;border-radius:50%;background:#d5e5e0;right:20%;top:20%}
+.seyveo-avatar--orbit{background:radial-gradient(circle,#3a464a,#111518 72%)}
+.seyveo-avatar--orbit::before{width:65%;height:65%;border-radius:50%;border:2px solid #b9c9c8;transform:rotate(-27deg) scaleX(.63);box-shadow:0 0 10px #c9d7d340}
+.seyveo-avatar--orbit::after{width:25%;height:25%;border-radius:50%;background:radial-gradient(circle at 28% 25%,#f5f7f3,#829998 75%);box-shadow:0 0 12px #c9d7d340}
+.seyveo-avatar--prism{background:radial-gradient(circle at 24% 22%,#3a4248,#141a1d 78%)}
+.seyveo-avatar--prism::before{width:62%;height:70%;clip-path:polygon(50% 0,96% 40%,70% 100%,26% 100%,4% 40%);background:linear-gradient(125deg,#dee4e1 2%,#6b7e83 48%,#222e33 55%,#b7c3c0 88%)}
+.seyveo-avatar--prism::after{width:23%;height:65%;transform:rotate(26deg);background:linear-gradient(90deg,transparent,#ffffff32,transparent)}
+.seyveo-avatar--silhouette{background:radial-gradient(circle at 22% 16%,#535e60,#171d20 78%)}
+.seyveo-avatar--silhouette::before{background:linear-gradient(140deg,#dce5e0,#a6b2b0)}
+.seyveo-avatar--silhouette::after{background:linear-gradient(152deg,#aab6b1,#596767 70%)}
+.seyveo-avatar--monogram{background:linear-gradient(145deg,#2f3737,#13191a)}
+.seyveo-avatar--monogram::before{inset:10%;border:1px solid rgba(231,236,232,.23);border-radius:50%}
+.seyveo-avatar-initials{position:relative;z-index:1;color:#edf1ed;font-size:clamp(11px,3.7vw,18px);font-weight:460;letter-spacing:-.07em}
+.seyveo-avatar--photo{background:#22292b}
+.seyveo-avatar--photo img{display:block;width:100%;height:100%;object-fit:cover}
+.home-passports .seyveo-owner-avatar{
+ width:47px;height:47px;flex:none;margin-left:auto;border-radius:50%;
+}
+.home-passports .seyveo-passport-card--company{
+ background:linear-gradient(215deg,#222729,#191e1f 65%,#131718);
+ box-shadow:0 12px 29px rgba(0,0,0,.43),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.home-passports .seyveo-passport-card--company::before{background:radial-gradient(ellipse at 85% 0,rgba(220,231,223,.08),transparent 63%)}
+.home-passports .seyveo-passport-card--company .seyveo-passport-card-titles strong{font-weight:520}
+.home-passports .seyveo-passport-card--company .seyveo-company-divider{margin-right:47px}
+.home-passports .seyveo-passport-card--company .seyveo-company-more{font-weight:500}
+:root[data-theme=light] .home-passports .seyveo-passport-card--company{
+ background:linear-gradient(215deg,#f9fbfa,#e8ecea);
+ box-shadow:0 12px 25px rgba(40,51,44,.12);
+}
+:root[data-theme=light] #homeHeader .home-owner-trigger{background:rgba(237,241,238,.94);border-color:rgba(80,96,85,.15)}
+
+/* My World now belongs to the horizontally swipeable favorites rail. */
+#homeHeader .home-world-popover:not([hidden]){
+ position:fixed;
+ top:var(--seyveo-world-top,118px);
+ right:max(12px,env(safe-area-inset-right,0px));
+ left:auto;
+ bottom:auto;
+ z-index:90;width:min(330px,calc(100vw - 24px));max-width:calc(100vw - 24px);
+ max-height:min(360px,calc(100dvh - 125px));padding:13px;border-radius:22px;
+ background:rgba(22,25,26,.97);
+ transform-origin:100% 100%;
+}
+#homeHeader .home-world-choice{min-height:46px;font-weight:490;background:rgba(221,228,222,.04)}
+:root[data-theme=light] #homeHeader .home-world-popover:not([hidden]){background:rgba(249,250,248,.98)}
+:root[data-theme=light] #homeHeader .home-world-choice{background:rgba(70,85,76,.045)}
+
+/* Portrait avatar chooser: only on-device presets/photo, no remote assets. */
+.seyveo-avatar-dialog{width:min(390px,calc(100vw - 24px));max-height:min(82dvh,650px);padding:23px 18px 17px;border-radius:25px}
+.seyveo-avatar-dialog h2{margin:0 0 5px;font-size:23px;font-weight:530;letter-spacing:-.035em}
+.seyveo-avatar-dialog p{margin:0 0 17px;color:var(--secondary);font-size:12px;line-height:1.5}
+.seyveo-avatar-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:16px}
+.seyveo-avatar-choice{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ min-width:0;min-height:113px;padding:11px 5px;border:1px solid var(--soft-line);
+ border-radius:18px;background:var(--card2);color:var(--text);font:inherit;cursor:pointer;
+}
+.seyveo-avatar-choice .seyveo-avatar{width:60px;height:60px;flex:none}
+.seyveo-avatar-choice small{font-size:11px;color:var(--secondary);font-weight:460}
+.seyveo-avatar-choice[aria-pressed=true]{border-color:rgba(168,197,180,.58);background:rgba(158,180,168,.09)}
+.seyveo-avatar-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.seyveo-avatar-dialog-actions{display:flex;gap:8px;flex-wrap:wrap}
+.seyveo-avatar-dialog-actions label,.seyveo-avatar-dialog-actions button{
+ display:flex;align-items:center;justify-content:center;min-height:44px;
+ flex:1 1 130px;padding:9px;border-radius:999px;border:1px solid var(--line);
+ background:var(--card2);color:var(--text);font:inherit;font-size:12px;font-weight:500;cursor:pointer;
+}
+.seyveo-avatar-dialog-actions input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.seyveo-avatar-dialog-actions label:focus-within{outline:2px solid var(--text);outline-offset:2px}
+#seyveoAvatarStatus{min-height:0;margin:11px 0 0;font-size:11px}
+#seyveoCompanyAvatarEdit{min-height:44px}
+@media(max-width:360px){.seyveo-avatar-gallery{gap:6px}.seyveo-avatar-choice{min-height:104px}.seyveo-avatar-choice .seyveo-avatar{width:53px;height:53px}}
