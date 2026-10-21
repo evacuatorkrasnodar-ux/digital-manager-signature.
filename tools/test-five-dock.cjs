@@ -35,7 +35,7 @@ assert.match(html,/assets\/floating-navigation\.css\?v=2/,'app loads v2 styleshe
 function portrait(width,height,safeBottom){
  // CSS has a 1px border each side, 7px horizontal padding, 3px column gaps.
  const compact=width<=355;
- const dockWidth=width-Math.min(compact?20:28,width-392);
+ const dockWidth=Math.min(392,width-(compact?20:28));
  const pad=compact?5:7,gap=compact?1:3;
  const cell=(dockWidth-2-2*pad-gap*4)/5;
  const top=height-(safeBottom+8)-64;
