@@ -1,7 +1,7 @@
 /* SEYVEO · Black Velvet Floating Navigation / 2026
  * Five balanced directions; Sayvi sits exactly in the center, not raised. The SAME nav IDs, route handlers,
  * click/hold speech semantics and web-app safe areas are retained.
- * 'Картина' returns as the fourth visible dock action; Home shortcut remains.
+ * 'Картина' is now the fourth visible dock action; no duplicate Home shortcut.
  * All rules are scoped to the existing footer, not the Home plasma or chat. */
 :root{
  --seyveo-nav-green:#a7d5bd;
@@ -139,13 +139,4 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  .dock>.assistant-button,.dock>.assistant-button .button-art{
   transition:none!important;animation:none!important;
  }
-}
-/* Home-only discreet business overview access; reuses established silver
-   glass header action shape. Never changes orb sizing, stage or brand art. */
-#homeHeader .home-picture-trigger svg{
- width:21px;height:21px;fill:none;stroke:currentColor;
- stroke-linecap:round;stroke-linejoin:round;stroke-width:1.65;
-}
-#homeHeader .home-picture-trigger:focus-visible{
- outline:2px solid var(--seyveo-nav-green);outline-offset:3px;
 }
