@@ -717,3 +717,44 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 #homeHeader #seyveoHeaderAvatar::after{border-radius:50%!important}
 #homeHeader #seyveoHeaderAvatar img{border-radius:50%;object-fit:cover}
 .home-passports .seyveo-passport-card--company .seyveo-passport-card-head{align-items:center}
+
+
+/* Compact company card with an independent scannable QR control. */
+.home-passports .sv-company-preview-shell{position:relative;display:block;width:100%;min-width:0}
+.home-passports .sv-company-preview-shell[hidden]{display:none!important}
+.home-passports .sv-company-preview-shell>.seyveo-passport-card--company{
+ display:block;width:100%;box-sizing:border-box;text-align:left;
+ padding-right:103px!important;
+}
+.home-passports .sv-company-preview-shell .seyveo-passport-card-titles,
+.home-passports .sv-company-preview-shell .seyveo-passport-mini-facts{
+ min-width:0;max-width:100%;overflow:hidden;
+}
+.home-passports .sv-company-preview-shell .seyveo-passport-mini-facts .seyveo-passport-line span{
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.home-passports .sv-mini-qr{
+ position:absolute;right:13px;top:50%;transform:translateY(-50%);
+ width:78px;min-height:95px;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:6px;
+ background:transparent;border:0;border-radius:12px;
+ padding:5px 2px;cursor:pointer;color:#becac4;z-index:4;
+}
+.home-passports .sv-mini-qr-code{
+ display:grid;place-items:center;width:72px;height:72px;
+ border:5px solid white;border-radius:10px;background:#fff;
+ box-sizing:border-box;overflow:hidden;
+}
+.home-passports .sv-mini-qr-code canvas,
+.home-passports .sv-mini-qr-code img{width:66px!important;height:66px!important;display:block}
+.home-passports .sv-mini-qr-code svg{
+ width:36px;height:36px;stroke:#202728;fill:none;stroke-width:1.5;stroke-linejoin:round;
+}
+.home-passports .sv-mini-qr>span:last-child{
+ font-size:9px;line-height:1.2;text-align:center;max-width:83px;white-space:normal;
+}
+.home-passports .sv-mini-qr:focus-visible{outline:2px solid #f3f5f1;outline-offset:1px}
+@media(max-width:375px){
+ .home-passports .sv-company-preview-shell>.seyveo-passport-card--company{padding-right:96px!important}
+ .home-passports .sv-mini-qr{right:9px}
+}
