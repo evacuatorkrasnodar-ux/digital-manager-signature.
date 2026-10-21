@@ -19,7 +19,7 @@ const plans=Object.freeze([
 const demoState={
  company:'sample',
  companies:{
-  sample:{plan:'pro',selected:'pro',renew:false,period:'month',activated:false},
+  sample:{plan:'max',selected:'max',renew:true,period:'month',activated:true},
   second:{plan:'start',selected:'start',renew:false,period:'year',activated:false}
  }
 };
@@ -29,6 +29,25 @@ const letterOf=(value)=>{
  return letter?letter[0].toLocaleUpperCase('ru-RU'):'•';
 };
 function current(){return demoState.companies[demoState.company]}
+/* The home owner card always represents the primary saved business.
+   Viewing a hypothetical second company must not change its status. */
+function ownerSubscriptionPreview(){
+ const state=demoState.companies.sample;
+ const plan=plans.find(item=>item.id===state.plan);
+ return {
+  demo:true,
+  activated:!!state.activated,
+  plan:state.activated?(plan?.title||'Business Max'):null,
+  short:state.activated?(plan?.short||'MAX'):null,
+  expires:state.activated?(state.period==='month'?'21 ноября 2026':'21 октября 2027'):null,
+  expirationShort:state.activated?(state.period==='month'?'21.11':'21.10.2027'):null,
+  renewal:!!state.renew
+ };
+}
+window.SEYVEO_GET_ACCOUNT_PREVIEW=ownerSubscriptionPreview;
+function notifyOwnerPreview(){
+ window.dispatchEvent(new CustomEvent('seyveo:account-preview-changed',{detail:ownerSubscriptionPreview()}));
+}
 function readIdentity(){
  let name='',company='';
  try{
@@ -100,6 +119,7 @@ function render(){
  const manageLabel=$('seyveoAccountManageBadge');
  if(manageLabel)manageLabel.textContent='Демо';
  renderPlans();
+ notifyOwnerPreview();
 }
 function selectTab(name){
  const valid=new Set(['overview','plans','billing','signin']);
