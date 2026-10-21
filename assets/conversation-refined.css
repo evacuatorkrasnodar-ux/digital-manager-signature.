@@ -16,9 +16,9 @@ html.seyveo-conversation .app{
  margin:0 auto;
  box-sizing:border-box;
  padding:calc(env(safe-area-inset-top,0px) + 8px)
-   max(16px,env(safe-area-inset-right,0px))
+   max(8px,env(safe-area-inset-right,0px))
    var(--sayvi-composer-space,154px)
-   max(16px,env(safe-area-inset-left,0px))!important;
+   max(8px,env(safe-area-inset-left,0px))!important;
  display:flex;flex-direction:column;
  overflow:hidden!important;
  overscroll-behavior:none;
@@ -50,6 +50,8 @@ html.seyveo-conversation #stage>.orb-inline-reply{
  padding:0!important;overflow:hidden!important;
  border:0!important;box-shadow:none!important;background:transparent!important;
 }
+/* SEYVEO Full Bleed: the reader fills the stage. Text retains the safe inner 2px
+ * in addition to the 8px app inset; no content is flush against curved glass. */
 html.seyveo-conversation #stage>.orb-inline-reply-text,
 html.seyveo-conversation #stage .orb-inline-reply-text{
  flex:1 1 auto;box-sizing:border-box;
@@ -118,6 +120,9 @@ html.seyveo-conversation .seyveo-reply-more>summary{
  border:1px solid rgba(76,116,161,.18);
  box-shadow:0 3px 12px rgba(51,81,120,.06);
 }
+/* SEYVEO Full Bleed: the capsule sits only 6px from a portrait screen edge.
+ * Its original 12px internal padding protects text and six interactive controls.
+ * Safe-area left/right insets still govern landscape and cutout devices. */
 /* Native keyboard-friendly composer: a tall, stable capsule with TEXT on the
  * first row and unobtrusive controls on the second, anchored to its bottom.
  * The existing textarea alone scrolls at four lines; never resize the page
@@ -127,7 +132,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  display:flex!important;flex-direction:column!important;
  align-items:stretch!important;justify-content:center;
  gap:1px!important;
- width:min(500px,calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ width:min(518px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
  min-height:94px!important;height:auto!important;max-height:168px!important;
  padding:11px 12px 9px!important;
  bottom:calc(12px + env(safe-area-inset-bottom,0px) + var(--keyboard-offset,0px))!important;
