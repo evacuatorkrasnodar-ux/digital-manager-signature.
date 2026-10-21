@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Test context-driven task priority
+        run: node tools/test-context-focus.cjs
       - name: Test local calendar reminders
         run: node tools/test-calendar-reminders.cjs
       - name: Test spoken and typed task commands
