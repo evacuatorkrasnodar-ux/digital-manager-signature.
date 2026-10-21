@@ -123,7 +123,6 @@
 .dock>.nav-item:focus-visible{
  outline:2px solid var(--seyveo-nav-green)!important;outline-offset:2px!important;
 }
-.dock>.ask-caption{display:none!important}
 /* Inline v1 dock art consolidated here: no old 88px floating dock. */
 .dock>.nav-item{-webkit-appearance:none!important;appearance:none!important}
 .dock>.nav-item svg{
@@ -132,6 +131,7 @@
 .dock>.nav-home svg{fill:currentColor}
 .dock>.assistant-button .button-art{display:block!important;overflow:visible!important}
 .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
+:root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-day)}
 .dock>.assistant-button .button-art .voice-bars{stroke-width:2.85;stroke-linecap:round;fill:none}
 .dock>.assistant-button.listening .voice-bars{
  animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
