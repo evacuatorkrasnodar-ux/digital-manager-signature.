@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Серебряный силуэт"><image width="96" height="96" href="data:image/jpeg;base64,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"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#343a3d"/><stop offset=".55" stop-color="#181d21"/><stop offset="1" stop-color="#0c1114"/></linearGradient>
+ <linearGradient id="metal" x1=".15" y1=".05" x2=".85" y2=".95"><stop stop-color="#f1f2ef"/><stop offset=".23" stop-color="#aeb8b9"/><stop offset=".59" stop-color="#606e73"/><stop offset="1" stop-color="#b7c2c1"/></linearGradient>
+ <linearGradient id="body" x1=".1" y1="0" x2=".85" y2="1"><stop stop-color="#c8d3d2"/><stop offset=".4" stop-color="#8c9c9f"/><stop offset="1" stop-color="#455459"/></linearGradient>
+ <radialGradient id="shine"><stop stop-color="#e6eae7" stop-opacity=".09"/><stop offset="1" stop-color="#e6eae7" stop-opacity="0"/></radialGradient>
+ <clipPath id="clip"><rect width="96" height="96" rx="20"/></clipPath>
+</defs>
+<g clip-path="url(#clip)">
+ <rect width="96" height="96" fill="url(#bg)"/>
+ <circle cx="45" cy="32" r="44" fill="url(#shine)"/>
+ <!-- Human shoulders and head, without brand waves or company identifiers -->
+ <path d="M15 94V83c0-15 11-24 25-26l8 10 8-10c14 2 25 11 25 26v11Z" fill="url(#body)"/>
+ <path d="M25 93V82c0-10 7-18 18-21M71 93V82c0-10-7-18-18-21" fill="none" stroke="#e0e8e6" stroke-opacity=".20" stroke-width="1.1"/>
+ <path d="M48 16c-13 0-22 10-22 23 0 14 9 25 22 25s22-11 22-25c0-13-9-23-22-23Z" fill="url(#metal)"/>
+ <path d="M36 21c-5 4-8 10-8 18 0 11 5 18 11 22" fill="none" stroke="#f3f5f2" stroke-opacity=".26" stroke-width="2" stroke-linecap="round"/>
+ <rect x=".5" y=".5" width="95" height="95" rx="19.5" fill="none" stroke="#f3f6f4" stroke-opacity=".14"/>
+</g>
+</svg>
