@@ -19,8 +19,8 @@ const plans=Object.freeze([
 const demoState={
  company:'sample',
  companies:{
-  sample:{plan:'pro',selected:'pro',renew:true},
-  second:{plan:'start',selected:'start',renew:false}
+  sample:{plan:'pro',selected:'pro',renew:true,period:'month'},
+  second:{plan:'start',selected:'start',renew:false,period:'year'}
  }
 };
 const safeText=(s,max=80)=>typeof s==='string'?s.trim().slice(0,max):'';
@@ -73,6 +73,11 @@ function render(){
  const plan=plans.find(item=>item.id===state.plan)||plans[1];
  $('seyveoAccountCurrentPlan').textContent=plan.title;
  $('seyveoAccountPlanDesc').textContent=plan.detail+' · SEYVEO Life включён';
+ const monthly=state.period==='month';
+ const date=monthly?'21 ноября 2026':'21 октября 2027';
+ $('seyveoAccountSampleExpiry').textContent=date+' · пример';
+ $('seyveoAccountSampleNextDate').textContent=date+' · условная';
+ dialog.querySelectorAll('[data-seyveo-period]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.seyveoPeriod===state.period)));
  const auto=$('seyveoAccountAutoRenew');
  auto.setAttribute('aria-checked',String(state.renew));
  $('seyveoAccountAutoLabel').textContent=state.renew?'Включено в примере':'Выключено в примере';
@@ -122,6 +127,11 @@ $('seyveoAccountClose').addEventListener('click',close);
 dialog.addEventListener('click',event=>{
  const target=event.target;
  if(target===dialog){close();return}
+ const period=target.closest('[data-seyveo-period]');
+ if(period&&['month','year'].includes(period.dataset.seyveoPeriod)){
+  current().period=period.dataset.seyveoPeriod;
+  render();return;
+ }
  const tab=target.closest('[data-seyveo-account-tab]');
  if(tab){selectTab(tab.dataset.seyveoAccountTab);return}
  const goto=target.closest('[data-seyveo-account-go]');
