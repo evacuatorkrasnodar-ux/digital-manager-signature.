@@ -12,7 +12,7 @@ const chatCss=fs.readFileSync(path.join(root,'assets/conversation-refined.css'),
 assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
 assert.match(css,/--seyveo-dock-bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)/,'Single approved safe-area offset');
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/,'Every page uses one dock bottom token');
-assert.match(css,/--seyveo-dock-height:64px/,'Single dock height token');
+assert.match(css,/--seyveo-dock-height:56px/,'One compact 56px dock-height token');
 const slots=[
  ['nav-home',1],['nav-tasks',2],['assistant-button',3],
  ['#navPicture',4],['nav-manage',5]
@@ -34,7 +34,7 @@ for(const id of expected){
  assert.ok(at>last,id+' keeps left-to-right DOM order');
  last=at;
 }
-assert.match(html,/assets\/floating-navigation\.css\?v=11/,'app loads v11 stylesheet');
+assert.match(html,/assets\/floating-navigation\.css\?v=12/,'app loads v11 stylesheet');
 assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is a direct body child, not in scrolling app');
 assert.ok(!html.includes('id="homePictureTrigger"'),'No duplicate Picture control on Home');
 assert.ok(!html.includes("$('homePictureTrigger')"),'No dead Picture handler on Home');
@@ -44,6 +44,11 @@ const inline=html.slice(html.indexOf('<style>'),html.indexOf('</style>'));
 assert.doesNotMatch(inline,/\.dock\s*\{|\.nav-item\s*\{|\.assistant-button\s*\{/,'No obsolete inline dock geometry or overlays');
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'One persistent dock in the DOM');
 assert.ok(html.includes('assets/conversation-refined.css?v=12'),'Open Canvas chat CSS is cache-busted');
+assert.match(css,/height:46px!important;min-height:46px!important/,'Touch targets remain above 44px');
+assert.match(html,/id="assistantButton" class="assistant-button" aria-label="Сэйви:/,'Sayvi remains accessible');
+assert.ok(!html.includes('dock-assistant-label'),'No duplicate Sayvi caption in five-tab dock');
+assert.ok(!css.includes('.dock-assistant-label'),'No stale Sayvi caption rule');
+
 assert.ok(!chatCss.includes('seyveo-name-thinking'),'Sayvi letters no longer move');
 assert.ok(chatCss.includes('animation:none!important;transform:none!important;opacity:1!important'),'Sayvi name is fixed');
 assert.ok(chatCss.includes('animation:seyveo-dot-thinking .78s ease-in-out infinite'),'Only nearby dots retain working animation');
@@ -55,7 +60,7 @@ function portrait(width,height,safeBottom){
  const dockWidth=Math.min(392,width-(compact?20:28));
  const pad=compact?5:7,gap=compact?1:3;
  const cell=(dockWidth-2-2*pad-gap*4)/5;
- const top=height-(safeBottom+8)-64;
+ const top=height-(safeBottom+8)-56;
  const dockLeft=(width-dockWidth)/2;
  const assistantCenter=dockLeft+1+pad+2*(cell+gap)+cell/2;
  assert.ok(cell>=44,'Each tab stays at least 44px wide');
