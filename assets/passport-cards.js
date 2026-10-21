@@ -89,6 +89,8 @@ function fillPreview(){
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Студия SEYVEO · пример';
  $('seyveoCompanyPreviewIndustry').textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
  $('seyveoCompanySample').hidden=saved;
+ const logo=$('seyveoCompanyInitial');
+ if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
 }
 function selectedRows(card){
  const allowed=card.type==='org'?['name','legalName','owner','industry','city','inn','kpp','ogrn','address','phone','email','website','bank','account','bik','corr']:
@@ -275,6 +277,7 @@ window.addEventListener('storage',e=>{
  if([KEY,'seyveo-first-acquaintance-v1'].includes(e.key))fillPreview();
 });
 window.addEventListener('seyveo:profile-changed',fillPreview);
+window.addEventListener('seyveo:avatar-letter-ready',fillPreview);
 fillPreview();
 })();
 
@@ -288,21 +291,29 @@ const status=$('seyveoAvatarStatus'),entry=$('seyveoCompanyAvatarEdit');
 if(!picker||!gallery||!file||!entry)return;
 const KEY='seyveo-owner-avatar-v1';
 const OPTIONS=[
- ['monogram','Инициалы','Лаконичный личный знак'],
- ['silhouette','Силуэт','Сдержанный силуэт'],
- ['line','Контур','Графическая линия'],
- ['velvet','Бархат','Мягкая светотень']
+ ['monogram','Буква','Первая буква имени'],
+ ['silhouette','Силуэт','Нейтральный образ без фото']
 ];
 const valid=new Set(OPTIONS.map(item=>item[0]));
-const renamed={onyx:'silhouette',silver:'line',orbit:'line',prism:'velvet'};
+const renamed={onyx:'silhouette',silver:'silhouette',orbit:'silhouette',prism:'silhouette',line:'silhouette',velvet:'silhouette'};
+/* One alphabetic character for every person or business, including Cyrillic.
+   Displayed identity is the source of truth; never use two-letter initials. */
+function initial(name){
+ const match=String(name||'').trim().match(/\p{L}/u);
+ return match?match[0].toLocaleUpperCase('ru-RU'):'•';
+}
+window.SEYVEO_AVATAR_LETTER=initial;
+window.dispatchEvent(new Event('seyveo:avatar-letter-ready'));
+
 function getInitials(){
- let name='Роман';
- try{
-  const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
-  if(typeof profile?.name==='string'&&profile.name.trim())name=profile.name.trim();
- }catch{}
- const words=name.split(/\s+/).filter(Boolean);
- return (words.length>1?words.slice(0,2).map(x=>x[0]).join(''):name.slice(0,1)).toLocaleUpperCase('ru-RU');
+ let name=$('seyveoCompanyPreviewName')?.textContent?.trim();
+ if(!name) {
+  try{
+   const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+   name=profile?.name;
+  }catch{}
+ }
+ return initial(name||'Роман');
 }
 function read(){
  try{
@@ -401,6 +412,10 @@ file.addEventListener('change',()=>{
  reader.readAsDataURL(imageFile);
 });
 window.addEventListener('seyveo:profile-changed',paint);
-window.addEventListener('storage',event=>{if(event.key===KEY){choice=read();paint()}});
+window.addEventListener('seyveo:company-changed',paint);
+window.addEventListener('storage',event=>{
+ if(event.key===KEY)choice=read();
+ if([KEY,'seyveo-company-passport-v1','seyveo-first-acquaintance-v1'].includes(event.key))paint();
+});
 paint();
 })();
