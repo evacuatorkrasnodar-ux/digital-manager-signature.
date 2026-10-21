@@ -7,7 +7,7 @@
  --seyveo-nav-ink:#dfe5ed;
  --seyveo-nav-glass:rgba(15,18,24,.90);
  --seyveo-nav-line:rgba(225,234,248,.14);
- --seyveo-dock-height:64px;
+ --seyveo-dock-height:56px;
  --seyveo-dock-bottom:calc(8px + env(safe-area-inset-bottom,0px));
 }
 :root[data-theme="light"]{
@@ -44,12 +44,12 @@
  transform:none!important;
  box-sizing:border-box;
  min-width:0!important;width:100%!important;
- height:54px!important;min-height:54px!important;
- margin:0!important;padding:4px 1px!important;
+ height:46px!important;min-height:46px!important;
+ margin:0!important;padding:2px 1px!important;
  display:flex!important;flex-direction:column!important;
  justify-content:center!important;align-items:center!important;
- gap:4px!important;
- border:0!important;border-radius:18px!important;
+ gap:3px!important;
+ border:0!important;border-radius:17px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:10px!important;line-height:1.05!important;font-weight:440!important;
  letter-spacing:-.02em!important;color:var(--secondary)!important;
@@ -81,9 +81,9 @@
  transform:none!important;
  display:flex!important;flex-direction:column!important;
  align-items:center!important;justify-content:center!important;
- gap:2px!important;
+ gap:0!important;
  box-sizing:border-box;
- width:100%!important;height:54px!important;min-width:0!important;min-height:54px!important;
+ width:100%!important;height:46px!important;min-width:0!important;min-height:46px!important;
  margin:0!important;padding:1px!important;
  border:0!important;border-radius:18px!important;
  background:transparent!important;
@@ -107,12 +107,6 @@
 :root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e3e9f0!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#42546a!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#42546a!important}
-.dock>.assistant-button .dock-assistant-label{
- display:block!important;font-size:10px;line-height:1.05;
- font-weight:550;letter-spacing:-.018em;
- color:var(--seyveo-nav-ink);
- white-space:nowrap;pointer-events:none;
-}
 .dock>.assistant-button:is(:active,.pressing,.arming) .button-art{
  transform:scale(.945)!important;
 }
@@ -143,6 +137,11 @@
 @media(prefers-reduced-motion:reduce){
  .dock>.assistant-button.listening .voice-bars{animation:none!important}
 }
+/* SEYVEO Signature Dock Compact: a 56px, five-way navigation dock.
+ * The central assistant's voice glyph is recognizable without repeating her
+ * name below it. Four destination names remain readable and touch targets
+ * stay at least 46px tall. No changes to gestures, route handlers or offsets.
+ */
 /* Hint and single Home composer follow the new dock height. Conversation
    keyboard geometry has stronger scoped rules and is unchanged. */
 .voice-hint{
@@ -154,7 +153,6 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
 @media(max-width:355px){
  .dock{width:calc(100% - 20px)!important;padding:4px 5px!important;gap:1px!important}
  .dock>.nav-item{font-size:9px!important;letter-spacing:-.035em!important}
- .dock>.assistant-button .dock-assistant-label{font-size:9px}
 }
 /* Landscape notch sides: keep the SAME dock, never create a second one. */
 @media(orientation:landscape) and (max-height:650px){
