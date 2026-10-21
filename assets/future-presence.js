@@ -3,8 +3,8 @@
 (()=>{
 'use strict';
 const root=document.documentElement;
-// Home-screen iOS WebKit can drift fixed elements while the root document scrolls.
-// Safari tabs and ordinary workspaces must keep their existing scrolling model.
+// iOS standalone uses one app scroll frame on ALL workspaces; Safari stays native.
+// This flag is independent of which tab is currently visible.
 const standalone=Boolean(window.matchMedia?.('(display-mode: standalone)').matches
  || window.navigator?.standalone===true);
 root.classList.toggle('seyveo-standalone',standalone);
@@ -24,9 +24,9 @@ function sync(){
  root.dataset.seyveoView=name;
  if(name===current)return;
  current=name;
- // Standalone Home scrolls only its content; return to the top on navigation.
- // Do not reset normal Safari tabs or the still-open conversation transcript.
- if(standalone&&name==='home'&&!root.classList.contains('seyveo-conversation')){
+ // One installed-PWA scroll container for EVERY workspace. Route changes
+ // reset its content position, never the shared fixed dock or a live chat.
+ if(standalone&&!root.classList.contains('seyveo-conversation')){
   const app=document.querySelector('.app');
   if(app)app.scrollTop=0;
  }
