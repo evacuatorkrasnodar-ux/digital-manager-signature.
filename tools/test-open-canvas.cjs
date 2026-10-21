@@ -23,7 +23,7 @@ assert.match(css,/#ask\.prompt:not\(\.expanded\) \.seyveo-conversation-heading\{
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoComposerFold\{\s*order:4!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoConversationMic\{\s*order:5!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #composerCompactSend\{\s*order:6!important/);
-assert.match(home,/assets\/conversation-refined\.css\?v=9/);
+assert.match(home,/assets\/conversation-refined\.css\?v=10/);
 assert.match(home,/assets\/living-conversation\.js\?v=15/);
 assert.equal((home.match(/<form class="prompt" id="ask"/g)||[]).length,1);
 assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
@@ -41,7 +41,10 @@ assert.match(css,/html\.seyveo-conversation\.seyveo-composer-keyboard #ask\.prom
 assert.match(home,/const shouldTrackKeyboard=focused\|\|\(already&&!root\.classList\.contains\('seyveo-conversation'\)\)/);
 assert.match(home,/const opened=!composer\.hidden&&shouldTrackKeyboard&&\(measure\.shift>115\|\|shrunk\)/);
 assert.match(css,/margin:1px 0 7px/);
-assert.match(css,/gap:4px;margin:0 0 12px!important/);
+assert.match(css,/gap:3px;margin:0 0 7px!important/);
+assert.match(css,/gap:0;margin:0 0 3px/);
+assert.match(css,/min-width:0;display:flex;flex-direction:column;gap:3px;\\n margin:0 0 8px/);
+assert.match(css,/height:40px!important;min-height:40px!important/);
 assert.match(css,/line-height:1\.55/);
 assert.match(docs,/SEYVEO Full Bleed/);
 console.log('SEYVEO Open Canvas + Full Bleed: one composer, safe width and header-free chat.');
