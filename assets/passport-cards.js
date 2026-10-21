@@ -165,6 +165,7 @@ function closeHeaderPassport(){
  if(!previewBox)return;
  previewBox.hidden=true;
  brand.hidden=true;company.hidden=true;
+ const companyShell=$('seyveoCompanyPreviewShell');if(companyShell)companyShell.hidden=true;
  brandTrigger?.setAttribute('aria-expanded','false');
  ownerTrigger?.setAttribute('aria-expanded','false');
 }
@@ -187,6 +188,7 @@ function toggleOwnerPassport(){
  fillPreview();
  previewBox.dataset.side='company';
  previewBox.hidden=false;company.hidden=false;
+ const companyShell=$('seyveoCompanyPreviewShell');if(companyShell)companyShell.hidden=false;
  ownerTrigger?.setAttribute('aria-expanded','true');
 }
 brandTrigger?.addEventListener('click',toggleHeaderPassport);
