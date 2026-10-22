@@ -24,9 +24,9 @@
   function overview(){
     const old=existing();
     const label=$('onboardManageSummary');
-    label.textContent=old?'Настроено':'Не настроено';
+    label.textContent=old?'Настроено':'По желанию';
     const sub=$('onboardManageDescription');
-    sub.textContent=old?'Имя и приоритеты · сохранены':'Имя и приоритеты';
+    sub.textContent=old?'Имя и приоритеты · сохранены':'Продолжить знакомство · можно позже';
   }
   function show(){
     const old=existing();
