@@ -6,7 +6,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const labels=Object.freeze({
- home:'Главная',tasks:'Дела',picture:'Картина',manage:'Управление',
+ home:'Главная',tasks:'Дела',picture:'Картина',manage:'Управление',connections:'Подключения',
  life:'Личное пространство',calendar:'Календарь',notes:'Блокнот',
  health:'Здоровье',care:'Забота',world:'Мой мир',help:'Первая помощь'
 });
@@ -33,6 +33,23 @@ function understand(input){
  q=q.replace(/^(?:(?:сейвео|севео|сейво|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
  q=q.replace(/[\s.!?]+$/g,'').replace(/\s+/g,' ');
  q=q.replace(/\s+пожалуйста$/,'').trim();
+ // Voice/text shortcut to the ALREADY EXISTING Management connections.
+ // It opens the service guide, not an OAuth authorization or an account login.
+ const connect=q.match(/^(?:подключи(?:те)?|подключить|давай подключим|хочу подключить|настрои(?:ть|м)|как подключить|покажи подключения|открой подключения)(?:\\s+(.+))?$/);
+ if(connect){
+  const target=(connect[1]||'').trim();
+  const serviceTypes={
+   'почту':'mail','почта':'mail','рабочую почту':'mail',
+   'crm':'crm','црм':'crm','1с':'accounting','бухгалтерию':'accounting',
+   'вконтакте':'vk','вк':'vk','соцсети':'vk',
+   'телеграм':'telegram','telegram':'telegram',
+   'озон':'marketplace','ozon':'marketplace','wildberries':'marketplace','вайлдберриз':'marketplace','маркетплейсы':'marketplace',
+   'авито':'avito','сайт':'site','рекламу':'ads','банк':'bank',
+   'яндекс бизнес':'yandex','2гис':'gis','карты':'maps'
+  };
+  const type=serviceTypes[target]||'';
+  if(!target||type)return Object.freeze({kind:'navigate',tool:'connections',label:labels.connections,type});
+ }
  // The request must consist of a navigation verb and ONE known destination.
  // Questions, long utterances and real-world actions pass to existing parsers.
  const command=q.match(/^(?:открой(?:те)?|открыть|покажи(?:те)?|показать|перейди(?:те)?|перейти|зайди(?:те)?|зайти|найди(?:те)?|найти|где(?: находится| найти| у нас)?|как открыть|как попасть в|хочу посмотреть|мне (?:нужен|нужна|нужно)|проведи (?:меня )?в)\s+(.+)$/);
@@ -81,6 +98,12 @@ function execute(plan){
   case 'tasks':$('navTasks')?.click();succeeded=!!$('navTasks');break;
   case 'picture':$('navPicture')?.click();succeeded=!!$('navPicture');break;
   case 'manage':$('navManage')?.click();succeeded=!!$('navManage');break;
+  case 'connections':{
+   $('navManage')?.click();
+   window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:plan.type||''}}));
+   succeeded=!!$('manageConnectionsDialog')?.open;
+   break;
+  }
   case 'life':location.hash='life';succeeded=true;break;
   case 'calendar':case 'notes':case 'health':case 'care':case 'world':{
    const button=space(plan.tool);
@@ -95,6 +118,7 @@ function execute(plan){
    break;
  }
  const message=succeeded?(plan.tool==='help'?'Показываю знакомство с SEYVEO.':
+  plan.tool==='connections'?'Открываю «Подключения». Реальная авторизация сервисов будет доступна после интеграции.':
   'Открываю «'+plan.label+'».'):'Не удалось открыть «'+plan.label+'». Попробуйте ещё раз.';
  notice(message);
  return {ok:succeeded,message,tool:plan.tool};
