@@ -1958,8 +1958,10 @@ function homeBusinessAdvice(){
  if(window.SEYVEO_CONNECTION_COACH?.homePaused?.())return null;
  const api=window.SEYVEO_BUSINESS_MAP;
  if(!api?.getState?.())return null;
- const next=api.getAdvice?.()?.[0];
- if(!next||!['about','goal','industry','workflow','source','connect'].includes(next.kind))return null;
+ const next=api.getAdvice?.()?.find(item=>
+  ['about','goal','industry','workflow','source','connect'].includes(item.kind)&&
+  !window.SEYVEO_CONNECTION_COACH?.skipHomeMapTip?.(item));
+ if(!next)return null;
  return next;
 }
 function openHomeAdvice(advice){
