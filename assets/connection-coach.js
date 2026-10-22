@@ -173,6 +173,79 @@ const canonical=type=>type==='yandex'||type==='gis'?'maps':TOPICS[type]?type:'';
 const safeNoteText=value=>String(value||'').replace(/\s+/g,' ').trim().slice(0,500);
 let topic='site',purpose='learn',mode='owner',showOtherServices=false;
 const choices=$('connectionCoachChoices'),detail=$('connectionCoachDetails');
+// One confirmed resource list from the existing Business Map, no second facts database.
+const FOLLOWUP_KEY='seyveo-connection-followups-v1';
+const registered=$('connectionCoachKnown'),registeredList=$('connectionCoachKnownList');
+const presence=$('connectionCoachPresent'),presenceNote=$('connectionCoachPresentNote');
+const topicFor=id=>id==='yandex'||id==='gis'?'maps':canonical(id);
+const storageType=id=>id==='maps'?'yandex':id;
+function knownResources(){
+ const rows=map()?.resources||[];
+ return {rows,types:[...new Set(rows.map(row=>topicFor(row.type)).filter(Boolean))]};
+}
+function followups(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(FOLLOWUP_KEY)||'{}');
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))return {};
+  const clean={};
+  for(const [type,row] of Object.entries(raw)){
+   if(!TOPICS[type]||!row||typeof row!=='object')continue;
+   clean[type]={until:Number.isFinite(row.until)?Math.max(0,Math.min(row.until,Date.now()+365*86400000)):0,off:row.off===true};
+  }
+  return clean;
+ }catch{return {}}
+}
+function persistFollowups(records){
+ try{localStorage.setItem(FOLLOWUP_KEY,JSON.stringify(records));return true}catch{return false}
+}
+function renderRegistry(){
+ if(!registered||!registeredList)return;
+ const {types}=knownResources(),prefs=followups();
+ registered.hidden=!types.length;
+ registeredList.replaceChildren();
+ const n=types.filter(t=>!prefs[t]?.off&&!(prefs[t]?.until>Date.now())).length;
+ const summary=$('connectionManagePrompt');
+ if(summary)summary.textContent=types.length
+  ?n?'Есть ресурсы · ждут разрешения: '+n:'Ресурсы указаны · напоминания отложены'
+  :'Рабочие ресурсы и разрешения · по желанию';
+ for(const type of types){
+  const state=prefs[type]||{},sleep=state.until>Date.now();
+  const row=document.createElement('div');row.className='connection-coach-known-row';
+  const content=document.createElement('div');content.className='connection-coach-known-copy';
+  const title=document.createElement('strong');title.textContent=LABELS[type]||TOPICS[type].name;
+  const note=document.createElement('small');
+  note.textContent='Указан · не подключён'+(state.off?' · без напоминаний':sleep
+   ?' · напомнить после '+new Date(state.until).toLocaleDateString('ru-RU'):' · можно подключить');
+  content.append(title,note);
+  const buttons=document.createElement('div');buttons.className='connection-coach-known-actions';
+  const guide=document.createElement('button');guide.type='button';
+  guide.dataset.resourceGuide=type;guide.textContent='Как подключить';
+  buttons.append(guide);
+  const snooze=document.createElement('button');snooze.type='button';
+  snooze.dataset.resourceFollowup=type;snooze.dataset.resourceAction=state.off||sleep?'resume':'later';
+  snooze.textContent=state.off||sleep?'Напоминать':'Позже';
+  buttons.append(snooze);
+  if(!state.off){
+   const off=document.createElement('button');off.type='button';
+   off.dataset.resourceFollowup=type;off.dataset.resourceAction='off';
+   off.textContent='Не напоминать';
+   buttons.append(off);
+  }
+  row.append(content,buttons);registeredList.append(row);
+ }
+}
+function renderPresence(){
+ if(!presence||!presenceNote)return;
+ const {rows,types}=knownResources();
+ const relevant=topic==='maps'?['gis','yandex']:[topic];
+ const detailed=rows.some(row=>relevant.includes(row.type)&&row.value!=='Использую');
+ presence.checked=types.includes(topic);
+ presence.disabled=detailed;
+ presenceNote.textContent=detailed?'Уточнить или удалить название можно в Карте бизнеса.'
+  :presence.checked?'Сэйви запомнила ресурс, но доступа к нему не получила.'
+  :'Сохранится только отметка, без паролей и чтения данных.';
+}
+
 const result=$('connectionCoachResult');
 const map=()=>window.SEYVEO_BUSINESS_MAP?.getState?.()||null;
 /* Suggestions use only the business owner's existing, local facts.
@@ -263,6 +336,8 @@ function render(){
  detail.hidden=false;
  updateChips();
  renderPersonal();
+ renderRegistry();
+ renderPresence();
  $('connectionCoachSelected').textContent=purpose==='promote'?'ПРИВЛЕЧЕНИЕ КЛИЕНТОВ · ПЛАН':'ПОДКЛЮЧЕНИЕ · ОБЪЯСНЕНИЕ';
  $('connectionCoachName').textContent=data.name;
  $('connectionCoachPlain').textContent=data.what+'\n\n'+data.benefit;
@@ -345,6 +420,43 @@ $('connectionCoachCopy').addEventListener('click',async()=>{
   await navigator.clipboard.writeText(buildText());
   result.textContent='План скопирован. Можно передать своему специалисту.';
  }catch{result.textContent='Не удалось скопировать. Используйте «В Блокнот».'}
+});
+
+// A reminder is a local status in Management, never a scheduled push or a claim of OAuth.
+registeredList?.addEventListener('click',event=>{
+ const guide=event.target.closest?.('[data-resource-guide]');
+ if(guide){
+  const selected=guide.dataset.resourceGuide;
+  if(!TOPICS[selected])return;
+  purpose='learn';showOtherServices=EXTRA_ORDER.includes(selected);
+  setType(selected);return;
+ }
+ const button=event.target.closest?.('[data-resource-followup]');
+ if(!button)return;
+ const type=button.dataset.resourceFollowup,action=button.dataset.resourceAction;
+ if(!TOPICS[type]||!['later','off','resume'].includes(action))return;
+ const next=followups();
+ next[type]={until:action==='later'?Date.now()+7*86400000:0,off:action==='off'};
+ if(!persistFollowups(next)){result.textContent='Напоминание не сохранилось.';return}
+ renderRegistry();
+ result.textContent=action==='later'?'Напомню в Управлении через 7 дней.':
+  action==='off'?'Больше не буду напоминать об этом ресурсе.':'Напоминания для ресурса включены.';
+});
+presence?.addEventListener('change',()=>{
+ const chosen=storageType(topic);
+ const desired=Boolean(presence.checked);
+ const saved=window.SEYVEO_BUSINESS_MAP?.markResourceUse?.(chosen,desired);
+ if(!saved?.ok){result.textContent=saved?.message||'Не удалось сохранить.';renderPresence();return}
+ result.textContent=desired?'Запомнила ресурс. Доступ не подключён.':'Отметка использования убрана.';
+ renderRegistry();renderPresence();
+});
+window.addEventListener('seyveo:business-map-changed',()=>{
+ renderRegistry();if(detail&&!detail.hidden)renderPresence();
+});
+window.addEventListener('storage',event=>{
+ if(event.key==='seyveo-business-map-v1'||event.key===FOLLOWUP_KEY){
+  renderRegistry();if(detail&&!detail.hidden)renderPresence();
+ }
 });
 // An existing Management dialog opens before this listener on the same event.
 window.addEventListener('seyveo:connection-help',event=>{
