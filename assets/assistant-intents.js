@@ -30,12 +30,12 @@ function toolFor(target){
 function understand(input){
  if(typeof input!=='string'||input.length>180||/[\n\r;]/.test(input))return null;
  let q=input.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
- q=q.replace(/^(?:(?:сейвео|севео|сейво|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
+ q=q.replace(/^(?:(?:сейвео|севео|сейво|сэйви|сейви|сэй|сей|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
  q=q.replace(/[\s.!?]+$/g,'').replace(/\s+/g,' ');
  q=q.replace(/\s+пожалуйста$/,'').trim();
  // Voice/text shortcut to the ALREADY EXISTING Management connections.
  // It opens the service guide, not an OAuth authorization or an account login.
- const connect=q.match(/^(?:подключи(?:те)?|подключить|давай подключим|хочу подключить|настрои(?:ть|м)|как подключить|покажи подключения|открой подключения)(?:\\s+(.+))?$/);
+ const connect=q.match(/^(?:подключи(?:те)?|подключить|давай подключим|хочу подключить|настрои(?:ть|м)|как подключить|покажи подключения|открой подключения)(?:\s+(.+))?$/);
  if(connect){
   const target=(connect[1]||'').trim();
   const serviceTypes={
