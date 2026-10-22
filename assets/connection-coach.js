@@ -463,6 +463,50 @@ window.addEventListener('seyveo:connection-help',event=>{
  start({type:event.detail?.type,goal:event.detail?.goal,specialist:event.detail?.specialist});
 });
 $('openManageConnections')?.addEventListener('click',()=>start());
-window.SEYVEO_CONNECTION_COACH=Object.freeze({open:start,getText:buildText});
+/* One honest benefit-led Home recommendation, reusing the existing
+ * Management connections dialog. No AI prediction or live service access. */
+const HOME_MUTE='seyveo-connection-home-muted-v1';
+const homeBenefits=Object.freeze({
+ mail:{title:'Почта: я помогу навести порядок',why:'Когда почта будет подключена с вашим разрешением, смогу предлагать разбор личных и рабочих писем, отделять нежелательные и готовить ответы для вашей проверки. Отправка — только после вашего согласия.'},
+ crm:{title:'CRM: помогу не терять клиентов',why:'После разрешённого подключения CRM смогу помогать замечать обращения без ответа, подготавливать сообщения и предлагать следующие действия. Вы утверждаете отправку.'},
+ marketplace:{title:'Маркетплейсы: заказы и вопросы рядом',why:'При разрешённом доступе к Ozon или Wildberries смогу помогать разбирать заказы, отзывы и вопросы покупателей, составлять черновики ответов для проверки.'},
+ vk:{title:'ВКонтакте: отвечать клиентам проще',why:'После разрешённого подключения сообщества смогу помогать разбирать сообщения и отзывы, предлагать ответы и отправлять их только после согласования.'},
+ telegram:{title:'Telegram: важное не потеряется',why:'При поддерживаемом подключении рабочего бота или канала смогу помогать разбирать обращения и готовить ответы. Личные переписки не читаю.'},
+ avito:{title:'Авито: обращения под контролем',why:'При разрешённом подключении смогу помогать замечать новые запросы, готовить ответы покупателям и сохранять важные договорённости.'},
+ maps:{title:'Карты: обратная связь клиентов',why:'После официального подключения поддерживаемой карточки компании смогу помогать разбирать отзывы и готовить ответы для вашей проверки.'},
+ site:{title:'Сайт: понимать обращения',why:'При подключении поддерживаемой аналитики и заявок сайта смогу помогать искать потерянные обращения и готовить предложения по улучшению.'},
+ ads:{title:'Реклама: расходы под контролем',why:'Когда подключите рекламную статистику с ограниченными правами, смогу анализировать её вместе с обращениями и предлагать решения. Бюджет меняется только с вашего подтверждения.'},
+ accounting:{title:'Учёт: меньше ручной работы',why:'При поддерживаемом и разрешённом подключении 1С или бухгалтерского сервиса смогу помогать готовить сводки и проверять согласования, без самостоятельных платежей.'},
+ bank:{title:'Банк: наглядная картина денег',why:'При официальном доступе только на чтение смогу помогать сопоставлять разрешённые операции с заказами и готовить сводку. Переводы и платежи без вашего согласия не совершаются.'}
+});
+function homeMuted(){
+ try{const value=Number(localStorage.getItem(HOME_MUTE));return Number.isFinite(value)&&value>Date.now()}catch{return false}
+}
+function homeSuggestion(){
+ if(homeMuted())return null;
+ // An actual ONE installation must never get business connection reminders.
+ try{
+  const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
+  if(profile?.focus==='life')return null;
+ }catch{}
+ const {types}=knownResources(),prefs=followups();
+ const priority=['mail','crm','marketplace','vk','avito','maps','site','telegram','ads','accounting','bank'];
+ const selected=priority.find(t=>types.includes(t)&&homeBenefits[t]&&!prefs[t]?.off&&!(prefs[t]?.until>Date.now()));
+ if(!selected)return null;
+ const benefit=homeBenefits[selected];
+ return {kind:'connect',type:selected,title:benefit.title,why:benefit.why,
+  connectionFollowup:true,resourceName:LABELS[selected]||TOPICS[selected].name};
+}
+function postponeFromHome(type){
+ if(!TOPICS[type])return false;
+ const next=followups();
+ next[type]={until:Date.now()+7*86400000,off:false};
+ if(!persistFollowups(next))return false;
+ try{localStorage.setItem(HOME_MUTE,String(Date.now()+86400000))}catch{}
+ renderRegistry();
+ window.dispatchEvent(new CustomEvent('seyveo:connection-followup-changed',{detail:{type}}));
+ return true;
+}
+window.SEYVEO_CONNECTION_COACH=Object.freeze({open:start,getText:buildText,homeSuggestion,postponeFromHome});
 start();
 })();
