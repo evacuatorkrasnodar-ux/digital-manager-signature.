@@ -151,8 +151,8 @@ function updateEntry(){
  if(prompt){
   const suggestion=s?recommendations(s)[0]:null;
   prompt.textContent=s
-   ?suggestion?'Следующий вопрос: '+suggestion.title:'Сведения сохранены. Можно продолжить знакомство.'
-   :'Расскажите о компании, целях и используемых ресурсах';
+   ?suggestion?'Когда удобно: '+suggestion.title:'Сведения сохранены. Дополнить карту можно в любое время.'
+   :'Цели, процессы и рабочие ресурсы · по желанию';
  }
 }
 function markStep(next){
@@ -231,7 +231,7 @@ function markStep(next){
  $('businessMapWorkflowSkip').hidden=view!=='workflow';
  $('businessMapLater').textContent=preview?'Закрыть демо':'Продолжить позже';
  $('businessMapProgress').textContent=preview?'ДЕМО · БЕЗ СОХРАНЕНИЯ':
-  view==='choose'?'НАЧАЛО ЗНАКОМСТВА':
+  view==='choose'?'ВАШ БИЗНЕС':
   view==='about'?'01 · О БИЗНЕСЕ':
   view==='sector'?'02 · СФЕРА ДЕЯТЕЛЬНОСТИ':
   view==='goal'?'02 · ЦЕЛИ':
