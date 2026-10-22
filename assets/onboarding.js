@@ -24,9 +24,9 @@
   function overview(){
     const old=existing();
     const label=$('onboardManageSummary');
-    label.textContent=old?CHOICES[old.focus]:'Не настроено';
+    label.textContent=old?'Настроено':'Не настроено';
     const sub=$('onboardManageDescription');
-    sub.textContent=old?(old.name?'Для '+trim(old.name,22)+' · настройки сохранены':'Ваш сценарий · сохранено'):'Имя и жизненный сценарий';
+    sub.textContent=old?'Имя и приоритеты · сохранены':'Имя и приоритеты';
   }
   function show(){
     const old=existing();
@@ -78,6 +78,6 @@
   window.addEventListener('storage',event=>{if(event.key===PROFILE)overview()});
   overview();
   // First-install welcome is handled separately by welcome.js.
-  // Keep this compact editor available from Management for existing users.
+  // Keep the single personal profile editor available in Management as "Обо мне".
   window.addEventListener('seyveo:profile-changed',overview);
 })();
