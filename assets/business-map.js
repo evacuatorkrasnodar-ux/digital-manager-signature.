@@ -643,8 +643,31 @@ function saveOwnerWeeklyRequests(value){
  if(!save()){data=previous;return {ok:false,message:'Не удалось сохранить сведения на устройстве.'}}
  return {ok:true,message:'Сохранено: около '+n+' обращений в неделю, со слов владельца.'};
 }
+/* Small owner-confirmed checkbox from Connections; never a real service login. */
+function markResourceUse(type,enabled){
+ if(!byType(type)||type==='other')return {ok:false,message:'Неизвестный ресурс.'};
+ if(dialog.open)return {ok:false,message:'Сначала закройте Карту бизнеса.'};
+ const current=load(),next=current?clone(current):fresh(ownerFocus()==='start'?'start':'existing');
+ const matches=next.resources.filter(row=>row.type===type);
+ if(enabled){
+  if(matches.length)return {ok:true};
+  if(next.resources.length>=20)return {ok:false,message:'В Карте бизнеса уже 20 ресурсов.'};
+  next.resources.push({type,value:'Использую'});
+  next.dismissed=next.dismissed.filter(id=>id!==type);
+ }else{
+  if(matches.some(row=>row.value!=='Использую'))
+   return {ok:false,message:'Название или адрес этого ресурса изменяется в Карте бизнеса.'};
+  next.resources=next.resources.filter(row=>!(row.type===type&&row.value==='Использую'));
+ }
+ next.updatedAt=new Date().toISOString();
+ if(!store(STORE,JSON.stringify(next)))return {ok:false,message:'Не удалось сохранить на устройстве.'};
+ updateEntry();
+ window.dispatchEvent(new CustomEvent('seyveo:business-map-changed',{detail:{resources:next.resources.length}}));
+ return {ok:true};
+}
 window.SEYVEO_BUSINESS_MAP=Object.freeze({
  open:start,
+ markResourceUse,
  saveWeeklyRequests:saveOwnerWeeklyRequests,
  getState:()=>{const stored=load();return stored?clone(stored):null},
  getAdvice:()=>{const stored=load();return stored?recommendations(stored).map(item=>({kind:item.kind,type:item.type||'',title:item.title,why:item.why})):[]}
