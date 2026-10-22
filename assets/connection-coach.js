@@ -496,6 +496,13 @@ const homeBenefitsShort=Object.freeze({
 function homeMuted(){
  try{const value=Number(localStorage.getItem(HOME_MUTE));return Number.isFinite(value)&&value>Date.now()}catch{return false}
 }
+function homePaused(){return homeMuted()}
+function skipHomeMapTip(item){
+ if(!item)return true;
+ if(item.kind!=='connect')return false;
+ const t=topicFor(item.type),prefs=followups();
+ return Boolean(!t||prefs[t]?.off||(prefs[t]?.until>Date.now()));
+}
 function homeSuggestion(){
  if(homeMuted())return null;
  // An actual ONE installation must never get business connection reminders.
@@ -521,6 +528,6 @@ function postponeFromHome(type){
  window.dispatchEvent(new CustomEvent('seyveo:connection-followup-changed',{detail:{type}}));
  return true;
 }
-window.SEYVEO_CONNECTION_COACH=Object.freeze({open:start,getText:buildText,homeSuggestion,postponeFromHome});
+window.SEYVEO_CONNECTION_COACH=Object.freeze({open:start,getText:buildText,homeSuggestion,homePaused,skipHomeMapTip,postponeFromHome});
 start();
 })();
