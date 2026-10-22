@@ -479,6 +479,19 @@ const homeBenefits=Object.freeze({
  accounting:{title:'Учёт: меньше ручной работы',why:'При поддерживаемом и разрешённом подключении 1С или бухгалтерского сервиса смогу помогать готовить сводки и проверять согласования, без самостоятельных платежей.'},
  bank:{title:'Банк: наглядная картина денег',why:'При официальном доступе только на чтение смогу помогать сопоставлять разрешённые операции с заказами и готовить сводку. Переводы и платежи без вашего согласия не совершаются.'}
 });
+const homeBenefitsShort=Object.freeze({
+ mail:'Смогу различать личные и рабочие письма, выделять спам и готовить ответы на проверку.',
+ crm:'Смогу помогать находить забытые заявки и готовить ответы клиентам.',
+ marketplace:'Смогу помогать с заказами, отзывами и вопросами покупателей на Ozon и других площадках.',
+ vk:'Смогу помогать разбирать сообщения, отзывы и готовить ответы клиентам.',
+ telegram:'Смогу помогать выделять рабочие обращения и предлагать ответы.',
+ avito:'Смогу помогать замечать заявки и составлять ответы покупателям.',
+ maps:'Смогу помогать отслеживать отзывы и готовить корректные ответы.',
+ site:'Смогу помогать замечать обращения с сайта и анализировать результаты.',
+ ads:'Смогу разбирать результаты рекламы и предлагать решения в согласованном бюджете.',
+ accounting:'Смогу помогать собирать сводки и готовить документы к проверке.',
+ bank:'Смогу помогать составлять финансовые сводки по разрешённым данным.'
+});
 function homeMuted(){
  try{const value=Number(localStorage.getItem(HOME_MUTE));return Number.isFinite(value)&&value>Date.now()}catch{return false}
 }
@@ -494,7 +507,7 @@ function homeSuggestion(){
  const selected=priority.find(t=>types.includes(t)&&homeBenefits[t]&&!prefs[t]?.off&&!(prefs[t]?.until>Date.now()));
  if(!selected)return null;
  const benefit=homeBenefits[selected];
- return {kind:'connect',type:selected,title:benefit.title,why:benefit.why,
+ return {kind:'connect',type:selected,title:benefit.title,why:homeBenefitsShort[selected],detail:benefit.why,
   connectionFollowup:true,resourceName:LABELS[selected]||TOPICS[selected].name};
 }
 function postponeFromHome(type){
