@@ -218,8 +218,31 @@ form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.ad
 }));
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
-$('seyveoStudioShare').addEventListener('click',()=>share('studio'));
-$('seyveoStudioPrint').addEventListener('click',()=>print('studio'));
+/* Company contact links follow interface language, not demo company data. */
+const studioSite=()=>String(document.documentElement.lang||navigator.language||'ru').toLowerCase().startsWith('ru')?'https://seyveo.ru/':'https://seyveo.com/';
+function updateStudioLinks(){
+ const url=studioSite(),link=$('seyveoStudioWebsite');
+ if(link){link.href=url;link.textContent=new URL(url).hostname+' ↗'}
+ const note=$('seyveoStudioSiteNote');
+ if(note)note.textContent=url.includes('.ru')?'Русский сайт seyveo.ru ещё может быть недоступен до публикации.':'Международный сайт seyveo.com.';
+}
+updateStudioLinks();
+studio.querySelectorAll('[data-studio-mail]').forEach(link=>{
+ const topics={idea:'Идея для SEYVEO',bug:'Ошибка в SEYVEO',other:'Письмо разработчикам SEYVEO'};
+ const title=topics[link.dataset.studioMail]||topics.other;
+ link.href='mailto:hello@seyveo.com?subject='+encodeURIComponent(title);
+});
+async function shareStudioLink(kind){
+ const url=kind==='app'?'https://evacuatorkrasnodar-ux.github.io/digital-manager-signature./':studioSite();
+ const title=kind==='app'?'SEYVEO — Цифровой управляющий':'SEYVEO — сайт студии';
+ if(navigator.share){
+  try{await navigator.share({title,url});status(studio,'Ссылка передана в меню отправки.');return}
+  catch(e){if(e?.name==='AbortError')return}
+ }
+ try{await navigator.clipboard.writeText(url);status(studio,'Ссылка скопирована.')}catch{status(studio,'Ссылка: '+url)}
+}
+$('seyveoStudioShareSite')?.addEventListener('click',()=>shareStudioLink('site'));
+$('seyveoStudioShareApp')?.addEventListener('click',()=>shareStudioLink('app'));
 $('seyveoCompanyShare').addEventListener('click',()=>share('company'));
 $('seyveoCompanyPrint').addEventListener('click',()=>print('company'));
 for(const d of [studio,dialog])d.addEventListener('click',e=>{if(e.target===d)d.close()});
