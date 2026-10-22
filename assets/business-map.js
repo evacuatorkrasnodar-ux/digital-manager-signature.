@@ -150,12 +150,9 @@ function updateEntry(){
  // A quiet status belongs here; details and the number of resources are visible inside the Map.
  const hasDetails=Boolean(s&&(s.description||s.goal||s.industry||s.industryAnswer||s.resources.length||s.storefronts?.length));
  if(label)label.textContent=hasDetails?'Сохранено':'По желанию';
- if(prompt){
-  const suggestion=s?recommendations(s)[0]:null;
-  prompt.textContent=s
-   ?suggestion?'Когда удобно: '+suggestion.title:'Сведения сохранены. Дополнить карту можно в любое время.'
-   :'Цели, процессы и рабочие ресурсы · по желанию';
- }
+ // The Management row should explain purpose, not act like another onboarding prompt.
+ // Recommendations remain inside the Map, where the owner can choose when to continue.
+ if(prompt)prompt.textContent='Что вы рассказали о целях, работе и ресурсах';
 }
 function markStep(next){
  view=next;status.textContent='';
