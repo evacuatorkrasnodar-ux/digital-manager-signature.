@@ -1955,6 +1955,7 @@ function homeBusinessAdvice(){
  // The existing Home recommendation first explains one known, unconnected resource.
  const pending=window.SEYVEO_CONNECTION_COACH?.homeSuggestion?.();
  if(pending)return pending;
+ if(window.SEYVEO_CONNECTION_COACH?.homePaused?.())return null;
  const api=window.SEYVEO_BUSINESS_MAP;
  if(!api?.getState?.())return null;
  const next=api.getAdvice?.()?.[0];
