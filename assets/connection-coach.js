@@ -439,6 +439,7 @@ registeredList?.addEventListener('click',event=>{
  next[type]={until:action==='later'?Date.now()+7*86400000:0,off:action==='off'};
  if(!persistFollowups(next)){result.textContent='Напоминание не сохранилось.';return}
  renderRegistry();
+ window.dispatchEvent(new Event('seyveo:connection-followup-changed'));
  result.textContent=action==='later'?'Напомню в Управлении через 7 дней.':
   action==='off'?'Больше не буду напоминать об этом ресурсе.':'Напоминания для ресурса включены.';
 });
