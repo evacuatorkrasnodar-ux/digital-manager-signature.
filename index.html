@@ -557,6 +557,24 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .seyveo-back-circle svg{width:17px;height:17px}
 #seyveoAccountDemo .seyveo-account-picker-label,
 #seyveoAccountDemo .seyveo-account-company-select{display:none!important}
+
+/* SEYVEO subscription concept: ONE / RISE / AUTONOM. */
+.seyveo-subscription-v2 .seyveo-account-shell{max-width:540px}
+.seyveo-subscription-v2 .seyveo-account-head p{font-size:13px;opacity:.65}
+.seyveo-subscription-status{padding:17px 0 18px;border-bottom:1px solid rgba(170,175,185,.2);display:flex;flex-direction:column;gap:5px}
+.seyveo-subscription-status span,.seyveo-subscription-kicker{font-size:10px;letter-spacing:.095em;opacity:.53}
+.seyveo-subscription-status strong{font-size:15px;font-weight:550}
+.seyveo-subscription-status small{opacity:.6;font-size:12px}
+.seyveo-subscription-options{display:grid;gap:11px;margin-top:20px}
+.seyveo-subscription-card{padding:20px;border:1px solid rgba(170,175,185,.17);border-radius:22px;background:rgba(130,135,150,.055)}
+.seyveo-subscription-card h3{font-weight:550;font-size:21px;letter-spacing:-.035em;margin:10px 0 7px}
+.seyveo-subscription-card p{font-size:13px;line-height:1.55;margin:7px 0;color:inherit;opacity:.72}
+.seyveo-subscription-features{font-size:12px!important;opacity:.57!important}
+.seyveo-subscription-level{display:flex;flex-direction:column;gap:5px;padding:12px 0;border-top:1px solid rgba(170,175,185,.12)}
+.seyveo-subscription-level strong{font-weight:550;font-size:14px}
+.seyveo-subscription-level small{font-size:12px;line-height:1.45;opacity:.65}
+.seyveo-subscription-state{display:inline-block;margin-top:10px;font-size:11px;opacity:.6}
+.seyveo-subscription-disclaimer{font-size:11px;line-height:1.65;opacity:.55;margin:20px 2px 3px}
 </style><link rel="stylesheet" href="assets/composer-intent.css?v=11"><link rel="stylesheet" href="assets/onboarding.css?v=4"><link rel="stylesheet" href="assets/welcome.css?v=5"><link rel="stylesheet" href="assets/first-minute.css?v=2"><link rel="stylesheet" href="assets/business-map.css?v=7"><link rel="stylesheet" href="assets/connection-coach.css?v=4"><link rel="stylesheet" href="assets/personal-tasks.css?v=12"><link rel="stylesheet" href="assets/passport-cards.css?v=21"><link rel="stylesheet" href="assets/company-signature.css?v=1"><link rel="stylesheet" href="assets/home-velvet.css?v=10"><link rel="stylesheet" href="assets/orb-shortcuts.css?v=12"><link rel="stylesheet" href="assets/orb-reply.css?v=16"><link rel="stylesheet" href="assets/orb-mist.css?v=13"><link rel="stylesheet" href="assets/dialog-velvet.css?v=3"><link rel="stylesheet" href="assets/notebook-smart.css?v=16"><link rel="stylesheet" href="assets/notebook-paper.css?v=10"><link rel="stylesheet" href="assets/notebook-scan.css?v=5"><link rel="stylesheet" href="assets/scroll-calm.css?v=1"><link rel="stylesheet" href="assets/pulse.css?v=2"><link rel="stylesheet" href="assets/brand-signature.css?v=2"><link rel="stylesheet" href="assets/home-widgets.css?v=1"><link rel="stylesheet" href="assets/picture.css?v=10"><link rel="stylesheet" href="assets/calendar.css?v=32"><link rel="stylesheet" href="assets/calendar-reminders.css?v=1"><link rel="stylesheet" href="assets/calendar-spaces.css?v=12"><link rel="stylesheet" href="assets/sections-velvet.css?v=8"><link rel="stylesheet" href="assets/personal-wellness.css?v=12"><link rel="stylesheet" href="assets/interaction-focus.css?v=1"><link rel="stylesheet" href="assets/management-previews.css?v=1"><link rel="stylesheet" href="assets/first-help.css?v=3"><link rel="stylesheet" href="assets/assistant-intents.css?v=1"><link rel="stylesheet" href="assets/adaptive-workspace.css?v=1"><link rel="stylesheet" href="assets/seyveo-premiere.css?v=1"><link rel="stylesheet" href="assets/living-conversation.css?v=13"><link rel="stylesheet" href="assets/conversation-refined.css?v=16"><link rel="stylesheet" href="assets/floating-navigation.css?v=14"><link rel="stylesheet" href="assets/future-surfaces.css?v=5"><link rel="stylesheet" href="assets/account-demo.css?v=2"></head><body><div class="app"><header class="top" id="homeHeader"><button class="mark home-brand-trigger seyveo-brand-trigger" id="homeBrandTrigger" type="button" aria-label="Показать паспорт SEYVEO" aria-expanded="false" aria-controls="homePassportPopover"><img src="assets/brand-tile.svg?v=1" alt="" width="44" height="44"><span class="seyveo-brand-caption" aria-hidden="true"><span class="seyveo-brand-name">SEYVEO</span><span class="seyveo-brand-specialty">IT · AI · AUTOMATION</span></span></button><h1 class="home-sr-heading">Главная · SEYVEO</h1><div class="home-header-actions"><div class="home-world-anchor"><button id="homeWorldTrigger" class="home-profile-trigger home-owner-trigger" type="button" aria-label="Профиль владельца и бизнес" title="Владелец и бизнес" aria-haspopup="true" aria-expanded="false" aria-controls="homePassportPopover"><span id="seyveoHeaderAvatar" class="seyveo-avatar seyveo-avatar--onyx" aria-hidden="true"></span></button><section id="homeWorldPopover" class="home-world-popover" aria-labelledby="homeWorldTitle" hidden><div class="home-world-title"><h2 id="homeWorldTitle">Мой мир</h2><p>Всё личное — в одном месте</p></div><div class="home-world-grid"><button type="button" class="home-world-choice" data-world-space="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13.5 14h2"/></svg><span>Календарь</span></button><button type="button" class="home-world-choice" data-world-space="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/></svg><span>Блокнот</span></button><button type="button" class="home-world-choice" data-world-space="health"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-5 4.2 10 2.3-5H21"/></svg><span>Здоровье</span></button><button type="button" class="home-world-choice" data-world-space="care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 8.6c0 4.8-8.5 10.6-8.5 10.6S3.5 13.4 3.5 8.6A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 8.5 1.4Z"/></svg><span>Забота</span></button><button type="button" class="home-world-choice home-world-choice-wide" data-world-space="world"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 4.7-5 12.3 0 17M12 3.5c5 4.7 5 12.3 0 17"/></svg><span>Люди и связи</span><span class="home-world-choice-chevron" aria-hidden="true">›</span></button></div></section></div></div>
 <section id="homePassportPopover" class="home-passports" hidden aria-label="Сведения SEYVEO и карточка бизнеса">
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;pointer-events:none">
@@ -1187,62 +1205,20 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </form>
 </dialog>
 
-<dialog id="seyveoAccountDemo" class="seyveo-account-modal" aria-labelledby="seyveoAccountTitle" aria-describedby="seyveoAccountDisclosure">
+<dialog id="seyveoAccountDemo" class="seyveo-account-modal seyveo-subscription-v2" aria-labelledby="seyveoAccountTitle">
 <div class="seyveo-account-shell">
-<header class="seyveo-account-head">
-<div><span class="seyveo-account-eyebrow">SEYVEO / ЛИЧНЫЙ КАБИНЕТ</span><h2 id="seyveoAccountTitle">Аккаунт и подписка</h2><p>Всё о доступе — в одном месте.</p></div>
-<button id="seyveoAccountClose" class="seyveo-account-finish" type="button">Готово</button>
-</header>
-<div class="seyveo-account-demo-flag"><span class="seyveo-account-dot" aria-hidden="true"></span><span>Интерактивный пример · не реальный аккаунт</span></div>
-<nav class="seyveo-account-tabs" aria-label="Разделы аккаунта">
-<button type="button" data-seyveo-account-tab="overview" aria-current="page">Обзор</button>
-<button type="button" data-seyveo-account-tab="plans">Тарифы</button>
-<button type="button" data-seyveo-account-tab="billing">Оплата</button>
-<button type="button" data-seyveo-account-tab="signin">Вход</button>
-</nav>
-<section class="seyveo-account-panel" data-seyveo-account-panel="overview" aria-label="Обзор аккаунта">
-<div class="seyveo-account-profile">
-
-<div class="seyveo-account-profile-text"><strong id="seyveoAccountPerson">Владелец</strong><small>Доступ · демонстрация</small></div>
-<button type="button" class="seyveo-account-text-action" data-seyveo-account-go="signin">Вход</button>
-</div>
-<label class="seyveo-account-picker-label" for="seyveoAccountCompany">МОИ КОМПАНИИ · ДЕМОНСТРАЦИЯ</label>
-<select id="seyveoAccountCompany" class="seyveo-account-company-select"><option value="sample">Студия SEYVEO · пример</option><option value="second">Другая компания · пример</option></select>
-<article class="seyveo-account-plan-summary">
-<div class="seyveo-account-summary-head"><span>МОЯ ПОДПИСКА · ПРИМЕР</span><span class="seyveo-account-mock-pill">Без оплаты</span></div>
-<h3 id="seyveoAccountCurrentPlan">Нет подписки</h3>
-<p id="seyveoAccountPlanDesc">Демонстрационный доступ · без списаний</p>
-<div class="seyveo-account-summary-rows"><div><span>Статус</span><strong id="seyveoAccountExampleStatus">Подписка не подключена</strong></div><div><span>Оплаченный период до</span><strong id="seyveoAccountSampleExpiry">—</strong></div><div><span>Продление</span><strong id="seyveoAccountRenewValue">Не настроено</strong></div></div>
-<button type="button" class="seyveo-account-primary" data-seyveo-account-go="plans">Управлять тарифом</button>
+<header class="seyveo-account-head"><div><span class="seyveo-account-eyebrow">SEYVEO / ПОДПИСКА</span><h2 id="seyveoAccountTitle">Подписка</h2><p>Выберите, где Сэйви будет вам помогать.</p></div>
+<button id="seyveoAccountClose" class="seyveo-account-finish" type="button">Готово</button></header>
+<div class="seyveo-subscription-status"><span>Ваш доступ</span><strong>Демонстрационная версия</strong><small>Платная подписка не подключена. Списаний нет.</small></div>
+<div class="seyveo-subscription-options" aria-label="Направления SEYVEO">
+<article class="seyveo-subscription-card">
+<span class="seyveo-subscription-kicker">ЛИЧНАЯ ЖИЗНЬ</span><h3>SEYVEO ONE</h3><p>Личный помощник для повседневной жизни.</p><p class="seyveo-subscription-features">Общение · знания · здоровье · музыка · умный дом</p><span class="seyveo-subscription-state">В разработке</span>
 </article>
-<div class="seyveo-account-quiet-row"><span>История платежей и чеки</span><button type="button" data-seyveo-account-go="billing">Посмотреть <span aria-hidden="true">›</span></button></div>
-</section>
-<section class="seyveo-account-panel" data-seyveo-account-panel="plans" aria-label="Выбор тарифа" hidden>
-<div class="seyveo-account-section-head"><h3>Выберите возможности</h3><p>Тарифы ниже — макеты будущих уровней. Стоимость ещё не утверждена.</p></div>
-<div class="seyveo-account-period" role="group" aria-label="Период подписки в примере"><button type="button" data-seyveo-period="month" aria-pressed="true">Месяц</button><button type="button" data-seyveo-period="year" aria-pressed="false">Год</button></div>
-<div id="seyveoAccountTierCards" class="seyveo-account-tier-list"></div>
-<div class="seyveo-account-choice-note" id="seyveoAccountTierMessage" aria-live="polite">Выбор не изменяет доступ в приложении.</div>
-<button type="button" id="seyveoAccountApplyPlan" class="seyveo-account-primary">Показать пример активного тарифа</button>
-</section>
-<section class="seyveo-account-panel" data-seyveo-account-panel="billing" aria-label="Управление продлением" hidden>
-<div class="seyveo-account-section-head"><h3>Управление продлением</h3><p>В мобильных приложениях покупка цифровой подписки оформляется через Apple App Store или Google Play. Текущий кабинет — демонстрация без реальных платежей.</p></div>
-<div class="seyveo-account-billing-card"><div class="seyveo-account-billing-row"><div><strong>Способ оплаты</strong><small>Появится после подключения покупок в мобильной версии</small></div><span>Apple / Google</span></div>
-<div class="seyveo-account-billing-row"><div><strong>Квитанции и продление</strong><small>Управляются через магазин, в котором была покупка</small></div><span>Пока недоступно</span></div></div>
-<p class="seyveo-account-disclosure">Не вводите банковские реквизиты в демонстрационную версию.</p>
-</section>
-<section class="seyveo-account-panel" data-seyveo-account-panel="signin" aria-label="Вход и безопасность" hidden>
-<div class="seyveo-account-section-head"><h3>Один аккаунт для ваших компаний</h3><p>В дальнейшем входите с разных устройств, а подписки и организации остаются связаны с вашим профилем.</p></div>
-<div class="seyveo-account-login-card">
-<div class="seyveo-account-login-icon" aria-hidden="true">✉</div>
-<strong>Вход по электронной почте</strong>
-<label for="seyveoAccountLoginEmail">Электронная почта · пример поля</label>
-<input id="seyveoAccountLoginEmail" type="email" autocomplete="off" maxlength="120" placeholder="name@example.com">
-<button id="seyveoAccountSendExampleCode" type="button" class="seyveo-account-primary">Посмотреть следующий шаг</button>
-<div id="seyveoAccountCodeStage" class="seyveo-account-code-stage" hidden><span>ШАГ 2 / ПОДТВЕРЖДЕНИЕ</span><strong>Введите шестизначный код</strong><div aria-hidden="true">○ ○ ○ ○ ○ ○</div><small>В настоящем сервисе код придёт на почту. Здесь он не отправляется.</small></div>
-</div>
-<p class="seyveo-account-signin-footer">Позже: вход через Apple и Google, управление устройствами, двухфакторная защита и восстановление доступа.</p>
-</section>
-<p id="seyveoAccountDisclosure" class="seyveo-account-disclosure">Демонстрация интерфейса: реального аккаунта и подписки нет. Тарифы, компании и продление меняются только на этом экране; никаких платежей, писем и синхронизации не происходит.</p>
+<article class="seyveo-subscription-card"><span class="seyveo-subscription-kicker">БИЗНЕС</span><h3>Цифровой управляющий</h3><p>От открытия дела до управления бизнесом.</p>
+<div class="seyveo-subscription-level"><strong>RISE</strong><small>Запуск и развитие дела · клиенты · продажи</small></div>
+<div class="seyveo-subscription-level"><strong>AUTONOM</strong><small>Процессы · финансы · документы · разрешённая автоматизация</small></div><span class="seyveo-subscription-state">В разработке</span>
+</article></div>
+<p class="seyveo-subscription-disclaimer">Тарифы и цены ещё не опубликованы. Покупка, продление и управление оплатой станут доступны после запуска реальной системы подписок.</p>
 </div></dialog>
 <dialog id="seyveoStudioDialog" class="seyveo-passport-modal" aria-labelledby="seyveoStudioTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть паспорт SEYVEO"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
 <h2 id="seyveoStudioTitle">Паспорт SEYVEO</h2>
@@ -3336,7 +3312,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
 <div id="firstHelpProgress" class="first-help-progress" aria-hidden="true"></div>
 <div class="first-help-actions"><button id="firstHelpExit" type="button">Пропустить</button><button id="firstHelpBack" type="button" hidden>Назад</button><button id="firstHelpNext" type="button">Начать</button></div>
 </section></section>
-<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=25"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/personal-tasks.js?v=14"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=31"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=23"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=4"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=16"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=8"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=16"></script><script src="assets/living-conversation.js?v=15"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=4"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=2" defer></script><script>
+<script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=25"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/personal-tasks.js?v=14"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=31"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=23"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=6"></script><script src="assets/picture.js?v=5"></script><script src="assets/home-widgets.js?v=9"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=4"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/first-help.js?v=4"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=16"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=8"></script><script src="assets/first-minute.js?v=4"></script><script src="assets/seyveo-premiere.js?v=1"></script><script src="assets/welcome.js?v=16"></script><script src="assets/living-conversation.js?v=15"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=5"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=2" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
