@@ -147,7 +147,9 @@ function save(){
 }
 function updateEntry(){
  const s=load(),label=$('businessMapManageSummary'),prompt=$('businessMapManagePrompt');
- if(label)label.textContent=s?(s.resources.length+' источн. · '+(s.description?'есть описание':'нужно описание')):'Начать';
+ // A quiet status belongs here; details and the number of resources are visible inside the Map.
+ const hasDetails=Boolean(s&&(s.description||s.goal||s.industry||s.industryAnswer||s.resources.length||s.storefronts?.length));
+ if(label)label.textContent=hasDetails?'Сохранено':'По желанию';
  if(prompt){
   const suggestion=s?recommendations(s)[0]:null;
   prompt.textContent=s
