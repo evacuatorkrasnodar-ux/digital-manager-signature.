@@ -11,7 +11,7 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!stage||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-living-surface-preview-v2';
+const SESSION='seyveo-living-surface-atelier-v21';
 const TIMING=Object.freeze({open:reduced()?0:800,beat:reduced()?0:5150,quiet:reduced()?0:4200,close:reduced()?0:790});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
@@ -281,6 +281,7 @@ function showTask(item){
  dynamic.hidden=true;
  const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
  createSurface({
+  kind:'task',
   title:item.title,
   body:'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
   category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
