@@ -45,6 +45,11 @@ function animateOrb(from){
 function before(next){
  if(!next)next=route();
  if(next===current&&orbCluster.parentNode===(next==='home'?stage:companion))return;
+ // Moving between two non-Home screens does not move the physical sphere.
+ if(next!=='home'&&orbCluster.parentNode===companion){
+  current=next;root.dataset.svSpace=next;beforeRect=null;
+  return;
+ }
  animation?.cancel();
  animation=null;
  beforeRect=orbCluster.getBoundingClientRect();
@@ -79,6 +84,15 @@ function after(next){
  if(next!=='home')cascade(next);
 }
 function initialize(){
+ // The same orb remains an accessible assistant button on interior pages.
+ // Home retains the approved cinematic brand-tap behaviour unchanged.
+ $('orb')?.addEventListener('click',event=>{
+  if(current==='home')return;
+  if(event.detail===0)return; // Do not intercept synthetic accessibility actions.
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  $('assistantButton')?.click();
+ },true);
  // Existing rows retain their original click handlers and destinations.
  document.querySelectorAll('#seyveoCleanManageMenu .manage-group')
   .forEach((group,i)=>group.style.setProperty('--sv-group-index',String(i)));
