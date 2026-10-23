@@ -72,6 +72,9 @@ function showExample(item){
  };
  heading.textContent=item.title;
  body.textContent=descriptions[item.kind]||'Это только пример будущей рекомендации.';
+ body.hidden=false;
+ const previous=$('replyThread');if(previous)previous.hidden=true;
+ const history=$('assistantDialogHistory');if(history)history.hidden=true;
  if(!modal.open)try{modal.showModal()}catch{}
 }
 const sample=[
