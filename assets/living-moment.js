@@ -223,10 +223,16 @@ function showTask(item){
  },12000);
  return true;
 }
+function adviceIdentity(card){
+ if(!card)return '';
+ const title=card.querySelector('.event-copy strong')?.textContent||'';
+ const basis=card.querySelector('.card-tag')?.textContent||'';
+ return 'advice:'+(title+'|'+basis).trim().slice(0,300);
+}
 function showExistingAdvice(){
  const card=dynamic.querySelector('[data-owner-advice]');
  if(!card)return false;
- const id='advice:'+card.textContent.trim().slice(0,300);
+ const id=adviceIdentity(card);
  if(quiet.has(id))return false;
  mode='advice';key=id;
  space.hidden=true;
@@ -242,7 +248,7 @@ function showExistingAdvice(){
 function refresh(){
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
- const pendingKey=pending?'advice:'+pending.textContent.trim().slice(0,300):'';
+ const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
@@ -292,8 +298,10 @@ dynamic.addEventListener('click',event=>{
  const card=dynamic.querySelector('[data-owner-advice]');
  let reason=card.querySelector('.lm-real-reason');
  if(!reason){
-  reason=create('p','lm-real-reason',card.querySelector('.card-tag')?.textContent||
-   'Предложение основано на данных, введённых в приложение.');
+  reason=create('p','lm-real-reason',
+   'Основание: '+(card.querySelector('.card-tag')?.textContent||
+   'сведения, которые вы внесли в приложение.')+
+   ' Это предложение, а не действие, выполненное без вашего согласия.');
   reason.hidden=true;card.append(reason);
  }
  reason.hidden=!reason.hidden;
