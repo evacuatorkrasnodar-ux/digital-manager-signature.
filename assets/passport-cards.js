@@ -39,15 +39,15 @@ function fillPreview(){
  }catch{}
  // A company's legal name is never a substitute for the human owner's name.
  // Demo may show Roman, but filled user records must not inherit sample identities.
- const owner=saved?(clean(record.owner)||profilePerson||(record.type!=='org'?clean(record.legalName):'')||'Владелец'):(profilePerson||'Роман');
+ const owner=saved?(clean(record.owner)||profilePerson||(record.type!=='org'?clean(record.legalName):'')||'Владелец'):(profilePerson||'Владелец');
  $('seyveoCompanyPreviewName').textContent='Мой бизнес';
  $('seyveoCompanyPreviewDesc').textContent=saved?(LABELS[record.type]||'Карточка компании'):'Карточка компании';
- $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'SEYVEO · пример';
+ $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Данные не заполнены';
  const industryPreview=$('seyveoCompanyPreviewIndustry');
- if(industryPreview)industryPreview.textContent=saved?(record.industry||'Сфера не указана'):'Цифровые услуги';
+ if(industryPreview)industryPreview.textContent=saved?(record.industry||'Сфера не указана'):'Сфера не указана';
  const preview=$('seyveoCompanyPreviewSubscription');
  if(preview)preview.textContent='Контакты и реквизиты';
- $('seyveoCompanySample').hidden=saved;
+ $('seyveoCompanySample').hidden=true;
  const logo=$('seyveoCompanyInitial');
  if(logo)logo.textContent=window.SEYVEO_AVATAR_LETTER?.(saved?record.name:'SEYVEO')||'S';
 }
@@ -118,8 +118,8 @@ function plain(kind){
   'Студия: SEYVEO — технологическая студия искусственного интеллекта и автоматизации',
   'Продукт: Цифровой управляющий',
   'Фирменная подпись: SEYVEO · IT · AI · AUTOMATION',
-  'Сборка: демонстрационная версия',
-  'Подписка: оформляется в разделе Управление',
+  'Сборка: предварительная версия без подключённых внешних сервисов',
+  'Подписка: пока не подключена',
   'Подключённый ИИ и внешние сервисы: отсутствуют',
   'Сведения о продукте представлены в приложении'
  ].join('\n');
@@ -252,8 +252,7 @@ window.addEventListener('storage',e=>{
 window.addEventListener('seyveo:profile-changed',fillPreview);
 window.addEventListener('seyveo:avatar-letter-ready',fillPreview);
 function updateSubscriptionBadge(){
- const demo=window.SEYVEO_GET_ACCOUNT_PREVIEW?.();
- const status=demo?.demo?(demo.activated?demo.plan+' · демонстрация':'Демонстрационный доступ'):'Демонстрационный доступ';
+ const status='Подписка не подключена';
  const home=$('seyveoBrandSubscriptionStatus'),detail=$('seyveoStudioSubscriptionStatus');
  if(home)home.textContent=status;
  if(detail)detail.textContent=status;
