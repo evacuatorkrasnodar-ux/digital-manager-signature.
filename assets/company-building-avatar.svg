@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Мой бизнес — серебристая архитектура на зелёном графите">
+<defs>
+  <radialGradient id="ground" cx=".38" cy=".27" r=".9">
+    <stop stop-color="#214440"/><stop offset=".46" stop-color="#0b211f"/><stop offset="1" stop-color="#04090b"/>
+  </radialGradient>
+  <linearGradient id="front" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#edf4f1"/><stop offset=".3" stop-color="#aebebc"/><stop offset=".75" stop-color="#526a6b"/><stop offset="1" stop-color="#263b3f"/>
+  </linearGradient>
+  <linearGradient id="side" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#718c8a"/><stop offset=".6" stop-color="#3d5658"/><stop offset="1" stop-color="#213638"/>
+  </linearGradient>
+  <linearGradient id="windows" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#f6faf6"/><stop offset="1" stop-color="#b4ccc7"/>
+  </linearGradient>
+</defs>
+<circle cx="40" cy="40" r="39.25" fill="url(#ground)" stroke="#77918a" stroke-opacity=".33" stroke-width=".8"/>
+<path d="M13 58V37l11-5 6 2v24" fill="#1c3839" stroke="#9fb8b1" stroke-opacity=".45" stroke-width=".7"/>
+<path d="M28 61V20l20-5 1 46Z" fill="url(#front)"/>
+<path d="M48 15 62 24v37H49Z" fill="url(#side)"/>
+<path d="M32 22.5 44 19.5V55H32Z" fill="#20383a" opacity=".74"/>
+<path d="M35 26.5 41.5 24.8M35 32.5 41.5 31M35 38.5 41.5 37M35 44.5 41.5 43M35 50.5 41.5 49" fill="none" stroke="url(#windows)" stroke-width="1.8" stroke-linecap="round" opacity=".83"/>
+<path d="M53 28.5h5M53 35h5M53 41.5h5M53 48h5M53 54.5h5" stroke="#cbded9" stroke-width="1.45" stroke-linecap="round" opacity=".67"/>
+<path d="M17 39.2 24 36M17 45 24 42M17 50.8 24 47.8" stroke="#8da9a3" stroke-width="1.25" opacity=".78"/>
+<path d="M13 61.5H66" stroke="#afc2b8" stroke-width="1.2" opacity=".76" stroke-linecap="round"/>
+<path d="M26 18.5 47.5 13.4" fill="none" stroke="#d6e3de" stroke-opacity=".49" stroke-width=".65"/>
+</svg>
