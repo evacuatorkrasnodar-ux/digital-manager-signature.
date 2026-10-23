@@ -20,7 +20,7 @@ function later(callback,ms){
  timers.push(id);return id;
 }
 function cancel(){for(const id of timers)clearTimeout(id);timers=[]}
-function available(){return !home.hidden&&!document.hidden&&!location.hash&&!(document.querySelector('dialog[open]'))}
+function available(){return !home.hidden&&!document.hidden&&!location.hash&&!document.documentElement.classList.contains('seyveo-conversation')&&!(document.querySelector('dialog[open]'))}
 function editing(){
  const composer=$('ask');
  const node=document.activeElement;
@@ -191,7 +191,7 @@ function showExistingAdvice(){
  return true;
 }
 function refresh(){
- if(document.hidden||home.hidden)return;
+ if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=pending?'advice:'+pending.textContent.trim().slice(0,300):'';
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
@@ -214,6 +214,12 @@ function refresh(){
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
+const viewObserver=new MutationObserver(()=>{
+ if(document.documentElement.classList.contains('seyveo-conversation')){
+  if(mode!=='idle')rest();
+ }else scheduleRefresh();
+});
+viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
