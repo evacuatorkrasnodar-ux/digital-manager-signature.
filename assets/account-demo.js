@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('seyveoAccountDemo');
 const launch=$('openSeyveoAccountDemo'),owner=$('openSeyveoAccountFromOwner');
 if(!dialog||!launch)return;
-function preview(){return {demo:true,activated:false,plan:null,short:null,expires:null,expirationShort:null,renewal:false};}
+function preview(){return {demo:false,activated:false,plan:null,short:null,expires:null,expirationShort:null,renewal:false};}
 window.SEYVEO_GET_ACCOUNT_PREVIEW=preview;
 function open(fromOwner=false){
  if(fromOwner){const company=$('seyveoCompanyDialog');if(company?.open)company.close();}
