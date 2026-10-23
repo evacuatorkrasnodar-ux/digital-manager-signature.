@@ -1,18 +1,18 @@
-/* SEYVEO Signature · Living Surface · Atelier v2.1
+/* SEYVEO Signature · Home Quiet Cinema v3
  * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const home=$('homePage'),stage=$('stage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
+const home=$('homePage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
 const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
 const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
 if(!home||!stage||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-living-surface-atelier-v21';
-const TIMING=Object.freeze({open:reduced()?0:800,beat:reduced()?0:5150,quiet:reduced()?0:4200,close:reduced()?0:790});
+const SESSION='seyveo-quiet-cinema-v3';
+const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 function later(callback,ms){
@@ -98,13 +98,13 @@ function icon(kind){
 }
 
 const sample=[
- {kind:'contract',title:'Проверить договор',category:'ВАЖНОЕ',body:'Документ ожидает вашего решения.',
+ {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
   detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
- {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Ответить на письма',
+ {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
   reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
   detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
- {kind:'health',title:'Время позаботиться о себе',category:'ЗДОРОВЬЕ',body:'Небольшая пауза для себя.',
+ {kind:'health',title:'Пора передохнуть',category:'ЗАБОТА',body:'Две спокойные минуты для себя.',
   reason:'Учебный пример заботы о себе, не основан на данных Apple Health или медицинских измерениях.',
   detail:'Можно сделать короткую передышку. Это демонстрация будущей персональной заботы, а не медицинский совет.'}
 ];
@@ -145,6 +145,7 @@ function createSurface(primary,other=[],real=false){
   if(real){$('navTasks')?.click();return}
   explain(field,shown.detail,open);
  },'main');
+ open.setAttribute('aria-label','Открыть: '+shown.title);
  const laterButton=polymer('Позже',()=>closeEarly());
  const why=polymer('Почему',()=>explain(field,shown.reason,why));
  why.setAttribute('aria-expanded','false');
@@ -185,18 +186,21 @@ function createSurface(primary,other=[],real=false){
    label.textContent=item.category;
    headline.textContent=item.title;
    description.textContent=item.body;
+   open.setAttribute('aria-label','Открыть: '+item.title);
    const reason=field.querySelector('.lm-explanation');
    if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
    why.setAttribute('aria-expanded','false');
    renderSecondary();
    scene.classList.remove('lm-scene--changing');
-   later(()=>{morphLocked=false},420);
-  },reduced()?0:270);
+   later(()=>{morphLocked=false},720);
+  },reduced()?0:430);
  }
  field.dataset.lmSubject=primary.kind;
  renderSecondary();
  const explanation=create('p','lm-explanation');
+ explanation.id='seyveoSurfaceReason';
  explanation.hidden=true;
+ why.setAttribute('aria-controls',explanation.id);
  scene.append(top,main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
@@ -249,7 +253,7 @@ function startPreview(){
  try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
- tip.textContent='ATELIER · ВЫМЫШЛЕННЫЕ ПРИМЕРЫ';
+ tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
@@ -263,7 +267,7 @@ function startPreview(){
    },TIMING.beat);
   },TIMING.beat);
  },TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Предпросмотр Living Surface запущен. Данные владельца не изменяются.';
+ if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
  return true;
 }
 function dueTask(){
