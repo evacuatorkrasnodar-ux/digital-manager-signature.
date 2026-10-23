@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 const home=$('homePage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
 const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
 const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
-if(!home||!stage||!dynamic||!space||!tiles)return;
+if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
 const SESSION='seyveo-quiet-cinema-v3';
