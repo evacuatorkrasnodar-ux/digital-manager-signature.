@@ -133,10 +133,10 @@ function ownerFocus(){
 function clone(x){return {version:1,mode:x.mode,description:x.description,goal:x.goal,
  industry:byIndustry(x.industry)?x.industry:'',industryAnswer:norm(x.industryAnswer,500),
  weeklyRequests:validWeeklyRequests(x.weeklyRequests),resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],storefronts:cleanStorefronts(x.storefronts),updatedAt:x.updatedAt}}
-let data=fresh('existing'),preview=false,firstLaunch=false,view='choose',sourceType='',origin=null,sectorReturn='goal';
+let data=fresh('existing'),preview=false,firstLaunch=false,view='map',sourceType='',origin=null,sectorReturn='goal';
 const title=$('businessMapTitle'),sub=$('businessMapLead'),status=$('businessMapStatus');
 const field=$('businessMapInput'),form=$('businessMapForm'),inputLabel=$('businessMapInputLabel'),inputHelp=$('businessMapInputHelp');
-const pages={choose:$('businessMapChoose'),sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,sources:$('businessMapSources'),map:$('businessMapOverview'),storefront:$('businessMapStorefront')};
+const pages={sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,sources:$('businessMapSources'),map:$('businessMapOverview'),storefront:$('businessMapStorefront')};
 function save(){
  if(preview)return true;
  const next=clone(data);next.updatedAt=new Date().toISOString();
@@ -161,10 +161,7 @@ function markStep(next){
   panel.hidden=key!==view;
  }
  form.hidden=!['about','goal','source','workflow'].includes(view);
- if(view==='choose'){
-  title.textContent='С чего начинается ваш путь?';
-  sub.textContent='Расскажите, есть ли у вас бизнес. Никаких длинных анкет.';
- }else if(view==='about'){
+ if(view==='about'){
   const startup=data.mode==='start';
   title.textContent=startup?'Какое дело хотите открыть?':'Расскажите о своём бизнесе';
   sub.textContent=startup
@@ -225,12 +222,11 @@ function markStep(next){
   sub.textContent='Это карта того, что вы рассказали, а не автоматический анализ или подключение сервисов.';
   drawMap();
  }
- $('businessMapBack').hidden=view==='choose'||view==='map'||view==='sector';
+ $('businessMapBack').hidden=view==='map'||view==='sector';
  $('businessMapSkipGoal').hidden=view!=='goal';
  $('businessMapWorkflowSkip').hidden=view!=='workflow';
  $('businessMapLater').textContent=preview?'Закрыть демо':'Продолжить позже';
  $('businessMapProgress').textContent=preview?'ДЕМО · БЕЗ СОХРАНЕНИЯ':
-  view==='choose'?'ВАШ БИЗНЕС':
   view==='about'?'01 · О БИЗНЕСЕ':
   view==='sector'?'02 · СФЕРА ДЕЯТЕЛЬНОСТИ':
   view==='goal'?'02 · ЦЕЛИ':
@@ -507,7 +503,6 @@ function start(options={}){
  const inferred=focus==='start'?'start':'existing';
  data=stored?clone(stored):fresh(inferred);
  if(preview)data=fresh(inferred);
- const initial=!stored&&focus!=='start'&&!['pro','max'].includes(focus);
  try{dialog.showModal()}catch{return false}
  // A business link supplied in conversation is only a DRAFT.
  // The owner must still press "Добавить сведения" before local storage writes.
@@ -531,7 +526,9 @@ function start(options={}){
   if(step==='sector')sectorReturn='map';
   markStep(step);
  }else{
-  markStep(options.fromStart||(!stored&&['start','pro','max'].includes(focus))?'about':initial?'choose':stored?'map':'choose');
+  // The first welcome already captures whether this is a new or established business.
+  // Saved maps reopen at their overview; new maps begin directly with optional details.
+  markStep(stored&&!options.fromStart?'map':'about');
  }
  return true;
 }
@@ -547,11 +544,6 @@ function finish(){
 $('businessMapClose').addEventListener('click',finish);
 $('businessMapLater').addEventListener('click',finish);
 dialog.addEventListener('cancel',event=>{event.preventDefault();finish()});
-$('businessMapChoose').addEventListener('click',event=>{
- const button=event.target.closest?.('[data-business-mode]');if(!button)return;
- data.mode=button.dataset.businessMode==='start'?'start':'existing';
- markStep('about');
-});
 form.addEventListener('submit',submit);
 $('businessMapBack').addEventListener('click',()=>{
  markStep(view==='source'?'sources':view==='goal'?'sector':'map');
