@@ -784,19 +784,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div id="personalTaskList" class="manage-card personal-tasks-list" aria-live="polite"><p class="personal-tasks-empty">Личные дела пока не созданы.</p></div>
 <p id="personalTasksNotice" class="personal-tasks-notice" role="status" aria-live="polite" hidden></p>
 </section>
-<div class="tasks-switch" role="group" aria-label="Демонстрационные поручения">
-<button type="button" data-tasks-tab="working" aria-pressed="true">В работе <span id="tasksCountWorking" aria-hidden="true">0</span></button>
-<button type="button" id="showHistory" data-tasks-tab="history" aria-pressed="false">История <span id="tasksCountHistory" aria-hidden="true">0</span></button>
-</div>
-<section class="manage-group tasks-group" aria-labelledby="tasksGroupHeading"><h2 id="tasksGroupHeading">Демонстрационные поручения</h2><div class="manage-card tasks-records" id="tasksRecords" aria-label="Поручения"></div>
- <div id="tasksHistoryControls" class="tasks-history-controls" hidden>
-  <small id="tasksHistoryHint" class="tasks-history-hint" role="status" aria-live="polite"></small>
-  <div class="tasks-history-actions">
-   <button id="tasksHistoryMore" type="button">Показать ещё</button>
-   <button id="tasksHistoryLess" type="button" hidden>Свернуть</button>
-  </div>
- </div></section>
-
 </main><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
 <div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
@@ -1328,7 +1315,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <p class="manage-dialog-note">Копия содержит записи календаря, Блокнота, личных пространств, контакты SEYVEO с номерами телефонов, сведения о здоровье (если вы их внесли) и реквизиты компании. Файл JSON не зашифрован — храните его в защищённом месте и не передавайте посторонним. Пароли и подключения внешних сервисов не включены.</p>
 <div class="info-actions"><button id="manageExportData" type="button" class="btn">Сохранить копию</button><button id="manageDataClose" type="button" class="btn primary">Закрыть</button></div>
 <small id="manageExportStatus" class="manage-dialog-status" role="status" aria-live="polite"></small>
-</dialog><dialog id="info" aria-labelledby="infoTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть ответ"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2 id="infoTitle"></h2><button id="assistantDialogHistory" class="reply-history-button" type="button" aria-label="Посмотреть историю разговоров с seyveo" hidden>История</button><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><section class="reply-user" aria-label="Ваше сообщение"><span class="reply-speaker">Вы</span><div class="reply-content" id="userReplyText"></div></section><section class="reply-assistant" aria-label="Ответ Сэйви"><div class="reply-assistant-body"><span class="reply-speaker reply-brand">Сэйви</span><div class="reply-content" id="assistantReplyText"></div></div></section><div class="reply-system">Демонстрация · ИИ и сервисы ещё не подключены</div></div><div class="info-actions"><button id="scenarioRestart" class="btn" type="button" hidden>Начать сначала</button><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="assistantChatHistoryDialog" class="assistant-chat-history notes-dialog" aria-labelledby="assistantChatHistoryTitle">
+</dialog><dialog id="info" aria-labelledby="infoTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть ответ"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button><h2 id="infoTitle"></h2><button id="assistantDialogHistory" class="reply-history-button" type="button" aria-label="Посмотреть историю разговоров с seyveo" hidden>История</button><p id="infoText"></p><div id="replyThread" class="reply-thread" hidden><section class="reply-user" aria-label="Ваше сообщение"><span class="reply-speaker">Вы</span><div class="reply-content" id="userReplyText"></div></section><section class="reply-assistant" aria-label="Ответ Сэйви"><div class="reply-assistant-body"><span class="reply-speaker reply-brand">Сэйви</span><div class="reply-content" id="assistantReplyText"></div></div></section><div class="reply-system">Демонстрация · ИИ и сервисы ещё не подключены</div></div><div class="info-actions"><button id="infoClose" class="btn primary" type="button">Закрыть</button></div></dialog><dialog id="assistantChatHistoryDialog" class="assistant-chat-history notes-dialog" aria-labelledby="assistantChatHistoryTitle">
 <button id="assistantChatHistoryBack" class="seyveo-close-control seyveo-dialog-close" type="button" aria-label="Закрыть историю"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <div class="assistant-chat-head"><h2 id="assistantChatHistoryTitle">История общения</h2><small id="assistantChatHistoryCount"></small></div>
 <div id="assistantChatHistoryList" class="assistant-chat-items"></div>
@@ -1777,14 +1764,13 @@ document.addEventListener('visibilitychange',()=>{
   brandHiddenAt=null;
 });
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function popup(title,description,scenario=false){
+function popup(title,description){
   $('info').classList.remove('is-reply');
   $('assistantDialogHistory').hidden=true;
   $('infoTitle').textContent=title;
   $('replyThread').hidden=true;
   $('infoText').hidden=false;
   $('infoText').textContent=description;
-  $('scenarioRestart').hidden=!scenario;
   if(!$('info').open)$('info').showModal();
 }
 function hideInlineReply(){
@@ -1944,83 +1930,11 @@ function syncHomeVoice(){
   // Keep the original pearl divider visible beneath every Sayvi message.
   $('quietSignal').hidden=false;
 }
-const taskStatusText={working:'В работе · демонстрация',done:'Исполнено · демонстрация',failed:'Не удалось · требуется внимание',approved:'Согласовано · без выполнения'};
-function progressDemoTasks(){
-  const now=Date.now();let changed=false;
-  for(const task of state.history){
-    if(task.status==='working'&&task.startedAt&&now-task.startedAt>=EXECUTION_DEMO_MS){
-      task.status='done';task.doneAt=now;changed=true;
-    }
-  }
-  if(changed){save();setTimeout(()=>showBrandSignature('completed'),COMPLETION_VISIBLE_MS+900)}
-}
-function activeTasks(){
-  const now=Date.now();
-  return state.history.filter(h=>h.status==='working'||h.status==='failed'||(h.status==='done'&&h.doneAt&&now-h.doneAt<COMPLETION_VISIBLE_MS)).slice(-3).reverse();
-}
-function taskRow(h){
-  const status=({working:'В работе',done:'Исполнено',failed:'Требует внимания',approved:'Согласовано'})[h.status]||'Согласовано';
-  const symbol=h.status==='working'?'◷':h.status==='failed'?'!':'✓';
-  return '<div class="activity-row" data-status="'+escapeHtml(h.status)+'"><span class="activity-icon" aria-hidden="true">'+symbol+'</span><div class="activity-info"><span class="activity-title">'+escapeHtml(h.label)+'</span><span class="activity-status">'+escapeHtml(status)+'</span></div><span class="activity-meta">'+escapeHtml(h.time)+'</span></div>';
-}
-/* Demo approvals remain in local history. Keep the page short by default,
-   not by deleting, merging or changing the stored events. */
-const TASKS_HISTORY_INITIAL=4,TASKS_HISTORY_STEP=10;
-let tasksView='working',tasksHistoryVisible=TASKS_HISTORY_INITIAL;
-function renderTasksPage(){
-  const active=state.history.filter(h=>h.status==='working'||h.status==='failed');
-  const history=state.history.filter(h=>h.status!=='working'&&h.status!=='failed');
-  const isHistory=tasksView==='history';
-  const all=(isHistory?history:active).slice().reverse();
-  const list=isHistory?all.slice(0,tasksHistoryVisible):all;
-  $('tasksCountWorking').textContent=String(active.length);
-  $('tasksCountHistory').textContent=String(history.length);
-  document.querySelectorAll('[data-tasks-tab]').forEach(button=>{
-    button.setAttribute('aria-pressed',String(button.dataset.tasksTab===tasksView));
-  });
-  $('tasksGroupHeading').textContent=isHistory?'История поручений · демо':'Поручения · демо';
-  const emptyTitle=isHistory?'История пока пуста':'Пока нет поручений в работе';
-  const emptyDescription=isHistory
-    ?'Выполненные и согласованные действия появятся здесь.'
-    :'Согласуйте действие на главной — оно появится здесь.';
-  $('tasksRecords').innerHTML=list.length?list.map(taskRow).join(''):
-    '<div class="tasks-empty"><strong>'+emptyTitle+'</strong><small>'+emptyDescription+'</small></div>';
-  const controls=$('tasksHistoryControls'),hasMore=isHistory&&history.length>TASKS_HISTORY_INITIAL;
-  controls.hidden=!hasMore;
-  if(hasMore){
-    const remaining=Math.max(0,history.length-list.length);
-    $('tasksHistoryHint').textContent='Показано '+list.length+' из '+history.length;
-    $('tasksHistoryMore').hidden=remaining===0;
-    $('tasksHistoryMore').textContent='Показать ещё '+Math.min(TASKS_HISTORY_STEP,remaining);
-    $('tasksHistoryLess').hidden=tasksHistoryVisible<=TASKS_HISTORY_INITIAL;
-  }
-}
-$('tasksHistoryMore').addEventListener('click',()=>{
-  tasksHistoryVisible+=TASKS_HISTORY_STEP;
-  renderTasksPage();
-});
-$('tasksHistoryLess').addEventListener('click',()=>{
-  tasksHistoryVisible=TASKS_HISTORY_INITIAL;
-  renderTasksPage();
-  $('tasksGroupHeading').scrollIntoView({block:'nearest',behavior:'auto'});
-});
-document.querySelectorAll('[data-tasks-tab]').forEach(button=>button.addEventListener('click',()=>{
-  if(button.dataset.tasksTab!==tasksView){
-    tasksView=button.dataset.tasksTab;
-    tasksHistoryVisible=TASKS_HISTORY_INITIAL;
-    renderTasksPage();
-  }
-}));
-function scheduleTaskProgress(){
-  clearTimeout(taskTransitionTimer);
-  const now=Date.now();
-  let wait=Infinity;
-  for(const task of state.history){
-    if(task.status==='working'&&task.startedAt)wait=Math.min(wait,Math.max(0,task.startedAt+EXECUTION_DEMO_MS-now));
-    if(task.status==='done'&&task.doneAt&&task.doneAt+COMPLETION_VISIBLE_MS>now)wait=Math.min(wait,task.doneAt+COMPLETION_VISIBLE_MS-now);
-  }
-  if(Number.isFinite(wait))taskTransitionTimer=setTimeout(render,Math.max(25,wait+25));
-}
+/* Legacy simulated approvals were removed from the interface. They remain in local
+ * storage only so owners can export or restore previous device data safely. */
+function progressDemoTasks(){}
+function renderTasksPage(){}
+function scheduleTaskProgress(){}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 window.addEventListener('seyveo:tasks-changed',syncHomeVoice);
 window.addEventListener('seyveo:profile-changed',syncHomeVoice);
@@ -2213,8 +2127,6 @@ function onManageRouteChange(){
 }
 window.addEventListener('hashchange',onManageRouteChange);
 
-$('showHistory').addEventListener('click',()=>{if(location.hash!=='#tasks')location.hash='tasks';});
-$('scenarioRestart').addEventListener('click',()=>{demoReplayInProgress=true;clearTimeout(confirmationTimer);clearTimeout(taskTransitionTimer);confirmation=null;state.index=0;state.history=[];save();$('info').close();render()});
 // The sphere is a living signature, not a second copy of the recommendation.
  // Each tap restarts the approved Pearl Mist + Black Velvet Deep Reveal.
  // The status text below the sphere stays visible; details remain in «Подробнее».
