@@ -306,6 +306,19 @@ function adviceIdentity(card){
 function showExistingAdvice(){
  const card=dynamic.querySelector('[data-owner-advice]');
  if(!card)return false;
+ // Bring existing permission-based recommendations into the same editorial
+ // symbol system. Remove their obsolete small icon instead of stacking art.
+ const heading=card.querySelector('.event-copy strong')?.textContent||'';
+ const kind=/почт|письм|e-mail|email/i.test(heading)?'mail':
+  /здоров|сердц|пульс/i.test(heading)?'health':'task';
+ const row=card.querySelector('.card-main');
+ if(row&&!row.querySelector('.lm-owner-art')){
+  const art=create('span','lm-owner-art');
+  art.setAttribute('aria-hidden','true');
+  art.append(icon(kind));
+  row.querySelector('.event-icon')?.remove();
+  row.prepend(art);
+ }
  const id=adviceIdentity(card);
  if(quiet.has(id))return false;
  mode='advice';key=id;
