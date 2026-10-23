@@ -1,4 +1,4 @@
-/* SEYVEO Signature · Living Moment + Cinematic Presence v1
+/* SEYVEO Signature · Living Surface + Cinematic Presence v2
  * Production-safe local cards and clearly marked design examples.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
@@ -68,41 +68,103 @@ function icon(kind){
  s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');
  s.innerHTML=glyph[kind]||glyph.task;return s;
 }
-function showExample(item){
- const modal=$('info'),heading=$('infoTitle'),body=$('infoText');
- if(!modal||!heading||!body)return;
- const descriptions={
-  contract:'Учебный пример: когда документ действительно появится из разрешённого источника, Сэйви предложит его проверить. Подписание без подтверждения владельца недопустимо.',
-  mail:'Учебный пример. Новые письма будут показаны только после настоящего подключения почты. Сейчас Сэйви не читает почту и не отправляет ответы.',
-  breath:'Небольшая добровольная передышка. Это иллюстрация идеи, а не вывод из медицинских данных и не медицинская рекомендация.'
- };
- heading.textContent=item.title;
- body.textContent=descriptions[item.kind]||'Это только пример будущей рекомендации.';
- body.hidden=false;
- const previous=$('replyThread');if(previous)previous.hidden=true;
- const history=$('assistantDialogHistory');if(history)history.hidden=true;
- if(!modal.open)try{modal.showModal()}catch{}
-}
+
 const sample=[
- {kind:'contract',title:'Проверить договор',category:'ВАЖНОЕ РЕШЕНИЕ',body:'Новый документ ожидает проверки.',large:true},
- {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Ответить на письма',large:false},
- {kind:'breath',title:'Передышка',category:'ЗАБОТА',body:'Две минуты для себя',large:false}
+ {kind:'contract',title:'Проверить договор',category:'ВАЖНОЕ',body:'Документ ожидает вашего решения.',
+  reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
+  detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
+ {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Ответить на письма',
+  reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
+  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
+ {kind:'breath',title:'Передышка',category:'ЗАБОТА',body:'Две минуты для себя',
+  reason:'Это добровольный общий совет, а не вывод из данных о здоровье.',
+  detail:'Можно спокойно посидеть и подышать в удобном ритме. Если некомфортно, пропустите.'}
 ];
-function tile(item){
- const button=create('button','lm-card '+(item.large?'lm-card--hero':'lm-card--small'));
- button.type='button';button.dataset.lmKind=item.kind;
- button.setAttribute('aria-label',item.title+'. Пример: '+item.body);
- const head=create('span','lm-card-head');
- const sign=create('span','lm-card-icon');sign.append(icon(item.kind));head.append(sign,create('span','lm-card-category',item.category));
- const body=create('span','lm-card-content');
- body.append(create('strong','lm-card-title',item.title),create('span','lm-card-desc',item.body));
- const arrow=create('span','lm-card-arrow','↗');arrow.setAttribute('aria-hidden','true');
- button.append(head,body,arrow);
- button.addEventListener('click',()=>showExample(item));
- return button;
+function polymer(label,callback,kind='quiet'){
+ const b=create('button','lm-polymer lm-polymer--'+kind,label);
+ b.type='button';b.addEventListener('click',event=>{event.stopPropagation();callback(b)});
+ return b;
 }
-function buildExamples(){
- tiles.replaceChildren();sample.forEach(x=>tiles.append(tile(x)));
+function explain(field,message,button){
+ const panel=field.querySelector('.lm-explanation');
+ if(!panel)return;
+ const collapse=!panel.hidden&&panel.textContent===message;
+ panel.textContent=message;panel.hidden=collapse;
+ field.classList.toggle('lm-has-reason',!collapse);
+ if(button)button.setAttribute('aria-expanded',String(!collapse));
+}
+function createSurface(primary,other=[],real=false){
+ tiles.replaceChildren();
+ const field=create('div','lm-field');
+ field.dataset.lmMode=real?'real':'preview';
+ const top=create('div','lm-field-top');
+ top.append(create('span','lm-field-eyebrow',primary.category),create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'КОНЦЕПТ'));
+ const main=create('section','lm-primary');
+ const copy=create('div','lm-primary-copy');
+ copy.append(create('strong','lm-primary-title',primary.title),create('p','lm-primary-subtitle',primary.body));
+ const controls=create('div','lm-actions');
+ const open=polymer('Открыть',()=>{
+  if(real){$('navTasks')?.click();return}
+  explain(field,primary.detail,open);
+ },'main');
+ const laterButton=polymer('Позже',()=>closeEarly());
+ const why=polymer('Почему',()=>explain(field,primary.reason,why));
+ why.setAttribute('aria-expanded','false');
+ controls.append(open,laterButton,why);
+ main.append(copy,controls);field.append(top,main);
+ if(other.length){
+  const lines=create('div','lm-secondary');
+  for(const item of other){
+   const row=create('button','lm-inline-item');
+   row.type='button';row.dataset.lmKind=item.kind;
+   row.setAttribute('aria-label',item.title+'. '+item.body);
+   const mark=create('span','lm-inline-icon');mark.append(icon(item.kind));
+   const words=create('span','lm-inline-copy');
+   words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
+   const arrow=create('span','lm-inline-arrow','↗');arrow.setAttribute('aria-hidden','true');
+   row.append(mark,words,arrow);
+   row.addEventListener('click',()=>{
+    explain(field,item.detail);
+    const heading=field.querySelector('.lm-field-eyebrow');
+    if(heading)heading.textContent=item.category+' · ПОДРОБНОСТИ';
+   });
+   lines.append(row);
+  }
+  field.append(lines);
+ }
+ const explanation=create('p','lm-explanation');explanation.hidden=true;
+ field.append(explanation);
+ tiles.append(field);
+ return field;
+}
+function buildExamples(){createSurface(sample[0],sample.slice(1))}
+function shrink(){
+ if(mode==='idle')return;
+ space.classList.add('lm-condense');
+ const reason=tiles.querySelector('.lm-explanation');
+ if(reason)reason.hidden=true;
+ const field=tiles.querySelector('.lm-field');
+ if(field)field.classList.remove('lm-has-reason');
+ tip.textContent=mode==='task'?'СОХРАНЕНО В «ДЕЛАХ»':
+  'ПРИМЕР · ВАЖНОЕ СОХРАНЯЕТСЯ';
+}
+function disappear(){
+ if(mode==='idle')return;
+ if(mode==='advice'){
+  quiet.add(key);dynamic.classList.add('lm-real-out');
+  later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
+  return;
+ }
+ if(mode==='task')quiet.add(key);
+ space.classList.add('lm-disappear');
+ later(()=>{if(mode==='preview'||mode==='task')rest()},TIMING.close);
+}
+function closeEarly(){
+ if(mode==='idle')return;
+ cancel();
+ if(mode==='task'||mode==='advice')quiet.add(key);
+ space.classList.add('lm-condense','lm-disappear');
+ later(()=>rest(),TIMING.close);
 }
 function hold(callback,delay){
  const check=()=>{
