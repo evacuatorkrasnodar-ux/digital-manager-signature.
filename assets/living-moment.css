@@ -368,6 +368,7 @@
 /* Older real-business recommendations use identical inset material.
    Their existing click handlers and permissions remain intact. */
 #homePage #dynamic .decision-card[data-owner-advice]{
+  animation:lm-owner-arrive 890ms cubic-bezier(.22,1,.36,1) both!important;
   margin:0!important;
   padding:14px 7px 12px!important;
   background:transparent!important;
@@ -407,6 +408,15 @@
   color:var(--secondary);font-size:12px;line-height:1.55;
 }
 #homePage #dynamic .lm-real-reason[hidden]{display:none!important}
+@keyframes lm-owner-arrive{
+  0%{opacity:0;transform:translate3d(0,12px,0)}
+  100%{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:no-preference){
+  #homePage #dynamic .decision-card[data-owner-advice] .lm-owner-art .lm-art-svg{
+    animation:lm-symbol-arrive 1120ms cubic-bezier(.18,.82,.22,1) both;
+  }
+}
 /* White Velvet keeps the same shapes, not a separate visual language. */
 :root[data-theme=light] #seyveoLivingMoment .lm-field::before{
   background:linear-gradient(to right,transparent,rgba(56,70,89,.18) 35%,rgba(56,70,89,.18) 65%,transparent);
@@ -433,7 +443,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 @media(prefers-reduced-motion:reduce){
   #homePage #orbCluster,#homePage #stage,#homePage #orb,
   #seyveoLivingMoment,#seyveoLivingMoment *,
-  #homePage #dynamic{
+  #homePage #dynamic,
+  #homePage #dynamic .decision-card[data-owner-advice]{
     animation:none!important;
     transition:none!important;
   }
