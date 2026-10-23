@@ -13,7 +13,7 @@ const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
 const SESSION='seyveo-living-moment-visited-v1';
 const TIMING=Object.freeze({open:reduced()?0:820,bright:8500,quiet:4700,close:reduced()?0:740});
-let mode='idle',key='',quiet=new Set(),timers=[];
+let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -31,7 +31,7 @@ function engaged(){
  const node=document.activeElement;
  const keyboardFocus=!!(node?.matches?.(':focus-visible')&&(space.contains(node)||dynamic.contains(node)));
  const mouse=!!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
- return editing()||keyboardFocus||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
+ return editing()||keyboardFocus||Date.now()<readingUntil||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
    ||document.querySelector('dialog[open]')!==null;
 }
 function focus(on){
@@ -43,7 +43,7 @@ function resetSpace(){
  tip.textContent='';
 }
 function rest(){
- cancel();mode='idle';key='';
+ cancel();mode='idle';key='';readingUntil=0;
  resetSpace();focus(false);
  scheduleRefresh();
 }
@@ -82,7 +82,7 @@ const sample=[
 ];
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
- b.type='button';b.addEventListener('click',event=>{event.stopPropagation();callback(b)});
+ b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
  return b;
 }
 function explain(field,message,button){
@@ -124,6 +124,7 @@ function createSurface(primary,other=[],real=false){
    const arrow=create('span','lm-inline-arrow','↗');arrow.setAttribute('aria-hidden','true');
    row.append(mark,words,arrow);
    row.addEventListener('click',()=>{
+    readingUntil=Date.now()+15000;
     explain(field,item.detail);
     const heading=field.querySelector('.lm-field-eyebrow');
     if(heading)heading.textContent=item.category+' · ПОДРОБНОСТИ';
@@ -310,9 +311,9 @@ dynamic.addEventListener('click',event=>{
 replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
  $('navHome')?.click();
- later(()=>{startPreview(true)},260);
+ later(()=>{startPreview()},260);
 });
-window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(true),state:()=>mode});
+window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
 scheduleRefresh();
 // Developer preview is deliberately visible once per tab/session, NOT user data.
 // Run after the approved opening logo has had time to appear.
