@@ -13,7 +13,7 @@ const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
 const SESSION='seyveo-living-moment-visited-v1';
 const TIMING=Object.freeze({open:reduced()?0:820,bright:8500,quiet:4700,close:reduced()?0:740});
-let mode='idle',key='',quiet=new Set(),timers=[],paused=false,shownPreview=false;
+let mode='idle',key='',quiet=new Set(),timers=[];
 let pendingUpdate=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -23,8 +23,9 @@ function cancel(){for(const id of timers)clearTimeout(id);timers=[]}
 function available(){return !home.hidden&&!document.hidden&&!location.hash&&!(document.querySelector('dialog[open]'))}
 function engaged(){
  const node=document.activeElement;
- return space.contains(node)||dynamic.contains(node)
-   ||space.matches(':hover')||dynamic.matches(':hover')
+ const keyboardFocus=!!(node?.matches?.(':focus-visible')&&(space.contains(node)||dynamic.contains(node)));
+ const mouse=!!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+ return keyboardFocus||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
    ||document.querySelector('dialog[open]')!==null;
 }
 function focus(on){
@@ -36,7 +37,7 @@ function resetSpace(){
  tip.textContent='';
 }
 function rest(){
- cancel();mode='idle';key='';paused=false;
+ cancel();mode='idle';key='';
  resetSpace();focus(false);
  scheduleRefresh();
 }
@@ -105,7 +106,7 @@ function hold(callback,delay){
 function startPreview(force=false){
  if(!available())return false;
  if(mode!=='idle')rest();
- mode='preview';key='preview';shownPreview=true;
+ mode='preview';key='preview';
  try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
@@ -200,7 +201,6 @@ function refresh(){
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle')focus(false);
 }
-space.addEventListener('pointerdown',()=>{if(mode==='preview'||mode==='task')paused=true},{passive:true});
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
 window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
@@ -230,7 +230,7 @@ let visited=false;
 try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
 if(!visited){
  later(()=>{
-  if(document.hidden||home.hidden||document.querySelector('dialog[open]'))return;
+  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
   startPreview();
  },9400);
 }
