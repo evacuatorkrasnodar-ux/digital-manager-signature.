@@ -1,4 +1,4 @@
-/* SEYVEO Picture Widgets · saved selection and one demo ledger.
+/* SEYVEO Picture Widgets · real local widgets and honest data availability.
    Quiet metrics inside Picture; clean Home remains reserved for decisions. */
 (()=>{
 'use strict';
@@ -31,7 +31,7 @@ const pref=()=>{
  const raw=readable(safeRead(PROFILE));
  return raw?.focus==='life'?'life':'business';
 };
-const defaults=()=>pref()==='life'?['plan','notes']:['clients','orders','money'];
+const defaults=()=>['plan','notes'];
 function selection(){
  const data=readable(safeRead(KEY));
  if(data&&data.version===1&&Array.isArray(data.ids)){
@@ -58,12 +58,7 @@ function update(next){
  renderHome();renderCatalog();
 }
 let picturePeriod='today';
-function demo(){
- const source=window.SEYVEO_PULSE_DEMO;
- return source&&typeof source.snapshot==='function'
-  ?source.snapshot(picturePeriod)
-  :{leads:0,sales:0,revenue:0,cost:0};
-}
+function connectedMetrics(){return window.SEYVEO_PULSE_DEMO?.snapshot?.(picturePeriod)||null;}
 function tasks(){
  const data=readable(safeRead('seyveo-personal-tasks-v1'));
  return Array.isArray(data)?data.filter(x=>x&&typeof x.title==='string'&&!x.done):[];
@@ -74,10 +69,10 @@ function notes(){
 }
 function info(id){
  const item=BY_ID[id];
- const data=demo(),count=tasks().length;
- if(id==='clients')return {label:item.label,value:num.format(data.leads),hint:'Обращений за период'};
- if(id==='orders')return {label:item.label,value:num.format(data.sales),hint:'Заказов за период'};
- if(id==='money')return {label:item.label,value:rub(data.revenue),hint:'Продажи за период'};
+ const data=connectedMetrics(),count=tasks().length;
+ if(id==='clients')return {label:item.label,value:Number.isFinite(data?.leads)?num.format(data.leads):'—',hint:'Источник обращений пока не подключён'};
+ if(id==='orders')return {label:item.label,value:Number.isFinite(data?.sales)?num.format(data.sales):'—',hint:'Источник заказов пока не подключён'};
+ if(id==='money')return {label:item.label,value:Number.isFinite(data?.revenue)?rub(data.revenue):'—',hint:'Источник финансов пока не подключён'};
  if(id==='plan')return {label:item.label,value:String(count),hint:count?'Нужно сделать · на устройстве':'Пока всё спокойно'};
  return {label:item.label,value:String(notes()),hint:'Сохранено на устройстве'};
 }
@@ -94,7 +89,7 @@ function renderHome(){
   button.type='button';button.dataset.homeWidget=id;
   button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть подробности');
   const label=create('span','home-widget-label',id==='money'?'Продано':data.label);
-  const value=create('strong','home-widget-value',id==='money'?moneyCompact(demo().revenue):data.value);
+  const value=create('strong','home-widget-value',id==='money'&&Number.isFinite(connectedMetrics()?.revenue)?moneyCompact(connectedMetrics().revenue):data.value);
   const arrow=create('span','home-widget-arrow');
   arrow.setAttribute('aria-hidden','true');
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -107,15 +102,14 @@ function renderConfigPreview(){
  const preview=$('homeWidgetsMiniPreview');
  if(!preview)return;
  preview.replaceChildren();
- // Fixed illustrative numbers; never fake actual sales or personal records.
- const examples={clients:'12',orders:'8',money:'48 тыс. ₽',plan:'3',notes:'5'};
+ // Use the same real values shown on the page; never inject example numbers.
  if(!selected.length){
   preview.append(create('p','manage-picture-example-empty','Ничего не выбрано. Добавьте карточку из списка ниже.'));
   return;
  }
  for(const id of selected){
   const tile=create('div','manage-picture-example-tile');
-  tile.append(create('span','',BY_ID[id].label),create('strong','',examples[id]));
+  tile.append(create('span','',BY_ID[id].label),create('strong','',info(id).value));
   preview.append(tile);
  }
 }
@@ -173,7 +167,7 @@ function rowsFor(id,datum){
 }
 function detail(id){
  if(!['clients','orders','money'].includes(id))return;
- const datum=demo(),copy={
+ const datum=connectedMetrics(),copy={
   clients:['Клиенты','Кто обращается и сколько заказов получилось'],
   orders:['Заказы','Что удалось продать за период'],
   money:['Деньги','Как идут продажи и расходы']
@@ -183,6 +177,12 @@ function detail(id){
  $('homeWidgetDetailCopy').textContent='';
  $('homeWidgetDetailCopy').hidden=true;
  const root=$('homeWidgetDetailRows');root.replaceChildren();
+ if(!datum || !['leads','sales','revenue','cost'].every(key=>Number.isFinite(datum[key]))){
+  $('homeWidgetDetailCopy').hidden=false;
+  $('homeWidgetDetailCopy').textContent='Нет подтверждённых данных. Подключите рабочий источник, чтобы увидеть показатели.';
+  if(!details.open)details.showModal();
+  return;
+ }
  for(const [name,value] of rowsFor(id,datum)){
   const row=create('div','home-widget-detail-row');
   row.append(create('span','',name),create('strong','',value));root.append(row);
