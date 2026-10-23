@@ -191,10 +191,8 @@ window.addEventListener('seyveo:first-minute-ready',event=>{
  // Let the plasma finish its signature before the first question.
  setTimeout(()=>{
   if(active||document.hidden)return;
-  const owner=profile();
-  if(['start','pro','max'].includes(owner.focus)&&window.SEYVEO_BUSINESS_MAP){
-   window.SEYVEO_BUSINESS_MAP.open({firstLaunch:true,fromStart:true});return;
-  }
+  // All focus types get the same optional first useful action on Home.
+  // Never automatically open a second Business Map questionnaire after welcome.
   start(false);
  },650);
 });
