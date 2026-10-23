@@ -21,11 +21,17 @@ function later(callback,ms){
 }
 function cancel(){for(const id of timers)clearTimeout(id);timers=[]}
 function available(){return !home.hidden&&!document.hidden&&!location.hash&&!(document.querySelector('dialog[open]'))}
+function editing(){
+ const composer=$('ask');
+ const node=document.activeElement;
+ return !!(composer&&!composer.hidden)
+   ||!!(node&&/^(INPUT|TEXTAREA)$/.test(node.tagName||''));
+}
 function engaged(){
  const node=document.activeElement;
  const keyboardFocus=!!(node?.matches?.(':focus-visible')&&(space.contains(node)||dynamic.contains(node)));
  const mouse=!!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
- return keyboardFocus||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
+ return editing()||keyboardFocus||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
    ||document.querySelector('dialog[open]')!==null;
 }
 function focus(on){
@@ -198,6 +204,8 @@ function refresh(){
   if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
+ // Do not resize the sphere beneath a working mobile keyboard.
+ if(editing())return;
  const item=dueTask();
  if(item&&showTask(item))return;
  if(pending&&showExistingAdvice())return;
