@@ -1806,7 +1806,7 @@ function showWrittenReply(userText,assistantText){
   // A blocking dialog used to cover the sphere exactly when it reacted.
   // Answer in the existing status space, keeping the orb on screen at
   // its approved position. The complete answer remains scrollable here.
-  // Main-app demo keeps a readable continuous transcript, without separate message cards.
+  // Conversation keeps a readable continuous transcript, without separate message cards.
   // Local Ollama streaming uses its own bridge and is not modified here.
   const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
   turns.push({question:userText,answer:assistantText});
@@ -1841,7 +1841,7 @@ function showWrittenReply(userText,assistantText){
   },wasScrolled?360:60);
 }
 /* SEYVEO · one home voice. Pending decisions take precedence;
-   when the demo finishes, the greeting gives way to real local to-dos. */
+   keep status grounded in local owner actions and tasks. */
 function daypartGreeting(){
   const h=new Date().getHours();
   return h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';
@@ -1850,8 +1850,8 @@ function ownerDisplayName(){
   try{
     const profile=JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null');
     const name=typeof profile?.name==='string'?profile.name.trim().replace(/\s+/g,' ').slice(0,32):'';
-    return name||'Роман';
-  }catch{return 'Роман'}
+    return name||'';
+  }catch{return ''}
 }
 function chosenAssistantName(){
   try{
@@ -1911,11 +1911,11 @@ function syncHomeVoice(){
     subline='Решение принято. Показываю демонстрационное выполнение — реальные сервисы не изменены.';
   }else if(advice?.connectionFollowup){
     kicker=assistant+' · полезное подключение';
-    headline=name+', продолжим подключение?';
+    headline=name?name+', продолжим подключение?':'Продолжим подключение?';
     subline='С вашим разрешением смогу помогать с '+advice.resourceName+' и готовить решения на вашу проверку.';
   }else if(advice){
     kicker='Рекомендация · для вашего бизнеса';
-    headline=name+', есть один полезный шаг';
+    headline=name?name+', есть один полезный шаг':'Есть один полезный шаг';
     subline='Предложение по вашей Карте бизнеса, а не по данным подключённых сервисов.';
   }else if(story&&(demoReplayInProgress||!window.SEYVEO_BUSINESS_MAP?.getState?.())){
     kicker=story.kicker;
@@ -1923,15 +1923,15 @@ function syncHomeVoice(){
     subline=story.subtitle;
   }else if(brief.overdue){
     kicker='Ваш план · требует внимания';
-    headline=name+', есть дело с прошедшим сроком';
+    headline=name?name+', есть дело с прошедшим сроком':'Есть дело с прошедшим сроком';
     subline='«'+brief.first+'». Посмотрите личные дела, когда будет удобно.';
   }else if(brief.dueToday){
     kicker='Ваш план на сегодня';
-    headline=name+', на сегодня есть дело';
+    headline=name?name+', на сегодня есть дело':'На сегодня есть дело';
     subline='«'+brief.first+'». Остальные записи — в разделе «Дела».';
   }else{
     kicker=assistant+' · на связи';
-    headline=daypartGreeting()+', '+name;
+    headline=daypartGreeting()+(name?', '+name:'');
     subline=brief.count
       ?'У нас в планах '+brief.count+' дел. Я помогу с ними, когда скажете.'
       :'Сейчас всё спокойно. Я рядом, если понадоблюсь.';
