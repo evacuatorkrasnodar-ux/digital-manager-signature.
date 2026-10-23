@@ -174,30 +174,22 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview(force=false){
- if(!available())return false;
+function startPreview(){
+ if(!available()||editing())return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';
  try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
- tip.textContent='ПРЕДПРОСМОТР · вымышленные примеры, ничего не сохранено';
+ tip.textContent='ПРЕДПРОСМОТР · ВЫМЫШЛЕННЫЕ ПРИМЕРЫ';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
  hold(()=>{
-  space.classList.add('lm-condense');
-  // One important decision remains as a compact memory before disappearing.
-  tip.textContent='ПРИМЕР · важное остаётся доступным в своём разделе';
+  shrink();
+  hold(()=>disappear(),TIMING.quiet);
  },TIMING.bright+TIMING.open);
- hold(()=>{
-  space.classList.add('lm-disappear');
-  later(()=>{
-   if(mode!=='preview')return;
-   rest();
-  },TIMING.close);
- },TIMING.bright+TIMING.quiet+TIMING.open);
- if(caption)caption.textContent='Предпросмотр запущен. Примеры не влияют на ваши данные.';
+ if(caption)caption.textContent='Предпросмотр Living Surface запущен. Данные владельца не изменяются.';
  return true;
 }
 function dueTask(){
@@ -213,26 +205,22 @@ function showTask(item){
  if(quiet.has(id))return false;
  mode='task';key=id;
  dynamic.hidden=true;
- tiles.replaceChildren();
- const wrapper=create('button','lm-card lm-card--hero lm-card--real');
- wrapper.type='button';wrapper.setAttribute('aria-label','Открыть дело: '+item.title);
- const head=create('span','lm-card-head');
- const sign=create('span','lm-card-icon');sign.append(icon('task'));
- head.append(sign,create('span','lm-card-category',item.due? 'ВАШЕ ДЕЛО · '+item.due:'ВАШЕ ДЕЛО'));
- const content=create('span','lm-card-content');
- content.append(create('strong','lm-card-title',item.title),create('span','lm-card-desc','Срок наступил · открыть в «Делах»'));
- wrapper.append(head,content,create('span','lm-card-arrow','↗'));
- wrapper.addEventListener('click',()=>{$('navTasks')?.click()});
- tiles.append(wrapper);
+ const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
+ createSurface({
+  title:item.title,
+  body:'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
+  category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
+  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
+  detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
+ },[],true);
  tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
  space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
  focus(true);
  later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{space.classList.add('lm-condense');tip.textContent='Дело сохранено в «Делах»'},12000);
  hold(()=>{
-  space.classList.add('lm-disappear');quiet.add(id);
-  later(()=>{if(mode==='task')rest()},TIMING.close);
- },18000);
+  shrink();
+  hold(()=>disappear(),6000);
+ },12000);
  return true;
 }
 function showExistingAdvice(){
@@ -245,11 +233,10 @@ function showExistingAdvice(){
  dynamic.hidden=false;
  dynamic.classList.remove('lm-real-dim','lm-real-out');
  focus(true);
- hold(()=>{dynamic.classList.add('lm-real-dim')},11000);
  hold(()=>{
-  quiet.add(id);dynamic.classList.add('lm-real-out');
-  later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
- },17000);
+  dynamic.classList.add('lm-real-dim');
+  hold(()=>disappear(),6000);
+ },11000);
  return true;
 }
 function refresh(){
@@ -296,6 +283,22 @@ document.addEventListener('visibilitychange',()=>{
  else if(!document.hidden)scheduleRefresh();
 });
 window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});
+/* Real business recommendations remain actionable. Explain in place without
+ * launching a second modal and without overwriting their original approval logic. */
+dynamic.addEventListener('click',event=>{
+ const button=event.target.closest?.('#inspect');
+ if(!button||!dynamic.querySelector('[data-owner-advice]'))return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const card=dynamic.querySelector('[data-owner-advice]');
+ let reason=card.querySelector('.lm-real-reason');
+ if(!reason){
+  reason=create('p','lm-real-reason',card.querySelector('.card-tag')?.textContent||
+   'Предложение основано на данных, введённых в приложение.');
+  reason.hidden=true;card.append(reason);
+ }
+ reason.hidden=!reason.hidden;
+ button.textContent=reason.hidden?'Почему':'Скрыть';
+},true);
 replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
  $('navHome')?.click();
