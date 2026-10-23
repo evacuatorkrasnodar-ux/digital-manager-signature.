@@ -324,7 +324,9 @@ function paintAvatar(node,data){
  }
 }
 function paint(){
- for(const id of ['seyveoHeaderAvatar','seyveoOwnerAvatarPreview','seyveoAvatarHero']){
+ // The company emblem in the Home header is a permanent brand image.
+  // Personal portrait choices stay local to the owner preview and dialog.
+  for(const id of ['seyveoOwnerAvatarPreview','seyveoAvatarHero']){
   paintAvatar($(id),choice);
  }
  const selected=choice.kind==='photo'?['Фото','Ваше изображение']:
