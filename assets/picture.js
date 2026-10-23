@@ -24,7 +24,7 @@ function row(root,label,value,total,group,index){
  track.append(fill);r.append(head,track);root.append(r);
 }
 function businessData(){
- const source=window.SEYVEO_PULSE_DEMO;
+ const source=window.SEYVEO_PULSE_DEMO; // Returns no invented numbers.
  return source?.picture?.(period)||null;
 }
 function render(){
@@ -40,7 +40,21 @@ function render(){
  if(life)return;
  window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
  const result=businessData();
- if(!result)return;
+ if(!result){
+  const note=$('pictureLifeNote');
+  note.hidden=false;
+  note.textContent='Показатели появятся здесь после подключения ваших рабочих источников. Пока данные о продажах и расходах не получены.';
+  $('pictureBusinessCharts').hidden=true;
+  $('pictureQuickInsight').hidden=true;
+  $('pictureBars').replaceChildren();
+  $('pictureSources').replaceChildren();
+  $('pictureExpenses').replaceChildren();
+  $('pictureSummary').textContent='Пока нет подтверждённых показателей.';
+  $('pictureMoneyDifference').textContent='Данные о продажах и расходах не подключены.';
+  return;
+ }
+ $('pictureBusinessCharts').hidden=false;
+ $('pictureQuickInsight').hidden=false;
  const {total,trend,sources,costs}=result;
  document.querySelectorAll('[data-picture-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.picturePeriod===period)));
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
