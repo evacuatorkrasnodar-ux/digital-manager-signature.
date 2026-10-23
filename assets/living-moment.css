@@ -50,3 +50,6 @@
 #homePage .dynamic.lm-real-out{opacity:0;transform:translate3d(0,-10px,0);pointer-events:none}
 :root[data-theme=light] #seyveoLivingMoment .lm-card{background:linear-gradient(165deg,rgba(255,255,255,.9),rgba(250,252,255,.7));box-shadow:0 5px 20px rgba(25,40,55,.045)}
 @media(prefers-reduced-motion:reduce){#homePage #orbCluster,#homePage #stage,#homePage #orb,#seyveoLivingMoment,#seyveoLivingMoment .lm-card,#homePage .dynamic{transition:none!important;animation:none!important}}
+
+/* Full conversation owns the stage; Living Moment never competes with chat. */
+html.seyveo-conversation #seyveoLivingMoment{display:none!important}
