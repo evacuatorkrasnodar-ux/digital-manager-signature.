@@ -4,6 +4,8 @@
 #ask.prompt:not(.expanded) .composer-intent,
 #ask.prompt:not(.expanded) #hideInput{display:none!important}
 #ask.prompt:not(.expanded) .composer-compact{display:flex;gap:6px;align-items:center;margin-left:auto;flex:none}
+/* The compact communication surface is drawn in-place, not a second button capsule. */
+#ask.prompt:not(.expanded) .composer-compact .composer-icon{background:transparent!important;box-shadow:none!important;border:0!important}
 #ask.prompt:not(.expanded) #question{min-width:0;flex:1}
 #ask.expanded .composer-intent{width:100%;flex:0 0 auto}
 #ask .composer-modes{display:flex;align-items:center;gap:8px;padding:0;border:0;border-radius:0;background:transparent;}
