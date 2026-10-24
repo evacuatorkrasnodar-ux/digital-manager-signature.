@@ -110,3 +110,218 @@
  #seyveoCleanDetail .smc-detail-art svg{width:40px;height:40px}
  #seyveoCleanDetail .smc-section-intro p{font-size:12px}
 }
+
+
+/* SEYVEO Explain-first · inner Management pages, same design vocabulary.
+   Only visual presentation is altered: never reposition or replace actual controls. */
+#seyveoCleanDetail{
+ font-family:inherit;
+}
+#seyveoCleanDetail .seyveo-clean-title{
+ font-weight:470;font-size:24px;letter-spacing:-.038em;line-height:1.18;
+ margin:9px 0 20px;
+}
+#seyveoCleanDetail #seyveoCleanLegacy .seyveo-selected-group>.manage-card{
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ overflow:visible!important;background:transparent!important;
+}
+#seyveoCleanDetail .seyveo-selected-item>.seyveo-manage-fold-body{
+ margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-row,
+#seyveoCleanDetail .seyveo-selected-item>.manage-row,
+#seyveoCleanDetail .seyveo-selected-item>.seyveo-manage-fold-body>.manage-notification-check>summary{
+ display:flex;align-items:center;width:100%;
+ min-height:82px;gap:12px;padding:12px 5px 13px 2px;
+ border:0;border-radius:12px;background:transparent;
+ color:var(--text);text-align:left;box-shadow:none;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-row + .manage-row::before{
+ top:0;left:62px;right:5px;
+ background:var(--soft-line);
+}
+#seyveoCleanDetail .smc-nested-art{
+ display:grid;place-items:center;flex:0 0 55px;
+ width:55px;height:56px;color:var(--text);opacity:.85;
+}
+#seyveoCleanDetail .smc-nested-art svg{
+ display:block;width:48px;height:48px;fill:none;
+ stroke:currentColor;stroke-width:1.45;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-row .manage-text,
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-notification-check>summary .manage-text{
+ min-width:0;flex:1;display:flex;flex-direction:column;
+ gap:5px;padding:1px 0;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body .manage-text strong{
+ font-size:15px;font-weight:475;letter-spacing:-.02em;line-height:1.32;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body .manage-text small{
+ color:var(--secondary);font-size:12px;line-height:1.5;font-weight:400;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body .manage-chevron{
+ opacity:.35;flex:0 0 12px;width:12px;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body .manage-theme-value{
+ font-size:11px;color:var(--secondary);
+ max-width:29%;white-space:normal;text-align:right;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-notification-check{
+ background:transparent;border:0;border-top:1px solid var(--soft-line);
+ border-radius:0;box-shadow:none;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-notification-check>summary{
+ list-style:none;cursor:pointer;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-notification-check>summary::-webkit-details-marker{display:none}
+#seyveoCleanDetail .manage-notification-body{
+ padding:9px 9px 19px 67px;
+ border:0;border-radius:0;background:transparent;
+}
+#seyveoCleanDetail .manage-notification-body>p{
+ font-size:12px;line-height:1.55;color:var(--secondary);
+}
+#seyveoCleanDetail #calendarPushCheck{
+ display:inline-flex;align-items:center;min-height:44px;
+ border:0;background:none!important;box-shadow:none!important;
+ padding:7px 0;color:var(--text);font-size:13px;
+ text-decoration:underline;text-decoration-color:var(--soft-line);
+ text-underline-offset:5px;
+}
+#seyveoCleanDetail .seyveo-selected-item>.seyveo-manage-fold-body>.seyveo-manage-notice{
+ display:block!important;
+ margin:13px 0 0!important;padding:11px 6px 11px 14px!important;
+ border:0;border-left:1px solid var(--line);border-radius:0;
+ background:transparent!important;
+ color:var(--secondary);font-size:11.5px;line-height:1.55;
+}
+#seyveoCleanDetail .smc-explain-mode{
+ display:flex;gap:14px;align-items:flex-start;
+ padding:12px 0;border-bottom:1px solid var(--soft-line);
+}
+#seyveoCleanDetail .smc-explain-mode:last-child{border-bottom:0}
+#seyveoCleanDetail .smc-explain-mode>div{min-width:0;flex:1}
+#seyveoCleanDetail .smc-explain-mode strong{
+ display:block;font-size:16px;line-height:1.3;letter-spacing:-.02em;
+ font-weight:480!important;margin:4px 0 5px!important;
+}
+#seyveoCleanDetail .smc-explain-mode p{
+ margin:0 0 6px!important;padding:0!important;
+ font-size:12.5px;line-height:1.58;font-weight:400;
+ color:var(--secondary)!important;opacity:1!important;
+ background:transparent!important;border:0!important;
+}
+#seyveoCleanDetail .seyveo-mode-description{
+ padding:0!important;background:transparent!important;border:0!important;
+}
+#seyveoCleanDetail .smc-explain-mode .seyveo-manage-notice{
+ margin:0!important;padding:0!important;color:var(--secondary);
+ font-size:12.5px;line-height:1.6;border:0!important;
+ background:transparent!important;
+}
+#seyveoCleanDetail .seyveo-manage-fold-body>.manage-row:active{
+ background:color-mix(in srgb,var(--text) 6%,transparent);
+}
+#seyveoCleanDetail .seyveo-manage-fold-body :is(button,summary):focus-visible{
+ outline:1px solid var(--text);outline-offset:1px;
+}
+
+/* Appearance screen: real theme choices stay functional, but no thick selection cards. */
+#manageThemeScreen .manage-theme-head h2{
+ font-weight:470;font-size:25px;letter-spacing:-.037em;
+}
+#manageThemeScreen .manage-theme-intro{
+ font-size:13px;line-height:1.53;margin:0 0 17px;
+}
+#manageThemeScreen .manage-theme-list{
+ border:0!important;box-shadow:none!important;
+ border-radius:0!important;background:transparent!important;overflow:visible;
+}
+#manageThemeScreen .manage-theme-choice{
+ min-height:91px;gap:15px;padding:14px 3px;
+ border:0;background:transparent;border-radius:12px;
+}
+#manageThemeScreen .manage-theme-choice .manage-theme-swatch{
+ width:47px;height:47px;flex:0 0 47px;
+ border:1px solid var(--soft-line);box-shadow:none;
+}
+#manageThemeScreen .manage-theme-choice:not(:last-child)::after{
+ left:64px;right:3px;height:1px;
+}
+#manageThemeScreen .manage-theme-choice .manage-text{gap:5px}
+#manageThemeScreen .manage-theme-choice .manage-text strong{
+ font-weight:470;font-size:16px;letter-spacing:-.022em;
+}
+#manageThemeScreen .manage-theme-choice .manage-text small{
+ font-size:12px;line-height:1.45;color:var(--secondary);
+}
+#manageThemeScreen .manage-theme-check{font-size:14px}
+#manageThemeScreen .manage-theme-choice:active{
+ background:color-mix(in srgb,var(--text) 6%,transparent);
+}
+#manageThemeScreen .manage-theme-note{
+ border:0;background:transparent;box-shadow:none;
+ font-size:12px;line-height:1.5;color:var(--secondary);
+}
+
+/* Linked settings sheets: keep existing input, OAuth and dialog listeners intact. */
+#manageConnectionsDialog,#manageDataDialog,#manageRoadmapDialog{
+ font-family:inherit;
+}
+#manageConnectionsDialog>h2,#manageDataDialog>h2,#manageRoadmapDialog>h2{
+ display:flex;align-items:center;gap:13px;
+ font-size:21px;font-weight:470;letter-spacing:-.03em;
+ line-height:1.25;padding:0 40px 0 0;margin:0 0 10px;
+}
+.smc-dialog-art{
+ display:grid;place-items:center;flex:none;
+ width:47px;height:47px;opacity:.83;color:var(--text);
+}
+.smc-dialog-art svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:1.45}
+#manageConnectionsDialog>.manage-dialog-desc,
+#manageDataDialog>.manage-dialog-desc,
+#manageRoadmapDialog>.manage-dialog-desc{
+ font-size:12.5px;line-height:1.6;color:var(--secondary);margin:0 0 19px;
+}
+#manageDataDialog .manage-data-list{
+ background:transparent;border:0;border-radius:0;box-shadow:none;
+}
+#manageDataDialog .manage-data-item{
+ padding:12px 2px;border-bottom:1px solid var(--soft-line);
+}
+#manageDataDialog .manage-data-item strong{font-weight:480}
+#manageDataDialog .manage-dialog-note{
+ padding:11px 0;border-top:1px solid var(--soft-line);
+ font-size:11.5px!important;color:var(--secondary);
+}
+#manageConnectionsDialog .manage-dialog-note,
+#manageRoadmapDialog .manage-dialog-note{color:var(--secondary)}
+#manageConnectionsDialog .connection-coach{
+ border:0;box-shadow:none;
+}
+#manageConnectionsDialog :is(button,summary):focus-visible,
+#manageDataDialog :is(button,summary):focus-visible,
+#manageRoadmapDialog :is(button,summary):focus-visible{
+ outline:1px solid var(--text);outline-offset:2px;
+}
+#seyveoAccountDemo .seyveo-account-head h2{
+ font-size:23px;font-weight:480;letter-spacing:-.03em;
+ display:flex;align-items:center;gap:12px;
+}
+#seyveoAccountDemo .seyveo-subscription-card{
+ background:transparent;border:0;border-top:1px solid var(--soft-line);
+ border-radius:0;padding:17px 2px;box-shadow:none;
+}
+#seyveoAccountDemo .seyveo-subscription-card h3{
+ font-size:20px;font-weight:480;
+}
+@media(max-width:375px){
+ #seyveoCleanDetail .smc-nested-art{width:44px;flex-basis:44px;height:50px}
+ #seyveoCleanDetail .smc-nested-art svg{width:39px;height:39px}
+ #seyveoCleanDetail .seyveo-manage-fold-body>.manage-row{gap:10px;padding:12px 2px}
+ #seyveoCleanDetail .smc-explain-mode{gap:10px}
+ #seyveoCleanDetail .seyveo-manage-fold-body .manage-text small{font-size:11.5px}
+ #manageThemeScreen .manage-theme-choice{gap:11px}
+ #manageThemeScreen .manage-theme-choice .manage-theme-swatch{width:41px;height:41px;flex-basis:41px}
+}
