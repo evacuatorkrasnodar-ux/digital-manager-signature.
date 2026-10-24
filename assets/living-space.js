@@ -81,11 +81,12 @@ function presentDirector(){
    if(originalAssistantTitle===null)assistantButton.removeAttribute('title');
    else assistantButton.setAttribute('title',originalAssistantTitle);
   }
+  root.removeAttribute('data-sv-living-scene');
   lastDirectorScreen='home';lastDirectorText='';
   return;
  }
  const scene=readDirector(currentScreen);
- const target=document.querySelector(voiceTargets[scene.context]||'');
+ const target=voiceTargets[scene.context]?document.querySelector(voiceTargets[scene.context]):null;
  if(target&&scene.line&&target.textContent!==scene.line){
   target.textContent=scene.line;
   target.classList.add('sv-living-director-copy');
