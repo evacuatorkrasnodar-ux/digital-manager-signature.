@@ -19,9 +19,9 @@ for(const [label,svg] of [['dark',dark],['light',light]]){
 assert.match(dark,/<stop stop-color="#202b3f"\/>/,'Original dark graphite restored');
 assert.match(light,/<stop stop-color="#f8faff"\/>/,'Original White Velvet pearl body restored');
 assert.doesNotMatch(light,/pearl-core|#253246|#51637b|#859bb1/,'No artificial smoky inner core');
-assert.ok(light.includes('<stop offset=".36" stop-color="#7f93ab" stop-opacity=".44"/>'),'Original transparent filaments');
-assert.ok(light.includes('<stop offset=".13" stop-color="#fdfdff" stop-opacity=".39"/>'),'Original soft silk');
+assert.ok(light.includes('<stop offset=".36" stop-color="#e9f0fa" stop-opacity=".26"/>'),'Approved translucent light-theme filaments');
+assert.ok(light.includes('<stop offset=".13" stop-color="#7890aa" stop-opacity=".24"/>'),'Approved light-theme silk');
 assert.equal((light.match(/<circle cx="260" cy="250"/g)||[]).length,4,'Original clip path, body, edgewash and rim only');
 assert.equal(html.split('plasma-signature.svg?v=18').length-1,2,'Dark asset version linked in HTML and theme handler');
-assert.equal(html.split('plasma-signature-light.svg?v=21').length-1,1,'Light asset version linked in theme handler');
+assert.equal(html.split('plasma-signature-light.svg?v=22').length-1,1,'Light asset version linked in theme handler');
 console.log('PASS SEYVEO original silver sphere and both themes');
