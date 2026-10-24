@@ -24,7 +24,6 @@ const back=$('sayviMusicBack');
 const importBtn=$('sayviMusicImport');
 const options=$('sayviMusicProviders');
 const providerText=$('sayviMusicProviderText');
-const notice=$('sayviMusicNotice');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn||!back)return;
 const safeName=file=>String(file?.name||'Без названия').replace(/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i,'');
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
@@ -47,7 +46,7 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0,activeProvider=null;
+let tracks=[],index=-1,url=null,selectVersion=0;
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -169,7 +168,6 @@ function ingest(list){
 }
 function providerChoose(name){
  const p=providers[name];if(!p)return;
- activeProvider=name;
  providerText.hidden=false;
  providerText.replaceChildren();
  const lead=document.createElement('strong');lead.textContent=p.name;
@@ -218,6 +216,12 @@ audio.addEventListener('ended',()=>{if(tracks.length>1)switchTrack(index+1,true)
 audio.addEventListener('error',()=>{updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 window.addEventListener('pagehide',()=>{
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
+});
+// Safari may return from back-forward cache after the ephemeral URL was revoked.
+// Restore the selection WITHOUT starting playback or asking for permissions.
+window.addEventListener('pageshow',event=>{
+ if(event.persisted&&tracks.length&&index>=0&&!audio.getAttribute('src'))
+  switchTrack(index,false);
 });
 $('openSeyveoMusicPreview')?.addEventListener('click',open);
 $('sayviMusicFromComposer')?.addEventListener('click',()=>{
