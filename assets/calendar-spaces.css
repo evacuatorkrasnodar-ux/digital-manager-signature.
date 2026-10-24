@@ -17,7 +17,7 @@
 .cal-space-dialog>p{margin:0 35px 15px 0;color:var(--secondary);font-size:12px;line-height:1.5}
 .cal-space-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .cal-space-toolbar small{color:var(--secondary);font-size:10.5px;line-height:1.4}
-.cal-space-toolbar button{padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:11px;font-weight:600;min-height:38px}
+.cal-space-toolbar button{padding:9px 4px;border-radius:0;border:0;background:transparent;color:var(--text);font-size:11px;font-weight:490;min-height:44px}
 .cal-space-list{display:flex;flex-direction:column;border:0;border-radius:0;overflow:hidden;background:transparent;}
 .calendar-space-record{display:flex;align-items:center;gap:10px;min-height:58px;width:100%;border:0;color:var(--text);background:transparent;text-align:left;padding:10px 13px}
 .calendar-space-record+.calendar-space-record{border-top:1px solid var(--soft-line)}
@@ -149,7 +149,7 @@
 @media(max-width:370px){
  #calendarHealthOverview .cal-health-tiles{gap:6px}
  #calendarHealthOverview .cal-health-tile{
-  border-radius:19px;padding:13px 10px 11px;min-height:132px;
+  border-radius:0;padding:10px 8px;min-height:99px;
  }
  #calendarHealthOverview .cal-health-emblem{width:32px;height:32px;top:9px;right:8px}
  #calendarHealthOverview .cal-health-tile-label{font-size:11px}
@@ -287,8 +287,8 @@
 }
 #calendarSpaceDialog[data-space=world] #calendarSpaceClose{display:none}
 @media(max-width:370px){
- #calendarSpaceDialog .world-people{padding:10px 11px 2px;border-radius:17px}
- #calendarSpaceDialog .world-connection-state{padding:10px 11px 2px;border-radius:17px}
+ #calendarSpaceDialog .world-people{padding:5px 0 0;border-radius:0}
+ #calendarSpaceDialog .world-connection-state{padding:5px 0 0;border-radius:0}
  #calendarSpaceDialog .world-hub-heading h3{font-size:13.5px}
  #calendarSpaceDialog .world-connection-state strong{font-size:11px}
  #calendarSpaceDialog .world-connection-state small{font-size:9.7px}
