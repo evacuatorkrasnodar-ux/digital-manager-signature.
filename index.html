@@ -2147,6 +2147,16 @@ function processRequest(){
  }finally{if(queued)activity.finish()}
 }
 function executeRequest(){
+const callTarget=window.SEYVEO_CONTACTS?.understand?.(q);
+if(callTarget){
+ const call=window.SEYVEO_CONTACTS.requestCall(callTarget);
+ if(call){
+  playFeedback('confirm');
+  question.value='';syncComposer();closeComposer();
+  window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:call.message,kind:'contact-call'});
+  return;
+ }
+}
 const houseAction=window.SEYVEO_SMART_HOME?.handle(q);
 if(houseAction){
  playFeedback('confirm');
@@ -2871,6 +2881,15 @@ function handleSpokenAssistant(raw){
  if(window.SEYVEO_DISCREET_MODE===true &&
   /(?:^|\s)(?:открой|покажи)\s+(?:мой мир|личное пространство)(?:[\s,.!?]|$)/i.test(phrase)){
   speakNeutralAside();return;
+ }
+ const callTarget=window.SEYVEO_CONTACTS?.understand?.(phrase);
+ if(callTarget){
+  const call=window.SEYVEO_CONTACTS.requestCall(callTarget);
+  if(call){
+   window.SEYVEO_CHAT_HISTORY?.add({question:phrase,answer:call.message,kind:'contact-call'});
+   speakAssistantReply(call.message);
+   return;
+  }
  }
  const houseAction=window.SEYVEO_SMART_HOME?.handle(phrase);
  if(houseAction){
