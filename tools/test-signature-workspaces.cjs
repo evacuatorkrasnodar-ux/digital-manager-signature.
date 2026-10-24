@@ -25,7 +25,7 @@ assert.match(tasks,/if\(!window\.confirm\('Удалить дело/,'Deletion st
 assert.doesNotMatch(tasks,/personal-task-delete|seyveo-close-glyph/,'No X-shaped delete controls');
 assert.match(taskCss,/#tasksPage \.personal-task-art/);
 assert.match(taskCss,/#tasksPage \.personal-task-menu\[hidden\]/);
-assert.match(contextCss,/#tasksPage \.tasks-context-open svg/);
+assert.match(contextCss,/#tasksPage \.tasks-context-art svg/);
 assert.match(calendar,/btn\.dataset\.calendarCall=callTarget/);
 assert.match(calendar,/CustomEvent\('seyveo:call-request',\{detail:\{target:name\}\}\)/);
 assert.match(calendar,/else routeTask\(entry\.dataset\.calendarTask\)/,'Ordinary tasks keep navigation');

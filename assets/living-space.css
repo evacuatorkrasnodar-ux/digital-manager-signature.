@@ -432,6 +432,8 @@ html.sv-space-active #managePage .seyveo-clean-back{
 /* NOTEBOOK, CARE AND DOCUMENTS — remain accessible real editors, not
    a duplicate dock of pill buttons over private content. */
 :is(#notesDialog,#calendarSpaceDialog,#noteReadDialog,#noteReviewDialog,#noteModeDialog,
+    .paper-editor-dialog,.paper-choice-dialog,.personal-call-dialog,.personal-contacts-dialog,
+    #personalTaskDialog,#calendarEventDialog,
     #manageConnectionsDialog,#manageRoadmapDialog,#manageDataDialog)[open]{
  background:var(--bg);box-shadow:0 28px 75px rgba(0,0,0,.38);
 }
@@ -522,4 +524,36 @@ html.sv-space-active #sayviMusicPage button.sv-music-intent{
 :is(#lifePage,#tasksPage,#calendarPage,#picturePage,#managePage)
  :is(button,a[href],summary):focus-visible{
  outline:2px solid var(--text);outline-offset:3px;
+}
+
+/* The source of a note is its own living object; a real editor stays readable. */
+#noteModeDialog .paper-choice-list,
+.paper-choice-dialog .paper-choice-list,
+#notesDialog .notes-list{border:0;background:transparent;box-shadow:none}
+.paper-choice-dialog .paper-choice-item,
+#notesDialog .note-item{border-radius:0;background:transparent;box-shadow:none}
+.paper-choice-dialog .paper-choice-item+.paper-choice-item{
+ border-top:1px solid var(--soft-line);
+}
+#manageRoadmapDialog .manage-roadmap-group{
+ border:0;border-top:1px solid var(--soft-line);
+}
+#manageRoadmapDialog .manage-roadmap-group-head{
+ border:0;border-radius:0;background:transparent;
+}
+/* The real contact picker is one calm disclosure, not a second grey app. */
+.personal-call-dialog .personal-call-list,
+.personal-contacts-dialog .personal-contacts-list{
+ background:transparent;border-radius:0;box-shadow:none;
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes sv-dialog-appear{
+  from{opacity:.35;transform:translate3d(0,9px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+ :is(#notesDialog,#calendarSpaceDialog,#noteReadDialog,#noteReviewDialog,#noteModeDialog,
+     .paper-editor-dialog,.paper-choice-dialog,.personal-call-dialog,.personal-contacts-dialog,
+     #personalTaskDialog,#calendarEventDialog,#manageRoadmapDialog)[open]{
+  animation:sv-dialog-appear .3s cubic-bezier(.22,1,.36,1) both;
+ }
 }
