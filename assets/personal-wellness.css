@@ -62,7 +62,8 @@
  -webkit-appearance:none;appearance:none;touch-action:manipulation
 }
 #calendarPersonalTools button.pw-primary{
- background:var(--text);color:var(--bg);border-color:var(--text)
+ background:transparent;color:var(--text);border-color:transparent;
+ text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:6px
 }
 #calendarPersonalTools button:disabled{opacity:.46;cursor:default}
 #calendarPersonalTools .pw-caption{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
@@ -73,9 +74,9 @@
 }
 #calendarPersonalTools .pw-inline :is(input,select),#calendarPersonalTools .pw-form input{
  display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;
- padding:10px 14px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;
- border:1px solid var(--line);border-radius:16px;
- background:var(--card2);color:var(--text);
+ padding:10px 3px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;
+ border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
+ background:transparent;color:var(--text);
  color-scheme:inherit;text-align:left
 }
 #calendarPersonalTools .pw-inline button{flex:none}
@@ -87,8 +88,8 @@
 }
 #calendarPersonalTools .pw-time-field input[type=time]{
  display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;
- padding:9px 12px;border:1px solid var(--line);border-radius:16px;
- background:var(--card2);color:var(--text);font:inherit;font-size:16px;
+ padding:9px 3px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
+ background:transparent;color:var(--text);font:inherit;font-size:16px;
  font-weight:500;letter-spacing:-.012em;font-variant-numeric:tabular-nums;
  text-align:left;-webkit-appearance:auto;appearance:auto;touch-action:manipulation;
  color-scheme:dark
@@ -343,20 +344,21 @@
 #calendarPersonalTools .pw-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:14px 0 5px}
 #calendarPersonalTools .pw-week-item{min-width:0;display:grid;gap:6px;justify-items:center;text-align:center;font-size:11px;font-variant-numeric:tabular-nums}
 #calendarPersonalTools .pw-week-item small{font-size:9.5px;color:var(--secondary)}
-#calendarPersonalTools .pw-form{display:grid;gap:10px;margin:12px 0}
+#calendarPersonalTools .pw-form{display:grid;gap:13px;margin:13px 0}
 #calendarPersonalTools .pw-form>label{display:grid;gap:6px;font-size:11px;color:var(--secondary)}
 #calendarPersonalTools .pw-form>button{justify-self:start}
-#calendarPersonalTools .pw-list{display:grid;gap:7px;margin:14px 0 5px}
+#calendarPersonalTools .pw-list{display:grid;gap:0;margin:14px 0 5px}
 #calendarPersonalTools .pw-list-row{
- display:flex;gap:9px;align-items:center;justify-content:space-between;border:0;background:transparent;border-radius:0;padding:8px 2px;min-width:0
+ display:flex;gap:9px;align-items:center;justify-content:space-between;border:0;border-bottom:1px solid var(--soft-line);background:transparent;border-radius:0;padding:11px 2px;min-width:0
 }
 #calendarPersonalTools .pw-list-row>div:first-child{display:grid;gap:4px;min-width:0}
 #calendarPersonalTools .pw-list-row strong{font-size:12px;font-weight:555;line-height:1.35;overflow-wrap:anywhere}
 #calendarPersonalTools .pw-list-row small{font-size:10.5px;color:var(--secondary);overflow-wrap:anywhere}
 #calendarPersonalTools .pw-list-row button{min-height:38px;padding:8px 11px;font-size:10.5px}
 #calendarPersonalTools .pw-list-row .pw-taken[aria-pressed=true]{
- border-color:color-mix(in srgb,var(--text) 35%,var(--line));
- background:var(--card);color:var(--text)
+ border-color:transparent;
+ background:transparent;color:var(--text);
+ text-decoration:underline;text-underline-offset:5px
 }
 #calendarPersonalTools .pw-row-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 #calendarPersonalTools .pw-empty{font-size:11.5px;color:var(--secondary);margin:9px 0}
@@ -366,12 +368,12 @@
 #calendarSpaceDialog:is([data-care-focus=true],[data-health-focus=true]) #calendarPersonalTools{margin-bottom:0}
 #calendarSpaceDialog #calendarSpaceJournal{display:block}
 #calendarSpaceDialog #calendarSpaceJournal>summary{display:none}
-#calendarSpaceDialog[data-space=care] #calendarSpaceJournal{border:1px solid var(--soft-line);border-radius:17px;padding:0;margin:0 0 11px;background:var(--card)}
+#calendarSpaceDialog[data-space=care] #calendarSpaceJournal{border:0;border-top:1px solid var(--soft-line);border-radius:0;padding:0;margin:9px 0 11px;background:transparent}
 #calendarSpaceDialog[data-space=care] #calendarSpaceJournal>summary{
- display:list-item;margin:0;padding:14px 13px;font-size:12px;line-height:1.35;font-weight:555;cursor:pointer;list-style-position:inside
+ display:list-item;margin:0;padding:13px 2px;font-size:12px;line-height:1.35;font-weight:520;cursor:pointer;list-style-position:inside
 }
 #calendarSpaceDialog[data-space=care] #calendarSpaceJournal[open]>summary{border-bottom:1px solid var(--soft-line)}
-#calendarSpaceDialog[data-space=care] .pw-journal-body{padding:12px}
+#calendarSpaceDialog[data-space=care] .pw-journal-body{padding:11px 2px}
 #calendarSpaceDialog[data-space=care] .pw-journal-body .cal-space-toolbar{margin-top:0}
 #calendarSpaceDialog[data-space=care] .pw-journal-body .cal-space-list{margin-bottom:0}
 @media(max-width:370px){
@@ -390,7 +392,7 @@
 }
 :root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#dbe3edcf 30%,#c5d0df52 64%,#c2cedb12)}
 
-#calendarPersonalTools .pw-cycle-privacy{margin:15px 0 0;padding:11px 12px;border:1px solid var(--soft-line);border-radius:15px}
+#calendarPersonalTools .pw-cycle-privacy{margin:15px 0 0;padding:11px 2px;border:0;border-top:1px solid var(--soft-line);border-radius:0}
 #calendarPersonalTools .pw-cycle-privacy summary{cursor:pointer;font-size:11px;color:var(--secondary);font-weight:530}
 #calendarPersonalTools .pw-cycle-privacy p{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
 #calendarPersonalTools .pw-cycle-privacy .pw-actions{justify-content:flex-start;margin-bottom:0}
