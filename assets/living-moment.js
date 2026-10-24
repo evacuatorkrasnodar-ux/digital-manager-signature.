@@ -180,9 +180,9 @@ function createSurface(primary,other=[],real=false){
    mark.append(icon(item.kind));
    const words=create('span','lm-inline-copy');
    words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
-   const arrow=create('span','lm-inline-arrow','↗');
-   arrow.setAttribute('aria-hidden','true');
-   row.append(mark,words,arrow);
+   // The whole row is the action. No decorative arrow: the artwork and
+   // title already make it recognizable, as in SEYVEO Quiet Actions.
+   row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+20000;
     openDestination(item.kind);
