@@ -1,4 +1,4 @@
-/* SEYVEO Living Answers v1 · one cinema, no browser chrome or second sphere. */
+/* SEYVEO Living Answers v2 · one cinema, interactive ink, in-app source lens. */
 #sayviAnswerPage[hidden],#sayviAnswerFollowup[hidden]{display:none!important}
 #sayviAnswerPage{flex:1;min-width:0;display:flex;flex-direction:column;padding:4px 0 34px;color:var(--text)}
 #sayviAnswerPage .sa-back{
@@ -22,9 +22,9 @@
 #sayviAnswerPage .sa-intro{font-size:13px;line-height:1.65;color:var(--secondary);max-width:42ch;margin:0 0 17px}
 #sayviAnswerPage .sa-media{
  position:relative;display:flex;flex-direction:column;justify-content:center;
- min-width:0;min-height:195px;margin:0 0 15px;border-radius:21px;
- overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.055),transparent 65%),var(--card2);
- border:1px solid var(--soft-line);
+ min-width:0;min-height:195px;margin:0 0 15px;border-radius:15px;
+ overflow:hidden;background:transparent;
+ border:0;box-shadow:none;
 }
 #sayviAnswerPage .sa-media-image{
  display:block;width:100%;height:auto;max-height:min(42dvh,360px);object-fit:contain;
@@ -32,23 +32,49 @@
 }
 #sayviAnswerPage .sa-media--zoom .sa-media-image{max-height:65dvh;transform:scale(1.04)}
 #sayviAnswerPage .sa-media-fallback{padding:24px;color:var(--secondary);font-size:12px;line-height:1.5}
-#sayviAnswerPage .sa-credit{
- display:block;align-self:flex-start;font-size:9.5px;
- line-height:1.5;color:var(--secondary);padding:9px 12px 0;text-decoration:none;
+#sayviAnswerPage button.sa-credit{
+ align-self:flex-start;
+ width:auto;min-height:38px;
+ font-size:10px;line-height:1.5;color:var(--secondary);
+ padding:5px 0 0;letter-spacing:0;
+ text-decoration:none;text-align:left;
 }
-#sayviAnswerPage .sa-intent,#sayviAnswerPage .sa-media .sa-intent{
- min-height:44px;padding:8px 4px;border:0;background:transparent;color:var(--text);
- font:inherit;font-size:12.5px;font-weight:500;letter-spacing:-.01em;
- cursor:pointer;text-align:left;text-underline-offset:5px;
- text-decoration:underline;text-decoration-thickness:1px;
- text-decoration-color:rgba(230,234,240,.22);
+#sayviAnswerPage button.sa-credit::before{
+ content:"↗";display:inline-block;margin-right:7px;opacity:.63;
+}
+/* Intent ink: these are phrases authored by Sayvi, not raised buttons. */
+#sayviAnswerPage button.sa-intent{
+ -webkit-appearance:none;appearance:none;
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ align-self:auto;
+ width:auto;min-width:0;max-width:100%;
+ flex:none;min-height:44px;
+ margin:0;padding:9px 1px;
+ border:0;border-radius:0;background:none;box-shadow:none;
+ color:var(--text);
+ font-family:inherit;font-size:13px;line-height:1.5;
+ font-weight:455;letter-spacing:-.012em;
+ cursor:pointer;text-align:left;
+ text-decoration:underline;text-underline-offset:6px;
+ text-decoration-thickness:1px;text-decoration-skip-ink:auto;
+ text-decoration-color:rgba(230,234,240,.29);
  -webkit-tap-highlight-color:transparent;
- transition:opacity 220ms ease,transform 270ms ease,color 270ms ease;
+ transition:opacity 240ms ease,transform 340ms cubic-bezier(.22,1,.36,1),
+    text-decoration-color 240ms ease;
 }
-#sayviAnswerPage .sa-media .sa-intent{align-self:flex-end;padding-right:14px;font-size:11px;color:var(--secondary)}
+#sayviAnswerPage button.sa-intent:hover{
+ text-decoration-color:currentColor;
+}
+#sayviAnswerPage .sa-media button.sa-intent--zoom{
+ align-self:flex-end;margin-right:2px;
+ font-size:11px;font-weight:425;
+ color:var(--secondary);
+}
+#sayviAnswerPage button.sa-intent--source-link{
+ font-size:11.5px;color:var(--text);
+}
 #sayviAnswerPage .sa-intent:active{transform:translate3d(0,1px,0);opacity:.74}
-#sayviAnswerPage .sa-intent:focus-visible,#sayviAnswerPage .sa-back:focus-visible,
-#sayviAnswerPage a:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:8px}
+#sayviAnswerPage button.sa-intent:focus-visible,#sayviAnswerPage .sa-back:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:8px}
 #sayviAnswerPage .sa-summary{font-size:14px;line-height:1.62;color:var(--text);font-weight:440;margin:15px 2px 20px}
 #sayviAnswerPage .sa-facts{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
@@ -70,24 +96,78 @@
 #sayviAnswerPage .sa-followup p{font-size:13px;line-height:1.65;color:var(--secondary);margin:0}
 #sayviAnswerPage .sa-followup .sa-intent{margin-top:11px;display:inline-block}
 #sayviAnswerPage .sa-sources{font-size:10px;color:var(--secondary);line-height:1.6;border-top:1px solid var(--soft-line);padding-top:12px;margin-top:20px}
-#sayviAnswerPage .sa-sources a{color:var(--text);text-decoration:underline;text-underline-offset:3px}
+#sayviAnswerPage .sa-sources button.sa-intent{
+ min-height:40px;padding:4px 0;
+ font-size:11.5px;font-weight:480;
+ color:var(--text);
+}
 #sayviAnswerPage .sa-sources p{margin:5px 0 0}
-#sayviAnswerPage .sa-intent--topic{
- display:grid;grid-template-columns:88px minmax(0,1fr) auto;
- gap:13px;align-items:center;text-decoration:none;width:100%;
+#sayviAnswerPage button.sa-intent--topic{
+ display:grid;grid-template-columns:82px minmax(0,1fr) auto;
+ gap:14px;align-items:center;
+ text-decoration:none;width:100%;
+ background:none;box-shadow:none;border:0;
  border-top:1px solid var(--soft-line);border-radius:0;
- padding:14px 0;min-height:88px;
+ padding:13px 0;min-height:86px;
 }
 #sayviAnswerPage .sa-media--compact{
- width:88px;min-height:61px;max-height:61px;margin:0;border-radius:12px;
+ width:82px;min-height:61px;max-height:61px;margin:0;border-radius:8px;
+ border:0;background:transparent;box-shadow:none;
  overflow:hidden;pointer-events:none;
 }
-#sayviAnswerPage .sa-media--compact .sa-media-image{height:61px;width:88px;object-fit:cover}
-#sayviAnswerPage .sa-topic-copy{font-size:14px;line-height:1.38;font-weight:470;letter-spacing:-.015em;text-decoration:none}
+#sayviAnswerPage .sa-media--compact .sa-media-image{height:61px;width:82px;object-fit:cover}
+#sayviAnswerPage .sa-topic-copy{font-size:14px;line-height:1.38;font-weight:465;letter-spacing:-.017em;
+ text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;
+ text-decoration-color:rgba(230,234,240,.25)}
 #sayviAnswerPage .sa-topic-arrow{font-size:20px;opacity:.46;text-decoration:none}
 #sayviAnswerPage .sa-endnote{color:var(--secondary);font-size:10.5px;line-height:1.58;padding-top:10px}
-:root[data-theme=light] #sayviAnswerPage .sa-media{background:#edf0f4;border-color:rgba(50,62,81,.12)}
-:root[data-theme=light] #sayviAnswerPage .sa-intent{text-decoration-color:rgba(56,69,85,.2)}
+:root[data-theme=light] #sayviAnswerPage .sa-media{background:transparent;border-color:transparent}
+:root[data-theme=light] #sayviAnswerPage button.sa-intent,
+:root[data-theme=light] #sayviAnswerPage .sa-topic-copy{text-decoration-color:rgba(56,69,85,.25)}
+/* Source Lens — information is restyled, not an embedded foreign webpage. */
+#sayviAnswerPage .sa-source-reader{min-width:0;padding:8px 5px 28px}
+#sayviAnswerPage .sa-source-reader-top{margin-bottom:22px}
+#sayviAnswerPage .sa-source-provenance{
+ display:flex;flex-direction:column;gap:8px;
+ margin:12px 0 24px;padding:14px 0;
+ border-top:1px solid var(--soft-line);
+ border-bottom:1px solid var(--soft-line);
+}
+#sayviAnswerPage .sa-source-provenance strong{
+ font-size:16px;line-height:1.35;font-weight:480;
+ letter-spacing:-.018em;color:var(--text);
+}
+#sayviAnswerPage .sa-source-location{
+ margin:0;overflow-wrap:anywhere;
+ font-size:10px;line-height:1.55;color:var(--secondary);
+}
+#sayviAnswerPage .sa-reader-heading{
+ margin:5px 0 10px;font-size:20px;line-height:1.35;
+ font-weight:465;letter-spacing:-.028em;
+}
+#sayviAnswerPage .sa-source-explanation{
+ color:var(--secondary);font-size:12.5px;
+ line-height:1.65;margin:0 0 16px;
+}
+#sayviAnswerPage .sa-reader-truth{
+ padding:13px 0 0;margin:18px 0 8px;
+ border-top:1px solid var(--soft-line);
+ color:var(--secondary);font-size:10.5px;line-height:1.6;
+}
+#sayviAnswerPage .sa-reader-media{
+ min-height:150px;max-height:52dvh;
+ width:100%;margin-bottom:15px;border:0;
+ background:transparent;
+}
+#sayviAnswerPage .sa-reader-media .sa-media-image{
+ max-height:48dvh;object-fit:contain;height:auto;width:100%;
+}
+#sayviAnswerPage button.sa-intent--reader-back{
+ margin-top:4px;font-size:13px;font-weight:485;
+}
+#sayviAnswerPage button.sa-intent--reader-back::before{
+ content:"‹";margin-right:10px;font-size:20px;opacity:.6;
+}
 @media(max-width:375px){
  #sayviAnswerPage .sa-facts{gap:8px}
  #sayviAnswerPage .sa-fact strong{font-size:13px}
