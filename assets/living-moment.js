@@ -399,21 +399,26 @@ document.addEventListener('visibilitychange',()=>{
 window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});
 /* Real business recommendations remain actionable. Explain in place without
  * launching a second modal and without overwriting their original approval logic. */
+/* Director's flow for real recommendations:
+ * first Подробнее, then show the ORIGINAL permitted action. */
 dynamic.addEventListener('click',event=>{
  const button=event.target.closest?.('#inspect');
- if(!button||!dynamic.querySelector('[data-owner-advice]'))return;
- event.preventDefault();event.stopImmediatePropagation();
+ if(!button)return;
  const card=dynamic.querySelector('[data-owner-advice]');
- let reason=card.querySelector('.lm-real-reason');
- if(!reason){
-  reason=create('p','lm-real-reason',
-   'Основание: '+(card.querySelector('.card-tag')?.textContent||
-   'сведения, которые вы внесли в приложение.')+
-   ' Это предложение, а не действие, выполненное без вашего согласия.');
-  reason.hidden=true;card.append(reason);
- }
- reason.hidden=!reason.hidden;
- button.textContent=reason.hidden?'Почему':'Скрыть';
+ if(!card)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const reason=create('p','lm-real-reason',
+  card.dataset.explanation||card.querySelector('.card-tag')?.textContent||
+  'Рекомендация основана на данных, предоставленных владельцем.');
+ card.append(reason);
+ button.setAttribute('aria-expanded','true');
+ button.hidden=true;
+ const action=card.querySelector('#resolve');
+ if(action)action.hidden=false;
+ const postpone=card.querySelector('#postponeConnection');
+ if(postpone)postpone.hidden=false;
+ card.classList.add('lm-real-expanded');
+ readingUntil=Date.now()+45000;
 },true);
 replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
