@@ -19,7 +19,9 @@ test('new training dataset contains 18 three-turn situations with alternating ro
   assert.equal(scenario.messages.length,6);
   for(let i=0;i<6;i++){
    assert.equal(scenario.messages[i].role,i%2?'assistant':'user');
-   assert.ok(typeof scenario.messages[i].content==='string'&&scenario.messages[i].content.length>8);
+   // Brief user corrections like «В 16:30.» are valid turns, not corrupt data.
+   assert.ok(typeof scenario.messages[i].content==='string'&&
+    scenario.messages[i].content.trim().length>(i%2?8:1));
   }
  }
  assert.ok(keys.has('code-no-fake-commit'));

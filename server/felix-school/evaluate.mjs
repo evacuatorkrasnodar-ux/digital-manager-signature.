@@ -44,7 +44,7 @@ export function validateCases(data){
    throw Error('Invalid forbidden patterns.');
   for(const pattern of [...item.patterns,...(item.mustNot||[])]){
    if(typeof pattern!=='string'||pattern.length>130)throw Error('Invalid pattern.');
-   new RegExp(pattern,'iu');
+   try{new RegExp(pattern,'iu')}catch{throw Error('Invalid pattern.');}
   }
   seen.add(item.id);
  }
