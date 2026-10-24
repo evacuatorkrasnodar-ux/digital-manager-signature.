@@ -216,6 +216,16 @@ function renderCallList(){
   button.append(element('strong','',c.name),element('small','',c.phone));target.append(button);
  }
 }
+function showCallChoices(show){
+ const inputGroup=$('seyveoCallSearchGroup'),listGroup=$('seyveoCallList'),switchBtn=$('seyveoCallChooseOther');
+ if(inputGroup)inputGroup.hidden=!show;
+ if(listGroup)listGroup.hidden=!show;
+ if(switchBtn){
+  switchBtn.hidden=!chosenContact;
+  switchBtn.setAttribute('aria-expanded',String(show));
+  switchBtn.textContent=show?'Скрыть контакты':'Другой контакт';
+ }
+}
 function chooseCallContact(id){
  const entry=readContacts().find(c=>c.id===id);
  chosenContact=entry?.id||'';
@@ -242,6 +252,7 @@ function openCall(targetName){
  chooseCallContact(matches.length===1?matches[0].id:'');
  if(matches.length>1)callStatus.textContent='Нашла несколько возможных контактов. Выберите, кому звонить.';
  else if(!matches.length)callStatus.textContent='Не нашла номер в «Моём мире». Выберите человека или добавьте контакт.';
+ showCallChoices(matches.length!==1);
 }
 function requestCall(target){
  const person=cleanName(target);
@@ -282,6 +293,7 @@ window.addEventListener('seyveo:contact-call',event=>{
  if(!entry)return;
  openCall(entry.name);
  chooseCallContact(entry.id);
+ showCallChoices(false);
  $('seyveoCallTitle').textContent='Позвонить · '+entry.name;
 });
 function contactsChanged(){
@@ -331,7 +343,16 @@ $('seyveoContactsList').addEventListener('click',event=>{
  }
 });
 $('seyveoCallList').addEventListener('click',event=>{
- const b=event.target.closest('button[data-call-choice]');if(b)chooseCallContact(b.dataset.callChoice);
+ const b=event.target.closest('button[data-call-choice]');
+ if(b){
+  chooseCallContact(b.dataset.callChoice);
+  showCallChoices(false);
+ }
+});
+$('seyveoCallChooseOther').addEventListener('click',()=>{
+ const showing=!$('seyveoCallList').hidden;
+ showCallChoices(!showing);
+ if(!showing)$('seyveoCallSearch').focus({preventScroll:true});
 });
 $('seyveoCallSearch').addEventListener('input',renderCallList);
 $('seyveoCallAddContact').addEventListener('click',()=>openContacts(true));
