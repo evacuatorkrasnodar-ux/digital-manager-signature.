@@ -41,9 +41,15 @@ function content(inWorld){
 }
 function paint(){
  for(const [root,inWorld] of [[home,false],[world,true]]){
-  const old=root.querySelector('.svh-sources')?.open;
+  const expanded=root.querySelector('.svh-sources')?.open;
+  const active=root.contains(document.activeElement)?document.activeElement:null;
+  const action=active?.dataset.sh,id=active?.dataset.id;
   root.innerHTML=content(inWorld);
-  if(old)root.querySelector('.svh-sources').open=true;
+  if(expanded)root.querySelector('.svh-sources').open=true;
+  if(action){
+   const match=[...root.querySelectorAll('button[data-sh]')].find(b=>b.dataset.sh===action&&b.dataset.id===id);
+   match?.focus({preventScroll:true});
+  }
  }
 }
 function close(){home.hidden=true}
