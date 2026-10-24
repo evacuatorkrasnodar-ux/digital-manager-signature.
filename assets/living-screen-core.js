@@ -46,6 +46,8 @@
    case 'manage':
     return {context:'manage',eyebrow:'Сэйви · возможности',
      line:'Здесь вы решаете, что мне разрешено. Подключения и правила доступны ниже.'};
+   case 'video':
+    return {context:'video',eyebrow:'Сэйви · видео',line:''};
    case 'music':
     return {context:'music',eyebrow:'Сэйви · музыка',
      line:data.playing===true?'Музыка играет. Управление остаётся в одном доке.'
