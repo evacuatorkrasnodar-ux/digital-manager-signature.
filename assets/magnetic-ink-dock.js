@@ -166,6 +166,11 @@ function init(){
   // Rewrite only after music releases ownership of the SAME dock.
   if(!musicMode())paint(false);
  });
+ window.addEventListener('seyveo:route-changed',()=>{
+  // pushState(Home) and nested screens also update the real active route.
+  // Repaint after all synchronous route/music handlers have settled.
+  requestAnimationFrame(()=>{if(!musicMode())paint(false)});
+ });
  center.addEventListener('click',()=>{
   if(!location.hash){
    page=0; // Home via the center always resets to the essential actions.
