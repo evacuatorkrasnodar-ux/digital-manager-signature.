@@ -1,129 +1,107 @@
-/* SEYVA PLAY · YouTube as a living scene, not a second app.
- * The official YouTube player is NEVER obscured by custom controls or overlays.
- * The existing Sayvi orb and Magnetic Ink dock remain owned by the app.
- * Avoid continuous animations, blurs, gradients and needless rendering. */
+/* SEYVA PLAY · quiet living stage.
+ * One real official YouTube iframe; no decorative overlays or duplicate dock.
+ * Only the title, one field and two actions are visible before playback. */
 #sayviVideoPage[hidden],#sayviVideoPlayer[hidden],
 #sayviVideoPage [hidden]{display:none!important}
 #sayviVideoPage.sv-video-page{
- --sv-video-ink:var(--text);
- box-sizing:border-box;
- display:flex;flex-direction:column;align-items:stretch;gap:13px;
- width:min(100%,640px);
- margin:0 auto;
- padding:clamp(8px,2.5dvh,21px) 0 calc(83px + env(safe-area-inset-bottom,0px));
- min-width:0;
- color:var(--sv-video-ink);
+ box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch;
+ width:min(100%,640px);min-width:0;margin:0 auto;
+ gap:clamp(9px,1.7dvh,16px);
+ padding:clamp(8px,2.6dvh,25px) 0 calc(95px + env(safe-area-inset-bottom,0px));
+ color:var(--text);
 }
 #sayviVideoPage .sv-video-header{
- display:flex;flex-direction:column;align-items:center;text-align:center;
- gap:3px;margin:0 0 7px;
-}
-#sayviVideoPage .sv-video-eyebrow{
- font-size:10px;line-height:1.4;color:var(--secondary);
- letter-spacing:.13em;margin:0;
+ display:flex;align-items:center;justify-content:center;
+ margin:0 0 clamp(10px,2dvh,22px);text-align:center;
 }
 #sayviVideoPage .sv-video-header h1{
- font-size:clamp(28px,7vw,44px);font-weight:410;
- line-height:1.16;letter-spacing:.015em;margin:0;
+ margin:0;font-size:clamp(29px,7vw,42px);font-weight:410;
+ letter-spacing:.008em;line-height:1.22;
 }
-#sayviVideoPage .sv-video-signature{
- font-size:9.5px;line-height:1.4;font-weight:480;
- letter-spacing:.2em;color:var(--secondary);margin:2px 0 0;
-}
-#sayviVideoPage .sv-video-intro{
- max-width:450px;margin:13px auto 1px;
- color:var(--secondary);font-size:12px;line-height:1.5;
+#sayviVideoPage .sv-video-sr-only{
+ position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
 }
 #sayviVideoPage .sv-video-form{
- display:flex;flex-direction:column;gap:9px;min-width:0;
- margin:0;
-}
-#sayviVideoPage .sv-video-form label{
- font-size:11px;line-height:1.4;color:var(--secondary);
+ display:flex;flex-direction:column;gap:6px;min-width:0;margin:0;
 }
 #sayviVideoPage .sv-video-form input{
- box-sizing:border-box;width:100%;max-width:100%;min-width:0;
- min-height:45px;padding:9px 3px;
+ box-sizing:border-box;width:100%;min-width:0;max-width:100%;
+ padding:11px 2px 12px;min-height:49px;
+ font:inherit;font-size:17px;line-height:1.45;
+ color:var(--text);background:transparent;
  border:0;border-bottom:1px solid var(--soft-line);
- border-radius:0;background:transparent;
- color:var(--text);font:inherit;font-size:15px;line-height:1.4;
- box-shadow:none;outline-offset:4px;
+ border-radius:0;box-shadow:none;outline-offset:3px;
 }
-#sayviVideoPage .sv-video-form input::placeholder{
- color:var(--secondary);opacity:1;
+#sayviVideoPage .sv-video-form input::placeholder{color:var(--secondary);opacity:1}
+#sayviVideoPage .sv-video-primary-actions{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:10px;margin:2px 0 0;
 }
-#sayviVideoPage .sv-video-primary-actions,
-#sayviVideoPage .sv-video-saved{
- display:flex;align-items:center;flex-wrap:wrap;
- gap:5px 23px;min-width:0;
-}
-#sayviVideoPage button,
-#sayviVideoPage .sv-video-saved a{
- padding:6px 1px;min-height:43px;
- border:0;border-radius:0;background:transparent;
- box-shadow:none;color:var(--text);
- font:inherit;font-size:12px;font-weight:490;line-height:1.4;
- text-decoration:none;cursor:pointer;
+#sayviVideoPage button,#sayviVideoPage .sv-video-saved a{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:7px 1px;border:0;border-radius:0;
+ background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:13px;font-weight:480;
+ line-height:1.4;text-decoration:none;cursor:pointer;
 }
 #sayviVideoPage #sayviVideoWatch{
- text-decoration:underline;text-underline-offset:6px;
+ font-size:15px;font-weight:520;text-decoration:underline;text-underline-offset:6px;
 }
-#sayviVideoPage #sayviVideoExample,
-#sayviVideoPage .sv-video-saved{
- color:var(--secondary);
-}
-#sayviVideoPage .sv-video-saved :is(button,a){
- font-size:11px;color:var(--secondary);
-}
-#sayviVideoPage button:disabled{opacity:.32;cursor:default}
-#sayviVideoPage :is(button,a,input):focus-visible{
+#sayviVideoPage #sayviVideoExample{font-size:12px;color:var(--secondary)}
+#sayviVideoPage button:disabled{opacity:.36;cursor:default}
+#sayviVideoPage :is(button,input,a,summary):focus-visible{
  outline:2px solid var(--text);outline-offset:3px;
 }
 #sayviVideoPage .sv-video-player{
- box-sizing:border-box;position:relative;
+ display:block;position:relative;box-sizing:border-box;
  width:100%;min-width:0;min-height:200px;
- aspect-ratio:16/9;
- padding:0;background:#000;border:0;
- border-radius:0;box-shadow:none;
- overflow:hidden;
+ aspect-ratio:16/9;padding:0;overflow:hidden;
+ background:#000;border:0;border-radius:0;box-shadow:none;
 }
 #sayviVideoPage .sv-video-iframe{
- display:block;position:absolute;inset:0;
+ position:absolute;inset:0;display:block;
  width:100%;height:100%;min-height:200px;
  border:0;outline:0;background:#000;
 }
 #sayviVideoPage .sv-video-status{
- min-height:20px;margin:0;
- font-size:12px;line-height:1.55;color:var(--secondary);
- overflow-wrap:anywhere;
+ margin:0;font-size:12px;line-height:1.55;
+ color:var(--secondary);overflow-wrap:anywhere;
 }
+#sayviVideoPage .sv-video-more{
+ box-sizing:border-box;margin:clamp(4px,1dvh,10px) 0 0;
+ padding:0;border:0;border-top:1px solid var(--soft-line);
+ background:transparent;color:var(--secondary);
+}
+#sayviVideoPage .sv-video-more summary{
+ display:flex;align-items:center;min-height:44px;
+ padding:5px 1px;cursor:pointer;list-style:none;
+ font-size:11px;line-height:1.4;color:var(--secondary);
+}
+#sayviVideoPage .sv-video-more summary::after{content:'⌄';margin-left:9px;font-size:15px}
+#sayviVideoPage .sv-video-more[open] summary::after{transform:rotate(180deg)}
+#sayviVideoPage .sv-video-more summary::-webkit-details-marker{display:none}
+#sayviVideoPage .sv-video-saved{
+ display:flex;align-items:center;flex-wrap:wrap;gap:4px 15px;
+ margin:0;padding:0 0 5px;
+}
+#sayviVideoPage .sv-video-saved :is(button,a){font-size:11px;color:var(--secondary)}
 #sayviVideoPage .sv-video-disclaimer{
- margin:3px 0 0;font-size:10.5px;line-height:1.58;
- color:var(--secondary);
+ margin:2px 0 10px;font-size:11px;line-height:1.55;color:var(--secondary);
 }
 #sayviVideoPage .sv-video-back{
- align-self:flex-start;min-height:44px;
- margin:2px 0 0;text-decoration:underline;
- text-underline-offset:6px;text-decoration-color:var(--soft-line);
+ align-self:flex-start;margin:0;font-size:12px!important;color:var(--secondary)!important;
 }
-/* iPhone X / 320px: preserve YouTube's mandatory 200px minimum player.
-   The scene scrolls naturally above the fixed existing dock; no overlays. */
 @media(max-width:420px){
  #sayviVideoPage.sv-video-page{
-  gap:9px;padding-top:clamp(3px,1vh,9px);
-  padding-bottom:calc(85px + env(safe-area-inset-bottom,0px));
+  gap:9px;padding-top:clamp(3px,1.3dvh,10px);
+  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
  }
- #sayviVideoPage .sv-video-header h1{font-size:clamp(27px,7.2vw,34px)}
- #sayviVideoPage .sv-video-intro{margin:6px auto 0;font-size:11px}
- #sayviVideoPage .sv-video-disclaimer{font-size:10px}
+ #sayviVideoPage .sv-video-header{margin-bottom:8px}
+ #sayviVideoPage .sv-video-header h1{font-size:clamp(28px,7.2vw,36px)}
 }
-@media(min-width:760px) and (min-height:620px){
- #sayviVideoPage.sv-video-page{padding-top:clamp(20px,4vh,48px);gap:17px}
- #sayviVideoPage .sv-video-header{margin-bottom:10px}
-}
-/* A native accessibility choice: no motion is needed for a film interface. */
 @media(prefers-reduced-motion:reduce){
  #sayviVideoPage *,#sayviVideoPage *::before,#sayviVideoPage *::after{
-  animation:none!important;transition:none!important;
+  transition:none!important;animation:none!important;
  }
 }
