@@ -82,7 +82,8 @@
  function render(){
   if(!saved)return;
   if(latest){
-   main.textContent='Сэйви · '+core.detail(latest);
+   const clock=/T(\\d{2}:\\d{2})/.exec(latest.observedAt)?.[1];
+   main.textContent='Сэйви · '+core.detail(latest)+(clock?' · прогноз '+clock:'');
    symbol.textContent=latest.code===0?'☼':[61,63,65,80,81,82].includes(latest.code)?'◌':'☁';
   }else{
    main.textContent='Сэйви · прогноз пока недоступен';
