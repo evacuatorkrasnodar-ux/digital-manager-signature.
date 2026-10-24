@@ -27,7 +27,7 @@ function findFiles(dir,extension){
 const html=read('index.html');
 // Protect the one-controller design from regressions: the hidden controls
 // are internal playback targets for the dock, never a second visible player.
-const linkedAssets=[...html.matchAll(/<(?:script|link)\\b[^>]*\\b(?:src|href)=["']([^"']+)["'][^>]*>/gi)]
+const linkedAssets=[...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)=["']([^"']+)["'][^>]*>/gi)]
  .map(m=>m[1].split(/[?#]/)[0]).filter(x=>x.startsWith('assets/'));
 check(new Set(linkedAssets).size===linkedAssets.length,
  'No duplicate stylesheet or script imports');
@@ -35,12 +35,12 @@ check(new Set(linkedAssets).size===linkedAssets.length,
 // are not elements of the document until a branch renders into a container.
 const staticMarkup=html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,'');
 const markupIds=[...staticMarkup.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
-const dockCount=[...staticMarkup.matchAll(/<footer\\b[^>]*\\bclass=["'][^"']*\\bdock\\b[^"']*["']/gi)].length;
-const musicAudioCount=[...staticMarkup.matchAll(/<audio\\b[^>]*\\bid=["']sayviMusicAudio["']/gi)].length;
+const dockCount=[...staticMarkup.matchAll(/<footer\b[^>]*\bclass=["'][^"']*\bdock\b[^"']*["']/gi)].length;
+const musicAudioCount=[...staticMarkup.matchAll(/<audio\b[^>]*\bid=["']sayviMusicAudio["']/gi)].length;
 check(dockCount===1&&musicAudioCount===1&&
  !markupIds.includes('sayviMusicBack')&&
  staticMarkup.includes('id="sayviMusicPlay"')&&
- /class="sv-music-controls"[^>]*\\bhidden\\b/.test(staticMarkup),
+ /class="sv-music-controls"[^>]*\bhidden\b/.test(staticMarkup),
  'Single music dock, hidden internal transport, no duplicate back control');
 /* Health/Care has one self-contained, static HTML template mounted in the
  * existing personal dialog. Validate its IDs rather than requiring copies in

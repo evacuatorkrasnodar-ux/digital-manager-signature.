@@ -43,8 +43,6 @@ function fillPreview(){
  $('seyveoCompanyPreviewName').textContent='Мой бизнес';
  $('seyveoCompanyPreviewDesc').textContent=saved?(LABELS[record.type]||'Карточка компании'):'Карточка компании';
  $('seyveoCompanyPreviewOwner').textContent=saved?record.name:'Данные не заполнены';
- const industryPreview=$('seyveoCompanyPreviewIndustry');
- if(industryPreview)industryPreview.textContent=saved?(record.industry||'Сфера не указана'):'Сфера не указана';
  const preview=$('seyveoCompanyPreviewSubscription');
  if(preview)preview.textContent='Контакты и реквизиты';
  $('seyveoCompanySample').hidden=true;
