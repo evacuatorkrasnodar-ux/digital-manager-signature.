@@ -46,6 +46,12 @@ assert.equal((html.match(/<footer class="dock"/g)||[]).length,1);
 
 const roadmapSource=load('assets/management.js');
 const masterIdeas=load('docs/SEYVEO-IDEAS-MASTER.md');
+assert.equal((roadmapSource.match(/\['seyveo_phone_home'/g)||[]).length,1,
+ 'Single flagship phone-home vision in existing roadmap');
+assert.match(roadmapSource,/\['seyveo_phone_home'[^\n]*'plan'\]/,
+ 'Flagship native ambition must never be reported as shipped');
+assert.match(masterIdeas,/SEYVEO — пространство вместо десятков приложений/,
+ 'The phone replacement vision is documented with platform constraints');
 assert.equal((roadmapSource.match(/\['living_continuity'/g)||[]).length,1,
  'Living Continuity belongs once to the existing roadmap, not a duplicate registry');
 assert.match(roadmapSource,/\['living_continuity'[^\n]*'demo'\]/,
