@@ -32,7 +32,7 @@ function init(){
  }
  function paint(){
   dock.classList.toggle('seyveo-music-dock',mode);
-  const playing=!!player.currentSrc&&!player.paused&&!player.ended;
+  const playing=!!(player.currentSrc||player.getAttribute('src'))&&!player.paused&&!player.ended;
   buttons.forEach((b,i)=>{
    if(mode){
     b.classList.remove('active');
@@ -54,17 +54,9 @@ function init(){
   if(!mode)document.dispatchEvent(new Event('seyveo:music-dock-exit'));
  }
  function showTracks(){
+  // The music page itself never scrolls. "Треки" opens one local drawer.
   openMusic?.();
-  requestAnimationFrame(()=>{
-   const list=document.getElementById('sayviMusicCollection');
-   const importButton=document.getElementById('sayviMusicImport');
-   const target=list&&!list.hidden?list:importButton;
-   target?.scrollIntoView?.({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});
-   if(list&&!list.hidden){
-    const first=list.querySelector('button[aria-current="true"]')||list.querySelector('button');
-    first?.focus?.({preventScroll:true});
-   }else importButton?.focus?.({preventScroll:true});
-  });
+  window.SEYVEO_MUSIC?.openQueue?.();
  }
  function musicAction(i){
   if(i===3){showTracks();return;}
@@ -83,7 +75,14 @@ function init(){
   if(mode){mode=false;paint();}
  },true);
  for(const name of ['play','playing','pause','ended','emptied'])player.addEventListener(name,()=>{if(mode)paint()});
- window.addEventListener('hashchange',()=>{if(mode)paint()});
+ window.addEventListener('hashchange',()=>{
+  // Exactly one dock mode, chosen by route: music only on the music screen.
+  const next=location.hash==='#sayvi-music';
+  if(mode!==next){mode=next;paint();}
+ });
+ // Restore the correct controls on hard refresh and when reentering music.
+ mode=location.hash==='#sayvi-music';
+ paint();
  window.SEYVEO_MUSIC_DOCK=Object.freeze({setMode(value){mode=!!value;paint()},isActive(){return mode}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
