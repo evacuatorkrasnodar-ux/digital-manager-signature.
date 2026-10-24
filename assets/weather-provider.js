@@ -14,8 +14,8 @@
   if(!qualified(lat)||!qualified(lon)||Math.abs(lat)>90||Math.abs(lon)>180)
    throw new RangeError('Weather location must be valid latitude and longitude');
   const query=new URLSearchParams({
-   latitude:String(Math.round(lat*10)/10),
-   longitude:String(Math.round(lon*10)/10),
+   latitude:String(Math.round(lat*100)/100),
+   longitude:String(Math.round(lon*100)/100),
    current:'temperature_2m,relative_humidity_2m,apparent_temperature,pressure_msl,weather_code,wind_speed_10m',
    hourly:'precipitation_probability',
    timezone:'auto',wind_speed_unit:'kmh',forecast_days:'1'
