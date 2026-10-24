@@ -8,23 +8,30 @@ const form=$('personalTaskForm'),input=$('personalTaskTitle'),date=$('personalTa
 const contactsDialog=$('seyveoContactsDialog'),callDialog=$('seyveoCallDialog');
 if(!list||!summary||!dialog||!form||!input||!date||!contactsDialog||!callDialog)return;
 const notice=$('personalTasksNotice');
-const focusPanel=$('tasksContextFocus'),focusWhen=$('tasksContextWhen'),focusTitle=$('tasksContextTitle'),focusOpen=$('tasksContextOpen');
+const focusPanel=$('tasksContextFocus'),focusWhen=$('tasksContextWhen'),focusTitle=$('tasksContextTitle'),focusOpen=$('tasksContextOpen'),focusArt=$('tasksContextArtwork'),focusHint=$('tasksContextHint'),focusComplete=$('tasksContextComplete');
 function renderContext(open){
- if(!focusPanel||!focusWhen||!focusTitle||!focusOpen)return '';
+ if(!focusPanel||!focusWhen||!focusTitle||!focusOpen||!focusArt||!focusComplete||!focusHint)return '';
  const priority=window.SEYVEO_CONTEXT_FOCUS?.selectTask(open)||null;
  focusPanel.hidden=!priority;
- if(!priority){focusOpen.dataset.focusTask='';focusOpen.dataset.focusCall='';return '';}
+ if(!priority){focusOpen.dataset.focusTask='';focusOpen.dataset.focusCall='';focusComplete.hidden=true;return '';}
  const contact=callTargetFromTask(priority.title);
  focusWhen.textContent=priority.when;
  focusTitle.textContent=priority.title;
  focusOpen.dataset.focusTask=priority.id;
  focusOpen.dataset.focusCall=contact;
- focusOpen.replaceChildren(taskIcon(contact?'phone':'arrow'));
+ focusArt.replaceChildren(taskIcon(contact?'phone':'note'));
+ focusHint.textContent=contact?'Коснитесь, чтобы подготовить звонок':'Коснитесь, чтобы найти дело';
+ focusComplete.hidden=!contact;
+ focusComplete.dataset.focusTask=priority.id;
  focusOpen.setAttribute('aria-label',contact?'Подготовить звонок: '+contact:'Перейти к делу: '+priority.title);
  focusOpen.title=contact?'Подготовить звонок':'Показать дело в списке';
  focusPanel.dataset.focusKind=contact?'call':'task';
  return priority.id;
 }
+focusComplete?.addEventListener('click',()=>{
+ const id=focusComplete.dataset.focusTask;
+ if(id&&read().some(item=>item.id===id&&!item.done))change(id);
+});
 focusOpen?.addEventListener('click',()=>{
  const id=focusOpen.dataset.focusTask;
  if(!id||$('tasksPage')?.hidden)return;
@@ -72,6 +79,7 @@ function taskIcon(kind){
  path.setAttribute('d',kind==='phone'
   ?'M7.2 3.8 10 6.6 8.4 8.7a13 13 0 0 0 6.9 6.9l2.1-1.6 2.8 2.8-1.8 3c-.4.7-1.2 1.1-2 1C9 20 4 15 3.2 7.6c-.1-.8.3-1.6 1-2l3-1.8Z'
   :kind==='more'?'M5 12h.1M12 12h.1M19 12h.1'
+  :kind==='note'?'M7 3.5h8l4 4v13H7zM15 3.5v4h4M10 12h6M10 16h5'
   :'m8 16 8-8M9 8h7v7');
  svg.append(path);return svg;
 }
@@ -402,26 +410,25 @@ window.addEventListener('storage',event=>{
   contactsChanged();
  }
 });
-function row(item,compact=false,featuredTaskId=''){
- const section=element('div',compact?'personal-brief-row':'personal-task-row');section.dataset.taskId=item.id;
+function row(item,compact=false){
+ const section=element('div',compact?'personal-brief-row':'personal-task-row');
+ section.dataset.taskId=item.id;
  const label=element('span','personal-task-content');
- const contact=callTargetFromTask(item.title),compactCall=compact&&contact;
- const name=element(compactCall?'button':'strong',
-  compactCall?'personal-task-call-title':'personal-task-name',item.title);
- if(compactCall){
-  name.type='button';name.dataset.taskCall=item.id;
+ const contact=callTargetFromTask(item.title);
+ const name=element('button',compact&&contact?'personal-task-call-title':'personal-task-name',item.title);
+ name.type='button';
+ if(compact&&contact){
+  name.dataset.taskCall=item.id;
   name.setAttribute('aria-label','Подготовить звонок: '+contact);
+ }else if(!compact){
+  name.dataset.taskMenu=item.id;
+  name.setAttribute('aria-label','Показать действия с делом: '+item.title);
+  name.setAttribute('aria-expanded','false');
+ }else{
+  name.disabled=true;
  }
  if(item.done)name.classList.add('is-done');
- const line=element('span','personal-task-title-line');line.append(name);
- // The featured call already has its single prominent action above the list.
- if(!compact&&contact&&!item.done&&item.id!==featuredTaskId){
-  const call=element('button','personal-task-inline-call');
-  call.type='button';call.dataset.taskCall=item.id;
-  call.setAttribute('aria-label','Подготовить звонок: '+contact);
-  call.title='Позвонить';call.append(taskIcon('phone'));line.append(call);
- }
- label.append(line);
+ label.append(name);
  const due=displayDate(item);
  if(due||item.done)label.append(element('small','',item.done?'Завершено':due));
  if(!compact){
@@ -431,19 +438,23 @@ function row(item,compact=false,featuredTaskId=''){
    origin.setAttribute('aria-label','Открыть исходную заметку для дела: '+item.title);
    label.append(origin);
   }
+  const art=element(contact&&!item.done?'button':'span','personal-task-art');
+  art.append(taskIcon(contact?'phone':'note'));
+  if(art.tagName==='BUTTON'){
+   art.type='button';art.dataset.taskCall=item.id;
+   art.setAttribute('aria-label','Подготовить звонок: '+contact);
+   art.title='Позвонить';
+  }else art.setAttribute('aria-hidden','true');
   const checkbox=element('button','personal-task-check',item.done?'✓':'');
   checkbox.type='button';checkbox.dataset.taskToggle=item.id;
   checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
   checkbox.setAttribute('aria-pressed',String(item.done));
-  const more=element('button','personal-task-more');
-  more.type='button';more.dataset.taskMenu=item.id;
-  more.setAttribute('aria-label','Действия с делом: '+item.title);
-  more.setAttribute('aria-expanded','false');more.append(taskIcon('more'));
   const menu=element('div','personal-task-menu');menu.hidden=true;
   const remove=element('button','personal-task-menu-delete','Удалить дело');
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
-  menu.append(remove);section.append(checkbox,label,more,menu);
+  menu.append(remove);
+  section.append(art,label,checkbox,menu);
  }else section.append(label);
  return section;
 }
@@ -453,12 +464,13 @@ function render(){
  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||a.createdAt.localeCompare(b.createdAt));
  const done=all.filter(item=>item.done).reverse();
  const featuredTaskId=renderContext(open);
+ const visibleOpen=open.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
  list.replaceChildren();
  if(!all.length){
   list.append(element('p','personal-tasks-empty','Пока нет дел. Добавьте первое — SEYVEO сохранит его на этом устройстве.'));
  }else{
-  if(open.length){const head=element('h3','personal-list-title','Нужно сделать · '+open.length);list.append(head);
-   open.forEach(task=>list.append(row(task,false,featuredTaskId)))}
+  if(visibleOpen.length){const head=element('h3','personal-list-title','Нужно сделать · '+visibleOpen.length);list.append(head);
+   visibleOpen.forEach(task=>list.append(row(task)))}
   if(done.length){const head=element('h3','personal-list-title','Выполнено · '+done.length);list.append(head);
    done.slice(0,30).forEach(task=>list.append(row(task)))}
  }
