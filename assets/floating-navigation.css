@@ -202,8 +202,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
 /* Black Velvet final polish: quiet selected tab and neutral Home capsule. */
 .dock>.nav-item.active{background:transparent!important;font-weight:490!important}
 :root[data-theme="light"] .dock>.nav-item.active{background:transparent!important}
-html:not(.seyveo-conversation) #ask.prompt:not(.expanded){background:transparent!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-:root[data-theme="light"]:not(.seyveo-conversation) #ask.prompt:not(.expanded){background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+/* The text-first composer gets its final focused contrast after the Living Ink
+   dock rules below.  Its outer frame remains invisible by design. */
 
 /* SEYVEO Living Ink: the same five functional touch targets, without a
    visual dock container. Symbols appear once like ink rising from the scene.
@@ -288,3 +288,58 @@ html:has(#ask:not([hidden])):not(.seyveo-conversation)
  .dock.sv-magnetic-dock>.nav-item{opacity:.72}
 html:has(#ask:not([hidden])):not(.seyveo-conversation)
  .dock.sv-magnetic-dock>.assistant-button{opacity:1}
+
+
+/* SEYVEO Living Ink · readable composer, not another glass capsule.
+   The ink is a feathered radial veil without a panel edge. Keep the original
+   composer DOM, tap targets, keyboard anchors, geometry and voice controls. */
+#ask.prompt:not(.expanded){
+ --sv-ink-input-text:#f1f3f7;
+ --sv-ink-input-hint:#b7c2d0;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,
+   rgba(30,34,43,.58) 0%,rgba(22,26,35,.39) 54%,rgba(12,15,22,0) 100%)!important;
+ border-color:transparent!important;
+ border-width:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#ask.prompt:not(.expanded):focus-within{
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,
+   rgba(39,44,54,.68) 0%,rgba(27,32,42,.48) 58%,rgba(13,17,24,0) 100%)!important;
+}
+#ask.prompt:not(.expanded) #question{
+ color:var(--sv-ink-input-text)!important;
+ -webkit-text-fill-color:var(--sv-ink-input-text)!important;
+ caret-color:var(--sv-ink-input-text);
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+#ask.prompt:not(.expanded) #question::placeholder{
+ color:var(--sv-ink-input-hint)!important;
+ opacity:1!important;
+ -webkit-text-fill-color:var(--sv-ink-input-hint)!important;
+}
+#ask.prompt:not(.expanded) .composer-compact :is(.composer-icon,.composer-expand-manual,.seyveo-conversation-mic){
+ color:var(--sv-ink-input-text)!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#ask.prompt:not(.expanded) .composer-compact :is(.composer-icon,.composer-expand-manual,.seyveo-conversation-mic) svg{
+ color:inherit!important;stroke:currentColor;
+}
+:root[data-theme="light"] #ask.prompt:not(.expanded){
+ --sv-ink-input-text:#202934;
+ --sv-ink-input-hint:#5b6673;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,
+   rgba(230,234,238,.75) 0%,rgba(238,241,244,.43) 54%,rgba(250,251,251,0) 100%)!important;
+}
+:root[data-theme="light"] #ask.prompt:not(.expanded):focus-within{
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,
+   rgba(223,230,236,.87) 0%,rgba(231,237,242,.55) 58%,rgba(252,253,253,0) 100%)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #ask.prompt:not(.expanded){transition:none!important}
+}
