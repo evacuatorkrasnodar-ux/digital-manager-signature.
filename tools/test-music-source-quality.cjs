@@ -17,7 +17,7 @@ assert.match(player,/if\(info\.hiRes\)/,'Hi-Res label only when source-verified'
 assert.match(player,/info\.format==='MP3'/,'MP3 format and first-frame bitrate can be shown');
 assert.match(player,/КАЧЕСТВО ФАЙЛА НЕ ОПРЕДЕЛЕНО/,'Unknown formats never get invented parameters');
 assert.match(player,/if\(version!==selectVersion\|\|tracks\[index\]!==file\)return/,'Old scans cannot repaint new track');
-assert.match(player,/Параметры исходного/,'Quality shown refers to source, not certified iPhone output');
+assert.match(player,/Проверенные параметры исходного файла/,'Quality shown refers to source, not certified iPhone output');
 assert.doesNotMatch(player,/AudioContext|decodeAudioData|createMediaElementSource/,'No fake upscaling or resampling');
 assert.equal((html.match(/id="sayviMusicAudio"/g)||[]).length,1,'One actual playback path');
 function media(buffer,name){
