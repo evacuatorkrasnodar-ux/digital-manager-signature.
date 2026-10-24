@@ -32,7 +32,7 @@
 .calendar-space-edit[hidden]{display:none!important}
 .calendar-space-edit h3{margin:0;font-size:13px;font-weight:615}
 .calendar-space-edit label{display:flex;flex-direction:column;gap:6px;color:var(--secondary);font-size:11.5px;line-height:1.45}
-.calendar-space-edit input,.calendar-space-edit select,.calendar-space-edit textarea{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;border:1px solid var(--line);border-radius:16px;background:var(--card2);color:var(--text);padding:10px 14px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;outline:0}
+.calendar-space-edit input,.calendar-space-edit select,.calendar-space-edit textarea{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;color:var(--text);padding:10px 3px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;outline:0}
 #calendarSpaceDialog .calendar-space-edit label:has(> select){position:relative}
 #calendarSpaceDialog .calendar-space-edit select{
  -webkit-appearance:none;appearance:none;
@@ -51,12 +51,12 @@
 .calendar-space-edit .calendar-space-annual{display:flex;align-items:center;flex-direction:row;gap:9px;font-size:12px}
 .calendar-space-annual input{width:18px;height:18px;min-height:18px;flex:none;accent-color:var(--text)}
 .calendar-space-actions{display:flex;align-items:center;gap:7px;justify-content:space-between}
-.calendar-space-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:535;letter-spacing:-.012em;line-height:1.2;text-align:center;border-radius:999px;-webkit-appearance:none;appearance:none}
-.calendar-space-actions button.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.calendar-space-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 10px;border:0;background:transparent;color:var(--text);font-family:inherit;font-size:12.5px;font-weight:535;letter-spacing:-.012em;line-height:1.2;text-align:center;border-radius:0;-webkit-appearance:none;appearance:none}
+.calendar-space-actions button.primary{background:transparent;color:var(--text);border:0;text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:6px}
 .calendar-space-actions #calendarSpaceDelete{margin-right:auto;color:var(--secondary)}
 .calendar-space-status{min-height:17px;font-size:11px;line-height:1.4;color:var(--secondary)}
 .calendar-space-privacy{display:block;margin:15px 0;color:var(--secondary);font-size:10.5px;line-height:1.5}
-.cal-space-dialog .cal-space-close{display:block;width:100%;min-height:40px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);font-size:12px}
+.cal-space-dialog .cal-space-close{display:block;width:100%;min-height:44px;border:0;border-radius:0;background:transparent;color:var(--text);font-size:12px}
 @media(max-width:370px){
  .calendar-spaces-grid{gap:2px;padding:3px}
  .calendar-space-button{min-height:55px;padding:5px 2px;border-radius:14px}
@@ -73,8 +73,8 @@
 ){display:none!important}
 #calendarSpaceDialog[data-measure-focus=true] #calendarSpaceJournal>summary{display:none!important}
 #calendarSpaceDialog[data-measure-focus=true] #calendarSpaceJournal{
- margin:0;padding:16px 14px 14px;
- border:1px solid var(--soft-line);border-radius:20px;background:var(--card)
+ margin:0;padding:16px 2px 14px;
+ border:0;border-radius:0;background:transparent
 }
 #calendarSpaceDialog[data-measure-focus=true] .calendar-space-edit{
  margin:0;padding:0;border:0
