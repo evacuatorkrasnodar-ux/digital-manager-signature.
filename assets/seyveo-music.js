@@ -29,7 +29,16 @@ const sourcesClose=$('sayviMusicSourcesClose');
 const resume=$('sayviMusicResume');
 const resumeText=$('sayviMusicResumeText');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
-const safeName=file=>String(file?.name||'Без названия').replace(/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i,'');
+// The original audio file is never renamed, transcoded, uploaded or modified.
+const metadata=window.SEYVEO_MUSIC_METADATA;
+const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
+ title:String(file?.name||'Без названия').replace(/\.[^.]+$/,''),
+ artist:'',display:String(file?.name||'Без названия')
+};
+let trackDescriptions=new WeakMap(),coverObjectURL=null;
+const infoFor=file=>file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
+const safeName=file=>infoFor(file).display;
+const coverFallback=new URL('assets/seyveo-music-lockscreen.png',document.baseURI).href;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
 const MAX_TRACKS=40,MAX_FILE_SIZE=180*1024*1024;
 const providers=Object.freeze({
@@ -67,6 +76,9 @@ const sayviMessage=message=>{status.textContent=message;status.hidden=!message;}
 function updatePlay(){
  const playing=!audio.paused&&!audio.ended&&!!audio.src;
  page.classList.toggle('sv-music-playing',playing);
+ if('mediaSession' in navigator){
+  try{navigator.mediaSession.playbackState=playing?'playing':'paused'}catch{}
+ }
  player.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
  player.setAttribute('aria-pressed',String(playing));
  $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
@@ -128,12 +140,26 @@ function safeRelease(){
   try{URL.revokeObjectURL(url)}catch{}
   url=null;
  }
+ if(coverObjectURL){
+  try{URL.revokeObjectURL(coverObjectURL)}catch{}
+  coverObjectURL=null;
+ }
 }
 function mediaSession(){
  if(!('mediaSession' in navigator))return;
  try{
-  if(typeof MediaMetadata==='function'&&index>=0)
-   navigator.mediaSession.metadata=new MediaMetadata({title:safeName(tracks[index]),artist:'Моя музыка · SEYVEO'});
+  if(typeof MediaMetadata==='function'&&index>=0){
+   const info=infoFor(tracks[index]);
+   navigator.mediaSession.metadata=new MediaMetadata({
+    title:info.title,
+    artist:info.artist||'Моя музыка · SEYVEO',
+    album:info.album||'SEYVEO Music',
+    // MP3 embedded cover when available; otherwise the approved Sayvi sphere.
+    artwork:[coverObjectURL
+     ?{src:coverObjectURL,type:info.artwork.type,sizes:''}
+     :{src:coverFallback,type:'image/png',sizes:'128x128'}]
+   });
+  }
   navigator.mediaSession.setActionHandler('play',()=>play());
   navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
   navigator.mediaSession.setActionHandler('previoustrack',()=>switchTrack(index-1,true));
@@ -184,10 +210,24 @@ function switchTrack(i,autoplay=false){
  }
  index=newIndex;
  audio.src=url;
- heading.textContent=safeName(file);
- artist.textContent='Ваш аудиофайл · '+(index+1)+' из '+tracks.length;
+ const visible=infoFor(file);
+ heading.textContent=visible.title;
+ artist.textContent=(visible.artist?visible.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();mediaSession();updatePlay();updateTime();
+ // Bounded local ID3 read never interrupts or delays the real audio element.
+ if(metadata?.describe){
+  Promise.resolve(metadata.describe(file)).then(info=>{
+   if(version!==selectVersion||tracks[index]!==file||!info)return;
+   trackDescriptions.set(file,info);
+   if(info.artwork){
+    try{coverObjectURL=URL.createObjectURL(info.artwork)}catch{coverObjectURL=null}
+   }
+   heading.textContent=info.title;
+   artist.textContent=(info.artist?info.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
+   collectionRender();mediaSession();syncResume();
+  }).catch(()=>{});
+ }
  if(autoplay){
   const playing=audio.play();
   if(playing&&typeof playing.catch==='function')playing.catch(()=>{
@@ -220,6 +260,7 @@ function ingest(list){
   return false;
  }
  tracks=chosen;
+ trackDescriptions=new WeakMap();
  switchTrack(0,false);
  if(candidates.length>chosen.length)
   sayviMessage('Добавлено '+chosen.length+' из '+candidates.length+' файлов. Ограничение — 40 файлов до 180 МБ каждый; неподдерживаемые пропущены.');
@@ -282,8 +323,12 @@ audio.addEventListener('playing',()=>{updatePlay();sayviMessage('Сэйви: с�
 audio.addEventListener('pause',updatePlay);
 audio.addEventListener('ended',()=>{if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
-window.addEventListener('pagehide',()=>{
- audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
+/* Screen lock/background can dispatch lifecycle changes.
+ * Never stop an actively playing track on pagehide: the OS decides if WebKit
+ * can continue. A full browser termination remains outside PWA control. */
+window.addEventListener('pagehide',event=>{
+ if(event.persisted||!audio.paused)return;
+ safeRelease();
 });
 // Safari may return from back-forward cache after the ephemeral URL was revoked.
 // Restore the selection WITHOUT starting playback or asking for permissions.
