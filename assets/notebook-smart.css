@@ -24,8 +24,7 @@
 #notesDialog .notes-head{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0 44px 12px 0}
 #notesDialog .notes-head h2{margin:0;font-size:21px;font-weight:580;line-height:1.25;letter-spacing:-.03em}
 #notesDialog .notes-new{
- display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;
- background:var(--card2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;
+ display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:0;background:transparent;color:var(--text);font:inherit;font-size:12px;cursor:pointer;
 }
 #notesDialog .notes-list{
  display:flex;flex-direction:column;
@@ -33,9 +32,7 @@
  -webkit-overflow-scrolling:touch;
 }
 #notesDialog .note-item{
- min-width:0;
- border:1px solid var(--line);
- background:var(--card2);
+ min-width:0;border:0;background:transparent;
 }
 #notesDialog .note-item small{display:block;color:var(--secondary);line-height:1.4}
 #notesDialog .note-item p{
