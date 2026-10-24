@@ -14,6 +14,12 @@ assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a','Native iOS im
 assert.equal(png.readUInt32BE(16),128);
 assert.match(html,/id="sayviMusicDisk"/,'Vinyl artwork stays in the original music screen');
 assert.match(css,/sv-music-spin/,'Vinyl animation remains available during playback');
+assert.match(css,/SEYVA MUSIC · Living Stage v2/,'Tall-phone composition tuning exists');
+assert.match(css,/@media \(max-width:759px\) and \(min-height:900px\) and \(orientation:portrait\)/,'Tall portrait mode uses height-aware layout');
+assert.match(css,/@media \(max-width:759px\) and \(max-height:899px\) and \(orientation:portrait\)/,'Compact iPhone mode remains separate');
+assert.match(css,/--sv-music-vinyl-size:min\(58vw,27dvh,290px\)/,'Tall screens have larger but bounded vinyl');
+assert.match(css,/--sv-music-vinyl-size:min\(44vw,17\.5dvh,126px\)/,'iPhone X size rule has not been removed');
+
 assert.equal((html.match(/id="sayviMusicAudio"/g)||[]).length,1,'One actual audio element');
 assert.ok(html.indexOf('assets/music-metadata.js')<html.indexOf('assets/seyveo-music.js'),'Metadata utility loads first');
 assert.match(player,/artwork:\[coverObjectURL/,'Embedded artwork or Sayvi');
