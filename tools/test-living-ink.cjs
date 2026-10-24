@@ -39,6 +39,17 @@ assert.match(dock,/height:46px!important;min-height:46px!important/,'Touchable n
 assert.match(dock,/prefers-reduced-motion:reduce/,'Respects reduced motion');
 assert.match(dock,/seyveo-ink-emerge/,'Signs rise once from the page');
 
+assert.match(dock,/SEYVEO Living Ink · readable composer/,'The compact input contrast stays intentional');
+assert.match(dock,/radial-gradient\(ellipse 87% 91% at 47% 50%/,'Compact input gets a feathered ink veil without a painted panel');
+assert.match(dock,/#ask\.prompt:not\(\.expanded\) #question::placeholder\{/,'Real composer hint has a contrast rule');
+assert.match(dock,/--sv-ink-input-hint:#b7c2d0/,'Black Velvet hint is legible');
+assert.match(dock,/:root\[data-theme="light"\] #ask\.prompt:not\(\.expanded\)/,'Light theme avoids white-on-white');
+assert.match(dock,/#ask\.prompt:not\(\.expanded\):focus-within\{/,'Focus increases contrast only, not geometry');
+assert.match(dock,/border-width:0!important/,'No visible gray input capsule');
+assert.doesNotMatch(dock,/backdrop-filter:blur\(20px\).*#ask\.prompt:not/,'No old frosted glass shell');
+assert.match(html,/assets\/floating-navigation\.css\?v=17/,'The deployed index refreshes new ink style');
+
+
 const rail=cssBlock(composer,'#assistantQuickrail.assistant-quickrail');
 for(const prop of ['border:0','background:transparent','box-shadow:none'])
  assert.ok(rail.includes(prop),'Quick actions have no outer box: '+prop);
