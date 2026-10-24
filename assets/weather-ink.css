@@ -1,0 +1,78 @@
+/* SEYVEO Weather · Living Ink, no capsule/card/glass/shadow.
+ * Zero additional animations. The single line belongs to the existing Home
+ * flow; never floats over the keyboard, sphere, health form or dock. */
+#homePage .swx-weather{
+ display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+ width:min(100%,490px);margin:0 auto 9px;
+ padding:3px 9px 5px;
+ gap:4px 10px;color:var(--secondary);
+ text-align:center;min-height:31px;
+}
+#homePage .swx-weather[hidden],#homePage .swx-weather [hidden]{display:none!important}
+#homePage .swx-weather button{
+ min-height:44px;padding:7px 4px;
+ font:inherit;font-size:11px;font-weight:450;
+ border:0;border-radius:0;box-shadow:none;
+ background:transparent;color:var(--secondary);
+ cursor:pointer;
+}
+#homePage .swx-weather button:focus-visible,
+#homePage .swx-weather a:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#homePage .swx-weather-enable{
+ letter-spacing:.025em;
+ text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px;
+}
+#homePage .swx-weather-content{
+ display:flex;align-items:center;justify-content:center;gap:8px;
+ min-width:0;max-width:100%;
+}
+#homePage .swx-weather-symbol{
+ font-size:17px;font-weight:300;line-height:1;color:var(--text);flex:none;
+}
+#homePage .swx-weather-main{
+ display:inline-block;font-size:11px;font-weight:455;
+ line-height:1.55;letter-spacing:.005em;color:var(--text);
+ overflow-wrap:anywhere;
+}
+#homePage .swx-weather-refresh{
+ width:33px;min-width:33px;font-size:16px!important;
+ opacity:.69;
+}
+#homePage .swx-weather-refresh:disabled{opacity:.3}
+#homePage .swx-weather-options{
+ width:44px;min-width:44px;white-space:nowrap;
+ font-size:10px!important;text-decoration:underline;
+ text-decoration-color:var(--soft-line);text-underline-offset:5px;
+}
+#homePage .swx-weather-health{
+ flex-basis:100%;max-width:440px;
+ margin:0;font-size:11px;line-height:1.55;color:var(--secondary);
+}
+#homePage .swx-weather-tail{
+ flex-basis:100%;display:flex;flex-wrap:wrap;justify-content:center;
+ align-items:center;gap:4px 17px;border-top:1px solid var(--soft-line);
+ padding:3px 0 0;
+}
+#homePage .swx-weather-source{
+ color:var(--secondary);font-size:10px;text-decoration:none;
+ border-bottom:1px solid var(--soft-line);
+}
+#calendarPersonalTools .swx-weather-in-health{
+ font-size:12px;line-height:1.65;color:var(--secondary);
+ padding:7px 2px 11px;margin:0 0 12px;
+ border-bottom:1px solid var(--soft-line);
+ overflow-wrap:anywhere;
+}
+#calendarPersonalTools .swx-weather-in-health[hidden]{display:none!important}
+:root[data-theme=light] #homePage .swx-weather-main{color:var(--text)}
+:root[data-theme=light] #homePage .swx-weather-symbol{color:var(--text)}
+@media(max-width:390px){
+ #homePage .swx-weather{padding:1px 3px 3px;gap:3px 5px}
+ #homePage .swx-weather-main{font-size:10.3px}
+ #homePage .swx-weather-options{font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage .swx-weather *{animation:none!important;transition:none!important}
+}
