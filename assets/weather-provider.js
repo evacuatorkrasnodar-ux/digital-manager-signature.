@@ -9,6 +9,7 @@
 })(typeof window!=='undefined'?window:null,function(){
  'use strict';
  const base='https://api.open-meteo.com/v1/forecast';
+ const geocoding='https://geocoding-api.open-meteo.com/v1/search';
  const qualified=x=>typeof x==='number'&&Number.isFinite(x);
  function urlFor(lat,lon){
   if(!qualified(lat)||!qualified(lon)||Math.abs(lat)>90||Math.abs(lon)>180)
@@ -31,7 +32,30 @@
   if(!data||typeof data!=='object'||data.error)throw new Error('Погодный сервис не ответил');
   return data;
  }
- return {urlFor,forecast,
+ async function findCities(raw,{fetchImpl,signal}={}){
+  const name=String(raw||'').trim().slice(0,90);
+  if(name.length<2)throw new Error('Введите название города');
+  const request=fetchImpl||(typeof fetch==='function'?fetch:null);
+  if(typeof request!=='function')throw new Error('Нет доступа к поиску городов');
+  const params=new URLSearchParams({name,count:'5',language:'ru',format:'json'});
+  const res=await request(geocoding+'?'+params.toString(),{
+   method:'GET',cache:'no-store',signal,credentials:'omit',referrerPolicy:'no-referrer'
+  });
+  if(!res||!res.ok)throw new Error('Поиск города сейчас недоступен');
+  const data=await res.json();
+  if(!data||data.error)throw new Error('Сервис поиска города не ответил');
+  const entries=Array.isArray(data.results)?data.results:[];
+  return entries.filter(item=>qualified(item.latitude)&&qualified(item.longitude)&&
+   Math.abs(item.latitude)<=90&&Math.abs(item.longitude)<=180&&typeof item.name==='string')
+   .map(item=>({
+    lat:Math.round(item.latitude*100)/100,
+    lon:Math.round(item.longitude*100)/100,
+    name:item.name.slice(0,90),
+    label:[item.name,item.admin1,item.country].filter((part,i,all)=>
+       typeof part==='string'&&part.trim()&&all.indexOf(part)===i).join(', ').slice(0,180)
+   }));
+ }
+ return {urlFor,forecast,findCities,
   attribution:'Weather data by Open-Meteo.com (CC BY 4.0)',
   attributionUrl:'https://open-meteo.com/'
  };
