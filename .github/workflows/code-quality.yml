@@ -42,6 +42,8 @@ jobs:
         run: node tools/test-weather.cjs
       - name: Test Magnetic Ink swipes and the fixed Sayvi center
         run: node tools/test-magnetic-ink.cjs
+      - name: Verify official YouTube SEYVA PLAY and resource release
+        run: node tools/test-seyveo-video.cjs
       - name: Test local music metadata, lock artwork and background playback
         run: node tools/test-music-quality.cjs
       - name: Confirm actual Hi-Res source before drawing badge
