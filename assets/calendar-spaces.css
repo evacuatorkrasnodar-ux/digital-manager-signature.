@@ -12,7 +12,7 @@
 .calendar-spaces-note{margin:10px 1px 0;color:var(--secondary);font-size:10.5px;line-height:1.5}
 .cal-dot-life{background:var(--text)!important;opacity:.45}
 .cal-entry-space-bullet{background:var(--text);opacity:.65}
-.cal-space-dialog{width:min(450px,calc(100vw - 24px));max-height:min(85dvh,760px);padding:23px 17px 18px}
+.cal-space-dialog{width:min(450px,calc(100vw - 24px));max-height:min(85dvh,760px);padding:16px 14px 13px}
 .cal-space-dialog h2{margin:0 40px 7px 0;font-size:21px;font-weight:610;line-height:1.25}
 .cal-space-dialog>p{margin:0 35px 15px 0;color:var(--secondary);font-size:12px;line-height:1.5}
 .cal-space-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
