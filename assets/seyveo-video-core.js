@@ -38,7 +38,7 @@
   if(typeof text!=='string'||text.length>350)return false;
   const q=text.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim();
   // Video commands take precedence over the existing local audio intents.
-  return /(?:покажи|открой|включи|давай посмотрим|хочу посмотреть|смотреть|посмотреть|запусти)\s+(?:(?:мне|нам|пожалуйста|какое-нибудь|какой-нибудь|это|этот)\s+){0,3}(?:видео|ютуб|youtube|ролик|клип|шортс|shorts)(?:\b|$)/i.test(q)
+  return /(?:покажи|открой|включи|давай посмотрим|хочу посмотреть|смотреть|посмотреть|запусти)\s+(?:(?:мне|нам|пожалуйста|какое-нибудь|какой-нибудь|это|этот)\s+){0,3}(?:видео|ютуб|youtube|ролик|клип|шортс|shorts)(?=\s|$|[.!?])/i.test(q)
    || /^(?:сейви[,\s]+)?(?:ютуб|youtube|видео|seyva play)[.!?\s]*$/i.test(q);
  }
  return Object.freeze({videoId,embed,understand});
