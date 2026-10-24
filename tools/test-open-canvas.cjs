@@ -56,7 +56,7 @@ assert.match(css,/SEYVEO Feather Chat v1/);
 assert.match(css,/font-size:14.5px;line-height:1.48;font-weight:400/);
 assert.match(css,/font-size:15px;line-height:1.50/);
 assert.match(css,/font-weight:400;letter-spacing:0;white-space:pre-wrap/);
-assert.match(css,/background:linear-gradient\(150deg,rgba\(51,70,96,\.87\),rgba\(34,49,69,\.89\)\)/);
+assert.match(css,/background:linear-gradient\(150deg,#2a2d2e,#242728\)/,'Approved neutral Black Velvet chat background');
 assert.match(css,/max-width:min\(92%,460px\)/);
 assert.match(css,/font-size:11px;font-weight:460/);
 assert.match(css,/box-shadow:none;/);
