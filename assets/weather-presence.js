@@ -107,7 +107,8 @@
   showHealth();
  }
  async function update(force=false){
-  if(!saved||working||document.hidden)return;
+  if(!saved||document.hidden)return;
+  if(working&&!force)return;
   if(!force&&latest&&Date.now()-lastFetch<INTERVAL)return;
   working=true;const version=++requestSerial;
   refresh.disabled=true;
@@ -128,7 +129,8 @@
     'Нет связи с погодным сервисом. Попробуйте обновить.';
    latest=null;lastFetch=0;render();
   }finally{
-   clearTimeout(kill);working=false;refresh.disabled=false;
+   clearTimeout(kill);
+   if(version===requestSerial){working=false;refresh.disabled=false}
   }
  }
  function requestLocation(){
