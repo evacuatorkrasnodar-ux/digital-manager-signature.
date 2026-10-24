@@ -14,25 +14,10 @@
  if(!core||!page||!form||!input||!screen||!status)return;
  const KEY='seyveo-video-saved-link-v1';
  const SAMPLE='M7lc1UVf-VE'; // Example used in the official YouTube IFrame docs.
- let chosen=null,playingFrame=null,lastRoute='',lastKnownHash='',unloadedAt=0;
- // Edit the existing stage in place: one smart field, no duplicate player.
- const header=page.querySelector('.sv-video-header');
- header?.querySelectorAll('p').forEach(el=>el.remove());
- const fieldLabel=page.querySelector('label[for="sayviVideoUrl"]');
- if(fieldLabel)fieldLabel.classList.add('sv-video-sr-only');
- input.placeholder='Что посмотрим?';input.inputMode='search';input.setAttribute('enterkeyhint','search');
- watch.textContent='Найти';if(demo)demo.textContent='Пример';
- const savedArea=page.querySelector('.sv-video-saved');
- const disclaimer=page.querySelector('.sv-video-disclaimer');
- const more=document.createElement('details');more.className='sv-video-more';
- const summary=document.createElement('summary');summary.textContent='Ещё';more.append(summary);
- if(savedArea)more.append(savedArea);
- if(disclaimer)more.append(disclaimer);
- page.insertBefore(more,back);
- status.textContent='';status.hidden=true;
+ let chosen=null,playingFrame=null,lastRoute='',lastKnownHash='';
+ // The HTML is the single source of markup; no duplicate toolbar or player.
  input.addEventListener('input',()=>{
-  const text=input.value.trim();
-  watch.textContent=core.videoId(text)?'Смотреть':'Найти';
+  watch.textContent=core.videoId(input.value.trim())?'Смотреть':'Найти';
  });
  const active=()=>location.hash==='#sayvi-video'&&!page.hidden;
  const message=(value)=>{status.textContent=value;status.hidden=!value};
@@ -56,7 +41,6 @@
   playingFrame=null;
   screen.hidden=true;
   screen.replaceChildren();
-  unloadedAt=Date.now();
  }
  function choose(id){
   if(!id)return false;
@@ -125,9 +109,11 @@
    message('Это не ссылка на видео YouTube. Проверьте адрес.');return;
   }
   const url='https://www.youtube.com/results?search_query='+encodeURIComponent(typed);
-  const tab=window.open(url,'_blank','noopener,noreferrer');
-  if(tab===null){message('Не удалось открыть поиск YouTube. Можно вставить прямую ссылку на видео.');return;}
-  message('Поиск по названию открылся в YouTube. Сам просмотр по ссылке — внутри Сэйвы.');
+  const searchLink=document.createElement('a');
+  searchLink.href=url;searchLink.target='_blank';
+  searchLink.rel='noopener noreferrer';
+  searchLink.click();
+  message('Поиск по названию откроется в YouTube. Внутри Сэйвы пока работает просмотр по ссылке.');
  });
  demo?.addEventListener('click',()=>{choose(SAMPLE);play()});
  back?.addEventListener('click',()=>{
