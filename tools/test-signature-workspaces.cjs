@@ -37,4 +37,16 @@ for(const sheet of ['#notesDialog','#calendarSpaceDialog','.paper-editor-dialog'
 assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 assert.match(html,/assets\/sections-velvet\.css\?v=9/);
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1);
+
+const roadmapSource=load('assets/management.js');
+const masterIdeas=load('docs/SEYVEO-IDEAS-MASTER.md');
+assert.equal((roadmapSource.match(/\['living_continuity'/g)||[]).length,1,
+ 'Living Continuity belongs once to the existing roadmap, not a duplicate registry');
+assert.match(roadmapSource,/\['living_continuity'[^\n]*'plan'\]/,
+ 'Living Continuity remains planned until real screens are validated');
+assert.match(masterIdeas,/Каждый экран — продолжение Главной/,
+ 'Canonical full-screen experience decision is recorded');
+assert.match(masterIdeas,/Управление → Наши идеи → Карта развития/,
+ 'Roadmap instructions point to the actual current UI');
+
 console.log('PASS Signature Tasks + shared Velvet workspaces; Home and dock unchanged.');
