@@ -375,7 +375,7 @@
 #calendarSpaceDialog[data-space=care] .pw-journal-body .cal-space-toolbar{margin-top:0}
 #calendarSpaceDialog[data-space=care] .pw-journal-body .cal-space-list{margin-bottom:0}
 @media(max-width:370px){
- #calendarPersonalTools .pw-card{padding:12px 10px;min-height:102px;border-radius:17px}
+ #calendarPersonalTools .pw-card{padding:9px 7px;min-height:88px;border-radius:0}
  #calendarPersonalTools .pw-detail{padding:13px 11px}
  #calendarPersonalTools .pw-inline{gap:7px}
  #calendarPersonalTools .pw-list-row{padding:9px}
