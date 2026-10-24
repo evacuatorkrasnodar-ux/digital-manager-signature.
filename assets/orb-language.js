@@ -25,7 +25,8 @@
  const classNames=['svl-live','svl-equalizer','svl-listening','svl-speaking','svl-symbol'];
  function clearOwn(){
   signal.classList.remove(...classNames);
-  if(signal.querySelector(':scope > .svl-depth'))signal.querySelector(':scope > .svl-depth').remove();
+  delete signal.dataset.svlKind;
+  signal.querySelector(':scope > .svl-depth')?.remove();
  }
  function available(){
   return !document.hidden&&!home.hidden&&!document.documentElement.classList.contains('seyveo-conversation');
