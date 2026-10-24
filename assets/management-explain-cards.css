@@ -325,3 +325,98 @@
  #manageThemeScreen .manage-theme-choice{gap:11px}
  #manageThemeScreen .manage-theme-choice .manage-theme-swatch{width:41px;height:41px;flex-basis:41px}
 }
+
+
+/* Connection coach: text-led choices, not a second wall of boxed buttons. */
+#manageConnectionsDialog .connection-coach-goals,
+#manageConnectionsDialog .connection-coach-modes{
+ gap:12px;border-bottom:1px solid var(--soft-line);padding-bottom:3px;
+}
+#manageConnectionsDialog .connection-coach-goals button,
+#manageConnectionsDialog .connection-coach-modes button{
+ background:transparent!important;border:0!important;
+ border-bottom:1px solid transparent!important;
+ border-radius:0!important;box-shadow:none!important;
+ color:var(--secondary);font-size:12px;font-weight:440;
+ padding:10px 3px 11px;min-height:44px;
+}
+#manageConnectionsDialog .connection-coach :is(.connection-coach-goals,.connection-coach-modes) button[aria-pressed=true]{
+ background:transparent!important;border-bottom-color:var(--text)!important;
+ color:var(--text);font-weight:480;
+}
+#manageConnectionsDialog .connection-coach-choices{
+ grid-template-columns:minmax(0,1fr);gap:0;
+}
+#manageConnectionsDialog .connection-coach-choices button{
+ min-height:51px;border:0!important;border-bottom:1px solid var(--soft-line)!important;
+ border-radius:0!important;background:transparent!important;
+ color:var(--text);padding:10px 2px;
+ font-weight:440;font-size:13px;
+}
+#manageConnectionsDialog .connection-coach-choices button[aria-pressed=true]{
+ font-weight:500;border-bottom-color:var(--text)!important;
+}
+#manageConnectionsDialog .connection-coach-choices .connection-coach-more{
+ min-height:44px;font-size:12px;text-align:left;color:var(--secondary);
+}
+#manageConnectionsDialog .connection-coach-personal{
+ background:transparent!important;border:0!important;
+ border-left:1px solid var(--line)!important;border-radius:0!important;
+ padding:4px 0 4px 13px;margin:12px 0 15px;
+}
+#manageConnectionsDialog .connection-coach-personal-choices button{
+ border:0!important;border-bottom:1px solid var(--soft-line)!important;
+ background:transparent!important;box-shadow:none!important;
+ border-radius:0!important;text-decoration:none;
+ color:var(--text);padding:8px 0;
+}
+#manageConnectionsDialog .connection-coach-actions button{
+ background:transparent;box-shadow:none;
+ border:1px solid var(--soft-line);border-radius:15px;
+ font-size:12px;font-weight:450;
+}
+#manageConnectionsDialog #connectionCoachNote{
+ color:var(--text)!important;background:transparent!important;
+ border:1px solid var(--line)!important;
+}
+
+/* Roadmap continues the editorial rhythm while keeping search, filters,
+   expand/collapse and saved checkboxes fully interactive. */
+#manageRoadmapDialog .manage-roadmap-principle{
+ background:transparent;border:0;border-left:1px solid var(--line);
+ border-radius:0;padding:8px 0 8px 14px;margin:2px 0 16px;
+}
+#manageRoadmapDialog .manage-roadmap-principle strong{
+ font-size:14px;font-weight:480;letter-spacing:-.02em;
+}
+#manageRoadmapDialog .manage-roadmap-principle span{
+ font-size:12px;line-height:1.5;
+}
+#manageRoadmapDialog .manage-roadmap-group{
+ border:0!important;border-top:1px solid var(--soft-line)!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+#manageRoadmapDialog .manage-roadmap-list{
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+#manageRoadmapDialog .manage-roadmap-item{
+ padding:13px 3px;border-bottom:1px solid var(--soft-line);
+}
+#manageRoadmapDialog .manage-roadmap-item strong{
+ font-size:13px;font-weight:480;letter-spacing:-.012em;
+}
+#manageRoadmapDialog .manage-roadmap-item p{
+ font-size:12px;line-height:1.55;color:var(--secondary);
+}
+#manageRoadmapDialog .manage-roadmap-group-head h3{
+ font-size:13px;font-weight:490;letter-spacing:-.02em;
+}
+#manageRoadmapDialog .manage-roadmap-search{
+ border:1px solid var(--soft-line);background:transparent;
+ border-radius:13px;min-height:44px;
+}
+#manageRoadmapDialog .manage-roadmap-progress{
+ font-weight:440;
+}
