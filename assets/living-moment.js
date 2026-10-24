@@ -113,6 +113,13 @@ function openDestination(kind){
  if(kind==='task'){$('navTasks')?.click();return true}
  return window.SEYVEO_SAYVI_SURFACES?.open?.(kind)===true;
 }
+function openCardAction(item){
+ if(item?.callTarget&&window.SEYVEO_CONTACTS?.requestCall){
+  // No new address book and no fictional call completion.
+  return !!window.SEYVEO_CONTACTS.requestCall(item.callTarget);
+ }
+ return openDestination(item.kind);
+}
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
  b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
@@ -131,7 +138,10 @@ function createSurface(primary,other=[],real=false){
  const artwork=create('button','lm-hero-art lm-hero-art--'+primary.kind);
  artwork.type='button';artwork.setAttribute('aria-label','Открыть: '+primary.title);
  artwork.append(icon(primary.kind));
- artwork.addEventListener('click',()=>{readingUntil=Date.now()+20000;openDestination(shown.kind)});
+ artwork.addEventListener('click',()=>{
+  readingUntil=Date.now()+20000;
+  openCardAction(shown);
+ });
  const copy=create('div','lm-primary-copy');
  const headline=create('strong','lm-primary-title',primary.title);
  const description=create('p','lm-primary-subtitle',primary.body);
@@ -148,7 +158,11 @@ function createSurface(primary,other=[],real=false){
  // external operations until the service exposes a working executor.
  const defer=polymer('Позже',()=>closeEarly());
  defer.hidden=true;
- const open=polymer('Подробнее',()=>{
+ const open=polymer(real&&primary.callTarget?'Позвонить':'Подробнее',()=>{
+  if(real&&shown.callTarget){
+   openCardAction(shown);
+   return;
+  }
   if(!expanded){
    expanded=true;
    field.classList.add('lm-has-reason');
@@ -161,11 +175,12 @@ function createSurface(primary,other=[],real=false){
    defer.hidden=false;
    return;
   }
-  openDestination(shown.kind);
+  openCardAction(shown);
  },'main');
  open.setAttribute('aria-controls',more.id);
  open.setAttribute('aria-expanded','false');
- open.setAttribute('aria-label','Подробнее: '+shown.title);
+ open.setAttribute('aria-label',real&&shown.callTarget?'Подготовить звонок: '+shown.callTarget:'Подробнее: '+shown.title);
+ if(real&&shown.callTarget)defer.hidden=false;
  controls.append(open,defer);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
@@ -298,6 +313,8 @@ function dueTask(){
   .sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
 }
 function showTask(item){
+ const callTarget=window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'';
+ const contact=callTarget?window.SEYVEO_CONTACTS?.availability?.(callTarget):null;
  const id='task:'+(item.id||item.title)+'|'+item.due;
  if(quiet.has(id))return false;
  mode='task';key=id;
@@ -306,10 +323,19 @@ function showTask(item){
  createSurface({
   kind:'task',
   title:item.title,
-  body:'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
+  callTarget,
+  body:callTarget
+    ?'Срок наступил'+(when?' · '+when:'')+'. Сэйви поможет связаться с человеком.'
+    :'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
   category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
-  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
-  detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
+  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил срок.',
+  detail:callTarget
+    ?contact?.matches===1
+      ?'Нашла «'+contact.name+'» в «Моём мире». Нажмите «Позвонить» и проверьте номер.'
+      :contact?.matches>1
+      ?'Есть несколько похожих контактов. Сэйви предложит выбрать нужного.'
+      :'Номер не найден. Сэйви поможет выбрать человека или добавить контакт.'
+    :'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
  },[],true);
  tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
  space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
