@@ -12,9 +12,9 @@
 .cal-round:focus-visible,.cal-periods button:focus-visible,.cal-day:focus-visible,.cal-entry:focus-visible,.cal-nav button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .calendar-header-add{background:var(--text);color:var(--bg);border-color:var(--text)}
 .calendar-header-add svg{stroke-width:1.65}
-.cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:3px;margin:0 0 0;border:1px solid var(--line);background:var(--card);border-radius:18px}
+.cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:0 0 0;border:0;background:transparent;border-radius:0;}
 .cal-periods button{min-width:0;min-height:38px;padding:0 3px;border:0;border-radius:14px;color:var(--secondary);background:transparent;font-size:12px;font-weight:565}
-.cal-periods button[aria-pressed=true]{background:var(--card2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line),0 2px 5px var(--shadow)}
+.cal-periods button[aria-pressed=true]{background:transparent;color:var(--text);box-shadow:none;}
 .cal-nav{display:flex;align-items:center;gap:7px;margin:0 1px 0;min-height:33px}
 .cal-nav h2{margin:0;min-width:0;flex:1;font-size:17px;letter-spacing:-.024em;line-height:1.25;font-weight:610}
 .cal-nav .cal-period-title{display:inline-block;max-width:100%;padding:5px 0;border:0;background:transparent;color:var(--text);font:inherit;letter-spacing:inherit;line-height:inherit;text-align:left;cursor:pointer}
@@ -31,7 +31,7 @@
  #calendarView .cal-swipe-prev{animation:cal-arrive-prev .22s cubic-bezier(.2,.7,.2,1) both}
 }
 /* Velvet weekend rails: continuous and very quiet, never individual tiles. */
-.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,rgba(255,255,255,.035),transparent 65%),var(--card);overflow:hidden;padding:5px 6px 4px}
+.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:0;border-radius:0;background:transparent;overflow:hidden;padding:3px 0 2px;}
 .cal-month::before,.cal-week-grid::before{
  content:"";position:absolute;z-index:0;pointer-events:none;
  top:5px;right:6px;bottom:4px;width:calc((100% - 12px) * 2 / 7);
@@ -68,12 +68,12 @@
 .cal-day-dots i.cal-dot-task{background:var(--text)}
 .cal-day-dots i.cal-dot-holiday{width:6px;height:6px;flex:none;border-radius:1.4px;background:var(--text);transform:rotate(45deg);opacity:.85}
 .cal-day[data-holiday=rest] .cal-day-dots i.cal-dot-holiday{background:transparent;border:1px solid var(--text);opacity:.8}
-.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:1px solid var(--line);border-radius:20px;padding:7px 4px;background:var(--card)}
+.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(220,230,244,.024);border:0;border-radius:0;padding:4px 0;background:transparent;}
 .cal-week-grid::before{top:7px;right:4px;bottom:7px;width:calc((100% - 8px) * 2 / 7)}
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:65px;justify-content:center;gap:6px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
-.cal-day-summary{margin:10px 1px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cal-day-summary{margin:6px 1px 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 #calendarView[data-mode=day] .cal-day-summary{margin-top:0}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
@@ -82,14 +82,14 @@
 .cal-holiday-symbol{display:inline-grid;place-items:center;flex:none;width:18px;height:18px;color:var(--secondary);font-size:17px}
 .cal-holiday-note[data-kind=rest]{color:var(--secondary)}
 /* Contextual local insight: no permanent widget, only actionable findings. */
-.cal-advice{display:flex;align-items:center;flex-wrap:wrap;gap:7px 10px;margin:9px 1px 4px;padding:9px 10px;border:1px solid var(--soft-line);border-radius:15px;background:var(--card);color:var(--text)}
+.cal-advice{display:flex;align-items:center;flex-wrap:wrap;gap:7px 10px;margin:9px 1px 4px;padding:8px 3px;border:0;border-radius:0;background:transparent;color:var(--text)}
 .cal-advice[hidden]{display:none!important}
 .cal-advice-mark{flex:none;font-size:10px;font-weight:650;letter-spacing:.04em}
 .cal-advice-copy{flex:1 1 145px;min-width:0;font-size:11px;line-height:1.5;color:var(--secondary);overflow-wrap:anywhere}
 .cal-advice-action{flex:none;min-height:38px;max-width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);font:inherit;font-size:11px;font-weight:570}
 .cal-advice-action:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.cal-agenda{padding:3px 14px;border:1px solid var(--line);border-radius:21px;background:var(--card);min-width:0}
-.cal-entry{display:flex;align-items:center;width:100%;gap:12px;padding:13px 0;text-align:left;color:var(--text);border:0;background:transparent;min-height:63px}
+.cal-agenda{padding:2px 0;border:0;border-radius:0;background:transparent;min-width:0}
+.cal-entry{display:flex;align-items:center;width:100%;gap:8px;padding:8px 2px;text-align:left;color:var(--text);border:0;background:transparent;min-height:60px;}
 .cal-entry+.cal-entry{border-top:1px solid var(--soft-line)}
 .cal-entry-time{flex:0 0 61px;width:61px;white-space:nowrap;font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums}
 .cal-entry-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
@@ -100,11 +100,11 @@
 .cal-entry-bullet{width:8px;height:8px;border-radius:50%;background:var(--secondary)}
 .cal-empty{padding:24px 15px;text-align:center;color:var(--secondary);line-height:1.6;font-size:12px}
 .cal-empty strong{display:block;color:var(--text);font-size:13px;font-weight:605;margin-bottom:4px}
-.cal-day-fab{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border:1px solid var(--line);border-radius:999px;background:var(--card2);color:var(--text);padding:8px 15px;font-size:12px;font-weight:590}
+.cal-day-fab{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border:0;border-radius:0;background:transparent;color:var(--text);padding:8px 5px;font-size:12px;font-weight:590}
 .cal-day-fab:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Compact paired actions; the original velvet dock retains its geometry. */
 #calendarPage .cal-actions{display:flex;align-items:stretch;gap:9px;margin-top:8px}
-#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:8px 7px;border-radius:999px;font-size:clamp(10.5px,2.8vw,12px);font-weight:550;white-space:nowrap}
+#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:8px 7px;border-radius:0;font-size:clamp(10.5px,2.8vw,12px);font-weight:550;white-space:nowrap}
 #calendarPage .cal-actions .cal-day-fab[hidden]{display:none!important}
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
 /* The app shell already reserves room for the shared fixed dock.
@@ -112,10 +112,10 @@
 .cal-deadline-section{margin:12px 0}
 .cal-deadline-section h3{font-size:13px;font-weight:610;line-height:1.45;margin:0 0 9px}
 .cal-deadline-section .cal-agenda{margin-bottom:11px}
-.cal-form-dialog{width:min(430px,calc(100vw - 28px));max-height:min(85dvh,720px);padding:22px 18px 17px}
+.cal-form-dialog{width:min(430px,calc(100vw - 28px));max-height:min(85dvh,720px);padding:16px 15px 13px;}
 .cal-form-dialog h2{margin:0 34px 7px 0;font-weight:625;font-size:21px;line-height:1.25}
 .cal-form-dialog>p{margin:0 20px 13px 0;color:var(--secondary);font-size:12px;line-height:1.5}
-.cal-form-dialog form{display:flex;flex-direction:column;gap:11px}
+.cal-form-dialog form{display:flex;flex-direction:column;gap:8px;}
 /* Keep the event name visible while iOS moves the scroll area during native
    date/time picker interaction; do not affect other dialogs. */
 #calendarEventDialog .cal-form-primary{
@@ -155,7 +155,7 @@
 #calendarEventDialog .cal-date-control:focus-within{outline:2px solid var(--text);outline-offset:2px}
 
 .cal-field{display:flex;flex-direction:column;gap:6px;min-width:0;color:var(--secondary);font-size:12px;line-height:1.5}
-.cal-field input,.cal-field textarea{display:block;width:100%;min-width:0;min-height:45px;box-sizing:border-box;padding:10px 12px;border:1px solid var(--line);border-radius:13px;color:var(--text);background:var(--card2);font:inherit;font-size:16px;outline:0;color-scheme:inherit}
+.cal-field input,.cal-field textarea{display:block;width:100%;min-width:0;min-height:45px;box-sizing:border-box;padding:9px 3px;border:0;border-radius:0;color:var(--text);background:transparent;font:inherit;font-size:16px;outline:0;color-scheme:inherit}
 .cal-field textarea{min-height:80px;resize:vertical}
 /* Display a dependable time label on iPhone while retaining its native picker. */
 .cal-time-control{position:relative;display:flex;align-items:center;min-width:0;min-height:45px;box-sizing:border-box;border:1px solid var(--line);border-radius:13px;background:var(--card2);overflow:hidden}
@@ -185,11 +185,11 @@
 /* One quiet segmented choice, with native radios and no iOS select arrows. */
 .cal-kind{min-width:0;padding:0;margin:0;border:0}
 .cal-kind legend{padding:0;margin:0 0 6px;color:var(--secondary);font-size:12px;line-height:1.5}
-.cal-kind-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:3px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.cal-kind-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:0;border:0;border-radius:0;background:transparent;}
 .cal-kind-option{position:relative;display:block;min-width:0;cursor:pointer}
 .cal-kind-option input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
 .cal-kind-option span{display:grid;place-items:center;min-height:42px;border-radius:11px;color:var(--secondary);font-size:13px;font-weight:550}
-.cal-kind-option input:checked+span{background:var(--card2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+.cal-kind-option input:checked+span{background:transparent;color:var(--text);box-shadow:inset 0 -1px 0 var(--text);}
 .cal-kind-option input:focus-visible+span{outline:2px solid var(--text);outline-offset:2px}
 .cal-extra{min-width:0}
 .cal-extra summary{display:flex;align-items:center;max-width:100%;min-height:42px;width:max-content;list-style:none;cursor:pointer;color:var(--secondary);font-size:12px}
@@ -372,10 +372,7 @@
 
 /* Signature Calendar phone action: same confirmed calling sheet as Tasks. */
 #calendarPage .cal-entry-phone{
- display:grid;place-items:center;flex:none;width:42px;height:42px;
- border:1px solid var(--line);border-radius:50%;
- background:var(--card2);color:var(--text);font-size:0;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.055);
+ display:grid;place-items:center;flex:none;width:42px;height:42px;border:0;border-radius:50%;background:transparent;color:var(--text);font-size:0;box-shadow:none;
 }
 #calendarPage .cal-entry-phone svg{
  display:block;width:19px;height:19px;fill:none;stroke:currentColor;
