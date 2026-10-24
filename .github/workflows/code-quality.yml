@@ -38,6 +38,8 @@ jobs:
         run: node tools/test-living-ink.cjs
       - name: Test readable History, Notes, Health and Care workspaces
         run: node tools/test-living-workspaces.cjs
+      - name: Test permissioned weather and careful health guidance
+        run: node tools/test-weather.cjs
       - name: Test Magnetic Ink swipes and the fixed Sayvi center
         run: node tools/test-magnetic-ink.cjs
       - name: Test local music metadata, lock artwork and background playback
