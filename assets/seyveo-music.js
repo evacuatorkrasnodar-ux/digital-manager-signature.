@@ -24,6 +24,11 @@ const back=$('sayviMusicBack');
 const importBtn=$('sayviMusicImport');
 const options=$('sayviMusicProviders');
 const providerText=$('sayviMusicProviderText');
+const sourcesPanel=$('sayviMusicSourcesPanel');
+const sourcesToggle=$('sayviMusicSourcesToggle');
+const sourcesClose=$('sayviMusicSourcesClose');
+const resume=$('sayviMusicResume');
+const resumeText=$('sayviMusicResumeText');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn||!back)return;
 const safeName=file=>String(file?.name||'Без названия').replace(/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i,'');
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
@@ -54,7 +59,7 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0;
+let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -67,7 +72,49 @@ function updatePlay(){
  player.setAttribute('aria-pressed',String(playing));
  $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
  disk?.setAttribute('aria-label',playing?'Музыка воспроизводится':'Музыка остановлена');
+ syncResume();
 }
+function syncResume(){
+ if(!resume||!resumeText)return;
+ const loaded=tracks.length>0&&index>=0;
+ const playing=loaded&&!audio.paused&&!audio.ended;
+ resume.hidden=!loaded;
+ if(loaded){
+  const track=safeName(tracks[index]);
+  resumeText.textContent=(playing?'Слушаем · ':'Продолжить · ')+track;
+  resume.setAttribute('aria-label','Вернуться к музыке: '+track);
+ }
+ document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing}}));
+}
+function hidePanels(){
+ queueOpen=false;
+ collection.hidden=true;
+ if(sourcesPanel)sourcesPanel.hidden=true;
+ if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
+}
+function showQueue(){
+ if(!tracks.length){
+  sayviMessage('Сначала выберите свои аудиофайлы.');
+  importBtn.focus({preventScroll:true});
+  return false;
+ }
+ if(sourcesPanel)sourcesPanel.hidden=true;
+ if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
+ queueOpen=true;
+ collectionRender();
+ collection.querySelector('.sv-music-panel-close')?.focus({preventScroll:true});
+ return true;
+}
+function toggleSources(force){
+ if(!sourcesPanel)return;
+ const show=typeof force==='boolean'?force:sourcesPanel.hidden;
+ if(show){queueOpen=false;collection.hidden=true;}
+ sourcesPanel.hidden=!show;
+ sourcesToggle?.setAttribute('aria-expanded',String(show));
+ if(show)sourcesClose?.focus({preventScroll:true});
+ else sourcesToggle?.focus({preventScroll:true});
+}
+
 function updateTime(){
  const total=Number.isFinite(audio.duration)?audio.duration:0;
  const now=Number.isFinite(audio.currentTime)?audio.currentTime:0;
@@ -103,7 +150,12 @@ function collectionRender(){
   collection.hidden=true;
   return;
  }
- collection.hidden=false;
+ collection.hidden=!queueOpen;
+ const dismiss=document.createElement('button');
+ dismiss.type='button';dismiss.className='sv-music-panel-close';
+ dismiss.textContent='Закрыть';dismiss.setAttribute('aria-label','Закрыть очередь музыки');
+ dismiss.addEventListener('click',()=>{queueOpen=false;collection.hidden=true;});
+ collection.append(dismiss);
  const title=document.createElement('p');
  title.className='sv-music-collection-label';
  title.textContent='МОЯ ОЧЕРЕДЬ · '+tracks.length;
@@ -202,6 +254,19 @@ function close(){
  $('navHome')?.click();
 }
 back.addEventListener('click',close);
+resume?.addEventListener('click',open);
+sourcesToggle?.addEventListener('click',()=>toggleSources());
+sourcesClose?.addEventListener('click',()=>toggleSources(false));
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape'||location.hash!=='#sayvi-music')return;
+ if(!collection.hidden||!sourcesPanel?.hidden){hidePanels();sourcesToggle?.focus({preventScroll:true});}
+});
+function syncMusicRoute(){
+ const inside=location.hash==='#sayvi-music';
+ document.documentElement.classList.toggle('sv-music-screen',inside);
+ if(!inside)hidePanels();
+}
+window.addEventListener('hashchange',syncMusicRoute);
 importBtn.addEventListener('click',()=>fileInput.click());
 player.addEventListener('click',play);
 previous.addEventListener('click',()=>switchTrack(index-1,true));
@@ -236,9 +301,9 @@ $('sayviMusicFromComposer')?.addEventListener('click',()=>{
  $('hideInput')?.click();open();
 });
 previous.disabled=true;next.disabled=true;seek.disabled=true;
-updatePlay();updateTime();collectionRender();
+updatePlay();updateTime();collectionRender();syncMusicRoute();
 window.SEYVEO_MUSIC=Object.freeze({
- understand,open,
+ understand,open,openQueue:showQueue,closePanels:hidePanels,
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   source:'local-file',connectedServices:0
