@@ -36,7 +36,9 @@
  attribution.href=provider.attributionUrl;attribution.target='_blank';attribution.rel='noopener noreferrer';
  const place=el('button','swx-weather-place','Уточнить место');place.type='button';
  const off=el('button','swx-weather-off','Отключить');off.type='button';
- tail.append(attribution,place,off);
+ // Attribution is always visible whenever provider data is shown.
+ body.append(attribution);
+ tail.append(place,off);
  const options=el('button','swx-weather-options','Настройки погоды');
  options.type='button';options.hidden=true;
  line.append(enable,body,note,options,tail);
