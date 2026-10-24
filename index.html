@@ -2019,8 +2019,9 @@ function goHome(){
 }
 $('navHome').addEventListener('click',goHome);
 $('navTasks').addEventListener('click',()=>{
-  if(location.hash==='#tasks'){renderTasksPage();return;}
-  tasksView=state.history.some(h=>h.status==='working'||h.status==='failed')?'working':'history';
+  // Personal Tasks owns the current Tasks page and refreshes on hashchange.
+  // Removed legacy tasksView assignment from the retired approval demo.
+  if(location.hash==='#tasks')return;
   location.hash='tasks';
 });
 /* My World is now an item of the existing swipe strip, not the header icon. */
