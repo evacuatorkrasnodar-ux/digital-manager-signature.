@@ -7,10 +7,10 @@
 .calendar-header p{font-size:12px;line-height:1.45;color:var(--secondary);margin:0}
 .calendar-kicker{font-size:10px!important;letter-spacing:.12em;font-weight:630;color:var(--secondary);margin-bottom:9px!important}
 .calendar-header-actions{display:flex;align-items:center;gap:7px;flex:none}
-.cal-round{display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;color:var(--text);background:var(--card);box-shadow:inset 0 1px 0 #ffffff0d}
+.cal-round{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;color:var(--text);background:transparent;box-shadow:none}
 .cal-round svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .cal-round:focus-visible,.cal-periods button:focus-visible,.cal-day:focus-visible,.cal-entry:focus-visible,.cal-nav button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.calendar-header-add{background:var(--text);color:var(--bg);border-color:var(--text)}
+.calendar-header-add{background:transparent;color:var(--text);border-color:transparent}
 .calendar-header-add svg{stroke-width:1.65}
 .cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:0 0 0;border:0;background:transparent;border-radius:0;}
 .cal-periods button{min-width:0;min-height:38px;padding:0 3px;border:0;border-radius:14px;color:var(--secondary);background:transparent;font-size:12px;font-weight:565}
@@ -355,7 +355,7 @@
 .cal-event-label{font-size:10px;text-align:center;color:var(--secondary);margin-top:6px}
 #calendarView[hidden],#calendarDeadlineView[hidden]{display:none!important}
 :root[data-theme=light] .cal-day[data-today=true] .cal-day-number{color:#fff}
-:root[data-theme=light] .calendar-header-add{color:#fff}
+:root[data-theme=light] .calendar-header-add{color:var(--text)}
 @media(max-width:370px){
  .calendar-header h1{font-size:25px}
  .calendar-header-actions{gap:5px}.cal-round{width:37px;height:37px}
