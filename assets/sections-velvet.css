@@ -29,14 +29,15 @@
  #calendarPage .cal-entry-copy{gap:3px}
  #calendarPage .cal-entry-copy strong{font-weight:575}
  #calendarPage .cal-empty{padding:21px 12px}
- #calendarPage .cal-advice{margin-top:8px;padding:10px 12px;border-radius:16px}
+ #calendarPage .cal-advice{margin-top:8px;padding:10px 2px;border-radius:0;background:transparent;border:0;border-top:1px solid var(--soft-line)}
 }
 #calendarEventDialog.cal-form-dialog[open]{
  border-radius:25px;
  max-height:min(94svh,calc(100svh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))
 }
 #calendarEventDialog .cal-field :is(input,textarea){
- border-radius:15px;background:var(--card2)
+ border-radius:0;background:transparent;border:0;
+ border-bottom:1px solid var(--soft-line)
 }
 #calendarEventDialog .cal-field textarea{
  resize:none;max-height:155px;overflow-y:auto
@@ -45,7 +46,8 @@
  -webkit-overflow-scrolling:touch;overscroll-behavior:contain
 }
 #calendarEventDialog .cal-dialog-actions .btn{
- min-height:44px;border-radius:999px
+ min-height:44px;border:0;border-radius:0;
+ background:transparent;color:var(--text)
 }
 
 /* PERSONAL SPACE: Health, Care, My World — shared sheet. */
@@ -72,10 +74,10 @@
  max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
  /* A fixed top anchor prevents shorter Health/Care panels jumping down the
     iPhone screen; only the dialog scrolls when content is taller. */
- top:max(10svh,calc(env(safe-area-inset-top,0px) + 14px));
+ top:max(12px,calc(env(safe-area-inset-top,0px) + 8px));
  bottom:auto;margin:0 auto;
- max-height:min(74svh,calc(90svh - 24px - env(safe-area-inset-bottom,0px)));
- padding:20px 17px 15px;border-radius:24px;
+ max-height:calc(100svh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+ padding:20px 17px 15px;border-radius:0;
  overflow-y:auto;overscroll-behavior:contain
 }
 #calendarSpaceDialog h2{
@@ -87,7 +89,7 @@
  min-height:44px;border-radius:999px;font-weight:540
 }
 #calendarSpaceDialog .cal-space-list{
- border-radius:18px;border-color:var(--soft-line)
+ border-radius:0;border-color:transparent;background:transparent
 }
 #calendarSpaceDialog .calendar-space-record{
  min-height:55px;padding:9px 12px;gap:9px
@@ -99,14 +101,15 @@
 }
 #calendarSpaceDialog .calendar-space-edit :is(input,select,textarea){
  box-sizing:border-box;min-height:44px;
- border-radius:14px;font-size:16px
+ border-radius:0;font-size:16px;background:transparent;border:0;
+ border-bottom:1px solid var(--soft-line)
 }
 #calendarSpaceDialog .calendar-space-edit textarea{
  resize:none;min-height:96px;max-height:160px;overflow-y:auto
 }
 #calendarSpaceDialog .calendar-space-actions button,
 #calendarSpaceDialog .cal-space-close{
- min-height:44px;border-radius:999px
+ min-height:44px;border-radius:0;background:transparent;border:0
 }
 #calendarSpaceDialog .calendar-space-privacy{
  margin:11px 0;font-size:10px;line-height:1.45
@@ -213,7 +216,9 @@
 :root[data-theme=light] .onboard-dialog .onboard-options-list{
  background:#fff;border-color:rgba(48,66,88,.12)
 }
-:root[data-theme=light] #calendarSpaceDialog .calendar-space-edit :is(input,select,textarea),
+:root[data-theme=light] #calendarSpaceDialog .calendar-space-edit :is(input,select,textarea){
+ background:transparent;border-color:var(--soft-line)
+}
 :root[data-theme=light] #calendarEventDialog .cal-field :is(input,textarea),
 :root[data-theme=light] .onboard-dialog .onboard-field input{
  background:#fff;border-color:rgba(48,66,88,.14)
