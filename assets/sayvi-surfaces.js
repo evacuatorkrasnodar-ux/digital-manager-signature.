@@ -119,10 +119,12 @@ function demoScenario(kind){
  }
  let completed=false;
  const explain=intent('Подробнее',()=>{
-  details.hidden=!details.hidden;
-  explain.setAttribute('aria-expanded',String(!details.hidden));
+  details.hidden=false;
+  explain.hidden=true;
+  execute.hidden=false;
+  later.hidden=false;
+  status.textContent='Сэйви: я показала главное. Решение за вами.';
  });
- explain.setAttribute('aria-expanded','false');
  const execute=intent('Исполнить',()=>{
   if(completed)return;
   completed=true;
@@ -155,7 +157,9 @@ function demoScenario(kind){
    choice.append(forget,remind);
   }
  });
- row.append(execute,explain,later);
+ execute.hidden=true;
+ later.hidden=true;
+ row.append(explain,execute,later);
  section.append(row,details,choice,status);
  section.append(hint('Это режим проверки будущего поведения Сэйви. Ни писем, ни подписей, ни медицинских действий он не выполняет.'));
  body.append(section);
