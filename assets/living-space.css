@@ -558,15 +558,9 @@ html.sv-space-active .sv-living-director-copy{
 html.sv-space-active #seyveoCompanion .sv-presence-caption{
  font-weight:455;letter-spacing:.075em;opacity:.76;
 }
-html.sv-space-active footer.dock[data-sv-living-context] .assistant-button{
- --sv-living-dock-glint:rgba(244,247,255,.18);
-}
-/* One subtle contextual contact point in the EXISTING central control.
-   The dock remains the exact same five buttons and height on iPhone X. */
-html.sv-space-active footer.dock[data-sv-living-context] .assistant-button{
- outline:1px solid var(--sv-living-dock-glint);
- outline-offset:1px;
-}
+/* Living Ink director uses the existing sphere caption and real voice glyph.
+   No passive outline around the central symbol; keyboard focus still uses
+   the accessible focus-visible rule of the single dock. */
 @media(prefers-reduced-motion:reduce){
  html.sv-space-active .sv-living-director-copy{animation:none!important}
 }
