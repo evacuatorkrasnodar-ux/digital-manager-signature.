@@ -25,7 +25,7 @@ const route=()=>{
  if(hash==='#picture')return 'picture';
  if(hash==='#calendar')return 'calendar';
  if(hash==='#life')return 'life';
- if(/^#sayvi-(mail|documents|health)$/.test(hash)||hash==='#sayvi-answer')return 'sayvi';
+ if(/^#sayvi-(mail|documents|health)$/.test(hash)||hash==='#sayvi-answer'||hash==='#sayvi-music')return 'sayvi';
  return 'home';
 };
 function animateOrb(from){
@@ -69,7 +69,7 @@ function before(next){
  current=next;
 }
 function cascade(page){
- const target=page==='sayvi'&&$('sayviAnswerPage')?.hidden===false?$('sayviAnswerPage'):screens[page];
+ const target=page==='sayvi'?( $('sayviAnswerPage')?.hidden===false?$('sayviAnswerPage'): $('sayviMusicPage')?.hidden===false?$('sayviMusicPage'):screens[page]):screens[page];
  if(!target||reduce.matches)return;
  target.classList.remove('sv-cascade');
  cancelAnimationFrame(frame);
