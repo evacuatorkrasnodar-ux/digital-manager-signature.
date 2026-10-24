@@ -85,61 +85,82 @@
  }
  #calendarSpaceDialog[data-measure-focus=true] .calendar-space-date-row>*{min-width:0}
 }
-/* Health inside Personal Space: glanceable real entered values, never examples.
-   Scoped exclusively to the existing shared dialog when Health is active. */
+/* Real health cards: tasteful color has meaning as a section identifier,
+   NEVER a green/red diagnosis. Values come solely from stored real records. */
 #calendarHealthOverview[hidden]{display:none!important}
 #calendarHealthOverview.cal-health-overview{margin:0 0 8px}
 #calendarHealthOverview .cal-health-tiles{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
 }
 #calendarHealthOverview .cal-health-tile{
- display:flex;position:relative;flex-direction:column;
- align-items:flex-start;gap:7px;min-width:0;min-height:114px;
- box-sizing:border-box;padding:15px 11px 12px;
- border:1px solid var(--soft-line);border-radius:19px;
- background:var(--card2);color:var(--text);
- text-align:left;font:inherit;cursor:pointer;
+ --health-wash:rgba(127,176,212,.09);
+ --health-ink:#9bbfda;
+ display:flex;position:relative;flex-direction:column;align-items:flex-start;
+ gap:7px;min-width:0;min-height:137px;box-sizing:border-box;
+ padding:15px 14px 12px;
+ border:1px solid rgba(185,202,221,.12);border-radius:22px;
+ background:linear-gradient(152deg,var(--health-wash),transparent 75%),var(--card2);
+ color:var(--text);text-align:left;font:inherit;cursor:pointer;
+ box-shadow:inset 0 1px 0 rgba(250,251,253,.045);
  -webkit-tap-highlight-color:transparent;
+ transition:transform 300ms cubic-bezier(.22,1,.36,1),background-color 300ms ease;
 }
-#calendarHealthOverview .cal-health-tile:active{
- background:var(--card);transform:scale(.99);
+#calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
+ --health-wash:rgba(113,160,215,.12);--health-ink:#9ec6e9;
 }
-#calendarHealthOverview .cal-health-tile:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
+#calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
+ --health-wash:rgba(227,112,143,.105);--health-ink:#e8a4b5;
 }
+#calendarHealthOverview .cal-health-tile:active{transform:scale(.988)}
+#calendarHealthOverview .cal-health-tile:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 #calendarHealthOverview .cal-health-tile-label{
- max-width:100%;font-size:11px;font-weight:565;
- line-height:1.3;color:var(--secondary);
+ max-width:calc(100% - 39px);
+ font-size:12px;font-weight:485;line-height:1.4;color:var(--secondary);
+}
+#calendarHealthOverview .cal-health-emblem{
+ position:absolute;top:11px;right:11px;width:39px;height:39px;
+ fill:none;stroke:var(--health-ink);stroke-width:1.85;
+ stroke-linecap:round;stroke-linejoin:round;opacity:.88;pointer-events:none;
 }
 #calendarHealthOverview .cal-health-tile strong{
  display:block;min-width:0;max-width:100%;margin-top:auto;
- font-size:clamp(14px,4.4vw,21px);line-height:1.22;
- font-weight:610;letter-spacing:-.035em;
+ font-size:clamp(17px,4.6vw,23px);line-height:1.17;
+ font-weight:510;letter-spacing:-.037em;
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
  font-variant-numeric:tabular-nums;
 }
 #calendarHealthOverview .cal-health-tile small{
- display:block;max-width:100%;font-size:10px;
- line-height:1.35;font-weight:470;color:var(--secondary);
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ display:block;max-width:calc(100% - 17px);
+ font-size:10.5px;line-height:1.35;font-weight:455;
+ color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 #calendarHealthOverview .cal-health-tile-action{
- position:absolute;top:9px;right:10px;
- color:var(--secondary);font-size:15px;line-height:1;
- opacity:.8;
-}
-@media(max-width:370px){
- #calendarHealthOverview .cal-health-tiles{gap:5px}
- #calendarHealthOverview .cal-health-tile{
-  border-radius:16px;padding:13px 8px 11px;min-height:114px;
- }
- #calendarHealthOverview .cal-health-tile-label{font-size:10px}
- #calendarHealthOverview .cal-health-tile small{font-size:9px}
+ position:absolute;bottom:10px;right:13px;
+ color:var(--health-ink);font-size:17px;line-height:1;opacity:.85;
+ pointer-events:none;
 }
 :root[data-theme=light] #calendarHealthOverview .cal-health-tile{
- background:#fff;border-color:rgba(45,63,86,.13);
+ background:linear-gradient(155deg,var(--health-wash),transparent 74%),#fff;
+ border-color:rgba(49,68,88,.12);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.82);
+}
+:root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
+ --health-wash:rgba(74,150,210,.095);--health-ink:#4b88b3;
+}
+:root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
+ --health-wash:rgba(198,95,128,.085);--health-ink:#b76c80;
+}
+@media(max-width:370px){
+ #calendarHealthOverview .cal-health-tiles{gap:6px}
+ #calendarHealthOverview .cal-health-tile{
+  border-radius:19px;padding:13px 10px 11px;min-height:132px;
+ }
+ #calendarHealthOverview .cal-health-emblem{width:32px;height:32px;top:9px;right:8px}
+ #calendarHealthOverview .cal-health-tile-label{font-size:11px}
+ #calendarHealthOverview .cal-health-tile small{font-size:9.8px}
 }
 @media(prefers-reduced-motion:reduce){
+ #calendarHealthOverview .cal-health-tile{transition:none}
  #calendarHealthOverview .cal-health-tile:active{transform:none}
 }
 
