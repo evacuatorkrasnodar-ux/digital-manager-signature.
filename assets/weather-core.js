@@ -44,7 +44,6 @@
    const valid=candidates.filter(x=>within(x,0,100)!==null);
    if(valid.length)rainChance=Math.max(...valid);
   }
-  const timestamp=Date.parse(c.time);
   return Object.freeze({
    temp:round(temp),apparent:apparent===null?null:round(apparent),
    pressure:pressure===null?null:round(pressure),
@@ -83,6 +82,7 @@
   if(!w)return '';
   const pieces=[w.temp+'°',w.conditions];
   if(w.pressure!==null)pieces.push('атм. давление '+w.pressure+' гПа');
+  if(w.rainChance!==null&&w.rainChance>=70)pieces.push('осадки до '+w.rainChance+'%');
   return pieces.join(' · ');
  };
  return {parse,signal,detail,label};
