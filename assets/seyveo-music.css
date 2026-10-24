@@ -484,3 +484,47 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   max-height:100dvh!important;
  }
 }
+
+/* SEYVA MUSIC · Living Ink brand, not a second card or certified Hi-Res logo.
+   A verified lossless SOURCE displays its own parameters only while playing. */
+#sayviMusicPage>header{text-align:center}
+#sayviMusicPage .sv-music-heading{
+ margin:3px 0 0;
+ font-size:clamp(24px,6vw,29px);
+ letter-spacing:.035em;
+ font-weight:420;
+ line-height:1.18;
+}
+#sayviMusicPage .sv-music-technology{
+ margin:3px 0 3px;
+ color:var(--secondary);
+ font-size:9px;
+ line-height:1.3;
+ font-weight:450;
+ letter-spacing:.23em;
+}
+#sayviMusicPage .sv-music-ai{
+ font-style:italic;
+ text-transform:none;
+ letter-spacing:0;
+ font-weight:600;
+}
+#sayviMusicPage .sv-music-quality[hidden]{display:none!important}
+#sayviMusicPage .sv-music-quality{
+ margin:4px 0 1px;
+ padding:0;
+ border:0;
+ background:none;
+ box-shadow:none;
+ text-align:center;
+ color:var(--text);
+ font-size:9.5px;
+ font-weight:470;
+ letter-spacing:.12em;
+ line-height:1.25;
+}
+@media(max-height:760px){
+ #sayviMusicPage .sv-music-heading{font-size:22px;margin-top:1px}
+ #sayviMusicPage .sv-music-technology{font-size:8.5px;margin-top:2px;margin-bottom:1px}
+ #sayviMusicPage .sv-music-quality{margin:1px 0 0;font-size:9px}
+}
