@@ -14,7 +14,8 @@ const screens={
   tasks:$('tasksPage'),
   picture:$('picturePage'),
   calendar:$('calendarPage'),
-  life:$('lifePage')
+  life:$('lifePage'),
+  sayvi:$('sayviSurfacePage')
 };
 let current='home',beforeRect=null,animation=null,frame=0;
 const route=()=>{
@@ -24,6 +25,7 @@ const route=()=>{
  if(hash==='#picture')return 'picture';
  if(hash==='#calendar')return 'calendar';
  if(hash==='#life')return 'life';
+ if(/^#sayvi-(mail|documents|health)$/.test(hash))return 'sayvi';
  return 'home';
 };
 function animateOrb(from){
