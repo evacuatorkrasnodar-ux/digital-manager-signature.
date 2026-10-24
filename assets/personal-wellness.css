@@ -27,10 +27,8 @@
 }
 #calendarPersonalTools .pw-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0 12px}
 #calendarPersonalTools .pw-card{
- display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
- gap:7px;min-width:0;min-height:109px;padding:14px 13px;border-radius:20px;
- border:1px solid var(--soft-line);background:var(--card2);color:var(--text);
- text-align:left;box-shadow:inset 0 1px 0 #ffffff0b;
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:4px;min-width:0;min-height:88px;padding:10px 9px;border-radius:0;border:0;background:transparent;color:var(--text);
+ text-align:left;box-shadow:none;
  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
  transition:transform .25s cubic-bezier(.2,.75,.25,1),border-color .25s ease,background .25s ease;
  animation:pw-appear .5s cubic-bezier(.16,1,.3,1) both
@@ -44,18 +42,12 @@
 #calendarPersonalTools .pw-card svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.84}
 #calendarPersonalTools .pw-card strong{font-size:13px;font-weight:560;line-height:1.25;letter-spacing:-.014em}
 #calendarPersonalTools .pw-card small{font-size:10.5px;font-weight:440;color:var(--secondary);line-height:1.25}
-#calendarPersonalTools .pw-card[aria-pressed=true]{
- border-color:color-mix(in srgb,var(--text) 44%,var(--line));
- background:var(--card);box-shadow:inset 0 1px 0 #ffffff10,0 5px 16px var(--shadow)
-}
+#calendarPersonalTools .pw-card[aria-pressed=true]{border-color:transparent;background:transparent;box-shadow:inset 0 -1px 0 var(--text);}
 #calendarPersonalTools .pw-card:focus-visible,#calendarPersonalTools button:focus-visible,#calendarPersonalTools :is(input,select):focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Health uses the same 114px card rhythm as the two measurement tiles above. */
 #calendarPersonalTools .pw-health-tiles{margin-top:0}
-#calendarPersonalTools .pw-health-tiles .pw-card{min-height:114px}
-#calendarPersonalTools .pw-detail{
- padding:16px 14px 14px;margin:0 0 12px;
- border:1px solid var(--line);border-radius:21px;
- background:var(--card);box-shadow:inset 0 1px 0 #ffffff0b;
+#calendarPersonalTools .pw-health-tiles .pw-card{min-height:90px;}
+#calendarPersonalTools .pw-detail{padding:10px 2px 12px;margin:0 0 8px;border:0;border-radius:0;background:transparent;box-shadow:none;
  animation:pw-reveal .38s cubic-bezier(.16,1,.3,1) both
 }
 #calendarPersonalTools .pw-panel-head{margin:0 0 14px}
@@ -64,9 +56,7 @@
 #calendarPersonalTools .pw-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;margin:13px 0}
 #calendarPersonalTools :is(.pw-actions button,.pw-inline button,.pw-form>button,.pw-list-row button,#pwCycleEnable){
  display:inline-flex;align-items:center;justify-content:center;
- min-height:44px;padding:10px 14px;
- border:1px solid var(--line);border-radius:999px;
- background:var(--card2);color:var(--text);
+ min-height:44px;padding:9px 6px;border:0;border-radius:0;background:transparent;color:var(--text);
  font-family:inherit;font-size:12.5px;font-weight:535;
  line-height:1.2;letter-spacing:-.012em;text-align:center;white-space:nowrap;
  -webkit-appearance:none;appearance:none;touch-action:manipulation
@@ -114,10 +104,7 @@
 #calendarPersonalTools .pw-segment-field{display:grid;gap:8px;min-width:0;margin:12px 0 10px}
 #calendarPersonalTools .pw-control-label{font-size:11.5px;line-height:1.4;color:var(--secondary)}
 #calendarPersonalTools .pw-segments{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
- padding:4px;border:1px solid var(--soft-line);border-radius:19px;
- background:var(--card2)
-}
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;padding:0;border:0;border-radius:0;background:transparent;}
 #calendarPersonalTools .pw-segments button{
  box-sizing:border-box;min-width:0;min-height:44px;padding:7px 3px;
  border:1px solid transparent;border-radius:15px;
@@ -340,9 +327,7 @@
 #calendarPersonalTools .pw-number strong{font-size:27px;font-weight:510;font-variant-numeric:tabular-nums;letter-spacing:-.042em}
 #calendarPersonalTools .pw-number small{font-size:10px;color:var(--secondary)}
 #calendarPersonalTools .pw-wide-row{
- display:flex;width:100%;align-items:center;gap:12px;
- margin:4px 0 10px;padding:12px 13px;min-height:66px;
- border:1px solid var(--line);border-radius:19px;background:var(--card2);
+ display:flex;width:100%;align-items:center;gap:12px;margin:2px 0 5px;padding:10px 2px;min-height:55px;border:0;border-radius:0;background:transparent;
  text-align:left;color:var(--text);
  transition:background .25s ease,border-color .25s ease,transform .2s ease
 }
@@ -363,9 +348,7 @@
 #calendarPersonalTools .pw-form>button{justify-self:start}
 #calendarPersonalTools .pw-list{display:grid;gap:7px;margin:14px 0 5px}
 #calendarPersonalTools .pw-list-row{
- display:flex;gap:9px;align-items:center;justify-content:space-between;
- border:1px solid var(--soft-line);background:var(--card2);
- border-radius:15px;padding:10px 12px;min-width:0
+ display:flex;gap:9px;align-items:center;justify-content:space-between;border:0;background:transparent;border-radius:0;padding:8px 2px;min-width:0
 }
 #calendarPersonalTools .pw-list-row>div:first-child{display:grid;gap:4px;min-width:0}
 #calendarPersonalTools .pw-list-row strong{font-size:12px;font-weight:555;line-height:1.35;overflow-wrap:anywhere}
@@ -411,11 +394,3 @@
 #calendarPersonalTools .pw-cycle-privacy summary{cursor:pointer;font-size:11px;color:var(--secondary);font-weight:530}
 #calendarPersonalTools .pw-cycle-privacy p{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
 #calendarPersonalTools .pw-cycle-privacy .pw-actions{justify-content:flex-start;margin-bottom:0}
-
-
-/* Unified Experience: lighter nested care and health surfaces. */
-#calendarPersonalTools .pw-card{background:rgba(190,199,194,.045);box-shadow:none}
-#calendarPersonalTools .pw-card strong{font-weight:510}
-#calendarPersonalTools .pw-wide-row{background:rgba(190,199,194,.045);box-shadow:none}
-:root[data-theme=light] #calendarPersonalTools .pw-card,
-:root[data-theme=light] #calendarPersonalTools .pw-wide-row{background:rgba(72,85,76,.045)}
