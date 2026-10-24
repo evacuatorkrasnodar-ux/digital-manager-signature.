@@ -10,7 +10,8 @@
   demo=$('sayviVideoExample'),back=$('sayviVideoBack'),
   screen=$('sayviVideoPlayer'),status=$('sayviVideoStatus'),
   save=$('sayviVideoSave'),resume=$('sayviVideoSaved'),
-  forget=$('sayviVideoForget'),external=$('sayviVideoExternal');
+  forget=$('sayviVideoForget'),external=$('sayviVideoExternal'),
+  more=$('sayviVideoMore');
  if(!core||!page||!form||!input||!screen||!status)return;
  const KEY='seyveo-video-saved-link-v1';
  const SAMPLE='M7lc1UVf-VE'; // Example used in the official YouTube IFrame docs.
@@ -29,6 +30,7 @@
   if(chosen)external.href='https://www.youtube.com/watch?v='+chosen;
   else external.removeAttribute('href');
   const hasSaved=!!safeLoad();
+  if(more)more.hidden=!chosen&&!hasSaved;
   resume.hidden=!hasSaved;
   forget.hidden=!hasSaved;
   save.disabled=!chosen;
