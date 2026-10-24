@@ -397,3 +397,48 @@
    overscroll-behavior:contain;
  }
 }
+
+
+/* SEYVEO Living Ink large writer · editorial page, not the old gray modal.
+   The original same textarea, buttons, voice/history hooks and keyboard/height
+   safeguards are untouched. Only paint and type contrast change. */
+#ask.prompt.expanded{
+ background:radial-gradient(ellipse 100% 90% at 50% 42%,
+  rgba(30,34,43,.68) 0%,rgba(18,22,29,.44) 69%,rgba(11,14,21,.16) 100%)!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#ask.prompt.expanded #question{
+ padding-inline:3px!important;
+ background:transparent!important;border:0!important;
+ border-bottom:1px solid var(--soft-line)!important;
+ border-radius:0!important;box-shadow:none!important;
+ color:#f2f3f6!important;-webkit-text-fill-color:#f2f3f6!important;
+ caret-color:#f2f3f6;
+}
+#ask.prompt.expanded #question::placeholder{
+ color:#b7c2cf!important;opacity:1!important;
+ -webkit-text-fill-color:#b7c2cf!important;
+}
+#ask.prompt.expanded .composer-tool span,
+#ask.prompt.expanded .composer-head .composer-icon{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;color:var(--text)!important;
+}
+#ask.prompt.expanded .composer-more button{
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;color:var(--text)!important;
+ min-height:44px;
+}
+#ask.prompt.expanded .composer-head strong{font-weight:510}
+:root[data-theme=light] #ask.prompt.expanded{
+ background:radial-gradient(ellipse 100% 90% at 50% 42%,
+  rgba(230,235,240,.88) 0%,rgba(241,245,248,.50) 69%,rgba(252,252,252,.14) 100%)!important;
+}
+:root[data-theme=light] #ask.prompt.expanded #question{
+ color:#202934!important;-webkit-text-fill-color:#202934!important;
+ caret-color:#202934;
+}
+:root[data-theme=light] #ask.prompt.expanded #question::placeholder{
+ color:#5b6673!important;-webkit-text-fill-color:#5b6673!important;
+}
