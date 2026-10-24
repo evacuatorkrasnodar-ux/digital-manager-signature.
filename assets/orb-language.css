@@ -49,3 +49,28 @@
  #orb #signal .svl-bars i:nth-child(1),#orb #signal .svl-bars i:nth-child(5){height:16%}
  #orb #signal .svl-bars i:nth-child(2),#orb #signal .svl-bars i:nth-child(4){height:25%}
 }
+
+
+/* Music has priority whenever the actual audio element is playing.
+   Enlarge the same inner signal on the small travelling sphere (no second orb). */
+#orb #signal.svl-live.svl-equalizer{
+  width:52%;
+  height:52%;
+  opacity:1;
+}
+#seyveoCompanion #orb #signal.svl-live.svl-equalizer{
+  width:64%;
+  height:64%;
+}
+#orb #signal.svl-equalizer .svl-depth{
+  color:rgba(251,253,255,.98);
+}
+#orb #signal.svl-equalizer .svl-bars{
+  width:76%;
+  height:70%;
+}
+#orb #signal.svl-equalizer .svl-bars i{
+  width:1.5px;
+  flex-basis:1.5px;
+  background:rgba(253,254,255,.98);
+}
