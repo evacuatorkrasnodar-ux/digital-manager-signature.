@@ -96,63 +96,48 @@ html:has(#ask:not([hidden])) #seyveoCompanion{
 #managePage #seyveoCleanManageMenu #openCompanyPassportFromManage{
   min-height:58px;
 }
-/* Управление: the elements themselves unfurl, without separate panels. */
+/* Management is part of the same living canvas, not another menu surface.
+   Existing SVG illustrations and REAL click handlers belong to the row. */
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{
-  border:0;
-  border-radius:0;
-  box-shadow:none;
-  background:transparent;
-  overflow:visible;
+ border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
-  margin-bottom:17px;
+ margin:0 0 26px;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group h2{
-  margin:0 0 5px 11px;
-  font-weight:460;
-  opacity:.68;
-  letter-spacing:.08em;
+ margin:0 0 7px 8px;padding:0;
+ font-size:10px;font-weight:480;letter-spacing:.11em;color:var(--secondary);opacity:.68;
 }
-html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row{
-  min-height:57px;
-  padding:11px 12px;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  box-shadow:none;
-  -webkit-tap-highlight-color:transparent;
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+ display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;
+ align-items:center;min-height:111px;margin:0;padding:12px 8px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ text-align:left;-webkit-tap-highlight-color:transparent;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row+.manage-row::before{
-  left:12px;
-  right:12px;
-  background:var(--soft-line);
+ top:0;left:8px;right:8px;height:1px;background:var(--soft-line);opacity:.75;
 }
+html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
+ display:grid;place-items:center;width:72px;min-width:72px;height:74px;
+ padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;
+ color:var(--text);opacity:.86;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
+ width:62px;height:62px;max-width:100%;fill:none;stroke:currentColor;stroke-width:1.15;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text{gap:7px}
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{
-  font-weight:480;
-  font-size:14px;
-  letter-spacing:-.015em;
+ color:var(--text);font-size:16px;font-weight:480;letter-spacing:-.028em;line-height:1.28;
 }
-html.sv-space-active #managePage #seyveoCleanManageMenu .manage-chevron{
-  font-weight:350;
-  opacity:.58;
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{
+ font-size:11.5px;font-weight:410;line-height:1.48;color:var(--secondary);
 }
-html.sv-space-active #managePage .manage-heading{
-  margin-top:2px;
-  margin-bottom:17px;
-}
-html.sv-space-active #managePage .manage-heading h1{
-  font-size:29px;
-  font-weight:450;
-  letter-spacing:-.04em;
-}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-chevron{display:none}
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:focus-visible{
-  outline:2px solid var(--text);
-  outline-offset:-2px;
-  border-radius:9px;
+ outline:2px solid var(--text);outline-offset:-2px;border-radius:8px;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:active{
-  background:rgba(235,240,246,.035);
-  border-radius:9px;
+ background:color-mix(in srgb,var(--text) 3%,transparent);
 }
 /* One-time Cascade Reveal: hierarchy first, then rows.
    No infinite loops, expensive filters, or permanent will-change layers. */
@@ -269,3 +254,272 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
 }
 #manageThemeScreen .manage-theme-head{margin-top:0}
 #seyveoCleanDetail .seyveo-clean-title{margin-top:1px}
+
+/* SEYVEO Living Continuity v2 · ONE canonical design layer
+ * Shared under the existing sphere, page routing and data modules.
+ * Open scenes, porcelain line art and contextual ink. No fake buttons,
+ * duplicated docks, heavy shadows, permanent filters or animated loops. */
+html.sv-space-active{
+ --sv-scene-ink:var(--text);
+ --sv-scene-sub:var(--secondary);
+ --sv-scene-hairline:var(--soft-line);
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage){
+ min-width:0;max-width:100%;overflow-x:clip;
+}
+/* Every area reads as a new thought from Sayvi, not a second application. */
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviMusicPage)
+ :is(.tasks-heading,.calendar-header,.picture-head,.manage-heading,.life-heading,.sv-deep-top){
+ margin:2px 0 22px;padding:0;border:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviMusicPage)
+ :is(.tasks-heading h1,.calendar-header h1,.picture-head h1,.manage-heading h1,.life-heading h1,.sv-deep-heading,.sv-music-heading){
+ margin:0 0 9px;font-size:clamp(26px,7vw,35px);font-weight:470;
+ line-height:1.15;letter-spacing:-.042em;color:var(--text);
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviMusicPage)
+ :is(.manage-caption,.calendar-kicker,.life-eyebrow,.sv-deep-kicker,.sv-music-eyebrow){
+ margin:0 0 10px;color:var(--secondary);
+ font-size:9.5px;font-weight:470;line-height:1.4;letter-spacing:.11em;opacity:.76;
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviMusicPage)
+ :is(.tasks-heading>p:last-child,.calendar-header p:not(.calendar-kicker),.picture-head p:last-child,.manage-heading>p:last-child,.life-description,.sv-deep-intro,.sv-music-intro){
+ max-width:34em;margin:0;color:var(--secondary);
+ font-size:12.5px;font-weight:410;line-height:1.58;letter-spacing:-.005em;
+}
+/* TIME — no boxed monthly widget. The calendar itself is the object. */
+html.sv-space-active #calendarPage .cal-month,
+html.sv-space-active #calendarPage .cal-week-grid,
+html.sv-space-active #calendarPage .cal-agenda,
+html.sv-space-active #calendarPage .cal-day-summary,
+html.sv-space-active #calendarPage .calendar-spaces-grid,
+html.sv-space-active #calendarPage .cal-advice,
+html.sv-space-active #calendarPage .cal-deadline-section .cal-agenda{
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #calendarPage .cal-month{
+ margin:8px 0 17px;padding:4px 0;
+ border-block:1px solid var(--sv-scene-hairline);
+ overflow:hidden;
+}
+html.sv-space-active #calendarPage .cal-month::before,
+html.sv-space-active #calendarPage .cal-week-grid::before{opacity:.44}
+html.sv-space-active #calendarPage .cal-periods,
+html.sv-space-active #picturePage .picture-tabs{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:5px;margin:4px 0 22px;padding:0;
+ border:0;border-bottom:1px solid var(--sv-scene-hairline);
+ border-radius:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #calendarPage .cal-periods button,
+html.sv-space-active #picturePage .picture-tabs button{
+ position:relative;min-height:46px;padding:7px 2px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--secondary);font:inherit;font-size:12px;font-weight:460;
+ transition:color .22s ease;
+}
+html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true],
+html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]{
+ background:transparent;box-shadow:none;color:var(--text);
+}
+html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true]::after,
+html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]::after{
+ content:"";position:absolute;left:26%;right:26%;bottom:-1px;height:1px;
+ background:var(--text);opacity:.7;pointer-events:none;
+}
+html.sv-space-active #calendarPage .cal-day-summary,
+html.sv-space-active #calendarPage .cal-agenda{
+ margin:9px 0 3px;padding:0;
+}
+html.sv-space-active #calendarPage .cal-entry{
+ min-height:81px;padding:13px 3px;margin:0;
+ border:0;border-top:1px solid var(--sv-scene-hairline);
+ border-radius:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #calendarPage .cal-entry:active{
+ background:color-mix(in srgb,var(--text) 3%,transparent);
+}
+html.sv-space-active #calendarPage .cal-entry-copy strong{font-size:14px;font-weight:480}
+html.sv-space-active #calendarPage .cal-day-fab,
+html.sv-space-active #calendarPage .cal-advice-action{
+ min-height:44px;padding:9px 5px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:12px;font-weight:470;
+}
+html.sv-space-active #calendarPage .cal-actions{
+ display:flex;flex-wrap:wrap;justify-content:flex-start;gap:17px;
+ margin:11px 0;padding:7px 0;border-top:1px solid var(--sv-scene-hairline);
+}
+html.sv-space-active #calendarPage .calendar-spaces{margin-top:16px}
+html.sv-space-active #calendarPage .calendar-spaces-grid{padding:4px 0;gap:0}
+html.sv-space-active #calendarPage .calendar-space-button{
+ border:0;border-radius:0;background:transparent;
+}
+/* PERSONAL WORLD — the five illustrations ARE navigation, not miniature tiles. */
+html.sv-space-active #lifePage .calendar-spaces{margin-top:20px}
+html.sv-space-active #lifePage .calendar-spaces-head{
+ padding:0 6px 8px;border-bottom:1px solid var(--sv-scene-hairline);
+}
+html.sv-space-active #lifePage .calendar-spaces-grid{
+ display:flex;flex-direction:column;gap:0;
+ margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #lifePage .calendar-space-button{
+ display:grid;grid-template-columns:74px minmax(0,1fr);
+ grid-template-rows:1fr 1fr;column-gap:17px;row-gap:0;
+ box-sizing:border-box;min-height:106px;width:100%;
+ padding:17px 6px;border:0;border-bottom:1px solid var(--sv-scene-hairline);
+ border-radius:0;background:transparent;box-shadow:none;text-align:left;
+}
+html.sv-space-active #lifePage .calendar-space-button svg{
+ grid-column:1;grid-row:1/3;align-self:center;justify-self:center;
+ width:58px;height:58px;fill:none;stroke:currentColor;stroke-width:1.2;
+ color:var(--text);opacity:.86;
+}
+html.sv-space-active #lifePage .calendar-space-button span{
+ grid-column:2;grid-row:1;align-self:end;
+ font-size:19px;font-weight:465;line-height:1.3;letter-spacing:-.03em;text-align:left;
+}
+html.sv-space-active #lifePage .calendar-space-button small{
+ grid-column:2;grid-row:2;align-self:start;
+ margin-top:5px;font-size:11.5px;font-weight:415;color:var(--secondary);text-align:left;
+}
+html.sv-space-active #lifePage .life-footnote{margin:20px 4px;color:var(--secondary);font-size:11px}
+/* BUSINESS — data is a visible landscape, not a stack of containers. */
+html.sv-space-active #picturePage .picture-company-access,
+html.sv-space-active #picturePage .picture-chart-box,
+html.sv-space-active #picturePage .picture-breakdown,
+html.sv-space-active #picturePage .picture-insight,
+html.sv-space-active #picturePage .home-widget-card,
+html.sv-space-active #picturePage .picture-full-report,
+html.sv-space-active #picturePage .picture-quick-insight{
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #picturePage .picture-section{
+ margin:28px 0 0;padding:18px 0 0;border-top:1px solid var(--sv-scene-hairline);
+}
+html.sv-space-active #picturePage .picture-chart-box{padding:9px 2px}
+html.sv-space-active #picturePage .picture-breakdown{padding:0 4px}
+html.sv-space-active #picturePage .home-widgets-grid{gap:0 12px}
+html.sv-space-active #picturePage .home-widget-card{
+ min-height:110px;margin:0;padding:15px 3px;
+ border-bottom:1px solid var(--sv-scene-hairline);
+}
+html.sv-space-active #picturePage .home-widget-card--wide{grid-column:1 / -1}
+html.sv-space-active #picturePage .home-widget-card:active{
+ background:color-mix(in srgb,var(--text) 3%,transparent);
+}
+html.sv-space-active #picturePage .picture-full-report{
+ width:100%;min-height:83px;margin:22px 0 0;padding:15px 5px;
+ border-top:1px solid var(--sv-scene-hairline);text-align:left;
+}
+html.sv-space-active #picturePage .picture-full-report .manage-chevron{display:none}
+html.sv-space-active #picturePage .picture-company-link{
+ min-height:64px;padding:10px 1px;border:0;background:transparent;box-shadow:none;
+}
+html.sv-space-active #picturePage .picture-company-link .picture-company-arrow{display:none}
+/* MANAGEMENT — keep real controls, but never paint a grey menu frame. */
+html.sv-space-active #managePage #manageOverview{background:transparent}
+html.sv-space-active #managePage #seyveoCleanManageMenu{margin-top:0}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+ transition:color .22s ease,background-color .22s ease;
+}
+html.sv-space-active #managePage #seyveoCleanDetail,
+html.sv-space-active #managePage #manageThemeScreen{background:transparent}
+html.sv-space-active #managePage .seyveo-clean-back{
+ background:transparent;border:0;box-shadow:none;
+}
+/* NOTEBOOK, CARE AND DOCUMENTS — remain accessible real editors, not
+   a duplicate dock of pill buttons over private content. */
+:is(#notesDialog,#calendarSpaceDialog,#noteReadDialog,#noteReviewDialog,#noteModeDialog,
+    #manageConnectionsDialog,#manageRoadmapDialog,#manageDataDialog)[open]{
+ background:var(--bg);box-shadow:0 28px 75px rgba(0,0,0,.38);
+}
+#notesDialog .notes-list,
+#notesDialog .note-item,
+#calendarSpaceDialog .cal-space-list,
+#calendarSpaceDialog .calendar-space-record,
+#manageRoadmapDialog .manage-roadmap-group,
+#manageRoadmapDialog .manage-roadmap-list,
+#manageRoadmapDialog .manage-roadmap-item{
+ background:transparent;border-radius:0;box-shadow:none;
+}
+#notesDialog .note-item,
+#calendarSpaceDialog .calendar-space-record,
+#manageRoadmapDialog .manage-roadmap-item{
+ border:0;border-bottom:1px solid var(--soft-line);
+}
+#notesDialog .notes-new,
+#notesDialog .note-item-actions button,
+#calendarSpaceDialog .cal-space-toolbar button,
+#manageRoadmapDialog .manage-roadmap-search{
+ border-radius:0;box-shadow:none;
+}
+#notesDialog .notes-new,
+#calendarSpaceDialog .cal-space-toolbar button{
+ border:0;background:transparent;color:var(--text);
+}
+/* Care symbols and personal readings retain meaningful content, not grey tiles. */
+#calendarPersonalTools .pw-card,
+#calendarPersonalTools .pw-health-tiles .pw-card,
+#calendarSpaceDialog .pw-card{
+ border:0;border-bottom:1px solid var(--soft-line);
+ border-radius:0;background:transparent;box-shadow:none;
+}
+#calendarPersonalTools .pw-card svg{
+ stroke-width:1.3;opacity:.9;
+}
+/* DEEP SCENES already use real illustrations. Retire only their boxes. */
+html.sv-space-active #sayviSurfacePage :is(.sv-deep-demo,.sv-deep-file-preview,.sv-deep-expand),
+html.sv-space-active #sayviAnswerPage :is(.sa-summary,.sa-fact,.sa-followup),
+html.sv-space-active #sayviMusicPage :is(.sv-music-providers,.sv-music-provider-actions){
+ background:transparent;box-shadow:none;
+}
+html.sv-space-active #sayviSurfacePage .sv-deep-demo{
+ border:0;border-top:1px solid var(--sv-scene-hairline);border-radius:0;
+}
+html.sv-space-active #sayviAnswerPage .sa-fact{
+ border:0;border-top:1px solid var(--sv-scene-hairline);border-radius:0;
+}
+html.sv-space-active #sayviMusicPage button.sv-music-intent{
+ background:transparent;box-shadow:none;
+}
+@media(max-width:375px){
+ html.sv-space-active #lifePage .calendar-space-button{grid-template-columns:58px minmax(0,1fr);column-gap:12px;min-height:91px}
+ html.sv-space-active #lifePage .calendar-space-button svg{width:48px;height:48px}
+ html.sv-space-active #lifePage .calendar-space-button span{font-size:17px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+  grid-template-columns:60px minmax(0,1fr);gap:11px;min-height:99px;
+ }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{width:58px;min-width:58px;height:64px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{width:53px;height:53px}
+}
+/* A single bounded reveal, never perpetual motion. */
+@media(prefers-reduced-motion:no-preference){
+ @keyframes sv-continuity-item{
+  from{opacity:.08;transform:translate3d(0,12px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+ #lifePage.sv-cascade .calendar-space-button,
+ #tasksPage.sv-cascade .personal-task-row,
+ #calendarPage.sv-cascade .calendar-space-button,
+ #picturePage.sv-cascade .home-widget-card{
+  animation:sv-continuity-item .66s cubic-bezier(.22,1,.36,1) both;
+ }
+ #lifePage.sv-cascade .calendar-space-button:nth-child(2),
+ #calendarPage.sv-cascade .calendar-space-button:nth-child(2){animation-delay:60ms}
+ #lifePage.sv-cascade .calendar-space-button:nth-child(3),
+ #calendarPage.sv-cascade .calendar-space-button:nth-child(3){animation-delay:110ms}
+ #lifePage.sv-cascade .calendar-space-button:nth-child(4),
+ #calendarPage.sv-cascade .calendar-space-button:nth-child(4){animation-delay:160ms}
+ #lifePage.sv-cascade .calendar-space-button:nth-child(5){animation-delay:205ms}
+}
+@media(prefers-reduced-motion:reduce){
+ #lifePage .calendar-space-button,#tasksPage .personal-task-row,
+ #calendarPage .calendar-space-button,#picturePage .home-widget-card{animation:none!important;transition:none!important}
+}
+/* Screen-reader and keyboard users still receive an honest control. */
+:is(#lifePage,#tasksPage,#calendarPage,#picturePage,#managePage)
+ :is(button,a[href],summary):focus-visible{
+ outline:2px solid var(--text);outline-offset:3px;
+}

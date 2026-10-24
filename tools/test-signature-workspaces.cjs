@@ -11,7 +11,7 @@ const html=load('index.html'),tasks=load('assets/personal-tasks.js');
 const calendar=load('assets/calendar.js'),calendarCss=load('assets/calendar.css');
 const taskCss=load('assets/personal-tasks.css');
 const contextCss=load('assets/future-surfaces.css');
-const css=load('assets/sections-velvet.css');
+const css=load('assets/living-space.css');
 assert.match(html,/id="tasksContextOpen" class="tasks-context-open seyveo-action-orb"/);
 assert.match(html,/id="tasksContextArtwork"/);
 assert.match(html,/id="tasksContextComplete"/);
@@ -37,7 +37,10 @@ for(const sheet of ['#notesDialog','#calendarSpaceDialog','.paper-editor-dialog'
   '.personal-call-dialog','#calendarPersonalTools'])
  assert.ok(css.includes(sheet),'Personal workspace inherits Signature: '+sheet);
 assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
-assert.match(html,/assets\/sections-velvet\.css\?v=9/);
+assert.match(html,/assets\/sections-velvet\.css\?v=10/);
+assert.match(html,/assets\/living-space\.css\?v=5/);
+assert.ok(html.indexOf('assets/living-space.css?v=5')>html.indexOf('assets/dock-voice-life.css?v=1'),
+ 'Living Continuity is the final workspaces layer, Home remains untouched');
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1);
 
 const roadmapSource=load('assets/management.js');
@@ -51,4 +54,10 @@ assert.match(masterIdeas,/Каждый экран — продолжение Г�
 assert.match(masterIdeas,/Управление → Наши идеи → Карта развития/,
  'Roadmap instructions point to the actual current UI');
 
-console.log('PASS Signature Tasks + shared Velvet workspaces; Home and dock unchanged.');
+assert.match(css,/#lifePage \.calendar-space-button svg/,'World uses full-sized navigable illustrations');
+assert.match(css,/#calendarPage \.cal-entry/,'Calendar events become open scenes');
+assert.match(css,/#picturePage \.home-widget-card/,'Business metrics stay unboxed');
+assert.match(css,/#notesDialog \.note-item/,'Notebook rows stay uncluttered');
+assert.match(css,/#seyveoCleanManageMenu \.manage-row\.seyveo-clean-link/,'Management keeps one large scene per entry');
+assert.doesNotMatch(css,/#homePage\s+\.(?:lm-|plasma)/,'Home cinema and sphere styling untouched');
+console.log('PASS Living Continuity: all secondary workspaces use one open-scene vocabulary.');
