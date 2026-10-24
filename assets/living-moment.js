@@ -1,4 +1,4 @@
-/* SEYVEO Signature · Quiet Cinema / Director's Decision v4
+/* SEYVEO Signature · Living Objects & Decisions v5
  * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
@@ -11,7 +11,7 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-quiet-cinema-decision-v4';
+const SESSION='seyveo-living-objects-demo-v5';
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
@@ -108,6 +108,11 @@ const sample=[
   reason:'Учебный пример заботы о себе, не основан на данных Apple Health или медицинских измерениях.',
   detail:'Можно сделать короткую передышку. Это демонстрация будущей персональной заботы, а не медицинский совет.'}
 ];
+/* Navigate through one continuous Sayvi space. No unrelated page or duplicate sphere. */
+function openDestination(kind){
+ if(kind==='task'){$('navTasks')?.click();return true}
+ return window.SEYVEO_SAYVI_SURFACES?.open?.(kind)===true;
+}
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
  b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
@@ -123,8 +128,10 @@ function createSurface(primary,other=[],real=false){
  top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР'));
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
- const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
+ const artwork=create('button','lm-hero-art lm-hero-art--'+primary.kind);
+ artwork.type='button';artwork.setAttribute('aria-label','Открыть: '+primary.title);
  artwork.append(icon(primary.kind));
+ artwork.addEventListener('click',()=>{readingUntil=Date.now()+20000;openDestination(shown.kind)});
  const copy=create('div','lm-primary-copy');
  const headline=create('strong','lm-primary-title',primary.title);
  const description=create('p','lm-primary-subtitle',primary.body);
@@ -148,18 +155,13 @@ function createSurface(primary,other=[],real=false){
    more.hidden=false;
    more.textContent=shown.reason+' '+shown.detail;
    controls.classList.add('lm-actions--details');
-   open.textContent=real?'К делу':'Исполнить';
-   open.setAttribute('aria-label',real?'Открыть дело: '+shown.title:'Показать пример исполнения: '+shown.title);
+   open.textContent=real?'К делу':shown.kind==='mail'?'Открыть почту':shown.kind==='health'?'Мои показатели':'К документам';
+   open.setAttribute('aria-label','Открыть: '+shown.title);
    open.setAttribute('aria-expanded','true');
    defer.hidden=false;
    return;
   }
-  if(real){$('navTasks')?.click();return}
-  more.textContent='Это был только пример. Ничего не подписано, не отправлено и не выполнено.';
-  tip.textContent='ДЕМОНСТРАЦИЯ · РЕАЛЬНЫХ ДЕЙСТВИЙ НЕТ';
-  controls.classList.add('lm-actions--complete');
-  open.hidden=true;
-  defer.textContent='Готово';
+  openDestination(shown.kind);
  },'main');
  open.setAttribute('aria-controls',more.id);
  open.setAttribute('aria-expanded','false');
@@ -182,8 +184,8 @@ function createSurface(primary,other=[],real=false){
    arrow.setAttribute('aria-hidden','true');
    row.append(mark,words,arrow);
    row.addEventListener('click',()=>{
-    readingUntil=Date.now()+12000;
-    changeFeatured(item);
+    readingUntil=Date.now()+20000;
+    openDestination(item.kind);
    });
    secondary.append(row);
   }
@@ -198,6 +200,7 @@ function createSurface(primary,other=[],real=false){
    field.dataset.lmSubject=item.kind;
    artwork.className='lm-hero-art lm-hero-art--'+item.kind;
    artwork.replaceChildren(icon(item.kind));
+   artwork.setAttribute('aria-label','Открыть: '+item.title);
    label.textContent=item.category;
    headline.textContent=item.title;
    description.textContent=item.body;
@@ -334,9 +337,14 @@ function showExistingAdvice(){
   /здоров|сердц|пульс/i.test(heading)?'health':'task';
  const row=card.querySelector('.card-main');
  if(row&&!row.querySelector('.lm-owner-art')){
-  const art=create('span','lm-owner-art');
-  art.setAttribute('aria-hidden','true');
+  const art=create('button','lm-owner-art');
+  art.type='button';
+  art.setAttribute('aria-label',kind==='mail'?'Открыть почтовое пространство':kind==='health'?'Открыть здоровье':'Открыть дела');
   art.append(icon(kind));
+  art.addEventListener('click',event=>{
+   event.preventDefault();event.stopPropagation();
+   openDestination(kind);
+  });
   row.querySelector('.event-icon')?.remove();
   row.prepend(art);
  }
