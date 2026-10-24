@@ -84,3 +84,29 @@
 @media(prefers-reduced-motion:reduce){
  #seyveoCleanManageMenu .manage-row.seyveo-clean-link{transition:none}
 }
+
+/* The same illustrated explanation follows users into an existing settings section.
+   The underlying real controls are never reconstructed or duplicated. */
+#seyveoCleanDetail .smc-section-intro{
+ display:flex;align-items:center;gap:13px;
+ margin:-10px 0 19px;padding:10px 5px 16px;
+ border-bottom:1px solid var(--soft-line);
+}
+#seyveoCleanDetail .smc-section-intro[hidden]{display:none!important}
+#seyveoCleanDetail .smc-detail-art{
+ width:50px;height:52px;flex:none;display:grid;place-items:center;
+ color:var(--text);opacity:.85;
+}
+#seyveoCleanDetail .smc-detail-art svg{
+ display:block;width:46px;height:46px;
+ fill:none;stroke:currentColor;stroke-width:1.4;
+}
+#seyveoCleanDetail .smc-section-intro p{
+ flex:1;min-width:0;margin:0;color:var(--secondary);
+ font-size:12.5px;line-height:1.53;font-weight:410;
+}
+@media(max-width:375px){
+ #seyveoCleanDetail .smc-detail-art{width:43px;height:46px}
+ #seyveoCleanDetail .smc-detail-art svg{width:40px;height:40px}
+ #seyveoCleanDetail .smc-section-intro p{font-size:12px}
+}
