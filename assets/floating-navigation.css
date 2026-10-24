@@ -240,3 +240,51 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  .dock>.nav-item>svg,.dock>.nav-item>span,
  .dock>.assistant-button>.button-art{animation:none!important;translate:none!important}
 }
+
+/* SEYVEO Magnetic Ink: same ONE dock, same four outer button nodes.
+   Side symbols glide to their next meaning; the original center is stationary.
+   No scrollbars, extra capsule, overlay, fake vibration or new nav structure. */
+.dock.sv-magnetic-dock>.nav-item{
+ touch-action:pan-y!important;
+ user-select:none;-webkit-user-select:none;
+ cursor:pointer;
+}
+.dock.sv-magnetic-dock>.nav-item span{
+ overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.dock.sv-magnetic-dock>.sv-magnetic-announcement{
+ position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);
+ white-space:nowrap;border:0;pointer-events:none;
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes sv-magnetic-ink-snap{
+  from{opacity:.18;translate:0 6px}
+  to{opacity:1;translate:0 0}
+ }
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item>svg,
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item>span{
+  animation:sv-magnetic-ink-snap .42s cubic-bezier(.22,1,.36,1) both!important;
+ }
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(2)>svg,
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(2)>span{
+  animation-delay:45ms!important;
+ }
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(4)>svg,
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(4)>span{
+  animation-delay:65ms!important;
+ }
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(5)>svg,
+ .dock.sv-magnetic-dock.sv-magnetic-reveal>.nav-item:nth-of-type(5)>span{
+  animation-delay:95ms!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .dock.sv-magnetic-dock>.nav-item>svg,
+ .dock.sv-magnetic-dock>.nav-item>span{animation:none!important;translate:none!important}
+}
+/* In writing mode the bottom controls remain reachable but recede. */
+html:has(#ask:not([hidden])):not(.seyveo-conversation)
+ .dock.sv-magnetic-dock>.nav-item{opacity:.72}
+html:has(#ask:not([hidden])):not(.seyveo-conversation)
+ .dock.sv-magnetic-dock>.assistant-button{opacity:1}
