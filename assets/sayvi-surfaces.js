@@ -128,10 +128,14 @@ function demoScenario(kind){
  const execute=intent('Исполнить',()=>{
   if(completed)return;
   completed=true;
-  execute.textContent='✓ Выполнено в демо';
+  execute.textContent='✓ Готово · демо';
   execute.classList.add('sv-deep-intent--done');
   execute.disabled=true;
-  status.textContent=cfg.done;
+  // Only the completion marker turns soft green; the report stays quiet ink.
+  status.replaceChildren(
+   create('span','sv-deep-success-mark','✓ Готово · демо. '),
+   create('span','sv-deep-success-copy',cfg.done)
+  );
   status.classList.add('sv-deep-demo-success');
   later.hidden=true;explain.hidden=true;
   choice.hidden=true;
