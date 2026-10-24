@@ -1,4 +1,4 @@
-/* SEYVEO Living Answers v1 — curated visual discovery without fake AI/search.
+/* SEYVEO Living Answers v2 — living source lens without browser chrome.
  * One existing Sayvi sphere, one question box, three source-attributed scenes.
  * Replace knowledge adapter when trusted AI/search is connected later. */
 (()=>{
@@ -54,7 +54,7 @@ const scenarios=Object.freeze({
   credit:'Схема: MesserWoland (по Yaddah), CC BY-SA 3.0 · Wikimedia Commons',
   creditUrl:'https://commons.wikimedia.org/wiki/File:Diagram_of_the_human_heart_(multilingual).svg',
   sourceUrl:'https://www.nhlbi.nih.gov/health/heart/anatomy',
-  sourceName:'MedlinePlus · работа сердца',
+  sourceName:'NIH · строение сердца',
   facts:[['4','Камеры сердца'],['2','Круга кровообращения'],['Клапаны','Помогают движению крови']],
   questions:[
    {id:'flow',label:'Покажи путь крови',title:'Два круга кровообращения',answer:'Кровь из тела попадает в правую половину сердца, затем направляется в лёгкие за кислородом. Из лёгких возвращается в левую половину, которая отправляет её по всему организму.'},
@@ -63,14 +63,65 @@ const scenarios=Object.freeze({
   ]
  }
 });
-let active=null,answerId=null,expanded=false;
+let active=null,answerId=null,expanded=false,sourceVisible=false,sourceReturnId=null;
 const create=(tag,cls,copy)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(copy!==undefined)el.textContent=copy;return el};
 function intent(label,fn,variant=''){
  const el=create('button','sa-intent'+(variant?' sa-intent--'+variant:''),label);
  el.type='button';el.addEventListener('click',fn);return el;
 }
-function href(url,label,cls='sa-source'){
- const a=create('a',cls,label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';return a;
+/* Every visible source invitation stays IN the Sayvi scene.
+ * We do not iframe third-party websites, proxy them or impersonate their UI.
+ * The lens is a clearly labelled prepared summary with provenance. */
+function sourceLink(label,kind='source'){
+ const button=intent(label,()=>showSource(kind),'source-link');
+ button.setAttribute('aria-label',label+' — посмотреть источник внутри Сэйви');
+ return button;
+}
+function returnFromSource(){
+ if(!sourceVisible||!active)return false;
+ const previous=sourceReturnId;
+ sourceVisible=false;
+ detail(active);
+ if(previous)showDetail(previous);
+ return true;
+}
+function showSource(kind='source'){
+ const record=scenarios[active];
+ if(!record)return false;
+ sourceReturnId=answerId;
+ sourceVisible=true;
+ const artwork=kind==='image';
+ const origin=artwork?record.credit:record.sourceName;
+ const originUrl=artwork?record.creditUrl:record.sourceUrl;
+ const section=create('section','sa-source-reader');
+ const opener=create('div','sa-source-reader-top');
+ opener.append(create('small','sa-eyebrow','SEYVEO · ИСТОЧНИК ВНУТРИ ОТВЕТА'));
+ opener.append(create('h1','sa-title',artwork?'Откуда это изображение':'Откуда эти сведения'));
+ opener.append(create('p','sa-intro','Сэйви показывает подготовленное объяснение и происхождение материала. Это не полная копия внешнего сайта.'));
+ section.append(opener);
+ const provenance=create('div','sa-source-provenance');
+ provenance.append(create('small','sa-small-label','ПЕРВОИСТОЧНИК'));
+ provenance.append(create('strong','',origin));
+ provenance.append(create('p','sa-source-location',originUrl));
+ section.append(provenance);
+ if(artwork){
+  const picture=media(record,true);
+  picture.classList.remove('sa-media--compact');
+  picture.classList.add('sa-reader-media');
+  section.append(picture);
+  section.append(create('p','sa-source-explanation','Это изображение использовано как иллюстрация к истории. Подпись указывает автора или архив и условия использования, если они известны.'));
+ }else{
+  section.append(create('h2','sa-reader-heading','Главное из материала'));
+  section.append(create('p','sa-summary',record.summary));
+  section.append(facts(record));
+  if(active==='roadster')section.append(create('p','sa-source-explanation','Слова производителя о полёте — не независимое подтверждение испытаний, продажи или доставки летающих машин.'));
+  else section.append(create('p','sa-source-explanation','Сведения представлены в виде краткого обучающего пересказа. Для полной статьи и её свежих обновлений потребуется будущий защищённый читатель.'));
+ }
+ section.append(create('p','sa-reader-truth','Этот экран составлен в SEYVEO заранее. Полный текст внешней страницы не загружался и не преобразовывался.'));
+ const action=intent('Вернуться к истории',returnFromSource,'reader-back');
+ section.append(action);
+ body.replaceChildren(section);
+ return true;
 }
 function media(record,compact=false){
  const surface=create('div','sa-media'+(compact?' sa-media--compact':''));
@@ -81,7 +132,8 @@ function media(record,compact=false){
  img.addEventListener('error',()=>{img.hidden=true;fallback.hidden=false});
  surface.append(img,fallback);
  if(!compact){
-  const label=href(record.creditUrl,record.credit,'sa-credit');
+  const label=sourceLink(record.credit,'image');
+  label.classList.add('sa-credit');
   surface.append(label);
   const zoom=intent('Рассмотреть крупнее',()=>{
    expanded=!expanded;surface.classList.toggle('sa-media--zoom',expanded);
@@ -123,7 +175,7 @@ function showDetail(id){
 }
 function detail(key){
  const record=scenarios[key];if(!record)return false;
- active=key;answerId=null;expanded=false;
+ active=key;answerId=null;expanded=false;sourceVisible=false;sourceReturnId=null;
  page.dataset.saTopic=key;
  const content=create('section','sa-scene');
  content.append(create('small','sa-eyebrow',record.label));
@@ -139,14 +191,14 @@ function detail(key){
  const reply=create('section','sa-followup');reply.id='sayviAnswerFollowup';reply.hidden=true;reply.setAttribute('aria-live','polite');
  content.append(reply);
  const citation=create('footer','sa-sources');
- citation.append(create('span','','Источники и проверка: '),href(record.sourceUrl,record.sourceName));
+ citation.append(create('span','','Источники и проверка: '),sourceLink(record.sourceName,'source'));
  citation.append(create('p','',key==='roadster'?'Важно: заявления производителя не равны независимому подтверждению серийного полёта.':'Это подготовленный познавательный пример, а не автоматический поиск.'));
  content.append(citation);
  body.replaceChildren(content);
  return true;
 }
 function gallery(){
- active=null;answerId=null;expanded=false;page.dataset.saTopic='gallery';
+ active=null;answerId=null;expanded=false;sourceVisible=false;sourceReturnId=null;page.dataset.saTopic='gallery';
  const grid=create('section','sa-gallery');
  grid.append(create('small','sa-eyebrow','SEYVEO · LIVING ANSWERS'));
  grid.append(create('h1','sa-title','Мир можно увидеть'));
@@ -184,6 +236,7 @@ function sync(){
  else gallery();
 }
 back.addEventListener('click',()=>{
+ if(returnFromSource())return;
  if(active){gallery();return}
  $('navHome')?.click();
 });
