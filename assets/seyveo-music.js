@@ -62,7 +62,7 @@ const providers=Object.freeze({
  },
  youtube:{
   name:'YouTube',
-  copy:'Музыкальные видео можно будет показывать через разрешённый YouTube-плеер. Мы не станем извлекать звук из видео, скрывать обязательный интерфейс или обещать фоновое воспроизведение в нарушение правил.'
+  copy:'SEYVA PLAY: официальный YouTube-плеер уже доступен по ссылке, прямо внутри Сэйвы. Без извлечения звука из видео, автозапуска, скрытия YouTube или обещаний фона.'
  },
  local:{
   name:'Мои записи',
@@ -320,6 +320,13 @@ function providerChoose(name){
  const lead=document.createElement('strong');lead.textContent=p.name;
  const copy=document.createElement('p');copy.textContent=p.copy;
  providerText.append(lead,copy);
+ if(name==='youtube'){
+  const openVideo=document.createElement('button');
+  openVideo.type='button';openVideo.className='sv-music-intent';
+  openVideo.textContent='Открыть SEYVA PLAY ↗';
+  openVideo.addEventListener('click',()=>window.SEYVEO_VIDEO?.open({from:'music'}));
+  providerText.append(openVideo);
+ }
  options.querySelectorAll('[data-music-provider]').forEach(btn=>{
   btn.setAttribute('aria-pressed',String(btn.dataset.musicProvider===name));
  });
@@ -340,6 +347,7 @@ function open(){
 resume?.addEventListener('click',open);
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
+$('sayviMusicVideoOpen')?.addEventListener('click',()=>window.SEYVEO_VIDEO?.open({from:'music'}));
 document.addEventListener('keydown',e=>{
  if(e.key!=='Escape'||location.hash!=='#sayvi-music')return;
  if(!collection.hidden||!sourcesPanel?.hidden){hidePanels();sourcesToggle?.focus({preventScroll:true});}
