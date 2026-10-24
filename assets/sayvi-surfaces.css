@@ -6,7 +6,12 @@
   display:flex;flex-direction:column;
   padding:4px 1px 32px;
   color:var(--text);
+  --sv-ink:rgba(196,215,231,.82);
+  --sv-wash:rgba(135,178,212,.10);
 }
+#sayviSurfacePage[data-sv-subject="mail"]{--sv-ink:#a3c9e6;--sv-wash:rgba(104,158,202,.13)}
+#sayviSurfacePage[data-sv-subject="contract"]{--sv-ink:#e3c4a5;--sv-wash:rgba(202,160,119,.105)}
+#sayviSurfacePage[data-sv-subject="health"]{--sv-ink:#e9a5b0;--sv-wash:rgba(232,126,147,.105)}
 #sayviSurfacePage .sv-deep-back{
   -webkit-appearance:none;appearance:none;
   align-self:flex-start;
@@ -44,12 +49,12 @@
 #sayviSurfacePage .sv-deep-hero::before{
   content:"";position:absolute;inset:0;
   margin:auto;width:160px;height:120px;
-  background:radial-gradient(ellipse,rgba(238,242,249,.043),transparent 72%);
+  background:radial-gradient(ellipse,var(--sv-wash),transparent 72%);
   border-radius:50%;pointer-events:none;
 }
 #sayviSurfacePage .sv-deep-icon{
   width:128px;height:128px;
-  stroke:var(--text);stroke-width:1.7;
+  stroke:var(--sv-ink);stroke-width:1.7;
   fill:none;stroke-linejoin:round;stroke-linecap:round;
   opacity:.84;overflow:visible;
 }
@@ -88,7 +93,7 @@
   -webkit-tap-highlight-color:transparent;
 }
 #sayviSurfacePage .sv-deep-intent--lead{
-  color:var(--text);font-size:14px;font-weight:510;
+  color:var(--sv-ink);font-size:14px;font-weight:510;
 }
 #sayviSurfacePage .sv-deep-intent--lead::after{
   content:"↗";font-size:16px;line-height:1;
@@ -179,10 +184,10 @@
   color:var(--secondary);font-size:12px;line-height:1.58;
 }
 #sayviSurfacePage .sv-deep-demo-success{
-  color:var(--text);font-weight:480;
+  color:var(--sv-ink);font-weight:490;
 }
 #sayviSurfacePage .sv-deep-intent--done{
-  color:var(--text)!important;
+  color:var(--sv-ink)!important;
   opacity:1!important;
   cursor:default;
 }
@@ -195,6 +200,9 @@
 #sayviSurfacePage .sv-deep-intent[hidden]{
   display:none!important;
 }
+:root[data-theme=light] #sayviSurfacePage[data-sv-subject="mail"]{--sv-ink:#3e789f;--sv-wash:rgba(84,156,206,.095)}
+:root[data-theme=light] #sayviSurfacePage[data-sv-subject="contract"]{--sv-ink:#956b4f;--sv-wash:rgba(176,125,83,.095)}
+:root[data-theme=light] #sayviSurfacePage[data-sv-subject="health"]{--sv-ink:#af5c70;--sv-wash:rgba(195,100,126,.10)}
 @media(prefers-reduced-motion:no-preference){
   @keyframes sv-deep-reveal{
     from{opacity:0;transform:translate3d(0,15px,0)}
