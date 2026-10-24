@@ -1,4 +1,4 @@
-/* SEYVEO Black Velvet Future v1.
+/* SEYVEO Living Ink Future — open workspaces, semantic states and quiet touch.
  * Workspaces only; never repaint Home plasma, chat, or dock geometry.
  * No lasers, glowing grids or looping decoration. */
 :root{
@@ -30,26 +30,12 @@
  vertical-align:middle;background:var(--future-ink);
  box-shadow:0 0 0 3px var(--future-wash);
 }
-#managePage :is(.manage-card,.manage-theme-list),
-#tasksPage :is(.personal-tasks-list,.tasks-records),
-#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight),
-#calendarPage :is(.cal-agenda,.cal-advice),
-#lifePage .calendar-space-button{
- border-color:var(--future-edge)!important;
- background-color:var(--card)!important;
- background-image:linear-gradient(155deg,var(--future-soft),transparent 63%)!important;
- box-shadow:inset 0 1px 0 var(--future-soft),0 5px 17px var(--future-shadow)!important;
-}
-#managePage .manage-card,
-#tasksPage :is(.personal-tasks-list,.tasks-records){border-radius:22px!important}
-#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight){border-radius:23px!important}
-#calendarPage .cal-agenda{border-radius:22px!important}
 #calendarPage .cal-periods button[aria-pressed=true],
 #picturePage .picture-tabs button[aria-pressed=true],
 #tasksPage .tasks-switch button[aria-pressed=true]{
  color:var(--text)!important;
- background:var(--future-wash)!important;
- box-shadow:inset 0 0 0 1px var(--future-edge)!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
 #managePage .manage-row:focus-visible,
 #picturePage button:focus-visible,
@@ -62,29 +48,11 @@
  #managePage .manage-row:hover,
  #calendarPage .cal-periods button:hover,
  #lifePage .calendar-space-button:hover{
-  background-color:var(--future-wash)!important;
+  color:var(--text)!important;
  }
 }
-/* Only actual voice/assistant events activate this living signal. */
-:root[data-seyveo-presence=listening] .dock>.assistant-button,
-:root[data-seyveo-presence=thinking] .dock>.assistant-button,
-:root[data-seyveo-presence=speaking] .dock>.assistant-button{
- background:var(--future-wash)!important;
-}
-:root[data-seyveo-presence=listening] .dock>.assistant-button .button-art,
-:root[data-seyveo-presence=thinking] .dock>.assistant-button .button-art,
-:root[data-seyveo-presence=speaking] .dock>.assistant-button .button-art{
- animation:seyveo-future-presence 1.8s ease-in-out infinite!important;
-}
-@keyframes seyveo-future-presence{
- 0%,100%{opacity:1}
- 50%{opacity:.69}
-}
-@media(prefers-reduced-motion:reduce){
- :root[data-seyveo-presence] .dock>.assistant-button .button-art{
-  animation:none!important;
- }
-}
+/* Sayvi's authentic listening/music/speaking glyph animation lives in
+   dock-voice-life.css. No second pulse or painted button is added here. */
 
 
 /* Future v2 · One tactile language for working screens only.
@@ -97,16 +65,8 @@
  --future-touch:rgba(94,113,143,.10);
  --future-touch-shadow:rgba(35,50,73,.065);
 }
-/* Calendar and Life use the same quiet glass rim as the other workspaces. */
-#calendarPage :is(.cal-month,.cal-week-grid,.calendar-spaces-grid),
-#lifePage .calendar-spaces-grid{
- border-color:var(--future-edge)!important;
- box-shadow:inset 0 1px 0 var(--future-soft),0 5px 17px var(--future-shadow)!important;
-}
-#calendarPage .calendar-space-button{
- border-color:var(--future-edge)!important;
- background-image:linear-gradient(155deg,var(--future-soft),transparent 66%)!important;
-}
+/* Calendars and Life keep their actual content, without a glass shell.
+   The real hairlines and selected-state indicator live in living-space.css. */
 /* Actual actions respond to a finger, keyboard or pointer.
  * Dense day cells and the Home/assistant dock are intentionally excluded. */
 #calendarPage :is(.calendar-space-button,.cal-periods button,.cal-advice-action,.cal-day-fab),
@@ -122,9 +82,10 @@
 #tasksPage :is(.tasks-switch button,.personal-tasks-add,.personal-task-origin):active:not(:disabled),
 #lifePage :is(.calendar-space-button,.life-back):active:not(:disabled),
 #managePage :is(.manage-row,.manage-theme-choice,.manage-theme-back):active:not(:disabled){
- background-color:var(--future-touch)!important;
- box-shadow:inset 0 0 0 1px var(--future-edge),
-            inset 0 2px 7px var(--future-touch-shadow)!important;
+ color:var(--text)!important;
+ background-color:transparent!important;
+ box-shadow:none!important;
+ opacity:.72;
 }
 #calendarPage :is(.calendar-space-button,.cal-advice-action,.cal-day-fab):focus-visible,
 #picturePage :is(.picture-full-report,.picture-tabs button):focus-visible,
@@ -151,9 +112,8 @@
 #calendarPage #calendarAgenda.seyveo-future-ack::after,
 #calendarPage #calendarDeadlineList.seyveo-future-ack::after,
 #tasksPage #personalTaskList.seyveo-future-ack::after{
- content:"";position:absolute;inset:0;z-index:1;
- border-radius:inherit;pointer-events:none;
- box-shadow:inset 0 0 0 1.5px var(--future-ink);
+ content:"";position:absolute;left:0;right:0;bottom:0;height:1px;z-index:1;
+ pointer-events:none;background:var(--future-ink);
  animation:seyveo-future-ack 980ms ease-out both;
 }
 @keyframes seyveo-future-ack{
