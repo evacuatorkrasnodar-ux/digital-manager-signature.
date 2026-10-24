@@ -45,14 +45,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .signal{position:absolute;z-index:3;top:50%;left:50%;width:108px;height:108px;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
 .signal svg{display:block;width:94px;height:94px}
 /* SEYVEO live effects: content only, the approved sphere stays untouched. */
-.signal.is-living,.signal.is-pearl{opacity:1;filter:none;transform:translate(-50%,-50%)}
-.signal.is-living .reveal-plane{
- display:grid;place-items:center;width:100%;height:100%;
- opacity:0;transform:translateZ(0);backface-visibility:hidden
-}
-.signal.is-living.is-appearing.signal--notice .reveal-plane{
- animation:living-notice 5.2s linear both;will-change:opacity
-}
+.signal.is-pearl{opacity:1;filter:none;transform:translate(-50%,-50%)}
 .signal.is-pearl .pearl-stage{
  position:relative;isolation:isolate;display:grid;place-items:center;
  box-sizing:border-box;width:100%;height:100%;
@@ -91,11 +84,6 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 :root[data-theme=light] .brand-mark{filter:brightness(.81) contrast(1.2) drop-shadow(0 1px 1px #50658028)}
 :root[data-theme=light] .brand-word{color:#5e718a;background:linear-gradient(150deg,#42566e 8%,#7790aa 52%,#405774 94%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :root[data-theme=light] .brand-specialty{color:#52657d}
-@keyframes living-notice{
- 0%{opacity:0;animation-timing-function:cubic-bezier(.42,0,.58,1)}
- 50%{opacity:.94;animation-timing-function:cubic-bezier(.42,0,.58,1)}
- 100%{opacity:0}
-}
 @keyframes cinema-inner-light{
  0%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.2,1)}
  35%{opacity:.45;animation-timing-function:cubic-bezier(.45,0,.65,1)}
@@ -1618,12 +1606,12 @@ document.addEventListener('seyveo:silk-touch',()=>playFeedback('select'));
 /* Orb glyphs are now defined only once in assets/orb-language.js. */
 const BRAND_LOCKUP_HTML='<span class="brand-lockup"><img class="brand-mark" src="assets/official-logo.svg?v=6" alt="" aria-hidden="true"><span class="brand-word">SEYVEO</span><span class="brand-specialty">IT · AI · AUTOMATION</span></span>';
 const BRAND_STORE_KEY='dm-seyveo-signature-v2';
-const BRAND_MAX_DAILY=3,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=9500;
+const BRAND_MAX_DAILY=1,BRAND_GAP_MS=2*60*60*1000,BRAND_DURATION_MS=9500;
 let brandClearTimer=null,brandNextTimer=null,brandHiddenAt=null;
 let brandFallback={day:'',count:0,lastAt:0};
 let noticeKey=null,noticeClearTimer=null;
 let revealFrameId=null;
-const SIGNAL_CLASSES=['is-appearing','is-brand','is-living','is-pearl','signal--notice'];
+const SIGNAL_CLASSES=['is-appearing','is-brand','is-pearl','signal--notice'];
 function resetSignal(el){
   cancelAnimationFrame(revealFrameId);
   el.classList.remove(...SIGNAL_CLASSES,'svl-live','svl-equalizer','svl-listening','svl-speaking','svl-symbol');
