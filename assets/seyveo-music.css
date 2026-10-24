@@ -203,7 +203,7 @@
  #sayviMusicPage .sv-music-artist{
   animation:sv-music-arrive 830ms cubic-bezier(.22,1,.36,1) both;
  }
- #sayviMusicPage .sv-music-playing .sv-music-record{
+ #sayviMusicPage.sv-music-playing .sv-music-record{
   animation:sv-music-spin 14s linear infinite;
  }
 }
