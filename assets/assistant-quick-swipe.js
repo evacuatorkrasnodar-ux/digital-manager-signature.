@@ -138,7 +138,7 @@ function updatePips(){
 }
 function updateDemoPips(){
  if(!demoTrack||!demoPips)return;
- const total=Math.max(1,selected.length-2);
+ const total=Math.max(1,selected.length-3);
  const slot=demoTrack.firstElementChild?.getBoundingClientRect().width||demoTrack.clientWidth/3||1;
  const page=Math.min(total-1,Math.max(0,Math.round(demoTrack.scrollLeft/slot)));
  demoPips.replaceChildren();demoPips.hidden=total<=1;
@@ -160,7 +160,7 @@ function renderDemo(){
  demoTrack.replaceChildren(...elements);
  demoTrack.dataset.count=String(selected.length);
  demoTrack.scrollLeft=0;
- if(demoHint)demoHint.textContent='Листайте пальцем или нажмите на значок. В образце команды не запускаются.';
+ if(demoHint)demoHint.textContent='Ниже выбран порядок избранных. В доке Сэйва остаётся по центру, а действия листаются четвёрками.';
  requestAnimationFrame(updateDemoPips);
 }
 function render(){
