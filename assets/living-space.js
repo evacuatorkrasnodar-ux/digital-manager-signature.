@@ -82,7 +82,16 @@ function cascade(page){
 function after(next){
  if(!next)next=route();
  if(current!==next)before(next);
- if(beforeRect){animateOrb(beforeRect);beforeRect=null;}
+ // The music stage is short and scrollable. Avoid FLIP interpolation across
+ // its moving scrollport on iOS, which can make the single sphere flicker.
+ if(location.hash==='#sayvi-music'){
+  animation?.cancel();
+  animation=null;
+  beforeRect=null;
+ }else if(beforeRect){
+  animateOrb(beforeRect);
+  beforeRect=null;
+ }
  if(next!=='home')cascade(next);
 }
 function initialize(){
