@@ -363,3 +363,43 @@
 @media(prefers-reduced-motion:reduce){
  #tasksPage .personal-task-call-title{transition:none}
 }
+
+/* Black Velvet · SEYVEO calls start as a quiet contact-first sheet.
+   No duplicate phone book on the screen when the person is already found. */
+.personal-call-dialog #seyveoCallSearchGroup[hidden],
+.personal-call-dialog #seyveoCallList[hidden],
+.personal-call-dialog #seyveoCallChooseOther[hidden]{display:none!important}
+.personal-call-dialog .personal-call-picked{
+ border:0;border-top:1px solid var(--soft-line);
+ border-bottom:1px solid var(--soft-line);
+ border-radius:0;background:transparent;
+ padding:15px 3px;margin:12px 0 4px;
+}
+.personal-call-dialog .personal-call-picked strong{
+ font-size:20px;line-height:1.25;letter-spacing:-.025em;
+ font-weight:470;
+}
+.personal-call-dialog .personal-call-picked span{
+ font-size:13px;line-height:1.4;
+}
+.personal-call-dialog .personal-call-switch{
+ display:inline-flex;align-items:center;min-height:44px;
+ margin:2px 0 7px;padding:8px 3px;
+ border:0;border-radius:0;background:transparent;
+ color:var(--secondary);font-size:12px;font-weight:450;
+ text-decoration:underline;text-decoration-color:var(--soft-line);
+ text-underline-offset:5px;
+}
+.personal-call-dialog .personal-call-actions{
+ gap:12px;align-items:center;margin-top:8px;
+}
+.personal-call-dialog #seyveoCallAddContact{
+ border:0;border-radius:0;background:transparent;
+ box-shadow:none;color:var(--secondary);font-size:12px;font-weight:450;
+ padding:9px 3px;
+}
+.personal-call-dialog #seyveoCallDial{
+ border:1px solid var(--line);background:var(--text);color:var(--bg);
+ border-radius:18px;font-size:13px;font-weight:500;
+ box-shadow:none;
+}
