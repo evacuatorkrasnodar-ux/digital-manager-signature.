@@ -1,4 +1,4 @@
-/* SEYVEO · Quiet Cinema v4 — Director's Decision and Signature Satin.
+/* SEYVEO · Living Intent Objects v5 — Director's Decision and Quiet Ink.
    Only existing container geometry moves. The approved plasma SVG is untouched. */
 #homePage #orbCluster{display:flex;align-items:center;justify-content:center;flex:none;width:100%;height:min(81vw,342px);transition:height 1150ms cubic-bezier(.22,1,.36,1)}
 #homePage #stage{transition:min-height 1150ms cubic-bezier(.22,1,.36,1),padding 1150ms cubic-bezier(.22,1,.36,1)}
@@ -135,9 +135,23 @@
   height:90px;
   min-width:0;
   color:var(--text);
+  -webkit-appearance:none;appearance:none;
+  border:0;background:transparent;box-shadow:none;padding:0;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
   transition:width 860ms cubic-bezier(.22,1,.36,1),
     height 860ms cubic-bezier(.22,1,.36,1),
     opacity 600ms ease;
+}
+#seyveoLivingMoment .lm-hero-art:focus-visible,
+#homePage #dynamic .lm-owner-art:focus-visible{
+  outline:2px solid var(--text);outline-offset:3px;
+  border-radius:50%;
+}
+#seyveoLivingMoment .lm-hero-art:active .lm-art-svg{
+  transform:scale(.968);
+}
+#seyveoLivingMoment .lm-hero-art .lm-art-svg{
+  transition:transform 330ms cubic-bezier(.22,1,.36,1);
 }
 /* An almost imperceptible satin depth—not a separate glowing tile. */
 #seyveoLivingMoment .lm-hero-art::before{
@@ -425,6 +439,9 @@
 #homePage #dynamic .decision-card[data-owner-advice] .lm-owner-art{
   display:grid;place-items:center;width:80px;height:80px;
   color:var(--text);
+  appearance:none;-webkit-appearance:none;
+  padding:0;border:0;background:transparent;box-shadow:none;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #homePage #dynamic .lm-owner-art svg{
   width:100%;height:100%;
