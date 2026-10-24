@@ -40,6 +40,8 @@ jobs:
         run: node tools/test-magnetic-ink.cjs
       - name: Test local music metadata, lock artwork and background playback
         run: node tools/test-music-quality.cjs
+      - name: Confirm actual Hi-Res source before drawing badge
+        run: node tools/test-music-source-quality.cjs
       - name: Test local calendar reminders
         run: node tools/test-calendar-reminders.cjs
       - name: Test spoken and typed task commands
