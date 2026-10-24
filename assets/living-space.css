@@ -547,3 +547,26 @@ html.sv-space-active #sayviMusicPage button.sv-music-intent{
   animation:sv-dialog-appear .3s cubic-bezier(.22,1,.36,1) both;
  }
 }
+
+
+/* Living Screen director v1 lives inside the original subtitle and dock.
+   Not another floating controller or stylesheet override. */
+html.sv-space-active .sv-living-director-copy{
+ color:var(--secondary);font-size:12.5px;line-height:1.55;
+ font-weight:420;letter-spacing:-.005em;overflow-wrap:anywhere;
+}
+html.sv-space-active #seyveoCompanion .sv-presence-caption{
+ font-weight:455;letter-spacing:.075em;opacity:.76;
+}
+html.sv-space-active footer.dock[data-sv-living-context] .assistant-button{
+ --sv-living-dock-glint:rgba(244,247,255,.18);
+}
+/* One subtle contextual contact point in the EXISTING central control.
+   The dock remains the exact same five buttons and height on iPhone X. */
+html.sv-space-active footer.dock[data-sv-living-context] .assistant-button{
+ outline:1px solid var(--sv-living-dock-glint);
+ outline-offset:1px;
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-space-active .sv-living-director-copy{animation:none!important}
+}

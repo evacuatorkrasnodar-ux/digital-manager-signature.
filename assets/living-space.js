@@ -28,6 +28,87 @@ const route=()=>{
  if(/^#sayvi-(mail|documents|health)$/.test(hash)||hash==='#sayvi-answer'||hash==='#sayvi-music')return 'sayvi';
  return 'home';
 };
+
+/* Living Screen director: reuses the approved headings, one sphere and one
+ * dock. Its copy derives only from visible module state and real events.
+ * It never clicks actions, invents data or changes the Home composition. */
+const directorCore=window.SEYVEO_LIVING_SCREEN_CORE;
+const dock=document.querySelector('footer.dock');
+const companionCaption=companion.querySelector('.sv-presence-caption');
+const assistantButton=$('assistantButton');
+const originalAssistantTitle=assistantButton?.getAttribute('title');
+const voiceTargets={
+ tasks:'#tasksPage .tasks-heading > p:last-child',
+ calendar:'#calendarPage .calendar-header > div > p:last-child',
+ life:'#lifePage .life-description',
+ picture:'#pictureLead',
+ manage:'#managePage #manageOverview > .manage-heading > p:last-child',
+ music:'#sayviMusicPage .sv-music-intro'
+};
+let directorFrame=0,lastDirectorScreen='',lastDirectorText='';
+let pendingTaskCount=null;
+function directorScreen(page){
+ if(page==='home')return 'home';
+ if(page==='sayvi'){
+  if(location.hash==='#sayvi-music')return 'music';
+  return 'sayvi';
+ }
+ return page;
+}
+function readDirector(page){
+ const screen=directorScreen(page);
+ const priority=$('tasksContextFocus')?.hidden===false;
+ const rowCount=document.querySelectorAll('#personalTaskList .personal-task-row[data-task-id]').length;
+ const tasksCount=Number.isInteger(pendingTaskCount)?pendingTaskCount:rowCount+(priority?1:0);
+ const selected=$('calendarSelectedCount');
+ const mode=document.querySelector('#calendarPage [data-calendar-mode][aria-pressed="true"]')?.dataset.calendarMode;
+ const count=document.querySelectorAll('#homeWidgetGrid [data-home-widget]').length;
+ const music=$('sayviMusicAudio');
+ return directorCore?.resolve({
+  screen,count:screen==='tasks'?tasksCount:screen==='picture'?count:null,
+  priority,mode,selection:!!selected&&selected.textContent?.trim()!=='',
+  playing:!!music&&!music.paused&&!music.ended
+ })||{context:screen,eyebrow:'Сэйви',line:''};
+}
+function presentDirector(){
+ if(!directorCore||!dock)return;
+ const currentScreen=route();
+ // Home belongs to the original stage; no modified headings/dock on Home.
+ if(currentScreen==='home'){
+  dock.removeAttribute('data-sv-living-context');
+  assistantButton?.removeAttribute('data-sv-living-context');
+  if(assistantButton){
+   if(originalAssistantTitle===null)assistantButton.removeAttribute('title');
+   else assistantButton.setAttribute('title',originalAssistantTitle);
+  }
+  lastDirectorScreen='home';lastDirectorText='';
+  return;
+ }
+ const scene=readDirector(currentScreen);
+ const target=document.querySelector(voiceTargets[scene.context]||'');
+ if(target&&scene.line&&target.textContent!==scene.line){
+  target.textContent=scene.line;
+  target.classList.add('sv-living-director-copy');
+ }
+ dock.dataset.svLivingContext=scene.context;
+ if(assistantButton){
+  assistantButton.dataset.svLivingContext=scene.context;
+  assistantButton.title='Сэйви · '+scene.eyebrow.replace(/^Сэйви · /,'');
+ }
+ if(companionCaption)companionCaption.textContent=scene.eyebrow;
+ if(scene.context!==lastDirectorScreen||scene.line!==lastDirectorText){
+  lastDirectorScreen=scene.context;lastDirectorText=scene.line;
+  root.dataset.svLivingScene=scene.context;
+ }
+}
+function scheduleDirector(){
+ if(directorFrame)return;
+ directorFrame=requestAnimationFrame(()=>{
+  directorFrame=0;
+  presentDirector();
+ });
+}
+
 function animateOrb(from){
  if(!from||reduce.matches||typeof orbCluster.animate!=='function')return;
  const to=orbCluster.getBoundingClientRect();
@@ -93,6 +174,7 @@ function after(next){
   beforeRect=null;
  }
  if(next!=='home')cascade(next);
+ scheduleDirector();
 }
 function initialize(){
  // The same orb remains an accessible assistant button on interior pages.
@@ -103,6 +185,21 @@ function initialize(){
   event.stopImmediatePropagation();
   $('assistantButton')?.click();
  },true);
+ // Recompute only after real data or navigation changes; no polling timers.
+ window.addEventListener('seyveo:tasks-changed',event=>{
+  const next=event.detail?.open;
+  pendingTaskCount=Number.isInteger(next)&&next>=0?next:null;
+  scheduleDirector();
+ });
+ for(const eventName of ['seyveo:calendar-changed','seyveo:spaces-changed',
+  'seyveo:wellness-changed','seyveo:music-state','seyveo:space-opened']){
+  window.addEventListener(eventName,scheduleDirector);
+ }
+ window.addEventListener('hashchange',scheduleDirector);
+ window.addEventListener('storage',scheduleDirector);
+ document.addEventListener('click',event=>{
+  if(event.target.closest('[data-calendar-mode],[data-picture-period], #seyveoCleanManageMenu [data-clean-section]'))scheduleDirector();
+ });
  // Existing rows retain their original click handlers and destinations.
  document.querySelectorAll('#seyveoCleanManageMenu .manage-group')
   .forEach((group,i)=>group.style.setProperty('--sv-group-index',String(i)));
@@ -118,6 +215,7 @@ function initialize(){
  after(route());
 }
 window.SEYVEO_LIVING_SPACE=Object.freeze({before,after});
+window.SEYVEO_LIVING_SCREEN=Object.freeze({refresh:scheduleDirector,current:()=>readDirector(route())});
 initialize();
 window.addEventListener('pageshow',event=>{if(event.persisted)after(route())});
 })();

@@ -32,6 +32,8 @@ jobs:
         run: node tools/test-context-focus.cjs
       - name: Check Signature workspaces and semantic task controls
         run: node tools/test-signature-workspaces.cjs
+      - name: Test one-sphere Living Screen director
+        run: node tools/test-living-screen.cjs
       - name: Test local calendar reminders
         run: node tools/test-calendar-reminders.cjs
       - name: Test spoken and typed task commands
