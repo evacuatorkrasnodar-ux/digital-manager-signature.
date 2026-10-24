@@ -1,7 +1,7 @@
-/* SEYVEO · Network Care v1
- * Interactive PWA settings only: NO native VPN, network interception, proxy,
- * secrets, background probes or claims of access to blocked destinations.
- * Future native bridge must report VERIFIED operating-system VPN state. */
+/* SEYVEO · Network Care v2 · native-first product, web prototype.
+ * Final product targets iOS and Android. This PWA is the interactive preview.
+ * No native tunnel is connected here; only verified OS state may show Connected.
+ * Never collect credentials or claim VPN protection from navigator.onLine. */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -22,14 +22,9 @@ const ua=navigator.userAgent||'';
 const platform=/android/i.test(ua)?'android':
  (/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))?'ios':'desktop';
 const labels={
- ios:'iPhone / iPad · веб-приложение',
- android:'Android · веб-приложение',
- desktop:'Компьютер · веб-приложение'
-};
-const explanations={
- ios:'Для настоящего VPN потребуется нативная версия SEYVEO с разрешением iOS. Запускать системный VPN из этой PWA нельзя.',
- android:'Для настоящего VPN потребуется приложение Android с VpnService и системным согласием. Веб-версия не управляет VPN.',
- desktop:'Сейчас работает PWA. Защищённый туннель потребует отдельного нативного компонента и разрешения пользователя.'
+ ios:'iPhone / iPad · предпросмотр SEYVEO для iOS',
+ android:'Android · предпросмотр SEYVEO для Android',
+ desktop:'Компьютер · прототип мобильного SEYVEO'
 };
 function load(){
  try{const stored=localStorage.getItem(KEY);return ALLOWED.has(stored)?stored:'ask'}
@@ -46,7 +41,7 @@ function refresh(){
   ?'Это сигнал устройства, а не проверка YouTube, Telegram или доступности какого-либо сайта.'
   :'Система сообщает об отсутствии соединения. Доступность отдельных сервисов сейчас не проверялась.';
  modeText.textContent=preference==='ask'
-  ?'Сэйви предложит помощь, если заметит проблему в будущем нативном приложении.'
+  ?'В полноценном приложении для iPhone и Android Сэйви сможет предложить помощь с доступом после вашего согласия.'
   :'Сэйви не будет предлагать помощь с доступом.';
  for(const b of mode.querySelectorAll('[data-network-preference]')){
   const pressed=b.dataset.networkPreference===preference;
@@ -77,7 +72,7 @@ demonstration.addEventListener('click',()=>{
  sayvi.hidden=false;
  sayvi.textContent=preference==='off'
   ?'Сэйви: вы отключили предложения помощи с доступом. Настройки можно изменить в любой момент.'
-  :'Сэйви: похоже, нужный сервис недоступен. Когда у меня появится нативный защищённый доступ, я сначала объясню, зачем он нужен, и попрошу разрешение. Сейчас подключить VPN из PWA я не могу.';
+  :'Сэйви: представим, что видео не открылось. В полноценном SEYVEO я смогу предложить защищённое подключение, объяснить его действие и получить системное разрешение. Здесь мы проверяем сценарий, а не включаем VPN.';
 });
 window.addEventListener('online',refresh);
 window.addEventListener('offline',refresh);
