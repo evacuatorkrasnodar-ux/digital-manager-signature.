@@ -1,4 +1,4 @@
-/* SEYVEO Signature · Home Quiet Cinema v3
+/* SEYVEO Signature · Quiet Cinema / Director's Decision v4
  * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
@@ -11,7 +11,7 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-quiet-cinema-v3';
+const SESSION='seyveo-quiet-cinema-decision-v4';
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
@@ -113,14 +113,6 @@ function polymer(label,callback,kind='quiet'){
  b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
  return b;
 }
-function explain(field,message,button){
- const panel=field.querySelector('.lm-explanation');
- if(!panel)return;
- const collapse=!panel.hidden&&panel.textContent===message;
- panel.textContent=message;panel.hidden=collapse;
- field.classList.toggle('lm-has-reason',!collapse);
- if(button)button.setAttribute('aria-expanded',String(!collapse));
-}
 function createSurface(primary,other=[],real=false){
  tiles.replaceChildren();
  const field=create('div','lm-field');
@@ -141,15 +133,38 @@ function createSurface(primary,other=[],real=false){
  const controls=create('div','lm-actions');
  let shown=primary;
  let morphLocked=false;
- const open=polymer('Открыть',()=>{
+ let expanded=false;
+ const more=create('p','lm-explanation');
+ more.id='seyveoSurfaceReason';
+ more.hidden=true;
+ // One visible action at a time. "Исполнить" is NEVER offered for real
+ // external operations until the service exposes a working executor.
+ const defer=polymer('Позже',()=>closeEarly());
+ defer.hidden=true;
+ const open=polymer('Подробнее',()=>{
+  if(!expanded){
+   expanded=true;
+   field.classList.add('lm-has-reason');
+   more.hidden=false;
+   more.textContent=shown.reason+' '+shown.detail;
+   controls.classList.add('lm-actions--details');
+   open.textContent=real?'К делу':'Исполнить';
+   open.setAttribute('aria-label',real?'Открыть дело: '+shown.title:'Показать пример исполнения: '+shown.title);
+   open.setAttribute('aria-expanded','true');
+   defer.hidden=false;
+   return;
+  }
   if(real){$('navTasks')?.click();return}
-  explain(field,shown.detail,open);
+  more.textContent='Это был только пример. Ничего не подписано, не отправлено и не выполнено.';
+  tip.textContent='ДЕМОНСТРАЦИЯ · РЕАЛЬНЫХ ДЕЙСТВИЙ НЕТ';
+  controls.classList.add('lm-actions--complete');
+  open.hidden=true;
+  defer.textContent='Готово';
  },'main');
- open.setAttribute('aria-label','Открыть: '+shown.title);
- const laterButton=polymer('Позже',()=>closeEarly());
- const why=polymer('Почему',()=>explain(field,shown.reason,why));
- why.setAttribute('aria-expanded','false');
- controls.append(open,laterButton,why);
+ open.setAttribute('aria-controls',more.id);
+ open.setAttribute('aria-expanded','false');
+ open.setAttribute('aria-label','Подробнее: '+shown.title);
+ controls.append(open,defer);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
  function renderSecondary(){
@@ -186,10 +201,15 @@ function createSurface(primary,other=[],real=false){
    label.textContent=item.category;
    headline.textContent=item.title;
    description.textContent=item.body;
-   open.setAttribute('aria-label','Открыть: '+item.title);
-   const reason=field.querySelector('.lm-explanation');
-   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
-   why.setAttribute('aria-expanded','false');
+   expanded=false;
+   field.classList.remove('lm-has-reason');
+   more.hidden=true;
+   more.textContent='';
+   controls.classList.remove('lm-actions--details','lm-actions--complete');
+   open.hidden=false;open.textContent='Подробнее';
+   open.setAttribute('aria-expanded','false');
+   open.setAttribute('aria-label','Подробнее: '+item.title);
+   defer.hidden=true;defer.textContent='Позже';
    renderSecondary();
    scene.classList.remove('lm-scene--changing');
    later(()=>{morphLocked=false},720);
@@ -197,11 +217,7 @@ function createSurface(primary,other=[],real=false){
  }
  field.dataset.lmSubject=primary.kind;
  renderSecondary();
- const explanation=create('p','lm-explanation');
- explanation.id='seyveoSurfaceReason';
- explanation.hidden=true;
- why.setAttribute('aria-controls',explanation.id);
- scene.append(top,main,secondary,explanation);
+ scene.append(top,main,secondary,more);
  field.append(scene);
  tiles.append(field);
  return {field,changeFeatured};
