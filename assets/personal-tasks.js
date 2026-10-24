@@ -255,6 +255,10 @@ function requestCall(target){
 }
 window.SEYVEO_CONTACTS=Object.freeze({
  taskTarget:callTargetFromTask,understand:personFromRequest,requestCall,
+ availability:target=>{
+  const matches=matchingContacts(cleanName(target),readContacts());
+  return Object.freeze({matches:matches.length,name:matches.length===1?matches[0].name:''});
+ },
  state:()=>({count:readContacts().length})
 });
 window.addEventListener('seyveo:call-request',event=>{
