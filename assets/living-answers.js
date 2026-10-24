@@ -51,7 +51,7 @@ const scenarios=Object.freeze({
   summary:'Сердце — мышечный насос с четырьмя камерами. Правая половина направляет кровь к лёгким, левая — по всему телу. Клапаны помогают крови двигаться в правильном направлении.',
   image:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Diagram_of_the_human_heart_%28multilingual%29.svg/921px-Diagram_of_the_human_heart_%28multilingual%29.svg.png',
   imageAlt:'Схема строения человеческого сердца с отмеченными камерами и сосудами',
-  credit:'Иллюстрация: Wikimedia Commons · обучающая схема',
+  credit:'Схема: MesserWoland (по Yaddah), CC BY-SA 3.0 · Wikimedia Commons',
   creditUrl:'https://commons.wikimedia.org/wiki/File:Diagram_of_the_human_heart_(multilingual).svg',
   sourceUrl:'https://www.nhlbi.nih.gov/health/heart/anatomy',
   sourceName:'MedlinePlus · работа сердца',
