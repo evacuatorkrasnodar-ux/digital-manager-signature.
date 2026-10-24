@@ -1,0 +1,75 @@
+/* SEYVEO Black Velvet · Quiet Signal Living Thread.
+   Animate only the original two fine lines and pearl. No new DOM, graphics or sound.
+   The base measurements in home-velvet.css remain the single source of layout. */
+#homePage .seyveo-quiet-signal{
+  --qsl-glimmer:rgba(244,249,255,.27);
+}
+:root[data-theme=light] #homePage .seyveo-quiet-signal{
+  --qsl-glimmer:rgba(65,83,111,.22);
+}
+/* A featherweight traveling light within the original 150px divider. */
+#homePage .seyveo-quiet-signal::before{
+  content:"";
+  position:absolute;
+  left:0;top:6.7px;
+  width:34%;height:1px;
+  z-index:0;pointer-events:none;
+  border-radius:99px;
+  background:linear-gradient(90deg,transparent,var(--qsl-glimmer),transparent);
+  opacity:0;transform:translate3d(-130%,0,0);
+}
+@media(prefers-reduced-motion:no-preference){
+ /* Same specificity as the one-time introduction; later stylesheet wins.
+    Keep all updates to transform/opacity only to avoid iPhone layout jumps. */
+ #homePage .seyveo-quiet-signal.qsl-idle:not([hidden]) .quiet-signal-pearl{
+  animation:qsl-rest 6.8s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-idle:not([hidden])::before{
+  animation:qsl-sweep 9.5s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-music:not([hidden]) .quiet-signal-pearl{
+  animation:qsl-beat 1.58s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-music:not([hidden])::before{
+  animation:qsl-sweep 3.2s linear infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-music:not([hidden]) .quiet-signal-line{
+  animation:qsl-line-breathe 2.1s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-listening:not([hidden]) .quiet-signal-pearl{
+  animation:qsl-beat 1.15s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal.qsl-speaking:not([hidden]) .quiet-signal-pearl{
+  animation:qsl-beat 1.08s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal:is(.qsl-listening,.qsl-speaking):not([hidden])::before{
+  animation:qsl-sweep 2.3s ease-in-out infinite;
+ }
+ #homePage .seyveo-quiet-signal:is(.qsl-suspended):not([hidden]) *,
+ #homePage .seyveo-quiet-signal:is(.qsl-suspended):not([hidden])::before{
+  animation:none!important;
+ }
+ @keyframes qsl-rest{
+  0%,100%{opacity:.88;transform:translate(-50%,-50%) scale(1)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.14)}
+ }
+ @keyframes qsl-beat{
+  0%,100%{opacity:.9;transform:translate(-50%,-50%) scale(1)}
+  48%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}
+ }
+ @keyframes qsl-line-breathe{
+  0%,100%{opacity:.68}
+  50%{opacity:.95}
+ }
+ @keyframes qsl-sweep{
+  0%,9%{opacity:0;transform:translate3d(-130%,0,0)}
+  17%{opacity:.38}
+  48%{opacity:.32}
+  62%,100%{opacity:0;transform:translate3d(350%,0,0)}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage .seyveo-quiet-signal::before{display:none!important;animation:none!important}
+ #homePage .seyveo-quiet-signal .quiet-signal-pearl,
+ #homePage .seyveo-quiet-signal .quiet-signal-line{animation:none!important;transition:none!important}
+}
