@@ -528,3 +528,126 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  #sayviMusicPage .sv-music-technology{font-size:8.5px;margin-top:2px;margin-bottom:1px}
  #sayviMusicPage .sv-music-quality{margin:1px 0 0;font-size:9px}
 }
+
+/* SEYVA MUSIC · Living Stage v1
+   Widescreen is editorial, not a heap of centered objects. The original vinyl
+   stays the focal point. A single narrow layout remains safe on iPhone X. */
+@media(min-width:760px) and (min-height:650px){
+ html.sv-music-screen .app{
+  max-width:900px!important;
+  width:min(100%,900px);
+  padding-left:clamp(28px,4.5vw,64px)!important;
+  padding-right:clamp(28px,4.5vw,64px)!important;
+ }
+ html.sv-music-screen #seyveoCompanion{
+  translate:-16px 0;
+ }
+ html.sv-music-screen #sayviMusicPage{
+  display:grid!important;
+  width:100%;
+  max-width:790px;
+  margin-inline:auto;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);
+  grid-template-rows:repeat(8,auto);
+  column-gap:clamp(36px,5.3vw,82px);
+  align-content:center;
+  justify-content:stretch;
+  align-items:start;
+  --sv-music-vinyl-size:min(31vw,36dvh,308px);
+ }
+ html.sv-music-screen #sayviMusicPage>header{
+  grid-column:1;grid-row:1;
+  text-align:left;
+  padding:0;
+  align-self:end;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-heading{
+  margin:0;
+  text-align:left;
+  font-size:clamp(30px,3.1vw,39px);
+  letter-spacing:.009em;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-technology{
+  margin:7px 0 0;
+  text-align:left;
+  letter-spacing:.2em;
+  font-size:10px;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{
+  grid-column:2;grid-row:1 / span 8;
+  justify-self:center;
+  align-self:center;
+  position:relative;
+  left:clamp(6px,1.6vw,19px);
+  margin:0;
+  width:var(--sv-music-vinyl-size);
+  height:var(--sv-music-vinyl-size);
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-title{
+  grid-column:1;grid-row:2;
+  margin:clamp(24px,5dvh,43px) 0 0;
+  text-align:left;
+  font-size:clamp(18px,2.1vw,24px);
+  line-height:1.28;
+  -webkit-line-clamp:2;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-artist{
+  grid-column:1;grid-row:3;
+  margin:6px 0 0;
+  text-align:left;
+  font-size:12px;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-quality{
+  grid-column:1;grid-row:4;
+  margin:9px 0 0;
+  text-align:left;
+  font-size:10px;
+  line-height:1.45;
+  letter-spacing:.05em;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-times{
+  grid-column:1;grid-row:5;
+  margin:clamp(19px,3vh,28px) 0 3px;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-seek{
+  grid-column:1;grid-row:6;
+  margin:0;
+  min-width:0;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-phrases{
+  grid-column:1;grid-row:7;
+  justify-content:flex-start;
+  gap:8px 23px;
+  margin:13px 0 0;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-status{
+  grid-column:1;grid-row:8;
+  text-align:left;
+  margin:8px 0 0;
+  font-size:11px;
+  line-height:1.45;
+  max-height:3em;
+  overflow:hidden;
+ }
+}
+/* Portrait: protect the one-screen arrangement, notch and compact music dock. */
+@media(max-width:759px){
+ html.sv-music-screen #sayviMusicPage{
+  display:flex!important;
+  width:100%;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{
+  position:relative;
+  left:min(1.2vw,5px);
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-quality{
+  line-height:1.4;
+  letter-spacing:.055em;
+  font-size:9px;
+  max-width:100%;
+  overflow-wrap:anywhere;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-music-screen #seyveoCompanion{transition:none!important}
+}
