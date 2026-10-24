@@ -88,7 +88,6 @@ function initialize(){
  // Home retains the approved cinematic brand-tap behaviour unchanged.
  $('orb')?.addEventListener('click',event=>{
   if(current==='home')return;
-  if(event.detail===0)return; // Do not intercept synthetic accessibility actions.
   event.preventDefault();
   event.stopImmediatePropagation();
   $('assistantButton')?.click();
