@@ -2071,7 +2071,16 @@ document.addEventListener('keydown',event=>{
 window.addEventListener('hashchange',closeWorldPopover);
 $('lifeBack').addEventListener('click',goHome);
 $('navPicture').addEventListener('click',()=>{if(location.hash!=='#picture')location.hash='picture';else syncAppPage()});
-$('navManage').addEventListener('click',()=>{if(location.hash!=='#manage')location.hash='manage';else syncAppPage()});
+$('navManage').addEventListener('click',()=>{
+  // "Управление" in the dock is also the way out of its nested detail page.
+  // Top back chevrons are intentionally absent; edge-swipe still works.
+  if(location.hash==='#manage'&&!$('seyveoCleanDetail').hidden){
+    $('seyveoCleanBack').click();
+    return;
+  }
+  if(location.hash!=='#manage')location.hash='manage';
+  else syncAppPage();
+});
 // Focus the new screen's heading only for deliberate in-app navigation.
 let manageFocusTarget=null;
 function manageRoute(hash,target){
