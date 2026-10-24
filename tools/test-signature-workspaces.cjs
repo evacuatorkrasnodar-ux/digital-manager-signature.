@@ -65,4 +65,22 @@ assert.doesNotMatch(pictureCss,/#picturePage \.home-widgets-grid:has/,'Legacy sp
 assert.match(css,/#notesDialog \.note-item/,'Notebook rows stay uncluttered');
 assert.match(css,/#seyveoCleanManageMenu \.manage-row\.seyveo-clean-link/,'Management keeps one large scene per entry');
 assert.doesNotMatch(css,/#homePage\s+\.(?:lm-|plasma)/,'Home cinema and sphere styling untouched');
+
+const compactCss=load('assets/composer-intent.css');
+const healthCss=load('assets/personal-wellness.css');
+const spaceCss=load('assets/calendar-spaces.css');
+const dialogCss=load('assets/dialog-velvet.css');
+const futureCss=load('assets/future-surfaces.css');
+assert.match(compactCss,/height:min\(51svh,435px\)/,'Compact note editor when keyboard is closed');
+assert.match(compactCss,/#ask\.expanded #question\{/,'Editor retains one visible text area');
+assert.match(spaceCss,/#calendarHealthOverview \.cal-health-tile\{[\s\S]*?background:transparent/);
+assert.match(healthCss,/#calendarPersonalTools \.pw-card\{[\s\S]*?background:transparent/);
+assert.match(futureCss,/#tasksPage \.tasks-context-open\{[\s\S]*?min-height:88px/,'Task scene height is compact');
+assert.doesNotMatch(healthCss,/Unified Experience: lighter nested care/,'Old Health tint removed');
+assert.doesNotMatch(spaceCss,/Unified Experience: calm World nested/,'Old World tint removed');
+assert.match(dialogCss,/background:var\(--bg\)/,'Dialogs use canvas background');
+for(const name of ['calendar-spaces','personal-wellness','notebook-smart','dialog-velvet','calendar','composer-intent','living-space','future-surfaces']){
+ assert.match(html,new RegExp('assets/'+name+'\\.css\\?v=\\d+'),'Versioned '+name);
+}
+
 console.log('PASS Living Continuity: all secondary workspaces use one open-scene vocabulary.');
