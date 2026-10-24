@@ -1032,9 +1032,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <button type="button" class="seyveo-close-control seyveo-dialog-close" id="seyveoCallClose" aria-label="Закрыть звонок"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
  <h2 id="seyveoCallTitle">Позвонить</h2>
  <p class="personal-call-help">Сэйви найдёт человека в «Моём мире» и подготовит звонок здесь. Для обычного сотового вызова телефон попросит подтверждение. Дело останется незавершённым.</p>
- <label class="personal-call-search-label">Найти контакт<input id="seyveoCallSearch" type="search" maxlength="70" autocomplete="off" placeholder="Поиск по имени"></label>
+ <label id="seyveoCallSearchGroup" class="personal-call-search-label">Найти контакт<input id="seyveoCallSearch" type="search" maxlength="70" autocomplete="off" placeholder="Поиск по имени"></label>
  <div id="seyveoCallList" class="personal-call-list" aria-label="Контакты для звонка"></div>
- <div class="personal-call-picked" id="seyveoCallPicked" hidden><small>Выбран контакт</small><strong id="seyveoCallPickedName"></strong><span id="seyveoCallPickedPhone"></span></div>
+ <div class="personal-call-picked" id="seyveoCallPicked" hidden><small>Сэйви нашла контакт</small><strong id="seyveoCallPickedName"></strong><span id="seyveoCallPickedPhone"></span></div>
+ <button id="seyveoCallChooseOther" class="personal-call-switch" type="button" hidden aria-expanded="false" aria-controls="seyveoCallList">Другой контакт</button>
  <p id="seyveoCallStatus" class="personal-contacts-status" role="status" aria-live="polite"></p>
  <div class="personal-call-actions"><button id="seyveoCallAddContact" type="button">Добавить контакт</button><a id="seyveoCallDial" href="#" role="button" hidden>Позвонить</a></div>
 </dialog>
