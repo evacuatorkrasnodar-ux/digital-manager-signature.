@@ -163,27 +163,8 @@
   background:radial-gradient(circle,rgba(245,248,250,.055),rgba(245,248,250,0) 71%);
   pointer-events:none;
 }
-/* Color is a restrained semantic accent, not a filter over Black Velvet.
- * Blue for Mail, champagne for Documents, coral for Care.
- * These are not indicators of health status or urgency. */
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-hero-art{
-  color:#a8cde9;
-}
-#seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero-art{
-  color:#e2c3a1;
-}
-#seyveoLivingMoment .lm-field[data-lm-subject="health"] .lm-hero-art{
-  color:#e8a2b2;
-}
-#seyveoLivingMoment .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{color:#9ec2db}
-#seyveoLivingMoment .lm-inline-item[data-lm-kind="contract"] .lm-inline-art{color:#d8b99a}
-#seyveoLivingMoment .lm-inline-item[data-lm-kind="health"] .lm-inline-art{color:#e1a0ad}
-:root[data-theme=light] #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-hero-art{color:#477f9f}
-:root[data-theme=light] #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero-art{color:#966d4d}
-:root[data-theme=light] #seyveoLivingMoment .lm-field[data-lm-subject="health"] .lm-hero-art{color:#ac6070}
-:root[data-theme=light] #seyveoLivingMoment .lm-inline-item[data-lm-kind="mail"] .lm-inline-art{color:#5383a2}
-:root[data-theme=light] #seyveoLivingMoment .lm-inline-item[data-lm-kind="contract"] .lm-inline-art{color:#9c7758}
-:root[data-theme=light] #seyveoLivingMoment .lm-inline-item[data-lm-kind="health"] .lm-inline-art{color:#b3657b}
+/* Living icons remain porcelain/graphite, so colored ink is reserved for
+ * meaningful states rather than each illustration. */
 #seyveoLivingMoment .lm-art-svg{
   display:block;
   width:100%;
