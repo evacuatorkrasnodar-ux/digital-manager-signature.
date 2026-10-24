@@ -26,11 +26,11 @@
  transform-origin:center;
  animation:svl-pulse 1.9s ease-in-out infinite alternate;
 }
-#orb #signal .svl-bars i:nth-child(1){--svl-max:.46;animation-duration:2.18s;animation-delay:-.44s}
-#orb #signal .svl-bars i:nth-child(2){--svl-max:.91;animation-duration:1.76s;animation-delay:-1.06s}
-#orb #signal .svl-bars i:nth-child(3){--svl-max:1.32;animation-duration:1.42s;animation-delay:-.19s}
-#orb #signal .svl-bars i:nth-child(4){--svl-max:.83;animation-duration:1.94s;animation-delay:-.71s}
-#orb #signal .svl-bars i:nth-child(5){--svl-max:.42;animation-duration:2.24s;animation-delay:-1.31s}
+#orb #signal .svl-bars i:nth-child(1){--svl-high:38%;animation-duration:2.18s;animation-delay:-.44s}
+#orb #signal .svl-bars i:nth-child(2){--svl-high:56%;animation-duration:1.76s;animation-delay:-1.06s}
+#orb #signal .svl-bars i:nth-child(3){--svl-high:71%;animation-duration:1.42s;animation-delay:-.19s}
+#orb #signal .svl-bars i:nth-child(4){--svl-high:53%;animation-duration:1.94s;animation-delay:-.71s}
+#orb #signal .svl-bars i:nth-child(5){--svl-high:36%;animation-duration:2.24s;animation-delay:-1.31s}
 #orb #signal.svl-listening .svl-bars i{animation-duration:2.55s;opacity:.82}
 #orb #signal.svl-speaking .svl-bars i{animation-duration:1.32s}
 :root[data-theme=light] #orb #signal .svl-depth{color:rgba(251,253,255,.91)}
@@ -41,7 +41,7 @@
  36%{opacity:.86;filter:blur(.5px);transform:scale(1)}
  68%{opacity:.78;filter:blur(.45px);transform:scale(1)}
  100%{opacity:0;filter:blur(3px);transform:scale(1.055)}}
-@keyframes svl-pulse{0%{height:10%;opacity:.48}100%{height:calc(24% + 36% * var(--svl-max));opacity:.96}}
+@keyframes svl-pulse{0%{height:10%;opacity:.48}100%{height:var(--svl-high,50%);opacity:.96}}
 @media(prefers-reduced-motion:reduce){
  #orb #signal .svl-depth,#orb #signal .svl-bars i{animation:none!important;transform:none!important;filter:none!important}
  #orb #signal .svl-depth{opacity:.9}
