@@ -34,6 +34,8 @@ jobs:
         run: node tools/test-signature-workspaces.cjs
       - name: Test one-sphere Living Screen director
         run: node tools/test-living-screen.cjs
+      - name: Protect Living Ink interface across workspaces
+        run: node tools/test-living-ink.cjs
       - name: Test local calendar reminders
         run: node tools/test-calendar-reminders.cjs
       - name: Test spoken and typed task commands
