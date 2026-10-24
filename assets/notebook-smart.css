@@ -101,33 +101,31 @@
 #noteReadDialog .note-read-actions>button{min-height:44px}
 /* Keep the list compact, but the full text is now one tap away. */
 #notesDialog .note-item p{max-height:104px}
-/* Long imported OCR text and existing notes get a near-full-screen editor.
-   The empty-note form stays compact. iOS keyboard can shrink the viewport. */
+/* Note editor: compact when text is short, with its own scroll for long text.
+   Do not force a near-fullscreen dark card in ordinary edit mode. */
 #noteReviewDialog.note-review-dialog[data-note-mode="edit"][open],
 #noteReviewDialog.note-review-dialog[data-note-mode="draft"][open]{
- display:flex;flex-direction:column;box-sizing:border-box;
- height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- max-height:min(84dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- min-height:0;overflow:hidden;
+ box-sizing:border-box;display:block;height:auto;
+ max-height:min(86svh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ overflow-y:auto;overscroll-behavior:contain;
 }
 #noteReviewDialog[data-note-mode="edit"] form,
 #noteReviewDialog[data-note-mode="draft"] form{
- display:flex;flex:1 1 auto;flex-direction:column;min-height:0;
+ display:flex;flex-direction:column;min-height:0;
 }
 #noteReviewDialog[data-note-mode="edit"] textarea,
 #noteReviewDialog[data-note-mode="draft"] textarea{
- flex:1 1 auto;min-height:0;max-height:none;resize:none;
+ display:block;flex:none;box-sizing:border-box;
+ min-height:165px;height:clamp(180px,38svh,400px);
+ max-height:min(48svh,460px);resize:vertical;
  overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
-#noteReviewDialog[data-note-mode="edit"] .info-actions,
-#noteReviewDialog[data-note-mode="draft"] .info-actions{flex:none}
 @media(max-height:550px){
- #noteReadDialog.note-read-dialog[open],
- #noteReviewDialog.note-review-dialog[data-note-mode="edit"][open],
- #noteReviewDialog.note-review-dialog[data-note-mode="draft"][open]{
-  height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+ #noteReadDialog.note-read-dialog[open]{
   max-height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
  }
+ #noteReviewDialog[data-note-mode="edit"] textarea,
+ #noteReviewDialog[data-note-mode="draft"] textarea{height:clamp(145px,33svh,220px);min-height:135px}
 }
 
 /* Preserved poems: never invent line wrapping; scroll sideways only if needed. */
@@ -537,3 +535,18 @@
 #notesDialog.notes-dialog[open] .notes-list.is-empty{flex:1 1 auto;min-height:220px}
 #notesDialog .note-open p{font-weight:420!important;line-height:1.47}
 @media(max-height:540px){#notesDialog.notes-dialog[open]{height:auto;max-height:calc(100svh - 14px)}}
+
+/* Single SEYVEO ink writing surface; no oversized filled rectangle. */
+#noteReviewDialog.note-review-dialog[open]{width:min(540px,calc(100vw - 22px));padding:22px clamp(15px,4vw,24px) 18px}
+#noteReviewDialog.note-review-dialog #noteReviewTitle{font-size:clamp(21px,5vw,25px);font-weight:480;letter-spacing:-.035em;padding:0;margin:0 0 12px}
+#noteReviewDialog.note-review-dialog textarea{
+  border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
+  background:transparent;box-shadow:none;padding:14px 2px;color:var(--text);
+  font-size:16px;line-height:1.58;white-space:pre-wrap;overflow-wrap:break-word;
+}
+#noteReviewDialog.note-review-dialog #noteReviewText:focus-visible{outline:0;border-bottom-color:var(--text)}
+:root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{background:transparent;border-bottom-color:rgba(45,61,80,.20)}
+#noteReviewDialog.note-review-dialog .info-actions{gap:10px;margin-top:13px}
+#noteReviewDialog.note-review-dialog .info-actions>.btn{min-height:48px}
+#notesDialog.notes-dialog[open] .notes-head{margin-right:80px}
+@media(max-width:370px){#noteReviewDialog.note-review-dialog[open]{padding-inline:15px}#notesDialog.notes-dialog[open] .notes-head{margin-right:72px}}
