@@ -45,7 +45,7 @@ assert.match(style,/min-height:200px/,'YouTube required minimum 200px player siz
 assert.match(style,/width:100%;height:100%;min-height:200px/,'Iframe viewport never collapses');
 assert.doesNotMatch(style,/\.sv-video-iframe[\s\S]{0,100}pointer-events:none/,'Native YouTube buttons remain clickable');
 assert.match(source,/if\(document\.hidden&&playingFrame\)/,'Background video is released');
-assert.match(source,/frame\.removeAttribute\('src'\)/,'Playback iframe unloads');
+assert.match(source,/playingFrame\.removeAttribute\('src'\)/,'Playback iframe unloads');
 assert.match(source,/music\.pause\(\)/,'Video pauses original local audio; not two streams');
 assert.doesNotMatch(source,/autoplay=1|enablejsapi=1|iframe_api|\/youtube\/v3\/search/,'No surprise autoplay, external API or hidden search');
 
