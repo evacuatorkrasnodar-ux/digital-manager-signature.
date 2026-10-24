@@ -10,21 +10,32 @@ if(!list||!summary||!dialog||!form||!input||!date||!contactsDialog||!callDialog)
 const notice=$('personalTasksNotice');
 const focusPanel=$('tasksContextFocus'),focusWhen=$('tasksContextWhen'),focusTitle=$('tasksContextTitle'),focusOpen=$('tasksContextOpen');
 function renderContext(open){
- if(!focusPanel||!focusWhen||!focusTitle||!focusOpen)return;
+ if(!focusPanel||!focusWhen||!focusTitle||!focusOpen)return '';
  const priority=window.SEYVEO_CONTEXT_FOCUS?.selectTask(open)||null;
  focusPanel.hidden=!priority;
- if(!priority){focusOpen.dataset.focusTask='';return}
+ if(!priority){focusOpen.dataset.focusTask='';focusOpen.dataset.focusCall='';return '';}
+ const contact=callTargetFromTask(priority.title);
  focusWhen.textContent=priority.when;
  focusTitle.textContent=priority.title;
  focusOpen.dataset.focusTask=priority.id;
+ focusOpen.dataset.focusCall=contact;
+ focusOpen.replaceChildren(taskIcon(contact?'phone':'arrow'));
+ focusOpen.setAttribute('aria-label',contact?'Подготовить звонок: '+contact:'Перейти к делу: '+priority.title);
+ focusOpen.title=contact?'Подготовить звонок':'Показать дело в списке';
+ focusPanel.dataset.focusKind=contact?'call':'task';
+ return priority.id;
 }
 focusOpen?.addEventListener('click',()=>{
  const id=focusOpen.dataset.focusTask;
  if(!id||$('tasksPage')?.hidden)return;
- const row=[...list.querySelectorAll('.personal-task-row[data-task-id]')].find(item=>item.dataset.taskId===id);
- if(!row)return;
- row.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
- row.querySelector('[data-task-toggle]')?.focus({preventScroll:true});
+ const task=read().find(item=>item.id===id&&!item.done);
+ if(!task)return;
+ const contact=callTargetFromTask(task.title);
+ if(contact&&contact===focusOpen.dataset.focusCall){requestCall(contact);return;}
+ const taskRow=[...list.querySelectorAll('.personal-task-row[data-task-id]')].find(item=>item.dataset.taskId===id);
+ if(!taskRow)return;
+ taskRow.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ taskRow.querySelector('[data-task-toggle]')?.focus({preventScroll:true});
 });
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
@@ -53,6 +64,16 @@ function strDate(iso){
 }
 function element(tag,cls,txt){
  const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=txt;return el;
+}
+function taskIcon(kind){
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ const path=document.createElementNS(ns,'path');
+ path.setAttribute('d',kind==='phone'
+  ?'M7.2 3.8 10 6.6 8.4 8.7a13 13 0 0 0 6.9 6.9l2.1-1.6 2.8 2.8-1.8 3c-.4.7-1.2 1.1-2 1C9 20 4 15 3.2 7.6c-.1-.8.3-1.6 1-2l3-1.8Z'
+  :kind==='more'?'M5 12h.1M12 12h.1M19 12h.1'
+  :'m8 16 8-8M9 8h7v7');
+ svg.append(path);return svg;
 }
 function displayDate(item){
  const label=strDate(item.due);if(!label)return '';
@@ -381,46 +402,49 @@ window.addEventListener('storage',event=>{
   contactsChanged();
  }
 });
-function row(item,compact=false){
+function row(item,compact=false,featuredTaskId=''){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');section.dataset.taskId=item.id;
  const label=element('span','personal-task-content');
- const callTo=callTargetFromTask(item.title);
- const name=element(callTo?'button':'strong',callTo?'personal-task-call-title':'',item.title);
- if(callTo){
+ const contact=callTargetFromTask(item.title),compactCall=compact&&contact;
+ const name=element(compactCall?'button':'strong',
+  compactCall?'personal-task-call-title':'personal-task-name',item.title);
+ if(compactCall){
   name.type='button';name.dataset.taskCall=item.id;
-  name.setAttribute('aria-label','Подготовить звонок: '+callTo);
-  name.title='Открыть контакты и подготовить звонок';
+  name.setAttribute('aria-label','Подготовить звонок: '+contact);
  }
  if(item.done)name.classList.add('is-done');
- label.append(name);
- const due=displayDate(item);
- if(due||item.done){const info=element('small','',item.done?'Завершено':due);label.append(info)}
- if(!compact){
-   if(item.sourceNoteId){
-    const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
-    origin.type='button';origin.dataset.taskOrigin=item.id;
-    origin.setAttribute('aria-label','Открыть исходную заметку для дела: '+item.title);
-    label.append(origin);
-   }
-   const checkbox=element('button','personal-task-check',item.done?'✓':'');
-   checkbox.type='button';checkbox.dataset.taskToggle=item.id;
-   checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
-   checkbox.setAttribute('aria-pressed',String(item.done));
-   section.append(checkbox,label);
-   const remove=element('button','personal-task-delete');
-   remove.type='button';remove.dataset.taskDelete=item.id;remove.setAttribute('aria-label','Удалить дело: '+item.title);
-   // The same centered, symmetrical vector X as all SEYVEO close controls.
-   const cross=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   cross.setAttribute('class','seyveo-close-glyph');
-   cross.setAttribute('viewBox','0 0 24 24');
-   cross.setAttribute('aria-hidden','true');
-   const strokes=document.createElementNS('http://www.w3.org/2000/svg','path');
-   strokes.setAttribute('d','M7 7l10 10M17 7 7 17');
-   cross.append(strokes);remove.append(cross);
-   section.append(remove);
- }else{
-   section.append(label);
+ const line=element('span','personal-task-title-line');line.append(name);
+ // The featured call already has its single prominent action above the list.
+ if(!compact&&contact&&!item.done&&item.id!==featuredTaskId){
+  const call=element('button','personal-task-inline-call');
+  call.type='button';call.dataset.taskCall=item.id;
+  call.setAttribute('aria-label','Подготовить звонок: '+contact);
+  call.title='Позвонить';call.append(taskIcon('phone'));line.append(call);
  }
+ label.append(line);
+ const due=displayDate(item);
+ if(due||item.done)label.append(element('small','',item.done?'Завершено':due));
+ if(!compact){
+  if(item.sourceNoteId){
+   const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
+   origin.type='button';origin.dataset.taskOrigin=item.id;
+   origin.setAttribute('aria-label','Открыть исходную заметку для дела: '+item.title);
+   label.append(origin);
+  }
+  const checkbox=element('button','personal-task-check',item.done?'✓':'');
+  checkbox.type='button';checkbox.dataset.taskToggle=item.id;
+  checkbox.setAttribute('aria-label',item.done?'Вернуть дело: '+item.title:'Завершить дело: '+item.title);
+  checkbox.setAttribute('aria-pressed',String(item.done));
+  const more=element('button','personal-task-more');
+  more.type='button';more.dataset.taskMenu=item.id;
+  more.setAttribute('aria-label','Действия с делом: '+item.title);
+  more.setAttribute('aria-expanded','false');more.append(taskIcon('more'));
+  const menu=element('div','personal-task-menu');menu.hidden=true;
+  const remove=element('button','personal-task-menu-delete','Удалить дело');
+  remove.type='button';remove.dataset.taskDelete=item.id;
+  remove.setAttribute('aria-label','Удалить дело: '+item.title);
+  menu.append(remove);section.append(checkbox,label,more,menu);
+ }else section.append(label);
  return section;
 }
 function render(){
@@ -428,12 +452,13 @@ function render(){
  const all=read(),open=all.filter(item=>!item.done)
  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||a.createdAt.localeCompare(b.createdAt));
  const done=all.filter(item=>item.done).reverse();
+ const featuredTaskId=renderContext(open);
  list.replaceChildren();
  if(!all.length){
   list.append(element('p','personal-tasks-empty','Пока нет дел. Добавьте первое — SEYVEO сохранит его на этом устройстве.'));
  }else{
   if(open.length){const head=element('h3','personal-list-title','Нужно сделать · '+open.length);list.append(head);
-   open.forEach(task=>list.append(row(task)))}
+   open.forEach(task=>list.append(row(task,false,featuredTaskId)))}
   if(done.length){const head=element('h3','personal-list-title','Выполнено · '+done.length);list.append(head);
    done.slice(0,30).forEach(task=>list.append(row(task)))}
  }
@@ -450,7 +475,6 @@ function render(){
  $('personalBriefCount').hidden=!open.length;
  // Keep personal tasks in Дела; show their compact Home preview only if pending.
  $('personalBrief').hidden=open.length===0;
- renderContext(open);
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
 function syncDueDateDisplay(){
@@ -508,6 +532,16 @@ $('personalTaskCancel').addEventListener('click',()=>dialog.close());
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
  if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
+ else if(btn.dataset.taskMenu){
+  const taskRow=btn.closest('.personal-task-row');
+  if(!taskRow)return;
+  const expanded=btn.getAttribute('aria-expanded')==='true';
+  list.querySelectorAll('[data-task-menu]').forEach(other=>other.setAttribute('aria-expanded','false'));
+  list.querySelectorAll('.personal-task-menu').forEach(other=>{other.hidden=true});
+  btn.setAttribute('aria-expanded',String(!expanded));
+  const menu=taskRow.querySelector('.personal-task-menu');
+  if(menu)menu.hidden=expanded;
+ }
  else if(btn.dataset.taskCall){
   const task=read().find(x=>x.id===btn.dataset.taskCall);
   const target=task?callTargetFromTask(task.title):'';
