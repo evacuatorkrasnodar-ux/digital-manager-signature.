@@ -1,0 +1,7 @@
+/* Music Flow: secondary navigation transforms, the centre assistant NEVER changes. */
+#seyveoMusicMode{position:fixed;z-index:65;right:max(12px,calc((100vw - 430px)/2 + 12px));bottom:calc(93px + env(safe-area-inset-bottom,0px));min-height:33px;padding:7px 12px;border:1px solid rgba(210,214,223,.35);border-radius:30px;background:rgba(21,22,27,.84);-webkit-backdrop-filter:blur(17px);backdrop-filter:blur(17px);box-shadow:0 3px 14px rgba(0,0,0,.18);color:var(--text,#f7f7f8);font:400 12px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;white-space:nowrap}
+#seyveoMusicMode[aria-pressed="true"]{border-color:rgba(236,239,245,.6);background:rgba(42,43,48,.94)}
+footer.dock.seyveo-music-dock .nav-item:not(#assistantButton){touch-action:manipulation}
+footer.dock.seyveo-music-dock .seyveo-music-dock-glyph{font-size:22px;line-height:1;display:block;white-space:nowrap;font-weight:400}
+@media(max-width:350px){#seyveoMusicMode{right:8px;padding:7px 10px}}
+@media(prefers-reduced-motion:reduce){#seyveoMusicMode{transition:none}}
