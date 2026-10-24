@@ -164,6 +164,7 @@ function renderDemo(){
  requestAnimationFrame(updateDemoPips);
 }
 function render(){
+ window.dispatchEvent(new CustomEvent('seyveo:quick-actions-changed',{detail:{selected:selected.slice()}}));
  track.replaceChildren(...selected.map(buttonFor));
  rail.dataset.count=String(selected.length);
  track.scrollLeft=0;
@@ -291,6 +292,11 @@ list.addEventListener('click',event=>{
  const saved=save();render();renderSettings();
  $('assistantQuickSettingsStatus').textContent=saved?'Изменения сохранены · '+selected.length+' действий':'Изменения не удалось сохранить на устройстве.';
  feedback();
+});
+window.SEYVEO_QUICK_ACTIONS=Object.freeze({
+ run:perform,
+ selected:()=>selected.slice(),
+ details:id=>byId.get(id)||null
 });
 render();
 })();
