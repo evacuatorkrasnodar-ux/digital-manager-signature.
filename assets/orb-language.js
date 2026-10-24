@@ -20,11 +20,9 @@
    attention:'<path d="M50 25v31"/><circle cx="50" cy="68" r="1.5"/>'
  };
  const types=new Set(Object.keys(path));
- const alias={budget:'task',legal:'note',message:'chat',reminder:'task',appointment:'calendar',youtube:'video',spotify:'video'};
+ const alias={budget:'task',legal:'note',message:'chat',reminder:'task',appointment:'calendar',youtube:'video',spotify:'chat'};
  let voice='',oneShot=null,onceTimer=0,voiceTimer=0;
- let brandHidden=false;
  const classNames=['svl-live','svl-equalizer','svl-listening','svl-speaking','svl-symbol'];
- const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
  function clearOwn(){
   signal.classList.remove(...classNames);
   if(signal.querySelector(':scope > .svl-depth'))signal.querySelector(':scope > .svl-depth').remove();
@@ -44,7 +42,7 @@
   if(!available()){clearOwn();return;}
   if(protectedState()){clearOwn();return;}
   let kind=voice==='listening'?'listening':voice==='speaking'?'speaking':
-    audio&&!audio.paused&&!audio.ended&&!!audio.currentSrc?'equalizer':oneShot?.kind||'';
+    audio&&!audio.paused&&!audio.ended&&(!!audio.currentSrc||!!audio.getAttribute('src'))?'equalizer':oneShot?.kind||'';
   if(!kind){clearOwn();return;}
   let content=signal.querySelector(':scope > .svl-depth');
   if(content&&signal.dataset.svlKind===kind)return;
@@ -78,7 +76,7 @@
   }
   sync();
  });
- for(const name of ['play','pause','ended','emptied','error'])audio?.addEventListener(name,sync);
+ for(const name of ['play','playing','pause','ended','emptied','error'])audio?.addEventListener(name,sync);
  window.addEventListener('seyveo:future-committed',event=>{
   if(event.detail?.area==='tasks')show('task');
   else if(event.detail?.area==='calendar')show('calendar');
