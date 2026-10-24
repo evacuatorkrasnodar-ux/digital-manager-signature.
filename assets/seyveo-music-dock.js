@@ -9,18 +9,14 @@ function init(){
  const sideIds=['navHome','navTasks','navPicture','navManage'];
  const buttons=sideIds.map(id=>document.getElementById(id));
  if(!dock||!center||!player||buttons.some(b=>!b)||!document.getElementById('sayviMusicPlay'))return;
- if(document.getElementById('seyveoMusicMode'))return;
+ if(window.SEYVEO_MUSIC_DOCK)return;
  let mode=false;
  const originals=buttons.map(b=>({html:b.innerHTML,aria:b.getAttribute('aria-label'),title:b.getAttribute('title')}));
  const glyphs=['⏮','▶','⏭','⌂'];
  const labels=['Назад','Пауза','Далее','Работа'];
- const toggle=document.createElement('button');
- toggle.type='button';toggle.id='seyveoMusicMode';toggle.setAttribute('aria-pressed','false');toggle.setAttribute('aria-label','Включить музыкальное управление в доке');
- toggle.textContent='♫ Музыка';document.body.append(toggle);
+
  function paint(){
   dock.classList.toggle('seyveo-music-dock',mode);
-  toggle.setAttribute('aria-pressed',String(mode));
-  toggle.textContent=mode?'♫ Режим музыки':'♫ Музыка';
   buttons.forEach((b,i)=>{
    if(mode){
     const playing=!player.paused&&!player.ended;
@@ -47,12 +43,6 @@ function init(){
   if(i===1){document.getElementById('sayviMusicPlay')?.click();return;}
   document.getElementById(i===0?'sayviMusicPrevious':'sayviMusicNext')?.click();
  }
- toggle.addEventListener('click',()=>{
-  mode=!mode;
-  paint();
-  // The room is accessible through existing entry points, even when there are no files yet.
-  if(mode&&!player.currentSrc)openMusic?.();
- });
  buttons.forEach((b,i)=>b.addEventListener('click',event=>{
   if(!mode)return;
   event.stopImmediatePropagation();event.preventDefault();
