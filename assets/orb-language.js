@@ -20,7 +20,7 @@
    attention:'<path d="M50 25v31"/><circle cx="50" cy="68" r="1.5"/>'
  };
  const types=new Set(Object.keys(path));
- const alias={budget:'task',legal:'note',message:'chat',reminder:'task',appointment:'calendar',youtube:'video',spotify:'chat'};
+ const alias={budget:'task',legal:'note',message:'chat',reminder:'task',appointment:'calendar',youtube:'video'};
  let voice='',oneShot=null,onceTimer=0,voiceTimer=0;
  const classNames=['svl-live','svl-equalizer','svl-listening','svl-speaking','svl-symbol'];
  function clearOwn(){
