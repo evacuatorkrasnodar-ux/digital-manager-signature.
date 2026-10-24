@@ -168,36 +168,43 @@
 }
 
 
-/* Future v4 · One contextual decision in Tasks, shown only for real due dates. */
+/* Context Focus: a single semantic action, never a second task controller. */
 #tasksPage #tasksContextFocus[hidden]{display:none!important}
 #tasksPage .tasks-context-focus{
- display:flex;align-items:center;justify-content:space-between;gap:12px;
- box-sizing:border-box;min-width:0;padding:10px 11px 10px 14px;margin:0 0 15px;
- border:1px solid var(--future-edge);border-radius:18px;
- background:linear-gradient(125deg,var(--future-wash),transparent 68%),var(--card);
- box-shadow:inset 0 1px 0 var(--future-soft);
+ display:flex;align-items:center;justify-content:space-between;gap:13px;
+ box-sizing:border-box;min-width:0;padding:15px 16px;margin:1px 0 20px;
+ border:1px solid var(--line);border-radius:25px;
+ background:linear-gradient(155deg,rgba(247,250,255,.04),transparent 72%),var(--card);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
-#tasksPage .tasks-context-copy{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+#tasksPage .tasks-context-copy{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1}
 #tasksPage .tasks-context-kicker{
- color:var(--future-ink);font-size:10px;font-weight:550;
- letter-spacing:.035em;line-height:1.35
+ color:var(--secondary);font-size:10.5px;font-weight:480;
+ letter-spacing:.04em;line-height:1.38
 }
 #tasksPage .tasks-context-copy strong{
- color:var(--text);font-size:13px;font-weight:540;
- line-height:1.35;letter-spacing:-.015em;overflow-wrap:anywhere;
+ color:var(--text);font-size:15px;font-weight:510;line-height:1.37;
+ letter-spacing:-.02em;overflow-wrap:anywhere;
  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
 }
 #tasksPage .tasks-context-open{
- display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;
- min-height:44px;min-width:76px;padding:9px 11px;
- font:inherit;font-weight:540;font-size:11px;white-space:nowrap;
- color:var(--text);border:1px solid var(--future-edge);border-radius:999px;
- background:var(--card2);-webkit-tap-highlight-color:transparent;
+ flex:0 0 48px;display:grid;place-items:center;width:48px;height:48px;
+ min-width:48px;min-height:48px;padding:0;
+ color:var(--text);border:1px solid var(--line);border-radius:50%;
+ background:linear-gradient(150deg,rgba(255,255,255,.055),transparent 75%),var(--card2);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.075);
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+ transition:transform .2s ease,border-color .2s ease,background-color .2s ease;
 }
-#tasksPage .tasks-context-open:active{background:var(--future-touch)}
-#tasksPage .tasks-context-open:focus-visible{outline:2px solid var(--future-ink);outline-offset:2px}
+#tasksPage .tasks-context-open svg{
+ display:block;width:21px;height:21px;fill:none;stroke:currentColor;
+ stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;
+}
+#tasksPage .tasks-context-open:active{transform:scale(.95);background:var(--card)}
+#tasksPage .tasks-context-open:focus-visible{outline:2px solid var(--text);outline-offset:3px}
 #tasksPage .personal-task-row{scroll-margin-bottom:108px}
 @media(max-width:360px){
- #tasksPage .tasks-context-focus{padding:9px 8px 9px 11px;gap:7px}
- #tasksPage .tasks-context-open{min-width:68px;padding-inline:8px}
+ #tasksPage .tasks-context-focus{padding:13px 12px;gap:9px}
+ #tasksPage .tasks-context-open{flex-basis:44px;width:44px;height:44px;min-width:44px;min-height:44px}
 }
+@media(prefers-reduced-motion:reduce){#tasksPage .tasks-context-open{transition:none}#tasksPage .tasks-context-open:active{transform:none}}
