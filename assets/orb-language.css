@@ -1,0 +1,51 @@
+/* SEYVEO · Living Orb Language. The approved sphere artwork & rim stay intact.
+   #signal is the ONLY symbol plane; no independent overlaid surface. */
+#orb #signal.svl-live{
+  opacity:1;display:grid;place-items:center;width:35%;height:35%;z-index:3;
+  pointer-events:none;overflow:visible;filter:none;
+}
+#orb #signal .svl-depth{
+  position:absolute;inset:0;display:grid;place-items:center;
+  color:rgba(244,249,255,.89);isolation:isolate;pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0 58%,rgba(0,0,0,.78) 79%,transparent 100%);
+  mask-image:radial-gradient(ellipse at center,#000 0 58%,rgba(0,0,0,.78) 79%,transparent 100%);
+  animation:svl-bloom 4.2s cubic-bezier(.25,.65,.2,1) both;
+}
+#orb #signal .svl-depth::before{
+  content:"";position:absolute;inset:11%;border-radius:50%;
+  background:radial-gradient(circle,rgba(193,221,241,.12),transparent 70%);
+  filter:blur(8px);pointer-events:none;z-index:-1;
+}
+#orb #signal .svl-outline{width:100%;height:100%;opacity:.82;filter:blur(.28px)}
+#orb #signal.svl-symbol .svl-depth{animation:svl-symbol 4.2s cubic-bezier(.35,.05,.65,1) both}
+#orb #signal .svl-bars{height:55%;width:69%;display:flex;gap:8%;justify-content:center;align-items:center}
+#orb #signal .svl-bars i{
+ display:block;width:1.3px;height:24%;flex:0 0 1.3px;
+ border-radius:3px;background:rgba(249,251,255,.94);
+ box-shadow:0 0 4px rgba(224,243,255,.16);
+ transform-origin:center;
+ animation:svl-pulse 1.9s ease-in-out infinite alternate;
+}
+#orb #signal .svl-bars i:nth-child(1){--svl-max:.46;animation-duration:2.18s;animation-delay:-.44s}
+#orb #signal .svl-bars i:nth-child(2){--svl-max:.91;animation-duration:1.76s;animation-delay:-1.06s}
+#orb #signal .svl-bars i:nth-child(3){--svl-max:1.32;animation-duration:1.42s;animation-delay:-.19s}
+#orb #signal .svl-bars i:nth-child(4){--svl-max:.83;animation-duration:1.94s;animation-delay:-.71s}
+#orb #signal .svl-bars i:nth-child(5){--svl-max:.42;animation-duration:2.24s;animation-delay:-1.31s}
+#orb #signal.svl-listening .svl-bars i{animation-duration:2.55s;opacity:.82}
+#orb #signal.svl-speaking .svl-bars i{animation-duration:1.32s}
+:root[data-theme=light] #orb #signal .svl-depth{color:rgba(251,253,255,.91)}
+@keyframes svl-bloom{0%{opacity:0;filter:blur(3px);transform:translateY(2px) scale(.92)}
+ 30%{opacity:.92;filter:blur(.65px);transform:translateY(0) scale(1)}
+ 100%{opacity:.8;filter:blur(.45px);transform:translateY(0) scale(1)}}
+@keyframes svl-symbol{0%{opacity:0;filter:blur(3px);transform:scale(.86)}
+ 36%{opacity:.86;filter:blur(.5px);transform:scale(1)}
+ 68%{opacity:.78;filter:blur(.45px);transform:scale(1)}
+ 100%{opacity:0;filter:blur(3px);transform:scale(1.055)}}
+@keyframes svl-pulse{0%{height:10%;opacity:.48}100%{height:calc(24% + 36% * var(--svl-max));opacity:.96}}
+@media(prefers-reduced-motion:reduce){
+ #orb #signal .svl-depth,#orb #signal .svl-bars i{animation:none!important;transform:none!important;filter:none!important}
+ #orb #signal .svl-depth{opacity:.9}
+ #orb #signal .svl-bars i{height:32%;opacity:.85}
+ #orb #signal .svl-bars i:nth-child(1),#orb #signal .svl-bars i:nth-child(5){height:16%}
+ #orb #signal .svl-bars i:nth-child(2),#orb #signal .svl-bars i:nth-child(4){height:25%}
+}
