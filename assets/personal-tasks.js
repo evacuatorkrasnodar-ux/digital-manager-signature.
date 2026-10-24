@@ -143,9 +143,33 @@ function contactForms(name){
  else if(key.length>3){forms.add(key+'у');forms.add(key+'а');}
  return forms;
 }
+/* Friendly Russian nickname and case matching for user's own contacts.
+   No numbers guessed, and multiple possible people ALWAYS require selection. */
+const juliaNames=new Set(['юльчик','юльчику','юльчика','юличка','юличке','юличку','юля','юле','юлю','юли','юлия','юлии','юлию','юлечка','юлечке','юлечку']);
+function personAliases(name){
+ const key=contactKey(name);
+ if(juliaNames.has(key))return new Set(juliaNames);
+ const forms=contactForms(name);
+ if(key.endsWith('чик'))forms.add(key+'у');
+ if(key.endsWith('ка'))forms.add(key.slice(0,-1)+'е');
+ if(key.endsWith('ек'))forms.add(key.slice(0,-2)+'ку');
+ return forms;
+}
 function matchingContacts(target,rows){
  const query=contactKey(target);
- return rows.filter(c=>contactForms(c.name).has(query));
+ if(!query)return [];
+ // Prefer exact/grammatical match. Broader nicknames only as a fallback.
+ const exact=rows.filter(c=>contactForms(c.name).has(query));
+ if(exact.length)return exact;
+ return rows.filter(c=>personAliases(c.name).has(query));
+}
+function personFromRequest(raw){
+ if(typeof raw!=='string'||raw.length>200||/[\n\r;]/.test(raw))return '';
+ const phrase=raw.trim().replace(/^(?:(?:сэйви|сейви|сейва|сейвео|seyveo)[\s,!:.-]+)+/i,'').trim();
+ const match=phrase.match(/^(?:позвони|позвонить|набери|набрать|перезвони|перезвонить)(?:\s+(?:мне|пожалуйста))?\s+(?:(?:моему|моей)\s+)?(.+?)[.!?\s]*$/i);
+ if(!match)return '';
+ const target=match[1].trim();
+ return target.length<=70&&!/[\d@:/]/.test(target)?target:'';
 }
 function renderContacts(){
  const rows=readContacts(),target=$('seyveoContactsList');target.replaceChildren();
@@ -170,6 +194,10 @@ function openContacts(fromCall=false){
  if(callDialog.open)callDialog.close();
  returnToCall=Boolean(fromCall);
  resetContactForm();showContactStatus('');
+ if(fromCall&&callTargetName){
+  // Use the person's requested name; the user supplies the number.
+  contactName.value=juliaNames.has(contactKey(callTargetName))?'Юльчик':callTargetName;
+ }
  renderContacts();
  if(!contactsDialog.open)contactsDialog.showModal();
 }
@@ -194,7 +222,7 @@ function chooseCallContact(id){
   $('seyveoCallPickedPhone').textContent=entry.phone;
   dial.href='tel:'+entry.phone;
   dial.setAttribute('aria-label','Позвонить контакту '+entry.name);
-  callStatus.textContent='Нажмите «Позвонить». iPhone предложит подтвердить вызов.';
+  callStatus.textContent='Сэйви нашла номер. Нажмите «Позвонить» — телефон предложит подтвердить вызов.';
  }else{
   dial.removeAttribute('href');callStatus.textContent='Выберите контакт, чтобы подготовить звонок.';
  }
@@ -208,9 +236,31 @@ function openCall(targetName){
  if(!callDialog.open)callDialog.showModal();
  const matches=matchingContacts(callTargetName,readContacts());
  chooseCallContact(matches.length===1?matches[0].id:'');
- if(matches.length>1)callStatus.textContent='Найдено несколько похожих имён. Выберите нужный номер.';
- else if(!matches.length)callStatus.textContent='Номер не найден. Выберите контакт из списка или добавьте новый.';
+ if(matches.length>1)callStatus.textContent='Нашла несколько возможных контактов. Выберите, кому звонить.';
+ else if(!matches.length)callStatus.textContent='Не нашла номер в «Моём мире». Выберите человека или добавьте контакт.';
 }
+function requestCall(target){
+ const person=cleanName(target);
+ if(!person)return null;
+ const matches=matchingContacts(person,readContacts());
+ openCall(person);
+ return {
+  kind:'contact-call',
+  message:matches.length===1
+    ?'Нашла контакт «'+matches[0].name+'». Проверь номер и нажми «Позвонить».'
+    :matches.length>1
+    ?'Нашла несколько возможных контактов. Выбери нужного человека.'
+    :'Пока не нашла «'+person+'» в «Моём мире». Можно выбрать или добавить номер.'
+ };
+}
+window.SEYVEO_CONTACTS=Object.freeze({
+ taskTarget:callTargetFromTask,understand:personFromRequest,requestCall,
+ state:()=>({count:readContacts().length})
+});
+window.addEventListener('seyveo:call-request',event=>{
+ const target=typeof event.detail?.target==='string'?event.detail.target:'';
+ if(target)requestCall(target);
+});
 /* The only contact directory now lives under Мой мир.
    Reuse the same local data and editors; never migrate or duplicate numbers. */
 window.addEventListener('seyveo:contacts-open',()=>{
@@ -277,6 +327,13 @@ $('seyveoCallList').addEventListener('click',event=>{
 });
 $('seyveoCallSearch').addEventListener('input',renderCallList);
 $('seyveoCallAddContact').addEventListener('click',()=>openContacts(true));
+summary.addEventListener('click',event=>{
+ const btn=event.target.closest('button[data-task-call]');
+ if(!btn)return;
+ const task=read().find(x=>x.id===btn.dataset.taskCall&&!x.done);
+ const target=task?callTargetFromTask(task.title):'';
+ if(target)requestCall(target);
+});
 $('seyveoCallDial').addEventListener('click',event=>{
  const c=readContacts().find(x=>x.id===chosenContact);
  if(!c){event.preventDefault();chooseCallContact('');return;}
@@ -298,7 +355,7 @@ window.addEventListener('storage',event=>{
 function row(item,compact=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');section.dataset.taskId=item.id;
  const label=element('span','personal-task-content');
- const callTo=!compact?callTargetFromTask(item.title):'';
+ const callTo=callTargetFromTask(item.title);
  const name=element(callTo?'button':'strong',callTo?'personal-task-call-title':'',item.title);
  if(callTo){
   name.type='button';name.dataset.taskCall=item.id;
@@ -425,7 +482,7 @@ list.addEventListener('click',e=>{
  else if(btn.dataset.taskCall){
   const task=read().find(x=>x.id===btn.dataset.taskCall);
   const target=task?callTargetFromTask(task.title):'';
-  if(target)openCall(target);
+  if(target)requestCall(target);
  }
  else if(btn.dataset.taskDelete)change(btn.dataset.taskDelete,true);
  else if(btn.dataset.taskNextDismiss){
