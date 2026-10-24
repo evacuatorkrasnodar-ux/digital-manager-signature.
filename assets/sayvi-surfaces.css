@@ -1,0 +1,160 @@
+/* SEYVEO Living Intent Surface · native in-app destination, Black Velvet.
+   No cards or mock inbox; iPhone X keeps original shell/safe areas. */
+#sayviSurfacePage[hidden]{display:none!important}
+#sayviSurfacePage{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  padding:4px 1px 32px;
+  color:var(--text);
+}
+#sayviSurfacePage .sv-deep-back{
+  -webkit-appearance:none;appearance:none;
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:9px;
+  min-height:44px;padding:6px 6px;
+  margin:0 0 16px;
+  color:var(--secondary);font:inherit;
+  font-size:12px;font-weight:480;
+  border:0;border-radius:10px;background:transparent;
+}
+#sayviSurfacePage .sv-deep-back-mark{
+  display:grid;place-items:center;width:25px;height:25px;
+  border:1px solid var(--soft-line);border-radius:50%;
+  font-size:21px;line-height:1;
+}
+#sayviSurfacePage .sv-deep-top{margin:0 4px 14px}
+#sayviSurfacePage .sv-deep-kicker{
+  color:var(--secondary);font-size:9.5px;
+  font-weight:480;letter-spacing:.15em;
+}
+#sayviSurfacePage .sv-deep-heading{
+  margin:8px 0 6px;font-size:30px;line-height:1.15;
+  font-weight:460;letter-spacing:-.048em;
+}
+#sayviSurfacePage .sv-deep-intro{
+  margin:0;max-width:32rem;color:var(--secondary);
+  font-size:12.5px;line-height:1.55;
+}
+#sayviSurfacePage .sv-deep-hero{
+  display:grid;place-items:center;
+  min-height:138px;position:relative;
+  margin:2px auto 14px;
+  width:100%;
+}
+#sayviSurfacePage .sv-deep-hero::before{
+  content:"";position:absolute;inset:0;
+  margin:auto;width:160px;height:120px;
+  background:radial-gradient(ellipse,rgba(238,242,249,.043),transparent 72%);
+  border-radius:50%;pointer-events:none;
+}
+#sayviSurfacePage .sv-deep-icon{
+  width:128px;height:128px;
+  stroke:var(--text);stroke-width:1.7;
+  fill:none;stroke-linejoin:round;stroke-linecap:round;
+  opacity:.84;overflow:visible;
+}
+#sayviSurfacePage .sv-deep-content{padding:5px 6px 0}
+#sayviSurfacePage .sv-deep-lead{
+  color:var(--text);font-size:18px;font-weight:480;
+  line-height:1.4;letter-spacing:-.025em;
+  margin:0 0 9px;
+}
+#sayviSurfacePage .sv-deep-copy,
+#sayviSurfacePage .sv-deep-expand{
+  margin:0 0 15px;color:var(--secondary);
+  font-size:13px;line-height:1.6;
+}
+#sayviSurfacePage .sv-deep-expand{
+  margin:6px 0 13px;
+  padding:10px 0 0;
+  border-top:1px solid var(--soft-line);
+}
+#sayviSurfacePage .sv-deep-expand[hidden]{display:none!important}
+#sayviSurfacePage .sv-deep-actions{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:4px 17px;margin:9px 0 18px;
+}
+#sayviSurfacePage .sv-deep-intent{
+  appearance:none;-webkit-appearance:none;
+  min-height:44px;
+  display:inline-flex;align-items:center;gap:7px;
+  border:0;background:transparent;
+  color:var(--secondary);
+  padding:8px 3px;margin:0;
+  border-radius:3px;
+  font:inherit;font-size:12.5px;font-weight:490;
+  letter-spacing:-.015em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-deep-intent--lead{
+  color:var(--text);font-size:14px;font-weight:510;
+}
+#sayviSurfacePage .sv-deep-intent--lead::after{
+  content:"↗";font-size:16px;line-height:1;
+  transform:translateY(-1px);opacity:.66;
+}
+#sayviSurfacePage .sv-deep-intent:focus-visible,
+#sayviSurfacePage .sv-deep-back:focus-visible,
+#sayviSurfacePage .sv-deep-file-link:focus-visible{
+  outline:2px solid var(--text);outline-offset:3px;
+}
+#sayviSurfacePage .sv-deep-note{
+  display:block;margin:12px 0 0;color:var(--secondary);
+  font-size:10.5px;line-height:1.58;opacity:.76;
+}
+#sayviSurfacePage .sv-deep-footer{
+  border-top:1px solid var(--soft-line);
+  margin:24px 6px 0;padding-top:13px;
+  color:var(--secondary);font-size:10px;line-height:1.55;opacity:.72;
+}
+#sayviSurfacePage .sv-deep-file-preview{
+  display:block;min-width:0;max-width:100%;overflow:hidden;
+  margin:8px 0 12px;
+}
+#sayviSurfacePage .sv-deep-file-image{
+  display:block;width:100%;height:auto;
+  max-height:65dvh;object-fit:contain;
+}
+#sayviSurfacePage .sv-deep-file-frame{
+  display:block;border:1px solid var(--soft-line);
+  background:transparent;width:100%;min-height:46dvh;
+  border-radius:8px;
+}
+#sayviSurfacePage .sv-deep-file-text{
+  margin:0;white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  color:var(--text);font:12px/1.62 inherit;
+  max-height:65dvh;overflow:auto;
+}
+#sayviSurfacePage .sv-deep-file-link{
+  display:inline-flex;align-items:center;
+  min-height:44px;text-decoration:none;
+  color:var(--text);font-size:12px;
+}
+#sayviSurfacePage .sv-deep-status{
+  color:var(--secondary);font-size:12px;line-height:1.5;
+}
+@media(prefers-reduced-motion:no-preference){
+  @keyframes sv-deep-reveal{
+    from{opacity:0;transform:translate3d(0,15px,0)}
+    to{opacity:1;transform:translate3d(0,0,0)}
+  }
+  @keyframes sv-deep-object{
+    from{opacity:0;transform:translate3d(0,14px,0) scale(.86)}
+    to{opacity:.84;transform:translate3d(0,0,0) scale(1)}
+  }
+  #sayviSurfacePage.sv-deep-enter .sv-deep-top,
+  #sayviSurfacePage.sv-deep-enter .sv-deep-content{
+    animation:sv-deep-reveal 860ms cubic-bezier(.22,1,.36,1) both;
+  }
+  #sayviSurfacePage.sv-deep-enter .sv-deep-content{animation-delay:180ms}
+  #sayviSurfacePage.sv-deep-enter .sv-deep-icon{
+    animation:sv-deep-object 1080ms cubic-bezier(.18,.82,.22,1) both;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #sayviSurfacePage,#sayviSurfacePage *{
+    animation:none!important;transition:none!important;
+  }
+}
