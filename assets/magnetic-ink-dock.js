@@ -167,7 +167,10 @@ function init(){
   if(!musicMode())paint(false);
  });
  center.addEventListener('click',()=>{
-  if(!location.hash)page=0; // First home navigation returns to the essentials.
+  if(!location.hash){
+   page=0; // Home via the center always resets to the essential actions.
+   if(!musicMode())paint(false); // pushState(Home) does not fire hashchange.
+  }
  },false);
  rebuild();
  window.SEYVEO_MAGNETIC_INK=Object.freeze({
