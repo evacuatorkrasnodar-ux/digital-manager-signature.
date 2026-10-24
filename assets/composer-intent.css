@@ -213,6 +213,9 @@
   box-shadow:none;
   animation:assistant-quick-appear .21s cubic-bezier(.2,.8,.2,1) both;
 }
+/* Favorites now appear in the single Magnetic Ink dock, not an upper
+   fixed toolbar. Keep the original management preview and saved choices. */
+#assistantQuickrail.assistant-quickrail{display:none!important}
 #assistantQuickrail[hidden]{display:none!important}
 /* While the user writes, unobtrusively dismiss favorites above the composer.
    Visibility also removes invisible buttons from keyboard/tab navigation.
