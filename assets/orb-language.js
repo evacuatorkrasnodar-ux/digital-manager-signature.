@@ -6,6 +6,7 @@
  const orb=document.getElementById('orb');
  const signal=document.getElementById('signal');
  const home=document.getElementById('homePage');
+ const musicPage=document.getElementById('sayviMusicPage');
  const audio=document.getElementById('sayviMusicAudio');
  if(!orb||!signal||!home)return;
  const path={
@@ -29,7 +30,10 @@
   signal.querySelector(':scope > .svl-depth')?.remove();
  }
  function available(){
-  return !document.hidden&&!home.hidden&&!document.documentElement.classList.contains('seyveo-conversation');
+  // The ONE sphere travels to Music. Do not turn off its visual language
+  // just because the Home DOM is hidden while the same sphere is reparented.
+  return !document.hidden&&(!home.hidden||musicPage?.hidden===false)
+   &&!document.documentElement.classList.contains('seyveo-conversation');
  }
  function protectedState(){
   return signal.classList.contains('is-pearl')||signal.classList.contains('is-brand')||
@@ -78,6 +82,8 @@
   sync();
  });
  for(const name of ['play','playing','pause','ended','emptied','error'])audio?.addEventListener(name,sync);
+ document.addEventListener('seyveo:music-state',sync);
+ document.addEventListener('seyveo:orb-channel-reset',sync);
  window.addEventListener('seyveo:future-committed',event=>{
   if(event.detail?.area==='tasks')show('task');
   else if(event.detail?.area==='calendar')show('calendar');
