@@ -148,11 +148,15 @@ function contactForms(name){
 const juliaNames=new Set(['юльчик','юльчику','юльчика','юличка','юличке','юличку','юля','юле','юлю','юли','юлия','юлии','юлию','юлечка','юлечке','юлечку']);
 function personAliases(name){
  const key=contactKey(name);
- if(juliaNames.has(key))return new Set(juliaNames);
+ // "Юлия Иванова" may be requested as "Юле"; do not mistake this for
+ // proof of identity if there are two Julias in the directory.
+ const first=key.split(/[\s(,]+/)[0];
  const forms=contactForms(name);
- if(key.endsWith('чик'))forms.add(key+'у');
- if(key.endsWith('ка'))forms.add(key.slice(0,-1)+'е');
- if(key.endsWith('ек'))forms.add(key.slice(0,-2)+'ку');
+ if(first!==key)for(const form of contactForms(first))forms.add(form);
+ if(juliaNames.has(first))for(const alias of juliaNames)forms.add(alias);
+ if(first.endsWith('чик'))forms.add(first+'у');
+ if(first.endsWith('ка'))forms.add(first.slice(0,-1)+'е');
+ if(first.endsWith('ек'))forms.add(first.slice(0,-2)+'ку');
  return forms;
 }
 function matchingContacts(target,rows){
