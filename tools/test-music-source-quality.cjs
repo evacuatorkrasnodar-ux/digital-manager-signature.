@@ -12,7 +12,10 @@ assert.match(html,/SEYVA MUSIC<\/h1><p class="sv-music-technology">SOUND <span c
 assert.match(html,/id="sayviMusicQuality"[^>]*\bhidden\b/,'Label starts hidden');
 assert.match(css,/\.sv-music-quality\[hidden\]\{display:none!important\}/,'No false static quality title');
 assert.ok(html.indexOf('assets/music-source-quality.js')<html.indexOf('assets/seyveo-music.js'),'Analyzer loads before audio controller');
-assert.match(player,/const show=playing&&verifiedSource\?\.hiRes===true/,'Indicator only for actively playing verified source');
+assert.match(player,/const playing=!!audio\.src&&!audio\.paused&&!audio\.ended&&index>=0/,'Quality details only while genuinely playing');
+assert.match(player,/if\(info\.hiRes\)/,'Hi-Res label only when source-verified');
+assert.match(player,/info\.format==='MP3'/,'MP3 format and first-frame bitrate can be shown');
+assert.match(player,/КАЧЕСТВО ФАЙЛА НЕ ОПРЕДЕЛЕНО/,'Unknown formats never get invented parameters');
 assert.match(player,/if\(version!==selectVersion\|\|tracks\[index\]!==file\)return/,'Old scans cannot repaint new track');
 assert.match(player,/Параметры исходного/,'Quality shown refers to source, not certified iPhone output');
 assert.doesNotMatch(player,/AudioContext|decodeAudioData|createMediaElementSource/,'No fake upscaling or resampling');
@@ -57,6 +60,16 @@ function makeWav(bits,rate){
  assert.equal((await quality.detect(makeWav(24,96000)))?.hiRes,true,'PCM WAV 24/96 qualifies');
  assert.equal((await quality.detect(makeWav(16,44100)))?.hiRes,false,'CD-quality never earns badge');
  assert.equal((await quality.detect(makeWav(32,96000)))?.hiRes,true,'Integer PCM WAV 32/96');
+
+ const mp3Bytes=Buffer.alloc(3000);
+ for(const offset of [0,417]){mp3Bytes[offset]=0xff;mp3Bytes[offset+1]=0xfb;mp3Bytes[offset+2]=0x90;mp3Bytes[offset+3]=0;}
+ const honestMP3=await quality.detect(media(mp3Bytes,'Artist - Track.mp3'));
+ assert.equal(honestMP3?.format,'MP3','Actual consecutive MPEG1 Layer III frames recognized');
+ assert.equal(honestMP3?.sampleRate,44100,'Real header rate not filename');
+ assert.equal(honestMP3?.bitrateKbps,128,'First frame bitrate is 128 kbps');
+ assert.equal(honestMP3?.bitrateScope,'first-frame','VBR caveat preserved');
+ assert.equal(honestMP3?.hiRes,false,'MP3 is not mislabeled lossless Hi-Res');
+
  const fake=Buffer.alloc(3000,0);fake.write('not a real file',0);
  assert.equal(await quality.detect(media(fake,'Hi-Res_24bit_192khz.flac')),null,'Filename must never imply Hi-Res');
  assert.equal(await quality.detect(media(fake,'HI-RES 24-96.mp3')),null,'Lossy fake filename is never certified');
@@ -66,5 +79,5 @@ function makeWav(bits,rate){
  const cut=Buffer.from(await makeWav(24,96000).arrayBuffer());
  cut.writeUInt32LE(1000000,40);
  assert.equal(await quality.detect(media(cut,'truncated.wav')),null,'Truncated WAV is rejected');
- console.log('PASS SEYVA MUSIC: actual FLAC/WAV sample formats, strict source detection, clean brand and hidden idle state.');
+ console.log('PASS SEYVA MUSIC: source FLAC/WAV and genuine MP3 frames, correct playback labels, truthful Hi-Res, accessible stage.');
 })().catch(err=>{console.error(err);process.exitCode=1});
