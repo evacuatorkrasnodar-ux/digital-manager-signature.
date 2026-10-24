@@ -13,6 +13,7 @@ function init(){
  if(!dock||!center||!player||!musicPage||buttons.some(b=>!b)||!document.getElementById('sayviMusicPlay'))return;
  if(window.SEYVEO_MUSIC_DOCK)return;
  let mode=false;
+ let lastMode=null,lastPlaying=null,lastTab=null;
  const originals=buttons.map(b=>({html:b.innerHTML,aria:b.getAttribute('aria-label'),title:b.getAttribute('title')}));
  const labels=['Пред.','Играть','Далее','Треки'];
  const icons={
@@ -31,8 +32,14 @@ function init(){
   return 'navHome';
  }
  function paint(){
-  dock.classList.toggle('seyveo-music-dock',mode);
   const playing=!!(player.currentSrc||player.getAttribute('src'))&&!player.paused&&!player.ended;
+  const tab=mode?null:currentTab();
+  const playback=mode?playing:null;
+  // Audio events often fire in pairs; never rebuild the dock for an unchanged state.
+  if(lastMode===mode&&lastPlaying===playback&&lastTab===tab)return;
+  const leavingMusic=lastMode===true&&!mode;
+  lastMode=mode;lastPlaying=playback;lastTab=tab;
+  dock.classList.toggle('seyveo-music-dock',mode);
   buttons.forEach((b,i)=>{
    if(mode){
     b.classList.remove('active');
@@ -46,12 +53,12 @@ function init(){
     b.innerHTML=originals[i].html;
     if(originals[i].aria===null)b.removeAttribute('aria-label');else b.setAttribute('aria-label',originals[i].aria);
     if(originals[i].title===null)b.removeAttribute('title');else b.setAttribute('title',originals[i].title);
-    const selected=b.id===currentTab();
+    const selected=b.id===tab;
     b.classList.toggle('active',selected);
     if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
    }
   });
-  if(!mode)document.dispatchEvent(new Event('seyveo:music-dock-exit'));
+  if(leavingMusic)document.dispatchEvent(new Event('seyveo:music-dock-exit'));
  }
  function showTracks(){
   // The music page itself never scrolls. "Треки" opens one local drawer.

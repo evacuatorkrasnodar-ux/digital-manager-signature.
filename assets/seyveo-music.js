@@ -20,7 +20,6 @@ const artist=$('sayviMusicArtist');
 const status=$('sayviMusicStatus');
 const collection=$('sayviMusicCollection');
 const disk=$('sayviMusicDisk');
-const back=$('sayviMusicBack');
 const importBtn=$('sayviMusicImport');
 const options=$('sayviMusicProviders');
 const providerText=$('sayviMusicProviderText');
@@ -29,7 +28,7 @@ const sourcesToggle=$('sayviMusicSourcesToggle');
 const sourcesClose=$('sayviMusicSourcesClose');
 const resume=$('sayviMusicResume');
 const resumeText=$('sayviMusicResumeText');
-if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn||!back)return;
+if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 const safeName=file=>String(file?.name||'Без названия').replace(/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i,'');
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
 const MAX_TRACKS=40,MAX_FILE_SIZE=180*1024*1024;
@@ -250,10 +249,6 @@ function open(){
  location.hash='#sayvi-music';
  return true;
 }
-function close(){
- $('navHome')?.click();
-}
-back.addEventListener('click',close);
 resume?.addEventListener('click',open);
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
