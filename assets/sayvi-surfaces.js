@@ -178,10 +178,6 @@ function mailView(){
  body.append(section);
 }
 const extensions=new Set(['pdf','txt','md','png','jpg','jpeg','webp']);
-const mime={
- pdf:'application/pdf',txt:'text/plain',md:'text/markdown',
- png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp'
-};
 function renderFile(file,status,preview,link){
  releaseFile();preview.replaceChildren();link.replaceChildren();
  const extension=String(file.name.split('.').pop()||'').toLowerCase();
