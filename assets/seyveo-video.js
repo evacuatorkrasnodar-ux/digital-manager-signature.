@@ -15,8 +15,27 @@
  const KEY='seyveo-video-saved-link-v1';
  const SAMPLE='M7lc1UVf-VE'; // Example used in the official YouTube IFrame docs.
  let chosen=null,playingFrame=null,lastRoute='',lastKnownHash='',unloadedAt=0;
+ // Edit the existing stage in place: one smart field, no duplicate player.
+ const header=page.querySelector('.sv-video-header');
+ header?.querySelectorAll('p').forEach(el=>el.remove());
+ const fieldLabel=page.querySelector('label[for="sayviVideoUrl"]');
+ if(fieldLabel)fieldLabel.classList.add('sv-video-sr-only');
+ input.placeholder='Что посмотрим?';input.inputMode='search';input.setAttribute('enterkeyhint','search');
+ watch.textContent='Найти';if(demo)demo.textContent='Пример';
+ const savedArea=page.querySelector('.sv-video-saved');
+ const disclaimer=page.querySelector('.sv-video-disclaimer');
+ const more=document.createElement('details');more.className='sv-video-more';
+ const summary=document.createElement('summary');summary.textContent='Ещё';more.append(summary);
+ if(savedArea)more.append(savedArea);
+ if(disclaimer)more.append(disclaimer);
+ page.insertBefore(more,back);
+ status.textContent='';status.hidden=true;
+ input.addEventListener('input',()=>{
+  const text=input.value.trim();
+  watch.textContent=core.videoId(text)?'Смотреть':'Найти';
+ });
  const active=()=>location.hash==='#sayvi-video'&&!page.hidden;
- const message=(value)=>{status.textContent=value};
+ const message=(value)=>{status.textContent=value;status.hidden=!value};
  const safeLoad=()=>{
   try{const id=localStorage.getItem(KEY);return core.videoId(id)}catch{return null}
  };
@@ -66,13 +85,13 @@
   frame.setAttribute('loading','eager');
   frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
   frame.addEventListener('load',()=>{
-   if(frame===playingFrame)message('Плеер открыт. Для запуска коснитесь ▶ внутри YouTube.');
+   if(frame===playingFrame)message('');
   },{once:true});
   screen.hidden=false;
   screen.append(frame);
   playingFrame=frame;
-  message('Загружаю официальный плеер…');
-  watch.textContent='Перезагрузить видео';
+  message('');
+  watch.textContent='Смотреть';
   return true;
  }
  function route(){
@@ -80,8 +99,8 @@
   document.documentElement.classList.toggle('sv-video-screen',inside);
   if(!inside){
    dispose();
-   watch.textContent='Смотреть';
-   if(lastKnownHash==='#sayvi-video')message('Видео остановлено при выходе — для экономии заряда.');
+   watch.textContent='Найти';
+   if(lastKnownHash==='#sayvi-video')message('');
   }
   lastKnownHash=location.hash;
  }
@@ -95,13 +114,20 @@
  }
  form.addEventListener('submit',event=>{
   event.preventDefault();
-  const id=core.videoId(input.value);
-  if(!id){
-   message('Вставьте ссылку на видео YouTube, Shorts или его 11-значный ID.');
-   return;
+  const typed=input.value.trim();
+  if(!typed){message('Напишите название видео или вставьте ссылку.');input.focus();return}
+  const id=core.videoId(typed);
+  if(id){choose(id);play();return;}
+  // Official YouTube embedded search was removed. The full in-app catalogue
+  // needs a separately authorized Data API integration. Never fake results.
+  if(typed.length>120){message('Название слишком длинное. Сократите запрос.');return}
+  if(/^(?:https?:|javascript:|data:|www\.)/i.test(typed)){
+   message('Это не ссылка на видео YouTube. Проверьте адрес.');return;
   }
-  choose(id);
-  play();
+  const url='https://www.youtube.com/results?search_query='+encodeURIComponent(typed);
+  const tab=window.open(url,'_blank','noopener,noreferrer');
+  if(tab===null){message('Не удалось открыть поиск YouTube. Можно вставить прямую ссылку на видео.');return;}
+  message('Поиск по названию открылся в YouTube. Сам просмотр по ссылке — внутри Сэйвы.');
  });
  demo?.addEventListener('click',()=>{choose(SAMPLE);play()});
  back?.addEventListener('click',()=>{
@@ -119,7 +145,7 @@
   const id=safeLoad();
   if(!id)return;
   choose(id);
-  message('Сохранённая ссылка готова. Нажмите «Смотреть», чтобы загрузить плеер.');
+  message('Видео готово. Нажмите «Смотреть».');
  });
  forget?.addEventListener('click',()=>{
   try{localStorage.removeItem(KEY)}catch{}
