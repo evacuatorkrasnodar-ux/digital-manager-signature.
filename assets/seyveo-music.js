@@ -70,16 +70,35 @@ const providers=Object.freeze({
  }
 });
 let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
-let verifiedSource=null;
+let verifiedSource=null,qualityPending=false;
 function updateSourceLabel(){
  if(!qualityLabel)return;
- // A header alone is not proof of audible output: show source parameters only
- // when the decoded audio element is actually playing this selected file.
- const playing=!!audio.src&&!audio.paused&&!audio.ended;
- const show=playing&&verifiedSource?.hiRes===true;
- qualityLabel.hidden=!show;
- qualityLabel.textContent=show?'HI-RES AUDIO · '+verifiedSource.detail:'';
- qualityLabel.title=show?'Параметры исходного '+verifiedSource.format+'-файла; качество выхода iPhone или наушников не подтверждено.':'';
+ const playing=!!audio.src&&!audio.paused&&!audio.ended&&index>=0;
+ qualityLabel.hidden=!playing;
+ if(!playing){qualityLabel.textContent='';qualityLabel.title='';return;}
+ // These are FILE headers, not measurements of output to headphones.
+ if(qualityPending){
+  qualityLabel.textContent='ПРОВЕРЯЮ ЗАПИСЬ';
+  qualityLabel.title='Сэйва читает заголовок выбранного файла на устройстве.';
+  return;
+ }
+ const info=verifiedSource;
+ if(!info){
+  qualityLabel.textContent='КАЧЕСТВО ФАЙЛА НЕ ОПРЕДЕЛЕНО';
+  qualityLabel.title='Этот аудиоформат пока не удаётся проверить. Сэйва не придумывает качество.';
+  return;
+ }
+ const frequency=(info.sampleRate/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кГц';
+ if(info.hiRes){
+  qualityLabel.textContent='HI-RES AUDIO · '+info.format+' · '+info.bits+' бит · '+frequency;
+ }else if(info.format==='MP3'){
+  qualityLabel.textContent='MP3 · '+info.bitrateKbps+' кбит/с* · '+frequency;
+ }else{
+  qualityLabel.textContent=info.format+' · '+info.bits+' бит · '+frequency;
+ }
+ qualityLabel.title=info.format==='MP3'
+  ?'Битрейт определён по первому звуковому кадру. В VBR-записи он может меняться; качество выхода наушников не измеряется.'
+  :'Проверенные параметры исходного файла. Качество вывода на динамики или наушники iPhone не подтверждено.';
 }
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
@@ -218,7 +237,7 @@ function switchTrack(i,autoplay=false){
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
  verifiedSource=null;
- updateSourceLabel();
+ qualityPending=!!sourceQuality?.detect;
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  try{url=URL.createObjectURL(file)}catch{
   sayviMessage('Не удалось открыть файл. Попробуйте выбрать другой аудиофайл.');
@@ -236,11 +255,11 @@ function switchTrack(i,autoplay=false){
  if(sourceQuality?.detect){
   Promise.resolve(sourceQuality.detect(file)).then(result=>{
    if(version!==selectVersion||tracks[index]!==file)return;
-   verifiedSource=result;
+   qualityPending=false;verifiedSource=result;
    updateSourceLabel();
   }).catch(()=>{
    if(version!==selectVersion||tracks[index]!==file)return;
-   verifiedSource=null;updateSourceLabel();
+   qualityPending=false;verifiedSource=null;updateSourceLabel();
   });
  }
  // Bounded local ID3 read never interrupts or delays the real audio element.
