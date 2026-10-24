@@ -33,6 +33,11 @@ assert.equal(new URL(official).searchParams.get('playsinline'),'1');
 assert.equal(api.embed('unsafe'),null);
 assert.ok(html.indexOf('seyveo-video-core.js')<html.indexOf('seyveo-video.js'));
 assert.match(html,/id="sayviVideoPage"[^>]*hidden/,'Video scene starts closed');
+assert.match(html,/placeholder="Что посмотрим\?"/,'One obvious type-by-name field');
+assert.match(html,/<details id="sayviVideoMore"/,'Rare YouTube links are collapsed by default');
+assert.match(html,/<summary>Ещё<\/summary>/,'One optional advanced action area');
+assert.match(html,/id="sayviVideoWatch" type="submit">Найти</,'Search starts from one action');
+assert.equal((html.match(/id="sayviVideoMore"/g)||[]).length,1,'No duplicate advanced panel');
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'No second dock');
 assert.equal((html.match(/id="orbCluster"/g)||[]).length,1,'Original orb kept');
 assert.equal((html.match(/id="sayviMusicAudio"/g)||[]).length,1,'Original music player remains single');
@@ -50,7 +55,7 @@ assert.match(source,/music\.pause\(\)/,'Video pauses original local audio; not t
 assert.doesNotMatch(source,/autoplay=1|enablejsapi=1|iframe_api|\/youtube\/v3\/search/,'No surprise autoplay, external API or hidden search');
 
 // Simulate a single user-operated video without opening YouTube's network.
-const handlers={},store=new Map(),nodes={};
+const handlers={},store=new Map(),nodes={},createdAnchors=[];
 function node(id){
  const listeners={};return {
   id,hidden:false,disabled:false,value:'',textContent:'',href:'',
@@ -75,7 +80,7 @@ nodes.sayviMusicAudio.pause=()=>{nodes.sayviMusicAudio.paused=true};
 const loc={hash:''};
 const documentMock={
  hidden:false, getElementById:id=>nodes[id]||null,
- createElement:tag=>node(tag),
+ createElement:tag=>{const el=node(tag);if(tag==='a')createdAnchors.push(el);return el},
  addEventListener:(ev,fn)=>{(handlers['document:'+ev]??=[]).push(fn)},
  documentElement:{classList:{toggle(){}}}
 };
@@ -91,6 +96,13 @@ nodes.sayviVideoPage.hidden=false;
 for(const fn of handlers.hashchange||[])fn();
 assert.equal(loc.hash,'#sayvi-video');
 assert.equal(nodes.sayviVideoPlayer.children.length,0,'Even navigation does not load YouTube');
+nodes.sayviVideoUrl.value='космос документальный фильм';
+for(const fn of nodes.sayviVideoForm.listeners.submit||[])fn({preventDefault(){}});
+assert.equal(nodes.sayviVideoPlayer.children.length,0,'Text search never pretends to be a video');
+assert.equal(createdAnchors.length,1,'Title opens one explicit official search handoff');
+assert.equal(createdAnchors[0].href,'https://www.youtube.com/results?search_query='+encodeURIComponent('космос документальный фильм'));
+assert.equal(createdAnchors[0].target,'_blank','The PWA screen is preserved');
+assert.equal(createdAnchors[0].rel,'noopener noreferrer');
 nodes.sayviVideoUrl.value='https://youtu.be/'+id;
 for(const fn of nodes.sayviVideoForm.listeners.submit||[])fn({preventDefault(){}});
 assert.equal(nodes.sayviVideoPlayer.children.length,1,'Only one iframe after Play');
