@@ -276,3 +276,154 @@
 #managePage .manage-text strong{font-weight:510;letter-spacing:-.018em}
 #managePage .manage-group h2{font-weight:480}
 #managePage .manage-card{box-shadow:none}
+
+/* SEYVEO Workspace Signature v9
+ * ONE finishing vocabulary for secondary screens, personal sheets and
+ * management. Never targets Home, plasma, native phone UI or the fixed dock.
+ * Interaction communicates real focus/selection, not fake microphone activity.
+ */
+:root{
+ --sv-work-radius:25px;
+ --sv-work-glint:rgba(247,250,255,.035);
+ --sv-work-inside:rgba(255,255,255,.05);
+}
+:root[data-theme=light]{
+ --sv-work-glint:rgba(255,255,255,.7);
+ --sv-work-inside:rgba(255,255,255,.85);
+}
+/* Consistent editorial hierarchy. The title does not compete with Sayvi. */
+:is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviAnswerPage)
+ :is(.tasks-heading h1,.calendar-header h1,.picture-head h1,.manage-heading h1,.sv-deep-heading,.sa-title){
+ font-weight:510!important;letter-spacing:-.038em;line-height:1.16;
+}
+:is(#tasksPage,#calendarPage,#picturePage,#managePage)
+ :is(.manage-caption,.calendar-kicker){
+ font-weight:485!important;letter-spacing:.095em;opacity:.9;
+}
+:is(#calendarPage,#picturePage,#managePage,#tasksPage)
+ :is(.calendar-header p:not(.calendar-kicker),.picture-head p:last-child,.manage-heading>p:last-child,.tasks-heading>p:last-child){
+ font-size:12.5px;line-height:1.5;font-weight:415;
+}
+/* The same thin inner light as our Home cards, never a bright new panel. */
+#calendarPage :is(.cal-month,.cal-agenda,.calendar-spaces-grid),
+#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight,.home-widget-card),
+#calendarSpaceDialog :is(.cal-space-list,.pw-card),
+#calendarPersonalTools .pw-card,
+#notesDialog .note-item,
+#picturePage .picture-full-report{
+ border-radius:var(--sv-work-radius);
+ box-shadow:inset 0 1px 0 var(--sv-work-inside);
+}
+#calendarPage :is(.cal-month,.cal-agenda),
+#picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight){
+ background:linear-gradient(155deg,var(--sv-work-glint),transparent 72%),var(--card);
+}
+#calendarPage .calendar-spaces-grid{
+ background:linear-gradient(150deg,var(--sv-work-glint),transparent 80%),var(--card);
+}
+#calendarPage .cal-day-summary h2,
+#calendarPage .calendar-spaces-head h2,
+#picturePage .picture-section h2,
+#managePage .manage-group h2{
+ font-weight:505;letter-spacing:-.014em;
+}
+#calendarPage :is(.cal-entry-copy strong,.calendar-space-button span),
+#calendarSpaceDialog .calendar-space-record-copy strong,
+#picturePage :is(.picture-split-label,.home-widget-label),
+#notesDialog .note-item p{
+ font-weight:475;
+}
+/* Quiet input controls: existing icons and labels keep their purposes. */
+#calendarPage .calendar-header-actions .cal-round{
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ border-radius:50%;background:var(--card);
+ box-shadow:inset 0 1px 0 var(--sv-work-inside);
+}
+#calendarPage .calendar-header-actions .cal-round svg{
+ stroke-width:1.55;
+}
+#calendarPage :is(.cal-periods button,.calendar-space-button),
+#picturePage .picture-tabs button,
+#calendarSpaceDialog :is(.cal-space-toolbar button,.calendar-space-actions button),
+#notesDialog :is(.notes-new,.note-more-options button){
+ font-weight:475;
+}
+#calendarPage .cal-periods button[aria-pressed=true],
+#picturePage .picture-tabs button[aria-pressed=true]{
+ box-shadow:inset 0 0 0 1px var(--line);
+}
+#calendarPage .calendar-space-button,
+#picturePage :is(.home-widget-card,.picture-full-report),
+#managePage #seyveoCleanManageMenu .seyveo-clean-link,
+#calendarSpaceDialog .calendar-space-record,
+#notesDialog .note-item-actions button,
+#calendarPersonalTools .pw-card{
+ transition:background-color .2s ease,border-color .2s ease,opacity .2s ease;
+}
+/* Selection and pressed state feel responsive without battery-costly loops. */
+@media(hover:hover) and (pointer:fine){
+ #calendarPage .calendar-space-button:hover,
+ #calendarSpaceDialog .calendar-space-record:hover,
+ #notesDialog .note-item-actions button:hover{
+  background:var(--card2);
+ }
+ #picturePage :is(.home-widget-card,.picture-full-report):hover{
+  border-color:var(--secondary);
+ }
+}
+#calendarPage .calendar-space-button:active,
+#calendarSpaceDialog .calendar-space-record:active,
+#notesDialog .note-item-actions button:active{
+ background:var(--card2);
+}
+#calendarPage :is(.cal-day,.calendar-space-button,.cal-round):focus-visible,
+#picturePage :is(.picture-tabs button,.home-widget-card,.picture-full-report):focus-visible,
+#calendarSpaceDialog :is(.calendar-space-record,.pw-card):focus-visible,
+#notesDialog .note-item-actions button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+/* Notes, Health, Care and World remain native-capable inside existing sheets. */
+:is(#notesDialog,#calendarSpaceDialog,.paper-editor-dialog,.paper-choice-dialog,.note-review-dialog,
+    .personal-contacts-dialog,.personal-call-dialog,#personalTaskDialog,#calendarEventDialog)
+ :is(h2,h3){
+ font-weight:515;letter-spacing:-.027em;
+}
+:is(#notesDialog,#calendarSpaceDialog,.paper-editor-dialog,.paper-choice-dialog,.note-review-dialog)
+ :is(input,textarea,select):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#calendarPersonalTools .pw-card[aria-pressed=true]{
+ border-color:var(--secondary);
+ box-shadow:inset 0 0 0 1px var(--line);
+}
+/* iPhone: no horizontal overflow, content scroll belongs inside its sheet. */
+@media(max-width:375px){
+ #calendarPage :is(.cal-month,.cal-agenda,.calendar-spaces-grid),
+ #picturePage :is(.picture-chart-box,.picture-breakdown,.picture-insight){
+  border-radius:22px;
+ }
+ #calendarPage .calendar-header{gap:7px}
+ #calendarPage .calendar-header-actions{gap:5px}
+}
+/* Materialize the header once on entry, never shimmer forever. */
+@media(prefers-reduced-motion:no-preference){
+ @keyframes sv-work-presence{
+  from{opacity:.66;transform:translate3d(0,5px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+ #calendarPage:not([hidden]) .calendar-header,
+ #picturePage:not([hidden]) .picture-head,
+ #managePage:not([hidden]) .manage-heading,
+ #tasksPage:not([hidden]) .tasks-heading,
+ #sayviSurfacePage:not([hidden]) .sv-deep-top{
+  animation:sv-work-presence .38s cubic-bezier(.22,1,.36,1) both;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage .calendar-space-button,
+ #picturePage :is(.home-widget-card,.picture-full-report),
+ #managePage #seyveoCleanManageMenu .seyveo-clean-link,
+ #calendarSpaceDialog .calendar-space-record,
+ #notesDialog .note-item-actions button,
+ #calendarPersonalTools .pw-card{transition:none}
+}
