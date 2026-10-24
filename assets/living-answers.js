@@ -208,7 +208,7 @@ function gallery(){
   item.setAttribute('aria-label','Исследовать: '+record.title);
   const preview=media(record,true);
   preview.setAttribute('aria-hidden','true');
-  item.append(preview,create('span','sa-topic-copy',record.title),create('span','sa-topic-arrow','↗'));
+  item.append(preview,create('span','sa-topic-copy',record.title),create('span','sa-topic-arrow','›'));
   grid.append(item);
  }
  grid.append(create('p','sa-endnote','Демо без подключённого ИИ. Изображения загружаются из открытых источников. Свои вопросы по другим темам пока обрабатывает обычная Сэйви.'));
