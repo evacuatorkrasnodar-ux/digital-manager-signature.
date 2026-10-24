@@ -10,10 +10,12 @@ const demoTrack=$('assistantQuickPreviewTrack'),demoPips=$('assistantQuickPrevie
 if(!rail||!track||!pips||!dialog||!list)return;
 const KEY='seyveo-assistant-quick-actions-v1',MAX=9;
 const WORLD_MIGRATION='seyveo-world-quickrail-migrated-v1';
-const DEFAULT=['event','note','history','world','notes'];
+const MUSIC_MIGRATION='seyveo-music-quickrail-migrated-v1';
+const DEFAULT=['event','note','music','history','world','notes'];
 const ITEMS=[
  ['event','Встреча','Создать событие','<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M12 12.5v5M9.5 15h5"/>'],
  ['note','Заметка','Написать заметку','<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6"/>'],
+ ['music','Музыка','Открыть музыкальный плеер','<path d="M9 18V5l11-2v13M9 8l11-2"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'],
  ['history','История','Обращения к помощнику','<path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/>'],
  ['notes','Мои записи','Открыть блокнот','<path d="M7 4.5h11v15H7zM10 8h5M10 12h5M10 16h3M4 7v12"/>'],
  ['calendar','Календарь','События и планы','<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13 14h2"/>'],
@@ -50,6 +52,17 @@ try{
   localStorage.setItem(WORLD_MIGRATION,'done');
  }
 }catch{}
+/* Introduce Music once into existing favorites without resetting preferences. */
+try{
+ if(localStorage.getItem(MUSIC_MIGRATION)!=='done'){
+  if(!selected.includes('music')){
+   if(selected.length>=MAX)selected=selected.slice(0,MAX-1);
+   selected.splice(Math.min(2,selected.length),0,'music');
+   save();
+  }
+  localStorage.setItem(MUSIC_MIGRATION,'done');
+ }
+}catch{}
 function feedback(){
  // Existing Silk Touch respects the user's sound preference. iOS browsers
  // cannot promise hardware haptics; never fake vibrations or emit loud audio.
@@ -63,6 +76,12 @@ function openSpace(id){
  if(entry)entry.click();
 }
 function perform(id){
+ if(id==='music'){
+  closeComposer();
+  window.SEYVEO_MUSIC?.open?.();
+  window.SEYVEO_MUSIC_DOCK?.setMode(true);
+  return;
+ }
  if(id==='note'){
   if($('ask').dataset.composerMode==='notes')$('composerExpandManual').click();
   else{
