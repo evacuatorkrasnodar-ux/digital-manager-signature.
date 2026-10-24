@@ -600,7 +600,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </button><button id="seyveoCompanyMiniQr" type="button" class="sv-mini-qr" aria-label="Создать QR-визитку компании"><span id="seyveoCompanyMiniQrCode" class="sv-mini-qr-code" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM5.5 5.5h2M16.5 5.5h2M5.5 16.5h2M14 14h3v3h-3zM19 14h2v7h-5v-2"/></svg></span><span id="seyveoCompanyMiniQrLabel">Создать визитку</span></button></div>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Показать фирменную анимацию SEYVEO"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=18" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><button id="sayviMusicResume" class="sv-music-resume" type="button" aria-label="Вернуться к музыке" hidden><span class="sv-music-resume-mark" aria-hidden="true">♫</span><span id="sayviMusicResumeText">Продолжить музыку</span></button><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйвой: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=18" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><button id="sayviMusicResume" class="sv-music-resume" type="button" aria-label="Вернуться к музыке" hidden><span class="sv-music-resume-mark" aria-hidden="true">♫</span><span id="sayviMusicResumeText">Продолжить музыку</span></button><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <aside id="seyveoNameTip" class="seyveo-name-tip" role="note" hidden><span><strong>Я Сэйви.</strong> SEYVEO — название системы, а Сэй — коротко и по-дружески.</span><button id="seyveoNameTipClose" type="button" aria-label="Скрыть подсказку об имени">Понятно</button></aside>
 <section id="orbInlineReply" class="orb-inline-reply" hidden aria-labelledby="orbInlineReplyTitle">
 <div class="orb-inline-reply-head">
@@ -1725,9 +1725,8 @@ function showBrandSignature(reason='ambient'){
   else clearTimeout(brandNextTimer);
   return true;
 }
-// User-requested logo on orb press. Explicit gestures bypass ambient daily quota,
-// but reuse the exact existing pearl content and Deep Reveal animation.
-let orbTapBrandActive=false,orbMistTimer=null;
+// The brand is ambient-only (once per day); touching the sphere is reserved for conversation.
+let orbMistTimer=null;
 function stopPearlMist(){
   clearTimeout(orbMistTimer);
   orbMistTimer=null;
@@ -1744,22 +1743,13 @@ function startPearlMist(){
   layer.classList.add('is-breathing');
   orbMistTimer=setTimeout(stopPearlMist,7800);
 }
-function revealOrbBrandOnTap(){
-  if(document.hidden||$('homePage').hidden)return;
-  const el=$('signal');
-  clearTimeout(noticeClearTimer);
+function dismissOrbBrand(){
+ const el=$('signal');
+ if(el.classList.contains('is-pearl')){
   clearTimeout(brandClearTimer);
   resetSignal(el);
-  pearlContent(el);
-  orbTapBrandActive=true;
-  afterTwoFrames(()=>{
-    if(el.classList.contains('is-pearl')&&!document.hidden)
-      el.classList.add('is-appearing');
-  });
-  brandClearTimer=setTimeout(()=>{
-    if(el.classList.contains('is-pearl'))resetSignal(el);
-    orbTapBrandActive=false;
-  },BRAND_DURATION_MS);
+ }
+ stopPearlMist();
 }
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
@@ -2030,11 +2020,7 @@ function syncAppPage(){
     hideInlineReply();
     $('signal').classList.remove('is-appearing');
     stopPearlMist();
-    if(orbTapBrandActive){
-      clearTimeout(brandClearTimer);
-      orbTapBrandActive=false;
-      if($('signal').classList.contains('is-pearl'))resetSignal($('signal'));
-    }
+    if($('signal').classList.contains('is-pearl'))dismissOrbBrand();
   }
   if(tasks){progressDemoTasks();renderTasksPage();scheduleTaskProgress();}
   if(picture)window.dispatchEvent(new Event('seyveo:picture-open'));
@@ -2131,17 +2117,8 @@ function onManageRouteChange(){
 }
 window.addEventListener('hashchange',onManageRouteChange);
 
-// The sphere is a living signature, not a second copy of the recommendation.
- // Each tap restarts the approved Pearl Mist + Black Velvet Deep Reveal.
- // The status text below the sphere stays visible; details remain in «Подробнее».
-$('orb').addEventListener('click',()=>{
-  if(document.documentElement.classList.contains('seyveo-conversation')){
-    // The compact sphere is a voice control, never a full-screen logo.
-    window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.();
-    return;
-  }
-  revealOrbBrandOnTap();
-});
+// Interaction is installed beside the voice controller below. No logo on tap.
+
 function getDemoAnswer(){
  return 'Пока у меня нет доступа к внешнему ИИ и вашим рабочим сервисам. Я могу помочь с доступными локальными действиями, записями и навигацией. Для остальных возможностей откройте «Подключения» в Управлении.';
 }
@@ -3177,6 +3154,38 @@ window.SEYVEO_CONVERSATION_TOGGLE_VOICE=()=>{
   question.blur();
   startVoice();
 };
+// Home sphere: a tap opens the SAME assistant composer; holding speaks.
+const homeOrb=$('orb');
+let orbHoldTimer=null,orbHoldStarted=false,orbLastLongPress=0;
+homeOrb.addEventListener('pointerdown',event=>{
+ if(event.button!==0||event.isPrimary===false)return;
+ clearTimeout(orbHoldTimer);orbHoldStarted=false;
+ orbHoldTimer=setTimeout(()=>{
+  orbHoldStarted=true;dismissOrbBrand();
+  if(!document.documentElement.classList.contains('seyveo-conversation'))startVoice();
+ },500);
+});
+function finishHomeOrbPress(){
+ clearTimeout(orbHoldTimer);orbHoldTimer=null;
+ if(!orbHoldStarted)return;
+ orbHoldStarted=false;orbLastLongPress=Date.now();
+ if(held){held=false;stopVoice();}
+ started=false;
+}
+homeOrb.addEventListener('pointerup',finishHomeOrbPress);
+homeOrb.addEventListener('pointercancel',finishHomeOrbPress);
+homeOrb.addEventListener('pointerleave',finishHomeOrbPress);
+homeOrb.addEventListener('contextmenu',event=>event.preventDefault());
+homeOrb.addEventListener('click',()=>{
+ if(Date.now()-orbLastLongPress<550)return;
+ dismissOrbBrand();
+ if(document.documentElement.classList.contains('seyveo-conversation')){
+   window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.();return;
+ }
+ if(composer.hidden){openComposer();hint.classList.remove('active');playFeedback('select');}
+ else question.focus({preventScroll:true});
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)finishHomeOrbPress()});
 fab.addEventListener('pointerdown',e=>{
   if(e.button!==0||e.isPrimary===false)return;
   started=false;held=false;clearTimeout(holdTimer);
@@ -3217,7 +3226,7 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=39"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=19"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=32"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=28"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=7"></script><script src="assets/picture.js?v=6"></script><script src="assets/home-widgets.js?v=11"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=17"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=8"></script><script src="assets/living-conversation.js?v=15"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/living-moment.js?v=14"></script><script src="assets/living-screen-core.js?v=1"></script><script src="assets/weather-core.js?v=1"></script><script src="assets/weather-provider.js?v=1"></script><script src="assets/weather-presence.js?v=1"></script><script src="assets/living-space.js?v=6"></script><script src="assets/sayvi-surfaces.js?v=5"></script><script src="assets/living-answers.js?v=3"></script><script src="assets/network-care.js?v=2"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/music-source-quality.js?v=2"></script><script src="assets/seyveo-music.js?v=9"></script><script src="assets/seyveo-music-dock.js?v=5"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=4"></script><script src="assets/magnetic-ink-dock.js?v=4"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=2" defer></script><script>
+</script><script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=39"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=19"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=32"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=28"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=7"></script><script src="assets/picture.js?v=6"></script><script src="assets/home-widgets.js?v=11"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=17"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=8"></script><script src="assets/living-conversation.js?v=15"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/living-moment.js?v=14"></script><script src="assets/living-screen-core.js?v=1"></script><script src="assets/weather-core.js?v=1"></script><script src="assets/weather-provider.js?v=2"></script><script src="assets/weather-presence.js?v=2"></script><script src="assets/living-space.js?v=6"></script><script src="assets/sayvi-surfaces.js?v=5"></script><script src="assets/living-answers.js?v=3"></script><script src="assets/network-care.js?v=2"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/music-source-quality.js?v=2"></script><script src="assets/seyveo-music.js?v=9"></script><script src="assets/seyveo-music-dock.js?v=5"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=4"></script><script src="assets/magnetic-ink-dock.js?v=4"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=2" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
