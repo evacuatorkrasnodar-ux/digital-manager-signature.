@@ -339,3 +339,127 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
   #info.is-reply #infoTitle{margin-right:115px}
   #info.is-reply .reply-history-button:not([hidden]){right:52px;padding:0 5px;font-size:11px}
 }
+
+
+/* SEYVEO Living Ink · real workspaces are open pages, not dialog boxes.
+   Keep true confirmation/permission dialogs framed for safety. Only content
+   workspaces listed here lose their old border and shadow. */
+:is(#assistantChatHistoryDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+ box-sizing:border-box;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background:var(--bg)!important;
+ color:var(--text);
+}
+:root[data-theme=light] :is(#assistantChatHistoryDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+ background:var(--bg)!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+}
+/* Saved requests: compact open lines, never pills with clipped first lines.
+   Native DETAILS remains functional, preserving read-only history and storage. */
+#assistantChatHistoryDialog.assistant-chat-history[open]{
+ display:flex;flex-direction:column;
+ width:min(530px,calc(100vw - 12px));
+ max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ height:min(900px,calc(100svh - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ max-height:calc(100svh - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+ padding:24px 17px 14px;
+ overflow:hidden;
+}
+#assistantChatHistoryDialog .assistant-chat-head{
+ display:grid;gap:7px;flex:0 0 auto;
+ padding:0 42px 12px 0;min-width:0;
+}
+#assistantChatHistoryDialog .assistant-chat-head h2{
+ margin:0;font-size:clamp(21px,5.4vw,26px);
+ line-height:1.25;letter-spacing:-.035em;font-weight:540;
+}
+#assistantChatHistoryDialog .assistant-chat-head small{
+ color:var(--secondary);font-size:12px;line-height:1.4;
+}
+#assistantChatHistoryDialog .assistant-chat-items{
+ display:flex;flex:1 1 auto;min-height:0;min-width:0;
+ flex-direction:column;align-items:stretch;gap:0;
+ overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+#assistantChatHistoryDialog .assistant-chat-items::-webkit-scrollbar{display:none}
+#assistantChatHistoryDialog .assistant-chat-item{
+ display:block;flex:0 0 auto;position:relative;
+ box-sizing:border-box;min-width:0;width:100%;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-top:1px solid var(--soft-line)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text);
+ overflow:visible!important;
+}
+#assistantChatHistoryDialog .assistant-chat-summary{
+ display:flex;flex-direction:column;justify-content:center;gap:5px;
+ box-sizing:border-box;width:100%;min-height:63px;height:auto!important;
+ margin:0;padding:12px 24px 12px 2px;
+ border:0;border-radius:0;background:transparent;
+ text-align:left;list-style:none;cursor:pointer;
+ white-space:normal;overflow:visible;
+}
+#assistantChatHistoryDialog .assistant-chat-summary::-webkit-details-marker{display:none}
+#assistantChatHistoryDialog .assistant-chat-summary::marker{content:''}
+#assistantChatHistoryDialog .assistant-chat-summary::after{
+ content:'›';position:absolute;right:5px;top:21px;
+ font-size:21px;font-weight:350;color:var(--secondary);
+}
+#assistantChatHistoryDialog .assistant-chat-item[open]>.assistant-chat-summary::after{transform:rotate(90deg)}
+#assistantChatHistoryDialog .assistant-chat-question{
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ overflow:hidden;min-width:0;max-width:100%;
+ font-size:14px;font-weight:500;line-height:1.5;
+ overflow-wrap:anywhere;word-break:normal;white-space:pre-wrap;
+}
+#assistantChatHistoryDialog .assistant-chat-time{
+ display:block;color:var(--secondary);font-size:10px;line-height:1.3;
+ font-variant-numeric:tabular-nums;
+}
+#assistantChatHistoryDialog .assistant-chat-detail{
+ box-sizing:border-box;display:grid;gap:9px;
+ max-width:100%;padding:3px 2px 15px;
+ background:transparent;border:0;overflow-wrap:anywhere;
+}
+#assistantChatHistoryDialog .assistant-chat-full-question,
+#assistantChatHistoryDialog .assistant-chat-answer{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ font-size:13px;line-height:1.62;word-break:normal;
+}
+#assistantChatHistoryDialog .assistant-chat-answer-label{
+ font-size:10px;color:var(--secondary);letter-spacing:.03em;
+}
+#assistantChatHistoryDialog .assistant-chat-empty{
+ margin:18px 2px;color:var(--secondary);font-size:13px;line-height:1.6;
+}
+#assistantChatHistoryDialog .assistant-chat-bottom{
+ display:flex;gap:14px;flex:0 0 auto;
+ padding:11px 0 2px;border-top:1px solid var(--soft-line);
+}
+#assistantChatHistoryDialog .assistant-chat-bottom .btn{
+ flex:1;min-width:0;min-height:44px;padding:8px 3px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;font-weight:500;
+}
+#assistantChatHistoryDialog .assistant-chat-bottom #assistantChatHistoryClear{
+ color:var(--secondary)!important;
+}
+#assistantChatHistoryDialog .assistant-chat-bottom #assistantChatHistoryDone{
+ text-decoration:underline;text-underline-offset:6px;
+}
+#assistantChatHistoryDialog :is(summary,button):focus-visible{
+ outline:2px solid var(--text);outline-offset:-2px;
+}
+@media(max-width:370px){
+ #assistantChatHistoryDialog.assistant-chat-history[open]{
+  width:calc(100vw - 8px);max-width:calc(100vw - 8px);
+  padding:18px 12px 10px;
+ }
+}
