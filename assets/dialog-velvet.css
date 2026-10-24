@@ -463,3 +463,22 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
   padding:18px 12px 10px;
  }
 }
+
+
+/* Workspace exits are quiet text actions. Editing sheets already have Cancel,
+   so their old redundant arrow stays accessible to JS but is not displayed. */
+:is(#calendarEventDialog,#personalTaskDialog,#noteReviewDialog,#noteReadDialog)
+ > button.seyveo-dialog-close{display:none!important}
+dialog > button.seyveo-close-control.seyveo-text-close{
+  box-sizing:border-box;width:auto;min-width:64px;height:44px;
+  padding:0 8px;display:flex;align-items:center;justify-content:center;
+  border:0;border-radius:12px;background:transparent;box-shadow:none;
+  font-size:13px;line-height:1.2;letter-spacing:-.01em;
+  color:var(--secondary);font-weight:500;
+}
+dialog > button.seyveo-close-control.seyveo-text-close::before{display:none!important;content:none!important}
+dialog > button.seyveo-close-control.seyveo-text-close:focus-visible{outline:2px solid var(--text);outline-offset:1px}
+:root[data-theme=light] dialog > button.seyveo-close-control.seyveo-text-close{color:var(--secondary)}
+#calendarSpaceDialog > h2:first-of-type,#noteModeDialog > h2:first-of-type,
+#seyveoCallDialog > h2:first-of-type,#seyveoContactsDialog > h2:first-of-type{padding-right:78px!important}
+#calendarSpaceDialog #calendarSpaceClose{display:none!important}
