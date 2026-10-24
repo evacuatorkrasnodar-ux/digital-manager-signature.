@@ -115,7 +115,7 @@
   searchLink.href=url;searchLink.target='_blank';
   searchLink.rel='noopener noreferrer';
   searchLink.click();
-  message('Поиск по названию откроется в YouTube. Внутри Сэйвы пока работает просмотр по ссылке.');
+  message('Нашли ролик? В YouTube нажмите «Поделиться → Копировать ссылку», затем вернитесь сюда и вставьте её в это же поле.');
  });
  demo?.addEventListener('click',()=>{choose(SAMPLE);play()});
  back?.addEventListener('click',()=>{
