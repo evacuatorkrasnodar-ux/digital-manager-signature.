@@ -53,7 +53,7 @@ const scenarios=Object.freeze({
   imageAlt:'Схема строения человеческого сердца с отмеченными камерами и сосудами',
   credit:'Иллюстрация: Wikimedia Commons · обучающая схема',
   creditUrl:'https://commons.wikimedia.org/wiki/File:Diagram_of_the_human_heart_(multilingual).svg',
-  sourceUrl:'https://medlineplus.gov/ency/anatomyvideos/000066.htm',
+  sourceUrl:'https://www.nhlbi.nih.gov/health/heart/anatomy',
   sourceName:'MedlinePlus · работа сердца',
   facts:[['4','Камеры сердца'],['2','Круга кровообращения'],['Клапаны','Помогают движению крови']],
   questions:[
