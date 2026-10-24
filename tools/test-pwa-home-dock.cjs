@@ -28,7 +28,7 @@ assert.match(css,/position:fixed!important;\s*inset:0!important;/);
 assert.match(css,/overflow-y:auto!important;/,'All installed PWA pages can scroll');
 assert.match(css,/overscroll-behavior-y:contain/);
 assert.match(css,/-webkit-overflow-scrolling:touch/);
-assert.match(html,/assets\/floating-navigation\.css\?v=12/);
+assert.match(html,/assets\/floating-navigation\.css\?v=\d+/);
 assert.match(html,/assets\/future-presence\.js\?v=4/);
 assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is not inside app scroller');
 

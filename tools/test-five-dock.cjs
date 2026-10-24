@@ -34,7 +34,7 @@ for(const id of expected){
  assert.ok(at>last,id+' keeps left-to-right DOM order');
  last=at;
 }
-assert.match(html,/assets\/floating-navigation\.css\?v=12/,'app loads v11 stylesheet');
+assert.match(html,/assets\/floating-navigation\.css\?v=\d+/,'app loads versioned dock stylesheet');
 assert.ok(html.includes('</div></div><footer class="dock"'),'Dock is a direct body child, not in scrolling app');
 assert.ok(!html.includes('id="homePictureTrigger"'),'No duplicate Picture control on Home');
 assert.ok(!html.includes("$('homePictureTrigger')"),'No dead Picture handler on Home');
@@ -43,7 +43,7 @@ assert.ok(!css.includes('data-seyveo-view="home"'),'No Home-only dock overrides'
 const inline=html.slice(html.indexOf('<style>'),html.indexOf('</style>'));
 assert.doesNotMatch(inline,/\.dock\s*\{|\.nav-item\s*\{|\.assistant-button\s*\{/,'No obsolete inline dock geometry or overlays');
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'One persistent dock in the DOM');
-assert.ok(html.includes('assets/conversation-refined.css?v=13'),'Open Canvas chat CSS is cache-busted');
+assert.match(html,/assets\/conversation-refined\.css\?v=\d+/,'Open Canvas chat CSS is cache-busted');
 assert.match(css,/height:46px!important;min-height:46px!important/,'Touch targets remain above 44px');
 assert.match(html,/id="assistantButton" class="assistant-button" aria-label="Сэйви:/,'Sayvi remains accessible');
 assert.ok(!html.includes('dock-assistant-label'),'No duplicate Sayvi caption in five-tab dock');

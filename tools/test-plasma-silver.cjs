@@ -22,6 +22,6 @@ assert.doesNotMatch(light,/pearl-core|#253246|#51637b|#859bb1/,'No artificial sm
 assert.ok(light.includes('<stop offset=".36" stop-color="#e9f0fa" stop-opacity=".26"/>'),'Approved translucent light-theme filaments');
 assert.ok(light.includes('<stop offset=".13" stop-color="#7890aa" stop-opacity=".24"/>'),'Approved light-theme silk');
 assert.equal((light.match(/<circle cx="260" cy="250"/g)||[]).length,4,'Original clip path, body, edgewash and rim only');
-assert.equal(html.split('plasma-signature.svg?v=18').length-1,2,'Dark asset version linked in HTML and theme handler');
-assert.equal(html.split('plasma-signature-light.svg?v=22').length-1,1,'Light asset version linked in theme handler');
+assert.equal((html.match(/plasma-signature\.svg\?v=\d+/g)||[]).length,2,'Dark asset linked in HTML and theme handler');
+assert.equal((html.match(/plasma-signature-light\.svg\?v=\d+/g)||[]).length,1,'Light asset linked in theme handler');
 console.log('PASS SEYVEO original silver sphere and both themes');

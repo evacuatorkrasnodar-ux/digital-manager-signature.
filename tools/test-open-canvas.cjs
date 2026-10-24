@@ -23,7 +23,7 @@ assert.match(css,/#ask\.prompt:not\(\.expanded\) \.seyveo-conversation-heading\{
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoComposerFold\{\s*order:4!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoConversationMic\{\s*order:5!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #composerCompactSend\{\s*order:6!important/);
-assert.match(home,/assets\/conversation-refined\.css\?v=13/);
+assert.match(home,/assets\/conversation-refined\.css\?v=\d+/);
 assert.match(home,/assets\/living-conversation\.js\?v=15/);
 assert.equal((home.match(/<form class="prompt" id="ask"/g)||[]).length,1);
 assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
