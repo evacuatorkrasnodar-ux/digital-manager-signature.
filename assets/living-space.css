@@ -13,7 +13,7 @@
   min-height:126px;
   padding:2px 0 8px;
   margin:0 0 2px;
-  background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 72%,transparent 100%);
+  background:transparent; /* The sphere has no painted black backing. */
   pointer-events:none;
   isolation:isolate;
 }
@@ -202,5 +202,54 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:active{
   .sv-cascade,.sv-cascade *{
     animation:none!important;
     transition:none!important;
+  }
+}
+
+
+/* Sayvi must feel genuinely separate from the page, not a black sticky banner.
+   On inner pages the ONE physical sphere scrolls in the natural document flow;
+   sticky + gradient caused visible scroll seams on mobile Safari. */
+#seyveoCompanion{
+  position:relative;
+  top:auto;
+  z-index:1;
+  background:transparent!important;
+  isolation:auto;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  transform:none;
+  will-change:auto;
+}
+#seyveoCompanion::before,
+#seyveoCompanion::after{
+  content:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion{
+  min-height:100px;
+  padding:0 0 8px;
+  margin:0;
+}
+html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion #orbCluster,
+html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion #orb{
+  width:88px;
+  height:88px;
+  min-width:0;
+  min-height:0;
+}
+html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion .sv-presence-caption{
+  bottom:0;
+  font-size:9px;
+}
+@media(max-height:760px){
+  html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion{
+    min-height:78px;
+    padding-bottom:5px;
+  }
+  html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion #orbCluster,
+  html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion #orb{
+    width:69px;
+    height:69px;
   }
 }
