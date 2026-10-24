@@ -17,6 +17,8 @@ const elapsed=$('sayviMusicElapsed');
 const duration=$('sayviMusicDuration');
 const heading=$('sayviMusicTrack');
 const artist=$('sayviMusicArtist');
+const qualityLabel=$('sayviMusicQuality');
+const sourceQuality=window.SEYVA_MUSIC_SOURCE_QUALITY;
 const status=$('sayviMusicStatus');
 const collection=$('sayviMusicCollection');
 const disk=$('sayviMusicDisk');
@@ -68,6 +70,17 @@ const providers=Object.freeze({
  }
 });
 let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
+let verifiedSource=null;
+function updateSourceLabel(){
+ if(!qualityLabel)return;
+ // A header alone is not proof of audible output: show source parameters only
+ // when the decoded audio element is actually playing this selected file.
+ const playing=!!audio.src&&!audio.paused&&!audio.ended;
+ const show=playing&&verifiedSource?.hiRes===true;
+ qualityLabel.hidden=!show;
+ qualityLabel.textContent=show?'HI-RES AUDIO · '+verifiedSource.detail:'';
+ qualityLabel.title=show?'Параметры исходного '+verifiedSource.format+'-файла; качество выхода iPhone или наушников не подтверждено.':'';
+}
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -76,6 +89,7 @@ const sayviMessage=message=>{status.textContent=message;status.hidden=!message;}
 function updatePlay(){
  const playing=!audio.paused&&!audio.ended&&!!audio.src;
  page.classList.toggle('sv-music-playing',playing);
+ updateSourceLabel();
  if('mediaSession' in navigator){
   try{navigator.mediaSession.playbackState=playing?'playing':'paused'}catch{}
  }
@@ -203,6 +217,8 @@ function switchTrack(i,autoplay=false){
  if(!tracks.length)return false;
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
+ verifiedSource=null;
+ updateSourceLabel();
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  try{url=URL.createObjectURL(file)}catch{
   sayviMessage('Не удалось открыть файл. Попробуйте выбрать другой аудиофайл.');
@@ -215,6 +231,15 @@ function switchTrack(i,autoplay=false){
  artist.textContent=(visible.artist?visible.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();mediaSession();updatePlay();updateTime();
+ // Hi-Res source check is bounded, asynchronous, and never delays playback.
+ // No guessing from filenames (e.g. "HiRes.mp3"), metadata tags or bitrate.
+ if(sourceQuality?.detect){
+  Promise.resolve(sourceQuality.detect(file)).then(result=>{
+   if(version!==selectVersion||tracks[index]!==file)return;
+   verifiedSource=result;
+   updateSourceLabel();
+  }).catch(()=>{verifiedSource=null;updateSourceLabel()});
+ }
  // Bounded local ID3 read never interrupts or delays the real audio element.
  if(metadata?.describe){
   Promise.resolve(metadata.describe(file)).then(info=>{
