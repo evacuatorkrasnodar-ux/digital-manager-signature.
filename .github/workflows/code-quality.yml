@@ -38,6 +38,8 @@ jobs:
         run: node tools/test-calendar-reminders.cjs
       - name: Test spoken and typed task commands
         run: node tools/test-task-natural.cjs
+      - name: Test one-phone-book SEYVEO call scenario
+        run: node tools/test-contact-call.cjs
       - name: Test one-step local actions
         run: node tools/test-local-actions.cjs
       - name: Test multi-turn reminder conversations

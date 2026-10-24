@@ -160,50 +160,10 @@ function callTargetFromTask(title){
   .trim();
  return target.length>0&&target.length<=70&&!/\d{4}/.test(target)?target:'';
 }
-function contactForms(name){
- const key=contactKey(name),forms=new Set([key]);
- if(key==='юля'||key==='юлия')return new Set(['юля','юлия','юле','юли','юлю','юлии','юлию']);
- if(key.includes(' '))return forms;
- if(key.endsWith('ия')){for(const end of ['и','ю','е'])forms.add(key.slice(0,-1)+end);}
- else if(key.endsWith('я')){for(const end of ['е','и','ю'])forms.add(key.slice(0,-1)+end);}
- else if(key.endsWith('а')){for(const end of ['е','у','ы','и'])forms.add(key.slice(0,-1)+end);}
- else if(key.endsWith('й')){for(const end of ['ю','я'])forms.add(key.slice(0,-1)+end);}
- else if(key.endsWith('ь'))forms.add(key.slice(0,-1)+'и');
- else if(key.length>3){forms.add(key+'у');forms.add(key+'а');}
- return forms;
-}
-/* Friendly Russian nickname and case matching for user's own contacts.
-   No numbers guessed, and multiple possible people ALWAYS require selection. */
-const juliaNames=new Set(['юльчик','юльчику','юльчика','юличка','юличке','юличку','юля','юле','юлю','юли','юлия','юлии','юлию','юлечка','юлечке','юлечку']);
-function personAliases(name){
- const key=contactKey(name);
- // "Юлия Иванова" may be requested as "Юле"; do not mistake this for
- // proof of identity if there are two Julias in the directory.
- const first=key.split(/[\s(,]+/)[0];
- const forms=contactForms(name);
- if(first!==key)for(const form of contactForms(first))forms.add(form);
- if(juliaNames.has(first))for(const alias of juliaNames)forms.add(alias);
- if(first.endsWith('чик'))forms.add(first+'у');
- if(first.endsWith('ка'))forms.add(first.slice(0,-1)+'е');
- if(first.endsWith('ек'))forms.add(first.slice(0,-2)+'ку');
- return forms;
-}
-function matchingContacts(target,rows){
- const query=contactKey(target);
- if(!query)return [];
- // Prefer exact/grammatical match. Broader nicknames only as a fallback.
- const exact=rows.filter(c=>contactForms(c.name).has(query));
- if(exact.length)return exact;
- return rows.filter(c=>personAliases(c.name).has(query));
-}
-function personFromRequest(raw){
- if(typeof raw!=='string'||raw.length>200||/[\n\r;]/.test(raw))return '';
- const phrase=raw.trim().replace(/^(?:(?:сэйви|сейви|сейва|сейвео|seyveo)[\s,!:.-]+)+/i,'').trim();
- const match=phrase.match(/^(?:позвони|позвонить|набери|набрать|перезвони|перезвонить)(?:\s+(?:мне|пожалуйста))?\s+(?:(?:моему|моей)\s+)?(.+?)[.!?\s]*$/i);
- if(!match)return '';
- const target=match[1].trim();
- return target.length<=70&&!/[\d@:/]/.test(target)?target:'';
-}
+/* Shared, pure voice/text and nickname matching. Real contacts stay here. */
+const callIntent=window.SEYVEO_CALL_INTENT;
+function matchingContacts(target,rows){return callIntent?.findMatches(target,rows)||[];}
+function personFromRequest(raw){return callIntent?.parse(raw)||'';}
 function renderContacts(){
  const rows=readContacts(),target=$('seyveoContactsList');target.replaceChildren();
  if(!rows.length){target.append(element('p','personal-contacts-empty','Здесь пока нет контактов. Добавьте первый номер вручную.'));return;}
@@ -229,7 +189,7 @@ function openContacts(fromCall=false){
  resetContactForm();showContactStatus('');
  if(fromCall&&callTargetName){
   // Use the person's requested name; the user supplies the number.
-  contactName.value=juliaNames.has(contactKey(callTargetName))?'Юльчик':callTargetName;
+  contactName.value=callIntent?.isJuliaAlias(callTargetName)?'Юльчик':callTargetName;
  }
  renderContacts();
  if(!contactsDialog.open)contactsDialog.showModal();
@@ -276,6 +236,7 @@ function openCall(targetName){
  chosenContact='';
  $('seyveoCallTitle').textContent='Позвонить'+(callTargetName?' · '+callTargetName:'');
  $('seyveoCallSearch').value='';
+ callHandoffPending=false;callWasHidden=false;
  if(!callDialog.open)callDialog.showModal();
  const matches=matchingContacts(callTargetName,readContacts());
  chooseCallContact(matches.length===1?matches[0].id:'');
@@ -392,6 +353,23 @@ summary.addEventListener('click',event=>{
  const target=task?callTargetFromTask(task.title):'';
  if(target)requestCall(target);
 });
+// A tel: link hands control to the system. Returning does NOT prove a call
+// connected; never close a task or create an invented call record.
+let callHandoffPending=false,callWasHidden=false;
+function restoreCallContext(){
+ if(!callHandoffPending)return;
+ if(document.hidden){callWasHidden=true;return;}
+ if(!callWasHidden)return;
+ callHandoffPending=false;callWasHidden=false;
+ if(callDialog.open){
+  callStatus.textContent='Сэйви снова рядом. Я не могу определить, состоялся ли разговор. Если поручение выполнено, отметьте его в «Делах».';
+  window.dispatchEvent(new CustomEvent('seyveo:call-return',{detail:{verified:false}}));
+ }
+}
+document.addEventListener('visibilitychange',restoreCallContext);
+window.addEventListener('pagehide',()=>{if(callHandoffPending)callWasHidden=true;});
+window.addEventListener('pageshow',restoreCallContext);
+callDialog.addEventListener('close',()=>{callHandoffPending=false;callWasHidden=false;});
 $('seyveoCallDial').addEventListener('click',event=>{
  const c=readContacts().find(x=>x.id===chosenContact);
  if(!c){event.preventDefault();chooseCallContact('');return;}
@@ -400,8 +378,9 @@ $('seyveoCallDial').addEventListener('click',event=>{
   callStatus.textContent='Номер контакта изменился. Проверьте и нажмите ещё раз.';
   return;
  }
- // Do not treat opening Phone as evidence the call actually connected.
- callStatus.textContent='Откройте «Телефон» и подтвердите вызов. Дело останется незавершённым.';
+ // Only a real user tap opens the system dialer; no auto-dial or success state.
+ callHandoffPending=true;callWasHidden=false;
+ callStatus.textContent='Передаю номер в системный «Телефон». Подтвердите вызов там. Дело останется незавершённым.';
 });
 window.addEventListener('storage',event=>{
  if(event.key===CONTACT_KEY){

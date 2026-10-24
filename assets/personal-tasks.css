@@ -236,11 +236,11 @@
  box-sizing:border-box;width:min(440px,calc(100vw - 24px));
  max-height:min(88dvh,calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
- padding:22px 18px 18px;border-radius:24px;
- background:var(--card);color:var(--text)
+ padding:17px 15px 16px;border-radius:22px;
+ background:var(--bg);color:var(--text)
 }
 .personal-contacts-dialog h2,.personal-call-dialog h2{
- margin:0 38px 8px 0;font-size:21px;font-weight:585;
+ margin:0 38px 8px 0;font-size:21px;font-weight:495;
  letter-spacing:-.027em;line-height:1.25;color:var(--text)
 }
 .personal-contacts-intro,.personal-call-help{
@@ -260,8 +260,8 @@
 }
 #seyveoContactForm input,#seyveoCallSearch{
  display:block;box-sizing:border-box;width:100%;min-width:0;
- min-height:46px;margin:0;padding:10px 12px;border:1px solid var(--line);
- border-radius:14px;background:var(--card2);color:var(--text);
+ min-height:44px;margin:0;padding:9px 3px;border:0;border-bottom:1px solid var(--line);
+ border-radius:0;background:transparent;color:var(--text);
  font:inherit;font-size:16px;line-height:1.35;outline:0;
  -webkit-appearance:none;appearance:none
 }
@@ -320,8 +320,8 @@
 .personal-call-choice{
  display:flex;flex-wrap:wrap;justify-content:space-between;
  align-items:center;gap:8px;min-width:0;min-height:46px;
- padding:9px 11px;border:1px solid var(--soft-line);
- border-radius:13px;background:var(--card2);color:var(--text);
+ padding:9px 4px;border:0;border-bottom:1px solid var(--soft-line);
+ border-radius:0;background:transparent;color:var(--text);
  font:inherit;text-align:left;touch-action:manipulation
 }
 .personal-call-choice[aria-pressed=true]{border-color:var(--text)}
