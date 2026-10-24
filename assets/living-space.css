@@ -253,3 +253,19 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
     height:69px;
   }
 }
+
+
+/* Native-like top-level navigation: no redundant arrow-and-label header rows.
+   Existing DOM buttons and JS listeners remain for compatibility.
+   The permanent dock (and supported swipe gestures) navigates instead.
+   Do NOT hide dialog close controls or nested editor backs. */
+#sayviMusicPage > #sayviMusicBack,
+#sayviAnswerPage > #sayviAnswerBack,
+#sayviSurfacePage > #sayviSurfaceBack,
+#lifePage #lifeBack,
+#manageThemeScreen #manageThemeBack,
+#seyveoCleanDetail > #seyveoCleanBack{
+  display:none!important;
+}
+#manageThemeScreen .manage-theme-head{margin-top:0}
+#seyveoCleanDetail .seyveo-clean-title{margin-top:1px}
