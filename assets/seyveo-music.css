@@ -299,3 +299,193 @@
 @media(prefers-reduced-motion:reduce){
   #sayviMusicPage .sv-music-cover{animation:none!important}
 }
+
+
+/* SEYVEO Music v4 · one-screen stage, one music controller (the dock).
+   Main viewport never scrolls; long libraries live inside optional drawers. */
+html.sv-music-screen,
+html.sv-music-screen body{
+  height:100%!important;
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+html.sv-music-screen .app{
+  height:100dvh!important;
+  min-height:0!important;
+  max-height:100dvh!important;
+  padding-bottom:calc(var(--seyveo-dock-bottom,18px) + var(--seyveo-dock-height,56px) + 10px)!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+html.sv-music-screen #seyveoCompanion{
+  flex:0 0 auto;
+}
+html.sv-music-screen #sayviMusicPage{
+  flex:1 1 0;
+  min-height:0;
+  max-height:100%;
+  overflow:hidden!important;
+  justify-content:flex-start;
+  --sv-music-vinyl-size:min(51vw,21.5dvh,205px);
+  padding-top:0;
+  padding-bottom:0;
+}
+html.sv-music-screen #sayviMusicPage .sv-music-cover{
+  margin:clamp(2px,1dvh,9px) auto 2px;
+  width:var(--sv-music-vinyl-size);
+  height:var(--sv-music-vinyl-size);
+}
+#sayviMusicPage .sv-music-controls,
+#sayviMusicPage .sv-music-controls[hidden]{
+  display:none!important;
+}
+/* Lyrics/title and record are still readable on 320px-wide devices. */
+html.sv-music-screen #sayviMusicPage .sv-music-heading{
+  font-size:clamp(21px,5.5vw,27px);
+}
+html.sv-music-screen #sayviMusicPage .sv-music-intro{
+  margin-bottom:2px;
+  line-height:1.36;
+  font-size:clamp(11px,2.7vw,12px);
+}
+html.sv-music-screen #sayviMusicPage .sv-music-title{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
+  font-size:clamp(16px,4.1vw,18px);
+}
+html.sv-music-screen #sayviMusicPage .sv-music-times{margin:5px 0 1px}
+html.sv-music-screen #sayviMusicPage .sv-music-seek{height:20px}
+html.sv-music-screen #sayviMusicPage .sv-music-phrases{
+  gap:1px 18px;
+  justify-content:center;
+  margin:1px 0 0;
+}
+html.sv-music-screen #sayviMusicPage .sv-music-status{
+  flex:0 0 auto;
+  margin:1px 0 0;
+  line-height:1.36;
+  font-size:10.5px;
+}
+html.sv-music-screen #sayviMusicPage .sv-music-status:not([hidden]){
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
+}
+#sayviMusicPage .sv-music-source-toggle{
+  color:var(--secondary);
+}
+#sayviMusicPage .sv-music-providers[hidden],
+#sayviMusicPage .sv-music-collection[hidden]{display:none!important}
+html.sv-music-screen #sayviMusicPage .sv-music-providers:not([hidden]),
+html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
+  position:fixed;
+  z-index:25;
+  bottom:calc(var(--seyveo-dock-bottom,18px) + var(--seyveo-dock-height,56px) + 10px);
+  left:50%;
+  width:min(492px,calc(100vw - 28px));
+  max-height:min(63dvh,510px);
+  padding:18px 19px 15px;
+  margin:0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:var(--bg);
+  color:var(--text);
+  box-shadow:0 -8px 38px rgba(0,0,0,.24);
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  transform:translateX(-50%);
+}
+#sayviMusicPage .sv-music-panel-close{
+  display:block;
+  margin:0 0 13px auto;
+  min-height:44px;
+  padding:8px 0 8px 14px;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  color:var(--secondary);
+  font-size:12px;
+  font-weight:460;
+}
+#sayviMusicPage .sv-music-collection-label{padding-right:65px}
+#sayviMusicPage .sv-music-providers .sv-music-note{
+  font-size:10px;
+  padding-bottom:6px;
+}
+#sayviMusicPage .sv-music-provider-actions{
+  align-items:baseline;
+  gap:4px 20px;
+}
+#sayviMusicPage .sv-music-track-row:focus-visible{
+  outline:1px solid var(--text);
+  outline-offset:-2px;
+}
+#homePage .sv-music-resume[hidden]{display:none!important}
+#homePage .sv-music-resume{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:37px;
+  min-width:0;
+  max-width:100%;
+  margin:12px auto 4px;
+  padding:5px 3px;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  color:var(--secondary);
+  font:inherit;
+  font-weight:450;
+  font-size:12px;
+  letter-spacing:-.01em;
+  text-align:center;
+}
+#homePage .sv-music-resume-mark{
+  flex:none;
+  color:var(--text);
+  font-size:16px;
+  line-height:1;
+}
+#homePage #sayviMusicResumeText{
+  min-width:0;max-width:22em;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  text-decoration:underline;
+  text-decoration-color:var(--soft-line);
+  text-underline-offset:5px;
+}
+#homePage .sv-music-resume:focus-visible{
+  outline:1px solid var(--text);
+  outline-offset:2px;
+}
+@media(max-height:760px){
+ html.sv-music-screen #sayviMusicPage{
+  --sv-music-vinyl-size:min(44vw,17.5dvh,126px);
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-heading{font-size:22px}
+ html.sv-music-screen #sayviMusicPage .sv-music-intro{font-size:11px;line-height:1.25}
+ html.sv-music-screen #sayviMusicPage .sv-music-times{margin-top:3px}
+ html.sv-music-screen #sayviMusicPage .sv-music-phrases{gap:1px 10px}
+}
+@media(max-height:590px){
+ html.sv-music-screen #sayviMusicPage{
+  --sv-music-vinyl-size:min(35vw,14dvh,85px);
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{margin:1px auto}
+ html.sv-music-screen #sayviMusicPage .sv-music-artist{line-height:1.2}
+ html.sv-music-screen #sayviMusicPage .sv-music-intro{font-size:10.5px}
+}
+@media(orientation:landscape) and (max-height:500px){
+ html.sv-music-screen #seyveoCompanion{display:none!important}
+ html.sv-music-screen #sayviMusicPage{
+  --sv-music-vinyl-size:0px;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{display:none}
+}
