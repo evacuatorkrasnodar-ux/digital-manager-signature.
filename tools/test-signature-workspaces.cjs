@@ -10,6 +10,7 @@ const load=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=load('index.html'),tasks=load('assets/personal-tasks.js');
 const calendar=load('assets/calendar.js'),calendarCss=load('assets/calendar.css');
 const taskCss=load('assets/personal-tasks.css');
+const widgetJs=load('assets/home-widgets.js'),widgetCss=load('assets/home-widgets.css'),pictureCss=load('assets/picture.css');
 const contextCss=load('assets/future-surfaces.css');
 const css=load('assets/living-space.css');
 assert.match(html,/id="tasksContextOpen" class="tasks-context-open seyveo-action-orb"/);
@@ -56,7 +57,11 @@ assert.match(masterIdeas,/Управление → Наши идеи → Кар�
 
 assert.match(css,/#lifePage \.calendar-space-button svg/,'World uses full-sized navigable illustrations');
 assert.match(css,/#calendarPage \.cal-entry/,'Calendar events become open scenes');
-assert.match(css,/#picturePage \.home-widget-card/,'Business metrics stay unboxed');
+assert.match(widgetJs,/button\.append\(sceneArtwork\(id\),copy,value\)/,'Selected metric is one tappable living scene');
+assert.match(widgetCss,/#picturePage \.picture-metric-artwork svg/,'Line illustrations are part of the metric');
+assert.match(widgetCss,/#picturePage \.home-widgets-grid\s*\{[\s\S]*?flex-direction:column/,'Metrics no longer share a boxed two-cell grid');
+assert.doesNotMatch(widgetJs,/home-widget-arrow/,'No redundant small arrows');
+assert.doesNotMatch(pictureCss,/#picturePage \.home-widgets-grid:has/,'Legacy split container is removed');
 assert.match(css,/#notesDialog \.note-item/,'Notebook rows stay uncluttered');
 assert.match(css,/#seyveoCleanManageMenu \.manage-row\.seyveo-clean-link/,'Management keeps one large scene per entry');
 assert.doesNotMatch(css,/#homePage\s+\.(?:lm-|plasma)/,'Home cinema and sphere styling untouched');

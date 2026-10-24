@@ -81,21 +81,46 @@ const moneyCompact=value=>{
  if(value>=1000)return (value/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})+' тыс. ₽';
  return rub(value);
 };
+// One meaningful, whole-row scene per selected fact. No decorative
+// arrows or shared grey panel: the real click target remains the object.
+const pictograms=Object.freeze({
+ clients:['M16 19c0-3 3-5 5-5s5 2 5 5','M21 10a3 3 0 1 0-6 0','M4 19c0-3 3-5 8-5s8 2 8 5','M12 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7'],
+ orders:['M6 7h12l1 14H5L6 7Z','M9 8V6a3 3 0 0 1 6 0v2','M9 14l2 2 4-4'],
+ money:['M4 19V5','M4 19h16','M7 15l4-4 3 2 5-6','M16 7h3v3'],
+ plan:['M7 5h11v16H6V5','M9 5V3h6v2','M9 11h6','M9 15l2 2 4-5'],
+ notes:['M7 3.5h9l3 3V21H7Z','M16 3.5V7h3','M10 11h6','M10 15h6','M10 19h4']
+});
+function sceneArtwork(id){
+ const ns='http://www.w3.org/2000/svg';
+ const wrap=create('span','picture-metric-artwork');
+ wrap.setAttribute('aria-hidden','true');
+ const svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+ svg.setAttribute('stroke-width','1.12');
+ svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+ for(const d of pictograms[id]||pictograms.notes){
+  const path=document.createElementNS(ns,'path');
+  path.setAttribute('d',d);svg.append(path);
+ }
+ wrap.append(svg);return wrap;
+}
 function renderHome(){
  grid.replaceChildren();
  home.hidden=selected.length===0;
  for(const id of selected){
-  const data=info(id),button=create('button','home-widget-card picture-metric'+(id==='money'?' picture-metric--money':''));
+  const data=info(id);
+  const button=create('button','home-widget-card picture-metric');
   button.type='button';button.dataset.homeWidget=id;
-  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть подробности');
-  const label=create('span','home-widget-label',id==='money'?'Продано':data.label);
-  const value=create('strong','home-widget-value',id==='money'&&Number.isFinite(connectedMetrics()?.revenue)?moneyCompact(connectedMetrics().revenue):data.value);
-  const arrow=create('span','home-widget-arrow');
-  arrow.setAttribute('aria-hidden','true');
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('viewBox','0 0 24 24');
-  svg.innerHTML='<path d="m9 6 6 6-6 6"/>';
-  arrow.append(svg);button.append(label,value,arrow);grid.append(button);
+  button.setAttribute('aria-label',data.label+'. '+data.value+'. '+data.hint+'. Открыть раздел');
+  const copy=create('span','picture-metric-copy');
+  const label=create('span','home-widget-label',data.label);
+  const hint=create('small','home-widget-note',data.hint);
+  copy.append(label,hint);
+  const value=create('strong','home-widget-value',
+   id==='money'&&Number.isFinite(connectedMetrics()?.revenue)?moneyCompact(connectedMetrics().revenue):data.value);
+  button.append(sceneArtwork(id),copy,value);
+  grid.append(button);
  }
 }
 function renderConfigPreview(){

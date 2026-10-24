@@ -34,24 +34,24 @@
 .picture-empty[hidden],#pictureBusiness[hidden]{display:none!important}
 
 #picturePage .home-widgets-heading .home-widgets-caption{letter-spacing:.03em}
-#picturePage .home-widgets-grid{margin-top:10px}
+
 .picture-subnote{color:var(--secondary);font-size:11px;line-height:1.45}
 @media(max-width:370px){.picture-bars{gap:4px}.picture-chart-box,.picture-breakdown,.picture-insight{padding-left:12px;padding-right:12px}.picture-head h1{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.picture-bin-bar{transition:none}}
 
 /* Smaller typographic summaries, not the oversized Home dashboard tiles. */
-#picturePage .home-widgets-grid{gap:9px}
-#picturePage .home-widget-card{min-height:105px;border-radius:18px;padding:12px 13px;background:var(--card);box-shadow:inset 0 1px 0 #ffffff07}
-#picturePage .home-widget-card--wide{min-height:99px}
-#picturePage .home-widget-top{margin-bottom:8px}
-#picturePage .home-widget-icon{width:25px;height:25px}
-#picturePage .home-widget-icon svg{width:15px;height:15px}
-#picturePage .home-widget-value{font-size:23px;letter-spacing:-.037em}
-#picturePage .home-widget-card--wide .home-widget-value{font-size:24px}
-#picturePage .home-widget-note{font-size:10.5px;margin-top:6px}
-#picturePage .home-widget-arrow{bottom:10px}
+
+
+
+
+
+
+
+
+
+
 #picturePage #pictureWidgetArea[hidden]{display:none!important}
-@media(max-width:370px){#picturePage .home-widget-card{min-height:99px;padding:11px}#picturePage .home-widget-value{font-size:21px}}
+
 
 
 /* Picture v2 — one quiet summary, not three outsized promo tiles. */
@@ -64,37 +64,17 @@
 #picturePage .home-widgets-heading{margin:0 1px 10px}
 #picturePage .home-widgets-heading h2{font-size:13px;font-weight:600}
 #picturePage .home-widgets-caption{font-size:9.5px;letter-spacing:.025em}
-#picturePage .home-widgets-grid{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
- border:1px solid var(--line);border-radius:22px;overflow:hidden;
- background:linear-gradient(147deg,rgba(240,247,255,.03),transparent 76%),var(--card);
- box-shadow:inset 0 1px 0 #ffffff0a
-}
-#picturePage .home-widget-card.picture-metric{
- display:flex;position:relative;flex-direction:column;justify-content:center;
- gap:9px;min-width:0;width:100%;height:auto;min-height:100px;padding:14px 9px 19px;
- text-align:center;border:0;border-radius:0;
- background:transparent;box-shadow:none;transform:none
-}
-#picturePage .picture-metric:not(:nth-child(3n)){border-right:1px solid var(--soft-line)}
-#picturePage .picture-metric:nth-child(n+4){border-top:1px solid var(--soft-line)}
-#picturePage .picture-metric .home-widget-label{
- display:block;line-height:1.25;font-size:11px;font-weight:495;color:var(--secondary)
-}
-#picturePage .picture-metric .home-widget-value{
- display:block;min-width:0;font-size:25px;font-weight:635;letter-spacing:-.035em;
- line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-}
-#picturePage .picture-metric--money .home-widget-value{
- font-size:clamp(11px,3.3vw,16px);font-weight:615;letter-spacing:-.022em
-}
-#picturePage .picture-metric .home-widget-arrow{
- position:absolute;right:50%;bottom:5px;transform:translateX(50%);
- width:12px;height:12px;opacity:.62
-}
-#picturePage .picture-metric .home-widget-arrow svg{width:12px;height:12px;stroke-width:1.4}
-#picturePage .home-widget-card.picture-metric:focus-visible{outline:2px solid var(--text);outline-offset:-3px;z-index:2}
-#picturePage .home-widget-card.picture-metric:active{background:var(--card2)}
+
+
+
+
+
+
+
+
+
+
+
 .picture-quick-insight{
  display:flex;gap:10px;align-items:baseline;margin:11px 1px 0;
  padding:0 1px;color:var(--secondary);font-size:11.5px;line-height:1.48
@@ -152,10 +132,10 @@
 }
 @media(max-width:370px){
  .picture-head h1{font-size:24px}
- #picturePage .home-widget-card.picture-metric{padding:12px 5px 17px;min-height:91px}
- #picturePage .picture-metric .home-widget-label{font-size:10.5px}
- #picturePage .picture-metric .home-widget-value{font-size:23px}
- #picturePage .picture-metric--money .home-widget-value{font-size:11px}
+ 
+ 
+ 
+ 
  .picture-bars{gap:3px}
  .picture-quick-insight{gap:7px}
 }
@@ -205,20 +185,12 @@
    white-space:normal;overflow-wrap:normal;word-break:normal;
    text-align:right;font-size:9px;line-height:1.3;letter-spacing:.01em
  }
- #picturePage .home-widgets-grid{border-radius:19px}
- #picturePage .home-widget-card.picture-metric{
-   gap:5px;min-height:83px;padding:10px 6px 17px
- }
- #picturePage .picture-metric .home-widget-label{
-   font-size:11px;line-height:1.3
- }
- #picturePage .picture-metric .home-widget-value{
-   font-size:23px;line-height:1.14;font-weight:620
- }
- #picturePage .picture-metric--money .home-widget-value{
-   font-size:clamp(11px,3vw,14px);letter-spacing:-.016em
- }
- #picturePage .picture-metric .home-widget-arrow{bottom:4px;opacity:.63}
+ 
+ 
+ 
+ 
+ 
+ 
  #picturePage .picture-quick-insight{
    gap:8px;align-items:baseline;margin:6px 1px 0;
    font-size:11.5px;line-height:1.43
@@ -263,11 +235,9 @@
  }
 @media (max-width:360px){
  #picturePage .picture-head h1{font-size:23px}
- #picturePage .home-widget-card.picture-metric{
-   min-height:83px;padding:10px 4px 17px
- }
- #picturePage .picture-metric .home-widget-value{font-size:22px}
- #picturePage .picture-metric--money .home-widget-value{font-size:11px}
+ 
+ 
+ 
  #picturePage .picture-bars{gap:3px}
 }
 
@@ -292,7 +262,7 @@
 #picturePage .picture-company-link:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){#picturePage .picture-company-link{transition:none}}
 
-/* Two tools must occupy the whole row; no phantom third column. */
-#picturePage .home-widgets-grid:has(> .picture-metric:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
-#picturePage .home-widgets-grid:has(> .picture-metric:nth-child(2):last-child)>.picture-metric:first-child{border-right:1px solid var(--soft-line)}
-#picturePage .home-widgets-grid:has(> .picture-metric:nth-child(2):last-child)>.picture-metric:nth-child(2){border-right:0}
+/* Widget composition now has one line-art scene per metric (home-widgets.css). */
+
+
+

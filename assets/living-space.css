@@ -390,7 +390,6 @@ html.sv-space-active #picturePage .picture-company-access,
 html.sv-space-active #picturePage .picture-chart-box,
 html.sv-space-active #picturePage .picture-breakdown,
 html.sv-space-active #picturePage .picture-insight,
-html.sv-space-active #picturePage .home-widget-card,
 html.sv-space-active #picturePage .picture-full-report,
 html.sv-space-active #picturePage .picture-quick-insight{
  border:0;border-radius:0;background:transparent;box-shadow:none;
@@ -400,15 +399,6 @@ html.sv-space-active #picturePage .picture-section{
 }
 html.sv-space-active #picturePage .picture-chart-box{padding:9px 2px}
 html.sv-space-active #picturePage .picture-breakdown{padding:0 4px}
-html.sv-space-active #picturePage .home-widgets-grid{gap:0 12px}
-html.sv-space-active #picturePage .home-widget-card{
- min-height:110px;margin:0;padding:15px 3px;
- border-bottom:1px solid var(--sv-scene-hairline);
-}
-html.sv-space-active #picturePage .home-widget-card--wide{grid-column:1 / -1}
-html.sv-space-active #picturePage .home-widget-card:active{
- background:color-mix(in srgb,var(--text) 3%,transparent);
-}
 html.sv-space-active #picturePage .picture-full-report{
  width:100%;min-height:83px;margin:22px 0 0;padding:15px 5px;
  border-top:1px solid var(--sv-scene-hairline);text-align:left;

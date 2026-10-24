@@ -1,35 +1,87 @@
-/* SEYVEO Home Widgets — compact personal dashboard, not the old blue neon UI.
-   Keep orb, dock and the recommendation as the primary focus. */
-#homeWidgetArea[hidden]{display:none!important}
-#homeWidgetArea{margin:18px 0 6px;min-width:0}
-.home-widgets-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 1px 12px}
-.home-widgets-heading h2{margin:0;font-size:14px;font-weight:630;letter-spacing:-.015em;line-height:1.3}
-.home-widgets-caption{font-size:10px;color:var(--secondary);letter-spacing:.045em;white-space:nowrap}
-.home-widgets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.home-widget-card{
- position:relative;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;
- width:100%;min-width:0;min-height:136px;text-align:left;padding:15px 14px 14px;
- border:1px solid var(--line);border-radius:23px;
- background:linear-gradient(150deg,rgba(248,250,255,.055),transparent 58%),var(--card);
- color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 6px 17px var(--shadow);
- -webkit-tap-highlight-color:transparent;transition:filter .17s ease,transform .17s ease
+/* SEYVEO Living Continuity: Business Picture scenes, not grey counter tiles.
+   One illustrated, accessible action per selected metric; data is unchanged. */
+#picturePage #pictureWidgetArea[hidden]{display:none!important}
+#picturePage #pictureWidgetArea{margin:0;min-width:0}
+#picturePage .home-widgets-heading{
+ display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+ margin:0 2px 10px;padding:0;min-width:0;
 }
-.home-widget-card--wide{grid-column:span 2;min-height:128px}
-.home-widget-card:active{transform:scale(.99);filter:brightness(1.08)}
-.home-widget-card:focus-visible{outline:2px solid var(--text);outline-offset:3px}
-.home-widget-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:14px}
-.home-widget-label{font-size:12px;font-weight:590;line-height:1.35;color:var(--secondary)}
-.home-widget-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--soft-line);background:var(--card2);color:var(--secondary);flex:none}
-.home-widget-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.home-widget-value{font-size:26px;font-weight:635;letter-spacing:-.045em;line-height:1.12;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.home-widget-card--wide .home-widget-value{font-size:28px}
-.home-widget-note{margin-top:7px;font-size:11px;line-height:1.35;color:var(--secondary)}
-.home-widget-card--wide .home-widget-note{margin-top:9px}
-.home-widget-arrow{position:absolute;right:12px;bottom:12px;display:grid;place-items:center;color:var(--secondary);width:16px;height:16px}
-.home-widget-arrow svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.home-widget-card .home-widget-note{padding-right:10px}
-.home-widgets-footer{margin:9px 1px 0;color:var(--secondary);font-size:10px;line-height:1.35}
-:root[data-theme=light] .home-widget-card{background:linear-gradient(144deg,#fff,#f2f5f8 85%);box-shadow:0 4px 15px rgba(49,65,82,.075),inset 0 1px 0 #fff}
+#picturePage .home-widgets-heading h2{
+ margin:0;font-size:13.5px;font-weight:490;letter-spacing:-.017em;line-height:1.4;
+}
+#picturePage .home-widgets-caption{
+ color:var(--secondary);font-size:9.5px;font-weight:440;line-height:1.4;
+ letter-spacing:.09em;white-space:normal;text-align:right;opacity:.75;
+}
+#picturePage .home-widgets-grid{
+ display:flex;flex-direction:column;gap:0;margin:0;padding:0;
+ width:100%;min-width:0;border:0;border-radius:0;
+ background:transparent;box-shadow:none;overflow:visible;
+}
+#picturePage .home-widget-card.picture-metric{
+ display:grid;grid-template-columns:74px minmax(0,1fr) auto;
+ align-items:center;gap:15px;width:100%;min-width:0;min-height:122px;height:auto;
+ margin:0;padding:18px 3px;
+ border:0;border-top:1px solid var(--soft-line);
+ border-radius:0;background:transparent;color:var(--text);
+ box-shadow:none;filter:none;transform:none;
+ text-align:left;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
+ transition:background-color .2s ease;
+}
+#picturePage .home-widget-card.picture-metric:last-child{border-bottom:1px solid var(--soft-line)}
+#picturePage .picture-metric-artwork{
+ display:grid;place-items:center;width:74px;height:78px;flex:none;
+ color:var(--text);opacity:.87;
+}
+#picturePage .picture-metric-artwork svg{
+ display:block;width:66px;height:66px;overflow:visible;
+ transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .28s ease;
+}
+#picturePage .picture-metric-copy{
+ display:flex;flex-direction:column;gap:7px;min-width:0;
+}
+#picturePage .picture-metric .home-widget-label{
+ font-size:clamp(15px,4.2vw,20px);font-weight:475;
+ line-height:1.28;letter-spacing:-.028em;color:var(--text);
+ overflow-wrap:anywhere;
+}
+#picturePage .picture-metric .home-widget-note{
+ margin:0;padding:0;display:block;color:var(--secondary);
+ font-size:11.5px;font-weight:420;line-height:1.5;overflow-wrap:anywhere;
+}
+#picturePage .picture-metric .home-widget-value{
+ display:block;align-self:center;justify-self:end;min-width:1.2ch;max-width:112px;
+ padding:0;font-size:clamp(24px,6vw,33px);font-weight:465;
+ line-height:1.15;letter-spacing:-.05em;text-align:right;
+ color:var(--text);overflow-wrap:anywhere;font-variant-numeric:tabular-nums;
+}
+#picturePage .picture-metric[data-home-widget=money] .home-widget-value{
+ font-size:clamp(14px,3.8vw,20px);letter-spacing:-.03em;
+}
+#picturePage .home-widget-card.picture-metric:active{
+ background:color-mix(in srgb,var(--text) 3%,transparent);
+}
+#picturePage .home-widget-card.picture-metric:active .picture-metric-artwork svg{
+ transform:scale(.96);opacity:1;
+}
+#picturePage .home-widget-card.picture-metric:focus-visible{
+ outline:2px solid var(--text);outline-offset:-2px;z-index:1;border-radius:8px;
+}
+@media(max-width:370px){
+ #picturePage .home-widget-card.picture-metric{
+  grid-template-columns:56px minmax(0,1fr) auto;gap:10px;min-height:103px;padding:12px 2px;
+ }
+ #picturePage .picture-metric-artwork{width:56px;height:64px}
+ #picturePage .picture-metric-artwork svg{width:52px;height:52px}
+ #picturePage .picture-metric .home-widget-label{font-size:15px}
+ #picturePage .picture-metric .home-widget-note{font-size:10.5px}
+ #picturePage .picture-metric .home-widget-value{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){
+ #picturePage .home-widget-card.picture-metric,
+ #picturePage .picture-metric-artwork svg{transition:none}
+}
+
 /* Management: selection, explicit add/hide, accessible move controls and a
    dedicated touch drag handle. This is not another settings submenu stack. */
 #homeWidgetsManageDialog{width:min(455px,calc(100% - 26px));max-height:min(84dvh,760px);padding:23px 17px 18px}
