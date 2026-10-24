@@ -47,8 +47,8 @@ const roadmapSource=load('assets/management.js');
 const masterIdeas=load('docs/SEYVEO-IDEAS-MASTER.md');
 assert.equal((roadmapSource.match(/\['living_continuity'/g)||[]).length,1,
  'Living Continuity belongs once to the existing roadmap, not a duplicate registry');
-assert.match(roadmapSource,/\['living_continuity'[^\n]*'plan'\]/,
- 'Living Continuity remains planned until real screens are validated');
+assert.match(roadmapSource,/\['living_continuity'[^\n]*'demo'\]/,
+ 'Living Continuity is a code demo, not device-certified ready');
 assert.match(masterIdeas,/Каждый экран — продолжение Главной/,
  'Canonical full-screen experience decision is recorded');
 assert.match(masterIdeas,/Управление → Наши идеи → Карта развития/,
