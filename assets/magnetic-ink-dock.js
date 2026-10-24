@@ -109,7 +109,7 @@ function init(){
   const next=Math.max(0,Math.min(pages.length-1,page+delta));
   if(next===page)return false;
   page=next;
-  ignoreClickUntil=Date.now()+420;
+  // Suppress synthetic post-swipe taps at pointerup, not keyboard navigation.
   paint(true);
   return true;
  }
