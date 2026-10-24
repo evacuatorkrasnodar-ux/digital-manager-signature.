@@ -1,4 +1,4 @@
-/* SEYVEO · Sayvi Surfaces v1 — a living object opens a real destination.
+/* SEYVEO · Sayvi Surfaces v2 — realistic test-drive without fake service actions — a living object opens a real destination.
  * Mail is a connection gateway until a provider is connected.
  * Documents use only user-selected files for this session; no upload/storage.
  * Health delegates to the existing local records, never fabricates readings. */
@@ -60,7 +60,108 @@ function openConnect(){
  if(row)row.click();
  else $('openManageConnections')?.click();
 }
+/* First-owner test drive. All examples are explicitly fictional.
+ * The only persisted demo state is a small count/mute preference in
+ * sessionStorage, never actual mail or document contents. */
+const DEMO_KEY='seyveo-sayvi-testdrive-later-v2';
+const demoScenes=Object.freeze({
+ mail:{
+  headline:'Письмо от клиента · пример',
+  message:'Клиент спрашивает, можно ли перенести встречу. Сэйви предлагает подготовить ответ.',
+  why:'В настоящей почте я покажу исходное письмо, объясню приоритет и дам проверить черновик.',
+  done:'✓ Черновик ответа подготовлен — только в демонстрации. Письмо НЕ отправлено и НЕ доставлено.'
+ },
+ contract:{
+  headline:'Договор требует внимания · пример',
+  message:'Сэйви обратила внимание на условие, которое стоит проверить до подписания.',
+  why:'В рабочем режиме я отмечу спорные места, покажу оригинал и попрошу вашего решения.',
+  done:'✓ Проверка показана на примере. Настоящий документ НЕ подписан и НЕ изменён.'
+ },
+ health:{
+  headline:'Время для себя · пример',
+  message:'Сэйви предлагает небольшую спокойную паузу.',
+  why:'Это добровольное напоминание, а не медицинское заключение или анализ ваших показателей.',
+  done:'✓ Демонстрация завершена. Реальные показатели НЕ изменены.'
+ }
+});
+function readDemoChoices(){
+ try{
+  const s=JSON.parse(sessionStorage.getItem(DEMO_KEY)||'{}');
+  return s&&typeof s==='object'&&!Array.isArray(s)?s:{};
+ }catch{return {}}
+}
+function demoChoice(kind,patch){
+ const all=readDemoChoices();
+ all[kind]={...all[kind],...patch};
+ try{sessionStorage.setItem(DEMO_KEY,JSON.stringify(all))}catch{}
+ return all[kind];
+}
+function demoScenario(kind){
+ const cfg=demoScenes[kind];if(!cfg)return;
+ const section=create('section','sv-deep-demo');
+ section.dataset.demoSubject=kind;
+ const status=create('p','sv-deep-demo-status');
+ status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+ section.append(create('small','sv-deep-demo-label','ТРЕНИРОВОЧНАЯ СЦЕНА · НЕ РЕАЛЬНОЕ СОБЫТИЕ'));
+ section.append(create('h2','sv-deep-demo-title',cfg.headline));
+ section.append(paragraph(cfg.message,'sv-deep-demo-message'));
+ const row=actions(),details=paragraph(cfg.why,'sv-deep-expand'),choice=create('div','sv-deep-demo-choice');
+ details.hidden=true;choice.hidden=true;
+ const state=readDemoChoices()[kind]||{};
+ if(state.muted){
+  status.textContent='Этот тренировочный сюжет скрыт по вашему выбору.';
+  const restore=intent('Вернуть пример',()=>{
+   demoChoice(kind,{muted:false,count:0});
+   render(kind);
+  });
+  section.append(actions(restore),status);
+  body.append(section);return;
+ }
+ let completed=false;
+ const explain=intent('Подробнее',()=>{
+  details.hidden=!details.hidden;
+  explain.setAttribute('aria-expanded',String(!details.hidden));
+ });
+ explain.setAttribute('aria-expanded','false');
+ const execute=intent('Исполнить',()=>{
+  if(completed)return;
+  completed=true;
+  execute.textContent='✓ Выполнено в демо';
+  execute.classList.add('sv-deep-intent--done');
+  execute.disabled=true;
+  status.textContent=cfg.done;
+  status.classList.add('sv-deep-demo-success');
+  later.hidden=true;explain.hidden=true;
+  choice.hidden=true;
+ },true);
+ const later=intent('Позже',()=>{
+  const count=Math.max(0,Math.min(20,Number(readDemoChoices()[kind]?.count)||0))+1;
+  demoChoice(kind,{count});
+  status.textContent=count<3?'Сэйви: хорошо, вернёмся к этому примеру, когда вы захотите.':'Сэйви: мы уже несколько раз откладывали это. Может, больше не напоминать?';
+  status.classList.remove('sv-deep-demo-success');
+  choice.replaceChildren();
+  if(count>=3){
+   choice.hidden=false;
+   const forget=intent('Больше не предлагать',()=>{
+    demoChoice(kind,{count:0,muted:true});
+    status.textContent='Сэйви: хорошо, этот пример больше не предлагаю.';
+    choice.hidden=true;later.hidden=true;execute.hidden=true;explain.hidden=true;
+   });
+   const remind=intent('Оставить на потом',()=>{
+    demoChoice(kind,{count:0});
+    status.textContent='Сэйви: оставлю этот пример доступным здесь. Автоматическое напоминание не настроено.';
+    choice.hidden=true;
+   });
+   choice.append(forget,remind);
+  }
+ });
+ row.append(execute,explain,later);
+ section.append(row,details,choice,status);
+ section.append(hint('Это режим проверки будущего поведения Сэйви. Ни писем, ни подписей, ни медицинских действий он не выполняет.'));
+ body.append(section);
+}
 function mailView(){
+ demoScenario('mail');
  const section=shelf();
  section.append(create('p','sv-deep-lead','Пока почта не подключена.'));
  section.append(paragraph('Я не вижу входящие письма и не могу выбирать важные или отвечать клиентам без вашего разрешения.'));
@@ -107,6 +208,7 @@ function renderFile(file,status,preview,link){
  }
 }
 function documentsView(){
+ demoScenario('contract');
  const section=shelf();
  section.append(create('p','sv-deep-lead','Ваши документы — под вашим контролем.'));
  section.append(paragraph('Выберите файл на телефоне. Он раскроется прямо здесь — без отправки на сервер.'));
@@ -137,6 +239,7 @@ function openExistingHealth(){
  return false;
 }
 function healthView(){
+ demoScenario('health');
  const section=shelf();
  section.append(create('p','sv-deep-lead','Здесь важны только ваши настоящие данные.'));
  section.append(paragraph('Откройте давление и пульс из личного пространства. Я не придумываю показатели и не ставлю диагнозы.'));
