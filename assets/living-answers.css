@@ -40,7 +40,7 @@
  text-decoration:none;text-align:left;
 }
 #sayviAnswerPage button.sa-credit::before{
- content:"↗";display:inline-block;margin-right:7px;opacity:.63;
+ content:"ⓘ";display:inline-block;margin-right:7px;opacity:.63;
 }
 /* Intent ink: these are phrases authored by Sayvi, not raised buttons. */
 #sayviAnswerPage button.sa-intent{
