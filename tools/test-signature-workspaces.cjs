@@ -8,6 +8,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const load=name=>fs.readFileSync(path.join(root,name),'utf8');
 const html=load('index.html'),tasks=load('assets/personal-tasks.js');
+const calendar=load('assets/calendar.js'),calendarCss=load('assets/calendar.css');
 const taskCss=load('assets/personal-tasks.css');
 const contextCss=load('assets/future-surfaces.css');
 const css=load('assets/sections-velvet.css');
@@ -23,6 +24,10 @@ assert.doesNotMatch(tasks,/personal-task-delete|seyveo-close-glyph/,'No X-shaped
 assert.match(taskCss,/#tasksPage \.personal-task-inline-call/);
 assert.match(taskCss,/#tasksPage \.personal-task-menu\[hidden\]/);
 assert.match(contextCss,/#tasksPage \.tasks-context-open svg/);
+assert.match(calendar,/btn\.dataset\.calendarCall=callTarget/);
+assert.match(calendar,/CustomEvent\('seyveo:call-request',\{detail:\{target:name\}\}\)/);
+assert.match(calendar,/else routeTask\(entry\.dataset\.calendarTask\)/,'Ordinary tasks keep navigation');
+assert.match(calendarCss,/#calendarPage \.cal-entry-phone svg/);
 for(const screen of ['tasksPage','calendarPage','picturePage','managePage',
   'lifePage','sayviSurfacePage','sayviAnswerPage'])
  assert.ok(css.includes('#'+screen),'Screen has shared Signature typography: '+screen);

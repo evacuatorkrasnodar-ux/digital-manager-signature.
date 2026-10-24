@@ -82,10 +82,14 @@ function dayItems(dayKey,includeDone=true){
 }
 function createEntry(item){
  const btn=text('button','cal-entry');btn.type='button';
+ const callTarget=item.source==='task'&&!item.done?window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'':'';
  const clock=text('span','cal-entry-time');
  if(item.source==='task'){
   clock.append(text('i','cal-entry-bullet'));btn.dataset.calendarTask=item.id;
-  btn.setAttribute('aria-label','Перейти к делу: '+item.title);
+  if(callTarget){
+   btn.dataset.calendarCall=callTarget;
+   btn.setAttribute('aria-label','Подготовить звонок: '+callTarget);
+  }else btn.setAttribute('aria-label','Перейти к делу: '+item.title);
  }else if(item.source==='space'){
   clock.append(text('i','cal-entry-bullet cal-entry-space-bullet'));
   btn.dataset.calendarSpaceItem=item.space;
@@ -106,7 +110,16 @@ function createEntry(item){
    +(item.remind===-1?' · напомнить в момент':item.remind?' · напомнить за '+(item.remind===60?'1 ч':item.remind+' мин'):'')
    +(item.note?' · '+item.note:'');
  copy.append(title,text('small','',subtitle));
- btn.append(clock,copy,text('span','cal-entry-chevron','›'));
+ const trailing=text('span',callTarget?'cal-entry-chevron cal-entry-phone':'cal-entry-chevron',callTarget?'':'›');
+ if(callTarget){
+  const ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+  const shape=document.createElementNS(ns,'path');
+  shape.setAttribute('d','M7.2 3.8 10 6.6 8.4 8.7a13 13 0 0 0 6.9 6.9l2.1-1.6 2.8 2.8-1.8 3c-.4.7-1.2 1.1-2 1C9 20 4 15 3.2 7.6c-.1-.8.3-1.6 1-2l3-1.8Z');
+  svg.append(shape);trailing.append(svg);
+ }
+ btn.append(clock,copy,trailing);
  return btn;
 }
 function fillAgenda(target,items,emptyTitle,emptyCaption){
@@ -599,7 +612,13 @@ for(const id of ['calendarAgenda','calendarDeadlineList']){
   const entry=event.target.closest('.cal-entry');
   if(!entry)return;
   if(entry.dataset.calendarEvent)openEvent(entry.dataset.calendarEvent);
-  else if(entry.dataset.calendarTask)routeTask(entry.dataset.calendarTask);
+  else if(entry.dataset.calendarTask){
+   const task=tasks().find(row=>row.id===entry.dataset.calendarTask&&!row.done);
+   const name=task?window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'':'';
+   if(name&&name===entry.dataset.calendarCall)
+    window.dispatchEvent(new CustomEvent('seyveo:call-request',{detail:{target:name}}));
+   else routeTask(entry.dataset.calendarTask);
+  }
   else if(entry.dataset.calendarSpaceRecord)window.dispatchEvent(new CustomEvent('seyveo:space-edit',{detail:{space:entry.dataset.calendarSpaceItem,id:entry.dataset.calendarSpaceRecord}}));
  });
 }
