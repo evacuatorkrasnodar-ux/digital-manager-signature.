@@ -61,7 +61,7 @@
   const target=match[1].replace(/(?:[,\s]+пожалуйста)\s*$/i,'').trim();
   // Future scheduling is NOT an immediate phone call. Let the reminder flow decide.
   if(!target||target.length>70||/[\d@:/\\]/.test(target)||
-   /\b(?:завтра|послезавтра|сегодня|через\s+\d+|в\s+(?:понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье))\b/i.test(target))return '';
+   /(?:^|[\s,])(?:завтра|послезавтра|сегодня|через\s+\d+|в\s+(?:понедельник|вторник|среду|четверг|пятницу|субботу|воскресенье))(?=$|[\s,.!?])/i.test(target))return '';
   return target;
  }
  return Object.freeze({parse,findMatches,isJuliaAlias:name=>juliaNames.has(key(name))});
