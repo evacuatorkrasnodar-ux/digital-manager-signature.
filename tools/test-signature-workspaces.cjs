@@ -38,7 +38,7 @@ for(const sheet of ['#notesDialog','#calendarSpaceDialog','.paper-editor-dialog'
   '.personal-call-dialog','#calendarPersonalTools'])
  assert.ok(css.includes(sheet),'Personal workspace inherits Signature: '+sheet);
 assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
-assert.match(html,/assets\/sections-velvet\.css\?v=10/);
+assert.match(html,/assets\/sections-velvet\.css\?v=\d+/);
 assert.match(html,/assets\/living-space\.css\?v=\d+/);
 assert.ok(html.search(/assets\/living-space\.css\?v=\d+/)>html.search(/assets\/dock-voice-life\.css\?v=\d+/),
  'Living Continuity is the final workspaces layer, Home remains untouched');
