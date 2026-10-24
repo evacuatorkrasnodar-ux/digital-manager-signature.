@@ -14,6 +14,8 @@ const cases=[
  ['Перезвони Мирону','Мирону'],
  ['Напомни позвонить Юльчику',''],
  ['Позвони Юльчику завтра',''],
+ ['Позвони Юльчику послезавтра',''],
+ ['Позвони Юльчику в понедельник',''],
  ['Позвони Юльчику в 8:00',''],
  ['Сэйви, позвони 89161234567',''],
  ['Позвони someone@example.com',''],
@@ -52,4 +54,4 @@ assert.doesNotMatch(task,/function personAliases\(/,'Legacy matching logic was r
 assert.match(css,/\.personal-call-dialog\[open\]\{/,'Call scene remains in original stylesheet');
 assert.equal((html.match(/id="seyveoCallDialog"/g)||[]).length,1);
 assert.equal((html.match(/id="seyveoCallDial"/g)||[]).length,1);
-console.log('PASS SEYVEO Call Intent: 14 commands, unambiguous and ambiguous people, real dialer handoff.');
+console.log('PASS SEYVEO Call Intent: 16 commands, unambiguous and ambiguous people, real dialer handoff.');
