@@ -133,10 +133,9 @@
  display:flex;align-items:center;justify-content:center;
  position:relative;isolation:isolate;
  box-sizing:border-box;min-height:45px;
- width:100%;min-width:0;max-width:100%;
- border:1px solid var(--line);border-radius:13px;
- background:var(--card2);overflow:hidden;
-}
+ width:100%;min-width:0;max-width:100%;border:0;border-radius:0;background:transparent;overflow:hidden;
+
+ border-bottom:1px solid var(--soft-line);}
 #calendarEventDialog .cal-date-control input[type=date]{
  position:absolute;inset:0;z-index:1;
  display:block;box-sizing:border-box;
@@ -158,7 +157,8 @@
 .cal-field input,.cal-field textarea{display:block;width:100%;min-width:0;min-height:45px;box-sizing:border-box;padding:9px 3px;border:0;border-radius:0;color:var(--text);background:transparent;font:inherit;font-size:16px;outline:0;color-scheme:inherit}
 .cal-field textarea{min-height:80px;resize:vertical}
 /* Display a dependable time label on iPhone while retaining its native picker. */
-.cal-time-control{position:relative;display:flex;align-items:center;min-width:0;min-height:45px;box-sizing:border-box;border:1px solid var(--line);border-radius:13px;background:var(--card2);overflow:hidden}
+.cal-time-control{position:relative;display:flex;align-items:center;min-width:0;min-height:45px;box-sizing:border-box;border:0;border-radius:0;background:transparent;overflow:hidden
+ border-bottom:1px solid var(--soft-line);}
 .cal-time-control input[type=time]{position:absolute;inset:0;z-index:1;width:100%;height:100%;min-height:45px;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
 .cal-time-display{display:block;min-width:0;padding:10px 12px;color:var(--secondary);font-size:16px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .cal-time-control[data-filled=true] .cal-time-display{color:var(--text)}
@@ -173,7 +173,7 @@
 :root[data-theme=light] .cal-time-clear{background:rgba(20,28,40,.045)}
 
 /* No extra card unless a chosen time is near a saved start time. */
-.cal-time-options{display:flex;flex-direction:column;gap:6px;min-width:0;padding:9px 11px;border:1px solid var(--soft-line);border-radius:13px;background:var(--card)}
+.cal-time-options{display:flex;flex-direction:column;gap:6px;min-width:0;padding:9px 11px;border:0;border-radius:0;background:transparent;}
 .cal-time-options[hidden]{display:none!important}
 .cal-time-options-message{font-size:12px;line-height:1.4;color:var(--text);overflow-wrap:anywhere}
 .cal-time-options-choices{display:flex;flex-wrap:wrap;gap:7px}
@@ -188,7 +188,7 @@
 .cal-kind-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:0;border:0;border-radius:0;background:transparent;}
 .cal-kind-option{position:relative;display:block;min-width:0;cursor:pointer}
 .cal-kind-option input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
-.cal-kind-option span{display:grid;place-items:center;min-height:42px;border-radius:11px;color:var(--secondary);font-size:13px;font-weight:550}
+.cal-kind-option span{display:grid;place-items:center;min-height:42px;border-radius:0;color:var(--secondary);font-size:13px;font-weight:550}
 .cal-kind-option input:checked+span{background:transparent;color:var(--text);box-shadow:inset 0 -1px 0 var(--text);}
 .cal-kind-option input:focus-visible+span{outline:2px solid var(--text);outline-offset:2px}
 .cal-extra{min-width:0}
@@ -203,12 +203,10 @@
 .cal-timing[hidden]{display:none!important}
 .cal-timing>summary{
  display:flex;align-items:center;gap:9px;box-sizing:border-box;
- width:100%;max-width:100%;min-height:48px;margin:0;padding:10px 12px;
- border:1px solid var(--line);border-radius:14px;
- background:linear-gradient(145deg,rgba(255,255,255,.024),transparent 70%),var(--card2);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+ width:100%;max-width:100%;min-height:48px;margin:0;padding:10px 12px;border:0;border-radius:0;background:transparent;box-shadow:none;
  color:var(--text);font-size:12px;font-weight:560;line-height:1.4
-}
+
+ border-bottom:1px solid var(--soft-line);}
 .cal-timing-brief{
  margin-left:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;
  white-space:nowrap;color:var(--secondary);font-size:11px;font-weight:460;text-align:right
@@ -221,7 +219,7 @@
 .cal-timing[open]>summary::after{transform:rotate(225deg);margin:4px 3px 0 0}
 :root[data-theme=light] .cal-timing>summary{box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
 .cal-timing-content{display:flex;flex-direction:column;gap:7px;padding:9px 0 1px;min-width:0}
-.cal-timing-settings{overflow:hidden;min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.cal-timing-settings{overflow:hidden;min-width:0;border:0;border-radius:0;background:transparent;}
 .cal-timing-setting+.cal-timing-setting{border-top:1px solid var(--soft-line)}
 .cal-timing-setting>summary{
  display:flex;align-items:center;gap:8px;box-sizing:border-box;
