@@ -420,3 +420,28 @@
 #manageRoadmapDialog .manage-roadmap-progress{
  font-weight:440;
 }
+
+
+/* Quiet Actions within settings dialogs: visible wording, no heavy button capsules.
+   Real click targets remain at least 44px tall. */
+#manageConnectionsDialog .info-actions .btn,
+#manageDataDialog .info-actions .btn,
+#manageRoadmapDialog .info-actions .btn{
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ flex:0 1 auto;min-height:44px;
+ padding:9px 4px 9px 0;border:0!important;border-radius:0!important;
+ color:var(--text)!important;background:transparent!important;
+ box-shadow:none!important;text-shadow:none!important;
+ font-size:13px;font-weight:480;line-height:1.4;
+ text-decoration:underline;text-decoration-color:var(--soft-line);
+ text-underline-offset:6px;
+}
+#manageConnectionsDialog .info-actions,
+#manageDataDialog .info-actions,
+#manageRoadmapDialog .info-actions{
+ display:flex;align-items:center;gap:20px;
+ border-top:1px solid var(--soft-line);padding-top:10px;
+}
+#manageConnectionsDialog .info-actions .btn:active,
+#manageDataDialog .info-actions .btn:active,
+#manageRoadmapDialog .info-actions .btn:active{opacity:.64}
