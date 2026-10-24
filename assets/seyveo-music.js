@@ -238,7 +238,10 @@ function switchTrack(i,autoplay=false){
    if(version!==selectVersion||tracks[index]!==file)return;
    verifiedSource=result;
    updateSourceLabel();
-  }).catch(()=>{verifiedSource=null;updateSourceLabel()});
+  }).catch(()=>{
+   if(version!==selectVersion||tracks[index]!==file)return;
+   verifiedSource=null;updateSourceLabel();
+  });
  }
  // Bounded local ID3 read never interrupts or delays the real audio element.
  if(metadata?.describe){
