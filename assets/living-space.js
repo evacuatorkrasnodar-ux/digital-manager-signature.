@@ -25,7 +25,7 @@ const route=()=>{
  if(hash==='#picture')return 'picture';
  if(hash==='#calendar')return 'calendar';
  if(hash==='#life')return 'life';
- if(/^#sayvi-(mail|documents|health)$/.test(hash)||hash==='#sayvi-answer'||hash==='#sayvi-music')return 'sayvi';
+ if(/^#sayvi-(mail|documents|health)$/.test(hash)||hash==='#sayvi-answer'||hash==='#sayvi-music'||hash==='#sayvi-video')return 'sayvi';
  return 'home';
 };
 
@@ -43,7 +43,8 @@ const voiceTargets={
  life:'#lifePage .life-description',
  picture:'#pictureLead',
  manage:'#managePage #manageOverview > .manage-heading > p:last-child',
- music:'#sayviMusicPage .sv-music-intro'
+ music:'#sayviMusicPage .sv-music-intro',
+ video:'#sayviVideoPage .sv-video-intro'
 };
 let directorFrame=0,lastDirectorScreen='',lastDirectorText='';
 let pendingTaskCount=null;
@@ -51,6 +52,7 @@ function directorScreen(page){
  if(page==='home')return 'home';
  if(page==='sayvi'){
   if(location.hash==='#sayvi-music')return 'music';
+  if(location.hash==='#sayvi-video')return 'video';
   return 'sayvi';
  }
  return page;
@@ -151,7 +153,7 @@ function before(next){
  current=next;
 }
 function cascade(page){
- const target=page==='sayvi'?( $('sayviAnswerPage')?.hidden===false?$('sayviAnswerPage'): $('sayviMusicPage')?.hidden===false?$('sayviMusicPage'):screens[page]):screens[page];
+ const target=page==='sayvi'?( $('sayviAnswerPage')?.hidden===false?$('sayviAnswerPage'): $('sayviMusicPage')?.hidden===false?$('sayviMusicPage'): $('sayviVideoPage')?.hidden===false?$('sayviVideoPage'):screens[page]):screens[page];
  if(!target||reduce.matches)return;
  target.classList.remove('sv-cascade');
  cancelAnimationFrame(frame);
@@ -166,7 +168,7 @@ function after(next){
  if(current!==next)before(next);
  // The music stage is short and scrollable. Avoid FLIP interpolation across
  // its moving scrollport on iOS, which can make the single sphere flicker.
- if(location.hash==='#sayvi-music'){
+ if(location.hash==='#sayvi-music'||location.hash==='#sayvi-video'){
   animation?.cancel();
   animation=null;
   beforeRect=null;
