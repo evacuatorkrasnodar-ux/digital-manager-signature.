@@ -55,6 +55,47 @@ html.seyveo-conversation #seyveoCompanion,
 html:has(#ask:not([hidden])) #seyveoCompanion{
   display:none!important;
 }
+/* Invisible Home Header.
+ * Retire only the two competing top buttons; preserve their underlying data,
+ * the world popup from Quickrail, and accessible passports in Management. */
+#homeHeader:not([hidden]){
+  position:relative;
+  height:0;
+  min-height:0;
+  margin:0;
+  padding:0;
+  overflow:visible;
+}
+#homeHeader .home-brand-trigger,
+#homeHeader .home-owner-trigger{
+  display:none!important;
+}
+#homeHeader .home-header-actions{
+  position:absolute;
+  right:0;
+  top:0;
+  width:0;
+  height:0;
+  margin:0;
+  gap:0;
+  overflow:visible;
+  pointer-events:none;
+}
+#homeHeader .home-world-anchor{width:0;height:0;overflow:visible}
+#homeHeader .home-world-popover:not([hidden]){
+  position:fixed;
+  z-index:90;
+  top:var(--seyveo-world-top,calc(env(safe-area-inset-top,0px) + 60px));
+  right:max(14px,env(safe-area-inset-right,0px));
+  left:auto;
+  pointer-events:auto;
+}
+#homeHeader .home-passports{pointer-events:auto}
+/* Keep accessibility and calm visual rhythm in the re-homed passports. */
+#managePage #seyveoCleanManageMenu #openStudioPassportFromManage,
+#managePage #seyveoCleanManageMenu #openCompanyPassportFromManage{
+  min-height:58px;
+}
 /* Управление: the elements themselves unfurl, without separate panels. */
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{
   border:0;
