@@ -402,6 +402,7 @@ function showLedger(items,{demo=false}={}){
   card.addEventListener('pointerdown',event=>{
    if(event.target.closest('button')||!event.isPrimary)return;
    pointerStart={x:event.clientX,y:event.clientY,id:event.pointerId};
+   try{card.setPointerCapture(event.pointerId)}catch{}
   });
   card.addEventListener('pointercancel',()=>{pointerStart=null});
   card.addEventListener('pointerup',event=>{
