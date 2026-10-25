@@ -7,6 +7,7 @@ const root=require('node:path').resolve(__dirname,'..');
 const load=p=>fs.readFileSync(require('node:path').join(root,p),'utf8');
 const js=load('assets/living-conversation.js');
 const css=load('assets/conversation-refined.css');
+const dockCss=load('assets/floating-navigation.css');
 const home=load('index.html');
 const docs=load('docs/SEYVEO-FUTURE-EXPERIENCE.md');
 assert.match(js,/const compact=\$\('ask'\)\.querySelector\('\.composer-compact'\)/);
@@ -26,6 +27,12 @@ assert.match(home,/assets\/conversation-refined\.css\?v=\d+/);
 assert.match(home,/assets\/living-conversation\.js\?v=16/);
 assert.equal((home.match(/<form class="prompt" id="ask"/g)||[]).length,1);
 assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
+// A retained message draft must never resurrect the retired slim bar above
+// the fixed dock. All Ask entry points use the SAME conversation writer.
+assert.match(dockCss,/html:not\(\.seyveo-conversation\) #ask\.prompt:not\(\.expanded\):not\(\[data-composer-mode="notes"\]\)\{\s*display:none!important;/);
+assert.match(home,/function openComposer\(\)\{[\s\S]*?window\.SEYVEO_CONVERSATION\.open\(\);\s*return;/);
+assert.match(home,/homeOrb\.addEventListener\('click',[\s\S]*?window\.SEYVEO_CONVERSATION\.open\(\)/);
+assert.match(home,/assets\/floating-navigation\.css\?v=30/,'Updated dock stylesheet is cache-busted');
 assert.match(docs,/SEYVEO Open Canvas/);
 assert.match(docs,/Invisible Header/);
 // SEYVEO Full Bleed: remove unnecessary horizontal gutters only inside chat.
