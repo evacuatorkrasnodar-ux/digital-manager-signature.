@@ -63,6 +63,13 @@ assert.doesNotMatch(future,/background-color:var\(--card\)!important|box-shadow:
 assert.doesNotMatch(future,/:root\[data-seyveo-presence=listening\] \.dock>\.assistant-button\s*\{/,'No duplicate painted voice capsule');
 assert.doesNotMatch(continuity,/--sv-living-dock-glint/,'No redundant scene ring');
 assert.match(continuity,/\.sv-cascade/,'Single-workspace reveal preserved');
+// Exactly one Quiet Atmosphere background per theme, shared across ALL pages.
+assert.match(continuity,/:root:not\(\[data-theme=light\]\) body\{/,'Dark graphite is shared by every page');
+assert.match(continuity,/:root\[data-theme=light\] body\{/,'Light atmosphere is also shared');
+assert.doesNotMatch(continuity,/body:has\(#homePage:not\(\[hidden\]\)\)/,'No Home-only backdrop override');
+assert.match(continuity,/rgba\(222,224,230,\.077\)/,'Pearl glow is deliberately softer');
+assert.doesNotMatch(continuity,/background-attachment:fixed|backdrop-filter:blur\(/,'No scroll-heavy background filters');
+assert.match(html,/assets\/living-space\.css\?v=17/,'New atmosphere stylesheet bypasses stale PWA cache');
 assert.match(wellness,/#calendarPersonalTools \.pw-water-insight\{/,'Health insights still exist');
 assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.calendar-space-edit textarea\{/,'Real editors stay mounted');
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
