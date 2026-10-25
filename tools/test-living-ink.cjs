@@ -86,10 +86,14 @@ assert.match(decisionCss,/#homePage #orbCluster/);
 assert.doesNotMatch(decisionJs,/lm-film-card|sv-decision|clean cinematic director/);
 assert.doesNotMatch(decisionCss,/\.lm-film-card|\.sv-decision/);
 assert.match(decisionCss,/\.lm-reveal \.lm-inline-item:nth-child\(2\)/,'Second flat row rises after the first');
-assert.match(decisionCss,/\.lm-gather \.lm-secondary/,'Rising rows gather on the same plane');
+assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-field/,'Three original rows gather in a single drawn card');
+assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-inline-item/,'The second and third task stay visible after merging');
+assert.doesNotMatch(decisionCss,/#seyveoLivingMoment\.lm-gather \.lm-secondary\{\s*max-height:0/,'Gather never deletes secondary items');
+assert.match(decisionJs,/controls\.append\(open\)/,'One details action on the featured card');
+assert.doesNotMatch(decisionJs,/hold\(\(\)=>disappear\(\),TIMING\.quiet\)/,'No automatic dismissal of the gathered card');
 assert.match(decisionJs,/function gatherPreview/,'Three examples gather into one scene');
 assert.doesNotMatch(decisionJs,/sessionStorage\.getItem\(SESSION\)/,'Same-tab reload shows the demo');
-assert.match(html,/living-moment\.css\?v=35/);
+assert.match(html,/living-moment\.css\?v=36/);
 assert.match(html,/living-moment\.js\?v=\d+/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
