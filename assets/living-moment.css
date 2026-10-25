@@ -610,6 +610,97 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment .lm-secondary{display:none}
 }
 
+/* SEYVEO Quiet Cinema · original rising cards → one decision.
+   Only four TEMPORARY illustrated sheets inside the existing Home field.
+   Never paint a second dock, fixed overlay, backdrop or assistant. */
+#homePage #seyveoLivingMoment .lm-film{
+ position:absolute;inset:0;z-index:3;isolation:isolate;
+ overflow:hidden;pointer-events:none;
+}
+#homePage #seyveoLivingMoment .lm-film-card{
+ --film-step:var(--film-index,0);
+ position:absolute;box-sizing:border-box;
+ left:2%;width:96%;height:54px;
+ bottom:calc(6px + var(--film-step) * 47px);
+ display:flex;align-items:center;gap:14px;
+ padding:5px 13px;min-width:0;
+ color:var(--text);
+ background:linear-gradient(150deg,rgba(41,44,50,.97),rgba(25,27,32,.98));
+ border:1px solid rgba(222,226,234,.20);
+ border-radius:15px;
+ box-shadow:0 8px 18px rgba(0,0,0,.12);
+ opacity:0;transform:translate3d(0,90px,0) scale(.98);
+ animation:
+  lm-film-rise 720ms cubic-bezier(.18,.8,.22,1) both,
+  lm-film-gather 700ms cubic-bezier(.24,.77,.31,1) both;
+ animation-delay:
+  calc(120ms + var(--film-step) * 190ms),
+  2200ms;
+}
+#homePage #seyveoLivingMoment .lm-film-art{
+ width:40px;height:40px;flex:none;display:grid;place-items:center;
+}
+#homePage #seyveoLivingMoment .lm-film-art svg{
+ width:39px;height:39px;stroke-width:1.75;
+}
+#homePage #seyveoLivingMoment .lm-film-title{
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:13px;font-weight:470;letter-spacing:-.014em;
+}
+#homePage #seyveoLivingMoment .lm-film-running .lm-scene{
+ opacity:0;pointer-events:none;
+}
+@keyframes lm-film-rise{
+ 0%{opacity:0;transform:translate3d(0,90px,0) scale(.98)}
+ 55%{opacity:1}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes lm-film-gather{
+ 0%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 70%{opacity:.75}
+ 100%{
+  opacity:0;
+  transform:translate3d(0,calc(var(--film-step) * 47px - 24px),0) scale(.94);
+ }
+}
+/* Horizontal gestures defer only; explicit completion exits from the right.
+   All motion uses opacity and transform and ends in the same DOM surface. */
+#homePage #seyveoLivingMoment .lm-scene.lm-swipe-out{
+ opacity:0;pointer-events:none;
+ transform:translate3d(var(--lm-exit-x,260px),-3px,0) scale(.96);
+ transition:opacity 320ms ease,transform 350ms cubic-bezier(.36,.05,.8,.4);
+}
+#homePage #seyveoLivingMoment .lm-scene.lm-swipe-in{
+ opacity:0;pointer-events:none;
+ transform:translate3d(-25px,5px,0) scale(.995);
+ transition:none;
+}
+#homePage #seyveoLivingMoment .lm-actions[hidden],
+#homePage #seyveoLivingMoment .lm-secondary[hidden]{display:none!important}
+#homePage #seyveoLivingMoment .lm-field{
+ touch-action:pan-y;
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-film-card{
+ color:#283240;
+ background:linear-gradient(155deg,rgba(252,253,254,.97),rgba(231,235,241,.98));
+ border-color:rgba(83,100,122,.24);
+ box-shadow:0 6px 14px rgba(35,49,66,.07);
+}
+@media(max-height:650px){
+ #homePage #seyveoLivingMoment .lm-film-card{height:44px;bottom:calc(3px + var(--film-step) * 37px);padding:3px 10px}
+ #homePage #seyveoLivingMoment .lm-film-art,
+ #homePage #seyveoLivingMoment .lm-film-art svg{width:33px;height:33px}
+ #homePage #seyveoLivingMoment .lm-film-title{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-film{display:none!important}
+ #homePage #seyveoLivingMoment .lm-film-card{animation:none!important}
+ #homePage #seyveoLivingMoment .lm-scene.lm-swipe-out,
+ #homePage #seyveoLivingMoment .lm-scene.lm-swipe-in{
+  transition:none!important;transform:none!important;
+ }
+}
+
 /* The optional demonstration has one quiet, in-flow entry point.
    This is text, not a glass card, fixed overlay or duplicate dock action. */
 #homePage .lm-demo-launch{
