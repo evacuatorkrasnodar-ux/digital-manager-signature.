@@ -1,125 +1,82 @@
-/* SEYVEO · Management / Black Velvet card language.
-   The 13 Management overview buttons only. Their markup, illustrations,
-   labels, accessibility and navigation handlers are untouched.
-   Same translucent ink outline as the Home decisions; no backdrop filters. */
-
+/* SEYVEO · Quiet navigation rows / restored original editorial language.
+ * Only the Management overview list; existing labels, icons and routes stay.
+ * No card capsules, gradients, page backgrounds or added GPU layers.
+ */
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
-  margin-bottom:17px;
+ margin-bottom:18px;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{
-  display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:8px;
-  padding:0;
-  overflow:visible!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
+ display:flex;flex-direction:column;gap:0;
+ padding:0!important;margin:0;
+ overflow:visible!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
 }
-
-/* One calm material for every entry; no privileged gray filled cards. */
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-  position:relative;
-  isolation:isolate;
-  box-sizing:border-box;
-  width:100%;
-  min-width:0;
-  min-height:76px;
-  margin:0;
-  padding:9px 13px 9px 11px;
-  gap:10px;
-  border:1px solid rgba(226,230,238,.22)!important;
-  border-radius:20px!important;
-  background:linear-gradient(155deg,rgba(248,250,255,.052),rgba(248,250,255,.013) 75%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
-  color:var(--text);
-  transition:background-color .17s ease,border-color .17s ease,transform .17s ease;
-  -webkit-tap-highlight-color:transparent;
+ box-sizing:border-box;display:flex;align-items:center;
+ position:relative;width:100%;min-width:0;
+ min-height:78px;margin:0;
+ padding:10px 6px 11px 5px;gap:15px;
+ color:var(--text);
+ background:transparent!important;border:0!important;
+ border-bottom:1px solid var(--soft-line)!important;
+ border-radius:0!important;box-shadow:none!important;
+ transform:none!important;transition:opacity .16s ease;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:last-child{
+ border-bottom:0!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link + .manage-row::before{
-  content:none!important;
-  display:none!important;
+ content:none!important;display:none!important;
 }
-/* Compact editorial drawing; retain the original SVG paths. */
 html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
-  width:44px;
-  min-width:44px;
-  height:46px;
-  opacity:.89;
+ width:51px;min-width:51px;height:51px;display:grid;place-items:center;
+ color:var(--text);opacity:.87;
+ border:0!important;background:transparent!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
-  width:38px;
-  height:38px;
+ width:43px;height:43px;stroke-width:1.4;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text{
-  gap:3px;
-  padding:0;
+ display:flex;flex-direction:column;align-items:flex-start;
+ gap:4px;min-width:0;padding:0;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{
-  font-size:15px;
-  font-weight:475;
-  line-height:1.26;
+ font-size:16px;font-weight:500;line-height:1.31;
+ letter-spacing:-.025em;color:var(--text);
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{
-  font-size:11.5px;
-  font-weight:410;
-  line-height:1.36;
+ font-size:12px;font-weight:410;line-height:1.42;
+ color:var(--secondary);overflow-wrap:anywhere;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-chevron{
-  width:11px;
-  min-width:11px;
-  height:20px;
+ flex:none;width:10px;min-width:10px;opacity:.38;
 }
 @media(hover:hover) and (pointer:fine){
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
-    border-color:rgba(239,243,251,.36)!important;
-    background:linear-gradient(155deg,rgba(248,250,255,.079),rgba(248,250,255,.022) 75%)!important;
-  }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
+  opacity:.77;
+ }
 }
-html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:active{
-  transform:translate3d(0,1px,0);
-  border-color:rgba(239,243,251,.3)!important;
-}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:active{opacity:.64}
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:focus-visible{
-  outline:2px solid var(--text);
-  outline-offset:3px;
-}
-/* Light theme: the same thin border and translucent treatment. */
-html.sv-space-active[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-  border-color:rgba(61,77,99,.22)!important;
-  background:linear-gradient(155deg,rgba(255,255,255,.43),rgba(255,255,255,.15) 75%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.36)!important;
-}
-@media(hover:hover) and (pointer:fine){
-  html.sv-space-active[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
-    border-color:rgba(61,77,99,.34)!important;
-    background:linear-gradient(155deg,rgba(255,255,255,.57),rgba(255,255,255,.22) 75%)!important;
-  }
+ outline:2px solid var(--text);outline-offset:-2px;
 }
 @media(max-width:375px){
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{gap:7px}
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-    min-height:74px;
-    padding:8px 10px;
-    gap:8px;
-    border-radius:18px!important;
-  }
-  html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
-    width:39px;
-    min-width:39px;
-    height:42px;
-  }
-  html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
-    width:35px;
-    height:35px;
-  }
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{font-size:14px}
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{font-size:11px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+  min-height:74px;padding:9px 4px;gap:10px;
+ }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
+  width:43px;min-width:43px;height:46px;
+ }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
+  width:39px;height:39px;
+ }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{font-size:15px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{font-size:11.5px}
 }
 @media(prefers-reduced-motion:reduce){
-  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-    transition:none!important;
-    transform:none!important;
-  }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+  transition:none!important;
+ }
 }
