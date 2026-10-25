@@ -10,6 +10,17 @@ function init(){
  const buttonIds=['navHome','navTasks','navPicture','navManage'];
  const buttons=buttonIds.map(id=>document.getElementById(id));
  if(!dock||!center||buttons.some(b=>!b)||window.SEYVEO_MAGNETIC_INK)return;
+ // Provide 1.6s tactile acknowledgement without a permanent active frame.
+ let feedbackTimer=0;
+ function showSelectionFeedback(button){
+  window.clearTimeout(feedbackTimer);
+  buttons.forEach(b=>b.classList.remove('sv-nav-feedback'));
+  button.classList.add('sv-nav-feedback');
+  feedbackTimer=window.setTimeout(()=>{
+   button.classList.remove('sv-nav-feedback');
+   feedbackTimer=0;
+  },1600);
+ }
  // The old upper favorites rail is not another navigation system.
  const rail=document.getElementById('assistantQuickrail');
  const track=document.getElementById('assistantQuickTrack');
@@ -65,6 +76,7 @@ function init(){
   button.addEventListener('click',event=>{
    // Programmatic clicks must continue to reach original navigation handlers.
    if(!event.isTrusted||musicMode())return;
+   showSelectionFeedback(button);
    event.preventDefault();
    event.stopImmediatePropagation();
    invoke(items[index].id);
@@ -74,7 +86,12 @@ function init(){
  window.addEventListener('seyveo:route-changed',paint);
  document.addEventListener('seyveo:music-dock-exit',()=>{
   // The music controls restore the same buttons, never create a second dock.
-  buttons.forEach(button=>delete button.dataset.svFixedAction);
+  window.clearTimeout(feedbackTimer);
+  feedbackTimer=0;
+  buttons.forEach(button=>{
+   button.classList.remove('sv-nav-feedback');
+   delete button.dataset.svFixedAction;
+  });
   paint();
  });
  paint();
