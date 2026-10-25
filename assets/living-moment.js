@@ -460,12 +460,19 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  }
  function moveNext({defer=false}={}){
   if(!current())return;
-  // Swiping only changes on-screen order; never deletes or completes a real task.
+  // Swiping changes only on-screen priority, not saved status or user data.
   const active=current();
+  if(defer&&queue.length===1){
+   collectionOpen=false;body.hidden=true;
+   head.querySelector('.lm-task-caption').textContent=
+     'Отложено до следующего просмотра · не удалено';
+   return;
+  }
   if(defer&&queue.length>1){
    const index=queue.indexOf(active);
    queue.splice(index,1);queue.push(active);
    deferredNote='Отложено в этом просмотре · дело сохранено.';
+   head.querySelector('.lm-task-caption').textContent='Следующее дело · остальные сохранены';
   }else collectionPage++;
   collectionOpen=false;
   render();
