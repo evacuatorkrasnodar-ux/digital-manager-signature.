@@ -147,7 +147,10 @@ function createSurface(primary,other=[],real=false){
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР'));
+ const sequence=[primary,...other];
+ const position=create('span','lm-field-measure',
+  (real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР')+' · 01 / '+String(sequence.length).padStart(2,'0'));
+ top.append(label,position);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('button','lm-hero-art lm-hero-art--'+primary.kind);
@@ -198,8 +201,13 @@ function createSurface(primary,other=[],real=false){
  const secondary=create('div','lm-secondary');
  function renderSecondary(){
   secondary.replaceChildren();
-  const limit=window.innerHeight<=710?1:2;
-  for(const item of [primary,...other].filter(value=>value!==shown).slice(0,limit)){
+  // One next item on iPhone X and shorter devices; all items remain
+  // reachable by tapping through the circular queue, with zero inner scroll.
+  const limit=window.innerHeight<=860?1:2;
+  const ordered=[primary,...other];
+  const activeIndex=ordered.indexOf(shown);
+  const upcoming=ordered.slice(activeIndex+1).concat(ordered.slice(0,activeIndex));
+  for(const item of upcoming.slice(0,limit)){
    const row=create('button','lm-inline-item');
    row.type='button';row.dataset.lmKind=item.kind;
    row.setAttribute('aria-label','Показать: '+item.title);
@@ -229,6 +237,9 @@ function createSurface(primary,other=[],real=false){
    artwork.replaceChildren(icon(item.kind));
    artwork.setAttribute('aria-label','Открыть: '+item.title);
    label.textContent=item.category;
+   position.textContent=(real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР')+' · '+
+    String(sequence.indexOf(item)+1).padStart(2,'0')+' / '+
+    String(sequence.length).padStart(2,'0');
    headline.textContent=item.title;
    description.textContent=item.body;
    expanded=false;
