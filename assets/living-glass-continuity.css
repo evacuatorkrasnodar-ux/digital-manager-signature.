@@ -192,3 +192,174 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#lifePage,#picturePage,#manage
   transition:none!important;
  }
 }
+
+/* SEYVA Glass Cinema · staged reading first, decisions only after gathering.
+   Each story card is one of the actual items in the final stack. */
+#homePage #seyveoLivingMoment .lm-cinema-stage{
+ position:relative;
+ width:100%;
+ max-width:470px;
+ height:192px;
+ margin:0 auto 8px;
+ overflow:visible;
+ pointer-events:none;
+ animation:sv-cinema-fold 670ms 6010ms cubic-bezier(.22,.8,.24,1) both;
+}
+#homePage #seyveoLivingMoment .lm-cinema-card{
+ --cinema-index:0;
+ position:absolute;left:4px;right:4px;top:0;
+ display:grid;
+ grid-template-columns:69px minmax(0,1fr);
+ align-items:center;
+ gap:14px;
+ min-height:156px;
+ box-sizing:border-box;
+ padding:18px 18px 18px 15px;
+ border:1px solid rgba(238,240,247,.23);
+ border-radius:25px;
+ background:
+  linear-gradient(156deg,rgba(255,255,255,.13),rgba(236,239,245,.04) 60%,rgba(16,19,25,.11)),
+  rgba(46,49,57,.95);
+ color:#f9fafc;
+ box-shadow:0 10px 26px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.13);
+ pointer-events:none;
+ animation:sv-cinema-card-join 2060ms cubic-bezier(.18,.82,.2,1) both;
+ animation-delay:calc(var(--cinema-index) * 2010ms);
+}
+#homePage #seyveoLivingMoment .lm-cinema-emblem{
+ width:68px;height:74px;display:grid;place-items:center;
+ color:#f2f4f8;
+}
+#homePage #seyveoLivingMoment .lm-cinema-emblem .lm-art-svg{
+ display:block;width:68px;height:68px;
+ stroke:currentColor;stroke-width:1.65;opacity:.96;
+}
+#homePage #seyveoLivingMoment .lm-cinema-copy{
+ display:flex;flex-direction:column;align-items:flex-start;
+ gap:5px;min-width:0;
+}
+#homePage #seyveoLivingMoment .lm-cinema-kicker{
+ font-size:9.8px;letter-spacing:.12em;
+ font-weight:550;color:#c5ccd7;
+}
+#homePage #seyveoLivingMoment .lm-cinema-title{
+ font-size:clamp(17px,4.5vw,21px);
+ line-height:1.28;font-weight:540;letter-spacing:-.025em;
+ color:#fafbff;overflow-wrap:anywhere;
+}
+#homePage #seyveoLivingMoment .lm-cinema-note{
+ margin:0;font-size:12px;line-height:1.5;
+ color:#d4d9e2;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+#homePage #seyveoLivingMoment .lm-cinema-remaining{
+ position:absolute;top:155px;left:5%;right:5%;text-align:center;
+ color:var(--secondary);font-size:10px;
+ letter-spacing:.045em;
+ animation:sv-cinema-more 1200ms 4500ms both;
+}
+#homePage #seyveoLivingMoment.lm-collection-cinematic .lm-decision-stack{
+ animation:sv-cinema-stack-assemble 660ms 6030ms cubic-bezier(.22,.8,.2,1) both!important;
+ pointer-events:none!important;
+}
+@keyframes sv-cinema-card-join{
+ 0%{opacity:0;transform:translate3d(0,18px,0) scale(.94)}
+ 18%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 72%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 100%{opacity:0;transform:translate3d(0,42px,0) scale(.78)}
+}
+@keyframes sv-cinema-stack-assemble{
+ 0%{opacity:0;transform:translate3d(0,26px,0) scale(.88)}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes sv-cinema-fold{
+ 0%{opacity:1;height:192px;margin-bottom:8px}
+ 100%{opacity:0;height:0;margin-bottom:0}
+}
+@keyframes sv-cinema-more{
+ 0%,70%{opacity:0}
+ 100%{opacity:.84}
+}
+/* Stacked cards keep their content visible even while collapsed. */
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-front{
+ display:grid;grid-template-columns:49px minmax(0,1fr);
+ align-items:center;gap:10px;
+ margin:0 13px 1px;
+ padding:10px 2px 13px;
+ border-top:1px solid rgba(240,242,248,.11);
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-icon{
+ width:47px;height:55px;display:grid;place-items:center;
+ color:#f4f6fb;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-icon .lm-art-svg{
+ width:46px;height:46px;stroke-width:1.6;opacity:.92;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-copy{
+ min-width:0;display:flex;flex-direction:column;gap:5px;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-when{
+ font-size:10px;line-height:1.35;letter-spacing:.085em;
+ color:#c7cedb;font-weight:520;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-name{
+ font-size:clamp(16px,4.45vw,20px);line-height:1.24;
+ font-weight:540;letter-spacing:-.025em;color:#f9fafc;
+ overflow-wrap:anywhere;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-summary{
+ margin:0;font-size:12px;line-height:1.48;color:#d0d7e2;
+ overflow-wrap:anywhere;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-deeper{
+ display:flex;flex-wrap:wrap;gap:7px 18px;
+ margin-top:11px;padding-top:9px;border-top:1px solid rgba(240,244,250,.12);
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-text-action{
+ min-height:44px;padding:9px 0;
+ font:inherit;font-size:12px;font-weight:520;
+ color:#edf2f8;border:0;background:transparent;
+ border-radius:999px;text-decoration:underline;text-underline-offset:4px;
+ cursor:pointer;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-text-action:focus-visible{
+ outline:2px solid #fff;outline-offset:3px;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack.lm-decision-swipe{
+ animation:sv-decision-small-move 320ms cubic-bezier(.22,.8,.2,1);
+}
+@keyframes sv-decision-small-move{
+ 0%{opacity:.65;transform:translate3d(-16px,0,0)}
+ 100%{opacity:1;transform:translate3d(0,0,0)}
+}
+#homePage #seyveoLivingMoment .lm-decision-stack [hidden]{
+ display:none!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-cinema-card{
+ background:linear-gradient(154deg,rgba(255,255,255,.93),rgba(235,239,245,.96));
+ border-color:rgba(58,70,90,.18);color:#263241;
+ box-shadow:0 7px 21px rgba(46,59,78,.09),inset 0 1px #fff;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment :is(.lm-cinema-title,.lm-cinema-emblem){
+ color:#243040;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment :is(.lm-cinema-kicker,.lm-cinema-note){
+ color:#5a687b;
+}
+@media(max-width:355px){
+ #homePage #seyveoLivingMoment .lm-cinema-card{
+  gap:10px;grid-template-columns:55px minmax(0,1fr);
+  padding:13px 11px;min-height:148px;
+ }
+ #homePage #seyveoLivingMoment .lm-cinema-emblem,
+ #homePage #seyveoLivingMoment .lm-cinema-emblem .lm-art-svg{
+  width:54px;height:54px;
+ }
+ #homePage #seyveoLivingMoment .lm-cinema-title{font-size:17px}
+ #homePage #seyveoLivingMoment .lm-cinema-note{font-size:11.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-cinema-stage{display:none!important;animation:none!important}
+ #homePage #seyveoLivingMoment .lm-cinema-card,
+ #homePage #seyveoLivingMoment .lm-decision-stack{animation:none!important}
+}
