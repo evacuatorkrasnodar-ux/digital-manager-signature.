@@ -212,10 +212,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
    Keep layout, routes, hold-to-speak, safe areas and music controls unchanged. */
 .dock>.assistant-button .center-face,
 .dock>.assistant-button .button-rim{display:block!important}
-.dock>.assistant-button .wave-mark{
- transform-origin:37px 37px;
- transform:translate(37px,37px) scale(.92) translate(-37px,-37px)!important;
-}
+/* The centered waveform is sized once in its SVG, without an overriding
+   CSS transform that can misalign it on mobile Safari. */
 html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  background:transparent!important;border:0!important;box-shadow:none!important;
 }
@@ -342,8 +340,9 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  #ask.prompt:not(.expanded){transition:none!important}
 }
 
-/* SEYVEO · compact signature glass dock.
-   Original silver-ring waveform, flat face, no raised or blurred orb. */
+/* SEYVEO · flat, subtly polished ceramic control.
+   One ring is painted by the SVG only: never add an outside CSS circle.
+   Dock, geometry of its other actions, gestures and live voice states stay. */
 .dock>#assistantButton{
  grid-column:3!important;grid-row:1!important;order:3!important;
  justify-self:center!important;align-self:center!important;
@@ -352,50 +351,42 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  width:58px!important;min-width:58px!important;max-width:58px!important;
  height:58px!important;min-height:58px!important;
  margin:0!important;padding:0!important;
- border:1px solid rgba(234,239,248,.20)!important;
- border-radius:50%!important;
- background:linear-gradient(156deg,rgba(237,241,248,.10),rgba(28,33,40,.11) 72%),rgba(29,34,43,.84)!important;
- box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
  filter:none!important;transform:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 .dock>#assistantButton .button-art{
- display:block!important;
- width:55px!important;height:55px!important;
- max-width:55px!important;max-height:55px!important;
- flex:0 0 55px!important;filter:none!important;
+ display:block!important;box-sizing:border-box!important;
+ width:58px!important;height:58px!important;
+ max-width:58px!important;max-height:58px!important;
+ flex:0 0 58px!important;filter:none!important;
+ margin:0!important;padding:0!important;
+ overflow:visible!important;
 }
 .dock>#assistantButton .button-art .center-face{
- display:block!important;fill:#222833!important;
+ display:block!important;fill:url(#ceramic-night)!important;
 }
 .dock>#assistantButton .button-art .button-rim{
- display:block!important;stroke:url(#rim-night)!important;
- stroke-width:1.18!important;opacity:.94!important;
+ display:block!important;
+ stroke:url(#rim-night)!important;
+ stroke-width:.95!important;
+ opacity:.96!important;
 }
-.dock>#assistantButton .button-art .wave-mark{
- transform-origin:37px 37px;
- transform:translate(37px,37px) scale(.92) translate(-37px,-37px)!important;
+.dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
+ fill:#303239!important;
 }
-.dock>#assistantButton:is(:active,.pressing,.arming){
- border-color:rgba(247,250,255,.35)!important;
- background:linear-gradient(155deg,rgba(249,250,255,.16),rgba(29,35,43,.15)),rgba(33,39,48,.87)!important;
+.dock>#assistantButton.listening .button-art .center-face{
+ fill:url(#ceramic-night)!important;
 }
-.dock>#assistantButton.listening{
- border-color:rgba(247,249,254,.48)!important;
- background:linear-gradient(155deg,rgba(246,248,254,.14),rgba(35,41,48,.16)),rgba(35,41,49,.85)!important;
+:root[data-theme="light"] .dock>#assistantButton .button-art .center-face{
+ fill:url(#ceramic-day)!important;
 }
-:root[data-theme="light"] .dock>#assistantButton{
- border-color:rgba(65,81,103,.26)!important;
- background:linear-gradient(155deg,rgba(255,255,255,.92),rgba(227,233,242,.76))!important;
- box-shadow:inset 0 1px rgba(255,255,255,.96)!important;
-}
-:root[data-theme="light"] .dock>#assistantButton .button-art .center-face{fill:#e8edf4!important}
 :root[data-theme="light"] .dock>#assistantButton .button-art .button-rim{
  stroke:url(#rim-day)!important;opacity:1!important;
 }
-:root[data-theme="light"] .dock>#assistantButton:is(:active,.pressing,.arming,.listening){
- border-color:rgba(58,77,100,.37)!important;
- background:linear-gradient(155deg,#fff,#e0e7f0)!important;
+:root[data-theme="light"] .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
+ fill:#e1e6ed!important;
 }
 @media(max-width:355px){
  .dock>#assistantButton{
@@ -403,8 +394,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
   height:52px!important;min-height:52px!important;
  }
  .dock>#assistantButton .button-art{
-  width:50px!important;height:50px!important;
-  max-width:50px!important;max-height:50px!important;flex:0 0 50px!important;
+  width:52px!important;height:52px!important;
+  max-width:52px!important;max-height:52px!important;flex:0 0 52px!important;
  }
 }
 @media(prefers-reduced-motion:reduce){
