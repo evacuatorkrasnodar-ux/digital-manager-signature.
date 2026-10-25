@@ -339,6 +339,7 @@ function discussTask(item,{demo=false}={}){
 function showLedger(items,{demo=false}={}){
  if(!items.length){if(demo)demoFinished=true;rest();return}
  if(!available()){rest();return}
+ const arrivedFromPreview=mode==='preview';
  cancel();mode='ledger';key=demo?'deck-demo':'deck-real';
  if(demoLaunch)demoLaunch.hidden=true;
  tiles.replaceChildren();space.classList.remove('lm-preview','lm-condense','lm-disappear','lm-real');
@@ -347,18 +348,43 @@ function showLedger(items,{demo=false}={}){
  const section=create('section','lm-deck');
  section.setAttribute('aria-label',demo?'Учебные примеры Сэйвы':'Ваши дела');
  const heading=create('div','lm-deck-heading');
- const eyebrow=create('small','lm-deck-eyebrow',demo?'СЭЙВА · ПРИМЕР':'СЭЙВА · ВАШИ ДЕЛА');
+ const eyebrow=create('small','lm-deck-eyebrow',demo?'СЭЙВА · ПРИМЕРЫ':'СЭЙВА · ВАШИ ДЕЛА');
  const count=create('span','lm-deck-count');
  heading.append(eyebrow,count);
+ /* Three genuine hand-drawn miniatures rise from below and gather into one
+    decision. They are ephemeral DOM objects, never new stored tasks. */
+ const cinema=create('div','lm-deck-cinema');
+ cinema.setAttribute('aria-hidden','true');
  const activeSlot=create('div','lm-deck-active');
  const nextSlot=create('div','lm-deck-next-slot');
  const foot=create('div','lm-deck-foot');
- const hint=create('span','lm-deck-hint','← Следующее · Позже →');
+ const hint=create('span','lm-deck-hint','← листать · → отложить');
  const laterButton=create('button','lm-deck-later','Позже');
  laterButton.type='button';
  foot.append(hint,laterButton);
- section.append(heading,activeSlot,nextSlot,foot);
+ section.append(heading,cinema,activeSlot,nextSlot,foot);
  tiles.append(section);
+ const cinematic=demo&&!arrivedFromPreview&&!reduced();
+ if(cinematic){
+  section.classList.add('lm-deck-intro');
+  items.slice(0,3).forEach((item,i)=>{
+   const miniature=create('div','lm-deck-cinema-card lm-deck-cinema-card--'+i);
+   miniature.style.setProperty('--lm-card-delay',i*710+'ms');
+   const mark=create('span','lm-deck-cinema-art');
+   mark.append(icon(item.kind||artisticKind(item)));
+   const copy=create('span','lm-deck-cinema-copy');
+   copy.append(create('small','lm-deck-cinema-count','0'+(i+1)+' / 0'+Math.min(items.length,3)),
+    create('strong','lm-deck-cinema-title',item.title));
+   miniature.append(mark,copy);cinema.append(miniature);
+  });
+  later(()=>{if(mode==='ledger'&&tiles.contains(section)){
+   section.classList.add('lm-deck-intro--fold');
+  }},2700);
+  later(()=>{if(mode==='ledger'&&tiles.contains(section)){
+   section.classList.remove('lm-deck-intro','lm-deck-intro--fold');
+   cinema.replaceChildren();
+  }},3420);
+ }
  let queue=items.slice(),activeId=queue[0]?.id,closing=false,swiping=false;
  function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
  function finish(){
@@ -405,7 +431,9 @@ function showLedger(items,{demo=false}={}){
   const main=create('div','lm-deck-main');
   const picture=create('span','lm-deck-art');picture.append(icon(item.kind||artisticKind(item)));
   const words=create('div','lm-deck-copy');
-  const tag=create('small','lm-deck-tag',item.category||(demo?'ПРИМЕР':'ВАШЕ ДЕЛО'));
+  const tag=create('small','lm-deck-tag',demo?
+   String(item.category||'').replace(/\s*·\s*ПРИМЕР$/i,''):
+   (item.category||'ВАШЕ ДЕЛО'));
   const title=create('h3','lm-deck-title',item.title);
   const subtitle=create('p','lm-deck-subtitle',item.body||'Ожидает решения');
   words.append(tag,title,subtitle);main.append(picture,words);
@@ -447,14 +475,13 @@ function showLedger(items,{demo=false}={}){
    peek.setAttribute('aria-label','Перейти к следующему делу: '+next.title);
    const peekArt=create('span','lm-deck-peek-art');peekArt.append(icon(next.kind||artisticKind(next)));
    const peekCopy=create('span','lm-deck-peek-copy');
-   peekCopy.append(create('small','lm-deck-peek-eyebrow','СЛЕДУЮЩЕЕ ДЕЛО'),
-    create('strong','lm-deck-peek-title',next.title),
-    create('span','lm-deck-peek-description',next.body||''));
+   peekCopy.append(create('small','lm-deck-peek-eyebrow','ДАЛЬШЕ'),
+    create('strong','lm-deck-peek-title',next.title));
    peek.append(peekArt,peekCopy);
    peek.addEventListener('click',()=>{readingUntil=Date.now()+22000;transition('left')});
    nextSlot.append(peek);
   }
-  hint.textContent=queue.length>1?'← Следующее · Позже →':'Смахните вправо, чтобы отложить';
+  hint.textContent=queue.length>1?'← листать · → отложить':'→ отложить';
   laterButton.setAttribute('aria-label',demo?'Убрать пример':'Отложить «'+item.title+'» до завтра');
   // Full-card gestures avoid the action row; scrolling vertically remains native.
   let pointerStart=null;
