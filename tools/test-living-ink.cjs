@@ -48,6 +48,7 @@ const managementCinema=read('assets/management-glass-showcase.css');
 const music=read('assets/seyveo-music-dock.js');
 const wellness=read('assets/personal-wellness.css');
 const life=read('assets/calendar-spaces.css');
+const notesCss=read('assets/notebook-smart.css');
 const roadmap=read('assets/management.js');
 const quick=read('assets/assistant-quick-swipe.js');
 const cssBlock=(source,selector)=>{
@@ -110,6 +111,12 @@ assert.doesNotMatch(continuity,/background-attachment:fixed|backdrop-filter:blur
 assert.match(html,/assets\/living-space\.css\?v=\d+/,'Current shared atmosphere stylesheet uses a versioned URL');
 assert.match(wellness,/#calendarPersonalTools \.pw-water-insight\{/,'Health insights still exist');
 assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.calendar-space-edit textarea\{/,'Real editors stay mounted');
+assert.match(notesCss,/#notesDialog \.note-more-options button\{min-width:0;padding:7px 3px;\s*border:0;background:transparent/,'Notes have no capsule choices');
+assert.match(notesCss,/#notesDialog \.note-item-actions>\.note-more-button\[aria-expanded=true\]\{\s*background:transparent/,'Expanded notes stay unpainted');
+assert.match(life,/#calendarSpaceDialog :is\(#worldManageContacts,\.world-person-call\):active\{\s*background:transparent;box-shadow:none/,'Contacts use quiet touch feedback');
+assert.match(html,/assets\/notebook-smart\.css\?v=21/,'Notes theme version refreshed');
+assert.match(html,/assets\/calendar-spaces\.css\?v=18/,'World theme version refreshed');
+
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
