@@ -16,10 +16,10 @@ function init(){
  if(rail){rail.setAttribute('aria-hidden','true');rail.inert=true;}
  if(track)track.tabIndex=-1;
  const items=[
+  {id:'home',title:'Главная',description:'Вернуться на Главную',
+   icon:'<path d="M3.5 10.5 12 3.5l8.5 7V20h-6.5v-6h-4v6H3.5z"/>'},
   {id:'tasks',title:'Дела',description:'Открыть дела',
    icon:'<path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/>'},
-  {id:'calendar',title:'Календарь',description:'Открыть календарь',
-   icon:'<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M8 3.5v4M16 3.5v4M4 10h16M8 14h2M13 14h2"/>'},
   {id:'world',title:'Мой мир',description:'Открыть Мой мир',
    icon:'<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c-4.5 4.5-4.5 12.1 0 16.6M12 3.7c4.5 4.5 4.5 12.1 0 16.6"/>'},
   {id:'manage',title:'Управление',description:'Открыть управление',
@@ -29,10 +29,10 @@ function init(){
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
  function activeDestination(){
   const hash=location.hash;
+  if(!hash||hash==='#home')return 'home';
   if(hash==='#tasks')return 'tasks';
-  if(hash==='#calendar')return 'calendar';
-  if(hash==='#life')return 'world';
-  if(hash==='#manage'||hash==='#manage-theme')return 'manage';
+  if(hash==='#calendar'||hash==='#life')return 'world';
+  if(hash==='#manage'||hash==='#manage-theme'||hash==='#picture')return 'manage';
   return '';
  }
  function paint(){
@@ -56,8 +56,8 @@ function init(){
   dock.setAttribute('aria-label','Разделы SEYVEO. Центр — Сэйви: общение и голос.');
  }
  function invoke(id){
+  if(id==='home'){document.getElementById('navHome')?.click();return;}
   if(id==='tasks'){document.getElementById('navTasks')?.click();return;}
-  if(id==='calendar'){location.hash='calendar';return;}
   if(id==='world'){location.hash='life';return;}
   if(id==='manage'){document.getElementById('navManage')?.click();}
  }
