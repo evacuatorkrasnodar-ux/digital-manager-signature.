@@ -363,9 +363,9 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  display:flex;flex-direction:column;
  width:min(530px,calc(100vw - 12px));
  max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
- height:min(900px,calc(100svh - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- max-height:calc(100svh - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
- padding:24px 17px 14px;
+ height:auto;
+ max-height:min(90svh,calc(100svh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ padding:19px 16px 11px;
  overflow:hidden;
 }
 #assistantChatHistoryDialog .assistant-chat-head{
@@ -373,14 +373,15 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  padding:0 42px 12px 0;min-width:0;
 }
 #assistantChatHistoryDialog .assistant-chat-head h2{
- margin:0;font-size:clamp(21px,5.4vw,26px);
- line-height:1.25;letter-spacing:-.035em;font-weight:540;
+ margin:0;font-size:clamp(20px,5.2vw,25px);
+ line-height:1.22;letter-spacing:-.04em;font-weight:480;
 }
 #assistantChatHistoryDialog .assistant-chat-head small{
  color:var(--secondary);font-size:12px;line-height:1.4;
 }
 #assistantChatHistoryDialog .assistant-chat-items{
- display:flex;flex:1 1 auto;min-height:0;min-width:0;
+ display:flex;flex:0 1 auto;min-height:0;min-width:0;
+ max-height:min(64svh,620px);
  flex-direction:column;align-items:stretch;gap:0;
  overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
@@ -400,22 +401,22 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 #assistantChatHistoryDialog .assistant-chat-summary{
  display:flex;flex-direction:column;justify-content:center;gap:5px;
  box-sizing:border-box;width:100%;min-height:63px;height:auto!important;
- margin:0;padding:12px 24px 12px 2px;
+ margin:0;padding:11px 3px 11px 2px;
  border:0;border-radius:0;background:transparent;
  text-align:left;list-style:none;cursor:pointer;
  white-space:normal;overflow:visible;
 }
 #assistantChatHistoryDialog .assistant-chat-summary::-webkit-details-marker{display:none}
 #assistantChatHistoryDialog .assistant-chat-summary::marker{content:''}
-#assistantChatHistoryDialog .assistant-chat-summary::after{
- content:'›';position:absolute;right:5px;top:21px;
- font-size:21px;font-weight:350;color:var(--secondary);
+/* The whole history row expands via native DETAILS; no decorative arrows. */
+#assistantChatHistoryDialog .assistant-chat-summary::after{content:none!important;display:none!important}
+#assistantChatHistoryDialog .assistant-chat-item[open]>.assistant-chat-summary{
+ color:var(--text);
 }
-#assistantChatHistoryDialog .assistant-chat-item[open]>.assistant-chat-summary::after{transform:rotate(90deg)}
 #assistantChatHistoryDialog .assistant-chat-question{
  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
  overflow:hidden;min-width:0;max-width:100%;
- font-size:14px;font-weight:500;line-height:1.5;
+ font-size:13.7px;font-weight:435;line-height:1.48;
  overflow-wrap:anywhere;word-break:normal;white-space:pre-wrap;
 }
 #assistantChatHistoryDialog .assistant-chat-time{
@@ -430,7 +431,7 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 #assistantChatHistoryDialog .assistant-chat-full-question,
 #assistantChatHistoryDialog .assistant-chat-answer{
  white-space:pre-wrap;overflow-wrap:anywhere;
- font-size:13px;line-height:1.62;word-break:normal;
+ font-size:13px;line-height:1.53;word-break:normal;
 }
 #assistantChatHistoryDialog .assistant-chat-answer-label{
  font-size:10px;color:var(--secondary);letter-spacing:.03em;
@@ -440,13 +441,13 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 }
 #assistantChatHistoryDialog .assistant-chat-bottom{
  display:flex;gap:14px;flex:0 0 auto;
- padding:11px 0 2px;border-top:1px solid var(--soft-line);
+ padding:8px 0 0;border-top:1px solid var(--soft-line);
 }
 #assistantChatHistoryDialog .assistant-chat-bottom .btn{
  flex:1;min-width:0;min-height:44px;padding:8px 3px;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
- color:var(--text)!important;font-weight:500;
+ color:var(--text)!important;font-weight:465;
 }
 #assistantChatHistoryDialog .assistant-chat-bottom #assistantChatHistoryClear{
  color:var(--secondary)!important;
