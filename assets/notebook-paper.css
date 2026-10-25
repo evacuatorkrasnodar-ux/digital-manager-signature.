@@ -4,7 +4,7 @@
  max-height:min(94dvh,calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
  padding:20px 17px 17px;overflow-y:auto;overscroll-behavior:contain;
 }
-.paper-choice-dialog h2,.paper-editor-dialog h2{font-size:21px;font-weight:610;margin:0 45px 7px 0;letter-spacing:-.025em}
+.paper-choice-dialog h2,.paper-editor-dialog h2{font-size:21px;font-weight:485;margin:0 45px 7px 0;letter-spacing:-.025em}
 .paper-choice-dialog>p,.paper-editor-dialog>p{margin:0 35px 13px 0;color:var(--secondary);font-size:12px;line-height:1.5}
 /* Three actions, one restrained Black/White Velvet vocabulary. */
 .paper-choice-list{display:grid;margin:11px 0 3px}
@@ -20,7 +20,7 @@
 .paper-choice-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;
  stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .paper-choice-copy{display:block;flex:1;min-width:0}
-.paper-choice-item strong{display:block;font-weight:550;line-height:1.25;letter-spacing:-.012em}
+.paper-choice-item strong{display:block;font-weight:475;line-height:1.25;letter-spacing:-.012em}
 .paper-choice-item small{display:block;margin-top:4px;color:var(--secondary)}
 .paper-choice-item:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .paper-choice-item:active{transform:scale(.993);border-color:rgba(230,237,246,.23)}
@@ -40,10 +40,10 @@
 .paper-toolbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;flex:none;padding:7px 0 10px}
 .paper-toolbar button,.paper-toolbar select{
  box-sizing:border-box;min-height:44px;min-width:44px;padding:9px 12px;
- border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);
+ border:1px solid transparent;border-radius:11px;background:transparent;color:var(--text);
  font:inherit;font-size:12px;font-weight:520;
 }
-.paper-toolbar button[aria-pressed=true]{background:var(--card2);box-shadow:inset 0 0 0 1px var(--line);color:var(--text)}
+.paper-toolbar button[aria-pressed=true]{background:transparent;border-color:var(--line);box-shadow:none;color:var(--text)}
 .paper-toolbar button:disabled{opacity:.35}
 .paper-toolbar select{flex:1 1 110px;max-width:170px;-webkit-appearance:none;appearance:none;cursor:pointer}
 .paper-toolbar button{cursor:pointer}
@@ -67,12 +67,12 @@
 
 /* SEYVEO Paper polish · full visible page and quiet glass tools on iPhone X. */
 .paper-choice-dialog{padding:18px 16px 15px}
-.paper-choice-dialog h2{font-size:21px;font-weight:570;margin-bottom:5px}
+.paper-choice-dialog h2{font-size:22px;font-weight:480;letter-spacing:-.04em;margin-bottom:5px}
 .paper-choice-dialog>p{margin-bottom:8px}
 .paper-choice-list{gap:8px;margin:10px 0 2px}
 .paper-choice-item{min-height:62px;padding:9px 12px;border-radius:16px;gap:12px}
 .paper-choice-icon{width:40px;height:40px}
-.paper-choice-item strong{font-size:14px;font-weight:550}
+.paper-choice-item strong{font-size:14px;font-weight:475}
 .paper-choice-item small{font-size:11.5px;line-height:1.35;margin-top:3px}
 @media(max-width:350px){.paper-choice-dialog{padding-inline:12px}.paper-choice-item{gap:10px;padding-inline:10px}.paper-choice-item small{font-size:11px}}
 #notePaperDialog.paper-editor-dialog[open]{
@@ -93,7 +93,7 @@
  stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
 }
 #notePaperDialog .paper-toolbar button[aria-pressed=true]{
- background:var(--card2);border-color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+ background:transparent;border-color:var(--line);box-shadow:none;
 }
 #notePaperDialog .paper-toolbar select{
  flex:1 1 98px;width:auto;min-width:98px;max-width:158px;height:44px;
@@ -140,7 +140,7 @@
  display:flex!important;align-items:center;justify-content:space-between;gap:4px;
  flex:1 1 0!important;width:100%!important;max-width:none;min-width:0;height:44px;min-height:44px;
  padding:0 8px!important;
- background:var(--card)!important;color:var(--text);font-size:12px;font-weight:520;
+ background:transparent!important;color:var(--text);font-size:12px;font-weight:465;
  border:1px solid var(--line);border-radius:14px;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
  white-space:nowrap;
@@ -149,7 +149,7 @@
  width:15px;height:15px;flex:none;stroke:currentColor;stroke-width:1.65;fill:none;
  stroke-linecap:round;stroke-linejoin:round;opacity:.77;
 }
-#notePaperDialog .paper-toolbar .paper-pattern-trigger[aria-expanded=true]{background:var(--card2)!important}
+#notePaperDialog .paper-toolbar .paper-pattern-trigger[aria-expanded=true]{background:transparent!important;border-color:var(--text)}
 #notePaperDialog .paper-pattern-menu:not([hidden]){
  display:grid;position:absolute;z-index:30;right:0;top:calc(100% + 6px);
  min-width:148px;width:max-content;max-width:210px;
@@ -164,14 +164,14 @@
  box-shadow:none;text-align:left;font:inherit;font-size:13px;font-weight:470;
 }
 #notePaperDialog .paper-pattern-menu button[aria-pressed=true]{
- background:var(--card2);font-weight:580;
+ background:transparent;font-weight:510;
 }
 #notePaperDialog .paper-pattern-menu button:focus-visible{
  outline:2px solid var(--text);outline-offset:-2px;
 }
 #notePaperDialog .paper-pattern-menu button:active{background:var(--card2)}
 #notePaperDialog #notePaperPattern[hidden]{display:none!important}
-#notePaperDialog .paper-head h2{color:var(--text);background:transparent!important;font-weight:580}
+#notePaperDialog .paper-head h2{color:var(--text);background:transparent!important;font-weight:480}
 @media(max-width:370px){
  #notePaperDialog .paper-toolbar{gap:3px}
  #notePaperDialog .paper-pattern-control{flex-basis:0;min-width:73px;max-width:none}
@@ -228,7 +228,7 @@
  border:0;border-radius:11px;background:transparent;box-shadow:none;
 }
 #notePaperDialog .paper-toolbar .paper-color-menu button[aria-pressed=true]{
- background:var(--card2);box-shadow:inset 0 0 0 1px var(--line);
+ background:transparent;box-shadow:inset 0 0 0 1px var(--soft-line);
 }
 #notePaperDialog .paper-swatch{
  display:block;width:25px;height:25px;border-radius:50%;
@@ -282,4 +282,68 @@
  #notePaperDialog .paper-color-control button{
   transition:none!important;
  }
+}
+
+/* Quiet Cinema: three methods live inside one slim editorial surface. */
+#noteModeDialog.paper-choice-dialog[open]{
+ width:min(450px,calc(100vw - 20px));
+ max-width:calc(100vw - 20px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ padding:18px 16px 15px;
+ border:1px solid var(--soft-line);border-radius:21px;
+ box-shadow:0 12px 34px rgba(0,0,0,.16);
+}
+#noteModeDialog .paper-choice-list{
+ display:flex;flex-direction:column;gap:0;
+ margin:12px 0 0;padding:0 10px;
+ border:1px solid var(--soft-line)!important;border-radius:18px;
+ background:transparent!important;box-shadow:none!important;overflow:hidden;
+}
+#noteModeDialog .paper-choice-item{
+ display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;
+ align-items:center;min-height:78px;width:100%;padding:11px 3px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;transform:none!important;
+}
+#noteModeDialog .paper-choice-item + .paper-choice-item{border-top:1px solid var(--soft-line)!important}
+#noteModeDialog .paper-choice-icon{
+ box-sizing:border-box;width:47px;height:47px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--text);
+}
+#noteModeDialog .paper-choice-icon svg{width:26px;height:26px;stroke-width:1.3}
+#noteModeDialog .paper-choice-item strong{font-size:14.5px;font-weight:480;letter-spacing:-.02em}
+#noteModeDialog .paper-choice-item small{font-size:11.5px;line-height:1.4}
+#noteModeDialog .paper-choice-item:active{opacity:.66}
+#notePaperDialog.paper-editor-dialog[open]{
+ border-color:var(--soft-line);border-radius:22px;
+ box-shadow:0 12px 35px rgba(0,0,0,.16);
+}
+#notePaperDialog .paper-toolbar-primary > button,
+#notePaperDialog .paper-toolbar-secondary > button,
+#notePaperDialog .paper-toolbar .paper-color-control > button{
+ border:1px solid transparent;border-radius:11px;
+ background:transparent;box-shadow:none;
+}
+#notePaperDialog .paper-toolbar-primary > button[aria-pressed=true]{
+ border-color:var(--line);background:transparent;box-shadow:none;
+}
+#notePaperDialog .paper-toolbar .paper-pattern-trigger{
+ border-color:var(--soft-line);background:transparent!important;box-shadow:none;
+}
+#notePaperDialog .paper-actions{
+ gap:24px;align-items:center;border-top:1px solid var(--soft-line);padding-top:8px;
+}
+#notePaperDialog .paper-actions button{
+ min-height:44px;padding:9px 4px;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;color:var(--secondary);font-size:13px;font-weight:455;
+}
+#notePaperDialog .paper-actions button.btn.primary{
+ color:var(--text);text-decoration:underline;
+ text-decoration-color:var(--soft-line);text-underline-offset:5px;
+}
+@media(max-width:370px){
+ #noteModeDialog.paper-choice-dialog[open]{padding-inline:12px}
+ #noteModeDialog .paper-choice-list{padding-inline:7px}
+ #noteModeDialog .paper-choice-item{grid-template-columns:43px minmax(0,1fr);gap:9px}
+ #noteModeDialog .paper-choice-icon{width:42px;height:42px}
 }
