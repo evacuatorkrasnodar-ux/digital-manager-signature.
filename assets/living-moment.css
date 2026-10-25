@@ -651,3 +651,191 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment.lm-next-mode,
  #homePage #seyveoLivingMoment .lm-next{animation:none!important;transition:none!important}
 }
+
+
+/* SEYVEO · CENTER OF DECISIONS
+   Hero object — cinematic reveal to one persistent, accessible stack.
+   The display layer never blocks the real controls. */
+#homePage #seyveoLivingMoment.lm-collection-mode{
+ position:relative;isolation:isolate;margin:16px 0 26px;
+}
+#homePage #seyveoLivingMoment .lm-tiles{
+ position:relative;min-width:0;
+}
+#homePage #seyveoLivingMoment .lm-task-collection{
+ position:relative;isolation:isolate;
+ width:calc(100% - 16px);max-width:460px;margin:14px auto 16px;
+ padding:0;box-sizing:border-box;
+ border-radius:25px;
+ border:1px solid rgba(231,237,247,.24);
+ background:linear-gradient(155deg,rgba(48,55,70,.98) 0%,rgba(23,28,39,.97) 52%,rgba(13,17,25,.99) 100%);
+ box-shadow:0 16px 34px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.10);
+ color:#f3f6fb;overflow:visible;
+}
+#homePage #seyveoLivingMoment .lm-task-collection::before,
+#homePage #seyveoLivingMoment .lm-task-collection::after{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ left:10px;right:10px;height:100%;top:6px;
+ border-radius:25px;border:1px solid rgba(231,237,247,.14);
+ background:linear-gradient(150deg,#343b4b,#171b25 80%);
+ box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+#homePage #seyveoLivingMoment .lm-task-collection::after{
+ z-index:-2;top:12px;left:20px;right:20px;
+ opacity:.7;background:#161b24;
+}
+#homePage #seyveoLivingMoment .lm-task-summary{
+ position:relative;min-height:108px;display:grid;
+ grid-template-columns:66px minmax(0,1fr);
+ align-items:center;column-gap:13px;
+ padding:17px 16px 17px 18px;
+ border:0;border-radius:25px;
+ cursor:pointer;list-style:none;
+}
+#homePage #seyveoLivingMoment .lm-task-summary::-webkit-details-marker{display:none}
+#homePage #seyveoLivingMoment .lm-task-summary::marker{content:""}
+#homePage #seyveoLivingMoment .lm-task-count{
+ display:grid;place-items:center;
+ width:64px;height:64px;
+ border-radius:21px;border:1px solid rgba(243,248,255,.30);
+ background:radial-gradient(circle at 33% 20%,rgba(253,254,255,.23),rgba(196,209,231,.06) 60%);
+ box-shadow:inset 0 1px rgba(255,255,255,.18);
+ color:#fff;font-size:31px;font-weight:440;
+ line-height:1;font-variant-numeric:tabular-nums;
+ letter-spacing:-.06em;
+}
+#homePage #seyveoLivingMoment .lm-task-heading{display:flex;flex-direction:column;gap:6px;min-width:0}
+#homePage #seyveoLivingMoment .lm-task-title{
+ display:block;color:#f8faff;
+ font-size:clamp(18px,5vw,23px);font-weight:545;
+ line-height:1.2;letter-spacing:-.041em;
+}
+#homePage #seyveoLivingMoment .lm-task-caption{
+ color:#bec9d8;font-size:12px;line-height:1.4;font-weight:430;
+}
+#homePage #seyveoLivingMoment .lm-task-total{
+ grid-column:2;margin-top:6px;
+ font-size:10.5px;line-height:1.3;font-weight:580;
+ color:#d8e0ec;letter-spacing:.045em;text-transform:uppercase;
+}
+#homePage #seyveoLivingMoment .lm-task-summary:focus-visible{
+ outline:2px solid #f0f5ff;outline-offset:5px;
+}
+#homePage #seyveoLivingMoment .lm-task-summary:active{
+ background:rgba(255,255,255,.045);
+}
+#homePage #seyveoLivingMoment .lm-task-body{
+ border-top:1px solid rgba(233,240,251,.14);
+ padding:14px 18px 18px;
+ color:#f5f7fc;
+}
+#homePage #seyveoLivingMoment .lm-task-position{
+ margin:0 0 10px;font-size:11px;line-height:1.4;letter-spacing:.08em;
+ font-weight:550;color:#b6c2d2;
+}
+#homePage #seyveoLivingMoment .lm-task-current-title{
+ margin:0 0 7px;font-size:20px;line-height:1.22;font-weight:540;letter-spacing:-.03em;
+ color:#f6f8fd;
+}
+#homePage #seyveoLivingMoment .lm-task-when{
+ margin:0 0 13px;font-size:11px;line-height:1.4;color:#c6d2e0;
+}
+#homePage #seyveoLivingMoment .lm-task-explanation{
+ margin:0 0 17px;font-size:13px;line-height:1.56;color:#cbd6e5;
+}
+#homePage #seyveoLivingMoment .lm-task-actions{
+ display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;
+}
+#homePage #seyveoLivingMoment :is(.lm-task-execute,.lm-task-complete,.lm-task-prev,.lm-task-next,.lm-task-replay){
+ min-height:44px;min-width:0;box-sizing:border-box;
+ border-radius:14px;padding:9px 13px;
+ border:1px solid rgba(238,243,251,.22);
+ background:rgba(244,248,255,.065);color:#e4eaf4;
+ font:inherit;font-size:12.2px;font-weight:540;line-height:1.3;
+ cursor:pointer;
+}
+#homePage #seyveoLivingMoment .lm-task-execute{
+ color:#1d2632;
+ border-color:#eff4fb;
+ background:linear-gradient(145deg,#f9fbff,#d7e0ec);
+ font-weight:610;
+}
+#homePage #seyveoLivingMoment .lm-task-paging{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;padding-top:11px;
+ border-top:1px solid rgba(235,242,255,.12);
+}
+#homePage #seyveoLivingMoment .lm-task-paging button[disabled]{
+ opacity:.38;cursor:default;
+}
+#homePage #seyveoLivingMoment .lm-task-feedback{
+ margin:10px 0 0;font-size:12px;line-height:1.5;color:#dbe5ef;
+}
+#homePage #seyveoLivingMoment .lm-task-feedback:empty{display:none}
+#homePage #seyveoLivingMoment .lm-task-replay{
+ width:100%;margin-top:9px;border-style:dashed;color:#c4cfdd;
+}
+#homePage #seyveoLivingMoment .lm-task-collection[data-demo=true] .lm-task-count{
+ font-size:29px;
+}
+#homePage #seyveoLivingMoment :is(.lm-task-execute,.lm-task-complete,.lm-task-prev,.lm-task-next,.lm-task-replay):focus-visible{
+ outline:2px solid #e7f1ff;outline-offset:3px;
+}
+/* Lightweight, one-time transform/opacity choreography.
+   The visible final collection exists in DOM from the beginning. */
+#homePage #seyveoLivingMoment .lm-gather-stage{
+ position:absolute;z-index:3;pointer-events:none;
+ left:5%;right:5%;top:-76px;height:178px;
+ perspective:600px;
+ animation:sv-gather-stage 2650ms ease-out both;
+}
+#homePage #seyveoLivingMoment .lm-gather-card{
+ --step:var(--gather-index,0);
+ position:absolute;left:2%;right:2%;top:5px;
+ display:flex;flex-direction:column;justify-content:center;gap:7px;
+ min-height:75px;padding:11px 15px;box-sizing:border-box;
+ border:1px solid rgba(238,242,250,.24);border-radius:21px;
+ background:linear-gradient(140deg,#333c4d,#141b27);
+ box-shadow:0 9px 18px rgba(0,0,0,.22);
+ color:#eff4fa;
+ animation:sv-gather-leaf 2450ms cubic-bezier(.22,.72,.23,1) both;
+ animation-delay:calc(var(--step) * 110ms);
+ will-change:transform,opacity;
+}
+#homePage #seyveoLivingMoment .lm-gather-kicker{
+ color:#b9c6d6;font-size:9.5px;letter-spacing:.13em;font-weight:580;
+}
+#homePage #seyveoLivingMoment .lm-gather-title{
+ color:#f7f9fc;font-size:17px;font-weight:510;letter-spacing:-.025em;
+ overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+@keyframes sv-gather-leaf{
+ 0%{transform:translate3d(0,-36px,0) scale(.91);opacity:0}
+ 17%{transform:translate3d(0,calc(var(--step)*18px),0) scale(1);opacity:1}
+ 42%{transform:translate3d(0,calc(var(--step)*18px),0) scale(1);opacity:1}
+ 88%{transform:translate3d(0,90px,0) scale(.89);opacity:.88}
+ 100%{transform:translate3d(0,110px,0) scale(.78);opacity:0}
+}
+@keyframes sv-gather-stage{0%,85%{opacity:1}100%{opacity:0}}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-task-collection{
+ background:linear-gradient(155deg,#424e60,#242d3d 68%,#151b26);
+ border-color:rgba(36,48,69,.34);
+ box-shadow:0 15px 28px rgba(30,45,65,.18),inset 0 1px rgba(255,255,255,.18);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-task-collection::before{
+ background:linear-gradient(155deg,#7d899a,#424d5d);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-task-collection::after{
+ background:#9aa5b5;
+}
+@media(max-width:355px){
+ #homePage #seyveoLivingMoment .lm-task-summary{grid-template-columns:56px minmax(0,1fr);gap:10px;padding:13px 11px}
+ #homePage #seyveoLivingMoment .lm-task-count{width:54px;height:54px;font-size:27px}
+ #homePage #seyveoLivingMoment .lm-task-caption{font-size:11px}
+ #homePage #seyveoLivingMoment .lm-task-title{font-size:18px}
+ #homePage #seyveoLivingMoment .lm-task-body{padding:14px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-gather-stage{display:none!important;animation:none!important}
+ #homePage #seyveoLivingMoment .lm-gather-card{animation:none!important;will-change:auto!important}
+}
