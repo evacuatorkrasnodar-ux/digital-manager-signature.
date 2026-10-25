@@ -26,7 +26,7 @@
 
 /* Compact scanner and in-dialog consent for Black Velvet. */
 #noteScanDialog.paper-scan-dialog{width:min(425px,calc(100vw - 28px));max-height:min(88dvh,calc(100dvh - 22px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding:19px 17px 15px;overscroll-behavior:contain}
-#noteScanDialog h2{font-size:21px;margin-bottom:6px;letter-spacing:-.025em}
+#noteScanDialog h2{font-size:22px;font-weight:480;margin-bottom:6px;letter-spacing:-.04em}
 #noteScanDialog>p{font-size:12px;line-height:1.45;margin:0 44px 11px 0}
 #noteScanDialog .paper-scan-inputs{gap:7px;margin-bottom:8px}
 #noteScanDialog .paper-scan-inputs label{min-height:44px;padding:8px 11px;border-radius:13px;font-size:12px}
@@ -64,15 +64,15 @@
 /* SEYVEO scanner Black/White Velvet v5: consistent touch targets.
    No changes to OCR, photo processing, or original poem line breaks. */
 #noteScanDialog.paper-scan-dialog{
- border-radius:24px;
+ border-radius:21px;border-color:var(--soft-line);box-shadow:0 12px 34px rgba(0,0,0,.16);
 }
 #noteScanDialog .paper-scan-inputs label{
- min-height:46px;border-radius:16px;
- background:var(--card2);border:1px solid var(--soft-line);
- color:var(--text);font-weight:500;
+ min-height:46px;border-radius:0;
+ background:transparent;border:0;border-bottom:1px solid var(--soft-line);
+ color:var(--text);font-weight:465;
  -webkit-tap-highlight-color:transparent;
 }
-#noteScanDialog .paper-scan-inputs label:active{background:var(--card)}
+#noteScanDialog .paper-scan-inputs label:active{background:transparent;opacity:.67}
 #noteScanDialog .paper-scan-line-mode{
  gap:12px;margin:2px 0 8px;padding:5px 2px;
 }
@@ -97,9 +97,9 @@
  outline:2px solid var(--text);outline-offset:3px;
 }
 #noteScanDialog .paper-scan-recognize{
- border-radius:16px;min-height:46px;
- background:var(--card2);border:1px solid var(--soft-line);
- font-size:13px;font-weight:520;
+ border-radius:0;min-height:46px;
+ background:transparent;border:0;border-bottom:1px solid var(--soft-line);
+ color:var(--text);font-size:13px;font-weight:465;box-shadow:none;
 }
 #noteScanDialog .paper-scan-recognize:disabled{
  opacity:.48;cursor:default;
@@ -107,9 +107,9 @@
 #noteScanDialog textarea{
  display:block;width:100%;box-sizing:border-box;
  resize:none;overflow-y:auto;overscroll-behavior:contain;
- min-height:122px;height:122px;max-height:122px;
- border:1px solid var(--soft-line);border-radius:17px;
- padding:13px 14px;background:var(--card2);color:var(--text);
+ min-height:105px;height:105px;max-height:155px;
+ border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
+ padding:10px 2px;background:transparent;color:var(--text);
  font-size:16px;line-height:1.5;
  -webkit-overflow-scrolling:touch;
 }
@@ -117,7 +117,18 @@
  outline:2px solid var(--text);outline-offset:2px;
 }
 #noteScanDialog .paper-scan-actions button{
- min-height:46px;border-radius:999px;font-size:13px;
+ min-height:46px;padding:9px 4px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary);font-size:13px;font-weight:465;
+}
+#noteScanDialog .paper-scan-actions #noteScanToText{
+ color:var(--text);
+ text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px;
+}
+#noteScanDialog .paper-scan-consent-actions button{
+ min-height:44px;border:0;border-radius:0;
+ background:transparent;box-shadow:none;color:var(--text);
 }
 :root[data-theme=light] #noteScanDialog .paper-scan-line-mode input{
  border-color:rgba(47,67,91,.25);
@@ -126,5 +137,5 @@
  border-color:#fff;
 }
 @media(max-height:650px){
- #noteScanDialog textarea{min-height:96px;height:96px;max-height:96px}
+ #noteScanDialog textarea{min-height:90px;height:90px;max-height:120px}
 }
