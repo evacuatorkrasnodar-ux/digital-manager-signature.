@@ -4,21 +4,22 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton){
  touch-action:manipulation;
  background:transparent!important;
  box-shadow:none!important;
- font-weight:440!important;
- color:var(--secondary)!important;
+ font-weight:520!important;
+ color:#dbe2ec!important;
 }
 footer.dock.seyveo-music-dock > .nav-item.active{
- background:transparent!important;
- font-weight:440!important;
+ background:rgba(241,246,255,.085)!important;
+ color:#f6f8fc!important;
+ font-weight:585!important;
 }
 footer.dock.seyveo-music-dock .seyveo-music-dock-svg{
- display:block;width:20px!important;height:20px!important;flex:none;
- fill:none;stroke:currentColor!important;stroke-width:1.55!important;
+ display:block;width:24px!important;height:24px!important;flex:none;
+ fill:none;stroke:currentColor!important;stroke-width:1.8!important;
  stroke-linecap:round;stroke-linejoin:round;
- opacity:.92;
+ opacity:1;
 }
 footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton) span{
- font-size:10px;line-height:1.05;font-weight:440;letter-spacing:-.02em;
+ font-size:inherit;line-height:1.12;font-weight:inherit;letter-spacing:-.025em;
 }
 footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  opacity:.63;
@@ -26,3 +27,8 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 @media(prefers-reduced-motion:reduce){
  footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton){transition:none!important}
 }
+
+/* The player reuses exactly the same glass dock and accessible contrast. */
+:root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton){color:#465466!important}
+:root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item.active{color:#182635!important;background:rgba(32,45,64,.075)!important}
+@media(max-width:355px){footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton) span{letter-spacing:-.04em}}
