@@ -36,7 +36,6 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
     inset 0 -1px 0 rgba(0,0,0,.13),
     0 6px 17px rgba(0,0,0,.15)!important;
   color:var(--text);
-  transform:translateZ(0);
   transition:background-color .17s ease,border-color .17s ease,
     box-shadow .17s ease,transform .17s ease;
   -webkit-tap-highlight-color:transparent;
@@ -76,7 +75,7 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
 }
 
 /* White Velvet uses pearlescent glass, not a gray-on-gray inversion. */
-:root[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+html.sv-space-active[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
   border-color:rgba(57,65,77,.18)!important;
   background:
     linear-gradient(157deg,rgba(255,255,255,.93),rgba(244,245,247,.70) 64%,rgba(220,224,230,.42)),
@@ -85,7 +84,7 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
     inset 0 1px 0 rgba(255,255,255,.98),
     0 5px 16px rgba(56,66,83,.09)!important;
 }
-:root[data-theme="light"] #managePage #seyveoCleanManageMenu
+html.sv-space-active[data-theme="light"] #managePage #seyveoCleanManageMenu
  .manage-row.seyveo-clean-link:is(#openManageRoadmap,[data-clean-section="connections"],[data-clean-section="subscription"]){
   border-color:rgba(51,63,80,.24)!important;
   background:
@@ -95,7 +94,7 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
     0 7px 19px rgba(57,68,86,.105)!important;
 }
 @media(hover:hover) and (pointer:fine){
-  :root[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
+  html.sv-space-active[data-theme="light"] #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
     border-color:rgba(45,61,82,.30)!important;
     background:linear-gradient(155deg,#fff,rgba(237,241,246,.96))!important;
   }
