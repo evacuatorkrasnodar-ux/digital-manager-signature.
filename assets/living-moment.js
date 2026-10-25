@@ -11,7 +11,7 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-living-objects-demo-v5';
+const SESSION='seyveo-living-objects-demo-v5'; // Only deliberate manual preview.
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
@@ -38,7 +38,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real');
+ space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-next-mode');
  space.hidden=true;tiles.replaceChildren();previewScene=null;
  tip.textContent='';
 }
@@ -341,10 +341,7 @@ function showTask(item){
  space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
  focus(true);
  later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
-  shrink();
-  hold(()=>disappear(),6000);
- },12000);
+ // An actual due task stays visible until its status or due date changes.
  return true;
 }
 function adviceIdentity(card){
@@ -381,10 +378,59 @@ function showExistingAdvice(){
  dynamic.hidden=false;
  dynamic.classList.remove('lm-real-dim','lm-real-out');
  focus(true);
- hold(()=>{
-  dynamic.classList.add('lm-real-dim');
-  hold(()=>disappear(),6000);
- },11000);
+ // Real recommendations stay until their originating data changes.
+ return true;
+}
+/* ONE next step based on local truth; no fabricated stats or connected accounts.
+ * No separate card framework, navigation shell or unapproved background work. */
+function readLocal(key){
+ try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:null}
+ catch{return null}
+}
+function nextIntent(){
+ const profile=readLocal('seyveo-first-acquaintance-v1');
+ if(profile?.focus==='life')return {
+  id:'life',eyebrow:'СЭЙВА · ВАШ ДЕНЬ',
+  title:'Начнём с того, что важно вам',
+  line:'Добавьте дело со сроком — я смогу напомнить о нём.',
+  action:'Открыть дела',target:'tasks'
+ };
+ const map=readLocal('seyveo-business-map-v1');
+ if(map?.version!==1||typeof map.description!=='string'||!map.description.trim())return{
+  id:'map',eyebrow:'СЭЙВА · ПЕРВЫЙ ШАГ',
+  title:'Расскажите о своём деле',
+  line:'Пара деталей о работе поможет мне предлагать более уместные действия.',
+  action:'Начать знакомство',target:'business'
+ };
+ return {
+  id:'connections',eyebrow:'СЭЙВА · ВОЗМОЖНОСТИ',
+  title:'Добавим полезные источники',
+  line:'С разрешённым доступом смогу помогать с письмами, заявками и отзывами. Пока сервисы не подключены.',
+  action:'Подключения',target:'connections'
+ };
+}
+function openNext(target){
+ if(target==='tasks'){$('navTasks')?.click();return}
+ if(target==='business'){$('openBusinessMap')?.click();return}
+ if(target==='connections')$('openManageConnections')?.click();
+}
+function showNext(intent){
+ if(!available()||editing())return false;
+ mode='next';key='next:'+intent.id;
+ tiles.replaceChildren();
+ const section=create('section','lm-next');
+ section.append(
+  create('p','lm-next-kicker',intent.eyebrow),
+  create('strong','lm-next-title',intent.title),
+  create('p','lm-next-description',intent.line)
+ );
+ const action=create('button','lm-next-action',intent.action);action.type='button';
+ action.addEventListener('click',()=>{readingUntil=Date.now()+15000;openNext(intent.target)});
+ section.append(action);
+ tiles.append(section);
+ tip.textContent='';
+ space.hidden=false;space.classList.add('lm-next-mode','lm-reveal');
+ focus(false);
  return true;
 }
 function refresh(){
@@ -393,6 +439,9 @@ function refresh(){
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
  if(mode==='task'){
+  const task=dueTask();
+  const taskKey=task?'task:'+(task.id||task.title)+'|'+task.due:'';
+  if(key!==taskKey){rest();return}
   if(!dynamic.hidden)dynamic.hidden=true;
   return;
  }
@@ -401,13 +450,19 @@ function refresh(){
   if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
+ if(mode==='next'){
+  if(dueTask()||pending){rest();return}
+  const intent=nextIntent();
+  if(key!=='next:'+intent.id){rest();return}
+  return;
+ }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
  const item=dueTask();
  if(item&&showTask(item))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
- if(mode==='idle')focus(false);
+ if(mode==='idle'&&!pending)showNext(nextIntent());
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
@@ -420,6 +475,11 @@ viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:[
 window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
+window.addEventListener('seyveo:profile-changed',scheduleRefresh);
+window.addEventListener('storage',event=>{
+ if(['seyveo-first-acquaintance-v1','seyveo-business-map-v1','seyveo-personal-tasks-v1'].includes(event.key))scheduleRefresh();
+});
+document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('close',scheduleRefresh));
 window.addEventListener('hashchange',()=>{
  if(mode!=='idle')rest();
  else focus(false);
@@ -461,14 +521,6 @@ replay?.addEventListener('click',()=>{
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
 scheduleRefresh();
-// Developer preview is deliberately visible once per tab/session, NOT user data.
-// Run after the approved opening logo has had time to appear.
-let visited=false;
-try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
-if(!visited){
- later(()=>{
-  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
-  startPreview();
- },9400);
-}
+// The explicit developer preview button remains available, but fictional
+// documents and messages never take over Home automatically.
 })();
