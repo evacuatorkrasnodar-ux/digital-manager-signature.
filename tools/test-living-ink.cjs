@@ -79,6 +79,15 @@ assert.match(chatLogic,/expand\.setAttribute\('aria-expanded','false'\)/,'Long q
 assert.match(chatLogic,/if\(atBottom\|\|isNewTurn\)scrollToLatest\(\)/,'New messages scroll into view');
 assert.match(chatLogic,/queueChatGeometry\(\);\s*scrollToLatest\(\);/,'Opening chat displays latest messages');
 assert.match(chatAppearance,/\.seyveo-message-folded \.seyveo-conversation-body\{/,'Only folded messages clip on screen');
+assert.match(chatAppearance,/html\.seyveo-conversation:not\(\[data-theme=light\]\) body\{/,'Chat canvas is one graphite surface');
+assert.match(chatAppearance,/linear-gradient\(180deg,#1d2025 0%,#1b1e23 55%,#191c21 100%\)/,'Softened graphite replaces pure black');
+assert.match(chatAppearance,/background:rgba\(232,236,244,\.092\)/,'Owner messages have soft visual separation');
+assert.match(chatAppearance,/width:44px!important;min-width:44px!important/,'Reply controls retain comfortable hit targets');
+assert.match(chatAppearance,/width:19px!important;height:19px!important/,'Reply glyphs are legible');
+assert.match(chatAppearance,/order:5!important;flex:0 0 44px/,'Composer controls have matching geometry');
+assert.match(chatAppearance,/background:transparent!important;\s*border:0!important;border-radius:0!important;\s*-webkit-backdrop-filter:none!important;backdrop-filter:none!important/,'No overlay stripe is introduced');
+assert.match(html,/conversation-refined\.css\?v=21/,'New chat styling is deployed');
+
 assert.match(html,/conversation-refined\.css\?v=20/,'Long-message style deployed');
 assert.match(html,/living-conversation\.js\?v=19/,'Latest chat controller deployed');
 
