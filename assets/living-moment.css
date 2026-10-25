@@ -116,7 +116,16 @@
   gap:14px;
   min-width:0;
   padding:0 7px 16px;
-  transition:gap 780ms ease,padding 780ms ease;
+  opacity:0;
+  transform:translate3d(0,40px,0);
+  transition:gap 780ms ease,padding 780ms ease,
+    opacity 790ms cubic-bezier(.2,.8,.2,1),
+    transform 900ms cubic-bezier(.22,1,.36,1);
+}
+#seyveoLivingMoment.lm-reveal .lm-primary{
+  opacity:1;
+  transform:translate3d(0,0,0);
+  transition-delay:90ms;
 }
 #seyveoLivingMoment .lm-hero{
   display:grid;
@@ -266,9 +275,16 @@
   padding:7px 7px;
   min-height:73px;
   cursor:pointer;
-  opacity:1;
-  transition:opacity 540ms ease,transform 740ms cubic-bezier(.22,1,.36,1);
+  opacity:0;
+  transform:translate3d(0,56px,0);
+  transition:opacity 760ms cubic-bezier(.2,.8,.2,1),transform 990ms cubic-bezier(.22,1,.36,1);
 }
+#seyveoLivingMoment.lm-reveal .lm-inline-item{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(1){transition-delay:540ms}
+#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(2){transition-delay:1080ms}
 #seyveoLivingMoment .lm-inline-item:focus-visible{
   outline:2px solid var(--text);
   outline-offset:-3px;
@@ -340,6 +356,19 @@
   0%{opacity:0;transform:translate3d(0,9px,0) scale(.92)}
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
+}
+/* The original three in-flow rows gather into one scene: no glass overlays. */
+#seyveoLivingMoment.lm-gather .lm-secondary{
+  max-height:0;
+  opacity:0;
+  transform:translate3d(0,-18px,0);
+  pointer-events:none;
+  transition-delay:250ms;
+}
+#seyveoLivingMoment.lm-gather .lm-inline-item{
+  opacity:0;
+  transform:translate3d(0,-26px,0);
+  transition-delay:0ms;
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
