@@ -1,13 +1,14 @@
 /* SEYVA PLAY · quiet living stage.
  * One real official YouTube iframe; no decorative overlays or duplicate dock.
- * Only the title, one field and two actions are visible before playback. */
+ * Only the title, one field and two actions are visible before playback.
+ * The shared app scroll area already reserves safe space above the dock. */
 #sayviVideoPage[hidden],#sayviVideoPlayer[hidden],
 #sayviVideoPage [hidden]{display:none!important}
 #sayviVideoPage.sv-video-page{
  box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch;
  width:min(100%,640px);min-width:0;margin:0 auto;
  gap:clamp(9px,1.7dvh,16px);
- padding:clamp(8px,2.6dvh,25px) 0 calc(95px + env(safe-area-inset-bottom,0px));
+ padding:clamp(8px,2.6dvh,25px) 0 20px;
  color:var(--text);
 }
 #sayviVideoPage .sv-video-header{
@@ -95,7 +96,7 @@
 @media(max-width:420px){
  #sayviVideoPage.sv-video-page{
   gap:9px;padding-top:clamp(3px,1.3dvh,10px);
-  padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
+  padding-bottom:18px;
  }
  #sayviVideoPage .sv-video-header{margin-bottom:8px}
  #sayviVideoPage .sv-video-header h1{font-size:clamp(28px,7.2vw,36px)}
