@@ -785,6 +785,10 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 /* Explicit hidden rules: author display:flex otherwise overrides the HTML
    hidden attribute on Safari and leaves "completed" controls hanging. */
 #homePage #seyveoLivingMoment .lm-task-body [hidden]{display:none!important}
+#homePage #seyveoLivingMoment .lm-task-feedback:not(:empty){
+ white-space:pre-line;padding-left:11px;
+ border-left:2px solid rgba(244,248,255,.31);
+}
 #homePage #seyveoLivingMoment .lm-task-feedback:empty{display:none}
 #homePage #seyveoLivingMoment .lm-task-replay{
  width:100%;margin-top:9px;border-style:dashed;color:#c4cfdd;
