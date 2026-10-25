@@ -387,158 +387,137 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  if(!tasks.length)return false;
  collectionDemo=demo;
  mode='collection';key=(demo?'demo:':'real:')+tasksSignature(tasks);
- space.classList.remove('lm-preview','lm-real','lm-next-mode','lm-condense','lm-disappear','lm-collection-mode');
+ space.classList.remove('lm-preview','lm-real','lm-next-mode','lm-condense','lm-disappear','lm-collection-cinematic');
  space.classList.add('lm-collection-mode','lm-reveal');
- space.hidden=false;
- // Business advice may coexist, but it is not counted as a personal task.
+ space.hidden=false;tip.textContent='';
  dynamic.hidden=!dynamic.querySelector('[data-owner-advice]');
- tip.textContent='';
  tiles.replaceChildren();
- const details=create('details','lm-task-collection');
- details.open=collectionOpen;
- if(demo&&animate)demoResolved.clear();
- if(demo)details.dataset.demo='true';
- // The scene uses real titles or clearly labelled demo titles, never fake activity.
- const runCinematic=animate&&!reduced();
- space.classList.toggle('lm-collection-cinematic',runCinematic);
- if(runCinematic){
-  const stage=create('div','lm-gather-stage');
-  stage.setAttribute('aria-hidden','true');
-  tasks.slice(0,3).forEach((task,index)=>{
-   // The symbol itself is the scene: no glass card, frames, or tiles.
-   const symbol=create('div','lm-gather-symbol');
-   symbol.style.setProperty('--gather-index',String(index));
-   symbol.append(icon(gatherKind(task,demo)),
-    create('span','lm-gather-title',task.title));
-   stage.append(symbol);
-  });
-  tiles.append(stage);
-  // The gesture-free choreography ends in ONE persistent decision stack.
-  // Keeping final state when the stage is removed also unlocks the summary.
-  const finishGather=()=>{
-   if(!stage.isConnected)return;
-   stage.remove();
-   space.classList.remove('lm-collection-cinematic');
-  };
-  stage.addEventListener('animationend',event=>{
-   // SVG stroke animations bubble; only the stage itself finishes the scene.
-   if(event.target===stage&&event.animationName==='sv-gather-stage')finishGather();
-  });
-  // iOS fallback if animationend was cancelled (e.g. by an OS setting).
-  later(finishGather,5850);
- }
- const summary=create('summary','lm-task-summary');
- const count=create('span','lm-task-count',String(tasks.length));
- const header=create('span','lm-task-heading');
- header.append(create('strong','lm-task-title','Центр решений'),
-  create('small','lm-task-caption',demo?'Демонстрация возможностей · без сохранения':
-   tasks.length===1?'Одно дело требует вашего внимания':'Дела собраны в одной стопке'));
- const total=create('span','lm-task-total',tasks.length+' '+(tasks.length%10===1&&tasks.length%100!==11?'дело':
-  [2,3,4].includes(tasks.length%10)&&!(tasks.length%100>=12&&tasks.length%100<=14)?'дела':'дел'));
- summary.append(count,header,total);
- const body=create('div','lm-task-body');
+ const queue=tasks.slice();
+ const wrapper=create('section','lm-task-collection lm-task-collection--quiet');
+ if(demo)wrapper.dataset.demo='true';
+ const summary=create('div','lm-task-summary');
+ const count=create('span','lm-task-count','0');
+ const head=create('span','lm-task-heading');
+ head.append(create('strong','lm-task-title','Центр решений'),
+  create('small','lm-task-caption',demo?'ДЕМО · Примеры без настоящих действий':'Ваши дела собраны здесь'));
+ const number=create('span','lm-task-total');
+ summary.append(count,head,number);
+ const actions=create('div','lm-task-actions lm-task-actions--two');
+ const view=create('button','lm-task-acquaint','Ознакомиться');view.type='button';
+ const execute=create('button','lm-task-execute','Исполнить');execute.type='button';
+ actions.append(view,execute);
+ const body=create('div','lm-task-body lm-task-body--quiet');body.hidden=true;
  const position=create('p','lm-task-position');
- const name=create('h3','lm-task-current-title');
+ const title=create('h3','lm-task-current-title');
  const when=create('p','lm-task-when');
- const desc=create('p','lm-task-explanation');
- const buttons=create('div','lm-task-actions');
- const act=create('button','lm-task-execute',demo?'Исполнить · демо':'Исполнить');act.type='button';
- const done=create('button','lm-task-complete',demo?'Следующий пример':'Отметить выполненным');done.type='button';
- buttons.append(act,done);
- const paging=create('div','lm-task-paging');
- const prev=create('button','lm-task-prev','Предыдущее');prev.type='button';
- const next=create('button','lm-task-next','Следующее');next.type='button';
- paging.append(prev,next);
+ const explanation=create('p','lm-task-explanation');
  const feedback=create('p','lm-task-feedback');feedback.setAttribute('role','status');
  feedback.setAttribute('aria-live','polite');
- body.append(position,name,when,desc,buttons,paging,feedback);
- const demoOutcomes={
-  'demo-mail':'ДЕМО · Черновик ответа:\n«Здравствуйте! Спасибо за обращение. Уточните, пожалуйста, удобное время — я подготовлю подтверждение.»\nПисьмо никому не отправлено.',
-  'demo-document':'ДЕМО · Результат проверки:\n«Сверить стороны договора, сроки исполнения и порядок оплаты.»\nНастоящий документ не загружался и ничего не подписано.',
-  'demo-call':'ДЕМО · Подготовка звонка:\n«Нужно подтвердить контакт и номер клиента перед вызовом.»\nЗвонок не совершался.'
+ body.append(position,title,when,explanation,feedback);
+ wrapper.append(summary,actions,body);
+ tiles.append(wrapper);
+ const results={
+  'demo-mail':'ДЕМО · Черновик ответа:\n«Здравствуйте! Спасибо за обращение. Уточните, пожалуйста, удобное время.»\nПисьмо не отправлялось.',
+  'demo-document':'ДЕМО · Проверка договора:\n«Проверить сроки, реквизиты сторон и порядок оплаты.»\nДокумент не подписывался.',
+  'demo-call':'ДЕМО · Подготовка звонка:\n«Перед звонком уточнить контакт и номер клиента.»\nЗвонка не было.'
  };
- const grammar=count=>count+' '+(count%10===1&&count%100!==11?'дело':
-  [2,3,4].includes(count%10)&&!(count%100>=12&&count%100<=14)?'дела':'дел');
- function updateCount(){
-  const remaining=demo?tasks.length-demoResolved.size:tasks.length;
-  count.textContent=String(remaining);
-  total.textContent=grammar(remaining);
+ const grammatical=n=>n+' '+(n%10===1&&n%100!==11?'дело':
+   [2,3,4].includes(n%10)&&!(n%100>=12&&n%100<=14)?'дела':'дел');
+ let deferredNote='';
+ function current(){
+  if(demo&&demoResolved.size===queue.length)return null;
+  const unresolved=demo?queue.filter(item=>!demoResolved.has(item.id)):queue;
+  if(!unresolved.length)return null;
+  collectionPage=((collectionPage%unresolved.length)+unresolved.length)%unresolved.length;
+  return unresolved[collectionPage];
  }
- function renderPage(){
-  if(demo&&demoResolved.size===tasks.length){
-   updateCount();
-   header.querySelector('.lm-task-caption').textContent='Демонстрация завершена';
-   position.textContent=tasks.length+' из '+tasks.length;
-   name.textContent='Все примеры показаны';
-   when.textContent='Центр решений · демо';
-   desc.textContent='Конверт, документ и звонок обработаны в демонстрационном режиме. Никаких реальных писем, подписей или вызовов не было.';
-   buttons.hidden=true;paging.hidden=true;
-   feedback.textContent='Нажмите «Повторить появление», чтобы посмотреть сцену снова.';
+ function render(){
+  const remaining=demo?queue.length-demoResolved.size:queue.length;
+  count.textContent=String(remaining);
+  number.textContent=grammatical(remaining);
+  view.setAttribute('aria-expanded',String(collectionOpen));
+  const item=current();
+  if(!item){
+   title.textContent='Все примеры обработаны';
+   position.textContent='ДЕМОНСТРАЦИЯ ЗАВЕРШЕНА';
+   when.textContent='';
+   explanation.textContent='Это была безопасная демонстрация без отправки писем, подписания документов и звонков.';
+   body.hidden=false;collectionOpen=true;
+   view.disabled=true;execute.disabled=true;
+   head.querySelector('.lm-task-caption').textContent='Все решения просмотрены';
    return;
   }
-  buttons.hidden=false;paging.hidden=false;
-  if(collectionPage>=tasks.length)collectionPage=tasks.length-1;
-  if(collectionPage<0)collectionPage=0;
-  if(demo&&demoResolved.has(tasks[collectionPage].id)){
-   collectionPage=tasks.findIndex(task=>!demoResolved.has(task.id));
-  }
-  const task=tasks[collectionPage];
-  position.textContent=(collectionPage+1)+' из '+tasks.length;
-  name.textContent=task.title;
-  when.textContent=demo?'Пример для просмотра':deadlineLabel(task);
-  const target=demo?'':(window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'');
-  desc.textContent=demo?task.demoDescription+' Это демонстрация, без доступа к настоящим сервисам.':target
-   ?'Сэйва поможет подготовить звонок по этому делу. Сам вызов подтверждается в телефоне.'
-   :task.sourceNoteId
-   ?'Вы сохранили дело из Блокнота. Откройте его, выполните нужное и отметьте завершённым.'
-   :'Дело сохранено вами. Нажмите «Исполнить», чтобы открыть его в разделе «Дела».';
-  prev.disabled=collectionPage===0;next.disabled=collectionPage===tasks.length-1;
-  act.hidden=false;
-  done.textContent=demo?'Следующий пример':'Отметить выполненным';
+  position.textContent=(collectionPage+1)+' из '+remaining;
+  title.textContent=item.title;
+  when.textContent=demo?'Пример для просмотра':deadlineLabel(item);
+  explanation.textContent=demo?item.demoDescription+' Реальные сервисы не подключались.':
+   item.sourceNoteId?'Это дело сохранено из Блокнота. Выполнить можно в разделе «Дела».':
+   'Это ваше сохранённое дело. «Исполнить» открывает его для выполнения.';
+  if(deferredNote){feedback.textContent=deferredNote;deferredNote=''}
+  else if(!demo||!demoResolved.has(item.id))feedback.textContent='';
+  body.hidden=!collectionOpen;
+  view.disabled=false;execute.disabled=false;
+ }
+ function moveNext({defer=false}={}){
+  if(!current())return;
+  // Swiping only changes on-screen order; never deletes or completes a real task.
+  const active=current();
+  if(defer&&queue.length>1){
+   const index=queue.indexOf(active);
+   queue.splice(index,1);queue.push(active);
+   deferredNote='Отложено в этом просмотре · дело сохранено.';
+  }else collectionPage++;
+  collectionOpen=false;
+  render();
+ }
+ view.addEventListener('click',()=>{
+  if(!current())return;
+  collectionOpen=!collectionOpen;
   feedback.textContent='';
-  updateCount();
-  act.onclick=()=>{
-   if(demo){
-    demoResolved.add(task.id);
-    updateCount();
-    feedback.textContent=demoOutcomes[task.id]||'Демо выполнено. Реальные данные не изменились.';
-    act.hidden=true;
-    done.textContent=demoResolved.size===tasks.length?'Показать итог':'Следующий пример';
-    return;
-   }
-   activateTask(task);
-  };
-  done.onclick=()=>{
-   if(demo){
-    const nextIndex=tasks.findIndex((entry,i)=>i>collectionPage&&!demoResolved.has(entry.id));
-    collectionPage=nextIndex>=0?nextIndex:tasks.findIndex(entry=>!demoResolved.has(entry.id));
-    renderPage();
-    return;
-   }
-   completeTask(task,feedback);
-  };
- }
- prev.addEventListener('click',()=>{collectionPage--;renderPage()});
- next.addEventListener('click',()=>{collectionPage++;renderPage()});
- renderPage();
- if(demo){
-  const replayButton=create('button','lm-task-replay','Повторить появление');replayButton.type='button';
-  replayButton.addEventListener('click',()=>{
-   collectionPage=0;collectionOpen=false;demoResolved.clear();cancel();resetSpace();mode='idle';key='';
-   showCollection(demoTasks(),{demo:true,animate:true});
-  });
-  body.append(replayButton);
- }
- details.append(summary,body);
- details.addEventListener('toggle',()=>{
-  collectionOpen=details.open;
-  // Keep the sphere's compact stage while the decision center is visible;
-  // on a smaller iPhone both the sphere and animated symbols remain in view.
-  focus(true);
+  render();
  });
- tiles.append(details);
+ execute.addEventListener('click',()=>{
+  const task=current();
+  if(!task)return;
+  readingUntil=Date.now()+13000;
+  if(!demo){activateTask(task);return}
+  demoResolved.add(task.id);
+  collectionOpen=true;
+  body.hidden=false;
+  position.textContent='ДЕМОНСТРАЦИЯ';
+  title.textContent=task.title;
+  when.textContent='Пример выполнен';
+  explanation.textContent=task.demoDescription;
+  feedback.textContent=results[task.id]||'Демо завершено. Настоящие данные не изменились.';
+  count.textContent=String(queue.length-demoResolved.size);
+  number.textContent=grammatical(queue.length-demoResolved.size);
+  execute.disabled=true;view.disabled=true;
+  // Allow sufficient reading time; swiping advances immediately if preferred.
+  later(()=>{
+   if(mode!=='collection'||!collectionDemo||!wrapper.isConnected)return;
+   collectionOpen=false;collectionPage=0;
+   render();
+  },5800);
+ });
+ // A horizontal gesture postpones a real item without editing the store.
+ let startX=null,startY=null;
+ wrapper.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1||event.target.closest('button'))return;
+  startX=event.touches[0].clientX;startY=event.touches[0].clientY;
+ },{passive:true});
+ wrapper.addEventListener('touchend',event=>{
+  if(startX===null||!event.changedTouches.length)return;
+  const deltaX=event.changedTouches[0].clientX-startX;
+  const deltaY=event.changedTouches[0].clientY-startY;
+  startX=null;startY=null;
+  if(deltaX< -70&&Math.abs(deltaY)<52){
+   if(demo&&demoResolved.size>0&&execute.disabled){
+    collectionOpen=false;collectionPage=0;render();
+   }else moveNext({defer:true});
+  }
+ },{passive:true});
+ render();
  focus(true);
- if(runCinematic)collectionAnimationSeen=true;
  return true;
 }
 function adviceIdentity(card){
