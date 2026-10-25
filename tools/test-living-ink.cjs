@@ -32,12 +32,13 @@ assert.match(music,/const dock=document\.querySelector\('footer\.dock'\)/,'Music
 assert.match(music,/if\(!mode\|\|!event\.isTrusted\)return/,'Programmatic navigation stays native');
 
 const dockShell=cssBlock(dock,'.dock');
-for(const property of ['background:transparent!important','border:0!important','box-shadow:none!important','backdrop-filter:none!important'])
- assert.ok(dockShell.includes(property),'Dock has no painted shell: '+property);
-assert.doesNotMatch(dockShell,/backdrop-filter:blur\(|border:1px solid var\(--seyveo-nav-line\)/);
-assert.match(dock,/height:46px!important;min-height:46px!important/,'Touchable navigation');
-assert.match(dock,/prefers-reduced-motion:reduce/,'Respects reduced motion');
-assert.match(dock,/seyveo-ink-emerge/,'Signs rise once from the page');
+assert.match(dockShell,/border:1px solid rgba\(235,238,244,.23\)!important/,'Fine outline');
+assert.match(dockShell,/backdrop-filter:none!important/,'No power-hungry blurring');
+assert.match(dockShell,/box-shadow:inset 0 1px 0 rgba\(255,255,255,.05\)!important/,'No large shadow');
+assert.doesNotMatch(dockShell,/backdrop-filter:blur\(/);
+assert.match(dock,/height:52px!important;min-height:52px!important/,'Accessible side tabs');
+assert.match(dock,/prefers-reduced-motion:reduce/,'Honors reduced motion');
+assert.doesNotMatch(dock,/sv-magnetic-reveal/,'Carousel animation retired');
 
 assert.match(dock,/SEYVEO Living Ink · readable composer/,'The compact input contrast stays intentional');
 assert.match(dock,/radial-gradient\(ellipse 87% 91% at 47% 50%/,'Compact input gets a feathered ink veil without a painted panel');
@@ -47,7 +48,7 @@ assert.match(dock,/:root\[data-theme="light"\] #ask\.prompt:not\(\.expanded\)/,'
 assert.match(dock,/#ask\.prompt:not\(\.expanded\):focus-within\{/,'Focus increases contrast only, not geometry');
 assert.match(dock,/border-width:0!important/,'No visible gray input capsule');
 assert.doesNotMatch(dock,/backdrop-filter:blur\(20px\).*#ask\.prompt:not/,'No old frosted glass shell');
-assert.match(html,/assets\/floating-navigation\.css\?v=17/,'The deployed index refreshes new ink style');
+assert.match(html,/assets\/floating-navigation\.css\?v=29/,'The deployed index refreshes current dock style');
 
 
 const rail=cssBlock(composer,'#assistantQuickrail.assistant-quickrail');
