@@ -1948,7 +1948,7 @@ function render(){
     // silently send messages or sign documents.
     // The Living Surface decorates this real recommendation with its
     // own large artwork. Do not reintroduce the former mini card icon.
-    $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true" data-explanation="'+escapeHtml(advice.detail||advice.why)+'"><div class="card-main"><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>'+escapeHtml(origin)+'</small></div></div><div class="card-tag">'+escapeHtml(advice.why)+'</div><div class="actions"><button class="btn primary" id="inspect" type="button" aria-expanded="false">Подробнее</button><button class="btn primary" id="resolve" type="button">Исполнить</button>+'</div></article>';
+    $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true" data-explanation="'+escapeHtml(advice.detail||advice.why)+'"><div class="card-main"><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>'+escapeHtml(origin)+'</small></div></div><div class="card-tag">'+escapeHtml(advice.why)+'</div><div class="actions"><button class="btn primary" id="inspect" type="button" aria-expanded="false">Подробнее</button><button class="btn primary" id="resolve" type="button">Исполнить</button></div></article>';
     // The Living Surface reveals the original action only after «Подробнее».
     $('resolve')?.addEventListener('click',()=>openHomeAdvice(advice));
   }else $('dynamic').replaceChildren();
