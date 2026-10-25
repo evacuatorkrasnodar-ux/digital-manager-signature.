@@ -8,10 +8,10 @@ const $=id=>document.getElementById(id);
 const home=$('homePage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
 const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
 const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
+const demoLaunch=$('seyveoDemoLaunch');
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-detailed-decision-cinema-v3';
 const TIMING=Object.freeze({open:reduced()?0:620,beat:2900,quiet:4800,close:reduced()?0:720});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let ledgerState=null,demoFinished=false,hadRealWork=false,realIntroSeen=false;
@@ -340,6 +340,7 @@ function showLedger(items,{demo=false}={}){
  if(!items.length){if(demo)demoFinished=true;rest();return}
  if(!available()){rest();return}
  cancel();mode='ledger';key=demo?'deck-demo':'deck-real';
+ if(demoLaunch)demoLaunch.hidden=true;
  tiles.replaceChildren();space.classList.remove('lm-preview','lm-condense','lm-disappear','lm-real');
  space.classList.add('lm-ledger-mode','lm-reveal');space.hidden=false;
  tip.textContent='';dynamic.hidden=true;focus(true);
@@ -525,7 +526,7 @@ function startPreview(list=null,{demo=true}={}){
  if(demo)demoFinished=false;
  else{hadRealWork=true;realIntroSeen=true}
  mode='preview';key=demo?'preview':'preview-real';
- try{sessionStorage.setItem(SESSION,'1')}catch{}
+ if(demoLaunch)demoLaunch.hidden=true;
  dynamic.hidden=true;
  const scenes=demo?sample:all.slice(0,3);
  previewScene=createSurface(scenes[0],scenes.slice(1));
@@ -643,6 +644,7 @@ function showExistingAdvice(){
  return true;
 }
 function refresh(){
+ if(demoLaunch)demoLaunch.hidden=true;
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
@@ -673,7 +675,11 @@ function refresh(){
  }
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
- if(mode==='idle'){focus(false);requestAutoDemo()}
+ if(mode==='idle'){
+  focus(false);
+  if(demoLaunch)demoLaunch.hidden=false;
+  requestAutoDemo();
+ }
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
@@ -727,41 +733,39 @@ replay?.addEventListener('click',()=>{
  later(()=>{startPreview()},260);
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
-/* A desktop browser must not stay blank after reload just because sessionStorage
-   remembers an earlier preview. The session key controls only the optional
-   first-visit cinema on touch/mobile, NEVER the desktop demonstration cards.
-   Never replace real tasks, owner advice, or someone's postponed work with demo. */
-const desktopPreview=!!window.matchMedia?.('(hover: hover) and (pointer: fine)')?.matches;
-let visited=false,autoDemoShown=false,autoDemoPending=false;
-try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
-function hasSavedPersonalTasks(){
+/* A repeatable demonstration is needed for QA on touch PCs and phones.
+   Old session and pointer-type restrictions blocked cards after refresh.
+   Never store illustrative tasks as real user data. */
+let autoDemoShown=false,autoDemoPending=false;
+function hasUnfinishedSavedTasks(){
  try{
   const rows=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');
-  return Array.isArray(rows)&&rows.some(item=>item&&typeof item.title==='string'&&item.title.trim());
+  return Array.isArray(rows)&&rows.some(item=>item&&item.done!==true&&
+   typeof item.title==='string'&&item.title.trim());
  }catch{return false}
 }
 function requestAutoDemo(){
- if(autoDemoShown||autoDemoPending||(!desktopPreview&&visited))return;
- if(mode!=='idle'||!available()||editing()||hadRealWork||demoFinished
-    ||hasSavedPersonalTasks()||dynamic.querySelector('[data-owner-advice]'))return;
+ if(autoDemoShown||autoDemoPending||mode!=='idle'||!available()||editing()
+    ||hadRealWork||demoFinished||hasUnfinishedSavedTasks()
+    ||dynamic.querySelector('[data-owner-advice]'))return;
  autoDemoPending=true;
  window.setTimeout(()=>{
   autoDemoPending=false;
-  if(autoDemoShown||mode!=='idle'||!available()||editing()||hadRealWork
-     ||demoFinished||hasSavedPersonalTasks()
+  if(autoDemoShown||mode!=='idle'||!available()||editing()
+     ||hadRealWork||demoFinished||hasUnfinishedSavedTasks()
      ||dynamic.querySelector('[data-owner-advice]'))return;
-  // On desktop show the actual informative cards quickly, instead of making
-  // the owner wait through three separate cinematic beats after each reload.
-  if(desktopPreview){
-   showLedger(demoLedgerItems(),{demo:true});
-   autoDemoShown=true;
-  }else{
-   autoDemoShown=startPreview();
-  }
- },desktopPreview?1250:1850);
+  showLedger(demoLedgerItems(),{demo:true});
+  autoDemoShown=true;
+ },1450);
 }
-// The initial Home, route switches and a closed onboarding/settings dialog
-// can all become eligible. No polling or endless auto-repeat is necessary.
+/* An explicit, accessible demo action always remains available on an empty Home;
+   it does not depend on timers, storage markers or device pointer type. */
+demoLaunch?.addEventListener('click',()=>{
+ if(!available()||editing()||readOpenTasks().length)return;
+ if(mode!=='idle')rest();
+ autoDemoShown=true;
+ showLedger(demoLedgerItems(),{demo:true});
+});
 document.addEventListener('close',scheduleRefresh,true);
 window.addEventListener('seyveo:route-changed',scheduleRefresh);
 scheduleRefresh();
