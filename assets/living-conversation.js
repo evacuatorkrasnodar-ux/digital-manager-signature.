@@ -330,9 +330,21 @@ function displayChatText(value){
   .replace(/(?:[ \t]*\n){3,}/g,'\n\n').trim();
 }
 let lastRenderedTurnCount=0;
+let latestScrollRequest=0;
 function scrollToLatest(){
- // Allow the layout to reserve space for the fixed chat writer first.
- requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
+ // The last message must be scrolled into view AFTER the fixed writer's
+ // real size and iOS visible viewport have been committed to the layout.
+ const request=++latestScrollRequest;
+ requestAnimationFrame(()=>{
+  if(request!==latestScrollRequest||
+     !root.classList.contains('seyveo-conversation'))return;
+  syncChatGeometry();
+  requestAnimationFrame(()=>{
+   if(request!==latestScrollRequest||
+      !root.classList.contains('seyveo-conversation'))return;
+   text.scrollTop=Math.max(0,text.scrollHeight-text.clientHeight);
+  });
+ });
 }
 function renderTurns(turns){
  const previous=text.scrollTop;
@@ -433,7 +445,7 @@ function syncChatGeometry(){
  const visibleBottom=top+height;
  const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
  root.style.setProperty('--sayvi-composer-space',
-  (composerHeight+bottomOffset+6)+'px');
+  (composerHeight+bottomOffset+10)+'px');
  if(stickToBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
 function queueChatGeometry(){
