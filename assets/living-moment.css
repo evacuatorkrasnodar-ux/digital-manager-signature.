@@ -631,7 +631,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  opacity:0;transform:translate3d(0,90px,0) scale(.98);
  animation:
   lm-film-rise 720ms cubic-bezier(.18,.8,.22,1) both,
-  lm-film-gather 700ms cubic-bezier(.24,.77,.31,1) both;
+  lm-film-gather 700ms cubic-bezier(.24,.77,.31,1) forwards;
  animation-delay:
   var(--film-rise-delay,120ms),
   2200ms;
