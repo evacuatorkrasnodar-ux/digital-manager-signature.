@@ -64,9 +64,9 @@ assert.doesNotMatch(future,/:root\[data-seyveo-presence=listening\] \.dock>\.ass
 assert.doesNotMatch(continuity,/--sv-living-dock-glint/,'No redundant scene ring');
 assert.match(continuity,/\.sv-cascade/,'Single-workspace reveal preserved');
 // Exactly one Quiet Atmosphere background per theme, shared across ALL pages.
-assert.match(continuity,/:root:not\(\[data-theme=light\]\) body\{/,'Dark graphite is shared by every page');
+assert.match(continuity,/#homePage:not\(\[hidden\]\)/,'Historical dark Home background is restored');
 assert.match(continuity,/:root\[data-theme=light\] body\{/,'Light atmosphere is also shared');
-assert.doesNotMatch(continuity,/body:has\(#homePage:not\(\[hidden\]\)\)/,'No Home-only backdrop override');
+assert.match(continuity,/background:#141619/,'Pure Black Velvet on restored Home');
 assert.match(continuity,/rgba\(222,224,230,\.077\)/,'Pearl glow is deliberately softer');
 assert.doesNotMatch(continuity,/background-attachment:fixed|backdrop-filter:blur\(/,'No scroll-heavy background filters');
 assert.match(html,/assets\/living-space\.css\?v=\d+/,'Current shared atmosphere stylesheet uses a versioned URL');
@@ -75,21 +75,16 @@ assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.ca
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
-// Clean new scene: forbid all old layered/duplicate systems.
-assert.match(decisionJs,/clean cinematic director/);
-assert.match(decisionJs,/function intro\(\)/);
-assert.match(decisionJs,/function advance\(action,direction\)/);
-assert.match(decisionJs,/queue\.push\(queue\.shift\(\)\)/);
-assert.match(decisionJs,/found\.done=true;found\.doneAt=/);
-assert.match(decisionJs,/preview\?\.addEventListener\('click'/);
-assert.match(decisionCss,/@keyframes sv-rise/);
-assert.match(decisionCss,/@keyframes sv-gather/);
-assert.match(decisionCss,/\.sv-decision/);
-assert.doesNotMatch(decisionCss,/\.lm-film|\.lm-deck|\.lm-cinema-gather|\.lm-cinema-enter/);
-assert.doesNotMatch(decisionJs,/lm-film|lm-deck|lm-cinema-enter|lm-cinema-gather/);
-assert.match(html,/living-moment\.css\?v=33/);
-assert.match(html,/living-moment\.js\?v=46/);
-
+// Historical Oct 23 Quiet Cinema v3: original plasma geometry and cinematic stage.
+assert.match(decisionJs,/Home Quiet Cinema v3/);
+assert.match(decisionJs,/function startPreview/);
+assert.match(decisionJs,/window\.SEYVEO_LIVING_MOMENT/);
+assert.match(decisionCss,/Black Velvet — Cinematic Presence/);
+assert.match(decisionCss,/#homePage #orbCluster/);
+assert.doesNotMatch(decisionJs,/lm-film-card|sv-decision|clean cinematic director/);
+assert.doesNotMatch(decisionCss,/\.lm-film-card|\.sv-decision/);
+assert.match(html,/living-moment\.css\?v=34/);
+assert.match(html,/living-moment\.js\?v=47/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
  assert.match(html,new RegExp('assets/'+item.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\$&')+'\\?v=\\d+'),'Versioned file: '+item);
