@@ -47,7 +47,7 @@ const header=document.createElement('header');
 header.id='seyveoConversationHeader';
 header.className='seyveo-conversation-header';
 header.hidden=true;
-header.innerHTML='<button type="button" id="seyveoConversationBack" aria-label="Вернуться на Главную" title="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>'+
+header.innerHTML='<button type="button" id="seyveoConversationBack" aria-label="Назад к предыдущему экрану" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>'+
  '<div class="seyveo-conversation-heading"><strong class="seyveo-conversation-name" aria-label="Сэйви"><span aria-hidden="true">С</span><span aria-hidden="true">э</span><span aria-hidden="true">й</span><span aria-hidden="true">в</span><span aria-hidden="true">и</span><span class="seyveo-name-dots" aria-hidden="true"><i></i><i></i><i></i></span></strong><span id="seyveoConversationStatus" role="status" aria-live="polite">На связи</span></div>'+
  '<button type="button" id="seyveoConversationHistory" aria-label="История бесед" title="История"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/></svg></button>';
 home.insertBefore(header,stage);
@@ -84,6 +84,7 @@ if(compact){
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
 let statusTimer=0,speakingNow=false;
+let returnRoute=''; // Workspace to restore after this single conversation closes.
 const sendButton=$('composerCompactSend');
 const sendIcon=sendButton?.innerHTML||'';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
@@ -155,6 +156,13 @@ function revealExisting(){
  stage.classList.add('has-inline-reply');
 }
 function open(){
+ if(root.classList.contains('seyveo-conversation'))return;
+ // Chat reuses the original Home conversation, then restores the caller's
+ // workspace on Back. No second chat, no replacement sphere or dock.
+ if(home.hidden){
+  returnRoute=location.hash||'';
+  document.getElementById('navHome')?.click();
+ }
  if(home.hidden)return;
  root.classList.add('seyveo-conversation');
  // Reuse the original writer and the existing saved thread.
@@ -186,6 +194,9 @@ function close(){
    // The regular Home status controls the line's idle visibility.
    quiet.hidden=$('kicker')?.textContent!=='На связи';
  }
+ const destination=returnRoute;
+ returnRoute='';
+ if(destination&&location.hash!==destination)location.hash=destination;
 }
 async function copyTextValue(value,label='Ответ'){
  try{
@@ -447,6 +458,8 @@ document.addEventListener('seyveo:assistant-presence',e=>{
 });
 window.addEventListener('hashchange',()=>{
  if(home.hidden||location.hash && !['','#home'].includes(location.hash)){
+   // Navigation away from chat explicitly cancels a pending return target.
+   returnRoute='';
    root.classList.remove('seyveo-conversation');
    root.style.removeProperty('--sayvi-chat-height');
    root.style.removeProperty('--sayvi-chat-top');
