@@ -7,8 +7,20 @@
  * Scoped to .seyveo-conversation: Home orb, dock and other pages unchanged.
  * User: quiet graphite bubbles, subtle emerald undertone; Sayvi: clean flowing text. One native textarea.
  */
-html.seyveo-conversation body{
+/* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
+   original body, not a floating or blurred panel over the fixed composer. */
+html.seyveo-conversation:not([data-theme=light]) body{
  overflow:hidden!important;overscroll-behavior:none;
+ background:
+  radial-gradient(ellipse 115vw 510px at 50% 26%,
+   rgba(219,224,233,.068) 0%,rgba(161,170,182,.032) 45%,transparent 88%),
+  linear-gradient(180deg,#1d2025 0%,#1b1e23 55%,#191c21 100%);
+ background-repeat:no-repeat;
+}
+html.seyveo-conversation[data-theme=light] body{
+ overflow:hidden!important;overscroll-behavior:none;
+ background:linear-gradient(180deg,#f7f8fa 0%,#f2f4f7 100%);
+ background-repeat:no-repeat;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
@@ -61,7 +73,7 @@ html.seyveo-conversation #stage .orb-inline-reply-text{
  flex:1 1 auto;box-sizing:border-box;
  width:100%;height:100%!important;min-height:0!important;
  max-height:none!important;overflow-y:auto!important;overflow-x:hidden;
- margin:0!important;padding:4px 2px 4px!important;
+ margin:0!important;padding:5px 3px 8px!important;
  scrollbar-width:none;
  -webkit-overflow-scrolling:touch;
  overscroll-behavior:contain;
@@ -82,14 +94,14 @@ html.seyveo-conversation .seyveo-chat-welcome p{
 html.seyveo-conversation .seyveo-conversation-turn{
  box-sizing:border-box;max-width:100%;
  min-width:0;display:flex;flex-direction:column;gap:3px;
- margin:0 0 8px;
+ margin:0 0 9px;
 }
 html.seyveo-conversation .seyveo-conversation-turn--you{
  align-self:flex-end;width:max-content;max-width:min(92%,460px);
- margin:2px 0 7px auto;padding:8px 11px 9px;
- color:#eceeed;
- background:rgba(238,242,249,.052);
- border:1px solid rgba(210,216,213,.10);
+ margin:2px 0 7px auto;padding:10px 13px 11px;
+ color:#f1f3f6;
+ background:rgba(232,236,244,.092);
+ border:1px solid rgba(226,233,244,.16);
  border-radius:18px 18px 7px 18px;
  box-shadow:none;
 }
@@ -119,20 +131,20 @@ html.seyveo-conversation .seyveo-conversation-expand:focus-visible{
 }
 
 html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-body{
- color:inherit;font-size:14.5px;line-height:1.50;font-weight:400;letter-spacing:0;white-space:pre-wrap;
+ color:inherit;font-size:14.5px;line-height:1.52;font-weight:400;letter-spacing:0;white-space:pre-wrap;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
  align-self:stretch;width:100%;max-width:100%;
- gap:3px;margin:0 0 4px!important;padding:0 2px!important;
+ gap:5px;margin:0 0 7px!important;padding:0 2px!important;
  border:0!important;border-radius:0!important;
  background:none!important;box-shadow:none!important;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-speaker{
- color:var(--secondary);font-size:11px;font-weight:460;letter-spacing:.015em;
+ color:var(--secondary);font-size:11.5px;font-weight:460;letter-spacing:.012em;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
- color:var(--text)!important;font-size:15px;line-height:1.52;
- font-weight:400;letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere;
+ color:var(--text)!important;font-size:15.2px;line-height:1.55;
+ font-weight:410;letter-spacing:-.004em;white-space:pre-wrap;overflow-wrap:anywhere;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
  margin-top:1px;padding:0;min-height:36px;
@@ -142,8 +154,8 @@ html.seyveo-conversation .seyveo-reply-more>summary{
  border-radius:50%;
 }
 :root[data-theme=light].seyveo-conversation .seyveo-conversation-turn--you{
- color:#293031;background:rgba(65,81,99,.065);
- border:1px solid rgba(80,88,85,.12);
+ color:#25313f;background:rgba(65,81,99,.085);
+ border:1px solid rgba(72,85,101,.14);
  box-shadow:none;
 }
 /* SEYVEO Full Bleed: the capsule sits only 6px from a portrait screen edge.
@@ -197,19 +209,19 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
  display:flex!important;align-items:center;justify-content:flex-end;
- width:100%;height:42px;min-height:42px;
- gap:6px!important;flex:0 0 42px;align-self:stretch;
+ width:100%;height:44px;min-height:44px;
+ gap:5px!important;flex:0 0 44px;align-self:stretch;
  margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
  display:grid!important;place-items:center;
- width:42px;height:42px;min-width:42px;min-height:42px;
+ width:44px;height:44px;min-width:44px;min-height:44px;
  background:transparent;border:1px solid transparent;color:var(--text);
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  display:grid!important;place-items:center;
- width:42px;height:42px;min-width:42px;min-height:42px;
- background:var(--card2)!important;border:1px solid var(--soft-line)!important;
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ background:transparent!important;border:0!important;
  color:var(--secondary)!important;border-radius:50%;
  box-shadow:none!important;
 }
@@ -306,32 +318,32 @@ html.seyveo-conversation .seyveo-conversation-user-group>.seyveo-conversation-tu
 }
 html.seyveo-conversation .seyveo-conversation-user-actions{
  display:flex;justify-content:flex-end;align-items:center;
- gap:1px;min-height:40px;width:auto;
- margin:-5px 2px -7px auto;padding:0;
+ gap:1px;min-height:44px;width:auto;
+ margin:-4px 2px -6px auto;padding:0;
 }
 html.seyveo-conversation .seyveo-conversation-user-actions .seyveo-conversation-reply-action{
  color:var(--secondary);
 }
 html.seyveo-conversation .seyveo-conversation-reply-actions{
  justify-content:flex-start!important;align-items:center;
- gap:1px!important;margin:-4px 0 -6px!important;
- min-height:40px!important;padding:0!important;
+ gap:2px!important;margin:-3px 0 -5px!important;
+ min-height:44px!important;padding:0!important;
  overflow-x:auto;scrollbar-width:none;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action{
  box-sizing:border-box;
  display:inline-flex;align-items:center;justify-content:center;
- width:38px!important;min-width:38px!important;
- height:40px!important;min-height:40px!important;
- flex:0 0 38px;padding:0!important;margin:0!important;
+ width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ flex:0 0 44px;padding:0!important;margin:0!important;
  border:0!important;border-radius:11px!important;
  background:transparent!important;
  color:var(--secondary);
- opacity:.78;transition:color .18s ease,background-color .18s ease,opacity .18s ease;
+ opacity:.91;transition:color .18s ease,opacity .18s ease;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
- width:16px!important;height:16px!important;
- stroke-width:1.6!important;
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
  fill:none!important;stroke:currentColor;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action>span{
@@ -430,7 +442,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory){
  box-sizing:border-box;display:grid!important;place-items:center;
- order:1;flex:0 0 42px;width:42px;height:42px;min-width:42px;min-height:42px;
+ order:1;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
  margin:0!important;padding:0;border:1px solid var(--soft-line);
  border-radius:50%;background:var(--card2);color:var(--text);
  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
@@ -456,14 +468,14 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationStatus{
  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
- order:5!important;flex:0 0 42px;margin:0!important;
+ order:5!important;flex:0 0 44px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
- order:6!important;flex:0 0 42px;margin:0!important;
+ order:6!important;flex:0 0 44px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory) svg{
- display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ display:block;width:20px;height:20px;fill:none;stroke:currentColor;
  stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
@@ -478,7 +490,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{gap:3px!important}
  html.seyveo-conversation #ask.prompt:not(.expanded)
   :is(#seyveoConversationBack,#seyveoConversationHistory){
-  width:40px;height:42px;min-width:40px;min-height:42px;flex-basis:40px;
+  width:40px;height:44px;min-width:40px;min-height:44px;flex-basis:40px;
  }
  html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
   min-width:40px;
@@ -510,7 +522,12 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoConversationMic,#composerCompactSend){
  background:transparent!important;border:0!important;
  border-radius:0!important;box-shadow:none!important;
- color:#d8dee7!important;min-height:40px!important;
+ color:#d8dee7!important;min-height:44px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationMic,#composerCompactSend) svg{
+ width:21px;height:21px;
+ stroke-width:1.7;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-name{
  color:#c0c8d3!important;font-weight:450!important;
