@@ -113,8 +113,10 @@ html.sv-space-active[data-theme="light"]{
 }
 #homePage #seyveoLivingMoment .lm-task-collection--quiet [hidden]{display:none!important}
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-task-collection--quiet{
- background:linear-gradient(151deg,rgba(80,85,94,.96),rgba(39,44,52,.97))!important;
- border-color:rgba(44,52,65,.33)!important;
+ background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(247,249,253,.98) 74%,rgba(237,240,246,.98))!important;
+ border-color:rgba(89,104,124,.21)!important;
+ box-shadow:0 8px 23px rgba(65,78,102,.085),inset 0 1px #fff!important;
+ color:#253140!important;
 }
 /* MANAGEMENT: keep all 13 original illustrated entries but lighter/thinner. */
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{gap:9px}
@@ -360,36 +362,90 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#lifePage,#picturePage,#manage
  #homePage #seyveoLivingMoment .lm-decision-stack{animation:none!important}
 }
 
-/* Two restrained, perfectly centred glass edges behind the gathered deck.
-   No skew, no tilted pile and no huge duplicate panels. */
+/* Quiet stack: one straight 5px glass edge, not multiple rectangles
+   sticking out underneath a large dialog. */
 #homePage #seyveoLivingMoment .lm-decision-stack{
  overflow:visible!important;
  isolation:isolate;
- margin-bottom:24px;
+ margin-bottom:16px;
 }
-#homePage #seyveoLivingMoment .lm-decision-stack::before,
-#homePage #seyveoLivingMoment .lm-decision-stack::after{
+#homePage #seyveoLivingMoment .lm-decision-stack::before{
  content:""!important;
  display:block!important;
- position:absolute;left:50%;top:auto;
- width:calc(100% - 22px);height:17px;
- bottom:-6px;transform:translateX(-50%);
+ position:absolute;
+ left:13px;right:13px;top:auto;bottom:-5px;
+ width:auto;height:8px;transform:none;
  pointer-events:none;
- border:1px solid rgba(242,243,248,.15);
- border-radius:0 0 21px 21px;
- background:linear-gradient(160deg,#434650,#242832);
- box-shadow:0 3px 7px rgba(0,0,0,.11);
+ border:1px solid rgba(239,242,250,.14);
+ border-radius:0 0 18px 18px;
+ background:rgba(73,77,87,.38);
+ box-shadow:0 3px 5px rgba(0,0,0,.07);
  z-index:-1;
 }
 #homePage #seyveoLivingMoment .lm-decision-stack::after{
- width:calc(100% - 42px);bottom:-11px;
- background:#20242b;
- border-color:rgba(242,243,248,.10);
- z-index:-2;
+ content:none!important;display:none!important;
 }
+#homePage #seyveoLivingMoment .lm-decision-stack.lm-decision-complete::before{
+ content:none!important;display:none!important;
+}
+/* Once the demo is done, leave a tiny acknowledgment, never a large card
+   with disabled buttons, an empty document and a fake stack of zero tasks. */
+#homePage #seyveoLivingMoment .lm-decision-stack.lm-decision-complete{
+ margin-bottom:10px;
+}
+#homePage #seyveoLivingMoment .lm-decision-complete .lm-task-summary{
+ min-height:60px;padding:11px 13px 7px;
+ grid-template-columns:42px minmax(0,1fr);
+}
+#homePage #seyveoLivingMoment .lm-decision-complete .lm-task-count{
+ width:39px;height:39px;font-size:22px;border-radius:14px;
+ background:rgba(251,252,255,.05);
+}
+#homePage #seyveoLivingMoment .lm-decision-complete .lm-task-actions--two{
+ display:block;padding:8px 13px 12px;
+}
+#homePage #seyveoLivingMoment .lm-decision-complete .lm-task-execute{
+ width:100%;min-height:42px;
+}
+/* A real light theme, not gray/dark cards on white. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack::before{
- background:linear-gradient(160deg,#737d8a,#424b58);
+ background:rgba(227,233,241,.92);
+ border-color:rgba(85,102,127,.14);
 }
-:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack::after{
- background:#66707e;
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack
+ :is(.lm-task-title,.lm-task-count,.lm-decision-name,.lm-task-current-title){
+ color:#253142!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack
+ :is(.lm-task-caption,.lm-task-total,.lm-decision-summary,.lm-decision-when,
+ .lm-task-explanation,.lm-task-feedback,.lm-decision-text-action){
+ color:#546275!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack
+ :is(.lm-decision-icon,.lm-decision-icon .lm-art-svg){
+ color:#2e3b4d!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-task-count{
+ border-color:rgba(80,95,115,.19)!important;
+ background:rgba(234,240,247,.66)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.85)!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-front{
+ border-color:rgba(78,93,112,.12)!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-task-body{
+ border-color:rgba(78,93,112,.13)!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-task-actions--two .lm-task-acquaint{
+ color:#283648!important;
+ background:rgba(226,233,243,.46)!important;
+ border-color:rgba(78,93,112,.24)!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-task-actions--two .lm-task-execute{
+ color:#f7f9fd!important;
+ background:linear-gradient(145deg,#4b5665,#293342)!important;
+ border-color:rgba(46,59,77,.42)!important;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-text-action{
+ color:#33455b!important;
 }
