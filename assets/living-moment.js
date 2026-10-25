@@ -39,7 +39,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-ledger-mode');
+ space.classList.remove('lm-reveal','lm-disappear','lm-preview','lm-real');
  space.hidden=true;tiles.replaceChildren();previewScene=null;realSignature='';
  tip.textContent='';
 }
@@ -218,7 +218,7 @@ function createSurface(primary,other=[],real=false){
   }
  }
  function changeFeatured(item){
-  if(item===shown||morphLocked||space.classList.contains('lm-condense'))return;
+  if(item===shown||morphLocked)return;
   morphLocked=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
@@ -351,7 +351,7 @@ function startPreview(list=null,{demo=true}={}){
  const scenes=all.slice(0,3);
  previewScene=createSurface(scenes[0],scenes.slice(1),!demo);
  tip.textContent='';
- space.hidden=false;space.classList.remove('lm-ledger-mode');
+ space.hidden=false;
  space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
@@ -419,7 +419,7 @@ function showRealWork(tasks){
  previewScene=createSurface(stories[0],stories.slice(1),true);
  tip.textContent='';
  space.hidden=false;
- space.classList.remove('lm-condense','lm-disappear','lm-ledger-mode','lm-preview');
+ space.classList.remove('lm-disappear','lm-preview');
  space.classList.add('lm-real');
  focus(true);
  later(()=>{if(mode==='real')space.classList.add('lm-reveal')},TIMING.open);
