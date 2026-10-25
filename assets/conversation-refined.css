@@ -96,6 +96,28 @@ html.seyveo-conversation .seyveo-conversation-turn--you{
 html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-speaker{
  display:none;
 }
+/* Compact only the displayed preview of a long owner message.
+   The full body and saved history remain unchanged. */
+html.seyveo-conversation .seyveo-conversation-turn--you.seyveo-message-folded .seyveo-conversation-body{
+ max-height:12em;overflow:hidden;overflow-wrap:anywhere;
+}
+html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-body{
+ overflow-wrap:anywhere;
+}
+html.seyveo-conversation .seyveo-conversation-expand{
+ align-self:flex-start;
+ display:inline-flex;align-items:center;
+ min-height:40px;padding:7px 0 2px;margin:1px 0 0;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary);
+ font:inherit;font-size:12px;font-weight:450;line-height:1.4;
+ text-align:left;cursor:pointer;
+}
+html.seyveo-conversation .seyveo-conversation-expand:focus-visible{
+ outline:1px solid var(--text);outline-offset:3px;
+}
+
 html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-body{
  color:inherit;font-size:14.5px;line-height:1.50;font-weight:400;letter-spacing:0;white-space:pre-wrap;
 }
