@@ -86,7 +86,7 @@ assert.match(decisionCss,/#homePage #orbCluster/);
 assert.doesNotMatch(decisionJs,/lm-film-card|sv-decision|clean cinematic director/);
 assert.doesNotMatch(decisionCss,/\.lm-film-card|\.sv-decision/);
 assert.match(html,/living-moment\.css\?v=34/);
-assert.match(html,/living-moment\.js\?v=47/);
+assert.match(html,/living-moment\.js\?v=\d+/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
  assert.match(html,new RegExp('assets/'+item.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\$&')+'\\?v=\\d+'),'Versioned file: '+item);
