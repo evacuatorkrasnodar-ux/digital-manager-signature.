@@ -1,4 +1,4 @@
-/* SEYVEO Signature · Living Objects & Decisions v6
+/* SEYVEO Signature · One Quiet Cinema v7
  * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
@@ -14,7 +14,7 @@ const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
 const TIMING=Object.freeze({open:reduced()?0:620,beat:2900,quiet:4800,close:reduced()?0:720});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
-let ledgerState=null,demoFinished=false,hadRealWork=false,realIntroSeen=false;
+let hadRealWork=false,realSignature='';
 let pendingUpdate=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -40,7 +40,7 @@ function focus(on){
 }
 function resetSpace(){
  space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-ledger-mode');
- space.hidden=true;tiles.replaceChildren();previewScene=null;ledgerState=null;
+ space.hidden=true;tiles.replaceChildren();previewScene=null;realSignature='';
  tip.textContent='';
 }
 function rest(){
@@ -124,6 +124,11 @@ function openDestination(kind){
  return window.SEYVEO_SAYVI_SURFACES?.open?.(kind)===true;
 }
 function openCardAction(item){
+ if(item?.id){
+  $('navTasks')?.click();
+  window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
+  return true;
+ }
  if(item?.callTarget&&window.SEYVEO_CONTACTS?.requestCall){
   // No new address book and no fictional call completion.
   return !!window.SEYVEO_CONTACTS.requestCall(item.callTarget);
@@ -168,6 +173,7 @@ function createSurface(primary,other=[],real=false){
  // Подробнее reveals local context; Исполнить opens the actual destination.
  // Neither action claims to have sent mail, signed a document or completed a call.
  const open=polymer('Подробнее',()=>{
+  if(discussTask(shown,{demo:!real}))return;
   expanded=!expanded;
   field.classList.toggle('lm-has-reason',expanded);
   more.hidden=!expanded;
@@ -192,8 +198,8 @@ function createSurface(primary,other=[],real=false){
  const secondary=create('div','lm-secondary');
  function renderSecondary(){
   secondary.replaceChildren();
-  if(real)return;
-  for(const item of [primary,...other].filter(value=>value!==shown)){
+  const limit=window.innerHeight<=710?1:2;
+  for(const item of [primary,...other].filter(value=>value!==shown).slice(0,limit)){
    const row=create('button','lm-inline-item');
    row.type='button';row.dataset.lmKind=item.kind;
    row.setAttribute('aria-label','Показать: '+item.title);
@@ -206,13 +212,13 @@ function createSurface(primary,other=[],real=false){
    row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+20000;
-    openDestination(item.kind);
+    changeFeatured(item);
    });
    secondary.append(row);
   }
  }
  function changeFeatured(item){
-  if(real||item===shown||morphLocked||space.classList.contains('lm-condense'))return;
+  if(item===shown||morphLocked||space.classList.contains('lm-condense'))return;
   morphLocked=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
@@ -246,11 +252,7 @@ function createSurface(primary,other=[],real=false){
  return {field,changeFeatured};
 }
 let previewScene=null;
-function buildExamples(){
- previewScene=createSurface(sample[0],sample.slice(1));
-}
-/* Small illustrated task cards: each action belongs to its own card.
-   No glass overlays. Real tasks are never silently marked complete. */
+/* Keep saved tasks and previous postponements, with one visible Home renderer. */
 const DEFERRED_KEY='seyveo-home-deferred-tasks-v1';
 const deferredFallback={};
 function localDay(date=new Date()){
@@ -262,13 +264,6 @@ function deferredTasks(){
   const value=JSON.parse(localStorage.getItem(DEFERRED_KEY)||'{}');
   return value&&typeof value==='object'&&!Array.isArray(value)?value:deferredFallback;
  }catch{return deferredFallback}
-}
-function postponeTask(id){
- const until=new Date();until.setDate(until.getDate()+1);
- const records=deferredTasks();
- records[id]=localDay(until);
- deferredFallback[id]=records[id];
- try{localStorage.setItem(DEFERRED_KEY,JSON.stringify(records))}catch{}
 }
 function readOpenTasks(){
  let data=[];try{data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]')}catch{}
@@ -285,11 +280,6 @@ function artisticKind(t){
  return /письм|почт|ответить|email/.test(title)?'mail':
    /документ|договор|акт|контракт|счет|счёт/.test(title)?'contract':
    /здоров|отдох|передох|пульс|врач/.test(title)?'health':'task';
-}
-function demoLedgerItems(){
- return sample.map((item,index)=>({id:'illustration-'+index,title:item.title,
-   kind:item.kind,body:item.body,cause:item.cause,proposal:item.proposal,
-   reason:item.reason,detail:item.detail,demo:true}));
 }
 function storyFromTask(task){
  const kind=artisticKind(task),today=localDay();
@@ -336,228 +326,10 @@ function discussTask(item,{demo=false}={}){
  chat.status?.('Контекст дела подготовлен. Отправьте сообщение, чтобы начать.',5400);
  return true;
 }
-function showLedger(items,{demo=false}={}){
- if(!items.length){if(demo)demoFinished=true;rest();return}
- if(!available()){rest();return}
- const arrivedFromPreview=mode==='preview';
- cancel();mode='ledger';key=demo?'deck-demo':'deck-real';
- if(demoLaunch)demoLaunch.hidden=true;
- tiles.replaceChildren();space.classList.remove('lm-preview','lm-condense','lm-disappear','lm-real');
- space.classList.add('lm-ledger-mode','lm-reveal');space.hidden=false;
- tip.textContent='';dynamic.hidden=true;focus(true);
- const section=create('section','lm-deck');
- section.setAttribute('aria-label',demo?'Учебные примеры Сэйвы':'Ваши дела');
- const heading=create('div','lm-deck-heading');
- const eyebrow=create('small','lm-deck-eyebrow',demo?'СЭЙВА · ПРИМЕРЫ':'СЭЙВА · ВАШИ ДЕЛА');
- const count=create('span','lm-deck-count');
- heading.append(eyebrow,count);
- /* Three genuine hand-drawn miniatures rise from below and gather into one
-    decision. They are ephemeral DOM objects, never new stored tasks. */
- const cinema=create('div','lm-deck-cinema');
- cinema.setAttribute('aria-hidden','true');
- const activeSlot=create('div','lm-deck-active');
- const foot=create('div','lm-deck-foot');
- const hint=create('button','lm-deck-hint','← другое дело');
- hint.type='button';
- hint.setAttribute('aria-label','Показать следующее дело');
- const laterButton=create('button','lm-deck-later','Позже');
- laterButton.type='button';
- foot.append(hint,laterButton);
- section.append(heading,cinema,activeSlot);
- tiles.append(section);
- const cinematic=demo&&!arrivedFromPreview&&!reduced();
- if(cinematic){
-  section.classList.add('lm-deck-intro');
-  items.slice(0,3).forEach((item,i)=>{
-   const miniature=create('div','lm-deck-cinema-card lm-deck-cinema-card--'+i);
-   miniature.style.setProperty('--lm-card-delay',i*860+'ms');
-   const mark=create('span','lm-deck-cinema-art');
-   mark.append(icon(item.kind||artisticKind(item)));
-   const copy=create('span','lm-deck-cinema-copy');
-   copy.append(create('small','lm-deck-cinema-count','0'+(i+1)+' / 0'+Math.min(items.length,3)),
-    create('strong','lm-deck-cinema-title',item.title));
-   miniature.append(mark,copy);cinema.append(miniature);
-  });
-  later(()=>{if(mode==='ledger'&&tiles.contains(section)){
-   section.classList.add('lm-deck-intro--fold');
-  }},3100);
-  later(()=>{if(mode==='ledger'&&tiles.contains(section)){
-   section.classList.remove('lm-deck-intro','lm-deck-intro--fold');
-   cinema.replaceChildren();
-  }},3850);
- }
- let queue=items.slice(),activeId=queue[0]?.id,closing=false,swiping=false;
- function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
- function finish(){
-  if(closing)return;
-  closing=true;if(demo)demoFinished=true;
-  section.classList.add('lm-deck-finished');
-  space.classList.add('lm-disappear');
-  later(()=>{if(mode==='ledger')rest()},reduced()?0:740);
- }
- function transition(direction,postpone=false){
-  if(swiping||closing)return;
-  const task=current();if(!task)return;
-  if(!postpone&&queue.length<2)return;
-  swiping=true;
-  if(postpone&&!demo)postponeTask(task.id);
-  const card=activeSlot.querySelector('.lm-deck-card');
-  if(card){
-   card.style.setProperty('--deck-exit-x',direction==='right'?'108%':'-108%');
-   card.classList.add('lm-deck-card--leaving');
-  }
-  later(()=>{
-   if(mode!=='ledger')return;
-   if(postpone){
-    queue=queue.filter(t=>t.id!==task.id);
-    activeId=queue[0]?.id||null;
-   }else{
-    const i=queue.findIndex(t=>t.id===task.id);
-    activeId=queue[(i+1)%queue.length]?.id||null;
-   }
-   swiping=false;render();
-   if(!demo)scheduleRefresh();
-  },reduced()?0:410);
- }
- function render(){
-  if(!queue.length){finish();return}
-  if(!queue.some(t=>t.id===activeId))activeId=queue[0].id;
-  const item=current(),n=queue.length;
-  const step=queue.findIndex(task=>task.id===item.id)+1;
-  const stepLabel=String(step).padStart(2,'0')+' / '+String(n).padStart(2,'0');
-  const teen=n%100>=11&&n%100<=14;
-  const ending=teen||n%10===0||n%10>=5?'дел':n%10===1?'дело':'дела';
-  count.textContent=n+' '+ending;
-  activeSlot.replaceChildren();
-  const card=create('article','lm-deck-card');
-  card.setAttribute('aria-label',item.title);
-  const main=create('div','lm-deck-main');
-  const picture=create('span','lm-deck-art');picture.append(icon(item.kind||artisticKind(item)));
-  const words=create('div','lm-deck-copy');
-  const category=demo?
-   String(item.category||'').replace(/\s*·\s*ПРИМЕР$/i,''):
-   (item.category||'ВАШЕ ДЕЛО');
-  const tag=create('small','lm-deck-tag',stepLabel+' · '+category);
-  const title=create('h3','lm-deck-title',item.title);
-  const subtitle=create('p','lm-deck-subtitle',item.body||'Ожидает решения');
-  words.append(tag,title,subtitle);main.append(picture,words);
-  const body=create('div','lm-deck-context');
-  const cause=create('div','lm-deck-info');
-  cause.append(create('small','lm-deck-info-key','ПОЧЕМУ ЭТО ВАЖНО'),
-    create('p','lm-deck-info-text',item.cause||'Нужно уточнить обстоятельства.'));
-  const solution=create('div','lm-deck-info');
-  solution.append(create('small','lm-deck-info-key','ЧТО ПРЕДЛАГАЕТ СЭЙВА'),
-    create('p','lm-deck-info-text',item.proposal||'Обсудить следующий шаг.'));
-  body.append(cause,solution);
-  const actions=create('div','lm-deck-actions');
-  const more=create('button','lm-deck-action','Подробнее');
-  const act=create('button','lm-deck-action lm-deck-action--primary','Исполнить');
-  more.type=act.type='button';
-  more.setAttribute('aria-label','Разобрать «'+item.title+'» с Сэйвой в чате');
-  more.addEventListener('click',()=>{
-   readingUntil=Date.now()+25000;
-   discussTask(item,{demo});
-  });
-  act.addEventListener('click',()=>{
-   readingUntil=Date.now()+25000;
-   if(demo){
-    // The preview illustrates a decision, never claims a real external action.
-    transition('right',true);
-    return;
-   }
-   $('navTasks')?.click();
-   window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
-  });
-  actions.append(more,act);
-  card.append(main,body);
-  if(queue.length>1){
-   const others=queue.filter(other=>other.id!==item.id);
-   // Avoid nested scrolling: show one nearby task on small iPhones,
-   // otherwise two. All tasks remain accessible by swipe or Next.
-   const shortPhone=window.innerWidth<=520&&window.innerHeight<=720;
-   const visibleCount=shortPhone?1:2;
-   const shown=others.slice(0,visibleCount);
-   const hiddenCount=others.length-shown.length;
-   const summary=create('div','lm-deck-summary');
-   summary.append(create('small','lm-deck-summary-label',
-    'ДРУГИЕ ДЕЛА'+(hiddenCount?' · +'+hiddenCount:'')
-   ));
-   const rows=create('div','lm-deck-summary-items');
-   shown.forEach(other=>{
-    const entry=create('button','lm-deck-summary-item');
-    entry.type='button';
-    entry.setAttribute('aria-label','Показать дело: '+other.title);
-    entry.append(icon(other.kind||artisticKind(other)),create('span','',other.title));
-    entry.addEventListener('click',()=>{
-     if(swiping||closing)return;
-     readingUntil=Date.now()+22000;activeId=other.id;render();
-    });
-    rows.append(entry);
-   });
-   summary.append(rows);card.append(summary);
-  }
-  hint.hidden=queue.length<2;
-
-  card.append(actions,foot);
-  activeSlot.append(card);
-  laterButton.setAttribute('aria-label',demo?'Убрать пример':'Отложить «'+item.title+'» до завтра');
-  // Full-card gestures avoid the action row; scrolling vertically remains native.
-  let pointerStart=null;
-  card.addEventListener('pointerdown',event=>{
-   if(event.target.closest('button')||!event.isPrimary)return;
-   pointerStart={x:event.clientX,y:event.clientY,id:event.pointerId};
-   try{card.setPointerCapture(event.pointerId)}catch{}
-  });
-  card.addEventListener('pointercancel',()=>{pointerStart=null});
-  card.addEventListener('pointerup',event=>{
-   if(!pointerStart||pointerStart.id!==event.pointerId)return;
-   const dx=event.clientX-pointerStart.x,dy=event.clientY-pointerStart.y;
-   pointerStart=null;
-   if(Math.abs(dx)<67||Math.abs(dy)>Math.abs(dx)*.57)return;
-   if(dx>0)transition('right',true);
-   else transition('left',false);
-  });
- }
- hint.addEventListener('click',()=>{
-  readingUntil=Date.now()+22000;
-  transition('left',false);
- });
- laterButton.addEventListener('click',()=>transition('right',true));
- ledgerState={demo,sync(next){
-  if(demo||swiping)return;
-  const signature=items=>items.map(t=>[t.id,t.title,t.due||''].join('\u001f')).join('\u001e');
-  if(signature(queue)===signature(next))return;
-  queue=next;render();
- }};
- render();
-}
-function shrink(){
- if(mode==='idle')return;
- space.classList.add('lm-condense');
- const reason=tiles.querySelector('.lm-explanation');
- if(reason)reason.hidden=true;
- const field=tiles.querySelector('.lm-field');
- if(field)field.classList.remove('lm-has-reason');
- tip.textContent=mode==='task'?'СОХРАНЕНО В «ДЕЛАХ»':
-  'ПРИМЕР · ВАЖНОЕ СОХРАНЯЕТСЯ';
-}
 function disappear(){
- if(mode==='idle')return;
- if(mode==='advice'){
-  quiet.add(key);dynamic.classList.add('lm-real-out');
-  later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
-  return;
- }
- if(mode==='task')quiet.add(key);
- space.classList.add('lm-disappear');
- later(()=>{if(mode==='preview'||mode==='task')rest()},TIMING.close);
-}
-function closeEarly(){
- if(mode==='idle')return;
- cancel();
- if(mode==='task'||mode==='advice')quiet.add(key);
- space.classList.add('lm-condense','lm-disappear');
- later(()=>rest(),TIMING.close);
+ if(mode!=='advice')return;
+ quiet.add(key);dynamic.classList.add('lm-real-out');
+ later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
 }
 function hold(callback,delay){
  const check=()=>{
@@ -570,86 +342,30 @@ function hold(callback,delay){
 function startPreview(list=null,{demo=true}={}){
  if(!available()||editing())return false;
  if(mode!=='idle')rest();
- const all=demo?demoLedgerItems():(list||readOpenTasks()).map(storyFromTask);
+ const all=demo?sample:(list||readOpenTasks()).map(storyFromTask);
  if(!all.length)return false;
- if(demo)demoFinished=false;
- else{hadRealWork=true;realIntroSeen=true}
+ if(!demo)hadRealWork=true;
  mode='preview';key=demo?'preview':'preview-real';
  if(demoLaunch)demoLaunch.hidden=true;
  dynamic.hidden=true;
- const scenes=demo?sample:all.slice(0,3);
- previewScene=createSurface(scenes[0],scenes.slice(1));
- tip.textContent=demo?'QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА':'СЭЙВА · ВАШИ ДЕЛА';
+ const scenes=all.slice(0,3);
+ previewScene=createSurface(scenes[0],scenes.slice(1),!demo);
+ tip.textContent='';
  space.hidden=false;space.classList.remove('lm-ledger-mode');
  space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- // Preserve the ORIGINAL nested beat sequence. A held interaction pauses
- // the next beat rather than letting later timers overtake it and flicker.
+ // The original preview stays visible; no second card deck or reflow.
  let featured=0;
- const presentLedger=()=>{
-  if(mode!=='preview')return;
-  if(editing()||document.querySelector('dialog[open]')){
-   later(presentLedger,900);return;
-  }
-  showLedger(demo?demoLedgerItems():readOpenTasks().map(storyFromTask),{demo});
- };
  const nextBeat=()=>{
   if(mode!=='preview')return;
   featured++;
-  if(featured<scenes.length){
-   previewScene?.changeFeatured(scenes[featured]);
-   hold(nextBeat,TIMING.beat);
-   return;
-  }
-  shrink();
-  later(presentLedger,reduced()?0:720);
+  if(featured>=scenes.length)return;
+  previewScene?.changeFeatured(scenes[featured]);
+  hold(nextBeat,TIMING.beat);
  };
- hold(nextBeat,TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: спокойная смена сюжетов, затем отдельные карточки с решениями.';
- return true;
-}
-function dueTask(){
- let tasks=[];
- try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))tasks=data}catch{}
- const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
- return tasks.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
-  &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
-  .sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
-}
-function showTask(item){
- const callTarget=window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'';
- const contact=callTarget?window.SEYVEO_CONTACTS?.availability?.(callTarget):null;
- const id='task:'+(item.id||item.title)+'|'+item.due;
- if(quiet.has(id))return false;
- mode='task';key=id;
- dynamic.hidden=true;
- const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
- createSurface({
-  kind:'task',
-  title:item.title,
-  callTarget,
-  body:callTarget
-    ?'Срок наступил'+(when?' · '+when:'')+'. Сэйви поможет связаться с человеком.'
-    :'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
-  category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
-  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил срок.',
-  detail:callTarget
-    ?contact?.matches===1
-      ?'Нашла «'+contact.name+'» в «Моём мире». Нажмите «Позвонить» и проверьте номер.'
-      :contact?.matches>1
-      ?'Есть несколько похожих контактов. Сэйви предложит выбрать нужного.'
-      :'Номер не найден. Сэйви поможет выбрать человека или добавить контакт.'
-    :'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
- },[],true);
- tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
- space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
- focus(true);
- later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
-  shrink();
-  hold(()=>disappear(),6000);
- },12000);
+ if(scenes.length>1)hold(nextBeat,TIMING.beat+TIMING.open);
+ if(caption)caption.textContent='Quiet Cinema: одна живая главная, плавная смена важных сюжетов.';
  return true;
 }
 function adviceIdentity(card){
@@ -692,21 +408,40 @@ function showExistingAdvice(){
  },11000);
  return true;
 }
+/* Personal tasks render in the same original preview surface. */
+function showRealWork(tasks){
+ if(!tasks.length)return false;
+ if(mode!=='idle')rest();
+ mode='real';key='real-work';hadRealWork=true;
+ realSignature=tasks.map(t=>[t.id,t.title,t.due||''].join(':')).join('|');
+ const stories=tasks.map(storyFromTask);
+ dynamic.hidden=true;
+ previewScene=createSurface(stories[0],stories.slice(1),true);
+ tip.textContent='';
+ space.hidden=false;
+ space.classList.remove('lm-condense','lm-disappear','lm-ledger-mode','lm-preview');
+ space.classList.add('lm-real');
+ focus(true);
+ later(()=>{if(mode==='real')space.classList.add('lm-reveal')},TIMING.open);
+ return true;
+}
 function refresh(){
  if(demoLaunch)demoLaunch.hidden=true;
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
- if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
- if(mode==='ledger'){
-  const real=readOpenTasks().map(storyFromTask);
-  if(ledgerState?.demo){
-   if(real.length){rest();showLedger(real,{demo:false})}
-  }else ledgerState?.sync(real);
+ const realTasks=readOpenTasks();
+ const nextSignature=realTasks.map(t=>[t.id,t.title,t.due||''].join(':')).join('|');
+ if(mode==='preview'){
+  if(realTasks.length){rest();showRealWork(realTasks);return}
+  if(!dynamic.hidden)dynamic.hidden=true;
   return;
  }
- if(mode==='task'){
-  if(!dynamic.hidden)dynamic.hidden=true;
+ if(mode==='real'){
+  if(nextSignature!==realSignature){
+   rest();
+   if(realTasks.length)showRealWork(realTasks);
+  }
   return;
  }
  if(mode==='advice'){
@@ -716,12 +451,7 @@ function refresh(){
  }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
- const real=readOpenTasks();
- if(real.length){
-  hadRealWork=true;
-  showLedger(real.map(storyFromTask),{demo:false});
-  return;
- }
+ if(realTasks.length){showRealWork(realTasks);return;}
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle'){
@@ -795,16 +525,15 @@ function hasUnfinishedSavedTasks(){
 }
 function requestAutoDemo(){
  if(autoDemoShown||autoDemoPending||mode!=='idle'||!available()||editing()
-    ||hadRealWork||demoFinished||hasUnfinishedSavedTasks()
+    ||hadRealWork||hasUnfinishedSavedTasks()
     ||dynamic.querySelector('[data-owner-advice]'))return;
  autoDemoPending=true;
  window.setTimeout(()=>{
   autoDemoPending=false;
   if(autoDemoShown||mode!=='idle'||!available()||editing()
-     ||hadRealWork||demoFinished||hasUnfinishedSavedTasks()
+     ||hadRealWork||hasUnfinishedSavedTasks()
      ||dynamic.querySelector('[data-owner-advice]'))return;
-  showLedger(demoLedgerItems(),{demo:true});
-  autoDemoShown=true;
+  if(startPreview())autoDemoShown=true;
  },1450);
 }
 /* An explicit, accessible demo action always remains available on an empty Home;
@@ -813,7 +542,7 @@ demoLaunch?.addEventListener('click',()=>{
  if(!available()||editing()||readOpenTasks().length)return;
  if(mode!=='idle')rest();
  autoDemoShown=true;
- showLedger(demoLedgerItems(),{demo:true});
+ startPreview();
 });
 document.addEventListener('close',scheduleRefresh,true);
 window.addEventListener('seyveo:route-changed',scheduleRefresh);
