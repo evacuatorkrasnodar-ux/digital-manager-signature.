@@ -68,19 +68,21 @@ assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.ca
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
-// Compact Home decisions never contain a second scroll view.
-const taskSummary=cssBlock(decisionCss,'#homePage #seyveoLivingMoment .lm-deck-summary-items');
-assert.match(taskSummary,/max-height:none;overflow:visible/,'No scroll inside the main decision card');
-assert.doesNotMatch(taskSummary,/overflow-y:auto|scrollbar-width:thin/);
-const taskCard=cssBlock(decisionCss,'#homePage #seyveoLivingMoment .lm-deck-card');
-assert.match(taskCard,/max-height:none;overflow:visible/,'Never clip a long task');
-assert.match(decisionCss,/max-height:720px/,'Short portrait phones have a denser layout');
-assert.match(decisionJs,/const visibleCount=shortPhone\?1:2/,'Only one or two other decisions occupy the card');
-assert.match(decisionJs,/others\.slice\(0,visibleCount\)/,'Remaining tasks are kept in the queue');
-assert.match(decisionJs,/const hint=create\('button','lm-deck-hint'/,'The next-task hint is a real action');
-assert.match(decisionJs,/hint\.addEventListener\('click'/,'Next task remains accessible without a swipe');
-assert.match(decisionJs,/const stepLabel=String\(step\)/,'Current decision is numbered');
-assert.match(decisionJs,/discussTask\(item,\{demo\}\)/,'Full details remain available via Подробнее');
+// Management preview is the ONLY Quiet Cinema task renderer.
+assert.match(decisionJs,/function startPreview\(list=null,\{demo=true\}=\{\}\)/);
+assert.match(decisionJs,/previewScene=createSurface\(scenes\[0\],scenes\.slice\(1\),!demo\)/);
+assert.match(decisionJs,/previewScene=createSurface\(stories\[0\],stories\.slice\(1\),true\)/,'Real tasks reuse preview');
+assert.match(decisionJs,/const limit=window\.innerHeight<=710\?1:2/,'No nested list in short portrait');
+assert.match(decisionJs,/if\(discussTask\(shown,\{demo:!real\}\)\)return/,'Full context opens in existing conversation');
+assert.match(decisionJs,/if\(startPreview\(\)\)autoDemoShown=true/,'Auto-demo retains the original scene');
+assert.doesNotMatch(decisionJs,/showLedger|lm-deck-|demoLedgerItems/,'No duplicate decision engine');
+assert.doesNotMatch(decisionCss,/\.lm-deck/, 'No legacy decision card CSS');
+assert.match(decisionCss,/overflow-y:hidden!important/,'Home uses one non-scrolling viewport');
+assert.match(decisionCss,/:has\(#homePage:not\(\[hidden\]\)\):not\(\.seyveo-conversation\)/,'Home-only scroll lock');
+assert.match(decisionCss,/max-height:760px/,'Small iPhones get compact stage spacing');
+assert.match(decisionCss,/#homePage #seyveoLivingMoment \.lm-inline-item/,'Original single-sheet list survives');
+assert.match(decisionCss,/lm-symbol-arrive/,'Original gentle symbol entrance survives');
+
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
  assert.match(html,new RegExp('assets/'+item.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\$&')+'\\?v=\\d+'),'Versioned file: '+item);
