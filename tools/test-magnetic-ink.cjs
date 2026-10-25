@@ -91,7 +91,7 @@ assert.equal(location.hash,'life','World routes directly');
 trusted('navManage');
 assert.equal(elements.navManage.programmaticClicks,1,'Manage uses original handler');
 
-location.hash='calendar';
+location.hash='#calendar'; // Browsers prepend # to location.hash assignments.
 for(const fn of windowEvents.hashchange||[])fn();
 assert.equal(elements.navTasks.getAttribute('aria-current'),'page');
 assert.equal(elements.navHome.getAttribute('aria-current'),null);
