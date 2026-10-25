@@ -50,23 +50,34 @@
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
  letter-spacing:-.025em!important;color:#edf0f6!important;
  -webkit-tap-highlight-color:transparent;
+ transition:border-color .36s ease,color .22s ease!important;
 }
 .dock>.nav-item svg{
  width:24px!important;height:24px!important;
  stroke-width:1.8!important;flex:none;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
+/* Keep current route semantics without a permanent frame.
+   Only a direct tap shows this thin contour; it fades after 1.6 seconds. */
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
- border-color:rgba(236,239,245,.39)!important;
+ border-color:transparent!important;
  background:transparent!important;
  box-shadow:none!important;
  font-weight:515!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
- border-color:rgba(51,67,88,.31)!important;
+ border-color:transparent!important;
  background:transparent!important;
  box-shadow:none!important;
+}
+.dock>.nav-item.sv-nav-feedback{
+ border-color:rgba(236,239,245,.39)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] .dock>.nav-item.sv-nav-feedback{
+ border-color:rgba(51,67,88,.31)!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -139,8 +150,8 @@
 }
 /* SEYVEO Signature Dock: a 58px five-way navigation surface.
  * The central ceramic voice control remains 50px; four side destinations
- * use 48px touch targets. Their selected state is a quiet rim, not a spot.
- * Original voice gestures and route handlers are unchanged.
+ * use 48px touch targets. A tap briefly traces a contour, then it fades.
+ * The active section remains distinguishable by type and icon only.
  */
 /* The old Home Ask strip was a duplicated entry surface. Chat alone
    owns that writer, while the separate Notes editor remains available.
@@ -168,6 +179,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
  .dock>.assistant-button,.dock>.assistant-button .button-art{
   transition:none!important;animation:none!important;
  }
+ .dock>.nav-item{transition:none!important}
 }
 
 /* The same safe-area bottom token is used in Safari and installed PWA;
