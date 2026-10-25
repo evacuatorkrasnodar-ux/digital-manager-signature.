@@ -418,6 +418,9 @@ function renderTurns(turns){
 let chatFrame=0;
 function syncChatGeometry(){
  if(!root.classList.contains('seyveo-conversation'))return;
+ // Keep the most recent message visible when the keyboard or writer moves,
+ // but don't drag someone away from older messages they are reading.
+ const stickToBottom=text.scrollHeight-text.clientHeight-text.scrollTop<56;
  const viewport=window.visualViewport;
  const height=Math.max(280,Math.round(viewport?.height||window.innerHeight));
  const top=Math.max(0,Math.round(viewport?.offsetTop||0));
@@ -431,6 +434,7 @@ function syncChatGeometry(){
  const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
  root.style.setProperty('--sayvi-composer-space',
   (composerHeight+bottomOffset+6)+'px');
+ if(stickToBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
 function queueChatGeometry(){
  if(chatFrame)return;
