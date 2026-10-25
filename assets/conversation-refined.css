@@ -61,7 +61,7 @@ html.seyveo-conversation #stage .orb-inline-reply-text{
  flex:1 1 auto;box-sizing:border-box;
  width:100%;height:100%!important;min-height:0!important;
  max-height:none!important;overflow-y:auto!important;overflow-x:hidden;
- margin:0!important;padding:5px 2px 8px!important;
+ margin:0!important;padding:4px 2px 4px!important;
  scrollbar-width:none;
  -webkit-overflow-scrolling:touch;
  overscroll-behavior:contain;
@@ -86,9 +86,9 @@ html.seyveo-conversation .seyveo-conversation-turn{
 }
 html.seyveo-conversation .seyveo-conversation-turn--you{
  align-self:flex-end;width:max-content;max-width:min(92%,460px);
- margin:2px 0 9px auto;padding:7px 11px 8px;
+ margin:2px 0 7px auto;padding:8px 11px 9px;
  color:#eceeed;
- background:linear-gradient(150deg,#2a2d2e,#242728);
+ background:rgba(238,242,249,.052);
  border:1px solid rgba(210,216,213,.10);
  border-radius:18px 18px 7px 18px;
  box-shadow:none;
@@ -97,7 +97,7 @@ html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-spe
  display:none;
 }
 html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-body{
- color:inherit;font-size:14.5px;line-height:1.48;font-weight:400;letter-spacing:0;white-space:pre-wrap;
+ color:inherit;font-size:14.5px;line-height:1.50;font-weight:400;letter-spacing:0;white-space:pre-wrap;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi{
  align-self:stretch;width:100%;max-width:100%;
@@ -109,7 +109,7 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-s
  color:var(--secondary);font-size:11px;font-weight:460;letter-spacing:.015em;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
- color:var(--text)!important;font-size:15px;line-height:1.50;
+ color:var(--text)!important;font-size:15px;line-height:1.52;
  font-weight:400;letter-spacing:0;white-space:pre-wrap;overflow-wrap:anywhere;
 }
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
@@ -120,7 +120,7 @@ html.seyveo-conversation .seyveo-reply-more>summary{
  border-radius:50%;
 }
 :root[data-theme=light].seyveo-conversation .seyveo-conversation-turn--you{
- color:#293031;background:linear-gradient(155deg,#eff1f0,#e7eae8);
+ color:#293031;background:rgba(65,81,99,.065);
  border:1px solid rgba(80,88,85,.12);
  box-shadow:none;
 }
@@ -144,10 +144,10 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
  border:1px solid var(--line)!important;
  border-radius:25px!important;
- background:linear-gradient(155deg,rgba(220,230,245,.065),transparent 72%),var(--card)!important;
- -webkit-backdrop-filter:blur(20px) saturate(110%);
- backdrop-filter:blur(20px) saturate(110%);
- box-shadow:0 5px 24px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.045)!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
  transform:translateX(-50%)!important;
  transition:none!important;animation:none!important;
  overflow:hidden!important;
@@ -175,18 +175,18 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
  display:flex!important;align-items:center;justify-content:flex-end;
- width:100%;height:40px;min-height:40px;
- gap:7px!important;flex:0 0 40px;align-self:stretch;
+ width:100%;height:42px;min-height:42px;
+ gap:6px!important;flex:0 0 42px;align-self:stretch;
  margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
  display:grid!important;place-items:center;
- width:39px;height:39px;min-width:39px;min-height:39px;
+ width:42px;height:42px;min-width:42px;min-height:42px;
  background:transparent;border:1px solid transparent;color:var(--text);
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  display:grid!important;place-items:center;
- width:39px;height:39px;min-width:39px;min-height:39px;
+ width:42px;height:42px;min-width:42px;min-height:42px;
  background:var(--card2)!important;border:1px solid var(--soft-line)!important;
  color:var(--secondary)!important;border-radius:50%;
  box-shadow:none!important;
@@ -408,7 +408,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory){
  box-sizing:border-box;display:grid!important;place-items:center;
- order:1;flex:0 0 38px;width:38px;height:38px;min-width:38px;min-height:38px;
+ order:1;flex:0 0 42px;width:42px;height:42px;min-width:42px;min-height:42px;
  margin:0!important;padding:0;border:1px solid var(--soft-line);
  border-radius:50%;background:var(--card2);color:var(--text);
  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
@@ -434,10 +434,10 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationStatus{
  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
- order:5!important;flex:0 0 39px;margin:0!important;
+ order:5!important;flex:0 0 42px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
- order:6!important;flex:0 0 39px;margin:0!important;
+ order:6!important;flex:0 0 42px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory) svg{
@@ -456,7 +456,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{gap:3px!important}
  html.seyveo-conversation #ask.prompt:not(.expanded)
   :is(#seyveoConversationBack,#seyveoConversationHistory){
-  width:36px;height:36px;min-width:36px;min-height:36px;flex-basis:36px;
+  width:40px;height:42px;min-width:40px;min-height:42px;flex-basis:40px;
  }
  html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
   min-width:40px;
@@ -466,14 +466,14 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
 /* SEYVEO Quiet Chat · shared dock graphite material. One composer,
    no redundant keyboard arrow, no heavy blur or additional panels. */
 html.seyveo-conversation #ask.prompt:not(.expanded){
- background:linear-gradient(158deg,rgba(47,49,56,.62),rgba(22,24,29,.66))!important;
+ background:transparent!important;
  border:0!important;border-radius:0!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
  overflow:visible!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded):focus-within{
- background:linear-gradient(158deg,rgba(54,57,64,.70),rgba(26,29,35,.73))!important;
+ background:transparent!important;
  border:0!important;box-shadow:none!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question{
@@ -513,11 +513,11 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  outline:2px solid var(--text)!important;outline-offset:1px;
 }
 :root[data-theme="light"].seyveo-conversation #ask.prompt:not(.expanded){
- background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(230,235,243,.65))!important;
+ background:transparent!important;
  border:0!important;box-shadow:none!important;
 }
 :root[data-theme="light"].seyveo-conversation #ask.prompt:not(.expanded):focus-within{
- background:linear-gradient(160deg,rgba(255,255,255,.73),rgba(232,238,246,.76))!important;
+ background:transparent!important;
 }
 :root[data-theme="light"].seyveo-conversation #ask.prompt:not(.expanded) #question{
  color:#202934!important;-webkit-text-fill-color:#202934!important;
