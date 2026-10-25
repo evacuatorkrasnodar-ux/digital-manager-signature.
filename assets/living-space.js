@@ -1,7 +1,7 @@
 /* SEYVEO Infinite Living Space v1
  * Move the ONE approved sphere between its Home anchor and the persistent
  * companion. The existing route/content engine remains the source of truth.
- * Transitions use transforms only; no cloned sphere, intervals or user writes. */
+ * One physical sphere, 320ms FLIP, no cloned sphere or interval polling. */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -125,7 +125,7 @@ function animateOrb(from){
  animation=orbCluster.animate([
   {transform:'translate3d('+dx+'px,'+dy+'px,0) scale('+ratio+')',opacity:.88},
   {transform:'translate3d(0,0,0) scale(1)',opacity:1}
- ],{duration:1060,easing:'cubic-bezier(.22,1,.36,1)'});
+ ],{duration:320,easing:'cubic-bezier(.22,1,.36,1)'});
  animation.addEventListener('finish',()=>{animation=null},{once:true});
 }
 function before(next){
