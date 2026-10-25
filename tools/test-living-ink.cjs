@@ -77,6 +77,8 @@ assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites pr
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
 // Historical Oct 23 Quiet Cinema v3: original plasma geometry and cinematic stage.
 assert.match(decisionJs,/Home Quiet Cinema v3/);
+assert.match(decisionJs,/stage=\$\('stage'\)/,'Cinema must resolve stage before guarding it');
+assert.match(decisionJs,/location\.hash==='#home'/,'Home route also enables the film');
 assert.match(decisionJs,/function startPreview/);
 assert.match(decisionJs,/window\.SEYVEO_LIVING_MOMENT/);
 assert.match(decisionCss,/Black Velvet — Cinematic Presence/);
