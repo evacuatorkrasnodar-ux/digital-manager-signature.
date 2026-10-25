@@ -566,30 +566,27 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* Living Velvet v2 · final compositional system.
-   Shared rhythm + muted dimensionality, without photo backgrounds, GPU filters,
-   extra controls, changes to local data or duplicated component styling. */
-/* SEYVEO · Quiet Atmosphere.
-   One stationary graphite backdrop, painted directly onto the existing body.
-   No extra DOM layers, photo, image, filter, motion or GPU-blurred veil.
-   A broad pearl reflection belongs to Sayvi; edges stay soft and dark.
-   Only Home uses this atmosphere. Other spaces retain their own backgrounds. */
+/* SEYVEO · Quiet Atmosphere · ONE shared background.
+   Home is the reference: same graphite on Tasks, Calendar, My World,
+   Management and other spaces, with the pearl glow gently reduced.
+   No extra elements, overlays, filters, animations or changes to the orb.
+   Use the original body canvas so page transitions never swap backgrounds. */
 #homePage{background:none;}
-:root:not([data-theme=light]) body:has(#homePage:not([hidden])){
+:root:not([data-theme=light]) body{
  background:
   radial-gradient(ellipse 108vw 475px at 50% 232px,
-   rgba(222,224,230,.125) 0%,rgba(159,165,176,.052) 43%,transparent 87%),
+   rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
   radial-gradient(ellipse 116vw 470px at 46% 615px,
-   rgba(118,119,128,.044) 0%,transparent 78%),
+   rgba(118,119,128,.027) 0%,transparent 78%),
   linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
  background-repeat:no-repeat;
 }
-:root[data-theme=light] body:has(#homePage:not([hidden])){
+:root[data-theme=light] body{
  background:
   radial-gradient(ellipse 108vw 475px at 50% 232px,
-   rgba(255,255,255,.40) 0%,rgba(161,173,187,.10) 50%,transparent 87%),
+   rgba(255,255,255,.26) 0%,rgba(161,173,187,.066) 50%,transparent 87%),
   radial-gradient(ellipse 116vw 470px at 46% 615px,
-   rgba(163,175,190,.08) 0%,transparent 78%),
+   rgba(163,175,190,.050) 0%,transparent 78%),
   linear-gradient(180deg,#f5f6f8 0%,#f1f3f6 58%,#eceff3 100%);
  background-repeat:no-repeat;
 }
