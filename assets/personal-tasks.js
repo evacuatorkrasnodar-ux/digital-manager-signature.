@@ -535,6 +535,24 @@ window.addEventListener('seyveo:home-task-complete',event=>{
  if(detail)detail.result=completed?{ok:true,message:'Дело отмечено выполненным.'}:
    {ok:false,message:'Не удалось сохранить. Проверьте память устройства.'};
 });
+/* Home Center of Decisions opens the exact saved task, not just the
+   generic Tasks screen. Navigation remains routed through existing #tasks. */
+window.addEventListener('seyveo:home-task-open',event=>{
+ const id=event.detail?.id;
+ if(typeof id!=='string'||!id)return;
+ const task=read().find(item=>item.id===id&&!item.done);
+ if(!task)return;
+ if(location.hash!=='#tasks')location.hash='#tasks';
+ const showTarget=()=>{
+  if($('tasksPage')?.hidden)return;
+  const item=[...list.querySelectorAll('.personal-task-row[data-task-id]')]
+   .find(row=>row.dataset.taskId===id);
+  if(!item)return;
+  item.scrollIntoView({block:'center',behavior:'auto'});
+  item.querySelector('[data-task-menu]')?.focus({preventScroll:true});
+ };
+ window.requestAnimationFrame(()=>window.setTimeout(showTarget,100));
+});
 form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
 $('personalAddTasks').addEventListener('click',openDialog);
