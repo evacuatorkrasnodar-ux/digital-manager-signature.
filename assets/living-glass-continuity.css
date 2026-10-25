@@ -195,90 +195,86 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#lifePage,#picturePage,#manage
 
 /* SEYVA Glass Cinema · staged reading first, decisions only after gathering.
    Each story card is one of the actual items in the final stack. */
+/* In the old Quiet Cinema language, the cards rise slowly FROM BELOW.
+   The stage is overlay-only: no height animations, layout jumps or blinking. */
 #homePage #seyveoLivingMoment .lm-cinema-stage{
- position:relative;
- width:100%;
+ position:absolute;
+ z-index:4;
+ top:0;left:0;right:0;
  max-width:470px;
- height:192px;
- margin:0 auto 8px;
+ height:190px;
+ margin:0 auto;
  overflow:visible;
  pointer-events:none;
- animation:sv-cinema-fold 670ms 6010ms cubic-bezier(.22,.8,.24,1) both;
+ animation:sv-cinema-stage-fade 760ms 7720ms ease-in-out both;
 }
 #homePage #seyveoLivingMoment .lm-cinema-card{
  --cinema-index:0;
  position:absolute;left:4px;right:4px;top:0;
  display:grid;
  grid-template-columns:69px minmax(0,1fr);
- align-items:center;
- gap:14px;
- min-height:156px;
- box-sizing:border-box;
- padding:18px 18px 18px 15px;
- border:1px solid rgba(238,240,247,.23);
+ align-items:center;gap:14px;
+ min-height:158px;
+ box-sizing:border-box;padding:18px 17px 18px 15px;
+ border:1px solid rgba(241,242,248,.20);
  border-radius:25px;
- background:
-  linear-gradient(156deg,rgba(255,255,255,.13),rgba(236,239,245,.04) 60%,rgba(16,19,25,.11)),
-  rgba(46,49,57,.95);
+ background:linear-gradient(158deg,rgba(248,248,252,.10),rgba(227,231,239,.015) 64%),rgba(43,46,53,.86);
  color:#f9fafc;
- box-shadow:0 10px 26px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.13);
+ box-shadow:0 9px 23px rgba(0,0,0,.15),inset 0 1px rgba(255,255,255,.11);
  pointer-events:none;
- animation:sv-cinema-card-join 2060ms cubic-bezier(.18,.82,.2,1) both;
- animation-delay:calc(var(--cinema-index) * 2010ms);
+ animation:sv-cinema-rise-and-gather 2600ms cubic-bezier(.22,.72,.24,1) both;
+ animation-delay:calc(var(--cinema-index) * 2600ms);
 }
 #homePage #seyveoLivingMoment .lm-cinema-emblem{
- width:68px;height:74px;display:grid;place-items:center;
- color:#f2f4f8;
+ width:68px;height:74px;display:grid;place-items:center;color:#f2f4f8;
 }
 #homePage #seyveoLivingMoment .lm-cinema-emblem .lm-art-svg{
  display:block;width:68px;height:68px;
  stroke:currentColor;stroke-width:1.65;opacity:.96;
 }
 #homePage #seyveoLivingMoment .lm-cinema-copy{
- display:flex;flex-direction:column;align-items:flex-start;
- gap:5px;min-width:0;
+ display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;
 }
 #homePage #seyveoLivingMoment .lm-cinema-kicker{
- font-size:9.8px;letter-spacing:.12em;
- font-weight:550;color:#c5ccd7;
+ font-size:9.8px;letter-spacing:.12em;font-weight:550;color:#c5ccd7;
 }
 #homePage #seyveoLivingMoment .lm-cinema-title{
- font-size:clamp(17px,4.5vw,21px);
- line-height:1.28;font-weight:540;letter-spacing:-.025em;
- color:#fafbff;overflow-wrap:anywhere;
+ font-size:clamp(17px,4.5vw,21px);line-height:1.28;
+ font-weight:540;letter-spacing:-.025em;color:#fafbff;overflow-wrap:anywhere;
 }
 #homePage #seyveoLivingMoment .lm-cinema-note{
- margin:0;font-size:12px;line-height:1.5;
- color:#d4d9e2;overflow-wrap:anywhere;
+ margin:0;font-size:12px;line-height:1.5;color:#d4d9e2;
+ overflow-wrap:anywhere;
  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
 }
 #homePage #seyveoLivingMoment .lm-cinema-remaining{
- position:absolute;top:155px;left:5%;right:5%;text-align:center;
- color:var(--secondary);font-size:10px;
- letter-spacing:.045em;
- animation:sv-cinema-more 1200ms 4500ms both;
+ position:absolute;top:164px;left:5%;right:5%;text-align:center;
+ color:var(--secondary);font-size:10px;letter-spacing:.045em;
+ animation:sv-cinema-more 1100ms 6600ms both;
 }
 #homePage #seyveoLivingMoment.lm-collection-cinematic .lm-decision-stack{
- animation:sv-cinema-stack-assemble 660ms 6030ms cubic-bezier(.22,.8,.2,1) both!important;
+ animation:sv-cinema-stack-reveal 720ms 7750ms cubic-bezier(.22,.72,.24,1) both!important;
  pointer-events:none!important;
 }
-@keyframes sv-cinema-card-join{
- 0%{opacity:0;transform:translate3d(0,18px,0) scale(.94)}
- 18%{opacity:1;transform:translate3d(0,0,0) scale(1)}
- 72%{opacity:1;transform:translate3d(0,0,0) scale(1)}
- 100%{opacity:0;transform:translate3d(0,42px,0) scale(.78)}
+@keyframes sv-cinema-rise-and-gather{
+ 0%{opacity:0;transform:translate3d(0,52px,0) scale(.965)}
+ 17%{opacity:.48;transform:translate3d(0,20px,0) scale(.986)}
+ 34%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 75%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 91%{opacity:.55;transform:translate3d(0,-9px,0) scale(.975)}
+ 100%{opacity:0;transform:translate3d(0,-22px,0) scale(.95)}
 }
-@keyframes sv-cinema-stack-assemble{
- 0%{opacity:0;transform:translate3d(0,26px,0) scale(.88)}
+@keyframes sv-cinema-stack-reveal{
+ 0%{opacity:0;transform:translate3d(0,22px,0) scale(.974)}
  100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
-@keyframes sv-cinema-fold{
- 0%{opacity:1;height:192px;margin-bottom:8px}
- 100%{opacity:0;height:0;margin-bottom:0}
+@keyframes sv-cinema-stage-fade{
+ 0%{opacity:1}
+ 100%{opacity:0}
 }
 @keyframes sv-cinema-more{
- 0%,70%{opacity:0}
- 100%{opacity:.84}
+ 0%,72%{opacity:0}
+ 100%{opacity:.85}
 }
 /* Stacked cards keep their content visible even while collapsed. */
 #homePage #seyveoLivingMoment .lm-decision-stack .lm-decision-front{
