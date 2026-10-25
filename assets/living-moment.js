@@ -419,16 +419,17 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   body.hidden=!collectionOpen;
   view.setAttribute('aria-expanded',String(collectionOpen));
   if(!task){
-   captionText.textContent='Все примеры рассмотрены';
-   frontWhen.textContent=demo?'ДЕМО · ЗАВЕРШЕНО':'ГОТОВО';
-   frontTitle.textContent='Больше нет ожидающих решений';
-   frontNote.textContent=demo?'Все действия были демонстрационными. Настоящие сервисы не затронуты.':'Открытых дел пока нет.';
-   visual.replaceChildren(icon('task'));
-   view.disabled=true;
+   wrapper.classList.add('lm-decision-complete');
+   captionText.textContent=demo?'Демонстрация завершена':'На сегодня всё';
+   count.textContent='✓';
+   total.textContent=demo?'Все примеры просмотрены':'Нет ожидающих дел';
+   front.hidden=true;body.hidden=true;collectionOpen=false;
+   view.hidden=true;view.disabled=true;view.textContent='Ознакомиться';
    execute.disabled=!demo;execute.textContent=demo?'Повторить показ':'Готово';
-   body.hidden=true;
    return;
   }
+  wrapper.classList.remove('lm-decision-complete');
+  front.hidden=false;view.hidden=false;
   captionText.textContent=lastDeferred|| (demo?'ДЕМО · решения для просмотра':'Ваши дела в одной стопке');
   frontWhen.textContent=completedResult?'ДЕМО · РЕЗУЛЬТАТ':demo?'ПРИМЕР · '+remaining.length+' В ОЧЕРЕДИ':deadlineLabel(task);
   frontTitle.textContent=task.title;
@@ -555,7 +556,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
    space.classList.remove('lm-collection-cinematic');
    collectionAnimationSeen=true;
   };
-  later(finalize,6700);
+  later(finalize,8700);
  }else collectionAnimationSeen=true;
  focus(true);
  return true;
