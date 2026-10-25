@@ -12,7 +12,7 @@ const demoLaunch=$('seyveoDemoLaunch');
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const TIMING=Object.freeze({open:reduced()?0:620,beat:2900,quiet:4800,close:reduced()?0:720});
+const TIMING=Object.freeze({open:reduced()?0:90,quiet:4800,close:reduced()?0:720});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let hadRealWork=false,realSignature='';
 let pendingUpdate=false;
@@ -296,7 +296,7 @@ function createSurface(primary,other=[],real=false){
  function transition(kind,direction=1){
   if(moving||!queue.length)return;
   moving=true;readingUntil=Date.now()+1600;
-  scene.style.setProperty('--lm-exit-x',(kind==='defer'?(direction<0?-1:1):1)*58+'px');
+  scene.style.setProperty('--lm-exit-x',((kind==='defer'?(direction<0?-1:1):1)*Math.min(window.innerWidth*.76,340))+'px');
   scene.classList.add('lm-swipe-out');
   const delay=reduced()?0:350;
   later(()=>{
@@ -470,23 +470,15 @@ function startPreview(list=null,{demo=true}={}){
  mode='preview';key=demo?'preview':'preview-real';
  if(demoLaunch)demoLaunch.hidden=true;
  dynamic.hidden=true;
- const scenes=all.slice(0,3);
+ const scenes=all;
  previewScene=createSurface(scenes[0],scenes.slice(1),!demo);
  tip.textContent='';
  space.hidden=false;
  space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- // The original preview stays visible; no second card deck or reflow.
- let featured=0;
- const nextBeat=()=>{
-  if(mode!=='preview')return;
-  featured++;
-  if(featured>=scenes.length)return;
-  previewScene?.changeFeatured(scenes[featured]);
-  hold(nextBeat,TIMING.beat);
- };
- if(scenes.length>1)hold(nextBeat,TIMING.beat+TIMING.open);
+ // Original procession: rise, gather, and remain ONE decision.
+ later(()=>{if(mode==='preview')previewScene?.playIntro()},TIMING.open);
  if(caption)caption.textContent='Quiet Cinema: одна живая главная, плавная смена важных сюжетов.';
  return true;
 }
@@ -544,10 +536,14 @@ function showRealWork(tasks){
  space.classList.remove('lm-disappear','lm-preview');
  space.classList.add('lm-real');
  focus(true);
- later(()=>{if(mode==='real')space.classList.add('lm-reveal')},TIMING.open);
+ later(()=>{if(mode==='real'){space.classList.add('lm-reveal');previewScene?.playIntro()}},TIMING.open);
  return true;
 }
 function refresh(){
+ if(mode==='complete'){
+  if(demoLaunch)demoLaunch.hidden=key!=='demo-complete';
+  return;
+ }
  if(demoLaunch)demoLaunch.hidden=true;
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
@@ -555,7 +551,7 @@ function refresh(){
  const realTasks=readOpenTasks();
  const nextSignature=realTasks.map(t=>[t.id,t.title,t.due||''].join(':')).join('|');
  if(mode==='preview'){
-  if(realTasks.length){rest();showRealWork(realTasks);return}
+  if(key!=='preview'&&realTasks.length){rest();showRealWork(realTasks);return}
   if(!dynamic.hidden)dynamic.hidden=true;
   return;
  }
@@ -661,7 +657,7 @@ function requestAutoDemo(){
 /* An explicit, accessible demo action always remains available on an empty Home;
    it does not depend on timers, storage markers or device pointer type. */
 demoLaunch?.addEventListener('click',()=>{
- if(!available()||editing()||readOpenTasks().length)return;
+ if(!available()||editing()||(mode!=='complete'&&readOpenTasks().length))return;
  if(mode!=='idle')rest();
  autoDemoShown=true;
  startPreview();
