@@ -14,6 +14,7 @@ const reduced=()=>!!MOTION?.matches;
 const SESSION='seyveo-original-quiet-cinema-restored-v1';
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
+let ledgerState=null,demoFinished=false,hadRealWork=false,realIntroSeen=false;
 let pendingUpdate=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -39,7 +40,7 @@ function focus(on){
 }
 function resetSpace(){
  space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real');
- space.hidden=true;tiles.replaceChildren();previewScene=null;
+ space.hidden=true;tiles.replaceChildren();previewScene=null;ledgerState=null;
  tip.textContent='';
 }
 function rest(){
@@ -238,6 +239,153 @@ function createSurface(primary,other=[],real=false){
 let previewScene=null;
 function buildExamples(){
  previewScene=createSurface(sample[0],sample.slice(1));
+}
+/* Drawn Decision Ledger · one paper-like sheet, no inset glass cards.
+   The original Quiet Cinema animation is retained intact above this layer. */
+function readOpenTasks(){
+ let data=[];try{data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]')}catch{}
+ if(!Array.isArray(data))return [];
+ return data.filter(t=>t&&t.done!==true&&typeof t.id==='string'&&
+   typeof t.title==='string'&&t.title.trim())
+  .map(t=>({id:t.id,title:t.title.trim().slice(0,140),
+   due:typeof t.due==='string'?t.due:'',sourceNoteId:t.sourceNoteId||''}))
+  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31'));
+}
+function artisticKind(t){
+ const title=String(t.title||'').toLowerCase();
+ return /письм|почт|ответить|email/.test(title)?'mail':
+   /документ|договор|акт|контракт|счет|счёт/.test(title)?'contract':
+   /здоров|отдох|передох|пульс|врач/.test(title)?'health':'task';
+}
+function demoLedgerItems(){
+ return sample.map((item,index)=>({id:'illustration-'+index,title:item.title,
+   kind:item.kind,body:item.body,reason:item.reason,detail:item.detail,
+   demo:true}));
+}
+function storyFromTask(task){
+ const kind=artisticKind(task);
+ const demoData=kind==='mail'?sample[1]:kind==='contract'?sample[0]:
+  kind==='health'?sample[2]:null;
+ return {kind,title:task.title,category:'ВАШЕ ДЕЛО',body:task.due?
+  'Срок: '+task.due.split('-').reverse().join('.'):'Сохранено в «Делах».',
+  reason:'Это запись из вашего списка дел, а не демонстрация.',
+  detail:'Изучите дело и подтвердите его завершение в разделе «Дела».',
+  id:task.id,due:task.due,sourceNoteId:task.sourceNoteId,
+  ...(demoData?{}:{})};
+}
+function showLedger(items,{demo=false}={}){
+ if(!items.length){if(demo)demoFinished=true;rest();return}
+ if(!available()){rest();return}
+ cancel();mode='ledger';key=demo?'ledger-demo':'ledger-real';
+ tiles.replaceChildren();space.classList.remove('lm-preview','lm-condense','lm-disappear','lm-real');
+ space.classList.add('lm-ledger-mode','lm-reveal');space.hidden=false;
+ tip.textContent='';dynamic.hidden=true;focus(true);
+ const section=create('section','lm-ledger');
+ section.setAttribute('aria-label','Ваш центр решений');
+ const mast=create('div','lm-ledger-heading');
+ const illustration=create('span','lm-ledger-illustration');illustration.append(icon('task'));
+ const heads=create('div','lm-ledger-headline');
+ heads.append(create('small','lm-ledger-kicker',demo?'СЭЙВА · ДЕМОНСТРАЦИЯ':'СЭЙВА · ВАШИ ДЕЛА'),
+  create('h3','lm-ledger-title','Центр решений'));
+ const counter=create('span','lm-ledger-counter');
+ mast.append(illustration,heads,counter);
+ const intro=create('p','lm-ledger-intro','Всё важное собрано в одном месте.');
+ const list=create('div','lm-ledger-list');
+ list.setAttribute('aria-label','Дела, ожидающие решения');
+ const note=create('p','lm-ledger-note');
+ const explanation=create('p','lm-ledger-explanation');explanation.hidden=true;
+ const actions=create('div','lm-ledger-actions');
+ const more=create('button','lm-ledger-action','Подробнее');more.type='button';
+ const act=create('button','lm-ledger-action','Исполнить');act.type='button';
+ actions.append(more,act);
+ const footer=create('small','lm-ledger-footer',
+  demo?'Примеры для просмотра · реальные данные не изменяются':
+  'Реальные действия требуют вашего подтверждения');
+ section.append(mast,intro,list,note,explanation,actions,footer);
+ tiles.append(section);
+ let queue=items.slice(),activeId=queue[0]?.id,expanded=false,closing=false;
+ function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
+ function finish(){
+  if(closing)return;
+  closing=true;
+  if(demo)demoFinished=true;
+  section.classList.add('lm-ledger-finished');
+  space.classList.add('lm-disappear');
+  later(()=>{
+   if(mode!=='ledger')return;
+   rest();
+  },reduced()?0:850);
+ }
+ function render(){
+  if(!queue.length){finish();return}
+  const currentItem=current();
+  if(!queue.some(t=>t.id===activeId))activeId=currentItem.id;
+  counter.textContent=queue.length+' '+(queue.length===1?'дело':queue.length<5?'дела':'дел');
+  list.replaceChildren();
+  for(const item of queue){
+   const row=create('button','lm-ledger-row');
+   row.type='button';
+   row.setAttribute('aria-pressed',String(item.id===activeId));
+   const mark=create('span','lm-ledger-row-art');
+   mark.append(icon(item.kind||artisticKind(item)));
+   const words=create('span','lm-ledger-row-copy');
+   words.append(create('strong','lm-ledger-row-title',item.title),
+    create('small','lm-ledger-row-sub',item.body||(
+     item.due?'Срок: '+item.due.split('-').reverse().join('.'):'Задача из раздела «Дела»')));
+   row.append(mark,words);
+   row.addEventListener('click',()=>{
+    activeId=item.id;expanded=false;readingUntil=Date.now()+25000;render();
+   });
+   list.append(row);
+  }
+  note.textContent='Выбрано: '+currentItem.title;
+  explanation.textContent=demo
+   ?(currentItem.reason||'Демонстрационный пример.')+' '+(currentItem.detail||'Реальных действий нет.')
+   :'Это ваше сохранённое дело. Сэйва поможет разобраться, но фактическое исполнение подтверждается вами в разделе «Дела».';
+  explanation.hidden=!expanded;
+  more.textContent=expanded?'Свернуть':'Подробнее';
+  more.setAttribute('aria-expanded',String(expanded));
+  act.textContent=demo?'Исполнить · демо':'Исполнить';
+ }
+ more.addEventListener('click',()=>{expanded=!expanded;readingUntil=Date.now()+25000;render()});
+ act.addEventListener('click',()=>{
+  const task=current();if(!task)return;
+  readingUntil=Date.now()+30000;
+  if(demo){
+   queue=queue.filter(item=>item.id!==task.id);
+   activeId=queue[0]?.id||null;expanded=false;
+   render();return;
+  }
+  // Actual work is completed in the canonical Tasks screen, not falsely
+  // marked as sent or signed by the Home prototype.
+  const event=new CustomEvent('seyveo:home-task-open',{detail:{id:task.id}});
+  window.dispatchEvent(event);
+  $('navTasks')?.click();
+ });
+ // Swipe selects the next item to review without altering any stored task.
+ let beginX=null,beginY=null;
+ section.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||e.target.closest('button'))return;
+  beginX=e.touches[0].clientX;beginY=e.touches[0].clientY;
+ },{passive:true});
+ section.addEventListener('touchend',e=>{
+  if(beginX===null||!e.changedTouches.length)return;
+  const dx=e.changedTouches[0].clientX-beginX,dy=e.changedTouches[0].clientY-beginY;
+  beginX=beginY=null;
+  if(Math.abs(dx)>75&&Math.abs(dy)<50&&queue.length>1){
+   const i=queue.findIndex(t=>t.id===activeId);
+   activeId=queue[(i+1)%queue.length].id;expanded=false;render();
+  }
+ },{passive:true});
+ ledgerState={demo,sync(next){
+  if(demo)return;
+  const previous=queue.map(t=>t.id).join('|');
+  const updated=next.map(t=>t.id).join('|');
+  if(previous===updated)return;
+  queue=next;expanded=false;
+  render();
+ }};
+ render();
 }
 function shrink(){
  if(mode==='idle')return;
