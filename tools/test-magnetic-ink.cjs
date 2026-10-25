@@ -63,13 +63,13 @@ const context={window:windowMock,document:documentMock,location};
 vm.runInNewContext(source,context,{filename:'magnetic-ink-dock.js'});
 const api=windowMock.SEYVEO_MAGNETIC_INK;
 assert.ok(api,'Fixed dock API registered');
-assert.deepEqual(Array.from(api.groups()[0]),['tasks','calendar','world','manage']);
+assert.deepEqual(Array.from(api.groups()[0]),['home','tasks','world','manage']);
 assert.equal(api.page(),0);
 assert.equal(api.next(),false);assert.equal(api.previous(),false);
 assert.deepEqual(ids.slice(0,4).map(id=>elements[id].dataset.svFixedAction),
- ['tasks','calendar','world','manage']);
-assert.ok(elements.navHome.innerHTML.includes('Дела'));
-assert.ok(elements.navTasks.innerHTML.includes('Календарь'));
+ ['home','tasks','world','manage']);
+assert.ok(elements.navHome.innerHTML.includes('Главная'));
+assert.ok(elements.navTasks.innerHTML.includes('Дела'));
 assert.ok(elements.navPicture.innerHTML.includes('Мой мир'));
 assert.ok(elements.navManage.innerHTML.includes('Управление'));
 assert.equal(elements.assistantQuickrail.inert,true,'Old second rail stays inert');
@@ -83,9 +83,9 @@ function trusted(id){
  assert.ok(event.prevented&&event.stopped,'A physical side tap is mapped exactly once');
 }
 trusted('navHome');
-assert.equal(elements.navTasks.programmaticClicks,1,'Дела reaches existing nav handler');
+assert.equal(elements.navHome.programmaticClicks,1,'Home calls existing goHome handler');
 trusted('navTasks');
-assert.equal(location.hash,'calendar','Calendar routes directly');
+assert.equal(elements.navTasks.programmaticClicks,1,'Tasks calls original task handler');
 trusted('navPicture');
 assert.equal(location.hash,'life','World routes directly');
 trusted('navManage');
@@ -93,11 +93,14 @@ assert.equal(elements.navManage.programmaticClicks,1,'Manage uses original handl
 
 location.hash='#calendar'; // Browsers prepend # to location.hash assignments.
 for(const fn of windowEvents.hashchange||[])fn();
-assert.equal(elements.navTasks.getAttribute('aria-current'),'page');
+assert.equal(elements.navPicture.getAttribute('aria-current'),'page','Calendar belongs to My World');
 assert.equal(elements.navHome.getAttribute('aria-current'),null);
-const htmlBefore=elements.navTasks.innerHTML;
+location.hash='';
 for(const fn of windowEvents.hashchange||[])fn();
-assert.equal(elements.navTasks.innerHTML,htmlBefore,'Repeated route does not repaint SVG');
+assert.equal(elements.navHome.getAttribute('aria-current'),'page','Home is always reachable');
+const htmlBefore=elements.navHome.innerHTML;
+for(const fn of windowEvents.hashchange||[])fn();
+assert.equal(elements.navHome.innerHTML,htmlBefore,'Repeated route does not repaint SVG');
 
 dock.classList.add('seyveo-music-dock');
 elements.navHome.innerHTML='music control';
@@ -105,6 +108,6 @@ api.refresh();
 assert.equal(elements.navHome.innerHTML,'music control','Music controls own same dock');
 dock.classList.remove('seyveo-music-dock');
 for(const fn of documentEvents['seyveo:music-dock-exit']||[])fn();
-assert.ok(elements.navHome.innerHTML.includes('Дела'),'Normal dock is restored after music');
+assert.ok(elements.navHome.innerHTML.includes('Главная'),'Normal Home dock is restored after music');
 assert.equal(elements.assistantButton.innerHTML,'<svg></svg><span>Original</span>','Sayvi center is untouched');
 console.log('PASS fixed SEYVEO dock: four stable destinations, one center, Music takeover, no swipe pages');
