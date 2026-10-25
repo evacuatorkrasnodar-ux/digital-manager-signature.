@@ -5,7 +5,7 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const home=$('homePage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
+const home=$('homePage'),stage=$('stage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
 const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
 const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
 if(!home||!stage||!dynamic||!space||!tiles)return;
@@ -20,7 +20,7 @@ function later(callback,ms){
  timers.push(id);return id;
 }
 function cancel(){for(const id of timers)clearTimeout(id);timers=[]}
-function available(){return !home.hidden&&!document.hidden&&!location.hash&&!document.documentElement.classList.contains('seyveo-conversation')&&!(document.querySelector('dialog[open]'))}
+function available(){return !home.hidden&&!document.hidden&&(!location.hash||location.hash==='#home')&&!document.documentElement.classList.contains('seyveo-conversation')&&!(document.querySelector('dialog[open]'))}
 function editing(){
  const composer=$('ask');
  const node=document.activeElement;
