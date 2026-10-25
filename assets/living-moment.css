@@ -760,3 +760,20 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
   animation:none!important;transition:none!important;
  }
 }
+
+/* The optional demonstration has one quiet, in-flow entry point.
+   This is text, not a glass card, fixed overlay or duplicate dock action. */
+#homePage .lm-demo-launch{
+ display:block;
+ width:max-content;max-width:100%;
+ min-height:42px;margin:13px auto 6px;padding:9px 13px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--secondary);
+ font:inherit;font-size:11.5px;line-height:1.4;font-weight:480;
+ letter-spacing:.018em;text-align:center;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#homePage .lm-demo-launch[hidden]{display:none!important}
+#homePage .lm-demo-launch:is(:hover,:focus-visible){color:var(--text)}
+#homePage .lm-demo-launch:focus-visible{outline:1px solid currentColor;outline-offset:2px}
+html.seyveo-conversation #homePage .lm-demo-launch{display:none!important}
