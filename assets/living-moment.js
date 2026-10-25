@@ -387,7 +387,29 @@ function readLocal(key){
  try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:null}
  catch{return null}
 }
+function soonTask(){
+ const tasks=readLocal('seyveo-personal-tasks-v1');
+ if(!Array.isArray(tasks))return null;
+ const now=new Date();
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+ const week=today+7*86400000;
+ return tasks.filter(item=>
+  item&&item.done!==true&&typeof item.title==='string'&&item.title.trim()
+  &&typeof item.due==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(item.due)
+  &&new Date(item.due+'T12:00:00').getTime()>today
+  &&new Date(item.due+'T12:00:00').getTime()<=week
+ ).sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
+}
 function nextIntent(){
+ const upcoming=soonTask();
+ if(upcoming){
+  const date=new Date(upcoming.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+  return {id:'upcoming:'+(upcoming.id||upcoming.title)+'|'+upcoming.due,
+   eyebrow:'СЭЙВА · СКОРО',
+   title:upcoming.title,
+   line:'Ближайший срок — '+date+'. Дело уже сохранено в вашем списке.',
+   action:'Посмотреть дело',target:'tasks'};
+ }
  const profile=readLocal('seyveo-first-acquaintance-v1');
  if(profile?.focus==='life')return {
   id:'life',eyebrow:'СЭЙВА · ВАШ ДЕНЬ',
