@@ -696,7 +696,8 @@ document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&mode!=='idle')rest();
  else if(!document.hidden)scheduleRefresh();
 });
-window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});
+window.addEventListener('pagehide',()=>{cancel();mode='idle';key='';resetSpace();focus(false)});
+window.addEventListener('pageshow',scheduleRefresh);
 /* Real business recommendations remain actionable. Explain in place without
  * launching a second modal and without overwriting their original approval logic. */
 /* Director's flow for real recommendations:
