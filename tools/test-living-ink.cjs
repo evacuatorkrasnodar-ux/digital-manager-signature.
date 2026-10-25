@@ -89,11 +89,16 @@ assert.match(decisionCss,/\.lm-reveal \.lm-inline-item:nth-child\(2\)/,'Second f
 assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-field/,'Three original rows gather in a single drawn card');
 assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-inline-item/,'The second and third task stay visible after merging');
 assert.doesNotMatch(decisionCss,/#seyveoLivingMoment\.lm-gather \.lm-secondary\{\s*max-height:0/,'Gather never deletes secondary items');
-assert.match(decisionJs,/controls\.append\(open\)/,'One details action on the featured card');
+assert.match(decisionJs,/controls\.append\(open,execute\)/,'Only two actions: Подробнее and Исполнить');
+assert.match(decisionJs,/seyveo:home-task-complete/,'Real completion uses validated personal task storage');
+assert.match(decisionJs,/function finishPreviewItem/,'Demo completion removes only the selected example');
+assert.doesNotMatch(decisionJs,/lm-inline-arrow/,'No extra arrow glyphs on task rows');
+assert.match(decisionCss,/\.lm-polymer--main::after/,'Button arrows are disabled in the scene stylesheet');
+assert.match(html,/<button class="btn primary" id="resolve" type="button">Исполнить<\/button>/,'Real advice has explicit execution entry');
 assert.doesNotMatch(decisionJs,/hold\(\(\)=>disappear\(\),TIMING\.quiet\)/,'No automatic dismissal of the gathered card');
 assert.match(decisionJs,/function gatherPreview/,'Three examples gather into one scene');
 assert.doesNotMatch(decisionJs,/sessionStorage\.getItem\(SESSION\)/,'Same-tab reload shows the demo');
-assert.match(html,/living-moment\.css\?v=36/);
+assert.match(html,/living-moment\.css\?v=37/);
 assert.match(html,/living-moment\.js\?v=\d+/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
