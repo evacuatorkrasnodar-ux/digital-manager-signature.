@@ -82,6 +82,9 @@ assert.match(decisionJs,/previewScene=createSurface\(scenes\[0\],scenes\.slice\(
 assert.match(decisionJs,/previewScene=createSurface\(stories\[0\],stories\.slice\(1\),true\)/,'Real tasks share the same renderer');
 assert.match(decisionJs,/const limit=showOpening\?Math\.min\(queue\.length-1,window\.innerHeight<=650\?1:window\.innerHeight<=900\?2:3\)/,'Only original rows rise; 2 on iPhone X');
 assert.match(decisionJs,/refreshView\(true\)/,'Opening uses the original decision list');
+assert.match(decisionJs,/secondary\.hidden=!showOpening/,'Do not leave extra rows on the final Home screen');
+assert.match(decisionCss,/\.lm-cinema-enter \.lm-secondary,/,'Force rising rows visible during the actual film');
+assert.match(decisionCss,/opacity:1!important;transform:none!important;max-height:none!important/,'Film does not inherit the hidden secondary state');
 assert.match(decisionJs,/field\.classList\.add\('lm-cinema-enter'\)/,'Illustrated rows rise');
 assert.match(decisionJs,/field\.classList\.add\('lm-cinema-gather'\)/,'Same rows gather');
 assert.match(decisionJs,/field\.classList\.remove\('lm-cinema-gather'\)/,'Gathering is cleaned up');
