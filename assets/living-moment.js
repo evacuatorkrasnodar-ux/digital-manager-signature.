@@ -269,8 +269,11 @@ function createSurface(primary,other=[],real=false){
   event.preventDefault();event.stopImmediatePropagation();
  },true);
  function notify(message){
-  tip.textContent=message;
-  tip.setAttribute('role','status');
+  // The progress line already occupies space; status never stretches Home
+  // or pushes the original card into the bottom dock.
+  position.textContent=message;
+  position.setAttribute('role','status');
+  position.setAttribute('aria-live','polite');
  }
  function finishScene(){
   moving=false;
@@ -302,6 +305,7 @@ function createSurface(primary,other=[],real=false){
   scene.classList.add('lm-swipe-out');
   const delay=reduced()?0:350;
   later(()=>{
+   let outcome='';
    if(!tiles.contains(field))return;
    if(kind==='defer'){
     if(real&&queue.length===1){
@@ -323,7 +327,7 @@ function createSurface(primary,other=[],real=false){
      try{localStorage.setItem('seyveo-home-task-order-v1',
        JSON.stringify(queue.map(task=>task.id)))}catch{}
     }
-    notify('Отложено на потом · вернётся в очередь');
+    outcome='Позже · дело в очереди';
    }else{
     const completedItem=queue.shift();
     if(real&&completedItem?.id){
@@ -345,12 +349,13 @@ function createSurface(primary,other=[],real=false){
      }
     }
     completed++;
-    notify(real?'Отмечено выполненным · без внешних действий':
-     'Учебное дело выполнено · реальные данные не затронуты');
+    outcome=real?'Дело завершено · только в списке':
+     'Демо выполнено · реальных действий нет';
    }
    scene.classList.remove('lm-swipe-out');
    scene.classList.add('lm-swipe-in');
    finishScene();
+   notify(outcome);
    later(()=>{
     scene.classList.remove('lm-swipe-in');
     if(real){
@@ -371,7 +376,8 @@ function createSurface(primary,other=[],real=false){
   field.classList.add('lm-film-running');
   introNode=create('div','lm-film');
   introNode.setAttribute('aria-hidden','true');
-  queue.slice(0,4).forEach((item,i)=>{
+  const visibleFilms=window.innerHeight<=650?2:window.innerHeight<=800?3:4;
+  queue.slice(0,visibleFilms).forEach((item,i)=>{
    const card=create('div','lm-film-card');
    // Precomputed values use only CSS properties supported by older iOS
    // Safari (iPhone X); CSS calc(number * length) is not reliable there.
@@ -388,7 +394,7 @@ function createSurface(primary,other=[],real=false){
    if(!tiles.contains(field))return;
    field.classList.remove('lm-film-running');
    introNode.remove();introNode=null;
-   notify('Сэйви собрала '+queue.length+' дел в одну очередь · свайпните в сторону, чтобы отложить');
+   notify(queue.length+' дел · свайпните в сторону, чтобы отложить');
   },reduced()?0:3100);
  }
  field.dataset.lmSubject=primary.kind;
