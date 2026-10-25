@@ -691,3 +691,360 @@ html.sv-space-active #lifePage .calendar-space-button small{
  }
 }
 
+
+
+/* ──────────────────────────────────────────────────────────────────────
+   SEYVEO · Quiet Cinema / all workspaces · single shared design contract.
+   Reuse existing functional elements. No duplicate dock, sphere, cards,
+   blurred overlays, cloned screens, placeholder content or JS navigation.
+   ────────────────────────────────────────────────────────────────────── */
+html.sv-space-active{
+ --sv-q-outline:rgba(232,237,245,.16);
+ --sv-q-line:rgba(232,237,245,.105);
+ --sv-q-surface:rgba(244,248,252,.034);
+ --sv-q-pressed:rgba(244,248,252,.055);
+}
+html[data-theme=light].sv-space-active{
+ --sv-q-outline:rgba(56,74,97,.16);
+ --sv-q-line:rgba(56,74,97,.13);
+ --sv-q-surface:rgba(255,255,255,.72);
+ --sv-q-pressed:rgba(58,76,96,.045);
+}
+/* Every destination continues to use the original graphite page canvas. */
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
+ #managePage,#sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage){
+ background:transparent;
+ color:var(--text);
+ min-width:0;
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,#managePage,
+ #sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage)
+ :is(.manage-heading,.tasks-heading,.calendar-header,.picture-head,.life-heading,
+      .sv-deep-top,.sa-header,.sv-video-header){
+ border:0;
+ background:transparent;
+ box-shadow:none;
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,#managePage,
+ #sayviSurfacePage,#sayviAnswerPage,#sayviVideoPage)
+ :is(h1,.sv-deep-heading,.sa-heading){
+ font-weight:490;
+ letter-spacing:-.043em;
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,#managePage,
+ #sayviSurfacePage,#sayviAnswerPage,#sayviVideoPage)
+ :is(.manage-caption,.calendar-kicker,.life-eyebrow,.sv-deep-kicker,
+      .sv-video-kicker,.sa-eyebrow){
+ font-weight:465;
+ font-size:10.5px;
+ letter-spacing:.13em;
+ color:var(--secondary);
+}
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,#managePage,
+ #sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage)
+ :is(h2,h3,.picture-chart-total strong,.sv-music-title){
+ letter-spacing:-.028em;
+}
+/* Tasks: one porcelain-ink list; keep native completion, edit and due dates. */
+html.sv-space-active #tasksPage .personal-tasks-list{
+ border:1px solid var(--sv-q-outline)!important;
+ border-radius:23px!important;
+ background:var(--sv-q-surface)!important;
+ box-shadow:none!important;
+ padding:7px 15px!important;
+ overflow:hidden;
+}
+html.sv-space-active #tasksPage .personal-task-row{
+ background:transparent!important;
+ box-shadow:none!important;
+ border-bottom:1px solid var(--sv-q-line)!important;
+ min-height:65px;
+}
+html.sv-space-active #tasksPage .personal-task-row:last-child{
+ border-bottom:0!important;
+}
+html.sv-space-active #tasksPage .personal-task-content strong{
+ font-size:14px;font-weight:495;letter-spacing:-.016em;
+}
+html.sv-space-active #tasksPage .personal-task-content small{
+ font-size:11.5px;line-height:1.42;
+}
+html.sv-space-active #tasksPage .personal-tasks-head h2{
+ font-size:13px;font-weight:480;letter-spacing:-.015em;
+}
+html.sv-space-active #tasksPage :is(.personal-tasks-add,.tasks-context-complete){
+ min-height:44px;
+ padding:9px 4px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text);font-weight:480;
+}
+html.sv-space-active #tasksPage :is(.tasks-context-focus,.personal-task-continuation){
+ border:1px solid var(--sv-q-outline)!important;
+ border-radius:23px!important;
+ background:var(--sv-q-surface)!important;
+ box-shadow:none!important;
+}
+/* My World: five spacious illustrated choices on one continuous surface. */
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ display:flex;flex-direction:column;
+ width:100%;min-width:0;
+ gap:0;padding:5px 13px;
+ border:1px solid var(--sv-q-outline);
+ border-radius:23px;
+ background:var(--sv-q-surface);
+ box-shadow:none;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ display:grid;grid-template-columns:53px minmax(0,1fr);
+ grid-template-rows:auto auto;
+ align-content:center;align-items:center;justify-content:stretch;
+ column-gap:13px;row-gap:3px;
+ width:100%;min-width:0;min-height:79px;
+ padding:12px 6px;
+ margin:0;
+ border:0!important;
+ border-bottom:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ text-align:left;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:last-child{
+ border-bottom:0!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
+ grid-column:1;grid-row:1 / span 2;
+ justify-self:center;align-self:center;
+ width:43px;height:43px;
+ stroke-width:1.35;color:var(--text);opacity:.83;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
+ grid-column:2;grid-row:1;justify-self:start;
+ font-size:16px;line-height:1.3;letter-spacing:-.027em;font-weight:485;
+ text-align:left;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
+ grid-column:2;grid-row:2;justify-self:start;
+ font-size:11.7px;line-height:1.42;font-weight:410;
+ text-align:left;color:var(--secondary);
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
+ opacity:.65;
+}
+/* Calendar: preserve the functional grid, periods, dates and live agenda. */
+html.sv-space-active #calendarPage #calendarView,
+html.sv-space-active #calendarPage #calendarDeadlineView{
+ padding:17px 13px 15px;
+ border:1px solid var(--sv-q-outline);
+ border-radius:23px;
+ background:var(--sv-q-surface);
+ box-shadow:none;
+}
+html.sv-space-active #calendarPage .cal-periods{
+ border:0!important;
+ border-bottom:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ padding:0 0 9px;
+ gap:9px;
+}
+html.sv-space-active #calendarPage .cal-periods button,
+html.sv-space-active #picturePage .picture-tabs button{
+ min-height:44px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ font-weight:465;
+ color:var(--secondary);
+}
+html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true],
+html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]{
+ color:var(--text);
+ border-bottom:1px solid var(--text)!important;
+}
+html.sv-space-active #calendarPage .cal-agenda{
+ border:0!important;
+ border-top:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ padding:9px 0;
+}
+html.sv-space-active #calendarPage .cal-day-summary{
+ padding:13px 0 8px;
+}
+html.sv-space-active #calendarPage :is(.cal-day-fab,.cal-advice-action,.calendar-header-add){
+ min-height:44px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ font-weight:480;color:var(--text);
+}
+html.sv-space-active #calendarPage .cal-advice{
+ border:0!important;border-top:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+/* Business: one analytic surface, no frosted boxes around each metric.
+   Charts, time ranges and editable widgets retain their functions. */
+html.sv-space-active #picturePage .picture-tabs{
+ border:0!important;
+ border-bottom:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;padding:0 0 9px;gap:9px;
+}
+html.sv-space-active #picturePage #pictureWidgetArea,
+html.sv-space-active #picturePage #pictureBusinessCharts{
+ border:1px solid var(--sv-q-outline);
+ border-radius:23px;
+ background:var(--sv-q-surface);
+ box-shadow:none;
+ padding:16px 13px;
+ margin-bottom:15px;
+}
+html.sv-space-active #picturePage :is(.home-widget-card,.picture-chart-box,
+ .picture-breakdown,.picture-insight,.picture-quick-insight,.picture-full-report){
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #picturePage .picture-section{
+ padding:14px 0 0;
+ margin:13px 0 0;
+ border-top:1px solid var(--sv-q-line);
+}
+html.sv-space-active #picturePage .picture-section:first-child{
+ border-top:0;margin-top:0;padding-top:0;
+}
+html.sv-space-active #picturePage .home-widget-card{
+ border-bottom:1px solid var(--sv-q-line)!important;
+}
+html.sv-space-active #picturePage :is(.picture-company-arrow,.manage-chevron){
+ display:none!important;
+}
+html.sv-space-active #picturePage .picture-full-report{
+ border-top:1px solid var(--sv-q-line)!important;
+}
+/* Management's interior uses the same ink material as its approved overview.
+   Keep every input, actual permission and selected section interactive. */
+html.sv-space-active #managePage #seyveoCleanDetail
+ :is(.seyveo-selected-group>.manage-card,.seyveo-selected-item>.seyveo-manage-fold-body){
+ border:1px solid var(--sv-q-outline)!important;
+ border-radius:22px!important;
+ background:var(--sv-q-surface)!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #managePage #seyveoCleanDetail .manage-row{
+ box-shadow:none!important;
+}
+html.sv-space-active #managePage #seyveoCleanDetail .manage-chevron{
+ display:none!important;
+}
+/* Sayvi's document, health and mail destinations: hand-drawn original art,
+   one quiet center, clearly legible actions. */
+html.sv-space-active #sayviSurfacePage :is(.sv-deep-hero,.sv-deep-demo){
+ border:1px solid var(--sv-q-outline)!important;
+ border-radius:23px!important;
+ background:var(--sv-q-surface)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #sayviSurfacePage :is(.sv-deep-intent,.sv-deep-demo-choice,.sv-deep-file-link){
+ min-height:44px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ font-weight:470;
+ color:var(--text);
+}
+html.sv-space-active #sayviSurfacePage :is(.sv-deep-intent,.sv-deep-demo-choice)::after{
+ content:none!important;display:none!important;
+}
+/* Living answers stay readable, without artificial chat-card boxes. */
+html.sv-space-active #sayviAnswerPage :is(.sa-scene,.sa-gallery,.sa-fact){
+ box-shadow:none!important;
+}
+html.sv-space-active #sayviAnswerPage .sa-scene{
+ border-color:var(--sv-q-outline)!important;
+ background:var(--sv-q-surface)!important;
+}
+/* Video and music retain native player behavior, with quiet inline choices. */
+html.sv-space-active #sayviVideoPage :is(.sv-video-form,.sv-video-more){
+ border:0!important;
+ border-top:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #sayviVideoPage :is(.sv-video-primary-actions button,
+ .sv-video-saved button,.sv-video-saved a,.sv-video-back){
+ min-height:44px;
+ padding:10px 5px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text);font-weight:470;
+}
+html.sv-space-active #sayviVideoPage .sv-video-more summary::after{
+ content:none!important;display:none!important;
+}
+html.sv-space-active #sayviMusicPage :is(.sv-music-intent,.sv-music-panel-close){
+ min-height:44px;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;
+ font-weight:465;color:var(--text);
+}
+html.sv-space-active #sayviMusicPage :is(.sv-music-providers,.sv-music-collection){
+ border:1px solid var(--sv-q-outline)!important;
+ border-radius:23px!important;
+ background:var(--sv-q-surface)!important;
+ box-shadow:none!important;
+}
+/* Nondecorative focus outlines preserve keyboard and assistive access. */
+html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
+ #managePage,#sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage)
+ :is(button,a[href],summary):focus-visible{
+ outline:1px solid var(--text);
+ outline-offset:3px;
+}
+/* One entrance for real content. Never animate the PWA's fixed dock or orb. */
+@media(prefers-reduced-motion:no-preference){
+ @keyframes sv-quiet-scene-enter{
+  from{opacity:0;transform:translate3d(0,24px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+ html.sv-space-active :is(#lifePage,#calendarPage,#tasksPage,#picturePage,#managePage,
+ #sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage).sv-cascade
+ :is(.calendar-spaces,.personal-tasks-panel,#calendarView,#pictureWidgetArea,
+  #pictureBusinessCharts,.sv-deep-hero,.sv-video-form,.sv-music-cover){
+  animation:sv-quiet-scene-enter 680ms cubic-bezier(.22,1,.36,1) both;
+ }
+ html.sv-space-active #calendarPage.sv-cascade #calendarView{animation-delay:90ms}
+ html.sv-space-active #picturePage.sv-cascade #pictureBusinessCharts{animation-delay:110ms}
+ html.sv-space-active #lifePage.sv-cascade .calendar-spaces{animation-delay:80ms}
+}
+@media(max-width:375px){
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+  padding:4px 10px;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  grid-template-columns:45px minmax(0,1fr);
+  column-gap:10px;min-height:74px;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
+  width:38px;height:38px;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
+  font-size:15px;
+ }
+ html.sv-space-active #calendarPage :is(#calendarView,#calendarDeadlineView),
+ html.sv-space-active #picturePage :is(#pictureWidgetArea,#pictureBusinessCharts){
+  padding:13px 10px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
+ #managePage,#sayviSurfacePage,#sayviAnswerPage,#sayviMusicPage,#sayviVideoPage) 
+ :is(.calendar-spaces,.personal-tasks-panel,#calendarView,#pictureWidgetArea,
+ #pictureBusinessCharts,.sv-deep-hero,.sv-video-form,.sv-music-cover){
+  animation:none!important;transition:none!important;
+ }
+}
