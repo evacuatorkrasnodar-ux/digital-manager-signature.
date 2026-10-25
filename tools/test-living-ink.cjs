@@ -75,45 +75,20 @@ assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.ca
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
-// One canonical Quiet Cinema scene; never reintroduce the retired deck.
-assert.match(decisionJs,/function createSurface\(primary,other=\[\],real=false\)/);
-assert.match(decisionJs,/const scenes=all;/,'All ten demo stories join the one queue');
-assert.match(decisionJs,/previewScene=createSurface\(scenes\[0\],scenes\.slice\(1\),!demo\)/);
-assert.match(decisionJs,/previewScene=createSurface\(stories\[0\],stories\.slice\(1\),true\)/,'Real tasks share the same renderer');
-assert.match(decisionJs,/const limit=showOpening\?Math\.min\(queue\.length-1,window\.innerHeight<=650\?1:window\.innerHeight<=900\?2:3\)/,'Only original rows rise; 2 on iPhone X');
-assert.match(decisionJs,/refreshView\(true\)/,'Opening uses the original decision list');
-assert.match(decisionJs,/secondary\.hidden=!showOpening/,'Do not leave extra rows on the final Home screen');
-assert.match(decisionCss,/\.lm-cinema-enter \.lm-secondary,/,'Force rising rows visible during the actual film');
-assert.match(decisionCss,/opacity:1!important;transform:none!important;max-height:none!important/,'Film does not inherit the hidden secondary state');
-assert.match(decisionJs,/field\.classList\.add\('lm-cinema-enter'\)/,'Illustrated rows rise');
-assert.match(decisionJs,/field\.classList\.add\('lm-cinema-gather'\)/,'Same rows gather');
-assert.match(decisionJs,/field\.classList\.remove\('lm-cinema-gather'\)/,'Gathering is cleaned up');
-assert.doesNotMatch(decisionJs,/lm-film-card|introNode|create\('div','lm-film'\)/,'No additional cards or glass overlays');
-assert.match(decisionJs,/field\.addEventListener\('pointerup'/,'Swipe support uses native pointer events');
-assert.match(decisionJs,/Math\.abs\(dx\)<62/,'Ignore taps and small accidental drags');
-assert.match(decisionJs,/if\(queue\.length>1\)queue\.push\(queue\.shift\(\)\)/,'Swipe defers; it never deletes');
-assert.match(decisionJs,/localStorage\.setItem\('seyveo-home-task-order-v1'/,'Saved task display order survives');
-assert.match(decisionJs,/const completedItem=queue\.shift\(\)/,'Completion advances to the next task');
-assert.match(decisionJs,/task\.done=true;task\.doneAt=/,'A real tap marks only a saved task complete');
-assert.match(decisionJs,/if\(discussTask\(shown,\{demo:!real\}\)\)return/,'Full detail opens in the original chat');
-assert.match(decisionJs,/demoLaunch\.textContent='Повторить кинематографический показ'/,'Replay after the educational film');
-assert.match(decisionJs,/if\(startPreview\(\)\)autoDemoShown=true/,'Demo remains available from idle');
-assert.equal((decisionJs.match(/id:'demo-\d+'/g)||[]).length,10,'Ten fictional examples, not ten real saved tasks');
-assert.match(decisionJs,/Все сведения вымышлены/,'Training stories are unmistakably labeled');
-assert.doesNotMatch(decisionJs,/showLedger|lm-deck-|demoLedgerItems/,'No duplicate decision engine');
-assert.doesNotMatch(decisionCss,/\.lm-deck/, 'No legacy decision deck styles');
-assert.match(decisionCss,/@keyframes lm-original-row-rise/,'Original rows rise from bottom');
-assert.match(decisionCss,/@keyframes lm-original-row-gather/,'Original rows gather into one existing decision');
-assert.match(decisionCss,/\.lm-cinema-enter \.lm-inline-item/,'Only the original in-flow list is animated');
-assert.match(decisionCss,/\.lm-cinema-gather \.lm-inline-item/,'No second visual layer');
-assert.doesNotMatch(decisionCss,/\.lm-film|@keyframes lm-film|#seyveoLivingMoment \.lm-film-card/,'The former glass overlay is deleted');
-assert.match(decisionCss,/\.lm-scene\.lm-swipe-out/,'Deferred or finished decisions still exit smoothly');
-assert.match(decisionCss,/prefers-reduced-motion:reduce/,'Reduced motion support remains');
-assert.match(decisionCss,/overflow-y:hidden!important/,'Home uses one non-scrolling viewport');
-assert.match(decisionCss,/:has\(#homePage:not\(\[hidden\]\)\):not\(\.seyveo-conversation\)/,'Home-only scroll lock');
-assert.match(decisionCss,/max-height:900px/,'iPhone X receives compact layouts');
-assert.match(decisionCss,/#homePage #seyveoLivingMoment \.lm-inline-item/,'Original illustrated decision list survives');
-assert.match(decisionCss,/lm-symbol-arrive/,'Original symbol reveal stays');
+// Clean new scene: forbid all old layered/duplicate systems.
+assert.match(decisionJs,/clean cinematic director/);
+assert.match(decisionJs,/function intro\(\)/);
+assert.match(decisionJs,/function advance\(action,direction\)/);
+assert.match(decisionJs,/queue\.push\(queue\.shift\(\)\)/);
+assert.match(decisionJs,/found\.done=true;found\.doneAt=/);
+assert.match(decisionJs,/preview\?\.addEventListener\('click'/);
+assert.match(decisionCss,/@keyframes sv-rise/);
+assert.match(decisionCss,/@keyframes sv-gather/);
+assert.match(decisionCss,/\.sv-decision/);
+assert.doesNotMatch(decisionCss,/\.lm-film|\.lm-deck|\.lm-cinema-gather|\.lm-cinema-enter/);
+assert.doesNotMatch(decisionJs,/lm-film|lm-deck|lm-cinema-enter|lm-cinema-gather/);
+assert.match(html,/living-moment\.css\?v=33/);
+assert.match(html,/living-moment\.js\?v=46/);
 
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
