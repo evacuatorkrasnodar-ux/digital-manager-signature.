@@ -1,4 +1,4 @@
-/* SEYVEO Signature · Living Objects & Decisions v5
+/* SEYVEO Signature · Living Objects & Decisions v6
  * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
  * Never writes fictional tasks, messages or business data. The approved
  * plasma, its effects, bottom dock and input controller remain untouched. */
@@ -356,13 +356,12 @@ function showLedger(items,{demo=false}={}){
  const cinema=create('div','lm-deck-cinema');
  cinema.setAttribute('aria-hidden','true');
  const activeSlot=create('div','lm-deck-active');
- const nextSlot=create('div','lm-deck-next-slot');
- const foot=create('div','lm-deck-foot');
- const hint=create('span','lm-deck-hint','← листать · → отложить');
+  const foot=create('div','lm-deck-foot');
+ const hint=create('span','lm-deck-hint','← другое дело');
  const laterButton=create('button','lm-deck-later','Позже');
  laterButton.type='button';
  foot.append(hint,laterButton);
- section.append(heading,cinema,activeSlot,nextSlot,foot);
+ section.append(heading,cinema,activeSlot);
  tiles.append(section);
  const cinematic=demo&&!arrivedFromPreview&&!reduced();
  if(cinematic){
@@ -425,7 +424,7 @@ function showLedger(items,{demo=false}={}){
   const teen=n%100>=11&&n%100<=14;
   const ending=teen||n%10===0||n%10>=5?'дел':n%10===1?'дело':'дела';
   count.textContent=n+' '+ending;
-  activeSlot.replaceChildren();nextSlot.replaceChildren();
+  activeSlot.replaceChildren();
   const card=create('article','lm-deck-card');
   card.setAttribute('aria-label',item.title);
   const main=create('div','lm-deck-main');
@@ -465,23 +464,27 @@ function showLedger(items,{demo=false}={}){
    window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
   });
   actions.append(more,act);
-  card.append(main,body,actions);
-  activeSlot.append(card);
-  const currentIndex=queue.findIndex(t=>t.id===activeId);
+  card.append(main,body);
   if(queue.length>1){
-   const next=queue[(currentIndex+1)%queue.length];
-   const peek=create('button','lm-deck-peek');
-   peek.type='button';
-   peek.setAttribute('aria-label','Перейти к следующему делу: '+next.title);
-   const peekArt=create('span','lm-deck-peek-art');peekArt.append(icon(next.kind||artisticKind(next)));
-   const peekCopy=create('span','lm-deck-peek-copy');
-   peekCopy.append(create('small','lm-deck-peek-eyebrow','ДАЛЬШЕ'),
-    create('strong','lm-deck-peek-title',next.title));
-   peek.append(peekArt,peekCopy);
-   peek.addEventListener('click',()=>{readingUntil=Date.now()+22000;transition('left')});
-   nextSlot.append(peek);
+   const summary=create('div','lm-deck-summary');
+   summary.append(create('small','lm-deck-summary-label','ДРУГИЕ ДЕЛА'));
+   const rows=create('div','lm-deck-summary-items');
+   queue.filter(other=>other.id!==item.id).forEach(other=>{
+    const entry=create('button','lm-deck-summary-item');
+    entry.type='button';
+    entry.setAttribute('aria-label','Показать дело: '+other.title);
+    entry.append(icon(other.kind||artisticKind(other)),create('span','',other.title));
+    entry.addEventListener('click',()=>{
+     if(swiping||closing)return;
+     readingUntil=Date.now()+22000;activeId=other.id;render();
+    });
+    rows.append(entry);
+   });
+   summary.append(rows);card.append(summary);
   }
-  hint.textContent=queue.length>1?'← листать · → отложить':'→ отложить';
+  hint.textContent=queue.length>1?'← другое дело':'';
+  card.append(actions,foot);
+  activeSlot.append(card);
   laterButton.setAttribute('aria-label',demo?'Убрать пример':'Отложить «'+item.title+'» до завтра');
   // Full-card gestures avoid the action row; scrolling vertically remains native.
   let pointerStart=null;
@@ -679,7 +682,7 @@ function refresh(){
  if(mode==='ledger'){
   const real=readOpenTasks().map(storyFromTask);
   if(ledgerState?.demo){
-   if(real.length){rest();showLedger(real.map(storyFromTask),{demo:false})}
+   if(real.length){rest();showLedger(real,{demo:false})}
   }else ledgerState?.sync(real);
   return;
  }
