@@ -8,6 +8,12 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const html=read('index.html');
+const vm=require('node:vm');
+const inlineScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+ .map(match=>match[1]).filter(code=>code.trim());
+assert.ok(inlineScripts.length>0,'Main document has inline scripts');
+for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline script'});
+
 const dock=read('assets/floating-navigation.css');
 const composer=read('assets/composer-intent.css');
 const home=read('assets/home-velvet.css');
