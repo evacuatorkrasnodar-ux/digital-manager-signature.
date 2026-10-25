@@ -55,11 +55,18 @@ assert.match(music,/const dock=document\.querySelector\('footer\.dock'\)/,'Music
 assert.match(music,/if\(!mode\|\|!event\.isTrusted\)return/,'Programmatic navigation stays native');
 
 const dockShell=cssBlock(dock,'.dock');
-assert.match(dockShell,/border:1px solid rgba\(235,238,244,.23\)!important/,'Fine outline');
+assert.match(dockShell,/border:1px solid rgba\(235,238,244,\.21\)!important/,'Thin dock outline');
 assert.match(dockShell,/backdrop-filter:none!important/,'No power-hungry blurring');
-assert.match(dockShell,/box-shadow:inset 0 1px 0 rgba\(255,255,255,.05\)!important/,'No large shadow');
+assert.match(dockShell,/box-shadow:inset 0 1px 0 rgba\(255,255,255,\.05\)!important/,'No large shadow');
 assert.doesNotMatch(dockShell,/backdrop-filter:blur\(/);
-assert.match(dock,/height:52px!important;min-height:52px!important/,'Accessible side tabs');
+assert.match(dock,/--seyveo-dock-height:58px/,'Dock is more compact');
+assert.match(dock,/height:48px!important;min-height:48px!important/,'Four side tabs retain large hit targets');
+const selectedDockTab=cssBlock(dock,'.dock>.nav-item.active');
+assert.match(selectedDockTab,/border-color:rgba\(236,239,245,\.39\)!important/,'Selected tab uses a thin outline');
+assert.match(selectedDockTab,/background:transparent!important/,'Selected tab has no grey stain');
+assert.doesNotMatch(selectedDockTab,/background:rgba\(/,'No tinted active capsule');
+assert.match(dock,/:root\[data-theme="light"\] \.dock>\.nav-item.active/,'Outline also works in light mode');
+assert.match(html,/assets\/floating-navigation\.css\?v=31/,'Updated dock CSS deployed');
 assert.match(dock,/prefers-reduced-motion:reduce/,'Honors reduced motion');
 assert.doesNotMatch(dock,/sv-magnetic-reveal/,'Carousel animation retired');
 
