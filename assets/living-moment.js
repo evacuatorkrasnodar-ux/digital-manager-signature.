@@ -308,6 +308,9 @@ function startPreview(){
 /* All open tasks live in the existing Tasks store. This surface only reads
  * their metadata; writing status is delegated to Personal Tasks. */
 let collectionPage=0,collectionOpen=false;
+let collectionDemo=false,collectionAnimationSeen=false;
+const GATHER_SESSION='seyveo-cinematic-collection-v1';
+try{collectionAnimationSeen=sessionStorage.getItem(GATHER_SESSION)==='1'}catch{}
 function openTasks(){
  const tasks=readLocal('seyveo-personal-tasks-v1');
  if(!Array.isArray(tasks))return [];
@@ -316,6 +319,13 @@ function openTasks(){
   typeof task.title==='string'&&task.title.trim()&&task.done!==true
  ).sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||
    String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+}
+function demoTasks(){
+ return [
+  {id:'demo-mail',title:'Ответить клиенту',due:'',demoDescription:'Сэйва покажет обращение клиента и подготовит ответ для согласования.'},
+  {id:'demo-document',title:'Проверить документ',due:'',demoDescription:'Сэйва выделит важные пункты договора и попросит подтвердить решение.'},
+  {id:'demo-call',title:'Позвонить по заказу',due:'',demoDescription:'Сэйва предложит контакт и передаст вызов в системный Телефон для подтверждения.'}
+ ];
 }
 function tasksSignature(tasks){
  return 'collection:'+tasks.map(item=>item.id+'|'+(item.due||'')+'|'+item.title).join('\u001e');
@@ -348,9 +358,10 @@ function completeTask(task,feedback){
  window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
  if(!detail.result?.ok&&feedback)feedback.textContent=detail.result?.message||'Не удалось завершить дело.';
 }
-function showCollection(tasks){
+function showCollection(tasks,{demo=false,animate=false}={}){
  if(!tasks.length)return false;
- mode='collection';key=tasksSignature(tasks);
+ collectionDemo=demo;
+ mode='collection';key=(demo?'demo:':'real:')+tasksSignature(tasks);
  space.classList.remove('lm-preview','lm-real','lm-next-mode','lm-condense','lm-disappear','lm-collection-mode');
  space.classList.add('lm-collection-mode','lm-reveal');
  space.hidden=false;
@@ -360,30 +371,40 @@ function showCollection(tasks){
  tiles.replaceChildren();
  const details=create('details','lm-task-collection');
  details.open=collectionOpen;
+ if(demo)details.dataset.demo='true';
+ // The scene uses real titles or clearly labelled demo titles, never fake activity.
+ const runCinematic=animate&&!reduced();
+ if(runCinematic){
+  const stage=create('div','lm-gather-stage');
+  stage.setAttribute('aria-hidden','true');
+  tasks.slice(0,3).forEach((task,index)=>{
+   const card=create('div','lm-gather-card');
+   card.style.setProperty('--gather-index',String(index));
+   card.append(create('span','lm-gather-kicker','СЭЙВА · '+(demo?'ДЕМО':'ДЕЛО')),
+    create('strong','lm-gather-title',task.title));
+   stage.append(card);
+  });
+  tiles.append(stage);
+  // Remove decorative animation layer after it has joined the stable stack.
+  stage.addEventListener('animationend',event=>{if(event.target===stage)stage.remove()},{once:true});
+ }
  const summary=create('summary','lm-task-summary');
  const count=create('span','lm-task-count',String(tasks.length));
  const header=create('span','lm-task-heading');
- header.append(create('strong','lm-task-title','Накопившиеся дела'),
-  create('small','lm-task-caption',
-   tasks.length===1?'Одно дело требует вашего внимания':'Все дела на одном экране'));
+ header.append(create('strong','lm-task-title','Центр решений'),
+  create('small','lm-task-caption',demo?'Демонстрация возможностей · без сохранения':
+   tasks.length===1?'Одно дело требует вашего внимания':'Дела собраны в одной стопке'));
  const total=create('span','lm-task-total',tasks.length+' '+(tasks.length%10===1&&tasks.length%100!==11?'дело':
   [2,3,4].includes(tasks.length%10)&&!(tasks.length%100>=12&&tasks.length%100<=14)?'дела':'дел'));
- const flash=create('span','lm-task-gather');flash.setAttribute('aria-hidden','true');
- // Animate the actual due titles only once per opening, not fictional alerts.
- // CSS reduces movement automatically when requested by the device.
- tasks.slice(0,3).forEach((task,i)=>{
-  const mark=create('span','lm-task-gather-item',task.title);
-  mark.style.setProperty('--gather-index',String(i));flash.append(mark);
- });
- summary.append(count,header,total,flash);
+ summary.append(count,header,total);
  const body=create('div','lm-task-body');
  const position=create('p','lm-task-position');
  const name=create('h3','lm-task-current-title');
  const when=create('p','lm-task-when');
  const desc=create('p','lm-task-explanation');
  const buttons=create('div','lm-task-actions');
- const act=create('button','lm-task-execute','Исполнить');act.type='button';
- const done=create('button','lm-task-complete','Отметить выполненным');done.type='button';
+ const act=create('button','lm-task-execute',demo?'Исполнить · демо':'Исполнить');act.type='button';
+ const done=create('button','lm-task-complete',demo?'Следующий пример':'Отметить выполненным');done.type='button';
  buttons.append(act,done);
  const paging=create('div','lm-task-paging');
  const prev=create('button','lm-task-prev','Предыдущее');prev.type='button';
@@ -398,21 +419,35 @@ function showCollection(tasks){
   const task=tasks[collectionPage];
   position.textContent=(collectionPage+1)+' из '+tasks.length;
   name.textContent=task.title;
-  when.textContent=deadlineLabel(task);
-  const target=window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'';
-  desc.textContent=target
+  when.textContent=demo?'Пример для просмотра':deadlineLabel(task);
+  const target=demo?'':(window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'');
+  desc.textContent=demo?task.demoDescription+' Реальных подключений и действий здесь нет.':target
    ?'Если контакт найден, Сэйва поможет подготовить звонок. Сам вызов подтверждается в телефоне; дело не отмечается выполненным автоматически.'
    :task.sourceNoteId
    ?'Вы сохранили это дело из Блокнота. Откройте его для действий и отметьте выполненным только после результата.'
    :'Это дело сохранено вами. Нажмите «Исполнить», чтобы открыть его, и подтвердите завершение после выполнения.';
   prev.disabled=collectionPage===0;next.disabled=collectionPage===tasks.length-1;
   feedback.textContent='';
-  act.onclick=()=>activateTask(task);
-  done.onclick=()=>completeTask(task,feedback);
+  act.onclick=()=>{
+   if(demo){feedback.textContent='Демо: показано действие. Личные данные и настоящие сервисы не затронуты.';return}
+   activateTask(task);
+  };
+  done.onclick=()=>{
+   if(demo){collectionPage=(collectionPage+1)%tasks.length;renderPage();return}
+   completeTask(task,feedback);
+  };
  }
  prev.addEventListener('click',()=>{collectionPage--;renderPage()});
  next.addEventListener('click',()=>{collectionPage++;renderPage()});
  renderPage();
+ if(demo){
+  const replayButton=create('button','lm-task-replay','Повторить появление');replayButton.type='button';
+  replayButton.addEventListener('click',()=>{
+   collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';
+   showCollection(demoTasks(),{demo:true,animate:true});
+  });
+  body.append(replayButton);
+ }
  details.append(summary,body);
  details.addEventListener('toggle',()=>{
   collectionOpen=details.open;
@@ -420,6 +455,10 @@ function showCollection(tasks){
  });
  tiles.append(details);
  focus(collectionOpen);
+ if(runCinematic){
+  collectionAnimationSeen=true;
+  try{sessionStorage.setItem(GATHER_SESSION,'1')}catch{}
+ }
  return true;
 }
 function adviceIdentity(card){
@@ -541,12 +580,18 @@ function refresh(){
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
  const tasks=openTasks();
  if(mode==='collection'){
-  if(!tasks.length||key!==tasksSignature(tasks)){
+  if(collectionDemo){
+   // Any actual work replaces the demo automatically.
+   if(tasks.length||pending){
+    collectionOpen=false;collectionPage=0;resetSpace();
+    mode='idle';key='';collectionDemo=false;scheduleRefresh();
+   }
+   return;
+  }
+  if(!tasks.length||key!=='real:'+tasksSignature(tasks)){
    collectionOpen=!!tiles.querySelector('.lm-task-collection[open]');
-   resetSpace();
-   mode='idle';key='';
+   resetSpace();mode='idle';key='';
    if(editing())return;
-   // Keep the same stack open when its contents change.
    if(tasks.length){showCollection(tasks);return}
    scheduleRefresh();return;
   }
@@ -554,7 +599,6 @@ function refresh(){
  }
  if(mode==='advice'){
   if(key!==pendingKey){rest();return}
-  if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
  if(mode==='next'){
@@ -563,12 +607,10 @@ function refresh(){
   if(key!=='next:'+intent.id){rest();return}
   return;
  }
- // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
- if(tasks.length&&showCollection(tasks))return;
+ if(tasks.length&&showCollection(tasks,{animate:!collectionAnimationSeen}))return;
  if(pending&&showExistingAdvice())return;
- if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
- if(mode==='idle'&&!pending)showNext(nextIntent());
+ if(mode==='idle'&&!pending)showCollection(demoTasks(),{demo:true,animate:!collectionAnimationSeen});
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
@@ -623,10 +665,16 @@ dynamic.addEventListener('click',event=>{
 replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
  $('navHome')?.click();
- later(()=>{startPreview()},260);
+ later(()=>{
+  collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';
+  showCollection(demoTasks(),{demo:true,animate:true});
+ },260);
 });
-window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
+window.SEYVEO_LIVING_MOMENT=Object.freeze({
+ preview:()=>{collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';return showCollection(demoTasks(),{demo:true,animate:true})},
+ state:()=>mode
+});
 scheduleRefresh();
-// The explicit developer preview button remains available, but fictional
-// documents and messages never take over Home automatically.
+// Real tasks take precedence; otherwise the PWA demonstrates the same
+// cinematic collection with clearly marked fictional content.
 })();
