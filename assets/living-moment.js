@@ -298,21 +298,23 @@ function startPreview({auto=false}={}){
  const firstBeat=reduced()?0:650;
  const changeBeat=reduced()?200:2600;
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},firstBeat);
- later(()=>{
-  if(mode!=='preview'||!available())return;
+ // The sequence waits while a person is reading or using a control.
+ // Nested beats guarantee that document, envelope and care never overlap.
+ hold(()=>{
+  if(mode!=='preview')return;
   previewScene?.changeFeatured(sample[1]);
- },changeBeat);
- later(()=>{
-  if(mode!=='preview'||!available())return;
-  previewScene?.changeFeatured(sample[2]);
- },changeBeat*2);
- later(()=>{
-  if(mode!=='preview'||!available())return;
-  cancel();resetSpace();mode='idle';key='';
-  // The living unboxed icons converge into ONE quiet glass decision center.
-  collectionPage=0;collectionOpen=false;
-  showCollection(demoTasks(),{demo:true,animate:false});
- },changeBeat*3+550);
+  hold(()=>{
+   if(mode!=='preview')return;
+   previewScene?.changeFeatured(sample[2]);
+   hold(()=>{
+    if(mode!=='preview')return;
+    cancel();resetSpace();mode='idle';key='';
+    // Living illustrations converge into ONE small, persistent glass decision.
+    collectionPage=0;collectionOpen=false;
+    showCollection(demoTasks(),{demo:true,animate:false});
+   },changeBeat+500);
+  },changeBeat);
+ },changeBeat+firstBeat);
  if(caption)caption.textContent='Демо: три примера, затем один Центр решений. Данные не изменяются.';
  return true;
 }
