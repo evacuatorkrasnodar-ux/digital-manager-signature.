@@ -547,6 +547,13 @@ function refresh(){
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
+ if(mode==='ledger'){
+  const real=readOpenTasks().map(storyFromTask);
+  if(ledgerState?.demo){
+   if(real.length){rest();startPreview(real,{demo:false})}
+  }else ledgerState?.sync(real);
+  return;
+ }
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
   return;
@@ -558,8 +565,13 @@ function refresh(){
  }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
- const item=dueTask();
- if(item&&showTask(item))return;
+ const real=readOpenTasks();
+ if(real.length){
+  hadRealWork=true;
+  if(!realIntroSeen){startPreview(real,{demo:false});return}
+  showLedger(real.map(storyFromTask),{demo:false});
+  return;
+ }
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle')focus(false);
@@ -622,7 +634,7 @@ let visited=false;
 try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
 if(!visited){
  later(()=>{
-  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
+  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle'||hadRealWork||demoFinished)return;
   startPreview();
  },9400);
 }
