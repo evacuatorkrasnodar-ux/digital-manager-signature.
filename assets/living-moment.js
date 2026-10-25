@@ -339,9 +339,9 @@ function showLedger(items,{demo=false}={}){
   if(!queue.length){finish();return}
   if(!queue.some(t=>t.id===activeId))activeId=queue[0].id;
   const item=current();
-  count.textContent=queue.length===1?'1 дело':queue.length+' дела';
-  if(queue.length>4||queue.length%10===0||queue.length%10>=5||
-     (queue.length>=11&&queue.length<=14))count.textContent=queue.length+' дел';
+  const n=queue.length,teen=n%100>=11&&n%100<=14;
+  const ending=teen||n%10===0||n%10>=5?'дел':n%10===1?'дело':'дела';
+  count.textContent=n+' '+ending;
   activeSlot.replaceChildren();nextSlot.replaceChildren();
   const card=create('article','lm-deck-card');
   card.setAttribute('aria-label',item.title);
