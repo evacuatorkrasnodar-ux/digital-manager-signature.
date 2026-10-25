@@ -412,7 +412,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  const outstanding=()=>demo?queue.filter(t=>!demoResolved.has(t.id)):queue;
  const current=()=>outstanding()[0]||null;
  function render(){
-  const remaining=outstanding(),task=current();
+  const remaining=outstanding(),task=completedResult?.task||current();
   count.textContent=String(remaining.length);
   total.textContent=grammar(remaining.length);
   body.hidden=!collectionOpen;
@@ -429,7 +429,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
    return;
   }
   captionText.textContent=lastDeferred|| (demo?'ДЕМО · решения для просмотра':'Ваши дела в одной стопке');
-  frontWhen.textContent=demo?'ПРИМЕР · '+remaining.length+' В ОЧЕРЕДИ':deadlineLabel(task);
+  frontWhen.textContent=completedResult?'ДЕМО · РЕЗУЛЬТАТ':demo?'ПРИМЕР · '+remaining.length+' В ОЧЕРЕДИ':deadlineLabel(task);
   frontTitle.textContent=task.title;
   frontNote.textContent=demo?task.demoDescription:
     task.sourceNoteId?'Дело из Блокнота · откройте, чтобы проверить исходную запись.':
@@ -443,7 +443,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   explanation.textContent=demo?task.demoDescription+' Это демонстрационный пример — без доступа к реальным письмам, договорам или вызовам.':
    'Срок: '+deadlineLabel(task)+'. Перед исполнением можно посоветоваться с Сэйвой или изменить название и срок дела.';
   if(completedResult){
-   feedback.textContent=completedResult;
+   feedback.textContent=completedResult.message;
    deeper.hidden=true;body.hidden=false;collectionOpen=true;view.disabled=true;
   }else{
    feedback.textContent=lastDeferred?'Дело отложено в этом просмотре. Оно не удалено.':'';
@@ -468,7 +468,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  function finishDemo(){
   const task=current();if(!task)return;
   demoResolved.add(task.id);
-  completedResult=results[task.id]||'Демо обработано. Реальные данные не изменились.';
+  completedResult={task,message:results[task.id]||'Демо обработано. Реальные данные не изменились.'};
   collectionOpen=true;render();
  }
  view.addEventListener('click',()=>{
@@ -477,11 +477,11 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   collectionOpen=!collectionOpen;render();
  });
  execute.addEventListener('click',()=>{
+  if(completedResult){completedResult=null;collectionOpen=false;render();return}
   if(!current()){
    if(demo){cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;showCollection(demoTasks(),{demo:true,animate:true})}
    return;
   }
-  if(completedResult){completedResult=null;collectionOpen=false;render();return}
   const task=current();if(!task)return;
   readingUntil=Date.now()+25000;
   if(demo){finishDemo();return}
@@ -526,7 +526,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   if(startX===null||!event.changedTouches.length)return;
   const dx=event.changedTouches[0].clientX-startX,dy=event.changedTouches[0].clientY-startY;
   startX=null;startY=null;
-  if(dx< -72&&Math.abs(dy)<50)postpone();
+  if(Math.abs(dx)>72&&Math.abs(dy)<50)postpone();
  },{passive:true});
  render();
  tiles.append(wrapper);
