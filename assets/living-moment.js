@@ -317,7 +317,9 @@ function showLedger(items,{demo=false}={}){
   if(!queue.length){finish();return}
   const currentItem=current();
   if(!queue.some(t=>t.id===activeId))activeId=currentItem.id;
-  counter.textContent=queue.length+' '+(queue.length===1?'дело':queue.length<5?'дела':'дел');
+  const n=queue.length;
+  const form=n%100>=11&&n%100<=14?'дел':n%10===1?'дело':[2,3,4].includes(n%10)?'дела':'дел';
+  counter.textContent=n+' '+form;
   list.replaceChildren();
   for(const item of queue){
    const row=create('button','lm-ledger-row');
@@ -375,8 +377,9 @@ function showLedger(items,{demo=false}={}){
  },{passive:true});
  ledgerState={demo,sync(next){
   if(demo)return;
-  const previous=queue.map(t=>t.id).join('|');
-  const updated=next.map(t=>t.id).join('|');
+  const signature=items=>items.map(t=>[t.id,t.title,t.due||''].join('\u001f')).join('\u001e');
+  const previous=signature(queue);
+  const updated=signature(next);
   if(previous===updated)return;
   queue=next;expanded=false;
   render();
