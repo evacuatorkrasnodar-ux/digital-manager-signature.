@@ -1,82 +1,163 @@
-/* SEYVEO · Quiet navigation rows / restored original editorial language.
- * Only the Management overview list; existing labels, icons and routes stay.
- * No card capsules, gradients, page backgrounds or added GPU layers.
- */
+/* SEYVEO · Quiet Cinema / Management.
+   One connected editorial surface, not a collection of grey tiles.
+   Existing section routes, settings, permissions and SVG art stay intact. */
+html.sv-space-active #managePage #manageOverview>.manage-heading{
+ margin-bottom:15px;
+}
+html.sv-space-active #managePage #manageOverview>.manage-heading .manage-caption{
+ color:var(--secondary);letter-spacing:.14em;font-weight:470;opacity:.72;
+}
+html.sv-space-active #managePage #manageOverview>.manage-heading h1{
+ font-size:clamp(27px,7vw,33px);
+ line-height:1.17;letter-spacing:-.049em;font-weight:490;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu{
+ position:relative;isolation:isolate;
+ box-sizing:border-box;width:100%;min-width:0;
+ margin:10px 0 28px;padding:0 14px 10px;
+ border:1px solid rgba(235,238,245,.155);
+ border-radius:24px;
+ background:rgba(248,250,253,.027);
+ box-shadow:none;
+}
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
- margin-bottom:18px;
+ margin:0!important;padding:16px 0 4px;
+ border:0;
+ border-top:1px solid rgba(235,238,245,.12);
+ background:transparent;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group:first-child{
+ border-top:0;
+ padding-top:18px;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group h2{
+ margin:0 0 7px 7px;
+ padding:0;
+ font-size:10px;line-height:1.5;font-weight:480;
+ letter-spacing:.13em;color:var(--secondary);opacity:.74;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-card{
  display:flex;flex-direction:column;gap:0;
+ width:100%;min-width:0;
  padding:0!important;margin:0;
- overflow:visible!important;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
+ overflow:visible!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
- box-sizing:border-box;display:flex;align-items:center;
- position:relative;width:100%;min-width:0;
- min-height:78px;margin:0;
- padding:10px 6px 11px 5px;gap:15px;
- color:var(--text);
- background:transparent!important;border:0!important;
- border-bottom:1px solid var(--soft-line)!important;
- border-radius:0!important;box-shadow:none!important;
- transform:none!important;transition:opacity .16s ease;
+ box-sizing:border-box;position:relative;
+ display:grid;grid-template-columns:57px minmax(0,1fr);
+ align-items:center;column-gap:13px;
+ width:100%;min-width:0;
+ min-height:79px;margin:0;padding:10px 5px 11px;
+ text-align:left;color:var(--text);
+ border:0!important;
+ border-bottom:1px solid rgba(235,238,245,.105)!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ transform:none;
+ transition:opacity 180ms ease;
  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:last-child{
  border-bottom:0!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link + .manage-row::before{
- content:none!important;display:none!important;
+ display:none!important;content:none!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
- width:51px;min-width:51px;height:51px;display:grid;place-items:center;
- color:var(--text);opacity:.87;
- border:0!important;background:transparent!important;
+ box-sizing:border-box;
+ display:grid;place-items:center;
+ width:55px;min-width:55px;height:56px;
+ padding:0;margin:0;
+ color:var(--text);opacity:.88;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
- width:43px;height:43px;stroke-width:1.4;
+ display:block;width:46px;height:46px;
+ stroke:currentColor;stroke-width:1.3;
+ fill:none;overflow:visible;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text{
  display:flex;flex-direction:column;align-items:flex-start;
  gap:4px;min-width:0;padding:0;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{
- font-size:16px;font-weight:500;line-height:1.31;
- letter-spacing:-.025em;color:var(--text);
+ color:var(--text);
+ font-size:15.5px;font-weight:485;line-height:1.32;
+ letter-spacing:-.027em;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{
- font-size:12px;font-weight:410;line-height:1.42;
+ font-size:11.8px;font-weight:400;line-height:1.45;
  color:var(--secondary);overflow-wrap:anywhere;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-chevron{
- flex:none;width:10px;min-width:10px;opacity:.38;
+ display:none!important;
+}
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:focus-visible{
+ outline:1px solid var(--text);outline-offset:-3px;
+ border-radius:5px!important;
 }
 @media(hover:hover) and (pointer:fine){
  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:hover{
-  opacity:.77;
+  opacity:.74;
  }
 }
-html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:active{opacity:.64}
-html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:focus-visible{
- outline:2px solid var(--text);outline-offset:-2px;
+html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link:active{
+ opacity:.56;
+}
+/* Separate groups enter one after another, then remain in a single surface.
+   Motion is one-shot and compositor-friendly; nothing runs forever. */
+@media(prefers-reduced-motion:no-preference){
+ @keyframes seyveo-manage-cinema-rise{
+  from{opacity:0;transform:translate3d(0,38px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+ html.sv-space-active #managePage.sv-cascade #seyveoCleanManageMenu .manage-group{
+  animation:seyveo-manage-cinema-rise 790ms cubic-bezier(.22,1,.36,1) both;
+  animation-delay:calc(60ms + min(var(--sv-group-index,0),4) * 155ms);
+ }
+ /* Avoid nested, opposing animations that cause iPhone jumpiness. */
+ html.sv-space-active #managePage.sv-cascade #seyveoCleanManageMenu .seyveo-clean-link{
+  animation:none!important;
+ }
 }
 @media(max-width:375px){
+ html.sv-space-active #managePage #seyveoCleanManageMenu{
+  padding:0 10px 8px;border-radius:21px;
+ }
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
+  padding-top:13px;
+ }
  html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-  min-height:74px;padding:9px 4px;gap:10px;
+  grid-template-columns:49px minmax(0,1fr);
+  min-height:74px;padding:9px 3px 10px;column-gap:10px;
  }
  html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration{
-  width:43px;min-width:43px;height:46px;
+  width:48px;min-width:48px;height:50px;
  }
  html.sv-space-active #managePage #seyveoCleanManageMenu .smc-illustration svg{
-  width:39px;height:39px;
+  width:41px;height:41px;
  }
- html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{font-size:15px}
- html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{font-size:11.5px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text strong{font-size:14.5px}
+ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-text small{font-size:11.3px}
+}
+/* White Velvet: the exact same geometry, softer paper-ink contrast. */
+html[data-theme=light].sv-space-active #managePage #seyveoCleanManageMenu{
+ border-color:rgba(52,68,87,.18);
+ background:rgba(255,255,255,.69);
+}
+html[data-theme=light].sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
+ border-top-color:rgba(52,68,87,.14);
+}
+html[data-theme=light].sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
+ border-bottom-color:rgba(52,68,87,.13)!important;
 }
 @media(prefers-reduced-motion:reduce){
- html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
-  transition:none!important;
+ html.sv-space-active #managePage #seyveoCleanManageMenu,
+ html.sv-space-active #managePage #seyveoCleanManageMenu *{
+  animation:none!important;transition:none!important;
  }
 }
