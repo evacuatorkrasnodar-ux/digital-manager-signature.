@@ -356,8 +356,10 @@ function showLedger(items,{demo=false}={}){
  const cinema=create('div','lm-deck-cinema');
  cinema.setAttribute('aria-hidden','true');
  const activeSlot=create('div','lm-deck-active');
-  const foot=create('div','lm-deck-foot');
- const hint=create('span','lm-deck-hint','← другое дело');
+ const foot=create('div','lm-deck-foot');
+ const hint=create('button','lm-deck-hint','← другое дело');
+ hint.type='button';
+ hint.setAttribute('aria-label','Показать следующее дело');
  const laterButton=create('button','lm-deck-later','Позже');
  laterButton.type='button';
  foot.append(hint,laterButton);
@@ -421,6 +423,8 @@ function showLedger(items,{demo=false}={}){
   if(!queue.length){finish();return}
   if(!queue.some(t=>t.id===activeId))activeId=queue[0].id;
   const item=current(),n=queue.length;
+  const step=queue.findIndex(task=>task.id===item.id)+1;
+  const stepLabel=String(step).padStart(2,'0')+' / '+String(n).padStart(2,'0');
   const teen=n%100>=11&&n%100<=14;
   const ending=teen||n%10===0||n%10>=5?'дел':n%10===1?'дело':'дела';
   count.textContent=n+' '+ending;
@@ -430,9 +434,10 @@ function showLedger(items,{demo=false}={}){
   const main=create('div','lm-deck-main');
   const picture=create('span','lm-deck-art');picture.append(icon(item.kind||artisticKind(item)));
   const words=create('div','lm-deck-copy');
-  const tag=create('small','lm-deck-tag',demo?
+  const category=demo?
    String(item.category||'').replace(/\s*·\s*ПРИМЕР$/i,''):
-   (item.category||'ВАШЕ ДЕЛО'));
+   (item.category||'ВАШЕ ДЕЛО');
+  const tag=create('small','lm-deck-tag',stepLabel+' · '+category);
   const title=create('h3','lm-deck-title',item.title);
   const subtitle=create('p','lm-deck-subtitle',item.body||'Ожидает решения');
   words.append(tag,title,subtitle);main.append(picture,words);
@@ -466,10 +471,19 @@ function showLedger(items,{demo=false}={}){
   actions.append(more,act);
   card.append(main,body);
   if(queue.length>1){
+   const others=queue.filter(other=>other.id!==item.id);
+   // Avoid nested scrolling: show one nearby task on small iPhones,
+   // otherwise two. All tasks remain accessible by swipe or Next.
+   const shortPhone=window.innerWidth<=520&&window.innerHeight<=720;
+   const visibleCount=shortPhone?1:2;
+   const shown=others.slice(0,visibleCount);
+   const hiddenCount=others.length-shown.length;
    const summary=create('div','lm-deck-summary');
-   summary.append(create('small','lm-deck-summary-label','ДРУГИЕ ДЕЛА'));
+   summary.append(create('small','lm-deck-summary-label',
+    'ДРУГИЕ ДЕЛА'+(hiddenCount?' · +'+hiddenCount:'')
+   ));
    const rows=create('div','lm-deck-summary-items');
-   queue.filter(other=>other.id!==item.id).forEach(other=>{
+   shown.forEach(other=>{
     const entry=create('button','lm-deck-summary-item');
     entry.type='button';
     entry.setAttribute('aria-label','Показать дело: '+other.title);
@@ -482,7 +496,8 @@ function showLedger(items,{demo=false}={}){
    });
    summary.append(rows);card.append(summary);
   }
-  hint.textContent=queue.length>1?'← другое дело':'';
+  hint.hidden=queue.length<2;
+
   card.append(actions,foot);
   activeSlot.append(card);
   laterButton.setAttribute('aria-label',demo?'Убрать пример':'Отложить «'+item.title+'» до завтра');
@@ -503,6 +518,10 @@ function showLedger(items,{demo=false}={}){
    else transition('left',false);
   });
  }
+ hint.addEventListener('click',()=>{
+  readingUntil=Date.now()+22000;
+  transition('left',false);
+ });
  laterButton.addEventListener('click',()=>transition('right',true));
  ledgerState={demo,sync(next){
   if(demo||swiping)return;
