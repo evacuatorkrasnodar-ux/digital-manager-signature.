@@ -400,7 +400,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  dynamic.hidden=!dynamic.querySelector('[data-owner-advice]');
  tiles.replaceChildren();
  const queue=tasks.slice();
- const runCinematic=animate&&!reduced();
+ // The actual cinema plays only in the original list, never in the gathered queue.
  const wrapper=create('section','lm-task-collection lm-task-collection--quiet lm-decision-stack');
  wrapper.dataset.demo=String(demo);
  const summary=create('div','lm-task-summary');
@@ -459,7 +459,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
     later(()=>{
      if(mode!=='collection'||!wrapper.isConnected)return;
      resetSpace();mode='idle';key='';focus(false);
-    },620);
+    },900);
    }
    return;
   }
@@ -517,7 +517,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  execute.addEventListener('click',()=>{
   if(completedResult){completedResult=null;collectionOpen=false;render();return}
   if(!current()){
-   if(demo){cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;showCollection(demoTasks(),{demo:true,animate:true})}
+   if(demo){cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;demoDismissed=false;lastIntroKey='';startPreview()}
    return;
   }
   const task=current();if(!task)return;
@@ -568,31 +568,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  },{passive:true});
  render();
  tiles.append(wrapper);
- if(runCinematic){
-  wrapper.inert=true;wrapper.setAttribute('aria-hidden','true');
-  space.classList.add('lm-collection-cinematic');
-  const stage=create('div','lm-cinema-stage');
-  stage.setAttribute('aria-hidden','true');
-  tasks.slice(0,3).forEach((task,index)=>{
-   const leaf=create('article','lm-cinema-card');
-   leaf.style.setProperty('--cinema-index',String(index));
-   const emblem=create('span','lm-cinema-emblem');emblem.append(icon(gatherKind(task,demo)));
-   const info=create('div','lm-cinema-copy');
-   info.append(create('small','lm-cinema-kicker',demo?'ДЕМО · СЭЙВА':'ДЕЛО · СЭЙВА'),
-    create('strong','lm-cinema-title',task.title),
-    create('p','lm-cinema-note',demo?task.demoDescription:deadlineLabel(task)+' · '+task.title));
-   leaf.append(emblem,info);stage.append(leaf);
-  });
-  if(tasks.length>3)stage.append(create('small','lm-cinema-remaining','И ещё '+(tasks.length-3)+' дел'));
-  tiles.insertBefore(stage,wrapper);
-  const finalize=()=>{
-   if(mode!=='collection'||!wrapper.isConnected)return;
-   stage.remove();wrapper.inert=false;wrapper.removeAttribute('aria-hidden');
-   space.classList.remove('lm-collection-cinematic');
-   collectionAnimationSeen=true;
-  };
-  later(finalize,8700);
- }else collectionAnimationSeen=true;
+ collectionAnimationSeen=true;
  focus(true);
  return true;
 }
