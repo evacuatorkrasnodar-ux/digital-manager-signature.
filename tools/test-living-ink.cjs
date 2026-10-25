@@ -19,6 +19,20 @@ const composer=read('assets/composer-intent.css');
 const home=read('assets/home-velvet.css');
 const future=read('assets/future-surfaces.css');
 const continuity=read('assets/living-space.css');
+
+// Quiet Cinema uses the existing shared workspace stylesheet, NOT a new layer.
+for(const page of ['tasksPage','calendarPage','picturePage','lifePage','managePage',
+ 'sayviSurfacePage','sayviAnswerPage','sayviMusicPage','sayviVideoPage'])
+ assert.ok(continuity.includes('#'+page),'Shared Quiet Cinema includes '+page);
+assert.match(continuity,/sv-quiet-scene-enter/,'Workspace entry is compositor friendly');
+assert.match(continuity,/--sv-q-surface/,'One shared visual surface token');
+assert.match(continuity,/prefers-reduced-motion:reduce/,'Animation can be disabled');
+assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My World has a single row surface');
+assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
+assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
+assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
+assert.match(html,/assets\/living-space\.css\?v=20/,'All screens use versioned common stylesheet');
+
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
 const managementCinema=read('assets/management-glass-showcase.css');
