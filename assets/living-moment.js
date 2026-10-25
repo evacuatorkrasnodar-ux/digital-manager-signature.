@@ -39,7 +39,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real');
+ space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-ledger-mode');
  space.hidden=true;tiles.replaceChildren();previewScene=null;ledgerState=null;
  tip.textContent='';
 }
@@ -423,28 +423,40 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview(){
+function startPreview(list=null,{demo=true}={}){
  if(!available()||editing())return false;
  if(mode!=='idle')rest();
- mode='preview';key='preview';
+ const all=demo?demoLedgerItems():(list||readOpenTasks()).map(storyFromTask);
+ if(!all.length)return false;
+ if(demo)demoFinished=false;
+ else{hadRealWork=true;realIntroSeen=true}
+ mode='preview';key=demo?'preview':'preview-real';
  try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
- buildExamples();
- tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
- space.hidden=false;space.classList.add('lm-preview');
+ const scenes=demo?sample:all.slice(0,3);
+ previewScene=createSurface(scenes[0],scenes.slice(1));
+ tip.textContent=demo?'QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА':'СЭЙВА · ВАШИ ДЕЛА';
+ space.hidden=false;space.classList.remove('lm-ledger-mode');
+ space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
-  previewScene?.changeFeatured(sample[1]);
-  hold(()=>{
-   previewScene?.changeFeatured(sample[2]);
-   hold(()=>{
-    shrink();
-    hold(()=>disappear(),TIMING.quiet);
-   },TIMING.beat);
-  },TIMING.beat);
+ // Keep the verified original morph cadence; no second animation layer.
+ if(scenes.length>=2)hold(()=>{
+  previewScene?.changeFeatured(scenes[1]);
  },TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
+ if(scenes.length>=3)hold(()=>{
+  previewScene?.changeFeatured(scenes[2]);
+ },TIMING.beat*2+TIMING.open);
+ hold(()=>{
+  if(mode!=='preview')return;
+  shrink();
+  later(()=>{
+   if(mode!=='preview')return;
+   // Exactly the items introduced above flow into ONE illustrated sheet.
+   showLedger(demo?demoLedgerItems():readOpenTasks().map(storyFromTask),{demo});
+  },reduced()?0:1250);
+ },TIMING.beat*Math.min(scenes.length,3)+TIMING.open);
+ if(caption)caption.textContent='Quiet Cinema: плавный показ и один нарисованный список решений.';
  return true;
 }
 function dueTask(){
