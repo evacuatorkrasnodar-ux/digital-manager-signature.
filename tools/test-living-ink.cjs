@@ -16,6 +16,8 @@ for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline 
 
 const dock=read('assets/floating-navigation.css');
 const composer=read('assets/composer-intent.css');
+const chatAppearance=read('assets/conversation-refined.css');
+const chatLogic=read('assets/living-conversation.js');
 const home=read('assets/home-velvet.css');
 const future=read('assets/future-surfaces.css');
 const continuity=read('assets/living-space.css');
@@ -58,6 +60,17 @@ const cssBlock=(source,selector)=>{
  assert.ok(close>start,'CSS selector closes: '+selector);
  return source.slice(start,close+1);
 };
+
+// Single Quiet Cinema chat: same canvas, real composer geometry, saved data intact.
+assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expanded\)\{\s*background:transparent!important/,'Composer shares page background');
+assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expanded\):focus-within\{\s*background:transparent!important/,'Composer never becomes a separate strip');
+assert.match(chatLogic,/const bottomOffset=Math\.max\(8,Math\.min\(96/,'Composer reserves measured safe area');
+assert.doesNotMatch(chatLogic,/composerHeight\+30/,'No arbitrary 30px blank gutter');
+assert.match(chatLogic,/function displayChatText\(value\)/,'Long displayed messages are compact');
+assert.match(chatLogic,/body\.textContent=displayChatText\(value\)/,'Chat renders compact spacing');
+assert.match(chatLogic,/const ownText=String\(value\|\|''\)/,'Clipboard/edit preserve the original user text');
+assert.match(html,/conversation-refined\.css\?v=19/,'Refined chat CSS is deployed');
+assert.match(html,/living-conversation\.js\?v=18/,'Refined chat JS is deployed');
 
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'Exactly one persistent dock');
 assert.equal((html.match(/id="orbCluster"/g)||[]).length,1,'One original sphere');
