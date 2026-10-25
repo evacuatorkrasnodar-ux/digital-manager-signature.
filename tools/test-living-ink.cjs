@@ -31,7 +31,7 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=20/,'All screens use versioned common stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=21/,'All screens use versioned common stylesheet');
 
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
@@ -84,11 +84,12 @@ assert.doesNotMatch(future,/background-color:var\(--card\)!important|box-shadow:
 assert.doesNotMatch(future,/:root\[data-seyveo-presence=listening\] \.dock>\.assistant-button\s*\{/,'No duplicate painted voice capsule');
 assert.doesNotMatch(continuity,/--sv-living-dock-glint/,'No redundant scene ring');
 assert.match(continuity,/\.sv-cascade/,'Single-workspace reveal preserved');
-// Exactly one Quiet Atmosphere background per theme, shared across ALL pages.
-assert.match(continuity,/#homePage:not\(\[hidden\]\)/,'Historical dark Home background is restored');
+// One Living Velvet atmosphere on every page, including Home.
+assert.match(continuity,/:root:not\(\[data-theme=light\]\) body\{/,'One dark canvas for all pages');
 assert.match(continuity,/:root\[data-theme=light\] body\{/,'Light atmosphere is also shared');
-assert.match(continuity,/background:#141619/,'Pure Black Velvet on restored Home');
-assert.match(continuity,/rgba\(222,224,230,\.077\)/,'Pearl glow is deliberately softer');
+assert.doesNotMatch(continuity,/body:has\(#homePage:not\(\[hidden\]\)\)/,'Home must not override the atmospheric background');
+assert.match(continuity,/linear-gradient\(180deg,#191b1f 0%,#141619 52%,#101216 100%\)/,'Black graphite depth restored');
+assert.match(continuity,/rgba\(222,224,230,\.077\)/,'Subtle pearl halo restored');
 assert.doesNotMatch(continuity,/background-attachment:fixed|backdrop-filter:blur\(/,'No scroll-heavy background filters');
 assert.match(html,/assets\/living-space\.css\?v=\d+/,'Current shared atmosphere stylesheet uses a versioned URL');
 assert.match(wellness,/#calendarPersonalTools \.pw-water-insight\{/,'Health insights still exist');
