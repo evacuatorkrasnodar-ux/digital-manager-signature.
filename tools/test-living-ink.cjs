@@ -71,6 +71,7 @@ const cssBlock=(source,selector)=>{
 assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expanded\)\{\s*background:transparent!important/,'Composer shares page background');
 assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expanded\):focus-within\{\s*background:transparent!important/,'Composer never becomes a separate strip');
 assert.match(chatLogic,/const bottomOffset=Math\.max\(8,Math\.min\(96/,'Composer reserves measured safe area');
+assert.match(chatLogic,/composerHeight\+bottomOffset\+10/,'Composer reserve leaves a safe touch gap');
 assert.doesNotMatch(chatLogic,/composerHeight\+30/,'No arbitrary 30px blank gutter');
 assert.match(chatLogic,/function displayChatText\(value\)/,'Long displayed messages are compact');
 assert.match(chatLogic,/visibleText\.length>440/,'Oversized questions are collapsed at display only');
@@ -81,6 +82,14 @@ assert.match(chatLogic,/queueChatGeometry\(\);\s*scrollToLatest\(\);/,'Opening c
 assert.match(chatAppearance,/\.seyveo-message-folded \.seyveo-conversation-body\{/,'Only folded messages clip on screen');
 assert.match(chatAppearance,/html\.seyveo-conversation:not\(\[data-theme=light\]\) body\{/,'Chat canvas is one graphite surface');
 assert.match(chatAppearance,/padding:6px clamp\(12px,3\.3vw,18px\) 22px!important/,'Transcript reserves actual horizontal gutters and a bottom breathing space');
+assert.match(chatAppearance,/flex:1 1 0%!important;box-sizing:border-box;/,'Native flex height owns the transcript viewport');
+assert.match(chatAppearance,/width:100%;height:auto!important;min-height:0!important/,'No forced 100-percent transcript height');
+assert.doesNotMatch(chatAppearance,/width:100%;height:100%!important;min-height:0!important/,'Regression: full-height reader cannot push its end under composer');
+assert.match(chatLogic,/let latestScrollRequest=0/,'Latest-turn scroll is deduplicated');
+assert.match(chatLogic,/syncChatGeometry\(\);\s*requestAnimationFrame\(\(\)=>\{/,'Scroll waits for real composer geometry');
+assert.match(chatLogic,/text\.scrollTop=Math\.max\(0,text\.scrollHeight-text\.clientHeight\)/,'Reader scrolls to its actual reachable end');
+assert.match(html,/conversation-refined\.css\?v=23/,'Corrected reader flex rules are deployed');
+assert.match(html,/living-conversation\.js\?v=21/,'Latest message scroll fix is deployed');
 assert.match(chatAppearance,/max-width:min\(91%,460px\);width:fit-content;min-width:0/,'Owner bubbles never exceed the message column');
 assert.match(chatAppearance,/box-sizing:border-box;width:100%;max-width:100%;min-width:0/,'Chat reader cannot overflow its flex parent');
 assert.match(chatLogic,/const stickToBottom=text\.scrollHeight-text\.clientHeight-text\.scrollTop<56/,'Keyboard does not hide the latest messages');
