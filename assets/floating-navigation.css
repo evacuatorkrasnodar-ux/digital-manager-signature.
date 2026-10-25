@@ -5,7 +5,7 @@
  * All rules are scoped to the existing footer, not the Home plasma or chat. */
 :root{
  --seyveo-nav-ink:#f6f8fc;
- --seyveo-dock-height:68px;
+ --seyveo-dock-height:72px;
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
@@ -23,15 +23,15 @@
  align-items:center!important;
  justify-items:stretch!important;
  gap:2px!important;
- width:min(420px,calc(100% - 14px))!important;
+ width:min(440px,calc(100% - 14px))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:6px 7px!important;
- border-radius:23px!important;
+ border-radius:28px!important;
  border:1px solid rgba(240,241,247,.23)!important;
- background:linear-gradient(156deg,rgba(49,53,59,.97),rgba(28,31,37,.98))!important;
- -webkit-backdrop-filter:blur(8px)!important;
- backdrop-filter:blur(8px)!important;
- box-shadow:0 8px 22px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.10)!important;
+ background:linear-gradient(157deg,rgba(239,241,248,.09),rgba(239,241,248,.015) 52%),rgba(24,28,36,.94)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:0 5px 16px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.10)!important;
  isolation:isolate;
 }
 .dock::before,.dock::after{content:none!important;display:none!important}
@@ -41,14 +41,14 @@
  transform:none!important;
  box-sizing:border-box;
  min-width:0!important;width:100%!important;
- height:54px!important;min-height:54px!important;
+ height:56px!important;min-height:56px!important;
  margin:0!important;padding:2px 1px!important;
  display:flex!important;flex-direction:column!important;
  justify-content:center!important;align-items:center!important;
  gap:4px!important;
  border:0!important;border-radius:17px!important;
  background:transparent!important;box-shadow:none!important;
- font-size:clamp(11.2px,3.15vw,12.2px)!important;line-height:1.12!important;font-weight:530!important;
+ font-size:clamp(10.8px,2.97vw,11.7px)!important;line-height:1.12!important;font-weight:530!important;
  letter-spacing:-.025em!important;color:#edf0f6!important;
  -webkit-tap-highlight-color:transparent;
 }
@@ -59,7 +59,7 @@
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
- background:rgba(241,246,255,.12)!important;
+ background:rgba(241,246,255,.075)!important;
  font-weight:585!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
@@ -196,8 +196,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:rgba(54,68,89,.23)!important;
- background:linear-gradient(160deg,rgba(255,255,255,.99),rgba(226,233,241,.99))!important;
- box-shadow:0 7px 25px rgba(39,56,79,.15),inset 0 1px rgba(255,255,255,.95)!important;
+ background:linear-gradient(160deg,rgba(255,255,255,.94),rgba(230,235,243,.96))!important;
+ box-shadow:0 5px 18px rgba(39,56,79,.10),inset 0 1px rgba(255,255,255,.95)!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
@@ -211,10 +211,10 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
    visual dock container. Symbols appear once like ink rising from the scene.
    Keep layout, routes, hold-to-speak, safe areas and music controls unchanged. */
 .dock>.assistant-button .center-face,
-.dock>.assistant-button .button-rim{display:none!important}
+.dock>.assistant-button .button-rim{display:block!important}
 .dock>.assistant-button .wave-mark{
  transform-origin:37px 37px;
- transform:translate(37px,37px) scale(1.03) translate(-37px,-37px)!important;
+ transform:translate(37px,37px) scale(.92) translate(-37px,-37px)!important;
 }
 html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  background:transparent!important;border:0!important;box-shadow:none!important;
@@ -342,61 +342,71 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  #ask.prompt:not(.expanded){transition:none!important}
 }
 
-/* SEYVEO · Flat Glass Assistant Dock v1
-   Same glass as the Management cards, but NOT a raised orb or radial bubble.
-   Keep the original 54px hit target, voice glyph and all press/hold handlers. */
+/* SEYVEO · compact signature glass dock.
+   Original silver-ring waveform, flat face, no raised or blurred orb. */
 .dock>#assistantButton{
-  justify-self:center!important;
-  width:54px!important;
-  min-width:54px!important;
-  max-width:54px!important;
-  height:54px!important;
-  min-height:54px!important;
-  padding:5px!important;
-  box-sizing:border-box!important;
-  border-radius:50%!important;
-  border:1px solid rgba(240,241,247,.20)!important;
-  background:
-    linear-gradient(155deg,rgba(247,247,250,.115),rgba(203,204,211,.035) 62%),
-    rgba(43,45,51,.47)!important;
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.12),
-    inset 0 -1px rgba(255,255,255,.035),
-    0 2px 5px rgba(0,0,0,.08)!important;
-  filter:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+ grid-column:3!important;grid-row:1!important;order:3!important;
+ justify-self:center!important;align-self:center!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;
+ width:58px!important;min-width:58px!important;max-width:58px!important;
+ height:58px!important;min-height:58px!important;
+ margin:0!important;padding:0!important;
+ border:1px solid rgba(234,239,248,.20)!important;
+ border-radius:50%!important;
+ background:linear-gradient(156deg,rgba(237,241,248,.10),rgba(28,33,40,.11) 72%),rgba(29,34,43,.84)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
+ filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 .dock>#assistantButton .button-art{
-  width:42px!important;height:42px!important;
-  max-width:42px!important;max-height:42px!important;
-  flex:0 0 42px!important;
+ display:block!important;
+ width:55px!important;height:55px!important;
+ max-width:55px!important;max-height:55px!important;
+ flex:0 0 55px!important;filter:none!important;
+}
+.dock>#assistantButton .button-art .center-face{
+ display:block!important;fill:#222833!important;
+}
+.dock>#assistantButton .button-art .button-rim{
+ display:block!important;stroke:url(#rim-night)!important;
+ stroke-width:1.18!important;opacity:.94!important;
+}
+.dock>#assistantButton .button-art .wave-mark{
+ transform-origin:37px 37px;
+ transform:translate(37px,37px) scale(.92) translate(-37px,-37px)!important;
 }
 .dock>#assistantButton:is(:active,.pressing,.arming){
-  border-color:rgba(250,250,253,.33)!important;
-  background:
-    linear-gradient(155deg,rgba(255,255,255,.17),rgba(205,208,216,.055) 62%),
-    rgba(49,51,58,.58)!important;
+ border-color:rgba(247,250,255,.35)!important;
+ background:linear-gradient(155deg,rgba(249,250,255,.16),rgba(29,35,43,.15)),rgba(33,39,48,.87)!important;
 }
 .dock>#assistantButton.listening{
-  border-color:rgba(246,248,252,.40)!important;
-  background:
-    linear-gradient(155deg,rgba(252,253,255,.13),rgba(217,223,233,.035) 67%),
-    rgba(46,48,56,.58)!important;
+ border-color:rgba(247,249,254,.48)!important;
+ background:linear-gradient(155deg,rgba(246,248,254,.14),rgba(35,41,48,.16)),rgba(35,41,49,.85)!important;
 }
 :root[data-theme="light"] .dock>#assistantButton{
-  border-color:rgba(54,65,80,.22)!important;
-  background:
-    linear-gradient(155deg,rgba(255,255,255,.82),rgba(229,233,240,.46) 73%),
-    rgba(243,246,249,.64)!important;
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.91),
-    inset 0 -1px rgba(74,87,106,.05),
-    0 2px 6px rgba(48,59,78,.06)!important;
+ border-color:rgba(65,81,103,.26)!important;
+ background:linear-gradient(155deg,rgba(255,255,255,.92),rgba(227,233,242,.76))!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.96)!important;
+}
+:root[data-theme="light"] .dock>#assistantButton .button-art .center-face{fill:#e8edf4!important}
+:root[data-theme="light"] .dock>#assistantButton .button-art .button-rim{
+ stroke:url(#rim-day)!important;opacity:1!important;
 }
 :root[data-theme="light"] .dock>#assistantButton:is(:active,.pressing,.arming,.listening){
-  border-color:rgba(51,64,85,.33)!important;
-  background:
-    linear-gradient(155deg,rgba(255,255,255,.91),rgba(218,225,235,.62)),
-    rgba(239,242,247,.8)!important;
+ border-color:rgba(58,77,100,.37)!important;
+ background:linear-gradient(155deg,#fff,#e0e7f0)!important;
+}
+@media(max-width:355px){
+ .dock>#assistantButton{
+  width:52px!important;min-width:52px!important;max-width:52px!important;
+  height:52px!important;min-height:52px!important;
+ }
+ .dock>#assistantButton .button-art{
+  width:50px!important;height:50px!important;
+  max-width:50px!important;max-height:50px!important;flex:0 0 50px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .dock>#assistantButton,.dock>#assistantButton .button-art{transition:none!important}
 }
