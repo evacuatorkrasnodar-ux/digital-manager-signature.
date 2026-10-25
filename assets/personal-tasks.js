@@ -47,7 +47,7 @@ focusOpen?.addEventListener('click',()=>{
 function showTaskError(message){if(!notice)return;notice.textContent=message;notice.hidden=false;}
 function clearTaskError(){if(!notice)return;notice.textContent='';notice.hidden=true;}
 const KEY='seyveo-personal-tasks-v1',MAX=150;
-let pendingSourceNoteId='',justCompletedTaskId='';
+let pendingSourceNoteId='',justCompletedTaskId='',editingTaskId='';
 function safeNoteId(value){return typeof value==='string'&&value.length>0&&value.length<=128?value:'';}
 function safeParse(raw){try{const v=JSON.parse(raw||'[]');return Array.isArray(v)?v:[]}catch{return []}}
 function read(){
@@ -484,7 +484,8 @@ function syncDueDateDisplay(){
 }
 for(const eventName of ['input','change','blur'])date.addEventListener(eventName,syncDueDateDisplay);
 function openDialog(){
- pendingSourceNoteId='';
+ pendingSourceNoteId='';editingTaskId='';
+ $('personalTaskDialogTitle').textContent='Новое дело';
  form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
@@ -494,6 +495,15 @@ function put(e){
  e.preventDefault();
  const title=input.value.trim().replace(/\s+/g,' ');
  if(!title){$('personalTaskStatus').textContent='Напишите, что нужно сделать.';input.focus();return}
+ if(editingTaskId){
+  const all=read(),record=all.find(task=>task.id===editingTaskId&&!task.done);
+  if(!record){$('personalTaskStatus').textContent='Дело изменилось или уже выполнено. Откройте список заново.';return}
+  record.title=title.slice(0,140);record.due=date.value;
+  if(!save(all)){$('personalTaskStatus').textContent='Не удалось сохранить изменения.';return}
+  editingTaskId='';dialog.close();render();
+  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+  return;
+ }
  const all=read();
  if(all.length>=MAX){$('personalTaskStatus').textContent='Достигнут предел записей. Удалите ненужные завершённые дела.';return}
  const next=[...all,{id:'personal-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),title:title.slice(0,140),due:date.value,done:false,createdAt:new Date().toISOString(),doneAt:'',
@@ -516,6 +526,26 @@ function change(id,del=false){
  render();
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
+/* Task edits from the Center of Decisions use the existing local editor.
+   This is not a second store; edits require explicit confirmation. */
+window.addEventListener('seyveo:home-task-edit',event=>{
+ const detail=event.detail;
+ const id=detail?.id;
+ const task=typeof id==='string'?read().find(item=>item.id===id&&!item.done):null;
+ if(!task){
+  if(detail)detail.result={status:'unavailable',message:'Дело уже изменилось или выполнено.'};
+  return;
+ }
+ openDialog();
+ editingTaskId=id;
+ $('personalTaskDialogTitle').textContent='Изменить дело';
+ input.value=task.title;
+ date.value=task.due;
+ syncDueDateDisplay();
+ $('personalTaskStatus').textContent='Изменения сохраняются только после вашего подтверждения.';
+ input.focus({preventScroll:true});
+ if(detail)detail.result={status:'opened'};
+});
 /* Home collections do not own a second database. Completing a saved task
    goes through the SAME validated Personal Tasks writer and renderer. */
 window.addEventListener('seyveo:home-task-complete',event=>{
