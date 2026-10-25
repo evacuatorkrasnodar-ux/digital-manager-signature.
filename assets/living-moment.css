@@ -614,8 +614,15 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
    The EXISTING rows rise and gather toward the EXISTING decision header.
    No absolute sheets, extra gradients, overlays, glow, or extra dock. */
 #homePage #seyveoLivingMoment .lm-cinema-enter .lm-primary{
- opacity:.58;
- transition:opacity 420ms ease;
+ opacity:0;
+ pointer-events:none;
+ transition:opacity 340ms ease;
+}
+#homePage #seyveoLivingMoment .lm-cinema-enter .lm-secondary,
+#homePage #seyveoLivingMoment .lm-cinema-gather .lm-secondary{
+ display:flex!important;flex-direction:column-reverse;
+ opacity:1!important;transform:none!important;max-height:none!important;
+ transition:none!important;
 }
 #homePage #seyveoLivingMoment .lm-cinema-enter .lm-inline-item{
  animation:lm-original-row-rise 780ms cubic-bezier(.18,.82,.22,1) both;
@@ -624,7 +631,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-cinema-enter .lm-inline-item:nth-child(2){animation-delay:320ms}
 #homePage #seyveoLivingMoment .lm-cinema-enter .lm-inline-item:nth-child(3){animation-delay:550ms}
 #homePage #seyveoLivingMoment .lm-cinema-gather .lm-primary{
- opacity:1;transition:opacity 600ms ease;
+ opacity:1;transition:opacity 600ms ease 120ms;
 }
 #homePage #seyveoLivingMoment .lm-cinema-gather .lm-inline-item{
  animation:lm-original-row-gather 680ms cubic-bezier(.22,.79,.36,1) forwards;
