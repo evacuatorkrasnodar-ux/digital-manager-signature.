@@ -304,44 +304,120 @@ function startPreview(){
  if(caption)caption.textContent='Демонстрация трёх примеров без изменения личных данных.';
  return true;
 }
-function dueTask(){
- let tasks=[];
- try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))tasks=data}catch{}
- const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
- return tasks.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
-  &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
-  .sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
+
+/* All open tasks live in the existing Tasks store. This surface only reads
+ * their metadata; writing status is delegated to Personal Tasks. */
+let collectionPage=0,collectionOpen=false;
+function openTasks(){
+ const tasks=readLocal('seyveo-personal-tasks-v1');
+ if(!Array.isArray(tasks))return [];
+ return tasks.filter(task=>
+  task&&typeof task.id==='string'&&task.id.length<=160&&
+  typeof task.title==='string'&&task.title.trim()&&task.done!==true
+ ).sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||
+   String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
 }
-function showTask(item){
- const callTarget=window.SEYVEO_CONTACTS?.taskTarget?.(item.title)||'';
- const contact=callTarget?window.SEYVEO_CONTACTS?.availability?.(callTarget):null;
- const id='task:'+(item.id||item.title)+'|'+item.due;
- if(quiet.has(id))return false;
- mode='task';key=id;
- dynamic.hidden=true;
- const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
- createSurface({
-  kind:'task',
-  title:item.title,
-  callTarget,
-  body:callTarget
-    ?'Срок наступил'+(when?' · '+when:'')+'. Сэйви поможет связаться с человеком.'
-    :'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
-  category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
-  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил срок.',
-  detail:callTarget
-    ?contact?.matches===1
-      ?'Нашла «'+contact.name+'» в «Моём мире». Нажмите «Позвонить» и проверьте номер.'
-      :contact?.matches>1
-      ?'Есть несколько похожих контактов. Сэйви предложит выбрать нужного.'
-      :'Номер не найден. Сэйви поможет выбрать человека или добавить контакт.'
-    :'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
- },[],true);
- tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
- space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
- focus(true);
- later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- // An actual due task stays visible until its status or due date changes.
+function tasksSignature(tasks){
+ return 'collection:'+tasks.map(item=>item.id+'|'+(item.due||'')+'|'+item.title).join('\u001e');
+}
+function deadlineLabel(task){
+ if(typeof task.due!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(task.due))return 'Без даты';
+ const [year,month,day]=task.due.split('-').map(Number);
+ const date=new Date(year,month-1,day);
+ if(date.getFullYear()!==year||date.getMonth()+1!==month||date.getDate()!==day)return 'Без даты';
+ const now=new Date();
+ const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+ const short=date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+ if(task.due<today)return 'Срок прошёл · '+short;
+ if(task.due===today)return 'Сегодня';
+ return 'До '+short;
+}
+function activateTask(task){
+ // An "execute" button opens the available, real action. It never falsely
+ // declares a phone call, payment or arbitrary human task completed.
+ const target=window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'';
+ if(target&&window.SEYVEO_CONTACTS?.requestCall){
+  window.SEYVEO_CONTACTS.requestCall(target);return;
+ }
+ $('navTasks')?.click();
+ window.dispatchEvent(new CustomEvent('seyveo:calendar-task-view',{detail:{id:task.id}}));
+}
+function completeTask(task,feedback){
+ // Only an explicit tap on "Отметить выполненным" may change status.
+ const detail={id:task.id,result:null};
+ window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
+ if(!detail.result?.ok&&feedback)feedback.textContent=detail.result?.message||'Не удалось завершить дело.';
+}
+function showCollection(tasks){
+ if(!tasks.length)return false;
+ mode='collection';key=tasksSignature(tasks);
+ space.classList.remove('lm-preview','lm-real','lm-next-mode','lm-condense','lm-disappear','lm-collection-mode');
+ space.classList.add('lm-collection-mode','lm-reveal');
+ space.hidden=false;
+ // Business advice may coexist, but it is not counted as a personal task.
+ dynamic.hidden=!dynamic.querySelector('[data-owner-advice]');
+ tip.textContent='';
+ tiles.replaceChildren();
+ const details=create('details','lm-task-collection');
+ details.open=collectionOpen;
+ const summary=create('summary','lm-task-summary');
+ const count=create('span','lm-task-count',String(tasks.length));
+ const header=create('span','lm-task-heading');
+ header.append(create('strong','lm-task-title','Накопившиеся дела'),
+  create('small','lm-task-caption',
+   tasks.length===1?'Одно дело требует вашего внимания':'Все дела на одном экране'));
+ const total=create('span','lm-task-total',tasks.length+' '+(tasks.length%10===1&&tasks.length%100!==11?'дело':
+  [2,3,4].includes(tasks.length%10)&&!(tasks.length%100>=12&&tasks.length%100<=14)?'дела':'дел'));
+ const flash=create('span','lm-task-gather');flash.setAttribute('aria-hidden','true');
+ tasks.slice(0,3).forEach((task,i)=>{
+  const mark=create('span','lm-task-gather-item',task.title);
+  mark.style.setProperty('--gather-index',String(i));flash.append(mark);
+ });
+ summary.append(count,header,total,flash);
+ const body=create('div','lm-task-body');
+ const position=create('p','lm-task-position');
+ const name=create('h3','lm-task-current-title');
+ const when=create('p','lm-task-when');
+ const desc=create('p','lm-task-explanation');
+ const buttons=create('div','lm-task-actions');
+ const act=create('button','lm-task-execute','Исполнить');act.type='button';
+ const done=create('button','lm-task-complete','Отметить выполненным');done.type='button';
+ buttons.append(act,done);
+ const paging=create('div','lm-task-paging');
+ const prev=create('button','lm-task-prev','Предыдущее');prev.type='button';
+ const next=create('button','lm-task-next','Следующее');next.type='button';
+ paging.append(prev,next);
+ const feedback=create('p','lm-task-feedback');feedback.setAttribute('role','status');
+ feedback.setAttribute('aria-live','polite');
+ body.append(position,name,when,desc,buttons,paging,feedback);
+ function renderPage(){
+  if(collectionPage>=tasks.length)collectionPage=tasks.length-1;
+  if(collectionPage<0)collectionPage=0;
+  const task=tasks[collectionPage];
+  position.textContent=(collectionPage+1)+' из '+tasks.length;
+  name.textContent=task.title;
+  when.textContent=deadlineLabel(task);
+  const target=window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'';
+  desc.textContent=target
+   ?'Если контакт найден, Сэйва поможет подготовить звонок. Сам вызов подтверждается в телефоне; дело не отмечается выполненным автоматически.'
+   :task.sourceNoteId
+   ?'Вы сохранили это дело из Блокнота. Откройте его для действий и отметьте выполненным только после результата.'
+   :'Это дело сохранено вами. Нажмите «Исполнить», чтобы открыть его, и подтвердите завершение после выполнения.';
+  prev.disabled=collectionPage===0;next.disabled=collectionPage===tasks.length-1;
+  feedback.textContent='';
+  act.onclick=()=>activateTask(task);
+  done.onclick=()=>completeTask(task,feedback);
+ }
+ prev.addEventListener('click',()=>{collectionPage--;renderPage()});
+ next.addEventListener('click',()=>{collectionPage++;renderPage()});
+ renderPage();
+ details.append(summary,body);
+ details.addEventListener('toggle',()=>{
+  collectionOpen=details.open;
+  focus(details.open);
+ });
+ tiles.append(details);
+ focus(collectionOpen);
  return true;
 }
 function adviceIdentity(card){
