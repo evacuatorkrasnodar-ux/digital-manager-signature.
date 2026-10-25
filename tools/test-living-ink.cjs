@@ -73,6 +73,15 @@ assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expan
 assert.match(chatLogic,/const bottomOffset=Math\.max\(8,Math\.min\(96/,'Composer reserves measured safe area');
 assert.doesNotMatch(chatLogic,/composerHeight\+30/,'No arbitrary 30px blank gutter');
 assert.match(chatLogic,/function displayChatText\(value\)/,'Long displayed messages are compact');
+assert.match(chatLogic,/visibleText\.length>440/,'Oversized questions are collapsed at display only');
+assert.match(chatLogic,/item\.classList\.add\('seyveo-message-folded'\)/,'Fold is a presentation class');
+assert.match(chatLogic,/expand\.setAttribute\('aria-expanded','false'\)/,'Long question expansion is accessible');
+assert.match(chatLogic,/if\(atBottom\|\|isNewTurn\)scrollToLatest\(\)/,'New messages scroll into view');
+assert.match(chatLogic,/queueChatGeometry\(\);\s*scrollToLatest\(\);/,'Opening chat displays latest messages');
+assert.match(chatAppearance,/\.seyveo-message-folded \.seyveo-conversation-body\{/,'Only folded messages clip on screen');
+assert.match(html,/conversation-refined\.css\?v=20/,'Long-message style deployed');
+assert.match(html,/living-conversation\.js\?v=19/,'Latest chat controller deployed');
+
 assert.match(historyStyles,/#assistantChatHistoryDialog\.assistant-chat-history\[open\]\{[\s\S]*?height:auto;/,'History follows its actual content height');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-items\{[\s\S]*?flex:0 1 auto;/,'History list does not force an empty viewport');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-summary::after\{content:none!important/,'History has no decorative arrows');
