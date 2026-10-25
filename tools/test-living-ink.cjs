@@ -19,6 +19,8 @@ const composer=read('assets/composer-intent.css');
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
 const notebookStyles=read('assets/notebook-smart.css');
+const paperStyles=read('assets/notebook-paper.css');
+const scanStyles=read('assets/notebook-scan.css');
 const taskStyles=read('assets/personal-tasks.css');
 const chatLogic=read('assets/living-conversation.js');
 const home=read('assets/home-velvet.css');
@@ -74,6 +76,19 @@ assert.match(historyStyles,/#assistantChatHistoryDialog\.assistant-chat-history\
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-items\{[\s\S]*?flex:0 1 auto;/,'History list does not force an empty viewport');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-summary::after\{content:none!important/,'History has no decorative arrows');
 assert.match(notebookStyles,/height:fit-content!important/,'Notebook fits real notes');
+assert.match(paperStyles,/#noteModeDialog \.paper-choice-list\{/,'One grouped note method surface');
+assert.match(paperStyles,/#noteModeDialog \.paper-choice-item \+ \.paper-choice-item\{border-top/,'Choice lines share thin dividers');
+assert.match(paperStyles,/#notePaperDialog \.paper-toolbar-primary > button/,'Paper tools remain accessible');
+assert.match(paperStyles,/\.paper-sheet canvas\{display:block/,'Writable white canvas is kept intact');
+assert.match(paperStyles,/#notePaperDialog \.paper-actions button\{[\s\S]*?background:transparent!important/,'Paper actions are plain text');
+assert.match(scanStyles,/#noteScanDialog \.paper-scan-inputs label\{[\s\S]*?background:transparent;border:0/,'Photo picker is unpainted');
+assert.match(scanStyles,/#noteScanDialog \.paper-scan-actions button\{[\s\S]*?background:transparent!important/,'Scan actions are text-only');
+assert.match(scanStyles,/#noteScanDialog \.paper-scan-consent\[hidden\]/,'OCR consent flow is still present');
+assert.match(notebookStyles,/height:clamp\(135px,22svh,185px\)/,'New note editor is compact');
+assert.match(notebookStyles,/\.note-more-options:not\(\[hidden\]\)\{[\s\S]*?gap:2px 12px/,'Notebook action list stays compact');
+for(const file of ['notebook-smart.css?v=23','notebook-paper.css?v=11','notebook-scan.css?v=6'])
+ assert.ok(html.includes('assets/'+file),'Refreshed notebook stylesheet '+file);
+
 assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
 assert.match(taskStyles,/#personalTaskDialog\.personal-task-dialog\[open\]/,'Task sheet keeps a quiet outline');
 assert.match(html,/dialog-velvet\.css\?v=7/,'History CSS refreshed');
