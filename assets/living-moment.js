@@ -168,7 +168,7 @@ function polymer(label,callback,kind='quiet'){
    gathers and is destroyed; it never leaves a duplicate UI behind. */
 function createSurface(primary,other=[],real=false){
  tiles.replaceChildren();
- let queue=[primary,...other],shown=primary,completed=0;
+ let queue=[primary,...other],shown=primary,completed=0,postponed=0;
  let moving=false,swipeStart=null,tapBlockUntil=0;
  let introNode=null,introStarted=false;
  const field=create('div','lm-field');
@@ -252,7 +252,7 @@ function createSurface(primary,other=[],real=false){
  /* A swipe only moves a task to the END of the queue; it never completes it.
     Pointer events work with touch and mouse, and the vertical gesture stays free. */
  field.addEventListener('pointerdown',event=>{
-  if(moving||event.button!==0||event.target.closest('button'))return;
+  if(moving||event.button!==0)return;
   swipeStart={x:event.clientX,y:event.clientY,id:event.pointerId};
  },{passive:true});
  field.addEventListener('pointercancel',()=>{swipeStart=null});
@@ -278,9 +278,11 @@ function createSurface(primary,other=[],real=false){
    field.classList.add('lm-finished');
    label.textContent=real?'ВАШИ ДЕЛА':'ДЕМОНСТРАЦИЯ';
    position.textContent=completed+' / '+completed;
-   headline.textContent=real?'Все дела завершены':'Все учебные дела выполнены';
-   description.textContent=real?
-    'Список дел обновлён. Внешние действия не выполнялись.':
+   headline.textContent=real?(postponed?'Дело отложено до завтра':'Все дела завершены'):
+    'Все учебные дела выполнены';
+   description.textContent=real?(postponed?
+    'Задача осталась сохранённой и вернётся завтра.':
+    'Список дел обновлён. Внешние действия не выполнялись.'):
     'Это был пример работы Сэйви. Ни одно реальное действие не совершено.';
    artwork.replaceChildren(icon('task'));
    controls.hidden=true;secondary.hidden=true;
@@ -302,7 +304,20 @@ function createSurface(primary,other=[],real=false){
   later(()=>{
    if(!tiles.contains(field))return;
    if(kind==='defer'){
-    if(queue.length>1)queue.push(queue.shift());
+    if(real&&queue.length===1){
+     // A single remaining personal task can genuinely wait until tomorrow.
+     const postponedItem=queue[0];
+     const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+     try{
+      const saved=deferredTasks();
+      saved[postponedItem.id]=localDay(tomorrow);
+      localStorage.setItem(DEFERRED_KEY,JSON.stringify(saved));
+      queue.shift();postponed++;
+     }catch{
+      notify('Не удалось сохранить отсрочку. Дело осталось в очереди.');
+      scene.classList.remove('lm-swipe-out');moving=false;return;
+     }
+    }else if(queue.length>1)queue.push(queue.shift());
     if(real){
      // Only the display order changes; saved personal tasks remain intact.
      try{localStorage.setItem('seyveo-home-task-order-v1',
