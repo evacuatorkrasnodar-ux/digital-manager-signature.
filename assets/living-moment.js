@@ -264,14 +264,11 @@ function demoLedgerItems(){
 }
 function storyFromTask(task){
  const kind=artisticKind(task);
- const demoData=kind==='mail'?sample[1]:kind==='contract'?sample[0]:
-  kind==='health'?sample[2]:null;
  return {kind,title:task.title,category:'ВАШЕ ДЕЛО',body:task.due?
   'Срок: '+task.due.split('-').reverse().join('.'):'Сохранено в «Делах».',
   reason:'Это запись из вашего списка дел, а не демонстрация.',
   detail:'Изучите дело и подтвердите его завершение в разделе «Дела».',
-  id:task.id,due:task.due,sourceNoteId:task.sourceNoteId,
-  ...(demoData?{}:{})};
+  id:task.id,due:task.due,sourceNoteId:task.sourceNoteId};
 }
 function showLedger(items,{demo=false}={}){
  if(!items.length){if(demo)demoFinished=true;rest();return}
@@ -345,7 +342,7 @@ function showLedger(items,{demo=false}={}){
   explanation.hidden=!expanded;
   more.textContent=expanded?'Свернуть':'Подробнее';
   more.setAttribute('aria-expanded',String(expanded));
-  act.textContent=demo?'Исполнить · демо':'Исполнить';
+  act.textContent='Исполнить';
  }
  more.addEventListener('click',()=>{expanded=!expanded;readingUntil=Date.now()+25000;render()});
  act.addEventListener('click',()=>{
@@ -358,9 +355,8 @@ function showLedger(items,{demo=false}={}){
   }
   // Actual work is completed in the canonical Tasks screen, not falsely
   // marked as sent or signed by the Home prototype.
-  const event=new CustomEvent('seyveo:home-task-open',{detail:{id:task.id}});
-  window.dispatchEvent(event);
   $('navTasks')?.click();
+  window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:task.id}}));
  });
  // Swipe selects the next item to review without altering any stored task.
  let beginX=null,beginY=null;
