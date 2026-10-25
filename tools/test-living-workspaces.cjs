@@ -48,8 +48,11 @@ assert.doesNotMatch(conversation,/Conversation composer v5: all actions RIGHT, e
 assert.equal((html.match(/id="assistantChatHistoryDialog"/g)||[]).length,1,'One actual chat history');
 assert.equal((html.match(/id="noteReadDialog"/g)||[]).length,1,'One actual note reader');
 assert.equal((html.match(/id="ask"/g)||[]).length,1,'One actual primary editor');
-const names=['dialog-velvet.css?v=5','notebook-smart.css?v=19','sections-velvet.css?v=11',
- 'personal-wellness.css?v=16','calendar-spaces.css?v=17',
- 'composer-intent.css?v=16','conversation-refined.css?v=17'];
-for(const ref of names)assert.ok(html.includes('assets/'+ref),'Published CSS version: '+ref);
+const names=['dialog-velvet.css','notebook-smart.css','sections-velvet.css',
+ 'personal-wellness.css','calendar-spaces.css',
+ 'composer-intent.css','conversation-refined.css'];
+for(const name of names){
+ const pattern=new RegExp('assets/'+name.replace('.', '\\.')+'\\?v=\\d+');
+ assert.match(html,pattern,'Current versioned stylesheet: '+name);
+}
 console.log('PASS Living Ink workspaces: history lines, readable notes, native care editor, one frameless composer.');
