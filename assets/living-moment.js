@@ -11,7 +11,6 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!stage||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-quiet-cinema-v3';
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
@@ -38,7 +37,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real');
+ space.classList.remove('lm-reveal','lm-gather','lm-condense','lm-disappear','lm-preview','lm-real');
  space.hidden=true;tiles.replaceChildren();previewScene=null;
  tip.textContent='';
 }
@@ -210,6 +209,11 @@ let previewScene=null;
 function buildExamples(){
  previewScene=createSurface(sample[0],sample.slice(1));
 }
+function gatherPreview(){
+ if(mode!=='preview')return;
+ space.classList.add('lm-gather');
+ tip.textContent='3 ПРИМЕРА · СОБРАНЫ В ОДНОМ МЕСТЕ';
+}
 function shrink(){
  if(mode==='idle')return;
  space.classList.add('lm-condense');
@@ -247,10 +251,9 @@ function hold(callback,delay){
  later(check,delay);
 }
 function startPreview(){
- if(!available()||editing())return false;
+ if(!available()||editing()||dueTask()||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';
- try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
  tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
@@ -258,14 +261,11 @@ function startPreview(){
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
  hold(()=>{
-  previewScene?.changeFeatured(sample[1]);
+  gatherPreview();
   hold(()=>{
-   previewScene?.changeFeatured(sample[2]);
-   hold(()=>{
-    shrink();
-    hold(()=>disappear(),TIMING.quiet);
-   },TIMING.beat);
-  },TIMING.beat);
+   shrink();
+   hold(()=>disappear(),TIMING.quiet);
+  },11500);
  },TIMING.beat+TIMING.open);
  if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
  return true;
@@ -406,14 +406,11 @@ replay?.addEventListener('click',()=>{
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
 scheduleRefresh();
-// Developer preview is deliberately visible once per tab/session, NOT user data.
+// Show labeled demo on each fresh page load, including same-tab refresh.
+// Due real tasks and permission-based advice always take priority.
 // Run after the approved opening logo has had time to appear.
-let visited=false;
-try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
-if(!visited){
- later(()=>{
-  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
-  startPreview();
- },9400);
-}
+later(()=>{
+ if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
+ startPreview();
+},9400);
 })();
