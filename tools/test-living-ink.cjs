@@ -13,6 +13,8 @@ const composer=read('assets/composer-intent.css');
 const home=read('assets/home-velvet.css');
 const future=read('assets/future-surfaces.css');
 const continuity=read('assets/living-space.css');
+const decisionCss=read('assets/living-moment.css');
+const decisionJs=read('assets/living-moment.js');
 const music=read('assets/seyveo-music-dock.js');
 const wellness=read('assets/personal-wellness.css');
 const life=read('assets/calendar-spaces.css');
@@ -66,6 +68,19 @@ assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.ca
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
+// Compact Home decisions never contain a second scroll view.
+const taskSummary=cssBlock(decisionCss,'#homePage #seyveoLivingMoment .lm-deck-summary-items');
+assert.match(taskSummary,/max-height:none;overflow:visible/,'No scroll inside the main decision card');
+assert.doesNotMatch(taskSummary,/overflow-y:auto|scrollbar-width:thin/);
+const taskCard=cssBlock(decisionCss,'#homePage #seyveoLivingMoment .lm-deck-card');
+assert.match(taskCard,/max-height:none;overflow:visible/,'Never clip a long task');
+assert.match(decisionCss,/max-height:720px/,'Short portrait phones have a denser layout');
+assert.match(decisionJs,/const visibleCount=shortPhone\?1:2/,'Only one or two other decisions occupy the card');
+assert.match(decisionJs,/others\.slice\(0,visibleCount\)/,'Remaining tasks are kept in the queue');
+assert.match(decisionJs,/const hint=create\('button','lm-deck-hint'/,'The next-task hint is a real action');
+assert.match(decisionJs,/hint\.addEventListener\('click'/,'Next task remains accessible without a swipe');
+assert.match(decisionJs,/const stepLabel=String\(step\)/,'Current decision is numbered');
+assert.match(decisionJs,/discussTask\(item,\{demo\}\)/,'Full details remain available via Подробнее');
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
  assert.match(html,new RegExp('assets/'+item.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\$&')+'\\?v=\\d+'),'Versioned file: '+item);
