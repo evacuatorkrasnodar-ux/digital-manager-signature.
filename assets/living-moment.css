@@ -701,10 +701,6 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  font-size:12.5px;font-weight:510;line-height:1.32;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-#homePage #seyveoLivingMoment .lm-deck-peek-description{
- font-size:10.8px;line-height:1.35;color:var(--secondary);
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
 #homePage #seyveoLivingMoment .lm-deck-foot{
  display:flex;align-items:center;justify-content:space-between;
  gap:12px;padding:5px 8px 0;min-height:36px;
@@ -815,7 +811,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:rgba(64,80,102,.70);
 }
 @media(prefers-reduced-motion:no-preference){
- #homePage #seyveoLivingMoment .lm-deck-card:not(.lm-deck-card--leaving){
+ #homePage #seyveoLivingMoment .lm-deck:not(.lm-deck-intro) .lm-deck-card:not(.lm-deck-card--leaving){
   animation:lm-deck-page-arrive 630ms cubic-bezier(.19,.82,.21,1) both;
  }
  #homePage #seyveoLivingMoment .lm-deck-peek{
