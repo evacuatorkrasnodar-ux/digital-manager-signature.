@@ -313,8 +313,8 @@ function startPreview(){
  * their metadata; writing status is delegated to Personal Tasks. */
 let collectionPage=0,collectionOpen=false;
 let collectionDemo=false,collectionAnimationSeen=false;
-const GATHER_SESSION='seyveo-cinematic-collection-v1';
-try{collectionAnimationSeen=sessionStorage.getItem(GATHER_SESSION)==='1'}catch{}
+// One cinematic opening per app runtime. The demo's explicit replay stays
+// available; do not suppress the opening across iPhone PWA relaunches.
 function openTasks(){
  const tasks=readLocal('seyveo-personal-tasks-v1');
  if(!Array.isArray(tasks))return [];
@@ -481,14 +481,13 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  details.append(summary,body);
  details.addEventListener('toggle',()=>{
   collectionOpen=details.open;
-  focus(details.open);
+  // Keep the sphere's compact stage while the decision center is visible;
+  // on a smaller iPhone both the sphere and animated symbols remain in view.
+  focus(true);
  });
  tiles.append(details);
- focus(collectionOpen);
- if(runCinematic){
-  collectionAnimationSeen=true;
-  try{sessionStorage.setItem(GATHER_SESSION,'1')}catch{}
- }
+ focus(true);
+ if(runCinematic)collectionAnimationSeen=true;
  return true;
 }
 function adviceIdentity(card){
