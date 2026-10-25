@@ -98,7 +98,13 @@ assert.match(html,/<button class="btn primary" id="resolve" type="button">Исп
 assert.doesNotMatch(decisionJs,/hold\(\(\)=>disappear\(\),TIMING\.quiet\)/,'No automatic dismissal of the gathered card');
 assert.match(decisionJs,/function gatherPreview/,'Three examples gather into one scene');
 assert.doesNotMatch(decisionJs,/sessionStorage\.getItem\(SESSION\)/,'Same-tab reload shows the demo');
-assert.match(html,/living-moment\.css\?v=37/);
+// The two actions must remain visually unpainted on both themes and sizes.
+const actionCss=cssBlock(decisionCss,'#seyveoLivingMoment .lm-polymer,');
+for(const token of ['border:0','border-radius:0','background:none','box-shadow:none'])
+ assert.match(actionCss,new RegExp(token.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\assert.match(html,/living-moment\.css\?v=37/);')),'Unpainted action: '+token);
+assert.match(decisionCss,/#seyveoLivingMoment \.lm-polymer::after/,'Arrows are removed from task actions');
+assert.doesNotMatch(decisionCss,/background:linear-gradient\(165deg,rgba\(248,250,252,\.072\)/,'Heavy capsule gradient is retired');
+assert.match(html,/living-moment\.css\?v=38/);
 assert.match(html,/living-moment\.js\?v=\d+/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
