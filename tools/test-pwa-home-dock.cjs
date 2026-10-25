@@ -22,7 +22,7 @@ assert.equal(dockOffset(0),7,'Never position dock below viewport');
 assert.ok(!css.includes('data-seyveo-view="home"'),'No Home-only dock offset');
 assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/);
 
-assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\)\{/,'Standalone offset scoped to all app workspaces');
+assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\),\s*html\.seyveo-standalone:not\(\.seyveo-conversation\) body\{/,'Standalone scrolling is scoped to the shared app shell');
 assert.ok(!css.includes('data-seyveo-view="home"'),'No page-by-page dock patches');
 assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/,'No per-page dock offsets');
 assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\) \.app\{/);
