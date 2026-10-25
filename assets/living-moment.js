@@ -238,6 +238,7 @@ function createSurface(primary,other=[],real=false){
    row.addEventListener('click',()=>deferCurrent(1));
    secondary.append(row);
   }
+  secondary.hidden=!showOpening;
   laterButton.hidden=queue.length<2;
   if(!queue.length)laterButton.hidden=true;
  }
