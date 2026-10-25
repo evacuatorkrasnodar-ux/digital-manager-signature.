@@ -150,7 +150,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  bottom:calc(var(--seyveo-dock-bottom) + var(--seyveo-dock-height) + 12px + var(--keyboard-offset,0px))!important;
 }
 @media(max-width:355px){
- .dock{width:calc(100% - 8px)!important;padding:6px 4px!important;gap:1px!important}
+ .dock{width:calc(100% - 8px)!important;padding:5px 4px!important;gap:1px!important}
  .dock>.nav-item{font-size:10.4px!important;letter-spacing:-.038em!important}
  .dock>.nav-item svg{width:22px!important;height:22px!important}
 }
