@@ -80,6 +80,14 @@ assert.match(chatLogic,/if\(atBottom\|\|isNewTurn\)scrollToLatest\(\)/,'New mess
 assert.match(chatLogic,/queueChatGeometry\(\);\s*scrollToLatest\(\);/,'Opening chat displays latest messages');
 assert.match(chatAppearance,/\.seyveo-message-folded \.seyveo-conversation-body\{/,'Only folded messages clip on screen');
 assert.match(chatAppearance,/html\.seyveo-conversation:not\(\[data-theme=light\]\) body\{/,'Chat canvas is one graphite surface');
+assert.match(chatAppearance,/padding:6px clamp\(12px,3\.3vw,18px\) 22px!important/,'Transcript reserves actual horizontal gutters and a bottom breathing space');
+assert.match(chatAppearance,/max-width:min\(91%,460px\);width:fit-content;min-width:0/,'Owner bubbles never exceed the message column');
+assert.match(chatAppearance,/box-sizing:border-box;width:100%;max-width:100%;min-width:0/,'Chat reader cannot overflow its flex parent');
+assert.match(chatLogic,/const stickToBottom=text\.scrollHeight-text\.clientHeight-text\.scrollTop<56/,'Keyboard does not hide the latest messages');
+assert.match(chatLogic,/if\(stickToBottom\)requestAnimationFrame/,'Existing history reading stays undisturbed');
+assert.match(html,/conversation-refined\.css\?v=22/,'Constrained chat CSS deployed');
+assert.match(html,/living-conversation\.js\?v=20/,'Keyboard-aware chat JS deployed');
+
 assert.match(chatAppearance,/linear-gradient\(180deg,#1d2025 0%,#1b1e23 55%,#191c21 100%\)/,'Softened graphite replaces pure black');
 assert.match(chatAppearance,/background:rgba\(232,236,244,\.092\)/,'Owner messages have soft visual separation');
 assert.match(chatAppearance,/width:44px!important;min-width:44px!important/,'Reply controls retain comfortable hit targets');
