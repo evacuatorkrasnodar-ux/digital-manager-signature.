@@ -72,14 +72,17 @@ assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink 
 assert.match(decisionJs,/function startPreview\(list=null,\{demo=true\}=\{\}\)/);
 assert.match(decisionJs,/previewScene=createSurface\(scenes\[0\],scenes\.slice\(1\),!demo\)/);
 assert.match(decisionJs,/previewScene=createSurface\(stories\[0\],stories\.slice\(1\),true\)/,'Real tasks reuse preview');
-assert.match(decisionJs,/const limit=window\.innerHeight<=710\?1:2/,'No nested list in short portrait');
+assert.match(decisionJs,/const limit=window\.innerHeight<=860\?1:2/,'iPhone X uses one next item');
+assert.match(decisionJs,/const upcoming=ordered\.slice\(activeIndex\+1\)\.concat/,'Every real or demo task remains reachable');
+assert.match(decisionJs,/String\(sequence\.indexOf\(item\)\+1\)/,'Current task progress is displayed');
 assert.match(decisionJs,/if\(discussTask\(shown,\{demo:!real\}\)\)return/,'Full context opens in existing conversation');
 assert.match(decisionJs,/if\(startPreview\(\)\)autoDemoShown=true/,'Auto-demo retains the original scene');
 assert.doesNotMatch(decisionJs,/showLedger|lm-deck-|demoLedgerItems/,'No duplicate decision engine');
 assert.doesNotMatch(decisionCss,/\.lm-deck/, 'No legacy decision card CSS');
 assert.match(decisionCss,/overflow-y:hidden!important/,'Home uses one non-scrolling viewport');
 assert.match(decisionCss,/:has\(#homePage:not\(\[hidden\]\)\):not\(\.seyveo-conversation\)/,'Home-only scroll lock');
-assert.match(decisionCss,/max-height:760px/,'Small iPhones get compact stage spacing');
+assert.match(decisionCss,/max-height:900px/,'iPhone X receives original scene density adaptation');
+assert.match(decisionCss,/max-height:760px/,'Smaller phones receive additional spacing adaptation');
 assert.match(decisionCss,/#homePage #seyveoLivingMoment \.lm-inline-item/,'Original single-sheet list survives');
 assert.match(decisionCss,/lm-symbol-arrive/,'Original gentle symbol entrance survives');
 
