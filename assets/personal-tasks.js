@@ -516,6 +516,25 @@ function change(id,del=false){
  render();
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
+/* Home collections do not own a second database. Completing a saved task
+   goes through the SAME validated Personal Tasks writer and renderer. */
+window.addEventListener('seyveo:home-task-complete',event=>{
+ const detail=event.detail;
+ const id=detail?.id;
+ if(typeof id!=='string'||!id||id.length>160){
+  if(detail)detail.result={ok:false,message:'Не удалось определить дело.'};
+  return;
+ }
+ const task=read().find(item=>item.id===id&&!item.done);
+ if(!task){
+  if(detail)detail.result={ok:false,message:'Дело уже завершено или изменено.'};
+  return;
+ }
+ change(id);
+ const completed=read().some(item=>item.id===id&&item.done);
+ if(detail)detail.result=completed?{ok:true,message:'Дело отмечено выполненным.'}:
+   {ok:false,message:'Не удалось сохранить. Проверьте память устройства.'};
+});
 form.addEventListener('submit',put);
 $('personalAddHome').addEventListener('click',openDialog);
 $('personalAddTasks').addEventListener('click',openDialog);
