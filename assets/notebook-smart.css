@@ -189,11 +189,13 @@
  background:transparent;border-color:transparent;color:var(--text);
 }
 #notesDialog .note-more-options:not([hidden]){
- grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
- padding:8px 0 1px;
+ grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;
+ padding:3px 0 1px;margin:0;
+ border:0;border-top:1px solid var(--soft-line);
 }
 #notesDialog .note-more-options button{
- min-height:44px;font-size:11.5px;border-radius:0;
+ min-height:42px;font-size:11.7px;font-weight:440;border-radius:0;
+ background:transparent;border:0;box-shadow:none;
 }
 #notesDialog .note-paper-preview{
  width:auto;max-width:110px;max-height:85px;margin:6px 0 0;
@@ -213,15 +215,15 @@
 }
 #noteReviewDialog.note-review-dialog[data-note-mode="new"] textarea{
  box-sizing:border-box;
- min-height:155px;height:clamp(155px,32svh,260px);max-height:260px;
+ min-height:135px;height:clamp(135px,22svh,185px);max-height:185px;
  resize:none;overflow:auto;overscroll-behavior:contain;
- padding:15px 14px;border-radius:18px;
- font-size:16px;line-height:1.65;
+ padding:11px 2px;border-radius:0;
+ font-size:16px;line-height:1.55;
 }
 #noteReviewDialog.note-review-dialog textarea{
  border-color:var(--soft-line);background:var(--card2);
 }
-#noteReviewDialog .info-actions .btn{border-radius:999px}
+#noteReviewDialog .info-actions .btn{border-radius:0}
 @media(max-width:370px){
  #notesDialog .notes-head{margin-right:39px;column-gap:5px}
  #notesDialog .notes-new{padding:8px 9px;font-size:11px}
@@ -545,8 +547,8 @@
 @media(max-height:540px){#notesDialog.notes-dialog[open]{max-height:calc(100svh - 14px)}}
 
 /* Single SEYVEO ink writing surface; no oversized filled rectangle. */
-#noteReviewDialog.note-review-dialog[open]{width:min(540px,calc(100vw - 22px));padding:22px clamp(15px,4vw,24px) 18px}
-#noteReviewDialog.note-review-dialog #noteReviewTitle{font-size:clamp(21px,5vw,25px);font-weight:480;letter-spacing:-.035em;padding:0;margin:0 0 12px}
+#noteReviewDialog.note-review-dialog[open]{width:min(510px,calc(100vw - 22px));padding:19px clamp(15px,4vw,22px) 14px}
+#noteReviewDialog.note-review-dialog #noteReviewTitle{font-size:clamp(20px,5vw,24px);font-weight:480;letter-spacing:-.04em;padding:0;margin:0 0 10px}
 #noteReviewDialog.note-review-dialog textarea{
   border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
   background:transparent;box-shadow:none;padding:14px 2px;color:var(--text);
@@ -564,7 +566,7 @@
  padding:8px 3px;font-weight:470;font-size:12px;
 }
 #notesDialog.notes-dialog[open] .note-open p{font-size:14px;font-weight:425!important}
-#notesDialog.notes-dialog[open] .note-item{padding:10px 0 9px}
+#notesDialog.notes-dialog[open] .note-item{padding:9px 0 9px}
 #notesDialog.notes-dialog[open] .note-item-actions>.note-more-button{
  font-size:18px;color:var(--secondary);border:0;background:transparent
 }
