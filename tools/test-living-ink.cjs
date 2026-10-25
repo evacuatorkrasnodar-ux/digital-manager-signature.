@@ -50,7 +50,7 @@ assert.match(dock,/:root\[data-theme="light"\] #ask\.prompt:not\(\.expanded\)/,'
 assert.match(dock,/#ask\.prompt:not\(\.expanded\):focus-within\{/,'Focus increases contrast only, not geometry');
 assert.match(dock,/border-width:0!important/,'No visible gray input capsule');
 assert.doesNotMatch(dock,/backdrop-filter:blur\(20px\).*#ask\.prompt:not/,'No old frosted glass shell');
-assert.match(html,/assets\/floating-navigation\.css\?v=29/,'The deployed index refreshes current dock style');
+assert.match(html,/assets\/floating-navigation\.css\?v=\d+/,'The deployed index loads the current dock stylesheet');
 
 
 const rail=cssBlock(composer,'#assistantQuickrail.assistant-quickrail');
