@@ -229,7 +229,7 @@
  stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5;
 }
 #calendarSpaceDialog :is(#worldManageContacts,.world-person-call):active{
- background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line);
+ background:transparent;box-shadow:none;opacity:.65;
 }
 #calendarSpaceDialog :is(#worldManageContacts,.world-person-info,.world-person-call):focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
