@@ -24,7 +24,7 @@ assert.doesNotMatch(css,/#seyveoComposerFold/,'No obsolete fold rules');
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #seyveoConversationMic\{\s*order:5!important/);
 assert.match(css,/#ask\.prompt:not\(\.expanded\) #composerCompactSend\{\s*order:6!important/);
 assert.match(home,/assets\/conversation-refined\.css\?v=\d+/);
-assert.match(home,/assets\/living-conversation\.js\?v=16/);
+assert.match(home,/assets\/living-conversation\.js\?v=\d+/);
 assert.equal((home.match(/<form class="prompt" id="ask"/g)||[]).length,1);
 assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
 // A retained message draft must never resurrect the retired slim bar above
