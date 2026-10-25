@@ -120,14 +120,15 @@ function explain(field,message,button){
  field.classList.toggle('lm-has-reason',!collapse);
  if(button)button.setAttribute('aria-expanded',String(!collapse));
 }
-function createSurface(primary,other=[],real=false){
+function createSurface(primary,other=[],real=false,taskId=''){
  tiles.replaceChildren();
  const field=create('div','lm-field');
  field.dataset.lmMode=real?'real':'preview';
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР'));
+ const measure=create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР');
+ top.append(label,measure);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
@@ -138,31 +139,56 @@ function createSurface(primary,other=[],real=false){
  copy.append(headline,description);
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
- let shown=primary;
- let morphLocked=false;
+ let remaining=[primary,...other],shown=primary,morphLocked=false;
  const open=polymer('Подробнее',()=>{
-  if(real){$('navTasks')?.click();return}
-  explain(field,shown.detail,open);
+  if(real){
+   if(taskId)window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:taskId}}));
+   return;
+  }
+  explain(field,shown.reason+' '+shown.detail,open);
+ });
+ const execute=polymer('Исполнить',()=>{
+  if(real){
+   // Complete through the existing validated Personal Tasks API, not a second store.
+   const detail={id:taskId,result:null};
+   window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
+   if(!detail.result?.ok){
+    explain(field,detail.result?.message||'Не удалось завершить дело.',execute);
+    return;
+   }
+   scene.classList.add('lm-scene--changing');
+   execute.disabled=true;
+   later(()=>{
+    if(mode==='task')rest(); // A following due task now takes its normal turn.
+   },reduced()?0:430);
+   return;
+  }
+  finishPreviewItem();
  },'main');
  open.setAttribute('aria-label','Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
- controls.append(open);
+ execute.setAttribute('aria-label','Исполнить: '+shown.title);
+ controls.append(open,execute);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
+ function updateCount(){
+  if(real)return;
+  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ПРЕДПРОСМОТР';
+ }
  function renderSecondary(){
   secondary.replaceChildren();
   if(real)return;
-  for(const item of [primary,...other].filter(value=>value!==shown)){
+  for(const item of remaining.filter(value=>value!==shown)){
+   // This is a selectable task row, not another visible action button.
    const row=create('button','lm-inline-item');
-   row.type='button';row.dataset.lmKind=item.kind;
-   row.setAttribute('aria-label','Показать: '+item.title);
+   row.type='button';
+   row.dataset.lmKind=item.kind;
+   row.setAttribute('aria-label','Выбрать дело: '+item.title);
    const mark=create('span','lm-inline-art');
    mark.append(icon(item.kind));
    const words=create('span','lm-inline-copy');
    words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
-   const arrow=create('span','lm-inline-arrow','↗');
-   arrow.setAttribute('aria-hidden','true');
-   row.append(mark,words,arrow);
+   row.append(mark,words);
    row.addEventListener('click',()=>{
     readingUntil=Date.now()+12000;
     changeFeatured(item);
@@ -170,27 +196,53 @@ function createSurface(primary,other=[],real=false){
    secondary.append(row);
   }
  }
+ function setFeatured(item){
+  shown=item;
+  field.dataset.lmSubject=item.kind;
+  artwork.className='lm-hero-art lm-hero-art--'+item.kind;
+  artwork.replaceChildren(icon(item.kind));
+  label.textContent=space.classList.contains('lm-gather')?'ГЛАВНОЕ':item.category;
+  headline.textContent=item.title;
+  description.textContent=item.body;
+  open.setAttribute('aria-label','Подробнее: '+item.title);
+  execute.setAttribute('aria-label','Исполнить: '+item.title);
+  const reason=field.querySelector('.lm-explanation');
+  if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
+  open.setAttribute('aria-expanded','false');
+  execute.setAttribute('aria-expanded','false');
+  updateCount();
+  renderSecondary();
+ }
  function changeFeatured(item){
-  if(real||item===shown||morphLocked||space.classList.contains('lm-condense'))return;
+  if(real||item===shown||morphLocked||!remaining.includes(item)||space.classList.contains('lm-condense'))return;
   morphLocked=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
    if(!tiles.contains(field)||mode==='idle')return;
-   shown=item;
-   field.dataset.lmSubject=item.kind;
-   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
-   artwork.replaceChildren(icon(item.kind));
-   label.textContent=item.category;
-   headline.textContent=item.title;
-   description.textContent=item.body;
-   open.setAttribute('aria-label','Подробнее: '+item.title);
-   const reason=field.querySelector('.lm-explanation');
-   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
-   open.setAttribute('aria-expanded','false');
-   renderSecondary();
+   setFeatured(item);
    scene.classList.remove('lm-scene--changing');
-   later(()=>{morphLocked=false},720);
-  },reduced()?0:430);
+   later(()=>{morphLocked=false},reduced()?0:500);
+  },reduced()?0:400);
+ }
+ function finishPreviewItem(){
+  if(real||morphLocked||mode!=='preview'||!remaining.includes(shown))return;
+  morphLocked=true;
+  open.disabled=true;execute.disabled=true;
+  scene.classList.add('lm-scene--changing');
+  later(()=>{
+   if(!tiles.contains(field)||mode!=='preview')return;
+   remaining=remaining.filter(item=>item!==shown);
+   if(!remaining.length){
+    tip.textContent='ПРИМЕРЫ РАЗОБРАНЫ · ДАННЫЕ НЕ ИЗМЕНЕНЫ';
+    space.classList.add('lm-disappear');
+    later(()=>rest(),reduced()?0:TIMING.close);
+    return;
+   }
+   setFeatured(remaining[0]);
+   tip.textContent='QUIET CINEMA · ОСТАЛОСЬ '+remaining.length;
+   scene.classList.remove('lm-scene--changing');
+   later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false},reduced()?0:430);
+  },reduced()?0:420);
  }
  field.dataset.lmSubject=primary.kind;
  renderSecondary();
@@ -198,10 +250,11 @@ function createSurface(primary,other=[],real=false){
  explanation.id='seyveoSurfaceReason';
  explanation.hidden=true;
  open.setAttribute('aria-controls',explanation.id);
+ execute.setAttribute('aria-controls',explanation.id);
  scene.append(top,main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
- return {field,changeFeatured};
+ return {field,changeFeatured,updateCount};
 }
 let previewScene=null;
 function buildExamples(){
@@ -299,7 +352,7 @@ function showTask(item){
   category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
   reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
   detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
- },[],true);
+ },[],true,item.id||'');
  tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
  space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
  focus(true);
