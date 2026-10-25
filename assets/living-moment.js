@@ -11,8 +11,8 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-illustrated-decision-ledger-demo-v1';
-const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
+const SESSION='seyveo-compact-task-deck-demo-v2';
+const TIMING=Object.freeze({open:reduced()?0:190,beat:850,quiet:4800,close:reduced()?0:420});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let ledgerState=null,demoFinished=false,hadRealWork=false,realIntroSeen=false;
 let pendingUpdate=false;
@@ -240,13 +240,33 @@ let previewScene=null;
 function buildExamples(){
  previewScene=createSurface(sample[0],sample.slice(1));
 }
-/* Drawn Decision Ledger · one paper-like sheet, no inset glass cards.
-   The original Quiet Cinema animation is retained intact above this layer. */
+/* Small illustrated task cards: each action belongs to its own card.
+   No glass overlays. Real tasks are never silently marked complete. */
+const DEFERRED_KEY='seyveo-home-deferred-tasks-v1';
+const deferredFallback={};
+function localDay(date=new Date()){
+ return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),
+  String(date.getDate()).padStart(2,'0')].join('-');
+}
+function deferredTasks(){
+ try{
+  const value=JSON.parse(localStorage.getItem(DEFERRED_KEY)||'{}');
+  return value&&typeof value==='object'&&!Array.isArray(value)?value:deferredFallback;
+ }catch{return deferredFallback}
+}
+function postponeTask(id){
+ const until=new Date();until.setDate(until.getDate()+1);
+ const records=deferredTasks();
+ records[id]=localDay(until);
+ deferredFallback[id]=records[id];
+ try{localStorage.setItem(DEFERRED_KEY,JSON.stringify(records))}catch{}
+}
 function readOpenTasks(){
  let data=[];try{data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]')}catch{}
  if(!Array.isArray(data))return [];
+ const deferred=deferredTasks(),today=localDay();
  return data.filter(t=>t&&t.done!==true&&typeof t.id==='string'&&
-   typeof t.title==='string'&&t.title.trim())
+   typeof t.title==='string'&&t.title.trim()&&!(deferred[t.id]>today))
   .map(t=>({id:t.id,title:t.title.trim().slice(0,140),
    due:typeof t.due==='string'?t.due:'',sourceNoteId:t.sourceNoteId||''}))
   .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31'));
@@ -273,116 +293,130 @@ function storyFromTask(task){
 function showLedger(items,{demo=false}={}){
  if(!items.length){if(demo)demoFinished=true;rest();return}
  if(!available()){rest();return}
- cancel();mode='ledger';key=demo?'ledger-demo':'ledger-real';
+ cancel();mode='ledger';key=demo?'deck-demo':'deck-real';
  tiles.replaceChildren();space.classList.remove('lm-preview','lm-condense','lm-disappear','lm-real');
  space.classList.add('lm-ledger-mode','lm-reveal');space.hidden=false;
  tip.textContent='';dynamic.hidden=true;focus(true);
- const section=create('section','lm-ledger');
- section.setAttribute('aria-label','Ваш центр решений');
- const mast=create('div','lm-ledger-heading');
- const illustration=create('span','lm-ledger-illustration');illustration.append(icon('task'));
- const heads=create('div','lm-ledger-headline');
- heads.append(create('small','lm-ledger-kicker',demo?'СЭЙВА · ДЕМОНСТРАЦИЯ':'СЭЙВА · ВАШИ ДЕЛА'),
-  create('h3','lm-ledger-title','Центр решений'));
- const counter=create('span','lm-ledger-counter');
- mast.append(illustration,heads,counter);
- const intro=create('p','lm-ledger-intro','Всё важное собрано в одном месте.');
- const list=create('div','lm-ledger-list');
- list.setAttribute('aria-label','Дела, ожидающие решения');
- const note=create('p','lm-ledger-note');
- const explanation=create('p','lm-ledger-explanation');explanation.hidden=true;
- const actions=create('div','lm-ledger-actions');
- const more=create('button','lm-ledger-action','Подробнее');more.type='button';
- const act=create('button','lm-ledger-action','Исполнить');act.type='button';
- actions.append(more,act);
- const footer=create('small','lm-ledger-footer',
-  demo?'Примеры для просмотра · реальные данные не изменяются':
-  'Реальные действия требуют вашего подтверждения');
- section.append(mast,intro,list,note,explanation,actions,footer);
+ const section=create('section','lm-deck');
+ section.setAttribute('aria-label',demo?'Примеры дел Сэйвы':'Ваши дела');
+ const heading=create('div','lm-deck-heading');
+ const eyebrow=create('small','lm-deck-eyebrow',demo?'СЭЙВА · ПРИМЕР':'СЭЙВА · ВАШИ ДЕЛА');
+ const count=create('span','lm-deck-count');
+ heading.append(eyebrow,count);
+ const activeSlot=create('div','lm-deck-active');
+ const nextSlot=create('div','lm-deck-next-slot');
+ const foot=create('div','lm-deck-foot');
+ const hint=create('span','lm-deck-hint','Смахните вправо — вернёмся завтра');
+ const laterButton=create('button','lm-deck-later','Позже');
+ laterButton.type='button';laterButton.setAttribute('aria-label','Отложить это дело до завтра');
+ foot.append(hint,laterButton);
+ section.append(heading,activeSlot,nextSlot,foot);
  tiles.append(section);
- let queue=items.slice(),activeId=queue[0]?.id,expanded=false,closing=false;
+ let queue=items.slice(),activeId=queue[0]?.id,expanded=false,closing=false,swiping=false;
  function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
  function finish(){
   if(closing)return;
-  closing=true;
-  if(demo)demoFinished=true;
-  section.classList.add('lm-ledger-finished');
+  closing=true;if(demo)demoFinished=true;
+  section.classList.add('lm-deck-finished');
   space.classList.add('lm-disappear');
+  later(()=>{if(mode==='ledger')rest()},reduced()?0:340);
+ }
+ function postpone(){
+  if(swiping||closing)return;
+  const task=current();if(!task)return;
+  swiping=true;
+  if(!demo)postponeTask(task.id);
+  const card=activeSlot.querySelector('.lm-deck-card');
+  if(card)card.classList.add('lm-deck-card--leaving');
   later(()=>{
    if(mode!=='ledger')return;
-   rest();
-  },reduced()?0:850);
+   queue=queue.filter(item=>item.id!==task.id);
+   activeId=queue[0]?.id||null;expanded=false;swiping=false;
+   render();
+  },reduced()?0:205);
  }
  function render(){
   if(!queue.length){finish();return}
-  const currentItem=current();
-  if(!queue.some(t=>t.id===activeId))activeId=currentItem.id;
-  const n=queue.length;
-  const form=n%100>=11&&n%100<=14?'дел':n%10===1?'дело':[2,3,4].includes(n%10)?'дела':'дел';
-  counter.textContent=n+' '+form;
-  list.replaceChildren();
-  for(const item of queue){
-   const row=create('button','lm-ledger-row');
-   row.type='button';
-   row.setAttribute('aria-pressed',String(item.id===activeId));
-   const mark=create('span','lm-ledger-row-art');
-   mark.append(icon(item.kind||artisticKind(item)));
-   const words=create('span','lm-ledger-row-copy');
-   words.append(create('strong','lm-ledger-row-title',item.title),
-    create('small','lm-ledger-row-sub',item.body||(
-     item.due?'Срок: '+item.due.split('-').reverse().join('.'):'Задача из раздела «Дела»')));
-   row.append(mark,words);
-   row.addEventListener('click',()=>{
-    activeId=item.id;expanded=false;readingUntil=Date.now()+25000;render();
-   });
-   list.append(row);
-  }
-  note.textContent='Выбрано: '+currentItem.title;
-  explanation.textContent=demo
-   ?(currentItem.reason||'Демонстрационный пример.')+' '+(currentItem.detail||'Реальных действий нет.')
-   :'Это ваше сохранённое дело. Сэйва поможет разобраться, но фактическое исполнение подтверждается вами в разделе «Дела».';
-  explanation.hidden=!expanded;
-  more.textContent=expanded?'Свернуть':'Подробнее';
+  if(!queue.some(t=>t.id===activeId))activeId=queue[0].id;
+  const item=current();
+  count.textContent=queue.length===1?'1 дело':queue.length+' дела';
+  if(queue.length>4||queue.length%10===0||queue.length%10>=5||
+     (queue.length>=11&&queue.length<=14))count.textContent=queue.length+' дел';
+  activeSlot.replaceChildren();nextSlot.replaceChildren();
+  const card=create('article','lm-deck-card');
+  card.setAttribute('aria-label',item.title);
+  const main=create('div','lm-deck-main');
+  const picture=create('span','lm-deck-art');picture.append(icon(item.kind||artisticKind(item)));
+  const words=create('div','lm-deck-copy');
+  const tag=create('small','lm-deck-tag',demo?'ПРИМЕР':'ВАШЕ ДЕЛО');
+  const title=create('h3','lm-deck-title',item.title);
+  const subtitle=create('p','lm-deck-subtitle',item.body||'Записано в «Делах»');
+  words.append(tag,title,subtitle);main.append(picture,words);
+  const detail=create('p','lm-deck-detail',
+   demo?(item.reason||'Это демонстрационный пример.')+' '+(item.detail||''):
+   'Это ваше сохранённое дело. Подробнее о нём и подтверждение завершения доступны в «Делах».');
+  detail.hidden=!expanded;
+  const actions=create('div','lm-deck-actions');
+  const more=create('button','lm-deck-action','Подробнее');
+  const act=create('button','lm-deck-action lm-deck-action--primary','Исполнить');
+  more.type=act.type='button';
   more.setAttribute('aria-expanded',String(expanded));
-  act.textContent='Исполнить';
+  more.addEventListener('click',()=>{
+   expanded=!expanded;readingUntil=Date.now()+20000;render();
+  });
+  act.addEventListener('click',()=>{
+   readingUntil=Date.now()+20000;
+   if(demo){
+    queue=queue.filter(t=>t.id!==item.id);
+    activeId=queue[0]?.id||null;expanded=false;render();
+    return;
+   }
+   // No fictional completion: actual tasks are only closed in the source list.
+   $('navTasks')?.click();
+   window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
+  });
+  actions.append(more,act);
+  card.append(main,detail,actions);
+  activeSlot.append(card);
+  const currentIndex=queue.findIndex(t=>t.id===activeId);
+  if(queue.length>1){
+   const next=queue[(currentIndex+1)%queue.length];
+   const peek=create('button','lm-deck-peek');
+   peek.type='button';
+   peek.setAttribute('aria-label','Показать следующее дело: '+next.title);
+   const peekArt=create('span','lm-deck-peek-art');peekArt.append(icon(next.kind||artisticKind(next)));
+   const peekCopy=create('span','lm-deck-peek-copy');
+   peekCopy.append(create('small','lm-deck-peek-eyebrow','СЛЕДУЮЩЕЕ ДЕЛО'),
+    create('strong','lm-deck-peek-title',next.title));
+   peek.append(peekArt,peekCopy);
+   peek.addEventListener('click',()=>{
+    activeId=next.id;expanded=false;readingUntil=Date.now()+15000;render();
+   });
+   nextSlot.append(peek);
+  }
+  foot.hidden=false;
+  hint.textContent=demo?'Смахните вправо — убрать пример':'Смахните вправо — вернёмся завтра';
+  laterButton.setAttribute('aria-label',demo?'Убрать этот пример':'Отложить «'+item.title+'» до завтра');
+  // Ignore drags starting on actions. A vertical gesture remains normal scrolling.
+  let pointerStart=null;
+  card.addEventListener('pointerdown',event=>{
+   if(event.target.closest('button')||!event.isPrimary)return;
+   pointerStart={x:event.clientX,y:event.clientY,id:event.pointerId};
+  });
+  card.addEventListener('pointercancel',()=>{pointerStart=null});
+  card.addEventListener('pointerup',event=>{
+   if(!pointerStart||pointerStart.id!==event.pointerId)return;
+   const dx=event.clientX-pointerStart.x,dy=event.clientY-pointerStart.y;
+   pointerStart=null;
+   if(dx>68&&Math.abs(dy)<58)postpone();
+  });
  }
- more.addEventListener('click',()=>{expanded=!expanded;readingUntil=Date.now()+25000;render()});
- act.addEventListener('click',()=>{
-  const task=current();if(!task)return;
-  readingUntil=Date.now()+30000;
-  if(demo){
-   queue=queue.filter(item=>item.id!==task.id);
-   activeId=queue[0]?.id||null;expanded=false;
-   render();return;
-  }
-  // Actual work is completed in the canonical Tasks screen, not falsely
-  // marked as sent or signed by the Home prototype.
-  $('navTasks')?.click();
-  window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:task.id}}));
- });
- // Swipe selects the next item to review without altering any stored task.
- let beginX=null,beginY=null;
- section.addEventListener('touchstart',e=>{
-  if(e.touches.length!==1||e.target.closest('button'))return;
-  beginX=e.touches[0].clientX;beginY=e.touches[0].clientY;
- },{passive:true});
- section.addEventListener('touchend',e=>{
-  if(beginX===null||!e.changedTouches.length)return;
-  const dx=e.changedTouches[0].clientX-beginX,dy=e.changedTouches[0].clientY-beginY;
-  beginX=beginY=null;
-  if(Math.abs(dx)>75&&Math.abs(dy)<50&&queue.length>1){
-   const i=queue.findIndex(t=>t.id===activeId);
-   activeId=queue[(i+1)%queue.length].id;expanded=false;render();
-  }
- },{passive:true});
+ laterButton.addEventListener('click',postpone);
  ledgerState={demo,sync(next){
   if(demo)return;
   const signature=items=>items.map(t=>[t.id,t.title,t.due||''].join('\u001f')).join('\u001e');
-  const previous=signature(queue);
-  const updated=signature(next);
-  if(previous===updated)return;
-  queue=next;expanded=false;
-  render();
+  if(signature(queue)===signature(next))return;
+  queue=next;expanded=false;render();
  }};
  render();
 }
@@ -458,10 +492,10 @@ function startPreview(list=null,{demo=true}={}){
    return;
   }
   shrink();
-  later(presentLedger,reduced()?0:1250);
+  later(presentLedger,reduced()?0:180);
  };
  hold(nextBeat,TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: плавный показ и один нарисованный список решений.';
+ if(caption)caption.textContent='Quiet Cinema: быстрый показ, затем отдельные карточки дел.';
  return true;
 }
 function dueTask(){
@@ -555,7 +589,7 @@ function refresh(){
  if(mode==='ledger'){
   const real=readOpenTasks().map(storyFromTask);
   if(ledgerState?.demo){
-   if(real.length){rest();startPreview(real,{demo:false})}
+   if(real.length){rest();showLedger(real.map(storyFromTask),{demo:false})}
   }else ledgerState?.sync(real);
   return;
  }
@@ -573,7 +607,6 @@ function refresh(){
  const real=readOpenTasks();
  if(real.length){
   hadRealWork=true;
-  if(!realIntroSeen){startPreview(real,{demo:false});return}
   showLedger(real.map(storyFromTask),{demo:false});
   return;
  }
@@ -641,6 +674,6 @@ if(!visited){
  later(()=>{
   if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle'||hadRealWork||demoFinished)return;
   startPreview();
- },9400);
+ },1150);
 }
 })();
