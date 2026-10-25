@@ -309,8 +309,11 @@ function startPreview(list=null,{demo=true}={}){
  space.hidden=false;space.classList.remove('lm-collection-mode','lm-collection-cinematic','lm-disappear');
  space.classList.add('lm-preview','lm-film-intro');focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},120);
- hold(()=>{
+ const collect=()=>{
   if(mode!=='preview')return;
+  // A mouse hovering on desktop must not freeze the cinema indefinitely.
+  // Only actual typing or a dialog defers collection.
+  if(editing()||document.querySelector('dialog[open]')){later(collect,900);return}
   space.classList.add('lm-film-folding');
   later(()=>{
    if(mode!=='preview')return;
@@ -319,7 +322,8 @@ function startPreview(list=null,{demo=true}={}){
    collectionOpen=false;
    showCollection(tasks,{demo,animate:false});
   },950);
- },reduced()?400:6000);
+ };
+ later(collect,reduced()?400:6000);
  if(caption)caption.textContent='Появление снизу · единый Центр решений.';
  return true;
 }
