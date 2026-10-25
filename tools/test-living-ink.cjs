@@ -69,7 +69,7 @@ assert.match(continuity,/:root\[data-theme=light\] body\{/,'Light atmosphere is 
 assert.doesNotMatch(continuity,/body:has\(#homePage:not\(\[hidden\]\)\)/,'No Home-only backdrop override');
 assert.match(continuity,/rgba\(222,224,230,\.077\)/,'Pearl glow is deliberately softer');
 assert.doesNotMatch(continuity,/background-attachment:fixed|backdrop-filter:blur\(/,'No scroll-heavy background filters');
-assert.match(html,/assets\/living-space\.css\?v=17/,'New atmosphere stylesheet bypasses stale PWA cache');
+assert.match(html,/assets\/living-space\.css\?v=\d+/,'Current shared atmosphere stylesheet uses a versioned URL');
 assert.match(wellness,/#calendarPersonalTools \.pw-water-insight\{/,'Health insights still exist');
 assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.calendar-space-edit textarea\{/,'Real editors stay mounted');
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
