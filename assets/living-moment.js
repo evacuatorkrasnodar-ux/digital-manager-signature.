@@ -369,6 +369,8 @@ function showCollection(tasks){
  const total=create('span','lm-task-total',tasks.length+' '+(tasks.length%10===1&&tasks.length%100!==11?'дело':
   [2,3,4].includes(tasks.length%10)&&!(tasks.length%100>=12&&tasks.length%100<=14)?'дела':'дел'));
  const flash=create('span','lm-task-gather');flash.setAttribute('aria-hidden','true');
+ // Animate the actual due titles only once per opening, not fictional alerts.
+ // CSS reduces movement automatically when requested by the device.
  tasks.slice(0,3).forEach((task,i)=>{
   const mark=create('span','lm-task-gather-item',task.title);
   mark.style.setProperty('--gather-index',String(i));flash.append(mark);
@@ -537,11 +539,17 @@ function refresh(){
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
- if(mode==='task'){
-  const task=dueTask();
-  const taskKey=task?'task:'+(task.id||task.title)+'|'+task.due:'';
-  if(key!==taskKey){rest();return}
-  if(!dynamic.hidden)dynamic.hidden=true;
+ const tasks=openTasks();
+ if(mode==='collection'){
+  if(!tasks.length||key!==tasksSignature(tasks)){
+   collectionOpen=!!tiles.querySelector('.lm-task-collection[open]');
+   resetSpace();
+   mode='idle';key='';
+   if(editing())return;
+   // Keep the same stack open when its contents change.
+   if(tasks.length){showCollection(tasks);return}
+   scheduleRefresh();return;
+  }
   return;
  }
  if(mode==='advice'){
@@ -550,15 +558,14 @@ function refresh(){
   return;
  }
  if(mode==='next'){
-  if(dueTask()||pending){rest();return}
+  if(tasks.length||pending){rest();return}
   const intent=nextIntent();
   if(key!=='next:'+intent.id){rest();return}
   return;
  }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
- const item=dueTask();
- if(item&&showTask(item))return;
+ if(tasks.length&&showCollection(tasks))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle'&&!pending)showNext(nextIntent());
