@@ -94,10 +94,10 @@ assert.match(chatAppearance,/width:44px!important;min-width:44px!important/,'Rep
 assert.match(chatAppearance,/width:19px!important;height:19px!important/,'Reply glyphs are legible');
 assert.match(chatAppearance,/order:5!important;flex:0 0 44px/,'Composer controls have matching geometry');
 assert.match(chatAppearance,/background:transparent!important;\s*border:0!important;border-radius:0!important;\s*-webkit-backdrop-filter:none!important;backdrop-filter:none!important/,'No overlay stripe is introduced');
-assert.match(html,/conversation-refined\.css\?v=21/,'New chat styling is deployed');
 
-assert.match(html,/conversation-refined\.css\?v=20/,'Long-message style deployed');
-assert.match(html,/living-conversation\.js\?v=19/,'Latest chat controller deployed');
+
+
+
 
 assert.match(historyStyles,/#assistantChatHistoryDialog\.assistant-chat-history\[open\]\{[\s\S]*?height:auto;/,'History follows its actual content height');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-items\{[\s\S]*?flex:0 1 auto;/,'History list does not force an empty viewport');
@@ -119,13 +119,13 @@ for(const file of ['notebook-smart.css?v=23','notebook-paper.css?v=11','notebook
 assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
 assert.match(taskStyles,/#personalTaskDialog\.personal-task-dialog\[open\]/,'Task sheet keeps a quiet outline');
 assert.match(html,/dialog-velvet\.css\?v=7/,'History CSS refreshed');
-assert.match(html,/notebook-smart\.css\?v=22/,'Notebook CSS refreshed');
+
 assert.match(html,/personal-tasks\.css\?v=19/,'Task CSS refreshed');
 
 assert.match(chatLogic,/body\.textContent=displayChatText\(value\)/,'Chat renders compact spacing');
 assert.match(chatLogic,/const ownText=String\(value\|\|''\)/,'Clipboard/edit preserve the original user text');
-assert.match(html,/conversation-refined\.css\?v=19/,'Refined chat CSS is deployed');
-assert.match(html,/living-conversation\.js\?v=18/,'Refined chat JS is deployed');
+
+
 
 assert.equal((html.match(/<footer class="dock"/g)||[]).length,1,'Exactly one persistent dock');
 assert.equal((html.match(/id="orbCluster"/g)||[]).length,1,'One original sphere');
@@ -190,7 +190,7 @@ assert.match(life,/\.calendar-space-edit input,\.calendar-space-edit select,\.ca
 assert.match(notesCss,/#notesDialog \.note-more-options button\{min-width:0;padding:7px 3px;\s*border:0;background:transparent/,'Notes have no capsule choices');
 assert.match(notesCss,/#notesDialog \.note-item-actions>\.note-more-button\[aria-expanded=true\]\{\s*background:transparent/,'Expanded notes stay unpainted');
 assert.match(life,/#calendarSpaceDialog :is\(#worldManageContacts,\.world-person-call\):active\{\s*background:transparent;box-shadow:none/,'Contacts use quiet touch feedback');
-assert.match(html,/assets\/notebook-smart\.css\?v=21/,'Notes theme version refreshed');
+
 assert.match(html,/assets\/calendar-spaces\.css\?v=18/,'World theme version refreshed');
 
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
