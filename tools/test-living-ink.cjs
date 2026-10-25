@@ -100,6 +100,7 @@ assert.doesNotMatch(decisionJs,/showLedger|lm-deck-|demoLedgerItems/,'No duplica
 assert.doesNotMatch(decisionCss,/\.lm-deck/, 'No legacy decision deck styles');
 assert.match(decisionCss,/@keyframes lm-film-rise/,'Bottom-to-top film entrance');
 assert.match(decisionCss,/@keyframes lm-film-gather/,'Multiple sheets gather into one');
+assert.match(decisionCss,/lm-film-gather 700ms cubic-bezier\(\.24,\.77,\.31,1\) forwards/,'Gather must not suppress earlier rise with backwards animation fill');
 assert.match(decisionCss,/\.lm-scene\.lm-swipe-out/,'Defer or finish has an actual exit animation');
 assert.match(decisionCss,/\.lm-film-running \.lm-scene/,'The one final card stays hidden during the opening film');
 assert.match(decisionCss,/prefers-reduced-motion:reduce/,'Reduced motion support remains');
