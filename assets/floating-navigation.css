@@ -138,13 +138,14 @@
  * name below it. Four destination names remain readable and touch targets
  * stay at least 54px tall. No changes to gestures or route handlers.
  */
-/* Hint and single Home composer follow the new dock height. Conversation
-   keyboard geometry has stronger scoped rules and is unchanged. */
+/* The old Home Ask strip was a duplicated entry surface. Chat alone
+   owns that writer, while the separate Notes editor remains available.
+   Do not apply this rule inside the conversation or to expanded Notes. */
 .voice-hint{
  bottom:calc(var(--seyveo-dock-bottom) + var(--seyveo-dock-height) + 15px)!important;
 }
-html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
- bottom:calc(var(--seyveo-dock-bottom) + var(--seyveo-dock-height) + 12px + var(--keyboard-offset,0px))!important;
+html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mode="notes"]){
+ display:none!important;
 }
 @media(max-width:355px){
  .dock{width:calc(100% - 8px)!important;padding:5px 4px!important;gap:1px!important}
