@@ -140,15 +140,13 @@ function createSurface(primary,other=[],real=false){
  const controls=create('div','lm-actions');
  let shown=primary;
  let morphLocked=false;
- const open=polymer('Открыть',()=>{
+ const open=polymer('Подробнее',()=>{
   if(real){$('navTasks')?.click();return}
   explain(field,shown.detail,open);
  },'main');
- open.setAttribute('aria-label','Открыть: '+shown.title);
- const laterButton=polymer('Позже',()=>closeEarly());
- const why=polymer('Почему',()=>explain(field,shown.reason,why));
- why.setAttribute('aria-expanded','false');
- controls.append(open,laterButton,why);
+ open.setAttribute('aria-label','Подробнее: '+shown.title);
+ open.setAttribute('aria-expanded','false');
+ controls.append(open);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
  function renderSecondary(){
@@ -185,10 +183,10 @@ function createSurface(primary,other=[],real=false){
    label.textContent=item.category;
    headline.textContent=item.title;
    description.textContent=item.body;
-   open.setAttribute('aria-label','Открыть: '+item.title);
+   open.setAttribute('aria-label','Подробнее: '+item.title);
    const reason=field.querySelector('.lm-explanation');
    if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
-   why.setAttribute('aria-expanded','false');
+   open.setAttribute('aria-expanded','false');
    renderSecondary();
    scene.classList.remove('lm-scene--changing');
    later(()=>{morphLocked=false},720);
@@ -199,7 +197,7 @@ function createSurface(primary,other=[],real=false){
  const explanation=create('p','lm-explanation');
  explanation.id='seyveoSurfaceReason';
  explanation.hidden=true;
- why.setAttribute('aria-controls',explanation.id);
+ open.setAttribute('aria-controls',explanation.id);
  scene.append(top,main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
@@ -211,8 +209,16 @@ function buildExamples(){
 }
 function gatherPreview(){
  if(mode!=='preview')return;
+ const field=tiles.querySelector('.lm-field');
+ if(field){
+  const label=field.querySelector('.lm-field-eyebrow');
+  const measure=field.querySelector('.lm-field-measure');
+  if(label)label.textContent='ГЛАВНОЕ';
+  if(measure)measure.textContent='3 ДЕЛА · ПРЕДПРОСМОТР';
+ }
+ // All three original tasks stay visible in one parent, never cloned.
  space.classList.add('lm-gather');
- tip.textContent='3 ПРИМЕРА · СОБРАНЫ В ОДНОМ МЕСТЕ';
+ tip.textContent='QUIET CINEMA · ВСЁ В ОДНОЙ КАРТОЧКЕ';
 }
 function shrink(){
  if(mode==='idle')return;
@@ -259,14 +265,16 @@ function startPreview(){
  tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
+ // Determine the actual entry distance for each screen, including iPhone X.
+ // Only transforms move during the sequence: no absolute overlays or clones.
+ const targetBottom=window.visualViewport?.height||window.innerHeight;
+ const relativeTop=space.getBoundingClientRect().top;
+ const distance=Math.max(320,Math.min(1100,targetBottom-relativeTop+100));
+ space.style.setProperty('--lm-rise-distance',distance+'px');
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
-  gatherPreview();
-  hold(()=>{
-   shrink();
-   hold(()=>disappear(),TIMING.quiet);
-  },11500);
- },TIMING.beat+TIMING.open);
+ // Each of the three independent cards rises from below the screen.
+ // After their arrival, they join a SINGLE card that remains readable.
+ hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
  if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
  return true;
 }
