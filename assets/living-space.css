@@ -569,25 +569,11 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 /* Living Velvet v2 · final compositional system.
    Shared rhythm + muted dimensionality, without photo backgrounds, GPU filters,
    extra controls, changes to local data or duplicated component styling. */
-/* Paint the atmosphere on the FULL viewport, rather than the narrow
-   max-width Home main: no rectangular gray patch or unfinished side edges. */
+/* Restore Quiet Cinema's even, unbroken background.
+   No additional light gradients or glass layer behind the original artwork. */
 #homePage{background:none;}
-body:has(#homePage:not([hidden])){
- background:
-   radial-gradient(ellipse 110vw 530px at 50% 260px,
-     rgba(220,225,236,.115),rgba(158,167,181,.038) 58%,transparent 100%),
-   linear-gradient(to bottom,rgba(61,65,73,.065),transparent 68%),
-   var(--bg);
- background-repeat:no-repeat;
-}
-:root[data-theme=light] body:has(#homePage:not([hidden])){
- background:
-   radial-gradient(ellipse 105vw 530px at 50% 260px,
-     rgba(130,146,169,.13),rgba(186,197,214,.029) 60%,transparent 100%),
-   linear-gradient(to bottom,rgba(255,255,255,.24),transparent 68%),
-   var(--bg);
- background-repeat:no-repeat;
-}
+body:has(#homePage:not([hidden])){background:var(--bg);}
+:root:not([data-theme=light]) body:has(#homePage:not([hidden])){background:#080a0f;}
 /* Put meaningful text, not decoration, in the visual foreground. */
 #homePage #stage .message .kicker{
  color:var(--secondary);opacity:.98;
@@ -683,18 +669,3 @@ html.sv-space-active #lifePage .calendar-space-button small{
  }
 }
 
-/* 2026 SEYVEO Art Direction: readable composition instead of monochrome void.
-   Never draw visual cards behind the animated mail/document/phone objects. */
-#homePage #stage .message .kicker{
- color:var(--secondary);opacity:1;font-weight:550;letter-spacing:.125em;
-}
-#homePage #stage .message h2{
- color:var(--text);font-weight:535;
- text-shadow:0 1px rgba(255,255,255,.055);
-}
-#homePage #stage .message p{
- color:var(--secondary);font-weight:445;
-}
-#homePage #seyveoLivingMoment .lm-next-description,
-#homePage #seyveoLivingMoment .lm-inline-note{color:var(--secondary)}
-:root[data-theme=light] #homePage #stage .message h2{text-shadow:none}
