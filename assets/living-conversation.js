@@ -173,6 +173,7 @@ function open(){
  quiet.hidden=true;
  status('На связи');
  queueChatGeometry();
+ scrollToLatest();
 }
 function close(){
  if(activeAction)cancelAction();
@@ -328,9 +329,16 @@ function displayChatText(value){
  return String(value??'').replace(/\r\n?/g,'\n')
   .replace(/(?:[ \t]*\n){3,}/g,'\n\n').trim();
 }
+let lastRenderedTurnCount=0;
+function scrollToLatest(){
+ // Allow the layout to reserve space for the fixed chat writer first.
+ requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
+}
 function renderTurns(turns){
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
+ const isNewTurn=turns.length>lastRenderedTurnCount;
+ lastRenderedTurnCount=turns.length;
  const nodes=[];
  turns.forEach(turn=>{
    for(const [who,value] of [['you',turn.question],['sayvi',turn.answer]]){
@@ -344,6 +352,22 @@ function renderTurns(turns){
      body.textContent=displayChatText(value);
      item.append(label,body);
      if(who==='you'){
+       // Keep oversized pasted questions readable without editing stored data.
+       const visibleText=displayChatText(value);
+       if(visibleText.length>440||visibleText.split('\n').length>9){
+         item.classList.add('seyveo-message-folded');
+         const expand=document.createElement('button');
+         expand.type='button';
+         expand.className='seyveo-conversation-expand';
+         expand.textContent='Показать полностью';
+         expand.setAttribute('aria-expanded','false');
+         expand.addEventListener('click',()=>{
+           const folded=item.classList.toggle('seyveo-message-folded');
+           expand.textContent=folded?'Показать полностью':'Свернуть';
+           expand.setAttribute('aria-expanded',String(!folded));
+         });
+         item.append(expand);
+       }
        // The message bubble and its quiet actions are separate siblings:
        // copy/edit must sit BELOW the owner's bubble, never inside it.
        const group=document.createElement('div');
@@ -386,7 +410,7 @@ function renderTurns(turns){
    nodes.push(welcome);
  }
  text.replaceChildren(...nodes);
- if(atBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
+ if(atBottom||isNewTurn)scrollToLatest();
 }
 // Only the chat shell follows iPhone's *visible* viewport.
 // Open Canvas has no top header: transcript and composer stay separate while
