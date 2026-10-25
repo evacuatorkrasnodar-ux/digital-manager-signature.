@@ -41,7 +41,7 @@ assert.match(spaces,/#lifePage \.calendar-space-button\{/,'My World controls rem
 assert.match(calendar,/top:max\(12px,calc\(env\(safe-area-inset-top,0px\) \+ 8px\)\)/,'Personal panels no longer waste 10svh at the top');
 assert.match(composer,/#ask\.prompt\.expanded\{/,'Original expanded composer remains');
 assert.match(composer,/SEYVEO Living Ink large writer/,'Expanded writer has its own ink styling');
-assert.match(conversation,/SEYVEO Living Ink Conversation/,'Chat uses same living ink');
+assert.match(conversation,/SEYVEO Quiet Chat/,'Chat shares fixed dock graphite while preserving the same input');
 assert.match(conversation,/border:0!important;border-radius:0!important/,'Chat has no glass frame');
 assert.doesNotMatch(conversation,/SEYVEO Black Velvet \/ Open Canvas control bar: neutral glass/,'Retired old gray chat block');
 assert.doesNotMatch(conversation,/Conversation composer v5: all actions RIGHT, emerald glass/,'Retired stale green capsules');
