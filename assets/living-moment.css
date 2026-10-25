@@ -6,7 +6,7 @@
 #homePage.lm-focus #orbCluster{height:clamp(146px,38vw,202px)}
 #homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
 #homePage.lm-focus #stage{min-height:clamp(260px,34vh,330px);padding-top:0;padding-bottom:8px;justify-content:flex-start}
-#homePage.lm-focus .message{min-height:88px}
+#homePage.lm-focus .message{min-height:88px;margin-top:12px}
 @media(max-height:760px){
  #homePage #orbCluster{height:min(70vw,272px)}
  #homePage.lm-focus #orbCluster{height:clamp(132px,33vw,172px)}
@@ -117,10 +117,12 @@
   min-width:0;
   padding:0 7px 16px;
   opacity:0;
-  transform:translate3d(0,40px,0);
+  transform:translate3d(0,var(--lm-rise-distance,65vh),0);
   transition:gap 780ms ease,padding 780ms ease,
-    opacity 790ms cubic-bezier(.2,.8,.2,1),
-    transform 900ms cubic-bezier(.22,1,.36,1);
+    opacity 880ms cubic-bezier(.2,.8,.2,1),
+    transform 1300ms cubic-bezier(.22,1,.36,1),
+    border-color 940ms ease,background-color 940ms ease,border-radius 940ms ease,
+    margin-bottom 940ms ease;
 }
 #seyveoLivingMoment.lm-reveal .lm-primary{
   opacity:1;
@@ -276,15 +278,18 @@
   min-height:73px;
   cursor:pointer;
   opacity:0;
-  transform:translate3d(0,56px,0);
-  transition:opacity 760ms cubic-bezier(.2,.8,.2,1),transform 990ms cubic-bezier(.22,1,.36,1);
+  transform:translate3d(0,var(--lm-rise-distance,65vh),0);
+  transition:opacity 910ms cubic-bezier(.2,.8,.2,1),
+    transform 1330ms cubic-bezier(.22,1,.36,1),
+    margin-bottom 940ms ease,padding 940ms ease,
+    border-color 940ms ease,background-color 940ms ease,border-radius 940ms ease;
 }
 #seyveoLivingMoment.lm-reveal .lm-inline-item{
   opacity:1;
   transform:translate3d(0,0,0);
 }
-#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(1){transition-delay:540ms}
-#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(2){transition-delay:1080ms}
+#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(1){transition-delay:670ms}
+#seyveoLivingMoment.lm-reveal .lm-inline-item:nth-child(2){transition-delay:1360ms}
 #seyveoLivingMoment .lm-inline-item:focus-visible{
   outline:2px solid var(--text);
   outline-offset:-3px;
@@ -357,18 +362,68 @@
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
-/* The original three in-flow rows gather into one scene: no glass overlays. */
-#seyveoLivingMoment.lm-gather .lm-secondary{
-  max-height:0;
-  opacity:0;
-  transform:translate3d(0,-18px,0);
-  pointer-events:none;
-  transition-delay:250ms;
+/* Three cards become one MAIN card — keep all three actual task elements.
+   Flat graphite layers, a single thin outline, no cloned glass overlays. */
+#seyveoLivingMoment.lm-preview .lm-field{
+  border:1px solid transparent;
+  border-radius:22px;
+  background-color:transparent;
+  box-shadow:none;
+  transition:opacity 860ms ease,transform 1120ms cubic-bezier(.22,1,.36,1),
+    padding 940ms ease,border-color 940ms ease,background-color 940ms ease;
 }
-#seyveoLivingMoment.lm-gather .lm-inline-item{
-  opacity:0;
-  transform:translate3d(0,-26px,0);
+#seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-primary{
+  margin-bottom:9px;
+  padding:13px 11px;
+  border:1px solid rgba(235,239,245,.14);
+  border-radius:19px;
+  background-color:rgba(245,248,253,.027);
+}
+#seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
+  min-height:79px;
+  margin-bottom:9px;
+  padding:8px 11px;
+  border:1px solid rgba(235,239,245,.14);
+  border-radius:19px;
+  background-color:rgba(245,248,253,.027);
+}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field{
+  border-color:rgba(235,239,245,.19);
+  background-color:rgba(245,248,253,.041);
+  padding:14px 11px 11px;
+}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field::before{opacity:0}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-primary{
+  margin-bottom:0;
+  padding:0 7px 12px;
+  border-color:transparent;
+  background-color:transparent;
+}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-secondary{
+  max-height:240px;
+  opacity:1;
+  transform:translate3d(0,0,0);
+  pointer-events:auto;
+}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-inline-item{
+  min-height:68px;
+  margin:0;
+  padding:7px;
+  border:0;
+  border-top:1px solid var(--soft-line);
+  border-radius:0;
+  background-color:transparent;
+  opacity:1;
+  transform:translate3d(0,0,0);
   transition-delay:0ms;
+}
+:root[data-theme=light] #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item){
+  border-color:rgba(59,75,96,.14);
+  background-color:rgba(57,75,96,.035);
+}
+:root[data-theme=light] #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
+  border-color:rgba(59,75,96,.18);
+  background-color:rgba(255,255,255,.76);
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
