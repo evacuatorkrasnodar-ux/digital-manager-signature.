@@ -1,181 +1,419 @@
-/* SEYVEO Home · clean cinematic director, October 2026.
-   One scene and one queue. No legacy deck, overlays or duplicate cards. */
+/* SEYVEO Signature · Home Quiet Cinema v3
+ * One living plane, sculpted editorial symbols and restrained kinetic rhythm.
+ * Never writes fictional tasks, messages or business data. The approved
+ * plasma, its effects, bottom dock and input controller remain untouched. */
 (()=>{
 'use strict';
-const byId=id=>document.getElementById(id);
-const home=byId('homePage'),surface=byId('seyveoLivingMoment'),
- tiles=byId('seyveoLivingTiles'),hint=byId('seyveoLivingCaption'),
- trigger=byId('seyveoDemoLaunch'),preview=byId('openLivingMomentPreview'),
- previewStatus=byId('livingMomentPreviewStatus'),dynamic=byId('dynamic');
-if(!home||!surface||!tiles)return;
-const DATA_KEY='seyveo-personal-tasks-v1';
-const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-const demo=[
- ['Проверить договор аренды','Срок согласования завтра.','Проверить условия и подготовить вопросы.','file-text'],
- ['Ответить клиенту','Клиент ожидает ответ.','Подготовить ответ для согласования.','mail'],
- ['Напомнить о встрече','Завтра созвон в 11:30.','Подготовить напоминание.','calendar'],
- ['Проверить рекламные расходы','Бюджет приблизился к лимиту.','Проверить рекламные кампании.','chart'],
- ['Продлить подписку','Учебная подписка истекает через два дня.','Подготовить решение о продлении.','file-text'],
- ['Разобрать письма','В учебной почте накопились обращения.','Выделить срочные сообщения.','mail'],
- ['Проверить публикацию','Материал ожидает согласования.','Показать текст перед публикацией.','file-text'],
- ['Сделать перерыв','Пришло время короткой паузы.','Предложить десятиминутный отдых.','heart'],
- ['Перенести встречу','Учебные события пересеклись.','Предложить другую дату.','calendar'],
- ['Сверить планы','Есть незакрытые учебные пункты.','Выстроить приоритеты.','list']
-].map((v,i)=>({id:'demo-'+i,title:v[0],body:v[1],proposal:v[2],art:v[3],demo:true}));
-const paths={
- 'file-text':'M7 3h7l4 4v14H7z M14 3v5h4 M10 12h5 M10 16h5',
- mail:'M3 6h18v12H3z M3 8l9 7 9-7',
- calendar:'M4 5h16v16H4z M4 10h16 M8 3v5 M16 3v5',
- chart:'M4 20V10 M10 20V5 M16 20v-8 M22 20H2',
- heart:'M12 21 4 13C-1 8 4 1 10 5l2 2 2-2c6-4 11 3 6 8z',
- list:'M4 6h1 M9 6h12 M4 12h1 M9 12h12 M4 18h1 M9 18h12'
-};
-let mode='idle',queue=[],done=0,timers=[],busy=false,opened=false,initial=true;
-function later(fn,ms){const id=setTimeout(fn,ms);timers.push(id)}
-function clearTimers(){timers.forEach(clearTimeout);timers=[]}
-function element(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+const $=id=>document.getElementById(id);
+const home=$('homePage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
+const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
+const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
+if(!home||!stage||!dynamic||!space||!tiles)return;
+const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+const reduced=()=>!!MOTION?.matches;
+const SESSION='seyveo-quiet-cinema-v3';
+const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
+let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
+let pendingUpdate=false;
+function later(callback,ms){
+ const id=window.setTimeout(callback,ms);
+ timers.push(id);return id;
+}
+function cancel(){for(const id of timers)clearTimeout(id);timers=[]}
+function available(){return !home.hidden&&!document.hidden&&!location.hash&&!document.documentElement.classList.contains('seyveo-conversation')&&!(document.querySelector('dialog[open]'))}
+function editing(){
+ const composer=$('ask');
+ const node=document.activeElement;
+ return !!(composer&&!composer.hidden)
+   ||!!(node&&/^(INPUT|TEXTAREA)$/.test(node.tagName||''));
+}
+function engaged(){
+ const node=document.activeElement;
+ const keyboardFocus=!!(node?.matches?.(':focus-visible')&&(space.contains(node)||dynamic.contains(node)));
+ const mouse=!!window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+ return editing()||keyboardFocus||Date.now()<readingUntil||(mouse&&(space.matches(':hover')||dynamic.matches(':hover')))
+   ||document.querySelector('dialog[open]')!==null;
+}
+function focus(on){
+ if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
+}
+function resetSpace(){
+ space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real');
+ space.hidden=true;tiles.replaceChildren();previewScene=null;
+ tip.textContent='';
+}
+function rest(){
+ cancel();mode='idle';key='';readingUntil=0;
+ resetSpace();focus(false);
+ scheduleRefresh();
+}
+function scheduleRefresh(){
+ if(pendingUpdate)return;
+ pendingUpdate=true;
+ queueMicrotask(()=>{pendingUpdate=false;refresh()});
+}
+function create(tag,klass,words){
+ const el=document.createElement(tag);if(klass)el.className=klass;
+ if(words!==undefined)el.textContent=words;
+ return el;
+}
+/* One hand-drawn monochrome symbol language, shared by the hero and its
+ * quiet secondary rail. No emoji, picture files, WebGL or animated filters. */
+const glyph=Object.freeze({
+ contract: [
+  '<path d="M29 11h29l15 15v53c0 4-3 7-7 7H30c-4 0-7-3-7-7V18c0-4 3-7 6-7Z"/>',
+  '<path d="M58 12v15h15"/>',
+  '<path d="M35 43h25M35 53h22M35 63h12"/>',
+  '<path d="m54 70 5 5 11-12" class="lm-glyph-accent"/>'
+ ].join(''),
+ mail: [
+  '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
+  '<path d="M15 31 43.5 54a7 7 0 0 0 9 0L81 31"/>',
+  '<path d="m16 68 22-18m42 18L58 50" class="lm-glyph-accent"/>'
+ ].join(''),
+ health: [
+  '<path d="M48 81 20.2 54.5C1.1 36.2 15 14.3 32.1 19.3 39 21.3 44 26.8 48 33c4-6.2 9-11.7 15.9-13.7 17.1-5 31 16.9 11.9 35.2Z"/>',
+  '<path d="M23 48h14l6-11 10 22 6-11h14" class="lm-glyph-accent"/>'
+ ].join(''),
+ breath: [
+  '<path d="M13 35c12-16 21 11 33-1 12-12 20-8 37-3"/>',
+  '<path d="M10 49c13-12 24 8 38-2 15-12 22-4 37-1"/>',
+  '<path d="M18 64c13-11 24 4 37-3 10-6 18-5 24-2"/>'
+ ].join(''),
+ task: [
+  '<rect x="16" y="14" width="64" height="69" rx="11"/>',
+  '<path d="M32 31h33M32 44h24M32 57h12"/>',
+  '<path d="m49 67 9 8 15-18" class="lm-glyph-accent"/>'
+ ].join('')
+});
 function icon(kind){
- const el=document.createElementNS('http://www.w3.org/2000/svg','svg');
- el.setAttribute('viewBox','0 0 24 24');el.setAttribute('fill','none');
- el.setAttribute('stroke','currentColor');el.setAttribute('stroke-width','1.5');
- el.setAttribute('stroke-linecap','round');el.setAttribute('stroke-linejoin','round');
- el.setAttribute('aria-hidden','true');
- const path=document.createElementNS('http://www.w3.org/2000/svg','path');
- path.setAttribute('d',paths[kind]||paths.list);el.append(path);return el;
+ const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ const type=Object.hasOwn(glyph,kind)?kind:'task';
+ s.setAttribute('viewBox','0 0 96 96');
+ s.setAttribute('aria-hidden','true');
+ s.setAttribute('focusable','false');
+ s.setAttribute('class','lm-art-svg lm-art-svg--'+type);
+ s.innerHTML=glyph[type];
+ return s;
 }
-function homeVisible(){return !home.hidden&&(!location.hash||location.hash==='#home')&&
- !document.documentElement.classList.contains('seyveo-conversation')&&!document.querySelector('dialog[open]')}
-function readTasks(){
- try{
-  const raw=JSON.parse(localStorage.getItem(DATA_KEY)||'[]');
-  if(!Array.isArray(raw))return [];
-  return raw.filter(t=>t&&typeof t.id==='string'&&typeof t.title==='string'&&t.title.trim()&&!t.done)
-   .map(t=>({id:t.id,title:t.title,body:t.due?'Срок: '+t.due:'Срок не указан',
-    proposal:'Обсудить детали и согласовать следующий шаг.',art:'list',demo:false}));
- }catch{return []}
+
+const sample=[
+ {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
+  reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
+  detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
+ {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
+  reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
+  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
+ {kind:'health',title:'Пора передохнуть',category:'ЗАБОТА',body:'Две спокойные минуты для себя.',
+  reason:'Учебный пример заботы о себе, не основан на данных Apple Health или медицинских измерениях.',
+  detail:'Можно сделать короткую передышку. Это демонстрация будущей персональной заботы, а не медицинский совет.'}
+];
+function polymer(label,callback,kind='quiet'){
+ const b=create('button','lm-polymer lm-polymer--'+kind,label);
+ b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
+ return b;
 }
-function hide(){clearTimers();mode='idle';busy=false;queue=[];tiles.replaceChildren();surface.hidden=true;
- home.classList.remove('lm-focus');hint.textContent=''}
-function makeRow(item,cls){
- const row=element('div',cls);
- const art=element('span','sv-film-icon');art.append(icon(item.art));
- row.append(art,element('span','sv-film-title',item.title));return row;
+function explain(field,message,button){
+ const panel=field.querySelector('.lm-explanation');
+ if(!panel)return;
+ const collapse=!panel.hidden&&panel.textContent===message;
+ panel.textContent=message;panel.hidden=collapse;
+ field.classList.toggle('lm-has-reason',!collapse);
+ if(button)button.setAttribute('aria-expanded',String(!collapse));
 }
-function build(){
+function createSurface(primary,other=[],real=false){
  tiles.replaceChildren();
- if(!queue.length){
-  const finished=element('section','sv-decision');
-  finished.append(element('p','sv-eyebrow','СЭЙВИ · РЕШЕНИЯ'),
-   element('h3','sv-title',mode==='demo'?'Демонстрация завершена':'Дела разобраны'),
-   element('p','sv-subtitle',mode==='demo'?'Все действия были учебными.':'Ваши изменения сохранены.'));
-  if(mode==='demo'){const btn=element('button','sv-action sv-action-primary','Повторить');
-   btn.type='button';btn.addEventListener('click',()=>start(true));finished.append(btn)}
-  tiles.append(finished);return;
+ const field=create('div','lm-field');
+ field.dataset.lmMode=real?'real':'preview';
+ const scene=create('div','lm-scene');
+ const top=create('div','lm-field-top');
+ const label=create('span','lm-field-eyebrow',primary.category);
+ top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР'));
+ const main=create('section','lm-primary');
+ const hero=create('div','lm-hero');
+ const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
+ artwork.append(icon(primary.kind));
+ const copy=create('div','lm-primary-copy');
+ const headline=create('strong','lm-primary-title',primary.title);
+ const description=create('p','lm-primary-subtitle',primary.body);
+ copy.append(headline,description);
+ hero.append(artwork,copy);
+ const controls=create('div','lm-actions');
+ let shown=primary;
+ let morphLocked=false;
+ const open=polymer('Открыть',()=>{
+  if(real){$('navTasks')?.click();return}
+  explain(field,shown.detail,open);
+ },'main');
+ open.setAttribute('aria-label','Открыть: '+shown.title);
+ const laterButton=polymer('Позже',()=>closeEarly());
+ const why=polymer('Почему',()=>explain(field,shown.reason,why));
+ why.setAttribute('aria-expanded','false');
+ controls.append(open,laterButton,why);
+ main.append(hero,controls);
+ const secondary=create('div','lm-secondary');
+ function renderSecondary(){
+  secondary.replaceChildren();
+  if(real)return;
+  for(const item of [primary,...other].filter(value=>value!==shown)){
+   const row=create('button','lm-inline-item');
+   row.type='button';row.dataset.lmKind=item.kind;
+   row.setAttribute('aria-label','Показать: '+item.title);
+   const mark=create('span','lm-inline-art');
+   mark.append(icon(item.kind));
+   const words=create('span','lm-inline-copy');
+   words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
+   const arrow=create('span','lm-inline-arrow','↗');
+   arrow.setAttribute('aria-hidden','true');
+   row.append(mark,words,arrow);
+   row.addEventListener('click',()=>{
+    readingUntil=Date.now()+12000;
+    changeFeatured(item);
+   });
+   secondary.append(row);
+  }
  }
- const item=queue[0],card=element('section','sv-decision');
- card.setAttribute('aria-label',item.title);
- const eyebrow=element('p','sv-eyebrow',(item.demo?'УЧЕБНЫЕ ДАННЫЕ':'ВАШЕ ДЕЛО')+
-  ' · '+(done+1)+' / '+(queue.length+done));
- const head=element('div','sv-decision-head');
- const mark=element('span','sv-decision-art');mark.append(icon(item.art));
- const text=element('div','sv-decision-copy');text.append(element('h3','sv-title',item.title),
-  element('p','sv-subtitle',item.body));head.append(mark,text);
- const suggestion=element('p','sv-proposal',item.proposal);
- const actions=element('div','sv-actions');
- const detail=element('button','sv-action','Подробнее');
- const execute=element('button','sv-action sv-action-primary',item.demo?'Исполнить':'Завершить дело');
- const defer=element('button','sv-action','Позже');
- for(const button of [detail,execute,defer])button.type='button';
- detail.addEventListener('click',()=>{
-  const chat=window.SEYVEO_CONVERSATION;if(typeof chat?.open!=='function')return;
-  chat.open();const field=byId('question');if(!field||field.value.trim())return;
-  field.value=(item.demo?'Учебный пример. ':'')+'Сэйва, давай разберём «'+item.title+'». '+item.body+
-   ' Предложение: '+item.proposal+' Ничего не исполняй без подтверждения.';
-  field.dispatchEvent(new Event('input',{bubbles:true}));
- });
- execute.addEventListener('click',()=>advance('execute',1));
- defer.addEventListener('click',()=>advance('later',1));
- actions.append(detail,execute,defer);card.append(eyebrow,head,suggestion,actions);
- let touch=null;
- card.addEventListener('pointerdown',e=>{if(busy||e.button!==0)return;
-  touch={id:e.pointerId,x:e.clientX,y:e.clientY}});
- card.addEventListener('pointercancel',()=>{touch=null});
- card.addEventListener('pointerup',e=>{
-  if(!touch||touch.id!==e.pointerId)return;
-  const dx=e.clientX-touch.x,dy=e.clientY-touch.y;touch=null;
-  if(Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)*1.4)advance('later',Math.sign(dx));
- });
- tiles.append(card);
+ function changeFeatured(item){
+  if(real||item===shown||morphLocked||space.classList.contains('lm-condense'))return;
+  morphLocked=true;
+  scene.classList.add('lm-scene--changing');
+  later(()=>{
+   if(!tiles.contains(field)||mode==='idle')return;
+   shown=item;
+   field.dataset.lmSubject=item.kind;
+   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
+   artwork.replaceChildren(icon(item.kind));
+   label.textContent=item.category;
+   headline.textContent=item.title;
+   description.textContent=item.body;
+   open.setAttribute('aria-label','Открыть: '+item.title);
+   const reason=field.querySelector('.lm-explanation');
+   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
+   why.setAttribute('aria-expanded','false');
+   renderSecondary();
+   scene.classList.remove('lm-scene--changing');
+   later(()=>{morphLocked=false},720);
+  },reduced()?0:430);
+ }
+ field.dataset.lmSubject=primary.kind;
+ renderSecondary();
+ const explanation=create('p','lm-explanation');
+ explanation.id='seyveoSurfaceReason';
+ explanation.hidden=true;
+ why.setAttribute('aria-controls',explanation.id);
+ scene.append(top,main,secondary,explanation);
+ field.append(scene);
+ tiles.append(field);
+ return {field,changeFeatured};
 }
-function advance(action,direction){
- if(busy||!queue.length)return;busy=true;
- const card=tiles.querySelector('.sv-decision'),item=queue[0];
- card?.style.setProperty('--departure',direction<0?'-75vw':'75vw');
- card?.classList.add('sv-decision-out');
+let previewScene=null;
+function buildExamples(){
+ previewScene=createSurface(sample[0],sample.slice(1));
+}
+function shrink(){
+ if(mode==='idle')return;
+ space.classList.add('lm-condense');
+ const reason=tiles.querySelector('.lm-explanation');
+ if(reason)reason.hidden=true;
+ const field=tiles.querySelector('.lm-field');
+ if(field)field.classList.remove('lm-has-reason');
+ tip.textContent=mode==='task'?'СОХРАНЕНО В «ДЕЛАХ»':
+  'ПРИМЕР · ВАЖНОЕ СОХРАНЯЕТСЯ';
+}
+function disappear(){
+ if(mode==='idle')return;
+ if(mode==='advice'){
+  quiet.add(key);dynamic.classList.add('lm-real-out');
+  later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
+  return;
+ }
+ if(mode==='task')quiet.add(key);
+ space.classList.add('lm-disappear');
+ later(()=>{if(mode==='preview'||mode==='task')rest()},TIMING.close);
+}
+function closeEarly(){
+ if(mode==='idle')return;
+ cancel();
+ if(mode==='task'||mode==='advice')quiet.add(key);
+ space.classList.add('lm-condense','lm-disappear');
+ later(()=>rest(),TIMING.close);
+}
+function hold(callback,delay){
+ const check=()=>{
+  if(mode==='idle'||!available()){if(!available())return rest();return}
+  if(engaged()){later(check,1800);return}
+  callback();
+ };
+ later(check,delay);
+}
+function startPreview(){
+ if(!available()||editing())return false;
+ if(mode!=='idle')rest();
+ mode='preview';key='preview';
+ try{sessionStorage.setItem(SESSION,'1')}catch{}
+ dynamic.hidden=true;
+ buildExamples();
+ tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
+ space.hidden=false;space.classList.add('lm-preview');
+ focus(true);
+ later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
+ hold(()=>{
+  previewScene?.changeFeatured(sample[1]);
+  hold(()=>{
+   previewScene?.changeFeatured(sample[2]);
+   hold(()=>{
+    shrink();
+    hold(()=>disappear(),TIMING.quiet);
+   },TIMING.beat);
+  },TIMING.beat);
+ },TIMING.beat+TIMING.open);
+ if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
+ return true;
+}
+function dueTask(){
+ let tasks=[];
+ try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))tasks=data}catch{}
+ const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ return tasks.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
+  &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
+  .sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
+}
+function showTask(item){
+ const id='task:'+(item.id||item.title)+'|'+item.due;
+ if(quiet.has(id))return false;
+ mode='task';key=id;
+ dynamic.hidden=true;
+ const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
+ createSurface({
+  kind:'task',
+  title:item.title,
+  body:'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
+  category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
+  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
+  detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
+ },[],true);
+ tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
+ space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
+ focus(true);
+ later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
+ hold(()=>{
+  shrink();
+  hold(()=>disappear(),6000);
+ },12000);
+ return true;
+}
+function adviceIdentity(card){
+ if(!card)return '';
+ const title=card.querySelector('.event-copy strong')?.textContent||'';
+ const basis=card.querySelector('.card-tag')?.textContent||'';
+ return 'advice:'+(title+'|'+basis).trim().slice(0,300);
+}
+function showExistingAdvice(){
+ const card=dynamic.querySelector('[data-owner-advice]');
+ if(!card)return false;
+ // Bring existing permission-based recommendations into the same editorial
+ // symbol system. Remove their obsolete small icon instead of stacking art.
+ const heading=card.querySelector('.event-copy strong')?.textContent||'';
+ const kind=/почт|письм|e-mail|email/i.test(heading)?'mail':
+  /здоров|сердц|пульс/i.test(heading)?'health':'task';
+ const row=card.querySelector('.card-main');
+ if(row&&!row.querySelector('.lm-owner-art')){
+  const art=create('span','lm-owner-art');
+  art.setAttribute('aria-hidden','true');
+  art.append(icon(kind));
+  row.querySelector('.event-icon')?.remove();
+  row.prepend(art);
+ }
+ const id=adviceIdentity(card);
+ if(quiet.has(id))return false;
+ mode='advice';key=id;
+ space.hidden=true;
+ dynamic.hidden=false;
+ dynamic.classList.remove('lm-real-dim','lm-real-out');
+ focus(true);
+ hold(()=>{
+  dynamic.classList.add('lm-real-dim');
+  hold(()=>disappear(),6000);
+ },11000);
+ return true;
+}
+function refresh(){
+ if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
+ const pending=dynamic.querySelector('[data-owner-advice]');
+ const pendingKey=adviceIdentity(pending);
+ if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
+ if(mode==='task'){
+  if(!dynamic.hidden)dynamic.hidden=true;
+  return;
+ }
+ if(mode==='advice'){
+  if(key!==pendingKey){rest();return}
+  if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
+  return;
+ }
+ // Do not resize the sphere beneath a working mobile keyboard.
+ if(editing())return;
+ const item=dueTask();
+ if(item&&showTask(item))return;
+ if(pending&&showExistingAdvice())return;
+ if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
+ if(mode==='idle')focus(false);
+}
+const observer=new MutationObserver(scheduleRefresh);
+observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
+const viewObserver=new MutationObserver(()=>{
+ if(document.documentElement.classList.contains('seyveo-conversation')){
+  if(mode!=='idle')rest();
+ }else scheduleRefresh();
+});
+viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
+window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
+window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
+window.addEventListener('hashchange',()=>{
+ if(mode!=='idle')rest();
+ else focus(false);
+ // Sync after the main router updates Home visibility.
+ later(scheduleRefresh,160);
+});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden&&mode!=='idle')rest();
+ else if(!document.hidden)scheduleRefresh();
+});
+window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});
+/* Real business recommendations remain actionable. Explain in place without
+ * launching a second modal and without overwriting their original approval logic. */
+dynamic.addEventListener('click',event=>{
+ const button=event.target.closest?.('#inspect');
+ if(!button||!dynamic.querySelector('[data-owner-advice]'))return;
+ event.preventDefault();event.stopImmediatePropagation();
+ const card=dynamic.querySelector('[data-owner-advice]');
+ let reason=card.querySelector('.lm-real-reason');
+ if(!reason){
+  reason=create('p','lm-real-reason',
+   'Основание: '+(card.querySelector('.card-tag')?.textContent||
+   'сведения, которые вы внесли в приложение.')+
+   ' Это предложение, а не действие, выполненное без вашего согласия.');
+  reason.hidden=true;card.append(reason);
+ }
+ reason.hidden=!reason.hidden;
+ button.textContent=reason.hidden?'Почему':'Скрыть';
+},true);
+replay?.addEventListener('click',()=>{
+ if(replay.closest('dialog[open]'))replay.closest('dialog').close();
+ $('navHome')?.click();
+ later(()=>{startPreview()},260);
+});
+window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
+scheduleRefresh();
+// Developer preview is deliberately visible once per tab/session, NOT user data.
+// Run after the approved opening logo has had time to appear.
+let visited=false;
+try{visited=sessionStorage.getItem(SESSION)==='1'}catch{}
+if(!visited){
  later(()=>{
-  if(action==='execute'){
-   if(!item.demo){
-    try{const records=JSON.parse(localStorage.getItem(DATA_KEY)||'[]');
-     if(!Array.isArray(records))throw Error('Invalid records');
-     const found=records.find(t=>t.id===item.id);
-     if(!found)throw Error('Task missing');
-     found.done=true;found.doneAt=new Date().toISOString();
-     localStorage.setItem(DATA_KEY,JSON.stringify(records));
-     window.dispatchEvent(new CustomEvent('seyveo:tasks-changed'));
-    }catch{busy=false;build();return}
-   }
-   queue.shift();done++;
-  }else if(queue.length>1)queue.push(queue.shift());
-  build();const next=tiles.querySelector('.sv-decision');
-  next?.classList.add('sv-decision-in');
-  later(()=>{next?.classList.remove('sv-decision-in');busy=false},reduced()?0:370);
- },reduced()?0:340);
+  if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
+  startPreview();
+ },9400);
 }
-function intro(){
- if(reduced()||queue.length<2){build();return}
- // A single temporary, UNFRAMED list replaces the final decision while
- // entering. It is not stacked above another row/card or another screen.
- tiles.replaceChildren();const stage=element('div','sv-intro');
- const count=Math.min(queue.length,innerHeight<690?2:innerHeight<870?3:4);
- queue.slice(0,count).forEach((item,i)=>{
-  const row=makeRow(item,'sv-intro-row');
-  row.style.setProperty('--idx',String(i));
-  row.style.animationDelay=(i*210)+'ms';stage.append(row);
- });tiles.append(stage);
- later(()=>{stage.classList.add('sv-intro-gather')},1450);
- later(()=>{build();tiles.firstElementChild?.classList.add('sv-decision-in');
-  later(()=>tiles.firstElementChild?.classList.remove('sv-decision-in'),340)
- },reduced()?0:2250);
-}
-function start(isDemo=false){
- if(!homeVisible())return false;
- clearTimers();busy=false;done=0;mode=isDemo?'demo':'real';
- queue=isDemo?demo.map(x=>({...x})):readTasks();
- if(!queue.length){mode='idle';surface.hidden=true;trigger.hidden=false;return false}
- surface.hidden=false;trigger.hidden=true;
- home.classList.add('lm-focus');
- hint.textContent='';
- intro();return true;
-}
-function sync(){
- if(!homeVisible()){if(mode!=='idle')hide();return}
- if(mode!=='idle')return;
- const real=readTasks();
- if(real.length){start(false);return}
- trigger.hidden=false;
- if(initial){initial=false;later(()=>{if(mode==='idle'&&homeVisible())start(true)},1000)}
-}
-preview?.addEventListener('click',()=>{
- preview.closest('dialog[open]')?.close();byId('navHome')?.click();
- later(()=>start(true),260);
-});
-trigger?.addEventListener('click',()=>start(true));
-addEventListener('hashchange',()=>later(sync,120));
-addEventListener('pageshow',sync);
-addEventListener('seyveo:tasks-changed',()=>{
- if(mode==='real'){hide()}sync();
-});
-new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
-window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>start(true),state:()=>mode});
-sync();
 })();
