@@ -21,6 +21,7 @@ const future=read('assets/future-surfaces.css');
 const continuity=read('assets/living-space.css');
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
+const managementCinema=read('assets/management-glass-showcase.css');
 const music=read('assets/seyveo-music-dock.js');
 const wellness=read('assets/personal-wellness.css');
 const life=read('assets/calendar-spaces.css');
@@ -82,6 +83,14 @@ assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
 assert.equal((roadmap.match(/\['living_intent'/g)||[]).length,1,'One Living Ink roadmap entry');
 // Historical Oct 23 Quiet Cinema v3: original plasma geometry and cinematic stage.
+// Management Quiet Cinema is one connected surface, never a grid of glass cards.
+assert.match(managementCinema,/#seyveoCleanManageMenu\{/,'Management has one connected card');
+assert.match(managementCinema,/seyveo-manage-cinema-rise/,'Management sections reveal in sequence');
+assert.match(managementCinema,/\.manage-chevron\{\s*display:none!important/,'No decorative chevrons');
+assert.match(managementCinema,/prefers-reduced-motion:reduce/,'Motion follows device preference');
+assert.doesNotMatch(managementCinema,/backdrop-filter|filter:blur/,'No blur layers on Management');
+assert.match(html,/management-glass-showcase\.css\?v=4/,'Updated Management styling is loaded');
+
 assert.match(decisionJs,/Home Quiet Cinema v3/);
 assert.match(decisionJs,/stage=\$\('stage'\)/,'Cinema must resolve stage before guarding it');
 assert.match(decisionJs,/location\.hash==='#home'/,'Home route also enables the film');
