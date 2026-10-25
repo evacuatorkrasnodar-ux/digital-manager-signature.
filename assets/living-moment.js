@@ -309,10 +309,11 @@ function openTasks(){
    String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
 }
 function demoTasks(){
+ // The original recognizable trio: document, envelope, care.
  return [
-  {id:'demo-mail',title:'Ответить клиенту',due:'',demoDescription:'Сэйва покажет обращение клиента и подготовит ответ для согласования.'},
-  {id:'demo-document',title:'Проверить документ',due:'',demoDescription:'Сэйва выделит важные пункты договора и попросит подтвердить решение.'},
-  {id:'demo-call',title:'Позвонить по заказу',due:'',demoDescription:'Сэйва предложит контакт и передаст вызов в системный Телефон для подтверждения.'}
+  {id:'demo-document',title:'Проверить документ',due:'',demoDescription:'Есть договор, который нужно посмотреть. Сэйва покажет важные пункты и предложит решение.'},
+  {id:'demo-mail',title:'Почта · ответить клиенту',due:'',demoDescription:'Есть письмо, которому нужен ответ. Сэйва поможет подготовить черновик для согласования.'},
+  {id:'demo-health',title:'Пора передохнуть',due:'',demoDescription:'Две спокойные минуты для себя. Учебный пример заботы без доступа к показателям здоровья.'}
  ];
 }
 function tasksSignature(tasks){
@@ -349,7 +350,7 @@ function gatherKind(task,demo){
  if(demo){
   if(task.id==='demo-mail')return 'mail';
   if(task.id==='demo-document')return 'contract';
-  if(task.id==='demo-call')return 'phone';
+  if(task.id==='demo-health')return 'health';
  }
  const title=String(task.title||'').toLowerCase();
  if(/почт|письм|email|e-mail|ответить клиенту|сообщен/i.test(title))return 'mail';
@@ -404,7 +405,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  const results={
   'demo-mail':'Демо: подготовлен черновик ответа. Письмо никому не отправлялось.',
   'demo-document':'Демо: отмечены сроки, реквизиты и порядок оплаты. Ничего не подписано.',
-  'demo-call':'Демо: предложено уточнить контакт перед звонком. Звонок не совершался.'
+  'demo-health':'Демо: подготовлена спокойная двухминутная пауза. Это не медицинская рекомендация и не анализ давления.'
  };
  let completedResult=null,lastDeferred='';
  const grammar=n=>n+' '+(n%10===1&&n%100!==11?'дело':
