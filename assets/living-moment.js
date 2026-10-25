@@ -38,7 +38,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-next-mode','lm-collection-mode','lm-collection-cinematic');
+ space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-next-mode','lm-collection-mode','lm-collection-cinematic','lm-film-intro','lm-film-folding');
  space.hidden=true;tiles.replaceChildren();previewScene=null;
  tip.textContent='';
 }
@@ -284,18 +284,50 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview(){
+function startPreview(list=null,{demo=true}={}){
  if(!available()||editing())return false;
+ const tasks=list||demoTasks();
+ if(!tasks.length)return false;
  if(mode!=='idle'){cancel();resetSpace();mode='idle';key=''}
- demoResolved.clear();collectionPage=0;collectionOpen=false;
  previewHasPlayed=true;
- return showCollection(demoTasks(),{demo:true,animate:true});
+ if(!demo)seenRealWork=true;
+ if(demo)demoResolved.clear();
+ mode='preview';key=(demo?'demo:':'real:')+tasksSignature(tasks);
+ collectionDemo=demo;dynamic.hidden=true;
+ // The original Quiet Cinema: large document and two calm lower rows.
+ // Exactly these items become the final decision stack.
+ const entries=tasks.slice(0,3).map(task=>({
+  kind:gatherKind(task,demo),title:task.title,
+  category:demo?'ВАЖНОЕ':'ВАШИ ДЕЛА',
+  body:demo?task.demoDescription:
+   (deadlineLabel(task)==='Без даты'?'Сохранено в «Делах».':deadlineLabel(task)+'.')+' Готово к решению.',
+  reason:demo?'Учебный пример без доступа к личным данным.':'Это ваше сохранённое дело.',
+  detail:'Решение требует вашего подтверждения.'
+ }));
+ previewScene=createSurface(entries[0],entries.slice(1));
+ tip.textContent=demo?'QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА':'СЭЙВА · ВАШИ ДЕЛА';
+ space.hidden=false;space.classList.remove('lm-collection-mode','lm-collection-cinematic','lm-disappear');
+ space.classList.add('lm-preview','lm-film-intro');focus(true);
+ later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},120);
+ hold(()=>{
+  if(mode!=='preview')return;
+  space.classList.add('lm-film-folding');
+  later(()=>{
+   if(mode!=='preview')return;
+   cancel();resetSpace();mode='idle';key='';
+   lastIntroKey=(demo?'demo:':'real:')+tasksSignature(tasks);
+   collectionOpen=false;
+   showCollection(tasks,{demo,animate:false});
+  },950);
+ },reduced()?400:6000);
+ if(caption)caption.textContent='Появление снизу · единый Центр решений.';
+ return true;
 }
-
 /* All open tasks live in the existing Tasks store. This surface only reads
  * their metadata; writing status is delegated to Personal Tasks. */
 let collectionPage=0,collectionOpen=false;
 let collectionDemo=false,collectionAnimationSeen=false,previewHasPlayed=false;
+let demoDismissed=false,seenRealWork=false,lastIntroKey='';
 const demoResolved=new Set();
 // One cinematic opening per app runtime. The demo's explicit replay stays
 // available; do not suppress the opening across iPhone PWA relaunches.
@@ -309,11 +341,10 @@ function openTasks(){
    String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
 }
 function demoTasks(){
- // The original recognizable trio: document, envelope, care.
  return [
-  {id:'demo-document',title:'Проверить документ',due:'',demoDescription:'Есть договор, который нужно посмотреть. Сэйва покажет важные пункты и предложит решение.'},
-  {id:'demo-mail',title:'Почта · ответить клиенту',due:'',demoDescription:'Есть письмо, которому нужен ответ. Сэйва поможет подготовить черновик для согласования.'},
-  {id:'demo-health',title:'Пора передохнуть',due:'',demoDescription:'Две спокойные минуты для себя. Учебный пример заботы без доступа к показателям здоровья.'}
+  {id:'demo-document',title:'Проверить документ',due:'',demoDescription:'Есть договор, который нужно посмотреть.'},
+  {id:'demo-mail',title:'Почта',due:'',demoDescription:'Есть письмо, которому нужен ответ.'},
+  {id:'demo-health',title:'Пора передохнуть',due:'',demoDescription:'Две спокойные минуты для себя.'}
  ];
 }
 function tasksSignature(tasks){
@@ -407,7 +438,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   'demo-document':'Демо: отмечены сроки, реквизиты и порядок оплаты. Ничего не подписано.',
   'demo-health':'Демо: подготовлена спокойная двухминутная пауза. Это не медицинская рекомендация и не анализ давления.'
  };
- let completedResult=null,lastDeferred='';
+ let completedResult=null,lastDeferred='',closing=false;
  const grammar=n=>n+' '+(n%10===1&&n%100!==11?'дело':
   [2,3,4].includes(n%10)&&!(n%100>=12&&n%100<=14)?'дела':'дел');
  const outstanding=()=>demo?queue.filter(t=>!demoResolved.has(t.id)):queue;
@@ -419,13 +450,17 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   body.hidden=!collectionOpen;
   view.setAttribute('aria-expanded',String(collectionOpen));
   if(!task){
-   wrapper.classList.add('lm-decision-complete');
-   captionText.textContent=demo?'Демонстрация завершена':'На сегодня всё';
-   count.textContent='✓';
-   total.textContent=demo?'Все примеры просмотрены':'Нет ожидающих дел';
-   front.hidden=true;body.hidden=true;collectionOpen=false;
-   view.hidden=true;view.disabled=true;view.textContent='Ознакомиться';
-   execute.disabled=!demo;execute.textContent=demo?'Повторить показ':'Готово';
+   // Once the final decision is handled, everything leaves the Home.
+   if(!closing){
+    closing=true;
+    if(demo)demoDismissed=true;
+    else seenRealWork=true;
+    space.classList.add('lm-disappear');
+    later(()=>{
+     if(mode!=='collection'||!wrapper.isConnected)return;
+     resetSpace();mode='idle';key='';focus(false);
+    },620);
+   }
    return;
   }
   wrapper.classList.remove('lm-decision-complete');
@@ -709,11 +744,18 @@ function refresh(){
   return;
  }
  if(editing())return;
- if(tasks.length&&showCollection(tasks,{animate:!collectionAnimationSeen}))return;
+ if(tasks.length){
+  seenRealWork=true;
+  const signature='real:'+tasksSignature(tasks);
+  if(lastIntroKey!==signature&&startPreview(tasks,{demo:false}))return;
+  if(showCollection(tasks,{demo:false,animate:false}))return;
+ }
  if(pending&&showExistingAdvice())return;
- if(mode==='idle'&&!pending){
-  previewHasPlayed=true;
-  showCollection(demoTasks(),{demo:true,animate:!collectionAnimationSeen});
+ if(mode==='idle'&&!pending&&!seenRealWork&&!demoDismissed){
+  const tasks=demoTasks();
+  const signature='demo:'+tasksSignature(tasks);
+  if(lastIntroKey!==signature)startPreview(tasks,{demo:true});
+  else showCollection(tasks,{demo:true,animate:false});
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
@@ -771,13 +813,13 @@ replay?.addEventListener('click',()=>{
  $('navHome')?.click();
  later(()=>{
   cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;
-  startPreview();
+  demoDismissed=false;lastIntroKey='';startPreview();
  },260);
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
  preview:()=>{
   cancel();resetSpace();mode='idle';key='';collectionPage=0;collectionOpen=false;
-  demoResolved.clear();return startPreview()
+  demoResolved.clear();demoDismissed=false;lastIntroKey='';return startPreview()
  },
  state:()=>mode
 });
