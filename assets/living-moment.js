@@ -170,7 +170,7 @@ function createSurface(primary,other=[],real=false){
  tiles.replaceChildren();
  let queue=[primary,...other],shown=primary,completed=0,postponed=0;
  let moving=false,swipeStart=null,tapBlockUntil=0;
- let introNode=null,introStarted=false;
+ let introStarted=false;
  const field=create('div','lm-field');
  field.dataset.lmMode=real?'real':'preview';
  const scene=create('div','lm-scene');
@@ -204,7 +204,7 @@ function createSurface(primary,other=[],real=false){
  controls.append(open,execute,laterButton);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
- function refreshView(){
+ function refreshView(showOpening=false){
   if(!queue.length)return;
   shown=queue[0];
   field.dataset.lmSubject=shown.kind;
@@ -222,7 +222,10 @@ function createSurface(primary,other=[],real=false){
   execute.textContent=real?'Завершить дело':'Исполнить';
   more.hidden=true;more.textContent='';
   secondary.replaceChildren();
-  const limit=window.innerHeight<=860?1:2;
+  // Original illustrated rows are ALSO the opening cinematic subjects.
+  // Never create or overlay a second set of glass cards.
+  const limit=showOpening?Math.min(queue.length-1,window.innerHeight<=710?2:3):
+    window.innerHeight<=860?1:2;
   const upcoming=queue.slice(1);
   for(const item of upcoming.slice(0,limit)){
    const row=create('button','lm-inline-item');
@@ -372,30 +375,22 @@ function createSurface(primary,other=[],real=false){
  function playIntro(){
   if(introStarted||!queue.length||!tiles.contains(field))return;
   introStarted=true;
-  if(reduced())return;
-  field.classList.add('lm-film-running');
-  introNode=create('div','lm-film');
-  introNode.setAttribute('aria-hidden','true');
-  const visibleFilms=window.innerHeight<=650?2:window.innerHeight<=800?3:4;
-  queue.slice(0,visibleFilms).forEach((item,i)=>{
-   const card=create('div','lm-film-card');
-   // Precomputed values use only CSS properties supported by older iOS
-   // Safari (iPhone X); CSS calc(number * length) is not reliable there.
-   card.style.setProperty('--film-bottom',(6+i*47)+'px');
-   card.style.setProperty('--film-compact-bottom',(3+i*37)+'px');
-   card.style.setProperty('--film-shift',(i*47-24)+'px');
-   card.style.setProperty('--film-rise-delay',(120+i*190)+'ms');
-   const mark=create('span','lm-film-art');mark.append(icon(item.kind));
-   card.append(mark,create('span','lm-film-title',item.title));
-   introNode.append(card);
-  });
-  field.append(introNode);
+  if(reduced()||queue.length<2)return;
+  // Animate the ORIGINAL illustrated task rows, in normal document flow.
+  // Nothing is superimposed over the decision card.
+  refreshView(true);
+  field.classList.add('lm-cinema-enter');
   later(()=>{
    if(!tiles.contains(field))return;
-   field.classList.remove('lm-film-running');
-   introNode.remove();introNode=null;
-   notify(queue.length+' дел · свайпните в сторону, чтобы отложить');
-  },reduced()?0:3100);
+   field.classList.remove('lm-cinema-enter');
+   field.classList.add('lm-cinema-gather');
+   later(()=>{
+    if(!tiles.contains(field))return;
+    field.classList.remove('lm-cinema-gather');
+    refreshView();
+    notify(queue.length+' дел · свайпните в сторону, чтобы отложить');
+   },reduced()?0:700);
+  },reduced()?0:1950);
  }
  field.dataset.lmSubject=primary.kind;
  refreshView();
