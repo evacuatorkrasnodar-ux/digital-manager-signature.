@@ -85,7 +85,11 @@ assert.match(decisionCss,/Black Velvet — Cinematic Presence/);
 assert.match(decisionCss,/#homePage #orbCluster/);
 assert.doesNotMatch(decisionJs,/lm-film-card|sv-decision|clean cinematic director/);
 assert.doesNotMatch(decisionCss,/\.lm-film-card|\.sv-decision/);
-assert.match(html,/living-moment\.css\?v=34/);
+assert.match(decisionCss,/\.lm-reveal \.lm-inline-item:nth-child\(2\)/,'Second flat row rises after the first');
+assert.match(decisionCss,/\.lm-gather \.lm-secondary/,'Rising rows gather on the same plane');
+assert.match(decisionJs,/function gatherPreview/,'Three examples gather into one scene');
+assert.doesNotMatch(decisionJs,/sessionStorage\.getItem\(SESSION\)/,'Same-tab reload shows the demo');
+assert.match(html,/living-moment\.css\?v=35/);
 assert.match(html,/living-moment\.js\?v=\d+/);
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
