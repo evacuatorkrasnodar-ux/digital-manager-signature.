@@ -53,8 +53,7 @@
  gap:5px;padding:7px 0 0;min-width:0;
 }
 #notesDialog .note-more-options button{min-width:0;padding:7px 3px;
- border:1px solid var(--soft-line);
- background:var(--card);color:var(--text);
+ border:0;background:transparent;box-shadow:none;color:var(--text);
  font:inherit;line-height:1.2;cursor:pointer;
 }
 #notesDialog .note-more-options button.note-delete{color:var(--secondary)}
@@ -187,14 +186,14 @@
  background:transparent;color:var(--secondary);
 }
 #notesDialog .note-item-actions>.note-more-button[aria-expanded=true]{
- background:var(--card2);border-color:transparent;
+ background:transparent;border-color:transparent;color:var(--text);
 }
 #notesDialog .note-more-options:not([hidden]){
  grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
  padding:8px 0 1px;
 }
 #notesDialog .note-more-options button{
- min-height:44px;font-size:11.5px;border-radius:12px;
+ min-height:44px;font-size:11.5px;border-radius:0;
 }
 #notesDialog .note-paper-preview{
  width:auto;max-width:110px;max-height:85px;margin:6px 0 0;
