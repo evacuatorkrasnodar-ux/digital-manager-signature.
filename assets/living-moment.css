@@ -804,22 +804,14 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment .lm-deck:not(.lm-deck-intro) .lm-deck-card:not(.lm-deck-card--leaving){
   animation:lm-deck-page-arrive 630ms cubic-bezier(.19,.82,.21,1) both;
  }
- #homePage #seyveoLivingMoment .lm-deck-peek{
-  animation:lm-deck-peek-arrive 690ms cubic-bezier(.19,.82,.21,1) both;
- }
  @keyframes lm-deck-page-arrive{
   0%{opacity:0;transform:translate3d(0,30px,0) scale(.982)}
   100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
  }
- @keyframes lm-deck-peek-arrive{
-  0%{opacity:0;transform:translate3d(0,22px,0)}
-  100%{opacity:1;transform:translate3d(0,0,0)}
- }
 }
 @media(prefers-reduced-motion:reduce){
  #homePage #seyveoLivingMoment .lm-deck-cinema{display:none!important}
- #homePage #seyveoLivingMoment .lm-deck-cinema-card,
- #homePage #seyveoLivingMoment .lm-deck-peek{
+ #homePage #seyveoLivingMoment .lm-deck-cinema-card{
   animation:none!important;transition:none!important;
  }
 }
