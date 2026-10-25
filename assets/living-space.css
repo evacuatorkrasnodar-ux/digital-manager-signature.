@@ -143,11 +143,11 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:active{
    No infinite loops, expensive filters, or permanent will-change layers. */
 @media(prefers-reduced-motion:no-preference){
   @keyframes sv-living-rise{
-    from{opacity:0;transform:translate3d(0,15px,0)}
+    from{opacity:0;transform:translate3d(0,8px,0)}
     to{opacity:1;transform:translate3d(0,0,0)}
   }
   @keyframes sv-living-line{
-    from{opacity:0;transform:translate3d(0,8px,0)}
+    from{opacity:0;transform:translate3d(0,5px,0)}
     to{opacity:1;transform:translate3d(0,0,0)}
   }
   #managePage.sv-cascade .manage-heading,
@@ -155,15 +155,15 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:active{
   #picturePage.sv-cascade > .picture-head,
   #calendarPage.sv-cascade > .calendar-header,
   #lifePage.sv-cascade > .life-heading{
-    animation:sv-living-rise 760ms cubic-bezier(.22,1,.36,1) both;
+    animation:sv-living-rise 310ms cubic-bezier(.22,1,.36,1) both;
   }
   #managePage.sv-cascade #seyveoCleanManageMenu .manage-group{
-    animation:sv-living-rise 840ms cubic-bezier(.22,1,.36,1) both;
-    animation-delay:calc(110ms + var(--sv-group-index, 0) * 100ms);
+    animation:sv-living-rise 320ms cubic-bezier(.22,1,.36,1) both;
+    animation-delay:calc(35ms + min(var(--sv-group-index, 0), 5) * 22ms);
   }
   #managePage.sv-cascade #seyveoCleanManageMenu .seyveo-clean-link{
-    animation:sv-living-line 700ms cubic-bezier(.22,1,.36,1) both;
-    animation-delay:calc(180ms + var(--sv-row-index, 0) * 55ms);
+    animation:sv-living-line 290ms cubic-bezier(.22,1,.36,1) both;
+    animation-delay:calc(50ms + min(var(--sv-row-index, 0), 7) * 14ms);
   }
   #managePage.sv-cascade #seyveoCleanDetail,
   #managePage.sv-cascade #manageThemeScreen,
@@ -171,8 +171,8 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row:active{
   #picturePage.sv-cascade > :not(.picture-head),
   #calendarPage.sv-cascade > :not(.calendar-header),
   #lifePage.sv-cascade > :not(.life-heading){
-    animation:sv-living-rise 820ms cubic-bezier(.22,1,.36,1) both;
-    animation-delay:160ms;
+    animation:sv-living-rise 330ms cubic-bezier(.22,1,.36,1) both;
+    animation-delay:35ms;
   }
 }
 @media(max-height:760px),(max-width:350px){
