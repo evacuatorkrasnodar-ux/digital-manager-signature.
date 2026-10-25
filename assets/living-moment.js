@@ -368,7 +368,7 @@ function showLedger(items,{demo=false}={}){
   section.classList.add('lm-deck-intro');
   items.slice(0,3).forEach((item,i)=>{
    const miniature=create('div','lm-deck-cinema-card lm-deck-cinema-card--'+i);
-   miniature.style.setProperty('--lm-card-delay',i*710+'ms');
+   miniature.style.setProperty('--lm-card-delay',i*860+'ms');
    const mark=create('span','lm-deck-cinema-art');
    mark.append(icon(item.kind||artisticKind(item)));
    const copy=create('span','lm-deck-cinema-copy');
@@ -378,11 +378,11 @@ function showLedger(items,{demo=false}={}){
   });
   later(()=>{if(mode==='ledger'&&tiles.contains(section)){
    section.classList.add('lm-deck-intro--fold');
-  }},2700);
+  }},3100);
   later(()=>{if(mode==='ledger'&&tiles.contains(section)){
    section.classList.remove('lm-deck-intro','lm-deck-intro--fold');
    cinema.replaceChildren();
-  }},3420);
+  }},3850);
  }
  let queue=items.slice(),activeId=queue[0]?.id,closing=false,swiping=false;
  function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
