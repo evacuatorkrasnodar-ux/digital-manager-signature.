@@ -17,6 +17,9 @@ for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline 
 const dock=read('assets/floating-navigation.css');
 const composer=read('assets/composer-intent.css');
 const chatAppearance=read('assets/conversation-refined.css');
+const historyStyles=read('assets/dialog-velvet.css');
+const notebookStyles=read('assets/notebook-smart.css');
+const taskStyles=read('assets/personal-tasks.css');
 const chatLogic=read('assets/living-conversation.js');
 const home=read('assets/home-velvet.css');
 const future=read('assets/future-surfaces.css');
@@ -67,6 +70,16 @@ assert.match(chatAppearance,/html\.seyveo-conversation #ask\.prompt:not\(\.expan
 assert.match(chatLogic,/const bottomOffset=Math\.max\(8,Math\.min\(96/,'Composer reserves measured safe area');
 assert.doesNotMatch(chatLogic,/composerHeight\+30/,'No arbitrary 30px blank gutter');
 assert.match(chatLogic,/function displayChatText\(value\)/,'Long displayed messages are compact');
+assert.match(historyStyles,/#assistantChatHistoryDialog\.assistant-chat-history\[open\]\{[\s\S]*?height:auto;/,'History follows its actual content height');
+assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-items\{[\s\S]*?flex:0 1 auto;/,'History list does not force an empty viewport');
+assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-summary::after\{content:none!important/,'History has no decorative arrows');
+assert.match(notebookStyles,/height:fit-content!important/,'Notebook fits real notes');
+assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
+assert.match(taskStyles,/#personalTaskDialog\.personal-task-dialog\[open\]/,'Task sheet keeps a quiet outline');
+assert.match(html,/dialog-velvet\.css\?v=7/,'History CSS refreshed');
+assert.match(html,/notebook-smart\.css\?v=22/,'Notebook CSS refreshed');
+assert.match(html,/personal-tasks\.css\?v=19/,'Task CSS refreshed');
+
 assert.match(chatLogic,/body\.textContent=displayChatText\(value\)/,'Chat renders compact spacing');
 assert.match(chatLogic,/const ownText=String\(value\|\|''\)/,'Clipboard/edit preserve the original user text');
 assert.match(html,/conversation-refined\.css\?v=19/,'Refined chat CSS is deployed');
