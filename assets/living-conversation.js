@@ -323,6 +323,11 @@ function makeFeedbackActions(turn){
  }
  refresh();return [useful,notUseful];
 }
+// Display only: shorten excessive blank lines without touching saved messages.
+function displayChatText(value){
+ return String(value??'').replace(/\r\n?/g,'\n')
+  .replace(/(?:[ \t]*\n){3,}/g,'\n\n').trim();
+}
 function renderTurns(turns){
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
@@ -336,7 +341,7 @@ function renderTurns(turns){
      label.textContent=who==='you'?'Вы':'Сэйви';
      const body=document.createElement('div');
      body.className='seyveo-conversation-body';
-     body.textContent=String(value||'');
+     body.textContent=displayChatText(value);
      item.append(label,body);
      if(who==='you'){
        // The message bubble and its quiet actions are separate siblings:
@@ -394,10 +399,14 @@ function syncChatGeometry(){
  const top=Math.max(0,Math.round(viewport?.offsetTop||0));
  root.style.setProperty('--sayvi-chat-height',height+'px');
  root.style.setProperty('--sayvi-chat-top',top+'px');
- // A ResizeObserver measures the same native textarea/form that already owns
- // input and drafts. The transcript shortens as the composer grows upwards.
- const composerHeight=Math.ceil(form.getBoundingClientRect().height);
- root.style.setProperty('--sayvi-composer-space',(composerHeight+30)+'px');
+ // Measure the actual native writer and its offset above the safe-area.
+ // Do not add a second arbitrary 30px gutter below the transcript.
+ const rect=form.getBoundingClientRect();
+ const composerHeight=Math.ceil(rect.height);
+ const visibleBottom=top+height;
+ const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
+ root.style.setProperty('--sayvi-composer-space',
+  (composerHeight+bottomOffset+6)+'px');
 }
 function queueChatGeometry(){
  if(chatFrame)return;
