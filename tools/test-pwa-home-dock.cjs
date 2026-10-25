@@ -10,16 +10,18 @@ const css=fs.readFileSync(path.join(rootDir,'assets/floating-navigation.css'),'u
 const source=fs.readFileSync(path.join(rootDir,'assets/future-presence.js'),'utf8');
 const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 
-// The dock does not have a different geometry for Home or Management.
-assert.match(css,/--seyveo-dock-bottom:calc\(8px \+ env\(safe-area-inset-bottom,0px\)\)/);
+// The one fixed dock and one shared scroll container keep iOS geometry stable.
+assert.match(css,/--seyveo-dock-bottom:max\(7px,calc\(env\(safe-area-inset-bottom,0px\) - 20px\)\)/);
 assert.match(css,/\.dock\{\s*position:fixed!important;\s*z-index:30!important;/);
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
-assert.match(css,/--seyveo-dock-height:56px/,'Shared dock compact height');
-assert.ok(css.includes('--seyveo-dock-bottom:max(18px,calc(env(safe-area-inset-bottom,0px) - 12px))'),'All installed PWA screens share the same unclipped low dock offset');
-assert.doesNotMatch(css,/--seyveo-dock-bottom:[^;]*safe-area-inset-top/,'Bottom of the viewport never depends on top notch inset');
-const dockOffset=bottomSafeArea=>Math.max(18,bottomSafeArea-12);
-assert.equal(dockOffset(34),22,'iPhone bottom 34px inset lowers dock while preserving clearance');
-assert.equal(dockOffset(0),18,'Even without inset, do not clip the rounded dock');
+assert.match(css,/--seyveo-dock-height:64px/,'Current shared dock height');
+assert.doesNotMatch(css,/--seyveo-dock-bottom:[^;]*safe-area-inset-top/);
+const dockOffset=bottomSafeArea=>Math.max(7,bottomSafeArea-20);
+assert.equal(dockOffset(34),14,'Current iPhone bottom compensation');
+assert.equal(dockOffset(0),7,'Never position dock below viewport');
+assert.ok(!css.includes('data-seyveo-view="home"'),'No Home-only dock offset');
+assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/);
+
 assert.match(css,/html\.seyveo-standalone:not\(\.seyveo-conversation\)\{/,'Standalone offset scoped to all app workspaces');
 assert.ok(!css.includes('data-seyveo-view="home"'),'No page-by-page dock patches');
 assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/,'No per-page dock offsets');
