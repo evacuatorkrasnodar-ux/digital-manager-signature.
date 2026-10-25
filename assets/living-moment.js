@@ -407,10 +407,12 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   // The gesture-free choreography ends in ONE persistent decision stack.
   // Keeping final state when the stage is removed also unlocks the summary.
   stage.addEventListener('animationend',event=>{
-   if(event.target!==stage)return;
+   // Child SVG drawing events bubble up; only the stage's own final
+   // animation finishes the scene and unlocks the persistent summary.
+   if(event.target!==stage||event.animationName!=='sv-gather-stage')return;
    stage.remove();
    space.classList.remove('lm-collection-cinematic');
-  },{once:true});
+  });
  }
  const summary=create('summary','lm-task-summary');
  const count=create('span','lm-task-count',String(tasks.length));
