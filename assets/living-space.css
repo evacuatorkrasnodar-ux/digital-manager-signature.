@@ -569,21 +569,23 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 /* Living Velvet v2 · final compositional system.
    Shared rhythm + muted dimensionality, without photo backgrounds, GPU filters,
    extra controls, changes to local data or duplicated component styling. */
-#homePage{
- /* A deliberate three-plane neutral light: sphere / text / actions.
-    Static backgrounds, not expensive blur or endlessly animated overlays. */
+/* Paint the atmosphere on the FULL viewport, rather than the narrow
+   max-width Home main: no rectangular gray patch or unfinished side edges. */
+#homePage{background:none;}
+body:has(#homePage:not([hidden])){
  background:
-   radial-gradient(ellipse 92% 310px at 50% 118px,
-     rgba(235,239,246,.112),rgba(210,217,230,.050) 51%,transparent 88%),
-   linear-gradient(to bottom,
-     rgba(90,96,106,.060),transparent 45%);
+   radial-gradient(ellipse 110vw 530px at 50% 260px,
+     rgba(220,225,236,.115),rgba(158,167,181,.038) 58%,transparent 100%),
+   linear-gradient(to bottom,rgba(61,65,73,.065),transparent 68%),
+   var(--bg);
  background-repeat:no-repeat;
 }
-:root[data-theme=light] #homePage{
+:root[data-theme=light] body:has(#homePage:not([hidden])){
  background:
-   radial-gradient(ellipse 90% 310px at 50% 118px,
-     rgba(131,143,161,.15),rgba(165,175,192,.044) 60%,transparent 91%),
-   linear-gradient(to bottom,rgba(255,255,255,.23),transparent 51%);
+   radial-gradient(ellipse 105vw 530px at 50% 260px,
+     rgba(130,146,169,.13),rgba(186,197,214,.029) 60%,transparent 100%),
+   linear-gradient(to bottom,rgba(255,255,255,.24),transparent 68%),
+   var(--bg);
  background-repeat:no-repeat;
 }
 /* Put meaningful text, not decoration, in the visual foreground. */
