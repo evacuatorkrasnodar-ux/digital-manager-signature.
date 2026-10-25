@@ -3,7 +3,7 @@
  * Stable safe-area, native scroll, original voice and music controls. */
 :root{
  --seyveo-nav-ink:#f6f8fc;
- --seyveo-dock-height:64px;
+ --seyveo-dock-height:58px;
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
@@ -21,13 +21,13 @@
  align-items:center!important;
  justify-items:stretch!important;
  gap:2px!important;
- width:min(440px,calc(100% - 14px))!important;
+ width:min(430px,calc(100% - 14px))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
- margin:0!important;padding:5px 7px!important;
- border-radius:23px!important;
- border:1px solid rgba(235,238,244,.23)!important;
+ margin:0!important;padding:4px 6px!important;
+ border-radius:21px!important;
+ border:1px solid rgba(235,238,244,.21)!important;
  background:
-  linear-gradient(158deg,rgba(47,49,56,.62),rgba(22,24,29,.66))!important;
+  linear-gradient(158deg,rgba(47,49,56,.48),rgba(22,24,29,.55))!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
@@ -40,12 +40,12 @@
  transform:none!important;
  box-sizing:border-box;
  min-width:0!important;width:100%!important;
- height:52px!important;min-height:52px!important;
+ height:48px!important;min-height:48px!important;
  margin:0!important;padding:2px 1px!important;
  display:flex!important;flex-direction:column!important;
  justify-content:center!important;align-items:center!important;
  gap:3px!important;
- border:0!important;border-radius:15px!important;
+ border:1px solid transparent!important;border-radius:13px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
  letter-spacing:-.025em!important;color:#edf0f6!important;
@@ -58,11 +58,15 @@
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
- background:rgba(241,242,245,.06)!important;
- font-weight:535!important;
+ border-color:rgba(236,239,245,.39)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ font-weight:515!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
- background:rgba(32,45,64,.075)!important;
+ border-color:rgba(51,67,88,.31)!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -79,7 +83,7 @@
  align-items:center!important;justify-content:center!important;
  gap:0!important;
  box-sizing:border-box;
- width:100%!important;height:54px!important;min-width:0!important;min-height:54px!important;
+ width:100%!important;height:50px!important;min-width:0!important;min-height:50px!important;
  margin:0!important;padding:1px!important;
  border:0!important;border-radius:18px!important;
  background:radial-gradient(circle,rgba(228,237,250,.095) 0,rgba(228,237,250,.055) 22px,transparent 23px)!important;
@@ -133,10 +137,10 @@
 @media(prefers-reduced-motion:reduce){
  .dock>.assistant-button.listening .voice-bars{animation:none!important}
 }
-/* SEYVEO Signature Dock: a 64px, five-way navigation dock.
- * The central assistant's voice glyph is recognizable without repeating her
- * name below it. Four destination names remain readable and touch targets
- * stay at least 54px tall. No changes to gestures or route handlers.
+/* SEYVEO Signature Dock: a 58px five-way navigation surface.
+ * The central ceramic voice control remains 50px; four side destinations
+ * use 48px touch targets. Their selected state is a quiet rim, not a spot.
+ * Original voice gestures and route handlers are unchanged.
  */
 /* The old Home Ask strip was a duplicated entry surface. Chat alone
    owns that writer, while the separate Notes editor remains available.
@@ -148,7 +152,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
  display:none!important;
 }
 @media(max-width:355px){
- .dock{width:calc(100% - 8px)!important;padding:5px 4px!important;gap:1px!important}
+ .dock{width:calc(100% - 8px)!important;padding:4px 4px!important;gap:1px!important}
  .dock>.nav-item{font-size:10.4px!important;letter-spacing:-.038em!important}
  .dock>.nav-item svg{width:22px!important;height:22px!important}
 }
@@ -195,8 +199,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
- border-color:rgba(54,68,89,.23)!important;
- background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(230,235,243,.65))!important;
+ border-color:rgba(54,68,89,.20)!important;
+ background:linear-gradient(160deg,rgba(255,255,255,.52),rgba(230,235,243,.56))!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.45)!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
