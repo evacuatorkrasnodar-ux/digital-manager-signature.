@@ -38,7 +38,7 @@ function focus(on){
  if(home.classList.contains('lm-focus')!==on)home.classList.toggle('lm-focus',on);
 }
 function resetSpace(){
- space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-next-mode');
+ space.classList.remove('lm-reveal','lm-condense','lm-disappear','lm-preview','lm-real','lm-next-mode','lm-collection-mode','lm-collection-cinematic');
  space.hidden=true;tiles.replaceChildren();previewScene=null;
  tip.textContent='';
 }
@@ -84,6 +84,10 @@ const glyph=Object.freeze({
   '<rect x="16" y="14" width="64" height="69" rx="11"/>',
   '<path d="M32 31h33M32 44h24M32 57h12"/>',
   '<path d="m49 67 9 8 15-18" class="lm-glyph-accent"/>'
+ ].join(''),
+ phone: [
+  '<path d="M29 17c2-3 6-4 9-2l12 11c3 3 3 6 1 9l-5 7c5 9 11 15 20 19l6-5c3-2 7-2 9 1l9 12c2 3 1 7-2 10-7 6-14 8-23 4C41 74 21 54 13 32c-3-7 0-12 5-16 3-2 7-2 11 1Z"/>',
+  '<path d="M58 15c10 2 18 10 20 20M60 26c5 1 7 4 8 8" class="lm-glyph-accent"/>'
  ].join('')
 });
 function icon(kind){
@@ -358,6 +362,19 @@ function completeTask(task,feedback){
  window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
  if(!detail.result?.ok&&feedback)feedback.textContent=detail.result?.message||'Не удалось завершить дело.';
 }
+function gatherKind(task,demo){
+ if(demo){
+  if(task.id==='demo-mail')return 'mail';
+  if(task.id==='demo-document')return 'contract';
+  if(task.id==='demo-call')return 'phone';
+ }
+ const title=String(task.title||'').toLowerCase();
+ if(/почт|письм|email|e-mail|ответить клиенту|сообщен/i.test(title))return 'mail';
+ if(/документ|договор|сч[её]т|акт|подпис|накладн/i.test(title))return 'contract';
+ if(/позвон|звонок|набрат[ьи]|перезвон/i.test(title))return 'phone';
+ if(/здоров|врач|давлен|пульс|аптек/i.test(title))return 'health';
+ return 'task';
+}
 function showCollection(tasks,{demo=false,animate=false}={}){
  if(!tasks.length)return false;
  collectionDemo=demo;
@@ -374,19 +391,26 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  if(demo)details.dataset.demo='true';
  // The scene uses real titles or clearly labelled demo titles, never fake activity.
  const runCinematic=animate&&!reduced();
+ space.classList.toggle('lm-collection-cinematic',runCinematic);
  if(runCinematic){
   const stage=create('div','lm-gather-stage');
   stage.setAttribute('aria-hidden','true');
   tasks.slice(0,3).forEach((task,index)=>{
-   const card=create('div','lm-gather-card');
-   card.style.setProperty('--gather-index',String(index));
-   card.append(create('span','lm-gather-kicker','СЭЙВА · '+(demo?'ДЕМО':'ДЕЛО')),
-    create('strong','lm-gather-title',task.title));
-   stage.append(card);
+   // The symbol itself is the scene: no glass card, frames, or tiles.
+   const symbol=create('div','lm-gather-symbol');
+   symbol.style.setProperty('--gather-index',String(index));
+   symbol.append(icon(gatherKind(task,demo)),
+    create('span','lm-gather-title',task.title));
+   stage.append(symbol);
   });
   tiles.append(stage);
-  // Remove decorative animation layer after it has joined the stable stack.
-  stage.addEventListener('animationend',event=>{if(event.target===stage)stage.remove()},{once:true});
+  // The gesture-free choreography ends in ONE persistent decision stack.
+  // Keeping final state when the stage is removed also unlocks the summary.
+  stage.addEventListener('animationend',event=>{
+   if(event.target!==stage)return;
+   stage.remove();
+   space.classList.remove('lm-collection-cinematic');
+  },{once:true});
  }
  const summary=create('summary','lm-task-summary');
  const count=create('span','lm-task-count',String(tasks.length));
