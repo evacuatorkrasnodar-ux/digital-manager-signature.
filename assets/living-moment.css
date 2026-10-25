@@ -552,7 +552,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
    No new glass, capsules, shadows, transforms or cards. */
 #homePage #seyveoLivingMoment .lm-actions{column-gap:22px}
 
-/* SEYVEO · Rising Illustrated Cinema and Decisions v4.
+/* SEYVEO · Compact Illustrated Ledger v5.
    Informative real task cards, no raised glass, overlays, emoji or heavy effects.
    Stable active footprint prevents the page and dock appearing to bounce. */
 #homePage.lm-focus,
@@ -582,17 +582,17 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #homePage #seyveoLivingMoment .lm-deck-active{
  position:relative;z-index:2;
- min-height:clamp(288px,37vh,328px);
+ min-height:0;
 }
 #homePage #seyveoLivingMoment .lm-deck-card{
  box-sizing:border-box;position:relative;isolation:isolate;
  display:flex;flex-direction:column;
- min-height:clamp(288px,37vh,328px);
- padding:16px 18px 4px;min-width:0;
+ min-height:0;
+ padding:14px 17px 7px;min-width:0;
  border:1px solid rgba(226,230,238,.19);
  border-radius:21px 23px 18px 22px;
- background:linear-gradient(150deg,rgba(247,250,255,.022),rgba(245,248,254,.004) 70%);
- box-shadow:0 8px 24px rgba(0,0,0,.045);color:var(--text);
+ background:transparent;
+ box-shadow:none;color:var(--text);
  touch-action:pan-y;-webkit-user-select:none;user-select:none;
  transition:transform 410ms cubic-bezier(.19,.83,.23,1),opacity 390ms ease;
 }
@@ -632,8 +632,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #homePage #seyveoLivingMoment .lm-deck-context{
  display:grid;grid-template-columns:1fr;
- align-content:start;gap:12px;
- flex:1;margin-top:11px;padding:12px 2px 11px;
+ align-content:start;gap:9px;
+ flex:none;margin-top:10px;padding:10px 2px 9px;
  border-top:1px solid rgba(233,237,246,.15);
 }
 #homePage #seyveoLivingMoment .lm-deck-info{min-width:0}
@@ -654,7 +654,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  border-top:1px solid rgba(230,235,245,.17);
 }
 #homePage #seyveoLivingMoment .lm-deck-action{
- display:block;width:100%;min-height:49px;padding:12px 2px;
+ display:block;width:100%;min-height:43px;padding:10px 2px;
  text-align:left;font:inherit;font-size:13.5px;
  line-height:1.35;font-weight:495;color:var(--secondary);
  cursor:pointer;border:0;border-radius:0!important;
@@ -664,52 +664,46 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:var(--text);font-weight:530;
 }
 #homePage #seyveoLivingMoment .lm-deck-action:active,
-#homePage #seyveoLivingMoment .lm-deck-peek:active,
 #homePage #seyveoLivingMoment .lm-deck-later:active{opacity:.62}
 #homePage #seyveoLivingMoment .lm-deck-action:focus-visible,
-#homePage #seyveoLivingMoment .lm-deck-peek:focus-visible,
 #homePage #seyveoLivingMoment .lm-deck-later:focus-visible{
  outline:2px solid currentColor;outline-offset:1px;
 }
-#homePage #seyveoLivingMoment .lm-deck-next-slot{
- position:relative;z-index:1;padding:0 17px;
+/* Every remaining task is part of the SAME drawn sheet. */
+#homePage #seyveoLivingMoment .lm-deck-summary{
+ display:flex;flex-direction:column;min-width:0;gap:0;
+ margin-top:3px;padding:8px 2px 4px;border-top:1px solid rgba(233,237,246,.13);
 }
-#homePage #seyveoLivingMoment .lm-deck-peek{
- box-sizing:border-box;display:flex;align-items:center;gap:11px;
- width:100%;min-height:63px;margin:-13px auto 0;padding:17px 14px 9px;
- border:1px solid rgba(227,231,240,.145);border-top:0;
- border-radius:0 0 18px 18px;
- color:var(--text);background:linear-gradient(170deg,rgba(236,240,246,.028),rgba(236,240,246,.008));
- text-align:left;box-shadow:none;font:inherit;cursor:pointer;
- -webkit-tap-highlight-color:transparent;
+#homePage #seyveoLivingMoment .lm-deck-summary-label{
+ margin:0 0 3px;font-size:9px;line-height:1.3;letter-spacing:.1em;
+ font-weight:500;color:var(--secondary);
 }
-#homePage #seyveoLivingMoment .lm-deck-peek-art{
- flex:none;display:grid;place-items:center;width:34px;height:37px;
- color:var(--secondary);
+#homePage #seyveoLivingMoment .lm-deck-summary-items{
+ display:flex;flex-direction:column;min-width:0;max-height:130px;
+ overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
 }
-#homePage #seyveoLivingMoment .lm-deck-peek-art .lm-art-svg{
- width:33px;height:33px;stroke-width:1.55;opacity:.87;
+#homePage #seyveoLivingMoment .lm-deck-summary-item{
+ display:flex;align-items:center;gap:8px;min-width:0;width:100%;
+ min-height:31px;padding:3px 0;
+ background:transparent;border:0;border-radius:0;box-shadow:none;
+ font:inherit;font-size:11.5px;line-height:1.3;color:var(--secondary);
+ text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-#homePage #seyveoLivingMoment .lm-deck-peek-copy{
- min-width:0;display:flex;flex-direction:column;gap:3px;
+#homePage #seyveoLivingMoment .lm-deck-summary-item svg{
+ width:24px;height:24px;flex:none;stroke-width:1.45;
 }
-#homePage #seyveoLivingMoment .lm-deck-peek-eyebrow{
- font-size:8px;line-height:1.3;letter-spacing:.09em;
- color:var(--secondary);
-}
-#homePage #seyveoLivingMoment .lm-deck-peek-title{
- font-size:12.5px;font-weight:510;line-height:1.32;
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+#homePage #seyveoLivingMoment .lm-deck-summary-item span{
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 #homePage #seyveoLivingMoment .lm-deck-foot{
  display:flex;align-items:center;justify-content:space-between;
- gap:12px;padding:5px 8px 0;min-height:36px;
+ gap:12px;padding:0 2px;min-height:27px;
 }
 #homePage #seyveoLivingMoment .lm-deck-hint{
  font-size:10.5px;line-height:1.4;color:var(--secondary);
 }
 #homePage #seyveoLivingMoment .lm-deck-later{
- flex:none;min-height:41px;padding:9px 2px;
+ flex:none;min-height:31px;padding:5px 2px;
  background:transparent;border:0;border-radius:0;
  font:inherit;font-size:12px;font-weight:530;
  color:var(--text);cursor:pointer;
@@ -725,20 +719,17 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment .lm-deck-title{font-size:17px}
  #homePage #seyveoLivingMoment .lm-deck-context{gap:10px;margin-top:11px;padding-top:10px}
  #homePage #seyveoLivingMoment .lm-deck-info-text{font-size:12px}
- #homePage #seyveoLivingMoment .lm-deck-peek{min-height:58px;padding:14px 10px 8px}
  #homePage #seyveoLivingMoment .lm-deck-hint{font-size:9.6px}
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card{
  border-color:rgba(61,77,99,.24);
- background:linear-gradient(150deg,rgba(255,255,255,.22),rgba(248,250,255,.06));
+ background:transparent;
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card::before{
  background:linear-gradient(90deg,transparent,rgba(65,80,102,.14),transparent);
 }
-:root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-peek{
- border-color:rgba(61,77,99,.21);background:rgba(255,255,255,.08);
-}
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-actions,
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-summary,
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-context{
  border-color:rgba(62,81,106,.16);
 }
@@ -784,8 +775,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  font-size:15px;font-weight:515;line-height:1.3;letter-spacing:-.028em;
  white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
 }
-#homePage #seyveoLivingMoment .lm-deck-intro
- :is(.lm-deck-active,.lm-deck-next-slot,.lm-deck-foot){
+#homePage #seyveoLivingMoment .lm-deck-intro .lm-deck-active{
  visibility:hidden;opacity:0;pointer-events:none;
 }
 #homePage #seyveoLivingMoment .lm-deck-intro--fold .lm-deck-cinema{
