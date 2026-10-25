@@ -224,7 +224,7 @@ function createSurface(primary,other=[],real=false){
   secondary.replaceChildren();
   // Original illustrated rows are ALSO the opening cinematic subjects.
   // Never create or overlay a second set of glass cards.
-  const limit=showOpening?Math.min(queue.length-1,window.innerHeight<=710?2:3):
+  const limit=showOpening?Math.min(queue.length-1,window.innerHeight<=650?1:window.innerHeight<=900?2:3):
     window.innerHeight<=860?1:2;
   const upcoming=queue.slice(1);
   for(const item of upcoming.slice(0,limit)){
