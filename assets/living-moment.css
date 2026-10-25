@@ -588,18 +588,12 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  box-sizing:border-box;position:relative;isolation:isolate;
  display:flex;flex-direction:column;
  min-height:0;
- padding:14px 17px 7px;min-width:0;
- border:1px solid rgba(226,230,238,.19);
- border-radius:21px 23px 18px 22px;
+ padding:10px 3px 4px;min-width:0;
+ border:0;border-radius:0;
  background:transparent;
  box-shadow:none;color:var(--text);
  touch-action:pan-y;-webkit-user-select:none;user-select:none;
  transition:transform 410ms cubic-bezier(.19,.83,.23,1),opacity 390ms ease;
-}
-#homePage #seyveoLivingMoment .lm-deck-card::before{
- content:"";position:absolute;left:25px;right:25px;top:0;
- height:1px;background:linear-gradient(90deg,transparent,rgba(247,248,252,.20),transparent);
- pointer-events:none;
 }
 #homePage #seyveoLivingMoment .lm-deck-card--leaving{
  transform:translate3d(var(--deck-exit-x,108%),0,0) rotate(.9deg);
@@ -683,10 +677,11 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
 }
 #homePage #seyveoLivingMoment .lm-deck-summary-item{
- display:flex;align-items:center;gap:8px;min-width:0;width:100%;
- min-height:31px;padding:3px 0;
- background:transparent;border:0;border-radius:0;box-shadow:none;
- font:inherit;font-size:11.5px;line-height:1.3;color:var(--secondary);
+ display:flex;align-items:center;gap:11px;min-width:0;width:100%;
+ min-height:45px;padding:7px 0;
+ background:transparent;border:0;border-bottom:1px solid var(--soft-line);
+ border-radius:0;box-shadow:none;
+ font:inherit;font-size:12px;line-height:1.4;color:var(--secondary);
  text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #homePage #seyveoLivingMoment .lm-deck-summary-item svg{
@@ -722,11 +717,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment .lm-deck-hint{font-size:9.6px}
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card{
- border-color:rgba(61,77,99,.24);
+ border:0;
  background:transparent;
-}
-:root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card::before{
- background:linear-gradient(90deg,transparent,rgba(65,80,102,.14),transparent);
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-actions,
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-summary,
@@ -747,11 +739,10 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  left:0;right:0;min-height:88px;
  display:flex;align-items:center;gap:13px;
  padding:11px 15px;
- border:1px solid rgba(229,234,246,.30);
- border-radius:21px 22px 19px 23px;
- background:linear-gradient(156deg,rgba(51,53,60,.985),rgba(27,29,35,.99) 70%);
- box-shadow:0 14px 24px rgba(0,0,0,.20);
- color:#f1f2f6;opacity:0;
+ border:0;border-radius:0;
+ background:transparent;
+ box-shadow:none;
+ color:var(--text);opacity:0;
  animation:lm-cinema-rise 1060ms cubic-bezier(.16,.82,.2,1) var(--lm-card-delay,0ms) both;
 }
 #homePage #seyveoLivingMoment .lm-deck-cinema-card--0{top:151px;z-index:1}
@@ -762,6 +753,17 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #homePage #seyveoLivingMoment .lm-deck-cinema-art .lm-art-svg{
  display:block;width:49px;height:49px;stroke-width:1.55;
+}
+/* Return the original hand-drawn stroke reveal from Quiet Cinema. */
+#homePage #seyveoLivingMoment .lm-deck-cinema-art .lm-art-svg :is(path,rect,circle,line,polyline){
+ fill:none;stroke-dasharray:260;stroke-dashoffset:260;
+ animation:sv-gather-line-draw 1050ms cubic-bezier(.25,.75,.32,1) both;
+ animation-delay:calc(var(--lm-card-delay,0ms) + 80ms);
+}
+@keyframes sv-gather-line-draw{
+ 0%{stroke-dashoffset:260;opacity:.15}
+ 75%{stroke-dashoffset:0;opacity:1}
+ 100%{stroke-dashoffset:0;opacity:1}
 }
 #homePage #seyveoLivingMoment .lm-deck-cinema-copy{
  display:flex;flex-direction:column;justify-content:center;
@@ -793,9 +795,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  100%{opacity:0;transform:translate3d(0,-38px,0) scale(.89)}
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-cinema-card{
- background:linear-gradient(157deg,rgba(251,252,253,.99),rgba(234,237,242,.99) 75%);
- border-color:rgba(74,88,111,.26);color:#273342;
- box-shadow:0 10px 22px rgba(45,55,75,.11);
+ background:transparent;border:0;color:#273342;box-shadow:none;
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-cinema-count{
  color:rgba(64,80,102,.70);
@@ -810,6 +810,9 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  }
 }
 @media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-deck-cinema-art .lm-art-svg :is(path,rect,circle,line,polyline){
+  animation:none!important;stroke-dashoffset:0!important;
+ }
  #homePage #seyveoLivingMoment .lm-deck-cinema{display:none!important}
  #homePage #seyveoLivingMoment .lm-deck-cinema-card{
   animation:none!important;transition:none!important;
