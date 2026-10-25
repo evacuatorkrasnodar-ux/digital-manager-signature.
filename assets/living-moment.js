@@ -313,6 +313,7 @@ function startPreview(){
  * their metadata; writing status is delegated to Personal Tasks. */
 let collectionPage=0,collectionOpen=false;
 let collectionDemo=false,collectionAnimationSeen=false;
+const demoResolved=new Set();
 // One cinematic opening per app runtime. The demo's explicit replay stays
 // available; do not suppress the opening across iPhone PWA relaunches.
 function openTasks(){
@@ -353,8 +354,7 @@ function activateTask(task){
  if(target&&window.SEYVEO_CONTACTS?.requestCall){
   window.SEYVEO_CONTACTS.requestCall(target);return;
  }
- $('navTasks')?.click();
- window.dispatchEvent(new CustomEvent('seyveo:calendar-task-view',{detail:{id:task.id}}));
+ window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:task.id}}));
 }
 function completeTask(task,feedback){
  // Only an explicit tap on "Отметить выполненным" may change status.
@@ -388,6 +388,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  tiles.replaceChildren();
  const details=create('details','lm-task-collection');
  details.open=collectionOpen;
+ if(demo&&animate)demoResolved.clear();
  if(demo)details.dataset.demo='true';
  // The scene uses real titles or clearly labelled demo titles, never fake activity.
  const runCinematic=animate&&!reduced();
@@ -416,7 +417,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
    if(event.target===stage&&event.animationName==='sv-gather-stage')finishGather();
   });
   // iOS fallback if animationend was cancelled (e.g. by an OS setting).
-  later(finishGather,4200);
+  later(finishGather,5850);
  }
  const summary=create('summary','lm-task-summary');
  const count=create('span','lm-task-count',String(tasks.length));
@@ -443,27 +444,69 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  const feedback=create('p','lm-task-feedback');feedback.setAttribute('role','status');
  feedback.setAttribute('aria-live','polite');
  body.append(position,name,when,desc,buttons,paging,feedback);
+ const demoOutcomes={
+  'demo-mail':'Демо выполнено: подготовлен черновик ответа. Письмо никому не отправлено.',
+  'demo-document':'Демо выполнено: выделены пункты для проверки. Ничего не подписано.',
+  'demo-call':'Демо выполнено: подготовлена карточка вызова. Звонок никому не совершён.'
+ };
+ const grammar=count=>count+' '+(count%10===1&&count%100!==11?'дело':
+  [2,3,4].includes(count%10)&&!(count%100>=12&&count%100<=14)?'дела':'дел');
+ function updateCount(){
+  const remaining=demo?tasks.length-demoResolved.size:tasks.length;
+  count.textContent=String(remaining);
+  total.textContent=grammar(remaining);
+ }
  function renderPage(){
+  if(demo&&demoResolved.size===tasks.length){
+   updateCount();
+   header.querySelector('.lm-task-caption').textContent='Демонстрация завершена';
+   position.textContent=tasks.length+' из '+tasks.length;
+   name.textContent='Все примеры показаны';
+   when.textContent='Центр решений · демо';
+   desc.textContent='Конверт, документ и звонок обработаны в демонстрационном режиме. Никаких реальных писем, подписей или вызовов не было.';
+   buttons.hidden=true;paging.hidden=true;
+   feedback.textContent='Нажмите «Повторить появление», чтобы посмотреть сцену снова.';
+   return;
+  }
+  buttons.hidden=false;paging.hidden=false;
   if(collectionPage>=tasks.length)collectionPage=tasks.length-1;
   if(collectionPage<0)collectionPage=0;
+  if(demo&&demoResolved.has(tasks[collectionPage].id)){
+   collectionPage=tasks.findIndex(task=>!demoResolved.has(task.id));
+  }
   const task=tasks[collectionPage];
   position.textContent=(collectionPage+1)+' из '+tasks.length;
   name.textContent=task.title;
   when.textContent=demo?'Пример для просмотра':deadlineLabel(task);
   const target=demo?'':(window.SEYVEO_CONTACTS?.taskTarget?.(task.title)||'');
-  desc.textContent=demo?task.demoDescription+' Реальных подключений и действий здесь нет.':target
-   ?'Если контакт найден, Сэйва поможет подготовить звонок. Сам вызов подтверждается в телефоне; дело не отмечается выполненным автоматически.'
+  desc.textContent=demo?task.demoDescription+' Это демонстрация, без доступа к настоящим сервисам.':target
+   ?'Сэйва поможет подготовить звонок по этому делу. Сам вызов подтверждается в телефоне.'
    :task.sourceNoteId
-   ?'Вы сохранили это дело из Блокнота. Откройте его для действий и отметьте выполненным только после результата.'
-   :'Это дело сохранено вами. Нажмите «Исполнить», чтобы открыть его, и подтвердите завершение после выполнения.';
+   ?'Вы сохранили дело из Блокнота. Откройте его, выполните нужное и отметьте завершённым.'
+   :'Дело сохранено вами. Нажмите «Исполнить», чтобы открыть его в разделе «Дела».';
   prev.disabled=collectionPage===0;next.disabled=collectionPage===tasks.length-1;
+  act.hidden=false;
+  done.textContent=demo?'Следующий пример':'Отметить выполненным';
   feedback.textContent='';
+  updateCount();
   act.onclick=()=>{
-   if(demo){feedback.textContent='Демо: показано действие. Личные данные и настоящие сервисы не затронуты.';return}
+   if(demo){
+    demoResolved.add(task.id);
+    updateCount();
+    feedback.textContent=demoOutcomes[task.id]||'Демо выполнено. Реальные данные не изменились.';
+    act.hidden=true;
+    done.textContent=demoResolved.size===tasks.length?'Показать итог':'Следующий пример';
+    return;
+   }
    activateTask(task);
   };
   done.onclick=()=>{
-   if(demo){collectionPage=(collectionPage+1)%tasks.length;renderPage();return}
+   if(demo){
+    const nextIndex=tasks.findIndex((entry,i)=>i>collectionPage&&!demoResolved.has(entry.id));
+    collectionPage=nextIndex>=0?nextIndex:tasks.findIndex(entry=>!demoResolved.has(entry.id));
+    renderPage();
+    return;
+   }
    completeTask(task,feedback);
   };
  }
@@ -473,7 +516,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  if(demo){
   const replayButton=create('button','lm-task-replay','Повторить появление');replayButton.type='button';
   replayButton.addEventListener('click',()=>{
-   collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';
+   collectionPage=0;collectionOpen=false;demoResolved.clear();cancel();resetSpace();mode='idle';key='';
    showCollection(demoTasks(),{demo:true,animate:true});
   });
   body.append(replayButton);
