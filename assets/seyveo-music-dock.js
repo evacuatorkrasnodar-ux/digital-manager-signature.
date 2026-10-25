@@ -26,10 +26,11 @@ function init(){
  const svg=name=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+icons[name]+'</svg>';
  function currentTab(){
   const hash=location.hash;
-  if(hash==='#tasks'||hash==='#calendar')return 'navTasks';
-  if(hash==='#picture')return 'navPicture';
-  if(hash==='#manage'||hash==='#manage-theme')return 'navManage';
-  return 'navHome';
+  if(hash==='#tasks')return 'navTasks';
+  if(hash==='#calendar'||hash==='#life')return 'navPicture';
+  if(hash==='#picture'||hash==='#manage'||hash==='#manage-theme')return 'navManage';
+  if(!hash||hash==='#home')return 'navHome';
+  return null;
  }
  function paint(){
   const playing=!!(player.currentSrc||player.getAttribute('src'))&&!player.paused&&!player.ended;
