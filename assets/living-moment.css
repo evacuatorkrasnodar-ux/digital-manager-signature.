@@ -551,3 +551,171 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 /* Two actions remain plain typography within the original Quiet Cinema.
    No new glass, capsules, shadows, transforms or cards. */
 #homePage #seyveoLivingMoment .lm-actions{column-gap:22px}
+
+/* SEYVEO · Decision Ledger · illustrated paper, NOT glass.
+   Only after the original cinematic document/mail/care sequence.
+   Real work and demo items use the same understated ink treatment. */
+#homePage #seyveoLivingMoment.lm-ledger-mode{
+ margin:8px 0 16px;
+}
+#homePage #seyveoLivingMoment .lm-ledger{
+ position:relative;isolation:isolate;box-sizing:border-box;
+ width:100%;max-width:490px;margin:9px auto 16px;
+ padding:18px 19px 17px;
+ border:1px solid rgba(215,223,236,.27);
+ border-radius:24px 28px 22px 26px;
+ background:linear-gradient(160deg,rgba(247,247,252,.035),rgba(225,232,245,.007) 60%);
+ color:var(--text);box-shadow:none;
+}
+#homePage #seyveoLivingMoment .lm-ledger::before{
+ content:"";position:absolute;pointer-events:none;
+ inset:7px;border:1px solid rgba(232,236,244,.07);
+ border-radius:19px 24px 17px 22px;
+}
+#homePage #seyveoLivingMoment .lm-ledger::after{
+ content:"";position:absolute;pointer-events:none;
+ top:-3px;left:23px;width:55px;height:5px;
+ border-radius:50%;background:linear-gradient(90deg,transparent,rgba(243,246,252,.42),transparent);
+ opacity:.6;
+}
+#homePage #seyveoLivingMoment .lm-ledger-heading{
+ display:grid;grid-template-columns:57px minmax(0,1fr) auto;
+ align-items:center;gap:10px;min-width:0;
+ padding-bottom:12px;
+ border-bottom:1px solid rgba(233,237,245,.16);
+}
+#homePage #seyveoLivingMoment .lm-ledger-illustration{
+ width:53px;height:56px;color:var(--text);
+ display:grid;place-items:center;
+}
+#homePage #seyveoLivingMoment .lm-ledger-illustration .lm-art-svg{
+ width:50px;height:50px;stroke-width:1.65;opacity:.90;
+}
+#homePage #seyveoLivingMoment .lm-ledger-headline{
+ min-width:0;display:flex;flex-direction:column;gap:5px;
+}
+#homePage #seyveoLivingMoment .lm-ledger-kicker{
+ font-size:9px;font-weight:540;line-height:1.3;
+ letter-spacing:.12em;color:var(--secondary);
+}
+#homePage #seyveoLivingMoment .lm-ledger-title{
+ margin:0;font-size:clamp(18px,4.5vw,22px);line-height:1.24;
+ font-weight:520;letter-spacing:-.036em;color:var(--text);
+}
+#homePage #seyveoLivingMoment .lm-ledger-counter{
+ align-self:center;font-size:10px;font-weight:520;
+ letter-spacing:.045em;color:var(--secondary);
+ white-space:nowrap;
+}
+#homePage #seyveoLivingMoment .lm-ledger-intro{
+ margin:12px 0 10px;font-size:12px;line-height:1.5;color:var(--secondary);
+}
+#homePage #seyveoLivingMoment .lm-ledger-list{
+ display:block;max-height:min(42vh,390px);
+ overflow-y:auto;overscroll-behavior:contain;
+ scrollbar-width:thin;scrollbar-color:rgba(204,211,224,.25) transparent;
+}
+#homePage #seyveoLivingMoment .lm-ledger-row{
+ width:100%;min-width:0;min-height:69px;
+ padding:11px 3px;
+ display:grid;grid-template-columns:46px minmax(0,1fr);
+ gap:10px;align-items:center;text-align:left;
+ font:inherit;color:var(--text);cursor:pointer;
+ border:0;border-top:1px solid rgba(234,238,246,.14);
+ border-radius:0;background:transparent;
+ transition:opacity .22s ease,background-color .22s ease;
+}
+#homePage #seyveoLivingMoment .lm-ledger-row:first-child{border-top:0}
+#homePage #seyveoLivingMoment .lm-ledger-row[aria-pressed="true"]{
+ background:linear-gradient(90deg,rgba(226,233,246,.045),transparent 88%);
+}
+#homePage #seyveoLivingMoment .lm-ledger-row:focus-visible,
+#homePage #seyveoLivingMoment .lm-ledger-action:focus-visible{
+ outline:2px solid var(--text);outline-offset:-2px;
+}
+#homePage #seyveoLivingMoment .lm-ledger-row-art{
+ width:42px;height:46px;display:grid;place-items:center;
+ color:var(--secondary);
+}
+#homePage #seyveoLivingMoment .lm-ledger-row-art .lm-art-svg{
+ width:40px;height:40px;stroke-width:1.65;opacity:.83;
+}
+#homePage #seyveoLivingMoment .lm-ledger-row[aria-pressed="true"] .lm-ledger-row-art{
+ color:var(--text);
+}
+#homePage #seyveoLivingMoment .lm-ledger-row-copy{
+ display:flex;flex-direction:column;min-width:0;gap:4px;
+}
+#homePage #seyveoLivingMoment .lm-ledger-row-title{
+ font-size:13px;line-height:1.31;font-weight:510;
+ letter-spacing:-.018em;overflow-wrap:anywhere;color:var(--text);
+}
+#homePage #seyveoLivingMoment .lm-ledger-row-sub{
+ font-size:11.5px;line-height:1.42;color:var(--secondary);
+ overflow-wrap:anywhere;
+}
+#homePage #seyveoLivingMoment .lm-ledger-note{
+ margin:10px 0 3px;min-height:18px;
+ font-size:11.5px;line-height:1.5;color:var(--secondary);
+}
+#homePage #seyveoLivingMoment .lm-ledger-explanation{
+ margin:8px 0 9px;padding:10px 0;
+ border-top:1px solid rgba(235,239,247,.13);
+ color:var(--secondary);font-size:12px;line-height:1.55;
+}
+#homePage #seyveoLivingMoment .lm-ledger-explanation[hidden]{display:none!important}
+#homePage #seyveoLivingMoment .lm-ledger-actions{
+ display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+ margin-top:6px;padding:6px 0;
+ border-top:1px solid rgba(234,238,245,.14);
+}
+#homePage #seyveoLivingMoment .lm-ledger-action{
+ min-height:44px;padding:9px 3px;
+ background:transparent;border:0;box-shadow:none;
+ border-radius:0!important;font:inherit;
+ font-size:13px;font-weight:525;line-height:1.25;
+ color:var(--text);text-align:left;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+#homePage #seyveoLivingMoment .lm-ledger-action:active,
+#homePage #seyveoLivingMoment .lm-ledger-row:active{opacity:.68}
+#homePage #seyveoLivingMoment .lm-ledger-footer{
+ display:block;margin-top:8px;
+ font-size:10px;line-height:1.48;letter-spacing:.015em;
+ color:var(--secondary);opacity:.75;
+}
+@media(max-width:370px){
+ #homePage #seyveoLivingMoment .lm-ledger{padding:15px 13px}
+ #homePage #seyveoLivingMoment .lm-ledger-heading{
+  grid-template-columns:48px minmax(0,1fr) auto;gap:8px;
+ }
+ #homePage #seyveoLivingMoment .lm-ledger-counter{font-size:9px}
+ #homePage #seyveoLivingMoment .lm-ledger-illustration,
+ #homePage #seyveoLivingMoment .lm-ledger-illustration .lm-art-svg{width:44px;height:44px}
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger{
+ border-color:rgba(65,82,107,.28);
+ background:linear-gradient(159deg,rgba(255,255,255,.51),rgba(248,250,254,.12));
+ box-shadow:none;
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger::before{border-color:rgba(72,89,111,.10)}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger-row,
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger-heading,
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger-actions{
+ border-color:rgba(71,89,115,.17);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-ledger-row[aria-pressed="true"]{
+ background:linear-gradient(90deg,rgba(105,125,155,.075),transparent 90%);
+}
+@media(prefers-reduced-motion:no-preference){
+ #homePage #seyveoLivingMoment.lm-ledger-mode .lm-ledger{
+  animation:lm-ledger-art-arrive 960ms cubic-bezier(.22,.8,.24,1) both;
+ }
+ @keyframes lm-ledger-art-arrive{
+  from{opacity:0;transform:translate3d(0,13px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-ledger{animation:none!important}
+}
