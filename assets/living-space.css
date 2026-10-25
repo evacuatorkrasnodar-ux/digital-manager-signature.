@@ -572,7 +572,13 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
    No extra elements, overlays, filters, animations or changes to the orb.
    Use the original body canvas so page transitions never swap backgrounds. */
 #homePage{background:none;}
-:root:not([data-theme=light]) body{
+:root:not([data-theme=light]) body:has(#homePage:not([hidden])){
+ background:#141619;
+ background-repeat:no-repeat;
+}
+/* Retain the newer shared graphite elsewhere; the restored original Home
+   uses its historical flat Black Velvet stage without a pearl wash. */
+:root:not([data-theme=light]) body:not(:has(#homePage:not([hidden]))){
  background:
   radial-gradient(ellipse 108vw 475px at 50% 232px,
    rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
