@@ -552,7 +552,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
    No new glass, capsules, shadows, transforms or cards. */
 #homePage #seyveoLivingMoment .lm-actions{column-gap:22px}
 
-/* SEYVEO · Detailed Quiet Cinema decisions v3.
+/* SEYVEO · Rising Illustrated Cinema and Decisions v4.
    Informative real task cards, no raised glass, overlays, emoji or heavy effects.
    Stable active footprint prevents the page and dock appearing to bounce. */
 #homePage.lm-focus,
@@ -564,7 +564,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  margin:4px 0 12px;overflow:visible;
 }
 #homePage #seyveoLivingMoment .lm-deck{
- box-sizing:border-box;width:100%;max-width:490px;
+ box-sizing:border-box;position:relative;isolation:isolate;
+ width:100%;max-width:490px;
  margin:0 auto 10px;padding:0 4px;color:var(--text);
 }
 #homePage #seyveoLivingMoment .lm-deck-heading{
@@ -580,23 +581,24 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  font-weight:480;color:var(--secondary);
 }
 #homePage #seyveoLivingMoment .lm-deck-active{
- min-height:clamp(256px,34vh,305px);
+ position:relative;z-index:2;
+ min-height:clamp(288px,37vh,328px);
 }
 #homePage #seyveoLivingMoment .lm-deck-card{
  box-sizing:border-box;position:relative;isolation:isolate;
  display:flex;flex-direction:column;
- min-height:clamp(256px,34vh,305px);
- padding:15px 17px 5px;min-width:0;
- border:1px solid rgba(226,230,238,.27);
- border-radius:23px 22px 19px 21px;
- background:linear-gradient(160deg,rgba(250,251,254,.029),rgba(251,253,255,.004) 70%);
- box-shadow:none;color:var(--text);
+ min-height:clamp(288px,37vh,328px);
+ padding:16px 18px 4px;min-width:0;
+ border:1px solid rgba(226,230,238,.19);
+ border-radius:21px 23px 18px 22px;
+ background:linear-gradient(150deg,rgba(247,250,255,.022),rgba(245,248,254,.004) 70%);
+ box-shadow:0 8px 24px rgba(0,0,0,.045);color:var(--text);
  touch-action:pan-y;-webkit-user-select:none;user-select:none;
  transition:transform 410ms cubic-bezier(.19,.83,.23,1),opacity 390ms ease;
 }
 #homePage #seyveoLivingMoment .lm-deck-card::before{
- content:"";position:absolute;left:12px;right:12px;top:6px;
- height:1px;background:linear-gradient(90deg,transparent,rgba(242,245,251,.13),transparent);
+ content:"";position:absolute;left:25px;right:25px;top:0;
+ height:1px;background:linear-gradient(90deg,transparent,rgba(247,248,252,.20),transparent);
  pointer-events:none;
 }
 #homePage #seyveoLivingMoment .lm-deck-card--leaving{
@@ -631,7 +633,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-deck-context{
  display:grid;grid-template-columns:1fr;
  align-content:start;gap:12px;
- flex:1;margin-top:14px;padding:13px 2px 12px;
+ flex:1;margin-top:11px;padding:12px 2px 11px;
  border-top:1px solid rgba(233,237,246,.15);
 }
 #homePage #seyveoLivingMoment .lm-deck-info{min-width:0}
@@ -642,7 +644,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #homePage #seyveoLivingMoment .lm-deck-info-text{
  margin:0;max-width:100%;
- font-size:12.5px;font-weight:410;line-height:1.51;
+ font-size:12.8px;font-weight:410;line-height:1.48;
  letter-spacing:-.007em;color:var(--text);
  opacity:.9;overflow-wrap:anywhere;
 }
@@ -670,14 +672,14 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  outline:2px solid currentColor;outline-offset:1px;
 }
 #homePage #seyveoLivingMoment .lm-deck-next-slot{
- position:relative;padding:0 12px;
+ position:relative;z-index:1;padding:0 17px;
 }
 #homePage #seyveoLivingMoment .lm-deck-peek{
  box-sizing:border-box;display:flex;align-items:center;gap:11px;
- width:100%;min-height:72px;margin:-2px auto 0;padding:12px 14px;
- border:1px solid rgba(227,231,240,.19);border-top:0;
- border-radius:0 0 19px 18px;
- color:var(--text);background:rgba(234,240,252,.011);
+ width:100%;min-height:63px;margin:-13px auto 0;padding:17px 14px 9px;
+ border:1px solid rgba(227,231,240,.145);border-top:0;
+ border-radius:0 0 18px 18px;
+ color:var(--text);background:linear-gradient(170deg,rgba(236,240,246,.028),rgba(236,240,246,.008));
  text-align:left;box-shadow:none;font:inherit;cursor:pointer;
  -webkit-tap-highlight-color:transparent;
 }
@@ -696,7 +698,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:var(--secondary);
 }
 #homePage #seyveoLivingMoment .lm-deck-peek-title{
- font-size:12px;font-weight:515;line-height:1.32;
+ font-size:12.5px;font-weight:510;line-height:1.32;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 #homePage #seyveoLivingMoment .lm-deck-peek-description{
@@ -708,7 +710,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  gap:12px;padding:5px 8px 0;min-height:36px;
 }
 #homePage #seyveoLivingMoment .lm-deck-hint{
- font-size:11px;line-height:1.4;color:var(--secondary);
+ font-size:10.5px;line-height:1.4;color:var(--secondary);
 }
 #homePage #seyveoLivingMoment .lm-deck-later{
  flex:none;min-height:41px;padding:9px 2px;
@@ -727,15 +729,15 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  #homePage #seyveoLivingMoment .lm-deck-title{font-size:17px}
  #homePage #seyveoLivingMoment .lm-deck-context{gap:10px;margin-top:11px;padding-top:10px}
  #homePage #seyveoLivingMoment .lm-deck-info-text{font-size:12px}
- #homePage #seyveoLivingMoment .lm-deck-peek{min-height:65px;padding:9px 10px}
- #homePage #seyveoLivingMoment .lm-deck-hint{font-size:10px}
+ #homePage #seyveoLivingMoment .lm-deck-peek{min-height:58px;padding:14px 10px 8px}
+ #homePage #seyveoLivingMoment .lm-deck-hint{font-size:9.6px}
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card{
- border-color:rgba(61,77,99,.30);
- background:linear-gradient(150deg,rgba(255,255,255,.29),rgba(248,250,255,.075));
+ border-color:rgba(61,77,99,.24);
+ background:linear-gradient(150deg,rgba(255,255,255,.22),rgba(248,250,255,.06));
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-card::before{
- background:linear-gradient(90deg,transparent,rgba(65,80,102,.16),transparent);
+ background:linear-gradient(90deg,transparent,rgba(65,80,102,.14),transparent);
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-peek{
  border-color:rgba(61,77,99,.21);background:rgba(255,255,255,.08);
@@ -745,6 +747,97 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  border-color:rgba(62,81,106,.16);
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-info-key{color:var(--secondary)}
+/* Temporary paper miniatures arrive from below in three measured beats.
+   Their footprints never touch the fixed dock or the saved task list. */
+#homePage #seyveoLivingMoment .lm-deck-cinema{
+ position:absolute;z-index:4;inset:42px 10px auto;
+ height:288px;pointer-events:none;
+ transform-origin:50% 38%;
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema:empty{display:none}
+#homePage #seyveoLivingMoment .lm-deck-cinema-card{
+ position:absolute;box-sizing:border-box;
+ left:0;right:0;min-height:88px;
+ display:flex;align-items:center;gap:13px;
+ padding:11px 15px;
+ border:1px solid rgba(229,234,246,.30);
+ border-radius:21px 22px 19px 23px;
+ background:linear-gradient(156deg,rgba(51,53,60,.985),rgba(27,29,35,.99) 70%);
+ box-shadow:0 14px 24px rgba(0,0,0,.20);
+ color:#f1f2f6;opacity:0;
+ animation:lm-cinema-rise 1060ms cubic-bezier(.16,.82,.2,1) var(--lm-card-delay,0ms) both;
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema-card--0{top:151px;z-index:1}
+#homePage #seyveoLivingMoment .lm-deck-cinema-card--1{top:95px;z-index:2}
+#homePage #seyveoLivingMoment .lm-deck-cinema-card--2{top:39px;z-index:3}
+#homePage #seyveoLivingMoment .lm-deck-cinema-art{
+ width:53px;height:54px;flex:none;display:grid;place-items:center;
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema-art .lm-art-svg{
+ display:block;width:49px;height:49px;stroke-width:1.55;
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema-copy{
+ display:flex;flex-direction:column;justify-content:center;
+ min-width:0;gap:4px;
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema-count{
+ font-size:9px;line-height:1.3;letter-spacing:.16em;
+ color:rgba(235,238,245,.62);
+}
+#homePage #seyveoLivingMoment .lm-deck-cinema-title{
+ font-size:15px;font-weight:515;line-height:1.3;letter-spacing:-.028em;
+ white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
+}
+#homePage #seyveoLivingMoment .lm-deck-intro
+ :is(.lm-deck-active,.lm-deck-next-slot,.lm-deck-foot){
+ visibility:hidden;opacity:0;pointer-events:none;
+}
+#homePage #seyveoLivingMoment .lm-deck-intro--fold .lm-deck-cinema{
+ animation:lm-cinema-gather 720ms cubic-bezier(.37,.03,.74,.45) both;
+}
+@keyframes lm-cinema-rise{
+ 0%{opacity:0;transform:translate3d(0,134px,0) scale(.94)}
+ 56%{opacity:.95}
+ 82%{opacity:1;transform:translate3d(0,-9px,0) scale(1.008)}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes lm-cinema-gather{
+ 0%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ 42%{opacity:1;transform:translate3d(0,-16px,0) scale(.98)}
+ 100%{opacity:0;transform:translate3d(0,-38px,0) scale(.89)}
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-cinema-card{
+ background:linear-gradient(157deg,rgba(251,252,253,.99),rgba(234,237,242,.99) 75%);
+ border-color:rgba(74,88,111,.26);color:#273342;
+ box-shadow:0 10px 22px rgba(45,55,75,.11);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-deck-cinema-count{
+ color:rgba(64,80,102,.70);
+}
+@media(prefers-reduced-motion:no-preference){
+ #homePage #seyveoLivingMoment .lm-deck-card:not(.lm-deck-card--leaving){
+  animation:lm-deck-page-arrive 630ms cubic-bezier(.19,.82,.21,1) both;
+ }
+ #homePage #seyveoLivingMoment .lm-deck-peek{
+  animation:lm-deck-peek-arrive 690ms cubic-bezier(.19,.82,.21,1) both;
+ }
+ @keyframes lm-deck-page-arrive{
+  0%{opacity:0;transform:translate3d(0,30px,0) scale(.982)}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+ }
+ @keyframes lm-deck-peek-arrive{
+  0%{opacity:0;transform:translate3d(0,22px,0)}
+  100%{opacity:1;transform:translate3d(0,0,0)}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment .lm-deck-cinema{display:none!important}
+ #homePage #seyveoLivingMoment .lm-deck-cinema-card,
+ #homePage #seyveoLivingMoment .lm-deck-peek{
+  animation:none!important;transition:none!important;
+ }
+}
+
 @media(prefers-reduced-motion:no-preference){
  #homePage #seyveoLivingMoment.lm-ledger-mode .lm-deck{
   animation:lm-deck-appear 780ms cubic-bezier(.2,.8,.27,1) both;
