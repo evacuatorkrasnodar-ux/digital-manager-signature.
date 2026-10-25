@@ -459,6 +459,7 @@ function showCollection(tasks,{demo=false,animate=false}={}){
   if(questionMode)parts.push('Предложи конкретные исправления перед исполнением.');
   // Never overwrite a person's existing unsent message.
   if(q&&!q.value.trim()){
+   $('composerModeAsk')?.click();
    q.value=parts.join(' ');
    q.dispatchEvent(new Event('input',{bubbles:true}));
   }
