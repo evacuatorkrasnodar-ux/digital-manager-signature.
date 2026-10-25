@@ -648,7 +648,7 @@ function refresh(){
    return;
   }
   if(!tasks.length||key!=='real:'+tasksSignature(tasks)){
-   collectionOpen=!!tiles.querySelector('.lm-task-collection[open]');
+   collectionOpen=!!tiles.querySelector('.lm-task-collection .lm-task-body:not([hidden])');
    resetSpace();mode='idle';key='';
    if(editing())return;
    if(tasks.length){showCollection(tasks);return}
@@ -669,7 +669,10 @@ function refresh(){
  if(editing())return;
  if(tasks.length&&showCollection(tasks,{animate:!collectionAnimationSeen}))return;
  if(pending&&showExistingAdvice())return;
- if(mode==='idle'&&!pending)showCollection(demoTasks(),{demo:true,animate:!collectionAnimationSeen});
+ if(mode==='idle'&&!pending){
+  if(!previewHasPlayed&&available()){startPreview({auto:true});return}
+  showCollection(demoTasks(),{demo:true,animate:false});
+ }
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
@@ -725,12 +728,15 @@ replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
  $('navHome')?.click();
  later(()=>{
-  collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';
-  showCollection(demoTasks(),{demo:true,animate:true});
+  cancel();resetSpace();mode='idle';key='';collectionPage=0;collectionOpen=false;
+  demoResolved.clear();startPreview();
  },260);
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
- preview:()=>{collectionPage=0;collectionOpen=false;cancel();resetSpace();mode='idle';key='';return showCollection(demoTasks(),{demo:true,animate:true})},
+ preview:()=>{
+  cancel();resetSpace();mode='idle';key='';collectionPage=0;collectionOpen=false;
+  demoResolved.clear();return startPreview()
+ },
  state:()=>mode
 });
 scheduleRefresh();
