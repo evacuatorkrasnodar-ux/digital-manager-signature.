@@ -162,127 +162,191 @@ function polymer(label,callback,kind='quiet'){
  b.type='button';b.addEventListener('click',event=>{event.stopPropagation();readingUntil=Date.now()+15000;callback(b)});
  return b;
 }
+/* One canonical living decision, with an ordered queue. Intro drawings
+   live only inside this surface; they never create a second dock or panel. */
 function createSurface(primary,other=[],real=false){
  tiles.replaceChildren();
+ let sequence=[primary,...other],shown=primary,morphLocked=false;
  const field=create('div','lm-field');
  field.dataset.lmMode=real?'real':'preview';
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- const sequence=[primary,...other];
- const position=create('span','lm-field-measure',
-  (real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР')+' · 01 / '+String(sequence.length).padStart(2,'0'));
+ const position=create('span','lm-field-measure');
  top.append(label,position);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('button','lm-hero-art lm-hero-art--'+primary.kind);
- artwork.type='button';artwork.setAttribute('aria-label','Открыть: '+primary.title);
- artwork.append(icon(primary.kind));
- artwork.addEventListener('click',()=>{
-  readingUntil=Date.now()+20000;
-  openCardAction(shown);
- });
+ artwork.type='button';artwork.append(icon(primary.kind));
+ artwork.addEventListener('click',()=>{readingUntil=Date.now()+20000;discussTask(shown,{demo:!real})});
  const copy=create('div','lm-primary-copy');
- const headline=create('strong','lm-primary-title',primary.title);
- const description=create('p','lm-primary-subtitle',primary.body);
- copy.append(headline,description);
- hero.append(artwork,copy);
+ const headline=create('strong','lm-primary-title');
+ const description=create('p','lm-primary-subtitle');
+ copy.append(headline,description);hero.append(artwork,copy);
  const controls=create('div','lm-actions');
- let shown=primary;
- let morphLocked=false;
- let expanded=false;
- const more=create('p','lm-explanation');
- more.id='seyveoSurfaceReason';
- more.hidden=true;
- // Quiet Cinema: two simple textual actions, no glass tiles or raised buttons.
- // Подробнее reveals local context; Исполнить opens the actual destination.
- // Neither action claims to have sent mail, signed a document or completed a call.
- const open=polymer('Подробнее',()=>{
-  if(discussTask(shown,{demo:!real}))return;
-  expanded=!expanded;
-  field.classList.toggle('lm-has-reason',expanded);
-  more.hidden=!expanded;
-  more.textContent=expanded?shown.reason+' '+shown.detail:'';
-  open.setAttribute('aria-expanded',String(expanded));
- },'main');
+ const details=polymer('Подробнее',()=>{
+  discussTask(shown,{demo:!real});
+ },'quiet');
  const execute=polymer('Исполнить',()=>{
-  const worked=openCardAction(shown);
-  if(worked)return;
-  expanded=true;field.classList.add('lm-has-reason');
-  more.hidden=false;
-  more.textContent=shown.reason+' '+shown.detail+
-   ' Для реального исполнения необходимо открыть соответствующий раздел и подтвердить действие.';
-  open.setAttribute('aria-expanded','true');
- },'main');
- open.setAttribute('aria-controls',more.id);
- open.setAttribute('aria-expanded','false');
- open.setAttribute('aria-label','Подробнее: '+primary.title);
- execute.setAttribute('aria-label','Исполнить: '+primary.title);
- controls.append(open,execute);
+  if(morphLocked)return;
+  if(real){
+   // A locally saved to-do can be marked done by the owner. This does NOT
+   // send mail, sign documents, pay bills or pretend to call providers.
+   let records;
+   try{records=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]')}
+   catch{records=null}
+   if(!Array.isArray(records)){announce('Не удалось прочитать ваши дела');return}
+   const target=records.find(t=>t&&t.id===shown.id&&!t.done);
+   if(!target){announce('Дело изменилось. Обновите список.');return}
+   target.done=true;target.doneAt=new Date().toISOString();
+   try{localStorage.setItem('seyveo-personal-tasks-v1',JSON.stringify(records))}
+   catch{announce('Не удалось сохранить выполнение');return}
+   transitionOut('complete',()=>{
+    sequence=readOpenTasks().map(storyFromTask);
+    realSignature=readOpenTasks().map(t=>[t.id,t.title,t.due||''].join(':')).join('|');
+    window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{
+     detail:{open:sequence.length,total:records.length}
+    }));
+   });
+   return;
+  }
+  // Clearly simulated completion; the ten examples NEVER mutate real data.
+  const completed=shown;
+  transitionOut('complete',()=>{
+   sequence=sequence.filter(t=>t!==completed);
+  });
+ });
+ const laterAction=polymer('Позже',()=>postpone('right'),'quiet');
+ controls.append(details,execute,laterAction);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
+ const note=create('span','lm-queue-status');
+ note.setAttribute('role','status');note.setAttribute('aria-live','polite');
+ function announce(text){
+  note.textContent=text;
+  tip.textContent=text;
+ }
+ function progress(){
+  const code=real?'ВАШИ ДЕЛА':'ДЕМО · ВЫМЫШЛЕННЫЕ ДАННЫЕ';
+  position.textContent=code+' · '+String(sequence.length).padStart(2,'0')+' В ОЧЕРЕДИ';
+ }
  function renderSecondary(){
   secondary.replaceChildren();
-  // One next item on iPhone X and shorter devices; all items remain
-  // reachable by tapping through the circular queue, with zero inner scroll.
   const limit=window.innerHeight<=860?1:2;
-  const ordered=[primary,...other];
-  const activeIndex=ordered.indexOf(shown);
-  const upcoming=ordered.slice(activeIndex+1).concat(ordered.slice(0,activeIndex));
-  for(const item of upcoming.slice(0,limit)){
-   const row=create('button','lm-inline-item');
-   row.type='button';row.dataset.lmKind=item.kind;
-   row.setAttribute('aria-label','Показать: '+item.title);
-   const mark=create('span','lm-inline-art');
-   mark.append(icon(item.kind));
-   const words=create('span','lm-inline-copy');
-   words.append(create('span','lm-inline-title',item.title),create('span','lm-inline-note',item.body));
-   // The whole row is the action. No decorative arrow: the artwork and
-   // title already make it recognizable, as in SEYVEO Quiet Actions.
-   row.append(mark,words);
-   row.addEventListener('click',()=>{
-    readingUntil=Date.now()+20000;
-    changeFeatured(item);
-   });
+  for(const item of sequence.slice(1,limit+1)){
+   const row=create('button','lm-inline-item');row.type='button';
+   row.setAttribute('aria-label','Показать дело: '+item.title);
+   const art=create('span','lm-inline-art');art.append(icon(item.kind));
+   const text=create('span','lm-inline-copy');
+   text.append(create('span','lm-inline-title',item.title),
+     create('span','lm-inline-note',item.body));
+   row.append(art,text);
+   row.addEventListener('click',()=>changeFeatured(item));
    secondary.append(row);
   }
  }
- function changeFeatured(item){
-  if(item===shown||morphLocked)return;
-  morphLocked=true;
-  scene.classList.add('lm-scene--changing');
-  later(()=>{
-   if(!tiles.contains(field)||mode==='idle')return;
-   shown=item;
-   field.dataset.lmSubject=item.kind;
-   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
-   artwork.replaceChildren(icon(item.kind));
-   artwork.setAttribute('aria-label','Открыть: '+item.title);
-   label.textContent=item.category;
-   position.textContent=(real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР')+' · '+
-    String(sequence.indexOf(item)+1).padStart(2,'0')+' / '+
-    String(sequence.length).padStart(2,'0');
-   headline.textContent=item.title;
-   description.textContent=item.body;
-   expanded=false;
-   field.classList.remove('lm-has-reason');
-   more.hidden=true;
-   more.textContent='';
-   open.textContent='Подробнее';
-   open.setAttribute('aria-expanded','false');
-   open.setAttribute('aria-label','Подробнее: '+shown.title);
-   execute.setAttribute('aria-label','Исполнить: '+shown.title);
-   renderSecondary();
-   scene.classList.remove('lm-scene--changing');
-   later(()=>{morphLocked=false},720);
-  },reduced()?0:430);
+ function renderMain(){
+  if(!sequence.length)return;
+  shown=sequence[0];field.dataset.lmSubject=shown.kind;
+  label.textContent=shown.category;
+  progress();
+  artwork.className='lm-hero-art lm-hero-art--'+shown.kind;
+  artwork.replaceChildren(icon(shown.kind));
+  artwork.setAttribute('aria-label','Подробнее: '+shown.title);
+  headline.textContent=shown.title;description.textContent=shown.body;
+  details.setAttribute('aria-label','Подробнее: '+shown.title);
+  execute.setAttribute('aria-label',real?'Отметить выполненным: '+shown.title:'Исполнить в демо: '+shown.title);
+  laterAction.setAttribute('aria-label','Отложить на потом: '+shown.title);
+  renderSecondary();
  }
- field.dataset.lmSubject=primary.kind;
- renderSecondary();
- scene.append(top,main,secondary,more);
- field.append(scene);
- tiles.append(field);
- return {field,changeFeatured};
+ function finish(){
+  tiles.replaceChildren();
+  space.classList.remove('lm-cinema-intro','lm-cinema-gather');
+  const finale=create('div','lm-finale');
+  const name=real?'Все доступные дела разобраны':'Демонстрация завершена';
+  finale.append(create('strong','lm-finale-title',name),
+    create('p','lm-finale-caption',real?
+      'Завершённые задачи сохранены. Отложенные вернутся позже.':
+      'Все десять вымышленных решений исполнены в демонстрации.'));
+  if(!real){
+   const repeat=create('button','lm-polymer lm-polymer--main','Посмотреть ещё раз');
+   repeat.type='button';
+   repeat.addEventListener('click',()=>startPreview());
+   finale.append(repeat);
+  }
+  tiles.append(finale);
+  mode=real?'finished-real':'finished-demo';
+  if(demoLaunch)demoLaunch.hidden=true;
+  announce(real?'Очередь дел разобрана':'Демо завершено · реальные данные не менялись');
+ }
+ function transitionOut(direction,onRemoved){
+  if(morphLocked||!sequence.length)return;
+  morphLocked=true;
+  const cls=direction==='complete'?'lm-scene--completed':
+    direction==='left'?'lm-scene--exit-left':'lm-scene--exit-right';
+  scene.classList.add(cls);
+  later(()=>{
+   if(!tiles.contains(field))return;
+   onRemoved();
+   if(!sequence.length){finish();morphLocked=false;return}
+   renderMain();
+   scene.classList.remove(cls);
+   scene.classList.add('lm-scene--incoming');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    scene.classList.remove('lm-scene--incoming');
+   }));
+   later(()=>{morphLocked=false},reduced()?0:370);
+  },reduced()?0:340);
+ }
+ function postpone(direction){
+  if(morphLocked)return;
+  if(real){
+   // Persist real deferrals until the next local day, with no task deletion.
+   const time=new Date();time.setDate(time.getDate()+1);
+   const nextDay=localDay(time);
+   const deferred=deferredTasks();deferred[shown.id]=nextDay;
+   try{localStorage.setItem(DEFERRED_KEY,JSON.stringify(deferred))}
+   catch{announce('Не удалось сохранить отсрочку');return}
+   transitionOut(direction,()=>{
+    const tasks=readOpenTasks();
+    sequence=tasks.map(storyFromTask);
+    realSignature=tasks.map(t=>[t.id,t.title,t.due||''].join(':')).join('|');
+    announce('Отложено до завтра');
+   });
+   return;
+  }
+  const pushed=shown;
+  transitionOut(direction,()=>{
+   sequence=sequence.filter(t=>t!==pushed);
+   sequence.push(pushed);
+   announce('Демо · вернёмся к делу позже');
+  });
+ }
+ function changeFeatured(item){
+  if(morphLocked||item===shown)return;
+  transitionOut('left',()=>{
+   sequence=sequence.filter(t=>t!==item);
+   sequence.unshift(item);
+  });
+ }
+ // A deliberate horizontal gesture is defer, NEVER execute or erase.
+ // Vertical motion remains browser scrolling on screens where it is needed.
+ let pointer=null;
+ field.addEventListener('pointerdown',event=>{
+  if(morphLocked||event.button!==0||event.target.closest('button'))return;
+  pointer={id:event.pointerId,x:event.clientX,y:event.clientY};
+ });
+ field.addEventListener('pointerup',event=>{
+  if(!pointer||pointer.id!==event.pointerId)return;
+  const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y;pointer=null;
+  if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.4)return;
+  event.preventDefault();readingUntil=Date.now()+12000;
+  postpone(dx<0?'left':'right');
+ });
+ field.addEventListener('pointercancel',()=>{pointer=null});
+ renderMain();
+ scene.append(top,main,secondary,note);field.append(scene);tiles.append(field);
+ return {field,changeFeatured,getQueue:()=>sequence.slice(),postpone};
 }
 let previewScene=null;
 /* Keep saved tasks and previous postponements, with one visible Home renderer. */
