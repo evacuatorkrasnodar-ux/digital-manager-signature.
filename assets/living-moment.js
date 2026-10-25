@@ -284,39 +284,12 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview({auto=false}={}){
+function startPreview(){
  if(!available()||editing())return false;
- if(mode!=='idle')return false;
+ if(mode!=='idle'){cancel();resetSpace();mode='idle';key=''}
+ demoResolved.clear();collectionPage=0;collectionOpen=false;
  previewHasPlayed=true;
- mode='preview';key='preview';
- dynamic.hidden=true;
- buildExamples();
- tip.textContent='ВОЗМОЖНОСТИ СЭЙВЫ · ДЕМО';
- space.hidden=false;space.classList.remove('lm-collection-mode','lm-next-mode','lm-collection-cinematic');
- space.classList.add('lm-preview');
- focus(false); // Retain the approved full-size sphere over the first editorial scene.
- const firstBeat=reduced()?0:650;
- const changeBeat=reduced()?200:2600;
- later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},firstBeat);
- // The sequence waits while a person is reading or using a control.
- // Nested beats guarantee that document, envelope and care never overlap.
- hold(()=>{
-  if(mode!=='preview')return;
-  previewScene?.changeFeatured(sample[1]);
-  hold(()=>{
-   if(mode!=='preview')return;
-   previewScene?.changeFeatured(sample[2]);
-   hold(()=>{
-    if(mode!=='preview')return;
-    cancel();resetSpace();mode='idle';key='';
-    // Living illustrations converge into ONE small, persistent glass decision.
-    collectionPage=0;collectionOpen=false;
-    showCollection(demoTasks(),{demo:true,animate:false});
-   },changeBeat+500);
-  },changeBeat);
- },changeBeat+firstBeat);
- if(caption)caption.textContent='Демо: три примера, затем один Центр решений. Данные не изменяются.';
- return true;
+ return showCollection(demoTasks(),{demo:true,animate:true});
 }
 
 /* All open tasks live in the existing Tasks store. This surface only reads
@@ -395,140 +368,197 @@ function showCollection(tasks,{demo=false,animate=false}={}){
  dynamic.hidden=!dynamic.querySelector('[data-owner-advice]');
  tiles.replaceChildren();
  const queue=tasks.slice();
- const wrapper=create('section','lm-task-collection lm-task-collection--quiet');
- if(demo)wrapper.dataset.demo='true';
+ const runCinematic=animate&&!reduced();
+ const wrapper=create('section','lm-task-collection lm-task-collection--quiet lm-decision-stack');
+ wrapper.dataset.demo=String(demo);
  const summary=create('div','lm-task-summary');
- const count=create('span','lm-task-count','0');
- const head=create('span','lm-task-heading');
- head.append(create('strong','lm-task-title','Центр решений'),
-  create('small','lm-task-caption',demo?'ДЕМО · Примеры без настоящих действий':'Ваши дела собраны здесь'));
- const number=create('span','lm-task-total');
- summary.append(count,head,number);
+ const count=create('span','lm-task-count',String(queue.length));
+ const header=create('span','lm-task-heading');
+ const heading=create('strong','lm-task-title','Центр решений');
+ const captionText=create('small','lm-task-caption',demo?'ДЕМО · решения для просмотра':'Ваши дела в одной стопке');
+ header.append(heading,captionText);
+ const total=create('span','lm-task-total');
+ summary.append(count,header,total);
+ const front=create('div','lm-decision-front');
+ const visual=create('span','lm-decision-icon');visual.setAttribute('aria-hidden','true');
+ const frontText=create('div','lm-decision-copy');
+ const frontWhen=create('small','lm-decision-when');
+ const frontTitle=create('strong','lm-decision-name');
+ const frontNote=create('p','lm-decision-summary');
+ frontText.append(frontWhen,frontTitle,frontNote);front.append(visual,frontText);
  const actions=create('div','lm-task-actions lm-task-actions--two');
  const view=create('button','lm-task-acquaint','Ознакомиться');view.type='button';
  const execute=create('button','lm-task-execute','Исполнить');execute.type='button';
  actions.append(view,execute);
- const body=create('div','lm-task-body lm-task-body--quiet');body.hidden=true;
- const position=create('p','lm-task-position');
- const title=create('h3','lm-task-current-title');
- const when=create('p','lm-task-when');
+ const body=create('section','lm-task-body lm-task-body--quiet');body.hidden=true;
+ const detailTitle=create('h3','lm-task-current-title','Подробности');
  const explanation=create('p','lm-task-explanation');
  const feedback=create('p','lm-task-feedback');feedback.setAttribute('role','status');
  feedback.setAttribute('aria-live','polite');
- body.append(position,title,when,explanation,feedback);
- wrapper.append(summary,actions,body);
- tiles.append(wrapper);
+ const deeper=create('div','lm-decision-deeper');
+ const consult=create('button','lm-decision-text-action','Посоветоваться с Сэйвой');consult.type='button';
+ const edit=create('button','lm-decision-text-action',demo?'Что можно исправить':'Изменить дело');edit.type='button';
+ deeper.append(consult,edit);
+ body.append(detailTitle,explanation,feedback,deeper);
+ wrapper.append(summary,front,actions,body);
  const results={
-  'demo-mail':'ДЕМО · Черновик ответа:\n«Здравствуйте! Спасибо за обращение. Уточните, пожалуйста, удобное время.»\nПисьмо не отправлялось.',
-  'demo-document':'ДЕМО · Проверка договора:\n«Проверить сроки, реквизиты сторон и порядок оплаты.»\nДокумент не подписывался.',
-  'demo-call':'ДЕМО · Подготовка звонка:\n«Перед звонком уточнить контакт и номер клиента.»\nЗвонка не было.'
+  'demo-mail':'Демо: подготовлен черновик ответа. Письмо никому не отправлялось.',
+  'demo-document':'Демо: отмечены сроки, реквизиты и порядок оплаты. Ничего не подписано.',
+  'demo-call':'Демо: предложено уточнить контакт перед звонком. Звонок не совершался.'
  };
- const grammatical=n=>n+' '+(n%10===1&&n%100!==11?'дело':
-   [2,3,4].includes(n%10)&&!(n%100>=12&&n%100<=14)?'дела':'дел');
- let deferredNote='';
- function current(){
-  if(demo&&demoResolved.size===queue.length)return null;
-  const unresolved=demo?queue.filter(item=>!demoResolved.has(item.id)):queue;
-  if(!unresolved.length)return null;
-  collectionPage=((collectionPage%unresolved.length)+unresolved.length)%unresolved.length;
-  return unresolved[collectionPage];
- }
+ let completedResult=null,lastDeferred='';
+ const grammar=n=>n+' '+(n%10===1&&n%100!==11?'дело':
+  [2,3,4].includes(n%10)&&!(n%100>=12&&n%100<=14)?'дела':'дел');
+ const outstanding=()=>demo?queue.filter(t=>!demoResolved.has(t.id)):queue;
+ const current=()=>outstanding()[0]||null;
  function render(){
-  const remaining=demo?queue.length-demoResolved.size:queue.length;
-  count.textContent=String(remaining);
-  number.textContent=grammatical(remaining);
-  view.setAttribute('aria-expanded',String(collectionOpen));
-  const item=current();
-  if(!item){
-   title.textContent='Все примеры обработаны';
-   position.textContent='ДЕМОНСТРАЦИЯ ЗАВЕРШЕНА';
-   when.textContent='';
-   explanation.textContent='Это была безопасная демонстрация без отправки писем, подписания документов и звонков.';
-   body.hidden=false;collectionOpen=true;
-   view.disabled=true;execute.disabled=true;
-   head.querySelector('.lm-task-caption').textContent='Все решения просмотрены';
-   return;
-  }
-  position.textContent=(collectionPage+1)+' из '+remaining;
-  title.textContent=item.title;
-  when.textContent=demo?'Пример для просмотра':deadlineLabel(item);
-  explanation.textContent=demo?item.demoDescription+' Реальные сервисы не подключались.':
-   item.sourceNoteId?'Это дело сохранено из Блокнота. Выполнить можно в разделе «Дела».':
-   'Это ваше сохранённое дело. «Исполнить» открывает его для выполнения.';
-  if(deferredNote){feedback.textContent=deferredNote;deferredNote=''}
-  else if(!demo||!demoResolved.has(item.id))feedback.textContent='';
+  const remaining=outstanding(),task=current();
+  count.textContent=String(remaining.length);
+  total.textContent=grammar(remaining.length);
   body.hidden=!collectionOpen;
-  view.disabled=false;execute.disabled=false;
- }
- function moveNext({defer=false}={}){
-  if(!current())return;
-  // Swiping changes only on-screen priority, not saved status or user data.
-  const active=current();
-  if(defer&&queue.length===1){
-   collectionOpen=false;body.hidden=true;
-   head.querySelector('.lm-task-caption').textContent=
-     'Отложено до следующего просмотра · не удалено';
+  view.setAttribute('aria-expanded',String(collectionOpen));
+  if(!task){
+   captionText.textContent='Все примеры рассмотрены';
+   frontWhen.textContent=demo?'ДЕМО · ЗАВЕРШЕНО':'ГОТОВО';
+   frontTitle.textContent='Больше нет ожидающих решений';
+   frontNote.textContent=demo?'Все действия были демонстрационными. Настоящие сервисы не затронуты.':'Открытых дел пока нет.';
+   visual.replaceChildren(icon('task'));
+   view.disabled=true;
+   execute.disabled=!demo;execute.textContent=demo?'Повторить показ':'Готово';
+   body.hidden=true;
    return;
   }
-  if(defer&&queue.length>1){
-   const index=queue.indexOf(active);
-   queue.splice(index,1);queue.push(active);
-   deferredNote='Отложено в этом просмотре · дело сохранено.';
-   head.querySelector('.lm-task-caption').textContent='Следующее дело · остальные сохранены';
-  }else collectionPage++;
-  collectionOpen=false;
-  render();
+  captionText.textContent=lastDeferred|| (demo?'ДЕМО · решения для просмотра':'Ваши дела в одной стопке');
+  frontWhen.textContent=demo?'ПРИМЕР · '+remaining.length+' В ОЧЕРЕДИ':deadlineLabel(task);
+  frontTitle.textContent=task.title;
+  frontNote.textContent=demo?task.demoDescription:
+    task.sourceNoteId?'Дело из Блокнота · откройте, чтобы проверить исходную запись.':
+    'Сохранённое дело. Можно проверить, обсудить или выполнить.';
+  visual.replaceChildren(icon(gatherKind(task,demo)));
+  view.disabled=false;
+  execute.disabled=false;
+  view.textContent=collectionOpen?'Свернуть':'Ознакомиться';
+  execute.textContent=completedResult?'Следующее':'Исполнить';
+  detailTitle.textContent=task.title;
+  explanation.textContent=demo?task.demoDescription+' Это демонстрационный пример — без доступа к реальным письмам, договорам или вызовам.':
+   'Срок: '+deadlineLabel(task)+'. Перед исполнением можно посоветоваться с Сэйвой или изменить название и срок дела.';
+  if(completedResult){
+   feedback.textContent=completedResult;
+   deeper.hidden=true;body.hidden=false;collectionOpen=true;view.disabled=true;
+  }else{
+   feedback.textContent=lastDeferred?'Дело отложено в этом просмотре. Оно не удалено.':'';
+   deeper.hidden=!collectionOpen;
+  }
+  lastDeferred='';
+ }
+ function showConsult(questionMode=false){
+  const task=current();if(!task)return;
+  const q=$('question');
+  const parts=['Помоги разобраться с делом «'+task.title+'».',demo?'Это демонстрационный пример.':'Это сохранённое мной дело.','Что важно проверить, что можно исправить и как лучше поступить?'];
+  if(questionMode)parts.push('Предложи конкретные исправления перед исполнением.');
+  // Never overwrite a person's existing unsent message.
+  if(q&&!q.value.trim()){
+   q.value=parts.join(' ');
+   q.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
+  q?.focus({preventScroll:true});
+  readingUntil=Date.now()+30000;
+ }
+ function finishDemo(){
+  const task=current();if(!task)return;
+  demoResolved.add(task.id);
+  completedResult=results[task.id]||'Демо обработано. Реальные данные не изменились.';
+  collectionOpen=true;render();
  }
  view.addEventListener('click',()=>{
   if(!current())return;
-  collectionOpen=!collectionOpen;
-  feedback.textContent='';
-  render();
+  if(completedResult)return;
+  collectionOpen=!collectionOpen;render();
  });
  execute.addEventListener('click',()=>{
-  const task=current();
-  if(!task)return;
-  readingUntil=Date.now()+13000;
-  if(!demo){activateTask(task);return}
-  demoResolved.add(task.id);
-  collectionOpen=true;
-  body.hidden=false;
-  position.textContent='ДЕМОНСТРАЦИЯ';
-  title.textContent=task.title;
-  when.textContent='Пример выполнен';
-  explanation.textContent=task.demoDescription;
-  feedback.textContent=results[task.id]||'Демо завершено. Настоящие данные не изменились.';
-  count.textContent=String(queue.length-demoResolved.size);
-  number.textContent=grammatical(queue.length-demoResolved.size);
-  execute.disabled=true;view.disabled=true;
-  // Allow sufficient reading time; swiping advances immediately if preferred.
-  later(()=>{
-   if(mode!=='collection'||!collectionDemo||!wrapper.isConnected)return;
-   collectionOpen=false;collectionPage=0;
-   render();
-  },5800);
+  if(!current()){
+   if(demo){cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;showCollection(demoTasks(),{demo:true,animate:true})}
+   return;
+  }
+  if(completedResult){completedResult=null;collectionOpen=false;render();return}
+  const task=current();if(!task)return;
+  readingUntil=Date.now()+25000;
+  if(demo){finishDemo();return}
+  // Executor handoff only. Do not falsely mark tasks as done.
+  activateTask(task);
  });
- // A horizontal gesture postpones a real item without editing the store.
+ consult.addEventListener('click',()=>showConsult(false));
+ edit.addEventListener('click',()=>{
+  const task=current();if(!task)return;
+  if(demo){showConsult(true);return}
+  const detail={id:task.id,result:null};
+  window.dispatchEvent(new CustomEvent('seyveo:home-task-edit',{detail}));
+  if(detail.result?.status!=='opened'){
+   feedback.textContent=detail.result?.message||'Откройте дело в списке для изменения.';
+   activateTask(task);
+  }
+ });
+ function postpone(){
+  if(!current()||completedResult)return;
+  if(queue.length<2){
+   captionText.textContent='Отложено на потом · дело сохранено';
+   body.hidden=true;collectionOpen=false;
+   return;
+  }
+  const task=current();
+  const index=queue.indexOf(task);
+  if(index>=0){queue.splice(index,1);queue.push(task)}
+  collectionOpen=false;completedResult=null;
+  lastDeferred='Отложено · остальные дела сохранены';
+  wrapper.classList.remove('lm-decision-swipe');
+  // Tiny feedback pulse is confined to the final stack, never the sphere.
+  void wrapper.offsetWidth;wrapper.classList.add('lm-decision-swipe');
+  render();
+ }
+ // Swiping works ONLY after all cinematic cards have joined the stack.
  let startX=null,startY=null;
  wrapper.addEventListener('touchstart',event=>{
-  if(event.touches.length!==1||event.target.closest('button'))return;
+  if(wrapper.inert||event.touches.length!==1||event.target.closest('button'))return;
   startX=event.touches[0].clientX;startY=event.touches[0].clientY;
  },{passive:true});
  wrapper.addEventListener('touchend',event=>{
   if(startX===null||!event.changedTouches.length)return;
-  const deltaX=event.changedTouches[0].clientX-startX;
-  const deltaY=event.changedTouches[0].clientY-startY;
+  const dx=event.changedTouches[0].clientX-startX,dy=event.changedTouches[0].clientY-startY;
   startX=null;startY=null;
-  if(deltaX< -70&&Math.abs(deltaY)<52){
-   if(demo&&demoResolved.size>0&&execute.disabled){
-    collectionOpen=false;collectionPage=0;render();
-   }else moveNext({defer:true});
-  }
+  if(dx< -72&&Math.abs(dy)<50)postpone();
  },{passive:true});
  render();
+ tiles.append(wrapper);
+ if(runCinematic){
+  wrapper.inert=true;wrapper.setAttribute('aria-hidden','true');
+  space.classList.add('lm-collection-cinematic');
+  const stage=create('div','lm-cinema-stage');
+  stage.setAttribute('aria-hidden','true');
+  tasks.slice(0,3).forEach((task,index)=>{
+   const leaf=create('article','lm-cinema-card');
+   leaf.style.setProperty('--cinema-index',String(index));
+   const emblem=create('span','lm-cinema-emblem');emblem.append(icon(gatherKind(task,demo)));
+   const info=create('div','lm-cinema-copy');
+   info.append(create('small','lm-cinema-kicker',demo?'ДЕМО · СЭЙВА':'ДЕЛО · СЭЙВА'),
+    create('strong','lm-cinema-title',task.title),
+    create('p','lm-cinema-note',demo?task.demoDescription:deadlineLabel(task)+' · '+task.title));
+   leaf.append(emblem,info);stage.append(leaf);
+  });
+  if(tasks.length>3)stage.append(create('small','lm-cinema-remaining','И ещё '+(tasks.length-3)+' дел'));
+  tiles.insertBefore(stage,wrapper);
+  const finalize=()=>{
+   if(mode!=='collection'||!wrapper.isConnected)return;
+   stage.remove();wrapper.inert=false;wrapper.removeAttribute('aria-hidden');
+   space.classList.remove('lm-collection-cinematic');
+   collectionAnimationSeen=true;
+  };
+  later(finalize,6700);
+ }else collectionAnimationSeen=true;
  focus(true);
  return true;
 }
+
 function adviceIdentity(card){
  if(!card)return '';
  const title=card.querySelector('.event-copy strong')?.textContent||'';
@@ -679,8 +709,8 @@ function refresh(){
  if(tasks.length&&showCollection(tasks,{animate:!collectionAnimationSeen}))return;
  if(pending&&showExistingAdvice())return;
  if(mode==='idle'&&!pending){
-  if(!previewHasPlayed&&available()){startPreview({auto:true});return}
-  showCollection(demoTasks(),{demo:true,animate:false});
+  previewHasPlayed=true;
+  showCollection(demoTasks(),{demo:true,animate:!collectionAnimationSeen});
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
@@ -737,8 +767,8 @@ replay?.addEventListener('click',()=>{
  if(replay.closest('dialog[open]'))replay.closest('dialog').close();
  $('navHome')?.click();
  later(()=>{
-  cancel();resetSpace();mode='idle';key='';collectionPage=0;collectionOpen=false;
-  demoResolved.clear();startPreview();
+  cancel();resetSpace();mode='idle';key='';demoResolved.clear();collectionOpen=false;
+  startPreview();
  },260);
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
