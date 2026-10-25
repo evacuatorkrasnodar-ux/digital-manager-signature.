@@ -132,7 +132,7 @@ function createSurface(primary,other=[],real=false){
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР'));
+ top.append(label,create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ДЕМО'));
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('button','lm-hero-art lm-hero-art--'+primary.kind);
@@ -287,7 +287,7 @@ function startPreview(){
  try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
- tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
+ tip.textContent='ВОЗМОЖНОСТИ СЭЙВЫ · ДЕМО';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
  later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
@@ -301,7 +301,7 @@ function startPreview(){
    },TIMING.beat);
   },TIMING.beat);
  },TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
+ if(caption)caption.textContent='Демонстрация трёх примеров без изменения личных данных.';
  return true;
 }
 function dueTask(){
