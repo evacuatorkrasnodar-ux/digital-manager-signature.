@@ -373,7 +373,12 @@ function createSurface(primary,other=[],real=false){
   introNode.setAttribute('aria-hidden','true');
   queue.slice(0,4).forEach((item,i)=>{
    const card=create('div','lm-film-card');
-   card.style.setProperty('--film-index',String(i));
+   // Precomputed values use only CSS properties supported by older iOS
+   // Safari (iPhone X); CSS calc(number * length) is not reliable there.
+   card.style.setProperty('--film-bottom',(6+i*47)+'px');
+   card.style.setProperty('--film-compact-bottom',(3+i*37)+'px');
+   card.style.setProperty('--film-shift',(i*47-24)+'px');
+   card.style.setProperty('--film-rise-delay',(120+i*190)+'ms');
    const mark=create('span','lm-film-art');mark.append(icon(item.kind));
    card.append(mark,create('span','lm-film-title',item.title));
    introNode.append(card);
