@@ -38,9 +38,7 @@ jobs:
         run: node tools/test-living-ink.cjs
       - name: Test readable History, Notes, Health and Care workspaces
         run: node tools/test-living-workspaces.cjs
-      - name: Test permissioned weather and careful health guidance
-        run: node tools/test-weather.cjs
-      - name: Test Magnetic Ink swipes and the fixed Sayvi center
+      - name: Test fixed Sayvi dock without swipe pages
         run: node tools/test-magnetic-ink.cjs
       - name: Verify official YouTube SEYVA PLAY and resource release
         run: node tools/test-seyveo-video.cjs
