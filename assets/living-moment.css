@@ -578,3 +578,76 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
   content:none!important;
   display:none!important;
 }
+
+
+/* SEYVA — one meaningful next step, not a simulated notification stream.
+   The sphere stays in place; actual user tasks and recommendations take over. */
+#homePage #seyveoLivingMoment.lm-next-mode{
+  margin:0 0 12px;
+  opacity:1;transform:none;
+}
+#homePage #seyveoLivingMoment .lm-next{
+  position:relative;
+  margin:0 3px;
+  padding:15px 13px 16px;
+  border-top:1px solid rgba(224,234,250,.18);
+  background:linear-gradient(155deg,rgba(226,233,246,.04),transparent 72%);
+  border-radius:0 0 18px 18px;
+  text-align:left;
+  color:var(--text);
+}
+#homePage #seyveoLivingMoment .lm-next-kicker{
+  margin:0 0 8px;
+  color:var(--secondary);
+  font-size:10px;font-weight:550;line-height:1.4;
+  letter-spacing:.105em;
+}
+#homePage #seyveoLivingMoment .lm-next-title{
+  display:block;
+  margin:0 0 6px;
+  font-size:clamp(17px,4.7vw,20px);
+  font-weight:540;letter-spacing:-.035em;line-height:1.25;
+  color:var(--text);
+}
+#homePage #seyveoLivingMoment .lm-next-description{
+  max-width:37em;margin:0 0 9px;
+  color:var(--secondary);font-size:12.5px;line-height:1.48;
+}
+#homePage #seyveoLivingMoment .lm-next-action{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:0;min-height:44px;
+  margin:0;padding:9px 15px;
+  border-radius:14px;
+  border:1px solid rgba(238,243,251,.23);
+  background:rgba(236,242,251,.075);
+  color:var(--text);box-shadow:none;
+  font:inherit;font-size:12.5px;font-weight:570;letter-spacing:-.013em;
+  -webkit-tap-highlight-color:transparent;cursor:pointer;
+}
+#homePage #seyveoLivingMoment .lm-next-action:active{
+  background:rgba(238,245,255,.14)
+}
+#homePage #seyveoLivingMoment .lm-next-action:focus-visible{
+  outline:2px solid var(--text);outline-offset:3px;
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-next{
+  border-color:rgba(53,70,90,.19);
+  background:linear-gradient(150deg,rgba(255,255,255,.75),rgba(255,255,255,0) 80%);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-next-action{
+  background:rgba(39,54,73,.06);
+  border-color:rgba(39,54,73,.2);
+}
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-next-action:active{
+  background:rgba(39,54,73,.1);
+}
+@media(max-width:355px){
+ #homePage #seyveoLivingMoment .lm-next{
+  padding:13px 10px 14px;
+ }
+ #homePage #seyveoLivingMoment .lm-next-description{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homePage #seyveoLivingMoment.lm-next-mode,
+ #homePage #seyveoLivingMoment .lm-next{animation:none!important;transition:none!important}
+}
