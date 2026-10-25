@@ -363,3 +363,37 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#lifePage,#picturePage,#manage
  #homePage #seyveoLivingMoment .lm-cinema-card,
  #homePage #seyveoLivingMoment .lm-decision-stack{animation:none!important}
 }
+
+/* Two restrained, perfectly centred glass edges behind the gathered deck.
+   No skew, no tilted pile and no huge duplicate panels. */
+#homePage #seyveoLivingMoment .lm-decision-stack{
+ overflow:visible!important;
+ isolation:isolate;
+ margin-bottom:24px;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack::before,
+#homePage #seyveoLivingMoment .lm-decision-stack::after{
+ content:""!important;
+ display:block!important;
+ position:absolute;left:50%;top:auto;
+ width:calc(100% - 22px);height:17px;
+ bottom:-6px;transform:translateX(-50%);
+ pointer-events:none;
+ border:1px solid rgba(242,243,248,.15);
+ border-radius:0 0 21px 21px;
+ background:linear-gradient(160deg,#434650,#242832);
+ box-shadow:0 3px 7px rgba(0,0,0,.11);
+ z-index:-1;
+}
+#homePage #seyveoLivingMoment .lm-decision-stack::after{
+ width:calc(100% - 42px);bottom:-11px;
+ background:#20242b;
+ border-color:rgba(242,243,248,.10);
+ z-index:-2;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack::before{
+ background:linear-gradient(160deg,#737d8a,#424b58);
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-decision-stack::after{
+ background:#66707e;
+}
