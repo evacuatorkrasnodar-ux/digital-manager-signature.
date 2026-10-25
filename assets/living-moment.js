@@ -284,35 +284,43 @@ function hold(callback,delay){
  };
  later(check,delay);
 }
-function startPreview(){
+function startPreview({auto=false}={}){
  if(!available()||editing())return false;
- if(mode!=='idle')rest();
+ if(mode!=='idle')return false;
+ previewHasPlayed=true;
  mode='preview';key='preview';
- try{sessionStorage.setItem(SESSION,'1')}catch{}
  dynamic.hidden=true;
  buildExamples();
  tip.textContent='ВОЗМОЖНОСТИ СЭЙВЫ · ДЕМО';
- space.hidden=false;space.classList.add('lm-preview');
- focus(true);
- later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
+ space.hidden=false;space.classList.remove('lm-collection-mode','lm-next-mode','lm-collection-cinematic');
+ space.classList.add('lm-preview');
+ focus(false); // Retain the approved full-size sphere over the first editorial scene.
+ const firstBeat=reduced()?0:650;
+ const changeBeat=reduced()?200:2600;
+ later(()=>{if(mode==='preview')space.classList.add('lm-reveal')},firstBeat);
+ later(()=>{
+  if(mode!=='preview'||!available())return;
   previewScene?.changeFeatured(sample[1]);
-  hold(()=>{
-   previewScene?.changeFeatured(sample[2]);
-   hold(()=>{
-    shrink();
-    hold(()=>disappear(),TIMING.quiet);
-   },TIMING.beat);
-  },TIMING.beat);
- },TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Демонстрация трёх примеров без изменения личных данных.';
+ },changeBeat);
+ later(()=>{
+  if(mode!=='preview'||!available())return;
+  previewScene?.changeFeatured(sample[2]);
+ },changeBeat*2);
+ later(()=>{
+  if(mode!=='preview'||!available())return;
+  cancel();resetSpace();mode='idle';key='';
+  // The living unboxed icons converge into ONE quiet glass decision center.
+  collectionPage=0;collectionOpen=false;
+  showCollection(demoTasks(),{demo:true,animate:false});
+ },changeBeat*3+550);
+ if(caption)caption.textContent='Демо: три примера, затем один Центр решений. Данные не изменяются.';
  return true;
 }
 
 /* All open tasks live in the existing Tasks store. This surface only reads
  * their metadata; writing status is delegated to Personal Tasks. */
 let collectionPage=0,collectionOpen=false;
-let collectionDemo=false,collectionAnimationSeen=false;
+let collectionDemo=false,collectionAnimationSeen=false,previewHasPlayed=false;
 const demoResolved=new Set();
 // One cinematic opening per app runtime. The demo's explicit replay stays
 // available; do not suppress the opening across iPhone PWA relaunches.
