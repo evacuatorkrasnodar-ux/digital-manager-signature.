@@ -303,6 +303,11 @@ function createSurface(primary,other=[],real=false){
    if(!tiles.contains(field))return;
    if(kind==='defer'){
     if(queue.length>1)queue.push(queue.shift());
+    if(real){
+     // Only the display order changes; saved personal tasks remain intact.
+     try{localStorage.setItem('seyveo-home-task-order-v1',
+       JSON.stringify(queue.map(task=>task.id)))}catch{}
+    }
     notify('Отложено на потом · вернётся в очередь');
    }else{
     const completedItem=queue.shift();
@@ -391,11 +396,23 @@ function readOpenTasks(){
  let data=[];try{data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]')}catch{}
  if(!Array.isArray(data))return [];
  const deferred=deferredTasks(),today=localDay();
- return data.filter(t=>t&&t.done!==true&&typeof t.id==='string'&&
+ const tasks=data.filter(t=>t&&t.done!==true&&typeof t.id==='string'&&
    typeof t.title==='string'&&t.title.trim()&&!(deferred[t.id]>today))
   .map(t=>({id:t.id,title:t.title.trim().slice(0,140),
    due:typeof t.due==='string'?t.due:'',sourceNoteId:t.sourceNoteId||''}))
   .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31'));
+ // A postponed item keeps its place after navigation or PWA relaunch.
+ // This key stores IDs only, never copies the user's task content.
+ let order=[];
+ try{
+  const saved=JSON.parse(localStorage.getItem('seyveo-home-task-order-v1')||'[]');
+  if(Array.isArray(saved))order=saved.filter(id=>typeof id==='string').slice(0,150);
+ }catch{}
+ if(order.length){
+  const positions=new Map(order.map((id,i)=>[id,i]));
+  tasks.sort((a,b)=>(positions.get(a.id)??9999)-(positions.get(b.id)??9999));
+ }
+ return tasks;
 }
 function artisticKind(t){
  const title=String(t.title||'').toLowerCase();
