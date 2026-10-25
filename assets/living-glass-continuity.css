@@ -151,9 +151,9 @@ html.sv-space-active #sayviMusicPage :is(.sv-music-library,.sv-music-providers){
  background:linear-gradient(150deg,var(--sv-glass-top),transparent 74%),var(--sv-glass-base);
  box-shadow:var(--sv-glass-shadow);
 }
-html.sv-space-active #tasksPage .personal-tasks-list{display:grid;gap:8px}
+/* Keep the original Tasks list flow and ordering untouched. */
 html.sv-space-active #tasksPage .personal-task-row{
- padding:12px 11px;margin:0;min-height:64px;
+ padding:12px 11px;margin:7px 0;min-height:64px;
 }
 html.sv-space-active #lifePage .calendar-space-button{
  min-height:83px;padding:11px;
