@@ -11,8 +11,8 @@ const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus')
 if(!home||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
-const SESSION='seyveo-compact-task-deck-demo-v2';
-const TIMING=Object.freeze({open:reduced()?0:190,beat:850,quiet:4800,close:reduced()?0:420});
+const SESSION='seyveo-detailed-decision-cinema-v3';
+const TIMING=Object.freeze({open:reduced()?0:620,beat:2900,quiet:4800,close:reduced()?0:720});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let ledgerState=null,demoFinished=false,hadRealWork=false,realIntroSeen=false;
 let pendingUpdate=false;
@@ -99,15 +99,24 @@ function icon(kind){
 }
 
 const sample=[
- {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
-  reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
-  detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
- {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
-  reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
-  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
- {kind:'health',title:'Пора передохнуть',category:'ЗАБОТА',body:'Две спокойные минуты для себя.',
-  reason:'Учебный пример заботы о себе, не основан на данных Apple Health или медицинских измерениях.',
-  detail:'Можно сделать короткую передышку. Это демонстрация будущей персональной заботы, а не медицинский совет.'}
+ {kind:'contract',title:'Проверить документ',category:'ДОКУМЕНТЫ · ПРИМЕР',
+  body:'Договор ожидает проверки условий до принятия решения.',
+  cause:'Не проверены стороны, сроки и возможные обязательства. Это учебная ситуация.',
+  proposal:'Сэйва разберёт условия по пунктам и подготовит вопросы к договору.',
+  reason:'Это вымышленный договор. Настоящие документы доступны только после разрешённого подключения.',
+  detail:'Ни один документ не будет подписан или отправлен без вашего подтверждения.'},
+ {kind:'mail',title:'Ответить на письмо',category:'ПОЧТА · ПРИМЕР',
+  body:'В примере есть обращение, на которое нужен ответ.',
+  cause:'Без текста письма невозможно оценить важность. Почта сейчас не подключена.',
+  proposal:'После подключения Сэйва выделит главное и подготовит черновик ответа.',
+  reason:'Это пример, реальных писем Сэйва не читала.',
+  detail:'Перед отправкой пользователь проверит текст и разрешит отправку.'},
+ {kind:'health',title:'Пора передохнуть',category:'ЗАБОТА · ПРИМЕР',
+  body:'Запланирована двухминутная пауза для восстановления внимания.',
+  cause:'Это иллюстрация возможного напоминания, а не результат анализа здоровья.',
+  proposal:'Сэйва может предложить короткую передышку или перенести напоминание.',
+  reason:'Учебный пример, не основанный на медицинских измерениях.',
+  detail:'Никаких медицинских выводов по этому примеру не делается.'}
 ];
 /* Navigate through one continuous Sayvi space. No unrelated page or duplicate sphere. */
 function openDestination(kind){
@@ -279,16 +288,53 @@ function artisticKind(t){
 }
 function demoLedgerItems(){
  return sample.map((item,index)=>({id:'illustration-'+index,title:item.title,
-   kind:item.kind,body:item.body,reason:item.reason,detail:item.detail,
-   demo:true}));
+   kind:item.kind,body:item.body,cause:item.cause,proposal:item.proposal,
+   reason:item.reason,detail:item.detail,demo:true}));
 }
 function storyFromTask(task){
- const kind=artisticKind(task);
- return {kind,title:task.title,category:'ВАШЕ ДЕЛО',body:task.due?
-  'Срок: '+task.due.split('-').reverse().join('.'):'Сохранено в «Делах».',
-  reason:'Это запись из вашего списка дел, а не демонстрация.',
-  detail:'Изучите дело и подтвердите его завершение в разделе «Дела».',
+ const kind=artisticKind(task),today=localDay();
+ const deadline=task.due?task.due.split('-').reverse().join('.'):'';
+ const dueContext=task.due
+  ? (task.due<today?'Срок уже прошёл: ':task.due===today?'Срок сегодня: ':'Запланировано на ')+deadline+'.'
+  : 'Срок ещё не указан.';
+ const suggestion=kind==='mail'?'Разобрать обращение и подготовить ответ для согласования.':
+  kind==='contract'?'Проверить условия документа и подготовить решение.':
+  kind==='health'?'Уточнить обстоятельства и выбрать безопасный следующий шаг.':
+  'Уточнить детали с Сэйвой и согласовать последовательность действий.';
+ return {kind,title:task.title,category:'ВАШЕ ДЕЛО',
+  body:dueContext,
+  cause:task.due?'Дело ожидает вашего решения в указанный срок.':
+    'Дело сохранено, но для приоритета может понадобиться срок и дополнительный контекст.',
+  proposal:suggestion,
+  reason:'Это ваше сохранённое дело. Сэйва пока опирается только на его название и срок.',
+  detail:'Обсудите детали в чате. Реальное исполнение потребует вашего подтверждения.',
   id:task.id,due:task.due,sourceNoteId:task.sourceNoteId};
+}
+/* Подробнее is a deep conversation, never an inline accordion.
+   Reuse the ONE existing chat and composer; do not invent an assistant reply. */
+function discussTask(item,{demo=false}={}){
+ const chat=window.SEYVEO_CONVERSATION;
+ if(typeof chat?.open!=='function')return false;
+ chat.open();
+ const input=$('question');
+ if(!input)return false;
+ const existing=input.value.trim();
+ if(existing){
+  chat.status?.('Ваш черновик сохранён. Отправьте его или очистите.',4300);
+  return true;
+ }
+ const title=String(item.title||'').slice(0,140);
+ const body=String(item.body||'').slice(0,300);
+ const cause=String(item.cause||'').slice(0,370);
+ const proposal=String(item.proposal||'').slice(0,370);
+ const prompt=(demo?'Это учебный пример, не реальное дело. ':'')+
+  'Сэйва, давай подробно разберём дело «'+title+'».\n'+
+  'Ситуация: '+body+'\nПричина: '+cause+'\nПредложение: '+proposal+
+  '\nПомоги разобраться в проблеме, уточни недостающую информацию и предложи безопасный план. Ничего не исполняй без моего подтверждения.';
+ input.value=prompt;
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+ chat.status?.('Контекст дела подготовлен. Отправьте сообщение, чтобы начать.',5400);
+ return true;
 }
 function showLedger(items,{demo=false}={}){
  if(!items.length){if(demo)demoFinished=true;rest();return}
@@ -298,7 +344,7 @@ function showLedger(items,{demo=false}={}){
  space.classList.add('lm-ledger-mode','lm-reveal');space.hidden=false;
  tip.textContent='';dynamic.hidden=true;focus(true);
  const section=create('section','lm-deck');
- section.setAttribute('aria-label',demo?'Примеры дел Сэйвы':'Ваши дела');
+ section.setAttribute('aria-label',demo?'Учебные примеры Сэйвы':'Ваши дела');
  const heading=create('div','lm-deck-heading');
  const eyebrow=create('small','lm-deck-eyebrow',demo?'СЭЙВА · ПРИМЕР':'СЭЙВА · ВАШИ ДЕЛА');
  const count=create('span','lm-deck-count');
@@ -306,40 +352,50 @@ function showLedger(items,{demo=false}={}){
  const activeSlot=create('div','lm-deck-active');
  const nextSlot=create('div','lm-deck-next-slot');
  const foot=create('div','lm-deck-foot');
- const hint=create('span','lm-deck-hint','Смахните вправо — вернёмся завтра');
+ const hint=create('span','lm-deck-hint','← Следующее · Позже →');
  const laterButton=create('button','lm-deck-later','Позже');
- laterButton.type='button';laterButton.setAttribute('aria-label','Отложить это дело до завтра');
+ laterButton.type='button';
  foot.append(hint,laterButton);
  section.append(heading,activeSlot,nextSlot,foot);
  tiles.append(section);
- let queue=items.slice(),activeId=queue[0]?.id,expanded=false,closing=false,swiping=false;
+ let queue=items.slice(),activeId=queue[0]?.id,closing=false,swiping=false;
  function current(){return queue.find(t=>t.id===activeId)||queue[0]||null}
  function finish(){
   if(closing)return;
   closing=true;if(demo)demoFinished=true;
   section.classList.add('lm-deck-finished');
   space.classList.add('lm-disappear');
-  later(()=>{if(mode==='ledger')rest()},reduced()?0:340);
+  later(()=>{if(mode==='ledger')rest()},reduced()?0:740);
  }
- function postpone(){
+ function transition(direction,postpone=false){
   if(swiping||closing)return;
   const task=current();if(!task)return;
+  if(!postpone&&queue.length<2)return;
   swiping=true;
-  if(!demo)postponeTask(task.id);
+  if(postpone&&!demo)postponeTask(task.id);
   const card=activeSlot.querySelector('.lm-deck-card');
-  if(card)card.classList.add('lm-deck-card--leaving');
+  if(card){
+   card.style.setProperty('--deck-exit-x',direction==='right'?'108%':'-108%');
+   card.classList.add('lm-deck-card--leaving');
+  }
   later(()=>{
    if(mode!=='ledger')return;
-   queue=queue.filter(item=>item.id!==task.id);
-   activeId=queue[0]?.id||null;expanded=false;swiping=false;
-   render();
-  },reduced()?0:205);
+   if(postpone){
+    queue=queue.filter(t=>t.id!==task.id);
+    activeId=queue[0]?.id||null;
+   }else{
+    const i=queue.findIndex(t=>t.id===task.id);
+    activeId=queue[(i+1)%queue.length]?.id||null;
+   }
+   swiping=false;render();
+   if(!demo)scheduleRefresh();
+  },reduced()?0:410);
  }
  function render(){
   if(!queue.length){finish();return}
   if(!queue.some(t=>t.id===activeId))activeId=queue[0].id;
-  const item=current();
-  const n=queue.length,teen=n%100>=11&&n%100<=14;
+  const item=current(),n=queue.length;
+  const teen=n%100>=11&&n%100<=14;
   const ending=teen||n%10===0||n%10>=5?'дел':n%10===1?'дело':'дела';
   count.textContent=n+' '+ending;
   activeSlot.replaceChildren();nextSlot.replaceChildren();
@@ -348,56 +404,58 @@ function showLedger(items,{demo=false}={}){
   const main=create('div','lm-deck-main');
   const picture=create('span','lm-deck-art');picture.append(icon(item.kind||artisticKind(item)));
   const words=create('div','lm-deck-copy');
-  const tag=create('small','lm-deck-tag',demo?'ПРИМЕР':'ВАШЕ ДЕЛО');
+  const tag=create('small','lm-deck-tag',item.category||(demo?'ПРИМЕР':'ВАШЕ ДЕЛО'));
   const title=create('h3','lm-deck-title',item.title);
-  const subtitle=create('p','lm-deck-subtitle',item.body||'Записано в «Делах»');
+  const subtitle=create('p','lm-deck-subtitle',item.body||'Ожидает решения');
   words.append(tag,title,subtitle);main.append(picture,words);
-  const detail=create('p','lm-deck-detail',
-   demo?(item.reason||'Это демонстрационный пример.')+' '+(item.detail||''):
-   'Это ваше сохранённое дело. Подробнее о нём и подтверждение завершения доступны в «Делах».');
-  detail.hidden=!expanded;
+  const body=create('div','lm-deck-context');
+  const cause=create('div','lm-deck-info');
+  cause.append(create('small','lm-deck-info-key','ПОЧЕМУ ЭТО ВАЖНО'),
+    create('p','lm-deck-info-text',item.cause||'Нужно уточнить обстоятельства.'));
+  const solution=create('div','lm-deck-info');
+  solution.append(create('small','lm-deck-info-key','ЧТО ПРЕДЛАГАЕТ СЭЙВА'),
+    create('p','lm-deck-info-text',item.proposal||'Обсудить следующий шаг.'));
+  body.append(cause,solution);
   const actions=create('div','lm-deck-actions');
   const more=create('button','lm-deck-action','Подробнее');
   const act=create('button','lm-deck-action lm-deck-action--primary','Исполнить');
   more.type=act.type='button';
-  more.setAttribute('aria-expanded',String(expanded));
+  more.setAttribute('aria-label','Разобрать «'+item.title+'» с Сэйвой в чате');
   more.addEventListener('click',()=>{
-   expanded=!expanded;readingUntil=Date.now()+20000;render();
+   readingUntil=Date.now()+25000;
+   discussTask(item,{demo});
   });
   act.addEventListener('click',()=>{
-   readingUntil=Date.now()+20000;
+   readingUntil=Date.now()+25000;
    if(demo){
-    queue=queue.filter(t=>t.id!==item.id);
-    activeId=queue[0]?.id||null;expanded=false;render();
+    // The preview illustrates a decision, never claims a real external action.
+    transition('right',true);
     return;
    }
-   // No fictional completion: actual tasks are only closed in the source list.
    $('navTasks')?.click();
    window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:item.id}}));
   });
   actions.append(more,act);
-  card.append(main,detail,actions);
+  card.append(main,body,actions);
   activeSlot.append(card);
   const currentIndex=queue.findIndex(t=>t.id===activeId);
   if(queue.length>1){
    const next=queue[(currentIndex+1)%queue.length];
    const peek=create('button','lm-deck-peek');
    peek.type='button';
-   peek.setAttribute('aria-label','Показать следующее дело: '+next.title);
+   peek.setAttribute('aria-label','Перейти к следующему делу: '+next.title);
    const peekArt=create('span','lm-deck-peek-art');peekArt.append(icon(next.kind||artisticKind(next)));
    const peekCopy=create('span','lm-deck-peek-copy');
    peekCopy.append(create('small','lm-deck-peek-eyebrow','СЛЕДУЮЩЕЕ ДЕЛО'),
-    create('strong','lm-deck-peek-title',next.title));
+    create('strong','lm-deck-peek-title',next.title),
+    create('span','lm-deck-peek-description',next.body||''));
    peek.append(peekArt,peekCopy);
-   peek.addEventListener('click',()=>{
-    activeId=next.id;expanded=false;readingUntil=Date.now()+15000;render();
-   });
+   peek.addEventListener('click',()=>{readingUntil=Date.now()+22000;transition('left')});
    nextSlot.append(peek);
   }
-  foot.hidden=false;
-  hint.textContent=demo?'Смахните вправо — убрать пример':'Смахните вправо — вернёмся завтра';
-  laterButton.setAttribute('aria-label',demo?'Убрать этот пример':'Отложить «'+item.title+'» до завтра');
-  // Ignore drags starting on actions. A vertical gesture remains normal scrolling.
+  hint.textContent=queue.length>1?'← Следующее · Позже →':'Смахните вправо, чтобы отложить';
+  laterButton.setAttribute('aria-label',demo?'Убрать пример':'Отложить «'+item.title+'» до завтра');
+  // Full-card gestures avoid the action row; scrolling vertically remains native.
   let pointerStart=null;
   card.addEventListener('pointerdown',event=>{
    if(event.target.closest('button')||!event.isPrimary)return;
@@ -409,15 +467,17 @@ function showLedger(items,{demo=false}={}){
    if(!pointerStart||pointerStart.id!==event.pointerId)return;
    const dx=event.clientX-pointerStart.x,dy=event.clientY-pointerStart.y;
    pointerStart=null;
-   if(dx>68&&Math.abs(dy)<58)postpone();
+   if(Math.abs(dx)<67||Math.abs(dy)>Math.abs(dx)*.57)return;
+   if(dx>0)transition('right',true);
+   else transition('left',false);
   });
  }
- laterButton.addEventListener('click',postpone);
+ laterButton.addEventListener('click',()=>transition('right',true));
  ledgerState={demo,sync(next){
-  if(demo)return;
+  if(demo||swiping)return;
   const signature=items=>items.map(t=>[t.id,t.title,t.due||''].join('\u001f')).join('\u001e');
   if(signature(queue)===signature(next))return;
-  queue=next;expanded=false;render();
+  queue=next;render();
  }};
  render();
 }
@@ -493,10 +553,10 @@ function startPreview(list=null,{demo=true}={}){
    return;
   }
   shrink();
-  later(presentLedger,reduced()?0:180);
+  later(presentLedger,reduced()?0:720);
  };
  hold(nextBeat,TIMING.beat+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: быстрый показ, затем отдельные карточки дел.';
+ if(caption)caption.textContent='Quiet Cinema: спокойная смена сюжетов, затем отдельные карточки с решениями.';
  return true;
 }
 function dueTask(){
@@ -675,6 +735,6 @@ if(!visited){
  later(()=>{
   if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle'||hadRealWork||demoFinished)return;
   startPreview();
- },1150);
+ },1800);
 }
 })();
