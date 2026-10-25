@@ -19,6 +19,7 @@ const composer=read('assets/composer-intent.css');
 const home=read('assets/home-velvet.css');
 const future=read('assets/future-surfaces.css');
 const continuity=read('assets/living-space.css');
+const videoStyles=read('assets/seyveo-video.css');
 
 // Quiet Cinema uses the existing shared workspace stylesheet, NOT a new layer.
 for(const page of ['tasksPage','calendarPage','picturePage','lifePage','managePage',
@@ -31,7 +32,15 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=21/,'All screens use versioned common stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=22/,'All screens use versioned common stylesheet');
+assert.match(html,/assets\/seyveo-video\.css\?v=3/,'Video page uses current source');
+assert.match(continuity,/#calendarPage\.sv-cascade \.calendar-space-button/,'Calendar keeps independent row reveal');
+assert.doesNotMatch(continuity,/#lifePage\.sv-cascade \.calendar-space-button,/,'My World children do not double animate');
+assert.doesNotMatch(continuity,/#tasksPage\.sv-cascade \.personal-task-row,/,'Task rows no longer double animate');
+assert.match(continuity,/#manageRoadmapDialog,#pictureBreakdownDialog/,'Dialogs share text-first actions');
+assert.match(continuity,/text-underline-offset:5px/,'Confirmed actions are text, not capsules');
+assert.doesNotMatch(videoStyles,/calc\(95px \+ env\(safe-area-inset-bottom/,'No doubled video bottom safe area');
+assert.doesNotMatch(videoStyles,/calc\(90px \+ env\(safe-area-inset-bottom/,'Compact video does not waste vertical space');
 
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
