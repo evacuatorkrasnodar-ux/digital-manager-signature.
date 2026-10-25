@@ -212,7 +212,7 @@
   overflow:hidden;
   transition:max-height 800ms cubic-bezier(.22,1,.36,1),opacity 480ms ease;
 }
-/* Quiet Cinema: integrated satin primary, two flat actions, 44px touch zones. */
+/* Quiet Cinema: only two visible task actions, simple type and 44px touch zones. */
 #seyveoLivingMoment .lm-polymer,
 #homePage #dynamic .decision-card[data-owner-advice] .actions .btn{
   -webkit-appearance:none;appearance:none;flex:0 0 auto;min-width:0;
@@ -232,10 +232,10 @@
   color:var(--text);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.038),inset 0 -1px 0 rgba(0,0,0,.09);
 }
+/* No decorative arrows after either of the two deliberate actions. */
 #seyveoLivingMoment .lm-polymer--main::after,
 #homePage #dynamic .decision-card[data-owner-advice] .actions .btn.primary::after{
-  content:"↗";display:inline-block;margin-left:9px;
-  font-size:14px;font-weight:370;line-height:1;opacity:.63;
+  content:none!important;display:none!important;
 }
 #seyveoLivingMoment .lm-polymer--quiet,
 #homePage #dynamic .decision-card[data-owner-advice] .actions .btn:not(.primary){
@@ -263,7 +263,7 @@
   width:100%;
   min-width:0;
   display:grid;
-  grid-template-columns:54px minmax(0,1fr) 18px;
+  grid-template-columns:54px minmax(0,1fr);
   gap:13px;
   align-items:center;
   text-align:left;
@@ -325,11 +325,9 @@
   font-size:11.5px;
   line-height:1.4;
 }
-#seyveoLivingMoment .lm-inline-arrow{
-  color:var(--secondary);
-  font-size:19px;
-  font-weight:350;
-}
+/* Row remains tap-selectable without visible navigation glyphs. */
+#seyveoLivingMoment .lm-inline-item:active{background:rgba(245,248,253,.035)}
+#seyveoLivingMoment .lm-polymer:disabled{opacity:.55;pointer-events:none}
 #seyveoLivingMoment .lm-explanation{
   margin:7px 7px 4px;
   padding:12px 0 0;
