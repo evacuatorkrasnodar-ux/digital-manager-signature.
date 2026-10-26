@@ -14,12 +14,24 @@ assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a','Native iOS im
 assert.equal(png.readUInt32BE(16),128);
 assert.match(html,/id="sayviMusicDisk"/,'Vinyl artwork stays in the original music screen');
 assert.match(css,/sv-music-spin/,'Vinyl animation remains available during playback');
-assert.match(css,/SEYVA MUSIC · Living Stage v2/,'Tall-phone composition tuning exists');
+assert.match(css,/SEYVEO SOUND · Living Stage v2/,'Tall-phone composition tuning exists');
 assert.match(css,/@media \(max-width:759px\) and \(min-height:900px\) and \(orientation:portrait\)/,'Tall portrait mode uses height-aware layout');
 assert.match(css,/@media \(max-width:759px\) and \(max-height:899px\) and \(orientation:portrait\)/,'Compact iPhone mode remains separate');
-assert.match(css,/--sv-music-vinyl-size:min\(58vw,27dvh,290px\)/,'Tall screens have larger but bounded vinyl');
+assert.match(css,/--sv-music-vinyl-size:min\(52vw,26dvh,278px\)/,'Tall screens have larger but bounded vinyl');
 assert.match(css,/--sv-music-vinyl-size:min\(44vw,17\.5dvh,126px\)/,'iPhone X size rule has not been removed');
 
+assert.match(html,/<span class="sv-music-brand">SEYVEO<\/span><span class="sv-music-brand-sub">SOUND<\/span>/,'Correct SEYVEO SOUND name');
+assert.match(html,/id="sayviMusicMinimize"/,'Explicit unobtrusive minimize control');
+assert.match(html,/id="sayviMusicMini"[^>]*hidden/,'One mini remote appears outside the full player when loaded');
+assert.match(html,/id="sayviMusicMiniPlay"/,'Mini playback uses the original music audio engine');
+assert.match(html,/id="sayviMusicQueue"/,'A music queue replaces the unrelated video button');
+assert.doesNotMatch(html,/id="sayviMusicVideoOpen"/,'Video is not an action in the music stage');
+assert.doesNotMatch(html,/id="sayviMusicResume"/,'No duplicate Home resume strip');
+assert.match(player,/location\.hash='#home'/,'Minimize navigates back without stopping audio');
+assert.match(player,/mini\.hidden=!loaded\|\|location\.hash==='#sayvi-music'/,'Remote shows only outside full player');
+assert.match(player,/miniPlay\?\.addEventListener\('click',play\)/,'Mini controls one audio element');
+assert.match(css,/#sayviMusicPage>header\.sv-music-head/,'Music signature aligns editorially');
+assert.doesNotMatch(css,/left:min\(1\.(?:1|2|5)vw/,'Record has no optical offset');
 assert.equal((html.match(/id="sayviMusicAudio"/g)||[]).length,1,'One actual audio element');
 assert.ok(html.indexOf('assets/music-metadata.js')<html.indexOf('assets/seyveo-music.js'),'Metadata utility loads first');
 assert.match(player,/artwork:\[coverObjectURL/,'Embedded artwork or Sayvi');
