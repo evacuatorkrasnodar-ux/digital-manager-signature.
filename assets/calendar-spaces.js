@@ -354,6 +354,18 @@ $('calendarSpaces').addEventListener('click',event=>{
   window.dispatchEvent(new Event('seyveo:notes-open'));
   return;
  }
+ if(name==='contacts'){
+  window.dispatchEvent(new Event('seyveo:contacts-open'));
+  return;
+ }
+ if(name==='smart-home'){
+  window.SEYVEO_SMART_HOME?.openStandalone?.()||window.SEYVEO_SMART_HOME?.open?.();
+  return;
+ }
+ if(name==='mail'){
+  location.hash='#sayvi-mail';
+  return;
+ }
  // Personal screens are standalone now, and shouldn't inherit a stale
  // selected date from the Calendar while opened from SEYVEO Life.
  const selectedDate=$('calendarPage').hidden?'':(window.SEYVEO_CALENDAR_DATE?.()||'');
