@@ -516,8 +516,14 @@ html.sv-space-active #managePage #seyveoCleanManageMenu{margin-top:0}
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean-link{
  transition:color .22s ease,background-color .22s ease;
 }
-html.sv-space-active #managePage #seyveoCleanDetail,
-html.sv-space-active #managePage #manageThemeScreen{background:transparent}
+/* Keep the nested detail transparent; Theme itself owns a bounded velvet panel. */
+html.sv-space-active #managePage #seyveoCleanDetail{background:transparent}
+html.sv-space-active #managePage #manageThemeScreen:not([hidden]){
+ background:var(--sv-q-surface,rgba(244,248,252,.034));
+}
+html[data-theme=light].sv-space-active #managePage #manageThemeScreen:not([hidden]){
+ background:rgba(255,255,255,.78);
+}
 html.sv-space-active #managePage .seyveo-clean-back{
  background:transparent;border:0;box-shadow:none;
 }
