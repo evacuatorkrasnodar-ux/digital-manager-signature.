@@ -27,8 +27,8 @@ function init(){
  function currentTab(){
   const hash=location.hash;
   if(hash==='#tasks')return 'navTasks';
-  if(hash==='#calendar'||hash==='#life')return 'navPicture';
-  if(hash==='#picture'||hash==='#manage'||hash==='#manage-theme')return 'navManage';
+  if(hash==='#picture')return 'navPicture';
+  if(hash==='#manage'||hash==='#manage-theme')return 'navManage';
   if(!hash||hash==='#home')return 'navHome';
   return null;
  }
