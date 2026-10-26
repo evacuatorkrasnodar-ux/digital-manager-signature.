@@ -1250,10 +1250,11 @@ body:has(#homePage:not([hidden])) .app{
   min-height:0;
   flex-shrink:1;
 }
-/* If enlarged text or a particularly long decision exceeds the available
-   space, only the decision itself can scroll, never the hero or Home. */
-#homePage #dynamic .decision-card{
-  max-height:100%;
-  overflow-y:auto;
-  overscroll-behavior:contain;
+/* The Home has no vertical elastic scroll surface. Cards keep their
+   natural size and the approved staged appearance/exit animations. */
+body:has(#homePage:not([hidden])) .app:not(:has(#ask:not([hidden]))){
+  touch-action:pan-x;
+}
+#homePage:not([hidden]){
+  overscroll-behavior-y:none;
 }
