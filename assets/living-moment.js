@@ -464,5 +464,5 @@ scheduleRefresh();
 // Bring back the original rising three-card introduction after opening.
 // If a dialog/navigation blocks it, refreshing Home retries instead of
 // silently discarding the animation forever.
-later(()=>{previewArmed=true;scheduleRefresh()},7800);
+window.setTimeout(()=>{previewArmed=true;scheduleRefresh()},7800);
 })();
