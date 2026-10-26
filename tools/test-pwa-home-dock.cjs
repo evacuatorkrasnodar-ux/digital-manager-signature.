@@ -14,7 +14,7 @@ const html=fs.readFileSync(path.join(rootDir,'index.html'),'utf8');
 assert.match(css,/--seyveo-dock-bottom:max\(7px,calc\(env\(safe-area-inset-bottom,0px\) - 20px\)\)/);
 assert.match(css,/\.dock\{\s*position:fixed!important;\s*z-index:30!important;/);
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
-assert.match(css,/--seyveo-dock-height:64px/,'Current shared dock height');
+assert.match(css,/--seyveo-dock-height:58px/,'Current shared dock height');
 assert.doesNotMatch(css,/--seyveo-dock-bottom:[^;]*safe-area-inset-top/);
 const dockOffset=bottomSafeArea=>Math.max(7,bottomSafeArea-20);
 assert.equal(dockOffset(34),14,'Current iPhone bottom compensation');
