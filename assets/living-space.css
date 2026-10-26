@@ -313,8 +313,8 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
  left:0;right:0;bottom:0;
 }
 #manageThemeScreen .manage-theme-swatch{
- box-sizing:border-box;flex:0 0 27px;width:27px;height:27px;min-width:27px;
- border-radius:50%;
+ box-sizing:border-box;flex:0 0 36px;width:36px;height:36px;min-width:36px;
+ border-radius:50%;overflow:hidden;
 }
 #manageThemeScreen .manage-theme-choice .manage-text{
  box-sizing:border-box;min-width:0;flex:1;gap:2px;
