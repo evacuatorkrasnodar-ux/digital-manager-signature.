@@ -32,3 +32,68 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 :root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton){color:#465466!important}
 :root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item.active{color:#182635!important;background:rgba(32,45,64,.075)!important}
 @media(max-width:355px){footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton) span{letter-spacing:-.04em}}
+
+/* SEYVEO SOUND · one compact remote for the existing audio engine.
+   Renders only with user-selected tracks, outside the full music screen. */
+#sayviMusicMini[hidden]{display:none!important}
+#sayviMusicMini{
+ position:fixed!important;z-index:29;
+ left:50%;transform:translateX(-50%);
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,58px) + 9px);
+ box-sizing:border-box;display:flex;align-items:center;
+ width:min(425px,calc(100vw - 34px));min-height:51px;
+ padding:4px 5px 4px 9px;gap:7px;
+ border:1px solid var(--line);
+ border-radius:18px;background:var(--card);
+ color:var(--text);
+ box-shadow:0 8px 24px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.045);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+html.sv-music-screen #sayviMusicMini{display:none!important}
+#sayviMusicMini button{
+ appearance:none;-webkit-appearance:none;cursor:pointer;
+ color:inherit;font:inherit;border:0;background:none;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviMusicMini .sv-music-mini-open{
+ min-width:0;min-height:44px;flex:1;
+ display:flex;align-items:center;gap:9px;text-align:left;
+ padding:0 4px;
+}
+#sayviMusicMini .sv-music-mini-symbol{
+ flex:0 0 31px;width:31px;height:31px;
+ display:grid;place-items:center;
+ border:1px solid var(--soft-line);border-radius:50%;
+ font-size:16px;color:var(--secondary);
+}
+#sayviMusicMini .sv-music-mini-copy{display:grid;gap:2px;min-width:0;flex:1}
+#sayviMusicMini .sv-music-mini-copy strong{
+ font-size:11.8px;font-weight:510;line-height:1.3;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#sayviMusicMini .sv-music-mini-copy small{
+ font-size:10px;color:var(--secondary);
+}
+#sayviMusicMini .sv-music-mini-chevron{
+ flex:none;font-size:18px;color:var(--secondary);font-weight:340;line-height:1;
+}
+#sayviMusicMini .sv-music-mini-play{
+ display:grid;place-items:center;flex:0 0 43px;
+ height:43px;border-radius:50%;
+ border:1px solid var(--soft-line);background:var(--card2);
+}
+#sayviMusicMini .sv-music-mini-play svg{
+ width:20px;height:20px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+#sayviMusicMini button:focus-visible{
+ outline:1px solid var(--text);outline-offset:1px;
+ border-radius:12px;
+}
+@media(max-width:355px){
+ #sayviMusicMini{width:calc(100vw - 24px);padding-left:7px}
+ #sayviMusicMini .sv-music-mini-open{gap:7px}
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviMusicMini{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
