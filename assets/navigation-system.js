@@ -1,6 +1,6 @@
 /* SEYVEO · unified Quiet Cinema navigation.
  * Decorates EXISTING buttons; never creates duplicate closes, changes routes,
- * touches localStorage, submits forms or replaces any app click handler.
+ * writes persistent data, submits forms or replaces any app click handler.
  * Its only behavior is protecting unsaved changes in three existing editors. */
 (()=>{'use strict';
  if(window.SEYVEO_NAVIGATION)return;
