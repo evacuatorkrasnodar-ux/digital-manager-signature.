@@ -366,6 +366,10 @@ $('calendarSpaces').addEventListener('click',event=>{
   location.hash='#sayvi-mail';
   return;
  }
+ if(name==='music'){
+  location.hash='#sayvi-music';
+  return;
+ }
  // Personal screens are standalone now, and shouldn't inherit a stale
  // selected date from the Calendar while opened from SEYVEO Life.
  const selectedDate=$('calendarPage').hidden?'':(window.SEYVEO_CALENDAR_DATE?.()||'');
