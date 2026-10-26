@@ -45,7 +45,7 @@ assert.match(html,/\$\('sayviVideoPage'\)\.hidden=!video;/,'Router owns video sc
 assert.match(html,/window\.SEYVEO_VIDEO\?\.understand\(q\)/,'Sayvi voice/text routes video intent');
 assert.match(living,/#sayvi-video/,'One orb follows the new screen');
 assert.match(director,/case 'video':/,'Video companion captions are real');
-assert.match(music,/sayviMusicVideoOpen/,'One direct entrance from Music');
+assert.doesNotMatch(music,/sayviMusicVideoOpen/,'Video remains a separate screen, not an unrelated music action');
 assert.match(style,/min-height:200px/,'YouTube required minimum 200px player size');
 assert.match(style,/width:100%;height:100%;min-height:200px/,'Iframe viewport never collapses');
 assert.doesNotMatch(style,/\.sv-video-iframe[\s\S]{0,100}pointer-events:none/,'Native YouTube buttons remain clickable');
