@@ -1507,3 +1507,35 @@ html.sv-space-active #lifePage .life-footnote{
 @media(prefers-reduced-motion:reduce){
  #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
 }
+
+/* LIFE · compact touch-friendly shortcuts (8 modules / 2 columns).
+   Preserve Black Velvet graphite and all existing module handlers. */
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ gap:8px!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ min-height:92px!important;
+ padding:11px 13px!important;
+ gap:3px!important;
+ border-radius:17px!important;
+ justify-content:center!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
+ width:24px!important;height:24px!important;
+ margin:0 0 6px!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
+ font-size:13px!important;line-height:1.2!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
+ font-size:10px!important;line-height:1.2!important;
+}
+html.sv-space-active #lifePage .life-heading{margin-bottom:14px!important}
+html.sv-space-active #lifePage .life-footnote{margin-top:13px!important}
+@media(max-width:350px){
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:7px!important}
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  min-height:88px!important;padding:10px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:12.5px!important}
+}
