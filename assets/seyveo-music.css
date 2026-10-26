@@ -413,26 +413,17 @@ html.sv-music-screen #sayviMusicPage .sv-music-flow{
 }
 #sayviMusicPage .sv-music-providers[hidden],
 #sayviMusicPage .sv-music-collection[hidden]{display:none!important}
-html.sv-music-screen #sayviMusicPage .sv-music-providers:not([hidden]),
-html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
-  position:fixed;
-  z-index:25;
-  bottom:calc(var(--seyveo-dock-bottom,18px) + var(--seyveo-dock-height,56px) + 10px);
-  left:50%;
-  width:min(492px,calc(100vw - 28px));
-  max-height:min(63dvh,510px);
-  padding:18px 19px 15px;
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:var(--bg);
-  color:var(--text);
-  box-shadow:0 -8px 38px rgba(0,0,0,.24);
-  overflow-x:hidden;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
-  transform:translateX(-50%);
+/* Solid library surface replaces the player content, never overlaps it
+   translucently; the fixed music dock remains outside this page. */
+html.sv-music-screen #sayviMusicPage{position:relative}
+#sayviMusicPage .sv-music-collection:not([hidden]){
+ position:absolute;z-index:100;inset:0;
+ width:100%;height:100%;max-width:none;max-height:none;
+ padding:clamp(14px,2.2dvh,24px) 4px 26px;margin:0;
+ border:0;border-radius:0;background:var(--bg);
+ color:var(--text);box-shadow:none;
+ overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
 }
 #sayviMusicPage .sv-music-panel-close{
   display:block;
@@ -446,7 +437,10 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   font-size:12px;
   font-weight:460;
 }
-#sayviMusicPage .sv-music-collection-label{padding-right:65px}
+#sayviMusicPage .sv-music-collection-label{
+ padding-right:0;margin:4px 0 16px;
+ color:var(--text);font-size:12px;letter-spacing:.13em;font-weight:450;
+}
 #sayviMusicPage .sv-music-providers .sv-music-note{
   font-size:10px;
   padding-bottom:6px;
@@ -578,25 +572,10 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
 }
 #sayviMusicPage .sv-music-minimize:focus-visible{outline:1px solid var(--text);outline-offset:1px}
-#sayviMusicPage .sv-music-quality[hidden]{display:none!important}
-#sayviMusicPage .sv-music-quality{
- margin:4px 0 1px;
- padding:0;
- border:0;
- background:none;
- box-shadow:none;
- text-align:center;
- color:var(--text);
- font-size:9.5px;
- font-weight:470;
- letter-spacing:.12em;
- line-height:1.25;
-}
 @media(max-height:760px){
  #sayviMusicPage .sv-music-heading{font-size:22px;margin-top:1px}
  #sayviMusicPage .sv-music-technology{font-size:8.5px;margin-top:-9px;margin-bottom:1px}
- #sayviMusicPage .sv-music-quality{margin:1px 0 0;font-size:9px}
-}
+ }
 
 /* SEYVEO SOUND · Living Stage v1
    Widescreen is editorial, not a heap of centered objects. The original vinyl
@@ -660,15 +639,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   text-align:left;
   font-size:12px;
  }
- html.sv-music-screen #sayviMusicPage .sv-music-quality{
-  grid-column:1;grid-row:4;
-  margin:9px 0 0;
-  text-align:left;
-  font-size:10px;
-  line-height:1.45;
-  letter-spacing:.05em;
- }
- html.sv-music-screen #sayviMusicPage .sv-music-times{
+ html.sv-music-screen  html.sv-music-screen #sayviMusicPage .sv-music-times{
   grid-column:1;grid-row:5;
   margin:clamp(19px,3vh,28px) 0 3px;
  }
@@ -704,14 +675,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   /* The vinyl anchors the listening area, well clear of the fixed transport. */
   margin-bottom:clamp(4px,.9dvh,10px);
  }
- html.sv-music-screen #sayviMusicPage .sv-music-quality{
-  line-height:1.4;
-  letter-spacing:.055em;
-  font-size:9px;
-  max-width:100%;
-  overflow-wrap:anywhere;
- }
-}
+ html.sv-music-screen }
 @media(prefers-reduced-motion:reduce){
  html.sv-music-screen #seyveoCompanion{transition:none!important}
 }
