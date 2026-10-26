@@ -1064,7 +1064,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <p id="seyveoCallStatus" class="personal-contacts-status" role="status" aria-live="polite"></p>
  <div class="personal-call-actions"><button id="seyveoCallAddContact" type="button">Добавить контакт</button><a id="seyveoCallDial" href="#" role="button" hidden>Позвонить</a></div>
 </dialog>
-<dialog id="businessMapDialog" class="business-map-dialog" aria-modal="true" aria-labelledby="businessMapTitle" aria-describedby="businessMapLead">
+<dialog id="businessMapDialog" class="business-map-dialog" hidden inert aria-hidden="true" style="display:none!important" aria-modal="true" aria-labelledby="businessMapTitle" aria-describedby="businessMapLead">
  <div class="business-map-shell">
   <header class="business-map-head">
    <div><strong class="business-map-brand">SEYVEO</strong><small class="business-map-subbrand">КАРТА БИЗНЕСА · НАСТРОЙКА</small></div>
@@ -1878,33 +1878,17 @@ function localTaskBrief(){
 /* A single helpful suggestion, from local owner-supplied data only.
    No online intelligence, third-party access or automatic execution. */
 function homeBusinessAdvice(){
- // The existing Home recommendation first explains one known, unconnected resource.
- const pending=window.SEYVEO_CONNECTION_COACH?.homeSuggestion?.();
- if(pending)return pending;
- if(window.SEYVEO_CONNECTION_COACH?.homePaused?.())return null;
- const api=window.SEYVEO_BUSINESS_MAP;
- if(!api?.getState?.())return null;
- const next=api.getAdvice?.()?.find(item=>
-  ['about','goal','industry','workflow','source','connect'].includes(item.kind)&&
-  !window.SEYVEO_CONNECTION_COACH?.skipHomeMapTip?.(item));
- if(!next)return null;
- return next;
+ // The separate Business Map interview is retired. Never create
+ // an unclickable Home recommendation that opens the old questionnaire.
+ // Approved connection follow-ups alone may appear here.
+ return window.SEYVEO_CONNECTION_COACH?.homeSuggestion?.()||null;
 }
 function openHomeAdvice(advice){
- if(!advice)return;
- let opened=false;
- if(advice.kind==='connect'){
-  // The existing Management → Connections is the single destination.
-  $('navManage')?.click();
-  window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:advice.type||''}}));
-  opened=$('manageConnectionsDialog')?.open===true;
- }else{
-  opened=window.SEYVEO_BUSINESS_MAP?.open?.({
-   guideStep:advice.kind,guideType:advice.type||'',
-   trigger:$('resolve')
-  })===true;
- }
- if(opened)playFeedback('select');
+ if(!advice||advice.kind!=='connect')return;
+ // One existing destination; no retired questionnaire.
+ $('navManage')?.click();
+ window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:advice.type||''}}));
+ if($('manageConnectionsDialog')?.open)playFeedback('select');
 }
 function syncHomeVoice(){
   const name=ownerDisplayName(),assistant=chosenAssistantName();
@@ -1917,7 +1901,7 @@ function syncHomeVoice(){
   }else if(advice){
     kicker='Рекомендация · для вашего бизнеса';
     headline=name?name+', есть один полезный шаг':'Есть один полезный шаг';
-    subline='Предложение по вашей Карте бизнеса, а не по данным подключённых сервисов.';
+    subline='Предложение по сведениям, которые вы разрешили сохранить, а не по данным внешних сервисов.';
   }else if(brief.overdue){
     kicker='Ваш план · требует внимания';
     headline=name?name+', есть дело с прошедшим сроком':'Есть дело с прошедшим сроком';
@@ -1959,7 +1943,7 @@ function render(){
   $('dynamic').hidden=!advice;
   if(advice){
     const reminder=advice.connectionFollowup===true;
-    const origin=reminder?'Сэйви · ваш рабочий ресурс':'Рекомендация · по вашей Карте бизнеса';
+    const origin=reminder?'Сэйви · ваш рабочий ресурс':'Сэйви · рекомендация';
     // An approval always opens the existing connection/workflow; it does not
     // silently send messages or sign documents.
     // The Living Surface decorates this real recommendation with its
@@ -3268,7 +3252,7 @@ fab.addEventListener('click',()=>{
 });
 $('hideInput').addEventListener('click',()=>{closeComposer();hint.classList.remove('active')});
 restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homePage').hidden)showBrandSignature('launch')})();
-</script><script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=39"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=22"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=32"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=31"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=7"></script><script src="assets/picture.js?v=6"></script><script src="assets/home-widgets.js?v=11"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=18"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=4"></script><script src="assets/connection-coach.js?v=9"></script><script src="assets/living-conversation.js?v=21"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/living-moment.js?v=53"></script><script src="assets/living-screen-core.js?v=1"></script><script src="assets/living-space.js?v=7"></script><script src="assets/sayvi-surfaces.js?v=5"></script><script src="assets/living-answers.js?v=3"></script><script src="assets/network-care.js?v=2"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/music-source-quality.js?v=2"></script><script src="assets/seyveo-music.js?v=9"></script><script src="assets/seyveo-music-dock.js?v=5"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=4"></script><script src="assets/magnetic-ink-dock.js?v=7"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=3"></script><script src="assets/navigation-system.js?v=1"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=3" defer></script><script>
+</script><script src="assets/assistant-chat-history.js?v=2"></script><script src="assets/wake-mode.js?v=6"></script><script src="assets/management.js?v=40"></script><script src="assets/onboarding.js?v=11"></script><script src="assets/context-focus.js?v=1"></script><script src="assets/contact-call-intent.js?v=1"></script><script src="assets/personal-tasks.js?v=22"></script><script src="assets/calendar-natural.js?v=2"></script><script src="assets/task-natural.js?v=1"></script><script src="assets/reminder-dialogue.js?v=1"></script><script src="assets/notebook-natural.js?v=5"></script><script src="assets/notebook-paper.js?v=5"></script><script src="assets/notebook-scan.js?v=4"></script><script src="assets/calendar-time.js?v=2"></script><script src="assets/calendar.js?v=32"></script><script src="assets/assistant-local-actions.js?v=3"></script><script src="assets/calendar-reminders.js?v=2"></script><script src="assets/push-status.js?v=1"></script><script src="assets/calendar-spaces.js?v=10"></script><script src="assets/personal-wellness.js?v=13"></script><script src="assets/passport-cards.js?v=31"></script><script src="assets/orb-shortcuts.js?v=6"></script><script src="assets/pulse.js?v=7"></script><script src="assets/picture.js?v=6"></script><script src="assets/home-widgets.js?v=11"></script><script src="assets/interaction-focus.js?v=1"></script><script src="assets/assistant-quick-swipe.js?v=7"></script><script src="assets/orb-presence.js?v=5"></script><script src="assets/assistant-intents.js?v=4"></script><script src="assets/business-map.js?v=19"></script><script src="assets/storefront-reader.js?v=2"></script><script src="assets/business-conversation.js?v=5"></script><script src="assets/connection-coach.js?v=10"></script><script src="assets/living-conversation.js?v=21"></script><script src="assets/future-presence.js?v=4"></script><script src="assets/account-demo.js?v=7"></script><script src="assets/living-moment.js?v=53"></script><script src="assets/living-screen-core.js?v=1"></script><script src="assets/living-space.js?v=7"></script><script src="assets/sayvi-surfaces.js?v=5"></script><script src="assets/living-answers.js?v=3"></script><script src="assets/network-care.js?v=2"></script><script src="assets/music-metadata.js?v=1"></script><script src="assets/music-source-quality.js?v=2"></script><script src="assets/seyveo-music.js?v=9"></script><script src="assets/seyveo-music-dock.js?v=5"></script><script src="assets/seyveo-video-core.js?v=1"></script><script src="assets/seyveo-video.js?v=4"></script><script src="assets/magnetic-ink-dock.js?v=7"></script><script src="assets/orb-language.js?v=2"></script><script src="assets/quiet-signal-life.js?v=1"></script><script src="assets/dock-voice-life.js?v=1"></script><script src="assets/seyveo-smart-home.js?v=3"></script><script src="assets/navigation-system.js?v=1"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script><script src="assets/company-qr.js?v=3" defer></script><script>
 /* SEYVEO Management · one tap, one destination. Preserve original handlers. */
 (function(){
  const menu=document.getElementById('seyveoCleanManageMenu'),detail=document.getElementById('seyveoCleanDetail'),legacy=document.getElementById('seyveoCleanLegacy'),network=document.getElementById('seyveoNetworkPage'),back=document.getElementById('seyveoCleanBack'),title=document.getElementById('seyveoCleanTitle');
