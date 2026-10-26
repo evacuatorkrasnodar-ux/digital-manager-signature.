@@ -1215,18 +1215,48 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
  border-bottom-color:rgba(27,40,62,.11)!important;
 }
 
-/* Home stays anchored while the real task cards advance underneath.
-   The already-existing lm-focus state owns both orb sizes. */
+/* Home is one immobile viewport. Existing lm-focus changes the SAME orb
+   from large to compact when a task/recommendation takes the stage. */
+html:has(#homePage:not([hidden])),
+body:has(#homePage:not([hidden])){
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+body:has(#homePage:not([hidden])) .app{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+  padding-bottom:calc(var(--seyveo-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 18px);
+}
+#homePage:not([hidden]){
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
 #homePage #stage{
-  position:sticky;
-  top:env(safe-area-inset-top,0px);
-  z-index:5;
-  background:var(--bg);
+  position:relative;
+  top:auto;
+  z-index:1;
+  flex:0 0 auto;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 #homePage #orbCluster{
   opacity:1;
   pointer-events:auto;
 }
+#homePage :is(#dynamic,#seyveoLivingMoment){
+  flex:0 1 auto;
+  min-height:0;
+}
+#homePage .decision-card{max-height:100%;overflow:auto;overscroll-behavior:contain}
 @media(max-height:760px){
-  #homePage #stage{top:env(safe-area-inset-top,0px)}
+  #homePage.lm-focus #stage{min-height:0;padding-bottom:3px}
+  #homePage.lm-focus #orbCluster{height:clamp(105px,22dvh,148px)}
+  #homePage.lm-focus #orb{transform:scale(.54)}
+  #homePage.lm-focus .message{min-height:65px;margin-top:2px}
 }
