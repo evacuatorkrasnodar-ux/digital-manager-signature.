@@ -45,31 +45,7 @@
 @media(max-height:630px){
  #ask.expanded{height:min(66dvh,480px);max-height:calc(100dvh - var(--keyboard-offset,0px) - 135px)}
 }
-/* History is a quiet reader, never another conversation composer. */
-#assistantChatHistoryDialog.assistant-chat-history[open]{
- display:flex;flex-direction:column;box-sizing:border-box;
- width:min(500px,calc(100vw - 24px));
- height:min(84dvh,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- max-height:min(84dvh,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- padding:18px 15px 15px;overflow:hidden
-}
-#assistantChatHistoryDialog .assistant-chat-head{flex:none;margin:0 46px 12px 0}
-#assistantChatHistoryDialog .assistant-chat-head h2{margin:0 0 5px;font-size:21px;font-weight:610}
-#assistantChatHistoryDialog .assistant-chat-head small{font-size:11px;line-height:1.4;color:var(--secondary)}
-#assistantChatHistoryDialog .assistant-chat-items{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
-#assistantChatHistoryDialog .assistant-chat-item{border:1px solid var(--line);border-radius:15px;background:var(--card2);overflow:hidden}
-#assistantChatHistoryDialog .assistant-chat-summary{list-style:none;display:flex;flex-direction:column;gap:6px;padding:13px;cursor:pointer}
-#assistantChatHistoryDialog .assistant-chat-summary::-webkit-details-marker{display:none}
-#assistantChatHistoryDialog .assistant-chat-question{color:var(--text);font-size:13px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-#assistantChatHistoryDialog .assistant-chat-time{color:var(--secondary);font-size:10.5px}
-#assistantChatHistoryDialog .assistant-chat-detail{padding:2px 13px 14px;border-top:1px solid var(--soft-line);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
-#assistantChatHistoryDialog .assistant-chat-full-question,#assistantChatHistoryDialog .assistant-chat-answer{white-space:pre-wrap;margin-top:11px;color:var(--text)}
-#assistantChatHistoryDialog .assistant-chat-answer-label{display:block;margin-top:13px;font-size:11px;color:var(--secondary)}
-#assistantChatHistoryDialog .assistant-chat-empty{font-size:13px;line-height:1.5;color:var(--secondary)}
-#assistantChatHistoryDialog .assistant-chat-bottom{display:flex;gap:8px;flex:none;margin-top:11px}
-#assistantChatHistoryDialog .assistant-chat-bottom button{flex:1;min-height:44px;min-width:0;font-size:12px}
-#assistantChatHistoryDialog .assistant-chat-bottom button[hidden]{display:none!important}
-
+/* Chat history styles are owned only by dialog-velvet.css (Quiet Cinema). */
 /* SEYVEO iPhone composer v4: free the writing area while the iOS keyboard is
    open. Normal dock, homepage, sphere and composer geometry are unchanged. */
 @media(max-width:700px){
