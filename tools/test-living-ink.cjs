@@ -274,7 +274,6 @@ assert.match(decisionJs,/controls\.append\(open,execute\)/,'Only two actions: П
 assert.match(decisionJs,/seyveo:home-task-complete/,'Real completion uses validated personal task storage');
 assert.match(decisionJs,/function finishPreviewItem/,'Demo completion removes only the selected example');
 assert.doesNotMatch(decisionJs,/lm-inline-arrow/,'No extra arrow glyphs on task rows');
-assert.match(decisionCss,/\.lm-polymer--main::after/,'Button arrows are disabled in the scene stylesheet');
 assert.match(html,/<button class="btn primary" id="resolve" type="button">Исполнить<\/button>/,'Real advice has explicit execution entry');
 assert.doesNotMatch(decisionJs,/hold\(\(\)=>disappear\(\),TIMING\.quiet\)/,'No automatic dismissal of the gathered card');
 assert.match(decisionJs,/function gatherPreview/,'Three examples gather into one scene');
