@@ -26,11 +26,10 @@
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
  border:1px solid rgba(235,238,244,.21)!important;
- background:
-  linear-gradient(158deg,rgba(47,49,56,.48),rgba(22,24,29,.55))!important;
+ background:rgba(31,33,39,.96)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+ box-shadow:none!important;
  isolation:isolate;
 }
 .dock::before,.dock::after{content:none!important;display:none!important}
@@ -212,8 +211,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:rgba(54,68,89,.20)!important;
- background:linear-gradient(160deg,rgba(255,255,255,.52),rgba(230,235,243,.56))!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.45)!important;
+ background:rgba(236,239,243,.97)!important;
+ box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
