@@ -1,4 +1,4 @@
-/* SEYVA MUSIC · test real container headers, not names or UI claims. */
+/* SEYVEO SOUND · test real container headers, not names or UI claims. */
 'use strict';
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -8,7 +8,7 @@ const base=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
 const player=fs.readFileSync(path.join(base,'assets/seyveo-music.js'),'utf8');
 const css=fs.readFileSync(path.join(base,'assets/seyveo-music.css'),'utf8');
-assert.match(html,/SEYVA MUSIC<\/h1><p class="sv-music-technology">SOUND <span class="sv-music-ai">ai<\/span> TECHNOLOGY/,'User-approved brand signature');
+assert.match(html,/<span class="sv-music-brand">SEYVEO<\/span><span class="sv-music-brand-sub">SOUND<\/span>/,'Approved SEYVEO SOUND signature');
 assert.match(html,/id="sayviMusicQuality"[^>]*\bhidden\b/,'Label starts hidden');
 assert.match(css,/\.sv-music-quality\[hidden\]\{display:none!important\}/,'No false static quality title');
 assert.ok(html.indexOf('assets/music-source-quality.js')<html.indexOf('assets/seyveo-music.js'),'Analyzer loads before audio controller');
@@ -79,5 +79,5 @@ function makeWav(bits,rate){
  const cut=Buffer.from(await makeWav(24,96000).arrayBuffer());
  cut.writeUInt32LE(1000000,40);
  assert.equal(await quality.detect(media(cut,'truncated.wav')),null,'Truncated WAV is rejected');
- console.log('PASS SEYVA MUSIC: source FLAC/WAV and genuine MP3 frames, correct playback labels, truthful Hi-Res, accessible stage.');
+ console.log('PASS SEYVEO SOUND: source FLAC/WAV and genuine MP3 frames, correct playback labels, truthful Hi-Res, accessible stage.');
 })().catch(err=>{console.error(err);process.exitCode=1});
