@@ -29,7 +29,6 @@ const sourcesClose=$('sayviMusicSourcesClose');
 const mini=$('sayviMusicMini');
 const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
-const miniNext=$('sayviMusicMiniNext');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
@@ -95,7 +94,6 @@ function syncResume(){
   if(loaded){
    const file=tracks[index];
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
-   if(miniNext)miniNext.disabled=tracks.length<2;
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
     miniPlay.setAttribute('aria-pressed',String(playing));
@@ -329,14 +327,98 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
-miniNext?.addEventListener('click',()=>switchTrack(index+1,true));
+// Slide the TWO-control remote by dragging its vinyl, without taking over
+// playback taps. A short vinyl tap still opens the full music page.
+let miniDrag=null,miniPosition=null,miniBlockClickUntil=0;
+function miniBounds(){
+ const viewport=window.visualViewport;
+ const minX=viewport?.offsetLeft||0;
+ const minY=viewport?.offsetTop||0;
+ const width=viewport?.width||window.innerWidth;
+ const height=viewport?.height||window.innerHeight;
+ const rect=mini.getBoundingClientRect();
+ const outer=9;
+ const minTop=minY+(width<=700?Math.min(54,height*.07):12);
+ let bottomLimit=minY+height-outer;
+ if(document.documentElement.classList.contains('seyveo-conversation')){
+  const writer=$('ask');
+  if(writer&&!writer.hidden){
+   const wr=writer.getBoundingClientRect();
+   if(wr.height>0)bottomLimit=Math.min(bottomLimit,wr.top-9);
+  }
+ }else{
+  const dock=document.querySelector('footer.dock');
+  if(dock&&getComputedStyle(dock).visibility!=='hidden'&&getComputedStyle(dock).display!=='none'){
+   const dr=dock.getBoundingClientRect();
+   if(dr.height>0)bottomLimit=Math.min(bottomLimit,dr.top-9);
+  }
+ }
+ return {
+  left:minX+outer,
+  right:Math.max(minX+outer,minX+width-outer-rect.width),
+  top:Math.min(minTop,Math.max(minY+outer,bottomLimit-rect.height)),
+  bottom:Math.max(minY+outer,bottomLimit-rect.height)
+ };
+}
+function setMiniPosition(x,y){
+ const b=miniBounds();
+ miniPosition={
+  x:Math.max(b.left,Math.min(b.right,x)),
+  y:Math.max(b.top,Math.min(b.bottom,y))
+ };
+ mini.style.left=miniPosition.x+'px';
+ mini.style.top=miniPosition.y+'px';
+ mini.style.bottom='auto';
+ mini.style.transform='none';
+}
+function keepMiniInView(){
+ if(miniPosition&&!mini.hidden)setMiniPosition(miniPosition.x,miniPosition.y);
+}
+if(mini&&miniOpen){
+ miniOpen.addEventListener('pointerdown',event=>{
+  if(event.pointerType==='mouse'&&event.button!==0)return;
+  const rect=mini.getBoundingClientRect();
+  miniDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,
+   x:rect.left,y:rect.top,moved:false};
+  try{miniOpen.setPointerCapture(event.pointerId)}catch{}
+ });
+ miniOpen.addEventListener('pointermove',event=>{
+  const d=miniDrag;
+  if(!d||d.pointerId!==event.pointerId)return;
+  const dx=event.clientX-d.startX,dy=event.clientY-d.startY;
+  if(!d.moved&&Math.hypot(dx,dy)<7)return;
+  d.moved=true;
+  event.preventDefault();
+  setMiniPosition(d.x+dx,d.y+dy);
+ });
+ const finishMiniDrag=event=>{
+  if(!miniDrag||miniDrag.pointerId!==event.pointerId)return;
+  if(miniDrag.moved)miniBlockClickUntil=Date.now()+650;
+  miniDrag=null;
+  try{if(miniOpen.hasPointerCapture(event.pointerId))miniOpen.releasePointerCapture(event.pointerId)}catch{}
+ };
+ miniOpen.addEventListener('pointerup',finishMiniDrag);
+ miniOpen.addEventListener('pointercancel',finishMiniDrag);
+ mini.addEventListener('click',event=>{
+  if(Date.now()<miniBlockClickUntil){
+   event.preventDefault();
+   event.stopImmediatePropagation();
+  }
+ },true);
+ window.addEventListener('resize',keepMiniInView,{passive:true});
+ window.visualViewport?.addEventListener('resize',keepMiniInView,{passive:true});
+ window.addEventListener('seyveo:route-changed',keepMiniInView);
+}
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
 // ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
 const miniWriter=$('ask');
 if(mini&&miniWriter&&typeof ResizeObserver==='function'){
  const measureWriter=()=>{
   const height=Math.ceil(miniWriter.getBoundingClientRect().height);
-  if(height>0)mini.style.setProperty('--sv-mini-writer-height',height+'px');
+  if(height>0){
+   mini.style.setProperty('--sv-mini-writer-height',height+'px');
+   keepMiniInView();
+  }
  };
  new ResizeObserver(measureWriter).observe(miniWriter);
  measureWriter();
