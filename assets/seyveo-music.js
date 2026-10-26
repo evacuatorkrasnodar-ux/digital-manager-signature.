@@ -345,6 +345,9 @@ function syncMusicRoute(){
  syncResume();
 }
 window.addEventListener('hashchange',syncMusicRoute);
+// Main navigation also uses history.pushState(), which does NOT fire hashchange.
+// Always clear the music-only screen class when the user opens Sayvi chat.
+window.addEventListener('seyveo:route-changed',syncMusicRoute);
 importBtn.addEventListener('click',()=>fileInput.click());
 player.addEventListener('click',play);
 previous.addEventListener('click',()=>switchTrack(index-1,true));
