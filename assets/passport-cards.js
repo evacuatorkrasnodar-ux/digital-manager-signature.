@@ -64,7 +64,11 @@ function drawRows(){
   const v=document.createElement('strong');v.textContent=value;
   row.append(k,v);rows.append(row);
  }
- $('seyveoCompanyNotFilled').hidden=!!card.name;
+ const saved=!!clean(card.name);
+ $('seyveoCompanyNotFilled').hidden=saved;
+ $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить сведения':'Добавить сведения';
+ $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Добавить сведения компании');
+ dialog.querySelector('.sv-company-actions').hidden=!saved;
 }
 function toggleType(){
  const type=$('seyveoCompanyType').value;
@@ -75,6 +79,36 @@ function toggleType(){
  });
 }
 let companyFormSnapshot='';
+const companyView=$('seyveoCompanyView'),companyEditor=$('seyveoCompanyEditor');
+const companyDone=dialog.querySelector('button.seyveo-dialog-close');
+function companyEditing(){return dialog.dataset.svCompanyMode==='edit'}
+function setCompanyMode(mode){
+ const editing=mode==='edit';
+ dialog.dataset.svCompanyMode=editing?'edit':'view';
+ companyView.hidden=editing;
+ companyEditor.hidden=!editing;
+ if(companyDone){
+  companyDone.textContent=editing?'Отмена':'Готово';
+  companyDone.setAttribute('aria-label',editing?'Отменить редактирование и вернуться к карточке':'Готово — закрыть карточку компании');
+ }
+}
+function restoreCompanyForm(){
+ const record=load();
+ for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
+ $('seyveoCompanyType').value=record.type||'npd';
+ const chosen=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
+ if(chosen)chosen.checked=true;
+ toggleType();
+ companyFormSnapshot=companyFormSignature();
+}
+function discardCompanyEditing(){
+ if(hasUnsavedCompanyChanges()&&!window.confirm('Есть несохранённые реквизиты. Отменить изменения?'))return false;
+ restoreCompanyForm();
+ status(dialog,'');
+ setCompanyMode('view');
+ dialog.scrollTop=0;
+ return true;
+}
 function companyFormSignature(){
  const values={type:$('seyveoCompanyType').value};
  for(const [key] of PROPS){
@@ -87,6 +121,11 @@ function hasUnsavedCompanyChanges(){
  return dialog.open&&companyFormSignature()!==companyFormSnapshot;
 }
 function confirmCompanyExit(event){
+ if(event.type==='cancel'&&companyEditing()){
+  event.preventDefault();
+  discardCompanyEditing();
+  return;
+ }
  if(!hasUnsavedCompanyChanges())return;
  if(window.confirm('Есть несохранённые реквизиты. Закрыть карточку без сохранения?'))return;
  event.preventDefault();
@@ -94,13 +133,9 @@ function confirmCompanyExit(event){
  event.stopImmediatePropagation();
 }
 function openCompany(){
- const record=load();
- for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
- $('seyveoCompanyType').value=record.type||'npd';
- const chosen=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
- if(chosen)chosen.checked=true;
- toggleType();drawRows();status(dialog,'');
- companyFormSnapshot=companyFormSignature();
+ restoreCompanyForm();
+ drawRows();status(dialog,'');
+ setCompanyMode('view');
  if(!dialog.open)dialog.showModal();
  // Modal scroll positions survive reopens on Safari. Always show the title,
  // summary and Done first; focusing the exit must not jump the form.
@@ -138,6 +173,8 @@ function save(event){
  if(!store(card)){status(dialog,'Не удалось сохранить на устройстве. Проверьте память браузера.');return}
  fillPreview();drawRows();status(dialog,'Данные сохранены на этом устройстве. Проверьте их перед отправкой.');
  companyFormSnapshot=companyFormSignature();
+ setCompanyMode('view');
+ dialog.scrollTop=0;
  window.dispatchEvent(new CustomEvent('seyveo:company-changed'));
 }
 function plain(kind){
@@ -235,8 +272,15 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('hashchange',closeHeaderPassport);
 $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
- const field=form.elements.namedItem('name');
- if(field&&typeof field.focus==='function')field.focus();
+ setCompanyMode('edit');
+ status(dialog,'');
+ dialog.scrollTop=0;
+ requestAnimationFrame(()=>{
+  if(!dialog.open||!companyEditing())return;
+  dialog.scrollTop=0;
+  const field=form.elements.namedItem('name');
+  field?.focus?.({preventScroll:true});
+ });
 });
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
@@ -252,8 +296,15 @@ $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('cancel',confirmCompanyExit);
 dialog.addEventListener('click',event=>{
- // Intercept the existing close/backdrop handlers before they discard input.
+ // Cancel editing inside the same sheet; never discard a draft silently.
  const button=event.target.closest?.('button.seyveo-dialog-close');
+ if(companyEditing()&&(button||event.target===dialog)){
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  discardCompanyEditing();
+  return;
+ }
  if(button||event.target===dialog)confirmCompanyExit(event);
 },true);
 /* Company contact links follow interface language, not demo company data. */
