@@ -32,6 +32,10 @@ for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline 
 const dock=read('assets/floating-navigation.css');
 const magnetic=read('assets/magnetic-ink-dock.js');
 const composer=read('assets/composer-intent.css');
+const businessMapUi=read('assets/business-map.css');
+assert.match(html,/assets\/business-map\.css\?v=9/,'Current compact Business Map CSS is deployed');
+assert.match(businessMapUi,/#businessMapDialog \.business-map-main\{[\s\S]*?flex:0 1 auto/,'Short Business Map steps do not stretch the footer to bottom');
+assert.match(businessMapUi,/@media\(min-width:700px\)\{/,'Desktop Business Map has content-sized sheet');
 const companyUi=read('assets/company-signature.css');
 const companyLogic=read('assets/passport-cards.js');
 assert.match(companyUi,/#seyveoCompanyDialog\.seyveo-passport-modal\[open\]/,'Company form is top aligned on narrow phones');
