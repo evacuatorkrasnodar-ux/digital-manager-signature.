@@ -567,6 +567,21 @@ function saveOwnerWeeklyRequests(value){
 }
 /* Small owner-confirmed checkbox from Connections; never a real service login. */
 /* Reuse the same Business Map store; only Connections presents editing. */
+function savePrivateBusinessContext(description,goal){
+ // Company Passport is the UI for owner's PRIVATE knowledge.
+ // Preserve the historical Business Map record for existing plans/resources.
+ const rawAbout=String(description??''),rawGoal=String(goal??'');
+ if(rawAbout.length>1000||rawGoal.length>320)return {ok:false,message:'Текст слишком длинный.'};
+ if(/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\\s|otp|код\\s+доступа)/i.test(rawAbout+' '+rawGoal))
+  return {ok:false,message:'Не сохраняйте здесь пароли, ключи или коды доступа.'};
+ const current=load(),next=current?clone(current):fresh(ownerFocus()==='start'?'start':'existing');
+ next.description=norm(rawAbout,1000);next.goal=norm(rawGoal,320);
+ next.updatedAt=new Date().toISOString();
+ if(!store(STORE,JSON.stringify(next)))return {ok:false,message:'Не удалось сохранить на устройстве.'};
+ updateEntry();
+ window.dispatchEvent(new CustomEvent('seyveo:business-map-changed',{detail:{businessContext:true}}));
+ return {ok:true,message:'Сохранено для Сэйви. В QR, печать и отправку эти сведения не попадут.'};
+}
 function saveResourceDetail(type,value){
  if(!byType(type))return {ok:false,message:'Выберите сервис из списка.'};
  if(dialog.open)return {ok:false,message:'Сначала закройте открытое окно.'};
@@ -620,7 +635,7 @@ function markResourceUse(type,enabled){
 window.SEYVEO_BUSINESS_MAP=Object.freeze({
  open:start,
  resourceTypes:()=>TYPES.map(x=>({id:x.id,name:x.name,reason:x.reason})),
- saveResourceDetail,removeResourceDetail,
+ saveResourceDetail,removeResourceDetail,savePrivateBusinessContext,
  markResourceUse,
  saveWeeklyRequests:saveOwnerWeeklyRequests,
  getState:()=>{const stored=load();return stored?clone(stored):null},
