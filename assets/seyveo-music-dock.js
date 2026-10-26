@@ -62,7 +62,12 @@ function init(){
   if(leavingMusic)document.dispatchEvent(new Event('seyveo:music-dock-exit'));
  }
  function showTracks(){
-  // The music page itself never scrolls. "Треки" opens one local drawer.
+  // "Треки" toggles the original library; the audio keeps playing.
+  const list=document.getElementById('sayviMusicCollection');
+  if(list&&!list.hidden){
+   window.SEYVEO_MUSIC?.closePanels?.();
+   return;
+  }
   openMusic?.();
   window.SEYVEO_MUSIC?.openQueue?.();
  }
