@@ -10,10 +10,10 @@ const source=fs.readFileSync(path.join(dir,'assets/magnetic-ink-dock.js'),'utf8'
 const html=fs.readFileSync(path.join(dir,'index.html'),'utf8');
 const chat=fs.readFileSync(path.join(dir,'assets/conversation-refined.css'),'utf8');
 assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)!important/);
-assert.match(css,/--seyveo-dock-height:64px/);
+assert.match(css,/--seyveo-dock-height:58px/);
 assert.match(css,/--seyveo-dock-bottom:max\(7px,calc\(env\(safe-area-inset-bottom,0px\) - 20px\)\)/);
 assert.match(css,/bottom:var\(--seyveo-dock-bottom\)!important/);
-assert.match(css,/height:52px!important;min-height:52px!important/,'44+ px side hit areas');
+assert.match(css,/height:48px!important;min-height:48px!important/,'44+ px side hit areas');
 const slots=[['.nav-home',1],['.nav-tasks',2],['.assistant-button',3],['#navPicture',4],['.nav-manage',5]];
 for(const [selector,position] of slots){
  const rule=css.split('.dock>'+selector+'{')[1]?.split('}')[0];
@@ -39,11 +39,11 @@ assert.match(chat,/\.seyveo-conversation-heading\.is-processing \.seyveo-name-do
 assert.doesNotMatch(css,/data-seyveo-view="(?:home|manage|picture)"/,'No screen-specific dock offsets');
 function portrait(width,height,safeBottom){
  const small=width<=355;
- const size=Math.min(440,width-(small?8:14));
- const pad=small?4:7, gap=small?1:2;
+ const size=Math.min(430,width-(small?8:14));
+ const pad=small?4:6, gap=small?1:2;
  const cell=(size-2-2*pad-4*gap)/5;
  const bottom=Math.max(7,safeBottom-20);
- const top=height-bottom-64;
+ const top=height-bottom-58;
  const center=(width-size)/2+1+pad+2*(cell+gap)+cell/2;
  assert.ok(cell>=44,'All slots remain comfortably tappable');
  assert.ok(top>0,'Dock fits height');
