@@ -1215,18 +1215,18 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
  border-bottom-color:rgba(27,40,62,.11)!important;
 }
 
-/* Home scroll: one real orb, no sticky copy and no large floating overlay.
-   The dock provides assistant access when the orb has scrolled away. */
-#homePage #orbCluster{
-  --sv-home-orb-progress:0;
-  transform:translate3d(0,calc(var(--sv-home-orb-progress) * -12px),0)
-    scale(calc(1 - var(--sv-home-orb-progress) * .52));
-  opacity:calc(1 - var(--sv-home-orb-progress));
-  transform-origin:center center;
+/* Home stays anchored while the real task cards advance underneath.
+   The already-existing lm-focus state owns both orb sizes. */
+#homePage #stage{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  z-index:5;
+  background:var(--bg);
 }
-@media(prefers-reduced-motion:reduce){
-  #homePage #orbCluster{
-    transform:none;
-    opacity:1;
-  }
+#homePage #orbCluster{
+  opacity:1;
+  pointer-events:auto;
+}
+@media(max-height:760px){
+  #homePage #stage{top:env(safe-area-inset-top,0px)}
 }
