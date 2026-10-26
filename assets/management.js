@@ -382,8 +382,36 @@ function snapshot(){
  };
 }
 function countOf(list){return Array.isArray(list)?list.length:0}
+/* Read-only owner review. The original stores stay canonical: company data,
+   explicitly entered business context and real tasks. No shadow memory copy. */
+function drawConfirmedMemory(record){
+ const host=$('manageMemoryFacts');if(!host)return;
+ host.replaceChildren();
+ const business=record.businessMap||{},company=record.companyPassport||{};
+ const facts=[];
+ const short=value=>typeof value==='string'?value.trim().slice(0,170):'';
+ if(short(company.name))facts.push(['Компания',short(company.name)]);
+ if(short(business.description))facts.push(['О деле',short(business.description)]);
+ if(short(business.goal))facts.push(['Цель',short(business.goal)]);
+ const active=record.personalTasks.filter(task=>task&&task.done!==true).length;
+ if(active)facts.push(['Текущие дела',String(active)]);
+ if((business.resources?.length||0)>0)facts.push(['Используемые сервисы',String(business.resources.length)]);
+ if(!facts.length){
+  const empty=document.createElement('p');empty.className='sv-memory-empty';
+  empty.textContent='Пока нет подтверждённых сведений.';
+  host.append(empty);
+ }else for(const [label,value] of facts){
+  const row=document.createElement('div');row.className='sv-memory-fact';
+  const title=document.createElement('span');title.textContent=label;
+  const data=document.createElement('strong');data.textContent=value;
+  row.append(title,data);host.append(row);
+ }
+ const forget=$('manageForgetBusiness');
+ if(forget)forget.hidden=!(short(business.description)||short(business.goal));
+}
 function drawData(){
  const record=snapshot(),list=$('manageDataSummary');
+ drawConfirmedMemory(record);
  list.replaceChildren();
  const parts=[
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
@@ -439,8 +467,19 @@ $('openManageConnections').addEventListener('click',()=>{
 });
 $('manageConnectionsClose').addEventListener('click',()=>connect.close());
 $('openManageData').addEventListener('click',()=>{drawData();dataDialog.showModal()});
-$('manageDataClose').addEventListener('click',()=>dataDialog.close());
 $('manageExportData').addEventListener('click',saveFile);
+$('manageForgetBusiness')?.addEventListener('click',()=>{
+ const current=window.SEYVEO_BUSINESS_MAP?.getState?.();
+ if(!current?.description&&!current?.goal)return;
+ // This action only clears owner's description and goal. It does not delete
+ // official company details, service names, tasks or prior downloaded backups.
+ if(!window.confirm('Очистить описание и цель из памяти Сэйви на этом устройстве? Дела, реквизиты и сервисы останутся.'))return;
+ const result=window.SEYVEO_BUSINESS_MAP?.savePrivateBusinessContext?.('','');
+ if(result?.ok)drawData();
+ $('manageMemoryStatus').textContent=result?.ok
+  ?'Описание и цель очищены на этом устройстве.'
+  :result?.message||'Не удалось изменить сведения.';
+});
 window.addEventListener('storage',event=>{
  if(event.key===ROADMAP_KEY){roadmapMarks=loadRoadmapMarks();if(roadmapDialog.open)drawRoadmap()}
 });
