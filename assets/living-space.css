@@ -1233,7 +1233,7 @@ body:has(#homePage:not([hidden])) .app{
   overflow-x:hidden!important;
   overflow-y:hidden!important;
   overscroll-behavior:none!important;
-  padding-bottom:calc(var(--seyveo-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 14px);
+  padding-bottom:calc(var(--seyveo-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 8px);
 }
 #homePage:not([hidden]){
   min-height:0;
@@ -1249,6 +1249,17 @@ body:has(#homePage:not([hidden])) .app{
 #homePage #seyveoLivingMoment{
   min-height:0;
   flex-shrink:1;
+}
+/* Make room for the complete first card inside the fixed Home.
+   Preserve the approved 2 orb sizes and art; reclaim only empty stage space. */
+#homePage.lm-focus #stage{
+  min-height:0;
+  padding-top:0;
+  padding-bottom:2px;
+}
+#homePage.lm-focus .message{
+  min-height:64px;
+  margin-top:2px;
 }
 /* If enlarged text or a particularly long decision exceeds the available
    space, only the decision itself can scroll, never the hero or Home. */
