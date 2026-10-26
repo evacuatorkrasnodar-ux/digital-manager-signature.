@@ -84,11 +84,15 @@ function init(){
   if(mode){mode=false;paint();}
  },true);
  for(const name of ['play','playing','pause','ended','emptied'])player.addEventListener(name,()=>{if(mode)paint()});
- window.addEventListener('hashchange',()=>{
-  // Exactly one dock mode, chosen by route: music only on the music screen.
+ function syncDockRoute(){
+  // history.pushState() on Home/Chat does not emit hashchange.
+  // Drop Music mode whenever the app emits its authoritative route update.
   const next=location.hash==='#sayvi-music';
   if(mode!==next){mode=next;paint();}
- });
+  else if(!mode)paint();
+ }
+ window.addEventListener('hashchange',syncDockRoute);
+ window.addEventListener('seyveo:route-changed',syncDockRoute);
  // Restore the correct controls on hard refresh and when reentering music.
  mode=location.hash==='#sayvi-music';
  paint();
