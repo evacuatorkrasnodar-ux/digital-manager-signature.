@@ -32,6 +32,18 @@ const magnetic=read('assets/magnetic-ink-dock.js');
 const composer=read('assets/composer-intent.css');
 const navigationCss=read('assets/navigation-system.css');
 const navigationJs=read('assets/navigation-system.js');
+const companyUi=read('assets/company-signature.css');
+const companyLogic=read('assets/passport-cards.js');
+assert.match(companyUi,/#seyveoCompanyDialog\.seyveo-passport-modal\[open\]/,'Company form is top aligned on narrow phones');
+assert.match(companyUi,/#seyveoCompanyDialog > button\.sv-nav-done/,'One sticky Done is visible when reading details');
+assert.match(companyLogic,/companyFormSnapshot=companyFormSignature\(\)/,'Opening and saving update the company form baseline');
+assert.match(companyLogic,/dialog\.scrollTop=0/,'Company details always reopen at the top');
+assert.match(companyLogic,/focus\(\{preventScroll:true\}\)/,'Focus does not scroll to form fields');
+assert.match(companyLogic,/dialog\.addEventListener\('cancel',confirmCompanyExit\)/,'Escape protects unsaved business details');
+assert.match(companyLogic,/dialog\.addEventListener\('click',event=>\{/,'Existing close and backdrop are protected');
+assert.match(html,/company-signature\.css\?v=2/,'Company layout update is deployed');
+assert.match(html,/passport-cards\.js\?v=29/,'Company opening/closing update is deployed');
+
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
 const notebookStyles=read('assets/notebook-smart.css');
