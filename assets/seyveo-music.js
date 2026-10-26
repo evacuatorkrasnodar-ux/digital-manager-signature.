@@ -67,6 +67,9 @@ const providers=Object.freeze({
  }
 });
 let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
+// A dismissed remote stays hidden while the audio keeps playing.
+// Entering the full music screen is the deliberate way to restore it.
+let miniDismissed=false;
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -89,7 +92,7 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
-  mini.hidden=!loaded||location.hash==='#sayvi-music';
+  mini.hidden=!loaded||location.hash==='#sayvi-music'||miniDismissed;
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -379,7 +382,7 @@ if(mini&&miniOpen){
   if(event.pointerType==='mouse'&&event.button!==0)return;
   const rect=mini.getBoundingClientRect();
   miniDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,
-   x:rect.left,y:rect.top,moved:false};
+   startedAt:performance.now(),x:rect.left,y:rect.top,moved:false};
   try{miniOpen.setPointerCapture(event.pointerId)}catch{}
  });
  miniOpen.addEventListener('pointermove',event=>{
@@ -392,10 +395,24 @@ if(mini&&miniOpen){
   setMiniPosition(d.x+dx,d.y+dy);
  });
  const finishMiniDrag=event=>{
-  if(!miniDrag||miniDrag.pointerId!==event.pointerId)return;
-  if(miniDrag.moved)miniBlockClickUntil=Date.now()+650;
+  const d=miniDrag;
+  if(!d||d.pointerId!==event.pointerId)return;
+  // A quick, mostly vertical downward flick hides the remote, not the music.
+  // Slow drags still reposition it. Cancelled touches never dismiss it.
+  const dx=event.clientX-d.startX,dy=event.clientY-d.startY;
+  const elapsed=performance.now()-d.startedAt;
+  const dismiss=event.type==='pointerup'&&d.moved&&
+   dy>78&&dy>Math.abs(dx)*1.35&&elapsed<650;
+  if(d.moved)miniBlockClickUntil=Date.now()+650;
   miniDrag=null;
   try{if(miniOpen.hasPointerCapture(event.pointerId))miniOpen.releasePointerCapture(event.pointerId)}catch{}
+  if(dismiss){
+   miniDismissed=true;
+   miniPosition=null;
+   // Clear free-drag geometry so re-opening starts in its designed position.
+   for(const name of ['left','top','bottom','transform'])mini.style.removeProperty(name);
+   syncResume();
+  }
  };
  miniOpen.addEventListener('pointerup',finishMiniDrag);
  miniOpen.addEventListener('pointercancel',finishMiniDrag);
@@ -433,6 +450,7 @@ document.addEventListener('keydown',e=>{
 });
 function syncMusicRoute(){
  const inside=location.hash==='#sayvi-music';
+ if(inside)miniDismissed=false;
  document.documentElement.classList.toggle('sv-music-screen',inside);
  if(!inside)hidePanels();
  else syncQueueToggle();
