@@ -69,7 +69,11 @@ mini?.addEventListener('click',event=>{
 renderMini();
 open.addEventListener('click',()=>{
  const r=record();
- if(!r.name){const s=$('seyveoCompanyDialog')?.querySelector('[data-passport-status]');if(s)s.textContent='Сохраните название бизнеса, чтобы создать визитку.';return}
+ if(!canShare(r)){
+  const s=$('seyveoCompanyDialog')?.querySelector('[data-passport-status]');
+  if(s)s.textContent='Для QR сохраните название компании и хотя бы один контакт: телефон, почту или сайт.';
+  return;
+ }
  const owner=$('seyveoCompanyDialog');if(owner?.open)owner.close();
  if(!dialog.open)dialog.showModal();
  update();
