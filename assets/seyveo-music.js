@@ -29,8 +29,7 @@ const sourcesClose=$('sayviMusicSourcesClose');
 const mini=$('sayviMusicMini');
 const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
-const miniTitle=$('sayviMusicMiniTitle');
-const miniState=$('sayviMusicMiniState');
+const miniNext=$('sayviMusicMiniNext');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
@@ -94,10 +93,9 @@ function syncResume(){
   mini.hidden=!loaded||location.hash==='#sayvi-music';
   mini.classList.toggle('is-playing',playing);
   if(loaded){
-   const file=tracks[index],info=infoFor(file);
-   if(miniTitle)miniTitle.textContent=info.title||safeName(file);
-   if(miniState)miniState.textContent=playing?'Играет':'На паузе';
-   if(miniOpen)miniOpen.setAttribute('aria-label','Вернуться в SEYVEO SOUND: '+safeName(file));
+   const file=tracks[index];
+   if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
+   if(miniNext)miniNext.disabled=tracks.length<2;
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
     miniPlay.setAttribute('aria-pressed',String(playing));
@@ -331,6 +329,7 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
+miniNext?.addEventListener('click',()=>switchTrack(index+1,true));
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
 // ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
 const miniWriter=$('ask');
