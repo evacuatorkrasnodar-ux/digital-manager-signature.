@@ -14,6 +14,8 @@ const reduced=()=>!!MOTION?.matches;
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
+// A missed startup presentation can start when Home becomes visible again.
+let previewArmed=false,previewSeen=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
  timers.push(id);return id;
@@ -304,7 +306,7 @@ function hold(callback,delay){
 function startPreview(){
  if(!available()||editing()||dueTask()||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
- mode='preview';key='preview';
+ mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
  buildExamples();
  tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
@@ -349,10 +351,7 @@ function showTask(item){
  space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
  focus(true);
  later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- hold(()=>{
-  shrink();
-  hold(()=>disappear(),6000);
- },12000);
+ // An unfinished real task stays on Home until the owner continues it.
  return true;
 }
 function adviceIdentity(card){
@@ -384,10 +383,7 @@ function showExistingAdvice(){
  dynamic.hidden=false;
  dynamic.classList.remove('lm-real-dim','lm-real-out');
  focus(true);
- hold(()=>{
-  dynamic.classList.add('lm-real-dim');
-  hold(()=>disappear(),6000);
- },11000);
+ // A real recommendation is not dismissed just because time passed.
  return true;
 }
 function refresh(){
@@ -410,7 +406,10 @@ function refresh(){
  if(item&&showTask(item))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
- if(mode==='idle')focus(false);
+ if(mode==='idle'){
+  focus(false);
+  if(previewArmed&&!previewSeen&&!item&&!pending&&available())startPreview();
+ }
 }
 const observer=new MutationObserver(scheduleRefresh);
 observer.observe(dynamic,{childList:true,attributes:true,attributeFilter:['hidden']});
@@ -424,6 +423,8 @@ window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
+ // Revisiting Home may replay the approved scene, never an actual task.
+ if(!location.hash||location.hash==='#home')previewSeen=false;
  if(mode!=='idle')rest();
  else focus(false);
  // Sync after the main router updates Home visibility.
@@ -433,6 +434,7 @@ document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&mode!=='idle')rest();
  else if(!document.hidden)scheduleRefresh();
 });
+document.addEventListener('close',()=>later(scheduleRefresh,130),true);
 window.addEventListener('pagehide',()=>{cancel();resetSpace();focus(false)});
 /* Real business recommendations remain actionable. Explain in place without
  * launching a second modal and without overwriting their original approval logic. */
@@ -459,11 +461,8 @@ replay?.addEventListener('click',()=>{
 });
 window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
 scheduleRefresh();
-// Show labeled demo on each fresh page load, including same-tab refresh.
-// Due real tasks and permission-based advice always take priority.
-// Run after the approved opening logo has had time to appear.
-later(()=>{
- if(document.hidden||home.hidden||document.querySelector('dialog[open]')||mode!=='idle')return;
- startPreview();
-},9400);
+// Bring back the original rising three-card introduction after opening.
+// If a dialog/navigation blocks it, refreshing Home retries instead of
+// silently discarding the animation forever.
+later(()=>{previewArmed=true;scheduleRefresh()},7800);
 })();
