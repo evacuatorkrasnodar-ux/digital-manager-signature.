@@ -326,7 +326,13 @@ for(const token of ['border:0','border-radius:0','background:none','box-shadow:n
 assert.match(decisionCss,/#seyveoLivingMoment \.lm-polymer::after/,'Arrows are removed from task actions');
 assert.doesNotMatch(decisionCss,/background:linear-gradient\(165deg,rgba\(248,250,252,\.072\)/,'Heavy capsule gradient is retired');
 assert.match(html,/living-moment\.css\?v=38/);
-assert.match(html,/living-moment\.js\?v=\d+/);
+assert.match(html,/living-moment\.js\?v=53/,'Restored Living Moment is cache-refreshed');
+assert.match(decisionJs,/previewArmed&&!previewSeen&&!item&&!pending&&available\(\)/,'Home retries the beautiful scene after a missed launch');
+assert.match(decisionJs,/window\.setTimeout\(\(\)=>\{previewArmed=true;scheduleRefresh\(\)\},7800\)/,'Startup scene timer survives navigation');
+const realTaskSection=decisionJs.slice(decisionJs.indexOf('function showTask('),decisionJs.indexOf('function adviceIdentity('));
+assert.doesNotMatch(realTaskSection,/hold\(/,'Unfinished real tasks are never dismissed on a timer');
+const realAdviceSection=decisionJs.slice(decisionJs.indexOf('function showExistingAdvice('),decisionJs.indexOf('function refresh('));
+assert.doesNotMatch(realAdviceSection,/hold\(/,'Real recommendations stay visible rather than fading on an idle timer');
 for(const item of ['composer-intent.css','future-surfaces.css','floating-navigation.css',
  'home-velvet.css','living-space.css','personal-wellness.css','calendar-spaces.css'])
  assert.match(html,new RegExp('assets/'+item.replace(/[.*+?^$\u007b\u007d()|[\]\\]/g,'\\$&')+'\\?v=\\d+'),'Versioned file: '+item);
