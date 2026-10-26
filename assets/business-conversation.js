@@ -112,7 +112,7 @@ function help(question){
  if(hasUrl&&isLinkContext){
   if(!link)return {answer:'Я вижу ссылку, но не могу безопасно подготовить её. Пришлите общедоступный адрес HTTPS без паролей, кодов доступа и секретных параметров.',action:null,kind:'link-invalid'};
   const label=link.type==='marketplace'?'витрину маркетплейса':link.type==='avito'?'страницу Авито':link.type==='vk'?'страницу ВКонтакте':'сайт компании';
-  return {kind:'link',answer:'Получил ссылку на '+label+': '+link.host+'.\n\nМогу подготовить её для Карты бизнеса. Сохранение произойдёт только после вашего подтверждения. Затем предложу проверить публичную страницу; чтение товаров зависит от ограничений сайта.',
+  return {kind:'link',answer:'Получил ссылку на '+label+': '+link.host+'.\n\nМогу предложить добавить её в «Подключения». Адрес сохранится только после вашего подтверждения. Доступ к самому сервису отдельно не подключается.',
    action:oneAction('source','Проверить и добавить ссылку',{url:link.url,type:link.type})};
  }
  const isKnowledge=/(?:что (?:ты )?знаеш|что тебе известно|что известно|расскажи.*(?:о моем|о нашем|про мой|про наш)|сведения о|память о|карта бизнеса|знакомство с бизнесом)/i.test(q)&&/(?:бизнес|компан|магазин|дело|ресурс|мне|меня|нас)/i.test(q);
@@ -138,15 +138,15 @@ function help(question){
   if(expected==='description'&&reply.length>=8&&reply.length<=1000&&
      !/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\s|otp|код\s+доступа|секретн)/i.test(reply)){
    return {kind:'description-draft',
-    answer:'Понял ваше описание бизнеса:\n«'+clean(reply,260)+'».\n\nЯ ещё не сохранил его. Проверьте текст и подтвердите в Карте бизнеса.',
-    action:oneAction('description','Проверить и сохранить описание',{value:reply})};
+    answer:'Понял ваше описание бизнеса:\n«'+clean(reply,260)+'».\n\nЭто пока только наш разговор. В сведения о бизнесе я его не записываю без вашего подтверждения.',
+    action:null};
   }
   if(expected==='weekly'){
    const match=reply.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').match(/^(?:(?:примерно|около|порядка|у нас|было|получили)\s+)*(\d{1,6})(?:\s+(?:заявок|заявки|заявка|обращений|обращения|обращение|лидов|лида|лид))?(?:\s+(?:в|за)\s+(?:последнюю\s+)?недел[юеи])?$/);
    if(match){
     const value=Number(match[1]);
     return {kind:'weekly-draft',
-     answer:'Вы указали около '+value+' новых обращений за неделю.\n\nЭто ваш ориентир, а не подтверждённая статистика CRM. Сохранить его в Карте бизнеса?',
+     answer:'Вы указали около '+value+' новых обращений за неделю.\n\nЭто ваш ориентир, а не подтверждённая статистика CRM. Хотите сохранить этот ориентир в локальных сведениях?',
      action:oneAction('weekly','Сохранить '+value+' обращений в неделю',{value})};
    }
   }
@@ -158,7 +158,7 @@ function help(question){
   const storefront=confirmedStorefront(map);
   const observed=storefront?(storefront.method==='owner'?'Вы описали ассортимент одной витрины.':'Сохранены подтверждённые вами сведения одной публичной страницы.'):'Данных о товарах из витрин пока нет.';
   const next=window.SEYVEO_BUSINESS_MAP?.getAdvice?.()?.[0];
-  return {kind:'knowledge',answer:overview+'\n\n'+observed+'\nПодключённых внешних сервисов пока нет.\n\n'+(next?'Следующий полезный вопрос: '+next.title:'Можно продолжить знакомство и проверить, что ещё важно.'),action:oneAction('map','Открыть Карту бизнеса')};
+  return {kind:'knowledge',answer:overview+'\n\n'+observed+'\nПодключённых внешних сервисов пока нет.\n\n'+(next?'Следующий полезный вопрос: '+next.title:'Можно продолжить знакомство и проверить, что ещё важно.'),action:null};
  }
  if(explain){
   const text=/\bapi\b|апи/.test(q)
@@ -183,8 +183,8 @@ function help(question){
    action:oneAction('connections','Как подключить',{type:resource||'site'})};
  }
   if(!map||!map.description){
-  return {kind:'business-start',answer:'Хочу помочь, но сначала важно понять ваше дело.\n\nРасскажите одним предложением, чем занимаетесь, в каком городе работаете и кто ваши клиенты. SEYVEO сохранит ответ в Карте бизнеса только с вашего подтверждения.\n\nПока реальные аналитика и ИИ не подключены.',
-   action:oneAction('map','Рассказать о бизнесе')};
+  return {kind:'business-start',answer:'Хочу помочь, но сначала важно понять ваше дело.\n\nРасскажите одним предложением, чем занимаетесь, в каком городе работаете и кто ваши клиенты. Пока я могу обсудить это с вами, но не записываю сведения бизнеса без отдельного подтверждения.\n\nПока реальные аналитика и ИИ не подключены.',
+   action:null};
  }
  const facts=shortFacts(map),knownSource=mainSource(map);
  const linkKnown=confirmedStorefront(map);
@@ -199,22 +199,22 @@ function help(question){
    'Для роста продаж нужна исходная точка. '+question+'\n\n'+
    (linkKnown?'Сведения об одной витрине сохранены, но это не статистика продаж. ':'')+
    'Сейчас SEYVEO не читает реальные заявки или выручку — сервисы ещё не подключены.',
-   action:oneAction('map','Карта бизнеса')};
+   action:null};
  }
  if(costs){
   return {kind:'finance',answer:facts+'\n\nПредлагаю начать с одного вопроса: какие три статьи расходов сейчас самые крупные?\n\nБез подтверждённых сумм и доступа к учёту я не могу назвать ваши потери или обещать экономию. Сначала соберём структуру затрат и только затем будем выбирать решения.',
-   action:oneAction('map','Уточнить финансы бизнеса')};
+   action:null};
  }
  if(catalog){
   if(linkKnown){
    const subject=linkKnown.method==='owner'?'со слов владельца':'из открытой страницы';
    const productInfo=linkKnown.products?.length?'Названия товаров: '+linkKnown.products.slice(0,3).map(x=>clean(x,65)).join(', ')+'. ':'';
    return {kind:'catalog',answer:'По указанной витрине сохранены сведения '+subject+'. '+productInfo+
-    '\n\nЯ могу предложить проверить названия, описания и карточки товаров, но не могу оценить весь каталог, спрос или продажи по одной странице. Откройте Карту бизнеса, чтобы продолжить проверку.',
-    action:oneAction('map','Открыть витрину в Карте')};
+    '\n\nЯ могу предложить проверить названия, описания и карточки товаров, но не могу оценить весь каталог, спрос или продажи по одной странице. Если захотите продолжить проверку, добавьте публичную ссылку в «Подключениях».',
+    action:null};
   }
   return {kind:'catalog',answer:facts+'\n\nДля предметной проверки понадобится публичная ссылка на сайт или витрину Ozon, Wildberries, Авито. Если магазин запрещает чтение, вы сможете описать ассортимент сами.\n\nБез реальных данных я не буду придумывать товары.',
-    action:oneAction('map','Добавить ссылку на витрину')};
+    action:null};
  }
  if(metrics){
   const weekly=map.weeklyRequests;
@@ -222,10 +222,10 @@ function help(question){
    ?'Со слов владельца сохранён ориентир: около '+weekly.value+' обращений за неделю. Это не онлайн-статистика.\n\n':'';
   return {kind:'metrics',answer:facts+'\n\n'+known+
    'Пока я не могу достоверно назвать число заказов, прибыль или конверсию: доступ к статистике и финансам не подключён.\n\nМожно уточнить другие показатели и затем выбрать подходящий источник данных.',
-   action:oneAction('map','Уточнить показатели')};
+   action:null};
  }
  return {kind:'business',answer:facts+'\n\nДавайте сначала обозначим вашу ближайшую цель. Тогда я смогу предложить нужный следующий вопрос и источник данных. Я пока работаю с локально указанными сведениями, не с настоящей бизнес-аналитикой.',
-   action:oneAction('map','Продолжить знакомство')};
+   action:null};
 }
 let currentAction=null;
 function reset(){
@@ -239,7 +239,7 @@ function show(result){
   result?.kind==='sales'&&result.awaitingWeekly?'weekly':null;
  if(!result?.action)return;
  const action=result.action;
- if(!['map','source','connections','description','weekly'].includes(action.kind))return;
+ if(!['source','connections','weekly'].includes(action.kind))return;
  currentAction=action;
  cta.textContent=clean(action.label,54);
  cta.hidden=false;
@@ -247,10 +247,16 @@ function show(result){
 cta.addEventListener('click',()=>{
  const action=currentAction;if(!action)return;
  let done=false;
- if(['map','source','description'].includes(action.kind)){
-  const args=action.kind==='source'?{sourcePrefill:{url:action.url,type:action.type}}:
-   action.kind==='description'?{aboutPrefill:action.value}:{};
-  done=window.SEYVEO_BUSINESS_MAP?.open?.(args)===true;
+ if(action.kind==='source'){
+  // One destination only: the existing service editor under Connections.
+  const page=$('navManage');
+  if(page){
+   page.click();
+   window.dispatchEvent(new CustomEvent('seyveo:connection-help',{
+    detail:{type:action.type||'site',sourcePrefill:action.url||''}
+   }));
+   done=true;
+  }
  }else if(action.kind==='weekly'){
   const result=window.SEYVEO_BUSINESS_MAP?.saveWeeklyRequests?.(action.value);
   if(result?.ok){
@@ -258,7 +264,7 @@ cta.addEventListener('click',()=>{
     '\n\nЭто введённый вами ориентир, а не данные из внешних сервисов.';
    done=true;
   }else{
-   $('orbInlineReplyText').textContent=result?.message||'Не удалось сохранить показатель. Проверьте Карту бизнеса.';
+   $('orbInlineReplyText').textContent=result?.message||'Не удалось сохранить показатель. Попробуйте ещё раз.';
   }
  }else if(action.kind==='connections'){
   const page=$('navManage');
