@@ -14,7 +14,7 @@ dialog > button.sv-nav-done.seyveo-close-control{
  letter-spacing:-.01em;line-height:1.2;white-space:nowrap;
 }
 dialog > button.sv-nav-done.seyveo-close-control::before{content:none!important;display:none!important}
-dialog > button.sv-nav-redundant{display:none!important}
+button.sv-nav-redundant{display:none!important}
 button.sv-nav-back{
  -webkit-appearance:none;appearance:none;
  box-sizing:border-box;min-width:44px;min-height:44px;
