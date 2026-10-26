@@ -488,12 +488,12 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 /* SEYVEO MUSIC · restrained one-line signature and studio tagline. */
 #sayviMusicPage>header.sv-music-head{
  display:grid;grid-template-columns:minmax(0,1fr) auto;
- grid-template-rows:auto auto;column-gap:18px;row-gap:5px;
+ grid-template-rows:auto auto;column-gap:18px;row-gap:0;
  text-align:left;align-items:center;min-width:0;
 }
 #sayviMusicPage .sv-music-heading{
  grid-column:1;grid-row:1;display:flex;flex-direction:row;align-items:baseline;gap:9px;
- flex-wrap:nowrap;min-width:0;margin:0;line-height:1.15;text-align:left;white-space:nowrap;
+ flex-wrap:nowrap;min-width:0;margin:0;line-height:1.05;text-align:left;white-space:nowrap;
 }
 #sayviMusicPage .sv-music-brand{
  font-size:clamp(22px,5.4vw,27px);font-weight:510;
@@ -504,8 +504,8 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  letter-spacing:.075em;line-height:1.2;
 }
 #sayviMusicPage .sv-music-technology{
- grid-column:1;grid-row:2;margin:0;color:var(--secondary);
- font-size:9px;line-height:1.5;letter-spacing:.11em;text-align:left;
+ grid-column:1;grid-row:2;margin:-5px 0 0;color:var(--secondary);
+ font-size:9px;line-height:1.3;letter-spacing:.11em;text-align:left;
  font-weight:370;
 }
 #sayviMusicPage .sv-music-ai{font-style:italic;text-transform:none;letter-spacing:0;font-weight:520}
@@ -536,7 +536,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 }
 @media(max-height:760px){
  #sayviMusicPage .sv-music-heading{font-size:22px;margin-top:1px}
- #sayviMusicPage .sv-music-technology{font-size:8.5px;margin-top:2px;margin-bottom:1px}
+ #sayviMusicPage .sv-music-technology{font-size:8.5px;margin-top:-3px;margin-bottom:1px}
  #sayviMusicPage .sv-music-quality{margin:1px 0 0;font-size:9px}
 }
 
@@ -576,7 +576,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #sayviMusicPage .sv-music-brand{font-size:clamp(23px,2.5vw,30px)}
  html.sv-music-screen #sayviMusicPage .sv-music-brand-sub{font-size:clamp(13px,1.4vw,17px)}
  html.sv-music-screen #sayviMusicPage .sv-music-technology{
-  margin:3px 0 0;text-align:left;letter-spacing:.2em;font-size:9px;
+  margin:-3px 0 0;text-align:left;letter-spacing:.2em;font-size:9px;
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   grid-column:2;grid-row:1 / span 8;
