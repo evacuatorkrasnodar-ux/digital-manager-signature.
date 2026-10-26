@@ -41,8 +41,16 @@ assert.match(companyLogic,/dialog\.scrollTop=0/,'Company details always reopen a
 assert.match(companyLogic,/focus\(\{preventScroll:true\}\)/,'Focus does not scroll to form fields');
 assert.match(companyLogic,/dialog\.addEventListener\('cancel',confirmCompanyExit\)/,'Escape protects unsaved business details');
 assert.match(companyLogic,/dialog\.addEventListener\('click',event=>\{/,'Existing close and backdrop are protected');
-assert.match(html,/company-signature\.css\?v=2/,'Company layout update is deployed');
-assert.match(html,/passport-cards\.js\?v=29/,'Company opening/closing update is deployed');
+assert.match(html,/class="sv-company-view" id="seyveoCompanyView"/,'Company opens as a calm reader');
+assert.match(html,/class="sv-company-editor" id="seyveoCompanyEditor" hidden/,'Editable fields start collapsed');
+assert.match(companyLogic,/function setCompanyMode\(mode\)/,'Read and edit use the same sheet');
+assert.match(companyLogic,/function discardCompanyEditing\(\)/,'Cancel returns to reader without losing saved records');
+assert.match(companyLogic,/dialog\.dataset\.svCompanyMode/,'Company state is explicit and isolated');
+assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-editor\[hidden\]/,'Collapsed editor remains genuinely hidden');
+assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-actions\[hidden\]/,'No unavailable share actions for an empty company');
+assert.match(companyUi,/#seyveoCompanyDialog > \.info-actions\{display:none!important\}/,'No duplicate footer close button');
+assert.match(html,/company-signature\.css\?v=3/,'Company Quiet Cinema view is deployed');
+assert.match(html,/passport-cards\.js\?v=30/,'Company reader/editor interactions are deployed');
 
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
