@@ -266,3 +266,41 @@
 
 
 
+
+/* Pulse of Business · calm responsive demo presentation. */
+#picturePage .picture-demo-label{
+ display:inline-flex;align-items:center;min-height:25px;
+ margin:4px 0 10px!important;padding:5px 10px;
+ font-size:9px!important;font-weight:520!important;
+ letter-spacing:.10em;line-height:1.35!important;
+ border:1px solid rgba(230,235,243,.17);border-radius:999px;
+ background:rgba(231,236,244,.055);color:var(--secondary);
+}
+#picturePage .picture-demo-label[hidden]{display:none!important}
+#picturePage .picture-head h1{
+ font-weight:460!important;letter-spacing:-.045em!important;
+}
+#picturePage .picture-tabs{
+ background:rgba(235,238,245,.032);border-color:rgba(228,234,244,.11);
+ box-shadow:none;
+}
+#picturePage .picture-tabs button[aria-pressed=true]{
+ background:rgba(237,241,248,.10);box-shadow:none;
+}
+#picturePage .picture-chart-box,
+#picturePage .picture-breakdown{
+ background:rgba(234,238,245,.025);
+ border-color:rgba(230,235,243,.13);
+ box-shadow:none;
+}
+#picturePage .picture-bin-bar{
+ background:linear-gradient(180deg,rgba(250,252,255,.92),rgba(144,153,168,.55));
+}
+@media(max-width:390px){
+ #picturePage .picture-demo-label{font-size:8.5px!important}
+}
+:root[data-theme=light] #picturePage .picture-tabs,
+:root[data-theme=light] #picturePage .picture-chart-box,
+:root[data-theme=light] #picturePage .picture-breakdown{
+ background:rgba(40,55,77,.028);border-color:rgba(40,55,77,.13);
+}
