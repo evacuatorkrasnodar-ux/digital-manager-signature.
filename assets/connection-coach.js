@@ -240,22 +240,27 @@ function renderRegistry(){
   const toggle=document.createElement('button');toggle.type='button';
   toggle.className='sv-connect-tile-top';toggle.dataset.resourceToggle=item.id;
   toggle.setAttribute('aria-expanded',String(expanded));
-  toggle.setAttribute('aria-label',item.name+': '+(saved.length?'указан, не подключён':'не указан')+'. Изменить');
+  toggle.setAttribute('aria-controls','sv-connect-editor-'+item.id);
+  toggle.setAttribute('aria-label',item.name+': '+(saved.length?'добавлен, доступ не подключён':'не добавлен')+'. '+(expanded?'Свернуть':'Открыть'));
   const symbol=document.createElement('span');symbol.className='sv-connect-tile-icon';symbol.append(resourceIcon(item.id));
+  const body=document.createElement('span');body.className='sv-connect-tile-body';
   const name=document.createElement('strong');name.textContent=item.name;
   const state=document.createElement('small');state.className='sv-connect-tile-state';
-  state.textContent=saved.length?'Указан · без доступа':'Не указан';
-  const glyph=document.createElement('span');glyph.className='sv-connect-tile-plus';
-  glyph.textContent=expanded?'−':'+';
-  toggle.append(symbol,name,state,glyph);
-  box.append(toggle);
+  state.textContent=saved.length?'Добавлен':'Не добавлен';
+  body.append(name,state);
   if(saved.length&&!expanded){
-   const teaser=document.createElement('div');teaser.className='sv-connect-tile-preview';
+   const teaser=document.createElement('small');teaser.className='sv-connect-tile-preview';
    teaser.textContent=saved.length===1?(saved[0].value==='Использую'?'Пользуюсь':saved[0].value):saved.length+' записи';
-   box.append(teaser);
+   body.append(teaser);
   }
+  const glyph=document.createElement('span');glyph.className='sv-connect-tile-chevron';
+  glyph.setAttribute('aria-hidden','true');
+  glyph.append(document.createElement('span'));
+  toggle.append(symbol,body,glyph);
+  box.append(toggle);
   if(expanded){
-   const editor=document.createElement('div');editor.className='sv-connect-tile-editor';
+   const editor=document.createElement('div');editor.id='sv-connect-editor-'+item.id;
+   editor.className='sv-connect-tile-editor';
    const desc=document.createElement('p');desc.textContent=item.reason;
    editor.append(desc);
    for(const value of saved){
