@@ -641,3 +641,27 @@ html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-exp
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
  line-height:1.46;
 }
+
+/* Single chat editor expander, no second input and no dock. */
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatExpand{
+ order:4;display:grid!important;place-items:center;
+ width:32px;min-width:32px;height:44px;flex:0 0 32px;
+ margin:0;padding:0;border:0!important;border-radius:50%;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary);cursor:pointer;
+}
+html.seyveo-conversation #seyveoChatExpand svg{
+ display:block;width:19px;height:19px;fill:none;
+ stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+html.seyveo-conversation #seyveoChatExpand:focus-visible{
+ outline:2px solid var(--text);outline-offset:1px;
+}
+html.seyveo-conversation.seyveo-chat-compose-expanded #ask.prompt:not(.expanded){
+ max-height:min(43dvh,300px)!important;
+}
+html.seyveo-conversation.seyveo-chat-compose-expanded #ask.prompt:not(.expanded) #question{
+ height:min(28dvh,210px)!important;
+ max-height:min(28dvh,210px)!important;
+ min-height:90px!important;
+}
