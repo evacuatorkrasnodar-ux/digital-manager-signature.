@@ -125,7 +125,7 @@ assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVE
 assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
 assert.match(html,/assets\/business-conversation\.js\?v=6/,'Chat receives revised Connections-only actions');
 assert.match(html,/assets\/business-map\.js\?v=21/,'Retired opening behavior is cache refreshed');
-assert.match(html,/assets\/connection-coach\.js\?v=13/,'Resource editing uses latest existing Connections');
+assert.match(html,/assets\/connection-coach\.js\?v=14/,'Resource editing uses latest existing Connections');
 /* One visually navigable catalog, one original source of truth. */
 const coachHtml=html.slice(html.indexOf('id="connectionCoachKnown"'),html.indexOf('</section>',html.indexOf('id="connectionCoachKnown"')));
 const networkJs=read('assets/network-care.js');
@@ -163,11 +163,20 @@ assert.doesNotMatch(coachHtml,/<select\b/,'No desktop-style dropdown in Connecti
 assert.doesNotMatch(coachHtml,/id="connectionCoachAddResource"/,'No duplicate resource editor');
 assert.match(coachJs,/const SERVICE_ICONS=Object\.freeze/,'Every service has a consistent vector icon');
 assert.match(coachJs,/resourceIcon\(item\.id\)/,'Each service renders its own vector icon');
+assert.match(coachJs,/className='sv-connect-tile-body'/,'Service content stays grouped in one button');
+assert.match(coachJs,/className='sv-connect-tile-chevron'/,'One aligned chevron replaces the overlay control');
+assert.doesNotMatch(coachJs,/sv-connect-tile-plus/,'Old crooked floating plus is removed');
+assert.match(coachJs,/aria-expanded/,'Expanded service editor remains accessible');
+assert.match(coachJs,/aria-controls/,'The tile button owns its inline service editor');
+assert.match(coachJs,/state.textContent=saved.length\?'Добавлен':'Не добавлен'/,'Service status is concise and distinct from external access');
+assert.match(coachCss,/grid-template-columns:30px minmax\(0,1fr\) 9px/,'Compact horizontal tile keeps icons, names and chevrons aligned');
+assert.doesNotMatch(coachCss,/sv-connect-tile-plus/,'Orphan floating-plus styles never return');
+assert.match(html,/assets\/connection-coach\.css\?v=8/,'Changed tile geometry invalidates mobile cache');
 assert.match(coachJs,/data-resource-form/,'Editor exists only for a selected service');
 assert.match(coachJs,/saveResourceDetail\?\.\(type,input\?\.value\)/,'Service tiles use original resource storage');
 assert.match(coachJs,/removeResourceDetail\?\.\(type,value\)/,'Owner can remove an individual service');
 assert.match(coachCss,/#manageConnectionsDialog \.sv-connect-grid\{/,'Responsive two-column Black Velvet catalog');
-assert.match(coachCss,/min-height:94px/,'Service icons use compact tiles');
+assert.match(coachCss,/min-height:90px/,'Service icons use compact tiles');
 assert.match(coachJs,/function visibleSteps\(\)/,'On-screen suggestions are three short steps');
 assert.match(html,/class="connection-coach-mode-fold"/,'Advanced owner/specialist mode stays folded');
 assert.match(html,/id="connectionCoachRelevance" hidden/,'Duplicate technical guidance is not shown by default');
