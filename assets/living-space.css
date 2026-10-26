@@ -1214,3 +1214,8 @@ html.sv-space-active:root[data-theme=light] #lifePage{
 html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
  border-bottom-color:rgba(27,40,62,.11)!important;
 }
+
+/* Inner-page miniature Sayvi is no longer displayed. The physical orb
+   stays in the DOM and returns intact to the Home stage on navigation.
+   Do not affect Home orb, dock voice button, or cards. */
+#seyveoCompanion:not([hidden]){display:none!important;min-height:0!important;margin:0!important;padding:0!important}
