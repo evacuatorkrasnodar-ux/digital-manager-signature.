@@ -624,3 +624,20 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-r
 html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-action{
  min-height:40px;
 }
+
+/* Tighter text-only rhythm: preserve literal message newlines and full history. */
+html.seyveo-conversation .seyveo-conversation-turn--you{
+ padding:7px 11px 8px;
+ max-width:min(86%,400px);
+}
+html.seyveo-conversation .seyveo-conversation-turn--you.seyveo-message-folded .seyveo-conversation-body{
+ max-height:9em;
+}
+html.seyveo-conversation .seyveo-conversation-turn--you .seyveo-conversation-expand{
+ min-height:36px;
+ margin-top:0;
+ padding:4px 0 0;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
+ line-height:1.46;
+}
