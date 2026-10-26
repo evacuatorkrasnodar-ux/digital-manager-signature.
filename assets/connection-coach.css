@@ -197,58 +197,64 @@
 }
 #manageConnectionsDialog .sv-connect-tile{
  min-width:0;overflow:hidden;
- border:1px solid var(--soft-line);
- border-radius:16px;
- background:linear-gradient(150deg,rgba(224,233,243,.046),rgba(224,233,243,.012));
- box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+ border:1px solid var(--soft-line);border-radius:16px;
+ background:linear-gradient(155deg,rgba(225,234,245,.043),rgba(225,234,245,.012));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.026);
 }
 #manageConnectionsDialog .sv-connect-tile.is-expanded{
- grid-column:1/-1;border-color:rgba(220,232,246,.35);
+ grid-column:1/-1;border-color:rgba(220,232,246,.31);
  background:var(--card2);
 }
 #manageConnectionsDialog .sv-connect-tile-top{
- display:flex;flex-direction:column;align-items:flex-start;gap:5px;
- position:relative;width:100%;min-height:94px;
- padding:10px 11px 9px;
- border:0;background:transparent;color:var(--text);
- text-align:left;
+ box-sizing:border-box;display:grid;
+ grid-template-columns:30px minmax(0,1fr) 9px;
+ align-items:center;column-gap:9px;
+ width:100%;min-height:90px;margin:0;padding:11px;
+ border:0;border-radius:15px;
+ background:transparent;color:var(--text);
+ font:inherit;text-align:left;cursor:pointer;
 }
 #manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-top{
- min-height:75px;display:grid;
- grid-template-columns:34px 1fr 22px;
- grid-template-rows:auto auto;column-gap:11px;row-gap:2px;
- align-content:center;align-items:center;
- padding:13px 15px;
+ min-height:69px;padding:11px 13px;
 }
 #manageConnectionsDialog .sv-connect-tile-icon{
- width:31px;height:31px;display:grid;place-items:center;flex:none;
- color:var(--text);border:1px solid rgba(220,233,245,.23);
- border-radius:11px;background:rgba(221,231,244,.05);
+ box-sizing:border-box;width:30px;height:30px;
+ display:grid;place-items:center;flex:none;
+ color:var(--text);border:1px solid rgba(220,233,245,.20);
+ border-radius:10px;background:rgba(221,231,244,.038);
 }
-#manageConnectionsDialog .sv-connect-tile-icon svg{width:18px;height:18px}
-#manageConnectionsDialog .sv-connect-tile-top strong{
- display:block;max-width:100%;font-size:11.7px;letter-spacing:-.02em;
- font-weight:510;line-height:1.35;overflow-wrap:anywhere;
+#manageConnectionsDialog .sv-connect-tile-icon svg{width:17px;height:17px}
+#manageConnectionsDialog .sv-connect-tile-body{
+ display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+ min-width:0;gap:4px;
+}
+#manageConnectionsDialog .sv-connect-tile-body strong{
+ font-size:11.7px;letter-spacing:-.015em;
+ font-weight:520;line-height:1.3;overflow-wrap:anywhere;
 }
 #manageConnectionsDialog .sv-connect-tile-state{
- color:var(--secondary);font-size:9.8px;line-height:1.35;max-width:100%;
+ display:block;max-width:100%;color:var(--secondary);
+ font-size:10px;line-height:1.35;
 }
-#manageConnectionsDialog .sv-connect-tile-plus{
- position:absolute;right:10px;top:11px;
- display:grid;place-items:center;width:18px;height:18px;
- border-radius:50%;border:1px solid var(--soft-line);
- color:var(--secondary);font-size:14px;font-weight:350;
+#manageConnectionsDialog .sv-connect-tile-chevron{
+ align-self:center;justify-self:center;width:9px;height:14px;
+ display:grid;place-items:center;flex:none;color:var(--secondary);opacity:.75;
 }
-#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-icon{grid-column:1;grid-row:1/3}
-#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-top strong{grid-column:2;grid-row:1}
-#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-state{grid-column:2;grid-row:2}
-#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-plus{
- position:static;grid-column:3;grid-row:1/3;
+#manageConnectionsDialog .sv-connect-tile-chevron>span{
+ display:block;width:6px;height:6px;border-top:1.35px solid currentColor;
+ border-right:1.35px solid currentColor;transform:rotate(45deg);
+ transition:transform .18s;
+}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-chevron>span{
+ transform:rotate(135deg);
 }
 #manageConnectionsDialog .sv-connect-tile-preview{
- padding:0 11px 9px;
- color:var(--secondary);font-size:9.8px;line-height:1.35;
- overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ box-sizing:border-box;display:block;min-width:0;max-width:100%;
+ padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ color:var(--secondary);font-size:9.6px;line-height:1.3;
+}
+#manageConnectionsDialog .sv-connect-tile-top:focus-visible{
+ outline:1px solid var(--text);outline-offset:-3px;
 }
 #manageConnectionsDialog .sv-connect-tile-editor{
  padding:0 15px 16px;display:grid;gap:10px;
@@ -322,9 +328,17 @@
 }
 @media(max-width:355px){
  #manageConnectionsDialog .sv-connect-grid{gap:7px}
- #manageConnectionsDialog .sv-connect-tile-top{padding:13px 9px 10px}
- #manageConnectionsDialog .sv-connect-tile-top strong{font-size:11.3px}
- #manageConnectionsDialog .sv-connect-tile-state{font-size:9.6px}
+ #manageConnectionsDialog .sv-connect-tile-top{
+  grid-template-columns:27px minmax(0,1fr) 8px;column-gap:7px;
+  min-height:92px;padding:9px 8px;
+ }
+ #manageConnectionsDialog .sv-connect-tile-icon{width:27px;height:27px}
+ #manageConnectionsDialog .sv-connect-tile-icon svg{width:16px;height:16px}
+ #manageConnectionsDialog .sv-connect-tile-body strong{font-size:11px}
+ #manageConnectionsDialog .sv-connect-tile-state{font-size:9.7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #manageConnectionsDialog .sv-connect-tile-chevron>span{transition:none}
 }
 #manageConnectionsDialog .connection-coach-presence{margin:11px 0 14px;padding:9px 0 12px;border-bottom:1px solid var(--soft-line)}
 #manageConnectionsDialog .connection-coach-presence label{display:flex;gap:9px;align-items:center;min-height:36px;font-size:12.2px;font-weight:450}
