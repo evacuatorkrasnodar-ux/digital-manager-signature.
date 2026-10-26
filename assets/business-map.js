@@ -133,10 +133,10 @@ function ownerFocus(){
 function clone(x){return {version:1,mode:x.mode,description:x.description,goal:x.goal,
  industry:byIndustry(x.industry)?x.industry:'',industryAnswer:norm(x.industryAnswer,500),
  weeklyRequests:validWeeklyRequests(x.weeklyRequests),resources:x.resources.map(row=>({...row})),dismissed:[...(x.dismissed||[])],storefronts:cleanStorefronts(x.storefronts),updatedAt:x.updatedAt}}
-let data=fresh('existing'),preview=false,firstLaunch=false,view='map',sourceType='',origin=null,sectorReturn='goal';
+let data=fresh('existing'),preview=false,firstLaunch=false,view='map',origin=null,sectorReturn='goal';
 const title=$('businessMapTitle'),sub=$('businessMapLead'),status=$('businessMapStatus');
 const field=$('businessMapInput'),form=$('businessMapForm'),inputLabel=$('businessMapInputLabel'),inputHelp=$('businessMapInputHelp');
-const pages={sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,sources:$('businessMapSources'),map:$('businessMapOverview'),storefront:$('businessMapStorefront')};
+const pages={sector:$('businessMapSector'),about:form,goal:form,source:form,workflow:form,map:$('businessMapOverview'),storefront:$('businessMapStorefront')};
 function save(){
  if(preview)return true;
  const next=clone(data);next.updatedAt=new Date().toISOString();
@@ -157,10 +157,10 @@ function updateEntry(){
 function markStep(next){
  view=next;status.textContent='';
  for(const [key,panel] of Object.entries(pages)){
-  if(key==='about'||key==='goal'||key==='source'||key==='workflow')continue;
+  if(key==='about'||key==='goal'||key==='workflow')continue;
   panel.hidden=key!==view;
  }
- form.hidden=!['about','goal','source','workflow'].includes(view);
+ form.hidden=!['about','goal','workflow'].includes(view);
  if(view==='about'){
   const startup=data.mode==='start';
   title.textContent=startup?'Какое дело хотите открыть?':'Расскажите о своём бизнесе';
@@ -197,19 +197,6 @@ function markStep(next){
   field.placeholder='Например, заявки принимаем по телефону и записываем вручную…';
   inputHelp.textContent='Это поможет уточнить будущие рекомендации. Можно ответить позже. Не вводите пароли и конфиденциальные данные.';
   $('businessMapSubmit').textContent='Сохранить ответ';
- }else if(view==='source'){
-  const type=byType(sourceType);if(!type){markStep('sources');return}
-  title.textContent='Расскажите о ресурсе';
-  sub.textContent='SEYVEO запомнит, чем вы пользуетесь. Это ещё не подключение.';
-  inputLabel.textContent=type.name;
-  field.value='';field.maxLength=180;
-  field.placeholder=type.id==='bank'?'Например, Т-Банк':type.id==='crm'?'Например, Битрикс24':'Название или адрес страницы';
-  inputHelp.textContent='Только название или общедоступная ссылка. Никогда не вводите пароли, токены, коды, реквизиты или ключи API.';
-  $('businessMapSubmit').textContent=preview?'Показать в демо':'Добавить сведения';
- }else if(view==='sources'){
-  title.textContent='Какие ресурсы уже используете?';
-  sub.textContent='Чем больше известно об источниках заявок и инструментах, тем полезнее будут будущие рекомендации.';
-  drawCategories();
  }else if(view==='storefront'){
   // The long Business Map may be scrolled far down. The new reader always
   // starts from its first control, without touching Home or the fixed dock.
@@ -230,8 +217,7 @@ function markStep(next){
   view==='about'?'01 · О БИЗНЕСЕ':
   view==='sector'?'02 · СФЕРА ДЕЯТЕЛЬНОСТИ':
   view==='goal'?'02 · ЦЕЛИ':
-  view==='sources'||view==='source'?'03 · РЕСУРСЫ':
-  view==='workflow'?'04 · РАБОЧИЙ ПРОЦЕСС':view==='storefront'?'ПУБЛИЧНАЯ ВИТРИНА':'КАРТА БИЗНЕСА';
+  view==='workflow'?'03 · РАБОЧИЙ ПРОЦЕСС':view==='storefront'?'ПУБЛИЧНАЯ ВИТРИНА':'КАРТА БИЗНЕСА';
 }
 function drawIndustryChoices(){
  const box=$('businessMapIndustryChoices');if(!box)return;
@@ -258,20 +244,6 @@ function pickIndustry(id){
  if(before.industry!==id)data.industryAnswer='';
  if(!save()){data.industry=before.industry;data.industryAnswer=before.industryAnswer;return}
  markStep(sectorReturn);
-}
-function drawCategories(){
- const box=$('businessMapCategories');box.replaceChildren();
- for(const type of TYPES){
-  const count=data.resources.filter(x=>x.type===type.id).length;
-  const button=document.createElement('button');button.type='button';button.className='business-map-source-choice';
-  button.dataset.businessSource=type.id;
-  const a=document.createElement('strong');a.textContent=type.name;
-  const b=document.createElement('small');b.textContent=count?'Указано: '+count:type.reason;
-  button.append(a,b);box.append(button);
- }
- $('businessMapResourcesCount').textContent=data.resources.length
-  ?'Указано ресурсов: '+data.resources.length+' · доступ к ним ещё не подключён.'
-  :'Пока не указан ни один источник. Начните с самого полезного.';
 }
 /* Transparent, deterministic needs engine. These are questions, not inferred facts.
    The user's current goal influences ORDER only; it never proves a missing
@@ -489,19 +461,8 @@ function submit(evt){
   const previous=data.industryAnswer;data.industryAnswer=text;
   if(!save()){data.industryAnswer=previous;return}
   markStep('map');
- }else if(view==='source'){
-  const text=norm(value,180);
-  if(!text){status.textContent='Укажите название или общедоступную ссылку.';return}
-  if(value.length>180||!acceptable(value)){status.textContent='Укажите только название или безопасный адрес без секретных данных.';return}
-  if(data.resources.length>=20){status.textContent='В карте уже 20 ресурсов. Уберите ненужный, чтобы добавить новый.';return}
-  if(data.resources.some(x=>x.type===sourceType&&x.value.toLocaleLowerCase('ru-RU')===text.toLocaleLowerCase('ru-RU'))){
-   status.textContent='Этот ресурс уже есть в карте.';return;
-  }
-  data.resources.push({type:sourceType,value:text});
-  const declined=[...data.dismissed];data.dismissed=data.dismissed.filter(id=>id!==sourceType);
-  if(!save()){data.resources.pop();data.dismissed=declined;return}
-  markStep('map');
- }
+
+}
 }
 function start(options={}){
  if(dialog.open||document.querySelector('dialog[open]'))return false;
@@ -543,7 +504,7 @@ function finish(){
  if(firstLaunch&&!preview)store(FIRST,data.description?'completed':'later');
  dialog.close();
  const ref=origin;
- origin=null;preview=false;firstLaunch=false;sourceType='';
+ origin=null;preview=false;firstLaunch=false;
  if(ref?.isConnected)try{ref.focus({preventScroll:true})}catch{}
  updateEntry();
 }
@@ -552,7 +513,7 @@ $('businessMapLater').addEventListener('click',finish);
 dialog.addEventListener('cancel',event=>{event.preventDefault();finish()});
 form.addEventListener('submit',submit);
 $('businessMapBack').addEventListener('click',()=>{
- markStep(view==='source'?'sources':view==='goal'?'sector':'map');
+ markStep(view==='goal'?'sector':'map');
 });
 $('businessMapSkipGoal').addEventListener('click',()=>{
  if(view==='goal'){markStep('map')}
@@ -568,12 +529,6 @@ $('businessMapEditIndustry').addEventListener('click',()=>{sectorReturn='map';ma
 $('businessMapEditWorkflow').addEventListener('click',()=>{
  if(!byIndustry(data.industry)){sectorReturn='map';markStep('sector')}else markStep('workflow');
 });
-$('businessMapCategories').addEventListener('click',event=>{
- const button=event.target.closest?.('[data-business-source]');if(!button)return;
- sourceType=button.dataset.businessSource;
- markStep('source');
-});
-$('businessMapSeeMap').addEventListener('click',()=>markStep('map'));
 $('businessMapAddSource').addEventListener('click',()=>openConnections());
 $('businessMapEditAbout').addEventListener('click',()=>markStep('about'));
 $('businessMapEditGoal').addEventListener('click',()=>markStep('goal'));
