@@ -387,7 +387,7 @@ function drawData(){
  list.replaceChildren();
  const parts=[
   ['Знакомство',record.introduction?'Сохранено':'Нет'],
-  ['Карта бизнеса',record.businessMap?(record.businessMap.resources?.length||0)+' источников · локально':'Пока не заполнена'],
+  ['Сведения о деле',record.businessMap?(record.businessMap.resources?.length||0)+' ресурсов · на устройстве':'Пока нет сведений'],
   ['Мои записи',String(countOf(record.notes))],
    ['История обращений',String(countOf(record.assistantChatHistory))+' локальных запросов'],
   ['Личные дела',String(countOf(record.personalTasks.filter(t=>t&&t.done!==true)))+' активных'],
