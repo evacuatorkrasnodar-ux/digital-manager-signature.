@@ -68,7 +68,22 @@ function drawRows(){
  $('seyveoCompanyNotFilled').hidden=saved;
  $('seyveoCompanyEditTop').querySelector('span').textContent=saved?'Изменить сведения':'Добавить сведения';
  $('seyveoCompanyEditTop').setAttribute('aria-label',saved?'Изменить сведения компании':'Добавить сведения компании');
- dialog.querySelector('.sv-company-actions').hidden=!saved;
+ // The reader always shows the three operations so QR never feels lost.
+ // Disabled actions explain that they need saved business details.
+ const qrReady=canCreateCompanyQr(card);
+ dialog.querySelector('.sv-company-actions').hidden=false;
+ $('seyveoCompanyShare').disabled=!saved;
+ $('seyveoCompanyPrint').disabled=!saved;
+ $('seyveoCompanyQrOpen').disabled=!qrReady;
+ $('seyveoCompanyQrHint').hidden=qrReady;
+}
+function canCreateCompanyQr(card){
+ if(!clean(card.name))return false;
+ if(clean(card.phone)||clean(card.email))return true;
+ try{
+  const url=new URL(clean(card.website));
+  return url.protocol==='http:'||url.protocol==='https:';
+ }catch{return false}
 }
 function toggleType(){
  const type=$('seyveoCompanyType').value;
