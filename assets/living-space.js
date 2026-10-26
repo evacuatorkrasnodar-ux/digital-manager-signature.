@@ -129,28 +129,22 @@ function animateOrb(from){
  animation.addEventListener('finish',()=>{animation=null},{once:true});
 }
 function before(next){
- if(!next)next=route();
- if(next===current&&orbCluster.parentNode===(next==='home'?stage:companion))return;
- // Moving between two non-Home screens does not move the physical sphere.
- if(next!=='home'&&orbCluster.parentNode===companion){
-  current=next;root.dataset.svSpace=next;beforeRect=null;
-  return;
- }
- animation?.cancel();
- animation=null;
- beforeRect=orbCluster.getBoundingClientRect();
- if(next==='home'){
-  root.classList.remove('sv-space-active');
-  root.removeAttribute('data-sv-space');
-  stage.insertBefore(orbCluster,stage.firstChild);
+  if(!next)next=route();
+  // The full-size orb lives only on Home. Keep it mounted in its original
+  // stage, including while Home is hidden, so voice/tap listeners stay intact.
+  animation?.cancel();
+  animation=null;
+  beforeRect=null;
+  if(orbCluster.parentNode!==stage)stage.insertBefore(orbCluster,stage.firstChild);
   companion.hidden=true;
- }else{
-  root.classList.add('sv-space-active');
-  root.dataset.svSpace=next;
-  companion.hidden=false;
-  companion.insertBefore(orbCluster,companion.firstChild);
- }
- current=next;
+  if(next==='home'){
+    root.classList.remove('sv-space-active');
+    root.removeAttribute('data-sv-space');
+  }else{
+    root.classList.add('sv-space-active');
+    root.dataset.svSpace=next;
+  }
+  current=next;
 }
 function cascade(page){
  const target=page==='sayvi'?( $('sayviAnswerPage')?.hidden===false?$('sayviAnswerPage'): $('sayviMusicPage')?.hidden===false?$('sayviMusicPage'): $('sayviVideoPage')?.hidden===false?$('sayviVideoPage'):screens[page]):screens[page];
@@ -164,20 +158,10 @@ function cascade(page){
  });
 }
 function after(next){
- if(!next)next=route();
- if(current!==next)before(next);
- // The music stage is short and scrollable. Avoid FLIP interpolation across
- // its moving scrollport on iOS, which can make the single sphere flicker.
- if(location.hash==='#sayvi-music'||location.hash==='#sayvi-video'){
-  animation?.cancel();
-  animation=null;
-  beforeRect=null;
- }else if(beforeRect){
-  animateOrb(beforeRect);
-  beforeRect=null;
- }
- if(next!=='home')cascade(next);
- scheduleDirector();
+  if(!next)next=route();
+  if(current!==next||orbCluster.parentNode!==stage||!companion.hidden)before(next);
+  if(next!=='home')cascade(next);
+  scheduleDirector();
 }
 function initialize(){
  // The same orb remains an accessible assistant button on interior pages.
