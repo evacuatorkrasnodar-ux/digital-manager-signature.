@@ -14,6 +14,8 @@ dialog > button.sv-nav-done.seyveo-close-control{
  letter-spacing:-.01em;line-height:1.2;white-space:nowrap;
 }
 dialog > button.sv-nav-done.seyveo-close-control::before{content:none!important;display:none!important}
+/* Reserve title space for the word Done, not the former 44px close glyph. */
+dialog > button.sv-nav-done ~ h2:first-of-type{padding-right:84px!important}
 button.sv-nav-redundant{display:none!important}
 button.sv-nav-back{
  -webkit-appearance:none;appearance:none;
