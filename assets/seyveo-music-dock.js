@@ -48,12 +48,14 @@ function init(){
     const name=i===0?'previous':i===1?(playing?'pause':'play'):i===2?'next':'list';
     const label=i===1?(playing?'Пауза':'Играть'):labels[i];
     b.innerHTML=svg(name)+'<span>'+label+'</span>';
-    b.setAttribute('aria-label',i===0?'Предыдущий трек':i===1?(playing?'Пауза':'Воспроизвести'):i===2?'Следующий трек':'Открыть очередь музыки');
+    b.setAttribute('aria-label',i===0?'Предыдущий трек':i===1?(playing?'Пауза':'Воспроизвести'):i===2?'Следующий трек':(document.getElementById('sayviMusicCollection')?.hidden===false?'Свернуть треки':'Открыть треки'));
+    if(i===3)b.setAttribute('aria-expanded',String(document.getElementById('sayviMusicCollection')?.hidden===false));
     b.removeAttribute('title');
    }else{
     b.innerHTML=originals[i].html;
     if(originals[i].aria===null)b.removeAttribute('aria-label');else b.setAttribute('aria-label',originals[i].aria);
     if(originals[i].title===null)b.removeAttribute('title');else b.setAttribute('title',originals[i].title);
+    if(i===3)b.removeAttribute('aria-expanded');
     const selected=b.id===tab;
     b.classList.toggle('active',selected);
     if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -62,14 +64,8 @@ function init(){
   if(leavingMusic)document.dispatchEvent(new Event('seyveo:music-dock-exit'));
  }
  function showTracks(){
-  // "Треки" toggles the original library; the audio keeps playing.
-  const list=document.getElementById('sayviMusicCollection');
-  if(list&&!list.hidden){
-   window.SEYVEO_MUSIC?.closePanels?.();
-   return;
-  }
-  openMusic?.();
-  window.SEYVEO_MUSIC?.openQueue?.();
+  // The player owns queue state. One tap opens; the next closes.
+  window.SEYVEO_MUSIC?.toggleQueue?.();
  }
  function musicAction(i){
   if(i===3){showTracks();return;}
