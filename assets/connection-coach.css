@@ -286,6 +286,14 @@
  color:var(--secondary);font-size:11px;line-height:1.6;margin:10px 0 0;
 }
 #manageConnectionsDialog .connection-coach-resource-status:empty{display:none}
+#manageConnectionsDialog .sv-connect-tile-followup{
+ display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+ padding-top:8px;border-top:1px solid var(--soft-line);
+}
+#manageConnectionsDialog .sv-connect-tile-followup button{
+ border:0;padding:7px 0;background:transparent;
+ color:var(--secondary);font-size:10.7px;min-height:36px;
+}
 #manageConnectionsDialog .sv-connect-tile-top:active{
  background:rgba(225,236,249,.045);
 }
