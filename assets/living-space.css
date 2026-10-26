@@ -1260,3 +1260,21 @@ body:has(#homePage:not([hidden])) .app{
   #homePage.lm-focus #orb{transform:scale(.54)}
   #homePage.lm-focus .message{min-height:65px;margin-top:2px}
 }
+
+/* Single seamless viewport canvas. The body gradient previously ended at the
+   locked Home boundary, leaving a darker rectangular strip behind the dock.
+   Paint the atmosphere once on the root, not separate body/app surfaces. */
+:root:not([data-theme=light]):has(#homePage:not([hidden])){
+  background:linear-gradient(180deg,#191b1f 0%,#17191d 50%,#15171b 100%) fixed!important;
+}
+:root:not([data-theme=light]):has(#homePage:not([hidden])) body,
+:root:not([data-theme=light]):has(#homePage:not([hidden])) .app{
+  background:transparent!important;
+}
+:root[data-theme=light]:has(#homePage:not([hidden])){
+  background:linear-gradient(180deg,#f5f6f8,#eff2f6) fixed!important;
+}
+:root[data-theme=light]:has(#homePage:not([hidden])) body,
+:root[data-theme=light]:has(#homePage:not([hidden])) .app{
+  background:transparent!important;
+}
