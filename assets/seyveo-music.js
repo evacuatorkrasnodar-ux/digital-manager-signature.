@@ -92,6 +92,7 @@ function syncResume(){
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
   mini.hidden=!loaded||location.hash==='#sayvi-music';
+  mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index],info=infoFor(file);
    if(miniTitle)miniTitle.textContent=info.title||safeName(file);
@@ -161,6 +162,7 @@ function updateTime(){
  seek.disabled=!total;
  seek.setAttribute('aria-valuetext',fmt(now)+' из '+fmt(total));
  seek.style.setProperty('--music-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
+ mini?.style.setProperty('--sv-mini-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
 }
 function safeRelease(){
  if(url){
@@ -329,6 +331,17 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
+// The fixed mini rests ABOVE the native chat writer, including multiline drafts.
+// ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
+const miniWriter=$('ask');
+if(mini&&miniWriter&&typeof ResizeObserver==='function'){
+ const measureWriter=()=>{
+  const height=Math.ceil(miniWriter.getBoundingClientRect().height);
+  if(height>0)mini.style.setProperty('--sv-mini-writer-height',height+'px');
+ };
+ new ResizeObserver(measureWriter).observe(miniWriter);
+ measureWriter();
+}
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
 document.addEventListener('keydown',e=>{
