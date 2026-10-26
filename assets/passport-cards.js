@@ -93,6 +93,27 @@ function toggleType(){
    for(const inp of w.querySelectorAll('input'))inp.disabled=!visible;
  });
 }
+const privateForm=$('seyveoCompanyPrivateForm');
+const privateAbout=$('seyveoCompanyPrivateAbout');
+const privateGoal=$('seyveoCompanyPrivateGoal');
+const privateStatus=$('seyveoCompanyPrivateStatus');
+let privateSnapshot='';
+function privateSignature(){return JSON.stringify([privateAbout?.value||'',privateGoal?.value||''])}
+function restorePrivateContext(){
+ const data=window.SEYVEO_BUSINESS_MAP?.getState?.()||{};
+ if(privateAbout)privateAbout.value=data.description||'';
+ if(privateGoal)privateGoal.value=data.goal||'';
+ if(privateStatus)privateStatus.textContent='';
+ privateSnapshot=privateSignature();
+ const panel=$('seyveoCompanyPrivate');if(panel)panel.open=false;
+}
+function privateDirty(){return privateSignature()!==privateSnapshot}
+privateForm?.addEventListener('submit',event=>{
+ event.preventDefault();
+ const saved=window.SEYVEO_BUSINESS_MAP?.savePrivateBusinessContext?.(privateAbout.value,privateGoal.value);
+ privateStatus.textContent=saved?.message||'Не удалось сохранить сведения.';
+ if(saved?.ok)privateSnapshot=privateSignature();
+});
 let companyFormSnapshot='';
 const companyView=$('seyveoCompanyView'),companyEditor=$('seyveoCompanyEditor');
 const companyDone=dialog.querySelector('button.seyveo-dialog-close');
@@ -119,6 +140,7 @@ function restoreCompanyForm(){
 function discardCompanyEditing(){
  if(hasUnsavedCompanyChanges()&&!window.confirm('Есть несохранённые реквизиты. Отменить изменения?'))return false;
  restoreCompanyForm();
+ restorePrivateContext();
  status(dialog,'');
  setCompanyMode('view');
  dialog.scrollTop=0;
@@ -133,7 +155,7 @@ function companyFormSignature(){
  return JSON.stringify(values);
 }
 function hasUnsavedCompanyChanges(){
- return dialog.open&&companyFormSignature()!==companyFormSnapshot;
+ return dialog.open&&(companyFormSignature()!==companyFormSnapshot||privateDirty());
 }
 function confirmCompanyExit(event){
  if(event.type==='cancel'&&companyEditing()){
@@ -149,6 +171,7 @@ function confirmCompanyExit(event){
 }
 function openCompany(){
  restoreCompanyForm();
+ restorePrivateContext();
  drawRows();status(dialog,'');
  setCompanyMode('view');
  if(!dialog.open)dialog.showModal();
@@ -287,6 +310,10 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('hashchange',closeHeaderPassport);
 $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
+ if(privateDirty()){
+  if(!window.confirm('Есть несохранённые сведения для Сэйви. Отменить их и перейти к реквизитам?'))return;
+  restorePrivateContext();
+ }
  setCompanyMode('edit');
  status(dialog,'');
  dialog.scrollTop=0;
