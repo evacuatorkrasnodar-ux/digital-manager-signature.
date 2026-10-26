@@ -488,27 +488,27 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 /* SEYVEO SOUND · editorial signature, one original vinyl. */
 #sayviMusicPage>header.sv-music-head{
  display:grid;grid-template-columns:minmax(0,1fr) auto;
- grid-template-rows:auto auto;column-gap:10px;row-gap:3px;
+ grid-template-rows:auto auto;column-gap:18px;row-gap:9px;
  text-align:left;align-items:center;min-width:0;
 }
 #sayviMusicPage .sv-music-heading{
- grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:8px;
- flex-wrap:wrap;min-width:0;margin:0;line-height:1.18;text-align:left;
+ grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+ flex-wrap:nowrap;min-width:0;margin:0;line-height:1.1;text-align:left;
 }
 #sayviMusicPage .sv-music-brand{
- font-size:clamp(21px,5.6vw,29px);font-weight:560;
- letter-spacing:.115em;line-height:1.15;
+ font-size:clamp(24px,6vw,31px);font-weight:520;
+ letter-spacing:.155em;line-height:1.12;
 }
 #sayviMusicPage .sv-music-brand-sub{
- font-size:clamp(15px,3.8vw,20px);font-weight:350;
- letter-spacing:.12em;line-height:1.15;
+ font-size:clamp(15px,3.5vw,19px);font-weight:320;
+ letter-spacing:.29em;line-height:1.12;
 }
 #sayviMusicPage .sv-music-technology{
  grid-column:1;grid-row:2;margin:0;color:var(--secondary);
- font-size:9px;line-height:1.5;letter-spacing:.18em;text-align:left;
- font-weight:440;
+ font-size:9px;line-height:1.5;letter-spacing:.16em;text-align:left;
+ font-weight:420;
 }
-#sayviMusicPage .sv-music-ai{font-style:italic;text-transform:none;letter-spacing:0;font-weight:560}
+#sayviMusicPage .sv-music-ai{font-style:italic;text-transform:none;letter-spacing:0;font-weight:520}
 #sayviMusicPage .sv-music-minimize{
  grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;gap:5px;
  align-self:start;justify-self:end;min-width:44px;min-height:44px;
