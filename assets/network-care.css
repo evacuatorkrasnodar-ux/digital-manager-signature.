@@ -1,123 +1,81 @@
-/* Network Care: Quiet Cinema setting. No fake active-VPN switch. */
+/* SEYVEO · concise network setting. One signal + one owner choice.
+   No fake VPN, diagnostics, instruction cards or redundant actions. */
 #seyveoNetworkPage[hidden]{display:none!important}
 #managePage #seyveoNetworkPage{
- display:flex;flex-direction:column;gap:0;
- margin:6px 0 10px;padding:0 2px 14px;
- max-width:560px;
+ display:grid;gap:0;margin:7px 0 10px;padding:0 1px 10px;
+ max-width:480px;min-width:0;
 }
-#seyveoNetworkPage .sv-network-intro{
- margin:0 0 25px;font-size:13px;
- line-height:1.65;color:var(--secondary);
+#seyveoNetworkPage .sv-network-status-card{
+ display:flex;align-items:center;gap:12px;
+ padding:15px 0 18px;
+ border-bottom:1px solid var(--soft-line);
 }
-#seyveoNetworkPage .sv-network-kicker{
- display:block;margin:0 0 9px;color:var(--secondary);
- font-size:10px;line-height:1.45;letter-spacing:.13em;
- font-weight:470;
+#seyveoNetworkPage .sv-network-status-art{
+ box-sizing:border-box;display:grid;place-items:center;
+ width:41px;height:41px;flex:0 0 41px;
+ border-radius:14px;border:1px solid var(--soft-line);
+ background:rgba(231,236,244,.045);color:var(--text);
 }
-#seyveoNetworkPage .sv-network-feature{
- display:flex;align-items:flex-start;gap:16px;
- margin:4px 0 20px;
+#seyveoNetworkPage .sv-network-status-art svg{
+ width:23px;height:23px;
 }
-#seyveoNetworkPage .sv-network-glyph{
- flex:0 0 55px;width:55px;height:55px;
- display:grid;place-items:center;
- color:var(--text);
- background:transparent;
+#seyveoNetworkPage .sv-network-status-copy{
+ display:flex;flex-direction:column;gap:4px;min-width:0;
 }
-#seyveoNetworkPage .sv-network-glyph svg{
- width:49px;height:49px;
- fill:none;stroke:currentColor;stroke-width:1.35;
- stroke-linejoin:round;stroke-linecap:round;
- opacity:.88;
+#seyveoNetworkPage .sv-network-status-copy strong{
+ font-size:15px;font-weight:500;line-height:1.35;letter-spacing:-.02em;
 }
-#seyveoNetworkPage .sv-network-feature h3{
- margin:0 0 7px;font-size:20px;line-height:1.3;
- letter-spacing:-.033em;font-weight:475;
+#seyveoNetworkPage .sv-network-status-copy small{
+ font-size:11px;color:var(--secondary);
 }
-#seyveoNetworkPage .sv-network-feature p{
- margin:0;color:var(--secondary);
- font-size:12px;line-height:1.6;
+#seyveoNetworkPage .sv-network-setting{
+ display:flex;align-items:center;gap:10px;justify-content:space-between;
+ min-height:70px;padding:13px 0;cursor:pointer;
+ border-bottom:1px solid var(--soft-line);position:relative;
 }
-#seyveoNetworkPage .sv-network-field{
- padding:16px 0;border-top:1px solid var(--soft-line);
+#seyveoNetworkPage .sv-network-setting>span:first-child{
+ display:grid;gap:4px;min-width:0;flex:1;
 }
-#seyveoNetworkPage .sv-network-title{
- display:block;margin:0 0 9px;font-size:13.5px;
- letter-spacing:-.016em;font-weight:490;
+#seyveoNetworkPage .sv-network-setting strong{
+ font-size:13px;font-weight:500;line-height:1.35;
 }
-#seyveoNetworkPage .sv-network-line{
- margin:0 0 9px;color:var(--text);
- font-size:12px;line-height:1.6;
+#seyveoNetworkPage .sv-network-setting small{
+ font-size:11px;line-height:1.4;color:var(--secondary);
 }
-#seyveoNetworkPage .sv-network-subline{
- margin:0;color:var(--secondary);
- font-size:11px;line-height:1.6;
+#seyveoNetworkPage .sv-network-setting input{
+ position:absolute;right:0;top:50%;width:46px;height:44px;
+ transform:translateY(-50%);opacity:0;cursor:pointer;
 }
-#seyveoNetworkPage .sv-network-choice{
- display:flex;flex-wrap:wrap;align-items:center;
- gap:5px 22px;
- margin:9px 0 11px;
+#seyveoNetworkPage .sv-network-switch{
+ box-sizing:border-box;display:flex;align-items:center;
+ width:40px;height:24px;flex:0 0 40px;padding:3px;
+ border-radius:999px;border:1px solid var(--soft-line);
+ background:rgba(220,230,242,.07);
+ transition:background .18s;
 }
-#seyveoNetworkPage button.sv-network-intent{
- appearance:none;-webkit-appearance:none;
- border:0;background:transparent;box-shadow:none;
- border-radius:0;min-height:44px;
- display:inline-flex;align-items:center;
- text-align:left;
- padding:10px 1px;
- color:var(--secondary);
- font:inherit;font-size:13px;font-weight:475;
- letter-spacing:-.012em;
- text-decoration:underline;text-decoration-thickness:1px;
- text-underline-offset:6px;
- text-decoration-color:rgba(230,234,240,.21);
- cursor:pointer;-webkit-tap-highlight-color:transparent;
- transition:color 180ms ease,text-decoration-color 180ms ease;
+#seyveoNetworkPage .sv-network-switch::before{
+ content:"";width:16px;height:16px;border-radius:50%;
+ background:var(--secondary);transition:transform .18s,background .18s;
 }
-#seyveoNetworkPage button.sv-network-intent:hover{
- text-decoration-color:currentColor;
+#seyveoNetworkPage input:checked+.sv-network-switch{
+ background:rgba(231,239,249,.19);border-color:rgba(231,239,249,.36);
 }
-#seyveoNetworkPage button.sv-network-intent.sv-network-selected,
-#seyveoNetworkPage button.sv-network-intent[aria-pressed="true"]{
- color:var(--text);text-decoration-color:var(--text);
+#seyveoNetworkPage input:checked+.sv-network-switch::before{
+ transform:translateX(16px);background:var(--text);
 }
-#seyveoNetworkPage button.sv-network-intent:focus-visible{
- outline:2px solid var(--text);outline-offset:3px;border-radius:5px;
+#seyveoNetworkPage input:focus-visible+.sv-network-switch{
+ outline:2px solid var(--text);outline-offset:3px;
 }
-#seyveoNetworkPage .sv-network-state{
- display:inline-flex;align-items:center;gap:9px;
- font-size:12px;font-weight:460;
- line-height:1.5;color:var(--secondary);
+#seyveoNetworkPage .sv-network-note{
+ color:var(--secondary);margin:15px 0 0;font-size:11px;line-height:1.6;
 }
-#seyveoNetworkPage .sv-network-state::before{
- content:"";width:5px;height:5px;flex:none;
- border-radius:50%;background:var(--secondary);opacity:.45;
+:root[data-theme=light] #seyveoNetworkPage .sv-network-switch{
+ background:rgba(51,73,98,.07);
 }
-#seyveoNetworkPage .sv-network-state[data-network-state="online"]::before{
- background:var(--text);opacity:.8;
-}
-#seyveoNetworkPage .sv-network-sayvi{
- margin:12px 0 0;padding:14px 0 2px;
- border-top:1px solid var(--soft-line);
- color:var(--text);font-size:13px;line-height:1.7;
- font-weight:430;
-}
-#seyveoNetworkPage .sv-network-sayvi[hidden]{display:none!important}
-#seyveoNetworkPage .sv-network-disclaimer{
- margin:11px 0 0;padding:13px 0 0;
- border-top:1px solid var(--soft-line);
- color:var(--secondary);font-size:10.5px;line-height:1.6;
-}
-:root[data-theme=light] #seyveoNetworkPage .sv-network-intent{
- text-decoration-color:rgba(43,56,72,.23);
-}
-@media(max-width:365px){
- #seyveoNetworkPage .sv-network-feature{gap:10px}
- #seyveoNetworkPage .sv-network-glyph{width:44px;flex-basis:44px}
- #seyveoNetworkPage .sv-network-glyph svg{width:39px;height:39px}
- #seyveoNetworkPage .sv-network-feature h3{font-size:19px}
- #seyveoNetworkPage .sv-network-choice{gap:1px 16px}
+:root[data-theme=light] #seyveoNetworkPage input:checked+.sv-network-switch{
+ background:rgba(51,73,98,.16);border-color:rgba(51,73,98,.36);
 }
 @media(prefers-reduced-motion:reduce){
- #seyveoNetworkPage button.sv-network-intent{transition:none!important}
+ #seyveoNetworkPage .sv-network-switch,
+ #seyveoNetworkPage .sv-network-switch::before{transition:none}
 }
