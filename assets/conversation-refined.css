@@ -689,3 +689,37 @@ html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded):focu
  border-radius:24px!important;
  box-shadow:none!important;
 }
+
+/* One restrained ChatGPT-like plus, with real local actions only. */
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
+ order:4;display:grid!important;place-items:center;
+ width:34px;min-width:34px;height:44px;flex:0 0 34px;
+ border:0!important;border-radius:50%;padding:0;margin:0;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text);cursor:pointer;
+}
+html:not(.seyveo-conversation) #seyveoChatPlus{display:none!important}
+#seyveoChatPlus svg{
+ width:21px;height:21px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoChatPlus:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+#seyveoChatPlusMenu[hidden]{display:none!important}
+#seyveoChatPlusMenu{
+ position:fixed;z-index:110;display:grid;gap:1px;
+ width:182px;box-sizing:border-box;padding:7px;
+ border:1px solid rgba(225,230,240,.13);
+ border-radius:17px;background:#24262b;
+ box-shadow:0 9px 24px rgba(0,0,0,.2);
+}
+#seyveoChatPlusMenu button{
+ min-height:43px;padding:9px 12px;text-align:left;
+ color:#f1f2f5;font:inherit;font-size:13px;font-weight:450;
+ border:0;border-radius:11px;background:transparent;
+}
+#seyveoChatPlusMenu button:active{background:rgba(255,255,255,.09)}
+:root[data-theme=light] #seyveoChatPlusMenu{
+ background:#f1f3f6;border-color:rgba(52,61,74,.12);
+ box-shadow:0 8px 22px rgba(48,58,72,.13);
+}
+:root[data-theme=light] #seyveoChatPlusMenu button{color:#26303c}
