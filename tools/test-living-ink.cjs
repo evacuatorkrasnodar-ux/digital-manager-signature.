@@ -12,11 +12,26 @@ const vm=require('node:vm');
 const inlineScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
  .map(match=>match[1]).filter(code=>code.trim());
 assert.ok(inlineScripts.length>0,'Main document has inline scripts');
+assert.match(html,/assets\/navigation-system\.css\?v=1/,'Single navigation style is active');
+assert.match(html,/assets\/navigation-system\.js\?v=1/,'Unified navigation semantics are active');
+assert.match(navigationCss,/button\.sv-nav-redundant\{display:none!important\}/,'All redundant close controls disappear');
+assert.match(navigationCss,/button\.sv-nav-done\.seyveo-close-control/,'Done is a quiet typographic action');
+assert.match(navigationCss,/button\.sv-nav-back\.seyveo-close-control/,'Back keeps its round 44px control');
+assert.match(navigationJs,/replaceChildren\(document\.createTextNode\('Готово'\)\)/,'Old close glyphs become Done without changing listeners');
+assert.match(navigationJs,/new Set\(\[\s*'personalTaskDialog','calendarEventDialog','noteReviewDialog'/,'Edit sheets use footer actions, never duplicate close controls');
+assert.match(navigationJs,/const guarded=\[/,'Existing edit forms are protected from accidental discard');
+assert.match(navigationJs,/event\.stopImmediatePropagation\(\)/,'Declined unsaved changes block original close handlers');
+assert.match(navigationJs,/MutationObserver\(capture\)/,'Editable snapshot is taken after dialog opens');
+assert.match(navigationJs,/window\.SEYVEO_NAVIGATION=Object\.freeze/,'Navigation is initialized once');
+assert.doesNotMatch(navigationJs,/location\.href|history\.pushState|localStorage/,'Navigation styling never changes routes or storage');
+
 for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline script'});
 
 const dock=read('assets/floating-navigation.css');
 const magnetic=read('assets/magnetic-ink-dock.js');
 const composer=read('assets/composer-intent.css');
+const navigationCss=read('assets/navigation-system.css');
+const navigationJs=read('assets/navigation-system.js');
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
 const notebookStyles=read('assets/notebook-smart.css');
