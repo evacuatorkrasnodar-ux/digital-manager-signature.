@@ -154,7 +154,7 @@ function syncResume(){
    const file=tracks[index],info=infoFor(file);
    if(miniTitle)miniTitle.textContent=info.title||safeName(file);
    if(miniState)miniState.textContent=playing?'Играет':'На паузе';
-   if(miniOpen)miniOpen.setAttribute('aria-label','Вернуться в SEYVEO SOUND: '+safeName(file));
+   if(miniOpen)miniOpen.setAttribute('aria-label','Вернуться в SEYVEO MUSIC: '+safeName(file));
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
     miniPlay.setAttribute('aria-pressed',String(playing));
