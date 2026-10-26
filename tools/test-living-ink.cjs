@@ -123,6 +123,13 @@ assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-bottom 
 assert.match(html,/assets\/composer-intent\.css\?v=17/,'Duplicate history style is no longer cached');
 
 assert.match(notebookStyles,/height:fit-content!important/,'Notebook fits real notes');
+assert.match(notebookStyles,/width:min\(520px,calc\(100vw - 24px\)\)/,'Notebook remains compact');
+assert.match(notebookStyles,/border-radius:22px!important/,'Single Quiet Cinema sheet');
+assert.match(notebookStyles,/-webkit-line-clamp:2/,'Previews are two lines');
+assert.match(notebookStyles,/max-height:min\(61svh,570px\)/,'Long lists scroll');
+assert.doesNotMatch(notebookStyles,/height:min\(840px,calc\(100svh/,'Legacy forced height gone');
+assert.match(notebookStyles,/min-height:44px;padding:8px 3px;font-size:12px/,'Actions retain touch area');
+
 assert.match(paperStyles,/#noteModeDialog \.paper-choice-list\{/,'One grouped note method surface');
 assert.match(paperStyles,/#noteModeDialog \.paper-choice-item \+ \.paper-choice-item\{border-top/,'Choice lines share thin dividers');
 assert.match(paperStyles,/#notePaperDialog \.paper-toolbar-primary > button/,'Paper tools remain accessible');
@@ -132,8 +139,8 @@ assert.match(scanStyles,/#noteScanDialog \.paper-scan-inputs label\{[\s\S]*?back
 assert.match(scanStyles,/#noteScanDialog \.paper-scan-actions button\{[\s\S]*?background:transparent!important/,'Scan actions are text-only');
 assert.match(scanStyles,/#noteScanDialog \.paper-scan-consent\[hidden\]/,'OCR consent flow is still present');
 assert.match(notebookStyles,/height:clamp\(135px,22svh,185px\)/,'New note editor is compact');
-assert.match(notebookStyles,/\.note-more-options:not\(\[hidden\]\)\{[\s\S]*?gap:2px 12px/,'Notebook action list stays compact');
-for(const file of ['notebook-smart.css?v=23','notebook-paper.css?v=11','notebook-scan.css?v=6'])
+assert.match(notebookStyles,/\.note-more-options:not\(\[hidden\]\)\{[\s\S]*?gap:0 8px/,'Notebook action list stays compact');
+for(const file of ['notebook-smart.css?v=24','notebook-paper.css?v=11','notebook-scan.css?v=6'])
  assert.ok(html.includes('assets/'+file),'Refreshed notebook stylesheet '+file);
 
 assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
