@@ -101,10 +101,6 @@
 
 
 
-#sayviMusicPage .sv-music-phrases{
- display:flex;justify-content:center;gap:7px 24px;flex-wrap:wrap;
- margin:4px 0 0;
-}
 #sayviMusicPage .sv-music-intent{
  min-height:44px;padding:8px 2px;display:inline-flex;align-items:center;
  font:inherit;font-size:12.5px;font-weight:460;letter-spacing:-.014em;
@@ -252,7 +248,6 @@
 @media(max-width:375px){
  #sayviMusicPage .sv-music-cover{max-width:280px;margin-top:7px}
 
- #sayviMusicPage .sv-music-phrases{gap:2px 17px}
 }
 
 /* SEYVEO Music · fluid one-screen listening stage.
@@ -313,7 +308,6 @@
 
 
 
-#sayviMusicPage .sv-music-phrases{margin:0;gap:3px 14px}
 #sayviMusicPage .sv-music-intent{min-height:42px;font-size:12px;padding:7px 1px}
 #sayviMusicPage .sv-music-status{margin:2px 0 5px;font-size:10.5px;line-height:1.38;min-height:0}
 #sayviMusicPage .sv-music-library,
@@ -325,7 +319,6 @@
   #sayviMusicPage .sv-music-intro{font-size:11.5px;line-height:1.33}
 
 
-  #sayviMusicPage .sv-music-phrases{gap:2px 9px}
 }
 @media(max-height:580px){
   #sayviMusicPage{--sv-music-vinyl-size:min(36vw,18dvh,110px)}
@@ -397,11 +390,6 @@ html.sv-music-screen #sayviMusicPage .sv-music-title{
 }
 html.sv-music-screen #sayviMusicPage .sv-music-times{margin:5px 0 1px}
 html.sv-music-screen #sayviMusicPage .sv-music-seek{height:20px}
-html.sv-music-screen #sayviMusicPage .sv-music-phrases{
-  gap:1px 18px;
-  justify-content:center;
-  margin:1px 0 0;
-}
 html.sv-music-screen #sayviMusicPage .sv-music-status{
   flex:0 0 auto;
   margin:1px 0 0;
@@ -520,7 +508,6 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #sayviMusicPage .sv-music-heading{font-size:22px}
  html.sv-music-screen #sayviMusicPage .sv-music-intro{font-size:11px;line-height:1.25}
  html.sv-music-screen #sayviMusicPage .sv-music-times{margin-top:3px}
- html.sv-music-screen #sayviMusicPage .sv-music-phrases{gap:1px 10px}
 }
 @media(max-height:590px){
  html.sv-music-screen #sayviMusicPage{
@@ -690,12 +677,6 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   margin:0;
   min-width:0;
  }
- html.sv-music-screen #sayviMusicPage .sv-music-phrases{
-  grid-column:1;grid-row:7;
-  justify-content:flex-start;
-  gap:8px 23px;
-  margin:13px 0 0;
- }
  html.sv-music-screen #sayviMusicPage .sv-music-status{
   grid-column:1;grid-row:8;
   text-align:left;
@@ -754,9 +735,6 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  }
  html.sv-music-screen #sayviMusicPage .sv-music-times{
   margin-top:clamp(12px,2dvh,27px);
- }
- html.sv-music-screen #sayviMusicPage .sv-music-phrases{
-  margin-top:clamp(5px,1dvh,13px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-status{
   margin-top:clamp(6px,1.1dvh,15px);
