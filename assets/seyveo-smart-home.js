@@ -1,8 +1,9 @@
 /* SEYVEO Smart Home demo. Virtual controls ONLY. No device connections. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
-const home=$('seyveoSmartHomeHome'),world=$('seyveoSmartHomeWorld');
-if(!home||!world)return;
+const home=$('seyveoSmartHomeHome'),world=$('seyveoSmartHomeWorld'),
+ standalone=$('seyveoSmartHomeStandalone'),standaloneDialog=$('seyveoSmartHomeDialog');
+if(!home||!world||!standalone||!standaloneDialog)return;
 const KEY='seyveo-smart-home-demo-v1';
 const initial={living:false,bedroom:false,outlet:false,temp:22,provider:'alice'};
 const providers={alice:'Алиса · Яндекс',marusya:'Маруся · VK',salut:'Салют · Сбер',apple:'Apple Home',google:'Google Home',alexa:'Amazon Alexa',smartthings:'SmartThings'};
@@ -22,9 +23,9 @@ function tile(id,label,icon){
  '<span class="svh-symbol" aria-hidden="true">'+icon+'</span><span class="svh-label">'+label+'</span>'+
  '<span class="svh-muted">'+(on?'Включено':'Выключено')+'</span></button>';
 }
-function content(inWorld){
+function content(inWorld,isStandalone=false){
  return '<header class="svh-top"><div><small>SEYVEO SMART HOME · ДЕМО</small><h3>Мой дом</h3></div>'+
- '<button type="button" class="svh-text-action" data-sh="'+(inWorld?'open':'close')+'">'+(inWorld?'На главную ›':'Свернуть ↑')+'</button></header>'+
+ (isStandalone?'':'<button type="button" class="svh-text-action" data-sh="'+(inWorld?'open':'close')+'">'+(inWorld?'На главную ›':'Свернуть ↑')+'</button>')+'</header>'+
  '<p class="svh-subtitle">Сэйви рядом. Всё под твоим контролем.</p>'+
  '<div class="svh-tiles" role="group" aria-label="Виртуальные устройства">'+
  tile('living','Гостиная','☼')+tile('bedroom','Спальня','✧')+tile('outlet','Розетка','⌁')+'</div>'+
@@ -40,11 +41,11 @@ function content(inWorld){
  '<p class="svh-honest">Демо · ни одна команда не отправляется реальной технике.</p>';
 }
 function paint(){
- for(const [root,inWorld] of [[home,false],[world,true]]){
+ for(const [root,inWorld,isStandalone] of [[home,false,false],[world,true,false],[standalone,true,true]]){
   const expanded=root.querySelector('.svh-sources')?.open;
   const active=root.contains(document.activeElement)?document.activeElement:null;
   const action=active?.dataset.sh,id=active?.dataset.id;
-  root.innerHTML=content(inWorld);
+  root.innerHTML=content(inWorld,isStandalone);
   if(expanded)root.querySelector('.svh-sources').open=true;
   if(action){
    const match=[...root.querySelectorAll('button[data-sh]')].find(b=>b.dataset.sh===action&&b.dataset.id===id);
@@ -53,6 +54,16 @@ function paint(){
  }
 }
 function close(){home.hidden=true}
+function openStandalone(){
+ window.SEYVEO_CLOSE_WORLD_MENU?.();
+ if($('calendarSpaceDialog')?.open)$('calendarSpaceDialog').close();
+ if($('ask')&&!$('ask').hidden)$('hideInput')?.click();
+ paint();
+ if(!standaloneDialog.open)standaloneDialog.showModal();
+ return true;
+}
+$('seyveoSmartHomeDialogClose')?.addEventListener('click',()=>standaloneDialog.close());
+standaloneDialog.addEventListener('click',event=>{if(event.target===standaloneDialog)standaloneDialog.close()});
 function open(){
  window.SEYVEO_CLOSE_WORLD_MENU?.();
  if($('calendarSpaceDialog')?.open)$('calendarSpaceDialog').close();
@@ -81,7 +92,7 @@ function change(action,id){
  }else return '';
  save();paint();return message;
 }
-for(const root of [home,world])root.addEventListener('click',event=>{
+for(const root of [home,world,standalone])root.addEventListener('click',event=>{
  const btn=event.target.closest('button[data-sh]');
  if(btn)change(btn.dataset.sh,btn.dataset.id);
 });
@@ -108,7 +119,7 @@ function handle(text){
  else change(p.a,p.id);
  open();return {message,kind:'smart-home-demo'};
 }
-window.SEYVEO_SMART_HOME=Object.freeze({open,close,handle,understand:parse,state:()=>({...state})});
-window.addEventListener('hashchange',()=>{if($('homePage')?.hidden)close()});
+window.SEYVEO_SMART_HOME=Object.freeze({open,openStandalone,close,handle,understand:parse,state:()=>({...state})});
+window.addEventListener('hashchange',()=>{if($('homePage')?.hidden)close();if(standaloneDialog.open)standaloneDialog.close()});
 paint();
 })();
