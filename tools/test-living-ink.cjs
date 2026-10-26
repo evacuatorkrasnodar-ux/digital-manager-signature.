@@ -114,6 +114,14 @@ assert.match(chatAppearance,/background:transparent!important;\s*border:0!import
 assert.match(historyStyles,/#assistantChatHistoryDialog\.assistant-chat-history\[open\]\{[\s\S]*?height:auto;/,'History follows its actual content height');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-items\{[\s\S]*?flex:0 1 auto;/,'History list does not force an empty viewport');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-summary::after\{content:none!important/,'History has no decorative arrows');
+assert.doesNotMatch(composer,/#assistantChatHistoryDialog\.assistant-chat-history\[open\]/,'No duplicated history shell in composer styles');
+assert.match(historyStyles,/max-height:min\(78svh/,'History stays within a quiet centered viewport');
+assert.match(historyStyles,/max-height:min\(58svh,560px\)/,'Long lists scroll within their reader');
+assert.match(historyStyles,/min-height:57px;height:auto!important/,'Rows are compact and touch-readable');
+assert.match(historyStyles,/border-radius:21px!important/,'Single fine-rimmed Quiet Cinema surface');
+assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-bottom button\[hidden\]\{display:none!important\}/,'Clear stays hidden on empty history');
+assert.match(html,/assets\/composer-intent\.css\?v=17/,'Duplicate history style is no longer cached');
+
 assert.match(notebookStyles,/height:fit-content!important/,'Notebook fits real notes');
 assert.match(paperStyles,/#noteModeDialog \.paper-choice-list\{/,'One grouped note method surface');
 assert.match(paperStyles,/#noteModeDialog \.paper-choice-item \+ \.paper-choice-item\{border-top/,'Choice lines share thin dividers');
@@ -130,7 +138,7 @@ for(const file of ['notebook-smart.css?v=23','notebook-paper.css?v=11','notebook
 
 assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
 assert.match(taskStyles,/#personalTaskDialog\.personal-task-dialog\[open\]/,'Task sheet keeps a quiet outline');
-assert.match(html,/dialog-velvet\.css\?v=7/,'History CSS refreshed');
+assert.match(html,/dialog-velvet\.css\?v=8/,'History CSS refreshed');
 
 assert.match(html,/personal-tasks\.css\?v=19/,'Task CSS refreshed');
 
