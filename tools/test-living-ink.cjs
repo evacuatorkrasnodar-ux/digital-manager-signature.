@@ -88,10 +88,16 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=23/,'All screens use the current shared stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=24/,'All screens use the current shared stylesheet');
 assert.match(continuity,/#manageThemeScreen #manageThemeBack\{/,'Theme has its own nested Back action');
 assert.match(html,/class="manage-theme-back-copy">Управление<\/span>/,'Theme Back icon retains an accessible fallback label');
-assert.match(continuity,/#managePage:has\(> #manageThemeScreen:not\(\[hidden\]\)\)/,'Tall screens balance Theme without adding new surfaces');
+assert.match(continuity,/#managePage:has\(> #manageThemeScreen:not\(\[hidden\]\)\)/,'Theme is independently width-constrained');
+assert.match(continuity,/#manageThemeScreen:not\(\[hidden\]\)\{[\s\S]*?width:min\(100%,460px\)/,'Theme is a compact inset frame');
+assert.match(continuity,/#manageThemeScreen \.manage-theme-check svg\{/,'Theme check is a clear stroke SVG');
+assert.match(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{/,'Management nested section also uses Back');
+assert.doesNotMatch(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{\s*display:none!important/,'Nested Management return must remain accessible');
+assert.equal((html.match(/<span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20"/g)||[]).length,3,'Each theme has an accessible graphic checkmark');
+assert.doesNotMatch(html,/\.manage-theme-choice\[aria-pressed=true\] \.manage-theme-check::after/,'No legacy off-centre CSS checkmark');
 assert.match(html,/assets\/seyveo-video\.css\?v=3/,'Video page uses current source');
 assert.match(continuity,/#calendarPage\.sv-cascade \.calendar-space-button/,'Calendar keeps independent row reveal');
 assert.doesNotMatch(continuity,/#lifePage\.sv-cascade \.calendar-space-button,/,'My World children do not double animate');
