@@ -46,7 +46,7 @@
 }
 #seyveoCompanyDialog .sv-company-view[hidden],
 #seyveoCompanyDialog .sv-company-editor[hidden],
-#seyveoCompanyDialog .sv-company-actions[hidden]{display:none!important}
+#seyveoCompanyDialog .sv-company-qr-hint[hidden]{display:none!important}
 #seyveoCompanyDialog .seyveo-company-dialog-identity #seyveoCompanyInitial[hidden],
 #seyveoCompanyDialog #seyveoCompanyAvatarEdit[hidden]{display:none!important}
 #seyveoCompanyDialog:before,
@@ -99,6 +99,13 @@
 }
 #seyveoCompanyDialog .sv-company-actions button+button{
  border-left:1px solid rgba(221,229,236,.12);
+}
+#seyveoCompanyDialog .sv-company-actions button:disabled{
+ opacity:.4;cursor:default;
+}
+#seyveoCompanyDialog .sv-company-qr-hint{
+ margin:6px 0 0;padding:0;
+ color:var(--secondary);font-size:11px;line-height:1.55;
 }
 #seyveoCompanyDialog .sv-company-actions button:active,
 #seyveoCompanyDialog .seyveo-passport-edit-top:active{opacity:.7}
