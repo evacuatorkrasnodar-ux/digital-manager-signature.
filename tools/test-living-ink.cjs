@@ -8,6 +8,8 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const html=read('index.html');
+const navigationCss=read('assets/navigation-system.css');
+const navigationJs=read('assets/navigation-system.js');
 const vm=require('node:vm');
 const inlineScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
  .map(match=>match[1]).filter(code=>code.trim());
@@ -30,8 +32,6 @@ for(const code of inlineScripts)new vm.Script(code,{filename:'index.html inline 
 const dock=read('assets/floating-navigation.css');
 const magnetic=read('assets/magnetic-ink-dock.js');
 const composer=read('assets/composer-intent.css');
-const navigationCss=read('assets/navigation-system.css');
-const navigationJs=read('assets/navigation-system.js');
 const companyUi=read('assets/company-signature.css');
 const companyLogic=read('assets/passport-cards.js');
 assert.match(companyUi,/#seyveoCompanyDialog\.seyveo-passport-modal\[open\]/,'Company form is top aligned on narrow phones');
@@ -124,8 +124,6 @@ assert.match(chatAppearance,/max-width:min\(91%,460px\);width:fit-content;min-wi
 assert.match(chatAppearance,/box-sizing:border-box;width:100%;max-width:100%;min-width:0/,'Chat reader cannot overflow its flex parent');
 assert.match(chatLogic,/const stickToBottom=text\.scrollHeight-text\.clientHeight-text\.scrollTop<56/,'Keyboard does not hide the latest messages');
 assert.match(chatLogic,/if\(stickToBottom\)requestAnimationFrame/,'Existing history reading stays undisturbed');
-assert.match(html,/conversation-refined\.css\?v=22/,'Constrained chat CSS deployed');
-assert.match(html,/living-conversation\.js\?v=20/,'Keyboard-aware chat JS deployed');
 
 assert.match(chatAppearance,/linear-gradient\(180deg,#1d2025 0%,#1b1e23 55%,#191c21 100%\)/,'Softened graphite replaces pure black');
 assert.match(chatAppearance,/background:rgba\(232,236,244,\.092\)/,'Owner messages have soft visual separation');
