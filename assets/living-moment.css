@@ -574,7 +574,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 
 /* Home focus: compact existing scene so the REAL decision fits the fixed
    viewport. No height:100%, no new layer, no stretching or scroll surface. */
-@media(max-height:950px){
+@media(max-height:1200px){
  #homePage.lm-focus #stage{
   min-height:0;
   padding-top:0;
