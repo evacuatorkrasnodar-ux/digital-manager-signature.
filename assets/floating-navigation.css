@@ -26,9 +26,10 @@
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
  border:1px solid rgba(235,238,244,.21)!important;
- background:linear-gradient(158deg,rgba(35,37,43,.88),rgba(17,19,24,.93))!important;
- -webkit-backdrop-filter:blur(18px) saturate(112%)!important;
- backdrop-filter:blur(18px) saturate(112%)!important;
+ background:
+  linear-gradient(158deg,rgba(47,49,56,.48),rgba(22,24,29,.55))!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
  isolation:isolate;
 }
