@@ -285,6 +285,25 @@ function renderRegistry(){
     guide.className='sv-connect-tile-guide';guide.dataset.resourceGuide=topicId;
     guide.textContent='Как подключить';editor.append(guide);
    }
+   if(saved.length){
+    const typeKey=topicFor(item.id);
+    if(TOPICS[typeKey]){
+     const prefs=followups()[typeKey]||{};
+     const paused=prefs.off||prefs.until>Date.now();
+     const actions=document.createElement('div');actions.className='sv-connect-tile-followup';
+     const remind=document.createElement('button');remind.type='button';
+     remind.dataset.resourceFollowup=typeKey;
+     remind.dataset.resourceAction=paused?'resume':'later';
+     remind.textContent=paused?'Возобновить напоминания':'Напомнить позже';
+     actions.append(remind);
+     if(!prefs.off){
+      const silent=document.createElement('button');silent.type='button';
+      silent.dataset.resourceFollowup=typeKey;silent.dataset.resourceAction='off';
+      silent.textContent='Не напоминать';actions.append(silent);
+     }
+     editor.append(actions);
+    }
+   }
    box.append(editor);
   }
   registeredList.append(box);
@@ -439,6 +458,8 @@ function start(options={}){
   resourceDraft=draft.slice(0,180);
  }
  render();
+ // The icon tiles are the first screen. Guidance opens only on request.
+ if(!options.type&&!options.specialist&&options.goal!=='promote')detail.hidden=true;
  if(draft){
   resourceStatus.textContent='Проверьте адрес перед сохранением.';
   registeredList.querySelector('input[name="resourceValue"]')?.focus({preventScroll:true});
@@ -509,6 +530,18 @@ registeredList?.addEventListener('click',event=>{
   const changed=window.SEYVEO_BUSINESS_MAP?.removeResourceDetail?.(type,value);
   resourceStatus.textContent=changed?.message||'Не удалось убрать ресурс.';
   renderRegistry();renderPresence();return;
+ }
+ const followup=event.target.closest?.('[data-resource-followup]');
+ if(followup){
+  const type=followup.dataset.resourceFollowup,action=followup.dataset.resourceAction;
+  if(!TOPICS[type]||!['later','off','resume'].includes(action))return;
+  const next=followups();
+  next[type]={until:action==='later'?Date.now()+7*86400000:0,off:action==='off'};
+  if(!persistFollowups(next)){resourceStatus.textContent='Не удалось сохранить напоминание.';return}
+  renderRegistry();
+  window.dispatchEvent(new Event('seyveo:connection-followup-changed'));
+  resourceStatus.textContent=action==='later'?'Напоминание отложено на 7 дней.':action==='off'?'Напоминания отключены.':'Напоминания возобновлены.';
+  return;
  }
  const guide=event.target.closest?.('[data-resource-guide]');
  if(guide){
