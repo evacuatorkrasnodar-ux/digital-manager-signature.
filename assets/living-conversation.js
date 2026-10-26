@@ -361,7 +361,9 @@ function renderTurns(turns){
      label.textContent=who==='you'?'Вы':'Сэйви';
      const body=document.createElement('div');
      body.className='seyveo-conversation-body';
-     body.textContent=displayChatText(value);
+     body.textContent=who==='sayvi'
+       ?displayChatText(value).replace(/\n{2,}/g,'\n')
+       :displayChatText(value);
      item.append(label,body);
      if(who==='you'){
        // Keep oversized pasted questions readable without editing stored data.
