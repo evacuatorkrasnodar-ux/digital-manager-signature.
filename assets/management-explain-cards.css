@@ -243,11 +243,15 @@
  border:0;background:transparent;border-radius:12px;
 }
 #manageThemeScreen .manage-theme-choice .manage-theme-swatch{
- width:47px;height:47px;flex:0 0 47px;
- border:1px solid var(--soft-line);box-shadow:none;
+ box-sizing:border-box;
+ width:36px;height:36px;flex:0 0 36px;
+ min-width:36px;max-width:36px;
+ border-radius:50%;overflow:hidden;
+ border:1px solid rgba(173,181,194,.24);
+ box-shadow:none;transform:none;
 }
 #manageThemeScreen .manage-theme-choice:not(:last-child)::after{
- left:64px;right:3px;height:1px;
+ left:52px;right:3px;height:1px;
 }
 #manageThemeScreen .manage-theme-choice .manage-text{gap:5px}
 #manageThemeScreen .manage-theme-choice .manage-text strong{
@@ -395,7 +399,7 @@
  #seyveoCleanDetail .smc-explain-mode{gap:10px}
  #seyveoCleanDetail .seyveo-manage-fold-body .manage-text small{font-size:11.5px}
  #manageThemeScreen .manage-theme-choice{gap:11px}
- #manageThemeScreen .manage-theme-choice .manage-theme-swatch{width:41px;height:41px;flex-basis:41px}
+ #manageThemeScreen .manage-theme-choice .manage-theme-swatch{width:34px;height:34px;flex-basis:34px;min-width:34px;max-width:34px}
 }
 
 
