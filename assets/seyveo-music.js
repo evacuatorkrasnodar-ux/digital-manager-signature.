@@ -31,6 +31,8 @@ const miniState=$('sayviMusicMiniState');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!flow||!flowNext)return;
+// The library is an independent, opaque screen, not part of the vinyl stage.
+if(collection.parentElement!==document.body)document.body.append(collection);
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
 const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
@@ -166,12 +168,12 @@ function collectionRender(){
  if(!queueOpen)return;
  const dismiss=document.createElement('button');
  dismiss.type='button';dismiss.className='sv-music-panel-close';
- dismiss.textContent='Закрыть';dismiss.setAttribute('aria-label','Закрыть музыкальную библиотеку');
+ dismiss.textContent='Готово';dismiss.setAttribute('aria-label','Вернуться к плееру');
  dismiss.addEventListener('click',()=>{queueOpen=false;collection.hidden=true;});
  collection.append(dismiss);
  const title=document.createElement('p');
  title.className='sv-music-collection-label';
- title.textContent='ТРЕКИ · '+tracks.length;
+ title.textContent='ТРЕКИ';
  collection.append(title);
  const actions=document.createElement('div');
  actions.className='sv-music-panel-actions';
@@ -184,7 +186,7 @@ function collectionRender(){
  if(!tracks.length){
   const empty=document.createElement('p');
   empty.className='sv-music-collection-empty';
-  empty.textContent='Выберите музыку на устройстве — она останется только у вас.';
+  empty.textContent='Пока нет треков. Добавьте музыку с устройства.';
   collection.append(empty);
   return;
  }
