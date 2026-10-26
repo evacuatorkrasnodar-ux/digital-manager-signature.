@@ -1261,20 +1261,28 @@ body:has(#homePage:not([hidden])) .app{
   #homePage.lm-focus .message{min-height:65px;margin-top:2px}
 }
 
-/* Single seamless viewport canvas. The body gradient previously ended at the
-   locked Home boundary, leaving a darker rectangular strip behind the dock.
-   Paint the atmosphere once on the root, not separate body/app surfaces. */
+/* Original SEYVEO atmospheric canvas, drawn once behind the fixed Home.
+   Preserve the approved pearl glow and graphite depth, with no separate
+   rectangular body/app background behind the dock. */
 :root:not([data-theme=light]):has(#homePage:not([hidden])){
-  background:linear-gradient(180deg,#191b1f 0%,#17191d 50%,#15171b 100%) fixed!important;
-}
-:root:not([data-theme=light]):has(#homePage:not([hidden])) body,
-:root:not([data-theme=light]):has(#homePage:not([hidden])) .app{
-  background:transparent!important;
+ background:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,
+   rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
+  radial-gradient(ellipse 116vw 470px at 46% 615px,
+   rgba(118,119,128,.027) 0%,transparent 78%),
+  linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%)!important;
+ background-repeat:no-repeat!important;
 }
 :root[data-theme=light]:has(#homePage:not([hidden])){
-  background:linear-gradient(180deg,#f5f6f8,#eff2f6) fixed!important;
+ background:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,
+   rgba(255,255,255,.26) 0%,rgba(161,173,187,.066) 50%,transparent 87%),
+  radial-gradient(ellipse 116vw 470px at 46% 615px,
+   rgba(163,175,190,.050) 0%,transparent 78%),
+  linear-gradient(180deg,#f5f6f8 0%,#f1f3f6 58%,#eceff3 100%)!important;
+ background-repeat:no-repeat!important;
 }
-:root[data-theme=light]:has(#homePage:not([hidden])) body,
-:root[data-theme=light]:has(#homePage:not([hidden])) .app{
-  background:transparent!important;
+:root:has(#homePage:not([hidden])) body,
+:root:has(#homePage:not([hidden])) .app{
+ background:transparent!important;
 }
