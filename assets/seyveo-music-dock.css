@@ -34,7 +34,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 @media(max-width:355px){footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton) span{letter-spacing:-.04em}}
 
 /* SEYVEO MUSIC · minimal floating controls.
-   Three touch targets, no container, no labels, no duplicated player.
+   Two touch targets, no container, no labels, no duplicated player.
    The vinyl surface and spindle use the SAME paint as the large record. */
 #sayviMusicMini[hidden],
 html.sv-music-screen #sayviMusicMini{display:none!important}
@@ -84,11 +84,15 @@ html.sv-music-screen #sayviMusicMini{display:none!important}
  animation:sv-music-mini-spin 14s linear infinite;
 }
 @keyframes sv-music-mini-spin{to{transform:rotate(360deg)}}
-#sayviMusicMini :is(.sv-music-mini-play,.sv-music-mini-next) svg{
+#sayviMusicMini .sv-music-mini-play svg{
  width:22px;height:22px;fill:none;stroke:currentColor;
  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
 }
-#sayviMusicMini .sv-music-mini-next:disabled{opacity:.32;cursor:default}
+#sayviMusicMini .sv-music-mini-open{
+ touch-action:none;cursor:grab;
+ -webkit-user-select:none;user-select:none;
+}
+#sayviMusicMini .sv-music-mini-open:active{cursor:grabbing}
 #sayviMusicMini button:focus-visible{
  outline:2px solid var(--text);outline-offset:1px;
 }
