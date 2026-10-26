@@ -198,64 +198,99 @@ function followups(){
 function persistFollowups(records){
  try{localStorage.setItem(FOLLOWUP_KEY,JSON.stringify(records));return true}catch{return false}
 }
+// One visual catalog. Every item has a permanent icon and a contextual editor.
+const SERVICE_ICONS=Object.freeze({
+ site:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18M12 3c5 5 5 13 0 18"/>',
+ yandex:'<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+ gis:'<path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/>',
+ avito:'<circle cx="6" cy="7" r="2.5"/><circle cx="17.5" cy="6.5" r="3"/><circle cx="7.5" cy="17" r="3"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+ vk:'<path d="M4 7c1 7 4 11 8 11v-5c2 0 3 3 7 5h2c-1.2-3-3.5-5-4-6 2-2 3-3 4-5h-4c-1 2-3 4-5 4V7H9v6c-2-1-3-4-4-6H4Z"/>',
+ telegram:'<path d="m21 3-4 18-5.5-5-3.5 3v-5l-5-2 18-9ZM8 14l13-11-9.5 13"/>',
+ crm:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ marketplace:'<path d="M4 9h16l-1 12H5L4 9ZM3 9l3-6h12l3 6M9 9v3a3 3 0 0 0 6 0V9"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+ ads:'<path d="m3 10 15-6v16L3 14v-4ZM7 15l2 6h4l-3-5M18 9c3 0 3 6 0 6"/>',
+ accounting:'<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8 7h8M8 12h2m4 0h2M8 16h2m4 0h2"/>',
+ bank:'<path d="m2 9 10-6 10 6M3 9h18M5 10v9m5-9v9m4-9v9m5-9v9M2 21h20"/>',
+ other:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'
+});
+let activeResourceType='',resourceDraft='';
+const resourceStatus=$('connectionCoachResourceStatus');
+function resourceIcon(type){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+ svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+ svg.setAttribute('stroke-width','1.45');svg.setAttribute('stroke-linecap','round');
+ svg.setAttribute('stroke-linejoin','round');
+ svg.innerHTML=SERVICE_ICONS[type]||SERVICE_ICONS.other;
+ return svg;
+}
 function renderRegistry(){
  if(!registered||!registeredList)return;
- const {rows,types}=knownResources(),prefs=followups();
  registered.hidden=false;
- registeredList.replaceChildren();
+ const {rows}=knownResources();
+ const types=window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[];
  const summary=$('connectionManagePrompt');
- if(summary)summary.textContent=rows.length
-  ?'Указано ресурсов: '+rows.length+' · доступ пока не подключён'
-  :'Рабочие ресурсы и разрешения · по желанию';
- if(!rows.length){
-  const empty=document.createElement('p');
-  empty.className='connection-coach-empty';
-  empty.textContent='Пока ничего не указано. Добавьте только те сервисы, которыми действительно пользуетесь.';
-  registeredList.append(empty);
-  return;
- }
- const names=new Map((window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[]).map(row=>[row.id,row.name]));
- const shownFollowups=new Set();
- for(const [index,item] of rows.entries()){
-  const type=topicFor(item.type),state=type?prefs[type]||{}:{};
-  const sleep=state.until>Date.now();
-  const row=document.createElement('div');row.className='connection-coach-known-row';
-  const content=document.createElement('div');content.className='connection-coach-known-copy';
-  const title=document.createElement('strong');
-  title.textContent=names.get(item.type)||LABELS[type]||'Ресурс';
-  const value=document.createElement('small');
-  value.textContent=item.value==='Использую'
-   ?'Пользуюсь · указано со слов владельца'
-   :item.value;
-  const note=document.createElement('small');
-  note.textContent='Не подключён'+(state.off?' · без напоминаний':sleep
-   ?' · напоминание отложено':' · доступ не предоставлен');
-  content.append(title,value,note);
-  const buttons=document.createElement('div');buttons.className='connection-coach-known-actions';
-  if(type&&TOPICS[type]){
-   const guide=document.createElement('button');guide.type='button';
-   guide.dataset.resourceGuide=type;guide.textContent='Как подключить';buttons.append(guide);
+ if(summary)summary.textContent=rows.length?'Указано ресурсов: '+rows.length+' · без доступа к сервисам':'Ваши сервисы · разрешения отдельно';
+ registeredList.replaceChildren();
+ for(const item of types){
+  const saved=rows.filter(v=>v.type===item.id);
+  const expanded=activeResourceType===item.id;
+  const box=document.createElement('article');box.className='sv-connect-tile'+(expanded?' is-expanded':'');
+  const toggle=document.createElement('button');toggle.type='button';
+  toggle.className='sv-connect-tile-top';toggle.dataset.resourceToggle=item.id;
+  toggle.setAttribute('aria-expanded',String(expanded));
+  toggle.setAttribute('aria-label',item.name+': '+(saved.length?'указан, не подключён':'не указан')+'. Изменить');
+  const symbol=document.createElement('span');symbol.className='sv-connect-tile-icon';symbol.append(resourceIcon(item.id));
+  const name=document.createElement('strong');name.textContent=item.name;
+  const state=document.createElement('small');state.className='sv-connect-tile-state';
+  state.textContent=saved.length?'Указан · без доступа':'Не указан';
+  const glyph=document.createElement('span');glyph.className='sv-connect-tile-plus';
+  glyph.textContent=expanded?'−':'+';
+  toggle.append(symbol,name,state,glyph);
+  box.append(toggle);
+  if(saved.length&&!expanded){
+   const teaser=document.createElement('div');teaser.className='sv-connect-tile-preview';
+   teaser.textContent=saved.length===1?(saved[0].value==='Использую'?'Пользуюсь':saved[0].value):saved.length+' записи';
+   box.append(teaser);
   }
-  const remove=document.createElement('button');remove.type='button';
-  remove.dataset.resourceRemove=String(index);remove.textContent='Убрать';
-  remove.setAttribute('aria-label','Убрать ресурс '+title.textContent);
-  buttons.append(remove);
-  if(type&&TOPICS[type]&&!shownFollowups.has(type)){
-   shownFollowups.add(type);
-   const later=document.createElement('button');later.type='button';
-   later.dataset.resourceFollowup=type;
-   later.dataset.resourceAction=state.off||sleep?'resume':'later';
-   later.textContent=state.off||sleep?'Напоминать':'Позже';
-   buttons.append(later);
-   if(!state.off){
-    const off=document.createElement('button');off.type='button';
-    off.dataset.resourceFollowup=type;off.dataset.resourceAction='off';
-    off.textContent='Не напоминать';buttons.append(off);
+  if(expanded){
+   const editor=document.createElement('div');editor.className='sv-connect-tile-editor';
+   const desc=document.createElement('p');desc.textContent=item.reason;
+   editor.append(desc);
+   for(const value of saved){
+    const entry=document.createElement('div');entry.className='sv-connect-saved';
+    const label=document.createElement('span');label.textContent=value.value==='Использую'?'Отмечено: пользуюсь':value.value;
+    const remove=document.createElement('button');remove.type='button';
+    remove.dataset.resourceRemoveType=item.id;remove.dataset.resourceRemoveValue=value.value;
+    remove.textContent='Убрать';remove.setAttribute('aria-label','Убрать '+item.name+': '+value.value);
+    entry.append(label,remove);editor.append(entry);
    }
+   const form=document.createElement('form');form.dataset.resourceForm=item.id;
+   form.className='sv-connect-tile-form';
+   const fieldLabel=document.createElement('label');fieldLabel.textContent='Название или публичный адрес';
+   const field=document.createElement('input');field.type='text';field.maxLength=180;
+   field.required=true;field.autocomplete='off';field.name='resourceValue';
+   field.placeholder=item.id==='site'?'https://example.ru':'Название или ссылка';
+   field.value=resourceDraft;
+   fieldLabel.append(field);form.append(fieldLabel);
+   const save=document.createElement('button');save.type='submit';save.textContent='Сохранить';
+   form.append(save);editor.append(form);
+   const message=document.createElement('small');
+   message.textContent='Сохраняется только эта запись. Доступ к сервису не предоставляется.';
+   editor.append(message);
+   const topicId=topicFor(item.id);
+   if(TOPICS[topicId]){
+    const guide=document.createElement('button');guide.type='button';
+    guide.className='sv-connect-tile-guide';guide.dataset.resourceGuide=topicId;
+    guide.textContent='Как подключить';editor.append(guide);
+   }
+   box.append(editor);
   }
-  row.append(content,buttons);registeredList.append(row);
+  registeredList.append(box);
  }
 }
+
 function renderPresence(){
  if(!presence||!presenceNote)return;
  const {rows,types}=knownResources();
@@ -268,24 +303,6 @@ function renderPresence(){
   :'Сохранится только отметка, без паролей и чтения данных.';
 }
 
-/* One small editor for owner-supplied resource details. No second database. */
-const resourceForm=$('connectionCoachResourceForm');
-const resourceType=$('connectionCoachResourceType');
-const resourceValue=$('connectionCoachResourceValue');
-const resourceStatus=$('connectionCoachResourceStatus');
-const resourceDetails=$('connectionCoachAddResource');
-for(const row of window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[]){
- const option=document.createElement('option');option.value=row.id;option.textContent=row.name;
- resourceType?.append(option);
-}
-resourceForm?.addEventListener('submit',event=>{
- event.preventDefault();
- const saved=window.SEYVEO_BUSINESS_MAP?.saveResourceDetail?.(resourceType.value,resourceValue.value);
- resourceStatus.textContent=saved?.message||'Не удалось сохранить ресурс.';
- if(saved?.ok){
-  resourceValue.value='';resourceDetails.open=false;renderRegistry();renderPresence();
- }
-});
 const result=$('connectionCoachResult');
 const map=()=>window.SEYVEO_BUSINESS_MAP?.getState?.()||null;
 /* Suggestions use only the business owner's existing, local facts.
@@ -411,18 +428,20 @@ function setType(id){
 }
 function start(options={}){
  purpose=options.goal==='promote'?'promote':'learn';
- mode=options.specialist===true?'specialist':'owner';topic=canonical(options.type)||recommendations()?.types[0]||'site';
+ mode=options.specialist===true?'specialist':'owner';
+ topic=canonical(options.type)||recommendations()?.types[0]||'site';
  showOtherServices=EXTRA_ORDER.includes(topic);
- render();
- // A link suggested in chat is only a draft until the user presses Save.
+ const types=window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[];
+ const chosen=types.find(v=>v.id===options.type);
  const draft=typeof options.sourcePrefill==='string'?options.sourcePrefill:'';
- if(draft&&resourceType&&resourceValue&&resourceDetails){
-  const chosen=window.SEYVEO_BUSINESS_MAP?.resourceTypes?.().some(row=>row.id===options.type)
-   ?options.type:storageType(topic);
-  resourceType.value=chosen;
-  resourceValue.value=draft.slice(0,180);
-  resourceDetails.open=true;
-  resourceStatus.textContent='Проверьте адрес или название перед сохранением.';
+ if(draft){
+  activeResourceType=chosen?.id||storageType(topic);
+  resourceDraft=draft.slice(0,180);
+ }
+ render();
+ if(draft){
+  resourceStatus.textContent='Проверьте адрес перед сохранением.';
+  registeredList.querySelector('input[name="resourceValue"]')?.focus({preventScroll:true});
  }
  return true;
 }
@@ -474,36 +493,46 @@ $('connectionCoachCopy').addEventListener('click',async()=>{
 
 // A reminder is a local status in Management, never a scheduled push or a claim of OAuth.
 registeredList?.addEventListener('click',event=>{
- const removing=event.target.closest?.('[data-resource-remove]');
- if(removing){
-  const rows=knownResources().rows,index=Number(removing.dataset.resourceRemove);
-  const item=Number.isInteger(index)&&index>=0?rows[index]:null;
-  if(!item)return;
-  if(!window.confirm('Убрать этот ресурс из списка SEYVEO? Остальные данные сохранятся.'))return;
-  const changed=window.SEYVEO_BUSINESS_MAP?.removeResourceDetail?.(item.type,item.value);
-  resourceStatus.textContent=changed?.message||'Не удалось убрать ресурс.';
-  renderRegistry();renderPresence();
+ const toggled=event.target.closest?.('[data-resource-toggle]');
+ if(toggled){
+  const selected=toggled.dataset.resourceToggle;
+  activeResourceType=activeResourceType===selected?'':selected;
+  resourceDraft='';
+  renderRegistry();
+  if(activeResourceType)registeredList.querySelector('input[name="resourceValue"]')?.focus({preventScroll:true});
   return;
+ }
+ const remove=event.target.closest?.('[data-resource-remove-type]');
+ if(remove){
+  const type=remove.dataset.resourceRemoveType,value=remove.dataset.resourceRemoveValue;
+  if(!window.confirm('Убрать этот ресурс из SEYVEO? Остальные данные останутся.'))return;
+  const changed=window.SEYVEO_BUSINESS_MAP?.removeResourceDetail?.(type,value);
+  resourceStatus.textContent=changed?.message||'Не удалось убрать ресурс.';
+  renderRegistry();renderPresence();return;
  }
  const guide=event.target.closest?.('[data-resource-guide]');
  if(guide){
   const selected=guide.dataset.resourceGuide;
   if(!TOPICS[selected])return;
   purpose='learn';showOtherServices=EXTRA_ORDER.includes(selected);
-  setType(selected);return;
+  setType(selected);
+  detail.scrollIntoView?.({block:'nearest',behavior:'smooth'});
  }
- const button=event.target.closest?.('[data-resource-followup]');
- if(!button)return;
- const type=button.dataset.resourceFollowup,action=button.dataset.resourceAction;
- if(!TOPICS[type]||!['later','off','resume'].includes(action))return;
- const next=followups();
- next[type]={until:action==='later'?Date.now()+7*86400000:0,off:action==='off'};
- if(!persistFollowups(next)){result.textContent='Напоминание не сохранилось.';return}
- renderRegistry();
- window.dispatchEvent(new Event('seyveo:connection-followup-changed'));
- result.textContent=action==='later'?'Напомню в Управлении через 7 дней.':
-  action==='off'?'Больше не буду напоминать об этом ресурсе.':'Напоминания для ресурса включены.';
 });
+registeredList?.addEventListener('submit',event=>{
+ const form=event.target.closest?.('[data-resource-form]');
+ if(!form)return;
+ event.preventDefault();
+ const type=form.dataset.resourceForm;
+ const input=form.querySelector('input[name="resourceValue"]');
+ const resultSave=window.SEYVEO_BUSINESS_MAP?.saveResourceDetail?.(type,input?.value);
+ resourceStatus.textContent=resultSave?.message||'Не удалось сохранить ресурс.';
+ if(resultSave?.ok){
+  resourceDraft='';
+  renderRegistry();renderPresence();
+ }
+});
+
 presence?.addEventListener('change',()=>{
  const chosen=storageType(topic);
  const desired=Boolean(presence.checked);
