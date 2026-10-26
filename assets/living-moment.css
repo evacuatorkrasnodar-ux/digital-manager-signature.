@@ -571,32 +571,3 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
     transition:none!important;
   }
 }
-
-/* Home focus: compact existing scene so the REAL decision fits the fixed
-   viewport. No height:100%, no new layer, no stretching or scroll surface. */
-@media(max-height:1200px){
- #homePage.lm-focus #stage{
-  min-height:0;
-  padding-top:0;
-  padding-bottom:4px;
- }
- #homePage.lm-focus #orbCluster{height:clamp(112px,17dvh,154px)}
- #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.53)}
- #homePage.lm-focus .message{min-height:0;margin-top:0}
- #homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  padding:9px 11px 6px;
- }
- #homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-primary{
-  padding-bottom:7px;
- }
- #homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-item{
-  min-height:58px;
-  padding:4px 7px;
- }
- #homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-art{
-  width:42px;height:42px;
- }
- #homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-art svg{
-  width:40px;height:40px;
- }
-}
