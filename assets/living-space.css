@@ -1233,7 +1233,7 @@ body:has(#homePage:not([hidden])) .app{
   overflow-x:hidden!important;
   overflow-y:hidden!important;
   overscroll-behavior:none!important;
-  padding-bottom:calc(var(--seyveo-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 8px);
+  padding-bottom:calc(var(--seyveo-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 14px);
 }
 #homePage:not([hidden]){
   min-height:0;
@@ -1249,26 +1249,6 @@ body:has(#homePage:not([hidden])) .app{
 #homePage #seyveoLivingMoment{
   min-height:0;
   flex-shrink:1;
-}
-/* Compact working state only. The large idle sphere is untouched.
-   Reduce the actual orb row (not just stage min-height) so the original
-   three-task card can finish above the dock instead of being hard-clipped. */
-#homePage.lm-focus #stage{
-  min-height:0;
-  padding-top:0;
-  padding-bottom:3px;
-  justify-content:flex-start;
-  background:transparent;
-}
-#homePage.lm-focus #orbCluster{
-  height:clamp(126px,18dvh,160px);
-}
-#homePage.lm-focus #orb{
-  transform:translate3d(0,-2px,0) scale(.48);
-}
-#homePage.lm-focus .message{
-  min-height:0;
-  margin-top:3px;
 }
 /* If enlarged text or a particularly long decision exceeds the available
    space, only the decision itself can scroll, never the hero or Home. */
