@@ -571,3 +571,51 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
     transition:none!important;
   }
 }
+
+
+/* Fixed Home · gathered decisions fit above the dock.
+   No bottom chat panel or background layer: the former straight dark strip
+   was the gathered card being clipped by Home's fixed viewport. The scene
+   keeps its real rounded border; only its content scrolls if genuinely tall. */
+#homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather{
+  flex:1 1 auto;
+  min-height:0;
+  margin-bottom:0;
+  overflow:hidden;
+}
+#homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-tiles{
+  height:100%;
+  min-height:0;
+}
+#homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
+  height:100%;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  border-radius:24px;
+}
+#homePage.lm-focus #seyveoLivingMoment.lm-preview.lm-gather .lm-field::-webkit-scrollbar{
+  display:none;
+}
+/* iPhone X / short screens: reserve real space for the decision, rather than
+   allowing the large hero to push its bottom beneath the fixed dock. */
+@media(max-height:900px){
+  #homePage.lm-focus #stage{
+    min-height:0;
+    padding-top:0;
+    padding-bottom:4px;
+  }
+  #homePage.lm-focus #orbCluster{
+    height:clamp(120px,19dvh,172px);
+  }
+  #homePage.lm-focus #orb{
+    transform:translate3d(0,-2px,0) scale(.53);
+  }
+  #homePage.lm-focus .message{
+    min-height:0;
+    margin-top:0;
+  }
+}
