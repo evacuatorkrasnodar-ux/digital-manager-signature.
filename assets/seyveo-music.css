@@ -640,6 +640,8 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #sayviMusicPage{
   display:flex!important;
   width:100%;
+  /* Separate the music identity from the companion sphere. */
+  padding-top:clamp(17px,2.7dvh,29px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   position:relative;
