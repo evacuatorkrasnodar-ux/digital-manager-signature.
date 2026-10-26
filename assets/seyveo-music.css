@@ -485,30 +485,41 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  }
 }
 
-/* SEYVA MUSIC · Living Ink brand, not a second card or certified Hi-Res logo.
-   A verified lossless SOURCE displays its own parameters only while playing. */
-#sayviMusicPage>header{text-align:center}
+/* SEYVEO SOUND · editorial signature, one original vinyl. */
+#sayviMusicPage>header.sv-music-head{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;
+ grid-template-rows:auto auto;column-gap:10px;row-gap:3px;
+ text-align:left;align-items:center;min-width:0;
+}
 #sayviMusicPage .sv-music-heading{
- margin:3px 0 0;
- font-size:clamp(24px,6vw,29px);
- letter-spacing:.035em;
- font-weight:420;
- line-height:1.18;
+ grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:8px;
+ flex-wrap:wrap;min-width:0;margin:0;line-height:1.18;text-align:left;
+}
+#sayviMusicPage .sv-music-brand{
+ font-size:clamp(21px,5.6vw,29px);font-weight:560;
+ letter-spacing:.115em;line-height:1.15;
+}
+#sayviMusicPage .sv-music-brand-sub{
+ font-size:clamp(15px,3.8vw,20px);font-weight:350;
+ letter-spacing:.12em;line-height:1.15;
 }
 #sayviMusicPage .sv-music-technology{
- margin:3px 0 3px;
- color:var(--secondary);
- font-size:9px;
- line-height:1.3;
- font-weight:450;
- letter-spacing:.23em;
+ grid-column:1;grid-row:2;margin:0;color:var(--secondary);
+ font-size:9px;line-height:1.5;letter-spacing:.18em;text-align:left;
+ font-weight:440;
 }
-#sayviMusicPage .sv-music-ai{
- font-style:italic;
- text-transform:none;
- letter-spacing:0;
- font-weight:600;
+#sayviMusicPage .sv-music-ai{font-style:italic;text-transform:none;letter-spacing:0;font-weight:560}
+#sayviMusicPage .sv-music-minimize{
+ grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;gap:5px;
+ align-self:start;justify-self:end;min-width:44px;min-height:44px;
+ padding:7px 1px 7px 5px;border:0;background:transparent;
+ color:var(--secondary);font-size:11px;font-weight:450;cursor:pointer;
 }
+#sayviMusicPage .sv-music-minimize svg{
+ width:17px;height:17px;fill:none;stroke:currentColor;
+ stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
+}
+#sayviMusicPage .sv-music-minimize:focus-visible{outline:1px solid var(--text);outline-offset:1px}
 #sayviMusicPage .sv-music-quality[hidden]{display:none!important}
 #sayviMusicPage .sv-music-quality{
  margin:4px 0 1px;
@@ -529,7 +540,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  #sayviMusicPage .sv-music-quality{margin:1px 0 0;font-size:9px}
 }
 
-/* SEYVA MUSIC · Living Stage v1
+/* SEYVEO SOUND · Living Stage v1
    Widescreen is editorial, not a heap of centered objects. The original vinyl
    stays the focal point. A single narrow layout remains safe on iPhone X. */
 @media(min-width:760px) and (min-height:650px){
@@ -561,24 +572,18 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   padding:0;
   align-self:end;
  }
- html.sv-music-screen #sayviMusicPage .sv-music-heading{
-  margin:0;
-  text-align:left;
-  font-size:clamp(30px,3.1vw,39px);
-  letter-spacing:.009em;
- }
+ html.sv-music-screen #sayviMusicPage .sv-music-heading{margin:0;text-align:left}
+ html.sv-music-screen #sayviMusicPage .sv-music-brand{font-size:clamp(27px,2.8vw,37px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-brand-sub{font-size:clamp(18px,1.8vw,23px)}
  html.sv-music-screen #sayviMusicPage .sv-music-technology{
-  margin:7px 0 0;
-  text-align:left;
-  letter-spacing:.2em;
-  font-size:10px;
+  margin:3px 0 0;text-align:left;letter-spacing:.2em;font-size:9px;
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   grid-column:2;grid-row:1 / span 8;
   justify-self:center;
   align-self:center;
   position:relative;
-  left:clamp(6px,1.6vw,19px);
+
   margin:0;
   width:var(--sv-music-vinyl-size);
   height:var(--sv-music-vinyl-size);
@@ -638,7 +643,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   position:relative;
-  left:min(1.2vw,5px);
+
  }
  html.sv-music-screen #sayviMusicPage .sv-music-quality{
   line-height:1.4;
@@ -652,20 +657,20 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #seyveoCompanion{transition:none!important}
 }
 
-/* SEYVA MUSIC · Living Stage v2: height-aware editorial rhythm.
+/* SEYVEO SOUND · Living Stage v2: height-aware editorial rhythm.
    The tall-phone screenshot exposed an oversized void below the transport.
    Expand the ORIGINAL record and give the scene breathing room without
    adding a player, dock, cards or a scrollable full-screen canvas. */
 @media (max-width:759px) and (min-height:900px) and (orientation:portrait){
  html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(58vw,27dvh,290px);
+  --sv-music-vinyl-size:min(52vw,26dvh,278px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   width:var(--sv-music-vinyl-size);
   height:var(--sv-music-vinyl-size);
   margin-top:clamp(17px,5.4dvh,78px);
   margin-bottom:clamp(8px,1.3dvh,16px);
-  left:min(1.5vw,8px);
+
  }
  html.sv-music-screen #sayviMusicPage .sv-music-title{
   margin-top:clamp(5px,1.2dvh,16px);
@@ -683,6 +688,6 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 @media (max-width:759px) and (max-height:899px) and (orientation:portrait){
  /* iPhone X and other short screens: no crop, no extra vinyl height. */
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
-  left:min(1.1vw,5px);
+
  }
 }
