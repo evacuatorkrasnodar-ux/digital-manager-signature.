@@ -48,8 +48,11 @@ const ids=['navHome','navTasks','navPicture','navManage','assistantButton','assi
 const elements=Object.fromEntries(ids.map(id=>[id,element(id)]));
 const dock=element('dock');
 const windowEvents={},documentEvents={};
+let feedbackTimer=null;
 const windowMock={
   SEYVEO_MUSIC_DOCK:{isActive:()=>false},
+  clearTimeout(){feedbackTimer=null},
+  setTimeout(fn,delay){feedbackTimer={fn,delay};return 1},
   addEventListener(event,fn){(windowEvents[event]??=[]).push(fn)}
 };
 const documentMock={
@@ -83,6 +86,10 @@ function trusted(id){
  assert.ok(event.prevented&&event.stopped,'A physical side tap is mapped exactly once');
 }
 trusted('navHome');
+assert.equal(elements.navHome.classList.contains('sv-nav-feedback'),true,'Tap briefly draws the dock contour');
+assert.equal(feedbackTimer?.delay,1600,'Contour is cleared after 1.6 seconds');
+feedbackTimer.fn();
+assert.equal(elements.navHome.classList.contains('sv-nav-feedback'),false,'Contour disappears without changing route');
 assert.equal(elements.navHome.programmaticClicks,1,'Home calls existing goHome handler');
 trusted('navTasks');
 assert.equal(elements.navTasks.programmaticClicks,1,'Tasks calls original task handler');
