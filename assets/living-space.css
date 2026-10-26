@@ -1219,3 +1219,56 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    stays in the DOM and returns intact to the Home stage on navigation.
    Do not affect Home orb, dock voice button, or cards. */
 #seyveoCompanion:not([hidden]){display:none!important;min-height:0!important;margin:0!important;padding:0!important}
+
+/* My World · seamless Life canvas.
+   Exactly the same approved graphite gradient values; paint it on the
+   viewport background rather than as a rectangular main-page tile. */
+html.sv-space-active:has(#lifePage:not([hidden])) body{
+ background:linear-gradient(155deg,#23262c 0%,#1e2126 46%,#191c21 100%)!important;
+ background-attachment:fixed!important;
+}
+html.sv-space-active #lifePage{
+ background:transparent!important;
+ min-height:0!important;
+ padding-inline:clamp(10px,3.2vw,20px);
+}
+html.sv-space-active #lifePage .life-heading{
+ padding:7px 4px 0!important;
+ margin-bottom:19px!important;
+}
+html.sv-space-active #lifePage .life-heading h1{
+ font-weight:460!important;letter-spacing:-.045em!important;
+}
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ padding:0!important;
+ gap:4px!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ min-height:77px!important;
+ padding:11px 12px!important;
+ border:0!important;
+ border-radius:17px!important;
+ transition:background-color .18s ease,opacity .18s ease;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:not(:last-child)::after{
+ content:"";position:absolute;bottom:-2px;left:65px;right:12px;
+ height:1px;background:rgba(225,232,243,.10);
+ pointer-events:none;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ position:relative;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
+ background:rgba(236,239,244,.055)!important;opacity:1!important;
+}
+@media(hover:hover){
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:hover{
+  background:rgba(236,239,244,.038)!important;
+ }
+}
+html.sv-space-active:root[data-theme=light]:has(#lifePage:not([hidden])) body{
+ background:linear-gradient(155deg,#f7f9fb,#eff2f6)!important;
+}
+html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button:not(:last-child)::after{
+ background:rgba(27,40,62,.10);
+}
