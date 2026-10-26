@@ -17,8 +17,6 @@ const elapsed=$('sayviMusicElapsed');
 const duration=$('sayviMusicDuration');
 const heading=$('sayviMusicTrack');
 const artist=$('sayviMusicArtist');
-const qualityLabel=$('sayviMusicQuality');
-const sourceQuality=window.SEYVA_MUSIC_SOURCE_QUALITY;
 const status=$('sayviMusicStatus');
 const collection=$('sayviMusicCollection');
 const disk=$('sayviMusicDisk');
@@ -35,7 +33,6 @@ const miniTitle=$('sayviMusicMiniTitle');
 const miniState=$('sayviMusicMiniState');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
-const queueAction=$('sayviMusicQueue');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
@@ -72,36 +69,6 @@ const providers=Object.freeze({
  }
 });
 let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
-let verifiedSource=null,qualityPending=false;
-function updateSourceLabel(){
- if(!qualityLabel)return;
- const playing=!!audio.src&&!audio.paused&&!audio.ended&&index>=0;
- qualityLabel.hidden=!playing;
- if(!playing){qualityLabel.textContent='';qualityLabel.title='';return;}
- // These are FILE headers, not measurements of output to headphones.
- if(qualityPending){
-  qualityLabel.textContent='ПРОВЕРЯЮ ЗАПИСЬ';
-  qualityLabel.title='Сэйва читает заголовок выбранного файла на устройстве.';
-  return;
- }
- const info=verifiedSource;
- if(!info){
-  qualityLabel.textContent='КАЧЕСТВО ФАЙЛА НЕ ОПРЕДЕЛЕНО';
-  qualityLabel.title='Этот аудиоформат пока не удаётся проверить. Сэйва не придумывает качество.';
-  return;
- }
- const frequency=(info.sampleRate/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' кГц';
- if(info.hiRes){
-  qualityLabel.textContent='HI-RES AUDIO · '+info.format+' · '+info.bits+' бит · '+frequency;
- }else if(info.format==='MP3'){
-  qualityLabel.textContent='MP3 · '+info.bitrateKbps+' кбит/с* · '+frequency;
- }else{
-  qualityLabel.textContent=info.format+' · '+info.bits+' бит · '+frequency;
- }
- qualityLabel.title=info.format==='MP3'
-  ?'Битрейт определён по первому звуковому кадру. В VBR-записи он может меняться; качество выхода наушников не измеряется.'
-  :'Проверенные параметры исходного файла. Качество вывода на динамики или наушники iPhone не подтверждено.';
-}
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -110,7 +77,6 @@ const sayviMessage=message=>{status.textContent=message;status.hidden=!message;}
 function updatePlay(){
  const playing=!audio.paused&&!audio.ended&&!!audio.src;
  page.classList.toggle('sv-music-playing',playing);
- updateSourceLabel();
  if('mediaSession' in navigator){
   try{navigator.mediaSession.playbackState=playing?'playing':'paused'}catch{}
  }
@@ -241,7 +207,7 @@ function collectionRender(){
  header.className='sv-music-collection-header';
  const title=document.createElement('p');
  title.className='sv-music-collection-label';
- title.textContent='МОЯ ОЧЕРЕДЬ · '+tracks.length;
+ title.textContent='ТРЕКИ · '+tracks.length;
  const dismiss=document.createElement('button');
  dismiss.type='button';dismiss.className='sv-music-panel-close';
  dismiss.textContent='Готово';dismiss.setAttribute('aria-label','Свернуть список и вернуться к плееру');
@@ -266,8 +232,6 @@ function switchTrack(i,autoplay=false){
  if(!tracks.length)return false;
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
- verifiedSource=null;
- qualityPending=!!sourceQuality?.detect;
  audio.pause();audio.removeAttribute('src');audio.load();safeRelease();
  try{url=URL.createObjectURL(file)}catch{
   sayviMessage('Не удалось открыть файл. Попробуйте выбрать другой аудиофайл.');
@@ -280,18 +244,6 @@ function switchTrack(i,autoplay=false){
  artist.textContent=(visible.artist?visible.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();mediaSession();updatePlay();updateTime();
- // Hi-Res source check is bounded, asynchronous, and never delays playback.
- // No guessing from filenames (e.g. "HiRes.mp3"), metadata tags or bitrate.
- if(sourceQuality?.detect){
-  Promise.resolve(sourceQuality.detect(file)).then(result=>{
-   if(version!==selectVersion||tracks[index]!==file)return;
-   qualityPending=false;verifiedSource=result;
-   updateSourceLabel();
-  }).catch(()=>{
-   if(version!==selectVersion||tracks[index]!==file)return;
-   qualityPending=false;verifiedSource=null;updateSourceLabel();
-  });
- }
  // Bounded local ID3 read never interrupts or delays the real audio element.
  if(metadata?.describe){
   Promise.resolve(metadata.describe(file)).then(info=>{
@@ -377,10 +329,6 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
-queueAction?.addEventListener('click',()=>{
- if(!tracks.length){fileInput.click();return}
- showQueue();
-});
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
 document.addEventListener('keydown',e=>{
