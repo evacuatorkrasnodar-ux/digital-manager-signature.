@@ -122,7 +122,7 @@
  border-radius:13px;padding:9px 10px;font-size:12px;
 }
 #manageConnectionsDialog #connectionCoachNote{
- color:#1c2735;background:#f0f4f9;border-color:#f0f4f9;
+ color:var(--text);background:transparent;border-color:rgba(219,232,249,.3);
 }
 #manageConnectionsDialog #connectionCoachResult{
  color:var(--secondary);font-size:11px;line-height:1.5;
@@ -146,7 +146,7 @@
  background:#e9eef4;
 }
 :root[data-theme=light] #manageConnectionsDialog #connectionCoachNote{
- background:#2d4056;color:#fff;border-color:#2d4056;
+ background:transparent;color:var(--text);border-color:rgba(49,70,97,.28);
 }
 @media(max-width:355px){
  #manageConnectionsDialog .connection-coach button{font-size:11.2px}
@@ -160,58 +160,150 @@
 }
 
 
-/* Owner-confirmed resources · quiet, compact Black Velvet, iPhone safe. */
-#manageConnectionsDialog .connection-coach-known{padding:0 0 14px;margin:2px 0 18px;border-bottom:1px solid var(--soft-line)}
-#manageConnectionsDialog .connection-coach-known h3{margin:0 0 5px;font-size:14px;font-weight:480;letter-spacing:-.02em;color:var(--text)}
-#manageConnectionsDialog .connection-coach-known>p{font-size:11.6px;line-height:1.55;color:var(--secondary);margin:0 0 9px}
-#manageConnectionsDialog .connection-coach-known-row{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;padding:11px 0;border-top:1px solid var(--soft-line)}
-#manageConnectionsDialog .connection-coach-known-copy{flex:1;min-width:0;display:grid;gap:4px}
-#manageConnectionsDialog .connection-coach-known-copy strong{font-size:12.3px;font-weight:480;line-height:1.4}
-#manageConnectionsDialog .connection-coach-known-copy small{font-size:10.6px;color:var(--secondary);line-height:1.5}
-
-#manageConnectionsDialog .connection-coach-empty{
- margin:8px 0 10px;color:var(--secondary);font-size:11.5px;line-height:1.55;
+/* SEYVEO Black Velvet · one service catalog, no dropdown or extra panel. */
+#manageConnectionsDialog .connection-coach-known{
+ padding:2px 0 20px;margin:0 0 19px;border-bottom:1px solid var(--soft-line);
 }
-#manageConnectionsDialog .connection-coach-add-resource{
- margin:13px 0 0;padding:0;border-top:1px solid var(--soft-line);
+#manageConnectionsDialog .sv-connect-section-head{
+ display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 5px;
 }
-#manageConnectionsDialog .connection-coach-add-resource>summary{
- min-height:44px;display:flex;align-items:center;cursor:pointer;list-style:none;
- font-size:12px;font-weight:480;color:var(--text);
+#manageConnectionsDialog .sv-connect-section-head h3{
+ margin:0;font-size:16px;font-weight:480;letter-spacing:-.035em;color:var(--text);
 }
-#manageConnectionsDialog .connection-coach-add-resource>summary::-webkit-details-marker{display:none}
-#manageConnectionsDialog .connection-coach-add-resource>summary::before{
- content:"+";display:inline-grid;place-items:center;width:22px;height:22px;margin-right:10px;
- font-size:17px;font-weight:400;border:1px solid var(--soft-line);border-radius:50%;
+#manageConnectionsDialog .sv-connect-section-head small{
+ color:var(--secondary);font-size:10.5px;text-align:right;
 }
-#manageConnectionsDialog .connection-coach-add-resource[open]>summary::before{content:"−"}
-#manageConnectionsDialog .connection-coach-resource-form{
- display:grid;gap:8px;padding:8px 0 4px;
+#manageConnectionsDialog .connection-coach-known>p{
+ color:var(--secondary);font-size:11.5px;line-height:1.6;
+ margin:0 0 16px;max-width:440px;
 }
-#manageConnectionsDialog .connection-coach-resource-form label{
- font-size:11px;color:var(--secondary);margin-top:3px;
+#manageConnectionsDialog .sv-connect-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;align-items:stretch;
 }
-#manageConnectionsDialog .connection-coach-resource-form :is(select,input){
- width:100%;min-width:0;min-height:44px;padding:10px 12px;
- border:1px solid var(--soft-line);border-radius:13px;
- background:var(--card2);color:var(--text);font:inherit;font-size:13px;
+#manageConnectionsDialog .sv-connect-tile{
+ min-width:0;overflow:hidden;
+ border:1px solid var(--soft-line);
+ border-radius:19px;
+ background:linear-gradient(150deg,rgba(224,233,243,.046),rgba(224,233,243,.012));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
 }
-#manageConnectionsDialog .connection-coach-resource-form button{
- min-height:44px;justify-self:stretch;margin-top:6px;padding:10px 15px;
- border:1px solid rgba(219,232,249,.3);border-radius:15px;
- background:transparent;color:var(--text);font-weight:480;
+#manageConnectionsDialog .sv-connect-tile.is-expanded{
+ grid-column:1/-1;border-color:rgba(220,232,246,.35);
+ background:var(--card2);
 }
-#manageConnectionsDialog .connection-coach-resource-form small,
+#manageConnectionsDialog .sv-connect-tile-top{
+ display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+ position:relative;width:100%;min-height:128px;
+ padding:15px 12px 12px;
+ border:0;background:transparent;color:var(--text);
+ text-align:left;
+}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-top{
+ min-height:87px;display:grid;
+ grid-template-columns:38px 1fr 24px;
+ grid-template-rows:auto auto;column-gap:11px;row-gap:2px;
+ align-content:center;align-items:center;
+ padding:13px 15px;
+}
+#manageConnectionsDialog .sv-connect-tile-icon{
+ width:37px;height:37px;display:grid;place-items:center;flex:none;
+ color:var(--text);border:1px solid rgba(220,233,245,.23);
+ border-radius:13px;background:rgba(221,231,244,.05);
+}
+#manageConnectionsDialog .sv-connect-tile-icon svg{width:21px;height:21px}
+#manageConnectionsDialog .sv-connect-tile-top strong{
+ display:block;max-width:100%;font-size:12px;letter-spacing:-.02em;
+ font-weight:510;line-height:1.35;overflow-wrap:anywhere;
+}
+#manageConnectionsDialog .sv-connect-tile-state{
+ color:var(--secondary);font-size:10px;line-height:1.4;max-width:100%;
+}
+#manageConnectionsDialog .sv-connect-tile-plus{
+ position:absolute;right:11px;top:16px;
+ display:grid;place-items:center;width:21px;height:21px;
+ border-radius:50%;border:1px solid var(--soft-line);
+ color:var(--secondary);font-size:14px;font-weight:350;
+}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-icon{grid-column:1;grid-row:1/3}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-top strong{grid-column:2;grid-row:1}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-state{grid-column:2;grid-row:2}
+#manageConnectionsDialog .sv-connect-tile.is-expanded .sv-connect-tile-plus{
+ position:static;grid-column:3;grid-row:1/3;
+}
+#manageConnectionsDialog .sv-connect-tile-preview{
+ padding:0 12px 12px;
+ color:var(--secondary);font-size:10px;line-height:1.4;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#manageConnectionsDialog .sv-connect-tile-editor{
+ padding:0 15px 16px;display:grid;gap:10px;
+}
+#manageConnectionsDialog .sv-connect-tile-editor>p{
+ margin:0;color:var(--secondary);font-size:11px;line-height:1.5;
+}
+#manageConnectionsDialog .sv-connect-saved{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ border-bottom:1px solid var(--soft-line);padding:8px 0;
+}
+#manageConnectionsDialog .sv-connect-saved span{
+ min-width:0;overflow-wrap:anywhere;color:var(--text);
+ font-size:11.5px;line-height:1.5;
+}
+#manageConnectionsDialog .sv-connect-saved button{
+ flex:none;border:0;background:transparent;
+ color:var(--secondary);padding:8px;min-height:40px;
+}
+#manageConnectionsDialog .sv-connect-tile-form{
+ display:grid;gap:9px;
+}
+#manageConnectionsDialog .sv-connect-tile-form label{
+ display:grid;gap:7px;color:var(--secondary);
+ font-size:11px;line-height:1.4;
+}
+#manageConnectionsDialog .sv-connect-tile-form input{
+ box-sizing:border-box;width:100%;min-width:0;min-height:46px;
+ padding:10px 12px;background:transparent;
+ border:1px solid var(--soft-line);border-radius:14px;
+ color:var(--text);font:inherit;font-size:13px;
+}
+#manageConnectionsDialog .sv-connect-tile-form button{
+ min-height:45px;padding:9px 14px;border-radius:15px;
+ border:1px solid rgba(222,235,249,.35);
+ background:rgba(221,231,243,.06);color:var(--text);
+ font-size:12px;font-weight:500;
+}
+#manageConnectionsDialog .sv-connect-tile-editor>small{
+ color:var(--secondary);font-size:10.5px;line-height:1.5;
+}
+#manageConnectionsDialog .sv-connect-tile-guide{
+ justify-self:start;min-height:40px;padding:7px 0;border:0;
+ background:transparent;color:var(--text);text-align:left;
+ text-decoration:underline;text-decoration-color:var(--soft-line);
+ text-underline-offset:5px;
+}
 #manageConnectionsDialog .connection-coach-resource-status{
- margin:3px 0 0;color:var(--secondary);font-size:11px;line-height:1.5;
+ color:var(--secondary);font-size:11px;line-height:1.6;margin:10px 0 0;
 }
 #manageConnectionsDialog .connection-coach-resource-status:empty{display:none}
-:root[data-theme=light] #manageConnectionsDialog .connection-coach-resource-form button{
- border-color:rgba(49,70,97,.26);
+#manageConnectionsDialog .sv-connect-tile-top:active{
+ background:rgba(225,236,249,.045);
 }
-#manageConnectionsDialog .connection-coach-known-actions{max-width:58%;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
-#manageConnectionsDialog .connection-coach-known-actions button{min-height:35px;border-radius:999px;padding:5px 9px;background:transparent;color:var(--text);border:1px solid var(--soft-line);font-size:10.7px}
-#manageConnectionsDialog .connection-coach-known-actions button[data-resource-action=off]{color:var(--secondary)}
+:root[data-theme=light] #manageConnectionsDialog .sv-connect-tile{
+ background:rgba(48,69,91,.025);border-color:rgba(54,76,100,.18);
+}
+:root[data-theme=light] #manageConnectionsDialog .sv-connect-tile.is-expanded{
+ background:rgba(50,72,96,.045);border-color:rgba(54,76,100,.27);
+}
+:root[data-theme=light] #manageConnectionsDialog .sv-connect-tile-icon{
+ border-color:rgba(54,76,100,.20);background:rgba(54,76,100,.04);
+}
+@media(max-width:355px){
+ #manageConnectionsDialog .sv-connect-grid{gap:7px}
+ #manageConnectionsDialog .sv-connect-tile-top{padding:13px 9px 10px}
+ #manageConnectionsDialog .sv-connect-tile-top strong{font-size:11.3px}
+ #manageConnectionsDialog .sv-connect-tile-state{font-size:9.6px}
+}
 #manageConnectionsDialog .connection-coach-presence{margin:11px 0 14px;padding:9px 0 12px;border-bottom:1px solid var(--soft-line)}
 #manageConnectionsDialog .connection-coach-presence label{display:flex;gap:9px;align-items:center;min-height:36px;font-size:12.2px;font-weight:450}
 #manageConnectionsDialog #connectionCoachPresent{width:18px;height:18px;flex:0 0 18px;accent-color:var(--text)}
