@@ -526,7 +526,7 @@ window.addEventListener('seyveo:storefront-save',event=>{
  const before=[...data.storefronts];
  data.storefronts=[...data.storefronts.filter(x=>x.url!==address),observation].slice(-8);
  if(!save()){data.storefronts=before;detail.result={ok:false,message:'Не удалось сохранить наблюдения. Проверьте память устройства.'};return}
- detail.result={ok:true,message:preview?'Демо: сведения видны только в этом просмотре.':'Сведения сохранены в Карте бизнеса.'};
+ detail.result={ok:true,message:preview?'Демо: сведения видны только в этом просмотре.':'Сведения сохранены на этом устройстве.'};
 });
 window.addEventListener('seyveo:storefront-leave',()=>{if(dialog.open&&view==='storefront')markStep('map')});
 $('businessMapAdvice')?.addEventListener('click',event=>{
@@ -569,7 +569,7 @@ function saveOwnerWeeklyRequests(value){
 /* Reuse the same Business Map store; only Connections presents editing. */
 function saveResourceDetail(type,value){
  if(!byType(type))return {ok:false,message:'Выберите сервис из списка.'};
- if(dialog.open)return {ok:false,message:'Сначала закройте Карту бизнеса.'};
+ if(dialog.open)return {ok:false,message:'Сначала закройте открытое окно.'};
  const raw=String(value||'').trim(),text=norm(raw,180);
  if(!text||raw.length>180||!acceptable(raw))
   return {ok:false,message:'Укажите название или безопасную HTTPS-ссылку без секретов.'};
@@ -598,7 +598,7 @@ function removeResourceDetail(type,value){
 }
 function markResourceUse(type,enabled){
  if(!byType(type)||type==='other')return {ok:false,message:'Неизвестный ресурс.'};
- if(dialog.open)return {ok:false,message:'Сначала закройте Карту бизнеса.'};
+ if(dialog.open)return {ok:false,message:'Сначала закройте открытое окно.'};
  const current=load(),next=current?clone(current):fresh(ownerFocus()==='start'?'start':'existing');
  const matches=next.resources.filter(row=>row.type===type);
  if(enabled){
