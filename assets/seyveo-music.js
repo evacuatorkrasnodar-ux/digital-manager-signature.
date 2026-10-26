@@ -156,6 +156,7 @@ function showQueue(){
  if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
  queueOpen=true;
  collectionRender();
+ collection.scrollTop=0;
  collection.querySelector('.sv-music-panel-close')?.focus({preventScroll:true});
  return true;
 }
@@ -219,15 +220,17 @@ function collectionRender(){
   return;
  }
  collection.hidden=!queueOpen;
- const dismiss=document.createElement('button');
- dismiss.type='button';dismiss.className='sv-music-panel-close';
- dismiss.textContent='Закрыть';dismiss.setAttribute('aria-label','Закрыть очередь музыки');
- dismiss.addEventListener('click',()=>{queueOpen=false;collection.hidden=true;});
- collection.append(dismiss);
+ const header=document.createElement('div');
+ header.className='sv-music-collection-header';
  const title=document.createElement('p');
  title.className='sv-music-collection-label';
  title.textContent='МОЯ ОЧЕРЕДЬ · '+tracks.length;
- collection.append(title);
+ const dismiss=document.createElement('button');
+ dismiss.type='button';dismiss.className='sv-music-panel-close';
+ dismiss.textContent='Готово';dismiss.setAttribute('aria-label','Свернуть список и вернуться к плееру');
+ dismiss.addEventListener('click',hidePanels);
+ header.append(title,dismiss);
+ collection.append(header);
  tracks.forEach((file,i)=>{
   const btn=document.createElement('button');
   btn.type='button';btn.className='sv-music-track-row';
