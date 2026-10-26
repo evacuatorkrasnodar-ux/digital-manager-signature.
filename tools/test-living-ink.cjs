@@ -68,8 +68,8 @@ assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-qr-hint\[hidden\]/,'QR
 const companyQr=read('assets/company-qr.js');
 assert.match(companyQr,/if\(!canShare\(r\)\)/,'QR does not open an empty contact card');
 assert.match(companyUi,/#seyveoCompanyDialog > \.info-actions\{display:none!important\}/,'No duplicate footer close button');
-assert.match(html,/company-signature\.css\?v=4/,'Company Quiet Cinema view is deployed');
-assert.match(html,/passport-cards\.js\?v=31/,'Company reader/editor interactions are deployed');
+assert.match(html,/company-signature\.css\?v=5/,'Company Quiet Cinema view is deployed');
+assert.match(html,/passport-cards\.js\?v=32/,'Company reader/editor interactions are deployed');
 
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
@@ -124,8 +124,27 @@ assert.match(legacyBusinessLogic,/function start\(options=\{\}\)\{[\s\S]*?return
 assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVEO_CONNECTION_COACH\?\.homeSuggestion\?\.\(\)\|\|null;/,'Home has no prompts pointing to retired questionnaire');
 assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
 assert.match(html,/assets\/business-conversation\.js\?v=6/,'Chat receives revised Connections-only actions');
-assert.match(html,/assets\/business-map\.js\?v=20/,'Retired opening behavior is cache refreshed');
-assert.match(html,/assets\/connection-coach\.js\?v=11/,'Resource editing uses latest existing Connections');
+assert.match(html,/assets\/business-map\.js\?v=21/,'Retired opening behavior is cache refreshed');
+assert.match(html,/assets\/connection-coach\.js\?v=12/,'Resource editing uses latest existing Connections');
+/* One visually navigable catalog, one original source of truth. */
+const coachHtml=html.slice(html.indexOf('id="connectionCoachKnown"'),html.indexOf('</section>',html.indexOf('id="connectionCoachKnown"')));
+const coachJs=read('assets/connection-coach.js');
+const coachCss=read('assets/connection-coach.css');
+assert.match(coachHtml,/id="connectionCoachKnownList" class="sv-connect-grid"/,'Visible icon catalog replaces the old list');
+assert.doesNotMatch(coachHtml,/<select\b/,'No desktop-style dropdown in Connections');
+assert.doesNotMatch(coachHtml,/id="connectionCoachAddResource"/,'No duplicate resource editor');
+assert.match(coachJs,/const SERVICE_ICONS=Object\.freeze/,'Every service has a consistent vector icon');
+assert.match(coachJs,/resourceIcon\(item\.id\)/,'Each service renders its own vector icon');
+assert.match(coachJs,/data-resource-form/,'Editor exists only for a selected service');
+assert.match(coachJs,/saveResourceDetail\?\.\(type,input\?\.value\)/,'Service tiles use original resource storage');
+assert.match(coachJs,/removeResourceDetail\?\.\(type,value\)/,'Owner can remove an individual service');
+assert.match(coachCss,/#manageConnectionsDialog \.sv-connect-grid\{/,'Responsive two-column Black Velvet catalog');
+assert.match(html,/id="seyveoCompanyPrivateForm"/,'Private business notes are available from Company Passport');
+assert.match(html,/id="seyveoCompanyPrivateAbout"/,'Existing business description is editable privately');
+assert.match(html,/id="seyveoCompanyPrivateGoal"/,'Existing goal is editable privately');
+assert.match(legacyBusinessLogic,/savePrivateBusinessContext,/, 'Private context stores in the previous business record');
+assert.match(companyLogic,/privateForm\?\.addEventListener\('submit'/,'Company Passport controls private save');
+assert.doesNotMatch(companyLogic.slice(companyLogic.indexOf('function plain(kind)'),companyLogic.indexOf('function closeHeaderPassport')),/seyveoCompanyPrivate|privateAbout|privateGoal/,'Company export and print must never expose private owner context');
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
 const managementCinema=read('assets/management-glass-showcase.css');
