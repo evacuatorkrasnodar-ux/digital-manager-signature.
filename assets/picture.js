@@ -65,16 +65,15 @@ function businessData(){
  return actual||sampleData();
 }
 function render(){
- const profile=(()=>{try{return JSON.parse(localStorage.getItem('seyveo-first-acquaintance-v1')||'null')}catch{return null}})();
- const life=profile?.focus==='life';
- $('pictureTitle').textContent=life?'Мой день':'Пульс бизнеса';
- $('pictureLead').textContent=life?'Ваши записи, дела и выбранные инструменты в одном месте.':'Понятно о клиентах, заказах и деньгах.';
- body.hidden=life;
- $('pictureBusinessCharts').hidden=life;
- $('pictureLifeNote').hidden=!life;
- $('pictureQuickInsight').hidden=life;
- $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent=life?'ВАШИ ИНСТРУМЕНТЫ':'ВАШ ВЫБОР';
- if(life)return;
+ // This route is explicitly "Pulse of Business", including for life-first profiles.
+ // Never hide its opt-in demonstration based on the onboarding preference.
+ $('pictureTitle').textContent='Пульс бизнеса';
+ $('pictureLead').textContent='Клиенты, продажи и расходы — пример работы Сэйви.';
+ body.hidden=false;
+ $('pictureBusinessCharts').hidden=false;
+ $('pictureLifeNote').hidden=true;
+ $('pictureQuickInsight').hidden=false;
+ $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent='ВАШ ВЫБОР';
  window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
  const result=businessData();
  if(!result){
