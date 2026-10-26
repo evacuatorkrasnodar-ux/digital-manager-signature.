@@ -168,26 +168,40 @@ function after(next){
 // then fade away. The persistent dock remains the sole compact assistant entry.
 const homeViewport=document.querySelector('.app');
 let homeOrbScrollFrame=0;
+let homeOrbBaseline=null;
 function syncHomeOrbScroll(){
   homeOrbScrollFrame=0;
-  // The main page uses document/window scrolling, not an .app scrollport.
-  const y=Math.max(0,window.scrollY||document.documentElement.scrollTop||0,homeViewport?.scrollTop||0);
   const home=current==='home'&&!$('homePage')?.hidden;
-  const progress=home?Math.min(1,y/250):0;
+  if(!home){
+    orbCluster.style.removeProperty('transform');
+    orbCluster.style.removeProperty('opacity');
+    orbCluster.style.removeProperty('pointer-events');
+    homeOrbBaseline=null;
+    return;
+  }
+  // Read the stage's real position, independent of which element scrolls.
+  // The stage itself is never transformed, so this is a stable reference.
+  const stageTop=stage.getBoundingClientRect().top;
+  const scrollY=Math.max(0,window.scrollY||0,document.documentElement.scrollTop||0,
+    document.body.scrollTop||0,homeViewport?.scrollTop||0);
+  if(homeOrbBaseline===null||scrollY<2)homeOrbBaseline=stageTop+scrollY;
+  const moved=Math.max(0,homeOrbBaseline-stageTop);
+  const progress=Math.min(1,Math.max(scrollY,moved)/235);
   const reduced=reduce.matches;
-  const visible=reduced?(progress<.45?1:0):1-progress;
+  const visible=reduced?(progress<.55?1:0):1-progress;
   const scale=reduced?1:1-progress*.58;
-  const lift=reduced?0:-progress*24;
-  orbCluster.style.transform='translate3d(0,'+lift.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+  orbCluster.style.transform='translate3d(0,'+(-progress*16).toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
   orbCluster.style.opacity=String(visible);
-  orbCluster.style.pointerEvents=progress>.96?'none':'';
+  orbCluster.style.pointerEvents=progress>.94?'none':'';
 }
 function scheduleHomeOrbScroll(){
   if(homeOrbScrollFrame)return;
   homeOrbScrollFrame=requestAnimationFrame(syncHomeOrbScroll);
 }
+// Capture nested scroll events too: iOS PWA screens can scroll on a parent.
+document.addEventListener('scroll',scheduleHomeOrbScroll,{passive:true,capture:true});
 window.addEventListener('scroll',scheduleHomeOrbScroll,{passive:true});
-homeViewport?.addEventListener('scroll',scheduleHomeOrbScroll,{passive:true});
+window.addEventListener('resize',scheduleHomeOrbScroll,{passive:true});
 window.addEventListener('seyveo:route-changed',scheduleHomeOrbScroll);
 window.addEventListener('pageshow',scheduleHomeOrbScroll);
 function initialize(){
