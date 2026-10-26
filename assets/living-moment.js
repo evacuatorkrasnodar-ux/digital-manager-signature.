@@ -141,33 +141,25 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
  const open=polymer('Подробнее',()=>{
-  if(real){
-   if(taskId)window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:taskId}}));
-   return;
-  }
+  // Explain why Sayvi surfaced the stored task; never mark it done.
   explain(field,shown.reason+' '+shown.detail,open);
  });
- const execute=polymer('Исполнить',()=>{
+ const execute=polymer(real?'Продолжить дело':'Исполнить',()=>{
   if(real){
-   // Complete through the existing validated Personal Tasks API, not a second store.
-   const detail={id:taskId,result:null};
-   window.dispatchEvent(new CustomEvent('seyveo:home-task-complete',{detail}));
-   if(!detail.result?.ok){
-    explain(field,detail.result?.message||'Не удалось завершить дело.',execute);
+   // Opening an ongoing plan or task is NOT evidence of completion.
+   // Only the owner's completion action in Tasks may finish a real item.
+   if(!taskId){
+    explain(field,'Не удалось найти сохранённое поручение.',execute);
     return;
    }
-   scene.classList.add('lm-scene--changing');
-   execute.disabled=true;
-   later(()=>{
-    if(mode==='task')rest(); // A following due task now takes its normal turn.
-   },reduced()?0:430);
+   window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:taskId}}));
    return;
   }
   finishPreviewItem();
  },'main');
  open.setAttribute('aria-label','Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
- execute.setAttribute('aria-label','Исполнить: '+shown.title);
+ execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  controls.append(open,execute);
  main.append(hero,controls);
  const secondary=create('div','lm-secondary');
