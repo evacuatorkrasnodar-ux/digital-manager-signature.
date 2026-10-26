@@ -140,11 +140,20 @@ function syncResume(){
  }
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing}}));
 }
+function syncQueueToggle(){
+ const button=$('navManage');
+ if(button&&location.hash==='#sayvi-music'){
+  const opened=queueOpen&&!collection.hidden;
+  button.setAttribute('aria-expanded',String(opened));
+  button.setAttribute('aria-label',opened?'Свернуть треки':'Открыть треки');
+ }
+}
 function hidePanels(){
  queueOpen=false;
  collection.hidden=true;
  if(sourcesPanel)sourcesPanel.hidden=true;
  if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
+ syncQueueToggle();
 }
 function showQueue(){
  if(!tracks.length){
@@ -157,8 +166,16 @@ function showQueue(){
  queueOpen=true;
  collectionRender();
  collection.scrollTop=0;
+ syncQueueToggle();
  collection.querySelector('.sv-music-panel-close')?.focus({preventScroll:true});
  return true;
+}
+function toggleQueue(){
+ if(queueOpen&&!collection.hidden){
+  hidePanels();
+  return false;
+ }
+ return showQueue();
 }
 function toggleSources(force){
  if(!sourcesPanel)return;
@@ -376,6 +393,7 @@ function syncMusicRoute(){
  const inside=location.hash==='#sayvi-music';
  document.documentElement.classList.toggle('sv-music-screen',inside);
  if(!inside)hidePanels();
+ else syncQueueToggle();
  syncResume();
 }
 window.addEventListener('hashchange',syncMusicRoute);
@@ -419,7 +437,7 @@ $('sayviMusicFromComposer')?.addEventListener('click',()=>{
 previous.disabled=true;next.disabled=true;seek.disabled=true;
 updatePlay();updateTime();collectionRender();syncMusicRoute();
 window.SEYVEO_MUSIC=Object.freeze({
- understand,open,minimize:minimizeMusic,openQueue:showQueue,closePanels:hidePanels,
+ understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   source:'local-file',connectedServices:0
