@@ -12,9 +12,11 @@
 html.seyveo-conversation:not([data-theme=light]) body{
  overflow:hidden!important;overscroll-behavior:none;
  background:
-  radial-gradient(ellipse 115vw 510px at 50% 26%,
-   rgba(219,224,233,.068) 0%,rgba(161,170,182,.032) 45%,transparent 88%),
-  linear-gradient(180deg,#1d2025 0%,#1b1e23 55%,#191c21 100%);
+  radial-gradient(ellipse 108vw 475px at 50% 232px,
+   rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
+  radial-gradient(ellipse 116vw 470px at 46% 615px,
+   rgba(118,119,128,.027) 0%,transparent 78%),
+  linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
  background-repeat:no-repeat;
 }
 html.seyveo-conversation[data-theme=light] body{
