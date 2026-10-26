@@ -1272,3 +1272,69 @@ html.sv-space-active:root[data-theme=light]:has(#lifePage:not([hidden])) body{
 html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button:not(:last-child)::after{
  background:rgba(27,40,62,.10);
 }
+
+/* SEYVEO Private Contacts · mobile-first Black Velvet.
+   Pure presentation: existing form, saved records, and call handlers untouched. */
+#seyveoContactsDialog.personal-contacts-dialog{
+ box-sizing:border-box;width:min(440px,calc(100vw - 20px));max-width:calc(100vw - 20px);
+ max-height:min(86dvh,780px);padding:21px 18px 25px;
+ border-radius:26px;border:1px solid rgba(235,239,247,.14);
+ background:#1d2025;color:var(--text);
+ box-shadow:0 20px 55px rgba(0,0,0,.24);
+ overflow-y:auto;overscroll-behavior:contain;
+}
+#seyveoContactsDialog #seyveoContactsTitle{
+ margin:3px 0 9px;font-size:24px;font-weight:470;letter-spacing:-.045em;
+}
+#seyveoContactsDialog .personal-contacts-intro{
+ margin:0 0 11px;max-width:38ch;font-size:12.5px;
+ line-height:1.55;color:var(--secondary);
+}
+#seyveoContactsDialog .personal-contacts-privacy{
+ margin:0 0 17px;padding:10px 0;
+ border:0;border-top:1px solid rgba(232,236,243,.11);
+ border-bottom:1px solid rgba(232,236,243,.11);
+ border-radius:0;background:transparent!important;
+ color:var(--secondary);font-size:11px;line-height:1.5;
+ box-shadow:none;
+}
+#seyveoContactsDialog .personal-contacts-privacy strong{color:var(--text);font-weight:550}
+#seyveoContactsDialog #seyveoContactForm{display:grid;gap:11px}
+#seyveoContactsDialog #seyveoContactForm label{
+ display:grid;gap:6px;margin:0;font-size:11.5px;color:var(--secondary);
+}
+#seyveoContactsDialog #seyveoContactForm input{
+ box-sizing:border-box;width:100%;min-height:45px;
+ padding:10px 13px;border-radius:14px;
+ border:1px solid rgba(231,235,243,.13);
+ background:rgba(236,240,246,.045);box-shadow:none;
+ font-size:16px;color:var(--text);
+}
+#seyveoContactsDialog .personal-contacts-form-actions{
+ display:flex;align-items:center;justify-content:flex-end;gap:8px;
+ margin:3px 0 5px;
+}
+#seyveoContactsDialog #seyveoContactSave,
+#seyveoContactsDialog #seyveoContactCancel{
+ width:auto!important;max-width:100%;min-width:0;
+ min-height:42px;padding:9px 16px;
+ border:1px solid rgba(233,237,245,.22)!important;
+ border-radius:22px!important;background:rgba(238,241,246,.07)!important;
+ color:var(--text)!important;box-shadow:none!important;
+ font-size:12.5px;font-weight:480;
+}
+#seyveoContactsDialog #seyveoContactsList{
+ margin-top:9px;padding:0;border:0;background:transparent;box-shadow:none;
+}
+#seyveoContactsDialog #seyveoContactsList > *{
+ max-width:100%;box-sizing:border-box;
+}
+@media(max-width:380px){
+ #seyveoContactsDialog.personal-contacts-dialog{padding:18px 13px 21px}
+}
+:root[data-theme=light] #seyveoContactsDialog.personal-contacts-dialog{
+ background:#f5f7f9;border-color:rgba(44,60,78,.14);color:var(--text);
+}
+:root[data-theme=light] #seyveoContactsDialog #seyveoContactForm input{
+ background:rgba(45,60,83,.035);border-color:rgba(45,60,83,.14);
+}
