@@ -88,7 +88,7 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=24/,'All screens use the current shared stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=25/,'All screens use the current shared stylesheet');
 assert.match(continuity,/#manageThemeScreen #manageThemeBack,\s*#seyveoCleanDetail > #seyveoCleanBack/,'Theme and Management details share nested Back controls');
 assert.match(html,/class="manage-theme-back-copy">Управление<\/span>/,'Theme Back icon retains an accessible fallback label');
 assert.match(continuity,/#managePage:has\(> #manageThemeScreen:not\(\[hidden\]\)\)/,'Theme is independently width-constrained');
