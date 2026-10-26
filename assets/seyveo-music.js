@@ -28,8 +28,14 @@ const providerText=$('sayviMusicProviderText');
 const sourcesPanel=$('sayviMusicSourcesPanel');
 const sourcesToggle=$('sayviMusicSourcesToggle');
 const sourcesClose=$('sayviMusicSourcesClose');
-const resume=$('sayviMusicResume');
-const resumeText=$('sayviMusicResumeText');
+const mini=$('sayviMusicMini');
+const miniOpen=$('sayviMusicMiniOpen');
+const miniPlay=$('sayviMusicMiniPlay');
+const miniTitle=$('sayviMusicMiniTitle');
+const miniState=$('sayviMusicMiniState');
+const miniIcon=$('sayviMusicMiniIcon');
+const minimize=$('sayviMusicMinimize');
+const queueAction=$('sayviMusicQueue');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
@@ -59,10 +65,6 @@ const providers=Object.freeze({
  vk:{
   name:'VK Музыка',
   copy:'Добавили в план SEYVEO Play. Подключение VK Музыки и право воспроизводить её каталог внутри Сэйви пока не подтверждены. Нужны официальные разрешения и поддерживаемый способ интеграции. Сейчас этот пункт показывает замысел, а не действующее подключение.'
- },
- youtube:{
-  name:'YouTube',
-  copy:'SEYVA PLAY: официальный YouTube-плеер уже доступен по ссылке, прямо внутри Сэйвы. Без извлечения звука из видео, автозапуска, скрытия YouTube или обещаний фона.'
  },
  local:{
   name:'Мои записи',
@@ -119,14 +121,22 @@ function updatePlay(){
  syncResume();
 }
 function syncResume(){
- if(!resume||!resumeText)return;
  const loaded=tracks.length>0&&index>=0;
  const playing=loaded&&!audio.paused&&!audio.ended;
- resume.hidden=!loaded;
- if(loaded){
-  const track=safeName(tracks[index]);
-  resumeText.textContent=(playing?'Слушаем · ':'Продолжить · ')+track;
-  resume.setAttribute('aria-label','Вернуться к музыке: '+track);
+ // One actual audio element. The mini is a small remote, not a second player.
+ if(mini){
+  mini.hidden=!loaded||location.hash==='#sayvi-music';
+  if(loaded){
+   const file=tracks[index],info=infoFor(file);
+   if(miniTitle)miniTitle.textContent=info.title||safeName(file);
+   if(miniState)miniState.textContent=playing?'Играет':'На паузе';
+   if(miniOpen)miniOpen.setAttribute('aria-label','Вернуться в SEYVEO SOUND: '+safeName(file));
+   if(miniPlay){
+    miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
+    miniPlay.setAttribute('aria-pressed',String(playing));
+   }
+   miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
+  }
  }
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing}}));
 }
@@ -186,7 +196,7 @@ function mediaSession(){
    navigator.mediaSession.metadata=new MediaMetadata({
     title:info.title,
     artist:info.artist||'Моя музыка · SEYVEO',
-    album:info.album||'SEYVEO Music',
+    album:info.album||'SEYVEO SOUND',
     // MP3 embedded cover when available; otherwise the approved Sayvi sphere.
     artwork:[coverObjectURL
      ?{src:coverObjectURL,type:info.artwork.type,sizes:''}
@@ -320,13 +330,7 @@ function providerChoose(name){
  const lead=document.createElement('strong');lead.textContent=p.name;
  const copy=document.createElement('p');copy.textContent=p.copy;
  providerText.append(lead,copy);
- if(name==='youtube'){
-  const openVideo=document.createElement('button');
-  openVideo.type='button';openVideo.className='sv-music-intent';
-  openVideo.textContent='Открыть SEYVA PLAY ↗';
-  openVideo.addEventListener('click',()=>window.SEYVEO_VIDEO?.open({from:'music'}));
-  providerText.append(openVideo);
- }
+
  options.querySelectorAll('[data-music-provider]').forEach(btn=>{
   btn.setAttribute('aria-pressed',String(btn.dataset.musicProvider===name));
  });
@@ -344,18 +348,32 @@ function open(){
  location.hash='#sayvi-music';
  return true;
 }
-resume?.addEventListener('click',open);
+function minimizeMusic(){
+ hidePanels();
+ // Switching screen never pauses the one audio element.
+ location.hash='#home';
+ return true;
+}
+minimize?.addEventListener('click',minimizeMusic);
+miniOpen?.addEventListener('click',open);
+miniPlay?.addEventListener('click',play);
+queueAction?.addEventListener('click',()=>{
+ if(!tracks.length){fileInput.click();return}
+ showQueue();
+});
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
-$('sayviMusicVideoOpen')?.addEventListener('click',()=>window.SEYVEO_VIDEO?.open({from:'music'}));
 document.addEventListener('keydown',e=>{
  if(e.key!=='Escape'||location.hash!=='#sayvi-music')return;
- if(!collection.hidden||!sourcesPanel?.hidden){hidePanels();sourcesToggle?.focus({preventScroll:true});}
+ if(!collection.hidden||!sourcesPanel?.hidden){
+  hidePanels();sourcesToggle?.focus({preventScroll:true});
+ }else minimizeMusic();
 });
 function syncMusicRoute(){
  const inside=location.hash==='#sayvi-music';
  document.documentElement.classList.toggle('sv-music-screen',inside);
  if(!inside)hidePanels();
+ syncResume();
 }
 window.addEventListener('hashchange',syncMusicRoute);
 importBtn.addEventListener('click',()=>fileInput.click());
@@ -398,7 +416,7 @@ $('sayviMusicFromComposer')?.addEventListener('click',()=>{
 previous.disabled=true;next.disabled=true;seek.disabled=true;
 updatePlay();updateTime();collectionRender();syncMusicRoute();
 window.SEYVEO_MUSIC=Object.freeze({
- understand,open,openQueue:showQueue,closePanels:hidePanels,
+ understand,open,minimize:minimizeMusic,openQueue:showQueue,closePanels:hidePanels,
  state:()=>Object.freeze({
   loaded:tracks.length,trackIndex:index,playing:!!tracks.length&&!audio.paused,
   source:'local-file',connectedServices:0
