@@ -94,11 +94,11 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=25/,'All screens use the current shared stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=26/,'All screens use the current shared stylesheet');
 assert.match(continuity,/#manageThemeScreen #manageThemeBack,\s*#seyveoCleanDetail > #seyveoCleanBack/,'Theme and Management details share nested Back controls');
 assert.match(html,/class="manage-theme-back-copy">Управление<\/span>/,'Theme Back icon retains an accessible fallback label');
 assert.match(continuity,/#managePage:has\(> #manageThemeScreen:not\(\[hidden\]\)\)/,'Theme is independently width-constrained');
-assert.match(continuity,/#manageThemeScreen:not\(\[hidden\]\)\{[\s\S]*?width:min\(100%,460px\)/,'Theme is a compact inset frame');
+assert.match(continuity,/#manageThemeScreen:not\(\[hidden\]\)\{[\s\S]*?width:min\(100%,405px\)/,'Theme is a compact inset frame');
 assert.match(continuity,/#manageThemeScreen \.manage-theme-check svg\{/,'Theme check is a clear stroke SVG');
 assert.match(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{/,'Management nested section also uses Back');
 assert.doesNotMatch(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{\s*display:none!important/,'Nested Management return must remain accessible');
@@ -125,9 +125,19 @@ assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVE
 assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
 assert.match(html,/assets\/business-conversation\.js\?v=6/,'Chat receives revised Connections-only actions');
 assert.match(html,/assets\/business-map\.js\?v=21/,'Retired opening behavior is cache refreshed');
-assert.match(html,/assets\/connection-coach\.js\?v=12/,'Resource editing uses latest existing Connections');
+assert.match(html,/assets\/connection-coach\.js\?v=13/,'Resource editing uses latest existing Connections');
 /* One visually navigable catalog, one original source of truth. */
 const coachHtml=html.slice(html.indexOf('id="connectionCoachKnown"'),html.indexOf('</section>',html.indexOf('id="connectionCoachKnown"')));
+const networkJs=read('assets/network-care.js');
+const networkCss=read('assets/network-care.css');
+assert.match(html,/assets\/network-care\.js\?v=3/,'Network renders only a real local preference');
+assert.match(html,/assets\/network-care\.css\?v=2/,'Network compact styling is deployed');
+assert.match(html,/id="seyveoNetworkMode" aria-label="Предлагать помощь с доступом"/,'Network retains one explicit owner preference');
+assert.doesNotMatch(html,/id="seyveoNetworkDemo"/,'Mock video/VPN action was removed');
+assert.doesNotMatch(html,/id="seyveoNetworkCheck"/,'Pointless manual network check was removed');
+assert.doesNotMatch(networkJs,/\.addEventListener\('click'/,'Network has no mock action buttons');
+assert.match(networkJs,/navigator\.onLine/,'Network reads only OS connectivity signal');
+assert.match(networkCss,/#seyveoNetworkPage \.sv-network-status-card\{/,'Network uses a single compact status');
 const coachJs=read('assets/connection-coach.js');
 const coachCss=read('assets/connection-coach.css');
 assert.match(coachHtml,/id="connectionCoachKnownList" class="sv-connect-grid"/,'Visible icon catalog replaces the old list');
@@ -139,6 +149,10 @@ assert.match(coachJs,/data-resource-form/,'Editor exists only for a selected ser
 assert.match(coachJs,/saveResourceDetail\?\.\(type,input\?\.value\)/,'Service tiles use original resource storage');
 assert.match(coachJs,/removeResourceDetail\?\.\(type,value\)/,'Owner can remove an individual service');
 assert.match(coachCss,/#manageConnectionsDialog \.sv-connect-grid\{/,'Responsive two-column Black Velvet catalog');
+assert.match(coachCss,/min-height:94px/,'Service icons use compact tiles');
+assert.match(coachJs,/function visibleSteps\(\)/,'On-screen suggestions are three short steps');
+assert.match(html,/class="connection-coach-mode-fold"/,'Advanced owner/specialist mode stays folded');
+assert.match(html,/id="connectionCoachRelevance" hidden/,'Duplicate technical guidance is not shown by default');
 assert.match(html,/id="seyveoCompanyPrivateForm"/,'Private business notes are available from Company Passport');
 assert.match(html,/id="seyveoCompanyPrivateAbout"/,'Existing business description is editable privately');
 assert.match(html,/id="seyveoCompanyPrivateGoal"/,'Existing goal is editable privately');
