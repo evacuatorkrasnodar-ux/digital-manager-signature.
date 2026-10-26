@@ -248,11 +248,41 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
 #sayviAnswerPage > #sayviAnswerBack,
 #sayviSurfacePage > #sayviSurfaceBack,
 #lifePage #lifeBack,
-#manageThemeScreen #manageThemeBack,
 #seyveoCleanDetail > #seyveoCleanBack{
   display:none!important;
 }
-#manageThemeScreen .manage-theme-head{margin-top:0}
+/* Theme is a nested Management scene: it needs a real return control.
+   Unlike top-level pages, the dock alone is not an obvious way back. */
+#manageThemeScreen .manage-theme-head{
+ display:flex;align-items:center;gap:13px;margin-top:0;
+}
+#manageThemeScreen .manage-theme-head h2{
+ margin:0;min-width:0;font-size:30px;font-weight:475;line-height:1.18;
+ letter-spacing:-.044em;
+}
+#manageThemeScreen #manageThemeBack{
+ display:inline-grid;place-items:center;flex:0 0 44px;
+ width:44px;min-width:44px;height:44px;min-height:44px;
+ margin:0;padding:0;border:1px solid var(--sv-q-outline,var(--soft-line));
+ border-radius:50%;background:var(--sv-q-surface,transparent);
+ color:var(--text);box-shadow:none;
+}
+#manageThemeScreen #manageThemeBack svg{display:block;width:18px;height:18px}
+#manageThemeScreen #manageThemeBack .manage-theme-back-copy{display:none}
+/* Very tall, narrow desktop windows should balance content between the
+   upper sphere and the fixed dock, rather than leaving a bottom void. */
+@media(min-height:1100px){
+ #managePage:has(> #manageThemeScreen:not([hidden])){
+  display:flex;flex-direction:column;
+ }
+ #manageThemeScreen:not([hidden]){
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  min-width:0;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #manageThemeScreen #manageThemeBack{transition:none}
+}
 #seyveoCleanDetail .seyveo-clean-title{margin-top:1px}
 
 /* SEYVEO Living Continuity v2 · ONE canonical design layer
