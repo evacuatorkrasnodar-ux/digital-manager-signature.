@@ -405,6 +405,31 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   font-size:12px;
   font-weight:460;
 }
+/* Keep queue exit visible even while browsing 40 tracks. Preserve the original
+   frosted panel, row spacing and music layout. */
+#sayviMusicPage .sv-music-collection-header{
+ position:sticky;
+ top:-18px;
+ z-index:5;
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;
+ margin:-18px -19px 12px;
+ padding:13px 19px 8px;
+ background:linear-gradient(160deg,rgba(48,51,59,.99),rgba(37,40,46,.99));
+ border-radius:21px 21px 0 0;
+}
+:root[data-theme=light] #sayviMusicPage .sv-music-collection-header{
+ background:linear-gradient(160deg,rgba(247,249,252,.99),rgba(236,240,247,.99));
+}
+#sayviMusicPage .sv-music-collection-header .sv-music-collection-label{
+ margin:0;padding:0;min-width:0;flex:1 1 auto;
+}
+#sayviMusicPage .sv-music-collection-header .sv-music-panel-close{
+ display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;
+ margin:0;padding:9px 2px 9px 12px;
+ min-height:44px;color:var(--text);
+ font-size:13px;font-weight:420;
+}
 #sayviMusicPage .sv-music-collection-label{padding-right:65px}
 #sayviMusicPage .sv-music-providers .sv-music-note{
   font-size:10px;
