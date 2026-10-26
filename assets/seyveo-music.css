@@ -2,7 +2,11 @@
  * No fake cover art, grey cards, imported icons or permanent visualizers.
  * Artwork is a pure-CSS record sculpture; rotation only while music plays.
  */
-#sayviMusicPage[hidden]{display:none!important}
+/* Do not let the stronger portrait/desktop display:flex|grid!important rules
+   resurrect the hidden player behind a conversation after pushState Home. */
+#sayviMusicPage[hidden],
+html.sv-music-screen #sayviMusicPage[hidden],
+html.seyveo-conversation #sayviMusicPage{display:none!important}
 #sayviMusicPage{
  flex:1;display:flex;flex-direction:column;min-width:0;
  padding:3px 4px max(28px, env(safe-area-inset-bottom, 0px));
