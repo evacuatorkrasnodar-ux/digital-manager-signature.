@@ -138,6 +138,24 @@ assert.doesNotMatch(html,/id="seyveoNetworkCheck"/,'Pointless manual network che
 assert.doesNotMatch(networkJs,/\.addEventListener\('click'/,'Network has no mock action buttons');
 assert.match(networkJs,/navigator\.onLine/,'Network reads only OS connectivity signal');
 assert.match(networkCss,/#seyveoNetworkPage \.sv-network-status-card\{/,'Network uses a single compact status');
+/* Owner-controlled Sayvi memory is a VIEW of existing local records,
+   not a new secret shadow store or an automatic AI memory promise. */
+const managementDataLogic=read('assets/management.js');
+const dataSheetCss=read('assets/management-explain-cards.css');
+assert.match(html,/id="manageDataTitle">Данные и резервные копии/,'Data section has a clear owner-facing name');
+assert.match(html,/id="manageMemoryFacts"/,'Owner can inspect confirmed business knowledge');
+assert.match(html,/class="sv-memory-inventory"/,'Technical storage list is folded by default');
+assert.match(html,/id="manageExportData"/,'Original backup export remains available');
+assert.match(html,/id="manageForgetBusiness"/,'Owner can explicitly clear private business facts');
+assert.doesNotMatch(html,/id="manageDataClose"/,'No redundant second footer close button');
+assert.match(managementDataLogic,/function drawConfirmedMemory\(record\)/,'Memory review is derived from existing records');
+assert.match(managementDataLogic,/const business=record\.businessMap\|\|\{\},company=record\.companyPassport\|\|\{\}/,'Review never creates a duplicate fact store');
+assert.match(managementDataLogic,/savePrivateBusinessContext\?\.\('',''\)/,'Forget clears only existing private description and goal');
+assert.match(managementDataLogic,/window\.confirm\('Очистить описание и цель/,'Forget asks for confirmation');
+assert.match(managementDataLogic,/const blob=new Blob\(\[JSON\.stringify\(info,null,2\)\]/,'Owner export contains the original local records');
+assert.match(dataSheetCss,/#manageDataDialog \.sv-memory-fact\{/,'Readout follows compact Black Velvet style');
+assert.match(html,/assets\/management\.js\?v=42/,'Memory UI uses a refreshed management script');
+assert.match(html,/assets\/management-explain-cards\.css\?v=3/,'Data styling version is refreshed');
 const coachJs=read('assets/connection-coach.js');
 const coachCss=read('assets/connection-coach.css');
 assert.match(coachHtml,/id="connectionCoachKnownList" class="sv-connect-grid"/,'Visible icon catalog replaces the old list');
