@@ -31,8 +31,8 @@ function init(){
    icon:'<path d="M3.5 10.5 12 3.5l8.5 7V20h-6.5v-6h-4v6H3.5z"/>'},
   {id:'tasks',title:'Дела',description:'Открыть дела',
    icon:'<path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/>'},
-  {id:'world',title:'Мой мир',description:'Открыть Мой мир',
-   icon:'<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6M12 3.7c-4.5 4.5-4.5 12.1 0 16.6M12 3.7c4.5 4.5 4.5 12.1 0 16.6"/>'},
+  {id:'picture',title:'Картина',description:'Открыть Картину бизнеса',
+   icon:'<path d="M4.5 19.5V14M9.5 19.5V9.5M14.5 19.5v-6M19.5 19.5V5"/>'},
   {id:'manage',title:'Управление',description:'Открыть управление',
    icon:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>'}
  ];
@@ -42,8 +42,8 @@ function init(){
   const hash=location.hash;
   if(!hash||hash==='#home')return 'home';
   if(hash==='#tasks')return 'tasks';
-  if(hash==='#calendar'||hash==='#life')return 'world';
-  if(hash==='#manage'||hash==='#manage-theme'||hash==='#picture')return 'manage';
+  if(hash==='#picture')return 'picture';
+  if(hash==='#manage'||hash==='#manage-theme')return 'manage';
   return '';
  }
  function paint(){
@@ -69,7 +69,7 @@ function init(){
  function invoke(id){
   if(id==='home'){document.getElementById('navHome')?.click();return;}
   if(id==='tasks'){document.getElementById('navTasks')?.click();return;}
-  if(id==='world'){location.hash='life';return;}
+  if(id==='picture'){document.getElementById('navPicture')?.click();return;}
   if(id==='manage'){document.getElementById('navManage')?.click();}
  }
  buttons.forEach((button,index)=>{
