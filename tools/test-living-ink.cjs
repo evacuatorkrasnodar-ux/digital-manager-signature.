@@ -47,10 +47,16 @@ assert.match(companyLogic,/function setCompanyMode\(mode\)/,'Read and edit use t
 assert.match(companyLogic,/function discardCompanyEditing\(\)/,'Cancel returns to reader without losing saved records');
 assert.match(companyLogic,/dialog\.dataset\.svCompanyMode/,'Company state is explicit and isolated');
 assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-editor\[hidden\]/,'Collapsed editor remains genuinely hidden');
-assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-actions\[hidden\]/,'No unavailable share actions for an empty company');
+assert.match(companyLogic,/dialog\.querySelector\('\.sv-company-actions'\)\.hidden=false/,'Company actions stay discoverable even before details are saved');
+assert.match(companyLogic,/function canCreateCompanyQr\(card\)/,'QR requires company name and contact');
+assert.match(companyLogic,/\$\('seyveoCompanyQrOpen'\)\.disabled=!qrReady/,'QR is disabled until the saved contact is ready');
+assert.match(html,/id="seyveoCompanyQrHint" class="sv-company-qr-hint"/,'QR readiness is explained next to the actions');
+assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-qr-hint\[hidden\]/,'QR help disappears when a valid contact is saved');
+const companyQr=read('assets/company-qr.js');
+assert.match(companyQr,/if\(!canShare\(r\)\)/,'QR does not open an empty contact card');
 assert.match(companyUi,/#seyveoCompanyDialog > \.info-actions\{display:none!important\}/,'No duplicate footer close button');
-assert.match(html,/company-signature\.css\?v=3/,'Company Quiet Cinema view is deployed');
-assert.match(html,/passport-cards\.js\?v=30/,'Company reader/editor interactions are deployed');
+assert.match(html,/company-signature\.css\?v=4/,'Company Quiet Cinema view is deployed');
+assert.match(html,/passport-cards\.js\?v=31/,'Company reader/editor interactions are deployed');
 
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
