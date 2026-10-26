@@ -31,6 +31,16 @@
  min-height:44px;padding:0 13px;border-radius:22px;border:1px solid #ffffff24;
  background:#ffffff0c;color:#e5e8e8;font-size:12px;flex:none;
 }
+/* The subscription overview uses the same simple Done as the Studio
+   passport: quiet text, never a competing capsule. */
+.seyveo-subscription-v2 .seyveo-account-finish{
+ flex:none;min-height:44px;min-width:64px;
+ padding:0 4px;border:0;border-radius:0;
+ background:transparent;box-shadow:none;
+ color:#d9dfe5;font-size:13px;font-weight:470;line-height:1.2;
+}
+.seyveo-subscription-v2 .seyveo-account-finish:active{opacity:.68}
+
 .seyveo-account-demo-flag{
  display:flex;align-items:center;gap:9px;min-height:34px;
  border:1px solid #ffffff16;border-radius:12px;padding:6px 10px;
