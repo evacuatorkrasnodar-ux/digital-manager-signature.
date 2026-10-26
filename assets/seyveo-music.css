@@ -669,88 +669,76 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #seyveoCompanion{transition:none!important}
 }
 
-/* SEYVEO MUSIC · one stage: the left-aligned signature follows the record
-   down into the listening area. The sphere and music dock do not move. */
-@media (max-width:759px) and (min-height:900px) and (orientation:portrait){
+/* SEYVEO MUSIC · the original studio listening stage.
+   One title at the LEFT, directly above one large original vinyl.
+   The companion sphere and glass dock are fixed in their existing positions.
+   This replaces previous competing portrait margin overrides. */
+#sayviMusicPage>header.sv-music-head{
+ grid-template-columns:minmax(0,1fr);
+ grid-template-rows:auto auto;
+ align-items:start;
+ row-gap:0;
+}
+#sayviMusicPage>header.sv-music-head .sv-music-minimize{
+ grid-column:1;grid-row:1;
+ justify-self:start;align-self:start;
+ display:flex;align-items:center;gap:10px;
+ padding:0;min-height:40px;
+ color:var(--secondary);font-size:13px;font-weight:400;
+}
+#sayviMusicPage>header.sv-music-head .sv-music-minimize svg{
+ width:39px;height:39px;padding:11px;box-sizing:border-box;
+ border:1px solid var(--soft-line);border-radius:50%;
+ stroke-width:1.65;flex:none;
+}
+#sayviMusicPage>header.sv-music-head .sv-music-lockup{
+ grid-column:1;grid-row:2;
+ justify-self:start;align-self:start;
+ align-items:flex-start;text-align:left;
+}
+/* Portrait: use ONE calibrated rhythm instead of independent offsets for
+   the brand and the record. The original type is never re-centred. */
+@media(max-width:759px) and (orientation:portrait){
  html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(74vw,37dvh,355px);
+  --sv-music-vinyl-size:min(76vw,35dvh,380px);
+  padding-top:clamp(5px,1dvh,12px);
+ }
+ html.sv-music-screen #sayviMusicPage>header.sv-music-head{
+  margin:0;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-lockup{
+  margin-top:clamp(72px,10dvh,128px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-cover{
   width:var(--sv-music-vinyl-size);
   height:var(--sv-music-vinyl-size);
-  margin-top:clamp(46px,6dvh,65px);
-  margin-bottom:clamp(8px,1.3dvh,16px);
-
+  margin:clamp(30px,4dvh,52px) auto clamp(9px,1.2dvh,15px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-title{
-  margin-top:clamp(5px,1.2dvh,16px);
+  margin-top:clamp(5px,.8dvh,12px);
  }
  html.sv-music-screen #sayviMusicPage .sv-music-times{
-  margin-top:clamp(12px,2dvh,27px);
- }
- html.sv-music-screen #sayviMusicPage .sv-music-phrases{
-  margin-top:clamp(5px,1dvh,13px);
- }
- html.sv-music-screen #sayviMusicPage .sv-music-status{
-  margin-top:clamp(6px,1.1dvh,15px);
+  margin-top:clamp(10px,1.5dvh,20px);
  }
 }
-@media (max-width:759px) and (max-height:899px) and (orientation:portrait){
- /* On smaller iPhones, grow the gap gently with available height; on very
-    short displays it shrinks automatically so playback stays above the dock. */
- html.sv-music-screen #sayviMusicPage .sv-music-cover{
-  margin-top:clamp(25px,4.5dvh,45px);
- }
+/* iPhone X and smaller devices: everything is still visible above the dock. */
+@media(max-width:759px) and (max-height:899px) and (orientation:portrait){
+ html.sv-music-screen #sayviMusicPage{--sv-music-vinyl-size:min(75vw,32dvh,320px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-lockup{margin-top:clamp(54px,8dvh,80px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{margin-top:clamp(20px,3dvh,32px)}
 }
-
-/* Left signature + vinyl now descend as one visual composition.
-   Short-screen breakpoints protect the dock and keep all controls visible. */
-@media (max-width:759px) and (orientation:portrait){
- html.sv-music-screen #sayviMusicPage>header.sv-music-head{
-  margin-top:clamp(145px,16dvh,185px);
- }
- html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(74vw,37dvh,355px);
- }
+@media(max-width:759px) and (max-height:820px) and (orientation:portrait){
+ html.sv-music-screen #sayviMusicPage{--sv-music-vinyl-size:min(70vw,29dvh,250px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-lockup{margin-top:clamp(37px,6dvh,60px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{margin-top:clamp(16px,2.5dvh,24px)}
 }
-@media (max-width:759px) and (max-height:899px) and (orientation:portrait){
- html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(71vw,32dvh,305px);
- }
- html.sv-music-screen #sayviMusicPage>header.sv-music-head{
-  margin-top:clamp(100px,13dvh,135px);
- }
+@media(max-width:759px) and (max-height:760px) and (orientation:portrait){
+ html.sv-music-screen #sayviMusicPage{--sv-music-vinyl-size:min(65vw,27dvh,218px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-lockup{margin-top:clamp(16px,3dvh,25px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{margin-top:clamp(10px,2dvh,16px)}
 }
-@media (max-width:759px) and (max-height:820px) and (orientation:portrait){
- html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(65vw,28dvh,250px);
- }
- html.sv-music-screen #sayviMusicPage>header.sv-music-head{
-  margin-top:clamp(62px,9dvh,80px);
- }
- html.sv-music-screen #sayviMusicPage .sv-music-cover{
-  margin-top:clamp(20px,3.5dvh,36px);
- }
-}
-@media (max-width:759px) and (max-height:760px) and (orientation:portrait){
- html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(49vw,19.2dvh,153px);
- }
- html.sv-music-screen #sayviMusicPage>header.sv-music-head{
-  margin-top:clamp(24px,5dvh,39px);
- }
- html.sv-music-screen #sayviMusicPage .sv-music-cover{
-  margin-top:clamp(12px,3dvh,25px);
- }
-}
-@media (max-width:759px) and (max-height:580px) and (orientation:portrait){
- html.sv-music-screen #sayviMusicPage{
-  --sv-music-vinyl-size:min(36vw,14dvh,85px);
- }
- html.sv-music-screen #sayviMusicPage>header.sv-music-head{
-  margin-top:4px;
- }
- html.sv-music-screen #sayviMusicPage .sv-music-cover{
-  margin-top:4px;
- }
+@media(max-width:759px) and (max-height:580px) and (orientation:portrait){
+ html.sv-music-screen #sayviMusicPage{--sv-music-vinyl-size:min(45vw,18dvh,100px)}
+ html.sv-music-screen #sayviMusicPage .sv-music-lockup{margin-top:4px}
+ html.sv-music-screen #sayviMusicPage .sv-music-cover{margin-top:4px}
 }
