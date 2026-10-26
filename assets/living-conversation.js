@@ -101,7 +101,7 @@ if(compact){
  plus.addEventListener('click',()=>{
   if(root.classList.contains('seyveo-conversation'))photos.click();
  });
- compact.insertBefore(plus,compact.firstChild);
+ compact.insertBefore(plus,$('seyveoConversationHistory').nextSibling);
  document.body.append(photos);
 }
 /* One reversible expand control for the existing chat textarea. */
