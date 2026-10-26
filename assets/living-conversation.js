@@ -81,48 +81,28 @@ if(compact){
  compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),mic);
 }
 
-/* Chat '+' invokes existing SEYVEO destinations; never pretends to upload files. */
+/* Leftmost photo picker: no extra app destinations or fake attachment sending. */
 if(compact){
  const plus=document.createElement('button');
  plus.type='button';plus.id='seyveoChatPlus';
- plus.setAttribute('aria-label','Дополнительные действия');
- plus.setAttribute('aria-expanded','false');
+ plus.setAttribute('aria-label','Выбрать фотографию');
+ plus.title='Выбрать фотографию';
  plus.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
- const menu=document.createElement('div');
- menu.id='seyveoChatPlusMenu';menu.hidden=true;
- menu.setAttribute('role','menu');
- const actions=[
-  ['История бесед','seyveoConversationHistory'],
-  ['Мои записи','viewNotes'],
-  ['Музыка','sayviMusicFromComposer']
- ];
- for(const [label,id] of actions){
-  const btn=document.createElement('button');
-  btn.type='button';btn.textContent=label;btn.setAttribute('role','menuitem');
-  btn.addEventListener('click',()=>{
-   closeMenu();
-   $(id)?.click();
-  });
-  menu.append(btn);
- }
- document.body.append(menu);
- function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
+ const photos=document.createElement('input');
+ photos.type='file';photos.id='seyveoChatPhotoFile';
+ photos.accept='image/*';photos.hidden=true;
+ photos.setAttribute('aria-label','Выбрать фотографию из устройства');
+ photos.addEventListener('change',()=>{
+  if(photos.files?.length){
+   window.alert('Фотография выбрана. Отправка изображений Сэйви пока не подключена.');
+  }
+  photos.value='';
+ });
  plus.addEventListener('click',()=>{
-  if(!root.classList.contains('seyveo-conversation'))return;
-  const show=menu.hidden;
-  if(!show){closeMenu();return}
-  const rect=plus.getBoundingClientRect();
-  menu.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-190))+'px';
-  menu.style.bottom=Math.max(0,window.innerHeight-rect.top+6)+'px';
-  menu.hidden=false;plus.setAttribute('aria-expanded','true');
+  if(root.classList.contains('seyveo-conversation'))photos.click();
  });
- document.addEventListener('pointerdown',e=>{
-  if(!menu.hidden&&!menu.contains(e.target)&&!plus.contains(e.target))closeMenu();
- });
- document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
- new MutationObserver(()=>{if(!root.classList.contains('seyveo-conversation'))closeMenu()})
-  .observe(root,{attributes:true,attributeFilter:['class']});
- compact.insertBefore(plus,compact.querySelector('#seyveoConversationMic'));
+ compact.insertBefore(plus,compact.firstChild);
+ document.body.append(photos);
 }
 /* One reversible expand control for the existing chat textarea. */
 if(compact){
