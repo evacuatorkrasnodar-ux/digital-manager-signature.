@@ -247,41 +247,113 @@ html[data-sv-space="sayvi"]:has(#sayviMusicPage:not([hidden])) #seyveoCompanion 
 #sayviMusicPage > #sayviMusicBack,
 #sayviAnswerPage > #sayviAnswerBack,
 #sayviSurfacePage > #sayviSurfaceBack,
-#lifePage #lifeBack,
-#seyveoCleanDetail > #seyveoCleanBack{
+#lifePage #lifeBack{
   display:none!important;
 }
-/* Theme is a nested Management scene: it needs a real return control.
-   Unlike top-level pages, the dock alone is not an obvious way back. */
+/* Theme is a nested Management scene, not a second full-width page.
+   Compact Black Velvet frame; all elements stay within the iPhone safe width.
+   No duplicated sphere, dock or image. */
+#managePage:has(> #manageThemeScreen:not([hidden])){
+ min-width:0;width:100%;max-width:100%;
+}
+#manageThemeScreen:not([hidden]){
+ box-sizing:border-box;
+ display:block;width:min(100%,460px);max-width:calc(100vw - 30px);
+ min-width:0;height:auto;min-height:0;
+ margin:10px auto 20px;padding:20px 19px 17px;
+ border:1px solid var(--sv-q-outline,var(--soft-line));
+ border-radius:24px;
+ background:var(--sv-q-surface,rgba(245,248,251,.035));
+ box-shadow:none;
+ overflow:visible;
+}
 #manageThemeScreen .manage-theme-head{
- display:flex;align-items:center;gap:13px;margin-top:0;
+ display:flex;align-items:center;min-width:0;gap:12px;
+ margin:0 0 8px;
 }
 #manageThemeScreen .manage-theme-head h2{
- margin:0;min-width:0;font-size:30px;font-weight:475;line-height:1.18;
- letter-spacing:-.044em;
+ margin:0;min-width:0;font-size:24px;font-weight:470;
+ line-height:1.2;letter-spacing:-.04em;
 }
-#manageThemeScreen #manageThemeBack{
- display:inline-grid;place-items:center;flex:0 0 44px;
- width:44px;min-width:44px;height:44px;min-height:44px;
- margin:0;padding:0;border:1px solid var(--sv-q-outline,var(--soft-line));
- border-radius:50%;background:var(--sv-q-surface,transparent);
+#manageThemeScreen #manageThemeBack,
+#seyveoCleanDetail > #seyveoCleanBack .seyveo-back-circle{
+ box-sizing:border-box;display:inline-grid;place-items:center;flex:0 0 44px;
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ margin:0;padding:0;
+ border:1px solid var(--sv-q-outline,var(--soft-line));
+ border-radius:50%;background:transparent;
  color:var(--text);box-shadow:none;
 }
-#manageThemeScreen #manageThemeBack svg{display:block;width:18px;height:18px}
+#manageThemeScreen #manageThemeBack svg,
+#seyveoCleanDetail > #seyveoCleanBack .seyveo-back-circle svg{
+ display:block;width:17px;height:17px;
+}
 #manageThemeScreen #manageThemeBack .manage-theme-back-copy{display:none}
-/* Very tall, narrow desktop windows should balance content between the
-   upper sphere and the fixed dock, rather than leaving a bottom void. */
-@media(min-height:1100px){
- #managePage:has(> #manageThemeScreen:not([hidden])){
-  display:flex;flex-direction:column;
- }
- #manageThemeScreen:not([hidden]){
-  flex:1;display:flex;flex-direction:column;justify-content:center;
-  min-width:0;
- }
+#manageThemeScreen .manage-theme-intro{
+ margin:0 0 14px;font-size:12.5px;line-height:1.55;
+}
+#manageThemeScreen .manage-theme-list{
+ box-sizing:border-box;width:100%;min-width:0;
+ margin:0;padding:0;border:0;border-radius:0;
+ background:transparent;box-shadow:none;overflow:hidden;
+}
+#manageThemeScreen .manage-theme-choice{
+ box-sizing:border-box;display:flex;align-items:center;
+ width:100%;min-width:0;min-height:67px;gap:12px;
+ padding:10px 2px;
+ border:0;border-radius:0;background:transparent;
+}
+#manageThemeScreen .manage-theme-choice:not(:last-child)::after{
+ left:0;right:0;bottom:0;
+}
+#manageThemeScreen .manage-theme-swatch{
+ box-sizing:border-box;flex:0 0 32px;width:32px;height:32px;min-width:32px;
+ border-radius:50%;
+}
+#manageThemeScreen .manage-theme-choice .manage-text{
+ box-sizing:border-box;min-width:0;flex:1;gap:2px;
+}
+#manageThemeScreen .manage-theme-choice .manage-text strong{
+ font-size:13px;font-weight:505;line-height:1.35;
+}
+#manageThemeScreen .manage-theme-choice .manage-text small{
+ font-size:11px;line-height:1.45;overflow-wrap:anywhere;
+}
+#manageThemeScreen .manage-theme-check{
+ box-sizing:border-box;display:grid;place-items:center;flex:0 0 22px;
+ width:22px;height:22px;min-width:22px;margin-left:auto;
+ border-radius:50%;border:1.4px solid var(--secondary);
+ background:transparent;color:transparent;font-size:0;
+}
+#manageThemeScreen .manage-theme-check svg{
+ display:block;width:14px;height:14px;
+ fill:none;stroke:currentColor;stroke-width:2;
+ stroke-linecap:round;stroke-linejoin:round;
+ opacity:0;
+}
+#manageThemeScreen .manage-theme-choice[aria-pressed=true] .manage-theme-check{
+ color:var(--bg);background:var(--text);border-color:var(--text);
+}
+#manageThemeScreen .manage-theme-choice[aria-pressed=true] .manage-theme-check svg{opacity:1}
+#manageThemeScreen .manage-theme-check::after{content:none!important;display:none!important}
+#manageThemeScreen .manage-theme-note{
+ margin:14px 1px 0;font-size:11px;line-height:1.5;
+}
+#seyveoCleanDetail > #seyveoCleanBack{
+ display:inline-flex!important;align-items:center;gap:10px;
+ padding:0;margin:0 0 16px;
+ background:transparent;border:0;box-shadow:none;
+ font-size:12px;color:var(--secondary);opacity:1;
+}
+html[data-theme=light] #manageThemeScreen:not([hidden]){
+ background:rgba(255,255,255,.73);
+}
+@media(max-width:375px){
+ #manageThemeScreen:not([hidden]){padding:17px 14px 14px}
+ #manageThemeScreen .manage-theme-choice{gap:9px}
 }
 @media(prefers-reduced-motion:reduce){
- #manageThemeScreen #manageThemeBack{transition:none}
+ #manageThemeScreen :is(.manage-theme-choice,.manage-theme-check){transition:none}
 }
 #seyveoCleanDetail .seyveo-clean-title{margin-top:1px}
 
