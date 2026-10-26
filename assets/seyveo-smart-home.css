@@ -59,3 +59,22 @@
 #calendarSpaceDialog #seyveoSmartHomeWorld .svh-device[aria-pressed=true]{border-color:var(--line);background:color-mix(in srgb,var(--text) 4%,transparent)}
 #calendarSpaceDialog .world-home-section button:focus-visible,
 #calendarSpaceDialog .world-home-section summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+/* Dedicated My World smart-home demo: one store, no new home-screen overlay. */
+#seyveoSmartHomeDialog{
+ box-sizing:border-box;width:min(520px,calc(100vw - 22px));
+ max-height:min(90dvh,760px);overflow-y:auto;
+ padding:23px 19px 21px;
+ border:1px solid var(--line);border-radius:24px;
+ background:var(--bg);color:var(--text);
+ box-shadow:0 20px 75px rgba(0,0,0,.38);
+}
+#seyveoSmartHomeDialog::backdrop{background:rgba(0,0,0,.60)}
+#seyveoSmartHomeDialogTitle{
+ margin:1px 72px 15px 0;font-size:22px;font-weight:490;letter-spacing:-.035em;
+}
+#seyveoSmartHomeStandalone{
+ margin:0;padding:3px 0 0;border:0;border-radius:0;background:transparent;
+}
+#seyveoSmartHomeStandalone .svh-top h3{font-size:17px}
+#seyveoSmartHomeStandalone .svh-tiles{gap:7px}
