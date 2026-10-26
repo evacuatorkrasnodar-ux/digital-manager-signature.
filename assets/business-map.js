@@ -464,40 +464,15 @@ function submit(evt){
 
 }
 }
+/* The Business Map questionnaire is retired from navigation.
+ * Its local record store stays available to Sayvi and Connections.
+ * Requests to edit service links go to the existing Connections panel. */
 function start(options={}){
- if(dialog.open||document.querySelector('dialog[open]'))return false;
- preview=options.preview===true;firstLaunch=options.firstLaunch===true;
- origin=options.trigger||null;
- const focus=ownerFocus(),stored=preview?null:load();
- const inferred=focus==='start'?'start':'existing';
- data=stored?clone(stored):fresh(inferred);
- if(preview)data=fresh(inferred);
- try{dialog.showModal()}catch{return false}
- // A business link supplied in conversation is only a DRAFT.
- // The owner must still press "Добавить сведения" before local storage writes.
- const aboutDraft=typeof options.aboutPrefill==='string'?options.aboutPrefill.trim():'';
- const aboutValid=aboutDraft.length>=8&&aboutDraft.length<=1000&&
-  !/(?:парол[ья]|password|access[_ -]?token|api[_ -]?key|client[_ -]?secret|bearer\\s|otp|код\\s+доступа)/i.test(aboutDraft);
  const draft=options.sourcePrefill;
- const valid=typeof draft?.url==='string'&&typeof draft?.type==='string'&&
-  byType(draft.type)&&STOREFRONT_TYPES.has(draft.type)&&publicPageUrl(draft.url)===draft.url&&
-  draft.url.length<=180;
- if(valid){
-  finish();return openConnections(draft.type,draft.url);
- }else if(aboutValid){
-  markStep('about');field.value=aboutDraft;
- }else if(!preview&&options.guideStep==='source'&&byType(options.guideType)){
-  finish();return openConnections(options.guideType);
- }else if(!preview&&['about','goal','industry','workflow'].includes(options.guideStep)){
-  const step=options.guideStep==='industry'?'sector':options.guideStep;
-  if(step==='sector')sectorReturn='map';
-  markStep(step);
- }else{
-  // The first welcome already captures whether this is a new or established business.
-  // Saved maps reopen at their overview; new maps begin directly with optional details.
-  markStep(stored&&!options.fromStart?'map':'about');
- }
- return true;
+ const type=draft?.type||options.guideType||'';
+ if((draft?.url||options.guideStep==='source')&&byType(type))
+  return openConnections(type,draft?.url||'');
+ return false;
 }
 function finish(){
  if(!dialog.open)return;
