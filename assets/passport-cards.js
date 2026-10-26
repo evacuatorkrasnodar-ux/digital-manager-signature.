@@ -74,6 +74,25 @@ function toggleType(){
    for(const inp of w.querySelectorAll('input'))inp.disabled=!visible;
  });
 }
+let companyFormSnapshot='';
+function companyFormSignature(){
+ const values={type:$('seyveoCompanyType').value};
+ for(const [key] of PROPS){
+  const field=form.elements.namedItem(key);
+  values[key]=field&&!field.disabled?String(field.value):'';
+ }
+ return JSON.stringify(values);
+}
+function hasUnsavedCompanyChanges(){
+ return dialog.open&&companyFormSignature()!==companyFormSnapshot;
+}
+function confirmCompanyExit(event){
+ if(!hasUnsavedCompanyChanges())return;
+ if(window.confirm('Есть несохранённые реквизиты. Закрыть карточку без сохранения?'))return;
+ event.preventDefault();
+ event.stopPropagation();
+ event.stopImmediatePropagation();
+}
 function openCompany(){
  const record=load();
  for(const [key] of PROPS){const input=form.elements.namedItem(key);if(input)input.value=record[key]||''}
@@ -81,7 +100,17 @@ function openCompany(){
  const chosen=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
  if(chosen)chosen.checked=true;
  toggleType();drawRows();status(dialog,'');
+ companyFormSnapshot=companyFormSignature();
  if(!dialog.open)dialog.showModal();
+ // Modal scroll positions survive reopens on Safari. Always show the title,
+ // summary and Done first; focusing the exit must not jump the form.
+ dialog.scrollTop=0;
+ requestAnimationFrame(()=>{
+  if(!dialog.open)return;
+  dialog.scrollTop=0;
+  dialog.querySelector('button.sv-nav-done,button.seyveo-dialog-close')
+   ?.focus({preventScroll:true});
+ });
 }
 function openStudio(){
  status(studio,'');
@@ -108,6 +137,7 @@ function save(event){
  if(error){status(dialog,error);return}
  if(!store(card)){status(dialog,'Не удалось сохранить на устройстве. Проверьте память браузера.');return}
  fillPreview();drawRows();status(dialog,'Данные сохранены на этом устройстве. Проверьте их перед отправкой.');
+ companyFormSnapshot=companyFormSignature();
  window.dispatchEvent(new CustomEvent('seyveo:company-changed'));
 }
 function plain(kind){
@@ -220,6 +250,12 @@ form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.ad
 }));
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('cancel',confirmCompanyExit);
+dialog.addEventListener('click',event=>{
+ // Intercept the existing close/backdrop handlers before they discard input.
+ const button=event.target.closest?.('button.seyveo-dialog-close');
+ if(button||event.target===dialog)confirmCompanyExit(event);
+},true);
 /* Company contact links follow interface language, not demo company data. */
 const studioSite=()=>String(document.documentElement.lang||navigator.language||'ru').toLowerCase().startsWith('ru')?'https://seyveo.ru/':'https://seyveo.com/';
 function updateStudioLinks(){
