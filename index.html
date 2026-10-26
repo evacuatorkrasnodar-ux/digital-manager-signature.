@@ -269,9 +269,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .manage-theme-choice:not(:last-child)::after{content:"";position:absolute;bottom:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
 .manage-theme-choice .manage-text strong{font-size:15px;font-weight:570}
 .manage-theme-swatch{width:36px;height:36px;flex:none;box-sizing:border-box;border-radius:50%;overflow:hidden;border:1px solid rgba(173,181,194,.24);box-shadow:none;background-clip:padding-box}
-/* Auto means "follow the device": quiet moon/sun line art, no artificial split or blob. */
-.manage-theme-swatch-auto{display:grid;place-items:center;background:#1b222c;border-color:rgba(193,205,225,.24)}
-.manage-theme-swatch-auto svg{display:block;width:21px;height:21px;fill:none;stroke:#e7ecf3;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+/* Auto: a simple clean 50/50 charcoal and porcelain circle, without a ring. */
+.manage-theme-swatch-auto{background:linear-gradient(90deg,#151a22 0%,#151a22 50%,#f0f2f5 50%,#f0f2f5 100%);box-shadow:none}
+#manageThemeScreen .manage-theme-choice .manage-theme-swatch.manage-theme-swatch-auto{border:0;box-shadow:none}
 .manage-theme-swatch-dark{background:linear-gradient(145deg,#2b333d 0%,#19202a 52%,#111720 100%)}
 .manage-theme-swatch-light{background:linear-gradient(145deg,#ffffff 0%,#f1f3f6 55%,#e3e8ee 100%)}
 .manage-theme-check{position:relative;display:grid;place-items:center;width:23px;height:23px;flex:none;border-radius:50%;color:transparent;font-size:0;border:1.4px solid var(--secondary)}
@@ -773,7 +773,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span class="manage-theme-back-copy">Управление</span></button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
 <p class="manage-theme-intro">Выберите оформление приложения.</p>
 <div class="manage-theme-list" role="group" aria-label="Тема приложения">
-<button type="button" data-theme-choice="auto" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-auto" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M14.6 7a6.9 6.9 0 1 0 2.7 11.4A7 7 0 0 1 14.6 7Z"/><circle cx="18" cy="6" r="2"/><path d="M18 1.7v1M18 9.3v1M13.7 6h1M21.3 6h1"/></svg></span><span class="manage-text"><strong>Авто</strong><small>Как на телефоне.</small></span><span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="m4.4 10.2 3.6 3.6 7.6-7.6"/></svg></span></button>
+<button type="button" data-theme-choice="auto" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-auto" aria-hidden="true"></span><span class="manage-text"><strong>Авто</strong><small>Как на телефоне.</small></span><span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="m4.4 10.2 3.6 3.6 7.6-7.6"/></svg></span></button>
 <button type="button" data-theme-choice="dark" class="manage-theme-choice" aria-pressed="true"><span class="manage-theme-swatch manage-theme-swatch-dark" aria-hidden="true"></span><span class="manage-text"><strong>Тёмная</strong><small>Black Velvet.</small></span><span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="m4.4 10.2 3.6 3.6 7.6-7.6"/></svg></span></button>
 <button type="button" data-theme-choice="light" class="manage-theme-choice" aria-pressed="false"><span class="manage-theme-swatch manage-theme-swatch-light" aria-hidden="true"></span><span class="manage-text"><strong>Светлая</strong><small>White Velvet.</small></span><span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path d="m4.4 10.2 3.6 3.6 7.6-7.6"/></svg></span></button>
 </div>
