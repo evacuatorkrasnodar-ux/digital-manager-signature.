@@ -1405,3 +1405,105 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="mail"] .sv-deep-footer{
  border-top-color:rgba(38,54,74,.16)!important;
  border-bottom-color:rgba(38,54,74,.12)!important;
 }
+
+/* SEYVEO LIFE · one unified mobile design language for My World and its tools.
+   Existing graphite palette preserved. No route, data or action changes. */
+html.sv-space-active #lifePage .life-heading{
+ margin:0 0 21px!important;padding:7px 2px 0!important;
+}
+html.sv-space-active #lifePage .life-eyebrow{
+ font-size:9px!important;letter-spacing:.18em!important;font-weight:460!important;
+}
+html.sv-space-active #lifePage .life-heading h1{
+ margin:9px 0 8px!important;font-size:clamp(30px,8vw,37px)!important;
+ font-weight:420!important;line-height:1.1!important;letter-spacing:-.052em!important;
+}
+html.sv-space-active #lifePage .life-description{
+ max-width:37ch;font-size:12.5px!important;line-height:1.55!important;
+ color:var(--secondary);
+}
+html.sv-space-active #lifePage .calendar-spaces-head{
+ margin:0 2px 7px!important;padding:0!important;
+}
+html.sv-space-active #lifePage .calendar-spaces-head h2{
+ font-size:11px!important;font-weight:470!important;letter-spacing:.015em!important;
+ color:var(--secondary);
+}
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:10px!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ box-sizing:border-box;min-height:126px!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:flex-end!important;gap:5px!important;
+ padding:15px!important;margin:0!important;
+ border:1px solid rgba(233,237,244,.105)!important;
+ border-radius:23px!important;background:rgba(234,239,247,.036)!important;
+ box-shadow:none!important;text-align:left!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
+ flex:none;align-self:flex-start!important;justify-self:auto!important;
+ width:30px!important;height:30px!important;margin:0 auto 9px 0!important;
+ opacity:.86!important;stroke-width:1.35!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
+ font-size:15px!important;font-weight:480!important;line-height:1.2!important;
+ letter-spacing:-.028em!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
+ font-size:10.5px!important;line-height:1.35!important;opacity:.85;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
+ background:rgba(234,239,247,.09)!important;transform:scale(.985);
+}
+html.sv-space-active #lifePage .life-footnote{
+ margin:18px 2px 24px!important;font-size:10px!important;line-height:1.55!important;
+}
+/* Personal module modals: use a shared sheet, not a squared-off dialog. */
+:is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog).cal-form-dialog,
+#seyveoSmartHomeDialog{
+ box-sizing:border-box!important;
+ width:min(480px,calc(100vw - 18px))!important;
+ max-width:calc(100vw - 18px)!important;
+ max-height:calc(100dvh - 24px)!important;
+ border:1px solid rgba(234,239,247,.12)!important;
+ border-radius:27px!important;
+ padding:23px clamp(15px,4.2vw,23px)!important;
+ background:#1d2025!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
+ overflow-y:auto;overscroll-behavior:contain;
+}
+:is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(h2,h3){
+ font-weight:460!important;letter-spacing:-.04em!important;
+}
+:is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(input,textarea,select){
+ max-width:100%;box-sizing:border-box;
+ border-radius:14px!important;
+}
+:is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(button,a){
+ -webkit-tap-highlight-color:transparent;
+}
+#seyveoContactsDialog .personal-contacts-form-actions{justify-content:flex-end!important}
+#seyveoContactsDialog #seyveoContactsList{overflow-wrap:anywhere}
+#seyveoSmartHomeDialog .svh-tiles{gap:9px!important}
+#seyveoSmartHomeDialog .svh-tile{
+ border-radius:19px!important;box-shadow:none!important;
+}
+@media(max-width:350px){
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:8px!important}
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  padding:12px!important;min-height:116px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:14px!important}
+}
+:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
+ border-color:rgba(38,50,68,.12)!important;background:rgba(36,50,71,.035)!important;
+}
+:root[data-theme=light] :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog){
+ background:#f5f7fa!important;border-color:rgba(38,50,68,.13)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
+}
