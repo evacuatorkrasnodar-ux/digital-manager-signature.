@@ -200,36 +200,58 @@ function persistFollowups(records){
 }
 function renderRegistry(){
  if(!registered||!registeredList)return;
- const {types}=knownResources(),prefs=followups();
- registered.hidden=!types.length;
+ const {rows,types}=knownResources(),prefs=followups();
+ registered.hidden=false;
  registeredList.replaceChildren();
- const n=types.filter(t=>!prefs[t]?.off&&!(prefs[t]?.until>Date.now())).length;
  const summary=$('connectionManagePrompt');
- if(summary)summary.textContent=types.length
-  ?n?'Есть ресурсы · ждут разрешения: '+n:'Ресурсы указаны · напоминания отложены'
+ if(summary)summary.textContent=rows.length
+  ?'Указано ресурсов: '+rows.length+' · доступ пока не подключён'
   :'Рабочие ресурсы и разрешения · по желанию';
- for(const type of types){
-  const state=prefs[type]||{},sleep=state.until>Date.now();
+ if(!rows.length){
+  const empty=document.createElement('p');
+  empty.className='connection-coach-empty';
+  empty.textContent='Пока ничего не указано. Добавьте только те сервисы, которыми действительно пользуетесь.';
+  registeredList.append(empty);
+  return;
+ }
+ const names=new Map((window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[]).map(row=>[row.id,row.name]));
+ const shownFollowups=new Set();
+ for(const [index,item] of rows.entries()){
+  const type=topicFor(item.type),state=type?prefs[type]||{}:{};
+  const sleep=state.until>Date.now();
   const row=document.createElement('div');row.className='connection-coach-known-row';
   const content=document.createElement('div');content.className='connection-coach-known-copy';
-  const title=document.createElement('strong');title.textContent=LABELS[type]||TOPICS[type].name;
+  const title=document.createElement('strong');
+  title.textContent=names.get(item.type)||LABELS[type]||'Ресурс';
+  const value=document.createElement('small');
+  value.textContent=item.value==='Использую'
+   ?'Пользуюсь · указано со слов владельца'
+   :item.value;
   const note=document.createElement('small');
-  note.textContent='Указан · не подключён'+(state.off?' · без напоминаний':sleep
-   ?' · напомнить после '+new Date(state.until).toLocaleDateString('ru-RU'):' · можно подключить');
-  content.append(title,note);
+  note.textContent='Не подключён'+(state.off?' · без напоминаний':sleep
+   ?' · напоминание отложено':' · доступ не предоставлен');
+  content.append(title,value,note);
   const buttons=document.createElement('div');buttons.className='connection-coach-known-actions';
-  const guide=document.createElement('button');guide.type='button';
-  guide.dataset.resourceGuide=type;guide.textContent='Как подключить';
-  buttons.append(guide);
-  const snooze=document.createElement('button');snooze.type='button';
-  snooze.dataset.resourceFollowup=type;snooze.dataset.resourceAction=state.off||sleep?'resume':'later';
-  snooze.textContent=state.off||sleep?'Напоминать':'Позже';
-  buttons.append(snooze);
-  if(!state.off){
-   const off=document.createElement('button');off.type='button';
-   off.dataset.resourceFollowup=type;off.dataset.resourceAction='off';
-   off.textContent='Не напоминать';
-   buttons.append(off);
+  if(type&&TOPICS[type]){
+   const guide=document.createElement('button');guide.type='button';
+   guide.dataset.resourceGuide=type;guide.textContent='Как подключить';buttons.append(guide);
+  }
+  const remove=document.createElement('button');remove.type='button';
+  remove.dataset.resourceRemove=String(index);remove.textContent='Убрать';
+  remove.setAttribute('aria-label','Убрать ресурс '+title.textContent);
+  buttons.append(remove);
+  if(type&&TOPICS[type]&&!shownFollowups.has(type)){
+   shownFollowups.add(type);
+   const later=document.createElement('button');later.type='button';
+   later.dataset.resourceFollowup=type;
+   later.dataset.resourceAction=state.off||sleep?'resume':'later';
+   later.textContent=state.off||sleep?'Напоминать':'Позже';
+   buttons.append(later);
+   if(!state.off){
+    const off=document.createElement('button');off.type='button';
+    off.dataset.resourceFollowup=type;off.dataset.resourceAction='off';
+    off.textContent='Не напоминать';buttons.append(off);
+   }
   }
   row.append(content,buttons);registeredList.append(row);
  }
@@ -241,11 +263,29 @@ function renderPresence(){
  const detailed=rows.some(row=>relevant.includes(row.type)&&row.value!=='Использую');
  presence.checked=types.includes(topic);
  presence.disabled=detailed;
- presenceNote.textContent=detailed?'Уточнить или удалить название можно в Карте бизнеса.'
+ presenceNote.textContent=detailed?'Название и адрес можно изменить в списке ваших сервисов выше.'
   :presence.checked?'Сэйви запомнила ресурс, но доступа к нему не получила.'
   :'Сохранится только отметка, без паролей и чтения данных.';
 }
 
+/* One small editor for owner-supplied resource details. No second database. */
+const resourceForm=$('connectionCoachResourceForm');
+const resourceType=$('connectionCoachResourceType');
+const resourceValue=$('connectionCoachResourceValue');
+const resourceStatus=$('connectionCoachResourceStatus');
+const resourceDetails=$('connectionCoachAddResource');
+for(const row of window.SEYVEO_BUSINESS_MAP?.resourceTypes?.()||[]){
+ const option=document.createElement('option');option.value=row.id;option.textContent=row.name;
+ resourceType?.append(option);
+}
+resourceForm?.addEventListener('submit',event=>{
+ event.preventDefault();
+ const saved=window.SEYVEO_BUSINESS_MAP?.saveResourceDetail?.(resourceType.value,resourceValue.value);
+ resourceStatus.textContent=saved?.message||'Не удалось сохранить ресурс.';
+ if(saved?.ok){
+  resourceValue.value='';resourceDetails.open=false;renderRegistry();renderPresence();
+ }
+});
 const result=$('connectionCoachResult');
 const map=()=>window.SEYVEO_BUSINESS_MAP?.getState?.()||null;
 /* Suggestions use only the business owner's existing, local facts.
@@ -374,6 +414,16 @@ function start(options={}){
  mode=options.specialist===true?'specialist':'owner';topic=canonical(options.type)||recommendations()?.types[0]||'site';
  showOtherServices=EXTRA_ORDER.includes(topic);
  render();
+ // A link suggested in chat is only a draft until the user presses Save.
+ const draft=typeof options.sourcePrefill==='string'?options.sourcePrefill:'';
+ if(draft&&resourceType&&resourceValue&&resourceDetails){
+  const chosen=window.SEYVEO_BUSINESS_MAP?.resourceTypes?.().some(row=>row.id===options.type)
+   ?options.type:storageType(topic);
+  resourceType.value=chosen;
+  resourceValue.value=draft.slice(0,180);
+  resourceDetails.open=true;
+  resourceStatus.textContent='Проверьте адрес или название перед сохранением.';
+ }
  return true;
 }
 $('connectionCoachPersonalChoices').addEventListener('click',event=>{
@@ -424,6 +474,17 @@ $('connectionCoachCopy').addEventListener('click',async()=>{
 
 // A reminder is a local status in Management, never a scheduled push or a claim of OAuth.
 registeredList?.addEventListener('click',event=>{
+ const removing=event.target.closest?.('[data-resource-remove]');
+ if(removing){
+  const rows=knownResources().rows,index=Number(removing.dataset.resourceRemove);
+  const item=Number.isInteger(index)&&index>=0?rows[index]:null;
+  if(!item)return;
+  if(!window.confirm('Убрать этот ресурс из списка SEYVEO? Остальные данные сохранятся.'))return;
+  const changed=window.SEYVEO_BUSINESS_MAP?.removeResourceDetail?.(item.type,item.value);
+  resourceStatus.textContent=changed?.message||'Не удалось убрать ресурс.';
+  renderRegistry();renderPresence();
+  return;
+ }
  const guide=event.target.closest?.('[data-resource-guide]');
  if(guide){
   const selected=guide.dataset.resourceGuide;
@@ -461,7 +522,7 @@ window.addEventListener('storage',event=>{
 });
 // An existing Management dialog opens before this listener on the same event.
 window.addEventListener('seyveo:connection-help',event=>{
- start({type:event.detail?.type,goal:event.detail?.goal,specialist:event.detail?.specialist});
+ start({type:event.detail?.type,goal:event.detail?.goal,specialist:event.detail?.specialist,sourcePrefill:event.detail?.sourcePrefill});
 });
 $('openManageConnections')?.addEventListener('click',()=>start());
 /* One honest benefit-led Home recommendation, reusing the existing
