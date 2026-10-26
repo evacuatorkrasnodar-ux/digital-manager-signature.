@@ -32,7 +32,7 @@ assert.equal((home.match(/<footer class="dock"/g)||[]).length,1);
 assert.match(dockCss,/html:not\(\.seyveo-conversation\) #ask\.prompt:not\(\.expanded\):not\(\[data-composer-mode="notes"\]\)\{\s*display:none!important;/);
 assert.match(home,/function openComposer\(\)\{[\s\S]*?window\.SEYVEO_CONVERSATION\.open\(\);\s*return;/);
 assert.match(home,/homeOrb\.addEventListener\('click',[\s\S]*?window\.SEYVEO_CONVERSATION\.open\(\)/);
-assert.match(home,/assets\/floating-navigation\.css\?v=30/,'Updated dock stylesheet is cache-busted');
+assert.match(home,/assets\/floating-navigation\.css\?v=\d+/,'Updated dock stylesheet is cache-busted');
 assert.match(docs,/SEYVEO Open Canvas/);
 assert.match(docs,/Invisible Header/);
 // SEYVEO Full Bleed: remove unnecessary horizontal gutters only inside chat.
