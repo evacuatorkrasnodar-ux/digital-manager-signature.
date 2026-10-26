@@ -595,3 +595,32 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
 @media(prefers-reduced-motion:reduce){
  html.seyveo-conversation #ask.prompt:not(.expanded){transition:none!important}
 }
+
+/* SEYVEO Quiet Chat · compact reading rhythm.
+   Only real conversation-turn classes; no guessed selectors or changes
+   to stage scrolling, compositor, dock, colors, or Home cards. */
+html.seyveo-conversation .seyveo-conversation-turn{
+ gap:2px;
+ margin-bottom:7px;
+}
+html.seyveo-conversation .seyveo-conversation-turn--you{
+ margin:2px 0 5px auto;
+ padding:8px 12px 9px;
+ max-width:min(88%,420px);
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi{
+ gap:3px;
+ margin-bottom:5px!important;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-body{
+ line-height:1.5;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-actions{
+ margin-top:0;
+ margin-bottom:0;
+ gap:2px;
+ min-height:38px;
+}
+html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-reply-action{
+ min-height:40px;
+}
