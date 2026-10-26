@@ -554,7 +554,7 @@ entry.addEventListener('click',()=>start({trigger:entry}));
 window.addEventListener('storage',event=>{if(event.key===STORE)updateEntry()});
 window.addEventListener('pagehide',()=>{if(dialog.open)dialog.close()});
 function saveOwnerWeeklyRequests(value){
- if(dialog.open||preview)return {ok:false,message:'Закройте Карту бизнеса, чтобы сохранить ответ из чата.'};
+ if(dialog.open||preview)return {ok:false,message:'Закройте открытое окно, чтобы сохранить ответ из чата.'};
  const n=Number(value);
  if(!Number.isSafeInteger(n)||n<0||n>1000000)return {ok:false,message:'Неверное количество обращений.'};
  const current=load();
@@ -603,12 +603,12 @@ function markResourceUse(type,enabled){
  const matches=next.resources.filter(row=>row.type===type);
  if(enabled){
   if(matches.length)return {ok:true};
-  if(next.resources.length>=20)return {ok:false,message:'В Карте бизнеса уже 20 ресурсов.'};
+  if(next.resources.length>=20)return {ok:false,message:'Можно указать не более 20 ресурсов.'};
   next.resources.push({type,value:'Использую'});
   next.dismissed=next.dismissed.filter(id=>id!==type);
  }else{
   if(matches.some(row=>row.value!=='Использую'))
-   return {ok:false,message:'Название или адрес этого ресурса изменяется в Карте бизнеса.'};
+   return {ok:false,message:'Название или адрес этого ресурса изменяется в «Подключениях».'};
   next.resources=next.resources.filter(row=>!(row.type===type&&row.value==='Использую'));
  }
  next.updatedAt=new Date().toISOString();
