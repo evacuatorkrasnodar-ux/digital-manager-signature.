@@ -690,7 +690,7 @@ html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded):focu
  box-shadow:none!important;
 }
 
-/* Chat photo picker sits at the far left, before Back and History. */
+/* Chat photo picker follows Back and History. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
  order:0!important;display:grid!important;place-items:center;
  width:34px;min-width:34px;height:44px;flex:0 0 34px;
