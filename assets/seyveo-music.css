@@ -413,22 +413,33 @@ html.sv-music-screen #sayviMusicPage .sv-music-flow{
 /* SEYVEO MUSIC: full opaque library outside the animated player. */
 #sayviMusicCollection[hidden]{display:none!important}
 #sayviMusicCollection:not([hidden]){
- position:fixed!important;inset:0!important;z-index:2147483000!important;
+ position:fixed!important;z-index:2147483000!important;
+ top:calc(10px + env(safe-area-inset-top,0px))!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;
+ bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+ left:max(12px,env(safe-area-inset-left,0px))!important;
  display:block!important;isolation:isolate!important;
- width:100vw!important;height:100dvh!important;
+ width:auto!important;height:auto!important;
  max-width:none!important;max-height:none!important;margin:0!important;
- padding:calc(20px + env(safe-area-inset-top,0px))
-   max(23px,env(safe-area-inset-right,0px))
-   calc(30px + env(safe-area-inset-bottom,0px))
-   max(23px,env(safe-area-inset-left,0px))!important;
- border:0!important;border-radius:0!important;
- background:var(--bg,#141619)!important;opacity:1!important;
- transform:none!important;filter:none!important;
- backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
- box-shadow:none!important;color:var(--text)!important;
+ padding:clamp(17px,2.4dvh,27px) clamp(16px,4vw,27px) 26px!important;
+ border:1px solid rgba(222,228,237,.18)!important;
+ border-radius:27px!important;
+ background:linear-gradient(155deg,rgba(52,56,64,.96) 0%,rgba(34,38,45,.94) 48%,rgba(27,30,36,.96) 100%)!important;
+ opacity:1!important;transform:none!important;filter:none!important;
+ backdrop-filter:blur(36px) saturate(.72)!important;
+ -webkit-backdrop-filter:blur(36px) saturate(.72)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 20px 48px rgba(0,0,0,.22)!important;
+ color:var(--text)!important;
  overflow-x:hidden!important;overflow-y:auto!important;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
  box-sizing:border-box;
+}
+:root[data-theme=light] #sayviMusicCollection:not([hidden]){
+ border-color:rgba(255,255,255,.8)!important;
+ background:linear-gradient(155deg,rgba(250,251,253,.96),rgba(235,239,246,.95) 55%,rgba(226,232,240,.96))!important;
+ backdrop-filter:blur(36px) saturate(.8)!important;
+ -webkit-backdrop-filter:blur(36px) saturate(.8)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 16px 38px rgba(45,56,75,.12)!important;
 }
 #sayviMusicCollection .sv-music-panel-close{
  display:inline-flex;float:right;min-height:44px;margin:0;
@@ -452,9 +463,12 @@ html.sv-music-screen #sayviMusicPage .sv-music-flow{
 }
 #sayviMusicCollection .sv-music-track-row{
  display:grid;grid-template-columns:24px minmax(0,1fr);
- align-items:center;gap:12px;width:100%;min-height:60px;
- padding:12px 0;border:0;border-bottom:1px solid var(--soft-line);
+ align-items:center;gap:12px;width:100%;min-height:57px;
+ padding:10px 0;border:0;border-bottom:1px solid rgba(238,242,249,.12);
  background:transparent;color:var(--secondary);font:inherit;text-align:left;
+}
+:root[data-theme=light] #sayviMusicCollection .sv-music-track-row{
+ border-bottom-color:rgba(53,68,88,.15);
 }
 #sayviMusicCollection .sv-music-track-row[aria-current=true]{color:var(--text)}
 #sayviMusicCollection .sv-music-row-num{font-size:11px;font-variant-numeric:tabular-nums}
