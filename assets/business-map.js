@@ -336,12 +336,22 @@ function recommendations(map=data){
  }
  return items;
 }
+function openConnections(type='',sourcePrefill=''){
+ // Shared resource destination, never an actual service login.
+ if(dialog.open)finish();
+ const nav=$('navManage');if(!nav)return false;
+ nav.click();
+ window.dispatchEvent(new CustomEvent('seyveo:connection-help',{
+  detail:{type:byType(type)?type:'',sourcePrefill:typeof sourcePrefill==='string'?sourcePrefill:''}
+ }));
+ return true;
+}
 function adviceAction(button){
  const action=button.dataset.businessAdviceAction,source=button.dataset.businessAdviceType;
  if(action==='about'||action==='goal'){markStep(action);return}
  if(action==='industry'){sectorReturn='map';markStep('sector');return}
  if(action==='workflow'){markStep('workflow');return}
- if(action==='source'&&byType(source)){sourceType=source;markStep('source');return}
+ if(action==='source'&&byType(source)){openConnections(source);return}
  if(action==='dismiss'&&byType(source)){
   if(!(data.dismissed||[]).includes(source)){
    data.dismissed.push(source);
@@ -375,7 +385,7 @@ function drawAdvice(){
   act.dataset.businessAdviceAction=item.kind;
   if(item.type)act.dataset.businessAdviceType=item.type;
   act.textContent=item.kind==='about'||item.kind==='goal'||item.kind==='workflow'?'Ответить':
-   item.kind==='industry'?'Уточнить':item.kind==='connect'?'Как будет подключаться':'Указать ресурс';
+   item.kind==='industry'?'Уточнить':item.kind==='connect'?'Как будет подключаться':'В Подключения';
   controls.append(act);
   if(item.kind==='source'){
    const skip=document.createElement('button');skip.type='button';skip.className='business-map-advice-dismiss';
@@ -439,14 +449,12 @@ function drawMap(){
    inspect.textContent=observed?'Обновить сведения':'Изучить витрину';
    controls.append(inspect);
   }
-  const remove=document.createElement('button');remove.type='button';remove.dataset.businessRemove=String(i);
-  remove.textContent='Убрать';remove.setAttribute('aria-label','Убрать '+strong.textContent);
-  controls.append(remove);
+  // Editing and removal belong to Management → Connections.
   row.append(text,controls);list.append(row);
  }
  $('businessMapCount').textContent=data.resources.length
   ?'Указано источников: '+data.resources.length+'. Подключений к сервисам пока нет.'
-  :'Подключений к сервисам пока нет.';
+  :'Ресурсы пока не указаны. Добавьте их в «Подключениях».';
 }
 function acceptable(value){
  if(!value)return false;
@@ -471,7 +479,7 @@ function submit(evt){
  }else if(view==='goal'){
   data.goal=norm(value,320);
   if(!save())return;
-  markStep('sources');
+  markStep('map');
  }else if(view==='workflow'){
   const text=norm(value,500);
   if(!text){status.textContent='Расскажите одним предложением или выберите «Позже».';return}
@@ -514,13 +522,11 @@ function start(options={}){
   byType(draft.type)&&STOREFRONT_TYPES.has(draft.type)&&publicPageUrl(draft.url)===draft.url&&
   draft.url.length<=180;
  if(valid){
-  sourceType=draft.type;
-  markStep('source');
-  field.value=draft.url;
+  finish();return openConnections(draft.type,draft.url);
  }else if(aboutValid){
   markStep('about');field.value=aboutDraft;
  }else if(!preview&&options.guideStep==='source'&&byType(options.guideType)){
-  sourceType=options.guideType;markStep('source');
+  finish();return openConnections(options.guideType);
  }else if(!preview&&['about','goal','industry','workflow'].includes(options.guideStep)){
   const step=options.guideStep==='industry'?'sector':options.guideStep;
   if(step==='sector')sectorReturn='map';
@@ -549,7 +555,7 @@ $('businessMapBack').addEventListener('click',()=>{
  markStep(view==='source'?'sources':view==='goal'?'sector':'map');
 });
 $('businessMapSkipGoal').addEventListener('click',()=>{
- if(view==='goal'){markStep('sources')}
+ if(view==='goal'){markStep('map')}
 });
 $('businessMapWorkflowSkip').addEventListener('click',()=>{if(view==='workflow')markStep('map')});
 $('businessMapIndustryBack').addEventListener('click',()=>markStep(sectorReturn==='goal'?'about':'map'));
@@ -568,7 +574,7 @@ $('businessMapCategories').addEventListener('click',event=>{
  markStep('source');
 });
 $('businessMapSeeMap').addEventListener('click',()=>markStep('map'));
-$('businessMapAddSource').addEventListener('click',()=>markStep('sources'));
+$('businessMapAddSource').addEventListener('click',()=>openConnections());
 $('businessMapEditAbout').addEventListener('click',()=>markStep('about'));
 $('businessMapEditGoal').addEventListener('click',()=>markStep('goal'));
 $('businessMapFinish').addEventListener('click',finish);
@@ -611,13 +617,7 @@ $('businessMapResourceList').addEventListener('click',event=>{
   }
   return;
  }
- const button=event.target.closest?.('[data-business-remove]');if(!button)return;
- const index=Number(button.dataset.businessRemove);
- if(!Number.isInteger(index)||index<0||index>=data.resources.length)return;
- const existing=data.resources.slice();
- data.resources.splice(index,1);
- if(!save()){data.resources=existing;return}
- markStep('map');
+
 });
 entry.addEventListener('click',()=>start({trigger:entry}));
 
@@ -636,6 +636,36 @@ function saveOwnerWeeklyRequests(value){
  return {ok:true,message:'Сохранено: около '+n+' обращений в неделю, со слов владельца.'};
 }
 /* Small owner-confirmed checkbox from Connections; never a real service login. */
+/* Reuse the same Business Map store; only Connections presents editing. */
+function saveResourceDetail(type,value){
+ if(!byType(type))return {ok:false,message:'Выберите сервис из списка.'};
+ if(dialog.open)return {ok:false,message:'Сначала закройте Карту бизнеса.'};
+ const raw=String(value||'').trim(),text=norm(raw,180);
+ if(!text||raw.length>180||!acceptable(raw))
+  return {ok:false,message:'Укажите название или безопасную HTTPS-ссылку без секретов.'};
+ const current=load(),next=current?clone(current):fresh(ownerFocus()==='start'?'start':'existing');
+ if(next.resources.some(x=>x.type===type&&x.value.toLocaleLowerCase('ru-RU')===text.toLocaleLowerCase('ru-RU')))
+  return {ok:false,message:'Этот ресурс уже указан.'};
+ if(next.resources.length>=20)return {ok:false,message:'Можно указать до 20 ресурсов.'};
+ next.resources=next.resources.filter(x=>!(x.type===type&&x.value==='Использую'));
+ next.resources.push({type,value:text});next.dismissed=next.dismissed.filter(x=>x!==type);
+ next.updatedAt=new Date().toISOString();
+ if(!store(STORE,JSON.stringify(next)))return {ok:false,message:'Не удалось сохранить на устройстве.'};
+ updateEntry();
+ window.dispatchEvent(new CustomEvent('seyveo:business-map-changed',{detail:{resources:next.resources.length}}));
+ return {ok:true,message:'Ресурс сохранён. Доступ к сервису не подключён.'};
+}
+function removeResourceDetail(type,value){
+ if(!byType(type)||typeof value!=='string'||dialog.open)return {ok:false,message:'Не удалось определить ресурс.'};
+ const current=load();if(!current)return {ok:false,message:'Сохранённых ресурсов нет.'};
+ const next=clone(current),index=next.resources.findIndex(x=>x.type===type&&x.value===value);
+ if(index<0)return {ok:false,message:'Ресурс уже изменён или удалён.'};
+ next.resources.splice(index,1);next.updatedAt=new Date().toISOString();
+ if(!store(STORE,JSON.stringify(next)))return {ok:false,message:'Не удалось сохранить изменение.'};
+ updateEntry();
+ window.dispatchEvent(new CustomEvent('seyveo:business-map-changed',{detail:{resources:next.resources.length}}));
+ return {ok:true,message:'Ресурс убран. Остальные сведения не изменены.'};
+}
 function markResourceUse(type,enabled){
  if(!byType(type)||type==='other')return {ok:false,message:'Неизвестный ресурс.'};
  if(dialog.open)return {ok:false,message:'Сначала закройте Карту бизнеса.'};
@@ -659,6 +689,8 @@ function markResourceUse(type,enabled){
 }
 window.SEYVEO_BUSINESS_MAP=Object.freeze({
  open:start,
+ resourceTypes:()=>TYPES.map(x=>({id:x.id,name:x.name,reason:x.reason})),
+ saveResourceDetail,removeResourceDetail,
  markResourceUse,
  saveWeeklyRequests:saveOwnerWeeklyRequests,
  getState:()=>{const stored=load();return stored?clone(stored):null},
