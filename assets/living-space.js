@@ -170,15 +170,23 @@ const homeViewport=document.querySelector('.app');
 let homeOrbScrollFrame=0;
 function syncHomeOrbScroll(){
   homeOrbScrollFrame=0;
-  const y=homeViewport?.scrollTop||0;
-  const progress=current==='home'?Math.max(0,Math.min(1,y/215)):0;
-  orbCluster.style.setProperty('--sv-home-orb-progress',progress.toFixed(3));
-  orbCluster.style.pointerEvents=progress>.94?'none':'';
+  // The main page uses document/window scrolling, not an .app scrollport.
+  const y=Math.max(0,window.scrollY||document.documentElement.scrollTop||0,homeViewport?.scrollTop||0);
+  const home=current==='home'&&!$('homePage')?.hidden;
+  const progress=home?Math.min(1,y/250):0;
+  const reduced=reduce.matches;
+  const visible=reduced?(progress<.45?1:0):1-progress;
+  const scale=reduced?1:1-progress*.58;
+  const lift=reduced?0:-progress*24;
+  orbCluster.style.transform='translate3d(0,'+lift.toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+  orbCluster.style.opacity=String(visible);
+  orbCluster.style.pointerEvents=progress>.96?'none':'';
 }
 function scheduleHomeOrbScroll(){
   if(homeOrbScrollFrame)return;
   homeOrbScrollFrame=requestAnimationFrame(syncHomeOrbScroll);
 }
+window.addEventListener('scroll',scheduleHomeOrbScroll,{passive:true});
 homeViewport?.addEventListener('scroll',scheduleHomeOrbScroll,{passive:true});
 window.addEventListener('seyveo:route-changed',scheduleHomeOrbScroll);
 window.addEventListener('pageshow',scheduleHomeOrbScroll);
