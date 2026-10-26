@@ -398,6 +398,27 @@ function updateChips(){
   ?'Сначала выберем, где вас могут найти клиенты. Разберём полезные шаги без запуска рекламы.'
   :'Выберите знакомый инструмент — объясню его назначение без технических загадок.';
 }
+/* Three visible actions. Full explanations remain in copy/Notepad output. */
+const QUICK_STEPS=Object.freeze({
+ site:{learn:['Добавьте адрес сайта','Проверьте контакты','Разрешите доступ отдельно'],promote:['Проверьте главную страницу','Добавьте кнопку связи','Считайте обращения']},
+ vk:{learn:['Добавьте страницу VK','Проверьте владельца','Подключайте только с разрешением'],promote:['Проверьте описание','Добавьте способ связи','Публикуйте примеры работ']},
+ telegram:{learn:['Добавьте рабочий канал','Определите нужные действия','Разрешите доступ отдельно'],promote:['Укажите пользу канала','Добавьте ссылку на связь','Отслеживайте обращения']},
+ marketplace:{learn:['Добавьте ссылку на магазин','Проверьте карточки товаров','Доступ к заказам — отдельно'],promote:['Улучшите карточки','Проверьте доставку','Сравните расходы и заказы']},
+ maps:{learn:['Добавьте карточку на карте','Проверьте адрес и часы','Доступ к отзывам — отдельно'],promote:['Уточните контакты','Добавьте реальные фото','Следите за обращениями']},
+ avito:{learn:['Добавьте профиль','Проверьте объявления','Сообщения — после разрешения'],promote:['Уточните заголовки','Добавьте реальные фото','Проверяйте заявки']},
+ crm:{learn:['Укажите вашу CRM','Уточните путь клиента','Согласуйте нужные права'],promote:['Запишите источники заявок','Считайте обращения','Следите за ответами']},
+ mail:{learn:['Укажите рабочую почту','Определите важные письма','Согласуйте доступ отдельно'],promote:['Проверьте подпись','Добавьте способ обращения','Следите за ответами']},
+ ads:{learn:['Укажите рекламный сервис','Определите отчёты','Согласуйте бюджет и права'],promote:['Выберите цель','Ограничьте бюджет','Измеряйте заявки']},
+ accounting:{learn:['Укажите учётный сервис','Определите нужные отчёты','Разрешения — отдельно'],promote:['Сверьте расходы','Проверьте выручку','Запланируйте следующий шаг']},
+ bank:{learn:['Укажите банк','Выберите нужные сведения','Разрешения — отдельно'],promote:['Уточните способы оплаты','Проверьте комиссии','Сравните расходы']}
+});
+function visibleSteps(){
+ const key=purpose==='promote'?'promote':'learn';
+ const result=QUICK_STEPS[topic]?.[key]||['Добавьте сервис','Уточните цель','Согласуйте следующий шаг'];
+ return mode==='specialist'
+  ?[result[0],'Передайте задачу специалисту','Проверьте результат вместе']
+  :result;
+}
 function steps(){
  const data=TOPICS[topic];
  if(mode==='specialist'&&purpose==='promote')return [
@@ -416,10 +437,10 @@ function render(){
  renderPresence();
  $('connectionCoachSelected').textContent=purpose==='promote'?'ПРИВЛЕЧЕНИЕ КЛИЕНТОВ · ПЛАН':'ПОДКЛЮЧЕНИЕ · ОБЪЯСНЕНИЕ';
  $('connectionCoachName').textContent=data.name;
- $('connectionCoachPlain').textContent=data.what+'\n\n'+data.benefit;
+ $('connectionCoachPlain').textContent=data.benefit;
  $('connectionCoachRelevance').textContent=context(topic);
  const list=$('connectionCoachSteps');list.replaceChildren();
- for(const row of steps()){
+ for(const row of visibleSteps()){
   const item=document.createElement('li');item.textContent=row;list.append(item);
  }
  $('connectionCoachSafety').textContent=(mode==='specialist'
