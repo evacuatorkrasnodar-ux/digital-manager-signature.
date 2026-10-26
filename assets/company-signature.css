@@ -109,6 +109,57 @@
 }
 #seyveoCompanyDialog .sv-company-actions button:active,
 #seyveoCompanyDialog .seyveo-passport-edit-top:active{opacity:.7}
+/* Private conversation context sits inside the existing Company Passport.
+   It NEVER goes through the public share, print or QR code paths. */
+#seyveoCompanyDialog .sv-company-private{
+ margin:19px 0 3px;padding:0;
+ border-top:1px solid rgba(225,235,246,.14);
+ border-bottom:1px solid rgba(225,235,246,.14);
+}
+#seyveoCompanyDialog .sv-company-private>summary{
+ display:flex;flex-direction:column;gap:5px;
+ position:relative;list-style:none;cursor:pointer;
+ padding:15px 28px 15px 0;min-height:55px;
+}
+#seyveoCompanyDialog .sv-company-private>summary::-webkit-details-marker{display:none}
+#seyveoCompanyDialog .sv-company-private>summary::after{
+ content:"›";position:absolute;right:4px;top:19px;color:var(--secondary);
+ font-size:19px;transform-origin:center;transition:transform .2s;
+}
+#seyveoCompanyDialog .sv-company-private[open]>summary::after{transform:rotate(90deg)}
+#seyveoCompanyDialog .sv-company-private>summary span{
+ color:var(--text);font-size:13px;font-weight:510;
+}
+#seyveoCompanyDialog .sv-company-private>summary small{
+ color:var(--secondary);font-size:11px;
+}
+#seyveoCompanyDialog .sv-company-private-form{
+ display:grid;gap:12px;padding:6px 0 18px;
+}
+#seyveoCompanyDialog .sv-company-private-form label{
+ display:grid;gap:7px;font-size:11px;color:var(--secondary);
+}
+#seyveoCompanyDialog .sv-company-private-form textarea{
+ box-sizing:border-box;display:block;width:100%;min-height:76px;
+ padding:12px;resize:vertical;max-height:210px;
+ border:1px solid rgba(227,237,247,.18);
+ border-radius:14px;background:rgba(228,235,247,.035);
+ color:var(--text);font:inherit;font-size:13px;line-height:1.5;
+}
+#seyveoCompanyDialog .sv-company-private-form button{
+ min-height:44px;border:1px solid rgba(225,236,250,.34);border-radius:15px;
+ background:transparent;color:var(--text);font:inherit;font-size:12px;font-weight:490;
+}
+#seyveoCompanyDialog .sv-company-private-form :is(small,p){
+ color:var(--secondary);font-size:10.8px;line-height:1.6;margin:0;
+}
+#seyveoCompanyDialog .sv-company-private-form p:empty{display:none}
+:root[data-theme=light] #seyveoCompanyDialog .sv-company-private-form textarea{
+ background:rgba(56,79,100,.035);border-color:rgba(55,74,96,.18);
+}
+@media(prefers-reduced-motion:reduce){
+ #seyveoCompanyDialog .sv-company-private>summary::after{transition:none}
+}
 #seyveoCompanyDialog .sv-company-editor{padding-top:2px}
 #seyveoCompanyDialog .seyveo-passport-section{
  margin:2px 0 22px;font-size:13px;font-weight:500;
