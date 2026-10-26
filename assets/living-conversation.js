@@ -81,6 +81,32 @@ if(compact){
  compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),mic);
 }
 
+/* One reversible expand control for the existing chat textarea. */
+if(compact){
+ const toggle=document.createElement('button');
+ toggle.type='button';
+ toggle.id='seyveoChatExpand';
+ toggle.setAttribute('aria-label','Раскрыть поле ввода');
+ toggle.setAttribute('aria-expanded','false');
+ toggle.title='Раскрыть поле ввода';
+ const draw=()=>{
+  const expanded=root.classList.contains('seyveo-chat-compose-expanded');
+  toggle.innerHTML=expanded
+   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+   :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>';
+  toggle.setAttribute('aria-label',expanded?'Свернуть поле ввода':'Раскрыть поле ввода');
+  toggle.setAttribute('aria-expanded',String(expanded));
+  toggle.title=expanded?'Свернуть поле ввода':'Раскрыть поле ввода';
+ };
+ toggle.addEventListener('click',()=>{
+  root.classList.toggle('seyveo-chat-compose-expanded');
+  draw();
+  if(typeof syncChatGeometry==='function')requestAnimationFrame(syncChatGeometry);
+  $('question')?.focus({preventScroll:true});
+ });
+ compact.insertBefore(toggle,compact.querySelector('#seyveoConversationMic'));
+ draw();
+}
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
 let statusTimer=0,speakingNow=false;
