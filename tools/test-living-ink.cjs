@@ -306,8 +306,11 @@ assert.match(decisionCss,/\.lm-reveal \.lm-inline-item:nth-child\(2\)/,'Second f
 assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-field/,'Three original rows gather in a single drawn card');
 assert.match(decisionCss,/\.lm-preview\.lm-gather \.lm-inline-item/,'The second and third task stay visible after merging');
 assert.doesNotMatch(decisionCss,/#seyveoLivingMoment\.lm-gather \.lm-secondary\{\s*max-height:0/,'Gather never deletes secondary items');
-assert.match(decisionJs,/controls\.append\(open,execute\)/,'Only two actions: Подробнее and Исполнить');
-assert.match(decisionJs,/seyveo:home-task-complete/,'Real completion uses validated personal task storage');
+assert.match(decisionJs,/controls\.append\(open,execute\)/,'Exactly two contextual Home actions');
+assert.match(decisionJs,/real\?'Продолжить дело':'Исполнить'/,'A real Home task resumes rather than falsely reporting success');
+assert.match(decisionJs,/seyveo:home-task-open/,'Real Home action opens the saved task');
+assert.doesNotMatch(decisionJs,/seyveo:home-task-complete/,'Home cannot mark a task complete merely by pressing Continue');
+assert.match(decisionJs,/explain\(field,shown.reason\+' '\+shown.detail,open\)/,'Details explain why the task was shown');
 assert.match(decisionJs,/function finishPreviewItem/,'Demo completion removes only the selected example');
 assert.doesNotMatch(decisionJs,/lm-inline-arrow/,'No extra arrow glyphs on task rows');
 assert.match(html,/<button class="btn primary" id="resolve" type="button">Исполнить<\/button>/,'Real advice has explicit execution entry');
