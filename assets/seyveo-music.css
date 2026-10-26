@@ -488,11 +488,16 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 /* SEYVEO MUSIC · restrained one-line signature and studio tagline. */
 #sayviMusicPage>header.sv-music-head{
  display:grid;grid-template-columns:minmax(0,1fr) auto;
- grid-template-rows:auto auto;column-gap:18px;row-gap:0;
+ grid-template-rows:auto;column-gap:18px;row-gap:0;
  text-align:left;align-items:center;min-width:0;
 }
+#sayviMusicPage .sv-music-lockup{
+ grid-column:1;grid-row:1;display:flex;flex-direction:column;
+ align-items:flex-start;justify-content:flex-start;
+ gap:0;min-width:0;
+}
 #sayviMusicPage .sv-music-heading{
- grid-column:1;grid-row:1;display:flex;flex-direction:row;align-items:baseline;gap:9px;
+ display:flex;flex-direction:row;align-items:baseline;gap:9px;
  flex-wrap:nowrap;min-width:0;margin:0;line-height:1.05;text-align:left;white-space:nowrap;
 }
 #sayviMusicPage .sv-music-brand{
@@ -504,13 +509,13 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  letter-spacing:.075em;line-height:1.2;
 }
 #sayviMusicPage .sv-music-technology{
- grid-column:1;grid-row:2;margin:-5px 0 0;color:var(--secondary);
- font-size:9px;line-height:1.3;letter-spacing:.11em;text-align:left;
+ margin:-3px 0 0;color:var(--secondary);
+ font-size:9px;line-height:1.2;letter-spacing:.11em;text-align:left;
  font-weight:370;
 }
 #sayviMusicPage .sv-music-ai{font-style:italic;text-transform:none;letter-spacing:0;font-weight:520}
 #sayviMusicPage .sv-music-minimize{
- grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;gap:5px;
+ grid-column:2;grid-row:1;display:flex;align-items:center;gap:5px;
  align-self:start;justify-self:end;min-width:44px;min-height:44px;
  padding:7px 1px 7px 5px;border:0;background:transparent;
  color:var(--secondary);font-size:11px;font-weight:450;cursor:pointer;
