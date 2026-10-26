@@ -113,6 +113,19 @@ assert.match(continuity,/text-underline-offset:5px/,'Confirmed actions are text,
 assert.doesNotMatch(videoStyles,/calc\(95px \+ env\(safe-area-inset-bottom/,'No doubled video bottom safe area');
 assert.doesNotMatch(videoStyles,/calc\(90px \+ env\(safe-area-inset-bottom/,'Compact video does not waste vertical space');
 
+/* LOCKED SEYVEO experience: no retired business questionnaire and no
+   substitution of approved rising/gathering Home cards. */
+const legacyBusinessLogic=read('assets/business-map.js');
+const businessConversation=read('assets/business-conversation.js');
+assert.match(html,/id="businessMapDialog"[^>]*hidden inert[^>]*style="display:none!important"/,'Retired business questionnaire is never visible');
+assert.match(html,/id="openBusinessMap"[^>]*hidden aria-hidden="true"/,'Retired Management entry remains hidden');
+assert.match(html,/data-clean-section="profile"[^>]*hidden aria-hidden="true"/,'Retired duplicate profile entry remains hidden');
+assert.match(legacyBusinessLogic,/function start\(options=\{\}\)\{[\s\S]*?return false;\s*\}/,'Old questionnaire cannot open through navigation');
+assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVEO_CONNECTION_COACH\?\.homeSuggestion\?\.\(\)\|\|null;/,'Home has no prompts pointing to retired questionnaire');
+assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
+assert.match(html,/assets\/business-conversation\.js\?v=6/,'Chat receives revised Connections-only actions');
+assert.match(html,/assets\/business-map\.js\?v=20/,'Retired opening behavior is cache refreshed');
+assert.match(html,/assets\/connection-coach\.js\?v=11/,'Resource editing uses latest existing Connections');
 const decisionCss=read('assets/living-moment.css');
 const decisionJs=read('assets/living-moment.js');
 const managementCinema=read('assets/management-glass-showcase.css');
