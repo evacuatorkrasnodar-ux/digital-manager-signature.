@@ -33,66 +33,125 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 :root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item.active{color:#182635!important;background:rgba(32,45,64,.075)!important}
 @media(max-width:355px){footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton) span{letter-spacing:-.04em}}
 
-/* SEYVEO SOUND · one compact remote for the existing audio engine.
-   Renders only with user-selected tracks, outside the full music screen. */
-#sayviMusicMini[hidden]{display:none!important}
+/* SEYVEO SOUND · signature mini player.
+   Only one audio element and two real controls; keep the iPhone glass thin. */
+#sayviMusicMini[hidden],
+html.sv-music-screen #sayviMusicMini{display:none!important}
 #sayviMusicMini{
+ --sv-mini-progress:0%;
+ box-sizing:border-box;
  position:fixed!important;z-index:29;
  left:50%;transform:translateX(-50%);
- bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,58px) + 9px);
- box-sizing:border-box;display:flex;align-items:center;
- width:min(425px,calc(100vw - 34px));min-height:51px;
- padding:4px 5px 4px 9px;gap:7px;
- border:1px solid var(--line);
- border-radius:18px;background:var(--card);
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,58px) + 10px);
+ width:min(336px,calc(100vw - 32px));
+ height:52px;min-height:52px;max-height:52px;
+ display:flex;align-items:center;gap:2px;
+ padding:3px 5px 3px 7px;
+ border:1px solid rgba(202,211,227,.17);
+ border-radius:16px;
  color:var(--text);
- box-shadow:0 8px 24px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.045);
- -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+ background:linear-gradient(155deg,rgba(40,44,51,.955),rgba(25,29,36,.975));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 6px 20px rgba(0,0,0,.16);
+ -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+ isolation:isolate;
 }
-html.sv-music-screen #sayviMusicMini{display:none!important}
+#sayviMusicMini::after{
+ content:"";position:absolute;bottom:4px;left:51px;right:49px;
+ height:1px;border-radius:1px;pointer-events:none;
+ background:linear-gradient(90deg,rgba(238,243,251,.67) 0 var(--sv-mini-progress),rgba(216,227,241,.12) var(--sv-mini-progress) 100%);
+}
 #sayviMusicMini button{
- appearance:none;-webkit-appearance:none;cursor:pointer;
- color:inherit;font:inherit;border:0;background:none;
- -webkit-tap-highlight-color:transparent;
+ box-sizing:border-box;appearance:none;-webkit-appearance:none;
+ color:inherit;font:inherit;border:0;background:transparent;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 #sayviMusicMini .sv-music-mini-open{
- min-width:0;min-height:44px;flex:1;
+ min-width:0;min-height:44px;flex:1 1 auto;
  display:flex;align-items:center;gap:9px;text-align:left;
- padding:0 4px;
+ padding:0 3px 0 1px;
 }
 #sayviMusicMini .sv-music-mini-symbol{
- flex:0 0 31px;width:31px;height:31px;
- display:grid;place-items:center;
- border:1px solid var(--soft-line);border-radius:50%;
- font-size:16px;color:var(--secondary);
+ position:relative;display:block;
+ width:34px;height:34px;min-width:34px;flex:0 0 34px;
+ border-radius:50%;overflow:hidden;
+ border:1px solid rgba(186,199,221,.15);
+ background:
+  radial-gradient(circle at 50% 50%,#8993a4 0 8%,#2b3442 9% 17%,transparent 18% 100%),
+  repeating-radial-gradient(circle at 50% 50%,#111720 0 2px,#333d4a 2.4px 3px,#131a24 3.6px 5px);
+ box-shadow:inset 0 1px 4px rgba(208,220,235,.14),inset 0 -3px 7px rgba(0,0,0,.28);
 }
-#sayviMusicMini .sv-music-mini-copy{display:grid;gap:2px;min-width:0;flex:1}
+#sayviMusicMini .sv-music-mini-symbol::after{
+ content:"";position:absolute;top:50%;left:50%;
+ width:3px;height:3px;border-radius:50%;
+ background:#0a0f17;transform:translate(-50%,-50%);
+}
+#sayviMusicMini.is-playing .sv-music-mini-symbol{
+ animation:sv-mini-record-spin 13s linear infinite;
+}
+@keyframes sv-mini-record-spin{to{transform:rotate(360deg)}}
+#sayviMusicMini .sv-music-mini-copy{
+ display:flex;flex:1 1 auto;flex-direction:column;justify-content:center;
+ gap:3px;min-width:0;padding-bottom:2px;
+}
 #sayviMusicMini .sv-music-mini-copy strong{
- font-size:11.8px;font-weight:510;line-height:1.3;
- overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:12.5px;font-weight:500;line-height:1.15;letter-spacing:-.012em;
 }
 #sayviMusicMini .sv-music-mini-copy small{
- font-size:10px;color:var(--secondary);
+ display:block;color:var(--secondary);font-size:10px;line-height:1.12;
 }
 #sayviMusicMini .sv-music-mini-chevron{
- flex:none;font-size:18px;color:var(--secondary);font-weight:340;line-height:1;
+ flex:none;font-size:16px;color:var(--secondary);line-height:1;font-weight:350;
+ padding:0 2px 1px 0;
 }
 #sayviMusicMini .sv-music-mini-play{
- display:grid;place-items:center;flex:0 0 43px;
- height:43px;border-radius:50%;
- border:1px solid var(--soft-line);background:var(--card2);
+ flex:0 0 43px;width:43px;height:43px;min-width:43px;min-height:43px;
+ display:grid;place-items:center;border-radius:50%;
+ border:1px solid rgba(210,220,234,.20);
+ background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
 }
 #sayviMusicMini .sv-music-mini-play svg{
- width:20px;height:20px;fill:none;stroke:currentColor;
+ width:19px;height:19px;fill:none;stroke:currentColor;
  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
+#sayviMusicMini .sv-music-mini-play:active{background:rgba(230,235,244,.14)}
 #sayviMusicMini button:focus-visible{
- outline:1px solid var(--text);outline-offset:1px;
- border-radius:12px;
+ outline:2px solid var(--text);outline-offset:1px;border-radius:12px;
+}
+/* In Chat the normal dock is hidden. Anchor above the REAL writer, never
+   across the text field; writer height is refreshed only when it resizes. */
+html.seyveo-conversation #sayviMusicMini{
+ z-index:39;
+ bottom:calc(max(8px,env(safe-area-inset-bottom,0px) - 12px) + var(--sv-mini-writer-height,94px) + 10px);
+}
+html.seyveo-conversation:has(#sayviMusicMini:not([hidden])) #stage .orb-inline-reply-text{
+ scroll-padding-bottom:60px;
+ padding-bottom:60px;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #sayviMusicMini,
+html.seyveo-conversation:has(#ask.prompt.expanded) #sayviMusicMini,
+html.seyveo-conversation:has(#question:focus) #sayviMusicMini{
+ display:none!important;
+}
+:root[data-theme=light] #sayviMusicMini{
+ border-color:rgba(87,105,128,.22);
+ color:#202a36;
+ background:linear-gradient(155deg,rgba(248,250,252,.97),rgba(232,237,243,.97));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.93),0 6px 19px rgba(32,45,65,.09);
+}
+:root[data-theme=light] #sayviMusicMini .sv-music-mini-play{
+ border-color:rgba(67,81,103,.17);
+ background:rgba(42,55,77,.045);
+}
+:root[data-theme=light] #sayviMusicMini::after{
+ background:linear-gradient(90deg,rgba(56,74,98,.65) 0 var(--sv-mini-progress),rgba(55,72,94,.17) var(--sv-mini-progress) 100%);
 }
 @media(max-width:355px){
- #sayviMusicMini{width:calc(100vw - 24px);padding-left:7px}
+ #sayviMusicMini{width:calc(100vw - 22px)}
  #sayviMusicMini .sv-music-mini-open{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicMini .sv-music-mini-symbol{animation:none!important}
 }
 @media(prefers-reduced-transparency:reduce){
  #sayviMusicMini{-webkit-backdrop-filter:none;backdrop-filter:none}
