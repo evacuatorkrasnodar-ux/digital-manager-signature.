@@ -360,17 +360,21 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 /* Saved requests: compact open lines, never pills with clipped first lines.
    Native DETAILS remains functional, preserving read-only history and storage. */
 #assistantChatHistoryDialog.assistant-chat-history[open]{
- display:flex;flex-direction:column;
- width:min(530px,calc(100vw - 12px));
- max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
- height:auto;
- max-height:min(90svh,calc(100svh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- padding:19px 16px 11px;
+ display:flex;flex-direction:column;box-sizing:border-box;
+ width:min(500px,calc(100vw - 28px));
+ max-width:calc(100vw - 28px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+ height:auto;min-height:0;
+ max-height:min(78svh,calc(100svh - 36px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+ padding:17px 15px 12px;
+ border:1px solid var(--soft-line)!important;
+ border-radius:21px!important;
+ background:var(--bg)!important;
+ box-shadow:none!important;
  overflow:hidden;
 }
 #assistantChatHistoryDialog .assistant-chat-head{
- display:grid;gap:7px;flex:0 0 auto;
- padding:0 42px 12px 0;min-width:0;
+ display:grid;gap:5px;flex:0 0 auto;
+ margin:0; padding:0 43px 12px 0;min-width:0;
 }
 #assistantChatHistoryDialog .assistant-chat-head h2{
  margin:0;font-size:clamp(20px,5.2vw,25px);
@@ -381,12 +385,17 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 }
 #assistantChatHistoryDialog .assistant-chat-items{
  display:flex;flex:0 1 auto;min-height:0;min-width:0;
- max-height:min(64svh,620px);
+ max-height:min(58svh,560px);
  flex-direction:column;align-items:stretch;gap:0;
- overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+ overflow-y:auto;overflow-x:hidden;
+ scrollbar-width:thin;scrollbar-color:var(--soft-line) transparent;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ scroll-padding:5px 0 12px;
 }
-#assistantChatHistoryDialog .assistant-chat-items::-webkit-scrollbar{display:none}
+#assistantChatHistoryDialog .assistant-chat-items::-webkit-scrollbar{width:3px}
+#assistantChatHistoryDialog .assistant-chat-items::-webkit-scrollbar-thumb{
+ background:var(--soft-line);border-radius:4px;
+}
 #assistantChatHistoryDialog .assistant-chat-item{
  display:block;flex:0 0 auto;position:relative;
  box-sizing:border-box;min-width:0;width:100%;
@@ -399,9 +408,9 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  overflow:visible!important;
 }
 #assistantChatHistoryDialog .assistant-chat-summary{
- display:flex;flex-direction:column;justify-content:center;gap:5px;
- box-sizing:border-box;width:100%;min-height:63px;height:auto!important;
- margin:0;padding:11px 3px 11px 2px;
+ display:flex;flex-direction:column;justify-content:center;gap:3px;
+ box-sizing:border-box;width:100%;min-height:57px;height:auto!important;
+ margin:0;padding:9px 4px 9px 2px;
  border:0;border-radius:0;background:transparent;
  text-align:left;list-style:none;cursor:pointer;
  white-space:normal;overflow:visible;
@@ -440,8 +449,8 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  margin:18px 2px;color:var(--secondary);font-size:13px;line-height:1.6;
 }
 #assistantChatHistoryDialog .assistant-chat-bottom{
- display:flex;gap:14px;flex:0 0 auto;
- padding:8px 0 0;border-top:1px solid var(--soft-line);
+ display:flex;gap:14px;flex:0 0 auto; margin:8px 0 0;
+ padding:5px 0 0;border-top:1px solid var(--soft-line);
 }
 #assistantChatHistoryDialog .assistant-chat-bottom .btn{
  flex:1;min-width:0;min-height:44px;padding:8px 3px;
@@ -455,13 +464,14 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 #assistantChatHistoryDialog .assistant-chat-bottom #assistantChatHistoryDone{
  text-decoration:underline;text-underline-offset:6px;
 }
+#assistantChatHistoryDialog .assistant-chat-bottom button[hidden]{display:none!important}
 #assistantChatHistoryDialog :is(summary,button):focus-visible{
  outline:2px solid var(--text);outline-offset:-2px;
 }
 @media(max-width:370px){
  #assistantChatHistoryDialog.assistant-chat-history[open]{
-  width:calc(100vw - 8px);max-width:calc(100vw - 8px);
-  padding:18px 12px 10px;
+  width:calc(100vw - 24px);max-width:calc(100vw - 24px);
+  padding:16px 12px 10px;border-radius:19px!important;
  }
 }
 
