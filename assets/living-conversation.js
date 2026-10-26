@@ -81,6 +81,49 @@ if(compact){
  compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),mic);
 }
 
+/* Chat '+' invokes existing SEYVEO destinations; never pretends to upload files. */
+if(compact){
+ const plus=document.createElement('button');
+ plus.type='button';plus.id='seyveoChatPlus';
+ plus.setAttribute('aria-label','Дополнительные действия');
+ plus.setAttribute('aria-expanded','false');
+ plus.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+ const menu=document.createElement('div');
+ menu.id='seyveoChatPlusMenu';menu.hidden=true;
+ menu.setAttribute('role','menu');
+ const actions=[
+  ['История бесед','seyveoConversationHistory'],
+  ['Мои записи','viewNotes'],
+  ['Музыка','sayviMusicFromComposer']
+ ];
+ for(const [label,id] of actions){
+  const btn=document.createElement('button');
+  btn.type='button';btn.textContent=label;btn.setAttribute('role','menuitem');
+  btn.addEventListener('click',()=>{
+   closeMenu();
+   $(id)?.click();
+  });
+  menu.append(btn);
+ }
+ document.body.append(menu);
+ function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
+ plus.addEventListener('click',()=>{
+  if(!root.classList.contains('seyveo-conversation'))return;
+  const show=menu.hidden;
+  if(!show){closeMenu();return}
+  const rect=plus.getBoundingClientRect();
+  menu.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-190))+'px';
+  menu.style.bottom=Math.max(0,window.innerHeight-rect.top+6)+'px';
+  menu.hidden=false;plus.setAttribute('aria-expanded','true');
+ });
+ document.addEventListener('pointerdown',e=>{
+  if(!menu.hidden&&!menu.contains(e.target)&&!plus.contains(e.target))closeMenu();
+ });
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+ new MutationObserver(()=>{if(!root.classList.contains('seyveo-conversation'))closeMenu()})
+  .observe(root,{attributes:true,attributeFilter:['class']});
+ compact.insertBefore(plus,compact.querySelector('#seyveoConversationMic'));
+}
 /* One reversible expand control for the existing chat textarea. */
 if(compact){
  const toggle=document.createElement('button');
