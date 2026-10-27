@@ -20,8 +20,9 @@ const values={
 };
 for(const [token,value] of Object.entries(values))
  assert.ok(core.includes(token+':'+value),'My World shared palette: '+token);
-assert.match(scene,/linear-gradient\(180deg,#101817 0%,#111e1b 27%,#142521 53%,#172b25 78%,#10211d 100%\)/,
- 'All workspaces use sampled My World velvet atmosphere');
+const myWorldGradient='linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%)';
+assert.equal(scene.split(myWorldGradient).length-1,2,
+ 'Exactly the same gradient on the common canvas and original My World scene');
 assert.match(scene,/--sv-q-outline:var\(--seyveo-hdr-outline\)/,'One consistent outline material');
 assert.match(chat,/linear-gradient\(180deg,#111917 0%,#142521 52%,#10211d 100%\)/,
  'Chat matches the same muted tone');
@@ -31,5 +32,8 @@ assert.ok(html.includes('--seyveo-emerald:#386d5b'),'Emerald remains legible on 
 for(const p of ['assets/home-velvet.css','assets/living-space.css','assets/conversation-refined.css','assets/management-glass-showcase.css'])
  assert.ok(new RegExp(p.replaceAll('.','\\.').replaceAll('/','\\/')+'\\?v=\\d+').test(html),'Cache-busted CSS '+p);
 assert.match(orb,/viewBox="40 30 440 440"/,'The approved sphere still has correct proportions');
-assert.doesNotMatch(scene,/background-attachment:fixed/,'No scroll-heavy atmospheric filter');
+assert.ok(scene.includes('background-attachment:fixed!important;'),
+ 'Original approved My World viewport presentation remains unchanged');
+assert.ok(!scene.match(/:root:not\(\[data-theme=light\]\) body\{[^}]*background-attachment:fixed/s),
+ 'Shared canvas does not add fixed attachment or extra repaints');
 console.log('PASS Black Velvet HDR-like: sampled My World color across Home, Chat and Management.');
