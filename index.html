@@ -2369,8 +2369,8 @@ $('openLifeFromManage')?.addEventListener('click',()=>{location.hash='#life'});
 $('openBusinessPictureFromManage')?.addEventListener('click',()=>{location.hash='#picture'});
 $('pictureBackToBusiness')?.addEventListener('click',()=>{
   // Return to the actual My Business workspace, not the Management overview.
-  const business=document.querySelector('#seyveoCleanManageMenu [data-clean-section="business"]');
-  if(business)business.click();
+  // Direct business buttons now live in Management itself.
+  window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
   if(location.hash!=='#manage')location.hash='#manage';
   else syncAppPage();
 });
@@ -3534,12 +3534,16 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
  const command=document.getElementById('seyveoBusinessCommandPage');
  const selectors={autonomy:[0,'details:nth-child(3)'],appearance:[1,'details:nth-child(1)'],notifications:[1,'details:nth-child(2)'],security:[1,'details:nth-child(3)'],backup:[1,'details:nth-child(4)'],about:[2,'details.seyveo-manage-fold'],business:[3,'details:nth-child(1)']};
  const direct={connections:'openManageConnections',subscription:'openSeyveoAccountDemo',backup:'openManageData',appearance:'openManageTheme'};
- let businessReturnToCommand=false;
+ let businessReturnPane=null;
  function home(){
-  businessReturnToCommand=false;
+  businessReturnPane=null;
   if(explanation){explanation.hidden=true;explanation.replaceChildren();}
   if(network)network.hidden=true;
-  if(command)command.hidden=true;
+  if(command){
+   command.hidden=true;
+   command.classList.remove('svcp-direct-view');
+   delete command.dataset.businessPane;
+  }
   legacy.hidden=false;
   legacy.classList.remove('sv-business-feature-mode');
   legacy.querySelectorAll('.sv-business-focus').forEach(node=>node.classList.remove('sv-business-focus'));
@@ -3548,14 +3552,8 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
  }
  function showSection(btn){
   const key=btn.dataset.cleanSection, id=direct[key];
-  const wasInCommand=key==='business'&&command&&!command.hidden;
-  if(key==='command'&&command){
-   home();
-   title.textContent='Мой бизнес';
-   menu.hidden=true;detail.hidden=false;legacy.hidden=true;command.hidden=false;
-   window.scrollTo(0,0);
-   return;
-  }
+  const returnPane=key==='business'&&command&&!command.hidden
+   ?command.dataset.businessPane:null;
   if(key==='network'&&network){
    home();
    title.textContent='Сеть и доступ';
@@ -3567,7 +3565,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   if(id){document.getElementById(id)?.click();return}
   const spec=selectors[key];if(!spec)return;
   home();
-  if(key==='business')businessReturnToCommand=wasInCommand;
+  if(key==='business')businessReturnPane=returnPane||null;
   const group=groups[spec[0]],item=group?.querySelector('.manage-card > '+spec[1]);
   if(!group||!item)return;
   group.classList.add('seyveo-selected-group');item.classList.add('seyveo-selected-item');
@@ -3586,11 +3584,37 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   menu.hidden=true;detail.hidden=false;
   window.scrollTo(0,0);
  }
- menu.addEventListener('click',e=>{const btn=e.target.closest('[data-clean-section]');if(btn)showSection(btn)});
+ const businessLabels={people:'Сотрудники',chat:'Рабочие чаты',tasks:'Поручения'};
+ const businessTabs={people:'team',chat:'chats',tasks:'tasks'};
+ function openBusinessPane(kind){
+  if(!businessTabs[kind]||!command)return;
+  home();
+  title.textContent=businessLabels[kind];
+  menu.hidden=true;detail.hidden=false;legacy.hidden=true;command.hidden=false;
+  command.classList.add('svcp-direct-view');
+  command.dataset.businessPane=kind;
+  command.querySelector('[data-svcp-tab="'+businessTabs[kind]+'"]')?.click();
+  window.scrollTo(0,0);
+ }
+ function openBusinessButton(kind){
+  if(kind==='company'){document.getElementById('openCompanyPassportFromManage')?.click();return}
+  if(kind==='pulse'){document.getElementById('openBusinessPictureFromManage')?.click();return}
+  if(kind==='documents'){document.getElementById('openUnifiedDocumentsFromManage')?.click();return}
+  if(kind==='hiring'){businessFeature('Кадры');return}
+  if(kind==='efficiency'){businessFeature('Эффект SEYVEO');return}
+  openBusinessPane(kind);
+ }
+ menu.addEventListener('click',e=>{
+  const business=e.target.closest('[data-clean-business]');
+  if(business){openBusinessButton(business.dataset.cleanBusiness);return}
+  const btn=e.target.closest('[data-clean-section]');
+  if(btn)showSection(btn);
+ });
  const goBack=()=>{
-  if(businessReturnToCommand){
-   businessReturnToCommand=false;
-   showSection(menu.querySelector('[data-clean-section="command"]'));
+  if(businessReturnPane){
+   const pane=businessReturnPane;
+   businessReturnPane=null;
+   openBusinessPane(pane);
   }else home();
  };
  back.addEventListener('click',goBack);
@@ -3615,7 +3639,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
    name==='Кадры'?'Подбор сотрудников':'Смены и развитие';
   window.scrollTo(0,0);
  }
- window.SEYVEO_BUSINESS_NAV=Object.freeze({openFeature:businessFeature});
+ window.SEYVEO_BUSINESS_NAV=Object.freeze({openFeature:businessFeature,returnToMenu:home});
  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden)goBack()});
  let touchX=null,touchY=null;
  detail.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});
