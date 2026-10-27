@@ -85,9 +85,10 @@ function saveSteps(date,steps){
 }
 window.SEYVEO_SPACES=Object.freeze({calendarItems,upcoming,stepsFor,saveSteps});
 let current='health',editing=null;
+// A single blood-pressure scene takes upper, lower AND pulse from one reading.
+// Standalone pulse records stay in the original journal for viewing/editing.
 const healthUnits=Object.freeze({
- 'Давление':['calHealthPressureValue','calHealthPressureDate'],
- 'Пульс':['calHealthPulseValue','calHealthPulseDate']
+ 'Давление':['calHealthPressureValue','calHealthPressureDate']
 });
 /* SEYVEO Life: world hub reads the single existing Contacts source of truth.
    No copying, syncing or invented entries. Accessible for product testing. */
@@ -224,17 +225,30 @@ function renderHealthOverview(){
  if(current!=='health')return;
  const records=read().filter(x=>x.space==='health');
  const formatted=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'});
- for(const [kind,[valueId,dateId]] of Object.entries(healthUnits)){
-  const matching=records.map((x,i)=>({x,i})).filter(a=>a.x.kind===kind||
-   (kind==='Пульс'&&a.x.kind==='Давление'&&Number.isInteger(a.x.bpPulse)));
-  const latest=matching.sort((a,b)=>
-   (b.x.date||'').localeCompare(a.x.date||'')||(b.x.recordedAt||0)-(a.x.recordedAt||0)||b.i-a.i
-  )[0]?.x;
-  const display=latest&&kind==='Пульс'&&latest.kind==='Давление'?latest.bpPulse+' уд/мин':latest?.title||'Нет записей';
-  $(valueId).textContent=display;
-  $(dateId).textContent=latest?(latest.date?'Последняя запись · '+formatted.format(new Date(latest.date+'T12:00:00')):'Последняя запись · без даты'):'';
-  $(valueId).closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
+ // Do not merge two measurements taken at different times. This summary
+ // displays the pulse only if it belongs to the SAME blood-pressure record.
+ const recent=kind=>records.map((x,i)=>({x,i})).filter(a=>a.x.kind===kind)
+  .sort((a,b)=>(b.x.date||'').localeCompare(a.x.date||'')||
+   (b.x.recordedAt||0)-(a.x.recordedAt||0)||b.i-a.i)[0]?.x;
+ const latest=recent('Давление'),standalonePulse=recent('Пульс');
+ const bp=bpParse(latest);
+ const value=$('calHealthPressureValue'),date=$('calHealthPressureDate');
+ if(bp){
+  value.textContent=bp.s+'/'+bp.d+' мм рт. ст.'+
+   (bp.p!==null?' · '+bp.p+' уд/мин':'');
+  date.textContent=latest.date?
+   'Последний замер · '+formatted.format(new Date(latest.date+'T12:00:00')):
+   'Последний замер · без даты';
+ }else if(latest){
+  // Preserve display of legacy free-text blood-pressure notes.
+  value.textContent=latest.title;
+  date.textContent='Предыдущая запись давления';
+ }else{
+  value.textContent='Нет измерений';
+  // Older pulse-only observations are never deleted or re-labelled as BP.
+  date.textContent=standalonePulse?'Отдельный пульс — в истории ниже':'Верхнее · нижнее · пульс';
  }
+ value.closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
  bpReport();
 }
 function renderList(){
