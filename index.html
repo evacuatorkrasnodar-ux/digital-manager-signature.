@@ -3372,7 +3372,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
  if(!menu||!detail||!legacy)return;
  const groups=Array.from(legacy.querySelectorAll('.seyveo-management-v2-group'));
  const explanation=document.getElementById('seyveoCleanExplain');
- const selectors={autonomy:[0,'details:nth-child(3)'],appearance:[1,'details:nth-child(1)'],notifications:[1,'details:nth-child(2)'],security:[1,'details:nth-child(3)'],backup:[1,'details:nth-child(4)'],about:[2,'details:nth-child(2)'],business:[3,'details:nth-child(1)']};
+ const selectors={autonomy:[0,'details:nth-child(3)'],appearance:[1,'details:nth-child(1)'],notifications:[1,'details:nth-child(2)'],security:[1,'details:nth-child(3)'],backup:[1,'details:nth-child(4)'],about:[2,'details.seyveo-manage-fold'],business:[3,'details:nth-child(1)']};
  const direct={connections:'openManageConnections',subscription:'openSeyveoAccountDemo',backup:'openManageData',appearance:'openManageTheme'};
  function home(){
   if(explanation){explanation.hidden=true;explanation.replaceChildren();}
@@ -3397,6 +3397,9 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   const group=groups[spec[0]],item=group?.querySelector('.manage-card > '+spec[1]);
   if(!group||!item)return;
   group.classList.add('seyveo-selected-group');item.classList.add('seyveo-selected-item');
+  // Expose the Ideas shortcut alongside Passport and demo materials.
+  // Stable semantic selector: inserting a new menu button must not break this page.
+  if(key==='about')group.querySelector('#openManageRoadmap')?.classList.add('seyveo-selected-item');
   if(item.tagName==='DETAILS')item.open=true;
   title.textContent=btn.querySelector('.manage-text strong')?.textContent.trim()||btn.textContent.trim();
   // The Business detail already has its own heading and sections: no duplicate picture/caption.
