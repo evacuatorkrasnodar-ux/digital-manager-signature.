@@ -395,6 +395,17 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#life
  max-width:34em;margin:0;color:var(--secondary);
  font-size:12.5px;font-weight:410;line-height:1.58;letter-spacing:-.005em;
 }
+/* Keep the actual monthly calendar compact without changing other screens. */
+html.sv-space-active #calendarPage .calendar-header{
+ margin:2px 0 12px;
+}
+html.sv-space-active #calendarPage .calendar-header h1{
+ font-size:clamp(24px,6.5vw,29px);
+ margin-bottom:5px;
+}
+html.sv-space-active #calendarPage .cal-nav{
+ min-height:30px;
+}
 /* TIME — no boxed monthly widget. The calendar itself is the object. */
 html.sv-space-active #calendarPage .cal-month,
 html.sv-space-active #calendarPage .cal-week-grid,
