@@ -41,7 +41,14 @@ const icon=(name)=>({
  meds:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="11" width="22" height="11" rx="5.5" transform="rotate(-45 16 16)"/><path d="m12 12 8 8"/></svg>',
  sleep:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23 5a12 12 0 1 0 4 20A12 12 0 0 1 23 5Z"/></svg>'
 })[name];
-const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false">'+icon(key)+'<strong>'+label+'</strong><small id="pwCard'+key+'">'+sub+'</small></button>';
+const cardActions=Object.freeze({
+ meds:'Добавить лекарство',sleep:'Записать сон',
+ breath:'Начать дыхание',water:'Записать воду',eyes:'Отдых для глаз',steps:'Записать шаги'
+});
+const arrow='<svg class="pw-card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false" aria-label="'+(cardActions[key]||label)+'">'+
+ icon(key)+'<strong>'+label+'</strong><small id="pwCard'+key+'">'+sub+'</small>'+
+ '<span class="pw-card-action" aria-hidden="true">'+(cardActions[key]||'Открыть')+arrow+'</span></button>';
 host.innerHTML=`
  <section id="pwCare">
   <button type="button" class="pw-tool-back" id="pwCareBack" hidden aria-label="Вернуться к инструментам заботы">
@@ -507,7 +514,7 @@ function renderMeds(){
  const rows=$('pwMedList');rows.replaceChildren();
  const meds=state.medications.filter(row=>row&&typeof row.name==='string').slice().sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
  const completed=meds.filter(row=>state.medLogs[row.id+'|'+today()]==='taken').length;
- $('pwCardmeds').textContent=meds.length?completed+' из '+meds.length+' отмечено':'Нет назначений';
+ $('pwCardmeds').textContent=meds.length?completed+' из '+meds.length+' отмечено':'Пока нет записей';
  if(!meds.length)rows.append(text('p','Пока нет записанных назначений.','pw-empty'));
  for(const row of meds){
   const wrap=document.createElement('article');wrap.className='pw-list-row';
@@ -529,7 +536,7 @@ function renderSleep(){
  const rows=$('pwSleepList');rows.replaceChildren();
  const data=state.sleep.filter(r=>r&&dateOk(r.date)).slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,50);
  // A quick glance at the last entered night, never a guessed measurement.
- $('pwCardsleep').textContent=data.length?String(data[0].hours).replace('.',',')+' ч · '+stamp(data[0].date):'Нет записей';
+ $('pwCardsleep').textContent=data.length?String(data[0].hours).replace('.',',')+' ч · '+stamp(data[0].date):'Пока нет записей';
  if(!data.length){rows.append(text('p','Добавьте первую запись сна.','pw-empty'));return;}
  const names={good:'Хорошо',normal:'Обычно',poor:'Беспокойно'};
  for(const row of data){
