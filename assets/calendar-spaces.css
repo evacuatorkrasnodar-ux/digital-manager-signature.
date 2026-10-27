@@ -33,18 +33,98 @@
 .calendar-space-edit h3{margin:0;font-size:13px;font-weight:615}
 .calendar-space-edit label{display:flex;flex-direction:column;gap:6px;color:var(--secondary);font-size:11.5px;line-height:1.45}
 .calendar-space-edit input,.calendar-space-edit select,.calendar-space-edit textarea{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:transparent;color:var(--text);padding:10px 3px;font:inherit;font-size:16px;font-weight:480;line-height:1.25;outline:0}
+/* Health measurement fields: native select/date remain the data source,
+   while visible choices are drawn by the same Black Velvet palette. */
 #calendarSpaceDialog .calendar-space-edit label:has(> select){position:relative}
-#calendarSpaceDialog .calendar-space-edit select{
- -webkit-appearance:none;appearance:none;
- padding-inline-end:43px;text-overflow:ellipsis
+#calendarSpaceDialog .calendar-space-edit :is(select,input[type=date]).cal-velvet-original{
+ position:absolute!important;width:1px!important;height:1px!important;
+ min-height:0!important;padding:0!important;margin:0!important;
+ opacity:0!important;pointer-events:none!important;clip-path:inset(50%);
 }
-#calendarSpaceDialog .calendar-space-edit label:has(> select)::after{
- content:'';position:absolute;right:20px;bottom:21px;width:8px;height:8px;
- border-right:1.8px solid var(--text);border-bottom:1.8px solid var(--text);
- transform:rotate(45deg);opacity:.7;pointer-events:none
+#calendarSpaceDialog .calendar-space-edit .cal-velvet-trigger{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;
+ width:100%;min-width:0;min-height:48px;padding:10px 13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:14px;
+ background:var(--card);color:var(--text);font:inherit;font-size:15px;
+ font-weight:510;text-align:left;box-shadow:none;cursor:pointer;
 }
-#calendarSpaceDialog .calendar-space-edit input[type=date]::-webkit-date-and-time-value{text-align:left}
-#calendarSpaceDialog .calendar-space-edit input[type=date]::-webkit-datetime-edit{padding:0}
+#calendarSpaceDialog .calendar-space-edit .cal-velvet-trigger:after{
+ content:'';flex:none;width:8px;height:8px;margin-left:10px;
+ border-right:1.6px solid var(--seyveo-emerald);
+ border-bottom:1.6px solid var(--seyveo-emerald);transform:translateY(-2px) rotate(45deg);
+}
+#calendarSpaceDialog .calendar-space-edit .cal-velvet-trigger[aria-expanded=true]{
+ border-color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .cal-velvet-picker[hidden]{display:none!important}
+#calendarSpaceDialog .cal-velvet-picker{
+ box-sizing:border-box;position:fixed;z-index:300;top:50%;left:50%;
+ transform:translate(-50%,-50%);width:min(330px,calc(100vw - 36px));
+ max-height:min(460px,calc(100dvh - 30px));overflow-y:auto;
+ padding:15px;border-radius:21px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));
+ background:var(--sv-life-dialog-bg,var(--card));color:var(--text);
+ box-shadow:0 14px 42px rgba(0,0,0,.30);
+}
+#calendarSpaceDialog .cal-velvet-picker :is(button,strong){font-family:inherit}
+#calendarSpaceDialog .cal-velvet-picker button{
+ appearance:none;border:0;background:transparent;box-shadow:none;
+ color:var(--text);cursor:pointer;
+}
+#calendarSpaceDialog .cal-velvet-picker button:focus-visible,
+#calendarSpaceDialog .calendar-space-edit .cal-velvet-trigger:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+}
+#calendarSpaceDialog .cal-velvet-picker-head,
+#calendarSpaceDialog .cal-velvet-month{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ margin:0 0 12px;
+}
+#calendarSpaceDialog .cal-velvet-picker-head strong,
+#calendarSpaceDialog .cal-velvet-month strong{
+ font-size:16px;font-weight:600;text-transform:capitalize;line-height:1.3;
+}
+#calendarSpaceDialog .cal-velvet-picker-head button{
+ min-height:44px;padding:8px 12px;font-size:12px;color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .cal-velvet-choices{display:grid;gap:3px}
+#calendarSpaceDialog .cal-velvet-choices button{
+ min-height:47px;padding:9px 12px;text-align:left;
+ border-radius:12px;font-size:14px;
+}
+#calendarSpaceDialog .cal-velvet-choices button[aria-pressed=true]{
+ background:var(--seyveo-hdr-active);color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .cal-velvet-month button{
+ display:grid;place-items:center;width:44px;height:44px;flex:none;
+ font-size:27px;color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .cal-velvet-weekdays,
+#calendarSpaceDialog .cal-velvet-days{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;
+ text-align:center;
+}
+#calendarSpaceDialog .cal-velvet-weekdays span{
+ font-size:10px;padding:6px 0;color:var(--secondary);
+}
+#calendarSpaceDialog .cal-velvet-days button{
+ display:grid;place-items:center;min-width:0;width:100%;height:36px;
+ font-size:12px;border-radius:11px;
+}
+#calendarSpaceDialog .cal-velvet-days button[aria-pressed=true]{
+ background:var(--seyveo-hdr-active);
+ box-shadow:inset 0 0 0 1px var(--seyveo-emerald);
+}
+#calendarSpaceDialog .cal-velvet-days button.is-today:not([aria-pressed=true]){
+ color:var(--seyveo-emerald);font-weight:700;
+}
+#calendarSpaceDialog .cal-velvet-picker-foot{
+ display:flex;justify-content:space-between;gap:10px;
+ margin-top:12px;padding-top:10px;border-top:1px solid var(--soft-line);
+}
+#calendarSpaceDialog .cal-velvet-picker-foot button{
+ min-height:44px;padding:8px 10px;font-size:12px;color:var(--seyveo-emerald);
+}
 .calendar-space-edit textarea{min-height:68px;resize:vertical}
 .calendar-space-edit :is(input,select,textarea):focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .calendar-space-date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
