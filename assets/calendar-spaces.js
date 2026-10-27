@@ -280,6 +280,7 @@ for(const [input,button,label] of [[svKind,svKindButton,'Раздел'],[svDate,
  input.classList.add('cal-velvet-original');
  input.tabIndex=-1;
  button.type='button';button.className='cal-velvet-trigger';button.setAttribute('aria-label',label);
+ button.id=input.id+'VelvetButton';input.parentElement.htmlFor=button.id;
  button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
  input.insertAdjacentElement('afterend',button);
  input.addEventListener('change',svSyncControls);
