@@ -1,10 +1,11 @@
-/* SEYVA PLAY · official YouTube user-initiated embed, resource and routing tests.
+/* SEYVEO PLAY · official YouTube user-initiated embed, resource and routing tests.
  * No external YouTube request occurs during these tests. */
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const api=require('../assets/seyveo-video-core.js');
 const html=read('index.html'),source=read('assets/seyveo-video.js'),
+ lifeNav=read('assets/calendar-spaces.js'),
  style=read('assets/seyveo-video.css'),music=read('assets/seyveo-music.js'),
  living=read('assets/living-space.js'),director=read('assets/living-screen-core.js');
 const id='M7lc1UVf-VE';
@@ -33,6 +34,21 @@ assert.equal(new URL(official).searchParams.get('playsinline'),'1');
 assert.equal(api.embed('unsafe'),null);
 assert.ok(html.indexOf('seyveo-video-core.js')<html.indexOf('seyveo-video.js'));
 assert.match(html,/id="sayviVideoPage"[^>]*hidden/,'Video scene starts closed');
+assert.match(html,/assets\/calendar-spaces\.js\?v=14/,'My World routes updated');
+assert.match(html,/assets\/seyveo-video\.js\?v=5/,'PLAY returns to the right screen');
+const worldGrid=html.match(/<div id="calendarSpaces"[^>]*>([\s\S]*?)<\/div>/)?.[1]||'';
+assert.equal((worldGrid.match(/data-calendar-space="play"/g)||[]).length,1,
+ 'Only one SEYVEO PLAY choice in My World');
+assert.doesNotMatch(worldGrid,/data-calendar-space="(?:documents|mail)"/,
+ 'Documents and Mail are not duplicated in My World');
+assert.match(html,/data-world-space="play"/,'Home My World shortcuts include PLAY');
+assert.doesNotMatch(html,/data-world-space="mail"/,'Home My World shortcuts do not duplicate Mail');
+assert.match(html,/<h1>SEYVEO PLAY<\/h1>/,'Brand stays SEYVEO');
+assert.match(lifeNav,/if\(name==='play'\)/,'My World tile opens PLAY');
+assert.match(lifeNav,/SEYVEO_VIDEO\?\.open\?\.\(\{from\}\)/,
+ 'My World reuses the existing video module');
+assert.doesNotMatch(lifeNav,/if\(name==='(?:documents|mail)'\)/,
+ 'Old duplicated My World routes are gone');
 assert.match(html,/placeholder="Что посмотрим\?"/,'One obvious type-by-name field');
 assert.match(html,/<details id="sayviVideoMore"/,'Rare YouTube links are collapsed by default');
 assert.match(html,/<summary>Ещё<\/summary>/,'One optional advanced action area');
@@ -124,6 +140,11 @@ nodes.sayviVideoBack.click();
 assert.equal(loc.hash,'#sayvi-music','Return to existing Music from Music source');
 for(const fn of handlers.hashchange||[])fn();
 assert.equal(win.SEYVEO_VIDEO.hasPlayer(),false,'Video stops on return to Music');
+win.SEYVEO_VIDEO.open({from:'life'});
+assert.equal(loc.hash,'#sayvi-video','My World launches existing PLAY screen');
+assert.equal(nodes.sayviVideoPlayer.children.length,0,'No autoplay when opening from My World');
+nodes.sayviVideoBack.click();
+assert.equal(loc.hash,'#life','PLAY Back returns to My World');
 nodes.sayviVideoForget.click();
 assert.equal(store.size,0,'Forget the only saved link');
-console.log('PASS SEYVA PLAY: URL allowlist, one official iframe, consent, native controls, media release and Music route.');
+console.log('PASS SEYVEO PLAY: one player, My World entry and Back, no duplicate mail/documents, official embed.');
