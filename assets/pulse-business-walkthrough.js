@@ -64,7 +64,7 @@ toggle.addEventListener('click',()=>{
  panel.hidden=!open;
  toggle.setAttribute('aria-expanded',String(open));
  toggle.textContent=open?'Свернуть демо':'Открыть демо «Пульс бизнеса»';
- if(open){step=0;render();panel.scrollIntoView?.({block:'nearest',behavior:'instant'});}
+ if(open){step=0;render();panel.scrollIntoView?.({block:'nearest',behavior:'auto'});}
 });
 next.addEventListener('click',()=>{step=(step+1)%stages.length;render()});
 fold.addEventListener('click',()=>{panel.hidden=true;toggle.textContent='Открыть демо «Пульс бизнеса»';toggle.setAttribute('aria-expanded','false');toggle.focus()});
