@@ -107,12 +107,9 @@ function syncResume(){
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing}}));
 }
 function syncQueueToggle(){
- const button=$('navManage');
- if(button&&location.hash==='#sayvi-music'){
-  const opened=queueOpen&&!collection.hidden;
-  button.setAttribute('aria-expanded',String(opened));
-  button.setAttribute('aria-label',opened?'Свернуть треки':'Открыть треки');
- }
+ // The persistent Management dock button must never become a music control.
+ // Queue accessibility is managed by the player itself, not global navigation.
+ if(collection)collection.setAttribute('aria-label','Треки SEYVEO Music');
 }
 function hidePanels(){
  queueOpen=false;
