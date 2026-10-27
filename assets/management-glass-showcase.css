@@ -17,13 +17,13 @@ html.sv-space-active #managePage #seyveoCleanManageMenu{
  margin:10px 0 28px;padding:0 14px 10px;
  border:1px solid var(--seyveo-hdr-outline);
  border-radius:24px;
- background:linear-gradient(159deg,rgba(243,255,249,.050),rgba(125,163,142,.016) 48%,rgba(17,43,34,.025));
+ background:linear-gradient(159deg,var(--seyveo-specular),var(--seyveo-hdr-active) 48%,transparent);
  box-shadow:none;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
  margin:0!important;padding:16px 0 4px;
  border:0;
- border-top:1px solid rgba(172,207,187,.15);
+ border-top:1px solid var(--seyveo-hdr-outline);
  background:transparent;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group:first-child{
@@ -52,7 +52,7 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
  min-height:79px;margin:0;padding:10px 5px 11px;
  text-align:left;color:var(--text);
  border:0!important;
- border-bottom:1px solid rgba(165,220,201,.15)!important;
+ border-bottom:1px solid var(--seyveo-hdr-outline)!important;
  border-radius:0!important;
  background:transparent!important;
  box-shadow:none!important;
