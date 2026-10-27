@@ -148,7 +148,7 @@
 #manageThemeScreen .manage-theme-example-mark{
  display:block;width:23px;height:23px;border-radius:50%;
  border:1px solid var(--line);
- background:radial-gradient(circle at 37% 33%,#f8fbff,#cad4e0 41%,#6d7889 78%,#373e49 100%);
+ background:radial-gradient(circle at 37% 33%,#fafffd,#beded1 41%,#668c82 78%,#263e40 100%);
  box-shadow:inset 0 1px 1px #fff5;
 }
 #manageThemeScreen .manage-theme-example-dot{
