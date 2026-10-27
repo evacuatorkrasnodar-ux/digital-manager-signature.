@@ -176,6 +176,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
  const seenQueueRows=new Set();
+ let queueRendered=false;
  // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
  // The message is invented. No API, actual outgoing email or AI is used.
  const mailDefault='Здравствуйте, Андрей! Спасибо за обращение. Уточните, пожалуйста, адрес доставки, чтобы мы могли рассчитать стоимость.';
@@ -285,7 +286,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    const row=create('button','lm-inline-item');
    row.type='button';
    row.dataset.lmKind=item.kind;
-   if(real&&seenQueueRows.size&&!seenQueueRows.has(item.eventId))row.classList.add('lm-next-arrive');
+   if(real&&queueRendered&&!seenQueueRows.has(item.eventId))row.classList.add('lm-next-arrive');
    if(real)seenQueueRows.add(item.eventId);
    row.setAttribute('aria-label','Выбрать дело: '+item.title);
    const mark=create('span','lm-inline-art');
@@ -299,6 +300,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    });
    secondary.append(row);
   }
+  if(real)queueRendered=true;
  }
  function setFeatured(item){
   shown=item;
