@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id),dialog=$('calendarSpaceDialog');
 if(!dialog||!$('calendarSpaces'))return;
 const KEY='seyveo-life-spaces-v1',MAX=240;
 const META=Object.freeze({
- health:{name:'Здоровье',desc:'Давление, пульс, лекарства и сон',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80'},
+ health:{name:'Здоровье',desc:'Ваши измерения и личные записи',kinds:['Давление','Пульс','Шаги','Самочувствие','Другое'],placeholder:'Например, 120/80'},
  care:{name:'Забота ♡',desc:'Дыхание, вода, шаги, отдых для глаз и цикл',kinds:['О себе','О близких','Личное','Другое'],placeholder:'Например, записаться на приём'},
  world:{name:'Мой мир',desc:'Ваши люди, важные даты и общение',kinds:['День рождения','Важная дата','Человек','Другое'],placeholder:'Например, мама'}
 });
@@ -139,8 +139,8 @@ function renderHealthOverview(){
   const latest=matching.map((item,index)=>({item,index})).sort((a,b)=>
    (b.item.date||'').localeCompare(a.item.date||'')||b.index-a.index
   )[0]?.item;
-  $(valueId).textContent=latest?latest.title:'—';
-  $(dateId).textContent=latest?(latest.date?formatted.format(new Date(latest.date+'T12:00:00')):'Без даты'):'Нет записей';
+  $(valueId).textContent=latest?latest.title:'Нет записей';
+  $(dateId).textContent=latest?(latest.date?'Последняя запись · '+formatted.format(new Date(latest.date+'T12:00:00')):'Последняя запись · без даты'):'';
  }
 }
 function renderList(){
