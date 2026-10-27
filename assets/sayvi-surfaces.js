@@ -12,7 +12,7 @@ const page=$('sayviSurfacePage'),subject=$('sayviSurfaceSubject'),
 if(!page||!subject||!title||!intro||!body||!back||!symbol)return;
 const routes=Object.freeze({mail:'#sayvi-mail',contract:'#sayvi-documents',task:'#tasks',health:'#sayvi-health'});
 const subjects=Object.freeze({
- mail:{label:'ПОЧТА',title:'Письма и сообщения',intro:'Здесь будут письма, которым стоит уделить внимание.',symbol:'mail'},
+ mail:{label:'SEYVEO / ПОЧТА',title:'Почта',intro:'Письма и черновики внутри SEYVEO. Подключение ящика — отдельно.',symbol:'mail'},
  contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Центр документов',intro:'Открывайте файлы, создавайте черновики и готовьте их к передаче. Интеллект Сэйви будет подключён отдельно.',symbol:'contract'},
  health:{label:'ЗАБОТА',title:'Ваше здоровье',intro:'Ваши показатели и спокойная забота о себе.',symbol:'health'}
 });
@@ -183,18 +183,131 @@ function demoScenario(kind){
  section.append(hint('Это режим проверки будущего поведения Сэйви. Ни писем, ни подписей, ни медицинских действий он не выполняет.'));
  body.append(section);
 }
+/* SEYVEO Mail — one native inbox shell, with no unconnected fake messages.
+   Drafts live only in this open app session until a secure account store exists.
+   A real provider connection and sending are intentionally NOT implemented here. */
+let mailFolder='inbox',mailEditorOpen=false,mailEditingId=null;
+let mailDrafts=[];
 function mailView(){
- demoScenario('mail');
  const section=shelf();
- section.append(create('p','sv-deep-lead','Пока почта не подключена.'));
- section.append(paragraph('Я не вижу входящие письма и не могу выбирать важные или отвечать клиентам без вашего разрешения.'));
- const note=paragraph('Когда подключение станет доступным, я смогу показывать источник, причину важности и готовить ответ для вашей проверки.','sv-deep-expand');
- note.hidden=true;
- const why=intent('Что я смогу делать',()=>{note.hidden=!note.hidden;why.setAttribute('aria-expanded',String(!note.hidden))});
- why.setAttribute('aria-expanded','false');
- section.append(actions(intent('Перейти к подключениям',openConnect,true),why),note);
- section.append(hint('Ни одного письма не загружено. Подключение почтового сервиса пока не является действующим доступом.'));
- body.append(section);
+ section.classList.add('sv-mail-workspace');
+ const nav=create('div','sv-mail-toolbar');
+ nav.setAttribute('role','group');nav.setAttribute('aria-label','Разделы почты');
+ const info=create('div','sv-mail-info');
+ info.setAttribute('role','status');info.setAttribute('aria-live','polite');
+ const content=create('div','sv-mail-list');
+ const actionRow=create('div','sv-mail-top-actions');
+ const connect=intent('Подключить ящик',openConnect);
+ connect.classList.add('sv-mail-connect');
+ const compose=intent('Написать',()=>{
+  mailEditorOpen=true;mailEditingId=null;paint();
+ },true);
+ compose.classList.add('sv-mail-compose');
+ actionRow.append(compose,connect);
+ const tabs=[
+  ['inbox','Входящие'],
+  ['sent','Отправленные'],
+  ['drafts','Черновики']
+ ];
+ function selectFolder(folder){
+  mailFolder=folder;mailEditorOpen=false;mailEditingId=null;paint();
+ }
+ function editDraft(id){
+  if(!mailDrafts.some(d=>d.id===id))return;
+  mailEditingId=id;mailEditorOpen=true;paint();
+ }
+ function removeDraft(id){
+  mailDrafts=mailDrafts.filter(d=>d.id!==id);
+  mailEditingId=null;mailEditorOpen=false;mailFolder='drafts';paint();
+ }
+ function drawEditor(){
+  const original=mailDrafts.find(d=>d.id===mailEditingId);
+  const form=create('form','sv-mail-editor');
+  form.setAttribute('aria-label','Черновик письма SEYVEO');
+  const title=create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо');
+  form.append(title);
+  function field(titleText,tag,value,mode){
+   const wrapper=create('label','sv-mail-field');
+   wrapper.append(create('span','sv-mail-field-label',titleText));
+   const input=create(tag,'sv-mail-input');
+   if(tag==='textarea')input.rows=5;
+   if(tag==='input'&&mode)input.type=mode;
+   input.value=value||'';
+   input.maxLength=tag==='textarea'?10000:tag==='input'&&mode==='email'?254:240;
+   wrapper.append(input);form.append(wrapper);
+   return input;
+  }
+  const recipient=field('Кому','input',original?.to,'email');
+  const subjectInput=field('Тема','input',original?.subject,'text');
+  const contentInput=field('Текст письма','textarea',original?.body);
+  const status=create('p','sv-mail-feedback');
+  status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  form.addEventListener('submit',event=>{
+   event.preventDefault();
+   const to=recipient.value.trim(),subject=subjectInput.value.trim(),
+    bodyText=contentInput.value.trim();
+   if(!to&&!subject&&!bodyText){
+    status.textContent='Добавьте хотя бы одну строку для черновика.';return;
+   }
+   const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    to:to.slice(0,254),subject:subject.slice(0,240),body:bodyText.slice(0,10000)};
+   if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
+   else mailDrafts.unshift(item);
+   mailEditorOpen=false;mailEditingId=null;mailFolder='drafts';paint();
+   info.textContent='Черновик сохранён только на время текущего сеанса SEYVEO. Не отправлен.';
+  });
+  const controls=create('div','sv-mail-editor-actions');
+  const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');
+  save.type='submit';
+  const cancel=intent('Отмена',()=>{
+   mailEditorOpen=false;mailEditingId=null;paint();
+  });
+  const send=create('button','sv-deep-intent','Отправить · недоступно');
+  send.type='button';send.disabled=true;
+  send.setAttribute('aria-label','Отправка недоступна до подключения почтового сервиса');
+  controls.append(save,cancel,send);
+  form.append(controls,status,hint('Черновик хранится только в памяти текущего сеанса. После закрытия приложения он может исчезнуть. Почта не подключена — отправки нет.'));
+  content.append(form);
+ }
+ function paint(){
+  nav.replaceChildren();content.replaceChildren();
+  for(const [key,label] of tabs){
+   const b=create('button','sv-mail-folder',label);
+   b.type='button';b.dataset.mailFolder=key;
+   b.setAttribute('aria-pressed',String(!mailEditorOpen&&key===mailFolder));
+   b.addEventListener('click',()=>selectFolder(key));nav.append(b);
+  }
+  compose.hidden=mailEditorOpen;
+  if(mailEditorOpen){
+   info.textContent='Редактор черновика · без реальной отправки';
+   drawEditor();return;
+  }
+  if(mailFolder==='drafts'){
+   info.textContent='Черновики · '+mailDrafts.length+' · только текущий сеанс';
+   if(!mailDrafts.length){
+    content.append(create('p','sv-mail-empty','Черновиков пока нет. Можно написать письмо и сохранить его на время сеанса.'));
+   }else{
+    for(const draft of mailDrafts){
+     const row=create('div','sv-mail-draft-row');
+     const headline=create('div','sv-mail-draft-content');
+     headline.append(create('strong','',draft.subject||'Без темы'));
+     headline.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
+     const controls=create('div','sv-mail-draft-actions');
+     controls.append(intent('Изменить',()=>editDraft(draft.id)),
+      intent('Удалить',()=>removeDraft(draft.id)));
+     row.append(headline,controls);content.append(row);
+    }
+   }
+  }else{
+   info.textContent=mailFolder==='inbox'?'Входящие · ящик не подключён':'Отправленные · ящик не подключён';
+   content.append(create('p','sv-mail-empty',
+    mailFolder==='inbox'?'Пока нет подключённого почтового ящика. Здесь будут ваши настоящие входящие письма.':
+    'Здесь будут действительно отправленные письма после подключения почты.'));
+  }
+ }
+ section.append(actionRow,nav,info,content);
+ section.append(hint('Это почтовый интерфейс внутри SEYVEO. Реальные входящие, синхронизация и отправка заработают только после официального подключения провайдера.'));
+ body.append(section);paint();
 }
 const extensions=new Set(['pdf','txt','md','png','jpg','jpeg','webp']);
 function renderFile(file,status,preview,link){
