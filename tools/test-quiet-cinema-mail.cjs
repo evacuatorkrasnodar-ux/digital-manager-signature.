@@ -14,8 +14,8 @@ assert.match(source,/previewScene=present\.length\?createSurface\(present\[0\],p
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=57/);
-assert.match(html,/assets\/living-moment\.css\?v=41/);
+assert.match(html,/assets\/living-moment\.js\?v=58/);
+assert.match(html,/assets\/living-moment\.css\?v=42/);
 assert.match(html,/assets\/personal-tasks\.js\?v=23/);
 assert.match(html,/assets\/personal-tasks\.css\?v=20/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
@@ -23,6 +23,9 @@ assert.match(style,/#seyveoLivingMoment\.lm-condense \.lm-mail-content\{display:
  'Mail content must disappear with original card condensation');
 assert.match(style,/#seyveoLivingMoment:not\(\.lm-condense\)/,
  'Mail cannot override original condensation');
+assert.match(style,/grid-template-columns:62px minmax\(0,1fr\)/,'Compact Home art, no cloned field');
+assert.match(style,/min-height:44px;font-size:11\.7px/,'Compact actions keep accessible touch height');
+assert.match(html,/seyveo:home-recommendation-changed/,'Sayvi Home voice follows the featured card');
 assert.doesNotMatch(source,/\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(/,'No actual mail transmission');
 assert.match(tasksSource,/function deferredPreviewRow/,'All deferred previews share original Tasks list');
 assert.match(tasksSource,/postponed\.forEach\(task=>list\.append\(row\(task,false,true\)\)\)/,'No second real-task store');
@@ -64,9 +67,10 @@ const doc={hidden:false,activeElement:null,documentElement:new Node(),querySelec
  getElementById:id=>nodes[id]||walk(tasks,x=>x.id===id),createElement:tag=>new Node(tag),
  createElementNS:(ns,tag)=>new Node(tag),addEventListener(){}};
 const timers=[];
+const homeRecommendations=[];
 const win={
  matchMedia:()=>({matches:false}),innerHeight:820,visualViewport:{height:820},
- addEventListener(){},dispatchEvent(){},scrollTo(){},setTimeout:(fn,ms)=>{const id=timers.length+1;timers.push({fn,ms,id});return id}
+ addEventListener(){},dispatchEvent(event){if(event.type==='seyveo:home-recommendation-changed')homeRecommendations.push(event.detail)},scrollTo(){},setTimeout:(fn,ms)=>{const id=timers.length+1;timers.push({fn,ms,id});return id}
 };
 const location={hash:''};
 let mailOpen=0,documentOpen=0;win.SEYVEO_SAYVI_SURFACES={open:kind=>{if(kind==='mail')mailOpen++;else if(kind==='contract')documentOpen++;else assert.fail('Unknown surface: '+kind);return true}};
@@ -88,12 +92,18 @@ assert.equal(field.dataset.lmSubject,'contract');
 const originalActions=all(field,x=>x.className.startsWith('lm-polymer'));
 assert.equal(originalActions.filter(b=>!b.hidden).length,4,'Document card has four in-place actions');
 const documentDetails=walk(field,x=>x.className==='lm-document-content');
-assert.ok(documentDetails&&!documentDetails.hidden,'Contract excerpt lives in original field');
+assert.ok(documentDetails&&!documentDetails.hidden,'Document advice lives in original field');
+assert.equal(walk(field,x=>x.className==='lm-primary-subtitle').hidden,true,'No redundant document subtitle in compact view');
+assert.equal(all(documentDetails,x=>x.className==='lm-document-excerpt').length,0,'Long contract excerpt shown only after Verify');
+assert.ok(all(documentDetails,x=>(x.textContent||'').startsWith('Сэйви · Я заметила')).length,'Original card carries Sayvi comment');
+assert.equal(homeRecommendations.at(-1)?.kind,'contract','Home voice announces the visible document');
+assert.equal(homeRecommendations.at(-1)?.isDemo,true,'Training document is not real');
 const documentAction=label=>{
  const button=all(field,x=>x.className.startsWith('lm-polymer')).find(x=>x.textContent===label&&!x.hidden);
  assert.ok(button,'Document action '+label);return button;
 };
 documentAction('Проверить').click();
+assert.ok(all(documentDetails,x=>x.className==='lm-document-excerpt').length,'Verify unfolds excerpt within same card');
 documentAction('Исправить').click();
 const documentInput=walk(documentDetails,x=>x.tagName==='TEXTAREA');
 assert.ok(documentInput,'Document comment edited in place');
