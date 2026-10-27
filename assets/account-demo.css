@@ -17,7 +17,7 @@
 }
 .seyveo-account-modal button,.seyveo-account-modal input,.seyveo-account-modal select{font-family:inherit}
 .seyveo-account-modal button:focus-visible,.seyveo-account-modal :is(input,select):focus-visible{
- outline:2px solid #b8d0c0;outline-offset:2px;
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 .seyveo-account-head{display:flex;align-items:start;justify-content:space-between;gap:12px}
 .seyveo-account-eyebrow,.seyveo-account-picker-label{
@@ -46,7 +46,7 @@
  border:1px solid var(--soft-line);border-radius:12px;padding:6px 10px;
  background:var(--seyveo-specular);color:var(--secondary);font-size:11px;line-height:1.3;
 }
-.seyveo-account-dot{width:7px;height:7px;border-radius:50%;background:#acc9bd;flex:none}
+.seyveo-account-dot{width:7px;height:7px;border-radius:50%;background:var(--seyveo-emerald);flex:none}
 .seyveo-account-tabs{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;
  padding:4px;margin:15px 0 17px;background:var(--seyveo-specular);border:1px solid var(--soft-line);border-radius:18px;
@@ -202,7 +202,7 @@
  .seyveo-account-switch span{transition:none}
 }
 :root[data-theme="light"] .seyveo-account-modal{
- color:var(--text);background:var(--card);border-color:#74898350;
+ color:var(--text);background:var(--card);border-color:var(--line);
 }
 :root[data-theme="light"] .seyveo-account-modal :is(h2,h3,strong){color:var(--text)}
 :root[data-theme="light"] .seyveo-account-modal :is(p,small,.seyveo-account-disclosure){color:var(--secondary)}
@@ -212,26 +212,26 @@
 :root[data-theme="light"] .seyveo-account-tabs{background:var(--card2)}
 :root[data-theme="light"] .seyveo-account-tabs button{color:var(--secondary)}
 :root[data-theme="light"] .seyveo-account-tabs button[aria-current="page"]{background:var(--card);color:var(--text)}
-:root[data-theme="light"] .seyveo-account-plan-summary{background:linear-gradient(150deg,var(--card),var(--card2));border-color:#7d8e865c}
+:root[data-theme="light"] .seyveo-account-plan-summary{background:linear-gradient(150deg,var(--card),var(--card2));border-color:var(--line)}
 :root[data-theme="light"] .seyveo-account-primary{background:#232d29;color:#fff}
-:root[data-theme="light"] .seyveo-account-secondary{color:var(--text);background:var(--card);border-color:#84958e66}
+:root[data-theme="light"] .seyveo-account-secondary{color:var(--text);background:var(--card);border-color:var(--line)}
 :root[data-theme="light"] .seyveo-account-company-select,
-:root[data-theme="light"] .seyveo-account-login-card input{background:#fff;color:var(--text);border-color:#8a9d9660}
+:root[data-theme="light"] .seyveo-account-login-card input{background:#fff;color:var(--text);border-color:var(--line)}
 :root[data-theme="light"] .seyveo-account-modal button:not(.seyveo-account-primary):not(.seyveo-account-switch){color:inherit}
 
 
 /* Subscription cadence — intentionally a preview, not a payment control. */
 .seyveo-account-period{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
- gap:4px;padding:4px;border:1px solid #ffffff15;
- border-radius:15px;background:#ffffff08;margin:0 0 13px;
+ gap:4px;padding:4px;border:1px solid var(--soft-line);
+ border-radius:15px;background:var(--seyveo-specular);margin:0 0 13px;
 }
 .seyveo-account-period button{
  min-height:43px;border:0;border-radius:11px;background:transparent;
- color:#bac5c3;font-size:12px;font-weight:520;
+ color:var(--secondary);font-size:12px;font-weight:520;
 }
 .seyveo-account-period button[aria-pressed=true]{
- background:#383f40;color:#f1f4f1;box-shadow:inset 0 1px #ffffff11;
+ background:var(--card2);color:var(--text);box-shadow:inset 0 1px #ffffff11;
 }
 :root[data-theme="light"] .seyveo-account-period{background:var(--card2)}
 :root[data-theme="light"] .seyveo-account-period button{color:var(--secondary)}
