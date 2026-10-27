@@ -55,7 +55,7 @@ host.innerHTML=`
    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>
    <span>Все инструменты</span>
   </button>
-  <div class="pw-tiles">${btn('breath','Дыхание','1–5 минут')}${btn('water','Вода','Мой баланс')}${btn('eyes','Глаза','Минута отдыха')}${btn('steps','Шаги','Сегодня')}</div>
+  <h3 class="pw-list-title">На каждый день</h3><p class="pw-list-intro">Выберите, что хотите сделать.</p><div class="pw-tiles">${btn('breath','Дыхание','1–5 минут')}${btn('water','Вода','Мой баланс')}${btn('eyes','Глаза','Минута отдыха')}${btn('steps','Шаги','Сегодня')}</div>
   <section id="pwCareDetail" class="pw-detail" hidden>
    <div data-pw-panel="breath" hidden>
     <header class="pw-panel-head"><h3>Минута спокойствия</h3><p>Дышите в комфортном ритме. Без задержек.</p></header>
@@ -109,7 +109,7 @@ host.innerHTML=`
  </section>
  <section id="pwHealth" hidden>
   <button id="pwHealthBack" type="button" class="pw-tool-back" hidden aria-label="Вернуться к показателям здоровья"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Все показатели</span></button>
-  <div class="pw-tiles pw-health-tiles">${btn('meds','Лекарства','По назначению')}${btn('sleep','Сон','Личный дневник')}</div>
+  <h3 class="pw-list-title">Лекарства и сон</h3><div class="pw-tiles pw-health-tiles">${btn('meds','Лекарства','По назначению')}${btn('sleep','Сон','Личный дневник')}</div>
   <section id="pwHealthDetail" class="pw-detail" hidden>
    <div data-pw-panel="meds" hidden>
     <header class="pw-panel-head"><h3>Приём лекарств</h3><p>Только по вашему расписанию, без рекомендаций по дозировкам.</p></header>
