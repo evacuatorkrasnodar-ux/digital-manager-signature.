@@ -108,7 +108,10 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
  state.tasks=state.tasks.slice(-60);
  save(TASK_KEY,state.tasks);input.value='';renderTasks();
 });
-$('svcpOpenCompany')?.addEventListener('click',()=>document.querySelector('#seyveoCleanManageMenu [data-clean-section="business"]')?.click());
+// Open the existing company card, not a second copy of it.
+$('svcpOpenCompany')?.addEventListener('click',()=>$('openCompanyPassportFromManage')?.click());
+// Preserve the older extended business tools through an explicit entry.
+$('svcpOpenMore')?.addEventListener('click',()=>window.SEYVEO_BUSINESS_NAV?.openTools?.());
 $('svcpOpenPulse')?.addEventListener('click',()=>$('openBusinessPictureFromManage')?.click());
 $('svcpOpenDocs')?.addEventListener('click',()=>$('openUnifiedDocumentsFromManage')?.click());
 window.addEventListener('pagehide',cleanupPreview);
