@@ -1,49 +1,11 @@
 /* SEYVEO Business Command · an isolated, accessible Black Velvet workspace.
    A visual prototype only: no corporate messages or uploads leave the device. */
-#seyveoBusinessCommandPage[hidden],
-#seyveoBusinessCommandPage [hidden]{display:none!important}
-#seyveoBusinessCommandPage{color:var(--text);padding:0 0 26px;max-width:740px;margin:0 auto;font-family:inherit}
+#seyveoBusinessCommandPage[hidden],#seyveoBusinessCommandPage [hidden]{display:none!important}
+#seyveoBusinessCommandPage{color:var(--text);max-width:none;margin:0 auto;padding:4px 0 calc(85px + env(safe-area-inset-bottom,0px));font-family:inherit}
+#seyveoBusinessCommandPage .svcp-panel{width:100%;min-width:0}
+#seyveoCleanManageMenu .manage-row.seyveo-business-direct .manage-text small{line-height:1.4}
+.svcp-room:focus-visible,.svcp-tool:focus-visible,.svcp-primary:focus-visible,.svcp-ghost:focus-visible{outline:2px solid #83d9ad;outline-offset:3px}
 
-/* When opened from a direct Business row, show ONLY that destination.
-   No second company tile, menu tabs, decorative header or duplicate tools. */
-#seyveoBusinessCommandPage.svcp-direct-view .svcp-top,
-#seyveoBusinessCommandPage.svcp-direct-view .svcp-company-entry,
-#seyveoBusinessCommandPage.svcp-direct-view .svcp-switch,
-#seyveoBusinessCommandPage.svcp-direct-view .svcp-tools{
- display:none!important;
-}
-#seyveoBusinessCommandPage.svcp-direct-view{
- max-width:none;
- padding:4px 0 calc(85px + env(safe-area-inset-bottom,0px));
-}
-#seyveoBusinessCommandPage.svcp-direct-view .svcp-panel{
- width:100%;
-}
-#seyveoCleanManageMenu .manage-row.seyveo-business-direct .manage-text small{
- line-height:1.4;
-}
-
-.svcp-top{position:relative;padding:22px 18px 20px;overflow:hidden;border:1px solid rgba(106,167,138,.25);border-radius:22px;background:linear-gradient(142deg,rgba(31,84,62,.26),rgba(30,51,43,.13) 56%,rgba(15,26,23,.07));}
-.svcp-top:before{content:"";pointer-events:none;position:absolute;width:190px;height:190px;border-radius:50%;top:-123px;right:-35px;background:radial-gradient(circle,rgba(81,209,145,.17),transparent 69%)}
-.svcp-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:600;color:#72bb96}
-.svcp-top h3{font-size:clamp(21px,5.5vw,28px);letter-spacing:-.046em;font-weight:550;line-height:1.15;margin:14px 0 8px}
-.svcp-top p{color:var(--secondary);font-size:13px;line-height:1.58;max-width:420px;margin:0}
-.svcp-availability{margin-top:16px;display:flex;align-items:flex-start;gap:7px;color:var(--secondary);font-size:11px;line-height:1.45}
-.svcp-availability:before{content:"";width:7px;height:7px;background:#82cba5;box-shadow:0 0 11px rgba(76,196,129,.4);border-radius:50%;flex:none;margin-top:4px}
-/* One business entrance: the company is immediately visible,
-   then the human-readable team/chat/tasks tabs. No duplicate menu item. */
-.svcp-company-entry{margin:16px 0 17px;padding:0 2px 3px}
-.svcp-entry-kicker{font-size:10px;letter-spacing:.09em;font-weight:620;color:var(--secondary);margin:0 0 3px 4px}
-.svcp-company-entry .svcp-tool{padding:12px 6px;border:1px solid var(--soft-line);border-radius:16px;background:rgba(71,127,93,.055)}
-.svcp-company-entry .svcp-tool:hover{background:rgba(71,127,93,.11)}
-.svcp-company-entry .svcp-tool svg{width:29px;height:29px;stroke:var(--seyveo-emerald)}
-.svcp-company-entry .svcp-tool span{font-size:15px}
-.svcp-company-entry .svcp-tool small{font-size:12px}
-.svcp-switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 19px}
-.svcp-tab{min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 7px;border:1px solid var(--soft-line);border-radius:14px;color:var(--text);background:rgba(99,137,115,.055);font-size:13px;font-weight:530;cursor:pointer}
-.svcp-tab svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.65;stroke-linejoin:round;stroke-linecap:round}
-.svcp-tab[aria-selected="true"]{color:#b7f4d2;border-color:rgba(111,199,151,.54);background:rgba(52,118,84,.25)}
-.svcp-tab:focus-visible,.svcp-room:focus-visible,.svcp-tool:focus-visible,.svcp-primary:focus-visible,.svcp-ghost:focus-visible{outline:2px solid #83d9ad;outline-offset:3px}
 .svcp-panel{min-width:0}
 .svcp-section-title{font-size:16px;font-weight:560;letter-spacing:-.027em;margin:6px 0 4px}
 .svcp-sub{font-size:12px;color:var(--secondary);line-height:1.5;margin:0 0 14px}
@@ -67,10 +29,14 @@
 .svcp-compose-input::placeholder{color:var(--secondary)}
 .svcp-primary{padding:9px 13px;min-height:38px;border:1px solid #56ae81;border-radius:999px;background:rgba(38,117,75,.74);color:#ecfff2;font:inherit;font-size:12px;font-weight:600;cursor:pointer;flex:none}
 .svcp-status{color:var(--secondary);font-size:11px;line-height:1.5;margin:10px 2px 0}
-.svcp-stateline{padding:9px 0;border-bottom:1px solid var(--soft-line);display:flex;gap:12px;align-items:center}
-.svcp-stateline svg{width:31px;height:31px;stroke:#79b898;fill:none;stroke-width:1.4;flex:none}
-.svcp-stateline strong{font-size:13px;display:block;margin-bottom:3px;font-weight:570}
-.svcp-stateline small{color:var(--secondary);font-size:12px;line-height:1.5;display:block}
+/* The employees page shows its real empty state, not imagined staff. */
+.svcp-team-empty{padding:28px 12px 24px;display:grid;justify-items:center;gap:10px;text-align:center}
+.svcp-team-empty-art{display:grid;place-items:center;width:70px;height:70px;border-radius:23px;background:rgba(55,131,93,.12);border:1px solid rgba(106,173,130,.17)}
+.svcp-team-empty-art svg{width:39px;height:39px;stroke:#7fc09b}
+.svcp-team-empty h3{font-size:18px;font-weight:570;letter-spacing:-.035em;margin:7px 0 0;color:var(--text)}
+.svcp-team-empty p{max-width:345px;margin:0;color:var(--secondary);font-size:13px;line-height:1.62}
+.svcp-team-demo{display:block;margin-top:5px;color:var(--secondary);font-size:11px}
+.svcp-team-extra{margin:9px 0 0;border-top:1px solid var(--soft-line)}
 .svcp-task-form{display:flex;gap:8px;margin:14px 0}
 .svcp-task-form input{min-width:0;flex:1;border:1px solid var(--soft-line);border-radius:13px;background:rgba(111,129,114,.075);padding:10px 12px;color:var(--text);font:inherit;font-size:13px}
 .svcp-task-list{display:grid;gap:7px}
@@ -78,15 +44,6 @@
 .svcp-task span{flex:1;overflow-wrap:anywhere}
 .svcp-task.is-done span{text-decoration:line-through;opacity:.52}
 .svcp-ghost{flex:none;border:0;background:none;color:var(--secondary);padding:7px 5px;font:inherit;font-size:12px;cursor:pointer}
-/* Additional actions appear in the relevant area, never behind a second
-   giant menu. The real old data handlers are retained in their original nodes. */
-#seyveoBusinessCommandPage .svcp-advanced-actions{
- margin:16px 0 5px;
- border-top:1px solid var(--soft-line);
-}
-#seyveoBusinessCommandPage .svcp-advanced-actions .svcp-tool{
- min-height:62px;
-}
 #seyveoCleanLegacy.sv-business-feature-mode
  .seyveo-management-v2-group.seyveo-selected-group > h2,
 #seyveoCleanLegacy.sv-business-feature-mode
@@ -107,15 +64,11 @@
  .seyveo-management-v2-group.seyveo-selected-group .seyveo-hr-operations > details.sv-business-focus > summary{
  display:none!important;
 }
-.svcp-tools{margin-top:25px}
-.svcp-tools h3{font-size:13px;font-weight:570;margin:0 0 7px;color:var(--secondary)}
 .svcp-tool{display:flex;width:100%;gap:12px;align-items:center;padding:13px 4px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
 .svcp-tool svg{width:25px;height:25px;stroke:#7cad92;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;fill:none;flex:none}
 .svcp-tool span{display:grid;gap:3px;flex:1;font-size:13px;font-weight:520}
 .svcp-tool small{color:var(--secondary);font-size:11px;font-weight:400;line-height:1.4}
 .svcp-tool:after{content:"›";font-size:21px;color:var(--secondary)}
-@media(max-width:360px){.svcp-tab{font-size:12px;gap:4px}.svcp-tab svg{width:16px}.svcp-composer{gap:5px}.svcp-primary{padding-inline:9px}}
+@media(max-width:360px){.svcp-composer{gap:5px}.svcp-primary{padding-inline:9px}}
 @media(prefers-reduced-motion:reduce){#seyveoBusinessCommandPage *{scroll-behavior:auto!important}}
-:root[data-theme=light] .svcp-top{background:linear-gradient(135deg,rgba(194,225,207,.6),rgba(226,238,230,.5))}
-:root[data-theme=light] .svcp-tab[aria-selected=true]{color:#17593b;background:rgba(84,159,113,.18)}
 :root[data-theme=light] .svcp-primary{background:#276f4b;color:white}
