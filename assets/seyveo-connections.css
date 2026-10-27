@@ -13,7 +13,7 @@
 .svc-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;border:1px solid var(--line);border-radius:14px;padding:4px;background:var(--card);margin-bottom:14px}
 .svc-tab{border:0;border-radius:10px;padding:10px 2px;background:transparent;color:var(--secondary);font:inherit;font-size:12px;cursor:pointer;min-height:40px}
 .svc-tab[aria-selected=true]{color:var(--text);background:var(--card2);box-shadow:inset 0 1px 0 var(--seyveo-specular)}
-.svc-section[hidden],.svc-detail[hidden]{display:none!important}.svc-section h3{font-size:12px;font-weight:640;letter-spacing:.01em;margin:8px 2px 11px;color:var(--secondary)}
+.svc-section[hidden],.svc-detail[hidden],.svc-tabs[hidden]{display:none!important}.svc-section h3{font-size:12px;font-weight:640;letter-spacing:.01em;margin:8px 2px 11px;color:var(--secondary)}
 .svc-card{width:100%;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,var(--seyveo-specular),transparent 57%),var(--card);color:var(--text);margin:0 0 9px;padding:13px;display:flex;gap:11px;align-items:center;text-align:left;font:inherit;cursor:pointer}
 .svc-bubble{width:44px;height:44px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--card2);color:var(--svc-accent);border:1px solid var(--line);font-size:18px;font-weight:630}
 .svc-card-body{min-width:0;flex:1}.svc-card-title{font-size:14px;font-weight:630;letter-spacing:-.012em;margin:0 0 3px;display:block}.svc-card-summary{font-size:11.5px;color:var(--secondary);line-height:1.35;display:block}.svc-card-arrow{color:var(--secondary);font-size:17px;align-self:center}
