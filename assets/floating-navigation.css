@@ -112,8 +112,8 @@
  transition:transform .18s ease!important;
 }
 .dock>.assistant-button .button-art .center-face{fill:#242829!important}
-.dock>.assistant-button .button-art .voice-bars{stroke:#f5f8fd!important}
-.dock>.assistant-button .button-art .voice-dot{fill:#f5f8fd!important}
+.dock>.assistant-button .button-art .voice-bars{stroke:var(--sv-ceramic-wave,#f5f8fd)!important}
+.dock>.assistant-button .button-art .voice-dot{fill:var(--sv-ceramic-wave,#f5f8fd)!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e7eae8!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#283443!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#283443!important}
@@ -340,7 +340,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  opacity:.96!important;
 }
 .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
- fill:#30443b!important;
+ fill:var(--sv-ceramic-pressed,#30443b)!important;
 }
 .dock>#assistantButton.listening .button-art .center-face{
  fill:url(#ceramic-night)!important;
@@ -392,3 +392,45 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 :root[data-theme=dark][data-palette=sapphire] #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(43,61,104,.63),rgba(30,45,78,.44) 58%,rgba(14,23,41,0) 100%)!important;
 }
+
+
+/* Original SEYVEO ceramic button: its existing SVG metal and ceramic now
+   inherit palette pigments. No second SVG/button, no layout or animation edits. */
+.dock>#assistantButton{
+ --sv-ceramic-wave:#f5f8fd;
+ --sv-ceramic-pressed:#30443b;
+}
+:root[data-theme=dark][data-palette=graphite] .dock>#assistantButton{
+ --sv-ceramic-wave:#ecf4fb;
+ --sv-ceramic-pressed:#384b5a;
+ --sv-ceramic-face-1:#33424d;--sv-ceramic-face-2:#2c3944;
+ --sv-ceramic-face-3:#27343f;--sv-ceramic-face-4:#232f3a;--sv-ceramic-face-5:#202b35;
+ --sv-ceramic-rim-1:#a4bdcb;--sv-ceramic-rim-2:#f0f6fc;
+ --sv-ceramic-rim-3:#b1c4d0;--sv-ceramic-rim-4:#7d98a9;
+ --sv-ceramic-rim-5:#f4f9ff;--sv-ceramic-rim-6:#a4bac7;--sv-ceramic-rim-7:#7a94a4;
+}
+:root[data-theme=dark][data-palette=sapphire] .dock>#assistantButton{
+ --sv-ceramic-wave:#e6efff;
+ --sv-ceramic-pressed:#344d81;
+ --sv-ceramic-face-1:#344c78;--sv-ceramic-face-2:#2b4069;
+ --sv-ceramic-face-3:#25365b;--sv-ceramic-face-4:#223151;--sv-ceramic-face-5:#1a2948;
+ --sv-ceramic-rim-1:#97b4ea;--sv-ceramic-rim-2:#f0f5ff;
+ --sv-ceramic-rim-3:#bacbf1;--sv-ceramic-rim-4:#7b99d2;
+ --sv-ceramic-rim-5:#f6f8ff;--sv-ceramic-rim-6:#a5bce9;--sv-ceramic-rim-7:#7895c9;
+}
+:root[data-theme=light] .dock>#assistantButton{
+ --sv-ceramic-wave:#283443;
+ --sv-ceramic-pressed:#e1e6ed;
+}
+.dock>#assistantButton #ceramic-night stop:nth-child(1){stop-color:var(--sv-ceramic-face-1,#31423c)}
+.dock>#assistantButton #ceramic-night stop:nth-child(2){stop-color:var(--sv-ceramic-face-2,#2b3a34)}
+.dock>#assistantButton #ceramic-night stop:nth-child(3){stop-color:var(--sv-ceramic-face-3,#26352f)}
+.dock>#assistantButton #ceramic-night stop:nth-child(4){stop-color:var(--sv-ceramic-face-4,#25322d)}
+.dock>#assistantButton #ceramic-night stop:nth-child(5){stop-color:var(--sv-ceramic-face-5,#222e2a)}
+.dock>#assistantButton #rim-night stop:nth-child(1){stop-color:var(--sv-ceramic-rim-1,#a1b7ac)}
+.dock>#assistantButton #rim-night stop:nth-child(2){stop-color:var(--sv-ceramic-rim-2,#f0f5f1)}
+.dock>#assistantButton #rim-night stop:nth-child(3){stop-color:var(--sv-ceramic-rim-3,#b0c6bb)}
+.dock>#assistantButton #rim-night stop:nth-child(4){stop-color:var(--sv-ceramic-rim-4,#849e91)}
+.dock>#assistantButton #rim-night stop:nth-child(5){stop-color:var(--sv-ceramic-rim-5,#f5faf6)}
+.dock>#assistantButton #rim-night stop:nth-child(6){stop-color:var(--sv-ceramic-rim-6,#a1b6ab)}
+.dock>#assistantButton #rim-night stop:nth-child(7){stop-color:var(--sv-ceramic-rim-7,#7b9587)}
