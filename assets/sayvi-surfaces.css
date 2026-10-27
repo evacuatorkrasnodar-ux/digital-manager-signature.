@@ -9,7 +9,7 @@
   /* The interface remains neutral. Color is reserved for true meaning. */
   --sv-ink:var(--text);
   --sv-wash:rgba(230,236,245,.052);
-  --sv-complete:#9bcaaf;
+  --sv-complete:var(--seyveo-emerald);
 }
 #sayviSurfacePage .sv-deep-back{
   -webkit-appearance:none;appearance:none;
