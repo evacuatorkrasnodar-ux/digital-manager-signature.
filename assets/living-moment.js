@@ -46,6 +46,7 @@ function resetSpace(){
 function rest(){
  cancel();mode='idle';key='';readingUntil=0;
  resetSpace();focus(false);
+ clearRecommendation();
  scheduleRefresh();
 }
 function scheduleRefresh(){
