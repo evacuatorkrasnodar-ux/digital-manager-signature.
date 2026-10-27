@@ -13,8 +13,8 @@ assert.match(source,/previewScene=createSurface\(sample\[0\],sample\.slice\(1\)\
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=54/);
-assert.match(html,/assets\/living-moment\.css\?v=40/);
+assert.match(html,/assets\/living-moment\.js\?v=55/);
+assert.match(html,/assets\/living-moment\.css\?v=41/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
 assert.match(style,/#seyveoLivingMoment\.lm-condense \.lm-mail-content\{display:none!important\}/,
  'Mail content must disappear with original card condensation');
@@ -63,7 +63,7 @@ const win={
  addEventListener(){},scrollTo(){},setTimeout:(fn,ms)=>{const id=timers.length+1;timers.push({fn,ms,id});return id}
 };
 const location={hash:''};
-let mailOpen=0;win.SEYVEO_SAYVI_SURFACES={open:kind=>{assert.equal(kind,'mail');mailOpen++;return true}};
+let mailOpen=0,documentOpen=0;win.SEYVEO_SAYVI_SURFACES={open:kind=>{if(kind==='mail')mailOpen++;else if(kind==='contract')documentOpen++;else assert.fail('Unknown surface: '+kind);return true}};
 let navClicks=0;navHome.addEventListener('click',()=>navClicks++);
 const MutationObserver=class{observe(){}};
 vm.runInNewContext(source,{document:doc,window:win,location,MutationObserver,
@@ -80,7 +80,22 @@ assert.equal(rows.length,2,'Two original other preview cards beneath primary = t
 assert.deepEqual(rows.map(r=>r.dataset.lmKind),['mail','health']);
 assert.equal(field.dataset.lmSubject,'contract');
 const originalActions=all(field,x=>x.className.startsWith('lm-polymer'));
-assert.equal(originalActions.filter(b=>!b.hidden).length,2,'Document card has original two actions');
+assert.equal(originalActions.filter(b=>!b.hidden).length,4,'Document card has four in-place actions');
+const documentDetails=walk(field,x=>x.className==='lm-document-content');
+assert.ok(documentDetails&&!documentDetails.hidden,'Contract excerpt lives in original field');
+const documentAction=label=>{
+ const button=all(field,x=>x.className.startsWith('lm-polymer')).find(x=>x.textContent===label&&!x.hidden);
+ assert.ok(button,'Document action '+label);return button;
+};
+documentAction('Проверить').click();
+documentAction('Исправить').click();
+const documentInput=walk(documentDetails,x=>x.tagName==='TEXTAREA');
+assert.ok(documentInput,'Document comment edited in place');
+documentInput.value='Уточнить срок поставки.';
+documentAction('Сохранить').click();
+assert.ok(all(documentDetails,x=>(x.textContent||'').includes('Уточнить срок поставки.')).length,'Suggestion stays in demo');
+documentAction('Подробнее').click();
+assert.equal(documentOpen,1,'Document opens the existing document center');
 rows[0].click();
 let timer=timers.find(t=>t.ms===400);assert.ok(timer,'Original morph animation triggered');
 timer.fn();
@@ -101,3 +116,43 @@ assert.ok(later&&!later.hidden,'Deferred test mail is available in Tasks');
 assert.equal(tasks.children[tasks.children.length-1],personal,'Existing personal task panel not replaced');
 assert.equal(tiles.children.length,1,'No cloned or competing Home card ever created');
 console.log('PASS original three-card Quiet Cinema, mail actions, review, edit, details, later and unchanged Tasks list.');
+
+/* Twenty real locally saved Tasks (not twenty fabricated mail/documents):
+ * only three may occupy the original Home scene; snooze reveals the next.
+ * No item is accidentally marked complete, and the original two other cards
+ * remain untouched in the initial three-card preview above. */
+{
+ const home2=new Node(),stage2=new Node(),dynamic2=new Node(),space2=new Node(),tiles2=new Node(),caption2=new Node(),tasks2=new Node();
+ const ids={homePage:home2,stage:stage2,dynamic:dynamic2,seyveoLivingMoment:space2,seyveoLivingTiles:tiles2,seyveoLivingCaption:caption2,tasksPage:tasks2};
+ const doc2={hidden:false,activeElement:null,documentElement:new Node(),querySelector(){return null},
+  getElementById:id=>ids[id]||null,createElement:tag=>new Node(tag),createElementNS:(ns,tag)=>new Node(tag),addEventListener(){}};
+ const taskTimers=[];
+ const win2={matchMedia:()=>({matches:false}),innerHeight:820,visualViewport:{height:820},
+  addEventListener(){},setTimeout:(fn,ms)=>{taskTimers.push({fn,ms});return taskTimers.length}};
+ const twenty=Array.from({length:20},(_,i)=>({id:'example-'+i,title:'Дело '+(i+1),done:false,due:'2020-01-01'}));
+ const storage={getItem:key=>key==='seyveo-personal-tasks-v1'?JSON.stringify(twenty):null};
+ vm.runInNewContext(source,{document:doc2,window:win2,location:{hash:''},MutationObserver,
+  queueMicrotask:fn=>fn(),clearTimeout(){},localStorage:storage,Date,
+  CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}}},{timeout:1700});
+ const taskField=walk(tiles2,x=>x.className==='lm-field');
+ assert.ok(taskField,'Actual saved tasks use only one Quiet Cinema field');
+ const taskRows=all(taskField,x=>x.className==='lm-inline-item');
+ assert.equal(taskRows.length,2,'At most one main and two next recommendations');
+ const meter=walk(taskField,x=>x.className==='lm-field-measure');
+ assert.equal(meter.textContent,'3 ИЗ 20 · ВАШИ ДЕЛА','Seventeen real tasks remain queued, not rendered');
+ const postpone=all(taskField,x=>x.className.startsWith('lm-polymer'))
+  .find(x=>x.textContent==='Позже'&&!x.hidden);
+ assert.ok(postpone,'A real task may be deferred');
+ postpone.click();
+ const swap=taskTimers.find(t=>t.ms===420);
+ assert.ok(swap,'Original morph transition used for queue');
+ swap.fn();
+ assert.equal(meter.textContent,'3 ИЗ 19 · ВАШИ ДЕЛА','Next task enters after decision');
+ const freshRows=all(taskField,x=>x.className==='lm-inline-item');
+ assert.equal(freshRows.length,2);
+ assert.ok(freshRows[1].classList.contains('lm-next-arrive'),'The new queue item rises from below');
+ assert.equal(twenty[0].done,false,'Deferring does not falsely complete the original task');
+ assert.equal(tiles2.children.length,1,'No second queue or cloned Home card');
+}
+assert.match(style,/lm-queue-arrive/,'New queue entry has its own restrained rising animation');
+console.log('PASS twenty-item Home queue, three visible, next rises after deferral, no fake completion.');
