@@ -185,6 +185,7 @@ for(const id of pwDateInputs){
  input.classList.add('pw-date-native');
  input.tabIndex=-1;
  const button=document.createElement('button');button.type='button';button.className='pw-date-open';
+ button.id=id+'VelvetButton';input.parentElement.htmlFor=button.id;
  button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
  button.setAttribute('aria-label','Выбрать дату: '+input.parentElement.firstChild.textContent.trim());
  input.insertAdjacentElement('afterend',button);
@@ -235,6 +236,7 @@ function setInputDefaults(){
 const pwTimeInput=$('pwMedTime'),pwTimeButton=document.createElement('button');
 pwTimeInput.classList.add('pw-time-native');pwTimeInput.tabIndex=-1;
 pwTimeButton.type='button';pwTimeButton.className='pw-time-open';
+pwTimeButton.id='pwMedTimeVelvetButton';pwTimeInput.parentElement.htmlFor=pwTimeButton.id;
 pwTimeButton.setAttribute('aria-haspopup','dialog');pwTimeButton.setAttribute('aria-expanded','false');
 pwTimeButton.setAttribute('aria-label','Выбрать время приёма');
 pwTimeInput.insertAdjacentElement('afterend',pwTimeButton);
