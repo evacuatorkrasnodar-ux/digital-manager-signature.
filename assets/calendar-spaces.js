@@ -425,7 +425,7 @@ function measurementFocus(active){
  $('calendarMeasureBack').hidden=!enabled;
  if(enabled){
   $('calendarSpaceJournal').open=true;
-  dialog.scrollTop=0;
+  $('svCareScroll').scrollTop=0;
  }
 }
 function leaveMeasurement(message=''){
@@ -439,7 +439,7 @@ function leaveMeasurement(message=''){
  $('calendarSpaceJournal').open=false;
  renderList();renderForm();
  $('calendarSpaceStatus').textContent=message;
- dialog.scrollTop=0;
+ $('svCareScroll').scrollTop=0;
  // The user returns to the overview, not a hidden form field.
  const target=[...$('calendarHealthOverview').querySelectorAll('[data-health-quick]')]
   .find(node=>node.dataset.healthQuick===category)||$('calendarSpaceClose');
@@ -484,7 +484,7 @@ function open(space,id=null,selectedDate=''){
   measurementFocus(true);
   $('calendarMeasureBack').focus({preventScroll:true});
  }else if(id)$('calendarSpaceTitle').focus({preventScroll:true});
- else dialog.scrollTop=0;
+ else $('svCareScroll').scrollTop=0;
 }
 function add(kind=null){
  // Health overview and history share this single form; reveal it before focus.
