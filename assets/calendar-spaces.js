@@ -350,10 +350,6 @@ $('calendarSpaces').addEventListener('click',event=>{
   if(location.hash!=='#calendar')location.hash='calendar';
   return;
  }
- if(name==='documents'){
-  if(!window.SEYVEO_SAYVI_SURFACES?.open?.('contract','personal'))location.hash='#sayvi-documents';
-  return;
- }
  if(name==='notes'){
   window.dispatchEvent(new Event('seyveo:notes-open'));
   return;
@@ -366,8 +362,10 @@ $('calendarSpaces').addEventListener('click',event=>{
   window.SEYVEO_SMART_HOME?.openStandalone?.()||window.SEYVEO_SMART_HOME?.open?.();
   return;
  }
- if(name==='mail'){
-  location.hash='#sayvi-mail';
+ if(name==='play'){
+  // Open the current official video player; do not duplicate it inside My World.
+  const from=location.hash==='#life'?'life':null;
+  if(!window.SEYVEO_VIDEO?.open?.({from}))location.hash='#sayvi-video';
   return;
  }
  if(name==='music'){
