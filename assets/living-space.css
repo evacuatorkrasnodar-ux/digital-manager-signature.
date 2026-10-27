@@ -679,7 +679,7 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
    Linear-only background: no radial ghost shapes or changes to the orb. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#1a221c 78%,#111512 100%);
+ background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#181d19 78%,#101310 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1213,7 +1213,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
 html.sv-space-active:has(#lifePage:not([hidden])) body{
- background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#1a221c 78%,#111512 100%)!important;
+ background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#181d19 78%,#101310 100%)!important;
  background-attachment:fixed!important;
 }
 html.sv-space-active #lifePage{
