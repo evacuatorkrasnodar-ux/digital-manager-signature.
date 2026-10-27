@@ -105,7 +105,7 @@
  --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
 }
 #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:var(--seyveo-specular);--health-ink:var(--text);
+ --health-wash:var(--seyveo-specular);--health-ink:var(--seyveo-emerald);
 }
 #calendarHealthOverview .cal-health-tile:active{transform:scale(.988)}
 #calendarHealthOverview .cal-health-tile:focus-visible{outline:2px solid var(--text);outline-offset:2px}
@@ -144,7 +144,7 @@
  --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
 }
 :root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:var(--seyveo-specular);--health-ink:var(--text);
+ --health-wash:var(--seyveo-specular);--health-ink:var(--seyveo-emerald);
 }
 @media(max-width:370px){
  #calendarHealthOverview .cal-health-tiles{gap:6px}
