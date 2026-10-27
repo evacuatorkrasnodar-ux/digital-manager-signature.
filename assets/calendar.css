@@ -48,8 +48,8 @@
 .cal-weekdays{margin:0 0 2px}
 .cal-weekdays span{font-size:10px;color:var(--secondary);text-align:center;padding:6px 0;font-weight:530}
 .cal-weekdays span:nth-child(n+6){color:var(--text);opacity:.77}
-.cal-month-grid{grid-auto-rows:minmax(42px,auto);row-gap:1px}
-.cal-day{display:flex;position:relative;flex-direction:column;gap:3px;align-items:center;justify-content:flex-start;min-width:0;min-height:42px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:4px 2px 3px;font-size:12px;line-height:1.1}
+.cal-month-grid{grid-auto-rows:minmax(39px,auto);row-gap:1px}
+.cal-day{display:flex;position:relative;flex-direction:column;gap:3px;align-items:center;justify-content:flex-start;min-width:0;min-height:39px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:3px 2px 2px;font-size:12px;line-height:1.1}
 .cal-day[data-outside=true]{color:var(--secondary);opacity:.42}
 .cal-day[data-weekend=true]{color:var(--secondary)}
 /* Delicate selected-day circle instead of a full-height rounded square. */
@@ -71,7 +71,7 @@
 .cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(157,225,198,.036);border:0;border-radius:0;padding:4px 0;background:transparent;}
 .cal-week-grid::before{top:7px;right:4px;bottom:7px;width:calc((100% - 8px) * 2 / 7)}
 .cal-week-grid>.cal-day{z-index:1}
-.cal-week-grid .cal-day{min-height:65px;justify-content:center;gap:6px}
+.cal-week-grid .cal-day{min-height:54px;justify-content:center;gap:4px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
 .cal-day-summary{margin:6px 1px 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 #calendarView[data-mode=day] .cal-day-summary{margin-top:0}
@@ -360,8 +360,8 @@
  .calendar-header h1{font-size:25px}
  .calendar-header-actions{gap:5px}.cal-round{width:37px;height:37px}
  .cal-periods button{font-size:11px}
- .cal-month{padding:5px 4px 4px}.cal-month::before{right:4px;width:calc((100% - 8px) * 2 / 7)}.cal-month-grid{grid-auto-rows:minmax(42px,auto)}
- .cal-day{padding:4px 1px 3px;min-height:42px}.cal-day-number{min-width:23px;height:23px}
+ .cal-month{padding:5px 4px 4px}.cal-month::before{right:4px;width:calc((100% - 8px) * 2 / 7)}.cal-month-grid{grid-auto-rows:minmax(39px,auto)}
+ .cal-day{padding:3px 1px 2px;min-height:39px}.cal-day-number{min-width:23px;height:23px}
  .cal-nav h2{font-size:15px}
  .cal-agenda{padding:3px 12px}.cal-entry{gap:9px}
  .cal-form-columns{grid-template-columns:minmax(0,1fr)}
