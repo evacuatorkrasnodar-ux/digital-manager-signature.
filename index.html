@@ -727,25 +727,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </main><main class="picture-main" id="picturePage" hidden aria-labelledby="pictureTitle">
 <header class="picture-head"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> ПОКАЗАТЕЛИ</p><h1 id="pictureTitle">Пульс бизнеса</h1><p id="pictureDemoLabel" class="picture-demo-label" hidden>ДЕМОНСТРАЦИЯ · ПРИМЕРНЫЕ ДАННЫЕ</p><button id="pictureDemoExit" type="button" class="sv-demo-exit" hidden>Выключить демо</button><p id="pictureLead">Понятно о клиентах, заказах и деньгах.</p></header>
 <p id="pictureLifeNote" class="picture-empty" hidden>Это ваше личное пространство: здесь будут дела, записи и нужные вам инструменты. Бизнес-показатели не показываем без необходимости.</p>
-<div id="pictureBusiness">
-
-<div class="picture-tabs" role="group" aria-label="За какой период"><button type="button" data-picture-period="today" aria-pressed="true">Сегодня</button><button type="button" data-picture-period="week" aria-pressed="false">Неделя</button><button type="button" data-picture-period="month" aria-pressed="false">Месяц</button><button type="button" data-picture-period="year" aria-pressed="false">Год</button></div>
-</div>
-<section id="pictureWidgetArea" class="home-widgets" aria-labelledby="homeWidgetTitle">
-<div class="home-widgets-heading"><h2 id="homeWidgetTitle">Самое важное</h2><span class="home-widgets-caption">ВАШ ВЫБОР</span></div>
-<div id="homeWidgetGrid" class="home-widgets-grid" aria-label="Выбранные показатели"></div>
-<div id="pictureQuickInsight" class="picture-quick-insight" hidden><span class="picture-quick-insight-mark" aria-hidden="true">SEYVEO</span><p id="pictureSummary">Обновляю показатели…</p></div>
-</section>
-<div id="pictureBusinessCharts">
-<section class="picture-section" aria-labelledby="pictureChartTitle"><h2 id="pictureChartTitle">Как менялись продажи</h2><div class="picture-chart-box">
-<div id="pictureBars" class="picture-bars"></div></div></section>
-<section class="picture-section" aria-labelledby="pictureSourcesTitle"><h2 id="pictureSourcesTitle">Откуда приходят клиенты</h2><div id="pictureSources" class="picture-breakdown"></div></section>
-<section class="picture-section" aria-labelledby="pictureExpensesTitle"><h2 id="pictureExpensesTitle">На что уходят деньги</h2><div id="pictureExpenses" class="picture-breakdown"></div><p id="pictureMoneyDifference" class="picture-subnote"></p></section>
-<button type="button" id="pictureFullReport" class="picture-full-report" aria-label="Подробный отчёт Пульс SEYVEO">
-<span class="picture-report-text"><strong>Пульс SEYVEO</strong><small>Конверсия, расходы и результат</small></span><span class="manage-chevron" aria-hidden="true">›</span>
-</button>
-
-</div>
 <section id="pictureDemoWorkspace" class="sv-demo-workspace" hidden aria-label="Учебные сценарии Пульса бизнеса">
 <p class="sv-demo-workspace-kicker">SEYVEO · ДЕМО-РЕЖИМ</p>
 <p class="sv-demo-workspace-intro">Это настоящий экран Пульса бизнеса с учебными обращениями. Клиенты и действия вымышлены; никаких сообщений, оплат или CRM-подключений нет.</p>
@@ -799,6 +780,26 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 </section>
 </section>
+<div id="pictureBusiness">
+
+<div class="picture-tabs" role="group" aria-label="За какой период"><button type="button" data-picture-period="today" aria-pressed="true">Сегодня</button><button type="button" data-picture-period="week" aria-pressed="false">Неделя</button><button type="button" data-picture-period="month" aria-pressed="false">Месяц</button><button type="button" data-picture-period="year" aria-pressed="false">Год</button></div>
+</div>
+<section id="pictureWidgetArea" class="home-widgets" aria-labelledby="homeWidgetTitle">
+<div class="home-widgets-heading"><h2 id="homeWidgetTitle">Самое важное</h2><span class="home-widgets-caption">ВАШ ВЫБОР</span></div>
+<div id="homeWidgetGrid" class="home-widgets-grid" aria-label="Выбранные показатели"></div>
+<div id="pictureQuickInsight" class="picture-quick-insight" hidden><span class="picture-quick-insight-mark" aria-hidden="true">SEYVEO</span><p id="pictureSummary">Обновляю показатели…</p></div>
+</section>
+<div id="pictureBusinessCharts">
+<section class="picture-section" aria-labelledby="pictureChartTitle"><h2 id="pictureChartTitle">Как менялись продажи</h2><div class="picture-chart-box">
+<div id="pictureBars" class="picture-bars"></div></div></section>
+<section class="picture-section" aria-labelledby="pictureSourcesTitle"><h2 id="pictureSourcesTitle">Откуда приходят клиенты</h2><div id="pictureSources" class="picture-breakdown"></div></section>
+<section class="picture-section" aria-labelledby="pictureExpensesTitle"><h2 id="pictureExpensesTitle">На что уходят деньги</h2><div id="pictureExpenses" class="picture-breakdown"></div><p id="pictureMoneyDifference" class="picture-subnote"></p></section>
+<button type="button" id="pictureFullReport" class="picture-full-report" aria-label="Подробный отчёт Пульс SEYVEO">
+<span class="picture-report-text"><strong>Пульс SEYVEO</strong><small>Конверсия, расходы и результат</small></span><span class="manage-chevron" aria-hidden="true">›</span>
+</button>
+
+</div>
+
 <button type="button" id="pictureBackToBusiness" class="seyveo-picture-back" aria-label="Назад в Мой бизнес"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg><span>Назад в «Мой бизнес»</span></button>
 </main>
 <dialog id="pictureBreakdownDialog" class="manage-dialog picture-detail-dialog" aria-labelledby="pictureBreakdownTitle">
