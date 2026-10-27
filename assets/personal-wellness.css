@@ -178,24 +178,71 @@
  #calendarSpaceDialog .pw-date-popup-header{margin-bottom:3px}
 }
 
-/* Native medication time wheel. On iPhone iOS renders the picker;
-   White Velvet requests light system chrome, Black Velvet requests dark. */
+/* Medication time entry inherits the active SEYVEO palette.
+   Real HH:MM input stays in the form but the native OS popup stays hidden. */
 #calendarPersonalTools .pw-inline .pw-time-field{
- display:grid;align-content:end;gap:6px;flex:1 1 125px;min-width:0
+ display:grid;align-content:end;gap:6px;flex:1 1 125px;min-width:0;
 }
-#calendarPersonalTools .pw-time-field input[type=time]{
- display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;
- padding:9px 3px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
- background:transparent;color:var(--text);font:inherit;font-size:16px;
- font-weight:500;letter-spacing:-.012em;font-variant-numeric:tabular-nums;
- text-align:left;-webkit-appearance:auto;appearance:auto;touch-action:manipulation;
- color-scheme:dark
+#calendarPersonalTools #pwMedTime.pw-time-native{
+ position:absolute!important;width:1px!important;height:1px!important;
+ min-height:0!important;padding:0!important;margin:0!important;
+ border:0!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%);
 }
-#calendarPersonalTools .pw-time-field input[type=time]::-webkit-date-and-time-value{text-align:left}
-#calendarPersonalTools .pw-time-field input[type=time]::-webkit-datetime-edit{padding:0}
-:root[data-theme=light] #calendarPersonalTools .pw-time-field input[type=time]{color-scheme:light}
-#calendarPersonalTools .pw-time-field input[type=time]:focus-visible{
- outline:2px solid var(--text);outline-offset:2px
+#calendarPersonalTools .pw-time-open{
+ display:flex;align-items:center;justify-content:space-between;
+ width:100%;min-height:48px;padding:10px 13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));
+ border-radius:14px;background:var(--card);box-shadow:none;
+ font:inherit;font-size:16px;color:var(--text);text-align:left;
+ font-variant-numeric:tabular-nums;cursor:pointer;
+}
+#calendarPersonalTools .pw-time-open:after{
+ content:'';width:14px;height:14px;margin-left:8px;flex:none;
+ border:1.6px solid var(--seyveo-emerald);border-radius:50%;
+ background:linear-gradient(var(--seyveo-emerald),var(--seyveo-emerald)) center 3px/1px 5px no-repeat;
+}
+#calendarPersonalTools .pw-time-open[aria-expanded=true]{
+ border-color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .pw-time-popup[hidden]{display:none!important}
+#calendarSpaceDialog .pw-time-popup{
+ box-sizing:border-box;position:fixed;z-index:320;top:50%;left:50%;
+ transform:translate(-50%,-50%);
+ width:min(310px,calc(100vw - 36px));padding:20px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));
+ border-radius:22px;background:var(--sv-life-dialog-bg,var(--card));
+ color:var(--text);box-shadow:0 14px 40px rgba(0,0,0,.3);
+}
+#calendarSpaceDialog .pw-time-popup>strong{
+ display:block;font-size:18px;letter-spacing:-.035em;font-weight:620;
+}
+#calendarSpaceDialog .pw-time-popup>p{
+ font-size:12px;color:var(--secondary);line-height:1.5;margin:5px 0 18px;
+}
+#calendarSpaceDialog .pw-time-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#calendarSpaceDialog .pw-time-fields label{
+ display:grid;gap:6px;font-size:11px;color:var(--secondary);
+}
+#calendarSpaceDialog .pw-time-fields input{
+ width:100%;min-width:0;min-height:55px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));
+ border-radius:14px;background:var(--card);
+ color:var(--text);text-align:center;font:inherit;font-size:22px;font-variant-numeric:tabular-nums;
+}
+#calendarSpaceDialog .pw-time-fields input::-webkit-inner-spin-button{
+ -webkit-appearance:none;
+}
+#calendarSpaceDialog .pw-time-actions{
+ display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:10px;
+}
+#calendarSpaceDialog .pw-time-actions button{
+ min-height:44px;padding:8px 10px;border:0;background:transparent;
+ color:var(--text);font:inherit;font-size:13px;
+}
+#calendarSpaceDialog .pw-time-actions [data-pw-time-confirm]{color:var(--seyveo-emerald)}
+#calendarSpaceDialog .pw-time-popup :is(button,input):focus-visible,
+#calendarPersonalTools .pw-time-open:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 
 /* Finite choices are an Apple-like three-way switch, not a platform dropdown. */
