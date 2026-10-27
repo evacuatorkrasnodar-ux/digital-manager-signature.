@@ -229,7 +229,54 @@ function setInputDefaults(){
  }
  pwSyncDateButtons();
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
+ pwSyncTime();
 }
+/* Medication times: same Black Velvet controls, preserve native HH:MM storage. */
+const pwTimeInput=$('pwMedTime'),pwTimeButton=document.createElement('button');
+pwTimeInput.classList.add('pw-time-native');pwTimeInput.tabIndex=-1;
+pwTimeButton.type='button';pwTimeButton.className='pw-time-open';
+pwTimeButton.setAttribute('aria-haspopup','dialog');pwTimeButton.setAttribute('aria-expanded','false');
+pwTimeButton.setAttribute('aria-label','Выбрать время приёма');
+pwTimeInput.insertAdjacentElement('afterend',pwTimeButton);
+const pwTimePopup=document.createElement('div');pwTimePopup.className='pw-time-popup';pwTimePopup.hidden=true;
+pwTimePopup.id='pwTimePopup';pwTimePopup.setAttribute('role','dialog');pwTimePopup.setAttribute('aria-label','Время приёма лекарства');
+pwTimePopup.innerHTML='<strong>Время приёма</strong><p>Укажите часы и минуты</p><div class="pw-time-fields"><label>Часы<input id="pwTimeHours" type="number" min="0" max="23" inputmode="numeric" maxlength="2"></label><label>Минуты<input id="pwTimeMinutes" type="number" min="0" max="59" inputmode="numeric" maxlength="2"></label></div><div class="pw-time-actions"><button type="button" data-pw-time-cancel>Отмена</button><button type="button" data-pw-time-confirm>Готово</button></div>';
+$('calendarSpaceDialog').append(pwTimePopup);
+const pwSyncTime=()=>{pwTimeButton.textContent=pwTimeInput.value||'Выбрать время'};
+const pwCloseTime=(focus=true)=>{
+ pwTimePopup.hidden=true;pwTimeButton.setAttribute('aria-expanded','false');
+ if(focus)pwTimeButton.focus({preventScroll:true});
+};
+pwTimeButton.addEventListener('click',()=>{
+ if(!pwTimePopup.hidden){pwCloseTime();return;}
+ if(!pwDatePopup.hidden)pwCloseDatePopup(false);
+ const [h,m]=(pwTimeInput.value||'09:00').split(':');
+ $('pwTimeHours').value=String(Number(h));$('pwTimeMinutes').value=String(Number(m));
+ pwTimePopup.hidden=false;pwTimeButton.setAttribute('aria-expanded','true');
+ $('pwTimeHours').focus({preventScroll:true});
+});
+pwTimePopup.addEventListener('click',event=>{
+ const button=event.target.closest('button');if(!button)return;
+ if(button.hasAttribute('data-pw-time-cancel')){pwCloseTime();return;}
+ if(button.hasAttribute('data-pw-time-confirm')){
+  const h=Number($('pwTimeHours').value),m=Number($('pwTimeMinutes').value);
+  if(!$('pwTimeHours').value||!$('pwTimeMinutes').value||!Number.isInteger(h)||!Number.isInteger(m)||h<0||h>23||m<0||m>59){
+   $('pwTimeHours').focus({preventScroll:true});return;
+  }
+  pwTimeInput.value=pad(h)+':'+pad(m);
+  pwTimeInput.dispatchEvent(new Event('change',{bubbles:true}));
+  pwSyncTime();pwCloseTime();
+ }
+});
+$('calendarSpaceDialog').addEventListener('click',event=>{
+ if(!pwTimePopup.hidden&&!event.target.closest('#pwTimePopup,.pw-time-open'))pwCloseTime(false);
+});
+$('calendarSpaceDialog').addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!pwTimePopup.hidden){event.preventDefault();event.stopPropagation();pwCloseTime();}
+});
+pwTimeInput.addEventListener('change',pwSyncTime);
+pwSyncTime();
+
 /* iOS / browser native time wheel; pwMedTime remains saved as HH:MM. */
 const CARE_TOOLS=new Set(['water','breath','eyes','steps']);
 function setToolFocus(section,focused){
@@ -670,7 +717,7 @@ window.addEventListener('seyveo:care-steps-open',event=>{
 });
 window.addEventListener('seyveo:spaces-changed',()=>{if(space==='care')renderSteps()});
 window.addEventListener('storage',event=>{if(event.key===KEY){state=load();if(!host.hidden)render()}});
-$('calendarSpaceDialog').addEventListener('close',()=>{pwCloseDatePopup(false);stopSession(false);resetTools();space='';host.hidden=true});
+$('calendarSpaceDialog').addEventListener('close',()=>{pwCloseDatePopup(false);pwCloseTime(false);stopSession(false);resetTools();space='';host.hidden=true});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&session&&!session.paused){
   session.paused=true;session.last=performance.now();
