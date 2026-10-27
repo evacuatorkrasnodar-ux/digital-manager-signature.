@@ -1019,21 +1019,24 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <h2 id="calendarSpaceTitleHeading">Личное пространство</h2>
 <button id="calendarMeasureBack" type="button" class="pw-tool-back" hidden aria-label="Вернуться ко всем показателям здоровья"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Все показатели</span></button>
 <p id="calendarSpaceIntro">Ваши записи на этом устройстве</p>
-<section id="calendarHealthOverview" class="cal-health-overview" aria-label="Ваши показатели" hidden>
+<section id="calendarHealthOverview" class="cal-health-overview" aria-label="Запись показателей здоровья" hidden>
+ <h3 class="cal-health-guide">Что хотите записать?</h3>
+ <p class="cal-health-guide-hint">Нажмите на карточку — откроется простая форма.</p>
  <div class="cal-health-tiles">
-  <button type="button" class="cal-health-tile" data-health-quick="Давление">
-   <span class="cal-health-tile-label">Давление</span><svg class="cal-health-emblem cal-health-emblem--pressure" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="11" width="32" height="26" rx="8"/><path d="M12 25h7l4-8 5 16 4-8h4"/></svg>
-   <strong id="calHealthPressureValue">—</strong>
-   <small id="calHealthPressureDate">Нет записей</small>
-   <span class="cal-health-tile-action" aria-hidden="true">＋</span>
+  <button type="button" class="cal-health-tile" data-health-quick="Давление" aria-label="Записать давление">
+   <svg class="cal-health-emblem cal-health-emblem--pressure" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="11" width="32" height="26" rx="8"/><path d="M12 25h7l4-8 5 16 4-8h4"/></svg>
+   <span class="cal-health-tile-label">Давление</span>
+   <strong id="calHealthPressureValue">Нет записей</strong>
+   <small id="calHealthPressureDate"></small>
+   <span class="cal-health-tile-action" aria-hidden="true">Записать давление <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
-  <button type="button" class="cal-health-tile" data-health-quick="Пульс">
-   <span class="cal-health-tile-label">Пульс</span><svg class="cal-health-emblem cal-health-emblem--pulse" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 9.5 27c-8-7.8-1.9-20.2 7.2-18 3.1.7 5.6 2.9 7.3 5.7 1.7-2.8 4.2-5 7.3-5.7 9.1-2.2 15.2 10.2 7.2 18Z"/><path d="M9 25h9l4-7 5 14 3-7h9"/></svg>
-   <strong id="calHealthPulseValue">—</strong>
-   <small id="calHealthPulseDate">Нет записей</small>
-   <span class="cal-health-tile-action" aria-hidden="true">＋</span>
+  <button type="button" class="cal-health-tile" data-health-quick="Пульс" aria-label="Записать пульс">
+   <svg class="cal-health-emblem cal-health-emblem--pulse" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 9.5 27c-8-7.8-1.9-20.2 7.2-18 3.1.7 5.6 2.9 7.3 5.7 1.7-2.8 4.2-5 7.3-5.7 9.1-2.2 15.2 10.2 7.2 18Z"/><path d="M9 25h9l4-7 5 14 3-7h9"/></svg>
+   <span class="cal-health-tile-label">Пульс</span>
+   <strong id="calHealthPulseValue">Нет записей</strong>
+   <small id="calHealthPulseDate"></small>
+   <span class="cal-health-tile-action" aria-hidden="true">Записать пульс <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
-
  </div>
 </section>
 <section id="calendarPersonalTools" class="pw-root" aria-label="Личные инструменты" hidden></section>
