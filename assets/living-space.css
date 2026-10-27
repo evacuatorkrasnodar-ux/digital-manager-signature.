@@ -683,7 +683,7 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
- background:linear-gradient(180deg,#f5f6f8 0%,#f1f3f6 58%,#eceff3 100%);
+ background:linear-gradient(180deg,#f7faf9 0%,#f1f7f4 58%,#e9f1ee 100%);
  background-repeat:no-repeat;
 }
 /* Put meaningful text, not decoration, in the visual foreground. */
