@@ -69,7 +69,7 @@
 #businessMapDialog .business-map-source-choice{
  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
  gap:5px;min-height:64px;width:100%;padding:12px 15px;text-align:left;
- border:1px solid rgba(196,242,225,.17);border-radius:16px;
+ border:1px solid var(--seyveo-hdr-outline);border-radius:16px;
  color:inherit;background:linear-gradient(154deg,var(--seyveo-specular),var(--seyveo-hdr-active));cursor:pointer;
 }
 #businessMapDialog .business-map-mode+.business-map-mode{margin-top:9px}
@@ -86,9 +86,9 @@
  background:var(--card);color:var(--text);font-size:16px;line-height:1.5;outline:0;
 }
 #businessMapDialog .business-map-form textarea:focus-visible{
- border-color:#a1d8c6;box-shadow:0 0 0 2px rgba(106,207,174,.12);
+ border-color:var(--text);box-shadow:0 0 0 2px var(--seyveo-hdr-active);
 }
-#businessMapDialog .business-map-form textarea::placeholder{color:#8b98a8}
+#businessMapDialog .business-map-form textarea::placeholder{color:var(--secondary)}
 #businessMapDialog .business-map-input-help{color:var(--secondary);font-size:11px;line-height:1.55;margin:12px 0 0}
 /* Quiet Cinema actions: no white web buttons. The primary action is
    identifiable through calmer satin contrast, not a bright filled slab. */
@@ -150,7 +150,7 @@
  flex:none;min-height:34px;border:0;background:transparent;color:var(--secondary);
  padding:5px 0 5px 8px;font-size:11px;cursor:pointer;
 }
-#businessMapDialog .business-map-type{font-size:11px;letter-spacing:.09em;color:#abb8c8}
+#businessMapDialog .business-map-type{font-size:11px;letter-spacing:.09em;color:var(--secondary)}
 #businessMapDialog .business-map-next{
  font-size:12px;line-height:1.52;color:var(--text);margin:6px 0;
 }
@@ -183,13 +183,13 @@
 :root[data-theme=light] #businessMapDialog .business-map-overview-block,
 :root[data-theme=light] #businessMapDialog .business-map-resource-row,
 :root[data-theme=light] #businessMapDialog .business-map-footer{border-color:rgba(51,69,93,.14)}
-:root[data-theme=light] #businessMapDialog :is(.business-map-subbrand,.business-map-progress,.business-map-lead,.business-map-overview-title,.business-map-type,.business-map-disclaimer,.business-map-empty,.business-map-count,.business-map-resources-count){color:#617084}
+:root[data-theme=light] #businessMapDialog :is(.business-map-subbrand,.business-map-progress,.business-map-lead,.business-map-overview-title,.business-map-type,.business-map-disclaimer,.business-map-empty,.business-map-count,.business-map-resources-count){color:var(--text)}
 :root[data-theme=light] #businessMapDialog :is(.business-map-source-choice,.business-map-mode){background:var(--card);border-color:var(--line)}
-:root[data-theme=light] #businessMapDialog :is(.business-map-source-choice small,.business-map-mode small,.business-map-input-help,.business-map-resource-row small){color:#66758a}
-:root[data-theme=light] #businessMapDialog :is(.business-map-owner-text,.business-map-next,.business-map-form label){color:#26364b}
+:root[data-theme=light] #businessMapDialog :is(.business-map-source-choice small,.business-map-mode small,.business-map-input-help,.business-map-resource-row small){color:var(--secondary)}
+:root[data-theme=light] #businessMapDialog :is(.business-map-owner-text,.business-map-next,.business-map-form label){color:var(--text)}
 :root[data-theme=light] #businessMapDialog :is(.business-map-close,.business-map-secondary){color:var(--secondary);border-color:var(--line)}
 :root[data-theme=light] #businessMapDialog .business-map-form textarea{background:var(--card);color:var(--text);border-color:var(--line)}
-:root[data-theme=light] #businessMapDialog .business-map-form textarea::placeholder{color:#8493a3}
+:root[data-theme=light] #businessMapDialog .business-map-form textarea::placeholder{color:var(--secondary)}
 :root[data-theme=light] #businessMapDialog .business-map-primary{
  background:linear-gradient(180deg,rgba(54,76,103,.070),rgba(54,76,103,.025));
  border-color:rgba(48,68,92,.30);color:var(--text);
@@ -201,7 +201,7 @@
 :root[data-theme=light] #businessMapDialog :is(.business-map-primary,.business-map-secondary):active{
  background:rgba(54,76,103,.09);
 }
-:root[data-theme=light] #businessMapDialog :is(.business-map-overview-row button,.business-map-resource-row button,.business-map-skip,.business-map-later){color:#4c6078}
+:root[data-theme=light] #businessMapDialog :is(.business-map-overview-row button,.business-map-resource-row button,.business-map-skip,.business-map-later){color:var(--text)}
 @media(max-width:345px){
  #businessMapDialog .business-map-shell{padding-left:15px;padding-right:15px}
  #businessMapDialog .business-map-categories{gap:7px}
@@ -222,7 +222,7 @@
  display:block;font-size:13px;font-weight:530;line-height:1.4;color:inherit;
 }
 #businessMapDialog .business-map-advice-row p{
- margin:5px 0 9px;font-size:11.5px;line-height:1.54;color:#a8b6c7;
+ margin:5px 0 9px;font-size:11.5px;line-height:1.54;color:var(--secondary);
 }
 #businessMapDialog .business-map-advice-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 #businessMapDialog .business-map-advice-actions button{
@@ -230,17 +230,17 @@
 }
 #businessMapDialog .business-map-advice-go{
  border:1px solid rgba(219,230,246,.23);border-radius:11px;
- padding:7px 13px;color:#ebf2fb;background:rgba(255,255,255,.09);
+ padding:7px 13px;color:var(--text);background:rgba(255,255,255,.09);
 }
 #businessMapDialog .business-map-advice-dismiss{
- border:0;padding:6px 7px;background:transparent;color:#a0b0c1;
+ border:0;padding:6px 7px;background:transparent;color:var(--secondary);
 }
 #businessMapDialog .business-map-advice-more{
- font-size:11px;line-height:1.45;color:#9facbb;margin:7px 0 0;
+ font-size:11px;line-height:1.45;color:var(--secondary);margin:7px 0 0;
 }
 #businessMapDialog :is(.business-map-guide-link,.business-map-reset){
  display:block;min-height:39px;padding:8px 2px;
- border:0;background:transparent;color:#b7cce0;font-size:11.5px;
+ border:0;background:transparent;color:var(--text);font-size:11.5px;
  text-align:left;text-decoration:underline;text-decoration-color:rgba(184,206,230,.25);
  text-underline-offset:3px;cursor:pointer;
 }
@@ -248,11 +248,11 @@
 #businessMapDialog [hidden]{display:none!important}
 :root[data-theme=light] #businessMapDialog .business-map-advice-row{border-color:rgba(56,78,108,.14)}
 :root[data-theme=light] #businessMapDialog .business-map-advice-row p,
-:root[data-theme=light] #businessMapDialog .business-map-advice-more{color:#617388}
+:root[data-theme=light] #businessMapDialog .business-map-advice-more{color:var(--text)}
 :root[data-theme=light] #businessMapDialog .business-map-advice-go{
- background:#fff;color:#344961;border-color:#c3cfdc
+ background:#fff;color:var(--text);border-color:var(--text)
 }
-:root[data-theme=light] #businessMapDialog :is(.business-map-advice-dismiss,.business-map-guide-link,.business-map-reset){color:#526b86}
+:root[data-theme=light] #businessMapDialog :is(.business-map-advice-dismiss,.business-map-guide-link,.business-map-reset){color:var(--text)}
 #manageConnectionsDialog .manage-connection-advice{
  margin:11px 0 16px;padding:12px 13px;border-radius:14px;
  border:1px solid var(--soft-line);background:var(--card2);
@@ -270,14 +270,14 @@
 #businessMapDialog .business-map-industry-choice{
  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
  gap:5px;width:100%;min-height:68px;padding:11px 12px;text-align:left;
- background:rgba(255,255,255,.035);color:inherit;border:1px solid rgba(196,242,225,.17);
+ background:rgba(255,255,255,.035);color:inherit;border:1px solid var(--seyveo-hdr-outline);
  border-radius:14px;cursor:pointer;
 }
 #businessMapDialog .business-map-industry-choice strong{
  font-size:12.5px;font-weight:510;line-height:1.3;
 }
 #businessMapDialog .business-map-industry-choice small{
- font-size:10.5px;line-height:1.35;color:#a2b3c5;
+ font-size:10.5px;line-height:1.35;color:var(--secondary);
 }
 #businessMapDialog .business-map-industry-choice[data-industry-state="proposed"]{
  border-color:rgba(198,216,237,.44);background:rgba(210,222,239,.055);
@@ -292,30 +292,30 @@
 :root[data-theme=light] #businessMapDialog .business-map-industry-choice{
  background:var(--card);border-color:var(--line)
 }
-:root[data-theme=light] #businessMapDialog .business-map-industry-choice small{color:#65758b}
+:root[data-theme=light] #businessMapDialog .business-map-industry-choice small{color:var(--secondary)}
 @media(max-width:345px){
  #businessMapDialog .business-map-industry-choices{gap:7px}
  #businessMapDialog .business-map-industry-choice{padding:9px 10px;min-height:73px}
 }
 
 :root[data-theme=light] #businessMapDialog .business-map-industry-choice[data-industry-state="proposed"]{
- border-color:#91a6bd;background:#f0f4f8
+ border-color:var(--secondary);background:var(--card2)
 }
 :root[data-theme=light] #businessMapDialog .business-map-industry-choice[data-industry-state="confirmed"]{
- border-color:#6987a7
+ border-color:var(--secondary)
 }
 
 /* Public storefront · a calm, consent-only continuation of Business Map. */
 #businessMapDialog .business-map-storefront-label{
- color:#9eacc0;font-size:10px;font-weight:500;letter-spacing:.14em;margin:11px 0 5px;
+ color:var(--secondary);font-size:10px;font-weight:500;letter-spacing:.14em;margin:11px 0 5px;
 }
 #businessMapDialog .business-map-storefront-address{
- font-size:12px;line-height:1.5;color:#ebf1fa;overflow-wrap:anywhere;margin:0 0 11px;
+ font-size:12px;line-height:1.5;color:var(--text);overflow-wrap:anywhere;margin:0 0 11px;
 }
 #businessMapDialog .business-map-storefront-explain,
 #businessMapDialog .business-map-storefront-message,
 #businessMapDialog .business-map-storefront-previous{
- font-size:11.5px;line-height:1.56;color:#aab9c9;margin:0 0 13px;
+ font-size:11.5px;line-height:1.56;color:var(--secondary);margin:0 0 13px;
 }
 #businessMapDialog .business-map-storefront-actions{
  display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:15px 0 12px;
@@ -332,11 +332,11 @@
  font-size:13px;line-height:1.5;color:inherit;margin:0 0 7px;
 }
 #businessMapDialog .business-map-storefront-found-description{
- font-size:12px;line-height:1.6;color:#b0c0d0;margin:0 0 12px;
+ font-size:12px;line-height:1.6;color:var(--secondary);margin:0 0 12px;
 }
 #businessMapDialog .business-map-storefront-products{padding:0 0 0 17px;margin:5px 0 15px}
 #businessMapDialog .business-map-storefront-products li{
- color:#dce7f2;font-size:12px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere;
+ color:var(--text);font-size:12px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere;
 }
 #businessMapDialog .business-map-storefront-manual{
  margin:15px 0;border-top:1px solid rgba(223,233,246,.13);padding-top:17px;
@@ -363,19 +363,19 @@
 }
 :root[data-theme=light] #businessMapDialog .business-map-storefront-address,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-found-description,
-:root[data-theme=light] #businessMapDialog .business-map-storefront-products li{color:#384b62}
-:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-explain,.business-map-storefront-message,.business-map-storefront-previous,.business-map-storefront-label){color:#64768b}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-products li{color:var(--text)}
+:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-explain,.business-map-storefront-message,.business-map-storefront-previous,.business-map-storefront-label){color:var(--secondary)}
 :root[data-theme=light] #businessMapDialog .business-map-storefront-manual textarea{background:var(--card);color:var(--text);border-color:var(--line)}
-:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-result,.business-map-storefront-manual){border-color:#d4deea}
+:root[data-theme=light] #businessMapDialog :is(.business-map-storefront-result,.business-map-storefront-manual){border-color:var(--text)}
 @media(max-width:375px){
  #businessMapDialog .business-map-storefront-actions>*{min-width:125px}
 }
 
 #businessMapDialog .business-map-stored-assortment{
  margin:7px 0 0;max-width:100%;font-size:11px;line-height:1.54;
- color:#b4c5d6;overflow-wrap:anywhere;white-space:normal;
+ color:var(--secondary);overflow-wrap:anywhere;white-space:normal;
 }
-:root[data-theme=light] #businessMapDialog .business-map-stored-assortment{color:#566e85}
+:root[data-theme=light] #businessMapDialog .business-map-stored-assortment{color:var(--text)}
 
 /* SEYVEO · First catalog review. A quiet editorial checklist, not an invented rating. */
 #businessMapDialog .business-map-storefront-audit{
@@ -389,10 +389,10 @@
  margin:0 0 8px;
 }
 #businessMapDialog .business-map-storefront-audit-head span{
- letter-spacing:.14em;font-size:10px;font-weight:530;color:#b9c9d9;
+ letter-spacing:.14em;font-size:10px;font-weight:530;color:var(--secondary);
 }
 #businessMapDialog .business-map-storefront-audit-head small{
- font-size:10px;font-weight:410;color:#90a0b1;text-align:right;
+ font-size:10px;font-weight:410;color:var(--secondary);text-align:right;
 }
 #businessMapDialog .business-map-storefront-audit-item{
  border-top:1px solid rgba(223,233,246,.09);padding:11px 0 10px;
@@ -401,23 +401,23 @@
  display:block;font-size:12.5px;line-height:1.4;font-weight:520;color:inherit;
 }
 #businessMapDialog .business-map-storefront-audit-item p{
- margin:5px 0 0;font-size:11.5px;color:#a9b8c7;line-height:1.58;
+ margin:5px 0 0;font-size:11.5px;color:var(--secondary);line-height:1.58;
 }
 #businessMapDialog .business-map-storefront-audit-limit,
 #businessMapDialog .business-map-storefront-audit-status{
- font-size:10.5px;line-height:1.56;color:#a4b3c3;margin:9px 0 0;
+ font-size:10.5px;line-height:1.56;color:var(--secondary);margin:9px 0 0;
 }
 #businessMapDialog #businessMapStorefrontAuditSave{
  margin:12px 0 0;width:100%;
 }
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-item{
- border-color:#d6dee8;
+ border-color:var(--text);
 }
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-head span,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-item p,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-limit,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-status{
- color:#596d83;
+ color:var(--text);
 }
-:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-head small{color:#75879a}
+:root[data-theme=light] #businessMapDialog .business-map-storefront-audit-head small{color:var(--secondary)}
