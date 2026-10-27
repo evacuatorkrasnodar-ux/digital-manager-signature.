@@ -1,9 +1,9 @@
 /* SEYVEO Family · one personal Black Velvet conversation, not a second app.
  * Every selector is scoped to the family dialog. No changes to the sphere or dock. */
 .svf-dialog:not([open]){display:none!important}
-.svf-dialog{box-sizing:border-box;color:var(--text);width:min(96vw,545px);max-width:545px;max-height:calc(100dvh - max(16px,env(safe-area-inset-top,0px)) - max(16px,env(safe-area-inset-bottom,0px)));padding:0;border:1px solid color-mix(in srgb,var(--seyveo-emerald) 26%,var(--soft-line));border-radius:25px;background:var(--bg);box-shadow:0 22px 65px rgba(0,0,0,.48);overflow:hidden}
+.svf-dialog{box-sizing:border-box;color:var(--text);width:min(96vw,545px);max-width:545px;height:min(730px,calc(100dvh - max(16px,env(safe-area-inset-top,0px)) - max(16px,env(safe-area-inset-bottom,0px))));max-height:calc(100dvh - max(16px,env(safe-area-inset-top,0px)) - max(16px,env(safe-area-inset-bottom,0px)));padding:0;border:1px solid color-mix(in srgb,var(--seyveo-emerald) 26%,var(--soft-line));border-radius:25px;background:var(--bg);box-shadow:0 22px 65px rgba(0,0,0,.48);overflow:hidden}
 .svf-dialog::backdrop{background:rgba(0,8,5,.77);backdrop-filter:blur(6px)}
-.svf-shell{box-sizing:border-box;max-height:inherit;min-height:min(580px,83dvh);display:flex;flex-direction:column;overflow:hidden}
+.svf-shell{box-sizing:border-box;height:100%;min-height:0;max-height:100%;display:flex;flex-direction:column;overflow:hidden}
 .svf-head{flex:none;padding:16px 16px 12px;background:linear-gradient(135deg,color-mix(in srgb,var(--seyveo-emerald) 10%,var(--bg)),var(--bg) 75%);border-bottom:1px solid var(--soft-line)}
 .svf-overline{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .svf-overline small{color:var(--secondary);font-size:9px;letter-spacing:.16em;font-weight:620}
@@ -24,7 +24,7 @@
 .svf-tab[aria-selected=true]{border-bottom-color:var(--seyveo-emerald);color:var(--text)}
 .svf-panel{min-height:0;flex:1;display:flex;flex-direction:column}
 .svf-panel[hidden],.svf-attachment[hidden],.svf-suggestion[hidden]{display:none!important}
-.svf-thread{flex:1;min-height:125px;overflow-y:auto;overscroll-behavior:contain;padding:15px 13px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
+.svf-thread{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:15px 13px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
 .svf-empty{max-width:290px;align-self:center;text-align:center;display:grid;justify-items:center;gap:7px;color:var(--secondary);font-size:12px;line-height:1.5;margin:auto 0;padding:20px 8px}
 .svf-empty svg{width:36px;height:36px;stroke:var(--seyveo-emerald);stroke-width:1.2;fill:none;opacity:.78}
 .svf-empty strong{font-size:14px;color:var(--text);font-weight:570}
@@ -40,7 +40,7 @@
 .svf-compose{display:flex;align-items:flex-end;gap:7px}
 .svf-upload{display:grid;place-items:center;min-width:41px;width:41px;height:41px;flex:none;border:1px solid var(--soft-line);border-radius:50%;cursor:pointer;color:var(--text)}
 .svf-upload svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round}
-.svf-compose textarea{flex:1;min-height:41px;max-height:120px;resize:vertical;min-width:0;font:inherit;font-size:14px;color:var(--text);background:transparent;border:0;outline:0;padding:9px 2px;line-height:1.4}
+.svf-compose textarea{flex:1;min-height:41px;max-height:120px;resize:none;min-width:0;font:inherit;font-size:14px;color:var(--text);background:transparent;border:0;outline:0;padding:9px 2px;line-height:1.4}
 .svf-compose textarea::placeholder{color:var(--secondary)}
 .svf-send{border:1px solid color-mix(in srgb,var(--seyveo-emerald) 60%,var(--soft-line));border-radius:22px;min-height:41px;padding:9px 12px;background:color-mix(in srgb,var(--seyveo-emerald) 23%,var(--bg));color:var(--text);font:inherit;font-size:12px;font-weight:570;cursor:pointer;flex:none}
 .svf-attachment{display:flex;align-items:center;gap:9px;padding:4px 0 9px;color:var(--secondary);font-size:11px;line-height:1.4;overflow-wrap:anywhere}
@@ -67,3 +67,14 @@
 .svf-dialog :is(button,input,textarea,summary):focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 @media(max-width:370px){.svf-dialog{width:98vw;border-radius:18px}.svf-head{padding:12px 12px 8px}.svf-composer-wrap{padding:8px}.svf-send{padding:8px}}
 @media(prefers-reduced-motion:reduce){.svf-dialog *{scroll-behavior:auto!important}}
+
+/* No nested page: on ordinary screens the family view fits the viewport,
+   with scrolling only after there are more messages than can be displayed. */
+.svf-dialog .svf-thread,.svf-dialog .svf-plans{scrollbar-width:none;-ms-overflow-style:none}
+.svf-dialog .svf-thread::-webkit-scrollbar,.svf-dialog .svf-plans::-webkit-scrollbar{display:none;width:0;height:0}
+@media(max-height:610px){
+ .svf-dialog{height:auto;overflow-y:auto;max-height:calc(100dvh - 16px)}
+ .svf-shell{height:auto;max-height:none;overflow:visible}
+ .svf-thread{min-height:100px;max-height:none;overflow:visible}
+ .svf-plans{min-height:140px;overflow:visible}
+}
