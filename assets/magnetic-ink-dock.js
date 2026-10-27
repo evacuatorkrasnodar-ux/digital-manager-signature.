@@ -66,21 +66,14 @@ function init(){
   });
   dock.setAttribute('aria-label','Разделы SEYVEO. Центр — Сэйви: общение и голос.');
  }
- function invoke(id){
-  if(id==='home'){document.getElementById('navHome')?.click();return;}
-  if(id==='tasks'){document.getElementById('navTasks')?.click();return;}
-  if(id==='life'){document.getElementById('navPicture')?.click();return;}
-  if(id==='manage'){document.getElementById('navManage')?.click();}
- }
- buttons.forEach((button,index)=>{
+ // Visual acknowledgement only. The ORIGINAL button's click listener owns routing.
+ // Never stop propagation or call button.click() during its own click dispatch:
+ // that can cancel the user's tap and the synthetic repeat may be suppressed.
+ buttons.forEach(button=>{
   button.addEventListener('click',event=>{
-   // Programmatic clicks must continue to reach original navigation handlers.
    if(!event.isTrusted||musicMode())return;
    showSelectionFeedback(button);
-   event.preventDefault();
-   event.stopImmediatePropagation();
-   invoke(items[index].id);
-  },true);
+  },{capture:true});
  });
  window.addEventListener('hashchange',paint);
  window.addEventListener('seyveo:route-changed',paint);
