@@ -1,11 +1,11 @@
-/* SEYVEO · Пульс бизнеса · интерактивный сценарий в «Наших идеях».
+/* SEYVEO · Пульс бизнеса · сценарий на настоящей странице Пульса бизнеса.
  * Полностью вымышленная история; только память вкладки. Никаких API,
  * localStorage, платежей, настоящих клиентов, ИИ и отправки сообщений.
  */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const root=$('manageRoadmapDialog');
+const root=$('picturePage');
 const toggle=$('managePulseDemoToggle');
 const panel=$('managePulseDemoPanel');
 const next=$('managePulseDemoNext');
@@ -68,6 +68,6 @@ toggle.addEventListener('click',()=>{
 });
 next.addEventListener('click',()=>{step=(step+1)%stages.length;render()});
 fold.addEventListener('click',()=>{panel.hidden=true;toggle.textContent='Открыть демо «Пульс бизнеса»';toggle.setAttribute('aria-expanded','false');toggle.focus()});
-root.addEventListener('close',()=>{panel.hidden=true;step=0;toggle.setAttribute('aria-expanded','false');toggle.textContent='Открыть демо «Пульс бизнеса»'});
+window.addEventListener('seyveo:demo-mode-reset',()=>{panel.hidden=true;step=0;toggle.setAttribute('aria-expanded','false');toggle.textContent='Открыть демо «Пульс бизнеса»';render()});
 render();
 })();
