@@ -3297,7 +3297,8 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   group.classList.add('seyveo-selected-group');item.classList.add('seyveo-selected-item');
   if(item.tagName==='DETAILS')item.open=true;
   title.textContent=btn.querySelector('.manage-text strong')?.textContent.trim()||btn.textContent.trim();
-  if(explanation){
+  // The Business detail already has its own heading and sections: no duplicate picture/caption.
+  if(explanation && key!=='business'){
    const art=btn.querySelector('.smc-illustration svg')?.cloneNode(true);
    const desc=btn.querySelector('.manage-text small')?.textContent.trim();
    const glyph=document.createElement('span');glyph.className='smc-detail-art';
