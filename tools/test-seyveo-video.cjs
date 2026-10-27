@@ -34,21 +34,26 @@ assert.equal(new URL(official).searchParams.get('playsinline'),'1');
 assert.equal(api.embed('unsafe'),null);
 assert.ok(html.indexOf('seyveo-video-core.js')<html.indexOf('seyveo-video.js'));
 assert.match(html,/id="sayviVideoPage"[^>]*hidden/,'Video scene starts closed');
-assert.match(html,/assets\/calendar-spaces\.js\?v=14/,'My World routes updated');
+assert.match(html,/assets\/calendar-spaces\.js\?v=15/,'My World routes updated');
 assert.match(html,/assets\/seyveo-video\.js\?v=5/,'PLAY returns to the right screen');
 const worldGrid=html.match(/<div id="calendarSpaces"[^>]*>([\s\S]*?)<\/div>/)?.[1]||'';
 assert.equal((worldGrid.match(/data-calendar-space="play"/g)||[]).length,1,
  'Only one SEYVEO PLAY choice in My World');
-assert.doesNotMatch(worldGrid,/data-calendar-space="(?:documents|mail)"/,
- 'Documents and Mail are not duplicated in My World');
+assert.equal((worldGrid.match(/data-calendar-space="documents"/g)||[]).length,1,
+ 'Personal Documents opens the existing one document center');
+assert.equal((worldGrid.match(/data-calendar-space="mail"/g)||[]).length,1,
+ 'Mail opens the in-app client directly');
 assert.match(html,/data-world-space="play"/,'Home My World shortcuts include PLAY');
-assert.doesNotMatch(html,/data-world-space="mail"/,'Home My World shortcuts do not duplicate Mail');
+assert.match(html,/data-world-space="mail"/,'Home My World shortcut opens the same Mail client');
+assert.match(html,/data-world-space="documents"/,'Home My World shortcut opens personal documents');
 assert.match(html,/<h1>SEYVEO PLAY<\/h1>/,'Brand stays SEYVEO');
 assert.match(lifeNav,/if\(name==='play'\)/,'My World tile opens PLAY');
 assert.match(lifeNav,/SEYVEO_VIDEO\?\.open\?\.\(\{from\}\)/,
  'My World reuses the existing video module');
-assert.doesNotMatch(lifeNav,/if\(name==='(?:documents|mail)'\)/,
- 'Old duplicated My World routes are gone');
+assert.match(lifeNav,/if\(name==='documents'\)/,'Personal documents reuses existing center');
+assert.match(lifeNav,/if\(name==='mail'\)/,'Mail goes directly to its own internal screen');
+assert.match(lifeNav,/SEYVEO_SAYVI_SURFACES\?\.open\?\.\('mail','personal'\)/,
+ 'Mail does not send people straight to Management');
 assert.match(html,/placeholder="Что посмотрим\?"/,'One obvious type-by-name field');
 assert.match(html,/<details id="sayviVideoMore"/,'Rare YouTube links are collapsed by default');
 assert.match(html,/<summary>Ещё<\/summary>/,'One optional advanced action area');
@@ -147,4 +152,4 @@ nodes.sayviVideoBack.click();
 assert.equal(loc.hash,'#life','PLAY Back returns to My World');
 nodes.sayviVideoForget.click();
 assert.equal(store.size,0,'Forget the only saved link');
-console.log('PASS SEYVEO PLAY: one player, My World entry and Back, no duplicate mail/documents, official embed.');
+console.log('PASS SEYVEO PLAY: one player, My World/Docs/Mail entries, back navigation, official embed.');
