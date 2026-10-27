@@ -2,6 +2,27 @@
    Only existing container geometry moves. The approved plasma SVG is untouched. */
 #homePage #orbCluster{display:flex;align-items:center;justify-content:center;flex:none;width:100%;height:min(81vw,342px);transition:height 1150ms cubic-bezier(.22,1,.36,1)}
 #homePage #stage{transition:min-height 1150ms cubic-bezier(.22,1,.36,1),padding 1150ms cubic-bezier(.22,1,.36,1)}
+ /* One real-source aura, on Home only. Never add a second background orb:
+    diffuse pearl/emerald spill sits behind the ORIGINAL SVG button. */
+#homePage #orbCluster{position:relative;isolation:isolate}
+#homePage #orbCluster::before{
+ content:"";position:absolute;z-index:0;pointer-events:none;
+ left:50%;top:50%;transform:translate(-50%,-50%);
+ width:min(99vw,450px);height:min(99vw,450px);border-radius:50%;
+ background:radial-gradient(ellipse at center,
+   rgba(199,229,217,.105) 0%,
+   rgba(96,160,139,.105) 35%,
+   rgba(56,115,99,.077) 54%,
+   rgba(41,83,77,.026) 69%,
+   transparent 81%);
+ opacity:.94;
+ transition:opacity 1150ms ease,transform 1150ms ease;
+}
+#homePage #orb{position:relative;z-index:1}
+#homePage.lm-focus #orbCluster::before{opacity:.72;transform:translate(-50%,-50%) scale(.66)}
+:root[data-theme=light] #homePage #orbCluster::before{opacity:.20}
+@media(prefers-reduced-motion:reduce){#homePage #orbCluster::before{transition:none}}
+
 #homePage #orb{transform:translate3d(0,0,0) scale(1);transform-origin:center center;transition:transform 1150ms cubic-bezier(.2,.78,.21,1)}
 #homePage.lm-focus #orbCluster{height:clamp(146px,38vw,202px)}
 #homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
