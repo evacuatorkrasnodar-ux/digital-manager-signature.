@@ -1,6 +1,6 @@
 /* SEYVEO Home · contextual Black Velvet remote, no permanent main-screen card */
 #seyveoSmartHomeHome[hidden],#seyveoSmartHomeWorld[hidden]{display:none!important}
-#seyveoSmartHomeHome{margin:5px 0 20px;padding:17px 15px 14px;width:100%;border-radius:22px;border:1px solid var(--line);background:linear-gradient(145deg,var(--seyveo-specular),rgba(81,173,149,.025) 60%,transparent),var(--bg);animation:svh-appear .3s ease both}
+#seyveoSmartHomeHome{margin:5px 0 20px;padding:17px 15px 14px;width:100%;border-radius:22px;border:1px solid var(--line);background:linear-gradient(145deg,var(--seyveo-specular),color-mix(in srgb,var(--seyveo-emerald) 3%,transparent) 60%,transparent),var(--bg);animation:svh-appear .3s ease both}
 #seyveoSmartHomeWorld{padding:16px 0 3px;margin-top:17px;border-top:1px solid var(--soft-line)}
 #seyveoSmartHomeHome,#seyveoSmartHomeWorld{color:var(--text)}
 .svh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
