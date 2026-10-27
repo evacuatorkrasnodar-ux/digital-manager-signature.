@@ -110,8 +110,10 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
 });
 // Open the existing company card, not a second copy of it.
 $('svcpOpenCompany')?.addEventListener('click',()=>$('openCompanyPassportFromManage')?.click());
-// Preserve the older extended business tools through an explicit entry.
-$('svcpOpenMore')?.addEventListener('click',()=>window.SEYVEO_BUSINESS_NAV?.openTools?.());
+// Old HR/shift/ROI tools remain live but open their own focused destinations.
+root.querySelectorAll('[data-svcp-feature]').forEach(button=>
+ button.addEventListener('click',()=>
+  window.SEYVEO_BUSINESS_NAV?.openFeature?.(button.dataset.svcpFeature)));
 $('svcpOpenPulse')?.addEventListener('click',()=>$('openBusinessPictureFromManage')?.click());
 $('svcpOpenDocs')?.addEventListener('click',()=>$('openUnifiedDocumentsFromManage')?.click());
 window.addEventListener('pagehide',cleanupPreview);
