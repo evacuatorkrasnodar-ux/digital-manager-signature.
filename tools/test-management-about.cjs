@@ -22,9 +22,13 @@ const businessKeys=[...overview.matchAll(/data-clean-business="([^"]+)"/g)].map(
 assert.deepEqual(businessKeys,['company','people','chat','tasks','pulse','documents','hiring','efficiency'],'Eight direct Business rows in order');
 assert.doesNotMatch(overview,/data-clean-section="command"/,'No intermediary My Business menu');
 assert.match(html,/id="svcpChats"/,'Existing chat preserved');
-assert.match(html,/id="svcpOpenCompany"/,'Company still accessible within business hub');
+assert.doesNotMatch(html,/id="svcpOpenCompany"/,'No duplicate company link in Employees, Chats or Tasks');
+assert.doesNotMatch(html,/id="svcpOpenPulse"|id="svcpOpenDocs"/,'No repeated Pulse or Documents beneath Employees');
+assert.doesNotMatch(html,/Другие инструменты/,'No giant secondary catalogue');
+assert.doesNotMatch(html,/Руководитель<\/strong>|Получают только нужные рабочие чаты/,'No pretend leader/member cards');
+assert.match(html,/Сотрудников пока нет/,'One clear employee empty state');
 assert.doesNotMatch(html,/id="svcpOpenMore"/,'No more giant second business menu');
-for(const name of ['Команда','Кадры','Эффект SEYVEO']){
+for(const name of ['Команда']){
  assert.match(html,new RegExp('data-svcp-feature="'+name+'"'),'Direct specialized entry preserved: '+name);
 }
 assert.match(html,/id="openCompanyPassportFromManage"/,'Real company card preserved');
@@ -90,11 +94,8 @@ function entry(name,label,desc){
   return null;
  }};
 }
-const tabs=Object.fromEntries(['team','chats','tasks'].map(k=>[k,new Fake('BUTTON')]));
-command.querySelector=selector=>{
- const hit=selector.match(/data-svcp-tab="([^"]+)"/);
- return hit?tabs[hit[1]]:null;
-};
+const openedTabs=[];
+window.SEYVEO_BUSINESS_COMMAND={openTab:name=>openedTabs.push(name)};
 const clickBusiness=key=>{
  const target={dataset:{cleanBusiness:key}};
  menu.fire('click',{target:{closest:selector=>selector==='[data-clean-business]'?target:null}});
@@ -112,7 +113,7 @@ for(const [key,heading,tab] of [['people','Сотрудники','team'],['chat'
  assert.equal(title.textContent,heading,'Direct destination '+key);
  assert.equal(command.hidden,false,'Business screen opens');
  assert.equal(command.states.has('svcp-direct-view'),true,'No nested Business hub');
- assert.ok(tabs[tab].calls>0,'Correct tab selected');
+ assert.equal(openedTabs.at(-1),tab,'Correct focused panel selected');
  back.click();
  assert.equal(menu.hidden,false,'Back to Business list');
 }
