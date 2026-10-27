@@ -98,6 +98,39 @@ function icon(kind){
  return s;
 }
 
+// Training-only deferred item inside the existing Tasks workspace.
+// No localStorage, no new Home card and no changes to owner's personal tasks.
+let mailDeferred=false;
+function setMailDeferred(value){
+ mailDeferred=!!value;
+ const page=$('tasksPage');if(!page)return;
+ let item=$('seyveoPreviewMailLater');
+ if(!item){
+  item=create('section','lm-mail-later');
+  item.id='seyveoPreviewMailLater';
+  item.setAttribute('aria-label','Учебное отложенное письмо');
+  item.append(create('small','','ДЕМО · ПОЗЖЕ'),
+   create('strong','','Андрей · стоимость доставки'),
+   create('p','','Учебное письмо отложено. В личные дела ничего не записано.'));
+  const link=create('button','lm-polymer','Открыть письмо');
+  link.type='button';
+  link.addEventListener('click',()=>{
+   const api=window.SEYVEO_SAYVI_SURFACES;
+   if(api?.open)api.open('mail');else location.hash='#sayvi-mail';
+  });
+  const restore=create('button','lm-polymer','Вернуть в примеры');
+  restore.type='button';
+  restore.addEventListener('click',()=>{
+   setMailDeferred(false);
+   $('navHome')?.click();
+   window.setTimeout(()=>window.SEYVEO_LIVING_MOMENT?.preview?.(),180);
+  });
+  item.append(link,restore);
+  const list=page.querySelector('.personal-tasks-panel');
+  if(list)page.insertBefore(item,list);else page.append(item);
+ }
+ item.hidden=!mailDeferred;
+}
 const sample=[
  {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
@@ -142,11 +175,62 @@ function createSurface(primary,other=[],real=false,taskId=''){
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
+ // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
+ // The message is invented. No API, actual outgoing email or AI is used.
+ const mailDefault='Здравствуйте, Андрей! Спасибо за обращение. Уточните, пожалуйста, адрес доставки, чтобы мы могли рассчитать стоимость.';
+ let mailDraft=mailDefault,mailStep='draft';
+ const mailDetails=create('div','lm-mail-content');
+ mailDetails.hidden=true;
+ function mailActive(){return !real&&shown.kind==='mail'}
+ function updateMail(){
+  const active=mailActive();
+  mailDetails.hidden=!active;
+  mailEdit.hidden=!active||mailStep==='edit';
+  mailLater.hidden=!active||mailStep==='edit'||mailStep==='done';
+  mailSave.hidden=!active||mailStep!=='edit';
+  mailCancel.hidden=!active||mailStep!=='edit';
+  open.hidden=active&&mailStep==='edit';
+  execute.hidden=active&&mailStep==='edit';
+  execute.textContent=real?'Продолжить дело':active
+    ?(mailStep==='done'?'✓ Готово · демо':mailStep==='confirm'?'Подтвердить · демо':'Отправить')
+    :'Исполнить';
+  mailDetails.replaceChildren();
+  if(!active)return;
+  mailDetails.append(create('p','lm-mail-intro','ДЕМО · Клиент Андрей спрашивает о стоимости доставки.'));
+  if(mailStep==='edit'){
+   const field=create('label','lm-mail-edit-label','Исправить черновик');
+   const input=create('textarea','lm-mail-edit-input');
+   input.rows=3;input.maxLength=1200;input.value=mailDraft;
+   field.append(input);mailDetails.append(field);
+  }else{
+   if(mailStep==='confirm'){
+    mailDetails.append(create('p','lm-mail-address','Кому: Андрей · адрес не подключён'),
+      create('p','lm-mail-address','Тема: Стоимость доставки'));
+   }
+   mailDetails.append(create('p','lm-mail-draft',mailDraft));
+   mailDetails.append(create('p','lm-mail-note',mailStep==='done'
+    ?'✓ Учебное подтверждение. Ничего не отправлено.'
+    :mailStep==='confirm'
+      ?'Это учебный пример. Подтверждение не отправляет письмо.'
+      :'Почта не подключена · настоящий ответ не отправлен.'));
+  }
+ }
  const open=polymer('Подробнее',()=>{
+  if(mailActive()){
+   const api=window.SEYVEO_SAYVI_SURFACES;
+   if(api?.open)api.open('mail');
+   else location.hash='#sayvi-mail';
+   return;
+  }
   // Explain why Sayvi surfaced the stored task; never mark it done.
   explain(field,shown.reason+' '+shown.detail,open);
  });
  const execute=polymer(real?'Продолжить дело':'Исполнить',()=>{
+  if(mailActive()){
+   if(mailStep==='draft'){mailStep='confirm';updateMail();return}
+   if(mailStep==='confirm'){mailStep='done';updateMail();return}
+   if(mailStep==='done'){finishPreviewItem();return}
+  }
   if(real){
    // Opening an ongoing plan or task is NOT evidence of completion.
    // Only the owner's completion action in Tasks may finish a real item.
@@ -162,8 +246,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
  open.setAttribute('aria-label','Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
- controls.append(open,execute);
- main.append(hero,controls);
+ const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
+ const mailSave=polymer('Сохранить',()=>{
+  const value=mailDetails.querySelector('textarea')?.value?.trim();
+  if(!value){explain(field,'Напишите текст ответа, чтобы сохранить учебный черновик.',mailSave);return}
+  mailDraft=value.slice(0,1200);mailStep='draft';updateMail();
+ });
+ const mailCancel=polymer('Отмена',()=>{mailStep='draft';updateMail()});
+ const mailLater=polymer('Позже',()=>{
+  if(!mailActive())return;
+  setMailDeferred(true);
+  // Removing a fictitious message from the preview never completes a real task.
+  finishPreviewItem();
+ });
+ controls.append(execute,mailEdit,open,mailLater,mailSave,mailCancel);
+ main.append(hero,mailDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
   if(real)return;
@@ -204,6 +301,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
   open.setAttribute('aria-expanded','false');
   execute.setAttribute('aria-expanded','false');
+  mailStep='draft';
+  updateMail();
   updateCount();
   renderSecondary();
  }
@@ -239,6 +338,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   },reduced()?0:420);
  }
  field.dataset.lmSubject=primary.kind;
+ updateMail();
  renderSecondary();
  const explanation=create('p','lm-explanation');
  explanation.id='seyveoSurfaceReason';
