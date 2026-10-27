@@ -141,36 +141,63 @@
 #sayviSurfacePage .sv-deep-status{
   color:var(--secondary);font-size:12px;line-height:1.5;
 }
-/* First-customer test scene — pure text and one semantic line, never a card. */
+/* The training scene is framed by Black Velvet in living-space.css.
+   Keep actual insets on the content itself, including on narrow phones. */
 #sayviSurfacePage .sv-deep-demo{
+  box-sizing:border-box;
   position:relative;
-  margin:4px 6px 24px;
-  padding:19px 0 15px;
+  min-width:0;
+  max-width:100%;
+  margin:4px 5px 20px;
+  padding:18px 18px 15px;
   border-top:1px solid var(--soft-line);
   border-bottom:1px solid var(--soft-line);
+  overflow-wrap:break-word;
 }
 #sayviSurfacePage .sv-deep-demo-label{
   display:block;
-  margin:0 0 12px;
+  margin:0 0 11px;
   font-size:9px;font-weight:490;
-  letter-spacing:.12em;
+  letter-spacing:.08em;
   line-height:1.5;
   color:var(--secondary);
+  overflow-wrap:normal;
 }
 #sayviSurfacePage .sv-deep-demo-title{
-  margin:0 0 7px;
-  color:var(--text);font-size:20px;
-  font-weight:470;line-height:1.28;
-  letter-spacing:-.032em;
+  margin:0 0 9px;
+  max-width:100%;
+  color:var(--text);font-size:clamp(17px,4.2vw,19px);
+  font-weight:480;line-height:1.3;
+  letter-spacing:-.024em;
+  overflow-wrap:break-word;
 }
 #sayviSurfacePage .sv-deep-demo-message{
   font-size:12.5px;
-  line-height:1.65;
+  line-height:1.54;
   color:var(--secondary);
-  margin:0 0 8px;
+  margin:0 0 9px;
 }
 #sayviSurfacePage .sv-deep-demo .sv-deep-actions{
-  margin:5px 0 10px;
+  margin:5px 0 7px;
+}
+#sayviSurfacePage .sv-deep-demo-status:empty{
+  display:none;
+}
+#sayviSurfacePage .sv-deep-demo>.sv-deep-note{
+  box-sizing:border-box;
+  margin:12px 0 0;
+  padding-top:12px;
+  border-top:1px solid var(--soft-line);
+  font-size:10.5px;
+  line-height:1.55;
+}
+@media(max-width:360px){
+  #sayviSurfacePage .sv-deep-demo{
+    margin-right:2px;
+    margin-left:2px;
+    padding-right:14px;
+    padding-left:14px;
+  }
 }
 #sayviSurfacePage .sv-deep-demo-choice{
   display:flex;align-items:center;flex-wrap:wrap;
