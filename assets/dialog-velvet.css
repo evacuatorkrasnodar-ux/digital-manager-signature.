@@ -341,28 +341,43 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 }
 
 
-/* SEYVEO workspace sheets · same themes as My World, no duplicate pages.
-   Keep the conversation history neutral. Notebook uses the active card tone;
-   wellness keeps its own soft palette. Original form handlers are unchanged. */
+/* Notebook and Wellness dialogs consume the SAME palette as My World.
+   This is their original shared contract, not an independent theme layer. */
 #assistantChatHistoryDialog:not([hidden]){
- box-sizing:border-box;
- border:0!important;border-radius:0!important;box-shadow:none!important;
- background:var(--bg)!important;color:var(--text);
+ box-sizing:border-box;border:0!important;border-radius:0!important;
+ box-shadow:none!important;background:var(--bg)!important;color:var(--text);
 }
-:is(#notesDialog,#noteReadDialog,#noteReviewDialog):not([hidden]){
+:is(#notesDialog,#noteReadDialog,#noteReviewDialog,#noteModeDialog,
+    #notePaperDialog,#noteScanDialog):not([hidden]){
  box-sizing:border-box;
  border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
- border-radius:23px!important;box-shadow:none!important;
- background:linear-gradient(155deg,var(--seyveo-hdr-active),transparent 48%),var(--card)!important;
+ border-radius:22px!important;box-shadow:none!important;
+ background:var(--sv-life-dialog-bg,var(--card))!important;
  color:var(--text);
 }
 #calendarSpaceDialog:not([hidden]){
  box-sizing:border-box;
  border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
- border-radius:23px!important;box-shadow:none!important;
- background:var(--sv-life-dialog-bg,var(--card))!important;color:var(--text);
+ border-radius:22px!important;box-shadow:none!important;
+ background:var(--sv-life-dialog-bg,var(--card))!important;
+ color:var(--text);
 }
 :root[data-theme=light] #assistantChatHistoryDialog:not([hidden]){background:var(--bg)!important}
+
+/* Notebook back arrows: same understated 44px gesture, no mismatched circular badge. */
+:is(#noteReviewDialog,#noteReadDialog,#notePaperDialog,#noteScanDialog)
+ > button.seyveo-dialog-close:not(.seyveo-text-close){
+ width:44px;height:44px;min-width:44px;
+ color:var(--text);background:transparent;border:0;border-radius:50%;
+}
+:is(#noteReviewDialog,#noteReadDialog,#notePaperDialog,#noteScanDialog)
+ > button.seyveo-dialog-close:not(.seyveo-text-close)::before{
+ content:none!important;display:none!important;
+}
+:is(#noteReviewDialog,#noteReadDialog,#notePaperDialog,#noteScanDialog)
+ > button.seyveo-dialog-close:not(.seyveo-text-close) svg.seyveo-close-glyph{
+ width:20px;height:20px;stroke-width:1.7;
+}
 
 /* Saved requests: compact open lines, never pills with clipped first lines.
    Native DETAILS remains functional, preserving read-only history and storage. */
