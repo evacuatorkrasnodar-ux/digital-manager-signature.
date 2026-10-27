@@ -12,11 +12,11 @@
 }
 #homeHeader .seyveo-brand-caption{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0}
 #homeHeader .seyveo-brand-name{
- color:#f2f4f4;font-size:14px;font-weight:560;line-height:1.16;
+ color:#f2f5f0;font-size:14px;font-weight:560;line-height:1.16;
  letter-spacing:.11em;padding-left:.11em;white-space:nowrap
 }
 #homeHeader .seyveo-brand-specialty{
- display:block;color:#a5afae;font-size:9px;line-height:1.28;font-weight:460;
+ display:block;color:#abbab0;font-size:9px;line-height:1.28;font-weight:460;
  letter-spacing:.015em;white-space:nowrap
 }
 :root[data-theme=light] #homeHeader .seyveo-brand-name{color:#253035}
