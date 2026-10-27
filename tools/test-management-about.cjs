@@ -72,11 +72,14 @@ groups[3].querySelectorAll=selector=>selector==='.seyveo-hr-operations > details
  Object.values(businessFeatures):[];
 const menu=new Fake(),detail=new Fake(),legacy=new Fake(),back=new Fake();
 const network=new Fake(),command=new Fake(),title=new Fake(),explanation=new Fake();
+const company=new Fake('BUTTON'),pulse=new Fake('BUTTON'),documents=new Fake('BUTTON');
 legacy.querySelectorAll=selector=>selector==='.seyveo-management-v2-group'?groups:
  selector==='.sv-business-focus'?Object.values(businessFeatures).filter(x=>x.states.has('sv-business-focus')):[];
 const lookup={seyveoCleanManageMenu:menu,seyveoCleanDetail:detail,seyveoCleanLegacy:legacy,
  seyveoNetworkPage:network,seyveoBusinessCommandPage:command,seyveoCleanBack:back,
- seyveoCleanTitle:title,seyveoCleanExplain:explanation};
+ seyveoCleanTitle:title,seyveoCleanExplain:explanation,
+ openCompanyPassportFromManage:company,openBusinessPictureFromManage:pulse,
+ openUnifiedDocumentsFromManage:documents};
 const document={getElementById:id=>lookup[id]||null,querySelector:()=>null,createElement:tag=>new Fake(tag.toUpperCase())};
 const window={addEventListener(){},scrollTo(){}};
 vm.runInNewContext(inline,{document,window},{timeout:1400});
@@ -97,6 +100,9 @@ const clickBusiness=key=>{
  menu.fire('click',{target:{closest:selector=>selector==='[data-clean-business]'?target:null}});
 };
 const normal=(key,title)=>menu.fire('click',{target:{closest:selector=>selector==='[data-clean-business]'?null:entry(key,title,'Описание')}});
+clickBusiness('company');assert.equal(company.calls,1,'Company opens original profile');
+clickBusiness('pulse');assert.equal(pulse.calls,1,'Business Pulse opens original picture');
+clickBusiness('documents');assert.equal(documents.calls,1,'Documents open original center');
 normal('about','О SEYVEO');
 assert.equal(material.open,true,'About material opens');
 back.click();
