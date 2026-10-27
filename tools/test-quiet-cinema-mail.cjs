@@ -14,8 +14,8 @@ assert.match(source,/previewScene=present\.length\?createSurface\(present\[0\],p
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=58/);
-assert.match(html,/assets\/living-moment\.css\?v=42/);
+assert.match(html,/assets\/living-moment\.js\?v=59/);
+assert.match(html,/assets\/living-moment\.css\?v=43/);
 assert.match(html,/assets\/personal-tasks\.js\?v=23/);
 assert.match(html,/assets\/personal-tasks\.css\?v=20/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
@@ -23,8 +23,10 @@ assert.match(style,/#seyveoLivingMoment\.lm-condense \.lm-mail-content\{display:
  'Mail content must disappear with original card condensation');
 assert.match(style,/#seyveoLivingMoment:not\(\.lm-condense\)/,
  'Mail cannot override original condensation');
-assert.match(style,/grid-template-columns:62px minmax\(0,1fr\)/,'Compact Home art, no cloned field');
+assert.match(style,/grid-template-columns:48px minmax\(0,1fr\)/,'Compact Home art, no cloned field');
 assert.match(style,/min-height:44px;font-size:11\.7px/,'Compact actions keep accessible touch height');
+assert.match(style,/min-height:48px/,'Queue rows still fit the 44px touch target');
+assert.match(style,/grid-template-columns:48px minmax\(0,1fr\)/,'All three cards share smaller artwork geometry');
 assert.match(html,/seyveo:home-recommendation-changed/,'Sayvi Home voice follows the featured card');
 assert.doesNotMatch(source,/\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(/,'No actual mail transmission');
 assert.match(tasksSource,/function deferredPreviewRow/,'All deferred previews share original Tasks list');
@@ -116,11 +118,25 @@ rows[0].click();
 let timer=timers.find(t=>t.ms===400);assert.ok(timer,'Original morph animation triggered');
 timer.fn();
 assert.equal(field.dataset.lmSubject,'mail','Original Mail item becomes featured');
+assert.equal(walk(field,x=>x.className==='lm-primary-subtitle').hidden,true,
+ 'Mail no longer repeats the same description above the readable response');
+const mailPreview=walk(field,x=>x.className==='lm-mail-content');
+assert.ok(mailPreview&&!mailPreview.hidden,'Readable mail draft remains in the original card');
+assert.ok(all(mailPreview,x=>x.className==='lm-mail-draft')
+ .some(x=>x.textContent.includes('Уточните, пожалуйста, адрес доставки')),
+ 'Full drafted response is visible without another tap');
+assert.ok(all(mailPreview,x=>x.className==='lm-mail-intro')
+ .some(x=>x.textContent.includes('ДЕМО')&&x.textContent.includes('почта не подключена')),
+ 'The preview still honestly labels the disconnected training mail');
+assert.equal(all(mailPreview,x=>x.className==='lm-mail-note').length,0,
+ 'Redundant mail note removed from the initial preview only');
 assert.equal(all(field,x=>x.className.startsWith('lm-polymer')).filter(b=>!b.hidden).length,4,
  'Mail has exactly four active actions, same field');
 const b=label=>{const found=all(field,x=>x.className.startsWith('lm-polymer')).find(x=>x.textContent===label&&!x.hidden);assert.ok(found,'Action '+label);return found};
 assert.equal(b('Отправить').click(),undefined);
 assert.ok(walk(field,x=>x.className==='lm-mail-address'),'Send first asks recipient review');
+assert.ok(all(mailPreview,x=>x.className==='lm-mail-note').length,
+ 'The send confirmation still warns that no real mail is transmitted');
 b('Исправить').click();
 let edit=walk(field,x=>x.tagName==='TEXTAREA');assert.ok(edit,'Compact editor is within existing card');
 edit.value='Добрый день! Уточните адрес доставки.';
