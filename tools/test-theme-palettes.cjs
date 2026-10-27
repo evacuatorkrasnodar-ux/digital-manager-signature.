@@ -15,7 +15,8 @@ const css={
  dock:read('assets/floating-navigation.css'),
  wellness:read('assets/personal-wellness.css'),
  smartHome:read('assets/seyveo-smart-home.css'),
- surfaces:read('assets/sayvi-surfaces.css')
+ surfaces:read('assets/sayvi-surfaces.css'),
+ home:read('assets/home-velvet.css')
 };
 const match=html.match(/data-theme-choice="([^"]+)"/g)||[];
 assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','dark','graphite','sapphire','light'],
@@ -32,6 +33,7 @@ assert.match(html,/assets\/conversation-refined\.css\?v=36/);
 assert.match(html,/assets\/personal-wellness\.css\?v=18/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=6/);
+assert.match(html,/assets\/home-velvet\.css\?v=18/);
 for(const variant of ['graphite','sapphire']){
  const selector='[data-theme=dark][data-palette='+variant+']';
  assert.ok(html.includes(selector),'Global tokens: '+variant);
@@ -40,6 +42,7 @@ for(const variant of ['graphite','sapphire']){
  assert.ok(css.talk.includes(selector),'Feather Chat: '+variant);
  assert.ok(css.dock.includes(selector),'Dock: '+variant);
  assert.ok(css.wellness.includes(selector),'Wellness breathing and care: '+variant);
+ assert.ok(css.home.includes(selector),'Home utility surfaces: '+variant);
 }
 assert.match(css.life,/:root\[data-theme=light\]/,'White gradient available');
 assert.match(css.music,/:root\[data-theme=light\]/,'White music sheet available');
