@@ -379,8 +379,7 @@
    The original same textarea, buttons, voice/history hooks and keyboard/height
    safeguards are untouched. Only paint and type contrast change. */
 #ask.prompt.expanded{
- background:radial-gradient(ellipse 100% 90% at 50% 42%,
-  rgba(30,34,43,.68) 0%,rgba(18,22,29,.44) 69%,rgba(11,14,21,.16) 100%)!important;
+ background:var(--sv-expanded-writer-background)!important;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
@@ -389,12 +388,12 @@
  background:transparent!important;border:0!important;
  border-bottom:1px solid var(--soft-line)!important;
  border-radius:0!important;box-shadow:none!important;
- color:#f2f3f6!important;-webkit-text-fill-color:#f2f3f6!important;
- caret-color:#f2f3f6;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ caret-color:var(--text);
 }
 #ask.prompt.expanded #question::placeholder{
- color:#b7c2cf!important;opacity:1!important;
- -webkit-text-fill-color:#b7c2cf!important;
+ color:var(--secondary)!important;opacity:1!important;
+ -webkit-text-fill-color:var(--secondary)!important;
 }
 #ask.prompt.expanded .composer-tool span,
 #ask.prompt.expanded .composer-head .composer-icon{
@@ -408,13 +407,19 @@
 }
 #ask.prompt.expanded .composer-head strong{font-weight:510}
 :root[data-theme=light] #ask.prompt.expanded{
- background:radial-gradient(ellipse 100% 90% at 50% 42%,
-  rgba(230,235,240,.88) 0%,rgba(241,245,248,.50) 69%,rgba(252,252,252,.14) 100%)!important;
+ background:var(--sv-expanded-writer-background)!important;
 }
 :root[data-theme=light] #ask.prompt.expanded #question{
- color:#202934!important;-webkit-text-fill-color:#202934!important;
- caret-color:#202934;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ caret-color:var(--text);
 }
 :root[data-theme=light] #ask.prompt.expanded #question::placeholder{
- color:#5b6673!important;-webkit-text-fill-color:#5b6673!important;
+ color:var(--secondary)!important;-webkit-text-fill-color:var(--secondary)!important;
 }
+
+
+/* The SAME expanded writer adopts app colors; keyboard geometry unchanged. */
+:root{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(30,49,43,.68),rgba(18,33,28,.44) 69%,rgba(11,22,17,.16))}
+:root[data-theme=dark][data-palette=graphite]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(43,59,71,.68),rgba(22,33,44,.44) 69%,rgba(13,20,27,.16))}
+:root[data-theme=dark][data-palette=sapphire]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(40,58,106,.72),rgba(20,33,67,.48) 69%,rgba(11,20,45,.17))}
+:root[data-theme=light]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(238,243,248,.88),rgba(244,247,250,.50) 69%,rgba(255,255,255,.14))}
