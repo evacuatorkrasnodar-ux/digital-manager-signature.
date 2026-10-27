@@ -674,12 +674,12 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Black Velvet 2.0 / Emerald Depth.
-   One refined linear canvas; no radial ghost silhouettes.
-   Protected orb SVG, position and animation remain unchanged. */
+/* SEYVEO · Black Velvet / subtle emerald undertone.
+   Almost-black graphite with only a trace of green, not a green canvas.
+   Linear-only background: no radial ghost shapes or changes to the orb. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#0c1110 0%,#101917 24%,#13241e 55%,#173127 78%,#0e1512 100%);
+ background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#1a221c 78%,#111512 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1173,7 +1173,7 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
 
 /* My World · quiet graphite page instead of a nearly black, boxed menu. */
 html.sv-space-active #lifePage{
- background:linear-gradient(155deg,#111d17 0%,#172920 46%,#101a15 100%)!important;
+ background:linear-gradient(155deg,#131815 0%,#1a211b 46%,#141916 100%)!important;
  min-height:100%;color:var(--text);
 }
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
