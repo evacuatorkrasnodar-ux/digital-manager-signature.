@@ -214,10 +214,10 @@
  min-height:46px;border-radius:999px;
 }
 #noteReviewDialog.note-review-dialog[data-note-mode="new"] textarea{
- box-sizing:border-box;
- min-height:135px;height:clamp(135px,22svh,185px);max-height:185px;
- resize:none;overflow:auto;overscroll-behavior:contain;
- padding:11px 2px;border-radius:0;
+ box-sizing:border-box;height:clamp(160px,26svh,225px)!important;
+ min-height:140px!important;max-height:225px!important;
+ resize:vertical;overflow:auto;overscroll-behavior:contain;
+ padding:12px 2px;border-radius:0;
  font-size:16px;line-height:1.55;
 }
 #noteReviewDialog.note-review-dialog textarea{
@@ -251,11 +251,11 @@
  height:fit-content!important;min-height:0!important;
  max-height:min(84svh,calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px));
  overflow:hidden;border:1px solid var(--soft-line)!important;
- border-radius:22px!important;background:var(--bg)!important;
+ border-radius:22px!important;background:var(--sv-life-dialog-bg,var(--card))!important;
  box-shadow:none!important;padding:18px 16px 14px;
 }
 #notesDialog.notes-dialog[open] .notes-head{
- flex:none;margin-right:73px;margin-bottom:9px;
+ flex:none;margin-right:75px;margin-bottom:9px;
 }
 #notesDialog.notes-dialog[open] .notes-list{
  box-sizing:border-box;min-height:0;max-height:min(61svh,570px);
@@ -524,16 +524,25 @@
 
 
 /* Single SEYVEO ink writing surface; no oversized filled rectangle. */
-#noteReviewDialog.note-review-dialog[open]{width:min(510px,calc(100vw - 22px));padding:19px clamp(15px,4vw,22px) 14px}
-#noteReviewDialog.note-review-dialog #noteReviewTitle{font-size:clamp(20px,5vw,24px);font-weight:480;letter-spacing:-.04em;padding:0;margin:0 0 10px}
+#noteReviewDialog.note-review-dialog[open]{
+ box-sizing:border-box;display:block;width:min(510px,calc(100vw - 22px));
+ height:auto!important;min-height:0!important;
+ max-height:min(82svh,calc(100dvh - 24px));
+ padding:19px clamp(15px,4vw,22px) 15px;
+ overflow-y:auto;
+}
+#noteReviewDialog.note-review-dialog #noteReviewTitle{font-size:clamp(22px,5.3vw,25px);font-weight:530;letter-spacing:-.04em;padding:0;margin:0 0 13px}
 #noteReviewDialog.note-review-dialog textarea{
-  border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
-  background:transparent;box-shadow:none;padding:14px 2px;color:var(--text);
-  font-size:16px;line-height:1.58;white-space:pre-wrap;overflow-wrap:break-word;
+ box-sizing:border-box;display:block;flex:none;
+ height:clamp(160px,26svh,225px)!important;min-height:140px!important;max-height:225px!important;
+ border:0;border-bottom:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:0;
+ background:transparent!important;box-shadow:none;padding:12px 2px;color:var(--text);
+ font-size:16px;line-height:1.58;white-space:pre-wrap;overflow-wrap:break-word;
+ resize:vertical;
 }
 #noteReviewDialog.note-review-dialog #noteReviewText:focus-visible{outline:0;border-bottom-color:var(--seyveo-emerald)}
 :root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{background:transparent;border-bottom-color:var(--seyveo-hdr-outline)}
-#noteReviewDialog.note-review-dialog .info-actions{gap:10px;margin-top:13px}
+#noteReviewDialog.note-review-dialog .info-actions{gap:12px;margin-top:12px;flex:none}
 #noteReviewDialog.note-review-dialog .info-actions>.btn{min-height:48px}
 #notesDialog.notes-dialog[open] .notes-head{margin-right:76px}
 #notesDialog.notes-dialog[open] .notes-head h2{
@@ -542,7 +551,7 @@
 #notesDialog.notes-dialog[open] .notes-new{
  padding:8px 3px;font-weight:470;font-size:12px;
 }
-#notesDialog.notes-dialog[open] .note-open p{font-size:14px;font-weight:425!important}
+#notesDialog.notes-dialog[open] .note-open p{font-size:15px;font-weight:450!important;line-height:1.5}
 #notesDialog.notes-dialog[open] .note-item{padding:9px 0 9px}
 #notesDialog.notes-dialog[open] .note-item-actions>.note-more-button{
  font-size:18px;color:var(--secondary);border:0;background:transparent
