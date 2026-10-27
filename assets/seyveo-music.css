@@ -377,10 +377,10 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   max-height:min(63dvh,510px);
   padding:18px 19px 15px;
   margin:0;
-  border:1px solid rgba(225,230,240,.21);
+  border:1px solid rgba(189,221,212,.24);
   border-radius:22px;
   /* The ORIGINAL glass sheet, now frosted rather than see-through. */
-  background:linear-gradient(160deg,rgba(48,51,59,.975),rgba(28,31,37,.982));
+  background:linear-gradient(157deg,rgba(46,67,62,.975),rgba(20,34,33,.985));
   -webkit-backdrop-filter:blur(30px) saturate(.7);
   backdrop-filter:blur(30px) saturate(.7);
   color:var(--text);
