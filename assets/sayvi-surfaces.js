@@ -184,11 +184,6 @@ function demoScenario(kind){
  body.append(section);
 }
 function mailView(){
- // Open the same fictional letter that Home showed. This never reads real mail.
- if(window.SEYVEO_HOME_MAIL_DEMO?.renderDetail?.(body)){
-  body.append(hint('Учебное письмо без настоящего отправителя, адреса и почтового подключения.'));
-  return;
- }
  demoScenario('mail');
  const section=shelf();
  section.append(create('p','sv-deep-lead','Пока почта не подключена.'));
