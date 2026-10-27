@@ -24,7 +24,7 @@
 #notesDialog .notes-head{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0 44px 12px 0}
 #notesDialog .notes-head h2{margin:0;font-size:21px;font-weight:580;line-height:1.25;letter-spacing:-.03em}
 #notesDialog .notes-new{
- display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:0;background:transparent;color:var(--text);font:inherit;font-size:12px;cursor:pointer;
+ display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:0;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:12px;cursor:pointer;
 }
 #notesDialog .notes-list{
  display:flex;flex-direction:column;
@@ -531,7 +531,7 @@
   background:transparent;box-shadow:none;padding:14px 2px;color:var(--text);
   font-size:16px;line-height:1.58;white-space:pre-wrap;overflow-wrap:break-word;
 }
-#noteReviewDialog.note-review-dialog #noteReviewText:focus-visible{outline:0;border-bottom-color:var(--text)}
+#noteReviewDialog.note-review-dialog #noteReviewText:focus-visible{outline:0;border-bottom-color:var(--seyveo-emerald)}
 :root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{background:transparent;border-bottom-color:var(--seyveo-hdr-outline)}
 #noteReviewDialog.note-review-dialog .info-actions{gap:10px;margin-top:13px}
 #noteReviewDialog.note-review-dialog .info-actions>.btn{min-height:48px}
