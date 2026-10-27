@@ -15,15 +15,15 @@ html.sv-space-active #managePage #seyveoCleanManageMenu{
  position:relative;isolation:isolate;
  box-sizing:border-box;width:100%;min-width:0;
  margin:10px 0 28px;padding:0 14px 10px;
- border:1px solid rgba(145,199,163,.17);
+ border:1px solid rgba(168,187,173,.15);
  border-radius:24px;
- background:rgba(31,63,43,.13);
+ background:rgba(33,45,36,.10);
  box-shadow:none;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
  margin:0!important;padding:16px 0 4px;
  border:0;
- border-top:1px solid rgba(145,199,163,.13);
+ border-top:1px solid rgba(168,187,173,.13);
  background:transparent;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group:first-child{
@@ -52,7 +52,7 @@ html.sv-space-active #managePage #seyveoCleanManageMenu .manage-row.seyveo-clean
  min-height:79px;margin:0;padding:10px 5px 11px;
  text-align:left;color:var(--text);
  border:0!important;
- border-bottom:1px solid rgba(145,199,163,.12)!important;
+ border-bottom:1px solid rgba(168,187,173,.12)!important;
  border-radius:0!important;
  background:transparent!important;
  box-shadow:none!important;
