@@ -11,7 +11,7 @@
  padding:20px 20px 18px!important;
  border-radius:24px!important;
  border:1px solid rgba(205,247,229,.16)!important;
- background:#152628!important;
+ background:var(--card)!important;
  box-shadow:0 16px 60px rgba(0,0,0,.28);
  color:var(--text);
 }
@@ -29,7 +29,7 @@
  top:0!important;right:auto!important;float:right;
  z-index:5;margin:0 0 -44px auto;
  min-height:44px;padding:0 6px!important;
- color:var(--text)!important;background:#152628!important;
+ color:var(--text)!important;background:var(--card)!important;
  border:0!important;border-radius:0!important;
  font-size:13px;font-weight:470;
 }
@@ -236,7 +236,7 @@
 #seyveoCompanyDialog .seyveo-passport-form .btn.primary{
  display:block;width:100%;min-height:48px;margin-top:8px;
  border:0;border-radius:999px;
- background:#e8edf4;color:#1b2634;
+ background:var(--card2);color:var(--text);
  box-shadow:none;font:inherit;font-size:13px;font-weight:510;
 }
 #seyveoCompanyDialog [data-passport-type][hidden]{display:none!important}
@@ -247,12 +247,12 @@
  outline:2px solid var(--text);outline-offset:3px;
 }
 :root[data-theme=light] #seyveoCompanyDialog.seyveo-passport-modal{
- color:#202833;background:#f7f8fa!important;
+ color:#202833;background:var(--card)!important;
  border-color:rgba(78,95,112,.17)!important;
  box-shadow:0 18px 55px rgba(40,53,67,.14);
 }
 :root[data-theme=light] #seyveoCompanyDialog > button.sv-nav-done{
- color:#2d3a49!important;background:#f7f8fa!important;
+ color:#2d3a49!important;background:var(--card)!important;
 }
 :root[data-theme=light] #seyveoCompanyDialog .sv-kind-options{
  background:rgba(60,78,99,.035);
