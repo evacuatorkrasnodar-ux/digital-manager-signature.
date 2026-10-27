@@ -1,0 +1,69 @@
+/* SEYVEO Family · one personal Black Velvet conversation, not a second app.
+ * Every selector is scoped to the family dialog. No changes to the sphere or dock. */
+.svf-dialog:not([open]){display:none!important}
+.svf-dialog{box-sizing:border-box;color:var(--text);width:min(96vw,545px);max-width:545px;max-height:calc(100dvh - max(16px,env(safe-area-inset-top,0px)) - max(16px,env(safe-area-inset-bottom,0px)));padding:0;border:1px solid color-mix(in srgb,var(--seyveo-emerald) 26%,var(--soft-line));border-radius:25px;background:var(--bg);box-shadow:0 22px 65px rgba(0,0,0,.48);overflow:hidden}
+.svf-dialog::backdrop{background:rgba(0,8,5,.77);backdrop-filter:blur(6px)}
+.svf-shell{box-sizing:border-box;max-height:inherit;min-height:min(580px,83dvh);display:flex;flex-direction:column;overflow:hidden}
+.svf-head{flex:none;padding:16px 16px 12px;background:linear-gradient(135deg,color-mix(in srgb,var(--seyveo-emerald) 10%,var(--bg)),var(--bg) 75%);border-bottom:1px solid var(--soft-line)}
+.svf-overline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.svf-overline small{color:var(--secondary);font-size:9px;letter-spacing:.16em;font-weight:620}
+.svf-iconbutton{width:42px;height:42px;border:1px solid var(--soft-line);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--text);cursor:pointer;flex:none}
+.svf-iconbutton svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.svf-personas{display:flex;align-items:center;gap:13px;margin:8px 0 9px}
+.svf-faces{display:flex;align-items:center;padding-left:5px}
+.svf-face{width:35px;height:35px;margin-left:-5px;border:2px solid var(--bg);border-radius:50%;display:grid;place-items:center;color:var(--text);background:color-mix(in srgb,var(--seyveo-emerald) 16%,var(--card));box-shadow:inset 0 1px rgba(255,255,255,.08)}
+.svf-face:nth-child(2){background:color-mix(in srgb,var(--seyveo-emerald) 23%,var(--card2))}
+.svf-face:nth-child(3){background:color-mix(in srgb,var(--seyveo-emerald) 10%,var(--card))}
+.svf-face svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.45;fill:none;stroke-linecap:round}
+.svf-personas h2{font-size:23px;line-height:1.15;font-weight:560;letter-spacing:-.042em;margin:0}
+.svf-personas p{margin:3px 0 0;color:var(--secondary);font-size:11px;line-height:1.4}
+.svf-signal{display:inline-flex;gap:7px;align-items:center;margin:0;color:var(--secondary);font-size:11px;line-height:1.5}
+.svf-signal:before{content:"";width:6px;height:6px;flex:none;border-radius:50%;background:var(--seyveo-emerald)}
+.svf-tabs{display:flex;gap:20px;align-items:center;flex:none;padding:0 17px;border-bottom:1px solid var(--soft-line)}
+.svf-tab{cursor:pointer;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--secondary);min-height:48px;padding:5px 1px;font:inherit;font-size:13px;font-weight:560}
+.svf-tab[aria-selected=true]{border-bottom-color:var(--seyveo-emerald);color:var(--text)}
+.svf-panel{min-height:0;flex:1;display:flex;flex-direction:column}
+.svf-panel[hidden],.svf-attachment[hidden],.svf-suggestion[hidden]{display:none!important}
+.svf-thread{flex:1;min-height:125px;overflow-y:auto;overscroll-behavior:contain;padding:15px 13px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
+.svf-empty{max-width:290px;align-self:center;text-align:center;display:grid;justify-items:center;gap:7px;color:var(--secondary);font-size:12px;line-height:1.5;margin:auto 0;padding:20px 8px}
+.svf-empty svg{width:36px;height:36px;stroke:var(--seyveo-emerald);stroke-width:1.2;fill:none;opacity:.78}
+.svf-empty strong{font-size:14px;color:var(--text);font-weight:570}
+.svf-msg{max-width:91%;align-self:flex-end;padding:11px 13px;border-radius:17px 17px 6px 17px;background:color-mix(in srgb,var(--seyveo-emerald) 16%,var(--bg));border:1px solid color-mix(in srgb,var(--seyveo-emerald) 26%,var(--soft-line));word-break:break-word}
+.svf-msg strong{display:block;margin:0 0 5px;color:var(--seyveo-emerald);font-size:10px;font-weight:600}
+.svf-msg span{display:block;white-space:pre-wrap;font-size:13px;line-height:1.5}
+.svf-composer-wrap{flex:none;border-top:1px solid var(--soft-line);padding:8px 12px 12px}
+.svf-suggestion{display:grid;gap:7px;margin:1px 0 10px;border-left:2px solid var(--seyveo-emerald);padding:8px 11px;background:color-mix(in srgb,var(--seyveo-emerald) 5%,transparent);border-radius:0 12px 12px 0}
+.svf-suggestion strong{font-size:12px;font-weight:560}
+.svf-suggestion p{font-size:11px;line-height:1.48;color:var(--secondary);margin:0}
+.svf-action{font:inherit;font-size:12px;color:var(--text);background:none;border:0;min-height:38px;cursor:pointer;text-align:left;padding:6px 0;font-weight:550}
+.svf-action.is-strong{color:var(--seyveo-emerald)}
+.svf-compose{display:flex;align-items:flex-end;gap:7px}
+.svf-upload{display:grid;place-items:center;min-width:41px;width:41px;height:41px;flex:none;border:1px solid var(--soft-line);border-radius:50%;cursor:pointer;color:var(--text)}
+.svf-upload svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round}
+.svf-compose textarea{flex:1;min-height:41px;max-height:120px;resize:vertical;min-width:0;font:inherit;font-size:14px;color:var(--text);background:transparent;border:0;outline:0;padding:9px 2px;line-height:1.4}
+.svf-compose textarea::placeholder{color:var(--secondary)}
+.svf-send{border:1px solid color-mix(in srgb,var(--seyveo-emerald) 60%,var(--soft-line));border-radius:22px;min-height:41px;padding:9px 12px;background:color-mix(in srgb,var(--seyveo-emerald) 23%,var(--bg));color:var(--text);font:inherit;font-size:12px;font-weight:570;cursor:pointer;flex:none}
+.svf-attachment{display:flex;align-items:center;gap:9px;padding:4px 0 9px;color:var(--secondary);font-size:11px;line-height:1.4;overflow-wrap:anywhere}
+.svf-attachment img{width:47px;height:38px;object-fit:cover;border-radius:8px}
+.svf-attachment span{flex:1;min-width:0}
+.svf-privacy{font-size:10.5px;line-height:1.5;color:var(--secondary);margin:8px 1px 0}
+.svf-join{flex:none;padding:0 16px 10px}
+.svf-join details{border-top:1px solid var(--soft-line)}
+.svf-join summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;color:var(--text);font-size:12px}
+.svf-join summary::-webkit-details-marker{display:none}
+.svf-join summary:after{content:"⌄";color:var(--secondary);font-size:16px}
+.svf-join p{font-size:11px;line-height:1.55;color:var(--secondary);margin:0 0 8px}
+.svf-plans{flex:1;min-height:190px;overflow-y:auto;padding:15px}
+.svf-plans h3{margin:0 0 7px;font-size:16px;font-weight:560;letter-spacing:-.025em}
+.svf-plans>p{font-size:12px;line-height:1.5;color:var(--secondary);margin:0 0 15px}
+.svf-plan-entry{display:flex;gap:9px;align-items:center;border-bottom:1px solid var(--soft-line);padding:11px 0}
+.svf-plan-entry label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+.svf-plan-entry input{width:18px;height:18px;accent-color:var(--seyveo-emerald);flex:none}
+.svf-plan-entry[data-done="true"] label span{text-decoration:line-through;color:var(--secondary)}
+.svf-plan-form{display:flex;gap:8px;margin:16px 0 10px}
+.svf-plan-form input{flex:1;min-width:0;font:inherit;font-size:13px;padding:10px 4px;border:0;border-bottom:1px solid var(--soft-line);outline:0;background:transparent;color:var(--text)}
+.svf-button-lite{padding:8px;border:0;background:none;color:var(--secondary);font:inherit;font-size:11px;cursor:pointer;min-height:38px}
+.svf-status{margin:0;min-height:22px;font-size:11px;line-height:1.5;color:var(--secondary)}
+.svf-dialog :is(button,input,textarea,summary):focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+@media(max-width:370px){.svf-dialog{width:98vw;border-radius:18px}.svf-head{padding:12px 12px 8px}.svf-composer-wrap{padding:8px}.svf-send{padding:8px}}
+@media(prefers-reduced-motion:reduce){.svf-dialog *{scroll-behavior:auto!important}}
