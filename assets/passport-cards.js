@@ -296,10 +296,6 @@ function toggleOwnerPassport(){
 }
 brandTrigger?.addEventListener('click',toggleHeaderPassport);
 ownerTrigger?.addEventListener('click',toggleOwnerPassport);
-$('pictureCompanyOpen')?.addEventListener('click',()=>{
- closeHeaderPassport();
- openCompany();
-});
 document.addEventListener('pointerdown',event=>{
  if(previewBox?.hidden)return;
  if(previewBox.contains(event.target)||brandTrigger?.contains(event.target)||ownerTrigger?.contains(event.target))return;
