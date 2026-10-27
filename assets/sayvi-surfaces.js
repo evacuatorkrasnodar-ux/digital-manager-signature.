@@ -13,7 +13,7 @@ if(!page||!subject||!title||!intro||!body||!back||!symbol)return;
 const routes=Object.freeze({mail:'#sayvi-mail',contract:'#sayvi-documents',task:'#tasks',health:'#sayvi-health'});
 const subjects=Object.freeze({
  mail:{label:'ПОЧТА',title:'Письма и сообщения',intro:'Здесь будут письма, которым стоит уделить внимание.',symbol:'mail'},
- contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Центр документов',intro:'Личные и деловые документы, инструменты Сэйви. Сейчас доступен просмотр выбранных файлов.',symbol:'contract'},
+ contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Центр документов',intro:'Открывайте файлы, создавайте черновики и готовьте их к передаче. Интеллект Сэйви будет подключён отдельно.',symbol:'contract'},
  health:{label:'ЗАБОТА',title:'Ваше здоровье',intro:'Ваши показатели и спокойная забота о себе.',symbol:'health'}
 });
 let fileUrl=null;
@@ -227,8 +227,11 @@ function renderFile(file,status,preview,link){
  }
 }
 function documentsView(){
- demoScenario('contract');
  const section=shelf();
+ if(window.SEYVEO_DOCUMENT_CENTER?.mount?.(section)){
+  body.append(section);
+  return;
+ }
  section.append(create('p','sv-deep-lead','Ваши документы — под вашим контролем.'));
  section.append(paragraph('Выберите файл на телефоне. Он раскроется прямо здесь — без отправки на сервер.'));
  const picker=document.createElement('input');picker.type='file';picker.hidden=true;
@@ -273,7 +276,8 @@ function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
  subject.textContent=descriptor.label;title.textContent=descriptor.title;intro.textContent=descriptor.intro;
- footer.textContent=localOnly;setArt(kind);body.replaceChildren();
+ footer.textContent=kind==='contract'?'Пока без защищённого архива и ИИ. Не добавляйте конфиденциальные документы в тестовый прототип.':localOnly;
+ setArt(kind);body.replaceChildren();
  if(kind==='mail')mailView();
  else if(kind==='contract')documentsView();
  else healthView();
@@ -290,7 +294,7 @@ function currentKind(){
 function sync(){
  const kind=currentKind();
  if(kind){updateBackDestination();render(kind);}
- else{releaseFile();returnDestination=null;updateBackDestination();}
+ else{releaseFile();window.SEYVEO_DOCUMENT_CENTER?.destroy?.();returnDestination=null;updateBackDestination();}
 }
 function open(kind,context){
  const target=routes[kind];
@@ -298,6 +302,7 @@ function open(kind,context){
  if(location.hash===target){sync();return true}
  // Capture the calling section before changing the hash.
  if(!currentKind())rememberOrigin(context);
+ if(kind==='contract')window.SEYVEO_DOCUMENT_CENTER?.setArea?.(context==='business'?'business':'personal');
  location.hash=target;
  return true;
 }
