@@ -175,6 +175,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
+ const seenQueueRows=new Set();
  // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
  // The message is invented. No API, actual outgoing email or AI is used.
  const mailDefault='Здравствуйте, Андрей! Спасибо за обращение. Уточните, пожалуйста, адрес доставки, чтобы мы могли рассчитать стоимость.';
@@ -185,6 +186,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function updateMail(){
   const active=mailActive();
   mailDetails.hidden=!active;
+  realLater.hidden=!real;
   mailEdit.hidden=!active||mailStep==='edit';
   mailLater.hidden=!active||mailStep==='edit'||mailStep==='done';
   mailSave.hidden=!active||mailStep!=='edit';
@@ -234,11 +236,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(real){
    // Opening an ongoing plan or task is NOT evidence of completion.
    // Only the owner's completion action in Tasks may finish a real item.
-   if(!taskId){
+   const actualId=shown.taskId||taskId;
+   if(!actualId){
     explain(field,'Не удалось найти сохранённое поручение.',execute);
     return;
    }
-   window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:taskId}}));
+   window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:actualId}}));
    return;
   }
   finishPreviewItem();
@@ -259,21 +262,31 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // Removing a fictitious message from the preview never completes a real task.
   finishPreviewItem();
  });
- controls.append(execute,mailEdit,open,mailLater,mailSave,mailCancel);
+ const realLater=polymer('Позже',()=>{
+  if(!real||!shown.eventId||morphLocked)return;
+  // Snooze only this Home session. The real item remains in its original Tasks list.
+  quiet.add(shown.eventId);
+  finishRealItem();
+ });
+ controls.append(execute,mailEdit,open,mailLater,realLater,mailSave,mailCancel);
  main.append(hero,mailDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
-  if(real)return;
+  if(real){
+   measure.textContent=Math.min(3,remaining.length)+' ИЗ '+remaining.length+' · ВАШИ ДЕЛА';
+   return;
+  }
   measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ПРЕДПРОСМОТР';
  }
  function renderSecondary(){
   secondary.replaceChildren();
-  if(real)return;
-  for(const item of remaining.filter(value=>value!==shown)){
+  for(const item of remaining.filter(value=>value!==shown).slice(0,2)){
    // This is a selectable task row, not another visible action button.
    const row=create('button','lm-inline-item');
    row.type='button';
    row.dataset.lmKind=item.kind;
+   if(real&&seenQueueRows.size&&!seenQueueRows.has(item.eventId))row.classList.add('lm-next-arrive');
+   if(real)seenQueueRows.add(item.eventId);
    row.setAttribute('aria-label','Выбрать дело: '+item.title);
    const mark=create('span','lm-inline-art');
    mark.append(icon(item.kind));
@@ -289,6 +302,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  }
  function setFeatured(item){
   shown=item;
+  if(real)key=item.eventId;
   field.dataset.lmSubject=item.kind;
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
   artwork.replaceChildren(icon(item.kind));
@@ -296,7 +310,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   headline.textContent=item.title;
   description.textContent=item.body;
   open.setAttribute('aria-label','Подробнее: '+item.title);
-  execute.setAttribute('aria-label','Исполнить: '+item.title);
+  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
   open.setAttribute('aria-expanded','false');
@@ -307,7 +321,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   renderSecondary();
  }
  function changeFeatured(item){
-  if(real||item===shown||morphLocked||!remaining.includes(item)||space.classList.contains('lm-condense'))return;
+  if(item===shown||morphLocked||!remaining.includes(item)||space.classList.contains('lm-condense'))return;
   morphLocked=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
@@ -337,8 +351,28 @@ function createSurface(primary,other=[],real=false,taskId=''){
    later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false},reduced()?0:430);
   },reduced()?0:420);
  }
+ function finishRealItem(){
+  if(!real||mode!=='task'||morphLocked)return;
+  morphLocked=true;open.disabled=true;execute.disabled=true;realLater.disabled=true;
+  scene.classList.add('lm-scene--changing');
+  later(()=>{
+   if(!tiles.contains(field)||mode!=='task')return;
+   remaining=dueTasks();
+   if(!remaining.length){
+    tip.textContent='НА ГЛАВНОЙ НЕТ ОЖИДАЮЩИХ ДЕЛ';
+    space.classList.add('lm-disappear');
+    later(()=>rest(),reduced()?0:TIMING.close);
+    return;
+   }
+   setFeatured(remaining[0]);
+   tip.textContent='ВАШИ ДЕЛА · ОЖИДАЮТ '+remaining.length;
+   scene.classList.remove('lm-scene--changing');
+   later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false;realLater.disabled=false},reduced()?0:430);
+  },reduced()?0:420);
+ }
  field.dataset.lmSubject=primary.kind;
  updateMail();
+ updateCount();
  renderSecondary();
  const explanation=create('p','lm-explanation');
  explanation.id='seyveoSurfaceReason';
@@ -355,7 +389,12 @@ function buildExamples(){
  previewScene=createSurface(sample[0],sample.slice(1));
 }
 function gatherPreview(){
- if(mode!=='preview')return;
+ if(mode!=='preview'&&mode!=='task')return;
+ if(mode==='task'){
+  space.classList.add('lm-gather');
+  tip.textContent='ВАШИ ДЕЛА · ОДНА ЖИВАЯ ОЧЕРЕДЬ';
+  return;
+ }
  const field=tiles.querySelector('.lm-field');
  if(field){
   const label=field.querySelector('.lm-field-eyebrow');
@@ -404,7 +443,7 @@ function hold(callback,delay){
  later(check,delay);
 }
 function startPreview(){
- if(!available()||editing()||dueTask()||dynamic.querySelector('[data-owner-advice]'))return false;
+ if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
@@ -425,33 +464,41 @@ function startPreview(){
  if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
  return true;
 }
-function dueTask(){
+function dueTasks(){
  let tasks=[];
  try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))tasks=data}catch{}
  const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
  return tasks.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
   &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
-  .sort((a,b)=>a.due.localeCompare(b.due))[0]||null;
+  .sort((a,b)=>a.due.localeCompare(b.due))
+  .map(item=>{
+   const eventId='task:'+(item.id||item.title)+'|'+item.due;
+   const when=new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+   return {
+    eventId,taskId:item.id||'',kind:'task',title:item.title,
+    body:'Срок наступил · '+when+'. Дело сохранено в вашем списке.',
+    category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
+    reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
+    detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
+   };
+  }).filter(item=>!quiet.has(item.eventId));
 }
-function showTask(item){
- const id='task:'+(item.id||item.title)+'|'+item.due;
- if(quiet.has(id))return false;
- mode='task';key=id;
+function showTasks(items){
+ if(!items.length)return false;
+ mode='task';key=items[0].eventId;
  dynamic.hidden=true;
- const when=item.due?new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
- createSurface({
-  kind:'task',
-  title:item.title,
-  body:'Срок наступил'+(when?' · '+when:'')+'. Дело сохранено в вашем списке.',
-  category:'ВАШЕ ДЕЛО · ТРЕБУЕТ ВНИМАНИЯ',
-  reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
-  detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
- },[],true,item.id||'');
+ createSurface(items[0],items.slice(1),true);
  tip.textContent='НА ОСНОВЕ ВАШИХ ЗАПИСЕЙ · НЕ ПРИМЕР';
- space.hidden=false;space.classList.remove('lm-preview');space.classList.add('lm-real');
+ space.hidden=false;space.classList.add('lm-preview','lm-real');
  focus(true);
+ const targetBottom=window.visualViewport?.height||window.innerHeight;
+ const relativeTop=space.getBoundingClientRect().top;
+ const distance=Math.max(320,Math.min(1100,targetBottom-relativeTop+100));
+ space.style.setProperty('--lm-rise-distance',distance+'px');
  later(()=>{if(mode==='task')space.classList.add('lm-reveal')},TIMING.open);
- // An unfinished real task stays on Home until the owner continues it.
+ if(items.length>1)hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
+ // Up to three current tasks rise together; the rest stay in the existing Tasks store.
+ // Opening or snoozing is never treated as proof that the task is completed.
  return true;
 }
 function adviceIdentity(card){
@@ -493,6 +540,7 @@ function refresh(){
  if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
+  if(!dueTasks().some(item=>item.eventId===key))rest();
   return;
  }
  if(mode==='advice'){
@@ -502,8 +550,8 @@ function refresh(){
  }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
- const item=dueTask();
- if(item&&showTask(item))return;
+ const tasks=dueTasks();
+ if(tasks.length&&showTasks(tasks))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle'){
