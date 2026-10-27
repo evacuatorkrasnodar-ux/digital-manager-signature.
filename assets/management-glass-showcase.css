@@ -161,3 +161,18 @@ html[data-theme=light].sv-space-active #managePage #seyveoCleanManageMenu .manag
   animation:none!important;transition:none!important;
  }
 }
+
+/* Alternative Black Velvet palettes share the same Management geometry.
+   Tint only the existing translucent editorial material, never clone cards. */
+html[data-theme=dark][data-palette=graphite].sv-space-active #managePage #seyveoCleanManageMenu{
+ background:linear-gradient(159deg,rgba(238,247,252,.05),rgba(156,182,199,.015) 48%,rgba(21,33,40,.023));
+}
+html[data-theme=dark][data-palette=sapphire].sv-space-active #managePage #seyveoCleanManageMenu{
+ background:linear-gradient(159deg,rgba(229,238,255,.056),rgba(130,163,236,.019) 48%,rgba(19,34,64,.03));
+}
+html[data-theme=dark][data-palette=graphite].sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
+ border-top-color:rgba(174,195,207,.16);
+}
+html[data-theme=dark][data-palette=sapphire].sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
+ border-top-color:rgba(166,189,239,.17);
+}
