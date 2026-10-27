@@ -167,73 +167,77 @@
 }
 /* Real health cards: tasteful color has meaning as a section identifier,
    NEVER a green/red diagnosis. Values come solely from stored real records. */
+/* Health overview · one simple choice per card. Existing buttons keep their
+   data-health-quick actions, and saved readings remain the source of truth. */
 #calendarHealthOverview[hidden]{display:none!important}
-#calendarHealthOverview.cal-health-overview{margin:0 0 8px}
+#calendarHealthOverview.cal-health-overview{margin:0 0 9px}
+#calendarHealthOverview .cal-health-guide{
+ margin:1px 2px 4px;font-size:18px;font-weight:630;
+ letter-spacing:-.035em;line-height:1.25;color:var(--text);
+}
+#calendarHealthOverview .cal-health-guide-hint{
+ margin:0 2px 13px;font-size:12px;line-height:1.45;color:var(--secondary);
+}
 #calendarHealthOverview .cal-health-tiles{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
 }
 #calendarHealthOverview .cal-health-tile{
- --health-wash:var(--seyveo-hdr-active);
  --health-ink:var(--seyveo-emerald);
- display:flex;position:relative;flex-direction:column;align-items:flex-start;
- gap:7px;min-width:0;min-height:99px;box-sizing:border-box;padding:12px 9px 10px;border:0;border-radius:0;background:transparent;
+ box-sizing:border-box;position:relative;display:grid;
+ grid-template-columns:minmax(0,1fr);grid-template-rows:35px auto auto 1fr auto;
+ align-content:stretch;align-items:start;justify-items:start;
+ row-gap:4px;min-width:0;min-height:171px;width:100%;padding:14px 13px 13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:19px;
+ background:linear-gradient(145deg,var(--seyveo-hdr-active),transparent 63%),var(--card);
  color:var(--text);text-align:left;font:inherit;cursor:pointer;box-shadow:none;
- -webkit-tap-highlight-color:transparent;
- transition:transform 300ms cubic-bezier(.22,1,.36,1),background-color 300ms ease;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+ transition:background .2s ease,transform .2s ease;
 }
-#calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
- --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
-}
-#calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:var(--seyveo-specular);--health-ink:var(--seyveo-emerald);
-}
-#calendarHealthOverview .cal-health-tile:active{transform:scale(.988)}
-#calendarHealthOverview .cal-health-tile:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-#calendarHealthOverview .cal-health-tile-label{
- max-width:calc(100% - 39px);
- font-size:12px;font-weight:485;line-height:1.4;color:var(--secondary);
+#calendarHealthOverview .cal-health-tile:active{transform:scale(.985)}
+#calendarHealthOverview .cal-health-tile:focus-visible{
+ outline:2px solid var(--health-ink);outline-offset:2px;
 }
 #calendarHealthOverview .cal-health-emblem{
- position:absolute;top:11px;right:11px;width:39px;height:39px;
+ position:static;grid-row:1;grid-column:1;width:33px;height:33px;
  fill:none;stroke:var(--health-ink);stroke-width:1.85;
- stroke-linecap:round;stroke-linejoin:round;opacity:.88;pointer-events:none;
+ stroke-linecap:round;stroke-linejoin:round;opacity:.96;pointer-events:none;
+}
+#calendarHealthOverview .cal-health-tile-label{
+ grid-row:2;display:block;margin:3px 0 0;
+ font-size:16px;font-weight:640;line-height:1.22;letter-spacing:-.025em;
+ color:var(--text);
 }
 #calendarHealthOverview .cal-health-tile strong{
- display:block;min-width:0;max-width:100%;margin-top:auto;
- font-size:clamp(17px,4.6vw,23px);line-height:1.17;
- font-weight:510;letter-spacing:-.037em;
- overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- font-variant-numeric:tabular-nums;
+ grid-row:3;display:block;min-width:0;max-width:100%;margin:1px 0 0;
+ font-size:17px;line-height:1.28;font-weight:540;letter-spacing:-.024em;
+ font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+#calendarHealthOverview .cal-health-tile[data-has-record=false] strong{
+ font-size:11.5px;color:var(--secondary);font-weight:475;letter-spacing:0;
 }
 #calendarHealthOverview .cal-health-tile small{
- display:block;max-width:calc(100% - 17px);
- font-size:10.5px;line-height:1.35;font-weight:455;
- color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ grid-row:4;display:block;width:100%;min-width:0;
+ font-size:10.5px;line-height:1.4;font-weight:450;color:var(--secondary);
+ overflow-wrap:anywhere;
 }
 #calendarHealthOverview .cal-health-tile-action{
- position:absolute;bottom:10px;right:13px;
- color:var(--health-ink);font-size:17px;line-height:1;opacity:.85;
- pointer-events:none;
+ grid-row:5;position:static;display:inline-flex;align-items:center;gap:5px;
+ margin-top:6px;max-width:100%;min-height:28px;
+ color:var(--health-ink);font-size:12px;font-weight:650;line-height:1.25;
+ opacity:1;pointer-events:none;
 }
-:root[data-theme=light] #calendarHealthOverview .cal-health-tile{
- background:linear-gradient(155deg,var(--health-wash),transparent 74%),var(--card);
- border-color:var(--seyveo-hdr-outline);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.82);
-}
-:root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
- --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
-}
-:root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:var(--seyveo-specular);--health-ink:var(--seyveo-emerald);
+#calendarHealthOverview .cal-health-tile-action svg{
+ display:block;width:14px;height:14px;flex:none;
+ fill:none;stroke:currentColor;stroke-width:1.8;
+ stroke-linecap:round;stroke-linejoin:round;
 }
 @media(max-width:370px){
- #calendarHealthOverview .cal-health-tiles{gap:6px}
+ #calendarHealthOverview .cal-health-tiles{gap:7px}
  #calendarHealthOverview .cal-health-tile{
-  border-radius:0;padding:10px 8px;min-height:99px;
+  min-height:169px;padding:12px 10px;border-radius:17px;
  }
- #calendarHealthOverview .cal-health-emblem{width:32px;height:32px;top:9px;right:8px}
- #calendarHealthOverview .cal-health-tile-label{font-size:11px}
- #calendarHealthOverview .cal-health-tile small{font-size:9.8px}
+ #calendarHealthOverview .cal-health-tile-label{font-size:15px}
+ #calendarHealthOverview .cal-health-tile-action{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){
  #calendarHealthOverview .cal-health-tile{transition:none}
