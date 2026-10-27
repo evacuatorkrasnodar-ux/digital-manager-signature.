@@ -240,3 +240,16 @@
 /* Personal world: lighter nested buttons, same dimensions and routes. */
 #homeHeader .home-world-choice{background:rgba(230,236,231,.035);border-color:rgba(217,226,219,.085);box-shadow:none;font-weight:500}
 :root[data-theme=light] #homeHeader .home-world-choice{background:rgba(80,96,84,.04);border-color:rgba(80,96,84,.10)}
+
+/* Theme palette also reaches Home's small historical/utility surfaces.
+   The protected plasma, Living Ink artwork and its animations are untouched. */
+:root[data-theme=dark][data-palette=graphite] #homePage{
+ --home-glass:rgba(27,38,46,.72);
+ --home-outline:rgba(172,197,208,.20);
+ --home-glint:rgba(238,247,252,.060);
+}
+:root[data-theme=dark][data-palette=sapphire] #homePage{
+ --home-glass:rgba(25,36,66,.73);
+ --home-outline:rgba(163,186,241,.23);
+ --home-glint:rgba(233,240,255,.065);
+}
