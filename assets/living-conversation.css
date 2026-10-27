@@ -127,7 +127,7 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi{
  border:1px solid var(--seyveo-emerald-border);
  border-radius:16px;
  background:
-   linear-gradient(150deg,rgba(66,114,103,.19),rgba(25,49,46,.09) 46%,transparent 83%),
+   var(--sv-chat-sayvi-gradient),
    var(--seyveo-emerald-panel);
  box-shadow:inset 0 1px 0 rgba(217,249,238,.045),0 8px 23px rgba(0,0,0,.11);
 }
@@ -158,7 +158,7 @@ html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerCompact
  transition:background .2s ease,color .2s ease,box-shadow .2s ease;
 }
 html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerCompactSend{
- background:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
+ background:var(--sv-chat-send-gradient);
  border-color:rgba(157,216,199,.37);
  color:#e8fff5;
  box-shadow:inset 0 1px 0 rgba(228,255,245,.13);
@@ -167,7 +167,7 @@ html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerMainAct
  color:var(--seyveo-emerald-text);border-color:var(--seyveo-emerald-border);
 }
 html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerMainAction>span{
- background:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
+ background:var(--sv-chat-send-gradient);
  color:#e8fff5;border-color:rgba(157,216,199,.37);
 }
 html.seyveo-conversation[data-theme=light]{
@@ -177,7 +177,7 @@ html.seyveo-conversation[data-theme=light]{
  --seyveo-emerald-active:#25695b;
 }
 html.seyveo-conversation[data-theme=light] .seyveo-conversation-turn--sayvi{
- background:linear-gradient(145deg,rgba(170,205,192,.34),transparent 82%),var(--seyveo-emerald-panel);
+ background:var(--sv-chat-sayvi-gradient),var(--seyveo-emerald-panel);
  box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 7px 19px rgba(57,82,75,.07);
 }
 @media(prefers-reduced-motion:reduce){
@@ -326,4 +326,51 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoComposerFold svg{
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoComposerFold:focus-visible{
  outline:2px solid var(--text);outline-offset:3px;
+}
+
+/* Feather Chat follows the same global palette as every screen and sheet.
+   Original emerald values are preserved as defaults. The chat remains
+   structurally unchanged, including voice, keyboard, scrolling and history. */
+html.seyveo-conversation{
+ --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(66,114,103,.19),rgba(25,49,46,.09) 46%,transparent 83%);
+ --sv-chat-send-gradient:linear-gradient(145deg,rgba(54,110,97,.64),rgba(35,76,70,.86));
+ --sv-chat-canvas:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,rgba(237,252,246,.039),rgba(120,162,143,.014) 43%,transparent 87%),
+  radial-gradient(ellipse 116vw 470px at 46% 615px,rgba(106,149,126,.011),transparent 78%),
+  linear-gradient(180deg,#111917 0%,#142521 52%,#10211d 100%);
+ --sv-chat-composer-gradient:linear-gradient(180deg,rgba(47,62,56,.26),rgba(28,42,36,.43) 52%,rgba(20,32,28,.22));
+ --sv-chat-stop-gradient:linear-gradient(145deg,#339a7e,#235f54);
+ --sv-chat-owner-bg:rgba(203,232,217,.061);
+ --sv-chat-owner-border:rgba(188,238,217,.14);
+}
+html.seyveo-conversation[data-theme=dark][data-palette=graphite]{
+ --seyveo-emerald-text:#c4d5df;--seyveo-emerald-border:rgba(163,197,216,.22);
+ --seyveo-emerald-panel:rgba(22,35,44,.92);--seyveo-emerald-active:#cfdfeb;
+ --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(115,149,169,.17),rgba(47,70,84,.10) 46%,transparent 83%);
+ --sv-chat-send-gradient:linear-gradient(145deg,rgba(94,132,151,.66),rgba(50,83,102,.88));
+ --sv-chat-canvas:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,rgba(231,243,252,.035),transparent 87%),
+  linear-gradient(180deg,#11161b 0%,#1c272e 52%,#121e25 100%);
+ --sv-chat-composer-gradient:linear-gradient(180deg,rgba(63,81,94,.27),rgba(37,54,66,.43) 52%,rgba(25,40,50,.23));
+ --sv-chat-stop-gradient:linear-gradient(145deg,#5f839a,#355b71);
+ --sv-chat-owner-bg:rgba(202,226,243,.065);--sv-chat-owner-border:rgba(183,214,236,.16);
+}
+html.seyveo-conversation[data-theme=dark][data-palette=sapphire]{
+ --seyveo-emerald-text:#c2d4ff;--seyveo-emerald-border:rgba(160,187,244,.24);
+ --seyveo-emerald-panel:rgba(19,32,62,.92);--seyveo-emerald-active:#d1deff;
+ --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(94,131,218,.21),rgba(38,57,110,.11) 46%,transparent 83%);
+ --sv-chat-send-gradient:linear-gradient(145deg,rgba(79,117,211,.69),rgba(49,77,150,.91));
+ --sv-chat-canvas:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,rgba(225,235,255,.045),transparent 87%),
+  linear-gradient(180deg,#101724 0%,#1a2947 52%,#121e38 100%);
+ --sv-chat-composer-gradient:linear-gradient(180deg,rgba(54,77,137,.31),rgba(29,47,92,.44) 52%,rgba(18,33,66,.25));
+ --sv-chat-stop-gradient:linear-gradient(145deg,#668bd8,#3458ac);
+ --sv-chat-owner-bg:rgba(191,211,255,.076);--sv-chat-owner-border:rgba(162,188,246,.19);
+}
+html.seyveo-conversation[data-theme=light]{
+ --sv-chat-canvas:linear-gradient(180deg,#fafbfc,#f0f3f7);
+ --sv-chat-sayvi-gradient:linear-gradient(145deg,rgba(201,216,230,.33),transparent 82%);
+ --sv-chat-composer-gradient:linear-gradient(180deg,rgba(225,230,236,.30),rgba(215,222,230,.44),rgba(225,230,236,.23));
+ --sv-chat-stop-gradient:linear-gradient(145deg,#467d77,#315a63);
+ --sv-chat-owner-bg:rgba(65,81,99,.085);--sv-chat-owner-border:rgba(67,92,111,.14);
 }
