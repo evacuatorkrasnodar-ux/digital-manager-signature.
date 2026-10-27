@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#101615"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="Цифровой управляющий SEYVEO — персональный помощник для жизни и бизнеса."><title>Цифровой управляющий · Living Interface</title><link rel="manifest" href="manifest.webmanifest?v=7"><link rel="icon" type="image/svg+xml" href="assets/app-icon.svg?v=6"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=3"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Управляющий"><style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-kerning:normal;--type-display:28px;--type-heading:22px;--type-body:15px;--type-body-compact:14px;--type-label:13px;--type-caption:12px;--type-eyebrow:11px;color-scheme:dark;--bg:#101615;--card:#1e2a25;--card2:#28372f;--text:#f2f6f3;--secondary:#bed0c6;--line:#40594e;--glass:#dce9e3;--shadow:#0006;--soft-line:#b5d1c222;--seyveo-emerald:#69c891;--seyveo-emerald-deep:#2d6a50;--seyveo-velvet:#142320}
-:root[data-theme=light]{color-scheme:light;--bg:#f3f5f8;--card:#fff;--card2:#edf1f5;--text:#1a2432;--secondary:#5f6d80;--line:#d5dce5;--glass:#344a70;--shadow:#8797b226;--soft-line:#1d304025}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-kerning:normal;--type-display:28px;--type-heading:22px;--type-body:15px;--type-body-compact:14px;--type-label:13px;--type-caption:12px;--type-eyebrow:11px;color-scheme:dark;--bg:#101615;--card:#1c2928;--card2:#293934;--text:#f4f8f6;--secondary:#bed2cb;--line:#48655c;--glass:#e7f4ef;--shadow:#0006;--soft-line:#b5d1c222;--seyveo-emerald:#69c891;--seyveo-emerald-deep:#2d6a50;--seyveo-velvet:#142320;--seyveo-metal-peak:#fcfffe;--seyveo-metal-mid:#c6dcd5;--seyveo-specular:rgba(240,255,249,.072)}
+:root[data-theme=light]{color-scheme:light;--bg:#f3f5f8;--card:#fff;--card2:#edf1f5;--text:#1a2432;--secondary:#5f6d80;--line:#d5dce5;--glass:#344a70;--shadow:#8797b226;--soft-line:#1d304025;--seyveo-metal-peak:#ffffff;--seyveo-metal-mid:#748b91;--seyveo-specular:rgba(255,255,255,.72)}
 /* SEYVEO shape vocabulary: one shared language, not one shape for all buttons. */
 :root{--seyveo-radius-action:999px;--seyveo-radius-choice:18px;--seyveo-radius-segment:14px;--seyveo-radius-icon:50%;--seyveo-action-hit:44px}
 *{box-sizing:border-box}
@@ -125,7 +125,7 @@ h1{font-size:var(--type-display);margin:0;font-weight:680;line-height:1.12;lette
 .dynamic{width:100%}
 .dynamic[hidden]{display:none!important}
 
-.decision-card{width:100%;padding:16px 17px 14px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(155deg,#ffffff07,transparent 54%),var(--card);box-shadow:0 8px 24px var(--shadow);animation:arrive .26s ease-out}
+.decision-card{width:100%;padding:16px 17px 14px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(155deg,var(--seyveo-specular),rgba(136,182,170,.025) 42%,transparent 72%),var(--card);box-shadow:inset 0 1px 0 rgba(247,255,252,.075),0 7px 22px rgba(0,0,0,.12);animation:arrive .26s ease-out}
 .decision-card.is-spotlight{outline:1px solid var(--text);outline-offset:3px}
 :root[data-theme=light] .decision-card{background:linear-gradient(150deg,#fff, #fafbfd)}
 .card-main{display:flex;align-items:center;gap:12px}
@@ -236,7 +236,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .manage-heading>p:last-child{margin:0;color:var(--secondary);font-size:12px;line-height:1.45}
 .manage-group{margin:0 0 22px}
 .manage-group h2{margin:0 0 9px;padding-left:6px;font-size:11px;font-weight:510;line-height:1.4;letter-spacing:.01em;color:var(--secondary)}
-.manage-card,.manage-theme-list{background:var(--card);border:1px solid var(--line);border-radius:var(--seyveo-radius-choice);overflow:hidden;box-shadow:inset 0 1px 0 #ffffff08}
+.manage-card,.manage-theme-list{background:linear-gradient(156deg,var(--seyveo-specular),transparent 58%),var(--card);border:1px solid var(--line);border-radius:var(--seyveo-radius-choice);overflow:hidden;box-shadow:inset 0 1px 0 rgba(245,255,251,.055)}
 .manage-row{position:relative;display:flex;align-items:center;gap:10px;min-height:59px;width:100%;padding:11px 15px;background:transparent;border:0;text-align:left;color:var(--text);transition:background-color .16s ease}
 .manage-row+.manage-row::before{content:"";position:absolute;top:0;left:15px;right:0;height:1px;background:var(--soft-line);pointer-events:none}
 .manage-row:active,.manage-theme-choice:active{background:var(--card2)}
@@ -272,7 +272,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 /* Auto: a simple clean 50/50 charcoal and porcelain circle, without a ring. */
 .manage-theme-swatch-auto{background:linear-gradient(90deg,#151a22 0%,#151a22 50%,#f0f2f5 50%,#f0f2f5 100%);box-shadow:none}
 #manageThemeScreen .manage-theme-choice .manage-theme-swatch.manage-theme-swatch-auto{border:0;box-shadow:none}
-.manage-theme-swatch-dark{background:linear-gradient(145deg,#2b333d 0%,#19202a 52%,#111720 100%)}
+.manage-theme-swatch-dark{background:linear-gradient(145deg,#3c5551 0%,#1e3532 48%,#0c1717 100%)}
 .manage-theme-swatch-light{background:linear-gradient(145deg,#ffffff 0%,#f1f3f6 55%,#e3e8ee 100%)}
 .manage-theme-check{position:relative;display:grid;place-items:center;width:23px;height:23px;flex:none;border-radius:50%;color:transparent;font-size:0;border:1.4px solid var(--secondary)}
 .manage-theme-choice[aria-pressed=true] .manage-theme-check{background:var(--text);border-color:var(--text);color:var(--bg)}
@@ -615,7 +615,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </button><button id="seyveoCompanyMiniQr" type="button" class="sv-mini-qr" aria-label="Создать QR-визитку компании"><span id="seyveoCompanyMiniQrCode" class="sv-mini-qr-code" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM5.5 5.5h2M16.5 5.5h2M5.5 16.5h2M14 14h3v3h-3zM19 14h2v7h-5v-2"/></svg></span><span id="seyveoCompanyMiniQrLabel">Создать визитку</span></button></div>
 </div>
 </section>
-</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйвой: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=18" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
+</header><main class="home-main" id="homePage"><section id="stage" class="stage" data-mode="attention"><div id="orbCluster" class="orb-cluster"><button id="orb" class="plasma" aria-label="Общаться с Сэйвой: нажмите для сообщения, удерживайте для голоса"><img id="plasmaVisual" class="plasma-art" src="assets/plasma-signature.svg?v=19" alt="" draggable="false" width="440" height="440"><span id="orbMist" class="orb-mist" aria-hidden="true"></span><span id="orbLogoMist" class="orb-logo-mist" aria-hidden="true"><span class="orb-logo-cloud orb-logo-cloud--a"></span><span class="orb-logo-cloud orb-logo-cloud--b"></span><span class="orb-logo-cloud orb-logo-cloud--c"></span></span><span id="signal" class="signal" aria-hidden="true"></span></button></div><div class="message" aria-live="polite"><div id="kicker" class="kicker">Сэйви · на связи</div><h2 id="headline">Добро пожаловать в SEYVEO</h2><p id="subline">Здесь будут ваши дела, сообщения и полезные рекомендации.</p><div id="quietSignal" class="seyveo-quiet-signal" aria-hidden="true"><span class="quiet-signal-line quiet-signal-line--left"></span><span class="quiet-signal-line quiet-signal-line--right"></span><span class="quiet-signal-pearl"></span></div></div>
 <aside id="seyveoNameTip" class="seyveo-name-tip" role="note" hidden><span><strong>Я Сэйви.</strong> SEYVEO — название системы, а Сэй — коротко и по-дружески.</span><button id="seyveoNameTipClose" type="button" aria-label="Скрыть подсказку об имени">Понятно</button></aside>
 <section id="orbInlineReply" class="orb-inline-reply" hidden aria-labelledby="orbInlineReplyTitle">
 <div class="orb-inline-reply-head">
@@ -1615,7 +1615,7 @@ function applyTheme(){
   // Keep the browser's top chrome consistent with the selected app theme.
   const browserTheme=document.querySelector('meta[name="theme-color"]');
   if(browserTheme)browserTheme.setAttribute('content',resolved==='light'?'#f4f6fa':'#101615');
-  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=22':'assets/plasma-signature.svg?v=18';
+  const svg=resolved==='light'?'assets/plasma-signature-light.svg?v=23':'assets/plasma-signature.svg?v=19';
   for(const id of ['plasmaVisual']){
     const el=$(id);if(el&&el.getAttribute('src')!==svg)el.setAttribute('src',svg);
   }
