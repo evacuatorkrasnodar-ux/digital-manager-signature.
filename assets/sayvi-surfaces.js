@@ -276,7 +276,7 @@ function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
  subject.textContent=descriptor.label;title.textContent=descriptor.title;intro.textContent=descriptor.intro;
- footer.textContent=kind==='contract'?'Пока без защищённого архива и ИИ. Не добавляйте конфиденциальные документы в тестовый прототип.':localOnly;
+ footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':localOnly;
  setArt(kind);body.replaceChildren();
  if(kind==='mail')mailView();
  else if(kind==='contract')documentsView();
