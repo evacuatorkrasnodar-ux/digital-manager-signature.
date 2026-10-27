@@ -23,6 +23,11 @@ const css={
  businessPicture:read('assets/picture.css'),
  network:read('assets/network-care.css'),
  wellness:read('assets/personal-wellness.css'),
+ health:read('assets/calendar-spaces.css'),
+ notes:read('assets/notebook-smart.css'),
+ paper:read('assets/notebook-paper.css'),
+ scan:read('assets/notebook-scan.css'),
+ secondary:read('assets/sections-velvet.css'),
  smartHome:read('assets/seyveo-smart-home.css'),
  surfaces:read('assets/sayvi-surfaces.css'),
  home:read('assets/home-velvet.css')
@@ -39,9 +44,14 @@ assert.match(html,/assets\/living-space\.css\?v=44/);
 assert.match(html,/assets\/seyveo-music\.css\?v=36/);
 assert.match(html,/assets\/living-conversation\.css\?v=15/);
 assert.match(html,/assets\/conversation-refined\.css\?v=37/);
-assert.match(html,/assets\/personal-wellness\.css\?v=18/);
+assert.match(html,/assets\/personal-wellness\.css\?v=19/);
+assert.match(html,/assets\/calendar-spaces\.css\?v=19/);
+assert.match(html,/assets\/sections-velvet\.css\?v=12/);
+assert.match(html,/assets\/notebook-smart\.css\?v=25/);
+assert.match(html,/assets\/notebook-paper\.css\?v=13/);
+assert.match(html,/assets\/notebook-scan\.css\?v=7/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
-assert.match(html,/assets\/sayvi-surfaces\.css\?v=6/);
+assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
 assert.match(html,/assets\/home-velvet\.css\?v=18/);
 const refreshed={
  'composer-intent.css':18,
@@ -92,6 +102,28 @@ assert.match(css.surfaces,/--sv-complete:var\(--seyveo-emerald\)/,
  'Mail and document actions share global accent');
 assert.match(css.wellness,/background:var\(--sv-care-breath-disc\)/,
  'Wellness disc follows selected theme');
+assert.match(css.wellness,/0 0 25px var\(--seyveo-hdr-active\)/,
+ 'Care breathing glow follows graphite, sapphire and emerald');
+assert.match(css.wellness,/filter:drop-shadow\(0 7px 15px var\(--seyveo-hdr-active\)\)/,
+ 'Care water figure has no fixed emerald glow');
+assert.match(css.health,/--health-ink:var\(--seyveo-emerald\)/,
+ 'Health pressure icon follows selected accent');
+assert.match(css.health,/--health-wash:var\(--seyveo-specular\);--health-ink:var\(--text\)/,
+ 'Health pulse icon stays distinguishable without permanent pink pigment');
+assert.doesNotMatch(css.health,/#(?:9ec6e9|e8a4b5|4b88b3|b76c80)/i,
+ 'No leftover fixed blue or pink Health palette');
+assert.match(css.notes,/:root\[data-theme=light\] #notesDialog \.notes-list\{\s*background:var\(--card\)/,
+ 'Notebook list obeys light palette');
+assert.match(css.notes,/:root\[data-theme=light\] #noteReadDialog \.note-read-content/,
+ 'Notebook reader theme remains wired');
+assert.match(css.paper,/border:1px solid var\(--seyveo-hdr-outline\);\s*background:linear-gradient\(135deg,var\(--seyveo-specular\),transparent\),var\(--card\)/,
+ 'Notebook creation chooser inherits all dark palette colors');
+assert.match(css.scan,/border-radius:7px;border:1px solid var\(--seyveo-hdr-outline\)/,
+ 'Notebook scanner checkbox inherits shared theme');
+assert.match(css.secondary,/background:var\(--card\);border-color:var\(--seyveo-hdr-outline\)/,
+ 'Health, Care and Notebook secondary white surfaces share active theme');
+assert.match(css.paper,/\.paper-sheet\{[^}]*background:#fff/,
+ 'Actual notebook drawing paper is intentionally white for saved drawings');
 
 assert.match(css.dock,/#ceramic-night stop:nth-child\(1\)\{stop-color:var\(--sv-ceramic-face-1/,
  'Original SVG ceramic gradient inherits palette');
@@ -126,4 +158,4 @@ assert.match(css.businessPicture,/linear-gradient\(180deg,var\(--text\),var\(--s
 assert.match(css.network,/background:var\(--seyveo-hdr-active\)/,
  'Network controls follow palette');
 assert.ok(!html.includes('assets/home-mail-demo.js'),'Home cards are unchanged');
-console.log('PASS theme contract: 4 palettes, central SVG button, real navigation, nested dialogs, onboarding, passports, Pulse, documents, wellness, music and chat.');
+console.log('PASS theme contract: 4 palettes, Notebook reader/paper/scanner, Health, Care, original sphere/dock, nested dialogs, music and chat.');
