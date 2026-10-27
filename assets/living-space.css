@@ -674,12 +674,12 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Black Velvet / HDR-like cool emerald depth.
-   Dark blue-green graphite, cool satin reflection, never military khaki.
-   Linear-only background: no radial ghost shapes or changes to the orb. */
+/* SEYVEO · Black Velvet HDR-like / My World color reference, 27 Oct 2026.
+   Deep graphite-green #111917 → #172b25; emerald is a whisper, not a painted canvas.
+   No radial silhouettes, no filters, no change to the approved orb. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#0e171a 0%,#102023 28%,#132b2c 55%,#153133 78%,#0c1b1d 100%);
+ background:linear-gradient(180deg,#101817 0%,#111e1b 27%,#142521 53%,#172b25 78%,#10211d 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -789,10 +789,10 @@ html.sv-space-active #lifePage .calendar-space-button small{
    blurred overlays, cloned screens, placeholder content or JS navigation.
    ────────────────────────────────────────────────────────────────────── */
 html.sv-space-active{
- --sv-q-outline:rgba(232,237,245,.16);
- --sv-q-line:rgba(232,237,245,.105);
- --sv-q-surface:rgba(244,248,252,.034);
- --sv-q-pressed:rgba(244,248,252,.055);
+ --sv-q-outline:var(--seyveo-hdr-outline);
+ --sv-q-line:var(--soft-line);
+ --sv-q-surface:rgba(235,251,243,.033);
+ --sv-q-pressed:var(--seyveo-hdr-active);
 }
 html[data-theme=light].sv-space-active{
  --sv-q-outline:rgba(56,74,97,.16);
@@ -1429,7 +1429,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  justify-content:flex-end!important;gap:5px!important;
  padding:15px!important;margin:0!important;
  border:1px solid var(--seyveo-hdr-outline)!important;
- border-radius:23px!important;background:linear-gradient(157deg,rgba(213,255,242,.076),rgba(79,157,137,.032) 47%,rgba(19,48,47,.023) 100%)!important;
+ border-radius:23px!important;background:linear-gradient(157deg,rgba(240,253,246,.054),rgba(119,160,139,.022) 47%,rgba(18,43,35,.02) 100%)!important;
  box-shadow:none!important;text-align:left!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
