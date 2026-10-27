@@ -22,12 +22,10 @@ function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.clas
 function tab(name){
  if(!['chats','team','tasks'].includes(name))return;
  state.tab=name;
- root.querySelectorAll('[data-svcp-tab]').forEach(b=>{const active=b.dataset.svcpTab===name;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1});
  root.querySelectorAll('[data-svcp-panel]').forEach(section=>{section.hidden=section.dataset.svcpPanel!==name});
  if(name==='tasks')renderTasks();
  if(name==='chats')renderChat();
 }
-root.querySelectorAll('[data-svcp-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.svcpTab)));
 root.querySelectorAll('[data-svcp-room]').forEach(button=>button.addEventListener('click',()=>{
  state.room=button.dataset.svcpRoom;
  renderChat();
@@ -108,14 +106,13 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
  state.tasks=state.tasks.slice(-60);
  save(TASK_KEY,state.tasks);input.value='';renderTasks();
 });
-// Open the existing company card, not a second copy of it.
-$('svcpOpenCompany')?.addEventListener('click',()=>$('openCompanyPassportFromManage')?.click());
 // Old HR/shift/ROI tools remain live but open their own focused destinations.
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
  button.addEventListener('click',()=>
   window.SEYVEO_BUSINESS_NAV?.openFeature?.(button.dataset.svcpFeature)));
-$('svcpOpenPulse')?.addEventListener('click',()=>$('openBusinessPictureFromManage')?.click());
-$('svcpOpenDocs')?.addEventListener('click',()=>$('openUnifiedDocumentsFromManage')?.click());
+// A single action from Management selects an existing focused workspace.
+// There is no second navigation menu inside chat, employees or tasks.
+window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab});
 window.addEventListener('pagehide',cleanupPreview);
 tab('chats');
 })();
