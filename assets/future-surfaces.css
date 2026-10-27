@@ -2,17 +2,17 @@
  * Workspaces only; never repaint Home plasma, chat, or dock geometry.
  * No lasers, glowing grids or looping decoration. */
 :root{
- --future-edge:rgba(185,197,217,.18);
- --future-wash:rgba(141,157,187,.075);
- --future-soft:rgba(232,239,250,.060);
- --future-ink:#bbdcd0;
+ --future-edge:var(--seyveo-hdr-outline);
+ --future-wash:var(--seyveo-hdr-active);
+ --future-soft:var(--seyveo-specular);
+ --future-ink:var(--seyveo-emerald);
  --future-shadow:rgba(0,0,0,.13);
 }
 :root[data-theme=light]{
- --future-edge:rgba(95,113,141,.18);
- --future-wash:rgba(110,130,158,.055);
+ --future-edge:var(--seyveo-hdr-outline);
+ --future-wash:var(--seyveo-hdr-active);
  --future-soft:rgba(255,255,255,.65);
- --future-ink:#3b6c61;
+ --future-ink:var(--seyveo-emerald);
  --future-shadow:rgba(51,66,89,.055);
 }
 /* Deliberately no ambient page-wide tint: flat Black / White Velvet. */
