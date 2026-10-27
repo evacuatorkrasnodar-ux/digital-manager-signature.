@@ -206,12 +206,109 @@ function renderForm(){
   $('calendarSpaceDate').value=stamp||(current==='health'?today:'');
  }
  updateHealthPlaceholder();
+ svSyncControls();
 }
 function updateHealthPlaceholder(){
  if(current!=='health')return;
  const examples={'Давление':'Например, 120/80','Пульс':'Например, 72 уд/мин','Шаги':'Например, 6200','Самочувствие':'Как вы себя чувствуете?'};
  $('calendarSpaceTitle').placeholder=examples[$('calendarSpaceKind').value]||'Ваша запись';
 }
+/* Same Velvet dropdown language as Health/Care — keep original form inputs authoritative. */
+const svKind=$('calendarSpaceKind'),svDate=$('calendarSpaceDate');
+const svKindButton=document.createElement('button'),svDateButton=document.createElement('button');
+const svPicker=document.createElement('section');
+let svPickerField=null,svPickerYear=0,svPickerMonth=0;
+svPicker.className='cal-velvet-picker';svPicker.hidden=true;
+svPicker.setAttribute('role','dialog');svPicker.setAttribute('aria-label','Выбор значения');
+svPicker.tabIndex=-1;
+dialog.append(svPicker);
+function svSyncControls(){
+ svKindButton.textContent=svKind.selectedOptions[0]?.textContent||'Выбрать раздел';
+ svDateButton.textContent=svDate.value?
+  new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(svDate.value+'T12:00:00')):'Выбрать дату';
+}
+function svClosePicker(focus=true){
+ const button=svPickerField==='kind'?svKindButton:svDateButton;
+ svPicker.hidden=true;svPicker.replaceChildren();svPickerField=null;
+ svKindButton.setAttribute('aria-expanded','false');svDateButton.setAttribute('aria-expanded','false');
+ if(focus)button.focus({preventScroll:true});
+}
+function svPickerTitle(title){
+ const head=document.createElement('div');head.className='cal-velvet-picker-head';
+ const name=document.createElement('strong');name.textContent=title;head.append(name);
+ const close=document.createElement('button');close.type='button';close.textContent='Готово';close.dataset.svClosePicker='1';head.append(close);
+ svPicker.append(head);
+}
+function svRenderKind(){
+ svPicker.replaceChildren();svPickerTitle('Раздел');
+ const list=document.createElement('div');list.className='cal-velvet-choices';
+ for(const option of svKind.options){
+  const button=document.createElement('button');button.type='button';button.dataset.svKind=option.value;
+  button.textContent=option.textContent;button.setAttribute('aria-pressed',String(svKind.value===option.value));
+  list.append(button);
+ }
+ svPicker.append(list);
+}
+function svRenderDate(){
+ svPicker.replaceChildren();
+ const head=document.createElement('div');head.className='cal-velvet-month';
+ const prev=document.createElement('button');prev.type='button';prev.dataset.svMonth='-1';prev.setAttribute('aria-label','Предыдущий месяц');prev.textContent='‹';
+ const name=document.createElement('strong');
+ name.textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(new Date(svPickerYear,svPickerMonth,1,12));
+ const next=document.createElement('button');next.type='button';next.dataset.svMonth='1';next.setAttribute('aria-label','Следующий месяц');next.textContent='›';
+ head.append(prev,name,next);svPicker.append(head);
+ const weekdays=document.createElement('div');weekdays.className='cal-velvet-weekdays';
+ for(const label of ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']){const el=document.createElement('span');el.textContent=label;weekdays.append(el);}
+ svPicker.append(weekdays);
+ const grid=document.createElement('div');grid.className='cal-velvet-days';
+ const month=new Date(svPickerYear,svPickerMonth,1,12),offset=(month.getDay()+6)%7;
+ for(let i=0;i<offset;i++)grid.append(document.createElement('span'));
+ for(let day=1,limit=new Date(svPickerYear,svPickerMonth+1,0).getDate();day<=limit;day++){
+  const date=[svPickerYear,String(svPickerMonth+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-');
+  const button=document.createElement('button');button.type='button';button.textContent=day;
+  button.dataset.svDate=date;button.setAttribute('aria-pressed',String(date===svDate.value));
+  if(date===new Date().toLocaleDateString('sv-SE'))button.classList.add('is-today');
+  grid.append(button);
+ }
+ svPicker.append(grid);
+ const foot=document.createElement('div');foot.className='cal-velvet-picker-foot';
+ for(const [key,label] of [['today','Сегодня'],['clear','Без даты']]){
+  const button=document.createElement('button');button.type='button';button.dataset.svDateAction=key;button.textContent=label;foot.append(button);
+ }svPicker.append(foot);
+}
+for(const [input,button,label] of [[svKind,svKindButton,'Раздел'],[svDate,svDateButton,'Дата']]){
+ input.classList.add('cal-velvet-original');
+ input.tabIndex=-1;
+ button.type='button';button.className='cal-velvet-trigger';button.setAttribute('aria-label',label);
+ button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
+ input.insertAdjacentElement('afterend',button);
+ input.addEventListener('change',svSyncControls);
+}
+function svOpenPicker(field){
+ if(svPickerField===field&&!svPicker.hidden){svClosePicker();return;}
+ svPickerField=field;
+ if(field==='date'){const value=svDate.value||new Date().toLocaleDateString('sv-SE');const date=new Date(value+'T12:00:00');svPickerYear=date.getFullYear();svPickerMonth=date.getMonth();svRenderDate();}
+ else svRenderKind();
+ svPicker.hidden=false;svKindButton.setAttribute('aria-expanded',String(field==='kind'));svDateButton.setAttribute('aria-expanded',String(field==='date'));
+ const button=svPicker.querySelector('button');button?.focus({preventScroll:true});
+}
+svKindButton.addEventListener('click',()=>svOpenPicker('kind'));
+svDateButton.addEventListener('click',()=>svOpenPicker('date'));
+svPicker.addEventListener('click',event=>{
+ const button=event.target.closest('button');if(!button)return;
+ if(button.dataset.svClosePicker){svClosePicker();return;}
+ if(button.dataset.svMonth){const d=new Date(svPickerYear,svPickerMonth+Number(button.dataset.svMonth),1,12);svPickerYear=d.getFullYear();svPickerMonth=d.getMonth();svRenderDate();return;}
+ if(button.dataset.svKind!==undefined){svKind.value=button.dataset.svKind;svKind.dispatchEvent(new Event('change',{bubbles:true}));svSyncControls();svClosePicker();return;}
+ let date=button.dataset.svDate;
+ if(button.dataset.svDateAction==='today')date=new Date().toLocaleDateString('sv-SE');
+ if(button.dataset.svDateAction==='clear')date='';
+ if(date!==undefined){svDate.value=date;svDate.dispatchEvent(new Event('change',{bubbles:true}));svSyncControls();svClosePicker();}
+});
+dialog.addEventListener('click',event=>{if(svPicker.hidden)return;if(!event.target.closest('.cal-velvet-picker,.cal-velvet-trigger'))svClosePicker(false);});
+dialog.addEventListener('keydown',event=>{if(event.key==='Escape'&&!svPicker.hidden){event.preventDefault();event.stopPropagation();svClosePicker();}});
+dialog.addEventListener('close',()=>{if(!svPicker.hidden)svClosePicker(false);});
+svSyncControls();
+
 function measurementFocus(active){
  const enabled=Boolean(active&&current==='health');
  dialog.dataset.measureFocus=String(enabled);
@@ -222,6 +319,7 @@ function measurementFocus(active){
  }
 }
 function leaveMeasurement(message=''){
+ if(!svPicker.hidden)svClosePicker(false);
  const active=document.activeElement;
  if(active&&dialog.contains(active)&&active.matches('input,textarea,select'))active.blur();
  const category=$('calendarSpaceKind').value;
@@ -285,6 +383,7 @@ function add(kind=null){
  editing=null;$('calendarSpaceForm').dataset.show='true';renderForm();
  if(typeof kind==='string'&&current==='health'&&healthUnits[kind]){
   $('calendarSpaceKind').value=kind;
+  svSyncControls();
   updateHealthPlaceholder();
  }
  if(current==='health'){
