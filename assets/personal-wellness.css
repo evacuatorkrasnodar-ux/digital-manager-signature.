@@ -39,10 +39,10 @@
 #calendarPersonalTools .pw-card:active{transform:scale(.975)}
 #calendarPersonalTools .pw-card svg{transition:transform .4s cubic-bezier(.16,1,.3,1)}
 #calendarPersonalTools .pw-card[aria-pressed=true] svg{transform:scale(1.07)}
-#calendarPersonalTools .pw-card svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.84}
+#calendarPersonalTools .pw-card svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;color:var(--seyveo-emerald);opacity:.92}
 #calendarPersonalTools .pw-card strong{font-size:13px;font-weight:560;line-height:1.25;letter-spacing:-.014em}
 #calendarPersonalTools .pw-card small{font-size:10.5px;font-weight:440;color:var(--secondary);line-height:1.25}
-#calendarPersonalTools .pw-card[aria-pressed=true]{border-color:transparent;background:transparent;box-shadow:inset 0 -1px 0 var(--text);}
+#calendarPersonalTools .pw-card[aria-pressed=true]{border-color:transparent;background:transparent;box-shadow:inset 0 -1px 0 var(--seyveo-emerald);}
 #calendarPersonalTools .pw-card:focus-visible,#calendarPersonalTools button:focus-visible,#calendarPersonalTools :is(input,select):focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Health uses the same 114px card rhythm as the two measurement tiles above. */
 #calendarPersonalTools .pw-health-tiles{margin-top:0}
