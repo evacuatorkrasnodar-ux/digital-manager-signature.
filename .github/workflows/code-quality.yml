@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Verify first Business Pulse demo and Our Ideas entry
+        run: node tools/test-pulse-walkthrough.cjs
       - name: Check read-only Windows server readiness logic
         run: node --test server/tests/check-seyveo-pc.test.mjs
       - name: Test original silver plasma in dark and light themes
