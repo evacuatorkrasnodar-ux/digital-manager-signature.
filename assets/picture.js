@@ -23,7 +23,8 @@ function row(root,label,value,total,group,index){
  fill.style.setProperty('--split-width',Math.max(0,Math.min(100,total||0))+'%');
  track.append(fill);r.append(head,track);root.append(r);
 }
-/* Explicit training data, never a business ledger; kept local to this screen. */
+/* Demonstration figures are available ONLY after the user enables Demo Mode.
+   No simulated records ever appear in normal business mode. */
 const sampleBase=Object.freeze({today:[12,20,16,27,23,34],week:[18,22,28,24,33,40,36],month:[18,25,22,31,28,37],year:[16,20,23,27,32,35]});
 function sampleData(){
  const sequence=sampleBase[period];
@@ -62,13 +63,15 @@ function sampleData(){
 }
 function businessData(){
  const actual=window.SEYVEO_PULSE_DEMO?.picture?.(period);
- return actual||sampleData();
+ return actual||(window.SEYVEO_DEMO_MODE?.isEnabled?.()?sampleData():null);
 }
 function render(){
  // This route is explicitly "Pulse of Business", including for life-first profiles.
  // Never hide its opt-in demonstration based on the onboarding preference.
  $('pictureTitle').textContent='Пульс бизнеса';
- $('pictureLead').textContent='Клиенты, продажи и расходы — пример работы Сэйви.';
+ $('pictureLead').textContent=window.SEYVEO_DEMO_MODE?.isEnabled?.()
+  ?'Клиенты, продажи и расходы · учебный сценарий Сэйви.'
+  :'Клиенты, заказы и деньги. Только подтверждённые источниками данные.';
  body.hidden=false;
  $('pictureBusinessCharts').hidden=false;
  $('pictureLifeNote').hidden=true;
@@ -184,6 +187,7 @@ document.querySelectorAll('[data-picture-period]').forEach(button=>button.addEve
  document.dispatchEvent(new Event('seyveo:silk-touch'));
 }));
 window.addEventListener('seyveo:profile-changed',render);
+window.addEventListener('seyveo:demo-mode-changed',render);
 window.addEventListener('hashchange',()=>{if(location.hash==='#picture')render()});
 window.addEventListener('storage',event=>{if(event.key==='seyveo-first-acquaintance-v1')render()});
 window.addEventListener('seyveo:picture-open',()=>{if(location.hash==='#picture')render()});
