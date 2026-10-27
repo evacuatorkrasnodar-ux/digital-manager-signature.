@@ -641,7 +641,7 @@ function refresh(){
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  if(mode==='idle'){
   focus(false);
-  if(previewArmed&&!previewSeen&&!item&&!pending&&available())startPreview();
+  if(previewArmed&&!previewSeen&&!tasks.length&&!pending&&available())startPreview();
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
