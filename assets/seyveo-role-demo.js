@@ -51,15 +51,61 @@ css.textContent=`
 .sv-showcase-actions .sv-showcase-action{background:#20553d;color:#f4fff8;border-color:#488f71}
 .sv-showcase-eyebrow,.sv-showcase-title strong{color:var(--text)}
 .sv-showcase button:focus-visible{outline:2px solid #8ad9aa;outline-offset:2px}
+.sv-showcase-director{margin:1px 0 15px;border-radius:16px;padding:12px;background:linear-gradient(135deg,rgba(17,57,40,.76),rgba(26,32,32,.24));border:1px solid rgba(86,159,116,.32)}
+.sv-showcase-director-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.sv-showcase-director-head strong{font-size:11px;letter-spacing:.07em}
+.sv-showcase-director-head small{font-size:10px;color:#8dd5aa;white-space:nowrap}
+.sv-showcase-director-title{font-size:14px;font-weight:650;margin:9px 0 12px;line-height:1.4}
+.sv-showcase-director-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.sv-showcase-director-cell{border:1px solid rgba(155,206,178,.14);border-radius:12px;padding:10px 9px;background:rgba(255,255,255,.035);min-width:0}
+.sv-showcase-director-cell span{display:block;font-size:10px;color:var(--secondary);margin-bottom:7px}
+.sv-showcase-director-cell strong{display:block;font-size:12px;color:var(--text);line-height:1.4;overflow-wrap:anywhere}
+.sv-showcase-director-cell.is-done{border-color:rgba(97,204,141,.48);background:rgba(65,139,88,.12)}
+.sv-showcase-director-cell.is-done strong{color:#9de5b9}
+.sv-showcase-director-note{font-size:10px!important;line-height:1.5;color:var(--secondary);margin:9px 0 0}
+.sv-showcase-shortcuts{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:11px;flex-wrap:wrap}
+.sv-showcase-shortcuts .sv-showcase-calc{border:1px solid #488f71;background:transparent;color:var(--text);border-radius:999px;min-height:38px;font-size:11px;padding:8px 11px}
+.sv-showcase-shortcuts span{font-size:10px;color:var(--secondary)}
+.sv-showcase-peek{padding:2px 16px 10px}
+.sv-showcase-peek strong{display:block;font-size:17px;letter-spacing:-.025em;line-height:1.32;margin:4px 0}
+.sv-showcase-peek p{font-size:12px;color:var(--secondary);line-height:1.5;margin:7px 0}
+@media(prefers-reduced-motion:no-preference){.sv-showcase-director-cell.is-done{animation:svShowcaseReveal .28s ease-out both}@keyframes svShowcaseReveal{from{opacity:.7;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}}
+
 @media(max-width:360px){.sv-showcase-fact{flex-direction:column;gap:2px}.sv-showcase-fact span:last-child{text-align:left}}
 `;
 document.head.append(css);
 const element=(tag,cls,value)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined)el.textContent=value;return el};
 const button=(name,fn,cls)=>{const b=element('button',cls,name);b.type='button';b.addEventListener('click',fn);return b};
+function executivePulse(){
+ const panel=element('section','sv-showcase-director');
+ const head=element('div','sv-showcase-director-head');
+ head.append(element('strong',null,'ПУЛЬТ РУКОВОДИТЕЛЯ'),element('small',null,'● УЧЕБНАЯ КОМПАНИЯ'));
+ panel.append(head,element('div','sv-showcase-director-title','Сэйви связывает весь путь сотрудника в один процесс'));
+ const grid=element('div','sv-showcase-director-grid');
+ const cards=[
+  ['Подбор',state.hired?'Приглашение готово':state.vacancy?'Вакансия подготовлена':'Нужно открыть вакансию',state.vacancy],
+  ['Обучение',state.trained?'Первый этап пройден':state.hired?'Новый сотрудник приглашён':'Ожидает приёма',state.trained],
+  ['Смена',state.onShift?'Начало отмечено':'Ещё нет отметки',state.onShift],
+  ['Результат',state.star?'Есть благодарность':state.taskDone?'Задача выполнена':'В ожидании',state.taskDone]
+ ];
+ cards.forEach(([title,value,done])=>{const cell=element('div','sv-showcase-director-cell'+(done?' is-done':''));cell.append(element('span',null,title),element('strong',null,value));grid.append(cell)});
+ panel.append(grid);
+ const footer=element('div','sv-showcase-shortcuts');
+ const calc=button('Посчитать экономию',()=>{
+  const details=document.querySelector?.('.seyveo-hr-operations[aria-label="Эффект работы Сэйви"] > details');
+  if(!details)return;
+  details.open=true;
+  details.scrollIntoView?.({behavior:'smooth',block:'center'});
+ },'sv-showcase-calc');
+ footer.append(calc,element('span',null,'Проверяемые цифры — после подключения компании'));
+ panel.append(footer,element('p','sv-showcase-director-note','Все события и показатели на этом экране вымышлены. Статусы обновляются только внутри презентации.'));
+ return panel;
+}
 function refresh(){root.replaceChildren();const card=element('section','sv-showcase');const head=element('div','sv-showcase-head');const orb=element('div','sv-showcase-glyph','✦');orb.setAttribute('aria-hidden','true');const title=element('div','sv-showcase-title');title.append(element('strong',null,'SEYVEO · Живое демо'),element('small',null,'Одна история компании. Два взгляда.'));head.append(orb,title);card.append(head);
- if(!active){const start=button('▶ Запустить демонстрацию',()=>{active=true;role='director';step=0;refresh()},'sv-showcase-launch');card.append(start);root.append(card);return}
+ if(!active){const peek=element('div','sv-showcase-peek');peek.append(element('strong',null,'Не просто управляйте бизнесом. Поручите Сэйви рутину.'),element('p',null,'Найм → обучение → смена → результат. Пройдите историю компании от лица директора и сотрудника.'));card.append(peek);const start=button('▶ Показать Сэйви в действии',()=>{active=true;role='director';step=0;refresh()},'sv-showcase-launch');card.append(start);root.append(card);return}
  const body=element('div','sv-showcase-body');const tabs=element('div','sv-showcase-tabs');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Демонстрационная роль');
  [['director','Руководитель'],['employee','Сотрудник']].forEach(([id,label])=>{const b=button(label,()=>{role=id;step=0;refresh()});b.setAttribute('aria-pressed',String(role===id));tabs.append(b)});body.append(tabs);
+ if(role==='director')body.append(executivePulse());
  const steps=stages[role],scene=steps[step],progress=element('div','sv-showcase-progress');progress.setAttribute('aria-label','Шаг '+(step+1)+' из '+steps.length);steps.forEach((_,i)=>{const part=element('span',i<=step?'is-current':'');progress.append(part)});body.append(progress);
  const section=element('div','sv-showcase-stage');section.append(element('div','sv-showcase-eyebrow',scene.eyebrow),element('h3',null,scene.title),element('div','sv-showcase-voice',scene.speech));
  const facts=element('div','sv-showcase-facts');scene.facts().forEach(([key,value])=>{const line=element('div','sv-showcase-fact');line.append(element('span',null,key),element('span',null,value));facts.append(line)});section.append(facts,element('p','sv-showcase-note',scene.note));
