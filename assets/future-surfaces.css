@@ -5,14 +5,14 @@
  --future-edge:rgba(185,197,217,.18);
  --future-wash:rgba(141,157,187,.075);
  --future-soft:rgba(232,239,250,.060);
- --future-ink:#c9d3e1;
+ --future-ink:#bbdcd0;
  --future-shadow:rgba(0,0,0,.13);
 }
 :root[data-theme=light]{
  --future-edge:rgba(95,113,141,.18);
  --future-wash:rgba(110,130,158,.055);
  --future-soft:rgba(255,255,255,.65);
- --future-ink:#50627b;
+ --future-ink:#3b6c61;
  --future-shadow:rgba(51,66,89,.055);
 }
 /* Deliberately no ambient page-wide tint: flat Black / White Velvet. */
