@@ -592,3 +592,56 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
     transition:none!important;
   }
 }
+
+/* Quiet Cinema Mail: content inside the SAME original rising/gathering card.
+   Other scenes, sphere, stage, dock and motion are untouched. */
+#seyveoLivingMoment .lm-mail-content[hidden],
+#seyveoLivingMoment .lm-actions .lm-polymer[hidden],
+#tasksPage #seyveoPreviewMailLater[hidden]{display:none!important}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions{
+ max-height:138px;overflow:visible;column-gap:15px;row-gap:0;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions .lm-polymer{
+ min-height:44px;font-size:12.5px;padding:8px 2px;
+}
+#seyveoLivingMoment .lm-mail-content{
+ display:grid;gap:7px;padding:1px 0 0;margin:0;
+ min-width:0;max-width:100%;color:var(--text)
+}
+#seyveoLivingMoment .lm-mail-content p{
+ margin:0;font-size:12px;line-height:1.48;overflow-wrap:anywhere
+}
+#seyveoLivingMoment .lm-mail-content .lm-mail-intro{
+ color:var(--secondary);font-size:11px
+}
+#seyveoLivingMoment .lm-mail-content .lm-mail-draft{
+ padding:6px 0;color:var(--text);font-size:12.5px;
+ white-space:pre-wrap
+}
+#seyveoLivingMoment .lm-mail-content .lm-mail-address{
+ color:var(--secondary);font-size:11px
+}
+#seyveoLivingMoment .lm-mail-content .lm-mail-note{
+ color:var(--secondary);font-size:10px
+}
+#seyveoLivingMoment .lm-mail-edit-label{
+ display:grid;gap:6px;color:var(--secondary);font-size:12px
+}
+#seyveoLivingMoment .lm-mail-edit-input{
+ box-sizing:border-box;width:100%;min-height:74px;max-height:136px;
+ resize:vertical;background:var(--seyveo-hdr-active);
+ border:1px solid var(--seyveo-hdr-outline);
+ border-radius:10px;padding:9px 10px;
+ color:var(--text);font:inherit;font-size:12.5px;line-height:1.45
+}
+#tasksPage .lm-mail-later{
+ display:grid;gap:9px;margin:4px 0 14px;padding:12px 6px;
+ border-bottom:1px solid var(--soft-line)
+}
+#tasksPage .lm-mail-later small{font-size:10px;letter-spacing:.1em;color:var(--seyveo-emerald)}
+#tasksPage .lm-mail-later strong{font-size:14px;font-weight:550;color:var(--text)}
+#tasksPage .lm-mail-later p{font-size:12px;color:var(--secondary);margin:0}
+#tasksPage .lm-mail-later button{
+ font:inherit;font-size:12px;min-height:44px;padding:8px 2px;
+ border:0;background:none;color:var(--text);cursor:pointer;text-align:left
+}
