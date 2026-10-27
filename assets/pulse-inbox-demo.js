@@ -7,7 +7,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const ids={
- dialog:'manageRoadmapDialog',toggle:'pulseInboxToggle',panel:'pulseInboxPanel',
+ dialog:'picturePage',toggle:'pulseInboxToggle',panel:'pulseInboxPanel',
  list:'pulseInboxList',headline:'pulseInboxHeadline',count:'pulseInboxCount',
  source:'pulseInboxSource',message:'pulseInboxMessage',state:'pulseInboxState',
  draft:'pulseInboxDraft',draftText:'pulseInboxDraftText',
@@ -149,10 +149,11 @@ el.close.addEventListener('click',()=>{
  el.panel.hidden=true;el.toggle.setAttribute('aria-expanded','false');
  el.toggle.textContent='Открыть учебную очередь обращений';el.toggle.focus();
 });
-el.dialog.addEventListener('close',()=>{
+window.addEventListener('seyveo:demo-mode-reset',()=>{
  el.panel.hidden=true;resetData();
  el.toggle.setAttribute('aria-expanded','false');
  el.toggle.textContent='Открыть учебную очередь обращений';
+ render();
 });
 render();
 })();
