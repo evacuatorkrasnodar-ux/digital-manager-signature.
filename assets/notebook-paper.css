@@ -9,12 +9,12 @@
 /* Three actions, one restrained Black/White Velvet vocabulary. */
 .paper-choice-list{display:grid;margin:11px 0 3px}
 .paper-choice-item{display:flex;align-items:center;gap:12px;width:100%;
- border:1px solid rgba(230,237,246,.11);
+ border:1px solid rgba(202,246,225,.12);
  background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.008)),var(--card);
  color:var(--text);text-align:left;font:inherit;cursor:pointer;
  -webkit-tap-highlight-color:transparent;transition:border-color .16s ease,background-color .16s ease,transform .14s ease}
 .paper-choice-icon{display:grid;place-items:center;flex:none;height:40px;
- border:1px solid rgba(230,237,246,.15);border-radius:50%;
+ border:1px solid rgba(202,246,225,.16);border-radius:50%;
  background:rgba(255,255,255,.048);color:#d9e0e9;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
 .paper-choice-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;
@@ -23,8 +23,8 @@
 .paper-choice-item strong{display:block;font-weight:475;line-height:1.25;letter-spacing:-.012em}
 .paper-choice-item small{display:block;margin-top:4px;color:var(--secondary)}
 .paper-choice-item:focus-visible{outline:2px solid var(--text);outline-offset:2px}
-.paper-choice-item:active{transform:scale(.993);border-color:rgba(230,237,246,.23)}
-@media(hover:hover) and (pointer:fine){.paper-choice-item:hover{border-color:rgba(230,237,246,.21)}}
+.paper-choice-item:active{transform:scale(.993);border-color:rgba(202,246,225,.24)}
+@media(hover:hover) and (pointer:fine){.paper-choice-item:hover{border-color:rgba(202,246,225,.22)}}
 :root[data-theme=light] .paper-choice-item{
  background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(240,244,248,.80));
  border-color:rgba(50,65,82,.13)}
