@@ -70,6 +70,9 @@ let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
 // A dismissed remote stays hidden while the audio keeps playing.
 // Entering the full music screen is the deliberate way to restore it.
 let miniDismissed=false;
+// A selected local file is not a playing session. Show the small remote only
+// after the audio element has actually started playback at least once.
+let hasPlayed=false;
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -77,6 +80,7 @@ const fmt=time=>{
 const sayviMessage=message=>{status.textContent=message;status.hidden=!message;};
 function updatePlay(){
  const playing=!audio.paused&&!audio.ended&&!!audio.src;
+ if(playing)hasPlayed=true;
  page.classList.toggle('sv-music-playing',playing);
  if('mediaSession' in navigator){
   try{navigator.mediaSession.playbackState=playing?'playing':'paused'}catch{}
@@ -92,7 +96,7 @@ function syncResume(){
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
-  mini.hidden=!loaded||location.hash==='#sayvi-music'||miniDismissed;
+  mini.hidden=!loaded||!hasPlayed||audio.ended||location.hash==='#sayvi-music'||miniDismissed;
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
@@ -104,7 +108,7 @@ function syncResume(){
    miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
   }
  }
- document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing}}));
+ document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing,hasPlayed}}));
 }
 function syncQueueToggle(){
  // The persistent Management dock button must never become a music control.
