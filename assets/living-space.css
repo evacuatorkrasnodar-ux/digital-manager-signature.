@@ -1213,7 +1213,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
 html.sv-space-active:has(#lifePage:not([hidden])) body{
- background:linear-gradient(180deg,#0c1110 0%,#101917 24%,#13241e 55%,#173127 78%,#0e1512 100%)!important;
+ background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#1a221c 78%,#111512 100%)!important;
  background-attachment:fixed!important;
 }
 html.sv-space-active #lifePage{
