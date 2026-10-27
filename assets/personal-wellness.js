@@ -297,7 +297,7 @@ function setToolFocus(section,focused){
  $(care?'pwCareBack':'pwHealthBack').hidden=!active;
  const dialog=$('calendarSpaceDialog');
  dialog.dataset[care?'careFocus':'healthFocus']=String(active);
- if(active)dialog.scrollTop=0;
+ if(active)$('svCareScroll').scrollTop=0;
 }
 function resetTools(){
  stopSession(false);careTool='';healthTool='';notice('');
@@ -610,7 +610,7 @@ host.addEventListener('click',event=>{
   resetSectionTools('care');
   $('pwCycleDetail').hidden=true;
   $('pwCycleOpen').setAttribute('aria-expanded','false');
-  $('calendarSpaceDialog').scrollTop=0;
+  $('svCareScroll').scrollTop=0;
   const target=wasCycle?$('pwCycleOpen'):
     host.querySelector('[data-pw-tool="'+previous+'"]');
   if(target)target.focus({preventScroll:true});
@@ -620,7 +620,7 @@ host.addEventListener('click',event=>{
  if(btn.id==='pwHealthBack'){
   const previous=healthTool;
   resetSectionTools('health');
-  $('calendarSpaceDialog').scrollTop=0;
+  $('svCareScroll').scrollTop=0;
   const target=host.querySelector('[data-pw-tool="'+previous+'"]');
   if(target)target.focus({preventScroll:true});
   notice('');
