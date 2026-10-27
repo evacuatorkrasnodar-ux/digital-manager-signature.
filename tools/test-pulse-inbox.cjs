@@ -10,7 +10,7 @@ const src=fs.readFileSync('assets/pulse-inbox-demo.js','utf8');
 const style=fs.readFileSync('assets/pulse-inbox-demo.css','utf8');
 const roadmap=fs.readFileSync('assets/management.js','utf8');
 new vm.Script(src,{filename:'pulse-inbox-demo.js'});
-const ids=['manageRoadmapDialog','pulseInboxToggle','pulseInboxPanel','pulseInboxList',
+const ids=['picturePage','pulseInboxToggle','pulseInboxPanel','pulseInboxList',
  'pulseInboxHeadline','pulseInboxCount','pulseInboxSource','pulseInboxMessage',
  'pulseInboxState','pulseInboxDraft','pulseInboxDraftText','pulseInboxHistory',
  'pulseInboxAction','pulseInboxReset','pulseInboxClose','pulseInboxFeedback'];
@@ -18,9 +18,11 @@ for(const id of ids)
  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'One inbox UI element '+id);
 for(const type of ['all','unanswered','resolved'])
  assert.equal((html.match(new RegExp('data-pulse-inbox-filter="'+type+'"','g'))||[]).length,1,'Unique filter '+type);
-assert.match(html,/assets\/pulse-inbox-demo\.js\?v=1/,'Included script');
-assert.match(html,/assets\/pulse-inbox-demo\.css\?v=1/,'Included scoped style');
-assert.ok(roadmap.includes("['crm_inbox_demo'"),'Second approved prototype appears in existing ideas');
+assert.match(html,/assets\/pulse-inbox-demo\.js\?v=2/,'Included script');
+assert.match(html,/assets\/pulse-inbox-demo\.css\?v=2/,'Included scoped style');
+assert.ok(roadmap.includes("['crm_inbox_demo'"),'Second prototype remains documented in Ideas list');
+const ideasHead=html.slice(html.indexOf('<dialog id="manageRoadmapDialog"'),html.indexOf('<div class="manage-roadmap-toolbar">'));
+assert.doesNotMatch(ideasHead,/class="sv-pulse-inbox"/,'The queue is no longer nested in Ideas dialog');
 const stripped=src.replace(/\/\*[\s\S]*?\*\//g,'').replace(/^\s*\/\/[^\n]*$/gm,'');
 assert.doesNotMatch(stripped,/\b(fetch|XMLHttpRequest|WebSocket|localStorage|sessionStorage|sendBeacon)\b/,
  'No real client networking or browser storage');
@@ -46,7 +48,8 @@ const doc={
  querySelectorAll(selector){return selector==='[data-pulse-inbox-filter]'?buttons:[]},
  createElement(){return new Node()}
 };
-vm.runInNewContext(src,{document:doc},{timeout:1800});
+const listeners={};const window={SEYVEO_DEMO_MODE:{isEnabled:()=>false},addEventListener(type,fn){(listeners[type]??=[]).push(fn)}};
+vm.runInNewContext(src,{document:doc,window},{timeout:1800});
 const click=id=>els[id].click();
 const texts=items=>items.map(x=>x.textContent);
 assert.match(els.pulseInboxCount.textContent,/3 учебных/);
@@ -85,7 +88,10 @@ click('pulseInboxClose');
 assert.equal(els.pulseInboxPanel.hidden,true);
 assert.equal(els.pulseInboxToggle.props['aria-expanded'],'false');
 click('pulseInboxToggle');
-els.manageRoadmapDialog.close();
-assert.equal(els.pulseInboxPanel.hidden,true,'Parent dialog closure hides inbox');
+for(const fn of listeners['seyveo:demo-mode-reset']||[])fn({});
+assert.equal(els.pulseInboxPanel.hidden,true,'Disabling Demo Mode hides inbox');
+assert.match(els.pulseInboxCount.textContent,/2 требуют ответа/,'Demo reset restores original cases');
+for(const fn of listeners['seyveo:demo-mode-changed']||[])fn({detail:{enabled:true}});
+assert.equal(els.pulseInboxPanel.hidden,false,'Demo mode automatically opens queue on real page');
 assert.match(style,/var\(--seyveo-hdr-active\)/,'Matches shared Black Velvet visual system');
 console.log('PASS SEYVEO unified inbox: filters, approval, simulated client, close, reset; no network or storage.');
