@@ -679,7 +679,7 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
    Linear-only background: no radial ghost shapes or changes to the orb. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#181d19 78%,#101310 100%);
+ background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1173,7 +1173,7 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
 
 /* My World · quiet graphite page instead of a nearly black, boxed menu. */
 html.sv-space-active #lifePage{
- background:linear-gradient(155deg,#131815 0%,#1a211b 46%,#141916 100%)!important;
+ background:linear-gradient(155deg,#121d1a 0%,#1a2923 46%,#121c19 100%)!important;
  min-height:100%;color:var(--text);
 }
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
@@ -1213,7 +1213,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
 html.sv-space-active:has(#lifePage:not([hidden])) body{
- background:linear-gradient(180deg,#101311 0%,#131714 28%,#171c18 55%,#181d19 78%,#101310 100%)!important;
+ background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%)!important;
  background-attachment:fixed!important;
 }
 html.sv-space-active #lifePage{
