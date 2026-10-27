@@ -1,38 +1,38 @@
 /* SEYVEO · one simulated Pulse inbox, inside Our Ideas.
  * Material is shared with My World; no new overlay, shadows or globe.
  */
-#manageRoadmapDialog .sv-pulse-inbox{margin:10px 0 17px;padding:15px 0;border-bottom:1px solid var(--soft-line)}
-#manageRoadmapDialog .sv-pulse-inbox>h3{font-size:16px;font-weight:540;letter-spacing:-.02em;margin:2px 0 8px;color:var(--text)}
-#manageRoadmapDialog .sv-pulse-inbox>p{color:var(--secondary);font-size:12px;line-height:1.55;margin:0 0 9px}
-#manageRoadmapDialog .sv-pulse-inbox-kicker{font-size:10px!important;letter-spacing:.11em;font-weight:600;color:var(--seyveo-emerald)!important}
-#manageRoadmapDialog .sv-pulse-inbox button{font:inherit;background:transparent;border:0;box-shadow:none;color:var(--text);cursor:pointer;text-align:left}
-#manageRoadmapDialog .sv-pulse-inbox>button{padding:10px 2px;min-height:44px;font-size:12px;text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px}
-#manageRoadmapDialog .sv-pulse-inbox button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:5px}
-#manageRoadmapDialog .sv-pulse-inbox-panel{border-top:1px solid var(--soft-line);padding:13px 0 4px;margin-top:10px}
-#manageRoadmapDialog .sv-pulse-inbox-panel[hidden],#manageRoadmapDialog .sv-pulse-inbox-draft[hidden],#manageRoadmapDialog #pulseInboxAction[hidden]{display:none!important}
-#manageRoadmapDialog .sv-pulse-inbox-summary{font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums;line-height:1.5;margin:0 0 10px}
-#manageRoadmapDialog .sv-pulse-inbox-filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;border-bottom:1px solid var(--soft-line)}
-#manageRoadmapDialog .sv-pulse-inbox-filters button{min-height:44px;padding:8px 2px;color:var(--secondary);font-size:11.5px;border-bottom:1px solid transparent}
-#manageRoadmapDialog .sv-pulse-inbox-filters button[aria-pressed=true]{border-bottom-color:var(--seyveo-emerald);color:var(--text);font-weight:570}
-#manageRoadmapDialog .sv-pulse-inbox-list{display:grid;gap:0;margin:0 0 16px}
-#manageRoadmapDialog .sv-pulse-inbox-item{display:grid;gap:5px;width:100%;padding:13px 7px;min-height:67px;border-bottom:1px solid var(--soft-line)!important}
-#manageRoadmapDialog .sv-pulse-inbox-item[aria-pressed=true]{background:var(--seyveo-hdr-active)!important;border-radius:10px}
-#manageRoadmapDialog .sv-pulse-inbox-item-heading{display:flex;gap:8px;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
-#manageRoadmapDialog .sv-pulse-inbox-item-heading strong{font-size:12.5px;font-weight:560}
-#manageRoadmapDialog .sv-pulse-inbox-item-heading small,#manageRoadmapDialog .sv-pulse-inbox-item-state{font-size:10px;color:var(--secondary)}
-#manageRoadmapDialog .sv-pulse-inbox-item-topic{font-size:12px;line-height:1.5}
-#manageRoadmapDialog .sv-pulse-inbox-detail{border-top:1px solid var(--seyveo-hdr-outline);padding-top:12px}
-#manageRoadmapDialog .sv-pulse-inbox-detail h4{font-size:14px;font-weight:540;line-height:1.35;margin:3px 0 7px}
-#manageRoadmapDialog .sv-pulse-inbox-source,#manageRoadmapDialog .sv-pulse-inbox-state,#manageRoadmapDialog .sv-pulse-inbox-note{font-size:11px;color:var(--secondary);margin:0 0 8px;line-height:1.5}
-#manageRoadmapDialog .sv-pulse-inbox-message{font-size:12.5px;color:var(--text);line-height:1.6;margin:10px 0}
-#manageRoadmapDialog .sv-pulse-inbox-draft{padding:10px 12px;border-left:2px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active);margin:10px 0;font-size:12px;line-height:1.55}
-#manageRoadmapDialog .sv-pulse-inbox-draft strong{display:block;margin-bottom:5px;font-size:11px;font-weight:540}
-#manageRoadmapDialog .sv-pulse-inbox-history-title{font-size:11px;color:var(--secondary);font-weight:550;margin:16px 0 5px}
-#manageRoadmapDialog .sv-pulse-inbox-history{list-style:none;padding:0;margin:0 0 9px}
-#manageRoadmapDialog .sv-pulse-inbox-event{display:flex;gap:13px;padding:8px 0;border-bottom:1px solid var(--soft-line);font-size:11.5px;line-height:1.5}
-#manageRoadmapDialog .sv-pulse-inbox-event-index{color:var(--seyveo-emerald);font-variant-numeric:tabular-nums}
-#manageRoadmapDialog .sv-pulse-inbox-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
-#manageRoadmapDialog .sv-pulse-inbox-actions button{min-height:44px;padding:8px 2px;font-size:12px;text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px}
-#manageRoadmapDialog #pulseInboxAction{color:var(--seyveo-emerald);font-weight:560}
-#manageRoadmapDialog .sv-pulse-inbox-empty{font-size:12px;color:var(--secondary);margin:8px 0}
-#manageRoadmapDialog .sv-pulse-inbox-disclaimer{font-size:10px!important;color:var(--secondary);line-height:1.5;margin:12px 0 0!important}
+#picturePage .sv-pulse-inbox{margin:10px 0 17px;padding:15px 0;border-bottom:1px solid var(--soft-line)}
+#picturePage .sv-pulse-inbox>h3{font-size:16px;font-weight:540;letter-spacing:-.02em;margin:2px 0 8px;color:var(--text)}
+#picturePage .sv-pulse-inbox>p{color:var(--secondary);font-size:12px;line-height:1.55;margin:0 0 9px}
+#picturePage .sv-pulse-inbox-kicker{font-size:10px!important;letter-spacing:.11em;font-weight:600;color:var(--seyveo-emerald)!important}
+#picturePage .sv-pulse-inbox button{font:inherit;background:transparent;border:0;box-shadow:none;color:var(--text);cursor:pointer;text-align:left}
+#picturePage .sv-pulse-inbox>button{padding:10px 2px;min-height:44px;font-size:12px;text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px}
+#picturePage .sv-pulse-inbox button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:5px}
+#picturePage .sv-pulse-inbox-panel{border-top:1px solid var(--soft-line);padding:13px 0 4px;margin-top:10px}
+#picturePage .sv-pulse-inbox-panel[hidden],#picturePage .sv-pulse-inbox-draft[hidden],#picturePage #pulseInboxAction[hidden]{display:none!important}
+#picturePage .sv-pulse-inbox-summary{font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums;line-height:1.5;margin:0 0 10px}
+#picturePage .sv-pulse-inbox-filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;border-bottom:1px solid var(--soft-line)}
+#picturePage .sv-pulse-inbox-filters button{min-height:44px;padding:8px 2px;color:var(--secondary);font-size:11.5px;border-bottom:1px solid transparent}
+#picturePage .sv-pulse-inbox-filters button[aria-pressed=true]{border-bottom-color:var(--seyveo-emerald);color:var(--text);font-weight:570}
+#picturePage .sv-pulse-inbox-list{display:grid;gap:0;margin:0 0 16px}
+#picturePage .sv-pulse-inbox-item{display:grid;gap:5px;width:100%;padding:13px 7px;min-height:67px;border-bottom:1px solid var(--soft-line)!important}
+#picturePage .sv-pulse-inbox-item[aria-pressed=true]{background:var(--seyveo-hdr-active)!important;border-radius:10px}
+#picturePage .sv-pulse-inbox-item-heading{display:flex;gap:8px;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
+#picturePage .sv-pulse-inbox-item-heading strong{font-size:12.5px;font-weight:560}
+#picturePage .sv-pulse-inbox-item-heading small,#picturePage .sv-pulse-inbox-item-state{font-size:10px;color:var(--secondary)}
+#picturePage .sv-pulse-inbox-item-topic{font-size:12px;line-height:1.5}
+#picturePage .sv-pulse-inbox-detail{border-top:1px solid var(--seyveo-hdr-outline);padding-top:12px}
+#picturePage .sv-pulse-inbox-detail h4{font-size:14px;font-weight:540;line-height:1.35;margin:3px 0 7px}
+#picturePage .sv-pulse-inbox-source,#picturePage .sv-pulse-inbox-state,#picturePage .sv-pulse-inbox-note{font-size:11px;color:var(--secondary);margin:0 0 8px;line-height:1.5}
+#picturePage .sv-pulse-inbox-message{font-size:12.5px;color:var(--text);line-height:1.6;margin:10px 0}
+#picturePage .sv-pulse-inbox-draft{padding:10px 12px;border-left:2px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active);margin:10px 0;font-size:12px;line-height:1.55}
+#picturePage .sv-pulse-inbox-draft strong{display:block;margin-bottom:5px;font-size:11px;font-weight:540}
+#picturePage .sv-pulse-inbox-history-title{font-size:11px;color:var(--secondary);font-weight:550;margin:16px 0 5px}
+#picturePage .sv-pulse-inbox-history{list-style:none;padding:0;margin:0 0 9px}
+#picturePage .sv-pulse-inbox-event{display:flex;gap:13px;padding:8px 0;border-bottom:1px solid var(--soft-line);font-size:11.5px;line-height:1.5}
+#picturePage .sv-pulse-inbox-event-index{color:var(--seyveo-emerald);font-variant-numeric:tabular-nums}
+#picturePage .sv-pulse-inbox-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+#picturePage .sv-pulse-inbox-actions button{min-height:44px;padding:8px 2px;font-size:12px;text-decoration:underline;text-decoration-color:var(--soft-line);text-underline-offset:5px}
+#picturePage #pulseInboxAction{color:var(--seyveo-emerald);font-weight:560}
+#picturePage .sv-pulse-inbox-empty{font-size:12px;color:var(--secondary);margin:8px 0}
+#picturePage .sv-pulse-inbox-disclaimer{font-size:10px!important;color:var(--secondary);line-height:1.5;margin:12px 0 0!important}
