@@ -141,6 +141,7 @@ function renderHealthOverview(){
   )[0]?.item;
   $(valueId).textContent=latest?latest.title:'Нет записей';
   $(dateId).textContent=latest?(latest.date?'Последняя запись · '+formatted.format(new Date(latest.date+'T12:00:00')):'Последняя запись · без даты'):'';
+  $(valueId).closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
  }
 }
 function renderList(){
