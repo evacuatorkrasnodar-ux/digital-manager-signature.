@@ -464,7 +464,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationBack{order:1}
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationHistory{order:2}
 html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-heading{
- display:flex!important;flex:1 1 auto;order:3;align-items:center;justify-content:center;
+ display:flex!important;flex:1 1 auto;order:4;align-items:center;justify-content:center;
  min-width:43px;max-width:none;margin:0!important;padding:0!important;
  gap:0;white-space:nowrap;pointer-events:none;
 }
@@ -482,10 +482,10 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationStatus{
  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
- order:5!important;flex:0 0 44px;margin:0!important;
+ order:6!important;flex:0 0 44px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
- order:6!important;flex:0 0 44px;margin:0!important;
+ order:7!important;flex:0 0 44px;margin:0!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory) svg{
@@ -644,7 +644,7 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-b
 
 /* Single chat editor expander, no second input and no dock. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatExpand{
- order:4;display:grid!important;place-items:center;
+ order:5;display:grid!important;place-items:center;
  width:32px;min-width:32px;height:44px;flex:0 0 32px;
  margin:0;padding:0;border:0!important;border-radius:50%;
  background:transparent!important;box-shadow:none!important;
@@ -692,7 +692,7 @@ html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded):focu
 
 /* Chat photo picker follows Back and History. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
- order:0!important;display:grid!important;place-items:center;
+ order:3!important;display:grid!important;place-items:center;
  width:34px;min-width:34px;height:44px;flex:0 0 34px;
  border:0!important;border-radius:50%;padding:0;margin:0;
  background:transparent!important;box-shadow:none!important;
