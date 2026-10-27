@@ -92,7 +92,8 @@
  }
  function open({from=null,id=null}={}){
   if(!active()&&location.hash!=='#sayvi-video')
-   lastRoute=from==='music'?'#sayvi-music':location.hash==='#sayvi-music'?'#sayvi-music':'';
+   lastRoute=from==='life'||location.hash==='#life'?'#life'
+    :from==='music'||location.hash==='#sayvi-music'?'#sayvi-music':'';
   if(id)choose(core.videoId(id));
   if(location.hash!=='#sayvi-video')location.hash='#sayvi-video';
   else route();
@@ -120,7 +121,7 @@
  demo?.addEventListener('click',()=>{choose(SAMPLE);play()});
  back?.addEventListener('click',()=>{
   dispose();
-  if(lastRoute==='#sayvi-music')location.hash='#sayvi-music';
+  if(lastRoute==='#life'||lastRoute==='#sayvi-music')location.hash=lastRoute;
   else $('navHome')?.click();
  });
  save?.addEventListener('click',()=>{
