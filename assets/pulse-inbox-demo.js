@@ -155,5 +155,15 @@ window.addEventListener('seyveo:demo-mode-reset',()=>{
  el.toggle.textContent='Открыть учебную очередь обращений';
  render();
 });
-render();
+function showInbox(){
+ el.panel.hidden=false;
+ el.toggle.setAttribute('aria-expanded','true');
+ el.toggle.textContent='Свернуть учебную очередь';
+ render();
+}
+window.addEventListener('seyveo:demo-mode-changed',event=>{
+ if(event.detail?.enabled)showInbox();
+});
+if(window.SEYVEO_DEMO_MODE?.isEnabled?.())showInbox();
+else render();
 })();
