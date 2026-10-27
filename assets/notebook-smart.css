@@ -24,8 +24,9 @@
 #notesDialog .notes-head{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0 44px 12px 0}
 #notesDialog .notes-head h2{margin:0;font-size:21px;font-weight:580;line-height:1.25;letter-spacing:-.03em}
 #notesDialog .notes-new{
- display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:0;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:12px;cursor:pointer;
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:0;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:12px;cursor:pointer;
 }
+#notesDialog .notes-new svg{display:block;flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 #notesDialog .notes-list{
  display:flex;flex-direction:column;
  max-height:min(58dvh,540px);min-width:0;overscroll-behavior:contain;
