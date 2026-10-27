@@ -46,7 +46,7 @@ const cardActions=Object.freeze({
  breath:'Начать дыхание',water:'Записать воду',eyes:'Отдых для глаз',steps:'Записать шаги'
 });
 const arrow='<svg class="pw-card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
-const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false" aria-label="'+(cardActions[key]||label)+'">'+
+const btn=(key,label,sub)=>'<button type="button" class="pw-card" data-pw-tool="'+key+'" aria-pressed="false" aria-label="'+(cardActions[key]||label)+'" aria-describedby="pwCard'+key+'">'+
  icon(key)+'<strong>'+label+'</strong><small id="pwCard'+key+'">'+sub+'</small>'+
  '<span class="pw-card-action" aria-hidden="true">'+(cardActions[key]||'Открыть')+arrow+'</span></button>';
 host.innerHTML=`
