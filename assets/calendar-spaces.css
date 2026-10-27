@@ -93,8 +93,8 @@
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
 }
 #calendarHealthOverview .cal-health-tile{
- --health-wash:rgba(127,176,212,.09);
- --health-ink:#9bbfda;
+ --health-wash:var(--seyveo-hdr-active);
+ --health-ink:var(--seyveo-emerald);
  display:flex;position:relative;flex-direction:column;align-items:flex-start;
  gap:7px;min-width:0;min-height:99px;box-sizing:border-box;padding:12px 9px 10px;border:0;border-radius:0;background:transparent;
  color:var(--text);text-align:left;font:inherit;cursor:pointer;box-shadow:none;
@@ -102,10 +102,10 @@
  transition:transform 300ms cubic-bezier(.22,1,.36,1),background-color 300ms ease;
 }
 #calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
- --health-wash:rgba(113,160,215,.12);--health-ink:#9ec6e9;
+ --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
 }
 #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:rgba(227,112,143,.105);--health-ink:#e8a4b5;
+ --health-wash:var(--seyveo-specular);--health-ink:var(--text);
 }
 #calendarHealthOverview .cal-health-tile:active{transform:scale(.988)}
 #calendarHealthOverview .cal-health-tile:focus-visible{outline:2px solid var(--text);outline-offset:2px}
@@ -136,15 +136,15 @@
  pointer-events:none;
 }
 :root[data-theme=light] #calendarHealthOverview .cal-health-tile{
- background:linear-gradient(155deg,var(--health-wash),transparent 74%),#fff;
- border-color:rgba(49,68,88,.12);
+ background:linear-gradient(155deg,var(--health-wash),transparent 74%),var(--card);
+ border-color:var(--seyveo-hdr-outline);
  box-shadow:inset 0 1px 0 rgba(255,255,255,.82);
 }
 :root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Давление"]{
- --health-wash:rgba(74,150,210,.095);--health-ink:#4b88b3;
+ --health-wash:var(--seyveo-hdr-active);--health-ink:var(--seyveo-emerald);
 }
 :root[data-theme=light] #calendarHealthOverview .cal-health-tile[data-health-quick="Пульс"]{
- --health-wash:rgba(198,95,128,.085);--health-ink:#b76c80;
+ --health-wash:var(--seyveo-specular);--health-ink:var(--text);
 }
 @media(max-width:370px){
  #calendarHealthOverview .cal-health-tiles{gap:6px}
