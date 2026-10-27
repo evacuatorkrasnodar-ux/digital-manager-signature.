@@ -236,11 +236,11 @@
  }
 }
 :root[data-theme=light] #notesDialog .notes-list{
- background:#fff;border-color:rgba(45,61,80,.11);
+ background:var(--card);border-color:var(--seyveo-hdr-outline);
 }
 :root[data-theme=light] #noteReadDialog .note-read-content,
 :root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{
- background:#fff;border-color:rgba(45,61,80,.12);
+ background:var(--card);border-color:var(--seyveo-hdr-outline);
 }
 
 /* SEYVEO Notebook · Quiet Cinema · a single intrinsic-height list. */
@@ -301,8 +301,8 @@
  background:transparent;border-color:transparent;
 }
 :root[data-theme=light] #notesDialog .note-empty-mark{
- background:rgba(90,110,135,.045);
- border-color:rgba(60,77,97,.13);
+ background:var(--seyveo-hdr-active);
+ border-color:var(--seyveo-hdr-outline);
 }
 @media(max-width:370px){
  #notesDialog.notes-dialog[open]{
@@ -532,7 +532,7 @@
   font-size:16px;line-height:1.58;white-space:pre-wrap;overflow-wrap:break-word;
 }
 #noteReviewDialog.note-review-dialog #noteReviewText:focus-visible{outline:0;border-bottom-color:var(--text)}
-:root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{background:transparent;border-bottom-color:rgba(45,61,80,.20)}
+:root[data-theme=light] #noteReviewDialog.note-review-dialog textarea{background:transparent;border-bottom-color:var(--seyveo-hdr-outline)}
 #noteReviewDialog.note-review-dialog .info-actions{gap:10px;margin-top:13px}
 #noteReviewDialog.note-review-dialog .info-actions>.btn{min-height:48px}
 #notesDialog.notes-dialog[open] .notes-head{margin-right:76px}
