@@ -674,12 +674,12 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Black Velvet HDR-like / My World color reference, 27 Oct 2026.
-   Deep graphite-green #111917 → #172b25; emerald is a whisper, not a painted canvas.
-   No radial silhouettes, no filters, no change to the approved orb. */
+/* SEYVEO · Black Velvet HDR-like / the approved My World canvas.
+   Use My World's exact muted graphite-green gradient on every destination;
+   never add an orb-shaped background or a new GPU-hungry effect. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#101817 0%,#111e1b 27%,#142521 53%,#172b25 78%,#10211d 100%);
+ background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1209,6 +1209,18 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    Do not affect Home orb, dock voice button, or cards. */
 #seyveoCompanion:not([hidden]){display:none!important;min-height:0!important;margin:0!important;padding:0!important}
 
+/* Keep the owner's approved My World color treatment unchanged while
+   the other scenes borrow its canvas. Only scoped design tokens, no overlay. */
+html.sv-space-active:not([data-theme=light]):has(#lifePage:not([hidden])){
+ --text:#f3faf7;
+ --secondary:#b0cfc5;
+ --line:#3b625b;
+ --soft-line:#a6d9ca28;
+ --seyveo-hdr-outline:rgba(190,242,223,.18);
+ --seyveo-hdr-active:rgba(103,206,172,.12);
+ --seyveo-emerald:#68cfad;
+ --seyveo-specular:rgba(227,255,246,.083);
+}
 /* My World · seamless Life canvas.
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
@@ -1429,7 +1441,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  justify-content:flex-end!important;gap:5px!important;
  padding:15px!important;margin:0!important;
  border:1px solid var(--seyveo-hdr-outline)!important;
- border-radius:23px!important;background:linear-gradient(157deg,rgba(240,253,246,.054),rgba(119,160,139,.022) 47%,rgba(18,43,35,.02) 100%)!important;
+ border-radius:23px!important;background:linear-gradient(157deg,rgba(213,255,242,.076),rgba(79,157,137,.032) 47%,rgba(19,48,47,.023) 100%)!important;
  box-shadow:none!important;text-align:left!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
