@@ -1038,6 +1038,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
  </div>
+ <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
+ <div class="cal-bp-report-head"><span class="cal-bp-report-icon" aria-hidden="true">✦</span><strong>Сэйви · оценка давления</strong></div>
+ <p id="calendarBpReportStatus"></p>
+ <p id="calendarBpReportAdvice"></p>
+ <p id="calendarBpReportAverage" class="cal-bp-average" hidden></p>
+ <small>Информационная оценка домашних измерений, не диагноз. Не меняйте лечение без врача.</small>
+ </div>
 </section>
 <section id="calendarPersonalTools" class="pw-root" aria-label="Личные инструменты" hidden></section>
 <section id="seyveoWorldHub" class="seyveo-world-hub" aria-label="Мой мир · люди и связи" hidden>
@@ -1057,7 +1064,16 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div id="calendarSpaceForm" class="calendar-space-edit" data-show="false" hidden>
 <h3 id="calendarSpaceFormTitle">Новая запись</h3>
 <form id="calendarSpaceFormFields">
-<label><span id="calendarSpaceNameLabel">Название</span><input id="calendarSpaceTitle" type="text" maxlength="110" required autocomplete="off"></label>
+<label id="calendarSpaceGenericValue"><span id="calendarSpaceNameLabel">Название</span><input id="calendarSpaceTitle" type="text" maxlength="110" required autocomplete="off"></label>
+<div id="calendarBloodPressureFields" class="cal-bp-fields" hidden>
+ <p class="cal-bp-lead">Перепишите три числа с тонометра</p>
+ <div class="cal-bp-grid">
+  <label><span>Верхнее</span><input id="calendarBpSystolic" type="number" min="50" max="300" step="1" inputmode="numeric" placeholder="130" autocomplete="off"><small>мм рт. ст.</small></label>
+  <label><span>Нижнее</span><input id="calendarBpDiastolic" type="number" min="30" max="200" step="1" inputmode="numeric" placeholder="80" autocomplete="off"><small>мм рт. ст.</small></label>
+  <label><span>Пульс</span><input id="calendarBpPulse" type="number" min="30" max="240" step="1" inputmode="numeric" placeholder="72" autocomplete="off"><small>уд/мин</small></label>
+ </div>
+ <div id="calendarBpLiveAdvice" class="cal-bp-preview" aria-live="polite">Введите три значения — Сэйви поможет разобраться в результате.</div>
+</div>
 <div class="calendar-space-date-row">
 <label>Раздел<select id="calendarSpaceKind"></select></label>
 <label>Дата · необязательно<input id="calendarSpaceDate" type="date"></label>
