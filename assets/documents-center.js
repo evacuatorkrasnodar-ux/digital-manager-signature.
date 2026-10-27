@@ -162,13 +162,35 @@ function draw(){
   panel.append(note('Это ручной редактор черновиков. Сэйви пока не генерирует и не проверяет содержание.'));
  }
  host.append(panel);
- host.append(note('Прототип: файлы и черновики доступны только в текущем сеансе, не сохраняются в архиве и не загружаются на сервер. Переключатель «Личное / Бизнес» пока не является защищённым хранилищем.'));
+ const archive=el('details','sv-doc-vault-shell');
+ const summary=el('summary','sv-doc-vault-summary');
+ summary.append(el('span','sv-doc-vault-title','Защищённый архив'),
+                el('small','','Сохранение с шифрованием · по паролю'));
+ const archiveContents=el('div','sv-doc-vault');
+ archive.append(summary,archiveContents);
+ archive.addEventListener('toggle',()=>{
+  if(!archive.open)return;
+  window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(archiveContents,{
+   area,
+   currentArea:()=>area,
+   selectedFile:()=>files[area],
+   draft:()=>({...drafts[area]}),
+   openFile(file,target){
+    if(!tabNames[target])return;
+    area=target;files[target]=file;view='file';draw();
+   },
+   clearSession(){reset();draw();}
+  });
+ });
+ host.append(archive);
+ host.append(note('Документы и черновики в редакторе остаются только до выхода из раздела. Для хранения откройте «Защищённый архив». В прототипе нет облачной резервной копии.'));
 }
 function mount(parent){
  reset();
  host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
 function destroy(){
+ window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
 window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea});
