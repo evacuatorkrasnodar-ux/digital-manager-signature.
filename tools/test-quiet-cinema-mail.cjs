@@ -14,7 +14,7 @@ assert.match(source,/previewScene=present\.length\?createSurface\(present\[0\],p
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=56/);
+assert.match(html,/assets\/living-moment\.js\?v=57/);
 assert.match(html,/assets\/living-moment\.css\?v=41/);
 assert.match(html,/assets\/personal-tasks\.js\?v=23/);
 assert.match(html,/assets\/personal-tasks\.css\?v=20/);
@@ -167,3 +167,25 @@ console.log('PASS original three-card Quiet Cinema, mail actions, review, edit, 
 }
 assert.match(style,/lm-queue-arrive/,'New queue entry has its own restrained rising animation');
 console.log('PASS twenty-item Home queue, three visible, next rises after deferral, no fake completion.');
+
+/* Regression: startup with no saved tasks must not reference the removed item
+ * variable. This exact path is what previously crashed Home refresh. */
+{
+ const ids={homePage:new Node(),stage:new Node(),dynamic:new Node(),seyveoLivingMoment:new Node(),
+  seyveoLivingTiles:new Node(),seyveoLivingCaption:new Node()};
+ const d={hidden:false,activeElement:null,documentElement:new Node(),querySelector(){return null},
+  getElementById:id=>ids[id]||null,createElement:tag=>new Node(tag),
+  createElementNS:(ns,tag)=>new Node(tag),addEventListener(){}};
+ const calls=[];
+ const w={matchMedia:()=>({matches:false}),innerHeight:820,visualViewport:{height:820},
+  addEventListener(){},dispatchEvent(){},setTimeout:(fn,ms)=>{calls.push({fn,ms});return calls.length}};
+ vm.runInNewContext(source,{document:d,window:w,location:{hash:''},MutationObserver,
+  queueMicrotask:fn=>fn(),clearTimeout(){},localStorage:{getItem:()=>null},Date,
+  Event:class{constructor(type){this.type=type}},
+  CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}}},{timeout:1700});
+ const startup=calls.find(call=>call.ms===7800);
+ assert.ok(startup,'Original opening countdown remains');
+ assert.doesNotThrow(()=>startup.fn(),'No ReferenceError when empty Home becomes ready');
+ assert.equal(w.SEYVEO_LIVING_MOMENT.state(),'preview','Original three-card scene starts');
+}
+console.log('PASS no-task Home startup, no stale item variable in refresh.');
