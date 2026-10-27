@@ -22,7 +22,13 @@ assert.match(overview,/data-clean-section="command"/,'Single My Business entry r
 assert.doesNotMatch(overview,/data-clean-section="business"/,'No second confusing business menu entry');
 assert.match(overview,/<strong>Мой бизнес<\/strong><small>Компания, сотрудники, чаты и задачи<\/small>/,'Business entry explains what is inside');
 assert.match(html,/id="svcpOpenCompany"/,'Company still accessible within business hub');
-assert.match(html,/id="svcpOpenMore"/,'Advanced company tools still accessible');
+assert.doesNotMatch(html,/id="svcpOpenMore"/,'No more giant second business menu');
+for(const name of ['Команда','Кадры','Эффект SEYVEO']){
+ assert.match(html,new RegExp('data-svcp-feature="'+name+'"'),'Direct specialized entry preserved: '+name);
+}
+assert.match(html,/id="openCompanyPassportFromManage"/,'Real company card preserved');
+assert.match(html,/id="seyveoStaffCards"/,'HR data card preserved');
+assert.match(html,/id="seyveoRoiForm"/,'ROI calculator preserved');
 assert.ok(html.indexOf('id="openManageRoadmap"')<detailStart,'Roadmap control is not hidden in About detail');
 assert.match(management,/\$\('openManageRoadmap'\)\.addEventListener\('click'/,'Single existing roadmap handler remains');
 assert.match(management,/roadmapDialog\.showModal\(\)/,'Ideas open the original dialog');
@@ -37,7 +43,7 @@ assert.doesNotMatch(inline,/if\(key==='about'\).*openManageRoadmap/,'About does 
 class Fake{
  constructor(tag='DIV'){
   this.tagName=tag;this.hidden=false;this.open=false;this.textContent='';this.handlers={};this.elements=[];this.states=new Set();
-  this.classList={add:x=>this.states.add(x),remove:x=>this.states.delete(x),contains:x=>this.states.has(x)};
+  this.classList={add:x=>this.states.add(x),remove:x=>this.states.delete(x),contains:x=>this.states.has(x),toggle:(x,on)=>{if(on)this.states.add(x);else this.states.delete(x)}};
  }
  addEventListener(type,fn){(this.handlers[type]??=[]).push(fn)}
  fire(type,event){for(const fn of this.handlers[type]??[])fn(event)}
@@ -45,16 +51,27 @@ class Fake{
  append(x){this.elements.push(x)}
  querySelector(){return null}
  querySelectorAll(){return []}
+ removeAttribute(x){if(x==='open')this.open=false}
 }
 const material=new Fake('DETAILS');
 const groups=Array.from({length:4},()=>new Fake('SECTION'));
 groups[2].querySelector=selector=>selector==='.manage-card > details.seyveo-manage-fold'?material:null;
 groups[2].querySelectorAll=selector=>selector==='.seyveo-selected-item'&&material.states.has('seyveo-selected-item')?[material]:[];
 const advancedBusiness=new Fake('DETAILS');
-groups[3].querySelector=selector=>selector==='.manage-card > details:nth-child(1)'?advancedBusiness:null;
+const businessFeatures=Object.fromEntries(['Команда','Кадры','Эффект SEYVEO'].map(name=>{
+ const node=new Fake('DETAILS');node.querySelector=selector=>
+  selector==='summary .manage-text strong'?{textContent:name}:null;
+ return [name,node];
+}));
+groups[3].querySelector=selector=>
+ selector==='.manage-card > details:nth-child(1)'||
+ selector==='.manage-card > details.seyveo-manage-fold'?advancedBusiness:null;
+groups[3].querySelectorAll=selector=>selector==='.seyveo-hr-operations > details.seyveo-manage-fold'?
+ Object.values(businessFeatures):[];
 const menu=new Fake(),detail=new Fake(),legacy=new Fake(),back=new Fake();
 const network=new Fake(),command=new Fake(),title=new Fake(),explanation=new Fake();
-legacy.querySelectorAll=selector=>selector==='.seyveo-management-v2-group'?groups:[];
+legacy.querySelectorAll=selector=>selector==='.seyveo-management-v2-group'?groups:
+ selector==='.sv-business-focus'?Object.values(businessFeatures).filter(x=>x.states.has('sv-business-focus')):[];
 const lookup={seyveoCleanManageMenu:menu,seyveoCleanDetail:detail,seyveoCleanLegacy:legacy,
  seyveoNetworkPage:network,seyveoBusinessCommandPage:command,seyveoCleanBack:back,
  seyveoCleanTitle:title,seyveoCleanExplain:explanation};
@@ -85,14 +102,24 @@ menu.fire('click',{target:{closest:()=>entry('command','Мой бизнес','К
 assert.equal(command.hidden,false,'Unified business hub opens');
 assert.equal(title.textContent,'Мой бизнес','Clear business heading');
 assert.equal(legacy.hidden,true,'Legacy section hidden during hub');
-assert.equal(typeof window.SEYVEO_BUSINESS_NAV?.openTools,'function','Advanced route available without second menu row');
-window.SEYVEO_BUSINESS_NAV.openTools();
-assert.equal(command.hidden,true,'Company advanced section replaces hub');
-assert.equal(advancedBusiness.open,true,'Existing business tools remain reachable');
-assert.equal(title.textContent,'Инструменты бизнеса','Advanced company title');
-back.fire('click',{});
-assert.equal(command.hidden,false,'Back from advanced company tools returns to business hub');
+assert.equal(typeof window.SEYVEO_BUSINESS_NAV?.openFeature,'function','Direct specialist routes available');
+for(const [name,heading] of [
+ ['Команда','Смены и развитие'],['Кадры','Подбор сотрудников'],['Эффект SEYVEO','Эффективность бизнеса']
+]){
+ window.SEYVEO_BUSINESS_NAV.openFeature(name);
+ assert.equal(command.hidden,true,'Specialized tools replace hub');
+ assert.equal(title.textContent,heading,'Specialized title for '+name);
+ assert.equal(legacy.states.has('sv-business-feature-mode'),true,'No giant legacy catalogue');
+ for(const [other,element] of Object.entries(businessFeatures)){
+  assert.equal(element.open,name===other,'Only selected specialist content opens: '+other);
+  assert.equal(element.states.has('sv-business-focus'),name===other,'Correct specialist targeted');
+ }
+ assert.equal(advancedBusiness.open,false,'Duplicate company toolbox stays closed');
+ back.fire('click',{});
+ assert.equal(command.hidden,false,'Back from specialist returns to My Business');
+ assert.equal(legacy.states.has('sv-business-feature-mode'),false,'Legacy styling cleaned after Back');
+}
 back.fire('click',{});
 assert.equal(command.hidden,true,'Hub closes');
 assert.equal(menu.hidden,false,'Back returns to Management');
-console.log('PASS Management: one My Business entrance, company and team tools, correct Back, original Ideas and About.');
+console.log('PASS Management: one My Business, three specialized direct routes, clean Back, existing HR and ROI, original Ideas.');
