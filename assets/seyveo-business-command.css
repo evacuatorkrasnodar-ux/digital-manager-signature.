@@ -3,6 +3,26 @@
 #seyveoBusinessCommandPage[hidden],
 #seyveoBusinessCommandPage [hidden]{display:none!important}
 #seyveoBusinessCommandPage{color:var(--text);padding:0 0 26px;max-width:740px;margin:0 auto;font-family:inherit}
+
+/* When opened from a direct Business row, show ONLY that destination.
+   No second company tile, menu tabs, decorative header or duplicate tools. */
+#seyveoBusinessCommandPage.svcp-direct-view .svcp-top,
+#seyveoBusinessCommandPage.svcp-direct-view .svcp-company-entry,
+#seyveoBusinessCommandPage.svcp-direct-view .svcp-switch,
+#seyveoBusinessCommandPage.svcp-direct-view .svcp-tools{
+ display:none!important;
+}
+#seyveoBusinessCommandPage.svcp-direct-view{
+ max-width:none;
+ padding:4px 0 calc(85px + env(safe-area-inset-bottom,0px));
+}
+#seyveoBusinessCommandPage.svcp-direct-view .svcp-panel{
+ width:100%;
+}
+#seyveoCleanManageMenu .manage-row.seyveo-business-direct .manage-text small{
+ line-height:1.4;
+}
+
 .svcp-top{position:relative;padding:22px 18px 20px;overflow:hidden;border:1px solid rgba(106,167,138,.25);border-radius:22px;background:linear-gradient(142deg,rgba(31,84,62,.26),rgba(30,51,43,.13) 56%,rgba(15,26,23,.07));}
 .svcp-top:before{content:"";pointer-events:none;position:absolute;width:190px;height:190px;border-radius:50%;top:-123px;right:-35px;background:radial-gradient(circle,rgba(81,209,145,.17),transparent 69%)}
 .svcp-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:600;color:#72bb96}
