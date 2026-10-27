@@ -13,10 +13,10 @@ html.seyveo-conversation:not([data-theme=light]) body{
  overflow:hidden!important;overscroll-behavior:none;
  background:
   radial-gradient(ellipse 108vw 475px at 50% 232px,
-   rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
+   rgba(206,248,233,.063) 0%,rgba(102,177,161,.023) 43%,transparent 87%),
   radial-gradient(ellipse 116vw 470px at 46% 615px,
-   rgba(118,119,128,.027) 0%,transparent 78%),
-  linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
+   rgba(87,160,147,.022) 0%,transparent 78%),
+  linear-gradient(180deg,#142124 0%,#102023 52%,#0b171a 100%);
  background-repeat:no-repeat;
 }
 html.seyveo-conversation[data-theme=light] body{
@@ -114,8 +114,8 @@ html.seyveo-conversation .seyveo-conversation-turn--you{
  max-width:min(91%,460px);min-width:0;
  margin:2px 0 7px auto;padding:10px 13px 11px;
  color:#f1f3f6;
- background:rgba(232,236,244,.092);
- border:1px solid rgba(226,233,244,.16);
+ background:rgba(205,244,229,.078);
+ border:1px solid rgba(188,238,217,.14);
  border-radius:18px 18px 7px 18px;
  box-shadow:none;
 }
@@ -412,7 +412,7 @@ html.seyveo-conversation .seyveo-conversation-heading span.is-processing::after{
 /* The square means something real: tap to cancel a queued action or stop
  * speech playback. A finished response always restores the send plane. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-stop-action{
- background:linear-gradient(145deg,#3c977d,#226953)!important;
+ background:linear-gradient(145deg,#339a7e,#235f54)!important;
  border-color:rgba(177,232,206,.48)!important;
  color:#f2fff8!important;
  box-shadow:inset 0 1px 0 rgba(240,255,246,.18)!important;
@@ -525,18 +525,18 @@ html.seyveo-conversation #ask.prompt:not(.expanded):focus-within{
  border:0!important;box-shadow:none!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question{
- color:#f2f3f6!important;-webkit-text-fill-color:#f2f3f6!important;
- caret-color:#f2f3f6;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ caret-color:var(--text);
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
- color:#b7c2cf!important;-webkit-text-fill-color:#b7c2cf!important;
+ color:var(--secondary)!important;-webkit-text-fill-color:var(--secondary)!important;
  opacity:1!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoConversationMic,#composerCompactSend){
  background:transparent!important;border:0!important;
  border-radius:0!important;box-shadow:none!important;
- color:#d8dee7!important;min-height:44px!important;
+ color:var(--text)!important;min-height:44px!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationMic,#composerCompactSend) svg{
@@ -544,12 +544,12 @@ html.seyveo-conversation #ask.prompt:not(.expanded)
  stroke-width:1.7;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-name{
- color:#c0c8d3!important;font-weight:450!important;
+ color:var(--secondary)!important;font-weight:450!important;
  letter-spacing:.005em!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoConversationMic,#composerCompactSend):active{
- color:#fff!important;opacity:.76;
+ color:var(--text)!important;opacity:.76;
 }
 html.seyveo-conversation #ask.prompt.seyveo-has-text:not(.expanded) #composerCompactSend{
  background:transparent!important;border:0!important;
