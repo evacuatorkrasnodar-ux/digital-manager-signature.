@@ -17,13 +17,13 @@ html.sv-space-active #managePage #seyveoCleanManageMenu{
  margin:10px 0 28px;padding:0 14px 10px;
  border:1px solid var(--seyveo-hdr-outline);
  border-radius:24px;
- background:linear-gradient(159deg,rgba(222,255,242,.053),rgba(48,117,105,.025) 48%,rgba(11,40,40,.04));
+ background:linear-gradient(159deg,rgba(243,255,249,.050),rgba(125,163,142,.016) 48%,rgba(17,43,34,.025));
  box-shadow:none;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
  margin:0!important;padding:16px 0 4px;
  border:0;
- border-top:1px solid rgba(165,220,201,.17);
+ border-top:1px solid rgba(172,207,187,.15);
  background:transparent;
 }
 html.sv-space-active #managePage #seyveoCleanManageMenu .manage-group:first-child{
