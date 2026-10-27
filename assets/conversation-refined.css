@@ -485,7 +485,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory) svg{
  display:block;width:20px;height:20px;fill:none;stroke:currentColor;
- stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory):active{
@@ -529,13 +529,16 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoConversationMic,#composerCompactSend){
+ box-sizing:border-box;display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ flex:0 0 44px!important;margin:0!important;padding:0!important;
  background:transparent!important;border:0!important;
  border-radius:0!important;box-shadow:none!important;
- color:var(--text)!important;min-height:44px!important;
+ color:var(--text)!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded)
  :is(#seyveoConversationMic,#composerCompactSend) svg{
- width:21px;height:21px;
+ width:20px;height:20px;
  stroke-width:1.7;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-conversation-name{
@@ -640,13 +643,13 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-b
 /* Single chat editor expander, no second input and no dock. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatExpand{
  order:5;display:grid!important;place-items:center;
- width:32px;min-width:32px;height:44px;flex:0 0 32px;
+ width:44px;min-width:44px;height:44px;min-height:44px;flex:0 0 44px;
  margin:0;padding:0;border:0!important;border-radius:50%;
  background:transparent!important;box-shadow:none!important;
  color:var(--secondary);cursor:pointer;
 }
 html.seyveo-conversation #seyveoChatExpand svg{
- display:block;width:19px;height:19px;fill:none;
+ display:block;width:20px;height:20px;fill:none;
  stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 html.seyveo-conversation #seyveoChatExpand:focus-visible{
@@ -684,14 +687,25 @@ html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded):focu
 /* Chat photo picker follows Back and History. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
  order:3!important;display:grid!important;place-items:center;
- width:34px;min-width:34px;height:44px;flex:0 0 34px;
+ width:44px;min-width:44px;height:44px;min-height:44px;flex:0 0 44px;
  border:0!important;border-radius:50%;padding:0;margin:0;
  background:transparent!important;box-shadow:none!important;
  color:var(--text);cursor:pointer;
 }
 html:not(.seyveo-conversation) #seyveoChatPlus{display:none!important}
 #seyveoChatPlus svg{
- width:21px;height:21px;fill:none;stroke:currentColor;
+ width:20px;height:20px;fill:none;stroke:currentColor;
  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 #seyveoChatPlus:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+/* The composer itself is unchanged. On narrow devices only the six icon hit
+   boxes contract equally, while remaining 44px tall and optically centered. */
+@media(max-width:350px){
+ html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoChatPlus,
+     #seyveoChatExpand,#seyveoConversationMic,#composerCompactSend){
+  width:40px!important;min-width:40px!important;height:44px!important;min-height:44px!important;
+  flex:0 0 40px!important;
+ }
+}
+
