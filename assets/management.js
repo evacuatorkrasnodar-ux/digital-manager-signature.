@@ -315,7 +315,7 @@ function drawRoadmap(){
   if(!matching.length)continue;
   displayed+=matching.length;
   const section=document.createElement('details');section.className='manage-roadmap-group';
-  section.open=!!search||pending||group.id==='living_world'||group.id==='foundation'||group.id==='sales';
+  section.open=!!search||pending||group.id==='core_principle'||group.id==='living_world'||group.id==='foundation'||group.id==='sales';
   const summary=document.createElement('summary');summary.className='manage-roadmap-group-head';
   const title=document.createElement('strong');title.textContent=group.name;
   const count=document.createElement('span');count.textContent=matching.length+' пунктов';
