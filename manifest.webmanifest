@@ -5,18 +5,18 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#141619",
-  "theme_color": "#141619",
+  "background_color": "#101311",
+  "theme_color": "#101311",
   "lang": "ru",
   "icons": [
     {
-      "src": "assets/app-icon.svg?v=4",
+      "src": "assets/app-icon.svg?v=5",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "assets/app-icon-maskable.svg?v=4",
+      "src": "assets/app-icon-maskable.svg?v=5",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
