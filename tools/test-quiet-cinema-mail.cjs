@@ -10,7 +10,7 @@ const html=fs.readFileSync('index.html','utf8');
 new vm.Script(source,{filename:'assets/living-moment.js'});
 const sampleKinds=['contract','mail','health'];
 for(const kind of sampleKinds)assert.match(source,new RegExp("kind:'"+kind+"'"),'Original card '+kind+' preserved');
-assert.match(source,/previewScene=createSurface\(sample\[0\],sample\.slice\(1\)\)/,'Original three-card queue remains');
+assert.match(source,/previewScene=present\.length\?createSurface\(present\[0\],present\.slice\(1\)\)/,'Original three-card queue remains when nothing is deferred');
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
@@ -120,6 +120,8 @@ b('Подробнее').click();assert.equal(mailOpen,1,'Details navigates to ex
 b('Позже').click();
 assert.equal(api.deferred().length,1,'The test mail is published for the ONE existing Tasks list');
 assert.equal(api.deferred()[0].kind,'mail','Deferred training item remains distinct from real saved tasks');
+assert.equal(api.preview(),true,'Home demo can reopen without the deferred mail');
+assert.equal(all(tiles,x=>x.dataset?.lmKind==='mail').length,0,'Deferred mail stays out of replay');
 assert.equal(walk(tasks,x=>x.id==='seyveoPreviewMailLater'),null,'No separate demonstration card on Tasks screen');
 assert.equal(tasks.children[tasks.children.length-1],personal,'Existing personal task panel not replaced');
 assert.equal(tiles.children.length,1,'No cloned or competing Home card ever created');
