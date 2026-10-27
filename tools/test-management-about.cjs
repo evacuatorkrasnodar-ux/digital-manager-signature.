@@ -18,9 +18,10 @@ for(const id of ['seyveoCleanManageMenu','seyveoCleanDetail','seyveoCleanLegacy'
 }
 assert.match(overview,/id="openManageRoadmap"/,'Original Ideas button appears directly in overview');
 assert.match(overview,/Карта развития · Поиск/,'Original roadmap displays an intelligible label');
-assert.match(overview,/data-clean-section="command"/,'Single My Business entry remains accessible');
-assert.doesNotMatch(overview,/data-clean-section="business"/,'No second confusing business menu entry');
-assert.match(overview,/<strong>Мой бизнес<\/strong><small>Компания, сотрудники, чаты и задачи<\/small>/,'Business entry explains what is inside');
+const businessKeys=[...overview.matchAll(/data-clean-business="([^"]+)"/g)].map(m=>m[1]);
+assert.deepEqual(businessKeys,['company','people','chat','tasks','pulse','documents','hiring','efficiency'],'Eight direct Business rows in order');
+assert.doesNotMatch(overview,/data-clean-section="command"/,'No intermediary My Business menu');
+assert.match(html,/id="svcpChats"/,'Existing chat preserved');
 assert.match(html,/id="svcpOpenCompany"/,'Company still accessible within business hub');
 assert.doesNotMatch(html,/id="svcpOpenMore"/,'No more giant second business menu');
 for(const name of ['Команда','Кадры','Эффект SEYVEO']){
@@ -42,11 +43,12 @@ assert.match(inline,/about:\[2,'details\.seyveo-manage-fold'\]/,'About uses stab
 assert.doesNotMatch(inline,/if\(key==='about'\).*openManageRoadmap/,'About does not duplicate Ideas');
 class Fake{
  constructor(tag='DIV'){
-  this.tagName=tag;this.hidden=false;this.open=false;this.textContent='';this.handlers={};this.elements=[];this.states=new Set();
+  this.tagName=tag;this.hidden=false;this.open=false;this.textContent='';this.handlers={};this.elements=[];this.states=new Set();this.dataset={};this.calls=0;
   this.classList={add:x=>this.states.add(x),remove:x=>this.states.delete(x),contains:x=>this.states.has(x),toggle:(x,on)=>{if(on)this.states.add(x);else this.states.delete(x)}};
  }
  addEventListener(type,fn){(this.handlers[type]??=[]).push(fn)}
  fire(type,event){for(const fn of this.handlers[type]??[])fn(event)}
+ click(){this.calls++;this.fire('click',{})}
  replaceChildren(...items){this.elements=items}
  append(x){this.elements.push(x)}
  querySelector(){return null}
@@ -85,41 +87,41 @@ function entry(name,label,desc){
   return null;
  }};
 }
-menu.querySelector=selector=>selector==='[data-clean-section="command"]'
- ?entry('command','Мой бизнес','Компания, сотрудники, чаты и задачи'):null;
-menu.fire('click',{target:{closest:()=>entry('about','О SEYVEO','История и материалы SEYVEO')}});
-assert.equal(menu.hidden,true,'Overview closes');
-assert.equal(detail.hidden,false,'About opens');
-assert.equal(title.textContent,'О SEYVEO','Correct About title');
-assert.equal(material.open,true,'Project materials unfold');
-assert.equal(material.states.has('seyveo-selected-item'),true,'Project materials shown');
-assert.equal(explanation.hidden,false,'About explanation appears');
-back.fire('click',{});
-assert.equal(menu.hidden,false,'Back restores overview');
-assert.equal(detail.hidden,true,'Back closes About');
-assert.equal(material.states.has('seyveo-selected-item'),false,'No stale selected material');
-menu.fire('click',{target:{closest:()=>entry('command','Мой бизнес','Компания, сотрудники, чаты и задачи')}});
-assert.equal(command.hidden,false,'Unified business hub opens');
-assert.equal(title.textContent,'Мой бизнес','Clear business heading');
-assert.equal(legacy.hidden,true,'Legacy section hidden during hub');
-assert.equal(typeof window.SEYVEO_BUSINESS_NAV?.openFeature,'function','Direct specialist routes available');
-for(const [name,heading] of [
- ['Команда','Смены и развитие'],['Кадры','Подбор сотрудников'],['Эффект SEYVEO','Эффективность бизнеса']
-]){
- window.SEYVEO_BUSINESS_NAV.openFeature(name);
- assert.equal(command.hidden,true,'Specialized tools replace hub');
- assert.equal(title.textContent,heading,'Specialized title for '+name);
- assert.equal(legacy.states.has('sv-business-feature-mode'),true,'No giant legacy catalogue');
- for(const [other,element] of Object.entries(businessFeatures)){
-  assert.equal(element.open,name===other,'Only selected specialist content opens: '+other);
-  assert.equal(element.states.has('sv-business-focus'),name===other,'Correct specialist targeted');
- }
- assert.equal(advancedBusiness.open,false,'Duplicate company toolbox stays closed');
- back.fire('click',{});
- assert.equal(command.hidden,false,'Back from specialist returns to My Business');
- assert.equal(legacy.states.has('sv-business-feature-mode'),false,'Legacy styling cleaned after Back');
+const tabs=Object.fromEntries(['team','chats','tasks'].map(k=>[k,new Fake('BUTTON')]));
+command.querySelector=selector=>{
+ const hit=selector.match(/data-svcp-tab="([^"]+)"/);
+ return hit?tabs[hit[1]]:null;
+};
+const clickBusiness=key=>{
+ const target={dataset:{cleanBusiness:key}};
+ menu.fire('click',{target:{closest:selector=>selector==='[data-clean-business]'?target:null}});
+};
+const normal=(key,title)=>menu.fire('click',{target:{closest:selector=>selector==='[data-clean-business]'?null:entry(key,title,'Описание')}});
+normal('about','О SEYVEO');
+assert.equal(material.open,true,'About material opens');
+back.click();
+assert.equal(menu.hidden,false,'About Back works');
+for(const [key,heading,tab] of [['people','Сотрудники','team'],['chat','Рабочие чаты','chats'],['tasks','Поручения','tasks']]){
+ clickBusiness(key);
+ assert.equal(title.textContent,heading,'Direct destination '+key);
+ assert.equal(command.hidden,false,'Business screen opens');
+ assert.equal(command.states.has('svcp-direct-view'),true,'No nested Business hub');
+ assert.ok(tabs[tab].calls>0,'Correct tab selected');
+ back.click();
+ assert.equal(menu.hidden,false,'Back to Business list');
 }
-back.fire('click',{});
-assert.equal(command.hidden,true,'Hub closes');
-assert.equal(menu.hidden,false,'Back returns to Management');
-console.log('PASS Management: one My Business, three specialized direct routes, clean Back, existing HR and ROI, original Ideas.');
+assert.equal(typeof window.SEYVEO_BUSINESS_NAV?.openFeature,'function','Original advanced routing intact');
+clickBusiness('people');
+window.SEYVEO_BUSINESS_NAV.openFeature('Кадры');
+assert.equal(title.textContent,'Подбор сотрудников');
+back.click();
+assert.equal(title.textContent,'Сотрудники','Advanced HR returns to employee screen');
+back.click();
+clickBusiness('hiring');
+assert.equal(title.textContent,'Подбор сотрудников','Direct hiring route');
+back.click();
+clickBusiness('efficiency');
+assert.equal(title.textContent,'Эффективность бизнеса','Direct efficiency route');
+back.click();
+assert.equal(menu.hidden,false,'Final Back returns to overview');
+console.log('PASS Management: 8 direct Business buttons, focused pages, correct Back and About.');
