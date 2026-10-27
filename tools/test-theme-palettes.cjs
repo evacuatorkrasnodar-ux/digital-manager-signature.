@@ -12,7 +12,10 @@ const css={
  music:read('assets/seyveo-music.css'),
  talk:read('assets/living-conversation.css'),
  conversation:read('assets/conversation-refined.css'),
- dock:read('assets/floating-navigation.css')
+ dock:read('assets/floating-navigation.css'),
+ wellness:read('assets/personal-wellness.css'),
+ smartHome:read('assets/seyveo-smart-home.css'),
+ surfaces:read('assets/sayvi-surfaces.css')
 };
 const match=html.match(/data-theme-choice="([^"]+)"/g)||[];
 assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','dark','graphite','sapphire','light'],
@@ -26,6 +29,9 @@ assert.match(html,/assets\/living-space\.css\?v=44/);
 assert.match(html,/assets\/seyveo-music\.css\?v=36/);
 assert.match(html,/assets\/living-conversation\.css\?v=14/);
 assert.match(html,/assets\/conversation-refined\.css\?v=36/);
+assert.match(html,/assets\/personal-wellness\.css\?v=18/);
+assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
+assert.match(html,/assets\/sayvi-surfaces\.css\?v=6/);
 for(const variant of ['graphite','sapphire']){
  const selector='[data-theme=dark][data-palette='+variant+']';
  assert.ok(html.includes(selector),'Global tokens: '+variant);
@@ -33,6 +39,7 @@ for(const variant of ['graphite','sapphire']){
  assert.ok(css.music.includes(selector),'Music panels: '+variant);
  assert.ok(css.talk.includes(selector),'Feather Chat: '+variant);
  assert.ok(css.dock.includes(selector),'Dock: '+variant);
+ assert.ok(css.wellness.includes(selector),'Wellness breathing and care: '+variant);
 }
 assert.match(css.life,/:root\[data-theme=light\]/,'White gradient available');
 assert.match(css.music,/:root\[data-theme=light\]/,'White music sheet available');
@@ -49,5 +56,11 @@ assert.match(css.conversation,/background:var\(--sv-chat-composer-gradient\)!imp
  'Feather Chat writer uses palette');
 assert.doesNotMatch(css.life,/html\.sv-space-active:not\(\[data-theme=light\]\):has\(#lifePage/,
  'Old per-page green globals must not override graphite/sapphire');
+assert.match(css.smartHome,/color-mix\(in srgb,var\(--seyveo-emerald\) 3%,transparent\)/,
+ 'Smart Home uses shared theme accent');
+assert.match(css.surfaces,/--sv-complete:var\(--seyveo-emerald\)/,
+ 'Mail and document actions share global accent');
+assert.match(css.wellness,/background:var\(--sv-care-breath-disc\)/,
+ 'Wellness disc follows selected theme');
 assert.ok(!html.includes('assets/home-mail-demo.js'),'Home cards are unchanged');
 console.log('PASS theme contract: all options, restore, shared backgrounds, My World and dialogs, music, chat, dock.');
