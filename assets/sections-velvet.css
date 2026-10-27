@@ -214,14 +214,14 @@
 :root[data-theme=light] #managePage .manage-card,
 :root[data-theme=light] .seyveo-pulse-dialog :is(.pulse-stat,.pulse-chart-box),
 :root[data-theme=light] .onboard-dialog .onboard-options-list{
- background:#fff;border-color:rgba(48,66,88,.12)
+ background:var(--card);border-color:var(--seyveo-hdr-outline)
 }
 :root[data-theme=light] #calendarSpaceDialog .calendar-space-edit :is(input,select,textarea){
  background:transparent;border-color:var(--soft-line)
 }
 :root[data-theme=light] #calendarEventDialog .cal-field :is(input,textarea),
 :root[data-theme=light] .onboard-dialog .onboard-field input{
- background:#fff;border-color:rgba(48,66,88,.14)
+ background:var(--card);border-color:var(--seyveo-hdr-outline)
 }
 @media(max-width:370px){
  #calendarSpaceDialog.cal-space-dialog[open]{padding:17px 12px 13px}
