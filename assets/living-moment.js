@@ -209,7 +209,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  hero.append(artwork,copy);
  const controls=create('div','lm-actions');
  let remaining=[primary,...other],shown=primary,morphLocked=false;
- const seenQueueRows=new Set();
+ const seenQueueRows=new Set(real&&primary.eventId?[primary.eventId]:[]);
  let queueRendered=false;
  // Only the ORIGINAL Quiet Cinema Mail item gains actions; no new card.
  // The message is invented. No API, actual outgoing email or AI is used.
