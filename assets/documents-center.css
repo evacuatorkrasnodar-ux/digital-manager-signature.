@@ -1,0 +1,62 @@
+/* SEYVEO / Document Center — one refined workspace, no fake archive cards. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-hero{display:none!important}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{margin:4px 4px 17px}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-content{padding:0 5px}
+#sayviSurfacePage .sv-doc-center{max-width:620px;width:100%;min-width:0;margin:0 auto;box-sizing:border-box}
+#sayviSurfacePage .sv-doc-heading{display:flex;flex-direction:column;gap:4px;margin:0 0 17px}
+#sayviSurfacePage .sv-doc-heading strong{font-size:13px;font-weight:500;line-height:1.4;letter-spacing:-.012em}
+#sayviSurfacePage .sv-doc-heading small{font-size:11px;line-height:1.45;color:var(--secondary)}
+#sayviSurfacePage .sv-doc-switch{display:flex;gap:23px;border-bottom:1px solid var(--soft-line)}
+#sayviSurfacePage .sv-doc-action{
+ appearance:none;-webkit-appearance:none;
+ border:0;border-radius:0;box-shadow:none;
+ background:transparent;color:var(--secondary);
+ font:inherit;font-size:13px;font-weight:480;letter-spacing:-.012em;
+ line-height:1.35;cursor:pointer;
+ min-width:0;min-height:44px;padding:11px 1px;
+ text-align:left;-webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-doc-tab{position:relative;font-size:14px;min-width:77px}
+#sayviSurfacePage .sv-doc-tab[aria-pressed="true"]{color:var(--text);font-weight:560}
+#sayviSurfacePage .sv-doc-tab[aria-pressed="true"]::after{
+ content:"";position:absolute;height:2px;bottom:-1px;left:0;right:0;
+ background:var(--text);border-radius:2px;
+}
+#sayviSurfacePage .sv-doc-commands{display:flex;align-items:center;flex-wrap:wrap;gap:4px 22px;padding:12px 0 11px}
+#sayviSurfacePage .sv-doc-command[aria-pressed="true"]{color:var(--text);font-weight:540}
+#sayviSurfacePage .sv-doc-workspace{box-sizing:border-box;min-width:0;padding:12px 0 0}
+#sayviSurfacePage .sv-doc-subtitle{font-size:17px;line-height:1.36;letter-spacing:-.022em;font-weight:495;margin:0 0 12px}
+#sayviSurfacePage .sv-doc-file-actions{display:flex;align-items:center;gap:7px 22px;flex-wrap:wrap;margin:8px 0}
+#sayviSurfacePage .sv-doc-file-actions .sv-doc-action,
+#sayviSurfacePage .sv-doc-primary{color:var(--text);font-weight:530}
+#sayviSurfacePage .sv-doc-action:focus-visible,
+#sayviSurfacePage .sv-doc-input:focus-visible,
+#sayviSurfacePage .sv-doc-editor:focus-visible,
+#sayviSurfacePage .sv-doc-search:focus-visible,
+#sayviSurfacePage .sv-doc-file-link:focus-visible{
+ outline:2px solid var(--text);outline-offset:4px
+}
+#sayviSurfacePage .sv-doc-input,
+#sayviSurfacePage .sv-doc-editor,
+#sayviSurfacePage .sv-doc-search{
+ display:block;box-sizing:border-box;min-width:0;width:100%;
+ border:1px solid var(--soft-line);border-radius:13px;background:transparent;
+ color:var(--text);font:inherit;font-size:14px;line-height:1.55;
+ padding:11px 12px;margin:0 0 10px;
+}
+#sayviSurfacePage .sv-doc-editor{min-height:176px;resize:vertical}
+#sayviSurfacePage .sv-doc-input::placeholder,
+#sayviSurfacePage .sv-doc-editor::placeholder,
+#sayviSurfacePage .sv-doc-search::placeholder{color:var(--secondary)}
+#sayviSurfacePage .sv-doc-status{color:var(--secondary);font-size:12px;line-height:1.5;margin:7px 0;overflow-wrap:anywhere}
+#sayviSurfacePage .sv-doc-preview{width:100%;min-width:0;max-width:100%;overflow:hidden;margin-top:12px}
+#sayviSurfacePage .sv-doc-preview .sv-deep-file-frame{min-height:260px;height:min(47dvh,480px);width:100%}
+#sayviSurfacePage .sv-doc-preview .sv-deep-file-text{max-height:45dvh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+#sayviSurfacePage .sv-doc-file-link{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:5px;font-size:12px;color:var(--text)}
+#sayviSurfacePage .sv-doc-note{color:var(--secondary);font-size:11px;line-height:1.52;margin:14px 0 0;max-width:590px}
+#sayviSurfacePage .sv-doc-workspace+.sv-doc-note{border-top:1px solid var(--soft-line);padding-top:13px;margin-top:22px}
+@media(max-width:360px){
+ #sayviSurfacePage .sv-doc-commands{gap:2px 15px}
+ #sayviSurfacePage .sv-doc-command{font-size:12px}
+ #sayviSurfacePage .sv-doc-switch{gap:16px}
+}
