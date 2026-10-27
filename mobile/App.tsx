@@ -4,12 +4,12 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 
-// This is a separate native M1 diagnostic — NOT a replacement for the approved
+// This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
 // SEYVEO Home, plasma, dock, or the Black Velvet design reference.
 type ScreenState = VaultStatus | 'checking';
 const C = {
-  bg: '#090a0d', card: '#15171b', border: '#292c32',
-  text: '#f4f4f6', secondary: '#9da1a9', accent: '#c6c9d0'
+  bg: '#0e171a', card: '#172729', border: '#3b625b',
+  text: '#f3faf7', secondary: '#b0cfc5', accent: '#94e0c4'
 };
 
 function NativeFoundation() {
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   status: { color: C.text, fontSize: 15, lineHeight: 24 },
   detail: { color: C.secondary, fontSize: 13, lineHeight: 21, marginTop: 12 },
-  button: { borderRadius: 16, borderColor: '#5c5f68', borderWidth: 1, paddingVertical: 14, paddingHorizontal: 18, marginTop: 24 },
+  button: { borderRadius: 16, borderColor: '#467a6d', borderWidth: 1, paddingVertical: 14, paddingHorizontal: 18, marginTop: 24 },
   pressed: { opacity: 0.65 },
   buttonText: { color: C.text, textAlign: 'center', fontSize: 15 },
   success: { color: C.text, fontSize: 15 },
