@@ -58,6 +58,35 @@
 .svcp-task span{flex:1;overflow-wrap:anywhere}
 .svcp-task.is-done span{text-decoration:line-through;opacity:.52}
 .svcp-ghost{flex:none;border:0;background:none;color:var(--secondary);padding:7px 5px;font:inherit;font-size:12px;cursor:pointer}
+/* Additional actions appear in the relevant area, never behind a second
+   giant menu. The real old data handlers are retained in their original nodes. */
+#seyveoBusinessCommandPage .svcp-advanced-actions{
+ margin:16px 0 5px;
+ border-top:1px solid var(--soft-line);
+}
+#seyveoBusinessCommandPage .svcp-advanced-actions .svcp-tool{
+ min-height:62px;
+}
+#seyveoCleanLegacy.sv-business-feature-mode
+ .seyveo-management-v2-group.seyveo-selected-group > h2,
+#seyveoCleanLegacy.sv-business-feature-mode
+ .seyveo-management-v2-group.seyveo-selected-group > .manage-card > details.seyveo-manage-fold,
+#seyveoCleanLegacy.sv-business-feature-mode
+ .seyveo-management-v2-group.seyveo-selected-group .seyveo-hr-operations > details.seyveo-manage-fold:not(.sv-business-focus){
+ display:none!important;
+}
+#seyveoCleanLegacy.sv-business-feature-mode
+ .seyveo-management-v2-group.seyveo-selected-group .seyveo-hr-operations > details.sv-business-focus{
+ display:block!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#seyveoCleanLegacy.sv-business-feature-mode
+ .seyveo-management-v2-group.seyveo-selected-group .seyveo-hr-operations > details.sv-business-focus > summary{
+ display:none!important;
+}
 .svcp-tools{margin-top:25px}
 .svcp-tools h3{font-size:13px;font-weight:570;margin:0 0 7px;color:var(--secondary)}
 .svcp-tool{display:flex;width:100%;gap:12px;align-items:center;padding:13px 4px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
