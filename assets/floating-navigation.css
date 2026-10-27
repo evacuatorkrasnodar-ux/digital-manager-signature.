@@ -367,3 +367,28 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 @media(prefers-reduced-motion:reduce){
  .dock>#assistantButton,.dock>#assistantButton .button-art{transition:none!important}
 }
+
+/* SEYVEO palette-aware fixed dock and Feather composer.
+   Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
+:root[data-theme=dark][data-palette=graphite] .dock{
+ border-color:rgba(170,194,208,.23)!important;
+ background:linear-gradient(155deg,rgba(235,244,249,.052),rgba(131,158,173,.02) 46%,transparent 77%),rgba(19,26,32,.97)!important;
+}
+:root[data-theme=dark][data-palette=sapphire] .dock{
+ border-color:rgba(159,188,243,.27)!important;
+ background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
+}
+:root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded){
+ --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(37,50,59,.55),rgba(26,36,43,.36) 54%,rgba(17,24,30,0) 100%)!important;
+}
+:root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded):focus-within{
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(44,59,70,.62),rgba(32,45,53,.43) 58%,rgba(17,24,30,0) 100%)!important;
+}
+:root[data-theme=dark][data-palette=sapphire] #ask.prompt:not(.expanded){
+ --sv-ink-input-text:#f0f4ff;--sv-ink-input-hint:#bac9e8;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(33,48,81,.57),rgba(24,36,63,.38) 54%,rgba(14,23,41,0) 100%)!important;
+}
+:root[data-theme=dark][data-palette=sapphire] #ask.prompt:not(.expanded):focus-within{
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(43,61,104,.63),rgba(30,45,78,.44) 58%,rgba(14,23,41,0) 100%)!important;
+}
