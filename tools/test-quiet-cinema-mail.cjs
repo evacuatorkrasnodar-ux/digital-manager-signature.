@@ -4,6 +4,7 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('assets/living-moment.js','utf8');
+const tasksSource=fs.readFileSync('assets/personal-tasks.js','utf8');
 const style=fs.readFileSync('assets/living-moment.css','utf8');
 const html=fs.readFileSync('index.html','utf8');
 new vm.Script(source,{filename:'assets/living-moment.js'});
@@ -13,14 +14,19 @@ assert.match(source,/previewScene=createSurface\(sample\[0\],sample\.slice\(1\)\
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=55/);
+assert.match(html,/assets\/living-moment\.js\?v=56/);
 assert.match(html,/assets\/living-moment\.css\?v=41/);
+assert.match(html,/assets\/personal-tasks\.js\?v=23/);
+assert.match(html,/assets\/personal-tasks\.css\?v=20/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
 assert.match(style,/#seyveoLivingMoment\.lm-condense \.lm-mail-content\{display:none!important\}/,
  'Mail content must disappear with original card condensation');
 assert.match(style,/#seyveoLivingMoment:not\(\.lm-condense\)/,
  'Mail cannot override original condensation');
 assert.doesNotMatch(source,/\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(/,'No actual mail transmission');
+assert.match(tasksSource,/function deferredPreviewRow/,'All deferred previews share original Tasks list');
+assert.match(tasksSource,/postponed\.forEach\(task=>list\.append\(row\(task,false,true\)\)\)/,'No second real-task store');
+assert.doesNotMatch(source,/item=create\('section','lm-mail-later'\)/,'Old separate deferred tiles must stay removed');
 class Node{
  constructor(tag='div'){this.tagName=tag.toUpperCase();this.className='';this.children=[];this.listeners={};
   this.dataset={};this.attrs={};this.style={setProperty(){}};this.hidden=false;this.textContent='';this.value='';
@@ -60,14 +66,14 @@ const doc={hidden:false,activeElement:null,documentElement:new Node(),querySelec
 const timers=[];
 const win={
  matchMedia:()=>({matches:false}),innerHeight:820,visualViewport:{height:820},
- addEventListener(){},scrollTo(){},setTimeout:(fn,ms)=>{const id=timers.length+1;timers.push({fn,ms,id});return id}
+ addEventListener(){},dispatchEvent(){},scrollTo(){},setTimeout:(fn,ms)=>{const id=timers.length+1;timers.push({fn,ms,id});return id}
 };
 const location={hash:''};
 let mailOpen=0,documentOpen=0;win.SEYVEO_SAYVI_SURFACES={open:kind=>{if(kind==='mail')mailOpen++;else if(kind==='contract')documentOpen++;else assert.fail('Unknown surface: '+kind);return true}};
 let navClicks=0;navHome.addEventListener('click',()=>navClicks++);
 const MutationObserver=class{observe(){}};
 vm.runInNewContext(source,{document:doc,window:win,location,MutationObserver,
- queueMicrotask(){},clearTimeout(){},Date,CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}}},{timeout:1700});
+ queueMicrotask(){},clearTimeout(){},Date,Event:class{constructor(type){this.type=type}},CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}}},{timeout:1700});
 const api=win.SEYVEO_LIVING_MOMENT;assert.ok(api);
 assert.equal(api.preview(),true,'Original rising preview starts');
 assert.equal(api.state(),'preview');
@@ -111,8 +117,10 @@ edit.value='Добрый день! Уточните адрес доставки.
 b('Сохранить').click();
 assert.ok(all(field,x=>x.className==='lm-mail-draft').some(x=>x.textContent===edit.value),'Edited draft appears');
 b('Подробнее').click();assert.equal(mailOpen,1,'Details navigates to existing Mail page');
-b('Позже').click();const later=walk(tasks,x=>x.id==='seyveoPreviewMailLater');
-assert.ok(later&&!later.hidden,'Deferred test mail is available in Tasks');
+b('Позже').click();
+assert.equal(api.deferred().length,1,'The test mail is published for the ONE existing Tasks list');
+assert.equal(api.deferred()[0].kind,'mail','Deferred training item remains distinct from real saved tasks');
+assert.equal(walk(tasks,x=>x.id==='seyveoPreviewMailLater'),null,'No separate demonstration card on Tasks screen');
 assert.equal(tasks.children[tasks.children.length-1],personal,'Existing personal task panel not replaced');
 assert.equal(tiles.children.length,1,'No cloned or competing Home card ever created');
 console.log('PASS original three-card Quiet Cinema, mail actions, review, edit, details, later and unchanged Tasks list.');
@@ -128,11 +136,11 @@ console.log('PASS original three-card Quiet Cinema, mail actions, review, edit, 
   getElementById:id=>ids[id]||null,createElement:tag=>new Node(tag),createElementNS:(ns,tag)=>new Node(tag),addEventListener(){}};
  const taskTimers=[];
  const win2={matchMedia:()=>({matches:false}),innerHeight:820,visualViewport:{height:820},
-  addEventListener(){},setTimeout:(fn,ms)=>{taskTimers.push({fn,ms});return taskTimers.length}};
+  addEventListener(){},dispatchEvent(){},setTimeout:(fn,ms)=>{taskTimers.push({fn,ms});return taskTimers.length}};
  const twenty=Array.from({length:20},(_,i)=>({id:'example-'+i,title:'Дело '+(i+1),done:false,due:'2020-01-01'}));
  const storage={getItem:key=>key==='seyveo-personal-tasks-v1'?JSON.stringify(twenty):null};
  vm.runInNewContext(source,{document:doc2,window:win2,location:{hash:''},MutationObserver,
-  queueMicrotask:fn=>fn(),clearTimeout(){},localStorage:storage,Date,
+  queueMicrotask:fn=>fn(),clearTimeout(){},localStorage:storage,Date,Event:class{constructor(type){this.type=type}},
   CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}}},{timeout:1700});
  const taskField=walk(tiles2,x=>x.className==='lm-field');
  assert.ok(taskField,'Actual saved tasks use only one Quiet Cinema field');
@@ -148,6 +156,7 @@ console.log('PASS original three-card Quiet Cinema, mail actions, review, edit, 
  assert.ok(swap,'Original morph transition used for queue');
  swap.fn();
  assert.equal(meter.textContent,'3 ИЗ 19 · ВАШИ ДЕЛА','Next task enters after decision');
+ assert.ok(win2.SEYVEO_LIVING_MOMENT.deferredTaskIds().includes('example-0'),'Snoozed item is visible to the ONE Tasks list');
  const freshRows=all(taskField,x=>x.className==='lm-inline-item');
  assert.equal(freshRows.length,2);
  assert.ok(freshRows[1].classList.contains('lm-next-arrive'),'The new queue item rises from below');
