@@ -98,72 +98,47 @@ function icon(kind){
  return s;
 }
 
-// Training-only deferred item inside the existing Tasks workspace.
-// No localStorage, no new Home card and no changes to owner's personal tasks.
-let mailDeferred=false;
-function setMailDeferred(value){
- mailDeferred=!!value;
- const page=$('tasksPage');if(!page)return;
- let item=$('seyveoPreviewMailLater');
- if(!item){
-  item=create('section','lm-mail-later');
-  item.id='seyveoPreviewMailLater';
-  item.setAttribute('aria-label','Учебное отложенное письмо');
-  item.append(create('small','','ДЕМО · ПОЗЖЕ'),
-   create('strong','','Андрей · стоимость доставки'),
-   create('p','','Учебное письмо отложено. В личные дела ничего не записано.'));
-  const link=create('button','lm-polymer','Открыть письмо');
-  link.type='button';
-  link.addEventListener('click',()=>{
-   const api=window.SEYVEO_SAYVI_SURFACES;
-   if(api?.open)api.open('mail');else location.hash='#sayvi-mail';
-  });
-  const restore=create('button','lm-polymer','Вернуть в примеры');
-  restore.type='button';
-  restore.addEventListener('click',()=>{
-   setMailDeferred(false);
-   $('navHome')?.click();
-   window.setTimeout(()=>window.SEYVEO_LIVING_MOMENT?.preview?.(),180);
-  });
-  item.append(link,restore);
-  const list=page.querySelector('.personal-tasks-panel');
-  if(list)page.insertBefore(item,list);else page.append(item);
- }
- item.hidden=!mailDeferred;
+// One source of truth for the current Home session's deferrals.
+// Preview entries never enter the real user's stored personal tasks.
+let mailDeferred=false,documentDeferred=false;
+const postponedTaskIds=new Set();
+function notifyDeferred(){
+ window.dispatchEvent(new Event('seyveo:home-deferred-changed'));
 }
-
-// Temporary DEMO-only document choice in the existing Tasks page.
-// No external document is opened, signed, changed or saved.
-let documentDeferred=false;
-function setDocumentDeferred(value){
- documentDeferred=!!value;
- const page=$('tasksPage');if(!page)return;
- let item=$('seyveoPreviewDocumentLater');
- if(!item){
-  item=create('section','lm-mail-later');
-  item.id='seyveoPreviewDocumentLater';
-  item.setAttribute('aria-label','Учебный отложенный документ');
-  item.append(create('small','','ДЕМО · ПОЗЖЕ'),
-   create('strong','','Учебный договор · проверить условия'),
-   create('p','','Документ отложен только в демонстрации. Ваши файлы и задачи не изменены.'));
-  const open=create('button','lm-polymer','Открыть документы');
-  open.type='button';
-  open.addEventListener('click',()=>{
-   const api=window.SEYVEO_SAYVI_SURFACES;
-   if(api?.open)api.open('contract');else location.hash='#sayvi-documents';
-  });
-  const restore=create('button','lm-polymer','Вернуть в примеры');
-  restore.type='button';
-  restore.addEventListener('click',()=>{
-   setDocumentDeferred(false);
-   $('navHome')?.click();
-   window.setTimeout(()=>window.SEYVEO_LIVING_MOMENT?.preview?.(),180);
-  });
-  item.append(open,restore);
-  const list=page.querySelector('.personal-tasks-panel');
-  if(list)page.insertBefore(item,list);else page.append(item);
+function setMailDeferred(value){mailDeferred=!!value;notifyDeferred()}
+function setDocumentDeferred(value){documentDeferred=!!value;notifyDeferred()}
+function deferredPreview(){
+ const result=[];
+ if(mailDeferred)result.push({
+  kind:'mail',title:'Андрей · стоимость доставки',
+  note:'Учебное письмо отложено. Настоящее сообщение не отправлялось.',
+  route:'mail'
+ });
+ if(documentDeferred)result.push({
+  kind:'contract',title:'Учебный договор · проверить условия',
+  note:'Учебный документ отложен. Настоящие файлы не изменены.',
+  route:'contract'
+ });
+ return result;
+}
+function restorePreview(kind){
+ if(kind==='mail'&&!mailDeferred||kind==='contract'&&!documentDeferred)return false;
+ if(kind==='mail')setMailDeferred(false);
+ else if(kind==='contract')setDocumentDeferred(false);
+ else return false;
+ $('navHome')?.click();
+ window.setTimeout(()=>window.SEYVEO_LIVING_MOMENT?.preview?.(),180);
+ return true;
+}
+function restoreTask(id){
+ if(typeof id!=='string'||!postponedTaskIds.has(id))return false;
+ postponedTaskIds.delete(id);
+ for(const eventId of Array.from(quiet)){
+  if(eventId.startsWith('task:'+id+'|'))quiet.delete(eventId);
  }
- item.hidden=!documentDeferred;
+ notifyDeferred();
+ scheduleRefresh();
+ return true;
 }
 const sample=[
  {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
@@ -364,6 +339,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(!real||!shown.eventId||morphLocked)return;
   // Snooze only this Home session. The real item remains in its original Tasks list.
   quiet.add(shown.eventId);
+  if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
  controls.append(execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
@@ -462,10 +438,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(!remaining.length){
     tip.textContent='НА ГЛАВНОЙ НЕТ ОЖИДАЮЩИХ ДЕЛ';
     space.classList.add('lm-disappear');
-    later(()=>rest(),reduced()?0:TIMING.close);
+    later(()=>{rest();notifyDeferred()},reduced()?0:TIMING.close);
     return;
    }
    setFeatured(remaining[0]);
+   notifyDeferred();
    tip.textContent='ВАШИ ДЕЛА · ОЖИДАЮТ '+remaining.length;
    scene.classList.remove('lm-scene--changing');
    later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false;realLater.disabled=false},reduced()?0:430);
@@ -709,7 +686,13 @@ replay?.addEventListener('click',()=>{
  $('navHome')?.click();
  later(()=>{startPreview()},260);
 });
-window.SEYVEO_LIVING_MOMENT=Object.freeze({preview:()=>startPreview(),state:()=>mode});
+window.SEYVEO_LIVING_MOMENT=Object.freeze({
+ preview:()=>startPreview(),state:()=>mode,
+ deferred:()=>deferredPreview(),
+ deferredTaskIds:()=>Array.from(postponedTaskIds),
+ restoreDeferred:kind=>restorePreview(kind),
+ restoreTask:id=>restoreTask(id)
+});
 scheduleRefresh();
 // Bring back the original rising three-card introduction after opening.
 // If a dialog/navigation blocks it, refreshing Home retries instead of
