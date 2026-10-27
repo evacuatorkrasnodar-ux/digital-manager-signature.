@@ -679,13 +679,24 @@ html[data-theme=light].sv-music-screen #sayviMusicPage .sv-music-collection:not(
    then offsetting half the increase in record diameter from the top margin.
    No copy of the sphere, vinyl or player controls is introduced. */
 #sayviMusicPage>header.sv-music-head{
- grid-template-columns:minmax(0,1fr);
+ grid-template-columns:minmax(0,1fr) auto;
  grid-template-rows:auto;
  align-items:start;
- row-gap:0;
+ column-gap:8px;row-gap:0;
 }
 #sayviMusicPage>header.sv-music-head .sv-music-minimize{
- display:none!important;
+ grid-column:2;grid-row:1;
+ display:inline-flex!important;align-items:center;justify-content:flex-end;
+ align-self:start;justify-self:end;gap:5px;
+ min-height:44px;min-width:69px;
+ padding:6px 1px 6px 4px;
+ border:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:12px;font-weight:535;
+ white-space:nowrap;
+}
+#sayviMusicPage>header.sv-music-head .sv-music-minimize svg{
+ width:15px;height:15px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 #sayviMusicPage>header.sv-music-head .sv-music-lockup{
  grid-column:1;grid-row:1;
