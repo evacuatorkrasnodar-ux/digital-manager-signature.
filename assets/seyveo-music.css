@@ -380,7 +380,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   border:1px solid rgba(189,221,212,.24);
   border-radius:22px;
   /* The ORIGINAL glass sheet, now frosted rather than see-through. */
-  background:linear-gradient(157deg,rgba(42,75,71,.975),rgba(18,38,40,.985));
+  background:var(--sv-music-sheet-gradient);
   -webkit-backdrop-filter:blur(30px) saturate(.7);
   backdrop-filter:blur(30px) saturate(.7);
   color:var(--text);
@@ -391,9 +391,9 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   -webkit-overflow-scrolling:touch;
   transform:translateX(-50%);
 }
-:root[data-theme=light] html.sv-music-screen #sayviMusicPage .sv-music-providers:not([hidden]),
-:root[data-theme=light] html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
-  background:linear-gradient(160deg,rgba(247,249,252,.975),rgba(232,237,245,.985));
+html[data-theme=light].sv-music-screen #sayviMusicPage .sv-music-providers:not([hidden]),
+html[data-theme=light].sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
+  background:var(--sv-music-sheet-gradient);
   border-color:rgba(255,255,255,.75);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 -8px 30px rgba(38,46,65,.13);
 }
@@ -419,11 +419,11 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  gap:12px;
  margin:-18px -19px 12px;
  padding:13px 19px 8px;
- background:linear-gradient(160deg,rgba(43,69,68,.99),rgba(24,44,47,.99));
+ background:var(--sv-music-header-gradient);
  border-radius:21px 21px 0 0;
 }
 :root[data-theme=light] #sayviMusicPage .sv-music-collection-header{
- background:linear-gradient(160deg,rgba(247,249,252,.99),rgba(236,240,247,.99));
+ background:var(--sv-music-header-gradient);
 }
 #sayviMusicPage .sv-music-collection-header .sv-music-collection-label{
  margin:0;padding:0;min-width:0;flex:1 1 auto;
@@ -750,4 +750,22 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
  html.sv-music-screen #sayviMusicPage{--sv-music-vinyl-size:min(45vw,18dvh,100px)}
  html.sv-music-screen #sayviMusicPage .sv-music-lockup{margin-top:4px}
  html.sv-music-screen #sayviMusicPage .sv-music-cover{margin-top:4px}
+}
+
+/* Global music pigments: vinyl art and player mechanics stay untouched. */
+:root{
+ --sv-music-sheet-gradient:linear-gradient(157deg,rgba(42,75,71,.975),rgba(18,38,40,.985));
+ --sv-music-header-gradient:linear-gradient(160deg,rgba(43,69,68,.99),rgba(24,44,47,.99));
+}
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-music-sheet-gradient:linear-gradient(157deg,rgba(47,63,76,.975),rgba(24,36,44,.985));
+ --sv-music-header-gradient:linear-gradient(160deg,rgba(45,60,73,.99),rgba(27,40,49,.99));
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-music-sheet-gradient:linear-gradient(157deg,rgba(40,61,108,.975),rgba(22,35,71,.985));
+ --sv-music-header-gradient:linear-gradient(160deg,rgba(42,61,111,.99),rgba(25,39,77,.99));
+}
+:root[data-theme=light]{
+ --sv-music-sheet-gradient:linear-gradient(160deg,rgba(251,253,255,.975),rgba(239,243,247,.985));
+ --sv-music-header-gradient:linear-gradient(160deg,rgba(251,253,255,.99),rgba(240,244,248,.99));
 }
