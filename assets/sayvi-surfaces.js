@@ -13,10 +13,25 @@ if(!page||!subject||!title||!intro||!body||!back||!symbol)return;
 const routes=Object.freeze({mail:'#sayvi-mail',contract:'#sayvi-documents',task:'#tasks',health:'#sayvi-health'});
 const subjects=Object.freeze({
  mail:{label:'ПОЧТА',title:'Письма и сообщения',intro:'Здесь будут письма, которым стоит уделить внимание.',symbol:'mail'},
- contract:{label:'ДОКУМЕНТЫ',title:'Ваши документы',intro:'Откройте документ. Сэйви сохранит внимание на главном.',symbol:'contract'},
+ contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Центр документов',intro:'Личные и деловые документы, инструменты Сэйви. Сейчас доступен просмотр выбранных файлов.',symbol:'contract'},
  health:{label:'ЗАБОТА',title:'Ваше здоровье',intro:'Ваши показатели и спокойная забота о себе.',symbol:'health'}
 });
 let fileUrl=null;
+let returnDestination=null;
+function updateBackDestination(){
+ const label=returnDestination?.label||'Главная';
+ const caption=back.querySelector('span:last-child');
+ if(caption)caption.textContent=label;
+ back.setAttribute('aria-label','Вернуться: '+label);
+}
+function rememberOrigin(context){
+ if(context==='business')returnDestination={hash:'#manage',label:'Мой бизнес'};
+ else if(location.hash==='#life')returnDestination={hash:'#life',label:'Мой мир'};
+ else if(location.hash==='#manage')returnDestination={hash:'#manage',label:'Управление'};
+ else if(location.hash==='#tasks')returnDestination={hash:'#tasks',label:'Дела'};
+ else returnDestination=null;
+ updateBackDestination();
+}
 const localOnly='Сведения хранятся только на вашем устройстве. Внешний ИИ здесь пока не подключён.';
 function create(tag,cls,words){
  const e=document.createElement(tag);
@@ -274,13 +289,15 @@ function currentKind(){
 }
 function sync(){
  const kind=currentKind();
- if(kind)render(kind);
- else releaseFile();
+ if(kind){updateBackDestination();render(kind);}
+ else{releaseFile();returnDestination=null;updateBackDestination();}
 }
-function open(kind){
+function open(kind,context){
  const target=routes[kind];
  if(!target)return false;
  if(location.hash===target){sync();return true}
+ // Capture the calling section before changing the hash.
+ if(!currentKind())rememberOrigin(context);
  location.hash=target;
  return true;
 }
@@ -289,7 +306,11 @@ function openPersonal(kind){
  if(choice){choice.click();return true}
  return false;
 }
-back.addEventListener('click',()=>{$('navHome')?.click()});
+back.addEventListener('click',()=>{
+ const destination=returnDestination?.hash;
+ if(destination)location.hash=destination;
+ else $('navHome')?.click();
+});
 window.addEventListener('hashchange',sync);
 window.addEventListener('pagehide',releaseFile);
 window.SEYVEO_SAYVI_SURFACES=Object.freeze({open,render,sync,openPersonal});
