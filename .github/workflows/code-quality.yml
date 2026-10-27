@@ -24,9 +24,11 @@ jobs:
         run: node tools/test-management-about.cjs
       - name: Protect approved My World Black Velvet HDR-like color system
         run: node tools/test-world-velvet.cjs
-      - name: Verify first Business Pulse demo and Our Ideas entry
+      - name: Verify Demo Mode only shows training inside actual Business Pulse
+        run: node tools/test-demo-mode.cjs
+      - name: Verify first Business Pulse scenario on the real page
         run: node tools/test-pulse-walkthrough.cjs
-      - name: Verify one fictional Business Pulse client inbox and its status rules
+      - name: Verify simulated client inbox inside the real Pulse route
         run: node tools/test-pulse-inbox.cjs
       - name: Check read-only Windows server readiness logic
         run: node --test server/tests/check-seyveo-pc.test.mjs
