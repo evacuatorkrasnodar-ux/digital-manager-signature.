@@ -111,6 +111,7 @@ function discardFile(){
  const preview=$('svfAttachment');preview.hidden=true;preview.replaceChildren();
 }
 const fileInput=$('svfFile');
+$('svfAttachButton').addEventListener('click',()=>fileInput.click());
 fileInput.addEventListener('change',()=>{
  discardFile();
  const file=fileInput.files?.[0];if(!file)return;
