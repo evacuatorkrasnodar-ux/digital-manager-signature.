@@ -679,11 +679,11 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
    never add an orb-shaped background or a new GPU-hungry effect. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%);
+ background:var(--sv-life-viewport-gradient);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
- background:linear-gradient(180deg,#f7faf9 0%,#f1f7f4 58%,#e9f1ee 100%);
+ background:var(--sv-life-viewport-gradient);
  background-repeat:no-repeat;
 }
 /* Put meaningful text, not decoration, in the visual foreground. */
@@ -1173,7 +1173,7 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
 
 /* My World · quiet graphite page instead of a nearly black, boxed menu. */
 html.sv-space-active #lifePage{
- background:linear-gradient(155deg,#121d1a 0%,#1a2923 46%,#121c19 100%)!important;
+ background:var(--sv-life-inner-gradient)!important;
  min-height:100%;color:var(--text);
 }
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
@@ -1198,7 +1198,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
  font-size:11.5px!important;
 }
 html.sv-space-active:root[data-theme=light] #lifePage{
- background:linear-gradient(155deg,#f7f9fb,#eff2f6)!important;
+ background:var(--sv-life-inner-gradient)!important;
 }
 html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
  border-bottom-color:rgba(27,40,62,.11)!important;
@@ -1211,7 +1211,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
 
 /* Keep the owner's approved My World color treatment unchanged while
    the other scenes borrow its canvas. Only scoped design tokens, no overlay. */
-html.sv-space-active:not([data-theme=light]):has(#lifePage:not([hidden])){
+html.sv-space-active[data-theme=dark][data-palette=emerald]:has(#lifePage:not([hidden])){
  --text:#f3faf7;
  --secondary:#b0cfc5;
  --line:#3b625b;
@@ -1225,7 +1225,7 @@ html.sv-space-active:not([data-theme=light]):has(#lifePage:not([hidden])){
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
 html.sv-space-active:has(#lifePage:not([hidden])) body{
- background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%)!important;
+ background:var(--sv-life-viewport-gradient)!important;
  background-attachment:fixed!important;
 }
 html.sv-space-active #lifePage{
@@ -1268,7 +1268,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
  }
 }
 html.sv-space-active:root[data-theme=light]:has(#lifePage:not([hidden])) body{
- background:linear-gradient(155deg,#f7f9fb,#eff2f6)!important;
+ background:var(--sv-life-viewport-gradient)!important;
 }
 html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button:not(:last-child)::after{
  background:rgba(27,40,62,.10);
@@ -1280,7 +1280,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
  box-sizing:border-box;width:min(440px,calc(100vw - 20px));max-width:calc(100vw - 20px);
  max-height:min(86dvh,780px);padding:21px 18px 25px;
  border-radius:26px;border:1px solid rgba(235,239,247,.14);
- background:#18271f;color:var(--text);
+ background:var(--sv-life-contacts-bg);color:var(--text);
  box-shadow:0 20px 55px rgba(0,0,0,.24);
  overflow-y:auto;overscroll-behavior:contain;
 }
@@ -1334,7 +1334,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
  #seyveoContactsDialog.personal-contacts-dialog{padding:18px 13px 21px}
 }
 :root[data-theme=light] #seyveoContactsDialog.personal-contacts-dialog{
- background:#f5f7f9;border-color:rgba(44,60,78,.14);color:var(--text);
+ background:var(--sv-life-contacts-bg);border-color:var(--seyveo-hdr-outline);color:var(--text);
 }
 :root[data-theme=light] #seyveoContactsDialog #seyveoContactForm input{
  background:rgba(45,60,83,.035);border-color:rgba(45,60,83,.14);
@@ -1441,7 +1441,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  justify-content:flex-end!important;gap:5px!important;
  padding:15px!important;margin:0!important;
  border:1px solid var(--seyveo-hdr-outline)!important;
- border-radius:23px!important;background:linear-gradient(157deg,rgba(213,255,242,.076),rgba(79,157,137,.032) 47%,rgba(19,48,47,.023) 100%)!important;
+ border-radius:23px!important;background:var(--sv-life-tile-gradient)!important;
  box-shadow:none!important;text-align:left!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
@@ -1473,7 +1473,7 @@ html.sv-space-active #lifePage .life-footnote{
  border:1px solid var(--seyveo-hdr-outline)!important;
  border-radius:27px!important;
  padding:23px clamp(15px,4.2vw,23px)!important;
- background:#172b2b!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
+ background:var(--sv-life-dialog-bg)!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
  overflow-y:auto;overscroll-behavior:contain;
 }
 :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(h2,h3){
@@ -1500,10 +1500,10 @@ html.sv-space-active #lifePage .life-footnote{
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:14px!important}
 }
 :root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
- border-color:rgba(40,95,77,.13)!important;background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(226,242,235,.60))!important;
+ border-color:var(--seyveo-hdr-outline)!important;background:var(--sv-life-tile-gradient)!important;
 }
 :root[data-theme=light] :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog){
- background:#f3f8f5!important;border-color:rgba(37,96,73,.14)!important;
+ background:var(--sv-life-dialog-bg)!important;border-color:var(--seyveo-hdr-outline)!important;
 }
 @media(prefers-reduced-motion:reduce){
  #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
@@ -1539,4 +1539,31 @@ html.sv-space-active #lifePage .life-footnote{margin-top:13px!important}
   min-height:88px!important;padding:10px!important;
  }
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:12.5px!important}
+}
+
+/* Shared pigment contract for the whole app and My World subpages.
+   Keep the original emerald art and geometry; only color comes from theme. */
+:root{
+ --sv-life-viewport-gradient:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%);
+ --sv-life-inner-gradient:linear-gradient(155deg,#121d1a 0%,#1a2923 46%,#121c19 100%);
+ --sv-life-tile-gradient:linear-gradient(157deg,rgba(213,255,242,.076),rgba(79,157,137,.032) 47%,rgba(19,48,47,.023));
+ --sv-life-dialog-bg:#172b2b;--sv-life-contacts-bg:#18271f;
+}
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-life-viewport-gradient:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);
+ --sv-life-inner-gradient:linear-gradient(155deg,#151b20 0%,#202a30 46%,#131a1f 100%);
+ --sv-life-tile-gradient:linear-gradient(157deg,rgba(233,247,255,.066),rgba(120,156,174,.03) 47%,rgba(22,43,52,.024));
+ --sv-life-dialog-bg:#1b2830;--sv-life-contacts-bg:#1c2931;
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-life-viewport-gradient:linear-gradient(180deg,#0d1423 0%,#151e35 28%,#1b2946 55%,#233251 78%,#0e1628 100%);
+ --sv-life-inner-gradient:linear-gradient(155deg,#131c30 0%,#202e4e 46%,#11192e 100%);
+ --sv-life-tile-gradient:linear-gradient(157deg,rgba(224,238,255,.082),rgba(107,139,216,.037) 47%,rgba(21,39,79,.026));
+ --sv-life-dialog-bg:#192845;--sv-life-contacts-bg:#1a2942;
+}
+:root[data-theme=light]{
+ --sv-life-viewport-gradient:linear-gradient(180deg,#fafbfc 0%,#f6f8fa 58%,#f0f3f7 100%);
+ --sv-life-inner-gradient:linear-gradient(155deg,#fafbfc,#f0f3f7);
+ --sv-life-tile-gradient:linear-gradient(150deg,rgba(255,255,255,.96),rgba(237,243,246,.65));
+ --sv-life-dialog-bg:#f9fafb;--sv-life-contacts-bg:#f9fafb;
 }
