@@ -14,7 +14,7 @@
  box-sizing:border-box;display:grid;place-items:center;
  width:41px;height:41px;flex:0 0 41px;
  border-radius:14px;border:1px solid var(--soft-line);
- background:rgba(231,236,244,.045);color:var(--text);
+ background:rgba(192,242,222,.048);color:var(--text);
 }
 #seyveoNetworkPage .sv-network-status-art svg{
  width:23px;height:23px;
@@ -50,7 +50,7 @@
  box-sizing:border-box;display:flex;align-items:center;
  width:40px;height:24px;flex:0 0 40px;padding:3px;
  border-radius:999px;border:1px solid var(--soft-line);
- background:rgba(220,230,242,.07);
+ background:rgba(184,237,214,.072);
  transition:background .18s;
 }
 #seyveoNetworkPage .sv-network-switch::before{
@@ -58,7 +58,7 @@
  background:var(--secondary);transition:transform .18s,background .18s;
 }
 #seyveoNetworkPage input:checked+.sv-network-switch{
- background:rgba(231,239,249,.19);border-color:rgba(231,239,249,.36);
+ background:rgba(160,224,198,.16);border-color:rgba(170,238,209,.32);
 }
 #seyveoNetworkPage input:checked+.sv-network-switch::before{
  transform:translateX(16px);background:var(--text);
@@ -70,10 +70,10 @@
  color:var(--secondary);margin:15px 0 0;font-size:11px;line-height:1.6;
 }
 :root[data-theme=light] #seyveoNetworkPage .sv-network-switch{
- background:rgba(51,73,98,.07);
+ background:rgba(43,107,86,.07);
 }
 :root[data-theme=light] #seyveoNetworkPage input:checked+.sv-network-switch{
- background:rgba(51,73,98,.16);border-color:rgba(51,73,98,.36);
+ background:rgba(43,107,86,.14);border-color:rgba(43,107,86,.32);
 }
 @media(prefers-reduced-motion:reduce){
  #seyveoNetworkPage .sv-network-switch,
