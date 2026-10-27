@@ -155,11 +155,11 @@
  position:relative;isolation:isolate;overflow:visible;
  width:186px;height:186px;display:grid;place-items:center;
  border-radius:50%;border:1px solid color-mix(in srgb,var(--text) 17%,transparent);
- background:radial-gradient(circle,rgba(182,233,211,.13),rgba(113,184,156,.03) 64%,transparent 74%)
+ background:var(--sv-care-outer-halo)
 }
 #calendarPersonalTools .pw-breath-aura{
  position:absolute;inset:8px;border-radius:50%;
- background:radial-gradient(circle,rgba(215,252,236,.26),rgba(144,207,183,.055) 57%,transparent 71%);
+ background:var(--sv-care-inner-halo);
  opacity:.5;pointer-events:none
 }
 #calendarPersonalTools .pw-breath-orbit{
@@ -170,7 +170,7 @@
  position:relative;display:grid;place-items:center;
  width:65%;aspect-ratio:1;border-radius:50%;
  border:1px solid color-mix(in srgb,var(--text) 43%,transparent);
- background:radial-gradient(circle at 36% 25%,rgba(251,255,253,.96),rgba(208,240,228,.57) 27%,rgba(121,192,170,.19) 60%,rgba(145,222,196,.034) 82%);
+ background:var(--sv-care-breath-disc);
  box-shadow:inset 0 2px 14px rgba(255,255,255,.4),0 0 25px rgba(153,230,201,.19),0 9px 22px rgba(0,0,0,.09);
  transform:scale(.82);transition:transform 6s cubic-bezier(.45,.05,.55,.95);pointer-events:none
 }
@@ -307,11 +307,11 @@
 }
 #calendarPersonalTools .pw-eye{
  width:100px;height:100px;display:grid;place-items:center;border:1px solid var(--line);
- border-radius:50%;background:radial-gradient(circle,#9dd7bd19,transparent 75%);
+ border-radius:50%;background:var(--sv-care-pulse-rest);
  transition:transform .55s ease,background .55s ease
 }
 #calendarPersonalTools .pw-eye.is-running{
- transform:scale(1.07);background:radial-gradient(circle,#9dd7bd2a,transparent 75%)
+ transform:scale(1.07);background:var(--sv-care-pulse-active)
 }
 #calendarPersonalTools .pw-eye svg{width:53px;height:53px;stroke:var(--text);fill:none;stroke-width:1.5;stroke-linejoin:round;transform-origin:center}
 #calendarPersonalTools .pw-eye.is-running svg{animation:pw-eye-focus 7s ease-in-out infinite}
@@ -390,9 +390,40 @@
  #calendarPersonalTools .pw-eye svg{animation:none!important;transition:none!important}
  #calendarPersonalTools .pw-breath-ring.is-active .pw-breath-disc{transform:scale(.92)}
 }
-:root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:radial-gradient(circle at 35% 25%,#fff,#d9f0e7cf 30%,#a6d6c252 64%,#a1d7bc12)}
+:root[data-theme=light] #calendarPersonalTools .pw-breath-disc{background:var(--sv-care-breath-disc)}
 
 #calendarPersonalTools .pw-cycle-privacy{margin:15px 0 0;padding:11px 2px;border:0;border-top:1px solid var(--soft-line);border-radius:0}
 #calendarPersonalTools .pw-cycle-privacy summary{cursor:pointer;font-size:11px;color:var(--secondary);font-weight:530}
 #calendarPersonalTools .pw-cycle-privacy p{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
 #calendarPersonalTools .pw-cycle-privacy .pw-actions{justify-content:flex-start;margin-bottom:0}
+
+/* Personal wellness inherits the selected app palette, not a permanent green.
+   Breathing motion and all real measurements are untouched. */
+:root{
+ --sv-care-outer-halo:radial-gradient(circle,rgba(182,233,211,.13),rgba(113,184,156,.03) 64%,transparent 74%);
+ --sv-care-inner-halo:radial-gradient(circle,rgba(215,252,236,.26),rgba(144,207,183,.055) 57%,transparent 71%);
+ --sv-care-breath-disc:radial-gradient(circle at 36% 25%,rgba(251,255,253,.96),rgba(208,240,228,.57) 27%,rgba(121,192,170,.19) 60%,rgba(145,222,196,.034) 82%);
+ --sv-care-pulse-rest:radial-gradient(circle,#9dd7bd19,transparent 75%);
+ --sv-care-pulse-active:radial-gradient(circle,#9dd7bd2a,transparent 75%);
+}
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-care-outer-halo:radial-gradient(circle,rgba(194,217,230,.13),rgba(116,151,174,.03) 64%,transparent 74%);
+ --sv-care-inner-halo:radial-gradient(circle,rgba(220,238,250,.25),rgba(145,184,210,.055) 57%,transparent 71%);
+ --sv-care-breath-disc:radial-gradient(circle at 36% 25%,rgba(251,253,255,.96),rgba(217,231,239,.58) 27%,rgba(136,177,200,.19) 60%,rgba(141,181,209,.03) 82%);
+ --sv-care-pulse-rest:radial-gradient(circle,rgba(170,201,222,.11),transparent 75%);
+ --sv-care-pulse-active:radial-gradient(circle,rgba(170,201,222,.17),transparent 75%);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-care-outer-halo:radial-gradient(circle,rgba(174,197,254,.17),rgba(108,135,214,.04) 64%,transparent 74%);
+ --sv-care-inner-halo:radial-gradient(circle,rgba(212,223,255,.27),rgba(136,158,239,.065) 57%,transparent 71%);
+ --sv-care-breath-disc:radial-gradient(circle at 36% 25%,rgba(248,250,255,.97),rgba(203,220,255,.58) 27%,rgba(119,155,244,.22) 60%,rgba(96,139,231,.04) 82%);
+ --sv-care-pulse-rest:radial-gradient(circle,rgba(140,170,245,.14),transparent 75%);
+ --sv-care-pulse-active:radial-gradient(circle,rgba(140,170,245,.24),transparent 75%);
+}
+:root[data-theme=light]{
+ --sv-care-breath-disc:radial-gradient(circle at 35% 25%,#ffffff,#e2eaf1cf 30%,#bacddd52 64%,#b2cade12);
+ --sv-care-outer-halo:radial-gradient(circle,rgba(180,197,216,.13),rgba(144,164,188,.03) 64%,transparent 74%);
+ --sv-care-inner-halo:radial-gradient(circle,rgba(230,239,249,.25),rgba(175,194,211,.065) 57%,transparent 71%);
+ --sv-care-pulse-rest:radial-gradient(circle,rgba(159,177,199,.10),transparent 75%);
+ --sv-care-pulse-active:radial-gradient(circle,rgba(159,177,199,.18),transparent 75%);
+}
