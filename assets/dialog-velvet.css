@@ -341,29 +341,28 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 }
 
 
-/* SEYVEO workspace sheets: chat history keeps its own neutral canvas;
-   Notebook / Health / Care follow the selected My World palette. These are
-   the original dialogs, not a second surface or an overlay. */
+/* SEYVEO workspace sheets · same themes as My World, no duplicate pages.
+   Keep the conversation history neutral. Notebook uses the active card tone;
+   wellness keeps its own soft palette. Original form handlers are unchanged. */
 #assistantChatHistoryDialog:not([hidden]){
  box-sizing:border-box;
  border:0!important;border-radius:0!important;box-shadow:none!important;
  background:var(--bg)!important;color:var(--text);
 }
-:is(#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+:is(#notesDialog,#noteReadDialog,#noteReviewDialog):not([hidden]){
  box-sizing:border-box;
  border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
- border-radius:25px!important;
- box-shadow:none!important;
- background:var(--sv-life-dialog-bg,var(--bg))!important;
+ border-radius:23px!important;box-shadow:none!important;
+ background:linear-gradient(155deg,var(--seyveo-hdr-active),transparent 48%),var(--card)!important;
  color:var(--text);
 }
-:root[data-theme=light] #assistantChatHistoryDialog:not([hidden]){
- background:var(--bg)!important;
+#calendarSpaceDialog:not([hidden]){
+ box-sizing:border-box;
+ border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
+ border-radius:23px!important;box-shadow:none!important;
+ background:var(--sv-life-dialog-bg,var(--card))!important;color:var(--text);
 }
-:root[data-theme=light] :is(#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
- background:var(--sv-life-dialog-bg,var(--bg))!important;
- border-color:var(--seyveo-hdr-outline,var(--line))!important;
-}
+:root[data-theme=light] #assistantChatHistoryDialog:not([hidden]){background:var(--bg)!important}
 
 /* Saved requests: compact open lines, never pills with clipped first lines.
    Native DETAILS remains functional, preserving read-only history and storage. */
