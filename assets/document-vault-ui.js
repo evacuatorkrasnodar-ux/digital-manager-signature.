@@ -34,7 +34,13 @@ function mount(slot,api){
  slot.replaceChildren(header,live);
  const valid=()=>slot.isConnected&&area===api.currentArea();
  async function run(job){
-  try{await job()}catch(err){if(valid())live.textContent=err?.message||'Не удалось выполнить операцию.';}
+  try{await job()}catch(err){
+   if(!valid())return;
+   const details=err?.message||'Не удалось выполнить операцию.';
+   const visible=slot.querySelector('.sv-vault-form .sv-vault-status');
+   if(visible)visible.textContent=details;
+   else slot.append(message(details,'error'));
+  }
  }
  function lockedForm(initialized){
   if(!valid())return;
@@ -73,7 +79,11 @@ function mount(slot,api){
   if(!valid())return;
   let items;
   try{items=await vault.list(area)}
-  catch(error){lockedForm(true);return;}
+  catch(error){
+   slot.replaceChildren(header,message(error?.message||'Не удалось прочитать архив.','error'),
+    btn('Заблокировать',()=>{vault.lock();api.clearSession();}));
+   return;
+  }
   if(!valid())return;
   slot.replaceChildren(header);
   const controls=$('div','sv-vault-controls');
