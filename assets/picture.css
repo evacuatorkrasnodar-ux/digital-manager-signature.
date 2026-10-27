@@ -19,7 +19,7 @@
 .picture-bars{display:grid;grid-template-columns:repeat(var(--picture-bars,6),minmax(0,1fr));align-items:end;gap:7px}
 .picture-bin{min-width:0}
 .picture-bin-track{width:100%}
-.picture-bin-bar{width:min(29px,78%);height:var(--bar-height,3%);min-height:3px;background:linear-gradient(180deg,rgba(242,255,250,.96),rgba(123,170,151,.56));opacity:.88}
+.picture-bin-bar{width:min(29px,78%);height:var(--bar-height,3%);min-height:3px;background:linear-gradient(180deg,var(--text),var(--seyveo-emerald));opacity:.88}
 .picture-bin small{height:17px;line-height:17px;white-space:nowrap;color:var(--secondary)}
 .picture-breakdown{padding:6px 15px}
 .picture-split-row{gap:8px}
@@ -281,7 +281,7 @@
  font-weight:460!important;letter-spacing:-.045em!important;
 }
 #picturePage .picture-tabs{
- background:rgba(188,242,224,.035);border-color:var(--seyveo-hdr-outline);
+ background:var(--seyveo-hdr-active);border-color:var(--seyveo-hdr-outline);
  box-shadow:none;
 }
 #picturePage .picture-tabs button[aria-pressed=true]{
@@ -289,12 +289,12 @@
 }
 #picturePage .picture-chart-box,
 #picturePage .picture-breakdown{
- background:linear-gradient(145deg,rgba(220,255,244,.05),rgba(66,131,119,.023) 55%,transparent);
+ background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 55%,transparent);
  border-color:var(--seyveo-hdr-outline);
  box-shadow:none;
 }
 #picturePage .picture-bin-bar{
- background:linear-gradient(180deg,rgba(248,255,252,.98),rgba(89,178,151,.68));
+ background:linear-gradient(180deg,var(--text),var(--seyveo-emerald));
 }
 @media(max-width:390px){
  #picturePage .picture-demo-label{font-size:8.5px!important}
@@ -302,7 +302,7 @@
 :root[data-theme=light] #picturePage .picture-tabs,
 :root[data-theme=light] #picturePage .picture-chart-box,
 :root[data-theme=light] #picturePage .picture-breakdown{
- background:rgba(46,120,99,.035);border-color:rgba(45,108,90,.14);
+ background:var(--seyveo-hdr-active);border-color:var(--seyveo-hdr-outline);
 }
 
 /* SEYVEO · real Business Pulse is the only place for interactive training.
