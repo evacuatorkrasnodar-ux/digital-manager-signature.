@@ -160,6 +160,32 @@
 #seyveoCleanDetail .seyveo-manage-fold-body .manage-text small{
  color:var(--secondary);font-size:12px;line-height:1.5;font-weight:400;
 }
+/* Business tools share one small line-icon system and a common text baseline. */
+#seyveoCleanDetail .seyveo-business-tools>.manage-row{
+ box-sizing:border-box;display:flex;align-items:center;min-height:74px;
+ padding:11px 4px 11px 0;gap:13px;
+}
+#seyveoCleanDetail .seyveo-business-tools>.manage-row + .manage-row::before{
+ left:57px;right:4px;
+}
+#seyveoCleanDetail .seyveo-business-tools .smc-nested-art{
+ box-sizing:border-box;display:grid;place-items:center;
+ width:44px;height:44px;flex:0 0 44px;opacity:.88;
+}
+#seyveoCleanDetail .seyveo-business-tools .smc-nested-art svg{
+ display:block;width:39px;height:39px;fill:none;
+ stroke:currentColor;stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#seyveoCleanDetail .seyveo-business-tools>.manage-row .manage-text{
+ padding:0;gap:4px;min-width:0;align-items:flex-start;
+}
+#seyveoCleanDetail .seyveo-business-tools>.manage-row .manage-text strong{
+ font-size:14px;font-weight:500;line-height:1.3;letter-spacing:-.015em;
+}
+#seyveoCleanDetail .seyveo-business-tools>.manage-row .manage-text small{
+ font-size:12px;line-height:1.4;font-weight:400;
+}
 #seyveoCleanDetail .seyveo-manage-fold-body .manage-chevron{
  opacity:.35;flex:0 0 12px;width:12px;
 }
