@@ -26,6 +26,8 @@ function read(){
    kind:META[x.space].kinds.includes(x.kind)?x.kind:META[x.space].kinds[0],
    date:dateValid(x.date)?x.date:'',
    detail:typeof x.detail==='string'?x.detail.slice(0,500):'',
+   bpPulse:Number.isInteger(x.bpPulse)&&x.bpPulse>=30&&x.bpPulse<=240?x.bpPulse:null,
+   recordedAt:Number.isSafeInteger(x.recordedAt)&&x.recordedAt>0?x.recordedAt:0,
    yearless:x.space==='world'&&x.kind==='День рождения'&&x.yearless===true
   })).filter(x=>x.title);
  }catch{return []}
@@ -126,23 +128,115 @@ function renderWorldHub(){
   holder.append(row);
  }
 }
+/* Pressure journal · three real readings, explanatory context only.
+   Home guidance uses ESC 2024 135/85 threshold for averaged home readings.
+   No diagnosis, predicted measurement, automatic medication or data transfer. */
+function bpParse(x){
+ if(!x||x.kind!=='Давление')return null;
+ const m=/^(\d{2,3})\s*\/\s*(\d{2,3})$/.exec(x.title);
+ if(!m)return null;
+ const s=Number(m[1]),d=Number(m[2]);
+ if(s<50||s>300||d<30||d>200||s<=d)return null;
+ return {s,d,p:Number.isInteger(x.bpPulse)?x.bpPulse:null,date:x.date||'',time:x.recordedAt||0};
+}
+function bpAssess(s,d,p){
+ let level,summary,advice;
+ if(s>=180||d>=120){
+  level='urgent';summary='Очень высокое давление';
+  advice='Если есть боль в груди, одышка, выраженная слабость, онемение, нарушение зрения или речи — немедленно вызывайте экстренную помощь по местному номеру. Не ждите второго измерения при таких симптомах. Без симптомов повторите замер через минуту и срочно свяжитесь с врачом, если значение остаётся очень высоким.';
+ }else if(s<90||d<60){
+  level='low';summary='Возможно пониженное давление';
+  advice='Сэйви рядом. Если кружится голова, избегайте резких подъёмов, присядьте или прилягте безопасно. При обмороке или сильной слабости нужна срочная медицинская оценка. Если чувствуете себя нормально, спокойно повторите замер.';
+ }else if(s>=160||d>=100){
+  level='high';summary='Значительно выше домашнего ориентира';
+  advice='Давайте без геройства: посидите в тишине пять минут, расслабьте плечи, поставьте ноги на пол и повторите замер через минуту. Если цифры сохраняются, свяжитесь с врачом в ближайшее время. Лечение самостоятельно не меняйте.';
+ }else if(s>=135||d>=85){
+  level='raised';summary='Выше ориентира для домашних измерений';
+  advice='Тонометр сегодня строгий, но одного замера ему для вердикта мало. Спокойно посидите пять минут и измерьте ещё раз через минуту. Повторяющиеся повышенные значения обсудите с врачом.';
+ }else if(s>=120||d>=70){
+  level='watch';summary='Немного выше оптимального домашнего диапазона';
+  advice='Тонометр не экзаменатор — за один результат оценок не ставим. Посидите спокойно пять минут и повторите измерение через минуту. Сэйви сохранит оба результата, чтобы увидеть реальную картину.';
+ }else{
+  level='usual';summary='Ниже ориентира повышенного домашнего давления';
+  advice='Тонометр сегодня в хорошем настроении — и это приятно. Если самочувствие хорошее, продолжайте обычные измерения по своему плану. Одно число ещё не показывает всю картину.';
+ }
+ if(Number.isInteger(p)&&(p>100||p<60)){
+  advice+=' Пульс '+p+' в минуту выходит за обычный диапазон покоя 60–100: нагрузка и индивидуальные особенности важны. При боли в груди, обмороке или одышке обращайтесь за экстренной помощью.';
+ }
+ if(level!=='urgent')advice+=' Перед повтором лучше без кофе, алкоголя и физической нагрузки.';
+ return {level,summary,advice};
+}
+function bpReadings(){
+ return read().filter(x=>x.space==='health'&&x.kind==='Давление')
+  .map((x,index)=>({bp:bpParse(x),index})).filter(x=>x.bp)
+  .sort((a,b)=>b.bp.date.localeCompare(a.bp.date)||b.bp.time-a.bp.time||b.index-a.index)
+  .map(x=>x.bp);
+}
+function bpAverage(list){
+ if(list.length<2)return null;
+ const [a,b]=list;
+ if(!a.time||!b.time||a.date!==b.date||Math.abs(a.time-b.time)>30*60*1000)return null;
+ return {s:Math.round((a.s+b.s)/2),d:Math.round((a.d+b.d)/2),
+  p:Number.isInteger(a.p)&&Number.isInteger(b.p)?Math.round((a.p+b.p)/2):null};
+}
+function bpReport(){
+ const box=$('calendarBpReport'),records=bpReadings();
+ box.hidden=current!=='health'||records.length===0;
+ if(box.hidden)return;
+ const bp=records[0],info=bpAssess(bp.s,bp.d,bp.p);
+ box.dataset.level=info.level;
+ $('calendarBpReportStatus').textContent=info.summary+' · '+bp.s+'/'+bp.d+' мм рт. ст.'+(bp.p!==null?', пульс '+bp.p:'');
+ $('calendarBpReportAdvice').textContent=info.advice;
+ const average=bpAverage(records),node=$('calendarBpReportAverage');
+ node.hidden=!average;
+ if(average)node.textContent='Среднее двух последних замеров за 30 минут: '+average.s+'/'+average.d+' мм рт. ст.'+(average.p!==null?', пульс '+average.p:'')+'. Это среднее, а не прогноз следующего результата.';
+}
+function bpPreview(){
+ const box=$('calendarBpLiveAdvice');
+ const ids=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'];
+ if(ids.some(id=>!$(id).value.trim())){box.textContent='Введите три значения с тонометра. Сэйви объяснит результат.';box.dataset.level='neutral';return;}
+ const [s,d,p]=ids.map(id=>Number($(id).value));
+ if(![s,d,p].every(Number.isInteger)||s<50||s>300||d<30||d>200||s<=d||p<30||p>240){
+  box.textContent='Проверьте числа: верхнее должно быть больше нижнего. Если показатели необычные, повторите измерение и при плохом самочувствии обратитесь за медицинской помощью.';
+  box.dataset.level='neutral';return;
+ }
+ const info=bpAssess(s,d,p);
+ box.textContent='Сэйви · '+info.summary+'. '+info.advice;
+ box.dataset.level=info.level;
+}
+function bpForm(item=null){
+ const active=current==='health'&&$('calendarSpaceKind').value==='Давление';
+ $('calendarBloodPressureFields').hidden=!active;
+ $('calendarSpaceGenericValue').hidden=active;
+ $('calendarSpaceTitle').required=!active;
+ if(active){
+  const bp=bpParse(item);
+  $('calendarBpSystolic').value=bp?String(bp.s):'';
+  $('calendarBpDiastolic').value=bp?String(bp.d):'';
+  $('calendarBpPulse').value=bp?.p!==null&&bp?.p!==undefined?String(bp.p):'';
+ }
+ bpPreview();
+}
+for(const id of ['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse']){
+ $(id).addEventListener('input',bpPreview);
+}
 function renderHealthOverview(){
- const overview=$('calendarHealthOverview');
- overview.hidden=current!=='health';
+ const overview=$('calendarHealthOverview');overview.hidden=current!=='health';
  if(current!=='health')return;
  const records=read().filter(x=>x.space==='health');
  const formatted=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short'});
  for(const [kind,[valueId,dateId]] of Object.entries(healthUnits)){
-  const matching=records.filter(x=>x.kind===kind);
-  // Existing entries have no modification timestamp: use their most recent
-  // recorded date, then original storage order. Never invent a value.
-  const latest=matching.map((item,index)=>({item,index})).sort((a,b)=>
-   (b.item.date||'').localeCompare(a.item.date||'')||b.index-a.index
-  )[0]?.item;
-  $(valueId).textContent=latest?latest.title:'Нет записей';
+  const matching=records.map((x,i)=>({x,i})).filter(a=>a.x.kind===kind||
+   (kind==='Пульс'&&a.x.kind==='Давление'&&Number.isInteger(a.x.bpPulse)));
+  const latest=matching.sort((a,b)=>
+   (b.x.date||'').localeCompare(a.x.date||'')||(b.x.recordedAt||0)-(a.x.recordedAt||0)||b.i-a.i
+  )[0]?.x;
+  const display=latest&&kind==='Пульс'&&latest.kind==='Давление'?latest.bpPulse+' уд/мин':latest?.title||'Нет записей';
+  $(valueId).textContent=display;
   $(dateId).textContent=latest?(latest.date?'Последняя запись · '+formatted.format(new Date(latest.date+'T12:00:00')):'Последняя запись · без даты'):'';
   $(valueId).closest('[data-health-quick]')?.setAttribute('data-has-record',String(Boolean(latest)));
  }
+ bpReport();
 }
 function renderList(){
  const root=$('calendarSpaceList');root.replaceChildren();
@@ -208,6 +302,7 @@ function renderForm(){
  }
  updateHealthPlaceholder();
  svSyncControls();
+ bpForm(item);
 }
 function updateHealthPlaceholder(){
  if(current!=='health')return;
@@ -387,6 +482,7 @@ function add(kind=null){
   $('calendarSpaceKind').value=kind;
   svSyncControls();
   updateHealthPlaceholder();
+  bpForm();
  }
  if(current==='health'){
   measurementFocus(true);
@@ -395,9 +491,16 @@ function add(kind=null){
 }
 function save(event){
  event.preventDefault();
- const title=$('calendarSpaceTitle').value.trim().replace(/\s+/g,' ').slice(0,110);
+ const isBP=current==='health'&&$('calendarSpaceKind').value==='Давление';
+ const ids=['calendarBpSystolic','calendarBpDiastolic','calendarBpPulse'];
+ const vals=ids.map(id=>$(id).value.trim());
+ const [sys,dia,pulse]=vals.map(Number);
+ const validBp=vals.every(Boolean)&&[sys,dia,pulse].every(Number.isInteger)&&
+  sys>=50&&sys<=300&&dia>=30&&dia<=200&&sys>dia&&pulse>=30&&pulse<=240;
+ const title=isBP?sys+'/'+dia:$('calendarSpaceTitle').value.trim().replace(/\s+/g,' ').slice(0,110);
  const date=$('calendarSpaceDate').value;
  const status=$('calendarSpaceStatus');
+ if(isBP&&!validBp){status.textContent='Проверьте верхнее, нижнее и пульс. Нужны три корректных числа.';return}
  if(!title){status.textContent='Напишите название.';return}
  if(date&&!dateValid(date)){status.textContent='Проверьте дату.';return}
  const all=read(),old=all.find(x=>x.id===editing&&x.space===current);
@@ -406,6 +509,8 @@ function save(event){
   id:old?.id||'space-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
   space:current,title,kind:$('calendarSpaceKind').value,date,
   detail:$('calendarSpaceDetail').value.trim().slice(0,500),
+  bpPulse:isBP?pulse:null,
+  recordedAt:isBP?(old?.recordedAt||Date.now()):0,
   yearless:current==='world'&&$('calendarSpaceKind').value==='День рождения'&&$('calendarSpaceAnnual').checked&&!!date
  };
  const updated=old?all.map(x=>x.id===old.id?row:x):[...all,row];
@@ -498,7 +603,7 @@ $('calendarHealthOverview').addEventListener('click',event=>{
  const quick=event.target.closest('[data-health-quick]');
  if(quick)add(quick.dataset.healthQuick);
 });
-$('calendarSpaceKind').addEventListener('change',updateHealthPlaceholder);
+$('calendarSpaceKind').addEventListener('change',()=>{updateHealthPlaceholder();bpForm();});
 $('calendarSpaceFormFields').addEventListener('submit',save);
 $('calendarSpaceCancel').addEventListener('click',()=>{
  if(current==='health'&&dialog.dataset.measureFocus==='true'){
