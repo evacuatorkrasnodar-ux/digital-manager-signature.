@@ -43,14 +43,14 @@
 #calendarPersonalTools .pw-card strong{font-size:13px;font-weight:560;line-height:1.25;letter-spacing:-.014em}
 #calendarPersonalTools .pw-card small{font-size:10.5px;font-weight:440;color:var(--secondary);line-height:1.25}
 #calendarPersonalTools .pw-card[aria-pressed=true]{border-color:transparent;background:transparent;box-shadow:inset 0 -1px 0 var(--seyveo-emerald);}
-#calendarPersonalTools .pw-card:focus-visible,#calendarPersonalTools button:focus-visible,#calendarPersonalTools :is(input,select):focus-visible{outline:2px solid var(--text);outline-offset:2px}
+#calendarPersonalTools .pw-card:focus-visible,#calendarPersonalTools button:focus-visible,#calendarPersonalTools :is(input,select):focus-visible{outline:1.5px solid var(--seyveo-emerald);outline-offset:2px}
 /* Health uses the same 114px card rhythm as the two measurement tiles above. */
 #calendarPersonalTools .pw-health-tiles{margin-top:0}
 #calendarPersonalTools .pw-health-tiles .pw-card{min-height:90px;}
-#calendarPersonalTools .pw-detail{padding:10px 2px 12px;margin:0 0 8px;border:0;border-radius:0;background:transparent;box-shadow:none;
+#calendarPersonalTools .pw-detail{padding:7px 2px 10px;margin:0 0 6px;border:0;border-radius:0;background:transparent;box-shadow:none;
  animation:pw-reveal .38s cubic-bezier(.16,1,.3,1) both
 }
-#calendarPersonalTools .pw-panel-head{margin:0 0 14px}
+#calendarPersonalTools .pw-panel-head{margin:0 0 10px}
 #calendarPersonalTools :is(.pw-panel-head h3,#pwCycleDetail h3){margin:0 0 5px;font-size:16px;font-weight:560;letter-spacing:-.028em}
 #calendarPersonalTools :is(.pw-panel-head p,#pwCycleDetail p){margin:0;font-size:11.5px;line-height:1.48;color:var(--secondary)}
 #calendarPersonalTools .pw-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;margin:13px 0}
@@ -67,7 +67,7 @@
 }
 #calendarPersonalTools button:disabled{opacity:.46;cursor:default}
 #calendarPersonalTools .pw-caption{margin:10px 0 0;font-size:10.5px;line-height:1.5;color:var(--secondary)}
-#calendarPersonalTools .pw-inline{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:10px 0 0}
+#calendarPersonalTools .pw-inline{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:7px 0 0}
 #calendarPersonalTools .pw-inline label{
  display:grid;align-content:end;gap:6px;flex:1 1 115px;min-width:0;
  font-size:11px;color:var(--secondary);line-height:1.25
@@ -488,7 +488,7 @@
 #calendarPersonalTools .pw-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:14px 0 5px}
 #calendarPersonalTools .pw-week-item{min-width:0;display:grid;gap:6px;justify-items:center;text-align:center;font-size:11px;font-variant-numeric:tabular-nums}
 #calendarPersonalTools .pw-week-item small{font-size:9.5px;color:var(--secondary)}
-#calendarPersonalTools .pw-form{display:grid;gap:13px;margin:13px 0}
+#calendarPersonalTools .pw-form{display:grid;gap:10px;margin:9px 0}
 #calendarPersonalTools .pw-form>label{display:grid;gap:6px;font-size:11px;color:var(--secondary)}
 #calendarPersonalTools .pw-form>button{justify-self:start}
 #calendarPersonalTools .pw-list{display:grid;gap:0;margin:14px 0 5px}
