@@ -646,3 +646,47 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  font:inherit;font-size:12px;min-height:44px;padding:8px 2px;
  border:0;background:none;color:var(--text);cursor:pointer;text-align:left
 }
+
+/* Quiet Cinema follow-up: an actual queue uses exactly the original Living Ink
+   field. New items enter only after a prior decision, never as 20 stacked cards. */
+#seyveoLivingMoment.lm-real:not(.lm-condense) .lm-actions{
+ max-height:138px;overflow:visible;column-gap:15px;row-gap:0
+}
+#seyveoLivingMoment.lm-real .lm-actions .lm-polymer{
+ min-height:44px;font-size:12.5px;padding:8px 2px
+}
+@media(prefers-reduced-motion:no-preference){
+ #seyveoLivingMoment.lm-real.lm-reveal .lm-inline-item.lm-next-arrive{
+  animation:lm-queue-arrive 760ms cubic-bezier(.22,1,.36,1) both
+ }
+}
+@keyframes lm-queue-arrive{
+ from{opacity:0;transform:translate3d(0,54px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+/* A document review unfolds inside the approved document illustration,
+   not in another card, dialog, or imitation document vault. */
+#seyveoLivingMoment .lm-document-content[hidden],
+#tasksPage #seyveoPreviewDocumentLater[hidden]{display:none!important}
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="contract"] .lm-actions{
+ max-height:138px;overflow:visible;column-gap:15px;row-gap:0
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-actions .lm-polymer{
+ min-height:44px;font-size:12.5px;padding:8px 2px
+}
+#seyveoLivingMoment.lm-condense .lm-document-content{display:none!important}
+#seyveoLivingMoment .lm-document-content{
+ display:grid;gap:8px;padding:1px 0 0;margin:0;
+ min-width:0;max-width:100%;color:var(--text)
+}
+#seyveoLivingMoment .lm-document-content p{
+ margin:0;font-size:12px;line-height:1.49;overflow-wrap:anywhere
+}
+#seyveoLivingMoment .lm-document-content .lm-mail-intro,
+#seyveoLivingMoment .lm-document-content .lm-document-note,
+#seyveoLivingMoment .lm-document-content .lm-mail-note{
+ color:var(--secondary);font-size:11px
+}
+#seyveoLivingMoment .lm-document-content .lm-document-excerpt{
+ color:var(--text);font-size:12.5px
+}
