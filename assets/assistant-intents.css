@@ -6,7 +6,7 @@
  transform:translateX(-50%);
  box-sizing:border-box;width:max-content;max-width:min(340px,calc(100vw - 32px));
  padding:11px 17px;border-radius:20px;
- color:#edf1f7;background:rgba(19,37,40,.96);
+ color:var(--text);background:var(--card);
  border:1px solid rgba(202,248,226,.21);
  box-shadow:0 11px 26px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.09);
  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
@@ -15,7 +15,7 @@
  pointer-events:none;animation:seyveoNavAppear .18s ease both;
 }
 :root[data-theme=light] #seyveoNavNotice{
- color:#263647;background:rgba(246,251,248,.97);
+ color:var(--text);background:var(--card);
  border-color:rgba(100,123,157,.17);
  box-shadow:0 10px 23px rgba(66,84,108,.14),inset 0 1px 0 rgba(255,255,255,.8);
 }
