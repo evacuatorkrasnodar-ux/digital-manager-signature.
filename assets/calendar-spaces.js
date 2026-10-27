@@ -350,6 +350,10 @@ $('calendarSpaces').addEventListener('click',event=>{
   if(location.hash!=='#calendar')location.hash='calendar';
   return;
  }
+ if(name==='documents'){
+  if(!window.SEYVEO_SAYVI_SURFACES?.open?.('contract','personal'))location.hash='#sayvi-documents';
+  return;
+ }
  if(name==='notes'){
   window.dispatchEvent(new Event('seyveo:notes-open'));
   return;
