@@ -1,6 +1,6 @@
 /* SEYVEO Home · contextual Black Velvet remote, no permanent main-screen card */
 #seyveoSmartHomeHome[hidden],#seyveoSmartHomeWorld[hidden]{display:none!important}
-#seyveoSmartHomeHome{margin:5px 0 20px;padding:17px 15px 14px;width:100%;border-radius:22px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(240,245,255,.045),transparent 60%),var(--bg);animation:svh-appear .3s ease both}
+#seyveoSmartHomeHome{margin:5px 0 20px;padding:17px 15px 14px;width:100%;border-radius:22px;border:1px solid var(--line);background:linear-gradient(145deg,var(--seyveo-specular),rgba(81,173,149,.025) 60%,transparent),var(--bg);animation:svh-appear .3s ease both}
 #seyveoSmartHomeWorld{padding:16px 0 3px;margin-top:17px;border-top:1px solid var(--soft-line)}
 #seyveoSmartHomeHome,#seyveoSmartHomeWorld{color:var(--text)}
 .svh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -10,7 +10,7 @@
 .svh-subtitle{margin:7px 0 15px;color:var(--secondary);font-size:12px}
 .svh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .svh-device{display:flex;align-items:flex-start;justify-content:center;flex-direction:column;gap:7px;min-width:0;min-height:101px;padding:11px 9px;background:var(--card);border:1px solid var(--soft-line);border-radius:17px;color:var(--text);text-align:left;box-shadow:none}
-.svh-device[aria-pressed=true]{background:color-mix(in srgb,var(--text) 9%,var(--card));border-color:color-mix(in srgb,var(--text) 28%,var(--line))}
+.svh-device[aria-pressed=true]{background:color-mix(in srgb,var(--seyveo-emerald) 12%,var(--card));border-color:color-mix(in srgb,var(--seyveo-emerald) 34%,var(--line))}
 .svh-symbol{font-size:20px;line-height:1;color:var(--secondary)}
 .svh-device[aria-pressed=true] .svh-symbol{color:var(--text)}
 .svh-label{font-size:12px;font-weight:460;line-height:1.2}
@@ -56,7 +56,7 @@
 #calendarSpaceDialog #seyveoSmartHomeWorld .svh-top{display:none}
 #calendarSpaceDialog #seyveoSmartHomeWorld .svh-subtitle{margin:0 0 12px}
 #calendarSpaceDialog #seyveoSmartHomeWorld .svh-device{background:transparent;border:1px solid var(--soft-line);border-radius:16px;min-height:92px}
-#calendarSpaceDialog #seyveoSmartHomeWorld .svh-device[aria-pressed=true]{border-color:var(--line);background:color-mix(in srgb,var(--text) 4%,transparent)}
+#calendarSpaceDialog #seyveoSmartHomeWorld .svh-device[aria-pressed=true]{border-color:var(--seyveo-hdr-outline);background:var(--seyveo-hdr-active)}
 #calendarSpaceDialog .world-home-section button:focus-visible,
 #calendarSpaceDialog .world-home-section summary:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 
