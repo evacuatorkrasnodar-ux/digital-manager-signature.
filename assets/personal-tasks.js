@@ -389,7 +389,7 @@ window.addEventListener('storage',event=>{
   contactsChanged();
  }
 });
-function row(item,compact=false){
+function row(item,compact=false,deferred=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
  const label=element('span','personal-task-content');
@@ -409,7 +409,7 @@ function row(item,compact=false){
  if(item.done)name.classList.add('is-done');
  label.append(name);
  const due=displayDate(item);
- if(due||item.done)label.append(element('small','',item.done?'Завершено':due));
+ if(due||item.done||deferred)label.append(element('small','',item.done?'Завершено':deferred?'Отложено с Главной · до следующего открытия':due));
  if(!compact){
   if(item.sourceNoteId){
    const origin=element('button','personal-task-origin','Из Блокнота · Открыть запись');
@@ -433,8 +433,33 @@ function row(item,compact=false){
   remove.type='button';remove.dataset.taskDelete=item.id;
   remove.setAttribute('aria-label','Удалить дело: '+item.title);
   menu.append(remove);
+  if(deferred){
+   const resume=element('button','personal-task-menu-delete','Вернуть на Главную');
+   resume.type='button';resume.dataset.taskResume=item.id;
+   menu.prepend(resume);
+  }
   section.append(art,label,checkbox,menu);
  }else section.append(label);
+ return section;
+}
+/* All saved tasks and postponed Home previews appear inside this ONE list.
+   The previews are read-only training data, never written to personal-tasks-v1. */
+function deferredPreviewRow(item){
+ const section=element('div','personal-task-row personal-deferred-row');
+ section.dataset.deferredKind=item.kind;
+ const art=element('span','personal-task-art');art.append(taskIcon('note'));
+ art.setAttribute('aria-hidden','true');
+ const copy=element('span','personal-task-content');
+ copy.append(element('strong','personal-deferred-title',item.title),
+  element('small','personal-deferred-note','ДЕМО · '+item.note));
+ const actions=element('span','personal-deferred-actions');
+ const open=element('button','','Подробнее');
+ open.type='button';open.dataset.deferredOpen=item.kind;
+ open.setAttribute('aria-label','Открыть учебный источник: '+item.title);
+ const restore=element('button','','Вернуть');
+ restore.type='button';restore.dataset.deferredRestore=item.kind;
+ restore.setAttribute('aria-label','Вернуть учебную карточку на Главную: '+item.title);
+ actions.append(open,restore);section.append(art,copy,actions);
  return section;
 }
 function render(){
@@ -442,18 +467,40 @@ function render(){
  const all=read(),open=all.filter(item=>!item.done)
  .sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31')||a.createdAt.localeCompare(b.createdAt));
  const done=all.filter(item=>item.done).reverse();
- const featuredTaskId=renderContext(open);
- const visibleOpen=open.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
+ const living=window.SEYVEO_LIVING_MOMENT;
+ const deferredIds=new Set(living?.deferredTaskIds?.()||[]);
+ const preview=Array.isArray(living?.deferred?.())?living.deferred():[];
+ const postponed=open.filter(item=>deferredIds.has(item.id));
+ const active=open.filter(item=>!deferredIds.has(item.id));
+ const featuredTaskId=renderContext(active);
+ const visibleActive=active.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
  list.replaceChildren();
- if(!all.length){
-  list.append(element('p','personal-tasks-empty','Пока нет дел. Добавьте первое — SEYVEO сохранит его на этом устройстве.'));
- }else{
-  if(visibleOpen.length){const head=element('h3','personal-list-title','Нужно сделать · '+visibleOpen.length);list.append(head);
-   visibleOpen.forEach(task=>list.append(row(task)))}
-  if(done.length){const head=element('h3','personal-list-title','Выполнено · '+done.length);list.append(head);
-   done.slice(0,30).forEach(task=>list.append(row(task)))}
+ if(visibleActive.length){
+  list.append(element('h3','personal-list-title','Нужно сделать · '+visibleActive.length));
+  visibleActive.forEach(task=>list.append(row(task)));
  }
- // Offer a single short-lived continuation only for the task just completed.
+ if(postponed.length||preview.length){
+  list.append(element('h3','personal-list-title','Отложено · '+(postponed.length+preview.length)));
+  postponed.forEach(task=>list.append(row(task,false,true)));
+  preview.forEach(item=>list.append(deferredPreviewRow(item)));
+ }
+ if(done.length){
+  list.append(element('h3','personal-list-title','Выполнено · '+done.length));
+  done.slice(0,30).forEach(task=>list.append(row(task)));
+ }
+ if(!open.length&&!preview.length){
+  list.prepend(element('p','personal-tasks-empty',done.length
+   ?'Сейчас нет незавершённых дел. Решённые поручения сохранены ниже.'
+   :'Пока всё спокойно. Здесь появятся поручения и рекомендации, которые ты отложишь с Главной.'));
+ }
+ const overview=$('tasksOverview');
+ if(overview){
+  const count=postponed.length+preview.length;
+  overview.textContent=open.length||preview.length
+   ?'В работе · '+active.length+(count?'   /   Отложено · '+count:'')
+   :'Сэйви соберёт здесь незавершённое, а ты сможешь добавить своё дело.';
+ }
+ // A continuation is offered only after a real task has been completed.
  const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
  if(completed){
   const action=findContinuation(completed,all);
@@ -464,10 +511,10 @@ function render(){
  else summary.append(element('p','personal-brief-empty',all.length?'Все личные дела завершены. Отличная работа.':'Личных дел пока нет.'));
  $('personalBriefCount').textContent=open.length?String(open.length):'';
  $('personalBriefCount').hidden=!open.length;
- // Keep personal tasks in Дела; show their compact Home preview only if pending.
  $('personalBrief').hidden=open.length===0;
  window.dispatchEvent(new CustomEvent('seyveo:tasks-changed',{detail:{open:open.length,total:all.length}}));
 }
+window.addEventListener('seyveo:home-deferred-changed',render);
 function syncDueDateDisplay(){
  const display=$('personalTaskDueDisplay'),control=date.closest('.personal-task-date-control');
  if(!display||!control)return;
@@ -589,7 +636,19 @@ $('personalAddTasks').addEventListener('click',openDialog);
 $('personalTaskCancel').addEventListener('click',()=>dialog.close());
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
- if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
+ if(btn.dataset.deferredOpen){
+  const kind=btn.dataset.deferredOpen==='mail'?'mail':'contract';
+  const api=window.SEYVEO_SAYVI_SURFACES;
+  if(api?.open)api.open(kind);
+  else location.hash=kind==='mail'?'#sayvi-mail':'#sayvi-documents';
+ }
+ else if(btn.dataset.deferredRestore){
+  window.SEYVEO_LIVING_MOMENT?.restoreDeferred?.(btn.dataset.deferredRestore);
+ }
+ else if(btn.dataset.taskResume){
+  window.SEYVEO_LIVING_MOMENT?.restoreTask?.(btn.dataset.taskResume);
+ }
+ else if(btn.dataset.taskToggle)change(btn.dataset.taskToggle);
  else if(btn.dataset.taskMenu){
   const taskRow=btn.closest('.personal-task-row');
   if(!taskRow)return;
