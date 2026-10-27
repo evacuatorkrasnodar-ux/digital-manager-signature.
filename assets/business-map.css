@@ -7,12 +7,12 @@
  width:min(610px,calc(100vw - 24px));max-width:calc(100vw - 24px);
  height:auto;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
  border:1px solid rgba(228,236,247,.17);border-radius:24px;
- overflow:hidden;background:#14171b;color:#f4f6fa;color-scheme:dark;
+ overflow:hidden;background:#112023;color:#effaf5;color-scheme:dark;
  box-shadow:0 22px 76px rgba(0,0,0,.3);box-sizing:border-box;
 }
 #businessMapDialog:not([open]){display:none}
 #businessMapDialog[open]{display:block}
-#businessMapDialog::backdrop{background:rgba(4,6,10,.78)}
+#businessMapDialog::backdrop{background:rgba(2,10,12,.80)}
 #businessMapDialog *{box-sizing:border-box}
 #businessMapDialog .business-map-shell{
  width:100%;min-height:0;height:auto;
@@ -40,7 +40,7 @@
  min-height:47px;padding-bottom:9px;border-bottom:1px solid rgba(232,240,251,.09);
 }
 #businessMapDialog .business-map-brand{font-size:12px;font-weight:575;letter-spacing:.22em}
-#businessMapDialog .business-map-subbrand{display:block;font-size:10px;color:#97a1af;letter-spacing:.07em;margin-top:3px}
+#businessMapDialog .business-map-subbrand{display:block;font-size:10px;color:#a0bfb4;letter-spacing:.07em;margin-top:3px}
 #businessMapDialog .business-map-close{
  display:grid;place-items:center;min-width:56px;min-height:44px;
  padding:7px 4px;border:0;border-radius:12px;
@@ -55,38 +55,38 @@
 }
 #businessMapDialog [hidden]{display:none!important}
 #businessMapDialog .business-map-progress{
- margin:0 0 16px;font-size:10px;letter-spacing:.18em;color:#96a3b3;font-weight:500;
+ margin:0 0 16px;font-size:10px;letter-spacing:.18em;color:#a1bfb4;font-weight:500;
 }
 #businessMapDialog h2{
  font:inherit;font-size:clamp(28px,7.5vw,37px);font-weight:360;
  letter-spacing:-.052em;line-height:1.13;color:inherit;margin:0 0 13px;
 }
 #businessMapDialog .business-map-lead{
- max-width:420px;margin:0 0 23px;color:#adb8c6;font-size:13px;line-height:1.63;
+ max-width:420px;margin:0 0 23px;color:#b0ccc3;font-size:13px;line-height:1.63;
 }
 #businessMapDialog button,#businessMapDialog textarea{font-family:inherit}
 #businessMapDialog .business-map-mode,
 #businessMapDialog .business-map-source-choice{
  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
  gap:5px;min-height:64px;width:100%;padding:12px 15px;text-align:left;
- border:1px solid rgba(227,235,246,.16);border-radius:16px;
- color:inherit;background:rgba(255,255,255,.03);cursor:pointer;
+ border:1px solid rgba(196,242,225,.17);border-radius:16px;
+ color:inherit;background:linear-gradient(154deg,rgba(212,255,240,.054),rgba(98,170,154,.018));cursor:pointer;
 }
 #businessMapDialog .business-map-mode+.business-map-mode{margin-top:9px}
 #businessMapDialog .business-map-mode strong,
 #businessMapDialog .business-map-source-choice strong{font-size:14px;font-weight:510;line-height:1.32}
 #businessMapDialog .business-map-mode small,
-#businessMapDialog .business-map-source-choice small{font-size:11px;line-height:1.43;color:#a2acb9;font-weight:410}
+#businessMapDialog .business-map-source-choice small{font-size:11px;line-height:1.43;color:#a6c1b8;font-weight:410}
 #businessMapDialog .business-map-form label{
- display:block;font-size:13px;font-weight:510;margin:0 0 11px;color:#e4eaf1;
+ display:block;font-size:13px;font-weight:510;margin:0 0 11px;color:#ebfaf2;
 }
 #businessMapDialog .business-map-form textarea{
  width:100%;height:132px;min-height:85px;max-height:220px;resize:vertical;
  border:1px solid rgba(228,236,247,.24);border-radius:16px;padding:13px;
- background:#1b2028;color:#f5f7fa;font-size:16px;line-height:1.5;outline:0;
+ background:#1c3031;color:#f1faf6;font-size:16px;line-height:1.5;outline:0;
 }
 #businessMapDialog .business-map-form textarea:focus-visible{
- border-color:#aebfd5;box-shadow:0 0 0 2px rgba(178,202,234,.12);
+ border-color:#a1d8c6;box-shadow:0 0 0 2px rgba(106,207,174,.12);
 }
 #businessMapDialog .business-map-form textarea::placeholder{color:#8b98a8}
 #businessMapDialog .business-map-input-help{color:#9eabb8;font-size:11px;line-height:1.55;margin:12px 0 0}
@@ -100,9 +100,9 @@
  flex:1 1 auto;min-width:0;min-height:48px;
  padding:10px 15px;
  border:1px solid rgba(230,237,245,.33);border-radius:16px;
- background:linear-gradient(180deg,rgba(239,245,251,.075),rgba(239,245,251,.028));
+ background:linear-gradient(180deg,rgba(220,255,242,.11),rgba(93,184,159,.038));
  box-shadow:inset 0 1px 0 rgba(255,255,255,.065);
- color:#eef2f7;font-size:13px;font-weight:490;line-height:1.3;
+ color:#f1fff8;font-size:13px;font-weight:490;line-height:1.3;
  letter-spacing:-.012em;text-align:center;cursor:pointer;
 }
 #businessMapDialog .business-map-secondary{
@@ -111,11 +111,11 @@
  padding:10px 13px;
  border:1px solid rgba(230,237,245,.20);border-radius:16px;
  background:transparent;box-shadow:none;
- color:#cbd5df;font-size:12.5px;font-weight:465;line-height:1.3;
+ color:#c6e1d6;font-size:12.5px;font-weight:465;line-height:1.3;
  cursor:pointer;
 }
 #businessMapDialog :is(.business-map-primary,.business-map-secondary):active{
- background:rgba(239,245,251,.10);
+ background:rgba(116,208,179,.11);
 }
 #businessMapDialog :is(#businessMapBack,#businessMapIndustryBack){
  display:inline-grid;place-items:center;
@@ -270,7 +270,7 @@
 #businessMapDialog .business-map-industry-choice{
  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
  gap:5px;width:100%;min-height:68px;padding:11px 12px;text-align:left;
- background:rgba(255,255,255,.035);color:inherit;border:1px solid rgba(227,235,246,.16);
+ background:rgba(255,255,255,.035);color:inherit;border:1px solid rgba(196,242,225,.17);
  border-radius:14px;cursor:pointer;
 }
 #businessMapDialog .business-map-industry-choice strong{
@@ -347,7 +347,7 @@
 #businessMapDialog .business-map-storefront-manual textarea{
  width:100%;min-height:85px;max-height:170px;resize:vertical;border-radius:13px;
  border:1px solid rgba(228,236,247,.24);padding:11px 12px;
- background:#1b2028;color:#f5f7fa;outline:0;font-size:16px;line-height:1.5;
+ background:#1c3031;color:#f1faf6;outline:0;font-size:16px;line-height:1.5;
 }
 #businessMapDialog .business-map-storefront-manual button{margin-top:9px;width:100%}
 #businessMapDialog .business-map-storefront-back{margin:12px 0 9px}
