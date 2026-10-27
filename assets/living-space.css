@@ -536,8 +536,11 @@ html.sv-space-active #managePage .seyveo-clean-back{
 /* NOTEBOOK, CARE AND DOCUMENTS — remain accessible real editors, not
    a duplicate dock of pill buttons over private content. */
 :is(#notesDialog,#calendarSpaceDialog,#noteReadDialog,#noteReviewDialog,#noteModeDialog,
-    .paper-editor-dialog,.paper-choice-dialog,.personal-call-dialog,.personal-contacts-dialog,
-    #personalTaskDialog,#calendarEventDialog,
+    .paper-editor-dialog,.paper-choice-dialog)[open]{
+ background:var(--sv-life-dialog-bg,var(--bg));
+ box-shadow:0 28px 75px rgba(0,0,0,.30);
+}
+:is(.personal-call-dialog,.personal-contacts-dialog,#personalTaskDialog,#calendarEventDialog,
     #manageConnectionsDialog,#manageRoadmapDialog,#manageDataDialog)[open]{
  background:var(--bg);box-shadow:0 28px 75px rgba(0,0,0,.38);
 }
