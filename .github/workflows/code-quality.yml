@@ -26,8 +26,8 @@ jobs:
         run: node tools/test-world-velvet.cjs
       - name: Verify Demo Mode only shows training inside actual Business Pulse
         run: node tools/test-demo-mode.cjs
-      - name: Check prebuilt Living Ink mail on Home and safe demo actions
-        run: node tools/test-home-mail-demo.cjs
+      - name: Verify original three-card Quiet Cinema mail and four safe actions
+        run: node tools/test-quiet-cinema-mail.cjs
       - name: Verify first Business Pulse scenario on the real page
         run: node tools/test-pulse-walkthrough.cjs
       - name: Verify simulated client inbox inside the real Pulse route
