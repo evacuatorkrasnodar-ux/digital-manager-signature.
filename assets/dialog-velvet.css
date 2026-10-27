@@ -341,22 +341,30 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
 }
 
 
-/* SEYVEO Living Ink · real workspaces are open pages, not dialog boxes.
-   Keep true confirmation/permission dialogs framed for safety. Only content
-   workspaces listed here lose their old border and shadow. */
-:is(#assistantChatHistoryDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+/* SEYVEO workspace sheets: chat history keeps its own neutral canvas;
+   Notebook / Health / Care follow the selected My World palette. These are
+   the original dialogs, not a second surface or an overlay. */
+#assistantChatHistoryDialog:not([hidden]){
  box-sizing:border-box;
- border:0!important;
- border-radius:0!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:var(--bg)!important;color:var(--text);
+}
+:is(#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+ box-sizing:border-box;
+ border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
+ border-radius:25px!important;
  box-shadow:none!important;
- background:var(--bg)!important;
+ background:var(--sv-life-dialog-bg,var(--bg))!important;
  color:var(--text);
 }
-:root[data-theme=light] :is(#assistantChatHistoryDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+:root[data-theme=light] #assistantChatHistoryDialog:not([hidden]){
  background:var(--bg)!important;
- border-color:transparent!important;
- box-shadow:none!important;
 }
+:root[data-theme=light] :is(#notesDialog,#noteReadDialog,#noteReviewDialog,#calendarSpaceDialog):not([hidden]){
+ background:var(--sv-life-dialog-bg,var(--bg))!important;
+ border-color:var(--seyveo-hdr-outline,var(--line))!important;
+}
+
 /* Saved requests: compact open lines, never pills with clipped first lines.
    Native DETAILS remains functional, preserving read-only history and storage. */
 #assistantChatHistoryDialog.assistant-chat-history[open]{
