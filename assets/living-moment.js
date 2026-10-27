@@ -463,9 +463,15 @@ function createSurface(primary,other=[],real=false,taskId=''){
  tiles.append(field);
  return {field,changeFeatured,updateCount};
 }
-let previewScene=null;
+let previewScene=null,previewCount=0;
 function buildExamples(){
- previewScene=createSurface(sample[0],sample.slice(1));
+ // A deferred training example cannot return Home until explicitly restored.
+ const present=sample.filter(item=>
+  !(item.kind==='mail'&&mailDeferred) &&
+  !(item.kind==='contract'&&documentDeferred));
+ previewCount=present.length;
+ previewScene=present.length?createSurface(present[0],present.slice(1)):null;
+ return present.length;
 }
 function gatherPreview(){
  if(mode!=='preview'&&mode!=='task')return;
@@ -479,7 +485,7 @@ function gatherPreview(){
   const label=field.querySelector('.lm-field-eyebrow');
   const measure=field.querySelector('.lm-field-measure');
   if(label)label.textContent='ГЛАВНОЕ';
-  if(measure)measure.textContent='3 ДЕЛА · ПРЕДПРОСМОТР';
+  if(measure)measure.textContent=previewCount+' '+(previewCount===1?'ДЕЛО':'ДЕЛА')+' · ПРЕДПРОСМОТР';
  }
  // All three original tasks stay visible in one parent, never cloned.
  space.classList.add('lm-gather');
@@ -526,7 +532,7 @@ function startPreview(){
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
- buildExamples();
+ if(!buildExamples()){rest();return false}
  tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
@@ -540,7 +546,7 @@ function startPreview(){
  // Each of the three independent cards rises from below the screen.
  // After their arrival, they join a SINGLE card that remains readable.
  hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: показ трёх сцен без изменения личных данных.';
+ if(caption)caption.textContent='Quiet Cinema: показ '+previewCount+' сцен без изменения личных данных.';
  return true;
 }
 function dueTasks(){
