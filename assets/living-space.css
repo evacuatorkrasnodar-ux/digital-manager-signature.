@@ -674,12 +674,12 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Shared Black Velvet canvas.
-   A calm full-page gradient without the fixed radial spots that resembled
-   a ghost sphere on every route. The actual sphere SVG is untouched. */
+/* SEYVEO · Black Velvet 2.0 / Emerald Depth.
+   One refined linear canvas; no radial ghost silhouettes.
+   Protected orb SVG, position and animation remain unchanged. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
+ background:linear-gradient(180deg,#0c1110 0%,#101917 24%,#13241e 55%,#173127 78%,#0e1512 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1173,7 +1173,7 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#lifePage,
 
 /* My World · quiet graphite page instead of a nearly black, boxed menu. */
 html.sv-space-active #lifePage{
- background:linear-gradient(155deg,#23262c 0%,#1e2126 46%,#191c21 100%)!important;
+ background:linear-gradient(155deg,#111d17 0%,#172920 46%,#101a15 100%)!important;
  min-height:100%;color:var(--text);
 }
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
@@ -1213,7 +1213,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
    Exactly the same approved graphite gradient values; paint it on the
    viewport background rather than as a rectangular main-page tile. */
 html.sv-space-active:has(#lifePage:not([hidden])) body{
- background:linear-gradient(155deg,#23262c 0%,#1e2126 46%,#191c21 100%)!important;
+ background:linear-gradient(180deg,#0c1110 0%,#101917 24%,#13241e 55%,#173127 78%,#0e1512 100%)!important;
  background-attachment:fixed!important;
 }
 html.sv-space-active #lifePage{
@@ -1268,7 +1268,7 @@ html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-
  box-sizing:border-box;width:min(440px,calc(100vw - 20px));max-width:calc(100vw - 20px);
  max-height:min(86dvh,780px);padding:21px 18px 25px;
  border-radius:26px;border:1px solid rgba(235,239,247,.14);
- background:#1d2025;color:var(--text);
+ background:#18271f;color:var(--text);
  box-shadow:0 20px 55px rgba(0,0,0,.24);
  overflow-y:auto;overscroll-behavior:contain;
 }
@@ -1461,7 +1461,7 @@ html.sv-space-active #lifePage .life-footnote{
  border:1px solid rgba(234,239,247,.12)!important;
  border-radius:27px!important;
  padding:23px clamp(15px,4.2vw,23px)!important;
- background:#1d2025!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
+ background:#18271f!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
  overflow-y:auto;overscroll-behavior:contain;
 }
 :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(h2,h3){
