@@ -1,0 +1,21 @@
+/* SEYVEO · invisible scroll tracks, retained content accessibility.
+ * UX: no browser-gray rails within Black Velvet workspaces.
+ * Scrolling, keyboard movement, focus and long histories MUST keep working.
+ * Do NOT turn overflow off on the app, notes, documents or conversations.
+ */
+html,body,body *{
+ scrollbar-width:none!important;
+ -ms-overflow-style:none!important;
+}
+html::-webkit-scrollbar,body::-webkit-scrollbar,body *::-webkit-scrollbar{
+ width:0!important;
+ height:0!important;
+ display:none!important;
+ background:transparent!important;
+}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,body *::-webkit-scrollbar-thumb{
+ background:transparent!important;
+ border:0!important;
+}
+/* Keep textareas clean and use their natural wheel/touch scrolling when long. */
+#seyveoFamilyDialog .svf-compose textarea{resize:none}
