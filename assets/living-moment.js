@@ -164,6 +164,24 @@ function explain(field,message,button){
  field.classList.toggle('lm-has-reason',!collapse);
  if(button)button.setAttribute('aria-expanded',String(!collapse));
 }
+// Sayvi's Home voice follows the CURRENT highlighted item, not generic "all quiet".
+function announceRecommendation(item){
+ if(!item)return;
+ const isDemo=mode==='preview';
+ const speech=isDemo
+  ?item.kind==='contract'
+   ?'Это учебный договор. Я покажу, где не хватает срока поставки, и предложу исправление.'
+   :item.kind==='mail'
+    ?'Это пример письма. Я подготовила черновик ответа, а отправку оставляю тебе.'
+    :'Это пример заботы о себе. Можно сделать короткую передышку.'
+  :'Это сохранённое поручение. Я напомнила о сроке и помогу открыть детали.';
+ window.dispatchEvent(new CustomEvent('seyveo:home-recommendation-changed',{
+  detail:{kind:item.kind,title:item.title,isDemo,message:speech}
+ }));
+}
+function clearRecommendation(){
+ window.dispatchEvent(new CustomEvent('seyveo:home-recommendation-changed',{detail:null}));
+}
 function createSurface(primary,other=[],real=false,taskId=''){
  tiles.replaceChildren();
  const field=create('div','lm-field');
@@ -194,7 +212,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  mailDetails.hidden=true;
  // The original document scene uses the SAME field, artwork, actions and motion.
  let documentStep='summary';
- const documentDefault='Просьба указать конкретный срок поставки и порядок уведомления о задержке.';
+ const documentDefault='Уточнить конкретный срок поставки и порядок уведомления о задержке.';
  let documentNote=documentDefault;
  const documentDetails=create('div','lm-document-content');
  documentDetails.hidden=true;
@@ -214,21 +232,26 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   documentDetails.replaceChildren();
   if(!active)return;
-  documentDetails.append(create('p','lm-mail-intro','ДЕМО · Условный договор, не ваш файл.'));
-  documentDetails.append(create('p','lm-document-excerpt',
-   'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
+  documentDetails.append(create('p','lm-mail-intro','ДЕМО · Учебный договор · не ваш файл'));
+  if(documentStep!=='summary'){
+   documentDetails.append(create('p','lm-document-excerpt',
+    'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
+  }
   if(documentStep==='edit'){
    const label=create('label','lm-mail-edit-label','Предложение к исправлению');
    const input=create('textarea','lm-mail-edit-input');
    input.rows=3;input.maxLength=1200;input.value=documentNote;
    label.append(input);documentDetails.append(label);
   }else{
+   const sayviText=documentStep==='done'
+    ?'Это только учебный пример. Настоящий договор не изменён.'
+    :documentStep==='summary'
+     ?'Я заметила: срок поставки не указан. Предлагаю уточнить его.'
+     :'Предлагаю: '+documentNote;
    documentDetails.append(create('p','lm-document-note',
-    documentStep==='done'
-     ?'✓ Отмечено только в демонстрации. Документы не изменены и не подписаны.'
-     :'Предложение Сэйви: '+documentNote));
+    'Сэйви · '+sayviText));
    if(documentStep==='review')documentDetails.append(create('p','lm-mail-note',
-    'Проверьте предложение перед согласованием. Кнопка не подписывает и не изменяет договор.'));
+    'ДЕМО · Согласование не подписывает и не изменяет договор.'));
   }
  }
 
@@ -384,6 +407,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   label.textContent=space.classList.contains('lm-gather')?'ГЛАВНОЕ':item.category;
   headline.textContent=item.title;
   description.textContent=item.body;
+  description.hidden=!real&&item.kind==='contract';
   open.setAttribute('aria-label','Подробнее: '+item.title);
   execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
@@ -396,6 +420,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   updateDocument();
   updateCount();
   renderSecondary();
+  announceRecommendation(item);
  }
  function changeFeatured(item){
   if(item===shown||morphLocked||!remaining.includes(item)||space.classList.contains('lm-condense'))return;
@@ -449,6 +474,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   },reduced()?0:420);
  }
  field.dataset.lmSubject=primary.kind;
+ description.hidden=!real&&primary.kind==='contract';
  updateMail();
  updateDocument();
  updateCount();
@@ -461,6 +487,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  scene.append(top,main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
+ announceRecommendation(primary);
  return {field,changeFeatured,updateCount};
 }
 let previewScene=null,previewCount=0;
