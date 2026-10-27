@@ -1,5 +1,5 @@
 /* SEYVEO · Management navigation regression.
- * Our Ideas is a single direct overview button; About holds project materials.
+ * Our Ideas remains direct; obsolete About/preview and demo controls must be absent.
  * Runs with Node, without a browser or external libraries.
  */
 'use strict';
@@ -12,8 +12,13 @@ const menuStart=html.indexOf('<div id="seyveoCleanManageMenu"');
 const detailStart=html.indexOf('<div id="seyveoCleanDetail"');
 assert.ok(menuStart>0&&detailStart>menuStart,'Management menu and detail exist in order');
 const overview=html.slice(menuStart,detailStart);
-assert.equal((html.match(/data-clean-section="about"/g)||[]).length,1,'Single About SEYVEO entry');
-for(const id of ['seyveoCleanManageMenu','seyveoCleanDetail','seyveoCleanLegacy','seyveoCleanBack','seyveoCleanTitle','openManageRoadmap','manageRoadmapDialog','openStudioPassportFromManage','seyveoBusinessCommandPage']){
+assert.doesNotMatch(overview,/data-clean-section="about"/,'No empty About SEYVEO page');
+for(const id of ['openSeyveoDemoMode','seyveoDemoModeState','openStudioPassportFromManage',
+ 'openSeyveoMusicPreview','openLivingAnswersPreview','openLivingMomentPreview','livingMomentPreviewStatus']){
+ assert.doesNotMatch(overview,new RegExp('id="'+id+'"'),'Removed old preview/demo UI: '+id);
+}
+assert.doesNotMatch(overview,/Материалы SEYVEO|Демо-режим|предпросмотры/,'No obsolete preview catalog or demo switch');
+for(const id of ['seyveoCleanManageMenu','seyveoCleanDetail','seyveoCleanLegacy','seyveoCleanBack','seyveoCleanTitle','openManageRoadmap','manageRoadmapDialog','seyveoBusinessCommandPage']){
  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'Unique element id: '+id);
 }
 assert.match(overview,/id="openManageRoadmap"/,'Original Ideas button appears directly in overview');
@@ -34,7 +39,9 @@ for(const name of ['Команда']){
 assert.match(html,/id="openCompanyPassportFromManage"/,'Real company card preserved');
 assert.match(html,/id="seyveoStaffCards"/,'HR data card preserved');
 assert.match(html,/id="seyveoRoiForm"/,'ROI calculator preserved');
-assert.ok(html.indexOf('id="openManageRoadmap"')<detailStart,'Roadmap control is not hidden in About detail');
+assert.ok(html.indexOf('id="openManageRoadmap"')<detailStart,'Roadmap control is visible directly in Management');
+assert.match(html,/id="seyveoStudioDialog"/,'Studio passport engine retained for linked company / brand actions');
+assert.match(html,/id="seyveoCompanyDialog"/,'Company card still works');
 assert.match(management,/\$\('openManageRoadmap'\)\.addEventListener\('click'/,'Single existing roadmap handler remains');
 assert.match(management,/roadmapDialog\.showModal\(\)/,'Ideas open the original dialog');
 const start=html.indexOf('/* SEYVEO Management · one tap, one destination. Preserve original handlers. */');
@@ -43,8 +50,8 @@ const end=html.indexOf('</script>',start);
 assert.ok(end>start,'Management routing source complete');
 const inline=html.slice(start,end);
 new vm.Script(inline,{filename:'SEYVEO Management navigation'});
-assert.match(inline,/about:\[2,'details\.seyveo-manage-fold'\]/,'About uses stable semantic selector');
-assert.doesNotMatch(inline,/if\(key==='about'\).*openManageRoadmap/,'About does not duplicate Ideas');
+assert.doesNotMatch(inline,/about:\[/,'Old About route is retired, no blank details frame');
+assert.doesNotMatch(inline,/if\(key==='about'\)/,'No About fallback recreated');
 class Fake{
  constructor(tag='DIV'){
   this.tagName=tag;this.hidden=false;this.open=false;this.textContent='';this.handlers={};this.elements=[];this.states=new Set();this.dataset={};this.calls=0;
@@ -59,10 +66,7 @@ class Fake{
  querySelectorAll(){return []}
  removeAttribute(x){if(x==='open')this.open=false}
 }
-const material=new Fake('DETAILS');
 const groups=Array.from({length:4},()=>new Fake('SECTION'));
-groups[2].querySelector=selector=>selector==='.manage-card > details.seyveo-manage-fold'?material:null;
-groups[2].querySelectorAll=selector=>selector==='.seyveo-selected-item'&&material.states.has('seyveo-selected-item')?[material]:[];
 const advancedBusiness=new Fake('DETAILS');
 const businessFeatures=Object.fromEntries(['Команда','Кадры','Эффект SEYVEO'].map(name=>{
  const node=new Fake('DETAILS');node.querySelector=selector=>
@@ -105,9 +109,8 @@ clickBusiness('company');assert.equal(company.calls,1,'Company opens original pr
 clickBusiness('pulse');assert.equal(pulse.calls,1,'Business Pulse opens original picture');
 clickBusiness('documents');assert.equal(documents.calls,1,'Documents open original center');
 normal('about','О SEYVEO');
-assert.equal(material.open,true,'About material opens');
-back.click();
-assert.equal(menu.hidden,false,'About Back works');
+assert.equal(menu.hidden,false,'Removed About shortcut cannot open a ghost page');
+
 for(const [key,heading,tab] of [['people','Сотрудники','team'],['chat','Рабочие чаты','chats'],['tasks','Поручения','tasks']]){
  clickBusiness(key);
  assert.equal(title.textContent,heading,'Direct destination '+key);
@@ -131,4 +134,4 @@ clickBusiness('efficiency');
 assert.equal(title.textContent,'Эффективность бизнеса','Direct efficiency route');
 back.click();
 assert.equal(menu.hidden,false,'Final Back returns to overview');
-console.log('PASS Management: 8 direct Business buttons, focused pages, correct Back and About.');
+console.log('PASS Management: 8 Business buttons, direct Ideas, no obsolete About/preview/demo UI and correct Back.');
