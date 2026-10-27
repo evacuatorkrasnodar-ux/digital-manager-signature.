@@ -37,6 +37,8 @@ style.textContent=[
 '.svstaff-tile-trend{font-size:11px;color:#66c998;line-height:1.4;white-space:normal}',
 '.svstaff-tile-count{display:flex;gap:7px;align-items:center;color:var(--secondary);font-size:10px;white-space:nowrap}',
 '.svstaff-tile-count b{color:var(--text);font-size:13px}',
+'.svstaff-tile-count .svstaff-icon{display:inline-flex;width:15px;height:15px;color:#dbaf58}',
+'.svstaff-tile-count .svstaff-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}',
 '.svstaff-tile-arrow{font-size:25px;color:#63b98b;align-self:center;line-height:1}',
 '.svstaff-footnote{padding:12px 10px 2px;font-size:10px;color:var(--secondary);line-height:1.5;margin:0}',
 '.svstaff-modal{width:min(520px,calc(100vw - 16px));max-width:none;max-height:min(92dvh,880px);margin:auto;padding:0;border:1px solid rgba(145,170,153,.21);border-radius:23px;background:#0c100f;color:#f4f6f4;box-shadow:0 20px 55px rgba(0,0,0,.4);overflow:auto;overscroll-behavior:contain;font-family:inherit}',
