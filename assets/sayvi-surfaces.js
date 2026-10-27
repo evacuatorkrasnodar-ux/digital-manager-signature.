@@ -293,8 +293,17 @@ function currentKind(){
 }
 function sync(){
  const kind=currentKind();
- if(kind){updateBackDestination();render(kind);}
- else{releaseFile();window.SEYVEO_DOCUMENT_CENTER?.destroy?.();returnDestination=null;updateBackDestination();}
+ if(kind){
+  // The document vault must lock even when switching directly to mail or health.
+  if(kind!=='contract')window.SEYVEO_DOCUMENT_CENTER?.destroy?.();
+  updateBackDestination();
+  render(kind);
+ }else{
+  releaseFile();
+  window.SEYVEO_DOCUMENT_CENTER?.destroy?.();
+  returnDestination=null;
+  updateBackDestination();
+ }
 }
 function open(kind,context){
  const target=routes[kind];
