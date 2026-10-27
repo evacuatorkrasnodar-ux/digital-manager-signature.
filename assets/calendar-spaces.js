@@ -563,6 +563,11 @@ $('calendarSpaces').addEventListener('click',event=>{
   window.dispatchEvent(new Event('seyveo:contacts-open'));
   return;
  }
+ if(name==='family'){
+  // One personal SEYVEO Family surface; never enter corporate workspace.
+  window.SEYVEO_FAMILY_CHAT?.open?.();
+  return;
+ }
  if(name==='smart-home'){
   window.SEYVEO_SMART_HOME?.openStandalone?.()||window.SEYVEO_SMART_HOME?.open?.();
   return;
