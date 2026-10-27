@@ -1129,21 +1129,14 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <h3 class="cal-health-guide">Показатели</h3>
  <p class="cal-health-guide-hint">Нажмите на показатель, чтобы посмотреть или добавить запись.</p>
  <div class="cal-health-tiles">
-  <button type="button" class="cal-health-tile" data-health-quick="Давление" aria-label="Записать давление" aria-describedby="calHealthPressureValue calHealthPressureDate">
+  <button type="button" class="cal-health-tile" data-health-quick="Давление" aria-label="Записать давление и пульс" aria-describedby="calHealthPressureValue calHealthPressureDate">
    <svg class="cal-health-emblem cal-health-emblem--pressure" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="11" width="32" height="26" rx="8"/><path d="M12 25h7l4-8 5 16 4-8h4"/></svg>
-   <span class="cal-health-tile-label">Давление</span>
+   <span class="cal-health-tile-label">Давление и пульс</span>
    <strong id="calHealthPressureValue">Нет записей</strong>
    <small id="calHealthPressureDate"></small>
    <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
   </button>
-  <button type="button" class="cal-health-tile" data-health-quick="Пульс" aria-label="Записать пульс" aria-describedby="calHealthPulseValue calHealthPulseDate">
-   <svg class="cal-health-emblem cal-health-emblem--pulse" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41 9.5 27c-8-7.8-1.9-20.2 7.2-18 3.1.7 5.6 2.9 7.3 5.7 1.7-2.8 4.2-5 7.3-5.7 9.1-2.2 15.2 10.2 7.2 18Z"/><path d="M9 25h9l4-7 5 14 3-7h9"/></svg>
-   <span class="cal-health-tile-label">Пульс</span>
-   <strong id="calHealthPulseValue">Нет записей</strong>
-   <small id="calHealthPulseDate"></small>
-   <span class="cal-health-tile-action" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span>
-  </button>
- </div>
+</div>
  <div id="calendarBpReport" class="cal-bp-report" hidden aria-live="polite">
  <div class="cal-bp-report-head"><span class="cal-bp-report-icon" aria-hidden="true">✦</span><strong>Сэйви · оценка давления</strong></div>
  <p id="calendarBpReportStatus"></p>
