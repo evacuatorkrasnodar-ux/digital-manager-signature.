@@ -133,11 +133,101 @@ function save(mutator){
   return true;
  }catch(error){console.error('SEYVEO private journal:',error);notice('Не удалось сохранить запись. Проверьте настройки браузера.');return false;}
 }
+/* Local Black Velvet date picker for the three wellness dates.
+   Keep original native input values, constraints and all saved records. */
+const pwDateInputs=['pwStepsDate','pwCycleDate','pwSleepDate'];
+const pwDateButtons={};
+let pwSelectedDateInput=null,pwVisibleYear=0,pwVisibleMonth=0;
+const pwDatePopup=document.createElement('div');
+pwDatePopup.id='pwDatePopup';
+pwDatePopup.className='pw-date-popup';
+pwDatePopup.hidden=true;
+pwDatePopup.setAttribute('role','dialog');
+pwDatePopup.setAttribute('aria-label','Выбрать дату');
+pwDatePopup.innerHTML='<div class="pw-date-popup-header"><button type="button" data-pw-month="-1" aria-label="Предыдущий месяц">‹</button><strong id="pwDateMonthName"></strong><button type="button" data-pw-month="1" aria-label="Следующий месяц">›</button></div><div class="pw-date-weekdays" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div class="pw-date-days" id="pwDateDays" role="group" aria-label="Дни месяца"></div><div class="pw-date-popup-footer"><button type="button" data-pw-pick-today>Сегодня</button><button type="button" data-pw-picker-close>Готово</button></div>';
+const pwDialog=$('calendarSpaceDialog');
+pwDialog.append(pwDatePopup);
+function pwSyncDateButtons(){
+ for(const id of pwDateInputs){
+  const input=$(id),button=pwDateButtons[id];if(!input||!button)continue;
+  button.textContent=dateOk(input.value)?new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(input.value+'T12:00:00')):'Выбрать дату';
+ }
+}
+function pwCloseDatePopup(restoreFocus=true){
+ const target=pwSelectedDateInput;
+ pwDatePopup.hidden=true;
+ pwSelectedDateInput=null;
+ for(const button of Object.values(pwDateButtons))button.setAttribute('aria-expanded','false');
+ if(restoreFocus&&target)pwDateButtons[target.id]?.focus({preventScroll:true});
+}
+function pwDrawDatePopup(){
+ if(!pwSelectedDateInput)return;
+ const displayed=new Date(pwVisibleYear,pwVisibleMonth,1,12);
+ $('pwDateMonthName').textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(displayed);
+ const todayParts=today().split('-').map(Number),lastMonth=new Date(todayParts[0],todayParts[1]-1,1,12);
+ pwDatePopup.querySelector('[data-pw-month="1"]').disabled=displayed>=lastMonth;
+ pwDatePopup.querySelector('[data-pw-month="-1"]').disabled=pwVisibleYear<=1900&&pwVisibleMonth===0;
+ const days=$('pwDateDays');days.replaceChildren();
+ const offset=(displayed.getDay()+6)%7;
+ for(let i=0;i<offset;i++){const blank=document.createElement('span');blank.setAttribute('aria-hidden','true');days.append(blank);}
+ const total=new Date(pwVisibleYear,pwVisibleMonth+1,0).getDate();
+ for(let i=1;i<=total;i++){
+  const value=[pwVisibleYear,pad(pwVisibleMonth+1),pad(i)].join('-');
+  const b=document.createElement('button');b.type='button';b.dataset.pwPickDate=value;b.textContent=String(i);
+  b.disabled=value>today();b.setAttribute('aria-label',new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(value+'T12:00:00')));
+  if(value===pwSelectedDateInput.value)b.setAttribute('aria-selected','true');
+  if(value===today())b.classList.add('is-today');
+  days.append(b);
+ }
+}
+for(const id of pwDateInputs){
+ const input=$(id);if(!input)continue;
+ input.classList.add('pw-date-native');
+ input.tabIndex=-1;
+ const button=document.createElement('button');button.type='button';button.className='pw-date-open';
+ button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-expanded','false');
+ button.setAttribute('aria-label','Выбрать дату: '+input.parentElement.firstChild.textContent.trim());
+ input.insertAdjacentElement('afterend',button);
+ pwDateButtons[id]=button;
+ button.addEventListener('click',()=>{
+  if(pwSelectedDateInput===input&&!pwDatePopup.hidden){pwCloseDatePopup();return;}
+  pwSelectedDateInput=input;
+  const value=dateOk(input.value)?input.value:today();
+  const parts=value.split('-').map(Number);pwVisibleYear=parts[0];pwVisibleMonth=parts[1]-1;
+  pwDatePopup.hidden=false;
+  for(const b of Object.values(pwDateButtons))b.setAttribute('aria-expanded',String(b===button));
+  pwDrawDatePopup();
+  pwDatePopup.querySelector('[data-pw-picker-close]').focus({preventScroll:true});
+ });
+ input.addEventListener('change',pwSyncDateButtons);
+}
+pwDatePopup.addEventListener('click',event=>{
+ const target=event.target.closest('button');if(!target||!pwSelectedDateInput)return;
+ if(target.hasAttribute('data-pw-picker-close')){pwCloseDatePopup();return;}
+ if(target.dataset.pwMonth){
+  const delta=Number(target.dataset.pwMonth);const d=new Date(pwVisibleYear,pwVisibleMonth+delta,1,12);
+  pwVisibleYear=d.getFullYear();pwVisibleMonth=d.getMonth();pwDrawDatePopup();return;
+ }
+ const value=target.hasAttribute('data-pw-pick-today')?today():target.dataset.pwPickDate;
+ if(!dateOk(value)||value>today())return;
+ pwSelectedDateInput.value=value;
+ pwSelectedDateInput.dispatchEvent(new Event('input',{bubbles:true}));
+ pwSelectedDateInput.dispatchEvent(new Event('change',{bubbles:true}));
+ pwSyncDateButtons();pwCloseDatePopup();
+});
+pwDialog.addEventListener('click',event=>{
+ if(pwDatePopup.hidden||event.target.closest('#pwDatePopup,.pw-date-open'))return;
+ pwCloseDatePopup(false);
+});
+pwDialog.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!pwDatePopup.hidden){event.stopPropagation();event.preventDefault();pwCloseDatePopup();}
+});
 function today(){return dateKey()}
 function setInputDefaults(){
  for(const id of ['pwStepsDate','pwCycleDate','pwSleepDate']){
   const el=$(id);el.max=today();if(!el.value||el.value>today())el.value=today();
  }
+ pwSyncDateButtons();
  if(!$('pwMedTime').value)$('pwMedTime').value='09:00';
 }
 /* iOS / browser native time wheel; pwMedTime remains saved as HH:MM. */
@@ -575,11 +665,12 @@ window.addEventListener('seyveo:care-steps-open',event=>{
  if(space!=='care')openSpace('care');
  const date=event.detail?.date;
  if(dateOk(date))$('pwStepsDate').value=date;
+ pwSyncDateButtons();
  openTool('steps');
 });
 window.addEventListener('seyveo:spaces-changed',()=>{if(space==='care')renderSteps()});
 window.addEventListener('storage',event=>{if(event.key===KEY){state=load();if(!host.hidden)render()}});
-$('calendarSpaceDialog').addEventListener('close',()=>{stopSession(false);resetTools();space='';host.hidden=true});
+$('calendarSpaceDialog').addEventListener('close',()=>{pwCloseDatePopup(false);stopSession(false);resetTools();space='';host.hidden=true});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&session&&!session.paused){
   session.paused=true;session.last=performance.now();
