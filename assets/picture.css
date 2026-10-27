@@ -304,3 +304,29 @@
 :root[data-theme=light] #picturePage .picture-breakdown{
  background:rgba(46,120,99,.035);border-color:rgba(45,108,90,.14);
 }
+
+/* SEYVEO · real Business Pulse is the only place for interactive training.
+   No additional layers: demo exercises share the approved My World material. */
+#picturePage #pictureDemoWorkspace[hidden],
+#picturePage #pictureDemoExit[hidden]{display:none!important}
+#picturePage .sv-demo-workspace{
+ min-width:0;margin:17px 0 15px;padding:13px 0 2px;
+ border-top:1px solid var(--seyveo-hdr-outline);color:var(--text)
+}
+#picturePage .sv-demo-workspace-kicker{
+ margin:0 0 7px;color:var(--seyveo-emerald);font-size:10px;
+ font-weight:580;letter-spacing:.14em
+}
+#picturePage .sv-demo-workspace-intro{
+ margin:0 0 10px;font-size:12.5px;line-height:1.6;color:var(--secondary)
+}
+#picturePage #pictureDemoExit{
+ display:block;margin:7px 0 8px;padding:6px 0;
+ border:0;background:transparent;box-shadow:none;
+ color:var(--seyveo-emerald);font:inherit;font-size:12px;
+ min-height:40px;text-align:left;text-decoration:underline;
+ text-decoration-color:var(--soft-line);text-underline-offset:5px
+}
+#picturePage #pictureDemoExit:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:3px}
+#picturePage .sv-pulse-inbox .sv-pulse-inbox-panel{background:transparent}
+#picturePage .sv-pulse-demo, #picturePage .sv-pulse-inbox{max-width:100%}
