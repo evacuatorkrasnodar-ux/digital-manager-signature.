@@ -489,3 +489,56 @@
  #tasksPage .personal-task-art svg{width:42px;height:42px}
  #tasksPage .personal-task-name{font-size:13px}
 }
+
+/* SEYVEO · Дела: one editorial list for saved and deferred decisions.
+   No second card stack, no duplicate Home recommendations or grey menus. */
+#tasksPage .tasks-heading{margin-bottom:20px}
+#tasksPage .tasks-heading #tasksOverview{
+ max-width:36ch;margin:8px 0 0;
+ color:var(--secondary);font-size:13px;line-height:1.5;
+ letter-spacing:-.008em;
+}
+#tasksPage .personal-tasks-head{margin:0 0 9px}
+#tasksPage .personal-tasks-head h2{font-size:13px;font-weight:500;color:var(--secondary)}
+#tasksPage .personal-tasks-list{padding:0 5px;background:transparent;border:0;box-shadow:none}
+#tasksPage .personal-tasks-empty{
+ box-sizing:border-box;display:block;margin:9px 0 0;padding:17px 0 15px;
+ border-top:1px solid var(--soft-line);border-radius:0;
+ background:transparent;box-shadow:none;
+ color:var(--secondary);font-size:13px;line-height:1.6;
+}
+#tasksPage .personal-list-title{
+ margin:19px 0 2px;padding:6px 1px;
+ color:var(--secondary);font-size:10px;line-height:1.4;
+ font-weight:540;letter-spacing:.09em;text-transform:uppercase;
+}
+#tasksPage .personal-list-title:first-child{margin-top:0}
+#tasksPage .personal-deferred-row{gap:10px}
+#tasksPage .personal-deferred-title{
+ display:block;color:var(--text);font-size:14px;
+ font-weight:490;line-height:1.45;overflow-wrap:anywhere;
+}
+#tasksPage .personal-deferred-note{
+ display:block;color:var(--secondary);font-size:11.5px;
+ line-height:1.55;overflow-wrap:anywhere;
+}
+#tasksPage .personal-deferred-actions{
+ flex:1 1 100%;display:flex;align-items:center;justify-content:flex-start;
+ flex-wrap:wrap;gap:5px 19px;margin:-6px 0 0 64px;
+}
+#tasksPage .personal-deferred-actions button{
+ display:inline-flex;align-items:center;min-height:44px;max-width:100%;
+ padding:8px 1px;border:0;border-radius:0;box-shadow:none;
+ background:transparent;color:var(--text);font:inherit;
+ font-size:12px;font-weight:460;text-align:left;cursor:pointer;
+}
+#tasksPage .personal-deferred-actions button:last-child{color:var(--secondary)}
+#tasksPage .personal-deferred-actions button:focus-visible{
+ outline:1px solid var(--text);outline-offset:3px
+}
+#tasksPage .personal-task-menu{gap:21px}
+#tasksPage .personal-task-menu-delete{text-decoration:none}
+@media(max-width:360px){
+ #tasksPage .personal-deferred-actions{margin-left:52px;gap:4px 13px}
+ #tasksPage .personal-deferred-actions button{font-size:11.5px}
+}
