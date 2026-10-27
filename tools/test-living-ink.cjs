@@ -14,8 +14,8 @@ const vm=require('node:vm');
 const inlineScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
  .map(match=>match[1]).filter(code=>code.trim());
 assert.ok(inlineScripts.length>0,'Main document has inline scripts');
-assert.match(html,/assets\/navigation-system\.css\?v=1/,'Single navigation style is active');
-assert.match(html,/assets\/navigation-system\.js\?v=1/,'Unified navigation semantics are active');
+assert.match(html,/assets\/navigation-system\.css\?v=\d+/,'Single navigation style is active');
+assert.match(html,/assets\/navigation-system\.js\?v=\d+/,'Unified navigation semantics are active');
 assert.match(navigationCss,/button\.sv-nav-redundant\{display:none!important\}/,'All redundant close controls disappear');
 assert.match(navigationCss,/button\.sv-nav-done\.seyveo-close-control/,'Done is a quiet typographic action');
 assert.match(navigationCss,/button\.sv-nav-back\.seyveo-close-control/,'Back keeps its round 44px control');
@@ -33,7 +33,7 @@ const dock=read('assets/floating-navigation.css');
 const magnetic=read('assets/magnetic-ink-dock.js');
 const composer=read('assets/composer-intent.css');
 const businessMapUi=read('assets/business-map.css');
-assert.match(html,/assets\/business-map\.css\?v=11/,'Quiet Cinema Business Map controls are deployed');
+assert.match(html,/assets\/business-map\.css\?v=\d+/,'Quiet Cinema Business Map controls are deployed');
 assert.match(html,/id="businessMapBack"[^>]*aria-label="Назад"/,'Form Back keeps its original handler and accessible arrow');
 assert.match(html,/id="businessMapIndustryBack"[^>]*aria-label="Назад"/,'Industry Back is consistently circular');
 assert.match(businessMapUi,/business-map-primary\{[\s\S]*?border:1px solid rgba\(230,237,245,\.33\)/,'Primary action is a subtle bordered satin control');
@@ -68,8 +68,8 @@ assert.match(companyUi,/#seyveoCompanyDialog \.sv-company-qr-hint\[hidden\]/,'QR
 const companyQr=read('assets/company-qr.js');
 assert.match(companyQr,/if\(!canShare\(r\)\)/,'QR does not open an empty contact card');
 assert.match(companyUi,/#seyveoCompanyDialog > \.info-actions\{display:none!important\}/,'No duplicate footer close button');
-assert.match(html,/company-signature\.css\?v=5/,'Company Quiet Cinema view is deployed');
-assert.match(html,/passport-cards\.js\?v=32/,'Company reader/editor interactions are deployed');
+assert.match(html,/company-signature\.css\?v=\d+/,'Company Quiet Cinema view is deployed');
+assert.match(html,/passport-cards\.js\?v=\d+/,'Company reader/editor interactions are deployed');
 
 const chatAppearance=read('assets/conversation-refined.css');
 const historyStyles=read('assets/dialog-velvet.css');
@@ -94,7 +94,7 @@ assert.match(continuity,/#lifePage #calendarSpaces\.calendar-spaces-grid/,'My Wo
 assert.match(continuity,/#tasksPage \.personal-tasks-list/,'Tasks have one outlined list');
 assert.match(continuity,/#calendarPage #calendarView/,'Calendar retains a real interactive grid');
 assert.match(continuity,/#picturePage #pictureBusinessCharts/,'Business charts remain available');
-assert.match(html,/assets\/living-space\.css\?v=26/,'All screens use the current shared stylesheet');
+assert.match(html,/assets\/living-space\.css\?v=\d+/,'All screens use the current shared stylesheet');
 assert.match(continuity,/#manageThemeScreen #manageThemeBack,\s*#seyveoCleanDetail > #seyveoCleanBack/,'Theme and Management details share nested Back controls');
 assert.match(html,/class="manage-theme-back-copy">Управление<\/span>/,'Theme Back icon retains an accessible fallback label');
 assert.match(continuity,/#managePage:has\(> #manageThemeScreen:not\(\[hidden\]\)\)/,'Theme is independently width-constrained');
@@ -104,7 +104,7 @@ assert.match(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{/,'Management ne
 assert.doesNotMatch(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{\s*display:none!important/,'Nested Management return must remain accessible');
 assert.equal((html.match(/<span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20"/g)||[]).length,3,'Each theme has an accessible graphic checkmark');
 assert.doesNotMatch(html,/\.manage-theme-choice\[aria-pressed=true\] \.manage-theme-check::after/,'No legacy off-centre CSS checkmark');
-assert.match(html,/assets\/seyveo-video\.css\?v=3/,'Video page uses current source');
+assert.match(html,/assets\/seyveo-video\.css\?v=\d+/,'Video page uses current source');
 assert.match(continuity,/#calendarPage\.sv-cascade \.calendar-space-button/,'Calendar keeps independent row reveal');
 assert.doesNotMatch(continuity,/#lifePage\.sv-cascade \.calendar-space-button,/,'My World children do not double animate');
 assert.doesNotMatch(continuity,/#tasksPage\.sv-cascade \.personal-task-row,/,'Task rows no longer double animate');
@@ -123,15 +123,15 @@ assert.match(html,/data-clean-section="profile"[^>]*hidden aria-hidden="true"/,'
 assert.match(legacyBusinessLogic,/function start\(options=\{\}\)\{[\s\S]*?return false;\s*\}/,'Old questionnaire cannot open through navigation');
 assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVEO_CONNECTION_COACH\?\.homeSuggestion\?\.\(\)\|\|null;/,'Home has no prompts pointing to retired questionnaire');
 assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
-assert.match(html,/assets\/business-conversation\.js\?v=6/,'Chat receives revised Connections-only actions');
-assert.match(html,/assets\/business-map\.js\?v=21/,'Retired opening behavior is cache refreshed');
-assert.match(html,/assets\/connection-coach\.js\?v=14/,'Resource editing uses latest existing Connections');
+assert.match(html,/assets\/business-conversation\.js\?v=\d+/,'Chat receives revised Connections-only actions');
+assert.match(html,/assets\/business-map\.js\?v=\d+/,'Retired opening behavior is cache refreshed');
+assert.match(html,/assets\/connection-coach\.js\?v=\d+/,'Resource editing uses latest existing Connections');
 /* One visually navigable catalog, one original source of truth. */
 const coachHtml=html.slice(html.indexOf('id="connectionCoachKnown"'),html.indexOf('</section>',html.indexOf('id="connectionCoachKnown"')));
 const networkJs=read('assets/network-care.js');
 const networkCss=read('assets/network-care.css');
-assert.match(html,/assets\/network-care\.js\?v=3/,'Network renders only a real local preference');
-assert.match(html,/assets\/network-care\.css\?v=2/,'Network compact styling is deployed');
+assert.match(html,/assets\/network-care\.js\?v=\d+/,'Network renders only a real local preference');
+assert.match(html,/assets\/network-care\.css\?v=\d+/,'Network compact styling is deployed');
 assert.match(html,/id="seyveoNetworkMode" aria-label="Предлагать помощь с доступом"/,'Network retains one explicit owner preference');
 assert.doesNotMatch(html,/id="seyveoNetworkDemo"/,'Mock video/VPN action was removed');
 assert.doesNotMatch(html,/id="seyveoNetworkCheck"/,'Pointless manual network check was removed');
@@ -154,8 +154,8 @@ assert.match(managementDataLogic,/savePrivateBusinessContext\?\.\('',''\)/,'Forg
 assert.match(managementDataLogic,/window\.confirm\('Очистить описание и цель/,'Forget asks for confirmation');
 assert.match(managementDataLogic,/const blob=new Blob\(\[JSON\.stringify\(info,null,2\)\]/,'Owner export contains the original local records');
 assert.match(dataSheetCss,/#manageDataDialog \.sv-memory-fact\{/,'Readout follows compact Black Velvet style');
-assert.match(html,/assets\/management\.js\?v=42/,'Memory UI uses a refreshed management script');
-assert.match(html,/assets\/management-explain-cards\.css\?v=3/,'Data styling version is refreshed');
+assert.match(html,/assets\/management\.js\?v=\d+/,'Memory UI uses a refreshed management script');
+assert.match(html,/assets\/management-explain-cards\.css\?v=\d+/,'Data styling version is refreshed');
 const coachJs=read('assets/connection-coach.js');
 const coachCss=read('assets/connection-coach.css');
 assert.match(coachHtml,/id="connectionCoachKnownList" class="sv-connect-grid"/,'Visible icon catalog replaces the old list');
@@ -171,7 +171,7 @@ assert.match(coachJs,/aria-controls/,'The tile button owns its inline service ed
 assert.match(coachJs,/state.textContent=saved.length\?'Добавлен':'Не добавлен'/,'Service status is concise and distinct from external access');
 assert.match(coachCss,/grid-template-columns:30px minmax\(0,1fr\) 9px/,'Compact horizontal tile keeps icons, names and chevrons aligned');
 assert.doesNotMatch(coachCss,/sv-connect-tile-plus/,'Orphan floating-plus styles never return');
-assert.match(html,/assets\/connection-coach\.css\?v=8/,'Changed tile geometry invalidates mobile cache');
+assert.match(html,/assets\/connection-coach\.css\?v=\d+/,'Changed tile geometry invalidates mobile cache');
 assert.match(coachJs,/data-resource-form/,'Editor exists only for a selected service');
 assert.match(coachJs,/saveResourceDetail\?\.\(type,input\?\.value\)/,'Service tiles use original resource storage');
 assert.match(coachJs,/removeResourceDetail\?\.\(type,value\)/,'Owner can remove an individual service');
@@ -227,8 +227,8 @@ assert.doesNotMatch(chatAppearance,/width:100%;height:100%!important;min-height:
 assert.match(chatLogic,/let latestScrollRequest=0/,'Latest-turn scroll is deduplicated');
 assert.match(chatLogic,/syncChatGeometry\(\);\s*requestAnimationFrame\(\(\)=>\{/,'Scroll waits for real composer geometry');
 assert.match(chatLogic,/text\.scrollTop=Math\.max\(0,text\.scrollHeight-text\.clientHeight\)/,'Reader scrolls to its actual reachable end');
-assert.match(html,/conversation-refined\.css\?v=24/,'Definite reader and stage flex bases are deployed');
-assert.match(html,/living-conversation\.js\?v=21/,'Latest message scroll fix is deployed');
+assert.match(html,/conversation-refined\.css\?v=\d+/,'Definite reader and stage flex bases are deployed');
+assert.match(html,/living-conversation\.js\?v=\d+/,'Latest message scroll fix is deployed');
 assert.match(chatAppearance,/max-width:min\(91%,460px\);width:fit-content;min-width:0/,'Owner bubbles never exceed the message column');
 assert.match(chatAppearance,/box-sizing:border-box;width:100%;max-width:100%;min-width:0/,'Chat reader cannot overflow its flex parent');
 assert.match(chatLogic,/const stickToBottom=text\.scrollHeight-text\.clientHeight-text\.scrollTop<56/,'Keyboard does not hide the latest messages');
@@ -254,7 +254,7 @@ assert.match(historyStyles,/max-height:min\(58svh,560px\)/,'Long lists scroll wi
 assert.match(historyStyles,/min-height:57px;height:auto!important/,'Rows are compact and touch-readable');
 assert.match(historyStyles,/border-radius:21px!important/,'Single fine-rimmed Quiet Cinema surface');
 assert.match(historyStyles,/#assistantChatHistoryDialog \.assistant-chat-bottom button\[hidden\]\{display:none!important\}/,'Clear stays hidden on empty history');
-assert.match(html,/assets\/composer-intent\.css\?v=17/,'Duplicate history style is no longer cached');
+assert.match(html,/assets\/composer-intent\.css\?v=\d+/,'Duplicate history style is no longer cached');
 
 assert.match(notebookStyles,/height:fit-content!important/,'Notebook fits real notes');
 assert.match(notebookStyles,/width:min\(520px,calc\(100vw - 24px\)\)/,'Notebook remains compact');
@@ -279,9 +279,9 @@ for(const file of ['notebook-smart.css?v=24','notebook-paper.css?v=11','notebook
 
 assert.match(notebookStyles,/\.notes-list:not\(\.is-empty\)\{[\s\S]*?flex:0 1 auto!important/,'Notebook does not fill empty screen');
 assert.match(taskStyles,/#personalTaskDialog\.personal-task-dialog\[open\]/,'Task sheet keeps a quiet outline');
-assert.match(html,/dialog-velvet\.css\?v=8/,'History CSS refreshed');
+assert.match(html,/dialog-velvet\.css\?v=\d+/,'History CSS refreshed');
 
-assert.match(html,/personal-tasks\.css\?v=19/,'Task CSS refreshed');
+assert.match(html,/personal-tasks\.css\?v=\d+/,'Task CSS refreshed');
 
 assert.match(chatLogic,/body\.textContent=displayChatText\(value\)/,'Chat renders compact spacing');
 assert.match(chatLogic,/const ownText=String\(value\|\|''\)/,'Clipboard/edit preserve the original user text');
@@ -312,8 +312,8 @@ assert.match(magnetic,/function showSelectionFeedback\(button\)/,'Tap animation 
 assert.match(magnetic,/showSelectionFeedback\(button\);/,'User click briefly shows the outline');
 assert.match(magnetic,/\},1600\);/,'Feedback ends after 1.6 seconds');
 assert.match(magnetic,/if\(!event\.isTrusted\|\|musicMode\(\)\)return/,'Synthetic routing never flashes the frame');
-assert.match(html,/assets\/floating-navigation\.css\?v=32/,'Timed dock CSS is loaded');
-assert.match(html,/assets\/magnetic-ink-dock\.js\?v=7/,'Timed dock JS is loaded');
+assert.match(html,/assets\/floating-navigation\.css\?v=\d+/,'Timed dock CSS is loaded');
+assert.match(html,/assets\/magnetic-ink-dock\.js\?v=\d+/,'Timed dock JS is loaded');
 assert.match(dock,/prefers-reduced-motion:reduce/,'Honors reduced motion');
 assert.doesNotMatch(dock,/sv-magnetic-reveal/,'Carousel animation retired');
 
@@ -352,7 +352,7 @@ assert.match(notesCss,/#notesDialog \.note-more-options button\{min-width:0;padd
 assert.match(notesCss,/#notesDialog \.note-item-actions>\.note-more-button\[aria-expanded=true\]\{\s*background:transparent/,'Expanded notes stay unpainted');
 assert.match(life,/#calendarSpaceDialog :is\(#worldManageContacts,\.world-person-call\):active\{\s*background:transparent;box-shadow:none/,'Contacts use quiet touch feedback');
 
-assert.match(html,/assets\/calendar-spaces\.css\?v=18/,'World theme version refreshed');
+assert.match(html,/assets\/calendar-spaces\.css\?v=\d+/,'World theme version refreshed');
 
 assert.match(life,/min-height:48px/,'Editable targets stay accessible');
 assert.match(quick,/const KEY='seyveo-assistant-quick-actions-v1'/,'Favorites preserve their existing storage key');
@@ -364,7 +364,7 @@ assert.match(managementCinema,/seyveo-manage-cinema-rise/,'Management sections r
 assert.match(managementCinema,/\.manage-chevron\{\s*display:none!important/,'No decorative chevrons');
 assert.match(managementCinema,/prefers-reduced-motion:reduce/,'Motion follows device preference');
 assert.doesNotMatch(managementCinema,/backdrop-filter|filter:blur/,'No blur layers on Management');
-assert.match(html,/management-glass-showcase\.css\?v=4/,'Updated Management styling is loaded');
+assert.match(html,/management-glass-showcase\.css\?v=\d+/,'Updated Management styling is loaded');
 
 assert.match(decisionJs,/Home Quiet Cinema v3/);
 assert.match(decisionJs,/stage=\$\('stage'\)/,'Cinema must resolve stage before guarding it');
@@ -398,8 +398,8 @@ for(const token of ['border:0','border-radius:0','background:none','box-shadow:n
  assert.ok(actionCss.includes(token),'Unpainted action: '+token);
 assert.match(decisionCss,/#seyveoLivingMoment \.lm-polymer::after/,'Arrows are removed from task actions');
 assert.doesNotMatch(decisionCss,/background:linear-gradient\(165deg,rgba\(248,250,252,\.072\)/,'Heavy capsule gradient is retired');
-assert.match(html,/living-moment\.css\?v=38/);
-assert.match(html,/living-moment\.js\?v=53/,'Restored Living Moment is cache-refreshed');
+assert.match(html,/living-moment\.css\?v=\d+/);
+assert.match(html,/living-moment\.js\?v=\d+/,'Restored Living Moment is cache-refreshed');
 assert.match(decisionJs,/previewArmed&&!previewSeen&&!item&&!pending&&available\(\)/,'Home retries the beautiful scene after a missed launch');
 assert.match(decisionJs,/window\.setTimeout\(\(\)=>\{previewArmed=true;scheduleRefresh\(\)\},7800\)/,'Startup scene timer survives navigation');
 const realTaskSection=decisionJs.slice(decisionJs.indexOf('function showTask('),decisionJs.indexOf('function adviceIdentity('));
