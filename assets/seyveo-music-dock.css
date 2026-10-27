@@ -18,6 +18,15 @@ footer.dock.seyveo-music-dock .seyveo-music-dock-svg{
  stroke-linecap:round;stroke-linejoin:round;
  opacity:1;
 }
+/* Only transport ICONS change; the original dock shell, size and center stay. */
+footer.dock.seyveo-music-dock #navTasks{color:var(--text)!important}
+footer.dock.seyveo-music-dock #navTasks .seyveo-music-dock-svg{
+ color:var(--seyveo-emerald);stroke:currentColor!important;
+}
+footer.dock.seyveo-music-dock > .nav-item[aria-disabled="true"]{
+ opacity:.45;
+}
+
 footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton) span{
  font-size:inherit;line-height:1.12;font-weight:inherit;letter-spacing:-.025em;
 }
