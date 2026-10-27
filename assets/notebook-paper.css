@@ -155,8 +155,8 @@
  display:grid;position:absolute;z-index:30;right:0;top:calc(100% + 6px);
  min-width:148px;width:max-content;max-width:210px;
  padding:5px;border:1px solid var(--seyveo-hdr-outline);border-radius:16px;
- background:var(--card);color:var(--text);
- box-shadow:0 12px 32px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
+ background:var(--sv-life-dialog-bg,var(--card));color:var(--text);
+ box-shadow:0 12px 32px rgba(0,0,0,.18);
  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
 }
 #notePaperDialog .paper-pattern-menu button{
@@ -165,10 +165,10 @@
  box-shadow:none;text-align:left;font:inherit;font-size:13px;font-weight:470;
 }
 #notePaperDialog .paper-pattern-menu button[aria-pressed=true]{
- background:transparent;font-weight:510;
+ background:var(--seyveo-hdr-active);font-weight:590;color:var(--seyveo-emerald);
 }
 #notePaperDialog .paper-pattern-menu button:focus-visible{
- outline:2px solid var(--text);outline-offset:-2px;
+ outline:2px solid var(--seyveo-emerald);outline-offset:1px;
 }
 #notePaperDialog .paper-pattern-menu button:active{background:var(--card2)}
 #notePaperDialog #notePaperPattern[hidden]{display:none!important}
@@ -218,8 +218,8 @@
  position:absolute;top:calc(100% + 7px);left:0;z-index:45;
  display:grid;grid-template-columns:repeat(3,44px);gap:3px;
  box-sizing:border-box;width:max-content;padding:7px;
- border:1px solid var(--line);border-radius:17px;
- background:var(--card);box-shadow:0 15px 35px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+ border:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:17px;
+ background:var(--sv-life-dialog-bg,var(--card));box-shadow:0 14px 32px rgba(0,0,0,.20);
  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
 }
 #notePaperDialog .paper-toolbar .paper-color-menu button{
