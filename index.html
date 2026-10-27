@@ -863,6 +863,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <p class="svcp-sub">Позже здесь появятся приглашения, отделы и доступы. Пока ни один сотрудник не подключён.</p>
   <div class="svcp-stateline"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="10" r="5"/><path d="M6 29v-4a10 10 0 0 1 20 0v4"/></svg><div><strong>Руководитель</strong><small>Приглашает людей и утверждает полномочия в рабочем пространстве</small></div></div>
   <div class="svcp-stateline"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5"/><path d="M2 29v-4a10 10 0 0 1 20 0v4M22 7a5 5 0 0 1 0 10M25 21c3 1 5 4 5 8"/></svg><div><strong>Сотрудники</strong><small>Получают только нужные рабочие чаты и задания. Личные записи и музыка остаются личными.</small></div></div>
+  <div class="svcp-advanced-actions" aria-label="Дополнительные инструменты сотрудников">
+   <button type="button" class="svcp-tool" data-svcp-feature="Команда"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4"/><path d="M3 27v-3a8 8 0 0 1 16 0v3M22 7a4 4 0 0 1 0 8M23 19c4 0 7 3 7 8"/></svg><span>Смены и развитие<small>Учёт рабочего времени · Достижения · Роли</small></span></button>
+   <button type="button" class="svcp-tool" data-svcp-feature="Кадры"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 4h18v24H7zM11 10h10M11 15h10M11 20h6"/><path d="m20 23 2 2 4-5"/></svg><span>Подбор сотрудников<small>Вакансии · Собеседования · Адаптация</small></span></button>
+  </div>
   <p class="svcp-status">Настоящие приглашения заработают после внедрения авторизации, серверных ролей и безопасного отзыва доступа.</p>
  </section>
  <section id="svcpTasks" class="svcp-panel" data-svcp-panel="tasks" role="tabpanel" hidden>
@@ -880,7 +884,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   
   <button type="button" id="svcpOpenPulse" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="4" width="26" height="24" rx="4"/><path d="m7 22 5-7 5 4 5-10 4 3"/></svg><span>Пульс бизнеса<small>Показатели, заказы и расходы</small></span></button>
   <button type="button" id="svcpOpenDocs" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 3h12l5 5v21H9zM21 3v6h5M13 15h9M13 20h9"/></svg><span>Документы<small>Открыть существующий центр документов</small></span></button>
-  <button type="button" id="svcpOpenMore" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="4"/><path d="M10 12h12M10 18h8M22 19v6M19 22h6"/></svg><span>Все инструменты бизнеса<small>Дополнительные возможности и настройки компании</small></span></button>
+  <button type="button" class="svcp-tool" data-svcp-feature="Эффект SEYVEO"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27h22M7 22l5-6 5 3 8-11M20 8h5v5"/></svg><span>Расчёт эффективности<small>Время · Экономия · Условный результат</small></span></button>
  </div>
 </section><section id="seyveoNetworkPage" hidden aria-label="Сеть и доступ Сэйви">
  <div class="sv-network-status-card">
@@ -3537,6 +3541,8 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   if(network)network.hidden=true;
   if(command)command.hidden=true;
   legacy.hidden=false;
+  legacy.classList.remove('sv-business-feature-mode');
+  legacy.querySelectorAll('.sv-business-focus').forEach(node=>node.classList.remove('sv-business-focus'));
   detail.hidden=true;menu.hidden=false;
   groups.forEach(g=>{g.classList.remove('seyveo-selected-group');g.querySelectorAll('.seyveo-selected-item').forEach(x=>x.classList.remove('seyveo-selected-item'))});
  }
@@ -3588,9 +3594,28 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   }else home();
  };
  back.addEventListener('click',goBack);
- window.SEYVEO_BUSINESS_NAV=Object.freeze({openTools:()=>showSection({
-  dataset:{cleanSection:'business'},textContent:'Инструменты бизнеса',querySelector:()=>null
- })});
+ // Route straight to the original specialized content, NOT to the old
+ // all-in-one "Инструменты бизнеса" screen with duplicate company links.
+ function businessFeature(name){
+  const allowed=['Команда','Кадры','Эффект SEYVEO'];
+  if(!allowed.includes(name))return;
+  showSection({dataset:{cleanSection:'business'},textContent:name,querySelector:()=>null});
+  const group=groups[3];
+  const nodes=[...group.querySelectorAll('.seyveo-hr-operations > details.seyveo-manage-fold')];
+  const selected=nodes.find(node=>
+   node.querySelector('summary .manage-text strong')?.textContent.trim()===name);
+  if(!selected){goBack();return}
+  group.querySelector('.manage-card > details.seyveo-manage-fold')?.removeAttribute('open');
+  nodes.forEach(node=>{
+   node.open=node===selected;
+   node.classList.toggle('sv-business-focus',node===selected);
+  });
+  legacy.classList.add('sv-business-feature-mode');
+  title.textContent=name==='Эффект SEYVEO'?'Эффективность бизнеса':
+   name==='Кадры'?'Подбор сотрудников':'Смены и развитие';
+  window.scrollTo(0,0);
+ }
+ window.SEYVEO_BUSINESS_NAV=Object.freeze({openFeature:businessFeature});
  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden)goBack()});
  let touchX=null,touchY=null;
  detail.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});
