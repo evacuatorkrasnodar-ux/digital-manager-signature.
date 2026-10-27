@@ -598,12 +598,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-mail-content[hidden],
 #seyveoLivingMoment .lm-actions .lm-polymer[hidden],
 #tasksPage #seyveoPreviewMailLater[hidden]{display:none!important}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions{
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="mail"] .lm-actions{
  max-height:138px;overflow:visible;column-gap:15px;row-gap:0;
 }
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions .lm-polymer{
  min-height:44px;font-size:12.5px;padding:8px 2px;
 }
+#seyveoLivingMoment.lm-condense .lm-mail-content{display:none!important}
 #seyveoLivingMoment .lm-mail-content{
  display:grid;gap:7px;padding:1px 0 0;margin:0;
  min-width:0;max-width:100%;color:var(--text)
