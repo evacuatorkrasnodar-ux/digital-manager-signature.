@@ -6,7 +6,7 @@
  box-sizing:border-box;width:min(515px,calc(100vw - 20px));
  max-width:calc(100vw - 20px);max-height:min(90dvh,850px);
  padding:0;margin:auto;border:1px solid rgba(211,222,217,.22);
- border-radius:27px;overflow:hidden;background:#142326;color:#f2faf5;
+ border-radius:27px;overflow:hidden;background:var(--card);color:var(--text);
  box-shadow:0 24px 80px rgba(0,0,0,.62),inset 0 1px rgba(255,255,255,.07);
 }
 .seyveo-account-modal::backdrop{background:rgba(0,0,0,.68);backdrop-filter:blur(8px)}
@@ -21,15 +21,15 @@
 }
 .seyveo-account-head{display:flex;align-items:start;justify-content:space-between;gap:12px}
 .seyveo-account-eyebrow,.seyveo-account-picker-label{
- display:block;color:#a5b0b4;font-size:10px;letter-spacing:.12em;line-height:1.4;font-weight:550;
+ display:block;color:var(--secondary);font-size:10px;letter-spacing:.12em;line-height:1.4;font-weight:550;
 }
 .seyveo-account-head h2{
- margin:6px 0 4px;color:#f0f2f1;font-size:22px;line-height:1.2;letter-spacing:-.035em;font-weight:540;
+ margin:6px 0 4px;color:var(--text);font-size:22px;line-height:1.2;letter-spacing:-.035em;font-weight:540;
 }
-.seyveo-account-head p{color:#acb5b8;font-size:12px;margin:0 0 15px;line-height:1.4}
+.seyveo-account-head p{color:var(--secondary);font-size:12px;margin:0 0 15px;line-height:1.4}
 .seyveo-account-finish{
- min-height:44px;padding:0 13px;border-radius:22px;border:1px solid #ffffff24;
- background:#ffffff0c;color:#e5e8e8;font-size:12px;flex:none;
+ min-height:44px;padding:0 13px;border-radius:22px;border:1px solid var(--soft-line);
+ background:var(--seyveo-specular);color:var(--text);font-size:12px;flex:none;
 }
 /* The subscription overview uses the same simple Done as the Studio
    passport: quiet text, never a competing capsule. */
@@ -37,26 +37,26 @@
  flex:none;min-height:44px;min-width:64px;
  padding:0 4px;border:0;border-radius:0;
  background:transparent;box-shadow:none;
- color:#d9dfe5;font-size:13px;font-weight:470;line-height:1.2;
+ color:var(--text);font-size:13px;font-weight:470;line-height:1.2;
 }
 .seyveo-subscription-v2 .seyveo-account-finish:active{opacity:.68}
 
 .seyveo-account-demo-flag{
  display:flex;align-items:center;gap:9px;min-height:34px;
- border:1px solid #ffffff16;border-radius:12px;padding:6px 10px;
- background:#ffffff07;color:#b7c3c0;font-size:11px;line-height:1.3;
+ border:1px solid var(--soft-line);border-radius:12px;padding:6px 10px;
+ background:var(--seyveo-specular);color:var(--secondary);font-size:11px;line-height:1.3;
 }
 .seyveo-account-dot{width:7px;height:7px;border-radius:50%;background:#acc9bd;flex:none}
 .seyveo-account-tabs{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;
- padding:4px;margin:15px 0 17px;background:#ffffff09;border:1px solid #ffffff10;border-radius:18px;
+ padding:4px;margin:15px 0 17px;background:var(--seyveo-specular);border:1px solid var(--soft-line);border-radius:18px;
 }
 .seyveo-account-tabs button{
  min-width:0;min-height:40px;padding:8px 3px;border:0;border-radius:14px;
- background:transparent;color:#aeb8b8;font-size:11.5px;font-weight:510;
+ background:transparent;color:var(--secondary);font-size:11.5px;font-weight:510;
 }
 .seyveo-account-tabs button[aria-current="page"]{
- background:#2b4642;color:#f6fff9;box-shadow:0 1px 5px #0004,inset 0 1px #ffffff18;
+ background:var(--card2);color:var(--text);box-shadow:0 1px 5px rgba(0,0,0,.25),inset 0 1px color-mix(in srgb,var(--text) 9%,transparent);
 }
 .seyveo-account-panel{display:block}
 .seyveo-account-profile{
@@ -64,123 +64,123 @@
 }
 .seyveo-account-initial{
  display:grid;place-items:center;flex:none;width:45px;height:45px;
- background:linear-gradient(150deg,#3a6358,#142426);color:#f5f5f1;
- border:1px solid #ffffff24;border-radius:14px;font-size:23px;font-weight:430;
+ background:linear-gradient(150deg,var(--seyveo-velvet),var(--card));color:var(--text);
+ border:1px solid var(--soft-line);border-radius:14px;font-size:23px;font-weight:430;
 }
 .seyveo-account-profile-text{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
 .seyveo-account-profile-text strong{font-weight:540;font-size:15px;overflow:hidden;text-overflow:ellipsis}
-.seyveo-account-profile-text small{font-size:11px;color:#aeb7b8}
-.seyveo-account-text-action{border:0;background:transparent;color:#d0d9d5;font-size:12px;min-height:44px;padding:5px 8px}
+.seyveo-account-profile-text small{font-size:11px;color:var(--secondary)}
+.seyveo-account-text-action{border:0;background:transparent;color:var(--text);font-size:12px;min-height:44px;padding:5px 8px}
 .seyveo-account-picker-label{margin:0 0 7px;font-size:9px}
 .seyveo-account-company-select{
  width:100%;min-height:45px;box-sizing:border-box;border-radius:14px;
- background:#263f3c;color:#f1f9f6;padding:9px 14px;
- border:1px solid #ffffff25;font-size:13px;margin:0 0 16px;
+ background:var(--card2);color:var(--text);padding:9px 14px;
+ border:1px solid var(--soft-line);font-size:13px;margin:0 0 16px;
 }
 .seyveo-account-plan-summary{
- border:1px solid #ffffff29;border-radius:22px;padding:17px 15px 14px;
- background:linear-gradient(150deg,#304945,#1c3233 62%,#132326);
- box-shadow:inset 0 1px #ffffff17,0 10px 22px #0003;
+ border:1px solid var(--soft-line);border-radius:22px;padding:17px 15px 14px;
+ background:linear-gradient(150deg,var(--card2),var(--card) 62%,var(--bg));
+ box-shadow:inset 0 1px color-mix(in srgb,var(--text) 9%,transparent),0 10px 22px #0003;
 }
-.seyveo-account-summary-head{display:flex;align-items:center;justify-content:space-between;gap:9px;color:#b5c0be;font-size:9.5px;letter-spacing:.07em}
-.seyveo-account-mock-pill{color:#cfdbd5;border:1px solid #ffffff2a;border-radius:999px;padding:4px 9px;letter-spacing:0}
+.seyveo-account-summary-head{display:flex;align-items:center;justify-content:space-between;gap:9px;color:var(--secondary);font-size:9.5px;letter-spacing:.07em}
+.seyveo-account-mock-pill{color:var(--secondary);border:1px solid var(--soft-line);border-radius:999px;padding:4px 9px;letter-spacing:0}
 .seyveo-account-plan-summary h3{
  margin:13px 0 2px;font-size:24px;font-weight:510;line-height:1.25;letter-spacing:-.035em;
 }
-.seyveo-account-plan-summary>p{margin:0 0 16px;color:#b4bec1;font-size:12px;line-height:1.4}
-.seyveo-account-summary-rows{border-top:1px solid #ffffff1c;margin-bottom:16px}
+.seyveo-account-plan-summary>p{margin:0 0 16px;color:var(--secondary);font-size:12px;line-height:1.4}
+.seyveo-account-summary-rows{border-top:1px solid var(--soft-line);margin-bottom:16px}
 .seyveo-account-summary-rows>div{
  display:flex;justify-content:space-between;gap:8px;padding:10px 0;
- border-bottom:1px solid #ffffff13;font-size:11px;line-height:1.5;
+ border-bottom:1px solid var(--soft-line);font-size:11px;line-height:1.5;
 }
-.seyveo-account-summary-rows span{color:#b2babc;min-width:0}
+.seyveo-account-summary-rows span{color:var(--secondary);min-width:0}
 .seyveo-account-summary-rows strong{font-weight:510;text-align:right;max-width:60%}
 .seyveo-account-primary,.seyveo-account-secondary{
  display:grid;place-items:center;width:100%;min-height:46px;
  box-sizing:border-box;border-radius:999px;padding:12px 13px;font-size:12px;
  font-weight:540;cursor:pointer;line-height:1.3;
 }
-.seyveo-account-primary{border:1px solid #e7edeb;background:#e7edeb;color:#1b2221}
-.seyveo-account-secondary{border:1px solid #ffffff2a;background:#ffffff0a;color:#ebf0ec}
+.seyveo-account-primary{border:1px solid var(--seyveo-metal-peak);background:var(--seyveo-metal-peak);color:#172329}
+.seyveo-account-secondary{border:1px solid var(--soft-line);background:var(--seyveo-specular);color:var(--text)}
 .seyveo-account-quiet-row{
  display:flex;align-items:center;justify-content:space-between;gap:8px;
- margin:16px 0 0;font-size:12px;color:#bdc5c4;
+ margin:16px 0 0;font-size:12px;color:var(--secondary);
 }
-.seyveo-account-quiet-row button{border:0;background:transparent;color:#eff4ef;padding:8px;min-height:44px;font-size:12px}
+.seyveo-account-quiet-row button{border:0;background:transparent;color:var(--text);padding:8px;min-height:44px;font-size:12px}
 .seyveo-account-section-head{margin:0 0 13px}
 .seyveo-account-section-head h3{margin:0 0 5px;font-size:17px;letter-spacing:-.025em;font-weight:540}
-.seyveo-account-section-head p{margin:0;color:#b3bfc1;font-size:12px;line-height:1.5}
+.seyveo-account-section-head p{margin:0;color:var(--secondary);font-size:12px;line-height:1.5}
 .seyveo-account-tier-list{display:grid;gap:8px;margin:0 0 13px}
 .seyveo-account-tier{
  width:100%;min-height:87px;display:flex;align-items:center;gap:10px;
- text-align:left;border:1px solid #ffffff25;border-radius:17px;
- background:#ffffff07;padding:13px;color:#e8eded;
+ text-align:left;border:1px solid var(--soft-line);border-radius:17px;
+ background:var(--seyveo-specular);padding:13px;color:var(--text);
 }
-.seyveo-account-tier[aria-pressed="true"]{background:#e6ebe90e;border-color:#b2c8bf9a}
+.seyveo-account-tier[aria-pressed="true"]{background:var(--seyveo-hdr-active);border-color:var(--secondary)}
 .seyveo-account-tier-mark{
- flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid #ffffff55;
+ flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid var(--soft-line);
  border-radius:50%;font-size:11px;
 }
 .seyveo-account-tier-main{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
 .seyveo-account-tier-main strong{font-size:14px;font-weight:550}
-.seyveo-account-tier-main small{font-size:11px;color:#b7c0c0;line-height:1.4}
-.seyveo-account-tier em{color:#e0e7e5;font-size:9px;font-style:normal;flex:none}
-.seyveo-account-choice-note{font-size:11px;color:#b9c5c0;line-height:1.5;min-height:18px;margin-bottom:12px}
+.seyveo-account-tier-main small{font-size:11px;color:var(--secondary);line-height:1.4}
+.seyveo-account-tier em{color:var(--text);font-size:9px;font-style:normal;flex:none}
+.seyveo-account-choice-note{font-size:11px;color:var(--secondary);line-height:1.5;min-height:18px;margin-bottom:12px}
 .seyveo-account-billing-card{
- border:1px solid #ffffff26;border-radius:18px;padding:0 13px;margin:0 0 13px;
- background:#ffffff07;
+ border:1px solid var(--soft-line);border-radius:18px;padding:0 13px;margin:0 0 13px;
+ background:var(--seyveo-specular);
 }
 .seyveo-account-billing-row{
  display:flex;align-items:center;justify-content:space-between;gap:12px;
  padding:14px 0;min-height:46px;
 }
-.seyveo-account-billing-row+.seyveo-account-billing-row{border-top:1px solid #ffffff19}
+.seyveo-account-billing-row+.seyveo-account-billing-row{border-top:1px solid var(--soft-line)}
 .seyveo-account-billing-row>div{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}
 .seyveo-account-billing-row strong{font-size:12px;font-weight:550}
-.seyveo-account-billing-row small{font-size:10.5px;color:#aeb9bd;line-height:1.4}
-.seyveo-account-billing-row>span{font-size:10.5px;text-align:right;color:#bbc6c4}
+.seyveo-account-billing-row small{font-size:10.5px;color:var(--secondary);line-height:1.4}
+.seyveo-account-billing-row>span{font-size:10.5px;text-align:right;color:var(--secondary)}
 .seyveo-account-switch{
  display:flex;align-items:center;flex:none;width:51px;height:31px;border:0;
- border-radius:20px;padding:3px;background:#34775e;
+ border-radius:20px;padding:3px;background:var(--seyveo-emerald-deep);
 }
-.seyveo-account-switch span{width:25px;height:25px;border-radius:50%;background:#f4f8f5;transform:translateX(20px);transition:transform .18s}
-.seyveo-account-switch[aria-checked="false"]{background:#384b49}
+.seyveo-account-switch span{width:25px;height:25px;border-radius:50%;background:var(--seyveo-metal-peak);transform:translateX(20px);transition:transform .18s}
+.seyveo-account-switch[aria-checked="false"]{background:var(--card2)}
 .seyveo-account-switch[aria-checked="false"] span{transform:translateX(0)}
 .seyveo-account-checkout{
- border:1px solid #ffffff2b;border-radius:17px;
- padding:13px;margin:13px 0;background:#ffffff0c;
+ border:1px solid var(--soft-line);border-radius:17px;
+ padding:13px;margin:13px 0;background:var(--seyveo-specular);
 }
 .seyveo-account-checkout strong{font-size:12px}
-.seyveo-account-checkout p{color:#c0c9c8;font-size:11px;line-height:1.55}
-.seyveo-account-checkout button{border:1px solid #ffffff30;background:#ffffff0a;border-radius:12px;color:#ecf0ee;min-height:44px;padding:9px 18px}
+.seyveo-account-checkout p{color:var(--secondary);font-size:11px;line-height:1.55}
+.seyveo-account-checkout button{border:1px solid var(--soft-line);background:var(--seyveo-specular);border-radius:12px;color:var(--text);min-height:44px;padding:9px 18px}
 .seyveo-account-history-head{margin:22px 0 13px}
-.seyveo-account-history-sample{display:flex;align-items:center;gap:12px;border-top:1px solid #ffffff22;padding:12px 1px}
-.seyveo-account-history-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;border:1px solid #ffffff2a;font-size:19px}
+.seyveo-account-history-sample{display:flex;align-items:center;gap:12px;border-top:1px solid var(--soft-line);padding:12px 1px}
+.seyveo-account-history-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;border:1px solid var(--soft-line);font-size:19px}
 .seyveo-account-history-sample>span:nth-child(2){display:flex;flex:1;flex-direction:column;gap:5px}
 .seyveo-account-history-sample strong{font-size:12px;font-weight:550}
-.seyveo-account-history-sample small{color:#aeb9b8;font-size:10px}
-.seyveo-account-history-sample>span:last-child{font-size:10px;color:#b2bcbb}
+.seyveo-account-history-sample small{color:var(--secondary);font-size:10px}
+.seyveo-account-history-sample>span:last-child{font-size:10px;color:var(--secondary)}
 .seyveo-account-login-card{
  display:flex;flex-direction:column;gap:10px;
- padding:18px 15px;border:1px solid #ffffff27;border-radius:18px;background:#ffffff06;
+ padding:18px 15px;border:1px solid var(--soft-line);border-radius:18px;background:var(--seyveo-specular);
 }
-.seyveo-account-login-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid #ffffff25;border-radius:13px;font-size:19px}
+.seyveo-account-login-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--soft-line);border-radius:13px;font-size:19px}
 .seyveo-account-login-card>strong{font-size:15px;font-weight:530}
-.seyveo-account-login-card label{font-size:11px;color:#bec8c5}
+.seyveo-account-login-card label{font-size:11px;color:var(--secondary)}
 .seyveo-account-login-card input{
  box-sizing:border-box;width:100%;min-height:46px;border-radius:13px;
- padding:10px 12px;border:1px solid #ffffff2b;background:#20282a;
- color:#f0f5f1;font-size:14px;
+ padding:10px 12px;border:1px solid var(--soft-line);background:var(--card2);
+ color:var(--text);font-size:14px;
 }
-.seyveo-account-code-stage{padding:14px 0 0;border-top:1px solid #ffffff1e;display:flex;flex-direction:column;gap:9px}
-.seyveo-account-code-stage>span{font-size:9px;color:#aebbba;letter-spacing:.12em}
+.seyveo-account-code-stage{padding:14px 0 0;border-top:1px solid var(--soft-line);display:flex;flex-direction:column;gap:9px}
+.seyveo-account-code-stage>span{font-size:9px;color:var(--secondary);letter-spacing:.12em}
 .seyveo-account-code-stage>strong{font-size:13px;font-weight:550}
-.seyveo-account-code-stage>div{letter-spacing:.19em;color:#dce4df;font-size:18px}
-.seyveo-account-code-stage small{font-size:11px;color:#b4bfbd;line-height:1.45}
-.seyveo-account-signin-footer{font-size:11px;color:#b8c3c0;line-height:1.6;margin:16px 1px}
+.seyveo-account-code-stage>div{letter-spacing:.19em;color:var(--text);font-size:18px}
+.seyveo-account-code-stage small{font-size:11px;color:var(--secondary);line-height:1.45}
+.seyveo-account-signin-footer{font-size:11px;color:var(--secondary);line-height:1.6;margin:16px 1px}
 .seyveo-account-disclosure{
  margin:19px 0 0;padding-top:13px;
- border-top:1px solid #ffffff1c;color:#a9b5b5;font-size:10px;line-height:1.55;
+ border-top:1px solid var(--soft-line);color:var(--secondary);font-size:10px;line-height:1.55;
 }
 .seyveo-account-profile-entry{margin:3px 0 11px}
 .seyveo-account-profile-link{
@@ -202,21 +202,21 @@
  .seyveo-account-switch span{transition:none}
 }
 :root[data-theme="light"] .seyveo-account-modal{
- color:#263130;background:#f5f7f6;border-color:#74898350;
+ color:var(--text);background:var(--card);border-color:#74898350;
 }
-:root[data-theme="light"] .seyveo-account-modal :is(h2,h3,strong){color:#25302e}
-:root[data-theme="light"] .seyveo-account-modal :is(p,small,.seyveo-account-disclosure){color:#5b6b68}
+:root[data-theme="light"] .seyveo-account-modal :is(h2,h3,strong){color:var(--text)}
+:root[data-theme="light"] .seyveo-account-modal :is(p,small,.seyveo-account-disclosure){color:var(--secondary)}
 :root[data-theme="light"] .seyveo-account-modal :is(.seyveo-account-demo-flag,.seyveo-account-tier,.seyveo-account-billing-card,.seyveo-account-login-card){
- background:#ffffff95;border-color:#85979044;color:#2b3532;
+ background:var(--card2);border-color:var(--line);color:var(--text);
 }
-:root[data-theme="light"] .seyveo-account-tabs{background:#dde4e1}
-:root[data-theme="light"] .seyveo-account-tabs button{color:#576560}
-:root[data-theme="light"] .seyveo-account-tabs button[aria-current="page"]{background:#fff;color:#25302c}
-:root[data-theme="light"] .seyveo-account-plan-summary{background:linear-gradient(150deg,#f8faf8,#e4e9e6);border-color:#7d8e865c}
+:root[data-theme="light"] .seyveo-account-tabs{background:var(--card2)}
+:root[data-theme="light"] .seyveo-account-tabs button{color:var(--secondary)}
+:root[data-theme="light"] .seyveo-account-tabs button[aria-current="page"]{background:var(--card);color:var(--text)}
+:root[data-theme="light"] .seyveo-account-plan-summary{background:linear-gradient(150deg,var(--card),var(--card2));border-color:#7d8e865c}
 :root[data-theme="light"] .seyveo-account-primary{background:#232d29;color:#fff}
-:root[data-theme="light"] .seyveo-account-secondary{color:#283430;background:#ffffffbb;border-color:#84958e66}
+:root[data-theme="light"] .seyveo-account-secondary{color:var(--text);background:var(--card);border-color:#84958e66}
 :root[data-theme="light"] .seyveo-account-company-select,
-:root[data-theme="light"] .seyveo-account-login-card input{background:#fff;color:#26322e;border-color:#8a9d9660}
+:root[data-theme="light"] .seyveo-account-login-card input{background:#fff;color:var(--text);border-color:#8a9d9660}
 :root[data-theme="light"] .seyveo-account-modal button:not(.seyveo-account-primary):not(.seyveo-account-switch){color:inherit}
 
 
@@ -233,6 +233,6 @@
 .seyveo-account-period button[aria-pressed=true]{
  background:#383f40;color:#f1f4f1;box-shadow:inset 0 1px #ffffff11;
 }
-:root[data-theme="light"] .seyveo-account-period{background:#dfe5e2}
-:root[data-theme="light"] .seyveo-account-period button{color:#45534e}
-:root[data-theme="light"] .seyveo-account-period button[aria-pressed=true]{background:#fdfefd;color:#202e29}
+:root[data-theme="light"] .seyveo-account-period{background:var(--card2)}
+:root[data-theme="light"] .seyveo-account-period button{color:var(--secondary)}
+:root[data-theme="light"] .seyveo-account-period button[aria-pressed=true]{background:var(--card);color:var(--text)}
