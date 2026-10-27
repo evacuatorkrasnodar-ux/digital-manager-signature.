@@ -674,27 +674,16 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Living Velvet · ONE shared atmospheric background.
-   Restore the approved black-graphite depth and very soft pearl light
-   on Home AND on every inner page. This is the original body canvas,
-   not an image, glass overlay, moving filter, or duplicated layer. */
+/* SEYVEO · Shared Black Velvet canvas.
+   A calm full-page gradient without the fixed radial spots that resembled
+   a ghost sphere on every route. The actual sphere SVG is untouched. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:
-  radial-gradient(ellipse 108vw 475px at 50% 232px,
-   rgba(222,224,230,.077) 0%,rgba(159,165,176,.030) 43%,transparent 87%),
-  radial-gradient(ellipse 116vw 470px at 46% 615px,
-   rgba(118,119,128,.027) 0%,transparent 78%),
-  linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
+ background:linear-gradient(180deg,#191b1f 0%,#141619 52%,#101216 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
- background:
-  radial-gradient(ellipse 108vw 475px at 50% 232px,
-   rgba(255,255,255,.26) 0%,rgba(161,173,187,.066) 50%,transparent 87%),
-  radial-gradient(ellipse 116vw 470px at 46% 615px,
-   rgba(163,175,190,.050) 0%,transparent 78%),
-  linear-gradient(180deg,#f5f6f8 0%,#f1f3f6 58%,#eceff3 100%);
+ background:linear-gradient(180deg,#f5f6f8 0%,#f1f3f6 58%,#eceff3 100%);
  background-repeat:no-repeat;
 }
 /* Put meaningful text, not decoration, in the visual foreground. */
