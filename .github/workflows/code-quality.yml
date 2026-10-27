@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Verify About SEYVEO opens Ideas, Passport and demos
+        run: node tools/test-management-about.cjs
       - name: Protect approved My World Black Velvet HDR-like color system
         run: node tools/test-world-velvet.cjs
       - name: Verify first Business Pulse demo and Our Ideas entry
