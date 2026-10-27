@@ -59,7 +59,7 @@
   padding:
    calc(20px + env(safe-area-inset-top,0px))
    max(16px,env(safe-area-inset-right,0px))
-   calc(26px + env(safe-area-inset-bottom,0px))
+   calc(112px + env(safe-area-inset-bottom,0px))
    max(16px,env(safe-area-inset-left,0px))!important;
  }
  /* The Notebook uses display:flex and had height:fit-content!important.
@@ -105,7 +105,7 @@
   padding-top:calc(17px + env(safe-area-inset-top,0px))!important;
  }
  html body #seyveoFamilyDialog .svf-join{
-  padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+  padding-bottom:calc(94px + env(safe-area-inset-bottom,0px))!important;
  }
  html body #seyveoFamilyDialog .svf-thread,
  html body #seyveoFamilyDialog .svf-plans{
@@ -124,13 +124,19 @@
   border-radius:0!important;
   box-shadow:none!important;
   padding-top:calc(20px + env(safe-area-inset-top,0px))!important;
-  padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;
+  padding-bottom:calc(105px + env(safe-area-inset-bottom,0px))!important;
  }
  /* Let the focus tools and long forms use one scrollable screen without
     clipping their footer/actions. On small phones the user can swipe down. */
  html body #calendarSpaceDialog .cal-space-list,
  html body #calendarSpaceDialog #calendarPersonalTools{
   max-height:none;
+ }
+ /* The real dock is portaled into the active modal's top layer.
+    It retains the same position and five native buttons, never duplicated. */
+ html body dialog.seyveo-dock-host[open] > footer.dock{
+  position:fixed!important;
+  z-index:90!important;
  }
  /* Native safe-area clearance for close controls anchored at the top. */
  html body dialog:is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog,#notesDialog)
