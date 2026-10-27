@@ -1,0 +1,70 @@
+/* SEYVEO · specific content inside the EXISTING Living Ink cards.
+ * The original card geometry, animation, sphere, home dock, backgrounds
+ * and main actions remain owned by living-moment.css.
+ */
+#homePage #dynamic .sv-home-mail-card .sv-home-mail-draft{
+  margin:9px 0 8px;padding:0;
+  font-size:13px;line-height:1.65;color:var(--text);
+  font-weight:420;white-space:pre-wrap;overflow-wrap:anywhere;
+}
+#homePage #dynamic .sv-home-mail-card .sv-home-mail-check{
+  display:grid;gap:7px;padding:11px 0;
+  border-top:1px solid var(--soft-line);border-bottom:1px solid var(--soft-line);
+  font-size:12px;line-height:1.55;color:var(--secondary);
+}
+#homePage #dynamic .sv-home-mail-check strong{color:var(--text);font-size:12.5px;font-weight:550}
+#homePage #dynamic .sv-home-mail-check small{font:inherit;opacity:.88}
+#homePage #dynamic .sv-home-mail-check p{
+  margin:0;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;
+}
+#homePage #dynamic .sv-home-mail-edit{display:grid;gap:8px;margin:13px 0}
+#homePage #dynamic .sv-home-mail-edit label{color:var(--secondary);font-size:12px}
+#homePage #dynamic .sv-home-mail-edit textarea{
+  width:100%;min-height:122px;resize:vertical;box-sizing:border-box;
+  padding:12px 13px;border:1px solid var(--seyveo-hdr-outline);
+  border-radius:12px;color:var(--text);background:var(--seyveo-hdr-active);
+  font:inherit;font-size:13px;line-height:1.5;outline-offset:3px;
+}
+#homePage #dynamic .sv-home-mail-card .actions{
+  column-gap:17px;row-gap:2px;max-height:none;
+}
+#homePage #dynamic .sv-home-mail-card .actions .btn{
+  padding:10px 2px;min-height:44px;font-size:12.5px;
+}
+#homePage #dynamic .sv-home-mail-status{
+  margin:9px 0 0;font-size:10.5px;color:var(--secondary);
+  line-height:1.5;max-width:100%;overflow-wrap:anywhere;
+}
+#homePage #dynamic .sv-home-mail-status[hidden]{display:none!important}
+#tasksPage .sv-home-mail-later{
+  display:grid;gap:8px;margin:6px 0 17px;padding:14px 4px 16px;
+  border-bottom:1px solid var(--soft-line);color:var(--text);
+}
+#tasksPage .sv-home-mail-later[hidden]{display:none!important}
+#tasksPage .sv-home-mail-later>small{font-size:10px;color:var(--seyveo-emerald);letter-spacing:.09em}
+#tasksPage .sv-home-mail-later>strong{font-size:15px;font-weight:540}
+#tasksPage .sv-home-mail-later p{margin:0;color:var(--secondary);font-size:12px;line-height:1.5}
+#tasksPage .sv-home-mail-later .actions{display:flex;gap:17px;flex-wrap:wrap}
+#tasksPage .sv-home-mail-later button,
+#sayviSurfacePage .sv-home-mail-original button{
+  font:inherit;font-size:12px;color:var(--text);border:0;background:none;
+  padding:10px 2px;min-height:44px;cursor:pointer;
+}
+#tasksPage .sv-home-mail-later button:focus-visible,
+#sayviSurfacePage .sv-home-mail-original button:focus-visible{
+  outline:2px solid var(--seyveo-emerald);outline-offset:3px;
+}
+#sayviSurfacePage .sv-home-mail-original{
+  display:grid;gap:12px;min-width:0;
+  border-top:1px solid var(--soft-line);padding:18px 0 14px;
+}
+#sayviSurfacePage .sv-home-mail-original>small{font-size:10px;color:var(--seyveo-emerald);letter-spacing:.11em}
+#sayviSurfacePage .sv-home-mail-original h2{font-size:17px;font-weight:540;letter-spacing:-.02em;margin:0}
+#sayviSurfacePage .sv-home-mail-original>p{margin:0;font-size:12.5px;color:var(--secondary);line-height:1.6;overflow-wrap:anywhere}
+#sayviSurfacePage .sv-home-mail-original blockquote{
+  margin:0;padding:9px 12px;border-left:2px solid var(--seyveo-emerald);
+  color:var(--text);background:var(--seyveo-hdr-active);font-size:13px;
+  line-height:1.6;overflow-wrap:anywhere;
+}
+#sayviSurfacePage .sv-home-mail-original>strong{font-weight:550;font-size:12px}
+#sayviSurfacePage .sv-home-mail-original .actions{display:flex;gap:16px;flex-wrap:wrap}
