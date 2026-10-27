@@ -703,6 +703,8 @@ $('pwStepsForm').addEventListener('submit',event=>{
 });
 $('pwStepsDate').addEventListener('change',fillSteps);
 $('pwBreathDuration').addEventListener('change',()=>{if(!session)$('pwBreathClock').textContent=clock(Number($('pwBreathDuration').value)*60)});
+// The form already performs explicit checks and shows a SEYVEO notice; avoid OS validation bubbles.
+$('pwMedForm').noValidate=true;
 $('pwMedForm').addEventListener('submit',recordMed);
 $('pwSleepForm').addEventListener('submit',recordSleep);
 $('pwCycleForm').addEventListener('submit',recordCycle);
