@@ -116,8 +116,12 @@ for(const name of scriptPaths.filter(x=>x.startsWith('assets/'))){
  for(const match of source.matchAll(/\bid=["']([\w-]+)["']/g))declaredModuleIds.add(match[1]);
  for(const match of source.matchAll(/\.id\s*=\s*["']([\w-]+)["']/g))declaredModuleIds.add(match[1]);
 }
+/* Only mounted scripts can require a DOM node in the running app.
+ * Dormant optional demos are still syntax-checked above, but their root
+ * containers are intentionally absent until a feature is mounted. */
+const mountedScripts=new Set(linkedAssets.filter(x=>x.endsWith('.js')));
 const referencedIds=new Set();
-for(const name of scriptPaths.filter(x=>x.startsWith('assets/'))){
+for(const name of scriptPaths.filter(x=>mountedScripts.has(x))){
  for(const m of read(name).matchAll(/(?:getElementById\(|\$\()\s*['"]([\w-]+)['"]\s*\)/g)){
   if(m[1]!=='page')referencedIds.add(m[1]); // dynamically created print window
  }
