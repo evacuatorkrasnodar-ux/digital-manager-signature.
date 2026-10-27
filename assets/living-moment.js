@@ -272,7 +272,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
-  mailDetails.append(create('p','lm-mail-intro','ДЕМО · Клиент Андрей спрашивает о стоимости доставки.'));
+  mailDetails.append(create('p','lm-mail-intro','ДЕМО · Андрей спрашивает о доставке · почта не подключена'));
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить черновик');
    const input=create('textarea','lm-mail-edit-input');
@@ -284,11 +284,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
       create('p','lm-mail-address','Тема: Стоимость доставки'));
    }
    mailDetails.append(create('p','lm-mail-draft',mailDraft));
-   mailDetails.append(create('p','lm-mail-note',mailStep==='done'
-    ?'✓ Учебное подтверждение. Ничего не отправлено.'
-    :mailStep==='confirm'
-      ?'Это учебный пример. Подтверждение не отправляет письмо.'
-      :'Почта не подключена · настоящий ответ не отправлен.'));
+   // The Home draft is fully readable, not buried beneath duplicate status text.
+   // A real sending confirmation remains explicit and cannot transmit a message.
+   if(mailStep!=='draft'){
+    mailDetails.append(create('p','lm-mail-note',mailStep==='done'
+     ?'✓ ДЕМО · Ничего не отправлено.'
+     :'ДЕМО · Подтверждение не отправляет письмо.'));
+   }
   }
  }
  const open=polymer('Подробнее',()=>{
@@ -408,7 +410,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   label.textContent=space.classList.contains('lm-gather')?'ГЛАВНОЕ':item.category;
   headline.textContent=item.title;
   description.textContent=item.body;
-  description.hidden=!real&&item.kind==='contract';
+  description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
   open.setAttribute('aria-label','Подробнее: '+item.title);
   execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
@@ -475,7 +477,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   },reduced()?0:420);
  }
  field.dataset.lmSubject=primary.kind;
- description.hidden=!real&&primary.kind==='contract';
+ description.hidden=!real&&(primary.kind==='contract'||primary.kind==='mail');
  updateMail();
  updateDocument();
  updateCount();
