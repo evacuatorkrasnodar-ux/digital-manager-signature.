@@ -81,6 +81,103 @@
 }
 #calendarPersonalTools .pw-inline button{flex:none}
 
+
+/* Native date data remains intact; the visible picker is SEYVEO Black Velvet.
+   Scoped to the three local wellness inputs, never medication time controls. */
+#calendarPersonalTools .pw-date-fields input.pw-date-native{
+ position:absolute!important;width:1px!important;height:1px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ opacity:0!important;pointer-events:none!important;clip-path:inset(50%);
+}
+#calendarPersonalTools .pw-date-fields label:has(.pw-date-native){position:relative}
+#calendarPersonalTools .pw-date-open{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;
+ width:100%;height:46px;min-height:46px;margin-top:1px;
+ padding:9px 12px!important;border:1px solid var(--seyveo-hdr-outline,var(--line))!important;
+ border-radius:13px!important;background:var(--card)!important;
+ color:var(--text)!important;text-align:left;font:inherit;font-size:14px!important;
+ font-variant-numeric:tabular-nums;letter-spacing:.008em;box-shadow:none!important;
+}
+#calendarPersonalTools .pw-date-open:after{
+ content:"";width:13px;height:13px;flex:none;margin-left:7px;opacity:.72;
+ border:1.5px solid var(--seyveo-emerald);border-top-width:4px;border-radius:3px;
+ box-sizing:border-box;
+}
+#calendarPersonalTools .pw-date-open[aria-expanded=true]{
+ border-color:var(--seyveo-emerald)!important;
+}
+#calendarSpaceDialog .pw-date-popup[hidden]{display:none!important}
+#calendarSpaceDialog .pw-date-popup{
+ position:fixed;z-index:200;
+ left:50%;top:50%;transform:translate(-50%,-50%);
+ box-sizing:border-box;width:min(320px,calc(100vw - 40px));
+ max-height:min(420px,calc(100dvh - 42px));
+ overflow-y:auto;overscroll-behavior:contain;
+ padding:14px 13px 12px;border-radius:21px;
+ border:1px solid var(--seyveo-hdr-outline,var(--line));
+ background:var(--sv-life-dialog-bg,var(--card))!important;
+ color:var(--text);
+ box-shadow:0 14px 42px rgba(0,0,0,.28);
+}
+#calendarSpaceDialog .pw-date-popup-header{
+ display:grid;grid-template-columns:44px minmax(0,1fr) 44px;
+ gap:3px;align-items:center;margin-bottom:11px;
+}
+#calendarSpaceDialog .pw-date-popup-header strong{
+ display:block;text-align:center;text-transform:capitalize;
+ font-size:15px;font-weight:580;letter-spacing:-.025em;
+}
+#calendarSpaceDialog .pw-date-popup button{
+ box-sizing:border-box;cursor:pointer;border:0;box-shadow:none;
+ background:transparent;color:var(--text);font:inherit;
+ -webkit-tap-highlight-color:transparent;
+}
+#calendarSpaceDialog .pw-date-popup button:focus-visible,
+#calendarPersonalTools .pw-date-open:focus-visible{
+ outline:2px solid var(--seyveo-emerald)!important;outline-offset:2px;
+}
+#calendarSpaceDialog .pw-date-popup-header button{
+ display:grid;place-items:center;width:44px;height:44px;
+ border-radius:50%;font-size:28px;font-weight:300;line-height:1;
+ color:var(--seyveo-emerald);
+}
+#calendarSpaceDialog .pw-date-popup-header button:disabled,
+#calendarSpaceDialog .pw-date-days button:disabled{
+ opacity:.23;pointer-events:none;
+}
+#calendarSpaceDialog .pw-date-weekdays,
+#calendarSpaceDialog .pw-date-days{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;
+ text-align:center;
+}
+#calendarSpaceDialog .pw-date-weekdays span{
+ padding:5px 0;font-size:10px;color:var(--secondary);
+}
+#calendarSpaceDialog .pw-date-days button{
+ display:grid;place-items:center;min-width:0;width:100%;height:35px;
+ border-radius:11px;font-size:12px;line-height:1;
+}
+#calendarSpaceDialog .pw-date-days button[aria-selected=true]{
+ color:var(--text);background:var(--seyveo-hdr-active);
+ box-shadow:inset 0 0 0 1px var(--seyveo-emerald);
+}
+#calendarSpaceDialog .pw-date-days button.is-today:not([aria-selected=true]){
+ color:var(--seyveo-emerald);font-weight:700;
+}
+#calendarSpaceDialog .pw-date-popup-footer{
+ display:flex;justify-content:space-between;gap:8px;
+ margin-top:13px;padding-top:10px;border-top:1px solid var(--soft-line);
+}
+#calendarSpaceDialog .pw-date-popup-footer button{
+ min-height:42px;padding:7px 10px;border-radius:10px;
+ font-size:12px;color:var(--seyveo-emerald);
+}
+@media(max-height:580px){
+ #calendarSpaceDialog .pw-date-popup{top:50%;padding:8px 10px}
+ #calendarSpaceDialog .pw-date-days button{height:30px}
+ #calendarSpaceDialog .pw-date-popup-header{margin-bottom:3px}
+}
+
 /* Native medication time wheel. On iPhone iOS renders the picker;
    White Velvet requests light system chrome, Black Velvet requests dark. */
 #calendarPersonalTools .pw-inline .pw-time-field{
