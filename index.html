@@ -825,20 +825,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <span class="smc-illustration" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="11" width="32" height="27" rx="6"/><path d="m21 17 11 7-11 7z"/><path d="M13 15h3M13 33h3"/></svg></span>
 <span class="manage-text"><strong>Демо-режим</strong><small>Учебные клиенты и действия прямо в Пульсе бизнеса</small></span><span id="seyveoDemoModeState" class="manage-theme-value" role="status" aria-live="polite">Выкл.</span>
 </button><button type="button" class="manage-row seyveo-clean-link" data-clean-section="about"><span class="smc-illustration" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="7" width="22" height="34" rx="5"/><circle cx="24" cy="16" r="1.2"/><path d="M23.5 23v9M20 24h3.5M20 32h8"/></svg></span><span class="manage-text"><strong>О SEYVEO</strong><small>История и материалы SEYVEO.</small></span><span class="manage-chevron" aria-hidden="true">›</span></button></div></section></div></details></div></section></div><div id="seyveoCleanDetail" hidden><button class="seyveo-clean-back" type="button" id="seyveoCleanBack" aria-label="Вернуться в Управление"><span class="seyveo-back-circle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 5-7 7 7 7"/></svg></span><span>Управление</span></button><h2 id="seyveoCleanTitle" class="seyveo-clean-title"></h2><div id="seyveoCleanExplain" class="smc-section-intro" hidden></div>
-<section id="seyveoBusinessCommandPage" class="svcp-root" hidden aria-label="SEYVEO — Мой бизнес">
- <div class="svcp-top">
-  <span class="svcp-eyebrow">SEYVEO BUSINESS</span>
-  <h3>Компания и команда</h3>
-  <p>Сведения компании, рабочее общение и поручения. Личное пространство всегда отдельно.</p>
-  <div class="svcp-availability">Чаты и сотрудники пока в демо. Данные компании открываются отдельно.</div>
- </div>
- <div class="svcp-company-entry"><p class="svcp-entry-kicker">О КОМПАНИИ</p><button type="button" id="svcpOpenCompany" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="8" width="26" height="21" rx="4"/><path d="M10 8V5a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3M3 17h26"/></svg><span>Компания<small>Карточка, контакты и QR-визитка</small></span></button></div>
- <div class="svcp-switch" role="tablist" aria-label="Рабочие разделы">
-  <button type="button" class="svcp-tab" data-svcp-tab="chats" role="tab" aria-selected="true" aria-controls="svcpChats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h6"/></svg><span>Чаты</span></button>
-  <button type="button" class="svcp-tab" data-svcp-tab="team" role="tab" aria-selected="false" aria-controls="svcpTeam"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M2 20v-3a7 7 0 0 1 14 0v3M17 5a3 3 0 0 1 0 6M19 14a6 6 0 0 1 3 5"/></svg><span>Команда</span></button>
-  <button type="button" class="svcp-tab" data-svcp-tab="tasks" role="tab" aria-selected="false" aria-controls="svcpTasks"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 6-7"/></svg><span>Задачи</span></button>
- </div>
- <section id="svcpChats" class="svcp-panel" data-svcp-panel="chats" role="tabpanel">
+<section id="seyveoBusinessCommandPage" class="svcp-root svcp-direct-view" hidden aria-label="Рабочие разделы SEYVEO">
+ <section id="svcpChats" class="svcp-panel" data-svcp-panel="chats" role="region" aria-label="Рабочие чаты">
   <h3 class="svcp-section-title">Рабочее общение</h3>
   <p class="svcp-sub">Проверяем дизайн будущего корпоративного чата. Всё, что вы введёте, видно только в этом браузере.</p>
   <div class="svcp-chat">
@@ -858,18 +846,18 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   </div>
   <p class="svcp-status" id="svcpChatStatus" role="status" aria-live="polite">Сообщения сохраняются только локально. Фото и документы можно выбрать для предпросмотра, но сами файлы не сохраняются и никому не отправляются.</p>
  </section>
- <section id="svcpTeam" class="svcp-panel" data-svcp-panel="team" role="tabpanel" hidden>
-  <h3 class="svcp-section-title">Ваша команда</h3>
-  <p class="svcp-sub">Позже здесь появятся приглашения, отделы и доступы. Пока ни один сотрудник не подключён.</p>
-  <div class="svcp-stateline"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="10" r="5"/><path d="M6 29v-4a10 10 0 0 1 20 0v4"/></svg><div><strong>Руководитель</strong><small>Приглашает людей и утверждает полномочия в рабочем пространстве</small></div></div>
-  <div class="svcp-stateline"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5"/><path d="M2 29v-4a10 10 0 0 1 20 0v4M22 7a5 5 0 0 1 0 10M25 21c3 1 5 4 5 8"/></svg><div><strong>Сотрудники</strong><small>Получают только нужные рабочие чаты и задания. Личные записи и музыка остаются личными.</small></div></div>
-  <div class="svcp-advanced-actions" aria-label="Дополнительные инструменты сотрудников">
-   <button type="button" class="svcp-tool" data-svcp-feature="Команда"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4"/><path d="M3 27v-3a8 8 0 0 1 16 0v3M22 7a4 4 0 0 1 0 8M23 19c4 0 7 3 7 8"/></svg><span>Смены и развитие<small>Учёт рабочего времени · Достижения · Роли</small></span></button>
-   <button type="button" class="svcp-tool" data-svcp-feature="Кадры"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 4h18v24H7zM11 10h10M11 15h10M11 20h6"/><path d="m20 23 2 2 4-5"/></svg><span>Подбор сотрудников<small>Вакансии · Собеседования · Адаптация</small></span></button>
+ <section id="svcpTeam" class="svcp-panel" data-svcp-panel="team" role="region" aria-label="Сотрудники" hidden>
+  <div class="svcp-team-empty">
+   <div class="svcp-team-empty-art" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="16" r="7"/><path d="M5 40v-4a14 14 0 0 1 28 0v4M34 12a6 6 0 0 1 0 12M37 29c4 1 6 5 6 11"/></svg></div>
+   <h3>Сотрудников пока нет</h3>
+   <p>Здесь появятся люди вашей компании, их роли и доступы. Подключение по приглашению заработает после запуска защищённых корпоративных аккаунтов.</p>
+   <span class="svcp-team-demo">Демонстрационный экран</span>
   </div>
-  <p class="svcp-status">Настоящие приглашения заработают после внедрения авторизации, серверных ролей и безопасного отзыва доступа.</p>
+  <div class="svcp-team-extra">
+   <button type="button" class="svcp-tool" data-svcp-feature="Команда"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4"/><path d="M3 27v-3a8 8 0 0 1 16 0v3M22 7a4 4 0 0 1 0 8M23 19c4 0 7 3 7 8"/></svg><span>Смены и достижения<small>Учёт часов · Поощрения · Развитие команды</small></span></button>
+  </div>
  </section>
- <section id="svcpTasks" class="svcp-panel" data-svcp-panel="tasks" role="tabpanel" hidden>
+ <section id="svcpTasks" class="svcp-panel" data-svcp-panel="tasks" role="region" aria-label="Поручения" hidden>
   <h3 class="svcp-section-title">Рабочие поручения</h3>
   <p class="svcp-sub">Можно опробовать создание поручений. Сейчас это локальные черновики, не задания сотрудникам.</p>
   <form id="svcpTaskForm" class="svcp-task-form">
@@ -879,13 +867,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <div id="svcpTaskList" class="svcp-task-list" aria-live="polite"></div>
   <p class="svcp-status">Рабочие черновики не смешиваются с личными делами из «Моего мира».</p>
  </section>
- <div class="svcp-tools" aria-label="Связанные инструменты">
-  <h3>Другие инструменты</h3>
-  
-  <button type="button" id="svcpOpenPulse" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="4" width="26" height="24" rx="4"/><path d="m7 22 5-7 5 4 5-10 4 3"/></svg><span>Пульс бизнеса<small>Показатели, заказы и расходы</small></span></button>
-  <button type="button" id="svcpOpenDocs" class="svcp-tool"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 3h12l5 5v21H9zM21 3v6h5M13 15h9M13 20h9"/></svg><span>Документы<small>Открыть существующий центр документов</small></span></button>
-  <button type="button" class="svcp-tool" data-svcp-feature="Эффект SEYVEO"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27h22M7 22l5-6 5 3 8-11M20 8h5v5"/></svg><span>Расчёт эффективности<small>Время · Экономия · Условный результат</small></span></button>
- </div>
 </section><section id="seyveoNetworkPage" hidden aria-label="Сеть и доступ Сэйви">
  <div class="sv-network-status-card">
   <div class="sv-network-status-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9a14 14 0 0 1 18 0M6 12.5a9 9 0 0 1 12 0M9.5 16a4 4 0 0 1 5 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg></div>
@@ -938,7 +919,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <details class="seyveo-hr-fold"><summary><strong>Сэйви объясняет рекомендации</strong><small>Доказательства · Пробелы · Следующий шаг</small></summary><p>Сэйви не ограничивается анкетой: сопоставляет требования вакансии с подтверждённым опытом, ответами и практическими заданиями, показывает факты и ограничения, предлагает уточняющие вопросы или следующий этап проверки. Может сказать: «Я бы внимательнее рассмотрела опыт этого кандидата — вот что стоит проверить». Не ставит общий балл пригодности, не делает психологических догадок и не решает автоматически, кого нанять.</p></details>
 <details class="seyveo-hr-fold"><summary><strong>Тестирование и результаты</strong><small>Знания · Методики · Отчёт кадровику</small></summary><p>Задания оцениваются по заранее определённым критериям. Стандартизированные психометрические опросники — только при подтверждённой пригодности, лицензии и корректной интерпретации. Без автоматических решений о найме.</p></details>
 <details class="seyveo-hr-fold"><summary><strong>Приём и наставник новичка</strong><small>Приглашение · Первый день · Обучение</small></summary><p>После одобрения кандидата кадровиком Сэйви встречает новичка, объясняет его обязанности и показывает актуальные разрешённые инструкции компании. Непонятное передаёт живому наставнику.</p></details>
-</div></details></div></div></section></div></div><p class="manage-footnote">Данные остаются на этом устройстве · ИИ и внешние сервисы пока не подключены</p>
+</div></details></div></div></section></div></div>
 </div><section id="manageThemeScreen" class="manage-theme-screen" hidden aria-labelledby="manageThemeTitle">
 <header class="manage-theme-head"><button type="button" id="manageThemeBack" class="manage-theme-back" aria-label="Вернуться в управление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span class="manage-theme-back-copy">Управление</span></button><h2 id="manageThemeTitle" tabindex="-1">Тема</h2></header>
 <p class="manage-theme-intro">Три настроения Black Velvet. Белая White Velvet — светлый вариант по умолчанию. Выбор сохранится на этом устройстве.</p>
@@ -3593,7 +3574,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   menu.hidden=true;detail.hidden=false;legacy.hidden=true;command.hidden=false;
   command.classList.add('svcp-direct-view');
   command.dataset.businessPane=kind;
-  command.querySelector('[data-svcp-tab="'+businessTabs[kind]+'"]')?.click();
+  window.SEYVEO_BUSINESS_COMMAND?.openTab?.(businessTabs[kind]);
   window.scrollTo(0,0);
  }
  function openBusinessButton(kind){
