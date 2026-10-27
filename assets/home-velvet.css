@@ -2,9 +2,9 @@
    More considered typography, lighter card surfaces, compact content rhythm.
    No edits to protected sphere, Deep Reveal, satellites, navigation or JS. */
 #homePage{
-  --home-glass:rgba(23,37,32,.67);
-  --home-outline:rgba(151,197,176,.15);
-  --home-glint:rgba(189,231,214,.028);
+  --home-glass:rgba(21,38,35,.70);
+  --home-outline:rgba(177,213,205,.18);
+  --home-glint:rgba(238,255,249,.080);
   --home-depth:0 3px 12px rgba(0,0,0,.09);
   --home-card-radius:32px;
 }
