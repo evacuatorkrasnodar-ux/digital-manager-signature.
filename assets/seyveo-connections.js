@@ -19,6 +19,7 @@ const mount=()=>{
   news:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/>',
   dots:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>'
  };
+ const telegramMark='<svg class="svc-telegram-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M21.4 3.8 2.8 11c-.9.35-.88.9-.13 1.14l4.74 1.48 1.84 5.85c.2.65.43.87.86.87.34 0 .51-.15.73-.37l2.57-2.48 5.07 3.74c.94.52 1.62.25 1.84-.89l2.89-15.17c.26-1.24-.47-1.73-1.81-1.22ZM9.1 13.4l10.35-6.77c.48-.31.92-.14.56.22l-8.63 7.9-.32 3.78-1.96-5.13Z"/></svg>';
  const svg=(name,klass='')=>'<svg class="'+klass+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(icon[name]||'')+'</svg>';
  const dialog=document.createElement('dialog');
  dialog.id='seyveoConnectionsDialog';
@@ -26,13 +27,13 @@ const mount=()=>{
  dialog.setAttribute('aria-label','SEYVEO · Telegram — интерактивная демонстрация');
  dialog.innerHTML='<div class="svc-shell">'
  +'<header class="svc-appbar"><div class="svc-brand">'
- +'<span class="svc-brand-emblem">'+svg('chat')+'</span><span class="svc-brand-title"><strong>SEYVEO</strong><small>COMMUNICATION SPACE</small></span>'
+ +'<span class="svc-brand-emblem">'+telegramMark+'</span><span class="svc-brand-title"><strong>Telegram</strong><small>В ПРОСТРАНСТВЕ SEYVEO</small></span>'
  +'</div><div class="svc-appbar-right"><span class="svc-preview-tag">КОНЦЕПТ</span><button type="button" class="svc-iconbutton" data-svc="close" aria-label="Закрыть Telegram">'+svg('close')+'</button></div></header>'
  +'<div class="svc-view svc-list-view" data-svc-view="list">'
  +'<div class="svc-hero"><div class="svc-hero-light" aria-hidden="true"></div><div class="svc-hero-orbit" aria-hidden="true"></div>'
- +'<p class="svc-overline">TELEGRAM · ВНУТРИ SEYVEO</p><h2>Всегда на <em>связи.</em></h2>'
- +'<p class="svc-hero-copy">Всё важное — рядом. Люди, истории и новости в одном пространстве.</p>'
- +'<div class="svc-hero-signature">'+svg('spark')+'<span>Красиво. Тихо. По-твоему.</span></div></div>'
+ +'<p class="svc-overline">SEYVEO / CONNECTIONS</p><h2>Ближе.<br><em>Чем когда-либо.</em></h2>'
+ +'<p class="svc-hero-copy">Здесь встречаются люди, мысли и истории. Всё важное — без лишнего шума.</p>'
+ +'<div class="svc-hero-signature">'+svg('spark')+'<span>ОБЩЕНИЕ НОВОГО УРОВНЯ</span></div></div>'
  +'<div class="svc-mode"><span class="svc-mode-led"></span><div><strong>Режим знакомства</strong><small>Пример интерфейса · Telegram не подключён</small></div>'+svg('shield')+'</div>'
  +'<div class="svc-tabs" role="tablist" aria-label="Разделы Telegram">'
  +'<button type="button" class="svc-tab" id="svcTabChats" role="tab" data-svc-tab="chats" aria-controls="svcPanelChats" aria-selected="true">Чаты</button>'
@@ -43,14 +44,14 @@ const mount=()=>{
  +'<div class="svc-filters" role="group" aria-label="Фильтр чатов"><button type="button" class="svc-filter is-active" data-svc-filter="all" aria-pressed="true">Все</button>'
  +'<button type="button" class="svc-filter" data-svc-filter="people" aria-pressed="false">Личные</button>'
  +'<button type="button" class="svc-filter" data-svc-filter="work" aria-pressed="false">Работа</button></div>'
- +'<div class="svc-section-heading"><span>Твои разговоры</span><small>Примеры · 3</small></div><div id="svcChatList" class="svc-chatlist"></div>'
- +'<div class="svc-sayvi-teaser"><span class="svc-teaser-star">'+svg('spark')+'</span><div><strong>Сэйви рядом</strong><p>Предложит аккуратный ответ — только когда ты попросишь.</p></div></div>'
+ +'<div class="svc-section-heading"><span>Диалоги</span><small>3 демо-разговора</small></div><div id="svcChatList" class="svc-chatlist"></div>'
+ +'<div class="svc-sayvi-teaser"><span class="svc-teaser-star">'+svg('spark')+'</span><div><strong>Твоя Сэйви. Рядом.</strong><p>Подберёт слова, когда попросишь. Никаких сообщений без твоего решения.</p></div></div>'
  +'</section>'
  +'<section class="svc-panel" id="svcPanelChannels" data-svc-panel="channels" role="tabpanel" aria-labelledby="svcTabChannels" hidden>'
- +'<div class="svc-section-heading"><span>Твоя лента</span><small>Макеты публикаций</small></div>'
+ +'<div class="svc-section-heading"><span>Лента открытий</span><small>Демо-публикации</small></div>'
  +'<div class="svc-feature svc-feature-tech"><div class="svc-feature-art" aria-hidden="true"><span class="svc-feature-moon"></span><span class="svc-feature-track"></span></div>'
- +'<div class="svc-feature-content"><span class="svc-feature-kicker">ТЕХНОЛОГИИ · ПРИМЕР</span><h3>Завтрашний день уже близко</h3><p>Идеи, открытия, новые возможности.</p><button type="button" class="svc-feature-link" data-svc-channel="tech">Читать историю '+svg('chevron')+'</button></div></div>'
- +'<div class="svc-feature svc-feature-life"><div class="svc-feature-content"><span class="svc-feature-kicker">ГОРОД И ЖИЗНЬ · ПРИМЕР</span><h3>Маленькие открытия большого города</h3><p>События и интересные места.</p><button type="button" class="svc-feature-link" data-svc-channel="life">Открыть публикацию '+svg('chevron')+'</button></div></div>'
+ +'<div class="svc-feature-content"><span class="svc-feature-kicker">ТЕХНОЛОГИИ · ПРИМЕР</span><h3>Будущее начинается сегодня.</h3><p>Идеи, которые меняют привычные вещи.</p><button type="button" class="svc-feature-link" data-svc-channel="tech">Читать историю '+svg('chevron')+'</button></div></div>'
+ +'<div class="svc-feature svc-feature-life"><div class="svc-feature-content"><span class="svc-feature-kicker">ГОРОД И ЖИЗНЬ · ПРИМЕР</span><h3>Город, который удивляет.</h3><p>Моменты, которые стоит заметить.</p><button type="button" class="svc-feature-link" data-svc-channel="life">Открыть публикацию '+svg('chevron')+'</button></div></div>'
  +'<p class="svc-disclaimer">Все публикации на этом экране вымышлены. Реальные каналы будут отображаться только после подключения аккаунта.</p>'
  +'</section>'
  +'<section class="svc-panel" id="svcPanelPrivacy" data-svc-panel="privacy" role="tabpanel" aria-labelledby="svcTabPrivacy" hidden>'
@@ -68,13 +69,13 @@ const mount=()=>{
  +'<span class="svc-thread-more" aria-hidden="true">'+svg('more')+'</span></header>'
  +'<div class="svc-thread-info">'+svg('lock')+'<span>Пример разговора · ничего не отправляется в Telegram</span></div>'
  +'<div class="svc-messages" id="svcMessages" role="log" aria-label="Пример переписки" aria-live="polite"></div>'
- +'<div class="svc-sayvi-inline"><div class="svc-sayvi-intro"><span>'+svg('spark')+'</span><strong>Помощь Сэйви</strong><small>Демо</small></div>'
- +'<button type="button" class="svc-suggest-button" data-svc="suggest">Предложить ответ '+svg('chevron')+'</button>'
+ +'<div class="svc-sayvi-inline"><div class="svc-sayvi-intro"><span>'+svg('spark')+'</span><strong>Сэйви · в диалоге</strong><small>Демо</small></div>'
+ +'<button type="button" class="svc-suggest-button" data-svc="suggest">Подскажи, как красиво ответить '+svg('chevron')+'</button>'
  +'<div id="svcSuggestion" class="svc-suggestion" hidden><p id="svcSuggestionText"></p><button type="button" data-svc="apply" class="svc-apply">Вставить в сообщение '+svg('chevron')+'</button></div></div>'
  +'<form class="svc-compose" id="svcComposer"><label class="svc-sr-only" for="svcMessageInput">Сообщение</label>'
  +'<input type="text" id="svcMessageInput" autocomplete="off" maxlength="400" placeholder="Написать сообщение…">'
  +'<button class="svc-send" type="submit" aria-label="Добавить демо-сообщение">'+svg('send')+'</button></form>'
- +'<p class="svc-thread-foot">Отправка работает только в демонстрации. Сообщения не сохраняются после закрытия.</p>'
+ +'<p class="svc-thread-foot">Демо · сообщение остаётся только на этом экране и исчезнет при закрытии.</p>'
  +'</section>'
  +'<section class="svc-view svc-article-view" data-svc-view="article" hidden>'
  +'<header class="svc-article-top"><button type="button" class="svc-iconbutton" data-svc="back" aria-label="Назад к каналам">'+svg('arrow')+'</button>'
@@ -95,8 +96,8 @@ const mount=()=>{
  {id:'team',name:'Команда',initials:'✦',category:'work',shade:'gold',stamp:'Пн',unread:'',summary:'Встречаемся в 11:00, всё по плану.',draft:'Отлично, коллеги. Встречаемся в 11:00!',messages:[{mine:false,text:'Коллеги, встречаемся в 11:00, всё по плану.',time:'09:24'},{mine:true,text:'Принято!',time:'09:28'}]}
  ];
  const articles={
- tech:{kicker:'ТЕХНОЛОГИИ · ПРИМЕР',title:'Завтрашний день уже близко',body:'Представь город, в котором цифровые инструменты становятся незаметными. Они помогают выбрать маршрут, вовремя напоминают о делах и освобождают время для того, что действительно важно. Это вымышленный пример подачи длинной публикации в новом пространстве SEYVEO.',summary:'Технологии должны освобождать время, а не требовать постоянного внимания.'},
- life:{kicker:'ГОРОД И ЖИЗНЬ · ПРИМЕР',title:'Маленькие открытия большого города',body:'Иногда самое интересное рядом: небольшие парки, тихие улицы, уютные пространства для работы и новые места для встреч. Такая лента могла бы объединять любимые каналы пользователя — с ясным авторством и ссылками на оригинальные публикации.',summary:'Интересные события могут быть рядом. Здесь позже будут публикации выбранных каналов.'}
+ tech:{kicker:'ТЕХНОЛОГИИ · ПРИМЕР',title:'Будущее начинается сегодня.',body:'Представь город, в котором цифровые инструменты становятся незаметными. Они помогают выбрать маршрут, вовремя напоминают о делах и освобождают время для того, что действительно важно. Это вымышленный пример подачи длинной публикации в новом пространстве SEYVEO.',summary:'Технологии должны освобождать время, а не требовать постоянного внимания.'},
+ life:{kicker:'ГОРОД И ЖИЗНЬ · ПРИМЕР',title:'Город, который удивляет.',body:'Иногда самое интересное рядом: небольшие парки, тихие улицы, уютные пространства для работы и новые места для встреч. Такая лента могла бы объединять любимые каналы пользователя — с ясным авторством и ссылками на оригинальные публикации.',summary:'Интересные события могут быть рядом. Здесь позже будут публикации выбранных каналов.'}
  };
  let previous=null,activeTab='chats',activeChat=null,filter='all',messages={},article='tech';
  const resetMessages=()=>{messages={};chatSeeds.forEach(c=>messages[c.id]=c.messages.map(m=>({...m})));};
