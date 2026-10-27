@@ -362,6 +362,17 @@ $('calendarSpaces').addEventListener('click',event=>{
   window.SEYVEO_SMART_HOME?.openStandalone?.()||window.SEYVEO_SMART_HOME?.open?.();
   return;
  }
+ if(name==='documents'){
+  // Always open the existing Document Center in its personal area.
+  // My Business has its own entry to the exact same center.
+  if(!window.SEYVEO_SAYVI_SURFACES?.open?.('contract','personal'))location.hash='#sayvi-documents';
+  return;
+ }
+ if(name==='mail'){
+  // In-app inbox first; Connections is a separate voluntary action inside Mail.
+  if(!window.SEYVEO_SAYVI_SURFACES?.open?.('mail','personal'))location.hash='#sayvi-mail';
+  return;
+ }
  if(name==='play'){
   // Open the current official video player; do not duplicate it inside My World.
   const from=location.hash==='#life'?'life':null;
