@@ -37,8 +37,8 @@ assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migra
 assert.match(html,/assets\/floating-navigation\.css\?v=39/);
 assert.match(html,/assets\/living-space\.css\?v=44/);
 assert.match(html,/assets\/seyveo-music\.css\?v=36/);
-assert.match(html,/assets\/living-conversation\.css\?v=14/);
-assert.match(html,/assets\/conversation-refined\.css\?v=36/);
+assert.match(html,/assets\/living-conversation\.css\?v=15/);
+assert.match(html,/assets\/conversation-refined\.css\?v=37/);
 assert.match(html,/assets\/personal-wellness\.css\?v=18/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=6/);
@@ -48,7 +48,7 @@ const refreshed={
  'seyveo-music-dock.css':8,
  'business-map.css':14,
  'company-signature.css':8,
- 'passport-cards.css':26,
+ 'passport-cards.css':27,
  'account-demo.css':6,
  'connection-coach.css':10,
  'picture.css':17,
@@ -111,6 +111,12 @@ assert.match(css.businessPassport,/background:#fff;width:238px/,
  'QR image remains truly white for scanner readability');
 assert.match(css.passports,/background:linear-gradient\(152deg,var\(--card2\) 0%,var\(--card\) 47%,var\(--bg\) 100%\)/,
  'Original profile/studio passport fills inherit palette');
+assert.match(css.passports,/#homeHeader \.home-world-popover:not\(\[hidden\]\)\{background:color-mix/,
+ 'My World shortcut popover follows selected palette');
+assert.match(css.talk,/\.seyveo-conversation-turn--sayvi \.seyveo-conversation-body\{color:var\(--text\)\}/,
+ 'Sayvi Chat text follows theme on all screens');
+assert.match(css.conversation,/max-width:min\(91%,460px\)/,
+ 'Chat geometry remains intact');
 assert.match(css.subscription,/border-radius:27px;overflow:hidden;background:var\(--card\);color:var\(--text\)/,
  'Subscription modal follows palette');
 assert.match(css.connections,/background:var\(--seyveo-hdr-active\)/,
