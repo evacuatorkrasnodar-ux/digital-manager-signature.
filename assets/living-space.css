@@ -674,12 +674,12 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
 }
 
 
-/* SEYVEO · Black Velvet / subtle emerald undertone.
-   Almost-black graphite with only a trace of green, not a green canvas.
+/* SEYVEO · Black Velvet / HDR-like cool emerald depth.
+   Dark blue-green graphite, cool satin reflection, never military khaki.
    Linear-only background: no radial ghost shapes or changes to the orb. */
 #homePage{background:none;}
 :root:not([data-theme=light]) body{
- background:linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%);
+ background:linear-gradient(180deg,#0e171a 0%,#102023 28%,#132b2c 55%,#153133 78%,#0c1b1d 100%);
  background-repeat:no-repeat;
 }
 :root[data-theme=light] body{
@@ -1428,8 +1428,8 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
  justify-content:flex-end!important;gap:5px!important;
  padding:15px!important;margin:0!important;
- border:1px solid rgba(233,237,244,.105)!important;
- border-radius:23px!important;background:rgba(234,239,247,.036)!important;
+ border:1px solid var(--seyveo-hdr-outline)!important;
+ border-radius:23px!important;background:linear-gradient(157deg,rgba(213,255,242,.076),rgba(79,157,137,.032) 47%,rgba(19,48,47,.023) 100%)!important;
  box-shadow:none!important;text-align:left!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
@@ -1446,7 +1446,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
  font-size:10.5px!important;line-height:1.35!important;opacity:.85;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
- background:rgba(234,239,247,.09)!important;transform:scale(.985);
+ background:var(--seyveo-hdr-active)!important;transform:scale(.985);
 }
 html.sv-space-active #lifePage .life-footnote{
  margin:18px 2px 24px!important;font-size:10px!important;line-height:1.55!important;
@@ -1458,10 +1458,10 @@ html.sv-space-active #lifePage .life-footnote{
  width:min(480px,calc(100vw - 18px))!important;
  max-width:calc(100vw - 18px)!important;
  max-height:calc(100dvh - 24px)!important;
- border:1px solid rgba(234,239,247,.12)!important;
+ border:1px solid var(--seyveo-hdr-outline)!important;
  border-radius:27px!important;
  padding:23px clamp(15px,4.2vw,23px)!important;
- background:#18271f!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
+ background:#172b2b!important;box-shadow:0 24px 60px rgba(0,0,0,.22)!important;
  overflow-y:auto;overscroll-behavior:contain;
 }
 :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog) :is(h2,h3){
@@ -1488,10 +1488,10 @@ html.sv-space-active #lifePage .life-footnote{
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:14px!important}
 }
 :root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
- border-color:rgba(38,50,68,.12)!important;background:rgba(36,50,71,.035)!important;
+ border-color:rgba(40,95,77,.13)!important;background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(226,242,235,.60))!important;
 }
 :root[data-theme=light] :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog){
- background:#f5f7fa!important;border-color:rgba(38,50,68,.13)!important;
+ background:#f3f8f5!important;border-color:rgba(37,96,73,.14)!important;
 }
 @media(prefers-reduced-motion:reduce){
  #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
