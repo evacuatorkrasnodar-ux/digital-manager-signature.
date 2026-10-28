@@ -21,8 +21,8 @@ const people=[
 const photos=new Map();
 const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
 const REVIEW_KEY='seyveo-recognition-review-demo-v1';
-const badgeKind={help:['✦','Помощь коллеге'],mentor:['◇','Наставничество'],initiative:['✧','Инициатива'],reliable:['◆','Надёжность']};
-const colleagues={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
+const badgeKind={help:['⭐','Спасибо'],support:['💚','Поддержка'],mentor:['🙌','Выручил'],initiative:['💡','Идея'],reliable:['🔥','Отличная работа']};
+const colleagues={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена','manager-demo':'Вы (демо)'};
 function readRecords(key){try{const r=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(r)?r.slice(-100):[]}catch{return []}}
 function peerRecognition(id){return readRecords(RECOGNITION_KEY).filter(x=>x&&x.to===id&&badgeKind[x.kind]&&typeof x.reason==='string').reverse()}
 function savedReview(id){return readRecords(REVIEW_KEY).filter(x=>x&&x.personId===id).slice(-1)[0]||null}
@@ -182,7 +182,7 @@ function renderProfile(){
   entry.append(description);badges.append(entry);
  }
  if(recognitions.length>12)badges.append(el('p','svstaff-peer-empty','Показаны последние 12 из '+recognitions.length+'.'));
- badges.append(el('p','svstaff-peer-disclaimer','Знаки — примеры конкретной помощи, а не рейтинг. Личности отправителей пока не подтверждены.'));
+ badges.append(el('p','svstaff-peer-disclaimer','Эмодзи — знаки благодарности, не объективная оценка. Без подтверждённого отправителя и обстоятельств они не основание для премии или взыскания.'));
  body.append(badges);
  const review=el('section','svstaff-review');
  review.append(el('h3',null,'Решение руководителя'));
