@@ -74,6 +74,26 @@
 
  const SHIFT_KEY='seyveo-demo-shift-history-v1';
  const LEGACY_SHIFT_KEY='seyveo-demo-shift-v1';
+ const BREAK_KEY='seyveo-employee-break-schedule-v1';
+ const MINUTE_MS=60000;
+ const BREAK_DEFAULT={afterMinutes:240,durationMinutes:30,paid:false};
+ function safeBreakPolicy(p){
+  const after=[120,180,240,300,360],duration=[15,30,45,60];
+  return {afterMinutes:after.includes(Number(p?.afterMinutes))?Number(p.afterMinutes):240,
+   durationMinutes:duration.includes(Number(p?.durationMinutes))?Number(p.durationMinutes):30,paid:p?.paid===true};
+ }
+ function readBreakPolicy(){try{return safeBreakPolicy(JSON.parse(localStorage.getItem(BREAK_KEY)||'null'))}
+ catch{return {...BREAK_DEFAULT}}}
+ function breakWindow(start,policy){const p=safeBreakPolicy(policy),begin=start+p.afterMinutes*MINUTE_MS;
+  return {start:begin,end:begin+p.durationMinutes*MINUTE_MS,policy:p};
+ }
+ function overlapPeriod(a,b,x,y){return Math.max(0,Math.min(b,y)-Math.max(a,x))}
+ function sessionWorkedPeriod(session,from,to){
+  const gross=overlapPeriod(from,to,session.start,session.end);
+  if(!session.breakPolicy||session.breakPolicy.paid)return gross;
+  const pause=breakWindow(session.start,session.breakPolicy);
+  return Math.max(0,gross-overlapPeriod(from,to,pause.start,Math.min(pause.end,session.end)));
+ }
  const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
  function readShiftLedger(){
   let value=null;
@@ -87,23 +107,25 @@
     if(legacy?.kind==='in'&&Number.isFinite(legacy.ts))start=legacy.ts;
    }catch{}
   }
-  return{start,history};
+  return{start,history,activeBreakPolicy:value?.activeBreakPolicy?safeBreakPolicy(value.activeBreakPolicy):null};
  }
  let employeeHistorySignature='';
  function renderEmployeeClock(){
   if(!isEmployee()||location.hash!=='#tasks')return;
-  const now=Date.now(),{start,history}=readShiftLedger();
+  const now=Date.now(),{start,history,activeBreakPolicy}=readShiftLedger();
   const active=start!==null&&start<=now;
+  // Existing active sessions without a policy retain their prior clock behavior.
+  const currentBreak=active&&activeBreakPolicy?breakWindow(start,activeBreakPolicy):null;
+  const onBreak=!!(currentBreak&&now>=currentBreak.start&&now<currentBreak.end);
   const today=new Date();today.setHours(0,0,0,0);
   const dayStart=today.getTime();
   const weekStart=new Date(today);weekStart.setDate(weekStart.getDate()-(weekStart.getDay()+6)%7);
   const monthStart=new Date(today.getFullYear(),today.getMonth(),1).getTime();
-  const sessions=history.map(e=>({start:e.start,end:e.end}));
-  if(active)sessions.push({start,end:now});
-  const overlaps=(from,to)=>sessions.reduce((total,item)=>
-   total+Math.max(0,Math.min(item.end,to)-Math.max(item.start,from)),0);
+  const sessions=history.map(e=>({start:e.start,end:e.end,breakPolicy:e.breakPolicy||null}));
+  if(active)sessions.push({start,end:now,breakPolicy:activeBreakPolicy||null});
+  const overlaps=(from,to)=>sessions.reduce((total,item)=>total+sessionWorkedPeriod(item,from,to),0);
   const todayMs=overlaps(dayStart,now),weekMs=overlaps(weekStart.getTime(),now),monthMs=overlaps(monthStart,now);
-  const elapsed=active?Math.max(0,now-start):todayMs;
+  const elapsed=active?sessionWorkedPeriod({start,end:now,breakPolicy:activeBreakPolicy||null},start,now):todayMs;
   const hms=ms=>{
    const seconds=Math.max(0,Math.floor(ms/1000));
    return String(Math.floor(seconds/3600)).padStart(2,'0')+':'+
@@ -118,25 +140,51 @@
   const plan=Number($('seyveoShiftPlanned')?.value);
   const plannedHours=Number.isFinite(plan)&&plan>=1&&plan<=24?plan:8;
   const percent=Math.min(100,Math.round(todayMs/(plannedHours*3600000)*100));
-  if(employeeAvatar)employeeAvatar.dataset.active=String(active);
+  if(employeeAvatar){employeeAvatar.dataset.active=String(active);employeeAvatar.dataset.break=String(onBreak)}
   const workDuty=$('svcpWorkDuty'),workDutyText=$('svcpWorkDutyText');
-  if(workDuty)workDuty.dataset.active=String(active);
-  if(workDutyText)workDutyText.textContent=active?'На смене · '+short(elapsed)
-    :todayMs>0?'Смена завершена · '+short(todayMs):'Не на смене';
+  if(workDuty){workDuty.dataset.active=String(active);workDuty.dataset.break=String(onBreak)}
+  if(workDutyText)workDutyText.textContent=onBreak?'На перерыве'
+   :active?'На смене · '+short(elapsed)
+   :todayMs>0?'Смена завершена · '+short(todayMs):'Не на смене';
   const card=$('svcpEmployeeShiftCard');
-  if(card)card.dataset.active=String(active);
+  if(card){card.dataset.active=String(active);card.dataset.break=String(onBreak)}
   const time=$('svcpEmployeeClock');
   if(time)time.textContent=hms(elapsed);
   const date=$('svcpEmployeeShiftDate');
   if(date)date.textContent=new Date(now).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
   const hint=$('svcpEmployeeClockHint');
-  if(hint)hint.textContent=active
-   ?'Начало в '+new Date(start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
+  if(hint)hint.textContent=onBreak?'Рабочий таймер на паузе'
+   :active?'Начало в '+new Date(start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
    :todayMs>0?'Сегодняшняя смена завершена':'Смена не начата';
   const progress=$('svcpEmployeeProgress');
   if(progress)progress.setAttribute('aria-valuenow',String(percent));
   const fill=$('svcpEmployeeProgressFill');
   if(fill)fill.style.width=percent+'%';
+  const info=$('svcpEmployeeBreakInfo');
+  const scheduled=activeBreakPolicy||readBreakPolicy();
+  const windowForBar=active?currentBreak:null;
+  const bar=$('svcpEmployeeProgress');
+  if(bar){
+   const markPercent=Math.min(99,Math.max(0,scheduled.afterMinutes/60/plannedHours*100));
+   const barWidth=Math.min(100-markPercent,scheduled.durationMinutes/60/plannedHours*100);
+   bar.style.setProperty('--svcp-break-left',markPercent+'%');
+   bar.style.setProperty('--svcp-break-width',barWidth+'%');
+   bar.dataset.scheduled=String(!!scheduled);
+  }
+  if(info){
+   if(onBreak){
+    const remaining=Math.max(0,Math.ceil((currentBreak.end-now)/MINUTE_MS));
+    info.textContent='Перерыв · осталось '+remaining+' мин · до '+
+     new Date(currentBreak.end).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+   }else if(active&&windowForBar){
+    const timeFrom=new Date(currentBreak.start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    const timeTo=new Date(currentBreak.end).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    info.textContent=now<currentBreak.start?'Перерыв по графику · '+timeFrom+'–'+timeTo:
+     'Перерыв завершён · работа продолжается';
+   }else{
+    info.textContent='Перерыв автоматически через '+(scheduled.afterMinutes/60)+' ч · '+scheduled.durationMinutes+' мин';
+   }
+  }
   const dayHint=$('svcpEmployeeTodayHint');
   if(dayHint)dayHint.textContent=short(todayMs);
   const planHint=$('svcpEmployeePlanHint');
@@ -159,7 +207,7 @@
     const when=document.createElement('span');
     when.textContent=new Date(entry.start).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})+
      ' · '+new Date(entry.start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    const duration=document.createElement('strong');duration.textContent=short(entry.end-entry.start);
+    const duration=document.createElement('strong');duration.textContent=short(sessionWorkedPeriod({start:entry.start,end:entry.end,breakPolicy:entry.breakPolicy||null},entry.start,entry.end));
     row.append(when,duration);historyList.append(row);
    }
   }
@@ -180,6 +228,8 @@
   }
  }
  $('seyveoShiftToggle')?.addEventListener('click',()=>requestAnimationFrame(renderEmployeeClock));
+ window.addEventListener('seyveo:shift-updated',renderEmployeeClock);
+ window.addEventListener('seyveo:break-schedule-updated',renderEmployeeClock);
  $('seyveoShiftPlanned')?.addEventListener('input',renderEmployeeClock);
  const employeeClockInterval=setInterval(()=>{
   if(isEmployee()&&!document.hidden&&location.hash==='#tasks')renderEmployeeClock();
@@ -189,7 +239,7 @@
  });
  window.addEventListener('seyveo:recognition-changed',renderEmployeeThanks);
  window.addEventListener('storage',event=>{
-  if(event.key===SHIFT_KEY||event.key===LEGACY_SHIFT_KEY)renderEmployeeClock();
+  if(event.key===SHIFT_KEY||event.key===LEGACY_SHIFT_KEY||event.key===BREAK_KEY)renderEmployeeClock();
   if(event.key===RECOGNITION_KEY)renderEmployeeThanks();
  });
  function renderEmployeeTasks(){
