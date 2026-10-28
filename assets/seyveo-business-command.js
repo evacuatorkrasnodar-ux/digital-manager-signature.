@@ -793,7 +793,20 @@ for(const group of MORE_EMOJI_GROUPS){
  group.emojis.forEach(emoji=>addEmojiButton(choices,emoji));
  section.append(choices);moreEmojis.append(section);
 }
-function applyPersonReaction(person,kind){
+// Conservative, local-only demo signals. No silent awards or employee scoring.
+function suggestedRecognition(msg,person){
+ if(!person||!STAFF[person]||msg.role!=='demo-elena'||person!=='elena')return null;
+ const words=String(msg.text||'').toLocaleLowerCase('ru-RU');
+ if(!words||msg.mediaId)return null;
+ const completed=/\\b(помогла|помог|выручила|выручил|исправила|исправил|разобралась|разобрался|готово|сделала|сделал|решила|решил|устранила|устранил)\\b/u.test(words);
+ if(!completed)return null;
+ const context=state.chat.filter(x=>x.room===msg.room&&x.at<msg.at&&x.role!=='recognition').slice(-8);
+ const requested=context.some(x=>/помоги|помочь|помощь|проверь|исправь|разберись|нужно|поручаю|проблем|ошибк|ценник|возврат/ui.test(x.text||''));
+ const initiative=/сама|самостоятельно|заметила|обнаружила|предложила|инициатив/ui.test(words);
+ if(!requested&&!initiative)return null;
+ return {reason:requested?'Помощь в рабочей ситуации':'Инициатива в работе'};
+}
+function applyPersonReaction(person,kind,reason){
  const reward=RECOGNITION_TYPES[kind];
  if(!STAFF[person]||!reward)return;
  const entries=read(RECOGNITION_KEY);
@@ -803,7 +816,7 @@ function applyPersonReaction(person,kind){
   return;
  }
  const item={id:'reaction-'+Date.now().toString(36),from:'manager-demo',to:person,kind,
-  reason:'Быстрая оценка в личном рабочем чате (без комментария)',at:new Date().toISOString(),demo:true};
+  reason:reason||'Быстрая благодарность в личном рабочем чате',at:new Date().toISOString(),demo:true};
  if(!save(RECOGNITION_KEY,entries.concat(item).slice(-100)))return;
  const entry={room:'dm-'+person,role:'recognition',at:Date.now(),
   text:reward.symbol+' '+RECOGNITION_NAMES['manager-demo']+' отметили '+STAFF[person]+' · '+reward.name,
@@ -918,11 +931,13 @@ function renderChat(){
     actions.append(moreButton);
     // A single visible tap awards a staff member directly from their message.
     // Ordinary chat emojis and saved-message bookmarks remain unrelated.
-    if(state.viewpoint==='manager' && roomDetails().kind==='personal' && roomDetails().person && STAFF[roomDetails().person] && !isSayvi){
+    const awardSuggestion=state.viewpoint==='manager'&&roomDetails().kind==='personal'
+     ?suggestedRecognition(msg,roomDetails().person):null;
+    if(awardSuggestion){
      const awardPerson=roomDetails().person;
-     const awardButton=btn('★',()=>applyPersonReaction(awardPerson,'help'),'svcp-message-action svcp-inline-award');
+     const awardButton=btn('★',()=>applyPersonReaction(awardPerson,'help',awardSuggestion.reason),'svcp-message-action svcp-inline-award');
      awardButton.setAttribute('aria-label','Благодарность для '+STAFF[awardPerson]+' · в личное дело');
-     awardButton.title='Благодарность '+STAFF[awardPerson]+' · в личное дело';
+     awardButton.title='Предложение Сэйви: '+awardSuggestion.reason+'. Поблагодарить '+STAFF[awardPerson];
      actions.prepend(awardButton);
     }
     function svcpActionIcon(title,kind,callback,className){
