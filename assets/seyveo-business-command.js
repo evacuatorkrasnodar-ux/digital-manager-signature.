@@ -864,6 +864,45 @@ function formatTime(ts){
  const dt=new Date(ts);
  return Number.isFinite(dt.getTime())?dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
 }
+
+// SEYVEO GUIDE: local, opt-in walkthrough. It does not operate a cash register.
+function guideSteps(text){
+ const t=String(text||'').toLocaleLowerCase('ru-RU');
+ if(/касс|смен|z.?отч[её]т|эвотор|1с|выручк/u.test(t))
+  return ['Уточни у коллеги модель кассы и название программы.','Проверь права доступа и наличие незавершённых продаж или возвратов.','Открой в кассовой программе раздел смены и следуй её штатным инструкциям. Не закрывай смену, если есть расхождения.','Проверь сформированный отчёт и сообщи коллеге результат. Подтверждай выполнение только после проверки.'];
+ if(/ценник|выклад|товар|полк|штрих.?код/u.test(t))
+  return ['Уточни товар и ожидаемый результат.','Сверь штрихкод, цену и название с разрешённой базой магазина.','Проверь выкладку или ценник и исправь только то, на что есть полномочия.','При необходимости прикрепи фото и сообщи коллеге результат.'];
+ if(/документ|накладн|возврат|заказ/u.test(t))
+  return ['Уточни номер документа или заказа и ожидаемое действие.','Проверь данные в рабочей системе и свои полномочия.','Выполни действие по утверждённой инструкции компании.','Проверь результат и ответь коллеге.'];
+ return ['Прочитай просьбу и уточни, какой результат нужен.','Уточни рабочую программу и доступные действия.','Выполни задачу по инструкции компании; при сомнении спроси коллегу.','Проверь результат и сообщи об этом в чат.'];
+}
+function openGuide(bubble,msg){
+ chatRoot.querySelectorAll('.svcp-guide-panel').forEach(node=>node.remove());
+ const steps=guideSteps(msg.text);let step=0;
+ const panel=el('section','svcp-guide-panel');
+ panel.setAttribute('aria-label','SEYVEO GUIDE — помощь с рабочим заданием');
+ const title=el('strong','svcp-guide-title','✦ Сэйви поможет');
+ const description=el('p','svcp-guide-description','Разберём задачу по шагам. Это подсказки, а не автоматическое выполнение.');
+ const progress=el('small','svcp-guide-progress');
+ const instruction=el('p','svcp-guide-instruction');
+ const controls=el('div','svcp-guide-controls');
+ const next=btn('Дальше',()=>{if(step<steps.length-1){step++;refresh()}else{panel.remove();setStatus('Проверь результат и ответь коллеге в чате.');}},'svcp-guide-next');
+ const question=btn('Уточнить',()=>{
+  const input=$('svcpChatInput');if(input){input.value='Подскажи, пожалуйста, ';input.focus({preventScroll:true});input.dispatchEvent(new Event('input',{bubbles:true}));}
+ },'svcp-guide-question');
+ const close=btn('×',()=>panel.remove(),'svcp-guide-close');
+ close.setAttribute('aria-label','Закрыть помощь Сэйви');
+ function refresh(){progress.textContent='Шаг '+(step+1)+' из '+steps.length;instruction.textContent=steps[step];next.textContent=step===steps.length-1?'Завершить':'Дальше';}
+ controls.append(question,next);
+ panel.append(title,close,description,progress,instruction,controls);
+ bubble.append(panel);refresh();
+ panel.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function isGuideRequest(msg){
+ return msg.role!=='recognition'&&msg.role!=='sayvi'&&typeof msg.text==='string'
+  && /помоги|помочь|нужно|пожалуйста|проверь|сделай|закрой|открой|распечатай|подготовь|исправь|посмотри|разберись|поручаю|задани|смену|отч[её]т/u.test(msg.text.toLocaleLowerCase('ru-RU'));
+}
+
 function renderChat(){
  closeRecognition();
  closeMessageMenus();
@@ -922,6 +961,11 @@ function renderChat(){
    }
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    if(!isRecognition){
+    if(state.viewpoint==='elena'&&!isOwn&&isGuideRequest(msg)){
+     const helper=btn('✦ Сэйви, помоги',()=>openGuide(bubble,msg),'svcp-guide-launch');
+     helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
+     bubble.append(helper);
+    }
     const actions=el('div','svcp-message-actions');
     const menu=el('div','svcp-message-menu');menu.hidden=true;
     menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
