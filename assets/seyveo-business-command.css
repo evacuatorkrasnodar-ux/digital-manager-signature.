@@ -108,7 +108,7 @@
 
 
 /* SEYVEO · one Tasks space for private matters and team assignments. */
-#tasksPage #unifiedTasksTabs{margin:0 0 20px;border-color:var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage #unifiedTasksTabs{display:grid!important;margin:0 0 20px;border-color:var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2))}
 #tasksPage #unifiedTasksTabs button{cursor:pointer;min-height:44px}
 #tasksPage #unifiedTasksTabs button[aria-pressed=true]{background:var(--card);box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line))}
 #tasksPage #unifiedPersonalTasksView[hidden],#tasksPage #unifiedBusinessTasksView[hidden]{display:none!important}
