@@ -665,7 +665,7 @@ function renderTasks(){
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
  const heading=el('div','svcp-task-section-head');
- heading.append(el('strong',null,'В работе'),el('small',null,String(open.length)));
+ heading.append(el('strong',null,'Активные поручения'),el('small',null,String(open.length)));
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
