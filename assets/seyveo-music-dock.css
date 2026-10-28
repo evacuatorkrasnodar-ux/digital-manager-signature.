@@ -78,13 +78,13 @@ html.sv-music-screen #sayviMusicMini{display:none!important}
  background:
   radial-gradient(circle at 50% 50%,transparent 0 5%,rgba(255,255,255,.09) 5.4% 5.9%,transparent 6.5% 13%,rgba(255,255,255,.075) 13.4% 14%,transparent 14.3% 19%,rgba(255,255,255,.043) 19.3% 19.9%,transparent 20% 42%,rgba(255,255,255,.025) 42.4% 43%,transparent 43.4% 100%),
   repeating-radial-gradient(circle,rgba(240,242,246,.075) 0 1px,rgba(0,0,0,0) 2px 5px),
-  conic-gradient(from 50deg,#323741,#16181e,#4b535e,#1b1e24,#101217,#323741);
+  conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b);
  box-shadow:inset 0 0 0 1px rgba(255,255,255,.055),inset 0 0 19px rgba(0,0,0,.35);
 }
 #sayviMusicMini .sv-music-record-center{
  width:21%;height:21%;display:grid;place-items:center;
  border:1px solid rgba(240,242,246,.23);border-radius:50%;
- background:radial-gradient(circle,#e7eaf0 0 5%,#7f899a 8%,#525e70 54%,#161c25 65%,#232a35 100%);
+ background:radial-gradient(circle,#f7fffc 0 5%,#a9cbbf 8%,#617e78 54%,#14282a 65%,#243c3d 100%);
 }
 #sayviMusicMini .sv-music-record-center::after{
  content:"";width:10%;height:10%;border-radius:50%;background:#080a0f;

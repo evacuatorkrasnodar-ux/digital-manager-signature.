@@ -42,6 +42,10 @@ for(const ink of ['--text:#ffffff;--secondary:#d9dde1','--text:#242a31;--seconda
 assert.match(html,/id="svcpThankStarMetal"/,'Original employee award star remains');
 assert.match(html,/id="svMusicStarMetal"/,'Actual Music favorite icon uses metallic Hollywood-inspired SVG');
 assert.match(html,/id="svMusicStarInitial"/,'Artist initial appears inside Music star');
+const miniVinyl=read('assets/seyveo-music-dock.css');
+assert.ok(css.music.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),'Large colored vinyl retains its original pigments');
+assert.ok(miniVinyl.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),'Mini record inherits the same original colored vinyl pigments');
+assert.match(read('assets/seyveo-music.js'),/person\.replace\(\/\^\[\^\\p\{L\}\]\+\/u/,'Music star recognizes the first Unicode letter of an artist');
 assert.doesNotMatch(read('assets/seyveo-music.js'),/favoriteButton\.textContent=liked/,'Favorite redraw never destroys the SVG');
 for(const choice of ['auto','graphite','light','dark','sapphire','plum']){
  const row=html.match(new RegExp('<button[^>]*data-theme-choice="'+choice+'"[^>]*>[\\s\\S]*?<\\/button>'));
@@ -70,7 +74,7 @@ assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
 assert.match(html,/assets\/home-velvet\.css\?v=20/);
 const refreshed={
  'composer-intent.css':21,
- 'seyveo-music-dock.css':9,
+ 'seyveo-music-dock.css':10,
  'business-map.css':14,
  'company-signature.css':8,
  'passport-cards.css':27,

@@ -96,7 +96,7 @@ function updateFavorite(){
  // Preserve the vector star in the button: swapping textContent destroys its SVG.
  const initial=favoriteButton.querySelector('#svMusicStarInitial');
  const person=String(file?infoFor(file).artist||'':'' ).trim();
- if(initial)initial.textContent=(Array.from(person.replace(/^[^\\p{L}]+/u,''))[0]||'S').toLocaleUpperCase('ru-RU');
+ if(initial)initial.textContent=(Array.from(person.replace(/^[^\p{L}]+/u,''))[0]||'S').toLocaleUpperCase('ru-RU');
  favoriteButton.setAttribute('aria-pressed',String(liked));
  favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':
   liked?'Убрать из избранного':'Добавить в избранное');
