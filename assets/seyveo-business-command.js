@@ -332,9 +332,7 @@ function renderTasks(){
    copy.append(el('small','svcp-task-assignee','Исполнитель: '+STAFF[t.assigneeId]+' · демо'));
   else copy.append(el('small','svcp-task-assignee','Без исполнителя · демо'));
   const actions=el('div','svcp-task-actions');
-  if(!t.done){
-   actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
-  }
+  actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
   actions.append(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
