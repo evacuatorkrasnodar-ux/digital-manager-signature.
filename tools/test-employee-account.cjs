@@ -18,23 +18,15 @@ assert.match(js,/function setEmployeeAccountOpen\(open\)/);
 assert.match(js,/employeeAccount\.hidden=!shown/);
 assert.match(js,/profileShift\.textContent=active/);
 assert.match(css,/data-account-open="true"/);
-assert.match(html,/assets\/seyveo-business-command\.css\?v=51/);
-assert.match(html,/id="svcpEmployeeChatSearch"/,'One left-side employee chat search trigger');
-const chatShell=html.match(/<div class="svcp-employee-chats-shell">([\s\S]*?)<\/div>\s*<button type="button" id="svcpEmployeeChatSearch"/);
-assert.ok(chatShell,'Search button must be a sibling outside the collapsible details element');
-assert.doesNotMatch(chatShell[1].split('</summary>')[0],/id="svcpEmployeeChatSearch"/,
- 'Search is outside summary and stays clickable without toggling the parent');
-assert.match(css,/#tasksPage #unifiedEmployeeTasksView\[data-account-open="true"\] > \.svcp-employee-chats-shell/,
- 'Profile view hides entire chat shell, including the left magnifier');
-assert.match(css,/#tasksPage \.svcp-employee-chat-search\{\s*position:absolute;left:7px;top:3px;z-index:2;/,
- 'Compact magnifier occupies the LEFT edge, no extra search row');
-assert.match(css,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-search-field\{display:none!important\}/,
- 'Full search field stays collapsed until magnifier is selected');
-assert.match(css,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-directory-head\{display:none!important\}/,'Duplicate inner chat heading hidden in employee workspace');
-assert.match(js,/function setEmployeeChatSearch\(open\)/,'Search button toggles existing search input');
-assert.match(js,/event\.stopPropagation\(\)/,'Search button does not collapse its parent details');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=52/);
+assert.equal((html.match(/id="svcpEmployeeChats"/g)||[]).length,1,'Original chat accordion is single instance');
+assert.match(html,/class="svcp-employee-chats-glyph"/,'Original employee chat icon restored');
+assert.match(html,/Руководитель, общий чат и группы/,'Original team chat description restored');
+assert.doesNotMatch(html,/id="svcpEmployeeChatSearch"/,'Temporary search button is removed');
+assert.doesNotMatch(js,/function setEmployeeChatSearch\(open\)/,'Temporary chat search controller is removed');
+assert.match(css,/#tasksPage \.svcp-employee-chats>summary\{display:flex;align-items:center;gap:10px;min-height:59px/,'Original chat tile layout restored');
 assert.doesNotMatch(html,/class="svcp-employee-profile-caption"/,'No extra visible caption below the avatar');
 assert.match(css,/#tasksPage \.svcp-employee-profile-toggle\{\s*position:absolute;right:0;top:0/,'Profile button is in top-right corner');
 assert.match(html,/id="svcpEmployeeDutyBadge"/,'Live shift status stays beneath employee name');
-assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=16/);
+assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=17/);
 console.log('PASS employee cabinet: original shift, hours and gratitude under avatar; work tasks/chat preserved.');

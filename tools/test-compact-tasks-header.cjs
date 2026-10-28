@@ -19,5 +19,5 @@ assert.match(business,/#tasksPage \.svcp-tasks-back\{display:grid;place-items:ce
 assert.match(business,/#tasksPage #unifiedTasksBackLabel\{position:absolute;width:1px;height:1px/,'Dynamic back label remains available to assistive technologies');
 assert.match(script,/\$\('unifiedTasksBack'\)\?\.addEventListener\('click'/,'Existing navigation logic preserved');
 assert.match(html,/assets\/personal-tasks\.css\?v=22/);
-assert.match(html,/assets\/seyveo-business-command\.css\?v=49/);
+assert.match(html,/assets\/seyveo-business-command\.css\?v=52/);
 console.log('PASS Tasks: a single compact, accessible toolbar leaves more room for chats on iPhone.');
