@@ -313,6 +313,7 @@ function syncComposerActions(){
  form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
+$('svcpAttachFile')?.addEventListener('click',()=>$('svcpFile')?.click());
 
 /* Draft polishing is opt-in and never sends a message. Basic offline demo only. */
 function polishDraftLocally(raw){
