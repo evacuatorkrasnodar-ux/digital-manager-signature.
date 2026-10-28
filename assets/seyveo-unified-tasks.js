@@ -17,7 +17,7 @@
  let exitTarget='home',pending=null;
  const CHAT_KEY='seyveo-business-command-chat-demo-v1';
  const chatNames={general:'Общий чат',team:'Смена и команда',docs:'Обсуждение документов',
-  'dm-elena':'Елена · администратор','dm-anna':'Анна · старший продавец',
+  'dm-elena':'Елена · кассир','dm-anna':'Анна · старший продавец',
   'dm-mikhail':'Михаил · продавец','dm-sayvi':'Сэйви'};
  function syncChatPreview(){
   const label=$('svcpTasksChatSummary');if(!label)return;
