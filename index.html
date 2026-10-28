@@ -3726,6 +3726,7 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
   if(kind==='pulse'){document.getElementById('openBusinessPictureFromManage')?.click();return}
   if(kind==='documents'){document.getElementById('openUnifiedDocumentsFromManage')?.click();return}
   if(kind==='tasks'){window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();return}
+  if(kind==='chat'){window.SEYVEO_UNIFIED_TASKS?.openChat?.('manage');return}
   if(kind==='hiring'){openBusinessPane('people');window.SEYVEO_BUSINESS_COMMAND?.openPeopleView?.('hiring');return}
   if(kind==='efficiency'){document.getElementById('openBusinessPictureFromManage')?.click();document.getElementById('pictureEfficiency')?.setAttribute('open','');return}
   openBusinessPane(kind);
@@ -3757,11 +3758,9 @@ restoreDraft();setComposerMode(composerMode);render();syncAppPage();if(!$('homeP
    document.getElementById('pictureEfficiency')?.setAttribute('open','');
   }
  }
- window.SEYVEO_BUSINESS_NAV=Object.freeze({openFeature:businessFeature,returnToMenu:home,openChats:(fromTasks=false)=>{
-  if(location.hash!=='#manage')location.hash='#manage';
-  openBusinessPane('chat');
-  if(fromTasks)window.SEYVEO_BUSINESS_COMMAND?.enterFromTasks?.();
- }});
+ window.SEYVEO_BUSINESS_NAV=Object.freeze({openFeature:businessFeature,returnToMenu:home,
+  openChats:(fromTasks=false)=>window.SEYVEO_UNIFIED_TASKS?.openChat?.(fromTasks?'tasks':'manage')
+ });
  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detail.hidden)goBack()});
  let touchX=null,touchY=null;
  detail.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchX=e.touches[0].clientX;touchY=e.touches[0].clientY},{passive:true});
