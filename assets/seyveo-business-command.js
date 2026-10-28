@@ -42,7 +42,7 @@ function peopleView(name){
  const directory=$('svcpPeopleDirectory'),recruitment=$('svcpPeopleHiring');
  if(directory)directory.hidden=hiring;
  if(recruitment)recruitment.hidden=!hiring;
- root.querySelectorAll('[data-svcp-people]').forEach(button=>{
+ document.querySelectorAll('#svcpTeam [data-svcp-people]').forEach(button=>{
   button.setAttribute('aria-pressed',String(button.dataset.svcpPeople===(hiring?'hiring':'team')));
  });
 }
@@ -65,7 +65,7 @@ function preparePeopleContent(){
  if(roi&&roiHost)roiHost.append(roi);
  peopleView('team');
 }
-root.querySelectorAll('[data-svcp-people]').forEach(button=>
+document.querySelectorAll('#svcpTeam [data-svcp-people]').forEach(button=>
  button.addEventListener('click',()=>peopleView(button.dataset.svcpPeople)));
 function tab(name){
  if(!['chats','team','tasks'].includes(name))return;
@@ -641,6 +641,7 @@ function storeTask(text,source){
  const updated=state.tasks.concat(created).slice(-60);
  if(!save(TASK_KEY,updated))return false;
  state.tasks=updated;renderTasks();
+ window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  const demoElena=created.find(item=>item.assigneeId==='elena');
  if(demoElena){state.lastDemoTaskId=demoElena.id;$('svcpPreviewOnHome').hidden=false}
  else{$('svcpPreviewOnHome').hidden=true}
@@ -766,6 +767,7 @@ $('svcpChatInput')?.addEventListener('keydown',event=>{
 });
 function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
+ window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  const wasHistoryOpen=!!list.querySelector('.svcp-task-history[open]');
  list.replaceChildren();
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
