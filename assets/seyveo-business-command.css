@@ -968,14 +968,15 @@
 #tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tasksPage .svcp-employee-recognition>strong{font-size:22px;font-weight:590;color:var(--text)}
-/* Elena has one chat heading. The search is a compact control on the right,
-   and the original full messenger is moved here, not duplicated. */
+/* Elena has one compact chat heading. The search lives on its LEFT as a
+   separate focusable button (not illegally nested in <summary>).
+   The original chat and history are moved here, never duplicated. */
 #tasksPage .svcp-employee-chats{
- min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ position:relative;min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:16px;overflow:hidden;background:var(--card)
 }
 #tasksPage .svcp-employee-chats>summary{
- display:flex;align-items:center;gap:8px;min-height:48px;padding:3px 6px 3px 13px;
+ display:flex;align-items:center;gap:8px;min-height:48px;padding:3px 13px 3px 57px;
  cursor:pointer;list-style:none
 }
 #tasksPage .svcp-employee-chats>summary::-webkit-details-marker{display:none}
@@ -985,7 +986,8 @@
 #tasksPage .svcp-employee-chevron{flex:none;font-size:17px;color:var(--secondary);transition:transform .15s}
 #tasksPage .svcp-employee-chats[open] .svcp-employee-chevron{transform:rotate(90deg)}
 #tasksPage .svcp-employee-chat-search{
- flex:none;display:grid;place-items:center;width:42px;height:42px;padding:0;margin:0;
+ position:absolute;left:7px;top:3px;z-index:2;
+ display:grid;place-items:center;width:42px;height:42px;padding:0;margin:0;
  border:0;border-radius:13px;background:transparent;color:var(--text);
  cursor:pointer;-webkit-tap-highlight-color:transparent
 }
