@@ -213,7 +213,6 @@ function showInbox(){
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
  $('svcpReturnToTasks').hidden=true;
- $('svcpChatInboxBackTasks').hidden=!chatsFromTasks;
  $('svcpTaskDiscussionQuick').hidden=true;
  clearReply();cancelTaskDraft();cleanupPreview();
  renderDirectory();
@@ -234,7 +233,7 @@ function openRoom(roomId){
  clearReply();cancelTaskDraft();cleanupPreview();
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
- $('svcpReturnToTasks').hidden=!chatsFromTasks;
+ $('svcpReturnToTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
  updatePerspective();renderChat();
 }
@@ -777,12 +776,10 @@ function openTaskDiscussion(task){
 function returnToTasks(){
  chatsFromTasks=false;
  $('svcpReturnToTasks').hidden=true;
- $('svcpChatInboxBackTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
  window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
 }
 $('svcpReturnToTasks')?.addEventListener('click',returnToTasks);
-$('svcpChatInboxBackTasks')?.addEventListener('click',returnToTasks);
 chatRoot.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
  input.value=button.dataset.svcpDiscussTemplate||'';
