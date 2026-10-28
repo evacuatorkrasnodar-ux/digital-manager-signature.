@@ -341,6 +341,7 @@
  }
  function closeEmployeeChat({restoreFocus=true}={}){
   if(page.dataset.workChatOpen!=='true')return;
+  window.dispatchEvent(new Event('seyveo:work-chat-closing'));
   const composer=$('svcpChatInput');if(composer){
    composer.blur();composer.rows=1;
    composer.style.removeProperty('height');composer.style.removeProperty('overflow-y')
