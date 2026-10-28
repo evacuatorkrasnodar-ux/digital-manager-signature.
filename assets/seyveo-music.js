@@ -93,7 +93,10 @@ function updateFavorite(){
  const file=index>=0?tracks[index]:null;
  const liked=isFavorite(file);
  favoriteButton.disabled=!file;
- favoriteButton.textContent=liked?'★':'☆';
+ // Preserve the vector star in the button: swapping textContent destroys its SVG.
+ const initial=favoriteButton.querySelector('#svMusicStarInitial');
+ const person=String(file?infoFor(file).artist||'':'' ).trim();
+ if(initial)initial.textContent=(Array.from(person.replace(/^[^\\p{L}]+/u,''))[0]||'S').toLocaleUpperCase('ru-RU');
  favoriteButton.setAttribute('aria-pressed',String(liked));
  favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':
   liked?'Убрать из избранного':'Добавить в избранное');
@@ -421,6 +424,7 @@ function switchTrack(i,autoplay=false){
   Promise.resolve(metadata.describe(file)).then(info=>{
    if(version!==selectVersion||tracks[index]!==file||!info)return;
    trackDescriptions.set(file,info);
+   updateFavorite();
    if(info.artwork){
     try{coverObjectURL=URL.createObjectURL(info.artwork)}catch{coverObjectURL=null}
    }

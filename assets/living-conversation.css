@@ -153,14 +153,14 @@ html.seyveo-conversation .seyveo-conversation-heading span.is-processing{
 /* The send glyph becomes a brand accent only when real text is ready. */
 html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerCompactSend{
  background:var(--seyveo-hdr-active);
- color:#9bbab2;
+ color:var(--secondary);
  border:1px solid var(--seyveo-hdr-outline);
  transition:background .2s ease,color .2s ease,box-shadow .2s ease;
 }
 html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerCompactSend{
  background:var(--sv-chat-send-gradient);
  border-color:var(--seyveo-hdr-outline);
- color:#e8fff5;
+ color:var(--text);
  box-shadow:inset 0 1px 0 rgba(228,255,245,.13);
 }
 html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerMainAction>span{
@@ -168,10 +168,10 @@ html.seyveo-conversation #ask:not([data-composer-mode="notes"]) #composerMainAct
 }
 html.seyveo-conversation #ask.seyveo-has-text:not([data-composer-mode="notes"]) #composerMainAction>span{
  background:var(--sv-chat-send-gradient);
- color:#e8fff5;border-color:var(--seyveo-hdr-outline);
+ color:var(--text);border-color:var(--seyveo-hdr-outline);
 }
 html.seyveo-conversation[data-theme=light]{
- --seyveo-emerald-text:#2d6c60;
+ --seyveo-emerald-text:var(--text);
  --seyveo-emerald-border:rgba(67,116,102,.22);
  --seyveo-emerald-panel:rgba(233,244,240,.95);
  --seyveo-emerald-active:#25695b;

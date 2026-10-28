@@ -38,8 +38,11 @@ assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','graphite','light','dark',
 assert.match(html,/const THEME_VALUES=\['auto','graphite','light','dark','sapphire','plum'\]/);
 assert.match(html,/dataset\.palette=palette/);
 assert.match(html,/Все темы — с фирменным HDR-эффектом SEYVEO/,'All themes openly explain HDR-inspired styling');
-for(const ink of ['--text:#f1f2f3;--secondary:#b6bec4','--text:#273238;--secondary:#657078'])assert.ok(html.includes(ink),'Neutral foreground is independent of palette');
-assert.match(html,/id="svcpThankStarMetal"/,'A five-pointed metallic recognition star is part of original work UI');
+for(const ink of ['--text:#ffffff;--secondary:#d9dde1','--text:#242a31;--secondary:#626a73'])assert.ok(html.includes(ink),'Neutral foreground is independent of palette');
+assert.match(html,/id="svcpThankStarMetal"/,'Original employee award star remains');
+assert.match(html,/id="svMusicStarMetal"/,'Actual Music favorite icon uses metallic Hollywood-inspired SVG');
+assert.match(html,/id="svMusicStarInitial"/,'Artist initial appears inside Music star');
+assert.doesNotMatch(read('assets/seyveo-music.js'),/favoriteButton\.textContent=liked/,'Favorite redraw never destroys the SVG');
 for(const choice of ['auto','graphite','light','dark','sapphire','plum']){
  const row=html.match(new RegExp('<button[^>]*data-theme-choice="'+choice+'"[^>]*>[\\s\\S]*?<\\/button>'));
  assert.ok(row&&row[0].includes('<small>HDR · '),'Visible HDR material label on '+choice);
@@ -53,8 +56,8 @@ assert.match(html,/THEME_VALUES\.includes\(raw\.theme\)/,'Legacy theme values st
 assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migrations still work');
 assert.match(html,/assets\/floating-navigation\.css\?v=42/);
 assert.match(html,/assets\/living-space\.css\?v=53/);
-assert.match(html,/assets\/seyveo-music\.css\?v=43/);
-assert.match(html,/assets\/living-conversation\.css\?v=19/);
+assert.match(html,/assets\/seyveo-music\.css\?v=44/);
+assert.match(html,/assets\/living-conversation\.css\?v=20/);
 assert.match(html,/assets\/conversation-refined\.css\?v=38/);
 assert.match(html,/assets\/personal-wellness\.css\?v=28/);
 assert.match(html,/assets\/calendar-spaces\.css\?v=25/);
