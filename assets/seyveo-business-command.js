@@ -7,6 +7,7 @@
 const $=id=>document.getElementById(id);
 const root=$('seyveoBusinessCommandPage');
 if(!root)return;
+const chatRoot=$('svcpChats');
 const CHAT_KEY='seyveo-business-command-chat-demo-v1';
 const TASK_KEY='seyveo-business-command-tasks-demo-v1';
 const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
@@ -18,13 +19,13 @@ const RECOGNITION_TYPES=Object.freeze({
 });
 const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
 const ROOMS=[
- {id:'general',label:'Общий чат',kind:'groups',hint:'Группа для всей команды',mark:'◎'},
- {id:'team',label:'Моя команда',kind:'groups',hint:'Рабочая группа',mark:'▦'},
- {id:'docs',label:'Документы',kind:'groups',hint:'Обсуждение рабочих файлов',mark:'▤'},
- {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena'},
- {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna'},
- {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail'},
- {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочая помощница · шаблонное демо',mark:'✧',person:'sayvi'}
+ {id:'general',label:'Общий чат',kind:'groups',hint:'Для всех сотрудников · общие объявления и вопросы',mark:'◎',section:'all'},
+ {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena',section:'people'},
+ {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna',section:'people'},
+ {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people'},
+ {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
+ {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
+ {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null;
@@ -73,7 +74,7 @@ function tab(name){
  if(name==='chats'){chatsFromTasks=false;showInbox()}
  if(name==='team')peopleView('team');
 }
-root.querySelectorAll('[data-svcp-room]').forEach(button=>
+chatRoot.querySelectorAll('[data-svcp-room]').forEach(button=>
  button.addEventListener('click',()=>openRoom(button.dataset.svcpRoom)));
 const STAFF={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
 function roomDetails(){return ROOMS.find(x=>x.id===state.room)||ROOMS[0]}
@@ -86,20 +87,33 @@ function senderName(msg){
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
  list.replaceChildren();
- root.querySelectorAll('[data-svcp-filter]').forEach(button=>
+ chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpFilter===state.filter)));
+ const sections={all:'Общий разговор',people:'Лично сотруднику',assistant:'Сэйви',extra:'Дополнительные группы'};
+ let prior=null;
  for(const room of ROOMS){
   if(state.filter!=='all'&&room.kind!==state.filter)continue;
+  if(room.section!==prior){
+   prior=room.section;
+   const title=el('div','svcp-directory-section',sections[prior]||'Переписки');
+   if(prior==='extra'){
+    title.append(el('small','', 'Тематические обсуждения: не отдельные отделы и не хранилище файлов'));
+   }
+   list.append(title);
+  }
   const row=el('button','svcp-directory-item');row.type='button';
-  row.setAttribute('aria-label','Открыть '+(room.kind==='personal'?'личный чат ':'группу ')+room.label);
+  const display=room.person&&room.person!=='sayvi'
+    ?room.label+' · '+(room.id==='dm-elena'?'администратор':room.id==='dm-anna'?'старший продавец':'продавец')
+    :room.label;
+  row.setAttribute('aria-label',room.kind==='personal'?'Написать лично: '+display:'Открыть группу: '+display);
   const art=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
   art.setAttribute('aria-hidden','true');
   const main=el('span','svcp-directory-item-body');
   const last=state.chat.filter(x=>x&&x.room===room.id&&typeof x.text==='string').slice(-1)[0];
   const preview=el('span','svcp-directory-preview',
-   last?(last.role==='sayvi'?'Сэйви: ':last.role==='demo-elena'?'Елена (демо): ':'Вы: ')+last.text.replace(/\s+/g,' ').slice(0,76):
-   room.kind==='personal'?'Написать лично · демо':'Открыть группу');
-  main.append(el('strong','',room.label),el('small','',room.hint),preview);
+   last?(last.role==='sayvi'?'Сэйви: ':last.role==='demo-elena'?'Елена (демо): ':'Сообщение: ')+last.text.replace(/\s+/g,' ').slice(0,76):
+   room.person?'Написать лично · учебный чат':'Открыть общий разговор');
+  main.append(el('strong','',display),el('small','',room.hint),preview);
   const arrow=el('span','svcp-directory-chevron','›');arrow.setAttribute('aria-hidden','true');
   row.append(art,main,arrow);
   row.addEventListener('click',()=>openRoom(room.id));
@@ -145,10 +159,10 @@ function updatePerspective(){
   ?'Как выглядел бы чат у Елены · учебный пример'
   :current.hint+' · на одном устройстве';
  $('svcpMentionElena').hidden=current.kind!=='groups';
- const chips=root.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
+ const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
 }
-root.querySelectorAll('[data-svcp-filter]').forEach(button=>
+chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
  button.addEventListener('click',()=>{state.filter=button.dataset.svcpFilter;renderDirectory()}));
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpElenaPerspective')?.addEventListener('click',()=>{
@@ -220,7 +234,7 @@ function formatTime(ts){
  return Number.isFinite(dt.getTime())?dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
 }
 function renderChat(){
- root.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
+ chatRoot.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
  thread.replaceChildren();
  const messages=state.chat.filter(x=>x&&x.room===state.room&&typeof x.text==='string').slice(-35);
@@ -465,10 +479,7 @@ function openTaskDiscussion(task){
  if(!task||typeof task.text!=='string')return;
  const person=task.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,task.assigneeId)?task.assigneeId:'';
  const roomId=person?'dm-'+person:'general';
- if(location.hash!=='#manage')location.hash='#manage';
- window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
- document.querySelector('[data-clean-business="chat"]')?.click();
- tab('chats');openRoom(roomId);
+ window.SEYVEO_UNIFIED_TASKS?.openChat?.('tasks',roomId);
  chatsFromTasks=true;
  if(person==='elena'){
   state.viewpoint='elena';
@@ -491,7 +502,7 @@ function returnToTasks(){
 }
 $('svcpReturnToTasks')?.addEventListener('click',returnToTasks);
 $('svcpChatInboxBackTasks')?.addEventListener('click',returnToTasks);
-root.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
+chatRoot.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
  input.value=button.dataset.svcpDiscussTemplate||'';
  input.focus({preventScroll:true});
@@ -635,23 +646,22 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 });
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
- enterFromTasks:()=>{
+ showChat:(roomId=null)=>{
   chatsFromTasks=true;
-  showInbox();
+  if(roomId&&ROOMS.some(x=>x.id===roomId))openRoom(roomId);
+  else showInbox();
  },
  openPeopleView:peopleView,
  openPrivateChat:(person,view='manager')=>{
- const id='dm-'+String(person||'').toLowerCase();
- if(!ROOMS.some(x=>x.id===id&&x.person))return false;
- if(location.hash!=='#manage')location.hash='#manage';
- document.querySelector('[data-clean-business="chat"]')?.click();
- tab('chats');openRoom(id);
- if(view==='elena'&&id==='dm-elena'){
-  state.viewpoint='elena';
-  updatePerspective();renderChat();
+  const id='dm-'+String(person||'').toLowerCase();
+  if(!ROOMS.some(x=>x.id===id&&x.person))return false;
+  window.SEYVEO_UNIFIED_TASKS?.openChat?.('manage',id);
+  if(view==='elena'&&id==='dm-elena'){
+   state.viewpoint='elena';updatePerspective();renderChat();
+  }
+  return true;
  }
- return true;
-}});
+});
 window.addEventListener('pagehide',cleanupPreview);
 preparePeopleContent();
 renderTasks();
