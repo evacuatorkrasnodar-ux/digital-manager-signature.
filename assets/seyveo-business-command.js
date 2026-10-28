@@ -655,7 +655,7 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  * explicit button in the personal chat and uses the previous staff-ledger key.
  */
 /* A chat emoji is never a staff performance award. Awards remain explicit. */
-const QUICK_EMOJIS=['👍','❤️','😂','🔥','👏','⭐','😊'];
+const QUICK_EMOJIS=['👍','❤️','😂','🔥','👏','😊'];
 const MORE_EMOJI_GROUPS=[
  {name:'Эмоции',emojis:['🥰','😍','🤣','😄','😁','😉','🥹','😢','😮','🤔','😎','🙏']},
  {name:'Поддержка',emojis:['💚','💙','💜','🫶','💪','🙌','👌','🤝','💯','✨','🎉','🏆']},
@@ -904,6 +904,14 @@ function renderChat(){
     moreButton.setAttribute('aria-label','Действия с сообщением');
     moreButton.setAttribute('aria-expanded','false');
     actions.append(moreButton);
+    // A single visible tap awards a staff member directly from their message.
+    // Ordinary chat emojis and saved-message bookmarks remain unrelated.
+    if(state.viewpoint==='manager' && msg.role==='demo-elena'){
+     const awardButton=btn('✦',()=>applyPersonReaction('elena','help'),'svcp-message-action svcp-inline-award');
+     awardButton.setAttribute('aria-label','Наградить Елену золотой звездой · в личное дело');
+     awardButton.title='Наградить Елену · в личное дело';
+     actions.prepend(awardButton);
+    }
     function svcpActionIcon(title,kind,callback,className){
      const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
