@@ -91,37 +91,60 @@ function renderDirectory(){
  list.replaceChildren();
  chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpFilter===state.filter)));
- const sections={all:'Общий разговор',people:'Лично сотруднику',assistant:'Сэйви',extra:'Дополнительные группы'};
- let prior=null,priorRoleGroup=null;
+ /* Keep the existing rooms and conversation IDs so old local messages still open.
+    One compact name/role line and one real message preview, not three descriptions. */
+ const latest=new Map();
+ for(const item of state.chat){
+  if(item&&typeof item.text==='string'&&item.text.trim())latest.set(item.room,item);
+ }
+ const sections={people:'Сотрудники',extra:'Группы'};
+ let prior=null;
+ const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
+ const groupHints={general:'Объявления и вопросы команды',team:'Смены и рабочие задачи',docs:'Вопросы по рабочим файлам'};
+ function previewTime(at){
+  if(!Number.isFinite(Number(at)))return '';
+  const date=new Date(at),now=new Date();
+  if(Number.isNaN(date.getTime()))return '';
+  if(date.toDateString()===now.toDateString())return date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const startOfToday=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  if(date.getTime()>=startOfToday-86400000&&date.getTime()<startOfToday)return 'Вчера';
+  return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',...(date.getFullYear()===now.getFullYear()?{}:{year:'2-digit'})});
+ }
  for(const room of ROOMS){
   if(state.filter!=='all'&&room.kind!==state.filter)continue;
   if(room.section!==prior){
-   prior=room.section;priorRoleGroup=null;
-   const title=el('div','svcp-directory-section',sections[prior]||'Переписки');
-   if(prior==='extra'){
-    title.append(el('small','', 'Тематические обсуждения: не отдельные отделы и не хранилище файлов'));
-   }
-   list.append(title);
+   prior=room.section;
+   if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
   }
-  if(room.section==='people'&&room.roleGroup&&room.roleGroup!==priorRoleGroup){
-   priorRoleGroup=room.roleGroup;
-   list.append(el('div','svcp-directory-role-group',room.roleGroup));
-  }
+  const person=room.person&&roleLabels[room.person];
+  const last=latest.get(room.id);
+  const name=room.label;
   const row=el('button','svcp-directory-item');row.type='button';
-  const display=room.person&&room.person!=='sayvi'
-    ?room.label+' · '+(room.id==='dm-elena'?'кассир':room.id==='dm-anna'?'старший продавец':'продавец')
-    :room.label;
-  row.setAttribute('aria-label',room.kind==='personal'?'Написать лично: '+display:'Открыть группу: '+display);
-  const art=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
-  art.setAttribute('aria-hidden','true');
-  const main=el('span','svcp-directory-item-body');
-  const last=state.chat.filter(x=>x&&x.room===room.id&&typeof x.text==='string').slice(-1)[0];
-  const preview=el('span','svcp-directory-preview',
-   last?(last.role==='sayvi'?'Сэйви: ':last.role==='demo-elena'?'Елена (демо): ':'Сообщение: ')+last.text.replace(/\s+/g,' ').slice(0,76):
-   room.person?'Написать лично · учебный чат':'Открыть общий разговор');
-  main.append(el('strong','',display),el('small','',room.hint),preview);
+  row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person?', '+person:''));
+  const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
+  avatar.setAttribute('aria-hidden','true');
+  const body=el('span','svcp-directory-item-body');
+  const headline=el('span','svcp-directory-item-head');
+  headline.append(el('strong','svcp-directory-name',name));
+  if(last?.at){
+   const time=el('time','svcp-directory-time',previewTime(last.at));
+   const d=new Date(last.at);
+   if(!Number.isNaN(d.getTime()))time.dateTime=d.toISOString();
+   headline.append(time);
+  }
+  const role=person?person:room.person==='sayvi'?'Помощник':
+   room.kind==='groups'?'Группа':'';
+  const lastLine=last?last.text.replace(/\s+/g,' ').trim():null;
+  const fallback=person?'Начать переписку':room.person==='sayvi'?'Рабочие подсказки':groupHints[room.id]||'Открыть чат';
+  const description=el('span','svcp-directory-preview');
+  if(role){
+   description.append(el('span','svcp-directory-role',role));
+   description.append(document.createTextNode(' · '));
+  }
+  description.append(document.createTextNode(lastLine||fallback));
+  body.append(headline,description);
   const arrow=el('span','svcp-directory-chevron','›');arrow.setAttribute('aria-hidden','true');
-  row.append(art,main,arrow);
+  row.append(avatar,body,arrow);
   row.addEventListener('click',()=>openRoom(room.id));
   list.append(row);
  }
