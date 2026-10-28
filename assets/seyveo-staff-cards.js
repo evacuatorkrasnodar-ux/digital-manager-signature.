@@ -73,7 +73,7 @@ style.textContent=[
 '.svstaff-metric svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}',
 '.svstaff-metric strong{font-size:24px;color:var(--text);line-height:1.15;font-weight:720;letter-spacing:-.035em}',
 '.svstaff-metric small{font-size:10px;line-height:1.4;color:var(--secondary)}',
-'.svstaff-gold{color:#dbaf58}.svstaff-silver{color:#c8d0cb}.svstaff-green{color:#54dc8e}',
+'.svstaff-gold{color:#ffffff}.svstaff-silver{color:#c8d0cb}.svstaff-green{color:#54dc8e}',
 '.svstaff-section{margin:0 0 24px}',
 '.svstaff-section h3{font-size:17px;line-height:1.3;font-weight:700;margin:0 0 14px;color:var(--text)}',
 '.svstaff-event{display:flex;align-items:flex-start;gap:11px;margin:0 0 15px}',
@@ -176,7 +176,9 @@ function renderProfile(){
   const entry=el('div','svstaff-peer-row'),description=el('div','svstaff-peer-copy');
   const day=new Date(record.at);
   const date=Number.isNaN(day.getTime())?'Дата не указана':day.toLocaleDateString('ru-RU');
-  entry.append(el('span','svstaff-peer-symbol',badgeKind[record.kind][0]));
+  const symbol=el('span','svstaff-peer-symbol',record.kind==='help'?'':badgeKind[record.kind][0]);
+  if(record.kind==='help')symbol.innerHTML='<svg class="svcp-star-icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z"/></svg>';
+  entry.append(symbol);
   description.append(el('strong',null,badgeKind[record.kind][1]),el('p',null,record.reason.slice(0,220)),
    el('small',null,'От: '+(colleagues[record.from]||'Коллега')+' · '+date+' · демо'));
   entry.append(description);badges.append(entry);
