@@ -114,7 +114,7 @@ const note=el('p','svstaff-footnote','Учебные примеры: данны�
 const modal=el('dialog','svstaff-modal');modal.setAttribute('aria-label','Профессиональная история сотрудника');document.body.append(modal);
 const top=el('div','svstaff-modal-top');top.append(el('span',null,'SEYVEO · КАДРЫ'),button('×','svstaff-close',()=>modal.close()));modal.append(top);
 const body=el('div','svstaff-content');modal.append(body);
-let chosen=null,showPlan=false,lastTrigger=null;
+let chosen=null,showPlan=false,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
  [['star','svstaff-gold',String(p.thanks),'Благодарностей'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание':'Замечаний'],['growth','svstaff-green',p.development,'Навыков']].forEach(([symbol,color,value,label])=>{
@@ -159,6 +159,7 @@ function renderProfile(){
   // The demo chat uses the employee's stable internal ID, never a display-name match.
   // Close the employee card before opening its existing Business chat surface.
   const personId=p.id;
+  leavingForChat=true;
   modal.close();
   window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.(personId);
  }));
@@ -174,7 +175,7 @@ function renderProfile(){
  const list=el('ol');p.next.forEach(x=>list.append(el('li',null,x)));plan.append(list,el('p',null,'Согласовать с самим сотрудником. Решение принимает руководитель, без автоматической оценки или наказания.'));body.append(plan)}
  body.append(el('p','svstaff-demo-note','Это демонстрационная карточка вымышленного сотрудника. Фото можно выбрать только для просмотра на этом устройстве — оно не загружается в сеть и не сохраняется. Рабочие замечания требуют проверки, права на ответ и исправление. Настоящий анализ Сэйви пока не подключён.'));
 }
-modal.addEventListener('close',()=>{chosen=null;showPlan=false;lastTrigger?.focus?.()});
+modal.addEventListener('close',()=>{chosen=null;showPlan=false;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
 modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
 window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)})});
 renderDirectory();
