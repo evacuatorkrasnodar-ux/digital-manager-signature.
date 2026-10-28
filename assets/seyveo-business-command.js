@@ -221,10 +221,20 @@ function prepareTask(msg){
 function cancelTaskDraft(){state.draftSource=null;$('svcpChatTaskDraft').hidden=true}
 $('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
 $('svcpOpenTasks')?.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.openBusiness?.());
+function taskDuplicateKey(task){
+ if(!task||task.done||typeof task.text!=='string')return '';
+ return (task.assigneeId||'')+'|'+task.text.trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
+}
 function storeTask(text,source){
  const title=String(text||'').trim().slice(0,140);
  if(!title)return false;
  const assigneeId=source?.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,source.assigneeId)?source.assigneeId:'';
+ const duplicateKey=taskDuplicateKey({text:title,assigneeId,done:false});
+ if(state.tasks.some(item=>taskDuplicateKey(item)===duplicateKey)){
+  setStatus('Такое поручение уже есть среди невыполненных. Откройте «Дела → Команде» или измените формулировку.');
+  $('svcpOpenTasks').hidden=false;
+  return false;
+ }
  const newTask={id:'chat-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),text:title,done:false,...(source?{source:'chat',room:source.room}: {}),...(assigneeId?{assigneeId}:{})};
  const updated=state.tasks.concat(newTask).slice(-60);
  if(!save(TASK_KEY,updated))return false;
@@ -301,10 +311,19 @@ $('svcpChatInput')?.addEventListener('keydown',event=>{
 function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
  list.replaceChildren();
- if(!state.tasks.length){list.append(el('p','svcp-sub','Рабочих поручений пока нет. Добавьте пример — он останется только в этом браузере.'));return}
+ if(!state.tasks.length){
+  list.append(el('p','svcp-sub','Поручений пока нет. Добавьте первое — оно останется только на этом устройстве.'));
+  return;
+ }
+ const seen=new Set(),duplicateIndices=[];
  state.tasks.forEach((t,i)=>{
   if(!t||typeof t.text!=='string')return;
-  const r=el('div','svcp-task'+(t.done?' is-done':''));
+  const duplicateKey=taskDuplicateKey(t);
+  if(duplicateKey){
+   if(seen.has(duplicateKey)){duplicateIndices.push(i);return}
+   seen.add(duplicateKey);
+  }
+  const row=el('div','svcp-task'+(t.done?' is-done':''));
   const checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
   checkbox.setAttribute('aria-label','Отметить выполнение: '+t.text);
   checkbox.addEventListener('change',()=>{
@@ -312,16 +331,31 @@ function renderTasks(){
    if(!save(TASK_KEY,updated)){checkbox.checked=!checkbox.checked;return}
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
   });
-  const text=el('span',null,t.text);
+  const copy=el('div','svcp-task-copy');
+  copy.append(el('strong','svcp-task-title',t.text));
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
-   text.append(el('small','svcp-task-assignee','Для: '+STAFF[t.assigneeId]+' · демо'));
+   copy.append(el('small','svcp-task-assignee','Исполнитель: '+STAFF[t.assigneeId]+' · демо'));
+  else copy.append(el('small','svcp-task-assignee','Без исполнителя · демо'));
   const remove=btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
   },'svcp-ghost');
-  r.append(checkbox,text,remove);list.append(r);
+  row.append(checkbox,copy,remove);list.append(row);
  });
+ if(duplicateIndices.length){
+  const note=el('div','svcp-duplicate-summary');
+  note.append(el('span','',duplicateIndices.length===1
+   ?'Одно одинаковое поручение скрыто'
+   :'Одинаковых поручений скрыто: '+duplicateIndices.length));
+  const clear=btn('Убрать повторы',()=>{
+   const toRemove=new Set(duplicateIndices);
+   const updated=state.tasks.filter((_,i)=>!toRemove.has(i));
+   if(!save(TASK_KEY,updated))return;
+   state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
+  },'svcp-ghost');
+  note.append(clear);list.append(note);
+ }
 }
 $('svcpTaskForm')?.addEventListener('submit',e=>{
  e.preventDefault();
@@ -396,5 +430,12 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleV
 }});
 window.addEventListener('pagehide',cleanupPreview);
 preparePeopleContent();
+renderTasks();
 tab('chats');
+window.addEventListener('storage',event=>{
+ if(event.key!==TASK_KEY)return;
+ state.tasks=read(TASK_KEY);
+ renderTasks();
+ syncPreviewAfterTaskEdit();
+});
 })();
