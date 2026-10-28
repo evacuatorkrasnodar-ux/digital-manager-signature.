@@ -20,9 +20,9 @@ const RECOGNITION_TYPES=Object.freeze({
 const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
 const ROOMS=[
  {id:'general',label:'Общий чат',kind:'groups',hint:'Для всех сотрудников · общие объявления и вопросы',mark:'◎',section:'all'},
- {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena',section:'people'},
- {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna',section:'people'},
- {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people'},
+ {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena',section:'people',roleGroup:'Администрация'},
+ {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna',section:'people',roleGroup:'Торговый зал'},
+ {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people',roleGroup:'Торговый зал'},
  {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
@@ -90,16 +90,20 @@ function renderDirectory(){
  chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpFilter===state.filter)));
  const sections={all:'Общий разговор',people:'Лично сотруднику',assistant:'Сэйви',extra:'Дополнительные группы'};
- let prior=null;
+ let prior=null,priorRoleGroup=null;
  for(const room of ROOMS){
   if(state.filter!=='all'&&room.kind!==state.filter)continue;
   if(room.section!==prior){
-   prior=room.section;
+   prior=room.section;priorRoleGroup=null;
    const title=el('div','svcp-directory-section',sections[prior]||'Переписки');
    if(prior==='extra'){
     title.append(el('small','', 'Тематические обсуждения: не отдельные отделы и не хранилище файлов'));
    }
    list.append(title);
+  }
+  if(room.section==='people'&&room.roleGroup&&room.roleGroup!==priorRoleGroup){
+   priorRoleGroup=room.roleGroup;
+   list.append(el('div','svcp-directory-role-group',room.roleGroup));
   }
   const row=el('button','svcp-directory-item');row.type='button';
   const display=room.person&&room.person!=='sayvi'
@@ -648,8 +652,9 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 });
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
- showChat:(roomId=null,viewpoint='manager')=>{
+ showChat:(roomId=null,viewpoint='manager',filter='all')=>{
   chatsFromTasks=true;
+  state.filter=['all','personal','groups'].includes(filter)?filter:'all';
   if(roomId&&ROOMS.some(x=>x.id===roomId)){
    openRoom(roomId);
    if(viewpoint==='elena'&&roomId==='dm-elena'){
