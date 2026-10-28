@@ -167,6 +167,7 @@ function updatePerspective(){
   :current.hint+' · на одном устройстве';
  $('svcpMentionElena').hidden=current.kind!=='groups';
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
+ $('svcpRecognizeOpen').hidden=!(current.person&&STAFF[current.person]);
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
 }
 chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
@@ -267,15 +268,17 @@ function renderChat(){
  chatRoot.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
  thread.replaceChildren();
- const messages=state.chat.filter(x=>x&&x.room===state.room&&typeof x.text==='string').slice(-35);
- if(!messages.length){
+ const messages=state.chat.map((msg,index)=>({msg,index}))
+  .filter(x=>x.msg&&x.msg.room===state.room&&typeof x.msg.text==='string');
+ const visible=focusSearchIndex!==null?messages:messages.slice(-35);
+ if(!visible.length){
   thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
-  for(const msg of messages){
+  for(const {msg,index} of visible){
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
    const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
-   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':''));
+   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
@@ -284,16 +287,24 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.demoReaction)bubble.append(el('span','svcp-bubble-reaction',msg.demoReaction+' 1'));
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    const actions=el('div','svcp-message-actions');
-   if(!isRecognition)actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
+   if(!isRecognition){
+    actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
+    actions.append(btn('😊',()=>showReactions({type:'message',index}),'svcp-message-action svcp-emoji-trigger'));
+   }
    if(!isRecognition&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())){
     actions.append(btn(isSayvi?'Подготовить поручение':'В поручение',()=>prepareTask(msg),'svcp-message-action'));
    }
    bubble.append(actions);thread.append(bubble);
   }
  }
- thread.scrollTop=thread.scrollHeight;
+ if(focusSearchIndex!==null){
+  const target=thread.querySelector('.svcp-bubble.is-search-hit');
+  thread.scrollTop=target?Math.max(0,target.offsetTop-thread.offsetTop-24):thread.scrollHeight;
+  focusSearchIndex=null;
+ }else thread.scrollTop=thread.scrollHeight;
 }
 function startReply(msg){
  state.replyTo={text:String(msg.text||'').slice(0,160),sender:senderName(msg)};
