@@ -87,6 +87,7 @@ function senderName(msg){
 }
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
+ if(renderHistorySearch())return;
  list.replaceChildren();
  chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
   button.setAttribute('aria-pressed',String(button.dataset.svcpFilter===state.filter)));
@@ -124,6 +125,65 @@ function renderDirectory(){
   row.addEventListener('click',()=>openRoom(room.id));
   list.append(row);
  }
+}
+/* Search existing local chat history and team assignments, no new archive page. */
+function renderHistorySearch(){
+ const query=historyQuery.trim().toLocaleLowerCase('ru-RU'),list=$('svcpConversationList');
+ if(!query||!list)return false;
+ list.replaceChildren();
+ const chatHits=state.chat.map((item,index)=>({item,index}))
+  .filter(({item})=>item&&typeof item.text==='string'&&ROOMS.some(room=>room.id===item.room)&&
+   (item.text.toLocaleLowerCase('ru-RU').includes(query)||
+    (ROOMS.find(room=>room.id===item.room)?.label||'').toLocaleLowerCase('ru-RU').includes(query)))
+  .reverse().slice(0,30);
+ const taskHits=state.tasks.map((item,index)=>({item,index}))
+  .filter(({item})=>item&&typeof item.text==='string'&&item.text.toLocaleLowerCase('ru-RU').includes(query))
+  .reverse().slice(0,30);
+ function heading(textValue,count){
+  const h=el('div','svcp-search-results-heading');
+  h.append(el('strong',null,textValue),el('small',null,String(count)));
+  list.append(h);
+ }
+ function resultRow(title,excerpt,click){
+  const row=el('button','svcp-search-result');
+  row.type='button';
+  row.append(el('strong',null,title),el('span',null,excerpt));
+  row.addEventListener('click',click);
+  list.append(row);
+ }
+ heading('Сообщения',chatHits.length);
+ for(const {item,index} of chatHits){
+  const room=ROOMS.find(x=>x.id===item.room);
+  resultRow(room?.label||'Чат',item.text.slice(0,150),()=>{
+   openRoom(item.room);
+   focusSearchIndex=index;
+   renderChat();
+  });
+ }
+ heading('Поручения',taskHits.length);
+ for(const {item,index} of taskHits){
+  resultRow((item.done?'✓ Выполнено · ':'В работе · ')+(STAFF[item.assigneeId]||'Команда'),item.text.slice(0,150),()=>{
+   window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
+   requestAnimationFrame(()=>focusTask(index));
+  });
+ }
+ if(!chatHits.length&&!taskHits.length){
+  list.append(el('p','svcp-search-empty','Совпадений нет. Попробуй другое слово из сообщения или поручения.'));
+ }
+ return true;
+}
+$('svcpHistorySearch')?.addEventListener('input',event=>{
+ historyQuery=event.target.value||'';
+ if(!renderHistorySearch())renderDirectory();
+});
+function focusTask(index){
+ const list=$('svcpTaskList');
+ if(!list)return;
+ const row=list.querySelector('[data-svcp-task-index="'+index+'"]');
+ if(!row)return;
+ const archive=row.closest('details.svcp-task-history');if(archive)archive.open=true;
+ row.classList.add('is-search-hit');
+ row.scrollIntoView({block:'center',behavior:'auto'});
 }
 function showInbox(){
  closeRecognition();
@@ -446,6 +506,7 @@ function renderTasks(){
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
+  row.setAttribute('data-svcp-task-index',String(i));
   const checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
   checkbox.setAttribute('aria-label',(t.done?'Вернуть в работу: ':'Завершить поручение: ')+t.text);
   checkbox.addEventListener('change',()=>{
