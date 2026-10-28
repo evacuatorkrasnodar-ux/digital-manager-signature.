@@ -874,7 +874,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <div class="svcp-conversation-bar">
     <button type="button" id="svcpConversationBack" class="svcp-conversation-back" aria-label="К списку рабочих чатов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
     <div class="svcp-conversation-info"><strong id="svcpConversationTitle">Общий чат</strong><small id="svcpConversationDetail">Демонстрационная переписка</small></div>
-    <button type="button" id="svcpElenaPerspective" class="svcp-perspective" hidden aria-pressed="false">Взгляд Елены</button>
+    <button type="button" id="svcpReturnToTasks" class="svcp-perspective" hidden>К поручению</button><button type="button" id="svcpElenaPerspective" class="svcp-perspective" hidden aria-pressed="false">Взгляд Елены</button>
    </div>
   <div class="svcp-chat">
    <div class="svcp-chat-intro">
@@ -1110,7 +1110,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
-<header class="manage-heading tasks-heading"><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НА КОНТРОЛЕ</p><h1 id="tasksTitle">Дела</h1><p id="tasksOverview" aria-live="polite">Здесь всё, что требует твоего решения или отложено с Главной.</p></header>
+<header class="manage-heading tasks-heading"><button type="button" id="unifiedTasksBack" class="svcp-tasks-back" aria-label="Выйти из дел и вернуться назад">‹ <span id="unifiedTasksBackLabel">Главная</span></button><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НА КОНТРОЛЕ</p><h1 id="tasksTitle">Дела</h1><p id="tasksOverview" aria-live="polite">Здесь всё, что требует твоего решения или отложено с Главной.</p></header>
 <div id="unifiedTasksTabs" class="tasks-switch" role="group" aria-label="Какие дела показать">
  <button type="button" data-unified-tasks-tab="personal" aria-pressed="true">Мои дела</button>
  <button type="button" data-unified-tasks-tab="business" aria-pressed="false">Команде</button>
