@@ -750,13 +750,10 @@ function showReactions(target,near=null){
  $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(person));
 }
 $('svcpRecognizeOpen')?.addEventListener('click',()=>{
- if(!$('svcpReactionPicker').hidden&&quickReactionTarget?.type==='person'){closeRecognition();return}
  const room=roomDetails();
- if(room.kind!=='personal'||!room.person||!STAFF[room.person]){
-  setStatus('Чтобы знак попал в карточку человека, откройте его личный рабочий чат.');
-  return;
- }
- showReactions({type:'person',person:room.person});
+ if(state.viewpoint!=='manager'||room.kind!=='personal'||!room.person||!STAFF[room.person])return;
+ // A dedicated gold recognition, never a bookmark or an emoji reaction.
+ applyPersonReaction(room.person,'help');
 });
 $('svcpReactionCancel')?.addEventListener('click',closeRecognition);
 /* Compact familiar emojis first, expandable library second. No scrolling tray. */
@@ -921,7 +918,7 @@ function renderChat(){
      svg.setAttribute('stroke-linejoin','round');
      const parts={
       reply:"<path d=\"M9 10 4 14l5 4\"/><path d=\"M4 14h9a7 7 0 0 1 7 7\"/>",reaction:"<path d=\"M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 5.5-8 10-8 10Z\"/>",
-      star:"<path d=\"m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2L12 17.3l-5.7 2.9 1.1-6.2-4.5-4.4 6.3-.9Z\"/>",award:"<path d=\"m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z\"/>",copy:"<rect x=\"8\" y=\"8\" width=\"11\" height=\"12\" rx=\"2\"/><path d=\"M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2\"/>",
+      star:"<path d=\"M6 4.5h12v16l-6-4-6 4Z\"/>",award:"<path d=\"m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z\"/>",copy:"<rect x=\"8\" y=\"8\" width=\"11\" height=\"12\" rx=\"2\"/><path d=\"M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2\"/>",
       edit:"<path d=\"m5 17-1 3 3-1L19 7a2.1 2.1 0 0 0-3-3Z\"/><path d=\"M14 6l4 4\"/>",delete:"<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6\"/>",
       task:"<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M8 10h8M8 14h5\"/><path d=\"M17 17v5m-2.5-2.5h5\"/>"
      };
@@ -933,15 +930,6 @@ function renderChat(){
     menu.append(svcpActionIcon('Реакция','reaction',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
     // HR appreciation is NOT a bookmark. Only an identifiable colleague earns
     // a golden recognition event, recorded by the existing staff-card ledger.
-    const awardPerson=state.viewpoint==='manager'&&msg.role==='demo-elena'?'elena':null;
-    if(awardPerson){
-     const thank=svcpActionIcon('Золотая звезда благодарности · в личное дело','award',()=>{
-      closeMessageMenus();
-      applyPersonReaction(awardPerson,'help');
-     },'svcp-message-menu-item');
-     thank.setAttribute('aria-description','Поощрение сотрудника, сохраняется в карточке, не в избранном');
-     menu.append(thank);
-    }
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
      if(!save(CHAT_KEY,updated))return;
