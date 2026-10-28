@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Check black vinyl, white star and one role-safe searchable business chat
+        run: node tools/test-black-vinyl-work-chats.cjs
       - name: Verify Business is in Dela and Management routes are clean
         run: node tools/test-management-about.cjs
       - name: Protect approved My World Black Velvet HDR-like color system

@@ -42,9 +42,11 @@ for(const ink of ['--text:#ffffff;--secondary:#d9dde1','--text:#242a31;--seconda
 assert.match(html,/id="svcpThankStarMetal"/,'Original employee award star remains');
 assert.match(html,/id="svMusicStarMetal"/,'Actual Music favorite icon uses metallic Hollywood-inspired SVG');
 assert.match(html,/id="svMusicStarInitial"/,'Artist initial appears inside Music star');
+assert.ok(css.music.includes('fill:rgba(255,255,255,.06);stroke:#ffffff'),'White silhouette in every theme');
+assert.ok(html.includes('stop-color="#ffffff"')&&html.includes('stop-color="#cbd1d9"'),'White gradient is fixed independent of theme');
 const miniVinyl=read('assets/seyveo-music-dock.css');
-assert.ok(css.music.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),'Large colored vinyl retains its original pigments');
-assert.ok(miniVinyl.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),'Mini record inherits the same original colored vinyl pigments');
+assert.ok(css.music.includes('conic-gradient(from 50deg,#0b0c0e,#24262a,#090a0c,#1c1e21,#090a0c,#121417,#0b0c0e)'),'Large vinyl is naturally black');
+assert.ok(miniVinyl.includes('conic-gradient(from 50deg,#0b0c0e,#24262a,#090a0c,#1c1e21,#090a0c,#121417,#0b0c0e)'),'Mini record matches the full black vinyl');
 assert.match(read('assets/seyveo-music.js'),/person\.replace\(\/\^\[\^\\p\{L\}\]\+\/u/,'Music star recognizes the first Unicode letter of an artist');
 assert.doesNotMatch(read('assets/seyveo-music.js'),/favoriteButton\.textContent=liked/,'Favorite redraw never destroys the SVG');
 for(const choice of ['auto','graphite','light','dark','sapphire','plum']){

@@ -171,7 +171,7 @@ function renderDirectory(){
  for(const item of state.chat){
   if(item&&typeof item.text==='string'&&item.text.trim())latest.set(item.room,item);
  }
- const sections={people:'Сотрудники',extra:'Группы'};
+ const sections={all:'Команда',people:'Сотрудники',extra:'Рабочие группы',assistant:'Сэйви'};
  let prior=null;
  const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
  const groupHints={general:'Объявления и вопросы команды',team:'Смены и рабочие задачи',docs:'Вопросы по рабочим файлам'};
@@ -190,12 +190,13 @@ function renderDirectory(){
    prior=room.section;
    if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
   }
+  const managerDialog=employeePreviewActive()&&room.id==='dm-elena';
   const person=room.person&&roleLabels[room.person];
   const last=latest.get(room.id);
-  const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
+  const name=managerDialog?'Руководитель':room.label;
   const row=el('button','svcp-directory-item');row.type='button';
-  row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person?', '+person:''));
-  const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
+  row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person&&!managerDialog?', '+person:''));
+  const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),managerDialog?'Р':room.mark);
   avatar.setAttribute('aria-hidden','true');
   const body=el('span','svcp-directory-item-body');
   const headline=el('span','svcp-directory-item-head');
@@ -206,10 +207,10 @@ function renderDirectory(){
    if(!Number.isNaN(d.getTime()))time.dateTime=d.toISOString();
    headline.append(time);
   }
-  const role=person?person:room.person==='sayvi'?'Помощник':
+  const role=managerDialog?'Личный рабочий чат':person?person:room.person==='sayvi'?'Помощник':
    room.kind==='groups'?'Группа':'';
   const lastLine=last?last.text.replace(/\s+/g,' ').trim():null;
-  const fallback=person?'Начать переписку':room.person==='sayvi'?'Рабочие подсказки':groupHints[room.id]||'Открыть чат';
+  const fallback=managerDialog?'Написать руководителю':person?'Начать переписку':room.person==='sayvi'?'Рабочие подсказки':groupHints[room.id]||'Открыть чат';
   const description=el('span','svcp-directory-preview');
   if(role){
    description.append(el('span','svcp-directory-role',role));
@@ -234,6 +235,13 @@ function renderHistorySearch(){
    (item.text.toLocaleLowerCase('ru-RU').includes(query)||
     (ROOMS.find(room=>room.id===item.room)?.label||'').toLocaleLowerCase('ru-RU').includes(query)))
   .reverse().slice(0,30);
+ const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
+ const roomHits=ROOMS.filter(room=>{
+  if(employeePreviewActive()&&!employeeAllowedRoom(room.id))return false;
+  const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
+  const role=employeePreviewActive()&&room.id==='dm-elena'?'руководитель':roleLabels[room.person]||room.hint;
+  return (name+' '+role).toLocaleLowerCase('ru-RU').includes(query);
+ });
  const taskHits=state.tasks.map((item,index)=>({item,index}))
   .filter(({item})=>item&&typeof item.text==='string'&&
    (!employeePreviewActive()||item.assigneeId==='elena')&&item.text.toLocaleLowerCase('ru-RU').includes(query))
@@ -249,6 +257,14 @@ function renderHistorySearch(){
   row.append(el('strong',null,title),el('span',null,excerpt));
   row.addEventListener('click',click);
   list.append(row);
+ }
+ if(roomHits.length){
+  heading('Чаты',roomHits.length);
+  for(const room of roomHits){
+   const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
+   const role=employeePreviewActive()&&room.id==='dm-elena'?'Личный рабочий чат':roleLabels[room.person]||room.hint;
+   resultRow(name,role,()=>openRoom(room.id));
+  }
  }
  heading('Сообщения',chatHits.length);
  for(const {item,index} of chatHits){
@@ -270,8 +286,8 @@ function renderHistorySearch(){
    requestAnimationFrame(()=>focusTask(index));
   });
  }
- if(!chatHits.length&&!taskHits.length){
-  list.append(el('p','svcp-search-empty','Совпадений нет. Попробуй другое слово из сообщения или поручения.'));
+ if(!roomHits.length&&!chatHits.length&&!taskHits.length){
+  list.append(el('p','svcp-search-empty','Ничего не найдено. Попробуйте имя, должность или слово из сообщения.'));
  }
  return true;
 }
