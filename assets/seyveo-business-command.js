@@ -589,22 +589,46 @@ function taskDuplicateKey(task){
  if(!task||task.done||typeof task.text!=='string')return '';
  return (task.assigneeId||'')+'|'+task.text.trim().replace(/\s+/g,' ').toLocaleLowerCase('ru-RU');
 }
+function taskRecipients(assigneeId){
+ if(assigneeId==='all')return Object.keys(STAFF);
+ return Object.prototype.hasOwnProperty.call(STAFF,assigneeId)?[assigneeId]:[];
+}
+function feedbackTask(message){
+ const field=$('svcpTaskFeedback');
+ if(field){field.textContent=message;field.hidden=!message}
+ setStatus(message);
+}
 function storeTask(text,source){
  const title=String(text||'').trim().slice(0,140);
  if(!title)return false;
- const assigneeId=source?.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,source.assigneeId)?source.assigneeId:'';
- const duplicateKey=taskDuplicateKey({text:title,assigneeId,done:false});
- if(state.tasks.some(item=>taskDuplicateKey(item)===duplicateKey)){
-  setStatus('Такое поручение уже есть среди невыполненных. Откройте «Дела → Команде» или измените формулировку.');
-  $('svcpOpenTasks').hidden=false;
+ const chosen=String(source?.assigneeId||'');
+ const recipients=taskRecipients(chosen);
+ if(!recipients.length){
+  feedbackTask('Сначала выберите сотрудника или всю команду — без получателя поручение не создаётся.');
   return false;
  }
- const newTask={id:'chat-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),text:title,done:false,...(source?{source:'chat',room:source.room}: {}),...(assigneeId?{assigneeId}:{})};
- const updated=state.tasks.concat(newTask).slice(-60);
+ const fresh=recipients.filter(assigneeId=>
+  !state.tasks.some(item=>taskDuplicateKey(item)===taskDuplicateKey({text:title,assigneeId,done:false}))
+ );
+ if(!fresh.length){
+  feedbackTask('Такое поручение уже есть у выбранных сотрудников.');
+  return false;
+ }
+ const created=fresh.map((assigneeId,i)=>({
+  id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
+  text:title,done:false,assigneeId,
+  ...(source?.room?{source:'chat',room:source.room}:{})
+ }));
+ const updated=state.tasks.concat(created).slice(-60);
  if(!save(TASK_KEY,updated))return false;
  state.tasks=updated;renderTasks();
- if(assigneeId==='elena'){state.lastDemoTaskId=newTask.id;$('svcpPreviewOnHome').hidden=false;}
- else{$('svcpPreviewOnHome').hidden=true;}
+ const demoElena=created.find(item=>item.assigneeId==='elena');
+ if(demoElena){state.lastDemoTaskId=demoElena.id;$('svcpPreviewOnHome').hidden=false}
+ else{$('svcpPreviewOnHome').hidden=true}
+ const status=chosen==='all'
+  ?'Созданы отдельные поручения: '+fresh.map(id=>STAFF[id]).join(', ')+'.'
+  :'Поручение для '+STAFF[fresh[0]]+' создано.';
+ feedbackTask(status+' Пока это локальное демо: уведомления сотрудникам не отправляются.');
  return true;
 }
 $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
@@ -614,7 +638,6 @@ $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
  if(!storeTask(title,source))return;
  cancelTaskDraft();
  $('svcpOpenTasks').hidden=false;
- setStatus('Поручение добавлено в «Дела → Команде» на этом устройстве. Сотрудникам не отправлено.');
 });
 $('svcpCallSayvi')?.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
@@ -696,7 +719,42 @@ function renderTasks(){
   copy.append(el('strong','svcp-task-title',t.text));
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee','Исполнитель: '+STAFF[t.assigneeId]+' · демо'));
-  else copy.append(el('small','svcp-task-assignee','Без исполнителя · демо'));
+  else{
+   copy.append(el('small','svcp-task-assignee','Не назначено · старое демо-поручение'));
+   if(!t.done){
+    const recipient=el('select','svcp-task-reassign');
+    recipient.setAttribute('aria-label','Назначить поручение «'+t.text.slice(0,65)+'»');
+    for(const [id,title] of [
+     ['','Назначить кому…'],['elena','Елена · кассир'],
+     ['anna','Анна · старший продавец'],['mikhail','Михаил · продавец'],
+     ['all','Всем · каждому отдельно']
+    ]){
+     const option=el('option','',title);option.value=id;recipient.append(option);
+    }
+    recipient.addEventListener('change',()=>{
+     const to=taskRecipients(recipient.value);
+     if(!to.length)return;
+     const chosen=to.filter(assigneeId=>
+      !state.tasks.some((item,j)=>j!==i&&taskDuplicateKey(item)===taskDuplicateKey({text:t.text,assigneeId,done:false}))
+     );
+     if(!chosen.length){
+      feedbackTask('Такое поручение уже назначено выбранным сотрудникам.');
+      recipient.value='';return;
+     }
+     const [first,...others]=chosen;
+     const added=others.map((assigneeId,k)=>({
+      ...t,id:'assigned-'+Date.now()+'-'+k+'-'+Math.random().toString(36).slice(2,6),
+      assigneeId,done:false
+     }));
+     const updated=state.tasks.map((item,j)=>j===i?{...item,assigneeId:first}:item).concat(added).slice(-60);
+     if(!save(TASK_KEY,updated)){recipient.value='';return}
+     state.tasks=updated;
+     renderTasks();syncPreviewAfterTaskEdit();
+     feedbackTask('Назначено: '+chosen.map(id=>STAFF[id]).join(', ')+'. Демо, без доставки на телефон.');
+    });
+    copy.append(recipient);
+   }
+  }
   const actions=el('div','svcp-task-actions');
   actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
   actions.append(btn('Удалить',()=>{
@@ -788,9 +846,13 @@ chatRoot.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button
 }));
 $('svcpTaskForm')?.addEventListener('submit',e=>{
  e.preventDefault();
- const input=$('svcpTaskInput');const txt=input?.value.trim()||'';
- if(!txt)return;
- if(storeTask(txt,null))input.value='';
+ const input=$('svcpTaskInput'),recipient=$('svcpTaskAssignee');
+ const txt=input?.value.trim()||'',assigneeId=recipient?.value||'';
+ if(!txt||!assigneeId)return;
+ if(storeTask(txt,{assigneeId})){
+  input.value='';
+  recipient.value='';
+ }
 });
 // Business tools keep their original handlers; the surrounding layout is unified.
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
