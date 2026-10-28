@@ -79,6 +79,11 @@ chatRoot.querySelectorAll('[data-svcp-room]').forEach(button=>
  button.addEventListener('click',()=>openRoom(button.dataset.svcpRoom)));
 const STAFF={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
 function roomDetails(){return ROOMS.find(x=>x.id===state.room)||ROOMS[0]}
+function privateAssignmentRecipient(){
+ const room=roomDetails();
+ return state.viewpoint==='manager'&&room.kind==='personal'&&room.person&&
+  Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:'';
+}
 function senderName(msg){
  if(msg.role==='recognition')return '✦ Знак признания · демо';
  if(msg.role==='sayvi')return 'Сэйви · демо';
@@ -250,6 +255,14 @@ function updatePerspective(){
  $('svcpMentionElena').hidden=current.kind!=='groups';
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
  $('svcpRecognizeOpen').hidden=state.viewpoint==='elena'||!(current.person&&STAFF[current.person]);
+ const directTask=$('svcpComposerDirectTask'),recipient=privateAssignmentRecipient();
+ if(directTask){
+  directTask.hidden=!recipient;
+  directTask.setAttribute('aria-label',recipient
+   ?'Создать поручение для '+STAFF[recipient]+' из написанного текста'
+   :'Поручить написанное сотруднику');
+  $('svcpChatForm')?.classList.toggle('svcp-can-assign',!!recipient);
+ }
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
 }
 $('svcpConversationBack')?.addEventListener('click',showInbox);
@@ -511,8 +524,12 @@ function renderChat(){
     actions.append(moreButton);
     menu.append(btn('↩ Ответить',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
     menu.append(btn('Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
-    if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
-     menu.append(btn('📌 Поручить',()=>{closeMessageMenus();prepareTask(msg)},'svcp-message-menu-item'));
+    if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
+     menu.append(btn('Поручить',()=>{
+      closeMessageMenus();
+      if(privateAssignmentRecipient())assignExistingMessage(msg,index);
+      else prepareTask(msg);
+     },'svcp-message-menu-item'));
     }
     bubble.tabIndex=0;
     bubble.setAttribute('aria-description','Нажмите, чтобы ответить, выбрать реакцию или создать поручение');
@@ -629,7 +646,23 @@ function storeTask(text,source){
   ?'Созданы отдельные поручения: '+fresh.map(id=>STAFF[id]).join(', ')+'.'
   :'Поручение для '+STAFF[fresh[0]]+' создано.';
  feedbackTask(status+' Пока это локальное демо: уведомления сотрудникам не отправляются.');
- return true;
+ return created;
+}
+function assignExistingMessage(msg,index){
+ const person=privateAssignmentRecipient();
+ if(!person||msg.taskId)return;
+ const text=String(msg.suggestTask||msg.text||'').trim();
+ if(!text||text.length>140||text.includes('[Выбран файл:')){
+  setStatus('Для поручения нужен текст до 140 символов без вложения.');
+  return;
+ }
+ const created=storeTask(text,{assigneeId:person,room:state.room});
+ if(!created)return;
+ const updated=state.chat.map((item,i)=>i===index?{...item,taskId:created[0].id}:item);
+ if(save(CHAT_KEY,updated)){
+  state.chat=updated;
+  renderChat();
+ }else setStatus('Поручение создано, но отметку в чате сохранить не удалось.');
 }
 $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
  event.preventDefault();
@@ -669,6 +702,39 @@ fileInput?.addEventListener('change',()=>{
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
 }
+/* Direct assignment while composing in a personal chat:
+   text is the task, the current employee is the recipient. No extra form. */
+$('svcpComposerDirectTask')?.addEventListener('click',()=>{
+ const person=privateAssignmentRecipient(),input=$('svcpChatInput');
+ const text=input?.value.trim()||'';
+ if(!person){setStatus('Поручение напрямую доступно в личном чате сотрудника.');return}
+ if(!text){setStatus('Напишите поручение и нажмите «Поручить».');input?.focus({preventScroll:true});return}
+ if(text.length>140){
+  setStatus('Для поручения можно написать до 140 символов. Сократите текст или отправьте как сообщение.');
+  input?.focus({preventScroll:true});return;
+ }
+ if(state.file){
+  setStatus('Прикрепление файлов к поручениям пока не подключено. Уберите файл или отправьте обычное сообщение.');
+  return;
+ }
+ const created=storeTask(text,{assigneeId:person,room:state.room});
+ if(!created)return;
+ const message={
+  room:state.room,role:'self',text:'📌 Поручение: '+text,at:Date.now(),
+  taskId:created[0].id,
+  ...(state.replyTo?{replyTo:state.replyTo}:{})
+ };
+ const updated=state.chat.concat(message).slice(-500);
+ if(save(CHAT_KEY,updated)){
+  state.chat=updated;
+  input.value='';
+  closeComposerEmoji();clearReply();cancelTaskDraft();
+  renderChat();
+  setStatus('Поручение для '+STAFF[person]+' сохранено в делах и переписке. Демо, без отправки на другой телефон.');
+ }else{
+  setStatus('Поручение для '+STAFF[person]+' создано в делах, но сообщение в чате не сохранилось.');
+ }
+});
 $('svcpChatForm')?.addEventListener('submit',event=>{
  event.preventDefault();
  const input=$('svcpChatInput'),txt=input?.value.trim()||'';
