@@ -882,3 +882,42 @@
 #tasksPage #svcpTaskList .svcp-task{min-height:57px;padding:8px 0}
 #tasksPage #svcpTaskList .svcp-task-copy{gap:3px}
 #tasksPage #svcpTaskList .svcp-task-actions{gap:0}
+
+/* SEYVEO temporary plan and work-perspective preview */
+#managePage .svcp-preview-management{margin-bottom:14px}
+#managePage .svcp-preview-panel{border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;padding:12px 14px;background:var(--card);display:grid;gap:8px}
+#managePage .svcp-preview-panel label{font-size:12px;font-weight:570;color:var(--text)}
+#managePage .svcp-preview-panel select{min-width:0;width:100%;min-height:44px;background:var(--seyveo-hdr-active,var(--card2));color:var(--text);border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;padding:8px 10px;font:inherit;font-size:13px}
+#managePage .svcp-preview-panel select:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:1px}
+#managePage .svcp-preview-panel p{margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45}
+#tasksPage #unifiedTasksTabs button[hidden]{display:none!important}
+#tasksPage #unifiedTasksTabs:has(button[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#tasksPage .svcp-large-note{margin:7px 0 0;padding:10px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.5}
+#tasksPage .svcp-large-note[hidden],#tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
+#tasksPage #unifiedEmployeeTasksView{min-width:0;display:grid;gap:16px;padding:0 2px 30px}
+#tasksPage .svcp-employee-intro{display:grid;gap:5px}
+#tasksPage .svcp-employee-kicker{color:var(--seyveo-emerald);font-size:10px;letter-spacing:.1em;font-weight:580}
+#tasksPage .svcp-employee-intro h2{font-size:20px;line-height:1.25;font-weight:600;margin:0}
+#tasksPage .svcp-employee-intro p{margin:0;color:var(--secondary);font-size:12px;line-height:1.45}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold{margin:0;padding:12px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--card)}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary{font-size:14px;font-weight:580;color:var(--text);cursor:pointer;list-style:none}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary small{display:block;font-size:11px;color:var(--secondary);margin-top:4px;font-weight:400}
+#tasksPage .svcp-employee-shift .seyveo-shift-demo{display:grid;gap:9px;min-width:0;margin-top:12px}
+#tasksPage .svcp-employee-shift .seyveo-shift-demo>p,#tasksPage .svcp-employee-shift .seyveo-shift-demo>div{margin:0}
+#tasksPage .svcp-employee-shift .seyveo-shift-demo button{width:100%;min-height:44px;border-radius:13px}
+#tasksPage .svcp-employee-shift .seyveo-shift-label{font-size:12px;color:var(--secondary)}
+#tasksPage .svcp-employee-shift .svcp-shift-explanation{font-size:11px;color:var(--secondary);line-height:1.5}
+#tasksPage .svcp-employee-shift .svcp-shift-explanation summary{cursor:pointer;color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-shift .svcp-shift-explanation small{display:block;margin-top:8px;font-size:11px;line-height:1.5}
+#tasksPage .svcp-employee-assignments,#tasksPage .svcp-employee-chats{display:grid;gap:9px;min-width:0}
+#tasksPage .svcp-employee-section-top{display:flex;justify-content:space-between;align-items:center}
+#tasksPage .svcp-employee-section-top h3{font-size:15px;font-weight:570;margin:0}
+#tasksPage .svcp-employee-section-top span{color:var(--secondary);font-size:12px}
+#tasksPage .svcp-employee-empty{color:var(--secondary);font-size:12px;margin:0}
+#tasksPage .svcp-employee-task{display:flex;align-items:center;min-height:46px;gap:10px;border-bottom:1px solid var(--soft-line);color:var(--text);font-size:13px}
+#tasksPage .svcp-employee-task input{accent-color:var(--seyveo-emerald);width:19px;height:19px;flex:none}
+#tasksPage .svcp-employee-task span{flex:1;min-width:0;overflow-wrap:anywhere}
+#tasksPage .svcp-employee-task.is-done span{text-decoration:line-through;color:var(--secondary)}
+#tasksPage #unifiedEmployeeChatHost{min-width:0}
+#tasksPage #unifiedEmployeeChatHost #svcpChats{display:block}
