@@ -241,7 +241,6 @@ back.addEventListener('click',()=>{
  $('navHome')?.click();
 });
 $('sayviExploreFromComposer')?.addEventListener('click',()=>{ $('hideInput')?.click();open('gallery') });
-$('openLivingAnswersPreview')?.addEventListener('click',()=>open('gallery'));
 window.addEventListener('hashchange',sync);
 window.SEYVEO_LIVING_ANSWERS=Object.freeze({open,understand,sync,topics:()=>Object.keys(scenarios)});
 sync();

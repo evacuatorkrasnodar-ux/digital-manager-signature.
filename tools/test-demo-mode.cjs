@@ -10,7 +10,9 @@ const html=fs.readFileSync('index.html','utf8');
 const src=fs.readFileSync('assets/demo-mode.js','utf8');
 const picture=fs.readFileSync('assets/picture.js','utf8');
 new vm.Script(src,{filename:'demo-mode.js'});
-const required=['openSeyveoDemoMode','seyveoDemoModeState','pictureDemoExit','pictureDemoLabel','pictureDemoWorkspace'];
+const required=['pictureDemoExit','pictureDemoLabel','pictureDemoWorkspace'];
+for(const id of ['openSeyveoDemoMode','seyveoDemoModeState'])
+ assert.ok(!html.includes('id="'+id+'"'),'Retired demo switch is not shown: '+id);
 for(const id of required)assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'Unique control '+id);
 assert.match(html,/assets\/demo-mode\.js\?v=1/);
 assert.match(picture,/return actual\|\|\(window\.SEYVEO_DEMO_MODE\?\.isEnabled\?\.\(\)\?sampleData\(\):null\)/,
@@ -47,10 +49,9 @@ vm.runInNewContext(src,{document,window,sessionStorage,Event,CustomEvent,locatio
 const api=window.SEYVEO_DEMO_MODE;
 assert.equal(api.isEnabled(),false,'Opt-in is off initially');
 assert.equal(nodes.pictureDemoWorkspace.hidden,true);
-nodes.openSeyveoDemoMode.click();
+api.setEnabled(true);
 assert.equal(api.isEnabled(),true);
-assert.equal(location.hash,'#picture','Start on actual Pulse route');
-assert.equal(nodes.openSeyveoDemoMode.attrs['aria-pressed'],'true');
+assert.equal(location.hash,'#manage','Internal compatibility API never navigates by itself');
 assert.equal(nodes.pictureDemoWorkspace.hidden,false);
 assert.equal(nodes.pictureDemoExit.hidden,false);
 assert.equal(storage.get('seyveo-demo-session-v1'),'on');
@@ -63,6 +64,5 @@ assert.equal(nodes.pictureDemoExit.hidden,true);
 assert.equal(nodes.pictureDemoLabel.hidden,true);
 assert.equal(storage.size,0,'No demo flag remains');
 assert.ok(events.some(x=>x.type==='seyveo:demo-mode-reset'),'Training records should be reset');
-assert.equal(nodes.openSeyveoDemoMode.attrs['aria-pressed'],'false');
 assert.ok(fs.readFileSync('assets/pulse-inbox-demo.js','utf8').includes("window.addEventListener('seyveo:demo-mode-reset'"),'Queue reset handler present');
-console.log('PASS real-page Demo Mode: opt-in, open Picture, isolated state, safe exit and reset.');
+console.log('PASS real-page Demo Mode: retired switch, internal compatibility API, isolated state, safe exit and reset.');

@@ -664,7 +664,6 @@ window.addEventListener('pageshow',event=>{
  if(event.persisted&&tracks.length&&index>=0&&!audio.getAttribute('src'))
   switchTrack(index,false);
 });
-$('openSeyveoMusicPreview')?.addEventListener('click',open);
 $('sayviMusicFromComposer')?.addEventListener('click',()=>{
  $('hideInput')?.click();open();
 });

@@ -322,10 +322,7 @@ $('seyveoCompanyEditTop')?.addEventListener('click',()=>{
 });
 brand.addEventListener('click',openStudio);
 company.addEventListener('click',openCompany);
-// Two Home shortcuts are retired visually. Their complete real dialogs
-// remain available from Management, including company QR inside the dialog.
-$('openStudioPassportFromManage')?.addEventListener('click',openStudio);
-$('openCompanyPassportFromManage')?.addEventListener('click',openCompany);
+// The dialogs stay available from the existing brand and company controls.
 window.SEYVEO_COMPANY_PASSPORT=Object.freeze({open:openCompany});
 form.addEventListener('submit',save);
 form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{

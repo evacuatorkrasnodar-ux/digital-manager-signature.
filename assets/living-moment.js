@@ -7,7 +7,6 @@
 const $=id=>document.getElementById(id);
 const home=$('homePage'),stage=$('stage'),dynamic=$('dynamic'),space=$('seyveoLivingMoment');
 const tiles=$('seyveoLivingTiles'),tip=$('seyveoLivingCaption');
-const replay=$('openLivingMomentPreview'),caption=$('livingMomentPreviewStatus');
 if(!home||!stage||!dynamic||!space||!tiles)return;
 const MOTION=window.matchMedia?.('(prefers-reduced-motion: reduce)');
 const reduced=()=>!!MOTION?.matches;
@@ -582,7 +581,6 @@ function startPreview(){
  // Each of the three independent cards rises from below the screen.
  // After their arrival, they join a SINGLE card that remains readable.
  hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
- if(caption)caption.textContent='Quiet Cinema: показ '+previewCount+' сцен без изменения личных данных.';
  return true;
 }
 function dueTasks(){
@@ -723,11 +721,6 @@ dynamic.addEventListener('click',event=>{
  reason.hidden=!reason.hidden;
  button.textContent=reason.hidden?'Почему':'Скрыть';
 },true);
-replay?.addEventListener('click',()=>{
- if(replay.closest('dialog[open]'))replay.closest('dialog').close();
- $('navHome')?.click();
- later(()=>{startPreview()},260);
-});
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
  preview:()=>startPreview(),state:()=>mode,
  deferred:()=>deferredPreview(),
