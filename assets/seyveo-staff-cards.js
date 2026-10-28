@@ -231,6 +231,14 @@ function renderProfile(){
 modal.addEventListener('close',()=>{chosen=null;showPlan=false;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
 modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
 window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)})});
+window.SEYVEO_STAFF_CARDS=Object.freeze({open:personId=>{
+ const person=people.find(p=>p.id===personId);
+ if(!person)return false;
+ if(location.hash!=='#manage')location.hash='#manage';
+ document.querySelector('[data-clean-business="people"]')?.click();
+ openPerson(person,null);
+ return true;
+}});
 window.addEventListener('seyveo:recognition-changed',()=>{
  renderDirectory();
  if(modal.open&&chosen)renderProfile();
