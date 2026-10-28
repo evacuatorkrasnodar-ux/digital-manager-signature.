@@ -908,7 +908,7 @@ function renderChat(){
     moreButton.setAttribute('aria-expanded','false');
     actions.append(moreButton);
     function svcpActionIcon(title,kind,callback,className){
-     const control=btn('',callback,className+' svcp-icon-action');
+     const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
      control.title=title;
      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -931,11 +931,13 @@ function renderChat(){
     }
     menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
     menu.append(svcpActionIcon('Реакция','reaction',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
-    menu.append(svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
+    const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
      if(!save(CHAT_KEY,updated))return;
      state.chat=updated;renderChat();renderDirectory();
-    },'svcp-message-menu-item'));
+    },'svcp-message-menu-item');
+    starControl.classList.toggle('is-saved',!!msg.starred);
+    menu.append(starControl);
     menu.append(svcpActionIcon('Копировать','copy',async()=>{
      closeMessageMenus();
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
