@@ -770,7 +770,7 @@ const cameraInputs={shelf:$('svcpCameraPhoto'),price:$('svcpCameraPhoto'),
 const cameraTray=$('svcpCameraTray'),cameraToggle=$('svcpCameraToggle');
 const cameraPurposeNames={shelf:'Фото выкладки',price:'Фото ценника',
  video:'Рабочее видео',barcode:'Штрихкод',file:'Вложение'};
-let cameraBusy=false;
+let cameraBusy=false,photoCapturePurpose='shelf';
 function setCameraTray(open){
  if(!cameraTray||!cameraToggle)return;
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
@@ -852,9 +852,16 @@ function pickCaptureFile(file,purpose){
  if(purpose==='barcode'){setCameraTray(true);detectPhotoBarcode(file)}
  else setCameraTray(false);
 }
-for(const [kind,input] of Object.entries(cameraInputs)){
- input?.addEventListener('change',()=>{
-  const file=input.files?.[0];
+// "Выкладка" and "Ценник" use one photo input; register its change
+// listener only once, otherwise the second handler overwrites the purpose.
+$('svcpCameraPhoto')?.addEventListener('change',()=>{
+ const file=$('svcpCameraPhoto').files?.[0];
+ if(file)pickCaptureFile(file,photoCapturePurpose);
+});
+for(const [kind,id] of [['video','svcpCameraVideo'],['barcode','svcpCameraBarcode'],['file','svcpFile']]){
+ const picker=$(id);
+ picker?.addEventListener('change',()=>{
+  const file=picker.files?.[0];
   if(file)pickCaptureFile(file,kind);
  });
 }
@@ -862,6 +869,7 @@ cameraTray?.querySelectorAll('[data-svcp-capture]').forEach(button=>
  button.addEventListener('click',()=>{
   const type=button.dataset.svcpCapture;
   const input=cameraInputs[type];if(!input)return;
+  if(type==='shelf'||type==='price')photoCapturePurpose=type;
   if(type==='barcode'){$('svcpBarcodeManual').hidden=false}
   else setCameraTray(false);
   input.value='';input.click();
