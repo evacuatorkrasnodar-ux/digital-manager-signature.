@@ -98,7 +98,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  display:flex!important;align-items:flex-end!important;flex-wrap:wrap!important;
  gap:9px!important;min-height:101px;margin:0!important;
  padding:10px max(13px,env(safe-area-inset-right,0px))
-  calc(13px + env(safe-area-inset-bottom,0px))
+  8px
   max(13px,env(safe-area-inset-left,0px))!important;
  background:var(--card)!important;border-top:1px solid var(--soft-line)!important;
  position:relative!important;inset:auto!important;bottom:auto!important;
