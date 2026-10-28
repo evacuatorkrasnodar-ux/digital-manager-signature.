@@ -274,7 +274,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  grid-column:2!important;grid-row:1!important;display:flex!important;align-items:flex-end!important;
  min-width:0!important;min-height:46px!important;max-height:138px!important;
  border:0!important;outline:0!important;border-radius:24px!important;box-shadow:none!important;
- background:rgba(142,169,160,.09)!important;overflow:hidden!important
+ background:transparent!important;overflow:hidden!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important}
 #tasksPage[data-work-chat-open="true"] #svcpPolishMessage{
@@ -304,7 +304,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpVoiceRecord{
- display:grid!important;place-items:center!important;background:rgba(142,169,160,.09)!important;color:var(--text)!important
+ display:grid!important;place-items:center!important;background:transparent!important;color:var(--text)!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send{
  display:none!important;place-items:center!important;
