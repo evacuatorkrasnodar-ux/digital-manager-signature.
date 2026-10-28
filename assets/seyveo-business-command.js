@@ -28,8 +28,73 @@ const ROOMS=[
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
 ];
-const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
+const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
+let mediaDatabasePromise=null,mediaRenderedUrls=[];
+/* Only local browser storage, never a server upload or a message delivery. */
+function mediaDatabase(){
+ if(!('indexedDB' in window))return Promise.reject(new Error('Локальное хранилище медиа недоступно'));
+ if(!mediaDatabasePromise){
+  mediaDatabasePromise=new Promise((resolve,reject)=>{
+   const req=indexedDB.open('seyveo-workchat-media-v1',1);
+   req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('files'))req.result.createObjectStore('files',{keyPath:'id'})};
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>reject(req.error||new Error('Не удалось открыть локальное хранилище'));
+   req.onblocked=()=>reject(new Error('Хранилище занято другой вкладкой'));
+  }).catch(error=>{mediaDatabasePromise=null;throw error});
+ }
+ return mediaDatabasePromise;
+}
+async function saveMediaLocally(file){
+ const db=await mediaDatabase();
+ const id='photo-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
+ await new Promise((resolve,reject)=>{
+  const tx=db.transaction('files','readwrite');
+  tx.oncomplete=resolve;
+  tx.onerror=()=>reject(tx.error||new Error('Не сохранился файл'));
+  tx.onabort=()=>reject(tx.error||new Error('Запись отменена'));
+  tx.objectStore('files').put({id,blob:file,name:file.name,type:file.type,at:Date.now()});
+ });
+ return id;
+}
+async function loadMediaLocally(id){
+ const db=await mediaDatabase();
+ return new Promise((resolve,reject)=>{
+  const request=db.transaction('files','readonly').objectStore('files').get(id);
+  request.onsuccess=()=>resolve(request.result||null);
+  request.onerror=()=>reject(request.error||new Error('Файл недоступен'));
+ });
+}
+function clearMediaRenderUrls(){
+ for(const url of mediaRenderedUrls)URL.revokeObjectURL(url);
+ mediaRenderedUrls=[];
+}
+function restoreStoredMedia(container,message){
+ if(!message.mediaId)return;
+ const slot=el('div','svcp-media-slot','Открываю вложение…');
+ container.append(slot);
+ loadMediaLocally(message.mediaId).then(record=>{
+  if(!slot.isConnected)return;
+  slot.replaceChildren();
+  if(!record?.blob){slot.textContent='Вложение недоступно на этом устройстве';return}
+  const url=URL.createObjectURL(record.blob);mediaRenderedUrls.push(url);
+  if(record.type?.startsWith('image/')){
+   const picture=el('img','svcp-chat-media-image');
+   picture.src=url;picture.alt='Фото: '+(record.name||'рабочая съёмка');picture.loading='lazy';
+   slot.append(picture);
+  }else if(record.type?.startsWith('video/')){
+   const video=el('video','svcp-chat-media-video');
+   video.src=url;video.controls=true;video.playsInline=true;video.preload='metadata';
+   video.setAttribute('aria-label','Рабочее видео: '+(record.name||''));slot.append(video);
+  }else{
+   const link=el('a','svcp-chat-media-file','Открыть файл · '+(record.name||'вложение'));
+   link.href=url;link.download=record.name||'seyveo-file';slot.append(link);
+  }
+  const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
+  slot.append(note);
+ }).catch(()=>{if(slot.isConnected)slot.textContent='Вложение недоступно в этом браузере'});
+}
+
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -498,6 +563,7 @@ function renderChat(){
  closeMessageMenus();
  chatRoot.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
+ clearMediaRenderUrls();
  thread.replaceChildren();
  const messages=state.chat.map((msg,index)=>({msg,index}))
   .filter(x=>x.msg&&x.msg.room===state.room&&typeof x.msg.text==='string');
@@ -526,6 +592,7 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.mediaId)restoreStoredMedia(bubble,msg);
    if(msg.demoReaction){
     const chip=btn(msg.demoReaction+' 1',()=>applyMessageEmoji(index,msg.demoReaction),'svcp-bubble-reaction');
     chip.setAttribute('aria-label','Убрать реакцию '+msg.demoReaction);
@@ -1043,7 +1110,7 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
   return true;
  }
 });
-window.addEventListener('pagehide',cleanupPreview);
+window.addEventListener('pagehide',()=>{cleanupPreview();clearMediaRenderUrls()});
 preparePeopleContent();
 renderTasks();
 tab('chats');
