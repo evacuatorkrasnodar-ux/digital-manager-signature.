@@ -313,6 +313,35 @@ function syncComposerActions(){
  form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
+
+/* Draft polishing is opt-in and never sends a message. Basic offline demo only. */
+function polishDraftLocally(raw){
+ let value=raw.trim().replace(/[ \t]+/g,' ').replace(/\s*([,;:!?])\s*/g,'$1 ').replace(/\s+([.])/g,'$1');
+ const replacements=[
+  [/\bщас\b/giu,'сейчас'],[/\bпж\b/giu,'пожалуйста'],[/\bплиз\b/giu,'пожалуйста'],
+  [/\bспс\b/giu,'спасибо'],[/\bнезнаю\b/giu,'не знаю'],[/\bнемогу\b/giu,'не могу'],
+  [/\bче\b/giu,'что'],[/\bчё\b/giu,'что'],[/\bок\b/giu,'хорошо']
+ ];
+ for(const [pattern,replacement] of replacements)value=value.replace(pattern,replacement);
+ value=value.replace(/\s+/g,' ').trim();
+ if(!value)return '';
+ value=value.charAt(0).toLocaleUpperCase('ru-RU')+value.slice(1);
+ if(!/[.!?…]$/.test(value))value+='.';
+ return value;
+}
+$('svcpPolishMessage')?.addEventListener('click',()=>{
+ const input=$('svcpChatInput');if(!input)return;
+ const original=input.value;
+ if(!original.trim()){setStatus('Сначала напиши сообщение своими словами.');input.focus();return}
+ const improved=polishDraftLocally(original);
+ if(!improved||improved===original.trim()){setStatus('Текст уже выглядит аккуратно. Проверь его перед отправкой.');return}
+ input.value=improved;
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+ input.focus({preventScroll:true});
+ input.setSelectionRange(improved.length,improved.length);
+ setStatus('Сэйви поправила оформление текста (демо). Проверь смысл перед отправкой.');
+});
+
 function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node}
 
 /* Reuse the working employee, shift, recruitment and ROI widgets rather than
