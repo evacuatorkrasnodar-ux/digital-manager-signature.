@@ -16,7 +16,10 @@ assert.ok(employeeStyle.includes('border-radius:18px;border:1px solid rgba(255,2
  'Employee star gets a unique quiet-square silver badge, not the round Music medallion');
 assert.match(html,/class="svcp-recognition-star" d="M32 7 L/,'Employee recognition uses a distinct eight-point star');
 assert.match(html,/class="svcp-recognition-heart"/,'Employee recognition is an appreciation symbol, not a Music favorite');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=46/,'New employee award style is cache-busted');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=47/,'Compact profile and employee award style are cache-busted');
+assert.doesNotMatch(html,/class="svcp-employee-profile-caption"/,'No redundant caption takes space below the avatar');
+assert.match(employeeStyle,/#tasksPage \.svcp-employee-profile-toggle\{\s*position:absolute;right:0;top:0/,'Avatar docks to the top right of Elena header');
+assert.match(employeeStyle,/#tasksPage \.svcp-employee-person\{gap:2px;min-width:0;padding-right:56px\}/,'Employee name and live shift status remain readable beside the avatar');
 for(const label of ["all:'Команда'","people:'Сотрудники'","extra:'Рабочие группы'","assistant:'Сэйви'"])
  assert.ok(js.includes(label),'Chat section '+label);
 assert.ok(js.includes("const managerDialog=employeePreviewActive()&&room.id==='dm-elena'"));
