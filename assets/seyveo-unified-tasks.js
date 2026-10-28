@@ -316,6 +316,20 @@
  let chatReturnFocus=null;
  const chatTop=$('svcpWorkChatBack');
  const chatViewport=window.visualViewport;
+ const workComposer=$('svcpChatInput');
+ const composerMinHeight=44;
+ function resizeWorkComposer(){
+  if(page.dataset.workChatOpen!=='true'||!workComposer)return;
+  // ScrollHeight includes manually entered newlines and naturally wrapped lines.
+  // Compact when empty, expand up to ~5 lines as the message grows.
+  const viewHeight=window.visualViewport?.height||window.innerHeight||700;
+  const limit=Math.max(76,Math.min(164,Math.floor(viewHeight*.30)));
+  workComposer.style.setProperty('height',composerMinHeight+'px','important');
+  const natural=Math.max(composerMinHeight,workComposer.scrollHeight||composerMinHeight);
+  const actual=Math.min(limit,natural);
+  workComposer.style.setProperty('height',actual+'px','important');
+  workComposer.style.setProperty('overflow-y',natural>limit?'auto':'hidden','important');
+ }
  function updateWorkChatViewport(){
   if(page.dataset.workChatOpen!=='true'||!employeeChatScreen)return;
   const viewport=window.visualViewport;
@@ -323,10 +337,14 @@
   const top=Math.max(0,Math.round(viewport?.offsetTop||0));
   employeeChatScreen.style.setProperty('--svcp-visible-height',height+'px');
   employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
+  resizeWorkComposer();
  }
  function closeEmployeeChat({restoreFocus=true}={}){
   if(page.dataset.workChatOpen!=='true')return;
-  const composer=$('svcpChatInput');if(composer){composer.blur();composer.rows=1}
+  const composer=$('svcpChatInput');if(composer){
+   composer.blur();composer.rows=1;
+   composer.style.removeProperty('height');composer.style.removeProperty('overflow-y')
+  }
   // The original chat still belongs to the manager's hub while it is closed.
   if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   page.dataset.workChatOpen='false';
@@ -354,7 +372,7 @@
   const heading=page.querySelector('.tasks-heading');
   if(heading)heading.inert=true;
   employee.inert=true;business.inert=true;
-  const input=$('svcpChatInput');if(input)input.rows=3;
+  const input=$('svcpChatInput');if(input)input.rows=1;
   // Null selects the real conversation list; assignments open the real DM.
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,'elena');
   updateWorkChatViewport();
@@ -369,6 +387,9 @@
   });
  }
  chatTop?.addEventListener('click',()=>closeEmployeeChat());
+ workComposer?.addEventListener('input',resizeWorkComposer);
+ workComposer?.addEventListener('focus',resizeWorkComposer);
+ window.addEventListener('seyveo:work-chat-sent',resizeWorkComposer);
  chatViewport?.addEventListener('resize',updateWorkChatViewport);
  chatViewport?.addEventListener('scroll',updateWorkChatViewport);
  window.addEventListener('resize',updateWorkChatViewport);
