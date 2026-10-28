@@ -763,25 +763,120 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
  input.focus({preventScroll:true});
  input.setSelectionRange(input.value.length,input.value.length);
 });
+/* Camera is a single entry point, with user-initiated system capture on mobile. */
 const fileInput=$('svcpFile');
+const cameraInputs={shelf:$('svcpCameraPhoto'),price:$('svcpCameraPhoto'),
+ video:$('svcpCameraVideo'),barcode:$('svcpCameraBarcode'),file:fileInput};
+const cameraTray=$('svcpCameraTray'),cameraToggle=$('svcpCameraToggle');
+const cameraPurposeNames={shelf:'Фото выкладки',price:'Фото ценника',
+ video:'Рабочее видео',barcode:'Штрихкод',file:'Вложение'};
+let cameraBusy=false;
+function setCameraTray(open){
+ if(!cameraTray||!cameraToggle)return;
+ cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
+}
+cameraToggle?.addEventListener('click',()=>setCameraTray(cameraTray.hidden));
+document.addEventListener('keydown',event=>{if(event.key==='Escape')setCameraTray(false)});
 function cleanupPreview(){
  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
- state.file=null;
- const display=$('svcpAttachmentPreview');if(display){display.replaceChildren();display.hidden=true}
+ state.file=null;state.filePurpose='file';state.scanCode='';
+ for(const input of new Set(Object.values(cameraInputs))){if(input)input.value=''}
+ const barcode=$('svcpBarcodeInput');if(barcode)barcode.value='';
+ const display=$('svcpAttachmentPreview');
+ if(display){display.replaceChildren();display.hidden=true}
 }
-fileInput?.addEventListener('change',()=>{
- cleanupPreview();
- const file=fileInput.files?.[0];if(!file)return;
- if(file.size>20*1024*1024){fileInput.value='';setStatus('Для демонстрационного просмотра выберите файл до 20 МБ.');return}
- state.file=file;
+function renderCapturePreview(){
  const display=$('svcpAttachmentPreview');if(!display)return;
- display.hidden=false;
- if(file.type.startsWith('image/')){
-  state.objectUrl=URL.createObjectURL(file);
-  const img=el('img');img.src=state.objectUrl;img.alt='Предпросмотр выбранной фотографии';display.append(img);
+ display.replaceChildren();
+ if(!state.file&&!state.scanCode){display.hidden=true;return}
+ display.hidden=false;display.classList.add('svcp-work-media-preview');
+ if(state.file){
+  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
+  state.objectUrl=URL.createObjectURL(state.file);
+  if(state.file.type.startsWith('image/')){
+   const img=el('img','svcp-selected-photo');
+   img.src=state.objectUrl;img.alt='Выбранный снимок, пока только на этом устройстве';
+   display.append(img);
+  }else if(state.file.type.startsWith('video/')){
+   const video=el('video','svcp-selected-video');video.src=state.objectUrl;
+   video.controls=true;video.playsInline=true;video.preload='metadata';
+   display.append(video);
+  }
  }
- display.append(el('span',null,file.name+' · только предпросмотр на устройстве'));
- display.append(btn('Убрать',()=>{fileInput.value='';cleanupPreview()},'svcp-ghost'));
+ const info=el('div','svcp-selected-info');
+ info.append(el('strong',null,cameraPurposeNames[state.filePurpose]||'Вложение'));
+ if(state.file)info.append(el('small',null,state.file.name+' · сохранится в этом браузере после отправки'));
+ if(state.scanCode)info.append(el('small','svcp-scanned-code','Код: '+state.scanCode+' · товар по базе не проверен'));
+ else if(state.filePurpose==='shelf')info.append(el('small',null,'Для проверки выкладки снимите всю полку и отдельно крупно ценники.'));
+ else if(state.filePurpose==='price')info.append(el('small',null,'Ценник должен быть читаемым. Сверка с каталогом пока недоступна.'));
+ else if(state.filePurpose==='barcode')info.append(el('small',null,'Если код не распознался, введите цифры вручную.'));
+ display.append(info);
+ display.append(btn('Убрать',()=>{cleanupPreview();setStatus('Вложение убрано.')},'svcp-ghost svcp-selected-remove'));
+}
+async function detectPhotoBarcode(file){
+ if(!file||state.file!==file)return;
+ const manual=$('svcpBarcodeManual');
+ if(manual)manual.hidden=false;
+ if(typeof window.BarcodeDetector!=='function'){
+  setStatus('Сканирование штрихкода не поддерживается этим браузером. Введите код вручную или сохраните фото без кода.');
+  return;
+ }
+ try{
+  const formats=typeof window.BarcodeDetector.getSupportedFormats==='function'
+   ?await window.BarcodeDetector.getSupportedFormats():[];
+  const wanted=['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'];
+  const allowed=formats.filter(x=>wanted.includes(x));
+  const detector=new window.BarcodeDetector(allowed.length?{formats:allowed}:undefined);
+  const results=await detector.detect(file);
+  if(state.file!==file)return;
+  const recognized=results.find(x=>typeof x.rawValue==='string'&&x.rawValue.trim());
+  if(!recognized){setStatus('Код на фото не распознан. Попробуйте ближе или введите вручную.');return}
+  state.scanCode=recognized.rawValue.trim().slice(0,96);
+  renderCapturePreview();
+  setStatus('Распознан код '+state.scanCode+'. Название товара и цену без базы магазина проверить нельзя.');
+ }catch{
+  setStatus('Автоматическое распознавание здесь недоступно. Можно ввести код вручную или прикрепить фото.');
+ }
+}
+function pickCaptureFile(file,purpose){
+ cleanupPreview();
+ if(!file)return;
+ const cap=file.type.startsWith('video/')?60*1024*1024:16*1024*1024;
+ if(file.size>cap){
+  setStatus('Файл слишком большой для локального демо. Видео до 60 МБ, фото и другие файлы до 16 МБ.');
+  return;
+ }
+ state.file=file;
+ state.filePurpose=purpose;
+ renderCapturePreview();
+ if(purpose==='barcode'){setCameraTray(true);detectPhotoBarcode(file)}
+ else setCameraTray(false);
+}
+for(const [kind,input] of Object.entries(cameraInputs)){
+ input?.addEventListener('change',()=>{
+  const file=input.files?.[0];
+  if(file)pickCaptureFile(file,kind);
+ });
+}
+cameraTray?.querySelectorAll('[data-svcp-capture]').forEach(button=>
+ button.addEventListener('click',()=>{
+  const type=button.dataset.svcpCapture;
+  const input=cameraInputs[type];if(!input)return;
+  if(type==='barcode'){$('svcpBarcodeManual').hidden=false}
+  else setCameraTray(false);
+  input.value='';input.click();
+ }));
+$('svcpBarcodeUse')?.addEventListener('click',()=>{
+ const raw=$('svcpBarcodeInput')?.value.trim().replace(/\s+/g,'')||'';
+ if(!/^[0-9A-Za-z.-]{4,48}$/.test(raw)){
+  setStatus('Введите штрихкод длиной 4–48 символов, без пробелов и специальных знаков.');
+  return;
+ }
+ state.scanCode=raw;
+ if(!state.file)state.filePurpose='barcode';
+ renderCapturePreview();
+ setCameraTray(false);
+ setStatus('Код '+raw+' добавлен к сообщению. Проверка по товарной базе ещё не подключена.');
 });
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
@@ -819,27 +914,56 @@ $('svcpComposerDirectTask')?.addEventListener('click',()=>{
   setStatus('Поручение для '+STAFF[person]+' создано в делах, но сообщение в чате не сохранилось.');
  }
 });
-$('svcpChatForm')?.addEventListener('submit',event=>{
+$('svcpChatForm')?.addEventListener('submit',async event=>{
  event.preventDefault();
+ if(cameraBusy)return;
  const input=$('svcpChatInput'),txt=input?.value.trim()||'';
- if(!txt&&!state.file){setStatus('Введите сообщение или выберите файл.');return}
- const fileName=state.file?.name;
- const message=[txt,fileName?'[Выбран файл: '+fileName+'. Это только имя — файл не отправлен и не сохранён.]':''].filter(Boolean).join('\n');
- const entry={room:state.room,text:message,at:Date.now(),role:state.viewpoint==='elena'?'demo-elena':'self',...(state.replyTo?{replyTo:state.replyTo}:{})};
- const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
- const messages=[entry];
- if(callSayvi){
-  const advice=suggestFromChat(txt);
-  messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
+ const file=state.file,purpose=state.filePurpose,barcode=state.scanCode;
+ if(!txt&&!file&&!barcode){setStatus('Напишите сообщение или откройте камеру.');return}
+ const type=file?.type||'';
+ const label=file?(purpose==='shelf'?'📷 Фото выкладки':purpose==='price'?'📷 Фото ценника':
+  purpose==='barcode'?'▥ Фото штрихкода':type.startsWith('video/')?'🎬 Видео':'📎 Вложение'):'';
+ const message=[txt,label,barcode?'Штрихкод: '+barcode:''].filter(Boolean).join('\n');
+ cameraBusy=true;
+ const sendButton=$('svcpChatForm')?.querySelector('[type="submit"]');
+ if(sendButton)sendButton.disabled=true;
+ try{
+  let mediaId=null;
+  if(file){
+   try{mediaId=await saveMediaLocally(file)}
+   catch{
+    setStatus('Файл не удалось сохранить в браузере. Проверьте свободное место и разрешения. Сообщение не отправлено.');
+    return;
+   }
+  }
+  const entry={room:state.room,text:message,at:Date.now(),
+   role:state.viewpoint==='elena'?'demo-elena':'self',
+   ...(mediaId?{mediaId,mediaType:type,mediaPurpose:purpose}:{}),
+   ...(state.replyTo?{replyTo:state.replyTo}:{})};
+  const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
+  const messages=[entry];
+  if(callSayvi){
+   if(file){
+    messages.push({room:state.room,role:'sayvi',at:Date.now(),
+     text:'Файл сохранён локально. Я пока не умею анализировать изображения и видео в этом демо. Для проверки выкладки нужны зрение ИИ, инструкции магазина и каталог товаров.'});
+   }else{
+    const advice=suggestFromChat(txt);
+    messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
+   }
+  }
+  const updated=state.chat.concat(messages).slice(-500);
+  if(!save(CHAT_KEY,updated))return;
+  state.chat=updated;
+  closeComposerEmoji();setCameraTray(false);
+  input.value='';cleanupPreview();clearReply();cancelTaskDraft();
+  renderChat();
+  setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
+   barcode?'Код записан локально, но не проверен по каталогу магазина.':
+   callSayvi?'Сэйви ответила шаблонной подсказкой, не настоящим ИИ.':'Сообщение сохранено локально, без доставки на другие устройства.');
+ }finally{
+  cameraBusy=false;
+  if(sendButton)sendButton.disabled=false;
  }
- const updated=state.chat.concat(messages).slice(-500);
- if(!save(CHAT_KEY,updated))return;
- state.chat=updated;
- closeComposerEmoji();
- input.value='';if(fileInput)fileInput.value='';
- cleanupPreview();clearReply();cancelTaskDraft();
- renderChat();
- setStatus(callSayvi?'Сэйви ответила шаблонной подсказкой. Это не подключённый ИИ.':state.viewpoint==='elena'?'Ответ Елены показан как учебный пример на этом устройстве.':'Сообщение записано локально. Доставки и уведомлений пока нет.');
 });
 $('svcpChatInput')?.addEventListener('keydown',event=>{
  if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){
