@@ -595,104 +595,49 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  font-size:23px;line-height:1;cursor:pointer;box-shadow:none
 }
 
-/* Black Velvet composer: reference-inspired spacious text surface, no AI label. */
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
- grid-template-rows:40px minmax(48px,auto)!important;
- align-items:center!important;column-gap:7px!important;row-gap:4px!important;
- padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))!important;
- border-radius:22px!important;min-height:102px!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage{
- grid-column:1!important;grid-row:1!important;
- display:grid!important;place-items:center!important;align-self:center!important;
- width:42px!important;height:40px!important;min-height:40px!important;min-width:42px!important;
- background:rgba(60,116,95,.12)!important;border:1px solid rgba(110,203,162,.32)!important;
- border-radius:14px!important;color:#85dfba!important;font-size:26px!important;padding:0!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-camera-toggle{
- grid-column:1!important;grid-row:2!important;align-self:end!important;
- width:42px!important;height:44px!important;min-width:42px!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
- grid-column:2!important;grid-row:1 / 3!important;align-self:stretch!important;
- border-radius:22px!important;min-height:96px!important;align-items:flex-end!important;
- background:rgba(19,23,24,.42)!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
- height:94px!important;min-height:94px!important;max-height:180px!important;
- padding:12px 8px 12px 12px!important;resize:none!important;align-self:stretch!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
- grid-column:3!important;grid-row:1!important;align-self:center!important;
- width:42px!important;height:40px!important;min-width:42px!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- grid-column:3!important;grid-row:2!important;align-self:end!important;
- width:44px!important;height:44px!important;min-width:44px!important;border-radius:50%!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-composer-direct-task:not([hidden]){
- grid-column:2!important;grid-row:3!important
-}
-@media(max-width:390px){
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
- grid-template-columns:40px minmax(0,1fr) 40px!important;gap:4px!important
- }
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage{
- width:38px!important;min-width:38px!important
- }
-}
 
-/* Screenshot-matched composer: tall unified field, slim left tool column. */
+/* Compact Telegram-like composer. Only the typed text grows the field. */
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
- grid-template-columns:52px minmax(0,1fr) 46px!important;
- grid-template-rows:42px 42px 42px!important;
- gap:3px 7px!important;min-height:142px!important;
- padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))!important;
- border-radius:26px!important;
+ display:grid!important;grid-template-columns:34px minmax(0,1fr) 42px!important;
+ grid-template-rows:repeat(3,25px)!important;gap:2px 6px!important;
+ min-height:0!important;padding:5px 7px calc(5px + env(safe-area-inset-bottom,0px))!important;
+ align-items:center!important;border-radius:20px!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle){
- grid-column:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
- width:48px!important;height:41px!important;min-width:48px!important;min-height:41px!important;
- margin:0!important;padding:0!important;border-radius:14px!important;
- border:0!important;background:transparent!important;color:var(--text)!important;
+ grid-column:1!important;display:grid!important;place-items:center!important;
+ width:32px!important;min-width:32px!important;height:25px!important;min-height:25px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:9px!important;
+ background:transparent!important;color:var(--text)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage{
- grid-row:1!important;color:#a5e1c8!important;font-size:29px!important;
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpPolishMessage{
+ grid-row:1!important;font-size:24px!important;color:#a5e1c8!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpAttachFile{grid-row:2!important}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-camera-toggle{grid-row:3!important}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpAttachFile svg{
- width:25px;height:25px;stroke:currentColor
+#tasksPage[data-work-chat-open="true"] #svcpAttachFile{grid-row:2!important}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-camera-toggle{grid-row:3!important}
+#tasksPage[data-work-chat-open="true"] #svcpAttachFile svg{width:20px;height:20px}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field{
+ grid-column:2 / 4!important;grid-row:1 / 4!important;
+ display:flex!important;align-items:center!important;align-self:center!important;
+ min-height:46px!important;max-height:138px!important;
+ border-radius:22px!important;background:var(--card)!important;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
+ padding:0 44px 0 0!important;overflow:hidden!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
- grid-column:2 / 4!important;grid-row:1 / 4!important;min-height:132px!important;
- position:relative!important;border-radius:25px!important;
- background:rgba(24,25,27,.86)!important;
- border:1px solid rgba(180,190,194,.18)!important;
- padding-right:48px!important;padding-bottom:46px!important;
+#tasksPage[data-work-chat-open="true"] #svcpChatInput{
+ height:46px!important;min-height:46px!important;max-height:138px!important;
+ padding:11px 5px 10px 12px!important;line-height:23px!important;
+ font-size:16px!important;resize:none!important;overflow-y:auto!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
- min-height:82px!important;height:82px!important;max-height:170px!important;
- padding:14px 9px 6px 15px!important;font-size:17px!important;line-height:1.42!important;
+#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpVoiceRecord{
+ grid-column:3!important;grid-row:1!important;z-index:2!important;
+ align-self:center!important;justify-self:center!important;
+ width:35px!important;min-width:35px!important;height:35px!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
- grid-column:3!important;grid-row:1!important;align-self:center!important;z-index:2!important;
- width:40px!important;height:40px!important;min-width:40px!important;
+#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send{
+ grid-column:3!important;grid-row:3!important;z-index:2!important;
+ align-self:center!important;justify-self:center!important;
+ width:37px!important;min-width:37px!important;height:37px!important;border-radius:50%!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- grid-column:3!important;grid-row:3!important;align-self:center!important;justify-self:center!important;
- z-index:2!important;width:43px!important;height:43px!important;min-width:43px!important;
- border-radius:50%!important
-}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-composer-direct-task:not([hidden]){
- grid-column:2!important;grid-row:4!important;
-}
-@media(max-width:390px){
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
- grid-template-columns:45px minmax(0,1fr) 43px!important;column-gap:4px!important
- }
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle){
- width:43px!important;min-width:43px!important
- }
+#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-composer-direct-task:not([hidden]){
+ grid-column:2!important;grid-row:4!important
 }
