@@ -13,7 +13,7 @@ const ROOMS=[
  {id:'general',label:'Общий чат',kind:'groups',hint:'Группа для всей команды',mark:'◎'},
  {id:'team',label:'Моя команда',kind:'groups',hint:'Рабочая группа',mark:'▦'},
  {id:'docs',label:'Документы',kind:'groups',hint:'Обсуждение рабочих файлов',mark:'▤'},
- {id:'dm-elena',label:'Елена',kind:'personal',hint:'Кассир · личный рабочий чат',mark:'Е',person:'elena'},
+ {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena'},
  {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna'},
  {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочая помощница · шаблонное демо',mark:'✧',person:'sayvi'}
