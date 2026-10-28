@@ -892,6 +892,7 @@
 #managePage .svcp-preview-panel p{margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45}
 #tasksPage #unifiedTasksTabs button[hidden]{display:none!important}
 #tasksPage #unifiedTasksTabs:has(button[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#tasksPage #unifiedTasksTabs:has(button:nth-child(2)[hidden]):has(button:nth-child(3)[hidden]){grid-template-columns:minmax(0,1fr)!important}
 #tasksPage .svcp-large-note{margin:7px 0 0;padding:10px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.5}
 #tasksPage .svcp-large-note[hidden],#tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
 #tasksPage #unifiedEmployeeTasksView{min-width:0;display:grid;gap:16px;padding:0 2px 30px}
