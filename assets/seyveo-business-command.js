@@ -613,8 +613,6 @@ function taskRecipients(assigneeId){
  return Object.prototype.hasOwnProperty.call(STAFF,assigneeId)?[assigneeId]:[];
 }
 function feedbackTask(message){
- const field=$('svcpTaskFeedback');
- if(field){field.textContent=message;field.hidden=!message}
  setStatus(message);
 }
 function storeTask(text,source){
@@ -843,7 +841,7 @@ function renderTasks(){
   if(key)openSeen.add(key);
   activeBox.append(taskRow(task,index));
  }
- if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Новых поручений нет. Выполненные находятся в истории ниже.'));
+ if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Активных поручений нет. Новую задачу можно поручить в чате сотрудника.'));
  list.append(activeBox);
  if(dups.length){
   const info=el('div','svcp-duplicate-summary');
@@ -914,16 +912,6 @@ chatRoot.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button
  input.focus({preventScroll:true});
  input.setSelectionRange(input.value.length,input.value.length);
 }));
-$('svcpTaskForm')?.addEventListener('submit',e=>{
- e.preventDefault();
- const input=$('svcpTaskInput'),recipient=$('svcpTaskAssignee');
- const txt=input?.value.trim()||'',assigneeId=recipient?.value||'';
- if(!txt||!assigneeId)return;
- if(storeTask(txt,{assigneeId})){
-  input.value='';
-  recipient.value='';
- }
-});
 // Business tools keep their original handlers; the surrounding layout is unified.
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
  button.addEventListener('click',()=>
