@@ -9,6 +9,14 @@ const root=$('seyveoBusinessCommandPage');
 if(!root)return;
 const CHAT_KEY='seyveo-business-command-chat-demo-v1';
 const TASK_KEY='seyveo-business-command-tasks-demo-v1';
+const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
+const RECOGNITION_TYPES=Object.freeze({
+ help:{name:'Помощь коллеге',symbol:'✦'},
+ mentor:{name:'Наставничество',symbol:'◇'},
+ initiative:{name:'Инициатива',symbol:'✧'},
+ reliable:{name:'Надёжность',symbol:'◆'}
+});
+const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
 const ROOMS=[
  {id:'general',label:'Общий чат',kind:'groups',hint:'Группа для всей команды',mark:'◎'},
  {id:'team',label:'Моя команда',kind:'groups',hint:'Рабочая группа',mark:'▦'},
@@ -70,6 +78,7 @@ root.querySelectorAll('[data-svcp-room]').forEach(button=>
 const STAFF={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
 function roomDetails(){return ROOMS.find(x=>x.id===state.room)||ROOMS[0]}
 function senderName(msg){
+ if(msg.role==='recognition')return '✦ Знак признания · демо';
  if(msg.role==='sayvi')return 'Сэйви · демо';
  if(msg.role==='demo-elena')return 'Елена · учебный пример';
  return roomDetails().kind==='personal'?'Руководитель · демо':'Вы · демо';
@@ -98,6 +107,7 @@ function renderDirectory(){
  }
 }
 function showInbox(){
+ closeRecognition();
  state.viewpoint='manager';
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
@@ -108,6 +118,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ closeRecognition();
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
  state.room=selected.id;
  state.viewpoint='manager';
@@ -149,6 +160,53 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  input.setSelectionRange(input.value.length,input.value.length);
 });
 
+/* Peer thanks are evidence of specific helpful actions, not performance grades.
+   Never auto-pay, rank, or penalize a staff member from these records. */
+function closeRecognition(){
+ const form=$('svcpRecognizeForm');
+ if(form)form.hidden=true;
+ $('svcpRecognizeOpen')?.setAttribute('aria-expanded','false');
+}
+$('svcpRecognizeOpen')?.addEventListener('click',()=>{
+ const form=$('svcpRecognizeForm');
+ if(!form)return;
+ const open=form.hidden;
+ form.hidden=!open;
+ $('svcpRecognizeOpen').setAttribute('aria-expanded',String(open));
+ if(open){
+  const room=ROOMS.find(x=>x.id===state.room);
+  if(room?.person&&room.person!=='sayvi')$('svcpRecognizeTo').value=room.person;
+  $('svcpRecognizeReason').focus({preventScroll:true});
+ }
+});
+$('svcpRecognizeCancel')?.addEventListener('click',closeRecognition);
+$('svcpRecognizeForm')?.addEventListener('submit',event=>{
+ event.preventDefault();
+ const from=$('svcpRecognizeFrom').value,to=$('svcpRecognizeTo').value,kind=$('svcpRecognizeKind').value;
+ const reason=$('svcpRecognizeReason').value.trim().slice(0,220);
+ if(!RECOGNITION_NAMES[from]||!STAFF[to]||!RECOGNITION_TYPES[kind]||reason.length<8){
+  setStatus('Напишите, за какую конкретную помощь благодарите коллегу (минимум 8 символов).');return;
+ }
+ if(from===to){setStatus('Самому себе знак признания поставить нельзя.');return}
+ let entries=read(RECOGNITION_KEY);
+ // Protect the demo from casual repeated clicks. A real system would verify identities.
+ const today=new Date().toISOString().slice(0,10);
+ if(entries.some(x=>x&&x.from===from&&x.to===to&&x.kind===kind&&String(x.at||'').slice(0,10)===today)){
+  setStatus('Сегодня от этого коллеги уже есть знак этой категории. Уточнения лучше обсудить в чате.');return;
+ }
+ const item={id:'recognition-'+Date.now().toString(36),from,to,kind,reason,at:new Date().toISOString(),demo:true};
+ entries=entries.concat(item).slice(-100);
+ if(!save(RECOGNITION_KEY,entries))return;
+ closeRecognition();$('svcpRecognizeReason').value='';
+ const symbol=RECOGNITION_TYPES[kind].symbol;
+ const entry={room:state.room,role:'recognition',at:Date.now(),
+  text:symbol+' '+RECOGNITION_NAMES[from]+' поблагодарила '+STAFF[to]+': '+reason,recognitionId:item.id};
+ // A chat announcement is only a convenience; the recognition ledger is authoritative.
+ const updated=read(CHAT_KEY).concat(entry).slice(-100);
+ if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
+ setStatus(symbol+' Знак «'+RECOGNITION_TYPES[kind].name+'» записан в учебную карточку '+STAFF[to]+'. Премия не назначена.');
+ window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:to}}));
+});
 function formatTime(ts){
  const dt=new Date(ts);
  return Number.isFinite(dt.getTime())?dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
@@ -162,10 +220,10 @@ function renderChat(){
   thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
   for(const msg of messages){
-   const isSayvi=msg.role==='sayvi';
+   const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
    const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
-   const bubble=el('article','svcp-bubble '+(isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':''));
+   const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':''));
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
@@ -176,8 +234,8 @@ function renderChat(){
    bubble.append(el('span','svcp-message-text',msg.text));
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    const actions=el('div','svcp-message-actions');
-   actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
-   if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
+   if(!isRecognition)actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
+   if(!isRecognition&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())){
     actions.append(btn(isSayvi?'Подготовить поручение':'В поручение',()=>prepareTask(msg),'svcp-message-action'));
    }
    bubble.append(actions);thread.append(bubble);
