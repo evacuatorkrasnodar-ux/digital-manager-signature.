@@ -319,7 +319,7 @@
  function updateWorkChatViewport(){
   if(page.dataset.workChatOpen!=='true'||!employeeChatScreen)return;
   const viewport=window.visualViewport;
-  const height=Math.max(250,Math.round(viewport?.height||window.innerHeight));
+  const height=Math.max(160,Math.round(viewport?.height||window.innerHeight));
   const top=Math.max(0,Math.round(viewport?.offsetTop||0));
   employeeChatScreen.style.setProperty('--svcp-visible-height',height+'px');
   employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
