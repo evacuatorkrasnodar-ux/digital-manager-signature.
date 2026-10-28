@@ -35,7 +35,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 #svcpWorkChatScreen .svcp-work-chat-heading strong{font-size:24px;font-weight:650;line-height:1.17;color:var(--text);letter-spacing:-.045em}
 #svcpWorkChatScreen .svcp-work-chat-heading small{font-size:12px;color:var(--secondary);line-height:1.4}
 #svcpWorkChatScreen .svcp-work-chat-mark{width:28px;height:28px;fill:none;stroke:var(--seyveo-emerald);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
-#tasksPage #svcpWorkChatCanvas{display:flex;min-width:0;min-height:0;flex:1 1 auto;overflow:hidden}
+#svcpWorkChatScreen #svcpWorkChatCanvas{display:flex;min-width:0;min-height:0;flex:1 1 auto;overflow:hidden}
 #svcpWorkChatScreen #unifiedTasksChatHost,
 #svcpWorkChatScreen #svcpChats{
  display:flex!important;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;
@@ -262,14 +262,14 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  border:0!important;box-shadow:none!important;background:transparent!important
 }
 #svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:7px!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpAttachFile{
+#svcpWorkChatScreen #svcpChatForm #svcpAttachFile{
  grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;
  height:46px!important;width:38px!important;min-width:38px!important;min-height:46px!important;
  padding:0!important;margin:0!important;background:transparent!important;border:0!important;
  box-shadow:none!important;color:var(--text)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpAttachFile svg{width:25px;height:25px}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpCameraToggle{display:none!important}
+#svcpWorkChatScreen #svcpAttachFile svg{width:25px;height:25px}
+#svcpWorkChatScreen #svcpChatForm #svcpCameraToggle{display:none!important}
 #svcpWorkChatScreen .svcp-chat-compose-field{
  grid-column:2!important;grid-row:1!important;display:flex!important;align-items:flex-end!important;
  min-width:0!important;min-height:46px!important;max-height:138px!important;
@@ -277,13 +277,13 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  background:transparent!important;overflow:hidden!important
 }
 #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important}
-#tasksPage[data-work-chat-open="true"] #svcpPolishMessage{
+#svcpWorkChatScreen #svcpPolishMessage{
  order:0!important;flex:0 0 36px!important;display:grid!important;place-items:center!important;
  height:44px!important;width:36px!important;min-width:36px!important;min-height:44px!important;
  margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;
  background:transparent!important;color:#77dcb3!important;font-size:25px!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpChatInput{
+#svcpWorkChatScreen #svcpChatInput{
  order:1!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
  height:46px!important;min-height:46px!important;max-height:138px!important;
  padding:11px 3px 10px 4px!important;margin:0!important;box-sizing:border-box!important;
@@ -291,30 +291,30 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  color:var(--text)!important;font-size:16px!important;line-height:24px!important;
  resize:none!important;overflow-y:auto!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpComposerEmojiToggle{
+#svcpWorkChatScreen #svcpComposerEmojiToggle{
  order:2!important;flex:0 0 30px!important;width:30px!important;min-width:30px!important;
  height:44px!important;min-height:44px!important;display:grid!important;place-items:center!important;
  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
  color:var(--secondary)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
+#svcpWorkChatScreen #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
+#svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
  grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
  width:42px!important;min-width:42px!important;height:46px!important;min-height:46px!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpVoiceRecord{
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
  display:grid!important;place-items:center!important;background:transparent!important;color:var(--text)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send{
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  display:none!important;place-items:center!important;
  background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;color:var(--text)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpChatForm[data-has-content="true"] #svcpVoiceRecord{display:none!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send span{display:none!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpComposerDirectTask:not([hidden]){grid-column:2 / -1!important;grid-row:2!important;justify-self:end}
+#svcpWorkChatScreen #svcpChatForm[data-has-content="true"] #svcpVoiceRecord{display:none!important}
+#svcpWorkChatScreen #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
+#svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{display:none!important}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){grid-column:2 / -1!important;grid-row:2!important;justify-self:end}
 /* Voice note uses the composer strip, not an old modal/audio form. */
 #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
  display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;
