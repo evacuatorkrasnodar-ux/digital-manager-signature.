@@ -616,7 +616,7 @@ function updatePerspective(){
   :current.hint+' · на одном устройстве';
  $('svcpMentionElena').hidden=current.kind!=='groups';
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
- $('svcpRecognizeOpen').hidden=state.viewpoint==='elena'||!(current.person&&STAFF[current.person]);
+ $('svcpRecognizeOpen').hidden=true; // Awards are offered contextually beside relevant messages.
  const directTask=$('svcpComposerDirectTask'),recipient=privateAssignmentRecipient();
  if(directTask){
   directTask.hidden=!recipient;
@@ -798,7 +798,7 @@ function suggestedRecognition(msg,person){
  if(!person||!STAFF[person]||msg.role!=='demo-elena'||person!=='elena')return null;
  const words=String(msg.text||'').toLocaleLowerCase('ru-RU');
  if(!words||msg.mediaId)return null;
- const completed=/\\b(помогла|помог|выручила|выручил|исправила|исправил|разобралась|разобрался|готово|сделала|сделал|решила|решил|устранила|устранил)\\b/u.test(words);
+ const completed=/(помогла|помог|выручила|выручил|исправила|исправил|разобралась|разобрался|готово|сделала|сделал|решила|решил|устранила|устранил)/u.test(words);
  if(!completed)return null;
  const context=state.chat.filter(x=>x.room===msg.room&&x.at<msg.at&&x.role!=='recognition').slice(-8);
  const requested=context.some(x=>/помоги|помочь|помощь|проверь|исправь|разберись|нужно|поручаю|проблем|ошибк|ценник|возврат/ui.test(x.text||''));
