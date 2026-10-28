@@ -1,0 +1,52 @@
+/* SEYVEO document approvals demo, Black Velvet HDR. */
+#sayviSurfacePage .svdf-root{width:100%;max-width:620px;color:var(--text);padding:2px 0 15px}
+#sayviSurfacePage .svdf-lead{display:grid;gap:5px;margin:9px 0 15px}
+#sayviSurfacePage .svdf-kicker{color:var(--seyveo-emerald,#89cbb3);font-size:10px;letter-spacing:.11em;font-weight:650}
+#sayviSurfacePage .svdf-lead h2{font-size:23px;line-height:1.16;letter-spacing:-.035em;font-weight:680;margin:0}
+#sayviSurfacePage .svdf-lead p{font-size:12.5px;line-height:1.5;color:var(--secondary);margin:0}
+#sayviSurfacePage .svdf-warning{font-size:11px;line-height:1.6;color:var(--secondary);padding:12px 13px;margin:0 0 18px;border-left:2px solid #8ccbb1;background:rgba(108,162,139,.07);border-radius:0 12px 12px 0}
+#sayviSurfacePage .svdf-role-switch{display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--soft-line);margin:0 0 22px}
+#sayviSurfacePage .svdf-button{color:var(--text);background:transparent;border:0;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#sayviSurfacePage .svdf-button:focus-visible,#sayviSurfacePage .svdf-select:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#sayviSurfacePage .svdf-role{font-size:13px;line-height:1.35;padding:11px 0!important;min-height:42px;color:var(--secondary)!important;border-bottom:2px solid transparent!important;border-radius:0!important}
+#sayviSurfacePage .svdf-role[aria-pressed="true"]{color:var(--text)!important;border-color:#65cba5!important}
+#sayviSurfacePage .svdf-create{display:grid;gap:11px;margin:0 0 24px;padding:15px 16px;border-radius:17px;background:rgba(112,154,141,.065)}
+#sayviSurfacePage .svdf-create>strong{font-size:14px;font-weight:650}
+#sayviSurfacePage .svdf-create>small{font-size:11px;color:var(--secondary)}
+#sayviSurfacePage .svdf-select{width:100%;min-width:0;min-height:43px;border:1px solid var(--soft-line);border-radius:13px;color:var(--text);background:var(--card);font:inherit;font-size:13px;padding:9px 12px}
+#sayviSurfacePage .svdf-primary{justify-self:start;min-height:39px;padding:9px 15px!important;border-radius:999px!important;background:rgba(59,160,121,.22)!important;color:var(--text)!important;font-size:12.5px;font-weight:630!important}
+#sayviSurfacePage .svdf-primary:active{background:rgba(59,160,121,.35)!important}
+#sayviSurfacePage .svdf-hint{font-size:12px;line-height:1.5;color:var(--secondary);margin:0 0 19px}
+#sayviSurfacePage .svdf-list-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px}
+#sayviSurfacePage .svdf-list-header strong{font-size:14px}
+#sayviSurfacePage .svdf-list-header span{font-size:11px;color:var(--secondary)}
+#sayviSurfacePage .svdf-list{display:grid;gap:9px}
+#sayviSurfacePage .svdf-record{padding:13px 14px;border-radius:16px;background:var(--card);border:1px solid transparent}
+#sayviSurfacePage .svdf-record.is-current{border-color:rgba(113,196,162,.25)}
+#sayviSurfacePage .svdf-record-heading{display:flex;align-items:center;gap:11px}
+#sayviSurfacePage .svdf-record-icon{display:grid;place-items:center;width:37px;height:37px;flex:0 0 37px;color:#93d6b6;font-size:21px}
+#sayviSurfacePage .svdf-record-name{min-width:0;display:grid;gap:3px}
+#sayviSurfacePage .svdf-record-name strong{font-size:13.5px;line-height:1.4;font-weight:630}
+#sayviSurfacePage .svdf-record-name small{color:var(--secondary);font-size:11px}
+#sayviSurfacePage .svdf-record-state{display:inline-flex;margin:9px 0 2px;padding:3px 0;font-size:12px;color:#d7d9da}
+#sayviSurfacePage .svdf-record-state[data-state="approved"]{color:#8bdfb9}
+#sayviSurfacePage .svdf-record-state[data-state="returned"],#sayviSurfacePage .svdf-record-state[data-state="revoked"]{color:#ebb98a}
+#sayviSurfacePage .svdf-date{display:block;color:var(--secondary);font-size:10.5px}
+#sayviSurfacePage .svdf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;margin:12px 0 0}
+#sayviSurfacePage .svdf-quiet{min-height:37px;color:var(--secondary)!important;font-size:12px;padding:6px 0!important}
+#sayviSurfacePage .svdf-detail{margin:13px 0 1px;padding:13px 0 0;border-top:1px solid var(--soft-line)}
+#sayviSurfacePage .svdf-detail>p{font-size:13px;line-height:1.6;margin:0 0 10px}
+#sayviSurfacePage .svdf-detail>.svdf-disclaimer{font-size:11px;color:var(--secondary)}
+#sayviSurfacePage .svdf-log{margin:17px 0 0;border-top:1px solid var(--soft-line);padding:12px 0 0}
+#sayviSurfacePage .svdf-log>strong{font-size:12px;font-weight:620}
+#sayviSurfacePage .svdf-log ol{display:grid;gap:7px;margin:8px 0 0;padding:0;list-style:none}
+#sayviSurfacePage .svdf-log li{color:var(--secondary);font-size:11px;line-height:1.45}
+#sayviSurfacePage .svdf-empty{font-size:12px;line-height:1.6;color:var(--secondary);padding:17px 0}
+#sayviSurfacePage .svdf-feedback{color:#94ddbc;font-size:11px;line-height:1.5;margin:10px 0;min-height:0}
+#sayviSurfacePage .svdf-reset{font-size:11px;color:var(--secondary)!important;padding:8px 0!important;margin-top:8px}
+#sayviSurfacePage .svdf-footnote{border-top:1px solid var(--soft-line);padding:12px 0 0;margin:17px 0 0;color:var(--secondary);font-size:10.5px;line-height:1.55}
+@media(max-width:370px){
+ #sayviSurfacePage .svdf-role-switch{gap:13px}
+ #sayviSurfacePage .svdf-role{font-size:12px}
+ #sayviSurfacePage .svdf-create{padding:12px 13px}
+}
