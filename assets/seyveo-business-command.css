@@ -639,3 +639,13 @@
 #unifiedTasksChatHost .svcp-conversation-search:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
 }
+
+/* Chat history: fetch more local messages on demand. */
+#unifiedTasksChatHost .svcp-load-older{
+ display:block;width:max-content;max-width:calc(100% - 20px);margin:8px auto 0;
+ min-height:36px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:999px;padding:7px 13px;background:var(--seyveo-hdr-active,var(--card));
+ color:var(--seyveo-emerald);font:inherit;font-size:11px;font-weight:550;cursor:pointer
+}
+#unifiedTasksChatHost .svcp-load-older[hidden]{display:none!important}
+#unifiedTasksChatHost .svcp-load-older:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
