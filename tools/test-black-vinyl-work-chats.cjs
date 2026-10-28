@@ -16,7 +16,7 @@ assert.ok(employeeStyle.includes('border-radius:18px;border:1px solid rgba(255,2
  'Employee star gets a unique quiet-square silver badge, not the round Music medallion');
 assert.match(html,/class="svcp-recognition-star" d="M32 7 L/,'Employee recognition uses a distinct eight-point star');
 assert.match(html,/class="svcp-recognition-heart"/,'Employee recognition is an appreciation symbol, not a Music favorite');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=48/,'Compact employee chats and award styles are cache-busted');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=49/,'Compact employee chats and award styles are cache-busted');
 assert.equal((html.match(/<strong>Чаты команды<\/strong>/g)||[]).length,2,'Shared manager inbox retains its own heading, while CSS hides it only in the employee workspace');
 assert.match(html,/id="svcpEmployeeChatSearch"[^>]*aria-controls="svcpHistorySearch"/,'Search button lives beside employee chat heading');
 assert.match(employeeStyle,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-directory-head\{display:none!important\}/,'Only employee duplicate heading is hidden');

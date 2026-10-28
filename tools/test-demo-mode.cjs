@@ -14,7 +14,7 @@ const required=['pictureDemoExit','pictureDemoLabel','pictureDemoWorkspace'];
 for(const id of ['openSeyveoDemoMode','seyveoDemoModeState'])
  assert.ok(!html.includes('id="'+id+'"'),'Retired demo switch is not shown: '+id);
 for(const id of required)assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'Unique control '+id);
-assert.match(html,/assets\/demo-mode\.js\?v=1/);
+assert.match(html,/assets\/demo-mode\.js\?v=2/);
 assert.match(picture,/return actual\|\|\(window\.SEYVEO_DEMO_MODE\?\.isEnabled\?\.\(\)\?sampleData\(\):null\)/,
  'Real Pulse metrics cannot fall back to a fabricated sample outside Demo Mode');
 const ideas=html.slice(html.indexOf('<dialog id="manageRoadmapDialog"'),html.indexOf('<div class="manage-roadmap-toolbar">'));

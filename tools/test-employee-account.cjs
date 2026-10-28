@@ -18,7 +18,7 @@ assert.match(js,/function setEmployeeAccountOpen\(open\)/);
 assert.match(js,/employeeAccount\.hidden=!shown/);
 assert.match(js,/profileShift\.textContent=active/);
 assert.match(css,/data-account-open="true"/);
-assert.match(html,/assets\/seyveo-business-command\.css\?v=48/);
+assert.match(html,/assets\/seyveo-business-command\.css\?v=49/);
 assert.match(html,/id="svcpEmployeeChatSearch"/,'One top-right employee chat search trigger');
 assert.match(css,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-directory-head\{display:none!important\}/,'Duplicate inner chat heading hidden in employee workspace');
 assert.match(js,/function setEmployeeChatSearch\(open\)/,'Search button toggles existing search input');

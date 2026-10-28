@@ -247,7 +247,7 @@
 #tasksPage .tasks-note{margin:8px 3px 0;font-size:11px;line-height:1.4}
 #tasksPage .tasks-demo-info{padding:7px 0}
 @media(max-width:370px){
- #tasksPage .tasks-heading h1{font-size:27px}
+ #tasksPage .tasks-title-row h1{font-size:21px}
  #tasksPage .tasks-records .activity-row{gap:8px;padding:10px}
  #tasksPage .tasks-records .activity-title{font-size:13px}
  #tasksPage .personal-tasks-head{gap:6px}
