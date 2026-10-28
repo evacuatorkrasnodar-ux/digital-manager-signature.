@@ -27,7 +27,7 @@ const ROOMS=[
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочая помощница · шаблонное демо',mark:'✧',person:'sayvi'}
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
-let chatsFromTasks=false;
+let chatsFromTasks=false,lastRecognizedPerson=null;
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-100):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -108,6 +108,7 @@ function renderDirectory(){
 }
 function showInbox(){
  closeRecognition();
+ $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  state.viewpoint='manager';
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
@@ -119,6 +120,7 @@ function showInbox(){
 }
 function openRoom(roomId){
  closeRecognition();
+ $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
  state.room=selected.id;
  state.viewpoint='manager';
@@ -198,14 +200,20 @@ $('svcpRecognizeForm')?.addEventListener('submit',event=>{
  entries=entries.concat(item).slice(-100);
  if(!save(RECOGNITION_KEY,entries))return;
  closeRecognition();$('svcpRecognizeReason').value='';
+ lastRecognizedPerson=to;
+ $('svcpRecognizeOpenCard').hidden=false;
+ $('svcpRecognizeOpenCard').textContent='✦ Открыть карточку '+STAFF[to];
  const symbol=RECOGNITION_TYPES[kind].symbol;
  const entry={room:state.room,role:'recognition',at:Date.now(),
-  text:symbol+' '+RECOGNITION_NAMES[from]+' поблагодарила '+STAFF[to]+': '+reason,recognitionId:item.id};
+  text:symbol+' '+RECOGNITION_NAMES[from]+(from==='mikhail'?' поблагодарил ':' поблагодарила ')+STAFF[to]+': '+reason,recognitionId:item.id};
  // A chat announcement is only a convenience; the recognition ledger is authoritative.
  const updated=read(CHAT_KEY).concat(entry).slice(-100);
  if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
  setStatus(symbol+' Знак «'+RECOGNITION_TYPES[kind].name+'» записан в учебную карточку '+STAFF[to]+'. Премия не назначена.');
  window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:to}}));
+});
+$('svcpRecognizeOpenCard')?.addEventListener('click',()=>{
+ if(lastRecognizedPerson)window.SEYVEO_STAFF_CARDS?.open?.(lastRecognizedPerson);
 });
 function formatTime(ts){
  const dt=new Date(ts);
