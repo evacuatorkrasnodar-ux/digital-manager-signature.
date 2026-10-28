@@ -7,14 +7,14 @@
  const $=id=>document.getElementById(id);
  const work=$('svcpEmployeeSchedule'),daysHost=$('svcpScheduleDays'),
   monthHost=$('svcpScheduleMonth'),detail=$('svcpScheduleSelected'),
-  requestsHost=$('svcpScheduleRequests'),manager=$('svcpManagerSchedule');
- if(!work||!daysHost||!monthHost||!detail||!requestsHost||!manager)return;
+  manager=$('svcpManagerSchedule');
+ if(!work||!daysHost||!monthHost||!detail||!manager)return;
  const page=$('tasksPage');
  const PLAN_KEY='seyveo-elena-workweek-demo-v1';
  const REQUEST_KEY='seyveo-elena-shift-requests-demo-v1';
  const SHIFT_KEY='seyveo-demo-shift-history-v1';
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
- const validTime=v=>typeof v==='string'&&/^([01]\\d|2[0-3]):[0-5]\\d$/.test(v);
+ const validTime=v=>typeof v==='string'&&/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(v);
  const defaultPlan=()=>({days:[1,2,3,4,5],start:'09:00',end:'17:30'});
  function read(key,fallback){
   try{const value=JSON.parse(localStorage.getItem(key)||'null');return value??fallback}
@@ -26,14 +26,14 @@
   const start=validTime(stored.start)?stored.start:'09:00',end=validTime(stored.end)?stored.end:'17:30';
   return start<end?{days,start,end}:defaultPlan();
  }
- const cleanRequest=x=>x&&typeof x.id==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(x.date)&&['off','swap'].includes(x.type)&&['pending','approved','declined'].includes(x.status);
+ const cleanRequest=x=>x&&typeof x.id==='string'&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x.date)&&['off','swap'].includes(x.type)&&['pending','approved','declined'].includes(x.status);
  function requests(){const data=read(REQUEST_KEY,[]);return Array.isArray(data)?data.filter(cleanRequest).slice(-90):[]}
  function save(key,value){
   try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}
  }
  const localDate=(y,m,d)=>new Date(y,m,d,12);
  function dayKey(date){const d=new Date(date);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
- function parseDay(key){if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(key||''))return null;
+ function parseDay(key){if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(key||''))return null;
   const [y,m,d]=key.split('-').map(Number),dt=localDate(y,m-1,d);return dayKey(dt)===key?dt:null}
  const monday=d=>{const t=localDate(d.getFullYear(),d.getMonth(),d.getDate());t.setDate(t.getDate()-(t.getDay()+6)%7);return t};
  const plusDays=(date,n)=>localDate(date.getFullYear(),date.getMonth(),date.getDate()+n);
@@ -80,6 +80,8 @@
   daysHost.replaceChildren();
   for(let i=0;i<7;i++)daysHost.append(buildDay(plusDays(anchor,i),items,settings));
   monthHost.hidden=!monthOpen;
+  const monthLabel=$('svcpScheduleMonthLabel');
+  if(monthLabel)monthLabel.hidden=!monthOpen;
   if(monthOpen){
    monthHost.replaceChildren();
    const chosen=parseDay(selected)||new Date(),monthDate=localDate(chosen.getFullYear(),chosen.getMonth(),1),first=monday(monthDate);
@@ -101,6 +103,12 @@
   askSwap.disabled=info.req?.status==='pending';
   const note=$('svcpScheduleNotice');
   if(note&&!note.dataset.saved)note.textContent='Учебный график · заявки остаются на этом устройстве.';
+  const doneCount=$('svcpResultsTasksDone');
+  if(doneCount){
+   const allTasks=read(TASK_KEY,[]);
+   const done=Array.isArray(allTasks)?allTasks.filter(item=>item&&item.assigneeId==='elena'&&item.done===true).length:0;
+   doneCount.textContent=String(done);
+  }
   const hoursGoal=$('svcpScheduleMonthGoal');
   if(hoursGoal){
    let plannedDays=0;const y=chosen.getFullYear(),m=chosen.getMonth(),monthLength=new Date(y,m+1,0).getDate();
@@ -206,6 +214,8 @@
  window.addEventListener('seyveo:break-schedule-updated',renderSchedule);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderSchedule()});
  // Switching between director / employee demo uses a single real calendar.
+ window.addEventListener('seyveo:employee-task-updated',renderSchedule);
+ window.addEventListener('seyveo:manager-tasks-updated',renderSchedule);
  const observer=new MutationObserver(()=>{if(!page.hidden)renderSchedule()});
  observer.observe(page,{attributes:true,attributeFilter:['data-employee-mode','hidden']});
  renderSchedule();
