@@ -980,14 +980,31 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <small>Фото, видео и коды останутся в этом браузере. Сэйви пока не анализирует изображения.</small>
    </div>
    <div id="svcpComposerEmojiStrip" class="svcp-composer-emoji-strip" role="group" aria-label="Эмодзи для сообщения" hidden></div>
+   <section id="svcpVoiceCapture" class="svcp-voice-capture" hidden aria-label="Запись голосового сообщения">
+    <div class="svcp-voice-live">
+     <span id="svcpVoiceDot" class="svcp-voice-dot" aria-hidden="true"></span>
+     <strong id="svcpVoiceLabel">Запись голоса</strong>
+     <time id="svcpVoiceClock" aria-label="Длительность записи">00:00</time>
+    </div>
+    <audio id="svcpVoicePreview" controls preload="metadata" hidden aria-label="Прослушать голосовое сообщение"></audio>
+    <div class="svcp-voice-controls">
+     <button type="button" id="svcpVoiceCancel">Удалить</button>
+     <button type="button" id="svcpVoiceStop">Остановить</button>
+     <button type="button" id="svcpVoiceSend" hidden>Отправить</button>
+    </div>
+    <small id="svcpVoiceHint" role="status">Голос сохранится на этом устройстве только после отправки.</small>
+   </section>
    <form id="svcpChatForm" class="svcp-composer">
     <button id="svcpCameraToggle" type="button" class="svcp-file-label svcp-camera-toggle" aria-label="Снять фото, видео, проверить штрихкод или прикрепить файл" aria-expanded="false" aria-controls="svcpCameraTray" title="Камера и файлы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h5l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
     <input id="svcpFile" type="file" hidden accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt">
     <input id="svcpCameraPhoto" type="file" accept="image/*" capture="environment" hidden>
     <input id="svcpCameraVideo" type="file" accept="video/*" capture="environment" hidden>
     <input id="svcpCameraBarcode" type="file" accept="image/*" capture="environment" hidden>
-    <textarea id="svcpChatInput" class="svcp-compose-input" rows="1" maxlength="1000" aria-label="Текст для демонстрационного чата" placeholder="Сообщение или @Сэйви…" spellcheck="true"></textarea>
-    <button id="svcpComposerEmojiToggle" class="svcp-composer-emoji-toggle" type="button" aria-label="Необязательно: выбрать эмодзи для сообщения" title="Эмодзи (по желанию)" aria-expanded="false" aria-controls="svcpComposerEmojiStrip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2"/><path d="M8.8 9.3h.1m6.2 0h.1" stroke-width="2.2"/></svg></button>
+    <div class="svcp-chat-compose-field">
+    <textarea id="svcpChatInput" class="svcp-compose-input" rows="1" maxlength="1000" aria-label="Текст для демонстрационного чата" placeholder="Сообщение…" spellcheck="true"></textarea>
+    <button id="svcpComposerEmojiToggle" class="svcp-composer-emoji-toggle" type="button" aria-label="Выбрать эмодзи" title="Эмодзи (по желанию)" aria-expanded="false" aria-controls="svcpComposerEmojiStrip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2"/><path d="M8.8 9.3h.1m6.2 0h.1" stroke-width="2.2"/></svg></button>
+     <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
+    </div>
     <button type="submit" class="svcp-primary svcp-chat-send" aria-label="Записать сообщение в учебный чат"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7.2 18-4-7.3L2.5 10.2 21 3Z"/></svg><span>В чат</span></button>
     <button id="svcpComposerDirectTask" type="button" class="svcp-composer-direct-task" aria-label="Поручить написанное сотруднику" hidden>Поручить</button>
    </form>
