@@ -119,14 +119,17 @@ function draw(){
  }
  host.append(tabs);
  const nav=el('div','sv-doc-commands');nav.setAttribute('role','group');nav.setAttribute('aria-label','Инструменты документов');
- for(const [kind,label] of [['file','Открыть файл'],['draft','Создать документ']]){
+ for(const [kind,label] of [...[['file','Открыть файл'],['draft','Создать документ']],...(area==='business'?[['flow','Согласования']]:[])]){
   const b=control(label,()=>{view=kind;draw();},'sv-doc-command');
   b.setAttribute('aria-pressed',String(view===kind));nav.append(b);
  }
  host.append(nav);
  const panel=el('section','sv-doc-workspace');
  const live=el('p','sv-doc-status');live.setAttribute('role','status');
- if(view==='file'){
+ if(view==='flow'&&area==='business'){
+  const mounted=window.SEYVEO_DOCUMENT_FLOW?.mount?.(panel);
+  if(!mounted)panel.append(note('Демонстрация согласований временно недоступна.'));
+ }else if(view==='file'){
   panel.append(el('h2','sv-doc-subtitle',area==='personal'?'Личные документы':'Документы бизнеса'));
   const select=el('input');select.type='file';select.hidden=true;
   select.accept='.pdf,.txt,.md,.png,.jpg,.jpeg,.webp,application/pdf,text/plain,image/png,image/jpeg,image/webp';
@@ -162,6 +165,7 @@ function draw(){
   panel.append(note('Это ручной редактор черновиков. Сэйви пока не генерирует и не проверяет содержание.'));
  }
  host.append(panel);
+ if(view==='flow'&&area==='business')return;
  const archive=el('details','sv-doc-vault-shell');
  const summary=el('summary','sv-doc-vault-summary');
  summary.append(el('span','sv-doc-vault-title','Защищённый архив'),
