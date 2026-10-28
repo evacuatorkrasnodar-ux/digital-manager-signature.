@@ -96,8 +96,8 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
  flex:0 0 auto!important;
  display:flex!important;align-items:flex-end!important;flex-wrap:wrap!important;
- gap:9px!important;min-height:101px;margin:0!important;
- padding:10px max(13px,env(safe-area-inset-right,0px))
+ gap:8px!important;min-height:64px;margin:0!important;
+ padding:8px max(13px,env(safe-area-inset-right,0px))
   8px
   max(13px,env(safe-area-inset-left,0px))!important;
  background:var(--card)!important;border-top:1px solid var(--soft-line)!important;
@@ -106,12 +106,13 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
  flex:1 1 0!important;min-width:125px!important;
- height:auto!important;min-height:72px!important;max-height:min(170px,30vh)!important;
- padding:13px 11px!important;border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
+ height:44px!important;min-height:44px!important;max-height:min(164px,34dvh)!important;
+ padding:10px 11px!important;border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
  border-radius:15px!important;background:var(--bg)!important;
  font-size:16px!important;line-height:1.45!important;
- resize:none!important;overflow-y:auto!important;box-shadow:none!important;
- -webkit-appearance:none;appearance:none
+ resize:none!important;overflow-y:hidden!important;box-shadow:none!important;
+ -webkit-appearance:none;appearance:none;
+ transition:height .12s ease
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput:focus{
  outline:2px solid var(--seyveo-emerald)!important;outline-offset:1px
@@ -139,8 +140,8 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 @media(max-height:580px){
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-intro{padding:4px 13px;min-height:0}
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-title{display:none}
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{min-height:76px;padding-top:6px!important;padding-bottom:6px!important}
- #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{min-height:56px!important}
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{min-height:58px;padding-top:6px!important;padding-bottom:6px!important}
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{min-height:44px!important}
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatStatus{display:none!important}
 }
 @media(max-width:355px){
