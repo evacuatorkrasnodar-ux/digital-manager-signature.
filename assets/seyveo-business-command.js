@@ -999,6 +999,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   state.chat=updated;
   closeComposerEmoji();setCameraTray(false);
   input.value='';cleanupPreview();clearReply();cancelTaskDraft();
+  window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
   setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
    barcode?'Код записан локально, но не проверен по каталогу магазина.':
