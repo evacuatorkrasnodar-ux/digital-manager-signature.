@@ -450,43 +450,71 @@ function workTaskForPreview(){
  return state.tasks.find(t=>t&&t.id===state.lastDemoTaskId&&t.assigneeId==='elena'&&!t.done)||null;
 }
 function resetHomeReply(){
- const form=$('svcpHomeReplyForm'),status=$('svcpHomeReplyStatus');
+ const form=$('svcpHomeReplyForm'),result=$('svcpHomeReplyResult');
  form.hidden=true;
  $('svcpHomePreviewReply').setAttribute('aria-expanded','false');
  $('svcpHomeReplyText').value='';
- status.hidden=true;status.textContent='';
+ result.hidden=true;
+ $('svcpHomeReplyStatus').textContent='';
+ const choices=$('svcpHomeSayviSuggestions');choices.hidden=true;
+ $('svcpHomeSayviHelp').setAttribute('aria-expanded','false');
 }
 $('svcpHomePreviewReply')?.addEventListener('click',()=>{
  if(!workTaskForPreview())return;
- const form=$('svcpHomeReplyForm');form.hidden=!form.hidden;
- $('svcpHomePreviewReply').setAttribute('aria-expanded',String(!form.hidden));
- if(!form.hidden)$('svcpHomeReplyText').focus({preventScroll:true});
+ const form=$('svcpHomeReplyForm');
+ if(form.hidden){
+  resetHomeReply();
+  form.hidden=false;
+  $('svcpHomePreviewReply').setAttribute('aria-expanded','true');
+  $('svcpHomeReplyText').focus({preventScroll:true});
+ }else resetHomeReply();
 });
 $('svcpHomeReplyCancel')?.addEventListener('click',resetHomeReply);
-$('svcpWorkHomePreview')?.querySelectorAll('[data-svcp-quick-reply]').forEach(button=>
+$('svcpHomeSayviHelp')?.addEventListener('click',()=>{
+ if(!workTaskForPreview())return;
+ const panel=$('svcpHomeSayviSuggestions');
+ panel.hidden=!panel.hidden;
+ $('svcpHomeSayviHelp').setAttribute('aria-expanded',String(!panel.hidden));
+});
+function sayviReplyDraft(kind,task){
+ const subject=String(task?.text||'поручение').trim().slice(0,95);
+ if(kind==='accept')return 'Приняла поручение «'+subject+'». Приступаю к выполнению.';
+ if(kind==='clarify')return 'Подскажите, пожалуйста, к какому времени нужно выполнить поручение «'+subject+'»? Хочу всё сделать правильно.';
+ if(kind==='disagree')return 'Хотела бы обсудить поручение «'+subject+'». Есть вопросы по условиям. Можно предложить другой вариант выполнения?';
+ return '';
+}
+$('svcpHomeSayviSuggestions')?.querySelectorAll('[data-svcp-home-suggestion]').forEach(button=>
  button.addEventListener('click',()=>{
-  $('svcpHomeReplyText').value=button.dataset.svcpQuickReply||'';
+  const task=workTaskForPreview();if(!task)return;
+  const text=sayviReplyDraft(button.dataset.svcpHomeSuggestion,task);
+  if(!text)return;
+  $('svcpHomeReplyText').value=text.slice(0,500);
+  $('svcpHomeSayviSuggestions').hidden=true;
+  $('svcpHomeSayviHelp').setAttribute('aria-expanded','false');
   $('svcpHomeReplyText').focus({preventScroll:true});
  }));
 $('svcpHomeReplyForm')?.addEventListener('submit',event=>{
  event.preventDefault();
- const task=workTaskForPreview(),text=$('svcpHomeReplyText').value.trim().slice(0,500);
+ const task=workTaskForPreview(),input=$('svcpHomeReplyText'),text=input.value.trim().slice(0,500);
  if(!task||!text)return;
  const reply={room:'dm-elena',role:'demo-elena',text,at:Date.now(),
-  replyTo:{sender:'Руководитель',text:task.text.slice(0,160)}};
+  replyTo:{sender:'Руководитель · поручение',text:task.text.slice(0,160)}};
  const updated=read(CHAT_KEY).concat(reply).slice(-100);
+ const status=$('svcpHomeReplyStatus');
  if(!save(CHAT_KEY,updated)){
-  const status=$('svcpHomeReplyStatus');
-  status.textContent='Не удалось сохранить ответ. Попробуйте ещё раз.';
-  status.hidden=false;
+  status.textContent='Не удалось записать ответ. Проверьте место на устройстве.';
+  $('svcpHomeReplyResult').hidden=false;
   return;
  }
  state.chat=updated;
  resetHomeReply();
- const status=$('svcpHomeReplyStatus');
- status.textContent='Ответ сохранён в учебном чате Елены. Руководителю не отправлен.';
- status.hidden=false;
+ status.textContent='✓ Добавлено в учебный чат Елены. Реальной доставки пока нет.';
+ $('svcpHomeReplyResult').hidden=false;
  renderDirectory();
+});
+$('svcpHomeOpenChat')?.addEventListener('click',()=>{
+ if($('svcpHomeReplyResult').hidden)return;
+ window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.('elena','elena');
 });
 function syncWorkPreview(){
  const task=workTaskForPreview(),card=$('svcpWorkHomePreview');
@@ -530,13 +558,17 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
  renderTasks();
  window.dispatchEvent(new CustomEvent('seyveo:demo-task-completed',{detail:{id:task.id}}));
 });
-window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView,openPrivateChat:person=>{
+window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView,openPrivateChat:(person,view='manager')=>{
  const id='dm-'+String(person||'').toLowerCase();
  if(!ROOMS.some(x=>x.id===id&&x.person))return false;
  if(location.hash!=='#manage')location.hash='#manage';
- // Open the actual Management chat surface before selecting the individual.
  document.querySelector('[data-clean-business="chat"]')?.click();
- tab('chats');openRoom(id);return true;
+ tab('chats');openRoom(id);
+ if(view==='elena'&&id==='dm-elena'){
+  state.viewpoint='elena';
+  updatePerspective();renderChat();
+ }
+ return true;
 }});
 window.addEventListener('pagehide',cleanupPreview);
 preparePeopleContent();
