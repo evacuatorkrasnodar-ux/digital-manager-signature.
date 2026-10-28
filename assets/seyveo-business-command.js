@@ -215,6 +215,7 @@ function showInbox(){
  closeComposerEmoji();
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  state.viewpoint='manager';
+ window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:'manager'}}));
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
  $('svcpReturnToTasks').hidden=true;
@@ -264,6 +265,7 @@ function updatePerspective(){
   $('svcpChatForm')?.classList.toggle('svcp-can-assign',!!recipient);
  }
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
+ window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
 }
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
