@@ -274,6 +274,12 @@ window.addEventListener('seyveo:work-chat-closing',cancelVoice);
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
+function syncComposerActions(){
+ const form=$('svcpChatForm');if(!form)return;
+ const text=$('svcpChatInput')?.value.trim()||'';
+ form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
+}
+$('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node}
 
 /* Reuse the working employee, shift, recruitment and ROI widgets rather than
@@ -529,6 +535,8 @@ function showInbox(){
  $('svcpReturnToTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
  clearReply();cancelTaskDraft();cleanupPreview();
+ const composer=$('svcpChatInput');if(composer)composer.value='';
+ syncComposerActions();
  renderDirectory();
 }
 function openRoom(roomId){
@@ -559,6 +567,8 @@ function openRoom(roomId){
  ?selected.label+' · '+(selected.id==='dm-elena'?'кассир':selected.id==='dm-anna'?'старший продавец':'продавец')
  :selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
+ const composer=$('svcpChatInput');if(composer)composer.value='';
+ syncComposerActions();
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
  $('svcpReturnToTasks').hidden=true;
@@ -1041,6 +1051,7 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
   input.value=(input.value.trim()?input.value.trim()+' ':'')+'@Сэйви ';
  input.focus({preventScroll:true});
  input.setSelectionRange(input.value.length,input.value.length);
+ input.dispatchEvent(new Event('input',{bubbles:true}));
 });
 /* Camera is a single entry point, with user-initiated system capture on mobile. */
 const fileInput=$('svcpFile');
@@ -1063,8 +1074,10 @@ function cleanupPreview(){
  const barcode=$('svcpBarcodeInput');if(barcode)barcode.value='';
  const display=$('svcpAttachmentPreview');
  if(display){display.replaceChildren();display.hidden=true}
+ syncComposerActions();
 }
 function renderCapturePreview(){
+ syncComposerActions();
  const display=$('svcpAttachmentPreview');if(!display)return;
  display.replaceChildren();
  if(!state.file&&!state.scanCode){display.hidden=true;return}
@@ -1228,6 +1241,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   const updated=state.chat.map((item,i)=>i===index?{...item,text:txt,editedAt:Date.now()}:item);
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;editingMessageIndex=null;input.value='';
+  syncComposerActions();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();renderDirectory();setStatus('Изменение сохранено на этом устройстве.');
   return;
@@ -1269,7 +1283,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;
   closeComposerEmoji();setCameraTray(false);
-  input.value='';cleanupPreview();clearReply();cancelTaskDraft();
+  input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
   setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
@@ -1529,6 +1543,7 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
  renderTasks();
  window.dispatchEvent(new CustomEvent('seyveo:demo-task-completed',{detail:{id:task.id}}));
 });
+syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
  showChat:(roomId=null,viewpoint='manager')=>{
