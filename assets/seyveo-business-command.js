@@ -19,6 +19,7 @@ const ROOMS=[
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочая помощница · шаблонное демо',mark:'✧',person:'sayvi'}
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
+let chatsFromTasks=false;
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-100):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -61,7 +62,7 @@ function tab(name){
  state.tab=name;
  root.querySelectorAll('[data-svcp-panel]').forEach(section=>{section.hidden=section.dataset.svcpPanel!==name});
  if(name==='tasks')renderTasks();
- if(name==='chats')showInbox();
+ if(name==='chats'){chatsFromTasks=false;showInbox()}
  if(name==='team')peopleView('team');
 }
 root.querySelectorAll('[data-svcp-room]').forEach(button=>
@@ -101,6 +102,7 @@ function showInbox(){
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
  $('svcpReturnToTasks').hidden=true;
+ $('svcpChatInboxBackTasks').hidden=!chatsFromTasks;
  $('svcpTaskDiscussionQuick').hidden=true;
  clearReply();cancelTaskDraft();cleanupPreview();
  renderDirectory();
@@ -115,7 +117,7 @@ function openRoom(roomId){
  clearReply();cancelTaskDraft();cleanupPreview();
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
- $('svcpReturnToTasks').hidden=true;
+ $('svcpReturnToTasks').hidden=!chatsFromTasks;
  $('svcpTaskDiscussionQuick').hidden=true;
  updatePerspective();renderChat();
 }
@@ -401,6 +403,7 @@ function openTaskDiscussion(task){
  window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
  document.querySelector('[data-clean-business="chat"]')?.click();
  tab('chats');openRoom(roomId);
+ chatsFromTasks=true;
  if(person==='elena'){
   state.viewpoint='elena';
   updatePerspective();renderChat();
@@ -413,11 +416,15 @@ function openTaskDiscussion(task){
  $('svcpReturnToTasks').hidden=false;
  $('svcpTaskDiscussionQuick').hidden=false;
 }
-$('svcpReturnToTasks')?.addEventListener('click',()=>{
+function returnToTasks(){
+ chatsFromTasks=false;
  $('svcpReturnToTasks').hidden=true;
+ $('svcpChatInboxBackTasks').hidden=true;
  $('svcpTaskDiscussionQuick').hidden=true;
- window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('manage');
-});
+ window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
+}
+$('svcpReturnToTasks')?.addEventListener('click',returnToTasks);
+$('svcpChatInboxBackTasks')?.addEventListener('click',returnToTasks);
 root.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
  input.value=button.dataset.svcpDiscussTemplate||'';
@@ -560,7 +567,14 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
  renderTasks();
  window.dispatchEvent(new CustomEvent('seyveo:demo-task-completed',{detail:{id:task.id}}));
 });
-window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView,openPrivateChat:(person,view='manager')=>{
+window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
+ openTab:tab,
+ enterFromTasks:()=>{
+  chatsFromTasks=true;
+  showInbox();
+ },
+ openPeopleView:peopleView,
+ openPrivateChat:(person,view='manager')=>{
  const id='dm-'+String(person||'').toLowerCase();
  if(!ROOMS.some(x=>x.id===id&&x.person))return false;
  if(location.hash!=='#manage')location.hash='#manage';
