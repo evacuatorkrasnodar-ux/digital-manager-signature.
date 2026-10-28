@@ -70,10 +70,14 @@ document.querySelectorAll('#svcpTeam [data-svcp-people]').forEach(button=>
 function tab(name){
  if(!['chats','team','tasks'].includes(name))return;
  state.tab=name;
- root.querySelectorAll('[data-svcp-panel]').forEach(section=>{section.hidden=section.dataset.svcpPanel!==name});
- if(name==='tasks')renderTasks();
- if(name==='chats'){chatsFromTasks=false;showInbox()}
- if(name==='team')peopleView('team');
+ // Panels now live in different workspaces; the old parent is not their root.
+ // Update by persistent element IDs instead of querying the retired container.
+ const panels={chats:$('svcpChats'),team:$('svcpTeam'),tasks:$('svcpTasks')};
+ if(name==='chats'){
+  if(panels.chats)panels.chats.hidden=false;
+  chatsFromTasks=false;showInbox();
+ }else if(name==='tasks')renderTasks();
+ else peopleView('team');
 }
 chatRoot.querySelectorAll('[data-svcp-room]').forEach(button=>
  button.addEventListener('click',()=>openRoom(button.dataset.svcpRoom)));
@@ -193,6 +197,10 @@ function renderHistorySearch(){
  heading('Поручения',taskHits.length);
  for(const {item,index} of taskHits){
   resultRow((item.done?'✓ Выполнено · ':'В работе · ')+(STAFF[item.assigneeId]||'Команда'),item.text.slice(0,150),()=>{
+   if(employeePreviewActive()){
+    window.SEYVEO_UNIFIED_TASKS?.openChat?.('tasks','dm-elena','elena');
+    return;
+   }
    window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('preserve');
    requestAnimationFrame(()=>focusTask(index));
   });
