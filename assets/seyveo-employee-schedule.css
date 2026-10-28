@@ -30,6 +30,8 @@
 #tasksPage .svcp-schedule-day[aria-pressed="true"]{border-color:var(--seyveo-hdr-outline,var(--soft-line));
  background:var(--seyveo-hdr-active,var(--card2))}
 #tasksPage .svcp-schedule-day[data-today="true"] strong{text-decoration:underline;text-decoration-color:var(--seyveo-emerald);text-underline-offset:4px}
+#tasksPage .svcp-schedule-month-label{font-size:10px;text-transform:capitalize;letter-spacing:.03em;color:var(--secondary);padding-top:6px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-schedule-month-label[hidden]{display:none!important}
 #tasksPage .svcp-schedule-month{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;
  padding:5px 0 3px;border-top:1px solid var(--soft-line)}
 #tasksPage .svcp-schedule-month .svcp-schedule-day{min-height:39px;padding:5px 0;gap:4px}
