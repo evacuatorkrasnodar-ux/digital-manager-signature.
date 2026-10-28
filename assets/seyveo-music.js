@@ -31,6 +31,13 @@ const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
+const favoriteButton=$('sayviMusicFavorite');
+const lyricsToggle=$('sayviMusicLyricsToggle');
+const lyricsPanel=$('sayviMusicLyricsPanel');
+const lyricsList=$('sayviMusicLyricsLines');
+const lyricsImport=$('sayviMusicLyricsImport');
+const lyricsInput=$('sayviMusicLyricsFile');
+const lyricsFoot=$('sayviMusicLyricsFoot');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
@@ -67,6 +74,150 @@ const providers=Object.freeze({
  }
 });
 let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
+
+/* Saved favorites are track fingerprints, not copied audio or subscriptions. */
+const FAVORITES_KEY='seyveo-music-favorites-v1';
+let favorites=new Set();
+try{
+ const stored=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]');
+ if(Array.isArray(stored))favorites=new Set(stored.filter(x=>typeof x==='string'&&x.length<350).slice(-200));
+}catch{}
+const favoriteId=file=>file?[
+ String(file.name||'').trim().toLocaleLowerCase('ru-RU'),String(file.size||0),
+ String(file.lastModified||0)
+].join('|'):'';
+function isFavorite(file){return !!file&&favorites.has(favoriteId(file))}
+function updateFavorite(){
+ if(!favoriteButton)return;
+ const file=index>=0?tracks[index]:null;
+ const liked=isFavorite(file);
+ favoriteButton.disabled=!file;
+ favoriteButton.textContent=liked?'★':'☆';
+ favoriteButton.setAttribute('aria-pressed',String(liked));
+ favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':
+  liked?'Убрать из избранного':'Добавить в избранное');
+ favoriteButton.title=liked?'В избранном':'В избранное';
+}
+function toggleFavorite(){
+ const file=index>=0?tracks[index]:null;if(!file)return;
+ const key=favoriteId(file);
+ if(favorites.has(key))favorites.delete(key);else favorites.add(key);
+ try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}
+ catch{sayviMessage('Не удалось сохранить избранное на этом устройстве.')}
+ updateFavorite();collectionRender();
+}
+favoriteButton?.addEventListener('click',toggleFavorite);
+
+/* User-provided LRC only. No catalog lyrics, scraping or automatic translation. */
+const lyricsForTrack=new WeakMap();
+let lyricsVisible=false,currentLyrics=[],activeLyricIndex=-1;
+function parseLRC(input){
+ if(typeof input!=='string'||input.length>220000)return [];
+ const timed=new Map();
+ for(const raw of input.split(/\r?\n/).slice(0,1500)){
+  let line=raw.trim();
+  const stamps=[...line.matchAll(/\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g)];
+  if(!stamps.length)continue;
+  line=line.replace(/\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\]/g,'').trim();
+  if(!line||line.length>400)continue;
+  const translated=/^(?:\[tr\]|\[перевод\]|↳|translation:\s*)/i.test(line);
+  line=line.replace(/^(?:\[tr\]|\[перевод\]|↳|translation:\s*)/i,'').trim();
+  if(!line)continue;
+  let [text,translation]=translated?['',line]:line.split(/\s+\|\s+/,2);
+  text=(text||'').slice(0,260);translation=(translation||'').slice(0,260);
+  for(const match of stamps){
+   const sec=Number(match[1])*60+Number(match[2])+
+     Number(('0.'+(match[3]||'0')).slice(0,5));
+   if(!Number.isFinite(sec)||sec<0||sec>86400)continue;
+   const key=String(Math.round(sec*100)/100);
+   const row=timed.get(key)||{time:sec,text:'',translation:''};
+   if(text)row.text=row.text||text;
+   if(translation)row.translation=row.translation||translation;
+   timed.set(key,row);
+  }
+ }
+ return [...timed.values()].filter(x=>x.text).sort((a,b)=>a.time-b.time).slice(0,500);
+}
+function updateLyrics(){
+ if(!lyricsVisible||!currentLyrics.length||!lyricsList)return;
+ const time=Number.isFinite(audio.currentTime)?audio.currentTime:0;
+ let at=-1;for(let i=0;i<currentLyrics.length;i++){if(currentLyrics[i].time<=time+.08)at=i;else break}
+ if(at===activeLyricIndex)return;
+ activeLyricIndex=at;
+ const nodes=lyricsList.querySelectorAll('[data-lyric-row]');
+ nodes.forEach((row,i)=>{
+  row.classList.toggle('is-current',i===at);
+  row.classList.toggle('is-past',i<at);
+  row.setAttribute('aria-current',String(i===at));
+ });
+ const focus=nodes[Math.max(0,at)];
+ if(focus){
+  // Scroll only the lyric region. The dock and music page do not jump.
+  const top=focus.offsetTop-lyricsList.offsetTop-lyricsList.clientHeight*.37;
+  lyricsList.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+ }
+}
+function renderLyrics(){
+ if(!lyricsList)return;
+ const file=index>=0?tracks[index]:null;
+ currentLyrics=file?lyricsForTrack.get(file)||[]:[];
+ activeLyricIndex=-1;lyricsList.replaceChildren();
+ if(lyricsFoot)lyricsFoot.textContent=currentLyrics.length?
+  'Строки из вашего .LRC · нажмите строку, чтобы перейти к этому моменту.' :
+  'Без текста .LRC синхронизация и перевод недоступны.';
+ if(!currentLyrics.length){
+  const note=document.createElement('p');
+  note.className='sv-music-lyrics-empty';
+  note.textContent='Добавьте файл .LRC с временными отметками. Если в нём есть перевод, покажем его под строкой.';
+  lyricsList.append(note);
+  return;
+ }
+ for(const line of currentLyrics){
+  const row=document.createElement('button');row.type='button';row.className='sv-music-lyric';
+  row.dataset.lyricRow='true';
+  row.setAttribute('aria-label','Перейти к '+fmt(line.time)+': '+line.text);
+  const main=document.createElement('span');main.className='sv-music-lyric-primary';main.textContent=line.text;
+  row.append(main);
+  if(line.translation){
+   const second=document.createElement('span');second.className='sv-music-lyric-translation';second.textContent=line.translation;
+   row.append(second);
+  }
+  row.addEventListener('click',()=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.min(line.time,audio.duration);updateTime()});
+  lyricsList.append(row);
+ }
+ updateLyrics();
+}
+function toggleLyrics(force){
+ lyricsVisible=typeof force==='boolean'?force:!lyricsVisible;
+ page.classList.toggle('sv-music-lyrics-mode',lyricsVisible);
+ if(lyricsPanel)lyricsPanel.hidden=!lyricsVisible;
+ if(lyricsToggle){
+  lyricsToggle.setAttribute('aria-pressed',String(lyricsVisible));
+  lyricsToggle.textContent=lyricsVisible?'Пластинка':'Текст';
+ }
+ if(lyricsVisible)renderLyrics();
+}
+lyricsToggle?.addEventListener('click',()=>toggleLyrics());
+lyricsImport?.addEventListener('click',()=>{
+ if(index<0){sayviMessage('Сначала выберите музыкальный файл, затем его текст .LRC.');return}
+ lyricsInput?.click();
+});
+lyricsInput?.addEventListener('change',async()=>{
+ const lrc=lyricsInput.files?.[0];lyricsInput.value='';
+ if(!lrc||index<0)return;
+ if(lrc.size>220000){sayviMessage('Файл текста слишком большой. Для синхронизации выберите .LRC до 220 КБ.');return}
+ const selected=tracks[index];
+ try{
+  const parsed=parseLRC(await lrc.text());
+  if(!parsed.length){sayviMessage('Не нашла временных отметок вида [00:12.50]. Проверьте файл .LRC.');return}
+  lyricsForTrack.set(selected,parsed);
+  if(tracks[index]===selected){
+   toggleLyrics(true);
+   sayviMessage('Текст синхронизирован по отметкам из файла. Перевод показан только там, где он есть в .LRC.');
+  }
+ }catch{sayviMessage('Не смогла прочитать файл текста. Попробуйте UTF-8 .LRC.')}
+});
+
 // A dismissed remote stays hidden while the audio keeps playing.
 // Entering the full music screen is the deliberate way to restore it.
 let miniDismissed=false;
@@ -163,6 +314,7 @@ function updateTime(){
  seek.setAttribute('aria-valuetext',fmt(now)+' из '+fmt(total));
  seek.style.setProperty('--music-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
  mini?.style.setProperty('--sv-mini-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
+ updateLyrics();
 }
 function safeRelease(){
  if(url){
@@ -224,7 +376,7 @@ function collectionRender(){
   const count=document.createElement('span');count.className='sv-music-row-num';
   count.textContent=String(i+1).padStart(2,'0');
   const name=document.createElement('span');name.className='sv-music-row-title';
-  name.textContent=safeName(file);
+  name.textContent=(isFavorite(file)?'★  ':'')+safeName(file);
   btn.append(count,name);
   btn.addEventListener('click',()=>{switchTrack(i,true)});
   collection.append(btn);
@@ -241,6 +393,7 @@ function switchTrack(i,autoplay=false){
  }
  index=newIndex;
  audio.src=url;
+ updateFavorite();renderLyrics();
  const visible=infoFor(file);
  heading.textContent=visible.title;
  artist.textContent=(visible.artist?visible.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
@@ -499,6 +652,7 @@ $('sayviMusicFromComposer')?.addEventListener('click',()=>{
  $('hideInput')?.click();open();
 });
 previous.disabled=true;next.disabled=true;seek.disabled=true;
+updateFavorite();renderLyrics();
 updatePlay();updateTime();collectionRender();syncMusicRoute();
 window.SEYVEO_MUSIC=Object.freeze({
  understand,open,minimize:minimizeMusic,openQueue:showQueue,toggleQueue,closePanels:hidePanels,
