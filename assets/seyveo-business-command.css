@@ -741,3 +741,49 @@
 @media(max-width:370px){
  #unifiedTasksChatHost .svcp-composer-emoji-toggle{width:28px;min-width:28px}
 }
+
+
+/* Recipient-first assignments: explicit person or each team member, never implicit. */
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;
+ gap:8px;align-items:end;margin:7px 0 15px
+}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form > #svcpTaskInput{
+ grid-column:1/-1;min-width:0;min-height:44px
+}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-assignee-field{
+ display:grid;gap:5px;min-width:0;color:var(--secondary);
+ font-size:11.5px;line-height:1.25
+}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-assignee-field select{
+ display:block;box-sizing:border-box;min-width:0;width:100%;height:44px;
+ padding:9px 31px 9px 12px;border-radius:13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--card);color:var(--text);font:inherit;font-size:13px;
+ text-overflow:ellipsis
+}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary{min-height:44px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-feedback{
+ grid-column:1/-1;margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45
+}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-feedback[hidden]{display:none!important}
+#tasksPage #svcpTaskList .svcp-task-reassign{
+ display:block;width:100%;max-width:220px;min-height:34px;
+ margin-top:5px;padding:5px 8px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:10px;background:var(--card);color:var(--seyveo-emerald);
+ font:inherit;font-size:12px
+}
+#tasksPage #unifiedBusinessTasksHost select:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+@media(max-width:440px){
+ #tasksPage #unifiedBusinessTasksHost .svcp-task-form{
+  grid-template-columns:minmax(0,1fr);
+ }
+ #tasksPage #unifiedBusinessTasksHost .svcp-task-form > #svcpTaskInput,
+ #tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary,
+ #tasksPage #unifiedBusinessTasksHost .svcp-task-feedback{
+  grid-column:1
+ }
+ #tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary{width:100%}
+}
