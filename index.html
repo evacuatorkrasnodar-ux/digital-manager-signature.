@@ -931,12 +931,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <div class="svcp-conversation-info"><strong id="svcpConversationTitle">Общий чат</strong><small id="svcpConversationDetail">Рабочая группа</small></div>
     <button type="button" id="svcpConversationSearch" class="svcp-conversation-search" aria-label="Найти сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg></button>
     <button type="button" id="svcpRoomInfoToggle" class="svcp-room-info-toggle" aria-label="Информация о чате" aria-controls="svcpRoomInfo" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10.5v6M12 7.5h.01"/></svg></button>
-    <button type="button" id="svcpReturnToTasks" class="svcp-perspective" hidden>К поручению</button><button type="button" id="svcpElenaPerspective" class="svcp-perspective" hidden aria-pressed="false">Взгляд Елены</button>
+    <button type="button" id="svcpReturnToTasks" class="svcp-perspective" hidden>К поручению</button>
    </div>
    <section id="svcpRoomInfo" class="svcp-room-info" hidden aria-label="Сведения о чате">
     <strong id="svcpRoomInfoName">Рабочий чат</strong>
     <p id="svcpRoomInfoDescription">Чат команды SEYVEO.</p>
     <small>Демо · сообщения и файлы остаются в этом браузере, участникам не доставляются.</small>
+    <button type="button" id="svcpElenaPerspective" class="svcp-perspective" hidden aria-pressed="false">Взгляд Елены</button>
    </section>
   <div class="svcp-chat">
    <div class="svcp-chat-intro">
@@ -1411,7 +1412,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <section id="svcpWorkChatScreen" role="dialog" aria-modal="true" aria-labelledby="svcpWorkChatTitle" aria-describedby="svcpWorkChatDescription" hidden>
  <header class="svcp-work-chat-header">
   <button type="button" id="svcpWorkChatBack" class="svcp-work-chat-back" aria-label="Вернуться к моей работе"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-  <div class="svcp-work-chat-heading"><strong id="svcpWorkChatTitle">Сообщения</strong><small id="svcpWorkChatDescription">SEYVEO · рабочие разговоры</small></div>
+  <div class="svcp-work-chat-heading"><strong id="svcpWorkChatTitle">Сообщения</strong><small id="svcpWorkChatDescription">Личные и групповые чаты · локальное демо</small></div>
   <svg class="svcp-work-chat-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v11H9l-5 3v-14Z"/><path d="M8 10.5h8"/></svg>
  </header>
  <div id="svcpWorkChatCanvas"></div>
