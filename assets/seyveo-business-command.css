@@ -189,3 +189,8 @@
  #seyveoBusinessCommandPage .svcp-composer{gap:5px}
 }
 @media(prefers-reduced-motion:reduce){#seyveoBusinessCommandPage .svcp-chat *{scroll-behavior:auto;transition:none}}
+
+/* Show a single contextual path to the shared team tasks, only after confirmation. */
+#seyveoBusinessCommandPage .svcp-open-tasks{display:inline-flex;align-items:center;justify-content:center;margin:9px 2px 2px;padding:9px 14px;min-height:40px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-hdr-active);color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
+#seyveoBusinessCommandPage .svcp-open-tasks[hidden]{display:none!important}
+#seyveoBusinessCommandPage .svcp-open-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
