@@ -405,8 +405,12 @@
  });
  // The separate chat demo perspective must not change the selected app version.
  $('navTasks')?.addEventListener('click',()=>{
-  if(isEmployee())setEmployeeAccountOpen(false);
-  isEmployee()?navigate('employee'):openPersonal();
+  // One dock destination, three meaningful workspaces.
+  // Managers enter Business rather than being dropped into private errands;
+  // ONE remains entirely personal, while employees land in their work view.
+  if(isEmployee()){setEmployeeAccountOpen(false);navigate('employee');return}
+  if(isManager()){openBusiness('home');return}
+  openPersonal();
  });
  window.addEventListener('hashchange',()=>{
   if(location.hash==='#tasks')routePending();
