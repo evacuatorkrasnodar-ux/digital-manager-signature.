@@ -155,6 +155,13 @@ function renderProfile(){
  const insight=el('section','svstaff-insight');const head=el('div','svstaff-insight-head');head.append(icon('spark'),el('span',null,'Сэйви · Анализ ситуации'));
  insight.append(head,el('p',null,p.insight));body.append(insight);
  const actions=el('div','svstaff-actions');
+ actions.append(button('Написать лично','svstaff-action',()=>{
+  // The demo chat uses the employee's stable internal ID, never a display-name match.
+  // Close the employee card before opening its existing Business chat surface.
+  const personId=p.id;
+  modal.close();
+  window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.(personId);
+ }));
  actions.append(button(showPlan?'Скрыть план':'План развития','svstaff-action',()=>{showPlan=!showPlan;renderProfile()}));
  const inp=el('input');inp.type='file';inp.accept='image/*';inp.hidden=true;inp.setAttribute('aria-label','Загрузить фото для просмотра');inp.addEventListener('change',()=>{
   const file=inp.files&&inp.files[0];if(!file)return;
