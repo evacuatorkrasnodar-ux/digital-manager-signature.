@@ -8,7 +8,13 @@ for(const css of [main,mini])assert.ok(css.includes('conic-gradient(from 50deg,#
 assert.ok(!main.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)')&&!mini.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),'Green vinyl is retired');
 assert.ok(main.includes('fill:rgba(255,255,255,.06);stroke:#ffffff'),'White star outline on every theme');
 assert.ok(main.includes('fill:url(#svMusicStarMetal);stroke:#ffffff'),'White filled favorite');
-assert.ok(html.includes('stop-color="#ffffff"')&&html.includes('stop-color="#cbd1d9"'),'Monochrome star in all themes');
+assert.ok(html.includes('stop-color="#ffffff"')&&html.includes('stop-color="#cbd1d9"'),'Monochrome Music star in all themes');
+assert.match(html,/id="svcpThankStarMetal"[^>]*><stop offset="0" stop-color="#ffffff"\/><stop offset=".43" stop-color="#edf1f6"\/><stop offset="1" stop-color="#b5c0cc"/,
+ 'Employee recognition star is silver-white in all themes');
+const employeeStyle=fs.readFileSync('assets/seyveo-business-command.css','utf8');
+assert.ok(employeeStyle.includes('border:1px solid rgba(255,255,255,.28);background:radial-gradient(circle at 34% 25%,#38404a,#171b21 74%)'),
+ 'Employee star plaque is white-and-charcoal independently of theme');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=45/,'New employee award style is cache-busted');
 for(const label of ["all:'Команда'","people:'Сотрудники'","extra:'Рабочие группы'","assistant:'Сэйви'"])
  assert.ok(js.includes(label),'Chat section '+label);
 assert.ok(js.includes("const managerDialog=employeePreviewActive()&&room.id==='dm-elena'"));
