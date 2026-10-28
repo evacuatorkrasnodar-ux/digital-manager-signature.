@@ -900,6 +900,9 @@ function renderChat(){
      menu.append(btn('Изменить',()=>{
       closeMessageMenus();clearReply();
       editingMessageIndex=index;
+      const editPreview=$('svcpReplyPreview'),editText=$('svcpReplyText');
+      if(editPreview)editPreview.hidden=false;
+      if(editText)editText.textContent='Редактирование · нажми × для отмены';
       const input=$('svcpChatInput');if(input){
        input.value=msg.text;input.focus({preventScroll:true});
        input.dispatchEvent(new Event('input',{bubbles:true}));
@@ -960,7 +963,15 @@ function startReply(msg){
  $('svcpChatInput')?.focus({preventScroll:true});
 }
 function clearReply(){state.replyTo=null;$('svcpReplyPreview').hidden=true;$('svcpReplyText').textContent=''}
-$('svcpReplyCancel')?.addEventListener('click',clearReply);
+$('svcpReplyCancel')?.addEventListener('click',()=>{
+ if(editingMessageIndex!==null){
+  editingMessageIndex=null;
+  const input=$('svcpChatInput');if(input){
+   input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+ }
+ clearReply();
+});
 function suggestFromChat(message){
  const request=message.replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').trim();
  if(/возврат|вернуть товар/i.test(request))return {
@@ -1260,7 +1271,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   const updated=state.chat.map((item,i)=>i===index?{...item,text:txt,editedAt:Date.now()}:item);
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;editingMessageIndex=null;input.value='';
-  syncComposerActions();
+  clearReply();syncComposerActions();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();renderDirectory();setStatus('Изменение сохранено на этом устройстве.');
   return;
