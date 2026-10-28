@@ -254,21 +254,27 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  * explicit button in the personal chat and uses the previous staff-ledger key.
  */
 const REACTION_MARKS={help:'⭐',support:'💚',mentor:'🙌',initiative:'💡',reliable:'🔥'};
+const reactionHome=$('svcpReactionPicker')?.parentElement;
 function closeRecognition(){
- $('svcpReactionPicker').hidden=true;
+ const panel=$('svcpReactionPicker');
+ if(panel){
+  panel.hidden=true;
+  if(reactionHome&&panel.parentElement!==reactionHome)reactionHome.appendChild(panel);
+ }
  $('svcpRecognizeOpen')?.setAttribute('aria-expanded','false');
  quickReactionTarget=null;
 }
-function showReactions(target){
+function showReactions(target,near=null){
+ closeRecognition();
  quickReactionTarget=target;
  const panel=$('svcpReactionPicker');
  if(!panel)return;
  $('svcpReactionLabel').textContent=target.type==='person'
   ?'Знак для '+STAFF[target.person]+' · демо'
   :'Реакция на сообщение';
+ if(near)near.appendChild(panel);
  panel.hidden=false;
  $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(target.type==='person'));
- panel.scrollIntoView({behavior:'auto',block:'nearest'});
 }
 $('svcpRecognizeOpen')?.addEventListener('click',()=>{
  if(!$('svcpReactionPicker').hidden&&quickReactionTarget?.type==='person'){closeRecognition();return}
@@ -329,6 +335,7 @@ function formatTime(ts){
  return Number.isFinite(dt.getTime())?dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
 }
 function renderChat(){
+ closeRecognition();
  chatRoot.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
  thread.replaceChildren();
@@ -359,7 +366,7 @@ function renderChat(){
    const actions=el('div','svcp-message-actions');
    if(!isRecognition){
     actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
-    actions.append(btn('😊',()=>showReactions({type:'message',index}),'svcp-message-action svcp-emoji-trigger'));
+    actions.append(btn('😊',()=>showReactions({type:'message',index},bubble),'svcp-message-action svcp-emoji-trigger'));
    }
    if(!isRecognition&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())){
     actions.append(btn(isSayvi?'Подготовить поручение':'В поручение',()=>prepareTask(msg),'svcp-message-action'));
