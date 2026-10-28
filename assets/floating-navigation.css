@@ -379,8 +379,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
- border-color:rgba(226,184,204,.25)!important;
- background:linear-gradient(155deg,rgba(255,226,240,.068),rgba(194,137,168,.027) 46%,transparent 77%),rgba(44,31,43,.97)!important;
+ border-color:rgba(226,186,137,.28)!important;
+ background:linear-gradient(155deg,rgba(255,229,182,.075),rgba(194,144,92,.03) 46%,transparent 77%),rgba(45,34,25,.97)!important;
 }
 :root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
@@ -399,11 +399,11 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 
 
 :root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded){
- --sv-ink-input-text:#f7e9ed;--sv-ink-input-hint:#d7bfc9;
- background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(89,60,79,.59),rgba(55,37,53,.40) 54%,rgba(33,23,34,0) 100%)!important;
+ --sv-ink-input-text:#f5e9d8;--sv-ink-input-hint:#d7c1a9;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(95,68,43,.59),rgba(57,42,29,.40) 54%,rgba(35,27,20,0) 100%)!important;
 }
 :root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded):focus-within{
- background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(110,73,95,.65),rgba(71,47,66,.46) 58%,rgba(33,23,34,0) 100%)!important;
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(119,86,54,.65),rgba(77,55,35,.46) 58%,rgba(35,27,20,0) 100%)!important;
 }
 
 /* Original SEYVEO ceramic button: its existing SVG metal and ceramic now
@@ -431,12 +431,12 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  --sv-ceramic-rim-5:#f6f8ff;--sv-ceramic-rim-6:#a5bce9;--sv-ceramic-rim-7:#7895c9;
 }
 :root[data-theme=dark][data-palette=plum] .dock>#assistantButton{
- --sv-ceramic-wave:#f9dbe7;--sv-ceramic-pressed:#704b63;
- --sv-ceramic-face-1:#6d5265;--sv-ceramic-face-2:#5c4356;
- --sv-ceramic-face-3:#4e384b;--sv-ceramic-face-4:#442f42;--sv-ceramic-face-5:#382738;
- --sv-ceramic-rim-1:#dec0cf;--sv-ceramic-rim-2:#fff1f6;
- --sv-ceramic-rim-3:#e5cad7;--sv-ceramic-rim-4:#bc96ac;
- --sv-ceramic-rim-5:#fff7fa;--sv-ceramic-rim-6:#d7b3c5;--sv-ceramic-rim-7:#ab879d;
+ --sv-ceramic-wave:#f8e3c5;--sv-ceramic-pressed:#79593c;
+ --sv-ceramic-face-1:#735841;--sv-ceramic-face-2:#604832;
+ --sv-ceramic-face-3:#533c2b;--sv-ceramic-face-4:#493324;--sv-ceramic-face-5:#39281d;
+ --sv-ceramic-rim-1:#e0c49f;--sv-ceramic-rim-2:#fff4df;
+ --sv-ceramic-rim-3:#ebd4b0;--sv-ceramic-rim-4:#c1a077;
+ --sv-ceramic-rim-5:#fff8e9;--sv-ceramic-rim-6:#dac09b;--sv-ceramic-rim-7:#af916e;
 }
 :root[data-theme=light] .dock>#assistantButton{
  --sv-ceramic-wave:#283443;

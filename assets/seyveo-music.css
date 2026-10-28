@@ -784,21 +784,21 @@ html[data-theme=light].sv-music-screen #sayviMusicPage .sv-music-collection:not(
 /* SEYVEO MUSIC · Warm Velvet + user-supplied timed lyrics
    The existing record, audio element, mini-remote and dock remain unchanged. */
 :root[data-theme=dark][data-palette=plum]{
- --sv-music-sheet-gradient:linear-gradient(157deg,rgba(111,82,96,.98),rgba(44,32,44,.985));
- --sv-music-header-gradient:linear-gradient(160deg,rgba(130,93,108,.96),rgba(59,43,55,.98))
+ --sv-music-sheet-gradient:linear-gradient(157deg,rgba(113,82,54,.98),rgba(45,32,23,.985));
+ --sv-music-header-gradient:linear-gradient(160deg,rgba(137,96,61,.96),rgba(63,44,29,.98))
 }
 html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
  background:
-  radial-gradient(ellipse 110% 68% at 48% 27%,rgba(158,119,132,.22),transparent 75%),
-  linear-gradient(168deg,#4c3c46 0%,#332933 49%,#201b22 100%)!important
+  radial-gradient(ellipse 110% 68% at 48% 27%,rgba(170,125,76,.23),transparent 75%),
+  linear-gradient(168deg,#55402f 0%,#382b20 49%,#201a15 100%)!important
 }
 html.sv-music-screen[data-theme=dark][data-palette=plum] #sayviMusicPage{
- color:#f7e9e9;
- --text:#f7e9e9;--secondary:#d1babe;--soft-line:#d5aeb528;
- --sv-music-soft:#d7aab9;--sv-music-veil:rgba(68,42,56,.73)
+ color:#f8eddb;
+ --text:#f8eddb;--secondary:#d7bfa1;--soft-line:#dfc19a2a;
+ --sv-music-soft:#e4be8b;--sv-music-veil:rgba(73,51,31,.73)
 }
 html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
- background:radial-gradient(ellipse at 50% 45%,rgba(215,170,188,.115),transparent 68%)
+ background:radial-gradient(ellipse at 50% 45%,rgba(225,182,127,.13),transparent 68%)
 }
 #sayviMusicPage>header.sv-music-head{
  grid-template-columns:minmax(0,1fr) 41px auto!important;
@@ -908,15 +908,15 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
    Inspired by the restrained material palette, not a reproduction of another UI. */
 html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
  background:
-  radial-gradient(ellipse 92% 65% at 52% 19%,rgba(184,144,151,.29),transparent 80%),
-  radial-gradient(ellipse 73% 55% at 12% 78%,rgba(145,101,113,.19),transparent 88%),
-  linear-gradient(168deg,#67545b 0%,#45373f 43%,#241e24 100%)!important
+  radial-gradient(ellipse 92% 65% at 52% 19%,rgba(197,150,99,.28),transparent 80%),
+  radial-gradient(ellipse 73% 55% at 12% 78%,rgba(158,111,67,.17),transparent 88%),
+  linear-gradient(168deg,#72543a 0%,#483526 43%,#241c17 100%)!important
 }
 html.sv-music-screen[data-theme=dark][data-palette=plum] #sayviMusicPage .sv-music-lyrics{
  background:
-  radial-gradient(ellipse 90% 72% at 52% 16%,rgba(198,158,164,.30),transparent 78%),
-  linear-gradient(165deg,rgba(117,92,100,.95),rgba(57,43,52,.98) 70%,rgba(39,33,39,.99));
- border-color:rgba(244,209,219,.20)
+  radial-gradient(ellipse 90% 72% at 52% 16%,rgba(210,163,108,.29),transparent 78%),
+  linear-gradient(165deg,rgba(123,88,57,.95),rgba(62,46,31,.98) 70%,rgba(41,32,25,.99));
+ border-color:rgba(244,213,173,.23)
 }
 #sayviMusicPage .sv-music-lyrics-heading{
  min-height:38px;gap:5px
@@ -932,9 +932,9 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] #sayviMusicPage .sv-mus
  display:none!important
 }
 #sayviMusicPage .sv-music-lyrics-tools #sayviMusicLyricsTranslation[aria-pressed=true]{
- background:rgba(252,226,235,.20);
- border-color:rgba(252,226,235,.50);
- color:#fff4f4
+ background:rgba(250,221,175,.20);
+ border-color:rgba(250,221,175,.50);
+ color:#fff4e3
 }
 #sayviMusicPage .sv-music-lyric{
  font-size:clamp(22px,5.7vw,33px);line-height:1.23;

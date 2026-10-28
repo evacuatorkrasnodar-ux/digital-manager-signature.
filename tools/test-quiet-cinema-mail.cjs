@@ -14,11 +14,13 @@ assert.match(source,/previewScene=present\.length\?createSurface\(present\[0\],p
 assert.match(source,/space\.classList\.add\('lm-gather'\)/,'Gathering animation remains');
 assert.match(source,/window\.SEYVEO_SAYVI_SURFACES/,'Mail opens existing Mail page');
 assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo choice');
-assert.match(html,/assets\/living-moment\.js\?v=59/);
-assert.match(html,/assets\/living-moment\.css\?v=43/);
+assert.match(html,/assets\/living-moment\.js\?v=60/);
+assert.match(html,/assets\/living-moment\.css\?v=44/);
 assert.match(html,/assets\/personal-tasks\.js\?v=23/);
 assert.match(html,/assets\/personal-tasks\.css\?v=20/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
+assert.match(style,/--lm-design-ready:1/,'Quiet Cinema style loading marker exists');
+assert.match(source,/getComputedStyle\(space\)/,'Preview skips unstyled display');
 assert.match(style,/#seyveoLivingMoment\.lm-condense \.lm-mail-content\{display:none!important\}/,
  'Mail content must disappear with original card condensation');
 assert.match(style,/#seyveoLivingMoment:not\(\.lm-condense\)/,

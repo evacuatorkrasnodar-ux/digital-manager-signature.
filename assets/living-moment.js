@@ -558,6 +558,12 @@ function hold(callback,delay){
  later(check,delay);
 }
 function startPreview(){
+ // When the stylesheet cannot load, do not show huge unstyled SVGs and default gray buttons.
+ if(typeof window.getComputedStyle==='function' &&
+    window.getComputedStyle(space).getPropertyValue('--lm-design-ready').trim()!=='1'){
+  console.warn('SEYVEO Quiet Cinema: CSS missing; preserving normal Home.');
+  return false;
+ }
  if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;

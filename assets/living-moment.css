@@ -45,6 +45,7 @@
 
 #seyveoLivingMoment[hidden]{display:none!important}
 #seyveoLivingMoment{
+  --lm-design-ready:1;
   width:100%;
   min-width:0;
   margin:0 0 6px;
@@ -426,21 +427,21 @@
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-primary{
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid rgba(235,239,245,.14);
+  border:1px solid var(--seyveo-hdr-outline);
   border-radius:19px;
-  background-color:rgba(245,248,253,.027);
+  background-color:var(--seyveo-hdr-active);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid rgba(235,239,245,.14);
+  border:1px solid var(--seyveo-hdr-outline);
   border-radius:19px;
-  background-color:rgba(245,248,253,.027);
+  background-color:var(--seyveo-hdr-active);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:rgba(235,239,245,.19);
-  background-color:rgba(245,248,253,.041);
+  border-color:var(--seyveo-hdr-outline);
+  background-color:var(--seyveo-hdr-active);
   padding:7px 9px 5px;
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::before{opacity:0}

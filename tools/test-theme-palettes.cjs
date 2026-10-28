@@ -39,16 +39,16 @@ assert.match(html,/const THEME_VALUES=\['auto','graphite','light','dark','sapphi
 assert.match(html,/dataset\.palette=palette/);
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
 assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
-for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Smoked Velvet'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
+for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Copper Dune'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
 for(const token of ['--seyveo-hdr-stage','--seyveo-hdr-glint'])assert.ok((html.match(new RegExp(token,'g'))||[]).length>=6,'HDR-inspired materials on all palettes: '+token);
 assert.match(html,/THEME_VALUES\.includes\(raw\.theme\)/,'Legacy theme values still restore');
 assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migrations still work');
-assert.match(html,/assets\/floating-navigation\.css\?v=40/);
-assert.match(html,/assets\/living-space\.css\?v=51/);
-assert.match(html,/assets\/seyveo-music\.css\?v=40/);
-assert.match(html,/assets\/living-conversation\.css\?v=16/);
+assert.match(html,/assets\/floating-navigation\.css\?v=41/);
+assert.match(html,/assets\/living-space\.css\?v=52/);
+assert.match(html,/assets\/seyveo-music\.css\?v=41/);
+assert.match(html,/assets\/living-conversation\.css\?v=17/);
 assert.match(html,/assets\/conversation-refined\.css\?v=38/);
-assert.match(html,/assets\/personal-wellness\.css\?v=25/);
+assert.match(html,/assets\/personal-wellness\.css\?v=26/);
 assert.match(html,/assets\/calendar-spaces\.css\?v=24/);
 assert.match(html,/assets\/sections-velvet\.css\?v=12/);
 assert.match(html,/assets\/notebook-smart\.css\?v=28/);
@@ -56,9 +56,9 @@ assert.match(html,/assets\/notebook-paper\.css\?v=14/);
 assert.match(html,/assets\/notebook-scan\.css\?v=8/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
-assert.match(html,/assets\/home-velvet\.css\?v=19/);
+assert.match(html,/assets\/home-velvet\.css\?v=20/);
 const refreshed={
- 'composer-intent.css':19,
+ 'composer-intent.css':20,
  'seyveo-music-dock.css':9,
  'business-map.css':14,
  'company-signature.css':8,

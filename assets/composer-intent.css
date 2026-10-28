@@ -422,5 +422,5 @@
 :root{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(30,49,43,.68),rgba(18,33,28,.44) 69%,rgba(11,22,17,.16))}
 :root[data-theme=dark][data-palette=graphite]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(43,59,71,.68),rgba(22,33,44,.44) 69%,rgba(13,20,27,.16))}
 :root[data-theme=dark][data-palette=sapphire]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(40,58,106,.72),rgba(20,33,67,.48) 69%,rgba(11,20,45,.17))}
-:root[data-theme=dark][data-palette=plum]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(91,61,82,.73),rgba(59,39,57,.49) 69%,rgba(35,25,36,.17))}
+:root[data-theme=dark][data-palette=plum]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(101,74,46,.73),rgba(65,47,30,.49) 69%,rgba(37,28,20,.17))}
 :root[data-theme=light]{--sv-expanded-writer-background:radial-gradient(ellipse 100% 90% at 50% 42%,rgba(238,243,248,.88),rgba(244,247,250,.50) 69%,rgba(255,255,255,.14))}
