@@ -330,7 +330,10 @@ function renderChat(){
  thread.replaceChildren();
  const messages=state.chat.map((msg,index)=>({msg,index}))
   .filter(x=>x.msg&&x.msg.room===state.room&&typeof x.msg.text==='string');
- const visible=focusSearchIndex!==null?messages:messages.slice(-35);
+ const focusAt=focusSearchIndex===null?-1:messages.findIndex(x=>x.index===focusSearchIndex);
+ const visible=focusAt>=0
+  ?messages.slice(Math.max(0,focusAt-16),Math.min(messages.length,focusAt+17))
+  :messages.slice(-35);
  if(!visible.length){
   thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
