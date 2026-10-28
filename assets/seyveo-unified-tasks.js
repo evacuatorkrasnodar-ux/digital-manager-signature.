@@ -16,6 +16,14 @@
   employeeProfileToggle=$('svcpEmployeeProfileToggle'),
   employeeAccount=$('svcpEmployeeAccountView'),employeeAccountBack=$('svcpEmployeeAccountBack');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
+ // Keep Elena's single account button in the top-right corner of the Tasks header.
+ // Reparent the real button to preserve its listeners, expanded state and account data.
+ if(employeeProfileToggle){
+  const heading=page.querySelector('.tasks-heading');
+  const caption=heading?.querySelector('.manage-caption');
+  if(heading)heading.insertBefore(employeeProfileToggle,caption||heading.firstChild);
+  employeeProfileToggle.hidden=true;
+ }
  taskHost.appendChild(tasks);
  tasks.hidden=false;
  chatHost.appendChild(chats);
@@ -301,6 +309,7 @@
   lastWorkView=chosen;
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
+  if(employeeProfileToggle)employeeProfileToggle.hidden=chosen!=='employee';
   if(chosen!=='employee')setEmployeeAccountOpen(false);
   if(overview)overview.hidden=chosen!=='personal';
   if(chosen==='business')showBoard();
@@ -318,6 +327,7 @@
   lastWorkView='business';
   personal.hidden=true;business.hidden=false;
   if(employee)employee.hidden=true;
+  if(employeeProfileToggle)employeeProfileToggle.hidden=true;
   setEmployeeAccountOpen(false);
   if(overview)overview.hidden=true;
   board.hidden=false;
