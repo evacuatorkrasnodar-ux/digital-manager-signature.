@@ -918,10 +918,11 @@ function renderChat(){
     actions.append(moreButton);
     // A single visible tap awards a staff member directly from their message.
     // Ordinary chat emojis and saved-message bookmarks remain unrelated.
-    if(state.viewpoint==='manager' && msg.role==='demo-elena'){
-     const awardButton=btn('✦',()=>applyPersonReaction('elena','help'),'svcp-message-action svcp-inline-award');
-     awardButton.setAttribute('aria-label','Наградить Елену золотой звездой · в личное дело');
-     awardButton.title='Наградить Елену · в личное дело';
+    if(state.viewpoint==='manager' && roomDetails().kind==='personal' && roomDetails().person && STAFF[roomDetails().person] && !isSayvi){
+     const awardPerson=roomDetails().person;
+     const awardButton=btn('★',()=>applyPersonReaction(awardPerson,'help'),'svcp-message-action svcp-inline-award');
+     awardButton.setAttribute('aria-label','Благодарность для '+STAFF[awardPerson]+' · в личное дело');
+     awardButton.title='Благодарность '+STAFF[awardPerson]+' · в личное дело';
      actions.prepend(awardButton);
     }
     function svcpActionIcon(title,kind,callback,className){
