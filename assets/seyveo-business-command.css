@@ -266,3 +266,39 @@
 #svcpWorkHomePreview .svcp-home-reply-status{margin:0;font-size:11px;line-height:1.5;color:var(--seyveo-emerald)}
 #svcpWorkHomePreview .svcp-home-reply-quick button:focus-visible,
 #svcpWorkHomePreview .svcp-home-reply textarea:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+
+/* SEYVEO Tasks · quiet active list, collapsed completed history, direct conversation. */
+#tasksPage .svcp-tasks-back{display:inline-flex;align-items:center;gap:5px;margin:0 0 12px;padding:6px 2px;min-height:36px;border:0;background:none;color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
+#tasksPage .svcp-tasks-back:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:4px}
+#tasksPage .svcp-tasks-back span{font-size:12px}
+#tasksPage #svcpTaskList{display:block}
+#tasksPage #svcpTaskList .svcp-task-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 0 4px}
+#tasksPage #svcpTaskList .svcp-task-section-head strong{font-size:14px;font-weight:580;color:var(--text)}
+#tasksPage #svcpTaskList .svcp-task-section-head small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage #svcpTaskList .svcp-task-active{display:grid;gap:0}
+#tasksPage #svcpTaskList .svcp-task-zero{font-size:12px;line-height:1.55;padding:13px 0;color:var(--secondary);margin:0}
+#tasksPage #svcpTaskList .svcp-task{min-height:67px;gap:10px;align-items:center;display:flex;padding:11px 0}
+#tasksPage #svcpTaskList .svcp-task input[type=checkbox]{width:20px;height:20px;min-width:20px;min-height:20px;flex:none;accent-color:var(--seyveo-emerald)}
+#tasksPage #svcpTaskList .svcp-task-copy{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+#tasksPage #svcpTaskList .svcp-task-title{display:block;font-size:13px;line-height:1.42}
+#tasksPage #svcpTaskList .svcp-task-assignee{display:block;font-size:11px;line-height:1.4}
+#tasksPage #svcpTaskList .svcp-task-actions{display:flex;align-items:flex-end;flex-direction:column;gap:2px;flex:none;min-width:76px}
+#tasksPage #svcpTaskList .svcp-task-actions button{font:inherit;font-size:11.5px;min-height:31px;border:0;border-radius:0;background:none;padding:5px 2px;cursor:pointer;white-space:nowrap}
+#tasksPage #svcpTaskList .svcp-task-discuss{color:var(--seyveo-emerald);font-weight:560}
+#tasksPage #svcpTaskList .svcp-task-actions .svcp-ghost{color:var(--secondary);font-weight:400}
+#tasksPage #svcpTaskList .svcp-task-actions button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#tasksPage #svcpTaskList .svcp-task-history{border-top:1px solid var(--soft-line);margin:15px 0 0;padding:4px 0 0}
+#tasksPage #svcpTaskList .svcp-task-history>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 1px;min-height:44px}
+#tasksPage #svcpTaskList .svcp-task-history>summary::-webkit-details-marker{display:none}
+#tasksPage #svcpTaskList .svcp-task-history>summary strong{font-size:13px;font-weight:550;color:var(--text)}
+#tasksPage #svcpTaskList .svcp-task-history>summary small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage #svcpTaskList .svcp-history-chevron{margin-left:auto;color:var(--secondary);font-size:20px;transition:transform .18s ease}
+#tasksPage #svcpTaskList .svcp-task-history[open] .svcp-history-chevron{transform:rotate(90deg)}
+#tasksPage #svcpTaskList .svcp-task-history>summary:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:5px}
+#tasksPage #svcpTaskList .svcp-task-completed{display:grid;gap:0}
+#tasksPage #svcpTaskList .svcp-task-history .svcp-task{opacity:.82}
+#tasksPage #svcpTaskList .svcp-duplicate-summary{padding:9px 1px}
+#seyveoBusinessCommandPage .svcp-conversation-bar #svcpReturnToTasks{color:var(--seyveo-emerald);border-color:var(--seyveo-hdr-outline)}
+#seyveoBusinessCommandPage .svcp-conversation-bar #svcpReturnToTasks[hidden]{display:none!important}
+@media(max-width:365px){#tasksPage #svcpTaskList .svcp-task{gap:7px}#tasksPage #svcpTaskList .svcp-task-actions{min-width:67px}#tasksPage #svcpTaskList .svcp-task-actions button{font-size:11px;padding-inline:0}}
+@media(prefers-reduced-motion:reduce){#tasksPage #svcpTaskList .svcp-history-chevron{transition:none}}
