@@ -157,8 +157,10 @@ function renderChat(){
  }else{
   for(const msg of messages){
    const isSayvi=msg.role==='sayvi';
-   const bubble=el('article','svcp-bubble '+(isSayvi?'is-sayvi':'is-self'));
-   bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':'Ваше сообщение');
+   const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
+   const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
+   const bubble=el('article','svcp-bubble '+(isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':''));
+   bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
    bubble.append(meta);
@@ -166,6 +168,7 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    bubble.append(el('span','svcp-message-text',msg.text));
+   if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    const actions=el('div','svcp-message-actions');
    actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
    if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
@@ -208,7 +211,9 @@ function prepareTask(msg){
  // Images and file names are never promoted to tasks automatically.
  const clean=String(proposed||'').replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').replace(/\[Выбран файл:[\s\S]*$/,'').trim().slice(0,140);
  if(!clean){setStatus('В этом сообщении нет текста для поручения.');return}
- state.draftSource={room:msg.room};
+ const room=ROOMS.find(x=>x.id===msg.room);
+ state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:''};
+ $('svcpChatTaskAssignee').value=state.draftSource.assigneeId;
  $('svcpChatTaskTitle').value=clean;
  $('svcpChatTaskDraft').hidden=false;
  $('svcpChatTaskTitle').focus({preventScroll:true});
@@ -219,14 +224,20 @@ $('svcpOpenTasks')?.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.op
 function storeTask(text,source){
  const title=String(text||'').trim().slice(0,140);
  if(!title)return false;
- const updated=state.tasks.concat({text:title,done:false,...(source?{source:'chat',room:source.room}: {})}).slice(-60);
+ const assigneeId=source?.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,source.assigneeId)?source.assigneeId:'';
+ const newTask={id:'chat-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),text:title,done:false,...(source?{source:'chat',room:source.room}: {}),...(assigneeId?{assigneeId}:{})};
+ const updated=state.tasks.concat(newTask).slice(-60);
  if(!save(TASK_KEY,updated))return false;
- state.tasks=updated;renderTasks();return true;
+ state.tasks=updated;renderTasks();
+ if(assigneeId==='elena'){state.lastDemoTaskId=newTask.id;$('svcpPreviewOnHome').hidden=false;}
+ else{$('svcpPreviewOnHome').hidden=true;}
+ return true;
 }
 $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
  event.preventDefault();
  const title=$('svcpChatTaskTitle').value;
- if(!storeTask(title,state.draftSource))return;
+ const source={...(state.draftSource||{}),assigneeId:$('svcpChatTaskAssignee').value};
+ if(!storeTask(title,source))return;
  cancelTaskDraft();
  $('svcpOpenTasks').hidden=false;
  setStatus('Поручение добавлено в «Дела → Команде» на этом устройстве. Сотрудникам не отправлено.');
@@ -267,8 +278,8 @@ $('svcpChatForm')?.addEventListener('submit',event=>{
  if(!txt&&!state.file){setStatus('Введите сообщение или выберите файл.');return}
  const fileName=state.file?.name;
  const message=[txt,fileName?'[Выбран файл: '+fileName+'. Это только имя — файл не отправлен и не сохранён.]':''].filter(Boolean).join('\n');
- const entry={room:state.room,text:message,at:Date.now(),role:'self',...(state.replyTo?{replyTo:state.replyTo}:{})};
- const callSayvi=/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
+ const entry={room:state.room,text:message,at:Date.now(),role:state.viewpoint==='elena'?'demo-elena':'self',...(state.replyTo?{replyTo:state.replyTo}:{})};
+ const callSayvi=state.room==='dm-sayvi'||/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
  const messages=[entry];
  if(callSayvi){
   const advice=suggestFromChat(txt);
@@ -280,7 +291,7 @@ $('svcpChatForm')?.addEventListener('submit',event=>{
  input.value='';if(fileInput)fileInput.value='';
  cleanupPreview();clearReply();cancelTaskDraft();
  renderChat();
- setStatus(callSayvi?'Сэйви ответила демонстрационной подсказкой. Сообщения никому не отправлены.':'Сообщение записано только на этом устройстве.');
+ setStatus(callSayvi?'Сэйви ответила шаблонной подсказкой. Это не подключённый ИИ.':state.viewpoint==='elena'?'Ответ Елены показан как учебный пример на этом устройстве.':'Сообщение записано локально. Доставки и уведомлений пока нет.');
 });
 $('svcpChatInput')?.addEventListener('keydown',event=>{
  if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){
@@ -298,6 +309,8 @@ function renderTasks(){
   checkbox.setAttribute('aria-label','Отметить выполнение: '+t.text);
   checkbox.addEventListener('change',()=>{t.done=checkbox.checked;save(TASK_KEY,state.tasks);renderTasks()});
   const text=el('span',null,t.text);
+  if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
+   text.append(el('small','svcp-task-assignee','Для: '+STAFF[t.assigneeId]+' · демо'));
   const remove=btn('Удалить',()=>{state.tasks.splice(i,1);save(TASK_KEY,state.tasks);renderTasks()},'svcp-ghost');
   r.append(checkbox,text,remove);list.append(r);
  });
@@ -312,7 +325,12 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
  button.addEventListener('click',()=>
   window.SEYVEO_BUSINESS_NAV?.openFeature?.(button.dataset.svcpFeature)));
-window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView});
+window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView,openPrivateChat:person=>{
+ const id='dm-'+String(person||'').toLowerCase();
+ if(!ROOMS.some(x=>x.id===id&&x.person))return false;
+ if(location.hash!=='#manage')location.hash='#manage';
+ tab('chats');openRoom(id);return true;
+}});
 window.addEventListener('pagehide',cleanupPreview);
 preparePeopleContent();
 tab('chats');
