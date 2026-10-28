@@ -1,0 +1,94 @@
+/* SEYVEO · employee schedule — Black Velvet; compact and native in all themes. */
+#tasksPage .svcp-employee-schedule{display:grid;gap:11px;min-width:0;padding:13px 12px 12px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:19px;
+ background:linear-gradient(155deg,var(--seyveo-specular,rgba(40,100,73,.06)),transparent 62%),var(--card)}
+#tasksPage .svcp-employee-schedule[hidden],#tasksPage .svcp-schedule-month[hidden],
+#tasksPage .svcp-schedule-request-actions button[hidden]{display:none!important}
+#tasksPage .svcp-schedule-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+#tasksPage .svcp-schedule-title{display:grid;gap:3px;min-width:0}
+#tasksPage .svcp-schedule-title h3{margin:0;color:var(--text);font-size:15px;font-weight:620;letter-spacing:-.025em}
+#tasksPage .svcp-schedule-title small{font-size:10px;color:var(--secondary);letter-spacing:.005em}
+#tasksPage .svcp-schedule-actions{display:flex;align-items:center;gap:3px;justify-content:flex-end}
+#tasksPage .svcp-schedule-actions button{display:grid;place-items:center;min-width:32px;min-height:34px;
+ padding:3px 6px;border:0;background:transparent;border-radius:10px;color:var(--text);font:inherit;
+ font-size:13px;cursor:pointer}
+#tasksPage .svcp-schedule-actions #svcpScheduleToday{padding:0 5px;font-size:10px;color:var(--secondary)}
+#tasksPage .svcp-schedule-period{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#tasksPage .svcp-schedule-period>span{font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage .svcp-schedule-period>button{border:0;background:transparent;min-height:34px;
+ padding:4px 7px;border-radius:10px;color:var(--text);font:inherit;font-size:11px;cursor:pointer}
+#tasksPage .svcp-schedule-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;min-width:0}
+#tasksPage .svcp-schedule-day{position:relative;display:grid;justify-items:center;align-content:center;gap:5px;
+ min-width:0;min-height:62px;padding:7px 0 6px;border-radius:12px;border:1px solid transparent;
+ background:transparent;color:var(--secondary);font:inherit;cursor:pointer}
+#tasksPage .svcp-schedule-day small{font-size:10px;line-height:1.1}
+#tasksPage .svcp-schedule-day strong{font-size:16px;line-height:1.1;font-weight:590;font-variant-numeric:tabular-nums;color:var(--text)}
+#tasksPage .svcp-schedule-day i{display:block;width:5px;height:5px;border-radius:50%;background:var(--secondary);opacity:.35}
+#tasksPage .svcp-schedule-day[data-state="work"] i{background:var(--seyveo-emerald);opacity:1}
+#tasksPage .svcp-schedule-day[data-state="pending"] i{background:#d9b66d;opacity:1}
+#tasksPage .svcp-schedule-day[data-state="leave"] i{background:#b7c6d3;opacity:1}
+#tasksPage .svcp-schedule-day[aria-pressed="true"]{border-color:var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage .svcp-schedule-day[data-today="true"] strong{text-decoration:underline;text-decoration-color:var(--seyveo-emerald);text-underline-offset:4px}
+#tasksPage .svcp-schedule-month{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;
+ padding:5px 0 3px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-schedule-month .svcp-schedule-day{min-height:39px;padding:5px 0;gap:4px}
+#tasksPage .svcp-schedule-month .svcp-schedule-day strong{font-size:12px}
+#tasksPage .svcp-schedule-month .svcp-schedule-day i{width:4px;height:4px}
+#tasksPage .svcp-schedule-month .svcp-schedule-day[data-outside="true"]{opacity:.35}
+#tasksPage .svcp-schedule-selected{display:grid;gap:7px;min-width:0;padding-top:11px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-schedule-selected-head{display:flex;align-items:center;justify-content:space-between;gap:7px;min-width:0}
+#tasksPage .svcp-schedule-selected-head strong{font-size:12px;font-weight:580;color:var(--text)}
+#tasksPage .svcp-schedule-selected-head span{font-size:11px;color:var(--text);text-align:right}
+#tasksPage .svcp-schedule-selected>p{margin:0;color:var(--secondary);font-size:10.5px;line-height:1.35}
+#tasksPage .svcp-schedule-request-actions{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+#tasksPage .svcp-schedule-request-actions button{border:0;background:transparent;color:var(--text);
+ font:inherit;font-size:11px;font-weight:575;min-height:33px;padding:3px 0;cursor:pointer}
+#tasksPage .svcp-schedule-request-actions button:disabled{opacity:.35;cursor:default}
+#tasksPage .svcp-schedule-notice{color:var(--secondary);font-size:10px;line-height:1.4}
+#tasksPage .svcp-schedule-actions button:focus-visible,#tasksPage .svcp-schedule-day:focus-visible,
+#tasksPage .svcp-schedule-request-actions button:focus-visible,#tasksPage .svcp-manager-schedule button:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#tasksPage .svcp-manager-schedule{margin:10px 0;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-manager-schedule>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;
+ min-height:46px;list-style:none;cursor:pointer;padding:9px 2px;color:var(--text);font-size:12px}
+#tasksPage .svcp-manager-schedule>summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-manager-schedule-inner{display:grid;gap:12px;padding:6px 2px 13px}
+#tasksPage .svcp-manager-schedule-inner>small{color:var(--secondary);font-size:10.5px;line-height:1.45}
+#tasksPage .svcp-manager-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+#tasksPage .svcp-manager-weekdays button{min-width:0;min-height:36px;padding:4px 0;
+ border:1px solid var(--soft-line);border-radius:10px;color:var(--secondary);background:transparent;font:inherit;font-size:10px}
+#tasksPage .svcp-manager-weekdays button[aria-pressed="true"]{border-color:var(--seyveo-emerald);color:var(--text);background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage .svcp-manager-time{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#tasksPage .svcp-manager-time label{display:grid;gap:6px;min-width:0;color:var(--secondary);font-size:10.5px}
+#tasksPage .svcp-manager-time input{min-width:0;width:100%;height:42px;padding:8px;border-radius:11px;
+ border:1px solid var(--soft-line);background:var(--card2);color:var(--text);font:inherit;font-size:13px}
+#tasksPage .svcp-manager-schedule-save{min-height:42px;padding:7px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:575}
+#tasksPage .svcp-manager-request-list{display:grid;gap:8px}
+#tasksPage .svcp-manager-request{display:grid;gap:8px;padding:9px 0;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-manager-request-copy{display:grid;gap:4px}
+#tasksPage .svcp-manager-request-copy strong{font-size:12px;color:var(--text);font-weight:570}
+#tasksPage .svcp-manager-request-copy small{font-size:10px;color:var(--secondary)}
+#tasksPage .svcp-manager-request-actions{display:flex;align-items:center;gap:10px}
+#tasksPage .svcp-manager-request-actions button{min-height:36px;border:0;background:transparent;
+ color:var(--text);font:inherit;font-size:11px;padding:3px 4px}
+#tasksPage .svcp-manager-request-actions button:first-child{color:var(--seyveo-emerald)}
+#tasksPage .svcp-schedule-empty{margin:0;color:var(--secondary);font-size:10.5px;line-height:1.45}
+#tasksPage .svcp-manager-schedule-status{font-size:10px;color:var(--secondary);line-height:1.4;margin:0}
+#tasksPage .svcp-results-extras{display:grid;gap:10px;margin-top:3px;border-top:1px solid var(--soft-line);padding-top:12px}
+#tasksPage .svcp-results-extras p{margin:0;font-size:11px;line-height:1.45;color:var(--secondary)}
+#tasksPage .svcp-results-extras p strong{color:var(--text);font-size:11.5px;font-weight:570}
+#tasksPage .svcp-results-payroll{display:grid;gap:3px;padding:1px 0}
+#tasksPage .svcp-results-payroll strong{color:var(--text);font-size:12px;font-weight:560}
+#tasksPage .svcp-results-payroll small{color:var(--secondary);font-size:10.5px;line-height:1.45}
+@media(max-width:360px){
+ #tasksPage .svcp-employee-schedule{padding:11px 8px}
+ #tasksPage .svcp-schedule-days{gap:2px}
+ #tasksPage .svcp-schedule-day{min-height:59px}
+ #tasksPage .svcp-schedule-day strong{font-size:14px}
+ #tasksPage .svcp-schedule-day small{font-size:9px}
+ #tasksPage .svcp-schedule-selected-head{align-items:flex-start;flex-direction:column}
+ #tasksPage .svcp-manager-weekdays{gap:2px}
+}
+@media(prefers-reduced-motion:reduce){#tasksPage .svcp-schedule-day{transition:none}}
