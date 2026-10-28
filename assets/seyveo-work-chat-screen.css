@@ -521,3 +521,26 @@ html.svcp-work-chat-active footer.dock{display:none!important}
   height:41px!important;min-height:41px!important;padding:8px!important
  }
 }
+
+/* Gratitude is a distinct HR recognition action in the conversation header. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-conversation-bar .svcp-gratitude-award:not([hidden]){
+ display:flex!important;align-items:center;gap:5px;flex:0 0 auto;
+ min-height:38px;max-width:118px;padding:7px 9px!important;
+ border:1px solid rgba(203,162,88,.46)!important;border-radius:14px!important;
+ background:rgba(202,163,88,.11)!important;color:#D9B270!important;
+ font-size:11px!important;font-weight:650!important;white-space:nowrap;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-gratitude-award svg{
+ flex:0 0 20px;width:20px;height:20px;fill:rgba(213,172,92,.18);
+ stroke:#D9B270!important;stroke-width:1.7;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-star,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-star.is-saved svg{
+ color:var(--text)!important;stroke:currentColor!important
+}
+@media(max-width:390px){
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-conversation-bar .svcp-gratitude-award:not([hidden]){
+  flex:0 0 38px;width:38px;min-width:38px;justify-content:center;padding:5px!important
+ }
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-gratitude-award span{display:none!important}
+}
