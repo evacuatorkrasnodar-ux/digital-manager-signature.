@@ -139,11 +139,13 @@
   };
   const plan=Number($('seyveoShiftPlanned')?.value);
   const plannedHours=Number.isFinite(plan)&&plan>=1&&plan<=24?plan:8;
-  const scheduled=activeBreakPolicy||readBreakPolicy();
+  // A session started before the new break scheduler has no retroactive break.
+  // Show a truthful plain timeline until the employee starts their next shift.
+  const scheduled=active?activeBreakPolicy:readBreakPolicy();
   const plannedMinutes=plannedHours*60;
   // The chart is a physical shift timeline. An unpaid break extends the shift;
   // a paid break fits inside the planned hours. Work totals still use net work.
-  const wholeMinutes=plannedMinutes+(scheduled.paid?0:scheduled.durationMinutes);
+  const wholeMinutes=plannedMinutes+(scheduled&&!scheduled.paid?scheduled.durationMinutes:0);
   const wholeMs=Math.max(1,wholeMinutes*MINUTE_MS);
   const progressPercent=active?Math.min(100,Math.max(0,(now-start)/wholeMs*100)):0;
   const progressShown=Math.round(progressPercent);
@@ -176,8 +178,8 @@
   const info=$('svcpEmployeeBreakInfo');
   const windowForBar=active?currentBreak:null;
   const bar=$('svcpEmployeeProgress');
-  const markPercent=Math.min(100,Math.max(0,scheduled.afterMinutes/wholeMinutes*100));
-  const markerWidth=Math.max(0,Math.min(100-markPercent,scheduled.durationMinutes/wholeMinutes*100));
+  const markPercent=scheduled?Math.min(100,Math.max(0,scheduled.afterMinutes/wholeMinutes*100)):100;
+  const markerWidth=scheduled?Math.max(0,Math.min(100-markPercent,scheduled.durationMinutes/wholeMinutes*100)):0;
   if(bar){
    bar.style.setProperty('--svcp-break-left',markPercent+'%');
    bar.style.setProperty('--svcp-break-width',markerWidth+'%');
@@ -186,15 +188,18 @@
    bar.dataset.running=String(active);
   }
   const timelineTotal=$('svcpShiftTimelineTotal');
-  if(timelineTotal)timelineTotal.textContent=plannedHours+' ч работы · '+scheduled.durationMinutes+' мин перерыв';
+  if(timelineTotal)timelineTotal.textContent=!scheduled?'Старая смена · перерыв не настроен'
+   :plannedHours+' ч работы · '+scheduled.durationMinutes+' мин перерыв';
   const timelineStart=$('svcpShiftTimelineStart'),timelineBreak=$('svcpShiftTimelineBreak'),timelineEnd=$('svcpShiftTimelineEnd');
   if(timelineStart)timelineStart.textContent=active?clockText(start):'Начало';
-  if(timelineBreak)timelineBreak.textContent=active&&currentBreak
-   ?clockText(currentBreak.start)+'–'+clockText(currentBreak.end):
-   'Через '+scheduled.afterMinutes/60+' ч';
+  if(timelineBreak)timelineBreak.textContent=!scheduled?'Без перерыва'
+   :active&&currentBreak?clockText(currentBreak.start)+'–'+clockText(currentBreak.end)
+   :'Через '+scheduled.afterMinutes/60+' ч';
   if(timelineEnd)timelineEnd.textContent=active?clockText(start+wholeMs):'Финиш';
   if(info){
-   if(onBreak){
+   if(active&&!scheduled){
+    info.textContent='Перерыв по графику применяется со следующей смены';
+   }else if(onBreak){
     const remaining=Math.max(0,Math.ceil((currentBreak.end-now)/MINUTE_MS));
     info.textContent='Перерыв · осталось '+remaining+' мин · до '+
      new Date(currentBreak.end).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
