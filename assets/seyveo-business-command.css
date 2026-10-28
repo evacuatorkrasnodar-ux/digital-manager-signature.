@@ -1039,6 +1039,53 @@
  #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-photo{width:68px;height:68px}
 }
 
+
+/* Scheduled staff breaks: visual strip only; no employee pause button. */
+#tasksPage .svcp-employee-progress{position:relative;overflow:hidden;isolation:isolate;height:7px}
+#tasksPage .svcp-employee-progress .svcp-break-marker{
+ position:absolute;z-index:2;top:0;bottom:0;
+ left:var(--svcp-break-left,50%);width:var(--svcp-break-width,6.25%);
+ max-width:100%;border-radius:2px;pointer-events:none;
+ background:repeating-linear-gradient(115deg,rgba(225,191,120,.42),rgba(225,191,120,.42) 3px,rgba(225,191,120,.21) 3px,rgba(225,191,120,.21) 6px)
+}
+#tasksPage .svcp-employee-break-info{display:flex;align-items:center;gap:7px;margin:1px 0 0;
+ font-size:11px;line-height:1.4;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage .svcp-employee-break-info::before{content:"";width:6px;height:6px;flex:none;border-radius:50%;background:rgba(225,191,120,.75)}
+#tasksPage .svcp-employee-shift-card[data-break="true"]{
+ border-color:rgba(231,199,143,.48);
+ background:linear-gradient(150deg,rgba(225,191,120,.075),transparent 68%),var(--card)
+}
+#tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-employee-progress{
+ background:rgba(225,191,120,.18);box-shadow:0 0 12px rgba(225,191,120,.08)
+}
+#tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-break-marker{
+ background:linear-gradient(90deg,#e5c78d,#f7e2b2);
+ box-shadow:0 0 10px rgba(233,194,122,.22)
+}
+#tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-employee-break-info{color:#eed6a0;font-weight:570}
+#tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-employee-break-info::before{background:#eed6a0;box-shadow:0 0 7px rgba(241,211,151,.42)}
+#tasksPage .svcp-work-duty[data-break="true"]{color:#eed6a0}
+#tasksPage .svcp-work-duty[data-break="true"] i{background:#eed6a0;box-shadow:0 0 7px rgba(241,211,151,.38)}
+#tasksPage .svcp-employee-avatar-badge[data-break="true"]::after{background:#eed6a0}
+#tasksPage .svcp-break-setup{margin:8px 0 12px;border:1px solid var(--soft-line);border-radius:14px;overflow:hidden;background:var(--card)}
+#tasksPage .svcp-break-setup>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;
+ padding:12px 13px;cursor:pointer;list-style:none;color:var(--text);font-size:12.5px}
+#tasksPage .svcp-break-setup>summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-break-setup-inner{display:grid;gap:11px;padding:1px 12px 14px}
+#tasksPage .svcp-break-setup-inner>p{margin:0;color:var(--secondary);font-size:11px;line-height:1.5}
+#tasksPage .svcp-break-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#tasksPage .svcp-break-controls label{display:grid;gap:7px;min-width:0;font-size:11px;color:var(--secondary)}
+#tasksPage .svcp-break-controls select{display:block;width:100%;min-width:0;min-height:42px;
+ border:1px solid var(--soft-line);border-radius:11px;padding:8px;background:var(--card2);color:var(--text);font:inherit;font-size:12px}
+#tasksPage .svcp-break-paid{display:flex;align-items:center;gap:8px;color:var(--text);font-size:11.5px;line-height:1.4}
+#tasksPage .svcp-break-paid input{width:18px;height:18px;accent-color:var(--seyveo-emerald)}
+#tasksPage .svcp-break-save{min-height:44px;border-radius:11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:575}
+#tasksPage .svcp-break-status{color:var(--secondary)}
+@media(max-width:350px){#tasksPage .svcp-break-controls{grid-template-columns:minmax(0,1fr)}}
+:root[data-theme="light"] #tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-employee-break-info,
+:root[data-theme="light"] #tasksPage .svcp-work-duty[data-break="true"]{color:#916828}
+
 /* SEYVEO · Elena's dedicated work page. Single entry, no repeated selector. */
 #tasksPage[data-employee-mode="true"] #unifiedTasksTabs{display:none!important}
 #tasksPage[data-employee-mode="true"] .tasks-heading{margin:0 0 14px;padding-right:56px}
