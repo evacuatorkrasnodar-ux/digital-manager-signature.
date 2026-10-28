@@ -321,7 +321,7 @@ function resizeWorkComposer(){
 }
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
-$('svcpAttachFile')?.addEventListener('click',()=>$('svcpFile')?.click());
+$('svcpAttachFile')?.addEventListener('click',()=>$('svcpCameraToggle')?.click());
 
 /* Draft polishing is opt-in and never sends a message. Basic offline demo only. */
 function polishDraftLocally(raw){
