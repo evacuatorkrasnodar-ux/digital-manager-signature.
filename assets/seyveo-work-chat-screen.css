@@ -248,3 +248,41 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 @media(prefers-reduced-motion:reduce){
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-dot{animation:none}
 }
+
+/* Shared controls also work when a manager opens the original business chat. */
+#unifiedTasksChatHost .svcp-chat-compose-field{
+ display:flex;flex:1 1 auto;align-items:flex-end;min-width:0;max-width:100%;gap:0
+}
+#unifiedTasksChatHost .svcp-chat-compose-field .svcp-compose-input{
+ display:block;min-width:0;flex:1 1 0;width:100%;box-sizing:border-box
+}
+#unifiedTasksChatHost .svcp-chat-compose-field .svcp-composer-emoji-toggle,
+#unifiedTasksChatHost .svcp-chat-compose-field .svcp-voice-record{
+ flex:0 0 30px;align-self:flex-end;display:grid;place-items:center;
+ width:30px;min-width:30px;height:40px;min-height:40px;
+ border:0;border-radius:9px;background:transparent;color:var(--secondary);
+ padding:0;cursor:pointer
+}
+#unifiedTasksChatHost .svcp-chat-compose-field .svcp-voice-record svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round
+}
+#unifiedTasksChatHost .svcp-voice-capture[hidden],
+#unifiedTasksChatHost .svcp-voice-capture audio[hidden],
+#unifiedTasksChatHost .svcp-voice-controls button[hidden]{display:none!important}
+#unifiedTasksChatHost .svcp-voice-capture:not([hidden]){
+ display:grid;gap:9px;padding:10px 12px;
+ border-top:1px solid var(--soft-line);background:var(--card)
+}
+#unifiedTasksChatHost .svcp-voice-live{display:flex;align-items:center;gap:9px}
+#unifiedTasksChatHost .svcp-voice-live strong{flex:1;min-width:0;font-size:13px;color:var(--text);font-weight:570}
+#unifiedTasksChatHost .svcp-voice-live time{font-size:14px;color:var(--text);font-variant-numeric:tabular-nums}
+#unifiedTasksChatHost .svcp-voice-dot{display:block;flex:none;width:9px;height:9px;border-radius:50%;background:#e2a08b}
+#unifiedTasksChatHost .svcp-voice-capture[data-state="ready"] .svcp-voice-dot{background:var(--seyveo-emerald)}
+#unifiedTasksChatHost .svcp-voice-controls{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}
+#unifiedTasksChatHost .svcp-voice-controls button{border:1px solid var(--soft-line);background:transparent;
+ border-radius:11px;min-height:38px;padding:6px 10px;color:var(--text);font:inherit;font-size:12px}
+#unifiedTasksChatHost .svcp-voice-capture audio{width:100%;height:44px}
+#unifiedTasksChatHost .svcp-voice-capture>small{font-size:11px;line-height:1.4;color:var(--secondary)}
+#unifiedTasksChatHost .svcp-chat-media-audio{width:min(290px,100%);max-width:100%;height:44px;display:block}
+#unifiedTasksChatHost .svcp-media-slot{min-width:0}
