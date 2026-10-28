@@ -89,10 +89,11 @@
  }
  function showEmployee(){
   if(!isEmployee()||!employee||!employeeChatHost)return;
-  // Only switch the chat destination when entering the worker workspace.
-  // Reopening Tasks must not silently jump to the Elena conversation.
-  const entering=chats.parentElement!==employeeChatHost;
-  if(entering)employeeChatHost.appendChild(chats);
+  // Preserve the complete styled chat host. Moving only #svcpChats here
+  // detached it from all scoped chat styles and caused a giant black SVG.
+  const entering=chatHost.parentElement!==employeeChatHost;
+  if(entering)employeeChatHost.appendChild(chatHost);
+  chatHost.hidden=false;
   chats.hidden=false;
   renderEmployeeTasks();
   if(entering)window.SEYVEO_BUSINESS_COMMAND?.showChat?.();
@@ -118,10 +119,16 @@
    if(location.hash!=='#manage')location.hash='#manage';
   }else $('navHome')?.click();
  });
- function showBoard(){
-  board.hidden=false;chatHost.hidden=false;
+ function restoreManagerChat(){
+  // Keep chats ahead of the manager's task list, without a duplicate DOM.
+  if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   if(chats.parentElement!==chatHost)chatHost.appendChild(chats);
-  chats.hidden=false;updateManagerSummary();
+  chatHost.hidden=false;chats.hidden=false;
+ }
+ function showBoard(){
+  board.hidden=false;
+  restoreManagerChat();
+  updateManagerSummary();
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.();
  }
  function select(view){
@@ -148,9 +155,8 @@
   personal.hidden=true;business.hidden=false;
   if(employee)employee.hidden=true;
   if(overview)overview.hidden=true;
-  board.hidden=false;chatHost.hidden=false;
-  if(chats.parentElement!==chatHost)chatHost.appendChild(chats);
-  chats.hidden=false;
+  board.hidden=false;
+  restoreManagerChat();
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager',filter||'all');
@@ -179,6 +185,16 @@
  }
  function openPersonal(){
   exitTarget='home';syncBack();navigate('personal');
+ }
+ function resetViewportAtWorkEntry(){
+  // #tasks is shared by several preview modes; its prior scroll location
+  // must not be reused after changing between employee and manager.
+  requestAnimationFrame(()=>{
+   if(location.hash!=='#tasks')return;
+   const viewport=document.querySelector('.app');
+   if(viewport)viewport.scrollTop=0;
+   window.scrollTo(0,0);
+  });
  }
  page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
   button.addEventListener('click',()=>{
@@ -220,6 +236,7 @@
   try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
   updatePulseAccess();exitTarget='home';syncBack();
   navigate(isEmployee()?'employee':isManager()?'team':'personal');
+  resetViewportAtWorkEntry();
  });
  // The separate chat demo perspective must not change the selected app version.
  $('navTasks')?.addEventListener('click',()=>isEmployee()?navigate('employee'):openPersonal());
