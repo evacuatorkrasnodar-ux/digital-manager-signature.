@@ -20,7 +20,7 @@ const RECOGNITION_TYPES=Object.freeze({
 const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
 const ROOMS=[
  {id:'general',label:'Общий чат',kind:'groups',hint:'Для всех сотрудников · общие объявления и вопросы',mark:'◎',section:'all'},
- {id:'dm-elena',label:'Елена',kind:'personal',hint:'Администратор · личный рабочий чат',mark:'Е',person:'elena',section:'people',roleGroup:'Администрация'},
+ {id:'dm-elena',label:'Елена',kind:'personal',hint:'Кассир · личный рабочий чат',mark:'Е',person:'elena',section:'people',roleGroup:'Касса'},
  {id:'dm-anna',label:'Анна',kind:'personal',hint:'Старший продавец · личный рабочий чат',mark:'А',person:'anna',section:'people',roleGroup:'Торговый зал'},
  {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people',roleGroup:'Торговый зал'},
  {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
@@ -107,7 +107,7 @@ function renderDirectory(){
   }
   const row=el('button','svcp-directory-item');row.type='button';
   const display=room.person&&room.person!=='sayvi'
-    ?room.label+' · '+(room.id==='dm-elena'?'администратор':room.id==='dm-anna'?'старший продавец':'продавец')
+    ?room.label+' · '+(room.id==='dm-elena'?'кассир':room.id==='dm-anna'?'старший продавец':'продавец')
     :room.label;
   row.setAttribute('aria-label',room.kind==='personal'?'Написать лично: '+display:'Открыть группу: '+display);
   const art=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
@@ -145,7 +145,7 @@ function openRoom(roomId){
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
  $('svcpConversationTitle').textContent=selected.person&&selected.person!=='sayvi'
- ?selected.label+' · '+(selected.id==='dm-elena'?'администратор':selected.id==='dm-anna'?'старший продавец':'продавец')
+ ?selected.label+' · '+(selected.id==='dm-elena'?'кассир':selected.id==='dm-anna'?'старший продавец':'продавец')
  :selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
  $('svcpOpenTasks').hidden=true;
