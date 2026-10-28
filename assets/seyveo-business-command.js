@@ -771,7 +771,7 @@ function renderTasks(){
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
  const heading=el('div','svcp-task-section-head');
- heading.append(el('strong',null,'Активные поручения'),el('small',null,String(open.length)));
+ heading.append(el('strong',null,'Поручения'),el('small',null,String(open.length)));
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
@@ -785,44 +785,9 @@ function renderTasks(){
   });
   const copy=el('div','svcp-task-copy');
   copy.append(el('strong','svcp-task-title',t.text));
+  // Legacy demo records remain stored, but assignees are chosen in chat.
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
-   copy.append(el('small','svcp-task-assignee','Исполнитель: '+STAFF[t.assigneeId]+' · демо'));
-  else{
-   copy.append(el('small','svcp-task-assignee','Не назначено · старое демо-поручение'));
-   if(!t.done){
-    const recipient=el('select','svcp-task-reassign');
-    recipient.setAttribute('aria-label','Назначить поручение «'+t.text.slice(0,65)+'»');
-    for(const [id,title] of [
-     ['','Назначить кому…'],['elena','Елена · кассир'],
-     ['anna','Анна · старший продавец'],['mikhail','Михаил · продавец'],
-     ['all','Всем · каждому отдельно']
-    ]){
-     const option=el('option','',title);option.value=id;recipient.append(option);
-    }
-    recipient.addEventListener('change',()=>{
-     const to=taskRecipients(recipient.value);
-     if(!to.length)return;
-     const chosen=to.filter(assigneeId=>
-      !state.tasks.some((item,j)=>j!==i&&taskDuplicateKey(item)===taskDuplicateKey({text:t.text,assigneeId,done:false}))
-     );
-     if(!chosen.length){
-      feedbackTask('Такое поручение уже назначено выбранным сотрудникам.');
-      recipient.value='';return;
-     }
-     const [first,...others]=chosen;
-     const added=others.map((assigneeId,k)=>({
-      ...t,id:'assigned-'+Date.now()+'-'+k+'-'+Math.random().toString(36).slice(2,6),
-      assigneeId,done:false
-     }));
-     const updated=state.tasks.map((item,j)=>j===i?{...item,assigneeId:first}:item).concat(added).slice(-60);
-     if(!save(TASK_KEY,updated)){recipient.value='';return}
-     state.tasks=updated;
-     renderTasks();syncPreviewAfterTaskEdit();
-     feedbackTask('Назначено: '+chosen.map(id=>STAFF[id]).join(', ')+'. Демо, без доставки на телефон.');
-    });
-    copy.append(recipient);
-   }
-  }
+   copy.append(el('small','svcp-task-assignee',STAFF[t.assigneeId]));
   const actions=el('div','svcp-task-actions');
   actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
   actions.append(btn('Удалить',()=>{
@@ -841,7 +806,7 @@ function renderTasks(){
   if(key)openSeen.add(key);
   activeBox.append(taskRow(task,index));
  }
- if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Активных поручений нет. Новую задачу можно поручить в чате сотрудника.'));
+ if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Поручений пока нет.'));
  list.append(activeBox);
  if(dups.length){
   const info=el('div','svcp-duplicate-summary');
