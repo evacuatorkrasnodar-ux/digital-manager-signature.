@@ -16,7 +16,7 @@ assert.ok(employeeStyle.includes('border-radius:18px;border:1px solid rgba(255,2
  'Employee star gets a unique quiet-square silver badge, not the round Music medallion');
 assert.match(html,/class="svcp-recognition-star" d="M32 7 L/,'Employee recognition uses a distinct eight-point star');
 assert.match(html,/class="svcp-recognition-heart"/,'Employee recognition is an appreciation symbol, not a Music favorite');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=52/,'Restored employee chat styles are cache-busted');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=53/,'Restored employee chat styles are cache-busted');
 assert.match(html,/class="svcp-employee-chats-glyph"/,'Employee chat restores its previous heading and icon');
 assert.doesNotMatch(html,/id="svcpEmployeeChatSearch"/,'No temporary magnifier beside chat section');
 assert.match(html,/id="svcpHistorySearch"/,'Existing full chat search remains inside the chat inbox');
