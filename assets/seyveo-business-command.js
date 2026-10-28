@@ -827,7 +827,24 @@ async function detectPhotoBarcode(file){
   const wanted=['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'];
   const allowed=formats.filter(x=>wanted.includes(x));
   const detector=new window.BarcodeDetector(allowed.length?{formats:allowed}:undefined);
-  const results=await detector.detect(file);
+  // BarcodeDetector accepts an ImageBitmapSource, not a File/Blob.
+  // Decode the camera image first, and release its bitmap after scanning.
+  let bitmap=null;
+  let results=[];
+  try{
+   if(typeof createImageBitmap==='function'){
+    bitmap=await createImageBitmap(file);
+    results=await detector.detect(bitmap);
+   }else{
+    const url=URL.createObjectURL(file);
+    try{
+     const photo=new Image();
+     photo.src=url;
+     await photo.decode();
+     results=await detector.detect(photo);
+    }finally{URL.revokeObjectURL(url)}
+   }
+  }finally{bitmap?.close?.()}
   if(state.file!==file)return;
   const recognized=results.find(x=>typeof x.rawValue==='string'&&x.rawValue.trim());
   if(!recognized){setStatus('Код на фото не распознан. Попробуйте ближе или введите вручную.');return}
