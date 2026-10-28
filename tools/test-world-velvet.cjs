@@ -21,8 +21,12 @@ const values={
 for(const [token,value] of Object.entries(values))
  assert.ok(core.includes(token+':'+value),'My World shared palette: '+token);
 const myWorldGradient='linear-gradient(180deg,#101615 0%,#111b19 28%,#142320 55%,#172923 78%,#0f1715 100%)';
-assert.equal(scene.split(myWorldGradient).length-1,2,
- 'Exactly the same gradient on the common canvas and original My World scene');
+assert.ok(scene.includes('--sv-life-viewport-gradient:'+myWorldGradient),
+ 'Original Emerald Velvet viewport pigment remains available');
+assert.ok((scene.match(/background:var\(--sv-life-viewport-gradient\)/g)||[]).length>=2,
+ 'Shared and My World canvases inherit a single palette-aware viewport token');
+assert.match(scene,/:root\[data-theme=dark\]\[data-palette=plum\]\{\s*--sv-life-viewport-gradient:linear-gradient\(180deg,#1c1b1a/,
+ 'Copper Dune uses the approved Connections reference, without recoloring Emerald Velvet');
 assert.match(scene,/--sv-q-outline:var\(--seyveo-hdr-outline\)/,'One consistent outline material');
 assert.match(chat,/linear-gradient\(180deg,#111917 0%,#142521 52%,#10211d 100%\)/,
  'Chat matches the same muted tone');
