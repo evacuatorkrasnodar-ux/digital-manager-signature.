@@ -787,3 +787,38 @@
  }
  #tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary{width:100%}
 }
+
+
+/* Direct one-tap assignment from the message composer to this employee.
+   Keep the ordinary message button and optional emoji separate. */
+#unifiedTasksChatHost .svcp-composer-direct-task{
+ display:inline-flex;align-items:center;justify-content:center;
+ flex:none;min-height:43px;border-radius:999px;
+ padding:8px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--seyveo-hdr-active,var(--card));
+ color:var(--seyveo-emerald);font:inherit;font-size:11.5px;font-weight:600;
+ white-space:nowrap;cursor:pointer
+}
+#unifiedTasksChatHost .svcp-composer-direct-task[hidden]{display:none!important}
+#unifiedTasksChatHost .svcp-composer-direct-task:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+#unifiedTasksChatHost .svcp-composer.svcp-can-assign{gap:5px}
+#unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-chat-send{
+ padding-inline:8px;min-width:65px
+}
+@media(max-width:400px){
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign{
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr) 30px auto;
+  align-items:end;column-gap:5px;row-gap:0;
+ }
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-file-label{grid-column:1;grid-row:1}
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-compose-input{grid-column:2;grid-row:1}
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-composer-emoji-toggle{grid-column:3;grid-row:1}
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-chat-send{grid-column:4;grid-row:1}
+ #unifiedTasksChatHost .svcp-composer.svcp-can-assign .svcp-composer-direct-task{
+  grid-column:2 / 5;grid-row:2;justify-self:end;margin-top:2px;
+  min-height:36px;padding:5px 13px;border-radius:13px
+ }
+}
