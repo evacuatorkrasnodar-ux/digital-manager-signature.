@@ -86,6 +86,7 @@
   }
   return{start,history};
  }
+ let employeeHistorySignature='';
  function renderEmployeeClock(){
   if(!isEmployee()||location.hash!=='#tasks')return;
   const now=Date.now(),{start,history}=readShiftLedger();
@@ -138,7 +139,9 @@
    const el=$(id);if(el)el.textContent=short(ms);
   }
   const historyList=$('svcpEmployeeHistoryList');
-  if(historyList){
+  const historySignature=history.length+'|'+(history[history.length-1]?.end||0);
+  if(historyList&&historySignature!==employeeHistorySignature){
+   employeeHistorySignature=historySignature;
    historyList.replaceChildren();
    const recent=history.slice(-4).reverse();
    if(!recent.length){
@@ -216,7 +219,7 @@
     const updated=saved.map((item,i)=>i===index?{...item,done:checkbox.checked}:item);
     try{localStorage.setItem(TASK_KEY,JSON.stringify(updated))}
     catch{checkbox.checked=!checkbox.checked;return}
-    window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
+    window.dispatchEvent(new Event('seyveo:employee-task-updated'));
     renderEmployeeTasks();
    });
    employeeTaskHost.append(row);
