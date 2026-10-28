@@ -1191,11 +1191,14 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <strong>Поручения команде</strong>
   <p>Рабочие задачи команды · пока сохраняются только на этом устройстве.</p>
  </div>
- <button type="button" id="svcpTasksChatShortcut" class="svcp-tasks-chat-shortcut" aria-label="Написать команде в рабочих чатах">
-  <span class="svcp-tasks-chat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 5.5h15v11h-9l-5.5 4V16.5H4.5z"/><path d="M8 10h8M8 13h5"/></svg></span>
-  <span class="svcp-tasks-chat-copy"><strong>Рабочие чаты</strong><small id="svcpTasksChatSummary">Общий чат · Лично сотруднику · Сэйви</small></span>
-  <span class="svcp-tasks-chat-chevron" aria-hidden="true">›</span>
- </button>
+ <div class="svcp-tasks-chat-entry">
+  <strong>Рабочие чаты</strong>
+  <div class="svcp-tasks-chat-actions">
+   <button type="button" id="svcpTasksChatShortcut">Общий чат</button>
+   <button type="button" id="svcpTasksPersonalShortcut">Написать лично</button>
+  </div>
+  <small id="svcpTasksChatSummary">Переписки команды и Сэйви · демо</small>
+ </div>
  <div id="unifiedBusinessTasksHost"></div>
  </div>
  <div id="unifiedTasksChatHost" aria-label="Рабочая переписка внутри дел" hidden></div>
