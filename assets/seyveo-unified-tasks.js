@@ -18,7 +18,17 @@
  host.appendChild(existing);
  existing.hidden=false;
 
- let nextBusinessRoute=false;
+ let nextBusinessRoute=false,exitTarget='home';
+ function syncBack(){
+  const label=$('unifiedTasksBackLabel');
+  if(label)label.textContent=exitTarget==='manage'?'В бизнес':'На Главную';
+ }
+ $('unifiedTasksBack')?.addEventListener('click',()=>{
+  if(exitTarget==='manage'){
+   window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
+   if(location.hash!=='#manage')location.hash='#manage';
+  }else $('navHome')?.click();
+ });
  function select(view){
   const team=view==='business';
   personal.hidden=team;
@@ -29,13 +39,17 @@
    button.setAttribute('aria-pressed',String(active));
   });
  }
- function openBusiness(){
+ function openBusiness(source='manage'){
+  exitTarget=source==='home'?'home':'manage';
+  syncBack();
   nextBusinessRoute=true;
   select('business');
   if(location.hash!=='#tasks')location.hash='#tasks';
   else nextBusinessRoute=false;
  }
  function openPersonal(){
+  exitTarget='home';
+  syncBack();
   nextBusinessRoute=false;
   select('personal');
   if(location.hash!=='#tasks')location.hash='#tasks';
@@ -52,5 +66,6 @@
   }
  });
  window.SEYVEO_UNIFIED_TASKS=Object.freeze({openBusiness,openPersonal});
+ syncBack();
  select('personal');
 })();
