@@ -293,7 +293,7 @@
    taskLabel.append(checkbox,name);
    const discuss=document.createElement('button');discuss.type='button';discuss.className='svcp-employee-task-chat';
    discuss.textContent='Обсудить';discuss.setAttribute('aria-label','Обсудить поручение: '+task.text);
-   discuss.addEventListener('click',()=>openEmployeeChat('dm-elena'));
+   discuss.addEventListener('click',()=>openWorkChat('dm-elena'));
    row.append(taskLabel,discuss);
    checkbox.addEventListener('change',()=>{
     const updated=saved.map((item,i)=>i===index?{...item,done:checkbox.checked}:item);
@@ -339,7 +339,7 @@
   employeeChatScreen.style.setProperty('--svcp-visible-top',top+'px');
   resizeWorkComposer();
  }
- function closeEmployeeChat({restoreFocus=true}={}){
+ function closeWorkChat({restoreFocus=true}={}){
   if(page.dataset.workChatOpen!=='true')return;
   window.dispatchEvent(new Event('seyveo:work-chat-closing'));
   const composer=$('svcpChatInput');if(composer){
@@ -348,6 +348,7 @@
   }
   // The original chat still belongs to the manager's hub while it is closed.
   if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
+  chatHost.hidden=true;
   page.dataset.workChatOpen='false';
   employeeChatScreen.hidden=true;
   document.documentElement.classList.remove('svcp-work-chat-active');
@@ -361,9 +362,11 @@
   if(restoreFocus&&previous?.isConnected&&!previous.hidden)
    requestAnimationFrame(()=>previous.focus({preventScroll:true}));
  }
- function openEmployeeChat(roomId=null,{camera=false}={}){
-  if(!isEmployee()||!employeeChatScreen||!employeeChatCanvas)return;
-  if(page.dataset.employeeMode!=='true')select('employee');
+ function openWorkChat(roomId=null,{camera=false}={}){
+  if((!isEmployee()&&!isManager())||!employeeChatScreen||!employeeChatCanvas)return;
+  const employeeMode=isEmployee();
+  if(employeeMode&&page.dataset.employeeMode!=='true')select('employee');
+  if(!employeeMode&&business.hidden)select('business');
   if(page.dataset.workChatOpen!=='true')chatReturnFocus=document.activeElement;
   employeeChatScreen.hidden=false;
   page.dataset.workChatOpen='true';
@@ -372,10 +375,13 @@
   document.documentElement.classList.add('svcp-work-chat-active');
   const heading=page.querySelector('.tasks-heading');
   if(heading)heading.inert=true;
-  employee.inert=true;business.inert=true;
+  if(employee)employee.inert=true;
+  if(business)business.inert=true;
   const input=$('svcpChatInput');if(input)input.rows=1;
-  // Null selects the real conversation list; assignments open the real DM.
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,'elena');
+  const headingTitle=$('svcpWorkChatTitle');
+  if(headingTitle)headingTitle.textContent='Сообщения';
+  // Null opens the complete existing directory. Staff and management share one engine.
+  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId,employeeMode?'elena':'manager');
   updateWorkChatViewport();
   requestAnimationFrame(()=>{
    if(page.dataset.workChatOpen!=='true')return;
@@ -387,7 +393,7 @@
    }
   });
  }
- chatTop?.addEventListener('click',()=>closeEmployeeChat());
+ chatTop?.addEventListener('click',()=>closeWorkChat());
  workComposer?.addEventListener('input',resizeWorkComposer);
  workComposer?.addEventListener('focus',resizeWorkComposer);
  window.addEventListener('seyveo:work-chat-sent',resizeWorkComposer);
@@ -396,7 +402,7 @@
  window.addEventListener('resize',updateWorkChatViewport);
  document.addEventListener('keydown',event=>{
   if(page.dataset.workChatOpen!=='true')return;
-  if(event.key==='Escape'){event.preventDefault();closeEmployeeChat();return}
+  if(event.key==='Escape'){event.preventDefault();closeWorkChat();return}
   if(event.key!=='Tab')return;
   const focusables=Array.from(employeeChatScreen.querySelectorAll('button:not([disabled]):not([hidden]),textarea:not([disabled]),input:not([disabled]):not([hidden]),select:not([disabled])'))
    .filter(el=>el.getClientRects().length&&el.offsetParent!==null);
@@ -423,7 +429,7 @@
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
   // Work is a dedicated page, and Back leads to the personal Tasks selector.
-  if(page.dataset.workChatOpen==='true'){closeEmployeeChat();return}
+  if(page.dataset.workChatOpen==='true'){closeWorkChat();return}
   if(isEmployee()&&page.dataset.employeeMode==='true'){
    select('personal');resetViewportAtWorkEntry();return;
   }
@@ -436,20 +442,22 @@
   // Keep chats ahead of the manager's task list, without a duplicate DOM.
   if(chatHost.parentElement!==board)board.insertBefore(chatHost,taskHost);
   if(chats.parentElement!==chatHost)chatHost.appendChild(chats);
-  chatHost.hidden=false;chats.hidden=false;
+  chatHost.hidden=true;chats.hidden=false;
  }
  function showBoard(){
   board.hidden=false;
-  restoreManagerChat();
+  if(page.dataset.workChatOpen!=='true')restoreManagerChat();
   updateManagerSummary();
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.();
+  // The messenger is a destination, not an inline card in the business hub.
+  if(page.dataset.workChatOpen!=='true')chatHost.hidden=true;
  }
  function select(view){
   if(view==='pulse'){openPulse();return}
   const chosen=isEmployee()?(view==='personal'?'personal':'employee'):
    isManager()?(view==='business'?'business':'personal'):'personal';
   lastWorkView=chosen;
-  if(chosen!=='employee')closeEmployeeChat({restoreFocus:false});
+  // A route change closes the messenger before moving its live DOM back.
+  if(page.dataset.workChatOpen==='true')closeWorkChat({restoreFocus:false});
   page.dataset.employeeMode=String(chosen==='employee');
   const title=$('tasksTitle');
   if(title)title.textContent=chosen==='employee'?'Моя работа':'Дела';
@@ -473,8 +481,8 @@
  }
  function showChat(roomId,viewpoint,filter){
   if(isEmployee()){
-   select('employee');
-   openEmployeeChat(roomId||null);
+   if(page.dataset.workChatOpen!=='true')select('employee');
+   openWorkChat(roomId||null);
    return;
   }
   if(!isManager()){select('personal');return}
@@ -486,10 +494,9 @@
   if(employeeResults)employeeResults.hidden=true;
   if(overview)overview.hidden=true;
   board.hidden=false;
-  restoreManagerChat();
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager',filter||'all');
+  openWorkChat(roomId||null);
  }
  function routePending(){
   const request=pending;pending=null;
@@ -549,8 +556,8 @@
    $('unifiedEmployeeAssignments')?.closest('.svcp-employee-assignments')?.scrollIntoView({block:'start',behavior:'smooth'});
    return;
   }
-  if(action==='chats')openEmployeeChat();
-  if(action==='camera')openEmployeeChat('dm-elena',{camera:true});
+  if(action==='chats')openWorkChat();
+  if(action==='camera')openWorkChat('dm-elena',{camera:true});
  });
  const businessActions=page.querySelector('.svcp-manager-actions');
  businessActions?.addEventListener('click',event=>{
@@ -584,7 +591,7 @@
  window.addEventListener('pageshow',updateManagerSummary);
  picker?.addEventListener('change',()=>{
   if(!MODES.includes(picker.value))return;
-  closeEmployeeChat({restoreFocus:false});
+  closeWorkChat({restoreFocus:false});
   previewMode=picker.value;
   try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
   updatePulseAccess();exitTarget='home';syncBack();
@@ -603,7 +610,7 @@
  window.addEventListener('hashchange',()=>{
   if(location.hash==='#tasks')routePending();
   else{
-   closeEmployeeChat({restoreFocus:false});
+   closeWorkChat({restoreFocus:false});
    pending=null;
    if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
   }
