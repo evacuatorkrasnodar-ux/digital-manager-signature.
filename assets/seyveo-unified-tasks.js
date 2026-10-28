@@ -317,15 +317,14 @@
  const chatTop=$('svcpWorkChatBack');
  const chatViewport=window.visualViewport;
  const workComposer=$('svcpChatInput');
- const composerMinHeight=44;
+ const composerMinHeight=46;
  function resizeWorkComposer(){
   if(page.dataset.workChatOpen!=='true'||!workComposer)return;
-  // ScrollHeight includes manually entered newlines and naturally wrapped lines.
-  // Compact when empty, expand up to ~5 lines as the message grows.
   const viewHeight=window.visualViewport?.height||window.innerHeight||700;
-  const limit=Math.max(76,Math.min(164,Math.floor(viewHeight*.30)));
+  const limit=Math.max(76,Math.min(138,Math.floor(viewHeight*.30)));
   workComposer.style.setProperty('height',composerMinHeight+'px','important');
-  const natural=Math.max(composerMinHeight,workComposer.scrollHeight||composerMinHeight);
+  // Do not let a long placeholder create a second empty line on Safari.
+  const natural=workComposer.value?Math.max(composerMinHeight,workComposer.scrollHeight||composerMinHeight):composerMinHeight;
   const actual=Math.min(limit,natural);
   workComposer.style.setProperty('height',actual+'px','important');
   workComposer.style.setProperty('overflow-y',natural>limit?'auto':'hidden','important');
