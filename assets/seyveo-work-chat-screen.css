@@ -544,3 +544,14 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  }
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-gratitude-award span{display:none!important}
 }
+
+/* One-tap visible staff appreciation — never hidden behind hover or an emoji menu. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-bubble:has(.svcp-inline-award) .svcp-message-actions{
+ opacity:1;pointer-events:auto;display:flex;gap:4px;align-items:center;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-inline-award{
+ color:#e8b95c!important;background:rgba(210,157,52,.13)!important;
+ border:1px solid rgba(224,177,83,.35)!important;border-radius:999px!important;
+ min-width:32px;min-height:32px;font-size:23px;line-height:1;
+ display:inline-flex;align-items:center;justify-content:center;
+}
