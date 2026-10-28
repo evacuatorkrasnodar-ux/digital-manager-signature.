@@ -38,6 +38,7 @@ const lyricsList=$('sayviMusicLyricsLines');
 const lyricsImport=$('sayviMusicLyricsImport');
 const lyricsInput=$('sayviMusicLyricsFile');
 const lyricsFoot=$('sayviMusicLyricsFoot');
+const lyricsTranslationButton=$('sayviMusicLyricsTranslation');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
@@ -110,7 +111,21 @@ favoriteButton?.addEventListener('click',toggleFavorite);
 
 /* User-provided LRC only. No catalog lyrics, scraping or automatic translation. */
 const lyricsForTrack=new WeakMap();
-let lyricsVisible=false,currentLyrics=[],activeLyricIndex=-1;
+let lyricsVisible=false,currentLyrics=[],activeLyricIndex=-1,showLyricsTranslation=true;
+function updateTranslationControl(){
+ const available=currentLyrics.some(line=>!!line.translation);
+ if(lyricsTranslationButton){
+  lyricsTranslationButton.hidden=!lyricsVisible||!available;
+  lyricsTranslationButton.setAttribute('aria-pressed',String(showLyricsTranslation));
+  lyricsTranslationButton.textContent=showLyricsTranslation?'Перевод ✓':'Перевод';
+  lyricsTranslationButton.setAttribute('aria-label',showLyricsTranslation?'Скрыть перевод':'Показать перевод');
+ }
+ page.classList.toggle('sv-music-hide-translation',!showLyricsTranslation);
+}
+lyricsTranslationButton?.addEventListener('click',()=>{
+ showLyricsTranslation=!showLyricsTranslation;
+ updateTranslationControl();
+});
 function parseLRC(input){
  if(typeof input!=='string'||input.length>220000)return [];
  const timed=new Map();
@@ -162,6 +177,7 @@ function renderLyrics(){
  const file=index>=0?tracks[index]:null;
  currentLyrics=file?lyricsForTrack.get(file)||[]:[];
  activeLyricIndex=-1;lyricsList.replaceChildren();
+ updateTranslationControl();
  if(lyricsFoot)lyricsFoot.textContent=currentLyrics.length?
   'Строки из вашего .LRC · нажмите строку, чтобы перейти к этому моменту.' :
   'Без текста .LRC синхронизация и перевод недоступны.';
@@ -193,9 +209,10 @@ function toggleLyrics(force){
  if(lyricsPanel)lyricsPanel.hidden=!lyricsVisible;
  if(lyricsToggle){
   lyricsToggle.setAttribute('aria-pressed',String(lyricsVisible));
-  lyricsToggle.textContent=lyricsVisible?'Пластинка':'Текст';
+  lyricsToggle.textContent=lyricsVisible?'Пластинка':'Слова';
  }
  if(lyricsVisible)renderLyrics();
+ else updateTranslationControl();
 }
 lyricsToggle?.addEventListener('click',()=>toggleLyrics());
 lyricsImport?.addEventListener('click',()=>{
