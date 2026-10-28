@@ -760,3 +760,18 @@
  #unifiedTasksChatHost .svcp-composer-emoji-choice,
  #unifiedTasksChatHost .svcp-composer-emoji-expand{min-width:33px}
 }
+
+
+/* Small monochrome optional emoji action; keep the input visually empty until typed. */
+#unifiedTasksChatHost .svcp-composer-emoji-toggle{
+ width:30px;min-width:30px;height:40px;
+ opacity:.72;align-self:flex-end;
+}
+#unifiedTasksChatHost .svcp-composer-emoji-toggle svg{
+ display:block;width:20px;height:20px;fill:none;
+ stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round
+}
+#unifiedTasksChatHost .svcp-composer-emoji-toggle[aria-expanded="true"]{opacity:1}
+@media(max-width:370px){
+ #unifiedTasksChatHost .svcp-composer-emoji-toggle{width:28px;min-width:28px}
+}
