@@ -51,22 +51,22 @@
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab===(team?'business':'personal'))));
  }
- function showChat(roomId,viewpoint){
+ function showChat(roomId,viewpoint,filter){
   personal.hidden=true;business.hidden=false;
   if(overview)overview.hidden=true;
   board.hidden=true;chatHost.hidden=false;chats.hidden=false;
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager');
+  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager',filter||'all');
  }
  function routePending(){
   const request=pending;pending=null;
-  if(request?.kind==='chat')showChat(request.roomId,request.viewpoint);
+  if(request?.kind==='chat')showChat(request.roomId,request.viewpoint,request.filter);
   else if(request?.kind==='team')select('business');
   else select('personal');
  }
- function navigate(kind,roomId,viewpoint){
-  pending={kind,roomId:roomId||null,viewpoint:viewpoint||'manager'};
+ function navigate(kind,roomId,viewpoint,filter){
+  pending={kind,roomId:roomId||null,viewpoint:viewpoint||'manager',filter:filter||'all'};
   if(location.hash!=='#tasks')location.hash='#tasks';
   else routePending();
  }
@@ -74,10 +74,10 @@
   if(source!=='preserve')exitTarget=source==='home'?'home':'manage';
   syncBack();navigate('team');
  }
- function openChat(source='tasks',roomId=null,viewpoint='manager'){
+ function openChat(source='tasks',roomId=null,viewpoint='manager',filter='all'){
   if(source==='manage')exitTarget='manage';
   else if(source==='home')exitTarget='home';
-  syncBack();navigate('chat',roomId,viewpoint);
+  syncBack();navigate('chat',roomId,viewpoint,filter);
  }
  function openPersonal(){
   exitTarget='home';syncBack();navigate('personal');
@@ -86,7 +86,8 @@
   button.addEventListener('click',()=>{
    pending=null;select(button.dataset.unifiedTasksTab);
   }));
- $('svcpTasksChatShortcut')?.addEventListener('click',()=>openChat('tasks'));
+ $('svcpTasksChatShortcut')?.addEventListener('click',()=>openChat('tasks','general'));
+ $('svcpTasksPersonalShortcut')?.addEventListener('click',()=>openChat('tasks',null,'manager','personal'));
  $('navTasks')?.addEventListener('click',openPersonal);
  window.addEventListener('hashchange',()=>{
   if(location.hash==='#tasks')routePending();
