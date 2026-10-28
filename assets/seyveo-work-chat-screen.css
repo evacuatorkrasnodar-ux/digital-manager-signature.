@@ -93,40 +93,114 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatTaskDraft{max-height:35%}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpCameraTray{max-height:31%}
+/* One true composer: two buttons frame one pill, never five floating columns. */
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
- flex:0 0 auto!important;
- display:flex!important;align-items:flex-end!important;flex-wrap:wrap!important;
- gap:8px!important;min-height:64px;margin:0!important;
- padding:8px max(13px,env(safe-area-inset-right,0px))
-  8px
-  max(13px,env(safe-area-inset-left,0px))!important;
+ flex:0 0 auto!important;display:grid!important;
+ grid-template-columns:42px minmax(0,1fr) 42px!important;
+ grid-auto-flow:row!important;align-items:end!important;
+ gap:7px!important;min-height:64px;margin:0!important;
+ padding:8px max(11px,env(safe-area-inset-right,0px)) 8px max(11px,env(safe-area-inset-left,0px))!important;
  background:var(--card)!important;border-top:1px solid var(--soft-line)!important;
  position:relative!important;inset:auto!important;bottom:auto!important;
- transform:none!important;box-shadow:none!important
+ transform:none!important;box-shadow:none!important;width:100%;min-width:0
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-camera-toggle{
+ grid-column:1!important;grid-row:1!important;min-width:42px!important;width:42px!important;
+ min-height:44px!important;height:44px!important;align-self:end!important;
+ border:0!important;background:transparent!important;border-radius:12px!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field{
+ grid-column:2!important;grid-row:1!important;display:flex;align-items:flex-end;
+ flex:1 1 auto;min-width:0!important;min-height:46px;max-width:100%;
+ gap:0;box-sizing:border-box;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:21px;
+ background:var(--bg);overflow:hidden
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
- flex:1 1 0!important;min-width:125px!important;
- height:44px!important;min-height:44px!important;max-height:min(164px,34dvh)!important;
- padding:10px 11px!important;border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
- border-radius:15px!important;background:var(--bg)!important;
- font-size:16px!important;line-height:1.45!important;
+ flex:1 1 auto!important;display:block;width:100%!important;min-width:0!important;
+ height:44px!important;min-height:44px!important;max-height:min(160px,31dvh)!important;
+ box-sizing:border-box;padding:11px 5px 10px 12px!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ color:var(--text)!important;font-size:16px!important;line-height:1.42!important;
  resize:none!important;overflow-y:hidden!important;box-shadow:none!important;
- -webkit-appearance:none;appearance:none;
- transition:height .12s ease
+ -webkit-appearance:none;appearance:none
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput:focus{
- outline:2px solid var(--seyveo-emerald)!important;outline-offset:1px
+ outline:0!important;box-shadow:none!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-file-label,
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpComposerEmojiToggle,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{
+ border-color:var(--seyveo-emerald);box-shadow:0 0 0 1px var(--seyveo-emerald)
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field :is(#svcpComposerEmojiToggle,#svcpVoiceRecord){
+ display:grid!important;grid-column:auto!important;grid-row:auto!important;
+ flex:0 0 30px!important;place-items:center!important;
+ width:30px!important;min-width:30px!important;max-width:30px!important;
+ height:44px!important;min-height:44px!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ color:var(--secondary);opacity:1;align-self:flex-end!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field :is(#svcpComposerEmojiToggle,#svcpVoiceRecord) svg{
+ width:20px!important;height:20px!important;fill:none;stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceRecord[aria-expanded="true"]{
+ color:#e7ad8f
+}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- align-self:flex-end!important;flex:0 0 auto;min-width:42px;min-height:44px;height:44px
+ grid-column:3!important;grid-row:1!important;display:grid!important;place-items:center!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;border-radius:14px!important;
+ align-self:end!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- display:grid!important;place-items:center;padding:6px 12px!important;border-radius:14px
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{display:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send svg{
+ width:20px!important;height:20px!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{font-size:13px!important}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpComposerDirectTask{flex:0 0 100%;margin-top:-2px}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpComposerDirectTask:not([hidden]){
+ grid-column:2 / -1!important;grid-row:2!important;justify-self:end;
+ min-height:34px;max-width:100%;margin:0!important;padding:5px 11px!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
+ display:grid!important;flex:0 0 auto;gap:10px;padding:12px 14px 11px;
+ border-top:1px solid var(--soft-line);background:var(--card);max-height:42vh;overflow-y:auto
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceCapture[hidden],
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoicePreview[hidden],
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-controls button[hidden]{display:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-live{
+ display:flex;align-items:center;gap:9px;min-height:25px;min-width:0
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-live strong{
+ font-size:13px;color:var(--text);font-weight:570;flex:1;line-height:1.4
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-live time{
+ font-size:14px;font-variant-numeric:tabular-nums;color:var(--text)
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-dot{
+ width:9px;height:9px;flex:none;border-radius:50%;background:#e2a08b;
+ animation:svcpVoicePulse 1.4s ease-in-out infinite
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceCapture[data-state="ready"] .svcp-voice-dot{
+ background:var(--seyveo-emerald);animation:none
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-controls{
+ display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-controls button{
+ min-height:40px;padding:8px 11px;border:1px solid var(--soft-line);
+ border-radius:12px;font:inherit;font-size:13px;color:var(--text);background:transparent
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceSend{
+ background:var(--seyveo-hdr-active,var(--card2));border-color:var(--seyveo-emerald)
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoicePreview{
+ display:block;width:100%;height:44px;max-width:100%
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceHint{
+ font-size:11px;line-height:1.42;color:var(--secondary)
+}
+@keyframes svcpVoicePulse{50%{opacity:.35;transform:scale(.83)}}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatStatus{
  flex:0 0 auto;margin:0!important;padding:3px 14px calc(4px + env(safe-area-inset-bottom,0px));
  font-size:11px!important;line-height:1.3!important;white-space:normal;
@@ -151,4 +225,26 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen *{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* Deliberately remove redundant "Working conversation" heading: room name
+   is already in the bar above; keep recognition and Sayvi tools in one row. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-title{display:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-intro{
+ min-height:0!important;padding:5px 13px!important;display:block!important;
+ overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-assist{
+ display:flex!important;flex-wrap:nowrap!important;width:max-content!important;
+ max-width:none!important;align-items:center;justify-content:flex-start!important;gap:8px
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-assist button{min-height:36px!important}
+@media(max-width:355px){
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{gap:5px!important;padding-inline:9px!important}
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field :is(#svcpComposerEmojiToggle,#svcpVoiceRecord){
+  flex-basis:28px!important;min-width:28px!important;width:28px!important
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-dot{animation:none}
 }
