@@ -821,7 +821,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 #sayviMusicPage .sv-music-favorite-bevel{fill:none;stroke:rgba(250,232,207,.65);stroke-width:1.1}
 #sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-shape{fill:url(#svMusicStarMetal);stroke:#ffe3b5}
 #sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-bevel{stroke:rgba(99,67,36,.68)}
-#sayviMusicPage .sv-music-star-initial{fill:#51391f;font-family:Georgia,serif;font-size:17px;font-weight:700;dominant-baseline:middle;letter-spacing:-1px;paint-order:stroke;stroke:rgba(249,231,198,.42);stroke-width:.35px}
+#sayviMusicPage .sv-music-star-initial{fill:#51391f;font-family:Georgia,serif;font-size:17px;font-weight:700;dominant-baseline:central;letter-spacing:0;paint-order:stroke;stroke:rgba(249,231,198,.42);stroke-width:.35px}
 #sayviMusicPage .sv-music-favorite[aria-pressed=false] .sv-music-star-initial{fill:#e9d1aa;stroke:none}
 #sayviMusicPage .sv-music-lyrics-toggle[aria-pressed=true]{
  color:var(--text);text-decoration-color:currentColor;font-weight:620
