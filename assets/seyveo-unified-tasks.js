@@ -15,21 +15,6 @@
  chatHost.appendChild(chats);
  chats.hidden=false;
  let exitTarget='home',pending=null;
- const CHAT_KEY='seyveo-business-command-chat-demo-v1';
- const chatNames={general:'Общий чат',team:'Смена и команда',docs:'Обсуждение документов',
-  'dm-elena':'Елена · кассир','dm-anna':'Анна · старший продавец',
-  'dm-mikhail':'Михаил · продавец','dm-sayvi':'Сэйви'};
- function syncChatPreview(){
-  const label=$('svcpTasksChatSummary');if(!label)return;
-  let messages=[];
-  try{const rows=JSON.parse(localStorage.getItem(CHAT_KEY)||'[]');
-   if(Array.isArray(rows))messages=rows;
-  }catch{}
-  const last=messages.filter(m=>m&&chatNames[m.room]&&typeof m.text==='string'&&m.text.trim()).slice(-1)[0];
-  label.textContent=last
-   ?chatNames[last.room]+': '+last.text.replace(/\s+/g,' ').slice(0,63)
-   :'Общий чат · Лично сотруднику · Сэйви';
- }
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
   if(label)label.textContent=exitTarget==='manage'?'В бизнес':'На Главную';
@@ -41,7 +26,8 @@
   }else $('navHome')?.click();
  });
  function showBoard(){
-  board.hidden=false;chatHost.hidden=true;syncChatPreview();
+  board.hidden=false;chatHost.hidden=false;chats.hidden=false;
+  window.SEYVEO_BUSINESS_COMMAND?.showChat?.();
  }
  function select(view){
   const team=view==='business';
@@ -54,7 +40,7 @@
  function showChat(roomId,viewpoint,filter){
   personal.hidden=true;business.hidden=false;
   if(overview)overview.hidden=true;
-  board.hidden=true;chatHost.hidden=false;chats.hidden=false;
+  board.hidden=false;chatHost.hidden=false;chats.hidden=false;
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager',filter||'all');
@@ -86,15 +72,11 @@
   button.addEventListener('click',()=>{
    pending=null;select(button.dataset.unifiedTasksTab);
   }));
- $('svcpTasksChatShortcut')?.addEventListener('click',()=>openChat('tasks','general'));
- $('svcpTasksPersonalShortcut')?.addEventListener('click',()=>openChat('tasks',null,'manager','personal'));
  $('navTasks')?.addEventListener('click',openPersonal);
  window.addEventListener('hashchange',()=>{
   if(location.hash==='#tasks')routePending();
   else pending=null;
  });
- window.addEventListener('storage',event=>{if(event.key===CHAT_KEY)syncChatPreview()});
- window.addEventListener('pageshow',syncChatPreview);
  window.SEYVEO_UNIFIED_TASKS=Object.freeze({openBusiness,openPersonal,openChat});
- syncChatPreview();syncBack();select('personal');
+ syncBack();select('personal');
 })();
