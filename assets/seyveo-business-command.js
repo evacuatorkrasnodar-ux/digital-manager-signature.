@@ -228,7 +228,7 @@ function updatePerspective(){
   :current.hint+' · на одном устройстве';
  $('svcpMentionElena').hidden=current.kind!=='groups';
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
- $('svcpRecognizeOpen').hidden=!(current.person&&STAFF[current.person]);
+ $('svcpRecognizeOpen').hidden=state.viewpoint==='elena'||!(current.person&&STAFF[current.person]);
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
 }
 chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
@@ -254,7 +254,24 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  * An emoji on a message stays in the chat; person recognition is a separate
  * explicit button in the personal chat and uses the previous staff-ledger key.
  */
-const REACTION_MARKS={help:'⭐',support:'💚',mentor:'🙌',initiative:'💡',reliable:'🔥'};
+/* A chat emoji is never a staff performance award. Awards remain explicit. */
+const QUICK_EMOJIS=['👍','❤️','😂','🔥','👏','⭐','😊'];
+const MORE_EMOJI_GROUPS=[
+ {name:'Эмоции',emojis:['🥰','😍','🤣','😄','😁','😉','🥹','😢','😮','🤔','😎','🙏']},
+ {name:'Поддержка',emojis:['💚','💙','💜','🫶','💪','🙌','👌','🤝','💯','✨','🎉','🏆']},
+ {name:'Работа',emojis:['✅','📌','🚀','💡','👀','👏','🤩','🙈','☕','🌟','🎯','🤗']}
+];
+function closeMessageMenus(){
+ chatRoot.querySelectorAll('.svcp-message-menu').forEach(menu=>{menu.hidden=true});
+ chatRoot.querySelectorAll('.svcp-more-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'));
+}
+function toggleMessageMenu(menu,trigger){
+ const opening=menu.hidden;
+ closeRecognition();
+ closeMessageMenus();
+ menu.hidden=!opening;
+ trigger.setAttribute('aria-expanded',String(opening));
+}
 const reactionHome=$('svcpReactionPicker')?.parentElement;
 function closeRecognition(){
  const panel=$('svcpReactionPicker');
@@ -266,16 +283,22 @@ function closeRecognition(){
  quickReactionTarget=null;
 }
 function showReactions(target,near=null){
+ closeMessageMenus();
  closeRecognition();
  quickReactionTarget=target;
  const panel=$('svcpReactionPicker');
  if(!panel)return;
- $('svcpReactionLabel').textContent=target.type==='person'
-  ?'Знак для '+STAFF[target.person]+' · демо'
+ const person=target.type==='person';
+ $('svcpReactionLabel').textContent=person
+  ?'Отметить '+STAFF[target.person]+' · знак сохранится в карточке сотрудника'
   :'Реакция на сообщение';
+ $('svcpReactionOptions').hidden=!person;
+ $('svcpMessageReactionOptions').hidden=person;
+ $('svcpMessageReactionMore').hidden=true;
+ $('svcpEmojiMoreToggle').setAttribute('aria-expanded','false');
  if(near)near.appendChild(panel);
  panel.hidden=false;
- $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(target.type==='person'));
+ $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(person));
 }
 $('svcpRecognizeOpen')?.addEventListener('click',()=>{
  if(!$('svcpReactionPicker').hidden&&quickReactionTarget?.type==='person'){closeRecognition();return}
@@ -287,6 +310,43 @@ $('svcpRecognizeOpen')?.addEventListener('click',()=>{
  showReactions({type:'person',person:room.person});
 });
 $('svcpReactionCancel')?.addEventListener('click',closeRecognition);
+/* Compact familiar emojis first, expandable library second. No scrolling tray. */
+const quickEmojis=el('div','svcp-reaction-options svcp-quick-emojis');
+quickEmojis.id='svcpMessageReactionOptions';
+quickEmojis.setAttribute('role','group');
+quickEmojis.setAttribute('aria-label','Быстрые реакции на сообщение');
+quickEmojis.hidden=true;
+const moreEmojis=el('div','svcp-emoji-more');
+moreEmojis.id='svcpMessageReactionMore';
+moreEmojis.hidden=true;
+const personReactionOptions=$('svcpReactionOptions');
+personReactionOptions.before(quickEmojis,moreEmojis);
+function addEmojiButton(host,emoji){
+ const button=btn(emoji,()=>{
+  const target=quickReactionTarget;
+  if(target?.type!=='message')return;
+  closeRecognition();
+  applyMessageEmoji(target.index,emoji);
+ },'svcp-emoji-option');
+ button.setAttribute('aria-label','Реакция '+emoji);
+ host.append(button);
+}
+QUICK_EMOJIS.forEach(emoji=>addEmojiButton(quickEmojis,emoji));
+const moreToggle=btn('＋',()=>{
+ moreEmojis.hidden=!moreEmojis.hidden;
+ moreToggle.setAttribute('aria-expanded',String(!moreEmojis.hidden));
+},'svcp-emoji-more-toggle');
+moreToggle.id='svcpEmojiMoreToggle';
+moreToggle.setAttribute('aria-label','Показать больше эмодзи');
+moreToggle.setAttribute('aria-controls','svcpMessageReactionMore');
+moreToggle.setAttribute('aria-expanded','false');
+quickEmojis.append(moreToggle);
+for(const group of MORE_EMOJI_GROUPS){
+ const section=el('section','svcp-emoji-group'),choices=el('div','svcp-emoji-grid');
+ section.append(el('small','svcp-emoji-heading',group.name));
+ group.emojis.forEach(emoji=>addEmojiButton(choices,emoji));
+ section.append(choices);moreEmojis.append(section);
+}
 function applyPersonReaction(person,kind){
  const reward=RECOGNITION_TYPES[kind];
  if(!STAFF[person]||!reward)return;
@@ -310,23 +370,22 @@ function applyPersonReaction(person,kind){
  setStatus('Знак '+reward.symbol+' сохранён в учебной карточке '+STAFF[person]+'. Это не проверенная оценка работы.');
  window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:person}}));
 }
-function applyMessageReaction(index,kind){
- const emoji=REACTION_MARKS[kind],msg=state.chat[index];
+function applyMessageEmoji(index,emoji){
+ const msg=state.chat[index];
  if(!emoji||!msg||typeof msg.text!=='string')return;
  const existing=msg.demoReaction===emoji?'':emoji;
  const updated=state.chat.map((item,i)=>i===index?{...item,demoReaction:existing}:item);
  if(!save(CHAT_KEY,updated))return;
  state.chat=updated;
  renderChat();
- setStatus(existing?'Реакция '+emoji+' добавлена к сообщению · демо':'Реакция убрана.');
+ setStatus(existing?'Реакция '+emoji+' добавлена в чат · демо':'Реакция убрана.');
 }
 $('svcpReactionOptions')?.querySelectorAll('[data-svcp-reaction]').forEach(button=>
  button.addEventListener('click',()=>{
   const target=quickReactionTarget,kind=button.dataset.svcpReaction;
-  if(!target)return;
+  if(target?.type!=='person')return;
   closeRecognition();
-  if(target.type==='person')applyPersonReaction(target.person,kind);
-  else applyMessageReaction(target.index,kind);
+  applyPersonReaction(target.person,kind);
  }));
 $('svcpRecognizeOpenCard')?.addEventListener('click',()=>{
  if(lastRecognizedPerson)window.SEYVEO_STAFF_CARDS?.open?.(lastRecognizedPerson);
@@ -337,6 +396,7 @@ function formatTime(ts){
 }
 function renderChat(){
  closeRecognition();
+ closeMessageMenus();
  chatRoot.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
  thread.replaceChildren();
@@ -367,17 +427,42 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    bubble.append(el('span','svcp-message-text',msg.text));
-   if(msg.demoReaction)bubble.append(el('span','svcp-bubble-reaction',msg.demoReaction+' 1'));
+   if(msg.demoReaction){
+    const chip=btn(msg.demoReaction+' 1',()=>applyMessageEmoji(index,msg.demoReaction),'svcp-bubble-reaction');
+    chip.setAttribute('aria-label','Убрать реакцию '+msg.demoReaction);
+    bubble.append(chip);
+   }
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
-   const actions=el('div','svcp-message-actions');
    if(!isRecognition){
-    actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
-    actions.append(btn('😊',()=>showReactions({type:'message',index},bubble),'svcp-message-action svcp-emoji-trigger'));
+    const actions=el('div','svcp-message-actions');
+    const emojiButton=btn('😊',()=>showReactions({type:'message',index},bubble),'svcp-message-action svcp-emoji-trigger');
+    emojiButton.setAttribute('aria-label','Выбрать эмодзи');
+    const menu=el('div','svcp-message-menu');menu.hidden=true;
+    menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
+    const moreButton=btn('···',()=>toggleMessageMenu(menu,moreButton),'svcp-message-action svcp-more-trigger');
+    moreButton.setAttribute('aria-label','Действия с сообщением');
+    moreButton.setAttribute('aria-expanded','false');
+    actions.append(emojiButton,moreButton);
+    menu.append(btn('↩ Ответить',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
+    menu.append(btn('😊 Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
+    if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
+     menu.append(btn('📌 Поручить',()=>{closeMessageMenus();prepareTask(msg)},'svcp-message-menu-item'));
+    }
+    bubble.tabIndex=0;
+    bubble.setAttribute('aria-description','Нажмите на сообщение, чтобы открыть действия');
+    bubble.addEventListener('click',event=>{
+     if(event.target.closest('button'))return;
+     if(event.target.closest('.svcp-message-menu'))return;
+     toggleMessageMenu(menu,moreButton);
+    });
+    bubble.addEventListener('keydown',event=>{
+     if((event.key==='Enter'||event.key===' ')&&event.target===bubble){
+      event.preventDefault();toggleMessageMenu(menu,moreButton);
+     }
+    });
+    bubble.append(actions,menu);
    }
-   if(!isRecognition&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())){
-    actions.append(btn(isSayvi?'Подготовить поручение':'В поручение',()=>prepareTask(msg),'svcp-message-action'));
-   }
-   bubble.append(actions);thread.append(bubble);
+   thread.append(bubble);
   }
  }
  if(focusSearchIndex!==null){
