@@ -16,7 +16,12 @@ assert.ok(employeeStyle.includes('border-radius:18px;border:1px solid rgba(255,2
  'Employee star gets a unique quiet-square silver badge, not the round Music medallion');
 assert.match(html,/class="svcp-recognition-star" d="M32 7 L/,'Employee recognition uses a distinct eight-point star');
 assert.match(html,/class="svcp-recognition-heart"/,'Employee recognition is an appreciation symbol, not a Music favorite');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=47/,'Compact profile and employee award style are cache-busted');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=48/,'Compact employee chats and award styles are cache-busted');
+assert.equal((html.match(/<strong>Чаты команды<\/strong>/g)||[]).length,1,'One employee heading, no nested duplicate text');
+assert.match(html,/id="svcpEmployeeChatSearch"[^>]*aria-controls="svcpHistorySearch"/,'Search button lives beside employee chat heading');
+assert.match(employeeStyle,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-directory-head\{display:none!important\}/,'Only employee duplicate heading is hidden');
+assert.match(employeeStyle,/#tasksPage #svcpEmployeeChats\[data-search-open="true"\] #svcpChatDirectory>\.svcp-search-field/,'Search appears only when requested');
+assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=16/,'Search handler asset is cache-busted');
 assert.doesNotMatch(html,/class="svcp-employee-profile-caption"/,'No redundant caption takes space below the avatar');
 assert.match(employeeStyle,/#tasksPage \.svcp-employee-profile-toggle\{\s*position:absolute;right:0;top:0/,'Avatar docks to the top right of Elena header');
 assert.match(employeeStyle,/#tasksPage \.svcp-employee-person\{gap:2px;min-width:0;padding-right:56px\}/,'Employee name and live shift status remain readable beside the avatar');

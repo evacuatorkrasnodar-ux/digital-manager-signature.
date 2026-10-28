@@ -14,7 +14,9 @@
   employeeChatHost=$('unifiedEmployeeChatHost'),employeeTaskHost=$('unifiedEmployeeAssignments'),
   picker=$('seyveoDemoModeSelect'),previewNotice=$('seyveoDemoModeNotice'),
   employeeProfileToggle=$('svcpEmployeeProfileToggle'),
-  employeeAccount=$('svcpEmployeeAccountView'),employeeAccountBack=$('svcpEmployeeAccountBack');
+  employeeAccount=$('svcpEmployeeAccountView'),employeeAccountBack=$('svcpEmployeeAccountBack'),
+  employeeChatsDetails=$('svcpEmployeeChats'),employeeChatSearch=$('svcpEmployeeChatSearch'),
+  employeeChatSearchInput=$('svcpHistorySearch');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
  taskHost.appendChild(tasks);
  tasks.hidden=false;
@@ -70,6 +72,37 @@
  employeeAccountBack?.addEventListener('click',()=>{
   setEmployeeAccountOpen(false);
   employeeProfileToggle?.focus();
+ });
+ // Only Elena's inbox collapses its redundant heading/search bar.
+ // Keep the existing one chat history, directory and search handler.
+ function setEmployeeChatSearch(open){
+  if(!employeeChatsDetails||!employeeChatSearch||!isEmployee())return;
+  const shown=!!open;
+  employeeChatsDetails.dataset.searchOpen=String(shown);
+  employeeChatSearch.setAttribute('aria-expanded',String(shown));
+  employeeChatSearch.setAttribute('aria-label',shown
+   ?'Закрыть поиск в рабочих чатах'
+   :'Поиск по чатам, сотрудникам и поручениям');
+  if(shown){
+   employeeChatsDetails.open=true;
+   if(!$('svcpConversation')?.hidden)$('svcpConversationSearch')?.click();
+   employeeChatSearchInput?.focus({preventScroll:true});
+  }else{
+   if(employeeChatSearchInput?.value){
+    employeeChatSearchInput.value='';
+    employeeChatSearchInput.dispatchEvent(new Event('input',{bubbles:true}));
+   }
+   if(document.activeElement===employeeChatSearchInput)employeeChatSearch.focus({preventScroll:true});
+  }
+ }
+ employeeChatSearch?.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  setEmployeeChatSearch(employeeChatsDetails?.dataset.searchOpen!=='true');
+ });
+ employeeChatsDetails?.addEventListener('toggle',()=>{
+  if(!employeeChatsDetails.open&&employeeChatsDetails.dataset.searchOpen==='true')
+   setEmployeeChatSearch(false);
  });
  function updatePulseAccess(){
   // UI preview only. Real access will require verified roles and server authorization.

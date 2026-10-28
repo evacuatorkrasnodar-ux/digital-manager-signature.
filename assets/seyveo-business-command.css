@@ -967,17 +967,46 @@
 #tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tasksPage .svcp-employee-recognition>strong{font-size:22px;font-weight:590;color:var(--text)}
-#tasksPage .svcp-employee-chats{min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;overflow:hidden;background:var(--card)}
-#tasksPage .svcp-employee-chats>summary{display:flex;align-items:center;gap:10px;min-height:59px;padding:10px 13px;cursor:pointer;list-style:none}
+/* Elena has one chat heading. The search is a compact control on the right,
+   and the original full messenger is moved here, not duplicated. */
+#tasksPage .svcp-employee-chats{
+ min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:16px;overflow:hidden;background:var(--card)
+}
+#tasksPage .svcp-employee-chats>summary{
+ display:flex;align-items:center;gap:8px;min-height:48px;padding:3px 6px 3px 13px;
+ cursor:pointer;list-style:none
+}
 #tasksPage .svcp-employee-chats>summary::-webkit-details-marker{display:none}
-#tasksPage .svcp-employee-chats-glyph{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:20px}
-#tasksPage .svcp-employee-chats>summary>span:nth-child(2){display:grid;gap:3px;flex:1;min-width:0}
-#tasksPage .svcp-employee-chats>summary strong{color:var(--text);font-size:13px;font-weight:570}
-#tasksPage .svcp-employee-chats>summary small{font-size:11px;color:var(--secondary)}
-#tasksPage .svcp-employee-chevron{font-size:21px;color:var(--secondary);transition:transform .15s}
+#tasksPage .svcp-employee-chats>summary>strong{
+ flex:1;min-width:0;color:var(--text);font-size:13px;font-weight:570
+}
+#tasksPage .svcp-employee-chevron{flex:none;font-size:17px;color:var(--secondary);transition:transform .15s}
 #tasksPage .svcp-employee-chats[open] .svcp-employee-chevron{transform:rotate(90deg)}
-#tasksPage .svcp-employee-chats #unifiedEmployeeChatHost{min-width:0;padding:8px 10px 12px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-employee-chat-search{
+ flex:none;display:grid;place-items:center;width:42px;height:42px;padding:0;margin:0;
+ border:0;border-radius:13px;background:transparent;color:var(--text);
+ cursor:pointer;-webkit-tap-highlight-color:transparent
+}
+#tasksPage .svcp-employee-chat-search svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;
+ stroke-linecap:round;stroke-linejoin:round
+}
+#tasksPage .svcp-employee-chat-search[aria-expanded="true"]{background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage .svcp-employee-chats #unifiedEmployeeChatHost{
+ min-width:0;padding:0 8px 9px;border-top:1px solid var(--soft-line)
+}
 #tasksPage .svcp-employee-chats #unifiedTasksChatHost{margin:0;padding:0;min-width:0}
+#tasksPage #svcpEmployeeChats #svcpChatDirectory>.svcp-directory-head{display:none!important}
+#tasksPage #svcpEmployeeChats #svcpChatDirectory>.svcp-search-field{display:none!important}
+#tasksPage #svcpEmployeeChats[data-search-open="true"] #svcpChatDirectory>.svcp-search-field{
+ display:flex!important;margin:9px 0 8px
+}
+#tasksPage #svcpEmployeeChats #svcpConversationList{
+ border:0;border-radius:0;background:transparent
+}
+#tasksPage #svcpEmployeeChats #svcpChatDirectory .svcp-directory-item{padding-inline:6px}
+#tasksPage .svcp-employee-chat-search:focus-visible{outline:2px solid var(--text);outline-offset:-3px}
 #tasksPage .svcp-employee-demo-note{color:var(--secondary);font-size:10px;line-height:1.4;margin:0 2px}
 #tasksPage .svcp-employee-shift button:focus-visible,#tasksPage .svcp-employee-chats>summary:focus-visible,#tasksPage .svcp-employee-hour-details>summary:focus-visible,#tasksPage .svcp-employee-task-chat:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
 @media(max-width:360px){#tasksPage .svcp-employee-avatar{width:40px;height:40px}#tasksPage .svcp-employee-duty{font-size:9px}#tasksPage .svcp-employee-shift-card{padding:13px}#tasksPage .svcp-employee-hour-grid{gap:5px}#tasksPage .svcp-employee-hour-grid>div{padding:10px 7px}#tasksPage .svcp-employee-hour-grid strong{font-size:13px}}
