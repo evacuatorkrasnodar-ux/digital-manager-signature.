@@ -26,7 +26,7 @@
   const start=validTime(stored.start)?stored.start:'09:00',end=validTime(stored.end)?stored.end:'17:30';
   return start<end?{days,start,end}:defaultPlan();
  }
- const cleanRequest=x=>x&&typeof x.id==='string'&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x.date)&&['off','swap'].includes(x.type)&&['pending','approved','declined'].includes(x.status);
+ const cleanRequest=x=>x&&typeof x.id==='string'&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x.date)&&['off','swap','vacation'].includes(x.type)&&(x.type!=='vacation'||(typeof x.endDate==='string'&&x.endDate>=x.date&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x.endDate)))&&['pending','approved','declined'].includes(x.status);
  function requests(){const data=read(REQUEST_KEY,[]);return Array.isArray(data)?data.filter(cleanRequest).slice(-90):[]}
  function save(key,value){
   try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}
@@ -39,8 +39,9 @@
  const plusDays=(date,n)=>localDate(date.getFullYear(),date.getMonth(),date.getDate()+n);
  const fmt=(d,options)=>new Intl.DateTimeFormat('ru-RU',options).format(d);
  const shortDay=d=>['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()];
- const dayRequest=(key,items)=>[...items].reverse().find(r=>r.date===key);
- const isApprovedOff=(key,items)=>items.some(r=>r.date===key&&r.type==='off'&&r.status==='approved');
+ const applies=(r,key)=>r.date===key||(r.type==='vacation'&&r.date<=key&&key<=r.endDate);
+ const dayRequest=(key,items)=>[...items].reverse().find(r=>applies(r,key));
+ const isApprovedOff=(key,items)=>items.some(r=>applies(r,key)&&['off','vacation'].includes(r.type)&&r.status==='approved');
  const todayKey=()=>dayKey(new Date());
  let selected=todayKey(),anchor=monday(new Date()),monthOpen=false;
  const el=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node};
@@ -64,7 +65,8 @@
   const key=dayKey(date),req=dayRequest(key,items),off=isApprovedOff(key,items);
   const workDay=settings.days.includes(date.getDay())&&!off;
   const name=fmt(date,{weekday:'long',day:'numeric',month:'long'});
-  const status=off?'Согласованный выходной · демо':workDay?'Смена '+settings.start+'–'+settings.end:'Выходной';
+  const status=off?(req?.type==='vacation'?'Согласованный отпуск · демо':'Согласованный выходной · демо')
+   :workDay?'Смена '+settings.start+'–'+settings.end:'Выходной';
   let hint=workDay?'Время смены · график-демо. Перерыв настраивается отдельно руководителем.'
    :'Этот день свободен по учебному графику.';
   if(req)hint+=(req.status==='pending'?' · Заявка на рассмотрении (локально)':req.status==='approved'?' · Заявка согласована в демо':' · Заявка отклонена в демо');
@@ -101,6 +103,14 @@
   askSwap.hidden=!info.workDay||past;
   askOff.disabled=info.req?.status==='pending';
   askSwap.disabled=info.req?.status==='pending';
+  const vacationButton=$('svcpScheduleAskVacation');
+  if(vacationButton)vacationButton.hidden=past;
+  const vacationForm=$('svcpVacationPanel');
+  if(vacationForm&&!vacationForm.hidden){
+   const dateFrom=$('svcpVacationFrom'),endDate=$('svcpVacationEnd');
+   if(dateFrom)dateFrom.textContent='Отпуск с '+fmt(chosen,{day:'numeric',month:'long'});
+   if(endDate){endDate.min=info.key;if(!endDate.value||endDate.value<info.key)endDate.value=dayKey(plusDays(chosen,6))}
+  }
   const note=$('svcpScheduleNotice');
   if(note&&!note.dataset.saved)note.textContent='Учебный график · заявки остаются на этом устройстве.';
   const doneCount=$('svcpResultsTasksDone');
@@ -144,8 +154,10 @@
   for(const req of relevant){
    const date=parseDay(req.date);if(!date)continue;
    const row=el('article','svcp-manager-request'),info=el('div','svcp-manager-request-copy');
-   info.append(el('strong',null,(req.type==='off'?'Выходной':'Замена смены')+' · Елена'),
-    el('small',null,fmt(date,{day:'numeric',month:'long',weekday:'short'})+' · только на этом устройстве'));
+   info.append(el('strong',null,(req.type==='off'?'Выходной':req.type==='swap'?'Замена смены':'Отпуск')+' · Елена'),
+    el('small',null,fmt(date,{day:'numeric',month:'long',weekday:'short'})+
+     (req.type==='vacation'&&parseDay(req.endDate)?' – '+fmt(parseDay(req.endDate),{day:'numeric',month:'long'}):'')+
+     ' · только на этом устройстве'));
    const actions=el('div','svcp-manager-request-actions');
    const accept=el('button',null,'Согласовать'),reject=el('button',null,'Отклонить');
    accept.type=reject.type='button';accept.dataset.svcpReview=req.id;accept.dataset.decision='approved';
@@ -164,11 +176,35 @@
    renderSchedule();
   }else{$('svcpScheduleNotice').textContent='Не удалось сохранить заявку на устройстве.'}
  }
+ function closeVacation(){
+  const pane=$('svcpVacationPanel');if(pane)pane.hidden=true;
+  const button=$('svcpScheduleAskVacation');if(button)button.setAttribute('aria-expanded','false');
+ }
+ function requestVacation(){
+  const from=parseDay(selected),end=parseDay($('svcpVacationEnd')?.value);
+  const notice=$('svcpScheduleNotice');
+  if(!from||!end||selected<todayKey()||end<from||end>plusDays(from,60)){
+   if(notice){notice.dataset.saved='true';notice.textContent='Выбери корректную дату окончания отпуска (не более 60 дней).'}
+   return;
+  }
+  const list=requests();
+  if(list.some(req=>req.status==='pending'&&req.date<=dayKey(end)&&
+    (req.type==='vacation'?req.endDate:req.date)>=selected)){
+   if(notice){notice.dataset.saved='true';notice.textContent='На эти даты уже есть заявка на рассмотрении.'}
+   return;
+  }
+  const item={id:'vac-'+Date.now()+'-'+Math.floor(Math.random()*1e6),
+   date:selected,endDate:dayKey(end),type:'vacation',status:'pending',createdAt:new Date().toISOString()};
+  if(save(REQUEST_KEY,[...list,item].slice(-90))){
+   if(notice){notice.dataset.saved='true';notice.textContent='Заявка на отпуск создана в демо. Работодателю не отправлена.'}
+   closeVacation();renderSchedule();
+  }else if(notice){notice.dataset.saved='true';notice.textContent='Не удалось сохранить заявку на устройстве.'}
+ }
  daysHost.addEventListener('click',onDay);monthHost.addEventListener('click',onDay);
  function onDay(event){
   const button=event.target.closest('[data-svcp-day]');if(!button)return;
   selected=button.dataset.svcpDay;const date=parseDay(selected);if(date)anchor=monday(date);
-  renderSchedule();
+  closeVacation();renderSchedule();
  }
  function movePeriod(direction){
   if(monthOpen){
@@ -184,6 +220,11 @@
  $('svcpScheduleMonthToggle')?.addEventListener('click',()=>{monthOpen=!monthOpen;renderSchedule()});
  $('svcpScheduleAskOff')?.addEventListener('click',()=>requestDay('off'));
  $('svcpScheduleAskSwap')?.addEventListener('click',()=>requestDay('swap'));
+ $('svcpScheduleAskVacation')?.addEventListener('click',()=>{
+  const pane=$('svcpVacationPanel'),button=$('svcpScheduleAskVacation');if(!pane)return;
+  pane.hidden=!pane.hidden;button?.setAttribute('aria-expanded',String(!pane.hidden));renderSchedule();
+ });
+ $('svcpVacationSend')?.addEventListener('click',requestVacation);
  let editDays=null;
  manager.addEventListener('toggle',()=>{if(manager.open){editDays=[...plan().days];renderManager(requests(),plan())}});
  manager.addEventListener('click',event=>{
