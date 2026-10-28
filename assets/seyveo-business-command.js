@@ -377,6 +377,7 @@ function syncPreviewAfterTaskEdit(){
  previewStarted=false;
  $('svcpWorkHomePreview').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
+ resetHomeReply();
 }
 function workTaskForPreview(){
  return state.tasks.find(t=>t&&t.id===state.lastDemoTaskId&&t.assigneeId==='elena'&&!t.done)||null;
@@ -418,7 +419,7 @@ $('svcpHomeReplyForm')?.addEventListener('submit',event=>{
 function syncWorkPreview(){
  const task=workTaskForPreview(),card=$('svcpWorkHomePreview');
  if(!card)return;
- if(!task){card.hidden=true;return}
+ if(!task){card.hidden=true;resetHomeReply();return}
  $('svcpHomePreviewTitle').textContent=task.text;
  $('svcpHomePreviewExecute').textContent=previewStarted?'Подтвердить выполнение':'Исполнить';
  $('svcpHomePreviewDetail').textContent=previewStarted
@@ -430,6 +431,7 @@ $('svcpPreviewOnHome')?.addEventListener('click',()=>{
  const task=workTaskForPreview();
  if(!task){$('svcpPreviewOnHome').hidden=true;return}
  previewStarted=false;
+ resetHomeReply();
  syncWorkPreview();
  location.hash='#home';
 });
@@ -437,6 +439,7 @@ $('svcpHomePreviewClose')?.addEventListener('click',()=>{
  $('svcpWorkHomePreview').hidden=true;
  state.lastDemoTaskId=null;
  previewStarted=false;
+ resetHomeReply();
 });
 $('svcpHomePreviewDetails')?.addEventListener('click',()=>{
  window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();
@@ -451,6 +454,7 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
  previewStarted=false;
  $('svcpWorkHomePreview').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
+ resetHomeReply();
  renderTasks();
  window.dispatchEvent(new CustomEvent('seyveo:demo-task-completed',{detail:{id:task.id}}));
 });
