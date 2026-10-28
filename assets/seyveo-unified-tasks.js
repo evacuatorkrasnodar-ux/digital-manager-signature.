@@ -565,6 +565,7 @@
   if(!button||!isManager())return;
   const kind=button.dataset.businessHub;
   if(kind==='pulse')openPulse();
+  if(kind==='chats')openWorkChat();
   if(kind==='mail')window.SEYVEO_SAYVI_SURFACES?.open?.('mail','business');
   if(kind==='documents')window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
   if(kind==='company')window.SEYVEO_COMPANY_PASSPORT?.open?.();
