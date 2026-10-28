@@ -28,10 +28,14 @@ assert.ok((scene.match(/background:var\(--sv-life-viewport-gradient\)/g)||[]).le
 assert.match(scene,/:root\[data-theme=dark\]\[data-palette=plum\]\{\s*--sv-life-viewport-gradient:linear-gradient\(180deg,#1c1b1a/,
  'Copper Dune uses the approved Connections reference, without recoloring Emerald Velvet');
 assert.match(scene,/--sv-q-outline:var\(--seyveo-hdr-outline\)/,'One consistent outline material');
-assert.match(chat,/linear-gradient\(180deg,#111917 0%,#142521 52%,#10211d 100%\)/,
- 'Chat matches the same muted tone');
+assert.match(chat,/background:var\(--sv-chat-canvas\)/,
+ 'Chat canvas derives from the shared palette instead of an obsolete hardcoded emerald gradient');
+const chatPalette=read('assets/living-conversation.css');
+assert.match(chatPalette,/--sv-chat-canvas:/,
+ 'The conversation palette declares its own accessible dark and light canvas');
 assert.match(home,/--home-glass:rgba\(24,41,35,\.67\)/,'Home cards follow My World palette');
-assert.match(management,/rgba\(125,163,142,\.016\)/,'Management uses subtle green only');
+assert.match(management,/background:linear-gradient\(159deg,var\(--seyveo-specular\),var\(--seyveo-hdr-active\) 48%,transparent\)/,
+ 'Management uses shared material tokens to follow all themes');
 assert.ok(html.includes('--seyveo-emerald:#386d5b'),'Emerald remains legible on White Velvet');
 for(const p of ['assets/home-velvet.css','assets/living-space.css','assets/conversation-refined.css','assets/management-glass-showcase.css'])
  assert.ok(new RegExp(p.replaceAll('.','\\.').replaceAll('/','\\/')+'\\?v=\\d+').test(html),'Cache-busted CSS '+p);
