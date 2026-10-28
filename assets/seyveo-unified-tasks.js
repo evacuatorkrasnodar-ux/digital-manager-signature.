@@ -378,6 +378,7 @@
   if(employee)employee.inert=true;
   if(business)business.inert=true;
   const input=$('svcpChatInput');if(input)input.rows=1;
+  chatTop?.setAttribute('aria-label',employeeMode?'Вернуться к моей работе':'Вернуться в пульт руководителя');
   const headingTitle=$('svcpWorkChatTitle');
   if(headingTitle)headingTitle.textContent='Сообщения';
   // Null opens the complete existing directory. Staff and management share one engine.
@@ -402,7 +403,12 @@
  window.addEventListener('resize',updateWorkChatViewport);
  document.addEventListener('keydown',event=>{
   if(page.dataset.workChatOpen!=='true')return;
-  if(event.key==='Escape'){event.preventDefault();closeWorkChat();return}
+  if(event.key==='Escape'){
+   event.preventDefault();
+   if(!$('svcpConversation')?.hidden)$('svcpConversationBack')?.click();
+   else closeWorkChat();
+   return;
+  }
   if(event.key!=='Tab')return;
   const focusables=Array.from(employeeChatScreen.querySelectorAll('button:not([disabled]):not([hidden]),textarea:not([disabled]),input:not([disabled]):not([hidden]),select:not([disabled])'))
    .filter(el=>el.getClientRects().length&&el.offsetParent!==null);
