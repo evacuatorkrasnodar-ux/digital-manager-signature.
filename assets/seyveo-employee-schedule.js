@@ -170,8 +170,16 @@
   selected=button.dataset.svcpDay;const date=parseDay(selected);if(date)anchor=monday(date);
   renderSchedule();
  }
- $('svcpSchedulePrev')?.addEventListener('click',()=>{anchor=plusDays(anchor,-7);selected=dayKey(anchor);renderSchedule()});
- $('svcpScheduleNext')?.addEventListener('click',()=>{anchor=plusDays(anchor,7);selected=dayKey(anchor);renderSchedule()});
+ function movePeriod(direction){
+  if(monthOpen){
+   const at=parseDay(selected)||new Date();
+   const target=localDate(at.getFullYear(),at.getMonth()+direction,Math.min(at.getDate(),28));
+   selected=dayKey(target);anchor=monday(target);
+  }else{anchor=plusDays(anchor,direction*7);selected=dayKey(anchor)}
+  renderSchedule();
+ }
+ $('svcpSchedulePrev')?.addEventListener('click',()=>movePeriod(-1));
+ $('svcpScheduleNext')?.addEventListener('click',()=>movePeriod(1));
  $('svcpScheduleToday')?.addEventListener('click',()=>{selected=todayKey();anchor=monday(new Date());renderSchedule()});
  $('svcpScheduleMonthToggle')?.addEventListener('click',()=>{monthOpen=!monthOpen;renderSchedule()});
  $('svcpScheduleAskOff')?.addEventListener('click',()=>requestDay('off'));
