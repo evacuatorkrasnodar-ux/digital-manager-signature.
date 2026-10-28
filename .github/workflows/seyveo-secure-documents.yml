@@ -1,0 +1,25 @@
+name: SEYVEO Secure Documents (local API tests)
+
+on:
+  push:
+    paths:
+      - 'server/secure-documents/**'
+      - 'server/document-authorization.mjs'
+      - 'server/document-authorization.test.mjs'
+      - '.github/workflows/seyveo-secure-documents.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  document-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check document access rules and local API
+        run: node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs
