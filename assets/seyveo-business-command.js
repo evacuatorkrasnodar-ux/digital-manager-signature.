@@ -455,6 +455,7 @@ function resetHomeReply(){
  $('svcpHomePreviewReply').setAttribute('aria-expanded','false');
  $('svcpHomeReplyText').value='';
  result.hidden=true;
+ $('svcpHomeOpenChat').hidden=true;
  $('svcpHomeReplyStatus').textContent='';
  const choices=$('svcpHomeSayviSuggestions');choices.hidden=true;
  $('svcpHomeSayviHelp').setAttribute('aria-expanded','false');
@@ -509,6 +510,7 @@ $('svcpHomeReplyForm')?.addEventListener('submit',event=>{
  state.chat=updated;
  resetHomeReply();
  status.textContent='✓ Добавлено в учебный чат Елены. Реальной доставки пока нет.';
+ $('svcpHomeOpenChat').hidden=false;
  $('svcpHomeReplyResult').hidden=false;
  renderDirectory();
 });
