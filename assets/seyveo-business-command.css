@@ -626,3 +626,16 @@
  #unifiedTasksChatHost .svcp-reaction-options button{font-size:19px;min-height:41px}
  #unifiedTasksChatHost .svcp-reaction-options{gap:4px}
 }
+
+/* Search affordance inside an open work conversation. */
+#unifiedTasksChatHost .svcp-conversation-search{
+ display:grid;place-items:center;flex:none;width:38px;height:38px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:50%;
+ background:transparent;color:var(--secondary);cursor:pointer;padding:7px
+}
+#unifiedTasksChatHost .svcp-conversation-search svg{
+ width:19px;height:19px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round
+}
+#unifiedTasksChatHost .svcp-conversation-search:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
