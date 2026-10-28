@@ -251,21 +251,88 @@
 #svcpWorkHomePreview button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 @media(max-width:380px){#seyveoBusinessCommandPage .svcp-directory-item{padding-inline:9px;gap:9px}#seyveoBusinessCommandPage .svcp-conversation-info strong{font-size:14px}#seyveoBusinessCommandPage .svcp-perspective{padding-inline:7px;font-size:10px}#seyveoBusinessCommandPage .svcp-chat-intro{flex-wrap:wrap}#seyveoBusinessCommandPage .svcp-chat-assist{width:100%}}
 
-/* Home: reply to an employee assignment in place, not in another screen. */
+/* Home · single reply composer, Feather Chat, explicit local demo semantics. */
 #svcpWorkHomePreview .svcp-home-reply[hidden],
-#svcpWorkHomePreview .svcp-home-reply-status[hidden]{display:none!important}
-#svcpWorkHomePreview .svcp-home-reply{display:grid;gap:9px;padding:10px 0 2px;border-top:1px solid var(--soft-line)}
-#svcpWorkHomePreview .svcp-home-reply>label{font-size:12px;font-weight:560;color:var(--text)}
-#svcpWorkHomePreview .svcp-home-reply-quick{display:flex;flex-wrap:wrap;gap:7px}
-#svcpWorkHomePreview .svcp-home-reply-quick button{border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;background:transparent;color:var(--secondary);min-height:34px;padding:6px 12px;font:inherit;font-size:11.5px;cursor:pointer}
-#svcpWorkHomePreview .svcp-home-reply textarea{display:block;width:100%;min-width:0;resize:vertical;min-height:65px;max-height:135px;padding:11px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:14px;background:var(--card);color:var(--text);font:inherit;font-size:13px;line-height:1.5}
-#svcpWorkHomePreview .svcp-home-reply textarea::placeholder{color:var(--secondary)}
-#svcpWorkHomePreview .svcp-home-reply-buttons{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
-#svcpWorkHomePreview .svcp-home-reply-buttons button{background:none;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;min-height:38px;padding:7px 2px;font:inherit;font-size:12px;color:var(--seyveo-emerald);font-weight:560;cursor:pointer}
-#svcpWorkHomePreview .svcp-home-reply-buttons #svcpHomeReplyCancel{color:var(--secondary)}
-#svcpWorkHomePreview .svcp-home-reply-status{margin:0;font-size:11px;line-height:1.5;color:var(--seyveo-emerald)}
-#svcpWorkHomePreview .svcp-home-reply-quick button:focus-visible,
-#svcpWorkHomePreview .svcp-home-reply textarea:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#svcpWorkHomePreview .svcp-home-sayvi-suggestions[hidden],
+#svcpWorkHomePreview .svcp-home-reply-result[hidden]{display:none!important}
+#svcpWorkHomePreview .svcp-home-reply{
+ display:grid;gap:10px;padding:12px 0 3px;border-top:1px solid var(--soft-line);
+ min-width:0
+}
+#svcpWorkHomePreview .svcp-home-reply-head{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;min-width:0
+}
+#svcpWorkHomePreview .svcp-home-reply-head label{
+ color:var(--text);font-size:12.5px;font-weight:565;line-height:1.4
+}
+#svcpWorkHomePreview .svcp-home-sayvi-help{
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;
+ padding:8px 11px;min-height:38px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:999px;background:var(--seyveo-hdr-active,var(--card));
+ color:var(--seyveo-emerald);font:inherit;font-size:11.5px;font-weight:565;cursor:pointer
+}
+#svcpWorkHomePreview .svcp-home-sayvi-help span{font-size:18px;line-height:1}
+#svcpWorkHomePreview .svcp-home-sayvi-suggestions{
+ display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:2px 0
+}
+#svcpWorkHomePreview .svcp-home-sayvi-suggestions>span{
+ display:block;flex-basis:100%;font-size:10.5px;line-height:1.4;color:var(--secondary)
+}
+#svcpWorkHomePreview .svcp-home-sayvi-suggestions button{
+ padding:7px 10px;min-height:35px;border:1px solid var(--soft-line);
+ border-radius:999px;background:transparent;color:var(--text);font:inherit;font-size:11px;cursor:pointer
+}
+#svcpWorkHomePreview .svcp-home-composer{
+ display:flex;align-items:flex-end;gap:9px;min-width:0
+}
+#svcpWorkHomePreview .svcp-home-composer textarea{
+ display:block;flex:1;min-width:0;width:100%;min-height:75px;max-height:145px;
+ padding:11px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:15px;background:var(--seyveo-hdr-active,var(--card));
+ color:var(--text);font:inherit;font-size:13px;line-height:1.5;resize:vertical
+}
+#svcpWorkHomePreview .svcp-home-composer textarea::placeholder{color:var(--secondary)}
+#svcpWorkHomePreview .svcp-home-send{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+ flex:none;width:73px;min-height:75px;padding:7px 5px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:15px;
+ color:var(--seyveo-emerald);background:var(--seyveo-hdr-active,var(--card));
+ font:inherit;font-size:10.5px;font-weight:570;cursor:pointer
+}
+#svcpWorkHomePreview .svcp-home-send svg{
+ width:24px;height:24px;stroke:currentColor;stroke-width:1.65;fill:none;stroke-linecap:round;stroke-linejoin:round
+}
+#svcpWorkHomePreview .svcp-home-reply-footer{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ flex-wrap:wrap;color:var(--secondary)
+}
+#svcpWorkHomePreview .svcp-home-reply-footer span{font-size:10.5px;line-height:1.45;flex:1}
+#svcpWorkHomePreview .svcp-home-reply-footer button{
+ border:0;background:none;padding:6px 0;min-height:34px;
+ color:var(--secondary);font:inherit;font-size:11px;cursor:pointer
+}
+#svcpWorkHomePreview .svcp-home-reply-result{
+ display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;
+ border-top:1px solid var(--soft-line);padding:11px 0 3px
+}
+#svcpWorkHomePreview .svcp-home-reply-status{
+ margin:0;flex:1;min-width:0;color:var(--seyveo-emerald);font-size:11px;line-height:1.5
+}
+#svcpWorkHomePreview #svcpHomeOpenChat{
+ min-height:36px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
+ background:transparent;color:var(--seyveo-emerald);
+ font:inherit;font-size:11.5px;font-weight:550;cursor:pointer;padding:6px 1px
+}
+#svcpWorkHomePreview .svcp-home-reply button:focus-visible,
+#svcpWorkHomePreview .svcp-home-reply textarea:focus-visible,
+#svcpWorkHomePreview #svcpHomeOpenChat:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+@media(max-width:360px){
+ #svcpWorkHomePreview .svcp-home-composer{gap:6px}
+ #svcpWorkHomePreview .svcp-home-send{width:62px}
+ #svcpWorkHomePreview .svcp-home-send span{font-size:10px}
+}
 
 /* SEYVEO Tasks · quiet active list, collapsed completed history, direct conversation. */
 #tasksPage .svcp-tasks-back{display:inline-flex;align-items:center;gap:5px;margin:0 0 12px;padding:6px 2px;min-height:36px;border:0;background:none;color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
