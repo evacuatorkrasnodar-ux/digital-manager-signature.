@@ -492,14 +492,21 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  width:21px;height:21px;display:block;stroke:currentColor;fill:none;
  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round
 }
+/* Bookmarks stay neutral. Only staff appreciation receives the gold star. */
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-star{
- color:#C9A56B!important
+ color:var(--text)!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-award{
+ color:#D7AE62!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-award svg{
+ stroke:#D7AE62!important;fill:rgba(215,174,98,.15)!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-message-menu .svcp-action-star.is-saved svg{
- fill:#C9A56B;stroke:#E4C48D
+ fill:var(--text);stroke:var(--text)
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-bubble-saved{
- color:#C9A56B!important;font-size:11px
+ color:var(--secondary)!important;font-size:11px
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-action-delete{color:#C88D89!important}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-icon-action:active{
