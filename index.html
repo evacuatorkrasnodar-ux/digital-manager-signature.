@@ -645,9 +645,23 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <p id="svcpHomePreviewDetail">Поручение руководителя · учебная демонстрация на одном устройстве</p>
  <div class="svcp-home-preview-actions">
   <button type="button" id="svcpHomePreviewDetails">Подробнее</button>
+  <button type="button" id="svcpHomePreviewReply" aria-expanded="false" aria-controls="svcpHomeReplyForm">Ответить</button>
   <button type="button" id="svcpHomePreviewExecute">Исполнить</button>
  </div>
- <small>Учебный просмотр · никому не доставлено</small>
+ <form id="svcpHomeReplyForm" class="svcp-home-reply" hidden aria-label="Учебный ответ Елены руководителю">
+  <label for="svcpHomeReplyText">Ответ руководителю · от Елены</label>
+  <div class="svcp-home-reply-quick" role="group" aria-label="Быстрые ответы">
+   <button type="button" data-svcp-quick-reply="Приняла, приступаю.">Приняла</button>
+   <button type="button" data-svcp-quick-reply="Нужно уточнение по поручению.">Уточнить</button>
+  </div>
+  <textarea id="svcpHomeReplyText" rows="2" maxlength="500" placeholder="Написать свой ответ…" required></textarea>
+  <div class="svcp-home-reply-buttons">
+   <button type="submit">Сохранить ответ</button>
+   <button type="button" id="svcpHomeReplyCancel">Отмена</button>
+  </div>
+ </form>
+ <p id="svcpHomeReplyStatus" class="svcp-home-reply-status" role="status" aria-live="polite" hidden></p>
+ <small>Учебный просмотр · ответ только на этом устройстве</small>
 </section>
 <section id="seyveoLivingMoment" class="lm-space" hidden aria-label="Центр решений Сэйвы"><p id="seyveoLivingCaption" class="lm-caption"></p><div id="seyveoLivingTiles" class="lm-tiles"></div></section><button type="button" id="seyveoDemoLaunch" class="lm-demo-launch" hidden>Посмотреть пример решений</button>
 <section class="timeline" id="workTimeline" hidden aria-label="Активные поручения управляющего"><div class="timeline-head"><h2 class="timeline-title">В работе у SEYVEO</h2></div><div id="activityList" class="activity-list"></div></section>
