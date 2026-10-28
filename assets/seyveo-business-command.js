@@ -310,22 +310,17 @@ $('svcpChatInput')?.addEventListener('keydown',event=>{
 });
 function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
+ const wasHistoryOpen=!!list.querySelector('.svcp-task-history[open]');
  list.replaceChildren();
- if(!state.tasks.length){
-  list.append(el('p','svcp-sub','Поручений пока нет. Добавьте первое — оно останется только на этом устройстве.'));
-  return;
- }
- const seen=new Set(),duplicateIndices=[];
- state.tasks.forEach((t,i)=>{
-  if(!t||typeof t.text!=='string')return;
-  const duplicateKey=taskDuplicateKey(t);
-  if(duplicateKey){
-   if(seen.has(duplicateKey)){duplicateIndices.push(i);return}
-   seen.add(duplicateKey);
-  }
+ const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
+ const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
+ const heading=el('div','svcp-task-section-head');
+ heading.append(el('strong',null,'В работе'),el('small',null,String(open.length)));
+ list.append(heading);
+ function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
   const checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
-  checkbox.setAttribute('aria-label','Отметить выполнение: '+t.text);
+  checkbox.setAttribute('aria-label',(t.done?'Вернуть в работу: ':'Завершить поручение: ')+t.text);
   checkbox.addEventListener('change',()=>{
    const updated=state.tasks.map((item,index)=>index===i?{...item,done:checkbox.checked}:item);
    if(!save(TASK_KEY,updated)){checkbox.checked=!checkbox.checked;return}
@@ -336,27 +331,86 @@ function renderTasks(){
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee','Исполнитель: '+STAFF[t.assigneeId]+' · демо'));
   else copy.append(el('small','svcp-task-assignee','Без исполнителя · демо'));
-  const remove=btn('Удалить',()=>{
+  const actions=el('div','svcp-task-actions');
+  if(!t.done){
+   actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
+  }
+  actions.append(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
-  },'svcp-ghost');
-  row.append(checkbox,copy,remove);list.append(row);
- });
- if(duplicateIndices.length){
-  const note=el('div','svcp-duplicate-summary');
-  note.append(el('span','',duplicateIndices.length===1
-   ?'Одно одинаковое поручение скрыто'
-   :'Одинаковых поручений скрыто: '+duplicateIndices.length));
-  const clear=btn('Убрать повторы',()=>{
-   const toRemove=new Set(duplicateIndices);
-   const updated=state.tasks.filter((_,i)=>!toRemove.has(i));
+  },'svcp-ghost'));
+  row.append(checkbox,copy,actions);
+  return row;
+ }
+ const openSeen=new Set(),dups=[];
+ const activeBox=el('div','svcp-task-active');
+ for(const {task,index} of open){
+  const key=taskDuplicateKey(task);
+  if(key&&openSeen.has(key)){dups.push(index);continue}
+  if(key)openSeen.add(key);
+  activeBox.append(taskRow(task,index));
+ }
+ if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Новых поручений нет. Выполненные находятся в истории ниже.'));
+ list.append(activeBox);
+ if(dups.length){
+  const info=el('div','svcp-duplicate-summary');
+  info.append(el('span',null,'Одинаковых активных задач скрыто: '+dups.length));
+  info.append(btn('Убрать повторы',()=>{
+   const set=new Set(dups),updated=state.tasks.filter((_,i)=>!set.has(i));
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
-  },'svcp-ghost');
-  note.append(clear);list.append(note);
+  },'svcp-ghost'));
+  list.append(info);
+ }
+ if(done.length){
+  const details=el('details','svcp-task-history');
+  details.open=wasHistoryOpen;
+  const summary=el('summary','svcp-task-history-title');
+  summary.append(el('strong',null,'Выполнено'),el('small',null,String(done.length)),el('span','svcp-history-chevron','›'));
+  details.append(summary);
+  const completed=el('div','svcp-task-completed');
+  const completedSeen=new Set(),duplicateDone=[];
+  for(const {task,index} of done){
+   const key=taskDuplicateKey({...task,done:false});
+   if(key&&completedSeen.has(key)){duplicateDone.push(index);continue}
+   if(key)completedSeen.add(key);
+   completed.append(taskRow(task,index));
+  }
+  details.append(completed);
+  if(duplicateDone.length){
+   const info=el('div','svcp-duplicate-summary');
+   info.append(el('span',null,'Одинаковых выполненных записей: '+duplicateDone.length));
+   info.append(btn('Убрать повторы',()=>{
+    const set=new Set(duplicateDone),updated=state.tasks.filter((_,i)=>!set.has(i));
+    if(!save(TASK_KEY,updated))return;
+    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
+   },'svcp-ghost'));
+   details.append(info);
+  }
+  list.append(details);
  }
 }
+function openTaskDiscussion(task){
+ if(!task||typeof task.text!=='string')return;
+ const person=task.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,task.assigneeId)?task.assigneeId:'';
+ const roomId=person?'dm-'+person:'general';
+ if(location.hash!=='#manage')location.hash='#manage';
+ window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
+ document.querySelector('[data-clean-business="chat"]')?.click();
+ tab('chats');openRoom(roomId);
+ if(person==='elena'){
+  state.viewpoint='elena';
+  updatePerspective();renderChat();
+ }
+ const message={room:roomId,role:'self',text:task.text};
+ startReply(message);
+ $('svcpReturnToTasks').hidden=false;
+}
+$('svcpReturnToTasks')?.addEventListener('click',()=>{
+ $('svcpReturnToTasks').hidden=true;
+ window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('manage');
+});
 $('svcpTaskForm')?.addEventListener('submit',e=>{
  e.preventDefault();
  const input=$('svcpTaskInput');const txt=input?.value.trim()||'';
