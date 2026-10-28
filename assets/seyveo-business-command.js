@@ -84,6 +84,8 @@ function privateAssignmentRecipient(){
  return state.viewpoint==='manager'&&room.kind==='personal'&&room.person&&
   Object.prototype.hasOwnProperty.call(STAFF,room.person)?room.person:'';
 }
+function employeePreviewActive(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
+function employeeAllowedRoom(roomId){return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)}
 function senderName(msg){
  if(msg.role==='recognition')return '✦ Знак признания · демо';
  if(msg.role==='sayvi')return 'Сэйви · демо';
@@ -114,13 +116,14 @@ function renderDirectory(){
   return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',...(date.getFullYear()===now.getFullYear()?{}:{year:'2-digit'})});
  }
  for(const room of ROOMS){
+  if(employeePreviewActive()&&!employeeAllowedRoom(room.id))continue;
   if(room.section!==prior){
    prior=room.section;
    if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
   }
   const person=room.person&&roleLabels[room.person];
   const last=latest.get(room.id);
-  const name=room.label;
+  const name=employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label;
   const row=el('button','svcp-directory-item');row.type='button';
   row.setAttribute('aria-label',(room.kind==='personal'?'Открыть личный чат: ':'Открыть чат: ')+name+(person?', '+person:''));
   const avatar=el('span','svcp-directory-avatar'+(room.person==='sayvi'?' is-sayvi':''),room.mark);
@@ -157,12 +160,14 @@ function renderHistorySearch(){
  if(!query||!list)return false;
  list.replaceChildren();
  const chatHits=state.chat.map((item,index)=>({item,index}))
-  .filter(({item})=>item&&typeof item.text==='string'&&ROOMS.some(room=>room.id===item.room)&&
+  .filter(({item})=>item&&typeof item.text==='string'&&
+   (!employeePreviewActive()||employeeAllowedRoom(item.room))&&ROOMS.some(room=>room.id===item.room)&&
    (item.text.toLocaleLowerCase('ru-RU').includes(query)||
     (ROOMS.find(room=>room.id===item.room)?.label||'').toLocaleLowerCase('ru-RU').includes(query)))
   .reverse().slice(0,30);
  const taskHits=state.tasks.map((item,index)=>({item,index}))
-  .filter(({item})=>item&&typeof item.text==='string'&&item.text.toLocaleLowerCase('ru-RU').includes(query))
+  .filter(({item})=>item&&typeof item.text==='string'&&
+   (!employeePreviewActive()||item.assigneeId==='elena')&&item.text.toLocaleLowerCase('ru-RU').includes(query))
   .reverse().slice(0,30);
  function heading(textValue,count){
   const h=el('div','svcp-search-results-heading');
@@ -214,8 +219,8 @@ function showInbox(){
  closeRecognition();
  closeComposerEmoji();
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
- state.viewpoint='manager';
- window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:'manager'}}));
+ state.viewpoint=employeePreviewActive()?'elena':'manager';
+ window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
  $('svcpReturnToTasks').hidden=true;
@@ -229,11 +234,13 @@ function openRoom(roomId){
  historyWindow=35;
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
+ if(employeePreviewActive()&&!employeeAllowedRoom(selected.id))return;
  state.room=selected.id;
- state.viewpoint='manager';
+ state.viewpoint=employeePreviewActive()?'elena':'manager';
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
- $('svcpConversationTitle').textContent=selected.person&&selected.person!=='sayvi'
+ $('svcpConversationTitle').textContent=employeePreviewActive()&&selected.id==='dm-elena'
+ ?'Руководитель':selected.person&&selected.person!=='sayvi'
  ?selected.label+' · '+(selected.id==='dm-elena'?'кассир':selected.id==='dm-anna'?'старший продавец':'продавец')
  :selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
@@ -247,7 +254,7 @@ function updatePerspective(){
  const current=roomDetails();
  const allowed=current.kind==='groups'||current.id==='dm-elena';
  const button=$('svcpElenaPerspective');
- button.hidden=!allowed;
+ button.hidden=employeePreviewActive()||!allowed;
  button.textContent=state.viewpoint==='elena'?'Вернуться к руководителю':'Взгляд Елены';
  button.setAttribute('aria-pressed',String(state.viewpoint==='elena'));
  $('svcpConversationDetail').textContent=state.viewpoint==='elena'
@@ -273,6 +280,7 @@ $('svcpConversationSearch')?.addEventListener('click',()=>{
  $('svcpHistorySearch')?.focus({preventScroll:true});
 });
 $('svcpElenaPerspective')?.addEventListener('click',()=>{
+ if(employeePreviewActive())return;
  state.viewpoint=state.viewpoint==='elena'?'manager':'elena';
  clearReply();cancelTaskDraft();updatePerspective();renderChat();
 });
@@ -1012,8 +1020,9 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  showChat:(roomId=null,viewpoint='manager')=>{
   chatsFromTasks=true;
   if(roomId&&ROOMS.some(x=>x.id===roomId)){
+   if(employeePreviewActive()&&!employeeAllowedRoom(roomId)){showInbox();return}
    openRoom(roomId);
-   if(viewpoint==='elena'&&roomId==='dm-elena'){
+   if((employeePreviewActive()||viewpoint==='elena')&&roomId==='dm-elena'){
     state.viewpoint='elena';updatePerspective();renderChat();
    }
   }else showInbox();
