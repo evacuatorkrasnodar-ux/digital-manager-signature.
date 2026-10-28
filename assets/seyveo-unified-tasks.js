@@ -24,6 +24,17 @@
   if(heading)heading.insertBefore(employeeProfileToggle,caption||heading.firstChild);
   employeeProfileToggle.hidden=true;
  }
+ // The employee's identity belongs INSIDE the account opened by that avatar,
+ // not in a second strip above assignments and chat. Preserve the live status IDs.
+ const employeeIdentity=employee?.querySelector('.svcp-employee-person');
+ const employeeAccountHeading=employeeAccount?.querySelector('.svcp-employee-account-heading');
+ if(employeeIdentity&&employeeAccountHeading){
+  employeeAccountHeading.appendChild(employeeIdentity);
+  const nowEmptyIntro=employee.querySelector('.svcp-employee-intro');
+  if(nowEmptyIntro&&!nowEmptyIntro.querySelector('.svcp-employee-person, .svcp-employee-profile-toggle')){
+   nowEmptyIntro.remove();
+  }
+ }
  taskHost.appendChild(tasks);
  tasks.hidden=false;
  chatHost.appendChild(chats);
