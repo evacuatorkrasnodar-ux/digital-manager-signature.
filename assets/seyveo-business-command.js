@@ -381,6 +381,40 @@ function syncPreviewAfterTaskEdit(){
 function workTaskForPreview(){
  return state.tasks.find(t=>t&&t.id===state.lastDemoTaskId&&t.assigneeId==='elena'&&!t.done)||null;
 }
+function resetHomeReply(){
+ const form=$('svcpHomeReplyForm'),status=$('svcpHomeReplyStatus');
+ form.hidden=true;
+ $('svcpHomePreviewReply').setAttribute('aria-expanded','false');
+ $('svcpHomeReplyText').value='';
+ status.hidden=true;status.textContent='';
+}
+$('svcpHomePreviewReply')?.addEventListener('click',()=>{
+ if(!workTaskForPreview())return;
+ const form=$('svcpHomeReplyForm');form.hidden=!form.hidden;
+ $('svcpHomePreviewReply').setAttribute('aria-expanded',String(!form.hidden));
+ if(!form.hidden)$('svcpHomeReplyText').focus({preventScroll:true});
+});
+$('svcpHomeReplyCancel')?.addEventListener('click',resetHomeReply);
+$('svcpWorkHomePreview')?.querySelectorAll('[data-svcp-quick-reply]').forEach(button=>
+ button.addEventListener('click',()=>{
+  $('svcpHomeReplyText').value=button.dataset.svcpQuickReply||'';
+  $('svcpHomeReplyText').focus({preventScroll:true});
+ }));
+$('svcpHomeReplyForm')?.addEventListener('submit',event=>{
+ event.preventDefault();
+ const task=workTaskForPreview(),text=$('svcpHomeReplyText').value.trim().slice(0,500);
+ if(!task||!text)return;
+ const reply={room:'dm-elena',role:'demo-elena',text,at:Date.now(),
+  replyTo:{sender:'Руководитель',text:task.text.slice(0,160)}};
+ const updated=read(CHAT_KEY).concat(reply).slice(-100);
+ if(!save(CHAT_KEY,updated))return;
+ state.chat=updated;
+ resetHomeReply();
+ const status=$('svcpHomeReplyStatus');
+ status.textContent='Ответ сохранён в учебном чате Елены. Руководителю не отправлен.';
+ status.hidden=false;
+ renderDirectory();
+});
 function syncWorkPreview(){
  const task=workTaskForPreview(),card=$('svcpWorkHomePreview');
  if(!card)return;
