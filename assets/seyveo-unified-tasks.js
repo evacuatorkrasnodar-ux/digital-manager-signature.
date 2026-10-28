@@ -89,9 +89,13 @@
  }
  function showEmployee(){
   if(!isEmployee()||!employee||!employeeChatHost)return;
-  if(chats.parentElement!==employeeChatHost)employeeChatHost.appendChild(chats);
-  chats.hidden=false;renderEmployeeTasks();
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.('dm-elena','elena');
+  // Only switch the chat destination when entering the worker workspace.
+  // Reopening Tasks must not silently jump to the Elena conversation.
+  const entering=chats.parentElement!==employeeChatHost;
+  if(entering)employeeChatHost.appendChild(chats);
+  chats.hidden=false;
+  renderEmployeeTasks();
+  if(entering)window.SEYVEO_BUSINESS_COMMAND?.showChat?.();
  }
  function openPulse(options={}){
   if(!isManager())return;
@@ -142,8 +146,11 @@
   if(!isManager()){select('personal');return}
   lastWorkView='business';
   personal.hidden=true;business.hidden=false;
+  if(employee)employee.hidden=true;
   if(overview)overview.hidden=true;
-  board.hidden=false;chatHost.hidden=false;chats.hidden=false;
+  board.hidden=false;chatHost.hidden=false;
+  if(chats.parentElement!==chatHost)chatHost.appendChild(chats);
+  chats.hidden=false;
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
   window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager',filter||'all');
