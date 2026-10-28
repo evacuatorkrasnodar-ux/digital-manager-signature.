@@ -13,7 +13,8 @@
   employee=$('unifiedEmployeeTasksView'),shiftHost=$('unifiedEmployeeShiftHost'),
   employeeChatHost=$('unifiedEmployeeChatHost'),employeeTaskHost=$('unifiedEmployeeAssignments'),
   picker=$('seyveoDemoModeSelect'),previewNotice=$('seyveoDemoModeNotice'),
-  employeeAvatar=$('svcpEmployeeAvatar'),employeeResults=$('svcpEmployeeResults');
+  employeeAvatar=$('svcpEmployeeAvatar'),employeeResults=$('svcpEmployeeResults'),
+  workDashboard=$('svcpWorkDashboard');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
  // The single avatar remains a static identity indicator in the heading.
  taskHost.appendChild(tasks);
