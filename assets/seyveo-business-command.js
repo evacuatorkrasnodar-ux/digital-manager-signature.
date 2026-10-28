@@ -187,6 +187,7 @@ function focusTask(index){
 }
 function showInbox(){
  closeRecognition();
+ closeComposerEmoji();
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  state.viewpoint='manager';
  $('svcpChatDirectory').hidden=false;
@@ -199,6 +200,7 @@ function showInbox(){
 }
 function openRoom(roomId){
  closeRecognition();
+ closeComposerEmoji();
  historyWindow=35;
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
@@ -265,6 +267,55 @@ function closeMessageMenus(){
  chatRoot.querySelectorAll('.svcp-message-menu').forEach(menu=>{menu.hidden=true});
  chatRoot.querySelectorAll('.svcp-more-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'));
 }
+/* Emoji composer is separate from message reactions: an inline strip, not a modal. */
+const composerEmojiStrip=$('svcpComposerEmojiStrip');
+const composerEmojiButton=$('svcpComposerEmojiToggle');
+let composerMoreEmojis=false;
+function closeComposerEmoji(){
+ if(composerEmojiStrip)composerEmojiStrip.hidden=true;
+ if(composerEmojiButton)composerEmojiButton.setAttribute('aria-expanded','false');
+ composerMoreEmojis=false;
+}
+function insertComposerEmoji(emoji){
+ const input=$('svcpChatInput');
+ if(!input)return;
+ const from=typeof input.selectionStart==='number'?input.selectionStart:input.value.length;
+ const to=typeof input.selectionEnd==='number'?input.selectionEnd:from;
+ const value=input.value.slice(0,from)+emoji+input.value.slice(to);
+ if(input.maxLength>0&&value.length>input.maxLength)return;
+ input.value=value;
+ input.focus({preventScroll:true});
+ input.setSelectionRange(from+emoji.length,from+emoji.length);
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function renderComposerEmojis(){
+ if(!composerEmojiStrip)return;
+ composerEmojiStrip.replaceChildren();
+ const emojis=composerMoreEmojis
+  ?[...QUICK_EMOJIS,...MORE_EMOJI_GROUPS.flatMap(group=>group.emojis)]
+  :QUICK_EMOJIS;
+ for(const emoji of emojis){
+  const option=el('button','svcp-composer-emoji-choice',emoji);
+  option.type='button';option.setAttribute('aria-label','Вставить '+emoji);
+  option.addEventListener('click',()=>insertComposerEmoji(emoji));
+  composerEmojiStrip.append(option);
+ }
+ const more=el('button','svcp-composer-emoji-expand',composerMoreEmojis?'Меньше':'＋');
+ more.type='button';more.setAttribute('aria-expanded',String(composerMoreEmojis));
+ more.setAttribute('aria-label',composerMoreEmojis?'Скрыть дополнительные эмодзи':'Показать другие эмодзи');
+ more.addEventListener('click',()=>{
+  composerMoreEmojis=!composerMoreEmojis;
+  renderComposerEmojis();
+ });
+ composerEmojiStrip.append(more);
+}
+composerEmojiButton?.addEventListener('click',()=>{
+ const show=composerEmojiStrip.hidden;
+ closeRecognition();closeMessageMenus();
+ if(show){composerEmojiStrip.hidden=false;renderComposerEmojis();}
+ else closeComposerEmoji();
+ composerEmojiButton.setAttribute('aria-expanded',String(show));
+});
 function toggleMessageMenu(menu,trigger){
  const opening=menu.hidden;
  closeRecognition();
@@ -596,6 +647,7 @@ $('svcpChatForm')?.addEventListener('submit',event=>{
  const updated=state.chat.concat(messages).slice(-500);
  if(!save(CHAT_KEY,updated))return;
  state.chat=updated;
+ closeComposerEmoji();
  input.value='';if(fileInput)fileInput.value='';
  cleanupPreview();clearReply();cancelTaskDraft();
  renderChat();
