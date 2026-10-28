@@ -140,7 +140,9 @@ function openRoom(roomId){
  state.viewpoint='manager';
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
- $('svcpConversationTitle').textContent=selected.label;
+ $('svcpConversationTitle').textContent=selected.person&&selected.person!=='sayvi'
+ ?selected.label+' · '+(selected.id==='dm-elena'?'администратор':selected.id==='dm-anna'?'старший продавец':'продавец')
+ :selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
@@ -646,19 +648,20 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 });
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
- showChat:(roomId=null)=>{
+ showChat:(roomId=null,viewpoint='manager')=>{
   chatsFromTasks=true;
-  if(roomId&&ROOMS.some(x=>x.id===roomId))openRoom(roomId);
-  else showInbox();
+  if(roomId&&ROOMS.some(x=>x.id===roomId)){
+   openRoom(roomId);
+   if(viewpoint==='elena'&&roomId==='dm-elena'){
+    state.viewpoint='elena';updatePerspective();renderChat();
+   }
+  }else showInbox();
  },
  openPeopleView:peopleView,
  openPrivateChat:(person,view='manager')=>{
   const id='dm-'+String(person||'').toLowerCase();
   if(!ROOMS.some(x=>x.id===id&&x.person))return false;
-  window.SEYVEO_UNIFIED_TASKS?.openChat?.('manage',id);
-  if(view==='elena'&&id==='dm-elena'){
-   state.viewpoint='elena';updatePerspective();renderChat();
-  }
+  window.SEYVEO_UNIFIED_TASKS?.openChat?.('manage',id,view);
   return true;
  }
 });
