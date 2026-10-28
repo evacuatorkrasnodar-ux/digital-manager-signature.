@@ -13,33 +13,9 @@
   employee=$('unifiedEmployeeTasksView'),shiftHost=$('unifiedEmployeeShiftHost'),
   employeeChatHost=$('unifiedEmployeeChatHost'),employeeTaskHost=$('unifiedEmployeeAssignments'),
   picker=$('seyveoDemoModeSelect'),previewNotice=$('seyveoDemoModeNotice'),
-  employeeProfileToggle=$('svcpEmployeeProfileToggle'),
-  employeeAccount=$('svcpEmployeeAccountView'),employeeAccountBack=$('svcpEmployeeAccountBack');
+  employeeAvatar=$('svcpEmployeeAvatar'),employeeResults=$('svcpEmployeeResults');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
- // Keep Elena's single account button in the top-right corner of the Tasks header.
- // Reparent the real button to preserve its listeners, expanded state and account data.
- if(employeeProfileToggle){
-  const heading=page.querySelector('.tasks-heading');
-  const caption=heading?.querySelector('.manage-caption');
-  if(heading)heading.insertBefore(employeeProfileToggle,caption||heading.firstChild);
-  employeeProfileToggle.hidden=true;
- }
- // The employee's identity belongs INSIDE the account opened by that avatar,
- // not in a second strip above assignments and chat. Preserve the live status IDs.
- const workDashboard=$('svcpWorkDashboard'),workShiftSlot=$('svcpWorkShiftSlot');
- const employeeIdentity=employee?.querySelector('.svcp-employee-person');
- const employeeAccountHeading=employeeAccount?.querySelector('.svcp-employee-account-heading');
- if(employeeIdentity&&employeeAccountHeading){
-  employeeAccountHeading.appendChild(employeeIdentity);
-  const nowEmptyIntro=employee.querySelector('.svcp-employee-intro');
-  if(nowEmptyIntro&&!nowEmptyIntro.querySelector('.svcp-employee-person, .svcp-employee-profile-toggle')){
-   nowEmptyIntro.remove();
-  }
- }
- // One original shift timer and shift button: visible in the employee workspace,
- // not duplicated between the workspace and profile. Hours and awards stay in profile.
- const realShiftCard=$('svcpEmployeeShiftCard');
- if(workShiftSlot&&realShiftCard)workShiftSlot.appendChild(realShiftCard);
+ // The single avatar remains a static identity indicator in the heading.
  taskHost.appendChild(tasks);
  tasks.hidden=false;
  chatHost.appendChild(chats);
@@ -79,34 +55,6 @@
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
  const isEmployee=()=>previewMode==='employee';
  const isManager=()=>['rise','autonom','large'].includes(previewMode);
- function setEmployeeAccountOpen(open){
-  if(!employeeAccount||!employee||!employeeProfileToggle)return;
-  const shown=!!open&&isEmployee();
-  employeeAccount.hidden=!shown;
-  employee.dataset.accountOpen=String(shown);
-  page.dataset.employeeAccountOpen=String(shown);
-  if(workDashboard)workDashboard.hidden=shown;
-  const topBackLabel=$('unifiedTasksBackLabel');
-  if(topBackLabel)topBackLabel.textContent=shown?'К работе':(page.dataset.employeeMode==='true'?'К моим делам':(exitTarget==='manage'?'В бизнес':'На Главную'));
-  employeeProfileToggle.setAttribute('aria-expanded',String(shown));
-  employeeProfileToggle.setAttribute('aria-label',shown
-   ?'Закрыть личный кабинет Елены, вернуться к поручениям и чатам'
-   :'Открыть кабинет Елены: смены, часы и благодарности');
-  if(shown){
-   renderEmployeeClock();renderEmployeeThanks();
-   requestAnimationFrame(()=>{
-    if(location.hash!=='#tasks'||employeeAccount.hidden)return;
-    const viewport=document.querySelector('.app');
-    if(viewport)viewport.scrollTop=0;
-    window.scrollTo(0,0);
-   });
-  }
- }
- employeeProfileToggle?.addEventListener('click',()=>setEmployeeAccountOpen(employeeAccount?.hidden));
- employeeAccountBack?.addEventListener('click',()=>{
-  setEmployeeAccountOpen(false);
-  employeeProfileToggle?.focus();
- });
  function updatePulseAccess(){
   // UI preview only. Real access will require verified roles and server authorization.
   if(businessTab)businessTab.hidden=!isManager();
@@ -169,12 +117,7 @@
   const plan=Number($('seyveoShiftPlanned')?.value);
   const plannedHours=Number.isFinite(plan)&&plan>=1&&plan<=24?plan:8;
   const percent=Math.min(100,Math.round(todayMs/(plannedHours*3600000)*100));
-  const badge=$('svcpEmployeeDutyBadge');
-  if(badge){badge.dataset.active=String(active);badge.lastChild.textContent=active?'На работе':'Не на смене'}
-  const profileShift=$('svcpEmployeeHeaderShift');
-  if(profileShift)profileShift.textContent=active?'Смена · '+short(elapsed)
-   :todayMs>0?'Сегодня · '+short(todayMs):'Смена не начата';
-  if(employeeProfileToggle)employeeProfileToggle.dataset.active=String(active);
+  if(employeeAvatar)employeeAvatar.dataset.active=String(active);
   const workDuty=$('svcpWorkDuty'),workDutyText=$('svcpWorkDutyText');
   if(workDuty)workDuty.dataset.active=String(active);
   if(workDutyText)workDutyText.textContent=active?'На смене · '+short(elapsed)
@@ -313,12 +256,10 @@
  function returnFromPulse(){navigate('team')}
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
-  if(label)label.textContent=employeeAccount&&!employeeAccount.hidden?'К работе'
-   :page.dataset.employeeMode==='true'?'К моим делам'
+  if(label)label.textContent=page.dataset.employeeMode==='true'?'К моим делам'
    :(exitTarget==='manage'?'В бизнес':'На Главную');
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
-  if(employeeAccount&&!employeeAccount.hidden){setEmployeeAccountOpen(false);return}
   // Work is a dedicated page, and Back leads to the personal Tasks selector.
   if(isEmployee()&&page.dataset.employeeMode==='true'){
    select('personal');resetViewportAtWorkEntry();return;
@@ -353,8 +294,12 @@
    caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':' НА КОНТРОЛЕ';
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
-  if(employeeProfileToggle)employeeProfileToggle.hidden=chosen!=='employee';
-  if(chosen!=='employee')setEmployeeAccountOpen(false);
+  if(employeeAvatar)employeeAvatar.hidden=chosen!=='employee';
+  if(chosen!=='employee'&&employeeResults){
+   employeeResults.hidden=true;
+   const resultsButton=workDashboard?.querySelector('[data-svcp-work-action="results"]');
+   resultsButton?.setAttribute('aria-expanded','false');
+  }
   if(overview)overview.hidden=chosen!=='personal';
   if(chosen==='business')showBoard();
   if(chosen==='employee')showEmployee();
@@ -373,8 +318,8 @@
   personal.hidden=true;business.hidden=false;
   if(employee)employee.hidden=true;
   page.dataset.employeeMode='false';
-  if(employeeProfileToggle)employeeProfileToggle.hidden=true;
-  setEmployeeAccountOpen(false);
+  if(employeeAvatar)employeeAvatar.hidden=true;
+  if(employeeResults)employeeResults.hidden=true;
   if(overview)overview.hidden=true;
   board.hidden=false;
   restoreManagerChat();
@@ -421,12 +366,21 @@
   button.addEventListener('click',()=>{
    pending=null;select(button.dataset.unifiedTasksTab);
   }));
- // Shortcut tiles open existing real task/chat/camera/profile panels; no duplicate UIs.
+ // Shortcut tiles use existing task/chat/camera and inline results; no duplicate UIs.
  workDashboard?.addEventListener('click',event=>{
   const button=event.target.closest('[data-svcp-work-action]');
   if(!button||!isEmployee())return;
   const action=button.dataset.svcpWorkAction;
-  if(action==='results'){setEmployeeAccountOpen(true);return}
+  if(action==='results'){
+   if(!employeeResults)return;
+   const open=employeeResults.hidden;
+   employeeResults.hidden=!open;
+   button.setAttribute('aria-expanded',String(open));
+   if(open){renderEmployeeClock();renderEmployeeThanks();
+    requestAnimationFrame(()=>employeeResults.scrollIntoView({behavior:'smooth',block:'start'}));
+   }
+   return;
+  }
   if(action==='tasks'){
    $('unifiedEmployeeAssignments')?.closest('.svcp-employee-assignments')?.scrollIntoView({block:'start',behavior:'smooth'});
    return;
@@ -478,7 +432,7 @@
   if(!MODES.includes(picker.value))return;
   previewMode=picker.value;
   try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
-  updatePulseAccess();setEmployeeAccountOpen(false);exitTarget='home';syncBack();
+  updatePulseAccess();exitTarget='home';syncBack();
   navigate(isEmployee()?'employee':isManager()?'team':'personal');
   resetViewportAtWorkEntry();
  });
@@ -487,7 +441,7 @@
   // One dock destination, three meaningful workspaces.
   // Managers enter Business rather than being dropped into private errands;
   // ONE remains entirely personal, while employees land in their work view.
-  if(isEmployee()){setEmployeeAccountOpen(false);navigate('employee');return}
+  if(isEmployee()){navigate('employee');return}
   if(isManager()){openBusiness('home');return}
   openPersonal();
  });
@@ -495,7 +449,6 @@
   if(location.hash==='#tasks')routePending();
   else{
    pending=null;
-   setEmployeeAccountOpen(false);
    if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
   }
  });
