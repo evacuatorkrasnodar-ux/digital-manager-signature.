@@ -642,3 +642,57 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  width:38px!important;min-width:38px!important
  }
 }
+
+/* Screenshot-matched composer: tall unified field, slim left tool column. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
+ grid-template-columns:52px minmax(0,1fr) 46px!important;
+ grid-template-rows:42px 42px 42px!important;
+ gap:3px 7px!important;min-height:142px!important;
+ padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))!important;
+ border-radius:26px!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle){
+ grid-column:1!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ width:48px!important;height:41px!important;min-width:48px!important;min-height:41px!important;
+ margin:0!important;padding:0!important;border-radius:14px!important;
+ border:0!important;background:transparent!important;color:var(--text)!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage{
+ grid-row:1!important;color:#a5e1c8!important;font-size:29px!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpAttachFile{grid-row:2!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-camera-toggle{grid-row:3!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpAttachFile svg{
+ width:25px;height:25px;stroke:currentColor
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
+ grid-column:2 / 4!important;grid-row:1 / 4!important;min-height:132px!important;
+ position:relative!important;border-radius:25px!important;
+ background:rgba(24,25,27,.86)!important;
+ border:1px solid rgba(180,190,194,.18)!important;
+ padding-right:48px!important;padding-bottom:46px!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
+ min-height:82px!important;height:82px!important;max-height:170px!important;
+ padding:14px 9px 6px 15px!important;font-size:17px!important;line-height:1.42!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
+ grid-column:3!important;grid-row:1!important;align-self:center!important;z-index:2!important;
+ width:40px!important;height:40px!important;min-width:40px!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
+ grid-column:3!important;grid-row:3!important;align-self:center!important;justify-self:center!important;
+ z-index:2!important;width:43px!important;height:43px!important;min-width:43px!important;
+ border-radius:50%!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-composer-direct-task:not([hidden]){
+ grid-column:2!important;grid-row:4!important;
+}
+@media(max-width:390px){
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
+ grid-template-columns:45px minmax(0,1fr) 43px!important;column-gap:4px!important
+ }
+ #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle){
+ width:43px!important;min-width:43px!important
+ }
+}
