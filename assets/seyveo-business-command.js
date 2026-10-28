@@ -84,8 +84,27 @@ function restoreStoredMedia(container,message){
    picture.src=url;picture.alt='Фото: '+(record.name||'рабочая съёмка');picture.loading='lazy';
    slot.append(picture);
   }else if(record.type?.startsWith('audio/')||message.mediaType?.startsWith('audio/')){
-   const audio=el('audio','svcp-chat-media-audio');audio.src=url;audio.controls=true;audio.preload='metadata';
-   audio.setAttribute('aria-label','Голосовое сообщение');slot.append(audio);
+   const audio=el('audio','svcp-chat-media-audio');audio.src=url;audio.preload='metadata';
+   const control=el('button','svcp-audio-play','▶');control.type='button';
+   control.setAttribute('aria-label','Воспроизвести голосовое сообщение');
+   const wave=el('span','svcp-audio-wave');
+   for(let i=0;i<19;i++){const stick=el('i');stick.style.height=(7+((i*17+13)%19))+'px';wave.append(stick)}
+   const duration=el('time','svcp-audio-duration',
+    message.audioDuration?voiceDuration(message.audioDuration*1000):'Голосовое');
+   control.addEventListener('click',async()=>{try{
+    if(audio.paused){await audio.play()}else audio.pause();
+   }catch{setStatus('Аудиозапись не удалось воспроизвести')}});
+   audio.addEventListener('play',()=>{control.textContent='Ⅱ';control.setAttribute('aria-label','Приостановить голосовое')});
+   audio.addEventListener('pause',()=>{control.textContent='▶';control.setAttribute('aria-label','Воспроизвести голосовое')});
+   audio.addEventListener('ended',()=>{control.textContent='▶'});
+   audio.addEventListener('timeupdate',()=>{
+    if(Number.isFinite(audio.duration)&&audio.duration>0){
+     wave.style.setProperty('--svcp-play-progress',Math.min(100,Math.round(audio.currentTime/audio.duration*100))+'%');
+     duration.textContent=voiceDuration((audio.duration-audio.currentTime)*1000);
+    }
+   });
+   slot.classList.add('svcp-voice-message');
+   slot.append(control,wave,duration,audio);
   }else if(record.type?.startsWith('video/')){
    const video=el('video','svcp-chat-media-video');
    video.src=url;video.controls=true;video.playsInline=true;video.preload='metadata';
@@ -870,7 +889,7 @@ function renderChat(){
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
-   bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.mediaPurpose!=='voice')bubble.append(el('span','svcp-message-text',msg.text));
    if(msg.editedAt)bubble.append(el('small','svcp-message-edited','изменено'));
    if(msg.mediaId)restoreStoredMedia(bubble,msg);
    if(msg.starred)bubble.append(el('small','svcp-bubble-saved','★ Избранное'));
@@ -933,10 +952,32 @@ function renderChat(){
     }
     bubble.tabIndex=0;
     bubble.setAttribute('aria-description','Нажмите, чтобы ответить, выбрать реакцию или создать поручение');
+    let longPressTimer=null,pressStartX=0,pressStartY=0;
+    const clearHold=()=>{clearTimeout(longPressTimer);longPressTimer=null};
+    bubble.addEventListener('pointerdown',event=>{
+     if(event.target.closest('button,audio,.svcp-message-menu'))return;
+     pressStartX=event.clientX;pressStartY=event.clientY;
+     clearHold();
+     longPressTimer=setTimeout(()=>{
+      longPressTimer=null;
+      toggleMessageMenu(menu,moreButton);
+      if(navigator.vibrate)navigator.vibrate(12);
+     },480);
+    });
+    bubble.addEventListener('pointermove',event=>{
+     if(longPressTimer&&Math.hypot(event.clientX-pressStartX,event.clientY-pressStartY)>12)clearHold();
+    });
+    bubble.addEventListener('pointerup',event=>{
+     if(longPressTimer&&event.clientX-pressStartX>85&&Math.abs(event.clientY-pressStartY)<65){
+      clearHold();startReply(msg);
+     }else clearHold();
+    });
+    bubble.addEventListener('pointercancel',clearHold);
+    bubble.addEventListener('contextmenu',event=>{event.preventDefault();clearHold();toggleMessageMenu(menu,moreButton)});
     bubble.addEventListener('click',event=>{
-     if(event.target.closest('button'))return;
+     if(event.target.closest('button,audio,.svcp-media-slot'))return;
      if(event.target.closest('.svcp-message-menu'))return;
-     toggleMessageMenu(menu,moreButton);
+     // Ordinary tap reads the message; hold or swipe opens the actions.
     });
     bubble.addEventListener('keydown',event=>{
      if((event.key==='Enter'||event.key===' ')&&event.target===bubble){
