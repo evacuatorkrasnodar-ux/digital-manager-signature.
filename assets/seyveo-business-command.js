@@ -14,7 +14,7 @@ const ROOMS=[
  {id:'team',label:'Команда'},
  {id:'docs',label:'Документы'}
 ];
-const state={tab:'chats',room:'general',file:null,objectUrl:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
+const state={tab:'chats',room:'general',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-100):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list))}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.')}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -64,22 +64,99 @@ root.querySelectorAll('[data-svcp-room]').forEach(button=>button.addEventListene
  state.room=button.dataset.svcpRoom;
  renderChat();
 }));
+function senderName(msg){return msg.role==='sayvi'?'Сэйви · демо-подсказка':'Вы · локальное демо'}
+function formatTime(ts){
+ const dt=new Date(ts);
+ return Number.isFinite(dt.getTime())?dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'';
+}
 function renderChat(){
  root.querySelectorAll('[data-svcp-room]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.svcpRoom===state.room)));
  const thread=$('svcpMessages');if(!thread)return;
  thread.replaceChildren();
- const msgs=state.chat.filter(x=>x&&x.room===state.room&&typeof x.text==='string').slice(-35);
- if(!msgs.length){
-  thread.append(el('p','svcp-note','Здесь будет история рабочего разговора. Пока это демонстрация: сообщения видны только на вашем устройстве.'));
+ const messages=state.chat.filter(x=>x&&x.room===state.room&&typeof x.text==='string').slice(-35);
+ if(!messages.length){
+  thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
-  for(const msg of msgs){
-   const bubble=el('div','svcp-bubble is-self');
-   bubble.append(el('strong','svcp-sender','Вы · локальное демо'),el('span','svcp-message-text',msg.text));
-   thread.append(bubble);
+  for(const msg of messages){
+   const isSayvi=msg.role==='sayvi';
+   const bubble=el('article','svcp-bubble '+(isSayvi?'is-sayvi':'is-self'));
+   bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':'Ваше сообщение');
+   const meta=el('div','svcp-bubble-meta');
+   meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
+   bubble.append(meta);
+   if(msg.replyTo&&typeof msg.replyTo.text==='string'){
+    bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
+   }
+   bubble.append(el('span','svcp-message-text',msg.text));
+   const actions=el('div','svcp-message-actions');
+   actions.append(btn('Ответить',()=>startReply(msg),'svcp-message-action'));
+   if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
+    actions.append(btn(isSayvi?'Подготовить поручение':'В поручение',()=>prepareTask(msg),'svcp-message-action'));
+   }
+   bubble.append(actions);thread.append(bubble);
   }
  }
  thread.scrollTop=thread.scrollHeight;
 }
+function startReply(msg){
+ state.replyTo={text:String(msg.text||'').slice(0,160),sender:senderName(msg)};
+ $('svcpReplyText').textContent='Ответ на: '+state.replyTo.sender+' · '+state.replyTo.text;
+ $('svcpReplyPreview').hidden=false;
+ $('svcpChatInput')?.focus({preventScroll:true});
+}
+function clearReply(){state.replyTo=null;$('svcpReplyPreview').hidden=true;$('svcpReplyText').textContent=''}
+$('svcpReplyCancel')?.addEventListener('click',clearReply);
+function suggestFromChat(message){
+ const request=message.replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').trim();
+ if(/возврат|вернуть товар/i.test(request))return {
+  text:'В этой демонстрации инструкции компании ещё не подключены. Лучше уточнить утверждённый порядок возврата у ответственного. Могу подготовить поручение на проверку.',
+  task:'Уточнить утверждённый порядок возврата товара'
+ };
+ if(/график|смен[ыуе]|выходн/i.test(request))return {
+  text:'Могу подготовить поручение по графику. Для точного ответа о сменах сначала нужны согласованные данные компании.',
+  task:'Уточнить и подтвердить график смен'
+ };
+ if(/поруч|задач|подготов|проверь|нужно|сдела|договор|заказ|отчёт|отчет|план|напомни/i.test(request))return {
+  text:'Могу оформить сказанное как поручение. Проверьте формулировку и подтвердите добавление — без этого ничего не запишу.',
+  task:request.slice(0,140)
+ };
+ return {
+  text:'Я здесь. Сейчас это пробная подсказка без подключения ИИ и корпоративных инструкций. Могу помочь подготовить поручение из конкретного рабочего сообщения — после вашего подтверждения.',
+  task:''
+ };
+}
+function prepareTask(msg){
+ const proposed=typeof msg.suggestTask==='string'&&msg.suggestTask.trim()?msg.suggestTask:msg.text;
+ // Images and file names are never promoted to tasks automatically.
+ const clean=String(proposed||'').replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').replace(/\[Выбран файл:[\s\S]*$/,'').trim().slice(0,140);
+ if(!clean){setStatus('В этом сообщении нет текста для поручения.');return}
+ state.draftSource={room:msg.room};
+ $('svcpChatTaskTitle').value=clean;
+ $('svcpChatTaskDraft').hidden=false;
+ $('svcpChatTaskTitle').focus({preventScroll:true});
+}
+function cancelTaskDraft(){state.draftSource=null;$('svcpChatTaskDraft').hidden=true}
+$('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
+function storeTask(text,source){
+ const title=String(text||'').trim().slice(0,140);
+ if(!title)return false;
+ state.tasks=state.tasks.concat({text:title,done:false,...(source?{source:'chat',room:source.room}: {})}).slice(-60);
+ save(TASK_KEY,state.tasks);renderTasks();return true;
+}
+$('svcpChatTaskDraft')?.addEventListener('submit',event=>{
+ event.preventDefault();
+ const title=$('svcpChatTaskTitle').value;
+ if(!storeTask(title,state.draftSource))return;
+ cancelTaskDraft();
+ setStatus('Поручение добавлено в «Дела → Команде» на этом устройстве. Сотрудникам не отправлено.');
+});
+$('svcpCallSayvi')?.addEventListener('click',()=>{
+ const input=$('svcpChatInput');if(!input)return;
+ if(!/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(input.value))
+  input.value=(input.value.trim()?input.value.trim()+' ':'')+'@Сэйви ';
+ input.focus({preventScroll:true});
+ input.setSelectionRange(input.value.length,input.value.length);
+});
 const fileInput=$('svcpFile');
 function cleanupPreview(){
  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
@@ -109,13 +186,24 @@ $('svcpChatForm')?.addEventListener('submit',event=>{
  if(!txt&&!state.file){setStatus('Введите сообщение или выберите файл.');return}
  const fileName=state.file?.name;
  const message=[txt,fileName?'[Выбран файл: '+fileName+'. Это только имя — файл не отправлен и не сохранён.]':''].filter(Boolean).join('\n');
- const entry={room:state.room,text:message,at:Date.now()};
- state.chat=state.chat.concat(entry).slice(-100);
+ const entry={room:state.room,text:message,at:Date.now(),role:'self',...(state.replyTo?{replyTo:state.replyTo}:{})};
+ const callSayvi=/(^|\s)@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)/i.test(txt);
+ const messages=[entry];
+ if(callSayvi){
+  const advice=suggestFromChat(txt);
+  messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
+ }
+ state.chat=state.chat.concat(messages).slice(-100);
  save(CHAT_KEY,state.chat);
  input.value='';if(fileInput)fileInput.value='';
- cleanupPreview();
+ cleanupPreview();clearReply();cancelTaskDraft();
  renderChat();
- setStatus('Запись добавлена в локальное демо. Никому не отправлена.');
+ setStatus(callSayvi?'Сэйви ответила демонстрационной подсказкой. Сообщения никому не отправлены.':'Сообщение записано только на этом устройстве.');
+});
+$('svcpChatInput')?.addEventListener('keydown',event=>{
+ if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){
+  event.preventDefault();$('svcpChatForm')?.requestSubmit();
+ }
 });
 function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
@@ -136,9 +224,7 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
  e.preventDefault();
  const input=$('svcpTaskInput');const txt=input?.value.trim()||'';
  if(!txt)return;
- state.tasks.push({text:txt.slice(0,140),done:false});
- state.tasks=state.tasks.slice(-60);
- save(TASK_KEY,state.tasks);input.value='';renderTasks();
+ if(storeTask(txt,null))input.value='';
 });
 // Business tools keep their original handlers; the surrounding layout is unified.
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
