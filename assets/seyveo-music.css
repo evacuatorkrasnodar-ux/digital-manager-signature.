@@ -902,3 +902,102 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  #sayviMusicPage .sv-music-lyric{transition:none;filter:none}
  #sayviMusicPage .sv-music-lyrics-lines{scroll-behavior:auto}
 }
+
+
+/* SEYVEO MUSIC · Warm Smoke / Sing Along: user-supplied LRC only.
+   Inspired by the restrained material palette, not a reproduction of another UI. */
+html.sv-music-screen[data-theme=dark][data-palette=plum] .app{
+ background:
+  radial-gradient(ellipse 92% 65% at 52% 19%,rgba(184,144,151,.29),transparent 80%),
+  radial-gradient(ellipse 73% 55% at 12% 78%,rgba(145,101,113,.19),transparent 88%),
+  linear-gradient(168deg,#67545b 0%,#45373f 43%,#241e24 100%)!important
+}
+html.sv-music-screen[data-theme=dark][data-palette=plum] #sayviMusicPage .sv-music-lyrics{
+ background:
+  radial-gradient(ellipse 90% 72% at 52% 16%,rgba(198,158,164,.30),transparent 78%),
+  linear-gradient(165deg,rgba(117,92,100,.95),rgba(57,43,52,.98) 70%,rgba(39,33,39,.99));
+ border-color:rgba(244,209,219,.20)
+}
+#sayviMusicPage .sv-music-lyrics-heading{
+ min-height:38px;gap:5px
+}
+#sayviMusicPage .sv-music-lyrics-tools{
+ display:flex;align-items:center;gap:6px;flex:none
+}
+#sayviMusicPage .sv-music-lyrics-tools button{
+ min-height:35px;padding:6px 9px;
+ font-size:10px;font-weight:540
+}
+#sayviMusicPage .sv-music-lyrics-tools button[hidden]{
+ display:none!important
+}
+#sayviMusicPage .sv-music-lyrics-tools #sayviMusicLyricsTranslation[aria-pressed=true]{
+ background:rgba(252,226,235,.20);
+ border-color:rgba(252,226,235,.50);
+ color:#fff4f4
+}
+#sayviMusicPage .sv-music-lyric{
+ font-size:clamp(22px,5.7vw,33px);line-height:1.23;
+ font-weight:700;letter-spacing:-.04em;
+ padding:10px 7px;margin:0 0 8px;
+ opacity:.28;filter:blur(.85px)
+}
+#sayviMusicPage .sv-music-lyric.is-current{
+ opacity:1;filter:none;transform:none
+}
+#sayviMusicPage .sv-music-lyric.is-past{opacity:.42;filter:none}
+#sayviMusicPage .sv-music-lyric-translation{
+ margin-top:7px;font-size:clamp(12px,3.2vw,16px);
+ font-weight:500;opacity:.86;line-height:1.4
+}
+#sayviMusicPage.sv-music-hide-translation .sv-music-lyric-translation{
+ display:none
+}
+#sayviMusicPage .sv-music-lyrics-lines{
+ padding:15px 4px 24px;
+ mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 85%,transparent 100%)
+}
+#sayviMusicPage .sv-music-lyrics-empty{
+ margin:16px 8px 0;font-size:13px;line-height:1.65
+}
+#sayviMusicPage .sv-music-favorite{
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--seyveo-hdr-active,rgba(218,181,197,.15));
+ transition:color .18s,background .18s
+}
+#sayviMusicPage .sv-music-favorite[aria-pressed=true]{
+ color:var(--seyveo-emerald);
+ background:var(--seyveo-hdr-active,rgba(225,168,186,.19));
+}
+@media(max-width:759px) and (orientation:portrait){
+ html.sv-music-screen #sayviMusicPage.sv-music-lyrics-mode>header.sv-music-head{
+  min-height:clamp(70px,9dvh,90px)!important
+ }
+ html.sv-music-screen #sayviMusicPage.sv-music-lyrics-mode .sv-music-cover{
+  width:min(100%,490px)!important;
+  max-width:100%!important;
+  height:clamp(280px,48dvh,520px)!important;
+  aspect-ratio:auto!important;
+  margin:4px auto 10px!important;
+  border-radius:22px
+ }
+ html.sv-music-screen #sayviMusicPage.sv-music-lyrics-mode .sv-music-lyrics{
+  padding:12px 11px 10px
+ }
+}
+@media(max-width:375px){
+ #sayviMusicPage .sv-music-lyric{
+  font-size:clamp(21px,6.25vw,27px);
+ }
+ #sayviMusicPage .sv-music-lyrics-tools button{
+  font-size:9.5px;padding:5px 6px
+ }
+}
+@media(max-height:690px) and (max-width:759px){
+ html.sv-music-screen #sayviMusicPage.sv-music-lyrics-mode .sv-music-cover{
+  height:clamp(235px,41dvh,330px)!important
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicPage .sv-music-lyric{transition:none!important;filter:none!important}
+}
