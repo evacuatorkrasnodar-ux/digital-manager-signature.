@@ -139,7 +139,15 @@
   };
   const plan=Number($('seyveoShiftPlanned')?.value);
   const plannedHours=Number.isFinite(plan)&&plan>=1&&plan<=24?plan:8;
-  const percent=Math.min(100,Math.round(todayMs/(plannedHours*3600000)*100));
+  const scheduled=activeBreakPolicy||readBreakPolicy();
+  const plannedMinutes=plannedHours*60;
+  // The chart is a physical shift timeline. An unpaid break extends the shift;
+  // a paid break fits inside the planned hours. Work totals still use net work.
+  const wholeMinutes=plannedMinutes+(scheduled.paid?0:scheduled.durationMinutes);
+  const wholeMs=Math.max(1,wholeMinutes*MINUTE_MS);
+  const progressPercent=active?Math.min(100,Math.max(0,(now-start)/wholeMs*100)):0;
+  const progressShown=Math.round(progressPercent);
+  const clockText=timestamp=>new Date(timestamp).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
   if(employeeAvatar){employeeAvatar.dataset.active=String(active);employeeAvatar.dataset.break=String(onBreak)}
   const workDuty=$('svcpWorkDuty'),workDutyText=$('svcpWorkDutyText');
   if(workDuty){workDuty.dataset.active=String(active);workDuty.dataset.break=String(onBreak)}
@@ -157,20 +165,34 @@
    :active?'Начало в '+new Date(start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
    :todayMs>0?'Сегодняшняя смена завершена':'Смена не начата';
   const progress=$('svcpEmployeeProgress');
-  if(progress)progress.setAttribute('aria-valuenow',String(percent));
+  if(progress){
+   progress.setAttribute('aria-valuenow',String(progressShown));
+   progress.setAttribute('aria-valuetext',
+    !active?'Смена не начата':onBreak?'Идёт перерыв, '+Math.ceil((currentBreak.end-now)/MINUTE_MS)+' мин осталось':
+    'Идёт работа, учтено '+short(elapsed));
+  }
   const fill=$('svcpEmployeeProgressFill');
-  if(fill)fill.style.width=percent+'%';
+  if(fill)fill.style.width=progressPercent+'%';
   const info=$('svcpEmployeeBreakInfo');
-  const scheduled=activeBreakPolicy||readBreakPolicy();
   const windowForBar=active?currentBreak:null;
   const bar=$('svcpEmployeeProgress');
+  const markPercent=Math.min(100,Math.max(0,scheduled.afterMinutes/wholeMinutes*100));
+  const markerWidth=Math.max(0,Math.min(100-markPercent,scheduled.durationMinutes/wholeMinutes*100));
   if(bar){
-   const markPercent=Math.min(99,Math.max(0,scheduled.afterMinutes/60/plannedHours*100));
-   const barWidth=Math.min(100-markPercent,scheduled.durationMinutes/60/plannedHours*100);
    bar.style.setProperty('--svcp-break-left',markPercent+'%');
-   bar.style.setProperty('--svcp-break-width',barWidth+'%');
-   bar.dataset.scheduled=String(!!scheduled);
+   bar.style.setProperty('--svcp-break-width',markerWidth+'%');
+   bar.style.setProperty('--svcp-now-left',progressPercent+'%');
+   bar.dataset.scheduled=String(markerWidth>0);
+   bar.dataset.running=String(active);
   }
+  const timelineTotal=$('svcpShiftTimelineTotal');
+  if(timelineTotal)timelineTotal.textContent=plannedHours+' ч работы · '+scheduled.durationMinutes+' мин перерыв';
+  const timelineStart=$('svcpShiftTimelineStart'),timelineBreak=$('svcpShiftTimelineBreak'),timelineEnd=$('svcpShiftTimelineEnd');
+  if(timelineStart)timelineStart.textContent=active?clockText(start):'Начало';
+  if(timelineBreak)timelineBreak.textContent=active&&currentBreak
+   ?clockText(currentBreak.start)+'–'+clockText(currentBreak.end):
+   'Через '+scheduled.afterMinutes/60+' ч';
+  if(timelineEnd)timelineEnd.textContent=active?clockText(start+wholeMs):'Финиш';
   if(info){
    if(onBreak){
     const remaining=Math.max(0,Math.ceil((currentBreak.end-now)/MINUTE_MS));
