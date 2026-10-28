@@ -129,7 +129,13 @@ function setVoicePanel(open,stateName='recording'){
  if(voiceStopButton)voiceStopButton.hidden=stateName!=='recording';
  if(voiceSendButton)voiceSendButton.hidden=stateName!=='ready';
  if(voiceLabel)voiceLabel.textContent=stateName==='recording'?'Идёт запись голоса':
-  stateName==='processing'?'Подготавливаю запись…':'Голосовое сообщение';
+  stateName==='processing'?'Подготавливаю запись…':
+  stateName==='error'?'Микрофон недоступен':'Голосовое сообщение';
+}
+function showVoiceError(message){
+  setStatus(message);
+  setVoicePanel(true,'error');
+  if(voiceHint)voiceHint.textContent=message;
 }
 function cancelVoice(){
  voiceRequestId++;
@@ -165,7 +171,7 @@ async function startVoice(){
  if(voiceSaving)return;
  if(voiceDraft){setStatus('Сначала отправь или удали уже записанное голосовое.');return}
  if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){
-  setStatus('Запись голоса недоступна в этом браузере. Нужен доступ к микрофону через HTTPS.');return;
+  showVoiceError('Здесь запись голоса недоступна. Открой SEYVEO через HTTPS в браузере с поддержкой микрофона.');return;
  }
  const requested=++voiceRequestId;
  try{
@@ -185,8 +191,8 @@ async function startVoice(){
   recorder.ondataavailable=e=>{if(e.data?.size)session.chunks.push(e.data)};
   recorder.onerror=()=>{
    if(session.discard)return;
-   setStatus('Ошибка записи. Проверь разрешение на микрофон.');
    cancelVoice();
+   showVoiceError('Ошибка записи. Проверь разрешение на микрофон.');
   };
   recorder.onstop=()=>{
    releaseVoiceStream(session.stream);clearInterval(session.timer);
@@ -221,9 +227,9 @@ async function startVoice(){
  }catch(error){
   if(requested!==voiceRequestId)return;
   const denied=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError';
-  setStatus(denied?'Для голосовых сообщений разреши доступ к микрофону в настройках браузера.':
-   'Не удалось включить запись голоса. Проверь микрофон и разрешения.');
   cancelVoice();
+  showVoiceError(denied?'Для голосовых сообщений разреши доступ к микрофону в настройках браузера.':
+   'Не удалось включить запись голоса. Проверь микрофон и разрешения.');
  }
 }
 async function sendVoice(){
@@ -251,7 +257,8 @@ async function sendVoice(){
   renderChat();renderDirectory();
   setStatus('Голосовое сообщение сохранено в переписке на этом устройстве. Другим людям пока не доставляется.');
  }catch{
-  setStatus('Не получилось сохранить голосовое на устройстве. Проверь свободное место и повтори.');
+  const message='Не получилось сохранить голосовое на устройстве. Проверь свободное место и повтори.';
+  setStatus(message);if(voiceHint)voiceHint.textContent=message;
  }finally{
   voiceSaving=false;
   if(voiceSendButton)voiceSendButton.disabled=false;
