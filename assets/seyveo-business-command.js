@@ -823,7 +823,18 @@ function applyMessageEmoji(index,emoji){
  const updated=state.chat.map((item,i)=>i===index?{...item,demoReaction:existing}:item);
  if(!save(CHAT_KEY,updated))return;
  state.chat=updated;
- renderChat();
+ // Update only the affected bubble, preserving scroll, media playback and focus.
+ const bubble=Array.from($('svcpMessages')?.querySelectorAll('.svcp-bubble[data-chat-index]')||[])
+  .find(node=>Number(node.dataset.chatIndex)===index);
+ if(bubble){
+  bubble.querySelector('.svcp-bubble-reaction')?.remove();
+  if(existing){
+   const chip=btn(existing+' 1',()=>applyMessageEmoji(index,existing),'svcp-bubble-reaction');
+   chip.setAttribute('aria-label','Убрать реакцию '+existing);
+   const actions=bubble.querySelector('.svcp-message-actions');
+   if(actions)bubble.insertBefore(chip,actions);else bubble.append(chip);
+  }
+ }else renderChat();
  setStatus(existing?'Реакция '+emoji+' добавлена в чат · демо':'Реакция убрана.');
 }
 $('svcpReactionOptions')?.querySelectorAll('[data-svcp-reaction]').forEach(button=>
@@ -879,6 +890,7 @@ function renderChat(){
    const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
+   bubble.dataset.chatIndex=String(index);
    bubble.setAttribute('aria-label',isSayvi?'Демонстрационная подсказка Сэйви':senderName(msg));
    const meta=el('div','svcp-bubble-meta');
    meta.append(el('strong','svcp-sender',senderName(msg)),el('time','svcp-time',formatTime(msg.at)));
@@ -941,7 +953,16 @@ function renderChat(){
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
      if(!save(CHAT_KEY,updated))return;
-     state.chat=updated;renderChat();renderDirectory();
+     state.chat=updated;
+     bubble.querySelector('.svcp-bubble-saved')?.remove();
+     if(updated[index].starred){
+      const savedLabel=el('small','svcp-bubble-saved','▮ Избранное');
+      const actions=bubble.querySelector('.svcp-message-actions');
+      if(actions)bubble.insertBefore(savedLabel,actions);else bubble.append(savedLabel);
+     }
+     starControl.classList.toggle('is-saved',!!updated[index].starred);
+     starControl.setAttribute('aria-label',updated[index].starred?'Убрать из избранного':'В избранное');
+     closeMessageMenus();renderDirectory();
     },'svcp-message-menu-item');
     starControl.classList.toggle('is-saved',!!msg.starred);
     menu.append(starControl);
