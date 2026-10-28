@@ -822,3 +822,32 @@
   min-height:36px;padding:5px 13px;border-radius:13px
  }
 }
+
+/* One manager hub: personal, team and business pulse.
+   The existing Pulse dashboard remains unchanged and is opened directly. */
+#tasksPage #unifiedTasksTabs,#picturePage #pulseTasksTabs{
+ display:grid!important;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr) minmax(0,1.08fr);
+ gap:3px;min-width:0;padding:4px;margin:0 0 18px;
+ background:var(--seyveo-hdr-active,var(--card2));
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:var(--seyveo-radius-choice,17px)
+}
+#picturePage #pulseTasksTabs{margin:9px 0 19px}
+#tasksPage #unifiedTasksTabs button,#picturePage #pulseTasksTabs button{
+ display:flex;align-items:center;justify-content:center;text-align:center;
+ min-width:0;min-height:44px;padding:7px 4px;
+ font:inherit;font-size:11.5px;font-weight:570;line-height:1.25;
+ border:0;border-radius:var(--seyveo-radius-segment,13px);
+ background:transparent;color:var(--secondary);cursor:pointer
+}
+#tasksPage #unifiedTasksTabs button[aria-pressed="true"],#picturePage #pulseTasksTabs button[aria-pressed="true"]{
+ background:var(--card);color:var(--text);
+ box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line))
+}
+#tasksPage #unifiedTasksTabs button[hidden],#picturePage #pulseTasksTabs[hidden]{display:none!important}
+#tasksPage #unifiedTasksTabs:has(button[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}
+#tasksPage #unifiedTasksTabs button:focus-visible,#picturePage #pulseTasksTabs button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
+@media(max-width:360px){
+ #tasksPage #unifiedTasksTabs button,#picturePage #pulseTasksTabs button{font-size:10.5px;padding:7px 2px}
+ #tasksPage #unifiedTasksTabs,#picturePage #pulseTasksTabs{gap:2px;padding:3px}
+}
