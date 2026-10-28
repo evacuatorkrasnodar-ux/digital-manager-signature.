@@ -234,8 +234,7 @@ window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob
 window.SEYVEO_STAFF_CARDS=Object.freeze({open:personId=>{
  const person=people.find(p=>p.id===personId);
  if(!person)return false;
- if(location.hash!=='#manage')location.hash='#manage';
- document.querySelector('[data-clean-business="people"]')?.click();
+ window.SEYVEO_UNIFIED_TASKS?.openPeople?.('team');
  openPerson(person,null);
  return true;
 }});
