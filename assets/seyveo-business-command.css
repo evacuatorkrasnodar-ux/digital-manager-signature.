@@ -649,3 +649,65 @@
 }
 #unifiedTasksChatHost .svcp-load-older[hidden]{display:none!important}
 #unifiedTasksChatHost .svcp-load-older:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+
+
+/* SEYVEO Feather Work Chat · tap-first actions & clear emoji / staff distinction */
+#unifiedTasksChatHost .svcp-bubble:not(.is-recognition){cursor:pointer}
+#unifiedTasksChatHost .svcp-bubble:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#unifiedTasksChatHost .svcp-message-actions{display:flex;justify-content:flex-end;gap:5px;margin-top:4px}
+#unifiedTasksChatHost .svcp-message-action.svcp-emoji-trigger,
+#unifiedTasksChatHost .svcp-message-action.svcp-more-trigger{
+ display:grid;place-items:center;flex:none;min-width:36px;min-height:32px;
+ padding:4px 7px;border:0;background:transparent;color:var(--secondary);font-size:19px
+}
+#unifiedTasksChatHost .svcp-message-action.svcp-more-trigger{font-size:21px;letter-spacing:1px}
+#unifiedTasksChatHost .svcp-message-action:focus-visible,
+#unifiedTasksChatHost .svcp-message-menu-item:focus-visible,
+#unifiedTasksChatHost .svcp-bubble-reaction:focus-visible,
+#unifiedTasksChatHost .svcp-emoji-option:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+#unifiedTasksChatHost .svcp-message-menu{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+ margin-top:5px;padding:7px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:14px;background:var(--seyveo-hdr-active,var(--card))
+}
+#unifiedTasksChatHost .svcp-message-menu[hidden],
+#unifiedTasksChatHost .svcp-reaction-options[hidden],
+#unifiedTasksChatHost .svcp-emoji-more[hidden]{display:none!important}
+#unifiedTasksChatHost .svcp-message-menu-item{
+ display:flex;align-items:center;justify-content:center;text-align:center;min-width:0;min-height:38px;
+ padding:7px 9px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:10px;background:var(--card);color:var(--text);font:inherit;font-size:11.5px;
+ cursor:pointer
+}
+#unifiedTasksChatHost .svcp-message-menu-item:active{color:var(--seyveo-emerald);background:var(--seyveo-hdr-active)}
+#unifiedTasksChatHost .svcp-quick-emojis{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;
+ max-width:none
+}
+#unifiedTasksChatHost .svcp-quick-emojis button{
+ width:100%;min-width:0;min-height:40px;font-size:22px;padding:5px 2px
+}
+#unifiedTasksChatHost .svcp-emoji-more-toggle{
+ color:var(--seyveo-emerald);font-size:25px!important;font-weight:400
+}
+#unifiedTasksChatHost .svcp-emoji-more{display:grid;gap:9px;max-width:100%}
+#unifiedTasksChatHost .svcp-emoji-group{display:grid;gap:5px}
+#unifiedTasksChatHost .svcp-emoji-heading{font-size:10.5px;color:var(--secondary)}
+#unifiedTasksChatHost .svcp-emoji-grid{
+ display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px
+}
+#unifiedTasksChatHost .svcp-emoji-grid button{
+ display:grid;place-items:center;min-width:0;min-height:37px;padding:3px 0;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:9px;
+ background:var(--card);font-size:20px;cursor:pointer
+}
+#unifiedTasksChatHost .svcp-emoji-grid button:active{background:var(--seyveo-hdr-active)}
+#unifiedTasksChatHost .svcp-bubble-reaction{
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));cursor:pointer;font:inherit;font-size:12px
+}
+@media(max-width:350px){
+ #unifiedTasksChatHost .svcp-quick-emojis{gap:4px}
+ #unifiedTasksChatHost .svcp-emoji-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
