@@ -8,7 +8,7 @@
   const PROFILE='seyveo-first-acquaintance-v1';
   const SKIPPED='seyveo-first-acquaintance-skipped-v1';
   const CHOICES=Object.freeze({
-    life:'Life',start:'Business Start',pro:'Business Pro',max:'Business Max'
+    life:'ONE',start:'RISE',pro:'AUTONOM',max:'Крупная компания · сценарий'
   });
   const safeRead=key=>{try{return localStorage.getItem(key)}catch{return null}};
   const safeWrite=(key,value)=>{try{localStorage.setItem(key,value);return true}catch{return false}};
