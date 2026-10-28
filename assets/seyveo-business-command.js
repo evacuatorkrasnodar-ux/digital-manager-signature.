@@ -325,6 +325,42 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
  button.addEventListener('click',()=>
   window.SEYVEO_BUSINESS_NAV?.openFeature?.(button.dataset.svcpFeature)));
+/* Only a user-requested preview: this is not a real incoming push or an
+   employee account. It uses the same already-saved demonstration task. */
+function workTaskForPreview(){
+ return state.tasks.find(t=>t&&t.id===state.lastDemoTaskId&&t.assigneeId==='elena'&&!t.done)||null;
+}
+function syncWorkPreview(){
+ const task=workTaskForPreview(),card=$('svcpWorkHomePreview');
+ if(!card)return;
+ if(!task){card.hidden=true;return}
+ $('svcpHomePreviewTitle').textContent=task.text;
+ card.hidden=false;
+}
+$('svcpPreviewOnHome')?.addEventListener('click',()=>{
+ const task=workTaskForPreview();
+ if(!task){$('svcpPreviewOnHome').hidden=true;return}
+ syncWorkPreview();
+ location.hash='#home';
+});
+$('svcpHomePreviewClose')?.addEventListener('click',()=>{
+ $('svcpWorkHomePreview').hidden=true;
+ state.lastDemoTaskId=null;
+});
+$('svcpHomePreviewDetails')?.addEventListener('click',()=>{
+ window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();
+});
+$('svcpHomePreviewExecute')?.addEventListener('click',()=>{
+ const task=workTaskForPreview();if(!task)return;
+ const updated=state.tasks.map(item=>item.id===task.id?{...item,done:true}:item);
+ if(!save(TASK_KEY,updated))return;
+ state.tasks=updated;
+ state.lastDemoTaskId=null;
+ $('svcpWorkHomePreview').hidden=true;
+ $('svcpPreviewOnHome').hidden=true;
+ renderTasks();
+ window.dispatchEvent(new CustomEvent('seyveo:demo-task-completed',{detail:{id:task.id}}));
+});
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView,openPrivateChat:person=>{
  const id='dm-'+String(person||'').toLowerCase();
  if(!ROOMS.some(x=>x.id===id&&x.person))return false;
