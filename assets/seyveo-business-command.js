@@ -28,7 +28,7 @@ const ROOMS=[
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
 ];
-const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
+const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
@@ -89,8 +89,6 @@ function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
  if(renderHistorySearch())return;
  list.replaceChildren();
- chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
-  button.setAttribute('aria-pressed',String(button.dataset.svcpFilter===state.filter)));
  /* Keep the existing rooms and conversation IDs so old local messages still open.
     One compact name/role line and one real message preview, not three descriptions. */
  const latest=new Map();
@@ -111,7 +109,6 @@ function renderDirectory(){
   return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',...(date.getFullYear()===now.getFullYear()?{}:{year:'2-digit'})});
  }
  for(const room of ROOMS){
-  if(state.filter!=='all'&&room.kind!==state.filter)continue;
   if(room.section!==prior){
    prior=room.section;
    if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
@@ -256,8 +253,6 @@ function updatePerspective(){
  $('svcpRecognizeOpen').hidden=state.viewpoint==='elena'||!(current.person&&STAFF[current.person]);
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
 }
-chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
- button.addEventListener('click',()=>{state.filter=button.dataset.svcpFilter;renderDirectory()}));
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
@@ -509,21 +504,19 @@ function renderChat(){
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    if(!isRecognition){
     const actions=el('div','svcp-message-actions');
-    const emojiButton=btn('😊',()=>showReactions({type:'message',index},bubble),'svcp-message-action svcp-emoji-trigger');
-    emojiButton.setAttribute('aria-label','Выбрать эмодзи');
     const menu=el('div','svcp-message-menu');menu.hidden=true;
     menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
     const moreButton=btn('···',()=>toggleMessageMenu(menu,moreButton),'svcp-message-action svcp-more-trigger');
     moreButton.setAttribute('aria-label','Действия с сообщением');
     moreButton.setAttribute('aria-expanded','false');
-    actions.append(emojiButton,moreButton);
+    actions.append(moreButton);
     menu.append(btn('↩ Ответить',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    menu.append(btn('😊 Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
+    menu.append(btn('Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
     if(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim()){
      menu.append(btn('📌 Поручить',()=>{closeMessageMenus();prepareTask(msg)},'svcp-message-menu-item'));
     }
     bubble.tabIndex=0;
-    bubble.setAttribute('aria-description','Нажмите на сообщение, чтобы открыть действия');
+    bubble.setAttribute('aria-description','Нажмите, чтобы ответить, выбрать реакцию или создать поручение');
     bubble.addEventListener('click',event=>{
      if(event.target.closest('button'))return;
      if(event.target.closest('.svcp-message-menu'))return;
@@ -934,9 +927,8 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 });
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
- showChat:(roomId=null,viewpoint='manager',filter='all')=>{
+ showChat:(roomId=null,viewpoint='manager')=>{
   chatsFromTasks=true;
-  state.filter=['all','personal','groups'].includes(filter)?filter:'all';
   if(roomId&&ROOMS.some(x=>x.id===roomId)){
    openRoom(roomId);
    if(viewpoint==='elena'&&roomId==='dm-elena'){
