@@ -100,6 +100,7 @@ function showInbox(){
  state.viewpoint='manager';
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
+ $('svcpReturnToTasks').hidden=true;
  clearReply();cancelTaskDraft();cleanupPreview();
  renderDirectory();
 }
@@ -113,6 +114,7 @@ function openRoom(roomId){
  clearReply();cancelTaskDraft();cleanupPreview();
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
+ $('svcpReturnToTasks').hidden=true;
  updatePerspective();renderChat();
 }
 function updatePerspective(){
@@ -400,6 +402,9 @@ function openTaskDiscussion(task){
  if(person==='elena'){
   state.viewpoint='elena';
   updatePerspective();renderChat();
+  // In an assignment discussion the employee identity is already explicit.
+  // Keep a single easy way back rather than two cramped header controls.
+  $('svcpElenaPerspective').hidden=true;
  }
  const message={room:roomId,role:'self',text:task.text};
  startReply(message);
