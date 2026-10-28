@@ -1,6 +1,6 @@
 # SEYVEO Secure Documents: server groundwork (not deployed)
 
-This directory now contains a **pure document authorization policy and tests**, not a running document server.
+This directory contains a **pure authorization policy and tests** plus an isolated [loopback-only local development server](secure-documents/README.md). It is **not** a deployed or production document service.
 
 Run tests on a machine with Node.js 20+:
 
@@ -34,9 +34,9 @@ The policy is deny-by-default:
 
 ## What is NOT included
 
-- No login, identity provider, session store, MFA or server process.
+- The local prototype implements only environment-configured test accounts and ephemeral bearer sessions. There is no production identity provider, MFA, durable session store or deployed service.
 - No database, cloud hosting or deployment.
-- No key management, encryption service, uploads, backups, push delivery, or audit persistence.
+- The loopback prototype encrypts short training texts in RAM using an environment-provided development key. There is no production key management, durable encrypted storage, uploads, backups, push delivery or audit persistence.
 - No Russian ЭДО operator, electronic signature, certificate or МЧД integration.
 - No legal-signature guarantee, regulatory certification, or protection against a compromised device.
 - No changes to personal SEYVEO One files or to the existing single-device document demo.
