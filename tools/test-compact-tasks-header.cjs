@@ -1,0 +1,22 @@
+/* SEYVEO · compact Tasks top toolbar, stable across all work modes. */
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const html=fs.readFileSync('index.html','utf8');
+const personal=fs.readFileSync('assets/personal-tasks.css','utf8');
+const business=fs.readFileSync('assets/seyveo-business-command.css','utf8');
+const script=fs.readFileSync('assets/seyveo-unified-tasks.js','utf8');
+const header=html.slice(html.indexOf('<header class="manage-heading tasks-heading">'),html.indexOf('</header>',html.indexOf('<header class="manage-heading tasks-heading">'))+9);
+assert.match(header,/<div class="tasks-title-row">/);
+const back=header.indexOf('id="unifiedTasksBack"'),title=header.indexOf('id="tasksTitle"'),brand=header.indexOf('SEYVEO');
+assert.ok(back>=0&&back<title&&title<brand,'Back, Дела and SEYVEO share one compact toolbar');
+assert.equal((header.match(/id="tasksTitle"/g)||[]).length,1);
+assert.equal((header.match(/id="unifiedTasksBack"/g)||[]).length,1);
+assert.equal((header.match(/id="unifiedTasksBackLabel"/g)||[]).length,1);
+assert.match(header,/id="tasksOverview"/,'Personal task guidance is retained');
+assert.match(personal,/#tasksPage \.tasks-title-row\{display:flex;align-items:center/,'One horizontal row');
+assert.match(business,/#tasksPage \.svcp-tasks-back\{display:grid;place-items:center;flex:none;width:44px;height:44px/,'Accessible 44px back target');
+assert.match(business,/#tasksPage #unifiedTasksBackLabel\{position:absolute;width:1px;height:1px/,'Dynamic back label remains available to assistive technologies');
+assert.match(script,/\$\('unifiedTasksBack'\)\?\.addEventListener\('click'/,'Existing navigation logic preserved');
+assert.match(html,/assets\/personal-tasks\.css\?v=21/);
+assert.match(html,/assets\/seyveo-business-command\.css\?v=49/);
+console.log('PASS Tasks: a single compact, accessible toolbar leaves more room for chats on iPhone.');

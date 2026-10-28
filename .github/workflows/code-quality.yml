@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript, CSS and project links
         run: node tools/check-quality.cjs
+      - name: Check compact Tasks toolbar
+        run: node tools/test-compact-tasks-header.cjs
       - name: Check black vinyl, white star and one role-safe searchable business chat
         run: node tools/test-black-vinyl-work-chats.cjs
       - name: Verify Business is in Dela and Management routes are clean

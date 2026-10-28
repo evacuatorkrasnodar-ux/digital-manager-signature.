@@ -82,7 +82,7 @@ assert.match(css,/#tasksPage \.svcp-manager-row/,
  'Original Black Velvet manager rows still have their styles');
 assert.match(business,/function preparePeopleContent\(\)/,
  'Existing HR and staffing widgets remain integrated');
-assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=15/,
+assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=16/,
  'Updated Business entry behavior is cache-versioned');
 
 assert.match(management,/\$\('openManageRoadmap'\)\.addEventListener\('click'/);
