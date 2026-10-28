@@ -129,7 +129,7 @@ const body=el('div','svstaff-content');modal.append(body);
 let chosen=null,showPlan=false,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
  const metrics=el('div','svstaff-metrics');
- [['star','svstaff-gold',String(p.thanks),'Благодарностей'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание':'Замечаний'],['growth','svstaff-green',p.development,'Навыков']].forEach(([symbol,color,value,label])=>{
+ [['star','svstaff-gold',String(peerRecognition(p.id).length),'Знаков команды · демо'],['clipboard','svstaff-silver',String(p.remarks),p.remarks===1?'Замечание · пример':'Замечаний · пример'],['growth','svstaff-green',p.development,'Навыки · пример']].forEach(([symbol,color,value,label])=>{
   const item=el('div','svstaff-metric');item.append(icon(symbol,color),el('strong',null,value),el('small',null,label));metrics.append(item);
  });
  target.append(metrics);
@@ -142,10 +142,10 @@ function renderDirectory(){
   const photo=el('img','svstaff-thumb');photo.src=photoFor(p);photo.alt='';photo.loading='lazy';
   const copy=el('span','svstaff-tile-copy');
   copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','✦ Сэйви: '+p.hint));
-  const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(p.thanks)));
+  const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(peerRecognition(p.id).length)));
   const arrow=el('span','svstaff-tile-arrow','›');arrow.setAttribute('aria-hidden','true');
   const newMarks=peerRecognition(p.id).length;
-  if(newMarks)copy.append(el('span','svstaff-peer-preview','✦ Получено знаков: '+newMarks+' · демо'));
+  if(newMarks)copy.append(el('span','svstaff-peer-preview','✦ Новый знак от коллег · демо'));
   tile.append(photo,copy,count,arrow);directory.append(tile);
  });
 }
