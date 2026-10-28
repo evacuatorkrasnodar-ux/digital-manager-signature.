@@ -42,7 +42,7 @@
 }
 .syp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .syp-top>div{min-width:0}
-.syp-kicker{margin:1px 0 8px;font-size:10px;letter-spacing:.20em;color:var(--seyveo-emerald);font-weight:600}
+.syp-kicker{margin:1px 0 8px;font-size:10px;letter-spacing:.20em;color:var(--text);font-weight:600}
 .syp-title{margin:0 0 5px;font-size:28px;letter-spacing:-.045em;font-weight:660;line-height:1.15;color:var(--text)}
 .syp-desc{margin:0 0 17px;font-size:12.5px;line-height:1.5;color:var(--secondary)}
 .syp-x{

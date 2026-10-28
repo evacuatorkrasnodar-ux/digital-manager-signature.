@@ -85,7 +85,7 @@
  font-size:16px;font-weight:600;text-transform:capitalize;line-height:1.3;
 }
 #calendarSpaceDialog .cal-velvet-picker-head button{
- min-height:44px;padding:8px 12px;font-size:12px;color:var(--seyveo-emerald);
+ min-height:44px;padding:8px 12px;font-size:12px;color:var(--text);
 }
 #calendarSpaceDialog .cal-velvet-choices{display:grid;gap:3px}
 #calendarSpaceDialog .cal-velvet-choices button{
@@ -93,11 +93,11 @@
  border-radius:12px;font-size:14px;
 }
 #calendarSpaceDialog .cal-velvet-choices button[aria-pressed=true]{
- background:var(--seyveo-hdr-active);color:var(--seyveo-emerald);
+ background:var(--seyveo-hdr-active);color:var(--text);
 }
 #calendarSpaceDialog .cal-velvet-month button{
  display:grid;place-items:center;width:44px;height:44px;flex:none;
- font-size:27px;color:var(--seyveo-emerald);
+ font-size:27px;color:var(--text);
 }
 #calendarSpaceDialog .cal-velvet-weekdays,
 #calendarSpaceDialog .cal-velvet-days{
@@ -116,14 +116,14 @@
  box-shadow:inset 0 0 0 1px var(--seyveo-emerald);
 }
 #calendarSpaceDialog .cal-velvet-days button.is-today:not([aria-pressed=true]){
- color:var(--seyveo-emerald);font-weight:700;
+ color:var(--text);font-weight:700;
 }
 #calendarSpaceDialog .cal-velvet-picker-foot{
  display:flex;justify-content:space-between;gap:10px;
  margin-top:12px;padding-top:10px;border-top:1px solid var(--soft-line);
 }
 #calendarSpaceDialog .cal-velvet-picker-foot button{
- min-height:44px;padding:8px 10px;font-size:12px;color:var(--seyveo-emerald);
+ min-height:44px;padding:8px 10px;font-size:12px;color:var(--text);
 }
 .calendar-space-edit textarea{min-height:68px;resize:vertical}
 .calendar-space-edit :is(input,select,textarea):focus-visible{outline:1.5px solid var(--seyveo-emerald);outline-offset:2px}

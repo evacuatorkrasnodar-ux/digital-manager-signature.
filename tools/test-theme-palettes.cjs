@@ -38,6 +38,8 @@ assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','graphite','light','dark',
 assert.match(html,/const THEME_VALUES=\['auto','graphite','light','dark','sapphire','plum'\]/);
 assert.match(html,/dataset\.palette=palette/);
 assert.match(html,/Все темы — с фирменным HDR-эффектом SEYVEO/,'All themes openly explain HDR-inspired styling');
+for(const ink of ['--text:#f1f2f3;--secondary:#b6bec4','--text:#273238;--secondary:#657078'])assert.ok(html.includes(ink),'Neutral foreground is independent of palette');
+assert.match(html,/id="svcpThankStarMetal"/,'A five-pointed metallic recognition star is part of original work UI');
 for(const choice of ['auto','graphite','light','dark','sapphire','plum']){
  const row=html.match(new RegExp('<button[^>]*data-theme-choice="'+choice+'"[^>]*>[\\s\\S]*?<\\/button>'));
  assert.ok(row&&row[0].includes('<small>HDR · '),'Visible HDR material label on '+choice);
@@ -51,13 +53,13 @@ assert.match(html,/THEME_VALUES\.includes\(raw\.theme\)/,'Legacy theme values st
 assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migrations still work');
 assert.match(html,/assets\/floating-navigation\.css\?v=42/);
 assert.match(html,/assets\/living-space\.css\?v=53/);
-assert.match(html,/assets\/seyveo-music\.css\?v=42/);
-assert.match(html,/assets\/living-conversation\.css\?v=18/);
+assert.match(html,/assets\/seyveo-music\.css\?v=43/);
+assert.match(html,/assets\/living-conversation\.css\?v=19/);
 assert.match(html,/assets\/conversation-refined\.css\?v=38/);
-assert.match(html,/assets\/personal-wellness\.css\?v=27/);
-assert.match(html,/assets\/calendar-spaces\.css\?v=24/);
+assert.match(html,/assets\/personal-wellness\.css\?v=28/);
+assert.match(html,/assets\/calendar-spaces\.css\?v=25/);
 assert.match(html,/assets\/sections-velvet\.css\?v=12/);
-assert.match(html,/assets\/notebook-smart\.css\?v=28/);
+assert.match(html,/assets\/notebook-smart\.css\?v=29/);
 assert.match(html,/assets\/notebook-paper\.css\?v=14/);
 assert.match(html,/assets\/notebook-scan\.css\?v=8/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
@@ -71,7 +73,7 @@ const refreshed={
  'passport-cards.css':27,
  'account-demo.css':6,
  'connection-coach.css':10,
- 'picture.css':17,
+ 'picture.css':18,
  'network-care.css':4,
  'home-widgets.css':4,
  'assistant-intents.css':3

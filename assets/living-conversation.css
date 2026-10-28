@@ -344,8 +344,8 @@ html.seyveo-conversation{
  --sv-chat-owner-border:rgba(188,238,217,.14);
 }
 html.seyveo-conversation[data-theme=dark][data-palette=graphite]{
- --seyveo-emerald-text:#c4d5df;--seyveo-emerald-border:rgba(163,197,216,.22);
- --seyveo-emerald-panel:rgba(22,35,44,.92);--seyveo-emerald-active:#cfdfeb;
+ --seyveo-emerald-text:var(--text);--seyveo-emerald-border:rgba(163,197,216,.22);
+ --seyveo-emerald-panel:rgba(22,35,44,.92);--seyveo-emerald-active:var(--text);
  --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(115,149,169,.17),rgba(47,70,84,.10) 46%,transparent 83%);
  --sv-chat-send-gradient:linear-gradient(145deg,rgba(94,132,151,.66),rgba(50,83,102,.88));
  --sv-chat-canvas:
@@ -356,8 +356,8 @@ html.seyveo-conversation[data-theme=dark][data-palette=graphite]{
  --sv-chat-owner-bg:rgba(202,226,243,.065);--sv-chat-owner-border:rgba(183,214,236,.16);
 }
 html.seyveo-conversation[data-theme=dark][data-palette=sapphire]{
- --seyveo-emerald-text:#c2d4ff;--seyveo-emerald-border:rgba(160,187,244,.24);
- --seyveo-emerald-panel:rgba(19,32,62,.92);--seyveo-emerald-active:#d1deff;
+ --seyveo-emerald-text:var(--text);--seyveo-emerald-border:rgba(160,187,244,.24);
+ --seyveo-emerald-panel:rgba(19,32,62,.92);--seyveo-emerald-active:var(--text);
  --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(94,131,218,.21),rgba(38,57,110,.11) 46%,transparent 83%);
  --sv-chat-send-gradient:linear-gradient(145deg,rgba(79,117,211,.69),rgba(49,77,150,.91));
  --sv-chat-canvas:
@@ -368,8 +368,8 @@ html.seyveo-conversation[data-theme=dark][data-palette=sapphire]{
  --sv-chat-owner-bg:rgba(191,211,255,.076);--sv-chat-owner-border:rgba(162,188,246,.19);
 }
 html.seyveo-conversation[data-theme=dark][data-palette=plum]{
- --seyveo-emerald-text:#dec6a9;--seyveo-emerald-border:rgba(208,176,139,.19);
- --seyveo-emerald-panel:rgba(39,36,32,.94);--seyveo-emerald-active:#e4c9a8;
+ --seyveo-emerald-text:var(--text);--seyveo-emerald-border:rgba(208,176,139,.19);
+ --seyveo-emerald-panel:rgba(39,36,32,.94);--seyveo-emerald-active:var(--text);
  --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(162,131,99,.13),rgba(63,54,45,.075) 46%,transparent 83%);
  --sv-chat-send-gradient:linear-gradient(145deg,rgba(121,97,73,.66),rgba(70,58,47,.88));
  --sv-chat-canvas:radial-gradient(ellipse 108vw 475px at 50% 232px,rgba(228,201,168,.029),transparent 87%),linear-gradient(180deg,#1c1b1a 0%,#292521 52%,#201e1c 100%);

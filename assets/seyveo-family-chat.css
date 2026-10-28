@@ -29,14 +29,14 @@
 .svf-empty svg{width:36px;height:36px;stroke:var(--seyveo-emerald);stroke-width:1.2;fill:none;opacity:.78}
 .svf-empty strong{font-size:14px;color:var(--text);font-weight:570}
 .svf-msg{max-width:91%;align-self:flex-end;padding:11px 13px;border-radius:17px 17px 6px 17px;background:color-mix(in srgb,var(--seyveo-emerald) 16%,var(--bg));border:1px solid color-mix(in srgb,var(--seyveo-emerald) 26%,var(--soft-line));word-break:break-word}
-.svf-msg strong{display:block;margin:0 0 5px;color:var(--seyveo-emerald);font-size:10px;font-weight:600}
+.svf-msg strong{display:block;margin:0 0 5px;color:var(--text);font-size:10px;font-weight:600}
 .svf-msg span{display:block;white-space:pre-wrap;font-size:13px;line-height:1.5}
 .svf-composer-wrap{flex:none;border-top:1px solid var(--soft-line);padding:8px 12px 12px}
 .svf-suggestion{display:grid;gap:7px;margin:1px 0 10px;border-left:2px solid var(--seyveo-emerald);padding:8px 11px;background:color-mix(in srgb,var(--seyveo-emerald) 5%,transparent);border-radius:0 12px 12px 0}
 .svf-suggestion strong{font-size:12px;font-weight:560}
 .svf-suggestion p{font-size:11px;line-height:1.48;color:var(--secondary);margin:0}
 .svf-action{font:inherit;font-size:12px;color:var(--text);background:none;border:0;min-height:38px;cursor:pointer;text-align:left;padding:6px 0;font-weight:550}
-.svf-action.is-strong{color:var(--seyveo-emerald)}
+.svf-action.is-strong{color:var(--text)}
 .svf-compose{display:flex;align-items:flex-end;gap:7px}
 .svf-upload{display:grid;place-items:center;min-width:41px;width:41px;height:41px;flex:none;border:1px solid var(--soft-line);border-radius:50%;cursor:pointer;color:var(--text)}
 .svf-upload svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round}

@@ -181,7 +181,7 @@
 .svc-article-summary p{color:var(--secondary);font-size:12px;line-height:1.5;margin:7px 0 0}
 @keyframes svc-enter{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes svc-breathe{from{opacity:.42;transform:scale(.96)}to{opacity:.84;transform:scale(1.03)}}
-:root[data-theme=light] .svc-hero h2 em{-webkit-text-fill-color:var(--seyveo-emerald);color:var(--seyveo-emerald);background:none}
+:root[data-theme=light] .svc-hero h2 em{-webkit-text-fill-color:var(--seyveo-emerald);color:var(--text);background:none}
 :root[data-theme=light] .svc-unread{color:#fff;background:var(--seyveo-emerald)}
 
 /* Standalone source icon: pure white paper plane; dark surface in light theme. */
