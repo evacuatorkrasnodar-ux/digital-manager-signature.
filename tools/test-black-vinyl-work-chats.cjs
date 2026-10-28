@@ -12,9 +12,11 @@ assert.ok(html.includes('stop-color="#ffffff"')&&html.includes('stop-color="#cbd
 assert.match(html,/id="svcpThankStarMetal"[^>]*><stop offset="0" stop-color="#ffffff"\/><stop offset=".43" stop-color="#edf1f6"\/><stop offset="1" stop-color="#b5c0cc"/,
  'Employee recognition star is silver-white in all themes');
 const employeeStyle=fs.readFileSync('assets/seyveo-business-command.css','utf8');
-assert.ok(employeeStyle.includes('border:1px solid rgba(255,255,255,.28);background:radial-gradient(circle at 34% 25%,#38404a,#171b21 74%)'),
- 'Employee star plaque is white-and-charcoal independently of theme');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=45/,'New employee award style is cache-busted');
+assert.ok(employeeStyle.includes('border-radius:18px;border:1px solid rgba(255,255,255,.19)'),
+ 'Employee star gets a unique quiet-square silver badge, not the round Music medallion');
+assert.match(html,/class="svcp-recognition-star" d="M32 7 L/,'Employee recognition uses a distinct eight-point star');
+assert.match(html,/class="svcp-recognition-heart"/,'Employee recognition is an appreciation symbol, not a Music favorite');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=46/,'New employee award style is cache-busted');
 for(const label of ["all:'Команда'","people:'Сотрудники'","extra:'Рабочие группы'","assistant:'Сэйви'"])
  assert.ok(js.includes(label),'Chat section '+label);
 assert.ok(js.includes("const managerDialog=employeePreviewActive()&&room.id==='dm-elena'"));
