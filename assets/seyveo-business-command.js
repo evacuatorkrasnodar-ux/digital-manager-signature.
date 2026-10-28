@@ -233,6 +233,10 @@ function updatePerspective(){
 chatRoot.querySelectorAll('[data-svcp-filter]').forEach(button=>
  button.addEventListener('click',()=>{state.filter=button.dataset.svcpFilter;renderDirectory()}));
 $('svcpConversationBack')?.addEventListener('click',showInbox);
+$('svcpConversationSearch')?.addEventListener('click',()=>{
+ showInbox();
+ $('svcpHistorySearch')?.focus({preventScroll:true});
+});
 $('svcpElenaPerspective')?.addEventListener('click',()=>{
  state.viewpoint=state.viewpoint==='elena'?'manager':'elena';
  clearReply();cancelTaskDraft();updatePerspective();renderChat();
