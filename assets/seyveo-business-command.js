@@ -316,8 +316,10 @@ $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
  input.style.setProperty('height','46px','important');
- const height=Math.min(138,Math.max(46,input.scrollHeight));
+ // Empty input stays one line: iOS otherwise measures the placeholder as text.
+ const height=input.value?Math.min(138,Math.max(46,input.scrollHeight)):46;
  input.style.setProperty('height',height+'px','important');
+ input.style.setProperty('overflow-y',input.value&&input.scrollHeight>138?'auto':'hidden','important');
 }
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
@@ -663,7 +665,8 @@ function updatePerspective(){
    :'Поручить написанное сотруднику');
   $('svcpChatForm')?.classList.toggle('svcp-can-assign',!!recipient);
  }
- $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
+ $('svcpChatInput').placeholder='Сообщение…';
+ resizeWorkComposer();
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
 }
 $('svcpRoomInfoToggle')?.addEventListener('click',()=>{
