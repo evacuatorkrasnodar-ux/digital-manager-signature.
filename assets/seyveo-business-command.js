@@ -307,11 +307,19 @@ function renderTasks(){
   const r=el('div','svcp-task'+(t.done?' is-done':''));
   const checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
   checkbox.setAttribute('aria-label','Отметить выполнение: '+t.text);
-  checkbox.addEventListener('change',()=>{t.done=checkbox.checked;save(TASK_KEY,state.tasks);renderTasks()});
+  checkbox.addEventListener('change',()=>{
+   const updated=state.tasks.map((item,index)=>index===i?{...item,done:checkbox.checked}:item);
+   if(!save(TASK_KEY,updated)){checkbox.checked=!checkbox.checked;return}
+   state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
+  });
   const text=el('span',null,t.text);
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    text.append(el('small','svcp-task-assignee','Для: '+STAFF[t.assigneeId]+' · демо'));
-  const remove=btn('Удалить',()=>{state.tasks.splice(i,1);save(TASK_KEY,state.tasks);renderTasks()},'svcp-ghost');
+  const remove=btn('Удалить',()=>{
+   const updated=state.tasks.filter((_,index)=>index!==i);
+   if(!save(TASK_KEY,updated))return;
+   state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
+  },'svcp-ghost');
   r.append(checkbox,text,remove);list.append(r);
  });
 }
@@ -328,6 +336,14 @@ root.querySelectorAll('[data-svcp-feature]').forEach(button=>
 /* Only a user-requested preview: this is not a real incoming push or an
    employee account. It uses the same already-saved demonstration task. */
 let previewStarted=false;
+function syncPreviewAfterTaskEdit(){
+ if(!state.lastDemoTaskId)return;
+ if(workTaskForPreview())return;
+ state.lastDemoTaskId=null;
+ previewStarted=false;
+ $('svcpWorkHomePreview').hidden=true;
+ $('svcpPreviewOnHome').hidden=true;
+}
 function workTaskForPreview(){
  return state.tasks.find(t=>t&&t.id===state.lastDemoTaskId&&t.assigneeId==='elena'&&!t.done)||null;
 }
