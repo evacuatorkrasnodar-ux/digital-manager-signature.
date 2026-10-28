@@ -469,3 +469,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  background:transparent;text-align:left;color:var(--text)
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-bubble{overflow:visible!important}
+
+/* Keep the pre-send audio control visually restrained until native player replacement. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceCapture[data-state="recording"] #svcpVoicePreview{display:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-bubble:focus-visible .svcp-message-actions{opacity:1;pointer-events:auto}
