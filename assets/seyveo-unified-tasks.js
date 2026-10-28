@@ -163,7 +163,7 @@
   const date=$('svcpEmployeeShiftDate');
   if(date)date.textContent=new Date(now).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
   const hint=$('svcpEmployeeClockHint');
-  if(hint)hint.textContent=onBreak?'Рабочий таймер на паузе'
+  if(hint)hint.textContent=onBreak?(activeBreakPolicy?.paid?'Оплачиваемый перерыв · время учитывается':'Рабочий таймер на паузе')
    :active?'Начало в '+new Date(start).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
    :todayMs>0?'Сегодняшняя смена завершена':'Смена не начата';
   const progress=$('svcpEmployeeProgress');
