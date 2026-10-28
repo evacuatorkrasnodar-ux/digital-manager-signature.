@@ -1039,6 +1039,43 @@
  #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-photo{width:68px;height:68px}
 }
 
+/* SEYVEO · Elena's dedicated work page. Single entry, no repeated selector. */
+#tasksPage[data-employee-mode="true"] #unifiedTasksTabs{display:none!important}
+#tasksPage[data-employee-mode="true"] .tasks-heading{margin:0 0 14px;padding-right:56px}
+#tasksPage[data-employee-mode="true"] .tasks-heading>h1{font-size:clamp(28px,7.4vw,36px);margin:3px 0 0;letter-spacing:-.04em}
+#tasksPage[data-employee-mode="true"] .tasks-heading>.manage-caption{letter-spacing:.14em;margin:0 0 6px}
+#tasksPage[data-employee-mode="true"] .tasks-heading>.svcp-tasks-back{margin:0 0 12px;min-height:40px;font-size:13px}
+#tasksPage[data-employee-mode="true"] #unifiedEmployeeTasksView{gap:13px;padding:0 0 calc(115px + env(safe-area-inset-bottom,0px))}
+#tasksPage .svcp-work-dashboard{display:grid;gap:12px;min-width:0}
+#tasksPage .svcp-work-dashboard[hidden]{display:none!important}
+#tasksPage .svcp-work-identity{display:flex;align-items:center;min-width:0;padding:12px 2px 2px;border-bottom:1px solid var(--soft-line)}
+#tasksPage .svcp-work-identity-text{display:grid;gap:4px;min-width:0}
+#tasksPage .svcp-work-identity-text strong{font-size:22px;font-weight:600;letter-spacing:-.035em;color:var(--text)}
+#tasksPage .svcp-work-identity-text small{font-size:12px;color:var(--secondary)}
+#tasksPage .svcp-work-duty{display:inline-flex;align-items:center;gap:7px;min-height:25px;font-size:11px;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage .svcp-work-duty i{display:block;flex:none;width:7px;height:7px;border-radius:50%;background:var(--secondary);opacity:.7}
+#tasksPage .svcp-work-duty[data-active="true"]{color:var(--seyveo-emerald)}
+#tasksPage .svcp-work-duty[data-active="true"] i{background:var(--seyveo-emerald);opacity:1;box-shadow:0 0 6px var(--seyveo-hdr-outline)}
+#tasksPage .svcp-work-shift-slot{min-width:0}
+#tasksPage .svcp-work-shift-slot>.svcp-employee-shift-card{width:100%}
+#tasksPage .svcp-work-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;min-width:0}
+#tasksPage .svcp-work-shortcuts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:88px;padding:10px 3px;border-radius:15px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card);color:var(--text);font:inherit;cursor:pointer;transition:background .15s}
+#tasksPage .svcp-work-shortcuts button:active{background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage .svcp-work-shortcuts button svg{width:24px;height:24px;fill:none;stroke:var(--seyveo-emerald);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#tasksPage .svcp-work-shortcuts button span{font-size:10.5px;line-height:1.24;text-align:center;font-weight:565;overflow-wrap:normal}
+#tasksPage .svcp-work-shortcuts button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#tasksPage[data-employee-mode="true"] .svcp-employee-assignments{padding:12px 2px 1px;border-top:1px solid var(--soft-line);scroll-margin-top:16px}
+#tasksPage[data-employee-mode="true"] .svcp-employee-assignments .svcp-employee-section-top h3{font-size:16px}
+#tasksPage[data-employee-mode="true"] #svcpEmployeeChats{scroll-margin-top:12px}
+#tasksPage[data-employee-mode="true"] .svcp-employee-demo-note{padding:0 2px}
+#tasksPage[data-employee-account-open="true"] .svcp-work-shift-slot{display:none!important}
+@media(max-width:360px){
+ #tasksPage .svcp-work-shortcuts{gap:5px}
+ #tasksPage .svcp-work-shortcuts button{min-height:81px;padding:8px 2px}
+ #tasksPage .svcp-work-shortcuts button span{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){#tasksPage .svcp-work-shortcuts button{transition:none}}
+
 /* Elena's work page: one compact navigation and one identity inside her account. */
 #tasksPage[data-employee-mode="true"] .tasks-heading{margin:0 0 12px}
 #tasksPage[data-employee-mode="true"] .tasks-heading>.svcp-tasks-back{margin:0 0 7px}
