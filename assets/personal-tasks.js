@@ -497,7 +497,7 @@ function render(){
  if(overview){
   const count=postponed.length+preview.length;
   overview.textContent=open.length||preview.length
-   ?'В работе · '+active.length+(count?'   /   Отложено · '+count:'')
+   ?'Мои дела · '+active.length+(count?'   /   Отложено · '+count:'')
    :'Сэйви соберёт здесь незавершённое, а ты сможешь добавить своё дело.';
  }
  // A continuation is offered only after a real task has been completed.
