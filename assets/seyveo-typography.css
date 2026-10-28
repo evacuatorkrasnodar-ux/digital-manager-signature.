@@ -233,3 +233,62 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
  #tasksPage .svcp-employee-schedule :is(.svcp-schedule-title h3,.svcp-schedule-selected-head strong,.svcp-schedule-selected-head span){font-size:calc(14px * var(--sv-text-scale))!important}
  #manageThemeScreen .sv-type-choice-row button{font-size:calc(12px * var(--sv-text-scale))}
 }
+
+/* Home cards: better legibility without changing their stage, animation or card geometry. */
+#homePage :is(.message .kicker,.timeline-history,.activity-empty,.personal-brief-head small,
+ .personal-brief-empty,.personal-brief-more){
+ font-size:calc(12px * var(--sv-text-scale))!important;line-height:1.42
+}
+#homePage :is(.timeline-title,.personal-brief-add){font-size:calc(14px * var(--sv-text-scale))!important}
+#homePage #seyveoLivingMoment :is(.lm-inline-title,.lm-primary-subtitle,.lm-inline-note,.lm-explanation,.lm-mail-intro,
+ .lm-mail-content p,.lm-mail-address,.lm-mail-note){
+ font-size:calc(13px * var(--sv-text-scale))!important;line-height:1.48
+}
+#homePage #seyveoLivingMoment :is(.lm-mail-draft,.lm-mail-edit-input){
+ font-size:calc(15px * var(--sv-text-scale))!important;line-height:1.5
+}
+#homePage #seyveoLivingMoment :is(.lm-caption,.lm-field-eyebrow){
+ font-size:calc(11px * var(--sv-text-scale))!important;line-height:1.35
+}
+/* Documents and vault: readable file names, descriptions and safe-action labels. */
+#sayviSurfacePage :is(.sv-doc-heading strong,.sv-vault-head strong,.sv-vault-row-text strong){
+ font-size:calc(var(--sv-type-regular) * var(--sv-text-scale))!important;line-height:1.43;overflow-wrap:anywhere
+}
+#sayviSurfacePage :is(.sv-doc-heading small,.sv-doc-status,.sv-doc-preview .sv-deep-file-text,.sv-doc-note,
+ .sv-vault-head small,.sv-doc-vault-summary small,.sv-vault-status,.sv-vault-count,.sv-vault-row-text small){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.47;overflow-wrap:anywhere
+}
+#sayviSurfacePage :is(.sv-doc-action,.sv-doc-file-link,.sv-doc-command,.sv-vault-row-actions .sv-doc-action){
+ font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important;line-height:1.4
+}
+/* Family and smart home: preserve icons and device sizes, increase actual words. */
+.svf-root :is(.svf-personas p,.svf-empty,.svf-suggestion p,.svf-join p,.svf-plans>p,.svf-privacy){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.48
+}
+.svf-root :is(.svf-msg span,.svf-suggestion strong,.svf-plan-entry label,.svf-join summary){
+ font-size:calc(var(--sv-type-regular) * var(--sv-text-scale))!important;line-height:1.48
+}
+.svf-root :is(.svf-action,.svf-send,.svf-tab){font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important}
+.svh-root :is(.svh-subtitle,.svh-muted,.svh-honest,.svh-sources small,.svh-message,.svh-label){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.49
+}
+.svh-root :is(.svh-scenes button,.svh-source-list button,.svh-text-action){
+ font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important
+}
+/* Private calls and wallet; card-brand micrographic is intentionally unchanged. */
+#seyveoContactsDialog :is(.personal-contacts-intro,.personal-contacts-privacy,.personal-call-help,#seyveoContactForm label){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.5
+}
+.syp-dialog :is(.syp-desc,.syp-panel p,.syp-note,.syp-status,.syp-listrow){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.49
+}
+.syp-dialog :is(.syp-action,.syp-btn){font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important}
+#sayviVideoPage :is(.sv-video-status,.sv-video-disclaimer,.sv-video-more summary){
+ font-size:calc(var(--sv-type-secondary) * var(--sv-text-scale))!important;line-height:1.52
+}
+#sayviVideoPage :is(.sv-video-back,.sv-video-saved button,.sv-video-saved a){
+ font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important
+}
+/* The work calendar's tiny seven-column labels cannot safely scale as body text. */
+#tasksPage .svcp-work-shortcuts button span{font-size:min(13.5px,calc(12px * var(--sv-text-scale)))!important}
+#tasksPage .svcp-schedule-month .svcp-schedule-day small{font-size:min(12px,calc(11px * var(--sv-text-scale)))!important}
