@@ -912,16 +912,16 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <section id="svcpChats" class="svcp-panel" data-svcp-panel="chats" role="region" aria-label="Рабочие чаты">
   <div id="svcpChatDirectory">
    <div class="svcp-directory-head"><div class="svcp-directory-heading"><strong>Все разговоры</strong><small>Личные сообщения, группы и Сэйви</small></div></div>
+   <label class="svcp-search-field" for="svcpHistorySearch">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>
+    <input id="svcpHistorySearch" type="search" autocomplete="off" maxlength="110" placeholder="Имя, должность, сообщение…" aria-label="Поиск по сотрудникам, чатам, сообщениям и поручениям">
+   </label>
    <div id="svcpChatFilters" class="svcp-chat-filters" role="group" aria-label="Фильтр рабочих диалогов">
     <button type="button" data-svcp-chat-filter="all" aria-pressed="true">Все</button>
     <button type="button" data-svcp-chat-filter="people" aria-pressed="false">Личные</button>
     <button type="button" data-svcp-chat-filter="groups" aria-pressed="false">Группы</button>
     <button type="button" data-svcp-chat-filter="saved" aria-pressed="false">Избранное</button>
    </div>
-   <label class="svcp-search-field" for="svcpHistorySearch">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>
-    <input id="svcpHistorySearch" type="search" autocomplete="off" maxlength="110" placeholder="Имя, должность, сообщение…" aria-label="Поиск по сотрудникам, чатам, сообщениям и поручениям">
-   </label>
    <div id="svcpConversationList" class="svcp-conversation-list" aria-live="polite"></div>
   </div>
   <div id="svcpConversation" hidden>
