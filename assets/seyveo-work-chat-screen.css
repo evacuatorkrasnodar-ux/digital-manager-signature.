@@ -586,3 +586,11 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  position:absolute;top:8px;right:9px;background:none;border:none;color:var(--secondary);
  font-size:20px;width:28px;height:28px
 }
+
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-polish-message{
+ flex:0 0 30px;width:30px;height:30px;min-width:30px;
+ display:inline-flex;align-items:center;justify-content:center;
+ border:1px solid rgba(103,214,171,.32);border-radius:50%;
+ color:#85dfba;background:rgba(65,161,124,.12);
+ font-size:23px;line-height:1;cursor:pointer;box-shadow:none
+}
