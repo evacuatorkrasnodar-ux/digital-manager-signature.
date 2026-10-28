@@ -302,3 +302,9 @@
 #seyveoBusinessCommandPage .svcp-conversation-bar #svcpReturnToTasks[hidden]{display:none!important}
 @media(max-width:365px){#tasksPage #svcpTaskList .svcp-task{gap:7px}#tasksPage #svcpTaskList .svcp-task-actions{min-width:67px}#tasksPage #svcpTaskList .svcp-task-actions button{font-size:11px;padding-inline:0}}
 @media(prefers-reduced-motion:reduce){#tasksPage #svcpTaskList .svcp-history-chevron{transition:none}}
+
+/* Task discussion · two calm suggestions, never auto-send. */
+#seyveoBusinessCommandPage .svcp-task-discussion-quick{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:9px 11px 6px;border-top:1px solid var(--soft-line)}
+#seyveoBusinessCommandPage .svcp-task-discussion-quick[hidden]{display:none!important}
+#seyveoBusinessCommandPage .svcp-task-discussion-quick button{min-height:36px;max-width:100%;padding:7px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:11.5px;cursor:pointer}
+#seyveoBusinessCommandPage .svcp-task-discussion-quick button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
