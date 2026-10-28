@@ -100,3 +100,26 @@
 #picturePage .sv-picture-efficiency .sv-picture-efficiency-disclaimer{margin:0 14px 7px;font-size:11.5px;line-height:1.5;color:var(--secondary)}
 #picturePage .sv-picture-efficiency .seyveo-roi-form{padding-inline:6px}
 @media(prefers-reduced-motion:reduce){#picturePage .sv-picture-efficiency .sv-picture-efficiency-arrow{transition:none}}
+
+
+/* SEYVEO · one Tasks space for private matters and team assignments. */
+#tasksPage #unifiedTasksTabs{margin:0 0 20px;border-color:var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage #unifiedTasksTabs button{cursor:pointer;min-height:44px}
+#tasksPage #unifiedTasksTabs button[aria-pressed=true]{background:var(--card);box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line))}
+#tasksPage #unifiedPersonalTasksView[hidden],#tasksPage #unifiedBusinessTasksView[hidden]{display:none!important}
+#tasksPage #unifiedBusinessTasksView{width:100%;min-width:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+#tasksPage .sv-unified-task-heading{margin:0 1px 14px}
+#tasksPage .sv-unified-task-heading strong{display:block;font-size:16px;line-height:1.4;font-weight:580;letter-spacing:-.018em}
+#tasksPage .sv-unified-task-heading p{margin:5px 0 0;color:var(--secondary);font-size:12px;line-height:1.55}
+#tasksPage #unifiedBusinessTasksHost{border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:19px;padding:12px 14px 8px;min-width:0;background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 60%,transparent)}
+#tasksPage #unifiedBusinessTasksHost #svcpTasks{min-width:0}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form{align-items:stretch;margin:5px 0 13px;gap:8px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form input{min-height:44px}
+#tasksPage #unifiedBusinessTasksHost .svcp-primary{min-height:44px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-list{min-height:38px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task{min-height:52px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task input[type=checkbox]{min-width:20px;min-height:20px;accent-color:var(--seyveo-emerald)}
+#tasksPage #unifiedBusinessTasksHost .svcp-status{margin:12px 0 4px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task-form input:focus-visible,
+#tasksPage #unifiedBusinessTasksHost .svcp-task input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+@media(max-width:360px){#tasksPage #unifiedBusinessTasksHost{padding-inline:10px}#tasksPage #unifiedBusinessTasksHost .svcp-task-form{gap:6px}}
