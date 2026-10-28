@@ -291,6 +291,7 @@ function focusTask(index){
 function showInbox(){
  closeRecognition();
  closeComposerEmoji();
+ setCameraTray(false);
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  state.viewpoint=employeePreviewActive()?'elena':'manager';
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
@@ -304,6 +305,7 @@ function showInbox(){
 function openRoom(roomId){
  closeRecognition();
  closeComposerEmoji();
+ setCameraTray(false);
  historyWindow=35;
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
