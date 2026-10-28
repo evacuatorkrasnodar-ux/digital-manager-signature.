@@ -37,8 +37,6 @@
 .svcp-team-empty p{max-width:345px;margin:0;color:var(--secondary);font-size:13px;line-height:1.62}
 .svcp-team-demo{display:block;margin-top:5px;color:var(--secondary);font-size:11px}
 .svcp-team-extra{margin:9px 0 0;border-top:1px solid var(--soft-line)}
-.svcp-task-form{display:flex;gap:8px;margin:14px 0}
-.svcp-task-form input{min-width:0;flex:1;border:1px solid var(--soft-line);border-radius:13px;background:rgba(111,129,114,.075);padding:10px 12px;color:var(--text);font:inherit;font-size:13px}
 .svcp-task-list{display:grid;gap:7px}
 .svcp-task{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--soft-line);padding:11px 0;font-size:13px;min-width:0}
 .svcp-task-copy{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px;overflow-wrap:anywhere}
@@ -118,16 +116,12 @@
 #tasksPage .sv-unified-task-heading p{margin:5px 0 0;color:var(--secondary);font-size:12px;line-height:1.55}
 #tasksPage #unifiedBusinessTasksHost{min-width:0;padding:0 2px 4px;border:0;border-radius:0;background:transparent;box-shadow:none}
 #tasksPage #unifiedBusinessTasksHost #svcpTasks{min-width:0}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form{align-items:stretch;margin:5px 0 13px;gap:8px}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form input{min-height:44px}
-#tasksPage #unifiedBusinessTasksHost .svcp-primary{min-height:44px}
 #tasksPage #unifiedBusinessTasksHost .svcp-task-list{min-height:38px;gap:0}
 #tasksPage #unifiedBusinessTasksHost .svcp-task{min-height:64px}
 #tasksPage #unifiedBusinessTasksHost .svcp-task input[type=checkbox]{min-width:20px;min-height:20px;accent-color:var(--seyveo-emerald)}
 #tasksPage #unifiedBusinessTasksHost .svcp-status{margin:12px 0 4px}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form input:focus-visible,
 #tasksPage #unifiedBusinessTasksHost .svcp-task input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-@media(max-width:360px){#tasksPage #unifiedBusinessTasksHost{padding-inline:10px}#tasksPage #unifiedBusinessTasksHost .svcp-task-form{gap:6px}}
+@media(max-width:360px){#tasksPage #unifiedBusinessTasksHost{padding-inline:10px}}
 
 
 /* SEYVEO Feather Work Chat · calm Black Velvet conversation. */
@@ -743,51 +737,16 @@
 }
 
 
-/* Recipient-first assignments: explicit person or each team member, never implicit. */
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form{
- display:grid;grid-template-columns:minmax(0,1fr) auto;
- gap:8px;align-items:end;margin:7px 0 15px
-}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form > #svcpTaskInput{
- grid-column:1/-1;min-width:0;min-height:44px
-}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-assignee-field{
- display:grid;gap:5px;min-width:0;color:var(--secondary);
- font-size:11.5px;line-height:1.25
-}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-assignee-field select{
- display:block;box-sizing:border-box;min-width:0;width:100%;height:44px;
- padding:9px 31px 9px 12px;border-radius:13px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
- background:var(--card);color:var(--text);font:inherit;font-size:13px;
- text-overflow:ellipsis
-}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary{min-height:44px}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-feedback{
- grid-column:1/-1;margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45
-}
-#tasksPage #unifiedBusinessTasksHost .svcp-task-feedback[hidden]{display:none!important}
+/* Old, unassigned demo tasks can still be assigned from their saved row. */
 #tasksPage #svcpTaskList .svcp-task-reassign{
  display:block;width:100%;max-width:220px;min-height:34px;
  margin-top:5px;padding:5px 8px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:10px;background:var(--card);color:var(--seyveo-emerald);
  font:inherit;font-size:12px
 }
-#tasksPage #unifiedBusinessTasksHost select:focus-visible{
+#tasksPage #svcpTaskList .svcp-task-reassign:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
 }
-@media(max-width:440px){
- #tasksPage #unifiedBusinessTasksHost .svcp-task-form{
-  grid-template-columns:minmax(0,1fr);
- }
- #tasksPage #unifiedBusinessTasksHost .svcp-task-form > #svcpTaskInput,
- #tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary,
- #tasksPage #unifiedBusinessTasksHost .svcp-task-feedback{
-  grid-column:1
- }
- #tasksPage #unifiedBusinessTasksHost .svcp-task-form>.svcp-primary{width:100%}
-}
-
 
 /* Direct one-tap assignment from the message composer to this employee.
    Keep the ordinary message button and optional emoji separate. */
