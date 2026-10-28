@@ -895,30 +895,88 @@
 #tasksPage #unifiedTasksTabs:has(button:nth-child(2)[hidden]):has(button:nth-child(3)[hidden]){grid-template-columns:minmax(0,1fr)!important}
 #tasksPage .svcp-large-note{margin:7px 0 0;padding:10px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.5}
 #tasksPage .svcp-large-note[hidden],#tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
-#tasksPage #unifiedEmployeeTasksView{min-width:0;display:grid;gap:16px;padding:0 2px 30px}
-#tasksPage .svcp-employee-intro{display:grid;gap:5px}
-#tasksPage .svcp-employee-kicker{color:var(--seyveo-emerald);font-size:10px;letter-spacing:.1em;font-weight:580}
-#tasksPage .svcp-employee-intro h2{font-size:20px;line-height:1.25;font-weight:600;margin:0}
-#tasksPage .svcp-employee-intro p{margin:0;color:var(--secondary);font-size:12px;line-height:1.45}
-#tasksPage .svcp-employee-shift>details.seyveo-hr-fold{margin:0;padding:12px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--card)}
-#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary{font-size:14px;font-weight:580;color:var(--text);cursor:pointer;list-style:none}
-#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary::-webkit-details-marker{display:none}
-#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary small{display:block;font-size:11px;color:var(--secondary);margin-top:4px;font-weight:400}
-#tasksPage .svcp-employee-shift .seyveo-shift-demo{display:grid;gap:9px;min-width:0;margin-top:12px}
-#tasksPage .svcp-employee-shift .seyveo-shift-demo>p,#tasksPage .svcp-employee-shift .seyveo-shift-demo>div{margin:0}
-#tasksPage .svcp-employee-shift .seyveo-shift-demo button{width:100%;min-height:44px;border-radius:13px}
-#tasksPage .svcp-employee-shift .seyveo-shift-label{font-size:12px;color:var(--secondary)}
-#tasksPage .svcp-employee-shift .svcp-shift-explanation{font-size:11px;color:var(--secondary);line-height:1.5}
-#tasksPage .svcp-employee-shift .svcp-shift-explanation summary{cursor:pointer;color:var(--seyveo-emerald)}
-#tasksPage .svcp-employee-shift .svcp-shift-explanation small{display:block;margin-top:8px;font-size:11px;line-height:1.5}
-#tasksPage .svcp-employee-assignments,#tasksPage .svcp-employee-chats{display:grid;gap:9px;min-width:0}
-#tasksPage .svcp-employee-section-top{display:flex;justify-content:space-between;align-items:center}
-#tasksPage .svcp-employee-section-top h3{font-size:15px;font-weight:570;margin:0}
-#tasksPage .svcp-employee-section-top span{color:var(--secondary);font-size:12px}
-#tasksPage .svcp-employee-empty{color:var(--secondary);font-size:12px;margin:0}
-#tasksPage .svcp-employee-task{display:flex;align-items:center;min-height:46px;gap:10px;border-bottom:1px solid var(--soft-line);color:var(--text);font-size:13px}
-#tasksPage .svcp-employee-task input{accent-color:var(--seyveo-emerald);width:19px;height:19px;flex:none}
-#tasksPage .svcp-employee-task span{flex:1;min-width:0;overflow-wrap:anywhere}
-#tasksPage .svcp-employee-task.is-done span{text-decoration:line-through;color:var(--secondary)}
-#tasksPage #unifiedEmployeeChatHost{min-width:0}
-#tasksPage #unifiedEmployeeChatHost #svcpChats{display:block}
+
+/* Black Velvet employee dashboard: all widgets remain original, compact and accessible. */
+#tasksPage #unifiedEmployeeTasksView{display:grid;gap:15px;min-width:0;padding:0 1px 28px}
+#tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
+#tasksPage .svcp-employee-intro{display:block;margin:0;padding:0 1px}
+#tasksPage .svcp-employee-profile{display:flex;align-items:center;gap:10px;min-width:0}
+#tasksPage .svcp-employee-avatar{display:grid;place-items:center;flex:none;width:45px;height:45px;border-radius:16px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:22px;font-weight:580}
+#tasksPage .svcp-employee-person{display:grid;gap:3px;flex:1;min-width:0}
+#tasksPage .svcp-employee-kicker{font-size:9px;letter-spacing:.13em;font-weight:620;color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-person h2{margin:0;color:var(--text);font-size:20px;letter-spacing:-.025em;line-height:1.2;font-weight:600}
+#tasksPage .svcp-employee-person p{margin:0;color:var(--secondary);font-size:11px}
+#tasksPage .svcp-employee-duty{display:inline-flex;gap:5px;align-items:center;flex:none;color:var(--secondary);font-size:10px;white-space:nowrap;font-weight:540}
+#tasksPage .svcp-employee-duty>span{width:6px;height:6px;flex:none;border-radius:50%;background:currentColor;opacity:.55}
+#tasksPage .svcp-employee-duty[data-active="true"]{color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-duty[data-active="true"]>span{opacity:1;box-shadow:0 0 8px currentColor}
+#tasksPage .svcp-employee-shift-card{display:grid;gap:9px;min-width:0;padding:16px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:21px;background:linear-gradient(145deg,var(--seyveo-specular,rgba(57,125,90,.06)),transparent 65%),var(--card)}
+#tasksPage .svcp-employee-shift-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#tasksPage .svcp-employee-shift-top strong{font-size:12px;font-weight:570;color:var(--text)}
+#tasksPage .svcp-employee-shift-top time{font-size:11px;color:var(--secondary)}
+#tasksPage .svcp-employee-live-clock{font-size:clamp(37px,10.2vw,58px);line-height:1.1;letter-spacing:-.048em;font-variant-numeric:tabular-nums;font-weight:510;color:var(--text);margin:7px 0 0}
+#tasksPage .svcp-employee-shift-card[data-active="true"] .svcp-employee-live-clock{color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-clock-hint{font-size:11px;line-height:1.45;color:var(--secondary);margin:0 0 2px}
+#tasksPage .svcp-employee-progress{height:5px;overflow:hidden;border-radius:999px;background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage .svcp-employee-progress>span{height:100%;width:0;max-width:100%;display:block;border-radius:inherit;background:var(--seyveo-emerald);transition:width .4s}
+#tasksPage .svcp-employee-progress-labels{display:flex;justify-content:space-between;gap:8px;color:var(--secondary);font-size:10.5px}
+#tasksPage .svcp-employee-shift{min-width:0}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold{margin:4px 0 0;padding:0;border:0;background:transparent}
+#tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary{display:none!important}
+#tasksPage .svcp-employee-shift .seyveo-shift-demo{display:grid;gap:6px;margin:0;padding:0}
+#tasksPage .svcp-employee-shift #seyveoShiftToggle{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;border-radius:15px;border:1px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:14px;font-weight:620;cursor:pointer}
+#tasksPage .svcp-employee-shift #seyveoShiftToggle[aria-pressed="true"]{border-color:var(--soft-line)}
+#tasksPage .svcp-employee-shift #seyveoShiftStatus{font-size:10px;color:var(--secondary);margin:0;line-height:1.35}
+#tasksPage .svcp-employee-hours{display:grid;gap:10px;min-width:0}
+#tasksPage .svcp-employee-section-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#tasksPage .svcp-employee-section-top h3{margin:0;color:var(--text);font-size:14px;font-weight:600}
+#tasksPage .svcp-employee-section-top>span{color:var(--secondary);font-size:11px}
+#tasksPage .svcp-employee-hour-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#tasksPage .svcp-employee-hour-grid>div{display:grid;gap:6px;min-width:0;padding:11px 10px;border-radius:15px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card)}
+#tasksPage .svcp-employee-hour-grid small{color:var(--secondary);font-size:10px}
+#tasksPage .svcp-employee-hour-grid strong{font-size:15px;font-weight:620;line-height:1.3;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums}
+#tasksPage .svcp-employee-hour-details{min-width:0;border:1px solid var(--soft-line);border-radius:14px;overflow:hidden}
+#tasksPage .svcp-employee-hour-details>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:11px 13px;color:var(--text);font-size:12px}
+#tasksPage .svcp-employee-hour-details>summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-employee-hour-details>summary span{font-size:18px;color:var(--secondary);transition:transform .15s}
+#tasksPage .svcp-employee-hour-details[open]>summary span{transform:rotate(90deg)}
+#tasksPage .svcp-employee-history{padding:0 13px}
+#tasksPage .svcp-employee-history-row{display:flex;justify-content:space-between;gap:9px;padding:9px 0;border-top:1px solid var(--soft-line);color:var(--text);font-size:11px}
+#tasksPage .svcp-employee-history-row>span{color:var(--secondary)}
+#tasksPage .svcp-employee-history-empty{margin:0 0 10px;color:var(--secondary);font-size:11px}
+#tasksPage .svcp-employee-hours-settings{display:grid;gap:11px;padding:12px 13px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-employee-hours-settings .seyveo-shift-label{font-size:11px;color:var(--secondary)}
+#tasksPage .svcp-employee-hours-settings .seyveo-shift-label input{max-width:100px;min-height:37px}
+#tasksPage .svcp-employee-hours-settings #seyveoShiftSummary{color:var(--secondary);font-size:11px;line-height:1.5}
+#tasksPage .svcp-employee-hours-settings #seyveoShiftExport{min-height:42px;border:1px solid var(--soft-line);border-radius:12px;background:transparent;color:var(--text);font:inherit;font-size:12px}
+#tasksPage .svcp-employee-hours-settings .svcp-shift-explanation{font-size:11px;color:var(--secondary)}
+#tasksPage .svcp-employee-hours-settings .svcp-shift-explanation summary{cursor:pointer;color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-hours-settings .svcp-shift-explanation small{display:block;margin-top:8px;line-height:1.5;font-size:10.5px}
+#tasksPage .svcp-employee-assignments{display:grid;gap:8px;min-width:0}
+#tasksPage .svcp-employee-task{display:flex;align-items:center;gap:10px;min-height:46px;border-bottom:1px solid var(--soft-line);font-size:12.5px;color:var(--text)}
+#tasksPage .svcp-employee-task-label{display:flex;align-items:center;gap:9px;flex:1;min-width:0;cursor:pointer}
+#tasksPage .svcp-employee-task-label input{width:19px;height:19px;flex:none;accent-color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-task-label span{min-width:0;flex:1;overflow-wrap:anywhere}
+#tasksPage .svcp-employee-task.is-done .svcp-employee-task-label span{color:var(--secondary);text-decoration:line-through}
+#tasksPage .svcp-employee-task-chat{border:0;background:none;padding:8px 0;color:var(--seyveo-emerald);font:inherit;font-size:11px;cursor:pointer;flex:none}
+#tasksPage .svcp-employee-empty{margin:0;color:var(--secondary);font-size:11px}
+#tasksPage .svcp-employee-recognition{display:flex;align-items:center;gap:11px;min-height:59px;padding:12px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--card)}
+#tasksPage .svcp-employee-thanks-symbol{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:22px}
+#tasksPage .svcp-employee-thanks-copy{display:grid;gap:3px;flex:1;min-width:0}
+#tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
+#tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#tasksPage .svcp-employee-recognition>strong{font-size:22px;font-weight:590;color:var(--seyveo-emerald)}
+#tasksPage .svcp-employee-chats{min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;overflow:hidden;background:var(--card)}
+#tasksPage .svcp-employee-chats>summary{display:flex;align-items:center;gap:10px;min-height:59px;padding:10px 13px;cursor:pointer;list-style:none}
+#tasksPage .svcp-employee-chats>summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-employee-chats-glyph{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:20px}
+#tasksPage .svcp-employee-chats>summary>span:nth-child(2){display:grid;gap:3px;flex:1;min-width:0}
+#tasksPage .svcp-employee-chats>summary strong{color:var(--text);font-size:13px;font-weight:570}
+#tasksPage .svcp-employee-chats>summary small{font-size:11px;color:var(--secondary)}
+#tasksPage .svcp-employee-chevron{font-size:21px;color:var(--secondary);transition:transform .15s}
+#tasksPage .svcp-employee-chats[open] .svcp-employee-chevron{transform:rotate(90deg)}
+#tasksPage .svcp-employee-chats #unifiedEmployeeChatHost{min-width:0;padding:8px 10px 12px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-employee-chats #unifiedTasksChatHost{margin:0;padding:0;min-width:0}
+#tasksPage .svcp-employee-demo-note{color:var(--secondary);font-size:10px;line-height:1.4;margin:0 2px}
+#tasksPage .svcp-employee-shift button:focus-visible,#tasksPage .svcp-employee-chats>summary:focus-visible,#tasksPage .svcp-employee-hour-details>summary:focus-visible,#tasksPage .svcp-employee-task-chat:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
+@media(max-width:360px){#tasksPage .svcp-employee-avatar{width:40px;height:40px}#tasksPage .svcp-employee-duty{font-size:9px}#tasksPage .svcp-employee-shift-card{padding:13px}#tasksPage .svcp-employee-hour-grid{gap:5px}#tasksPage .svcp-employee-hour-grid>div{padding:10px 7px}#tasksPage .svcp-employee-hour-grid strong{font-size:13px}}
