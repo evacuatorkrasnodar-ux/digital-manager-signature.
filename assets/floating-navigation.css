@@ -378,6 +378,10 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  border-color:rgba(159,188,243,.27)!important;
  background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
+:root[data-theme=dark][data-palette=plum] .dock{
+ border-color:rgba(226,184,204,.25)!important;
+ background:linear-gradient(155deg,rgba(255,226,240,.068),rgba(194,137,168,.027) 46%,transparent 77%),rgba(44,31,43,.97)!important;
+}
 :root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(37,50,59,.55),rgba(26,36,43,.36) 54%,rgba(17,24,30,0) 100%)!important;
@@ -393,6 +397,14 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(43,61,104,.63),rgba(30,45,78,.44) 58%,rgba(14,23,41,0) 100%)!important;
 }
 
+
+:root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded){
+ --sv-ink-input-text:#f7e9ed;--sv-ink-input-hint:#d7bfc9;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(89,60,79,.59),rgba(55,37,53,.40) 54%,rgba(33,23,34,0) 100%)!important;
+}
+:root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded):focus-within{
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(110,73,95,.65),rgba(71,47,66,.46) 58%,rgba(33,23,34,0) 100%)!important;
+}
 
 /* Original SEYVEO ceramic button: its existing SVG metal and ceramic now
    inherit palette pigments. No second SVG/button, no layout or animation edits. */
@@ -417,6 +429,14 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  --sv-ceramic-rim-1:#97b4ea;--sv-ceramic-rim-2:#f0f5ff;
  --sv-ceramic-rim-3:#bacbf1;--sv-ceramic-rim-4:#7b99d2;
  --sv-ceramic-rim-5:#f6f8ff;--sv-ceramic-rim-6:#a5bce9;--sv-ceramic-rim-7:#7895c9;
+}
+:root[data-theme=dark][data-palette=plum] .dock>#assistantButton{
+ --sv-ceramic-wave:#f9dbe7;--sv-ceramic-pressed:#704b63;
+ --sv-ceramic-face-1:#6d5265;--sv-ceramic-face-2:#5c4356;
+ --sv-ceramic-face-3:#4e384b;--sv-ceramic-face-4:#442f42;--sv-ceramic-face-5:#382738;
+ --sv-ceramic-rim-1:#dec0cf;--sv-ceramic-rim-2:#fff1f6;
+ --sv-ceramic-rim-3:#e5cad7;--sv-ceramic-rim-4:#bc96ac;
+ --sv-ceramic-rim-5:#fff7fa;--sv-ceramic-rim-6:#d7b3c5;--sv-ceramic-rim-7:#ab879d;
 }
 :root[data-theme=light] .dock>#assistantButton{
  --sv-ceramic-wave:#283443;

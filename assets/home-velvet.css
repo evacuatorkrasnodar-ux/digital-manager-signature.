@@ -253,3 +253,9 @@
  --home-outline:rgba(163,186,241,.23);
  --home-glint:rgba(233,240,255,.065);
 }
+
+:root[data-theme=dark][data-palette=plum] #homePage{
+ --home-glass:rgba(58,42,55,.74);
+ --home-outline:rgba(230,189,205,.21);
+ --home-glint:rgba(255,228,241,.070);
+}

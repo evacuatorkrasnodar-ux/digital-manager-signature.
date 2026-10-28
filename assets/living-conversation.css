@@ -367,6 +367,18 @@ html.seyveo-conversation[data-theme=dark][data-palette=sapphire]{
  --sv-chat-stop-gradient:linear-gradient(145deg,#668bd8,#3458ac);
  --sv-chat-owner-bg:rgba(191,211,255,.076);--sv-chat-owner-border:rgba(162,188,246,.19);
 }
+html.seyveo-conversation[data-theme=dark][data-palette=plum]{
+ --seyveo-emerald-text:#f1cdd8;--seyveo-emerald-border:rgba(235,183,205,.24);
+ --seyveo-emerald-panel:rgba(51,36,49,.92);--seyveo-emerald-active:#f0d1dc;
+ --sv-chat-sayvi-gradient:linear-gradient(150deg,rgba(181,125,151,.20),rgba(84,54,76,.10) 46%,transparent 83%);
+ --sv-chat-send-gradient:linear-gradient(145deg,rgba(164,105,132,.67),rgba(102,64,88,.87));
+ --sv-chat-canvas:
+  radial-gradient(ellipse 108vw 475px at 50% 232px,rgba(255,230,242,.045),transparent 87%),
+  linear-gradient(180deg,#211b21 0%,#332832 52%,#281e29 100%);
+ --sv-chat-composer-gradient:linear-gradient(180deg,rgba(95,66,83,.30),rgba(67,43,62,.45) 52%,rgba(44,29,42,.24));
+ --sv-chat-stop-gradient:linear-gradient(145deg,#b27b96,#82556f);
+ --sv-chat-owner-bg:rgba(244,199,218,.073);--sv-chat-owner-border:rgba(237,190,212,.18);
+}
 html.seyveo-conversation[data-theme=light]{
  --sv-chat-canvas:linear-gradient(180deg,#fafbfc,#f0f3f7);
  --sv-chat-sayvi-gradient:linear-gradient(145deg,rgba(201,216,230,.33),transparent 82%);
