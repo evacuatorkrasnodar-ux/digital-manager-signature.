@@ -29,7 +29,7 @@ const ROOMS=[
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
-let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='';
+let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -199,6 +199,7 @@ function showInbox(){
 }
 function openRoom(roomId){
  closeRecognition();
+ historyWindow=35;
  $('svcpRecognizeOpenCard').hidden=true;lastRecognizedPerson=null;
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
  state.room=selected.id;
@@ -344,7 +345,12 @@ function renderChat(){
  const focusAt=focusSearchIndex===null?-1:messages.findIndex(x=>x.index===focusSearchIndex);
  const visible=focusAt>=0
   ?messages.slice(Math.max(0,focusAt-16),Math.min(messages.length,focusAt+17))
-  :messages.slice(-35);
+  :messages.slice(-historyWindow);
+ const older=$('svcpLoadOlder');
+ if(older){
+  older.hidden=focusAt>=0||messages.length<=historyWindow;
+  older.textContent='↑ Ранние сообщения · ещё '+Math.max(0,messages.length-historyWindow);
+ }
  if(!visible.length){
   thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
@@ -380,6 +386,12 @@ function renderChat(){
   focusSearchIndex=null;
  }else thread.scrollTop=thread.scrollHeight;
 }
+$('svcpLoadOlder')?.addEventListener('click',()=>{
+ historyWindow=Math.min(500,historyWindow+35);
+ renderChat();
+ const thread=$('svcpMessages');
+ if(thread)thread.scrollTop=0;
+});
 function startReply(msg){
  state.replyTo={text:String(msg.text||'').slice(0,160),sender:senderName(msg)};
  $('svcpReplyText').textContent='Ответ на: '+state.replyTo.sender+' · '+state.replyTo.text;
@@ -785,9 +797,16 @@ preparePeopleContent();
 renderTasks();
 tab('chats');
 window.addEventListener('storage',event=>{
- if(event.key!==TASK_KEY)return;
- state.tasks=read(TASK_KEY);
- renderTasks();
- syncPreviewAfterTaskEdit();
+ if(event.key===CHAT_KEY){
+  state.chat=read(CHAT_KEY);
+  renderDirectory();
+  if(!$('svcpConversation').hidden)renderChat();
+ }
+ if(event.key===TASK_KEY){
+  state.tasks=read(TASK_KEY);
+  renderTasks();
+  syncPreviewAfterTaskEdit();
+  if(historyQuery.trim())renderHistorySearch();
+ }
 });
 })();
