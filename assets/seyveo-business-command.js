@@ -175,7 +175,10 @@ async function startVoice(){
   const mime=choices.find(type=>{try{return MediaRecorder.isTypeSupported(type)}catch{return false}});
   let recorder;
   try{recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined)}
-  catch{recorder=new MediaRecorder(stream)}
+  catch{
+   try{recorder=new MediaRecorder(stream)}
+   catch(error){releaseVoiceStream(stream);throw error}
+  }
   const session={recorder,stream,chunks:[],room:state.room,viewpoint:state.viewpoint,
    started:Date.now(),timer:null,finished:false,discard:false,token:requested};
   voiceSession=session;
