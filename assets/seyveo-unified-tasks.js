@@ -79,11 +79,22 @@
   const shown=!!open&&isEmployee();
   employeeAccount.hidden=!shown;
   employee.dataset.accountOpen=String(shown);
+  page.dataset.employeeAccountOpen=String(shown);
+  const topBackLabel=$('unifiedTasksBackLabel');
+  if(topBackLabel)topBackLabel.textContent=shown?'К работе':(exitTarget==='manage'?'В бизнес':'На Главную');
   employeeProfileToggle.setAttribute('aria-expanded',String(shown));
   employeeProfileToggle.setAttribute('aria-label',shown
    ?'Закрыть личный кабинет Елены, вернуться к поручениям и чатам'
    :'Открыть кабинет Елены: смены, часы и благодарности');
-  if(shown){renderEmployeeClock();renderEmployeeThanks()}
+  if(shown){
+   renderEmployeeClock();renderEmployeeThanks();
+   requestAnimationFrame(()=>{
+    if(location.hash!=='#tasks'||employeeAccount.hidden)return;
+    const viewport=document.querySelector('.app');
+    if(viewport)viewport.scrollTop=0;
+    window.scrollTo(0,0);
+   });
+  }
  }
  employeeProfileToggle?.addEventListener('click',()=>setEmployeeAccountOpen(employeeAccount?.hidden));
  employeeAccountBack?.addEventListener('click',()=>{
@@ -292,7 +303,7 @@
  function returnFromPulse(){navigate('team')}
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
-  if(label)label.textContent=exitTarget==='manage'?'В бизнес':'На Главную';
+  if(label)label.textContent=employeeAccount&&!employeeAccount.hidden?'К работе':(exitTarget==='manage'?'В бизнес':'На Главную');
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
   if(employeeAccount&&!employeeAccount.hidden){setEmployeeAccountOpen(false);return}
@@ -318,6 +329,7 @@
   const chosen=isEmployee()?(view==='personal'?'personal':'employee'):
    isManager()?(view==='business'?'business':'personal'):'personal';
   lastWorkView=chosen;
+  page.dataset.employeeMode=String(chosen==='employee');
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
   if(employeeProfileToggle)employeeProfileToggle.hidden=chosen!=='employee';
@@ -338,6 +350,7 @@
   lastWorkView='business';
   personal.hidden=true;business.hidden=false;
   if(employee)employee.hidden=true;
+  page.dataset.employeeMode='false';
   if(employeeProfileToggle)employeeProfileToggle.hidden=true;
   setEmployeeAccountOpen(false);
   if(overview)overview.hidden=true;
