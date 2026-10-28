@@ -1631,10 +1631,10 @@ html.sv-space-active #lifePage .life-footnote{margin-top:12px!important}
  --sv-life-dialog-bg:#192845;--sv-life-contacts-bg:#1a2942;
 }
 :root[data-theme=dark][data-palette=plum]{
- --sv-life-viewport-gradient:linear-gradient(180deg,#231d18 0%,#2c231b 28%,#392b21 55%,#483325 78%,#241d17 100%);
- --sv-life-inner-gradient:linear-gradient(155deg,#292119 0%,#3b2c21 46%,#292019 100%);
- --sv-life-tile-gradient:linear-gradient(157deg,rgba(255,230,192,.096),rgba(195,141,80,.041) 47%,rgba(85,52,30,.024));
- --sv-life-dialog-bg:#35291f;--sv-life-contacts-bg:#32261d;
+ --sv-life-viewport-gradient:linear-gradient(180deg,#1c1b1a 0%,#23211f 28%,#292521 55%,#302a24 78%,#1b1a19 100%);
+ --sv-life-inner-gradient:linear-gradient(155deg,#211f1d 0%,#2b2723 46%,#211f1d 100%);
+ --sv-life-tile-gradient:linear-gradient(157deg,rgba(245,231,213,.063),rgba(168,133,97,.024) 47%,rgba(68,55,44,.016));
+ --sv-life-dialog-bg:#282420;--sv-life-contacts-bg:#27231f;
 }
 :root[data-theme=light]{
  --sv-life-viewport-gradient:linear-gradient(180deg,#fafbfc 0%,#f6f8fa 58%,#f0f3f7 100%);

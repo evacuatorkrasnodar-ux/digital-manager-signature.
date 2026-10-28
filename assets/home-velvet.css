@@ -255,7 +255,7 @@
 }
 
 :root[data-theme=dark][data-palette=plum] #homePage{
- --home-glass:rgba(60,43,30,.76);
- --home-outline:rgba(228,190,140,.23);
- --home-glint:rgba(255,230,187,.078);
+ --home-glass:rgba(39,36,32,.77);
+ --home-outline:rgba(206,176,143,.17);
+ --home-glint:rgba(255,235,210,.052);
 }
