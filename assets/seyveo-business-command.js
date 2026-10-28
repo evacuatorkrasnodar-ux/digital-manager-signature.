@@ -82,6 +82,9 @@ function restoreStoredMedia(container,message){
    const picture=el('img','svcp-chat-media-image');
    picture.src=url;picture.alt='Фото: '+(record.name||'рабочая съёмка');picture.loading='lazy';
    slot.append(picture);
+  }else if(record.type?.startsWith('audio/')||message.mediaType?.startsWith('audio/')){
+   const audio=el('audio','svcp-chat-media-audio');audio.src=url;audio.controls=true;audio.preload='metadata';
+   audio.setAttribute('aria-label','Голосовое сообщение');slot.append(audio);
   }else if(record.type?.startsWith('video/')){
    const video=el('video','svcp-chat-media-video');
    video.src=url;video.controls=true;video.playsInline=true;video.preload='metadata';
@@ -94,6 +97,168 @@ function restoreStoredMedia(container,message){
   slot.append(note);
  }).catch(()=>{if(slot.isConnected)slot.textContent='Вложение недоступно в этом браузере'});
 }
+
+
+/* One real audio recording flow, using the existing local chat and IndexedDB.
+ * No dictation, upload, background mic or cross-device delivery.
+ * Tap mic -> stop -> review -> send (or discard). */
+const voiceRecordButton=$('svcpVoiceRecord'),voicePanel=$('svcpVoiceCapture');
+const voiceStopButton=$('svcpVoiceStop'),voiceSendButton=$('svcpVoiceSend'),voiceCancelButton=$('svcpVoiceCancel');
+const voicePreview=$('svcpVoicePreview'),voiceClock=$('svcpVoiceClock'),voiceLabel=$('svcpVoiceLabel');
+const voiceHint=$('svcpVoiceHint');
+let voiceSession=null,voiceDraft=null,voicePreviewUrl=null,voiceRequestId=0,voiceSaving=false;
+function voiceDuration(ms){
+ const seconds=Math.max(0,Math.floor(ms/1000));
+ return String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+}
+function releaseVoiceStream(stream){
+ try{stream?.getTracks().forEach(track=>track.stop())}catch{}
+}
+function clearVoiceDraft(){
+ voiceDraft=null;
+ if(voicePreview) {
+  voicePreview.pause();voicePreview.removeAttribute('src');voicePreview.load();
+  voicePreview.hidden=true;
+ }
+ if(voicePreviewUrl){URL.revokeObjectURL(voicePreviewUrl);voicePreviewUrl=null}
+}
+function setVoicePanel(open,stateName='recording'){
+ if(!voicePanel)return;
+ voicePanel.hidden=!open;voicePanel.dataset.state=stateName;
+ voiceRecordButton?.setAttribute('aria-expanded',String(open));
+ if(voiceStopButton)voiceStopButton.hidden=stateName!=='recording';
+ if(voiceSendButton)voiceSendButton.hidden=stateName!=='ready';
+ if(voiceLabel)voiceLabel.textContent=stateName==='recording'?'Идёт запись голоса':
+  stateName==='processing'?'Подготавливаю запись…':'Голосовое сообщение';
+}
+function cancelVoice(){
+ voiceRequestId++;
+ if(voiceSession){
+  const current=voiceSession;voiceSession=null;
+  current.discard=true;clearInterval(current.timer);
+  releaseVoiceStream(current.stream);
+  try{if(current.recorder?.state!=='inactive')current.recorder.stop()}catch{}
+ }
+ clearVoiceDraft();setVoicePanel(false);
+ if(voiceClock)voiceClock.textContent='00:00';
+ voiceSaving=false;
+ if(voiceSendButton)voiceSendButton.disabled=false;
+}
+function stopVoice(){
+ const current=voiceSession;
+ if(!current||current.finished)return;
+ current.finished=true;clearInterval(current.timer);
+ setVoicePanel(true,'processing');
+ if(voiceHint)voiceHint.textContent='Сохраняю запись для прослушивания…';
+ // Stop the mic immediately even before the encoder finishes its final chunk.
+ try{
+  if(current.recorder.state!=='inactive')current.recorder.stop();
+  else current.recorder.onstop?.();
+ }catch{
+  current.discard=true;releaseVoiceStream(current.stream);voiceSession=null;
+  setStatus('Не удалось завершить запись голоса.');cancelVoice();
+ }
+ releaseVoiceStream(current.stream);
+}
+async function startVoice(){
+ if(voiceSession){stopVoice();return}
+ if(voiceSaving)return;
+ if(voiceDraft){setStatus('Сначала отправь или удали уже записанное голосовое.');return}
+ if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){
+  setStatus('Запись голоса недоступна в этом браузере. Нужен доступ к микрофону через HTTPS.');return;
+ }
+ const requested=++voiceRequestId;
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  if(requested!==voiceRequestId){releaseVoiceStream(stream);return}
+  const choices=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];
+  const mime=choices.find(type=>{try{return MediaRecorder.isTypeSupported(type)}catch{return false}});
+  let recorder;
+  try{recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined)}
+  catch{recorder=new MediaRecorder(stream)}
+  const session={recorder,stream,chunks:[],room:state.room,viewpoint:state.viewpoint,
+   started:Date.now(),timer:null,finished:false,discard:false,token:requested};
+  voiceSession=session;
+  recorder.ondataavailable=e=>{if(e.data?.size)session.chunks.push(e.data)};
+  recorder.onerror=()=>{
+   if(session.discard)return;
+   setStatus('Ошибка записи. Проверь разрешение на микрофон.');
+   cancelVoice();
+  };
+  recorder.onstop=()=>{
+   releaseVoiceStream(session.stream);clearInterval(session.timer);
+   if(session.discard||voiceSession!==session||session.token!==voiceRequestId)return;
+   voiceSession=null;
+   const duration=Math.max(0,Date.now()-session.started);
+   const mimeType=recorder.mimeType||session.chunks[0]?.type||'audio/mp4';
+   const audio=new Blob(session.chunks,{type:mimeType});
+   if(!audio.size||duration<450){
+    setStatus('Запись слишком короткая. Попробуй ещё раз.');cancelVoice();return;
+   }
+   voiceDraft={blob:audio,duration,room:session.room,viewpoint:session.viewpoint};
+   if(voicePreview){
+    voicePreviewUrl=URL.createObjectURL(audio);
+    voicePreview.src=voicePreviewUrl;voicePreview.hidden=false;
+   }
+   if(voiceHint)voiceHint.textContent='Прослушай запись и отправь, либо удали.';
+   setVoicePanel(true,'ready');
+  };
+  try{recorder.start(300)}
+  catch(error){session.discard=true;voiceSession=null;releaseVoiceStream(stream);throw error}
+  clearVoiceDraft();
+  setVoicePanel(true,'recording');
+  if(voiceClock)voiceClock.textContent='00:00';
+  if(voiceHint)voiceHint.textContent='Нажми «Остановить», чтобы прослушать голосовое перед отправкой.';
+  session.timer=setInterval(()=>{
+   if(voiceSession!==session)return;
+   const duration=Date.now()-session.started;
+   if(voiceClock)voiceClock.textContent=voiceDuration(duration);
+   if(duration>=120000)stopVoice();
+  },250);
+ }catch(error){
+  if(requested!==voiceRequestId)return;
+  const denied=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError';
+  setStatus(denied?'Для голосовых сообщений разреши доступ к микрофону в настройках браузера.':
+   'Не удалось включить запись голоса. Проверь микрофон и разрешения.');
+  cancelVoice();
+ }
+}
+async function sendVoice(){
+ if(voiceSaving||!voiceDraft)return;
+ if(voiceSession){stopVoice();return}
+ const draft=voiceDraft;
+ if(state.room!==draft.room){
+  setStatus('Запись начата в другом чате. Вернись туда или удали запись.');return;
+ }
+ voiceSaving=true;if(voiceSendButton)voiceSendButton.disabled=true;
+ const mime=draft.blob.type||'audio/mp4';
+ const ext=mime.includes('mp4')?'m4a':mime.includes('ogg')?'ogg':'webm';
+ const name='seyveo-voice-'+Date.now()+'.'+ext;
+ try{
+  const file=new File([draft.blob],name,{type:mime});
+  const mediaId=await saveMediaLocally(file);
+  // The same room history and one recipient context as text messages.
+  const entry={room:draft.room,text:'Голосовое сообщение · '+voiceDuration(draft.duration),
+   at:Date.now(),role:draft.viewpoint==='elena'?'demo-elena':'self',
+   mediaId,mediaType:mime,mediaPurpose:'voice',audioDuration:Math.round(draft.duration/1000)};
+  const updated=state.chat.concat(entry).slice(-500);
+  if(!save(CHAT_KEY,updated))return;
+  state.chat=updated;
+  cancelVoice();
+  renderChat();renderDirectory();
+  setStatus('Голосовое сообщение сохранено в переписке на этом устройстве. Другим людям пока не доставляется.');
+ }catch{
+  setStatus('Не получилось сохранить голосовое на устройстве. Проверь свободное место и повтори.');
+ }finally{
+  voiceSaving=false;
+  if(voiceSendButton)voiceSendButton.disabled=false;
+ }
+}
+voiceRecordButton?.addEventListener('click',startVoice);
+voiceStopButton?.addEventListener('click',stopVoice);
+voiceCancelButton?.addEventListener('click',cancelVoice);
+voiceSendButton?.addEventListener('click',sendVoice);
+window.addEventListener('seyveo:work-chat-closing',cancelVoice);
 
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
@@ -305,6 +470,7 @@ function focusTask(index){
  row.scrollIntoView({block:'center',behavior:'auto'});
 }
 function showInbox(){
+ cancelVoice();
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -319,6 +485,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ cancelVoice();
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -1278,7 +1445,7 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
   return true;
  }
 });
-window.addEventListener('pagehide',()=>{cleanupPreview();clearMediaRenderUrls()});
+window.addEventListener('pagehide',()=>{cancelVoice();cleanupPreview();clearMediaRenderUrls()});
 preparePeopleContent();
 renderTasks();
 tab('chats');
