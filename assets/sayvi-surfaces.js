@@ -25,7 +25,7 @@ function updateBackDestination(){
  back.setAttribute('aria-label','Вернуться: '+label);
 }
 function rememberOrigin(context){
- if(context==='business')returnDestination={hash:'#manage',label:'Мой бизнес'};
+ if(context==='business')returnDestination={hash:'#tasks',label:'Пульт руководителя'};
  else if(location.hash==='#life')returnDestination={hash:'#life',label:'Мой мир'};
  else if(location.hash==='#manage')returnDestination={hash:'#manage',label:'Управление'};
  else if(location.hash==='#tasks')returnDestination={hash:'#tasks',label:'Дела'};
