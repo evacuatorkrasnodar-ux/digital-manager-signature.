@@ -101,6 +101,7 @@ function showInbox(){
  $('svcpChatDirectory').hidden=false;
  $('svcpConversation').hidden=true;
  $('svcpReturnToTasks').hidden=true;
+ $('svcpTaskDiscussionQuick').hidden=true;
  clearReply();cancelTaskDraft();cleanupPreview();
  renderDirectory();
 }
@@ -115,6 +116,7 @@ function openRoom(roomId){
  $('svcpOpenTasks').hidden=true;
  $('svcpPreviewOnHome').hidden=true;
  $('svcpReturnToTasks').hidden=true;
+ $('svcpTaskDiscussionQuick').hidden=true;
  updatePerspective();renderChat();
 }
 function updatePerspective(){
@@ -409,11 +411,19 @@ function openTaskDiscussion(task){
  const message={room:roomId,role:'self',text:task.text};
  startReply(message);
  $('svcpReturnToTasks').hidden=false;
+ $('svcpTaskDiscussionQuick').hidden=false;
 }
 $('svcpReturnToTasks')?.addEventListener('click',()=>{
  $('svcpReturnToTasks').hidden=true;
+ $('svcpTaskDiscussionQuick').hidden=true;
  window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('manage');
 });
+root.querySelectorAll('[data-svcp-discuss-template]').forEach(button=>button.addEventListener('click',()=>{
+ const input=$('svcpChatInput');if(!input)return;
+ input.value=button.dataset.svcpDiscussTemplate||'';
+ input.focus({preventScroll:true});
+ input.setSelectionRange(input.value.length,input.value.length);
+}));
 $('svcpTaskForm')?.addEventListener('submit',e=>{
  e.preventDefault();
  const input=$('svcpTaskInput');const txt=input?.value.trim()||'';
