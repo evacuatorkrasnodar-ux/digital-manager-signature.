@@ -997,16 +997,16 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <section id="svcpVoiceCapture" class="svcp-voice-capture" hidden aria-label="Запись голосового сообщения">
     <div class="svcp-voice-live">
      <span id="svcpVoiceDot" class="svcp-voice-dot" aria-hidden="true"></span>
-     <strong id="svcpVoiceLabel">Запись голоса</strong>
+     <strong id="svcpVoiceLabel">Запись</strong><span class="svcp-voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
      <time id="svcpVoiceClock" aria-label="Длительность записи">00:00</time>
     </div>
     <audio id="svcpVoicePreview" controls preload="metadata" hidden aria-label="Прослушать голосовое сообщение"></audio>
     <div class="svcp-voice-controls">
-     <button type="button" id="svcpVoiceCancel">Удалить</button>
-     <button type="button" id="svcpVoiceStop">Остановить</button>
-     <button type="button" id="svcpVoiceSend" hidden>Отправить</button>
+     <button type="button" id="svcpVoiceCancel" aria-label="Удалить запись"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+     <button type="button" id="svcpVoiceStop" aria-label="Завершить запись"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/></svg></button>
+     <button type="button" id="svcpVoiceSend" hidden aria-label="Отправить голосовое"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button>
     </div>
-    <small id="svcpVoiceHint" role="status">Голос сохранится на этом устройстве только после отправки.</small>
+    <small id="svcpVoiceHint" role="status" class="svcp-voice-hint">Нажмите квадрат, чтобы прослушать</small>
    </section>
    <form id="svcpChatForm" class="svcp-composer">
     <button id="svcpCameraToggle" type="button" class="svcp-file-label svcp-camera-toggle" aria-label="Снять фото, видео, проверить штрихкод или прикрепить файл" aria-expanded="false" aria-controls="svcpCameraTray" title="Камера и файлы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h5l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
