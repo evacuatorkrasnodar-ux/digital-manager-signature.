@@ -408,7 +408,12 @@ $('svcpHomeReplyForm')?.addEventListener('submit',event=>{
  const reply={room:'dm-elena',role:'demo-elena',text,at:Date.now(),
   replyTo:{sender:'Руководитель',text:task.text.slice(0,160)}};
  const updated=read(CHAT_KEY).concat(reply).slice(-100);
- if(!save(CHAT_KEY,updated))return;
+ if(!save(CHAT_KEY,updated)){
+  const status=$('svcpHomeReplyStatus');
+  status.textContent='Не удалось сохранить ответ. Попробуйте ещё раз.';
+  status.hidden=false;
+  return;
+ }
  state.chat=updated;
  resetHomeReply();
  const status=$('svcpHomeReplyStatus');
