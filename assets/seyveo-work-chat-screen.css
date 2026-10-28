@@ -641,3 +641,19 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 #tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-composer-direct-task:not([hidden]){
  grid-column:2!important;grid-row:4!important
 }
+
+/* Airy borderless chat composer — Black Velvet integration. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
+ background:transparent!important;border:0!important;box-shadow:none!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{
+ border:0!important;outline:0!important;box-shadow:none!important;
+ background:rgba(145,168,161,.075)!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput{
+ background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle,#svcpVoiceRecord){
+ box-shadow:none!important;border:0!important;outline:0!important;background:transparent!important
+}
