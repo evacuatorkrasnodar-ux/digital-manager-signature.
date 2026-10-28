@@ -574,3 +574,19 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  font-size:20px;width:28px;height:28px
 }
 
+
+/* No composer backdrop: remove inherited skins and decorative layers too. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatInput,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
+ background:transparent!important;background-image:none!important;
+ border-color:transparent!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm::before,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm::after,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field::before,
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field::after{
+ content:none!important;display:none!important
+}
