@@ -390,3 +390,6 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-voice-dot{animation:none}
  #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen *{scroll-behavior:auto!important;transition:none!important}
 }
+/* Room/back-list state is explicit: never display both panes simultaneously. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatDirectory[hidden],
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpConversation[hidden]{display:none!important}
