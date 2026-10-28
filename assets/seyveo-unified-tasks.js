@@ -19,6 +19,23 @@
  existing.hidden=false;
 
  let nextBusinessRoute=false,exitTarget='home';
+ const CHAT_KEY='seyveo-business-command-chat-demo-v1';
+ const chatNames={general:'Общий чат',team:'Моя команда',docs:'Документы',
+  'dm-elena':'Елена','dm-anna':'Анна','dm-mikhail':'Михаил','dm-sayvi':'Сэйви'};
+ function syncChatPreview(){
+  const label=$('svcpTasksChatSummary');if(!label)return;
+  let messages=[];
+  try{const value=JSON.parse(localStorage.getItem(CHAT_KEY)||'[]');
+   if(Array.isArray(value))messages=value;
+  }catch{}
+  const latest=messages.filter(m=>m&&chatNames[m.room]&&typeof m.text==='string'&&m.text.trim()).slice(-1)[0];
+  label.textContent=latest
+   ?chatNames[latest.room]+': '+latest.text.replace(/\s+/g,' ').slice(0,65)
+   :'Общий чат, личные сообщения и Сэйви · демо';
+ }
+ $('svcpTasksChatShortcut')?.addEventListener('click',()=>{
+  window.SEYVEO_BUSINESS_NAV?.openChats?.(true);
+ });
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
   if(label)label.textContent=exitTarget==='manage'?'В бизнес':'На Главную';
@@ -34,13 +51,14 @@
   personal.hidden=team;
   business.hidden=!team;
   if(overview)overview.hidden=team;
+  if(team)syncChatPreview();
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>{
    const active=button.dataset.unifiedTasksTab===(team?'business':'personal');
    button.setAttribute('aria-pressed',String(active));
   });
  }
  function openBusiness(source='manage'){
-  exitTarget=source==='home'?'home':'manage';
+  if(source!=='preserve')exitTarget=source==='home'?'home':'manage';
   syncBack();
   nextBusinessRoute=true;
   select('business');
@@ -65,7 +83,12 @@
    nextBusinessRoute=false;
   }
  });
+ window.addEventListener('storage',event=>{
+  if(event.key===CHAT_KEY)syncChatPreview();
+ });
+ window.addEventListener('pageshow',syncChatPreview);
  window.SEYVEO_UNIFIED_TASKS=Object.freeze({openBusiness,openPersonal});
+ syncChatPreview();
  syncBack();
  select('personal');
 })();
