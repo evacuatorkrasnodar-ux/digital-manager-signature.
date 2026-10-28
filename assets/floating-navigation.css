@@ -379,8 +379,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
- border-color:rgba(207,178,146,.21)!important;
- background:linear-gradient(155deg,rgba(255,237,211,.049),rgba(169,140,107,.020) 46%,transparent 77%),rgba(30,29,27,.97)!important;
+ border-color:rgba(204,185,164,.19)!important;
+ background:linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),rgba(28,27,26,.97)!important;
 }
 :root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
@@ -399,11 +399,11 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 
 
 :root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded){
- --sv-ink-input-text:#f3ebe2;--sv-ink-input-hint:#cfbcaa;
- background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(64,56,48,.55),rgba(43,39,35,.37) 54%,rgba(27,26,24,0) 100%)!important;
+ --sv-ink-input-text:#ffffff;--sv-ink-input-hint:#d9dde1;
+ background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(51,47,43,.51),rgba(39,36,33,.34) 54%,rgba(28,27,26,0) 100%)!important;
 }
 :root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded):focus-within{
- background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(81,69,56,.60),rgba(51,45,39,.43) 58%,rgba(27,26,24,0) 100%)!important;
+ background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(61,55,48,.57),rgba(45,40,36,.40) 58%,rgba(28,27,26,0) 100%)!important;
 }
 
 /* Original SEYVEO ceramic button: its existing SVG metal and ceramic now

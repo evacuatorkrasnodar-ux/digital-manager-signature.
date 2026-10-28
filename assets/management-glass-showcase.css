@@ -178,8 +178,8 @@ html[data-theme=dark][data-palette=sapphire].sv-space-active #managePage #seyveo
 }
 
 html[data-theme=dark][data-palette=plum].sv-space-active #managePage #seyveoCleanManageMenu{
- background:linear-gradient(159deg,rgba(247,234,216,.044),rgba(176,146,112,.016) 48%,rgba(37,33,29,.022));
+ background:linear-gradient(159deg,rgba(243,232,218,.030),rgba(178,158,134,.012) 48%,rgba(31,29,27,.020));
 }
 html[data-theme=dark][data-palette=plum].sv-space-active #managePage #seyveoCleanManageMenu .manage-group{
- border-top-color:rgba(203,177,149,.14);
+ border-top-color:rgba(204,185,164,.16);
 }

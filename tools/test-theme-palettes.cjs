@@ -51,19 +51,22 @@ for(const choice of ['auto','graphite','light','dark','sapphire','plum']){
  const row=html.match(new RegExp('<button[^>]*data-theme-choice="'+choice+'"[^>]*>[\\s\\S]*?<\\/button>'));
  assert.ok(row&&row[0].includes('<small>HDR · '),'Visible HDR material label on '+choice);
 }
-assert.match(html,/--bg:#1c1b1a;--card:#282521/,'Copper Dune uses dark graphite-toned surfaces');
+assert.match(html,/--bg:#1c1b1a;--card:#282522;--card2:#302c28/,'Copper Dune matches the screenshot's warm graphite');
+assert.match(css.life,/--sv-life-dialog-bg:#1c1b1a;--sv-life-contacts-bg:#1c1b1a/,'Personal dialogs share the Connections near-black background');
+assert.match(css.music,/linear-gradient\(168deg,#24221f 0%,#201e1c 43%,#1c1b1a 100%\)/,'Music matches screenshot background without brown cast');
+assert.match(css.home,/--home-glass:rgba\(40,37,34,.85\)/,'Home cards follow the Connections material');
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
 assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
 for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Copper Dune'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
 for(const token of ['--seyveo-hdr-stage','--seyveo-hdr-glint'])assert.ok((html.match(new RegExp(token,'g'))||[]).length>=6,'HDR-inspired materials on all palettes: '+token);
 assert.match(html,/THEME_VALUES\.includes\(raw\.theme\)/,'Legacy theme values still restore');
 assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migrations still work');
-assert.match(html,/assets\/floating-navigation\.css\?v=42/);
-assert.match(html,/assets\/living-space\.css\?v=53/);
+assert.match(html,/assets\/floating-navigation\.css\?v=43/);
+assert.match(html,/assets\/living-space\.css\?v=54/);
 assert.match(html,/assets\/seyveo-music\.css\?v=44/);
-assert.match(html,/assets\/living-conversation\.css\?v=20/);
+assert.match(html,/assets\/living-conversation\.css\?v=21/);
 assert.match(html,/assets\/conversation-refined\.css\?v=38/);
-assert.match(html,/assets\/personal-wellness\.css\?v=28/);
+assert.match(html,/assets\/personal-wellness\.css\?v=29/);
 assert.match(html,/assets\/calendar-spaces\.css\?v=25/);
 assert.match(html,/assets\/sections-velvet\.css\?v=12/);
 assert.match(html,/assets\/notebook-smart\.css\?v=29/);
@@ -73,7 +76,7 @@ assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
 assert.match(html,/assets\/home-velvet\.css\?v=20/);
 const refreshed={
- 'composer-intent.css':21,
+ 'composer-intent.css':22,
  'seyveo-music-dock.css':10,
  'business-map.css':14,
  'company-signature.css':8,

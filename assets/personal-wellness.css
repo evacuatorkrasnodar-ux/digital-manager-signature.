@@ -625,8 +625,8 @@
  --sv-care-pulse-active:radial-gradient(circle,rgba(140,170,245,.24),transparent 75%);
 }
 :root[data-theme=dark][data-palette=plum]{
- --sv-care-outer-halo:radial-gradient(circle,rgba(225,208,187,.13),rgba(159,137,111,.03) 64%,transparent 74%);
- --sv-care-inner-halo:radial-gradient(circle,rgba(245,229,208,.23),rgba(190,164,137,.05) 57%,transparent 71%);
+ --sv-care-outer-halo:radial-gradient(circle,rgba(225,212,194,.085),rgba(159,143,124,.02) 64%,transparent 74%);
+ --sv-care-inner-halo:radial-gradient(circle,rgba(245,234,221,.18),rgba(190,174,155,.037) 57%,transparent 71%);
  --sv-care-breath-disc:radial-gradient(circle at 36% 25%,rgba(255,252,246,.96),rgba(232,217,195,.55) 27%,rgba(176,151,123,.15) 60%,rgba(145,115,81,.03) 82%);
  --sv-care-pulse-rest:radial-gradient(circle,rgba(186,160,127,.09),transparent 75%);
  --sv-care-pulse-active:radial-gradient(circle,rgba(186,160,127,.17),transparent 75%);
