@@ -30,6 +30,23 @@ const ROOMS=[
 ];
 const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
+// Demo document requests appear as messages in the existing documents room.
+// No transport: the message and workflow exist only on this device.
+window.addEventListener('seyveo:document-flow-updated',event=>{
+ const d=event.detail||{};
+ if(d.reason==='created'&&typeof d.id==='string'){
+  const duplicate=state.chat.some(x=>x?.documentFlowId===d.id);
+  if(!duplicate){
+   const item={room:'docs',role:'self',at:Date.now(),documentFlowId:d.id,
+    text:'▤ '+String(d.title||'Документ').slice(0,100)+'\nДля Елены · учебный запрос. Нет доставки на другой телефон.'};
+   const updated=state.chat.concat(item).slice(-500);
+   if(save(CHAT_KEY,updated))state.chat=updated;
+  }
+ }
+ renderDirectory();
+ if(state.room==='docs'&&!$('svcpConversation')?.hidden)renderChat();
+});
+
 let chatFilter='all',editingMessageIndex=null;
 let mediaDatabasePromise=null,mediaRenderedUrls=[];
 /* Only local browser storage, never a server upload or a message delivery. */
@@ -992,6 +1009,18 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    if(msg.mediaPurpose!=='voice')bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.documentFlowId&&window.SEYVEO_DOCUMENT_FLOW?.get?.(msg.documentFlowId)){
+    const doc=window.SEYVEO_DOCUMENT_FLOW.get(msg.documentFlowId);
+    const action=btn('▤ Открыть документ · демо',()=>{
+     window.SEYVEO_SAYVI_SURFACES?.open?.('contract','business');
+     // The document workspace mounts after the route change.
+     window.setTimeout(()=>window.SEYVEO_DOCUMENT_CENTER?.openApprovals?.(msg.documentFlowId),70);
+    },'svcp-document-flow-open');
+    action.setAttribute('aria-label','Открыть учебный документ в согласованиях');
+    bubble.append(action);
+    const label={sent:'Ожидает ознакомления',read:'Просмотрено',approved:'Подтверждено',returned:'Возвращено',revoked:'Отозвано'}[doc.state];
+    bubble.append(el('small','svcp-document-flow-state',label||'Учебный документ'));
+   }
    if(msg.editedAt)bubble.append(el('small','svcp-message-edited','изменено'));
    if(msg.mediaId)restoreStoredMedia(bubble,msg);
    if(msg.starred)bubble.append(el('small','svcp-bubble-saved','★ Избранное'));
