@@ -1041,7 +1041,28 @@
 
 
 /* Scheduled staff breaks: visual strip only; no employee pause button. */
-#tasksPage .svcp-employee-progress{position:relative;overflow:hidden;isolation:isolate;height:7px}
+#tasksPage .svcp-shift-timeline{display:grid;gap:7px;min-width:0;padding:5px 0 1px}
+#tasksPage .svcp-shift-timeline-head{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}
+#tasksPage .svcp-shift-timeline-head strong{color:var(--text);font-size:10.5px;font-weight:600}
+#tasksPage .svcp-shift-timeline-head span{color:var(--secondary);font-size:10px;text-align:right;line-height:1.3}
+#tasksPage .svcp-shift-timeline-times{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:4px;align-items:center;min-width:0}
+#tasksPage .svcp-shift-timeline-times span{font-size:10px;line-height:1.3;color:var(--secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
+#tasksPage .svcp-shift-timeline-times span:nth-child(2){text-align:center;color:#c5ac78}
+#tasksPage .svcp-shift-timeline-times span:last-child{text-align:right}
+#tasksPage .svcp-employee-progress{position:relative;overflow:visible;isolation:isolate;height:8px;border-radius:999px}
+#tasksPage .svcp-employee-progress>span:first-child{height:8px;border-radius:999px}
+#tasksPage .svcp-employee-progress .svcp-schedule-cursor{
+ display:none;position:absolute;z-index:4;left:var(--svcp-now-left,0%);
+ top:50%;width:13px;height:13px;box-sizing:border-box;border-radius:50%;
+ border:2px solid var(--bg);background:#ecf8f0;transform:translate(-50%,-50%);
+ box-shadow:0 0 0 1px var(--seyveo-emerald);pointer-events:none
+}
+#tasksPage .svcp-employee-progress[data-running="true"] .svcp-schedule-cursor{display:block}
+#tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-schedule-cursor{background:#ffe4a9;box-shadow:0 0 0 1px #d5b775}
+:root[data-theme="light"] #tasksPage .svcp-shift-timeline-times span:nth-child(2){color:#8c652c}
+@media(max-width:360px){
+ #tasksPage .svcp-shift-timeline-head span,#tasksPage .svcp-shift-timeline-times span{font-size:9px}
+}
 #tasksPage .svcp-employee-progress .svcp-break-marker{
  position:absolute;z-index:2;top:0;bottom:0;
  left:var(--svcp-break-left,50%);width:var(--svcp-break-width,6.25%);
