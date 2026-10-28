@@ -1,8 +1,8 @@
 /* SEYVEO Business Command · an isolated, accessible Black Velvet workspace.
    A visual prototype only: no corporate messages or uploads leave the device. */
-#seyveoBusinessCommandPage[hidden],#seyveoBusinessCommandPage [hidden]{display:none!important}
-#seyveoBusinessCommandPage{color:var(--text);max-width:none;margin:0 auto;padding:4px 0 calc(85px + env(safe-area-inset-bottom,0px));font-family:inherit}
-#seyveoBusinessCommandPage .svcp-panel{width:100%;min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost)[hidden],:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) [hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost){color:var(--text);max-width:none;margin:0 auto;padding:4px 0 calc(85px + env(safe-area-inset-bottom,0px));font-family:inherit}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-panel{width:100%;min-width:0}
 #seyveoCleanManageMenu .manage-row.seyveo-business-direct .manage-text small{line-height:1.4}
 .svcp-room:focus-visible,.svcp-tool:focus-visible,.svcp-primary:focus-visible,.svcp-ghost:focus-visible{outline:2px solid #83d9ad;outline-offset:3px}
 
@@ -75,22 +75,22 @@
 .svcp-tool small{color:var(--secondary);font-size:11px;font-weight:400;line-height:1.4}
 .svcp-tool:after{content:"›";font-size:21px;color:var(--secondary)}
 @media(max-width:360px){.svcp-composer{gap:5px}.svcp-primary{padding-inline:9px}}
-@media(prefers-reduced-motion:reduce){#seyveoBusinessCommandPage *{scroll-behavior:auto!important}}
+@media(prefers-reduced-motion:reduce){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) *{scroll-behavior:auto!important}}
 :root[data-theme=light] .svcp-primary{background:#276f4b;color:white}
 
 
 /* SEYVEO Business · unified people workspace (team + recruiting). */
-#seyveoBusinessCommandPage .svcp-people-note{margin:0 2px 15px;color:var(--secondary);font-size:12px;line-height:1.6}
-#seyveoBusinessCommandPage .svcp-people-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 18px;padding:4px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--seyveo-hdr-active,var(--card))}
-#seyveoBusinessCommandPage .svcp-people-switch button{min-height:42px;padding:9px 7px;border:0;border-radius:13px;background:transparent;color:var(--secondary);font:inherit;font-size:13px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-people-switch button[aria-pressed=true]{color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)}
-#seyveoBusinessCommandPage .svcp-people-switch button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#seyveoBusinessCommandPage .svcp-people-view{min-width:0}
-#seyveoBusinessCommandPage .svcp-people-heading{margin:4px 8px 10px;font-size:15px;font-weight:580;letter-spacing:-.02em;color:var(--text)}
-#seyveoBusinessCommandPage #svcpPeopleCardsHost{min-width:0}
-#seyveoBusinessCommandPage #svcpPeopleShiftHost{margin-top:12px;border-top:1px solid var(--soft-line);padding-top:7px}
-#seyveoBusinessCommandPage #svcpPeopleHiringHost>.seyveo-hr-intro{margin:2px 8px 12px}
-#seyveoBusinessCommandPage #svcpPeopleHiringHost>.seyveo-hr-fold{margin-inline:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-note{margin:0 2px 15px;color:var(--secondary);font-size:12px;line-height:1.6}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 18px;padding:4px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--seyveo-hdr-active,var(--card))}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button{min-height:42px;padding:9px 7px;border:0;border-radius:13px;background:transparent;color:var(--secondary);font:inherit;font-size:13px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button[aria-pressed=true]{color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-view{min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-heading{margin:4px 8px 10px;font-size:15px;font-weight:580;letter-spacing:-.02em;color:var(--text)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleCardsHost{min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleShiftHost{margin-top:12px;border-top:1px solid var(--soft-line);padding-top:7px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleHiringHost>.seyveo-hr-intro{margin:2px 8px 12px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleHiringHost>.seyveo-hr-fold{margin-inline:0}
 #picturePage .sv-picture-efficiency{margin:18px 0 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:19px;background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 55%,transparent);overflow:hidden}
 #picturePage .sv-picture-efficiency>summary{display:flex;align-items:center;gap:11px;list-style:none;cursor:pointer;padding:14px 15px;min-height:68px;color:var(--text)}
 #picturePage .sv-picture-efficiency>summary::-webkit-details-marker{display:none}
@@ -131,113 +131,113 @@
 
 
 /* SEYVEO Feather Work Chat · calm Black Velvet conversation. */
-#seyveoBusinessCommandPage .svcp-chat{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat{
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 80%,transparent);
  border-radius:20px;
  box-shadow:none;
 }
-#seyveoBusinessCommandPage .svcp-chat-intro{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-intro{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
  padding:12px 13px 10px;
 }
-#seyveoBusinessCommandPage .svcp-chat-title{display:grid;gap:4px;min-width:0}
-#seyveoBusinessCommandPage .svcp-chat-title strong{font-size:14px;font-weight:570;letter-spacing:-.02em;color:var(--text)}
-#seyveoBusinessCommandPage .svcp-chat-title small{font-size:11px;line-height:1.45;color:var(--secondary)}
-#seyveoBusinessCommandPage .svcp-sayvi-call{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-title{display:grid;gap:4px;min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-title strong{font-size:14px;font-weight:570;letter-spacing:-.02em;color:var(--text)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-title small{font-size:11px;line-height:1.45;color:var(--secondary)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-sayvi-call{
  flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;
  padding:8px 11px;min-height:38px;background:var(--seyveo-hdr-active,var(--card2));
  color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:590;cursor:pointer;
 }
-#seyveoBusinessCommandPage .svcp-sayvi-call span{font-size:18px;font-weight:400;line-height:1}
-#seyveoBusinessCommandPage .svcp-sayvi-call:focus-visible,
-#seyveoBusinessCommandPage .svcp-message-action:focus-visible,
-#seyveoBusinessCommandPage .svcp-preview-close:focus-visible{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-sayvi-call span{font-size:18px;font-weight:400;line-height:1}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-sayvi-call:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-preview-close:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
-#seyveoBusinessCommandPage .svcp-rooms{border-top:1px solid var(--soft-line);padding:9px 11px;gap:6px}
-#seyveoBusinessCommandPage .svcp-room{min-height:36px;padding:8px 12px}
-#seyveoBusinessCommandPage .svcp-room[aria-pressed=true]{background:var(--seyveo-hdr-active);box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline)}
-#seyveoBusinessCommandPage .svcp-messages{min-height:205px;max-height:min(47dvh,440px);padding:14px 12px;gap:10px}
-#seyveoBusinessCommandPage .svcp-bubble{max-width:90%;min-width:0;padding:10px 12px 8px;border-radius:15px 15px 15px 5px;background:var(--card);box-shadow:none;overflow-wrap:anywhere}
-#seyveoBusinessCommandPage .svcp-bubble.is-self{border-radius:15px 15px 5px 15px;background:var(--seyveo-hdr-active);border-color:var(--seyveo-hdr-outline)}
-#seyveoBusinessCommandPage .svcp-bubble.is-sayvi{align-self:flex-start;border-color:var(--seyveo-hdr-outline);background:linear-gradient(140deg,var(--seyveo-hdr-active),var(--card))}
-#seyveoBusinessCommandPage .svcp-bubble-meta{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:6px}
-#seyveoBusinessCommandPage .svcp-bubble .svcp-sender{margin:0;font-size:11px;color:var(--seyveo-emerald);font-weight:590}
-#seyveoBusinessCommandPage .svcp-time{font-size:10px;color:var(--secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
-#seyveoBusinessCommandPage .svcp-bubble .svcp-message-text{display:block;font-size:13px;line-height:1.55;white-space:pre-wrap}
-#seyveoBusinessCommandPage .svcp-quote{margin:1px 0 8px;padding:7px 9px;border-left:2px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active);border-radius:0 9px 9px 0;font-size:11px;line-height:1.45;color:var(--secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
-#seyveoBusinessCommandPage .svcp-message-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
-#seyveoBusinessCommandPage .svcp-message-action{min-height:30px;border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:5px 10px;font:inherit;font-size:11px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-message-action:active{background:var(--seyveo-hdr-active);color:var(--text)}
-#seyveoBusinessCommandPage .svcp-reply-preview{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:9px 12px;border-top:1px solid var(--soft-line);background:var(--seyveo-hdr-active)}
-#seyveoBusinessCommandPage .svcp-reply-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--secondary)}
-#seyveoBusinessCommandPage .svcp-preview-close{flex:none;min-width:30px;min-height:30px;border:0;border-radius:50%;background:transparent;color:var(--text);font:inherit;font-size:21px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-chat-task-draft{display:grid;gap:10px;padding:12px 13px;border-top:1px solid var(--seyveo-hdr-outline);background:var(--seyveo-hdr-active)}
-#seyveoBusinessCommandPage .svcp-chat-task-draft label{display:grid;gap:3px}
-#seyveoBusinessCommandPage .svcp-chat-task-draft label strong{font-weight:570;font-size:13px}
-#seyveoBusinessCommandPage .svcp-chat-task-draft label small,
-#seyveoBusinessCommandPage .svcp-chat-task-draft>small{font-size:11px;color:var(--secondary);line-height:1.4}
-#seyveoBusinessCommandPage .svcp-chat-task-draft input{width:100%;min-width:0;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;color:var(--text);background:var(--card);font:inherit;font-size:13px}
-#seyveoBusinessCommandPage .svcp-chat-task-draft input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#seyveoBusinessCommandPage .svcp-task-draft-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-#seyveoBusinessCommandPage .svcp-task-draft-actions .svcp-ghost{padding:9px 11px;min-height:38px}
-#seyveoBusinessCommandPage .svcp-composer{padding:8px 10px;gap:7px}
-#seyveoBusinessCommandPage .svcp-composer .svcp-primary{min-height:40px}
-#seyveoBusinessCommandPage .svcp-compose-input{min-height:40px;padding:10px 3px;resize:none}
-#seyveoBusinessCommandPage #svcpChatStatus{padding:0 1px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-rooms{border-top:1px solid var(--soft-line);padding:9px 11px;gap:6px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-room{min-height:36px;padding:8px 12px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-room[aria-pressed=true]{background:var(--seyveo-hdr-active);box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-messages{min-height:205px;max-height:min(47dvh,440px);padding:14px 12px;gap:10px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble{max-width:90%;min-width:0;padding:10px 12px 8px;border-radius:15px 15px 15px 5px;background:var(--card);box-shadow:none;overflow-wrap:anywhere}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-self{border-radius:15px 15px 5px 15px;background:var(--seyveo-hdr-active);border-color:var(--seyveo-hdr-outline)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-sayvi{align-self:flex-start;border-color:var(--seyveo-hdr-outline);background:linear-gradient(140deg,var(--seyveo-hdr-active),var(--card))}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble-meta{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:6px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble .svcp-sender{margin:0;font-size:11px;color:var(--seyveo-emerald);font-weight:590}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-time{font-size:10px;color:var(--secondary);font-variant-numeric:tabular-nums;white-space:nowrap}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble .svcp-message-text{display:block;font-size:13px;line-height:1.55;white-space:pre-wrap}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-quote{margin:1px 0 8px;padding:7px 9px;border-left:2px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active);border-radius:0 9px 9px 0;font-size:11px;line-height:1.45;color:var(--secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action{min-height:30px;border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:5px 10px;font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action:active{background:var(--seyveo-hdr-active);color:var(--text)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-reply-preview{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:9px 12px;border-top:1px solid var(--soft-line);background:var(--seyveo-hdr-active)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-reply-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--secondary)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-preview-close{flex:none;min-width:30px;min-height:30px;border:0;border-radius:50%;background:transparent;color:var(--text);font:inherit;font-size:21px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft{display:grid;gap:10px;padding:12px 13px;border-top:1px solid var(--seyveo-hdr-outline);background:var(--seyveo-hdr-active)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft label{display:grid;gap:3px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft label strong{font-weight:570;font-size:13px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft label small,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft>small{font-size:11px;color:var(--secondary);line-height:1.4}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft input{width:100%;min-width:0;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;color:var(--text);background:var(--card);font:inherit;font-size:13px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-draft-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-draft-actions .svcp-ghost{padding:9px 11px;min-height:38px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-composer{padding:8px 10px;gap:7px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-composer .svcp-primary{min-height:40px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-compose-input{min-height:40px;padding:10px 3px;resize:none}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpChatStatus{padding:0 1px}
 @media(max-width:360px){
- #seyveoBusinessCommandPage .svcp-chat-intro{padding:10px 9px}
- #seyveoBusinessCommandPage .svcp-sayvi-call{padding-inline:9px}
- #seyveoBusinessCommandPage .svcp-bubble{max-width:95%}
- #seyveoBusinessCommandPage .svcp-composer{gap:5px}
+ :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-intro{padding:10px 9px}
+ :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-sayvi-call{padding-inline:9px}
+ :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble{max-width:95%}
+ :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-composer{gap:5px}
 }
-@media(prefers-reduced-motion:reduce){#seyveoBusinessCommandPage .svcp-chat *{scroll-behavior:auto;transition:none}}
+@media(prefers-reduced-motion:reduce){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat *{scroll-behavior:auto;transition:none}}
 
 /* Show a single contextual path to the shared team tasks, only after confirmation. */
-#seyveoBusinessCommandPage .svcp-open-tasks{display:inline-flex;align-items:center;justify-content:center;margin:9px 2px 2px;padding:9px 14px;min-height:40px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-hdr-active);color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-open-tasks[hidden]{display:none!important}
-#seyveoBusinessCommandPage .svcp-open-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks{display:inline-flex;align-items:center;justify-content:center;margin:9px 2px 2px;padding:9px 14px;min-height:40px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-hdr-active);color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks[hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 
 /* SEYVEO Feather Work Chat · one inbox, personal/group conversations. */
-#seyveoBusinessCommandPage .svcp-directory-head{display:flex;flex-direction:column;gap:4px;margin:3px 3px 14px}
-#seyveoBusinessCommandPage .svcp-directory-head strong{font-size:17px;font-weight:570;letter-spacing:-.025em;color:var(--text)}
-#seyveoBusinessCommandPage .svcp-directory-head small{font-size:11.5px;color:var(--secondary)}
-#seyveoBusinessCommandPage .svcp-directory-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin-bottom:14px;background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline);border-radius:15px}
-#seyveoBusinessCommandPage .svcp-directory-filters button{border:0;border-radius:12px;min-height:41px;padding:8px;color:var(--secondary);font:inherit;font-size:12px;background:transparent;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-directory-filters button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--soft-line)}
-#seyveoBusinessCommandPage .svcp-directory-filters button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#seyveoBusinessCommandPage .svcp-conversation-list{background:linear-gradient(145deg,var(--seyveo-specular),transparent 65%),var(--card);border:1px solid var(--seyveo-hdr-outline);border-radius:19px;overflow:hidden}
-#seyveoBusinessCommandPage .svcp-directory-item{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;min-height:76px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;cursor:pointer;font:inherit}
-#seyveoBusinessCommandPage .svcp-directory-item:last-child{border-bottom:0}
-#seyveoBusinessCommandPage .svcp-directory-item:active,#seyveoBusinessCommandPage .svcp-directory-item:hover{background:var(--seyveo-hdr-active)}
-#seyveoBusinessCommandPage .svcp-directory-item:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-3px}
-#seyveoBusinessCommandPage .svcp-directory-avatar{display:grid;place-items:center;width:44px;height:44px;flex:none;border:1px solid var(--seyveo-hdr-outline);border-radius:15px;background:var(--seyveo-hdr-active);font-size:19px;font-weight:550;color:var(--seyveo-emerald)}
-#seyveoBusinessCommandPage .svcp-directory-avatar.is-sayvi{border-radius:50%;font-size:24px}
-#seyveoBusinessCommandPage .svcp-directory-item-body{display:grid;gap:3px;flex:1;min-width:0}
-#seyveoBusinessCommandPage .svcp-directory-item-body strong{font-size:14px;font-weight:580;letter-spacing:-.015em}
-#seyveoBusinessCommandPage .svcp-directory-item-body small{font-size:11.5px;color:var(--secondary);line-height:1.35}
-#seyveoBusinessCommandPage .svcp-directory-preview{font-size:11px;color:var(--secondary);text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
-#seyveoBusinessCommandPage .svcp-directory-chevron{color:var(--secondary);font-size:22px;font-weight:300}
-#seyveoBusinessCommandPage .svcp-directory-note{margin:12px 3px;color:var(--secondary);font-size:11px;line-height:1.55}
-#seyveoBusinessCommandPage .svcp-conversation-bar{display:flex;align-items:center;gap:9px;margin:0 0 12px;min-width:0}
-#seyveoBusinessCommandPage .svcp-conversation-back{width:38px;height:40px;display:grid;place-items:center;flex:none;border:1px solid var(--soft-line);border-radius:50%;background:transparent;color:var(--text);cursor:pointer}
-#seyveoBusinessCommandPage .svcp-conversation-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-#seyveoBusinessCommandPage .svcp-conversation-info{display:grid;gap:3px;min-width:0;flex:1}
-#seyveoBusinessCommandPage .svcp-conversation-info strong{font-size:15px;font-weight:590;line-height:1.25}
-#seyveoBusinessCommandPage .svcp-conversation-info small{font-size:10.5px;color:var(--secondary);line-height:1.3}
-#seyveoBusinessCommandPage .svcp-perspective{flex:none;max-width:125px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;padding:8px 9px;min-height:38px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:11px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-chat-assist{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
-#seyveoBusinessCommandPage .svcp-mention-quick{border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:8px 10px;min-height:38px;font:inherit;font-size:11px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-mention-quick:focus-visible,
-#seyveoBusinessCommandPage .svcp-conversation-back:focus-visible,
-#seyveoBusinessCommandPage .svcp-perspective:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#seyveoBusinessCommandPage .svcp-bubble.is-other{align-self:flex-start;border-color:var(--seyveo-hdr-outline);background:var(--card)}
-#seyveoBusinessCommandPage .svcp-bubble.is-mentioned{border-color:var(--seyveo-emerald)}
-#seyveoBusinessCommandPage .svcp-mention-notice{display:block;margin-top:8px;font-size:10.5px;color:var(--seyveo-emerald);line-height:1.4}
-#seyveoBusinessCommandPage .svcp-chat-task-draft select{width:100%;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;background:var(--card);color:var(--text);font:inherit;font-size:13px}
-#seyveoBusinessCommandPage .svcp-task-assignee{display:block;margin-top:4px;color:var(--seyveo-emerald);font-size:11px;line-height:1.4}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head{display:flex;flex-direction:column;gap:4px;margin:3px 3px 14px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head strong{font-size:17px;font-weight:570;letter-spacing:-.025em;color:var(--text)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head small{font-size:11.5px;color:var(--secondary)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin-bottom:14px;background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline);border-radius:15px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-filters button{border:0;border-radius:12px;min-height:41px;padding:8px;color:var(--secondary);font:inherit;font-size:12px;background:transparent;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-filters button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--soft-line)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-filters button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-list{background:linear-gradient(145deg,var(--seyveo-specular),transparent 65%),var(--card);border:1px solid var(--seyveo-hdr-outline);border-radius:19px;overflow:hidden}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;min-height:76px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;cursor:pointer;font:inherit}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:last-child{border-bottom:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:active,:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:hover{background:var(--seyveo-hdr-active)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-3px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-avatar{display:grid;place-items:center;width:44px;height:44px;flex:none;border:1px solid var(--seyveo-hdr-outline);border-radius:15px;background:var(--seyveo-hdr-active);font-size:19px;font-weight:550;color:var(--seyveo-emerald)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-avatar.is-sayvi{border-radius:50%;font-size:24px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item-body{display:grid;gap:3px;flex:1;min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item-body strong{font-size:14px;font-weight:580;letter-spacing:-.015em}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item-body small{font-size:11.5px;color:var(--secondary);line-height:1.35}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-preview{font-size:11px;color:var(--secondary);text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-chevron{color:var(--secondary);font-size:22px;font-weight:300}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-note{margin:12px 3px;color:var(--secondary);font-size:11px;line-height:1.55}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar{display:flex;align-items:center;gap:9px;margin:0 0 12px;min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back{width:38px;height:40px;display:grid;place-items:center;flex:none;border:1px solid var(--soft-line);border-radius:50%;background:transparent;color:var(--text);cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info{display:grid;gap:3px;min-width:0;flex:1}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info strong{font-size:15px;font-weight:590;line-height:1.25}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info small{font-size:10.5px;color:var(--secondary);line-height:1.3}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective{flex:none;max-width:125px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;padding:8px 9px;min-height:38px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-quick{border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:8px 10px;min-height:38px;font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-quick:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-other{align-self:flex-start;border-color:var(--seyveo-hdr-outline);background:var(--card)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-mentioned{border-color:var(--seyveo-emerald)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-notice{display:block;margin-top:8px;font-size:10.5px;color:var(--seyveo-emerald);line-height:1.4}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft select{width:100%;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;background:var(--card);color:var(--text);font:inherit;font-size:13px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-assignee{display:block;margin-top:4px;color:var(--seyveo-emerald);font-size:11px;line-height:1.4}
 #svcpWorkHomePreview[hidden]{display:none!important}
 #svcpWorkHomePreview{margin:9px 0 13px;padding:13px 14px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:18px;background:linear-gradient(150deg,var(--seyveo-specular),transparent 72%),var(--card);color:var(--text);box-shadow:none;display:grid;gap:7px;min-width:0}
 #svcpWorkHomePreview .svcp-home-preview-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -249,7 +249,7 @@
 #svcpWorkHomePreview .svcp-home-preview-actions button{min-height:38px;min-width:0;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:none;color:var(--seyveo-emerald);font:inherit;font-size:12px;font-weight:560;cursor:pointer;padding:7px 2px;text-align:left}
 #svcpWorkHomePreview>small{font-size:10px;color:var(--secondary);line-height:1.4;opacity:.8}
 #svcpWorkHomePreview button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-@media(max-width:380px){#seyveoBusinessCommandPage .svcp-directory-item{padding-inline:9px;gap:9px}#seyveoBusinessCommandPage .svcp-conversation-info strong{font-size:14px}#seyveoBusinessCommandPage .svcp-perspective{padding-inline:7px;font-size:10px}#seyveoBusinessCommandPage .svcp-chat-intro{flex-wrap:wrap}#seyveoBusinessCommandPage .svcp-chat-assist{width:100%}}
+@media(max-width:380px){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item{padding-inline:9px;gap:9px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info strong{font-size:14px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective{padding-inline:7px;font-size:10px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-intro{flex-wrap:wrap}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{width:100%}}
 
 /* Home · single reply composer, Feather Chat, explicit local demo semantics. */
 #svcpWorkHomePreview .svcp-home-reply[hidden],
@@ -365,16 +365,16 @@
 #tasksPage #svcpTaskList .svcp-task-completed{display:grid;gap:0}
 #tasksPage #svcpTaskList .svcp-task-history .svcp-task{opacity:.82}
 #tasksPage #svcpTaskList .svcp-duplicate-summary{padding:9px 1px}
-#seyveoBusinessCommandPage .svcp-conversation-bar #svcpReturnToTasks{color:var(--seyveo-emerald);border-color:var(--seyveo-hdr-outline)}
-#seyveoBusinessCommandPage .svcp-conversation-bar #svcpReturnToTasks[hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar #svcpReturnToTasks{color:var(--seyveo-emerald);border-color:var(--seyveo-hdr-outline)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar #svcpReturnToTasks[hidden]{display:none!important}
 @media(max-width:365px){#tasksPage #svcpTaskList .svcp-task{gap:7px}#tasksPage #svcpTaskList .svcp-task-actions{min-width:67px}#tasksPage #svcpTaskList .svcp-task-actions button{font-size:11px;padding-inline:0}}
 @media(prefers-reduced-motion:reduce){#tasksPage #svcpTaskList .svcp-history-chevron{transition:none}}
 
 /* Task discussion · two calm suggestions, never auto-send. */
-#seyveoBusinessCommandPage .svcp-task-discussion-quick{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:9px 11px 6px;border-top:1px solid var(--soft-line)}
-#seyveoBusinessCommandPage .svcp-task-discussion-quick[hidden]{display:none!important}
-#seyveoBusinessCommandPage .svcp-task-discussion-quick button{min-height:36px;max-width:100%;padding:7px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:11.5px;cursor:pointer}
-#seyveoBusinessCommandPage .svcp-task-discussion-quick button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:9px 11px 6px;border-top:1px solid var(--soft-line)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick[hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick button{min-height:36px;max-width:100%;padding:7px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;background:transparent;color:var(--seyveo-emerald);font:inherit;font-size:11.5px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 
 
 /* SEYVEO Tasks · work conversation entry shares a single existing messenger. */
@@ -400,55 +400,55 @@
 }
 #tasksPage .svcp-tasks-chat-chevron{font-size:23px;line-height:1;color:var(--secondary);font-weight:300}
 #tasksPage .svcp-tasks-chat-shortcut:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:3px}
-#seyveoBusinessCommandPage .svcp-directory-head{flex-direction:row;align-items:center;justify-content:space-between;gap:9px}
-#seyveoBusinessCommandPage .svcp-directory-heading{display:grid;gap:4px;min-width:0;flex:1}
-#seyveoBusinessCommandPage .svcp-inbox-back-tasks{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head{flex-direction:row;align-items:center;justify-content:space-between;gap:9px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-heading{display:grid;gap:4px;min-width:0;flex:1}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-inbox-back-tasks{
  flex:none;min-height:38px;padding:7px 9px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:999px;background:var(--seyveo-hdr-active,var(--card));font:inherit;font-size:11.5px;
  color:var(--seyveo-emerald);cursor:pointer
 }
-#seyveoBusinessCommandPage .svcp-inbox-back-tasks[hidden]{display:none!important}
-#seyveoBusinessCommandPage .svcp-inbox-back-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-inbox-back-tasks[hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-inbox-back-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 @media(max-width:350px){
  #tasksPage .svcp-tasks-chat-shortcut{padding:9px;gap:8px}
  #tasksPage .svcp-tasks-chat-icon{width:35px;height:35px}
- #seyveoBusinessCommandPage .svcp-directory-head{gap:6px}
+ :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head{gap:6px}
 }
 
 /* SEYVEO Team · thanks for actions, not social likes. */
-#seyveoBusinessCommandPage .svcp-recognize-launch{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch{
  display:inline-flex;align-items:center;gap:5px;justify-content:center;
  min-height:38px;padding:8px 10px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:999px;background:transparent;color:var(--seyveo-emerald);
  font:inherit;font-size:11.5px;font-weight:560;white-space:nowrap;cursor:pointer
 }
-#seyveoBusinessCommandPage .svcp-recognize-launch span{font-size:17px;line-height:1}
-#seyveoBusinessCommandPage .svcp-recognition-form{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch span{font-size:17px;line-height:1}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form{
  display:grid;gap:11px;padding:13px 12px 12px;border-top:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  background:linear-gradient(140deg,var(--seyveo-specular),var(--seyveo-hdr-active) 70%,transparent);min-width:0
 }
-#seyveoBusinessCommandPage .svcp-recognition-heading{display:grid;gap:4px}
-#seyveoBusinessCommandPage .svcp-recognition-heading strong{color:var(--seyveo-emerald);font-size:13.5px;font-weight:565}
-#seyveoBusinessCommandPage .svcp-recognition-heading small{font-size:11px;color:var(--secondary);line-height:1.4}
-#seyveoBusinessCommandPage .svcp-recognition-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#seyveoBusinessCommandPage .svcp-recognition-form label{display:grid;gap:5px;font-size:11.5px;color:var(--secondary);min-width:0}
-#seyveoBusinessCommandPage .svcp-recognition-form select,
-#seyveoBusinessCommandPage .svcp-recognition-form textarea{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-heading{display:grid;gap:4px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-heading strong{color:var(--seyveo-emerald);font-size:13.5px;font-weight:565}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-heading small{font-size:11px;color:var(--secondary);line-height:1.4}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form label{display:grid;gap:5px;font-size:11.5px;color:var(--secondary);min-width:0}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form select,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form textarea{
  display:block;box-sizing:border-box;width:100%;min-width:0;min-height:42px;
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;
  padding:9px 10px;color:var(--text);background:var(--card);font:inherit;font-size:12px;line-height:1.45
 }
-#seyveoBusinessCommandPage .svcp-recognition-form textarea{min-height:76px;max-height:140px;resize:vertical}
-#seyveoBusinessCommandPage .svcp-recognition-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-#seyveoBusinessCommandPage .svcp-recognition-controls .svcp-primary{min-height:40px}
-#seyveoBusinessCommandPage .svcp-recognition-footnote{font-size:10.5px;line-height:1.5;color:var(--secondary)}
-#seyveoBusinessCommandPage .svcp-bubble.is-recognition{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form textarea{min-height:76px;max-height:140px;resize:vertical}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-controls .svcp-primary{min-height:40px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-footnote{font-size:10.5px;line-height:1.5;color:var(--secondary)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-recognition{
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card));
  border-radius:14px;align-self:flex-start;max-width:94%
 }
-#seyveoBusinessCommandPage .svcp-recognize-launch:focus-visible,
-#seyveoBusinessCommandPage .svcp-recognition-form select:focus-visible,
-#seyveoBusinessCommandPage .svcp-recognition-form textarea:focus-visible{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form select:focus-visible,
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form textarea:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
 }
 .svstaff-peer-preview{font-size:11px;color:#78cfa0;line-height:1.4;font-weight:540}
@@ -472,15 +472,43 @@
 .svstaff-review-form textarea{min-height:73px;resize:vertical}
 .svstaff-review-submit{justify-self:start;min-height:39px;padding:9px 14px;border:1px solid rgba(75,173,112,.4);border-radius:999px;background:rgba(43,129,90,.18);color:#cef3d8;font:inherit;font-size:12px;font-weight:550;cursor:pointer}
 .svstaff-review-status{margin:0;font-size:11px;color:#e9c077}
-@media(max-width:370px){#seyveoBusinessCommandPage .svcp-recognition-fields{grid-template-columns:1fr}#seyveoBusinessCommandPage .svcp-chat-assist{gap:4px}#seyveoBusinessCommandPage .svcp-recognize-launch{font-size:11px;padding-inline:8px}}
+@media(max-width:370px){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-fields{grid-template-columns:1fr}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{gap:4px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch{font-size:11px;padding-inline:8px}}
 
 /* SEYVEO Team · recognition profile shortcut. */
-#seyveoBusinessCommandPage .svcp-recognition-card-link{
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-card-link{
  display:inline-flex;align-items:center;justify-content:flex-start;
  min-height:41px;margin:8px 11px 5px;padding:7px 11px;
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;
  background:transparent;color:var(--seyveo-emerald);
  font:inherit;font-size:12px;font-weight:555;cursor:pointer
 }
-#seyveoBusinessCommandPage .svcp-recognition-card-link[hidden]{display:none!important}
-#seyveoBusinessCommandPage .svcp-recognition-card-link:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-card-link[hidden]{display:none!important}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-card-link:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+
+/* Tasks now hosts the SAME chat node. There is no overlay or second messenger. */
+#unifiedTasksChatHost[hidden],#unifiedTasksTeamBoard[hidden]{display:none!important}
+#unifiedTasksChatHost{width:100%;min-width:0;padding:0 0 calc(80px + env(safe-area-inset-bottom,0px));font:inherit}
+#unifiedTasksChatHost .svcp-panel{width:100%;min-width:0}
+#unifiedTasksChatHost .svcp-directory-section{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ margin:9px 0 0;padding:11px 13px 8px;
+ border-top:1px solid var(--soft-line);
+ font-size:11px;font-weight:590;letter-spacing:.025em;color:var(--seyveo-emerald)
+}
+#unifiedTasksChatHost .svcp-directory-section:first-child{border-top:0;margin-top:0}
+#unifiedTasksChatHost .svcp-directory-section small{font-size:10px;font-weight:400;line-height:1.3;color:var(--secondary)}
+#unifiedTasksChatHost .svcp-directory-item-body strong{font-weight:560}
+#unifiedTasksChatHost .svcp-chat-send{
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:43px;
+ padding:9px 12px;white-space:nowrap
+}
+#unifiedTasksChatHost .svcp-chat-send svg{
+ width:18px;height:18px;stroke:currentColor;stroke-width:1.7;fill:none;
+ stroke-linecap:round;stroke-linejoin:round;flex:none
+}
+#unifiedTasksChatHost .svcp-chat-send span{font-size:11.5px}
+@media(max-width:365px){
+ #unifiedTasksChatHost .svcp-chat-send{padding-inline:9px;gap:4px}
+ #unifiedTasksChatHost .svcp-chat-send svg{width:16px;height:16px}
+ #unifiedTasksChatHost .svcp-chat-send span{font-size:10.5px}
+}
