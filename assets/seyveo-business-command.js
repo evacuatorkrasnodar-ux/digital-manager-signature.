@@ -273,7 +273,17 @@ window.addEventListener('seyveo:work-chat-closing',cancelVoice);
 
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
-function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
+let statusResetTimer=null;
+function setStatus(s){
+ const el=$('svcpChatStatus');if(!el)return;
+ el.textContent=s;
+ clearTimeout(statusResetTimer);
+ const screen=$('svcpWorkChatScreen');
+ if(screen&&!screen.hidden&&screen.dataset.view==='room'){
+  el.dataset.show='true';
+  statusResetTimer=setTimeout(()=>{el.dataset.show='false'},3400);
+ }else el.dataset.show='false';
+}
 function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
