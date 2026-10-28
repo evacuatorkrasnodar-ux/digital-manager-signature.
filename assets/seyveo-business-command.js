@@ -284,6 +284,10 @@ function setStatus(s){
   statusResetTimer=setTimeout(()=>{el.dataset.show='false'},3400);
  }else el.dataset.show='false';
 }
+window.addEventListener('seyveo:work-chat-closing',()=>{
+ clearTimeout(statusResetTimer);
+ const el=$('svcpChatStatus');if(el)el.dataset.show='false';
+});
 function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
