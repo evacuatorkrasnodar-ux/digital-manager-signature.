@@ -1038,10 +1038,12 @@
  #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-photo{width:68px;height:68px}
 }
 
-/* One original Elena profile, with shift / hours / gratitude behind the top-right avatar. */
+/* The same Elena account avatar lives at the top right of the Tasks header. */
+#tasksPage .tasks-heading{position:relative}
+#tasksPage .svcp-employee-profile-toggle[hidden]{display:none!important}
 #tasksPage .svcp-employee-intro{position:relative;padding:0 0 8px;margin:0;border-bottom:1px solid var(--soft-line)}
 #tasksPage .svcp-employee-profile{position:relative;display:block;min-width:0}
-#tasksPage .svcp-employee-person{gap:2px;min-width:0;padding-right:56px}
+#tasksPage .svcp-employee-person{gap:2px;min-width:0;padding-right:0}
 #tasksPage .svcp-employee-person h2{font-size:21px;font-weight:590;letter-spacing:-.035em}
 #tasksPage .svcp-employee-statusline{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0;margin-top:3px}
 #tasksPage .svcp-employee-duty{white-space:normal;font-size:10.5px}
@@ -1089,6 +1091,6 @@
 @media(max-width:360px){
  #tasksPage .svcp-employee-profile-toggle{width:44px;height:44px}
  #tasksPage .svcp-employee-profile-toggle .svcp-employee-avatar{width:42px;height:42px}
- #tasksPage .svcp-employee-person{padding-right:49px}
+ #tasksPage .svcp-employee-person{padding-right:0}
  #tasksPage .svcp-employee-shift-preview{font-size:10px}
 }
