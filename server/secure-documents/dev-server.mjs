@@ -82,8 +82,7 @@ function send(res, status, payload) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',
-    'Content-Security-Policy': "default-src 'none'",
-    'Access-Control-Allow-Origin': 'null'
+    'Content-Security-Policy': "default-src 'none'"
   });
   res.end(JSON.stringify(payload));
 }
@@ -154,7 +153,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
 
   const handler = async (req, res) => {
     try {
-      if (req.headers.origin && req.headers.origin !== 'null')
+      if (req.headers.origin)
         fail(403, 'Браузерные запросы с чужого сайта запрещены.');
       const path = new URL(req.url || '/', 'http://127.0.0.1').pathname;
       if (req.method === 'GET' && path === '/health') {
