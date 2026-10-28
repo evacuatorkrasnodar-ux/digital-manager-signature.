@@ -907,20 +907,42 @@ function renderChat(){
     moreButton.setAttribute('aria-label','Действия с сообщением');
     moreButton.setAttribute('aria-expanded','false');
     actions.append(moreButton);
-    menu.append(btn('↩ Ответить',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    menu.append(btn('Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
-    menu.append(btn(msg.starred?'★ Убрать из избранного':'☆ В избранное',()=>{
+    function svcpActionIcon(title,kind,callback,className){
+     const control=btn('',callback,className+' svcp-icon-action');
+     control.setAttribute('aria-label',title);
+     control.title=title;
+     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+     svg.setAttribute('viewBox','0 0 24 24');
+     svg.setAttribute('aria-hidden','true');
+     svg.setAttribute('fill','none');
+     svg.setAttribute('stroke','currentColor');
+     svg.setAttribute('stroke-width','1.8');
+     svg.setAttribute('stroke-linecap','round');
+     svg.setAttribute('stroke-linejoin','round');
+     const parts={
+      reply:"<path d=\"M9 10 4 14l5 4\"/><path d=\"M4 14h9a7 7 0 0 1 7 7\"/>",reaction:"<path d=\"M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 5.5-8 10-8 10Z\"/>",
+      star:"<path d=\"m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2L12 17.3l-5.7 2.9 1.1-6.2-4.5-4.4 6.3-.9Z\"/>",copy:"<rect x=\"8\" y=\"8\" width=\"11\" height=\"12\" rx=\"2\"/><path d=\"M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2\"/>",
+      edit:"<path d=\"m5 17-1 3 3-1L19 7a2.1 2.1 0 0 0-3-3Z\"/><path d=\"M14 6l4 4\"/>",delete:"<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6\"/>",
+      task:"<rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M8 10h8M8 14h5\"/><path d=\"M17 17v5m-2.5-2.5h5\"/>"
+     };
+     svg.innerHTML=parts[kind]||'';
+     control.appendChild(svg);
+     return control;
+    }
+    menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
+    menu.append(svcpActionIcon('Реакция','reaction',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
+    menu.append(svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
      const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
      if(!save(CHAT_KEY,updated))return;
      state.chat=updated;renderChat();renderDirectory();
     },'svcp-message-menu-item'));
-    menu.append(btn('Копировать',async()=>{
+    menu.append(svcpActionIcon('Копировать','copy',async()=>{
      closeMessageMenus();
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
      catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
     },'svcp-message-menu-item'));
     if(isOwn&&!msg.mediaId&&!msg.taskId){
-     menu.append(btn('Изменить',()=>{
+     menu.append(svcpActionIcon('Изменить','edit',()=>{
       closeMessageMenus();clearReply();
       editingMessageIndex=index;
       const editPreview=$('svcpReplyPreview'),editText=$('svcpReplyText');
@@ -934,7 +956,7 @@ function renderChat(){
      },'svcp-message-menu-item'));
     }
     if(isOwn){
-     menu.append(btn('Удалить у себя',()=>{
+     menu.append(svcpActionIcon('Удалить у себя','delete',()=>{
       closeMessageMenus();
       if(!window.confirm('Удалить это сообщение из локальной истории?'))return;
       const updated=state.chat.filter((_,i)=>i!==index);
@@ -944,7 +966,7 @@ function renderChat(){
      },'svcp-message-menu-item'));
     }
     if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
-     menu.append(btn('Поручить',()=>{
+     menu.append(svcpActionIcon('Поручить','task',()=>{
       closeMessageMenus();
       if(privateAssignmentRecipient())assignExistingMessage(msg,index);
       else prepareTask(msg);
