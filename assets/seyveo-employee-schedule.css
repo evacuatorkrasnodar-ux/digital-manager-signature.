@@ -47,6 +47,18 @@
 #tasksPage .svcp-schedule-request-actions button{border:0;background:transparent;color:var(--text);
  font:inherit;font-size:11px;font-weight:575;min-height:33px;padding:3px 0;cursor:pointer}
 #tasksPage .svcp-schedule-request-actions button:disabled{opacity:.35;cursor:default}
+#tasksPage .svcp-vacation-panel{display:grid;gap:9px;padding:10px 11px;border:1px solid var(--soft-line);
+ border-radius:13px;background:var(--card2)}
+#tasksPage .svcp-vacation-panel[hidden]{display:none!important}
+#tasksPage .svcp-vacation-panel>p{font-size:11px;margin:0;color:var(--text);font-weight:550}
+#tasksPage .svcp-vacation-panel label{display:grid;gap:5px;font-size:10.5px;color:var(--secondary)}
+#tasksPage .svcp-vacation-panel input{width:100%;min-height:40px;min-width:0;
+ background:var(--card);border:1px solid var(--soft-line);color:var(--text);
+ border-radius:10px;padding:7px 9px;font:inherit;font-size:12px}
+#tasksPage .svcp-vacation-panel>button{justify-self:start;min-height:40px;padding:7px 10px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:11px;
+ background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:11.5px}
+#tasksPage .svcp-vacation-panel :focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 #tasksPage .svcp-schedule-notice{color:var(--secondary);font-size:10px;line-height:1.4}
 #tasksPage .svcp-schedule-actions button:focus-visible,#tasksPage .svcp-schedule-day:focus-visible,
 #tasksPage .svcp-schedule-request-actions button:focus-visible,#tasksPage .svcp-manager-schedule button:focus-visible{
