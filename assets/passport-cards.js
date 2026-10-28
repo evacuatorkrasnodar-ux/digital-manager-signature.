@@ -326,6 +326,7 @@ company.addEventListener('click',openCompany);
 // remain available from Management, including company QR inside the dialog.
 $('openStudioPassportFromManage')?.addEventListener('click',openStudio);
 $('openCompanyPassportFromManage')?.addEventListener('click',openCompany);
+window.SEYVEO_COMPANY_PASSPORT=Object.freeze({open:openCompany});
 form.addEventListener('submit',save);
 form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{
  $('seyveoCompanyType').value=input.value;toggleType();
