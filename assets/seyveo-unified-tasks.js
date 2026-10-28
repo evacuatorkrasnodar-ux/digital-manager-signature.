@@ -51,22 +51,22 @@
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab===(team?'business':'personal'))));
  }
- function showChat(roomId){
+ function showChat(roomId,viewpoint){
   personal.hidden=true;business.hidden=false;
   if(overview)overview.hidden=true;
   board.hidden=true;chatHost.hidden=false;chats.hidden=false;
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
-  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null);
+  window.SEYVEO_BUSINESS_COMMAND?.showChat?.(roomId||null,viewpoint||'manager');
  }
  function routePending(){
   const request=pending;pending=null;
-  if(request?.kind==='chat')showChat(request.roomId);
+  if(request?.kind==='chat')showChat(request.roomId,request.viewpoint);
   else if(request?.kind==='team')select('business');
   else select('personal');
  }
- function navigate(kind,roomId){
-  pending={kind,roomId:roomId||null};
+ function navigate(kind,roomId,viewpoint){
+  pending={kind,roomId:roomId||null,viewpoint:viewpoint||'manager'};
   if(location.hash!=='#tasks')location.hash='#tasks';
   else routePending();
  }
@@ -74,10 +74,10 @@
   if(source!=='preserve')exitTarget=source==='home'?'home':'manage';
   syncBack();navigate('team');
  }
- function openChat(source='tasks',roomId=null){
+ function openChat(source='tasks',roomId=null,viewpoint='manager'){
   if(source==='manage')exitTarget='manage';
   else if(source==='home')exitTarget='home';
-  syncBack();navigate('chat',roomId);
+  syncBack();navigate('chat',roomId,viewpoint);
  }
  function openPersonal(){
   exitTarget='home';syncBack();navigate('personal');
