@@ -12,7 +12,9 @@
   people=$('svcpTeam'),peopleHost=$('unifiedPeopleHost'),staffReveal=$('svcpManagerPeople'),
   employee=$('unifiedEmployeeTasksView'),shiftHost=$('unifiedEmployeeShiftHost'),
   employeeChatHost=$('unifiedEmployeeChatHost'),employeeTaskHost=$('unifiedEmployeeAssignments'),
-  picker=$('seyveoDemoModeSelect'),previewNotice=$('seyveoDemoModeNotice');
+  picker=$('seyveoDemoModeSelect'),previewNotice=$('seyveoDemoModeNotice'),
+  employeeProfileToggle=$('svcpEmployeeProfileToggle'),
+  employeeAccount=$('svcpEmployeeAccountView'),employeeAccountBack=$('svcpEmployeeAccountBack');
  if(!page||!personal||!business||!board||!taskHost||!chatHost||!tasks||!chats)return;
  taskHost.appendChild(tasks);
  tasks.hidden=false;
@@ -53,6 +55,22 @@
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
  const isEmployee=()=>previewMode==='employee';
  const isManager=()=>['rise','autonom','large'].includes(previewMode);
+ function setEmployeeAccountOpen(open){
+  if(!employeeAccount||!employee||!employeeProfileToggle)return;
+  const shown=!!open&&isEmployee();
+  employeeAccount.hidden=!shown;
+  employee.dataset.accountOpen=String(shown);
+  employeeProfileToggle.setAttribute('aria-expanded',String(shown));
+  employeeProfileToggle.setAttribute('aria-label',shown
+   ?'Закрыть личный кабинет Елены, вернуться к поручениям и чатам'
+   :'Открыть кабинет Елены: смены, часы и благодарности');
+  if(shown){renderEmployeeClock();renderEmployeeThanks()}
+ }
+ employeeProfileToggle?.addEventListener('click',()=>setEmployeeAccountOpen(employeeAccount?.hidden));
+ employeeAccountBack?.addEventListener('click',()=>{
+  setEmployeeAccountOpen(false);
+  employeeProfileToggle?.focus();
+ });
  function updatePulseAccess(){
   // UI preview only. Real access will require verified roles and server authorization.
   if(businessTab)businessTab.hidden=!isManager();
@@ -117,6 +135,10 @@
   const percent=Math.min(100,Math.round(todayMs/(plannedHours*3600000)*100));
   const badge=$('svcpEmployeeDutyBadge');
   if(badge){badge.dataset.active=String(active);badge.lastChild.textContent=active?'На работе':'Не на смене'}
+  const profileShift=$('svcpEmployeeHeaderShift');
+  if(profileShift)profileShift.textContent=active?'Смена · '+short(elapsed)
+   :todayMs>0?'Сегодня · '+short(todayMs):'Смена не начата';
+  if(employeeProfileToggle)employeeProfileToggle.dataset.active=String(active);
   const card=$('svcpEmployeeShiftCard');
   if(card)card.dataset.active=String(active);
   const time=$('svcpEmployeeClock');
@@ -254,6 +276,7 @@
   if(label)label.textContent=exitTarget==='manage'?'В бизнес':'На Главную';
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
+  if(employeeAccount&&!employeeAccount.hidden){setEmployeeAccountOpen(false);return}
   if(exitTarget==='manage'){
    window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
    if(location.hash!=='#manage')location.hash='#manage';
@@ -278,6 +301,7 @@
   lastWorkView=chosen;
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
+  if(chosen!=='employee')setEmployeeAccountOpen(false);
   if(overview)overview.hidden=chosen!=='personal';
   if(chosen==='business')showBoard();
   if(chosen==='employee')showEmployee();
@@ -294,6 +318,7 @@
   lastWorkView='business';
   personal.hidden=true;business.hidden=false;
   if(employee)employee.hidden=true;
+  setEmployeeAccountOpen(false);
   if(overview)overview.hidden=true;
   board.hidden=false;
   restoreManagerChat();
@@ -374,16 +399,20 @@
   if(!MODES.includes(picker.value))return;
   previewMode=picker.value;
   try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
-  updatePulseAccess();exitTarget='home';syncBack();
+  updatePulseAccess();setEmployeeAccountOpen(false);exitTarget='home';syncBack();
   navigate(isEmployee()?'employee':isManager()?'team':'personal');
   resetViewportAtWorkEntry();
  });
  // The separate chat demo perspective must not change the selected app version.
- $('navTasks')?.addEventListener('click',()=>isEmployee()?navigate('employee'):openPersonal());
+ $('navTasks')?.addEventListener('click',()=>{
+  if(isEmployee())setEmployeeAccountOpen(false);
+  isEmployee()?navigate('employee'):openPersonal();
+ });
  window.addEventListener('hashchange',()=>{
   if(location.hash==='#tasks')routePending();
   else{
    pending=null;
+   setEmployeeAccountOpen(false);
    if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
   }
  });
