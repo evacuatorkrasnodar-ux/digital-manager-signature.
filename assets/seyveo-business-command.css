@@ -968,11 +968,12 @@
 #tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tasksPage .svcp-employee-recognition>strong{font-size:22px;font-weight:590;color:var(--text)}
-/* Elena has one compact chat heading. The search lives on its LEFT as a
-   separate focusable button (not illegally nested in <summary>).
-   The original chat and history are moved here, never duplicated. */
+/* Elena has one compact chat heading. Search lives to the LEFT, outside
+   <details>, so the magnifier remains visible even while chat is folded.
+   Existing room history is reparented, never duplicated. */
+#tasksPage .svcp-employee-chats-shell{position:relative;min-width:0}
 #tasksPage .svcp-employee-chats{
- position:relative;min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
  border-radius:16px;overflow:hidden;background:var(--card)
 }
 #tasksPage .svcp-employee-chats>summary{
@@ -1108,7 +1109,7 @@
 #tasksPage .svcp-employee-account-heading h3{font-size:21px;font-weight:560;letter-spacing:-.033em;margin:4px 0}
 #tasksPage .svcp-employee-account-heading p{font-size:11.5px;color:var(--secondary);margin:0;line-height:1.45}
 #tasksPage #unifiedEmployeeTasksView[data-account-open="true"] > .svcp-employee-assignments,
-#tasksPage #unifiedEmployeeTasksView[data-account-open="true"] > .svcp-employee-chats,
+#tasksPage #unifiedEmployeeTasksView[data-account-open="true"] > .svcp-employee-chats-shell,
 #tasksPage #unifiedEmployeeTasksView[data-account-open="true"] > .svcp-employee-demo-note{display:none!important}
 #tasksPage .svcp-employee-account-view .svcp-employee-recognition{
  padding:9px 2px;min-height:51px;background:transparent;border:0;border-top:1px solid var(--soft-line);border-radius:0

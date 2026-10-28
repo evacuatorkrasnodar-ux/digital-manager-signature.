@@ -18,12 +18,14 @@ assert.match(js,/function setEmployeeAccountOpen\(open\)/);
 assert.match(js,/employeeAccount\.hidden=!shown/);
 assert.match(js,/profileShift\.textContent=active/);
 assert.match(css,/data-account-open="true"/);
-assert.match(html,/assets\/seyveo-business-command\.css\?v=50/);
+assert.match(html,/assets\/seyveo-business-command\.css\?v=51/);
 assert.match(html,/id="svcpEmployeeChatSearch"/,'One left-side employee chat search trigger');
-const chatShell=html.match(/<details id="svcpEmployeeChats"[^>]*>([\s\S]*?)<div id="unifiedEmployeeChatHost">/);
-assert.ok(chatShell,'One chat summary and search in Elena workspace');
+const chatShell=html.match(/<div class="svcp-employee-chats-shell">([\s\S]*?)<\/div>\s*<button type="button" id="svcpEmployeeChatSearch"/);
+assert.ok(chatShell,'Search button must be a sibling outside the collapsible details element');
 assert.doesNotMatch(chatShell[1].split('</summary>')[0],/id="svcpEmployeeChatSearch"/,
- 'Search button is outside summary: clicking it must not fold the chat');
+ 'Search is outside summary and stays clickable without toggling the parent');
+assert.match(css,/#tasksPage #unifiedEmployeeTasksView\[data-account-open="true"\] > \.svcp-employee-chats-shell/,
+ 'Profile view hides entire chat shell, including the left magnifier');
 assert.match(css,/#tasksPage \.svcp-employee-chat-search\{\s*position:absolute;left:7px;top:3px;z-index:2;/,
  'Compact magnifier occupies the LEFT edge, no extra search row');
 assert.match(css,/#tasksPage #svcpEmployeeChats #svcpChatDirectory>\.svcp-search-field\{display:none!important\}/,
