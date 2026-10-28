@@ -1175,17 +1175,49 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <p id="personalTasksNotice" class="personal-tasks-notice" role="status" aria-live="polite" hidden></p>
 </section>
 </div>
-<section id="unifiedEmployeeTasksView" aria-label="Рабочие дела сотрудника" hidden>
- <div class="svcp-employee-intro">
-  <span class="svcp-employee-kicker">SEYVEO · СОТРУДНИК · ДЕМО</span>
-  <h2>Моя работа</h2><p>Елена · кассир. Смены, поручения и рабочие разговоры.</p>
- </div>
- <div id="unifiedEmployeeShiftHost" class="svcp-employee-shift"></div>
+<section id="unifiedEmployeeTasksView" aria-label="Личный рабочий кабинет сотрудника" hidden>
+ <header class="svcp-employee-intro">
+  <div class="svcp-employee-profile">
+   <span class="svcp-employee-avatar" aria-hidden="true">Е</span>
+   <div class="svcp-employee-person"><span class="svcp-employee-kicker">SEYVEO · МОЯ РАБОТА</span><h2>Елена</h2><p>Кассир · Учебный кабинет</p></div>
+   <span id="svcpEmployeeDutyBadge" class="svcp-employee-duty" data-active="false"><span aria-hidden="true"></span>Не на смене</span>
+  </div>
+ </header>
+ <section class="svcp-employee-shift-card" id="svcpEmployeeShiftCard" aria-label="Сегодняшняя смена">
+  <div class="svcp-employee-shift-top"><strong>Сегодня</strong><time id="svcpEmployeeShiftDate"></time></div>
+  <div class="svcp-employee-live-clock" id="svcpEmployeeClock" role="timer" aria-label="Отработано в текущую смену">00:00:00</div>
+  <p id="svcpEmployeeClockHint" class="svcp-employee-clock-hint">Смена не начата</p>
+  <div class="svcp-employee-progress" role="progressbar" aria-label="Выполненная часть плановой смены" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="svcpEmployeeProgress"><span id="svcpEmployeeProgressFill"></span></div>
+  <div class="svcp-employee-progress-labels"><span id="svcpEmployeeTodayHint">0 мин</span><span id="svcpEmployeePlanHint">План 8 ч</span></div>
+  <div id="unifiedEmployeeShiftHost" class="svcp-employee-shift"></div>
+ </section>
+ <section class="svcp-employee-hours" aria-label="Учёт отработанных часов">
+  <div class="svcp-employee-section-top"><h3>Мои часы</h3><span>По отметкам</span></div>
+  <div class="svcp-employee-hour-grid">
+   <div><small>Сегодня</small><strong id="svcpHoursToday">0 ч</strong></div>
+   <div><small>Неделя</small><strong id="svcpHoursWeek">0 ч</strong></div>
+   <div><small>Месяц</small><strong id="svcpHoursMonth">0 ч</strong></div>
+  </div>
+  <details id="svcpEmployeeHoursDetails" class="svcp-employee-hour-details">
+   <summary>История и учёт часов <span aria-hidden="true">›</span></summary>
+   <div id="svcpEmployeeHistoryList" class="svcp-employee-history"></div>
+   <div id="svcpEmployeeHoursSettings" class="svcp-employee-hours-settings"></div>
+  </details>
+ </section>
  <section class="svcp-employee-assignments" aria-labelledby="svcpEmployeeTasksTitle">
-  <div class="svcp-employee-section-top"><h3 id="svcpEmployeeTasksTitle">Мои поручения</h3><span id="svcpEmployeeTaskCount"></span></div>
+  <div class="svcp-employee-section-top"><h3 id="svcpEmployeeTasksTitle">Мои поручения</h3><span id="svcpEmployeeTaskCount">0</span></div>
   <div id="unifiedEmployeeAssignments" aria-live="polite"></div>
  </section>
- <section class="svcp-employee-chats" aria-label="Мои рабочие чаты"><div id="unifiedEmployeeChatHost"></div></section>
+ <section class="svcp-employee-recognition" aria-labelledby="svcpEmployeeThanksTitle">
+  <span class="svcp-employee-thanks-symbol" aria-hidden="true">✧</span>
+  <div class="svcp-employee-thanks-copy"><h3 id="svcpEmployeeThanksTitle">Мои благодарности</h3><p id="svcpEmployeeThanksText">Здесь появятся отметки коллег.</p></div>
+  <strong id="svcpEmployeeThanksCount">0</strong>
+ </section>
+ <details id="svcpEmployeeChats" class="svcp-employee-chats">
+  <summary><span class="svcp-employee-chats-glyph" aria-hidden="true">◎</span><span><strong>Чаты команды</strong><small>Руководитель, общий чат и группы</small></span><span class="svcp-employee-chevron" aria-hidden="true">›</span></summary>
+  <div id="unifiedEmployeeChatHost"></div>
+ </details>
+ <p class="svcp-employee-demo-note">Учебный режим: отметки хранятся на этом устройстве, другим людям не отправляются.</p>
 </section>
 <section id="unifiedBusinessTasksView" aria-label="Пульт руководителя" hidden>
  <div id="unifiedTasksTeamBoard">
