@@ -30,6 +30,7 @@ const ROOMS=[
 ];
 const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
+let chatFilter='all',editingMessageIndex=null;
 let mediaDatabasePromise=null,mediaRenderedUrls=[];
 /* Only local browser storage, never a server upload or a message delivery. */
 function mediaDatabase(){
@@ -340,6 +341,27 @@ function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
  if(renderHistorySearch())return;
  list.replaceChildren();
+ $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
+  button.setAttribute('aria-pressed',String(button.dataset.svcpChatFilter===chatFilter)));
+ if(chatFilter==='saved'){
+  const savedMessages=state.chat.map((msg,index)=>({msg,index}))
+   .filter(({msg})=>msg?.starred&&typeof msg.text==='string'&&
+    ROOMS.some(room=>room.id===msg.room)&&(!employeePreviewActive()||employeeAllowedRoom(msg.room)))
+   .reverse();
+  if(!savedMessages.length){
+   list.append(el('p','svcp-search-empty','Здесь будут отмеченные тобой сообщения. Звёздочку можно поставить в меню сообщения.'));
+   return;
+  }
+  for(const {msg,index} of savedMessages){
+   const room=ROOMS.find(r=>r.id===msg.room);
+   const row=el('button','svcp-search-result svcp-saved-result');row.type='button';
+   row.append(el('strong',null,'★ '+(employeePreviewActive()&&room.id==='dm-elena'?'Руководитель':room.label)),
+    el('span',null,msg.text.slice(0,145)));
+   row.addEventListener('click',()=>{openRoom(msg.room);focusSearchIndex=index;renderChat()});
+   list.append(row);
+  }
+  return;
+ }
  /* Keep the existing rooms and conversation IDs so old local messages still open.
     One compact name/role line and one real message preview, not three descriptions. */
  const latest=new Map();
@@ -361,6 +383,8 @@ function renderDirectory(){
  }
  for(const room of ROOMS){
   if(employeePreviewActive()&&!employeeAllowedRoom(room.id))continue;
+  if(chatFilter==='people'&&room.kind!=='personal')continue;
+  if(chatFilter==='groups'&&room.kind!=='groups')continue;
   if(room.section!==prior){
    prior=room.section;
    if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
@@ -399,6 +423,15 @@ function renderDirectory(){
   list.append(row);
  }
 }
+$('svcpChatFilters')?.addEventListener('click',event=>{
+ const button=event.target.closest('[data-svcp-chat-filter]');
+ if(!button)return;
+ const next=button.dataset.svcpChatFilter;
+ if(!['all','people','groups','saved'].includes(next))return;
+ chatFilter=next;
+ const search=$('svcpHistorySearch');if(search){search.value='';historyQuery=''}
+ renderDirectory();
+});
 /* Search existing local chat history and team assignments, no new archive page. */
 function renderHistorySearch(){
  const query=historyQuery.trim().toLocaleLowerCase('ru-RU'),list=$('svcpConversationList');
@@ -480,7 +513,11 @@ function focusTask(index){
  row.scrollIntoView({block:'center',behavior:'auto'});
 }
 function showInbox(){
- cancelVoice();
+ cancelVoice();editingMessageIndex=null;
+ const container=$('svcpWorkChatScreen');
+ if(container)container.dataset.view='inbox';
+ const info=$('svcpRoomInfo');if(info)info.hidden=true;
+ $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -495,7 +532,11 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
- cancelVoice();
+ cancelVoice();editingMessageIndex=null;
+ const container=$('svcpWorkChatScreen');
+ if(container)container.dataset.view='room';
+ const info=$('svcpRoomInfo');if(info)info.hidden=true;
+ $('svcpRoomInfoToggle')?.setAttribute('aria-expanded','false');
  closeRecognition();
  closeComposerEmoji();
  setCameraTray(false);
@@ -505,6 +546,12 @@ function openRoom(roomId){
  if(employeePreviewActive()&&!employeeAllowedRoom(selected.id))return;
  state.room=selected.id;
  state.viewpoint=employeePreviewActive()?'elena':'manager';
+ const avatar=$('svcpRoomAvatar');if(avatar)avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
+ const roomName=$('svcpRoomInfoName');if(roomName)roomName.textContent=
+  state.viewpoint==='elena'&&selected.id==='dm-elena'?'Руководитель':selected.label;
+ const roomDescription=$('svcpRoomInfoDescription');
+ if(roomDescription)roomDescription.textContent=selected.hint+
+  (selected.kind==='groups'?' · общий рабочий разговор':' · личная переписка');
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
  $('svcpConversationTitle').textContent=employeePreviewActive()&&selected.id==='dm-elena'
@@ -542,6 +589,10 @@ function updatePerspective(){
  $('svcpChatInput').placeholder=state.viewpoint==='elena'?'Ответ Елены · локальное демо…':current.person==='sayvi'?'Спросить Сэйви · демо…':'Сообщение или @Сэйви…';
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
 }
+$('svcpRoomInfoToggle')?.addEventListener('click',()=>{
+ const panel=$('svcpRoomInfo'),button=$('svcpRoomInfoToggle');if(!panel)return;
+ panel.hidden=!panel.hidden;button?.setAttribute('aria-expanded',String(!panel.hidden));
+});
 $('svcpConversationBack')?.addEventListener('click',showInbox);
 $('svcpConversationSearch')?.addEventListener('click',()=>{
  showInbox();
@@ -787,7 +838,9 @@ function renderChat(){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
    bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.editedAt)bubble.append(el('small','svcp-message-edited','изменено'));
    if(msg.mediaId)restoreStoredMedia(bubble,msg);
+   if(msg.starred)bubble.append(el('small','svcp-bubble-saved','★ Избранное'));
    if(msg.demoReaction){
     const chip=btn(msg.demoReaction+' 1',()=>applyMessageEmoji(index,msg.demoReaction),'svcp-bubble-reaction');
     chip.setAttribute('aria-label','Убрать реакцию '+msg.demoReaction);
@@ -804,6 +857,37 @@ function renderChat(){
     actions.append(moreButton);
     menu.append(btn('↩ Ответить',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
     menu.append(btn('Реакция',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
+    menu.append(btn(msg.starred?'★ Убрать из избранного':'☆ В избранное',()=>{
+     const updated=state.chat.map((item,i)=>i===index?{...item,starred:!item.starred}:item);
+     if(!save(CHAT_KEY,updated))return;
+     state.chat=updated;renderChat();renderDirectory();
+    },'svcp-message-menu-item'));
+    menu.append(btn('Копировать',async()=>{
+     closeMessageMenus();
+     try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
+     catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
+    },'svcp-message-menu-item'));
+    if(isOwn&&!msg.mediaId&&!msg.taskId){
+     menu.append(btn('Изменить',()=>{
+      closeMessageMenus();clearReply();
+      editingMessageIndex=index;
+      const input=$('svcpChatInput');if(input){
+       input.value=msg.text;input.focus({preventScroll:true});
+       input.dispatchEvent(new Event('input',{bubbles:true}));
+      }
+      setStatus('Редактирование · измени текст и нажми «Отправить».');
+     },'svcp-message-menu-item'));
+    }
+    if(isOwn){
+     menu.append(btn('Удалить у себя',()=>{
+      closeMessageMenus();
+      if(!window.confirm('Удалить это сообщение из локальной истории?'))return;
+      const updated=state.chat.filter((_,i)=>i!==index);
+      if(!save(CHAT_KEY,updated))return;
+      state.chat=updated;renderChat();renderDirectory();
+      setStatus('Сообщение удалено из этого браузера.');
+     },'svcp-message-menu-item'));
+    }
     if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
      menu.append(btn('Поручить',()=>{
       closeMessageMenus();
@@ -1138,6 +1222,16 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
  event.preventDefault();
  if(cameraBusy)return;
  const input=$('svcpChatInput'),txt=input?.value.trim()||'';
+ if(editingMessageIndex!==null){
+  const index=editingMessageIndex,msg=state.chat[index];
+  if(!msg||msg.room!==state.room||!txt){setStatus('Напиши новый текст или выйди из редактирования.');return}
+  const updated=state.chat.map((item,i)=>i===index?{...item,text:txt,editedAt:Date.now()}:item);
+  if(!save(CHAT_KEY,updated))return;
+  state.chat=updated;editingMessageIndex=null;input.value='';
+  window.dispatchEvent(new Event('seyveo:work-chat-sent'));
+  renderChat();renderDirectory();setStatus('Изменение сохранено на этом устройстве.');
+  return;
+ }
  const file=state.file,purpose=state.filePurpose,barcode=state.scanCode;
  if(!txt&&!file&&!barcode){setStatus('Напишите сообщение или откройте камеру.');return}
  const type=file?.type||'';
