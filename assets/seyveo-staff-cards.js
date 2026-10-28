@@ -19,6 +19,18 @@ const people=[
   {date:'4 сентября',type:'good',title:'Помогала разобраться со складскими остатками',sub:'Подтверждено · учебный пример'}],hair:'#483128',skin:'#deb08c',jacket:'#393b53',back:'#c4cbd7',female:true}
 ];
 const photos=new Map();
+const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
+const REVIEW_KEY='seyveo-recognition-review-demo-v1';
+const badgeKind={help:['✦','Помощь коллеге'],mentor:['◇','Наставничество'],initiative:['✧','Инициатива'],reliable:['◆','Надёжность']};
+const colleagues={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
+function readRecords(key){try{const r=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(r)?r.slice(-100):[]}catch{return []}}
+function peerRecognition(id){return readRecords(RECOGNITION_KEY).filter(x=>x&&x.to===id&&badgeKind[x.kind]&&typeof x.reason==='string').reverse()}
+function savedReview(id){return readRecords(REVIEW_KEY).filter(x=>x&&x.personId===id).slice(-1)[0]||null}
+function saveReview(personId,kind,note){
+ if(!people.some(p=>p.id===personId)||!['bonus','discuss'].includes(kind)||note.trim().length<8)return false;
+ const records=readRecords(REVIEW_KEY).concat({personId,kind,note:note.trim().slice(0,240),at:new Date().toISOString()}).slice(-100);
+ try{localStorage.setItem(REVIEW_KEY,JSON.stringify(records));return true}catch{return false}
+}
 const style=document.createElement('style');
 style.id='seyveo-staff-black-velvet';
 style.textContent=[
@@ -132,6 +144,8 @@ function renderDirectory(){
   copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','✦ Сэйви: '+p.hint));
   const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(p.thanks)));
   const arrow=el('span','svstaff-tile-arrow','›');arrow.setAttribute('aria-hidden','true');
+  const newMarks=peerRecognition(p.id).length;
+  if(newMarks)copy.append(el('span','svstaff-peer-preview','✦ Получено знаков: '+newMarks+' · демо'));
   tile.append(photo,copy,count,arrow);directory.append(tile);
  });
 }
@@ -152,6 +166,45 @@ function renderProfile(){
   const copy=el('div','svstaff-event-copy');copy.append(el('strong',null,item.title),el('small',null,item.date+' · '+item.sub));event.append(copy);history.append(event);
  });
  body.append(history);
+ const recognitions=peerRecognition(p.id);
+ const badges=el('section','svstaff-peer-section');
+ const title=el('div','svstaff-peer-head');
+ title.append(el('h3',null,'✦ Знаки признания коллег'),el('span','svstaff-peer-count',String(recognitions.length)));
+ badges.append(title);
+ if(!recognitions.length)badges.append(el('p','svstaff-peer-empty','Пока нет новых знаков. Коллеги могут поблагодарить за помощь в рабочем чате.'));
+ for(const record of recognitions.slice(0,12)){
+  const entry=el('div','svstaff-peer-row'),description=el('div','svstaff-peer-copy');
+  const day=new Date(record.at);
+  const date=Number.isNaN(day.getTime())?'Дата не указана':day.toLocaleDateString('ru-RU');
+  entry.append(el('span','svstaff-peer-symbol',badgeKind[record.kind][0]));
+  description.append(el('strong',null,badgeKind[record.kind][1]),el('p',null,record.reason.slice(0,220)),
+   el('small',null,'От: '+(colleagues[record.from]||'Коллега')+' · '+date+' · демо'));
+  entry.append(description);badges.append(entry);
+ }
+ if(recognitions.length>12)badges.append(el('p','svstaff-peer-empty','Показаны последние 12 из '+recognitions.length+'.'));
+ badges.append(el('p','svstaff-peer-disclaimer','Знаки — примеры конкретной помощи, а не рейтинг. Личности отправителей пока не подтверждены.'));
+ body.append(badges);
+ const review=el('section','svstaff-review');
+ review.append(el('h3',null,'Решение руководителя'));
+ const prior=savedReview(p.id);
+ if(prior)review.append(el('p','svstaff-review-record',(prior.kind==='bonus'?'На рассмотрении: поощрение':'На рассмотрении: обсуждение')+' · '+prior.note));
+ review.append(el('p','svstaff-review-note','Руководитель может предложить поощрение или обсудить рабочую ситуацию. Никакой автоматической премии или взыскания.'));
+ const form=el('form','svstaff-review-form'),selector=el('select');
+ selector.setAttribute('aria-label','Действие руководителя');
+ for(const [key,label] of [['bonus','Рассмотреть поощрение'],['discuss','Обсудить развитие или обстоятельства']]){
+  const opt=el('option',null,label);opt.value=key;selector.append(opt);
+ }
+ const note=el('textarea');note.rows=2;note.maxLength=240;note.minLength=8;note.required=true;
+ note.placeholder='Укажите основание для рассмотрения…';note.setAttribute('aria-label','Основание решения руководителя');
+ const feedback=el('p','svstaff-review-status');feedback.setAttribute('role','status');
+ const submit=el('button','svstaff-review-submit','Сохранить для рассмотрения');submit.type='submit';
+ form.append(selector,note,submit,feedback);
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!saveReview(p.id,selector.value,note.value)){feedback.textContent='Напишите конкретное основание (минимум 8 символов).';return}
+  renderProfile();
+ });
+ review.append(form);body.append(review);
  const insight=el('section','svstaff-insight');const head=el('div','svstaff-insight-head');head.append(icon('spark'),el('span',null,'Сэйви · Анализ ситуации'));
  insight.append(head,el('p',null,p.insight));body.append(insight);
  const actions=el('div','svstaff-actions');
@@ -178,5 +231,14 @@ function renderProfile(){
 modal.addEventListener('close',()=>{chosen=null;showPlan=false;if(!leavingForChat)lastTrigger?.focus?.();leavingForChat=false});
 modal.addEventListener('click',e=>{if(e.target===modal)modal.close()});
 window.addEventListener('pagehide',()=>{photos.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)})});
+window.addEventListener('seyveo:recognition-changed',()=>{
+ renderDirectory();
+ if(modal.open&&chosen)renderProfile();
+});
+window.addEventListener('storage',event=>{
+ if(event.key!==RECOGNITION_KEY&&event.key!==REVIEW_KEY)return;
+ renderDirectory();
+ if(modal.open&&chosen)renderProfile();
+});
 renderDirectory();
 })();
