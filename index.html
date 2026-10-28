@@ -648,19 +648,33 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <button type="button" id="svcpHomePreviewReply" aria-expanded="false" aria-controls="svcpHomeReplyForm">Ответить</button>
   <button type="button" id="svcpHomePreviewExecute">Исполнить</button>
  </div>
- <form id="svcpHomeReplyForm" class="svcp-home-reply" hidden aria-label="Учебный ответ Елены руководителю">
-  <label for="svcpHomeReplyText">Ответ руководителю · от Елены</label>
-  <div class="svcp-home-reply-quick" role="group" aria-label="Быстрые ответы">
-   <button type="button" data-svcp-quick-reply="Приняла, приступаю.">Приняла</button>
-   <button type="button" data-svcp-quick-reply="Нужно уточнение по поручению.">Уточнить</button>
+ <form id="svcpHomeReplyForm" class="svcp-home-reply" hidden aria-label="Ответ Елены на рабочее поручение">
+  <div class="svcp-home-reply-head">
+   <label for="svcpHomeReplyText">Ответ Елены руководителю</label>
+   <button type="button" id="svcpHomeSayviHelp" class="svcp-home-sayvi-help" aria-expanded="false" aria-controls="svcpHomeSayviSuggestions"><span aria-hidden="true">✧</span> Сэйви, помоги</button>
   </div>
-  <textarea id="svcpHomeReplyText" rows="2" maxlength="500" placeholder="Написать свой ответ…" required></textarea>
-  <div class="svcp-home-reply-buttons">
-   <button type="submit">Сохранить ответ</button>
+  <div id="svcpHomeSayviSuggestions" class="svcp-home-sayvi-suggestions" hidden>
+   <span>Сэйви · готовые формулировки (демо)</span>
+   <button type="button" data-svcp-home-suggestion="accept">Принять поручение</button>
+   <button type="button" data-svcp-home-suggestion="clarify">Уточнить детали</button>
+   <button type="button" data-svcp-home-suggestion="disagree">Предложить другое</button>
+  </div>
+  <div class="svcp-home-composer">
+   <textarea id="svcpHomeReplyText" rows="2" maxlength="500" placeholder="Написать ответ…" required></textarea>
+   <button type="submit" id="svcpHomeSendReply" class="svcp-home-send" aria-label="Отправить ответ в учебный чат Елены">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7.2 18-4-7.3L2.5 10.2 21 3Z"/></svg>
+    <span>Отправить</span>
+   </button>
+  </div>
+  <div class="svcp-home-reply-footer">
+   <span>Демо · сообщение останется на этом устройстве</span>
    <button type="button" id="svcpHomeReplyCancel">Отмена</button>
   </div>
  </form>
- <p id="svcpHomeReplyStatus" class="svcp-home-reply-status" role="status" aria-live="polite" hidden></p>
+ <div id="svcpHomeReplyResult" class="svcp-home-reply-result" hidden>
+  <p id="svcpHomeReplyStatus" class="svcp-home-reply-status" role="status" aria-live="polite"></p>
+  <button type="button" id="svcpHomeOpenChat">Посмотреть в чате</button>
+ </div>
  <small>Учебный просмотр · ответ только на этом устройстве</small>
 </section>
 <section id="seyveoLivingMoment" class="lm-space" hidden aria-label="Центр решений Сэйвы"><p id="seyveoLivingCaption" class="lm-caption"></p><div id="seyveoLivingTiles" class="lm-tiles"></div></section><button type="button" id="seyveoDemoLaunch" class="lm-demo-launch" hidden>Посмотреть пример решений</button>
