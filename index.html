@@ -899,6 +899,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <div class="svcp-task-draft-actions"><button class="svcp-primary" type="submit">Добавить в поручения</button><button class="svcp-ghost" type="button" id="svcpChatTaskCancel">Отмена</button></div>
     <small>Демо · остаётся на устройстве, сотрудникам не отправляется</small>
    </form>
+   <div id="svcpTaskDiscussionQuick" class="svcp-task-discussion-quick" hidden role="group" aria-label="Варианты ответа на поручение">
+    <button type="button" data-svcp-discuss-template="Мне нужно уточнение по этому поручению: ">Уточнить</button>
+    <button type="button" data-svcp-discuss-template="Предлагаю изменить условия поручения: ">Предложить другое</button>
+   </div>
    <div id="svcpAttachmentPreview" class="svcp-attach-preview" hidden></div>
    <form id="svcpChatForm" class="svcp-composer">
     <label class="svcp-file-label" for="svcpFile" title="Выбрать файл для предпросмотра" aria-label="Выбрать файл для предпросмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 12 6-6a4 4 0 0 1 6 6l-9 9a6 6 0 0 1-9-9l10-10"/></svg></label>
