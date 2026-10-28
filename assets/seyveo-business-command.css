@@ -910,11 +910,11 @@
 #tasksPage .svcp-employee-duty>span{width:6px;height:6px;flex:none;border-radius:50%;background:currentColor;opacity:.55}
 #tasksPage .svcp-employee-duty[data-active="true"]{color:var(--text)}
 #tasksPage .svcp-employee-duty[data-active="true"]>span{opacity:1;box-shadow:0 0 8px currentColor}
-#tasksPage .svcp-employee-shift-card{display:grid;gap:9px;min-width:0;padding:16px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:21px;background:linear-gradient(145deg,var(--seyveo-specular,rgba(57,125,90,.06)),transparent 65%),var(--card)}
+#tasksPage .svcp-employee-shift-card{display:grid;gap:7px;min-width:0;padding:13px 14px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:18px;background:linear-gradient(145deg,var(--seyveo-specular,rgba(57,125,90,.06)),transparent 65%),var(--card)}
 #tasksPage .svcp-employee-shift-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #tasksPage .svcp-employee-shift-top strong{font-size:12px;font-weight:570;color:var(--text)}
 #tasksPage .svcp-employee-shift-top time{font-size:11px;color:var(--secondary)}
-#tasksPage .svcp-employee-live-clock{font-size:clamp(37px,10.2vw,58px);line-height:1.1;letter-spacing:-.048em;font-variant-numeric:tabular-nums;font-weight:510;color:var(--text);margin:7px 0 0}
+#tasksPage .svcp-employee-live-clock{font-size:clamp(36px,8.8vw,48px);line-height:1.08;letter-spacing:-.048em;font-variant-numeric:tabular-nums;font-weight:510;color:var(--text);margin:2px 0 0}
 #tasksPage .svcp-employee-shift-card[data-active="true"] .svcp-employee-live-clock{color:var(--text)}
 #tasksPage .svcp-employee-clock-hint{font-size:11px;line-height:1.45;color:var(--secondary);margin:0 0 2px}
 #tasksPage .svcp-employee-progress{height:5px;overflow:hidden;border-radius:999px;background:var(--seyveo-hdr-active,var(--card2))}
@@ -926,7 +926,7 @@
 #tasksPage .svcp-employee-shift .seyveo-shift-demo{display:grid;gap:6px;margin:0;padding:0}
 #tasksPage .svcp-employee-shift #seyveoShiftToggle{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;border-radius:15px;border:1px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:14px;font-weight:620;cursor:pointer}
 #tasksPage .svcp-employee-shift #seyveoShiftToggle[aria-pressed="true"]{border-color:var(--soft-line)}
-#tasksPage .svcp-employee-shift #seyveoShiftStatus{font-size:10px;color:var(--secondary);margin:0;line-height:1.35}
+#tasksPage .svcp-employee-shift #seyveoShiftStatus{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #tasksPage .svcp-employee-hours{display:grid;gap:10px;min-width:0}
 #tasksPage .svcp-employee-section-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 #tasksPage .svcp-employee-section-top h3{margin:0;color:var(--text);font-size:14px;font-weight:600}
@@ -961,8 +961,8 @@
 #tasksPage .svcp-employee-task-chat{border:0;background:none;padding:8px 0;color:var(--text);font:inherit;font-size:11px;cursor:pointer;flex:none}
 #tasksPage .svcp-employee-empty{margin:0;color:var(--secondary);font-size:11px}
 #tasksPage .svcp-employee-recognition{display:flex;align-items:center;gap:13px;min-height:75px;padding:12px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--card)}
-#tasksPage .svcp-employee-thanks-symbol{display:grid;place-items:center;flex:none;width:60px;height:60px;border-radius:18px;border:1px solid rgba(255,255,255,.19);background:linear-gradient(145deg,#30343c,#181d23 76%);box-shadow:inset 0 1px 2px rgba(255,255,255,.12);color:#ffffff}
-#tasksPage .svcp-employee-thanks-symbol svg{display:block;width:45px;height:45px;max-width:100%;max-height:100%;filter:drop-shadow(0 1px 2px rgba(17,12,8,.18))}
+#tasksPage .svcp-employee-thanks-symbol{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:13px;border:1px solid rgba(236,245,251,.20);background:#27323c;color:#fff}
+#tasksPage .svcp-employee-thanks-symbol svg{display:block;width:26px;height:26px;max-width:100%;max-height:100%}
 #tasksPage .svcp-employee-thanks-copy{display:grid;gap:3px;flex:1;min-width:0}
 #tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -1038,6 +1038,33 @@
  #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-photo{width:68px;height:68px}
 }
 
+/* Elena's work page: one compact navigation and one identity inside her account. */
+#tasksPage[data-employee-mode="true"] .tasks-heading{margin:0 0 12px}
+#tasksPage[data-employee-mode="true"] .tasks-heading>.svcp-tasks-back{margin:0 0 7px}
+#tasksPage[data-employee-mode="true"] .tasks-heading>.manage-caption{margin:0 0 5px}
+#tasksPage[data-employee-mode="true"] .tasks-heading>h1{font-size:27px;margin:0 0 4px}
+#tasksPage[data-employee-mode="true"] .tasks-switch{margin:0 0 12px;padding:3px}
+#tasksPage[data-employee-mode="true"] .tasks-switch button{min-height:39px}
+#tasksPage[data-employee-account-open="true"] .tasks-heading{position:relative;display:flex;align-items:center;min-height:46px;margin:0 0 10px;padding:0 54px 0 0}
+#tasksPage[data-employee-account-open="true"] .tasks-heading>.svcp-tasks-back{margin:0;min-height:44px;padding:4px 0}
+#tasksPage[data-employee-account-open="true"] .tasks-heading>.manage-caption,
+#tasksPage[data-employee-account-open="true"] .tasks-heading>#tasksTitle,
+#tasksPage[data-employee-account-open="true"] .tasks-heading>#tasksOverview,
+#tasksPage[data-employee-account-open="true"] #unifiedTasksTabs{display:none!important}
+#tasksPage[data-employee-account-open="true"] #unifiedEmployeeTasksView{gap:11px;padding-bottom:calc(118px + env(safe-area-inset-bottom,0px))}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-view{gap:12px}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading{display:block;padding:1px 0 9px;border-bottom:1px solid var(--soft-line)}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading>.svcp-employee-person{display:grid;gap:4px}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading .svcp-employee-kicker{font-size:9px;letter-spacing:.13em}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading .svcp-employee-person h2{font-size:24px;line-height:1.1;margin:1px 0}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading .svcp-employee-person p{font-size:12px}
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading .svcp-employee-shift-preview,
+#tasksPage[data-employee-account-open="true"] .svcp-employee-account-heading .svcp-employee-status-separator{display:none}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mark-icon{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;background:#27323c;color:#fff}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mark-icon svg{display:block;width:15px;height:15px}
+#unifiedTasksChatHost .svcp-reaction-options button[data-svcp-reaction="help"]{color:#fff}
+#unifiedTasksChatHost .svcp-reaction-options button[data-svcp-reaction="help"] svg{display:block;width:23px;height:23px;padding:3px;border-radius:7px;background:#27323c}
+
 /* The same Elena account avatar lives at the top right of the Tasks header. */
 #tasksPage .tasks-heading{position:relative}
 #tasksPage .svcp-employee-profile-toggle[hidden]{display:none!important}
@@ -1083,7 +1110,7 @@
 #tasksPage .svcp-employee-account-view .svcp-employee-recognition{
  padding:9px 2px;min-height:51px;background:transparent;border:0;border-top:1px solid var(--soft-line);border-radius:0
 }
-#tasksPage .svcp-employee-account-view .svcp-employee-thanks-symbol{width:60px;height:60px}
+#tasksPage .svcp-employee-account-view .svcp-employee-thanks-symbol{width:44px;height:44px}
 #tasksPage .svcp-employee-profile-toggle:focus-visible,
 #tasksPage .svcp-employee-account-back:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
