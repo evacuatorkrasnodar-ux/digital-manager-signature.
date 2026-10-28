@@ -473,3 +473,14 @@
 .svstaff-review-submit{justify-self:start;min-height:39px;padding:9px 14px;border:1px solid rgba(75,173,112,.4);border-radius:999px;background:rgba(43,129,90,.18);color:#cef3d8;font:inherit;font-size:12px;font-weight:550;cursor:pointer}
 .svstaff-review-status{margin:0;font-size:11px;color:#e9c077}
 @media(max-width:370px){#seyveoBusinessCommandPage .svcp-recognition-fields{grid-template-columns:1fr}#seyveoBusinessCommandPage .svcp-chat-assist{gap:4px}#seyveoBusinessCommandPage .svcp-recognize-launch{font-size:11px;padding-inline:8px}}
+
+/* SEYVEO Team · recognition profile shortcut. */
+#seyveoBusinessCommandPage .svcp-recognition-card-link{
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ min-height:41px;margin:8px 11px 5px;padding:7px 11px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;
+ background:transparent;color:var(--seyveo-emerald);
+ font:inherit;font-size:12px;font-weight:555;cursor:pointer
+}
+#seyveoBusinessCommandPage .svcp-recognition-card-link[hidden]{display:none!important}
+#seyveoBusinessCommandPage .svcp-recognition-card-link:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
