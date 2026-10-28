@@ -189,6 +189,12 @@ function draw(){
  host.append(archive);
  host.append(note('Документы и черновики в редакторе остаются только до выхода из раздела. Для хранения откройте «Защищённый архив». В прототипе нет облачной резервной копии.'));
 }
+function openApprovals(recordId){
+ area='business';view='flow';
+ if(host)draw();
+ if(typeof recordId==='string')window.SEYVEO_DOCUMENT_FLOW?.select?.(recordId);
+ return true;
+}
 function mount(parent){
  reset();
  host=el('div','sv-doc-center');parent.append(host);draw();return true;
@@ -197,5 +203,5 @@ function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  reset();host=null;
 }
-window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea});
+window.SEYVEO_DOCUMENT_CENTER=Object.freeze({mount,destroy,setArea,openApprovals});
 })();
