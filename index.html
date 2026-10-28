@@ -893,9 +893,45 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <div class="svcp-chat">
    <div class="svcp-chat-intro">
     <span class="svcp-chat-title"><strong>Общение команды</strong><small>Локальное демо · без доставки сообщений</small></span>
-    <div class="svcp-chat-assist"><button type="button" id="svcpMentionElena" class="svcp-mention-quick" aria-label="Упомянуть Елену в группе">@Елена</button><button type="button" id="svcpCallSayvi" class="svcp-sayvi-call" aria-label="Позвать Сэйви в рабочий разговор"><span aria-hidden="true">✧</span> Сэйви</button></div>
+    <div class="svcp-chat-assist"><button type="button" id="svcpRecognizeOpen" class="svcp-recognize-launch" aria-controls="svcpRecognizeForm" aria-expanded="false"><span aria-hidden="true">✦</span> Поблагодарить</button><button type="button" id="svcpMentionElena" class="svcp-mention-quick" aria-label="Упомянуть Елену в группе">@Елена</button><button type="button" id="svcpCallSayvi" class="svcp-sayvi-call" aria-label="Позвать Сэйви в рабочий разговор"><span aria-hidden="true">✧</span> Сэйви</button></div>
    </div>
    <div class="svcp-messages" id="svcpMessages" role="log" aria-label="Демонстрационная переписка" aria-live="polite"></div>
+   <form id="svcpRecognizeForm" class="svcp-recognition-form" hidden aria-label="Благодарность коллеге">
+    <div class="svcp-recognition-heading"><strong>✦ Знак признания</strong><small>За конкретную помощь, не просто лайк · демо</small></div>
+    <div class="svcp-recognition-fields">
+     <label>Кто благодарит
+      <select id="svcpRecognizeFrom" required>
+       <option value="tanya">Таня · коллега (демо)</option>
+       <option value="anna">Анна · старший продавец</option>
+       <option value="mikhail">Михаил · продавец</option>
+       <option value="elena">Елена · администратор</option>
+      </select>
+     </label>
+     <label>Кого
+      <select id="svcpRecognizeTo" required>
+       <option value="elena">Елену</option>
+       <option value="anna">Анну</option>
+       <option value="mikhail">Михаила</option>
+      </select>
+     </label>
+    </div>
+    <label class="svcp-recognition-kind">За что
+     <select id="svcpRecognizeKind" required>
+      <option value="help">✦ Помощь коллеге</option>
+      <option value="mentor">◇ Наставничество</option>
+      <option value="initiative">✧ Инициатива</option>
+      <option value="reliable">◆ Надёжность</option>
+     </select>
+    </label>
+    <label class="svcp-recognition-reason">Что человек сделал
+     <textarea id="svcpRecognizeReason" rows="2" maxlength="220" required placeholder="Например: Елена помогла Тане закрыть смену и разобраться с кассой"></textarea>
+    </label>
+    <div class="svcp-recognition-controls">
+     <button type="submit" class="svcp-primary">✦ Вручить знак</button>
+     <button type="button" id="svcpRecognizeCancel" class="svcp-ghost">Отмена</button>
+    </div>
+    <small class="svcp-recognition-footnote">Сохранится в учебной карточке сотрудника на этом устройстве. Реальные личности и события не подтверждены.</small>
+   </form>
    <div id="svcpReplyPreview" class="svcp-reply-preview" hidden>
     <span id="svcpReplyText" class="svcp-reply-text"></span>
     <button type="button" id="svcpReplyCancel" class="svcp-preview-close" aria-label="Отменить ответ на сообщение">×</button>
