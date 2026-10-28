@@ -12,12 +12,13 @@ const CHAT_KEY='seyveo-business-command-chat-demo-v1';
 const TASK_KEY='seyveo-business-command-tasks-demo-v1';
 const RECOGNITION_KEY='seyveo-peer-recognition-demo-v1';
 const RECOGNITION_TYPES=Object.freeze({
- help:{name:'Помощь коллеге',symbol:'✦'},
- mentor:{name:'Наставничество',symbol:'◇'},
- initiative:{name:'Инициатива',symbol:'✧'},
- reliable:{name:'Надёжность',symbol:'◆'}
+ help:{name:'Спасибо',symbol:'⭐'},
+ mentor:{name:'Выручил',symbol:'🙌'},
+ initiative:{name:'Хорошая идея',symbol:'💡'},
+ reliable:{name:'Отличная работа',symbol:'🔥'},
+ support:{name:'Поддержка',symbol:'💚'}
 });
-const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена'};
+const RECOGNITION_NAMES={tanya:'Таня',anna:'Анна',mikhail:'Михаил',elena:'Елена','manager-demo':'Вы · демо'};
 const ROOMS=[
  {id:'general',label:'Общий чат',kind:'groups',hint:'Для всех сотрудников · общие объявления и вопросы',mark:'◎',section:'all'},
  {id:'dm-elena',label:'Елена',kind:'personal',hint:'Кассир · личный рабочий чат',mark:'Е',person:'elena',section:'people',roleGroup:'Касса'},
@@ -28,7 +29,7 @@ const ROOMS=[
  {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
-let chatsFromTasks=false,lastRecognizedPerson=null;
+let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='';
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-100):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
@@ -182,56 +183,79 @@ $('svcpMentionElena')?.addEventListener('click',()=>{
  input.setSelectionRange(input.value.length,input.value.length);
 });
 
-/* Peer thanks are evidence of specific helpful actions, not performance grades.
-   Never auto-pay, rank, or penalize a staff member from these records. */
+/* A small, reversible reaction instead of a multi-field appreciation form.
+ * "manager-demo" is not a verified employee identity; no HR decision is made.
+ * An emoji on a message stays in the chat; person recognition is a separate
+ * explicit button in the personal chat and uses the previous staff-ledger key.
+ */
+const REACTION_MARKS={help:'⭐',support:'💚',mentor:'🙌',initiative:'💡',reliable:'🔥'};
 function closeRecognition(){
- const form=$('svcpRecognizeForm');
- if(form)form.hidden=true;
+ $('svcpReactionPicker').hidden=true;
  $('svcpRecognizeOpen')?.setAttribute('aria-expanded','false');
+ quickReactionTarget=null;
+}
+function showReactions(target){
+ quickReactionTarget=target;
+ const panel=$('svcpReactionPicker');
+ if(!panel)return;
+ $('svcpReactionLabel').textContent=target.type==='person'
+  ?'Знак для '+STAFF[target.person]+' · демо'
+  :'Реакция на сообщение';
+ panel.hidden=false;
+ $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(target.type==='person'));
+ panel.scrollIntoView({behavior:'instant',block:'nearest'});
 }
 $('svcpRecognizeOpen')?.addEventListener('click',()=>{
- const form=$('svcpRecognizeForm');
- if(!form)return;
- const open=form.hidden;
- form.hidden=!open;
- $('svcpRecognizeOpen').setAttribute('aria-expanded',String(open));
- if(open){
-  const room=ROOMS.find(x=>x.id===state.room);
-  if(room?.person&&room.person!=='sayvi')$('svcpRecognizeTo').value=room.person;
-  $('svcpRecognizeReason').focus({preventScroll:true});
+ if(!$('svcpReactionPicker').hidden&&quickReactionTarget?.type==='person'){closeRecognition();return}
+ const room=roomDetails();
+ if(room.kind!=='personal'||!room.person||!STAFF[room.person]){
+  setStatus('Чтобы знак попал в карточку человека, откройте его личный рабочий чат.');
+  return;
  }
+ showReactions({type:'person',person:room.person});
 });
-$('svcpRecognizeCancel')?.addEventListener('click',closeRecognition);
-$('svcpRecognizeForm')?.addEventListener('submit',event=>{
- event.preventDefault();
- const from=$('svcpRecognizeFrom').value,to=$('svcpRecognizeTo').value,kind=$('svcpRecognizeKind').value;
- const reason=$('svcpRecognizeReason').value.trim().slice(0,220);
- if(!RECOGNITION_NAMES[from]||!STAFF[to]||!RECOGNITION_TYPES[kind]||reason.length<8){
-  setStatus('Напишите, за какую конкретную помощь благодарите коллегу (минимум 8 символов).');return;
+$('svcpReactionCancel')?.addEventListener('click',closeRecognition);
+function applyPersonReaction(person,kind){
+ const reward=RECOGNITION_TYPES[kind];
+ if(!STAFF[person]||!reward)return;
+ const entries=read(RECOGNITION_KEY);
+ const day=new Date().toISOString().slice(0,10);
+ if(entries.some(x=>x&&x.from==='manager-demo'&&x.to===person&&x.kind===kind&&String(x.at||'').slice(0,10)===day)){
+  setStatus('Такой знак уже поставлен сегодня. Можешь выбрать другую эмоцию.');
+  return;
  }
- if(from===to){setStatus('Самому себе знак признания поставить нельзя.');return}
- let entries=read(RECOGNITION_KEY);
- // Protect the demo from casual repeated clicks. A real system would verify identities.
- const today=new Date().toISOString().slice(0,10);
- if(entries.some(x=>x&&x.from===from&&x.to===to&&x.kind===kind&&String(x.at||'').slice(0,10)===today)){
-  setStatus('Сегодня от этого коллеги уже есть знак этой категории. Уточнения лучше обсудить в чате.');return;
- }
- const item={id:'recognition-'+Date.now().toString(36),from,to,kind,reason,at:new Date().toISOString(),demo:true};
- entries=entries.concat(item).slice(-100);
- if(!save(RECOGNITION_KEY,entries))return;
- closeRecognition();$('svcpRecognizeReason').value='';
- lastRecognizedPerson=to;
- $('svcpRecognizeOpenCard').hidden=false;
- $('svcpRecognizeOpenCard').textContent='✦ Открыть карточку '+STAFF[to];
- const symbol=RECOGNITION_TYPES[kind].symbol;
- const entry={room:state.room,role:'recognition',at:Date.now(),
-  text:symbol+' '+RECOGNITION_NAMES[from]+(from==='mikhail'?' поблагодарил ':' поблагодарила ')+STAFF[to]+': '+reason,recognitionId:item.id};
- // A chat announcement is only a convenience; the recognition ledger is authoritative.
+ const item={id:'reaction-'+Date.now().toString(36),from:'manager-demo',to:person,kind,
+  reason:'Быстрая оценка в личном рабочем чате (без комментария)',at:new Date().toISOString(),demo:true};
+ if(!save(RECOGNITION_KEY,entries.concat(item).slice(-100)))return;
+ const entry={room:'dm-'+person,role:'recognition',at:Date.now(),
+  text:reward.symbol+' '+RECOGNITION_NAMES['manager-demo']+' отметили '+STAFF[person]+' · '+reward.name,
+  recognitionId:item.id};
  const updated=read(CHAT_KEY).concat(entry).slice(-100);
  if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
- setStatus(symbol+' Знак «'+RECOGNITION_TYPES[kind].name+'» записан в учебную карточку '+STAFF[to]+'. Премия не назначена.');
- window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:to}}));
-});
+ lastRecognizedPerson=person;
+ $('svcpRecognizeOpenCard').textContent='Открыть карточку '+STAFF[person];
+ $('svcpRecognizeOpenCard').hidden=false;
+ setStatus('Знак '+reward.symbol+' сохранён в учебной карточке '+STAFF[person]+'. Это не проверенная оценка работы.');
+ window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:person}}));
+}
+function applyMessageReaction(index,kind){
+ const emoji=REACTION_MARKS[kind],msg=state.chat[index];
+ if(!emoji||!msg||typeof msg.text!=='string')return;
+ const existing=msg.demoReaction===emoji?'':emoji;
+ const updated=state.chat.map((item,i)=>i===index?{...item,demoReaction:existing}:item);
+ if(!save(CHAT_KEY,updated))return;
+ state.chat=updated;
+ renderChat();
+ setStatus(existing?'Реакция '+emoji+' добавлена к сообщению · демо':'Реакция убрана.');
+}
+$('svcpReactionOptions')?.querySelectorAll('[data-svcp-reaction]').forEach(button=>
+ button.addEventListener('click',()=>{
+  const target=quickReactionTarget,kind=button.dataset.svcpReaction;
+  if(!target)return;
+  closeRecognition();
+  if(target.type==='person')applyPersonReaction(target.person,kind);
+  else applyMessageReaction(target.index,kind);
+ }));
 $('svcpRecognizeOpenCard')?.addEventListener('click',()=>{
  if(lastRecognizedPerson)window.SEYVEO_STAFF_CARDS?.open?.(lastRecognizedPerson);
 });
