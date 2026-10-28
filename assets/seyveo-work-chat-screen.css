@@ -253,65 +253,68 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpComposerEmojiStrip,#svcpTaskDiscussionQuick){
  padding:8px 13px;background:var(--card);border-top:1px solid var(--soft-line)
 }
-/* Single SEYVEO chat composer layout — no competing overrides. */
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm {
- display:grid!important;grid-template-columns:34px minmax(0,1fr) 42px!important;
- grid-template-rows:repeat(3,20px)!important;align-items:center!important;
- column-gap:6px!important;row-gap:0!important;
- width:100%;min-height:0!important;margin:0!important;
+/* Approved SEYVEO: one compact pill, no stacked buttons or duplicated styles. */
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpChatForm{
+ display:grid!important;grid-template-columns:38px minmax(0,1fr) 42px!important;grid-template-rows:auto!important;
+ gap:6px!important;align-items:end!important;min-height:0!important;width:100%;
  padding:7px max(8px,env(safe-area-inset-right,0px)) calc(7px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))!important;
- position:relative!important;inset:auto!important;transform:none!important;
- background:transparent!important;border:0!important;box-shadow:none!important;
+ margin:0!important;position:relative!important;inset:auto!important;transform:none!important;
+ border:0!important;box-shadow:none!important;background:transparent!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen:focus-within #svcpChatForm {padding-bottom:7px!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpPolishMessage,#svcpAttachFile,.svcp-camera-toggle){
- grid-column:1!important;display:grid!important;place-items:center!important;
- width:32px!important;height:20px!important;min-width:32px!important;min-height:20px!important;
- padding:0!important;margin:0!important;border:0!important;border-radius:8px!important;
- background:transparent!important;color:var(--text)!important;box-shadow:none!important
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:7px!important}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpAttachFile{
+ grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;
+ height:46px!important;width:38px!important;min-width:38px!important;min-height:46px!important;
+ padding:0!important;margin:0!important;background:transparent!important;border:0!important;
+ box-shadow:none!important;color:var(--text)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpPolishMessage {grid-row:1!important;color:#91dec0!important;font-size:22px!important}
-#tasksPage[data-work-chat-open="true"] #svcpAttachFile {grid-row:2!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-camera-toggle {grid-row:3!important}
-#tasksPage[data-work-chat-open="true"] #svcpAttachFile svg,
-#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-camera-toggle svg{width:19px;height:19px}
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field {
- grid-column:2!important;grid-row:1 / 4!important;
- min-width:0;min-height:44px!important;max-height:136px!important;
- display:flex!important;align-self:center!important;align-items:center!important;
- overflow:hidden!important;box-sizing:border-box!important;
- border:0!important;border-radius:22px!important;
- background:rgba(145,168,161,.075)!important;box-shadow:none!important
+#tasksPage[data-work-chat-open="true"] #svcpAttachFile svg{width:25px;height:25px}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpCameraToggle{display:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field{
+ grid-column:2!important;grid-row:1!important;display:flex!important;align-items:flex-end!important;
+ min-width:0!important;min-height:46px!important;max-height:138px!important;
+ border:0!important;outline:0!important;border-radius:24px!important;box-shadow:none!important;
+ background:rgba(142,169,160,.09)!important;overflow:hidden!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important}
+#tasksPage[data-work-chat-open="true"] #svcpPolishMessage{
+ order:0!important;flex:0 0 36px!important;display:grid!important;place-items:center!important;
+ height:44px!important;width:36px!important;min-width:36px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;
+ background:transparent!important;color:#77dcb3!important;font-size:25px!important
+}
 #tasksPage[data-work-chat-open="true"] #svcpChatInput{
- flex:1 1 auto!important;width:100%!important;min-width:0!important;
- height:44px!important;min-height:44px!important;max-height:136px!important;
- padding:10px 4px 9px 12px!important;margin:0!important;
- box-sizing:border-box!important;background:transparent!important;
- border:0!important;outline:0!important;box-shadow:none!important;
- color:var(--text)!important;font:inherit;font-size:16px!important;line-height:24px!important;
+ order:1!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
+ height:46px!important;min-height:46px!important;max-height:138px!important;
+ padding:11px 3px 10px 4px!important;margin:0!important;box-sizing:border-box!important;
+ background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;
+ color:var(--text)!important;font-size:16px!important;line-height:24px!important;
  resize:none!important;overflow-y:auto!important
 }
 #tasksPage[data-work-chat-open="true"] #svcpComposerEmojiToggle{
- flex:0 0 30px!important;display:grid!important;place-items:center!important;
- width:30px!important;height:42px!important;min-height:42px!important;
+ order:2!important;flex:0 0 30px!important;width:30px!important;min-width:30px!important;
+ height:44px!important;min-height:44px!important;display:grid!important;place-items:center!important;
  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
  color:var(--secondary)!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpComposerEmojiToggle svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7}
+#tasksPage[data-work-chat-open="true"] #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
 #tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
- grid-column:3!important;grid-row:1 / 4!important;align-self:center!important;justify-self:center!important;
- width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
- padding:0!important;margin:0!important;border-radius:50%!important;box-shadow:none!important
+ grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
+ width:42px!important;min-width:42px!important;height:46px!important;min-height:46px!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
 }
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpVoiceRecord{display:grid!important;place-items:center!important;border:0!important;background:transparent!important;color:var(--text)!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send{display:none!important;place-items:center!important;background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;color:var(--text)!important}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpVoiceRecord{
+ display:grid!important;place-items:center!important;background:rgba(142,169,160,.09)!important;color:var(--text)!important
+}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send{
+ display:none!important;place-items:center!important;
+ background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;color:var(--text)!important
+}
 #tasksPage[data-work-chat-open="true"] #svcpChatForm[data-has-content="true"] #svcpVoiceRecord{display:none!important}
 #tasksPage[data-work-chat-open="true"] #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
 #tasksPage[data-work-chat-open="true"] #svcpChatForm .svcp-chat-send span{display:none!important}
-#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpComposerDirectTask:not([hidden]){grid-column:2 / -1!important;grid-row:4!important;justify-self:end}
+#tasksPage[data-work-chat-open="true"] #svcpChatForm #svcpComposerDirectTask:not([hidden]){grid-column:2 / -1!important;grid-row:2!important;justify-self:end}
 /* Voice note uses the composer strip, not an old modal/audio form. */
 #tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
  display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;
@@ -570,13 +573,4 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  position:absolute;top:8px;right:9px;background:none;border:none;color:var(--secondary);
  font-size:20px;width:28px;height:28px
 }
-
-#tasksPage[data-work-chat-open="true"] #svcpWorkChatScreen .svcp-polish-message{
- flex:0 0 30px;width:30px;height:30px;min-width:30px;
- display:inline-flex;align-items:center;justify-content:center;
- border:1px solid rgba(103,214,171,.32);border-radius:50%;
- color:#85dfba;background:rgba(65,161,124,.12);
- font-size:23px;line-height:1;cursor:pointer;box-shadow:none
-}
-
 
