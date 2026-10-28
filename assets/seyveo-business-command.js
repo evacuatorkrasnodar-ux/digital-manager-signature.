@@ -365,6 +365,8 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleV
  const id='dm-'+String(person||'').toLowerCase();
  if(!ROOMS.some(x=>x.id===id&&x.person))return false;
  if(location.hash!=='#manage')location.hash='#manage';
+ // Open the actual Management chat surface before selecting the individual.
+ document.querySelector('[data-clean-business="chat"]')?.click();
  tab('chats');openRoom(id);return true;
 }});
 window.addEventListener('pagehide',cleanupPreview);
