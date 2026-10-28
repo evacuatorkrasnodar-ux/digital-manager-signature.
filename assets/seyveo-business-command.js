@@ -19,12 +19,46 @@ function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');retur
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list))}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.')}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
 function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node}
+
+/* Reuse the working employee, shift, recruitment and ROI widgets rather than
+   creating parallel copies. Moving existing DOM nodes preserves their listeners. */
+function peopleView(name){
+ const hiring=name==='hiring';
+ const directory=$('svcpPeopleDirectory'),recruitment=$('svcpPeopleHiring');
+ if(directory)directory.hidden=hiring;
+ if(recruitment)recruitment.hidden=!hiring;
+ root.querySelectorAll('[data-svcp-people]').forEach(button=>{
+  button.setAttribute('aria-pressed',String(button.dataset.svcpPeople===(hiring?'hiring':'team')));
+ });
+}
+function preparePeopleContent(){
+ const cards=$('seyveoStaffCards'),cardsHost=$('svcpPeopleCardsHost');
+ if(cards&&cardsHost){
+  const obsoleteWrapper=cards.closest('details.seyveo-hr-fold');
+  cardsHost.append(cards);
+  // This wrapper belonged to the old recruiting menu and is now empty.
+  obsoleteWrapper?.remove();
+ }
+ const shiftFold=$('seyveoShiftToggle')?.closest('details.seyveo-hr-fold');
+ const shiftHost=$('svcpPeopleShiftHost');
+ if(shiftFold&&shiftHost)shiftHost.append(shiftFold);
+ const interview=$('seyveoHrDemoOpen');
+ const recruitingBody=interview?.closest('details.seyveo-manage-fold')?.querySelector('.seyveo-manage-fold-body');
+ const recruitingHost=$('svcpPeopleHiringHost');
+ if(recruitingBody&&recruitingHost)recruitingHost.append(...Array.from(recruitingBody.childNodes));
+ const roi=$('seyveoRoiForm'),roiHost=$('pictureEfficiencyHost');
+ if(roi&&roiHost)roiHost.append(roi);
+ peopleView('team');
+}
+root.querySelectorAll('[data-svcp-people]').forEach(button=>
+ button.addEventListener('click',()=>peopleView(button.dataset.svcpPeople)));
 function tab(name){
  if(!['chats','team','tasks'].includes(name))return;
  state.tab=name;
  root.querySelectorAll('[data-svcp-panel]').forEach(section=>{section.hidden=section.dataset.svcpPanel!==name});
  if(name==='tasks')renderTasks();
  if(name==='chats')renderChat();
+ if(name==='team')peopleView('team');
 }
 root.querySelectorAll('[data-svcp-room]').forEach(button=>button.addEventListener('click',()=>{
  state.room=button.dataset.svcpRoom;
@@ -106,13 +140,12 @@ $('svcpTaskForm')?.addEventListener('submit',e=>{
  state.tasks=state.tasks.slice(-60);
  save(TASK_KEY,state.tasks);input.value='';renderTasks();
 });
-// Old HR/shift/ROI tools remain live but open their own focused destinations.
+// Business tools keep their original handlers; the surrounding layout is unified.
 root.querySelectorAll('[data-svcp-feature]').forEach(button=>
  button.addEventListener('click',()=>
   window.SEYVEO_BUSINESS_NAV?.openFeature?.(button.dataset.svcpFeature)));
-// A single action from Management selects an existing focused workspace.
-// There is no second navigation menu inside chat, employees or tasks.
-window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab});
+window.SEYVEO_BUSINESS_COMMAND=Object.freeze({openTab:tab,openPeopleView:peopleView});
 window.addEventListener('pagehide',cleanupPreview);
+preparePeopleContent();
 tab('chats');
 })();
