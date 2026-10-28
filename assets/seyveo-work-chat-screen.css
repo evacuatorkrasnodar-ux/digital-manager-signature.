@@ -164,6 +164,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  background:transparent;color:var(--text);font:inherit;font-size:13px
 }
 #svcpWorkChatScreen .svcp-chat{
+ position:relative!important;
  flex:1 1 auto;display:flex;min-height:0;flex-direction:column;overflow:hidden!important;
  width:100%;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important
@@ -191,7 +192,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  width:100%;display:flex;flex-direction:column;gap:9px;overflow-x:hidden;overflow-y:auto!important;
  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
  padding:16px max(16px,env(safe-area-inset-right,0px))
-  10px max(16px,env(safe-area-inset-left,0px))!important;
+  calc(80px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))!important;
  background:transparent!important;background-image:none!important;
  scroll-padding-bottom:18px
 }
@@ -258,10 +259,17 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  display:grid!important;grid-template-columns:38px minmax(0,1fr) 42px!important;grid-template-rows:auto!important;
  gap:6px!important;align-items:end!important;min-height:0!important;width:100%;
  padding:4px 8px 5px!important;
- margin:0!important;position:relative!important;inset:auto!important;transform:none!important;
+ margin:0!important;position:absolute!important;inset:auto 0 0 0!important;
+ z-index:5!important;transform:none!important;
  border:0!important;box-shadow:none!important;background:transparent!important
 }
 #svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:5px!important}
+/* When an attachment/reply tray opens, keep it in ordinary layout instead of overlapping controls. */
+#svcpWorkChatScreen .svcp-chat:has(:is(#svcpCameraTray,#svcpComposerEmojiStrip,#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
+ position:relative!important;inset:auto!important;flex:0 0 auto!important
+}
+#svcpWorkChatScreen .svcp-chat:has(#svcpVoiceCapture:not([hidden])) #svcpMessages{padding-bottom:12px!important}
+
 /* A native installed app, unlike Safari, needs its own home-indicator inset. */
 @media(display-mode:standalone){
  #svcpWorkChatScreen #svcpChatForm{padding-bottom:calc(5px + env(safe-area-inset-bottom,0px))!important}
