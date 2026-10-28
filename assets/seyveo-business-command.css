@@ -711,3 +711,52 @@
  #unifiedTasksChatHost .svcp-quick-emojis{gap:4px}
  #unifiedTasksChatHost .svcp-emoji-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
+
+
+/* Emoji in chat input: standalone key and inline strip; no popup window. */
+#unifiedTasksChatHost .svcp-composer-emoji-toggle{
+ display:grid;place-items:center;flex:none;width:34px;height:40px;padding:0;
+ background:transparent;border:0;border-radius:50%;
+ font:inherit;font-size:23px;line-height:1;color:var(--text);
+ cursor:pointer;-webkit-tap-highlight-color:transparent
+}
+#unifiedTasksChatHost .svcp-composer-emoji-toggle[aria-expanded="true"]{
+ color:var(--seyveo-emerald)
+}
+#unifiedTasksChatHost .svcp-composer-emoji-strip{
+ display:flex;flex-wrap:wrap;gap:2px 4px;align-items:center;justify-content:flex-start;
+ padding:6px 10px 7px;border-top:1px solid var(--soft-line);background:transparent;
+}
+#unifiedTasksChatHost .svcp-composer-emoji-strip[hidden]{display:none!important}
+#unifiedTasksChatHost .svcp-composer-emoji-choice,
+#unifiedTasksChatHost .svcp-composer-emoji-expand{
+ display:grid;place-items:center;min-width:36px;min-height:36px;
+ border:0;border-radius:9px;padding:3px;
+ background:transparent;color:var(--text);
+ font:inherit;font-size:23px;line-height:1;cursor:pointer;
+}
+#unifiedTasksChatHost .svcp-composer-emoji-expand{
+ color:var(--seyveo-emerald);font-size:24px;
+}
+#unifiedTasksChatHost .svcp-composer-emoji-choice:active,
+#unifiedTasksChatHost .svcp-composer-emoji-expand:active{
+ background:var(--seyveo-hdr-active,var(--card))
+}
+#unifiedTasksChatHost .svcp-composer-emoji-toggle:focus-visible,
+#unifiedTasksChatHost .svcp-composer-emoji-choice:focus-visible,
+#unifiedTasksChatHost .svcp-composer-emoji-expand:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:1px
+}
+/* Reaction choices stay within the message, without an extra card-like frame. */
+#unifiedTasksChatHost .svcp-bubble>.svcp-reaction-picker{
+ padding:7px 0 0;border:0;background:transparent;box-shadow:none;
+}
+#unifiedTasksChatHost .svcp-bubble>.svcp-reaction-picker>span{
+ font-size:10.5px
+}
+@media(max-width:370px){
+ #unifiedTasksChatHost .svcp-composer{gap:3px;padding-inline:6px}
+ #unifiedTasksChatHost .svcp-composer-emoji-toggle{width:30px}
+ #unifiedTasksChatHost .svcp-composer-emoji-choice,
+ #unifiedTasksChatHost .svcp-composer-emoji-expand{min-width:33px}
+}
