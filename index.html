@@ -911,7 +911,13 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <section id="seyveoBusinessCommandPage" class="svcp-root svcp-direct-view" hidden aria-label="Рабочие разделы SEYVEO">
  <section id="svcpChats" class="svcp-panel" data-svcp-panel="chats" role="region" aria-label="Рабочие чаты">
   <div id="svcpChatDirectory">
-   <div class="svcp-directory-head"><div class="svcp-directory-heading"><strong>Чаты команды</strong><small>Команда · личные чаты · рабочие группы</small></div></div>
+   <div class="svcp-directory-head"><div class="svcp-directory-heading"><strong>Все разговоры</strong><small>Личные сообщения, группы и Сэйви</small></div></div>
+   <div id="svcpChatFilters" class="svcp-chat-filters" role="group" aria-label="Фильтр рабочих диалогов">
+    <button type="button" data-svcp-chat-filter="all" aria-pressed="true">Все</button>
+    <button type="button" data-svcp-chat-filter="people" aria-pressed="false">Личные</button>
+    <button type="button" data-svcp-chat-filter="groups" aria-pressed="false">Группы</button>
+    <button type="button" data-svcp-chat-filter="saved" aria-pressed="false">Избранное</button>
+   </div>
    <label class="svcp-search-field" for="svcpHistorySearch">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>
     <input id="svcpHistorySearch" type="search" autocomplete="off" maxlength="110" placeholder="Имя, должность, сообщение…" aria-label="Поиск по сотрудникам, чатам, сообщениям и поручениям">
@@ -921,12 +927,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <div id="svcpConversation" hidden>
    <div class="svcp-conversation-bar">
     <button type="button" id="svcpConversationBack" class="svcp-conversation-back" aria-label="К списку рабочих чатов"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-    <div class="svcp-conversation-info"><strong id="svcpConversationTitle">Общий чат</strong><small id="svcpConversationDetail">Демонстрационная переписка</small></div><button type="button" id="svcpConversationSearch" class="svcp-conversation-search" aria-label="Поиск по сообщениям и поручениям"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg></button>
+    <span id="svcpRoomAvatar" class="svcp-room-avatar" aria-hidden="true">◎</span>
+    <div class="svcp-conversation-info"><strong id="svcpConversationTitle">Общий чат</strong><small id="svcpConversationDetail">Рабочая группа</small></div>
+    <button type="button" id="svcpConversationSearch" class="svcp-conversation-search" aria-label="Найти сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg></button>
+    <button type="button" id="svcpRoomInfoToggle" class="svcp-room-info-toggle" aria-label="Информация о чате" aria-controls="svcpRoomInfo" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10.5v6M12 7.5h.01"/></svg></button>
     <button type="button" id="svcpReturnToTasks" class="svcp-perspective" hidden>К поручению</button><button type="button" id="svcpElenaPerspective" class="svcp-perspective" hidden aria-pressed="false">Взгляд Елены</button>
    </div>
+   <section id="svcpRoomInfo" class="svcp-room-info" hidden aria-label="Сведения о чате">
+    <strong id="svcpRoomInfoName">Рабочий чат</strong>
+    <p id="svcpRoomInfoDescription">Чат команды SEYVEO.</p>
+    <small>Демо · сообщения и файлы остаются в этом браузере, участникам не доставляются.</small>
+   </section>
   <div class="svcp-chat">
    <div class="svcp-chat-intro">
-    <span class="svcp-chat-title"><strong>Рабочий разговор</strong><small>Сообщения на этом устройстве · демо</small></span>
     <div class="svcp-chat-assist"><button type="button" id="svcpRecognizeOpen" class="svcp-recognize-launch" aria-controls="svcpReactionPicker" aria-expanded="false"><span class="svcp-mark-icon" aria-hidden="true"><svg class="svcp-star-icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.8 2.85 5.77 6.37.93-4.61 4.5 1.09 6.35L12 17.35l-5.7 3 1.09-6.35-4.61-4.5 6.37-.93Z"/></svg></span> Отметить</button><button type="button" id="svcpMentionElena" class="svcp-mention-quick" aria-label="Упомянуть Елену в группе">@Елена</button><button type="button" id="svcpCallSayvi" class="svcp-sayvi-call" aria-label="Позвать Сэйви в рабочий разговор"><span aria-hidden="true">✧</span> Сэйви</button></div>
    </div>
    <button type="button" id="svcpLoadOlder" class="svcp-load-older" hidden>↑ Ранние сообщения</button>
@@ -1001,10 +1014,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <input id="svcpCameraVideo" type="file" accept="video/*" capture="environment" hidden>
     <input id="svcpCameraBarcode" type="file" accept="image/*" capture="environment" hidden>
     <div class="svcp-chat-compose-field">
-    <textarea id="svcpChatInput" class="svcp-compose-input" rows="1" maxlength="1000" aria-label="Текст для демонстрационного чата" placeholder="Сообщение…" spellcheck="true"></textarea>
+    <textarea id="svcpChatInput" class="svcp-compose-input" rows="1" maxlength="1000" aria-label="Текст для демонстрационного чата" placeholder="Написать сообщение…" spellcheck="true"></textarea>
     <button id="svcpComposerEmojiToggle" class="svcp-composer-emoji-toggle" type="button" aria-label="Выбрать эмодзи" title="Эмодзи (по желанию)" aria-expanded="false" aria-controls="svcpComposerEmojiStrip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2"/><path d="M8.8 9.3h.1m6.2 0h.1" stroke-width="2.2"/></svg></button>
-     <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
     </div>
+    <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
     <button type="submit" class="svcp-primary svcp-chat-send" aria-label="Записать сообщение в учебный чат"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7.2 18-4-7.3L2.5 10.2 21 3Z"/></svg><span>В чат</span></button>
     <button id="svcpComposerDirectTask" type="button" class="svcp-composer-direct-task" aria-label="Поручить написанное сотруднику" hidden>Поручить</button>
    </form>
@@ -1398,7 +1411,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <section id="svcpWorkChatScreen" role="dialog" aria-modal="true" aria-labelledby="svcpWorkChatTitle" aria-describedby="svcpWorkChatDescription" hidden>
  <header class="svcp-work-chat-header">
   <button type="button" id="svcpWorkChatBack" class="svcp-work-chat-back" aria-label="Вернуться к моей работе"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-  <div class="svcp-work-chat-heading"><strong id="svcpWorkChatTitle">Чаты команды</strong><small id="svcpWorkChatDescription">Личные и групповые · демо на этом устройстве</small></div>
+  <div class="svcp-work-chat-heading"><strong id="svcpWorkChatTitle">Сообщения</strong><small id="svcpWorkChatDescription">SEYVEO · рабочие разговоры</small></div>
   <svg class="svcp-work-chat-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v11H9l-5 3v-14Z"/><path d="M8 10.5h8"/></svg>
  </header>
  <div id="svcpWorkChatCanvas"></div>
