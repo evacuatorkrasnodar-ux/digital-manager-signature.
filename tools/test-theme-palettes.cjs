@@ -33,29 +33,33 @@ const css={
  home:read('assets/home-velvet.css')
 };
 const match=html.match(/data-theme-choice="([^"]+)"/g)||[];
-assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','dark','graphite','sapphire','plum','light'],
+assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','graphite','light','dark','sapphire','plum'],
  'One original settings page offers all theme choices in stable order');
-assert.match(html,/const THEME_VALUES=\['auto','dark','graphite','sapphire','plum','light'\]/);
+assert.match(html,/const THEME_VALUES=\['auto','graphite','light','dark','sapphire','plum'\]/);
 assert.match(html,/dataset\.palette=palette/);
+assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
+assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
+for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Smoked Velvet'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
+for(const token of ['--seyveo-hdr-stage','--seyveo-hdr-glint'])assert.ok((html.match(new RegExp(token,'g'))||[]).length>=6,'HDR-inspired materials on all palettes: '+token);
 assert.match(html,/THEME_VALUES\.includes\(raw\.theme\)/,'Legacy theme values still restore');
 assert.match(html,/THEME_VALUES\.includes\(previous\.theme\)/,'Older theme migrations still work');
 assert.match(html,/assets\/floating-navigation\.css\?v=40/);
-assert.match(html,/assets\/living-space\.css\?v=50/);
+assert.match(html,/assets\/living-space\.css\?v=51/);
 assert.match(html,/assets\/seyveo-music\.css\?v=40/);
 assert.match(html,/assets\/living-conversation\.css\?v=16/);
-assert.match(html,/assets\/conversation-refined\.css\?v=37/);
+assert.match(html,/assets\/conversation-refined\.css\?v=38/);
 assert.match(html,/assets\/personal-wellness\.css\?v=25/);
-assert.match(html,/assets\/calendar-spaces\.css\?v=19/);
+assert.match(html,/assets\/calendar-spaces\.css\?v=24/);
 assert.match(html,/assets\/sections-velvet\.css\?v=12/);
-assert.match(html,/assets\/notebook-smart\.css\?v=25/);
-assert.match(html,/assets\/notebook-paper\.css\?v=13/);
-assert.match(html,/assets\/notebook-scan\.css\?v=7/);
+assert.match(html,/assets\/notebook-smart\.css\?v=28/);
+assert.match(html,/assets\/notebook-paper\.css\?v=14/);
+assert.match(html,/assets\/notebook-scan\.css\?v=8/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
 assert.match(html,/assets\/home-velvet\.css\?v=19/);
 const refreshed={
- 'composer-intent.css':18,
- 'seyveo-music-dock.css':8,
+ 'composer-intent.css':19,
+ 'seyveo-music-dock.css':9,
  'business-map.css':14,
  'company-signature.css':8,
  'passport-cards.css':27,
@@ -158,4 +162,4 @@ assert.match(css.businessPicture,/linear-gradient\(180deg,var\(--text\),var\(--s
 assert.match(css.network,/background:var\(--seyveo-hdr-active\)/,
  'Network controls follow palette');
 assert.ok(!html.includes('assets/home-mail-demo.js'),'Home cards are unchanged');
-console.log('PASS theme contract: 5 palettes, Notebook reader/paper/scanner, Health, Care, original sphere/dock, nested dialogs, music and chat.');
+console.log('PASS theme contract: Auto graphite/white, five manual palettes, subtle HDR-style pigments, Notebook reader/paper/scanner, Health, Care, original sphere/dock, nested dialogs, music and chat.');
