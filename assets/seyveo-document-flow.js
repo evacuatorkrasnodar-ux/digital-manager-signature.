@@ -147,6 +147,12 @@ function draw(){
  host.append(list);
  const live=$('p','svdf-feedback',info);live.setAttribute('role','status');host.append(live);
  if(records.length)host.append(button('Очистить учебную историю',reset,'svdf-reset'));
+ const chat=button('Обсудить документы в рабочем чате',()=>{
+  const open=window.SEYVEO_UNIFIED_TASKS?.openChat;
+  if(typeof open==='function')open('manage','docs',role==='employee'?'elena':'manager');
+  else{info='Рабочий чат пока недоступен.';draw();}
+ },'svdf-chat-link');
+ host.append(chat);
  host.append($('p','svdf-footnote','Настоящее внедрение потребует учётных записей, прав доступа, серверной доставки, журналирования, хранения в подходящем контуре и интеграции с оператором ЭДО/ЭП.'));
 }
 function mount(parent){
