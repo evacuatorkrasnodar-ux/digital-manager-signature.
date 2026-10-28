@@ -30,7 +30,7 @@ const ROOMS=[
 ];
 const state={tab:'chats',room:'general',filter:'all',viewpoint:'manager',file:null,objectUrl:null,replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='';
-function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-100):[]}catch{return []}}
+function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
 function setStatus(s){const el=$('svcpChatStatus');if(el)el.textContent=s}
 function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node}
@@ -264,7 +264,7 @@ function showReactions(target){
   :'Реакция на сообщение';
  panel.hidden=false;
  $('svcpRecognizeOpen')?.setAttribute('aria-expanded',String(target.type==='person'));
- panel.scrollIntoView({behavior:'instant',block:'nearest'});
+ panel.scrollIntoView({behavior:'auto',block:'nearest'});
 }
 $('svcpRecognizeOpen')?.addEventListener('click',()=>{
  if(!$('svcpReactionPicker').hidden&&quickReactionTarget?.type==='person'){closeRecognition();return}
@@ -291,7 +291,7 @@ function applyPersonReaction(person,kind){
  const entry={room:'dm-'+person,role:'recognition',at:Date.now(),
   text:reward.symbol+' '+RECOGNITION_NAMES['manager-demo']+' отметили '+STAFF[person]+' · '+reward.name,
   recognitionId:item.id};
- const updated=read(CHAT_KEY).concat(entry).slice(-100);
+ const updated=read(CHAT_KEY).concat(entry).slice(-500);
  if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
  lastRecognizedPerson=person;
  $('svcpRecognizeOpenCard').textContent='Открыть карточку '+STAFF[person];
@@ -482,7 +482,7 @@ $('svcpChatForm')?.addEventListener('submit',event=>{
   const advice=suggestFromChat(txt);
   messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
  }
- const updated=state.chat.concat(messages).slice(-100);
+ const updated=state.chat.concat(messages).slice(-500);
  if(!save(CHAT_KEY,updated))return;
  state.chat=updated;
  input.value='';if(fileInput)fileInput.value='';
@@ -686,7 +686,7 @@ $('svcpHomeReplyForm')?.addEventListener('submit',event=>{
  if(!task||!text)return;
  const reply={room:'dm-elena',role:'demo-elena',text,at:Date.now(),
   replyTo:{sender:'Руководитель · поручение',text:task.text.slice(0,160)}};
- const updated=read(CHAT_KEY).concat(reply).slice(-100);
+ const updated=read(CHAT_KEY).concat(reply).slice(-500);
  const status=$('svcpHomeReplyStatus');
  if(!save(CHAT_KEY,updated)){
   status.textContent='Не удалось записать ответ. Проверьте место на устройстве.';
