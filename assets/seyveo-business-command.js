@@ -374,8 +374,6 @@ function renderDirectory(){
  for(const item of state.chat){
   if(item&&typeof item.text==='string'&&item.text.trim())latest.set(item.room,item);
  }
- const sections={all:'Команда',people:'Сотрудники',extra:'Рабочие группы',assistant:'Сэйви'};
- let prior=null;
  const roleLabels={elena:'Кассир',anna:'Старший продавец',mikhail:'Продавец'};
  const groupHints={general:'Объявления и вопросы команды',team:'Смены и рабочие задачи',docs:'Вопросы по рабочим файлам'};
  function previewTime(at){
@@ -387,14 +385,12 @@ function renderDirectory(){
   if(date.getTime()>=startOfToday-86400000&&date.getTime()<startOfToday)return 'Вчера';
   return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',...(date.getFullYear()===now.getFullYear()?{}:{year:'2-digit'})});
  }
- for(const room of ROOMS){
-  if(employeePreviewActive()&&!employeeAllowedRoom(room.id))continue;
-  if(chatFilter==='people'&&room.kind!=='personal')continue;
-  if(chatFilter==='groups'&&room.kind!=='groups')continue;
-  if(room.section!==prior){
-   prior=room.section;
-   if(sections[prior])list.append(el('div','svcp-directory-section',sections[prior]));
-  }
+ const visibleRooms=ROOMS.filter(room=>
+  (!employeePreviewActive()||employeeAllowedRoom(room.id))&&
+  (chatFilter!=='people'||room.kind==='personal')&&
+  (chatFilter!=='groups'||room.kind==='groups'))
+  .sort((a,b)=>(Number(latest.get(b.id)?.at)||0)-(Number(latest.get(a.id)?.at)||0));
+ for(const room of visibleRooms){
   const managerDialog=employeePreviewActive()&&room.id==='dm-elena';
   const person=room.person&&roleLabels[room.person];
   const last=latest.get(room.id);
@@ -835,7 +831,20 @@ function renderChat(){
  if(!visible.length){
   thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
  }else{
+  let lastDay='';
   for(const {msg,index} of visible){
+   if(Number.isFinite(Number(msg.at))&&msg.at){
+    const date=new Date(msg.at);
+    const dateKey=Number.isNaN(date.getTime())?'':date.toDateString();
+    if(dateKey&&dateKey!==lastDay){
+     lastDay=dateKey;
+     const today=new Date(),yesterday=new Date(today);
+     yesterday.setDate(today.getDate()-1);
+     const label=dateKey===today.toDateString()?'Сегодня':dateKey===yesterday.toDateString()?'Вчера'
+      :date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',...(date.getFullYear()===today.getFullYear()?{}:{year:'numeric'})});
+     thread.append(el('div','svcp-chat-day',label));
+    }
+   }
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
    const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
