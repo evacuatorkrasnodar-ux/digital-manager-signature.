@@ -1,12 +1,13 @@
 /**
- * SEYVEO Secure Documents — LOCAL, EPHEMERAL developer API.
- * Never expose to the internet. No database, MFA, certified E-signature,
- * production-grade identity, persistent audit, backup or real delivery.
- * In-memory ciphertext is lost when the process stops.
+ * SEYVEO Secure Documents — LOCAL development API.
+ * Never expose to the internet. No production identity, database, MFA,
+ * certified E-signature, backup, concurrent-process support or real delivery.
+ * Optional encrypted disk snapshot is enabled ONLY via an explicit path.
  */
 import { createServer } from 'node:http';
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash, createCipheriv, createDecipheriv } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
+import { createEncryptedDevStore } from './dev-store.mjs';
 import {
   canCreateDocument, canReadDocument, canReadDocumentAudit,
   canTransitionDocument
@@ -98,10 +99,10 @@ const nextState = Object.freeze({
 
 /**
  * Provides a loopback-only prototype. No actor or role comes from the client.
- * Credentials are from a trusted local bootstrap configuration and hashed in memory.
- * The master key lives only in RAM. Nothing is written to disk.
+ * Credentials are from trusted environment bootstrap and hashed in memory.
+ * The master key lives only in RAM; optional persistence stores ciphertext.
  */
-export function createDevDocumentServer({ ownerPassword, employeePassword, masterKey, organizationId='demo-org' }) {
+export function createDevDocumentServer({ ownerPassword, employeePassword, masterKey, organizationId='demo-org', storagePath } = {}) {
   if (process.env.NODE_ENV === 'production') throw new Error('Production is intentionally disabled.');
   if (!Buffer.isBuffer(masterKey) || masterKey.length !== 32)
     throw new Error('A random 32-byte development encryption key is required.');
@@ -115,8 +116,11 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
     userId, organizationId, role: user.role, status:'active'
   }]));
   const sessions = new Map();
-  const documents = new Map();
-  const audit = new Map();
+  const storage=storagePath?createEncryptedDevStore({filePath:storagePath,masterKey}):null;
+  // Deliberately fail startup on wrong key, tampered ciphertext, or invalid format.
+  const loaded=storage?.load()||{documents:new Map(),audit:new Map()};
+  let documents=loaded.documents;
+  let audit=loaded.audit;
   const attempts = new Map();
 
   const securityContext = req => {
@@ -138,10 +142,20 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
     if (!doc || !canReadDocument({ ...context, document:doc })) fail(404, 'Документ не найден.');
     return doc;
   };
-  const logEvent = (document, actorUserId, action) => {
-    const entry = Object.freeze({ at: new Date().toISOString(), actorUserId, action, status:document.status });
-    const history = audit.get(document.id) || [];
-    history.push(entry); audit.set(document.id, history);
+  const commitDocument = (document, actorUserId, action) => {
+    // A synchronous single-process transaction: persist first, then publish
+    // in-memory maps. No state is committed on encryption/disk failure.
+    const nextDocs=new Map(documents),nextAudit=new Map(audit);
+    const entry=Object.freeze({at:new Date().toISOString(),actorUserId,action,status:document.status});
+    const history=[...(audit.get(document.id)||[]),entry];
+    nextDocs.set(document.id,document);
+    nextAudit.set(document.id,history);
+    if(storage){
+      try{storage.save({documents:nextDocs,audit:nextAudit});}
+      catch{fail(503,'Не удалось сохранить учебный документ. Действие не выполнено.');}
+    }
+    documents=nextDocs;
+    audit=nextAudit;
   };
   const loginAllowed = () => {
     const now = Date.now();
@@ -214,8 +228,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
           title:data.title.trim(), status:'sent', createdAt:now, updatedAt:now,
           sealed:encryptedContent(data.body, masterKey)
         };
-        documents.set(document.id, document);
-        logEvent(document, context.actor.userId, 'created');
+        commitDocument(document, context.actor.userId, 'created');
         send(res, 201, { document:meta(document) });
         return;
       }
@@ -235,10 +248,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         if (!Object.hasOwn(nextState, data.action) ||
           !canTransitionDocument({ ...context, document, action:data.action }))
           fail(403, 'Это действие недоступно.');
-        document.status = nextState[data.action];
-        document.updatedAt = new Date().toISOString();
-        logEvent(document, context.actor.userId, data.action);
-        send(res, 200, { document:meta(document) });
+        // Never mutate a persisted record before the new snapshot is durable.
+        const nextDocument={...document,status:nextState[data.action],updatedAt:new Date().toISOString()};
+        commitDocument(nextDocument, context.actor.userId, data.action);
+        send(res, 200, { document:meta(nextDocument) });
         return;
       }
       fail(405, 'Метод не поддерживается.');
@@ -264,7 +277,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const server = createDevDocumentServer({
       ownerPassword:process.env.SEYVEO_DEV_OWNER_PASSWORD,
       employeePassword:process.env.SEYVEO_DEV_EMPLOYEE_PASSWORD,
-      masterKey:key
+      masterKey:key,
+      storagePath:process.env.SEYVEO_DEV_STORE_PATH||undefined
     });
     const port = Number(process.env.SEYVEO_DEV_PORT || '8787');
     if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid port.');
