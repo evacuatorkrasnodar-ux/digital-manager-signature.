@@ -9,3 +9,9 @@ export function financeSummary(items,months=3){
  if(![startup,monthly,reserve,total].every(Number.isSafeInteger))throw new RangeError('Budget overflow');
  return {startup,monthly,reserve,months,total};
 }
+
+export function fundingGap(items,available,months=3){
+ if(!Number.isSafeInteger(available)||available<0||available>1e12)throw new TypeError('Invalid available funds');
+ const needed=financeSummary(items,months).total;
+ return {needed,available,shortfall:Math.max(0,needed-available),remaining:Math.max(0,available-needed)};
+}
