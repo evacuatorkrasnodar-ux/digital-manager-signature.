@@ -195,7 +195,7 @@ function renderAgenda(){
 /* Smart Calendar v1: local rule-based assistance, not an external AI model. */
 function timeCollision(date,time,exceptID=null){
  if(!time||!at(date))return null;
- return events().find(item=>item.date===date&&item.time===time&&item.id!==exceptID)||null;
+ return visibleEvents().find(item=>item.date===date&&item.time===time&&item.id!==exceptID)||null;
 }
 /* Local in-app reminders only, not background push notifications. */
 function upcomingReminder(nowDate=new Date(),records=visibleEvents()){
@@ -328,7 +328,7 @@ function showTimeAlternatives(){
  const date=$('calendarEventDate').value,time=$('calendarEventTime').value;
  const engine=window.SEYVEO_CALENDAR_TIME;
  const settings=planningValues();
- const nearby=engine?.nearest(events(),date,time,editing,settings)||null;
+ const nearby=engine?.nearest(visibleEvents(),date,time,editing,settings)||null;
  box.hidden=!nearby;
  choices.replaceChildren();
  if(!nearby)return;
@@ -338,7 +338,7 @@ function showTimeAlternatives(){
     ?'Время занято с учётом длительности и дороги'
     :'Время может быть занято: у одной встречи не указана длительность';
  $('calendarTimeOptionsMessage').textContent=notice+' — «'+nearby.title.slice(0,65)+'» ('+nearby.time+'). Возможные варианты:';
- const slots=engine.suggestions(events(),date,time,editing,new Date(),settings);
+ const slots=engine.suggestions(visibleEvents(),date,time,editing,new Date(),settings);
  if(!slots.length){
   $('calendarTimeOptionsMessage').textContent+=' Других вариантов с 09:00 до 19:00 не нашлось.';
   return;
