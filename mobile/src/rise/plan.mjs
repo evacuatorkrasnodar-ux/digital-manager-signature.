@@ -7,5 +7,7 @@ export const plan=[
 ];
 export function sumBudget(amounts){
  if(!Array.isArray(amounts)||amounts.some(x=>!Number.isSafeInteger(x)||x<0||x>1e10))throw Error('Invalid amount');
- return amounts.reduce((sum,x)=>sum+x,0);
+ const total=amounts.reduce((sum,x)=>sum+x,0);
+ if(!Number.isSafeInteger(total))throw Error('Budget overflow');
+ return total;
 }
