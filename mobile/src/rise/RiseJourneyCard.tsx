@@ -21,7 +21,7 @@ export function RiseJourneyCard(){
     <Text style={styles.heading}>Продолжить</Text>
    </Pressable>
   </>:null}
-  <Text style={styles.note}>Пробная версия: ответы остаются в памяти только до закрытия приложения.</Text>
+  <Text style={styles.note}>Пробная версия. Проект пока не сохраняется: для этого требуется подключить защищённую базу устройства.</Text>
  </View>;
 }
 const styles=StyleSheet.create({
