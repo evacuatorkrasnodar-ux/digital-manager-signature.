@@ -1,0 +1,52 @@
+/* Actual SEYVEO / LIFE page tiles, not the Home popover.
+   Preserve all existing backgrounds, tile borders, sphere and dock. */
+#lifePage #calendarSpaces .calendar-space-button {
+  display:grid;
+  grid-template-columns:26px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-content:center;
+  align-items:start;
+  justify-content:stretch;
+  column-gap:13px;
+  row-gap:7px;
+  text-align:left;
+}
+#lifePage #calendarSpaces .calendar-space-button > svg {
+  grid-column:1;
+  grid-row:1 / 3;
+  width:25px;
+  height:25px;
+  justify-self:center;
+  align-self:start;
+}
+#lifePage #calendarSpaces .calendar-space-button > span {
+  grid-column:2;
+  grid-row:1;
+  align-self:center;
+  margin:0;
+  min-width:0;
+  line-height:1.3;
+  text-align:left;
+}
+#lifePage #calendarSpaces .calendar-space-button > small {
+  grid-column:2;
+  grid-row:2;
+  margin:0;
+  min-width:0;
+  line-height:1.4;
+  text-align:left;
+}
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="calendar"] > svg { color:#E7D2A2; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="notes"] > svg { color:#CBBFE9; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="health"] > svg,
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="care"] > svg { color:#E8B8C7; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="family"] > svg { color:#F0C5D0; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="contacts"] > svg { color:#9EDDD1; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="smart-home"] > svg { color:#C2DED1; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="documents"] > svg { color:#B8D4E8; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="mail"] > svg { color:#8FE3C3; }
+#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="pay"] > svg { color:#E7D2A2; }
+/* Telegram/YouTube artwork retains its existing white brand fill. */
+@media(max-width:370px) {
+ #lifePage #calendarSpaces .calendar-space-button {column-gap:9px}
+}
