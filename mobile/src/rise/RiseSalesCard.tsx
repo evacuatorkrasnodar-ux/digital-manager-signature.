@@ -7,8 +7,9 @@ export function RiseSalesCard({monthlyFixed=0}:{monthlyFixed?:number}){
  const [revenue,setRevenue]=useState('');
  const [cost,setCost]=useState('');
  const [busy,setBusy]=useState(false);
+ const [loaded,setLoaded]=useState(false);
  const [error,setError]=useState(false);
- useEffect(()=>{loadRiseSales().then(setRows).catch(()=>setError(true))},[]);
+ useEffect(()=>{loadRiseSales().then(data=>{setRows(data);setLoaded(true)}).catch(()=>setError(true))},[]);
  const current=new Date();
  const monthKey=current.getFullYear()+'-'+String(current.getMonth()+1).padStart(2,'0');
  const monthRows=rows.filter(row=>row.soldOn?.startsWith(monthKey+'-'));
@@ -21,7 +22,7 @@ export function RiseSalesCard({monthlyFixed=0}:{monthlyFixed?:number}){
  const progress=salesProgress(totals.revenue,totals.cost,monthlyFixed);
  const valid=[revenue,cost].every(x=>/^[0-9]+$/.test(x)&&Number(x)<=1e10);
  const save=async()=>{
-  if(!valid||busy)return;
+  if(!valid||busy||!loaded||error)return;
   setBusy(true);
   try{await addRiseSale(Number(revenue),Number(cost));setRows(await loadRiseSales());setRevenue('');setCost('')}
   catch{setError(true)}
@@ -31,7 +32,7 @@ export function RiseSalesCard({monthlyFixed=0}:{monthlyFixed?:number}){
   <Text style={{color:'#95d9bd'}}>SEYVEO RISE · Продажи вручную</Text>
   <TextInput value={revenue} onChangeText={setRevenue} keyboardType="number-pad" placeholder="Выручка" accessibilityLabel="Выручка" style={{color:'#fff',padding:12}}/>
   <TextInput value={cost} onChangeText={setCost} keyboardType="number-pad" placeholder="Затраты" accessibilityLabel="Затраты" style={{color:'#fff',padding:12}}/>
-  <Pressable accessibilityRole="button" disabled={!valid||busy||error} onPress={()=>{void save()}}><Text style={{color:'#95d9bd',padding:12}}>Сохранить продажу</Text></Pressable>
+  <Pressable accessibilityRole="button" disabled={!valid||busy||error||!loaded} onPress={()=>{void save()}}><Text style={{color:'#95d9bd',padding:12}}>Сохранить продажу</Text></Pressable>
   <Text style={{color:'#fff'}}>Записей за месяц: {monthRows.length} · Выручка: {totals.revenue} · Переменные затраты: {totals.cost}</Text>
   <Text style={{color:'#fff'}}>Вклад в покрытие расходов: {progress.contribution} · Осталось покрыть: {progress.remaining}</Text>
   <Text style={{color:'#95d9bd'}}>Сэйви · Сравнение с прошлым месяцем</Text>
