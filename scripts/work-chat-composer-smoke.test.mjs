@@ -59,7 +59,7 @@ test('task is contextual to typed personal chat with an employee, not a permanen
   assert.match(script,/if\(save\(CHAT_KEY,updated\)\)/);
   assert.match(script,/Демо, без отправки на другой телефон/);
   assert.match(html,/seyveo-work-chat-screen\.css\?v=30/);
-  assert.match(html,/seyveo-business-command\.js\?v=66/);
+  assert.match(html,/seyveo-business-command\.js\?v=67/);
 });
 
 test('existing Sayvi assistant remains attached to the employee message, without duplicate helper',()=>{
