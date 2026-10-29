@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {Script} from 'node:vm';
 const read=p=>readFile(new URL('../'+p,import.meta.url),'utf8');
 const [html,css,js]=await Promise.all([
  read('index.html'),read('assets/seyveo-music.css'),read('assets/seyveo-music.js')
@@ -80,4 +81,8 @@ test('Music Hall of Fame shows starred tracks without creating audio copies',()=
  assert.match(css,/#sayviMusicPage \.sv-music-record\.sv-music-hall-track \.sv-music-vinyl-hall-star\{display:block\}/);
  assert.match(css,/#sayviMusicPage\.sv-music-playing \.sv-music-record\{/);
  assert.doesNotMatch(css,/\.sv-music-vinyl-hall-star[^}]*animation:/);
+});
+
+test('SEYVEO Music controller stays syntactically valid',()=>{
+ assert.doesNotThrow(()=>new Script(js,{filename:'assets/seyveo-music.js'}));
 });
