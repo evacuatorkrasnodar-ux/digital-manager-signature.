@@ -144,3 +144,16 @@ test('client cannot synchronize if login identity is absent',async()=>{
  assert.equal((await f.client.poll()).state,'sign-in-required');
  assert.equal(f.received.length,0);
 });
+
+
+test('account swap during secure cursor loading never sends old token',async()=>{
+ let current=identity('elena'),requests=0;
+ const f=setup({
+  getIdentity:async()=>current,
+  readCursor:async()=>{current=identity('tanya');return 0},
+  request:async()=>{requests++;return {status:200,body:{events:[],nextCursor:0}}}
+ });
+ assert.equal((await f.client.poll()).state,'session-changed');
+ assert.equal(requests,0);
+ assert.equal(f.received.length,0);
+});
