@@ -211,7 +211,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         // The label is display-only: the server assigns the actual session ID.
         // No client-supplied role, organization, device ID or trusted device claim.
         const label = data.deviceLabel === undefined ? 'Учебное устройство' : data.deviceLabel;
-        if (!isText(label, 60) || /[\\r\\n\\t]/.test(label))
+        if (!isText(label, 60) || /[\r\n\t]/.test(label))
           fail(400, 'Некорректное имя учебного устройства.');
         const now = Date.now();
         for(const [digest, entry] of sessions) {
@@ -258,7 +258,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       }
       // Revoke just one session of the authenticated account. In particular,
       // an owner cannot browse or revoke another employee's private sessions.
-      const sessionMatch=/^\\/v1\\/sessions\\/([0-9a-f-]{36})$/.exec(path);
+      const sessionMatch=/^\/v1\/sessions\/([0-9a-f-]{36})$/.exec(path);
       if(sessionMatch){
         if(req.method!=='DELETE') fail(405,'Метод не поддерживается.');
         let targetDigest;
