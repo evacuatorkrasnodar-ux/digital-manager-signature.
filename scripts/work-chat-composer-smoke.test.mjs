@@ -35,7 +35,7 @@ test('composer uses a single row, oval paper plane, and inline assignment at all
   assert.match(css,/#svcpWorkChatScreen #svcpChatForm\.svcp-can-assign\{[\s\S]*?grid-template-columns:38px minmax\(0,1fr\) 87px 58px!important/);
   assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not\(\[hidden\]\)\{[\s\S]*?grid-column:3!important;grid-row:1!important/);
   assert.match(css,/#svcpWorkChatScreen #svcpChatForm\.svcp-can-assign \.svcp-chat-send\{[\s\S]*?grid-column:4!important;grid-row:1!important/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?width:58px!important;min-width:58px!important;height:46px!important;[\s\S]*?border-radius:19px!important/);
+  assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?width:58px!important;min-width:58px!important;height:46px!important;[\s\S]*?border-radius:999px!important/);
   assert.match(css,/@media\(max-width:390px\)\{[\s\S]*?grid-template-columns:33px minmax\(0,1fr\) 72px 52px!important/);
   assert.match(css,/@media\(max-width:340px\)\{[\s\S]*?grid-template-columns:32px minmax\(0,1fr\) 40px 52px!important/);
   assert.doesNotMatch(css,/#svcpComposerDirectTask:not\(\[hidden\]\)\{grid-column:2 \/ -1!important;grid-row:2!important/);
