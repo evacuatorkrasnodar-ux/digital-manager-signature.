@@ -13,7 +13,7 @@ test('remove complex manual lyrics imports and leave simple main music actions',
  assert.match(page,/id="sayviMusicImport"/);
  assert.match(page,/id="sayviMusicSourcesToggle"/);
  assert.match(page,/id="sayviMusicFavorite"/);
- assert.match(html,/seyveo-music\.css\?v=49/);
+ assert.match(html,/seyveo-music\.css\?v=50/);
  assert.match(html,/seyveo-music\.js\?v=32/);
 });
 test('whole favorite button is compact, star centered without SVG transform',()=>{
