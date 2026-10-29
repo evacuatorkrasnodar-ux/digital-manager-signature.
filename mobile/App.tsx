@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
+import { NativeWorkAccessStatus } from './src/work/NativeWorkAccessStatus';
 
 // This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
 // SEYVEO Home, plasma, dock, or the Black Velvet design reference.
@@ -96,6 +97,7 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
+          <NativeWorkAccessStatus />
           <Text style={styles.footnote}>
             Календарь, Блокнот, резервные копии и голос будут подключаться
             после проверки безопасности. Никакой отправки личных данных в облако.
