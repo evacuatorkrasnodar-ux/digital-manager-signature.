@@ -139,7 +139,7 @@ test('manager-to-Elena task demo uses shared task state and explicit manager acc
  assert.match(roles,/file\.accept='image\/\*'/);
  assert.match(roles,/renderEmployeeTasks\(\)/);
  assert.match(roles,/window\.SEYVEO_APPROVAL_DEMO_PHOTO=Object\.freeze/);
- assert.match(roles,/function previewRole\(role\)/);
+ assert.match(roles,/function switchPreviewRole\(role\)/);
  assert.match(css,/#tasksPage \.svcp-approval-demo-entry\{/);
  assert.match(css,/#tasksPage \.svcp-approval-report-form\{/);
  assert.doesNotMatch(roles,/localStorage\.setItem\([^,\n]*photo/i);
