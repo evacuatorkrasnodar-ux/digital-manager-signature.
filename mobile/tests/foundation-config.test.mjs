@@ -18,7 +18,7 @@ test('package versions match Expo SDK 58 baseline and include a development clie
  const pkg = JSON.parse(await read('package.json'));
  assert.match(pkg.dependencies.expo, /^~58\./);
  assert.equal(pkg.dependencies.react, '19.3.0');
- assert.equal(pkg.dependencies['react-native'], '0.88.0');
+ assert.equal(pkg.dependencies['react-native'], '0.88.1');
  assert.match(pkg.dependencies['expo-dev-client'], /^~58\./);
  assert.equal(pkg.scripts.start, 'expo start --dev-client');
 });
