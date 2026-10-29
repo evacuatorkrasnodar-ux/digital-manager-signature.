@@ -56,7 +56,7 @@ export SEYVEO_DEV_MASTER_KEY_B64="$(node -e "console.log(require('node:crypto').
 node server/secure-documents/dev-server.mjs
 ```
 
-The process listens at `http://127.0.0.1:8787` by default. To use another local port set `SEYVEO_DEV_PORT` to 1024–65535. The CLI does **not** bind to all interfaces.
+The process listens at `http://127.0.0.1:8787` by default. To use another local port set `SEYVEO_DEV_PORT` to 1024–65535. Both the CLI and the server factory now reject an unspecified/wildcard bind (such as `server.listen(8787)` or `0.0.0.0`) **before** opening a socket. Only explicit `127.0.0.1` or `::1` is allowed. This is a development safety barrier, **not** production network security or permission to connect phones.
 
 ### Optional tenant-aware SQLite mode (synthetic data only)
 
