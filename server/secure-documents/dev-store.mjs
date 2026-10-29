@@ -164,10 +164,14 @@ export function createEncryptedDevStore({ filePath, masterKey }) {
       while(written<data.length) written+=writeSync(fd,data,written,data.length-written);
       fsyncSync(fd);closeSync(fd);fd=undefined;
       renameSync(tmp,filePath);
-      // File was fsynced; best-effort directory fsync on POSIX platforms.
+      // A post-rename directory fsync is best-effort. Once rename succeeds,
+      // never signal a failed transaction that would leave memory out of sync
+      // with the already-replaced file. This remains a DEV-ONLY durability gap.
       if (process.platform!=='win32') {
         let dirfd;
-        try {dirfd=openSync(dir,'r');fsyncSync(dirfd);} finally {if(dirfd!==undefined)closeSync(dirfd);}
+        try {dirfd=openSync(dir,'r');fsyncSync(dirfd);}
+        catch { /* Filesystems may not support directory fsync. */ }
+        finally {if(dirfd!==undefined)closeSync(dirfd);}
       }
     } catch(e) {
       if(fd!==undefined)closeSync(fd);
