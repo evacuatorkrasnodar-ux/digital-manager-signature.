@@ -32,6 +32,7 @@ const miniPlay=$('sayviMusicMiniPlay');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 const favoriteButton=$('sayviMusicFavorite');
+const hallToggle=$('sayviMusicHallToggle');
 if(!page||!audio||!fileInput||!player||!seek||!status||!heading||!collection||!importBtn)return;
 // The original audio file is never renamed, transcoded, uploaded or modified.
 const metadata=window.SEYVEO_MUSIC_METADATA;
@@ -67,7 +68,7 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false;
+let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks';
 
 /* Saved favorites are track fingerprints, not copied audio or subscriptions. */
 const FAVORITES_KEY='seyveo-music-favorites-v1';
@@ -158,9 +159,12 @@ function syncResume(){
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing,hasPlayed}}));
 }
 function syncQueueToggle(){
- // The persistent Management dock button must never become a music control.
- // Queue accessibility is managed by the player itself, not global navigation.
- if(collection)collection.setAttribute('aria-label','Треки SEYVEO Music');
+ // Use the existing single collection panel for tracks and Hall of Fame.
+ if(collection)collection.setAttribute('aria-label',collectionMode==='hall'?'Аллея славы · избранные песни':'Треки SEYVEO Music');
+ if(hallToggle){
+  hallToggle.setAttribute('aria-expanded',String(queueOpen&&collectionMode==='hall'&&!collection.hidden));
+  hallToggle.setAttribute('aria-label','Аллея славы · избранных песен: '+favorites.size);
+ }
 }
 function hidePanels(){
  queueOpen=false;
@@ -169,14 +173,15 @@ function hidePanels(){
  if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
  syncQueueToggle();
 }
-function showQueue(){
- if(!tracks.length){
+function showCollection(mode){
+ if(mode==='tracks'&&!tracks.length){
   sayviMessage('Сначала выберите свои аудиофайлы.');
   importBtn.focus({preventScroll:true});
   return false;
  }
  if(sourcesPanel)sourcesPanel.hidden=true;
- if(sourcesToggle)sourcesToggle.setAttribute('aria-expanded','false');
+ sourcesToggle?.setAttribute('aria-expanded','false');
+ collectionMode=mode;
  queueOpen=true;
  collectionRender();
  collection.scrollTop=0;
@@ -184,17 +189,25 @@ function showQueue(){
  collection.querySelector('.sv-music-panel-close')?.focus({preventScroll:true});
  return true;
 }
+function showQueue(){return showCollection('tracks')}
 function toggleQueue(){
- if(queueOpen&&!collection.hidden){
+ if(queueOpen&&!collection.hidden&&collectionMode==='tracks'){
   hidePanels();
   return false;
  }
  return showQueue();
 }
+function toggleHall(){
+ if(queueOpen&&!collection.hidden&&collectionMode==='hall'){
+  hidePanels();
+  return false;
+ }
+ return showCollection('hall');
+}
 function toggleSources(force){
  if(!sourcesPanel)return;
  const show=typeof force==='boolean'?force:sourcesPanel.hidden;
- if(show){queueOpen=false;collection.hidden=true;}
+ if(show){queueOpen=false;collection.hidden=true;syncQueueToggle()}
  sourcesPanel.hidden=!show;
  sourcesToggle?.setAttribute('aria-expanded',String(show));
  if(show)sourcesClose?.focus({preventScroll:true});
@@ -247,35 +260,63 @@ function mediaSession(){
 }
 function collectionRender(){
  collection.replaceChildren();
- if(!tracks.length){
+ if(collectionMode==='tracks'&&!tracks.length){
   collection.hidden=true;
+  syncQueueToggle();
   return;
  }
  collection.hidden=!queueOpen;
+ const hall=collectionMode==='hall';
+ const loaded=new Map(tracks.map((file,i)=>[favoriteId(file),{file,i}]));
+ const entries=hall?[...favorites].map(key=>({key,match:loaded.get(key)}))
+  :tracks.map((file,i)=>({key:favoriteId(file),match:{file,i}}));
  const header=document.createElement('div');
  header.className='sv-music-collection-header';
  const title=document.createElement('p');
  title.className='sv-music-collection-label';
- title.textContent='ТРЕКИ · '+tracks.length;
+ title.textContent=hall?'АЛЛЕЯ СЛАВЫ · '+favorites.size:'ТРЕКИ · '+tracks.length;
  const dismiss=document.createElement('button');
  dismiss.type='button';dismiss.className='sv-music-panel-close';
  dismiss.textContent='Готово';dismiss.setAttribute('aria-label','Свернуть список и вернуться к плееру');
  dismiss.addEventListener('click',hidePanels);
  header.append(title,dismiss);
  collection.append(header);
- tracks.forEach((file,i)=>{
+ if(hall){
+  const note=document.createElement('p');
+  note.className='sv-music-hall-note';
+  note.textContent=!entries.length
+   ?'Пока нет любимых песен. Нажми звезду возле исполнителя, чтобы добавить первую.'
+   :entries.some(entry=>!entry.match)
+    ?'Звёзды сохранены на этом устройстве. Чтобы слушать песни после перезапуска, снова выбери их файлы через «Моя музыка».'
+    :'Твои любимые песни из текущей подборки.';
+  collection.append(note);
+ }
+ entries.forEach(({key,match},position)=>{
   const btn=document.createElement('button');
   btn.type='button';btn.className='sv-music-track-row';
-  btn.dataset.musicIndex=String(i);
-  btn.setAttribute('aria-current',String(i===index));
+  if(hall)btn.classList.add('sv-music-hall-row');
+  const available=!!match;
+  if(available){
+   btn.dataset.musicIndex=String(match.i);
+   btn.setAttribute('aria-current',String(match.i===index));
+  }
   const count=document.createElement('span');count.className='sv-music-row-num';
-  count.textContent=String(i+1).padStart(2,'0');
+  count.textContent=hall?'★':String(position+1).padStart(2,'0');
   const name=document.createElement('span');name.className='sv-music-row-title';
-  name.textContent=(isFavorite(file)?'★  ':'')+safeName(file);
+  const remembered=String(key).split('|').slice(0,-2).join('|').replace(/\.[^.]+$/,'');
+  name.textContent=available
+   ?(hall?'':isFavorite(match.file)?'★  ':'')+safeName(match.file)
+   :remembered||'Любимая песня';
   btn.append(count,name);
-  btn.addEventListener('click',()=>{switchTrack(i,true)});
+  if(!available){
+   btn.classList.add('sv-music-hall-unavailable');
+   btn.title='Выбрать файл песни заново';
+   btn.setAttribute('aria-label',name.textContent+'. Выбрать файл для воспроизведения');
+   btn.addEventListener('click',()=>fileInput.click());
+  }else btn.addEventListener('click',()=>switchTrack(match.i,true));
   collection.append(btn);
  });
+ syncQueueToggle();
 }
 function switchTrack(i,autoplay=false){
  if(!tracks.length)return false;
@@ -490,6 +531,7 @@ if(mini&&miniWriter&&typeof ResizeObserver==='function'){
  new ResizeObserver(measureWriter).observe(miniWriter);
  measureWriter();
 }
+hallToggle?.addEventListener('click',toggleHall);
 sourcesToggle?.addEventListener('click',()=>toggleSources());
 sourcesClose?.addEventListener('click',()=>toggleSources(false));
 document.addEventListener('keydown',e=>{
