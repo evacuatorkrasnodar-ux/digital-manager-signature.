@@ -71,7 +71,9 @@ export function createVerifiedJwtAccessSession({
     if(!object(jwk)||jwk.kty!=='RSA'||!KID.test(jwk.kid||'')||
        jwk.alg!=='RS256'||jwk.use!=='sig'||keys.has(jwk.kid)||
        Object.hasOwn(jwk,'d')||Object.hasOwn(jwk,'p')||
-       Object.hasOwn(jwk,'q')||Object.hasOwn(jwk,'oth')||
+       Object.hasOwn(jwk,'q')||Object.hasOwn(jwk,'dp')||
+       Object.hasOwn(jwk,'dq')||Object.hasOwn(jwk,'qi')||
+       Object.hasOwn(jwk,'oth')||
        (jwk.key_ops!==undefined&&
         (!Array.isArray(jwk.key_ops)||jwk.key_ops.length!==1||
          jwk.key_ops[0]!=='verify')))
