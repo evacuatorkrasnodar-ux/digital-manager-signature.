@@ -73,12 +73,14 @@ function saveEvents(list){
  catch{return false}
 }
 let focus=new Date(),mode='month',editing=null,scope='all';
-const visibleEvents=()=>events().filter(x=>scope==='all'||x.kind===scope);
+const managerPreview=()=>window.SEYVEO_PREVIEW?.isManager?.()===true;
+const selectedScope=()=>managerPreview()?scope:'personal';
+const visibleEvents=()=>events().filter(x=>selectedScope()==='all'||x.kind===selectedScope());
 const iso=()=>format(focus);
 function dayItems(dayKey,includeDone=true){
  const meeting=visibleEvents().filter(x=>x.date===dayKey).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
- const todo=scope==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
- const personal=scope==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(dayKey)||[]);
+ const todo=selectedScope()==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
+ const personal=selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(dayKey)||[]);
  return [...meeting,...todo,...personal].sort((a,b)=>a.sort.localeCompare(b.sort)||a.title.localeCompare(b.title,'ru'));
 }
 function createEntry(item){
@@ -140,7 +142,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  btn.dataset.weekend=String(day.getDay()===0||day.getDay()===6);
  if(holiday)btn.dataset.holiday=holiday.kind;
  if(!week)btn.dataset.outside=String(day.getMonth()!==focus.getMonth());
- const personal=scope==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(key)||[]);
+ const personal=selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(key)||[]);
  const records=calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length;
  btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+(holiday?' · '+holiday.name:'')+' · '+records+' записей');
  if(week)btn.append(text('small','',weekday[(day.getDay()+6)%7]));
@@ -155,14 +157,14 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
 function renderMonth(){
  const selected=new Date(focus.getFullYear(),focus.getMonth(),1);
  const grid=$('calendarMonthGrid');grid.replaceChildren();
- const first=monday(selected),calendarEvents=visibleEvents(),personalTasks=scope==='business'?[]:tasks();
+ const first=monday(selected),calendarEvents=visibleEvents(),personalTasks=selectedScope()==='business'?[]:tasks();
  const total=Math.ceil((((new Date(focus.getFullYear(),focus.getMonth()+1,0)).getDate())+(selected.getDay()+6)%7)/7)*7;
  for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
 }
 function renderWeek(){
- const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=visibleEvents(),personalTasks=scope==='business'?[]:tasks();
+ const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=visibleEvents(),personalTasks=selectedScope()==='business'?[]:tasks();
  root.replaceChildren();
  for(let i=0;i<7;i++)root.append(dayButton(step(mondayStart,i),true,calendarEvents,personalTasks));
  $('calendarMonth').hidden=true;
@@ -196,7 +198,7 @@ function timeCollision(date,time,exceptID=null){
  return events().find(item=>item.date===date&&item.time===time&&item.id!==exceptID)||null;
 }
 /* Local in-app reminders only, not background push notifications. */
-function upcomingReminder(nowDate=new Date(),records=events()){
+function upcomingReminder(nowDate=new Date(),records=visibleEvents()){
  const now=nowDate.getTime();
  const active=[];
  for(const item of records){
@@ -223,7 +225,7 @@ function smartSuggestion(todayDate=new Date()){
     'Через '+remaining+' мин: «'+dueReminder.title.slice(0,55)+'».'
   };
  }
- const entries=events().filter(item=>item.date===selected&&item.time);
+ const entries=visibleEvents().filter(item=>item.date===selected&&item.time);
  const times=new Map();
  for(const entry of entries){
   if(times.has(entry.time))return{
@@ -233,7 +235,8 @@ function smartSuggestion(todayDate=new Date()){
   };
   times.set(entry.time,entry);
  }
- const pending=tasks().filter(item=>!item.done&&item.date).sort((a,b)=>a.date.localeCompare(b.date));
+ const pending=selectedScope()==='business'?[]:
+  tasks().filter(item=>!item.done&&item.date).sort((a,b)=>a.date.localeCompare(b.date));
  const late=pending.filter(item=>item.date<today);
  if(late.length)return{
   kind:'deadlines',
@@ -259,14 +262,15 @@ function smartSuggestion(todayDate=new Date()){
   };
  }
  const tomorrow=format(step(todayDate,1));
- const meeting=events().filter(item=>item.date===tomorrow&&item.time).sort((a,b)=>a.time.localeCompare(b.time))[0];
+ const meeting=visibleEvents().filter(item=>item.date===tomorrow&&item.time).sort((a,b)=>a.time.localeCompare(b.time))[0];
  if(meeting)return{
   kind:'event',id:meeting.id,
   message:'Завтра в '+meeting.time+' запланировано «'+meeting.title.slice(0,48)+'».',
   action:'Открыть'
  };
  /* Only important dates in My World; do not interpret private health records. */
- const upcoming=window.SEYVEO_SPACES?.upcoming(today,format(step(todayDate,7)))||[];
+ const upcoming=selectedScope()==='business'?[]:
+  (window.SEYVEO_SPACES?.upcoming(today,format(step(todayDate,7)))||[]);
  const birthday=upcoming.find(item=>item.space==='world'&&item.kind==='День рождения'&&item.date>=today);
  if(birthday)return{
   kind:'day',date:birthday.date,
@@ -372,9 +376,9 @@ function showEventTimeHint(){
 function renderDeadlines(){
  const today=format(new Date()),tomorrow=format(step(new Date(),1)),weekEnd=format(step(new Date(),7));
  const all=[
-  ...(scope==='business'?[]:tasks().filter(x=>!x.done).map(x=>({...x,source:'task'}))),
+  ...(selectedScope()==='business'?[]:tasks().filter(x=>!x.done).map(x=>({...x,source:'task'}))),
   ...visibleEvents().filter(x=>x.date>=today).map(x=>({...x,source:'event'})),
-  ...(scope==='business'?[]:(window.SEYVEO_SPACES?.upcoming(today,format(step(new Date(),370)))||[]))
+  ...(selectedScope()==='business'?[]:(window.SEYVEO_SPACES?.upcoming(today,format(step(new Date(),370)))||[]))
  ];
  const groups=[
   ['Просрочено',x=>x.source==='task'&&x.date&&x.date<today],
@@ -400,9 +404,12 @@ function renderDeadlines(){
 }
 function render(){
  if(page.hidden)return;
- page.dataset.calendarScope=scope;
+ const currentScope=selectedScope();
+ page.dataset.calendarScope=currentScope;
+ const scopeControls=page.querySelector('.cal-scope');
+ if(scopeControls)scopeControls.hidden=!managerPreview();
  document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>
-  btn.setAttribute('aria-pressed',String(btn.dataset.calendarScope===scope)));
+  btn.setAttribute('aria-pressed',String(btn.dataset.calendarScope===currentScope)));
  const deadline=mode==='deadlines';
  $('calendarView').hidden=deadline;
  $('calendarView').dataset.mode=mode;
@@ -508,10 +515,11 @@ function setEventKind(kind){
  if(radio)radio.checked=true;
 }
 function getEventKind(){
+ if(!managerPreview())return 'personal';
  return form.querySelector('input[name="calendarEventKind"]:checked')?.value==='business'?'business':'personal';
 }
 function openEvent(id=null){
- const item=id?events().find(x=>x.id===id):null;editing=item?.id||null;
+ const item=id?visibleEvents().find(x=>x.id===id):null;editing=item?.id||null;
  form.reset();
  $('calendarEventTitleHeading').textContent=item?'Изменить событие':'Новое событие';
  $('calendarEventName').value=item?.title||'';
@@ -522,7 +530,9 @@ function openEvent(id=null){
  $('calendarEventTiming').open=false;
  form.querySelectorAll('.cal-timing-setting').forEach(section=>{section.open=false});
  syncTimeDisplay();
- setEventKind(item?.kind||(scope==='business'?'business':'personal'));
+ const workKind=form.querySelector('input[name="calendarEventKind"][value="business"]')?.closest('label');
+ if(workKind)workKind.hidden=!managerPreview();
+ setEventKind(item?.kind||(selectedScope()==='business'?'business':'personal'));
  $('calendarEventExtra').open=Boolean(item?.note);
  $('calendarEventNote').value=item?.note||'';
  $('calendarDeleteEvent').hidden=!item;
@@ -602,7 +612,7 @@ $('calendarAddTask').addEventListener('click',addTask);
 $('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
 document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>btn.addEventListener('click',()=>{
  const next=btn.dataset.calendarScope;
- if(!['all','personal','business'].includes(next))return;
+ if(!managerPreview()||!['all','personal','business'].includes(next))return;
  scope=next;
  render();
 }));
@@ -690,6 +700,11 @@ $('calendarEventDialog').addEventListener('click',event=>{
 });
 window.SEYVEO_CALENDAR_DATE=iso;
 window.addEventListener('seyveo:calendar-open',()=>{render()});
+window.addEventListener('seyveo:calendar-manager-context',event=>{
+ if(event.detail?.active!==true||!managerPreview())return;
+ scope='all';
+ render();
+});
 window.addEventListener('seyveo:spaces-changed',()=>{if(!page.hidden)render()});
 /* Explicit assistant appointments: save local appointments immediately when
  * well-defined; ask for clarification on clashes or missing meeting time.
