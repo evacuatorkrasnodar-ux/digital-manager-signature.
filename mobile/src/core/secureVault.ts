@@ -111,3 +111,19 @@ export async function initializeVault(): Promise<VaultStatus> {
     return 'unavailable';
   }
 }
+
+export async function openVerifiedVault() {
+  const identity = await readIdentity();
+  if (!identity || identity.stage !== 'ready') throw new Error('Vault unavailable');
+  await confirmCipher(identity);
+  const db = await SQLite.openDatabaseAsync(identity.database);
+  try {
+    await db.execAsync("PRAGMA key = '" + identity.hexKey + "';");
+    const cipher = await db.getFirstAsync<{cipher_version:string}>('PRAGMA cipher_version');
+    if (!cipher?.cipher_version) throw new Error('SQLCipher required');
+    return db;
+  } catch(error) {
+    await db.closeAsync();
+    throw error;
+  }
+}
