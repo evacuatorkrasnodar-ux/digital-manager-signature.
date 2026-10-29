@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
+import { request as httpRequest } from 'node:http';
 import { createDevDocumentServer } from './dev-server.mjs';
 
 const ownerPassword='test-owner-session-password-2026';
@@ -26,7 +27,7 @@ async function start(t){
   };
   const login=(user,password,deviceLabel)=>call('/v1/sessions','POST',
     {login:user,password,deviceLabel});
-  return {call,login};
+  return {call,login,url};
 }
 
 test('independent employee and manager device sessions are private and individually revocable',async t=>{
@@ -96,4 +97,40 @@ test('training session limits protect against unbounded tokens without affecting
   assert.equal((await call('/v1/sessions','GET',undefined,fresh.body.token)).body.sessions.length,5);
   assert.equal((await call('/v1/organizations','GET',undefined,tokens[1].body.token)).status,401);
   assert.equal((await call('/v1/organizations','GET',undefined,employee.body.token)).status,200);
+});
+
+test('revoking a session blocks a document upload still waiting for its request body',async t=>{
+  const {call,login,url}=await start(t);
+  const phone=await login('owner',ownerPassword,'Test lost phone');
+  const laptop=await login('owner',ownerPassword,'Test active laptop');
+  assert.equal(phone.status,200);
+  assert.equal(laptop.status,200);
+  const route='/v1/organizations/demo-org/documents';
+  const payload=JSON.stringify({
+    recipientUserId:'elena',type:'approval',
+    title:'Fictional delayed draft',body:'No real document'
+  });
+  let pending;
+  const finished=new Promise((resolve,reject)=>{
+    pending=httpRequest(url+route,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+phone.body.token
+      }
+    },res=>{
+      let received='';
+      res.on('data',chunk=>{received+=chunk});
+      res.on('end',()=>resolve({status:res.statusCode,body:JSON.parse(received)}));
+    });
+    pending.on('error',reject);
+  });
+  pending.write(payload.slice(0,8));
+  await new Promise(resolve=>setTimeout(resolve,30));
+  assert.equal((await call('/v1/sessions/'+phone.body.session.id,
+    'DELETE',undefined,laptop.body.token)).status,200);
+  pending.end(payload.slice(8));
+  const result=await finished;
+  assert.equal(result.status,401);
+  assert.equal((await call(route,'GET',undefined,laptop.body.token)).body.documents.length,0);
 });
