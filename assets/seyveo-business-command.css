@@ -935,6 +935,74 @@
 #tasksPage #svcpTaskList .svcp-task-copy{gap:3px}
 #tasksPage #svcpTaskList .svcp-task-actions{gap:0}
 
+/* One task, two perspectives — local review preview in existing workspaces. */
+#tasksPage .svcp-approval-demo-entry{
+ display:grid;gap:4px;padding:11px 0 13px;margin:0 0 4px;
+ border-bottom:1px solid var(--soft-line);
+}
+#tasksPage .svcp-approval-demo-entry>strong{
+ color:var(--text);font-weight:600;font-size:13px;
+}
+#tasksPage .svcp-approval-demo-entry>small,
+#tasksPage .svcp-approval-demo-note{
+ color:var(--secondary);font-size:11px;line-height:1.5;
+}
+#tasksPage .svcp-approval-demo-controls{
+ display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:4px;
+}
+#tasksPage .svcp-approval-demo-controls button,
+#tasksPage .svcp-approval-demo-switch,
+#tasksPage .svcp-approval-submit{
+ min-height:39px;padding:7px 0;border:0;background:none;
+ font:inherit;font-size:12px;font-weight:550;color:var(--text);
+ cursor:pointer;text-align:left;
+}
+#tasksPage .svcp-approval-demo-button,
+#tasksPage .svcp-approval-submit{
+ color:var(--seyveo-emerald,var(--text))!important;
+}
+#tasksPage .svcp-approval-demo-state{
+ display:inline-block;color:var(--seyveo-emerald,var(--secondary));
+ font-size:11px;line-height:1.45;font-weight:550;
+}
+#tasksPage .svcp-approval-demo-report{
+ margin:2px 0 0;color:var(--text);font-size:11.5px;
+ line-height:1.48;overflow-wrap:anywhere;
+}
+#tasksPage .svcp-approval-demo-proof{
+ display:block;max-width:160px;max-height:120px;object-fit:cover;
+ border-radius:11px;border:1px solid var(--soft-line);
+}
+#tasksPage #svcpTaskList .svcp-task-actions .svcp-approval-demo-accept{
+ color:var(--seyveo-emerald,var(--text));font-weight:600;
+}
+#tasksPage .svcp-employee-task.svcp-approval-employee-row{
+ display:grid;align-items:start;gap:6px;
+ padding:12px 0;border-bottom:1px solid var(--soft-line);
+}
+#tasksPage .svcp-approval-task-title{
+ font-size:13px;font-weight:590;line-height:1.45;overflow-wrap:anywhere;
+}
+#tasksPage .svcp-approval-report-form{display:grid;gap:9px;min-width:0}
+#tasksPage .svcp-approval-report-form>label{
+ display:grid;gap:5px;color:var(--secondary);font-size:11px;
+}
+#tasksPage .svcp-approval-report-form textarea{
+ box-sizing:border-box;width:100%;min-height:64px;max-height:135px;resize:vertical;
+ padding:10px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:12px;background:var(--card);color:var(--text);
+ font:inherit;font-size:12px;line-height:1.45;
+}
+#tasksPage .svcp-approval-photo-label input{
+ display:block;box-sizing:border-box;width:100%;padding:5px 0;
+ font-size:11px;color:var(--text);
+}
+#tasksPage .svcp-approval-demo-controls button:focus-visible,
+#tasksPage .svcp-approval-report-form button:focus-visible,
+#tasksPage .svcp-approval-demo-switch:focus-visible{
+ outline:2px solid var(--seyveo-emerald,var(--text));outline-offset:2px;
+}
+
 /* SEYVEO · one honest preview hierarchy: 3 levels, nested variants, separate role. */
 #managePage .svcp-preview-management{margin-bottom:12px}
 #managePage .svcp-preview-panel{
