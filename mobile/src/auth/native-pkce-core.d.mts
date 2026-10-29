@@ -4,6 +4,7 @@ export interface NativePkceConfig {
   authorizationEndpoint: string;
   redirectUri: string;
   clientId: string;
+  redirectMode?: 'claimed-https'|'private-use';
   randomBytes: (size: number) => Promise<Uint8Array>;
   sha256: (bytes: Uint8Array) => Promise<Uint8Array>;
   now?: () => number;
