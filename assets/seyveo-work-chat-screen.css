@@ -326,7 +326,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  display:none!important;place-items:center!important;
  width:58px!important;min-width:58px!important;height:46px!important;
- border-radius:19px!important;
+ border-radius:999px!important;
  background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;
  color:var(--text)!important
 }
@@ -357,7 +357,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
  grid-column:4!important;grid-row:1!important;
- width:58px!important;min-width:58px!important;border-radius:19px!important
+ width:58px!important;min-width:58px!important;border-radius:999px!important
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:focus-visible,
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send:focus-visible{
