@@ -42,6 +42,14 @@ export function createDocumentUpdateSync({
     if(!cursorOk(recorded))return {state:'retry'};
     let cursor=recorded;
     if(stamp!==generation)return {state:'stopped'};
+    // Account may have changed while secure cursor storage was loading.
+    // Never issue even a single network call with a stale identity.
+    let beforeRequest;
+    try{beforeRequest=await getIdentity();}
+    catch{return {state:'retry',cursor};}
+    if(stamp!==generation)return {state:'stopped'};
+    if(!sameIdentity(identity,beforeRequest))
+      return {state:'session-changed',cursor};
 
     let result;
     try{
