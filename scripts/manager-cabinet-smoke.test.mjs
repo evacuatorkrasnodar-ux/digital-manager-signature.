@@ -36,6 +36,9 @@ test('director gets one heading, no duplicate cockpit, and a calm local demo sta
   assert.match(roles,/if\(taskTabs\)taskTabs\.dataset\.manager=String\(isManager\(\)\)/);
   assert.match(html,/id="managerCalendarTabs"/);
   assert.match(css,/#tasksPage #unifiedTasksTabs\[hidden\]/);
+  assert.match(css,/#tasksPage #unifiedTasksTabs\[data-manager="true"\]\{[\s\S]*?grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
+  assert.doesNotMatch(css,/#tasksPage #unifiedTasksTabs:has\(button\[hidden\]\)\{grid-template-columns:minmax\(0,1fr\)!important\}/);
+  assert.match(css,/#tasksPage #unifiedTasksTabs:has\(button\[hidden\]\):not\(\[data-manager="true"\]\)/);
   assert.match(css,/#tasksPage \.svcp-manager-signal\[hidden\]/);
 });
 
