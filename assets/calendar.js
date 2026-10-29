@@ -700,10 +700,16 @@ $('calendarEventDialog').addEventListener('click',event=>{
 });
 window.SEYVEO_CALENDAR_DATE=iso;
 window.addEventListener('seyveo:calendar-open',()=>{render()});
+// Keep the single Calendar functional in My World. The compact manager
+// header is used only when reached via the center manager tab.
 window.addEventListener('seyveo:calendar-manager-context',event=>{
- if(event.detail?.active!==true||!managerPreview())return;
- scope='all';
+ const active=event.detail?.active===true&&managerPreview();
+ page.dataset.managerEntry=String(active);
+ if(active)scope='all';
  render();
+});
+window.addEventListener('hashchange',()=>{
+ if(location.hash!=='#calendar')page.dataset.managerEntry='false';
 });
 window.addEventListener('seyveo:spaces-changed',()=>{if(!page.hidden)render()});
 /* Explicit assistant appointments: save local appointments immediately when
