@@ -5,9 +5,10 @@ export function salesProgress(revenue,cost,fixed){
 
 export function compareSalesMonths(current,previous){
  const margin=month=>month.revenue-month.cost;
- const change=margin(current)-margin(previous);
+ const enoughData=previous.orders>0&&current.orders>0;
+ const change=enoughData?margin(current)-margin(previous):null;
  let advice='Проверьте данные продаж за оба месяца.';
- if(previous.orders>0&&current.orders>0){
+ if(enoughData){
   if(current.revenue>previous.revenue&&current.cost-previous.cost>current.revenue-previous.revenue)
    advice='Выручка выросла, но затраты увеличились сильнее. Проверьте себестоимость заказов.';
   else if(change>0)advice='Маржинальный доход вырос. Проверьте, какие действия помогли.';
