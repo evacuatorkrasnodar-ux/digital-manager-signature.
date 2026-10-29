@@ -114,6 +114,10 @@ const del=(id,token=ownerToken,organizationId=org)=>
   new Request(origin+'/v1/organizations/'+organizationId+'/invitations/'+id,{
     method:'DELETE',headers:{Authorization:'Bearer '+token}
   });
+const accept=(code,token)=>new Request(origin+'/v1/invitations/accept',{
+  method:'POST',headers:{Authorization:'Bearer '+token,
+    'Content-Type':'application/json'},body:JSON.stringify({code})
+});
 
 test('native director QR + share link works with authenticated server, verified-person acceptance',async()=>{
   const f=fixture();
@@ -136,15 +140,12 @@ test('native director QR + share link works with authenticated server, verified-
   assert.equal(await f.identity.canAccessBusiness({
     token:otherToken,organizationId:org,operation:'invite-employee'
   }),false);
-  assert.equal(await f.identity.acceptVerifiedInvitation({
-    token:workerToken,code:created.serverResponse.code
-  }),false);
-  assert.equal(await f.identity.acceptVerifiedInvitation({
-    token:otherToken,code:created.serverResponse.code
-  }),true);
-  assert.equal(await f.identity.acceptVerifiedInvitation({
-    token:otherToken,code:created.serverResponse.code
-  }),false);
+  assert.equal((await f.service.handle(
+    accept(created.serverResponse.code,workerToken))).status,409);
+  assert.equal((await f.service.handle(
+    accept(created.serverResponse.code,otherToken))).status,201);
+  assert.equal((await f.service.handle(
+    accept(created.serverResponse.code,otherToken))).status,409);
   assert.equal(f.memberships.get(org+':tanya').role,'employee');
   assert.equal(await f.identity.canAccessPersonal({
     token:ownerToken,accountUserId:'tanya'
@@ -159,9 +160,8 @@ test('director can revoke one-time invitation before employee uses QR',async()=>
     invitationId:created.serverResponse.invitation.id
   }),{status:'cancelled'});
   assert.equal(f.records.size,0);
-  assert.equal(await f.identity.acceptVerifiedInvitation({
-    token:otherToken,code:created.serverResponse.code
-  }),false);
+  assert.equal((await f.service.handle(
+    accept(created.serverResponse.code,otherToken))).status,409);
   assert.equal(f.calls.cancel,1);
 });
 
@@ -269,4 +269,20 @@ test('incomplete adapters or insecure origins cannot initialize service',()=>{
     issueInvitationAtomic:async()=>false,revokeInvitationAtomic:async()=>false,
     ...override
   }),TypeError);
+});
+
+test('QR acceptance rejects unauthenticated, malformed and role escalation payloads',async()=>{
+  const f=fixture();
+  const created=await f.native.create({employeeLogin:'tanya'});
+  assert.equal(created.status,'issued');
+  const code=created.serverResponse.code;
+  assert.equal((await f.service.handle(accept(code,'X'.repeat(48)))).status,409);
+  assert.equal((await f.service.handle(accept('bad',otherToken))).status,400);
+  assert.equal((await f.service.handle(new Request(origin+'/v1/invitations/accept',{
+    method:'POST',headers:{
+      Authorization:'Bearer '+otherToken,'Content-Type':'application/json'
+    },body:JSON.stringify({code,role:'owner'})
+  }))).status,400);
+  assert.equal(f.records.size,1);
+  assert.equal(f.memberships.has(org+':tanya'),false);
 });
