@@ -26,6 +26,49 @@ phones. Real-device tests require a separately secured backend and identity.
 
 Sync safety note: a 401 or 403 permanently stops the current development sync instance. A missing or invalid cursor now causes retry rather than silent reset to zero; a new account must explicitly initialize its own cursor. Identity is checked again before transport to avoid requests with the previous account token.
 
+## HTTPS-only document sync adapter — **not yet connected to phones**
+
+`https-event-transport.mjs` adds a strict transport adapter around the existing event
+cursor synchronizer. An explicitly configured **canonical HTTPS origin** is required;
+plain HTTP, loopback development servers, embedded credentials, extra URL paths,
+unexpected API routes and redirects are rejected. Authorized requests use bearer
+tokens and `redirect: 'manual'`, `credentials: 'omit'`, `cache: 'no-store'`,
+with bounded JSON event responses. The adapter suppresses raw remote error
+messages so URL/token strings are not included in error logs. HTTP 401/403 is
+passed to the existing synchronization logic to stop a revoked session.
+
+Example **purely conceptual** integration (the hostname is deliberately fake;
+nothing is listening there and no phone makes a request in these tests):
+
+```js
+import { createHttpsDocumentUpdateSync } from './https-event-transport.mjs';
+const sync = createHttpsDocumentUpdateSync({
+  apiOrigin: 'https://documents.seyveo.example',
+  getIdentity: trustedNativeSessionProvider,
+  readCursor: readAccountScopedCursor,
+  writeCursor: saveAccountScopedCursor,
+  onEvent: handleIdempotentDocumentEvent,
+  onAccessLost: clearSessionAndRequireLogin
+});
+await sync.poll();
+```
+
+The example functions above are integration contracts, **not** implemented
+production identity/storage services. This is a **JavaScript policy module only**:
+the actual iOS/Android native HTTP implementation must separately prove it
+honors `redirect:'manual'`, verifies system TLS certificates, prevents any token
+forwarding on redirects, and stores credentials in platform-secure storage. Native
+mobile integration, trustworthy staff onboarding, a secured public backend,
+push notifications, and end-to-end two-phone delivery remain **unimplemented**.
+Do not configure this adapter to reach the isolated HTTP development API or
+process real documents.
+
+Test using synthetic responses without contacting any external host:
+
+```sh
+node --test server/secure-documents/https-event-transport.test.mjs
+```
+
 ## Implemented
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
