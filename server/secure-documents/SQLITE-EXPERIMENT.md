@@ -38,8 +38,8 @@ The SQLite binding is experimental in Node.js 22. Tests use **synthetic data onl
 
 ### What is NOT implemented
 
-This is **not a production EDMS backend** and is not yet connected to the loopback HTTP server or to the iOS/Android application. There is no server-managed identity provider, MFA, TLS remote deployment, enterprise key management, database-wide encryption, secured backups, tenant-specific keys, key rotation, multi-process locking, real delivery between devices, remote revocation notifications, regulator compliance, electronic signatures or legal evidentiary audit.
+This is **not a production EDMS backend**. The SQLite adapter is now optionally connected to the loopback-only developer HTTP server via `SEYVEO_DEV_SQLITE_PATH`, but it is **not connected to the iOS/Android application or GitHub Pages demo**. There is no server-managed identity provider, MFA, TLS remote deployment, enterprise key management, database-wide encryption, secured backups, tenant-specific keys, key rotation, multi-process locking, real delivery between devices, remote revocation notifications, regulator compliance, electronic signatures or legal evidentiary audit.
 
 `bootstrapOrganization` and `addMember` are privileged **development-only APIs**; they must never be routed directly to untrusted clients. Only trusted server-side administration should provision or change memberships.
 
-**Next meaningful step:** choose a production-grade identity and database design, create a proper server boundary and transactional permission checks, and test the full authentication→authorization→document workflow with threat modeling before exposing any remote access.
+**Next meaningful step:** confirm full loopback HTTP tests in CI, harden the server identity, tenant and audit model, choose production-grade identity and encrypted database infrastructure, and complete a formal threat model before exposing any remote access.
