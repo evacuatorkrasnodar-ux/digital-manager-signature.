@@ -264,7 +264,7 @@ test('verified, recipient-bound invitation is consumed once and cannot grant own
   }),true);
   assert.deepEqual(transactions,[{
     invitationId:'invite-1',codeDigest:hash,userId:'tanya',
-    organizationId:'business-1',role:'employee'
+    sessionId:'tanya-session',organizationId:'business-1',role:'employee'
   }]);
   assert.equal(await f.boundary.acceptVerifiedInvitation({
     token:tokens.tanya,code
@@ -323,4 +323,14 @@ test('backend and database failures never authorize business or personal changes
   assert.equal(await f.boundary.acceptVerifiedInvitation({
     token:tokens.tanya,code:'Z'.repeat(43)
   }),false);
+});
+
+test('only a cryptographically verified, still-active principal may be handed to atomic owner invitation storage',async()=>{
+  const f=fixture();
+  assert.deepEqual(await f.boundary.identifyVerifiedPerson({token:tokens.owner}),{
+    userId:'owner',sessionId:'owner-session'
+  });
+  assert.equal(await f.boundary.identifyVerifiedPerson({token:'not-signed'}),null);
+  f.principals.delete(tokens.owner);
+  assert.equal(await f.boundary.identifyVerifiedPerson({token:tokens.owner}),null);
 });

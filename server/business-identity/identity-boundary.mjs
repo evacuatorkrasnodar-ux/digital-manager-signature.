@@ -69,6 +69,14 @@ export function createBusinessIdentityBoundary({
       current.sessionId===original.sessionId;
   }
 
+  // This principal has passed the external cryptographic verifier and a
+  // second revocation check. Never derive it from the QR or request body.
+  async function identifyVerifiedPerson({token}={}){
+    const principal=await verified(token);
+    return principal&&await unchanged(token,principal)
+      ?Object.freeze(principal):null;
+  }
+
   // A company membership is not ownership of an employee's personal account.
   // The only identity allowed for the personal side is the account holder.
   async function canAccessPersonal({token,accountUserId}={}){
@@ -141,6 +149,7 @@ export function createBusinessIdentityBoundary({
       // together. A role or organization from an HTTP body is never used.
       const result=await redeemInvitation({
         invitationId:invite.id,codeDigest,userId:principal.userId,
+        sessionId:principal.sessionId,
         organizationId:invite.organizationId,role:'employee'
       });
       return result===true;
@@ -148,6 +157,6 @@ export function createBusinessIdentityBoundary({
   }
 
   return Object.freeze({
-    canAccessPersonal,canAccessBusiness,acceptVerifiedInvitation
+    identifyVerifiedPerson,canAccessPersonal,canAccessBusiness,acceptVerifiedInvitation
   });
 }
