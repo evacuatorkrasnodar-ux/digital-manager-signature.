@@ -357,6 +357,13 @@
     const state=document.createElement('small');state.className='svcp-approval-demo-state';
     state.textContent=names[task.reviewStatus]||names.assigned;
     row.append(title,state);
+    if(task.id==='devstudio-enterprise-single-task'){
+      const meta=document.createElement('div');meta.className='svcp-task-extended';
+      if(task.branch){const line=document.createElement('small');line.textContent='Филиал: '+String(task.branch).slice(0,80);meta.append(line)}
+      if(task.description){const p=document.createElement('p');p.textContent=String(task.description).slice(0,500);meta.append(p)}
+      if(task.dueAt){const deadline=new Date(task.dueAt);if(!Number.isNaN(deadline.valueOf())){const p=document.createElement('small');p.textContent='Срок: '+deadline.toLocaleString('ru-RU');meta.append(p)}}
+      row.append(meta);
+    }
     if(task.reportText){
      const report=document.createElement('p');report.className='svcp-approval-demo-report';
      report.textContent='Твой отчёт: '+String(task.reportText).slice(0,350);row.append(report);
