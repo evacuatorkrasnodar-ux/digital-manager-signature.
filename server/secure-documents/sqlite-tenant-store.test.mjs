@@ -4,6 +4,7 @@ import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {randomBytes} from 'node:crypto';
+import {DatabaseSync} from 'node:sqlite';
 import {openDevTenantStore} from './sqlite-tenant-store.mjs';
 
 test('SEYVEO developer database: tenant boundaries, transitions, encryption and restart',t=>{
@@ -49,4 +50,22 @@ test('SEYVEO developer database: tenant boundaries, transitions, encryption and 
 test('reject invalid database path and key',()=>{
  assert.throws(()=>openDevTenantStore({filePath:'demo.sqlite',masterKey:randomBytes(32)}));
  assert.throws(()=>openDevTenantStore({filePath:'/tmp/test.sqlite',masterKey:randomBytes(10)}));
+});
+
+test('audit HMAC rejects an altered event',t=>{
+ const dir=mkdtempSync(join(tmpdir(),'seyveo-audit-'));
+ t.after(()=>rmSync(dir,{recursive:true,force:true}));
+ const filePath=join(dir,'audit.sqlite'),masterKey=randomBytes(32);
+ const owner={userId:'owner'};
+ let store=openDevTenantStore({filePath,masterKey});
+ store.bootstrapOrganization({organizationId:'company',ownerUserId:owner.userId});
+ store.addMember({actor:owner,organizationId:'company',userId:'elena',role:'employee'});
+ const d=store.createDocument({actor:owner,organizationId:'company',recipientUserId:'elena',type:'approval',title:'Test',body:'Synthetic'});
+ store.close();
+ const db=new DatabaseSync(filePath);
+ db.prepare("UPDATE document_audit SET action='tampered' WHERE document_id=?").run(d.id);
+ db.close();
+ store=openDevTenantStore({filePath,masterKey});
+ assert.throws(()=>store.getAudit({actor:owner,organizationId:'company',documentId:d.id}),/Audit history corrupted/);
+ store.close();
 });
