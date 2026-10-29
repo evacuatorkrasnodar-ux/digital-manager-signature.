@@ -20,7 +20,7 @@ export function createDocumentUpdateSync({
   for(const f of [getIdentity,readCursor,writeCursor,request,onEvent,onAccessLost])
     if(typeof f!=='function')throw new TypeError('Document sync dependencies are required.');
 
-  let generation=0, inflight=null;
+  let generation=0, inflight=null, stopped=false;
   const sameIdentity=(a,b)=>a&&b&&
     a.userId===b.userId&&a.organizationId===b.organizationId&&
     a.accessToken===b.accessToken;
@@ -100,12 +100,17 @@ export function createDocumentUpdateSync({
     return {state:'synced',cursor,handled,hasMore:payload.events.length===50};
   }
   function poll(){
+    if(stopped)return Promise.resolve({state:'stopped'});
     if(inflight)return inflight;
     const active=perform();
     inflight=active;
-    void active.finally(()=>{if(inflight===active)inflight=null;});
+    // Use both branches so cleanup cannot create an unhandled rejection.
+    void active.then(
+      ()=>{if(inflight===active)inflight=null;},
+      ()=>{if(inflight===active)inflight=null;}
+    );
     return active;
   }
-  function stop(){generation++;}
+  function stop(){stopped=true;generation++;}
   return Object.freeze({poll,stop});
 }
