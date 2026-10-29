@@ -185,7 +185,8 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         fail(403,'Сервер разработки доступен только с этого компьютера.');
       if (req.headers.origin)
         fail(403, 'Браузерные запросы с чужого сайта запрещены.');
-      const path = new URL(req.url || '/', 'http://127.0.0.1').pathname;
+      const requestUrl = new URL(req.url || '/', 'http://127.0.0.1');
+      const path = requestUrl.pathname;
       if (req.method === 'GET' && path === '/health') {
         send(res, 200, { ok:true, mode:'local-development', productionReady:false,
           backend:sqlite?'sqlite-experimental':storage?'encrypted-snapshot':'in-memory',
@@ -220,6 +221,28 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if (req.method === 'GET' && path === '/v1/organizations') {
         send(res, 200, { organizations:[{ id:context.membership.organizationId, role:context.membership.role }] });
         return;
+      }
+      // Durable, recipient-only event cursor for a future mobile client.
+      // No document title/body and no user selector is accepted from the URL.
+      const changeMatch=/^\/v1\/organizations\/([^/]+)\/updates$/.exec(path);
+      if(changeMatch){
+        if(req.method!=='GET')fail(405,'Метод не поддерживается.');
+        if(changeMatch[1]!==context.membership.organizationId)fail(404,'Раздел не найден.');
+        if(!sqlite)fail(501,'События доступны только в учебном режиме SQLite.');
+        const raw=requestUrl.searchParams.get('after')??'0';
+        if(!/^(?:0|[1-9][0-9]{0,14})$/.test(raw)||
+            Array.from(requestUrl.searchParams.keys()).some(k=>k!=='after')||
+            requestUrl.searchParams.getAll('after').length>1)
+          fail(400,'Некорректный курсор обновлений.');
+        try{
+          const changes=sqlite.getUpdates({
+            actor:context.actor,organizationId:context.membership.organizationId,
+            after:Number(raw),limit:50
+          });
+          send(res,200,changes);return;
+        }catch{
+          fail(503,'События документов недоступны.');
+        }
       }
       // Polling mailbox for two separate authenticated local test sessions.
       // No request parameter may select another person's inbox/outbox.
