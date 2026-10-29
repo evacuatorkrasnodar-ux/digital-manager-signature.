@@ -10,7 +10,7 @@
 - Only small **text bodies** (up to 8000 characters). AES-256-GCM protects document text in memory. **Optional** AES-256-GCM encrypted snapshots can save training documents, metadata and audit history to a local private file. Without an explicit file path, all documents disappear on restart. Sessions always expire on restart. No production backups or multi-process concurrency.
 - Each API route verifies session, current membership, tenant and per-document policy before returning data or changing a document status.
 - Statuses distinguish reading, acknowledging, approving, returning and revoking; the **development** audit history is kept with the encrypted snapshot if enabled. This is not a trustworthy/legal audit trail and cannot detect rollback to an older valid snapshot.
-- No connection to the existing GitHub Pages demo, SEYVEO One, external operators or real employees.
+- No connection to the existing GitHub Pages demo, SEYVEO One, external operators or real employees. The inbox/outbox endpoints operate between two local test sessions only.
 
 ## Tests
 
@@ -81,6 +81,24 @@ curl -sS -X POST http://127.0.0.1:8787/v1/sessions \
 
 The login response includes a temporary bearer token. Use `Authorization: Bearer <token>` for other routes.
 
+### Two-account inbox/outbox polling (local development)
+
+The server now exposes separate, **authenticated and tenant-scoped** mailboxes for the fictional `owner` and `elena` accounts:
+
+- `GET /v1/organizations/demo-org/inbox` — only documents addressed to the authenticated user.
+- `GET /v1/organizations/demo-org/outbox` — only documents created by the authenticated user.
+
+Responses contain `folder`, `documents`, `total`, and `pending` (documents in `sent` or `read` state). Each list entry includes a document ID, title, type, status, and timestamps **but never the body or authorization token**. The document body requires its separately authenticated detail endpoint. Completed/revoked documents stay in the lists as history, and `Cache-Control: no-store` prevents caching responses.
+
+The server does not accept an employee ID or role in the URL to select another person's mailbox. Every request checks the current session, active membership, and company ID; the database layer independently enforces its own policy. When the employee acknowledges a document, the next director polling request sees the changed status.
+
+**These are polling APIs, not mobile push notifications, nor production delivery between two phones.** A future production client may poll conservatively while active and use OS push notifications with server-side authorization when backgrounded. No notification should contain confidential document text.
+
+For regression coverage run:
+```sh
+node --test server/secure-documents/mailbox-view.test.mjs server/secure-documents/mailbox-http.test.mjs
+```
+
 Routes:
 
 | Method | Path | Meaning |
@@ -89,6 +107,8 @@ Routes:
 | POST | `/v1/sessions` | Test account login |
 | DELETE | `/v1/sessions/current` | End current session |
 | GET | `/v1/organizations` | Current membership |
+| GET | `/v1/organizations/demo-org/inbox` | Only recipient's document metadata; count pending |
+| GET | `/v1/organizations/demo-org/outbox` | Only creator's document metadata; count pending |
 | GET / POST | `/v1/organizations/demo-org/documents` | List readable documents / create document (owner) |
 | GET | `/v1/organizations/demo-org/documents/:id` | Read allowed document and decrypted text |
 | GET | `/v1/organizations/demo-org/documents/:id/audit` | Read document activity |
