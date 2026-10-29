@@ -92,7 +92,34 @@ Responses contain `folder`, `documents`, `total`, and `pending` (documents in `s
 
 The server does not accept an employee ID or role in the URL to select another person's mailbox. Every request checks the current session, active membership, and company ID; the database layer independently enforces its own policy. When the employee acknowledges a document, the next director polling request sees the changed status.
 
-**These are polling APIs, not mobile push notifications, nor production delivery between two phones.** A future production client may poll conservatively while active and use OS push notifications with server-side authorization when backgrounded. No notification should contain confidential document text.
+**These are polling APIs, not mobile push notifications, nor production delivery between two phones.**
+
+### Conditional inbox/outbox refresh
+
+For a logged-in session, the first `GET /v1/organizations/demo-org/inbox`
+(or `outbox`) returns **200** and an `ETag` response header, e.g.
+`"svdm-..."`. Subsequent GETs can provide exactly that value in
+`If-None-Match`:
+
+- **304** (empty body) means the visible mailbox is unchanged for this
+  authenticated user and folder.
+- **200** with a new JSON body and tag means it changed: e.g. a new document
+  arrived or an employee acknowledged it.
+- **401/403/404** must be treated as authentication, authorization or routing
+  failures, *never* as a successfully synchronized mailbox.
+
+Revision tags are HMAC-based and include the authenticated user ID, tenant,
+folder and the authorized mailbox projection. Tags contain no readable document
+text. Browser and client responses are marked `Cache-Control: private, no-store`.
+**A mobile client must keep its session credential in secure platform storage,
+not browser localStorage, and must not log bearer tokens or document bodies.**
+The demo currently uses a short-lived RAM token and does not implement a
+production mobile client or push notifications.
+
+Tests:
+`node --test server/secure-documents/mailbox-tag.test.mjs server/secure-documents/mailbox-conditional-http.test.mjs`
+
+ A future production client may poll conservatively while active and use OS push notifications with server-side authorization when backgrounded. No notification should contain confidential document text.
 
 For regression coverage run:
 ```sh
