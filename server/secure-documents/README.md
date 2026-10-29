@@ -24,6 +24,8 @@ node --test server/secure-documents/mobile-sync-core.test.mjs
 Do **not** expose the loopback developer server to the internet to test two
 phones. Real-device tests require a separately secured backend and identity.
 
+Sync safety note: a 401 or 403 permanently stops the current development sync instance. A missing or invalid cursor now causes retry rather than silent reset to zero; a new account must explicitly initialize its own cursor. Identity is checked again before transport to avoid requests with the previous account token.
+
 ## Implemented
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
