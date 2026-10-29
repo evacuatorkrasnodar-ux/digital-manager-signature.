@@ -13,8 +13,8 @@ test('remove complex manual lyrics imports and leave simple main music actions',
  assert.match(page,/id="sayviMusicImport"/);
  assert.match(page,/id="sayviMusicSourcesToggle"/);
  assert.match(page,/id="sayviMusicFavorite"/);
- assert.match(html,/seyveo-music\.css\?v=53/);
- assert.match(html,/seyveo-music\.js\?v=33/);
+ assert.match(html,/seyveo-music\.css\?v=54/);
+ assert.match(html,/seyveo-music\.js\?v=34/);
 });
 test('Walk of Fame jewel sits before the artist, not in the header',()=>{
  assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*width:44px;height:44px;min-width:44px;min-height:44px/);
@@ -50,4 +50,19 @@ test('original music playback, favorites, dock and track choices stay wired',()=
  assert.match(html,/id="sayviMusicSeek"/);
  assert.match(html,/id="sayviMusicCollection"/);
  assert.match(html,/id="sayviMusicMinimize"/);
+});
+
+test('Music Hall of Fame shows starred tracks without creating audio copies',()=>{
+ assert.match(html,/id="sayviMusicHallToggle"[^>]*>Аллея славы<\/button>/);
+ assert.match(js,/const FAVORITES_KEY='seyveo-music-favorites-v1'/);
+ assert.match(js,/function toggleHall\(\)/);
+ assert.match(js,/hallToggle\?\.addEventListener\('click',toggleHall\)/);
+ assert.match(js,/function showCollection\(mode\)/);
+ assert.match(js,/collectionMode==='hall'/);
+ assert.match(js,/АЛЛЕЯ СЛАВЫ · /);
+ assert.match(js,/fileInput\.click\(\)/);
+ assert.match(js,/entries\.some\(entry=>!entry\.match\)/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite::before\{[^}]*width:34px;height:34px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*aspect-ratio:1\/1/);
+ assert.match(css,/#sayviMusicPage \.sv-music-hall-row \.sv-music-row-num\{/);
 });
