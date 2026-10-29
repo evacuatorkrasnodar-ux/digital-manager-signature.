@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
     "check": "tsc --noEmit",
-    "test": "node --test tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs"
+    "test": "node --test tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs tests/native-pkce-core.test.mjs"
   },
   "dependencies": {
     "expo": "~58.0.0",
