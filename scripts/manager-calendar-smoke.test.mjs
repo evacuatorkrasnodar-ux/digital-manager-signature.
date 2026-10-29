@@ -52,6 +52,9 @@ test('existing Calendar uses one event store for personal and work filtered day/
   assert.match(calendar,/function renderAgenda\(\)/);
   assert.match(calendar,/scope=next;/);
   assert.match(calendar,/const currentScope=selectedScope\(\)/);
+  assert.match(calendar,/const nearby=engine\?\.nearest\(visibleEvents\(\)/);
+  assert.match(calendar,/const slots=engine\.suggestions\(visibleEvents\(\)/);
+  assert.match(calendar,/return visibleEvents\(\)\.find\(item=>item\.date===date/);
   assert.match(calendar,/setEventKind\(item\?\.kind\|\|\(selectedScope\(\)==='business'\?'business':'personal'\)\)/);
   assert.match(html,/data-calendar-scope="all"/);
   assert.match(html,/data-calendar-scope="personal"/);
