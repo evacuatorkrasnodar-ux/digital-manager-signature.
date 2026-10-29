@@ -50,6 +50,7 @@
  let previewMode='autonom';
  try{const stored=localStorage.getItem(MODE_KEY);if(MODES.includes(stored))previewMode=stored}catch{}
  let exitTarget='home',pending=null,lastWorkView='personal';
+ const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal');
  const businessTab=page.querySelector('[data-unified-tasks-tab="business"]');
  const employeeTab=page.querySelector('[data-unified-tasks-tab="employee"]');
  const managerLabel=page.querySelector('.svcp-manager-kicker');
@@ -465,10 +466,17 @@
   if(page.dataset.workChatOpen==='true')closeWorkChat({restoreFocus:false});
   page.dataset.employeeMode=String(chosen==='employee');
   const title=$('tasksTitle');
-  if(title)title.textContent=chosen==='employee'?'Моя работа':'Дела';
+  if(title)title.textContent=chosen==='employee'?'Моя работа':
+   chosen==='business'?'Кабинет руководителя':'Дела';
+  page.dataset.workView=chosen;
+  if(taskTabs)taskTabs.hidden=chosen==='business';
+  if(managerSignal)managerSignal.hidden=chosen!=='business';
   const caption=page.querySelector('.tasks-heading .manage-caption');
-  if(caption&&caption.lastChild?.nodeType===3)
-   caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':' НА КОНТРОЛЕ';
+  if(caption){
+   caption.hidden=chosen==='business';
+   if(caption.lastChild?.nodeType===3)
+    caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':' НА КОНТРОЛЕ';
+  }
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
   if(employeeAvatar)employeeAvatar.hidden=chosen!=='employee';
@@ -491,16 +499,8 @@
    return;
   }
   if(!isManager()){select('personal');return}
-  lastWorkView='business';
-  personal.hidden=true;business.hidden=false;
-  if(employee)employee.hidden=true;
-  page.dataset.employeeMode='false';
-  if(employeeAvatar)employeeAvatar.hidden=true;
-  if(employeeResults)employeeResults.hidden=true;
-  if(overview)overview.hidden=true;
-  board.hidden=false;
-  page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
-   button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab==='business')));
+  // Always update the heading and hide the personal/business selector first.
+  select('business');
   openWorkChat(roomId||null);
  }
  function routePending(){
@@ -583,11 +583,18 @@
  }
  function updateManagerSummary(){
   const summary=$('svcpManagerStatus');if(!summary)return;
+  const signal=$('svcpManagerSignal');
   try{
    const rows=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');
    const count=Array.isArray(rows)?rows.filter(r=>r&&typeof r.text==='string'&&!r.done).length:0;
-   summary.textContent=count?('Активных поручений: '+count+' · локальные данные'):'Новых поручений нет · данные на устройстве';
-  }catch{summary.textContent='Поручения · данные только на устройстве'}
+   if(signal)signal.dataset.attention=count?'true':'false';
+   summary.textContent=count
+    ?('Сэйви · '+count+' '+(count===1?'поручение':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'поручения':'поручений')+' в работе · локально')
+    :'Сэйви · Всё спокойно · локальное демо';
+  }catch{
+   if(signal)signal.dataset.attention='false';
+   summary.textContent='Сэйви · Локальные поручения недоступны';
+  }
  }
  staffReveal?.addEventListener('toggle',()=>{
   if(staffReveal.open)window.SEYVEO_BUSINESS_COMMAND?.openPeopleView?.('team');
