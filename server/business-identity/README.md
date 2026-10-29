@@ -6,6 +6,61 @@ anything. Its separate offline JWT adapter verifies signed tokens against
 preconfigured public keys and injected identity/revocation callbacks but does
 not discover or operate a real provider. No real user data should be supplied.
 
+## Owner invitation HTTP contract (server-side, no deployment)
+
+`owner-invitation-http.mjs` introduces
+`createOwnerInvitationHttpContract({identity,resolveVerifiedRecipient,
+issueInvitationAtomic,revokeInvitationAtomic,now,apiOrigin})`. It is a
+**Request → Response security boundary**, **not a running server**.
+There is **no listening socket, TLS configuration, identity provider, real
+account directory, database or deployment** included in this module.
+
+### Future routes
+
+- `POST /v1/organizations/{organizationId}/invitations`: authenticated
+  **owner only**. Accept exactly `{"employeeLogin":"login"}`. Verify the
+  current session/owner membership against server truth, resolve an
+  **already verified, active personal account**, generate a random 32-byte
+  one-use code, store only SHA256(code) through an atomic trusted adapter,
+  recheck the owner, and return the exact `201` payload already consumed
+  by `mobile/src/business/https-owner-invite-client.mjs`:
+  `{"code":"...","invitation":{"id":"...","employeeLogin":"...","expiresAt":"..."}}`.
+  **Maximum lifetime: 15 minutes**, no QR content for arbitrary roles.
+- `DELETE /v1/organizations/{organizationId}/invitations/{invitationId}`:
+  owner only; revoke through the same trusted database and return `200`.
+- `POST /v1/invitations/accept`: requires the employee's separately
+  **verified personal account token** and exactly `{"code":"..."}`. It
+  delegates to `identity-boundary.mjs`'s `acceptVerifiedInvitation`:
+  only the specifically assigned account can join, only as an employee,
+  and only once with a transactional backend. A QR scan **never means
+  authenticated or authorized**.
+
+All routes are bound to a preconfigured exact HTTPS origin, reject
+browser `Origin` headers, do not follow redirects, limit JSON bodies
+while reading them, and use generic errors with `Cache-Control: no-store`
+and `Referrer-Policy: no-referrer`. The server does not accept a claimed
+client role, tenant change, redirect target, or username as proof.
+
+**Important missing production trust:** The functions
+`resolveVerifiedRecipient`, `issueInvitationAtomic` and
+`revokeInvitationAtomic` must be implemented using a production-grade
+identity directory and durable transactions. Inside each transaction,
+the adapter MUST revalidate active owner membership/session, recipient
+identity, tenant uniqueness, expiry, one-use consumption, revocation,
+rate limits and invitation quotas. The adapter contracts are not a
+substitute for that implementation. Current in-memory tests merely
+simulate those invariants. Transport TLS, OIDC key rotation, abuse
+monitoring, audit, real App Links and phone E2E tests remain unimplemented.
+
+`owner-invitation-http.test.mjs` exercises a complete **synthetic,
+in-process Request/Response round-trip** through the existing native
+HTTPS invite client, QR link parser and recipient-bound acceptance.
+These tests do **not** demonstrate production security or a remote API.
+
+```sh
+node --test server/business-identity/owner-invitation-http.test.mjs
+```
+
 ## Experimental JWT access-token verifier (cryptographic policy, not login)
 
 `verified-access-token.mjs` adds `createVerifiedJwtAccessSession(...)`, a
