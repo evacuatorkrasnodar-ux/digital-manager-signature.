@@ -61,8 +61,8 @@ assert.ok(js.includes('!roomHits.length&&!chatHits.length&&!taskHits.length'),
  'Empty search covers all three categories');
 assert.ok(js.includes('Только на этом устройстве · без отправки'),
  'Local chat attachments do not masquerade as delivered');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=65/,
+assert.match(html,/assets\/seyveo-business-command\.css\?v=66/,
  'Current work stylesheet is cache-busted');
-assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=36/,
+assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=37/,
  'Current unified work script is cache-busted');
 console.log('PASS black vinyl, gold outlined rose Music S, original HR award and role-safe local work chat');
