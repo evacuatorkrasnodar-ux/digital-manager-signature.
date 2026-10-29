@@ -314,7 +314,8 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  color:var(--secondary)!important
 }
 #svcpWorkChatScreen #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
-#svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
  width:42px!important;min-width:42px!important;height:46px!important;min-height:46px!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
