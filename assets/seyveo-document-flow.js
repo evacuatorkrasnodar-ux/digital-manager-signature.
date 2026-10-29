@@ -158,7 +158,7 @@ function renderRecord(node,x){
  if(x.id===selected){
   const detail=$('div','svdf-detail');
   detail.append($('p','svdf-document-body',latestRevision(x).body));
-  detail.append($('p','svdf-disclaimer','Учебный текст, не официальный документ. Содержимое не подписывается и не отправляется.'));
+  detail.append($('p','svdf-disclaimer','Учебный текст. Редакции сохраняются только в этом браузере, без шифрования и подписи.'));
   const actions=$('div','svdf-actions');
   if(role==='employee'){
    if(x.state==='sent'){
@@ -241,7 +241,7 @@ function draw(){
   $('h2','','Согласования'),
   $('p','','Документ → сотрудник → ознакомление или согласование → история действий.'));
  host.append(lead);
- host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Один браузер, переключение ролей без авторизации. Нет реальной доставки, электронной подписи, защищённого обмена и юридической силы. Для настоящих документов используйте зашифрованный архив отдельно.'));
+ host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Редакции и замечания хранятся без шифрования в этом браузере. Не вводите личные, коммерческие или конфиденциальные данные. Переключение ролей не является авторизацией. Нет реальной доставки и юридически значимой подписи.'));
  const roleSwitch=$('div','svdf-role-switch');roleSwitch.setAttribute('role','group');roleSwitch.setAttribute('aria-label','Учебная роль');
  for(const [key,label] of [['manager','Руководитель'],['employee','Елена · сотрудник']]){
   const b=button(label,()=>setRole(key),'svdf-role');b.setAttribute('aria-pressed',String(key===role));roleSwitch.append(b);
