@@ -17,11 +17,14 @@ const sampleStaff=['Елена · продавец','Татьяна · стар�
 function safeDraft(){try{const data=JSON.parse(localStorage.getItem('seyveo-company-structure-draft-v1')||'null');return Array.isArray(data?.branches)?data.branches.filter(x=>typeof x==='string'&&x.trim()).slice(0,30):[]}catch{return []}}
 const branches=safeDraft().length?safeDraft():sampleBranches;
 for(const [id,values] of [['svSimBranch',branches],['svSimStaff',sampleStaff]])for(const value of values){const opt=document.createElement('option');opt.value=value;opt.textContent=value;$(id).append(opt)}
-let phase=0;let history=[];
+let task=null;
+const getPhase=()=>task?task.phase:0;
+const getHistory=()=>task?task.events:[];
 const steps=['Поручение создано','Сотрудник принял поручение','Результат передан на проверку','Руководитель принял результат'];
 function render(){
+ const phase=getPhase();
  const box=$('svSimTimeline');box.replaceChildren();
- history.forEach((text,i)=>{const row=document.createElement('div');row.className='sv-sim-event';const number=document.createElement('small');number.textContent=String(i+1).padStart(2,'0');const body=document.createElement('span');body.textContent=text;row.append(number,body);box.append(row)});
+ getHistory().forEach((text,i)=>{const row=document.createElement('div');row.className='sv-sim-event';const number=document.createElement('small');number.textContent=String(i+1).padStart(2,'0');const body=document.createElement('span');body.textContent=text;row.append(number,body);box.append(row)});
  $('svSimState').textContent=phase===0?'Выберите филиал и сотрудника, затем создайте поручение.':phase===4?'Поручение завершено · учебный сценарий':steps[phase-1]+' · следующий шаг: '+steps[phase];
  const branch=$('svSimBranch').value,person=$('svSimStaff').value;
  $('svSimBossBranch').textContent=branch;
@@ -32,9 +35,35 @@ function render(){
  $('svSimWorkerStatus').textContent=['Нет активного поручения','Новое поручение · принять','Принято · выполнить','Результат отправлен','Руководитель принял ✓'][phase];
  for(const [id,allowed] of [['svSimCreate',phase===0],['svSimAccept',phase===1],['svSimSubmit',phase===2],['svSimApprove',phase===3]])$(id).disabled=!allowed;
 }
-const action=(next)=>{if(phase!==next-1)return;phase=next;const branch=$('svSimBranch').value,person=$('svSimStaff').value;history.push(steps[next-1]+' · '+person+' · '+branch);render()};
-$('svSimCreate').onclick=()=>action(1);$('svSimAccept').onclick=()=>action(2);$('svSimSubmit').onclick=()=>action(3);$('svSimApprove').onclick=()=>action(4);
-$('svSimReset').onclick=()=>{phase=0;history=[];render()};
-for(const id of ['svSimBranch','svSimStaff'])$(id).addEventListener('change',()=>{phase=0;history=[];render()});
+// One task object is the authoritative source for both perspectives.
+function act(next){
+ const phase=getPhase();
+ if(phase!==next-1)return;
+ const branch=$('svSimBranch').value,person=$('svSimStaff').value;
+ if(next===1){
+   task={id:'demo-task-1',title:'Проверить выкладку товаров',branch,assignee:person,
+     phase:0,events:[],updatedAt:null};
+ }
+ if(!task)return;
+ task.phase=next;task.updatedAt=new Date().toISOString();
+ task.events.push(steps[next-1]+' · '+task.assignee+' · '+task.branch);
+ // Other future demo components can observe the same immutable snapshot.
+ window.dispatchEvent(new CustomEvent('seyveo:demo-task-changed',{
+   detail:structuredClone(task)
+ }));
+ render();
+}
+$('svSimCreate').onclick=()=>act(1);
+$('svSimAccept').onclick=()=>act(2);
+$('svSimSubmit').onclick=()=>act(3);
+$('svSimApprove').onclick=()=>act(4);
+function reset(){
+ task=null;
+ window.dispatchEvent(new CustomEvent('seyveo:demo-task-changed',{detail:null}));
+ render();
+}
+$('svSimReset').onclick=reset;
+for(const id of ['svSimBranch','svSimStaff'])$(id).addEventListener('change',reset);
+
 render();
 })();
