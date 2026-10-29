@@ -106,7 +106,6 @@ function NativeFoundation() {
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
             organizationId={work.workspace?.organizationId}
             role={work.workspace?.role}
-            onRefresh={()=>{void workController.refresh();}}
             onLock={()=>{workController.lock();}}
           />
           <Text style={styles.footnote}>
