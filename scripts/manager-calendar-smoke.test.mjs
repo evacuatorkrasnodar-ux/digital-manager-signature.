@@ -37,7 +37,7 @@ test('Calendar tab opens the existing single calendar instead of duplicating its
   assert.match(nav,/navigate\(tab\.dataset\.managerCalendarTab==='business'\?'team':'personal'\)/);
   assert.match(nav,/managerCalendarContext=false/);
   assert.match(html,/id="managerCalendarTabs"[\s\S]*?data-manager-calendar-tab="calendar" aria-pressed="true"/);
-  assert.match(html,/seyveo-unified-tasks\.js\?v=37/);
+  assert.match(html,/seyveo-unified-tasks\.js\?v=38/);
   assert.match(html,/calendar\.js\?v=33/);
   assert.match(html,/calendar\.css\?v=38/);
 });
