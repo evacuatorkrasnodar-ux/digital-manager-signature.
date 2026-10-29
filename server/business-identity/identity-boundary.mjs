@@ -15,7 +15,13 @@ import {
 } from '../document-authorization.mjs';
 
 const ID=/^[A-Za-z0-9_-]{1,96}$/;
-const TOKEN=/^[A-Za-z0-9_-]{40,512}$/;
+// Accept either a previously verified opaque session token or a compact
+// signed JWT access token. A well-formed JWT is NOT trusted on its own:
+// verifySession MUST perform cryptographic validation and revocation checks.
+const OPAQUE_TOKEN=/^[A-Za-z0-9_-]{40,512}$/;
+const SIGNED_JWT=/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
+const tokenShaped=value=>typeof value==='string'&&
+  (OPAQUE_TOKEN.test(value)||(value.length<=8192&&SIGNED_JWT.test(value)));
 const INVITE_CODE=/^[A-Za-z0-9_-]{43}$/;
 const ROLES=new Set(['owner','admin','manager','employee']);
 const OPERATIONS=new Set([
@@ -46,7 +52,7 @@ export function createBusinessIdentityBoundary({
     throw new TypeError('Trusted identity boundary dependencies are required.');
 
   async function verified(token){
-    if(typeof token!=='string'||!TOKEN.test(token))return null;
+    if(!tokenShaped(token))return null;
     try{
       const principal=await verifySession(token);
       if(!principal||!validId(principal.userId)||!validId(principal.sessionId)||
