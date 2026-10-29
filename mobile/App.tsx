@@ -103,7 +103,7 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
-          <RiseJourneyCard />
+          {state === 'ready' ? <RiseJourneyCard /> : null}
           <NativeWorkAccessStatus
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
             organizationId={work.workspace?.organizationId}
