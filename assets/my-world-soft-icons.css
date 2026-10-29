@@ -1,0 +1,38 @@
+/* SEYVEO · My World gentle icon accents, desktop alignment.
+   No page backgrounds, sphere, cards or dock changes. */
+#homeHeader .home-world-choice {
+  display:grid;
+  grid-template-columns:20px minmax(0,1fr);
+  align-items:center;
+  column-gap:9px;
+  text-align:left;
+}
+#homeHeader .home-world-choice.home-world-choice-wide {
+  grid-template-columns:20px minmax(0,1fr) 12px;
+}
+#homeHeader .home-world-choice > svg {
+  width:19px;
+  height:19px;
+  justify-self:center;
+  align-self:center;
+}
+#homeHeader .home-world-choice > span:not(.home-world-choice-chevron) {
+  display:block;
+  min-width:0;
+  line-height:1.35;
+  white-space:normal;
+}
+#homeHeader .home-world-choice > .home-world-choice-chevron {
+  grid-column:3;
+  justify-self:end;
+  margin-left:0;
+}
+#homeHeader .home-world-choice[data-world-space="calendar"] > svg { color:#E7D2A2; }
+#homeHeader .home-world-choice[data-world-space="notes"] > svg { color:#CBBFE9; }
+#homeHeader .home-world-choice[data-world-space="health"] > svg,
+#homeHeader .home-world-choice[data-world-space="care"] > svg { color:#E8B8C7; }
+#homeHeader .home-world-choice[data-world-space="contacts"] > svg { color:#9EDDD1; }
+#homeHeader .home-world-choice[data-world-space="smart-home"] > svg { color:#C2DED1; }
+#homeHeader .home-world-choice[data-world-space="documents"] > svg { color:#B8D4E8; }
+#homeHeader .home-world-choice[data-world-space="mail"] > svg { color:#8FE3C3; }
+/* YouTube retains its brand artwork, not recolored. */
