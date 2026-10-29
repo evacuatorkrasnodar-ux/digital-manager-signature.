@@ -695,3 +695,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-document-content .lm-document-excerpt{
  color:var(--text);font-size:11.5px
 }
+
+/* Work message shares the original Quiet Cinema card, typography and motion. */
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-art-svg--work{color:#8FE3C3;stroke:#8FE3C3}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:first-child{
+ border-radius:999px;background:#e8fff1;color:#10251d;border:1px solid #baf7d5;
+ padding-inline:15px;font-weight:650;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content textarea{
+ box-sizing:border-box;width:100%;max-width:100%;
+}
