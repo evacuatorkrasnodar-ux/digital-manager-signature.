@@ -68,29 +68,10 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',hallPlayback=false;
+let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks';
 
 /* Saved favorites are track fingerprints, not copied audio or subscriptions. */
 const FAVORITES_KEY='seyveo-music-favorites-v1';
-const FAVORITES_DETAILS_KEY='seyveo-music-favorites-details-v1';
-let favoriteDetails=new Map();
-try{
- const details=JSON.parse(localStorage.getItem(FAVORITES_DETAILS_KEY)||'[]');
- if(Array.isArray(details))favoriteDetails=new Map(details.filter(row=>
-  Array.isArray(row)&&typeof row[0]==='string'&&row[0].length<350&&row[1]&&typeof row[1]==='object'
- ).slice(-200));
-}catch{}
-const cleanMusicLabel=value=>String(value||'').trim().slice(0,160);
-function saveFavoriteDetails(file){
- if(!file)return;
- const key=favoriteId(file),info=infoFor(file);
- favoriteDetails.set(key,{title:cleanMusicLabel(info.title),artist:cleanMusicLabel(info.artist)});
- try{localStorage.setItem(FAVORITES_DETAILS_KEY,JSON.stringify([...favoriteDetails].slice(-200)))}catch{}
-}
-const hallInitial=name=>{
- const first=Array.from(String(name||'').trim().replace(/^[^\p{L}]+/u,''))[0]||'S';
- return first.toLocaleUpperCase('ru-RU').slice(0,2);
-};
 let favorites=new Set();
 try{
  const stored=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]');
@@ -110,10 +91,7 @@ function updateFavorite(){
  // Preserve the vector star in the button: swapping textContent destroys its SVG.
  const initial=favoriteButton.querySelector('#svMusicStarInitial');
  const person=String(file?infoFor(file).artist||'':'' ).trim();
- if(initial)initial.textContent=hallInitial(person);
- const vinylInitial=disk?.querySelector('#svMusicDiskStarInitial');
- if(vinylInitial)vinylInitial.textContent=hallInitial(person);
- disk?.classList.toggle('sv-music-hall-track',liked);
+ if(initial)initial.textContent=(Array.from(person.replace(/^[^\p{L}]+/u,''))[0]||'S').toLocaleUpperCase('ru-RU');
  favoriteButton.setAttribute('aria-pressed',String(liked));
  favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':
   liked?'Убрать из избранного':'Добавить в избранное');
@@ -122,10 +100,7 @@ function updateFavorite(){
 function toggleFavorite(){
  const file=index>=0?tracks[index]:null;if(!file)return;
  const key=favoriteId(file),wasLiked=favorites.has(key);
- if(wasLiked){favorites.delete(key);favoriteDetails.delete(key)}
- else{favorites.add(key);saveFavoriteDetails(file)}
- try{localStorage.setItem(FAVORITES_DETAILS_KEY,JSON.stringify([...favoriteDetails].slice(-200)))}catch{}
- if(wasLiked&&hallPlayback)hallPlayback=false;
+ if(wasLiked)favorites.delete(key);else favorites.add(key);
  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}
  catch{sayviMessage('Не удалось сохранить избранное на этом устройстве.')}
  updateFavorite();collectionRender();
@@ -283,39 +258,15 @@ function mediaSession(){
   });
  }catch{}
 }
-function hallBadge(name){
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('viewBox','0 0 64 64');
- svg.setAttribute('aria-hidden','true');
- svg.setAttribute('focusable','false');
- // SEYVEO's rose stone, double engraved gold rim and the artist's initial.
- svg.innerHTML='<circle cx="32" cy="32" r="30" fill="#202329" stroke="#dcb46d" stroke-width="1.7"/>'+
-  '<path d="M32 5.8 40.6 23.2 59.8 26 45.9 39.6 49.2 58.8 32 49.7 14.8 58.8 18.1 39.6 4.2 26 23.4 23.2Z" fill="#a76976" stroke="#e8bf77" stroke-width="2.5" stroke-linejoin="round"/>'+
-  '<path d="M32 10 39.5 25 55.4 27.7 43.5 39.2 46.2 54.2 32 46.6 17.8 54.2 20.5 39.2 8.6 27.7 24.5 25Z" fill="none" stroke="#f9e1a7" stroke-opacity=".36" stroke-width=".75"/>'+
-  '<text x="32" y="40" text-anchor="middle" font-family="-apple-system,Arial,sans-serif" font-weight="750" font-size="21" fill="#f4cc75" stroke="#714523" stroke-width=".55" paint-order="stroke"></text>';
- svg.querySelector('text').textContent=hallInitial(name);
- return svg;
-}
-function playHall(){
- const ids=tracks.map((file,i)=>isFavorite(file)?i:-1).filter(i=>i>=0);
- if(!ids.length){
-  sayviMessage('Чтобы слушать Аллею, сначала открой любимые аудиофайлы через «Моя музыка».');
-  importBtn.focus({preventScroll:true});
-  return;
- }
- hallPlayback=true;
- const ok=switchTrack(ids[0],true,true);
- if(ok)hidePanels();
- else hallPlayback=false;
-}
 function collectionRender(){
  collection.replaceChildren();
  if(collectionMode==='tracks'&&!tracks.length){
-  collection.hidden=true;syncQueueToggle();return;
+  collection.hidden=true;
+  syncQueueToggle();
+  return;
  }
  collection.hidden=!queueOpen;
  const hall=collectionMode==='hall';
- collection.classList.toggle('sv-music-hall-gallery',hall);
  const loaded=new Map(tracks.map((file,i)=>[favoriteId(file),{file,i}]));
  const entries=hall?[...favorites].map(key=>({key,match:loaded.get(key)}))
   :tracks.map((file,i)=>({key:favoriteId(file),match:{file,i}}));
@@ -334,66 +285,40 @@ function collectionRender(){
   const note=document.createElement('p');
   note.className='sv-music-hall-note';
   note.textContent=!entries.length
-   ?'Здесь появятся твои любимые песни. Коснись золотой звезды рядом с исполнителем.'
+   ?'Пока нет любимых песен. Нажми звезду возле исполнителя, чтобы добавить первую.'
    :entries.some(entry=>!entry.match)
-    ?'Твои звёзды сохранены. Для воспроизведения после перезапуска снова выбери аудиофайлы через «Моя музыка».'
-    :'Личная галерея любимой музыки.';
+    ?'Звёзды сохранены на этом устройстве. Чтобы слушать песни после перезапуска, снова выбери их файлы через «Моя музыка».'
+    :'Твои любимые песни из текущей подборки.';
   collection.append(note);
-  const available=entries.filter(entry=>entry.match);
-  if(available.length){
-   const listen=document.createElement('button');
-   listen.type='button';listen.className='sv-music-hall-listen';
-   listen.textContent='▶  Слушать мою Аллею';
-   listen.addEventListener('click',playHall);
-   collection.append(listen);
-  }
-  const gallery=document.createElement('div');
-  gallery.className='sv-music-hall-grid';
-  entries.forEach(({key,match},position)=>{
-   const details=match?infoFor(match.file):favoriteDetails.get(key);
-   const fileTitle=String(key).split('|').slice(0,-2).join('|').replace(/\.[^.]+$/,'');
-   const song=cleanMusicLabel(details?.title)||fileTitle||'Любимая песня';
-   const person=cleanMusicLabel(details?.artist);
-   const btn=document.createElement('button');
-   btn.type='button';btn.className='sv-music-hall-card';
-   if(!match)btn.classList.add('sv-music-hall-unavailable');
-   if(match){btn.dataset.musicIndex=String(match.i);btn.setAttribute('aria-current',String(match.i===index))}
-   const seal=document.createElement('span');
-   seal.className='sv-music-hall-seal';
-   seal.append(hallBadge(person));
-   const name=document.createElement('strong');
-   name.className='sv-music-hall-song';name.textContent=song;
-   const artistName=document.createElement('span');
-   artistName.className='sv-music-hall-person';
-   artistName.textContent=person||'Из моей музыки';
-   const hint=document.createElement('span');
-   hint.className='sv-music-hall-hint';
-   hint.textContent=match?'Слушать':'Выбрать файл';
-   btn.append(seal,name,artistName,hint);
-   btn.setAttribute('aria-label',(match?'Воспроизвести ':'Выбрать файл для ')+song+(person?' — '+person:''));
-   btn.addEventListener('click',()=>match?(hallPlayback=false,switchTrack(match.i,true),hidePanels()):fileInput.click());
-   gallery.append(btn);
-  });
-  collection.append(gallery);
-  syncQueueToggle();return;
  }
- entries.forEach(({match},position)=>{
+ entries.forEach(({key,match},position)=>{
   const btn=document.createElement('button');
   btn.type='button';btn.className='sv-music-track-row';
-  btn.dataset.musicIndex=String(match.i);
-  btn.setAttribute('aria-current',String(match.i===index));
+  if(hall)btn.classList.add('sv-music-hall-row');
+  const available=!!match;
+  if(available){
+   btn.dataset.musicIndex=String(match.i);
+   btn.setAttribute('aria-current',String(match.i===index));
+  }
   const count=document.createElement('span');count.className='sv-music-row-num';
-  count.textContent=String(position+1).padStart(2,'0');
+  count.textContent=hall?'★':String(position+1).padStart(2,'0');
   const name=document.createElement('span');name.className='sv-music-row-title';
-  name.textContent=(isFavorite(match.file)?'★  ':'')+safeName(match.file);
+  const remembered=String(key).split('|').slice(0,-2).join('|').replace(/\.[^.]+$/,'');
+  name.textContent=available
+   ?(hall?'':isFavorite(match.file)?'★  ':'')+safeName(match.file)
+   :remembered||'Любимая песня';
   btn.append(count,name);
-  btn.addEventListener('click',()=>switchTrack(match.i,true));
+  if(!available){
+   btn.classList.add('sv-music-hall-unavailable');
+   btn.title='Выбрать файл песни заново';
+   btn.setAttribute('aria-label',name.textContent+'. Выбрать файл для воспроизведения');
+   btn.addEventListener('click',()=>fileInput.click());
+  }else btn.addEventListener('click',()=>switchTrack(match.i,true));
   collection.append(btn);
  });
  syncQueueToggle();
 }
-function switchTrack(i,autoplay=false,fromHall=false){
- if(!fromHall)hallPlayback=false;
+function switchTrack(i,autoplay=false){
  if(!tracks.length)return false;
  const newIndex=((i%tracks.length)+tracks.length)%tracks.length;
  const file=tracks[newIndex];const version=++selectVersion;
@@ -415,7 +340,6 @@ function switchTrack(i,autoplay=false,fromHall=false){
   Promise.resolve(metadata.describe(file)).then(info=>{
    if(version!==selectVersion||tracks[index]!==file||!info)return;
    trackDescriptions.set(file,info);
-   if(isFavorite(file))saveFavoriteDetails(file);
    updateFavorite();
    if(info.artwork){
     try{coverObjectURL=URL.createObjectURL(info.artwork)}catch{coverObjectURL=null}
@@ -646,18 +570,7 @@ audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
 audio.addEventListener('playing',()=>{updatePlay();sayviMessage('')});
 audio.addEventListener('pause',updatePlay);
-audio.addEventListener('ended',()=>{
- if(hallPlayback){
-  const available=tracks.map((file,i)=>isFavorite(file)?i:-1).filter(i=>i>=0);
-  const current=available.indexOf(index),nextHall=available[current+1];
-  if(nextHall!==undefined){switchTrack(nextHall,true,true);return}
-  hallPlayback=false;
-  updatePlay();sayviMessage('Сэйви: твоя Аллея славы прозвучала.');
-  return;
- }
- if(tracks.length>1)switchTrack(index+1,true);
- else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}
-});
+audio.addEventListener('ended',()=>{if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
 audio.addEventListener('error',()=>{updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
