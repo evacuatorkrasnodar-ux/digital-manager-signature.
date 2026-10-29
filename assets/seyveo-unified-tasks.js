@@ -817,7 +817,7 @@
    if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
   }
  });
- function previewRole(role){
+ function switchPreviewRole(role){
   if(role!=='manager'&&role!=='employee')return;
   // This is ONLY a view switch on one phone, not authorization.
   if(previewTier==='one')previewTier='rise';
@@ -825,7 +825,7 @@
   applyPreviewSelection();
  }
  window.SEYVEO_UNIFIED_TASKS=Object.freeze({
-  openBusiness,openPersonal,openChat,openPulse,returnFromPulse,openPeople,previewRole
+  openBusiness,openPersonal,openChat,openPulse,returnFromPulse,openPeople,previewRole:switchPreviewRole
  });
  window.SEYVEO_PREVIEW=Object.freeze({getMode:()=>previewMode,isManager,isEmployee});
  syncBack();updatePulseAccess();select(isEmployee()?'employee':'personal');
