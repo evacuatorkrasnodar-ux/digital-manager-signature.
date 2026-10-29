@@ -81,6 +81,42 @@ curl -sS -X POST http://127.0.0.1:8787/v1/sessions \
 
 The login response includes a temporary bearer token. Use `Authorization: Bearer <token>` for other routes.
 
+### Persistent document events (SQLite development mode)
+
+The SQLite backend now writes a minimal **per-recipient change event** in the
+same database transaction as a new document or status update.
+This is useful for a future phone client that needs to catch up after being
+offline. It is **not** a push notification and cannot reach another device
+while the server is bound to 127.0.0.1.
+
+An authenticated client may call:
+
+`GET /v1/organizations/demo-org/updates?after=0`
+
+The response contains only `events` and `nextCursor`.
+Each event includes an increasing numeric cursor, document ID, event kind
+(`assigned` or `status_changed`), and timestamp. It contains **no document
+title or body**. Use the authorized document endpoint for details.
+
+The cursor is **per caller's visible stream**, not a credential and not a
+document access grant. The server authenticates the session and verifies the
+current membership and organization on every request. Clients should persist
+the last processed cursor securely, advance it only after handling the
+response, and resume from the same cursor after reconnection. Events are
+fetched in ascending order (up to 50 per request); request again if a full
+page is returned.
+
+Events are saved in SQLite, not delivered via Apple Push Notification service
+or Firebase Cloud Messaging. There is no hardened production transport,
+application sign-in, device enrollment, or background processing yet.
+Revoked employees lose access to the stream.
+
+Check with synthetic data:
+
+```sh
+node --test server/secure-documents/document-updates.test.mjs server/secure-documents/document-updates-http.test.mjs
+```
+
 ### Two-account inbox/outbox polling (local development)
 
 The server now exposes separate, **authenticated and tenant-scoped** mailboxes for the fictional `owner` and `elena` accounts:
@@ -136,6 +172,7 @@ Routes:
 | GET | `/v1/organizations` | Current membership |
 | GET | `/v1/organizations/demo-org/inbox` | Only recipient's document metadata; count pending |
 | GET | `/v1/organizations/demo-org/outbox` | Only creator's document metadata; count pending |
+| GET | `/v1/organizations/demo-org/updates?after=0` | Authenticated event cursor for the current account (SQLite only) |
 | GET / POST | `/v1/organizations/demo-org/documents` | List readable documents / create document (owner) |
 | GET | `/v1/organizations/demo-org/documents/:id` | Read allowed document and decrypted text |
 | GET | `/v1/organizations/demo-org/documents/:id/audit` | Read document activity |
