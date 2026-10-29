@@ -176,6 +176,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
 
   const handler = async (req, res) => {
     try {
+      // Defense in depth: refuse requests if a developer accidentally binds
+      // this training server to a non-loopback network interface.
+      if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.localAddress))
+        fail(403,'Сервер разработки доступен только с этого компьютера.');
       if (req.headers.origin)
         fail(403, 'Браузерные запросы с чужого сайта запрещены.');
       const path = new URL(req.url || '/', 'http://127.0.0.1').pathname;
