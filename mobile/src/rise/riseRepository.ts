@@ -55,3 +55,25 @@ export async function addRiseCost(name:string,amount:number){
   await db.runAsync('INSERT INTO rise_costs(name,amount) VALUES (?,?)',name.trim(),amount);
  }finally{await db.closeAsync()}
 }
+
+export type RiseCostKind='startup'|'monthly';
+export async function addCategorizedRiseCost(name:string,amount:number,kind:RiseCostKind){
+ if(!['startup','monthly'].includes(kind)||!name.trim()||name.length>120||!Number.isSafeInteger(amount)||amount<0||amount>1e10)throw new TypeError('Invalid cost');
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_cost_kinds (cost_id INTEGER PRIMARY KEY NOT NULL, kind TEXT NOT NULL)');
+  await db.withTransactionAsync(async()=>{
+   await db.execAsync('CREATE TABLE IF NOT EXISTS rise_costs (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, amount INTEGER NOT NULL)');
+   const row=await db.runAsync('INSERT INTO rise_costs(name,amount) VALUES (?,?)',name.trim(),amount);
+   await db.runAsync('INSERT INTO rise_cost_kinds(cost_id,kind) VALUES (?,?)',row.lastInsertRowId,kind);
+  });
+ }finally{await db.closeAsync()}
+}
+export async function loadCategorizedRiseCosts(){
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_cost_kinds (cost_id INTEGER PRIMARY KEY NOT NULL, kind TEXT NOT NULL)');
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_costs (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, amount INTEGER NOT NULL)');
+  return await db.getAllAsync<{id:number;name:string;amount:number;kind:string}>("SELECT c.id,c.name,c.amount,COALESCE(k.kind,'startup') AS kind FROM rise_costs c LEFT JOIN rise_cost_kinds k ON k.cost_id=c.id ORDER BY c.id");
+ }finally{await db.closeAsync()}
+}
