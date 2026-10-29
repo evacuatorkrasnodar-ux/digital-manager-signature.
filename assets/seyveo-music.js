@@ -68,10 +68,29 @@ const providers=Object.freeze({
   copy:'Сейчас доступно настоящее прослушивание ваших собственных аудиофайлов. Они остаются на устройстве и открываются только на время работы плеера.'
  }
 });
-let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks';
+let tracks=[],index=-1,url=null,selectVersion=0,queueOpen=false,collectionMode='tracks',hallPlayback=false;
 
 /* Saved favorites are track fingerprints, not copied audio or subscriptions. */
 const FAVORITES_KEY='seyveo-music-favorites-v1';
+const FAVORITES_DETAILS_KEY='seyveo-music-favorites-details-v1';
+let favoriteDetails=new Map();
+try{
+ const details=JSON.parse(localStorage.getItem(FAVORITES_DETAILS_KEY)||'[]');
+ if(Array.isArray(details))favoriteDetails=new Map(details.filter(row=>
+  Array.isArray(row)&&typeof row[0]==='string'&&row[0].length<350&&row[1]&&typeof row[1]==='object'
+ ).slice(-200));
+}catch{}
+const cleanMusicLabel=value=>String(value||'').trim().slice(0,160);
+function saveFavoriteDetails(file){
+ if(!file)return;
+ const key=favoriteId(file),info=infoFor(file);
+ favoriteDetails.set(key,{title:cleanMusicLabel(info.title),artist:cleanMusicLabel(info.artist)});
+ try{localStorage.setItem(FAVORITES_DETAILS_KEY,JSON.stringify([...favoriteDetails].slice(-200)))}catch{}
+}
+const hallInitial=name=>{
+ const first=Array.from(String(name||'').trim().replace(/^[^\p{L}]+/u,''))[0]||'S';
+ return first.toLocaleUpperCase('ru-RU').slice(0,2);
+};
 let favorites=new Set();
 try{
  const stored=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]');
@@ -91,7 +110,10 @@ function updateFavorite(){
  // Preserve the vector star in the button: swapping textContent destroys its SVG.
  const initial=favoriteButton.querySelector('#svMusicStarInitial');
  const person=String(file?infoFor(file).artist||'':'' ).trim();
- if(initial)initial.textContent=(Array.from(person.replace(/^[^\p{L}]+/u,''))[0]||'S').toLocaleUpperCase('ru-RU');
+ if(initial)initial.textContent=hallInitial(person);
+ const vinylInitial=disk?.querySelector('#svMusicDiskStarInitial');
+ if(vinylInitial)vinylInitial.textContent=hallInitial(person);
+ disk?.classList.toggle('sv-music-hall-track',liked);
  favoriteButton.setAttribute('aria-pressed',String(liked));
  favoriteButton.setAttribute('aria-label',!file?'Выберите трек для избранного':
   liked?'Убрать из избранного':'Добавить в избранное');
@@ -100,7 +122,10 @@ function updateFavorite(){
 function toggleFavorite(){
  const file=index>=0?tracks[index]:null;if(!file)return;
  const key=favoriteId(file),wasLiked=favorites.has(key);
- if(wasLiked)favorites.delete(key);else favorites.add(key);
+ if(wasLiked){favorites.delete(key);favoriteDetails.delete(key)}
+ else{favorites.add(key);saveFavoriteDetails(file)}
+ try{localStorage.setItem(FAVORITES_DETAILS_KEY,JSON.stringify([...favoriteDetails].slice(-200)))}catch{}
+ if(wasLiked&&hallPlayback)hallPlayback=false;
  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}
  catch{sayviMessage('Не удалось сохранить избранное на этом устройстве.')}
  updateFavorite();collectionRender();
@@ -340,6 +365,7 @@ function switchTrack(i,autoplay=false){
   Promise.resolve(metadata.describe(file)).then(info=>{
    if(version!==selectVersion||tracks[index]!==file||!info)return;
    trackDescriptions.set(file,info);
+   if(isFavorite(file))saveFavoriteDetails(file);
    updateFavorite();
    if(info.artwork){
     try{coverObjectURL=URL.createObjectURL(info.artwork)}catch{coverObjectURL=null}
