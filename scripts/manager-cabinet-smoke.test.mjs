@@ -92,9 +92,9 @@ test('today area reuses live assignments, completion history and active counts',
 });
 
 test('no old cached stylesheet/scripts and compact original manager CSS rules',()=>{
-  assert.match(html,/seyveo-business-command\.css\?v=66/);
-  assert.match(html,/seyveo-business-command\.js\?v=66/);
-  assert.match(html,/seyveo-unified-tasks\.js\?v=37/);
+  assert.match(html,/seyveo-business-command\.css\?v=67/);
+  assert.match(html,/seyveo-business-command\.js\?v=67/);
+  assert.match(html,/seyveo-unified-tasks\.js\?v=38/);
   assert.match(css,/#tasksPage \.svcp-manager-row\{[^}]*min-height:52px/);
   assert.match(css,/#tasksPage \.svcp-manager-art\{[^}]*width:33px/);
   assert.match(css,/#tasksPage \.svcp-manager-staff\{[^}]*margin:0;border:0/);
@@ -123,4 +123,25 @@ test('subscription preview has three tiers, nested Family/Enterprise and indepen
 
 test('new preview controller has valid JavaScript',()=>{
  assert.doesNotThrow(()=>new Script(roles,{filename:'assets/seyveo-unified-tasks.js'}));
+});
+
+test('manager-to-Elena task demo uses shared task state and explicit manager acceptance',()=>{
+ assert.match(html,/id="svcpTaskList"/);
+ assert.match(html,/id="unifiedEmployeeAssignments"/);
+ assert.match(tasks,/function storeTask\(text,source\)/);
+ assert.match(tasks,/approvalFlow:true,reviewStatus:'assigned'/);
+ assert.match(tasks,/Поручить Елене/);
+ assert.match(tasks,/reviewStatus:accepted\?'approved':'rework'/);
+ assert.match(tasks,/if\(employeePreviewActive\(\)\)return/);
+ assert.match(tasks,/window\.addEventListener\('seyveo:employee-task-updated'/);
+ assert.match(roles,/reviewStatus:'review',reportText:report\.slice\(0,350\)/);
+ assert.match(roles,/photoSelected:demoPhotos\.has\(task\.id\)/);
+ assert.match(roles,/file\.accept='image\/\*'/);
+ assert.match(roles,/renderEmployeeTasks\(\)/);
+ assert.match(roles,/window\.SEYVEO_APPROVAL_DEMO_PHOTO=Object\.freeze/);
+ assert.match(roles,/function previewRole\(role\)/);
+ assert.match(css,/#tasksPage \.svcp-approval-demo-entry\{/);
+ assert.match(css,/#tasksPage \.svcp-approval-report-form\{/);
+ assert.doesNotMatch(roles,/localStorage\.setItem\([^,\n]*photo/i);
+ assert.doesNotMatch(tasks,/fetch\([^)]*task/i);
 });
