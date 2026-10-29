@@ -46,8 +46,8 @@ for(const id of ['svcpHistorySearch','svcpChatTaskDraft','svcpCameraBarcode','sv
  assert.ok(html.includes('id="'+id+'"'),'Existing feature preserved: '+id);
 assert.ok(html.includes('placeholder="Имя, должность, сообщение…"'),
  'Discoverable chat search');
-for(const label of ["all:'Команда'","people:'Сотрудники'","extra:'Рабочие группы'","assistant:'Сэйви'"])
- assert.ok(js.includes(label),'Chat section '+label);
+for(const section of ["section:'all'","section:'people'","section:'extra'","section:'assistant'"])
+ assert.ok(js.includes(section),'Chat section '+section);
 assert.ok(js.includes("const managerDialog=employeePreviewActive()&&room.id==='dm-elena'"),
  'Employee receives correct opposite-side chat identity');
 assert.ok(js.includes("managerDialog?'Р':room.mark"),
