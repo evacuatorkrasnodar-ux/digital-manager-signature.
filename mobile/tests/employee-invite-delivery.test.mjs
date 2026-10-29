@@ -57,8 +57,8 @@ test('invalid, absent, tampered or unverified invitation responses fail closed',
     {...invite,invitation:{...invite.invitation,expiresAt:'2026-02-30T12:15:00.000Z'}},
     {...invite,invitation:{...invite.invitation,expiresAt:'2099-10-29T12:15:00.000Z'}}
   ];
-  for(const response of examples)
-    assert.deepEqual(prepare(response),{status:'unavailable'});
+  for(const [index,response] of examples.entries())
+    assert.deepEqual(prepare(response),{status:'unavailable'},'invalid response '+index);
   assert.deepEqual(prepare(invite,()=>instant,'https://evil.invalid/not-invite/'),
     {status:'unavailable'});
   assert.deepEqual(prepare(invite,()=>instant,'http://join.seyveo.example/join/employee/'),
