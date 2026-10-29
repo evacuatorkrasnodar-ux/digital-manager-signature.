@@ -101,3 +101,30 @@ test('server refuses invalid keys, too-short passwords, shared credentials and p
   assert.throws(()=>createDevDocumentServer({...defaults,ownerPassword:'short'}));
   assert.throws(()=>createDevDocumentServer({...defaults,employeePassword:defaults.ownerPassword}));
 });
+
+test('developer API cannot accidentally bind a network interface', async t => {
+  const server=createDevDocumentServer({
+    ownerPassword:'training-owner-password-2026',
+    employeePassword:'training-elena-password-2026',
+    masterKey:Buffer.alloc(32,37)
+  });
+  const blocked=[
+    [0], // Node defaults to the wildcard interface if host is omitted.
+    [0,'0.0.0.0'],
+    [0,'::'],
+    [{port:0,host:'0.0.0.0'}],
+    [{port:0,host:'::'}]
+  ];
+  for(const args of blocked){
+    assert.throws(()=>server.listen(...args),/explicit loopback bind/);
+    assert.equal(server.listening,false);
+  }
+  // A local-only bind still works for the existing developer test suite.
+  server.listen(0,'127.0.0.1');
+  await once(server,'listening');
+  t.after(async()=>{await new Promise(resolve=>server.close(resolve));});
+  assert.equal(server.address().address,'127.0.0.1');
+  const res=await fetch('http://127.0.0.1:'+server.address().port+'/health');
+  assert.equal(res.status,200);
+  assert.equal((await res.json()).productionReady,false);
+});
