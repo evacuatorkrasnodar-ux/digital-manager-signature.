@@ -83,6 +83,7 @@ const favoriteId=file=>file?[
 function isFavorite(file){return !!file&&favorites.has(favoriteId(file))}
 function updateFavorite(){
  if(!favoriteButton)return;
+ favoriteButton.classList.remove('sv-music-favorite--spark');
  const file=index>=0?tracks[index]:null;
  const liked=isFavorite(file);
  favoriteButton.disabled=!file;
@@ -97,13 +98,21 @@ function updateFavorite(){
 }
 function toggleFavorite(){
  const file=index>=0?tracks[index]:null;if(!file)return;
- const key=favoriteId(file);
- if(favorites.has(key))favorites.delete(key);else favorites.add(key);
+ const key=favoriteId(file),wasLiked=favorites.has(key);
+ if(wasLiked)favorites.delete(key);else favorites.add(key);
  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites].slice(-200)))}
  catch{sayviMessage('Не удалось сохранить избранное на этом устройстве.')}
  updateFavorite();collectionRender();
+ // The gold glint runs once when adding a track, never during playback.
+ if(!wasLiked&&!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches){
+  favoriteButton.classList.add('sv-music-favorite--spark');
+ }
 }
 favoriteButton?.addEventListener('click',toggleFavorite);
+favoriteButton?.addEventListener('animationend',event=>{
+ if(event.animationName==='sv-music-star-glint')
+  favoriteButton.classList.remove('sv-music-favorite--spark');
+});
 
 // A dismissed remote stays hidden while the audio keeps playing.
 // Entering the full music screen is the deliberate way to restore it.
