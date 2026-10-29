@@ -11,12 +11,13 @@ const [html,nav,calendar,calendarCss,employee]=await Promise.all([
 test('manager sees ordered three tabs with Calendar centered and director Cabinet renamed',()=>{
   const tabs=html.split('<div id="unifiedTasksTabs"')[1]?.split('</div>')[0];
   assert.ok(tabs);
-  const names=[...tabs.matchAll(/data-unified-tasks-tab="([^"]+)"[^>]*>([^<]+)</g)];
+  const names=[...tabs.matchAll(/data-unified-tasks-tab="([^"]+)"[^>]*>[\s\S]*?<span>([^<]+)<\/span><\/button>/g)];
   assert.deepEqual(names.map(x=>[x[1],x[2]]),[
     ['personal','Мои дела'],['calendar','Календарь'],
-    ['business','Кабинет'],['employee','Моя работа']
+    ['business','Кабинет']
   ]);
   assert.match(tabs,/data-unified-tasks-tab="calendar"[^>]*hidden/);
+  assert.match(tabs,/data-unified-tasks-tab="employee"[^>]*hidden>Моя работа<\/button>/);
   assert.match(nav,/if\(calendarTab\)calendarTab\.hidden=!isManager\(\)/);
   assert.match(nav,/if\(businessTab\)businessTab\.hidden=!isManager\(\)/);
   assert.match(nav,/if\(employeeTab\)employeeTab\.hidden=!isEmployee\(\)/);

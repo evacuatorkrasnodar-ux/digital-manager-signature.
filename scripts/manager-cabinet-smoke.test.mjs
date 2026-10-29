@@ -31,7 +31,7 @@ test('director gets one heading, no duplicate cockpit, and a calm local demo sta
   assert.match(roles,/if\(taskTabs\)taskTabs\.hidden=false/);
   assert.match(roles,/page\.dataset\.workView=chosen/);
   assert.match(html,/data-unified-tasks-tab="calendar"/);
-  assert.match(html,/data-unified-tasks-tab="business" aria-pressed="false">Кабинет/);
+  assert.match(html,/data-unified-tasks-tab="business" aria-pressed="false">[\s\S]*?<span>Кабинет<\/span>/);
   assert.match(roles,/if\(calendarTab\)calendarTab\.hidden=!isManager\(\)/);
   assert.match(roles,/if\(taskTabs\)taskTabs\.dataset\.manager=String\(isManager\(\)\)/);
   assert.match(html,/id="managerCalendarTabs"/);
@@ -91,7 +91,7 @@ test('today area reuses live assignments, completion history and active counts',
 });
 
 test('no old cached stylesheet/scripts and compact original manager CSS rules',()=>{
-  assert.match(html,/seyveo-business-command\.css\?v=62/);
+  assert.match(html,/seyveo-business-command\.css\?v=63/);
   assert.match(html,/seyveo-business-command\.js\?v=64/);
   assert.match(html,/seyveo-unified-tasks\.js\?v=35/);
   assert.match(css,/#tasksPage \.svcp-manager-row\{[^}]*min-height:57px/);
