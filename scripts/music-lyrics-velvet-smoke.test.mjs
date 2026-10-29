@@ -18,7 +18,7 @@ test('remove complex manual lyrics imports and leave simple main music actions',
 });
 test('Walk of Fame jewel sits before the artist, not in the header',()=>{
  assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*width:44px;height:44px;min-width:44px;min-height:44px/);
- assert.match(css,/#sayviMusicPage \.sv-music-favorite::before\{[^}]*inset:5px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite::before\{[^}]*width:34px;height:34px/);
  assert.match(css,/#sayviMusicPage \.sv-music-artist-row\{[^}]*gap:3px/);
  assert.match(css,/#sayviMusicPage \.sv-music-favorite-star\{[^}]*width:26px;height:26px;[\s\S]*?overflow:visible;transform:none/);
  assert.match(css,/#sayviMusicPage>header\.sv-music-head\{[^}]*grid-template-columns:minmax\(0,1fr\) auto!important/);
