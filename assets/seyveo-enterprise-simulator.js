@@ -17,53 +17,68 @@ const sampleStaff=['Елена · продавец','Татьяна · стар�
 function safeDraft(){try{const data=JSON.parse(localStorage.getItem('seyveo-company-structure-draft-v1')||'null');return Array.isArray(data?.branches)?data.branches.filter(x=>typeof x==='string'&&x.trim()).slice(0,30):[]}catch{return []}}
 const branches=safeDraft().length?safeDraft():sampleBranches;
 for(const [id,values] of [['svSimBranch',branches],['svSimStaff',sampleStaff]])for(const value of values){const opt=document.createElement('option');opt.value=value;opt.textContent=value;$(id).append(opt)}
+const TASK_KEY='seyveo-business-command-tasks-demo-v1';
+const SIM_ID='devstudio-enterprise-single-task';
 let task=null;
-const getPhase=()=>task?task.phase:0;
-const getHistory=()=>task?task.events:[];
+const getPhase=()=>task?.phase||0;
+const getHistory=()=>task?.events||[];
+const getRows=()=>{try{const rows=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch{return []}};
+function mirror(){
+ const row=getRows().find(x=>x?.id===SIM_ID);
+ if(!row||!task)return;
+ const phase=row.done||row.reviewStatus==='approved'?4:row.reviewStatus==='review'?3:row.reviewStatus==='accepted'?2:1;
+ if(phase!==task.phase){task.phase=phase;task.events.push('Изменение из раздела «Дела» · '+(row.reviewStatus||'assigned'));render()}
+}
 const steps=['Поручение создано','Сотрудник принял поручение','Результат передан на проверку','Руководитель принял результат'];
 function render(){
  const phase=getPhase();
  const box=$('svSimTimeline');box.replaceChildren();
  getHistory().forEach((text,i)=>{const row=document.createElement('div');row.className='sv-sim-event';const number=document.createElement('small');number.textContent=String(i+1).padStart(2,'0');const body=document.createElement('span');body.textContent=text;row.append(number,body);box.append(row)});
- $('svSimState').textContent=phase===0?'Выберите филиал и сотрудника, затем создайте поручение.':phase===4?'Поручение завершено · учебный сценарий':steps[phase-1]+' · следующий шаг: '+steps[phase];
- const branch=$('svSimBranch').value,person=$('svSimStaff').value;
- $('svSimBossBranch').textContent=branch;
- $('svSimBossPerson').textContent='Исполнитель: '+person;
- $('svSimWorkerName').textContent=person;
- $('svSimWorkerBranch').textContent=branch;
+ $('svSimState').textContent=phase===0?'Выберите филиал и Елену, затем создайте поручение.':phase===4?'Поручение завершено · учебный сценарий':steps[phase-1]+' · следующий шаг: '+steps[phase];
+ const branch=task?.branch||$('svSimBranch').value,person=task?.assignee||$('svSimStaff').value;
+ $('svSimBossBranch').textContent=branch;$('svSimBossPerson').textContent='Исполнитель: '+person;
+ $('svSimWorkerName').textContent=person;$('svSimWorkerBranch').textContent=branch;
  $('svSimBossStatus').textContent=['Задание ещё не создано','Ожидает принятия','В работе','Результат ожидает проверки','Выполнено ✓'][phase];
- $('svSimWorkerStatus').textContent=['Нет активного поручения','Новое поручение · принять','Принято · выполнить','Результат отправлен','Руководитель принял ✓'][phase];
+ $('svSimWorkerStatus').textContent=['Нет активного поручения','Новое поручение','Принято','Результат отправлен','Руководитель принял ✓'][phase];
  for(const [id,allowed] of [['svSimCreate',phase===0],['svSimAccept',phase===1],['svSimSubmit',phase===2],['svSimApprove',phase===3]])$(id).disabled=!allowed;
 }
-// One task object is the authoritative source for both perspectives.
-function act(next){
- const phase=getPhase();
- if(phase!==next-1)return;
+function write(next){
+ const previous=getPhase();if(previous!==next-1)return;
  const branch=$('svSimBranch').value,person=$('svSimStaff').value;
- if(next===1){
-   task={id:'demo-task-1',title:'Проверить выкладку товаров',branch,assignee:person,
-     phase:0,events:[],updatedAt:null};
- }
- if(!task)return;
- task.phase=next;task.updatedAt=new Date().toISOString();
- task.events.push(steps[next-1]+' · '+task.assignee+' · '+task.branch);
- // Other future demo components can observe the same immutable snapshot.
- window.dispatchEvent(new CustomEvent('seyveo:demo-task-changed',{
-   detail:structuredClone(task)
- }));
+ if(person!=='Елена · продавец'){$('svSimState').textContent='Связь с «Делами» доступна для тестовой Елены. Выберите Елену.';return}
+ const current=getRows(),existing=current.find(x=>x?.id===SIM_ID);
+ if(next===1&&existing){$('svSimState').textContent='Учебная задача уже существует. Сбросьте её перед повторным тестом.';return}
+ if(next>1&&!existing){$('svSimState').textContent='Задача отсутствует в «Делах».';return}
+ const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,
+ reviewStatus:['','assigned','accepted','review','approved'][next],done:next===4,
+ ...(next===3?{reportText:'Выкладка проверена · учебный результат'}:{})};
+ const rows=next===1?[...current,updated]:current.map(x=>x?.id===SIM_ID?updated:x);
+ try{localStorage.setItem(TASK_KEY,JSON.stringify(rows))}catch{$('svSimState').textContent='Не удалось сохранить учебное поручение.';return}
+ if(next===1)task={id:SIM_ID,branch,assignee:person,phase:0,events:[]};
+ task.phase=next;task.events.push(steps[next-1]+' · '+person+' · '+branch);
+ window.dispatchEvent(new Event('seyveo:employee-task-updated'));
+ window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
+ window.dispatchEvent(new CustomEvent('seyveo:demo-task-changed',{detail:structuredClone(task)}));
  render();
 }
-$('svSimCreate').onclick=()=>act(1);
-$('svSimAccept').onclick=()=>act(2);
-$('svSimSubmit').onclick=()=>act(3);
-$('svSimApprove').onclick=()=>act(4);
+$('svSimCreate').onclick=()=>write(1);$('svSimAccept').onclick=()=>write(2);
+$('svSimSubmit').onclick=()=>write(3);$('svSimApprove').onclick=()=>write(4);
 function reset(){
+ const rows=getRows();
+ if(rows.some(x=>x?.id===SIM_ID)){
+  try{localStorage.setItem(TASK_KEY,JSON.stringify(rows.filter(x=>x?.id!==SIM_ID)))}catch{$('svSimState').textContent='Не удалось очистить учебную задачу.';return}
+ }
  task=null;
+ window.dispatchEvent(new Event('seyveo:employee-task-updated'));
+ window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  window.dispatchEvent(new CustomEvent('seyveo:demo-task-changed',{detail:null}));
  render();
 }
 $('svSimReset').onclick=reset;
-for(const id of ['svSimBranch','svSimStaff'])$(id).addEventListener('change',reset);
+for(const id of ['svSimBranch','svSimStaff'])$(id).addEventListener('change',()=>{if(task){$('svSimState').textContent='Сначала сбросьте текущую задачу.';return}render()});
+window.addEventListener('seyveo:employee-task-updated',mirror);
+window.addEventListener('seyveo:manager-tasks-updated',mirror);
+window.addEventListener('storage',event=>{if(event.key===TASK_KEY)mirror()});
 
 render();
 })();
