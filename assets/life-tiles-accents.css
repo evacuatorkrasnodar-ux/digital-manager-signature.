@@ -87,3 +87,14 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calen
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="documents"] > svg{color:#B8D4E8!important;}
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="mail"] > svg{color:#8FE3C3!important;}
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="pay"] > svg{color:#E7D2A2!important;}
+
+/* Finish the remaining My World tiles. Brand silhouettes stay intact. */
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="wallet"] > svg{color:#E7D2A2!important}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="music"] > svg{color:#CBBFE9!important}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="connections"] > svg.seyveo-telegram-white{
+ color:#A9D6EE!important;fill:#A9D6EE!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="connections"] > svg.seyveo-telegram-white path{fill:#A9D6EE!important}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="play"] > svg.seyveo-youtube-white path{
+ fill:#E5C0C7!important;
+}
