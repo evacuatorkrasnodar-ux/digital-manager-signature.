@@ -8,6 +8,10 @@ Run tests on a machine with Node.js 20+:
 node --test server/document-authorization.test.mjs
 ```
 
+## Relational database experiment (not connected)
+
+A separate [tenant-aware SQLite development prototype](secure-documents/SQLITE-EXPERIMENT.md) now contains organizations, active/revoked memberships, encrypted document titles and bodies, and HMAC-checked training audit entries. It is local-only, not an encrypted production database or an iOS/Android service. The loopback HTTP server does **not** yet use this adapter. Do not use real business documents.
+
 ## Security boundaries
 
 The mobile app or its browser demo is NEVER a source of trusted roles or tenant IDs.
