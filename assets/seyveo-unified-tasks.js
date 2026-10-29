@@ -361,7 +361,7 @@
      const report=document.createElement('p');report.className='svcp-approval-demo-report';
      report.textContent='Твой отчёт: '+String(task.reportText).slice(0,350);row.append(report);
     }
-    if(task.reviewStatus==='assigned'||task.reviewStatus==='rework'){
+    if(task.reviewStatus==='assigned'||task.reviewStatus==='rework'||(task.id==='devstudio-enterprise-single-task'&&task.reviewStatus==='accepted')){
      const form=document.createElement('form');form.className='svcp-approval-report-form';
      const label=document.createElement('label');label.textContent='Что сделано';
      const note=document.createElement('textarea');note.rows=2;note.maxLength=350;
@@ -394,7 +394,7 @@
       const report=note.value.trim();if(!report){note.focus();return}
       let fresh=[];try{const value=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');if(Array.isArray(value))fresh=value}catch{}
       if(!fresh.some(t=>t?.id===task.id&&t.approvalFlow===true&&t.assigneeId==='elena'&&
-       (t.reviewStatus==='assigned'||t.reviewStatus==='rework')))return;
+       (t.reviewStatus==='assigned'||t.reviewStatus==='rework'||(t.id==='devstudio-enterprise-single-task'&&t.reviewStatus==='accepted'))))return;
       const updated=fresh.map(t=>t.id===task.id?{
        ...t,reviewStatus:'review',reportText:report.slice(0,350),
        photoSelected:demoPhotos.has(task.id),submittedAt:Date.now(),done:false
