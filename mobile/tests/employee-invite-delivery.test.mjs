@@ -43,7 +43,7 @@ test('expired or far-future secrets cannot be shown or sent by the native view',
 
 test('invalid, absent, tampered or unverified invitation responses fail closed',()=>{
   const examples=[
-    null,undefined,{},'fake',
+    null,{},'fake',
     {code},
     {...invite,code:'short'},
     {...invite,code:'Z'.repeat(44)},
@@ -59,6 +59,10 @@ test('invalid, absent, tampered or unverified invitation responses fail closed',
   ];
   for(const [index,response] of examples.entries())
     assert.deepEqual(prepare(response),{status:'unavailable'},'invalid response '+index);
+  // `prepare(undefined)` uses the helper's default valid fixture; test the
+  // actual API entry point for missing server responses instead.
+  assert.deepEqual(prepareEmployeeInviteDelivery({inviteLinkBase:base,now:()=>instant}),
+    {status:'unavailable'});
   assert.deepEqual(prepare(invite,()=>instant,'https://evil.invalid/not-invite/'),
     {status:'unavailable'});
   assert.deepEqual(prepare(invite,()=>instant,'http://join.seyveo.example/join/employee/'),
