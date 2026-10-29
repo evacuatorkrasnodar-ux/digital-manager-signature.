@@ -1,21 +1,21 @@
 # SEYVEO Secure Documents — isolated developer server
 
-**Non-production only.** This is a small Node.js 22+ loopback-only API for developing authentication, tenant authorization, document transitions, and in-memory encrypted document contents. It is **not** a secure production EDMS or certified ЭДО. No real personal, corporate or confidential documents should be used.
+**Non-production only.** This Node.js 22+ loopback-only API demonstrates password sessions, tenant authorization and document transitions, with optional encrypted snapshot persistence. It remains a single-process training tool, not a production database or real secure service. It is **not** a secure production EDMS or certified ЭДО. No real personal, corporate or confidential documents should be used.
 
 ## Implemented
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
 - Passwords supplied via environment variables; scrypt-derived password hashes and random 30-minute bearer sessions kept **in memory**. Login attempts are throttled.
 - Local API binds to **127.0.0.1**. CLI fails closed unless `SEYVEO_DEV_SERVER=1`, fails in `NODE_ENV=production`, and does not enable browser CORS. Browser `Origin` requests are rejected.
-- Only small **text bodies** (up to 8000 characters). AES-256-GCM ciphertext, IV and tag live **in RAM only** under a 32-byte development key supplied at startup. Documents and sessions disappear on restart; **no durable storage or backups**.
+- Only small **text bodies** (up to 8000 characters). AES-256-GCM protects document text in memory. **Optional** AES-256-GCM encrypted snapshots can save training documents, metadata and audit history to a local private file. Without an explicit file path, all documents disappear on restart. Sessions always expire on restart. No production backups or multi-process concurrency.
 - Each API route verifies session, current membership, tenant and per-document policy before returning data or changing a document status.
-- Statuses distinguish reading, acknowledging, approving, returning and revoking; an in-memory, untrusted audit history is attached to each document.
+- Statuses distinguish reading, acknowledging, approving, returning and revoking; the **development** audit history is kept with the encrypted snapshot if enabled. This is not a trustworthy/legal audit trail and cannot detect rollback to an older valid snapshot.
 - No connection to the existing GitHub Pages demo, SEYVEO One, external operators or real employees.
 
 ## Tests
 
 ```bash
-node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs
+node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs server/secure-documents/dev-store.test.mjs server/secure-documents/dev-restart.test.mjs
 ```
 
 GitHub Actions workflow: `.github/workflows/seyveo-secure-documents.yml`. It runs the same two test files.
@@ -33,6 +33,18 @@ node server/secure-documents/dev-server.mjs
 ```
 
 The process listens at `http://127.0.0.1:8787` by default. To use another local port set `SEYVEO_DEV_PORT` to 1024–65535. The CLI does **not** bind to all interfaces.
+
+### Optional encrypted persistence (synthetic data only)
+
+Create a private directory **outside your Git repository** (for example in `/tmp` on Linux/macOS) and set a fixed random key that you can retain securely across restarts. The environment variable `SEYVEO_DEV_STORE_PATH` must be an **absolute file path** in a private directory (0700), such as `/tmp/seyveo-demo-private/docs.enc` after creating that directory with mode 0700. The encrypted snapshot file uses mode 0600. Set this variable before launching:
+
+```bash
+mkdir -p /tmp/seyveo-demo-private
+chmod 700 /tmp/seyveo-demo-private
+export SEYVEO_DEV_STORE_PATH=/tmp/seyveo-demo-private/docs.enc
+```
+
+**Do not generate a new master key each time if you want to reopen saved documents.** Reuse the same `SEYVEO_DEV_MASTER_KEY_B64` value. If the key is wrong, file permissions are insecure, or the snapshot was altered, the server refuses to start rather than silently deleting data. Never commit or share keys, documents, or exported snapshots. This implementation encrypts each complete snapshot and writes it using an atomic rename; it is not an encrypted database, a backup system or a multi-node store.
 
 Example developer requests (do not put tokens in shell history in real systems):
 
@@ -71,7 +83,7 @@ Create example:
 
 ## CRITICAL — what is still missing
 
-This code must **not** be deployed or exposed publicly. It has no durable encrypted database, production identity provider, MFA, validated organization onboarding, secrets/KMS, key rotation, backups, distributed session revocation, durable tamper-evident audit, antivirus scanning, PDF/file uploads, retention policy, rate limiting across machines, transport TLS termination, or real document delivery. The in-memory activity history and role demo are **not evidence of a legal signature**.
+This code must **not** be deployed or exposed publicly. It has no production database, hardened identity provider, MFA, validated organization onboarding, secrets/KMS, key rotation, backups, distributed session revocation, durable tamper-evident audit, antivirus scanning, PDF/file uploads, retention policy, rate limiting across machines, transport TLS termination, or real document delivery. The optional encrypted file has no secure rollback protection and no concurrent-process locking. The in-memory activity history and role demo are **not evidence of a legal signature**.
 
 For a real Russian product, design the data flow, local infrastructure, consent, personal-data compliance, cryptographic requirements and integration with licensed operators of ЭДО and appropriate electronic signatures with legal/security experts. Do not claim regulatory certification until obtained.
 
