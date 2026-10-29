@@ -20,6 +20,7 @@ for(const [id,values] of [['svSimBranch',branches],['svSimStaff',sampleStaff]])f
 const TASK_KEY='seyveo-business-command-tasks-demo-v1';
 const SIM_ID='devstudio-enterprise-single-task';
 let task=null;
+function restore(){const row=getRows().find(x=>x?.id===SIM_ID);if(!row)return;task={id:SIM_ID,branch:row.branch||'Учебный филиал',assignee:'Елена · продавец',phase:0,events:[]};mirror()}
 const getPhase=()=>task?.phase||0;
 const getHistory=()=>task?.events||[];
 const getRows=()=>{try{const rows=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch{return []}};
@@ -27,7 +28,8 @@ function mirror(){
  const row=getRows().find(x=>x?.id===SIM_ID);
  if(!row||!task)return;
  const phase=row.done||row.reviewStatus==='approved'?4:row.reviewStatus==='review'?3:row.reviewStatus==='accepted'?2:1;
- if(phase!==task.phase){task.phase=phase;task.events.push('Изменение из раздела «Дела» · '+(row.reviewStatus||'assigned'));render()}
+ if(phase!==task.phase){task.phase=phase;task.events.push('Состояние в «Делах» · '+(row.reviewStatus||'assigned'))}
+ task.branch=row.branch||task.branch;render()
 }
 const steps=['Поручение создано','Сотрудник принял поручение','Результат передан на проверку','Руководитель принял результат'];
 function render(){
@@ -49,7 +51,7 @@ function write(next){
  const current=getRows(),existing=current.find(x=>x?.id===SIM_ID);
  if(next===1&&existing){$('svSimState').textContent='Учебная задача уже существует. Сбросьте её перед повторным тестом.';return}
  if(next>1&&!existing){$('svSimState').textContent='Задача отсутствует в «Делах».';return}
- const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,branch,description:'Проверить выкладку, ценники и представить результат руководителю.',
+ const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,branch:existing?.branch||branch,description:existing?.description||'Проверить выкладку, ценники и представить результат руководителю.',
  reviewStatus:['','assigned','accepted','review','approved'][next],done:next===4,
  ...(next===3?{reportText:'Выкладка проверена · учебный результат'}:{})};
  const rows=next===1?[...current,updated]:current.map(x=>x?.id===SIM_ID?updated:x);
@@ -78,7 +80,7 @@ $('svSimReset').onclick=reset;
 for(const id of ['svSimBranch','svSimStaff'])$(id).addEventListener('change',()=>{if(task){$('svSimState').textContent='Сначала сбросьте текущую задачу.';return}render()});
 window.addEventListener('seyveo:employee-task-updated',mirror);
 window.addEventListener('seyveo:manager-tasks-updated',mirror);
-window.addEventListener('storage',event=>{if(event.key===TASK_KEY)mirror()});
-
+window.addEventListener('storage',event=>{if(event.key===TASK_KEY){if(!task)restore();else mirror()}});
+restore();
 render();
 })();
