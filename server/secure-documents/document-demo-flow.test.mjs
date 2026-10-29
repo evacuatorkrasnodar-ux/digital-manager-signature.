@@ -117,3 +117,84 @@ test('employee and director open their own demo document view automatically',()=
  assert.match(reopenedManager.host.textContent,/Отправленные документы/);
  assert.equal(reopenedManager.flow.getRecords().length,1);
 });
+
+
+test('director revises returned training text and Elena signs off only on new edition',()=>{
+ const storage=new Map(),manager=launch(storage);
+ const select=manager.find(n=>n.tagName==='SELECT')[0];
+ select.value='equipment';select.dispatch('change');
+ manager.press('Передать Елене · демо');
+ const id=manager.flow.getRecords()[0].id;
+ const original=manager.flow.get(id).revisions[0].body;
+ manager.flow.setRole('employee');manager.flow.select(id);
+ manager.press('Отметить как прочитанное');
+ manager.press('Вернуть с замечанием');
+ const reason=manager.find(n=>n.tagName==='TEXTAREA')[0];
+ reason.value='Уточните сроки поставки оборудования.';
+ reason.dispatch('input');
+ manager.press('Отправить замечание');
+ assert.equal(manager.flow.get(id).state,'returned');
+ manager.flow.setRole('manager');
+ assert.match(manager.host.textContent,/В работе · 1/);
+ manager.flow.select(id);
+ manager.press('Исправить и отправить повторно');
+ let boxes=manager.find(n=>n.tagName==='TEXTAREA');
+ assert.equal(boxes.length,2);
+ boxes[1].value='Добавлены сроки и номер проверки.';
+ boxes[1].dispatch('input');
+ manager.press('Отправить новую редакцию · демо');
+ assert.equal(manager.flow.get(id).state,'returned','unchanged body must not be resent');
+ boxes=manager.find(n=>n.tagName==='TEXTAREA');
+ boxes[0].value=original+' Сроки передачи уточнены в учебном тексте.';
+ boxes[0].dispatch('input');
+ manager.press('Отправить новую редакцию · демо');
+ assert.equal(manager.flow.get(id).state,'sent');
+ assert.equal(manager.flow.get(id).revisions.length,2);
+ assert.equal(manager.flow.get(id).revisions[0].body,original);
+ assert.match(manager.flow.get(id).revisions[1].body,/Сроки передачи уточнены/);
+ assert.match(manager.flow.get(id).log.at(-1).text,/редакцию №2/);
+ assert.equal(manager.events.at(-1).detail.reason,'revision');
+ manager.flow.setRole('employee');
+ manager.flow.select(id);
+ assert.match(manager.host.textContent,/Сроки передачи уточнены/);
+ assert.equal(manager.find(n=>n.tagName==='BUTTON'&&n.textContent==='Согласовать').length,0);
+ manager.press('Отметить как прочитанное');
+ manager.press('Согласовать');
+ assert.equal(manager.flow.get(id).state,'approved');
+ const reopened=launch(storage);
+ assert.equal(reopened.flow.get(id).state,'approved');
+ assert.equal(reopened.flow.get(id).revisions.length,2);
+ assert.match(reopened.flow.get(id).revisions[1].body,/Сроки передачи уточнены/);
+});
+test('failed resubmission leaves previous returned revision and log intact',()=>{
+ const storage=new Map();
+ const initial=[{id:'demo-revision-1',kind:'equipment',recipient:'elena',state:'returned',
+  created:Date.now(),log:[{at:Date.now(),text:'Елена вернула с замечанием: Нужно исправить сумму.'}]}];
+ storage.set('seyveo-document-flow-training-v1',JSON.stringify(initial));
+ const demo=launch(storage,{failWrites:true});
+ assert.equal(demo.flow.get('demo-revision-1').revisions.length,1);
+ demo.flow.select('demo-revision-1');
+ demo.press('Исправить и отправить повторно');
+ const fields=demo.find(n=>n.tagName==='TEXTAREA');
+ assert.equal(fields.length,2);
+ fields[0].value+=' Исправленная сумма по акту.';
+ fields[0].dispatch('input');
+ fields[1].value='Сумма уточнена.';
+ fields[1].dispatch('input');
+ demo.press('Отправить новую редакцию · демо');
+ assert.equal(demo.flow.get('demo-revision-1').state,'returned');
+ assert.equal(demo.flow.get('demo-revision-1').revisions.length,1);
+ assert.equal(demo.flow.get('demo-revision-1').log.length,1);
+ assert.match(demo.host.textContent,/Не удалось сохранить/);
+});
+test('legacy records without revisions gain original sample without data loss',()=>{
+ const storage=new Map();
+ const input=[{id:'demo-legacy',kind:'schedule',recipient:'elena',state:'approved',
+  created:Date.now(),log:[{at:Date.now(),text:'Legacy done'}]}];
+ storage.set('seyveo-document-flow-training-v1',JSON.stringify(input));
+ const demo=launch(storage);
+ const found=demo.flow.get('demo-legacy');
+ assert.equal(found.state,'approved');
+ assert.equal(found.revisions.length,1);
+ assert.match(found.revisions[0].body,/График смен/);
+});
