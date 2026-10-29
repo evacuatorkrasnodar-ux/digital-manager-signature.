@@ -64,6 +64,18 @@ html.seyveo-conversation #sayviMusicPage{display:none!important}
 #sayviMusicPage .sv-music-record-center::after{
  content:"";width:10%;height:10%;border-radius:50%;background:#080a0f;
 }
+/* The Hall of Fame seal is printed ON the original record label.
+   It inherits the record's existing rotation, never animates separately. */
+#sayviMusicPage .sv-music-vinyl-hall-star{
+ display:none;width:91%;height:91%;max-width:100%;max-height:100%;
+ pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.48));
+}
+#sayviMusicPage .sv-music-record.sv-music-hall-track .sv-music-record-center{
+ border-color:rgba(243,206,130,.62);
+ background:radial-gradient(circle,#222a31 0%,#171b20 67%,#39414a 100%);
+}
+#sayviMusicPage .sv-music-record.sv-music-hall-track .sv-music-record-center::after{display:none}
+#sayviMusicPage .sv-music-record.sv-music-hall-track .sv-music-vinyl-hall-star{display:block}
 #sayviMusicPage .sv-music-title{
  margin:1px 0 5px;text-align:center;
  font-size:20px;line-height:1.32;font-weight:475;letter-spacing:-.035em;
@@ -113,13 +125,73 @@ html.seyveo-conversation #sayviMusicPage{display:none!important}
  color:#e9c77d;text-decoration-color:#d6ab5d;
 }
 #sayviMusicPage .sv-music-hall-note{
- margin:6px 0 12px;color:var(--secondary);font-size:11.5px;line-height:1.48;
+ margin:6px 0 11px;color:var(--secondary);font-size:11.5px;line-height:1.45;
 }
-#sayviMusicPage .sv-music-hall-row .sv-music-row-num{
- color:#efc978;font-size:17px;text-shadow:0 0 5px rgba(208,157,60,.14);
+#sayviMusicPage .sv-music-hall-listen{
+ display:inline-flex;align-items:center;justify-content:center;min-height:39px;
+ margin:0 0 15px;padding:5px 13px;border:1px solid rgba(224,178,99,.43);
+ border-radius:999px;background:rgba(208,162,90,.065);
+ color:#f0d49b;font:inherit;font-size:12px;font-weight:550;cursor:pointer;
 }
-#sayviMusicPage .sv-music-hall-unavailable .sv-music-row-title{
- color:var(--secondary);
+#sayviMusicPage .sv-music-hall-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ align-items:stretch;gap:10px;padding:1px 0 4px;
+}
+#sayviMusicPage .sv-music-hall-card{
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+ position:relative;min-width:0;min-height:155px;gap:3px;
+ padding:11px 8px 10px;border:1px solid rgba(219,174,103,.26);
+ border-radius:15px;background:
+ radial-gradient(ellipse at 50% 2%,rgba(221,174,112,.095),transparent 64%),
+ linear-gradient(157deg,rgba(31,36,42,.89),rgba(17,22,27,.98));
+ color:#f4efe7;font:inherit;text-align:center;cursor:pointer;
+ box-shadow:inset 0 1px 0 rgba(255,246,223,.075);
+ transition:border-color .18s,background .18s;
+}
+#sayviMusicPage .sv-music-hall-card::before{
+ content:"";position:absolute;inset:5px;pointer-events:none;border-radius:11px;
+ border:1px solid rgba(239,196,125,.075);
+}
+#sayviMusicPage .sv-music-hall-card:focus-visible{
+ outline:2px solid #f0ca82;outline-offset:2px;
+}
+#sayviMusicPage .sv-music-hall-card[aria-current="true"]{
+ border-color:rgba(237,194,118,.72);
+}
+#sayviMusicPage .sv-music-hall-seal{
+ display:grid;place-items:center;width:57px;height:57px;flex:0 0 57px;
+}
+#sayviMusicPage .sv-music-hall-seal svg{
+ width:57px;height:57px;max-width:100%;max-height:100%;
+ filter:drop-shadow(0 2px 3px rgba(0,0,0,.38));
+}
+#sayviMusicPage .sv-music-hall-song{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ line-clamp:2;overflow:hidden;max-width:100%;min-width:0;
+ font-size:12.5px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;
+}
+#sayviMusicPage .sv-music-hall-person{
+ display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ color:#d3bfa8;font-size:11px;line-height:1.25;
+}
+#sayviMusicPage .sv-music-hall-hint{
+ display:block;margin-top:auto;padding-top:5px;color:#c5a675;
+ font-size:10px;line-height:1.3;
+}
+#sayviMusicPage .sv-music-hall-unavailable{opacity:.7}
+@media(max-width:340px){
+ #sayviMusicPage .sv-music-hall-grid{gap:7px}
+ #sayviMusicPage .sv-music-hall-card{padding:10px 5px;min-height:144px}
+ #sayviMusicPage .sv-music-hall-seal,#sayviMusicPage .sv-music-hall-seal svg{
+  width:48px;height:48px
+ }
+}
+:root[data-theme=light] #sayviMusicPage .sv-music-hall-card{
+ background:linear-gradient(158deg,#37343a,#24262c);
+ color:#fcf5ee;
+}
+:root[data-theme=light] #sayviMusicPage .sv-music-hall-listen{
+ color:#815c23;background:rgba(199,146,59,.06)
 }
 @media(max-width:355px){
  #sayviMusicPage .sv-music-phrases{flex-wrap:nowrap;gap:6px}
