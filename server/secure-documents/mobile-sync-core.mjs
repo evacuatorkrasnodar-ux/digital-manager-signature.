@@ -28,12 +28,19 @@ export function createDocumentUpdateSync({
     typeof x.accessToken==='string'&&x.accessToken.length>=20;
 
   async function perform(){
-    const stamp=generation,identity=await getIdentity();
+    const stamp=generation;
+    let identity;
+    try{identity=await getIdentity();}
+    catch{return {state:'retry'};}
+    if(stamp!==generation)return {state:'stopped'};
     if(!validIdentity(identity))return {state:'sign-in-required'};
     const checkpoint={userId:identity.userId,organizationId:identity.organizationId};
     if(stamp!==generation)return {state:'stopped'};
-    const recorded=await readCursor(checkpoint);
-    let cursor=cursorOk(recorded)?recorded:0;
+    let recorded;
+    try{recorded=await readCursor(checkpoint);}
+    catch{return {state:'retry'};}
+    if(!cursorOk(recorded))return {state:'retry'};
+    let cursor=recorded;
     if(stamp!==generation)return {state:'stopped'};
 
     let result;
@@ -47,12 +54,19 @@ export function createDocumentUpdateSync({
       return {state:'offline',cursor};
     }
     if(stamp!==generation)return {state:'stopped'};
-    const current=await getIdentity();
+    let current;
+    try{current=await getIdentity();}
+    catch{return {state:'retry',cursor};}
     if(!sameIdentity(identity,current))return {state:'session-changed'};
     if(result?.status===401||result?.status===403){
+      // This sync instance is permanently invalidated. A new authenticated
+      // login must create a new instance; never retry with a revoked token.
+      stopped=true;
       generation++;
-      await onAccessLost({userId:identity.userId,organizationId:identity.organizationId,
-        reason:'session-not-authorized'});
+      try{
+        await onAccessLost({userId:identity.userId,organizationId:identity.organizationId,
+          reason:'session-not-authorized'});
+      }catch{ /* Preserve revoked state even if UI cleanup fails. */ }
       return {state:'sign-in-required'};
     }
     if(result?.status!==200)return {state:'retry',cursor};
@@ -64,7 +78,10 @@ export function createDocumentUpdateSync({
     let handled=0;
     for(const event of payload.events){
       if(stamp!==generation)return {state:'stopped',cursor};
-      if(!sameIdentity(identity,await getIdentity()))return {state:'session-changed',cursor};
+      let observed;
+      try{observed=await getIdentity();}
+      catch{return {state:'retry',cursor};}
+      if(!sameIdentity(identity,observed))return {state:'session-changed',cursor};
       if(!event||!cursorOk(event.cursor)||event.cursor<=cursor||
          event.cursor>payload.nextCursor||!goodId(event.documentId)||
          !ACTIONS.has(event.kind)||typeof event.at!=='string'||
@@ -77,7 +94,10 @@ export function createDocumentUpdateSync({
           kind:event.kind,at:event.at
         },checkpoint);
         if(stamp!==generation)return {state:'stopped',cursor};
-        if(!sameIdentity(identity,await getIdentity()))
+        let confirmed;
+        try{confirmed=await getIdentity();}
+        catch{return {state:'retry',cursor};}
+        if(!sameIdentity(identity,confirmed))
           return {state:'session-changed',cursor};
         await writeCursor(checkpoint,event.cursor);
         cursor=event.cursor;
@@ -90,7 +110,10 @@ export function createDocumentUpdateSync({
     if(payload.nextCursor>cursor){
       // Database can advance past events hidden by current access policy.
       if(stamp!==generation)return {state:'stopped',cursor};
-      if(!sameIdentity(identity,await getIdentity()))
+      let confirmed;
+      try{confirmed=await getIdentity();}
+      catch{return {state:'retry',cursor};}
+      if(!sameIdentity(identity,confirmed))
         return {state:'session-changed',cursor};
       try{
         await writeCursor(checkpoint,payload.nextCursor);
