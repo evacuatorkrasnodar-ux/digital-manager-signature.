@@ -96,12 +96,17 @@ export async function saveRiseAvailableFunds(value:string):Promise<void>{
  }finally{await db.closeAsync()}
 }
 
-export type RiseSale={id:number;revenue:number;cost:number};
+export type RiseSale={id:number;revenue:number;cost:number;soldOn:string|null};
+const saleDateColumn=async(db:Awaited<ReturnType<typeof openVerifiedVault>>)=>{
+ const columns=await db.getAllAsync<{name:string}>('PRAGMA table_info(rise_sales)');
+ if(!columns.some(column=>column.name==='sold_on'))await db.execAsync('ALTER TABLE rise_sales ADD COLUMN sold_on TEXT');
+};
 export async function loadRiseSales():Promise<RiseSale[]>{
  const db=await openVerifiedVault();
  try{
   await db.execAsync('CREATE TABLE IF NOT EXISTS rise_sales (id INTEGER PRIMARY KEY AUTOINCREMENT, revenue INTEGER NOT NULL, cost INTEGER NOT NULL)');
-  return await db.getAllAsync<RiseSale>('SELECT id,revenue,cost FROM rise_sales ORDER BY id DESC LIMIT 500');
+  await saleDateColumn(db);
+  return await db.getAllAsync<RiseSale>('SELECT id,revenue,cost,sold_on AS soldOn FROM rise_sales ORDER BY id DESC LIMIT 500');
  }finally{await db.closeAsync()}
 }
 export async function addRiseSale(revenue:number,cost:number):Promise<void>{
@@ -109,6 +114,9 @@ export async function addRiseSale(revenue:number,cost:number):Promise<void>{
  const db=await openVerifiedVault();
  try{
   await db.execAsync('CREATE TABLE IF NOT EXISTS rise_sales (id INTEGER PRIMARY KEY AUTOINCREMENT, revenue INTEGER NOT NULL, cost INTEGER NOT NULL)');
-  await db.runAsync('INSERT INTO rise_sales(revenue,cost) VALUES (?,?)',revenue,cost);
+  await saleDateColumn(db);
+  const today=new Date();
+  const localDate=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+  await db.runAsync('INSERT INTO rise_sales(revenue,cost,sold_on) VALUES (?,?,?)',revenue,cost,localDate);
  }finally{await db.closeAsync()}
 }
