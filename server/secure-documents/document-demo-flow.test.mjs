@@ -20,7 +20,7 @@ class Node {
  click(){for(const listener of this.handlers.click||[])listener({target:this})}
  dispatch(name){for(const listener of this.handlers[name]||[])listener({target:this})}
 }
-function launch(storage=new Map(),{failWrites=false}={}){
+function launch(storage=new Map(),{failWrites=false,employeePreview=false}={}){
  const events=[];
  const localStorage={
   getItem:key=>storage.get(key)||null,
@@ -28,7 +28,7 @@ function launch(storage=new Map(),{failWrites=false}={}){
   removeItem:key=>storage.delete(key)
  };
  const window={addEventListener(){},dispatchEvent:e=>events.push(e),
-  confirm:()=>true,SEYVEO_UNIFIED_TASKS:{openChat(){}}};
+  confirm:()=>true,SEYVEO_PREVIEW:{isEmployee:()=>employeePreview},SEYVEO_UNIFIED_TASKS:{openChat(){}}};
  const context={window,localStorage,
   document:{createElement:tag=>new Node(tag)},
   CustomEvent:class{constructor(name,options){this.type=name;this.detail=options.detail}}
@@ -103,4 +103,17 @@ test('when local storage is full, failed new request does not lose old records',
  assert.equal(demo.flow.getRecords().length,25);
  assert.ok(demo.flow.get('demo-0'));
  assert.match(demo.host.textContent,/Не удалось сохранить/);
+});
+
+test('employee and director open their own demo document view automatically',()=>{
+ const storage=new Map();
+ const manager=launch(storage);
+ manager.press('Передать Елене · демо');
+ assert.match(manager.host.textContent,/Отправленные документы/);
+ const employee=launch(storage,{employeePreview:true});
+ assert.match(employee.host.textContent,/Мои входящие/);
+ assert.equal(employee.find(x=>x.tagName==='BUTTON'&&x.textContent==='Передать Елене · демо').length,0);
+ const reopenedManager=launch(storage);
+ assert.match(reopenedManager.host.textContent,/Отправленные документы/);
+ assert.equal(reopenedManager.flow.getRecords().length,1);
 });
