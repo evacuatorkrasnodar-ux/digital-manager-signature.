@@ -68,8 +68,9 @@ const glyph=Object.freeze({
   '<path d="m54 70 5 5 11-12" class="lm-glyph-accent"/>'
  ].join(''),
  work: [
-  '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
-  '<path d="M15 31 43.5 54a7 7 0 0 0 9 0L81 31"/>'
+  '<circle cx="48" cy="47" r="36"/>',
+  '<path d="M22 72 15 82l19-5" class="lm-glyph-accent"/>',
+  '<text x="48" y="58" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif" font-size="33" font-weight="500">Е</text>'
  ].join(''),
  mail: [
   '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
@@ -558,6 +559,7 @@ function gatherPreview(){
 }
 function shrink(){
  if(mode==='idle')return;
+ if(mode==='preview'&&tiles.querySelector('.lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) textarea'))return;
  space.classList.add('lm-condense');
  const reason=tiles.querySelector('.lm-explanation');
  if(reason)reason.hidden=true;
@@ -568,6 +570,7 @@ function shrink(){
 }
 function disappear(){
  if(mode==='idle')return;
+ if(mode==='preview'&&tiles.querySelector('.lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) textarea'))return;
  if(mode==='advice'){
   quiet.add(key);dynamic.classList.add('lm-real-out');
   later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
