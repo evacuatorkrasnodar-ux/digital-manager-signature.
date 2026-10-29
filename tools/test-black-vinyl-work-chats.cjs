@@ -1,6 +1,6 @@
 'use strict';
-/* Current SEYVEO regression: white Music favorites are separate from
-   golden staff recognition. Work chat keeps one real local engine.
+/* Current SEYVEO regression: gold-rimmed rose Music S favorite is separate
+   from unchanged staff recognition. Work chat keeps one real local engine.
    This is a static contract, not a cross-device delivery test. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -18,12 +18,13 @@ for(const source of [music,mini]){
  assert.ok(!source.includes('conic-gradient(from 50deg,#374d4b,#151f23,#5e7972,#1b2e31,#0e171b,#374d4b)'),
   'Old green vinyl is not restored');
 }
-assert.ok(music.includes('fill:rgba(255,255,255,.06);stroke:#ffffff'),
- 'White outline of Music favorite');
-assert.ok(music.includes('fill:url(#svMusicStarMetal);stroke:#ffffff'),
- 'White metallic Music favorite when selected');
-assert.match(html,/id="svMusicStarMetal"[^>]*>[\s\S]*?stop-color="#ffffff"/,
- 'Music metallic gradient exists');
+assert.ok(music.includes('fill:url(#svMusicHallRose);stroke:url(#svMusicHallGold)'),
+ 'Music star is rose with a gold border');
+assert.match(html,/id="svMusicHallGold"[^>]*>/,'Music golden outline exists');
+assert.match(html,/id="svMusicHallRose"[^>]*>/,'Music rose terrazzo fill exists');
+assert.ok(music.includes('fill:url(#svMusicHallGold);font-family:'),
+ 'Music S is gold, not white');
+assert.match(html,/id="svMusicStarInitial"[^>]*>S<\/text>/,'S initial belongs to music favorite');
 
 /* Explicit staff appreciation is a different action from song favorite
    and chat's normal saved-message star. */
@@ -33,14 +34,10 @@ assert.match(html,/Поблагодарить сотрудника золото�
  'Recognition is tied to a staff record, not a Music track');
 assert.match(html,/id="svcpRecognizeOpenCard"[^>]*>✦ Посмотреть знак в карточке сотрудника/,
  'Recognition can be viewed in the staff record');
-assert.match(html,/id="svcpHallMedal" viewBox="0 0 64 64"/,
- 'One canonical SEYVEO Walk of Fame star medallion');
-assert.match(html,/id="svcpHallGold"/,'Gold rim and border have their own gradient');
-assert.match(html,/stroke="url\(#svcpHallGold\)"/,'Walk of Fame star edge is golden');
-assert.match(html,/<text x="32" y="39\.5"[^>]*fill="url\(#svcpHallGold\)"/,
- 'Gold S is in the center of the star');
-assert.match(chat,/#svcpWorkChatScreen \.svcp-gratitude-award \.svcp-hall-medal\{/,
- 'Gold medallion has a dedicated visual class separate from white Music favorite');
+assert.doesNotMatch(html,/id="svcpHallMedal"/,
+ 'Walk of Fame icon must not be placed in the staff award');
+assert.match(html,/id="svcpRecognizeOpen"[^>]*>[\s\S]*?<svg class="svcp-star-icon"/,
+ 'Original employee recognition icon is restored');
 assert.match(chat,/#svcpWorkChatScreen \.svcp-message-menu \.svcp-action-star/,
  'Saved message is independent from HR appreciation');
 assert.match(employee,/#tasksPage \.svcp-manager-row\{/,
@@ -68,4 +65,4 @@ assert.match(html,/assets\/seyveo-business-command\.css\?v=65/,
  'Current work stylesheet is cache-busted');
 assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=36/,
  'Current unified work script is cache-busted');
-console.log('PASS black vinyl, white Music favorite, golden HR award and role-safe local work chat');
+console.log('PASS black vinyl, gold outlined rose Music S, original HR award and role-safe local work chat');
