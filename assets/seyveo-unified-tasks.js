@@ -46,9 +46,32 @@
   }
  }
  const MODE_KEY='seyveo-demo-preview-mode-v1';
+ const PREVIEW_STRUCTURE_KEY='seyveo-demo-preview-structure-v1';
  const MODES=['one','rise','autonom','large','employee'];
+ const TIERS=['one','rise','autonom'];
+ const PREVIEW_OPTIONS={
+  one:['personal','family'],rise:['start','operating'],autonom:['standard','enterprise']
+ };
+ const tierPicker=$('seyveoPreviewTiers'),roleGroup=$('seyveoDemoRoleGroup');
  let previewMode='autonom';
  try{const stored=localStorage.getItem(MODE_KEY);if(MODES.includes(stored))previewMode=stored}catch{}
+ let previewTier=previewMode==='one'?'one':previewMode==='rise'?'rise':'autonom';
+ let previewRole=previewMode==='employee'?'employee':'manager';
+ let previewOptions={one:'personal',rise:'operating',autonom:previewMode==='large'?'enterprise':'standard'};
+ const previewModeFor=()=>previewTier==='one'?'one':previewRole==='employee'?'employee':
+  previewTier==='rise'?'rise':previewOptions.autonom==='enterprise'?'large':'autonom';
+ try{
+  const saved=JSON.parse(localStorage.getItem(PREVIEW_STRUCTURE_KEY)||'null');
+  if(saved&&TIERS.includes(saved.tier)){
+   previewTier=saved.tier;
+   previewRole=saved.role==='employee'?'employee':'manager';
+   for(const tier of TIERS){
+    if(PREVIEW_OPTIONS[tier].includes(saved.options?.[tier]))previewOptions[tier]=saved.options[tier];
+   }
+   if(previewTier==='one')previewRole='manager';
+   previewMode=previewModeFor();
+  }
+ }catch{}
  let exitTarget='home',pending=null,lastWorkView='personal',managerCalendarContext=false;
  const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal'),
   managerCalendarTabs=$('managerCalendarTabs'),
@@ -69,14 +92,40 @@
    if(managerCalendarTabs)managerCalendarTabs.hidden=true;
   }
   if(employeeTab)employeeTab.hidden=!isEmployee();
-  if(managerLabel)managerLabel.textContent=previewMode==='large'?'КРУПНАЯ КОМПАНИЯ · ДЕМО':
-   (previewMode==='rise'?'RISE':'AUTONOM')+' · SEYVEO · ДЕМО';
+  if(managerLabel)managerLabel.textContent=previewTier==='autonom'&&previewOptions.autonom==='enterprise'
+   ?'AUTONOM ENTERPRISE · ДЕМО':previewTier.toUpperCase()+' · SEYVEO · ДЕМО';
   if(picker)picker.value=previewMode;
-  if(previewNotice)previewNotice.textContent=isEmployee()
-   ?'Пример Елены: её смена, поручения и рабочие чаты. Данные на одном устройстве.'
-   :previewMode==='one'?'Личная версия без бизнес-пульта. Подписка не меняется.'
-   :previewMode==='large'?'Сценарий крупной компании: структура и права пока не подключены.'
-   :'Просмотр '+previewMode.toUpperCase()+'. Различия тарифов пока не подключены.';
+  if(tierPicker){
+   tierPicker.querySelectorAll('[data-preview-tier]').forEach(button=>
+    button.setAttribute('aria-pressed',String(button.dataset.previewTier===previewTier)));
+   tierPicker.querySelectorAll('[data-preview-tier-row]').forEach(row=>
+    row.dataset.active=String(row.dataset.previewTierRow===previewTier));
+   tierPicker.querySelectorAll('[data-preview-option]').forEach(button=>{
+    const [tier,option]=button.dataset.previewOption.split(':');
+    button.setAttribute('aria-pressed',String(tier===previewTier&&previewOptions[tier]===option));
+   });
+  }
+  if(roleGroup){
+   roleGroup.hidden=previewTier==='one';
+   roleGroup.querySelectorAll('[data-preview-role]').forEach(button=>
+    button.setAttribute('aria-pressed',String(button.dataset.previewRole===previewRole)));
+  }
+  if(previewNotice){
+   const explanation=previewTier==='one'
+    ?previewOptions.one==='family'
+      ?'ONE Family · семейный вариант ONE с личными профилями. Отдельная подписка не создаётся.'
+      :'ONE · личная жизнь и Сэйви без бизнес-пульта.'
+    :previewTier==='rise'
+     ?previewOptions.rise==='start'
+       ?'RISE · запуск бизнеса с нуля. Это сценарий работы внутри RISE.'
+       :'RISE · развитие действующего бизнеса. Это тот же уровень RISE.'
+     :previewOptions.autonom==='enterprise'
+      ?'AUTONOM Enterprise · крупная компания, роли и индивидуальное внедрение. Не четвёртый тариф.'
+      :'AUTONOM · самостоятельное управление бизнесом в разрешённых пределах.';
+   previewNotice.textContent=explanation+(previewTier!=='one'
+    ?(previewRole==='employee'?' Вид сотрудника: Елена.':' Вид руководителя.'):'')
+    +' Только демо: тариф и реальные права не меняются.';
+  }
   if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
  }
 
@@ -628,18 +677,53 @@
  window.addEventListener('seyveo:manager-tasks-updated',()=>{updateManagerSummary();if(isEmployee())renderEmployeeTasks()});
  window.addEventListener('storage',event=>{if(event.key===TASK_KEY){updateManagerSummary();if(isEmployee())renderEmployeeTasks()}});
  window.addEventListener('pageshow',updateManagerSummary);
- picker?.addEventListener('change',()=>{
-  if(!MODES.includes(picker.value))return;
+ function applyPreviewSelection(){
   closeWorkChat({restoreFocus:false});
-  previewMode=picker.value;
-  try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
+  previewMode=previewModeFor();
+  try{
+   localStorage.setItem(MODE_KEY,previewMode);
+   localStorage.setItem(PREVIEW_STRUCTURE_KEY,JSON.stringify({
+    tier:previewTier,role:previewRole,options:previewOptions
+   }));
+  }catch{}
   updatePulseAccess();
-  // Change account, not just the heading: clear the messenger's ephemeral
-  // filters/selection so the manager cannot inherit Elena's open chat state.
+  // Real access is unchanged. Clear the old role's local chat view only.
   window.SEYVEO_BUSINESS_COMMAND?.resetChatForRoleChange?.();
   exitTarget='home';syncBack();
   navigate(isEmployee()?'employee':isManager()?'team':'personal');
   resetViewportAtWorkEntry();
+ }
+ tierPicker?.addEventListener('click',event=>{
+  const option=event.target.closest('[data-preview-option]');
+  const tierButton=event.target.closest('[data-preview-tier]');
+  if(option){
+   const [tier,variant]=option.dataset.previewOption.split(':');
+   if(!TIERS.includes(tier)||!PREVIEW_OPTIONS[tier].includes(variant))return;
+   previewTier=tier;previewOptions[tier]=variant;
+  }else if(tierButton){
+   const tier=tierButton.dataset.previewTier;
+   if(!TIERS.includes(tier))return;
+   previewTier=tier;
+  }else return;
+  if(previewTier==='one')previewRole='manager';
+  applyPreviewSelection();
+ });
+ roleGroup?.addEventListener('click',event=>{
+  const button=event.target.closest('[data-preview-role]');
+  if(!button||previewTier==='one')return;
+  const role=button.dataset.previewRole;
+  if(role!=='manager'&&role!=='employee')return;
+  previewRole=role;applyPreviewSelection();
+ });
+ // Compatibility with existing stored/automated legacy preview modes.
+ picker?.addEventListener('change',()=>{
+  if(!MODES.includes(picker.value))return;
+  const mode=picker.value;
+  previewTier=mode==='one'?'one':mode==='rise'?'rise':'autonom';
+  previewRole=mode==='employee'?'employee':'manager';
+  if(mode==='large')previewOptions.autonom='enterprise';
+  if(mode==='autonom')previewOptions.autonom='standard';
+  applyPreviewSelection();
  });
  // The separate chat demo perspective must not change the selected app version.
  $('navTasks')?.addEventListener('click',()=>{
