@@ -103,7 +103,7 @@ function NativeFoundation() {
             ) : null}
           </View>
           <NativeWorkAccessStatus
-            state={work.status==='locked'?'unavailable':work.status}
+            state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
             organizationId={work.workspace?.organizationId}
             role={work.workspace?.role}
             onRefresh={()=>{void workController.refresh();}}
