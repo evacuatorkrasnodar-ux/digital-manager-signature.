@@ -166,3 +166,18 @@ test('starting a new authorization invalidates pending asynchronous earlier atte
   assert.deepEqual(await first,{status:'superseded'});
   assert.equal(flow.acceptCallback(authResponse(second.authorizationUrl)).status,'exchange-required');
 });
+
+test('canonical HTTPS root issuers are accepted without a trailing slash',async()=>{
+  const rootIssuer='https://accounts.seyveo.example';
+  const flow=fixture({
+    issuer:rootIssuer,
+    authorizationEndpoint:'https://accounts.seyveo.example/oauth2/authorize'
+  });
+  const started=await flow.begin();
+  assert.equal(started.status,'browser-required');
+  const callback=new URL(config.redirectUri);
+  callback.searchParams.set('code','synthetic-code-123456789');
+  callback.searchParams.set('state',new URL(started.authorizationUrl).searchParams.get('state'));
+  callback.searchParams.set('iss',rootIssuer);
+  assert.equal(flow.acceptCallback(callback.href).status,'exchange-required');
+});
