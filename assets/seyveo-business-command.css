@@ -786,7 +786,7 @@
  box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line))
 }
 #tasksPage #unifiedTasksTabs button[hidden],#picturePage #pulseTasksTabs[hidden]{display:none!important}
-#tasksPage #unifiedTasksTabs:has(button[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Role-aware layout is defined once below, after the legacy fallback. */
 #tasksPage #unifiedTasksTabs button:focus-visible,#picturePage #pulseTasksTabs button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
 @media(max-width:360px){
  #tasksPage #unifiedTasksTabs button,#picturePage #pulseTasksTabs button{font-size:10.5px;padding:7px 2px}
@@ -794,9 +794,9 @@
 }
 
 /* Black Velvet · Manager's work hub, one home for business operations. */
-#tasksPage #unifiedTasksTabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+/* Removed obsolete global 2-column !important rule; manager has 3 tabs. */
 #tasksPage #unifiedTasksTabs button[hidden]{display:none!important}
-#tasksPage #unifiedTasksTabs:has(button[hidden]){grid-template-columns:minmax(0,1fr)!important}
+/* Removed obsolete hidden-child 1-column !important rule. */
 #tasksPage #unifiedTasksTabs[hidden],#tasksPage .tasks-heading .manage-caption[hidden],
 #tasksPage .svcp-manager-signal[hidden]{display:none!important}
 #tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:17px}
