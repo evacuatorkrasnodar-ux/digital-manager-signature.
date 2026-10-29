@@ -13,16 +13,21 @@ test('remove complex manual lyrics imports and leave simple main music actions',
  assert.match(page,/id="sayviMusicImport"/);
  assert.match(page,/id="sayviMusicSourcesToggle"/);
  assert.match(page,/id="sayviMusicFavorite"/);
- assert.match(html,/seyveo-music\.css\?v=50/);
+ assert.match(html,/seyveo-music\.css\?v=51/);
  assert.match(html,/seyveo-music\.js\?v=32/);
 });
 test('whole favorite button is compact, star centered without SVG transform',()=>{
  assert.match(css,/#sayviMusicPage .sv-music-favorite\{[^}]*width:38px;height:38px;min-width:38px;min-height:38px/);
- assert.match(css,/#sayviMusicPage .sv-music-favorite-star\{[^}]*width:26px;height:26px;overflow:visible;transform:none/);
+ assert.match(css,/#sayviMusicPage .sv-music-favorite-star\{[^}]*width:36px;height:36px;overflow:visible;transform:none/);
  assert.match(css,/#sayviMusicPage>header\.sv-music-head\{[^}]*grid-template-columns:minmax\(0,1fr\) 40px auto!important/);
- assert.match(css,/:root\[data-theme=light\] #sayviMusicPage \.sv-music-favorite\{[^}]*background:#28333b/);
- assert.match(css,/#sayviMusicPage \.sv-music-favorite-shape\{[^}]*stroke:#ffffff/);
+ assert.match(css,/:root\[data-theme=light\] #sayviMusicPage \.sv-music-favorite\{[^}]*background:#253039/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite-shape\{[^}]*stroke:url\(#svMusicHallGold\)/);
  assert.match(html,/id="sayviMusicFavorite"[^>]*aria-pressed="false"/);
+ assert.match(html,/id="svMusicHallGold"/);
+ assert.match(html,/id="svMusicHallRose"/);
+ assert.match(css,/\.sv-music-favorite-shape\{[^}]*fill:url\(#svMusicHallRose\)/);
+ assert.match(css,/\.sv-music-star-initial\{[^}]*fill:url\(#svMusicHallGold\)/);
+ assert.doesNotMatch(html,/id="svcpHallMedal"/,'Staff recognition is not repurposed for Music');
 });
 test('original music playback, favorites, dock and track choices stay wired',()=>{
  assert.match(js,/favoriteButton\?\.addEventListener\('click',toggleFavorite\)/);
