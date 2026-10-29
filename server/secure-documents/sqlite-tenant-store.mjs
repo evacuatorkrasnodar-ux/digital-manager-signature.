@@ -59,7 +59,7 @@ export function openDevTenantStore({filePath, masterKey}={}){
   try{
     db.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 3000; PRAGMA journal_mode = DELETE;');
     if(process.platform!=='win32')chmodSync(filePath,0o600);
-    db.exec("\n      CREATE TABLE IF NOT EXISTS organizations (\n        id TEXT PRIMARY KEY CHECK(length(id)>0), created_at TEXT NOT NULL\n      );\n      CREATE TABLE IF NOT EXISTS memberships (\n        organization_id TEXT NOT NULL REFERENCES organizations(id),\n        user_id TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('owner','admin','manager','employee')),\n        status TEXT NOT NULL CHECK(status IN ('active','revoked')),\n        PRIMARY KEY (organization_id,user_id)\n      );\n      CREATE TABLE IF NOT EXISTS documents (\n        id TEXT PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id),\n        creator_user_id TEXT NOT NULL, recipient_user_id TEXT NOT NULL,\n        type TEXT NOT NULL CHECK(type IN ('approval','acknowledgement')),\n        status TEXT NOT NULL CHECK(status IN ('sent','read','acknowledged','approved','returned','revoked')),\n        iv BLOB NOT NULL,tag BLOB NOT NULL,body_cipher BLOB NOT NULL,\n        created_at TEXT NOT NULL,updated_at TEXT NOT NULL,\n        FOREIGN KEY(organization_id,creator_user_id) REFERENCES memberships(organization_id,user_id),\n        FOREIGN KEY(organization_id,recipient_user_id) REFERENCES memberships(organization_id,user_id)\n      );\n      CREATE INDEX IF NOT EXISTS documents_by_tenant ON documents(organization_id,created_at);\n      CREATE INDEX IF NOT EXISTS documents_by_recipient ON documents(organization_id,recipient_user_id);\n      CREATE TABLE IF NOT EXISTS document_audit (\n        document_id TEXT NOT NULL REFERENCES documents(id),\n        event_no INTEGER NOT NULL, actor_user_id TEXT NOT NULL,\n        action TEXT NOT NULL,status TEXT NOT NULL,at TEXT NOT NULL,\n        prev_hmac TEXT NOT NULL,hmac TEXT NOT NULL,\n        PRIMARY KEY(document_id,event_no)\n      );\n      CREATE TABLE IF NOT EXISTS store_guard (\n        singleton INTEGER PRIMARY KEY CHECK(singleton=1),iv BLOB NOT NULL,\n        tag BLOB NOT NULL,body BLOB NOT NULL\n      );\n    ");
+    db.exec("\n      CREATE TABLE IF NOT EXISTS organizations (\n        id TEXT PRIMARY KEY CHECK(length(id)>0), created_at TEXT NOT NULL\n      );\n      CREATE TABLE IF NOT EXISTS memberships (\n        organization_id TEXT NOT NULL REFERENCES organizations(id),\n        user_id TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('owner','admin','manager','employee')),\n        status TEXT NOT NULL CHECK(status IN ('active','revoked')),\n        PRIMARY KEY (organization_id,user_id)\n      );\n      CREATE TABLE IF NOT EXISTS documents (\n        id TEXT PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id),\n        creator_user_id TEXT NOT NULL, recipient_user_id TEXT NOT NULL,\n        type TEXT NOT NULL CHECK(type IN ('approval','acknowledgement')),\n        status TEXT NOT NULL CHECK(status IN ('sent','read','acknowledged','approved','returned','revoked')),\n        iv BLOB NOT NULL,tag BLOB NOT NULL,body_cipher BLOB NOT NULL,\n        created_at TEXT NOT NULL,updated_at TEXT NOT NULL,\n        FOREIGN KEY(organization_id,creator_user_id) REFERENCES memberships(organization_id,user_id),\n        FOREIGN KEY(organization_id,recipient_user_id) REFERENCES memberships(organization_id,user_id)\n      );\n      CREATE INDEX IF NOT EXISTS documents_by_tenant ON documents(organization_id,created_at);\n      CREATE INDEX IF NOT EXISTS documents_by_recipient ON documents(organization_id,recipient_user_id);\n      CREATE TABLE IF NOT EXISTS document_audit (\n        document_id TEXT NOT NULL REFERENCES documents(id),\n        event_no INTEGER NOT NULL, actor_user_id TEXT NOT NULL,\n        action TEXT NOT NULL,status TEXT NOT NULL,at TEXT NOT NULL,\n        prev_hmac TEXT NOT NULL,hmac TEXT NOT NULL,\n        PRIMARY KEY(document_id,event_no)\n      );\n      CREATE TABLE IF NOT EXISTS document_updates (\n        seq INTEGER PRIMARY KEY AUTOINCREMENT,\n        organization_id TEXT NOT NULL,\n        user_id TEXT NOT NULL,\n        document_id TEXT NOT NULL REFERENCES documents(id),\n        kind TEXT NOT NULL CHECK(kind IN ('assigned','status_changed')),\n        created_at TEXT NOT NULL,\n        FOREIGN KEY(organization_id,user_id) REFERENCES memberships(organization_id,user_id)\n      );\n      CREATE INDEX IF NOT EXISTS document_updates_inbox\n        ON document_updates(organization_id,user_id,seq);\n      CREATE TABLE IF NOT EXISTS store_guard (\n        singleton INTEGER PRIMARY KEY CHECK(singleton=1),iv BLOB NOT NULL,\n        tag BLOB NOT NULL,body BLOB NOT NULL\n      );\n    ");
     // Detect wrong key on every subsequent open, even before reading documents.
     const guard=db.prepare('SELECT iv,tag,body FROM store_guard WHERE singleton=1').get();
     if(guard){
@@ -101,6 +101,11 @@ export function openDevTenantStore({filePath, masterKey}={}){
     const no=(prev?.event_no||0)+1,prevHash=prev?.hmac||'',at=new Date().toISOString();
     db.prepare('INSERT INTO document_audit VALUES(?,?,?,?,?,?,?,?)')
       .run(d.id,no,actor,action,d.status,at,prevHash,digest(d.id,no,actor,action,d.status,at,prevHash));
+  };
+  const appendUpdate=(doc,targetUserId,kind)=>{
+    if(targetUserId===null||targetUserId===undefined)return;
+    db.prepare('INSERT INTO document_updates(organization_id,user_id,document_id,kind,created_at) VALUES(?,?,?,?,?)')
+      .run(doc.organization_id,targetUserId,doc.id,kind,new Date().toISOString());
   };
   const verifyAudit=id=>{
     const entries=db.prepare('SELECT * FROM document_audit WHERE document_id=? ORDER BY event_no').all(id);
@@ -181,6 +186,7 @@ export function openDevTenantStore({filePath, masterKey}={}){
         .run(id,organizationId,actor.userId,recipientUserId,type,'sent',encrypted.iv,
           encrypted.tag,encrypted.body,at,at);
       const row=load(id,organizationId);appendAudit(row,actor.userId,'created');
+      appendUpdate(row,recipientUserId,'assigned');
       return publicRow(row);
     });
   }
@@ -210,13 +216,28 @@ export function openDevTenantStore({filePath, masterKey}={}){
       if(updated.changes!==1)denied();
       const next=load(documentId,organizationId);
       appendAudit(next,actor.userId,action);
+      // Notify only the other participant; no document title/body in event.
+      const other=actor.userId===next.creator_user_id?next.recipient_user_id:next.creator_user_id;
+      if(other!==actor.userId)appendUpdate(next,other,'status_changed');
       return publicRow(next);
     });
+  }
+  function getUpdates({actor,organizationId,after=0,limit=50}){
+    const m=membership(actor,organizationId);
+    if(!Number.isSafeInteger(after)||after<0||!Number.isInteger(limit)||limit<1||limit>50)denied();
+    const rows=db.prepare(`SELECT u.seq,u.document_id,u.kind,u.created_at,d.id,
+      d.organization_id,d.creator_user_id,d.recipient_user_id,d.type,d.status
+      FROM document_updates u JOIN documents d ON d.id=u.document_id
+      WHERE u.organization_id=? AND u.user_id=? AND u.seq>?
+      ORDER BY u.seq ASC LIMIT ?`).all(organizationId,actor.userId,after,limit);
+    const events=rows.filter(d=>canReadDocument({actor,membership:m,document:docForPolicy(d)}))
+      .map(d=>({cursor:d.seq,documentId:d.document_id,kind:d.kind,at:d.created_at}));
+    return {events,nextCursor:rows.length?rows[rows.length-1].seq:after};
   }
   function getAudit({actor,organizationId,documentId}){
     readAccess(actor,organizationId,documentId);
     return verifyAudit(documentId);
   }
   return Object.freeze({bootstrapOrganization,ensureDemoTenant,getMembership,addMember,revokeMember,createDocument,
-    getDocument,listDocuments,transition,getAudit,close:()=>db.close()});
+    getDocument,listDocuments,transition,getAudit,getUpdates,close:()=>db.close()});
 }
