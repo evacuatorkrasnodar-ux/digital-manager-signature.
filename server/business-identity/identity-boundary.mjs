@@ -19,7 +19,7 @@ const ID=/^[A-Za-z0-9_-]{1,96}$/;
 // signed JWT access token. A well-formed JWT is NOT trusted on its own:
 // verifySession MUST perform cryptographic validation and revocation checks.
 const OPAQUE_TOKEN=/^[A-Za-z0-9_-]{40,512}$/;
-const SIGNED_JWT=/^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$/;
+const SIGNED_JWT=/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 const tokenShaped=value=>typeof value==='string'&&
   (OPAQUE_TOKEN.test(value)||(value.length<=8192&&SIGNED_JWT.test(value)));
 const INVITE_CODE=/^[A-Za-z0-9_-]{43}$/;
