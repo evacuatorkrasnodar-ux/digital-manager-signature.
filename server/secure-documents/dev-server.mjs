@@ -233,6 +233,13 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         return;
       }
       const context = securityContext(req);
+      // Every write revalidates the session after its asynchronous body read.
+      // Revoking a session during an upload must prevent a queued mutation.
+      const readAuthorizedJson=async()=>{
+        const data=await readJson(req);
+        securityContext(req);
+        return data;
+      };
       if (req.method === 'DELETE' && path === '/v1/sessions/current') {
         sessions.delete(hashToken(req.headers.authorization.slice(7)));
         send(res, 200, { ok:true });
@@ -362,7 +369,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         if(!id&&!operation&&req.method==='POST'){
           if(!canCreateDocument({...context,organizationId:tenant}))
             fail(403,'Нет права создавать документы.');
-          const data=await readJson(req);
+          const data=await readAuthorizedJson();
           if(!['acknowledgement','approval'].includes(data.type)||
             !isText(data.title,120)||!isText(data.body,8000)||
             typeof data.recipientUserId!=='string')
@@ -386,7 +393,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
           }))});return;
         }
         if(operation==='actions'&&req.method==='POST'){
-          const data=await readJson(req);
+          const data=await readAuthorizedJson();
           if(!Object.hasOwn(nextState,data.action))fail(403,'Это действие недоступно.');
           send(res,200,{document:invoke(()=>sqlite.transition({
             actor:context.actor,organizationId:tenant,documentId:id,action:data.action
@@ -403,7 +410,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if (!id && !operation && req.method === 'POST') {
         if (!canCreateDocument({ ...context, organizationId:tenant })) fail(403, 'Нет права создавать документы.');
         if (documents.size >= MAX_DOCS) fail(409, 'Достигнут предел локального прототипа.');
-        const data = await readJson(req);
+        const data = await readAuthorizedJson();
         if (!['acknowledgement','approval'].includes(data.type) ||
             !isText(data.title, 120) || !isText(data.body, 8000) ||
             typeof data.recipientUserId !== 'string')
@@ -434,7 +441,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         return;
       }
       if (operation === 'actions' && req.method === 'POST') {
-        const data = await readJson(req);
+        const data = await readAuthorizedJson();
         if (!Object.hasOwn(nextState, data.action) ||
           !canTransitionDocument({ ...context, document, action:data.action }))
           fail(403, 'Это действие недоступно.');
