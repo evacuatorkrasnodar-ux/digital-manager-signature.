@@ -11,8 +11,8 @@ const [html,nav,calendar,calendarCss,employee]=await Promise.all([
 test('manager sees ordered three tabs with Calendar centered and director Cabinet renamed',()=>{
   const tabs=html.split('<div id="unifiedTasksTabs"')[1]?.split('</div>')[0];
   assert.ok(tabs);
-  const names=[...tabs.matchAll(/data-unified-tasks-tab="([^"]+)"[^>]*>([^<]+)</g)];
-  assert.deepEqual(names.map(x=>[x[1],x[2]]),[
+  const names=[...tabs.matchAll(/data-unified-tasks-tab="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)].map(x=>[x[1],x[2].replace(/<[^>]*>/g,'').trim()]);
+  assert.deepEqual(names,[
     ['personal','Мои дела'],['calendar','Календарь'],
     ['business','Кабинет'],['employee','Моя работа']
   ]);
@@ -22,6 +22,12 @@ test('manager sees ordered three tabs with Calendar centered and director Cabine
   assert.match(nav,/if\(employeeTab\)employeeTab\.hidden=!isEmployee\(\)/);
   assert.match(html,/\.tasks-switch\[data-manager="true"\],#managerCalendarTabs\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(nav,/if\(taskTabs\)taskTabs\.hidden=false/);
+  assert.match(html,/class="sv-tab-icon sv-tab-icon-calendar"/);
+  assert.match(html,/\.tasks-switch\[data-manager="true"\],#managerCalendarTabs\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  const businessCss=await read('assets/seyveo-business-command.css');
+  assert.match(businessCss,/#tasksPage #unifiedTasksTabs\[data-manager="true"\]\{[\s\S]*?grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
+  assert.doesNotMatch(businessCss,/#tasksPage #unifiedTasksTabs:has\(button\[hidden\]\)\{grid-template-columns:minmax\(0,1fr\)!important\}/);
+  assert.doesNotMatch(businessCss,/#tasksPage #unifiedTasksTabs\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important\}/);
 });
 
 test('Calendar tab opens the existing single calendar instead of duplicating its data or markup',()=>{
@@ -37,8 +43,8 @@ test('Calendar tab opens the existing single calendar instead of duplicating its
   assert.match(nav,/managerCalendarContext=false/);
   assert.match(html,/id="managerCalendarTabs"[\s\S]*?data-manager-calendar-tab="calendar" aria-pressed="true"/);
   assert.match(html,/seyveo-unified-tasks\.js\?v=35/);
-  assert.match(html,/calendar\.js\?v=33/);
-  assert.match(html,/calendar\.css\?v=38/);
+  assert.match(html,/calendar\.js\?v=34/);
+  assert.match(html,/calendar\.css\?v=39/);
 });
 
 test('existing Calendar uses one event store for personal and work filtered day/week/month/deadlines',()=>{
