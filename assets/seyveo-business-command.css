@@ -935,13 +935,71 @@
 #tasksPage #svcpTaskList .svcp-task-copy{gap:3px}
 #tasksPage #svcpTaskList .svcp-task-actions{gap:0}
 
-/* SEYVEO temporary plan and work-perspective preview */
-#managePage .svcp-preview-management{margin-bottom:14px}
-#managePage .svcp-preview-panel{border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;padding:12px 14px;background:var(--card);display:grid;gap:8px}
-#managePage .svcp-preview-panel label{font-size:12px;font-weight:570;color:var(--text)}
-#managePage .svcp-preview-panel select{min-width:0;width:100%;min-height:44px;background:var(--seyveo-hdr-active,var(--card2));color:var(--text);border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;padding:8px 10px;font:inherit;font-size:13px}
-#managePage .svcp-preview-panel select:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:1px}
+/* SEYVEO · one honest preview hierarchy: 3 levels, nested variants, separate role. */
+#managePage .svcp-preview-management{margin-bottom:12px}
+#managePage .svcp-preview-panel{
+ display:grid;gap:10px;padding:12px 13px;border-radius:17px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card);
+}
 #managePage .svcp-preview-panel p{margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45}
+#managePage .svcp-preview-intro{
+ font-size:10.5px!important;letter-spacing:.035em;opacity:.9;
+}
+#managePage .svcp-preview-tiers{display:grid;gap:0;min-width:0}
+#managePage .svcp-preview-tier{
+ display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.55fr);
+ align-items:center;gap:9px;min-height:57px;padding:5px 1px;
+ border-top:1px solid var(--soft-line);
+}
+#managePage .svcp-preview-tier-name{
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ min-width:0;min-height:44px;gap:3px;padding:5px 2px;
+ border:0;border-radius:8px;background:none;color:var(--text);
+ font:inherit;text-align:left;cursor:pointer;
+}
+#managePage .svcp-preview-tier-name strong{
+ display:block;font-size:14px;font-weight:645;letter-spacing:.015em;line-height:1.1;
+}
+#managePage .svcp-preview-tier-name small{
+ display:block;color:var(--secondary);font-size:10.5px;line-height:1.15;
+}
+#managePage .svcp-preview-tier-name[aria-pressed="true"] strong{color:var(--seyveo-emerald,var(--text))}
+#managePage .svcp-preview-options{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;min-width:0;
+}
+#managePage .svcp-preview-options button,
+#managePage .svcp-preview-role-actions button{
+ min-width:0;min-height:40px;padding:5px 4px;border-radius:11px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ background:transparent;color:var(--secondary);font:inherit;
+ font-size:11.5px;font-weight:500;line-height:1.25;cursor:pointer;
+}
+#managePage .svcp-preview-options button[aria-pressed="true"],
+#managePage .svcp-preview-role-actions button[aria-pressed="true"]{
+ color:var(--text);border-color:var(--seyveo-emerald,var(--soft-line));
+ background:var(--seyveo-hdr-active,var(--card2));
+}
+#managePage .svcp-preview-role{
+ display:grid;gap:6px;padding-top:9px;border-top:1px solid var(--soft-line);
+}
+#managePage .svcp-preview-role-label{
+ color:var(--secondary);font-size:11px;font-weight:530;
+}
+#managePage .svcp-preview-role-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#managePage .svcp-preview-panel #seyveoDemoModeNotice{
+ padding-top:8px;border-top:1px solid var(--soft-line);font-size:11px;
+}
+#managePage .svcp-preview-panel button:focus-visible{
+ outline:2px solid var(--seyveo-emerald,var(--text));outline-offset:2px;
+}
+#managePage .svcp-preview-panel [hidden]{display:none!important}
+@media(max-width:375px){
+ #managePage .svcp-preview-panel{padding:10px}
+ #managePage .svcp-preview-tier{gap:5px}
+ #managePage .svcp-preview-tier-name strong{font-size:13px}
+ #managePage .svcp-preview-tier-name small{font-size:10px}
+ #managePage .svcp-preview-options button{font-size:10.5px}
+}
 #tasksPage #unifiedTasksTabs button[hidden]{display:none!important}
 #tasksPage #unifiedTasksTabs:has(button[hidden]):not([data-manager="true"]){
  grid-template-columns:repeat(2,minmax(0,1fr))!important
