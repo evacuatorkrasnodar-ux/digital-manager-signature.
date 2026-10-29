@@ -396,6 +396,16 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
     }
   };
   const server=createServer(handler);
+  // An accidental server.listen(port) binds all interfaces on Node.js.
+  // Refuse that *before* opening a socket, even if callers bypass the CLI.
+  const originalListen=server.listen;
+  server.listen=function(...args){
+    const options=args[0];
+    const host=options&&typeof options==='object' ? options.host : args[1];
+    if(host!=='127.0.0.1'&&host!=='::1')
+      throw new Error('Secure Documents development API requires an explicit loopback bind (127.0.0.1 or ::1).');
+    return originalListen.apply(this,args);
+  };
   if(sqlite)server.on('close',()=>sqlite.close());
   return server;
 }
