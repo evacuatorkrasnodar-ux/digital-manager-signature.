@@ -15,7 +15,7 @@
 ## Tests
 
 ```bash
-node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs server/secure-documents/dev-store.test.mjs server/secure-documents/dev-restart.test.mjs
+node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs server/secure-documents/dev-store.test.mjs server/secure-documents/dev-restart.test.mjs server/secure-documents/sqlite-tenant-store.test.mjs server/secure-documents/sqlite-http.test.mjs
 ```
 
 GitHub Actions workflow: `.github/workflows/seyveo-secure-documents.yml`. It runs the same two test files.
@@ -33,6 +33,30 @@ node server/secure-documents/dev-server.mjs
 ```
 
 The process listens at `http://127.0.0.1:8787` by default. To use another local port set `SEYVEO_DEV_PORT` to 1024–65535. The CLI does **not** bind to all interfaces.
+
+### Optional tenant-aware SQLite mode (synthetic data only)
+
+The loopback-only HTTP server can now use the SQLite experiment directly. This is opt-in and is independent from the older encrypted snapshot file. Set `SEYVEO_DEV_SQLITE_PATH` to an **absolute file path** within a private folder, for example:
+
+```bash
+mkdir -p /tmp/seyveo-demo-sqlite
+chmod 700 /tmp/seyveo-demo-sqlite
+export SEYVEO_DEV_SQLITE_PATH=/tmp/seyveo-demo-sqlite/documents.sqlite
+# Set the same SEYVEO_DEV_SERVER, password and master-key variables as above.
+node server/secure-documents/dev-server.mjs
+```
+
+On first startup, the server creates only the fictional `demo-org` with two example memberships: `owner` and `elena`. Later startups **do not reset existing memberships**. Revoked employees remain revoked; the owner can still log in. The HTTP routes are the same as in the in-memory mode. SQLite stores **only document title and body as AES-GCM ciphertext**; organization IDs, user IDs, roles, workflow statuses, and timestamps remain visible metadata. The training audit has an HMAC chain, not independently trusted or legally meaningful evidence.
+
+Keep the **same secret 32-byte master key** for every restart. A wrong key causes startup failure. Do **not** set `SEYVEO_DEV_STORE_PATH` together with `SEYVEO_DEV_SQLITE_PATH`: two persistence modes at once are rejected. The local-only server rejects requests to a non-loopback interface.
+
+The SQLite adapter and linked HTTP route have tests:
+
+```bash
+node --test server/secure-documents/sqlite-tenant-store.test.mjs server/secure-documents/sqlite-http.test.mjs
+```
+
+This database is still experimental (`node:sqlite`), local-only and lacks production authentication, secure transport, tenant-specific key management, backups and protected off-device delivery. **Never test with confidential documents.**
 
 ### Optional encrypted persistence (synthetic data only)
 
