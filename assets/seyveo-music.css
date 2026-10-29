@@ -811,35 +811,43 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 /* Walk of Fame favorite lives beside the artist, not in the header.
    The original SVG, gold S and saved-favorite behavior are untouched. */
 #sayviMusicPage .sv-music-artist-row{
- display:flex;align-items:center;justify-content:center;gap:5px;
- width:100%;max-width:100%;min-width:0;min-height:40px;margin:0 auto;
+ display:flex;align-items:center;justify-content:center;gap:3px;
+ width:100%;max-width:100%;min-width:0;min-height:44px;margin:-2px auto 0;
+ line-height:1.25;
 }
 #sayviMusicPage .sv-music-artist-row .sv-music-artist{
  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- text-align:left;margin:0;
+ text-align:left;margin:0;line-height:1.25;
 }
 #sayviMusicPage .sv-music-favorite{
- position:relative;isolation:isolate;flex:0 0 40px;
- display:grid;place-items:center;width:40px;height:40px;min-width:40px;min-height:40px;
- margin:0;padding:0;border:1px solid rgba(232,189,104,.62);border-radius:50%;
- background:#253039;overflow:hidden;
- box-shadow:inset 0 1px 0 rgba(255,245,217,.09);
- color:var(--text);font:inherit;line-height:1;cursor:pointer;transition:background .18s,box-shadow .18s,border-color .18s
+ position:relative;isolation:isolate;flex:0 0 44px;
+ display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;
+ align-self:center;margin:0;padding:0;border:0;border-radius:50%;
+ background:transparent;overflow:hidden;
+ color:var(--text);font:inherit;line-height:1;cursor:pointer
 }
-#sayviMusicPage .sv-music-favorite[aria-pressed=true]{
+/* The 44px tap target stays generous; the visible jewel is only 34px. */
+#sayviMusicPage .sv-music-favorite::before{
+ content:"";position:absolute;inset:5px;border-radius:50%;pointer-events:none;
+ border:1px solid rgba(232,189,104,.55);background:#253039;
+ box-shadow:inset 0 1px 0 rgba(255,245,217,.07);
+ transition:border-color .18s,background .18s,box-shadow .18s
+}
+#sayviMusicPage .sv-music-favorite[aria-pressed=true]::before{
  border-color:#f3d183;background:#30353a;
- box-shadow:0 0 0 1px rgba(230,182,89,.12),inset 0 1px 0 rgba(255,245,217,.12)
+ box-shadow:0 0 0 1px rgba(230,182,89,.09),inset 0 1px 0 rgba(255,245,217,.10)
 }
-:root[data-theme=light] #sayviMusicPage .sv-music-favorite{
- background:#253039;border-color:rgba(199,146,59,.8);color:#fff
+:root[data-theme=light] #sayviMusicPage .sv-music-favorite::before{
+ background:#253039;border-color:rgba(199,146,59,.68)
 }
-:root[data-theme=light] #sayviMusicPage .sv-music-favorite[aria-pressed=true]{
- background:#30353a;border-color:#c99849;color:#fff
+:root[data-theme=light] #sayviMusicPage .sv-music-favorite[aria-pressed=true]::before{
+ background:#30353a;border-color:#c99849
 }
 #sayviMusicPage .sv-music-favorite:disabled{opacity:.9;cursor:default}
 #sayviMusicPage .sv-music-favorite-star{
- display:block;width:29px;height:29px;overflow:visible;transform:none;
- filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))
+ display:block;position:relative;z-index:1;width:26px;height:26px;
+ overflow:visible;transform:none;
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))
 }
 #sayviMusicPage .sv-music-favorite-shape{
  fill:url(#svMusicHallRose);stroke:url(#svMusicHallGold);stroke-width:2.7;
@@ -860,7 +868,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 }
 /* One understated glint only when a track is added; no looping sparkle. */
 #sayviMusicPage .sv-music-favorite::after{
- content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:50%;
+ content:"";position:absolute;inset:5px;z-index:2;pointer-events:none;border-radius:50%;
  background:linear-gradient(110deg,transparent 21%,rgba(255,235,172,.08) 35%,rgba(255,243,198,.75) 49%,transparent 69%);
  opacity:0;transform:translateX(-135%);
 }
