@@ -35,7 +35,7 @@ export function RiseSalesCard({monthlyFixed=0}:{monthlyFixed?:number}){
   <Text style={{color:'#fff'}}>Записей за месяц: {monthRows.length} · Выручка: {totals.revenue} · Переменные затраты: {totals.cost}</Text>
   <Text style={{color:'#fff'}}>Вклад в покрытие расходов: {progress.contribution} · Осталось покрыть: {progress.remaining}</Text>
   <Text style={{color:'#95d9bd'}}>Сэйви · Сравнение с прошлым месяцем</Text>
-  <Text style={{color:'#fff'}}>Изменение маржинального дохода: {insight.change}</Text>
+  <Text style={{color:'#fff'}}>Изменение маржинального дохода: {insight.change===null?'Недостаточно данных':insight.change}</Text>
   <Text style={{color:'#abc7bc'}}>{insight.advice}</Text>
   <Text style={{color:'#abc7bc',fontSize:12}}>Расчёт за текущий месяц по последним 500 записям. Старые продажи без даты исключены. Не является бухгалтерской отчётностью.</Text>
   {error?<Text style={{color:'#fff'}}>Ошибка защищённого хранилища</Text>:null}
