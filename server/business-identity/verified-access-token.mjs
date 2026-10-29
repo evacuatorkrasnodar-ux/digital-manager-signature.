@@ -58,7 +58,8 @@ export function createVerifiedJwtAccessSession({
   try{source=new URL(issuer);}
   catch{throw new TypeError('An explicitly configured HTTPS issuer is required.');}
   if(source.protocol!=='https:'||source.username||source.password||
-     source.search||source.hash||source.href!==issuer||
+     source.search||source.hash||
+     (source.href!==issuer&&source.origin!==issuer)||
      typeof audience!=='string'||!audience.trim()||
      typeof clientId!=='string'||!clientId.trim()||
      !Array.isArray(jwks)||jwks.length<1||jwks.length>10||
