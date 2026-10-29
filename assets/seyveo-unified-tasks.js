@@ -600,7 +600,11 @@
   closeWorkChat({restoreFocus:false});
   previewMode=picker.value;
   try{localStorage.setItem(MODE_KEY,previewMode)}catch{}
-  updatePulseAccess();exitTarget='home';syncBack();
+  updatePulseAccess();
+  // Change account, not just the heading: clear the messenger's ephemeral
+  // filters/selection so the manager cannot inherit Elena's open chat state.
+  window.SEYVEO_BUSINESS_COMMAND?.resetChatForRoleChange?.();
+  exitTarget='home';syncBack();
   navigate(isEmployee()?'employee':isManager()?'team':'personal');
   resetViewportAtWorkEntry();
  });
