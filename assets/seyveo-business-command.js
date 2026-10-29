@@ -1628,6 +1628,33 @@ function renderTasks(){
   // Legacy demo records remain stored, but assignees are chosen in chat.
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee',STAFF[t.assigneeId]));
+  if(approval&&t.id==='devstudio-enterprise-single-task'){
+   const meta=el('div','svcp-task-extended');
+   meta.append(el('small',null,'Филиал: '+String(t.branch||'Учебный филиал').slice(0,80)));
+   if(t.dueAt){const date=new Date(t.dueAt);if(!Number.isNaN(date.valueOf()))meta.append(el('small',null,'Срок: '+date.toLocaleString('ru-RU')))}
+   if(t.description)meta.append(el('p',null,String(t.description).slice(0,500)));
+   copy.append(meta);
+   if(!t.done&&!employeePreviewActive()){
+    const details=el('details','svcp-task-meta-edit');
+    details.append(el('summary',null,'Настроить поручение'));
+    const form=el('form');
+    const desc=el('textarea');desc.maxLength=500;desc.rows=2;desc.value=t.description||'';desc.placeholder='Описание задания';
+    const label=el('label',null,'Описание');label.append(desc);
+    const due=el('input');due.type='datetime-local';due.value=t.dueAt||'';
+    const dueLabel=el('label',null,'Срок');dueLabel.append(due);
+    const submit=el('button',null,'Сохранить');submit.type='submit';
+    form.append(label,dueLabel,submit);details.append(form);
+    form.addEventListener('submit',event=>{
+     event.preventDefault();
+     const current=read(TASK_KEY);
+     if(!Array.isArray(current))return;
+     const changed=current.map(x=>x?.id===t.id?{...x,description:desc.value.trim().slice(0,500),dueAt:due.value}:x);
+     if(!save(TASK_KEY,changed))return;
+     state.tasks=changed;renderTasks();
+    });
+    copy.append(details);
+   }
+  }
   if(approval){
    const statusNames={assigned:'Ожидает Елену',review:'Ожидает проверки',rework:'Возвращено на доработку',approved:'Принято руководителем'};
    const status=el('small','svcp-approval-demo-state',statusNames[t.reviewStatus]||'Ожидает Елену');
