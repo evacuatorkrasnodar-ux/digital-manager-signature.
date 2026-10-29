@@ -1,0 +1,36 @@
+name: SEYVEO Keycloak Auth Staging · Config Only
+
+on:
+  push:
+    paths:
+      - 'deploy/auth-staging/**'
+      - '.github/workflows/keycloak-auth-staging.yml'
+  pull_request:
+    paths:
+      - 'deploy/auth-staging/**'
+      - '.github/workflows/keycloak-auth-staging.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-staging-blueprint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check template configuration, secret validation, and native redirect policy
+        run: node --test deploy/auth-staging/staging-config.test.mjs
+      - name: Verify Docker Compose syntax without running any server
+        run: docker compose --env-file deploy/auth-staging/.env.example -f deploy/auth-staging/compose.yaml config --quiet
+      - name: Confirm example secrets intentionally fail operator preflight
+        shell: bash
+        run: |
+          if node deploy/auth-staging/validate-staging.mjs deploy/auth-staging/.env.example; then
+            echo "ERROR: placeholder config was accepted"
+            exit 1
+          fi

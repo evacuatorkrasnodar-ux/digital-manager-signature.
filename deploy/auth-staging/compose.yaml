@@ -1,0 +1,84 @@
+# SEYVEO Keycloak staging only. No production deployment or real users.
+# Run only after validate-staging.mjs accepts a PRIVATE .env file.
+name: seyveo-auth-staging
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${SEYVEO_DB_PASSWORD:?Missing database secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    restart: unless-stopped
+    command: ["start", "--import-realm"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${SEYVEO_DB_PASSWORD:?Missing database secret}
+      KC_HOSTNAME: https://${SEYVEO_AUTH_HOST:?Missing auth hostname}
+      KC_HOSTNAME_STRICT: "true"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "false"
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${SEYVEO_BOOTSTRAP_ADMIN_USERNAME:?Missing bootstrap username}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${SEYVEO_BOOTSTRAP_ADMIN_PASSWORD:?Missing admin secret}
+    volumes:
+      - ./realm/seyveo-realm.json:/opt/keycloak/data/import/seyveo-realm.json:ro
+    networks:
+      - database
+      - edge
+    security_opt:
+      - no-new-privileges:true
+    # No host ports, management port 9000 stays private. The proxy is the
+    # only public ingress. TLS is terminated by Caddy on the same host.
+    mem_limit: 2g
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - keycloak
+    environment:
+      SEYVEO_AUTH_HOST: ${SEYVEO_AUTH_HOST:?Missing auth hostname}
+      SEYVEO_ACME_EMAIL: ${SEYVEO_ACME_EMAIL:?Missing ACME email}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  database:
+    internal: true
+  edge: {}
+
+volumes:
+  postgres_data: {}
+  caddy_data: {}
+  caddy_config: {}

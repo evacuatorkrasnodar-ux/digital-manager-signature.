@@ -1,0 +1,13 @@
+# Private staging secrets; don't commit even accidentally.
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.sql
+*.dump
+backups/
+caddy_data/
+postgres_data/

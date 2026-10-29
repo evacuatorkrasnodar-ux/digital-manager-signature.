@@ -1,0 +1,29 @@
+{
+    email {$SEYVEO_ACME_EMAIL}
+}
+
+# Public HTTPS OIDC routes only. Admin Console, master realm, health and
+# metrics are NEVER exposed over the public reverse proxy.
+{$SEYVEO_AUTH_HOST} {
+    encode zstd gzip
+
+    @private {
+        path /admin /admin/* /realms/master /realms/master/* /health /health/* /metrics /metrics/*
+    }
+    respond @private 404
+
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        -Server
+    }
+
+    reverse_proxy keycloak:8080 {
+        header_up Host {$SEYVEO_AUTH_HOST}
+        header_up X-Forwarded-Host {$SEYVEO_AUTH_HOST}
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Port 443
+        header_up -Forwarded
+    }
+}
