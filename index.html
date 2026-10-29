@@ -485,6 +485,25 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;
  stroke-linejoin:round;stroke-linecap:round;opacity:.9;
 }
+/* My World: pastel outline icons and a single clean text baseline. No background edits. */
+#homeHeader .home-world-choice{
+  display:grid;grid-template-columns:20px minmax(0,1fr);align-items:center;
+  column-gap:9px;text-align:left;
+}
+#homeHeader .home-world-choice-wide{grid-template-columns:20px minmax(0,1fr) 12px}
+#homeHeader .home-world-choice svg{width:19px;height:19px;justify-self:center;align-self:center}
+#homeHeader .home-world-choice span:not(.home-world-choice-chevron){display:block;line-height:1.35;min-width:0;white-space:normal}
+#homeHeader .home-world-choice-chevron{grid-column:3;justify-self:end;margin-left:0}
+#homeHeader .home-world-choice[data-world-space="calendar"] svg{color:#E7D2A2}
+#homeHeader .home-world-choice[data-world-space="notes"] svg{color:#CBBFE9}
+#homeHeader .home-world-choice[data-world-space="health"] svg,
+#homeHeader .home-world-choice[data-world-space="care"] svg{color:#E8B8C7}
+#homeHeader .home-world-choice[data-world-space="contacts"] svg{color:#9EDDD1}
+#homeHeader .home-world-choice[data-world-space="smart-home"] svg{color:#C2DED1}
+#homeHeader .home-world-choice[data-world-space="documents"] svg{color:#B8D4E8}
+#homeHeader .home-world-choice[data-world-space="mail"] svg{color:#8FE3C3}
+#homeHeader .home-world-choice[data-world-space="play"] svg{color:#CBBFE9}
+
 #homeHeader .home-world-choice:active{background:rgba(230,240,253,.12)}
 #homeHeader .home-world-choice:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 #homeHeader .home-world-choice-wide{
