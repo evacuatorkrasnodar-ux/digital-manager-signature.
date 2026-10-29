@@ -1,0 +1,39 @@
+name: SEYVEO Director Cabinet · UI Smoke
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-business-command.css'
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-unified-tasks.js'
+      - 'scripts/manager-cabinet-smoke.test.mjs'
+      - '.github/workflows/seyveo-director-cabinet.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-business-command.css'
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-unified-tasks.js'
+      - 'scripts/manager-cabinet-smoke.test.mjs'
+      - '.github/workflows/seyveo-director-cabinet.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  manager-cabinet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax (business, tasks, and regression test)
+        run: |
+          node --check assets/seyveo-unified-tasks.js
+          node --check assets/seyveo-business-command.js
+          node --check scripts/manager-cabinet-smoke.test.mjs
+      - name: Confirm one director menu, compact live tasks, and employee-role isolation
+        run: node --test scripts/manager-cabinet-smoke.test.mjs
