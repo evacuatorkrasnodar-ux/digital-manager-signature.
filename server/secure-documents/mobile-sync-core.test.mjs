@@ -106,3 +106,41 @@ test('parallel poll requests share a single network operation',async()=>{
  await a;
  assert.equal(calls,1);
 });
+
+
+test('revocation permanently stops this sync instance even when cleanup throws',async()=>{
+ let requests=0,callbacks=0;
+ const f=setup({
+  request:async()=>{requests++;return {status:401,body:{error:'expired'}};},
+  onAccessLost:async()=>{callbacks++;throw new Error('UI cleanup failed')}
+ });
+ assert.equal((await f.client.poll()).state,'sign-in-required');
+ assert.equal((await f.client.poll()).state,'stopped');
+ assert.equal(requests,1);
+ assert.equal(callbacks,1);
+});
+test('corrupt or unavailable checkpoint fails closed without replaying from zero',async()=>{
+ for(const value of [undefined,-1,NaN,'0']){
+  let requests=0;
+  const f=setup({
+   readCursor:async()=>value,
+   request:async()=>{requests++;return {status:200,body:{events:[],nextCursor:0}};}
+  });
+  assert.equal((await f.client.poll()).state,'retry');
+  assert.equal(requests,0);
+ }
+ const failed=setup({readCursor:async()=>{throw new Error('storage unavailable')}});
+ assert.equal((await failed.client.poll()).state,'retry');
+ assert.equal(failed.received.length,0);
+});
+test('identity provider failures are retryable without writing a cursor',async()=>{
+ const f=setup({getIdentity:async()=>{throw new Error('secure storage busy')}});
+ assert.equal((await f.client.poll()).state,'retry');
+ assert.equal(f.getCursor(),0);
+ assert.equal(f.received.length,0);
+});
+test('client cannot synchronize if login identity is absent',async()=>{
+ const f=setup({getIdentity:async()=>null});
+ assert.equal((await f.client.poll()).state,'sign-in-required');
+ assert.equal(f.received.length,0);
+});
