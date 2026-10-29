@@ -1,27 +1,33 @@
-import React,{useState} from 'react';
+import React,{useEffect,useState} from 'react';
+import {loadRiseAnswers,saveRiseAnswer} from './riseRepository';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
 import {nextStep} from './journey.mjs';
 
 export function RiseJourneyCard(){
  const [answers,setAnswers]=useState<Record<string,string>>({});
  const [draft,setDraft]=useState('');
+ const [status,setStatus]=useState<'loading'|'ready'|'unavailable'>('loading');
+ useEffect(()=>{let active=true;loadRiseAnswers().then(data=>{if(active){setAnswers(data);setStatus('ready')}}).catch(()=>{if(active)setStatus('unavailable')});return()=>{active=false}},[]);
  const step=nextStep(answers);
- const advance=()=>{
-  if(step.key==='plan'||!draft.trim())return;
-  setAnswers(previous=>({...previous,[step.key]:draft.trim().slice(0,240)}));
-  setDraft('');
+ const advance=async()=>{
+  if(status!=='ready'||step.key==='plan'||!draft.trim())return;
+  setStatus('loading');
+  try {await saveRiseAnswer(step.key,draft.trim().slice(0,240));
+   setAnswers(previous=>({...previous,[step.key]:draft.trim().slice(0,240)}));setDraft('');setStatus('ready');
+  } catch {setStatus('unavailable')}
  };
  return <View style={styles.card}>
   <Text style={styles.heading}>SEYVEO RISE · МОЙ ПУТЬ</Text>
   <Text style={styles.question}>{step.title}</Text>
+  {status==='unavailable'?<Text style={styles.note}>Защищённое хранилище недоступно. Ответ не сохранён.</Text>:null}
   {step.key!=='plan'?<>
    <TextInput accessibilityLabel={step.title} placeholder="Ваш ответ" placeholderTextColor="#a9bbaf"
     value={draft} onChangeText={setDraft} maxLength={240} style={styles.input}/>
-   <Pressable accessibilityRole="button" onPress={advance} disabled={!draft.trim()} style={styles.button}>
+   <Pressable accessibilityRole="button" onPress={advance} disabled={status!=='ready'||!draft.trim()} style={styles.button}>
     <Text style={styles.heading}>Продолжить</Text>
    </Pressable>
   </>:null}
-  <Text style={styles.note}>Пробная версия. Проект пока не сохраняется: для этого требуется подключить защищённую базу устройства.</Text>
+  <Text style={styles.note}>Ответы сохраняются только в зашифрованном хранилище этого устройства. Синхронизация пока не подключена.</Text>
  </View>;
 }
 const styles=StyleSheet.create({
