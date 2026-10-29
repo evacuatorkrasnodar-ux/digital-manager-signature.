@@ -598,17 +598,9 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  background:rgba(202,163,88,.11)!important;color:#D9B270!important;
  font-size:11px!important;font-weight:650!important;white-space:nowrap;
 }
-/* Walk of Fame: gold-edged rose stone star with a gold S; never a silver award. */
-#svcpWorkChatScreen .svcp-gratitude-award .svcp-hall-medal{
- display:block;flex:0 0 29px;width:29px;height:29px;fill:none;
- stroke:none!important;overflow:visible;
- filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))
-}
-#svcpWorkChatScreen .svcp-reaction-options .svcp-hall-medal{
- display:block;width:32px;height:32px;fill:none;stroke:none;overflow:visible;
-}
-#svcpWorkChatScreen .svcp-gratitude-award svg:not(.svcp-hall-medal){
- flex:0 0 20px;width:20px;height:20px
+#svcpWorkChatScreen .svcp-gratitude-award svg{
+ flex:0 0 20px;width:20px;height:20px;fill:rgba(213,172,92,.18);
+ stroke:#D9B270!important;stroke-width:1.7;
 }
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-star,
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-star.is-saved svg{
@@ -626,14 +618,10 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  opacity:1;pointer-events:auto;display:flex;gap:4px;align-items:center;
 }
 #svcpWorkChatScreen .svcp-inline-award{
- color:#e8b95c!important;background:rgba(210,157,52,.08)!important;
+ color:#e8b95c!important;background:rgba(210,157,52,.13)!important;
  border:1px solid rgba(224,177,83,.35)!important;border-radius:999px!important;
- min-width:36px;min-height:36px;padding:2px!important;line-height:1;
+ min-width:32px;min-height:32px;font-size:23px;line-height:1;
  display:inline-flex;align-items:center;justify-content:center;
-}
-#svcpWorkChatScreen .svcp-inline-award .svcp-hall-medal{
- display:block;width:30px;height:30px;flex:0 0 30px;fill:none;stroke:none;
- filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))
 }
 
 /* SEYVEO GUIDE — compact inline worker assistance. */
