@@ -18,6 +18,7 @@ const ID=/^[A-Za-z0-9_-]{1,96}$/;
 const TOKEN=/^(?:[A-Za-z0-9_-]{40,512}|[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/;
 const INVITE_LIFETIME_MS=15*60*1000;
 const MAX_BODY_BYTES=2048;
+class InvalidRequestBody extends Error {}
 const headerJson=Object.freeze({
   'Content-Type':'application/json; charset=utf-8',
   'Cache-Control':'no-store, max-age=0',
@@ -45,14 +46,17 @@ async function boundedBody(request,field='employeeLogin',pattern=LOGIN){
       const part=await reader.read();
       if(part.done)break;
       total+=part.value.byteLength;
-      if(total>MAX_BODY_BYTES)throw new Error('Oversized JSON');
+      if(total>MAX_BODY_BYTES)throw new InvalidRequestBody();
       chunks.push(part.value);
     }
   }finally{reader.releaseLock();}
   const bytes=new Uint8Array(total);let offset=0;
   for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
-  const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
-  const data=JSON.parse(source);
+  let data;
+  try{
+    const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+    data=JSON.parse(source);
+  }catch{throw new InvalidRequestBody();}
   if(!data||typeof data!=='object'||Array.isArray(data)||
      Object.keys(data).length!==1||!Object.hasOwn(data,field)||
      typeof data[field]!=='string'||!pattern.test(data[field]))
@@ -192,7 +196,8 @@ export function createOwnerInvitationHttpContract({
         return result(200,{ok:true});
       }
       return methodNotAllowed();
-    }catch{
+    }catch(error){
+      if(error instanceof InvalidRequestBody)return invalid();
       // Generic error: never reveal secrets, accounts, tenants, DB reasons.
       return result(503,{error:'unavailable'});
     }
