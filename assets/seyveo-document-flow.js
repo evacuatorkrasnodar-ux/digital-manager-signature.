@@ -1,6 +1,6 @@
 /* SEYVEO Document Flow — local training workflow, NOT a production EDMS.
- * Only fixed fictional template IDs, state and timestamps are stored in localStorage.
- * No real files, document bodies, signatures or personal data are transmitted.
+ * Fictional sample text, revision drafts, state and timestamps are stored UNENCRYPTED in localStorage.
+ * No real files, signatures or personal data are transmitted. Never enter confidential data.
  * Switching demo roles is not authentication or access control.
  */
 (()=>{
@@ -11,15 +11,29 @@ const TYPES=Object.freeze({
  equipment:{title:'Акт приёмки оборудования',type:'Согласование',body:'Учебный пример. Полученное оборудование проверяется ответственным сотрудником перед согласованием акта.'},
  supplier:{title:'Договор с поставщиком',type:'Согласование',body:'Учебный пример. Условия поставки, цена, сроки и реквизиты должны быть проверены перед заключением договора.'}
 });
-const MAX=25;
+const MAX=25,MAX_REVISIONS=10,MAX_BODY=2400;
+const validBody=value=>typeof value==='string'&&value.trim().length>=20&&value.length<=MAX_BODY;
+const validNote=value=>typeof value==='string'&&value.trim().length>=5&&value.trim().length<=350;
 const $=(tag,cls,label)=>{
  const e=document.createElement(tag);if(cls)e.className=cls;
  if(label!==undefined)e.textContent=label;return e;
 };
 const button=(label,action,cls='')=>{const e=$('button','svdf-button '+cls,label);e.type='button';e.addEventListener('click',action);return e;};
 let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
-let returnDraft={id:'',text:''};
-const isActive=x=>x.state==='sent'||x.state==='read';
+let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
+const isActive=x=>x.state==='sent'||x.state==='read'||(role==='manager'&&x.state==='returned');
+function safeRevisions(x){
+ const fallback={number:1,body:TYPES[x.kind].body,at:Number.isFinite(x.created)?x.created:Date.now(),note:'Исходный учебный текст'};
+ if(!Array.isArray(x.revisions)||!x.revisions.length)return [fallback];
+ const valid=x.revisions.slice(0,MAX_REVISIONS).filter(v=>v&&
+  Number.isInteger(v.number)&&v.number>=1&&v.number<=MAX_REVISIONS&&
+  validBody(v.body)&&Number.isFinite(v.at)&&typeof v.note==='string')
+  .map(v=>({number:v.number,body:v.body,at:v.at,note:v.note.slice(0,350)}));
+ if(!valid.length||valid[0].number!==1||
+    valid.some((v,i)=>v.number!==i+1))return [fallback];
+ return valid;
+}
+const latestRevision=x=>x.revisions[x.revisions.length-1];
 const safeReason=text=>typeof text==='string'?text.trim().slice(0,350):'';
 function read(){
  try{
@@ -29,7 +43,8 @@ function read(){
    &&['sent','read','approved','returned','revoked'].includes(x.state)
    &&Array.isArray(x.log))
    .slice(-MAX).map(x=>({id:x.id.slice(0,70),kind:x.kind,recipient:'elena',state:x.state,
-    created:typeof x.created==='number'?x.created:Date.now(),
+    created:Number.isFinite(x.created)?x.created:Date.now(),
+    revisions:safeRevisions(x), 
     log:x.log.filter(y=>y&&Number.isFinite(y.at)&&typeof y.text==='string').slice(-12).map(y=>({at:y.at,text:y.text.slice(0,460)}))}));
  }catch{return [];}
 }
@@ -43,7 +58,7 @@ function status(x){
  if(x.state==='sent')return 'Ожидает Елену';
  if(x.state==='read')return 'Елена просмотрела · ждём подтверждения';
  if(x.state==='approved')return TYPES[x.kind].type==='Ознакомление'?'Ознакомление подтверждено':'Согласовано · демо';
- if(x.state==='returned')return 'Возвращено с замечанием';
+ if(x.state==='returned')return 'Нужна новая редакция · замечание Елены';
  return 'Отозвано';
 }
 function emit(reason,record){
@@ -78,10 +93,39 @@ function updateRecord(id,next,reason=''){
  info=next==='approved'?'Подтверждено в учебном режиме. Это не электронная подпись.':'Статус обновлён только в браузере.';
  emit('status',x);draw();return true;
 }
+function resubmit(id,newBody,changeNote){
+ if(role!=='manager')return false;
+ const x=records.find(y=>y.id===id);
+ if(!x||x.state!=='returned')return false;
+ if(x.revisions.length>=MAX_REVISIONS){
+  info='Достигнут предел учебных редакций. Создай новый документ.';
+  draw();return false;
+ }
+ if(!validBody(newBody)||newBody.trim()===latestRevision(x).body.trim()){
+  info='Измени текст документа (от 20 до 2400 символов), прежде чем отправлять новую редакцию.';
+  draw();return false;
+ }
+ if(!validNote(changeNote)){
+  info='Опиши исправление: от 5 до 350 символов.';
+  draw();return false;
+ }
+ const now=Date.now(),nextNumber=latestRevision(x).number+1;
+ const replacement={...x,state:'sent',
+  revisions:x.revisions.concat({number:nextNumber,body:newBody.trim(),at:now,note:changeNote.trim()}),
+  log:x.log.concat({at:now,text:'Руководитель отправил редакцию №'+nextNumber+
+   ' · исправлено: '+changeNote.trim()+' · учебный режим'}).slice(-12)};
+ const previous=records;
+ records=records.map(item=>item.id===id?replacement:item);
+ if(!persist()){records=previous;draw();return false;}
+ revisionDraft={id:'',body:'',note:''};
+ listFilter='active';info='Новая редакция №'+nextNumber+' передана Елене в этом браузере. Подтверждение потребуется заново.';
+ emit('revision',replacement);draw();return true;
+}
 function create(){
  if(role!=='manager')return;
  const x={id:'demo-'+Date.now()+'-'+Math.floor(Math.random()*1e5),kind,recipient:'elena',state:'sent',
-  created:Date.now(),log:[{at:Date.now(),text:'Руководитель подготовил запрос для Елены · только демо'}]};
+  created:Date.now(),revisions:[{number:1,body:TYPES[kind].body,at:Date.now(),note:'Исходный учебный текст'}],
+  log:[{at:Date.now(),text:'Руководитель подготовил запрос для Елены · только демо'}]};
  const previous=records;
  records=records.concat(x).slice(-MAX);
  if(!persist()){records=previous;draw();return;}
@@ -92,19 +136,19 @@ function reset(){
  if(!window.confirm('Очистить только учебную историю согласований на этом устройстве?'))return;
  const previous=records;
  try{localStorage.removeItem(KEY)}catch{info='Не удалось очистить данные браузера.';draw();return;}
- records=[];selected='';returnDraft={id:'',text:''};info='Учебная история очищена.';
+ records=[];selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};info='Учебная история очищена.';
  emit('reset');draw();
 }
 function get(id){return records.find(r=>r.id===id)||null;}
-function select(id){if(!get(id))return false;selected=id;listFilter='all';draw();return true;}
-function setRole(which){if(which!=='manager'&&which!=='employee')return;role=which;info='';selected='';returnDraft={id:'',text:''};listFilter='active';draw();}
+function select(id){if(!get(id))return false;selected=id;listFilter='all';revisionDraft={id:'',body:'',note:''};draw();return true;}
+function setRole(which){if(which!=='manager'&&which!=='employee')return;role=which;info='';selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};listFilter='active';draw();}
 function renderRecord(node,x){
  const card=$('article','svdf-record');
  if(x.id===selected)card.classList.add('is-current');
  const header=$('div','svdf-record-heading');
  header.append($('span','svdf-record-icon','▤'));
  const body=$('div','svdf-record-name');
- body.append($('strong','',TYPES[x.kind].title),$('small','',TYPES[x.kind].type+' · Елена'));
+ body.append($('strong','',TYPES[x.kind].title),$('small','',TYPES[x.kind].type+' · Елена · редакция №'+latestRevision(x).number));
  header.append(body);card.append(header);
  const state=$('div','svdf-record-state',status(x));state.dataset.state=x.state;card.append(state);
  card.append($('small','svdf-date','Создано '+stamp(x.created)));
@@ -113,7 +157,7 @@ function renderRecord(node,x){
  card.append(controls);
  if(x.id===selected){
   const detail=$('div','svdf-detail');
-  detail.append($('p','',TYPES[x.kind].body));
+  detail.append($('p','svdf-document-body',latestRevision(x).body));
   detail.append($('p','svdf-disclaimer','Учебный текст, не официальный документ. Содержимое не подписывается и не отправляется.'));
   const actions=$('div','svdf-actions');
   if(role==='employee'){
@@ -129,6 +173,10 @@ function renderRecord(node,x){
    }
   }else if(x.state==='sent'||x.state==='read'){
    actions.append(button('Отозвать',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
+  }else if(x.state==='returned'){
+   actions.append(button('Исправить и отправить повторно',()=>{
+    revisionDraft={id:x.id,body:latestRevision(x).body,note:''};draw();
+   },'svdf-primary'));
   }
   if(actions.childElementCount)detail.append(actions);
   if(role==='employee'&&x.state==='read'&&returnDraft.id===x.id){
@@ -146,6 +194,38 @@ function renderRecord(node,x){
    remark.append(heading,field,buttons);
    detail.append(remark);
   }
+  if(role==='manager'&&x.state==='returned'&&revisionDraft.id===x.id){
+   const editor=$('section','svdf-revision-editor');
+   editor.append($('strong','','Исправленная редакция №'+(latestRevision(x).number+1)));
+   editor.append($('p','svdf-hint','Измени учебный текст и кратко опиши исправление. Предыдущая редакция сохранится в истории.'));
+   const bodyField=$('textarea','svdf-revision-body');
+   bodyField.maxLength=MAX_BODY;bodyField.rows=5;
+   bodyField.setAttribute('aria-label','Исправленный текст учебного документа');
+   bodyField.value=revisionDraft.body;
+   bodyField.addEventListener('input',()=>revisionDraft.body=bodyField.value);
+   const noteField=$('textarea','svdf-revision-note');
+   noteField.rows=2;noteField.maxLength=350;
+   noteField.placeholder='Что именно исправлено…';
+   noteField.setAttribute('aria-label','Описание исправлений');
+   noteField.value=revisionDraft.note;
+   noteField.addEventListener('input',()=>revisionDraft.note=noteField.value);
+   editor.append(bodyField,noteField);
+   const buttons=$('div','svdf-actions');
+   buttons.append(button('Отправить новую редакцию · демо',()=>resubmit(x.id,bodyField.value,noteField.value),'svdf-primary'));
+   buttons.append(button('Отмена',()=>{revisionDraft={id:'',body:'',note:''};draw();},'svdf-quiet'));
+   editor.append(buttons);detail.append(editor);
+  }
+  const versions=$('details','svdf-versions');
+  const summary=$('summary','','Редакции документа · '+x.revisions.length);
+  versions.append(summary);
+  for(const rev of x.revisions.slice().reverse()){
+   const section=$('div','svdf-revision-item');
+   section.append($('strong','','Редакция №'+rev.number+' · '+stamp(rev.at)));
+   section.append($('small','',rev.note));
+   section.append($('p','',rev.body));
+   versions.append(section);
+  }
+  detail.append(versions);
   const log=$('div','svdf-log');log.append($('strong','','История действий'));
   const timeline=$('ol','');
   for(const item of x.log)timeline.append($('li','',stamp(item.at)+' · '+item.text));
@@ -180,12 +260,12 @@ function draw(){
  const active=records.filter(isActive).length,completed=records.length-active;
  const title=$('div','svdf-list-header');
  title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'),
-  $('span','',active+' ожидают · '+completed+' завершены'));
+  $('span','',active+' в работе · '+completed+' завершены'));
  host.append(title);
  const filters=$('div','svdf-list-filters');
  filters.setAttribute('role','group');filters.setAttribute('aria-label','Фильтр учебных документов');
- for(const [value,label] of [['active','Ожидают · '+active],['completed','Завершены · '+completed],['all','Все · '+records.length]]){
-  const tab=button(label,()=>{listFilter=value;selected='';returnDraft={id:'',text:''};draw();},'svdf-list-filter');
+ for(const [value,label] of [['active','В работе · '+active],['completed','Завершены · '+completed],['all','Все · '+records.length]]){
+  const tab=button(label,()=>{listFilter=value;selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};draw();},'svdf-list-filter');
   tab.setAttribute('aria-pressed',String(listFilter===value));
   filters.append(tab);
  }
@@ -212,7 +292,7 @@ function mount(parent){
  // The current app preview determines the initial document inbox, not any
  // previous unverified role toggled inside this training screen.
  role=window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
- selected='';listFilter='active';returnDraft={id:'',text:''};info='';
+ selected='';listFilter='active';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};info='';
  host=$('div','svdf-root');parent.append(host);draw();return true;
 }
 function unmount(){host=null;}
