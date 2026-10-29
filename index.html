@@ -1239,7 +1239,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </div>
 
 </main><main class="tasks-main" id="tasksPage" hidden aria-labelledby="tasksTitle">
-<header class="manage-heading tasks-heading"><button type="button" id="unifiedTasksBack" class="svcp-tasks-back" aria-label="Выйти из дел и вернуться назад">‹ <span id="unifiedTasksBackLabel">Главная</span></button><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НА КОНТРОЛЕ</p><h1 id="tasksTitle">Дела</h1><p id="tasksOverview" aria-live="polite">Здесь всё, что требует твоего решения или отложено с Главной.</p><span id="svcpEmployeeAvatar" class="svcp-employee-avatar-badge" role="img" aria-label="Елена · кассир"><span class="svcp-employee-avatar" aria-hidden="true">Е</span></span></header>
+<header class="manage-heading tasks-heading"><button type="button" id="unifiedTasksBack" class="svcp-tasks-back" aria-label="Выйти из дел и вернуться назад">‹ <span id="unifiedTasksBackLabel">Главная</span></button><p class="manage-caption">SEYVEO <span aria-hidden="true">/</span> НА КОНТРОЛЕ</p><h1 id="tasksTitle">Дела</h1><p id="svcpManagerSignal" class="svcp-manager-signal" hidden><span class="svcp-manager-signal-mark" aria-hidden="true">✧</span><span id="svcpManagerStatus" role="status" aria-live="polite">Сэйви · Поручений нет · локальное демо</span></p><p id="tasksOverview" aria-live="polite">Здесь всё, что требует твоего решения или отложено с Главной.</p><span id="svcpEmployeeAvatar" class="svcp-employee-avatar-badge" role="img" aria-label="Елена · кассир"><span class="svcp-employee-avatar" aria-hidden="true">Е</span></span></header>
 <div id="unifiedTasksTabs" class="tasks-switch" role="group" aria-label="Какие дела показать">
  <button type="button" data-unified-tasks-tab="personal" aria-pressed="true">Мои дела</button>
  <button type="button" data-unified-tasks-tab="business" aria-pressed="false">Бизнес</button>
@@ -1354,23 +1354,16 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  </section>
  <p class="svcp-employee-demo-note">Учебный режим: отметки хранятся на этом устройстве, другим людям не отправляются.</p>
 </section>
-<section id="unifiedBusinessTasksView" aria-label="Пульт руководителя" hidden>
+<section id="unifiedBusinessTasksView" aria-label="Кабинет руководителя" hidden>
  <div id="unifiedTasksTeamBoard">
-  <div class="svcp-manager-intro">
-   <div class="svcp-manager-identity"><span class="svcp-manager-emblem" aria-hidden="true">✧</span><div><span class="svcp-manager-kicker">SEYVEO BUSINESS</span><h2>Пульт руководителя</h2></div></div>
-   <p>Показатели, команда и решения — в одном месте.</p>
-   <div class="svcp-manager-status" id="svcpManagerStatus" role="status">Рабочий обзор · данные на устройстве</div>
-   <p id="svcpLargeCompanyNotice" class="svcp-large-note" hidden>Сценарий крупной компании: подразделения, руководители отделов и рабочие права. Реальная корпоративная синхронизация ещё не подключена.</p>
-  </div>
   <div class="svcp-manager-actions" aria-label="Инструменты бизнеса">
    <button class="svcp-manager-row" type="button" data-business-hub="pulse"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 13h5l3-7 4 12 3-7h5"/></svg></span><span class="svcp-manager-row-text"><strong>Пульс бизнеса</strong><small>Клиенты, продажи и показатели</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
    <button class="svcp-manager-row" type="button" data-business-hub="chats"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H9l-5 3v-14Z"/><path d="M8 10.5h8"/></svg></span><span class="svcp-manager-row-text"><strong>Чаты команды</strong><small>Личные сообщения, группы и голосовые</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
-   <button class="svcp-manager-row" type="button" data-business-hub="mail"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></span><span class="svcp-manager-row-text"><strong>Рабочая почта</strong><small>Письма и черновики · подключение отдельно</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
+   <button class="svcp-manager-row" type="button" data-business-hub="mail"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></span><span class="svcp-manager-row-text"><strong>Рабочая почта</strong><small>Письма и черновики</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
    <button class="svcp-manager-row" type="button" data-business-hub="documents"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/></svg></span><span class="svcp-manager-row-text"><strong>Документы бизнеса</strong><small>Файлы, договоры и согласования</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
    <button class="svcp-manager-row" type="button" data-business-hub="company"><span class="svcp-manager-art" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 7V4h8v3M4 13h16M10 12v3h4v-3"/></svg></span><span class="svcp-manager-row-text"><strong>Моя компания</strong><small>Карточка, контакты и QR-визитка</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></button>
-  </div>
   <details id="svcpManagerPeople" class="svcp-manager-staff">
-   <summary><span class="svcp-manager-staff-symbol" aria-hidden="true">✧</span><span><strong>Сотрудники</strong><small>Карточки, смены, достижения и подбор</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></summary>
+   <summary><span class="svcp-manager-art svcp-manager-staff-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16.5 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7.5" r="3.5"/><path d="M21 20v-2a4 4 0 0 0-3-3.87M16.5 4.1a3.5 3.5 0 0 1 0 6.8"/></svg></span><span><strong>Сотрудники</strong><small>Карточки, смены и подбор</small></span><span class="svcp-manager-chevron" aria-hidden="true">›</span></summary>
    <details id="svcpManagerSchedule" class="svcp-manager-schedule">
     <summary>График и заявки Елены <span aria-hidden="true">›</span></summary>
     <div class="svcp-manager-schedule-inner">
@@ -1413,6 +1406,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    </details>
    <div id="unifiedPeopleHost" class="svcp-manager-people-content"></div>
   </details>
+  </div>
   <div id="unifiedTasksChatHost" aria-label="Переписки команды" hidden></div>
   <div id="unifiedBusinessTasksHost"></div>
  </div>
