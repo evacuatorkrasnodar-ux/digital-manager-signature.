@@ -7,6 +7,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {Script} from 'node:vm';
 const read=name=>readFile(new URL('../'+name,import.meta.url),'utf8');
 const [html,roles,tasks,css]=await Promise.all([
   read('index.html'),
@@ -92,7 +93,7 @@ test('today area reuses live assignments, completion history and active counts',
 
 test('no old cached stylesheet/scripts and compact original manager CSS rules',()=>{
   assert.match(html,/seyveo-business-command\.css\?v=66/);
-  assert.match(html,/seyveo-business-command\.js\?v=65/);
+  assert.match(html,/seyveo-business-command\.js\?v=66/);
   assert.match(html,/seyveo-unified-tasks\.js\?v=37/);
   assert.match(css,/#tasksPage \.svcp-manager-row\{[^}]*min-height:52px/);
   assert.match(css,/#tasksPage \.svcp-manager-art\{[^}]*width:33px/);
@@ -118,4 +119,8 @@ test('subscription preview has three tiers, nested Family/Enterprise and indepen
  assert.match(roles,/navigate\(isEmployee\(\)\?'employee':isManager\(\)\?'team':'personal'\)/);
  assert.match(css,/#managePage \.svcp-preview-tiers\{/);
  assert.match(css,/#managePage \.svcp-preview-options\{/);
+});
+
+test('new preview controller has valid JavaScript',()=>{
+ assert.doesNotThrow(()=>new Script(roles,{filename:'assets/seyveo-unified-tasks.js'}));
 });
