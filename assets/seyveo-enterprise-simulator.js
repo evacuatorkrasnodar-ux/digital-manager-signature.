@@ -49,7 +49,7 @@ function write(next){
  const current=getRows(),existing=current.find(x=>x?.id===SIM_ID);
  if(next===1&&existing){$('svSimState').textContent='Учебная задача уже существует. Сбросьте её перед повторным тестом.';return}
  if(next>1&&!existing){$('svSimState').textContent='Задача отсутствует в «Делах».';return}
- const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,
+ const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,branch,description:'Проверить выкладку, ценники и представить результат руководителю.',
  reviewStatus:['','assigned','accepted','review','approved'][next],done:next===4,
  ...(next===3?{reportText:'Выкладка проверена · учебный результат'}:{})};
  const rows=next===1?[...current,updated]:current.map(x=>x?.id===SIM_ID?updated:x);
