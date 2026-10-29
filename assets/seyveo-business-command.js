@@ -48,6 +48,7 @@ window.addEventListener('seyveo:document-flow-updated',event=>{
 });
 
 let chatFilter='all',editingMessageIndex=null;
+let lastChatAccount=null;
 let mediaDatabasePromise=null,mediaRenderedUrls=[];
 /* Only local browser storage, never a server upload or a message delivery. */
 function mediaDatabase(){
@@ -604,7 +605,25 @@ function focusTask(index){
  row.classList.add('is-search-hit');
  row.scrollIntoView({block:'center',behavior:'auto'});
 }
+// A change between the employee and manager previews must never reuse
+// stale search/filter/perspective state from the other role. Messages remain
+// untouched in the same local demo storage.
+function syncChatAccount(){
+ const account=employeePreviewActive()?'employee':'manager';
+ if(lastChatAccount===account)return;
+ lastChatAccount=account;
+ chatFilter='all';
+ historyQuery='';
+ focusSearchIndex=null;
+ historyWindow=35;
+ const search=$('svcpHistorySearch');
+ if(search)search.value='';
+ $('svcpChatFilters')?.querySelectorAll('[data-svcp-chat-filter]').forEach(button=>
+  button.setAttribute('aria-pressed',String(button.dataset.svcpChatFilter==='all')));
+ editingMessageIndex=null;
+}
 function showInbox(){
+ syncChatAccount();
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
  if(container)container.dataset.view='inbox';
@@ -626,6 +645,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ syncChatAccount();
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
  if(container)container.dataset.view='room';
@@ -1803,12 +1823,18 @@ $('svcpHomePreviewExecute')?.addEventListener('click',()=>{
 syncComposerActions();
 window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
  openTab:tab,
+ resetChatForRoleChange:()=>{
+  // The mode picker has already updated SEYVEO_PREVIEW when called.
+  lastChatAccount=null;
+  syncChatAccount();
+  showInbox();
+ },
  showChat:(roomId=null,viewpoint='manager')=>{
   chatsFromTasks=true;
   if(roomId&&ROOMS.some(x=>x.id===roomId)){
    if(employeePreviewActive()&&!employeeAllowedRoom(roomId)){showInbox();return}
    openRoom(roomId);
-   if((employeePreviewActive()||viewpoint==='elena')&&roomId==='dm-elena'){
+   if(employeePreviewActive()&&roomId==='dm-elena'){
     state.viewpoint='elena';updatePerspective();renderChat();
    }
   }else showInbox();
