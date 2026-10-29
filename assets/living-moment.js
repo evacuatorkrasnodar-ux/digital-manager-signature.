@@ -221,18 +221,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workSayvi.hidden=!active||workMode!=='choose';
   workOwn.hidden=!active||workMode!=='choose';
   workBack.hidden=!active||workMode==='choose';
+  workSend.hidden=!active||workMode==='choose'||workMode==='done';
+  workBack.textContent=workMode==='done'?'Новый ответ':'Назад';
   execute.hidden=active;
   workDetails.replaceChildren();
   if(!active)return;
   workDetails.append(create('p','lm-mail-intro','ДЕМО · Рабочий чат · Елена'));
   workDetails.append(create('p','lm-mail-draft','Я закончила выкладку товаров. Можете проверить?'));
-  if(workMode!=='choose'){
+  if(workMode!=='choose'&&workMode!=='done'){
    const label=create('label','lm-mail-edit-label',workMode==='sayvi'?'✧ Черновик Сэйви':'Ваш ответ');
    const input=create('textarea','lm-mail-edit-input');input.rows=3;input.maxLength=1200;input.value=workDraft;
    input.addEventListener('input',()=>{workDraft=input.value});
    label.append(input);workDetails.append(label);
   }
-  workDetails.append(create('p','lm-mail-note','Учебное сообщение. Отправка в настоящий чат не подключена.'));
+  workDetails.append(create('p','lm-mail-note',workMode==='done'?'✓ ДЕМО · Ответ показан, но Елене ничего не отправлено.':'Учебное сообщение. Отправка в настоящий чат не подключена.'));
+  if(workMode==='done')workDetails.append(create('p','lm-mail-draft','Ваш ответ: '+workDraft));
  }
 
  const mailDetails=create('div','lm-mail-content');
@@ -367,6 +370,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
+ const workSend=polymer('Отправить · демо',()=>{if(!workDraft.trim()){explain(field,'Сначала напишите ответ.',workSend);return}workMode='done';updateWork()});
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
@@ -399,7 +403,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
- controls.append(workSayvi,workOwn,workBack,execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
+ controls.append(workSayvi,workOwn,workSend,workBack,execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
