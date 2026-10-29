@@ -32,10 +32,11 @@ export function createTrainingInvitations({
   };
   function create({actorUserId,employeeLogin}={}){
     if(actorUserId!=='owner')throw new Error('Only the fictional owner can invite employees.');
-    if(typeof employeeLogin!=='string'||!LOGIN.test(employeeLogin)||
-      users.has(employeeLogin)||Array.from(pending.values()).some(x=>x.employeeLogin===employeeLogin))
-      throw new Error('Invalid or unavailable training login.');
     cleanup();
+    if(typeof employeeLogin!=='string'||!LOGIN.test(employeeLogin)||
+      users.has(employeeLogin)||memberships.has(employeeLogin)||
+      Array.from(pending.values()).some(x=>x.employeeLogin===employeeLogin))
+      throw new Error('Invalid or unavailable training login.');
     if(pending.size>=MAX_PENDING)throw new Error('Too many pending training invitations.');
     const code=randomBytes(32).toString('base64url');
     const entry=Object.freeze({
