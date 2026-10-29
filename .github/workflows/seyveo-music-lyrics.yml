@@ -1,0 +1,36 @@
+name: SEYVEO Music · Lyrics & Star UI
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-music.css'
+      - 'assets/seyveo-music.js'
+      - 'scripts/music-lyrics-velvet-smoke.test.mjs'
+      - '.github/workflows/seyveo-music-lyrics.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-music.css'
+      - 'assets/seyveo-music.js'
+      - 'scripts/music-lyrics-velvet-smoke.test.mjs'
+      - '.github/workflows/seyveo-music-lyrics.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  music-lyrics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate music JS and smoke suite syntax
+        run: |
+          node --check assets/seyveo-music.js
+          node --check scripts/music-lyrics-velvet-smoke.test.mjs
+      - name: Check theme, star, lyrics parser and existing transport wiring
+        run: node --test scripts/music-lyrics-velvet-smoke.test.mjs
