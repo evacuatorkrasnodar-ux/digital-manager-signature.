@@ -168,9 +168,11 @@ test('SQLite persists a verified-owner employee invite across DB restart and con
   assert.equal((await two.accept(code,elenaToken)).status,409);
   assert.equal((await two.accept(code,tanyaToken)).status,201);
   assert.equal((await two.accept(code,tanyaToken)).status,409);
-  assert.deepEqual(h.db.prepare(
+  const membership=h.db.prepare(
     'SELECT role,status FROM memberships WHERE organization_id=? AND user_id=?'
-  ).get(org,'tanya'),{role:'employee',status:'active'});
+  ).get(org,'tanya');
+  assert.equal(membership.role,'employee');
+  assert.equal(membership.status,'active');
   assert.equal(two.repository.loadInvitation({codeDigest:digest(code)}),null);
   h.close();h.reopen();
   assert.equal(h.build().repository.loadInvitation({codeDigest:digest(code)}),null);
