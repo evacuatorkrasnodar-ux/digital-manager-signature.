@@ -194,6 +194,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         const dummy = { salt: fakeSalt, passwordHash: secureHash('invalid-dev-account', fakeSalt) };
         const matches = checkPassword(account || dummy, data.password);
         if (!account || !matches) fail(401, 'Неверные данные входа.');
+        if(sqlite){
+          try{sqlite.getMembership({actor:{userId:account.userId},organizationId});}
+          catch{fail(403,'Доступ к компании отозван.');}
+        }
         const token = randomBytes(32).toString('base64url');
         sessions.set(hashToken(token), { userId: account.userId, expiresAt:Date.now() + SESSION_MS });
         send(res, 200, { token, tokenType:'Bearer', expiresInSeconds:SESSION_MS / 1000,
