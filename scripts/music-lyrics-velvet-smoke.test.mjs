@@ -27,7 +27,7 @@ test('Walk of Fame jewel sits before the artist, not in the header',()=>{
  assert.ok(page.indexOf('id="sayviMusicTrack"')<page.indexOf('id="sayviMusicFavorite"'));
  assert.ok(page.indexOf('</header>')<page.indexOf('id="sayviMusicFavorite"'));
  assert.match(css,/html\.sv-music-screen #sayviMusicPage \.sv-music-artist-row\{[^}]*grid-column:1;grid-row:3/);
- assert.match(css,/:root\[data-theme=light\] #sayviMusicPage \.sv-music-favorite\{[^}]*background:#253039/);
+ assert.match(css,/:root\[data-theme=light\] #sayviMusicPage \.sv-music-favorite::before\{[^}]*background:#253039/);
  assert.match(css,/#sayviMusicPage \.sv-music-favorite-shape\{[^}]*stroke:url\(#svMusicHallGold\)/);
  assert.match(html,/id="sayviMusicFavorite"[^>]*aria-pressed="false"/);
  assert.match(html,/id="svMusicHallGold"/);
