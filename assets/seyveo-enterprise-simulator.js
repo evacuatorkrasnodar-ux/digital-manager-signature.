@@ -26,10 +26,11 @@ const getHistory=()=>task?.events||[];
 const getRows=()=>{try{const rows=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');return Array.isArray(rows)?rows:[]}catch{return []}};
 function mirror(){
  const row=getRows().find(x=>x?.id===SIM_ID);
- if(!row||!task)return;
+ if(!row){if(task){task=null;render()}return}
+ if(!task){task={id:SIM_ID,branch:row.branch||'Учебный филиал',assignee:'Елена · продавец',phase:0,events:[]}}
  const phase=row.done||row.reviewStatus==='approved'?4:row.reviewStatus==='review'?3:row.reviewStatus==='accepted'?2:1;
  if(phase!==task.phase){task.phase=phase;task.events.push('Состояние в «Делах» · '+(row.reviewStatus||'assigned'))}
- task.branch=row.branch||task.branch;render()
+ task.branch=row.branch||task.branch;task.reviewStatus=row.reviewStatus||'assigned';render()
 }
 const steps=['Поручение создано','Сотрудник принял поручение','Результат передан на проверку','Руководитель принял результат'];
 function render(){
@@ -41,7 +42,7 @@ function render(){
  $('svSimBossBranch').textContent=branch;$('svSimBossPerson').textContent='Исполнитель: '+person;
  $('svSimWorkerName').textContent=person;$('svSimWorkerBranch').textContent=branch;
  $('svSimBossStatus').textContent=['Задание ещё не создано','Ожидает принятия','В работе','Результат ожидает проверки','Выполнено ✓'][phase];
- $('svSimWorkerStatus').textContent=['Нет активного поручения','Новое поручение','Принято','Результат отправлен','Руководитель принял ✓'][phase];
+ $('svSimWorkerStatus').textContent=task?.reviewStatus==='rework'?'Нужна доработка':(['Нет активного поручения','Новое поручение','Принято','Результат отправлен','Руководитель принял ✓'][phase]);
  for(const [id,allowed] of [['svSimCreate',phase===0],['svSimAccept',phase===1],['svSimSubmit',phase===2],['svSimApprove',phase===3]])$(id).disabled=!allowed;
 }
 function write(next){
@@ -51,6 +52,7 @@ function write(next){
  const current=getRows(),existing=current.find(x=>x?.id===SIM_ID);
  if(next===1&&existing){$('svSimState').textContent='Учебная задача уже существует. Сбросьте её перед повторным тестом.';return}
  if(next>1&&!existing){$('svSimState').textContent='Задача отсутствует в «Делах».';return}
+ if(next>1&&existing?.reviewStatus==='rework'&&next===2){$('svSimState').textContent='Поручение возвращено на доработку. Елена может повторно отправить отчёт из «Дел».';return}
  const updated={...(existing||{}),id:SIM_ID,text:'Проверить выкладку товаров',assigneeId:'elena',approvalFlow:true,branch:existing?.branch||branch,description:existing?.description||'Проверить выкладку, ценники и представить результат руководителю.',
  reviewStatus:['','assigned','accepted','review','approved'][next],done:next===4,
  ...(next===3?{reportText:'Выкладка проверена · учебный результат'}:{})};
