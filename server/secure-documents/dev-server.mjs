@@ -171,7 +171,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         fail(403, 'Браузерные запросы с чужого сайта запрещены.');
       const path = new URL(req.url || '/', 'http://127.0.0.1').pathname;
       if (req.method === 'GET' && path === '/health') {
-        send(res, 200, { ok:true, mode:'local-development', productionReady:false });
+        send(res, 200, { ok:true, mode:'local-development', productionReady:false, encryptedFileEnabled:!!storage });
         return;
       }
       if (req.method === 'POST' && path === '/v1/sessions') {
