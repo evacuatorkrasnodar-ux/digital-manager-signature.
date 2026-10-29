@@ -707,3 +707,19 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content textarea{
  box-sizing:border-box;width:100%;max-width:100%;
 }
+
+/* One soft category-tinted glow on the featured icon only, never on the rail. */
+#seyveoLivingMoment .lm-field .lm-hero-art{--lm-soft-glow:#a9dac7}
+#seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-hero-art{--lm-soft-glow:#b8d4e8}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-hero-art,
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-hero-art{--lm-soft-glow:#8fe3c3}
+#seyveoLivingMoment .lm-field[data-lm-subject="health"] .lm-hero-art{--lm-soft-glow:#e8b8c7}
+#seyveoLivingMoment .lm-field[data-lm-subject="task"] .lm-hero-art{--lm-soft-glow:#e7d2a2}
+#seyveoLivingMoment .lm-field .lm-hero-art > .lm-art-svg{
+ color:var(--lm-soft-glow)!important;
+ stroke:currentColor!important;
+ filter:drop-shadow(0 0 5px color-mix(in srgb,var(--lm-soft-glow) 36%,transparent));
+}
+#seyveoLivingMoment .lm-field .lm-actions .lm-polymer:first-child:not([hidden]){
+ font-weight:650;
+}
