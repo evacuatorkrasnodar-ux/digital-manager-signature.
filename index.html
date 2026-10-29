@@ -327,6 +327,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 .tasks-main{flex:1;min-width:0;padding:11px 0 18px}
 .tasks-heading{margin-bottom:21px}
 .tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-choice);background:var(--card2)}
+.tasks-switch[data-manager="true"],#managerCalendarTabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tasks-switch button[hidden],#managerCalendarTabs[hidden]{display:none!important}
+#managerCalendarTabs{margin:0 0 18px}
+@media(max-width:380px){.tasks-switch[data-manager="true"] button,#managerCalendarTabs button{font-size:12px;padding-inline:2px}}
 .tasks-switch button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:39px;min-width:0;padding:9px 4px;border:0;border-radius:var(--seyveo-radius-segment);background:transparent;color:var(--secondary);font-size:13px;font-weight:570;line-height:1.3}
 .tasks-switch button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:0 2px 7px #0002,inset 0 0 0 1px var(--soft-line)}
 .tasks-switch span{font-size:11px;font-weight:450;font-variant-numeric:tabular-nums;color:var(--secondary)}
