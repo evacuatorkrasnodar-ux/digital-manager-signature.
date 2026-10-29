@@ -695,3 +695,16 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-document-content .lm-document-excerpt{
  color:var(--text);font-size:11.5px
 }
+
+/* SEYVEO Soft HDR · tint only outline drawings shown on the real demo Home.
+   Preserve the existing background, gradients, sphere, dock and card layout. */
+#seyveoLivingMoment .lm-art-svg--contract,
+#homePage #dynamic .lm-art-svg--contract{color:#B8D4E8!important;stroke:#B8D4E8!important}
+#seyveoLivingMoment .lm-art-svg--mail,
+#homePage #dynamic .lm-art-svg--mail{color:#8FE3C3!important;stroke:#8FE3C3!important}
+#seyveoLivingMoment .lm-art-svg--health,
+#homePage #dynamic .lm-art-svg--health{color:#E8B8C7!important;stroke:#E8B8C7!important}
+#seyveoLivingMoment .lm-art-svg--breath,
+#homePage #dynamic .lm-art-svg--breath{color:#C7D7E7!important;stroke:#C7D7E7!important}
+#seyveoLivingMoment .lm-art-svg--task,
+#homePage #dynamic .lm-art-svg--task{color:#E7D2A2!important;stroke:#E7D2A2!important}
