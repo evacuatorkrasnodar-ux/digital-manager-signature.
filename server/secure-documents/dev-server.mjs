@@ -9,6 +9,7 @@ import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash, creat
 import { pathToFileURL } from 'node:url';
 import { createEncryptedDevStore } from './dev-store.mjs';
 import { openDevTenantStore } from './sqlite-tenant-store.mjs';
+import { createTrainingInvitations } from './dev-invitations.mjs';
 import { projectDocumentMailbox } from './mailbox-view.mjs';
 import { mailboxTag, mailboxUnchanged } from './mailbox-tag.mjs';
 import {
@@ -125,6 +126,16 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
   try{sqlite?.ensureDemoTenant({organizationId,ownerUserId:'owner',employeeUserId:'elena'});}
   catch(error){sqlite?.close();throw error;}
   const sessions = new Map();
+  // Synthetic, in-memory onboarding only. Production identity and persisted
+  // memberships require a separate trusted service with reviewed migrations.
+  const invitations=createTrainingInvitations({
+    users,memberships,organizationId,
+    makeEmployeeAccount:(userId,password)=>newAccount(userId,'employee',password),
+    revokeSessions:userId=>{
+      for(const [digest,session] of sessions)
+        if(session.userId===userId)sessions.delete(digest);
+    }
+  });
   const storage=storagePath?createEncryptedDevStore({filePath:storagePath,masterKey}):null;
   // Deliberately fail startup on wrong key, tampered ciphertext, or invalid format.
   const loaded=storage?.load()||{documents:new Map(),audit:new Map()};
@@ -207,6 +218,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         if(sqlite){
           try{sqlite.getMembership({actor:{userId:account.userId},organizationId});}
           catch{fail(403,'Доступ к компании отозван.');}
+        }else{
+          const membership=memberships.get(account.userId);
+          if(!membership||membership.status!=='active')
+            fail(403,'Доступ к компании отозван.');
         }
         // The label is display-only: the server assigns the actual session ID.
         // No client-supplied role, organization, device ID or trusted device claim.
@@ -231,6 +246,21 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
           session:{id:session.id,deviceLabel:session.deviceLabel,createdAt:session.createdAt,
             expiresAt:new Date(session.expiresAt).toISOString()} });
         return;
+      }
+      // Redeem without a session, but only with a single-use high-entropy code.
+      // No connection to emails, real employees, or external devices.
+      if(path==='/v1/invitations/accept'){
+        if(req.method!=='POST')fail(405,'Метод не поддерживается.');
+        if(sqlite||storage)fail(501,'Учебные приглашения доступны только без сохранения на диск.');
+        const data=await readJson(req);
+        try{
+          const joined=invitations.redeem({code:data.code,password:data.password});
+          send(res,201,joined);return;
+        }catch(error){
+          if(error?.message==='Too many training invitation attempts.')
+            fail(429,'Слишком много попыток активации.');
+          fail(400,'Приглашение недействительно или данные не подходят.');
+        }
       }
       const context = securityContext(req);
       // Every write revalidates the session after its asynchronous body read.
@@ -279,6 +309,51 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         sessions.delete(targetDigest);
         send(res,200,{ok:true});
         return;
+      }
+      const invitationMatch=/^\/v1\/organizations\/([^/]+)\/invitations(?:\/([0-9a-f-]{36}))?$/.exec(path);
+      if(invitationMatch){
+        if(invitationMatch[1]!==context.membership.organizationId)fail(404,'Раздел не найден.');
+        if(context.membership.role!=='owner')fail(403,'Доступ запрещён.');
+        if(sqlite||storage)fail(501,'Учебные приглашения доступны только без сохранения на диск.');
+        if(!invitationMatch[2]&&req.method==='POST'){
+          const data=await readAuthorizedJson();
+          try{
+            const result=invitations.create({
+              actorUserId:context.actor.userId,employeeLogin:data.employeeLogin
+            });
+            send(res,201,result);return;
+          }catch(error){
+            if(error?.message==='Too many pending training invitations.')
+              fail(409,'Достигнут предел учебных приглашений.');
+            fail(400,'Неверное имя учебного сотрудника или приглашение уже существует.');
+          }
+        }
+        if(invitationMatch[2]&&req.method==='DELETE'){
+          try{
+            invitations.cancel({
+              actorUserId:context.actor.userId,invitationId:invitationMatch[2]
+            });
+            send(res,200,{ok:true});return;
+          }catch{fail(404,'Учебное приглашение не найдено.');}
+        }
+        fail(405,'Метод не поддерживается.');
+      }
+      const memberMatch=/^\/v1\/organizations\/([^/]+)\/members(?:\/([a-z][a-z0-9_-]{2,31}))?$/.exec(path);
+      if(memberMatch){
+        if(memberMatch[1]!==context.membership.organizationId)fail(404,'Раздел не найден.');
+        if(context.membership.role!=='owner')fail(403,'Доступ запрещён.');
+        if(sqlite||storage)fail(501,'Учебное управление сотрудниками доступно только без сохранения на диск.');
+        if(!memberMatch[2]&&req.method==='GET'){
+          send(res,200,{members:invitations.members({actorUserId:context.actor.userId})});
+          return;
+        }
+        if(memberMatch[2]&&req.method==='DELETE'){
+          try{
+            invitations.revoke({actorUserId:context.actor.userId,userId:memberMatch[2]});
+            send(res,200,{ok:true});return;
+          }catch{fail(404,'Учебный сотрудник не найден.');}
+        }
+        fail(405,'Метод не поддерживается.');
       }
       if (req.method === 'GET' && path === '/v1/organizations') {
         send(res, 200, { organizations:[{ id:context.membership.organizationId, role:context.membership.role }] });

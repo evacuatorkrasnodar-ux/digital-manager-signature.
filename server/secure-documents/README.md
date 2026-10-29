@@ -69,6 +69,60 @@ Test using synthetic responses without contacting any external host:
 node --test server/secure-documents/https-event-transport.test.mjs
 ```
 
+## Fictional employee invitations and membership (RAM-only)
+
+**Training only:** an existing test company owner can invite an additional fake
+employee, who chooses a separate password and signs in as an **employee**.
+This demonstrates business-space access without connecting SEYVEO One,
+personal contacts, music, notes, health information or any actual staff.
+
+This workflow works **only with the in-memory backend**, with neither
+`SEYVEO_DEV_SQLITE_PATH` nor `SEYVEO_DEV_STORE_PATH` configured. The routes
+return HTTP **501** if any persistent backend is selected. Invited passwords,
+memberships, codes, and sessions are deliberately held only in process memory
+and vanish on restart. **Never** use real personal data, passwords or a real
+employee's identity. Do not expose the server beyond loopback.
+
+Synthetic developer flow:
+1. Owner signs in with `POST /v1/sessions` and receives a short-lived bearer token.
+2. Owner calls `POST /v1/organizations/demo-org/invitations` with
+   `{"employeeLogin":"tanya"}`. The server returns a random one-use code
+   **once**; only its SHA-256 digest is stored in memory. The code expires
+   after 15 minutes; up to 20 invitations may be pending.
+3. A test actor locally provides the code and new password to
+   `POST /v1/invitations/accept`. This creates a dedicated account and
+   active `employee` membership. A code cannot be reused, and activation
+   attempts are throttled. No email, SMS, QR onboarding or actual phone
+   invitation delivery exists.
+4. The employee signs in using their chosen test password. Business document
+   policies apply per-recipient: no manager rights, and no access to another
+   employee's documents.
+5. The owner can list work memberships with
+   `GET /v1/organizations/demo-org/members`, cancel an unused invite with
+   `DELETE /v1/organizations/demo-org/invitations/:id`, or revoke a member
+   with `DELETE /v1/organizations/demo-org/members/:login`. Revocation
+   invalidates all of that account's current training sessions.
+   Reinstatement is not available in this prototype.
+
+A client cannot select a role or organization in the activation request.
+No invitation codes, password hashes, session tokens or personal-space data
+appear in the members listing. Because this is a developer-only teaching
+exercise, an invitation must **not** be treated as verified identity,
+verified employment, legally effective authorization, or cross-device
+connectivity.
+
+```sh
+node --test server/secure-documents/dev-invitations.test.mjs server/secure-documents/dev-invitations-http.test.mjs
+```
+
+**Production requirements are still open:** persistent identity provider,
+verified invitations (proof of recipient), independent organization
+registration, session/device enrollment, MFA, tenant-scoped database
+transactions, secret storage and rotation, anti-abuse controls, authenticated
+HTTPS transport, independent security assessment, real iOS/Android
+integration, and legally reviewed document workflows. The separate SEYVEO
+One environment must never be visible to employers.
+
 ## Implemented
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
