@@ -14,21 +14,54 @@
 .calendar-header-add svg{stroke-width:1.65}
 /* One calendar and one event store: personal/work scopes in the manager preview.
    These are event filters, not a second calendar or an employee shift ledger. */
+/* A quiet secondary filter: do not create a third heavy segmented bar. */
 #calendarPage .cal-scope{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
- padding:3px;border:1px solid var(--soft-line);border-radius:15px;
- background:var(--card2);margin:0 0 11px
+ display:flex;justify-content:flex-end;align-items:center;gap:13px;
+ margin:0 0 8px;padding:0;border:0;border-radius:0;background:transparent
 }
 #calendarPage .cal-scope[hidden]{display:none!important}
 #calendarPage .cal-scope button{
- min-width:0;min-height:36px;padding:5px 4px;border:0;border-radius:11px;
- color:var(--secondary);background:transparent;font:inherit;font-size:12px;font-weight:550
+ position:relative;min-width:0;min-height:30px;padding:3px 1px 6px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--secondary);font:inherit;font-size:11.3px;font-weight:540
 }
 #calendarPage .cal-scope button[aria-pressed="true"]{
- color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)
+ color:var(--text);background:transparent;box-shadow:none
+}
+#calendarPage .cal-scope button[aria-pressed="true"]::after{
+ content:"";position:absolute;bottom:2px;left:15%;width:70%;height:1.5px;
+ background:var(--seyveo-emerald);border-radius:2px;opacity:.7
 }
 #calendarPage .cal-scope button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+/* The manager already chose Calendar in the three icon-tabs above.
+   Remove the repeated visual title, not the accessible page heading. */
+#calendarPage .cal-manager-brief{display:none}
+#calendarPage[data-manager-entry="true"] .calendar-header{
+ margin:0 0 7px;min-height:36px;justify-content:space-between
+}
+#calendarPage[data-manager-entry="true"] .calendar-header>div:first-child{
+ position:absolute!important;width:1px!important;height:1px!important;
+ overflow:hidden!important;clip-path:inset(50%)!important;
+ white-space:nowrap!important
+}
+#calendarPage[data-manager-entry="true"] .cal-manager-brief{
+ display:block;margin:0;color:var(--secondary);font-size:11.5px;font-weight:530
+}
+#calendarPage[data-manager-entry="true"] .calendar-header-add{
+ width:35px;height:35px;border-radius:13px;color:var(--seyveo-emerald);
+ background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline)
+}
+/* A single understated emerald gesture throughout matching calendar entry points.
+   Works in the light, dark and emerald themes with the existing theme variable. */
+#calendarPage .calendar-header-add svg,
+#lifePage .seyveo-calendar-entry svg{stroke:var(--seyveo-emerald)}
+#calendarPage .cal-day[data-selected=true]:not([data-today=true]) .cal-day-number{
+ color:var(--seyveo-emerald);box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline)
+}
+#calendarPage .cal-day-dots i:first-child:not(.cal-dot-task):not(.cal-dot-holiday){
+ background:var(--seyveo-emerald);opacity:.8
 }
 .cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:0 0 0;border:0;background:transparent;border-radius:0;}
 .cal-periods button{min-width:0;min-height:38px;padding:0 3px;border:0;border-radius:14px;color:var(--secondary);background:transparent;font-size:12px;font-weight:565}
