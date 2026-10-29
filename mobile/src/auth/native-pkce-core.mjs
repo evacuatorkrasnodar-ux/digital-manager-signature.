@@ -24,7 +24,7 @@ function validHttps(value){
   if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash||
      !url.hostname.includes('.')||url.hostname==='localhost'||
      url.hostname.endsWith('.local')||
-     url.href!==value)
+     (url.href!==value&&url.origin!==value))
     throw new TypeError('Canonical, uncredentialed HTTPS URL required.');
   return url;
 }
