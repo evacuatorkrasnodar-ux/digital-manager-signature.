@@ -35,7 +35,7 @@ const methodNotAllowed=()=>result(405,{error:'method-not-allowed'});
 const validId=value=>typeof value==='string'&&ID.test(value);
 
 /** Reads a Request body with a strict limit *during* streaming, not after. */
-async function boundedBody(request){
+async function boundedBody(request,field='employeeLogin',pattern=LOGIN){
   const stream=request.body;
   if(!stream)return null;
   const reader=stream.getReader();
@@ -54,8 +54,8 @@ async function boundedBody(request){
   const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
   const data=JSON.parse(source);
   if(!data||typeof data!=='object'||Array.isArray(data)||
-     Object.keys(data).length!==1||!Object.hasOwn(data,'employeeLogin')||
-     typeof data.employeeLogin!=='string'||!LOGIN.test(data.employeeLogin))
+     Object.keys(data).length!==1||!Object.hasOwn(data,field)||
+     typeof data[field]!=='string'||!pattern.test(data[field]))
     return null;
   return data;
 }
@@ -108,6 +108,27 @@ export function createOwnerInvitationHttpContract({
       if(url.origin!==origin||url.protocol!=='https:'||url.search||url.hash||
          url.username||url.password||request.headers.has('origin'))
         return forbidden();
+      // Person-side acceptance: a scanned code never grants membership until
+      // the trusted identity boundary verifies the signed-in recipient and
+      // the DB atomically consumes the invitation under that same identity.
+      if(url.pathname==='/v1/invitations/accept'){
+        if(request.method!=='POST')return methodNotAllowed();
+        const mime=request.headers.get('content-type');
+        if(!mime||!/^application\/json(?:\s*;|$)/i.test(mime))
+          return invalid();
+        const length=request.headers.get('content-length');
+        if(length!==null&&(!/^\d+$/.test(length)||Number(length)>MAX_BODY_BYTES))
+          return invalid();
+        const auth=request.headers.get('authorization');
+        const token=typeof auth==='string'&&auth.startsWith('Bearer ')?auth.slice(7):'';
+        if(token.length>8192||!TOKEN.test(token))return forbidden();
+        if(typeof identity.acceptVerifiedInvitation!=='function')
+          return result(503,{error:'unavailable'});
+        const data=await boundedBody(request,'code',/^[A-Za-z0-9_-]{43}$/);
+        if(!data)return invalid();
+        const accepted=await identity.acceptVerifiedInvitation({token,code:data.code});
+        return accepted===true?result(201,{ok:true}):conflict();
+      }
       const match=/^\/v1\/organizations\/([A-Za-z0-9_-]{1,96})\/invitations(?:\/([A-Za-z0-9_-]{1,96}))?$/.exec(url.pathname);
       if(!match)return result(404,{error:'not-found'});
       const [,organizationId,invitationId]=match;
