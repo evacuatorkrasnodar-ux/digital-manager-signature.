@@ -13,12 +13,14 @@ test('remove complex manual lyrics imports and leave simple main music actions',
  assert.match(page,/id="sayviMusicImport"/);
  assert.match(page,/id="sayviMusicSourcesToggle"/);
  assert.match(page,/id="sayviMusicFavorite"/);
- assert.match(html,/seyveo-music\.css\?v=52/);
+ assert.match(html,/seyveo-music\.css\?v=53/);
  assert.match(html,/seyveo-music\.js\?v=33/);
 });
 test('Walk of Fame jewel sits before the artist, not in the header',()=>{
- assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*width:40px;height:40px;min-width:40px;min-height:40px/);
- assert.match(css,/#sayviMusicPage \.sv-music-favorite-star\{[^}]*width:29px;height:29px;overflow:visible;transform:none/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*width:44px;height:44px;min-width:44px;min-height:44px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite::before\{[^}]*inset:5px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-artist-row\{[^}]*gap:3px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite-star\{[^}]*width:26px;height:26px;[\s\S]*?overflow:visible;transform:none/);
  assert.match(css,/#sayviMusicPage>header\.sv-music-head\{[^}]*grid-template-columns:minmax\(0,1fr\) auto!important/);
  const page=html.slice(html.indexOf('<main id="sayviMusicPage"'),html.indexOf('</main>',html.indexOf('<main id="sayviMusicPage"')));
  assert.match(page,/<div class="sv-music-artist-row"[^>]*>[\s\S]*?id="sayviMusicFavorite"[\s\S]*?id="sayviMusicArtist"/);
