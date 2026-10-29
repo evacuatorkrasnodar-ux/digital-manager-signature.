@@ -28,6 +28,16 @@ function validHttps(value){
     throw new TypeError('Canonical, uncredentialed HTTPS URL required.');
   return url;
 }
+// The private-use redirect supports older iOS devices (including iPhone X).
+// It is registered to the native bundle scheme in mobile/app.json. PKCE,
+ // state and issuer are mandatory because schemes are not exclusive to apps.
+const PRIVATE_USE_REDIRECT='com.seyveo.digitalmanager:/oauth2redirect';
+function validNativeRedirect(value,redirectMode){
+  if(redirectMode==='claimed-https')return validHttps(value);
+  if(redirectMode!=='private-use'||value!==PRIVATE_USE_REDIRECT)
+    throw new TypeError('Explicit registered native OAuth callback required.');
+  return new URL(value);
+}
 function base64url(bytes){
   if(!(bytes instanceof Uint8Array)||bytes.length<1)
     throw new TypeError('CSPRNG bytes required.');
@@ -50,17 +60,17 @@ const asciiBytes=text=>Uint8Array.from(text,ch=>ch.charCodeAt(0));
  */
 export function createNativePkceFlow({
   issuer,authorizationEndpoint,redirectUri,clientId,
-  randomBytes,sha256,now=Date.now
+  redirectMode='claimed-https',randomBytes,sha256,now=Date.now
 }={}){
   const iss=validHttps(issuer);
   const authorize=validHttps(authorizationEndpoint);
-  const redirect=validHttps(redirectUri);
+  const redirect=validNativeRedirect(redirectUri,redirectMode);
   if(iss.origin!==authorize.origin||
      typeof clientId!=='string'||!ID.test(clientId)||
      typeof randomBytes!=='function'||typeof sha256!=='function'||
      typeof now!=='function')
     throw new TypeError('Trusted native OAuth configuration is required.');
-  // Exact native application-claimed HTTPS callback. No wildcard or query.
+  // Exact registered HTTPS callback or fixed private-use native callback.
   if(redirect.pathname==='/'||authorize.pathname==='/')
     throw new TypeError('Registered authorization and redirect paths required.');
   let generation=0, pending=null;
