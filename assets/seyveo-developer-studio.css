@@ -1,1 +1,19 @@
 #svDevLaunch{position:fixed;right:12px;top:12px;z-index:9998;padding:8px;border-radius:12px;background:#20382e;color:white}#svDevStudio{width:min(95vw,620px);max-height:85dvh;overflow:auto;border-radius:18px;background:var(--card);color:var(--text);padding:18px}#svDevStudio::backdrop{background:#000b}.sv-dev-head{display:flex;justify-content:space-between}.sv-dev-warning{font-size:12px}.sv-dev-actions{display:flex;gap:8px;flex-wrap:wrap}.sv-dev-actions button{padding:9px;border-radius:9px}.sv-dev-row{padding:10px;border-bottom:1px solid var(--line);display:grid;gap:4px}.sv-dev-row small{color:var(--secondary)}
+.sv-sim-previews{margin-top:20px}
+.sv-sim-muted{font-size:12px;line-height:1.5;color:var(--secondary)}
+.sv-sim-toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.sv-sim-toolbar label{font-size:12px;flex:1;min-width:145px}
+.sv-sim-toolbar select{display:block;width:100%;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+.sv-sim-toolbar button{border:1px solid var(--line);border-radius:10px;padding:9px;background:var(--seyveo-hdr-active);color:var(--text)}
+.sv-sim-toolbar button:disabled{opacity:.35}
+.sv-sim-phones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sv-sim-phone{min-width:0;min-height:210px;background:var(--bg);border:1px solid var(--line);border-radius:22px;padding:12px;box-sizing:border-box}
+.sv-sim-phone-head{border-bottom:1px solid var(--line);padding-bottom:10px;display:grid;gap:7px}
+.sv-sim-phone-head span,.sv-sim-phone-body small{font-size:10px;letter-spacing:.06em;color:var(--seyveo-emerald)}
+.sv-sim-phone-head strong{font-size:12px;overflow-wrap:anywhere}
+.sv-sim-phone-body{padding-top:13px}
+.sv-sim-phone-body h4{font-size:13px;margin:8px 0;line-height:1.35}
+.sv-sim-phone-body p{font-size:12px;line-height:1.45;color:var(--secondary);overflow-wrap:anywhere}
+.sv-sim-event{font-size:12px;display:flex;gap:10px;padding:7px 0}
+.sv-sim-event small{color:var(--seyveo-emerald)}
+@media(max-width:370px){.sv-sim-phones{grid-template-columns:1fr}}
