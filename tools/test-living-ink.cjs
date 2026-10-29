@@ -122,7 +122,7 @@ const legacyBusinessLogic=read('assets/business-map.js');
 const businessConversation=read('assets/business-conversation.js');
 assert.match(html,/id="businessMapDialog"[^>]*hidden inert[^>]*style="display:none!important"/,'Retired business questionnaire is never visible');
 assert.match(html,/id="openBusinessMap"[^>]*hidden aria-hidden="true"/,'Retired Management entry remains hidden');
-assert.match(html,/data-clean-section="profile"[^>]*hidden aria-hidden="true"/,'Retired duplicate profile entry remains hidden');
+assert.doesNotMatch(html,/data-clean-section="profile"/,'Retired duplicate profile entry stays removed from Management');
 assert.match(legacyBusinessLogic,/function start\(options=\{\}\)\{[\s\S]*?return false;\s*\}/,'Old questionnaire cannot open through navigation');
 assert.match(html,/function homeBusinessAdvice\(\)\{[\s\S]*?return window\.SEYVEO_CONNECTION_COACH\?\.homeSuggestion\?\.\(\)\|\|null;/,'Home has no prompts pointing to retired questionnaire');
 assert.doesNotMatch(businessConversation,/oneAction\('map'/,'The chat never offers a dead business-map action');
