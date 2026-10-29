@@ -10,6 +10,7 @@
  * Client-side owner navigation is only UX, never an authorization decision.
  */
 import {prepareEmployeeInviteDelivery} from './employee-invite-delivery.mjs';
+import {createEmployeeQrInviteLink} from '../auth/employee-qr-invite.mjs';
 
 const ORG=/^[A-Za-z0-9_-]{1,96}$/;
 const LOGIN=/^[a-z][a-z0-9_-]{2,31}$/;
@@ -64,27 +65,10 @@ export function createHttpsOwnerInviteClient({
      typeof getSession!=='function'||typeof fetchImpl!=='function'||
      typeof now!=='function')
     throw new TypeError('Trusted owner invite client dependencies required.');
-  // A bad link base must fail at configuration time, not after receiving
-  // a single-use secret from the trusted issuing backend.
-  const validation=prepareEmployeeInviteDelivery({
-    inviteLinkBase,
-    serverResponse:null,
-    now
+  // Validate the exact future verified App Link before fetching secrets.
+  createEmployeeQrInviteLink({
+    inviteLinkBase,invitationCode:'A'.repeat(43)
   });
-  // prepareEmployeeInviteDelivery returns generic unavailable for null
-  // responses; use a deliberately synthetic local value to validate base.
-  const checked=prepareEmployeeInviteDelivery({
-    inviteLinkBase,
-    serverResponse:{
-      code:'A'.repeat(43),
-      invitation:{
-        id:'check',employeeLogin:'check',
-        expiresAt:new Date(now()+60_000).toISOString()
-      }
-    },now
-  });
-  if(validation.status!=='unavailable'||checked.status!=='ready')
-    throw new TypeError('Trusted invite app-link base is required.');
 
   const endpoint=origin+'/v1/organizations/'+organizationId+'/invitations';
 
