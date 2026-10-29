@@ -2,6 +2,28 @@
 
 **Non-production only.** This Node.js 22+ loopback-only API demonstrates password sessions, tenant authorization and document transitions, with optional encrypted snapshot persistence. It remains a single-process training tool, not a production database or real secure service. It is **not** a secure production EDMS or certified ЭДО. No real personal, corporate or confidential documents should be used.
 
+## Mobile sync: separate, experimental client logic
+
+The new `mobile-sync-core.mjs` is a transport-independent event synchronizer
+for future iOS/Android code; it does not connect a phone to the server.
+It accepts a trusted identity provider, a secure request adapter, user-scoped
+nonsecret cursor persistence and an idempotent event handler.
+
+On a session change, revoked access, failed delivery, or invalid event, it
+refuses to report a successful synchronization. Confidential document content
+is never part of event notifications. Account secrets must be stored using
+platform-secure storage, not by this module. The production transport must
+use authenticated HTTPS and separate trusted user sessions.
+
+Check local client logic with:
+
+```sh
+node --test server/secure-documents/mobile-sync-core.test.mjs
+```
+
+Do **not** expose the loopback developer server to the internet to test two
+phones. Real-device tests require a separately secured backend and identity.
+
 ## Implemented
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
