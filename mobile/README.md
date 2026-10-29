@@ -1,3 +1,57 @@
+## SEYVEO native identity · OAuth authorization-code + PKCE (contract only)
+
+This directory now contains a **provider-independent, tested authorization
+preflight** under `src/auth/`, not a login UI or a real authenticated user
+session. There are **no configured identity-provider keys, tenant accounts,
+domain-based App Links, OAuth client registrations or real tokens**.
+
+- `native-pkce-core.mjs` holds a single short-lived authorization attempt,
+  generates a fresh 32-byte state, PKCE verifier and OpenID nonce with an
+  injected cryptographic RNG, and computes the S256 challenge. The browser
+  URL requests `response_type=code` only; no implicit token response and no
+  client secret. A new attempt cancels the old one.
+- Callback parsing requires the **exact configured app-claimed HTTPS callback
+  URL**, matching state and the expected authorization-server issuer
+  (`iss`, per RFC 9207), exactly one authorization code, no fragments,
+  token parameters, duplicate parameters, or unrecognized fields. Matching
+  callbacks are consumed once and expire after five minutes. The code and
+  verifier are released **only to trusted native exchange code**, never as
+  a proof of successful login.
+- `nativePkceEntropy.ts` supplies native entropy and SHA-256 via the already
+  installed `expo-crypto` package. It does not launch a browser, exchange
+  codes, persist session tokens or contact a network service.
+- `tests/native-pkce-core.test.mjs` uses synthetic OAuth responses and Node
+  CSPRNG/hash implementations. It does **not** confirm real browser redirects
+  or Android/iOS App Link entitlements.
+
+Before enabling login, select a supported identity provider and register a
+**public native OAuth client** with exact iOS Universal Link and Android
+verified App Link redirect; prove the domain association files and app signing
+keys on real devices. The chosen provider must support the authorization-code
+flow with PKCE S256, OpenID identity validation, and an issuer identification
+response. Use Expo AuthSession / a reviewed provider SDK to launch the
+**system authentication browser** (never an embedded WebView). A reviewed
+native adapter must POST the one-use code and verifier to the configured HTTPS
+token endpoint, validate ID token/nonce and access-token issuer/audience,
+securely store credentials in native device storage, and handle logout,
+refresh token rotation, revocation, errors and offline login states. The
+SEYVEO Business backend must continue verifying access tokens and current
+organization membership independently; employers never gain personal
+SEYVEO One access.
+
+```sh
+node --test tests/native-pkce-core.test.mjs
+```
+
+References: [RFC 8252](https://www.rfc-editor.org/rfc/rfc8252),
+[RFC 9700](https://www.rfc-editor.org/rfc/rfc9700),
+[Expo SDK 58 Crypto](https://docs.expo.dev/versions/v58.0.0/sdk/crypto/),
+[Expo AuthSession](https://docs.expo.dev/versions/latest/sdk/auth-session/).
+
+**Not production:** no phone can sign in using these sources yet. Do not use
+real passwords, user accounts or confidential documents in the current demo.
+
+
 # SEYVEO Mobile · M1 (настоящий iOS / Android)
 
 **20.10.2026 — первая изолированная нативная основа, без изменения утверждённой Главной, плазмы и дока.**
