@@ -2,6 +2,7 @@ import React,{useEffect,useState} from 'react';
 import {loadRiseAnswers,saveRiseAnswer} from './riseRepository';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
 import {nextStep} from './journey.mjs';
+import {plan} from './plan.mjs';
 
 export function RiseJourneyCard(){
  const [answers,setAnswers]=useState<Record<string,string>>({});
@@ -19,6 +20,7 @@ export function RiseJourneyCard(){
  return <View style={styles.card}>
   <Text style={styles.heading}>SEYVEO RISE · МОЙ ПУТЬ</Text>
   <Text style={styles.question}>{step.title}</Text>
+  {step.key==='plan'?plan.map(([key,title],i)=><Text key={key} style={styles.note}>{i+1}. {title}</Text>):null}
   {status==='unavailable'?<Text style={styles.note}>Защищённое хранилище недоступно. Ответ не сохранён.</Text>:null}
   {step.key!=='plan'?<>
    <TextInput accessibilityLabel={step.title} placeholder="Ваш ответ" placeholderTextColor="#a9bbaf"
