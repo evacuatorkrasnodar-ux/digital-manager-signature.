@@ -209,6 +209,10 @@ function draw(){
 function mount(parent){
  if(!parent)return false;
  if(host&&host.parentNode)host.remove();
+ // The current app preview determines the initial document inbox, not any
+ // previous unverified role toggled inside this training screen.
+ role=window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
+ selected='';listFilter='active';returnDraft={id:'',text:''};info='';
  host=$('div','svdf-root');parent.append(host);draw();return true;
 }
 function unmount(){host=null;}
