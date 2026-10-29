@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
 import {SeyveoActionButton} from './SeyveoActionButton';
+import {iconAccents} from '../theme/iconAccents';
 
 export type ChatNotice={id:string;sender:string;channel:'work'|'family';message:string};
 type Props={notice:ChatNotice;draftSuggestion?:string;onSend?:(id:string,text:string)=>Promise<boolean>;onOpenChat?:()=>void;onDismiss?:()=>void;demo?:boolean};
@@ -18,7 +19,7 @@ export function HomeChatCard({notice,draftSuggestion,onSend,onOpenChat,onDismiss
   finally{setBusy(false)}
  };
  return <View style={s.card}>
-  <Text style={s.overline}>{notice.channel==='family'?'СЕМЕЙНЫЙ ЧАТ':'РАБОЧИЙ ЧАТ'} {demo?'· ДЕМО':''}</Text>
+  <View style={s.headingRow}><Text style={[s.symbol,{color:notice.channel==='family'?iconAccents.family:iconAccents.chat}]}>{notice.channel==='family'?'♡':'✉'}</Text><Text style={s.overline}>{notice.channel==='family'?'СЕМЕЙНЫЙ ЧАТ':'РАБОЧИЙ ЧАТ'} {demo?'· ДЕМО':''}</Text></View>
   <Text style={s.name}>{notice.sender}</Text>
   <Text style={s.message}>{notice.message}</Text>
   {mode==='choose'?<View style={s.row}>
@@ -39,6 +40,7 @@ export function HomeChatCard({notice,draftSuggestion,onSend,onOpenChat,onDismiss
  </View>;
 }
 const s=StyleSheet.create({
+ headingRow:{flexDirection:'row',alignItems:'center',gap:10},symbol:{fontSize:22,fontWeight:'300'},
  card:{backgroundColor:'#091e18',borderColor:'#2a5344',borderWidth:1,borderRadius:26,padding:18,marginTop:12},
  overline:{color:'#8be3b2',fontSize:11,letterSpacing:1},name:{color:'#f4fff8',fontSize:17,marginTop:8},
  message:{color:'#d7e6dc',fontSize:14,marginTop:10,lineHeight:21},
