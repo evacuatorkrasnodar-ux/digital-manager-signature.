@@ -4,6 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { NativeWorkAccessStatus } from './src/work/NativeWorkAccessStatus';
+import { createWorkAccessController } from './src/work/work-access-controller.mjs';
 
 // This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
 // SEYVEO Home, plasma, dock, or the Black Velvet design reference.
@@ -13,9 +14,13 @@ const C = {
   text: '#f3faf7', secondary: '#b0cfc5', accent: '#94e0c4'
 };
 
+// No real corporate session has been configured yet; never auto-open work.
+const workController=createWorkAccessController({refresh:async()=>({status:'unavailable',workspace:null})});
 function NativeFoundation() {
   const [state, setState] = useState<ScreenState>('checking');
   const [busy, setBusy] = useState(false);
+  const [work, setWork] = useState(workController.getState());
+  useEffect(()=>workController.subscribe(value=>setWork({...value})),[]);
 
   const refresh = useCallback(async () => {
     setState('checking');
@@ -97,7 +102,13 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
-          <NativeWorkAccessStatus />
+          <NativeWorkAccessStatus
+            state={work.status==='locked'?'unavailable':work.status}
+            organizationId={work.workspace?.organizationId}
+            role={work.workspace?.role}
+            onRefresh={()=>{void workController.refresh();}}
+            onLock={()=>{workController.lock();}}
+          />
           <Text style={styles.footnote}>
             Календарь, Блокнот, резервные копии и голос будут подключаться
             после проверки безопасности. Никакой отправки личных данных в облако.
