@@ -30,11 +30,25 @@ Sync safety note: a 401 or 403 permanently stops the current development sync in
 
 - Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
 - Passwords supplied via environment variables; scrypt-derived password hashes and random 30-minute bearer sessions kept **in memory**. Login attempts are throttled.
+- The training API can list and revoke **the current account's own device-labelled login sessions**; labels are unverified text, not hardware attestation. It never accepts a device ID, user ID, role or organization from a login claim. It cannot manage other users' sessions, and all sessions vanish on server restart.
 - Local API binds to **127.0.0.1**. CLI fails closed unless `SEYVEO_DEV_SERVER=1`, fails in `NODE_ENV=production`, and does not enable browser CORS. Browser `Origin` requests are rejected.
 - Only small **text bodies** (up to 8000 characters). AES-256-GCM protects document text in memory. **Optional** AES-256-GCM encrypted snapshots can save training documents, metadata and audit history to a local private file. Without an explicit file path, all documents disappear on restart. Sessions always expire on restart. No production backups or multi-process concurrency.
 - Each API route verifies session, current membership, tenant and per-document policy before returning data or changing a document status.
 - Statuses distinguish reading, acknowledging, approving, returning and revoking; the **development** audit history is kept with the encrypted snapshot if enabled. This is not a trustworthy/legal audit trail and cannot detect rollback to an older valid snapshot.
 - No connection to the existing GitHub Pages demo, SEYVEO One, external operators or real employees. The inbox/outbox endpoints operate between two local test sessions only.
+
+## Experimental per-device sessions (same computer only)
+
+Every successful `POST /v1/sessions` accepts optional `deviceLabel` (a short, display-only string, for example `"Elena Android — test"`) and returns a server-generated `session.id` along with the existing bearer token. The label **does not** prove the device's identity; do not use real names, phone information or passwords in test labels.
+
+An authenticated caller can inspect **only their own** sessions with `GET /v1/sessions`. The response lists non-secret IDs, labels, created/expiry timestamps and `current`, but never bearer tokens. `DELETE /v1/sessions/:id` revokes one of the caller's own sessions, and `DELETE /v1/sessions/current` logs out the current session. Tokens revoked in this single Node process immediately fail authorization; other users' sessions cannot be listed or revoked by guessed IDs. Each account may have up to five concurrent test sessions; a fresh login is possible after one is removed or expires.
+
+These sessions and test identities are **memory-only**. They reset when the local process restarts; there is no real device enrollment, strong identity provider, MFA, distributed revocation, or remote delivery. This API must never be exposed to an external network to test two phones. A separate HTTPS-backed production architecture and independent security review are required before remote devices, real staff accounts, or confidential documents.
+
+Run the isolated regression test:
+```sh
+node --test server/secure-documents/device-sessions-http.test.mjs
+```
 
 ## Tests
 
