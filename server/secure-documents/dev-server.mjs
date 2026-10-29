@@ -388,6 +388,23 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         }
         fail(405,'Метод не поддерживается.');
       }
+      // Authenticated local work-space bootstrap. Never accept actor/tenant
+      // IDs from query parameters or reveal other members.
+      if (req.method === 'GET' && path === '/v1/workspace') {
+        if(requestUrl.search)fail(400,'Неожиданные параметры.');
+        send(res,200,{
+          personalUnaffected:true,
+          work:{
+            organizationId:context.membership.organizationId,
+            userId:context.actor.userId,
+            role:context.membership.role,
+            status:'active'
+          },
+          serverVerified:true,
+          trainingOnly:true
+        });
+        return;
+      }
       if (req.method === 'GET' && path === '/v1/organizations') {
         send(res, 200, { organizations:[{ id:context.membership.organizationId, role:context.membership.role }] });
         return;
