@@ -26,5 +26,5 @@ assert.match(business,/#tasksPage \.svcp-tasks-back\{display:inline-flex;align-i
 assert.doesNotMatch(business,/\.svcp-tasks-back-arrow/,'Retired compact-only arrow removed');
 assert.match(script,/\$\('unifiedTasksBack'\)\?\.addEventListener\('click'/,'Back behavior unchanged');
 assert.match(html,/assets\/personal-tasks\.css\?v=23/,'New original-header stylesheet cache version');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=66/,'Back control stylesheet refreshed');
+assert.match(html,/assets\/seyveo-business-command\.css\?v=67/,'Back control stylesheet refreshed');
 console.log('PASS Tasks header: previous original two-level appearance and working back navigation are restored.');
