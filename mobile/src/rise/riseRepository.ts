@@ -37,3 +37,21 @@ export async function setRiseProgress(id:string,done:boolean){
   else await db.runAsync('DELETE FROM rise_progress WHERE id = ?',id);
  }finally{await db.closeAsync()}
 }
+
+export type RiseCost={id:number;name:string;amount:number};
+export async function loadRiseCosts():Promise<RiseCost[]>{
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_costs (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, amount INTEGER NOT NULL)');
+  return await db.getAllAsync<RiseCost>('SELECT id,name,amount FROM rise_costs ORDER BY id');
+ }finally{await db.closeAsync()}
+}
+export async function addRiseCost(name:string,amount:number){
+ if(!name.trim()||name.length>120||!Number.isSafeInteger(amount)||amount<0||amount>10000000000)
+  throw new TypeError('Invalid cost');
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_costs (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, amount INTEGER NOT NULL)');
+  await db.runAsync('INSERT INTO rise_costs(name,amount) VALUES (?,?)',name.trim(),amount);
+ }finally{await db.closeAsync()}
+}
