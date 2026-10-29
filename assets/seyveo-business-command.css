@@ -114,7 +114,7 @@
 #tasksPage #unifiedBusinessTasksHost{min-width:0;padding:0 2px 4px;border:0;border-radius:0;background:transparent;box-shadow:none}
 #tasksPage #unifiedBusinessTasksHost #svcpTasks{min-width:0}
 #tasksPage #unifiedBusinessTasksHost .svcp-task-list{min-height:38px;gap:0}
-#tasksPage #unifiedBusinessTasksHost .svcp-task{min-height:64px}
+#tasksPage #unifiedBusinessTasksHost .svcp-task{min-height:60px}
 #tasksPage #unifiedBusinessTasksHost .svcp-task input[type=checkbox]{min-width:20px;min-height:20px;accent-color:var(--seyveo-emerald)}
 #tasksPage #unifiedBusinessTasksHost .svcp-status{margin:12px 0 4px}
 #tasksPage #unifiedBusinessTasksHost .svcp-task input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
@@ -328,12 +328,12 @@
 #tasksPage .svcp-tasks-back:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:4px}
 #tasksPage .svcp-tasks-back span{font-size:12px}
 #tasksPage #svcpTaskList{display:block}
-#tasksPage #svcpTaskList .svcp-task-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 0 4px}
+#tasksPage #svcpTaskList .svcp-task-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 2px}
 #tasksPage #svcpTaskList .svcp-task-section-head strong{font-size:14px;font-weight:580;color:var(--text)}
 #tasksPage #svcpTaskList .svcp-task-section-head small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums}
 #tasksPage #svcpTaskList .svcp-task-active{display:grid;gap:0}
 #tasksPage #svcpTaskList .svcp-task-zero{font-size:12px;line-height:1.55;padding:8px 0;color:var(--secondary);margin:0}
-#tasksPage #svcpTaskList .svcp-task{min-height:67px;gap:10px;align-items:center;display:flex;padding:11px 0}
+#tasksPage #svcpTaskList .svcp-task{min-height:60px;gap:10px;align-items:center;display:flex;padding:7px 0}
 #tasksPage #svcpTaskList .svcp-task input[type=checkbox]{width:20px;height:20px;min-width:20px;min-height:20px;flex:none;accent-color:var(--seyveo-emerald)}
 #tasksPage #svcpTaskList .svcp-task-copy{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 #tasksPage #svcpTaskList .svcp-task-title{display:block;font-size:13px;line-height:1.42}
@@ -343,7 +343,7 @@
 #tasksPage #svcpTaskList .svcp-task-discuss{color:var(--text);font-weight:560}
 #tasksPage #svcpTaskList .svcp-task-actions .svcp-ghost{color:var(--secondary);font-weight:400}
 #tasksPage #svcpTaskList .svcp-task-actions button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#tasksPage #svcpTaskList .svcp-task-history{border-top:1px solid var(--soft-line);margin:9px 0 0;padding:2px 0 0}
+#tasksPage #svcpTaskList .svcp-task-history{border-top:1px solid var(--soft-line);margin:5px 0 0;padding:2px 0 0}
 #tasksPage #svcpTaskList .svcp-task-history>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 1px;min-height:44px}
 #tasksPage #svcpTaskList .svcp-task-history>summary::-webkit-details-marker{display:none}
 #tasksPage #svcpTaskList .svcp-task-history>summary strong{font-size:13px;font-weight:550;color:var(--text)}
@@ -798,23 +798,43 @@
    layout just because the fourth, employee-only tab is hidden. */
 #tasksPage #unifiedTasksTabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 #tasksPage #unifiedTasksTabs[data-manager="true"]{
- grid-template-columns:repeat(3,minmax(0,1fr))!important
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ margin-bottom:12px;border-radius:17px
 }
+/* The manager and calendar share one compact, legible navigation pattern.
+   Keep the emerald calendar symbol even when another destination is active. */
+#tasksPage #unifiedTasksTabs button,#managerCalendarTabs button{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ min-height:52px;gap:3px;padding:5px 2px;line-height:1.15;white-space:nowrap
+}
+#tasksPage #unifiedTasksTabs button .sv-mini-nav-icon,#managerCalendarTabs button .sv-mini-nav-icon{
+ display:block;font-size:19px;font-weight:400;line-height:1;color:inherit
+}
+#tasksPage #unifiedTasksTabs [data-unified-tasks-tab="calendar"] .sv-mini-nav-icon,
+#managerCalendarTabs [data-manager-calendar-tab="calendar"] .sv-mini-nav-icon{color:#55dca6}
+#tasksPage #unifiedTasksTabs [data-unified-tasks-tab="calendar"],
+#managerCalendarTabs [data-manager-calendar-tab="calendar"]{color:var(--text)}
+#managerCalendarTabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#tasksPage #unifiedTasksTabs button::after,#managerCalendarTabs button::after{content:none!important}
 #tasksPage #unifiedTasksTabs button[hidden]{display:none!important}
 #tasksPage #unifiedTasksTabs:has(button:nth-child(2)[hidden]):has(button:nth-child(3)[hidden]){
  grid-template-columns:minmax(0,1fr)!important
 }
 #tasksPage #unifiedTasksTabs[hidden],#tasksPage .tasks-heading .manage-caption[hidden],
 #tasksPage .svcp-manager-signal[hidden]{display:none!important}
-#tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:17px}
+#tasksPage[data-work-view="business"]{padding-top:4px}
+#tasksPage[data-work-view="business"] .tasks-heading{margin:0 0 10px}
+#tasksPage[data-work-view="business"] .svcp-tasks-back{
+ min-height:32px;margin:0 0 5px;padding:2px 2px;font-size:11.5px
+}
 #tasksPage[data-work-view="business"] .tasks-heading h1{
- margin:6px 0 8px;font-size:clamp(23px,5.8vw,30px);
- line-height:1.16;font-weight:580;letter-spacing:-.04em;
+ margin:0 0 5px;font-size:clamp(22px,5.4vw,26px);
+ line-height:1.16;font-weight:580;letter-spacing:-.035em;
  text-wrap:balance;overflow-wrap:normal
 }
 #tasksPage .svcp-manager-signal{
  display:flex;align-items:center;gap:8px;margin:0;
- color:var(--secondary);font-size:11.5px;line-height:1.45;font-weight:460
+ color:var(--secondary);font-size:11px;line-height:1.32;font-weight:460
 }
 #tasksPage .svcp-manager-signal-mark{
  display:grid;place-items:center;flex:none;width:17px;height:17px;
@@ -824,18 +844,21 @@
  color:var(--seyveo-emerald)
 }
 #tasksPage .svcp-manager-actions{overflow:hidden;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
- border-radius:19px;background:var(--card);margin:0 0 17px}
-#tasksPage .svcp-manager-row{display:flex;align-items:center;width:100%;min-height:57px;gap:10px;padding:8px 11px;
+ border-radius:17px;background:var(--card);margin:0 0 10px}
+#tasksPage .svcp-manager-row{display:flex;align-items:center;width:100%;min-height:52px;gap:9px;padding:6px 10px;
  border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
 #tasksPage .svcp-manager-row:last-child{border-bottom:0}
 #tasksPage .svcp-manager-row:active{background:var(--seyveo-hdr-active)}
-#tasksPage .svcp-manager-art{display:grid;place-items:center;flex:none;width:35px;height:35px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;
+#tasksPage .svcp-manager-art{display:grid;place-items:center;flex:none;width:33px;height:33px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:11px;
  background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald)}
-#tasksPage .svcp-manager-art svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;fill:none}
-#tasksPage .svcp-manager-row-text{display:grid;flex:1;min-width:0;gap:3px}
+#tasksPage .svcp-manager-art svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;fill:none}
+#tasksPage .svcp-manager-row-text{display:grid;flex:1;min-width:0;gap:2px}
 #tasksPage .svcp-manager-row-text strong{font-size:13.5px;font-weight:580;letter-spacing:-.015em}
-#tasksPage .svcp-manager-row-text small{font-size:11.3px;color:var(--secondary);line-height:1.32}
+#tasksPage .svcp-manager-row-text small{
+ display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:11px;color:var(--secondary);line-height:1.25
+}
 #tasksPage .svcp-manager-chevron{flex:none;color:var(--secondary);font-size:22px;font-weight:300;transition:transform .16s}
 #tasksPage .svcp-manager-row:focus-visible,#tasksPage .svcp-manager-staff summary:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
@@ -843,15 +866,18 @@
  margin:0;border:0;border-radius:0;background:transparent;overflow:hidden
 }
 #tasksPage .svcp-manager-staff>summary{
- display:flex;align-items:center;gap:10px;min-height:57px;padding:8px 11px;
+ display:flex;align-items:center;gap:9px;min-height:52px;padding:6px 10px;
  cursor:pointer;list-style:none;border:0;background:transparent
 }
 #tasksPage .svcp-manager-staff>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-manager-staff>summary:active{background:var(--seyveo-hdr-active)}
 #tasksPage .svcp-manager-staff-symbol{border-color:var(--seyveo-hdr-outline,var(--soft-line))}
-#tasksPage .svcp-manager-staff>summary>span:nth-child(2){display:grid;gap:3px;flex:1;min-width:0}
+#tasksPage .svcp-manager-staff>summary>span:nth-child(2){display:grid;gap:2px;flex:1;min-width:0}
 #tasksPage .svcp-manager-staff>summary strong{font-size:13.5px;color:var(--text);font-weight:580}
-#tasksPage .svcp-manager-staff>summary small{font-size:11.3px;line-height:1.32;color:var(--secondary)}
+#tasksPage .svcp-manager-staff>summary small{
+ display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:11px;line-height:1.25;color:var(--secondary)
+}
 #tasksPage .svcp-manager-staff[open]>summary{border-bottom:1px solid var(--soft-line)}
 #tasksPage .svcp-manager-staff[open]>summary .svcp-manager-chevron{transform:rotate(90deg)}
 #tasksPage .svcp-manager-people-content{padding:0 10px 12px;border-top:1px solid var(--soft-line)}
@@ -863,7 +889,7 @@
 #tasksPage #unifiedTasksTeamBoard #unifiedTasksChatHost{margin-bottom:19px}
 #picturePage .svcp-pulse-return-note{font-size:11px;color:var(--secondary);margin:8px 2px 13px}
 @media(max-width:360px){
- #tasksPage .svcp-manager-row{padding:9px 10px}
+ #tasksPage .svcp-manager-row{padding:6px 9px}
 }
 
 /* Manager-people workspace: reparented from Management with the original staff listeners. */
