@@ -1584,7 +1584,7 @@ function renderTasks(){
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
  const heading=el('div','svcp-task-section-head');
- heading.append(el('strong',null,'Поручения'),el('small',null,String(open.length)));
+ heading.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
@@ -1619,7 +1619,7 @@ function renderTasks(){
   if(key)openSeen.add(key);
   activeBox.append(taskRow(task,index));
  }
- if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Поручений пока нет.'));
+ if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Новых поручений нет.'));
  list.append(activeBox);
  if(dups.length){
   const info=el('div','svcp-duplicate-summary');
