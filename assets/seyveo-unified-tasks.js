@@ -56,7 +56,6 @@
  const businessTab=page.querySelector('[data-unified-tasks-tab="business"]');
  const employeeTab=page.querySelector('[data-unified-tasks-tab="employee"]');
  const managerLabel=page.querySelector('.svcp-manager-kicker');
- const largeNote=$('svcpLargeCompanyNotice');
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
  const isEmployee=()=>previewMode==='employee';
  const isManager=()=>['rise','autonom','large'].includes(previewMode);
@@ -72,7 +71,6 @@
   if(employeeTab)employeeTab.hidden=!isEmployee();
   if(managerLabel)managerLabel.textContent=previewMode==='large'?'КРУПНАЯ КОМПАНИЯ · ДЕМО':
    (previewMode==='rise'?'RISE':'AUTONOM')+' · SEYVEO · ДЕМО';
-  if(largeNote)largeNote.hidden=previewMode!=='large';
   if(picker)picker.value=previewMode;
   if(previewNotice)previewNotice.textContent=isEmployee()
    ?'Пример Елены: её смена, поручения и рабочие чаты. Данные на одном устройстве.'
