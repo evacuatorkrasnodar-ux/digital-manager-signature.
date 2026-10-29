@@ -219,6 +219,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function workActive(){return !real&&shown.kind==='work'}
  function updateWork(){
   const active=workActive();workDetails.hidden=!active;
+  sayviAction.hidden=active;
   workSayvi.hidden=!active||workMode!=='choose';
   workOwn.hidden=!active||workMode!=='choose';
   workBack.hidden=!active||workMode==='choose';
@@ -368,6 +369,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
  open.setAttribute('aria-label','Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
+ const sayviAction=polymer('✧ Сэйви',()=>{
+  if(mailActive()){mailStep='edit';updateMail();return}
+  if(documentActive()){documentStep='review';updateDocument();return}
+  explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
+ });
  const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
@@ -404,7 +410,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
- controls.append(workSayvi,workOwn,workSend,workBack,execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
+ controls.append(sayviAction,workSayvi,workOwn,workSend,workBack,execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
