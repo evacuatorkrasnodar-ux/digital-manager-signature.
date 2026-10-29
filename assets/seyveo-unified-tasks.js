@@ -49,8 +49,10 @@
  const MODES=['one','rise','autonom','large','employee'];
  let previewMode='autonom';
  try{const stored=localStorage.getItem(MODE_KEY);if(MODES.includes(stored))previewMode=stored}catch{}
- let exitTarget='home',pending=null,lastWorkView='personal';
- const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal');
+ let exitTarget='home',pending=null,lastWorkView='personal',managerCalendarContext=false;
+ const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal'),
+  managerCalendarTabs=$('managerCalendarTabs'),
+  calendarTab=page.querySelector('[data-unified-tasks-tab="calendar"]');
  const businessTab=page.querySelector('[data-unified-tasks-tab="business"]');
  const employeeTab=page.querySelector('[data-unified-tasks-tab="employee"]');
  const managerLabel=page.querySelector('.svcp-manager-kicker');
@@ -61,6 +63,12 @@
  function updatePulseAccess(){
   // UI preview only. Real access will require verified roles and server authorization.
   if(businessTab)businessTab.hidden=!isManager();
+  if(calendarTab)calendarTab.hidden=!isManager();
+  if(taskTabs)taskTabs.dataset.manager=String(isManager());
+  if(managerCalendarContext&&!isManager()){
+   managerCalendarContext=false;
+   if(managerCalendarTabs)managerCalendarTabs.hidden=true;
+  }
   if(employeeTab)employeeTab.hidden=!isEmployee();
   if(managerLabel)managerLabel.textContent=previewMode==='large'?'КРУПНАЯ КОМПАНИЯ · ДЕМО':
    (previewMode==='rise'?'RISE':'AUTONOM')+' · SEYVEO · ДЕМО';
@@ -469,7 +477,7 @@
   if(title)title.textContent=chosen==='employee'?'Моя работа':
    chosen==='business'?'Кабинет руководителя':'Дела';
   page.dataset.workView=chosen;
-  if(taskTabs)taskTabs.hidden=chosen==='business';
+  if(taskTabs)taskTabs.hidden=false;
   if(managerSignal)managerSignal.hidden=chosen!=='business';
   const caption=page.querySelector('.tasks-heading .manage-caption');
   if(caption){
@@ -491,6 +499,17 @@
   page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
    button.setAttribute('aria-pressed',String(button.dataset.unifiedTasksTab===chosen)));
   syncBack();
+ }
+ function openManagerCalendar(){
+  if(!isManager())return;
+  if(page.dataset.workChatOpen==='true')closeWorkChat({restoreFocus:false});
+  managerCalendarContext=true;
+  if(managerCalendarTabs)managerCalendarTabs.hidden=false;
+  // Reuse the ONE existing Calendar page, never clone it into a work panel.
+  // A preview-role check is still required; native server roles come later.
+  if(location.hash!=='#calendar')location.hash='#calendar';
+  window.dispatchEvent(new CustomEvent('seyveo:calendar-manager-context',
+   {detail:{active:true}}));
  }
  function showChat(roomId,viewpoint,filter){
   if(isEmployee()){
@@ -540,8 +559,17 @@
  }
  page.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>
   button.addEventListener('click',()=>{
-   pending=null;select(button.dataset.unifiedTasksTab);
+   pending=null;
+   if(button.dataset.unifiedTasksTab==='calendar'){openManagerCalendar();return}
+   select(button.dataset.unifiedTasksTab);
   }));
+ managerCalendarTabs?.addEventListener('click',event=>{
+  const tab=event.target.closest('[data-manager-calendar-tab]');
+  if(!tab||!managerCalendarContext||!isManager())return;
+  if(tab.dataset.managerCalendarTab==='calendar')return;
+  // Keep the back destination and task/chat state intact across pages.
+  navigate(tab.dataset.managerCalendarTab==='business'?'team':'personal');
+ });
  // Shortcut tiles use existing task/chat/camera and inline results; no duplicate UIs.
  workDashboard?.addEventListener('click',event=>{
   const button=event.target.closest('[data-svcp-work-action]');
@@ -625,6 +653,10 @@
   openPersonal();
  });
  window.addEventListener('hashchange',()=>{
+  if(location.hash!=='#calendar'){
+   managerCalendarContext=false;
+   if(managerCalendarTabs)managerCalendarTabs.hidden=true;
+  }
   if(location.hash==='#tasks')routePending();
   else{
    closeWorkChat({restoreFocus:false});
