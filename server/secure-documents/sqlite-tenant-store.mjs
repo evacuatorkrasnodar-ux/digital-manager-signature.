@@ -125,6 +125,31 @@ export function openDevTenantStore({filePath, masterKey}={}){
       db.prepare("INSERT INTO memberships VALUES(?,?,'owner','active')").run(organizationId,ownerUserId);
     });
   }
+  // Startup-only bootstrap of two fictional demo identities.
+  // Refuse to overwrite an existing membership, particularly a revoked one.
+  function ensureDemoTenant({organizationId,ownerUserId,employeeUserId}){
+    if(!idOk(organizationId)||!idOk(ownerUserId)||!idOk(employeeUserId)||
+       ownerUserId===employeeUserId)throw new Error('Invalid demo bootstrap identities.');
+    return tx(()=>{
+      const exists=db.prepare('SELECT id FROM organizations WHERE id=?').get(organizationId);
+      if(!exists){
+        db.prepare('INSERT INTO organizations VALUES(?,?)').run(organizationId,new Date().toISOString());
+        db.prepare("INSERT INTO memberships VALUES(?,?,'owner','active')").run(organizationId,ownerUserId);
+        db.prepare("INSERT INTO memberships VALUES(?,?,'employee','active')").run(organizationId,employeeUserId);
+        return;
+      }
+      const owner=db.prepare('SELECT role,status FROM memberships WHERE organization_id=? AND user_id=?')
+        .get(organizationId,ownerUserId);
+      const employee=db.prepare('SELECT role,status FROM memberships WHERE organization_id=? AND user_id=?')
+        .get(organizationId,employeeUserId);
+      if(owner?.role!=='owner'||owner.status!=='active'||
+         employee?.role!=='employee'||employee.status!=='active')
+        throw new Error('Existing developer tenant is not compatible with demo credentials.');
+    });
+  }
+  function getMembership({actor,organizationId}){
+    return membership(actor,organizationId);
+  }
   function addMember({actor,organizationId,userId,role}){
     if(!idOk(userId)||!ROLES.has(role)||role==='owner')denied();
     if(membership(actor,organizationId).role!=='owner')denied();
@@ -150,6 +175,8 @@ export function openDevTenantStore({filePath, masterKey}={}){
     const id=randomUUID(),at=new Date().toISOString();
     const encrypted=sealed(contentKey,organizationId,id,{title,body});
     return tx(()=>{
+      const count=db.prepare('SELECT count(*) AS total FROM documents WHERE organization_id=?').get(organizationId);
+      if(count.total>=100)throw new Error('Development document limit reached.');
       db.prepare('INSERT INTO documents VALUES(?,?,?,?,?,?,?,?,?,?,?)')
         .run(id,organizationId,actor.userId,recipientUserId,type,'sent',encrypted.iv,
           encrypted.tag,encrypted.body,at,at);
@@ -165,10 +192,12 @@ export function openDevTenantStore({filePath, masterKey}={}){
   function listDocuments({actor,organizationId}){
     const m=membership(actor,organizationId);
     if(m.role==='owner'||m.role==='admin'){
-      return db.prepare('SELECT * FROM documents WHERE organization_id=? ORDER BY created_at DESC').all(organizationId).map(publicRow);
+      return db.prepare('SELECT * FROM documents WHERE organization_id=? ORDER BY created_at DESC').all(organizationId)
+        .map(d=>({...publicRow(d),title:opened(contentKey,d).title}));
     }
     return db.prepare('SELECT * FROM documents WHERE organization_id=? AND (creator_user_id=? OR recipient_user_id=?) ORDER BY created_at DESC')
-      .all(organizationId,actor.userId,actor.userId).map(publicRow);
+      .all(organizationId,actor.userId,actor.userId)
+      .map(d=>({...publicRow(d),title:opened(contentKey,d).title}));
   }
   function transition({actor,organizationId,documentId,action}){
     return tx(()=>{
@@ -188,6 +217,6 @@ export function openDevTenantStore({filePath, masterKey}={}){
     readAccess(actor,organizationId,documentId);
     return verifyAudit(documentId);
   }
-  return Object.freeze({bootstrapOrganization,addMember,revokeMember,createDocument,
+  return Object.freeze({bootstrapOrganization,ensureDemoTenant,getMembership,addMember,revokeMember,createDocument,
     getDocument,listDocuments,transition,getAudit,close:()=>db.close()});
 }
