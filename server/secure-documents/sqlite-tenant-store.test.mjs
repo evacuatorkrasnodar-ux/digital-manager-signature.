@@ -1,0 +1,52 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {randomBytes} from 'node:crypto';
+import {openDevTenantStore} from './sqlite-tenant-store.mjs';
+
+test('SEYVEO developer database: tenant boundaries, transitions, encryption and restart',t=>{
+ const dir=mkdtempSync(join(tmpdir(),'seyveo-tenant-test-'));
+ t.after(()=>rmSync(dir,{recursive:true,force:true}));
+ const filePath=join(dir,'docs.sqlite'),masterKey=randomBytes(32);
+ let store=openDevTenantStore({filePath,masterKey});
+ t.after(()=>{try{store.close()}catch{}});
+ const owner={userId:'ownerA'},otherOwner={userId:'ownerB'},elena={userId:'elena'},anna={userId:'anna'},outsider={userId:'outsider'};
+ store.bootstrapOrganization({organizationId:'companyA',ownerUserId:owner.userId});
+ store.bootstrapOrganization({organizationId:'companyB',ownerUserId:otherOwner.userId});
+ store.addMember({actor:owner,organizationId:'companyA',userId:elena.userId,role:'employee'});
+ store.addMember({actor:owner,organizationId:'companyA',userId:anna.userId,role:'employee'});
+ assert.throws(()=>store.addMember({actor:elena,organizationId:'companyA',userId:outsider.userId,role:'employee'}));
+ assert.throws(()=>store.addMember({actor:owner,organizationId:'companyB',userId:'worker',role:'employee'}));
+ const created=store.createDocument({actor:owner,organizationId:'companyA',recipientUserId:'elena',type:'acknowledgement',title:'Секретный учебный приказ',body:'Учебное содержимое не должно попасть в SQLite открытым текстом'});
+ assert.equal(created.status,'sent');
+ assert.equal(store.getDocument({actor:elena,organizationId:'companyA',documentId:created.id}).title,'Секретный учебный приказ');
+ assert.throws(()=>store.getDocument({actor:anna,organizationId:'companyA',documentId:created.id}));
+ assert.throws(()=>store.getDocument({actor:otherOwner,organizationId:'companyB',documentId:created.id}));
+ assert.throws(()=>store.getDocument({actor:owner,organizationId:'companyB',documentId:created.id}));
+ assert.deepEqual(store.listDocuments({actor:anna,organizationId:'companyA'}),[]);
+ assert.equal(store.listDocuments({actor:elena,organizationId:'companyA'}).length,1);
+ assert.equal(store.listDocuments({actor:otherOwner,organizationId:'companyB'}).length,0);
+ assert.throws(()=>store.transition({actor:owner,organizationId:'companyA',documentId:created.id,action:'acknowledge'}));
+ assert.equal(store.transition({actor:elena,organizationId:'companyA',documentId:created.id,action:'read'}).status,'read');
+ assert.equal(store.transition({actor:elena,organizationId:'companyA',documentId:created.id,action:'acknowledge'}).status,'acknowledged');
+ assert.throws(()=>store.transition({actor:elena,organizationId:'companyA',documentId:created.id,action:'acknowledge'}));
+ assert.deepEqual(store.getAudit({actor:owner,organizationId:'companyA',documentId:created.id}).map(x=>x.action),['created','read','acknowledge']);
+ assert.throws(()=>store.getAudit({actor:anna,organizationId:'companyA',documentId:created.id}));
+ store.close();
+ let raw=readFileSync(filePath);
+ assert.equal(raw.includes(Buffer.from('Секретный учебный приказ')),false);
+ assert.equal(raw.includes(Buffer.from('Учебное содержимое')),false);
+ assert.throws(()=>openDevTenantStore({filePath,masterKey:randomBytes(32)}));
+ store=openDevTenantStore({filePath,masterKey});
+ assert.equal(store.getDocument({actor:elena,organizationId:'companyA',documentId:created.id}).status,'acknowledged');
+ store.revokeMember({actor:owner,organizationId:'companyA',userId:'elena'});
+ assert.throws(()=>store.getDocument({actor:elena,organizationId:'companyA',documentId:created.id}));
+ assert.equal(store.listDocuments({actor:owner,organizationId:'companyA'}).length,1);
+});
+
+test('reject invalid database path and key',()=>{
+ assert.throws(()=>openDevTenantStore({filePath:'demo.sqlite',masterKey:randomBytes(32)}));
+ assert.throws(()=>openDevTenantStore({filePath:'/tmp/test.sqlite',masterKey:randomBytes(10)}));
+});
