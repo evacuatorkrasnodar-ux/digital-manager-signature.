@@ -14,6 +14,7 @@ on:
     paths:
       - 'index.html'
       - 'assets/**'
+      - 'mobile/**'
       - 'scripts/check-entrypoint-assets.mjs'
       - '.github/workflows/safe-cleanup.yml'
   workflow_dispatch:
@@ -44,5 +45,6 @@ jobs:
       - name: Validate native RISE JavaScript modules
         run: |
           for file in mobile/src/rise/*.mjs; do node --check "$file"; done
-      - name: Run native RISE logic tests
-        run: node --test mobile/tests/rise-*.test.mjs
+      - name: Run all mobile unit tests
+        working-directory: mobile
+        run: npm test
