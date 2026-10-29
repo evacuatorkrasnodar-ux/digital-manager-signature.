@@ -13,13 +13,18 @@ test('remove complex manual lyrics imports and leave simple main music actions',
  assert.match(page,/id="sayviMusicImport"/);
  assert.match(page,/id="sayviMusicSourcesToggle"/);
  assert.match(page,/id="sayviMusicFavorite"/);
- assert.match(html,/seyveo-music\.css\?v=51/);
- assert.match(html,/seyveo-music\.js\?v=32/);
+ assert.match(html,/seyveo-music\.css\?v=52/);
+ assert.match(html,/seyveo-music\.js\?v=33/);
 });
-test('whole favorite button is compact, star centered without SVG transform',()=>{
- assert.match(css,/#sayviMusicPage .sv-music-favorite\{[^}]*width:38px;height:38px;min-width:38px;min-height:38px/);
- assert.match(css,/#sayviMusicPage .sv-music-favorite-star\{[^}]*width:36px;height:36px;overflow:visible;transform:none/);
- assert.match(css,/#sayviMusicPage>header\.sv-music-head\{[^}]*grid-template-columns:minmax\(0,1fr\) 40px auto!important/);
+test('Walk of Fame jewel sits before the artist, not in the header',()=>{
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite\{[^}]*width:40px;height:40px;min-width:40px;min-height:40px/);
+ assert.match(css,/#sayviMusicPage \.sv-music-favorite-star\{[^}]*width:29px;height:29px;overflow:visible;transform:none/);
+ assert.match(css,/#sayviMusicPage>header\.sv-music-head\{[^}]*grid-template-columns:minmax\(0,1fr\) auto!important/);
+ const page=html.slice(html.indexOf('<main id="sayviMusicPage"'),html.indexOf('</main>',html.indexOf('<main id="sayviMusicPage"')));
+ assert.match(page,/<div class="sv-music-artist-row"[^>]*>[\s\S]*?id="sayviMusicFavorite"[\s\S]*?id="sayviMusicArtist"/);
+ assert.ok(page.indexOf('id="sayviMusicTrack"')<page.indexOf('id="sayviMusicFavorite"'));
+ assert.ok(page.indexOf('</header>')<page.indexOf('id="sayviMusicFavorite"'));
+ assert.match(css,/html\.sv-music-screen #sayviMusicPage \.sv-music-artist-row\{[^}]*grid-column:1;grid-row:3/);
  assert.match(css,/:root\[data-theme=light\] #sayviMusicPage \.sv-music-favorite\{[^}]*background:#253039/);
  assert.match(css,/#sayviMusicPage \.sv-music-favorite-shape\{[^}]*stroke:url\(#svMusicHallGold\)/);
  assert.match(html,/id="sayviMusicFavorite"[^>]*aria-pressed="false"/);
@@ -35,6 +40,9 @@ test('original music playback, favorites, dock and track choices stay wired',()=
  assert.match(js,/function switchTrack\(/);
  assert.match(js,/function updatePlay\(\)/);
  assert.match(js,/function updateTime\(\)/);
+ assert.match(js,/favoriteButton\.classList\.add\('sv-music-favorite--spark'\)/);
+ assert.match(css,/@keyframes sv-music-star-glint/);
+ assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
  assert.match(html,/id="sayviMusicAudio"/);
  assert.match(html,/id="sayviMusicPlay"/);
  assert.match(html,/id="sayviMusicSeek"/);
