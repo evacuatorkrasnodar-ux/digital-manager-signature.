@@ -1,19 +1,21 @@
 import React,{useEffect,useState} from 'react';
-import {loadRiseAnswers,saveRiseAnswer,loadRiseProgress,setRiseProgress,loadRiseCosts,addRiseCost,type RiseCost} from './riseRepository';
+import {loadRiseAnswers,saveRiseAnswer,loadRiseProgress,setRiseProgress,loadCategorizedRiseCosts,addCategorizedRiseCost} from './riseRepository';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
 import {nextStep} from './journey.mjs';
-import {plan,sumBudget} from './plan.mjs';
+import {plan} from './plan.mjs';
+import {financeSummary} from './finance.mjs';
 
 export function RiseJourneyCard(){
  const [answers,setAnswers]=useState<Record<string,string>>({});
  const [draft,setDraft]=useState('');
  const [completed,setCompleted]=useState<string[]>([]);
  const [savingStep,setSavingStep]=useState(false);
- const [costs,setCosts]=useState<RiseCost[]>([]);
+ const [costs,setCosts]=useState<{id:number;name:string;amount:number;kind:string}[]>([]);
+ const [costKind,setCostKind]=useState<'startup'|'monthly'>('startup');
  const [costName,setCostName]=useState('');
  const [costAmount,setCostAmount]=useState('');
  const [status,setStatus]=useState<'loading'|'ready'|'unavailable'>('loading');
- useEffect(()=>{let active=true;Promise.all([loadRiseAnswers(),loadRiseProgress(),loadRiseCosts()]).then(([data,progress,rows])=>{if(active){setAnswers(data);setCompleted(progress);setCosts(rows);setStatus('ready')}}).catch(()=>{if(active)setStatus('unavailable')});return()=>{active=false}},[]);
+ useEffect(()=>{let active=true;Promise.all([loadRiseAnswers(),loadRiseProgress(),loadCategorizedRiseCosts()]).then(([data,progress,rows])=>{if(active){setAnswers(data);setCompleted(progress);setCosts(rows);setStatus('ready')}}).catch(()=>{if(active)setStatus('unavailable')});return()=>{active=false}},[]);
  const step=nextStep(answers);
  const toggleStep=async(id:string)=>{
   if(status!=='ready'||savingStep)return;
@@ -27,7 +29,7 @@ export function RiseJourneyCard(){
   const amount=Number(costAmount);
   if(status!=='ready'||savingStep||!costName.trim()||!/^\d+$/.test(costAmount)||!Number.isSafeInteger(amount)||amount>1e10||costs.length>=100||!Number.isSafeInteger(costs.reduce((sum,row)=>sum+row.amount,amount)))return;
   setSavingStep(true);
-  try{await addRiseCost(costName.trim(),amount);setCosts(await loadRiseCosts());setCostName('');setCostAmount('')}
+  try{await addCategorizedRiseCost(costName.trim(),amount,costKind);setCosts(await loadRiseCosts());setCostName('');setCostAmount('')}
   catch{setStatus('unavailable')}
   finally{setSavingStep(false)}
  };
@@ -42,7 +44,7 @@ export function RiseJourneyCard(){
   <Text style={styles.heading}>SEYVEO RISE · МОЙ ПУТЬ</Text>
   <Text style={styles.question}>{step.title}</Text>
   {step.key==='plan'?plan.map(([key,title],i)=><Pressable key={key} accessibilityRole="checkbox" accessibilityState={{checked:completed.includes(key),disabled:status!=='ready'||savingStep}} disabled={status!=='ready'||savingStep} onPress={()=>{void toggleStep(key)}} style={styles.button}><Text style={styles.note}>{completed.includes(key)?'✓':'○'} {i+1}. {title}</Text></Pressable>):null}
-  {step.key==='plan'?<View><Text style={styles.question}>Черновая смета</Text><TextInput accessibilityLabel="Статья расхода" value={costName} onChangeText={setCostName} placeholder="Например, оборудование" placeholderTextColor="#a9bbaf" maxLength={120} style={styles.input}/><TextInput accessibilityLabel="Сумма расхода" value={costAmount} onChangeText={setCostAmount} keyboardType="number-pad" placeholder="Сумма в выбранной валюте" placeholderTextColor="#a9bbaf" style={styles.input}/><Pressable accessibilityRole="button" disabled={status!=='ready'||savingStep} onPress={()=>{void saveCost()}} style={styles.button}><Text style={styles.heading}>Добавить расход</Text></Pressable>{costs.map(row=><Text key={row.id} style={styles.note}>{row.name}: {row.amount}</Text>)}<Text style={styles.question}>Итого: {sumBudget(costs.map(row=>row.amount))}</Text><Text style={styles.note}>Все суммы в одной валюте. Цены задаёт пользователь.</Text></View>:null}
+  {step.key==='plan'?<View><Text style={styles.question}>Черновая смета</Text><Pressable accessibilityRole="button" onPress={()=>setCostKind(k=>k==='startup'?'monthly':'startup')} style={styles.button}><Text style={styles.heading}>Тип: {costKind==='startup'?'Разовый расход':'Ежемесячный расход'} · изменить</Text></Pressable><TextInput accessibilityLabel="Статья расхода" value={costName} onChangeText={setCostName} placeholder="Например, оборудование" placeholderTextColor="#a9bbaf" maxLength={120} style={styles.input}/><TextInput accessibilityLabel="Сумма расхода" value={costAmount} onChangeText={setCostAmount} keyboardType="number-pad" placeholder="Сумма в выбранной валюте" placeholderTextColor="#a9bbaf" style={styles.input}/><Pressable accessibilityRole="button" disabled={status!=='ready'||savingStep} onPress={()=>{void saveCost()}} style={styles.button}><Text style={styles.heading}>Добавить расход</Text></Pressable>{costs.map(row=><Text key={row.id} style={styles.note}>{row.name} ({row.kind==='monthly'?'ежемесячно':'разово'}): {row.amount}</Text>)}<Text style={styles.question}>Разовые: {financeSummary(costs).startup} · В месяц: {financeSummary(costs).monthly} · С запасом на 3 месяца: {financeSummary(costs).total}</Text><Text style={styles.note}>Все суммы в одной валюте. Цены задаёт пользователь.</Text></View>:null}
   {status==='unavailable'?<Text style={styles.note}>Защищённое хранилище недоступно. Ответ не сохранён.</Text>:null}
   {step.key!=='plan'?<>
    <TextInput accessibilityLabel={step.title} placeholder="Ваш ответ" placeholderTextColor="#a9bbaf"
