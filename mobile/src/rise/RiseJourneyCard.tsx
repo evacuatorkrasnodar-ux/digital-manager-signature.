@@ -1,3 +1,34 @@
-import React from 'react';
-import {Text,View} from 'react-native';
-export function RiseJourneyCard(){return <View><Text>SEYVEO RISE · Мой путь</Text></View>}
+import React,{useState} from 'react';
+import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
+import {nextStep} from './journey.mjs';
+
+export function RiseJourneyCard(){
+ const [answers,setAnswers]=useState<Record<string,string>>({});
+ const [draft,setDraft]=useState('');
+ const step=nextStep(answers);
+ const advance=()=>{
+  if(step.key==='plan'||!draft.trim())return;
+  setAnswers(previous=>({...previous,[step.key]:draft.trim().slice(0,240)}));
+  setDraft('');
+ };
+ return <View style={styles.card}>
+  <Text style={styles.heading}>SEYVEO RISE · МОЙ ПУТЬ</Text>
+  <Text style={styles.question}>{step.title}</Text>
+  {step.key!=='plan'?<>
+   <TextInput accessibilityLabel={step.title} placeholder="Ваш ответ" placeholderTextColor="#a9bbaf"
+    value={draft} onChangeText={setDraft} maxLength={240} style={styles.input}/>
+   <Pressable accessibilityRole="button" onPress={advance} disabled={!draft.trim()} style={styles.button}>
+    <Text style={styles.heading}>Продолжить</Text>
+   </Pressable>
+  </>:null}
+  <Text style={styles.note}>Пробная версия: ответы остаются в памяти только до закрытия приложения.</Text>
+ </View>;
+}
+const styles=StyleSheet.create({
+ card:{marginTop:18,padding:20,borderRadius:20,backgroundColor:'#152623',borderWidth:1,borderColor:'#31564e'},
+ heading:{color:'#95d9bd',fontSize:12,letterSpacing:1},
+ question:{color:'#f3faf7',fontSize:18,marginTop:14},
+ input:{color:'#f3faf7',borderBottomWidth:1,borderBottomColor:'#527469',marginTop:15,padding:10},
+ button:{marginTop:14,padding:12},
+ note:{marginTop:12,color:'#abc7bc',fontSize:12,lineHeight:18}
+});
