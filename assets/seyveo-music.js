@@ -182,12 +182,12 @@ function renderLyrics(){
  activeLyricIndex=-1;lyricsList.replaceChildren();
  updateTranslationControl();
  if(lyricsFoot)lyricsFoot.textContent=currentLyrics.length?
-  'Строки из вашего .LRC · нажмите строку, чтобы перейти к этому моменту.' :
-  'Без текста .LRC синхронизация и перевод недоступны.';
+  'Ваш файл .LRC · нажмите строку, чтобы перейти к этому моменту.' :
+  'Ваш файл .LRC · остаётся только в текущем сеансе';
  if(!currentLyrics.length){
   const note=document.createElement('p');
   note.className='sv-music-lyrics-empty';
-  note.textContent='Добавьте файл .LRC с временными отметками. Если в нём есть перевод, покажем его под строкой.';
+  note.textContent='Добавьте файл .LRC — слова появятся в такт музыке. Если в файле есть перевод, покажем его под строками.';
   lyricsList.append(note);
   return;
  }
