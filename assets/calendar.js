@@ -149,7 +149,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  btn.append(text('span','cal-day-number',String(day.getDate())));
  const dots=text('span','cal-day-dots');
  if(holiday)dots.append(text('i','cal-dot-holiday'));
- if(calendarEvents.some(x=>x.date===key))dots.append(text('i',''));
+ if(calendarEvents.some(x=>x.date===key))dots.append(text('i','cal-dot-event'));
  if(personalTasks.some(x=>x.date===key&&!x.done))dots.append(text('i','cal-dot-task'));
  if(personal.length)dots.append(text('i','cal-dot-life'));
  btn.append(dots);return btn;
