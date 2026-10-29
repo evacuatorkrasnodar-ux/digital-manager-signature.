@@ -37,13 +37,13 @@ function render(){
  const phase=getPhase();
  const box=$('svSimTimeline');box.replaceChildren();
  getHistory().forEach((text,i)=>{const row=document.createElement('div');row.className='sv-sim-event';const number=document.createElement('small');number.textContent=String(i+1).padStart(2,'0');const body=document.createElement('span');body.textContent=text;row.append(number,body);box.append(row)});
- $('svSimState').textContent=phase===0?'Выберите филиал и Елену, затем создайте поручение.':phase===4?'Поручение завершено · учебный сценарий':steps[phase-1]+' · следующий шаг: '+steps[phase];
+ $('svSimState').textContent=task?.reviewStatus==='rework'?'Возвращено на доработку: откройте «Дела» Елены и отправьте исправленный отчёт.':phase===0?'Выберите филиал и Елену, затем создайте поручение.':phase===4?'Поручение завершено · учебный сценарий':steps[phase-1]+' · следующий шаг: '+steps[phase];
  const branch=task?.branch||$('svSimBranch').value,person=task?.assignee||$('svSimStaff').value;
  $('svSimBossBranch').textContent=branch;$('svSimBossPerson').textContent='Исполнитель: '+person;
  $('svSimWorkerName').textContent=person;$('svSimWorkerBranch').textContent=branch;
  $('svSimBossStatus').textContent=['Задание ещё не создано','Ожидает принятия','В работе','Результат ожидает проверки','Выполнено ✓'][phase];
  $('svSimWorkerStatus').textContent=task?.reviewStatus==='rework'?'Нужна доработка':(['Нет активного поручения','Новое поручение','Принято','Результат отправлен','Руководитель принял ✓'][phase]);
- for(const [id,allowed] of [['svSimCreate',phase===0],['svSimAccept',phase===1],['svSimSubmit',phase===2],['svSimApprove',phase===3]])$(id).disabled=!allowed;
+ for(const [id,allowed] of [['svSimCreate',phase===0],['svSimAccept',phase===1],['svSimSubmit',phase===2],['svSimApprove',phase===3]])$(id).disabled=!allowed||(task?.reviewStatus==='rework');
 }
 function write(next){
  const previous=getPhase();if(previous!==next-1)return;
