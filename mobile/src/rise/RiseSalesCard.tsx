@@ -26,6 +26,7 @@ export function RiseSalesCard({monthlyFixed=0}:{monthlyFixed?:number}){
   <Pressable accessibilityRole="button" disabled={!valid||busy||error} onPress={()=>{void save()}}><Text style={{color:'#95d9bd',padding:12}}>Сохранить продажу</Text></Pressable>
   <Text style={{color:'#fff'}}>Записей: {rows.length} · Выручка: {totals.revenue} · Переменные затраты: {totals.cost}</Text>
   <Text style={{color:'#fff'}}>Вклад в покрытие расходов: {progress.contribution} · Осталось покрыть: {progress.remaining}</Text>
+  <Text style={{color:'#abc7bc',fontSize:12}}>Расчёт по последним 500 сохранённым записям, без разделения по месяцам. Не является бухгалтерской отчётностью.</Text>
   {error?<Text style={{color:'#fff'}}>Ошибка защищённого хранилища</Text>:null}
  </View>;
 }
