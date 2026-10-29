@@ -50,3 +50,23 @@
  #sayviSurfacePage .svdf-role{font-size:12px}
  #sayviSurfacePage .svdf-create{padding:12px 13px}
 }
+
+/* Compact document queues and a real, explicit reason on returned items. */
+#sayviSurfacePage .svdf-list-filters{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;
+ padding:0 0 11px;margin:0 0 5px}
+#sayviSurfacePage .svdf-list-filters::-webkit-scrollbar{display:none}
+#sayviSurfacePage .svdf-list-filter{flex:none;min-height:36px;padding:7px 10px!important;
+ color:var(--secondary)!important;font-size:11.5px;border-radius:999px!important}
+#sayviSurfacePage .svdf-list-filter[aria-pressed="true"]{
+ color:var(--text)!important;background:var(--seyveo-hdr-active,var(--card2))!important;
+ box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line))}
+#sayviSurfacePage .svdf-return-editor{display:grid;gap:9px;max-width:100%;margin:14px 0;
+ padding:11px 0;border-top:1px solid var(--soft-line);border-bottom:1px solid var(--soft-line)}
+#sayviSurfacePage .svdf-return-editor strong{font-size:12px;font-weight:600}
+#sayviSurfacePage .svdf-return-input{width:100%;min-height:82px;max-height:160px;
+ padding:12px 13px;resize:vertical;border:1px solid var(--soft-line);border-radius:13px;
+ background:var(--card);color:var(--text);font:inherit;font-size:13px;line-height:1.5;
+ box-sizing:border-box}
+#sayviSurfacePage .svdf-return-input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#sayviSurfacePage .svdf-return-editor .svdf-actions{margin:0}
+#sayviSurfacePage .svdf-log li{overflow-wrap:anywhere}
