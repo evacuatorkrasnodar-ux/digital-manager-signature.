@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
-const [html,nav,calendar,calendarCss,employee]=await Promise.all([
+const [html,nav,calendar,calendarCss,employee,businessCss]=await Promise.all([
   read('index.html'),read('assets/seyveo-unified-tasks.js'),
   read('assets/calendar.js'),read('assets/calendar.css'),
-  read('assets/seyveo-employee-schedule.js')
+  read('assets/seyveo-employee-schedule.js'),read('assets/seyveo-business-command.css')
 ]);
 
 test('manager sees ordered three tabs with Calendar centered and director Cabinet renamed',()=>{
@@ -24,7 +24,6 @@ test('manager sees ordered three tabs with Calendar centered and director Cabine
   assert.match(nav,/if\(taskTabs\)taskTabs\.hidden=false/);
   assert.match(html,/class="sv-tab-icon sv-tab-icon-calendar"/);
   assert.match(html,/\.tasks-switch\[data-manager="true"\],#managerCalendarTabs\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
-  const businessCss=await read('assets/seyveo-business-command.css');
   assert.match(businessCss,/#tasksPage #unifiedTasksTabs\[data-manager="true"\]\{[\s\S]*?grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
   assert.doesNotMatch(businessCss,/#tasksPage #unifiedTasksTabs:has\(button\[hidden\]\)\{grid-template-columns:minmax\(0,1fr\)!important\}/);
   assert.doesNotMatch(businessCss,/#tasksPage #unifiedTasksTabs\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important\}/);
