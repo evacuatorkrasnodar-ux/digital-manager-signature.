@@ -22,4 +22,4 @@ jobs:
         with:
           node-version: '22'
       - name: Check document access rules and local API
-        run: node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs server/secure-documents/dev-store.test.mjs server/secure-documents/dev-restart.test.mjs
+        run: node --test server/document-authorization.test.mjs server/secure-documents/dev-server.test.mjs server/secure-documents/dev-store.test.mjs server/secure-documents/dev-restart.test.mjs server/secure-documents/sqlite-tenant-store.test.mjs
