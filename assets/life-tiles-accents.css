@@ -98,3 +98,37 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calen
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="play"] > svg.seyveo-youtube-white path{
  fill:#E5C0C7!important;
 }
+
+/* Responsive LIFE tiles: phone-first, comfortable touch targets.
+   Only sizing/flow here; existing backgrounds and dock stay untouched. */
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ gap:9px!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+ height:auto!important;min-height:96px!important;max-height:none!important;
+ padding:12px 11px!important;box-sizing:border-box!important;
+ overflow:visible!important;
+ grid-template-columns:24px minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;
+ gap:5px 10px!important;align-content:center!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span,
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small{
+ overflow:visible!important;overflow-wrap:break-word!important;
+ white-space:normal!important;
+}
+@media(max-width:700px){
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  min-height:104px!important;padding:12px 9px!important;
+  grid-template-columns:22px minmax(0,1fr)!important;gap:6px 8px!important;
+ }
+}
+@media(max-width:370px){
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:7px!important}
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  min-height:108px!important;padding:10px 7px!important;
+  grid-template-columns:20px minmax(0,1fr)!important;gap:5px 6px!important;
+ }
+}
