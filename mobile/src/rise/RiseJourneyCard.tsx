@@ -29,7 +29,7 @@ export function RiseJourneyCard(){
   const amount=Number(costAmount);
   if(status!=='ready'||savingStep||!costName.trim()||!/^\d+$/.test(costAmount)||!Number.isSafeInteger(amount)||amount>1e10||costs.length>=100||!Number.isSafeInteger(costs.reduce((sum,row)=>sum+row.amount,amount)))return;
   setSavingStep(true);
-  try{await addCategorizedRiseCost(costName.trim(),amount,costKind);setCosts(await loadRiseCosts());setCostName('');setCostAmount('')}
+  try{await addCategorizedRiseCost(costName.trim(),amount,costKind);setCosts(await loadCategorizedRiseCosts());setCostName('');setCostAmount('')}
   catch{setStatus('unavailable')}
   finally{setSavingStep(false)}
  };
