@@ -4,6 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { NativeWorkAccessStatus } from './src/work/NativeWorkAccessStatus';
+import { RiseJourneyCard } from './src/rise/RiseJourneyCard';
 import { createWorkAccessController } from './src/work/work-access-controller.mjs';
 
 // This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
@@ -102,6 +103,7 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
+          <RiseJourneyCard />
           <NativeWorkAccessStatus
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
             organizationId={work.workspace?.organizationId}
