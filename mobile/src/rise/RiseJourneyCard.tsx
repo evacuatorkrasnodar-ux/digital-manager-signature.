@@ -25,7 +25,7 @@ export function RiseJourneyCard(){
  };
  const saveCost=async()=>{
   const amount=Number(costAmount);
-  if(status!=='ready'||savingStep||!costName.trim()||!/^\d+$/.test(costAmount)||!Number.isSafeInteger(amount)||amount>1e10)return;
+  if(status!=='ready'||savingStep||!costName.trim()||!/^\d+$/.test(costAmount)||!Number.isSafeInteger(amount)||amount>1e10||costs.length>=100||!Number.isSafeInteger(costs.reduce((sum,row)=>sum+row.amount,amount)))return;
   setSavingStep(true);
   try{await addRiseCost(costName.trim(),amount);setCosts(await loadRiseCosts());setCostName('');setCostAmount('')}
   catch{setStatus('unavailable')}
