@@ -1,3 +1,49 @@
+## OAuth token exchange contract — no live credentials
+
+`src/auth/native-code-exchange.mjs` now describes the **next step after**
+`native-pkce-core.mjs` accepts the one-time callback. It is an isolated
+dependency-injected contract, **not a live login or an installed provider SDK**.
+
+A trusted native transport must send an HTTPS POST with
+`grant_type=authorization_code`, the returned one-use authorization code,
+the **exact registered redirect**, public `client_id`, and the private PKCE
+`code_verifier`. There is no client secret in the app. The adapter requests
+`redirect:'manual'`, `credentials:'omit'`, `cache:'no-store'`,
+checks endpoint origin and response content/type/size, refuses redirects,
+returns no raw network errors, and exchanges a grant at most once.
+
+Before any credentials can be saved, an externally supplied
+`verifyIdToken` callback **must cryptographically verify** the OIDC
+ID-token signature and key, issuer, audience, validity/expiration, and nonce.
+The contract **also checks** the returned verified claims against the
+expected issuer, native client ID and one-time nonce. A valid access-token
+response without a verified ID token **cannot authenticate a person**.
+
+`saveVerifiedSession` is deliberately unimplemented: a future mobile
+integration must use platform-secure storage with OS-specific lifecycle and
+logout handling. The adapter only returns `{status:'stored'}` after that
+trusted callback reports success; it never returns tokens for display or
+logs. Synthetic integration tests use fake credentials and callbacks;
+**they do not test cryptographic ID-token verification, real certificates,
+secure device storage, or actual HTTP redirects on iOS/Android**.
+
+```sh
+cd mobile
+node --test tests/native-code-exchange.test.mjs
+```
+
+Required before real phone sign-in: choose and configure a supported OIDC
+provider, register a public native OAuth client, set up HTTPS
+Universal/Verified App Links and domain association, integrate a vetted
+system-browser authentication library and OIDC/JWKS verifier, confirm native
+transport redirects cannot forward secrets, implement secure token storage
+and revocation/refresh rotation, and complete on-device acceptance testing.
+OAuth sign-in and backend tenant authorization are **different checks**;
+a successful login cannot make an employee a company owner.
+
+Standards: [RFC 9700](https://www.rfc-editor.org/rfc/rfc9700) and
+[Expo AuthSession](https://docs.expo.dev/versions/latest/sdk/auth-session/).
+
 ## SEYVEO native identity · OAuth authorization-code + PKCE (contract only)
 
 This directory now contains a **provider-independent, tested authorization
