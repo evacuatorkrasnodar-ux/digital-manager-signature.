@@ -83,8 +83,8 @@ test('today area reuses live assignments, completion history and active counts',
 });
 
 test('no old cached stylesheet/scripts and compact original manager CSS rules',()=>{
-  assert.match(html,/seyveo-business-command\.css\?v=61/);
-  assert.match(html,/seyveo-business-command\.js\?v=63/);
+  assert.match(html,/seyveo-business-command\.css\?v=62/);
+  assert.match(html,/seyveo-business-command\.js\?v=64/);
   assert.match(html,/seyveo-unified-tasks\.js\?v=34/);
   assert.match(css,/#tasksPage \.svcp-manager-row\{[^}]*min-height:57px/);
   assert.match(css,/#tasksPage \.svcp-manager-art\{[^}]*width:35px/);

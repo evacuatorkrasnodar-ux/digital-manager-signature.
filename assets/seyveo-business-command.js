@@ -329,6 +329,13 @@ function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
  const text=$('svcpChatInput')?.value.trim()||'';
  form.dataset.hasContent=String(!!(text||state.file||state.scanCode));
+ // A command is offered only while composing text to a specific employee.
+ // Do not show a second-row empty action, during message edits, or to Elena.
+ const task=$('svcpComposerDirectTask');
+ const ready=!!(privateAssignmentRecipient()&&text&&
+  !state.file&&!state.scanCode&&editingMessageIndex===null);
+ if(task)task.hidden=!ready;
+ form.classList.toggle('svcp-can-assign',ready);
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
@@ -696,13 +703,12 @@ function updatePerspective(){
  $('svcpRecognizeOpen').hidden=true; // Awards are offered contextually beside relevant messages.
  const directTask=$('svcpComposerDirectTask'),recipient=privateAssignmentRecipient();
  if(directTask){
-  directTask.hidden=!recipient;
   directTask.setAttribute('aria-label',recipient
    ?'Создать поручение для '+STAFF[recipient]+' из написанного текста'
    :'Поручить написанное сотруднику');
-  $('svcpChatForm')?.classList.toggle('svcp-can-assign',!!recipient);
  }
  $('svcpChatInput').placeholder='Сообщение…';
+ syncComposerActions();
  resizeWorkComposer();
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
 }
@@ -1502,6 +1508,7 @@ $('svcpComposerDirectTask')?.addEventListener('click',()=>{
   state.chat=updated;
   input.value='';
   closeComposerEmoji();clearReply();cancelTaskDraft();
+  syncComposerActions();resizeWorkComposer();
   renderChat();
   setStatus('Поручение для '+STAFF[person]+' сохранено в делах и переписке. Демо, без отправки на другой телефон.');
  }else{

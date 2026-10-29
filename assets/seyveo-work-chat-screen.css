@@ -256,7 +256,7 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 /* Approved SEYVEO: one compact pill, no stacked buttons or duplicated styles. */
 #svcpWorkChatScreen #svcpChatForm{
- display:grid!important;grid-template-columns:38px minmax(0,1fr) 42px!important;grid-template-rows:auto!important;
+ display:grid!important;grid-template-columns:38px minmax(0,1fr) 58px!important;grid-template-rows:auto!important;
  gap:6px!important;align-items:end!important;min-height:0!important;width:100%;
  padding:4px 8px 5px!important;
  margin:0!important;position:absolute!important;inset:auto 0 0 0!important;
@@ -314,7 +314,8 @@ html.svcp-work-chat-active footer.dock{display:none!important}
  color:var(--secondary)!important
 }
 #svcpWorkChatScreen #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}
-#svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
  width:42px!important;min-width:42px!important;height:46px!important;min-height:46px!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
@@ -324,13 +325,77 @@ html.svcp-work-chat-active footer.dock{display:none!important}
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  display:none!important;place-items:center!important;
- background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;color:var(--text)!important
+ width:58px!important;min-width:58px!important;height:46px!important;
+ border-radius:999px!important;
+ background:var(--seyveo-emerald-deep,var(--seyveo-hdr-active))!important;
+ color:var(--text)!important
 }
 #svcpWorkChatScreen #svcpChatForm[data-has-content="true"] #svcpVoiceRecord{display:none!important}
 #svcpWorkChatScreen #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
 #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8}
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{display:none!important}
-#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){grid-column:2 / -1!important;grid-row:2!important;justify-self:end}
+/* Inline manager-only command, NEVER a second row or a floating duplicate.
+   No task button in Elena's view, empty composer, or during editing. */
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
+ grid-template-columns:38px minmax(0,1fr) 87px 58px!important;
+ grid-template-rows:auto!important
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+ grid-column:3!important;grid-row:1!important;align-self:end!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;width:87px!important;min-width:0!important;max-width:87px!important;
+ min-height:44px!important;height:46px!important;margin:0!important;
+ padding:5px 7px!important;border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
+ border-radius:16px!important;background:var(--seyveo-hdr-active,var(--card2))!important;
+ color:var(--text)!important;font-size:11px!important;font-weight:590!important;
+ box-shadow:none!important;white-space:nowrap!important;touch-action:manipulation
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask svg{
+ display:block!important;flex:0 0 17px!important;width:17px!important;height:17px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
+ grid-column:4!important;grid-row:1!important;
+ width:58px!important;min-width:58px!important;border-radius:999px!important
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:focus-visible,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-send:focus-visible{
+ outline:2px solid var(--seyveo-emerald)!important;outline-offset:2px!important
+}
+/* 375px iPhone X: maintain a usable text field beside the actions. */
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
+  grid-template-columns:33px minmax(0,1fr) 72px 52px!important;gap:4px!important;
+  padding-inline:5px!important
+ }
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign #svcpAttachFile{
+  width:33px!important;min-width:33px!important
+ }
+ #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+  width:72px!important;max-width:72px!important;padding-inline:4px!important;
+  font-size:10px!important;gap:2px!important
+ }
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
+  width:52px!important;min-width:52px!important
+ }
+ #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask svg{
+  width:14px!important;height:14px!important;flex-basis:14px!important
+ }
+}
+/* Very narrow devices: recognizable check-list icon with a spoken label. */
+@media(max-width:340px){
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
+  grid-template-columns:32px minmax(0,1fr) 40px 52px!important
+ }
+ #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+  width:40px!important;max-width:40px!important;padding:0!important
+ }
+ #svcpWorkChatScreen #svcpComposerDirectTask span{display:none!important}
+ #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask svg{
+  width:21px!important;height:21px!important;flex-basis:21px!important
+ }
+}
 /* Voice note uses the composer strip, not an old modal/audio form. */
 #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
  display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;

@@ -1,0 +1,38 @@
+name: SEYVEO Work Chat · Composer Smoke
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-work-chat-screen.css'
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-business-command.css'
+      - 'scripts/work-chat-composer-smoke.test.mjs'
+      - '.github/workflows/seyveo-work-chat-composer.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/seyveo-work-chat-screen.css'
+      - 'assets/seyveo-business-command.js'
+      - 'assets/seyveo-business-command.css'
+      - 'scripts/work-chat-composer-smoke.test.mjs'
+      - '.github/workflows/seyveo-work-chat-composer.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  work-composer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm work chat logic and test JavaScript syntax
+        run: |
+          node --check assets/seyveo-business-command.js
+          node --check scripts/work-chat-composer-smoke.test.mjs
+      - name: Confirm task and send share a row and Sayvi guide still works
+        run: node --test scripts/work-chat-composer-smoke.test.mjs
