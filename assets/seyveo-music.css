@@ -806,35 +806,47 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 }
 #sayviMusicPage>header.sv-music-head .sv-music-lockup{grid-column:1;grid-row:1}
 #sayviMusicPage>header.sv-music-head .sv-music-minimize{grid-column:3;grid-row:1}
+/* SEYVEO Music favorite · Walk of Fame S, kept independent of staff awards. */
 #sayviMusicPage .sv-music-favorite{
  grid-column:2;grid-row:1;align-self:start;justify-self:center;
  display:grid;place-items:center;width:38px;height:38px;min-width:38px;min-height:38px;
- margin-top:5px;padding:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:50%;
- background:var(--seyveo-hdr-active,var(--card2));
- box-shadow:inset 0 1px 0 var(--seyveo-specular,rgba(255,255,255,.05));
- color:var(--text);font:inherit;line-height:1;cursor:pointer;transition:background .18s,box-shadow .18s
+ margin-top:5px;padding:0;border:1px solid rgba(232,189,104,.62);border-radius:50%;
+ background:#253039;
+ box-shadow:inset 0 1px 0 rgba(255,245,217,.09);
+ color:var(--text);font:inherit;line-height:1;cursor:pointer;transition:background .18s,box-shadow .18s,border-color .18s
 }
 #sayviMusicPage .sv-music-favorite[aria-pressed=true]{
- color:var(--text);background:var(--seyveo-hdr-active,var(--card2))
+ border-color:#f3d183;background:#30353a;
+ box-shadow:0 0 0 1px rgba(230,182,89,.12),inset 0 1px 0 rgba(255,245,217,.12)
 }
-/* In the light theme keep the requested white metal star legible. */
 :root[data-theme=light] #sayviMusicPage .sv-music-favorite{
- background:#28333b;border-color:rgba(40,51,59,.28);color:#fff
+ background:#253039;border-color:rgba(199,146,59,.8);color:#fff
 }
 :root[data-theme=light] #sayviMusicPage .sv-music-favorite[aria-pressed=true]{
- background:#28333b;color:#fff
+ background:#30353a;border-color:#c99849;color:#fff
 }
 #sayviMusicPage .sv-music-favorite:disabled{opacity:.9;cursor:default}
 #sayviMusicPage .sv-music-favorite-star{
- display:block;width:34px;height:34px;max-width:none;overflow:visible;transform:none;
- filter:drop-shadow(0 1px 2px rgba(0,0,0,.12))
+ display:block;width:36px;height:36px;overflow:visible;transform:none;
+ filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))
 }
-#sayviMusicPage .sv-music-favorite-shape{fill:rgba(255,255,255,.06);stroke:#ffffff;stroke-width:2.5;transition:fill .18s ease}
-#sayviMusicPage .sv-music-favorite-bevel{fill:none;stroke:rgba(255,255,255,.83);stroke-width:1.1}
-#sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-shape{fill:url(#svMusicStarMetal);stroke:#ffffff}
-#sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-bevel{stroke:rgba(49,58,67,.55)}
-#sayviMusicPage .sv-music-star-initial{fill:#1e2229;font-family:Georgia,serif;font-size:18px;font-weight:700;dominant-baseline:central;letter-spacing:0;paint-order:stroke;stroke:rgba(255,255,255,.12);stroke-width:.35px}
-#sayviMusicPage .sv-music-favorite[aria-pressed=false] .sv-music-star-initial{fill:#ffffff;stroke:none}
+#sayviMusicPage .sv-music-favorite-shape{
+ fill:url(#svMusicHallRose);stroke:url(#svMusicHallGold);stroke-width:2.7;
+ transition:filter .18s ease
+}
+#sayviMusicPage .sv-music-favorite-bevel{
+ fill:none;stroke:rgba(255,233,178,.36);stroke-width:.75
+}
+#sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-shape{
+ fill:url(#svMusicHallRose);stroke:url(#svMusicHallGold);
+ filter:brightness(1.12)
+}
+#sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-bevel{stroke:rgba(255,230,163,.58)}
+#sayviMusicPage .sv-music-star-initial{
+ fill:url(#svMusicHallGold);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+ font-size:20px;font-weight:750;dominant-baseline:central;letter-spacing:0;
+ paint-order:stroke;stroke:#633c18;stroke-width:.6px
+}
 #sayviMusicPage .sv-music-lyrics-toggle[aria-pressed=true]{
  color:var(--text);text-decoration-color:currentColor;font-weight:620
 }
