@@ -10,6 +10,7 @@ import { pathToFileURL } from 'node:url';
 import { createEncryptedDevStore } from './dev-store.mjs';
 import { openDevTenantStore } from './sqlite-tenant-store.mjs';
 import { projectDocumentMailbox } from './mailbox-view.mjs';
+import { mailboxTag, mailboxUnchanged } from './mailbox-tag.mjs';
 import {
   canCreateDocument, canReadDocument, canReadDocumentAudit,
   canTransitionDocument
@@ -78,14 +79,15 @@ async function readJson(req) {
     fail(400, 'Некорректный JSON.');
   }
 }
-function send(res, status, payload) {
+function send(res, status, payload, extraHeaders={}) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store, max-age=0',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'no-referrer',
-    'Content-Security-Policy': "default-src 'none'"
+    'Content-Security-Policy': "default-src 'none'",
+    ...extraHeaders
   });
   res.end(JSON.stringify(payload));
 }
@@ -238,7 +240,21 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
             documents:visible,actor:context.actor,membership:context.membership,
             organizationId:tenant,folder
           });
-          send(res,200,projected);return;
+          const etag=mailboxTag({
+            masterKey,actor:context.actor,organizationId:tenant,mailbox:projected
+          });
+          if(mailboxUnchanged(req.headers['if-none-match'],etag)){
+            res.writeHead(304,{
+              'ETag':etag,
+              'Cache-Control':'private, no-store, max-age=0',
+              'X-Content-Type-Options':'nosniff'
+            });
+            res.end();return;
+          }
+          send(res,200,projected,{
+            'ETag':etag,
+            'Cache-Control':'private, no-store, max-age=0'
+          });return;
         } catch {
           fail(503,'Входящие документы временно недоступны.');
         }
