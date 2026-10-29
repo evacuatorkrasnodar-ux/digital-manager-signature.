@@ -95,3 +95,20 @@ export async function saveRiseAvailableFunds(value:string):Promise<void>{
   await db.runAsync('INSERT OR REPLACE INTO rise_finance_settings(key,value) VALUES (?,?)','available',value);
  }finally{await db.closeAsync()}
 }
+
+export type RiseSale={id:number;revenue:number;cost:number};
+export async function loadRiseSales():Promise<RiseSale[]>{
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_sales (id INTEGER PRIMARY KEY AUTOINCREMENT, revenue INTEGER NOT NULL, cost INTEGER NOT NULL)');
+  return await db.getAllAsync<RiseSale>('SELECT id,revenue,cost FROM rise_sales ORDER BY id DESC LIMIT 500');
+ }finally{await db.closeAsync()}
+}
+export async function addRiseSale(revenue:number,cost:number):Promise<void>{
+ if(![revenue,cost].every(n=>Number.isSafeInteger(n)&&n>=0&&n<=1e10))throw new TypeError('Invalid sale');
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_sales (id INTEGER PRIMARY KEY AUTOINCREMENT, revenue INTEGER NOT NULL, cost INTEGER NOT NULL)');
+  await db.runAsync('INSERT INTO rise_sales(revenue,cost) VALUES (?,?)',revenue,cost);
+ }finally{await db.closeAsync()}
+}
