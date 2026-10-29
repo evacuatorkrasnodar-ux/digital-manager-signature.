@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { NativeWorkAccessStatus } from './src/work/NativeWorkAccessStatus';
 import { RiseJourneyCard } from './src/rise/RiseJourneyCard';
+import { HomeInsightCard } from './src/home/HomeInsightCard';
 import { createWorkAccessController } from './src/work/work-access-controller.mjs';
 
 // This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
@@ -20,6 +21,8 @@ const workController=createWorkAccessController({refresh:async()=>({status:'unav
 function NativeFoundation() {
   const [state, setState] = useState<ScreenState>('checking');
   const [busy, setBusy] = useState(false);
+  const [showInsight,setShowInsight]=useState(true);
+  const scrollRef=useRef<ScrollView>(null);
   const [work, setWork] = useState(workController.getState());
   useEffect(()=>workController.subscribe(value=>setWork({...value})),[]);
 
@@ -40,7 +43,7 @@ function NativeFoundation() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.content}>
         <Text style={styles.brand}>seyveo</Text>
         <Text style={styles.subtitle}>ai automation</Text>
         <View style={styles.section}>
@@ -103,6 +106,7 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
+          {state === 'ready' && showInsight ? <HomeInsightCard onExecute={()=>scrollRef.current?.scrollToEnd({animated:true})} onLater={()=>setShowInsight(false)} /> : null}
           {state === 'ready' ? <RiseJourneyCard /> : null}
           <NativeWorkAccessStatus
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
