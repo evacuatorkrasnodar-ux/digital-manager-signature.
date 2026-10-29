@@ -6,6 +6,7 @@ import { initializeVault, inspectVault, type VaultStatus } from './src/core/secu
 import { NativeWorkAccessStatus } from './src/work/NativeWorkAccessStatus';
 import { RiseJourneyCard } from './src/rise/RiseJourneyCard';
 import { HomeInsightCard } from './src/home/HomeInsightCard';
+import { HomeChatCard } from './src/home/HomeChatCard';
 import { createWorkAccessController } from './src/work/work-access-controller.mjs';
 
 // This is a separate native M1 diagnostic in the Black Velvet HDR-like palette — NOT a replacement for the approved
@@ -108,6 +109,7 @@ function NativeFoundation() {
             ) : null}
           </View>
           {state === 'ready' && showInsight ? <HomeInsightCard onExecute={()=>scrollRef.current?.scrollTo({y:riseY.current,animated:true})} onLater={()=>setShowInsight(false)} /> : null}
+          {state === 'ready' ? <HomeChatCard demo notice={{id:'demo-work-message',sender:'Елена',channel:'work',message:'Я закончила выкладку. Можете проверить?'}} draftSuggestion="Спасибо, Елена! Пришли, пожалуйста, фото выкладки." /> : null}
           {state === 'ready' ? <View onLayout={event=>{riseY.current=event.nativeEvent.layout.y}}><RiseJourneyCard /></View> : null}
           <NativeWorkAccessStatus
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
