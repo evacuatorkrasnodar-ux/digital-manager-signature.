@@ -624,10 +624,12 @@ html[data-theme=light].sv-music-screen #sayviMusicPage .sv-music-collection:not(
   line-height:1.28;
   -webkit-line-clamp:2;
  }
- html.sv-music-screen #sayviMusicPage .sv-music-artist{
+ html.sv-music-screen #sayviMusicPage .sv-music-artist-row{
   grid-column:1;grid-row:3;
   margin:6px 0 0;
-  text-align:left;
+  justify-content:flex-start;
+ }
+ html.sv-music-screen #sayviMusicPage .sv-music-artist{
   font-size:12px;
  }
  html.sv-music-screen #sayviMusicPage .sv-music-times{
@@ -801,17 +803,26 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  background:radial-gradient(ellipse at 50% 45%,rgba(208,178,141,.085),transparent 68%)
 }
 #sayviMusicPage>header.sv-music-head{
- grid-template-columns:minmax(0,1fr) 40px auto!important;
+ grid-template-columns:minmax(0,1fr) auto!important;
  align-items:start
 }
 #sayviMusicPage>header.sv-music-head .sv-music-lockup{grid-column:1;grid-row:1}
-#sayviMusicPage>header.sv-music-head .sv-music-minimize{grid-column:3;grid-row:1}
-/* SEYVEO Music favorite · Walk of Fame S, kept independent of staff awards. */
+#sayviMusicPage>header.sv-music-head .sv-music-minimize{grid-column:2;grid-row:1}
+/* Walk of Fame favorite lives beside the artist, not in the header.
+   The original SVG, gold S and saved-favorite behavior are untouched. */
+#sayviMusicPage .sv-music-artist-row{
+ display:flex;align-items:center;justify-content:center;gap:5px;
+ width:100%;max-width:100%;min-width:0;min-height:40px;margin:0 auto;
+}
+#sayviMusicPage .sv-music-artist-row .sv-music-artist{
+ min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ text-align:left;margin:0;
+}
 #sayviMusicPage .sv-music-favorite{
- grid-column:2;grid-row:1;align-self:start;justify-self:center;
- display:grid;place-items:center;width:38px;height:38px;min-width:38px;min-height:38px;
- margin-top:5px;padding:0;border:1px solid rgba(232,189,104,.62);border-radius:50%;
- background:#253039;
+ position:relative;isolation:isolate;flex:0 0 40px;
+ display:grid;place-items:center;width:40px;height:40px;min-width:40px;min-height:40px;
+ margin:0;padding:0;border:1px solid rgba(232,189,104,.62);border-radius:50%;
+ background:#253039;overflow:hidden;
  box-shadow:inset 0 1px 0 rgba(255,245,217,.09);
  color:var(--text);font:inherit;line-height:1;cursor:pointer;transition:background .18s,box-shadow .18s,border-color .18s
 }
@@ -827,7 +838,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 }
 #sayviMusicPage .sv-music-favorite:disabled{opacity:.9;cursor:default}
 #sayviMusicPage .sv-music-favorite-star{
- display:block;width:36px;height:36px;overflow:visible;transform:none;
+ display:block;width:29px;height:29px;overflow:visible;transform:none;
  filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))
 }
 #sayviMusicPage .sv-music-favorite-shape{
@@ -846,6 +857,33 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  fill:url(#svMusicHallGold);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;
  font-size:20px;font-weight:750;dominant-baseline:central;letter-spacing:0;
  paint-order:stroke;stroke:#633c18;stroke-width:.6px
+}
+/* One understated glint only when a track is added; no looping sparkle. */
+#sayviMusicPage .sv-music-favorite::after{
+ content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:50%;
+ background:linear-gradient(110deg,transparent 21%,rgba(255,235,172,.08) 35%,rgba(255,243,198,.75) 49%,transparent 69%);
+ opacity:0;transform:translateX(-135%);
+}
+#sayviMusicPage .sv-music-favorite--spark::after{
+ animation:sv-music-star-glint .74s cubic-bezier(.22,.64,.25,1) both
+}
+#sayviMusicPage .sv-music-favorite--spark .sv-music-favorite-star{
+ animation:sv-music-star-engrave .74s ease-out both
+}
+@keyframes sv-music-star-glint{
+ 0%{opacity:0;transform:translateX(-135%)}
+ 19%{opacity:.88}
+ 70%{opacity:.75}
+ 100%{opacity:0;transform:translateX(135%)}
+}
+@keyframes sv-music-star-engrave{
+ 0%{filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))}
+ 45%{filter:drop-shadow(0 0 4px rgba(250,211,124,.58))}
+ 100%{filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviMusicPage .sv-music-favorite--spark::after,
+ #sayviMusicPage .sv-music-favorite--spark .sv-music-favorite-star{animation:none}
 }
 #sayviMusicPage .sv-music-lyrics-toggle[aria-pressed=true]{
  color:var(--text);text-decoration-color:currentColor;font-weight:620
