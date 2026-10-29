@@ -143,7 +143,7 @@ export function openDevTenantStore({filePath, masterKey}={}){
       const employee=db.prepare('SELECT role,status FROM memberships WHERE organization_id=? AND user_id=?')
         .get(organizationId,employeeUserId);
       if(owner?.role!=='owner'||owner.status!=='active'||
-         employee?.role!=='employee'||employee.status!=='active')
+         employee?.role!=='employee')
         throw new Error('Existing developer tenant is not compatible with demo credentials.');
     });
   }
