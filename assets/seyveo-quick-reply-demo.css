@@ -1,0 +1,17 @@
+/* SEYVEO Feather · one quiet interactive demo message on Home.
+   No changes to the approved page background, orb or dock. */
+#seyveoQuickReplyDemo{box-sizing:border-box;width:min(100% - 28px,450px);margin:12px auto 20px;padding:17px;border:1px solid rgba(154,218,186,.26);border-radius:23px;background:rgba(14,30,25,.87);color:#eefbf2}
+#seyveoQuickReplyDemo[hidden],#seyveoQuickReplyDemo [hidden]{display:none!important}
+#seyveoQuickReplyDemo .sq-head{display:flex;gap:8px;align-items:center;color:#91d9b1;font-size:11px;letter-spacing:.06em}
+#seyveoQuickReplyDemo .sq-demo{margin-left:auto;opacity:.65;font-size:10px}
+#seyveoQuickReplyDemo .sq-title{font-size:16px;font-weight:600;margin:12px 0 8px}
+#seyveoQuickReplyDemo .sq-msg{font-size:14px;line-height:1.55;margin:0;color:#d9e7dc}
+#seyveoQuickReplyDemo .sq-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+#seyveoQuickReplyDemo button{min-height:44px;padding:9px 14px;border-radius:99px;border:1px solid rgba(170,224,190,.26);background:rgba(44,77,60,.25);color:#e2f3e7;font:inherit;font-size:13px;cursor:pointer}
+#seyveoQuickReplyDemo button.sq-sayvi{background:#e8fff1;color:#10251d;border-color:#baf7d5;font-weight:650}
+#seyveoQuickReplyDemo button:focus-visible,#seyveoQuickReplyDemo textarea:focus-visible{outline:2px solid #8fe3c3;outline-offset:2px}
+#seyveoQuickReplyDemo .sq-compose{margin-top:14px}
+#seyveoQuickReplyDemo .sq-compose label{display:block;color:#b2d8be;font-size:12px;margin-bottom:7px}
+#seyveoQuickReplyDemo textarea{box-sizing:border-box;width:100%;min-height:77px;resize:vertical;border-radius:13px;border:1px solid #416758;background:rgba(5,21,16,.7);color:#f4fff7;padding:12px;font:inherit;font-size:14px}
+#seyveoQuickReplyDemo .sq-hint{font-size:11px;color:#a9cbb5;line-height:1.5;margin:10px 0 0}
+@media(max-width:370px){#seyveoQuickReplyDemo{width:calc(100% - 20px);padding:14px}}
