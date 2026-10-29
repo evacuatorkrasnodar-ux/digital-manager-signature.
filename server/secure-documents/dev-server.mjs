@@ -182,13 +182,16 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
     documents=nextDocs;
     audit=nextAudit;
   };
-  const loginAllowed = () => {
+  const attemptAllowed = bucket => {
     const now = Date.now();
-    const current = attempts.get('loopback') || [];
+    const current = attempts.get(bucket) || [];
     const recent = current.filter(t => now - t < LOGIN_WINDOW_MS);
-    if (recent.length >= MAX_LOGIN_ATTEMPTS) fail(429, 'Слишком много попыток входа.');
-    recent.push(now); attempts.set('loopback', recent);
+    if (recent.length >= MAX_LOGIN_ATTEMPTS)
+      fail(429, 'Слишком много попыток входа или активации.');
+    recent.push(now); attempts.set(bucket, recent);
   };
+  const loginAllowed=()=>attemptAllowed('login');
+  const redeemAllowed=()=>attemptAllowed('redeem');
 
   const handler = async (req, res) => {
     try {
@@ -209,7 +212,13 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if (req.method === 'POST' && path === '/v1/sessions') {
         loginAllowed();
         const data = await readJson(req);
-        const account = users.get(data.login);
+        // Demo owner/Elena remain bootstrapped by environment variables.
+        // New fictional employees use an encrypted scrypt verifier stored
+        // alongside their tenant membership in the local SQLite experiment.
+        const account = users.get(data.login) ||
+          (sqlite ? sqlite.trainingOnboarding.getAccount({
+            organizationId,userId:data.login
+          }) : null);
         // Perform a comparable KDF even for unknown logins.
         const fakeSalt = Buffer.alloc(16);
         const dummy = { salt: fakeSalt, passwordHash: secureHash('invalid-dev-account', fakeSalt) };
@@ -251,10 +260,16 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       // No connection to emails, real employees, or external devices.
       if(path==='/v1/invitations/accept'){
         if(req.method!=='POST')fail(405,'Метод не поддерживается.');
-        if(sqlite||storage)fail(501,'Учебные приглашения доступны только без сохранения на диск.');
+        if(storage)fail(501,'Учебные приглашения недоступны при сохранении снимков.');
+        redeemAllowed();
         const data=await readJson(req);
         try{
-          const joined=invitations.redeem({code:data.code,password:data.password});
+          const joined=sqlite
+            ?sqlite.trainingOnboarding.redeemInvitation({
+              organizationId,code:data.code,password:data.password,
+              makeEmployeeAccount:(userId,password)=>newAccount(userId,'employee',password)
+            })
+            :invitations.redeem({code:data.code,password:data.password});
           send(res,201,joined);return;
         }catch(error){
           if(error?.message==='Too many training invitation attempts.')
@@ -314,13 +329,17 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if(invitationMatch){
         if(invitationMatch[1]!==context.membership.organizationId)fail(404,'Раздел не найден.');
         if(context.membership.role!=='owner')fail(403,'Доступ запрещён.');
-        if(sqlite||storage)fail(501,'Учебные приглашения доступны только без сохранения на диск.');
+        if(storage)fail(501,'Учебные приглашения недоступны при сохранении снимков.');
         if(!invitationMatch[2]&&req.method==='POST'){
           const data=await readAuthorizedJson();
           try{
-            const result=invitations.create({
-              actorUserId:context.actor.userId,employeeLogin:data.employeeLogin
-            });
+            const result=sqlite
+              ?sqlite.trainingOnboarding.createInvitation({
+                actor:context.actor,organizationId,employeeLogin:data.employeeLogin
+              })
+              :invitations.create({
+                actorUserId:context.actor.userId,employeeLogin:data.employeeLogin
+              });
             send(res,201,result);return;
           }catch(error){
             if(error?.message==='Too many pending training invitations.')
@@ -330,7 +349,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         }
         if(invitationMatch[2]&&req.method==='DELETE'){
           try{
-            invitations.cancel({
+            if(sqlite)sqlite.trainingOnboarding.cancelInvitation({
+              actor:context.actor,organizationId,invitationId:invitationMatch[2]
+            });
+            else invitations.cancel({
               actorUserId:context.actor.userId,invitationId:invitationMatch[2]
             });
             send(res,200,{ok:true});return;
@@ -342,14 +364,25 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if(memberMatch){
         if(memberMatch[1]!==context.membership.organizationId)fail(404,'Раздел не найден.');
         if(context.membership.role!=='owner')fail(403,'Доступ запрещён.');
-        if(sqlite||storage)fail(501,'Учебное управление сотрудниками доступно только без сохранения на диск.');
+        if(storage)fail(501,'Учебное управление сотрудниками недоступно при сохранении снимков.');
         if(!memberMatch[2]&&req.method==='GET'){
-          send(res,200,{members:invitations.members({actorUserId:context.actor.userId})});
+          const members=sqlite
+            ?sqlite.trainingOnboarding.listMembers({actor:context.actor,organizationId})
+            :invitations.members({actorUserId:context.actor.userId});
+          send(res,200,{members});
           return;
         }
         if(memberMatch[2]&&req.method==='DELETE'){
           try{
-            invitations.revoke({actorUserId:context.actor.userId,userId:memberMatch[2]});
+            if(sqlite){
+              sqlite.trainingOnboarding.revokeMember({
+                actor:context.actor,organizationId,userId:memberMatch[2]
+              });
+              for(const [digest,session] of sessions)
+                if(session.userId===memberMatch[2])sessions.delete(digest);
+            }else invitations.revoke({
+              actorUserId:context.actor.userId,userId:memberMatch[2]
+            });
             send(res,200,{ok:true});return;
           }catch{fail(404,'Учебный сотрудник не найден.');}
         }
