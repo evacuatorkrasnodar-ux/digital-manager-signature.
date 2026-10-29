@@ -1,12 +1,13 @@
 import React,{useState} from 'react';
 import {View,Text,Pressable,StyleSheet} from 'react-native';
 import {SeyveoActionButton} from './SeyveoActionButton';
+import {iconAccents} from '../theme/iconAccents';
 
 type Props={onExecute:()=>void;onLater:()=>void};
 export function HomeInsightCard({onExecute,onLater}:Props){
  const [expanded,setExpanded]=useState(false);
  return <View style={s.card}>
-  <Text style={s.eyebrow}>✦ СЭЙВИ ЗАМЕТИЛА</Text>
+  <Text style={s.eyebrow}><Text style={{color:iconAccents.assistant}}>✧ </Text>СЭЙВИ ЗАМЕТИЛА</Text>
   <Text style={s.title}>Пора проверить первые продажи</Text>
   <Text style={s.body}>В RISE можно записать заказ и увидеть, сколько ежемесячных расходов уже покрыто.</Text>
   {expanded?<Text style={s.detail}>Открой «Мой путь» и внеси выручку и затраты по заказу. Сэйви рассчитает вклад продажи в покрытие расходов. Данные берутся из твоих записей, без подключения кассы.</Text>:null}
