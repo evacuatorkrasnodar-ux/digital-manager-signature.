@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
     "check": "tsc --noEmit",
-    "test": "node --test tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs tests/native-pkce-core.test.mjs tests/native-code-exchange.test.mjs tests/employee-qr-invite.test.mjs tests/employee-invite-delivery.test.mjs tests/https-owner-invite-client.test.mjs"
+    "test": "node --test tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs tests/native-pkce-core.test.mjs tests/native-code-exchange.test.mjs tests/employee-qr-invite.test.mjs tests/employee-invite-delivery.test.mjs tests/https-owner-invite-client.test.mjs tests/native-browser-login.test.mjs"
   },
   "dependencies": {
     "expo": "~58.0.0",
@@ -18,6 +18,7 @@
     "expo-secure-store": "~58.0.2",
     "expo-sqlite": "~58.0.13",
     "expo-status-bar": "~58.0.3",
+    "expo-web-browser": "~58.0.7",
     "react": "19.3.0",
     "react-native": "0.88.1",
     "react-native-qrcode-svg": "6.3.24",

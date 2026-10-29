@@ -32,6 +32,7 @@ export interface ExchangeConfig {
   tokenEndpoint: string;
   redirectUri: string;
   clientId: string;
+  redirectMode?: 'claimed-https'|'private-use';
   fetchImpl: (url: string, options: {
     method: string;
     headers: Record<string,string>;

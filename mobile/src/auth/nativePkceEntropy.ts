@@ -13,6 +13,7 @@ export type NativeOAuthProvider = Readonly<{
   authorizationEndpoint: string;
   redirectUri: string;
   clientId: string;
+  redirectMode?: 'claimed-https'|'private-use';
 }>;
 
 export function createNativeLoginPreflight(provider: NativeOAuthProvider): NativePkceFlow {

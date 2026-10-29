@@ -1,3 +1,90 @@
+## Системный вход через OIDC: iPhone X и Android (пока без действующего провайдера)
+
+Для первой серверной интеграции SEYVEO выбран **Keycloak** как
+самостоятельно размещаемый OpenID Connect-провайдер.
+Это **архитектурный выбор для staging**, а не готовое развертывание,
+покупка VPS, регистрация клиентов или гарантия доступности в РФ.
+Существующие `seyveo.com` / `seyveo.ru` не используются как адреса
+провайдера без настройки DNS, TLS и договоров на хостинг.
+
+Добавлен `src/auth/ExpoNativeLogin.ts`: реальный системный браузер
+`expo-web-browser` (`openAuthSessionAsync` — iOS
+`ASWebAuthenticationSession` / Android Custom Tabs). Он использует
+существующие криптографические PKCE S256, одноразовые `state` и
+`nonce`, и принимает только точный callback с `iss` (RFC 9207).
+Он не возвращает код или токены в UI: после ответа вызывает только
+**доверенный `exchangeGrant`**. Статус «вошёл» возможен лишь после
+ответа `stored` от настоящей проверки подписи OIDC ID-токена и
+сохранения сеанса в защищённом хранилище.
+
+### Почему это важно для iPhone X
+
+Expo HTTPS Universal Link callback с `preferUniversalLinks` требует
+iOS 17.4+ и настроенные Associated Domains. iPhone X не поддерживает
+iOS 17.4. Поэтому по умолчанию для старых iPhone и Android предусмотрен
+**точный reverse-domain private-use redirect**:
+
+`com.seyveo.digitalmanager:/oauth2redirect`
+
+Эта схема добавлена в `mobile/app.json` наряду с прежней
+`seyveo`, не подменяя её. Редирект регистрируется в Keycloak
+**дословно, без wildcard**, только для публичного нативного клиента
+`seyveo-native`. Другие приложения потенциально способны
+перехватить private-use URI, поэтому PKCE, строгий `state`,
+`iss`, короткий срок и проверка ID-токена обязательны. На устройствах,
+где оба Verified App Links/Universal Links и доменные файлы
+действительно настроены, можно позже явно включить режим
+`claimed-https` с проверкой ОС на устройстве. Одной проверки строки
+в JS недостаточно.
+
+**Внимание:** компонент `ExpoNativeLogin.ts` ещё не встроен в
+диагностическую Главную и не содержит ключей провайдера, тестовых
+пользователей, адресов серверов или паролей. Внешний Keycloak-сервер
+сейчас не подключён. `createNativeCodeExchange` всё ещё требует
+настоящую криптографическую OIDC ID-token verification (через
+проверенный провайдерский SDK или JOSE) и `saveVerifiedSession`,
+который записывает токены только в Secure Store. Не делайте
+фиктивную callback-проверку `verified:true`.
+
+### Что администратор должен настроить отдельно
+
+1. Развернуть поддерживаемый Keycloak в HTTPS с управляемой БД,
+   резервированием, регулярными обновлениями и мониторингом; создать
+   realm `seyveo`, без тестовых пользователей и секретов в GitHub.
+2. Создать публичный OIDC client `seyveo-native` с Authorization
+   Code + PKCE S256, **без client secret**, запретив Implicit Flow,
+   Resource Owner Password Credentials grant и произвольные redirect.
+   Проверить по реальному OIDC metadata, что Authorization Response
+   содержит `iss` и метаданные объявляют
+   `authorization_response_iss_parameter_supported=true`.
+   **Если этого нет, существующий PKCE-контракт не будет принимать
+   ответы; нельзя просто отключить проверку.**
+3. Настроить self-registration и email verification через реальный
+   SMTP-провайдер (отдельные DNS/SPF/DKIM/DMARC, rate-limits,
+   password policy, recovery, защита от перебора и MFA).
+4. Для API отдельно проверить, что Keycloak может выдавать
+   нужный SEYVEO ресурсному серверу профиль OAuth JWT **RFC 9068**
+   (RS256, `typ=at+jwt`, нужные `aud`/`client_id`).
+   Обычный OIDC ID-токен **не подходит**. Если профиль несовместим,
+   понадобится поддерживаемая проверка opaque token / introspection
+   или иной reviewed validator; не ослаблять текущую проверку.
+5. Только после регистрации клиента и проверки работы с телефона
+   активировать `createExpoNativeLogin` в отдельном экране входа,
+   интегрировать реальный `exchangeGrant`, Secure Store,
+   обновление/отзыв токенов и логирование без токенов/QR.
+
+Проверки из `tests/native-browser-login.test.mjs` используют
+синтетический Keycloak-подобный адрес `.example`, подлинные
+одноразовые PKCE challenge и тестовые токены. **Они не подтверждают
+логин в реальном Keycloak, iOS 16/17 App Links, установленное APK/IPA
+или защиту Secure Store.** Для production требуются тесты на iPhone X
+и устройствах Android с установленной нативной сборкой.
+
+Справка: [Expo WebBrowser](https://docs.expo.dev/versions/latest/sdk/webbrowser/),
+[Keycloak administration](https://www.keycloak.org/docs/latest/server_admin/),
+[OAuth 2.0 for Native Apps RFC 8252](https://www.rfc-editor.org/rfc/rfc8252),
+[RFC 9207](https://www.rfc-editor.org/rfc/rfc9207).
+
 ## Кабинет руководителя — выдача и отзыв QR-приглашений (изолированный нативный модуль)
 
 Добавлены `src/business/DirectorEmployeeInvitationPanel.tsx` и

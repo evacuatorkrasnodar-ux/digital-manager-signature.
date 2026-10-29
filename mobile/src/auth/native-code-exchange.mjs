@@ -28,6 +28,13 @@ function trustedUrl(value){
     throw new TypeError('Canonical HTTPS OAuth configuration required.');
   return url;
 }
+function trustedNativeRedirect(value,redirectMode){
+  if(redirectMode==='claimed-https')return trustedUrl(value);
+  if(redirectMode!=='private-use'||
+     value!=='com.seyveo.digitalmanager:/oauth2redirect')
+    throw new TypeError('Registered private-use OAuth redirect required.');
+  return new URL(value);
+}
 const validToken=value=>typeof value==='string'&&TOKEN.test(value);
 const validText=value=>typeof value==='string'&&
   value.length>0&&value.length<=256&&!/[\x00-\x1f\x7f]/.test(value);
@@ -48,11 +55,12 @@ const validTime=value=>Number.isSafeInteger(value)&&value>0;
  */
 export function createNativeCodeExchange({
   issuer,tokenEndpoint,redirectUri,clientId,
+  redirectMode='claimed-https',
   fetchImpl,verifyIdToken,saveVerifiedSession,now=Date.now
 }={}){
   const iss=trustedUrl(issuer);
   const endpoint=trustedUrl(tokenEndpoint);
-  const redirect=trustedUrl(redirectUri);
+  const redirect=trustedNativeRedirect(redirectUri,redirectMode);
   if(iss.origin!==endpoint.origin||endpoint.pathname==='/'||
      redirect.pathname==='/'||typeof clientId!=='string'||
      !ID.test(clientId)||[fetchImpl,verifyIdToken,saveVerifiedSession,now]

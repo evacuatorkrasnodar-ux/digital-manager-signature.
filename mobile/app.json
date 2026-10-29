@@ -2,7 +2,7 @@
   "expo": {
     "name": "SEYVEO",
     "slug": "seyveo-mobile",
-    "scheme": "seyveo",
+    "scheme": ["seyveo", "com.seyveo.digitalmanager"],
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
