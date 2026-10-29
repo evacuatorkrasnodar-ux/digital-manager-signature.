@@ -102,7 +102,10 @@ assert.match(continuity,/#manageThemeScreen:not\(\[hidden\]\)\{[\s\S]*?width:min
 assert.match(continuity,/#manageThemeScreen \.manage-theme-check svg\{/,'Theme check is a clear stroke SVG');
 assert.match(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{/,'Management nested section also uses Back');
 assert.doesNotMatch(continuity,/#seyveoCleanDetail > #seyveoCleanBack\{\s*display:none!important/,'Nested Management return must remain accessible');
-assert.equal((html.match(/<span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20"/g)||[]).length,3,'Each theme has an accessible graphic checkmark');
+const themeChoices=(html.match(/class="manage-theme-choice" aria-pressed=/g)||[]).length;
+const themeChecks=(html.match(/<span class="manage-theme-check" aria-hidden="true"><svg viewBox="0 0 20 20"/g)||[]).length;
+assert.ok(themeChoices>=3,'At least three visual theme choices exist');
+assert.equal(themeChecks,themeChoices,'Every theme has its own graphical checkmark');
 assert.doesNotMatch(html,/\.manage-theme-choice\[aria-pressed=true\] \.manage-theme-check::after/,'No legacy off-centre CSS checkmark');
 assert.match(html,/assets\/seyveo-video\.css\?v=\d+/,'Video page uses current source');
 assert.match(continuity,/#calendarPage\.sv-cascade \.calendar-space-button/,'Calendar keeps independent row reveal');
