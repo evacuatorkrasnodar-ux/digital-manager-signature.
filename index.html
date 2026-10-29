@@ -512,6 +512,16 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 #homeHeader .home-world-choice-chevron{
  display:block;margin-left:auto;color:var(--secondary);font-size:17px;font-weight:350;
 }
+/* Desktop My World finishing pass: align wide-row chevrons and icon/text rhythm. */
+#homeHeader .home-world-choice-wide .home-world-choice-chevron{
+  grid-column:3;justify-self:end;margin-left:0;
+}
+#homeHeader .home-world-choice:not(.home-world-choice-wide){
+  grid-template-columns:20px minmax(0,1fr);
+}
+#homeHeader .home-world-choice[data-world-space="play"] svg.seyveo-youtube-white{
+  color:inherit;stroke:none;
+}
 :root[data-theme=light] #homeHeader .home-world-popover{
  border-color:rgba(72,91,117,.15);
  background:rgba(252,253,255,.98);
