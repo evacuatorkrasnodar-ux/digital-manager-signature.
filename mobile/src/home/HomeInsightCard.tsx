@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
 import {View,Text,Pressable,StyleSheet} from 'react-native';
+import {SeyveoActionButton} from './SeyveoActionButton';
 
 type Props={onExecute:()=>void;onLater:()=>void};
 export function HomeInsightCard({onExecute,onLater}:Props){
@@ -10,7 +11,7 @@ export function HomeInsightCard({onExecute,onLater}:Props){
   <Text style={s.body}>В RISE можно записать заказ и увидеть, сколько ежемесячных расходов уже покрыто.</Text>
   {expanded?<Text style={s.detail}>Открой «Мой путь» и внеси выручку и затраты по заказу. Сэйви рассчитает вклад продажи в покрытие расходов. Данные берутся из твоих записей, без подключения кассы.</Text>:null}
   <View style={s.actions}>
-   <Pressable accessibilityRole="button" onPress={onExecute} style={s.primary}><Text style={s.primaryText}>Исполнить</Text></Pressable>
+   <SeyveoActionButton kind="human" label="Исполнить" onPress={onExecute} />
    <Pressable accessibilityRole="button" onPress={()=>setExpanded(x=>!x)} style={s.action}><Text style={s.link}>{expanded?'Свернуть':'Подробнее'}</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={onLater} style={s.action}><Text style={s.link}>Позже</Text></Pressable>
   </View>
