@@ -69,25 +69,41 @@ Test using synthetic responses without contacting any external host:
 node --test server/secure-documents/https-event-transport.test.mjs
 ```
 
-## Fictional employee invitations and membership (RAM-only)
+## Fictional employee invitations and persistent SQLite training accounts
 
 **Training only:** an existing test company owner can invite an additional fake
 employee, who chooses a separate password and signs in as an **employee**.
 This demonstrates business-space access without connecting SEYVEO One,
 personal contacts, music, notes, health information or any actual staff.
 
-This workflow works **only with the in-memory backend**, with neither
-`SEYVEO_DEV_SQLITE_PATH` nor `SEYVEO_DEV_STORE_PATH` configured. The routes
-return HTTP **501** if any persistent backend is selected. Invited passwords,
-memberships, codes, and sessions are deliberately held only in process memory
-and vanish on restart. **Never** use real personal data, passwords or a real
-employee's identity. Do not expose the server beyond loopback.
+The same fictional invitation endpoints now support **two development modes**:
+without a persistence path, test accounts and pending codes exist only in
+memory; with `SEYVEO_DEV_SQLITE_PATH`, newly invited employee accounts,
+organization memberships, revocations, and pending invitation digests are
+stored in the **local development SQLite database** and survive process
+restarts. Importantly, **login sessions still expire on server restart**.
+The older `SEYVEO_DEV_STORE_PATH` encrypted-snapshot backend **does not
+support invitations** and returns HTTP **501** on these routes.
+
+SQLite employee credentials are independently salted/scrypt-derived and
+stored as **AES-256-GCM-encrypted verifier records** using a key derived from
+the required development master key. No employee plaintext passwords or
+invitation codes are saved. Company ID, user logins, membership roles/status,
+invitation expiration and timestamps are **not encrypted** SQLite metadata.
+An invitation code is returned only once; only its SHA-256 digest is saved.
+SQLite invitation acceptance and membership creation take place in one local
+transaction. Reusing or cancelling a code cannot create another account.
+Existing revoked memberships never become active at restart.
+
+**Never** use real personal data, passwords or a real employee's identity.
+Do not expose the server beyond loopback. This is still **not** a production
+login service, mobile account registration, MFA, trusted audit or certified ЭДО.
 
 Synthetic developer flow:
 1. Owner signs in with `POST /v1/sessions` and receives a short-lived bearer token.
 2. Owner calls `POST /v1/organizations/demo-org/invitations` with
    `{"employeeLogin":"tanya"}`. The server returns a random one-use code
-   **once**; only its SHA-256 digest is stored in memory. The code expires
+   **once**; only its SHA-256 digest is stored in the selected development backend. The code expires
    after 15 minutes; up to 20 invitations may be pending.
 3. A test actor locally provides the code and new password to
    `POST /v1/invitations/accept`. This creates a dedicated account and
@@ -112,7 +128,7 @@ verified employment, legally effective authorization, or cross-device
 connectivity.
 
 ```sh
-node --test server/secure-documents/dev-invitations.test.mjs server/secure-documents/dev-invitations-http.test.mjs
+node --test server/secure-documents/dev-invitations.test.mjs server/secure-documents/dev-invitations-http.test.mjs server/secure-documents/sqlite-training-onboarding-http.test.mjs
 ```
 
 **Production requirements are still open:** persistent identity provider,
@@ -125,8 +141,8 @@ One environment must never be visible to employers.
 
 ## Implemented
 
-- Only two explicitly configured **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
-- Passwords supplied via environment variables; scrypt-derived password hashes and random 30-minute bearer sessions kept **in memory**. Login attempts are throttled.
+- Two environment-bootstrapped **test accounts**: owner (role: owner) and Elena (role: employee), in one fixed test organization `demo-org`, plus fictional employee accounts invited by the test owner. Invited accounts persist only when development SQLite is enabled. The server does NOT accept roles, organization membership, or user IDs from request headers as authentication.
+- Bootstrapped passwords supplied via environment variables; invited employees set independent fictional passwords and their scrypt verifier is encrypted in development SQLite, if selected. Random 30-minute bearer sessions always remain **in memory** and login attempts are throttled.
 - The training API can list and revoke **the current account's own device-labelled login sessions**; labels are unverified text, not hardware attestation. It never accepts a device ID, user ID, role or organization from a login claim. It cannot manage other users' sessions, and all sessions vanish on server restart.
 - Local API binds to **127.0.0.1**. CLI fails closed unless `SEYVEO_DEV_SERVER=1`, fails in `NODE_ENV=production`, and does not enable browser CORS. Browser `Origin` requests are rejected.
 - Only small **text bodies** (up to 8000 characters). AES-256-GCM protects document text in memory. **Optional** AES-256-GCM encrypted snapshots can save training documents, metadata and audit history to a local private file. Without an explicit file path, all documents disappear on restart. Sessions always expire on restart. No production backups or multi-process concurrency.
@@ -181,7 +197,7 @@ export SEYVEO_DEV_SQLITE_PATH=/tmp/seyveo-demo-sqlite/documents.sqlite
 node server/secure-documents/dev-server.mjs
 ```
 
-On first startup, the server creates only the fictional `demo-org` with two example memberships: `owner` and `elena`. Later startups **do not reset existing memberships**. Revoked employees remain revoked; the owner can still log in. The HTTP routes are the same as in the in-memory mode. SQLite stores **only document title and body as AES-GCM ciphertext**; organization IDs, user IDs, roles, workflow statuses, and timestamps remain visible metadata. The training audit has an HMAC chain, not independently trusted or legally meaningful evidence.
+On first startup, the server creates only the fictional `demo-org` with two example memberships: `owner` and `elena`. Later startups **do not reset existing memberships**. Revoked employees remain revoked; the owner can still log in. The HTTP routes are the same as in the in-memory mode. SQLite stores document titles/bodies and invited employee password verifiers as separate AES-GCM ciphertext records; organization IDs, user IDs, roles, workflow statuses and timestamps remain visible metadata. Invitation codes are only stored as SHA-256 digests. The training audit has an HMAC chain, not independently trusted or legally meaningful evidence.
 
 Keep the **same secret 32-byte master key** for every restart. A wrong key causes startup failure. Do **not** set `SEYVEO_DEV_STORE_PATH` together with `SEYVEO_DEV_SQLITE_PATH`: two persistence modes at once are rejected. The local-only server rejects requests to a non-loopback interface.
 
