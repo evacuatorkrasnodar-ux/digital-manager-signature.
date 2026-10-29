@@ -7,6 +7,9 @@ on:
       - 'assets/seyveo-business-command.css'
       - 'assets/seyveo-business-command.js'
       - 'assets/seyveo-unified-tasks.js'
+      - 'assets/calendar.js'
+      - 'assets/calendar.css'
+      - 'scripts/manager-calendar-smoke.test.mjs'
       - 'scripts/manager-cabinet-smoke.test.mjs'
       - '.github/workflows/seyveo-director-cabinet.yml'
   pull_request:
@@ -15,6 +18,9 @@ on:
       - 'assets/seyveo-business-command.css'
       - 'assets/seyveo-business-command.js'
       - 'assets/seyveo-unified-tasks.js'
+      - 'assets/calendar.js'
+      - 'assets/calendar.css'
+      - 'scripts/manager-calendar-smoke.test.mjs'
       - 'scripts/manager-cabinet-smoke.test.mjs'
       - '.github/workflows/seyveo-director-cabinet.yml'
 
@@ -33,7 +39,9 @@ jobs:
       - name: Check JavaScript syntax (business, tasks, and regression test)
         run: |
           node --check assets/seyveo-unified-tasks.js
+          node --check assets/calendar.js
+          node --check scripts/manager-calendar-smoke.test.mjs
           node --check assets/seyveo-business-command.js
           node --check scripts/manager-cabinet-smoke.test.mjs
       - name: Confirm one director menu, compact live tasks, and employee-role isolation
-        run: node --test scripts/manager-cabinet-smoke.test.mjs
+        run: node --test scripts/manager-cabinet-smoke.test.mjs scripts/manager-calendar-smoke.test.mjs
