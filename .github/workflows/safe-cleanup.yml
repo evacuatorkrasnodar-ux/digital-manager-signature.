@@ -48,3 +48,21 @@ jobs:
       - name: Run all mobile unit tests
         working-directory: mobile
         run: npm test
+
+  check-native-types:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install --no-audit --no-fund
+      - name: Validate TypeScript
+        working-directory: mobile
+        run: npm run check
+      - name: Validate Expo configuration
+        working-directory: mobile
+        run: npx expo config --json > /dev/null
