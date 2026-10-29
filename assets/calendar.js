@@ -72,12 +72,13 @@ function saveEvents(list){
  try{localStorage.setItem(STORE,JSON.stringify(list.slice(-MAX)));return true}
  catch{return false}
 }
-let focus=new Date(),mode='month',editing=null;
+let focus=new Date(),mode='month',editing=null,scope='all';
+const visibleEvents=()=>events().filter(x=>scope==='all'||x.kind===scope);
 const iso=()=>format(focus);
 function dayItems(dayKey,includeDone=true){
- const meeting=events().filter(x=>x.date===dayKey).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
- const todo=tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
- const personal=window.SEYVEO_SPACES?.calendarItems(dayKey)||[];
+ const meeting=visibleEvents().filter(x=>x.date===dayKey).map(x=>({...x,source:'event',sort:x.time||'99:00'}));
+ const todo=scope==='business'?[]:tasks().filter(x=>x.date===dayKey&&(includeDone||!x.done)).map(x=>({...x,source:'task',sort:'98:00'}));
+ const personal=scope==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(dayKey)||[]);
  return [...meeting,...todo,...personal].sort((a,b)=>a.sort.localeCompare(b.sort)||a.title.localeCompare(b.title,'ru'));
 }
 function createEntry(item){
@@ -139,7 +140,7 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
  btn.dataset.weekend=String(day.getDay()===0||day.getDay()===6);
  if(holiday)btn.dataset.holiday=holiday.kind;
  if(!week)btn.dataset.outside=String(day.getMonth()!==focus.getMonth());
- const personal=window.SEYVEO_SPACES?.calendarItems(key)||[];
+ const personal=scope==='business'?[]:(window.SEYVEO_SPACES?.calendarItems(key)||[]);
  const records=calendarEvents.filter(x=>x.date===key).length+personalTasks.filter(x=>x.date===key).length+personal.length;
  btn.setAttribute('aria-label',fmtLong.format(day)+(key===today?' · сегодня':'')+(holiday?' · '+holiday.name:'')+' · '+records+' записей');
  if(week)btn.append(text('small','',weekday[(day.getDay()+6)%7]));
@@ -154,14 +155,14 @@ function dayButton(day,week=false,calendarEvents=[],personalTasks=[]){
 function renderMonth(){
  const selected=new Date(focus.getFullYear(),focus.getMonth(),1);
  const grid=$('calendarMonthGrid');grid.replaceChildren();
- const first=monday(selected),calendarEvents=events(),personalTasks=tasks();
+ const first=monday(selected),calendarEvents=visibleEvents(),personalTasks=scope==='business'?[]:tasks();
  const total=Math.ceil((((new Date(focus.getFullYear(),focus.getMonth()+1,0)).getDate())+(selected.getDay()+6)%7)/7)*7;
  for(let i=0;i<total;i++)grid.append(dayButton(step(first,i),false,calendarEvents,personalTasks));
  $('calendarMonth').hidden=false;
  $('calendarWeek').hidden=true;
 }
 function renderWeek(){
- const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=events(),personalTasks=tasks();
+ const mondayStart=monday(focus),root=$('calendarWeekGrid'),calendarEvents=visibleEvents(),personalTasks=scope==='business'?[]:tasks();
  root.replaceChildren();
  for(let i=0;i<7;i++)root.append(dayButton(step(mondayStart,i),true,calendarEvents,personalTasks));
  $('calendarMonth').hidden=true;
@@ -371,9 +372,9 @@ function showEventTimeHint(){
 function renderDeadlines(){
  const today=format(new Date()),tomorrow=format(step(new Date(),1)),weekEnd=format(step(new Date(),7));
  const all=[
-  ...tasks().filter(x=>!x.done).map(x=>({...x,source:'task'})),
-  ...events().filter(x=>x.date>=today).map(x=>({...x,source:'event'})),
-  ...(window.SEYVEO_SPACES?.upcoming(today,format(step(new Date(),370)))||[])
+  ...(scope==='business'?[]:tasks().filter(x=>!x.done).map(x=>({...x,source:'task'}))),
+  ...visibleEvents().filter(x=>x.date>=today).map(x=>({...x,source:'event'})),
+  ...(scope==='business'?[]:(window.SEYVEO_SPACES?.upcoming(today,format(step(new Date(),370)))||[]))
  ];
  const groups=[
   ['Просрочено',x=>x.source==='task'&&x.date&&x.date<today],
@@ -399,6 +400,9 @@ function renderDeadlines(){
 }
 function render(){
  if(page.hidden)return;
+ page.dataset.calendarScope=scope;
+ document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>
+  btn.setAttribute('aria-pressed',String(btn.dataset.calendarScope===scope)));
  const deadline=mode==='deadlines';
  $('calendarView').hidden=deadline;
  $('calendarView').dataset.mode=mode;
@@ -518,7 +522,7 @@ function openEvent(id=null){
  $('calendarEventTiming').open=false;
  form.querySelectorAll('.cal-timing-setting').forEach(section=>{section.open=false});
  syncTimeDisplay();
- setEventKind(item?.kind||'personal');
+ setEventKind(item?.kind||(scope==='business'?'business':'personal'));
  $('calendarEventExtra').open=Boolean(item?.note);
  $('calendarEventNote').value=item?.note||'';
  $('calendarDeleteEvent').hidden=!item;
@@ -596,6 +600,12 @@ $('calendarAdd').addEventListener('click',()=>openEvent());
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
 $('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
+document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>btn.addEventListener('click',()=>{
+ const next=btn.dataset.calendarScope;
+ if(!['all','personal','business'].includes(next))return;
+ scope=next;
+ render();
+}));
 document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.addEventListener('click',()=>{
  mode=btn.dataset.calendarMode;render();
 }));
