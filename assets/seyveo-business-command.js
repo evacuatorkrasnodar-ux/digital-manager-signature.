@@ -1289,6 +1289,7 @@ function storeTask(text,source){
  const created=fresh.map((assigneeId,i)=>({
   id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
   text:title,done:false,assigneeId,
+  ...(source?.approvalFlow?{approvalFlow:true,reviewStatus:'assigned'}:{}),
   ...(source?.room?{source:'chat',room:source.room}:{})
  }));
  const updated=state.tasks.concat(created).slice(-60);
@@ -1590,32 +1591,79 @@ function renderTasks(){
  list.replaceChildren();
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
+ const demo=el('div','svcp-approval-demo-entry');
+ const demoTitle=el('strong',null,'Путь поручения · демо');
+ const demoHint=el('small',null,'Создай задачу → посмотри глазами Елены → прими результат. Всё на этом устройстве.');
+ demo.append(demoTitle,demoHint);
+ const demoControls=el('div','svcp-approval-demo-controls');
+ demoControls.append(btn('Поручить Елене',()=>{
+  if(employeePreviewActive())return;
+  const text='Проверить выкладку на витрине и передать результат';
+  const existing=state.tasks.findIndex(t=>t?.approvalFlow&&t.assigneeId==='elena'&&!t.done);
+  if(existing>=0){focusTask(existing);return}
+  const created=storeTask(text,{assigneeId:'elena',approvalFlow:true});
+  if(created)window.SEYVEO_UNIFIED_TASKS?.previewRole?.('employee');
+ },'svcp-approval-demo-button'));
+ demoControls.append(btn('Взгляд Елены',()=>window.SEYVEO_UNIFIED_TASKS?.previewRole?.('employee'),'svcp-approval-demo-switch'));
+ demo.append(demoControls);list.append(demo);
  const heading=el('div','svcp-task-section-head');
  heading.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
   row.setAttribute('data-svcp-task-index',String(i));
-  const checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
-  checkbox.setAttribute('aria-label',(t.done?'Вернуть в работу: ':'Завершить поручение: ')+t.text);
-  checkbox.addEventListener('change',()=>{
-   const updated=state.tasks.map((item,index)=>index===i?{...item,done:checkbox.checked}:item);
-   if(!save(TASK_KEY,updated)){checkbox.checked=!checkbox.checked;return}
-   state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
-  });
+  const approval=t.approvalFlow===true;
+  let checkbox=null;
+  if(!approval){
+   checkbox=el('input');checkbox.type='checkbox';checkbox.checked=!!t.done;
+   checkbox.setAttribute('aria-label',(t.done?'Вернуть в работу: ':'Завершить поручение: ')+t.text);
+   checkbox.addEventListener('change',()=>{
+    const updated=state.tasks.map((item,index)=>index===i?{...item,done:checkbox.checked}:item);
+    if(!save(TASK_KEY,updated)){checkbox.checked=!checkbox.checked;return}
+    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
+   });
+  }
   const copy=el('div','svcp-task-copy');
   copy.append(el('strong','svcp-task-title',t.text));
   // Legacy demo records remain stored, but assignees are chosen in chat.
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee',STAFF[t.assigneeId]));
+  if(approval){
+   const statusNames={assigned:'Ожидает Елену',review:'Ожидает проверки',rework:'Возвращено на доработку',approved:'Принято руководителем'};
+   const status=el('small','svcp-approval-demo-state',statusNames[t.reviewStatus]||'Ожидает Елену');
+   copy.append(status);
+   if(t.reportText)copy.append(el('p','svcp-approval-demo-report','Елена: '+String(t.reportText).slice(0,350)));
+   if(t.reviewStatus==='review'&&t.photoSelected){
+    const image=window.SEYVEO_APPROVAL_DEMO_PHOTO?.get?.(t.id);
+    if(image){
+     const img=el('img','svcp-approval-demo-proof');img.src=image;img.alt='Фото результата Елены · локальный просмотр';
+     copy.append(img);
+    }else copy.append(el('small','svcp-approval-demo-note','Фото было выбрано, но не сохранилось после перезагрузки страницы.'));
+   }
+  }
   const actions=el('div','svcp-task-actions');
+  if(approval&&t.reviewStatus==='review'&&!t.done){
+   const resolve=(accepted)=>{
+    if(employeePreviewActive())return;
+    // The manager is the ONLY demo perspective permitted to approve.
+    const updated=state.tasks.map((item,j)=>j===i?{
+     ...item,reviewStatus:accepted?'approved':'rework',done:accepted,
+     reviewedAt:Date.now()
+    }:item);
+    if(!save(TASK_KEY,updated))return;
+    state.tasks=updated;renderTasks();
+   };
+   actions.append(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'));
+   actions.append(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'));
+  }
   actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
   actions.append(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
   },'svcp-ghost'));
-  row.append(checkbox,copy,actions);
+  if(checkbox)row.append(checkbox);
+  row.append(copy,actions);
   return row;
  }
  const openSeen=new Set(),dups=[];
@@ -1858,6 +1906,11 @@ window.addEventListener('pagehide',()=>{cancelVoice();cleanupPreview();clearMedi
 preparePeopleContent();
 renderTasks();
 tab('chats');
+window.addEventListener('seyveo:employee-task-updated',()=>{
+ state.tasks=read(TASK_KEY);
+ renderTasks();
+ syncPreviewAfterTaskEdit();
+});
 window.addEventListener('storage',event=>{
  if(event.key===CHAT_KEY){
   state.chat=read(CHAT_KEY);
