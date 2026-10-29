@@ -17,7 +17,7 @@ assert.match(source,/setMailDeferred\(true\)/,'Later is a real in-memory demo ch
 assert.match(html,/assets\/living-moment\.js\?v=60/);
 assert.match(html,/assets\/living-moment\.css\?v=44/);
 assert.match(html,/assets\/personal-tasks\.js\?v=24/);
-assert.match(html,/assets\/personal-tasks\.css\?v=20/);
+assert.match(html,/assets\/personal-tasks\.css\?v=23/);
 assert.doesNotMatch(html,/assets\/home-mail-demo\.(?:js|css)/,'No competing Home card module');
 assert.match(style,/--lm-design-ready:1/,'Quiet Cinema style loading marker exists');
 assert.match(source,/getComputedStyle\(space\)/,'Preview skips unstyled display');
