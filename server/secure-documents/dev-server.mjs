@@ -18,6 +18,7 @@ import {
 
 const MAX_BODY_BYTES = 16 * 1024;
 const SESSION_MS = 30 * 60 * 1000;
+const MAX_ACTIVE_SESSIONS_PER_USER = 5;
 const MAX_DOCS = 100;
 const MAX_LOGIN_ATTEMPTS = 10;
 const LOGIN_WINDOW_MS = 60 * 1000;
@@ -136,9 +137,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
     if (typeof header !== 'string' || !/^Bearer [A-Za-z0-9_-]{40,160}$/.test(header))
       fail(401, 'Требуется действующая сессия.');
     const token = header.slice(7);
-    const session = sessions.get(hashToken(token));
+    const digest = hashToken(token);
+    const session = sessions.get(digest);
     if (!session || session.expiresAt <= Date.now()) {
-      sessions.delete(hashToken(token));
+      sessions.delete(digest);
       fail(401, 'Сессия истекла или недействительна.');
     }
     let membership;
@@ -147,7 +149,7 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       catch{fail(403,'Нет действующего доступа.');}
     }else membership=memberships.get(session.userId);
     if (!membership || membership.status !== 'active') fail(403, 'Нет действующего доступа.');
-    return { actor: { userId: session.userId }, membership };
+    return { actor: { userId: session.userId }, membership, session };
   };
   const loadDocument = (id, context) => {
     const doc = documents.get(id);
@@ -206,16 +208,69 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
           try{sqlite.getMembership({actor:{userId:account.userId},organizationId});}
           catch{fail(403,'Доступ к компании отозван.');}
         }
+        // The label is display-only: the server assigns the actual session ID.
+        // No client-supplied role, organization, device ID or trusted device claim.
+        const label = data.deviceLabel === undefined ? 'Учебное устройство' : data.deviceLabel;
+        if (!isText(label, 60) || /[\\r\\n\\t]/.test(label))
+          fail(400, 'Некорректное имя учебного устройства.');
+        const now = Date.now();
+        for(const [digest, entry] of sessions) {
+          if(entry.expiresAt <= now) sessions.delete(digest);
+        }
+        const active = Array.from(sessions.values()).filter(entry=>entry.userId===account.userId).length;
+        if(active >= MAX_ACTIVE_SESSIONS_PER_USER)
+          fail(429, 'Превышено число активных учебных сеансов.');
         const token = randomBytes(32).toString('base64url');
-        sessions.set(hashToken(token), { userId: account.userId, expiresAt:Date.now() + SESSION_MS });
+        const session = Object.freeze({
+          id:randomUUID(), userId:account.userId, deviceLabel:label.trim(),
+          createdAt:new Date(now).toISOString(), expiresAt:now + SESSION_MS
+        });
+        sessions.set(hashToken(token), session);
         send(res, 200, { token, tokenType:'Bearer', expiresInSeconds:SESSION_MS / 1000,
-          user:{ id:account.userId, role:account.role, organizationId } });
+          user:{ id:account.userId, role:account.role, organizationId },
+          session:{id:session.id,deviceLabel:session.deviceLabel,createdAt:session.createdAt,
+            expiresAt:new Date(session.expiresAt).toISOString()} });
         return;
       }
       const context = securityContext(req);
       if (req.method === 'DELETE' && path === '/v1/sessions/current') {
         sessions.delete(hashToken(req.headers.authorization.slice(7)));
         send(res, 200, { ok:true });
+        return;
+      }
+      if (req.method === 'GET' && path === '/v1/sessions') {
+        const now=Date.now();
+        const owned=[];
+        for(const [digest, entry] of sessions){
+          if(entry.expiresAt <= now) {
+            sessions.delete(digest);
+          } else if(entry.userId === context.actor.userId) {
+            owned.push({
+              id:entry.id,deviceLabel:entry.deviceLabel,createdAt:entry.createdAt,
+              expiresAt:new Date(entry.expiresAt).toISOString(),
+              current:entry.id===context.session.id
+            });
+          }
+        }
+        owned.sort((a,b)=>a.createdAt.localeCompare(b.createdAt)||a.id.localeCompare(b.id));
+        send(res,200,{sessions:owned});
+        return;
+      }
+      // Revoke just one session of the authenticated account. In particular,
+      // an owner cannot browse or revoke another employee's private sessions.
+      const sessionMatch=/^\\/v1\\/sessions\\/([0-9a-f-]{36})$/.exec(path);
+      if(sessionMatch){
+        if(req.method!=='DELETE') fail(405,'Метод не поддерживается.');
+        let targetDigest;
+        for(const [digest, entry] of sessions){
+          if(entry.userId===context.actor.userId&&entry.id===sessionMatch[1]&&entry.expiresAt>Date.now()){
+            targetDigest=digest;
+            break;
+          }
+        }
+        if(!targetDigest) fail(404,'Учебный сеанс не найден.');
+        sessions.delete(targetDigest);
+        send(res,200,{ok:true});
         return;
       }
       if (req.method === 'GET' && path === '/v1/organizations') {
