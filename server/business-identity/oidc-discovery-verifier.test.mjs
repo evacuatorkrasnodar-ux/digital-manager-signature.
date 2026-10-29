@@ -112,13 +112,19 @@ test('cached public keys never cache account status or session revocation',async
 
 test('expired metadata must refresh; provider outage denies access even with old valid signature',async()=>{
   const f=fixture();
-  assert.equal((await f.adapter.verifySession(jwt()))?.userId,'tanya');
+  // Token lifetime is intentionally longer than the 5-minute JWKS cache.
+  // Its RFC 9068 lifetime remains safely under the one-hour maximum.
+  const longLived=jwt({claims:{exp:nowSec+1200}});
+  assert.equal((await f.adapter.verifySession(longLived))?.userId,'tanya');
   f.setTime(timestamp+300001);f.setOnline(false);
-  assert.equal(await f.adapter.verifySession(jwt()),null);
+  assert.equal(await f.adapter.verifySession(longLived),null);
   assert.equal(await f.adapter.getTrustedProviderConfig(),null);
   f.setOnline(true);
-  assert.equal((await f.adapter.verifySession(jwt()))?.userId,'tanya');
-  assert.equal(f.calls.length,5);
+  assert.equal((await f.adapter.verifySession(longLived))?.userId,'tanya');
+  assert.equal(f.calls.length,6);
+  // An expired access token must still fail after keys were refreshed.
+  f.setTime(timestamp+1201000);
+  assert.equal(await f.adapter.verifySession(longLived),null);
 });
 
 test('issuer pinning, altered endpoints and missing code+S256 metadata fail',async()=>{
