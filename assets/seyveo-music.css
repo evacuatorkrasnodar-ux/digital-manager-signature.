@@ -826,14 +826,14 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 }
 #sayviMusicPage .sv-music-favorite:disabled{opacity:.9;cursor:default}
 #sayviMusicPage .sv-music-favorite-star{
- display:block;width:26px;height:26px;overflow:visible;transform:none;
+ display:block;width:34px;height:34px;max-width:none;overflow:visible;transform:none;
  filter:drop-shadow(0 1px 2px rgba(0,0,0,.12))
 }
 #sayviMusicPage .sv-music-favorite-shape{fill:rgba(255,255,255,.06);stroke:#ffffff;stroke-width:2.5;transition:fill .18s ease}
 #sayviMusicPage .sv-music-favorite-bevel{fill:none;stroke:rgba(255,255,255,.83);stroke-width:1.1}
 #sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-shape{fill:url(#svMusicStarMetal);stroke:#ffffff}
 #sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-bevel{stroke:rgba(49,58,67,.55)}
-#sayviMusicPage .sv-music-star-initial{fill:#1e2229;font-family:Georgia,serif;font-size:17px;font-weight:700;dominant-baseline:central;letter-spacing:0;paint-order:stroke;stroke:rgba(255,255,255,.12);stroke-width:.35px}
+#sayviMusicPage .sv-music-star-initial{fill:#1e2229;font-family:Georgia,serif;font-size:18px;font-weight:700;dominant-baseline:central;letter-spacing:0;paint-order:stroke;stroke:rgba(255,255,255,.12);stroke-width:.35px}
 #sayviMusicPage .sv-music-favorite[aria-pressed=false] .sv-music-star-initial{fill:#ffffff;stroke:none}
 #sayviMusicPage .sv-music-lyrics-toggle[aria-pressed=true]{
  color:var(--text);text-decoration-color:currentColor;font-weight:620
