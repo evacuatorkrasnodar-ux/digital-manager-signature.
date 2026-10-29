@@ -77,3 +77,21 @@ export async function loadCategorizedRiseCosts(){
   return await db.getAllAsync<{id:number;name:string;amount:number;kind:string}>("SELECT c.id,c.name,c.amount,COALESCE(k.kind,'startup') AS kind FROM rise_costs c LEFT JOIN rise_cost_kinds k ON k.cost_id=c.id ORDER BY c.id");
  }finally{await db.closeAsync()}
 }
+
+export async function loadRiseAvailableFunds():Promise<string>{
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_finance_settings (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)');
+  const row=await db.getFirstAsync<{value:string}>('SELECT value FROM rise_finance_settings WHERE key = ?', 'available');
+  return row?.value??'';
+ }finally{await db.closeAsync()}
+}
+export async function saveRiseAvailableFunds(value:string):Promise<void>{
+ if(!/^\d{1,13}$/.test(value)||!Number.isSafeInteger(Number(value))||Number(value)>1e12)
+  throw new TypeError('Invalid funds');
+ const db=await openVerifiedVault();
+ try{
+  await db.execAsync('CREATE TABLE IF NOT EXISTS rise_finance_settings (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)');
+  await db.runAsync('INSERT OR REPLACE INTO rise_finance_settings(key,value) VALUES (?,?)','available',value);
+ }finally{await db.closeAsync()}
+}
