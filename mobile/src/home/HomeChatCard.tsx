@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
+import {SeyveoActionButton} from './SeyveoActionButton';
 
 export type ChatNotice={id:string;sender:string;channel:'work'|'family';message:string};
 type Props={notice:ChatNotice;draftSuggestion?:string;onSend?:(id:string,text:string)=>Promise<boolean>;onOpenChat?:()=>void;onDismiss?:()=>void;demo?:boolean};
@@ -21,13 +22,13 @@ export function HomeChatCard({notice,draftSuggestion,onSend,onOpenChat,onDismiss
   <Text style={s.name}>{notice.sender}</Text>
   <Text style={s.message}>{notice.message}</Text>
   {mode==='choose'?<View style={s.row}>
-   <Pressable accessibilityRole="button" onPress={()=>{setDraft(draftSuggestion??'');setMode('suggest')}} style={s.primary}><Text style={s.star}>✧</Text><Text style={s.primaryText}>Ответит Сэйви</Text></Pressable>
-   <Pressable accessibilityRole="button" onPress={()=>{setDraft('');setMode('write')}} style={s.secondary}><Text style={s.actionText}>Ответить самому</Text></Pressable>
+   <SeyveoActionButton label="Ответит Сэйви" onPress={()=>{setDraft(draftSuggestion??'');setMode('suggest')}} />
+   <SeyveoActionButton kind="human" label="Ответить самому" onPress={()=>{setDraft('');setMode('write')}} />
   </View>:<View>
    <Text style={s.hint}>{mode==='suggest'?'Черновик Сэйви · проверь перед отправкой':'Ваш ответ'}</Text>
    <TextInput multiline accessibilityLabel="Текст ответа" value={draft} onChangeText={setDraft} maxLength={4000} placeholder="Написать ответ…" placeholderTextColor="#8eaa9e" style={s.input}/>
    <View style={s.row}>
-    <Pressable accessibilityRole="button" disabled={!onSend||busy||!draft.trim()} onPress={()=>{void submit()}} style={s.primary}><Text style={s.primaryText}>{busy?'Отправка…':'Отправить'}</Text></Pressable>
+    <SeyveoActionButton kind="human" label={busy?'Отправка…':'Отправить'} disabled={!onSend||busy||!draft.trim()} onPress={()=>{void submit()}} />
     <Pressable accessibilityRole="button" onPress={()=>setMode('choose')} style={s.action}><Text style={s.actionText}>Назад</Text></Pressable>
    </View>
    {!onSend?<Text style={s.hint}>Отправка ещё не подключена к чату.</Text>:null}
