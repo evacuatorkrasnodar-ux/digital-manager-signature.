@@ -23,6 +23,7 @@ function NativeFoundation() {
   const [busy, setBusy] = useState(false);
   const [showInsight,setShowInsight]=useState(true);
   const scrollRef=useRef<ScrollView>(null);
+  const riseY=useRef(0);
   const [work, setWork] = useState(workController.getState());
   useEffect(()=>workController.subscribe(value=>setWork({...value})),[]);
 
@@ -106,8 +107,8 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
-          {state === 'ready' && showInsight ? <HomeInsightCard onExecute={()=>scrollRef.current?.scrollToEnd({animated:true})} onLater={()=>setShowInsight(false)} /> : null}
-          {state === 'ready' ? <RiseJourneyCard /> : null}
+          {state === 'ready' && showInsight ? <HomeInsightCard onExecute={()=>scrollRef.current?.scrollTo({y:riseY.current,animated:true})} onLater={()=>setShowInsight(false)} /> : null}
+          {state === 'ready' ? <View onLayout={event=>{riseY.current=event.nativeEvent.layout.y}}><RiseJourneyCard /></View> : null}
           <NativeWorkAccessStatus
             state={work.status==='checking'?'checking':work.status==='verified'?'verified':'unavailable'}
             organizationId={work.workspace?.organizationId}
