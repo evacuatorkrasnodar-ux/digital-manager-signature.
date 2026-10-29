@@ -33,8 +33,14 @@ assert.match(html,/Поблагодарить сотрудника золото�
  'Recognition is tied to a staff record, not a Music track');
 assert.match(html,/id="svcpRecognizeOpenCard"[^>]*>✦ Посмотреть знак в карточке сотрудника/,
  'Recognition can be viewed in the staff record');
-assert.match(chat,/#svcpWorkChatScreen \.svcp-gratitude-award svg\{[\s\S]*?stroke:#D9B270!important/,
- 'Gold award is visually distinct from white Music star');
+assert.match(html,/id="svcpHallMedal" viewBox="0 0 64 64"/,
+ 'One canonical SEYVEO Walk of Fame star medallion');
+assert.match(html,/id="svcpHallGold"/,'Gold rim and border have their own gradient');
+assert.match(html,/stroke="url\(#svcpHallGold\)"/,'Walk of Fame star edge is golden');
+assert.match(html,/<text x="32" y="39\.5"[^>]*fill="url\(#svcpHallGold\)"/,
+ 'Gold S is in the center of the star');
+assert.match(chat,/#svcpWorkChatScreen \.svcp-gratitude-award \.svcp-hall-medal\{/,
+ 'Gold medallion has a dedicated visual class separate from white Music favorite');
 assert.match(chat,/#svcpWorkChatScreen \.svcp-message-menu \.svcp-action-star/,
  'Saved message is independent from HR appreciation');
 assert.match(employee,/#tasksPage \.svcp-manager-row\{/,
@@ -58,7 +64,7 @@ assert.ok(js.includes('!roomHits.length&&!chatHits.length&&!taskHits.length'),
  'Empty search covers all three categories');
 assert.ok(js.includes('Только на этом устройстве · без отправки'),
  'Local chat attachments do not masquerade as delivered');
-assert.match(html,/assets\/seyveo-business-command\.css\?v=64/,
+assert.match(html,/assets\/seyveo-business-command\.css\?v=65/,
  'Current work stylesheet is cache-busted');
 assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=36/,
  'Current unified work script is cache-busted');
