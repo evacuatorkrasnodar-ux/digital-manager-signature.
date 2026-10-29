@@ -11,12 +11,14 @@ export function allowed({membership,organizationId,branchId,permission,subjectUs
  if(!Object.hasOwn(ROLE_PERMISSIONS,membership.role))return false;
  if(!ROLE_PERMISSIONS[membership.role].includes(permission))return false;
  if(!['owner','manager'].includes(membership.role) &&
-    permission==='tasks:read' && resourceAssigneeId!==subjectUserId)return false;
+    permission==='tasks:read' && (!subjectUserId||!resourceAssigneeId||resourceAssigneeId!==subjectUserId))return false;
  // Managers are branch-scoped unless explicitly assigned a company-wide scope.
+ if(membership.role==='manager' && !branchId)return false;
  if(membership.role==='manager' && branchId &&
     !Array.isArray(membership.branchIds))return false;
  if(membership.role==='manager' && branchId &&
     !membership.branchIds.includes(branchId))return false;
+ if(['employee','logistics'].includes(membership.role)&&!branchId)return false;
  if(['employee','logistics'].includes(membership.role)&&branchId &&
     (!Array.isArray(membership.branchIds)||!membership.branchIds.includes(branchId)))return false;
  return true;
