@@ -3,8 +3,8 @@
 export const ROLE_PERMISSIONS=Object.freeze({
  owner:['org:read','org:manage','members:read','members:invite','members:revoke','roles:assign','tasks:read','tasks:create','tasks:review','files:read'],
  manager:['org:read','members:read','tasks:read','tasks:create','tasks:review','files:read'],
- employee:['tasks:read','files:read'],
- logistics:['tasks:read','files:read']
+ employee:['tasks:read'],
+ logistics:['tasks:read']
 });
 export function allowed({membership,organizationId,branchId,permission,subjectUserId,resourceAssigneeId}={}){
  if(!membership||membership.status!=='active'||membership.organizationId!==organizationId)return false;
