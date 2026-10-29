@@ -8,6 +8,7 @@ import { createServer } from 'node:http';
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash, createCipheriv, createDecipheriv } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { createEncryptedDevStore } from './dev-store.mjs';
+import { openDevTenantStore } from './sqlite-tenant-store.mjs';
 import {
   canCreateDocument, canReadDocument, canReadDocumentAudit,
   canTransitionDocument
@@ -102,7 +103,7 @@ const nextState = Object.freeze({
  * Credentials are from trusted environment bootstrap and hashed in memory.
  * The master key lives only in RAM; optional persistence stores ciphertext.
  */
-export function createDevDocumentServer({ ownerPassword, employeePassword, masterKey, organizationId='demo-org', storagePath } = {}) {
+export function createDevDocumentServer({ ownerPassword, employeePassword, masterKey, organizationId='demo-org', storagePath, sqlitePath } = {}) {
   if (process.env.NODE_ENV === 'production') throw new Error('Production is intentionally disabled.');
   if (!Buffer.isBuffer(masterKey) || masterKey.length !== 32)
     throw new Error('A random 32-byte development encryption key is required.');
@@ -115,6 +116,10 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
   const memberships = new Map(Array.from(users, ([userId, user]) => [userId, {
     userId, organizationId, role: user.role, status:'active'
   }]));
+  if(sqlitePath&&storagePath)throw new Error('Select only one development persistence backend.');
+  const sqlite=sqlitePath?openDevTenantStore({filePath:sqlitePath,masterKey}):null;
+  try{sqlite?.ensureDemoTenant({organizationId,ownerUserId:'owner',employeeUserId:'elena'});}
+  catch(error){sqlite?.close();throw error;}
   const sessions = new Map();
   const storage=storagePath?createEncryptedDevStore({filePath:storagePath,masterKey}):null;
   // Deliberately fail startup on wrong key, tampered ciphertext, or invalid format.
@@ -133,7 +138,11 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       sessions.delete(hashToken(token));
       fail(401, 'Сессия истекла или недействительна.');
     }
-    const membership = memberships.get(session.userId);
+    let membership;
+    if(sqlite){
+      try{membership=sqlite.getMembership({actor:{userId:session.userId},organizationId});}
+      catch{fail(403,'Нет действующего доступа.');}
+    }else membership=memberships.get(session.userId);
     if (!membership || membership.status !== 'active') fail(403, 'Нет действующего доступа.');
     return { actor: { userId: session.userId }, membership };
   };
@@ -171,7 +180,9 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         fail(403, 'Браузерные запросы с чужого сайта запрещены.');
       const path = new URL(req.url || '/', 'http://127.0.0.1').pathname;
       if (req.method === 'GET' && path === '/health') {
-        send(res, 200, { ok:true, mode:'local-development', productionReady:false, encryptedFileEnabled:!!storage });
+        send(res, 200, { ok:true, mode:'local-development', productionReady:false,
+          backend:sqlite?'sqlite-experimental':storage?'encrypted-snapshot':'in-memory',
+          encryptedFileEnabled:!!storage });
         return;
       }
       if (req.method === 'POST' && path === '/v1/sessions') {
@@ -204,6 +215,58 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       const [, tenant, id, operation] = match;
       // Tenant isolation: never trust the ID from the URL as proof of membership.
       if (tenant !== context.membership.organizationId) fail(404, 'Документ не найден.');
+      if(sqlite){
+        const invoke=fn=>{
+          try{return fn();}
+          catch(error){
+            if(error?.message==='Access denied or resource unavailable.')
+              fail(404,'Документ не найден или действие запрещено.');
+            if(error?.message==='Development document limit reached.')
+              fail(409,'Достигнут предел учебных документов.');
+            fail(503,'База разработки недоступна.');
+          }
+        };
+        if(!id&&!operation&&req.method==='GET'){
+          send(res,200,{documents:invoke(()=>sqlite.listDocuments({
+            actor:context.actor,organizationId:tenant
+          }))});
+          return;
+        }
+        if(!id&&!operation&&req.method==='POST'){
+          if(!canCreateDocument({...context,organizationId:tenant}))
+            fail(403,'Нет права создавать документы.');
+          const data=await readJson(req);
+          if(!['acknowledgement','approval'].includes(data.type)||
+            !isText(data.title,120)||!isText(data.body,8000)||
+            typeof data.recipientUserId!=='string')
+            fail(400,'Некорректные поля документа.');
+          const document=invoke(()=>sqlite.createDocument({
+            actor:context.actor,organizationId:tenant,
+            recipientUserId:data.recipientUserId,type:data.type,
+            title:data.title,body:data.body
+          }));
+          send(res,201,{document});return;
+        }
+        if(!id)fail(404,'Маршрут не найден.');
+        if(!operation&&req.method==='GET'){
+          send(res,200,{document:invoke(()=>sqlite.getDocument({
+            actor:context.actor,organizationId:tenant,documentId:id
+          }))});return;
+        }
+        if(operation==='audit'&&req.method==='GET'){
+          send(res,200,{events:invoke(()=>sqlite.getAudit({
+            actor:context.actor,organizationId:tenant,documentId:id
+          }))});return;
+        }
+        if(operation==='actions'&&req.method==='POST'){
+          const data=await readJson(req);
+          if(!Object.hasOwn(nextState,data.action))fail(403,'Это действие недоступно.');
+          send(res,200,{document:invoke(()=>sqlite.transition({
+            actor:context.actor,organizationId:tenant,documentId:id,action:data.action
+          }))});return;
+        }
+        fail(405,'Метод не поддерживается.');
+      }
       if (!id && !operation && req.method === 'GET') {
         const result = Array.from(documents.values()).filter(d =>
           canReadDocument({ ...context, document:d })).map(meta);
@@ -260,7 +323,9 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
         { error:error instanceof HttpProblem ? error.message : 'Внутренняя ошибка сервера.' });
     }
   };
-  return createServer(handler);
+  const server=createServer(handler);
+  if(sqlite)server.on('close',()=>sqlite.close());
+  return server;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (process.env.SEYVEO_DEV_SERVER !== '1' || process.env.NODE_ENV === 'production') {
@@ -278,7 +343,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       ownerPassword:process.env.SEYVEO_DEV_OWNER_PASSWORD,
       employeePassword:process.env.SEYVEO_DEV_EMPLOYEE_PASSWORD,
       masterKey:key,
-      storagePath:process.env.SEYVEO_DEV_STORE_PATH||undefined
+      storagePath:process.env.SEYVEO_DEV_STORE_PATH||undefined,
+      sqlitePath:process.env.SEYVEO_DEV_SQLITE_PATH||undefined
     });
     const port = Number(process.env.SEYVEO_DEV_PORT || '8787');
     if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid port.');
