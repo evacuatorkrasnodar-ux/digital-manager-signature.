@@ -91,11 +91,31 @@ test('today area reuses live assignments, completion history and active counts',
 });
 
 test('no old cached stylesheet/scripts and compact original manager CSS rules',()=>{
-  assert.match(html,/seyveo-business-command\.css\?v=65/);
+  assert.match(html,/seyveo-business-command\.css\?v=66/);
   assert.match(html,/seyveo-business-command\.js\?v=65/);
-  assert.match(html,/seyveo-unified-tasks\.js\?v=36/);
+  assert.match(html,/seyveo-unified-tasks\.js\?v=37/);
   assert.match(css,/#tasksPage \.svcp-manager-row\{[^}]*min-height:52px/);
   assert.match(css,/#tasksPage \.svcp-manager-art\{[^}]*width:33px/);
   assert.match(css,/#tasksPage \.svcp-manager-staff\{[^}]*margin:0;border:0/);
   assert.match(css,/#tasksPage\[data-work-view="business"\] \.tasks-heading h1/);
+});
+
+test('subscription preview has three tiers, nested Family/Enterprise and independent business role',()=>{
+ assert.match(html,/id="seyveoPreviewTiers"/);
+ for(const tier of ['one','rise','autonom'])assert.match(html,new RegExp('data-preview-tier="'+tier+'"'));
+ for(const variant of ['one:personal','one:family','rise:start','rise:operating','autonom:standard','autonom:enterprise'])
+  assert.ok(html.includes('data-preview-option="'+variant+'"'),variant);
+ assert.match(html,/id="seyveoDemoRoleGroup"[^>]*hidden/);
+ assert.match(html,/data-preview-role="manager"/);
+ assert.match(html,/data-preview-role="employee"/);
+ assert.match(roles,/const PREVIEW_STRUCTURE_KEY='seyveo-demo-preview-structure-v1'/);
+ assert.match(roles,/function applyPreviewSelection\(\)/);
+ assert.match(roles,/previewTier==='one'\?'one':previewRole==='employee'\?'employee'/);
+ assert.match(roles,/previewOptions\.autonom==='enterprise'\?'large':'autonom'/);
+ assert.match(roles,/roleGroup\.hidden=previewTier==='one'/);
+ assert.match(roles,/if\(previewTier==='one'\)previewRole='manager'/);
+ assert.match(roles,/resetChatForRoleChange/);
+ assert.match(roles,/navigate\(isEmployee\(\)\?'employee':isManager\(\)\?'team':'personal'\)/);
+ assert.match(css,/#managePage \.svcp-preview-tiers\{/);
+ assert.match(css,/#managePage \.svcp-preview-options\{/);
 });
