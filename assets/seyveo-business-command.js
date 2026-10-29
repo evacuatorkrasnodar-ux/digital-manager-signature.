@@ -1075,8 +1075,7 @@ function renderChat(){
      ?suggestedRecognition(msg,roomDetails().person):null;
     if(awardSuggestion){
      const awardPerson=roomDetails().person;
-     const awardButton=btn('',()=>applyPersonReaction(awardPerson,'help',awardSuggestion.reason),'svcp-message-action svcp-inline-award');
-     awardButton.innerHTML='<svg class="svcp-hall-medal" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><use href="#svcpHallMedal"/></svg>';
+     const awardButton=btn('★',()=>applyPersonReaction(awardPerson,'help',awardSuggestion.reason),'svcp-message-action svcp-inline-award');
      awardButton.setAttribute('aria-label','Благодарность для '+STAFF[awardPerson]+' · в личное дело');
      awardButton.title='Предложение Сэйви: '+awardSuggestion.reason+'. Поблагодарить '+STAFF[awardPerson];
      actions.prepend(awardButton);
