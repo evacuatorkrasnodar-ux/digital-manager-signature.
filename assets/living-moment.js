@@ -67,6 +67,10 @@ const glyph=Object.freeze({
   '<path d="M35 43h25M35 53h22M35 63h12"/>',
   '<path d="m54 70 5 5 11-12" class="lm-glyph-accent"/>'
  ].join(''),
+ work: [
+  '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
+  '<path d="M15 31 43.5 54a7 7 0 0 0 9 0L81 31"/>'
+ ].join(''),
  mail: [
   '<rect x="11.5" y="23" width="73" height="52" rx="10"/>',
   '<path d="M15 31 43.5 54a7 7 0 0 0 9 0L81 31"/>',
@@ -144,6 +148,7 @@ const sample=[
  {kind:'contract',title:'Проверить документ',category:'ВАЖНОЕ',body:'Есть договор, который нужно посмотреть.',
   reason:'Это вымышленный договор для предпросмотра. Настоящий появляется только из ваших документов или разрешённого источника.',
   detail:'В рабочем режиме Сэйви поможет проверить договор, но ничего не подпишет без вашего подтверждения.'},
+ {kind:'work',title:'Елена · рабочий чат',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
  {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
   reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
   detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
@@ -208,6 +213,28 @@ function createSurface(primary,other=[],real=false,taskId=''){
  // The message is invented. No API, actual outgoing email or AI is used.
  const mailDefault='Здравствуйте, Андрей! Спасибо за обращение. Уточните, пожалуйста, адрес доставки, чтобы мы могли рассчитать стоимость.';
  let mailDraft=mailDefault,mailStep='draft';
+ let workDraft='',workMode='choose';
+ const workDetails=create('div','lm-mail-content');workDetails.hidden=true;
+ function workActive(){return !real&&shown.kind==='work'}
+ function updateWork(){
+  const active=workActive();workDetails.hidden=!active;
+  workSayvi.hidden=!active||workMode!=='choose';
+  workOwn.hidden=!active||workMode!=='choose';
+  workBack.hidden=!active||workMode==='choose';
+  execute.hidden=active;
+  workDetails.replaceChildren();
+  if(!active)return;
+  workDetails.append(create('p','lm-mail-intro','ДЕМО · Рабочий чат · Елена'));
+  workDetails.append(create('p','lm-mail-draft','Я закончила выкладку товаров. Можете проверить?'));
+  if(workMode!=='choose'){
+   const label=create('label','lm-mail-edit-label',workMode==='sayvi'?'✧ Черновик Сэйви':'Ваш ответ');
+   const input=create('textarea','lm-mail-edit-input');input.rows=3;input.maxLength=1200;input.value=workDraft;
+   input.addEventListener('input',()=>{workDraft=input.value});
+   label.append(input);workDetails.append(label);
+  }
+  workDetails.append(create('p','lm-mail-note','Учебное сообщение. Отправка в настоящий чат не подключена.'));
+ }
+
  const mailDetails=create('div','lm-mail-content');
  mailDetails.hidden=true;
  // The original document scene uses the SAME field, artwork, actions and motion.
@@ -299,6 +326,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    else location.hash='#sayvi-mail';
    return;
   }
+  if(workActive()){explain(field,'Учебный рабочий чат. Можно подготовить ответ прямо здесь, но отправка пока не подключена.',open);return}
   if(documentActive()){
    const api=window.SEYVEO_SAYVI_SURFACES;
    if(api?.open)api.open('contract');
@@ -309,6 +337,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   explain(field,shown.reason+' '+shown.detail,open);
  });
  const execute=polymer(real?'Продолжить дело':'Исполнить',()=>{
+  if(workActive()){updateWork();return}
   if(mailActive()){
    if(mailStep==='draft'){mailStep='confirm';updateMail();return}
    if(mailStep==='confirm'){mailStep='done';updateMail();return}
@@ -335,6 +364,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
  open.setAttribute('aria-label','Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
+ const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
+ const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
+ const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
@@ -367,8 +399,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
- controls.append(execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
- main.append(hero,mailDetails,documentDetails,controls);
+ controls.append(workSayvi,workOwn,workBack,execute,mailEdit,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
+ main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
  function updateCount(){
   if(real){
@@ -417,9 +449,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.setAttribute('aria-expanded','false');
   execute.setAttribute('aria-expanded','false');
   mailStep='draft';
-  documentStep='summary';
+  documentStep='summary';workMode='choose';workDraft='';
   updateMail();
-  updateDocument();
+  updateDocument();updateWork();
   updateCount();
   renderSecondary();
   announceRecommendation(item);
@@ -478,7 +510,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  field.dataset.lmSubject=primary.kind;
  description.hidden=!real&&(primary.kind==='contract'||primary.kind==='mail');
  updateMail();
- updateDocument();
+ updateDocument();updateWork();
  updateCount();
  renderSecondary();
  const explanation=create('p','lm-explanation');
