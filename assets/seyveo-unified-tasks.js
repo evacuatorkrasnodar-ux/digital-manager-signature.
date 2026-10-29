@@ -326,6 +326,14 @@
   if(event.key===SHIFT_KEY||event.key===LEGACY_SHIFT_KEY||event.key===BREAK_KEY)renderEmployeeClock();
   if(event.key===RECOGNITION_KEY)renderEmployeeThanks();
  });
+ // Photos in this FIRST preview remain only in the current tab's memory.
+ // Never upload them, write them to localStorage or include them in task JSON.
+ const demoPhotos=new Map();
+ window.SEYVEO_APPROVAL_DEMO_PHOTO=Object.freeze({get:id=>demoPhotos.get(id)||null});
+ window.addEventListener('pagehide',()=>{
+  for(const url of demoPhotos.values())URL.revokeObjectURL(url);
+  demoPhotos.clear();
+ });
  function renderEmployeeTasks(){
   if(!employeeTaskHost)return;
   employeeTaskHost.replaceChildren();
@@ -342,6 +350,69 @@
   for(const {task,index} of [...active,...mine.filter(({task})=>task.done)]){
    const row=document.createElement('div');
    row.className='svcp-employee-task'+(task.done?' is-done':'');
+   if(task.approvalFlow===true){
+    row.classList.add('svcp-approval-employee-row');
+    const title=document.createElement('strong');title.className='svcp-approval-task-title';title.textContent=task.text;
+    const names={assigned:'Новое поручение',review:'Отправлено руководителю',rework:'Нужна доработка',approved:'Принято руководителем'};
+    const state=document.createElement('small');state.className='svcp-approval-demo-state';
+    state.textContent=names[task.reviewStatus]||names.assigned;
+    row.append(title,state);
+    if(task.reportText){
+     const report=document.createElement('p');report.className='svcp-approval-demo-report';
+     report.textContent='Твой отчёт: '+String(task.reportText).slice(0,350);row.append(report);
+    }
+    if(task.reviewStatus==='assigned'||task.reviewStatus==='rework'){
+     const form=document.createElement('form');form.className='svcp-approval-report-form';
+     const label=document.createElement('label');label.textContent='Что сделано';
+     const note=document.createElement('textarea');note.rows=2;note.maxLength=350;
+     note.placeholder='Например: проверила полку, поправила ценники';
+     note.setAttribute('aria-label','Отчёт о выполнении: '+task.text);
+     label.append(note);form.append(label);
+     const photo=document.createElement('label');photo.className='svcp-approval-photo-label';
+     photo.textContent='Фото результата · необязательно';
+     const file=document.createElement('input');file.type='file';file.accept='image/*';
+     file.setAttribute('capture','environment');file.setAttribute('aria-label','Выбрать фото результата');
+     photo.append(file);form.append(photo);
+     const hint=document.createElement('small');hint.className='svcp-approval-demo-note';
+     hint.textContent='Фото только для просмотра в этой вкладке, не сохраняется и не отправляется.';
+     form.append(hint);
+     file.addEventListener('change',()=>{
+      const selected=file.files?.[0];if(!selected)return;
+      if(!selected.type.startsWith('image/')||selected.size>8*1024*1024){
+       file.value='';hint.textContent='Выберите фото не более 8 МБ.';return;
+      }
+      const prev=demoPhotos.get(task.id);if(prev)URL.revokeObjectURL(prev);
+      demoPhotos.set(task.id,URL.createObjectURL(selected));
+      hint.textContent='Фото выбрано · доступно только до закрытия вкладки.';
+     });
+     const send=document.createElement('button');send.type='submit';
+     send.className='svcp-approval-submit';send.textContent='Передать на проверку';
+     form.append(send);
+     form.addEventListener('submit',event=>{
+      event.preventDefault();
+      if(!isEmployee())return;
+      const report=note.value.trim();if(!report){note.focus();return}
+      let fresh=[];try{const value=JSON.parse(localStorage.getItem(TASK_KEY)||'[]');if(Array.isArray(value))fresh=value}catch{}
+      if(!fresh.some(t=>t?.id===task.id&&t.approvalFlow===true&&t.assigneeId==='elena'&&
+       (t.reviewStatus==='assigned'||t.reviewStatus==='rework')))return;
+      const updated=fresh.map(t=>t.id===task.id?{
+       ...t,reviewStatus:'review',reportText:report.slice(0,350),
+       photoSelected:demoPhotos.has(task.id),submittedAt:Date.now(),done:false
+      }:t);
+      try{localStorage.setItem(TASK_KEY,JSON.stringify(updated))}
+      catch{hint.textContent='Не удалось сохранить учебный отчёт на устройстве.';return}
+      window.dispatchEvent(new Event('seyveo:employee-task-updated'));
+      renderEmployeeTasks();
+     });
+     row.append(form);
+    }else if(task.reviewStatus==='review'){
+     const next=document.createElement('button');next.type='button';
+     next.className='svcp-approval-demo-switch';next.textContent='Посмотреть как руководитель';
+     next.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.previewRole?.('manager'));
+     row.append(next);
+    }
+    employeeTaskHost.append(row);continue;
+   }
    const taskLabel=document.createElement('label');taskLabel.className='svcp-employee-task-label';
    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=!!task.done;
    checkbox.setAttribute('aria-label','Выполнено: '+task.text);
@@ -746,7 +817,16 @@
    if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
   }
  });
- window.SEYVEO_UNIFIED_TASKS=Object.freeze({openBusiness,openPersonal,openChat,openPulse,returnFromPulse,openPeople});
+ function previewRole(role){
+  if(role!=='manager'&&role!=='employee')return;
+  // This is ONLY a view switch on one phone, not authorization.
+  if(previewTier==='one')previewTier='rise';
+  previewRole=role;
+  applyPreviewSelection();
+ }
+ window.SEYVEO_UNIFIED_TASKS=Object.freeze({
+  openBusiness,openPersonal,openChat,openPulse,returnFromPulse,openPeople,previewRole
+ });
  window.SEYVEO_PREVIEW=Object.freeze({getMode:()=>previewMode,isManager,isEmployee});
  syncBack();updatePulseAccess();select(isEmployee()?'employee':'personal');
 })();
