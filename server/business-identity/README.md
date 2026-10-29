@@ -1,9 +1,61 @@
 # SEYVEO account boundary · future iOS/Android backend
 
-**Architecture and policy tests, NOT a production identity service.** This module
-does not create accounts, send invitations, listen on HTTP(S), fetch personal
-data, provide storage, verify an OAuth or OpenID Connect provider, or deploy
-anything. No real user data should be supplied.
+**Architecture, cryptographic reference adapter and policy tests — NOT a production identity service.** The boundary does not create accounts, send invitations, listen on HTTP(S), fetch personal
+data, provide storage, run an OAuth login or OpenID Connect flow, or deploy
+anything. Its separate offline JWT adapter verifies signed tokens against
+preconfigured public keys and injected identity/revocation callbacks but does
+not discover or operate a real provider. No real user data should be supplied.
+
+## Experimental JWT access-token verifier (cryptographic policy, not login)
+
+`verified-access-token.mjs` adds `createVerifiedJwtAccessSession(...)`, a
+**Node.js 22+ offline development adapter** that cryptographically verifies a
+signed **RFC 9068 OAuth access-token JWT**, then returns a verified
+`userId/sessionId` for the existing business identity boundary.
+
+Its deliberately narrow policy:
+- Accept **only** signed RSA RS256 access tokens with explicit
+  `typ: at+jwt` (or `application/at+jwt`). Do **not** accept OpenID Connect
+  ID tokens (`typ: JWT`), unsigned tokens, symmetric MAC algorithms or an
+  algorithm/key indicated by untrusted token claims.
+- Use **explicitly configured** issuer, resource-server audience, authorized
+  native `client_id`, and locally supplied, trusted RSA PUBLIC signing
+  keys. Validate JWS signature, exact issuer/client, audience, issuance and
+  expiry times, token ID, and the maximum one-hour token lifetime.
+  Token-supplied `jku`, `jwk`, `x5u`, critical headers, or URLs are refused:
+  the verifier never makes network key-discovery requests.
+- Resolve the token's issuer-scoped subject through a trusted account directory
+  with `resolvePerson`. A client-credentials/machine account cannot become
+  a personal SEYVEO account just by having a valid signed token.
+- Call `isRevoked` **on each verification**, requiring an explicit `false`
+  for a known active session. Offline or failed status lookup **denies access**.
+  Employer role and company ID in a JWT have **no authority**; business
+  access still relies on fresh, server-side organization membership.
+- Accept either an opaque trusted token or a JWT-shaped string in
+  `identity-boundary.mjs`, but **always** send either through the configured
+  trusted `verifySession` implementation. The token's appearance proves nothing.
+
+The adapters `resolvePerson` and `isRevoked` are critical security
+dependencies **not implemented here**. The signed-JWT module is a narrowly
+scoped learning/reference implementation, **not a substitute for a reviewed
+OAuth/OIDC library, key-management integration or a production session
+service**. All tests use randomly generated test keys and synthetic identities.
+
+A real backend must use provider-supported OAuth Authorization Code + PKCE
+for native login, configured discovery and carefully managed JWKS rotation,
+verified issuer, strict access-token audience, a reliable revoked-session
+service, real person directory and complete signup/recovery and MFA policies.
+Do not configure this module to send tokens to the loopback document server,
+do not promote the test identity provider or bundled test keys, and never
+treat passing tests as production security approval.
+
+```sh
+node --test server/business-identity/verified-access-token.test.mjs
+```
+
+The underlying recommendations are
+[RFC 9068](https://www.rfc-editor.org/rfc/rfc9068) (access-token profile) and
+[RFC 8725](https://www.rfc-editor.org/rfc/rfc8725) (JWT security best practices).
 
 ## Invariants
 
