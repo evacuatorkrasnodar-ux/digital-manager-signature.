@@ -67,7 +67,7 @@ assert.match(work,/staffReveal\?\.addEventListener\('toggle'/);
 assert.match(css,/#tasksPage \.svcp-manager-row\{/);
 assert.match(css,/#tasksPage \.svcp-manager-staff>summary/);
 assert.match(business,/function preparePeopleContent\(\)/);
-assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=37/);
+assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=38/);
 
 assert.match(management,/\$\('openManageRoadmap'\)\.addEventListener\('click'/);
 assert.match(management,/roadmapDialog\.showModal\(\)/);
