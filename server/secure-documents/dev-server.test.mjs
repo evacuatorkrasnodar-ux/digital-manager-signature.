@@ -44,6 +44,19 @@ test('SEYVEO document API: verified local sessions and tenant boundaries', async
   assert.equal(employeeResponse.body.user.role,'employee');
   assert.equal((await request('/v1/organizations','GET',undefined,employee)).body.organizations[0].role,'employee');
 
+  const workspaceOwner=await request('/v1/workspace','GET',undefined,owner);
+  const workspaceElena=await request('/v1/workspace','GET',undefined,employee);
+  assert.equal((await request('/v1/workspace')).status,401);
+  assert.equal((await request('/v1/workspace?userId=owner','GET',undefined,employee)).status,400);
+  assert.equal(workspaceOwner.status,200);
+  assert.equal(workspaceOwner.body.work.role,'owner');
+  assert.equal(workspaceElena.status,200);
+  assert.equal(workspaceElena.body.work.userId,'elena');
+  assert.equal(workspaceElena.body.work.role,'employee');
+  assert.equal(workspaceElena.body.work.organizationId,'demo-org');
+  assert.equal(workspaceElena.body.trainingOnly,true);
+  assert.equal(JSON.stringify(workspaceElena.body).includes('ownerPassword'),false);
+
   const doc={
     type:'acknowledgement',recipientUserId:'elena',
     title:'Учебный приказ о сменах',body:'Этот текст должен быть зашифрован в памяти сервера.'
