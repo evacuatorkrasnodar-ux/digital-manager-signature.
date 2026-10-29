@@ -9,6 +9,7 @@ import { randomBytes, randomUUID, scryptSync, timingSafeEqual, createHash, creat
 import { pathToFileURL } from 'node:url';
 import { createEncryptedDevStore } from './dev-store.mjs';
 import { openDevTenantStore } from './sqlite-tenant-store.mjs';
+import { projectDocumentMailbox } from './mailbox-view.mjs';
 import {
   canCreateDocument, canReadDocument, canReadDocumentAudit,
   canTransitionDocument
@@ -217,6 +218,30 @@ export function createDevDocumentServer({ ownerPassword, employeePassword, maste
       if (req.method === 'GET' && path === '/v1/organizations') {
         send(res, 200, { organizations:[{ id:context.membership.organizationId, role:context.membership.role }] });
         return;
+      }
+      // Polling mailbox for two separate authenticated local test sessions.
+      // No request parameter may select another person's inbox/outbox.
+      const mailboxMatch=/^\/v1\/organizations\/([^/]+)\/(inbox|outbox)$/.exec(path);
+      if(mailboxMatch){
+        if(req.method!=='GET')fail(405,'Метод не поддерживается.');
+        const [,tenant,folder]=mailboxMatch;
+        if(tenant!==context.membership.organizationId)
+          fail(404,'Раздел не найден.');
+        let visible;
+        try {
+          visible=sqlite
+            ?sqlite.listDocuments({actor:context.actor,organizationId:tenant})
+            :Array.from(documents.values())
+              .filter(doc=>canReadDocument({...context,document:doc}))
+              .map(meta);
+          const projected=projectDocumentMailbox({
+            documents:visible,actor:context.actor,membership:context.membership,
+            organizationId:tenant,folder
+          });
+          send(res,200,projected);return;
+        } catch {
+          fail(503,'Входящие документы временно недоступны.');
+        }
       }
       const match = /^\/v1\/organizations\/([^/]+)\/documents(?:\/([^/]+))?(?:\/(actions|audit))?$/.exec(path);
       if (!match) fail(404, 'Маршрут не найден.');
