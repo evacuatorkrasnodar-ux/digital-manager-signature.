@@ -94,6 +94,7 @@ export function createOwnerInvitationHttpContract({
     origin=url.origin;
   }catch{throw new TypeError('A trusted exact HTTPS API origin is required.');}
   if(typeof identity?.canAccessBusiness!=='function'||
+     typeof identity?.identifyVerifiedPerson!=='function'||
      [resolveVerifiedRecipient,issueInvitationAtomic,
       revokeInvitationAtomic,now,random,makeId]
        .some(fn=>typeof fn!=='function'))
@@ -141,6 +142,9 @@ export function createOwnerInvitationHttpContract({
       const token=typeof auth==='string'&&auth.startsWith('Bearer ')?auth.slice(7):'';
       if(token.length>8192||!TOKEN.test(token))return forbidden();
       if(!(await assertOwnerActive(token,organizationId)))return forbidden();
+      const actor=await identity.identifyVerifiedPerson({token});
+      if(!actor||!validId(actor.userId)||!validId(actor.sessionId))
+        return forbidden();
       if(!invitationId&&request.method==='POST'){
         const mime=request.headers.get('content-type');
         if(!mime||!/^application\/json(?:\s*;|$)/i.test(mime))
@@ -172,7 +176,7 @@ export function createOwnerInvitationHttpContract({
         const created=await issueInvitationAtomic({
           invitationId:id,codeDigest:createHash('sha256').update(code).digest('hex'),
           organizationId,employeeLogin:data.employeeLogin,
-          recipientUserId:recipient.userId,role:'employee',
+          actor,recipientUserId:recipient.userId,role:'employee',
           issuedAt:time,expiresAt,
           assertOwnerActive:()=>assertOwnerActive(token,organizationId)
         });
@@ -188,7 +192,7 @@ export function createOwnerInvitationHttpContract({
       }
       if(invitationId&&request.method==='DELETE'){
         const revoked=await revokeInvitationAtomic({
-          organizationId,invitationId,
+          organizationId,invitationId,actor,
           assertOwnerActive:()=>assertOwnerActive(token,organizationId)
         });
         if(revoked!==true)return conflict();
