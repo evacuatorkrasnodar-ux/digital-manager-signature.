@@ -21,7 +21,7 @@
  const EVENT_STORE='seyveo-calendar-events-v1',TASK_STORE='seyveo-personal-tasks-v1';
  function parse(message){
   if(typeof message!=='string'||message.length>500)return null;
-  const value=strip(message).replace(/^(?:сэй|сейва)[,\s]+/iu,'').replace(/[?!.]+$/gu,'').trim();
+  const value=strip(message).replace(/^(?:сэй|сэйви)[,\s]+/iu,'').replace(/[?!.]+$/gu,'').trim();
   let match=value.match(/^(?:(?:что\s+у\s+меня)|(?:что\s+у\s+меня\s+запланировано)|(?:какие\s+(?:у\s+меня\s+)?(?:планы|дела|встречи|события))|(?:покажи\s+(?:мои\s+)?(?:дела|планы|встречи|события))|(?:что\s+(?:в\s+моём\s+)?календаре))(?:\s+на)?\s+(сегодня|завтра|послезавтра)$/iu);
   if(match)return {kind:'calendar',shift:({сегодня:0,завтра:1,послезавтра:2})[match[1]]};
   // Deliberately no catch-all "remember everything": notes may contain secrets.
@@ -90,11 +90,11 @@
     text:'Не удалось прочитать локальные записи. Данные не менялись.'});}
  }
  // Delegate create requests to the ORIGINAL reviewed Calendar/Notebook handlers.
- // This removes only the wake-name "Сэй/Сейва" before the approved handlers.
+ // This removes only the wake-name "Сэй/Сэйви" before the approved handlers.
  // NO direct localStorage writes, modal bypass, network call or pretend execution.
  function draftCommand(message){
   if(typeof message!=='string'||message.length>2500)return null;
-  const match=message.trim().match(/^(?:сэй|сейва)(?:\s*[,!:.]\s*|\s+)([\s\S]+)$/iu);
+  const match=message.trim().match(/^(?:сэй|сэйви)(?:\s*[,!:.]\s*|\s+)([\s\S]+)$/iu);
   if(!match)return null;
   const command=match[1].trim();
   if(!command)return null;
@@ -160,14 +160,14 @@
    const stage=root.document.getElementById('stage');
    if(!panel||!overlay||!stage)return;
    if(root.SEYVEO_LOCAL_PENDING){
-    panel.textContent='Сейва ещё отвечает. Попробуй снова после ответа.';
+    panel.textContent='Сэйви ещё отвечает. Попробуй снова после ответа.';
     return;
    }
    const history=Array.isArray(root.SEYVEO_LOCAL_DIALOGUE?.turns)
     ?root.SEYVEO_LOCAL_DIALOGUE.turns.slice(-3):[];
-   const previous=history.map(t=>'Вы:\n'+t.q+'\n\nСейва:\n'+t.a).join('\n\n────────────\n\n');
+   const previous=history.map(t=>'Вы:\n'+t.q+'\n\nСэйви:\n'+t.a).join('\n\n────────────\n\n');
    panel.textContent=(previous?previous+'\n\n────────────\n\n':'')+
-    'Вы:\n'+q+'\n\nСейва:\n'+result.text;
+    'Вы:\n'+q+'\n\nСэйви:\n'+result.text;
    panel.scrollTop=panel.scrollHeight;
    overlay.hidden=false;
    stage.classList.add('has-inline-reply');
