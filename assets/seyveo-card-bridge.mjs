@@ -171,3 +171,52 @@ function syncBusinessTaskCards(){
 window.addEventListener('seyveo:manager-tasks-updated',syncBusinessTaskCards);
 window.addEventListener('storage',e=>{if(e.key===LOCAL_TASK_STORE)syncBusinessTaskCards();});
 queueMicrotask(syncBusinessTaskCards);
+
+/* Local-only employee message and peer-recognition adapters.
+   These are developer lifecycle records, not extra Home cards.
+   Do not treat an emoji as a manager-approved performance assessment. */
+const LOCAL_CHAT_STORE='seyveo-business-command-chat-demo-v1';
+const LOCAL_RECOGNITION_STORE='seyveo-peer-recognition-demo-v1';
+const linkedLocalEvents=new Set();
+function readLocalArray(key){
+ try{const data=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(data)?data:[];}
+ catch{return [];}
+}
+function linkLocalEvent(source,id,eventType,title,summary,actor){
+ const recordId=String(id||'').slice(0,128);
+ if(!recordId||linkedLocalEvents.has(source+':'+recordId))return;
+ try{
+  receive({eventId:source+':'+recordId,source,accountId:'demo-account',
+   workspaceId:'demo-workspace',sourceRecordId:recordId,eventType,
+   title:String(title||'Учебное событие').slice(0,140),
+   contextText:String(summary||'').slice(0,1200),actorLabel:String(actor||'').slice(0,80),
+   priority:2});
+  linkedLocalEvents.add(source+':'+recordId);
+ }catch(error){log('local-event-adapter-error',String(error));}
+}
+function syncLocalConversations(){
+ const chat=readLocalArray(LOCAL_CHAT_STORE);
+ chat.slice(-200).forEach((message,index)=>{
+  if(!message||typeof message.text!=='string'||!message.text.trim())return;
+  // Only received employee messages; manager's outgoing and special service
+  // messages are excluded so the assistant doesn't generate false inbox alerts.
+  if(message.role!=='elena'&&message.role!=='employee')return;
+  const id=[message.room||'unknown',message.at||index,index].join(':');
+  linkLocalEvent('local-work-chat',id,'message_received',
+   'Сообщение в рабочем чате',message.text,message.role);
+ });
+ const rewards=readLocalArray(LOCAL_RECOGNITION_STORE);
+ rewards.slice(-100).forEach((reward,index)=>{
+  if(!reward||typeof reward.id!=='string'||!reward.id)return;
+  linkLocalEvent('local-peer-recognition',reward.id,'employee_update',
+   'Благодарность сотруднику · демо',
+   'Знак: '+String(reward.kind||'').slice(0,60)+'; сотрудник: '+String(reward.to||'').slice(0,80),
+   reward.from);
+ });
+}
+window.addEventListener('seyveo:recognition-updated',syncLocalConversations);
+window.addEventListener('seyveo:work-chat-updated',syncLocalConversations);
+window.addEventListener('storage',event=>{
+ if(event.key===LOCAL_CHAT_STORE||event.key===LOCAL_RECOGNITION_STORE)syncLocalConversations();
+});
+queueMicrotask(syncLocalConversations);
