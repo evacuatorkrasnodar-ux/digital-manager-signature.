@@ -19,8 +19,16 @@ function postpone(key){return advance(key,'deferred',{reason:'User chose Later'}
 function resume(key){return advance(key,'shown',{reason:'User resumed deferred card'});}
 // Stable order for Quiet Cinema's existing preview items, without changing geometry.
 function orderPreview(items){
+ // Explicit priority wins; stable family order breaks ties.
+ // No guessing urgency from free-text, names, or sensitive medical content.
  const rank={work:0,mail:1,contract:2};
- return [...items].sort((a,b)=>(rank[a.kind]??3)-(rank[b.kind]??3));
+ const level={urgent:0,important:1,normal:2};
+ const score=item=>Number.isInteger(item.priority)&&item.priority>=0&&item.priority<=3
+   ?item.priority:(Object.hasOwn(level,item.priority)?level[item.priority]:2);
+ return items.map((item,index)=>({item,index})).sort((a,b)=>
+   score(a.item)-score(b.item)||
+   (rank[a.item.kind]??3)-(rank[b.item.kind]??3)||
+   a.index-b.index).map(entry=>entry.item);
 }
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
