@@ -29,7 +29,7 @@ export async function respond(payload){
   return Object.freeze({
    status:'temporarily-unavailable',
    provider:'none',model:null,route:plan.route,
-   text:'Сейва пока не смогла получить ответ. Проверь подключение выбранной модели. Реальных действий я не выполнял.',
+   text:'Сэйви пока не смогла получить ответ. Проверь подключение выбранной модели. Реальных действий я не выполнял.',
    approvalRequired:plan.humanApprovalRequired,
    executed:false
   });
