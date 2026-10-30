@@ -10,6 +10,7 @@ export function createLocalInference({runtime,modelPath,integrityVerified=false}
  let state='unloaded';
  let busy=false;
  async function unload(){
+  if(busy)throw Error('model-session-busy');
   if(state!=='unloaded'){
    state='unloaded';
    await runtime.unload();
@@ -30,7 +31,8 @@ export function createLocalInference({runtime,modelPath,integrityVerified=false}
     state='ready';
     return true;
    }catch(e){
-    try{await unload()}catch{}
+    state='unloaded';
+    try{await runtime.unload()}catch{}
     throw Error('local-model-unavailable');
    }finally{busy=false}
   },
