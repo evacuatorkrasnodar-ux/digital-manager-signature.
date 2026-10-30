@@ -1288,7 +1288,8 @@ function storeTask(text,source){
  }
  const created=fresh.map((assigneeId,i)=>({
   id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
-  text:title,done:false,assigneeId,
+  text:title,done:false,assigneeId,createdAt:Date.now(),
+  ...(source?.room==='business-mail'?{mailHistory:[{event:'assigned',at:Date.now()}]}:{}),
   ...(source?.approvalFlow?{approvalFlow:true,reviewStatus:'assigned'}:{}),
   ...(source?.room?{source:source.room==='business-mail'?'business-mail':'chat',room:source.room}:{}),
   ...(source?.mailDraftId?{mailDraftId:source.mailDraftId}:{})
@@ -1660,7 +1661,8 @@ function renderTasks(){
     // The manager is the ONLY demo perspective permitted to approve.
     const updated=state.tasks.map((item,j)=>j===i?{
      ...item,reviewStatus:accepted?'approved':'rework',done:accepted,
-     reviewedAt:Date.now()
+     reviewedAt:Date.now(),
+     ...(item.mailHistory?{mailHistory:[...item.mailHistory,{event:accepted?'approved':'rework',at:Date.now()}]}:{})
     }:item);
     if(!save(TASK_KEY,updated))return;
     state.tasks=updated;renderTasks();
