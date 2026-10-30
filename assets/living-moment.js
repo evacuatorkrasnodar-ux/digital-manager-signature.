@@ -727,7 +727,12 @@ function refresh(){
  if(document.hidden||home.hidden||document.documentElement.classList.contains('seyveo-conversation'))return;
  const pending=dynamic.querySelector('[data-owner-advice]');
  const pendingKey=adviceIdentity(pending);
- if(mode==='preview'){if(!dynamic.hidden)dynamic.hidden=true;return}
+ if(mode==='preview'){
+  if(!dynamic.hidden)dynamic.hidden=true;
+  // A real manager review supersedes only the idle training presentation.
+  if(dueTasks().some(item=>item.businessTask)&&!editing()){rest();return}
+  return;
+ }
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
   if(!dueTasks().some(item=>item.eventId===key))rest();
