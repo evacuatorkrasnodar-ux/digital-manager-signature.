@@ -13,7 +13,8 @@ import sys
 import traceback
 from pathlib import Path
 
-from clone_wife_voice import MODEL, default_output
+from clone_wife_voice import MODEL
+from approved_voice import app_reference, active_path
 
 MAX_TEXT = 450
 MAX_LINE = 4096
@@ -33,9 +34,13 @@ def reply(payload):
 
 def main():
     configure_stdio()
-    reference = default_output() / "wife-reference.wav"
+    try:
+        reference = app_reference()
+    except ValueError as error:
+        reply({"type": "fatal", "error": str(error)[:300]})
+        return 1
     if not reference.is_file():
-        reply({"type": "fatal", "error": "Не найден локальный голос Сэйви."})
+        reply({"type": "fatal", "error": "Не найден локальный голос Сэйви. Запусти activate-approved-voice.cmd."})
         return 1
 
     # Third-party libraries may print progress; never pollute JSONL stdout.
@@ -57,7 +62,7 @@ def main():
         reply({"type": "fatal", "error": "Ошибка запуска голосового движка: " + str(error)[:300]})
         return 1
 
-    reply({"type": "ready"})
+    reply({"type": "ready", "voice": "approved" if reference == active_path() else "legacy"})
     for raw in sys.stdin:
         if len(raw) > MAX_LINE:
             reply({"type": "error", "id": 0, "error": "Слишком длинная команда."})
