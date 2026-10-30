@@ -1,0 +1,28 @@
+name: SEYVEO Voice School Offline Safety Tests
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/seyveo-voice-school/**'
+      - '.github/workflows/seyveo-voice-school.yml'
+  pull_request:
+    paths:
+      - 'server/seyveo-voice-school/**'
+      - '.github/workflows/seyveo-voice-school.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice-school:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate Python without TTS model downloads
+        run: |
+          python -m py_compile server/seyveo-voice-school/voice_school.py server/seyveo-voice-school/speak.py
+          python -m unittest discover -s server/seyveo-voice-school -p test_voice_school.py -v
+          python server/seyveo-voice-school/voice_school.py --plan
