@@ -120,5 +120,26 @@ if(home&&dock){
   live.scrollIntoView({behavior:'smooth',block:'nearest'});
  });
 }
+// Local AI coaching: store only examples the developer explicitly approves.
+const learning=document.createElement('section');learning.className='scs-panel';
+const heading=document.createElement('h3');heading.textContent='Память Сэйви · обучение на примерах';
+const note=document.createElement('p');note.className='scs-note';
+note.textContent='Сэйви будет учитывать только одобренные ответы. Не вводите сюда пароли или личные данные.';
+const question=document.createElement('textarea');question.rows=2;question.maxLength=600;question.placeholder='Пример вопроса пользователя';
+const answer=document.createElement('textarea');answer.rows=4;answer.maxLength=1800;answer.placeholder='Правильный ответ Сэйви';
+const save=document.createElement('button');save.type='button';save.textContent='Обучить Сэйви на этом примере';
+const status=document.createElement('p');status.className='scs-note';status.setAttribute('aria-live','polite');
+const loadStats=async()=>{try{const r=await fetch('/api/seyveo-learning-stats');const v=await r.json();status.textContent='Одобрено примеров: '+v.count+' · веса Qwen3 не меняются';}catch{status.textContent='Локальный модуль памяти пока недоступен';}};
+save.addEventListener('click',async()=>{
+ if(!question.value.trim()||!answer.value.trim()){status.textContent='Заполни вопрос и правильный ответ.';return;}
+ save.disabled=true;
+ try{const r=await fetch('/api/seyveo-learning-approve',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:question.value,answer:answer.value})});
+  if(!r.ok)throw Error('Не удалось сохранить');question.value='';answer.value='';await loadStats();
+ }catch{status.textContent='Не удалось сохранить. Проверь локальный сервер.';}
+ finally{save.disabled=false;}
+});
+for(const el of [heading,note,question,answer,save,status])learning.append(el);
+page.querySelector('.scs-wrap').append(learning);
+button.addEventListener('click',loadStats);
 render();
 })();
