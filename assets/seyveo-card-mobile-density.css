@@ -58,3 +58,16 @@
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:3px}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .sv-card-expand{min-height:38px}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"].sv-card-expanded .lm-mail-content .lm-mail-draft{display:block;overflow-wrap:anywhere}
+
+/* Phone readability: reserve a real gap below the original sphere. */
+#homePage.lm-focus #orbCluster{margin-bottom:14px}
+#homePage.lm-focus .message{margin-top:10px}
+#homePage.lm-focus.sv-orb-level-3 #orbCluster{margin-bottom:17px}
+/* Expansion control lives immediately below the actions, never after a spacer. */
+#seyveoLivingMoment .lm-field .sv-card-expand{
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ margin:0 0 2px 4px;padding:0 2px;min-height:32px;
+ font:inherit;font-size:12px;line-height:1.25;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:2px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions{margin-bottom:0;row-gap:0}
