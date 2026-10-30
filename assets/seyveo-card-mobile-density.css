@@ -1,0 +1,21 @@
+/* SEYVEO mobile density level 3: only compact Quiet Cinema; plasma SVG unchanged. */
+@media(max-height:740px), (max-width:380px){
+ #homePage.lm-focus #orbCluster{height:clamp(96px,23vw,124px)!important}
+ #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
+ #homePage.lm-focus #stage{min-height:clamp(178px,25vh,220px)!important;padding-bottom:2px}
+ #homePage.lm-focus .message{min-height:52px;margin-top:5px}
+ #seyveoLivingMoment .lm-field{padding-top:5px}
+ #seyveoLivingMoment .lm-hero-art{width:39px;height:39px}
+ #seyveoLivingMoment .lm-hero{grid-template-columns:39px minmax(0,1fr);gap:6px}
+ #seyveoLivingMoment .lm-secondary{max-height:110px}
+}
+/* Compact first view. Expanded content still uses the original action flow. */
+#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .lm-mail-content:not([hidden]),
+#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .lm-document-content:not([hidden]){
+ max-height:92px;overflow:hidden;mask-image:linear-gradient(#000 76%,transparent);
+}
+#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .sv-copy-guide{max-height:48px;overflow:hidden}
+#seyveoLivingMoment .sv-card-expand{align-self:flex-start;border:0;background:none;color:var(--seyveo-emerald,var(--text));padding:4px 2px;min-height:44px;font:inherit;font-size:12px;cursor:pointer}
+#seyveoLivingMoment .sv-card-expand[hidden]{display:none!important}
+#seyveoLivingMoment .lm-field.sv-card-expanded .lm-mail-content,
+#seyveoLivingMoment .lm-field.sv-card-expanded .lm-document-content{max-height:none;mask-image:none}
