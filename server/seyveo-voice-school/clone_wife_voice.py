@@ -113,7 +113,7 @@ def main(argv=None):
     out=args.out.resolve()
     if out==Path.cwd().resolve():
         parser.error("Не сохраняй приватные записи в корне GitHub-проекта.")
-    print("Голос жены: используется только с её добровольного согласия.")
+    print("Голос SEYVEO: используется только с добровольного согласия правообладателя записи.")
     print("Оригинал остаётся на твоём компьютере. Запись не попадёт в GitHub.")
     reference,stats=prepare(args.recording,out)
     print("Выбран фрагмент:",stats,"→",reference)
