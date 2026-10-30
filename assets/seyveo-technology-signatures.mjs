@@ -12,3 +12,17 @@ function applySignatures(){
  }
 }
 applySignatures();
+
+/* Small signatures on existing function tiles, not extra menu items. */
+const featureCaptions=[
+ ['[data-calendar-space="health"]','SEYVEO · VITAL CARE'],
+ ['[data-calendar-space="care"]','SEYVEO · PERSONAL CARE']
+];
+for(const [selector,caption] of featureCaptions){
+ const tile=document.querySelector(selector);
+ const subtitle=tile?.querySelector('small');
+ if(subtitle){subtitle.textContent=caption;subtitle.classList.add('sv-technology-caption');}
+}
+const techStyle=document.createElement('style');
+techStyle.textContent='.sv-technology-caption{font-size:9px!important;letter-spacing:.06em!important;color:var(--seyveo-emerald,var(--secondary))!important;font-weight:550!important}';
+document.head.append(techStyle);
