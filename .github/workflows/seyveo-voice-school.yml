@@ -26,7 +26,9 @@ jobs:
           python-version: '3.11'
       - name: Validate Python without TTS model downloads
         run: |
-          python -m py_compile server/seyveo-voice-school/voice_school.py server/seyveo-voice-school/speak.py server/seyveo-voice-school/clone_wife_voice.py server/seyveo-voice-school/say.py
+          python -m py_compile server/seyveo-voice-school/voice_school.py server/seyveo-voice-school/speak.py server/seyveo-voice-school/clone_wife_voice.py server/seyveo-voice-school/say.py server/seyveo-voice-school/voice_worker.py
+          node --check server/voice-worker.mjs
+          node --test server/voice-worker.test.mjs
           node --check assets/seyveo-private-voice.js
           node --check assets/living-conversation.js
           node --check server/real-app-local.mjs
