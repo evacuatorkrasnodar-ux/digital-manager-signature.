@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import unittest
+from pathlib import Path
 
 
 class VoiceUtf8TransportTests(unittest.TestCase):
@@ -24,7 +25,7 @@ class VoiceUtf8TransportTests(unittest.TestCase):
             [sys.executable, "-c", command], input=json.dumps(
                 {"id": 1, "text": message}, ensure_ascii=False
             ) + "\n", text=True, encoding="utf-8", capture_output=True,
-            env=env, timeout=10,
+            env=env, timeout=10, cwd=Path(__file__).resolve().parent,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)["text"], message)
