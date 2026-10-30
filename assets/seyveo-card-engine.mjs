@@ -9,6 +9,15 @@ const done=new Set(['succeeded','archived','canceled','expired']);
 const allowed={new:['shown','deferred','canceled'],shown:['action_pending','deferred','canceled'],deferred:['shown','canceled'],action_pending:['executing','shown','failed'],executing:['succeeded','failed'],failed:['action_pending','shown'],succeeded:['archived'],archived:[],canceled:[],expired:[]};
 function requiredString(s,name){if(typeof s!=='string'||!s.trim())throw new TypeError('Missing '+name);return s.trim();}
 export function eventKey(e){return ['source','accountId','sourceRecordId','eventType'].map(k=>requiredString(e[k],k)).concat(String(e.revision??0)).join('\u001f');}
+export function explainPriority(e){
+ const level=Number.isInteger(e.priority)&&e.priority>=0&&e.priority<=3?e.priority:2;
+ const labels=['Критическое','Важное','Обычное','Информационное'];
+ // Only source-provided, verified explanations. Never infer urgency from text.
+ const reason=typeof e.priorityReason==='string'&&e.priorityReason.trim()
+   ?e.priorityReason.trim().slice(0,240)
+   :'Причина приоритета источником не указана.';
+ return {level,label:labels[level],reason,verified:!!(e.priorityReasonVerified===true)};
+}
 export function createCard(e,{workspaceId,accountId}={}){
  if(!e||typeof e!=='object')throw new TypeError('Invalid event');
  const key=eventKey(e),type=TYPE_BY_EVENT[e.eventType]||'systemNotice';
@@ -19,7 +28,7 @@ export function createCard(e,{workspaceId,accountId}={}){
  cardType:type,sourceLabel:String(e.source),actorLabel:String(e.actorLabel||''),
  title:requiredString(e.title,'title'),contextText:String(e.contextText||''),assistantText:String(e.assistantText||''),
  proposalText:String(e.proposalText||''),priority:Math.max(0,Math.min(3,Number.isInteger(e.priority)?e.priority:2)),
- colorToken:type,actions:actions.slice(0,2),status:'new',version:1,accountId:e.accountId,workspaceId:e.workspaceId||null,
+ priorityExplanation:explainPriority(e),colorToken:type,actions:actions.slice(0,2),status:'new',version:1,accountId:e.accountId,workspaceId:e.workspaceId||null,
  createdAt:e.createdAt||new Date().toISOString(),history:[],privacyLevel:e.privacyLevel||'private'};
 }
 export function transition(card,next,meta={}){
