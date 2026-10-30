@@ -90,7 +90,10 @@ if(business&&trigger){
     const names={assigned:'В работе',review:'На проверке',rework:'На доработке',approved:'Принято'};
     summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
     item.append(summary);
-    const advice=document.createElement('small');advice.textContent='Сэйви · '+tasks.filter(t=>ids.includes(t.id)).map(mailTaskNextStep).join(' ');item.append(advice);
+    const pending=tasks.filter(t=>ids.includes(t.id)&&t.reviewStatus==='review'&&!t.done);
+    const active=tasks.filter(t=>ids.includes(t.id)&&!t.done);
+    if(active.length){const advice=document.createElement('small');advice.textContent='Сэйви · '+active.map(mailTaskNextStep).join(' ');item.append(advice);}
+    if(pending.length){const check=document.createElement('button');check.type='button';check.textContent='Проверить результат';check.addEventListener('click',()=>{if(window.SEYVEO_BUSINESS_TASK_DEMO?.openTask(pending[0].id)){page.hidden=true;if(board)board.hidden=false;}});item.append(check);}
     const history=document.createElement('details');history.className='svb-mail-history';const toggle=document.createElement('summary');toggle.textContent='История исполнения · подробнее';history.append(toggle);
     const milestones={assigned:'Поручение создано',review:'Сотрудник передал результат на проверку',approved:'Руководитель принял результат',rework:'Руководитель вернул на доработку'};
     for(const task of tasks.filter(t=>ids.includes(t.id))){
