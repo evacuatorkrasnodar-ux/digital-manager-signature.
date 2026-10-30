@@ -16,3 +16,23 @@ function list(){return visible([...cards.values()]).sort((a,b)=>a.priority-b.pri
 function inspect(){return {cards:list().map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
+
+// Non-invasive adapter for the existing Quiet Cinema demo mail card.
+// Tracks the confirmed demo step only; no network delivery is implied.
+let demoMailCounter=0;
+document.addEventListener('click',event=>{
+ const button=event.target?.closest?.('button');
+ const field=button?.closest?.('.lm-field');
+ if(!field||field.dataset.lmSubject!=='mail')return;
+ const label=button.textContent.trim();
+ if(!label.includes('Завершить пример')||!label.includes('демо'))return;
+ const seq=++demoMailCounter;
+ try{
+  const card=receive({eventId:'preview-mail-'+seq,source:'quiet-cinema-demo',accountId:'demo-account',workspaceId:'demo-workspace',sourceRecordId:'preview-mail-'+seq,eventType:'email_received',title:'Учебное письмо Андрея',contextText:'Демонстрация отправки',priority:2});
+  const pending=advance(card.dedupeKey,'action_pending');
+  const running=advance(pending.dedupeKey,'executing');
+  // This only acknowledges a local simulation, never a message delivered to a recipient.
+  const completed=advance(running.dedupeKey,'succeeded',{acknowledged:true,reason:'LOCAL DEMO SIMULATION ONLY'});
+  advance(completed.dedupeKey,'archived',{reason:'Local demo step closed'});
+ }catch(error){log('demo-mail-error',String(error));}
+},true);
