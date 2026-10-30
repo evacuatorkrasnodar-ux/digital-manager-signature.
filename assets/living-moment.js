@@ -799,6 +799,7 @@ dynamic.addEventListener('click',event=>{
 },true);
 window.SEYVEO_LIVING_MOMENT=Object.freeze({
  preview:()=>startPreview(),state:()=>mode,
+ inspectReview:id=>({queued:dueTasks().some(t=>t.businessTask&&t.taskId===id),visible:mode==='task'&&key==='mail-review:'+id&&!space.hidden}),
  deferred:()=>deferredPreview(),
  deferredTaskIds:()=>Array.from(postponedTaskIds),
  restoreDeferred:kind=>restorePreview(kind),
