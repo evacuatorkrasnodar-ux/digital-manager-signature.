@@ -70,5 +70,46 @@ button.addEventListener('click',()=>{page.hidden=false;render()});
 page.querySelector('[data-close]').addEventListener('click',()=>{page.hidden=true});
 select.addEventListener('change',()=>{stage=0;fillEditor();render()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')page.hidden=true});
+// Developer-only live Home walkthrough: never sends messages or changes real tasks.
+const home=document.getElementById('homePage');
+const dock=document.getElementById('seyveoLivingMoment');
+if(home&&dock){
+ const history=[];
+ const live=document.createElement('section');
+ live.id='seyveoStudioHomeDemo';live.hidden=true;
+ live.setAttribute('aria-label','Учебная карточка разработчика');
+ live.style.cssText='box-sizing:border-box;max-width:680px;width:calc(100% - 20px);margin:12px auto 22px;padding:17px;border:1px solid var(--soft-line);border-radius:22px;color:var(--text);background:var(--card2);';
+ dock.insertAdjacentElement('afterend',live);
+ const launch=document.createElement('button');launch.type='button';launch.textContent='Показать событие на Главной · демо';launch.style.cssText='min-height:44px;margin:12px 0;padding:6px 12px;border:1px solid var(--soft-line);border-radius:99px;background:transparent;color:var(--text);font:inherit;cursor:pointer;';
+ page.querySelector('.scs-wrap').append(launch);
+ const audit=document.createElement('p');audit.className='scs-note';audit.setAttribute('aria-live','polite');audit.textContent='Журнал действий пока пуст. Отправка и подпись отключены.';page.querySelector('.scs-wrap').append(audit);
+ let counter=0;
+ function record(type,card){history.unshift(type+' · '+card.title+' · '+new Date().toLocaleTimeString('ru-RU'));audit.textContent=history.slice(0,7).join(' | ');}
+ function show(card){
+  live.replaceChildren();live.hidden=false;
+  const title=document.createElement('strong');title.textContent=card.icon+'  '+card.title;title.style.cssText='display:block;font-size:18px;line-height:1.4;';
+  const flag=document.createElement('p');flag.textContent=card.family+' · УЧЕБНОЕ СОБЫТИЕ';flag.style.cssText='color:var(--secondary);font-size:11px;letter-spacing:.08em;';
+  const fact=document.createElement('p');fact.textContent=card.fact;fact.style.cssText='line-height:1.5;white-space:pre-wrap;';
+  const advise=document.createElement('p');advise.textContent='✧ СЭЙВИ ПРЕДЛАГАЕТ\n'+(card.suggestion||'Изучить событие');advise.style.cssText='white-space:pre-wrap;line-height:1.5;color:var(--text);';
+  const actions=document.createElement('div');actions.style.cssText='display:flex;flex-wrap:wrap;gap:16px;';
+  const make=(name,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=name;b.style.cssText='border:0;background:transparent;color:var(--text);font:inherit;cursor:pointer;min-height:44px;padding:5px 0;';b.addEventListener('click',fn);actions.append(b);};
+  make('Подтвердить · демо',()=>{record('Учебное подтверждение',card);live.hidden=true;live.replaceChildren();});
+  make('Позже',()=>{record('Отложено',card);live.hidden=true;live.replaceChildren();});
+  make('В студию',()=>{page.hidden=false;record('Открыта студия',card);});
+  live.append(title,flag,fact,advise,actions);
+  record('Показано на Главной',card);
+ }
+ launch.addEventListener('click',()=>{
+  const engine=window.SEYVEO_CARD_ENGINE;
+  const eventKey=Object.keys(engine?.eventType||{})[Number(select.value)];
+  const card=engine?.buildCard({id:'studio-home-'+(++counter),type:eventKey,title:fields.title.value,fact:fields.fact.value,suggestion:fields.suggestion.value,priority:fields.priority.value,source:'Студия разработчика',demo:true});
+  if(!card){audit.textContent='Заполни заголовок и описание события.';return;}
+  page.hidden=true;
+  const main=document.getElementById('homePage');if(main)main.hidden=false;
+  window.dispatchEvent(new CustomEvent('seyveo:studio-home-preview',{detail:{id:card.id,type:card.eventType}}));
+  show(card);
+  live.scrollIntoView({behavior:'smooth',block:'nearest'});
+ });
+}
 render();
 })();
