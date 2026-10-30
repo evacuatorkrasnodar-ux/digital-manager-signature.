@@ -41,10 +41,12 @@ if(enabled){
   if(!action){status.textContent='Ошибка: у карточки нет видимой кнопки «Проверить».';return;}
   const rect=action.getBoundingClientRect();
   const viewportHeight=window.visualViewport?.height||window.innerHeight;
-  const onScreen=rect.width>0&&rect.height>0&&rect.top>=0&&rect.bottom<=viewportHeight;
+  const viewportWidth=window.visualViewport?.width||window.innerWidth;
+  const onScreen=rect.width>0&&rect.height>0&&rect.top>=0&&rect.bottom<=viewportHeight&&rect.left>=0&&rect.right<=viewportWidth;
   const center=document.elementFromPoint(rect.left+rect.width/2,rect.top+rect.height/2);
   const uncovered=!!center&&(center===action||action.contains(center));
-  status.textContent='Кнопка: '+(onScreen?'в пределах экрана':'за пределами экрана')+' · '+(uncovered?'доступна':'перекрыта или ещё анимируется')+'. Проверяй после завершения анимации.';
+  const overlay=!!center&&box.contains(center);
+  status.textContent='Мобильная проверка: '+(onScreen?'✓ кнопка в границах экрана':'! кнопка выходит за границы')+'; '+(uncovered?'✓ доступна':overlay?'! перекрыта панелью DEV FLOW':'! перекрыта или ещё анимируется')+'. Проверяй после завершения анимации.';
  });
  box.append(title,status,create,submit,inspect,verify,audit,rules,visual);document.body.append(box);
 }
