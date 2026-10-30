@@ -1921,7 +1921,16 @@ preparePeopleContent();
 renderTasks();
 tab('chats');
 window.addEventListener('seyveo:employee-task-updated',()=>{
- state.tasks=read(TASK_KEY);
+ const incoming=read(TASK_KEY);
+ let changed=false;
+ const updated=incoming.map(task=>{
+  const prior=state.tasks.find(t=>t.id===task.id);
+  if(task.source!=='business-mail'||!prior||task.reviewStatus!=='review'||prior.reviewStatus==='review')return task;
+  changed=true;
+  return {...task,mailHistory:[...(task.mailHistory||[]),{event:'review',at:Date.now()}]};
+ });
+ if(changed)save(TASK_KEY,updated);
+ state.tasks=changed?updated:incoming;
  renderTasks();
  syncPreviewAfterTaskEdit();
 });
