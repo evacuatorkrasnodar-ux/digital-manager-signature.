@@ -109,7 +109,10 @@ export function createRealLocalServer({memoryStore}={}){
     const html=adaptOriginalHome(await readFile(resolve(ROOT,'index.html'),'utf8'));
     res.writeHead(200,{...HEADERS,'content-type':'text/html; charset=utf-8'});
     res.end(html);
-   }catch{send(res,500,{error:'Не удалось загрузить настоящую Главную.'})}
+   }catch(error){
+     console.error('[SEYVEO Home] Ошибка загрузки:',error?.stack||error);
+     send(res,500,{error:'Не удалось загрузить настоящую Главную. Подробности в окне сервера.'});
+    }
    return;
   }
   if(req.method==='GET'&&path==='/assets/push-status.js'){
