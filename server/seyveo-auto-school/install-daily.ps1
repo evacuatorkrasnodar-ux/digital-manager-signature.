@@ -7,14 +7,14 @@ $root = (Resolve-Path (Join-Path $folder '..\..')).Path
 $runner = Join-Path $folder 'run.mjs'
 $node = (Get-Command node -ErrorAction Stop).Source
 Write-Host "SEYVEO AI School will run automatically every day at 02:30 (Windows local time)."
-Write-Host "It uses CPU and local Ollama. It NEVER publishes updates or transfers personal data."
+Write-Host "It tests eight skill areas using CPU and local Ollama. It NEVER publishes updates or transfers personal data."
 Write-Host "To stop it: Windows Task Scheduler -> $taskName -> Disable."
 $answer = Read-Host 'Register the daily task? Type YES'
 if ($answer -cne 'YES') {
   Write-Host 'Cancelled. No task was created.'
   exit 0
 }
-$arguments = '"' + $runner + '" --count=2'
+$arguments = '"' + $runner + '" --count=8'
 $action = New-ScheduledTaskAction -Execute $node -Argument $arguments -WorkingDirectory $root
 $trigger = New-ScheduledTaskTrigger -Daily -At '02:30'
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 6) -MultipleInstances IgnoreNew
