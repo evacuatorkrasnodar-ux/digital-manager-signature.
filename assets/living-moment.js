@@ -370,9 +370,37 @@ function createSurface(primary,other=[],real=false,taskId=''){
      documentDetails.append(exportText);
      const compare=create('div','lm-document-comparison');
      compare.append(create('p','lm-section-label','БЫЛО · ИСХОДНЫЙ ТЕКСТ'));
-     compare.append(create('p','lm-document-excerpt',documentSource));
+     const before=create('p','lm-document-excerpt');
+     const after=create('p','lm-document-note');
+     const left=documentSource.match(/\\S+|\\s+/g)||[];
+     const right=documentProposed.match(/\\S+|\\s+/g)||[];
+     const a=left.filter(x=>!/^\\s+$/.test(x)),b=right.filter(x=>!/^\\s+$/.test(x));
+     if(a.length*b.length>30000){
+      before.textContent=documentSource;after.textContent=documentProposed;
+     }else{
+      const matrix=Array.from({length:a.length+1},()=>new Uint16Array(b.length+1));
+      for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)
+       matrix[i][j]=a[i]===b[j]?matrix[i+1][j+1]+1:Math.max(matrix[i+1][j],matrix[i][j+1]);
+      let i=0,j=0;
+      const oldWords=[],newWords=[];
+      while(i<a.length||j<b.length){
+       if(i<a.length&&j<b.length&&a[i]===b[j]){oldWords.push([a[i],false]);newWords.push([b[j],false]);i++;j++;}
+       else if(i<a.length&&(j===b.length||matrix[i+1][j]>=matrix[i][j+1])){oldWords.push([a[i],true]);i++;}
+       else{newWords.push([b[j],true]);j++;}
+      }
+      const paint=(target,words,background)=>{
+       for(const [word,changed] of words){
+        const span=document.createElement('span');span.textContent=word+' ';
+        if(changed){span.style.background=background;span.style.borderRadius='3px';}
+        target.append(span);
+       }
+      };
+      paint(before,oldWords,'rgba(226,115,115,.22)');
+      paint(after,newWords,'rgba(105,217,165,.22)');
+     }
+     compare.append(before);
      compare.append(create('p','lm-section-label','СТАЛО · ПРЕДЛОЖЕНИЕ СЭЙВИ'));
-     compare.append(create('p','lm-document-note',documentProposed));
+     compare.append(after);
      documentDetails.append(compare);
      const downloadDraft=(name,blob)=>{
       const url=URL.createObjectURL(blob),a=document.createElement('a');
