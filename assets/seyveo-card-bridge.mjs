@@ -14,5 +14,5 @@ function advance(key,next,meta={}){
 }
 function list(){return visible([...cards.values()]).sort((a,b)=>a.priority-b.priority||a.createdAt.localeCompare(b.createdAt));}
 function inspect(){return {cards:list().map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
-Object.defineProperty(window,'SEYVEO_CARD_ENGINE',{value:Object.freeze({receive,advance,list,inspect}),writable:false,configurable:false});
+Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
