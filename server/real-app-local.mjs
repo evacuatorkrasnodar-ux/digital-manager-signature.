@@ -176,8 +176,14 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
      res.end(wav);
     }
    }catch(error){
-    console.error('[SEYVEO Voice] Ошибка генерации:',error?.message||error);
-    if(!res.destroyed&&!res.headersSent)send(res,500,{error:'Не удалось создать голос. Проверь окно локального сервера.'});
+    const details=String(error?.message||error||'Неизвестная ошибка');
+    console.error('[SEYVEO Voice] Причина ошибки:',details);
+    if(error?.stack)console.error('[SEYVEO Voice] Технические подробности:',error.stack);
+    // This HTTP endpoint is localhost-only. Return a safe, short diagnostic
+    // instead of an opaque 500 so a voice failure can actually be repaired.
+    const visible=details.replace(/[A-Za-z]:\\[^\\\s]+(?:\\[^\\\s]+)*/g,'[локальный путь]')
+     .replace(/\/(?:home|Users)\/[^\s]+/g,'[локальный путь]').slice(0,180);
+    if(!res.destroyed&&!res.headersSent)send(res,500,{error:'Ошибка голосового движка: '+visible});
    }
    return;
   }
