@@ -26,9 +26,13 @@ const labels=['Новое','В работе','Позже','Завершено ·
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
  const e=entries[Number(select.value)];
+ const engine=window.SEYVEO_CARD_ENGINE;
+ const eventKey=Object.keys(engine?.eventType||{})[Number(select.value)];
+ const card=engine?.buildCard({id:'studio-'+select.value,type:eventKey,title:e[1],fact:e[2],suggestion:e[3],source:'Студия разработчика',demo:true});
+
  preview.replaceChildren();
- const art=document.createElement('div');art.className='scs-icon';art.textContent=e[5];art.style.color=e[4];preview.append(art);
- for(const [cls,txt] of [['scs-label',e[0]+' · ДЕМО'],['',e[1]],['scs-label','ЧТО ПРОИЗОШЛО'],['',e[2]],['scs-label','✧ СЭЙВИ ПРЕДЛАГАЕТ'],['',e[3]],['scs-note','Состояние: '+labels[stage]]]){
+ const art=document.createElement('div');art.className='scs-icon';art.textContent=card?.icon||e[5];art.style.color=card?.accent||e[4];preview.append(art);
+ for(const [cls,txt] of [['scs-label',e[0]+' · ДЕМО'],['',e[1]],['scs-label','ЧТО ПРОИЗОШЛО'],['',e[2]],['scs-label','✧ СЭЙВИ ПРЕДЛАГАЕТ'],['',e[3]],['scs-note','Состояние: '+labels[stage]],['scs-note','Действия по правилам: '+(card?.actions.join(' · ')||'нет')],['scs-note',card?'Карточка автоматически собрана из события':'Нет зарегистрированного типа события']]){
   const p=document.createElement('p');p.className='scs-block '+cls;p.textContent=txt;preview.append(p);
  }
  [...states.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===stage)));
