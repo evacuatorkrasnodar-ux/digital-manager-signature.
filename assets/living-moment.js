@@ -331,7 +331,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
    else location.hash='#sayvi-mail';
    return;
   }
-  if(workActive()){explain(field,'Учебный рабочий чат. Можно подготовить ответ прямо здесь, но отправка пока не подключена.',open);return}
+  if(workActive()){
+   const opened=window.SEYVEO_BUSINESS_COMMAND?.openPrivateChat?.('elena','manager');
+   if(!opened)explain(field,'Рабочий чат сейчас недоступен. Черновик ответа можно подготовить здесь.',open);
+   return;
+  }
   if(documentActive()){
    const api=window.SEYVEO_SAYVI_SURFACES;
    if(api?.open)api.open('contract');
@@ -366,7 +370,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   finishPreviewItem();
  },'main');
- open.setAttribute('aria-label','Подробнее: '+shown.title);
+ open.textContent=workActive()?'В чат':'Подробнее';
+ open.setAttribute('aria-label',workActive()?'Открыть рабочий чат Елены':'Подробнее: '+shown.title);
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  const sayviAction=polymer('✧ Сэйви',()=>{
@@ -453,7 +458,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
-  open.setAttribute('aria-label','Подробнее: '+item.title);
+  open.textContent=!real&&item.kind==='work'?'В чат':'Подробнее';
+  open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':'Подробнее: '+item.title);
   execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
