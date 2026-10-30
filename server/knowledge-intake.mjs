@@ -3,6 +3,7 @@
  */
 import {readFile,readdir,mkdir,writeFile} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 
 const TOPICS=new Set(['business','legal','psychology']);
@@ -50,7 +51,7 @@ export async function approveSubmission({staging,approved,id}){
  await writeFile(join(approved,id+'.json'),JSON.stringify(output,null,2),{flag:'wx'});
  return output;
 }
-const self=process.argv[1]&&resolve(process.argv[1])===resolve(new URL(import.meta.url).pathname);
+const self=process.argv[1]&&pathToFileURL(resolve(process.argv[1])).href===import.meta.url;
 if(self){
  const root=resolve(process.cwd());
  const action=process.argv[2];
