@@ -300,6 +300,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
     });
     documentDetails.append(list);
     documentDetails.dataset.reviewMode=documentView;
+    const toggle=create('button','lm-polymer','Предложенная редакция');
+    toggle.type='button';
+    documentDetails.append(toggle);
     documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
    }
   }
