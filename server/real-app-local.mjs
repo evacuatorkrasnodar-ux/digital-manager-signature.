@@ -321,6 +321,12 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
    let message;
    try{message=await readQuestion(req,{withHistory:true})}
    catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   // Stable application identity: do not ask a language model to guess its name.
+   if(/^(?:как тебя зовут|кто ты|представься|представь себя|как твое имя|как твоё имя)[?.!\s]*$/iu.test(message.message.trim())){
+    res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
+    res.end(JSON.stringify({type:'delta',text:'Меня зовут Сейва, коротко Сэй. Я голосовая помощница, созданная компанией SEYVEO.'})+'\n'+JSON.stringify({type:'done',source:'identity',cloud:false,executed:false})+'\n');
+    return;
+   }
    // Explicit closed-form numeric commands are resolved locally without Ollama.
    // Never parse unlabeled values from free-form conversation.
    const math=businessChatAnswer(message.message);
