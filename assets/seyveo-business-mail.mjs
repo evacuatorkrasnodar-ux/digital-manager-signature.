@@ -5,6 +5,7 @@ const trigger=business?.querySelector('[data-business-hub="mail"]');
 if(business&&trigger){
  const board=document.getElementById('unifiedTasksTeamBoard');
  const store=createScopedDraftStore();
+ const linkedTasks=new Map();
  let tab='inbox',editing=-1;
  const styles=document.createElement('style');
  styles.textContent=`
@@ -72,7 +73,8 @@ if(business&&trigger){
      if(!id){caption.textContent='Выбери исполнителя: Елена, Анна, Михаил или Всем';return;}
      const api=window.SEYVEO_BUSINESS_TASK_DEMO;
      if(!api){caption.textContent='Механизм поручений недоступен';return;}
-     const result=api.assignFromMail({text:instruction.value.trim(),assigneeId:id});
+     const result=api.assignFromMail({text:instruction.value.trim(),assigneeId:id,mailDraftId:'local-draft-'+i});
+     if(result.ok)linkedTasks.set(i,result.ids||[result.id]);
      caption.textContent=result.ok?'Добавлено в рабочие дела · локальное демо, уведомление не отправлено':result.reason||'Не удалось создать поручение';
     });
     panel.append(caption,assignee,instruction,copy,send);item.append(panel);
