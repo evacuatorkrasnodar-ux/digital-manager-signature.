@@ -224,7 +224,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workOwn.hidden=!active||workMode!=='choose';
   workBack.hidden=!active||workMode==='choose';
   workSend.hidden=!active||workMode==='choose'||workMode==='done';
-  workBack.textContent=workMode==='done'?'Новый ответ':'Назад';
+  workBack.textContent=workMode==='sayvi'?'Изменить':workMode==='done'?'Новый ответ':'Назад';
   execute.hidden=active;
   workDetails.replaceChildren();
   if(!active)return;
@@ -232,13 +232,16 @@ function createSurface(primary,other=[],real=false,taskId=''){
   workDetails.append(create('p','lm-section-label','СООБЩЕНИЕ ЕЛЕНЫ'));
   workDetails.append(create('p','lm-mail-draft','Я закончила выкладку товаров. Можете проверить?'));
   if(workMode!=='choose'&&workMode!=='done'){
-   workDetails.append(create('p','lm-section-label',workMode==='sayvi'?'✧ СЭЙВИ ПРЕДЛАГАЕТ':'ВАШ ОТВЕТ'));
-   const label=create('label','lm-mail-edit-label',workMode==='sayvi'?'✧ Черновик Сэйви':'Ваш ответ');
+   workDetails.append(create('p','lm-section-label',workMode==='sayvi'?'✧ СЭЙВИ ПОДГОТОВИЛА ОТВЕТ':'ВАШ ОТВЕТ'));
+   const label=create('label','lm-mail-edit-label');
    const input=create('textarea','lm-mail-edit-input');input.rows=3;input.maxLength=1200;input.value=workDraft;
-   input.addEventListener('input',()=>{workDraft=input.value});
+   input.setAttribute('aria-label','Текст ответа Елене');
+   input.style.cssText='display:block;box-sizing:border-box;width:100%;max-width:100%;min-height:112px;height:auto;overflow-y:auto;resize:vertical;white-space:pre-wrap;line-height:1.5;padding:12px;border-radius:13px;';
+   input.addEventListener('input',()=>{workDraft=input.value;input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'});
    label.append(input);workDetails.append(label);
+   requestAnimationFrame(()=>{if(input.isConnected){input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'}});
   }
-  workDetails.append(create('p','lm-mail-note',workMode==='done'?'✓ ДЕМО · Ответ показан, но Елене ничего не отправлено.':'Учебное сообщение. Отправка в настоящий чат не подключена.'));
+  workDetails.append(create('p','lm-mail-note',workMode==='done'?'✓ Демо завершено. Реальное сообщение не отправлено.':'Демо · сообщение не будет отправлено Елене.'));
   if(workMode==='done')workDetails.append(create('p','lm-mail-draft','Ваш ответ: '+workDraft));
  }
 
@@ -389,8 +392,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
  });
  const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
- const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
- const workSend=polymer('Отправить · демо',()=>{if(!workDraft.trim()){explain(field,'Сначала напишите ответ.',workSend);return}workMode='done';updateWork();finishPreviewItem()});
+ const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
+ const workSend=polymer('Отправить · демо',()=>{const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}workDraft=typed;workMode='done';updateWork();finishPreviewItem()});
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
