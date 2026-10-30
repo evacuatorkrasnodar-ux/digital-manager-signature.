@@ -305,6 +305,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
      editor.setAttribute('aria-label','Предложенная редакция');
      editor.addEventListener('input',()=>{documentProposed=editor.value;});
      documentDetails.append(editor);
+     const saveDraft=create('button','lm-polymer','Сохранить черновик');
+     saveDraft.type='button';
+     saveDraft.addEventListener('click',()=>{
+      try{localStorage.setItem(documentDraftKey,JSON.stringify({original:documentSource,parts:documentParts,proposed:documentProposed,at:new Date().toISOString(),demo:true}));saveDraft.textContent='✓ Черновик сохранён';}
+      catch{saveDraft.textContent='Не удалось сохранить';}
+     });
+     documentDetails.append(saveDraft);
     }
     documentDetails.dataset.reviewMode=documentView;
     const toggle=create('button','lm-polymer','Предложенная редакция');
