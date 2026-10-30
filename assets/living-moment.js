@@ -228,9 +228,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   execute.hidden=active;
   workDetails.replaceChildren();
   if(!active)return;
-  workDetails.append(create('p','lm-mail-intro','ДЕМО · Рабочий чат · Елена'));
+  workDetails.append(create('p','lm-mail-intro','РАБОЧИЙ ЧАТ · ЕЛЕНА · ДЕМО'));
+  workDetails.append(create('p','lm-section-label','СООБЩЕНИЕ ЕЛЕНЫ'));
   workDetails.append(create('p','lm-mail-draft','Я закончила выкладку товаров. Можете проверить?'));
   if(workMode!=='choose'&&workMode!=='done'){
+   workDetails.append(create('p','lm-section-label',workMode==='sayvi'?'✧ СЭЙВИ ПРЕДЛАГАЕТ':'ВАШ ОТВЕТ'));
    const label=create('label','lm-mail-edit-label',workMode==='sayvi'?'✧ Черновик Сэйви':'Ваш ответ');
    const input=create('textarea','lm-mail-edit-input');input.rows=3;input.maxLength=1200;input.value=workDraft;
    input.addEventListener('input',()=>{workDraft=input.value});
@@ -264,7 +266,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   documentDetails.replaceChildren();
   if(!active)return;
-  documentDetails.append(create('p','lm-mail-intro','ДЕМО · Учебный договор · не ваш файл'));
+  documentDetails.append(create('p','lm-mail-intro','ДОКУМЕНТ · УЧЕБНЫЙ ДОГОВОР · ДЕМО'));
+  documentDetails.append(create('p','lm-section-label','✧ СЭЙВИ ЗАМЕТИЛА'));
   if(documentStep!=='summary'){
    documentDetails.append(create('p','lm-document-excerpt',
     'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
@@ -303,7 +306,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
-  mailDetails.append(create('p','lm-mail-intro','ДЕМО · Андрей спрашивает о доставке · почта не подключена'));
+  mailDetails.append(create('p','lm-mail-intro','ПИСЬМО · АНДРЕЙ · ДЕМО'),create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),create('p','lm-section-label','✧ ОТВЕТ СЭЙВИ'));
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить черновик');
    const input=create('textarea','lm-mail-edit-input');
