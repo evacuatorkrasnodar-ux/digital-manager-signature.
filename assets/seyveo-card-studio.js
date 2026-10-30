@@ -12,7 +12,10 @@ const entries=[
 ['Бизнес','Новая продажа','Учебная запись о продаже','Посмотреть показатели','#A5D8BB','▥'],
 ['Сотрудники','Запрос сотрудника','Елена оставила запрос','Открыть обращение','#CBBFE9','♧'],
 ['Умный дом','Нет связи с устройством','Учебный датчик недоступен','Проверить соединение','#C2DED1','⌂'],
-['Безопасность','Проверка доступа','Учебное событие входа','Посмотреть устройства','#B8D4E8','◇']
+['Безопасность','Проверка доступа','Учебное событие входа','Посмотреть устройства','#B8D4E8','◇'],
+['Проверка выкладки','Елена закончила выкладку','Фото ещё не получено','Попросить Елену прислать фото полки и ценников','#8FE3C3','▧'],
+['Благодарность','Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность, не начисляя премию автоматически','#E7D2A2','✦'],
+['Документооборот','Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта','#B8D4E8','▤']
 ];
 if(!new URLSearchParams(location.search).has('seyveoStudio'))return;
 const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.textContent='✧ Студия карточек';
@@ -37,7 +40,7 @@ function demoQueue(){
  const engine=window.SEYVEO_CARD_ENGINE;
  if(!engine){queueResult.textContent='Движок недоступен';return}
  const types=Object.keys(engine.eventType);
- const importance=['normal','urgent','important','normal','important','normal','normal','important','normal','normal','urgent','normal'];
+ const importance=['normal','urgent','important','normal','important','normal','normal','important','normal','normal','urgent','normal','important','normal','important'];
  const events=entries.map((e,i)=>({id:'example-'+i,type:types[i],title:e[1],fact:e[2],suggestion:e[3],priority:importance[i],demo:true,source:'Студия'}));
  events.push({...events[0]});
  const cards=engine.fromEvents(events);
