@@ -298,7 +298,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
      list.append(create('p','lm-document-excerpt',part.original));
      list.append(create('p','lm-document-note',part.analysis));
     });
-    documentDetails.append(list);
+    if(documentView==='remarks')documentDetails.append(list);
+    else{
+     const editor=create('textarea','lm-mail-edit-input');
+     editor.rows=8;editor.maxLength=12000;editor.value=documentProposed;
+     editor.setAttribute('aria-label','Предложенная редакция');
+     editor.addEventListener('input',()=>{documentProposed=editor.value;});
+     documentDetails.append(editor);
+    }
     documentDetails.dataset.reviewMode=documentView;
     const toggle=create('button','lm-polymer','Предложенная редакция');
     toggle.type='button';
