@@ -87,10 +87,12 @@ if(business&&trigger){
     summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
     item.append(summary);
    }
-   item.append(title,recipient,edit,delegate,remove);list.append(item);
+   item.prepend(title,recipient);
+   item.append(edit,delegate,remove);list.append(item);
   });
  }
  form.addEventListener('submit',event=>{event.preventDefault();const draft={to:to.value.trim(),subject:subject.value.trim(),body:message.value.trim()};if(editing<0)store.add('business',draft);else store.update('business',editing,draft);editing=-1;form.reset();render();});
+ window.addEventListener('seyveo:manager-tasks-updated',()=>{if(!page.hidden&&tab==='drafts')render();});
  const exit=()=>{page.hidden=true;if(board)board.hidden=false;};
  back.addEventListener('click',exit);
  window.addEventListener('hashchange',exit);
