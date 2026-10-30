@@ -34,3 +34,20 @@ test('failed native probe never marks model ready',async()=>{
 test('unverified model is rejected before calling native runtime',()=>{
  assert.throws(()=>createLocalInference({modelPath:'unverified.gguf',runtime:{}}),/model-integrity-unverified/);
 });
+
+test('cannot unload a model during an active response',async()=>{
+ let finish;
+ const runtime={
+  load:async()=>{},
+  complete:async prompt=>prompt.startsWith('Ответь')?'готова':new Promise(resolve=>{finish=resolve}),
+  unload:async()=>{}
+ };
+ const session=createLocalInference({runtime,modelPath:'verified.gguf',integrityVerified:true});
+ await session.initialize();
+ const pending=session.reply('Привет');
+ await assert.rejects(session.unload(),/model-session-busy/);
+ finish('ответ');
+ assert.equal(await pending,'ответ');
+ await session.unload();
+ assert.equal(session.status(),'unloaded');
+});
