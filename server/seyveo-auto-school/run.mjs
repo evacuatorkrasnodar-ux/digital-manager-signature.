@@ -8,12 +8,14 @@ import {resolve} from 'node:path';
 import {CURRICULUM,teacherPrompt,judgePrompt,runAutonomousSchool} from './core.mjs';
 import {createLocalOllama,DEFAULT_TEACHER,DEFAULT_STUDENT} from './ollama.mjs';
 import {createSchoolStore} from './store.mjs';
+import {createApiTeacher} from './api-teacher.mjs';
 import {describeExam} from './report.mjs';
 
 export function parseArgs(args){
- const options={count:8,dryRun:false,check:false,help:false};
+ const options={count:8,dryRun:false,check:false,help:false,teacherApi:false};
  for(const arg of args){
   if(arg==='--dry-run')options.dryRun=true;
+  else if(arg==='--teacher-api')options.teacherApi=true;
   else if(arg==='--check')options.check=true;
   else if(arg==='--help')options.help=true;
   else if(/^--count=\d+$/.test(arg))options.count=Number(arg.split('=')[1]);
@@ -34,7 +36,8 @@ export async function run(args=process.argv.slice(2),{output=console.log,createC
   return {mode:'dry-run',count:options.count};
  }
  const client=createClient(),store=createStore();
- output('SEYVEO · автономная школа | локальные модели: '+client.models.teacher+' → '+client.models.student);
+ const apiTeacher=options.teacherApi?createApiTeacher():null;
+ output('SEYVEO · автошкола | учитель: '+(apiTeacher?apiTeacher.model+' (API)':client.models.teacher)+'; ученица: '+client.models.student+'; экзаменатор: '+client.models.examiner);
  await client.verifyInstalled();
  if(options.check){output('✓ Нужные модели установлены. Облачных вызовов нет.');return {mode:'check'}}
  return store.locked(async()=>{
@@ -42,7 +45,7 @@ export async function run(args=process.argv.slice(2),{output=console.log,createC
   output('План: '+options.count+' экзаменов. Результаты и ответы будут видны после каждого экзамена.');
   const result=await runAutonomousSchool({
    count:options.count,
-   generate:async(topic,sequence)=>client.teacherJson(teacherPrompt(topic,sequence)),
+   generate:async(topic,sequence)=>apiTeacher?apiTeacher.generate(teacherPrompt(topic,sequence)):client.teacherJson(teacherPrompt(topic,sequence)),
    grade:async(lesson,answer,context)=>client.examinerJson(judgePrompt(lesson,answer,context)),
    studentAnswer:async(question)=>client.studentText(question),
    onStart:({topic,index,total})=>output('\nУрок '+index+' из '+total+' · '+topic.title+' — учитель составляет вопрос, Сэйви отвечает, идёт оценка…'),
