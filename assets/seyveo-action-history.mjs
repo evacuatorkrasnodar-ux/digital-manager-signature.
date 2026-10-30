@@ -9,7 +9,7 @@ if(personal&&head){
 .sah-inline-panel[hidden]{display:none!important}.sah-inline-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sah-inline-head h3{font-size:16px;margin:0}.sah-inline-head button{border:0;background:transparent;color:inherit;font:inherit;padding:8px}
 .sah-search{display:block;width:100%;box-sizing:border-box;margin:9px 0 6px;padding:10px 12px;border:1px solid var(--soft-line,#526b60);border-radius:12px;background:transparent;color:var(--text,#fff);font:inherit;font-size:14px;outline-offset:2px}.sah-inline-note{font-size:12px;opacity:.7;line-height:1.5}.sah-date-heading{margin:14px 0 3px;font-size:11px;font-weight:650;letter-spacing:.045em;color:var(--secondary,#a5b3ab)}.sah-row{padding:11px 0;border-top:1px solid var(--soft-line,#526b60);font-size:13px}
-.sah-row small{display:block;opacity:.75;margin-top:3px}.sah-studio{font-size:11px;opacity:.75;overflow-wrap:anywhere}
+.sah-row[data-state=failed]{border-left:2px solid #e68a78;padding-left:10px}.sah-row[data-state=pending]{border-left:2px solid #d6af69;padding-left:10px}.sah-state{display:inline-block;border-radius:8px;padding:2px 7px;font-weight:650}.sah-state[data-state=failed]{color:#eda494;background:#a1433026}.sah-state[data-state=pending]{color:#e0be7d;background:#a7782724}.sah-state[data-state=done]{color:#8bd3aa;background:#36745522}.sah-row small{display:block;opacity:.75;margin-top:3px}.sah-studio{font-size:11px;opacity:.75;overflow-wrap:anywhere}
 `;
  document.head.append(style);
  const open=document.createElement('button');open.type='button';open.className='sah-inline-toggle';open.textContent='История';open.setAttribute('aria-expanded','false');
@@ -26,7 +26,8 @@ if(personal&&head){
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
  let visibleCount=4;
  const more=document.createElement('button');more.type='button';more.className='sah-inline-toggle';more.style.marginTop='10px';more.hidden=true;more.textContent='Показать ещё';panel.append(more);
- const statuses={shown:'Показано',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
+ const stateOf=v=>v==='failed'?'failed':['shown','deferred','action_pending','executing'].includes(v)?'pending':['succeeded','archived'].includes(v)?'done':'other';
+ const statuses={shown:'Не завершено',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
  function render(){
   list.replaceChildren();
   const api=window.SEYVEO_CARD_LIFECYCLE;
@@ -55,10 +56,12 @@ if(personal&&head){
     group.textContent=!valid?'Без даты':day===dateKey(today)?'Сегодня':day===dateKey(yesterday)?'Вчера':date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
     list.append(group);lastDay=day;
    }
-   const item=document.createElement('div');item.className='sah-row';
+   const item=document.createElement('div');item.className='sah-row';item.dataset.state=stateOf(e.to);
    const name=document.createElement('strong');name.textContent=e.title||({mail:'Письмо',work:'Рабочее сообщение',contract:'Документ'}[e.cardType]||'Действие Сэйви');
    const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано');
-   item.append(name,line);
+   const status=document.createElement('span');status.className='sah-state';status.dataset.state=stateOf(e.to);status.textContent=statuses[e.to]||e.to||'Событие';
+   line.textContent=valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
+   item.append(name,status,line);
    if(studio){const tech=document.createElement('small');tech.className='sah-studio';tech.textContent=(e.from||'—')+' → '+(e.to||'—')+' · '+e.eventId+(e.reason?' · '+e.reason:'');item.append(tech);}
    list.append(item);
   }
