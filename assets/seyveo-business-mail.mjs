@@ -1,3 +1,4 @@
+import {inspectPastedMail} from './seyveo-mail-local-assist.mjs';
 import {mailTaskNextStep} from './seyveo-mail-next-step.mjs';
 import {taskTimeline} from './seyveo-task-timeline.mjs';
 /* SEYVEO Business Mail — embedded in manager cabinet, disconnected prototype. */
@@ -28,6 +29,7 @@ if(business&&trigger){
  styles.textContent+='.svb-mail-handoff{display:grid;gap:8px;margin:8px 0 5px;padding:10px 0;border-top:1px solid var(--soft-line)}.svb-mail-handoff input,.svb-mail-handoff textarea{box-sizing:border-box;width:100%;border:1px solid var(--soft-line);border-radius:12px;padding:10px;background:transparent;color:inherit;font:inherit}.svb-mail-handoff textarea{min-height:90px}.svb-mail-handoff button{justify-self:start;color:var(--seyveo-emerald,#a2dcba)}';
  styles.textContent+='.svb-mail-history{gap:5px;margin:6px 0;padding:8px 0;border-top:1px solid var(--soft-line)}.svb-mail-history small{font-size:11px;color:var(--secondary)}';
  styles.textContent+='.svb-mail-history summary{cursor:pointer;color:var(--seyveo-emerald,#a2dcba);font-size:12px;letter-spacing:.02em}.svb-mail-history small{display:block;margin-top:6px}';
+ styles.textContent+='.svb-mail-handoff summary{cursor:pointer;color:var(--seyveo-emerald,#9bd5b7)}.svb-mail-handoff textarea{width:100%;box-sizing:border-box;min-height:96px;margin-top:10px;background:transparent;border:1px solid var(--soft-line);border-radius:12px;color:inherit;padding:10px;font:inherit}';
  document.head.append(styles);
  const page=document.createElement('section');page.className='svb-mail';page.hidden=true;
  const head=document.createElement('div');head.className='svb-mail-head';
@@ -41,7 +43,24 @@ if(business&&trigger){
  const subject=document.createElement('input');subject.required=true;subject.placeholder='Тема';
  const message=document.createElement('textarea');message.required=true;message.placeholder='Текст письма';
  const save=document.createElement('button');save.type='submit';save.textContent='Сохранить рабочий черновик';form.append(to,subject,message,save);
- page.append(head,note,tabs,list,form);business.append(page);
+ const assist=document.createElement('details');assist.className='svb-mail-handoff';
+ const assistTitle=document.createElement('summary');assistTitle.textContent='Сэйви · разобрать текст письма';
+ const paste=document.createElement('textarea');paste.placeholder='Вставьте текст рабочего письма для локального разбора';
+ const analyze=document.createElement('button');analyze.type='button';analyze.textContent='Разобрать';
+ const result=document.createElement('div');result.className='svb-mail-muted';result.setAttribute('aria-live','polite');
+ analyze.addEventListener('click',()=>{
+  const insight=inspectPastedMail(paste.value);
+  result.replaceChildren();
+  const line=document.createElement('p');line.textContent=insight.kind==='empty'?insight.summary:'Тема по ключевым словам: '+insight.topic+' · Суть (фрагмент оригинала): '+insight.summary;
+  result.append(line);
+  if(insight.reply){
+   const proposed=document.createElement('p');proposed.textContent='Шаблон ответа для проверки: '+insight.reply;result.append(proposed);
+   const draft=document.createElement('button');draft.type='button';draft.textContent='Перенести шаблон в черновик';draft.addEventListener('click',()=>{tab='drafts';editing=-1;render();subject.value='Ответ на обращение';message.value=insight.reply;form.scrollIntoView({block:'nearest'});});result.append(draft);
+  }
+ });
+ const explain=document.createElement('p');explain.className='svb-mail-muted';explain.textContent='Локальная подсказка по правилам. Не ИИ, письмо никуда не отправляется. Не вставляйте конфиденциальные данные в учебный прототип.';
+ assist.append(assistTitle,explain,paste,analyze,result);
+ page.append(head,note,tabs,assist,list,form);business.append(page);
  function render(){
   tabs.replaceChildren();list.replaceChildren();form.hidden=tab!=='drafts';
   for(const [id,label] of [['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики']]){
