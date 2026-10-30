@@ -302,6 +302,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
     documentDetails.dataset.reviewMode=documentView;
     const toggle=create('button','lm-polymer','Предложенная редакция');
     toggle.type='button';
+    toggle.textContent=documentView==='remarks'?'Предложенная редакция':'Замечания Сэйви';
+    toggle.addEventListener('click',()=>{documentView=documentView==='remarks'?'redraft':'remarks';updateDocument();});
     documentDetails.append(toggle);
     documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
    }
