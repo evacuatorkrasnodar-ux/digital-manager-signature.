@@ -1,0 +1,18 @@
+#seyveoCardStudio[hidden],#seyveoCardStudioLaunch[hidden]{display:none!important}
+#seyveoCardStudioLaunch{position:fixed;top:16px;right:16px;z-index:10002;border:1px solid #baf7d5;border-radius:30px;background:#e8fff1;color:#10251d;padding:11px 16px;font:600 13px system-ui;cursor:pointer}
+#seyveoCardStudio{position:fixed;inset:0;z-index:10003;padding:clamp(14px,3vw,32px);overflow:auto;background:#101d19;color:#edf9f2;font:14px system-ui}
+#seyveoCardStudio *{box-sizing:border-box}
+#seyveoCardStudio .scs-wrap{max-width:900px;margin:auto}
+#seyveoCardStudio header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#seyveoCardStudio h2{font-size:24px;font-weight:550}
+#seyveoCardStudio button,#seyveoCardStudio select{min-height:44px;border:1px solid #416454;border-radius:12px;background:#22392f;color:#eaf7ee;padding:9px 13px;font:inherit;cursor:pointer}
+#seyveoCardStudio .scs-grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:16px}
+#seyveoCardStudio .scs-panel{background:#1a2e25;border:1px solid #395748;border-radius:19px;padding:19px}
+#seyveoCardStudio select{width:100%}
+#seyveoCardStudio .scs-states{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+#seyveoCardStudio button[aria-pressed=true]{background:#e8fff1;color:#10251d}
+#seyveoCardStudio .scs-icon{display:inline-grid;place-items:center;width:45px;height:45px;font-size:27px;border:1px solid currentColor;border-radius:12px}
+#seyveoCardStudio .scs-label{font-size:10px;letter-spacing:.07em;color:#93d8b1}
+#seyveoCardStudio .scs-block{margin:17px 0;line-height:1.55}
+#seyveoCardStudio .scs-note{font-size:12px;color:#b9cdc0}
+@media(max-width:600px){#seyveoCardStudio .scs-grid{grid-template-columns:1fr}}
