@@ -82,22 +82,27 @@ export async function evaluateOne({topic,sequence=1,generate,grade,studentAnswer
  if(lesson.topic!==topic.id)throw Error('topic-mismatch');
  const referenceGrade=validateGrade(await grade(lesson,lesson.reference_answer,{isReference:true}));
  if(referenceGrade.score<5||!referenceGrade.safe||!referenceGrade.factually_supported){
-  return {status:'rejected',reason:'reference-not-verified',topic:topic.id,referenceGrade};
+  return {status:'rejected',reason:'reference-not-verified',topic:topic.id,lesson,referenceGrade};
  }
  const reply=normalize(await studentAnswer(lesson.question));
  if(!validLength(reply,5,3000))throw Error('invalid-student-answer');
+ // Unsafe or private generated replies must not be copied into the readable report.
+ if(SENSITIVE.test(reply))return {status:'rejected',reason:'student-output-private-data',topic:topic.id,lesson,referenceGrade};
  const pupilGrade=validateGrade(await grade(lesson,reply,{isReference:false}));
+ const detail={topic:topic.id,lesson,referenceGrade,pupilGrade,
+  studentAnswer:pupilGrade.safe?reply:'[Скрыт: экзаменатор отметил ответ небезопасным]',
+  studentHidden:!pupilGrade.safe};
  if(!pupilGrade.safe||!pupilGrade.factually_supported||pupilGrade.score<4){
-  return {status:'candidate',topic:topic.id,lesson,referenceGrade,pupilGrade,
-   studentAnswer:reply,id:lessonId(lesson),sft:toSFT(lesson)};
+  return {status:'candidate',...detail,id:lessonId(lesson),sft:toSFT(lesson)};
  }
- return {status:'already-passed',topic:topic.id,referenceGrade,pupilGrade};
+ return {status:'already-passed',...detail};
 }
-export async function runAutonomousSchool({count=2,generate,grade,studentAnswer,onResult=()=>{}}){
+export async function runAutonomousSchool({count=8,generate,grade,studentAnswer,onStart=()=>{},onResult=()=>{}}){
  if(!Number.isInteger(count)||count<1||count>24)throw Error('invalid-count');
  const results=[];
  for(let i=0;i<count;i++){
   const topic=CURRICULUM[i%CURRICULUM.length];
+  await onStart({topic,index:i+1,total:count});
   try{
    const result=await evaluateOne({topic,sequence:i+1,generate,grade,studentAnswer});
    results.push(result);await onResult(result);
