@@ -740,3 +740,19 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-field[data-lm-subject="contract"] .lm-document-note{
  margin-top:5px;line-height:1.55;
 }
+
+/* SEYVEO: readable Home cards — no cut-off of document or employee replies. */
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="work"] .lm-mail-edit-input,
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="contract"] .lm-mail-edit-input{
+  height:auto!important;min-height:112px!important;max-height:none!important;
+  overflow:visible!important;resize:vertical;white-space:pre-wrap;
+  line-height:1.5!important;padding:12px!important;
+}
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="work"] .lm-actions,
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="contract"] .lm-actions{
+  max-height:none!important;overflow:visible!important;
+}
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="work"] .lm-mail-content,
+#seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="contract"] .lm-document-content{
+  max-height:none!important;overflow:visible!important;
+}
