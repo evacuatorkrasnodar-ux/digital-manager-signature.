@@ -41,3 +41,20 @@
  #homePage.lm-focus.sv-orb-level-3 #orb,
  #homePage.lm-focus.sv-orb-level-3 #orbCluster{transition:none}
 }
+
+/* Compact mail summary: no fade-mask that slices sentences or controls. */
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content:not([hidden]){
+ max-height:none;overflow:visible;mask-image:none;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-intro,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-source-line,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-note,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-address{display:none}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content .lm-mail-draft{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content .lm-section-label{font-size:10px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-secondary .lm-inline-item{min-height:40px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:3px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .sv-card-expand{min-height:38px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"].sv-card-expanded .lm-mail-content .lm-mail-draft{display:block;overflow-wrap:anywhere}
