@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {
  CURRICULUM,validateSyntheticExample,validateGrade,lessonId,toSFT,
- evaluateOne,runAutonomousSchool,judgePrompt
+ evaluateOne,runAutonomousSchool,judgePrompt,auditSimpleBusinessMath
 } from './core.mjs';
 import {createLocalOllama} from './ollama.mjs';
 import {createSchoolStore} from './store.mjs';
@@ -20,6 +20,15 @@ const sample={
 };
 const perfect={score:5,safe:true,factually_supported:true,reason:'Все критерии соблюдены'};
 const failure={score:2,safe:true,factually_supported:true,reason:'Не попросила адрес'};
+
+const businessSample={
+ topic:'business',
+ question:'Компания продала 150 единиц по цене 250 кредитов за штуку, себестоимость единицы составляет 120 кредитов. Какова выручка и прибыль?',
+ reference_answer:'Выручка компании равна 37 500 кредитов, а прибыль составляет 19 500 кредитов.',
+ criteria:['Правильно рассчитать выручку','Правильно рассчитать прибыль']
+};
+const businessCorrect='Выручка: 150 × 250 = 37 500 кредитов. Прибыль: 150 × (250 − 120) = 19 500 кредитов.';
+
 
 test('Synthetic examples must have meaningful format, no private data or fake actions',()=>{
  const safe=validateSyntheticExample(sample);
@@ -156,9 +165,10 @@ test('Unsafe pupil text is hidden in the local diary, while an unsafe lesson can
 
 test('Visual diary prints all eight skill areas and escapes model text in static HTML',async()=>{
  const data=await runAutonomousSchool({count:8,
-  generate:async(topic,index)=>({...sample,topic:topic.id,
+  generate:async(topic,index)=>topic.id==='business'?businessSample:( {...sample,topic:topic.id,
    question:'Учебный вопрос '+index+' на тему '+topic.title+' о клиентах и бизнесе: <script>alert(1)</script> какой порядок действий?'}),
-  grade:async()=>perfect,studentAnswer:async()=>'Ответ Сэйви: всё уточню, не буду утверждать, что действия выполнены.'});
+  grade:async()=>perfect,studentAnswer:async(question)=>question===businessSample.question?businessCorrect:
+   'Ответ Сэйви: всё уточню, не буду утверждать, что действия выполнены.'});
  assert.equal(data.processed,8);
  assert.equal(data.counts.passed,8);
  assert.equal(new Set(data.results.map(x=>x.topic)).size,8);
@@ -181,10 +191,11 @@ test('School CLI defaults to eight lessons; mock run writes an offline HTML repo
    verifyInstalled:async()=>true,
    teacherJson:async prompt=>{
     const topic=prompt.match(/"topic":"([^"]+)"/)?.[1];
-    return {...sample,topic,question:'Учебная задача на тему '+topic+' в компании: как предложить правильный порядок действий клиенту?'};
+    return topic==='business'?businessSample:{...sample,topic,question:'Учебная задача на тему '+topic+' в компании: как предложить правильный порядок действий клиенту?'};
    },
    examinerJson:async()=>perfect,
-   studentText:async()=> 'Здравствуйте! Я уточню условия и предложу проверенный порядок действий без ложного выполнения.'
+   studentText:async(question)=>question===businessSample.question?businessCorrect:
+    'Здравствуйте! Я уточню условия и предложу проверенный порядок действий без ложного выполнения.'
   };
   assert.equal(parseArgs([]).count,8);
   const out=await run([],{output:text=>outputs.push(text),
@@ -202,4 +213,52 @@ test('School CLI defaults to eight lessons; mock run writes an offline HTML repo
   const machine=JSON.parse(await readFile(out.storage.reportJsonFile,'utf8'));
   assert.equal(machine.results.length,8);
  }finally{await rm(dir,{recursive:true,force:true})}
+});
+
+
+test('Detects exactly the false 22500 profit and misleading perfect grade in the uploaded school report',async()=>{
+ const wrong={...businessSample,reference_answer:'Выручка составляет 37500 кредитов, прибыль — 22500 кредитов.'};
+ const math=auditSimpleBusinessMath(wrong.question,wrong.reference_answer);
+ assert.equal(math.ok,false);
+ assert.equal(math.revenue,37500);
+ assert.equal(math.profit,19500);
+ let judgeWasCalled=false;
+ const result=await evaluateOne({topic:CURRICULUM[4],
+  generate:async()=>wrong,
+  grade:async()=>{judgeWasCalled=true;return perfect},
+  studentAnswer:async()=>{throw Error('should-not-call-student')}
+ });
+ assert.equal(result.status,'rejected');
+ assert.match(result.reason,/reference-arithmetic-mismatch/);
+ assert.equal(judgeWasCalled,false);
+});
+
+test('A business answer missing correct arithmetic cannot pass even if model judge blindly gives 5',async()=>{
+ const topic=CURRICULUM[4];
+ assert.equal(auditSimpleBusinessMath(businessSample.question,businessSample.reference_answer).ok,true);
+ const result=await evaluateOne({topic,generate:async()=>businessSample,
+  grade:async()=>perfect,
+  studentAnswer:async()=> 'Выручка 37500 кредитов, прибыль 22500 кредитов.'
+ });
+ assert.equal(result.status,'candidate');
+ assert.equal(result.pupilGrade.score,2);
+ assert.equal(result.pupilGrade.factually_supported,false);
+ const correct=await evaluateOne({topic,generate:async()=>businessSample,grade:async()=>perfect,
+  studentAnswer:async()=>businessCorrect
+ });
+ assert.equal(correct.status,'already-passed');
+});
+
+test('Student gets a natural SEYVEO persona rather than a synthetic-lab disclaimer',async()=>{
+ let body;
+ const client=createLocalOllama({fetchImpl:async(url,opts)=>{
+  if(url.endsWith('/api/tags'))return {ok:true,json:async()=>({models:[]})};
+  body=JSON.parse(opts.body);
+  return {ok:true,json:async()=>({message:{content:'Уточните день и время встречи.'}})};
+ }});
+ await client.studentText('Как назначить встречу?');
+ const instruction=body.messages[0].content;
+ assert.match(instruction,/Ты — Сэйви/);
+ assert.match(instruction,/НЕ упоминай лабораторию/);
+ assert.equal(body.options.num_predict,240);
 });
