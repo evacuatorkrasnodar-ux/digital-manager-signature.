@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import json
 import sys
+import traceback
 from pathlib import Path
 
 from clone_wife_voice import MODEL, default_output
@@ -88,7 +89,11 @@ def main():
             reply({"type": "result", "id": task_id})
         except Exception as error:
             task_id = item.get("id") if isinstance(locals().get("item"), dict) else 0
-            reply({"type": "error", "id": task_id, "error": str(error)[:300]})
+            # Keep a readable traceback in the owner's local server window.
+            # Never print the source audio or private conversation text.
+            traceback.print_exc(file=sys.stderr)
+            reply({"type": "error", "id": task_id,
+                   "error": (type(error).__name__ + ": " + str(error))[:300]})
     return 0
 
 
