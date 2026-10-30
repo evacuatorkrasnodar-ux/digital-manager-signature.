@@ -1,3 +1,4 @@
+import {taskTimeline} from './seyveo-task-timeline.mjs';
 /* SEYVEO Business Mail — embedded in manager cabinet, disconnected prototype. */
 import {MAIL_SPACES,createScopedDraftStore} from './seyveo-mail-spaces.mjs';
 const business=document.getElementById('unifiedBusinessTasksView');
@@ -91,7 +92,7 @@ if(business&&trigger){
     const milestones={assigned:'Поручение создано',approved:'Руководитель принял результат',rework:'Руководитель вернул на доработку'};
     for(const task of tasks.filter(t=>ids.includes(t.id))){
      const heading=document.createElement('small');heading.textContent='Исполнитель: '+({elena:'Елена',anna:'Анна',mikhail:'Михаил'}[task.assigneeId]||task.assigneeId);history.append(heading);
-     for(const step of task.mailHistory||[]){
+     for(const step of taskTimeline(task)){
       const line=document.createElement('small');line.textContent=(milestones[step.event]||step.event)+' · '+new Date(step.at).toLocaleString('ru-RU');history.append(line);
      }
      if(task.reportText){const p=document.createElement('small');p.textContent='Отчёт: '+String(task.reportText).slice(0,350);history.append(p);}
