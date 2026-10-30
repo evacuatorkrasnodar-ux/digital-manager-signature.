@@ -1305,6 +1305,14 @@ function storeTask(text,source){
  feedbackTask(status+' Пока это локальное демо: уведомления сотрудникам не отправляются.');
  return created;
 }
+// Local demo bridge: uses the same manager task store and UI as chat assignments.
+window.SEYVEO_BUSINESS_TASK_DEMO=Object.freeze({
+ assignFromMail({text,assigneeId}={}){
+  if(typeof text!=='string'||!text.trim()||text.length>140)return {ok:false,reason:'Поручение должно содержать не более 140 символов'};
+  const created=storeTask(text,{assigneeId,approvalFlow:true,room:'business-mail'});
+  return created?{ok:true,id:created[0].id,localOnly:true}:{ok:false,reason:'Поручение не создано'};
+ }
+});
 function assignExistingMessage(msg,index){
  const person=privateAssignmentRecipient();
  if(!person||msg.taskId)return;
