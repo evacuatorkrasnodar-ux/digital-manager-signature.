@@ -22,24 +22,31 @@ page.innerHTML='<div class="scs-wrap"><header><h2>Студия карточек 
 document.body.append(page);
 const select=page.querySelector('select'),states=page.querySelector('.scs-states'),preview=page.querySelector('#scsPreview');
 entries.forEach((e,i)=>{const opt=document.createElement('option');opt.value=i;opt.textContent=e[0];select.append(opt)});
+const editor=document.createElement('div');editor.className='scs-editor';
+editor.innerHTML='<label>Заголовок события<input data-edit="title" maxlength="140"></label><label>Что произошло<textarea data-edit="fact" maxlength="1200" rows="3"></textarea></label><label>Предложение Сэйви<textarea data-edit="suggestion" maxlength="1200" rows="3"></textarea></label><label>Приоритет<select data-edit="priority"><option value="normal">Обычный</option><option value="important">Важный</option><option value="urgent">Срочный</option></select></label>';
+select.insertAdjacentElement('afterend',editor);
+const fields=Object.fromEntries([...editor.querySelectorAll('[data-edit]')].map(x=>[x.dataset.edit,x]));
+function fillEditor(){const e=entries[Number(select.value)];fields.title.value=e[1];fields.fact.value=e[2];fields.suggestion.value=e[3];fields.priority.value='normal'}
+fillEditor();
+editor.addEventListener('input',render);editor.addEventListener('change',render);
 const labels=['Новое','В работе','Позже','Завершено · демо','Ошибка · демо'];let stage=0;
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
  const e=entries[Number(select.value)];
  const engine=window.SEYVEO_CARD_ENGINE;
  const eventKey=Object.keys(engine?.eventType||{})[Number(select.value)];
- const card=engine?.buildCard({id:'studio-'+select.value,type:eventKey,title:e[1],fact:e[2],suggestion:e[3],source:'Студия разработчика',demo:true});
+ const card=engine?.buildCard({id:'studio-'+select.value,type:eventKey,title:fields.title.value,fact:fields.fact.value,suggestion:fields.suggestion.value,priority:fields.priority.value,source:'Студия разработчика',demo:true});
 
  preview.replaceChildren();
  const art=document.createElement('div');art.className='scs-icon';art.textContent=card?.icon||e[5];art.style.color=card?.accent||e[4];preview.append(art);
- for(const [cls,txt] of [['scs-label',e[0]+' · ДЕМО'],['',e[1]],['scs-label','ЧТО ПРОИЗОШЛО'],['',e[2]],['scs-label','✧ СЭЙВИ ПРЕДЛАГАЕТ'],['',e[3]],['scs-note','Состояние: '+labels[stage]],['scs-note','Действия по правилам: '+(card?.actions.join(' · ')||'нет')],['scs-note',card?'Карточка автоматически собрана из события':'Нет зарегистрированного типа события']]){
+ for(const [cls,txt] of [['scs-label',e[0]+' · ДЕМО'],['',card?.title||'Заполните заголовок'],['scs-label','ЧТО ПРОИЗОШЛО'],['',card?.fact||'Добавьте событие'],['scs-label','✧ СЭЙВИ ПРЕДЛАГАЕТ'],['',card?.suggestion||'Предложение не задано'],['scs-note','Состояние: '+labels[stage]],['scs-note','Действия по правилам: '+(card?.actions.join(' · ')||'нет')],['scs-note',card?'Карточка автоматически собрана из события':'Нет зарегистрированного типа события']]){
   const p=document.createElement('p');p.className='scs-block '+cls;p.textContent=txt;preview.append(p);
  }
  [...states.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===stage)));
 }
 button.addEventListener('click',()=>{page.hidden=false;render()});
 page.querySelector('[data-close]').addEventListener('click',()=>{page.hidden=true});
-select.addEventListener('change',()=>{stage=0;render()});
+select.addEventListener('change',()=>{stage=0;fillEditor();render()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')page.hidden=true});
 render();
 })();
