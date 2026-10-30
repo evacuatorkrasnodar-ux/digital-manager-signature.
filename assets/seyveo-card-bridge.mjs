@@ -134,3 +134,40 @@ document.addEventListener('click',event=>{
   }
  }catch(error){log('demo-card-error',String(error));}
 },true);
+
+/* Business task -> shared lifecycle. No second Home card and no external send.
+   The source remains the existing local demo task store. */
+const LOCAL_TASK_STORE='seyveo-business-command-tasks-demo-v1';
+const syncedTaskKeys=new Map();
+function syncBusinessTaskCards(){
+ let tasks;
+ try{tasks=JSON.parse(localStorage.getItem(LOCAL_TASK_STORE)||'[]');}catch{return;}
+ if(!Array.isArray(tasks))return;
+ const active=new Set();
+ for(const task of tasks.slice(0,200)){
+  if(!task||typeof task.id!=='string'||!task.id||typeof task.text!=='string'||!task.text.trim())continue;
+  const id=task.id.slice(0,128);active.add(id);
+  let key=syncedTaskKeys.get(id);
+  if(!key&&!task.done){
+   try{
+    const card=receive({eventId:'local-task:'+id,source:'business-command-local-demo',accountId:'demo-account',workspaceId:'demo-workspace',
+     sourceRecordId:id,eventType:'task_assigned',title:task.text.slice(0,140),
+     contextText:task.text.slice(0,1200),actorLabel:String(task.assigneeId||'').slice(0,80),priority:2});
+    key=card.dedupeKey;syncedTaskKeys.set(id,key);
+    log('local-business-task-linked',{taskId:id,eventId:card.eventId});
+   }catch(e){log('local-task-link-error',String(e));}
+  }
+  if(task.done&&key){
+   try{const card=cards.get(key);if(card&&visible([card]).length)advance(key,'canceled',{reason:'Task marked completed in source (not externally verified)'});}
+   catch(e){log('local-task-close-error',String(e));}
+  }
+ }
+ for(const [id,key] of syncedTaskKeys)if(!active.has(id)){
+  try{const card=cards.get(key);if(card&&visible([card]).length)advance(key,'canceled',{reason:'Task removed from local source'});}
+  catch(e){log('local-task-remove-error',String(e));}
+  syncedTaskKeys.delete(id);
+ }
+}
+window.addEventListener('seyveo:manager-tasks-updated',syncBusinessTaskCards);
+window.addEventListener('storage',e=>{if(e.key===LOCAL_TASK_STORE)syncBusinessTaskCards();});
+queueMicrotask(syncBusinessTaskCards);
