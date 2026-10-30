@@ -47,8 +47,8 @@ export function actionFor(card,id){const action=card.actions.find(a=>a.id===id);
 export function createDemoEvents(){
  const common={source:'demo',accountId:'demo-account',workspaceId:'demo-workspace',revision:1};
  return [
- {...common,eventId:'demo-email-1',sourceRecordId:'email-1',eventType:'email_received',priority:1,title:'Письмо от Андрея',actorLabel:'Клиент Андрей',contextText:'Андрей спрашивает о стоимости доставки.',assistantText:'Я подготовила короткий ответ.',proposalText:'Уточнить адрес доставки.'},
- {...common,eventId:'demo-doc-1',sourceRecordId:'doc-1',eventType:'document_received',priority:1,title:'Документ на проверку',actorLabel:'Рабочие документы',contextText:'Получен новый договор.',assistantText:'Проверь реквизиты и условия.',proposalText:'Открыть документ для просмотра.'},
- {...common,eventId:'demo-task-1',sourceRecordId:'task-1',eventType:'task_assigned',priority:2,title:'Поручение сотруднику',actorLabel:'Команда',contextText:'Нужно проверить выкладку товара.',assistantText:'Предлагаю запросить фотографию.',proposalText:'Исполнить после подтверждения.'}
+ {...common,eventId:'demo-email-1',sourceRecordId:'email-1',eventType:'email_received',priority:1,priorityReason:'Клиент ожидает ответа о доставке.',priorityReasonVerified:true,title:'Письмо от Андрея',actorLabel:'Клиент Андрей',contextText:'Андрей спрашивает о стоимости доставки.',assistantText:'Я подготовила короткий ответ.',proposalText:'Уточнить адрес доставки.'},
+ {...common,eventId:'demo-doc-1',sourceRecordId:'doc-1',eventType:'document_received',priority:1,priorityReason:'Документ ожидает проверки перед дальнейшими действиями.',priorityReasonVerified:true,title:'Документ на проверку',actorLabel:'Рабочие документы',contextText:'Получен новый договор.',assistantText:'Проверь реквизиты и условия.',proposalText:'Открыть документ для просмотра.'},
+ {...common,eventId:'demo-task-1',sourceRecordId:'task-1',eventType:'task_assigned',priority:2,priorityReason:'Это обычное учебное поручение без подтверждённого срочного срока.',priorityReasonVerified:true,title:'Поручение сотруднику',actorLabel:'Команда',contextText:'Нужно проверить выкладку товара.',assistantText:'Предлагаю запросить фотографию.',proposalText:'Исполнить после подтверждения.'}
  ];
 }
