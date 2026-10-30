@@ -9,7 +9,7 @@ if(mailButtons.length){
  if(!life)throw new Error('My World page missing');
  const dlg=document.createElement('section');dlg.className='svmail';dlg.hidden=true;dlg.setAttribute('aria-label','Почта SEYVEO');
  const shell=document.createElement('div');shell.className='svmail-shell';
- const head=document.createElement('div');head.className='svmail-head';const heading=document.createElement('div');const kicker=document.createElement('p');kicker.className='svmail-kicker';kicker.textContent='SEYVEO · INTELLIGENT MAIL';const title=document.createElement('h2');title.textContent='Почта';heading.append(kicker,title);const close=document.createElement('button');close.className='svmail-close';close.textContent='‹ Мой мир';close.type='button';head.append(heading,close);
+ const head=document.createElement('div');head.className='svmail-head';const heading=document.createElement('div');const kicker=document.createElement('p');kicker.className='svmail-kicker';kicker.textContent='SEYVEO · INTELLIGENT MAIL';const title=document.createElement('h2');title.textContent='Почта';heading.append(kicker,title);const close=document.createElement('button');close.className='svmail-close';close.textContent='‹ Мой мир';close.type='button';const controls=document.createElement('div');controls.className='svmail-head-actions';const newDraft=document.createElement('button');newDraft.type='button';newDraft.className='svmail-new';newDraft.textContent='Написать';controls.append(newDraft,close);head.append(heading,controls);
  const hero=document.createElement('div');hero.className='svmail-hero';const orbit=document.createElement('div');orbit.className='svmail-orbit';const star=document.createElement('span');star.className='svmail-star';star.textContent='✦';const promise=document.createElement('span');promise.textContent='Сэйви поможет разобраться с важными письмами';orbit.append(star,promise);hero.append(orbit);
  const tabs=document.createElement('div');tabs.className='svmail-tabs';tabs.setAttribute('role','tablist');
  const search=document.createElement('input');search.className='svmail-search';search.type='search';search.placeholder='Поиск по письмам';search.setAttribute('aria-label','Поиск по письмам');
@@ -22,12 +22,14 @@ if(mailButtons.length){
  compose.append(to,subject,body,save);shell.append(head,hero,search,tabs,note,view,compose);dlg.append(shell);life.append(dlg);
  const drafts=[];let current='inbox';let editing=-1;
  const labels={inbox:'Входящие',sent:'Отправленные',drafts:'Черновики'};
+ newDraft.addEventListener('click',()=>{current='drafts';editing=-1;compose.reset();save.textContent='Сохранить черновик';search.value='';render();to.focus({preventScroll:true});compose.scrollIntoView({block:'nearest',behavior:'smooth'});});
  function render(){
   tabs.replaceChildren();
   for(const [key,label] of Object.entries(labels)){
    const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-selected',String(current===key));b.addEventListener('click',()=>{current=key;render()});tabs.append(b);
   }
   view.replaceChildren();compose.hidden=current!=='drafts';
+  note.hidden=current!=='inbox';
   const message=document.createElement('p');message.className='svmail-note';
   if(current==='drafts'){
    message.textContent=drafts.length?'Черновики сохранены только до закрытия страницы · не отправлены':'Напиши письмо — Сэйви поможет подготовить ответ после подключения ИИ.';
@@ -44,6 +46,6 @@ if(mailButtons.length){
  window.addEventListener('hashchange',exitMail);
  document.addEventListener('click',event=>{
   const button=event.target.closest?.('[data-calendar-space="mail"]');if(!button)return;
-  event.preventDefault();event.stopImmediatePropagation();current='inbox';editing=-1;compose.reset();save.textContent='Сохранить черновик';render();dlg.hidden=false;life.classList.add('svmail-active');
+  event.preventDefault();event.stopImmediatePropagation();current='inbox';search.value='';editing=-1;compose.reset();save.textContent='Сохранить черновик';render();dlg.hidden=false;life.classList.add('svmail-active');
  },true);
 }
