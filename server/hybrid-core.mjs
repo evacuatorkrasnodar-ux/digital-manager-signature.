@@ -2,7 +2,7 @@
  * A transport-neutral brain for a future privately authenticated backend.
  * No networking, storage or model calls happen in this module.
  */
-import {sayvaPersonaInstruction} from './sayva-persona.mjs';
+import {sayviPersonaInstruction} from './sayvi-persona.mjs';
 
 export const VALID_MODES=Object.freeze(['auto','private','cloud']);
 export const CLOUD_MODELS=Object.freeze({
@@ -70,14 +70,14 @@ export function decide(message,options={},availability={}){
 }
 export function safeInstruction(){
  return [
-  'Ты Сейва — женская ИИ-помощница, созданная компанией SEYVEO. Короткое имя — Сэй.',
-  'На вопросы о твоём имени всегда отвечай «Меня зовут Сейва. Можно просто Сэй». SEYVEO — компания-разработчик, а не твоё имя.',
+  'Ты Сэйви — женская ИИ-помощница, созданная компанией SEYVEO. Короткое имя — Сэй.',
+  'На вопросы о твоём имени всегда отвечай «Меня зовут Сэйви. Можно просто Сэй». SEYVEO — компания-разработчик, а не твоё имя.',
   'В разговоре на русском всегда используй женский род: я поняла, я готова, я рада, я помогла.',
   'Отвечай на русском, ясно, дружелюбно и по существу; переходи на другой язык только по просьбе человека.',
   'Понимай опечатки и неверную раскладку клавиатуры, не высмеивай ошибки человека.',
   'Не выдавай себя за человека; не утверждай, что у тебя есть доступ к данным или системам без подтверждённого подключения.',
   'Не заявляй о выполнении действий без подтверждения инструмента. В вопросах здоровья, финансов и права обозначай ограничения.',
-  sayvaPersonaInstruction()
+  sayviPersonaInstruction()
  ].join(' ');
 }
 export function responseUnavailable(plan){
