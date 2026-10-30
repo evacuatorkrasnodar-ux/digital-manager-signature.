@@ -28,7 +28,7 @@ if(host){
    if(oldToggle){oldToggle.textContent='Развернуть';oldToggle.setAttribute('aria-expanded','false');}
   }
   let toggle=field.querySelector('.sv-card-expand');
-  if(!toggle){toggle=make('button','Развернуть');toggle.type='button';toggle.className='sv-card-expand';toggle.setAttribute('aria-expanded','false');toggle.addEventListener('click',()=>{const expanded=field.classList.toggle('sv-card-expanded');toggle.textContent=expanded?'Свернуть':'Развернуть';toggle.setAttribute('aria-expanded',String(expanded));});original.append(toggle);}
+  if(!toggle){toggle=make('button','Развернуть');toggle.type='button';toggle.className='sv-card-expand';toggle.setAttribute('aria-expanded','false');toggle.addEventListener('click',()=>{const expanded=field.classList.toggle('sv-card-expanded');toggle.textContent=expanded?'Свернуть':'Развернуть';toggle.setAttribute('aria-expanded',String(expanded));});const actions=field.querySelector('.lm-actions');if(actions)actions.after(toggle);else original.append(toggle);}
   if(field.querySelector('.lm-mail-content:not([hidden]) textarea, .lm-document-content:not([hidden]) textarea')){field.classList.add('sv-card-expanded');toggle.textContent='Свернуть';toggle.setAttribute('aria-expanded','true');}
   if(prior?.dataset.kind===kind)return;
   prior?.remove();
