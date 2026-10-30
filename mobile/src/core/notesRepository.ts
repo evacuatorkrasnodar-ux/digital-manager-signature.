@@ -1,6 +1,5 @@
 import * as Crypto from 'expo-crypto';
-import * as SQLite from 'expo-sqlite';
-import {withVerifiedVault} from './vaultConnection';
+import {withVerifiedVault} from './secureVault';
 import {validatePersonalNote,personalNoteRow,noteIdValid} from './personalNotes.mjs';
 export type PersonalNote={id:string;text:string;createdAt:string;updatedAt:string};
 const TABLE='CREATE TABLE IF NOT EXISTS personal_notes (id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)';
