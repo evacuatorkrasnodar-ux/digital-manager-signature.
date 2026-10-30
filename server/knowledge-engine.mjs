@@ -6,7 +6,12 @@ import {readFile,readdir} from 'node:fs/promises';
 import {resolve,join,basename} from 'node:path';
 const TOPICS=new Set(['business','legal','psychology']);
 const TOKENS=/[а-яёa-z0-9]{3,}/giu;
-const words=value=>new Set((String(value).toLocaleLowerCase('ru').match(TOKENS)||[]));
+const stem=word=>{
+ const value=word.toLocaleLowerCase('ru').replace(/ё/g,'е');
+ if(!/^[а-я]+$/u.test(value)||value.length<5)return value;
+ return value.replace(/(?:иями|ями|ами|ого|ему|ыми|ими|ыми|иях|иях|иях|ий|ый|ая|ое|ые|ов|ев|ам|ям|ах|ях|ом|ем|ой|ей|ию|ия|ью|ым|им|ых|их|ы|и|а|я|у|ю|е|о|ь)$/u,'');
+};
+const words=value=>new Set((String(value).toLocaleLowerCase('ru').match(TOKENS)||[]).map(stem));
 export function chunkDocument(doc,{size=750,overlap=90}={}){
  if(!doc||!TOPICS.has(doc.topic)||typeof doc.text!=='string'||!doc.text.trim()||
     typeof doc.title!=='string'||typeof doc.source!=='string'||!doc.source.trim())throw Error('invalid-knowledge-document');
