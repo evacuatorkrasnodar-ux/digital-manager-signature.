@@ -36,3 +36,49 @@ document.addEventListener('click',event=>{
   advance(completed.dedupeKey,'archived',{reason:'Local demo step closed'});
  }catch(error){log('demo-mail-error',String(error));}
 },true);
+
+/* Quiet Cinema document and workplace-message demo completion.
+ * Recording only: the existing scene remains the sole UI owner.
+ * A local simulated outcome is NOT a signed document or a delivered chat.
+ */
+let demoOtherCounter=0;
+function recordDemoCompletion(eventType,title){
+ const seq=++demoOtherCounter;
+ const recordId='preview-'+eventType+'-'+seq;
+ const first=receive({
+  eventId:recordId,source:'quiet-cinema-demo',
+  accountId:'demo-account',workspaceId:'demo-workspace',
+  sourceRecordId:recordId,eventType,title,
+  contextText:'Учебное действие выполнено только в интерфейсе',
+  priority:2
+ });
+ let current=first;
+ for(const state of ['action_pending','executing']){
+  current=advance(current.dedupeKey,state);
+ }
+ current=advance(current.dedupeKey,'succeeded',{
+  acknowledged:true,reason:'LOCAL DEMO SIMULATION ONLY'
+ });
+ advance(current.dedupeKey,'archived',{reason:'Local preview handled'});
+}
+document.addEventListener('click',event=>{
+ const button=event.target?.closest?.('button');
+ const field=button?.closest?.('.lm-field');
+ if(!field||field.dataset.lmMode!=='preview')return;
+ const subject=field.dataset.lmSubject;
+ const label=button.textContent.trim();
+ try{
+  if(subject==='work'&&label==='Отправить · демо'){
+   // The original handler rejects an empty draft; do not claim success.
+   const draft=field.querySelector('.lm-mail-edit-input')?.value?.trim();
+   if(!draft)return;
+   recordDemoCompletion('message_received','Учебный ответ сотруднику');
+  }
+  if(subject==='contract'&&label==='Исполнить'){
+   // Only the explicit last click of the existing document preview counts.
+   const done=[...field.querySelectorAll('.lm-document-note')]
+    .some(node=>node.textContent.includes('Настоящий договор не изменён'));
+   if(done)recordDemoCompletion('document_received','Учебное согласование документа');
+  }
+ }catch(error){log('demo-card-error',String(error));}
+},true);
