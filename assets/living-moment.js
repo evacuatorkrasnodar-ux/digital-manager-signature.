@@ -390,7 +390,35 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(documentActive()){documentStep='review';updateDocument();return}
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
- const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
+ const workSayvi=polymer('✧ Ответит Сэйви',async()=>{
+  const defaultReply='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';
+  workMode='sayvi';workDraft=defaultReply;updateWork();
+  const current=shown;
+  const button=workSayvi;
+  button.disabled=true;
+  const ctrl=new AbortController();
+  const timeout=setTimeout(()=>ctrl.abort(),45000);
+  try{
+   const response=await fetch('/api/seyveo-ask',{
+    method:'POST',credentials:'same-origin',signal:ctrl.signal,
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:'Составь только короткий дружелюбный черновик ответа сотруднице Елене на сообщение: «Я закончила выкладку товаров. Можете проверить?» Попроси её прислать фото полки и читаемых ценников для проверки. Не утверждай, что фотография уже получена или выкладка проверена. Никаких вступлений, только текст сообщения.'})
+   });
+   if(!response.ok)throw Error('local AI unavailable');
+   const data=await response.json();
+   const proposal=String(data?.text||'').trim().slice(0,1200);
+   if(!proposal)throw Error('empty AI reply');
+   if(shown!==current||!workActive()||workMode!=='sayvi')return;
+   const editor=workDetails.querySelector('textarea');
+   // The manager may already be editing: never overwrite their text.
+   if(editor&&editor.value===defaultReply){workDraft=proposal;editor.value=proposal;editor.style.height='auto';editor.style.height=Math.min(editor.scrollHeight+4,300)+'px';}
+  }catch{
+   if(shown===current&&workActive()&&workMode==='sayvi'){
+    const note=workDetails.querySelector('.lm-mail-note');
+    if(note)note.textContent='Локальная Сэйви недоступна. Показан безопасный шаблон · демо, без отправки.';
+   }
+  }finally{clearTimeout(timeout);button.disabled=false;}
+ });
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
  const workSend=polymer('Отправить · демо',()=>{const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}workDraft=typed;workMode='done';updateWork();finishPreviewItem()});
