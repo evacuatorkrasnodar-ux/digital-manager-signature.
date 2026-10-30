@@ -43,15 +43,17 @@ export function adaptOriginalHome(html){
  const armIdle='function armComposerIdle(){';
  const voiceFallback=' const answer=getDemoAnswer(phrase);';
  const boot='restoreDraft();setComposerMode(composerMode);render();syncAppPage();';
- if(!served.includes(armIdle)||!served.includes(voiceFallback)||!served.includes(boot))
-  throw Error('Original Home voice/composer anchors changed; refusing adaptation.');
+ if(!served.includes(armIdle)||!served.includes(voiceFallback)||!served.includes(boot)){
+  console.warn('[SEYVEO Home] Optional voice hook changed; serving original Home.');
+  return html;
+ }
  served=served.replace(armIdle,armIdle+'if(window.SEYVEO_LOCAL_CHAT_ACTIVE)return;');
  served=served.replace(voiceFallback,
   '  if(window.SEYVEO_LOCAL_VOICE_BRIDGE?.(phrase))return;\n'+voiceFallback);
  served=served.replace(boot,LOCAL_VOICE_UI+'\n'+boot);
  const entry="$('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;";
  const locations=served.split(entry);
- if(locations.length!==2)throw Error('SEYVEO Home composer changed; memory patch refused.');
+ if(locations.length!==2){console.warn('[SEYVEO Home] Composer changed; serving original Home.');return html;}
  let adapted=locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/felix-action-journal.js?v=1" defer></script><script src="assets/felix-personal-context.js?v=1" defer></script></head>').replace('</head>',"<style id=\"seyveo-local-voice-style\">\n #ask #seyveoLocalMicCompact,#ask #seyveoLocalMicExpanded{\n  display:grid;place-items:center;flex:none;width:40px;height:40px;min-width:40px;\n  padding:0;border:1px solid var(--soft-line);border-radius:50%;\n  background:var(--card2);color:var(--text);cursor:pointer;\n }\n #ask #seyveoLocalMicCompact:focus-visible,#ask #seyveoLocalMicExpanded:focus-visible{outline:2px solid currentColor;outline-offset:2px}\n #ask.prompt:not(.expanded) #seyveoLocalMicExpanded,#ask.expanded #seyveoLocalMicCompact{display:none!important}\n</style>"+'</head>');
  // Do not duplicate personal assistant draft text into the existing persistent
  // chat-history store. Only normal public app interactions retain prior behavior.
