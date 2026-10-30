@@ -25,3 +25,5 @@
 .svmail-draft strong{font-size:13px}.svmail-draft small{color:#a2bbae;font-size:11px}
 @media(max-width:380px){.svmail-shell{padding:18px 13px 22px}.svmail h2{font-size:22px!important}}
 @media(prefers-reduced-motion:reduce){.svmail,.svmail *{animation:none!important;transition:none!important}}
+
+.svmail-draft-actions{display:flex;gap:12px;margin-top:5px}.svmail-draft-actions button{border:0;background:transparent;padding:7px 0;color:#a8e5c2;font-size:12px;min-height:36px}.svmail-draft-actions button:last-child{color:#d4ada8}
