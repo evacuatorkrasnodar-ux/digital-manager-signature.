@@ -16,7 +16,7 @@ export function planOfflineReply(question,{online=false,modelReady=false,packs=[
  if(NAV.test(text)&&available.has('maps'))
   return Object.freeze({route:'offline-maps',deviceLocation,needsInternet:false});
  if(NEEDS_NETWORK.test(text))return Object.freeze({route:'network-required',needsInternet:true});
- if(modelReady)return Object.freeze({route:'on-device-model',needsInternet:false});
+ if(modelReady===true)return Object.freeze({route:'on-device-model',needsInternet:false});
  if(available.has('general'))return Object.freeze({route:'knowledge-search',needsInternet:false});
  return Object.freeze({route:'local-help',needsInternet:false});
 }
