@@ -1,3 +1,4 @@
+import {MAIL_AI_STATUS} from './seyveo-mail-ai-contract.mjs';
 import {inspectPastedMail} from './seyveo-mail-local-assist.mjs';
 import {mailTaskNextStep} from './seyveo-mail-next-step.mjs';
 import {taskTimeline} from './seyveo-task-timeline.mjs';
@@ -58,8 +59,9 @@ if(business&&trigger){
    const draft=document.createElement('button');draft.type='button';draft.textContent='Перенести шаблон в черновик';draft.addEventListener('click',()=>{tab='drafts';editing=-1;render();subject.value='Ответ на обращение';message.value=insight.reply;form.scrollIntoView({block:'nearest'});});result.append(draft);
   }
  });
+ const aiStatus=document.createElement('p');aiStatus.className='svb-mail-muted';aiStatus.textContent='Анализ ИИ: '+(MAIL_AI_STATUS.connected?'подключён':'не подключён')+'. '+MAIL_AI_STATUS.reason;
  const explain=document.createElement('p');explain.className='svb-mail-muted';explain.textContent='Локальная подсказка по правилам. Не ИИ, письмо никуда не отправляется. Не вставляйте конфиденциальные данные в учебный прототип.';
- assist.append(assistTitle,explain,paste,analyze,result);
+ assist.append(assistTitle,explain,aiStatus,paste,analyze,result);
  page.append(head,note,tabs,assist,list,form);business.append(page);
  function render(){
   tabs.replaceChildren();list.replaceChildren();form.hidden=tab!=='drafts';
