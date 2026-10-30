@@ -5,6 +5,7 @@ import {randomUUID} from 'node:crypto';
 import {readFile,writeFile,rename,mkdir,rm,open} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
 import {homedir} from 'node:os';
+import {describeSession,htmlSession} from './report.mjs';
 
 export function schoolDataDir(){
  const base=process.platform==='win32'?
@@ -16,6 +17,9 @@ export function createSchoolStore({dir=schoolDataDir()}={}){
  const stateFile=join(dir,'state.json');
  const exportFile=join(dir,'experimental-sft.jsonl');
  const lockFile=join(dir,'running.lock');
+ const reportTextFile=join(dir,'last-session.txt');
+ const reportHtmlFile=join(dir,'last-session.html');
+ const reportJsonFile=join(dir,'last-session.json');
  async function load(){
   try{
    const state=JSON.parse(await readFile(stateFile,'utf8'));
@@ -42,7 +46,7 @@ export function createSchoolStore({dir=schoolDataDir()}={}){
  }
  return Object.freeze({
   dir,
-  paths:{stateFile,exportFile,lockFile},
+  paths:{stateFile,exportFile,lockFile,reportTextFile,reportHtmlFile,reportJsonFile},
   load,
   async locked(task){
    await mkdir(dir,{recursive:true,mode:0o700});
@@ -71,7 +75,12 @@ export function createSchoolStore({dir=schoolDataDir()}={}){
     at:new Date().toISOString(),processed:summary.processed,counts:summary.counts,added
    }].slice(-100);
    await save(state);
-   return {added,total:state.candidates.length,exportFile};
+   // The diary is deliberately local and only includes synthetic test prompts.
+   const recordedAt=new Date().toISOString();
+   await atomicWrite(reportTextFile,describeSession({...summary,results},{at:recordedAt}));
+   await atomicWrite(reportHtmlFile,htmlSession({...summary,results},{at:recordedAt}));
+   await atomicWrite(reportJsonFile,JSON.stringify({recordedAt,...summary,results},null,2));
+   return {added,total:state.candidates.length,exportFile,reportTextFile,reportHtmlFile,reportJsonFile};
   }
  });
 }
