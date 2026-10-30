@@ -77,6 +77,8 @@ jobs:
           node-version: '24'
       - name: Felix persona, safety, batch 2 and dialogue guidance tests
         run: node --test server/tests/felix-persona.test.mjs server/tests/felix-batch2.test.mjs server/tests/felix-batch3.test.mjs server/tests/felix-batch4.test.mjs server/tests/felix-batch5.test.mjs server/tests/felix-school.test.mjs server/tests/core.test.mjs
+      - name: SEYVEO Learning Engine consent and owner approval tests
+        run: node --test server/tests/learning-queue.test.mjs
       - name: Lesson coach and local streaming tests
         run: node --test server/tests/lesson-coach.test.mjs server/tests/local-stream.test.mjs
       - name: Felix batch 2 offline exam readiness
