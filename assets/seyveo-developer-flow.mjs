@@ -1,4 +1,6 @@
-import {checkReviewStateRules} from './seyveo-review-rules.mjs';
+import {checkReviewStateRules,shouldShowManagerReview} from './seyveo-review-rules.mjs';
+window.SEYVEO_REVIEW_RULES=Object.freeze({shouldShowManagerReview});
+window.dispatchEvent(new Event('seyveo:review-rules-ready'));
 /* Developer-only local flow tester. Enable explicitly with ?seyveo_dev=1.
    No production notifications, mail sending or authentication implied. */
 const enabled=new URLSearchParams(location.search).get('seyveo_dev')==='1';
