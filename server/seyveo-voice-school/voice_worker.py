@@ -18,11 +18,20 @@ MAX_TEXT = 450
 MAX_LINE = 4096
 
 
+def configure_stdio():
+    """The Node server sends UTF-8; Windows console encoding must not corrupt it."""
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 def reply(payload):
-    print(json.dumps(payload, ensure_ascii=False), flush=True)
+    # ASCII-safe JSONL even if launched through a legacy Windows codepage.
+    print(json.dumps(payload, ensure_ascii=True), flush=True)
 
 
 def main():
+    configure_stdio()
     reference = default_output() / "wife-reference.wav"
     if not reference.is_file():
         reply({"type": "fatal", "error": "Не найден локальный голос Сэйви."})
