@@ -554,8 +554,10 @@ function buildExamples(){
  const present=sample.filter(item=>
   !(item.kind==='mail'&&mailDeferred) &&
   !(item.kind==='contract'&&documentDeferred));
- previewCount=present.length;
- previewScene=present.length?createSurface(present[0],present.slice(1)):null;
+ // Unified ordering is opt-in; the original Quiet Cinema layout remains unchanged.
+ const ordered=window.SEYVEO_CARD_LIFECYCLE?.orderPreview?.(present)||present;
+ previewCount=ordered.length;
+ previewScene=ordered.length?createSurface(ordered[0],ordered.slice(1)):null;
  return present.length;
 }
 function gatherPreview(){
