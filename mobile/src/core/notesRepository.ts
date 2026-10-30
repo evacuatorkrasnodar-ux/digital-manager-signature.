@@ -1,6 +1,14 @@
 import * as Crypto from 'expo-crypto';
 import {withVerifiedVault} from './secureVault';
-import {validatePersonalNote,personalNoteRow,noteIdValid} from './personalNotes.mjs';
+const validatePersonalNote=(text:string)=>{
+ const cleaned=text.trim();
+ if(!cleaned||cleaned.length>4000)throw Error('invalid-note');
+ return cleaned;
+};
+const noteIdValid=(id:string)=>/^[a-f0-9-]{36}$/i.test(id);
+const personalNoteRow=(row:{id:string;content:string;created_at:string;updated_at:string})=>({
+ id:row.id,text:row.content,createdAt:row.created_at,updatedAt:row.updated_at
+});
 export type PersonalNote={id:string;text:string;createdAt:string;updatedAt:string};
 const TABLE='CREATE TABLE IF NOT EXISTS personal_notes (id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)';
 export async function saveNote(text:string):Promise<PersonalNote>{
