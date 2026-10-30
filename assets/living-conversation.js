@@ -496,6 +496,26 @@ function renderTurns(turns){
  text.replaceChildren(...nodes);
  if(atBottom||isNewTurn)scrollToLatest();
 }
+// One live stream inside the real Feather Chat.
+// A pending answer is plain text without premature actions.
+// When the stream completes, showWrittenReply adds the regular actions,
+// including the existing speaker, under the complete message.
+let streamedBody=null;
+function beginStream(question){
+ open();
+ const turns=window.SEYVEO_DEMO_CHAT_TURNS||[];
+ renderTurns([...turns,{question:String(question||''),answer:''}]);
+ const bodies=text.querySelectorAll('.seyveo-conversation-turn--sayvi .seyveo-conversation-body');
+ streamedBody=bodies[bodies.length-1]||null;
+ if(streamedBody)streamedBody.textContent='Сэйви думает…';
+ scrollToLatest();
+}
+function updateStream(answer){
+ if(!streamedBody||!streamedBody.isConnected)return;
+ const nearBottom=text.scrollHeight-text.clientHeight-text.scrollTop<64;
+ streamedBody.textContent=displayChatText(answer||'Сэйви думает…').replace(/\n{2,}/g,'\n');
+ if(nearBottom)text.scrollTop=text.scrollHeight;
+}
 // Only the chat shell follows iPhone's *visible* viewport.
 // Open Canvas has no top header: transcript and composer stay separate while
 // typing; the Home sphere and dock are unchanged outside the conversation.
@@ -604,5 +624,5 @@ window.SEYVEO_CHAT_ACTIVITY=Object.freeze({
  begin:beginAction,finish:finishAction,cancel:cancelAction,
  isBusy:()=>Boolean(activeAction)
 });
-window.SEYVEO_CONVERSATION={open,close,renderTurns,status};
+window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status};
 })();
