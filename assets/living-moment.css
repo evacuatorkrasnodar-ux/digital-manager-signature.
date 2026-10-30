@@ -756,3 +756,21 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment:not(.lm-condense) .lm-field[data-lm-subject="contract"] .lm-document-content{
   max-height:none!important;overflow:visible!important;
 }
+
+/* The two preview rows may wrap on phones; never crop the bottom row.
+   Preserve the deliberate collapse when the scene is condensed. */
+#seyveoLivingMoment:not(.lm-condense) .lm-secondary{
+  max-height:none;
+  overflow:visible;
+  padding-bottom:12px;
+}
+#seyveoLivingMoment:not(.lm-condense) .lm-inline-item{
+  min-height:52px;
+  height:auto;
+  overflow:visible;
+}
+#seyveoLivingMoment.lm-condense .lm-secondary{
+  max-height:0;
+  overflow:hidden;
+  padding-bottom:0;
+}
