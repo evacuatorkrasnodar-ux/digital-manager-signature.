@@ -1290,7 +1290,7 @@ function storeTask(text,source){
   id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
   text:title,done:false,assigneeId,
   ...(source?.approvalFlow?{approvalFlow:true,reviewStatus:'assigned'}:{}),
-  ...(source?.room?{source:'chat',room:source.room}:{})
+  ...(source?.room?{source:source.room==='business-mail'?'business-mail':'chat',room:source.room}:{})
  }));
  const updated=state.tasks.concat(created).slice(-60);
  if(!save(TASK_KEY,updated))return false;
@@ -1633,14 +1633,16 @@ function renderTasks(){
   }
   const copy=el('div','svcp-task-copy');
   copy.append(el('strong','svcp-task-title',t.text));
+  if(t.source==='business-mail')copy.append(el('small','svcp-task-assignee','SEYVEO · BUSINESS MAIL · локальное демо'));
   // Legacy demo records remain stored, but assignees are chosen in chat.
   if(t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId))
    copy.append(el('small','svcp-task-assignee',STAFF[t.assigneeId]));
   if(approval){
-   const statusNames={assigned:'Ожидает Елену',review:'Ожидает проверки',rework:'Возвращено на доработку',approved:'Принято руководителем'};
+   const employee=STAFF[t.assigneeId]||'сотрудника';
+   const statusNames={assigned:'Ожидает: '+employee,review:'Ожидает проверки',rework:'Возвращено на доработку',approved:'Принято руководителем'};
    const status=el('small','svcp-approval-demo-state',statusNames[t.reviewStatus]||'Ожидает Елену');
    copy.append(status);
-   if(t.reportText)copy.append(el('p','svcp-approval-demo-report','Елена: '+String(t.reportText).slice(0,350)));
+   if(t.reportText)copy.append(el('p','svcp-approval-demo-report',(STAFF[t.assigneeId]||'Сотрудник')+': '+String(t.reportText).slice(0,350)));
    if(t.reviewStatus==='review'&&t.photoSelected){
     const image=window.SEYVEO_APPROVAL_DEMO_PHOTO?.get?.(t.id);
     if(image){
