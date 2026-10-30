@@ -40,12 +40,9 @@ def main():
                 MODEL, device_map="cpu", dtype=torch.float32,
                 attn_implementation="sdpa"
             )
-            # Preserve the original approved speaker conditioning.
-            # Build it ONCE for this persistent process, not on every reply.
-            # Never overwrite or regenerate the approved local WAVs.
-            voice_prompt = model.create_voice_clone_prompt(
-                ref_audio=str(reference), x_vector_only_mode=True
-            )
+            # Reuse the loaded model, but use the exact voice-cloning call
+            # that produced the owner's approved long SEYVEO test recording.
+            # Never replace or rewrite the reference recording.
     except Exception as error:
         reply({"type": "fatal", "error": "Ошибка запуска голосового движка: " + str(error)[:300]})
         return 1
@@ -76,7 +73,7 @@ def main():
             with contextlib.redirect_stdout(sys.stderr):
                 sounds, rate = model.generate_voice_clone(
                     text=phrase.strip(), language="Russian",
-                    voice_clone_prompt=voice_prompt
+                    ref_audio=str(reference), x_vector_only_mode=True
                 )
                 sf.write(str(destination), sounds[0], rate, subtype="PCM_16")
             reply({"type": "result", "id": task_id})
