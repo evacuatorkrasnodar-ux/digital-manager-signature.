@@ -18,7 +18,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
-const TYPES={'.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.webmanifest':'application/manifest+json','.ico':'image/x-icon'};
+const TYPES={'.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.woff2':'font/woff2','.woff':'font/woff','.avif':'image/avif','.gif':'image/gif','.mp4':'video/mp4','.webm':'video/webm','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.webmanifest':'application/manifest+json','.ico':'image/x-icon'};
 const HEADERS={
  'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','cross-origin-resource-policy':'same-origin',
  'content-security-policy':"default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
