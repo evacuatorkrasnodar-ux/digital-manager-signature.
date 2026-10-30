@@ -299,6 +299,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
      list.append(create('p','lm-document-note',part.analysis));
     });
     documentDetails.append(list);
+    documentDetails.dataset.reviewMode=documentView;
     documentDetails.append(create('p','lm-mail-note','Разбор сохранён как учебный черновик на этом устройстве. Оригинал не меняется.'));
    }
   }
