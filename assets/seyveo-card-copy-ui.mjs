@@ -25,7 +25,8 @@ if(host){
   const guide=make('section','');guide.className='sv-copy-guide';guide.dataset.kind=kind;
   guide.setAttribute('aria-label','Пояснение Сэйви');
   // Facts, drafts and Sayvi suggestions are already shown by Quiet Cinema.
-  // Keep one concise additional reason instead of duplicating three sections.\n  for(const [label,value] of [['Почему важно',data.reason]]){
+  // Keep one concise additional reason instead of duplicating three sections.
+  for(const [label,value] of [['Почему важно',data.reason]]){
    const box=document.createElement('div');box.append(make('small',label),make('p',value));guide.append(box);
   }
   const hero=original.querySelector('.lm-hero');
