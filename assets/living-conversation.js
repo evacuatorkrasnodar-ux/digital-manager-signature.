@@ -69,7 +69,28 @@ function microphone(id){
 }
 const compact=$('ask').querySelector('.composer-compact');
 const composerHead=$('ask').querySelector('.composer-head');
-if(compact)compact.insertBefore(microphone('seyveoConversationMic'),compact.querySelector('#composerCompactSend'));
+if(compact){
+ // Exactly one compact microphone. Clean up legacy injected microphone
+ // controls from old local-server versions, without touching any other actions.
+ const cleanDuplicateMics=()=>{
+  const own=compact.querySelector('#seyveoConversationMic');
+  if(!own)return;
+  for(const button of compact.querySelectorAll('button')){
+   if(button===own)continue;
+   const signature=[button.id,button.getAttribute('aria-label'),button.title].join(' ');
+   if(/seyveoLocalMic|microphone|микрофон|диктовк|говорить с (?:сэйви|seyveo)/iu.test(signature)){
+    button.remove();
+   }
+  }
+ };
+ compact.insertBefore(microphone('seyveoConversationMic'),compact.querySelector('#composerCompactSend'));
+ cleanDuplicateMics();
+ // Some legacy local scripts may mount their controls after this module.
+ // Keep the single composer microphone even if one is appended later.
+ const micObserver=new MutationObserver(()=>cleanDuplicateMics());
+ micObserver.observe(compact,{childList:true});
+ window.addEventListener('pagehide',()=>micObserver.disconnect(),{once:true});
+}
 // The existing Back control closes the conversation. There is no secondary
 // keyboard-dismiss arrow; native keyboards can close by their own controls.
 if(compact){
