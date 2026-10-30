@@ -6,7 +6,6 @@ import {createServer} from 'node:http';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {execFile} from 'node:child_process';
 import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
@@ -20,6 +19,7 @@ import {businessChatAnswer} from './intelligence/business-chat.mjs';
 import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
+import {createVoiceWorker} from './voice-worker.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -116,6 +116,8 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
  let voiceJob=null,voiceCache=null;
  const memories=memoryStore||createMemoryStore();
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
+ const voiceRunner=createVoiceWorker();
+ process.once('exit',()=>voiceRunner.close());
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
@@ -152,13 +154,9 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
        const folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
        try{
         const output=join(folder,'reply.wav');
-        const script=resolve(ROOT,'server','seyveo-voice-school','say.py');
-        await new Promise((ok,fail)=>{
-         execFile(process.platform==='win32'?'py':'python3',
-          [...(process.platform==='win32'?['-3.11']:[]),script,'--text',phrase,'--out',output],
-          {windowsHide:true,timeout:480000,maxBuffer:1048576,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
-          error=>error?fail(error):ok());
-        });
+        // Keep the same model and approved voice in memory between requests.
+        // CPU still synthesizes audio, but does not reload Qwen3-TTS every click.
+        await voiceRunner.generate(phrase,output);
         const bytes=await readFile(output);
         if(bytes.length<44||bytes.length>15000000)throw Error('Неподдерживаемый размер аудио.');
         voiceCache={text:phrase,wav:bytes};
