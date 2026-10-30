@@ -10,6 +10,7 @@ import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
 import {askLocalStream} from './local-stream.mjs';
+import {loadKnowledgeLibrary,retrieveKnowledge,knowledgeContext} from './knowledge-engine.mjs';
 import {createMemoryStore,memoryContext} from './local-memory.mjs';
 import {memoryCommand,memoryResultText} from './conversation-memory.mjs';
 import {validateHistory} from './local-dialogue.mjs';
@@ -370,9 +371,13 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
      'x-accel-buffering':'no'
     });
     res.flushHeaders();
-    const [facts,examples]=await Promise.all([memories.list(),findApprovedExamples(message.message)]);
+    const [facts,examples,knowledgeDocs]=await Promise.all([
+     memories.list(),findApprovedExamples(message.message),
+     loadKnowledgeLibrary({directory:join(ROOT,'knowledge','approved')})
+    ]);
+    const knowledge=knowledgeContext(retrieveKnowledge(message.message,knowledgeDocs));
     const result=await askLocalStream(message.message,{
-     name:'SEYVEO',memory:memoryContext(facts),examples,history:message.history,signal:controller.signal,
+     name:'SEYVEO',memory:memoryContext(facts),examples,knowledge,history:message.history,signal:controller.signal,
      onDelta:token=>{
       if(firstTextMs===null)firstTextMs=Date.now()-startedAt;
       if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
