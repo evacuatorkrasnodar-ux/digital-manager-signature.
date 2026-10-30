@@ -65,7 +65,17 @@ if(business&&trigger){
      try{await navigator.clipboard.writeText(text);caption.textContent='Скопировано. Отправка сотруднику не выполнялась.';}
      catch{caption.textContent='Не удалось скопировать. Текст доступен выше.';}
     });
-    panel.append(caption,assignee,instruction,copy);item.append(panel);
+    const send=document.createElement('button');send.type='button';send.textContent='Добавить в рабочие дела';
+    send.addEventListener('click',()=>{
+     const people={'елена':'elena','анна':'anna','михаил':'mikhail','всем':'all'};
+     const id=people[assignee.value.trim().toLocaleLowerCase('ru-RU')];
+     if(!id){caption.textContent='Выбери исполнителя: Елена, Анна, Михаил или Всем';return;}
+     const api=window.SEYVEO_BUSINESS_TASK_DEMO;
+     if(!api){caption.textContent='Механизм поручений недоступен';return;}
+     const result=api.assignFromMail({text:instruction.value.trim(),assigneeId:id});
+     caption.textContent=result.ok?'Добавлено в рабочие дела · локальное демо, уведомление не отправлено':result.reason||'Не удалось создать поручение';
+    });
+    panel.append(caption,assignee,instruction,copy,send);item.append(panel);
    });
    item.append(title,recipient,edit,delegate,remove);list.append(item);
   });
