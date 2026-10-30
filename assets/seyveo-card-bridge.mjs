@@ -17,10 +17,15 @@ function deferred(){return [...cards.values()].filter(c=>c.status==='deferred');
 function archive(){return [...cards.values()].filter(c=>['archived','succeeded','canceled','expired'].includes(c.status));}
 function postpone(key){return advance(key,'deferred',{reason:'User chose Later'});}
 function resume(key){return advance(key,'shown',{reason:'User resumed deferred card'});}
+// Stable order for Quiet Cinema's existing preview items, without changing geometry.
+function orderPreview(items){
+ const rank={work:0,mail:1,contract:2};
+ return [...items].sort((a,b)=>(rank[a.kind]??3)-(rank[b.kind]??3));
+}
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
 // outcome AFTER an external integration or explicit local demo confirms it.
-Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,inspect}),writable:false,configurable:false});
+Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,orderPreview,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
 
 // Non-invasive adapter for the existing Quiet Cinema demo mail card.
