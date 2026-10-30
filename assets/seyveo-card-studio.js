@@ -17,9 +17,18 @@ const entries=[
 ['Благодарность','Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность, не начисляя премию автоматически','#E7D2A2','✦'],
 ['Документооборот','Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта','#B8D4E8','▤']
 ];
-if(!new URLSearchParams(location.search).has('seyveoStudio'))return;
-const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.textContent='✧ Студия карточек';
-document.body.append(button);
+// Keep the developer tools off production hosts; no query parameter is needed locally.
+const localDeveloper=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
+if(!localDeveloper)return;
+const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.type='button';button.textContent='✧ Студия карточек';
+const management=document.querySelector('#manageOverview #seyveoCleanManageMenu')||document.querySelector('#manageOverview');
+if(management){
+ const section=document.createElement('section');section.className='manage-group';section.setAttribute('aria-label','Инструменты разработчика');
+ const heading=document.createElement('h2');heading.textContent='Разработчик';
+ const note=document.createElement('p');note.textContent='Учебные карточки, проверка сценариев и журнал действий. Только на этом компьютере.';
+ section.append(heading,note,button);management.append(section);
+ button.style.cssText='display:block;position:static;inset:auto;margin:12px 0;min-height:44px;padding:10px 14px;border:1px solid var(--soft-line);border-radius:16px;background:var(--card2);color:var(--text);font:inherit;';
+}else{document.body.append(button);}
 const page=document.createElement('section');page.id='seyveoCardStudio';page.hidden=true;
 page.innerHTML='<div class="scs-wrap"><header><h2>Студия карточек Сэйви</h2><button type="button" data-close>Закрыть</button></header><p class="scs-note">Только учебные события. Ничего не отправляется.</p><div class="scs-grid"><div class="scs-panel"><label for="scsFamily">Семейство карточки</label><select id="scsFamily"></select><div class="scs-states"></div></div><div class="scs-panel" id="scsPreview"></div></div></div>';
 document.body.append(page);
