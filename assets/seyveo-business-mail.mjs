@@ -24,6 +24,7 @@ if(business&&trigger){
 .svb-mail-form textarea{min-height:112px}.svb-mail-form button{border:1px solid var(--soft-line);border-radius:99px;padding:11px}
 `;
  styles.textContent+='.svb-mail-handoff{display:grid;gap:8px;margin:8px 0 5px;padding:10px 0;border-top:1px solid var(--soft-line)}.svb-mail-handoff input,.svb-mail-handoff textarea{box-sizing:border-box;width:100%;border:1px solid var(--soft-line);border-radius:12px;padding:10px;background:transparent;color:inherit;font:inherit}.svb-mail-handoff textarea{min-height:90px}.svb-mail-handoff button{justify-self:start;color:var(--seyveo-emerald,#a2dcba)}';
+ styles.textContent+='.svb-mail-history{display:grid;gap:5px;margin:6px 0;padding:8px 0;border-top:1px solid var(--soft-line)}.svb-mail-history small{font-size:11px;color:var(--secondary)}';
  document.head.append(styles);
  const page=document.createElement('section');page.className='svb-mail';page.hidden=true;
  const head=document.createElement('div');head.className='svb-mail-head';
@@ -86,6 +87,16 @@ if(business&&trigger){
     const names={assigned:'В работе',review:'На проверке',rework:'На доработке',approved:'Принято'};
     summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
     item.append(summary);
+    const history=document.createElement('div');history.className='svb-mail-history';
+    const milestones={assigned:'Поручение создано',approved:'Руководитель принял результат',rework:'Руководитель вернул на доработку'};
+    for(const task of tasks.filter(t=>ids.includes(t.id))){
+     const heading=document.createElement('small');heading.textContent='Исполнитель: '+({elena:'Елена',anna:'Анна',mikhail:'Михаил'}[task.assigneeId]||task.assigneeId);history.append(heading);
+     for(const step of task.mailHistory||[]){
+      const line=document.createElement('small');line.textContent=(milestones[step.event]||step.event)+' · '+new Date(step.at).toLocaleString('ru-RU');history.append(line);
+     }
+     if(task.reviewStatus==='review'){const line=document.createElement('small');line.textContent='Результат передан на проверку';history.append(line);}
+    }
+    item.append(history);
     const jump=document.createElement('button');jump.type='button';jump.textContent='Открыть поручение';jump.addEventListener('click',()=>{if(window.SEYVEO_BUSINESS_TASK_DEMO?.openTask(ids[0])){page.hidden=true;if(board)board.hidden=false;}});item.append(jump);
    }
    item.prepend(title,recipient);
