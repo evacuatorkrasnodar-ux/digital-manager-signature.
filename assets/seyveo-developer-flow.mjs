@@ -48,5 +48,17 @@ if(enabled){
   const overlay=!!center&&box.contains(center);
   status.textContent='Мобильная проверка: '+(onScreen?'✓ кнопка в границах экрана':'! кнопка выходит за границы')+'; '+(uncovered?'✓ доступна':overlay?'! перекрыта панелью DEV FLOW':'! перекрыта или ещё анимируется')+'. Проверяй после завершения анимации.';
  });
- box.append(title,status,create,submit,inspect,verify,audit,rules,visual);document.body.append(box);
+ const mobile=button('Диагностика · клавиатура и переход',()=>{
+  const field=document.querySelector('#homePage .lm-field');
+  const active=document.activeElement;
+  const typing=!!active&&(/^(INPUT|TEXTAREA)$/.test(active.tagName)||active.isContentEditable);
+  const viewport=window.visualViewport;
+  const keyboardLikely=typing&&!!viewport&&viewport.height<window.innerHeight*0.8;
+  const review=window.SEYVEO_LIVING_MOMENT?.inspectReview?.(id);
+  const task=get().find(t=>t.id===id);
+  const routeReady=!!task&&typeof window.SEYVEO_BUSINESS_TASK_DEMO?.openTask==='function';
+  const cardOnScreen=!!field&&!field.closest('[hidden]')&&!!review?.visible;
+  status.textContent='Клавиатура: '+(keyboardLikely?'возможно открыта':typing?'поле активно, размер экрана не изменён':'поле ввода не активно')+' · Карточка: '+(cardOnScreen?'видна':'не видна')+' · Переход: '+(routeReady?'обработчик доступен':'не готов')+'. Диагностика не открывает клавиатуру и не выполняет переход.';
+ });
+ box.append(title,status,create,submit,inspect,verify,audit,rules,visual,mobile);document.body.append(box);
 }
