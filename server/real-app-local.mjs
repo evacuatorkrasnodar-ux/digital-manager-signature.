@@ -16,6 +16,7 @@ import {intelligenceCatalog,intelligencePlan} from './intelligence/architecture.
 import {businessChatAnswer} from './intelligence/business-chat.mjs';
 import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
+import {createLearningQueue} from './learning-queue.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -103,13 +104,14 @@ function localFile(path){
  if(!file.startsWith(resolve(ROOT,'assets')+sep))return null;
  return TYPES[extname(file).toLowerCase()]?file:null;
 }
-export function createRealLocalServer({memoryStore}={}){
+export function createRealLocalServer({memoryStore,learningQueue}={}){
  // Force offline AI, even if a paid API key exists in the environment.
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
  const memories=memoryStore||createMemoryStore();
+ const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
@@ -270,9 +272,9 @@ export function createRealLocalServer({memoryStore}={}){
      'x-accel-buffering':'no'
     });
     res.flushHeaders();
-    const facts=await memories.list();
+    const [facts,examples]=await Promise.all([memories.list(),findApprovedExamples(message.message)]);
     const result=await askLocalStream(message.message,{
-     name:'SEYVEO',memory:memoryContext(facts),history:message.history,signal:controller.signal,
+     name:'SEYVEO',memory:memoryContext(facts),examples,history:message.history,signal:controller.signal,
      onDelta:token=>{
       if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
      }
@@ -300,6 +302,45 @@ export function createRealLocalServer({memoryStore}={}){
     if(typeof data?.text!=='string'||!data.text.trim()||data.text.length>8000)throw Error('invalid');
     const answer=await analyzeBusinessMail(data.text);send(res,200,answer);
    }catch(err){send(res,err?.message==='invalid'?400:502,{error:err?.message==='invalid'?'Нужен текст до 8000 символов.':String(err?.message||'Ошибка Ollama').slice(0,150)})}
+   return;
+  }
+  if(req.method==='GET'&&path==='/api/seyveo-learning-dashboard'){
+   try{
+    const [facts,examples,items]=await Promise.all([memories.list(),learningStats(),proposals.list()]);
+    send(res,200,{mode:'local-dev',privateCount:facts.length,
+     approvedCount:examples.count,pendingCount:items.filter(x=>x.status==='pending').length,
+     proposals:items.slice(-40).reverse(),cloudSync:false,weightTraining:false,sharedAcrossUsers:false});
+   }catch{send(res,500,{error:'Не удалось прочитать данные лаборатории.'})}
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-learning-proposal'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!String(req.headers['content-type']||'').startsWith('application/json')){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   try{
+    let size=0;const parts=[];
+    for await(const part of req){size+=part.length;if(size>6000)throw Error('invalid-example');parts.push(part)}
+    const data=JSON.parse(Buffer.concat(parts).toString('utf8'));
+    if(!data||typeof data!=='object'||Array.isArray(data))throw Error('invalid-example');
+    const result=data.action==='propose'?await proposals.propose(data):
+      await proposals.review(data.id,data.action);
+    send(res,200,{ok:true,proposals:result.items.slice(-40).reverse()});
+   }catch(error){
+    const key=String(error?.message||'');
+    const errors={
+     'consent-required':'Для общей библиотеки нужно явное согласие.',
+     'invalid-example':'Заполни вопрос (4–600 символов) и образец ответа (4–1800 символов).',
+     'private-data':'Обнаружены признаки личных данных. Используй только вымышленные обезличенные примеры.',
+     'learning-full':'Очередь заполнена: удали старые записи.',
+     'duplicate-example':'Этот пример уже ожидает проверки.',
+     'invalid-id':'Неверный идентификатор примера.',
+     'invalid-action':'Неизвестное действие.',
+     'already-reviewed':'Этот пример уже рассмотрен.',
+     'unknown-id':'Запись не найдена.'
+    };
+    send(res,errors[key]?400:500,{error:errors[key]||'Не удалось изменить лабораторию. Данные сохранены.'});
+   }
    return;
   }
   if(req.method==='GET'&&path==='/api/seyveo-learning-stats'){
