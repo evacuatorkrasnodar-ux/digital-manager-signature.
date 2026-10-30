@@ -15,5 +15,18 @@ if(enabled){
  const submit=button('2 · Передать отчёт',()=>{if(!id){status.textContent='Сначала создайте поручение';return;}const tasks=get();const task=tasks.find(t=>t.id===id);if(!task){status.textContent='Поручение не найдено';return;}task.reviewStatus='review';task.reportText='Учебный отчёт Елены: проверка завершена';task.mailHistory=[...(task.mailHistory||[]),{event:'review',at:Date.now(),actor:'elena',report:task.reportText}];localStorage.setItem(key,JSON.stringify(tasks));window.dispatchEvent(new Event('seyveo:employee-task-updated'));window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));status.textContent='На проверке. Откройте Главную.';});
  const inspect=button('3 · Открыть проверку',()=>{if(!id||!window.SEYVEO_BUSINESS_TASK_DEMO?.openTask(id))status.textContent='Поручение недоступно';else status.textContent='Выберите Принять или Доработать в Делах';});
  const verify=button('4 · Диагностика карточки',()=>{const task=get().find(t=>t.id===id);const card=window.SEYVEO_LIVING_MOMENT?.inspectReview?.(id);if(!task||!card){status.textContent='Нет задания или диагностика Главной недоступна';return;}const expected=task.reviewStatus==='review'&&!task.done;status.textContent=(expected===card.queued?'✓':'!')+' Очередь: '+(card.queued?'есть':'нет')+'; карточка на экране: '+(card.visible?'да':'нет')+'; статус: '+(task.reviewStatus||'неизвестен')+'. '+(expected===card.queued?'Условие показа верно.':'Несоответствие очереди — проверь Главную.');});
- box.append(title,status,create,submit,inspect,verify);document.body.append(box);
+ const audit=button('Итог · проверить весь цикл',()=>{
+  const task=get().find(t=>t.id===id);
+  if(!task){status.textContent='Не найдено учебное поручение. Начни с шага 1.';return;}
+  const events=Array.isArray(task.mailHistory)?task.mailHistory:[];
+  const created=events.some(e=>e.event==='assigned');
+  const submitted=events.some(e=>e.event==='review');
+  const resolved=events.some(e=>e.event==='approved'||e.event==='rework');
+  const card=window.SEYVEO_LIVING_MOMENT?.inspectReview?.(id);
+  const expected=task.reviewStatus==='review'&&!task.done;
+  const queue=card?card.queued===expected:false;
+  const checks=[['Создано',created],['Отчёт',submitted],['Решение',resolved],['Очередь',queue]];
+  status.textContent=checks.map(([name,ok])=>(ok?'✓ ':'○ ')+name).join(' · ')+(checks.every(x=>x[1])?' · Цикл пройден в локальных данных.':' · Не все этапы завершены.');
+ });
+ box.append(title,status,create,submit,inspect,verify,audit);document.body.append(box);
 }
