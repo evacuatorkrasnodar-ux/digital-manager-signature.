@@ -13,12 +13,16 @@
  business:{family:'Бизнес',icon:'▥',accent:'#A5D8BB',actions:['open-business','later']},
  employee:{family:'Сотрудники',icon:'♧',accent:'#CBBFE9',actions:['open-team','later']},
  home:{family:'Умный дом',icon:'⌂',accent:'#C2DED1',actions:['open-home','later']},
- security:{family:'Безопасность',icon:'◇',accent:'#B8D4E8',actions:['review-security','later']}
+ security:{family:'Безопасность',icon:'◇',accent:'#B8D4E8',actions:['review-security','later']},
+ shelf:{family:'Проверка выкладки',icon:'▧',accent:'#8FE3C3',actions:['request-photo','open-chat','later']},
+ recognition:{family:'Благодарность',icon:'✦',accent:'#E7D2A2',actions:['review-recognition','open-team','later']},
+ secureFlow:{family:'Документооборот',icon:'▤',accent:'#B8D4E8',actions:['review-document','open-document','later']}
  });
  const eventType={ 'message.received':'message','mail.received':'mail','document.review_requested':'document',
  'task.due':'task','calendar.upcoming':'calendar','health.reminder':'health',
  'care.reminder':'care','finance.review_requested':'finance','business.sale_recorded':'business',
- 'employee.requested':'employee','home.offline':'home','security.login_review':'security'};
+ 'employee.requested':'employee','home.offline':'home','security.login_review':'security',
+ 'shelf.photo_requested':'shelf','employee.recognition_proposed':'recognition','document.signature_review':'secureFlow'};
  const trim=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
  function buildCard(event){
   if(!event||typeof event!=='object'||!Object.prototype.hasOwnProperty.call(eventType,event.type))return null;
