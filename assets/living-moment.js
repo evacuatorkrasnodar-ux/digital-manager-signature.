@@ -798,6 +798,9 @@ window.SEYVEO_LIVING_MOMENT=Object.freeze({
  restoreDeferred:kind=>restorePreview(kind),
  restoreTask:id=>restoreTask(id)
 });
+window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
+window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
+window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
 scheduleRefresh();
 // Bring back the original rising three-card introduction after opening.
 // If a dialog/navigation blocks it, refreshing Home retries instead of
