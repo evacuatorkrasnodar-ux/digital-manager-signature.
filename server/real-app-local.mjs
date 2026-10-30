@@ -11,6 +11,7 @@ import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
 import {askLocalStream} from './local-stream.mjs';
 import {createMemoryStore,memoryContext} from './local-memory.mjs';
+import {memoryCommand,memoryResultText} from './conversation-memory.mjs';
 import {validateHistory} from './local-dialogue.mjs';
 import {planAgentTask} from './agent/planner.mjs';
 import {reviewApprovedFile} from './agent/code-review.mjs';
@@ -321,6 +322,23 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
    let message;
    try{message=await readQuestion(req,{withHistory:true})}
    catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   // Only a direct, explicit user command can save a local memory note.
+   // Reuse the existing validated memory store and its sensitive-data filter.
+   const remember=memoryCommand(message.message);
+   if(remember){
+    try{
+     const result=await memories.add(remember.text);
+     const response=memoryResultText({duplicate:result.duplicate});
+     res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
+     res.end(JSON.stringify({type:'delta',text:response})+'\n'+JSON.stringify({type:'done',source:'local-memory',cloud:false,executed:false})+'\n');
+    }catch(error){
+     const type=String(error?.message||'');
+     const warning=type==='sensitive-note'?'Я не сохраняю пароли, ключи или банковские данные.':type==='memory-full'?'Моя память заполнена. Удали старую заметку.':'Не смогла сохранить заметку. Напиши короткий текст до 180 символов.';
+     res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
+     res.end(JSON.stringify({type:'delta',text:warning})+'\n'+JSON.stringify({type:'done',source:'local-memory',cloud:false,executed:false})+'\n');
+    }
+    return;
+   }
    // Stable application identity: do not ask a language model to guess its name.
    if(/^(?:как тебя зовут|кто ты|представься|представь себя|как твое имя|как твоё имя)[?.!\s]*$/iu.test(message.message.trim())){
     res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
