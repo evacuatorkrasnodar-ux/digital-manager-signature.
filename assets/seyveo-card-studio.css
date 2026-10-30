@@ -20,3 +20,10 @@
 #seyveoCardStudio .scs-editor{display:grid;gap:12px;margin-top:15px}
 #seyveoCardStudio .scs-editor label{display:grid;gap:6px;font-size:12px;color:#b9d9c6}
 #seyveoCardStudio .scs-editor input,#seyveoCardStudio .scs-editor textarea{width:100%;padding:10px;border:1px solid #416454;border-radius:10px;background:#22392f;color:#fff;font:14px system-ui;resize:vertical}
+
+#seyveoCardStudio .scs-queue{margin-top:16px}
+#seyveoCardStudio .scs-queue h3{font-size:17px;font-weight:550;margin:0 0 8px}
+#seyveoCardStudio .scs-queue-list{display:grid;gap:7px;padding:0;list-style:none}
+#seyveoCardStudio .scs-queue-list li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #365242;padding:8px 0}
+#seyveoCardStudio .scs-queue-list strong{font-weight:530}
+#seyveoCardStudio .scs-queue-list span{color:#98cdb0;font-size:12px;text-align:right}
