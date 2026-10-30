@@ -3,6 +3,7 @@
 import {trainingCardCopy} from './seyveo-card-copy.mjs';
 const host=document.getElementById('seyveoLivingTiles');
 if(host){
+ const mobileCss=document.createElement('link');mobileCss.rel='stylesheet';mobileCss.href='assets/seyveo-card-mobile-density.css?v=1';document.head.append(mobileCss);
  const style=document.createElement('style');
  style.textContent='.sv-copy-guide{margin:6px 0 10px;padding:8px 0;border-top:1px solid var(--soft-line,#ffffff25);display:grid;gap:9px}.sv-copy-guide p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--text,#fff)}.sv-copy-guide small{display:block;font-size:10px;letter-spacing:.09em;color:var(--secondary,#b9c8c1);text-transform:uppercase}';
  document.head.append(style);
@@ -15,7 +16,10 @@ if(host){
   const kind=field?.dataset.lmSubject;
   const data=field?.dataset.lmMode==='preview'?trainingCardCopy(kind):null;
   const prior=original?.querySelector('.sv-copy-guide');
-  if(!data){prior?.remove();return;}
+  if(!data){prior?.remove();field?.querySelector('.sv-card-expand')?.remove();field?.classList.remove('sv-card-expanded');return;}
+  let toggle=field.querySelector('.sv-card-expand');
+  if(!toggle){toggle=make('button','Развернуть');toggle.type='button';toggle.className='sv-card-expand';toggle.setAttribute('aria-expanded','false');toggle.addEventListener('click',()=>{const expanded=field.classList.toggle('sv-card-expanded');toggle.textContent=expanded?'Свернуть':'Развернуть';toggle.setAttribute('aria-expanded',String(expanded));});original.append(toggle);}
+  if(field.querySelector('textarea:not([hidden])')){field.classList.add('sv-card-expanded');toggle.textContent='Свернуть';toggle.setAttribute('aria-expanded','true');}
   if(prior?.dataset.kind===kind)return;
   prior?.remove();
   const guide=make('section','');guide.className='sv-copy-guide';guide.dataset.kind=kind;
