@@ -1,3 +1,4 @@
+import './seyveo-mail-cabinet.mjs';
 import './seyveo-action-history.mjs';
 import './seyveo-adaptive-orb.mjs';
 import './seyveo-card-copy-ui.mjs';
