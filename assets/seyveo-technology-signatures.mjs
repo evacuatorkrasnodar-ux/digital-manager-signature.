@@ -16,7 +16,9 @@ applySignatures();
 /* Small signatures on existing function tiles, not extra menu items. */
 const featureCaptions=[
  ['[data-calendar-space="health"]','SEYVEO · VITAL CARE'],
- ['[data-calendar-space="care"]','SEYVEO · PERSONAL CARE']
+ ['[data-calendar-space="care"]','SEYVEO · PERSONAL CARE'],
+ ['[data-business-hub="documents"]','SEYVEO · SECURE FLOW'],
+ ['[data-clean-section="security"]','SEYVEO · PRIVATE CORE']
 ];
 for(const [selector,caption] of featureCaptions){
  const tile=document.querySelector(selector);
