@@ -255,6 +255,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
  let documentAnalysis='';
  let documentAnalyzing=false;
  let documentParts=[];
+ let documentView='remarks';
+ let documentProposed='';
  const documentDraftKey='seyveo-contract-review-draft-v1';
  const documentDetails=create('div','lm-document-content');
  documentDetails.hidden=true;
@@ -464,7 +466,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(documentAnalyzing||!documentActive()||documentStep!=='review')return;
   const clause=documentDetails.querySelector('textarea')?.value?.trim()||'';
   if(!clause){explain(field,'Вставьте текст пункта договора.',documentAnalyze);return;}
-  documentSource=clause.slice(0,8500);documentAnalyzing=true;documentParts=[];documentAnalysis='';updateDocument();
+  documentSource=clause.slice(0,8500);documentAnalyzing=true;documentParts=[];documentAnalysis='';documentView='remarks';documentProposed='';updateDocument();
   try{
    // Split at numbered headings or blank lines; keep a bounded workload on local Qwen.
    const chunks=documentSource.split(/\n\s*\n|\n(?=\s*(?:пункт\s+)?\d+[.)]\s)/i).map(x=>x.trim()).filter(Boolean);
@@ -482,9 +484,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
      const data=await response.json(),answer=String(data?.text||'').trim().slice(0,1300);
      if(!answer)throw Error('Нет ответа от Сэйви.');
      documentParts.push({original:part,analysis:answer});
+     const proposed=answer.match(/Предложение\\s*[:：]\\s*(.*)/i)?.[1]?.trim();
+     documentProposed+=(documentProposed?'\n\n':'')+(proposed&&proposed.length>10?proposed:part);
      documentAnalysis='Разобрано '+documentParts.length+' из '+sections.length+' пунктов. Ниже — отдельные замечания.';
      documentNote=documentParts.map((p,n)=>'Пункт '+(n+1)+'\\n'+p.analysis).join('\\n\\n').slice(0,1200);
-     try{localStorage.setItem(documentDraftKey,JSON.stringify({original:documentSource,parts:documentParts,at:new Date().toISOString(),demo:true}));}catch{}
+     try{localStorage.setItem(documentDraftKey,JSON.stringify({original:documentSource,parts:documentParts,proposed:documentProposed,at:new Date().toISOString(),demo:true}));}catch{}
     }finally{clearTimeout(timer);}
    }
   }catch(error){
