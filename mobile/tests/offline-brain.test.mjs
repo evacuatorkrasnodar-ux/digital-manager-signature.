@@ -20,3 +20,9 @@ test('live information is not invented offline',()=>{
  const p=planOfflineReply('Какая погода сейчас');
  assert.equal(p.needsInternet,true);
 });
+
+test('live facts cannot be invented by installed offline model',()=>{
+ const result=planOfflineReply('Какая погода сейчас',{modelReady:true,packs:['general']});
+ assert.equal(result.route,'network-required');
+ assert.equal(result.needsInternet,true);
+});
