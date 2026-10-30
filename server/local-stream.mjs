@@ -17,10 +17,10 @@ const LONG=/(?:подробно|развёрнуто|детально|пошаг
 export function localOptionsFor(message){
  const text=normalizeMessage(message);
  // Explicit brevity beats any complex-language heuristic.
- let num_predict=200;
- if(SHORT.test(text))num_predict=110;
- else if(LONG.test(text))num_predict=320;
- else if(text.length<100)num_predict=150;
+ let num_predict=400;
+ if(SHORT.test(text))num_predict=140;
+ else if(LONG.test(text))num_predict=650;
+ else if(text.length<100)num_predict=320;
  const requestedThreads=Number(process.env.SEYVEO_LOCAL_THREADS);
  // Conservative starting point for a mixed P-core/E-core i5-12600K.
  // Tunable from start-real-seyveo.cmd; not a benchmark claim.
