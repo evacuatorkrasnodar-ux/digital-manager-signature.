@@ -1290,7 +1290,8 @@ function storeTask(text,source){
   id:'chat-'+Date.now()+'-'+i+'-'+Math.random().toString(36).slice(2,7),
   text:title,done:false,assigneeId,
   ...(source?.approvalFlow?{approvalFlow:true,reviewStatus:'assigned'}:{}),
-  ...(source?.room?{source:source.room==='business-mail'?'business-mail':'chat',room:source.room}:{})
+  ...(source?.room?{source:source.room==='business-mail'?'business-mail':'chat',room:source.room}:{}),
+  ...(source?.mailDraftId?{mailDraftId:source.mailDraftId}:{})
  }));
  const updated=state.tasks.concat(created).slice(-60);
  if(!save(TASK_KEY,updated))return false;
@@ -1307,10 +1308,10 @@ function storeTask(text,source){
 }
 // Local demo bridge: uses the same manager task store and UI as chat assignments.
 window.SEYVEO_BUSINESS_TASK_DEMO=Object.freeze({
- assignFromMail({text,assigneeId}={}){
+ assignFromMail({text,assigneeId,mailDraftId}={}){
   if(typeof text!=='string'||!text.trim()||text.length>140)return {ok:false,reason:'Поручение должно содержать не более 140 символов'};
-  const created=storeTask(text,{assigneeId,approvalFlow:true,room:'business-mail'});
-  return created?{ok:true,id:created[0].id,localOnly:true}:{ok:false,reason:'Поручение не создано'};
+  const created=storeTask(text,{assigneeId,approvalFlow:true,room:'business-mail',mailDraftId});
+  return created?{ok:true,id:created[0].id,ids:created.map(t=>t.id),localOnly:true}:{ok:false,reason:'Поручение не создано'};
  }
 });
 function assignExistingMessage(msg,index){
