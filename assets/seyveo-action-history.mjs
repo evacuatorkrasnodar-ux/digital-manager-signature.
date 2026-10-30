@@ -8,7 +8,7 @@ if(personal&&head){
 .sah-inline-panel{margin-top:12px;border:1px solid var(--soft-line,#526b60);border-radius:18px;padding:14px;background:var(--card2,transparent);color:var(--text,#fff)}
 .sah-inline-panel[hidden]{display:none!important}.sah-inline-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sah-inline-head h3{font-size:16px;margin:0}.sah-inline-head button{border:0;background:transparent;color:inherit;font:inherit;padding:8px}
-.sah-inline-note{font-size:12px;opacity:.7;line-height:1.5}.sah-row{padding:11px 0;border-top:1px solid var(--soft-line,#526b60);font-size:13px}
+.sah-inline-note{font-size:12px;opacity:.7;line-height:1.5}.sah-date-heading{margin:14px 0 3px;font-size:11px;font-weight:650;letter-spacing:.045em;color:var(--secondary,#a5b3ab)}.sah-row{padding:11px 0;border-top:1px solid var(--soft-line,#526b60);font-size:13px}
 .sah-row small{display:block;opacity:.75;margin-top:3px}.sah-studio{font-size:11px;opacity:.75;overflow-wrap:anywhere}
 `;
  document.head.append(style);
@@ -34,10 +34,21 @@ if(personal&&head){
   if(!cards.length&&!events.length){const p=document.createElement('p');p.className='sah-inline-note';p.textContent='Пока нет действий в истории.';list.append(p);return;}
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
   const selected=studio?events:events.filter((e,i,all)=>all.findIndex(x=>x.eventId===e.eventId)===i);
+  const dateKey=d=>[d.getFullYear(),d.getMonth(),d.getDate()].join('-');
+  const today=new Date(),yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1);
+  let lastDay='';
   for(const e of selected.slice(0,Math.min(visibleCount,40))){
+   const date=e.at?new Date(e.at):null;
+   const valid=date&&!Number.isNaN(date.getTime());
+   const day=valid?dateKey(date):'unknown';
+   if(day!==lastDay){
+    const group=document.createElement('p');group.className='sah-date-heading';
+    group.textContent=!valid?'Без даты':day===dateKey(today)?'Сегодня':day===dateKey(yesterday)?'Вчера':date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+    list.append(group);lastDay=day;
+   }
    const item=document.createElement('div');item.className='sah-row';
    const name=document.createElement('strong');name.textContent=e.title||({mail:'Письмо',work:'Рабочее сообщение',contract:'Документ'}[e.cardType]||'Действие Сэйви');
-   const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(e.at?new Date(e.at).toLocaleString('ru-RU'):'время не указано');
+   const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано');
    item.append(name,line);
    if(studio){const tech=document.createElement('small');tech.className='sah-studio';tech.textContent=(e.from||'—')+' → '+(e.to||'—')+' · '+e.eventId+(e.reason?' · '+e.reason:'');item.append(tech);}
    list.append(item);
