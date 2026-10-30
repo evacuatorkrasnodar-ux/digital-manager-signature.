@@ -15,6 +15,7 @@ const features=[
 const style=document.createElement('style');
 style.textContent='.sv-technology-caption{display:block!important;font-size:10px!important;line-height:1.45!important;letter-spacing:.075em!important;color:var(--seyveo-emerald,#9bd5b7)!important;opacity:1!important;font-weight:550!important}.manage-caption.sv-signature,.life-eyebrow.sv-signature{color:var(--seyveo-emerald,#9bd5b7)!important;opacity:1!important;letter-spacing:.1em!important}';
 document.head.append(style);
+style.textContent+=' .sv-technology-caption{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}';
 function apply(){
  for(const [selector,value] of captions){
   const el=document.querySelector(selector);
@@ -34,3 +35,5 @@ let scheduled=false;
 const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply();});};
 new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true});
 window.addEventListener('hashchange',schedule);
+window.addEventListener('pageshow',schedule);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
