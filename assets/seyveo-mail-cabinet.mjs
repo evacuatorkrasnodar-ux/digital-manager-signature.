@@ -1,3 +1,4 @@
+import {prepareMailInsight} from './seyveo-mail-intelligence.mjs';
 /* SEYVEO Mail cabinet UI. No remote account, no fabricated messages. */
 const mailButtons=document.querySelectorAll('[data-calendar-space="mail"]');
 if(mailButtons.length){
@@ -20,7 +21,10 @@ if(mailButtons.length){
  const body=document.createElement('textarea');body.placeholder='Текст письма';body.required=true;
  const save=document.createElement('button');save.type='submit';save.textContent='Сохранить черновик';
  compose.append(to,subject,body,save);shell.append(head,hero,search,tabs,note,view,compose);dlg.append(shell);life.append(dlg);
- const drafts=[];let current='inbox';let editing=-1;
+ const drafts=[];let current='inbox';
+ // Future authenticated provider can render verified insights via this adapter.
+ window.SEYVEO_MAIL_PREVIEW=Object.freeze({prepare:prepareMailInsight});
+let editing=-1;
  const labels={inbox:'Входящие',sent:'Отправленные',drafts:'Черновики'};
  newDraft.addEventListener('click',()=>{current='drafts';editing=-1;compose.reset();save.textContent='Сохранить черновик';search.value='';render();to.focus({preventScroll:true});compose.scrollIntoView({block:'nearest',behavior:'smooth'});});
  function render(){
