@@ -377,7 +377,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const workSayvi=polymer('✧ Ответит Сэйви',()=>{workMode='sayvi';workDraft='Спасибо, Елена! Пришли, пожалуйста, фото выкладки — я проверю.';updateWork()});
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Назад',()=>{workMode='choose';updateWork()});
- const workSend=polymer('Отправить · демо',()=>{if(!workDraft.trim()){explain(field,'Сначала напишите ответ.',workSend);return}workMode='done';updateWork()});
+ const workSend=polymer('Отправить · демо',()=>{if(!workDraft.trim()){explain(field,'Сначала напишите ответ.',workSend);return}workMode='done';updateWork();finishPreviewItem()});
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
