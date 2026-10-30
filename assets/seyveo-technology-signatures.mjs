@@ -1,3 +1,4 @@
+import './seyveo-private-core-overview.mjs';
 /* SEYVEO signature captions. Only existing labels; no new navigation or rows. */
 const signatures=[
  ['#tasksPage .manage-heading .manage-caption','SEYVEO · ACTION MEMORY'],
