@@ -283,7 +283,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }
   if(documentStep==='review'){
    const sourceLabel=create('label','lm-mail-edit-label','ТЕКСТ ПУНКТА ДОГОВОРА · ДЕМО');
-   const sourceInput=create('textarea','lm-mail-edit-input');sourceInput.rows=4;sourceInput.maxLength=6000;
+   const sourceInput=create('textarea','lm-mail-edit-input');sourceInput.rows=4;sourceInput.maxLength=3200;
    sourceInput.value=documentSource;sourceInput.setAttribute('aria-label','Текст пункта договора для проверки');
    sourceInput.addEventListener('input',()=>{documentSource=sourceInput.value;});
    sourceLabel.append(sourceInput);documentDetails.append(sourceLabel);
@@ -452,7 +452,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(documentAnalyzing||!documentActive()||documentStep!=='review')return;
   const clause=documentDetails.querySelector('textarea')?.value?.trim()||'';
   if(!clause){explain(field,'Вставьте текст пункта договора.',documentAnalyze);return;}
-  documentSource=clause.slice(0,6000);documentAnalyzing=true;updateDocument();
+  documentSource=clause.slice(0,3200);documentAnalyzing=true;updateDocument();
   try{
    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),45000);
    let response;
