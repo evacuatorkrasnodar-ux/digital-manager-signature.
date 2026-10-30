@@ -30,3 +30,14 @@
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-secondary .lm-inline-item{min-height:42px}
 /* The explanatory paragraph remains available when expanding mail/document. */
 #seyveoLivingMoment .lm-field[data-lm-mode="preview"]:not(.sv-card-expanded) .sv-copy-guide{display:none}
+
+/* Dynamic third level: expanded content or active editor needs vertical room.
+   Scope only to Home with Quiet Cinema focus; keep orb SVG untouched. */
+#homePage.lm-focus.sv-orb-level-3 #orbCluster{height:clamp(96px,24vw,128px)!important}
+#homePage.lm-focus.sv-orb-level-3 #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
+#homePage.lm-focus.sv-orb-level-3 #stage{min-height:clamp(175px,25vh,220px)!important;padding-bottom:2px}
+#homePage.lm-focus.sv-orb-level-3 .message{min-height:52px;margin-top:5px}
+@media(prefers-reduced-motion:reduce){
+ #homePage.lm-focus.sv-orb-level-3 #orb,
+ #homePage.lm-focus.sv-orb-level-3 #orbCluster{transition:none}
+}
