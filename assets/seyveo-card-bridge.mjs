@@ -1,3 +1,4 @@
+import './seyveo-card-copy-ui.mjs';
 import {createCard,transition,visible,ingest} from './seyveo-card-engine.mjs';
 // Main UI integration layer. Opt-in event API; legacy home rendering is untouched.
 const cards=new Map(),trace=[];const scope={accountId:'demo-account',workspaceId:'demo-workspace'};
