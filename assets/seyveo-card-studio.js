@@ -29,6 +29,25 @@ const fields=Object.fromEntries([...editor.querySelectorAll('[data-edit]')].map(
 function fillEditor(){const e=entries[Number(select.value)];fields.title.value=e[1];fields.fact.value=e[2];fields.suggestion.value=e[3];fields.priority.value='normal'}
 fillEditor();
 editor.addEventListener('input',render);editor.addEventListener('change',render);
+const queuePanel=document.createElement('div');queuePanel.className='scs-panel scs-queue';
+queuePanel.innerHTML='<h3>Автоматическая очередь · демо</h3><p class="scs-note">Несколько событий → карточки по важности, без дублей.</p><button type="button" data-generate>Создать учебные события</button><div data-queue-result aria-live="polite"></div>';
+page.querySelector('.scs-wrap').append(queuePanel);
+const queueResult=queuePanel.querySelector('[data-queue-result]');
+function demoQueue(){
+ const engine=window.SEYVEO_CARD_ENGINE;
+ if(!engine){queueResult.textContent='Движок недоступен';return}
+ const types=Object.keys(engine.eventType);
+ const importance=['normal','urgent','important','normal','important','normal','normal','important','normal','normal','urgent','normal'];
+ const events=entries.map((e,i)=>({id:'example-'+i,type:types[i],title:e[1],fact:e[2],suggestion:e[3],priority:importance[i],demo:true,source:'Студия'}));
+ events.push({...events[0]});
+ const cards=engine.fromEvents(events);
+ queueResult.replaceChildren();
+ const summary=document.createElement('p');summary.className='scs-note';summary.textContent='Событий: '+events.length+' · Уникальных карточек: '+cards.length+' · Срочные показаны первыми';queueResult.append(summary);
+ const list=document.createElement('ol');list.className='scs-queue-list';
+ cards.forEach(card=>{const item=document.createElement('li');const title=document.createElement('strong');title.textContent=card.title;const meta=document.createElement('span');meta.textContent=card.family+' · '+({urgent:'Срочно',important:'Важно',normal:'Обычно'})[card.priority];item.append(title,meta);list.append(item)});
+ queueResult.append(list);
+}
+queuePanel.querySelector('[data-generate]').addEventListener('click',demoQueue);
 const labels=['Новое','В работе','Позже','Завершено · демо','Ошибка · демо'];let stage=0;
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
