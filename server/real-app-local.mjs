@@ -118,7 +118,7 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  const voiceRunner=createVoiceWorker();
  process.once('exit',()=>voiceRunner.close());
- return createServer(async(req,res)=>{
+ const server=createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
   if(req.method==='POST'&&path==='/api/seyveo-private-tts'){
@@ -475,6 +475,21 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
   }
   send(res,404,{error:'Не найдено.'});
  });
+ // Prepare the private local speech engine once, without blocking the page.
+ // First playback can then reuse the already-loaded model and speaker profile.
+ let warmTimer;
+ server.once('listening',()=>{
+  warmTimer=setTimeout(()=>{
+   console.log('[SEYVEO Voice] Загружаю голосовой движок заранее…');
+   voiceRunner.warmup().then(
+    ()=>console.log('[SEYVEO Voice] Движок готов к озвучиванию.'),
+    error=>console.error('[SEYVEO Voice] Предварительная загрузка:',error?.message||error)
+   );
+  },2500);
+  warmTimer.unref?.();
+ });
+ server.once('close',()=>{clearTimeout(warmTimer);voiceRunner.close()});
+ return server;
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const server=createRealLocalServer();
