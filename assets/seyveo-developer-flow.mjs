@@ -32,5 +32,19 @@ if(enabled){
   status.textContent=checks.map(([name,ok])=>(ok?'✓ ':'○ ')+name).join(' · ')+(checks.every(x=>x[1])?' · Цикл пройден в локальных данных.':' · Не все этапы завершены.');
  });
  const rules=button('Автотест · правила карточек',()=>{const results=checkReviewStateRules();const failed=results.filter(x=>!x.passed);status.textContent=failed.length?'Проверка не пройдена: '+failed.map(x=>x.name).join(', '):'Все 6 сценариев состояний прошли проверку. Это тест правил, не анимаций.';});
- box.append(title,status,create,submit,inspect,verify,audit,rules);document.body.append(box);
+ const visual=button('Диагностика · мобильная карточка',()=>{
+  const card=window.SEYVEO_LIVING_MOMENT?.inspectReview?.(id);
+  if(!card?.visible){status.textContent='Карточка сейчас не видна. Открой Главную после сдачи отчёта и повтори проверку.';return;}
+  const home=document.getElementById('homePage');
+  const field=home?.querySelector('.lm-field');
+  const action=field&&[...field.querySelectorAll('button')].find(b=>b.textContent.trim()==='Проверить');
+  if(!action){status.textContent='Ошибка: у карточки нет видимой кнопки «Проверить».';return;}
+  const rect=action.getBoundingClientRect();
+  const viewportHeight=window.visualViewport?.height||window.innerHeight;
+  const onScreen=rect.width>0&&rect.height>0&&rect.top>=0&&rect.bottom<=viewportHeight;
+  const center=document.elementFromPoint(rect.left+rect.width/2,rect.top+rect.height/2);
+  const uncovered=!!center&&(center===action||action.contains(center));
+  status.textContent='Кнопка: '+(onScreen?'в пределах экрана':'за пределами экрана')+' · '+(uncovered?'доступна':'перекрыта или ещё анимируется')+'. Проверяй после завершения анимации.';
+ });
+ box.append(title,status,create,submit,inspect,verify,audit,rules,visual);document.body.append(box);
 }
