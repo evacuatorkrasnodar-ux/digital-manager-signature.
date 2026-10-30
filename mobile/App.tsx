@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, TextInput } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { MemoryDiagnostic } from './src/core/MemoryDiagnostic';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
 
@@ -119,6 +120,7 @@ function NativeFoundation() {
               </>
             ) : null}
           </View>
+          {state==='ready' ? <MemoryDiagnostic onChange={()=>void refreshNotes()} /> : null}
           {state==='ready' ? <View style={styles.panel}>
             <Text style={styles.panelTitle}>Мои заметки · на этом телефоне</Text>
             <TextInput style={styles.noteInput} multiline value={draft} onChangeText={setDraft}
