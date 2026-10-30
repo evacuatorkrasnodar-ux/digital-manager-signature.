@@ -2,7 +2,10 @@
 import tempfile
 import unittest
 from pathlib import Path
-from compare_approved_voice import find_recording
+import runpy
+
+# The utility filename is compare-approved-voice.py, with hyphens.
+find_recording = runpy.run_path(str(Path(__file__).with_name("compare-approved-voice.py")))["find_recording"]
 
 
 class CompareVoiceDiscoveryTests(unittest.TestCase):
