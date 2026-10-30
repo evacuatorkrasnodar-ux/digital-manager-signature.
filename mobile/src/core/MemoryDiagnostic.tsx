@@ -35,7 +35,8 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
   setBusy(true);
   try{
    const reply=await recallPersonalNotes();
-   setMessage(reply.message+' '+(reply.notes||[]).map(n=>n.text).join(' · '));
+   const visible=(reply.notes||[]).slice(0,10);
+   setMessage(reply.message+(visible.length?'\n'+visible.map((n,i)=>`${i+1}. ${n.text}`).join('\n'):'')+(reply.notes&&reply.notes.length>10?'\nПоказаны первые 10 заметок.':''));
   }catch{setMessage('Не удалось прочитать SecureVault.');}
   finally{setBusy(false);}
  };
@@ -57,6 +58,6 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
    {button('Отмена',()=>{setPending(null);setMessage('Запись отменена.');},busy)}
   </View>:null}
   {button('Что ты запомнила?',()=>{void recall();},busy)}
-  {message?<Text style={{color:'#b0cfc5',marginTop:12}}>{message}</Text>:null}
+  {message?<Text accessibilityRole="text" style={{color:'#b0cfc5',marginTop:12}}>{message}</Text>:null}
  </View>;
 }
