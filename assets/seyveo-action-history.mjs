@@ -23,6 +23,8 @@ if(personal&&head){
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
+ let visibleCount=4;
+ const more=document.createElement('button');more.type='button';more.className='sah-inline-toggle';more.style.marginTop='10px';more.hidden=true;more.textContent='Показать ещё';panel.append(more);
  const statuses={shown:'Показано',deferred:'Отложено',action_pending:'Ожидает действия',executing:'Выполняется',succeeded:'Выполнено',archived:'В архиве',failed:'Ошибка',canceled:'Отменено',expired:'Истекло'};
  function render(){
   list.replaceChildren();
@@ -32,7 +34,7 @@ if(personal&&head){
   if(!cards.length&&!events.length){const p=document.createElement('p');p.className='sah-inline-note';p.textContent='Пока нет действий в истории.';list.append(p);return;}
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
   const selected=studio?events:events.filter((e,i,all)=>all.findIndex(x=>x.eventId===e.eventId)===i);
-  for(const e of selected.slice(0,100)){
+  for(const e of selected.slice(0,Math.min(visibleCount,40))){
    const item=document.createElement('div');item.className='sah-row';
    const name=document.createElement('strong');name.textContent=e.title||({mail:'Письмо',work:'Рабочее сообщение',contract:'Документ'}[e.cardType]||'Действие Сэйви');
    const line=document.createElement('small');line.textContent=(statuses[e.to]||e.to||'Событие')+' · '+(e.at?new Date(e.at).toLocaleString('ru-RU'):'время не указано');
@@ -40,8 +42,11 @@ if(personal&&head){
    if(studio){const tech=document.createElement('small');tech.className='sah-studio';tech.textContent=(e.from||'—')+' → '+(e.to||'—')+' · '+e.eventId+(e.reason?' · '+e.reason:'');item.append(tech);}
    list.append(item);
   }
+  more.hidden=selected.length<=visibleCount;
+  if(!more.hidden)more.textContent='Показать ещё · '+Math.min(4,selected.length-visibleCount);
  }
- const toggle=show=>{panel.hidden=!show;open.setAttribute('aria-expanded',String(show));if(show)render();};
+ more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
+ const toggle=show=>{panel.hidden=!show;open.setAttribute('aria-expanded',String(show));if(show){visibleCount=4;render();}};
  open.addEventListener('click',()=>toggle(panel.hidden));
  close.addEventListener('click',()=>toggle(false));
  window.addEventListener('seyveo:cards-changed',()=>{if(!panel.hidden)render()});
