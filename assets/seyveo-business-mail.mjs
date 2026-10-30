@@ -25,7 +25,8 @@ if(business&&trigger){
 .svb-mail-form textarea{min-height:112px}.svb-mail-form button{border:1px solid var(--soft-line);border-radius:99px;padding:11px}
 `;
  styles.textContent+='.svb-mail-handoff{display:grid;gap:8px;margin:8px 0 5px;padding:10px 0;border-top:1px solid var(--soft-line)}.svb-mail-handoff input,.svb-mail-handoff textarea{box-sizing:border-box;width:100%;border:1px solid var(--soft-line);border-radius:12px;padding:10px;background:transparent;color:inherit;font:inherit}.svb-mail-handoff textarea{min-height:90px}.svb-mail-handoff button{justify-self:start;color:var(--seyveo-emerald,#a2dcba)}';
- styles.textContent+='.svb-mail-history{display:grid;gap:5px;margin:6px 0;padding:8px 0;border-top:1px solid var(--soft-line)}.svb-mail-history small{font-size:11px;color:var(--secondary)}';
+ styles.textContent+='.svb-mail-history{gap:5px;margin:6px 0;padding:8px 0;border-top:1px solid var(--soft-line)}.svb-mail-history small{font-size:11px;color:var(--secondary)}';
+ styles.textContent+='.svb-mail-history summary{cursor:pointer;color:var(--seyveo-emerald,#a2dcba);font-size:12px;letter-spacing:.02em}.svb-mail-history small{display:block;margin-top:6px}';
  document.head.append(styles);
  const page=document.createElement('section');page.className='svb-mail';page.hidden=true;
  const head=document.createElement('div');head.className='svb-mail-head';
