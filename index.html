@@ -3152,7 +3152,8 @@ function printNote(note){
   popup.opener=null;popup.document.open();
   popup.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title>'
    +'<style>body{font:16px/1.55 system-ui,sans-serif;color:#182033;max-width:740px;margin:40px auto;padding:14px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style>'
-   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre></body></html>');
+   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre><script type="module" src="assets/seyveo-card-bridge.mjs"></script>
+</body></html>');
   popup.document.close();popup.focus();popup.print();
  }catch{
   try{popup.close()}catch{}
