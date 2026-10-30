@@ -177,3 +177,14 @@ test('interrupted metadata insertion can retry without losing the existing encry
   assert.equal(ready.hexKey, pending.hexKey);
   assert.equal(d.databases.get(ready.database).marker, '1');
 });
+
+test('simultaneous initialization requests share one encrypted vault identity', async () => {
+  const d = await fixture();
+  const results = await Promise.all(Array.from({length: 8}, () => d.initializeVault()));
+  assert.deepEqual(results, Array(8).fill('ready'));
+  assert.equal(d.databases.size, 1);
+  assert.equal(d.opened, 1);
+  const identity = JSON.parse(d.secureValues.get('seyveo.personal.vault.v1'));
+  assert.equal(d.databases.get(identity.database).marker, '1');
+  assert.equal(await d.inspectVault(), 'ready');
+});
