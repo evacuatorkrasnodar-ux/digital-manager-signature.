@@ -252,12 +252,12 @@ function createSurface(primary,other=[],real=false,taskId=''){
  function updateDocument(){
   const active=documentActive();
   documentDetails.hidden=!active;
-  documentEdit.hidden=!active||documentStep==='edit'||documentStep==='done';
+  documentEdit.hidden=!active||documentStep!=='review';
   documentLater.hidden=!active||documentStep==='edit'||documentStep==='done';
   documentSave.hidden=!active||documentStep!=='edit';
   documentCancel.hidden=!active||documentStep!=='edit';
   if(active){
-   execute.hidden=documentStep==='edit';
+   execute.hidden=documentStep==='edit'||documentStep==='summary';
    open.hidden=documentStep==='edit';
    execute.textContent=documentStep==='done'?'Дальше'
     :documentStep==='review'?'Ознакомлен · демо':'Проверить';
