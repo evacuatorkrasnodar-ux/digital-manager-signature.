@@ -18,7 +18,7 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
   setPending(proposal);
   if(proposal){setMessage('Сэйви: сохранить это в защищённой памяти?');return;}
   const plan=planOfflineReply(input,{modelReady:false,packs:[]});
-  setMessage(offlineFallback(plan)||'Эта возможность ещё не подключена. Я не буду изображать выполненное действие.');
+  setMessage(offlineFallback(plan)||'Сэйви пока не умеет выполнять это действие. Никаких изменений не сделано.');
  };
  const confirm=async()=>{
   if(busy||savingRef.current||!pending)return;
