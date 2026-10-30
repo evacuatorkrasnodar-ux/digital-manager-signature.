@@ -22,6 +22,7 @@ if(business&&trigger){
 .svb-mail-form input,.svb-mail-form textarea{width:100%;box-sizing:border-box;background:transparent;color:var(--text);border:1px solid var(--soft-line);border-radius:12px;padding:11px;font:inherit}
 .svb-mail-form textarea{min-height:112px}.svb-mail-form button{border:1px solid var(--soft-line);border-radius:99px;padding:11px}
 `;
+ styles.textContent+='.svb-mail-handoff{display:grid;gap:8px;margin:8px 0 5px;padding:10px 0;border-top:1px solid var(--soft-line)}.svb-mail-handoff input,.svb-mail-handoff textarea{box-sizing:border-box;width:100%;border:1px solid var(--soft-line);border-radius:12px;padding:10px;background:transparent;color:inherit;font:inherit}.svb-mail-handoff textarea{min-height:90px}.svb-mail-handoff button{justify-self:start;color:var(--seyveo-emerald,#a2dcba)}';
  document.head.append(styles);
  const page=document.createElement('section');page.className='svb-mail';page.hidden=true;
  const head=document.createElement('div');head.className='svb-mail-head';
@@ -49,7 +50,24 @@ if(business&&trigger){
    const title=document.createElement('strong');title.textContent=draft.subject;const recipient=document.createElement('small');recipient.textContent='Кому: '+draft.to;
    const edit=document.createElement('button');edit.type='button';edit.textContent='Продолжить';edit.addEventListener('click',()=>{editing=i;to.value=draft.to;subject.value=draft.subject;message.value=draft.body;});
    const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';remove.addEventListener('click',()=>{store.remove('business',i);editing=-1;form.reset();render();});
-   item.append(title,recipient,edit,remove);list.append(item);
+   const delegate=document.createElement('button');delegate.type='button';delegate.textContent='Подготовить поручение';
+   delegate.addEventListener('click',()=>{
+    const existing=item.querySelector('.svb-mail-handoff');
+    if(existing){existing.remove();return;}
+    const panel=document.createElement('div');panel.className='svb-mail-handoff';
+    const caption=document.createElement('p');caption.className='svb-mail-muted';caption.textContent='Черновик поручения · не отправлено сотруднику';
+    const assignee=document.createElement('input');assignee.placeholder='Кому поручить (имя или должность)';assignee.setAttribute('aria-label','Исполнитель поручения');
+    const instruction=document.createElement('textarea');instruction.value='Проверить: '+draft.subject+'\n'+draft.body;instruction.setAttribute('aria-label','Текст поручения');
+    const copy=document.createElement('button');copy.type='button';copy.textContent='Скопировать поручение';
+    copy.addEventListener('click',async()=>{
+     if(!assignee.value.trim()||!instruction.value.trim()){caption.textContent='Укажи исполнителя и текст поручения';return;}
+     const text='Исполнитель: '+assignee.value.trim()+'\n'+instruction.value.trim();
+     try{await navigator.clipboard.writeText(text);caption.textContent='Скопировано. Отправка сотруднику не выполнялась.';}
+     catch{caption.textContent='Не удалось скопировать. Текст доступен выше.';}
+    });
+    panel.append(caption,assignee,instruction,copy);item.append(panel);
+   });
+   item.append(title,recipient,edit,delegate,remove);list.append(item);
   });
  }
  form.addEventListener('submit',event=>{event.preventDefault();const draft={to:to.value.trim(),subject:subject.value.trim(),body:message.value.trim()};if(editing<0)store.add('business',draft);else store.update('business',editing,draft);editing=-1;form.reset();render();});
