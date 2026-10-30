@@ -30,7 +30,7 @@ class VoiceSchoolTest(unittest.TestCase):
         self.assertEqual(VOICE_NAME, "SEYVEO")
         self.assertTrue(any("Роман" in x[1] for x in PHRASES))
         self.assertEqual(len(available_cases()), 6)
-        self.assertIn("female", __import__("voice_school").VOICE_PROFILE)
+        self.assertIn("feminine", __import__("voice_school").VOICE_PROFILE)
         self.assertEqual(normalize("Ёж, РОМАН!"), ["еж", "роман"])
 
     def test_word_recognition_and_audio_health(self):
