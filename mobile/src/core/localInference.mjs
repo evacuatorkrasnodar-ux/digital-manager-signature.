@@ -2,7 +2,8 @@
  * The native runtime is injected, not silently downloaded or simulated.
  * A successful probe is required before ordinary chat becomes available.
  */
-export function createLocalInference({runtime,modelPath}={}){
+export function createLocalInference({runtime,modelPath,integrityVerified=false}={}){
+ if(integrityVerified!==true)throw Error('model-integrity-unverified');
  if(typeof modelPath!=='string'||!modelPath.trim())throw Error('model-path-required');
  if(!runtime||typeof runtime.load!=='function'||typeof runtime.complete!=='function'||typeof runtime.unload!=='function')
   throw Error('native-runtime-required');
