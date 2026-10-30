@@ -1308,6 +1308,7 @@ function storeTask(text,source){
 }
 // Local demo bridge: uses the same manager task store and UI as chat assignments.
 window.SEYVEO_BUSINESS_TASK_DEMO=Object.freeze({
+ openTask(id){const i=state.tasks.findIndex(t=>t.id===id);if(i<0)return false;window.SEYVEO_UNIFIED_TASKS?.openBusiness?.();requestAnimationFrame(()=>focusTask(i));return true;},
  assignFromMail({text,assigneeId,mailDraftId}={}){
   if(typeof text!=='string'||!text.trim()||text.length>140)return {ok:false,reason:'Поручение должно содержать не более 140 символов'};
   const created=storeTask(text,{assigneeId,approvalFlow:true,room:'business-mail',mailDraftId});
