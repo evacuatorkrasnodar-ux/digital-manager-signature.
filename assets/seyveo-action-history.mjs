@@ -1,3 +1,4 @@
+import './seyveo-history-recovery.mjs';
 /* History belongs in Дела > Мои дела. No floating launch control. */
 const personal=document.getElementById('unifiedPersonalTasksView');
 const head=personal?.querySelector('.personal-tasks-head');
