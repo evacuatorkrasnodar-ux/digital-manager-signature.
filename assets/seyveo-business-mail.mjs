@@ -94,6 +94,8 @@ if(business&&trigger){
      for(const step of task.mailHistory||[]){
       const line=document.createElement('small');line.textContent=(milestones[step.event]||step.event)+' · '+new Date(step.at).toLocaleString('ru-RU');history.append(line);
      }
+     if(task.reportText){const p=document.createElement('small');p.textContent='Отчёт: '+String(task.reportText).slice(0,350);history.append(p);}
+     if(task.photoSelected){const p=document.createElement('small');p.textContent='Фото выбрано (локальное демо)';history.append(p);}
      if(task.reviewStatus==='review'){const line=document.createElement('small');line.textContent='Результат передан на проверку';history.append(line);}
     }
     item.append(history);
