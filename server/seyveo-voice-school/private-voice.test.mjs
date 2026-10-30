@@ -79,6 +79,12 @@ test('Long replies are spoken in consecutive bounded phrases, never first 450 ch
  assert(asked.length>=2,'next phrase must be requested');
  assert(asked[1].length<=420);
  assert.equal(demo.played.length,2);
+ let pos=1;
+ while(pos<20 && demo.played[pos]){
+  demo.played[pos].onended();
+  await flush();
+  pos++;
+ }
  assert(asked.join(' ').length>=message.trim().length-3,'all text must be covered');
 });
 
