@@ -1,0 +1,1 @@
+export function taskTimeline(task){const events=Array.isArray(task?.mailHistory)?task.mailHistory:[];return events.filter(e=>e&&Number.isFinite(e.at)).sort((a,b)=>a.at-b.at).filter((e,i,a)=>i===0||e.event!==a[i-1].event||e.at!==a[i-1].at)}
