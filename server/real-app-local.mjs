@@ -112,7 +112,8 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
- let busy=false,minute=0,count=0,voiceBusy=false;
+ let busy=false,minute=0,count=0;
+ let voiceJob=null,voiceCache=null;
  const memories=memoryStore||createMemoryStore();
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  return createServer(async(req,res)=>{
@@ -123,10 +124,6 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
-   // One synthesis at a time: prevents repeated expensive model loads on CPU.
-   if(voiceBusy){send(res,429,{error:'Сэйви ещё озвучивает предыдущую фразу.'});return}
-   let folder;
-   voiceBusy=true;
    try{
     let bytes=0,parts=[];
     for await(const part of req){
@@ -137,25 +134,49 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
     const data=JSON.parse(Buffer.concat(parts).toString('utf8'));
     const phrase=typeof data?.text==='string'?data.text.trim():'';
     if(phrase.length<2||phrase.length>450)throw Error('Допустимая длина текста — от 2 до 450 символов.');
-    folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
-    const output=join(folder,'reply.wav');
-    const script=resolve(ROOT,'server','seyveo-voice-school','say.py');
-    await new Promise((ok,fail)=>{
-     execFile(process.platform==='win32'?'py':'python3',
-       [...(process.platform==='win32'?['-3.11']:[]),script,'--text',phrase,'--out',output],
-       {windowsHide:true,timeout:300000,maxBuffer:32768,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
-       error=>error?fail(error):ok());
-    });
-    const wav=await readFile(output);
-    if(wav.length<44||wav.length>15000000)throw Error('Неподдерживаемый размер аудио.');
-    res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(wav.length)});
-    res.end(wav);
+    // On CPU, one generation may continue even after a browser request is cancelled.
+    // If the same answer is requested again, share the running job, not a 429 error.
+    // Store only the latest short generated WAV in memory, never the personal source.
+    let wav;
+    if(voiceCache?.text===phrase){
+     wav=voiceCache.wav;
+    }else{
+     if(voiceJob&&voiceJob.text!==phrase){
+      send(res,409,{error:'Сэйви ещё озвучивает другую фразу. Повтори после завершения.'});return;
+     }
+     if(!voiceJob){
+      const job={text:phrase,promise:null};
+      job.promise=(async()=>{
+       const folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
+       try{
+        const output=join(folder,'reply.wav');
+        const script=resolve(ROOT,'server','seyveo-voice-school','say.py');
+        await new Promise((ok,fail)=>{
+         execFile(process.platform==='win32'?'py':'python3',
+          [...(process.platform==='win32'?['-3.11']:[]),script,'--text',phrase,'--out',output],
+          {windowsHide:true,timeout:300000,maxBuffer:32768,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
+          error=>error?fail(error):ok());
+        });
+        const bytes=await readFile(output);
+        if(bytes.length<44||bytes.length>15000000)throw Error('Неподдерживаемый размер аудио.');
+        voiceCache={text:phrase,wav:bytes};
+        return bytes;
+       }finally{
+        await rm(folder,{recursive:true,force:true}).catch(()=>{});
+        if(voiceJob===job)voiceJob=null;
+       }
+      })();
+      voiceJob=job;
+     }
+     wav=await voiceJob.promise;
+    }
+    if(!res.destroyed&&!res.headersSent){
+     res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(wav.length)});
+     res.end(wav);
+    }
    }catch(error){
     console.error('[SEYVEO Voice] Ошибка генерации:',error?.message||error);
-    if(!res.headersSent)send(res,500,{error:'Не удалось создать голос. Проверь окно локального сервера.'});
-   }finally{
-    voiceBusy=false;
-    if(folder)await rm(folder,{recursive:true,force:true}).catch(()=>{});
+    if(!res.destroyed&&!res.headersSent)send(res,500,{error:'Не удалось создать голос. Проверь окно локального сервера.'});
    }
    return;
   }
