@@ -14,6 +14,7 @@ import {planAgentTask} from './agent/planner.mjs';
 import {reviewApprovedFile} from './agent/code-review.mjs';
 import {intelligenceCatalog,intelligencePlan} from './intelligence/architecture.mjs';
 import {businessChatAnswer} from './intelligence/business-chat.mjs';
+import {analyzeBusinessMail} from './mail-intelligence.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -275,6 +276,18 @@ export function createRealLocalServer({memoryStore}={}){
     busy=false;
     res.off('close',disconnected);
    }
+   return;
+  }
+  if(req.method==='POST'&&path==='/api/seyveo-mail-analyze'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!String(req.headers['content-type']||'').startsWith('application/json')){send(res,415,{error:'Ожидается JSON.'});return}
+   let size=0,chunks=[];
+   try{
+    for await(const chunk of req){size+=chunk.length;if(size>12000)throw Error('invalid');chunks.push(chunk)}
+    const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    if(typeof data?.text!=='string'||!data.text.trim()||data.text.length>8000)throw Error('invalid');
+    const answer=await analyzeBusinessMail(data.text);send(res,200,answer);
+   }catch(err){send(res,err?.message==='invalid'?400:502,{error:err?.message==='invalid'?'Нужен текст до 8000 символов.':String(err?.message||'Ошибка Ollama').slice(0,150)})}
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-ask'){
