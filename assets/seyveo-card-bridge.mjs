@@ -220,3 +220,31 @@ window.addEventListener('storage',event=>{
  if(event.key===LOCAL_CHAT_STORE||event.key===LOCAL_RECOGNITION_STORE)syncLocalConversations();
 });
 queueMicrotask(syncLocalConversations);
+
+/* Document workflow adapter. A document-created event starts review;
+   draft/review/approval events are audit notes, NOT legal signing receipts. */
+const linkedDocuments=new Map();
+function onDocumentFlow(event){
+ const data=event.detail||{};
+ const id=typeof data.id==='string'?data.id.slice(0,128):'';
+ if(!id)return;
+ const reason=String(data.reason||'').slice(0,80);
+ if(reason==='created'&&!linkedDocuments.has(id)){
+  try{
+   const title=String(data.title||'Документ').slice(0,140);
+   const card=receive({eventId:'document-flow:'+id,source:'local-document-flow-demo',
+    accountId:'demo-account',workspaceId:'demo-workspace',sourceRecordId:id,
+    eventType:'document_received',title,
+    contextText:'Учебный документ ожидает проверки содержания и участников.',priority:2});
+   linkedDocuments.set(id,card.dedupeKey);
+   log('document-created',{id,title,stage:'review'});
+  }catch(error){log('document-link-error',String(error));}
+  return;
+ }
+ if(!linkedDocuments.has(id))return;
+ // Record changes accurately, without treating a UI approval as a signature.
+ if(['updated','review','reviewed','approved','rejected','sent','archived','signed'].includes(reason)){
+  log('document-flow-stage',{id,stage:reason,verifiedSignature:false});
+ }
+}
+window.addEventListener('seyveo:document-flow-updated',onDocumentFlow);
