@@ -10,10 +10,12 @@ export function createLlamaRnRuntime(initLlama,{contextSize=1024,gpuLayers=0}={}
   async load(modelPath){
    if(context)throw Error('llama-session-already-loaded');
    if(typeof modelPath!=='string'||!modelPath.endsWith('.gguf'))throw Error('invalid-gguf-path');
-   context=await initLlama({model:modelPath,n_ctx:contextSize,n_gpu_layers:gpuLayers});
-   if(!context||typeof context.completion!=='function'||typeof context.release!=='function'){
-    context=null;throw Error('invalid-native-context');
+   const loaded=await initLlama({model:modelPath,n_ctx:contextSize,n_gpu_layers:gpuLayers});
+   if(!loaded||typeof loaded.completion!=='function'||typeof loaded.release!=='function'){
+    if(typeof loaded?.release==='function')await loaded.release();
+    throw Error('invalid-native-context');
    }
+   context=loaded;
   },
   async complete(prompt,{maxTokens=256}={}){
    if(!context)throw Error('llama-not-loaded');
