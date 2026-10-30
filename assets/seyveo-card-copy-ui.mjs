@@ -3,7 +3,7 @@
 import {trainingCardCopy} from './seyveo-card-copy.mjs';
 const host=document.getElementById('seyveoLivingTiles');
 if(host){
- const mobileCss=document.createElement('link');mobileCss.rel='stylesheet';mobileCss.href='assets/seyveo-card-mobile-density.css?v=4';document.head.append(mobileCss);
+ const mobileCss=document.createElement('link');mobileCss.rel='stylesheet';mobileCss.href='assets/seyveo-card-mobile-density.css?v=5';document.head.append(mobileCss);
  const style=document.createElement('style');
  style.textContent='.sv-copy-guide{margin:6px 0 10px;padding:8px 0;border-top:1px solid var(--soft-line,#ffffff25);display:grid;gap:9px}.sv-copy-guide p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--text,#fff)}.sv-copy-guide small{display:block;font-size:10px;letter-spacing:.09em;color:var(--secondary,#b9c8c1);text-transform:uppercase}';
  document.head.append(style);
