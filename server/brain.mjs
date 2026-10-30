@@ -8,7 +8,7 @@ export async function respond(payload){
  const message=normalizeMessage(payload?.message);
  const mode=typeof payload?.mode==='string'?payload.mode:'auto';
  const allowCloud=payload?.allowCloud===true;
- const name=payload?.assistantName==='Милисса'?'Милисса':'Феликс';
+ const name='SEYVEO';
  const availability=availableModels();
  const plan=decide(message,{mode,allowCloud},availability);
  if(plan.route==='unavailable')return {...responseUnavailable(plan),route:plan.route,reason:plan.reason};
@@ -29,7 +29,7 @@ export async function respond(payload){
   return Object.freeze({
    status:'temporarily-unavailable',
    provider:'none',model:null,route:plan.route,
-   text:'Феликс пока не смог получить ответ. Проверь подключение выбранной модели. Реальных действий я не выполнял.',
+   text:'Сэйви пока не смогла получить ответ. Проверь подключение выбранной модели. Реальных действий я не выполнял.',
    approvalRequired:plan.humanApprovalRequired,
    executed:false
   });
