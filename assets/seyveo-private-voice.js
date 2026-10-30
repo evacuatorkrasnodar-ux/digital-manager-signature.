@@ -5,7 +5,7 @@
  */
 (()=>{
  'use strict';
- let context=null,source=null,request=null,revision=0;
+ let context=null,source=null,request=null,revision=0,starting=false;
  const announce=(stage,message='')=>{
   document.dispatchEvent(new CustomEvent('seyveo:voice-status',{detail:{stage,message}}));
  };
@@ -26,7 +26,7 @@
   return parts;
  };
  const stop=()=>{
-  ++revision;
+  ++revision;starting=false;
   const pending=request;request=null;
   if(pending)pending.abort();
   const current=source;source=null;
@@ -44,6 +44,7 @@
  };
  const playPart=async(parts,index,ticket)=>{
   if(ticket!==revision)return;
+  starting=false;
   const abort=new AbortController();
   request=abort;
   announce('preparing',parts.length>1?('Часть '+(index+1)+' из '+parts.length):'');
@@ -86,7 +87,7 @@
  };
  window.SEYVEO_CONVERSATION_READ_REPLY=async text=>{
   // Pressing the speaker again stops both synthesis and playback.
-  if(request||source){stop();return}
+  if(starting||request||source){stop();return}
   const parts=splitPhrases(text);
   if(!parts.length)return;
   // Unlock sound NOW, inside the physical click handler.
@@ -96,9 +97,11 @@
    if(!context)context=new AudioEngine();
    const unlock=context.resume();
    const ticket=++revision;
+   starting=true;
    await unlock;
    if(ticket===revision)void playPart(parts,0,ticket);
   }catch(error){
+   starting=false;
    announce('error',String(error?.message||error));
   }
  };
