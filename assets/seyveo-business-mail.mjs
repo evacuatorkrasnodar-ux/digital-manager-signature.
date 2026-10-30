@@ -89,7 +89,7 @@ if(business&&trigger){
     summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
     item.append(summary);
     const history=document.createElement('div');history.className='svb-mail-history';
-    const milestones={assigned:'Поручение создано',approved:'Руководитель принял результат',rework:'Руководитель вернул на доработку'};
+    const milestones={assigned:'Поручение создано',review:'Сотрудник передал результат на проверку',approved:'Руководитель принял результат',rework:'Руководитель вернул на доработку'};
     for(const task of tasks.filter(t=>ids.includes(t.id))){
      const heading=document.createElement('small');heading.textContent='Исполнитель: '+({elena:'Елена',anna:'Анна',mikhail:'Михаил'}[task.assigneeId]||task.assigneeId);history.append(heading);
      for(const step of taskTimeline(task)){
