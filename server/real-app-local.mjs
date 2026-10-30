@@ -3,7 +3,10 @@
    production index.html, plasma, layouts, local data or public app.
  */
 import {createServer} from 'node:http';
-import {readFile} from 'node:fs/promises';
+import {readFile,mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {execFile} from 'node:child_process';
 import {dirname,resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {respond} from './brain.mjs';
@@ -56,7 +59,7 @@ export function adaptOriginalHome(html){
  const entry="$('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;";
  const locations=served.split(entry);
  if(locations.length!==2){console.warn('[SEYVEO Home] Composer changed; serving original Home.');return html;}
- let adapted=locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/felix-action-journal.js?v=1" defer></script><script src="assets/felix-personal-context.js?v=1" defer></script></head>')
+ let adapted=locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/felix-action-journal.js?v=1" defer></script><script src="assets/felix-personal-context.js?v=1" defer></script><script src="assets/seyveo-private-voice.js?v=1" defer></script></head>')
  // Do not duplicate personal assistant draft text into the existing persistent
  // chat-history store. Only normal public app interactions retain prior behavior.
  const calHistory="window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик события в календаре для проверки. Пока не сохранено.',kind:'draft'});";
@@ -109,12 +112,53 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
- let busy=false,minute=0,count=0;
+ let busy=false,minute=0,count=0,voiceBusy=false;
  const memories=memoryStore||createMemoryStore();
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='POST'&&path==='/api/seyveo-private-tts'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   // One synthesis at a time: prevents repeated expensive model loads on CPU.
+   if(voiceBusy){send(res,429,{error:'Сэйви ещё озвучивает предыдущую фразу.'});return}
+   let folder;
+   voiceBusy=true;
+   try{
+    let bytes=0,parts=[];
+    for await(const part of req){
+     bytes+=part.length;
+     if(bytes>2500)throw Error('Слишком длинный запрос.');
+     parts.push(part);
+    }
+    const data=JSON.parse(Buffer.concat(parts).toString('utf8'));
+    const phrase=typeof data?.text==='string'?data.text.trim():'';
+    if(phrase.length<2||phrase.length>450)throw Error('Допустимая длина текста — от 2 до 450 символов.');
+    folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
+    const output=join(folder,'reply.wav');
+    const script=resolve(ROOT,'server','seyveo-voice-school','say.py');
+    await new Promise((ok,fail)=>{
+     execFile(process.platform==='win32'?'py':'python3',
+       [...(process.platform==='win32'?['-3.11']:[]),script,'--text',phrase,'--out',output],
+       {windowsHide:true,timeout:300000,maxBuffer:32768,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
+       error=>error?fail(error):ok());
+    });
+    const wav=await readFile(output);
+    if(wav.length<44||wav.length>15000000)throw Error('Неподдерживаемый размер аудио.');
+    res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(wav.length)});
+    res.end(wav);
+   }catch(error){
+    console.error('[SEYVEO Voice] Ошибка генерации:',error?.message||error);
+    if(!res.headersSent)send(res,500,{error:'Не удалось создать голос. Проверь окно локального сервера.'});
+   }finally{
+    voiceBusy=false;
+    if(folder)await rm(folder,{recursive:true,force:true}).catch(()=>{});
+   }
+   return;
+  }
   if(req.method==='GET'&&(path==='/'||path==='/index.html')){
    try{
     const html=adaptOriginalHome(await readFile(resolve(ROOT,'index.html'),'utf8'));
@@ -412,7 +456,7 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
 }
 if(process.argv[1]&&fileURLToPath(import.meta.url)===resolve(process.argv[1])){
  const server=createRealLocalServer();
- server.requestTimeout=130000;
+ server.requestTimeout=310000;
  server.listen(PORT,HOST,()=>{
   process.stdout.write('\nSEYVEO · настоящая Главная + локальный SEYVEO\n');
   process.stdout.write('Открой в Chrome: '+ORIGIN+'\n');
