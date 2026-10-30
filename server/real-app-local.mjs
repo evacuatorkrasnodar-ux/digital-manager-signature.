@@ -139,12 +139,14 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
     // Store only the latest short generated WAV in memory, never the personal source.
     let wav;
     if(voiceCache?.text===phrase){
+     console.log('[SEYVEO Voice] Воспроизвожу ранее созданное аудио.');
      wav=voiceCache.wav;
     }else{
      if(voiceJob&&voiceJob.text!==phrase){
       send(res,409,{error:'Сэйви ещё озвучивает другую фразу. Повтори после завершения.'});return;
      }
      if(!voiceJob){
+      console.log('[SEYVEO Voice] Начинаю локальную генерацию, символов:',phrase.length);
       const job={text:phrase,promise:null};
       job.promise=(async()=>{
        const folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
@@ -154,12 +156,13 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
         await new Promise((ok,fail)=>{
          execFile(process.platform==='win32'?'py':'python3',
           [...(process.platform==='win32'?['-3.11']:[]),script,'--text',phrase,'--out',output],
-          {windowsHide:true,timeout:300000,maxBuffer:32768,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
+          {windowsHide:true,timeout:480000,maxBuffer:1048576,env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}},
           error=>error?fail(error):ok());
         });
         const bytes=await readFile(output);
         if(bytes.length<44||bytes.length>15000000)throw Error('Неподдерживаемый размер аудио.');
         voiceCache={text:phrase,wav:bytes};
+        console.log('[SEYVEO Voice] Аудио готово, размер:',bytes.length,'байт.');
         return bytes;
        }finally{
         await rm(folder,{recursive:true,force:true}).catch(()=>{});
