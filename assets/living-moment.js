@@ -292,14 +292,14 @@ function createSurface(primary,other=[],real=false,taskId=''){
   const active=mailActive();
   mailDetails.hidden=!active;
   realLater.hidden=!real;
-  mailEdit.hidden=!active||mailStep==='edit';
+  mailEdit.hidden=!active||mailStep!=='confirm';
   mailLater.hidden=!active||mailStep==='edit'||mailStep==='done';
   mailSave.hidden=!active||mailStep!=='edit';
   mailCancel.hidden=!active||mailStep!=='edit';
   open.hidden=active&&mailStep==='edit';
-  execute.hidden=active&&mailStep==='edit';
+  execute.hidden=active&&(mailStep==='edit'||mailStep==='draft');
   execute.textContent=real?'Продолжить дело':active
-    ?(mailStep==='done'?'✓ Готово · демо':mailStep==='confirm'?'Подтвердить · демо':'Отправить')
+    ?(mailStep==='done'?'✓ Готово · демо':mailStep==='confirm'?'Отправить · демо':'Отправить')
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
@@ -375,7 +375,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  open.setAttribute('aria-expanded','false');
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  const sayviAction=polymer('✧ Сэйви',()=>{
-  if(mailActive()){mailStep='edit';updateMail();return}
+  if(mailActive()){mailStep='confirm';updateMail();return}
   if(documentActive()){documentStep='review';updateDocument();return}
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
@@ -387,7 +387,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
   if(!value){explain(field,'Напишите текст ответа, чтобы сохранить учебный черновик.',mailSave);return}
-  mailDraft=value.slice(0,1200);mailStep='draft';updateMail();
+  mailDraft=value.slice(0,1200);mailStep='confirm';updateMail();
  });
  const mailCancel=polymer('Отмена',()=>{mailStep='draft';updateMail()});
  const mailLater=polymer('Позже',()=>{
