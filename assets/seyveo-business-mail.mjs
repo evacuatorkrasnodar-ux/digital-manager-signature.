@@ -94,6 +94,7 @@ if(business&&trigger){
      const heading=document.createElement('small');heading.textContent='Исполнитель: '+({elena:'Елена',anna:'Анна',mikhail:'Михаил'}[task.assigneeId]||task.assigneeId);history.append(heading);
      for(const step of taskTimeline(task)){
       const line=document.createElement('small');line.textContent=(milestones[step.event]||step.event)+' · '+new Date(step.at).toLocaleString('ru-RU');history.append(line);
+      if(step.report){const detail=document.createElement('small');detail.textContent='Отчёт на момент сдачи: '+step.report;history.append(detail);}
      }
      if(task.reportText){const p=document.createElement('small');p.textContent='Отчёт: '+String(task.reportText).slice(0,350);history.append(p);}
      if(task.photoSelected){const p=document.createElement('small');p.textContent='Фото выбрано (локальное демо)';history.append(p);}
