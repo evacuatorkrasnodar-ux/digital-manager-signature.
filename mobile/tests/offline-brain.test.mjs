@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {planOfflineReply,offlineFallback} from '../src/core/offlineBrain.mjs';
+import {localModelReady} from '../src/core/modelReadiness.mjs';
 test('offline safety pack takes priority over generative model',()=>{
  assert.equal(planOfflineReply('Я заблудился в лесу',{modelReady:true,packs:['safety']}).route,'knowledge');
 });
@@ -25,4 +26,10 @@ test('live facts cannot be invented by installed offline model',()=>{
  const result=planOfflineReply('Какая погода сейчас',{modelReady:true,packs:['general']});
  assert.equal(result.route,'network-required');
  assert.equal(result.needsInternet,true);
+});
+
+test('local model requires verified installation and native probe',()=>{
+ assert.equal(localModelReady({installed:true,integrityVerified:true,runtimeLoaded:true,probeSucceeded:false}),false);
+ assert.equal(localModelReady({installed:true,integrityVerified:true,runtimeLoaded:true,probeSucceeded:true}),true);
+ assert.equal(planOfflineReply('Расскажи историю',{modelReady:localModelReady({installed:true})}).route,'local-help');
 });
