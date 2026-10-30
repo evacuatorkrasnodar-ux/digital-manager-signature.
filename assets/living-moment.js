@@ -291,6 +291,52 @@ function createSurface(primary,other=[],real=false,taskId=''){
    sourceInput.value=documentSource;sourceInput.setAttribute('aria-label','Текст пункта договора для проверки');
    sourceInput.addEventListener('input',()=>{documentSource=sourceInput.value;});
    sourceLabel.append(sourceInput);documentDetails.append(sourceLabel);
+   const picker=create('input','lm-document-file');
+   picker.type='file';picker.accept='.pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain';
+   picker.setAttribute('aria-label','Открыть документ PDF, DOCX или TXT');
+   picker.style.cssText='display:block;max-width:100%;margin:8px 0;';
+   const status=create('p','lm-mail-note','Файл читается в браузере. Для PDF и DOCX нужна библиотека обработки документов.');
+   picker.addEventListener('change',async()=>{
+    const file=picker.files?.[0];if(!file)return;
+    if(file.size>5*1024*1024){status.textContent='Размер файла должен быть не больше 5 МБ.';return;}
+    status.textContent='Извлекаю текст документа…';
+    try{
+     const name=file.name.toLowerCase();
+     let extracted='';
+     if(name.endsWith('.txt'))extracted=await file.text();
+     else{
+      const load=async(url,globalName)=>{
+       if(window[globalName])return window[globalName];
+       await new Promise((resolve,reject)=>{
+        const script=document.createElement('script');script.src=url;script.onload=resolve;script.onerror=reject;document.head.append(script);
+       });
+       if(!window[globalName])throw Error('Библиотека не загрузилась.');
+       return window[globalName];
+      };
+      const bytes=await file.arrayBuffer();
+      if(name.endsWith('.docx')){
+       const mammoth=await load('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js','mammoth');
+       extracted=(await mammoth.extractRawText({arrayBuffer:bytes})).value;
+      }else if(name.endsWith('.pdf')){
+       const pdfjs=await load('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','pdfjsLib');
+       pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+       const pdf=await pdfjs.getDocument({data:new Uint8Array(bytes)}).promise;
+       const texts=[];
+       for(let page=1;page<=Math.min(pdf.numPages,15);page++){
+        const content=await(await pdf.getPage(page)).getTextContent();
+        texts.push(content.items.map(item=>item.str||'').join(' '));
+       }
+       extracted=texts.join('\n\n');
+      }else throw Error('Выберите PDF, DOCX или TXT.');
+     }
+     if(!extracted.trim())throw Error('Текст не найден. Возможно, PDF содержит только сканы.');
+     documentSource=extracted.trim().slice(0,8500);
+     documentParts=[];documentAnalysis='';documentProposed='';
+     sourceInput.value=documentSource;
+     status.textContent='✓ Текст загружен локально. Для анализа используется до 8500 символов; исходный файл не меняется.';
+    }catch(error){status.textContent='Не удалось прочитать файл: '+String(error?.message||'ошибка').slice(0,130);}
+   });
+   documentDetails.append(picker,status);
    if(documentParts.length){
     const list=create('div','lm-document-sections');
     documentParts.forEach((part,i)=>{
