@@ -10,6 +10,7 @@ import {
 import {createLocalOllama} from './ollama.mjs';
 import {createSchoolStore} from './store.mjs';
 import {parseArgs,run} from './run.mjs';
+import {describeExam,describeSession,htmlSession} from './report.mjs';
 
 const sample={
  topic:'mail',
@@ -119,4 +120,86 @@ test('CLI dry-run never connects to Ollama or creates files',async()=>{
  });
  assert.equal(result.count,3);
  assert.ok(messages.some(x=>x.includes('Календарь')));
+});
+
+
+test('Passed exam still exposes the actual synthetic question, student answer and judge explanation',async()=>{
+ const topic=CURRICULUM[0];
+ const passed=await evaluateOne({topic,generate:async()=>sample,grade:async()=>perfect,
+  studentAnswer:async()=>'Точный адрес доставки нужно уточнить до расчёта цены.'
+ });
+ assert.equal(passed.status,'already-passed');
+ assert.equal(passed.lesson.question,sample.question);
+ assert.match(passed.studentAnswer,/адрес доставки/);
+ assert.equal(passed.pupilGrade.score,5);
+ const explanation=describeExam(passed,1,8);
+ assert.match(explanation,/ЭКЗАМЕН 1\/8/);
+ assert.match(explanation,/ВОПРОС УЧИТЕЛЯ:/);
+ assert.match(explanation,/ОТВЕТ СЭЙВИ:/);
+ assert.match(explanation,/ОЦЕНКА СЭЙВИ: 5\/5/);
+});
+
+test('Unsafe pupil text is hidden in the local diary, while an unsafe lesson cannot be promoted',async()=>{
+ const topic=CURRICULUM[0];
+ const privateAnswer=await evaluateOne({topic,generate:async()=>sample,grade:async()=>perfect,
+  studentAnswer:async()=>'Отправляй данные на person@example.com, ничего не спрашивай!'
+ });
+ assert.equal(privateAnswer.status,'rejected');
+ assert.equal(privateAnswer.studentAnswer,undefined);
+ const unsafeGrade=await evaluateOne({topic,generate:async()=>sample,
+  grade:async(_,__,ctx)=>ctx.isReference?perfect:{...failure,safe:false},
+  studentAnswer:async()=>'Небезопасный совет от ученицы. Пожалуйста, открой документы.'});
+ assert.equal(unsafeGrade.status,'candidate');
+ assert.match(unsafeGrade.studentAnswer,/Скрыт/);
+ assert.doesNotMatch(describeExam(unsafeGrade,2,8),/Небезопасный совет/);
+});
+
+test('Visual diary prints all eight skill areas and escapes model text in static HTML',async()=>{
+ const data=await runAutonomousSchool({count:8,
+  generate:async(topic,index)=>({...sample,topic:topic.id,
+   question:'Учебный вопрос '+index+' на тему '+topic.title+' о клиентах и бизнесе: <script>alert(1)</script> какой порядок действий?'}),
+  grade:async()=>perfect,studentAnswer:async()=>'Ответ Сэйви: всё уточню, не буду утверждать, что действия выполнены.'});
+ assert.equal(data.processed,8);
+ assert.equal(data.counts.passed,8);
+ assert.equal(new Set(data.results.map(x=>x.topic)).size,8);
+ const textReport=describeSession(data,{at:'2026-10-30T00:00:00Z'});
+ const html=htmlSession(data,{at:'2026-10-30T00:00:00Z'});
+ for(const topic of CURRICULUM)assert.match(textReport,new RegExp(topic.title));
+ assert.match(textReport,/ОТВЕТ СЭЙВИ/);
+ assert.match(html,/Дневник школы Сэйви/);
+ assert.match(html,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+ assert.doesNotMatch(html,/<script>/);
+ assert.match(html,/default-src 'none'/);
+});
+
+test('School CLI defaults to eight lessons; mock run writes an offline HTML report',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'seyveo-eight-school-'));
+ try{
+  const outputs=[];
+  const mock={
+   models:{teacher:'qwen3:8b',student:'qwen3:4b-instruct'},
+   verifyInstalled:async()=>true,
+   teacherJson:async prompt=>{
+    const topic=prompt.match(/"topic":"([^"]+)"/)?.[1];
+    return {...sample,topic,question:'Учебная задача на тему '+topic+' в компании: как предложить правильный порядок действий клиенту?'};
+   },
+   examinerJson:async()=>perfect,
+   studentText:async()=> 'Здравствуйте! Я уточню условия и предложу проверенный порядок действий без ложного выполнения.'
+  };
+  assert.equal(parseArgs([]).count,8);
+  const out=await run([],{output:text=>outputs.push(text),
+   createClient:()=>mock,createStore:()=>createSchoolStore({dir})});
+  assert.equal(out.result.processed,8);
+  assert.equal(out.result.counts.passed,8);
+  assert.equal(out.storage.total,0);
+  assert.equal(outputs.filter(x=>x.includes('ЭКЗАМЕН ')).length,8);
+  const report=await readFile(out.storage.reportHtmlFile,'utf8');
+  assert.match(report,/Картина|Письма клиентам/);
+  assert.match(report,/Умные карточки/);
+  const plain=await readFile(out.storage.reportTextFile,'utf8');
+  assert.match(plain,/ВОПРОС УЧИТЕЛЯ/);
+  assert.match(plain,/Ответ Сэйви/i);
+  const machine=JSON.parse(await readFile(out.storage.reportJsonFile,'utf8'));
+  assert.equal(machine.results.length,8);
+ }finally{await rm(dir,{recursive:true,force:true})}
 });
