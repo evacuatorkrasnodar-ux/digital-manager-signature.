@@ -37,7 +37,7 @@ export function createVoiceWorker({spawnChild=spawn,python=process.platform==='w
    bootResolve=resolveReady;bootReject=rejectReady;
    const args=[...(process.platform==='win32'?['-3.11']:[]),script];
    const proc=spawnChild(python,args,{
-    windowsHide:true,stdio:['pipe','pipe','pipe'],env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1'}
+    windowsHide:true,stdio:['pipe','pipe','pipe'],env:{...process.env,HF_HUB_DISABLE_SYMLINKS_WARNING:'1',PYTHONIOENCODING:'utf-8',PYTHONUTF8:'1'}
    });
    child=proc;
    proc.stdout.on('data',data=>{
