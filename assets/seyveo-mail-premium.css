@@ -1,0 +1,27 @@
+/* SEYVEO MAIL · Black Velvet HDR. Compact native-minded email workspace. */
+.svmail{width:min(94vw,600px);max-height:88dvh;padding:0!important;border:1px solid #78b79a45!important;border-radius:26px!important;background:linear-gradient(155deg,#173329,#101b19 52%,#0a1112)!important;color:#edf8f1!important;box-shadow:0 26px 70px #0008;overflow:hidden!important}
+.svmail::backdrop{background:#050a0bc9;backdrop-filter:blur(9px)}
+.svmail-shell{max-height:88dvh;overflow-y:auto;padding:21px 18px 25px;box-sizing:border-box}
+.svmail-head{display:flex;align-items:center;justify-content:space-between}
+.svmail-kicker{margin:0 0 5px;font-size:9px;letter-spacing:.2em;color:#8bc6a8}
+.svmail h2{font-size:25px!important;letter-spacing:-.06em;font-weight:540!important}
+.svmail-close{font-size:13px;min-height:40px;color:#c7dccf!important}
+.svmail-hero{padding:18px 0 15px;border-bottom:1px solid #ffffff1b}
+.svmail-orbit{display:flex;gap:9px;align-items:center;font-size:12px;color:#c4ded0}
+.svmail-star{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#a8f4cc,#187858 68%,#0b2f25);color:#fff;box-shadow:0 0 20px #26a9765e;font-size:15px}
+.svmail-search{width:100%;box-sizing:border-box;margin:16px 0 7px;padding:12px 14px;border-radius:15px;border:1px solid #ffffff27;background:#ffffff08;color:inherit;font:inherit;font-size:13px;outline-offset:2px}
+.svmail-tabs{display:flex!important;gap:3px!important;margin:10px 0 5px!important;border-bottom:1px solid #ffffff19}
+.svmail-tabs button{flex:1;min-width:0;font-size:12px!important;padding:13px 2px!important}
+.svmail-tabs button[aria-selected=true]{color:#aaf0c7;border-bottom:2px solid #83d6ab!important}
+.svmail-note{font-size:12px!important;line-height:1.55!important;color:#a7bcaf!important}
+.svmail-empty{padding:16px 0!important;border:0!important}
+.svmail-empty-title{font-size:15px;font-weight:600;margin:3px 0 5px}
+.svmail-actionline{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff15}
+.svmail-pill{padding:6px 9px;border:1px solid #8bbd9c45;border-radius:99px;color:#9fdcba;font-size:10px;white-space:nowrap}
+.svmail-primary{width:100%;border:1px solid #7cdbad6b!important;border-radius:14px!important;background:#39886426!important;color:#baf5d3!important;min-height:44px;padding:10px 15px}
+.svmail-compose{margin-top:12px!important}
+.svmail-compose input,.svmail-compose textarea{border-color:#ffffff30!important;border-radius:13px!important}
+.svmail-draft{padding:13px 3px;border-bottom:1px solid #ffffff19;display:grid;gap:4px}
+.svmail-draft strong{font-size:13px}.svmail-draft small{color:#a2bbae;font-size:11px}
+@media(max-width:380px){.svmail-shell{padding:18px 13px 22px}.svmail h2{font-size:22px!important}}
+@media(prefers-reduced-motion:reduce){.svmail,.svmail *{animation:none!important;transition:none!important}}
