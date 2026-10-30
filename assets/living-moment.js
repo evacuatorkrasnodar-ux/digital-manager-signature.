@@ -372,6 +372,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     explain(field,'Не удалось найти сохранённое поручение.',execute);
     return;
    }
+   if(shown.businessTask){window.SEYVEO_BUSINESS_TASK_DEMO?.openTask?.(actualId);return;}
    window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:actualId}}));
    return;
   }
@@ -645,9 +646,18 @@ function startPreview(){
 }
 function dueTasks(){
  let tasks=[];
- try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))tasks=data}catch{}
+ if(window.SEYVEO_PREVIEW?.isEmployee?.()!==true){
+  try{
+   const work=JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')||'[]');
+   const reviews=Array.isArray(work)?work.filter(t=>t&&t.approvalFlow===true&&t.reviewStatus==='review'&&!t.done&&t.source==='business-mail'):[];
+   const people={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
+   tasks=reviews.slice(0,3).map(t=>({eventId:'mail-review:'+t.id,taskId:t.id,businessTask:true,kind:'task',title:'Проверить результат поручения',body:(people[t.assigneeId]||'Сотрудник')+' передал результат. Требуется решение руководителя.',category:'SEYVEO · BUSINESS MAIL',reason:'Поручение ожидает решения руководителя.',detail:'Откройте поручение, чтобы принять результат или вернуть на доработку.'}));
+  }catch{}
+ }
+ let personal=[];
+ try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))personal=data}catch{}
  const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
- return tasks.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
+ return tasks.concat(personal.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
   &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
   .sort((a,b)=>a.due.localeCompare(b.due))
   .map(item=>{
@@ -660,7 +670,7 @@ function dueTasks(){
     reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
     detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
    };
-  }).filter(item=>!quiet.has(item.eventId));
+  })).filter(item=>!quiet.has(item.eventId));
 }
 function showTasks(items){
  if(!items.length)return false;
