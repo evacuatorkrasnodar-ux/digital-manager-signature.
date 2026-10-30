@@ -19,3 +19,14 @@
 #seyveoLivingMoment .sv-card-expand[hidden]{display:none!important}
 #seyveoLivingMoment .lm-field.sv-card-expanded .lm-mail-content,
 #seyveoLivingMoment .lm-field.sv-card-expanded .lm-document-content{max-height:none;mask-image:none}
+
+/* Elena's message is already in the hero. Never repeat the same message below. */
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-intro:first-child,
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-section-label:nth-child(2),
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-draft:nth-child(3){display:none!important}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-note{font-size:10px;line-height:1.3;opacity:.72}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-primary{gap:3px}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{gap:7px}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-secondary .lm-inline-item{min-height:42px}
+/* The explanatory paragraph remains available when expanding mail/document. */
+#seyveoLivingMoment .lm-field[data-lm-mode="preview"]:not(.sv-card-expanded) .sv-copy-guide{display:none}
