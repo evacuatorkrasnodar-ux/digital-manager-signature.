@@ -18,11 +18,18 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Validate Python without TTS model downloads
         run: |
-          python -m py_compile server/seyveo-voice-school/voice_school.py server/seyveo-voice-school/speak.py
+          python -m py_compile server/seyveo-voice-school/voice_school.py server/seyveo-voice-school/speak.py server/seyveo-voice-school/clone_wife_voice.py server/seyveo-voice-school/say.py
+          node --check assets/seyveo-private-voice.js
+          node --check assets/living-conversation.js
+          node --check server/real-app-local.mjs
+          node --test server/seyveo-voice-school/private-voice.test.mjs
           python -m unittest discover -s server/seyveo-voice-school -p test_voice_school.py -v
           python server/seyveo-voice-school/voice_school.py --plan
