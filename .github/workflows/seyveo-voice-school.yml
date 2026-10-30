@@ -35,4 +35,5 @@ jobs:
           node --test server/seyveo-voice-school/private-voice.test.mjs
           node --test server/seyveo-voice-school/feather-chat-stream.test.mjs
           python -m unittest discover -s server/seyveo-voice-school -p test_voice_school.py -v
+          python -m unittest discover -s server/seyveo-voice-school -p test_voice_worker_encoding.py -v
           python server/seyveo-voice-school/voice_school.py --plan
