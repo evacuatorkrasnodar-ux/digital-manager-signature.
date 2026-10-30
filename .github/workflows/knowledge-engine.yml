@@ -5,6 +5,8 @@ on:
     paths:
       - 'server/knowledge-engine.mjs'
       - 'server/knowledge-engine.test.mjs'
+      - 'server/knowledge-intake.mjs'
+      - 'server/knowledge-intake.test.mjs'
       - 'knowledge/**'
       - '.github/workflows/knowledge-engine.yml'
   workflow_dispatch:
@@ -21,4 +23,4 @@ jobs:
       - run: node --check server/knowledge-engine.mjs
       - run: node --check server/local-stream.mjs
       - run: node --check server/real-app-local.mjs
-      - run: node --test server/knowledge-engine.test.mjs
+      - run: node --test server/knowledge-engine.test.mjs server/knowledge-intake.test.mjs
