@@ -103,3 +103,15 @@ test('Approved voice uses natural speed and no browser synthetic fallback',()=>{
  assert.match(js,/context\.createBufferSource\(\)/);
  assert.match(js,/\/api\/seyveo-private-tts/);
 });
+
+test('Persistent engine uses exact SEYVEO approved sample synthesis settings',()=>{
+ const worker=readFileSync(resolve(here,'voice_worker.py'),'utf8');
+ const original=readFileSync(resolve(here,'say.py'),'utf8');
+ for(const source of [original,worker]){
+  assert.match(source,/model\.generate_voice_clone\(/);
+  assert.match(source,/ref_audio=str\(reference\)/);
+  assert.match(source,/x_vector_only_mode=True/);
+  assert.match(source,/language="Russian"/);
+ }
+ assert.doesNotMatch(worker,/voice_clone_prompt=voice_prompt/);
+});
