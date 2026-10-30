@@ -334,6 +334,8 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
     return;
    }
    count++;busy=true;
+   const startedAt=Date.now();
+   let firstTextMs=null;
    const controller=new AbortController();
    const disconnected=()=>{if(!res.writableEnded)controller.abort()};
    res.on('close',disconnected);
@@ -348,9 +350,11 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
     const result=await askLocalStream(message.message,{
      name:'SEYVEO',memory:memoryContext(facts),examples,history:message.history,signal:controller.signal,
      onDelta:token=>{
+      if(firstTextMs===null)firstTextMs=Date.now()-startedAt;
       if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
      }
     });
+    console.log('[SEYVEO Timing] First text:',firstTextMs,'ms; complete:',Date.now()-startedAt,'ms');
     if(!res.destroyed)res.end(JSON.stringify({
      type:'done',model:result.model,cloud:false,executed:false
     })+'\n');
