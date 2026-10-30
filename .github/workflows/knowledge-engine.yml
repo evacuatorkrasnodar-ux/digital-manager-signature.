@@ -1,0 +1,24 @@
+name: SEYVEO Knowledge Engine Checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/knowledge-engine.mjs'
+      - 'server/knowledge-engine.test.mjs'
+      - 'knowledge/**'
+      - '.github/workflows/knowledge-engine.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  knowledge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check server/knowledge-engine.mjs
+      - run: node --check server/local-stream.mjs
+      - run: node --check server/real-app-local.mjs
+      - run: node --test server/knowledge-engine.test.mjs
