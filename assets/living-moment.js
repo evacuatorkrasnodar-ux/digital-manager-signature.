@@ -302,7 +302,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.hidden=active&&mailStep==='edit';
   execute.hidden=active&&(mailStep==='edit'||mailStep==='draft');
   execute.textContent=real?'Продолжить дело':active
-    ?(mailStep==='done'?'✓ Готово · демо':mailStep==='confirm'?'Отправить · демо':'Отправить')
+    ?(mailStep==='done'?'✓ Завершено · демо':mailStep==='confirm'?'Завершить пример · демо':'Продолжить')
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
@@ -352,7 +352,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(workActive()){updateWork();return}
   if(mailActive()){
    if(mailStep==='draft'){mailStep='confirm';updateMail();return}
-   if(mailStep==='confirm'){mailStep='done';updateMail();return}
+   if(mailStep==='confirm'){
+    // This is only a local scripted demo: there is no external mail acknowledgement.
+    // Close the preview after the simulated confirmation, never claim a real send.
+    mailStep='done';updateMail();finishPreviewItem();return;
+   }
    if(mailStep==='done'){finishPreviewItem();return}
   }
   if(documentActive()){
