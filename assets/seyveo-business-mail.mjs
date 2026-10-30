@@ -86,6 +86,7 @@ if(business&&trigger){
     const names={assigned:'В работе',review:'На проверке',rework:'На доработке',approved:'Принято'};
     summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
     item.append(summary);
+    const jump=document.createElement('button');jump.type='button';jump.textContent='Открыть поручение';jump.addEventListener('click',()=>{if(window.SEYVEO_BUSINESS_TASK_DEMO?.openTask(ids[0])){page.hidden=true;if(board)board.hidden=false;}});item.append(jump);
    }
    item.prepend(title,recipient);
    item.append(edit,delegate,remove);list.append(item);
