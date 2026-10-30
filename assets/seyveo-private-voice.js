@@ -1,28 +1,52 @@
-/* Local SEYVEO voice playback: user-initiated only, one existing speaker button.
- * Never replaces the approved voice with browser speech synthesis.
+/* SEYVEO private voice · Feather Chat's existing speaker button.
+ * The voice sample stays on the owner's PC. Don't mark "speaking"
+ * before audio exists; unlock WebAudio synchronously with the click.
  */
 (()=>{
  'use strict';
- let player=null,request=null,revision=0;
- const stop=()=>{
-  revision++;
-  if(request){request.abort();request=null}
-  if(player){player.pause();player.src='';player=null}
-  document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'stop'}}));
+ let context=null,source=null,request=null,revision=0;
+ const announce=(stage,message='')=>{
+  document.dispatchEvent(new CustomEvent('seyveo:voice-status',{detail:{stage,message}}));
  };
- const originalStop=window.SEYVEO_CONVERSATION_STOP_SPEECH;
+ const stop=()=>{
+  ++revision;
+  const pending=request;
+  request=null;
+  if(pending)pending.abort();
+  const current=source;
+  source=null;
+  if(current){
+   current.onended=null;
+   try{current.stop()}catch{}
+   try{current.disconnect()}catch{}
+  }
+  announce('idle');
+ };
+ const previousStop=window.SEYVEO_CONVERSATION_STOP_SPEECH;
  window.SEYVEO_CONVERSATION_STOP_SPEECH=()=>{
   stop();
-  if(typeof originalStop==='function')originalStop();
+  if(typeof previousStop==='function')previousStop();
  };
- window.SEYVEO_CONVERSATION_READ_REPLY=async(text)=>{
-  if(request||player){stop();return}
-  const phrase=String(text||'').replace(/[*#_`]/g,'').trim().slice(0,450);
+ window.SEYVEO_CONVERSATION_READ_REPLY=async text=>{
+  // Second tap cancels the pending request or stops actual playback.
+  if(request||source){stop();return}
+  const phrase=String(text||'').replace(/[*#_]/g,'').trim().slice(0,450);
   if(!phrase)return;
+  // Resume the audio engine during the real click, before any await.
+  // Audio.play() after async CPU synthesis can be blocked by Edge.
+  let unlocked;
+  try{
+   const AudioEngine=window.AudioContext||window.webkitAudioContext;
+   if(!AudioEngine)throw Error('Браузер не поддерживает Web Audio.');
+   if(!context)context=new AudioEngine();
+   unlocked=context.resume();
+  }catch(error){
+   announce('error',String(error.message||error));return;
+  }
   const ticket=++revision;
   const abort=new AbortController();
   request=abort;
-  document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'speaking'}}));
+  announce('preparing');
   try{
    const response=await fetch('/api/seyveo-private-tts',{
     method:'POST',credentials:'same-origin',signal:abort.signal,
@@ -30,27 +54,35 @@
     body:JSON.stringify({text:phrase})
    });
    if(!response.ok){
-    const body=await response.json().catch(()=>({}));
-    throw Error(body.error||'Не удалось озвучить.');
+    const data=await response.json().catch(()=>({}));
+    throw Error(data.error||'Ошибка голосового сервера: '+response.status);
    }
-   const blob=await response.blob();
+   const audioData=await response.arrayBuffer();
    if(ticket!==revision)return;
-   const url=URL.createObjectURL(blob);
-   const audio=new Audio(url);
-   player=audio;request=null;
-   const finish=()=>{
-    URL.revokeObjectURL(url);
-    if(player===audio){player=null;document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'stop'}}))}
+   const decoded=await context.decodeAudioData(audioData);
+   await unlocked;
+   if(ticket!==revision)return;
+   if(context.state!=='running')throw Error('Браузер заблокировал звук. Нажми на значок динамика ещё раз.');
+   const node=context.createBufferSource();
+   node.buffer=decoded;
+   node.connect(context.destination);
+   source=node;
+   request=null;
+   node.onended=()=>{
+    if(source===node){
+     source=null;
+     try{node.disconnect()}catch{}
+     announce('idle');
+    }
    };
-   audio.addEventListener('ended',finish,{once:true});
-   audio.addEventListener('error',finish,{once:true});
-   await audio.play();
+   node.start(0);
+   announce('playing');
   }catch(error){
    if(ticket!==revision||error?.name==='AbortError')return;
-   request=null;player=null;
-   document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'stop'}}));
-   window.alert('SEYVEO · голос: '+String(error?.message||'Ошибка'));
+   request=null;source=null;
+   announce('error',String(error?.message||'Не удалось создать звук.'));
+   console.error('[SEYVEO Voice]',error);
   }
  };
- window.addEventListener('pagehide',stop);
+ window.addEventListener('pagehide',stop,{once:true});
 })();
