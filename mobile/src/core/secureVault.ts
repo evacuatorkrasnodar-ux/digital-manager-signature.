@@ -79,7 +79,7 @@ export async function inspectVault(): Promise<VaultStatus> {
   }
 }
 
-export async function initializeVault(): Promise<VaultStatus> {
+async function initializeVaultOnce(): Promise<VaultStatus> {
   try {
     let identity = await readIdentity();
     if (!identity) {
@@ -110,4 +110,15 @@ export async function initializeVault(): Promise<VaultStatus> {
   } catch {
     return 'unavailable';
   }
+}
+
+// Coalesce simultaneous taps, app lifecycle retries and component effects.
+// Only one attempt may generate or persist the encryption identity at a time.
+let initializationInFlight: Promise<VaultStatus> | null = null;
+export function initializeVault(): Promise<VaultStatus> {
+  if (initializationInFlight) return initializationInFlight;
+  initializationInFlight = initializeVaultOnce().finally(() => {
+    initializationInFlight = null;
+  });
+  return initializationInFlight;
 }
