@@ -81,3 +81,10 @@ test('Only approved local TTS is used; browser synthetic voice is never fallback
  assert.doesNotMatch(js,/speechSynthesis\s*\.\s*speak/);
  assert.match(js,/\/api\/seyveo-private-tts/);
 });
+
+
+test('Approved voice plays at natural speed without time-stretching',()=>{
+ assert.doesNotMatch(js,/playbackRate\s*=\s*1\.12/);
+ assert.doesNotMatch(js,/preservesPitch\s*=/);
+ assert.match(js,/context\.createBufferSource\(\)/);
+});
