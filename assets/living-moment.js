@@ -368,6 +368,43 @@ function createSurface(primary,other=[],real=false,taskId=''){
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
      });
      documentDetails.append(exportText);
+     const compare=create('div','lm-document-comparison');
+     compare.append(create('p','lm-section-label','БЫЛО · ИСХОДНЫЙ ТЕКСТ'));
+     compare.append(create('p','lm-document-excerpt',documentSource));
+     compare.append(create('p','lm-section-label','СТАЛО · ПРЕДЛОЖЕНИЕ СЭЙВИ'));
+     compare.append(create('p','lm-document-note',documentProposed));
+     documentDetails.append(compare);
+     const downloadDraft=(name,blob)=>{
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),3000);
+     };
+     const docx=create('button','lm-polymer','Сохранить DOCX');docx.type='button';
+     docx.addEventListener('click',async()=>{
+      if(!documentProposed.trim())return;
+      try{
+       if(!window.docx)await new Promise((ok,fail)=>{
+        const tag=document.createElement('script');tag.src='https://cdnjs.cloudflare.com/ajax/libs/docx/9.5.1/index.umd.js';
+        tag.onload=ok;tag.onerror=fail;document.head.append(tag);
+       });
+       const lib=window.docx;if(!lib)throw Error('DOCX библиотека недоступна');
+       const paragraphs=['SEYVEO · Предложенная редакция · ЧЕРНОВИК',...documentProposed.split(/\n/)].map(t=>new lib.Paragraph({text:t}));
+       const file=new lib.Document({sections:[{children:paragraphs}]});
+       downloadDraft('SEYVEO-предложенная-редакция.docx',await lib.Packer.toBlob(file));
+      }catch{docx.textContent='DOCX недоступен';}
+     });
+     const pdf=create('button','lm-polymer','Сохранить PDF');pdf.type='button';
+     pdf.addEventListener('click',async()=>{
+      if(!documentProposed.trim())return;
+      const w=window.open('','_blank');
+      if(!w){pdf.textContent='Разрешите окно печати';return;}
+      const d=w.document;d.title='SEYVEO · Предложенная редакция · ЧЕРНОВИК';
+      const h=d.createElement('h2');h.textContent='SEYVEO · Предложенная редакция · ЧЕРНОВИК';
+      const pre=d.createElement('pre');pre.textContent=documentProposed;
+      pre.style.cssText='font:14px/1.6 Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere';
+      d.body.append(h,pre);w.focus();w.print();
+     });
+     documentDetails.append(docx,pdf);
     }
     documentDetails.dataset.reviewMode=documentView;
     const toggle=create('button','lm-polymer','Предложенная редакция');
