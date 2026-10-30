@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { planOfflineReply, offlineFallback } from './offlineBrain.mjs';
+import { planSeyveoAction } from './seyveoActionRouter.mjs';
 import { proposeMemoryAction, confirmMemorySave, recallPersonalNotes, type MemoryProposal } from './seyveoMemoryBridge';
 
 export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
@@ -17,8 +17,8 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
   const proposal=proposeMemoryAction(input);
   setPending(proposal);
   if(proposal){setMessage('Сэйви: сохранить это в защищённой памяти?');return;}
-  const plan=planOfflineReply(input,{modelReady:false,packs:[]});
-  setMessage(offlineFallback(plan)||'Сэйви пока не умеет выполнять это действие. Никаких изменений не сделано.');
+  const plan=planSeyveoAction(input);
+  setMessage(plan.message||'Сэйви пока не умеет выполнять это действие. Никаких изменений не сделано.');
  };
  const confirm=async()=>{
   if(busy||savingRef.current||!pending)return;
