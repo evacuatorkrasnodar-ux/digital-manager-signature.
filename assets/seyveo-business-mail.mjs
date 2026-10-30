@@ -79,6 +79,14 @@ if(business&&trigger){
     });
     panel.append(caption,assignee,instruction,copy,send);item.append(panel);
    });
+   const ids=linkedTasks.get(i)||[];
+   if(ids.length){
+    let tasks=[];try{tasks=JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')||'[]');}catch{}
+    const summary=document.createElement('small');
+    const names={assigned:'В работе',review:'На проверке',rework:'На доработке',approved:'Принято'};
+    summary.textContent=tasks.filter(t=>ids.includes(t.id)).map(t=>t.done?'Принято':names[t.reviewStatus]||'В работе').join(' · ')||'Поручение не найдено';
+    item.append(summary);
+   }
    item.append(title,recipient,edit,delegate,remove);list.append(item);
   });
  }
