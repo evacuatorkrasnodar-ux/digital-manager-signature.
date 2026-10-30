@@ -15,6 +15,24 @@ function advance(key,next,meta={}){
  const n=transition(card,next,meta);cards.set(key,n);log('transition',{eventId:n.eventId,from:card.status,to:next});notify();return n;
 }
 function list(){return visible([...cards.values()]).sort((a,b)=>a.priority-b.priority||a.createdAt.localeCompare(b.createdAt));}
+function openChat(key){
+ const card=cards.get(key);
+ if(!card)throw new Error('Unknown card');
+ if(!visible([card]).length)throw new Error('Card is not active');
+ log('chat-opened',{eventId:card.eventId,status:card.status});
+ // Navigation is not execution; keep the card in the queue.
+ return card;
+}
+function complete(key,{acknowledged=false,reason=''}={}){
+ if(acknowledged!==true)throw new Error('Verified acknowledgement required');
+ let card=cards.get(key);
+ if(!card)throw new Error('Unknown card');
+ if(card.status==='shown'||card.status==='failed')card=advance(key,'action_pending');
+ if(card.status==='action_pending')card=advance(key,'executing');
+ if(card.status!=='executing')throw new Error('Card cannot be completed from '+card.status);
+ card=advance(key,'succeeded',{acknowledged:true,reason});
+ return advance(key,'archived',{reason:'Confirmed completion'});
+}
 function deferred(){return [...cards.values()].filter(c=>c.status==='deferred');}
 function archive(){return [...cards.values()].filter(c=>['archived','succeeded','canceled','expired'].includes(c.status));}
 function postpone(key){return advance(key,'deferred',{reason:'User chose Later'});}
@@ -35,7 +53,7 @@ function orderPreview(items){
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
 // outcome AFTER an external integration or explicit local demo confirms it.
-Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,orderPreview,inspect}),writable:false,configurable:false});
+Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,openChat,complete,orderPreview,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
 
 // Non-invasive adapter for the existing Quiet Cinema demo mail card.
