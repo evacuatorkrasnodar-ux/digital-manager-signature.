@@ -84,5 +84,5 @@ export function createVoiceWorker({spawnChild=spawn,python=process.platform==='w
  function close(){
   if(child){const proc=child;reset(new Error('Голосовой движок остановлен.'));proc.kill()}
  }
- return {generate,close};
+ return {generate,warmup:start,close};
 }
