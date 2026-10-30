@@ -33,5 +33,6 @@ jobs:
           node --check assets/living-conversation.js
           node --check server/real-app-local.mjs
           node --test server/seyveo-voice-school/private-voice.test.mjs
+          node --test server/seyveo-voice-school/feather-chat-stream.test.mjs
           python -m unittest discover -s server/seyveo-voice-school -p test_voice_school.py -v
           python server/seyveo-voice-school/voice_school.py --plan
