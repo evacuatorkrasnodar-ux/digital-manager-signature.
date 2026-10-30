@@ -122,3 +122,16 @@ export function initializeVault(): Promise<VaultStatus> {
   });
   return initializationInFlight;
 }
+
+export async function withVerifiedVault<T>(operation:(db:SQLite.SQLiteDatabase)=>Promise<T>):Promise<T>{
+ const identity=await readIdentity();
+ if(!identity||identity.stage!=='ready')throw Error('vault-not-ready');
+ await confirmCipher(identity);
+ const db=await SQLite.openDatabaseAsync(identity.database);
+ try{
+  await db.execAsync("PRAGMA key = '"+identity.hexKey+"';");
+  const marker=await db.getFirstAsync<{value:string}>('SELECT value FROM vault_meta WHERE id = ?', 'schema');
+  if(marker?.value!=='1')throw Error('vault-verification-failed');
+  return await operation(db);
+ }finally{await db.closeAsync()}
+}
