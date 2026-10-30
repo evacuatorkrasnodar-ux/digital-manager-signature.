@@ -4,6 +4,7 @@ import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createMemoryStore} from '../local-memory.mjs';
+import {createLearningQueue} from '../learning-queue.mjs';
 import {request as httpRequest} from 'node:http';
 import {Script} from 'node:vm';
 import {createRealLocalServer,adaptOriginalHome} from '../real-app-local.mjs';
@@ -59,7 +60,9 @@ test('Original main page is rendered unchanged except local reply integration',a
 
 test('Actual app with private Ollama is served on loopback and refuses foreign requests',async()=>{
  const dir=await mkdtemp(join(tmpdir(),'seyveo-http-memory-'));
- const server=createRealLocalServer({memoryStore:createMemoryStore(join(dir,'notes.json'))});
+ const approvedInTest=[];
+ const server=createRealLocalServer({memoryStore:createMemoryStore(join(dir,'notes.json')),
+  learningQueue:createLearningQueue({file:join(dir,'learning.json'),approveExample:async(q,a)=>approvedInTest.push({q,a})})});
  await new Promise((resolve,reject)=>{
   server.once('error',reject);
   server.listen(PORT,HOST,resolve);
@@ -215,6 +218,37 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   const memo=JSON.parse(saved.body).items;
   assert.equal(memo.length,1);
   assert.equal(memo[0].text,'Наш первый проект — автоматизация заявок.');
+  // Learning Lab uses an explicit two-stage flow without transmitting user data.
+  const dashboard=await request('/api/seyveo-learning-dashboard');
+  assert.equal(dashboard.status,200);
+  assert.equal(JSON.parse(dashboard.body).privateCount,1);
+  assert.equal(JSON.parse(dashboard.body).sharedAcrossUsers,false);
+  const externalProposal=await request('/api/seyveo-learning-proposal',{
+   method:'POST',headers:{origin:'https://outside.example','content-type':'application/json'},
+   data:{action:'propose',question:'Как ответить клиенту?',answer:'Уточнить детали.',confirmed:true}
+  });
+  assert.equal(externalProposal.status,403);
+  const noConsent=await request('/api/seyveo-learning-proposal',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'propose',question:'Как ответить клиенту?',answer:'Уточнить детали.',confirmed:false}
+  });
+  assert.equal(noConsent.status,400);
+  const propose=await request('/api/seyveo-learning-proposal',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'propose',question:'Как ответить клиенту?',answer:'Уточнить детали.',confirmed:true}
+  });
+  assert.equal(propose.status,200);
+  const proposal=JSON.parse(propose.body).proposals[0];
+  assert.equal(proposal.status,'pending');
+  assert.equal(approvedInTest.length,0);
+  const approve=await request('/api/seyveo-learning-proposal',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{action:'approve',id:proposal.id}
+  });
+  assert.equal(approve.status,200);
+  assert.equal(approvedInTest.length,1);
+  assert.equal(JSON.parse(approve.body).proposals[0].status,'approved');
+
 
   // Stream must deliver model tokens through the original page endpoint.
   const packets=[
