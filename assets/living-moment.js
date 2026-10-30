@@ -358,6 +358,16 @@ function createSurface(primary,other=[],real=false,taskId=''){
       catch{saveDraft.textContent='Не удалось сохранить';}
      });
      documentDetails.append(saveDraft);
+     const exportText=create('button','lm-polymer','Сохранить отдельным TXT');
+     exportText.type='button';
+     exportText.addEventListener('click',()=>{
+      if(!documentProposed.trim())return;
+      const blob=new Blob([documentProposed],{type:'text/plain;charset=utf-8'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');link.href=url;link.download='SEYVEO-предложенная-редакция.txt';
+      document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+     });
+     documentDetails.append(exportText);
     }
     documentDetails.dataset.reviewMode=documentView;
     const toggle=create('button','lm-polymer','Предложенная редакция');
