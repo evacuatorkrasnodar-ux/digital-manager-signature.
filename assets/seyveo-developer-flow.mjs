@@ -1,3 +1,4 @@
+import {checkReviewStateRules} from './seyveo-review-rules.mjs';
 /* Developer-only local flow tester. Enable explicitly with ?seyveo_dev=1.
    No production notifications, mail sending or authentication implied. */
 const enabled=new URLSearchParams(location.search).get('seyveo_dev')==='1';
@@ -28,5 +29,6 @@ if(enabled){
   const checks=[['Создано',created],['Отчёт',submitted],['Решение',resolved],['Очередь',queue]];
   status.textContent=checks.map(([name,ok])=>(ok?'✓ ':'○ ')+name).join(' · ')+(checks.every(x=>x[1])?' · Цикл пройден в локальных данных.':' · Не все этапы завершены.');
  });
- box.append(title,status,create,submit,inspect,verify,audit);document.body.append(box);
+ const rules=button('Автотест · правила карточек',()=>{const results=checkReviewStateRules();const failed=results.filter(x=>!x.passed);status.textContent=failed.length?'Проверка не пройдена: '+failed.map(x=>x.name).join(', '):'Все 6 сценариев состояний прошли проверку. Это тест правил, не анимаций.';});
+ box.append(title,status,create,submit,inspect,verify,audit,rules);document.body.append(box);
 }
