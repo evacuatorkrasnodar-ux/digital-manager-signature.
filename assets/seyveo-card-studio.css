@@ -16,3 +16,7 @@
 #seyveoCardStudio .scs-block{margin:17px 0;line-height:1.55}
 #seyveoCardStudio .scs-note{font-size:12px;color:#b9cdc0}
 @media(max-width:600px){#seyveoCardStudio .scs-grid{grid-template-columns:1fr}}
+
+#seyveoCardStudio .scs-editor{display:grid;gap:12px;margin-top:15px}
+#seyveoCardStudio .scs-editor label{display:grid;gap:6px;font-size:12px;color:#b9d9c6}
+#seyveoCardStudio .scs-editor input,#seyveoCardStudio .scs-editor textarea{width:100%;padding:10px;border:1px solid #416454;border-radius:10px;background:#22392f;color:#fff;font:14px system-ui;resize:vertical}
