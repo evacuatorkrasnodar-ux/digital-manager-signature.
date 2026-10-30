@@ -1,0 +1,38 @@
+name: SEYVEO Auto School Offline Checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/seyveo-auto-school/**'
+      - '.github/workflows/seyveo-auto-school.yml'
+  pull_request:
+    paths:
+      - 'server/seyveo-auto-school/**'
+      - '.github/workflows/seyveo-auto-school.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-school-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate SEYVEO teaching code without Ollama
+        run: |
+          node --check server/seyveo-auto-school/core.mjs
+          node --check server/seyveo-auto-school/ollama.mjs
+          node --check server/seyveo-auto-school/store.mjs
+          node --check server/seyveo-auto-school/run.mjs
+          node --test server/seyveo-auto-school/auto-school.test.mjs
+      - name: Check GPU training script syntax only
+        run: python -m py_compile server/seyveo-auto-school/train_gpu_lora.py
