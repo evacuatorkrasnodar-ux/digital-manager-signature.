@@ -35,3 +35,7 @@
 #lifePage .svmail-shell{max-height:none;overflow:visible;padding:15px 12px 75px}
 #lifePage .svmail-hero{padding:12px 0}
 #lifePage .svmail-close{font-size:13px}
+
+#lifePage .svmail-head-actions{display:flex;align-items:center;gap:8px}
+#lifePage .svmail-new{border:0;background:transparent;color:#a5e8c2;padding:9px 3px;font-size:13px}
+#lifePage .svmail-note[hidden]{display:none!important}
