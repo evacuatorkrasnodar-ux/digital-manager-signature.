@@ -10,14 +10,21 @@
   document.dispatchEvent(new CustomEvent('seyveo:voice-status',{detail:{stage,message}}));
  };
  const splitPhrases=value=>{
-  let left=String(value||'').replace(/[*#_]/g,'').trim().slice(0,3000);
+  // Short natural utterances synthesize much more reliably on local CPU.
+  // Emoji and formatting never change the displayed reply, only spoken text.
+  let left=String(value||'')
+   .replace(/[\u200b-\u200d\uFE0E\uFE0F]/g,'')
+   .replace(/\p{Extended_Pictographic}/gu,'')
+   .replace(/[*#_]/g,'')
+   .replace(/\s+/g,' ').trim().slice(0,3000);
   const parts=[];
+  const MAX_PHRASE=170;
   while(left){
-   if(left.length<=420){if(left.length>1)parts.push(left);break}
-   const head=left.slice(0,420);
-   let cut=Math.max(head.lastIndexOf('. '),head.lastIndexOf('! '),head.lastIndexOf('? '),head.lastIndexOf('\n'));
-   if(cut<160)cut=head.lastIndexOf(' ');
-   if(cut<2)cut=420;
+   if(left.length<=MAX_PHRASE){if(left.length>1)parts.push(left);break}
+   const head=left.slice(0,MAX_PHRASE);
+   let cut=Math.max(head.lastIndexOf('. '),head.lastIndexOf('! '),head.lastIndexOf('? '));
+   if(cut<60)cut=head.lastIndexOf(' ');
+   if(cut<2)cut=MAX_PHRASE;
    else if(/[.!?]/.test(left[cut]))cut++;
    const part=left.slice(0,cut).trim();
    if(part.length>1)parts.push(part);
