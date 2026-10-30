@@ -650,7 +650,7 @@ function dueTasks(){
  if(window.SEYVEO_PREVIEW?.isEmployee?.()!==true){
   try{
    const work=JSON.parse(localStorage.getItem('seyveo-business-command-tasks-demo-v1')||'[]');
-   const reviews=Array.isArray(work)?work.filter(t=>t&&t.approvalFlow===true&&t.reviewStatus==='review'&&!t.done&&t.source==='business-mail'):[];
+   const reviews=Array.isArray(work)?work.filter(t=>window.SEYVEO_REVIEW_RULES?.shouldShowManagerReview(t)===true):[];
    const people={elena:'Елена',anna:'Анна',mikhail:'Михаил'};
    tasks=reviews.slice(0,3).map(t=>({eventId:'mail-review:'+t.id,taskId:t.id,businessTask:true,kind:'task',title:'Проверить результат поручения',body:(people[t.assigneeId]||'Сотрудник')+' передал результат. Требуется решение руководителя.',category:'SEYVEO · BUSINESS MAIL',reason:'Поручение ожидает решения руководителя.',detail:'Откройте поручение, чтобы принять результат или вернуть на доработку.'}));
   }catch{}
@@ -805,6 +805,7 @@ window.SEYVEO_LIVING_MOMENT=Object.freeze({
  restoreDeferred:kind=>restorePreview(kind),
  restoreTask:id=>restoreTask(id)
 });
+window.addEventListener('seyveo:review-rules-ready',scheduleRefresh);
 window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
 window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
 window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
