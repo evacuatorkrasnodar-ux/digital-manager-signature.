@@ -147,8 +147,8 @@
    ?{...x,status:'cancelled',reason:'Сеанс был прерван',updatedAt:new Date().toISOString()}:x));
  function format(){
   const rows=entries().slice(-10).reverse();
-  if(!rows.length)return 'Журнал действий Сейваа пока пуст. Здесь появятся только попытки создания записей через Филю.';
-  return 'Журнал действий Сейваа · на этом устройстве:\n\n'+rows.map(x=>
+  if(!rows.length)return 'Журнал действий Сэйвиа пока пуст. Здесь появятся только попытки создания записей через Филю.';
+  return 'Журнал действий Сэйвиа · на этом устройстве:\n\n'+rows.map(x=>
    '• '+x.label+' — '+DISPLAY[x.status]+
    (x.reason?' ('+x.reason+')':'')
   ).join('\n')+'\n\nЖурнал не хранит содержание заметок. Сохранение означает, что запись подтверждена в локальном приложении, а не во внешнем сервисе.';
@@ -156,7 +156,7 @@
  function handleAsk(event){
   if(event.target?.id!=='ask'||event.target.dataset?.composerMode==='notes')return;
   const q=root.document?.getElementById('question')?.value?.trim()||'';
-  if(!/^(?:(?:сэй|сейва)[,\s]+)?(?:покажи\s+)?журнал\s+действий[?.!]?$/iu.test(q))
+  if(!/^(?:(?:сэй|сэйви)[,\s]+)?(?:покажи\s+)?журнал\s+действий[?.!]?$/iu.test(q))
    return;
   event.preventDefault();
   event.stopImmediatePropagation();
