@@ -18,7 +18,7 @@ if(mailButtons.length){
  const body=document.createElement('textarea');body.placeholder='Текст письма';body.required=true;
  const save=document.createElement('button');save.type='submit';save.textContent='Сохранить черновик';
  compose.append(to,subject,body,save);shell.append(head,hero,search,tabs,note,view,compose);dlg.append(shell);document.body.append(dlg);
- const drafts=[];let current='inbox';
+ const drafts=[];let current='inbox';let editing=-1;
  const labels={inbox:'Входящие',sent:'Отправленные',drafts:'Черновики'};
  function render(){
   tabs.replaceChildren();
@@ -29,17 +29,17 @@ if(mailButtons.length){
   const message=document.createElement('p');message.className='svmail-note';
   if(current==='drafts'){
    message.textContent=drafts.length?'Черновики сохранены только до закрытия страницы · не отправлены':'Напиши письмо — Сэйви поможет подготовить ответ после подключения ИИ.';
-   for(const draft of drafts.slice().reverse().filter(d=>[d.to,d.subject,d.body].some(x=>x.toLocaleLowerCase('ru-RU').includes(search.value.toLocaleLowerCase('ru-RU'))))){
-    const p=document.createElement('div');p.className='svmail-draft';const name=document.createElement('strong');name.textContent=draft.subject;const addr=document.createElement('small');addr.textContent='Кому: '+draft.to;p.append(name,addr);view.append(p);
+   for(const [index,draft] of drafts.map((draft,index)=>[index,draft]).reverse().filter(([,d])=>[d.to,d.subject,d.body].some(x=>x.toLocaleLowerCase('ru-RU').includes(search.value.toLocaleLowerCase('ru-RU'))))){
+    const p=document.createElement('div');p.className='svmail-draft';const name=document.createElement('strong');name.textContent=draft.subject;const addr=document.createElement('small');addr.textContent='Кому: '+draft.to;const actions=document.createElement('div');actions.className='svmail-draft-actions';const edit=document.createElement('button');edit.type='button';edit.textContent='Продолжить';edit.addEventListener('click',()=>{editing=index;to.value=draft.to;subject.value=draft.subject;body.value=draft.body;save.textContent='Обновить черновик';compose.scrollIntoView({block:'nearest',behavior:'smooth'});});const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';remove.addEventListener('click',()=>{drafts.splice(index,1);if(editing===index){editing=-1;compose.reset();save.textContent='Сохранить черновик';}else if(editing>index)editing--;render();});actions.append(edit,remove);p.append(name,addr,actions);view.append(p);
    }
   }else message.textContent=current==='inbox'?'Нет подключённого почтового ящика.':'Отправленные письма появятся после подключения почты.';
   view.prepend(message);search.disabled=current!=='drafts';search.placeholder=current==='drafts'?'Найти черновик':'Поиск заработает после подключения почты';
  }
- compose.addEventListener('submit',event=>{event.preventDefault();drafts.push({to:to.value,subject:subject.value,body:body.value});compose.reset();render()});
+ compose.addEventListener('submit',event=>{event.preventDefault();const next={to:to.value.trim(),subject:subject.value.trim(),body:body.value.trim()};if(editing>=0)drafts[editing]=next;else drafts.push(next);editing=-1;save.textContent='Сохранить черновик';compose.reset();render()});
  search.addEventListener('input',render);
  close.addEventListener('click',()=>dlg.close());
  document.addEventListener('click',event=>{
   const button=event.target.closest?.('[data-calendar-space="mail"]');if(!button)return;
-  event.preventDefault();event.stopImmediatePropagation();current='inbox';render();dlg.showModal();
+  event.preventDefault();event.stopImmediatePropagation();current='inbox';editing=-1;compose.reset();save.textContent='Сохранить черновик';render();dlg.showModal();
  },true);
 }
