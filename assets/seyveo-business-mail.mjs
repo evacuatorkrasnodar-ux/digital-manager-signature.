@@ -1,4 +1,3 @@
-import {MAIL_AI_STATUS} from './seyveo-mail-ai-contract.mjs';
 import {inspectPastedMail} from './seyveo-mail-local-assist.mjs';
 import {mailTaskNextStep} from './seyveo-mail-next-step.mjs';
 import {taskTimeline} from './seyveo-task-timeline.mjs';
@@ -49,18 +48,42 @@ if(business&&trigger){
  const paste=document.createElement('textarea');paste.placeholder='Вставьте текст рабочего письма для локального разбора';
  const analyze=document.createElement('button');analyze.type='button';analyze.textContent='Разобрать';
  const result=document.createElement('div');result.className='svb-mail-muted';result.setAttribute('aria-live','polite');
- analyze.addEventListener('click',()=>{
-  const insight=inspectPastedMail(paste.value);
+ analyze.addEventListener('click',async()=>{
+  const content=paste.value.trim();
   result.replaceChildren();
-  const line=document.createElement('p');line.textContent=insight.kind==='empty'?insight.summary:'Тема по ключевым словам: '+insight.topic+' · Суть (фрагмент оригинала): '+insight.summary;
-  result.append(line);
-  if(insight.reply){
-   const proposed=document.createElement('p');proposed.textContent='Шаблон ответа для проверки: '+insight.reply;result.append(proposed);
-   const draft=document.createElement('button');draft.type='button';draft.textContent='Перенести шаблон в черновик';draft.addEventListener('click',()=>{tab='drafts';editing=-1;render();subject.value='Ответ на обращение';message.value=insight.reply;form.scrollIntoView({block:'nearest'});});result.append(draft);
-  }
+  if(!content){result.textContent='Вставь текст рабочего письма.';return;}
+  analyze.disabled=true;analyze.textContent='Сэйви разбирает…';
+  const show=(insight,localAI)=>{
+   result.replaceChildren();
+   const summary=document.createElement('p');summary.textContent=(localAI?'Сэйви · суть: ':'Правила · суть: ')+(insight.summary||'');result.append(summary);
+   if(insight.reply){
+    const reply=document.createElement('p');reply.textContent='Предлагаемый ответ (не отправлен): '+insight.reply;result.append(reply);
+    const draft=document.createElement('button');draft.type='button';draft.textContent='Открыть ответ в черновике';
+    draft.addEventListener('click',()=>{tab='drafts';editing=-1;render();subject.value='Ответ на обращение';message.value=insight.reply;form.scrollIntoView({block:'nearest'});});result.append(draft);
+   }
+   if(insight.task){const task=document.createElement('p');task.textContent='Предложение поручения (не назначено): '+insight.task;result.append(task);}
+  };
+  try{
+   const response=await fetch('/api/seyveo-mail-analyze',{
+    method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+    body:JSON.stringify({text:content.slice(0,8000)})
+   });
+   if(!response.ok){const data=await response.json().catch(()=>({}));throw Error(data.error||'Локальный анализ недоступен');}
+   const data=await response.json();
+   if(typeof data.summary!=='string'||typeof data.suggestedReply!=='string')throw Error('Неверный ответ ИИ');
+   show({summary:data.summary,reply:data.suggestedReply,task:data.suggestedTask},true);
+   aiStatus.textContent='Qwen3 · локальный анализ выполнен. Черновик требует проверки.';
+  }catch(error){
+   const fallback=inspectPastedMail(content);
+   show(fallback,false);
+   const warning=document.createElement('p');
+   warning.textContent='Qwen3 пока недоступна: '+String(error?.message||'ошибка')+'. Показана подсказка по правилам.';
+   result.prepend(warning);
+   aiStatus.textContent='Локальная Qwen3 недоступна. Работают обычные подсказки.';
+  }finally{analyze.disabled=false;analyze.textContent='Разобрать';}
  });
- const aiStatus=document.createElement('p');aiStatus.className='svb-mail-muted';aiStatus.textContent='Анализ ИИ: '+(MAIL_AI_STATUS.connected?'подключён':'не подключён')+'. '+MAIL_AI_STATUS.reason;
- const explain=document.createElement('p');explain.className='svb-mail-muted';explain.textContent='Локальная подсказка по правилам. Не ИИ, письмо никуда не отправляется. Не вставляйте конфиденциальные данные в учебный прототип.';
+ const aiStatus=document.createElement('p');aiStatus.className='svb-mail-muted';aiStatus.textContent='Локальный анализ Qwen3 · проверяется при нажатии «Разобрать».';
+ const explain=document.createElement('p');explain.className='svb-mail-muted';explain.textContent='Qwen3 обрабатывает введённый текст локально через Ollama, если сервер обновлён. При недоступности ИИ используются простые правила. Никакой отправки писем или выдачи поручений без подтверждения.';
  assist.append(assistTitle,explain,aiStatus,paste,analyze,result);
  page.append(head,note,tabs,assist,list,form);business.append(page);
  function render(){
