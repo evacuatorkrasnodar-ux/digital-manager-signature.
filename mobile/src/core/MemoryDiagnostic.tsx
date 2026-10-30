@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { planOfflineReply, offlineFallback } from './offlineBrain.mjs';
 import { proposeMemoryAction, confirmMemorySave, recallPersonalNotes, type MemoryProposal } from './seyveoMemoryBridge';
@@ -8,7 +8,12 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
  const [pending,setPending]=useState<MemoryProposal|null>(null);
  const [message,setMessage]=useState('');
  const [busy,setBusy]=useState(false);
+ const savingRef=useRef(false);
  const prepare=()=>{
+  if(busy)return;
+  if(/^(?:сэйви[,!\s]*)?(?:что ты (?:запомнила|помнишь)|покажи (?:мои )?заметки)\??$/iu.test(input.trim())){
+   setPending(null);void recall();return;
+  }
   const proposal=proposeMemoryAction(input);
   setPending(proposal);
   if(proposal){setMessage('Сэйви: сохранить это в защищённой памяти?');return;}
@@ -16,16 +21,17 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
   setMessage(offlineFallback(plan)||'Эта возможность ещё не подключена. Я не буду изображать выполненное действие.');
  };
  const confirm=async()=>{
-  if(busy||!pending)return;
+  if(busy||savingRef.current||!pending)return;
+  savingRef.current=true;
   setBusy(true);
   try{
    const reply=await confirmMemorySave(pending);
    setPending(null);setInput('');setMessage(reply.message);onChange();
   }catch{setMessage('Сохранение не выполнено. Проверь SecureVault.');}
-  finally{setBusy(false);}
+  finally{savingRef.current=false;setBusy(false);}
  };
  const recall=async()=>{
-  if(busy)return;
+  if(busy||savingRef.current)return;
   setBusy(true);
   try{
    const reply=await recallPersonalNotes();
@@ -44,7 +50,7 @@ export function MemoryDiagnostic({onChange}:{onChange:()=>void}) {
   <TextInput multiline maxLength={4200} value={input} onChangeText={t=>{setInput(t);setPending(null);setMessage('');}}
    placeholder="Сэйви, запомни..." placeholderTextColor="#b0cfc5"
    style={{color:'#f3faf7',borderWidth:1,borderColor:'#3b625b',padding:12,minHeight:65,marginTop:12}}/>
-  {button('Подготовить запись',prepare,busy||!input.trim())}
+  {button('Спросить Сэйви',prepare,busy||!input.trim())}
   {pending?<View>
    <Text style={{color:'#f3faf7',marginTop:12}}>{pending.text}</Text>
    {button('Подтвердить сохранение',()=>{void confirm();},busy)}
