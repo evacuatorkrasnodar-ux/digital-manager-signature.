@@ -547,6 +547,18 @@ if(typeof ResizeObserver==='function'){
  // Only ↗, an explicit microphone action or sending a message opens chat.
 $('seyveoConversationBack').addEventListener('click',close);
 $('seyveoConversationHistory').addEventListener('click',()=>window.SEYVEO_CHAT_HISTORY?.open());
+// The approved private voice prepares audio on CPU before playback.
+// It must NEVER turn the normal Send button into Stop while generating.
+document.addEventListener('seyveo:voice-status',event=>{
+ if(!root.classList.contains('seyveo-conversation'))return;
+ const state=event.detail?.stage;
+ if(state==='preparing')status('Готовлю голос Сэйви…');
+ else if(state==='playing')status('Сэйви говорит');
+ else if(state==='idle')status('На связи');
+ else if(state==='error'){
+  status('Не удалось озвучить: '+String(event.detail?.message||'Ошибка'),5000);
+ }
+});
 document.addEventListener('seyveo:assistant-presence',e=>{
  const phase=e.detail?.phase;
  if(phase==='listening'){
