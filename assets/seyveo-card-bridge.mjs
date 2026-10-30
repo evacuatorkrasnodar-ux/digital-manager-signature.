@@ -50,10 +50,11 @@ function orderPreview(items){
    (rank[a.item.kind]??3)-(rank[b.item.kind]??3)||
    a.index-b.index).map(entry=>entry.item);
 }
+function history(){return [...cards.values()].flatMap(card=>card.history.map(step=>({eventId:card.eventId,cardType:card.cardType,title:card.title,from:step.from,to:step.to,at:step.at,reason:step.reason}))).sort((a,b)=>b.at.localeCompare(a.at));}
 function inspect(){return {cards:[...cards.values()].map(c=>({id:c.id,eventId:c.eventId,type:c.cardType,status:c.status,priority:c.priority})),trace:trace.slice()};}
 // The bridge never sends messages or signs documents. It only records the
 // outcome AFTER an external integration or explicit local demo confirms it.
-Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,openChat,complete,orderPreview,inspect}),writable:false,configurable:false});
+Object.defineProperty(window,'SEYVEO_CARD_LIFECYCLE',{value:Object.freeze({receive,advance,list,deferred,archive,postpone,resume,openChat,complete,orderPreview,history,inspect}),writable:false,configurable:false});
 log('ready','Card Engine bridge loaded; legacy cards untouched');
 
 // Non-invasive adapter for the existing Quiet Cinema demo mail card.
