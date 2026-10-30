@@ -1662,7 +1662,7 @@ function renderTasks(){
     const updated=state.tasks.map((item,j)=>j===i?{
      ...item,reviewStatus:accepted?'approved':'rework',done:accepted,
      reviewedAt:Date.now(),
-     ...(item.mailHistory?{mailHistory:[...item.mailHistory,{event:accepted?'approved':'rework',at:Date.now()}]}:{})
+     ...(item.mailHistory?{mailHistory:[...item.mailHistory,{event:accepted?'approved':'rework',at:Date.now(),actor:'manager'}]}:{})
     }:item);
     if(!save(TASK_KEY,updated))return;
     state.tasks=updated;renderTasks();
@@ -1927,7 +1927,7 @@ window.addEventListener('seyveo:employee-task-updated',()=>{
   const prior=state.tasks.find(t=>t.id===task.id);
   if(task.source!=='business-mail'||!prior||task.reviewStatus!=='review'||prior.reviewStatus==='review')return task;
   changed=true;
-  return {...task,mailHistory:[...(task.mailHistory||[]),{event:'review',at:Date.now()}]};
+  return {...task,mailHistory:[...(task.mailHistory||[]),{event:'review',at:Date.now(),actor:task.assigneeId,report:String(task.reportText||'').slice(0,350),photoSelected:!!task.photoSelected}]};
  });
  if(changed)save(TASK_KEY,updated);
  state.tasks=changed?updated:incoming;
