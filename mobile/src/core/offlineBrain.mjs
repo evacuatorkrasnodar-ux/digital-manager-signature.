@@ -5,7 +5,7 @@
 const SAFE=/заблуд|потерял[аи]?сь|потерялся|лес[еу]|поход|экстренн|перва[яй] помощ/iu;
 const NOTES=/заметк|блокнот|запиши|запомни|вспомни/iu;
 const NAV=/карт|маршрут|координат|ориентир|навигац/iu;
-const NEEDS_NETWORK=/курс валют|текущ(?:ая|ие|ий) новост|погод[аыу] сейчас|закажи|отправь сообщение|позвони через интернет/iu;
+const NEEDS_NETWORK=/курс валют|(?:текущ|последн|свеж|сегодняшн)[а-яё]*\s+(?:новост|погод|курс)|(?:погод|новост)[а-яё]*\s+(?:сейчас|сегодня)|закажи|отправь сообщение|позвони через интернет/iu;
 export function planOfflineReply(question,{online=false,modelReady=false,packs=[],deviceLocation=false}={}){
  if(typeof question!=='string'||!question.trim())throw Error('empty-question');
  const text=question.trim();
