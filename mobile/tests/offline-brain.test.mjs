@@ -33,3 +33,10 @@ test('local model requires verified installation and native probe',()=>{
  assert.equal(localModelReady({installed:true,integrityVerified:true,runtimeLoaded:true,probeSucceeded:true}),true);
  assert.equal(planOfflineReply('Расскажи историю',{modelReady:localModelReady({installed:true})}).route,'local-help');
 });
+
+test('fresh news and current exchange rates require live data',()=>{
+ for(const q of ['Последние новости','Какая погода сегодня','Текущий курс евро']){
+  const route=planOfflineReply(q,{modelReady:true,packs:['general']});
+  assert.equal(route.route,'network-required',q);
+ }
+});
