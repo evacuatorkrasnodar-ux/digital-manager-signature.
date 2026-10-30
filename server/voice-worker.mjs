@@ -69,8 +69,9 @@ export function createVoiceWorker({spawnChild=spawn,python=process.platform==='w
    const id=++serial;
    const timer=setTimeout(()=>{
     if(task?.id!==id)return;
+    const stalled=child;
     reset(new Error('Голосовой движок не ответил.'));
-    if(child)child.kill();
+    if(stalled)stalled.kill();
    },480000);
    task={id,resolve:resolveResult,reject:rejectResult,timer};
    child.stdin.write(JSON.stringify({id,text,output})+'\n',error=>{
