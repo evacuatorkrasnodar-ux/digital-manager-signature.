@@ -348,7 +348,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   // Explain why Sayvi surfaced the stored task; never mark it done.
   explain(field,shown.reason+' '+shown.detail,open);
  });
- const execute=polymer(real?'Продолжить дело':'Исполнить',()=>{
+ const execute=polymer(real&&primary.businessTask?'Проверить':real?'Продолжить дело':'Исполнить',()=>{
   if(workActive()){updateWork();return}
   if(mailActive()){
    if(mailStep==='draft'){mailStep='confirm';updateMail();return}
@@ -468,7 +468,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
   open.textContent=!real&&item.kind==='work'?'В чат':'Подробнее';
   open.setAttribute('aria-label',item.kind==='work'?'Открыть рабочий чат Елены':'Подробнее: '+item.title);
-  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+item.title);
+  execute.textContent=real&&item.businessTask?'Проверить':real?'Продолжить дело':'Исполнить';
+  execute.setAttribute('aria-label',(real&&item.businessTask?'Проверить: ':real?'Продолжить дело: ':'Исполнить: ')+item.title);
   const reason=field.querySelector('.lm-explanation');
   if(reason){reason.hidden=true;field.classList.remove('lm-has-reason')}
   open.setAttribute('aria-expanded','false');
