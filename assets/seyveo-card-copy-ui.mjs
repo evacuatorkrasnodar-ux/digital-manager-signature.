@@ -19,9 +19,17 @@ if(host){
   if(!data){prior?.remove();field?.querySelector('.sv-card-expand')?.remove();field?.classList.remove('sv-card-expanded');return;}
   // The work preview already shows Elena's message in its hero; no second text block.
   if(kind==='work'){prior?.remove();field.querySelector('.sv-card-expand')?.remove();field.classList.remove('sv-card-expanded');return;}
+  // A newly featured card starts compact; switching cards never keeps
+  // the previous card's expanded state.
+  if(field.dataset.svCopyKind!==kind){
+   field.dataset.svCopyKind=kind;
+   field.classList.remove('sv-card-expanded');
+   const oldToggle=field.querySelector('.sv-card-expand');
+   if(oldToggle){oldToggle.textContent='Развернуть';oldToggle.setAttribute('aria-expanded','false');}
+  }
   let toggle=field.querySelector('.sv-card-expand');
   if(!toggle){toggle=make('button','Развернуть');toggle.type='button';toggle.className='sv-card-expand';toggle.setAttribute('aria-expanded','false');toggle.addEventListener('click',()=>{const expanded=field.classList.toggle('sv-card-expanded');toggle.textContent=expanded?'Свернуть':'Развернуть';toggle.setAttribute('aria-expanded',String(expanded));});original.append(toggle);}
-  if(field.querySelector('textarea:not([hidden])')){field.classList.add('sv-card-expanded');toggle.textContent='Свернуть';toggle.setAttribute('aria-expanded','true');}
+  if(field.querySelector('.lm-mail-content:not([hidden]) textarea, .lm-document-content:not([hidden]) textarea')){field.classList.add('sv-card-expanded');toggle.textContent='Свернуть';toggle.setAttribute('aria-expanded','true');}
   if(prior?.dataset.kind===kind)return;
   prior?.remove();
   const guide=make('section','');guide.className='sv-copy-guide';guide.dataset.kind=kind;
