@@ -415,7 +415,11 @@ test('live web search endpoint returns real stub sources, keeps owner origin and
   assert.equal(result.status,'results');
   assert.equal(result.results.length,1);
   assert.equal(result.results[0].url,'https://example.org/article');
-  assert.deepEqual(calls,['Правда ли Маск сделал летающий автомобиль?']);
+  assert.deepEqual(calls,['Маск сделал летающий автомобиль']);
+  assert.equal(result.query,'Правда ли Маск сделал летающий автомобиль?');
+  assert.equal(result.research.category,'fact-check');
+  assert.equal(result.research.factChecked,false);
+  assert.equal(result.research.distinctDomains,1);
   const badOrigin=await request('/api/seyveo-live-search',{
    method:'POST',headers:{origin:'https://invalid.example','content-type':'application/json'},
    data:{message:'Новости'}
@@ -428,7 +432,7 @@ test('live web search endpoint returns real stub sources, keeps owner origin and
   });
   // Only the question is used, even when the request contains extra fields.
   assert.equal(withPrivate.status,200);
-  assert.deepEqual(calls,['Правда ли Маск сделал летающий автомобиль?','Новости']);
+  assert.deepEqual(calls,['Маск сделал летающий автомобиль','Новости']);
   const oversized=await request('/api/seyveo-live-search',{
    method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
    data:{message:'н'.repeat(601)}
