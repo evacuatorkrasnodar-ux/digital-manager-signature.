@@ -24,6 +24,7 @@ import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
 import {makeBraveSearchProvider,searchWithSources} from './live-search.mjs';
 import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
+import {composeEvidenceBrief} from './intelligence/evidence-brief.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -163,6 +164,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     const result=await searchWithSources(researchPlan.searchQuery,{search:liveSearch});
     const review=reviewPublicSources(researchPlan,result.results);
     send(res,200,{...result,query,results:review.results,
+     answer:composeEvidenceBrief({...review,category:researchPlan.category}).answer,
      research:{category:researchPlan.category,needsFreshness:researchPlan.needsFreshness,
       searchedOn:researchPlan.searchedOn,sourceCount:review.sourceCount,
       distinctDomains:review.distinctDomains,factChecked:false,
