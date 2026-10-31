@@ -30,7 +30,8 @@ const css={
  secondary:read('assets/sections-velvet.css'),
  smartHome:read('assets/seyveo-smart-home.css'),
  surfaces:read('assets/sayvi-surfaces.css'),
- home:read('assets/home-velvet.css')
+ home:read('assets/home-velvet.css'),
+ browser:read('assets/seyveo-browser.css')
 };
 const match=html.match(/data-theme-choice="([^"]+)"/g)||[];
 assert.deepEqual(match.map(x=>x.slice(19,-1)),['auto','graphite','light','dark','sapphire','plum'],
@@ -56,7 +57,11 @@ for(const choice of ['auto','graphite','light','dark','sapphire','plum']){
 assert.match(html,/--bg:#1c1b1a;--card:#282522;--card2:#302c28/,'Copper Dune matches the screenshot's warm graphite');
 assert.match(css.life,/--sv-life-dialog-bg:#1c1b1a;--sv-life-contacts-bg:#1c1b1a/,'Personal dialogs share the Connections near-black background');
 assert.match(css.music,/linear-gradient\(168deg,#24221f 0%,#201e1c 43%,#1c1b1a 100%\)/,'Music matches screenshot background without brown cast');
-assert.match(css.home,/--home-glass:rgba\(40,37,34,.85\)/,'Home cards follow the Connections material');
+assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet material follows the selected palette');
+assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
+assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
+assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
+assert.match(html,/assets\/seyveo-browser\.css\?v=40/,'Browser theme stylesheet is refreshed');
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
 assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
 for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Copper Dune'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
@@ -76,7 +81,7 @@ assert.match(html,/assets\/notebook-paper\.css\?v=14/);
 assert.match(html,/assets\/notebook-scan\.css\?v=8/);
 assert.match(html,/assets\/seyveo-smart-home\.css\?v=5/);
 assert.match(html,/assets\/sayvi-surfaces\.css\?v=7/);
-assert.match(html,/assets\/home-velvet\.css\?v=20/);
+assert.match(html,/assets\/home-velvet\.css\?v=23/);
 const refreshed={
  'composer-intent.css':22,
  'seyveo-music-dock.css':10,
