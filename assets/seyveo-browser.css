@@ -296,14 +296,77 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-tab-context button:disabled{opacity:.28}
 .sb-tab-context button:hover{color:#8bdab3}
 .sb-manager-select[aria-expanded="true"] .sb-tab-body strong{color:inherit}
-.sb-manager-closed{display:flex;flex-direction:column;border:1px solid rgba(100,155,126,.28);border-radius:16px;overflow:hidden;background:rgba(10,67,47,.16);padding:0 12px}
-.sb-manager-closed-row{display:flex;align-items:center;gap:12px;min-height:62px;border-bottom:1px solid rgba(135,172,150,.15)}
+/* Recently closed · slim unified glass rows, no remote icon requests */
+.sb-manager-closed{
+ display:flex;flex-direction:column;gap:0;
+ padding:0 14px;overflow:hidden;
+ border:1px solid rgba(109,165,131,.24);border-radius:17px;
+ background:linear-gradient(125deg,rgba(11,70,53,.19),rgba(7,35,31,.18));
+ box-shadow:inset 0 1px rgba(209,255,226,.04);
+}
+.sb-manager-closed-row{
+ display:flex;align-items:center;gap:12px;
+ min-height:69px;border-bottom:1px solid rgba(129,174,148,.15);
+}
 .sb-manager-closed-row:last-child{border-bottom:0}
-.sb-closed-icon{flex:none;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:rgba(95,155,121,.11);color:#a2ddbc;font-size:17px}
-.sb-manager-closed-row>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.sb-manager-closed-row strong{font-size:12px;line-height:1.25;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-manager-closed-row small{font-size:10px;opacity:.57}
-.sb-manager-closed-row button{min-width:34px;min-height:40px;font-size:22px;opacity:.78}
+.sb-closed-icon{
+ flex:none;display:grid;place-items:center;
+ width:37px;height:38px;border-radius:9px;
+ background:rgba(78,128,100,.13);color:#e1efe7;
+ font-size:21px;font-weight:450;line-height:1;
+}
+.sb-closed-icon-youtube{
+ background:#f52132;color:#fff;font-size:17px;
+ width:33px;height:25px;border-radius:7px;
+ margin-left:2px;margin-right:2px;
+}
+.sb-closed-icon-notion{
+ background:#fff;color:#0e1613;
+ border:2px solid #0e1613;outline:1px solid rgba(240,250,245,.45);
+ font:700 22px Georgia,serif;border-radius:3px;
+ width:31px;height:31px;margin-left:3px;margin-right:3px;
+ transform:rotate(-2deg);
+}
+.sb-closed-icon-airbnb{color:#f46c78;background:transparent;font-size:33px}
+.sb-closed-icon-yandex{background:#f4f6f3;color:#151a16;border-radius:50%;font-weight:700;font-size:23px}
+.sb-closed-icon-wikipedia{color:#f4f6f3;font:26px Georgia,serif;background:#101817}
+.sb-closed-content{
+ display:flex;flex:1;min-width:0;align-items:flex-start;justify-content:center;
+ flex-direction:column;gap:6px;
+ padding:9px 1px;text-align:left;
+ color:inherit;background:transparent;border:0;
+}
+.sb-closed-content strong{
+ display:block;width:100%;font-size:clamp(11.5px,2.7vw,13.5px);
+ font-weight:430;line-height:1.35;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sb-closed-content small{
+ display:block;max-width:100%;font-size:11px;
+ color:var(--secondary,#c5d4cb);opacity:.68;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sb-closed-restore{
+ display:grid;place-items:center;flex:none;
+ width:39px;min-height:43px;margin-right:-5px;
+ border:0;background:transparent;color:inherit;
+ font-size:25px;font-weight:300;opacity:.72;
+ transition:opacity .16s ease,transform .16s ease;
+}
+.sb-closed-restore:hover{opacity:1;transform:translateX(-2px)}
+.sb-closed-restore:focus-visible,.sb-closed-content:focus-visible{outline:1px solid var(--seyveo-emerald,#7ad6ab);outline-offset:-2px;border-radius:8px}
+.sb-closed-empty{
+ display:flex;align-items:center;gap:11px;
+ min-height:60px;padding:12px 1px;
+ font-size:12px;line-height:1.4;color:var(--secondary,#c0d2c7);opacity:.65;
+}
+.sb-closed-empty-icon{
+ display:grid;place-items:center;width:30px;height:30px;flex:none;
+ border:1px solid rgba(130,180,151,.25);border-radius:9px;
+ font-size:20px;
+}
+.sb-manager-heading [data-recent-all]{font-size:12px;opacity:.66}
+@media(prefers-reduced-motion:reduce){.sb-closed-restore{transition:none}}
 .sb-manager-empty,.sb-manager-collection-empty{font-size:12px;line-height:1.5;opacity:.57;padding:12px 4px;margin:0}
 .sb-manager-collections-heading{margin-top:27px}
 .sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
