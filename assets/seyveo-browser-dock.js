@@ -28,13 +28,15 @@ function init(){
   outer[1].setAttribute('aria-disabled',String(!s?.canForward));
   dock.setAttribute('aria-label','SEYVEO Browser · навигация, Сэйви и вкладки');
  }
+ function syncHeight(){document.body.style.setProperty('--seyveo-browser-dock-height',Math.ceil(dock.getBoundingClientRect().height)+'px')}
  function enter(){
+  syncHeight();
   if(active){draw();return}
   active=true;dock.classList.add('seyveo-browser-dock');draw();
  }
  function leave(){
   if(!active)return;
-  active=false;dock.classList.remove('seyveo-browser-dock');
+  active=false;dock.classList.remove('seyveo-browser-dock');document.body.style.removeProperty('--seyveo-browser-dock-height');
   for(const b of outer){delete b.dataset.svBrowserAction;delete b.dataset.svFixedAction;b.removeAttribute('aria-disabled')}
   document.dispatchEvent(new Event('seyveo:browser-dock-exit'));
   window.SEYVEO_MAGNETIC_INK?.refresh?.();
@@ -50,6 +52,7 @@ function init(){
   if((action==='back'||action==='forward')&&b.getAttribute('aria-disabled')==='true')return;
   window.SEYVEO_BROWSER?.[action]?.();
  },true);
+ window.addEventListener('resize',()=>{if(active)syncHeight()});
  document.addEventListener('seyveo:browser-open',refresh);
  document.addEventListener('seyveo:browser-close',refresh);
  document.addEventListener('seyveo:browser-state',()=>{if(active)draw()});
