@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=51/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=38/,'Browser context-aware Sayvi script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=52/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=39/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -72,7 +72,7 @@ assert.ok(css.browser.includes('scroll-snap-type:x mandatory'),'Recent browser t
 assert.ok(css.browser.includes('min-height:67px;height:67px'),'Recent tabs have compact height');
 assert.ok(!css.browser.includes('>.sb-home-recent-tabs{margin-top:auto'),'Recent tabs flow immediately after Continue Browsing');
 assert.ok(css.browser.includes('@media(max-width:600px)'),'iPhone portrait and Plus layouts share compact rhythm');
-assert.ok(css.browser.includes('.seyveo-browser-home{min-height:70px;max-height:80px}'),'Browser title space shrinks on iPhone');
+assert.ok(css.browser.includes('.seyveo-browser-home{min-height:62px;max-height:70px}'),'Browser title space shrinks below iPhone camera safe area');
 assert.ok(browserJS.includes('for(const entry of recentEntries)'),'All recent tabs appear in the swipe rail');
 assert.ok(browserJS.includes('data-open-tab-manager'),'Recent tabs expose Show All');
 assert.ok(browserJS.includes("managerSection='tabs';tabManager(true)"),'Show All opens existing tab manager');
@@ -83,14 +83,24 @@ assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:calc(25%
 assert.ok(css.browser.includes('grid-auto-columns:calc(25% - 4.5px)'),'Four tiles remain fully visible on narrow iPhones');
 assert.ok(!css.browser.includes('background:radial-gradient(ellipse 46% 48% at 50% 43%,var(--seyveo-hdr-active),transparent 85%)'),'Browser logo has no unintended light patch');
 assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick Access can reveal all original tiles');
-assert.ok(css.browser.includes('.seyveo-browser-bar{height:44px;min-height:44px;max-height:44px'),'Browser address bar has a 44px outer height');
-assert.ok(css.browser.includes('width:40px;height:40px;flex:none'),'QR scan fits the compact field');
+assert.ok(css.browser.includes('.seyveo-browser-bar{height:40px;min-height:40px;max-height:40px'),'Browser address bar has a 40px outer height');
+assert.ok(css.browser.includes('width:36px;height:36px;flex:none'),'QR scan fits the compact field');
 assert.ok(!css.browser.includes('.seyveo-browser-bar{min-height:58px;max-height:62px'),'Old Browser bar height does not override the compact field');
-assert.match(html,/assets\/seyveo-browser-dock\.js\?v=3/,'Browser dock uses original central Sayvi');
+assert.match(html,/assets\/seyveo-browser-dock\.js\?v=4/,'Browser dock uses original central Sayvi');
 assert.match(html,/assets\/living-conversation\.js\?v=33/,'Existing Feather Chat close hook loaded');
 const browserDockJS=read('assets/seyveo-browser-dock.js');
 const conversationJS=read('assets/living-conversation.js');
 assert.ok(browserDockJS.includes("event.target.closest?.('#assistantButton')"),'Original central Sayvi opens Browser assistant');
+assert.ok(!browserJS.includes('<header class="seyveo-browser-top">'),'Browser does not render a redundant top back arrow');
+assert.ok(browserJS.includes('function goToSeyveoHome()'),'Browser uses SEYVEO Home as the dock house destination');
+assert.ok(browserJS.includes("document.getElementById('navHome')?.click()"),'House uses existing SEYVEO Home navigation');
+assert.ok(browserJS.includes('home:goToSeyveoHome'),'House no longer resets the current browser tab');
+assert.ok(browserDockJS.includes("setButton(outer[2],'home','Главная SEYVEO')"),'Dock house is labeled for the real Home destination');
+assert.ok(browserJS.includes("root.addEventListener('touchstart'"),'Browser has an iPhone edge-return gesture');
+assert.ok(browserJS.includes("root.addEventListener('touchend'"),'Browser edge-return gesture has a safe completion');
+assert.ok(css.browser.includes('padding-top:max(env(safe-area-inset-top),12px)'),'Brand starts below the camera safe area');
+assert.ok(css.browser.includes('.seyveo-browser-bar input{font-size:16px}'),'iPhone search avoids keyboard auto-zoom');
+
 assert.ok(browserJS.includes('function askSayvi()'),'Browser hands off to existing Feather Chat');
 assert.ok(browserJS.includes('function resumeAfterSayvi()'),'Browser restores its own iframe after chat');
 assert.ok(browserJS.includes('suspendedForSayvi=true'),'Browser pauses instead of reloading the page');
