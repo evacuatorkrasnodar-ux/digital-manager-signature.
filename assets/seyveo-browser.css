@@ -276,7 +276,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 }
 
 /* SEYVEO Browser · Black Velvet tab overview. One shared native dock. */
-.seyveo-browser-manager[hidden],.sb-manager-tabs-panel[hidden],.sb-manager-secondary[hidden]{display:none!important}
+.seyveo-browser-manager[hidden],.sb-manager-switcher[hidden],.sb-manager-tabs-panel[hidden],.sb-manager-secondary[hidden]{display:none!important}
 /* The tabs screen stays in the SAME layout flow as the Browser start:
    one wordmark at the same coordinates, one active theme, no overlay header. */
 .seyveo-browser-manager{
@@ -294,12 +294,11 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser.is-managing>.seyveo-browser-tabs,
 .seyveo-browser.is-managing>.seyveo-browser-bottom,
 .seyveo-browser.is-managing>.seyveo-browser-sheet{display:none!important}
-/* Pure geometry: this unchanged switcher occupies the search field's exact slot.
-   Do not show an extra heading or change any of the four existing controls. */
-.sb-manager-top-heading{display:none}
+/* Same direct parent, flex order and size as the original Browser search bar.
+   This is the same existing four-button navigation, not four new tiles. */
 .sb-manager-switcher{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- height:40px;min-height:40px;margin-bottom:0;border-radius:22px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ width:100%;flex:none;height:40px;min-height:40px;max-height:40px;margin:0;border-radius:22px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
 }
 .sb-manager-switcher button{
  display:flex;justify-content:center;align-items:center;gap:5px;min-width:0;
@@ -314,7 +313,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-heading{
  margin:27px 3px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px
 }
-.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:20px}
+.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:4px}
 .sb-manager-heading strong{font-size:clamp(16px,3.7vw,19px);font-weight:450}
 .sb-manager-heading button{border:0;background:transparent;color:inherit;font-size:12px;opacity:.73}
 .sb-manager-heading-actions{display:flex;align-items:center;gap:12px}
@@ -507,7 +506,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-manager-heading{margin-top:20px}
 }
 @media(max-width:600px){
- .sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:10px}
+ .sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:4px}
 }
 @media(max-height:700px){.sb-manager-heading{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
