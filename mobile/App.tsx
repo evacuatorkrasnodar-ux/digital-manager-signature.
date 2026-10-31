@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, TextI
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MemoryDiagnostic } from './src/core/MemoryDiagnostic';
+import { OfflinePacksPanel } from './src/core/OfflinePacksPanel';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
 
@@ -136,6 +137,7 @@ function NativeFoundation() {
               </Pressable>
             </View>)}
           </View>:null}
+          <OfflinePacksPanel />
           <Text style={styles.footnote}>
             Календарь, Блокнот, резервные копии и голос будут подключаться
             после проверки безопасности. Никакой отправки личных данных в облако.
