@@ -51,69 +51,6 @@ header.innerHTML='<button type="button" id="seyveoConversationBack" aria-label="
  '<div class="seyveo-conversation-heading"><strong class="seyveo-conversation-name" aria-label="Сэйви"><span aria-hidden="true">С</span><span aria-hidden="true">э</span><span aria-hidden="true">й</span><span aria-hidden="true">в</span><span aria-hidden="true">и</span><span class="seyveo-name-dots" aria-hidden="true"><i></i><i></i><i></i></span></strong><span id="seyveoConversationStatus" role="status" aria-live="polite">На связи</span></div>'+
  '<button type="button" id="seyveoConversationHistory" aria-label="История бесед" title="История"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/></svg></button>';
 home.insertBefore(header,stage);
-// Search the existing conversation, without making a second message store.
-const searchToggle=document.createElement('button');
-searchToggle.type='button';
-searchToggle.id='seyveoConversationSearchToggle';
-searchToggle.title='Поиск в переписке';
-searchToggle.setAttribute('aria-label','Поиск в переписке');
-searchToggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.5 4.5"/></svg>';
-header.insertBefore(searchToggle,$('seyveoConversationHistory'));
-const searchBar=document.createElement('div');
-searchBar.id='seyveoConversationSearch';
-searchBar.className='seyveo-chat-search';
-searchBar.hidden=true;
-const searchInput=document.createElement('input');
-searchInput.type='search';searchInput.placeholder='Найти сообщение';
-searchInput.setAttribute('aria-label','Найти в переписке');
-searchInput.autocomplete='off';
-const searchCount=document.createElement('span');
-searchCount.className='seyveo-chat-search-count';
-const searchClose=document.createElement('button');
-searchClose.type='button';searchClose.textContent='Готово';
-searchClose.setAttribute('aria-label','Закрыть поиск');
-searchBar.append(searchInput,searchCount,searchClose);
-home.insertBefore(searchBar,stage);
-let searchMatches=[],searchIndex=0;
-function searchApply(){
- const query=searchInput.value.trim().toLocaleLowerCase('ru-RU');
- const rows=[...text.querySelectorAll('.seyveo-conversation-turn')];
- for(const row of rows)row.classList.remove('seyveo-search-hit');
- searchMatches=query?rows.filter(row=>row.querySelector('.seyveo-conversation-body')?.textContent.toLocaleLowerCase('ru-RU').includes(query)):[];
- searchIndex=0;
- searchCount.textContent=query?(searchMatches.length+' найдено'):'';
- if(searchMatches.length)searchJump();
-}
-function searchJump(){
- const row=searchMatches[searchIndex];
- if(!row)return;
- searchMatches.forEach(item=>item.classList.remove('seyveo-search-hit'));
- row.classList.add('seyveo-search-hit');
- row.scrollIntoView({block:'center',behavior:'smooth'});
- searchCount.textContent=(searchIndex+1)+' из '+searchMatches.length;
-}
-function searchClosePanel(){
- searchBar.hidden=true;searchInput.value='';searchApply();
- searchToggle.setAttribute('aria-expanded','false');
-}
-searchToggle.setAttribute('aria-expanded','false');
-searchToggle.setAttribute('aria-controls','seyveoConversationSearch');
-searchToggle.addEventListener('click',()=>{
- if(!searchBar.hidden){searchClosePanel();return;}
- searchBar.hidden=false;searchToggle.setAttribute('aria-expanded','true');
- searchInput.focus({preventScroll:true});searchApply();
-});
-searchClose.addEventListener('click',searchClosePanel);
-searchInput.addEventListener('input',searchApply);
-searchInput.addEventListener('keydown',event=>{
- if(event.key==='Escape'){searchClosePanel();return;}
- if(event.key!=='Enter'||!searchMatches.length)return;
- event.preventDefault();
- searchIndex=(searchIndex+(event.shiftKey?-1:1)+searchMatches.length)%searchMatches.length;
- searchJump();
-});
-
-
 function microphone(id){
  const button=document.createElement('button');
  button.id=id;
@@ -308,7 +245,6 @@ function open(){
  scrollToLatest();
 }
 function close(){
- searchClosePanel();
  if(activeAction)cancelAction();
  root.style.removeProperty('--sayvi-chat-height');
  root.style.removeProperty('--sayvi-chat-top');
@@ -558,7 +494,6 @@ function renderTurns(turns){
    nodes.push(welcome);
  }
  text.replaceChildren(...nodes);
- if(!searchBar.hidden)searchApply();
  if(atBottom||isNewTurn)scrollToLatest();
 }
 // One live stream inside the real Feather Chat.
