@@ -17,15 +17,15 @@ const LONG=/(?:подробно|развёрнуто|детально|пошаг
 export function localOptionsFor(message){
  const text=normalizeMessage(message);
  // Explicit brevity beats any complex-language heuristic.
- let num_predict=400;
- if(SHORT.test(text))num_predict=140;
- else if(LONG.test(text))num_predict=650;
- else if(text.length<100)num_predict=320;
+ let num_predict=850;
+ if(SHORT.test(text))num_predict=180;
+ else if(LONG.test(text))num_predict=1400;
+ else if(text.length<100)num_predict=600;
  const requestedThreads=Number(process.env.SEYVEO_LOCAL_THREADS);
  // Conservative starting point for a mixed P-core/E-core i5-12600K.
  // Tunable from start-real-seyveo.cmd; not a benchmark claim.
  const num_thread=Number.isInteger(requestedThreads)&&requestedThreads>=2&&requestedThreads<=16?requestedThreads:8;
- return Object.freeze({num_predict,num_ctx:2048,num_thread,temperature:0.5});
+ return Object.freeze({num_predict,num_ctx:4096,num_thread,temperature:0.5});
 }
 
 /** onDelta gets displayable text, never tool commands or model metadata. */
