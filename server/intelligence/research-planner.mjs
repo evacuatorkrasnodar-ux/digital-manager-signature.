@@ -27,7 +27,7 @@ export function planPublicResearch(question,{today=new Date().toISOString().slic
  const needsFreshness=['fact-check','news','shopping','legal'].includes(category);
  // Remove an assistant wake word and filler, but never make up missing subjects.
  const cleaned=original.replace(/^(?:с[эе]йви|с[эе]й)[,!\s]*/iu,'')
-  .replace(/^(?:а\s+)?(?:что\s+)?(?:правда\s+ли|а\s+правда\s+что)\s+/iu,'')
+  .replace(/^(?:а\s+)?(?:что\s+)?(?:правда(?:\s+ли|\s+что)?|неужели)\s+/iu,'')
   .trim().replace(/[?!.]+$/u,'').trim();
  const searchQuery=(cleaned||original).slice(0,600);
  const reviewRules=category==='fact-check'
