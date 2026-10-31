@@ -17,3 +17,15 @@ test('rejects unsafe sources and never invents content',async()=>{
 test('requires nonempty source title and excerpt',()=>{
  assert.deepEqual(validateLiveSearchResults([{title:'',snippet:'X',url:'https://example.org'}]),[]);
 });
+
+test('photos require explicit approval and a visible credit',()=>{
+ const base={title:'Материал',snippet:'Текст источника',url:'https://example.org/story',
+  imageUrl:'https://images.example.org/photo.jpg'};
+ const unapproved=validateLiveSearchResults([base])[0];
+ assert.equal(unapproved.imageUrl,null);
+ const withoutCredit=validateLiveSearchResults([{...base,imageApproved:true}])[0];
+ assert.equal(withoutCredit.imageUrl,null);
+ const approved=validateLiveSearchResults([{...base,imageApproved:true,imageCredit:'Фото: издатель'}])[0];
+ assert.equal(approved.imageUrl,'https://images.example.org/photo.jpg');
+ assert.equal(approved.imageCredit,'Фото: издатель');
+});
