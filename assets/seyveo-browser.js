@@ -795,6 +795,9 @@ function paintMagnet(y,bounds=magnetBounds()){
  const pos=magnetClamp(y,bounds.full,bounds.home);
  magneticCurrentY=pos;
  root.style.setProperty('--sb-magnet-y',pos+'px');
+ // Keep the entire tab rail (including close buttons and +) locked to the
+ // moving glass seam; its original normal position is the zero offset.
+ root.style.setProperty('--sb-magnet-tabs-shift',(pos-bounds.normal)+'px');
  const progress=magnetClamp((bounds.normal-pos)/Math.max(1,bounds.normal-bounds.full),0,1);
  const headerFull=window.matchMedia('(max-width:649px)').matches?62:70;
  const headerHeight=headerFull-(headerFull-22)*progress;
