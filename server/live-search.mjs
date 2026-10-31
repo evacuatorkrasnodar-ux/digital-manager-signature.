@@ -13,9 +13,11 @@ export function validateLiveSearchResults(raw){
   const title=String(item.title||'').trim().slice(0,180);
   const snippet=String(item.snippet||'').trim().slice(0,600);
   if(!title||!snippet)return [];
-  const imageUrl=item.imageUrl?safeUrl(item.imageUrl):null;
+  // Do not display third-party images unless the provider confirms permitted use and attribution.
+  const imageCredit=typeof item.imageCredit==='string'?item.imageCredit.trim().slice(0,110):'';
+  const imageUrl=item.imageApproved===true&&imageCredit?safeUrl(item.imageUrl):null;
   const publishedAt=typeof item.publishedAt==='string'&&/^\d{4}-\d{2}-\d{2}/.test(item.publishedAt)?item.publishedAt.slice(0,10):null;
-  return [{title,snippet,url,imageUrl,publishedAt}];
+  return [{title,snippet,url,imageUrl,imageApproved:!!imageUrl,imageCredit:imageUrl?imageCredit:'',publishedAt}];
  });
 }
 export async function searchWithSources(question,{search}={}){
