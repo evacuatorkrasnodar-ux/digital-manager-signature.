@@ -283,21 +283,23 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  position:relative;inset:auto;z-index:5;
  flex:1;min-width:0;min-height:0;width:100%;
  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;
- padding:12px 2px 24px;
+ padding:0 0 24px;
  color:var(--text,#edf5ef);
  background:transparent;
 }
 .seyveo-browser-manager::-webkit-scrollbar{display:none}
+.seyveo-browser.is-managing>.seyveo-browser-bar,
 .seyveo-browser.is-managing>.seyveo-browser-start,
 .seyveo-browser.is-managing>.seyveo-browser-content,
 .seyveo-browser.is-managing>.seyveo-browser-tabs,
 .seyveo-browser.is-managing>.seyveo-browser-bottom,
 .seyveo-browser.is-managing>.seyveo-browser-sheet{display:none!important}
-/* Keep the four original tab buttons, simply reserve the same visual slot as Quick Access. */
-.sb-manager-top-heading{margin-bottom:10px}
+/* Pure geometry: this unchanged switcher occupies the search field's exact slot.
+   Do not show an extra heading or change any of the four existing controls. */
+.sb-manager-top-heading{display:none}
 .sb-manager-switcher{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- height:40px;min-height:40px;margin-bottom:51px;border-radius:22px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ height:40px;min-height:40px;margin-bottom:0;border-radius:22px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
 }
 .sb-manager-switcher button{
  display:flex;justify-content:center;align-items:center;gap:5px;min-width:0;
@@ -312,7 +314,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-heading{
  margin:27px 3px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px
 }
-.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:17px}
+.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:20px}
 .sb-manager-heading strong{font-size:clamp(16px,3.7vw,19px);font-weight:450}
 .sb-manager-heading button{border:0;background:transparent;color:inherit;font-size:12px;opacity:.73}
 .sb-manager-heading-actions{display:flex;align-items:center;gap:12px}
@@ -505,13 +507,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-manager-heading{margin-top:20px}
 }
 @media(max-width:600px){
- .seyveo-browser-manager{padding-top:4px}
- .sb-manager-top-heading{margin-bottom:7px}
- .sb-manager-switcher{margin-bottom:36px}
- .sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:11px}
-}
-@media(max-width:380px){
- .sb-manager-switcher{margin-bottom:33px}
+ .sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:10px}
 }
 @media(max-height:700px){.sb-manager-heading{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
