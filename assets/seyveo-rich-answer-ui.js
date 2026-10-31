@@ -29,7 +29,9 @@ function cleanBlocks(value){
   }
   if(block.type==='bars'){
    const values=Array.isArray(block.items)?block.items.slice(0,8).flatMap(item=>{
-    const value=Number(item?.value),label=short(item?.label,60);
+    const raw=item?.value;
+    if(typeof raw!=='number')return [];
+    const value=raw,label=short(item?.label,60);
     return label&&Number.isFinite(value)&&value>=0&&value<=1e12?[{label,value}]:[];
    }):[];
    if(!values.length)return [];
