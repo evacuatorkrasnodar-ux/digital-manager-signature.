@@ -39,3 +39,9 @@
 .seyveo-browser-bottom button{border-radius:12px}
 .seyveo-browser-bottom button:active{background:rgba(117,197,150,.12)}
 @media(prefers-reduced-motion:reduce){.seyveo-browser-shortcuts button{transition:none}}
+
+/* Browser uses the actual SEYVEO dock, not a second footer. */
+.seyveo-browser-bottom{display:none!important}
+body.seyveo-browser-open .seyveo-browser{bottom:60px;padding-bottom:8px}
+body.seyveo-browser-open footer.dock{z-index:2147483001!important;position:fixed!important;bottom:0!important}
+body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
