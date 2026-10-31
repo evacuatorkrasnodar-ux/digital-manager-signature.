@@ -26,7 +26,12 @@ const sectionPaths={
 };
 let managerSection='tabs';
 for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
-manager.prepend(switcher);
+// Match the first screen's heading and four quick-access tiles in the
+// exact same vertical slot. The real search bar and wordmark remain shared.
+const managerHeading=document.createElement('div');
+managerHeading.className='seyveo-browser-start-heading sb-manager-top-heading';
+managerHeading.innerHTML='<span>Разделы</span>';
+manager.prepend(managerHeading,switcher);
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
 while(switcher.nextSibling)tabsPanel.append(switcher.nextSibling);
 manager.append(tabsPanel);
@@ -560,7 +565,7 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
-$('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}navigate(url)});
+$('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
