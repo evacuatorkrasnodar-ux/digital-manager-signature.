@@ -235,3 +235,26 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-secondary h3{font-size:18px;font-weight:450;margin:0 0 7px}
 @media(max-width:370px){.sb-manager-switcher button{padding:11px 1px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button{transition:none}}
+
+.seyveo-browser-manager{padding:0 13px 18px;background:var(--bg,#0d1714)}
+.sb-manager-nav{height:135px;position:relative;display:flex;align-items:center;justify-content:center}
+.sb-manager-brand{display:flex;flex-direction:column;align-items:center;gap:6px}
+.sb-manager-brand span{font-size:32px;letter-spacing:.28em;font-weight:300}
+.sb-manager-brand small{font-size:14px;letter-spacing:.43em;opacity:.65}
+.sb-manager-nav>[data-manager-back]{position:absolute;left:0;top:14px;width:36px;height:36px;font-size:24px}
+.sb-manager-nav-spacer{display:none}
+.sb-manager-switcher{min-height:62px;border-radius:24px;background:rgba(10,72,48,.2)}
+.sb-manager-switcher button{display:flex;justify-content:center;align-items:center;gap:5px;font-size:11px;padding:8px 2px;border-radius:23px}
+.sb-switch-icon{font-size:17px}
+.sb-manager-heading{margin:24px 2px 12px}
+.sb-manager-heading-actions{display:flex;align-items:center;gap:9px}
+.sb-manager-heading-actions [data-manager-new]{font-size:23px}
+.sb-manager-card{min-height:100px;border-radius:16px;background:rgba(13,65,44,.18)}
+.sb-manager-card.is-current{background:rgba(17,86,54,.22)}
+.sb-manager-site-icon{width:63px;height:68px;border-radius:13px}
+.sb-manager-site-icon.sb-manager-youtube{color:#ef4b56}
+.sb-manager-card.is-current .sb-manager-select small{color:#71d5a7;opacity:1}
+.sb-manager-closed{gap:0;padding:0 12px;border:1px solid rgba(94,158,125,.22);border-radius:16px;background:rgba(18,75,50,.12)}
+.sb-manager-closed .sb-manager-restore{border:0!important;border-bottom:1px solid rgba(112,158,128,.15)!important;border-radius:0;background:transparent!important}
+.sb-manager-closed .sb-manager-restore:last-child{border-bottom:0!important}
+@media(max-width:390px){.sb-manager-nav{height:110px}.sb-manager-switcher{min-height:55px}.sb-manager-switcher button{font-size:9px}.sb-manager-site-icon{width:52px;height:60px}}
