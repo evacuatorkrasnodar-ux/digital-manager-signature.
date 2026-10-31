@@ -45,3 +45,28 @@
 body.seyveo-browser-open .seyveo-browser{bottom:60px;padding-bottom:8px}
 body.seyveo-browser-open footer.dock{z-index:2147483001!important;position:fixed!important;bottom:0!important}
 body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
+
+/* Browser start · refined native SEYVEO surface */
+.seyveo-browser-top strong{letter-spacing:.13em}
+.seyveo-browser-home{flex:0 1 auto;min-height:130px;max-height:175px;padding:10px 0 4px}
+.seyveo-browser-home h2{font-size:32px;letter-spacing:.12em;font-weight:350;margin:5px 0 8px}
+.seyveo-browser-home p{font-size:12px;opacity:.65}
+.seyveo-browser-start{overflow-y:auto;scrollbar-width:none;min-height:90px;padding-top:18px}
+.seyveo-browser-start::-webkit-scrollbar{display:none}
+.seyveo-browser-shortcuts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:93px;line-height:1.1}
+.seyveo-browser-shortcuts button::before{display:none}
+.seyveo-browser-shortcuts button span:not(.sb-site-mark){font-size:11px}
+.seyveo-browser-shortcuts button small{font-size:9px;opacity:.48;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-site-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;font-weight:650;font-size:19px;background:rgba(120,147,133,.13);color:inherit}
+.sb-yandex{background:#f5f6f3;color:#1c211f;border-radius:50%;font-size:22px}
+.sb-youtube{background:#e92b36;color:white;font-size:14px}
+.sb-wiki{font-family:Georgia,serif;font-size:23px}
+.sb-saved{color:#77c8a0;font-size:23px}
+.seyveo-browser-recent{margin-top:25px}
+.seyveo-browser-recent [data-recent-tabs]{display:grid;gap:7px}
+.seyveo-browser-recent-item{display:flex;align-items:flex-start;justify-content:center;flex-direction:column;text-align:left;gap:6px;padding:12px 15px!important;min-height:62px;border:1px solid rgba(125,159,142,.18)!important;border-radius:15px;background:rgba(125,159,142,.045)!important}
+.seyveo-browser-recent-item strong{font-size:12px;font-weight:500}
+.seyveo-browser-recent-item small,.seyveo-browser-recent-empty{font-size:11px;opacity:.55}
+.seyveo-browser-recent-empty{padding:12px 3px}
+body.seyveo-browser-open .seyveo-browser{padding-bottom:6px}
+@media(max-height:730px){.seyveo-browser-home{min-height:85px;max-height:115px}.seyveo-browser-shortcuts button{min-height:77px}.seyveo-browser-recent{margin-top:14px}}
