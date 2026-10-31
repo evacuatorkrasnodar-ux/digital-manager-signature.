@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="941" height="1672" viewBox="0 0 941 1672" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#073c30"/><stop offset=".27" stop-color="#031611"/><stop offset=".64" stop-color="#020e0d"/><stop offset="1" stop-color="#010707"/></linearGradient>
+<radialGradient id="bloom" cx="0" cy=".06" r=".85"><stop stop-color="#00bb83" stop-opacity=".6"/><stop offset=".23" stop-color="#008c75" stop-opacity=".22"/><stop offset=".76" stop-color="#002c25" stop-opacity="0"/></radialGradient>
+<linearGradient id="blade" x1="0" y1="0" x2="1" y2=".25"><stop stop-color="#2ef9ce" stop-opacity=".51"/><stop offset=".08" stop-color="#00ab87" stop-opacity=".2"/><stop offset=".68" stop-color="#053c34" stop-opacity=".11"/><stop offset="1" stop-color="#02130f" stop-opacity="0"/></linearGradient>
+<linearGradient id="line" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#75ffe3" stop-opacity=".88"/><stop offset=".3" stop-color="#08b68e" stop-opacity=".37"/><stop offset="1" stop-color="#00b28c" stop-opacity=".24"/></linearGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="22"/></filter>
+<filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<rect width="941" height="1672" fill="url(#bg)"/>
+<ellipse cx="-28" cy="75" rx="610" ry="450" fill="url(#bloom)" filter="url(#blur)"/>
+<path d="M-120 30 L985 1050 L945 1545 L-130 440 Z" fill="url(#blade)" opacity=".74"/>
+<path d="M-90 180 L920 1220 L1040 1560 L-125 525 Z" fill="#06715d" opacity=".09"/>
+<path d="M-80 265 Q290 500 495 830 T994 1520" fill="none" stroke="#1bffc8" stroke-width="24" opacity=".10" filter="url(#blur)"/>
+<path d="M-95 88 L996 1221" fill="none" stroke="#2fe9bd" stroke-width="18" opacity=".15" filter="url(#soft)"/>
+<path d="M-95 88 L996 1221" fill="none" stroke="url(#line)" stroke-width="1.6" opacity=".77"/>
+<path d="M-70 126 L923 1140" fill="none" stroke="#30bda6" stroke-width=".8" opacity=".35"/>
+<path d="M-90 353 Q145 556 298 712 Q560 960 977 1508" fill="none" stroke="#00d4ab" stroke-width="1.1" opacity=".5"/>
+<path d="M-70 402 Q120 563 329 770 T1008 1459" fill="none" stroke="#49ffe1" stroke-width="1" opacity=".53"/>
+<path d="M-135 420 Q345 1018 822 1354 L1040 1517" fill="none" stroke="#00b997" stroke-width="45" opacity=".075" filter="url(#blur)"/>
+<path d="M-120 570 Q262 860 620 1005 Q790 1090 1030 1173 L1030 1310 Q564 1120 -110 602Z" fill="#197e6a" opacity=".10"/>
+<path d="M-80 559 Q450 969 973 1118" fill="none" stroke="#32cfae" stroke-width=".9" opacity=".24"/>
+<path d="M-80 780 L975 1610" fill="none" stroke="#008b76" stroke-width=".8" opacity=".17"/>
+<rect width="941" height="1672" fill="#010909" opacity=".18"/>
+</svg>
