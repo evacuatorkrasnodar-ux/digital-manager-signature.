@@ -369,13 +369,61 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(prefers-reduced-motion:reduce){.sb-closed-restore{transition:none}}
 .sb-manager-empty,.sb-manager-collection-empty{font-size:12px;line-height:1.5;opacity:.57;padding:12px 4px;margin:0}
 .sb-manager-collections-heading{margin-top:27px}
-.sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.sb-manager-collection-tile{min-width:0;min-height:77px;padding:10px;display:flex;align-items:center;gap:9px;text-align:left;border:1px solid rgba(108,166,136,.25);border-radius:17px;background:rgba(13,69,48,.18)}
-.sb-collection-art{display:grid;place-items:center;flex:none;width:41px;height:48px;border-radius:11px;background:linear-gradient(120deg,rgba(22,150,108,.35),rgba(15,74,62,.25));color:#93e4be;font-size:27px}
-.sb-manager-collection-tile>span:last-child{display:flex;flex-direction:column;gap:6px;min-width:0}
-.sb-manager-collection-tile strong{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-manager-collection-tile small{font-size:10px;opacity:.57}
-.sb-manager-collection-empty{grid-column:1/-1;padding:16px 8px;border:1px solid rgba(108,166,136,.18);border-radius:15px}
+
+/* SEYVEO Collections: two miniature smart-glass cards, matching the approved layout. */
+.sb-manager-collections-heading{margin-top:24px;margin-bottom:11px}
+.sb-manager-collections-heading [data-collection-new]{font-size:12px;font-weight:400;letter-spacing:0;opacity:.76}
+.sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:10px}
+.sb-manager-collection-tile{
+ min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;
+ border-radius:17px;border:1px solid rgba(109,165,135,.28);
+ background:linear-gradient(135deg,rgba(12,76,56,.24),rgba(11,38,35,.22));
+ box-shadow:inset 0 1px rgba(215,255,227,.04);
+ overflow:hidden;
+}
+.sb-manager-collection-tile.is-menu-open{border-color:rgba(96,187,143,.42)}
+.sb-collection-open{min-width:0;min-height:95px;display:flex;align-items:center;gap:10px;text-align:left;padding:9px 2px 9px 10px;background:transparent;color:inherit;border:0}
+.sb-collection-cover{
+ display:block;flex:none;width:clamp(42px,10.5vw,57px);height:clamp(52px,12vw,63px);
+ border-radius:11px;overflow:hidden;
+ background:linear-gradient(140deg,#133a34,#08221c);
+ border:1px solid rgba(139,193,159,.15);
+ box-shadow:0 2px 12px rgba(0,0,0,.19);
+}
+.sb-collection-cover svg{display:block;width:100%;height:100%;object-fit:cover}
+.sb-collection-summary{display:flex;min-width:0;flex:1;flex-direction:column;gap:7px}
+.sb-collection-summary strong{font-size:clamp(11px,2.55vw,13px);line-height:1.2;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sb-collection-summary small{color:var(--secondary,#ccdad0);font-size:clamp(10px,2.1vw,11px);line-height:1.25;opacity:.7;white-space:nowrap}
+.sb-collection-more{
+ display:flex;align-self:stretch;align-items:center;justify-content:center;
+ width:28px;padding:0 0 2px;border:0;background:transparent;
+ color:inherit;font-size:23px;line-height:1;opacity:.82;
+}
+.sb-collection-more[aria-expanded="true"]{color:#81d5a8;opacity:1}
+.sb-collection-more:hover{opacity:1}
+.sb-collection-quick-actions{
+ grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;
+ padding:9px 11px;border-top:1px solid rgba(130,172,143,.15);animation:sb-collection-appear .18s ease-out;
+}
+.sb-collection-quick-actions>button,.sb-collection-rename-form button{font-size:11px;line-height:1.2;padding:7px 2px;background:transparent;color:inherit;border:0;opacity:.85}
+.sb-collection-quick-actions button:hover{opacity:1;color:#94dbb5}
+.sb-collection-confirm-label{font-size:11px;opacity:.78}
+.sb-collection-rename-form{display:flex;align-items:center;flex-wrap:wrap;gap:7px;width:100%}
+.sb-collection-rename-form input{flex:1;min-width:80px;max-width:100%;padding:6px;background:rgba(58,113,82,.13);color:inherit;border:1px solid rgba(112,174,136,.32);border-radius:7px;font:inherit;font-size:12px}
+.sb-collection-rename-form button{flex:none}
+.sb-manager-collection-empty{grid-column:1/-1;min-height:75px;display:flex;align-items:center;padding:16px;border:1px solid rgba(108,166,136,.20);border-radius:16px;font-size:12px;line-height:1.5;opacity:.68;background:rgba(15,76,53,.12)}
+@keyframes sb-collection-appear{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:390px){
+ .sb-manager-collections-list{gap:7px}
+ .sb-collection-open{min-height:78px;gap:6px;padding:7px 0 7px 6px}
+ .sb-collection-cover{width:36px;height:49px;border-radius:8px}
+ .sb-manager-collection-tile{grid-template-columns:minmax(0,1fr) 22px;border-radius:13px}
+ .sb-collection-more{width:22px;font-size:19px}
+ .sb-collection-summary{gap:5px}
+ .sb-collection-summary strong{font-size:10.5px}
+ .sb-collection-summary small{font-size:9.5px}
+}
+@media(prefers-reduced-motion:reduce){.sb-collection-quick-actions{animation:none}}
 .sb-manager-secondary{display:grid;gap:10px;padding:24px 1px 10px}
 .sb-secondary-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sb-secondary-header h3{font-size:19px;font-weight:450;margin:0}
