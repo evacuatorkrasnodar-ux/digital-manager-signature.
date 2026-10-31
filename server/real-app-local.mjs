@@ -142,6 +142,12 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    if(query.length>600||query.trim().split(/\s+/).length>75){
     send(res,400,{error:'Сократи вопрос для поиска.'});return;
    }
+   // Defense in depth: refuse obviously private material even if a client
+   // bypasses the browser's public-question classifier.
+   if(/(?:мои|моё|моя|мой заказ|наш заказ|моих|личн(?:ый|ые|ая)|парол|паспорт|переписк|зарплат|договор|сотрудник|клиент|банковск|медицинск|здоровь|диагноз)/i.test(query)){
+    send(res,400,{error:'Этот вопрос содержит личный контекст. Внешний поиск не запускался.'});
+    return;
+   }
    searchCount++;
    if(!liveSearch){
     send(res,200,{status:'unavailable',query,results:[],message:'Живой поиск ещё не подключён: нужен ключ провайдера на сервере.'});
