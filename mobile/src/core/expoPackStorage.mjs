@@ -41,7 +41,7 @@ export function createExpoPackStorage(){
    const m=validatePackManifest(input);
    if(!await this.verify(m))throw Error('pack-integrity-failed');
    if(pack(m.id).exists)throw Error('pack-already-installed');
-   temp(m.id).move(pack(m.id));
+   await temp(m.id).move(pack(m.id));
    await record(m.id).write(JSON.stringify(m));
   },
   async discard(id){guard(id);if(temp(id).exists)temp(id).delete()},
