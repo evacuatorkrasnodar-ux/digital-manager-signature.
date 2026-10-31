@@ -22,11 +22,6 @@
  }
  function start(question){
   if(!isSearchQuestion(question))return false;
-  if(!userAllowedSearch()){
-   window.SEYVEO_CONVERSATION?.showSearchResults?.({query:question,status:'unavailable',
-    message:'Интернет-поиск не запущен без разрешения. Можно разрешить поиск при следующем запросе.'});
-   return true;
-  }
   if(active)return true;
   const conversation=window.SEYVEO_CONVERSATION;
   if(!conversation?.beginStream||!conversation?.showSearchResults)return false;
@@ -43,6 +38,21 @@
   conversation.updateStream?.('Сэйви проверяет информацию в интернете…');
   (async()=>{
    try{
+    const check=await fetch('/api/seyveo-live-search-status',{
+     credentials:'same-origin',signal:controller.signal});
+    if(!check.ok)throw Error('search-status-unavailable');
+    const state=await check.json();
+    if(controller.signal.aborted)return;
+    if(state.configured!==true){
+     conversation.showSearchResults({query:question,status:'unavailable',results:[],
+      message:'Поисковик Brave пока не подключён. Нужен API-ключ на сервере.'});
+     return;
+    }
+    if(!userAllowedSearch()){
+     conversation.showSearchResults({query:question,status:'unavailable',results:[],
+      message:'Поиск не запущен без разрешения.'});
+     return;
+    }
     const response=await fetch('/api/seyveo-live-search',{
      method:'POST',credentials:'same-origin',
      headers:{'content-type':'application/json'},
