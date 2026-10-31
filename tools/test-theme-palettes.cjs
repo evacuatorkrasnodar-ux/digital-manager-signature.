@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=49/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=50/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=38/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -79,8 +79,9 @@ assert.ok(browserJS.includes("managerSection='tabs';tabManager(true)"),'Show All
 assert.ok(css.browser.includes('flex:0 0 calc((100% - var(--sb-recent-gap)) / 2)'),'Recent cards fit two across');
 assert.ok(!css.browser.includes('flex-basis:57%'),'Small screens retain exactly two full-width cards');
 assert.ok(browserJS.includes('function paintSiteMark('),'Browser icons use one shared vector renderer');
-assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:clamp(104px,26vw,128px)'),'Quick Access is horizontally swipeable without tile redesign');
-assert.ok(css.browser.includes('background:radial-gradient(ellipse 46% 48% at 50% 43%,var(--seyveo-hdr-active),transparent 85%)'),'Browser title uses theme-aware ambient glow only');
+assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:calc(25% - 6px)'),'Four Quick Access tiles fit the iPhone viewport and still scroll for additional tiles');
+assert.ok(css.browser.includes('grid-auto-columns:calc(25% - 4.5px)'),'Four tiles remain fully visible on narrow iPhones');
+assert.ok(!css.browser.includes('background:radial-gradient(ellipse 46% 48% at 50% 43%,var(--seyveo-hdr-active),transparent 85%)'),'Browser logo has no unintended light patch');
 assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick Access can reveal all original tiles');
 assert.ok(css.browser.includes('.seyveo-browser-bar{height:54px;min-height:54px;max-height:54px'),'iPhone Browser address bar height is exactly 54px');
 assert.match(html,/assets\/seyveo-browser-dock\.js\?v=3/,'Browser dock uses original central Sayvi');
