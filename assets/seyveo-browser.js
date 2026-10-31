@@ -42,7 +42,7 @@ let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCol
 const key='seyveo-browser-bookmarks-v1';
 const collectionsKey='seyveo-browser-collections-v1';
 const sessionKey='seyveo-browser-session-v1';
-function restoreSession(){try{const s=JSON.parse(localStorage.getItem(sessionKey)||'null');if(!s||!Array.isArray(s.tabs))return;const items=s.tabs.slice(0,20).filter(t=>t&&Number.isInteger(t.id)&&Array.isArray(t.entries)).map(t=>{const entries=t.entries.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,40);return{id:t.id,entries,position:Math.max(-1,Math.min(Number.isInteger(t.position)?t.position:-1,entries.length-1))}});if(items.length){tabs=items;active=tabs.some(t=>t.id===s.active)?s.active:tabs[0].id;nextId=Math.max(...tabs.map(t=>t.id),0)+1}if(Array.isArray(s.closed))recentlyClosed=s.closed.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,25)}catch{}}
+function restoreSession(){try{const s=JSON.parse(localStorage.getItem(sessionKey)||'null');if(!s||!Array.isArray(s.tabs))return;const items=s.tabs.slice(0,20).filter(t=>t&&Number.isInteger(t.id)&&Array.isArray(t.entries)).map(t=>{const entries=t.entries.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,40);return{id:t.id,entries,position:Math.max(-1,Math.min(Number.isInteger(t.position)?t.position:-1,entries.length-1))}});if(items.length){tabs=items;active=tabs.some(t=>t.id===s.active)?s.active:tabs[0].id;nextId=Math.max(...tabs.map(t=>t.id),0)+1}if(Array.isArray(s.closed))recentlyClosed=s.closed.map(normalizeClosed).filter(Boolean).slice(0,25)}catch{}}
 function persistSession(){try{localStorage.setItem(sessionKey,JSON.stringify({tabs,active,closed:recentlyClosed}))}catch{}}
 
 let showAllHistory=false;
@@ -59,7 +59,43 @@ function store(a){try{localStorage.setItem(key,JSON.stringify(a.slice(0,60)))}ca
 function getCollections(){try{const data=JSON.parse(localStorage.getItem(collectionsKey)||'[]');return Array.isArray(data)?data.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.urls)).slice(0,30).map(x=>({id:x.id,name:x.name.slice(0,42),urls:x.urls.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,100)})):[]}catch{return []}}
 function putCollections(items){try{localStorage.setItem(collectionsKey,JSON.stringify(items.slice(0,30)))}catch{}}
 function makeCollection(){managerSection='collections';creatingCollection=true;renderManager();secondary.querySelector('.sb-collection-name')?.focus()}
-function saveClosed(url){if(!url)return;recentlyClosed=[url,...recentlyClosed.filter(x=>x!==url)].slice(0,25)}
+function normalizeClosed(item){
+ const url=typeof item==='string'?item:item&&typeof item.url==='string'?item.url:null;
+ if(!url||!secureUrl(url))return null;
+ const at=typeof item==='object'&&item&&Number.isFinite(item.closedAt)&&item.closedAt>0&&item.closedAt<=Date.now()?item.closedAt:null;
+ return {url,closedAt:at};
+}
+function saveClosed(url){
+ if(!url||!secureUrl(url))return;
+ recentlyClosed=[{url,closedAt:Date.now()},...recentlyClosed.filter(item=>item.url!==url)].slice(0,25);
+}
+function closedAge(at){
+ if(!at)return 'закрыта ранее';
+ const minutes=Math.max(0,Math.floor((Date.now()-at)/60000));
+ if(minutes<1)return 'только что';
+ if(minutes<60)return minutes+' мин. назад';
+ const hours=Math.floor(minutes/60);
+ if(hours<24)return hours+' ч. назад';
+ const days=Math.floor(hours/24);
+ return days+' дн. назад';
+}
+function closedLabel(url){
+ const host=new URL(url).hostname.toLowerCase();
+ if(host==='www.youtube.com'||host==='youtube.com'||host==='m.youtube.com')return 'YouTube — видео';
+ if(host==='notion.so'||host==='www.notion.so'||host==='notion.com'||host==='www.notion.com')return 'Notion — заметки и проекты';
+ if(host==='airbnb.com'||host==='www.airbnb.com'||host.startsWith('airbnb.'))return 'Airbnb — путешествия';
+ if(host==='ya.ru'||host==='yandex.ru'||host==='www.yandex.ru')return 'Яндекс — поиск';
+ return siteName(url);
+}
+function closedBrand(url){
+ const host=new URL(url).hostname.toLowerCase();
+ if(host.includes('youtube.com')||host==='youtu.be')return ['youtube','▶'];
+ if(host==='notion.so'||host.endsWith('.notion.so')||host==='notion.com')return ['notion','N'];
+ if(host.includes('airbnb.'))return ['airbnb','♧'];
+ if(host==='ya.ru'||host.includes('yandex.'))return ['yandex','Я'];
+ if(host.includes('wikipedia.org'))return ['wikipedia','W'];
+ return ['default','◎'];
+}
 function siteName(url){const host=new URL(url).hostname.replace(/^www\./,'');return host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host}
 function siteSymbol(url){const host=new URL(url).hostname;return host.includes('youtube')?'▶':host.includes('wikipedia')?'W':host.includes('yandex')||host.includes('ya.ru')?'Я':'◇'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
@@ -114,9 +150,30 @@ function renderManager(){
   setTabDetails(item,managerMenuId===t.id);
   list.append(item);
  }
- const recentHeading=manager.querySelector('[data-recent-all]');recentHeading.hidden=recentlyClosed.length<=3;recentHeading.textContent=allClosedShown?'Свернуть':'Показать все ›';
- if(!recentlyClosed.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Закрытые страницы появятся здесь';closed.append(hint)}
- for(const url of (allClosedShown?recentlyClosed:recentlyClosed.slice(0,3))){const row=document.createElement('div');row.className='sb-manager-closed-row';const icon=document.createElement('span');icon.className='sb-closed-icon';icon.textContent=siteSymbol(url);const body=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');body.append(title,sub);const restore=document.createElement('button');restore.type='button';restore.textContent='↶';restore.setAttribute('aria-label','Восстановить '+siteName(url));restore.addEventListener('click',()=>{recentlyClosed=recentlyClosed.filter(x=>x!==url);const t={id:nextId++,entries:[url],position:0};tabs.push(t);active=t.id;tabManager(false);render()});row.append(icon,body,restore);closed.append(row)}
+ const recentHeading=manager.querySelector('[data-recent-all]');
+ recentHeading.hidden=recentlyClosed.length<=3;
+ recentHeading.textContent=allClosedShown?'Свернуть':'Показать все ›';
+ if(!recentlyClosed.length){
+  const empty=document.createElement('div');empty.className='sb-closed-empty';
+  const mark=document.createElement('span');mark.className='sb-closed-empty-icon';mark.textContent='◷';
+  const hint=document.createElement('span');hint.textContent='Закрой вкладку — здесь её можно будет восстановить';
+  empty.append(mark,hint);closed.append(empty);
+ }
+ for(const entry of (allClosedShown?recentlyClosed:recentlyClosed.slice(0,3))){
+  const url=entry.url;
+  const row=document.createElement('div');row.className='sb-manager-closed-row';
+  const icon=document.createElement('span');const brand=closedBrand(url);icon.className='sb-closed-icon sb-closed-icon-'+brand[0];icon.textContent=brand[1];icon.setAttribute('aria-hidden','true');
+  const body=document.createElement('button');body.type='button';body.className='sb-closed-content';
+  const title=document.createElement('strong');title.textContent=closedLabel(url);
+  const sub=document.createElement('small');const domain=new URL(url).hostname.replace(/^www[.]/,'');
+  sub.textContent=domain+' · '+closedAge(entry.closedAt);
+  body.append(title,sub);
+  const restore=document.createElement('button');restore.type='button';restore.className='sb-closed-restore';
+  restore.textContent='↶';restore.setAttribute('aria-label','Восстановить '+siteName(url));restore.title='Восстановить страницу';
+  const restorePage=()=>{recentlyClosed=recentlyClosed.filter(x=>x.url!==url);const t={id:nextId++,entries:[url],position:0};tabs.push(t);active=t.id;tabManager(false);render()};
+  restore.addEventListener('click',restorePage);body.addEventListener('click',restorePage);
+  row.append(icon,body,restore);closed.append(row);
+ }
  const entries=getCollections();
  if(!entries.length){const empty=document.createElement('p');empty.className='sb-manager-collection-empty';empty.textContent='Сохраняй страницы в тематические коллекции';collections.append(empty)}
  for(const collection of entries){const tile=document.createElement('button');tile.type='button';tile.className='sb-manager-collection-tile';const art=document.createElement('span');art.className='sb-collection-art';art.textContent='▱';const words=document.createElement('span');const name=document.createElement('strong');name.textContent=collection.name;const count=document.createElement('small');count.textContent=collection.urls.length+' стр.';words.append(name,count);tile.append(art,words);tile.addEventListener('click',()=>{managerSection='collections';openCollection=collection.id;renderManager()});collections.append(tile)}
