@@ -26,6 +26,9 @@ function request(path,{method='GET',headers={},data}={}){
 test('Original main page is rendered unchanged except local reply integration',async()=>{
  const original=await readFile(new URL('../../index.html',import.meta.url),'utf8');
  const adapted=adaptOriginalHome(original);
+ assert.notEqual(adapted,original,'local bridge must not fall back to unmodified Home after keyboard helper changes');
+ assert.match(adapted,/const q=window\.SEYVEO_RU_LAYOUT/);
+ assert.match(adapted,/const catalogRequest=/);
  assert.match(adapted,/id="plasmaVisual"/);
  assert.match(adapted,/src="assets\/plasma-signature.svg\?v=13"/);
  assert.match(adapted,/id="homePage"/);
