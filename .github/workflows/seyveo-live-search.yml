@@ -40,7 +40,7 @@ permissions:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -54,4 +54,4 @@ jobs:
       - run: node --test server/tests/image-csp-policy.test.mjs
       - run: node --check assets/living-conversation.js
       - run: node --check assets/assistant-chat-history.js
-      - run: node --test server/live-search.test.mjs tools/test-live-search-ui.cjs tools/test-rich-answer-ui.cjs
+      - run: node --test server/live-search.test.mjs tools/test-live-search-ui.cjs tools/test-rich-answer-ui.cjs tools/test-live-search-request.cjs
