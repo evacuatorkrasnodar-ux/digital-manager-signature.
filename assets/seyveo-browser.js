@@ -586,6 +586,17 @@ function render(){
  }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
+  // Site-specific glass tint, based on known site branding, never on inaccessible page pixels.
+  const tabAddress=item.entries[item.position];
+  if(tabAddress){
+   const siteHost=new URL(tabAddress).hostname.toLowerCase();
+   const siteTint=siteHost.includes('wikipedia.org')?'#12161b'
+    :siteHost.includes('ya.ru')||siteHost.includes('yandex.')?'#c9d9dc'
+    :siteHost.includes('youtube.com')||siteHost==='youtu.be'?'#641923'
+    :siteHost.includes('habr.com')?'#133c37'
+    :null;
+   if(siteTint)pill.style.setProperty('--sb-site-tint',siteTint);
+  }
   const choose=document.createElement('button');choose.type='button';choose.className='sb-browser-tab-select';
   const address=item.entries[item.position];
   if(address){
