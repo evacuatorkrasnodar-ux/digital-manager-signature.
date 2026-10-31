@@ -133,6 +133,10 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='GET'&&path==='/api/seyveo-index-status'){
+   const docs=await searchLocalIndex('управление клиентскими заявками',ROOT);
+   send(res,200,{ready:true,exampleMatches:docs.length});return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-live-search-status'){
    // Capability only: never reveal the provider credential, even to localhost.
    send(res,200,{configured:typeof liveSearch==='function',
