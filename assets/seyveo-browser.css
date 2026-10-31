@@ -456,8 +456,6 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-manager-select{gap:8px;padding-left:8px}
  .sb-tab-preview{width:64px;height:62px}
  .sb-manager-heading{margin-top:20px}
- .sb-manager-collection-tile{gap:6px;padding:8px}
- .sb-collection-art{width:31px;height:41px}
 }
 @media(max-height:700px){.sb-manager-heading{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
