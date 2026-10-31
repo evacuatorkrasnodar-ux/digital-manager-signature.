@@ -23,6 +23,7 @@ import {addApprovedExample,learningStats,findApprovedExamples} from './approved-
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
 import {makeBraveSearchProvider,searchWithSources} from './live-search.mjs';
+import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -148,14 +149,24 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     send(res,400,{error:'Этот вопрос содержит личный контекст. Внешний поиск не запускался.'});
     return;
    }
+   const researchPlan=planPublicResearch(query);
+   if(!researchPlan.allowed){
+    send(res,400,{error:'Нельзя отправлять личные данные внешнему поиску.'});
+    return;
+   }
    searchCount++;
    if(!liveSearch){
     send(res,200,{status:'unavailable',query,results:[],message:'Живой поиск ещё не подключён: нужен ключ провайдера на сервере.'});
     return;
    }
    try{
-    const result=await searchWithSources(query,{search:liveSearch});
-    send(res,200,result);
+    const result=await searchWithSources(researchPlan.searchQuery,{search:liveSearch});
+    const review=reviewPublicSources(researchPlan,result.results);
+    send(res,200,{...result,query,results:review.results,
+     research:{category:researchPlan.category,needsFreshness:researchPlan.needsFreshness,
+      searchedOn:researchPlan.searchedOn,sourceCount:review.sourceCount,
+      distinctDomains:review.distinctDomains,factChecked:false,
+      reviewRules:review.reviewRules,notes:review.notes}});
    }catch(error){
     console.error('[SEYVEO Search]',String(error?.message||'unavailable'));
     send(res,503,{status:'unavailable',query,results:[],
