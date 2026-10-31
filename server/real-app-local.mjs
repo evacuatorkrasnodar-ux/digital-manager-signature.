@@ -46,7 +46,7 @@ export function adaptOriginalHome(html){
  const found=[...html.matchAll(marker)];
  if(found.length!==1){
   console.warn('[SEYVEO Home] AI bridge not applied: expected 1 demo branch, got '+found.length+'. Serving original Home.');
-  return html;
+  throw Error('local-ai-bridge-missing');
  }
  let served=html.replace(marker,()=>BRIDGE).replace('Демо · ИИ не подключён</small>','Локальный ИИ · Qwen3 4B</small>');
  // In the LOCAL copy only: keep the composer awake after the first question.
@@ -54,8 +54,8 @@ export function adaptOriginalHome(html){
  const voiceFallback=' const answer=getDemoAnswer(phrase);';
  const boot='restoreDraft();setComposerMode(composerMode);render();syncAppPage();';
  if(!served.includes(armIdle)||!served.includes(voiceFallback)||!served.includes(boot)){
-  console.warn('[SEYVEO Home] Optional voice hook changed; serving original Home.');
-  return html;
+  console.error('[SEYVEO Home] Optional voice hook changed; refusing unconnected Home.');
+  throw Error('local-ai-voice-hook-missing');
  }
  served=served.replace(armIdle,armIdle+'if(window.SEYVEO_LOCAL_CHAT_ACTIVE)return;');
  served=served.replace(voiceFallback,
@@ -65,7 +65,7 @@ export function adaptOriginalHome(html){
  // The approved Russian keyboard-layout helper may change the q expression.
  const composerStart=/\$\('ask'\)\.addEventListener\('submit',e=>\{e\.preventDefault\(\);const q=[^\n]{1,250}if\(!q\)return;/g;
  const entries=[...served.matchAll(composerStart)];
- if(entries.length!==1){console.warn('[SEYVEO Home] Composer changed; serving original Home.');return html;}
+ if(entries.length!==1){console.error('[SEYVEO Home] Composer changed; refusing unconnected Home.');throw Error('local-ai-composer-missing');}
  const entry=entries[0][0];
  let adapted=served.replace(entry,entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/seyveo-action-journal.js?v=1" defer></script><script src="assets/seyveo-personal-context.js?v=1" defer></script><script src="assets/seyveo-private-voice.js?v=1" defer></script></head>')
  // Do not duplicate personal assistant draft text into the existing persistent
