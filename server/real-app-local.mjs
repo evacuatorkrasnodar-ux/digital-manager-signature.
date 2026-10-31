@@ -130,7 +130,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    // The current owner explicitly requested a public web search. Only the
    // question is passed to the provider, never private notes or chat history.
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
-   if(!/^application\\/json(?:\\s*;|$)/i.test(String(req.headers['content-type']||''))){
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
     send(res,415,{error:'Ожидается JSON.'});return;
    }
    const now=Math.floor(Date.now()/60000);
@@ -139,7 +139,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    let query;
    try{query=await readQuestion(req)}
    catch{send(res,400,{error:'Нужен вопрос до 600 символов.'});return}
-   if(query.length>600||query.trim().split(/\\s+/).length>75){
+   if(query.length>600||query.trim().split(/\s+/).length>75){
     send(res,400,{error:'Сократи вопрос для поиска.'});return;
    }
    searchCount++;
