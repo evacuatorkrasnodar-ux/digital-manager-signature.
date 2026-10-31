@@ -353,15 +353,34 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-tab-context button:hover{color:#8bdab3}
 .sb-manager-select[aria-expanded="true"] .sb-tab-body strong{color:inherit}
 /* Recently closed · slim unified glass rows, no remote icon requests */
+/* Quiet Cinema: one recently closed row at rest, the rest unfold in order. */
 .sb-manager-closed{
- display:flex;flex-direction:column;gap:0;
- padding:0 14px;overflow:hidden;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ display:grid;grid-template-columns:minmax(0,1fr);gap:0;position:relative;isolation:isolate;
+ padding:0 14px;overflow:visible;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
 }
+.sb-manager-closed::after{
+ content:"";position:absolute;z-index:-1;left:9px;right:9px;bottom:-6px;height:15px;
+ border:1px solid var(--sv-home-outline);border-radius:0 0 15px 15px;
+ background:var(--sv-home-glass);opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.sb-manager-closed.is-collapsed::after{opacity:.72}
+.sb-closed-slot{
+ display:grid;grid-template-rows:1fr;min-height:0;overflow:hidden;
+ opacity:1;transform:translateY(0) scale(1);transform-origin:top center;
+ transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1),
+  opacity .31s ease,transform .38s cubic-bezier(.22,1,.36,1);
+ transition-delay:calc(var(--sb-closed-order,0) * 42ms);
+}
+.sb-closed-slot.is-folded{
+ grid-template-rows:0fr;opacity:0;transform:translateY(-13px) scale(.985);
+ pointer-events:none;transition-delay:0ms;
+}
+.sb-closed-slot>.sb-manager-closed-row{height:79px;min-height:0;overflow:hidden}
 .sb-manager-closed-row{
  display:flex;align-items:center;gap:12px;
  min-height:79px;border-bottom:1px solid var(--sv-home-outline);
 }
-.sb-manager-closed-row:last-child{border-bottom:0}
+.sb-closed-slot:last-child>.sb-manager-closed-row,.sb-manager-closed.is-collapsed .sb-closed-slot:first-child>.sb-manager-closed-row{border-bottom:0}
 .sb-closed-icon{
  flex:none;display:grid;place-items:center;
  width:37px;height:38px;border-radius:9px;background:var(--seyveo-hdr-active);color:#e1efe7;
@@ -418,7 +437,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  font-size:20px;
 }
 .sb-manager-heading [data-recent-all]{font-size:12px;opacity:.66}
-@media(prefers-reduced-motion:reduce){.sb-closed-restore{transition:none}}
+@media(prefers-reduced-motion:reduce){.sb-closed-restore,.sb-closed-slot,.sb-manager-closed::after{transition:none}}
 .sb-manager-empty,.sb-manager-collection-empty{font-size:12px;line-height:1.5;opacity:.57;padding:12px 4px;margin:0}
 .sb-manager-collections-heading{margin-top:27px}
 
