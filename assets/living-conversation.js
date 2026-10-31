@@ -435,6 +435,10 @@ function renderTurns(turns){
        ?displayChatText(value).replace(/\n{2,}/g,'\n')
        :displayChatText(value);
      item.append(label,body);
+     if(who==='sayvi'&&turn.search){
+       const sources=window.SEYVEO_LIVE_SEARCH_UI?.render?.(turn.search);
+       if(sources)item.append(sources);
+     }
      if(who==='you'){
        // Keep oversized pasted questions readable without editing stored data.
        const visibleText=displayChatText(value);
@@ -639,7 +643,30 @@ window.SEYVEO_CHAT_ACTIVITY=Object.freeze({
  begin:beginAction,finish:finishAction,cancel:cancelAction,
  isBusy:()=>Boolean(activeAction)
 });
-window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,
+// A verified search service can deliver this payload without replacing Feather Chat.
+function showSearchResults(payload){
+ const q=String(payload?.query||'').trim().slice(0,1000);
+ if(!q)return false;
+ const supplied=Array.isArray(payload?.results)?payload.results.slice(0,6):[];
+ const available=payload?.status==='results'&&supplied.length>0;
+ const answer=available
+  ?'Нашла материалы по твоему вопросу. Ниже источники, даты и фотографии, если они доступны. Важные факты лучше сверять с оригинальными публикациями.'
+  :payload?.status==='unavailable'
+   ?'Интернет-поиск пока не подключён. Я не буду придумывать новости и ссылки.'
+   :'По этому запросу пока не нашла проверяемых источников.';
+ const turn={question:q,answer,search:available?{status:'results',results:supplied}:null};
+ const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
+ turns.push(turn);
+ if(turns.length>30)turns.splice(0,turns.length-30);
+ open();
+ renderTurns(turns);
+ window.SEYVEO_CHAT_HISTORY?.add({question:q,answer,kind:'search',search:turn.search});
+ return true;
+}
+window.addEventListener('seyveo:web-search-results',event=>{
+ if(event.detail)showSearchResults(event.detail);
+});
+window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,showSearchResults,
  endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
 };
 })();
