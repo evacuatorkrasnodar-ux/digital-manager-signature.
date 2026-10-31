@@ -8,7 +8,7 @@ root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.s
 root.innerHTML=`<header class="seyveo-browser-top"><button type="button" data-close aria-label="Вернуться в Мой мир">‹</button><span class="seyveo-browser-header-space" aria-hidden="true"></span></header>
 <div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
-<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle hidden>Показать все ›</button></div><div data-continue-list></div></div></div>
+<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle hidden>Показать все ›</button></div><div data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager>Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden><strong>Этот сайт не разрешает встроенный просмотр</strong><p>YouTube запрещает открывать главную страницу во фрейме. Можно открыть сайт отдельно.</p><button type="button" data-open-blocked>Открыть YouTube ↗</button></div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
 <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
@@ -318,6 +318,27 @@ function render(){
   action('Убрать из истории',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
   const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);contList.append(card);
  }
+ const recentHome=root.querySelector('.sb-home-recent-tabs'),recentGrid=root.querySelector('[data-home-recent-tabs]');
+ recentGrid.replaceChildren();
+ const openTabs=tabs.filter(tab=>tab.entries[tab.position]).slice(-4).reverse();
+ recentHome.hidden=openTabs.length===0;
+ for(const tab of openTabs.slice(0,2)){
+  const address=tab.entries[tab.position],host=new URL(address).hostname.replace(/^www[.]/,''),name=siteName(address);
+  const tile=document.createElement('article');tile.className='sb-home-recent-card';
+  const jump=document.createElement('button');jump.type='button';jump.className='sb-home-recent-open';jump.setAttribute('aria-label','Открыть '+name);
+  const mark=document.createElement('span');mark.className='sb-home-recent-symbol';mark.textContent=siteSymbol(address);
+  if(host.includes('youtube'))mark.classList.add('is-youtube');
+  if(host.includes('yandex')||host==='ya.ru')mark.classList.add('is-yandex');
+  const info=document.createElement('span');info.className='sb-home-recent-info';
+  const title=document.createElement('strong');title.textContent=name;
+  const sub=document.createElement('small');sub.textContent=host;
+  info.append(title,sub);jump.append(mark,info);
+  jump.addEventListener('click',()=>{active=tab.id;render()});
+  const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='sb-home-recent-close';
+  closeButton.textContent='×';closeButton.setAttribute('aria-label','Закрыть '+name);
+  closeButton.addEventListener('click',()=>closeTab(tab.id));
+  tile.append(jump,closeButton);recentGrid.append(tile);
+ }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
  const choose=document.createElement('button');choose.type='button';choose.textContent=item.entries[item.position]?new URL(item.entries[item.position]).hostname:'Новая вкладка';choose.addEventListener('click',()=>{active=item.id;render()});
@@ -346,6 +367,7 @@ $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!ur
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;render()});
+$('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
 root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.site)));
 
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
