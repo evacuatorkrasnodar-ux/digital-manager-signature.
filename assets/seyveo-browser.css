@@ -877,11 +877,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- position:relative;z-index:4;display:grid;place-items:center;flex:none;
- width:45px;height:44px;min-height:44px;
- padding:0;border-radius:13px;border:1px solid var(--sv-home-outline);
- background:linear-gradient(155deg,var(--sv-home-glint),transparent 77%),var(--sv-home-glass);
- font-size:27px;font-weight:300;
+ /* Reference: narrow vertical glass tab, hooked under the page edge.
+    The parent rail sits behind site content; bottom of this button is tucked away. */
+ position:relative;top:-9px;z-index:0;
+ align-self:flex-start;display:grid;place-items:center;flex:none;
+ width:37px;min-width:37px;height:56px;min-height:56px;
+ padding:0 0 4px;border-radius:17px 17px 5px 5px;
+ border:1px solid var(--sv-home-outline);
+ background:linear-gradient(160deg,var(--sv-home-glint),transparent 65%),var(--sv-home-glass);
+ box-shadow:inset 0 1px 0 var(--sv-home-glint);
+ font-size:25px;font-weight:300;line-height:1;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
  position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
@@ -905,7 +910,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab{height:42px;border-radius:11px 11px 2px 2px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  width:42px;height:42px;min-height:42px;border-radius:12px;
+  width:35px;min-width:35px;height:54px;min-height:54px;
+  top:-8px;border-radius:16px 16px 5px 5px;
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
   gap:3px;padding-left:4px;
