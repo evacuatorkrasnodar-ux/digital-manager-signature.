@@ -60,6 +60,12 @@ const notice=root.querySelector('.seyveo-browser-blocked');
 const embedExplanation=notice.querySelector('p');
 const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
 const sitebar=$('.sb-browser-sitebar'),siteMenu=$('[data-site-menu-panel]'),siteMenuButton=$('[data-site-menu]');
+/* QUIET CINEMA: bound dimensions prevent global button and menu styles from
+   inflating this small browser-owned popup in the live app. */
+siteMenu.style.cssText='width:158px;max-width:calc(100vw - 32px);height:auto;min-height:0;max-height:none;padding:4px;gap:1px;border-radius:11px;box-shadow:0 6px 14px rgba(0,0,0,.12);';
+siteMenu.querySelectorAll('button').forEach(button=>{
+ button.style.cssText='display:flex;align-items:center;width:100%;height:29px;min-height:29px;max-height:29px;padding:0 8px;margin:0;border-radius:7px;font-size:11.5px;line-height:1.2;font-weight:450;white-space:nowrap;box-shadow:none;';
+});
 function closeSiteMenu(){siteMenu.hidden=true;siteMenuButton.setAttribute('aria-expanded','false')}
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
