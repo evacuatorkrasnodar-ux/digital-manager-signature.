@@ -356,14 +356,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Quiet Cinema: one recently closed row at rest, the rest unfold in order. */
 .sb-manager-closed{
  display:block;position:relative;isolation:isolate;
- padding:0 14px;overflow:visible;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ padding:0 14px;overflow:hidden;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
 }
-.sb-manager-closed::after{
- content:"";position:absolute;z-index:-1;left:9px;right:9px;bottom:-6px;height:15px;
- border:1px solid var(--sv-home-outline);border-radius:0 0 15px 15px;
- background:var(--sv-home-glass);opacity:0;pointer-events:none;transition:opacity .25s ease;
-}
-.sb-manager-closed.is-collapsed::after{opacity:.72}
 .sb-closed-slot{
  display:block;max-height:79px;overflow:hidden;
  opacity:1;transform:translateY(0) scale(1);transform-origin:top center;
@@ -437,7 +431,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  font-size:20px;
 }
 .sb-manager-heading [data-recent-all]{font-size:12px;opacity:.66}
-@media(prefers-reduced-motion:reduce){.sb-closed-restore,.sb-closed-slot,.sb-manager-closed::after{transition:none}}
+@media(prefers-reduced-motion:reduce){.sb-closed-restore,.sb-closed-slot{transition:none}}
 .sb-manager-empty,.sb-manager-collection-empty{font-size:12px;line-height:1.5;opacity:.57;padding:12px 4px;margin:0}
 .sb-manager-collections-heading{margin-top:27px}
 
