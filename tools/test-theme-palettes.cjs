@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=45/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=35/,'Browser touch navigation and icon script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=46/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=36/,'Browser touch navigation and icon script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -74,7 +74,10 @@ assert.ok(!css.browser.includes('>.sb-home-recent-tabs{margin-top:auto'),'Recent
 assert.ok(css.browser.includes('@media(max-width:600px)'),'iPhone portrait and Plus layouts share compact rhythm');
 assert.ok(css.browser.includes('.seyveo-browser-home{min-height:70px;max-height:80px}'),'Browser title space shrinks on iPhone');
 assert.ok(browserJS.includes('for(const entry of recentEntries)'),'All recent tabs appear in the swipe rail');
-assert.ok(!browserJS.includes('data-open-tab-manager'),'Swipe rail does not need a show-all button');
+assert.ok(browserJS.includes('data-open-tab-manager'),'Recent tabs expose Show All');
+assert.ok(browserJS.includes("managerSection='tabs';tabManager(true)"),'Show All opens existing tab manager');
+assert.ok(css.browser.includes('flex:0 0 calc((100% - var(--sb-recent-gap)) / 2)'),'Recent cards fit two across');
+assert.ok(!css.browser.includes('flex-basis:57%'),'Small screens retain exactly two full-width cards');
 assert.ok(browserJS.includes('function paintSiteMark('),'Browser icons use one shared vector renderer');
 for(const brand of ['youtube','wikipedia','yandex','habr'])assert.ok(browserJS.includes(brand+":'<svg"),'Local SVG for '+brand);
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
