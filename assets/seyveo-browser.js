@@ -441,6 +441,51 @@ function askSayvi(){
  }else window.SEYVEO_CONVERSATION.status?.('Браузер · Сэйви на связи',2500);
  return true;
 }
+/* Voice commands reuse the one microphone and existing browser navigation.
+   A public search is only opened after an explicit spoken search request. */
+function browserVoiceCommand(transcript){
+ if(root.hidden)return false;
+ const phrase=String(transcript||'').trim().slice(0,400);
+ if(!phrase)return true;
+ const intent=phrase.replace(/^(?:сэйви|сейви|seyveo)[,!\s]+/i,'').trim();
+ const search=intent.match(/^(?:найди|поищи|ищи|загугли|поиск(?:ать)?|найти)\s+(.+)$/iu);
+ if(search){
+  const query=search[1].trim();
+  if(query)navigate(target(query));
+  return true;
+ }
+ const open=intent.match(/^(?:открой|открыть|перейди\s+на|зайди\s+на)\s+(.+)$/iu);
+ if(open){
+  const destination=open[1].trim().replace(/[.!?]+$/,'');
+  const known={
+   'ютуб':'https://www.youtube.com','youtube':'https://www.youtube.com',
+   'яндекс':'https://ya.ru','yandex':'https://ya.ru',
+   'википедию':'https://www.wikipedia.org','википедия':'https://www.wikipedia.org',
+   'wikipedia':'https://www.wikipedia.org'
+  };
+  const named=known[destination.toLowerCase()];
+  const link=named||(/^https?:\/\//i.test(destination)||/^(?:[\w-]+\.)+[a-z]{2,}(?:\/.*)?$/i.test(destination)?target(destination):null);
+  if(link){navigate(link);return true;}
+ }
+ // For questions and unrecognized commands, use the real Feather Chat.
+ // Never invent an answer or silently send an unrelated web query.
+ if(askSayvi()){
+  const field=document.getElementById('question');
+  if(field){
+   const old=field.value.trim();
+   if(!old||/^Я открыл сайт [^.\s]+(?:\.[^.\s]+)+\. Помоги мне разобраться:\s*$/.test(old)){
+    field.value=phrase;
+    field.dispatchEvent(new Event('input',{bubbles:true}));
+   }
+  }
+ }
+ return true;
+}
+function browserVoiceUnavailable(message){
+ if(root.hidden)return false;
+ if(askSayvi())window.SEYVEO_CONVERSATION?.status?.(String(message||'Голосовой ввод недоступен. Напиши Сэйви в чате.'),6000);
+ return true;
+}
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
 function close(){suspendedForSayvi=false;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
@@ -511,5 +556,5 @@ $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(inpu
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!sheet.hidden)sheet.hidden=true;else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
 })();
