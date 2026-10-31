@@ -42,7 +42,7 @@
 
 /* Browser uses the actual SEYVEO dock, not a second footer. */
 .seyveo-browser-bottom{display:none!important}
-body.seyveo-browser-open .seyveo-browser{bottom:60px;padding-bottom:8px}
+body.seyveo-browser-open .seyveo-browser{bottom:0;padding-bottom:calc(var(--seyveo-browser-dock-height, 86px) + 8px)}
 body.seyveo-browser-open footer.dock{z-index:2147483001!important;position:fixed!important;bottom:0!important}
 body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 
@@ -68,7 +68,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-recent-item strong{font-size:12px;font-weight:500}
 .seyveo-browser-recent-item small,.seyveo-browser-recent-empty{font-size:11px;opacity:.55}
 .seyveo-browser-recent-empty{padding:12px 3px}
-body.seyveo-browser-open .seyveo-browser{padding-bottom:6px}
+
 @media(max-height:730px){.seyveo-browser-home{min-height:85px;max-height:115px}.seyveo-browser-shortcuts button{min-height:77px}.seyveo-browser-recent{margin-top:14px}}
 
 /* 2026-10-31 layout correction: no giant empty viewport, tabs under address. */
