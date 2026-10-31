@@ -877,6 +877,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   inset 0 0 19px color-mix(in srgb,var(--sb-accent) 18%,transparent),
   0 0 13px color-mix(in srgb,var(--sb-accent) 20%,transparent);
 }
+/* Continuous LED below active tab glass. */
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active{--sb-led:var(--sb-led-color,var(--sb-accent));border-color:color-mix(in srgb,var(--sb-led) 60%,var(--sb-edge))}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::before{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(to top,color-mix(in srgb,var(--sb-led) 46%,transparent),color-mix(in srgb,var(--sb-led) 19%,transparent) 45%,transparent 90%);
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
+ content:"";position:absolute;left:0;right:0;bottom:0;height:5px;pointer-events:none;
+ background:var(--sb-led);box-shadow:0 -3px 12px color-mix(in srgb,var(--sb-led) 80%,transparent),0 -10px 19px color-mix(in srgb,var(--sb-led) 30%,transparent);
+}
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:grid;grid-template-columns:23px minmax(0,1fr);
  align-items:center;gap:5px;flex:1;min-width:0;max-width:none;
