@@ -46,3 +46,18 @@ test('steps remain semantic and bounded',()=>{
  const view=api.render([{type:'steps',items:['Открыть','Проверить','Подтвердить']}]);
  assert.equal(walk(view).filter(n=>n.tag==='li').length,3);
 });
+
+test('structured diagrams use semantic steps',()=>{
+ const view=api.render([{type:'diagram',title:'Путь заказа',nodes:[
+  {label:'Заявка',detail:'Получена'},
+  {label:'Проверка',detail:'Сверить детали'},
+  {label:'Ответ',detail:'Подтвердить'}]}]);
+ assert.equal(walk(view).filter(n=>n.tag==='li').length,3);
+});
+test('an approved image survives validation and history roundtrip',()=>{
+ const blocks=[{type:'image',approved:true,alt:'Пример',title:'Иллюстрация',
+  url:'https://images.example.org/fig.jpg',sourceUrl:'https://source.example.org',credit:'Автор'}];
+ const stored=api.cleanBlocks(blocks);
+ assert.equal(stored[0].approved,true);
+ assert.equal(walk(api.render(stored)).filter(n=>n.tag==='img').length,1);
+});
