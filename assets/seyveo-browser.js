@@ -51,7 +51,7 @@ function makeCollection(){const name=window.prompt('Название колле�
 function saveClosed(url){if(!url)return;recentlyClosed=[url,...recentlyClosed.filter(x=>x!==url)].slice(0,25)}
 function siteName(url){const host=new URL(url).hostname.replace(/^www\./,'');return host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host}
 function siteSymbol(url){const host=new URL(url).hostname;return host.includes('youtube')?'▶':host.includes('wikipedia')?'W':host.includes('yandex')||host.includes('ya.ru')?'Я':'◇'}
-function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u)tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
+function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){managerOpen=value;manager.hidden=!value;if(value)renderManager();}
 function renderManager(){
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
