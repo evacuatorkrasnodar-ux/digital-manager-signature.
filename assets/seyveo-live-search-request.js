@@ -10,13 +10,13 @@
   if(q.length<5||q.length>600||excludes.test(q))return false;
   return /(?:в интернете|в сети|поищи|найди (?:новост|стать|фото|картин|публикац|сведения|информац)|что нового|последн(?:ие|яя|ий)|новост|сегодня|вчера|правда(?: ли| что)?|свеж(?:ие|ая|ий)|актуальн|проверь факт|покажи (?:фото|картин))/i.test(q);
  }
- function userAllowedSearch(){
+ function userAllowedSearch(provider){
   const key='seyveo-public-web-search-consent-v1';
   try{if(localStorage.getItem(key)==='yes')return true}catch{}
   // One native, explicit consent prompt. The query goes to an external
   // provider; do not silently transmit it from a new user's chat.
   if(typeof window.confirm!=='function')return false;
-  const approved=window.confirm('Разрешить Сэйви проверять публичные вопросы через интернет-поиск Brave? Отправляется только текст текущего вопроса, без личной памяти и истории.');
+  const approved=window.confirm('Разрешить Сэйви проверять публичные вопросы через интернет-поиск ('+String(provider||'внешний источник')+')? Отправляется только текст текущего вопроса, без личной памяти и истории.');
   if(approved){try{localStorage.setItem(key,'yes')}catch{}}
   return approved;
  }
@@ -45,10 +45,10 @@
     if(controller.signal.aborted)return;
     if(state.configured!==true){
      conversation.showSearchResults({query:question,status:'unavailable',results:[],
-      message:'Поисковик Brave пока не подключён. Нужен API-ключ на сервере.'});
+      message:'Поиск сейчас недоступен. Проверь соединение с сервером.'});
      return;
     }
-    if(!userAllowedSearch()){
+    if(!userAllowedSearch(state.provider)){
      conversation.showSearchResults({query:question,status:'unavailable',results:[],
       message:'Поиск не запущен без разрешения.'});
      return;
