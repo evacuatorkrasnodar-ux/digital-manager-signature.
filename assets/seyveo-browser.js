@@ -274,6 +274,25 @@ function toggleTabDetails(id){
  managerMenuId=managerMenuId===id?null:id;
  manager.querySelectorAll('.sb-manager-card').forEach(card=>setTabDetails(card,Number(card.dataset.tabId)===managerMenuId));
 }
+/* Reuse Quiet Cinema's animated stacked disclosure for recently closed tabs. */
+function syncClosedStack(){
+ const closed=manager.querySelector('[data-manager-closed]'),toggle=manager.querySelector('[data-recent-all]');
+ const slots=closed.querySelectorAll('.sb-closed-slot');
+ const expandable=slots.length>1,expanded=expandable&&allClosedShown;
+ closed.id='seyveoRecentlyClosedList';
+ toggle.hidden=!expandable;
+ toggle.textContent=expanded?'Свернуть':'Показать все ›';
+ toggle.setAttribute('aria-controls',closed.id);
+ toggle.setAttribute('aria-expanded',String(expanded));
+ closed.classList.toggle('is-expanded',expanded);
+ closed.classList.toggle('is-collapsed',expandable&&!expanded);
+ slots.forEach((slot,index)=>{
+  const folded=index>0&&!expanded;
+  slot.classList.toggle('is-folded',folded);
+  slot.inert=folded;
+  slot.setAttribute('aria-hidden',String(folded));
+ });
+}
 function renderManager(){
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
  const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
@@ -313,17 +332,16 @@ function renderManager(){
   setTabDetails(item,managerMenuId===t.id);
   list.append(item);
  }
- const recentHeading=manager.querySelector('[data-recent-all]');
- recentHeading.hidden=recentlyClosed.length<=3;
- recentHeading.textContent=allClosedShown?'Свернуть':'Показать все ›';
  if(!recentlyClosed.length){
   const empty=document.createElement('div');empty.className='sb-closed-empty';
   const mark=document.createElement('span');mark.className='sb-closed-empty-icon';mark.textContent='◷';
   const hint=document.createElement('span');hint.textContent='Закрой вкладку — здесь её можно будет восстановить';
   empty.append(mark,hint);closed.append(empty);
  }
- for(const entry of (allClosedShown?recentlyClosed:recentlyClosed.slice(0,3))){
+ for(const [position,entry] of recentlyClosed.entries()){
   const url=entry.url;
+  const slot=document.createElement('div');slot.className='sb-closed-slot';
+  slot.style.setProperty('--sb-closed-order',String(Math.min(position,6)));
   const row=document.createElement('div');row.className='sb-manager-closed-row';
   const icon=document.createElement('span');const brand=closedBrand(url);icon.className='sb-closed-icon sb-closed-icon-'+brand[0];paintSiteMark(icon,url);
   const body=document.createElement('button');body.type='button';body.className='sb-closed-content';
@@ -335,8 +353,9 @@ function renderManager(){
   restore.textContent='↶';restore.setAttribute('aria-label','Восстановить '+siteName(url));restore.title='Восстановить страницу';
   const restorePage=()=>{recentlyClosed=recentlyClosed.filter(x=>x.url!==url);const t={id:nextId++,entries:[url],position:0};tabs.push(t);active=t.id;tabManager(false);render()};
   restore.addEventListener('click',restorePage);body.addEventListener('click',restorePage);
-  row.append(icon,body,restore);closed.append(row);
+  row.append(icon,body,restore);slot.append(row);closed.append(slot);
  }
+ syncClosedStack();
  const entries=getCollections();
  for(const collection of entries)collections.append(makeCollectionCard(collection));
  const starterNames=['Вдохновение','Путешествия'];
@@ -613,7 +632,7 @@ root.addEventListener('touchend',event=>{
 },{passive:true});
 root.addEventListener('touchcancel',()=>{edgeSwipe=null},{passive:true});
 function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
-manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;renderManager()});
+manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;syncClosedStack()});
 manager.querySelector('[data-collection-new]').addEventListener('click',makeCollection);
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
