@@ -1065,13 +1065,13 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Reference: upright sides, softly rounded top and bottom-right corner. */
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
  width:34px;min-width:34px;
- border-radius:11px 11px 17px 3px;
+ border-radius:11px 11px 24px 3px;
  padding:0;
 }
 @media(max-width:649px){
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
   width:32px;min-width:32px;
-  border-radius:10px 10px 16px 3px;
+  border-radius:10px 10px 23px 3px;
   padding:0;
  }
 }
@@ -1104,5 +1104,5 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
  background:currentColor;border-radius:1px;pointer-events:none;
 }
-.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::before{width:19px;height:1.5px}
-.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::after{width:1.5px;height:19px}
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::before{width:14px;height:1.5px}
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::after{width:1.5px;height:14px}
