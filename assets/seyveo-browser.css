@@ -810,44 +810,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  margin:0 auto!important;flex:none!important;
 }
 
-/* Opened website · reference-aligned SEYVEO shell. Only page mode, never Home/Manager.
-   Header and tab rail remain fixed; the site/reader scrolls inside content. */
-.seyveo-browser .sb-browser-url-lock,
-.seyveo-browser .sb-browser-reload{display:none}
+/* Opened website: exactly the same search bar component and geometry as Home.
+   No mode-specific address field styling, extra icons or second theme treatment.
+   The site and tabs below still have their own layouts. */
 .seyveo-browser.is-site-view{
- gap:10px;
  overflow:hidden;overscroll-behavior:none;
-}
-
-
-
-.seyveo-browser.is-site-view>.seyveo-browser-bar{
- flex:none;height:58px;min-height:58px;max-height:58px;
- border-radius:24px;padding:5px 12px 5px 16px;gap:11px;
- border:1px solid var(--line,var(--sv-home-outline));
- background:linear-gradient(120deg,var(--seyveo-hdr-active),var(--sv-home-glass) 75%);
- box-shadow:inset 0 1px 0 var(--sv-home-glint),0 0 0 1px var(--sv-home-outline);
-}
-.seyveo-browser.is-site-view .seyveo-browser-search-icon,
-.seyveo-browser.is-site-view [data-scan]{display:none}
-.seyveo-browser.is-site-view .sb-browser-url-lock{
- display:grid;place-items:center;flex:none;width:20px;height:24px;color:var(--text);opacity:.86;
-}
-.seyveo-browser.is-site-view .sb-browser-url-lock svg{
- width:19px;height:19px;fill:none;stroke:currentColor;
- stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
-}
-.seyveo-browser.is-site-view .seyveo-browser-bar input{
- font-size:clamp(14px,3.4vw,17px);font-weight:400;letter-spacing:0;line-height:1.3;
- white-space:nowrap;text-overflow:ellipsis;
-}
-.seyveo-browser.is-site-view .sb-browser-reload{
- display:grid;place-items:center;flex:none;width:39px;height:39px;
- padding:7px;background:transparent;opacity:.88;border-radius:50%;
-}
-.seyveo-browser.is-site-view .sb-browser-reload svg{
- display:block;width:23px;height:23px;fill:none;stroke:currentColor;
- stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
@@ -908,9 +875,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view{gap:7px}
  
- .seyveo-browser.is-site-view>.seyveo-browser-bar{height:54px;min-height:54px;max-height:54px}
  .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:49px;min-height:49px;gap:5px}
  .seyveo-browser.is-site-view .seyveo-browser-tab{min-height:47px;max-width:190px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{width:43px;min-height:46px}
