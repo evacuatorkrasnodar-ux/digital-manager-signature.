@@ -666,7 +666,8 @@ function showSearchResults(payload){
  if(turns.length>30)turns.splice(0,turns.length-30);
  open();
  renderTurns(turns);
- window.SEYVEO_CHAT_HISTORY?.add({question:q,answer,kind:'search',search:turn.search,rich});
+ // Provider search results are transient; only the user's question and generic reply persist.
+ window.SEYVEO_CHAT_HISTORY?.add({question:q,answer,kind:'search'});
  return true;
 }
 window.addEventListener('seyveo:web-search-results',event=>{
