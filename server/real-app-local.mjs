@@ -61,10 +61,13 @@ export function adaptOriginalHome(html){
  served=served.replace(voiceFallback,
   '  if(window.SEYVEO_LOCAL_VOICE_BRIDGE?.(phrase))return;\n'+voiceFallback);
  served=served.replace(boot,LOCAL_VOICE_UI+'\n'+boot);
- const entry="$('ask').addEventListener('submit',e=>{e.preventDefault();const q=$('question').value.trim();if(!q)return;";
- const locations=served.split(entry);
- if(locations.length!==2){console.warn('[SEYVEO Home] Composer changed; serving original Home.');return html;}
- let adapted=locations.join(entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/seyveo-action-journal.js?v=1" defer></script><script src="assets/seyveo-personal-context.js?v=1" defer></script><script src="assets/seyveo-private-voice.js?v=1" defer></script></head>')
+ // Locate the existing submit handler independently of optional input normalization.
+ // The approved Russian keyboard-layout helper may change the q expression.
+ const composerStart=/\$\('ask'\)\.addEventListener\('submit',e=>\{e\.preventDefault\(\);const q=[^\n]{1,250}if\(!q\)return;/g;
+ const entries=[...served.matchAll(composerStart)];
+ if(entries.length!==1){console.warn('[SEYVEO Home] Composer changed; serving original Home.');return html;}
+ const entry=entries[0][0];
+ let adapted=served.replace(entry,entry+'\n'+INTELLIGENCE_UI+'\n'+CODE_REVIEW_UI+'\n'+MEMORY_UI).replace('</head>','<script src="assets/seyveo-action-journal.js?v=1" defer></script><script src="assets/seyveo-personal-context.js?v=1" defer></script><script src="assets/seyveo-private-voice.js?v=1" defer></script></head>')
  // Do not duplicate personal assistant draft text into the existing persistent
  // chat-history store. Only normal public app interactions retain prior behavior.
  const calHistory="window.SEYVEO_CHAT_HISTORY?.add({question:q,answer:'Подготовлен черновик события в календаре для проверки. Пока не сохранено.',kind:'draft'});";
