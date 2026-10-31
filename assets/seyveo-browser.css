@@ -1085,3 +1085,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   border-radius:10px 10px 16px 3px;
  }
 }
+
+/* Hide the scrollbar drawn inside cross-origin site iframes.
+   The viewport clips only the right-hand scrollbar strip; page scrolling still works. */
+.seyveo-browser.is-site-view .seyveo-browser-content>iframe{
+  flex:0 0 calc(100% + 16px);
+  width:calc(100% + 16px);
+  max-width:none;
+}
