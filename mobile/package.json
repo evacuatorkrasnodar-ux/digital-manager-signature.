@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
     "check": "tsc --noEmit",
-    "test": "node --test tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs tests/personal-notes.test.mjs tests/offline-brain.test.mjs tests/seyveo-action-router.test.mjs tests/local-inference.test.mjs tests/llama-adapter.test.mjs tests/offline-packs.test.mjs tests/offline-catalog.test.mjs tests/offline-pack-manager.test.mjs tests/native-pkce-core.test.mjs tests/native-code-exchange.test.mjs tests/employee-qr-invite.test.mjs tests/employee-invite-delivery.test.mjs tests/https-owner-invite-client.test.mjs tests/native-browser-login.test.mjs"
+    "test": "node --test tests/browser-scroll-chrome.test.mjs tests/foundation-config.test.mjs tests/secure-vault-behavior.test.mjs tests/personal-notes.test.mjs tests/offline-brain.test.mjs tests/seyveo-action-router.test.mjs tests/local-inference.test.mjs tests/llama-adapter.test.mjs tests/offline-packs.test.mjs tests/offline-catalog.test.mjs tests/offline-pack-manager.test.mjs tests/native-pkce-core.test.mjs tests/native-code-exchange.test.mjs tests/employee-qr-invite.test.mjs tests/employee-invite-delivery.test.mjs tests/https-owner-invite-client.test.mjs tests/native-browser-login.test.mjs"
   },
   "dependencies": {
     "expo": "~58.0.0",
