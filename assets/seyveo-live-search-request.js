@@ -10,8 +10,23 @@
   if(q.length<5||q.length>600||excludes.test(q))return false;
   return /(?:в интернете|в сети|поищи|найди (?:новост|стать|фото|картин|публикац|сведения|информац)|что нового|последн(?:ие|яя|ий)|новост|сегодня|вчера|правда(?: ли| что)?|свеж(?:ие|ая|ий)|актуальн|проверь факт|покажи (?:фото|картин))/i.test(q);
  }
+ function userAllowedSearch(){
+  const key='seyveo-public-web-search-consent-v1';
+  try{if(localStorage.getItem(key)==='yes')return true}catch{}
+  // One native, explicit consent prompt. The query goes to an external
+  // provider; do not silently transmit it from a new user's chat.
+  if(typeof window.confirm!=='function')return false;
+  const approved=window.confirm('Разрешить Сэйви проверять публичные вопросы через интернет-поиск Brave? Отправляется только текст текущего вопроса, без личной памяти и истории.');
+  if(approved){try{localStorage.setItem(key,'yes')}catch{}}
+  return approved;
+ }
  function start(question){
   if(!isSearchQuestion(question))return false;
+  if(!userAllowedSearch()){
+   window.SEYVEO_CONVERSATION?.showSearchResults?.({query:question,status:'unavailable',
+    message:'Интернет-поиск не запущен без разрешения. Можно разрешить поиск при следующем запросе.'});
+   return true;
+  }
   if(active)return true;
   const conversation=window.SEYVEO_CONVERSATION;
   if(!conversation?.beginStream||!conversation?.showSearchResults)return false;
