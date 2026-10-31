@@ -8,12 +8,15 @@ on:
       - 'server/tests/image-csp-policy.test.mjs'
       - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
+      - 'assets/seyveo-live-search-request.js'
       - 'assets/seyveo-rich-answer-ui.js'
       - 'assets/living-conversation.js'
       - 'assets/living-conversation.css'
       - 'assets/assistant-chat-history.js'
       - 'tools/test-live-search-ui.cjs'
       - 'tools/test-rich-answer-ui.cjs'
+      - 'tools/test-live-search-request.cjs'
+      - 'server/tests/real-app-local.test.mjs'
       - '.github/workflows/seyveo-live-search.yml'
   pull_request:
     paths:
@@ -22,12 +25,15 @@ on:
       - 'server/tests/image-csp-policy.test.mjs'
       - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
+      - 'assets/seyveo-live-search-request.js'
       - 'assets/seyveo-rich-answer-ui.js'
       - 'assets/living-conversation.js'
       - 'assets/living-conversation.css'
       - 'assets/assistant-chat-history.js'
       - 'tools/test-live-search-ui.cjs'
       - 'tools/test-rich-answer-ui.cjs'
+      - 'tools/test-live-search-request.cjs'
+      - 'server/tests/real-app-local.test.mjs'
       - '.github/workflows/seyveo-live-search.yml'
 permissions:
   contents: read
@@ -41,8 +47,10 @@ jobs:
         with:
           node-version: '22'
       - run: node --check assets/seyveo-live-search-ui.js
+      - run: node --check assets/seyveo-live-search-request.js
       - run: node --check assets/seyveo-rich-answer-ui.js
       - run: node --check server/real-app-local.mjs
+      - run: node --test server/tests/real-app-local.test.mjs
       - run: node --test server/tests/image-csp-policy.test.mjs
       - run: node --check assets/living-conversation.js
       - run: node --check assets/assistant-chat-history.js
