@@ -21,7 +21,7 @@ function init(){
   if(!active)return;
   setButton(outer[0],'back','Назад');
   setButton(outer[1],'forward','Вперёд');
-  setButton(outer[2],'home','Старт');
+  setButton(outer[2],'home','Главная SEYVEO');
   setButton(outer[3],'tabs','Вкладки');
   const s=window.SEYVEO_BROWSER?.state?.();
   outer[0].setAttribute('aria-disabled',String(!s?.canBack));
