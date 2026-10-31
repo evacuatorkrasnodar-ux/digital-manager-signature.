@@ -286,12 +286,13 @@ function syncQuietCinemaStack(list,toggle,slotSelector,expanded){
  list.classList.toggle('is-expanded',isExpanded);
  list.classList.toggle('is-collapsed',expandable&&!isExpanded);
  slots.forEach((slot,index)=>{
-  // Animate the real card height instead of a large, arbitrary max-height.
-  // This keeps the falling/receding motion identical on both Browser pages.
-  if(slotSelector==='.sb-history-slot'){
-   const intrinsic=Array.from(slot.children).reduce((total,child)=>total+child.scrollHeight,0);
-   const measured=Math.max(slot.scrollHeight,intrinsic);
-   if(measured>0)slot.style.setProperty('--sb-quiet-open-height',Math.ceil(measured)+'px');
+  // A real inner wrapper lets the 0fr ↔ 1fr animation follow card content
+  // automatically. No measured max-height: it clipped History on some screens.
+  if(slotSelector==='.sb-history-slot'&&!slot.firstElementChild?.classList.contains('sb-quiet-inner')){
+   const inner=document.createElement('div');
+   inner.className='sb-quiet-inner';
+   while(slot.firstChild)inner.append(slot.firstChild);
+   slot.append(inner);
   }
   const folded=index>0&&!isExpanded;
   slot.classList.toggle('is-folded',folded);
