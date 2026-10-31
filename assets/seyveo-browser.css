@@ -494,3 +494,41 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:block!important;width:25px!important;height:25px!important;
  margin:0 auto!important;flex:none!important;
 }
+
+/* Browser surfaces follow the selected SEYVEO theme, never a fixed green palette. */
+.seyveo-browser{
+ --sb-glass:color-mix(in srgb,currentColor 5%,transparent);
+ --sb-glass-strong:color-mix(in srgb,currentColor 9%,transparent);
+ --sb-stroke:color-mix(in srgb,currentColor 16%,transparent);
+}
+.seyveo-browser .seyveo-browser-bar,
+.seyveo-browser .seyveo-browser-shortcuts button,
+.seyveo-browser .seyveo-browser-continue-card,
+.seyveo-browser .seyveo-browser-history-card,
+.seyveo-browser .seyveo-browser-bookmark-card,
+.seyveo-browser .sb-home-recent-card,
+.seyveo-browser .seyveo-browser-recent-item{
+ background:var(--sb-glass)!important;border-color:var(--sb-stroke)!important;
+ box-shadow:inset 0 1px color-mix(in srgb,currentColor 5%,transparent);
+}
+.seyveo-browser .seyveo-browser-bar:focus-within,
+.seyveo-browser .seyveo-browser-shortcuts button:hover{
+ border-color:color-mix(in srgb,currentColor 32%,transparent)!important;
+}
+.seyveo-browser .seyveo-browser-bar .seyveo-browser-scan:hover,
+.seyveo-browser .seyveo-browser-history-actions button:hover,
+.seyveo-browser .seyveo-browser-tab.is-active{
+ background:var(--sb-glass-strong);
+}
+.seyveo-browser .seyveo-browser-history-logo,
+.seyveo-browser .seyveo-browser-continue-card>span:first-child,
+.seyveo-browser .sb-home-recent-symbol:not(.is-youtube):not(.is-yandex),
+.seyveo-browser .sb-site-mark:not(.sb-youtube):not(.sb-yandex),
+.seyveo-browser .seyveo-browser-bar>span{
+ background:var(--sb-glass-strong);color:inherit;
+}
+.seyveo-browser .sb-saved,
+.seyveo-browser .seyveo-browser-history-menu[aria-expanded="true"]{
+ color:inherit;
+}
+.seyveo-browser .seyveo-browser-shortcuts button:active{background:var(--sb-glass-strong)!important}
