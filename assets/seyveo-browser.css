@@ -156,22 +156,35 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Two-block home: quick links followed immediately by Continue browsing. */
 .seyveo-browser-continue{margin-top:21px}
 .seyveo-browser-continue .seyveo-browser-start-heading{display:flex;justify-content:space-between;align-items:center}
+
+.sb-browser-history-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex:none}
+.sb-browser-history-heading-actions [data-history-toggle]{white-space:nowrap}
+.sb-browser-history-heading-actions [data-history-clear]{
+ display:grid;place-items:center;flex:none;width:30px;height:30px;
+ padding:5px;border-radius:10px;color:inherit;opacity:.62;
+}
+.sb-browser-history-heading-actions [data-history-clear] svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.sb-browser-history-heading-actions [data-history-clear]:hover{opacity:1;background:var(--seyveo-hdr-active)}
+.sb-browser-history-heading-actions [data-history-clear]:focus-visible{outline:2px solid var(--line);outline-offset:2px}
+@media(max-width:380px){
+ .seyveo-browser-continue .seyveo-browser-start-heading>span:first-child{font-size:12px}
+ .sb-browser-history-heading-actions{gap:3px}
+ .sb-browser-history-heading-actions [data-history-toggle]{font-size:11px}
+}
+
 /* Continue browsing shares the Home Quiet Cinema stack gesture. */
+/* Same fold geometry as Recently Closed: intrinsic card height, no fake lower outline. */
 .seyveo-browser-continue [data-continue-list]{
- display:grid;gap:0;position:relative;isolation:isolate;
+ display:block;position:relative;min-width:0;
 }
-.seyveo-browser-continue [data-continue-list]::after{
- content:"";position:absolute;z-index:-1;left:9px;right:9px;bottom:-5px;
- height:16px;border-radius:0 0 16px 16px;
- border:1px solid var(--sv-home-outline);background:var(--sv-home-glass);
- opacity:0;pointer-events:none;transition:opacity .25s ease;
-}
-.seyveo-browser-continue [data-continue-list].is-collapsed::after{opacity:.72}
 .seyveo-browser-continue .sb-history-slot{
- display:grid;grid-template-rows:1fr;min-height:0;
+ display:block;max-height:240px;overflow:hidden;min-height:0;
  margin-bottom:9px;opacity:1;transform:translateY(0) scale(1);
  transform-origin:top center;
- transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1),
+ transition:max-height .38s cubic-bezier(.22,1,.36,1),
   margin-bottom .38s cubic-bezier(.22,1,.36,1),
   opacity .31s ease,transform .38s cubic-bezier(.22,1,.36,1);
  transition-delay:calc(var(--sb-history-order,0) * 42ms);
@@ -180,13 +193,14 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  min-height:0;overflow:hidden;
 }
 .seyveo-browser-continue .sb-history-slot.is-folded{
- grid-template-rows:0fr;margin-bottom:0;opacity:0;
+ max-height:0;margin-bottom:0;opacity:0;
  transform:translateY(-13px) scale(.985);pointer-events:none;
  transition-delay:0ms;
 }
+.seyveo-browser-continue [data-continue-list].is-collapsed .sb-history-slot:first-child,
+.seyveo-browser-continue .sb-history-slot:last-child{margin-bottom:0}
 @media(prefers-reduced-motion:reduce){
- .seyveo-browser-continue .sb-history-slot,
- .seyveo-browser-continue [data-continue-list]::after{transition:none}
+ .seyveo-browser-continue .sb-history-slot{transition:none}
 }
 
 .seyveo-browser-continue-card{width:100%;min-height:81px;display:flex;align-items:center;gap:16px;text-align:left;padding:12px 14px!important;border:1px solid var(--sv-home-outline);border-radius:18px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}
