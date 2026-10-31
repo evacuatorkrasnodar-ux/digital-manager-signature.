@@ -241,7 +241,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  color:inherit;font-size:clamp(10px,2.4vw,12px);white-space:nowrap;
  transition:background .18s;
 }
-.sb-switch-icon{font-size:clamp(15px,3.2vw,21px);line-height:1}
+.sb-switch-icon{display:flex;align-items:center;justify-content:center;flex:none;line-height:1}
+.sb-switch-icon svg{width:clamp(16px,3.9vw,21px);height:clamp(16px,3.9vw,21px);display:block}
 .sb-switch-count{font-size:11px;min-width:18px;min-height:18px;display:grid;place-items:center;border-radius:50%;background:rgba(139,207,172,.2)}
 .sb-manager-switcher button.is-selected{
  background:linear-gradient(115deg,rgba(1,150,105,.48),rgba(4,77,56,.32));
