@@ -7,7 +7,7 @@ root.id='seyveoBrowser';root.className='seyveo-browser';root.hidden=true;
 root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','SEYVEO Browser');
 root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
-<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button></div><div id="seyveoBrowserHistoryList" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
+<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button><button type="button" data-history-clear hidden aria-label="Очистить продолжение просмотра" title="Очистить историю просмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div id="seyveoBrowserHistoryList" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden><strong>Этот сайт не разрешает встроенный просмотр</strong><p>YouTube запрещает открывать главную страницу во фрейме. Можно открыть сайт отдельно.</p><button type="button" data-open-blocked>Открыть YouTube ↗</button></div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
 <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
@@ -275,25 +275,29 @@ function toggleTabDetails(id){
  managerMenuId=managerMenuId===id?null:id;
  manager.querySelectorAll('.sb-manager-card').forEach(card=>setTabDetails(card,Number(card.dataset.tabId)===managerMenuId));
 }
-/* Reuse Quiet Cinema's animated stacked disclosure for recently closed tabs. */
-function syncClosedStack(){
- const closed=manager.querySelector('[data-manager-closed]'),toggle=manager.querySelector('[data-recent-all]'),clear=manager.querySelector('[data-recent-clear]');
- const slots=closed.querySelectorAll('.sb-closed-slot');
- const expandable=slots.length>1,expanded=expandable&&allClosedShown;
- closed.id='seyveoRecentlyClosedList';
+/* Shared Quiet Cinema fold/reveal behavior: same gesture and accessibility in both lists. */
+function syncQuietCinemaStack(list,toggle,slotSelector,expanded){
+ const slots=list.querySelectorAll(slotSelector);
+ const expandable=slots.length>1,isExpanded=expandable&&expanded;
  toggle.hidden=!expandable;
- clear.hidden=!slots.length;
- toggle.textContent=expanded?'Свернуть':'Показать все ›';
- toggle.setAttribute('aria-controls',closed.id);
- toggle.setAttribute('aria-expanded',String(expanded));
- closed.classList.toggle('is-expanded',expanded);
- closed.classList.toggle('is-collapsed',expandable&&!expanded);
+ toggle.textContent=isExpanded?'Свернуть':'Показать все ›';
+ toggle.setAttribute('aria-expanded',String(isExpanded));
+ list.classList.toggle('is-expanded',isExpanded);
+ list.classList.toggle('is-collapsed',expandable&&!isExpanded);
  slots.forEach((slot,index)=>{
-  const folded=index>0&&!expanded;
+  const folded=index>0&&!isExpanded;
   slot.classList.toggle('is-folded',folded);
   slot.inert=folded;
   slot.setAttribute('aria-hidden',String(folded));
  });
+ return slots.length;
+}
+function syncClosedStack(){
+ const closed=manager.querySelector('[data-manager-closed]'),toggle=manager.querySelector('[data-recent-all]'),clear=manager.querySelector('[data-recent-clear]');
+ closed.id='seyveoRecentlyClosedList';
+ const count=syncQuietCinemaStack(closed,toggle,'.sb-closed-slot',allClosedShown);
+ toggle.setAttribute('aria-controls',closed.id);
+ clear.hidden=!count;
 }
 function renderManager(){
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
@@ -442,23 +446,12 @@ function renderSecondary(){
  if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Сохрани страницу в Избранное';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
-/* Quiet Cinema: one visible history card at rest, full stack when opened. */
+/* Identical Quiet Cinema disclosure on the Browser start page. */
 function syncHistoryStack(){
- const list=$('[data-continue-list]'),toggle=$('[data-history-toggle]');
- const slots=list.querySelectorAll('.sb-history-slot');
- const hasStack=slots.length>1;
- if(!hasStack)showAllHistory=false;
- toggle.hidden=!hasStack;
- toggle.textContent=showAllHistory?'Свернуть':'Показать все ›';
- toggle.setAttribute('aria-expanded',String(showAllHistory));
- list.classList.toggle('is-expanded',showAllHistory&&hasStack);
- list.classList.toggle('is-collapsed',!showAllHistory&&hasStack);
- slots.forEach((slot,i)=>{
-  const folded=i>0&&!showAllHistory;
-  slot.classList.toggle('is-folded',folded);
-  slot.setAttribute('aria-hidden',String(folded));
-  slot.inert=folded;
- });
+ const list=$('[data-continue-list]'),toggle=$('[data-history-toggle]'),clear=$('[data-history-clear]');
+ const count=syncQuietCinemaStack(list,toggle,'.sb-history-slot',showAllHistory);
+ if(count<2)showAllHistory=false;
+ clear.hidden=!historyItems().length;
 }
 function render(){
  persistSession();
@@ -612,7 +605,7 @@ function browserVoiceUnavailable(message){
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){suspendedForSayvi=false;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -664,6 +657,11 @@ $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!ur
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;syncHistoryStack()});
+$('[data-history-clear]').addEventListener('click',()=>{
+ if(!historyItems().length)return;
+ if(!window.confirm('Очистить историю просмотра? Записи исчезнут и из раздела «История». Открытые вкладки и избранное останутся.'))return;
+ clearHistory();render();
+});
 /* Native magnetic snapping for swipes; the label opens the existing full tab manager. */
 $('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
 paintQuickSites();
