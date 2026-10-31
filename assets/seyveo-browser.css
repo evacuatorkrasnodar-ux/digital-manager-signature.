@@ -501,7 +501,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-home-recent-tabs[hidden]{display:none!important}
 .sb-home-recent-tabs>.seyveo-browser-start-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sb-home-recent-grid{
- display:flex;align-items:stretch;gap:9px;min-width:0;max-width:100%;
+ --sb-recent-gap:9px;
+ display:flex;align-items:stretch;gap:var(--sb-recent-gap);min-width:0;max-width:100%;
  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
  scroll-snap-type:x mandatory;scroll-padding-inline:1px;
  overscroll-behavior-x:contain;scrollbar-width:none;
@@ -509,7 +510,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 }
 .sb-home-recent-grid::-webkit-scrollbar{display:none}
 .sb-home-recent-card{
- flex:0 0 min(56%,254px);min-width:0;min-height:67px;height:67px;
+ flex:0 0 calc((100% - var(--sb-recent-gap)) / 2);min-width:0;min-height:67px;height:67px;
  display:flex;align-items:center;overflow:hidden;scroll-snap-align:start;
  border:1px solid var(--sv-home-outline);border-radius:17px;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
@@ -547,8 +548,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-manager .sb-manager-secondary-link>.sb-site-logo{width:37px;height:37px;background:transparent}
 .seyveo-browser .seyveo-browser-history-menu svg{width:22px;height:22px;fill:currentColor;vertical-align:middle}
 @media(max-width:380px){
- .sb-home-recent-grid{gap:8px}
- .sb-home-recent-card{min-height:63px;height:63px;flex-basis:57%}
+ .sb-home-recent-grid{--sb-recent-gap:8px}
+ .sb-home-recent-card{min-height:63px;height:63px}
  .sb-home-recent-open{gap:7px;padding-left:7px}
  .sb-home-recent-symbol.sb-site-logo{width:31px;height:31px}
  .sb-home-recent-info strong{font-size:11.5px}
