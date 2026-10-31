@@ -842,7 +842,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  position:relative;top:19px;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
- position:relative;top:10px; /* Position only page tabs; plus, page and rail stay unchanged. */
+ position:relative;top:5px; /* Raise only website tabs 5px; plus, page and rail unchanged. */
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
  grid-auto-columns:calc((100% - 12px) / 3);
  align-items:stretch;gap:6px;min-width:0;flex:1;
