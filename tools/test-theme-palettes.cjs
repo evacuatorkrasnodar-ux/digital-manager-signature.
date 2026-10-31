@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=48/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=37/,'Browser touch navigation and icon script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=49/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=38/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -82,6 +82,20 @@ assert.ok(browserJS.includes('function paintSiteMark('),'Browser icons use one s
 assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:clamp(104px,26vw,128px)'),'Quick Access is horizontally swipeable without tile redesign');
 assert.ok(css.browser.includes('background:radial-gradient(ellipse 46% 48% at 50% 43%,var(--seyveo-hdr-active),transparent 85%)'),'Browser title uses theme-aware ambient glow only');
 assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick Access can reveal all original tiles');
+assert.ok(css.browser.includes('.seyveo-browser-bar{height:54px;min-height:54px;max-height:54px'),'iPhone Browser address bar height is exactly 54px');
+assert.match(html,/assets\/seyveo-browser-dock\.js\?v=3/,'Browser dock uses original central Sayvi');
+assert.match(html,/assets\/living-conversation\.js\?v=33/,'Existing Feather Chat close hook loaded');
+const browserDockJS=read('assets/seyveo-browser-dock.js');
+const conversationJS=read('assets/living-conversation.js');
+assert.ok(browserDockJS.includes("event.target.closest?.('#assistantButton')"),'Original central Sayvi opens Browser assistant');
+assert.ok(browserJS.includes('function askSayvi()'),'Browser hands off to existing Feather Chat');
+assert.ok(browserJS.includes('function resumeAfterSayvi()'),'Browser restores its own iframe after chat');
+assert.ok(browserJS.includes('suspendedForSayvi=true'),'Browser pauses instead of reloading the page');
+assert.ok(conversationJS.includes("new Event('seyveo:conversation-close')"),'Feather Chat signals Back to the Browser');
+assert.ok(browserJS.includes("document.addEventListener('seyveo:conversation-close',resumeAfterSayvi)"),'Browser resumes only after Feather Chat closes');
+assert.ok(browserJS.includes("field&&!field.value.trim()"),'Existing drafts cannot be overwritten by Browser context');
+assert.ok(!browserJS.includes('frame.contentDocument'),'Browser does not read third-party page content without permission');
+
 assert.ok(browserJS.includes('data-quick-toggle'),'Quick Access exposes Show All button');
 for(const brand of ['youtube','wikipedia','yandex','habr'])assert.ok(browserJS.includes(brand+":'<svg"),'Local SVG for '+brand);
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
