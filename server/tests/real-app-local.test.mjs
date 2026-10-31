@@ -71,6 +71,12 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
  try{
   const home=await request('/');
   assert.equal(home.status,200);
+  const csp=home.headers['content-security-policy'];
+  assert.match(csp,/img-src 'self' data: https:\/\/upload\.wikimedia\.org https:\/\/planetary\.s3\.amazonaws\.com;/);
+  assert.match(csp,/connect-src 'self';/);
+  assert.match(csp,/object-src 'none';/);
+  assert.doesNotMatch(csp,/img-src[^;]*\*/);
+  assert.doesNotMatch(csp,/img-src[^;]*https:\s*;/);
   assert.match(home.body,/\/api\/seyveo-intelligence-catalog/);
   const catalogResponse=await request('/api/seyveo-intelligence-catalog');
   assert.equal(catalogResponse.status,200);
