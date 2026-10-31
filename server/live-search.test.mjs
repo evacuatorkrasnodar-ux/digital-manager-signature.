@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {searchWithSources,validateLiveSearchResults,makeBraveSearchProvider} from '../server/live-search.mjs';
+import {searchWithSources,validateLiveSearchResults,makeBraveSearchProvider,createBraveContextProvider} from '../server/live-search.mjs';
 test('offline state is honest without a connected search provider',async()=>{
  const result=await searchWithSources('Новости компании');
  assert.equal(result.status,'unavailable');assert.deepEqual(result.results,[]);
@@ -54,4 +54,30 @@ test('Brave provider sends only the public query and keeps key in server header'
 });
 test('provider is unavailable without a server credential',()=>{
  assert.equal(makeBraveSearchProvider({apiKey:''}),null);
+});
+
+test('Brave LLM Context retrieves bounded passages from traceable pages',async()=>{
+ const provider=createBraveContextProvider({apiKey:'private-test-key',fetcher:async(url,options)=>{
+  const target=new URL(url);
+  assert.equal(target.pathname,'/res/v1/llm/context');
+  assert.equal(target.searchParams.get('maximum_number_of_tokens'),'4096');
+  assert.equal(target.searchParams.get('context_threshold_mode'),'strict');
+  assert.equal(options.headers['x-subscription-token'],'private-test-key');
+  assert.doesNotMatch(url,/private-test-key/);
+  return {ok:true,json:async()=>({
+   grounding:{generic:[{url:'https://example.org/report',title:'Публикация',
+    snippets:['Первый абзац документа.','Второй абзац документа.']}]},
+   sources:{'https://example.org/report':{age:['16 октября 2026','2026-10-16']}}
+  })};
+ }});
+ const results=await provider('последние новости');
+ assert.equal(results.length,1);
+ assert.match(results[0].context,/Второй абзац/);
+ assert.equal(results[0].publishedAt,'2026-10-16');
+ const safe=validateLiveSearchResults(results);
+ assert.equal(safe.length,1);
+ assert.equal(safe[0].url,'https://example.org/report');
+});
+test('context lookup stays disabled without server token',()=>{
+ assert.equal(createBraveContextProvider({apiKey:''}),null);
 });
