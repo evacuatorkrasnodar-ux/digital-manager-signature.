@@ -839,7 +839,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  height:46px;min-height:46px;margin:10px 0 -4px;gap:6px;
  /* Whole tab rail is 15px lower: 10px additional layout gap plus 5px
     deeper beneath the page edge. Text and close icons stay readable. */
- position:relative;top:18px;z-index:2;
+ position:relative;top:19px;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
@@ -953,7 +953,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-top:10px;margin-bottom:-4px;top:16px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-top:10px;margin-bottom:-4px;top:17px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
