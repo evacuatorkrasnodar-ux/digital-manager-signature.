@@ -61,7 +61,13 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=42/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\\/seyveo-browser\\.css\\?v=43/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\\/seyveo-browser\\.js\\?v=34/,'Browser history interaction script is refreshed');
+const browserJS=read('assets/seyveo-browser.js');
+assert.match(browserJS,/function syncHistoryStack\\(/,'Continue Browsing uses a shared expand and collapse state');
+assert.match(browserJS,/slot\\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
+assert.match(browserJS,/showAllHistory=!showAllHistory;syncHistoryStack\\(\\)/,'History toggle animates the existing stack without replacing cards');
+assert.match(css.browser,/\\.sb-history-slot\\.is-folded/,'History cards fold into a single visible card');
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
 assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
 for(const title of ['Classic Graphite','White Velvet','Emerald Royale','Midnight Sapphire','Copper Dune'])assert.match(html,new RegExp('<strong>'+title+'</strong>'),'Theme name: '+title);
