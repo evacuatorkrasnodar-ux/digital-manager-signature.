@@ -63,6 +63,17 @@ function siteName(url){const host=new URL(url).hostname.replace(/^www\./,'');ret
 function siteSymbol(url){const host=new URL(url).hostname;return host.includes('youtube')?'▶':host.includes('wikipedia')?'W':host.includes('yandex')||host.includes('ya.ru')?'Я':'◇'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){managerOpen=value;manager.hidden=!value;if(value)renderManager();}
+function setTabDetails(card,expanded){
+ card.classList.toggle('is-expanded',expanded);
+ const head=card.querySelector('.sb-manager-select'),menu=card.querySelector('.sb-manager-more'),details=card.querySelector('.sb-tab-context');
+ if(head)head.setAttribute('aria-expanded',String(expanded));
+ if(menu)menu.setAttribute('aria-expanded',String(expanded));
+ if(details){details.setAttribute('aria-hidden',String(!expanded));details.inert=!expanded}
+}
+function toggleTabDetails(id){
+ managerMenuId=managerMenuId===id?null:id;
+ manager.querySelectorAll('.sb-manager-card').forEach(card=>setTabDetails(card,Number(card.dataset.tabId)===managerMenuId));
+}
 function renderManager(){
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
  const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
@@ -73,7 +84,12 @@ function renderManager(){
  list.replaceChildren();closed.replaceChildren();collections.replaceChildren();
  for(const t of tabs){
   const url=t.entries[t.position],item=document.createElement('article');item.className='sb-manager-card'+(t.id===active?' is-current':'');
-  const select=document.createElement('button');select.type='button';select.className='sb-manager-select';select.setAttribute('aria-label',url?'Перейти на '+siteName(url):'Открыть новую вкладку');
+  item.dataset.tabId=String(t.id);
+  const select=document.createElement('button');select.type='button';select.className='sb-manager-select';
+  const detailsId='sb-tab-details-'+t.id;
+  select.setAttribute('aria-controls',detailsId);
+  select.setAttribute('aria-expanded',String(managerMenuId===t.id));
+  select.setAttribute('aria-label',(url?siteName(url):'Новая вкладка')+' — действия');
   const preview=document.createElement('span');preview.className='sb-tab-preview '+(url?'sb-preview-'+(new URL(url).hostname.includes('youtube')?'video':new URL(url).hostname.includes('wikipedia')?'reference':new URL(url).hostname.includes('yandex')?'search':'web'):'sb-preview-empty');
   const previewMark=document.createElement('span');previewMark.textContent=url?siteSymbol(url):'＋';preview.append(previewMark);
   const body=document.createElement('span');body.className='sb-tab-body';
@@ -81,12 +97,20 @@ function renderManager(){
   const domain=document.createElement('small');domain.className='sb-tab-domain';domain.textContent=url?new URL(url).hostname.replace(/^www[.]/,''):'Начать просмотр';
   const status=document.createElement('small');status.className='sb-tab-status'+(t.id===active?' is-active':'');status.textContent=t.id===active?'● Активная вкладка':'● Открыта';
   body.append(title,domain,status);select.append(preview,body);
-  select.addEventListener('click',()=>{active=t.id;tabManager(false);render()});
   const tools=document.createElement('span');tools.className='sb-manager-card-tools';
   const x=document.createElement('button');x.type='button';x.className='sb-manager-close';x.textContent='×';x.setAttribute('aria-label','Закрыть вкладку');x.addEventListener('click',()=>closeTab(t.id));
-  const more=document.createElement('button');more.type='button';more.className='sb-manager-more';more.textContent='⋮';more.setAttribute('aria-label','Действия с вкладкой');more.addEventListener('click',()=>{managerMenuId=managerMenuId===t.id?null:t.id;renderManager()});
+  const more=document.createElement('button');more.type='button';more.className='sb-manager-more';more.textContent='⋮';more.setAttribute('aria-label','Действия с вкладкой');more.setAttribute('aria-controls',detailsId);more.setAttribute('aria-expanded',String(managerMenuId===t.id));
+  select.addEventListener('click',()=>toggleTabDetails(t.id));
+  more.addEventListener('click',()=>toggleTabDetails(t.id));
   tools.append(x,more);item.append(select,tools);
-  if(managerMenuId===t.id){const actions=document.createElement('div');actions.className='sb-tab-context';for(const [label,action] of [['Закладка',()=>{if(url){const a=saved();if(!a.includes(url))store([url,...a])}}],['Открыть отдельно',()=>{if(url)window.open(url,'_blank','noopener,noreferrer')}],['Закрыть',()=>closeTab(t.id)]]){const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=!url&&label!=='Закрыть';button.addEventListener('click',()=>{action();managerMenuId=null;renderManager()});actions.append(button)}item.append(actions)}
+  const actions=document.createElement('div');actions.className='sb-tab-context';actions.id=detailsId;
+  const inner=document.createElement('div');inner.className='sb-tab-context-inner';
+  const action=(label,handler,disabled=false)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=disabled;button.addEventListener('click',handler);inner.append(button);return button};
+  action('Открыть',()=>{active=t.id;managerMenuId=null;tabManager(false);render()});
+  const bookmark=action(url&&saved().includes(url)?'Убрать из закладок':'☆ В закладки',()=>{if(!url)return;const list=saved();const exists=list.includes(url);store(exists?list.filter(link=>link!==url):[url,...list]);bookmark.textContent=exists?'☆ В закладки':'Убрать из закладок'},!url);
+  action('Закрыть',()=>closeTab(t.id));
+  actions.append(inner);item.append(actions);
+  setTabDetails(item,managerMenuId===t.id);
   list.append(item);
  }
  const recentHeading=manager.querySelector('[data-recent-all]');recentHeading.hidden=recentlyClosed.length<=3;recentHeading.textContent=allClosedShown?'Свернуть':'Показать все ›';
