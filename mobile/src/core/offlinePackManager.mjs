@@ -25,15 +25,17 @@ export function createOfflinePackManager({storage,platform,getFreeBytes,activeId
     if(ids.includes(p.id))return {status:'already-installed',id:p.id};
     const plan=planPackInstall([p],{platform,freeBytes:await getFreeBytes(),installedIds:ids});
     if(!plan.canInstall)throw Error('pack-install-not-allowed');
-    let staged=false;
+    let attempted=false;
     try{
+     attempted=true;
      await storage.download(p);
-     staged=true;
      if(await storage.verify(p)!==true)throw Error('pack-integrity-failed');
      await storage.commit(p);
      return {status:'installed',id:p.id};
     }catch(e){
-     if(staged&&typeof storage.discard==='function')await storage.discard(p.id);
+     if(attempted&&typeof storage.discard==='function'){
+      try{await storage.discard(p.id)}catch{}
+     }
      throw e;
     }
    });
