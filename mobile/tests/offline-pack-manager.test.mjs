@@ -39,3 +39,15 @@ test('refuses removal while model in use and path traversal',async()=>{
  await assert.rejects(f.manager.remove('../vault'),/invalid-pack-id/);
  assert.equal(f.files.size,1);
 });
+
+test('cleans partial file after download failure',async()=>{
+ const calls=[];
+ const storage={
+  list:async()=>[],download:async()=>{throw Error('download-failed')},
+  verify:async()=>true,commit:async()=>{throw Error('must-not-commit')},
+  remove:async()=>{},discard:async id=>calls.push(id)
+ };
+ const manager=createOfflinePackManager({storage,platform:'ios',getFreeBytes:async()=>200_000_000});
+ await assert.rejects(manager.install(manifest),/download-failed/);
+ assert.deepEqual(calls,['small-model']);
+});
