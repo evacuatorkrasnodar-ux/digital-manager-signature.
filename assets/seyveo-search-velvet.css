@@ -1,0 +1,19 @@
+/* SEYVEO Search · Black Velvet, quiet source cards; no ad slots or tracking */
+.seyveo-live-search{display:grid;gap:12px;max-width:100%;margin:10px 0 2px;color:inherit}
+.seyveo-live-search-heading{display:flex;align-items:center;gap:9px;min-height:30px;font-size:13px;font-weight:650;letter-spacing:.01em}
+.seyveo-live-search-mark{display:grid;place-items:center;width:28px;height:28px;border:1px solid rgba(87,176,144,.28);border-radius:50%;color:#65ba98;background:rgba(64,155,124,.07);font-size:18px}
+.seyveo-live-search-heading small{margin-left:auto;opacity:.55;font-size:11px;font-weight:500}
+.seyveo-live-search-sources{display:grid;gap:7px}
+.seyveo-live-search-source{display:flex;align-items:center;gap:12px;min-width:0;padding:13px 14px;border-radius:17px;border:1px solid rgba(128,153,147,.17);background:rgba(125,148,141,.045);color:inherit;text-decoration:none;transition:background .15s ease,border-color .15s ease}
+.seyveo-live-search-source:hover,.seyveo-live-search-source:focus-visible{border-color:rgba(80,160,131,.45);background:rgba(80,160,131,.085);outline-offset:2px}
+.seyveo-live-search-source-content{min-width:0;flex:1;display:grid;gap:5px}
+.seyveo-live-search-source strong{font-size:13px;line-height:1.42;font-weight:650;overflow-wrap:anywhere}
+.seyveo-live-search-source p{margin:0;font-size:12px;line-height:1.55;opacity:.78;overflow-wrap:anywhere}
+.seyveo-live-search-source small{font-size:10.5px;line-height:1.4;opacity:.55;overflow-wrap:anywhere}
+.seyveo-live-search-arrow{font-size:15px;opacity:.5}
+.seyveo-live-search-disclaimer{margin:0 2px!important;font-size:10.5px!important;line-height:1.5!important;opacity:.55}
+.seyveo-live-search-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.seyveo-live-search-photo{overflow:hidden;border-radius:13px;border:1px solid rgba(128,153,147,.15);color:inherit;text-decoration:none}
+.seyveo-live-search-photo img{display:block;width:100%;aspect-ratio:1.45;object-fit:cover}
+.seyveo-live-search-photo small{display:block;padding:5px 8px;font-size:9px;opacity:.65}
+@media(prefers-reduced-motion:reduce){.seyveo-live-search-source{transition:none}}
