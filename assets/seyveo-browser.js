@@ -17,7 +17,7 @@ document.body.append(root);
 const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading"><strong>Недавно закрытые</strong><button type="button" data-recent-all hidden>Показать все ›</button></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
 root.append(manager);
 const switcher=document.createElement('nav');switcher.className='sb-manager-switcher';switcher.setAttribute('aria-label','Разделы браузера');
-const sections=[['tabs','Вкладки'],['favorites','Избранное'],['history','История'],['collections','Коллекции']];
+const sections=[['tabs','Вкладки','Страницы'],['favorites','Избранное','Закладки'],['history','История','Просмотры'],['collections','Коллекции','Подборки']];
 const sectionPaths={
  tabs:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16H3a1 1 0 0 1-1-1V4a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v1"/>',
  favorites:'<path d="M6 4.5c0-1 .8-1.8 1.8-1.8h8.4c1 0 1.8.8 1.8 1.8V21l-6-4-6 4z"/>',
@@ -25,7 +25,7 @@ const sectionPaths={
  collections:'<path d="m12 2 9 5-9 5-9-5 9-5zm-9 10 9 5 9-5M3 17l9 5 9-5"/>'
 };
 let managerSection='tabs';
-for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
+for(const [id,label,description] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span><small>'+description+'</small>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
 // Match the first screen's heading and four quick-access tiles in the
 // exact same vertical slot. The real search bar and wordmark remain shared.
 const managerHeading=document.createElement('div');
