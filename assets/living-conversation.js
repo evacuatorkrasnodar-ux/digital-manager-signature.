@@ -515,7 +515,7 @@ function beginStream(question,cancel){
  if(activeAction?.kind==='stream')finishAction();
  streamDraft='';
  // Stop appears only when the caller provides a real cancellation callback.
- if(typeof cancel==='function'&&!activeAction){
+ if(typeof cancel==='function'&&(!activeAction||activeAction.kind==='queued')){
   activeAction={kind:'stream',cancel};syncActionButton();
  }
  status('Сэйви пишет…');
@@ -644,7 +644,7 @@ window.addEventListener('hashchange',()=>{
  }
 });
 window.SEYVEO_CHAT_ACTIVITY=Object.freeze({
- begin:beginAction,finish:finishAction,cancel:cancelAction,
+ begin:beginAction,finish:()=>{if(activeAction?.kind==='queued')finishAction()},cancel:cancelAction,
  isBusy:()=>Boolean(activeAction)
 });
 // A verified search service can deliver this payload without replacing Feather Chat.
@@ -658,7 +658,7 @@ function showSearchResults(payload){
  const answer=available
   ?summary||'Нашла материалы по твоему вопросу. Ниже источники, даты и фотографии, если они доступны. Важные факты лучше сверять с оригинальными публикациями.'
   :payload?.status==='unavailable'
-   ?'Интернет-поиск пока не подключён. Я не буду придумывать новости и ссылки.'
+   ?String(payload?.message||'Интернет-поиск пока не подключён. Я не буду придумывать новости и ссылки.').slice(0,280)
    :'По этому запросу пока не нашла проверяемых источников.';
  const turn={question:q,answer,rich,search:available?{status:'results',results:supplied}:null};
  const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
