@@ -1141,14 +1141,33 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
  box-shadow:none;
 }
+/* Only the selected site tab emits light: coloured glass, fine edge and a
+   compact LED at the visible page seam (the bottom 11px sit behind the page). */
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active{
- background:linear-gradient(180deg,
-  color-mix(in srgb,var(--sb-accent) 11%,var(--sb-site-tint,var(--sb-surface))),
-  color-mix(in srgb,var(--sb-site-tint,var(--sb-surface)) 85%,var(--sb-surface)));
+ --sb-led:var(--sb-led-color,var(--sb-accent));
+ border-color:color-mix(in srgb,var(--sb-led) 68%,var(--sb-edge));
+ background:
+  radial-gradient(ellipse 115% 85% at 50% 100%,
+   color-mix(in srgb,var(--sb-led) 17%,transparent),transparent 85%),
+  linear-gradient(180deg,
+   color-mix(in srgb,var(--sb-led) 6%,var(--sb-site-tint,var(--sb-surface))),
+   color-mix(in srgb,var(--sb-site-tint,var(--sb-surface)) 88%,var(--sb-surface)));
+ box-shadow:
+  inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 14%,transparent),
+  inset 0 0 0 1px color-mix(in srgb,var(--sb-led) 16%,transparent),
+  inset 0 -14px 19px -13px color-mix(in srgb,var(--sb-led) 40%,transparent);
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::before{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(to top,
+  color-mix(in srgb,var(--sb-led) 21%,transparent),transparent 57%);
  box-shadow:none;
 }
-.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::before,
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
- content:none;
- box-shadow:none;
+ content:"";position:absolute;left:1px;right:1px;bottom:11px;
+ height:3px;border-radius:3px;pointer-events:none;
+ background:var(--sb-led);
+ box-shadow:
+  0 -2px 8px color-mix(in srgb,var(--sb-led) 85%,transparent),
+  0 -8px 17px color-mix(in srgb,var(--sb-led) 36%,transparent);
 }
