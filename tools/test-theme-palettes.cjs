@@ -62,7 +62,7 @@ assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its s
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
 assert.match(html,/assets\/seyveo-browser\.css\?v=52/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=39/,'Browser context-aware Sayvi script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=40/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -86,7 +86,7 @@ assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick A
 assert.ok(css.browser.includes('.seyveo-browser-bar{height:40px;min-height:40px;max-height:40px'),'Browser address bar has a 40px outer height');
 assert.ok(css.browser.includes('width:36px;height:36px;flex:none'),'QR scan fits the compact field');
 assert.ok(!css.browser.includes('.seyveo-browser-bar{min-height:58px;max-height:62px'),'Old Browser bar height does not override the compact field');
-assert.match(html,/assets\/seyveo-browser-dock\.js\?v=4/,'Browser dock uses original central Sayvi');
+assert.match(html,/assets\/seyveo-browser-dock\.js\?v=5/,'Browser dock uses original central Sayvi');
 assert.match(html,/assets\/living-conversation\.js\?v=33/,'Existing Feather Chat close hook loaded');
 const browserDockJS=read('assets/seyveo-browser-dock.js');
 const conversationJS=read('assets/living-conversation.js');
@@ -108,6 +108,15 @@ assert.ok(conversationJS.includes("new Event('seyveo:conversation-close')"),'Fea
 assert.ok(browserJS.includes("document.addEventListener('seyveo:conversation-close',resumeAfterSayvi)"),'Browser resumes only after Feather Chat closes');
 assert.ok(browserJS.includes("field&&!field.value.trim()"),'Existing drafts cannot be overwritten by Browser context');
 assert.ok(!browserJS.includes('frame.contentDocument'),'Browser does not read third-party page content without permission');
+assert.ok(browserDockJS.includes('SEYVEO_DOCK_VOICE_CLICK_SUPPRESSED'),'Long hold never opens duplicate Feather Chat');
+assert.ok(html.includes('window.SEYVEO_DOCK_VOICE_CLICK_SUPPRESSED=()=>'),'One existing mic distinguishes tap from press-and-hold');
+assert.ok(html.includes("!window.SEYVEO_BROWSER?.state?.().open)goHome()"),'Speech does not force Browser back to Home');
+assert.ok(html.includes("window.SEYVEO_BROWSER.voiceCommand?.(phrase)"),'Existing speech recognition sends words to Browser');
+assert.ok(browserJS.includes('function browserVoiceCommand(transcript)'),'Browser supports voice search without new microphone controls');
+assert.ok(browserJS.includes('voiceCommand:browserVoiceCommand'),'Voice command API available to existing center button');
+assert.ok(browserJS.includes('privateQuery'),'Private dictated requests are not sent to Yandex automatically');
+assert.ok(browserJS.includes('function browserVoiceUnavailable(message)'),'Unsupported speech falls back to normal Sayvi chat');
+
 
 assert.ok(browserJS.includes('data-quick-toggle'),'Quick Access exposes Show All button');
 for(const brand of ['youtube','wikipedia','yandex','habr'])assert.ok(browserJS.includes(brand+":'<svg"),'Local SVG for '+brand);
