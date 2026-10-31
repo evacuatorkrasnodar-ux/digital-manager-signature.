@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=50/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=51/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=38/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -83,7 +83,9 @@ assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:calc(25%
 assert.ok(css.browser.includes('grid-auto-columns:calc(25% - 4.5px)'),'Four tiles remain fully visible on narrow iPhones');
 assert.ok(!css.browser.includes('background:radial-gradient(ellipse 46% 48% at 50% 43%,var(--seyveo-hdr-active),transparent 85%)'),'Browser logo has no unintended light patch');
 assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick Access can reveal all original tiles');
-assert.ok(css.browser.includes('.seyveo-browser-bar{height:54px;min-height:54px;max-height:54px'),'iPhone Browser address bar height is exactly 54px');
+assert.ok(css.browser.includes('.seyveo-browser-bar{height:44px;min-height:44px;max-height:44px'),'Browser address bar has a 44px outer height');
+assert.ok(css.browser.includes('width:40px;height:40px;flex:none'),'QR scan fits the compact field');
+assert.ok(!css.browser.includes('.seyveo-browser-bar{min-height:58px;max-height:62px'),'Old Browser bar height does not override the compact field');
 assert.match(html,/assets\/seyveo-browser-dock\.js\?v=3/,'Browser dock uses original central Sayvi');
 assert.match(html,/assets\/living-conversation\.js\?v=33/,'Existing Feather Chat close hook loaded');
 const browserDockJS=read('assets/seyveo-browser-dock.js');
