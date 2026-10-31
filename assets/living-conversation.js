@@ -435,6 +435,10 @@ function renderTurns(turns){
        ?displayChatText(value).replace(/\n{2,}/g,'\n')
        :displayChatText(value);
      item.append(label,body);
+     if(who==='sayvi'&&turn.rich){
+       const rich=window.SEYVEO_RICH_ANSWER?.render?.(turn.rich);
+       if(rich)item.append(rich);
+     }
      if(who==='sayvi'&&turn.search){
        const sources=window.SEYVEO_LIVE_SEARCH_UI?.render?.(turn.search);
        if(sources)item.append(sources);
@@ -666,7 +670,25 @@ function showSearchResults(payload){
 window.addEventListener('seyveo:web-search-results',event=>{
  if(event.detail)showSearchResults(event.detail);
 });
-window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,showSearchResults,
+// The intelligence service can choose a readable format for grounded data.
+// The renderer never guesses figures or creates illustrations by itself.
+function showRichAnswer(payload){
+ const question=String(payload?.question||'').trim().slice(0,3500);
+ const answer=String(payload?.answer||'').trim().slice(0,20000);
+ const rich=window.SEYVEO_RICH_ANSWER?.cleanBlocks?.(payload?.blocks)||[];
+ if(!question||(!answer&&!rich.length))return false;
+ const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
+ turns.push({question,answer,rich});
+ if(turns.length>30)turns.splice(0,turns.length-30);
+ open();
+ renderTurns(turns);
+ window.SEYVEO_CHAT_HISTORY?.add({question,answer,rich,kind:'reply'});
+ return true;
+}
+window.addEventListener('seyveo:rich-answer',event=>{
+ if(event.detail)showRichAnswer(event.detail);
+});
+window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,showSearchResults,showRichAnswer,
  endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
 };
 })();
