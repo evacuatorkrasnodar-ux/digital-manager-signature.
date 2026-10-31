@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=58/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=59/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=45/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -77,6 +77,16 @@ assert.ok(browserJS.includes("return 'Без даты'"),'Old URLs without times
 assert.ok(browserJS.includes("removeHistory(address);render()"),'Recent tabs can delete the same History record');
 assert.ok(browserJS.includes("removeHistory(link);render()"),'Continue Browsing removes the same History record');
 assert.ok(css.browser.includes('.sb-manager-secondary.is-history{gap:5px;padding-top:14px}'),'History row spacing is compact and isolated');
+
+assert.ok(css.browser.includes('.sb-manager-select{min-width:0;min-height:79px'),'Opened tabs match the first page full-width card height');
+assert.ok(css.browser.includes('min-height:79px;border-bottom:1px solid var(--sv-home-outline)'),'Recently closed tabs match full-width card height');
+assert.ok(css.browser.includes('.sb-collection-open{min-width:0;min-height:67px'),'Collections match two-up Recent Tabs card height');
+assert.ok(css.browser.includes('.sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:9px}'),'Collections use the first page two-column width and gap');
+assert.ok(css.browser.includes('padding:0 2px 24px;'),'All second-page cards align with first-page left/right inset');
+assert.ok(css.browser.includes('.sb-tab-preview{width:57px;height:56px}'),'iPhone open-tab preview fits its compact card');
+assert.ok(css.browser.includes('.sb-manager-closed-row{min-height:75px}'),'Narrow iPhone recently closed tab uses compact height');
+assert.ok(css.browser.includes('.sb-collection-open{min-height:63px;gap:6px;padding:5px 0 5px 6px}'),'Narrow iPhone collection cards match paired recent cards');
+assert.ok(css.browser.includes('.sb-manager-heading{margin-top:13px;margin-bottom:9px}'),'Section headings use a compact regular mobile rhythm');
 assert.ok(css.browser.includes('.sb-history-entry{'),'History rows have their own theme-aware Black Velvet style');
 assert.ok(css.browser.includes('.sb-history-entry-delete{'),'History has a dedicated single-entry delete control');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
