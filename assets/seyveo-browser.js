@@ -38,7 +38,7 @@ notice.querySelector('p').style.cssText='font-size:13px;line-height:1.5;opacity:
 notice.querySelector('button').style.cssText='padding:13px;border-radius:14px;border:1px solid #65b88b;background:#ffffff10;color:inherit';
 const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
-let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;
+let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
 const collectionsKey='seyveo-browser-collections-v1';
 const sessionKey='seyveo-browser-session-v1';
@@ -101,6 +101,37 @@ function makeCollectionCard(collection){
   panel.append(rename,remove);
  }
  card.append(panel);return card;
+}
+
+function createStarterCollection(name){
+ const collections=getCollections();
+ const existing=collections.find(item=>item.name===name);
+ if(existing){openCollection=existing.id;managerSection='collections';templateMenuName=null;renderManager();return}
+ if(collections.length>=30)return;
+ const id=String(Date.now())+'-'+Math.random().toString(36).slice(2,6);
+ collections.push({id,name,urls:[]});putCollections(collections);
+ templateMenuName=null;managerSection='collections';openCollection=id;renderManager();
+}
+function makeStarterCollectionCard(name){
+ const card=document.createElement('article');card.className='sb-manager-collection-tile sb-collection-starter';
+ const open=document.createElement('button');open.type='button';open.className='sb-collection-open';open.setAttribute('aria-label','Создать коллекцию '+name);
+ const cover=collectionCover({name}),words=document.createElement('span');words.className='sb-collection-summary';
+ const title=document.createElement('strong');title.textContent=name;
+ const subtitle=document.createElement('small');subtitle.textContent='Создать коллекцию';
+ words.append(title,subtitle);open.append(cover,words);
+ open.addEventListener('click',()=>createStarterCollection(name));
+ const more=document.createElement('button');more.type='button';more.className='sb-collection-more';more.textContent='⋮';
+ more.setAttribute('aria-label','Действия с образцом '+name);
+ more.setAttribute('aria-expanded',String(templateMenuName===name));
+ more.addEventListener('click',()=>{templateMenuName=templateMenuName===name?null:name;renderManager()});
+ card.append(open,more);
+ if(templateMenuName===name){
+  const panel=document.createElement('div');panel.className='sb-collection-quick-actions';
+  const create=document.createElement('button');create.type='button';create.textContent='Создать эту коллекцию';
+  create.addEventListener('click',()=>createStarterCollection(name));
+  panel.append(create);card.append(panel);
+ }
+ return card;
 }
 function makeCollection(){managerSection='collections';creatingCollection=true;renderManager();secondary.querySelector('.sb-collection-name')?.focus()}
 function normalizeClosed(item){
@@ -219,8 +250,14 @@ function renderManager(){
   row.append(icon,body,restore);closed.append(row);
  }
  const entries=getCollections();
- if(!entries.length){const empty=document.createElement('p');empty.className='sb-manager-collection-empty';empty.textContent='Создай коллекцию — здесь появятся её обложка и сохранённые страницы';collections.append(empty)}
  for(const collection of entries)collections.append(makeCollectionCard(collection));
+ const starterNames=['Вдохновение','Путешествия'];
+ const hasStarter=entries.some(item=>starterNames.includes(item.name));
+ if(!entries.length||hasStarter){
+  for(const name of starterNames){
+   if(!entries.some(item=>item.name===name))collections.append(makeStarterCollectionCard(name));
+  }
+ }
 }
 function renderSecondary(){
  secondary.replaceChildren();
