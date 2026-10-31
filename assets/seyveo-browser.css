@@ -194,15 +194,23 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 
 @media(max-height:700px){}
 
+/* Defined colour tokens for Browser: all themes use their own SEYVEO accent. */
+.seyveo-browser{
+ --sb-accent:var(--seyveo-emerald,#91d8bf);
+ --sb-surface:color-mix(in srgb,var(--card2,#23303a) 80%,var(--bg,#11161b));
+ --sb-edge:color-mix(in srgb,var(--sb-accent) 32%,var(--line,#3b4c55));
+}
 /* Approved SEYVEO glass search field: no arrow, functional scan glyph. */
 .seyveo-browser-bar{
  height:40px;min-height:40px;max-height:40px;
  padding:2px 7px 2px 12px;gap:9px;border-radius:22px;
- border:1px solid color-mix(in srgb,var(--line) 30%,var(--sv-home-outline));
- background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
- box-shadow:inset 0 1px 0 var(--sv-home-glint),
-  0 0 0 1px color-mix(in srgb,var(--line) 7%,transparent),
-  0 0 17px color-mix(in srgb,var(--line) 13%,transparent);
+ border:1px solid color-mix(in srgb,var(--sb-accent) 48%,var(--line,#3b4c55));
+ background:radial-gradient(ellipse 80% 125% at 24% -25%,color-mix(in srgb,var(--sb-accent) 22%,transparent),transparent 96%),
+  linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 9%,var(--sb-surface)),var(--sb-surface));
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 19%,transparent),
+  inset 0 2px 8px color-mix(in srgb,var(--sb-accent) 13%,transparent),
+  0 0 0 1px color-mix(in srgb,var(--sb-accent) 9%,transparent),
+  0 0 20px color-mix(in srgb,var(--sb-accent) 24%,transparent);
 }
 .seyveo-browser-search-icon{background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;flex:0 0 21px;color:var(--text,#eff7f2);opacity:.9}
 .seyveo-browser-search-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
@@ -844,36 +852,23 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .seyveo-browser-tab{
  position:relative;display:flex;align-items:stretch;
  width:100%;min-width:0;max-width:none;height:44px;min-height:0;
- border:1px solid color-mix(in srgb,var(--sv-home-outline) 72%,var(--line) 28%);
- border-radius:12px 12px 2px 2px;
- /* Denser glass: a bright polished top face, transparent center and deep inset rim. */
- background:
-  linear-gradient(180deg,
-   color-mix(in srgb,var(--sv-home-glint) 64%,var(--sv-home-glass)) 0%,
-   var(--sv-home-glass) 78%),
-  var(--sv-home-glass);
- box-shadow:
-  inset 0 1px 0 color-mix(in srgb,var(--sv-home-glint) 82%,var(--line) 18%),
-  inset 1px 0 0 color-mix(in srgb,var(--sv-home-outline) 42%,transparent),
-  inset -1px 0 0 color-mix(in srgb,var(--sv-home-outline) 42%,transparent),
-  inset 0 -9px 13px color-mix(in srgb,var(--sv-home-outline) 22%,transparent);
+ border:1px solid var(--sb-edge);border-radius:12px 12px 2px 2px;
+ background:linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 12%,var(--sb-surface)),var(--sb-surface) 80%);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 19%,transparent),
+  inset 1px 0 0 color-mix(in srgb,var(--sb-accent) 11%,transparent),
+  inset -1px 0 0 color-mix(in srgb,var(--sb-accent) 11%,transparent),
+  inset 0 -8px 13px color-mix(in srgb,var(--bg,#11161b) 30%,transparent);
  overflow:hidden;scroll-snap-align:start;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active{
- border-color:color-mix(in srgb,var(--line) 72%,var(--sv-home-outline));
- background:
-  radial-gradient(ellipse 95% 135% at 35% 0%,
-   color-mix(in srgb,var(--line) 27%,transparent) 0%,
-   transparent 78%),
-  linear-gradient(180deg,
-   color-mix(in srgb,var(--line) 17%,var(--sv-home-glass)) 0%,
-   var(--sv-home-glass) 94%);
- box-shadow:
-  inset 0 1px 0 color-mix(in srgb,var(--line) 48%,var(--sv-home-glint)),
-  inset 0 5px 13px color-mix(in srgb,var(--line) 16%,transparent),
-  inset 1px 0 0 color-mix(in srgb,var(--line) 27%,transparent),
-  inset -1px 0 0 color-mix(in srgb,var(--line) 27%,transparent),
-  0 0 16px color-mix(in srgb,var(--line) 20%,transparent);
+ border-color:color-mix(in srgb,var(--sb-accent) 79%,var(--line,#3b4c55));
+ background:radial-gradient(ellipse 115% 145% at 35% 0%,color-mix(in srgb,var(--sb-accent) 42%,transparent),transparent 80%),
+  linear-gradient(180deg,color-mix(in srgb,var(--sb-accent) 24%,var(--sb-surface)),var(--sb-surface) 94%);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--sb-accent) 53%,transparent),
+  inset 0 7px 16px color-mix(in srgb,var(--sb-accent) 21%,transparent),
+  inset 1px 0 0 color-mix(in srgb,var(--sb-accent) 20%,transparent),
+  inset -1px 0 0 color-mix(in srgb,var(--sb-accent) 20%,transparent),
+  0 0 19px color-mix(in srgb,var(--sb-accent) 25%,transparent);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:grid;grid-template-columns:23px minmax(0,1fr);
@@ -915,19 +910,15 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- /* Same dense glass and outline as adjacent tabs, without an active glow. */
  position:relative;top:0;z-index:0;
  align-self:flex-start;display:grid;place-items:center;flex:none;
  width:37px;min-width:37px;height:44px;min-height:44px;
- padding:0;border-radius:12px 12px 2px 2px;
- border:1px solid color-mix(in srgb,var(--sv-home-outline) 72%,var(--line) 28%);
- background:linear-gradient(180deg,
-  color-mix(in srgb,var(--sv-home-glint) 64%,var(--sv-home-glass)),
-  var(--sv-home-glass) 78%);
- box-shadow:inset 0 1px 0 color-mix(in srgb,var(--sv-home-glint) 82%,var(--line) 18%),
-  inset 0 -9px 13px color-mix(in srgb,var(--sv-home-outline) 22%,transparent);
+ padding:0 0 14px;border-radius:12px 12px 2px 2px;
+ border:1px solid var(--sb-edge);
+ background:linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 12%,var(--sb-surface)),var(--sb-surface) 80%);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 19%,transparent),
+  inset 0 -8px 13px color-mix(in srgb,var(--bg,#11161b) 30%,transparent);
  font-size:25px;font-weight:300;line-height:1;
- padding-bottom:14px; /* plus glyph also follows the raised tab content */
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
  position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
