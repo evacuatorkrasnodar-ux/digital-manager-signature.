@@ -55,7 +55,7 @@ function render(){
   const card=document.createElement('article');card.className='seyveo-browser-history-card';
   const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-label','Открыть '+name);
   const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.setAttribute('aria-hidden','true');
-  const favicon=document.createElement('img');favicon.alt='';favicon.width=25;favicon.height=25;favicon.loading='lazy';favicon.referrerPolicy='no-referrer';favicon.src=url.origin+'/favicon.ico';favicon.addEventListener('error',()=>{favicon.remove();logo.textContent='◈'},{once:true});logo.append(favicon);
+  logo.textContent=name==='YouTube'?'▶':name==='Wikipedia'?'W':name==='Яндекс'?'Я':'◈';
   const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=name;const sub=document.createElement('small');sub.textContent=host;words.append(title,sub);
   head.append(logo,words);head.addEventListener('click',()=>navigate(link));
   const menu=document.createElement('button');menu.type='button';menu.className='seyveo-browser-history-menu';menu.textContent='⋯';menu.setAttribute('aria-label','Действия с '+name);menu.setAttribute('aria-expanded',String(expandedHistory===link));menu.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
