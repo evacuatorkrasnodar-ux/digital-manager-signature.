@@ -839,7 +839,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  height:46px;min-height:46px;margin:10px 0 -4px;gap:6px;
  /* Whole tab rail is 15px lower: 10px additional layout gap plus 5px
     deeper beneath the page edge. Text and close icons stay readable. */
- position:relative;top:18px;z-index:4;
+ position:relative;top:18px;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
@@ -938,7 +938,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  font-size:25px;font-weight:300;line-height:1;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
- position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
+ position:relative;top:19px;z-index:3;order:4;flex:1;min-height:0;min-width:0;
  width:calc(100% + 2 * var(--sv-browser-gutter));
  margin-inline:calc(-1 * var(--sv-browser-gutter));
  /* The page continues underneath the floating original SEYVEO dock. */
@@ -1059,6 +1059,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:none;
  width:0;
  height:0;
+}
+
+/* At compact widths the rail sits 2px higher; maintain the same 1px overlap. */
+@media(max-width:390px){
+ .seyveo-browser.is-site-view>.seyveo-browser-content{top:17px}
 }
 
 /* SEYVEO browser: compact, narrow new-tab glass shape.
