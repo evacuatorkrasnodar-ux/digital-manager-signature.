@@ -175,34 +175,36 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-browser-history-heading-actions [data-history-toggle]{font-size:11px}
 }
 
-/* One Quiet Cinema animation engine for both Browser pages.
-   The actual slot height is measured in JS, preventing the first page popping
-   open faster than the second one or revealing an empty lower outline. */
+/* Shared Quiet Cinema motion: no height guesses or clipped first History card.
+   Grid track + a min-height:0 inner wrapper animate actual content in both views. */
 .seyveo-browser-continue [data-continue-list]{
  display:block;position:relative;min-width:0;--sb-quiet-gap:9px;
 }
 .seyveo-browser-continue .sb-history-slot,
 .sb-manager-history-list .sb-history-slot{
- display:block;min-width:0;min-height:0;
- max-height:var(--sb-quiet-open-height,96px);
- overflow:hidden;margin-bottom:var(--sb-quiet-gap,9px);
+ display:grid;grid-template-rows:1fr;min-width:0;min-height:0;
+ margin-bottom:var(--sb-quiet-gap,9px);
  opacity:1;transform:translateY(0) scale(1);
  transform-origin:top center;
- transition:max-height .38s cubic-bezier(.22,1,.36,1),
+ transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1),
   margin-bottom .38s cubic-bezier(.22,1,.36,1),
   opacity .31s ease,transform .38s cubic-bezier(.22,1,.36,1);
  transition-delay:calc(var(--sb-history-order,0) * 42ms);
 }
+.seyveo-browser-continue .sb-history-slot>.sb-quiet-inner,
+.sb-manager-history-list .sb-history-slot>.sb-quiet-inner{
+ min-height:0;min-width:0;overflow:hidden;
+}
 .seyveo-browser-continue .sb-history-slot.is-folded,
 .sb-manager-history-list .sb-history-slot.is-folded{
- max-height:0;margin-bottom:0;opacity:0;
+ grid-template-rows:0fr;margin-bottom:0;opacity:0;
  transform:translateY(-13px) scale(.985);
  pointer-events:none;transition-delay:0ms;
 }
 .seyveo-browser-continue [data-continue-list].is-collapsed .sb-history-slot:first-child,
 .seyveo-browser-continue .sb-history-slot:last-child,
+.sb-manager-history-list.is-collapsed .sb-history-slot:first-child,
 .sb-manager-history-list .sb-history-slot:last-child{margin-bottom:0}
-.seyveo-browser-continue .sb-history-slot>.seyveo-browser-history-card{min-height:0;overflow:hidden}
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser-continue .sb-history-slot,
  .sb-manager-history-list .sb-history-slot{transition:none}
