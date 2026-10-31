@@ -4,7 +4,7 @@
  */
 import {readFile,readdir} from 'node:fs/promises';
 import {resolve,join,basename} from 'node:path';
-const TOPICS=new Set(['business','legal','psychology']);
+const TOPICS=new Set(['business','legal','psychology','science','technology','history','travel','reference']);
 const TOKENS=/[а-яёa-z0-9]{3,}/giu;
 const stem=word=>{
  const value=word.toLocaleLowerCase('ru').replace(/ё/g,'е');
