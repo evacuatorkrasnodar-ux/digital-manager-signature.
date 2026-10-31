@@ -58,7 +58,7 @@ export function makeBraveSearchProvider({apiKey=process.env.SEYVEO_BRAVE_SEARCH_
    title:item.title,
    url:item.url,
    snippet:item.description,
-   publishedAt:typeof item.page_age==='string'&&/^\\d{4}-\\d{2}-\\d{2}/.test(item.page_age)?item.page_age.slice(0,10):null
+   publishedAt:typeof item.page_age==='string'&&/^\d{4}-\d{2}-\d{2}/.test(item.page_age)?item.page_age.slice(0,10):null
   }));
  };
 }
