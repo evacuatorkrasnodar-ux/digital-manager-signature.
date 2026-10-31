@@ -27,7 +27,8 @@ export function createSeyveoWebProvider({fetcher=fetch}={}){
    const snippet=clean(item.snippet).slice(0,600);
    if(!title||!snippet)return [];
    const url='https://ru.wikipedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));
-   const publishedAt=/^\d{4}-\d{2}-\d{2}/.test(item.timestamp||'')?item.timestamp.slice(0,10):null;
+   // Search timestamp is an edit time, not publication date. Never label it as published.
+   const publishedAt=null;
    return [{title,snippet,url,publishedAt}];
   });
  };
