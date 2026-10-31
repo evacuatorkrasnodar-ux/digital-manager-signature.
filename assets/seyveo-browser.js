@@ -9,7 +9,28 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><span class="sb-browser-url-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><button type="button" class="sb-browser-reload" data-site-reload aria-label="Обновить страницу" title="Обновить страницу"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.1 11.2A8.3 8.3 0 1 0 18 17.8"/><path d="M20 5.5v5.8h-5.8"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
 <div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button><button type="button" data-history-clear hidden aria-label="Очистить продолжение просмотра" title="Очистить историю просмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
-<div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
+<div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
+ <div class="sb-browser-demo-head"><span class="sb-browser-demo-menu" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><strong>Хабр</strong><span class="sb-browser-demo-fill"></span><span class="sb-browser-demo-search" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span></div>
+ <article class="sb-browser-demo-article">
+  <div class="sb-browser-demo-meta"><span>ДИЗАЙН</span><span>·</span><span>12 мая 2024</span><span>·</span><span>◷ 7 мин</span><small>ДЕМО</small></div>
+  <h1>Минимализм в цифровом пространстве: почему меньше значит больше</h1>
+  <p class="sb-browser-demo-lead">Разбираемся, как принципы минимализма помогают создавать более удобные, красивые и осознанные цифровые продукты.</p>
+  <div class="sb-browser-demo-hero" role="img" aria-label="Иллюстрация рабочего стола с лампой, ноутбуком и чашкой">
+   <svg viewBox="0 0 640 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><linearGradient id="sbDemoWall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#233a3b"/><stop offset=".58" stop-color="#111c20"/><stop offset="1" stop-color="#071416"/></linearGradient><linearGradient id="sbDemoDesk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#816346"/><stop offset=".16" stop-color="#3d352a"/><stop offset="1" stop-color="#111b1c"/></linearGradient><radialGradient id="sbDemoGlow"><stop stop-color="#e2ae68" stop-opacity=".28"/><stop offset="1" stop-color="#dfac68" stop-opacity="0"/></radialGradient></defs>
+    <rect width="640" height="340" fill="url(#sbDemoWall)"/><g stroke="#9ab1ad" stroke-opacity=".12"><path d="M120 0v235M253 0v235M380 0v235M510 0v235"/></g><ellipse cx="126" cy="117" rx="180" ry="150" fill="url(#sbDemoGlow)"/>
+    <path d="M0 229h640v111H0z" fill="url(#sbDemoDesk)"/><path d="M0 232h640" stroke="#d2b68a" stroke-width="3" stroke-opacity=".3"/>
+    <path d="m162 224 33-142h54" stroke="#101719" stroke-width="9" fill="none"/><path d="m210 77-61 2-16 20h78z" fill="#20292a"/><path d="M151 97h52" stroke="#f3c083" stroke-width="5"/><path d="m155 226-33 0" stroke="#101718" stroke-width="10"/>
+    <rect x="100" y="177" width="35" height="51" rx="4" fill="#111b1a"/><path d="M116 174q-17-30-13-50m13 50q20-42 13-57m-13 51q-3-25-24-40" stroke="#455838" fill="none" stroke-width="3"/>
+    <path d="M277 149h163l30 83H311z" fill="#111719" stroke="#566260" stroke-width="3"/><path d="M313 232h158l42 12H273z" fill="#293031"/><path d="M275 244h241" stroke="#9a9b90" stroke-opacity=".32" stroke-width="3"/>
+    <rect x="525" y="190" width="43" height="42" rx="5" fill="#121c1e" stroke="#4d5552" stroke-width="3"/><path d="M566 202q23-1 10 17h-9" fill="none" stroke="#4b5652" stroke-width="6"/>
+    <rect x="0" y="293" width="640" height="47" fill="#10191b" opacity=".68"/>
+   </svg>
+  </div>
+  <p>В мире, где нас ежедневно окружает избыток информации, минимализм становится не просто эстетическим выбором, а осознанной необходимостью. Он помогает сфокусироваться на главном, снижает когнитивную нагрузку и делает взаимодействие с технологиями по-настоящему приятным.</p>
+  <p>Продуманная иерархия, свободное пространство и спокойные детали позволяют сосредоточиться на содержании.</p>
+ </article>
+</section><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
 <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
 <div class="seyveo-browser-sheet" hidden><div class="seyveo-browser-sheet-bar"><strong>Избранное</strong><button type="button" data-dismiss>Готово</button></div><div data-bookmark-list></div></div>`;
 // Embedded websites keep their sandbox; do not add allow-same-origin with allow-scripts.
@@ -500,12 +521,17 @@ function render(){
  // full-height grey error iframe; a native app will require WebView integration.
  const embedHost=url?new URL(url).hostname.toLowerCase():'';
  const unsupportedEmbeds=new Set(['youtube.com','www.youtube.com','m.youtube.com','youtu.be','ya.ru','www.ya.ru','yandex.ru','www.yandex.ru']);
- const blocked=!!url&&unsupportedEmbeds.has(embedHost);
+ // The provided Habr-style reference is a DEMO only for this exact sample route.
+ // Never substitute fabricated article text into another live website.
+ const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
+ const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
+ $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
- $('.seyveo-browser-frame-note').hidden=home||blocked;
+ $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
  $('.seyveo-browser-content').classList.toggle('is-embed-unavailable',blocked);
- frame.hidden=home||blocked;
- if(blocked){
+ frame.hidden=home||blocked||isDemo;
+ if(isDemo){frame.removeAttribute('src');displayedTab=null}
+ else if(blocked){
   embedExplanation.textContent='Сайт '+embedHost+' не открывается внутри веб-демоверсии SEYVEO. Для полноценного встроенного просмотра потребуется нативный браузер приложения.';
   frame.removeAttribute('src');displayedTab=null;
  }else if(url){if(displayedTab!==active||frame.getAttribute('src')!==url){frame.src=url;displayedTab=active}}
@@ -710,6 +736,7 @@ $('[data-external]').addEventListener('click',()=>{const url=currentUrl();if(url
 $('[data-site-reload]').addEventListener('click',()=>{
  const url=currentUrl();if(!url)return;
  if(!frame.hidden){frame.src=url;displayedTab=active}
+ else if(!$('[data-browser-demo]').hidden){$('[data-browser-demo]').scrollTop=0}
  else render();
 });
 $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!url)return;const a=saved();store(a.includes(url)?a.filter(x=>x!==url):[url,...a]);render()});
