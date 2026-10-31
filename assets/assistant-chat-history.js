@@ -7,29 +7,23 @@ if(!dialog)return;
 const KEY='seyveo-assistant-chat-history-v1',LIMIT=60;
 const $=id=>document.getElementById(id);
 const safeRich=value=>window.SEYVEO_RICH_ANSWER?.cleanBlocks?.(value)||[];
-function safeSearch(value){
- if(value?.status!=='results'||!Array.isArray(value.results))return null;
- const results=value.results.slice(0,6).flatMap(item=>{
-  if(!item||typeof item!=='object')return [];
-  let url;try{const u=new URL(item.url);if(u.protocol!=='https:'||u.username||u.password)return [];url=u.href}catch{return []}
-  const title=String(item.title||'').slice(0,180);
-  if(!title)return [];
-  let imageUrl=null;
-  if(item.imageApproved===true&&item.imageCredit){
-   try{const u=new URL(item.imageUrl);if(u.protocol==='https:'&&!u.username&&!u.password)imageUrl=u.href}catch{}
-  }
-  return [{title,url,snippet:String(item.snippet||'').slice(0,600),
-   publishedAt:String(item.publishedAt||'').slice(0,10),
-   imageUrl,imageApproved:!!imageUrl,imageCredit:imageUrl?String(item.imageCredit).slice(0,110):''}];
- });
- return results.length?{status:'results',results}:null;
-}
 function load(){
  try{
   const raw=JSON.parse(localStorage.getItem(KEY)||'[]');
   if(!Array.isArray(raw))return[];
+  // Older prototypes retained web result URLs/snippets. Remove these from
+  // persistent storage: the chosen API permits transient display by default.
+  if(raw.some(row=>row&&typeof row==='object'&&Object.hasOwn(row,'search'))){
+   try{
+    const clean=raw.map(row=>{
+     if(!row||typeof row!=='object'||Array.isArray(row))return row;
+     const {search,...rest}=row;return rest;
+    });
+    localStorage.setItem(KEY,JSON.stringify(clean));
+   }catch{}
+  }
   return raw.filter(row=>row&&typeof row.q==='string'&&typeof row.a==='string'&&Number.isFinite(row.at))
-   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,20000),at:row.at,search:safeSearch(row.search),rich:safeRich(row.rich),kind:row.kind==='draft'?'draft':'reply'}));
+   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,20000),at:row.at,rich:safeRich(row.rich),kind:row.kind==='draft'?'draft':'reply'}));
  }catch{return[]}
 }
 function save(items){
@@ -40,12 +34,12 @@ function save(items){
 // Read only actual saved turns; never mix in the separate Notebook drafts.
 function recent(limit=30){
  const count=Math.min(LIMIT,Math.max(1,Number(limit)||30));
- return load().slice(-count).map(row=>({question:row.q,answer:row.a,search:row.search,rich:row.rich}));
+ return load().slice(-count).map(row=>({question:row.q,answer:row.a,rich:row.rich}));
 }
-function add({question,answer,kind,search,rich}){
+function add({question,answer,kind,rich}){
  const q=String(question||'').trim(),a=String(answer||'').trim();
  if(!q)return false;
- const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,20000),at,search:safeSearch(search),rich:safeRich(rich),kind:kind==='draft'?'draft':'reply'};
+ const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,20000),at,rich:safeRich(rich),kind:kind==='draft'?'draft':'reply'};
  const result=save([...load(),row]);
  if(dialog.open)render();
  return result;
