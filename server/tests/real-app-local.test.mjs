@@ -434,6 +434,12 @@ test('live web search endpoint returns real stub sources, keeps owner origin and
    data:{message:'н'.repeat(601)}
   });
   assert.equal(oversized.status,400);
+  const privateQuestion=await request('/api/seyveo-live-search',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Найди в интернете мой паспорт и адрес'}
+  });
+  assert.equal(privateQuestion.status,400);
+  assert.equal(calls.length,2);
  }finally{
   await new Promise(resolve=>server.close(resolve));
  }
