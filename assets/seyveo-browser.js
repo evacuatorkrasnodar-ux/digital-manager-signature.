@@ -9,7 +9,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
 <div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button><button type="button" data-history-clear hidden aria-label="Очистить продолжение просмотра" title="Очистить историю просмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
-<div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
+<div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Меню браузера" aria-expanded="false" aria-controls="seyveoBrowserSiteMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button><nav id="seyveoBrowserSiteMenu" class="sb-browser-site-menu" data-site-menu-panel aria-label="Меню SEYVEO Browser" hidden><button type="button" data-site-action="tabs">Вкладки</button><button type="button" data-site-action="favorites">Избранное</button><button type="button" data-site-action="history">История</button><button type="button" data-site-action="home">Главная браузера</button></nav></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
  <div class="sb-browser-demo-head"><span class="sb-browser-demo-menu" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><strong>Хабр</strong><span class="sb-browser-demo-fill"></span><span class="sb-browser-demo-search" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span></div>
  <article class="sb-browser-demo-article">
   <div class="sb-browser-demo-meta"><span>ДИЗАЙН</span><span>·</span><span>12 мая 2024</span><span>·</span><span>◷ 7 мин</span><small>ДЕМО</small></div>
@@ -59,6 +59,8 @@ const notice=root.querySelector('.seyveo-browser-blocked');
 // Styling belongs to the Browser stylesheet so all three native themes apply.
 const embedExplanation=notice.querySelector('p');
 const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
+const sitebar=$('.sb-browser-sitebar'),siteMenu=$('[data-site-menu-panel]'),siteMenuButton=$('[data-site-menu]');
+function closeSiteMenu(){siteMenu.hidden=true;siteMenuButton.setAttribute('aria-expanded','false')}
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
@@ -525,6 +527,8 @@ function render(){
  // Never substitute fabricated article text into another live website.
  const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
  const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
+ closeSiteMenu();sitebar.hidden=home||isDemo;
+ if(url)$('[data-site-title]').textContent=siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
  $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
@@ -760,6 +764,20 @@ root.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',clos
 root.querySelectorAll('[data-bookmarks]').forEach(b=>b.addEventListener('click',bookmarks));
 $('[data-dismiss]').addEventListener('click',()=>sheet.hidden=true);
 $('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
+siteMenuButton.addEventListener('click',()=>{
+ const opening=siteMenu.hidden;
+ siteMenu.hidden=!opening;
+ siteMenuButton.setAttribute('aria-expanded',String(opening));
+});
+$('[data-site-search]').addEventListener('click',()=>{closeSiteMenu();input.focus();input.select()});
+siteMenu.querySelectorAll('[data-site-action]').forEach(button=>button.addEventListener('click',()=>{
+ const action=button.dataset.siteAction;closeSiteMenu();
+ if(action==='home'){$('[data-home]').click();return}
+ if(['tabs','favorites','history'].includes(action)){managerSection=action;tabManager(true)}
+}));
+root.addEventListener('click',event=>{
+ if(!siteMenu.hidden&&!event.target.closest('.sb-browser-sitebar'))closeSiteMenu();
+});
 $('[data-back]').addEventListener('click',()=>{const t=current();if(t.position>0){t.position--;render()}});
 $('[data-forward]').addEventListener('click',()=>{const t=current();if(t.position<t.entries.length-1){t.position++;render()}});
 $('[data-home]').addEventListener('click',()=>{const t=current();t.entries=[];t.position=-1;render()});
@@ -792,7 +810,7 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
 $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!siteMenu.hidden)closeSiteMenu();else if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
 window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
