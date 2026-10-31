@@ -349,6 +349,7 @@ function renderManager(){
 }
 function renderSecondary(){
  secondary.replaceChildren();
+ secondary.classList.toggle('is-history',managerSection==='history');
  const header=document.createElement('div');header.className='sb-secondary-header';const heading=document.createElement('h3');heading.textContent=managerSection==='favorites'?'Избранное':managerSection==='history'?'История':'Коллекции';header.append(heading);secondary.append(header);
  if(managerSection==='collections'){
   const add=document.createElement('button');add.type='button';add.textContent='＋ Новая коллекция';add.addEventListener('click',makeCollection);header.append(add);
