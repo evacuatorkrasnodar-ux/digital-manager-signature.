@@ -392,3 +392,49 @@ test('Business math commands in local chat are exact, offline and refuse incompl
   await rm(dir,{recursive:true,force:true});
  }
 });
+
+test('live web search endpoint returns real stub sources, keeps owner origin and never requires local model',async()=>{
+ const calls=[];
+ const server=createRealLocalServer({
+  searchProvider:async query=>{
+   calls.push(query);
+   return [{title:'Источник публикации',snippet:'Проверяемая сводка',url:'https://example.org/article',publishedAt:'2026-10-15'}];
+  }
+ });
+ await new Promise((resolve,reject)=>{
+  server.once('error',reject);
+  server.listen(PORT,HOST,resolve);
+ });
+ try{
+  const valid=await request('/api/seyveo-live-search',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Правда ли Маск сделал летающий автомобиль?'}
+  });
+  assert.equal(valid.status,200);
+  const result=JSON.parse(valid.body);
+  assert.equal(result.status,'results');
+  assert.equal(result.results.length,1);
+  assert.equal(result.results[0].url,'https://example.org/article');
+  assert.deepEqual(calls,['Правда ли Маск сделал летающий автомобиль?']);
+  const badOrigin=await request('/api/seyveo-live-search',{
+   method:'POST',headers:{origin:'https://invalid.example','content-type':'application/json'},
+   data:{message:'Новости'}
+  });
+  assert.equal(badOrigin.status,403);
+  assert.equal(calls.length,1);
+  const withPrivate=await request('/api/seyveo-live-search',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'Новости',history:[{role:'user',content:'private'}]}
+  });
+  // Only the question is used, even when the request contains extra fields.
+  assert.equal(withPrivate.status,200);
+  assert.deepEqual(calls,['Правда ли Маск сделал летающий автомобиль?','Новости']);
+  const oversized=await request('/api/seyveo-live-search',{
+   method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
+   data:{message:'н'.repeat(601)}
+  });
+  assert.equal(oversized.status,400);
+ }finally{
+  await new Promise(resolve=>server.close(resolve));
+ }
+});
