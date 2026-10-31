@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash,webcrypto} from 'node:crypto';
-import {validatePackManifest,planPackInstall,verifyPackBytes} from '../src/core/offlinePacks.mjs';
+import {validatePackManifest,planPackInstall,verifyPackBytes,planPackRemoval} from '../src/core/offlinePacks.mjs';
 const data=new TextEncoder().encode('SEYVEO offline test pack');
 const sample={id:'safety-guide',kind:'knowledge',title:'Лес и безопасность',bytes:data.length,
  sha256:createHash('sha256').update(data).digest('hex'),version:1,platform:'both',
@@ -27,4 +27,11 @@ test('pack contents must match declared SHA-256 and exact size',async()=>{
  assert.equal(await verifyPackBytes(data,sample),true);
  assert.equal(await verifyPackBytes(new TextEncoder().encode('other'),sample),false);
  assert.equal(await verifyPackBytes(new Uint8Array(data.length),sample),false);
+});
+
+test('optional pack removal never targets vault or active model',()=>{
+ assert.throws(()=>planPackRemoval('../personal-vault',{installedIds:['offline-model']}),/invalid-pack-id/);
+ assert.equal(planPackRemoval('offline-model',{installedIds:['offline-model'],activeIds:['offline-model']}).canRemove,false);
+ assert.deepEqual(planPackRemoval('offline-model',{installedIds:['offline-model']}),{canRemove:true,reason:'optional-pack-only',packId:'offline-model'});
+ assert.equal(planPackRemoval('offline-model',{installedIds:[]}).canRemove,false);
 });
