@@ -484,3 +484,19 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Resolution-independent emerald glass ribbons; no pixelated embedded JPEG. */
 .seyveo-browser:not([hidden]){background-color:#020b0a;background-image:linear-gradient(rgba(1,9,8,.06),rgba(1,9,8,.1)),url("./seyveo-browser-emerald.svg");background-position:center center;background-size:cover;background-repeat:no-repeat}
 .seyveo-browser-manager:not([hidden]){background-color:#020b0a;background-image:linear-gradient(rgba(0,12,10,.21),rgba(0,10,9,.37)),url("./seyveo-browser-emerald.svg");background-position:center center;background-size:cover;background-repeat:no-repeat}
+
+/* Browser controls: satin-matte glass so the emerald artwork stays behind the UI. */
+.seyveo-browser:not([hidden]) .seyveo-browser-shortcuts button,
+.seyveo-browser:not([hidden]) .seyveo-browser-history-card,
+.seyveo-browser:not([hidden]) .sb-home-recent-card{
+ background:linear-gradient(145deg,rgba(15,37,33,.91),rgba(9,25,23,.88));
+ border-color:rgba(108,166,137,.30);
+ box-shadow:inset 0 1px 0 rgba(220,255,234,.035);
+ backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);
+}
+.seyveo-browser:not([hidden]) .seyveo-browser-bar{
+ background:rgba(10,35,29,.85);
+ backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);
+}
