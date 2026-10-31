@@ -1380,6 +1380,13 @@ body.seyveo-browser-open.seyveo-browser-immersive footer.dock{
  opacity:var(--sb-magnet-chrome-opacity,1);
  transition:opacity .28s ease;
 }
+/* Tabs, close controls and + ride the same magnetic seam as the page.
+   This translates only the existing rail; no tab geometry is changed. */
+.seyveo-browser.is-site-view.is-magnet-page>.seyveo-browser-tabs{
+ transform:translate3d(0,var(--sb-magnet-tabs-shift,0px),0);
+ transition:transform .315s cubic-bezier(.2,.78,.24,1),opacity .28s ease;
+ will-change:transform;
+}
 .seyveo-browser.is-magnet-page.is-magnet-dragging>.seyveo-browser-home,
 .seyveo-browser.is-magnet-page.is-magnet-dragging>.seyveo-browser-bar,
 .seyveo-browser.is-magnet-page.is-magnet-dragging>.seyveo-browser-tabs{
