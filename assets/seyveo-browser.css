@@ -178,7 +178,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Shared Quiet Cinema motion: no height guesses or clipped first History card.
    Grid track + a min-height:0 inner wrapper animate actual content in both views. */
 .seyveo-browser-continue [data-continue-list]{
- display:block;position:relative;min-width:0;--sb-quiet-gap:9px;
+ display:block;position:relative;min-width:0;--sb-quiet-gap:0px;
 }
 .seyveo-browser-continue .sb-history-slot,
 .sb-manager-history-list .sb-history-slot{
@@ -217,7 +217,12 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-continue-card small{font-size:11px;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 
 /* SEYVEO continue-reading stack: progressive disclosure in existing glass style. */
-.seyveo-browser-history-card{border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);overflow:hidden}
+.seyveo-browser-history-card{
+ border:0;border-bottom:1px solid var(--sv-home-outline);border-radius:0;
+ background:transparent;box-shadow:none;overflow:hidden;
+}
+.seyveo-browser-continue .sb-history-slot:last-child .seyveo-browser-history-card,
+.seyveo-browser-continue [data-continue-list].is-collapsed .sb-history-slot:first-child .seyveo-browser-history-card{border-bottom:0}
 .seyveo-browser-history-head{display:flex;align-items:center;gap:13px;width:100%;min-height:87px;padding:12px 14px;text-align:left}
 .seyveo-browser-history-logo{display:grid;place-items:center;width:53px;height:53px;border-radius:12px;flex:none;background:var(--seyveo-hdr-active);font-size:23px;color:var(--text)}
 .seyveo-browser-history-words{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1}
@@ -233,14 +238,14 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(prefers-reduced-motion:reduce){.seyveo-browser-history-actions{animation:none}.seyveo-browser-history-chevron{transition:none}}
 
 /* Quiet SEYVEO history cards: lightweight direct-open surface + contextual menu. */
-.seyveo-browser-history-top{display:flex;align-items:center;min-height:70px}
-.seyveo-browser-history-head{flex:1;min-width:0;min-height:70px;padding:10px 11px;text-align:left;gap:12px}
+.seyveo-browser-history-top{display:flex;align-items:center;min-height:79px}
+.seyveo-browser-history-head{flex:1;min-width:0;min-height:79px;padding:10px 11px;text-align:left;gap:8px}
 .seyveo-browser-history-logo{width:37px;height:37px;flex:none;border-radius:10px;background:var(--seyveo-hdr-active);font-size:18px}
 .seyveo-browser-history-logo img{display:block;width:25px;height:25px;object-fit:contain}
 .seyveo-browser-history-words{gap:5px}
 .seyveo-browser-history-words strong{font-size:13px;font-weight:500}
 .seyveo-browser-history-words small{font-size:11px;opacity:.58}
-.seyveo-browser-history-menu{align-self:stretch;width:42px;min-height:60px;padding:0 10px;font-size:22px;letter-spacing:2px;opacity:.7}
+.seyveo-browser-history-menu{align-self:stretch;width:42px;min-height:79px;padding:0 10px;font-size:22px;letter-spacing:2px;opacity:.7}
 .seyveo-browser-history-menu[aria-expanded="true"]{color:var(--text);opacity:1}
 .seyveo-browser-history-actions{padding:8px 12px 12px;border-top:1px solid rgba(106,158,126,.12);gap:16px}
 .seyveo-browser-history-actions button,.seyveo-browser-history-actions button:first-child{padding:6px 2px;border:0;border-radius:0;background:transparent;font-size:12px;opacity:.82}
@@ -259,7 +264,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-shortcuts{gap:8px}
 .seyveo-browser-shortcuts button{min-height:91px;padding:9px 3px;gap:5px;border-radius:16px}
 .seyveo-browser-continue{margin-top:17px}
-.seyveo-browser-history-top,.seyveo-browser-history-head{min-height:65px}
+.seyveo-browser-history-top,.seyveo-browser-history-head{min-height:79px}
 @media(min-height:850px){.seyveo-browser-home{min-height:110px;max-height:120px}.seyveo-browser-start{padding-top:16px}}
 /* iPhone layout: keep the original scale and interactions, close vertical gaps.
    One responsive rule in the existing rhythm section, not a second painted layer. */
@@ -286,9 +291,9 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  }
  .seyveo-browser-shortcuts button{min-height:76px;padding:6px 3px;gap:4px}
  .seyveo-browser-continue{margin-top:11px}
- .seyveo-browser-history-top,.seyveo-browser-history-head{min-height:61px}
+ .seyveo-browser-history-top,.seyveo-browser-history-head{min-height:79px}
  .seyveo-browser-history-head{padding:7px 10px}
- .seyveo-browser-history-menu{min-height:61px}
+ .seyveo-browser-history-menu{min-height:79px}
 }
 @media(max-width:380px){
  .seyveo-browser-home{min-height:60px;max-height:68px}
