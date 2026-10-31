@@ -16,7 +16,7 @@ test('keyless public source lookup returns attributable, bounded results',async(
  assert.equal(results.length,1);
  assert.equal(results[0].url,'https://ru.wikipedia.org/wiki/'+encodeURIComponent('История_компьютера'));
  assert.equal(results[0].snippet,'Описание истории компьютера');
- assert.equal(results[0].publishedAt,'2026-10-01');
+ assert.equal(results[0].publishedAt,null);
 });
 test('no arbitrary remote host or private conversation details',async()=>{
  let request='';
