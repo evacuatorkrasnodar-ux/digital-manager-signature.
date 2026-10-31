@@ -653,18 +653,20 @@ function showSearchResults(payload){
  if(!q)return false;
  const supplied=Array.isArray(payload?.results)?payload.results.slice(0,6):[];
  const available=payload?.status==='results'&&supplied.length>0;
+ const rich=available?(window.SEYVEO_RICH_ANSWER?.cleanBlocks?.(payload?.blocks)||[]):[];
+ const summary=String(payload?.answer||'').trim().slice(0,20000);
  const answer=available
-  ?'Нашла материалы по твоему вопросу. Ниже источники, даты и фотографии, если они доступны. Важные факты лучше сверять с оригинальными публикациями.'
+  ?summary||'Нашла материалы по твоему вопросу. Ниже источники, даты и фотографии, если они доступны. Важные факты лучше сверять с оригинальными публикациями.'
   :payload?.status==='unavailable'
    ?'Интернет-поиск пока не подключён. Я не буду придумывать новости и ссылки.'
    :'По этому запросу пока не нашла проверяемых источников.';
- const turn={question:q,answer,search:available?{status:'results',results:supplied}:null};
+ const turn={question:q,answer,rich,search:available?{status:'results',results:supplied}:null};
  const turns=window.SEYVEO_DEMO_CHAT_TURNS||(window.SEYVEO_DEMO_CHAT_TURNS=[]);
  turns.push(turn);
  if(turns.length>30)turns.splice(0,turns.length-30);
  open();
  renderTurns(turns);
- window.SEYVEO_CHAT_HISTORY?.add({question:q,answer,kind:'search',search:turn.search});
+ window.SEYVEO_CHAT_HISTORY?.add({question:q,answer,kind:'search',search:turn.search,rich});
  return true;
 }
 window.addEventListener('seyveo:web-search-results',event=>{
