@@ -30,6 +30,7 @@ test('routes fresh public questions but not private work or ordinary dialogue',(
 test('forwards only one explicit public question to local server',async()=>{
  let called;
  const t=prepare(async(path,init)=>{
+  if(path==='/api/seyveo-live-search-status')return {ok:true,json:async()=>({configured:true})};
   called={path,init};
   return {ok:true,json:async()=>({status:'results',results:[{title:'Verified',url:'https://example.org',snippet:'Report'}]})};
  });
@@ -45,8 +46,9 @@ test('forwards only one explicit public question to local server',async()=>{
 });
 test('cancel aborts actual fetch without adding fabricated answer',async()=>{
  let signal;
- const t=prepare(async(_path,init)=>{
+ const t=prepare(async(path,init)=>{
   signal=init.signal;
+  if(path==='/api/seyveo-live-search-status')return {ok:true,json:async()=>({configured:true})};
   return new Promise((_resolve,reject)=>{
    init.signal.addEventListener('abort',()=>reject(Object.assign(Error('abort'),{name:'AbortError'})));
   });
@@ -61,10 +63,27 @@ test('cancel aborts actual fetch without adding fabricated answer',async()=>{
 
 test('one-time explicit search consent blocks declined external requests',async()=>{
  let calls=0;
- const t=prepare(async()=>{calls++;throw Error('should not contact provider')},()=>false);
+ const t=prepare(async path=>{
+  if(path==='/api/seyveo-live-search-status')return {ok:true,json:async()=>({configured:true})};
+  calls++;throw Error('should not contact provider')
+ },()=>false);
  assert.equal(t.api.start('Правда ли Маск сделал летающую машину?'),true);
  await tick();
  assert.equal(calls,0);
  assert.equal(t.received[0].status,'unavailable');
  assert.equal(t.saved.size,0);
+});
+
+test('no external consent prompt when search provider is not connected',async()=>{
+ let confirmations=0,requests=[];
+ const t=prepare(async path=>{
+  requests.push(path);
+  return {ok:true,json:async()=>({configured:false})};
+ },()=>{confirmations++;return true});
+ t.api.start('Какие последние новости о Tesla?');
+ await tick();
+ assert.equal(confirmations,0);
+ assert.deepEqual(requests,['/api/seyveo-live-search-status']);
+ assert.equal(t.received.length,1);
+ assert.equal(t.received[0].status,'unavailable');
 });
