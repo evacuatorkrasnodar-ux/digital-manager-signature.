@@ -8,14 +8,16 @@
  root.innerHTML=`<header class="seyveo-browser-top"><button type="button" data-close aria-label="Назад в SEYVEO">‹</button><strong>SEYVEO <span>Browser</span></strong><span class="seyveo-browser-shield" aria-label="HTTPS">◇</span></header>
  <form class="seyveo-browser-bar"><input type="text" name="address" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Адрес сайта https://…" aria-label="Адрес сайта"><button type="submit" aria-label="Перейти">→</button></form>
  <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
- <div class="seyveo-browser-content"><div class="seyveo-browser-empty">Открой сайт по адресу HTTPS. Для поиска информации попроси Сэйви.</div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-popups" hidden></iframe></div>
+ <div class="seyveo-browser-content"><div class="seyveo-browser-empty">Открой сайт по адресу HTTPS. Для поиска информации попроси Сэйви.</div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe></div>
  <div class="seyveo-browser-note">Сайты могут запретить встроенный просмотр. Это ещё не нативный браузер и не блокировщик рекламы.</div>
  <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-bookmark aria-label="Добавить закладку">☆</button><button type="button" data-bookmarks aria-label="Закладки">Закладки</button><button type="button" data-external aria-label="Открыть во внешнем браузере">↗</button><button type="button" data-close>Готово</button></footer>`;
  document.body.append(root);
  const input=root.querySelector('input'),frame=root.querySelector('iframe'),empty=root.querySelector('.seyveo-browser-empty');
  const tabsArea=root.querySelector('[data-tabs]');
  let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2;
+ let displayedTab=null;
  const bookmarkKey='seyveo-browser-bookmarks-v1';
+ // Secure embeds cannot expose their internal history or current URL to this page.
  function secureUrl(value){
   try{const u=new URL(String(value).trim());return u.protocol==='https:'&&!u.username&&!u.password?u.href:null}catch{return null}
  }
@@ -33,8 +35,8 @@
   const url=currentUrl();
   input.value=url||'';
   frame.hidden=!url;empty.hidden=!!url;
-  if(url){if(frame.getAttribute('src')!==url)frame.src=url}
-  else frame.removeAttribute('src');
+  if(url){if(displayedTab!==active||frame.getAttribute('src')!==url){frame.src=url;displayedTab=active}}
+  else{frame.removeAttribute('src');displayedTab=null;}
   const t=currentTab();
   root.querySelector('[data-back]').disabled=t.position<=0;
   root.querySelector('[data-forward]').disabled=t.position>=t.entries.length-1;
@@ -56,8 +58,11 @@
   const t=currentTab();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;
   render();return true;
  }
- function open(value){show();if(value){if(!navigate(value))return false}else render();return true}
- function close(){root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src')}
+ function open(value){
+  if(value&&!secureUrl(value))return false;
+  show();if(value)navigate(value);else render();return true;
+ }
+ function close(){root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;}
  root.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
  root.querySelector('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
  root.querySelector('[data-back]').addEventListener('click',()=>{const t=currentTab();if(t.position>0){t.position--;render()}});
@@ -74,6 +79,14 @@
  });
  input.addEventListener('input',()=>input.setCustomValidity(''));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden)close()});
+ // Public HTTPS links from the Feather Chat open in SEYVEO without changing the chat.
+ document.addEventListener('click',event=>{
+  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  const link=event.target.closest?.('a[href]');
+  if(!link||root.contains(link)||!link.closest('.seyveo-conversation'))return;
+  const url=secureUrl(link.href);if(!url)return;
+  event.preventDefault();open(url);
+ });
  window.SEYVEO_BROWSER=Object.freeze({open,close});
  render();
 })();
