@@ -844,14 +844,14 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
  grid-auto-columns:calc((100% - 12px) / 3);
- align-items:end;gap:6px;min-width:0;flex:1;padding-bottom:2px;
+ align-items:stretch;gap:6px;min-width:0;flex:1;
  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
  scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
  scroll-padding-inline:0;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab{
  position:relative;display:flex;align-items:stretch;
- width:100%;min-width:0;max-width:none;height:30px;min-height:0;
+ width:100%;min-width:0;max-width:none;height:44px;min-height:0;
  border:1px solid var(--sb-edge);border-radius:12px 12px 2px 2px;
  background:
   linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 13%,transparent),transparent 43%),
@@ -903,7 +903,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .sb-browser-tab-mark,
 .seyveo-browser.is-site-view .sb-browser-tab-name,
 .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{
- transform:none;
+ transform:translateY(-7px);
 }
 .seyveo-browser.is-site-view .sb-browser-tab-name{
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;
@@ -913,7 +913,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
  flex:none;display:grid;place-items:center;width:22px;min-width:22px;
  height:100%;padding:0 3px;font-size:19px;font-weight:300;opacity:.75;
- transform:none;
+ transform:translateY(-7px);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder{opacity:.63}
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder .sb-browser-tab-select{
@@ -928,8 +928,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
  position:relative;top:0;z-index:0;
- align-self:flex-end;display:grid;place-items:center;flex:none;margin-bottom:2px;
- width:37px;min-width:37px;height:30px;min-height:30px;
+ align-self:flex-start;display:grid;place-items:center;flex:none;
+ width:37px;min-width:37px;height:44px;min-height:44px;
  padding:0 0 14px;border-radius:12px 12px 2px 2px;
  border:1px solid var(--sb-edge);
  background:linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 12%,var(--sb-surface)),var(--sb-surface) 80%);
@@ -957,9 +957,9 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
- .seyveo-browser.is-site-view .seyveo-browser-tab{height:28px;border-radius:11px 11px 2px 2px}
+ .seyveo-browser.is-site-view .seyveo-browser-tab{height:42px;border-radius:11px 11px 2px 2px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  width:35px;min-width:35px;height:28px;min-height:28px;
+  width:35px;min-width:35px;height:42px;min-height:42px;
   top:0;border-radius:11px 11px 2px 2px;
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
@@ -973,8 +973,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:13px;height:13px}
  .seyveo-browser.is-site-view .sb-browser-tab-mark,
  .seyveo-browser.is-site-view .sb-browser-tab-name,
- .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{transform:none}
- .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{transform:none}
+ .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{transform:translateY(-6px)}
+ .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{transform:translateY(-6px)}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{padding-bottom:12px}
 }
 @media(prefers-reduced-motion:reduce){
