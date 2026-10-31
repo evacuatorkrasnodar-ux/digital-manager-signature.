@@ -1067,12 +1067,6 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-site-view>.seyveo-browser-content{top:6px}
 }
 
-@media(max-width:390px){
- .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  height:34px;min-height:34px;
- }
-}
-
 /* SEYVEO browser: compact, narrow new-tab glass shape.
    Reference: upright sides, softly rounded top and bottom-right corner. */
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
@@ -1089,6 +1083,12 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   align-self:flex-start;top:10px;
   border-radius:10px 10px 20px 3px;
   padding:0;
+ }
+}
+
+@media(max-width:390px){
+ .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
+  height:34px;min-height:34px;
  }
 }
 
