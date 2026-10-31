@@ -38,7 +38,7 @@ notice.querySelector('p').style.cssText='font-size:13px;line-height:1.5;opacity:
 notice.querySelector('button').style.cssText='padding:13px;border-radius:14px;border:1px solid #65b88b;background:#ffffff10;color:inherit';
 const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
-let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;
+let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;
 const key='seyveo-browser-bookmarks-v1';
 const collectionsKey='seyveo-browser-collections-v1';
 const sessionKey='seyveo-browser-session-v1';
@@ -175,8 +175,8 @@ function renderManager(){
   row.append(icon,body,restore);closed.append(row);
  }
  const entries=getCollections();
- if(!entries.length){const empty=document.createElement('p');empty.className='sb-manager-collection-empty';empty.textContent='Сохраняй страницы в тематические коллекции';collections.append(empty)}
- for(const collection of entries){const tile=document.createElement('button');tile.type='button';tile.className='sb-manager-collection-tile';const art=document.createElement('span');art.className='sb-collection-art';art.textContent='▱';const words=document.createElement('span');const name=document.createElement('strong');name.textContent=collection.name;const count=document.createElement('small');count.textContent=collection.urls.length+' стр.';words.append(name,count);tile.append(art,words);tile.addEventListener('click',()=>{managerSection='collections';openCollection=collection.id;renderManager()});collections.append(tile)}
+ if(!entries.length){const empty=document.createElement('p');empty.className='sb-manager-collection-empty';empty.textContent='Создай коллекцию — здесь появятся её обложка и сохранённые страницы';collections.append(empty)}
+ for(const collection of entries)collections.append(makeCollectionCard(collection));
 }
 function renderSecondary(){
  secondary.replaceChildren();
