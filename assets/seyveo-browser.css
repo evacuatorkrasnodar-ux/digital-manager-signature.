@@ -186,3 +186,20 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-history-actions{padding:8px 12px 12px;border-top:1px solid rgba(106,158,126,.12);gap:16px}
 .seyveo-browser-history-actions button,.seyveo-browser-history-actions button:first-child{padding:6px 2px;border:0;border-radius:0;background:transparent;font-size:12px;opacity:.82}
 .seyveo-browser-history-actions button:hover{color:#8bdcb2;opacity:1}
+
+/* Compact vertical rhythm modeled on the approved iPhone browser reference. */
+.seyveo-browser{gap:9px;padding-top:max(env(safe-area-inset-top),9px)}
+.seyveo-browser-top{min-height:35px;padding:0}
+.seyveo-browser-top>button{width:35px;height:35px;font-size:25px}
+.seyveo-browser-home{flex:none;min-height:92px;max-height:105px;padding:0;gap:2px}
+.seyveo-browser-kicker{font-size:clamp(27px,5vw,34px);letter-spacing:.25em;line-height:1.14}
+.seyveo-browser-home h2{font-size:clamp(13px,2.5vw,16px);line-height:1.1;letter-spacing:.42em;margin:0}
+.seyveo-browser-bar{min-height:58px;max-height:62px;margin-top:3px}
+.seyveo-browser-start{padding-top:12px;overflow-y:auto;min-height:0}
+.seyveo-browser-start-heading{margin-bottom:10px}
+.seyveo-browser-shortcuts{gap:8px}
+.seyveo-browser-shortcuts button{min-height:91px;padding:9px 3px;gap:5px;border-radius:16px}
+.seyveo-browser-continue{margin-top:17px}
+.seyveo-browser-history-top,.seyveo-browser-history-head{min-height:65px}
+@media(min-height:850px){.seyveo-browser-home{min-height:110px;max-height:120px}.seyveo-browser-start{padding-top:16px}}
+@media(max-width:420px){.seyveo-browser-home{min-height:88px;max-height:100px}.seyveo-browser-shortcuts button{min-height:88px}.seyveo-browser-start{padding-top:9px}}
