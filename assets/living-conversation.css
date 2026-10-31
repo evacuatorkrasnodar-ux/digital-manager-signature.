@@ -416,3 +416,29 @@ html.seyveo-conversation[data-theme=light]{
 .seyveo-live-search a:focus-visible{outline:2px solid var(--seyveo-emerald,#82c7ab);outline-offset:2px}
 @media(hover:hover){.seyveo-live-search-source:hover{background:var(--card2)}}
 @media(max-width:380px){.seyveo-live-search-source{padding:11px 12px}.seyveo-live-search-photo{width:128px}}
+
+/* SEYVEO Rich Answers. Native-looking editorial blocks, no nested full-screen panels. */
+.seyveo-rich-answer{display:grid;gap:12px;margin:14px 0 4px;min-width:0}
+.seyveo-rich-block{min-width:0;overflow:hidden;border:1px solid var(--soft-line);border-radius:17px;background:var(--card);padding:14px}
+.seyveo-rich-title{font-size:13px;font-weight:620;line-height:1.4;color:var(--text);margin:0 0 12px}
+.seyveo-rich-table-scroll{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.seyveo-rich-table{border-collapse:collapse;width:100%;min-width:max-content;font-size:12px;font-variant-numeric:tabular-nums}
+.seyveo-rich-table th{text-align:left;font-size:11px;font-weight:620;color:var(--secondary);background:var(--card2)}
+.seyveo-rich-table td,.seyveo-rich-table th{padding:11px 12px;border-bottom:1px solid var(--soft-line);max-width:260px;white-space:normal;overflow-wrap:anywhere;vertical-align:top}
+.seyveo-rich-table tr:last-child td{border-bottom:0}
+.seyveo-rich-table td:first-child{font-weight:550}
+.seyveo-rich-bars{display:grid;gap:13px}
+.seyveo-rich-bar-heading{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:12px;color:var(--secondary)}
+.seyveo-rich-bar-heading strong{font-weight:620;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.seyveo-rich-bar-track{height:7px;overflow:hidden;background:var(--card2);border-radius:100px;margin-top:6px}
+.seyveo-rich-bar-fill{display:block;height:100%;background:var(--seyveo-emerald,#80bea9);border-radius:inherit}
+.seyveo-rich-source{font-size:10.5px;line-height:1.45;color:var(--secondary);margin:12px 0 0}
+.seyveo-rich-steps{list-style:decimal;margin:0;padding-left:24px;display:grid;gap:11px;font-size:13px;line-height:1.5}
+.seyveo-rich-steps li{padding-left:4px;overflow-wrap:anywhere}
+.seyveo-rich-steps li::marker{color:var(--seyveo-emerald,#80bea9);font-weight:700}
+.seyveo-rich-image{display:grid;gap:8px;color:var(--secondary);text-decoration:none}
+.seyveo-rich-image img{display:block;width:100%;max-height:320px;object-fit:contain;border-radius:12px;background:var(--card2)}
+.seyveo-rich-image small{font-size:10.5px}
+.seyveo-rich-note{margin:0;font-size:13px;line-height:1.6;color:var(--text);overflow-wrap:anywhere}
+.seyveo-rich-image:focus-visible{outline:2px solid var(--seyveo-emerald,#80bea9);outline-offset:3px}
+@media(max-width:380px){.seyveo-rich-block{padding:11px}.seyveo-rich-table td,.seyveo-rich-table th{padding:9px}}
