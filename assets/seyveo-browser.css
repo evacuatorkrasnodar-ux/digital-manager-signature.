@@ -128,3 +128,21 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-scan svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .seyveo-browser-scan:hover{background:rgba(93,179,137,.1)}
 @media(max-width:390px){.seyveo-browser-bar{gap:10px;padding-left:14px;padding-right:8px}}
+
+/* Expandable bookmarks card, same restrained glass direction as SEYVEO home cards. */
+.seyveo-browser-bookmark-card{border:1px solid rgba(110,190,147,.32);border-radius:20px;background:linear-gradient(135deg,rgba(13,77,56,.22),rgba(27,67,51,.08));overflow:hidden}
+.seyveo-browser-bookmark-trigger{width:100%;min-height:103px;padding:16px;display:flex;align-items:center;gap:15px;text-align:left}
+.seyveo-browser-bookmark-title{display:flex;flex-direction:column;gap:7px;flex:1}
+.seyveo-browser-bookmark-title strong{font-weight:500;font-size:18px}
+.seyveo-browser-bookmark-title small{font-size:12px;opacity:.65}
+.seyveo-browser-bookmark-chevron{font-size:27px;opacity:.75;transition:transform .25s}
+.seyveo-browser-bookmark-trigger[aria-expanded="true"] .seyveo-browser-bookmark-chevron{transform:rotate(180deg)}
+.seyveo-browser-bookmark-content{border-top:1px solid rgba(128,164,141,.17);padding:9px 12px 13px;animation:sv-bookmarks-reveal .23s ease-out}
+.seyveo-browser-bookmark-content[hidden]{display:none!important}
+.seyveo-browser-bookmark-link{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;padding:13px 10px;border-radius:13px}
+.seyveo-browser-bookmark-link+ .seyveo-browser-bookmark-link{border-top:1px solid rgba(128,164,141,.12)}
+.seyveo-browser-bookmark-link strong{font-size:13px;font-weight:500}
+.seyveo-browser-bookmark-link small{font-size:11px;opacity:.55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.seyveo-browser-bookmark-empty{padding:12px 7px;font-size:12px;line-height:1.5;opacity:.65}
+@keyframes sv-bookmarks-reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.seyveo-browser-bookmark-content{animation:none}.seyveo-browser-bookmark-chevron{transition:none}}
