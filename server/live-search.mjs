@@ -28,3 +28,37 @@ export async function searchWithSources(question,{search}={}){
  return {status:results.length?'results':'empty',query,results,
   message:results.length?'Найдены источники для проверки.':'Не удалось найти проверяемые источники.'};
 }
+
+/* Actual web provider. The credential stays on the server, never in a browser.
+   Uses Brave Web Search API's documented GET endpoint.
+   Only the explicit search question is sent; no memory or conversation history. */
+export function makeBraveSearchProvider({apiKey=process.env.SEYVEO_BRAVE_SEARCH_API_KEY,fetcher=fetch}={}){
+ if(typeof apiKey!=='string'||!apiKey.trim())return null;
+ if(typeof fetcher!=='function')throw Error('invalid-fetcher');
+ return async function braveSearch(question){
+  const query=String(question||'').trim().slice(0,600);
+  const endpoint=new URL('https://api.search.brave.com/res/v1/web/search');
+  endpoint.searchParams.set('q',query);
+  endpoint.searchParams.set('count','6');
+  endpoint.searchParams.set('search_lang','ru');
+  endpoint.searchParams.set('ui_lang','ru-RU');
+  endpoint.searchParams.set('safesearch','moderate');
+  endpoint.searchParams.set('text_decorations','false');
+  endpoint.searchParams.set('result_filter','web');
+  const response=await fetcher(endpoint.href,{
+   method:'GET',
+   headers:{'accept':'application/json','x-subscription-token':apiKey.trim()},
+   signal:AbortSignal.timeout(12000),
+   redirect:'error'
+  });
+  if(!response.ok)throw Error(response.status===429?'search-rate-limited':'search-provider-error');
+  const payload=await response.json();
+  if(!Array.isArray(payload?.web?.results))throw Error('invalid-search-response');
+  return payload.web.results.map(item=>({
+   title:item.title,
+   url:item.url,
+   snippet:item.description,
+   publishedAt:typeof item.page_age==='string'&&/^\\d{4}-\\d{2}-\\d{2}/.test(item.page_age)?item.page_age.slice(0,10):null
+  }));
+ };
+}
