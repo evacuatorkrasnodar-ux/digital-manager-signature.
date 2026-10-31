@@ -14,7 +14,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <div class="seyveo-browser-sheet" hidden><div class="seyveo-browser-sheet-bar"><strong>Избранное</strong><button type="button" data-dismiss>Готово</button></div><div data-bookmark-list></div></div>`;
 // Embedded websites keep their sandbox; do not add allow-same-origin with allow-scripts.
 document.body.append(root);
-const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-nav"><button type="button" data-manager-back aria-label="Вернуться в браузер"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button><div class="sb-manager-brand"><span>SEYVEO</span><small>Browser</small></div><span class="sb-manager-nav-spacer" aria-hidden="true"></span></div><div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading"><strong>Недавно закрытые</strong><button type="button" data-recent-all hidden>Показать все ›</button></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
+const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading"><strong>Недавно закрытые</strong><button type="button" data-recent-all hidden>Показать все ›</button></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
 root.append(manager);
 const switcher=document.createElement('nav');switcher.className='sb-manager-switcher';switcher.setAttribute('aria-label','Разделы браузера');
 const sections=[['tabs','Вкладки'],['favorites','Избранное'],['history','История'],['collections','Коллекции']];
@@ -26,7 +26,7 @@ const sectionPaths={
 };
 let managerSection='tabs';
 for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
-manager.querySelector('.sb-manager-nav').after(switcher);
+manager.prepend(switcher);
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
 while(switcher.nextSibling)tabsPanel.append(switcher.nextSibling);
 manager.append(tabsPanel);
@@ -209,7 +209,15 @@ function paintQuickSites(){
 }
 function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'▶':brand==='wikipedia'?'W':brand==='yandex'?'Я':brand==='habr'?'H':'•'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
-function tabManager(value=true){managerOpen=value;manager.hidden=!value;if(value)renderManager();}
+function tabManager(value=true){
+ managerOpen=Boolean(value);
+ manager.hidden=!managerOpen;
+ // Keep the SAME header node, not a second copy: no logo jump or change
+ // of typography when switching between Browser and its tab collection.
+ root.classList.toggle('is-managing',managerOpen);
+ $('.seyveo-browser-home').hidden=!managerOpen&&!!currentUrl();
+ if(managerOpen){manager.scrollTop=0;renderManager();}
+}
 function setTabDetails(card,expanded){
  card.classList.toggle('is-expanded',expanded);
  const head=card.querySelector('.sb-manager-select'),menu=card.querySelector('.sb-manager-more'),details=card.querySelector('.sb-tab-context');
@@ -340,7 +348,7 @@ function syncHistoryStack(){
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
- $('.seyveo-browser-home').hidden=!home;$('.seyveo-browser-start').hidden=!home;$('.seyveo-browser-content').hidden=home;$('.seyveo-browser-tabs').hidden=home;
+ $('.seyveo-browser-home').hidden=!home&&!managerOpen;$('.seyveo-browser-start').hidden=!home;$('.seyveo-browser-content').hidden=home;$('.seyveo-browser-tabs').hidden=home;
  input.value=url||'';
  const blocked=!!url&&['youtube.com','www.youtube.com','m.youtube.com','youtu.be'].includes(new URL(url).hostname.toLowerCase());
  $('.seyveo-browser-blocked').hidden=!blocked;
@@ -519,7 +527,6 @@ root.addEventListener('touchend',event=>{
 },{passive:true});
 root.addEventListener('touchcancel',()=>{edgeSwipe=null},{passive:true});
 function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
-manager.querySelector('[data-manager-back]').addEventListener('click',()=>tabManager(false));
 manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;renderManager()});
 manager.querySelector('[data-collection-new]').addEventListener('click',makeCollection);
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
