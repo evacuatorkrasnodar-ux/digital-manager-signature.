@@ -1070,13 +1070,13 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Reference: upright sides, softly rounded top and bottom-right corner. */
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
  width:34px;min-width:34px;
- border-radius:11px 11px 21px 3px;
+ border-radius:11px 11px 21px 3px / 11px 11px 7px 3px;
  padding:0;
 }
 @media(max-width:649px){
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
   width:32px;min-width:32px;
-  border-radius:10px 10px 20px 3px;
+  border-radius:10px 10px 20px 3px / 10px 10px 7px 3px;
   padding:0;
  }
 }
