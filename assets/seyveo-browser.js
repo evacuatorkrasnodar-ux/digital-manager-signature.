@@ -598,6 +598,19 @@ function render(){
   choose.addEventListener('click',()=>{active=item.id;render()});
  const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть вкладку');close.addEventListener('click',()=>closeTab(item.id));
  pill.append(choose,close);tabArea.append(pill)}
+ // Reserve three real interaction positions without pretending the user has
+ // visited extra websites. Empty slots create a normal tab when tapped.
+ for(let position=tabs.length;position<3;position++){
+  const placeholder=document.createElement('span');placeholder.className='seyveo-browser-tab is-placeholder';
+  const create=document.createElement('button');create.type='button';
+  create.className='sb-browser-tab-select';create.setAttribute('aria-label','Создать вкладку '+(position+1));
+  const icon=document.createElement('span');icon.className='sb-browser-tab-empty-mark';icon.setAttribute('aria-hidden','true');
+  icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5"/></svg>';
+  const label=document.createElement('span');label.className='sb-browser-tab-name';label.textContent='Новая вкладка';
+  create.append(icon,label);
+  create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
+  placeholder.append(create);tabArea.append(placeholder);
+ }
 }
 function navigate(value){const url=secureUrl(value);if(!url)return false;const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
 /* One existing Sayvi, one original dock: temporarily hide Browser without
