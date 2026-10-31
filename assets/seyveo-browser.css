@@ -869,6 +869,12 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  border-radius:5px;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark svg{display:block;width:100%;height:100%}
+/* The rail is tucked behind the page: raise visual contents, not the tabs. */
+.seyveo-browser.is-site-view .sb-browser-tab-mark,
+.seyveo-browser.is-site-view .sb-browser-tab-name,
+.seyveo-browser.is-site-view .sb-browser-tab-empty-mark{
+ transform:translateY(-7px);
+}
 .seyveo-browser.is-site-view .sb-browser-tab-name{
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;
  white-space:nowrap;text-align:center;line-height:1.15;
@@ -877,6 +883,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
  flex:none;display:grid;place-items:center;width:22px;min-width:22px;
  height:100%;padding:0 3px;font-size:19px;font-weight:300;opacity:.75;
+ transform:translateY(-7px);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder{opacity:.63}
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder .sb-browser-tab-select{
@@ -899,6 +906,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  background:linear-gradient(160deg,var(--sv-home-glint),transparent 65%),var(--sv-home-glass);
  box-shadow:inset 0 1px 0 var(--sv-home-glint);
  font-size:25px;font-weight:300;line-height:1;
+ padding-bottom:14px; /* plus glyph also follows the raised tab content */
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
  position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
@@ -934,6 +942,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   width:20px;min-width:20px;font-size:17px;padding:0 2px;
  }
  .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:13px;height:13px}
+ .seyveo-browser.is-site-view .sb-browser-tab-mark,
+ .seyveo-browser.is-site-view .sb-browser-tab-name,
+ .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{transform:translateY(-6px)}
+ .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{transform:translateY(-6px)}
+ .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{padding-bottom:12px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-site-view .seyveo-browser-tab{transition:none}
