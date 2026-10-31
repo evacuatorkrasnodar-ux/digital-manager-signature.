@@ -25,7 +25,7 @@ const sectionPaths={
  collections:'<path d="m12 2 9 5-9 5-9-5 9-5zm-9 10 9 5 9-5M3 17l9 5 9-5"/>'
 };
 let managerSection='tabs';
-for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
+for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{if(id==='history')showManagerHistory=false;managerSection=id;renderManager()});switcher.append(button)}
 // Put the ORIGINAL four-part switcher beside the search field in the same
 // root flex slot. Toggling which one is visible guarantees matching geometry.
 root.querySelector('.seyveo-browser-bar').after(switcher);
@@ -48,6 +48,7 @@ function restoreSession(){try{const s=JSON.parse(localStorage.getItem(sessionKey
 function persistSession(){try{localStorage.setItem(sessionKey,JSON.stringify({tabs,active,closed:recentlyClosed}))}catch{}}
 
 let showAllHistory=false;
+let showManagerHistory=false;
 let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
 const historyTimesKey='seyveo-browser-history-times-v1';
@@ -79,7 +80,7 @@ function removeHistory(url){
 }
 function clearHistory(){
  try{localStorage.removeItem(historyKey);localStorage.removeItem(historyTimesKey)}catch{}
- expandedHistory=null;showAllHistory=false;
+ expandedHistory=null;showAllHistory=false;showManagerHistory=false;
 }
 function historyDate(when){
  if(!when)return 'Дата не сохранена';
@@ -255,7 +256,7 @@ function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'�
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShown=false;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){
  managerOpen=Boolean(value);
- if(!managerOpen)allClosedShown=false; // Reopening the manager starts with the quiet folded stack.
+ if(!managerOpen){allClosedShown=false;showManagerHistory=false;} // Begin with folded Quiet Cinema stacks on re-entry.
  manager.hidden=!managerOpen;
  switcher.hidden=!managerOpen;
  // The logo is one DOM node, and the existing search / tabs controls now
@@ -404,21 +405,40 @@ function renderSecondary(){
  }
  if(managerSection==='history'){
   const links=historyItems(),times=historyTimes();
+  const controls=document.createElement('span');controls.className='sb-history-heading-actions';
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='sb-history-show-all';
+  toggle.textContent='Показать все ›';toggle.hidden=links.length<2;
+  toggle.setAttribute('aria-controls','seyveoBrowserVisitHistoryList');
+  toggle.setAttribute('aria-expanded',String(showManagerHistory));
+  toggle.addEventListener('click',()=>{
+   showManagerHistory=!showManagerHistory;
+   syncQuietCinemaStack(historyList,toggle,'.sb-history-slot',showManagerHistory);
+  });
+  controls.append(toggle);
   if(links.length){
-   const clear=document.createElement('button');clear.type='button';clear.className='sb-history-clear-all';clear.textContent='Очистить историю';
+   const clear=document.createElement('button');clear.type='button';clear.className='sb-history-clear-all';
+   clear.setAttribute('aria-label','Очистить историю');clear.title='Очистить историю';
+   clear.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg>';
    clear.addEventListener('click',()=>{
     if(!window.confirm('Удалить всю историю браузера SEYVEO? Вкладки и избранное останутся.'))return;
     clearHistory();renderManager();render();
    });
-   header.append(clear);
-  }else{
-   const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='История пока пуста';secondary.append(hint);
+   controls.append(clear);
   }
+  header.append(controls);
+  if(!links.length){
+   const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='История пока пуста';secondary.append(hint);
+   return;
+  }
+  const historyList=document.createElement('div');historyList.id='seyveoBrowserVisitHistoryList';
+  historyList.className='sb-manager-history-list';secondary.append(historyList);
   let lastDay=null;
-  for(const url of links){
+  for(const [index,url] of links.entries()){
+   const slot=document.createElement('div');slot.className='sb-history-slot';
+   slot.style.setProperty('--sb-history-order',String(Math.min(index,6)));
    const time=times[url]||null,day=historyDay(time);
    if(day!==lastDay){
-    const label=document.createElement('div');label.className='sb-history-day';label.textContent=day;secondary.append(label);lastDay=day;
+    const label=document.createElement('div');label.className='sb-history-day';label.textContent=day;slot.append(label);lastDay=day;
    }
    const row=document.createElement('div');row.className='sb-history-entry';
    const open=document.createElement('button');open.type='button';open.className='sb-history-entry-open';
@@ -428,7 +448,7 @@ function renderSecondary(){
    const title=document.createElement('strong');title.textContent=siteName(url);
    const line=document.createElement('span');line.className='sb-history-entry-meta';
    const host=document.createElement('small');host.textContent=new URL(url).hostname.replace(/^www[.]/,'');
-   const clock=document.createElement('time');clock.textContent=time?new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(time)):'Время неизвестно';
+   const clock=document.createElement('time');clock.textContent=time?new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(time)):'—';
    if(time)clock.dateTime=new Date(time).toISOString();
    clock.title=historyDate(time);
    line.append(host,clock);words.append(title,line);open.append(icon,words);
@@ -437,9 +457,10 @@ function renderSecondary(){
    remove.setAttribute('aria-label','Удалить из истории: '+siteName(url));
    remove.title='Удалить запись';
    remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
-   remove.addEventListener('click',()=>{removeHistory(url);renderManager();render()});
-   row.append(open,remove);secondary.append(row);
+   remove.addEventListener('click',()=>{removeHistory(url);if(historyItems().length<2)showManagerHistory=false;renderManager();render()});
+   row.append(open,remove);slot.append(row);historyList.append(slot);
   }
+  syncQuietCinemaStack(historyList,toggle,'.sb-history-slot',showManagerHistory);
   return;
  }
  const links=saved();
