@@ -11,6 +11,7 @@ function prepare(fetcher,confirm=()=>true){
   beginStream:(q,stop)=>calls.push({q,stop}),
   updateStream:()=>{},
   showSearchResults:x=>received.push(x),
+  showRichAnswer:x=>received.push(x),
   endStream:()=>{}
  };
  const window={SEYVEO_CONVERSATION:chat,confirm};
@@ -86,4 +87,19 @@ test('no external consent prompt when search provider is not connected',async()=
  assert.deepEqual(requests,['/api/seyveo-live-search-status']);
  assert.equal(t.received.length,1);
  assert.equal(t.received[0].status,'unavailable');
+});
+
+test('local index search stays on localhost without external consent',async()=>{
+ let consent=0,remote='';
+ const t=prepare(async(path,options)=>{
+  remote=path;
+  assert.equal(path,'/api/seyveo-index-search');
+  assert.equal(JSON.parse(options.body).message,'найди в библиотеке CRM заявки');
+  return {ok:true,json:async()=>({status:'local',results:[{title:'CRM',excerpt:'Работа с заявками',source:'SEYVEO'}]})};
+ },()=>{consent++;return false});
+ assert.equal(t.api.start('найди в библиотеке CRM заявки'),true);
+ await tick();
+ assert.equal(consent,0);
+ assert.equal(remote,'/api/seyveo-index-search');
+ assert.match(t.received[0].answer,/Работа с заявками/);
 });
