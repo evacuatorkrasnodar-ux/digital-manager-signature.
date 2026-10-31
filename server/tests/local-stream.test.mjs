@@ -17,13 +17,13 @@ function mockReader(parts){
  });
 }
 test('Adaptive token budget chooses short, regular and business responses',()=>{
- assert.equal(localOptionsFor('Ответь коротко: кто ты?').num_predict,140);
- assert.equal(localOptionsFor('Привет!').num_predict,320);
- assert.equal(localOptionsFor('Расскажи что-нибудь интересное о путешествиях и городах в свободной форме').num_predict,320);
- assert.equal(localOptionsFor('Расскажи об обычных занятиях, свободном времени, путешествиях, городах, красивых местах и неторопливом отдыхе без дополнительных условий').num_predict,400);
- assert.equal(localOptionsFor('Предложи три конкретных шага найти клиентов для SEYVEO').num_predict,650);
- assert.equal(localOptionsFor('Подробно объясни но ответь коротко').num_predict,140);
- assert.equal(localOptionsFor('Привет').num_ctx,2048);
+ assert.equal(localOptionsFor('Ответь коротко: кто ты?').num_predict,180);
+ assert.equal(localOptionsFor('Привет!').num_predict,600);
+ assert.equal(localOptionsFor('Расскажи что-нибудь интересное о путешествиях и городах в свободной форме').num_predict,600);
+ assert.equal(localOptionsFor('Расскажи об обычных занятиях, свободном времени, путешествиях, городах, красивых местах и неторопливом отдыхе без дополнительных условий').num_predict,850);
+ assert.equal(localOptionsFor('Предложи три конкретных шага найти клиентов для SEYVEO').num_predict,1400);
+ assert.equal(localOptionsFor('Подробно объясни но ответь коротко').num_predict,180);
+ assert.equal(localOptionsFor('Привет').num_ctx,4096);
  assert.equal(localOptionsFor('Привет').num_thread,8);
 });
 test('Stream sends real partial tokens, with bounded local CPU options and no cloud',async()=>{
@@ -50,8 +50,8 @@ test('Stream sends real partial tokens, with bounded local CPU options and no cl
   const body=JSON.parse(request.opts.body);
   assert.equal(body.stream,true);
   assert.equal(body.keep_alive,'15m');
-  assert.equal(body.options.num_predict,140);
-  assert.equal(body.options.num_ctx,2048);
+  assert.equal(body.options.num_predict,180);
+  assert.equal(body.options.num_ctx,4096);
   assert.equal(body.options.num_thread,6);
   assert.match(body.messages[0].content,/Qwen3 4B/);
   assert.equal(request.opts.headers.authorization,undefined);
