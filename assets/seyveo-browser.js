@@ -404,8 +404,47 @@ function render(){
  pill.append(choose,close);tabArea.append(pill)}
 }
 function navigate(value){const url=secureUrl(value);if(!url)return false;const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
-function open(value){if(value&&!secureUrl(value))return false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+/* One existing Sayvi, one original dock: temporarily hide Browser without
+   tearing down the iframe so its current page and scroll can be restored. */
+let suspendedForSayvi=false;
+function resumeAfterSayvi(){
+ if(!suspendedForSayvi)return false;
+ suspendedForSayvi=false;
+ if(!root.hidden)return false;
+ root.hidden=false;
+ document.body.classList.add('seyveo-browser-open');
+ document.dispatchEvent(new Event('seyveo:browser-open'));
+ return true;
+}
+function askSayvi(){
+ if(root.hidden||typeof window.SEYVEO_CONVERSATION?.open!=='function')return false;
+ const url=currentUrl();
+ if(managerOpen)tabManager(false);
+ suspendedForSayvi=true;
+ root.hidden=true;
+ document.body.classList.remove('seyveo-browser-open');
+ document.dispatchEvent(new Event('seyveo:browser-close'));
+ window.SEYVEO_CONVERSATION.open();
+ if(!document.documentElement.classList.contains('seyveo-conversation')){
+  resumeAfterSayvi();
+  return false;
+ }
+ // Share only the public host as editable context, never query tokens or page
+ // contents. Cross-origin article text cannot be read from our sandboxed iframe.
+ if(url){
+  const host=new URL(url).hostname.replace(/^www[.]/,'');
+  const field=document.getElementById('question');
+  if(field&&!field.value.trim()){
+   field.value='Я открыл сайт '+host+'. Помоги мне разобраться: ';
+   field.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  window.SEYVEO_CONVERSATION.status?.('Браузер · '+host+' · для разбора статьи добавь её текст',8500);
+ }else window.SEYVEO_CONVERSATION.status?.('Браузер · Сэйви на связи',2500);
+ return true;
+}
+document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
+function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
+function close(){suspendedForSayvi=false;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
 manager.querySelector('[data-manager-back]').addEventListener('click',()=>tabManager(false));
 manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;renderManager()});
@@ -445,5 +484,5 @@ $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(inpu
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!sheet.hidden)sheet.hidden=true;else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:()=> $('[data-home]').click(),tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:()=> $('[data-home]').click(),tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
 })();
