@@ -45,6 +45,14 @@ function init(){
  // Capture actions at the actual dock, so standard route navigation doesn't fire.
  dock.addEventListener('click',event=>{
   if(!active)return;
+  // The unchanged central sphere enters the original Feather Chat. No
+  // duplicate Sayvi button or competing browser-specific conversation.
+  const sayvi=event.target.closest?.('#assistantButton');
+  if(sayvi&&dock.contains(sayvi)){
+   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+   window.SEYVEO_BROWSER?.askSayvi?.();
+   return;
+  }
   const b=event.target.closest?.('button[data-sv-browser-action]');
   if(!b||!outer.includes(b))return;
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
