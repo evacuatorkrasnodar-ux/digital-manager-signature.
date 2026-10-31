@@ -42,11 +42,19 @@ function cleanBlocks(value){
    if(!items.length)return [];
    return [{type:'steps',title,items}];
   }
+  if(block.type==='diagram'){
+   const nodes=Array.isArray(block.nodes)?block.nodes.slice(0,7).flatMap(node=>{
+    const label=short(node?.label,90),detail=short(node?.detail,170);
+    return label?[{label,detail}]:[];
+   }):[];
+   if(nodes.length<2)return [];
+   return [{type:'diagram',title,nodes}];
+  }
   if(block.type==='image'){
    const url=https(block.url),sourceUrl=https(block.sourceUrl);
    const credit=short(block.credit,110),alt=short(block.alt,160);
    if(block.approved!==true||!url||!sourceUrl||!credit||!alt)return [];
-   return [{type:'image',title,url,sourceUrl,credit,alt}];
+   return [{type:'image',title,url,sourceUrl,credit,alt,approved:true}];
   }
   if(block.type==='note'){
    const body=short(block.body,400);
@@ -96,6 +104,16 @@ function render(input){
    const ol=make('ol','seyveo-rich-steps');
    for(const item of block.items)ol.append(make('li','',item));
    section.append(ol);
+  }
+  if(block.type==='diagram'){
+   const diagram=make('ol','seyveo-rich-diagram');
+   for(const node of block.nodes){
+    const step=make('li','seyveo-rich-diagram-node');
+    step.append(make('strong','',node.label));
+    if(node.detail)step.append(make('small','',node.detail));
+    diagram.append(step);
+   }
+   section.append(diagram);
   }
   if(block.type==='image'){
    const link=make('a','seyveo-rich-image');
