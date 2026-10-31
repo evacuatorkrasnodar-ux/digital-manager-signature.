@@ -821,7 +821,9 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
  height:46px;min-height:46px;margin:0 0 -4px;gap:6px;
- position:relative;z-index:2;
+ /* Shift only the tab rail visually, not the header or page layout.
+    The page (z-index 3) covers the rail's bottom, as in the reference. */
+ position:relative;top:13px;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
@@ -897,7 +899,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-bottom:-4px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-bottom:-4px;top:11px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
