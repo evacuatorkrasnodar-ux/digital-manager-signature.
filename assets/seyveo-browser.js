@@ -8,7 +8,7 @@ root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.s
 root.innerHTML=`<header class="seyveo-browser-top"><button type="button" data-close aria-label="Вернуться в Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button><span class="seyveo-browser-header-space" aria-hidden="true"></span></header>
 <div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
-<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button></div><div id="seyveoBrowserHistoryList" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager>Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs></div></section></div>
+<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button></div><div id="seyveoBrowserHistoryList" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden><strong>Этот сайт не разрешает встроенный просмотр</strong><p>YouTube запрещает открывать главную страницу во фрейме. Можно открыть сайт отдельно.</p><button type="button" data-open-blocked>Открыть YouTube ↗</button></div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
 <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
@@ -172,7 +172,43 @@ function closedBrand(url){
  return ['default','◎'];
 }
 function siteName(url){const host=new URL(url).hostname.replace(/^www\./,'');return host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host}
-function siteSymbol(url){const host=new URL(url).hostname;return host.includes('youtube')?'▶':host.includes('wikipedia')?'W':host.includes('yandex')||host.includes('ya.ru')?'Я':'◇'}
+/* Local crisp vector marks. No third-party favicon requests or pixelated letter placeholders. */
+const siteMarks=Object.freeze({
+ youtube:'<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="7" width="38" height="26" rx="8" fill="#FF0033"/><path d="M16 13.5 28 20l-12 6.5z" fill="#fff"/></svg>',
+ wikipedia:'<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="10" fill="#202B33"/><text x="20" y="28" text-anchor="middle" font-family="Georgia,serif" font-size="27" font-weight="bold" fill="#fff">W</text></svg>',
+ yandex:'<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><circle cx="20" cy="20" r="19" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" font-weight="bold" fill="#171b1b">Я</text></svg>',
+ habr:'<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="1" y="1" width="38" height="38" rx="8" fill="#238EBA"/><path d="M12 9h6v8h5V9h6v22h-6v-9h-5v9h-6z" fill="#fff"/></svg>',
+ notion:'<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="2" y="2" width="36" height="36" rx="5" fill="#fff"/><path d="M11 10h18v20h-4L15 17v13h-4z" fill="#111"/></svg>'
+});
+function siteBrand(url){
+ const host=new URL(url).hostname.toLowerCase().replace(/^www[.]/,'');
+ if(host==='youtube.com'||host.endsWith('.youtube.com')||host==='youtu.be')return 'youtube';
+ if(host==='wikipedia.org'||host.endsWith('.wikipedia.org'))return 'wikipedia';
+ if(host==='ya.ru'||host==='yandex.ru'||host.endsWith('.yandex.ru')||host.endsWith('.yandex.com'))return 'yandex';
+ if(host==='habr.com'||host.endsWith('.habr.com'))return 'habr';
+ if(host==='notion.so'||host.endsWith('.notion.so')||host==='notion.com')return 'notion';
+ return 'generic';
+}
+function paintSiteMark(element,url){
+ const brand=siteBrand(url);
+ element.classList.add('sb-site-logo','sb-logo-'+brand);
+ if(siteMarks[brand])element.innerHTML=siteMarks[brand];
+ else {
+  const name=new URL(url).hostname.replace(/^www[.]/,'').split('.')[0];
+  element.textContent=Array.from(name)[0]?.toUpperCase()||'•';
+ }
+ element.setAttribute('aria-hidden','true');
+ return element;
+}
+function paintQuickSites(){
+ root.querySelectorAll('.seyveo-browser-shortcuts button[data-site]').forEach(button=>{
+  const mark=button.querySelector('.sb-site-mark');
+  if(mark)paintSiteMark(mark,button.dataset.site);
+ });
+ const savedMark=root.querySelector('.seyveo-browser-shortcuts [data-bookmarks] .sb-saved');
+ if(savedMark)savedMark.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 2.6 5.8 6.4.7-4.8 4.3 1.3 6.2-5.5-3.2-5.5 3.2 1.3-6.2L3 9.5l6.4-.7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+}
+function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'▶':brand==='wikipedia'?'W':brand==='yandex'?'Я':brand==='habr'?'H':'•'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){managerOpen=value;manager.hidden=!value;if(value)renderManager();}
 function setTabDetails(card,expanded){
@@ -203,7 +239,7 @@ function renderManager(){
   select.setAttribute('aria-expanded',String(managerMenuId===t.id));
   select.setAttribute('aria-label',(url?siteName(url):'Новая вкладка')+' — действия');
   const preview=document.createElement('span');preview.className='sb-tab-preview '+(url?'sb-preview-'+(new URL(url).hostname.includes('youtube')?'video':new URL(url).hostname.includes('wikipedia')?'reference':new URL(url).hostname.includes('yandex')?'search':'web'):'sb-preview-empty');
-  const previewMark=document.createElement('span');previewMark.textContent=url?siteSymbol(url):'＋';preview.append(previewMark);
+  const previewMark=document.createElement('span');if(url)paintSiteMark(previewMark,url);else previewMark.textContent='＋';preview.append(previewMark);
   const body=document.createElement('span');body.className='sb-tab-body';
   const title=document.createElement('strong');title.textContent=url?siteName(url):'Новая вкладка';
   const domain=document.createElement('small');domain.className='sb-tab-domain';domain.textContent=url?new URL(url).hostname.replace(/^www[.]/,''):'Начать просмотр';
@@ -237,7 +273,7 @@ function renderManager(){
  for(const entry of (allClosedShown?recentlyClosed:recentlyClosed.slice(0,3))){
   const url=entry.url;
   const row=document.createElement('div');row.className='sb-manager-closed-row';
-  const icon=document.createElement('span');const brand=closedBrand(url);icon.className='sb-closed-icon sb-closed-icon-'+brand[0];icon.textContent=brand[1];icon.setAttribute('aria-hidden','true');
+  const icon=document.createElement('span');const brand=closedBrand(url);icon.className='sb-closed-icon sb-closed-icon-'+brand[0];paintSiteMark(icon,url);
   const body=document.createElement('button');body.type='button';body.className='sb-closed-content';
   const title=document.createElement('strong');title.textContent=closedLabel(url);
   const sub=document.createElement('small');const domain=new URL(url).hostname.replace(/^www[.]/,'');
@@ -282,7 +318,7 @@ function renderSecondary(){
  }
  const links=managerSection==='favorites'?saved():historyItems();
  if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent=managerSection==='favorites'?'Сохрани страницу в Избранное':'История пока пуста';secondary.append(hint)}
- for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');icon.textContent=siteSymbol(url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
+ for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
 /* Quiet Cinema: one visible history card at rest, full stack when opened. */
 function syncHistoryStack(){
@@ -326,10 +362,10 @@ function render(){
   const card=document.createElement('article');card.className='seyveo-browser-history-card';
   const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-label','Открыть '+name);
   const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.setAttribute('aria-hidden','true');
-  logo.textContent=name==='YouTube'?'▶':name==='Wikipedia'?'W':name==='Яндекс'?'Я':'◈';
+  paintSiteMark(logo,link);
   const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=name;const sub=document.createElement('small');sub.textContent=host;words.append(title,sub);
   head.append(logo,words);head.addEventListener('click',()=>navigate(link));
-  const menu=document.createElement('button');menu.type='button';menu.className='seyveo-browser-history-menu';menu.textContent='⋯';menu.setAttribute('aria-label','Действия с '+name);menu.setAttribute('aria-expanded',String(expandedHistory===link));menu.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
+  const menu=document.createElement('button');menu.type='button';menu.className='seyveo-browser-history-menu';menu.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>';menu.setAttribute('aria-label','Действия с '+name);menu.setAttribute('aria-expanded',String(expandedHistory===link));menu.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
   const actions=document.createElement('div');actions.className='seyveo-browser-history-actions';actions.hidden=expandedHistory!==link;
   const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
   action(saved().includes(link)?'Убрать из закладок':'☆ В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
@@ -346,20 +382,18 @@ function render(){
   if(!recentEntries.some(entry=>entry.url===address))recentEntries.push({url:address,tabId:null});
  }
  recentHome.hidden=recentEntries.length===0;
- for(const entry of recentEntries.slice(0,2)){
+ for(const entry of recentEntries){
   const address=entry.url,host=new URL(address).hostname.replace(/^www[.]/,''),name=siteName(address);
   const tile=document.createElement('article');tile.className='sb-home-recent-card';
   const jump=document.createElement('button');jump.type='button';jump.className='sb-home-recent-open';jump.setAttribute('aria-label','Открыть '+name);
-  const mark=document.createElement('span');mark.className='sb-home-recent-symbol';mark.textContent=siteSymbol(address);
-  if(host.includes('youtube'))mark.classList.add('is-youtube');
-  if(host.includes('yandex')||host==='ya.ru')mark.classList.add('is-yandex');
+  const mark=document.createElement('span');mark.className='sb-home-recent-symbol';paintSiteMark(mark,address);
   const info=document.createElement('span');info.className='sb-home-recent-info';
   const title=document.createElement('strong');title.textContent=name;
   const sub=document.createElement('small');sub.textContent=host;
   info.append(title,sub);jump.append(mark,info);
   jump.addEventListener('click',()=>{if(entry.tabId!==null){active=entry.tabId;render()}else navigate(address)});
   const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='sb-home-recent-close';
-  closeButton.textContent='×';closeButton.setAttribute('aria-label',entry.tabId!==null?'Закрыть вкладку '+name:'Убрать из недавних '+name);
+  closeButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>';closeButton.setAttribute('aria-label',entry.tabId!==null?'Закрыть вкладку '+name:'Убрать из недавних '+name);
   closeButton.addEventListener('click',()=>{if(entry.tabId!==null){closeTab(entry.tabId)}else{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(url=>url!==address)))}catch{}render()}});
   tile.append(jump,closeButton);recentGrid.append(tile);
  }
@@ -391,7 +425,8 @@ $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!ur
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;syncHistoryStack()});
-$('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
+/* The recent tab rail is swipe-first; full tab management remains in the dock. */
+paintQuickSites();
 root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.site)));
 
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
