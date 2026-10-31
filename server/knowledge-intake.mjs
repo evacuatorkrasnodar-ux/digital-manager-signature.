@@ -6,7 +6,7 @@ import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 
-const TOPICS=new Set(['business','legal','psychology']);
+const TOPICS=new Set(['business','legal','psychology','science','technology','history','travel','reference']);
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').slice(0,45);
 export function validateSubmission(v){
  if(!v||typeof v!=='object'||!TOPICS.has(v.topic)||
