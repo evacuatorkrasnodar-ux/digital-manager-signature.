@@ -129,3 +129,12 @@ function handle(raw){
 window.SEYVEO_LOCAL_ACTIONS=Object.freeze({handle,executePlan});
 if(typeof module!=='undefined'&&module.exports)module.exports={handle,execute,executePlan};
 })();
+// Russian keyboard-layout helper for typed messages.
+window.SEYVEO_RU_LAYOUT=function(input){
+ const en='qwertyuiop[]asdfghjkl;\'zxcvbnm,.';
+ const ru='йцукенгшщзхъфывапролджэячсмитьбю';
+ const raw=String(input||'');
+ if(!/[a-z]{3}/i.test(raw)||/https?:|@|www\./i.test(raw))return raw;
+ const converted=Array.from(raw,c=>{const i=en.indexOf(c.toLowerCase());return i<0?c:c===c.toUpperCase()?ru[i].toUpperCase():ru[i]}).join('');
+ return /(?:привет|брат|давай|сэйви|сейви|помоги|напиши|что|как|меня|спасибо|дальше|понял)/i.test(converted)?converted:raw;
+};
