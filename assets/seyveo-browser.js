@@ -87,6 +87,11 @@
   const url=secureUrl(link.href);if(!url)return;
   event.preventDefault();open(url);
  });
+ document.addEventListener('click',event=>{
+  const tile=event.target.closest?.('[data-calendar-space="browser"]');
+  if(!tile)return;
+  event.preventDefault();open();
+ });
  window.SEYVEO_BROWSER=Object.freeze({open,close});
  render();
 })();
