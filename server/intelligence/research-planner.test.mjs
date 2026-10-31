@@ -46,3 +46,11 @@ test('no sources means no fabricated conclusion',()=>{
  assert.equal(result.distinctDomains,0);
  assert.equal(result.factChecked,false);
 });
+
+test('unshared personal questions do not become internet search queries',()=>{
+ for(const question of ['Найди мой номер телефона','Какие у нас личные заметки?','Поищи мою переписку']){
+  const plan=planPublicResearch(question);
+  assert.equal(plan.allowed,false,question);
+  assert.equal(plan.searchQuery,null,question);
+ }
+});
