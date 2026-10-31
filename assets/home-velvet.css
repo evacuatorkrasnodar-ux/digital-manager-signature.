@@ -1,11 +1,41 @@
+
+/* Shared Home Velvet material tokens — also consumed by SEYVEO Browser. */
+:root{
+ --sv-home-glass:rgba(24,41,35,.67);
+ --sv-home-outline:rgba(165,208,190,.19);
+ --sv-home-glint:rgba(248,255,252,.066);
+ --sv-home-depth:0 3px 12px rgba(0,0,0,.09);
+}
+:root[data-theme=light]{
+ --sv-home-glass:rgba(255,255,255,.80);
+ --sv-home-outline:rgba(64,79,99,.14);
+ --sv-home-glint:rgba(255,255,255,.58);
+ --sv-home-depth:0 4px 16px rgba(41,59,79,.055);
+}
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-home-glass:rgba(27,38,46,.72);
+ --sv-home-outline:rgba(172,197,208,.20);
+ --sv-home-glint:rgba(238,247,252,.060);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-home-glass:rgba(25,36,66,.73);
+ --sv-home-outline:rgba(163,186,241,.23);
+ --sv-home-glint:rgba(233,240,255,.065);
+}
+:root[data-theme=dark][data-palette=plum]{
+ --sv-home-glass:rgba(40,37,34,.85);
+ --sv-home-outline:rgba(204,185,164,.19);
+ --sv-home-glint:rgba(255,243,222,.042);
+}
+
 /* SEYVEO · Home Velvet v6 — understated Apple-inspired finish.
    More considered typography, lighter card surfaces, compact content rhythm.
    No edits to protected sphere, Deep Reveal, satellites, navigation or JS. */
 #homePage{
-  --home-glass:rgba(24,41,35,.67);
-  --home-outline:rgba(165,208,190,.19);
-  --home-glint:rgba(248,255,252,.066);
-  --home-depth:0 3px 12px rgba(0,0,0,.09);
+  --home-glass:var(--sv-home-glass);
+  --home-outline:var(--sv-home-outline);
+  --home-glint:var(--sv-home-glint);
+  --home-depth:var(--sv-home-depth);
   --home-card-radius:32px;
 }
 
@@ -80,10 +110,10 @@
 
 /* White Velvet: silver-white, still light glass without noisy effects. */
 :root[data-theme=light] #homePage{
-  --home-glass:rgba(255,255,255,.80);
-  --home-outline:rgba(64,79,99,.14);
-  --home-glint:rgba(255,255,255,.58);
-  --home-depth:0 4px 16px rgba(41,59,79,.055);
+  --home-glass:var(--sv-home-glass);
+  --home-outline:var(--sv-home-outline);
+  --home-glint:var(--sv-home-glint);
+  --home-depth:var(--sv-home-depth);
 }
 :root[data-theme=light] #homePage .timeline-history,
 :root[data-theme=light] #homePage .personal-brief-add,
@@ -244,18 +274,18 @@
 /* Theme palette also reaches Home's small historical/utility surfaces.
    The protected plasma, Living Ink artwork and its animations are untouched. */
 :root[data-theme=dark][data-palette=graphite] #homePage{
- --home-glass:rgba(27,38,46,.72);
- --home-outline:rgba(172,197,208,.20);
- --home-glint:rgba(238,247,252,.060);
+ --home-glass:var(--sv-home-glass);
+ --home-outline:var(--sv-home-outline);
+ --home-glint:var(--sv-home-glint);
 }
 :root[data-theme=dark][data-palette=sapphire] #homePage{
- --home-glass:rgba(25,36,66,.73);
- --home-outline:rgba(163,186,241,.23);
- --home-glint:rgba(233,240,255,.065);
+ --home-glass:var(--sv-home-glass);
+ --home-outline:var(--sv-home-outline);
+ --home-glint:var(--sv-home-glint);
 }
 
 :root[data-theme=dark][data-palette=plum] #homePage{
- --home-glass:rgba(40,37,34,.85);
- --home-outline:rgba(204,185,164,.19);
- --home-glint:rgba(255,243,222,.042);
+ --home-glass:var(--sv-home-glass);
+ --home-outline:var(--sv-home-outline);
+ --home-glint:var(--sv-home-glint);
 }
