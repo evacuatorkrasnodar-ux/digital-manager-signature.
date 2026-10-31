@@ -267,6 +267,9 @@ function close(){
  const destination=returnRoute;
  returnRoute='';
  if(destination&&location.hash!==destination)location.hash=destination;
+ // Allow a suspended browser caller to return to its exact tab and scroll.
+ // Ordinary Feather Chat exits are unchanged when no browser is waiting.
+ document.dispatchEvent(new Event('seyveo:conversation-close'));
 }
 async function copyTextValue(value,label='Ответ'){
  try{
