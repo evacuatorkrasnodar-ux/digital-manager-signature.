@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'server/live-search*'
+      - 'server/real-app-local.mjs'
+      - 'server/tests/image-csp-policy.test.mjs'
+      - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
       - 'assets/seyveo-rich-answer-ui.js'
       - 'assets/living-conversation.js'
@@ -15,6 +18,9 @@ on:
   pull_request:
     paths:
       - 'server/live-search*'
+      - 'server/real-app-local.mjs'
+      - 'server/tests/image-csp-policy.test.mjs'
+      - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
       - 'assets/seyveo-rich-answer-ui.js'
       - 'assets/living-conversation.js'
@@ -36,6 +42,8 @@ jobs:
           node-version: '22'
       - run: node --check assets/seyveo-live-search-ui.js
       - run: node --check assets/seyveo-rich-answer-ui.js
+      - run: node --check server/real-app-local.mjs
+      - run: node --test server/tests/image-csp-policy.test.mjs
       - run: node --check assets/living-conversation.js
       - run: node --check assets/assistant-chat-history.js
       - run: node --test server/live-search.test.mjs tools/test-live-search-ui.cjs tools/test-rich-answer-ui.cjs
