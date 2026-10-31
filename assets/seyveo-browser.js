@@ -9,7 +9,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
 <div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button><button type="button" data-history-clear hidden aria-label="Очистить продолжение просмотра" title="Очистить историю просмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
-<div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-magnetic-grip" data-magnetic-grip aria-label="Магнитная кромка: вверх — полный экран, вниз — поиск или главная" title="Проведите вверх или вниз"><span aria-hidden="true"></span></button><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Меню браузера" aria-expanded="false" aria-controls="seyveoBrowserSiteMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button><nav id="seyveoBrowserSiteMenu" class="sb-browser-site-menu" data-site-menu-panel aria-label="Меню SEYVEO Browser" hidden><button type="button" data-site-action="tabs">Вкладки</button><button type="button" data-site-action="favorites">Избранное</button><button type="button" data-site-action="history">История</button><button type="button" data-site-action="home">Главная браузера</button></nav></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
+<div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Меню браузера" aria-expanded="false" aria-controls="seyveoBrowserSiteMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button><nav id="seyveoBrowserSiteMenu" class="sb-browser-site-menu" data-site-menu-panel aria-label="Меню SEYVEO Browser" hidden><button type="button" data-site-action="tabs">Вкладки</button><button type="button" data-site-action="favorites">Избранное</button><button type="button" data-site-action="history">История</button><button type="button" data-site-action="home">Главная браузера</button></nav></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
  <div class="sb-browser-demo-head"><span class="sb-browser-demo-menu" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><strong>Хабр</strong><span class="sb-browser-demo-fill"></span><span class="sb-browser-demo-search" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span></div>
  <article class="sb-browser-demo-article">
   <div class="sb-browser-demo-meta"><span>ДИЗАЙН</span><span>·</span><span>12 мая 2024</span><span>·</span><span>◷ 7 мин</span><small>ДЕМО</small></div>
@@ -67,26 +67,13 @@ siteMenu.querySelectorAll('button').forEach(button=>{
  button.style.cssText='display:flex;align-items:center;width:100%;height:29px;min-height:29px;max-height:29px;padding:0 8px;margin:0;border-radius:7px;font-size:11.5px;line-height:1.2;font-weight:450;white-space:nowrap;box-shadow:none;';
 });
 function closeSiteMenu(){siteMenu.hidden=true;siteMenuButton.setAttribute('aria-expanded','false')}
-const magneticGrip=$('[data-magnetic-grip]');
-const homeGrip=document.createElement('button');
-homeGrip.type='button';homeGrip.className='sb-browser-home-grip';
-homeGrip.dataset.magneticHome='';homeGrip.hidden=true;
-homeGrip.setAttribute('aria-label','Вернуться к открытой странице');
-homeGrip.title='Проведите вверх, чтобы вернуться к странице';
-homeGrip.innerHTML='<span aria-hidden="true"></span>';
-$('.seyveo-browser-home').after(homeGrip);
-const magnetAnchor=document.createElement('div');
-magnetAnchor.className='sb-browser-magnet-anchor';magnetAnchor.setAttribute('aria-hidden','true');
-$('.seyveo-browser-content').before(magnetAnchor);
-const magnetSheet=$('.seyveo-browser-content');
-let browserStage='normal'; // normal | immersive | home
-function setBrowserStage(next){
+// The browser viewport is fixed. Only website content scrolls.
+let browserStage='normal'; // normal | home
+function setBrowserStage(stage){
  if(managerOpen)return;
- if(!currentUrl())return;
- const stage=['normal','immersive','home'].includes(next)?next:'normal';
- snapMagnetTo(stage);
+ browserStage=stage==='home'?'home':'normal';
+ render();
 }
-
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
@@ -304,12 +291,7 @@ function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'�
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShown=false;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){
  managerOpen=Boolean(value);
- if(managerOpen){
-  cancelMagnetSnap();
-  browserStage='normal';
-  root.classList.remove('is-immersive','is-magnet-page','is-magnet-home','is-magnet-preview-home','is-magnet-dragging','is-magnet-settling');
-  document.body.classList.remove('seyveo-browser-immersive');
- }
+ if(managerOpen)browserStage='normal';
  if(!managerOpen){allClosedShown=false;showManagerHistory=false;} // Begin with folded Quiet Cinema stacks on re-entry.
  manager.hidden=!managerOpen;
  switcher.hidden=!managerOpen;
@@ -547,17 +529,12 @@ function syncHistoryStack(){
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url||browserStage==='home';if(managerOpen)renderManager();
- const hasPage=!!url&&!managerOpen;
  $('.seyveo-browser-home').hidden=false;
- root.classList.toggle('is-site-view',hasPage);
- root.classList.toggle('is-magnet-page',hasPage);
- root.classList.toggle('is-magnet-home',hasPage&&home);
- const immersive=hasPage&&browserStage==='immersive';
- root.classList.toggle('is-immersive',immersive);
- document.body.classList.toggle('seyveo-browser-immersive',immersive&&!root.hidden);
- homeGrip.hidden=!(home&&hasPage);
- $('.seyveo-browser-start').hidden=!home;magnetSheet.hidden=!hasPage;$('.seyveo-browser-tabs').hidden=home;
- input.value=home&&browserStage==='home'?'':url||'';
+ root.classList.toggle('is-site-view',!home&&!managerOpen);
+ $('.seyveo-browser-start').hidden=!home;
+ $('.seyveo-browser-content').hidden=home;
+ $('.seyveo-browser-tabs').hidden=home;
+ input.value=home?'':url||'';
  // A static web demo cannot bypass X-Frame-Options / CSP frame-ancestors.
  // Sites that fail in the user's preview get a compact explanation, never a
  // full-height grey error iframe; a native app will require WebView integration.
@@ -567,13 +544,13 @@ function render(){
  // Never substitute fabricated article text into another live website.
  const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
  const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
- closeSiteMenu();sitebar.hidden=!hasPage;
+ closeSiteMenu();sitebar.hidden=home;
  if(url)$('[data-site-title]').textContent=siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
  $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
  $('.seyveo-browser-content').classList.toggle('is-embed-unavailable',blocked);
- frame.hidden=!hasPage||blocked||isDemo;
+ frame.hidden=home||blocked||isDemo;
  if(isDemo){frame.removeAttribute('src');displayedTab=null}
  else if(blocked){
   embedExplanation.textContent='Сайт '+embedHost+' не открывается внутри веб-демоверсии SEYVEO. Для полноценного встроенного просмотра потребуется нативный браузер приложения.';
@@ -673,7 +650,6 @@ function render(){
   create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
   placeholder.append(create);tabArea.append(placeholder);
  }
- if(hasPage&&!root.hidden)syncMagnetLayout();
 }
 function navigate(value){const url=secureUrl(value);if(!url)return false;browserStage='normal';const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
 /* One existing Sayvi, one original dock: temporarily hide Browser without
@@ -762,7 +738,7 @@ function browserVoiceUnavailable(message){
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){cancelMagnetSnap();browserStage='normal';root.classList.remove('is-immersive','is-magnet-page','is-magnet-home','is-magnet-preview-home','is-magnet-dragging','is-magnet-settling');document.body.classList.remove('seyveo-browser-immersive');suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){browserStage='normal';suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -771,153 +747,6 @@ function goToSeyveoHome(){
  document.getElementById('navHome')?.click();
  return true;
 }
-/* SEYVEO magnetic glass v2: the whole web sheet tracks the finger.
-   The three stop locations are measured from the real responsive layout;
-   the nested iframe keeps its URL, DOM node and scroll history. */
-let magneticPointer=null,magneticTimer=null,magneticCurrentY=0,magneticNormalY=0;
-let ignoreMagnetClickUntil=0;
-const magnetClamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const magnetEaseTime=315;
-function magnetBounds(){
- const rect=root.getBoundingClientRect();
- const padding=parseFloat(getComputedStyle(root).paddingTop)||0;
- const full=Math.max(0,Math.min(padding,rect.height*.08));
- if(browserStage!=='home'&&!root.classList.contains('is-magnet-preview-home')){
-  const a=magnetAnchor.getBoundingClientRect();
-  if(a.height>=0&&a.top>=rect.top+30){
-   magneticNormalY=magnetClamp(a.top-rect.top,full+80,rect.height*.7);
-  }
- }
- if(!magneticNormalY)magneticNormalY=magnetClamp(rect.height*.26,full+100,rect.height*.65);
- return{full,normal:magneticNormalY,home:rect.height+12};
-}
-function paintMagnet(y,bounds=magnetBounds()){
- const pos=magnetClamp(y,bounds.full,bounds.home);
- magneticCurrentY=pos;
- root.style.setProperty('--sb-magnet-y',pos+'px');
- // Keep the entire tab rail (including close buttons and +) locked to the
- // moving glass seam; its original normal position is the zero offset.
- root.style.setProperty('--sb-magnet-tabs-shift',(pos-bounds.normal)+'px');
- const progress=magnetClamp((bounds.normal-pos)/Math.max(1,bounds.normal-bounds.full),0,1);
- const headerFull=window.matchMedia('(max-width:649px)').matches?62:70;
- const headerHeight=headerFull-(headerFull-22)*progress;
- root.style.setProperty('--sb-magnet-header-height',headerHeight+'px');
- root.style.setProperty('--sb-magnet-tools-opacity',String(1-progress));
- root.style.setProperty('--sb-magnet-chrome-opacity',String(1-progress));
- root.style.setProperty('--sb-magnet-full-top',bounds.full+'px');
-}
-function magnetPreviewHome(){
- if(!currentUrl()||managerOpen)return;
- const rect=root.getBoundingClientRect(),search=$('.seyveo-browser-bar').getBoundingClientRect();
- root.style.setProperty('--sb-magnet-home-content-top',
-  Math.max(115,search.bottom-rect.top+18)+'px');
- root.classList.add('is-magnet-preview-home');
- $('.seyveo-browser-start').hidden=false;
-}
-function cancelMagnetSnap(){
- if(magneticTimer!==null){clearTimeout(magneticTimer);magneticTimer=null}
- magneticPointer=null;
- root.classList.remove('is-magnet-dragging','is-magnet-settling','is-magnet-preview-home');
- root.style.removeProperty('--sb-magnet-pull');
-}
-function syncMagnetLayout(){
- if(root.hidden||managerOpen||!currentUrl()||magneticPointer||magneticTimer!==null)return;
- const bounds=magnetBounds();
- paintMagnet(browserStage==='immersive'?bounds.full:browserStage==='home'?bounds.home:bounds.normal,bounds);
-}
-function snapMagnetTo(stage){
- if(root.hidden||managerOpen||!currentUrl())return;
- const dest=['immersive','normal','home'].includes(stage)?stage:'normal';
- if(magneticTimer!==null){clearTimeout(magneticTimer);magneticTimer=null}
- const bounds=magnetBounds();
- if(dest==='home'||browserStage==='home')magnetPreviewHome();
- root.classList.remove('is-magnet-dragging');
- root.classList.add('is-magnet-settling');
- paintMagnet(bounds[dest==='immersive'?'full':dest],bounds);
- magneticTimer=setTimeout(()=>{
-  magneticTimer=null;
-  browserStage=dest;
-  root.classList.remove('is-magnet-settling','is-magnet-preview-home');
-  render(); // Only commit the new stage after the glass has reached its stop.
- },magnetEaseTime+35);
-}
-function magneticStart(event,source){
- if(root.hidden||managerOpen||!currentUrl()||!event.isPrimary)return;
- if(event.pointerType==='mouse'&&event.button!==0)return;
- const onHandle=!!event.target.closest?.('[data-magnetic-grip],[data-magnetic-home]');
- if(event.target.closest?.('button')&&!onHandle)return;
- if(magneticTimer!==null){
-  clearTimeout(magneticTimer);magneticTimer=null;
-  root.classList.remove('is-magnet-settling');
- }
- const bounds=magnetBounds();
- const start=magneticCurrentY||bounds[browserStage==='immersive'?'full':browserStage];
- magneticPointer={id:event.pointerId,source,x:event.clientX,y:event.clientY,
-  start,startStage:browserStage,startTime:performance.now(),moving:false,bounds};
- try{source.setPointerCapture(event.pointerId)}catch{}
-}
-function bindMagneticEdge(source){
- source.addEventListener('pointerdown',event=>magneticStart(event,source));
- source.addEventListener('pointermove',event=>{
-  const g=magneticPointer;
-  if(!g||g.id!==event.pointerId||g.source!==source)return;
-  const dx=event.clientX-g.x,dy=event.clientY-g.y;
-  if(!g.moving){
-   if(Math.abs(dy)<7||Math.abs(dy)<Math.abs(dx)*1.15)return;
-   g.moving=true;
-   closeSiteMenu();
-   root.classList.add('is-magnet-dragging');
-  }
-  event.preventDefault();
-  if(dy>10||g.startStage==='home')magnetPreviewHome();
-  paintMagnet(g.start+dy,g.bounds);
- });
- source.addEventListener('pointerup',event=>{
-  const g=magneticPointer;
-  if(!g||g.id!==event.pointerId||g.source!==source)return;
-  magneticPointer=null;
-  if(!g.moving)return;
-  ignoreMagnetClickUntil=performance.now()+500;
-  const dy=event.clientY-g.y;
-  const v=dy/Math.max(35,performance.now()-g.startTime);
-  let dest=g.startStage;
-  if(g.startStage==='home'){
-   if(dy< -48||v< -0.35)dest='normal';
-  }else if(g.startStage==='immersive'){
-   if(dy>120||v>0.9&&dy>65)dest='home';
-   else if(dy>34||v>0.24&&dy>18)dest='normal';
-  }else{
-   if(dy< -34||v< -0.25&&dy< -18)dest='immersive';
-   else if(dy>110||v>0.6&&dy>58)dest='home';
-  }
-  snapMagnetTo(dest);
- });
- source.addEventListener('pointercancel',()=>{
-  if(magneticPointer?.source!==source)return;
-  const stage=magneticPointer.startStage;
-  magneticPointer=null;
-  snapMagnetTo(stage);
- });
-}
-bindMagneticEdge(sitebar);
-bindMagneticEdge(homeGrip);
-const demoMagneticHead=$('.sb-browser-demo-head');
-if(demoMagneticHead)bindMagneticEdge(demoMagneticHead);
-root.addEventListener('click',event=>{
- if(performance.now()<ignoreMagnetClickUntil&&event.target.closest('.sb-browser-sitebar,.sb-browser-home-grip,.sb-browser-demo-head')){
-  event.preventDefault();event.stopImmediatePropagation();
- }
-},true);
-magneticGrip.addEventListener('click',()=>setBrowserStage(browserStage==='immersive'?'normal':'immersive'));
-homeGrip.addEventListener('click',()=>setBrowserStage('normal'));
-magneticGrip.addEventListener('keydown',event=>{
- if(event.key==='ArrowUp'){event.preventDefault();setBrowserStage('immersive')}
- if(event.key==='ArrowDown'){event.preventDefault();setBrowserStage(browserStage==='immersive'?'normal':'home')}
-});
-homeGrip.addEventListener('keydown',event=>{
- if(event.key==='ArrowUp'){event.preventDefault();setBrowserStage('normal')}
-});
-window.addEventListener('resize',()=>{if(!root.hidden&&!managerOpen&&currentUrl())syncMagnetLayout()});
 /* iOS back gesture from the left screen edge. Respect the two swipe rails and
    vertical scrolling. Embedded cross-origin pages must use native platform Back. */
 let edgeSwipe=null;
@@ -925,7 +754,6 @@ root.addEventListener('touchstart',event=>{
  edgeSwipe=null;
  if(root.hidden||event.touches.length!==1)return;
  const touch=event.touches[0],target=event.target;
- if(target.closest('.sb-browser-sitebar,.sb-browser-home-grip'))return;
  if(touch.clientX>26||target.closest('input,textarea,select,.sb-home-recent-grid,.seyveo-browser-shortcuts'))return;
  edgeSwipe={x:touch.clientX,y:touch.clientY};
 },{passive:true});
@@ -982,7 +810,7 @@ $('[data-history-clear]').addEventListener('click',()=>{
  if(!window.confirm('Очистить историю просмотра? Записи исчезнут и из раздела «История». Открытые вкладки и избранное останутся.'))return;
  clearHistory();render();
 });
-/* Native magnetic snapping for swipes; the label opens the existing full tab manager. */
+/* Open the existing browser tab manager from the start page. */
 $('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
 paintQuickSites();
 /* Keep shortcut tiles intact: native swipe in the rail, expand all on request. */
@@ -999,7 +827,7 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
 $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(browserStage==='immersive'){setBrowserStage('normal');return}if(!siteMenu.hidden)closeSiteMenu();else if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!siteMenu.hidden)closeSiteMenu();else if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
 window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
