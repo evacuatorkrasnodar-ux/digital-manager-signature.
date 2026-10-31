@@ -3,17 +3,19 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const src=fs.readFileSync(require('node:path').join(__dirname,'../assets/seyveo-live-search-request.js'),'utf8');
-function prepare(fetcher){
+function prepare(fetcher,confirm=()=>true){
  const calls=[],received=[];
+ const saved=new Map();
+ const localStorage={getItem:key=>saved.get(key)||null,setItem:(key,value)=>saved.set(key,value)};
  const chat={
   beginStream:(q,stop)=>calls.push({q,stop}),
   updateStream:()=>{},
   showSearchResults:x=>received.push(x),
   endStream:()=>{}
  };
- const window={SEYVEO_CONVERSATION:chat};
- vm.runInNewContext(src,{window,fetch:fetcher,AbortController,console});
- return {api:window.SEYVEO_LIVE_SEARCH_REQUEST,calls,received};
+ const window={SEYVEO_CONVERSATION:chat,confirm};
+ vm.runInNewContext(src,{window,fetch:fetcher,AbortController,localStorage,console});
+ return {api:window.SEYVEO_LIVE_SEARCH_REQUEST,calls,received,saved};
 }
 const tick=()=>new Promise(r=>setTimeout(r,5));
 test('routes fresh public questions but not private work or ordinary dialogue',()=>{
@@ -55,4 +57,14 @@ test('cancel aborts actual fetch without adding fabricated answer',async()=>{
  await tick();
  assert.equal(signal.aborted,true);
  assert.equal(t.received.length,0);
+});
+
+test('one-time explicit search consent blocks declined external requests',async()=>{
+ let calls=0;
+ const t=prepare(async()=>{calls++;throw Error('should not contact provider')},()=>false);
+ assert.equal(t.api.start('Правда ли Маск сделал летающую машину?'),true);
+ await tick();
+ assert.equal(calls,0);
+ assert.equal(t.received[0].status,'unavailable');
+ assert.equal(t.saved.size,0);
 });
