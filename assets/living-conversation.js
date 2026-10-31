@@ -417,6 +417,7 @@ function scrollToLatest(){
  });
 }
 function renderTurns(turns){
+ if(activeAction?.kind==='stream'&&turns.length&&String(turns[turns.length-1]?.answer||'').trim())finishAction();
  const previous=text.scrollTop;
  const atBottom=text.scrollHeight-text.clientHeight-previous<42;
  const isNewTurn=turns.length>lastRenderedTurnCount;
@@ -502,9 +503,15 @@ function renderTurns(turns){
 // including the existing speaker, under the complete message.
 let streamedBody=null;
 let streamDraft='';
-function beginStream(question){
+function beginStream(question,cancel){
  open();
+ if(activeAction?.kind==='stream')finishAction();
  streamDraft='';
+ // Stop appears only when the caller provides a real cancellation callback.
+ if(typeof cancel==='function'&&!activeAction){
+  activeAction={kind:'stream',cancel};syncActionButton();
+ }
+ status('Сэйви пишет…');
  const turns=window.SEYVEO_DEMO_CHAT_TURNS||[];
  renderTurns([...turns,{question:String(question||''),answer:''}]);
  const bodies=text.querySelectorAll('.seyveo-conversation-turn--sayvi .seyveo-conversation-body');
@@ -522,6 +529,7 @@ function updateStream(answer){
  if(!streamedBody)return;
  const nearBottom=text.scrollHeight-text.clientHeight-text.scrollTop<64;
  streamedBody.textContent=displayChatText(streamDraft)||'Сэйви думает…';
+ status('Сэйви пишет…');
  if(nearBottom)text.scrollTop=text.scrollHeight;
 }
 // Only the chat shell follows iPhone's *visible* viewport.
@@ -632,5 +640,7 @@ window.SEYVEO_CHAT_ACTIVITY=Object.freeze({
  begin:beginAction,finish:finishAction,cancel:cancelAction,
  isBusy:()=>Boolean(activeAction)
 });
-window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status};
+window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,
+ endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
+};
 })();
