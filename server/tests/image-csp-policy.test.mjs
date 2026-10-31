@@ -22,3 +22,10 @@ test('all curated Living Answers images use approved HTTPS image hosts',()=>{
  }
  assert.doesNotMatch(media,/thumb\.wikimedia\.org/);
 });
+
+test('Roadster curated answer reflects 2026 demonstration, not a stale 2017-only claim',()=>{
+ assert.match(media,/15 октября 2026 года/);
+ assert.match(media,/2028 год/);
+ assert.match(media,/caranddriver\.com\/news\/a74145531/);
+ assert.match(media,/не доказательство длительного полёта/);
+});
