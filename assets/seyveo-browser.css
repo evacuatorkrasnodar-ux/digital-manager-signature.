@@ -1093,3 +1093,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   width:calc(100% + 16px);
   max-width:none;
 }
+
+/* Geometrically centered plus, independent of the full-width glyph's font metrics. */
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
+ position:relative;
+ font-size:0;
+}
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::before,
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::after{
+ content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ background:currentColor;border-radius:1px;pointer-events:none;
+}
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::before{width:19px;height:1.5px}
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::after{width:1.5px;height:19px}
