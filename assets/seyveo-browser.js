@@ -58,6 +58,50 @@ function saved(){try{const a=JSON.parse(localStorage.getItem(key)||'[]');return 
 function store(a){try{localStorage.setItem(key,JSON.stringify(a.slice(0,60)))}catch{}}
 function getCollections(){try{const data=JSON.parse(localStorage.getItem(collectionsKey)||'[]');return Array.isArray(data)?data.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.urls)).slice(0,30).map(x=>({id:x.id,name:x.name.slice(0,42),urls:x.urls.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,100)})):[]}catch{return []}}
 function putCollections(items){try{localStorage.setItem(collectionsKey,JSON.stringify(items.slice(0,30)))}catch{}}
+
+function collectionCover(collection){
+ const cover=document.createElement('span');cover.className='sb-collection-cover';cover.setAttribute('aria-hidden','true');
+ const travel=/путеш|travel|поезд|горы|туризм|природ|отдых|vacation|trip/i.test(collection.name);
+ cover.classList.add(travel?'sb-collection-cover-travel':'sb-collection-cover-inspiration');
+ cover.innerHTML=travel
+ ?'<svg viewBox="0 0 72 72" focusable="false" aria-hidden="true"><defs><linearGradient id="sbtravelSky" x1="0" y1="0" x2="0.7" y2="1"><stop stop-color="#f3d6b5"/><stop offset=".48" stop-color="#b0d2d2"/><stop offset="1" stop-color="#355c55"/></linearGradient><linearGradient id="sbtravelGround" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3b6d62"/><stop offset="1" stop-color="#102b29"/></linearGradient></defs><rect width="72" height="72" rx="12" fill="url(#sbtravelSky)"/><circle cx="55" cy="17" r="10" fill="#e9eed5" opacity=".48"/><path d="M-6 57 25 21 42 42 53 29 80 62v18H-6Z" fill="#42545c"/><path d="m25 21 9 12-8-3-8 4Z" fill="#e7ece9"/><path d="m53 29 8 11-10-5-7 4Z" fill="#dce8e7"/><path d="m-5 58 17-12 15 10 13-8 35 16v10H-5Z" fill="#2f5d59"/><path d="M0 60q22-8 37 0t35-1v13H0Z" fill="url(#sbtravelGround)"/><path d="M5 64q26-10 58 2" stroke="#b3dbca" stroke-width="1.3" opacity=".37" fill="none"/></svg>'
+ :'<svg viewBox="0 0 72 72" focusable="false" aria-hidden="true"><defs><linearGradient id="sbinspireCard" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#65e5c4"/><stop offset=".58" stop-color="#138b77"/><stop offset="1" stop-color="#054e4b"/></linearGradient></defs><rect width="72" height="72" rx="12" fill="#092d29"/><rect x="29" y="11" width="33" height="47" rx="5" fill="#8ca8ba" opacity=".48" transform="rotate(-7 45 34)"/><rect x="22" y="14" width="34" height="49" rx="5" fill="#5b93a0" opacity=".77" transform="rotate(2 39 39)"/><rect x="13" y="17" width="35" height="47" rx="5" fill="url(#sbinspireCard)"/><path d="M21 23h17v22L30 40l-9 5z" fill="#adffe4" opacity=".22"/><path d="M19 54h24" stroke="#b6ffe5" stroke-opacity=".33" stroke-width="1.5"/></svg>';
+ return cover;
+}
+function collectionCount(n){
+ const mod=n%10,group=n%100;
+ return n+' '+(group>=11&&group<=14?'страниц':mod===1?'страница':mod>=2&&mod<=4?'страницы':'страниц');
+}
+function makeCollectionCard(collection){
+ const id=collection.id,card=document.createElement('article');card.className='sb-manager-collection-tile';card.dataset.collectionId=id;
+ if(collectionMenuId===id)card.classList.add('is-menu-open');
+ const open=document.createElement('button');open.type='button';open.className='sb-collection-open';open.setAttribute('aria-label','Открыть коллекцию '+collection.name);
+ const cover=collectionCover(collection),words=document.createElement('span');words.className='sb-collection-summary';
+ const title=document.createElement('strong');title.textContent=collection.name;const count=document.createElement('small');count.textContent=collectionCount(collection.urls.length);
+ words.append(title,count);open.append(cover,words);
+ open.addEventListener('click',()=>{collectionMenuId=null;renamingCollectionId=null;confirmCollectionDeleteId=null;managerSection='collections';openCollection=id;renderManager()});
+ const more=document.createElement('button');more.type='button';more.className='sb-collection-more';more.textContent='⋮';more.setAttribute('aria-label','Действия с коллекцией '+collection.name);more.setAttribute('aria-expanded',String(collectionMenuId===id));
+ more.addEventListener('click',()=>{collectionMenuId=collectionMenuId===id?null:id;renamingCollectionId=null;confirmCollectionDeleteId=null;renderManager()});
+ card.append(open,more);
+ if(collectionMenuId!==id)return card;
+ const panel=document.createElement('div');panel.className='sb-collection-quick-actions';
+ if(renamingCollectionId===id){
+  const form=document.createElement('form');form.className='sb-collection-rename-form';const input=document.createElement('input');input.type='text';input.className='sb-collection-rename-input';input.maxLength=42;input.value=collection.name;input.setAttribute('aria-label','Новое название коллекции');
+  const submit=document.createElement('button');submit.type='submit';submit.textContent='Сохранить';
+  const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';cancel.addEventListener('click',()=>{renamingCollectionId=null;renderManager()});
+  form.addEventListener('submit',event=>{event.preventDefault();const name=input.value.trim();if(!name)return;putCollections(getCollections().map(item=>item.id===id?{...item,name:name.slice(0,42)}:item));renamingCollectionId=null;collectionMenuId=null;renderManager()});
+  form.append(input,submit,cancel);panel.append(form);
+ }else if(confirmCollectionDeleteId===id){
+  const warning=document.createElement('span');warning.className='sb-collection-confirm-label';warning.textContent='Удалить коллекцию?';
+  const yes=document.createElement('button');yes.type='button';yes.textContent='Удалить';yes.addEventListener('click',()=>{putCollections(getCollections().filter(item=>item.id!==id));collectionMenuId=null;confirmCollectionDeleteId=null;if(openCollection===id)openCollection=null;renderManager()});
+  const no=document.createElement('button');no.type='button';no.textContent='Отмена';no.addEventListener('click',()=>{confirmCollectionDeleteId=null;renderManager()});panel.append(warning,yes,no);
+ }else{
+  const rename=document.createElement('button');rename.type='button';rename.textContent='Переименовать';rename.addEventListener('click',()=>{renamingCollectionId=id;renderManager();manager.querySelector('.sb-collection-rename-input')?.focus()});
+  const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';remove.addEventListener('click',()=>{confirmCollectionDeleteId=id;renderManager()});
+  panel.append(rename,remove);
+ }
+ card.append(panel);return card;
+}
 function makeCollection(){managerSection='collections';creatingCollection=true;renderManager();secondary.querySelector('.sb-collection-name')?.focus()}
 function normalizeClosed(item){
  const url=typeof item==='string'?item:item&&typeof item.url==='string'?item.url:null;
