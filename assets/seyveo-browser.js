@@ -8,7 +8,7 @@ root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.s
 root.innerHTML=`<header class="seyveo-browser-top"><button type="button" data-close aria-label="Вернуться в Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button><span class="seyveo-browser-header-space" aria-hidden="true"></span></header>
 <div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
-<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle hidden>Показать все ›</button></div><div data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager>Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs></div></section></div>
+<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span></div><div class="seyveo-browser-shortcuts"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button></div><div id="seyveoBrowserHistoryList" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager>Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs></div></section></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><div class="seyveo-browser-blocked" hidden><strong>Этот сайт не разрешает встроенный просмотр</strong><p>YouTube запрещает открывать главную страницу во фрейме. Можно открыть сайт отдельно.</p><button type="button" data-open-blocked>Открыть YouTube ↗</button></div><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
 <footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
@@ -284,6 +284,24 @@ function renderSecondary(){
  if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent=managerSection==='favorites'?'Сохрани страницу в Избранное':'История пока пуста';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');icon.textContent=siteSymbol(url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
+/* Quiet Cinema: one visible history card at rest, full stack when opened. */
+function syncHistoryStack(){
+ const list=$('[data-continue-list]'),toggle=$('[data-history-toggle]');
+ const slots=list.querySelectorAll('.sb-history-slot');
+ const hasStack=slots.length>1;
+ if(!hasStack)showAllHistory=false;
+ toggle.hidden=!hasStack;
+ toggle.textContent=showAllHistory?'Свернуть':'Показать все ›';
+ toggle.setAttribute('aria-expanded',String(showAllHistory));
+ list.classList.toggle('is-expanded',showAllHistory&&hasStack);
+ list.classList.toggle('is-collapsed',!showAllHistory&&hasStack);
+ slots.forEach((slot,i)=>{
+  const folded=i>0&&!showAllHistory;
+  slot.classList.toggle('is-folded',folded);
+  slot.setAttribute('aria-hidden',String(folded));
+  slot.inert=folded;
+ });
+}
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
@@ -299,10 +317,10 @@ function render(){
  $('[data-bookmark]').disabled=!url;$('[data-external]').disabled=!url;
  $('[data-bookmark]').textContent=url&&saved().includes(url)?'★':'☆';
  document.dispatchEvent(new Event('seyveo:browser-state'));
- const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();const toggle=$('[data-history-toggle]');toggle.hidden=items.length<2;toggle.textContent=showAllHistory?'Свернуть':'Показать все ›';
- const selected=showAllHistory?items:items.slice(0,3);
+ const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();
+ const selected=items;
  if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
- for(const link of selected){
+ for(const [position,link] of selected.entries()){
   const url=new URL(link),host=url.hostname.replace(/^www\./,'');
   const name=host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host;
   const card=document.createElement('article');card.className='seyveo-browser-history-card';
@@ -316,8 +334,10 @@ function render(){
   const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
   action(saved().includes(link)?'Убрать из закладок':'☆ В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
   action('Убрать из истории',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
-  const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);contList.append(card);
+  const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);
+  const slot=document.createElement('div');slot.className='sb-history-slot';slot.style.setProperty('--sb-history-order',String(Math.min(position,6)));slot.append(card);contList.append(slot);
  }
+ syncHistoryStack();
  const recentHome=root.querySelector('.sb-home-recent-tabs'),recentGrid=root.querySelector('[data-home-recent-tabs]');
  recentGrid.replaceChildren();
  const liveTabs=tabs.filter(tab=>tab.entries[tab.position]).slice().reverse();
@@ -370,7 +390,7 @@ $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!ur
 
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
-$('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;render()});
+$('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;syncHistoryStack()});
 $('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
 root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.site)));
 
