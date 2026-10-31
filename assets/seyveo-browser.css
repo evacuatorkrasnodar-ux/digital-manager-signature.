@@ -494,41 +494,62 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:block!important;width:25px!important;height:25px!important;
  margin:0 auto!important;flex:none!important;
 }
-
-/* Browser surfaces follow the selected SEYVEO theme, never a fixed green palette. */
+/* SEYVEO Browser · unified Black Velvet materials.
+   Theme tokens are defined by the app; site brand marks remain untouched. */
 .seyveo-browser{
- --sb-glass:color-mix(in srgb,currentColor 5%,transparent);
- --sb-glass-strong:color-mix(in srgb,currentColor 9%,transparent);
- --sb-stroke:color-mix(in srgb,currentColor 16%,transparent);
+ --sb-surface:color-mix(in srgb,var(--card) 74%,var(--bg));
+ --sb-surface-raised:color-mix(in srgb,var(--card2) 58%,var(--bg));
+ --sb-hairline:color-mix(in srgb,var(--line) 64%,transparent);
+ --sb-highlight:color-mix(in srgb,var(--text) 5%,transparent);
+ --sb-muted:var(--secondary);
 }
-.seyveo-browser .seyveo-browser-bar,
-.seyveo-browser .seyveo-browser-shortcuts button,
+.seyveo-browser .seyveo-browser-bar{
+ background:linear-gradient(155deg,var(--sb-highlight),transparent 66%),var(--sb-surface);
+ border:1px solid var(--sb-hairline);
+ box-shadow:inset 0 1px color-mix(in srgb,var(--text) 7%,transparent),0 7px 24px rgba(0,0,0,.075);
+}
+.seyveo-browser .seyveo-browser-bar:focus-within{
+ border-color:var(--seyveo-hdr-outline,var(--line));
+ box-shadow:inset 0 1px var(--sb-highlight),0 0 0 2px var(--seyveo-hdr-active,transparent);
+}
+.seyveo-browser .seyveo-browser-search-icon,
+.seyveo-browser .seyveo-browser-bar>span{
+ display:flex;align-items:center;justify-content:center;background:transparent;
+ color:var(--text);opacity:.82;box-shadow:none;
+}
+.seyveo-browser .seyveo-browser-bar input::placeholder{color:var(--secondary);opacity:.9}
+.seyveo-browser .seyveo-browser-bar .seyveo-browser-scan{background:transparent;color:var(--text);box-shadow:none}
+.seyveo-browser .seyveo-browser-shortcuts button{
+ background:linear-gradient(155deg,var(--sb-highlight),transparent 70%),var(--sb-surface);
+ border:1px solid var(--sb-hairline);
+ box-shadow:inset 0 1px color-mix(in srgb,var(--text) 5%,transparent);
+}
+.seyveo-browser .seyveo-browser-shortcuts button:hover,
+.seyveo-browser .seyveo-browser-shortcuts button:active{
+ background:var(--sb-surface-raised);border-color:var(--line);
+}
 .seyveo-browser .seyveo-browser-continue-card,
 .seyveo-browser .seyveo-browser-history-card,
 .seyveo-browser .seyveo-browser-bookmark-card,
-.seyveo-browser .sb-home-recent-card,
-.seyveo-browser .seyveo-browser-recent-item{
- background:var(--sb-glass)!important;border-color:var(--sb-stroke)!important;
- box-shadow:inset 0 1px color-mix(in srgb,currentColor 5%,transparent);
+.seyveo-browser .seyveo-browser-recent-item,
+.seyveo-browser .sb-home-recent-card{
+ background:linear-gradient(155deg,var(--sb-highlight),transparent 76%),var(--sb-surface);
+ border:1px solid var(--sb-hairline);
+ box-shadow:inset 0 1px color-mix(in srgb,var(--text) 5%,transparent);
 }
-.seyveo-browser .seyveo-browser-bar:focus-within,
-.seyveo-browser .seyveo-browser-shortcuts button:hover{
- border-color:color-mix(in srgb,currentColor 32%,transparent)!important;
-}
-.seyveo-browser .seyveo-browser-bar .seyveo-browser-scan:hover,
-.seyveo-browser .seyveo-browser-history-actions button:hover,
-.seyveo-browser .seyveo-browser-tab.is-active{
- background:var(--sb-glass-strong);
-}
+.seyveo-browser .seyveo-browser-continue-card{background:linear-gradient(155deg,var(--sb-highlight),transparent 76%),var(--sb-surface)!important;border-color:var(--sb-hairline)!important}
+.seyveo-browser .seyveo-browser-recent-item{background:var(--sb-surface)!important;border-color:var(--sb-hairline)!important}
 .seyveo-browser .seyveo-browser-history-logo,
 .seyveo-browser .seyveo-browser-continue-card>span:first-child,
 .seyveo-browser .sb-home-recent-symbol:not(.is-youtube):not(.is-yandex),
-.seyveo-browser .sb-site-mark:not(.sb-youtube):not(.sb-yandex),
-.seyveo-browser .seyveo-browser-bar>span{
- background:var(--sb-glass-strong);color:inherit;
+.seyveo-browser .sb-site-mark:not(.sb-youtube):not(.sb-yandex){
+ background:var(--sb-surface-raised);color:var(--text);
 }
-.seyveo-browser .sb-saved,
-.seyveo-browser .seyveo-browser-history-menu[aria-expanded="true"]{
- color:inherit;
-}
-.seyveo-browser .seyveo-browser-shortcuts button:active{background:var(--sb-glass-strong)!important}
+.seyveo-browser .sb-saved,.seyveo-browser .seyveo-browser-history-menu[aria-expanded="true"]{color:var(--text)}
+.seyveo-browser .seyveo-browser-start-heading{color:var(--secondary)}
+.seyveo-browser .seyveo-browser-history-words small,
+.seyveo-browser .sb-home-recent-info small{color:var(--secondary)}
+.seyveo-browser .seyveo-browser-top>button{display:grid;place-items:center}
+.seyveo-browser .seyveo-browser-history-logo,
+.seyveo-browser .sb-home-recent-symbol{line-height:1;text-align:center}
+.seyveo-browser button:focus-visible,.seyveo-browser input:focus-visible{outline-color:var(--seyveo-emerald,var(--text))}
