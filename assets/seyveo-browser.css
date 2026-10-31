@@ -820,10 +820,10 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Extra tabs swipe horizontally; the separate + is always visible. */
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
- height:46px;min-height:46px;margin:0 0 -4px;gap:6px;
- /* Shift only the tab rail visually, not the header or page layout.
-    The page (z-index 3) covers the rail's bottom, as in the reference. */
- position:relative;top:13px;z-index:2;
+ height:46px;min-height:46px;margin:10px 0 -4px;gap:6px;
+ /* Whole tab rail is 15px lower: 10px additional layout gap plus 5px
+    deeper beneath the page edge. Text and close icons stay readable. */
+ position:relative;top:18px;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
  display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
@@ -877,12 +877,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- /* Reference: narrow vertical glass tab, hooked under the page edge.
-    The parent rail sits behind site content; bottom of this button is tucked away. */
- position:relative;top:-9px;z-index:0;
+ /* Same baseline and corner profile as the other tabs, not a separate capsule. */
+ position:relative;top:0;z-index:0;
  align-self:flex-start;display:grid;place-items:center;flex:none;
- width:37px;min-width:37px;height:56px;min-height:56px;
- padding:0 0 4px;border-radius:17px 17px 5px 5px;
+ width:37px;min-width:37px;height:44px;min-height:44px;
+ padding:0;border-radius:12px 12px 2px 2px;
  border:1px solid var(--sv-home-outline);
  background:linear-gradient(160deg,var(--sv-home-glint),transparent 65%),var(--sv-home-glass);
  box-shadow:inset 0 1px 0 var(--sv-home-glint);
@@ -904,14 +903,14 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-bottom:-4px;top:11px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-top:10px;margin-bottom:-4px;top:16px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab{height:42px;border-radius:11px 11px 2px 2px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  width:35px;min-width:35px;height:54px;min-height:54px;
-  top:-8px;border-radius:16px 16px 5px 5px;
+  width:35px;min-width:35px;height:42px;min-height:42px;
+  top:0;border-radius:11px 11px 2px 2px;
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
   gap:3px;padding-left:4px;
