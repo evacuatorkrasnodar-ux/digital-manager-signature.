@@ -62,3 +62,36 @@ export function makeBraveSearchProvider({apiKey=process.env.SEYVEO_BRAVE_SEARCH_
   }));
  };
 }
+
+/* Brave LLM Context returns real extracted passages and source metadata.
+   No automatic training, no persistence, no secrets sent to the browser. */
+export function createBraveContextProvider({apiKey=process.env.SEYVEO_BRAVE_SEARCH_API_KEY,fetcher=fetch}={}){
+ if(typeof apiKey!=='string'||!apiKey.trim())return null;
+ return async query=>{
+  const endpoint=new URL('https://api.search.brave.com/res/v1/llm/context');
+  endpoint.searchParams.set('q',String(query).slice(0,600));
+  endpoint.searchParams.set('search_lang','ru');
+  endpoint.searchParams.set('maximum_number_of_tokens','4096');
+  endpoint.searchParams.set('maximum_number_of_urls','6');
+  endpoint.searchParams.set('context_threshold_mode','strict');
+  endpoint.searchParams.set('enable_local','false');
+  const res=await fetcher(endpoint.href,{
+   headers:{accept:'application/json','x-subscription-token':apiKey.trim()},
+   redirect:'error',signal:AbortSignal.timeout(30000)
+  });
+  if(!res.ok)throw Error('brave-context-unavailable');
+  const data=await res.json();
+  if(!Array.isArray(data?.grounding?.generic))throw Error('invalid-context-response');
+  return data.grounding.generic.slice(0,6).flatMap(item=>{
+   const url=safeUrl(item?.url);
+   if(!url)return [];
+   const title=String(item.title||data.sources?.[url]?.title||'').slice(0,180);
+   const snippets=Array.isArray(item.snippets)?item.snippets.filter(v=>typeof v==='string').slice(0,3):[];
+   if(!title||!snippets.length)return [];
+   const date=data.sources?.[url]?.age?.[1];
+   return [{url,title,snippet:snippets.join(' ').slice(0,600),
+    context:snippets.join('\n').slice(0,3000),
+    publishedAt:typeof date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(date)?date:null}];
+  });
+ };
+}
