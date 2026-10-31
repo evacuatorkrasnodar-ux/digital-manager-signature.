@@ -459,3 +459,21 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 }
 @media(max-height:700px){.sb-manager-heading{margin-top:18px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
+
+
+/* Browser home: separate Recent Tabs section below Continue Browsing. */
+.sb-home-recent-tabs{margin-top:21px;padding-bottom:12px}
+.sb-home-recent-tabs[hidden]{display:none!important}
+.sb-home-recent-tabs>.seyveo-browser-start-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.sb-home-recent-tabs>.seyveo-browser-start-heading button{padding:4px 0;border:0;background:transparent;color:inherit;font-size:12px;opacity:.7;white-space:nowrap}
+.sb-home-recent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sb-home-recent-card{display:flex;align-items:center;min-width:0;min-height:73px;border:1px solid rgba(99,158,128,.25);border-radius:17px;background:linear-gradient(135deg,rgba(12,73,54,.24),rgba(10,45,38,.13));overflow:hidden}
+.sb-home-recent-open{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:10px 0 10px 11px;text-align:left;color:inherit;background:transparent;border:0}
+.sb-home-recent-symbol{flex:none;display:grid;place-items:center;width:33px;height:33px;border-radius:9px;background:rgba(46,121,104,.2);color:#bce7d3;font-size:19px}
+.sb-home-recent-symbol.is-youtube{background:#f52032;color:white;font-size:17px}
+.sb-home-recent-symbol.is-yandex{background:#f6f7f4;color:#171d1b;border-radius:50%;font-weight:700}
+.sb-home-recent-info{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.sb-home-recent-info strong{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-home-recent-info small{font-size:10.5px;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-home-recent-close{flex:none;align-self:stretch;width:30px;padding:0 6px;border:0;background:transparent;color:inherit;font-size:21px;opacity:.68}
+@media(max-width:380px){.sb-home-recent-grid{gap:7px}.sb-home-recent-open{gap:6px;padding-left:7px}.sb-home-recent-symbol{width:28px;height:28px}.sb-home-recent-info strong{font-size:11px}.sb-home-recent-info small{font-size:10px}}
