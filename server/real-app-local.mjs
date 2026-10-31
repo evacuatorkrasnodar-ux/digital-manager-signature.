@@ -22,6 +22,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
+import {makeBraveSearchProvider,searchWithSources} from './live-search.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const HOST='127.0.0.1',PORT=8790,ORIGIN='http://127.0.0.1:8790';
@@ -109,12 +110,14 @@ function localFile(path){
  if(!file.startsWith(resolve(ROOT,'assets')+sep))return null;
  return TYPES[extname(file).toLowerCase()]?file:null;
 }
-export function createRealLocalServer({memoryStore,learningQueue}={}){
+export function createRealLocalServer({memoryStore,learningQueue,searchProvider}={}){
  // Force offline AI, even if a paid API key exists in the environment.
  process.env.SEYVEO_ENABLE_LOCAL='1';
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
+ const liveSearch=searchProvider===undefined?makeBraveSearchProvider():searchProvider;
+ let searchMinute=0,searchCount=0;
  let voiceJob=null,voiceCache=null;
  const memories=memoryStore||createMemoryStore();
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
@@ -123,6 +126,37 @@ export function createRealLocalServer({memoryStore,learningQueue}={}){
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='POST'&&path==='/api/seyveo-live-search'){
+   // The current owner explicitly requested a public web search. Only the
+   // question is passed to the provider, never private notes or chat history.
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!/^application\\/json(?:\\s*;|$)/i.test(String(req.headers['content-type']||''))){
+    send(res,415,{error:'Ожидается JSON.'});return;
+   }
+   const now=Math.floor(Date.now()/60000);
+   if(searchMinute!==now){searchMinute=now;searchCount=0}
+   if(searchCount>=10){send(res,429,{error:'Слишком много поисковых запросов. Попробуй через минуту.'});return}
+   let query;
+   try{query=await readQuestion(req)}
+   catch{send(res,400,{error:'Нужен вопрос до 600 символов.'});return}
+   if(query.length>600||query.trim().split(/\\s+/).length>75){
+    send(res,400,{error:'Сократи вопрос для поиска.'});return;
+   }
+   searchCount++;
+   if(!liveSearch){
+    send(res,200,{status:'unavailable',query,results:[],message:'Живой поиск ещё не подключён: нужен ключ провайдера на сервере.'});
+    return;
+   }
+   try{
+    const result=await searchWithSources(query,{search:liveSearch});
+    send(res,200,result);
+   }catch(error){
+    console.error('[SEYVEO Search]',String(error?.message||'unavailable'));
+    send(res,503,{status:'unavailable',query,results:[],
+     message:'Не удалось проверить информацию в интернете. Попробуй позже.'});
+   }
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-private-tts'){
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Только локальная страница SEYVEO.'});return}
    if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){
