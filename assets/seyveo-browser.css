@@ -816,52 +816,73 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser.is-site-view{
  overflow:hidden;overscroll-behavior:none;
 }
+/* Three magnetic, compact Browser tabs across the visible rail.
+   Extra tabs swipe horizontally; the separate + is always visible. */
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
- height:53px;min-height:53px;margin-top:0;gap:7px;
+ height:51px;min-height:51px;margin:0;gap:7px;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
- align-items:stretch;gap:7px;scroll-padding-inline:2px;scroll-snap-type:x mandatory;
+ display:grid;grid-auto-flow:column;grid-template-rows:minmax(0,1fr);
+ grid-auto-columns:calc((100% - 12px) / 3);
+ align-items:stretch;gap:6px;min-width:0;flex:1;
+ overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
+ scroll-padding-inline:0;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab{
- position:relative;min-width:0;max-width:clamp(154px,48vw,250px);
- min-height:51px;border-radius:17px 17px 8px 8px;
+ position:relative;display:flex;align-items:stretch;
+ width:100%;min-width:0;max-width:none;height:49px;min-height:0;
  border:1px solid var(--sv-home-outline);
- background:linear-gradient(155deg,var(--sv-home-glint),transparent 76%),var(--sv-home-glass);
+ border-radius:15px 15px 3px 3px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 75%),var(--sv-home-glass);
  box-shadow:inset 0 1px 0 var(--sv-home-glint);
  overflow:hidden;scroll-snap-align:start;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active{
  border-color:var(--line,var(--sv-home-outline));
- background:linear-gradient(125deg,var(--seyveo-hdr-active),var(--sv-home-glass) 85%);
+ background:linear-gradient(115deg,var(--seyveo-hdr-active),var(--sv-home-glass) 90%);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
- content:"";position:absolute;bottom:0;left:8px;right:8px;height:3px;
- background:var(--line,#30cf9d);border-radius:6px;pointer-events:none;
- box-shadow:0 -2px 10px var(--line,#30cf9d);
+ content:"";position:absolute;bottom:0;left:5px;right:5px;height:3px;
+ background:var(--line,#30cf9d);border-radius:5px;pointer-events:none;
+ box-shadow:0 -2px 8px var(--line,#30cf9d);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
- min-width:0;max-width:none;flex:1;display:flex;align-items:center;gap:8px;
- padding:8px 4px 8px 10px;text-align:left;font-size:12px;
+ display:flex;align-items:center;gap:5px;flex:1;min-width:0;max-width:none;
+ padding:5px 1px 5px 7px;text-align:left;font-size:11px;
+ white-space:nowrap;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark{
- display:grid;place-items:center;flex:none;width:25px;height:25px;
- overflow:hidden;border-radius:6px;
+ display:grid;place-items:center;flex:none;
+ width:21px;height:21px;min-width:21px;min-height:21px;
+ border-radius:5px;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark svg{display:block;width:100%;height:100%}
 .seyveo-browser.is-site-view .sb-browser-tab-name{
- display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- font-size:12px;font-weight:450;
+ display:block;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;font-size:11px;font-weight:450;
 }
-.seyveo-browser.is-site-view .seyveo-browser-tab button:last-child{
- flex:none;display:grid;place-items:center;width:30px;padding:0 4px;
- font-size:21px;font-weight:300;opacity:.7;
+.seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
+ flex:none;display:grid;place-items:center;width:22px;min-width:22px;
+ padding:0 3px;font-size:19px;font-weight:300;opacity:.75;
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder{opacity:.63}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder .sb-browser-tab-select{
+ width:100%;justify-content:flex-start;padding-right:5px;
+}
+.seyveo-browser.is-site-view .sb-browser-tab-empty-mark{
+ display:grid;place-items:center;flex:none;width:19px;height:19px;opacity:.65;
+}
+.seyveo-browser.is-site-view .sb-browser-tab-empty-mark svg{
+ display:block;width:17px;height:17px;fill:none;
+ stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- display:grid;place-items:center;flex:none;width:48px;min-height:49px;
- padding:0;border-radius:16px;
- border:1px solid var(--sv-home-outline);
- background:var(--sv-home-glass);font-size:27px;
+ display:grid;place-items:center;flex:none;width:44px;height:49px;min-height:49px;
+ padding:0;border-radius:15px;border:1px solid var(--sv-home-outline);
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 77%),var(--sv-home-glass);
+ font-size:26px;font-weight:300;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
  order:4;flex:1;min-height:0;min-width:0;width:100%;
@@ -875,11 +896,23 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- 
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:49px;min-height:49px;gap:5px}
- .seyveo-browser.is-site-view .seyveo-browser-tab{min-height:47px;max-width:190px}
- .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{width:43px;min-height:46px}
- .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{gap:6px;padding-left:7px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:48px;min-height:48px;gap:5px}
+ .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
+  gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
+ }
+ .seyveo-browser.is-site-view .seyveo-browser-tab{height:46px;border-radius:13px 13px 3px 3px}
+ .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
+  width:39px;height:46px;min-height:46px;border-radius:13px;
+ }
+ .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
+  gap:3px;padding-left:4px;
+ }
+ .seyveo-browser.is-site-view .sb-browser-tab-mark{width:18px;height:18px;min-width:18px;min-height:18px}
+ .seyveo-browser.is-site-view .sb-browser-tab-name{font-size:10px}
+ .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
+  width:17px;min-width:17px;font-size:17px;padding:0 1px;
+ }
+ .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:16px;height:16px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-site-view .seyveo-browser-tab{transition:none}
