@@ -116,8 +116,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Single wordmark, matched to approved SEYVEO Browser reference. */
 .seyveo-browser-header-space{width:38px;height:38px;display:block}
 .seyveo-browser-home{min-height:145px;max-height:170px;justify-content:center;gap:5px}
-.seyveo-browser-kicker{font-size:clamp(29px,6vw,39px);font-weight:300;letter-spacing:.28em;line-height:1.2;color:var(--text,#edf5f0);opacity:1}
-.seyveo-browser-home h2{font-size:clamp(15px,3vw,19px);font-weight:300;letter-spacing:.44em;line-height:1.35;margin:0;color:inherit;opacity:.67}
+.seyveo-browser-kicker{font-size:clamp(29px,6vw,39px);font-weight:300;letter-spacing:.28em;line-height:1.2;color:var(--text,#edf5f0);opacity:.88;text-shadow:none;filter:none}
+.seyveo-browser-home h2{font-size:clamp(15px,3vw,19px);font-weight:300;letter-spacing:.44em;line-height:1.35;margin:0;color:inherit;opacity:.64;text-shadow:none;filter:none}
 @media(max-height:700px){.seyveo-browser-home{min-height:94px;max-height:116px}}
 
 /* Approved SEYVEO glass search field: no arrow, functional scan glyph. */
