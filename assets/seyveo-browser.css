@@ -1122,3 +1122,33 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::before{width:12px;height:1.5px}
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]::after{width:1.5px;height:12px}
+
+/* Browser lighting: restrained search glow, non-illuminated tabs. */
+.seyveo-browser .seyveo-browser-bar{
+ border-color:color-mix(in srgb,var(--sb-accent) 17%,var(--line,#3b4c55));
+ background:
+  radial-gradient(ellipse 80% 125% at 24% -25%,color-mix(in srgb,var(--sb-accent) 3%,transparent),transparent 96%),
+  linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 5%,var(--sb-surface)),var(--sb-surface));
+ box-shadow:
+  inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 8%,transparent),
+  0 0 5px color-mix(in srgb,var(--sb-accent) 3%,transparent);
+}
+.seyveo-browser .seyveo-browser-bar:focus-within{
+ border-color:color-mix(in srgb,var(--sb-accent) 26%,var(--line,#3b4c55));
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 8%,transparent);
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab,
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
+ box-shadow:none;
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active{
+ background:linear-gradient(180deg,
+  color-mix(in srgb,var(--sb-accent) 11%,var(--sb-site-tint,var(--sb-surface))),
+  color-mix(in srgb,var(--sb-site-tint,var(--sb-surface)) 85%,var(--sb-surface)));
+ box-shadow:none;
+}
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::before,
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
+ content:none;
+ box-shadow:none;
+}
