@@ -50,8 +50,49 @@ function persistSession(){try{localStorage.setItem(sessionKey,JSON.stringify({ta
 let showAllHistory=false;
 let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
+const historyTimesKey='seyveo-browser-history-times-v1';
 function historyItems(){try{const a=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(a)?a.filter(x=>typeof x==='string'&&secureUrl(x)).slice(0,24):[]}catch{return []}}
-function remember(url){try{localStorage.setItem(historyKey,JSON.stringify([url,...historyItems().filter(x=>x!==url)].slice(0,24)))}catch{}}
+function historyTimes(){
+ try{
+  const values=JSON.parse(localStorage.getItem(historyTimesKey)||'{}');
+  if(!values||typeof values!=='object'||Array.isArray(values))return {};
+  const out={};
+  for(const [url,when] of Object.entries(values)){
+   if(secureUrl(url)&&Number.isFinite(when)&&when>0&&when<=Date.now()+60000)out[url]=when;
+  }
+  return out;
+ }catch{return {}}
+}
+function saveHistoryTimes(values){try{localStorage.setItem(historyTimesKey,JSON.stringify(values))}catch{}}
+function remember(url){
+ try{
+  const urls=[url,...historyItems().filter(x=>x!==url)].slice(0,24);
+  localStorage.setItem(historyKey,JSON.stringify(urls));
+  const times=historyTimes();times[url]=Date.now();
+  saveHistoryTimes(Object.fromEntries(urls.filter(x=>times[x]).map(x=>[x,times[x]])));
+ }catch{}
+}
+function removeHistory(url){
+ try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==url)))}catch{}
+ const times=historyTimes();delete times[url];saveHistoryTimes(times);
+ if(expandedHistory===url)expandedHistory=null;
+}
+function clearHistory(){
+ try{localStorage.removeItem(historyKey);localStorage.removeItem(historyTimesKey)}catch{}
+ expandedHistory=null;showAllHistory=false;
+}
+function historyDate(when){
+ if(!when)return 'Дата не сохранена';
+ return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(when));
+}
+function historyDay(when){
+ if(!when)return 'Без даты';
+ const visited=new Date(when),today=new Date();
+ if(visited.toDateString()===today.toDateString())return 'Сегодня';
+ const yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1);
+ if(visited.toDateString()===yesterday.toDateString())return 'Вчера';
+ return new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(visited);
+}
 function secureUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null}catch{return null}}
 function target(value){let s=String(value||'').trim();if(!s)return null;if(/^https?:\/\//i.test(s))return secureUrl(s);if(/^([\w-]+\.)+[a-z]{2,}(\/.*)?$/i.test(s))return secureUrl('https://'+s);return 'https://yandex.ru/search/?text='+encodeURIComponent(s)}
 function current(){return tabs.find(t=>t.id===active)}
@@ -327,8 +368,48 @@ function renderSecondary(){
   }
   return
  }
- const links=managerSection==='favorites'?saved():historyItems();
- if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent=managerSection==='favorites'?'Сохрани страницу в Избранное':'История пока пуста';secondary.append(hint)}
+ if(managerSection==='history'){
+  const links=historyItems(),times=historyTimes();
+  if(links.length){
+   const clear=document.createElement('button');clear.type='button';clear.className='sb-history-clear-all';clear.textContent='Очистить историю';
+   clear.addEventListener('click',()=>{
+    if(!window.confirm('Удалить всю историю браузера SEYVEO? Вкладки и избранное останутся.'))return;
+    clearHistory();renderManager();render();
+   });
+   header.append(clear);
+  }else{
+   const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='История пока пуста';secondary.append(hint);
+  }
+  let lastDay=null;
+  for(const url of links){
+   const time=times[url]||null,day=historyDay(time);
+   if(day!==lastDay){
+    const label=document.createElement('div');label.className='sb-history-day';label.textContent=day;secondary.append(label);lastDay=day;
+   }
+   const row=document.createElement('div');row.className='sb-history-entry';
+   const open=document.createElement('button');open.type='button';open.className='sb-history-entry-open';
+   open.setAttribute('aria-label','Открыть '+siteName(url));
+   const icon=document.createElement('span');icon.className='sb-history-entry-icon';paintSiteMark(icon,url);
+   const words=document.createElement('span');words.className='sb-history-entry-words';
+   const title=document.createElement('strong');title.textContent=siteName(url);
+   const line=document.createElement('span');line.className='sb-history-entry-meta';
+   const host=document.createElement('small');host.textContent=new URL(url).hostname.replace(/^www[.]/,'');
+   const clock=document.createElement('time');clock.textContent=time?new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'}).format(new Date(time)):'Время неизвестно';
+   if(time)clock.dateTime=new Date(time).toISOString();
+   clock.title=historyDate(time);
+   line.append(host,clock);words.append(title,line);open.append(icon,words);
+   open.addEventListener('click',()=>{tabManager(false);navigate(url)});
+   const remove=document.createElement('button');remove.type='button';remove.className='sb-history-entry-delete';
+   remove.setAttribute('aria-label','Удалить из истории: '+siteName(url));
+   remove.title='Удалить запись';
+   remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+   remove.addEventListener('click',()=>{removeHistory(url);renderManager();render()});
+   row.append(open,remove);secondary.append(row);
+  }
+  return;
+ }
+ const links=saved();
+ if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Сохрани страницу в Избранное';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
 /* Quiet Cinema: one visible history card at rest, full stack when opened. */
@@ -380,7 +461,7 @@ function render(){
   const actions=document.createElement('div');actions.className='seyveo-browser-history-actions';actions.hidden=expandedHistory!==link;
   const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
   action(saved().includes(link)?'Убрать из закладок':'☆ В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
-  action('Убрать из истории',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
+  action('Убрать из истории',()=>{removeHistory(link);render()});
   const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);
   const slot=document.createElement('div');slot.className='sb-history-slot';slot.style.setProperty('--sb-history-order',String(Math.min(position,6)));slot.append(card);contList.append(slot);
  }
@@ -405,7 +486,7 @@ function render(){
   jump.addEventListener('click',()=>{if(entry.tabId!==null){active=entry.tabId;render()}else navigate(address)});
   const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='sb-home-recent-close';
   closeButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>';closeButton.setAttribute('aria-label',entry.tabId!==null?'Закрыть вкладку '+name:'Убрать из недавних '+name);
-  closeButton.addEventListener('click',()=>{if(entry.tabId!==null){closeTab(entry.tabId)}else{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(url=>url!==address)))}catch{}render()}});
+  closeButton.addEventListener('click',()=>{if(entry.tabId!==null){closeTab(entry.tabId)}else{removeHistory(address);render()}});
   tile.append(jump,closeButton);recentGrid.append(tile);
  }
  tabArea.replaceChildren();
