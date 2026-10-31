@@ -1,10 +1,10 @@
 .seyveo-browser[hidden],.seyveo-browser [hidden]{display:none!important}
 .seyveo-browser{--sb-ink:#ecf5f0;position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;gap:12px;padding:max(env(safe-area-inset-top),16px) 16px max(env(safe-area-inset-bottom),14px);color:var(--text,#ecf5f0);background:var(--bg,#111a16);font-family:inherit;box-sizing:border-box}
 .seyveo-browser *{box-sizing:border-box}.seyveo-browser button{border:0;color:inherit;background:transparent;font:inherit;cursor:pointer}.seyveo-browser button:focus-visible,.seyveo-browser input:focus-visible{outline:2px solid #7ce0ac;outline-offset:3px}
-.seyveo-browser-top,.seyveo-browser-bottom{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-shrink:0}.seyveo-browser-top{min-height:46px}.seyveo-browser-top>button{width:38px;height:38px;border-radius:50%;font-size:31px;line-height:25px;background:#ffffff0b}.seyveo-browser-top strong{font-size:14px;letter-spacing:.14em;font-weight:650}.seyveo-browser-top strong span{color:#9dbeb0;font-weight:400;letter-spacing:.04em}.seyveo-browser-shield{font-size:10px;letter-spacing:.12em;color:#9bd2b5}
+.seyveo-browser-top,.seyveo-browser-bottom{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-shrink:0}.seyveo-browser-top{min-height:46px}.seyveo-browser-top>button{width:38px;height:38px;border-radius:50%;font-size:31px;line-height:25px;background:var(--seyveo-hdr-active)}.seyveo-browser-top strong{font-size:14px;letter-spacing:.14em;font-weight:650}.seyveo-browser-top strong span{color:#9dbeb0;font-weight:400;letter-spacing:.04em}.seyveo-browser-shield{font-size:10px;letter-spacing:.12em;color:#9bd2b5}
 .seyveo-browser-home{position:relative;text-align:center;flex:1;min-height:100px;max-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-bottom:0;overflow:hidden}.seyveo-browser-kicker{position:relative;color:#a6d9be;letter-spacing:.25em;font-size:9px}.seyveo-browser-home h2{position:relative;font-size:clamp(23px,6vw,34px);font-weight:500;letter-spacing:-.045em;margin:9px 0 3px}.seyveo-browser-home p{position:relative;color:#aebcb4;font-size:13px;margin:0}
-.seyveo-browser-bar{display:flex;align-items:center;gap:11px;min-height:56px;padding:5px 7px 5px 20px;border:1px solid rgba(130,145,140,.22);background:rgba(125,145,135,.06);border-radius:22px;box-shadow:0 12px 40px #0003;flex-shrink:0}.seyveo-browser-bar>span{font-size:27px;color:#9ed0af}.seyveo-browser-bar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:15px}.seyveo-browser-bar input::placeholder{color:#a1b3a8}.seyveo-browser-bar button{height:42px;width:42px;border-radius:16px;background:rgba(125,160,140,.14);color:inherit;font-size:23px}
-.seyveo-browser-start{flex:1;min-height:155px;padding:22px 2px}.seyveo-browser-start-heading{font-size:12px;letter-spacing:.05em;color:#b4c5bb;margin-bottom:15px}.seyveo-browser-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.seyveo-browser-shortcuts button{font-size:11px;min-height:70px;word-break:break-word;padding:10px 4px;border:1px solid #b0e9c321;border-radius:17px;background:#e1ffe809}.seyveo-browser-shortcuts button:active{background:#c3ffe52a}.seyveo-browser-hint{font-size:10px;line-height:1.6;color:#8c9f95;margin-top:19px}
+.seyveo-browser-bar{display:flex;align-items:center;gap:11px;min-height:56px;padding:5px 7px 5px 20px;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border-radius:22px;box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);flex-shrink:0}.seyveo-browser-bar>span{font-size:27px;color:var(--text)}.seyveo-browser-bar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:15px}.seyveo-browser-bar input::placeholder{color:var(--secondary)}.seyveo-browser-bar button{height:42px;width:42px;border-radius:16px;background:rgba(125,160,140,.14);color:inherit;font-size:23px}
+.seyveo-browser-start{flex:1;min-height:155px;padding:22px 2px}.seyveo-browser-start-heading{font-size:12px;letter-spacing:.05em;color:var(--secondary);margin-bottom:15px}.seyveo-browser-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.seyveo-browser-shortcuts button{font-size:11px;min-height:70px;word-break:break-word;padding:10px 4px;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}.seyveo-browser-shortcuts button:active{background:var(--seyveo-hdr-active)}.seyveo-browser-hint{font-size:10px;line-height:1.6;color:#8c9f95;margin-top:19px}
 .seyveo-browser-tabs{display:flex;align-items:center;min-height:37px;gap:8px;flex-shrink:0}.seyveo-browser-tabs>[data-tabs]{display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}.seyveo-browser-tabs>[data-tabs]::-webkit-scrollbar{display:none}.seyveo-browser-tab{display:flex;align-items:center;flex:none;max-width:180px;border:1px solid #bcf3d326;border-radius:13px;background:#ffffff09}.seyveo-browser-tab.is-active{background:#7bd6a122;border-color:#78d8a163}.seyveo-browser-tab button:first-child{min-width:0;max-width:140px;padding:9px 8px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seyveo-browser-tab button:last-child{font-size:18px;padding:5px 8px}.seyveo-browser-tabs>[data-new]{font-size:22px;padding:4px 12px;border-radius:12px;background:#ffffff12}
 .seyveo-browser-content{position:relative;flex:1;min-height:0;border-radius:20px;overflow:hidden;background:white}.seyveo-browser-content iframe{width:100%;height:100%;border:0;background:#fff}.seyveo-browser-frame-note{position:absolute;bottom:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:9px;background:#0b1918ed;color:#c9ded1;padding:8px 12px;font-size:10px;line-height:1.4}.seyveo-browser-frame-note>span{flex:1;min-width:0}.seyveo-browser-frame-note button{flex:none;font-size:11px;color:#bde5cf;border:1px solid #709f8766;border-radius:10px;padding:8px;background:#38715127;cursor:pointer}
 .seyveo-browser-bottom{padding-top:7px;border-top:1px solid #c4f5d41d}.seyveo-browser-bottom button{min-height:39px;min-width:32px;padding:5px 7px;border-radius:12px;font-size:19px}.seyveo-browser-bottom button:last-child{font-size:11px;color:#a9d8bd}.seyveo-browser-bottom button:disabled{opacity:.3;cursor:default}.seyveo-browser-open{overflow:hidden!important}
@@ -14,7 +14,7 @@
 
 /* SEYVEO signature: restrained optical depth, no sphere, all three themes. */
 .seyveo-browser{isolation:isolate;background:var(--bg,#111a16)}
-.seyveo-browser::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,transparent,rgba(108,191,150,.55),transparent);pointer-events:none}
+.seyveo-browser::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,transparent,var(--sv-home-outline),transparent);pointer-events:none}
 .seyveo-browser-top{position:relative;padding-bottom:5px}
 .seyveo-browser-top strong{letter-spacing:.16em;font-size:13px}
 .seyveo-browser-top strong span{letter-spacing:.08em;font-size:11px}
@@ -22,14 +22,14 @@
 .seyveo-browser-kicker{letter-spacing:.37em;font-size:10px;opacity:.68}
 .seyveo-browser-home h2{font-size:clamp(31px,7vw,42px);font-weight:430;letter-spacing:-.05em;margin:14px 0 8px}
 .seyveo-browser-home p{font-size:12px;opacity:.64;letter-spacing:.025em}
-.seyveo-browser-bar{border-radius:19px;background:linear-gradient(140deg,rgba(136,160,149,.10),rgba(136,160,149,.025));border:1px solid rgba(133,177,154,.29);box-shadow:inset 0 1px rgba(255,255,255,.07),0 12px 28px rgba(0,0,0,.06)}
-.seyveo-browser-bar:focus-within{border-color:rgba(91,192,143,.7);box-shadow:0 0 0 3px rgba(91,192,143,.1)}
+.seyveo-browser-bar{border-radius:19px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border:1px solid var(--sv-home-outline);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth)}
+.seyveo-browser-bar:focus-within{border-color:var(--line);box-shadow:0 0 0 2px var(--seyveo-hdr-active)}
 .seyveo-browser-bar button{border-radius:13px;background:rgba(99,168,133,.18)}
 .seyveo-browser-start{padding-top:26px}
 .seyveo-browser-start-heading{font-size:10px;text-transform:uppercase;letter-spacing:.19em;opacity:.7}
 .seyveo-browser-shortcuts{gap:10px}
-.seyveo-browser-shortcuts button{position:relative;min-height:78px;border-radius:16px;background:linear-gradient(145deg,rgba(144,164,154,.11),rgba(144,164,154,.025));border:1px solid rgba(144,164,154,.19);box-shadow:inset 0 1px rgba(255,255,255,.045);transition:background .2s,border-color .2s}
-.seyveo-browser-shortcuts button:hover{border-color:rgba(117,197,150,.48);background:rgba(117,197,150,.11)}
+.seyveo-browser-shortcuts button{position:relative;min-height:78px;border-radius:16px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border:1px solid var(--sv-home-outline);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);transition:background .2s,border-color .2s}
+.seyveo-browser-shortcuts button:hover{border-color:var(--line);background:var(--sv-home-glass)}
 .seyveo-browser-shortcuts button::before{content:"";display:block;width:18px;height:18px;border-radius:6px;margin:0 auto 9px;background:linear-gradient(135deg,rgba(159,205,184,.45),rgba(159,205,184,.06));border:1px solid rgba(159,205,184,.22)}
 .seyveo-browser-shortcuts button:last-child::before{background:none;border:1px solid rgba(159,205,184,.25);transform:rotate(45deg);border-radius:3px}
 .seyveo-browser-tabs{margin-top:5px}
@@ -57,14 +57,14 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-shortcuts button::before{display:none}
 .seyveo-browser-shortcuts button span:not(.sb-site-mark){font-size:11px}
 .seyveo-browser-shortcuts button small{font-size:9px;opacity:.48;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-site-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;font-weight:650;font-size:19px;background:rgba(120,147,133,.13);color:inherit}
+.sb-site-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;font-weight:650;font-size:19px;background:var(--seyveo-hdr-active);color:inherit}
 .sb-yandex{background:#f5f6f3;color:#1c211f;border-radius:50%;font-size:22px}
 .sb-youtube{background:#e92b36;color:white;font-size:14px}
 .sb-wiki{font-family:Georgia,serif;font-size:23px}
-.sb-saved{color:#77c8a0;font-size:23px}
+.sb-saved{color:var(--text);font-size:23px}
 .seyveo-browser-recent{margin-top:25px}
 .seyveo-browser-recent [data-recent-tabs]{display:grid;gap:7px}
-.seyveo-browser-recent-item{display:flex;align-items:flex-start;justify-content:center;flex-direction:column;text-align:left;gap:6px;padding:12px 15px!important;min-height:62px;border:1px solid rgba(125,159,142,.18)!important;border-radius:15px;background:rgba(125,159,142,.045)!important}
+.seyveo-browser-recent-item{display:flex;align-items:flex-start;justify-content:center;flex-direction:column;text-align:left;gap:6px;padding:12px 15px!important;min-height:62px;border:1px solid var(--sv-home-outline);border-radius:15px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}
 .seyveo-browser-recent-item strong{font-size:12px;font-weight:500}
 .seyveo-browser-recent-item small,.seyveo-browser-recent-empty{font-size:11px;opacity:.55}
 .seyveo-browser-recent-empty{padding:12px 3px}
@@ -78,11 +78,11 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-home{flex:none;min-height:120px;max-height:145px;padding:8px 0 12px}
 .seyveo-browser-home h2{font-size:30px;letter-spacing:.16em;font-weight:350;margin:6px 0}
 .seyveo-browser-home p{font-size:11px}
-.seyveo-browser-bar{min-height:58px;border-color:rgba(91,180,136,.38);background:linear-gradient(125deg,rgba(49,105,80,.21),rgba(90,132,111,.07));box-shadow:inset 0 1px rgba(255,255,255,.08),0 5px 18px #0001}
+.seyveo-browser-bar{min-height:58px;border-color:rgba(91,180,136,.38);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth)}
 .seyveo-browser-start{flex:1;min-height:0;padding:16px 2px 8px;overflow-y:auto}
 .seyveo-browser-start-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;font-size:12px;letter-spacing:.07em;opacity:.82;text-transform:none}
 .seyveo-browser-shortcuts{gap:9px}
-.seyveo-browser-shortcuts button{min-height:94px;border-radius:16px;background:linear-gradient(145deg,rgba(41,89,69,.20),rgba(138,171,154,.045));border:1px solid rgba(114,163,135,.23)}
+.seyveo-browser-shortcuts button{min-height:94px;border-radius:16px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border:1px solid var(--sv-home-outline)}
 .seyveo-browser-recent{margin-top:24px}
 .seyveo-browser-recent [data-recent-tabs]{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .seyveo-browser-recent-item{min-height:76px}
@@ -107,7 +107,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-intro small{font-size:11px;opacity:.6}
 .seyveo-browser-intro-arrow{font-size:24px;opacity:.65}
 .seyveo-browser-continue{margin-top:20px}
-.seyveo-browser-continue-card{display:flex;gap:13px;padding:16px!important;border-radius:16px;background:rgba(80,133,102,.10)!important}
+.seyveo-browser-continue-card{display:flex;gap:13px;padding:16px!important;border-radius:16px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}
 .seyveo-browser-continue-card>span:last-child{display:flex;flex-direction:column;gap:7px}
 .seyveo-browser-continue-card small{font-size:11px;opacity:.6}
 @media(max-height:700px){.seyveo-browser-home{min-height:85px;max-height:110px}.seyveo-browser-intro{margin-top:12px}}
@@ -120,17 +120,17 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(max-height:700px){.seyveo-browser-home{min-height:94px;max-height:116px}}
 
 /* Approved SEYVEO glass search field: no arrow, functional scan glyph. */
-.seyveo-browser-bar{min-height:64px;padding:7px 14px 7px 21px;gap:16px;border-radius:25px;border:1px solid rgba(86,206,158,.67);background:linear-gradient(125deg,rgba(9,79,59,.44),rgba(19,66,50,.22) 65%,rgba(7,47,38,.4));box-shadow:inset 0 1px rgba(187,255,221,.1),0 0 20px rgba(30,160,110,.075)}
+.seyveo-browser-bar{min-height:64px;padding:7px 14px 7px 21px;gap:16px;border-radius:25px;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth)}
 .seyveo-browser-search-icon{display:flex;align-items:center;justify-content:center;flex:0 0 27px;color:var(--text,#eff7f2);opacity:.9}
 .seyveo-browser-search-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .seyveo-browser-bar input{font-size:15px;letter-spacing:.005em}
 .seyveo-browser-bar .seyveo-browser-scan{display:flex;align-items:center;justify-content:center;width:45px;height:45px;flex:none;border-radius:14px;border:0;background:transparent;color:inherit;padding:8px;box-shadow:none}
 .seyveo-browser-scan svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
-.seyveo-browser-scan:hover{background:rgba(93,179,137,.1)}
+.seyveo-browser-scan:hover{background:var(--seyveo-hdr-active)}
 @media(max-width:390px){.seyveo-browser-bar{gap:10px;padding-left:14px;padding-right:8px}}
 
 /* Expandable bookmarks card, same restrained glass direction as SEYVEO home cards. */
-.seyveo-browser-bookmark-card{border:1px solid rgba(110,190,147,.32);border-radius:20px;background:linear-gradient(135deg,rgba(13,77,56,.22),rgba(27,67,51,.08));overflow:hidden}
+.seyveo-browser-bookmark-card{border:1px solid var(--sv-home-outline);border-radius:20px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);overflow:hidden}
 .seyveo-browser-bookmark-trigger{width:100%;min-height:103px;padding:16px;display:flex;align-items:center;gap:15px;text-align:left}
 .seyveo-browser-bookmark-title{display:flex;flex-direction:column;gap:7px;flex:1}
 .seyveo-browser-bookmark-title strong{font-weight:500;font-size:18px}
@@ -151,16 +151,16 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-continue{margin-top:21px}
 .seyveo-browser-continue .seyveo-browser-start-heading{display:flex;justify-content:space-between;align-items:center}
 .seyveo-browser-continue [data-continue-list]{display:grid;gap:9px}
-.seyveo-browser-continue-card{width:100%;min-height:81px;display:flex;align-items:center;gap:16px;text-align:left;padding:12px 14px!important;border:1px solid rgba(110,175,143,.22)!important;border-radius:18px;background:linear-gradient(130deg,rgba(16,80,57,.19),rgba(32,55,45,.06))!important}
-.seyveo-browser-continue-card>span:first-child{width:58px;height:56px;flex:none;display:grid;place-items:center;border-radius:12px;background:rgba(72,135,104,.14);font-size:23px;color:#7ed6aa}
+.seyveo-browser-continue-card{width:100%;min-height:81px;display:flex;align-items:center;gap:16px;text-align:left;padding:12px 14px!important;border:1px solid var(--sv-home-outline);border-radius:18px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}
+.seyveo-browser-continue-card>span:first-child{width:58px;height:56px;flex:none;display:grid;place-items:center;border-radius:12px;background:var(--seyveo-hdr-active);font-size:23px;color:var(--text)}
 .seyveo-browser-continue-card>span:last-child{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
 .seyveo-browser-continue-card strong{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .seyveo-browser-continue-card small{font-size:11px;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 
 /* SEYVEO continue-reading stack: progressive disclosure in existing glass style. */
-.seyveo-browser-history-card{border:1px solid rgba(105,165,135,.25);border-radius:17px;background:linear-gradient(125deg,rgba(27,78,56,.17),rgba(33,52,43,.04));overflow:hidden}
+.seyveo-browser-history-card{border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);overflow:hidden}
 .seyveo-browser-history-head{display:flex;align-items:center;gap:13px;width:100%;min-height:87px;padding:12px 14px;text-align:left}
-.seyveo-browser-history-logo{display:grid;place-items:center;width:53px;height:53px;border-radius:12px;flex:none;background:rgba(78,133,104,.16);font-size:23px;color:#9fd8b8}
+.seyveo-browser-history-logo{display:grid;place-items:center;width:53px;height:53px;border-radius:12px;flex:none;background:var(--seyveo-hdr-active);font-size:23px;color:var(--text)}
 .seyveo-browser-history-words{display:flex;flex-direction:column;gap:7px;min-width:0;flex:1}
 .seyveo-browser-history-words strong{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .seyveo-browser-history-words small{font-size:11px;opacity:.62;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -169,23 +169,23 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-history-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 13px 14px;border-top:1px solid rgba(106,158,126,.14);animation:sv-history-open .22s ease-out}
 .seyveo-browser-history-actions[hidden]{display:none!important}
 .seyveo-browser-history-actions button{padding:10px 12px;border-radius:11px;background:rgba(115,170,141,.11);font-size:12px}
-.seyveo-browser-history-actions button:first-child{background:rgba(83,168,122,.23)}
+.seyveo-browser-history-actions button:first-child{background:transparent}
 @keyframes sv-history-open{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.seyveo-browser-history-actions{animation:none}.seyveo-browser-history-chevron{transition:none}}
 
 /* Quiet SEYVEO history cards: lightweight direct-open surface + contextual menu. */
 .seyveo-browser-history-top{display:flex;align-items:center;min-height:70px}
 .seyveo-browser-history-head{flex:1;min-width:0;min-height:70px;padding:10px 11px;text-align:left;gap:12px}
-.seyveo-browser-history-logo{width:37px;height:37px;flex:none;border-radius:10px;background:rgba(95,143,117,.1);font-size:18px}
+.seyveo-browser-history-logo{width:37px;height:37px;flex:none;border-radius:10px;background:var(--seyveo-hdr-active);font-size:18px}
 .seyveo-browser-history-logo img{display:block;width:25px;height:25px;object-fit:contain}
 .seyveo-browser-history-words{gap:5px}
 .seyveo-browser-history-words strong{font-size:13px;font-weight:500}
 .seyveo-browser-history-words small{font-size:11px;opacity:.58}
 .seyveo-browser-history-menu{align-self:stretch;width:42px;min-height:60px;padding:0 10px;font-size:22px;letter-spacing:2px;opacity:.7}
-.seyveo-browser-history-menu[aria-expanded="true"]{color:#8bdcb2;opacity:1}
+.seyveo-browser-history-menu[aria-expanded="true"]{color:var(--text);opacity:1}
 .seyveo-browser-history-actions{padding:8px 12px 12px;border-top:1px solid rgba(106,158,126,.12);gap:16px}
 .seyveo-browser-history-actions button,.seyveo-browser-history-actions button:first-child{padding:6px 2px;border:0;border-radius:0;background:transparent;font-size:12px;opacity:.82}
-.seyveo-browser-history-actions button:hover{color:#8bdcb2;opacity:1}
+.seyveo-browser-history-actions button:hover{color:var(--text);opacity:1}
 
 /* Compact vertical rhythm modeled on the approved iPhone browser reference. */
 .seyveo-browser{gap:9px;padding-top:max(env(safe-area-inset-top),9px)}
@@ -470,9 +470,9 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-home-recent-tabs>.seyveo-browser-start-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .sb-home-recent-tabs>.seyveo-browser-start-heading button{padding:4px 0;border:0;background:transparent;color:inherit;font-size:12px;opacity:.7;white-space:nowrap}
 .sb-home-recent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.sb-home-recent-card{display:flex;align-items:center;min-width:0;min-height:73px;border:1px solid rgba(99,158,128,.25);border-radius:17px;background:linear-gradient(135deg,rgba(12,73,54,.24),rgba(10,45,38,.13));overflow:hidden}
+.sb-home-recent-card{display:flex;align-items:center;min-width:0;min-height:73px;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);overflow:hidden}
 .sb-home-recent-open{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:10px 0 10px 11px;text-align:left;color:inherit;background:transparent;border:0}
-.sb-home-recent-symbol{flex:none;display:grid;place-items:center;width:33px;height:33px;border-radius:9px;background:rgba(46,121,104,.2);color:#bce7d3;font-size:19px}
+.sb-home-recent-symbol{flex:none;display:grid;place-items:center;width:33px;height:33px;border-radius:9px;background:var(--seyveo-hdr-active);color:var(--text);font-size:19px}
 .sb-home-recent-symbol.is-youtube{background:#f52032;color:white;font-size:17px}
 .sb-home-recent-symbol.is-yandex{background:#f6f7f4;color:#171d1b;border-radius:50%;font-weight:700}
 .sb-home-recent-info{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
@@ -482,8 +482,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(max-width:380px){.sb-home-recent-grid{gap:7px}.sb-home-recent-open{gap:6px;padding-left:7px}.sb-home-recent-symbol{width:28px;height:28px}.sb-home-recent-info strong{font-size:11px}.sb-home-recent-info small{font-size:10px}}
 
 /* Use the active SEYVEO theme without a browser-specific image or fixed dark overlay. */
-.seyveo-browser:not([hidden]){background:var(--bg,#111a16);background-image:none}
-.seyveo-browser-manager:not([hidden]){background:var(--bg,#111a16);background-image:none}
+.seyveo-browser:not([hidden]){background:var(--sv-life-viewport-gradient,var(--bg));background-image:var(--sv-life-viewport-gradient,var(--bg))}
+.seyveo-browser-manager:not([hidden]){background:var(--sv-life-viewport-gradient,var(--bg));background-image:var(--sv-life-viewport-gradient,var(--bg))}
 /* Browser-only dock: icon-only, evenly centered, original SEYVEO center preserved. */
 footer.dock.seyveo-browser-dock button[data-sv-browser-action] > span{display:none!important}
 footer.dock.seyveo-browser-dock button[data-sv-browser-action]{
@@ -494,62 +494,3 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:block!important;width:25px!important;height:25px!important;
  margin:0 auto!important;flex:none!important;
 }
-/* SEYVEO Browser · unified Black Velvet materials.
-   Theme tokens are defined by the app; site brand marks remain untouched. */
-.seyveo-browser{
- --sb-surface:color-mix(in srgb,var(--card) 74%,var(--bg));
- --sb-surface-raised:color-mix(in srgb,var(--card2) 58%,var(--bg));
- --sb-hairline:color-mix(in srgb,var(--line) 64%,transparent);
- --sb-highlight:color-mix(in srgb,var(--text) 5%,transparent);
- --sb-muted:var(--secondary);
-}
-.seyveo-browser .seyveo-browser-bar{
- background:linear-gradient(155deg,var(--sb-highlight),transparent 66%),var(--sb-surface);
- border:1px solid var(--sb-hairline);
- box-shadow:inset 0 1px color-mix(in srgb,var(--text) 7%,transparent),0 7px 24px rgba(0,0,0,.075);
-}
-.seyveo-browser .seyveo-browser-bar:focus-within{
- border-color:var(--seyveo-hdr-outline,var(--line));
- box-shadow:inset 0 1px var(--sb-highlight),0 0 0 2px var(--seyveo-hdr-active,transparent);
-}
-.seyveo-browser .seyveo-browser-search-icon,
-.seyveo-browser .seyveo-browser-bar>span{
- display:flex;align-items:center;justify-content:center;background:transparent;
- color:var(--text);opacity:.82;box-shadow:none;
-}
-.seyveo-browser .seyveo-browser-bar input::placeholder{color:var(--secondary);opacity:.9}
-.seyveo-browser .seyveo-browser-bar .seyveo-browser-scan{background:transparent;color:var(--text);box-shadow:none}
-.seyveo-browser .seyveo-browser-shortcuts button{
- background:linear-gradient(155deg,var(--sb-highlight),transparent 70%),var(--sb-surface);
- border:1px solid var(--sb-hairline);
- box-shadow:inset 0 1px color-mix(in srgb,var(--text) 5%,transparent);
-}
-.seyveo-browser .seyveo-browser-shortcuts button:hover,
-.seyveo-browser .seyveo-browser-shortcuts button:active{
- background:var(--sb-surface-raised);border-color:var(--line);
-}
-.seyveo-browser .seyveo-browser-continue-card,
-.seyveo-browser .seyveo-browser-history-card,
-.seyveo-browser .seyveo-browser-bookmark-card,
-.seyveo-browser .seyveo-browser-recent-item,
-.seyveo-browser .sb-home-recent-card{
- background:linear-gradient(155deg,var(--sb-highlight),transparent 76%),var(--sb-surface);
- border:1px solid var(--sb-hairline);
- box-shadow:inset 0 1px color-mix(in srgb,var(--text) 5%,transparent);
-}
-.seyveo-browser .seyveo-browser-continue-card{background:linear-gradient(155deg,var(--sb-highlight),transparent 76%),var(--sb-surface)!important;border-color:var(--sb-hairline)!important}
-.seyveo-browser .seyveo-browser-recent-item{background:var(--sb-surface)!important;border-color:var(--sb-hairline)!important}
-.seyveo-browser .seyveo-browser-history-logo,
-.seyveo-browser .seyveo-browser-continue-card>span:first-child,
-.seyveo-browser .sb-home-recent-symbol:not(.is-youtube):not(.is-yandex),
-.seyveo-browser .sb-site-mark:not(.sb-youtube):not(.sb-yandex){
- background:var(--sb-surface-raised);color:var(--text);
-}
-.seyveo-browser .sb-saved,.seyveo-browser .seyveo-browser-history-menu[aria-expanded="true"]{color:var(--text)}
-.seyveo-browser .seyveo-browser-start-heading{color:var(--secondary)}
-.seyveo-browser .seyveo-browser-history-words small,
-.seyveo-browser .sb-home-recent-info small{color:var(--secondary)}
-.seyveo-browser .seyveo-browser-top>button{display:grid;place-items:center}
-.seyveo-browser .seyveo-browser-history-logo,
-.seyveo-browser .sb-home-recent-symbol{line-height:1;text-align:center}
-.seyveo-browser button:focus-visible,.seyveo-browser input:focus-visible{outline-color:var(--seyveo-emerald,var(--text))}
