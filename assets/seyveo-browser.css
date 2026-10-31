@@ -500,3 +500,14 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  backdrop-filter:blur(10px);
  -webkit-backdrop-filter:blur(10px);
 }
+
+/* Browser-only dock: icon-only, evenly centered, original SEYVEO center preserved. */
+footer.dock.seyveo-browser-dock button[data-sv-browser-action] > span{display:none!important}
+footer.dock.seyveo-browser-dock button[data-sv-browser-action]{
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ gap:0!important;padding:0!important;min-height:48px;
+}
+footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
+ display:block!important;width:25px!important;height:25px!important;
+ margin:0 auto!important;flex:none!important;
+}
