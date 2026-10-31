@@ -543,9 +543,9 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-manager-collections-heading{margin-top:13px;margin-bottom:9px}
 }
 @media(max-width:380px){
- .sb-manager-select{min-height:75px}
+ .sb-manager-select{min-height:79px}
  .sb-tab-preview{width:53px;height:52px}
- .sb-manager-closed-row{min-height:75px}
+ .sb-manager-closed-row{min-height:79px}
 }
 @media(max-height:700px){.sb-manager-heading{margin-top:13px}}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
