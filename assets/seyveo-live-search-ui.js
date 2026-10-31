@@ -45,6 +45,7 @@ function render(payload){
   const url=secureUrl(row.url);
   const link=element('a','seyveo-live-search-source');
   link.href=url;link.target='_blank';link.rel='noopener noreferrer';
+  link.addEventListener('click',event=>{if(!window.SEYVEO_BROWSER?.open)return;event.preventDefault();window.SEYVEO_BROWSER.open(url);});
   const info=element('div','seyveo-live-search-source-content');
   info.append(element('strong','',String(row.title).slice(0,180)));
   if(row.snippet)info.append(element('p','',String(row.snippet).slice(0,330)));
