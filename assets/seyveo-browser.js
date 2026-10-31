@@ -31,7 +31,7 @@ notice.querySelector('p').style.cssText='font-size:13px;line-height:1.5;opacity:
 notice.querySelector('button').style.cssText='padding:13px;border-radius:14px;border:1px solid #65b88b;background:#ffffff10;color:inherit';
 const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
-let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;
+let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;
 const key='seyveo-browser-bookmarks-v1';
 const collectionsKey='seyveo-browser-collections-v1';
 const sessionKey='seyveo-browser-session-v1';
@@ -51,7 +51,7 @@ function saved(){try{const a=JSON.parse(localStorage.getItem(key)||'[]');return 
 function store(a){try{localStorage.setItem(key,JSON.stringify(a.slice(0,60)))}catch{}}
 function getCollections(){try{const data=JSON.parse(localStorage.getItem(collectionsKey)||'[]');return Array.isArray(data)?data.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.urls)).slice(0,30).map(x=>({id:x.id,name:x.name.slice(0,42),urls:x.urls.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,100)})):[]}catch{return []}}
 function putCollections(items){try{localStorage.setItem(collectionsKey,JSON.stringify(items.slice(0,30)))}catch{}}
-function makeCollection(){const name=window.prompt('Название коллекции');if(!name||!name.trim())return;const items=getCollections();items.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,6),name:name.trim().slice(0,42),urls:[]});putCollections(items);managerSection='collections';openCollection=items[items.length-1].id;renderManager()}
+function makeCollection(){managerSection='collections';creatingCollection=true;renderManager();secondary.querySelector('.sb-collection-name')?.focus()}
 function saveClosed(url){if(!url)return;recentlyClosed=[url,...recentlyClosed.filter(x=>x!==url)].slice(0,25)}
 function siteName(url){const host=new URL(url).hostname.replace(/^www\./,'');return host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host}
 function siteSymbol(url){const host=new URL(url).hostname;return host.includes('youtube')?'▶':host.includes('wikipedia')?'W':host.includes('yandex')||host.includes('ya.ru')?'Я':'◇'}
@@ -95,6 +95,7 @@ function renderSecondary(){
  const header=document.createElement('div');header.className='sb-secondary-header';const heading=document.createElement('h3');heading.textContent=managerSection==='favorites'?'Избранное':managerSection==='history'?'История':'Коллекции';header.append(heading);secondary.append(header);
  if(managerSection==='collections'){
   const add=document.createElement('button');add.type='button';add.textContent='＋ Новая коллекция';add.addEventListener('click',makeCollection);header.append(add);
+  if(creatingCollection){const form=document.createElement('form');form.className='sb-collection-create';const field=document.createElement('input');field.type='text';field.className='sb-collection-name';field.maxLength=42;field.required=true;field.placeholder='Название коллекции';field.setAttribute('aria-label','Название коллекции');const save=document.createElement('button');save.type='submit';save.textContent='Создать';const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';cancel.addEventListener('click',()=>{creatingCollection=false;renderManager()});form.addEventListener('submit',event=>{event.preventDefault();const name=field.value.trim();if(!name)return;const items=getCollections();if(items.length>=30)return;const id=String(Date.now())+'-'+Math.random().toString(36).slice(2,6);items.push({id,name,urls:[]});putCollections(items);creatingCollection=false;openCollection=id;renderManager()});form.append(field,save,cancel);secondary.append(form)}
   const items=getCollections();
   if(!items.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Создай коллекцию, чтобы собирать важные страницы по темам';secondary.append(hint)}
   for(const collection of items){
