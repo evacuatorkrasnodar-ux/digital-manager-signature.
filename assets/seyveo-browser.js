@@ -92,7 +92,6 @@ function open(value){if(value&&!secureUrl(value))return false;root.hidden=false;
 function close(){tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
 manager.querySelector('[data-manager-back]').addEventListener('click',()=>tabManager(false));
-manager.querySelector('[data-manager-back]').addEventListener('click',()=>tabManager(false));
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{for(const t of tabs){const u=t.entries[t.position];if(u)recentlyClosed=[u,...recentlyClosed.filter(x=>x!==u)].slice(0,12)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
 root.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
