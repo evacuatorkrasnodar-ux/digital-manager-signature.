@@ -20,7 +20,40 @@
   if(approved){try{localStorage.setItem(key,'yes')}catch{}}
   return approved;
  }
+ function isLocalQuestion(value){
+  const q=String(value||'').trim();
+  return q.length>=5&&q.length<=600&&/^(?:сэйви[, ]*)?(?:найди|поищи|ищи|поиск)\s+(?:в\s+)?(?:моей\s+)?(?:локальн(?:ой|ых)\s+)?(?:библиотек(?:е|и)|знаниях|материалах\s+seyveo)\b/iu.test(q);
+ }
+ function startLocal(question){
+  const conversation=window.SEYVEO_CONVERSATION;
+  if(!conversation?.showRichAnswer)return false;
+  if(active)return true;
+  const controller=new AbortController();
+  const task={controller};active=task;
+  conversation.beginStream?.(question,()=>{controller.abort();conversation.endStream?.()});
+  conversation.updateStream?.('Ищу в локальной библиотеке SEYVEO…');
+  (async()=>{
+   try{
+    const response=await fetch('/api/seyveo-index-search',{
+     method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+     body:JSON.stringify({message:question}),signal:controller.signal});
+    const payload=await response.json();
+    if(controller.signal.aborted)return;
+    if(!response.ok)throw Error('local-index-unavailable');
+    const rows=Array.isArray(payload.results)?payload.results.slice(0,4):[];
+    const answer=rows.length?'Нашла в одобренной локальной библиотеке SEYVEO:\n\n'+
+     rows.map((x,i)=>(i+1)+'. '+String(x.title||'Материал')+'\n'+String(x.excerpt||'').slice(0,450)+'\nИсточник: '+String(x.source||'локальная библиотека')).join('\n\n')+
+     '\n\nЭто локальные справочные материалы, не свежие новости.':
+     'В одобренной локальной библиотеке пока нет подходящих материалов.';
+    conversation.showRichAnswer({question,answer});
+   }catch{
+    if(!controller.signal.aborted)conversation.showRichAnswer({question,answer:'Не удалось открыть локальный индекс. Проверь сервер SEYVEO.'});
+   }finally{if(active===task){active=null;conversation.endStream?.()}}
+  })();
+  return true;
+ }
  function start(question){
+  if(isLocalQuestion(question))return startLocal(question);
   if(!isSearchQuestion(question))return false;
   if(active)return true;
   const conversation=window.SEYVEO_CONVERSATION;
