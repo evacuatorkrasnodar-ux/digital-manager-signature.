@@ -6,6 +6,7 @@ const dialog=document.getElementById('assistantChatHistoryDialog');
 if(!dialog)return;
 const KEY='seyveo-assistant-chat-history-v1',LIMIT=60;
 const $=id=>document.getElementById(id);
+const safeRich=value=>window.SEYVEO_RICH_ANSWER?.cleanBlocks?.(value)||[];
 function safeSearch(value){
  if(value?.status!=='results'||!Array.isArray(value.results))return null;
  const results=value.results.slice(0,6).flatMap(item=>{
@@ -28,7 +29,7 @@ function load(){
   const raw=JSON.parse(localStorage.getItem(KEY)||'[]');
   if(!Array.isArray(raw))return[];
   return raw.filter(row=>row&&typeof row.q==='string'&&typeof row.a==='string'&&Number.isFinite(row.at))
-   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,20000),at:row.at,search:safeSearch(row.search),kind:row.kind==='draft'?'draft':'reply'}));
+   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,20000),at:row.at,search:safeSearch(row.search),rich:safeRich(row.rich),kind:row.kind==='draft'?'draft':'reply'}));
  }catch{return[]}
 }
 function save(items){
@@ -39,12 +40,12 @@ function save(items){
 // Read only actual saved turns; never mix in the separate Notebook drafts.
 function recent(limit=30){
  const count=Math.min(LIMIT,Math.max(1,Number(limit)||30));
- return load().slice(-count).map(row=>({question:row.q,answer:row.a,search:row.search}));
+ return load().slice(-count).map(row=>({question:row.q,answer:row.a,search:row.search,rich:row.rich}));
 }
-function add({question,answer,kind,search}){
+function add({question,answer,kind,search,rich}){
  const q=String(question||'').trim(),a=String(answer||'').trim();
  if(!q)return false;
- const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,20000),at,search:safeSearch(search),kind:kind==='draft'?'draft':'reply'};
+ const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,20000),at,search:safeSearch(search),rich:safeRich(rich),kind:kind==='draft'?'draft':'reply'};
  const result=save([...load(),row]);
  if(dialog.open)render();
  return result;
@@ -75,7 +76,12 @@ function render(){
   const asked=el('div','assistant-chat-full-question',row.q);
   const label=el('small','assistant-chat-answer-label',row.kind==='draft'?'Подготовлено · локальный прототип':'Ответ · локальный прототип');
   const answer=el('div','assistant-chat-answer',row.a||'Ответ не сохранён.');
-  panel.append(asked,label,answer);item.append(panel);parent.append(item);
+  panel.append(asked,label,answer);
+  if(row.rich?.length){
+   const formatted=window.SEYVEO_RICH_ANSWER?.render?.(row.rich);
+   if(formatted)panel.append(formatted);
+  }
+  item.append(panel);parent.append(item);
  }
 }
 function open(){
