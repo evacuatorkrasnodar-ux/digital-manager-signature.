@@ -438,15 +438,21 @@ function renderSecondary(){
    const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='История пока пуста';secondary.append(hint);
    return;
   }
+  // Match the existing Recently Closed panel: one shared glass surface,
+  // no separate card borders or gaps. The date label stays above the panel.
+  const firstDay=historyDay(times[links[0]]||null);
+  const dateHeading=document.createElement('div');dateHeading.className='sb-history-day';
+  dateHeading.textContent=firstDay;secondary.append(dateHeading);
   const historyList=document.createElement('div');historyList.id='seyveoBrowserVisitHistoryList';
-  historyList.className='sb-manager-history-list';secondary.append(historyList);
-  let lastDay=null;
+  historyList.className='sb-manager-history-list sb-manager-closed';secondary.append(historyList);
+  let lastDay=firstDay;
   for(const [index,url] of links.entries()){
    const slot=document.createElement('div');slot.className='sb-history-slot';
    slot.style.setProperty('--sb-history-order',String(Math.min(index,6)));
    const time=times[url]||null,day=historyDay(time);
    if(day!==lastDay){
-    const label=document.createElement('div');label.className='sb-history-day';label.textContent=day;slot.append(label);lastDay=day;
+    const label=document.createElement('div');label.className='sb-history-day sb-history-day-inline';
+    label.textContent=day;slot.append(label);lastDay=day;
    }
    const row=document.createElement('div');row.className='sb-history-entry';
    const open=document.createElement('button');open.type='button';open.className='sb-history-entry-open';
