@@ -214,8 +214,9 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  background:
   linear-gradient(130deg,rgba(15,112,79,.17) 0%,transparent 22%),
   radial-gradient(ellipse at 90% 2%,rgba(8,105,76,.12),transparent 38%),
-  var(--bg,#0c1411);
+  var(--sb-panel-bg,var(--bg,#0c1411));
 }
+:root[data-theme=dark][data-palette=graphite] .seyveo-browser-manager{--sb-panel-bg:#08150f}
 .seyveo-browser-manager::-webkit-scrollbar{display:none}
 .sb-manager-nav{
  height:clamp(125px,18vh,170px);position:relative;
