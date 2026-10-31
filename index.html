@@ -3637,6 +3637,12 @@ function handleSpokenAssistant(raw){
 window.SEYVEO_VOICE_EXECUTE=handleSpokenAssistant;
 const fab=$('assistantButton'),inputPanel=$('ask'),hint=$('voiceHint');
 let holdTimer=null,held=false,started=false,recognition=null,suppressClick=false;
+// Browser dock intercepts only a short tap; a completed voice hold must not
+// accidentally trigger another Chat open on the synthesized release click.
+window.SEYVEO_DOCK_VOICE_CLICK_SUPPRESSED=()=>{
+ if(!suppressClick&&!started)return false;
+ started=false;return true;
+};
 let hintTimeout=null;
 function setHint(value){
   hint.textContent=value;hint.classList.add('active');
@@ -3753,14 +3759,15 @@ function startVoice(){
   window.dispatchEvent(new Event('seyveo:manual-voice')); // Stop optional wake mode before manual recording.
   started=true;held=true;
   fab.classList.remove('pressing');
-  if($('homePage').hidden)goHome();
+  if($('homePage').hidden&&!window.SEYVEO_BROWSER?.state?.().open)goHome();
   const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!Speech){
     fab.classList.remove('arming');
     held=false;
     // No editor jumps over the Home screen when dictation is unavailable.
     // A short tap still opens the keyboard for intentional written messages.
-    setHint('Диктуйте через клавиатуру iPhone.');
+    if(window.SEYVEO_BROWSER?.state?.().open)window.SEYVEO_BROWSER.voiceUnavailable?.('На этом устройстве голосовое распознавание недоступно. Можно написать Сэйви.');
+    else setHint('Диктуйте через клавиатуру iPhone.');
     return;
   }
   try{
@@ -3783,6 +3790,10 @@ function startVoice(){
       const phrase=Array.from(e.results).map(result=>result[0]?.transcript||'').join(' ').trim();
       if(!phrase||speechDelivered)return;
       speechDelivered=true;
+      if(window.SEYVEO_BROWSER?.state?.().open){
+        window.SEYVEO_BROWSER.voiceCommand?.(phrase);
+        return;
+      }
       const writingNote=composerMode==='notes';
       // If the user is ALREADY editing a note, add dictated text there.
       // All other speech goes directly to the quiet assistant interpreter.
@@ -3805,7 +3816,8 @@ function startVoice(){
         e.error==='aborted'?'Голосовой ввод остановлен':
         'Голосовой ввод не сработал ('+e.error+').';
       document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'listening-end'}}));
-      setHint(message+' · Для текста нажмите кнопку помощника.');
+      if(window.SEYVEO_BROWSER?.state?.().open)window.SEYVEO_BROWSER.voiceUnavailable?.(message+' · Напиши Сэйви в чате.');
+      else setHint(message+' · Для текста нажмите кнопку помощника.');
     };
     sr.onend=()=>{
       if(recognition===sr){
@@ -3826,7 +3838,8 @@ function startVoice(){
     fab.classList.remove('arming','listening');
     fab.setAttribute('aria-pressed','false');
     document.dispatchEvent(new CustomEvent('seyveo:assistant-presence',{detail:{phase:'listening-end'}}));
-    setHint('Микрофон недоступен. Для записи нажмите кнопку и используйте клавиатуру.');
+    if(window.SEYVEO_BROWSER?.state?.().open)window.SEYVEO_BROWSER.voiceUnavailable?.('Микрофон недоступен. Можно написать Сэйви в чате.');
+    else setHint('Микрофон недоступен. Для записи нажмите кнопку и используйте клавиатуру.');
   }
 }
 // Tap to speak inside Living Conversation; Home dock keeps press-and-hold.
