@@ -1,5 +1,5 @@
 .seyveo-browser[hidden],.seyveo-browser [hidden]{display:none!important}
-.seyveo-browser{--sb-ink:#ecf5f0;position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;gap:12px;overflow:hidden;overscroll-behavior:none;padding:max(env(safe-area-inset-top),16px) 16px max(env(safe-area-inset-bottom),14px);color:var(--text,#ecf5f0);background:var(--bg,#111a16);font-family:inherit;box-sizing:border-box}
+.seyveo-browser{--sb-ink:#ecf5f0;--sv-browser-gutter:16px;position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;gap:12px;overflow:hidden;overscroll-behavior:none;padding:max(env(safe-area-inset-top),16px) 16px max(env(safe-area-inset-bottom),14px);color:var(--text,#ecf5f0);background:var(--bg,#111a16);font-family:inherit;box-sizing:border-box}
 .seyveo-browser *{box-sizing:border-box}.seyveo-browser button{border:0;color:inherit;background:transparent;font:inherit;cursor:pointer}.seyveo-browser button:focus-visible,.seyveo-browser input:focus-visible{outline:2px solid #7ce0ac;outline-offset:3px}
 .seyveo-browser-top,.seyveo-browser-bottom{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-shrink:0}.seyveo-browser-top{min-height:46px}.seyveo-browser-top>button{display:grid;place-items:center;width:40px;height:40px;min-width:40px;padding:0;border:1px solid var(--sv-home-outline);border-radius:50%;font-size:0;line-height:1;color:var(--text);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint)}.seyveo-browser-top>button svg,.sb-manager-nav [data-manager-back] svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .seyveo-browser-top strong{font-size:14px;letter-spacing:.14em;font-weight:650}.seyveo-browser-top strong span{color:#9dbeb0;font-weight:400;letter-spacing:.04em}.seyveo-browser-shield{font-size:10px;letter-spacing:.12em;color:#9bd2b5}
@@ -338,7 +338,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* iPhone layout: keep the original scale and interactions, close vertical gaps.
    One responsive rule in the existing rhythm section, not a second painted layer. */
 @media(max-width:600px){
- .seyveo-browser{gap:6px;padding-left:clamp(10px,3vw,16px);padding-right:clamp(10px,3vw,16px)}
+ .seyveo-browser{--sv-browser-gutter:clamp(10px,3vw,16px);gap:6px;padding-left:var(--sv-browser-gutter);padding-right:var(--sv-browser-gutter)}
  .seyveo-browser-top{min-height:40px}
  
  .seyveo-browser-start{padding-top:4px;padding-bottom:5px}
@@ -820,7 +820,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Extra tabs swipe horizontally; the separate + is always visible. */
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
- height:44px;min-height:44px;margin:0 0 -9px;gap:6px;
+ height:30px;min-height:30px;margin:0 0 -8px;gap:5px;
  position:relative;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
@@ -833,9 +833,9 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab{
  position:relative;display:flex;align-items:stretch;
- width:100%;min-width:0;max-width:none;height:42px;min-height:0;
+ width:100%;min-width:0;max-width:none;height:29px;min-height:0;
  border:1px solid var(--sv-home-outline);
- border-radius:11px 11px 2px 2px;
+ border-radius:4px 4px 0 0;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 75%),var(--sv-home-glass);
  box-shadow:inset 0 1px 0 var(--sv-home-glint);
  overflow:hidden;scroll-snap-align:start;
@@ -845,28 +845,28 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  background:linear-gradient(115deg,var(--seyveo-hdr-active),var(--sv-home-glass) 90%);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
- content:"";position:absolute;bottom:11px;left:5px;right:5px;height:3px;
+ content:"";position:absolute;bottom:9px;left:3px;right:3px;height:2px;
  background:var(--line,#30cf9d);border-radius:5px;pointer-events:none;
  box-shadow:0 -2px 8px var(--line,#30cf9d);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:flex;align-items:center;gap:5px;flex:1;min-width:0;max-width:none;
- padding:3px 1px 3px 6px;text-align:left;font-size:11px;
+ padding:1px 1px 1px 4px;text-align:left;font-size:10px;
  white-space:nowrap;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark{
  display:grid;place-items:center;flex:none;
- width:20px;height:20px;min-width:20px;min-height:20px;
- border-radius:5px;overflow:hidden;
+ width:15px;height:15px;min-width:15px;min-height:15px;
+ border-radius:3px;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark svg{display:block;width:100%;height:100%}
 .seyveo-browser.is-site-view .sb-browser-tab-name{
  display:block;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;
- white-space:nowrap;font-size:11px;font-weight:450;
+ white-space:nowrap;font-size:10px;font-weight:450;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
  flex:none;display:grid;place-items:center;width:22px;min-width:22px;
- padding:0 3px;font-size:18px;font-weight:300;opacity:.75;
+ padding:0 1px;font-size:15px;font-weight:300;opacity:.75;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder{opacity:.63}
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder .sb-browser-tab-select{
@@ -880,15 +880,17 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- display:grid;place-items:center;flex:none;width:40px;height:42px;min-height:42px;
- padding:0;border-radius:11px 11px 2px 2px;border:1px solid var(--sv-home-outline);
+ display:grid;place-items:center;flex:none;width:34px;height:29px;min-height:29px;
+ padding:0;border-radius:4px 4px 0 0;border:1px solid var(--sv-home-outline);
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 77%),var(--sv-home-glass);
- font-size:26px;font-weight:300;
+ font-size:21px;font-weight:300;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
- position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;width:100%;
- border-radius:16px 16px 12px 12px;
- border:1px solid var(--sv-home-outline);
+ position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
+ width:calc(100% + 2 * var(--sv-browser-gutter));
+ margin-inline:calc(-1 * var(--sv-browser-gutter));
+ border-radius:9px 9px 0 0;
+ border:1px solid var(--sv-home-outline);border-left:0;border-right:0;
  background:var(--sv-life-viewport-gradient,var(--bg));
  overflow:hidden;
 }
@@ -897,24 +899,24 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:41px;min-height:41px;gap:5px;margin-bottom:-8px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:28px;min-height:28px;gap:4px;margin-bottom:-7px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
- .seyveo-browser.is-site-view .seyveo-browser-tab{height:39px;border-radius:10px 10px 2px 2px}
+ .seyveo-browser.is-site-view .seyveo-browser-tab{height:27px;border-radius:3px 3px 0 0}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  width:39px;height:39px;min-height:39px;border-radius:10px 10px 2px 2px;
+  width:31px;height:27px;min-height:27px;border-radius:3px 3px 0 0;
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
   gap:3px;padding-left:4px;
  }
- .seyveo-browser.is-site-view .sb-browser-tab-mark{width:18px;height:18px;min-width:18px;min-height:18px}
- .seyveo-browser.is-site-view .sb-browser-tab-name{font-size:10px}
+ .seyveo-browser.is-site-view .sb-browser-tab-mark{width:14px;height:14px;min-width:14px;min-height:14px}
+ .seyveo-browser.is-site-view .sb-browser-tab-name{font-size:9.5px}
  .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
-  width:17px;min-width:17px;font-size:17px;padding:0 1px;
+  width:16px;min-width:16px;font-size:14px;padding:0 1px;
  }
- .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:16px;height:16px}
- .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{bottom:10px}
+ .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:13px;height:13px}
+ .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{bottom:8px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-site-view .seyveo-browser-tab{transition:none}
