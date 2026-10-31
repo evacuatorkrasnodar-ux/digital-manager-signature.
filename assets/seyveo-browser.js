@@ -26,14 +26,12 @@ const sectionPaths={
 };
 let managerSection='tabs';
 for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{managerSection=id;renderManager()});switcher.append(button)}
-// Match the vertical position of the four Quick Access items without
-// changing their design or rebuilding the original four-section switcher.
-const managerHeading=document.createElement('div');
-managerHeading.className='seyveo-browser-start-heading sb-manager-top-heading';
-managerHeading.innerHTML='<span>Разделы</span>';
-manager.prepend(managerHeading,switcher);
+// Put the ORIGINAL four-part switcher beside the search field in the same
+// root flex slot. Toggling which one is visible guarantees matching geometry.
+root.querySelector('.seyveo-browser-bar').after(switcher);
+switcher.hidden=true;
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
-while(switcher.nextSibling)tabsPanel.append(switcher.nextSibling);
+while(manager.firstChild)tabsPanel.append(manager.firstChild);
 manager.append(tabsPanel);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const notice=root.querySelector('.seyveo-browser-blocked');
@@ -217,8 +215,9 @@ function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.ent
 function tabManager(value=true){
  managerOpen=Boolean(value);
  manager.hidden=!managerOpen;
- // Keep the SAME header node, not a second copy: no logo jump or change
- // of typography when switching between Browser and its tab collection.
+ switcher.hidden=!managerOpen;
+ // The logo is one DOM node, and the existing search / tabs controls now
+ // occupy the identical top-level slot rather than separate scroll containers.
  root.classList.toggle('is-managing',managerOpen);
  $('.seyveo-browser-home').hidden=!managerOpen&&!!currentUrl();
  if(managerOpen){manager.scrollTop=0;renderManager();}
