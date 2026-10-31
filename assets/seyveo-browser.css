@@ -219,7 +219,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 :root[data-theme=dark][data-palette=graphite] .seyveo-browser-manager{--sb-panel-bg:#08150f}
 .seyveo-browser-manager::-webkit-scrollbar{display:none}
 .sb-manager-nav{
- height:max(92px,calc(env(safe-area-inset-top,0px) + 67px));position:relative;
+ height:max(79px,calc(env(safe-area-inset-top,0px) + 58px));position:relative;
  display:flex;align-items:flex-start;justify-content:center;
  box-sizing:border-box;padding-top:max(17px,env(safe-area-inset-top,0px));
 }
