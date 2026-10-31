@@ -47,7 +47,7 @@ function init(){
   return '';
  }
  function paint(){
-  if(musicMode())return; // The existing Music Dock owns the buttons during playback.
+  if(musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.())return; // Music or Browser owns the existing buttons.
   const active=activeDestination();
   items.forEach((item,index)=>{
    const button=buttons[index];
@@ -71,12 +71,13 @@ function init(){
  // that can cancel the user's tap and the synthetic repeat may be suppressed.
  buttons.forEach(button=>{
   button.addEventListener('click',event=>{
-   if(!event.isTrusted||musicMode())return;
+   if(!event.isTrusted||musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.())return;
    showSelectionFeedback(button);
   },{capture:true});
  });
  window.addEventListener('hashchange',paint);
  window.addEventListener('seyveo:route-changed',paint);
+ document.addEventListener('seyveo:browser-dock-exit',()=>{buttons.forEach(b=>delete b.dataset.svFixedAction);paint()});
  document.addEventListener('seyveo:music-dock-exit',()=>{
   // The music controls restore the same buttons, never create a second dock.
   window.clearTimeout(feedbackTimer);
