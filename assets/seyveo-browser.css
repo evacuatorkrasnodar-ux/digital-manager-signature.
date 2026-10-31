@@ -844,11 +844,6 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  border-color:var(--line,var(--sv-home-outline));
  background:linear-gradient(115deg,var(--seyveo-hdr-active),var(--sv-home-glass) 90%);
 }
-.seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
- content:"";position:absolute;bottom:3px;left:6px;right:6px;height:2px;
- background:var(--line,#30cf9d);border-radius:5px;pointer-events:none;
- box-shadow:0 -2px 8px var(--line,#30cf9d);
-}
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:flex;align-items:center;gap:5px;flex:1;min-width:0;max-width:none;
  padding:5px 2px 5px 7px;text-align:left;font-size:12px;
@@ -919,7 +914,6 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   width:20px;min-width:20px;font-size:17px;padding:0 2px;
  }
  .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:13px;height:13px}
- .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{bottom:3px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-site-view .seyveo-browser-tab{transition:none}
