@@ -50,6 +50,9 @@ function init(){
   const sayvi=event.target.closest?.('#assistantButton');
   if(sayvi&&dock.contains(sayvi)){
    event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+   // Pointer-up after a long press synthesizes a click on some iPhones:
+   // let the single speech handler finish without opening a second chat.
+   if(window.SEYVEO_DOCK_VOICE_CLICK_SUPPRESSED?.())return;
    window.SEYVEO_BROWSER?.askSayvi?.();
    return;
   }
