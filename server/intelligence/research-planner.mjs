@@ -1,10 +1,10 @@
 /* SEYVEO Research Planner: decisions and source review, never model training.
    Public search results are untrusted excerpts, not proof of a claim. */
 const CATEGORIES=Object.freeze([
- ['fact-check',/(?:правда|фейк|провер|слух|действительно|реально|на самом деле)/iu],
- ['news',/(?:новост|последн|сегодня|вчера|недавно|объявил|выпустил|показал)/iu],
- ['shopping',/(?:цен|стоит|купить|характеристик|сравн|модел|товар)/iu],
  ['legal',/(?:закон|законодатель|постановлен|правил|регулирован|лицензи|налог)/iu],
+ ['fact-check',/(?:правда|фейк|провер|слух|действительно|реально|на самом деле)/iu],
+ ['shopping',/(?:цен|стоит|купить|характеристик|сравн|модел|товар)/iu],
+ ['news',/(?:новост|последн|сегодня|вчера|недавно|объявил|выпустил|показал)/iu],
  ['science',/(?:исследован|открыти|научн|учёные|ученые|космос|медицин|технологи)/iu],
  ['reference',/./u]
 ]);
@@ -62,7 +62,7 @@ export function reviewPublicSources(plan,results,{maxSources=6}={}){
  }
  const dated=chosen.filter(x=>dateOf(x.publishedAt));
  const notes=['Результаты поиска — материалы для проверки, а не подтверждённый вывод.'];
- if(domains.length<2)notes.push('Пока найден только один независимый домен: вывод делать рано.');
+ if(chosen.length&&domains.length<2)notes.push('Материалы пока только с одного сайта: нужна независимая проверка.');
  if(plan.needsFreshness&&dated.length<chosen.length)notes.push('Часть публикаций без подтверждённой даты.');
  if(plan.category==='legal')notes.push('Проверяй действующую редакцию нормативного документа и юрисдикцию.');
  return Object.freeze({results:chosen,sourceCount:chosen.length,distinctDomains:new Set(chosen.map(x=>domainOf(x.url))).size,
