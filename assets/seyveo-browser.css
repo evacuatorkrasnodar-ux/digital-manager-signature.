@@ -481,26 +481,9 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-home-recent-close{flex:none;align-self:stretch;width:30px;padding:0 6px;border:0;background:transparent;color:inherit;font-size:21px;opacity:.68}
 @media(max-width:380px){.sb-home-recent-grid{gap:7px}.sb-home-recent-open{gap:6px;padding-left:7px}.sb-home-recent-symbol{width:28px;height:28px}.sb-home-recent-info strong{font-size:11px}.sb-home-recent-info small{font-size:10px}}
 
-/* Resolution-independent emerald glass ribbons; no pixelated embedded JPEG. */
-.seyveo-browser:not([hidden]){background-color:#020b0a;background-image:linear-gradient(rgba(1,9,8,.06),rgba(1,9,8,.1)),url("./seyveo-browser-emerald.svg");background-position:center center;background-size:cover;background-repeat:no-repeat}
-.seyveo-browser-manager:not([hidden]){background-color:#020b0a;background-image:linear-gradient(rgba(0,12,10,.21),rgba(0,10,9,.37)),url("./seyveo-browser-emerald.svg");background-position:center center;background-size:cover;background-repeat:no-repeat}
-
-/* Browser controls: satin-matte glass so the emerald artwork stays behind the UI. */
-.seyveo-browser:not([hidden]) .seyveo-browser-shortcuts button,
-.seyveo-browser:not([hidden]) .seyveo-browser-history-card,
-.seyveo-browser:not([hidden]) .sb-home-recent-card{
- background:linear-gradient(145deg,rgba(15,37,33,.91),rgba(9,25,23,.88));
- border-color:rgba(108,166,137,.30);
- box-shadow:inset 0 1px 0 rgba(220,255,234,.035);
- backdrop-filter:blur(10px);
- -webkit-backdrop-filter:blur(10px);
-}
-.seyveo-browser:not([hidden]) .seyveo-browser-bar{
- background:rgba(10,35,29,.85);
- backdrop-filter:blur(10px);
- -webkit-backdrop-filter:blur(10px);
-}
-
+/* Use the active SEYVEO theme without a browser-specific image or fixed dark overlay. */
+.seyveo-browser:not([hidden]){background:var(--bg,#111a16);background-image:none}
+.seyveo-browser-manager:not([hidden]){background:var(--bg,#111a16);background-image:none}
 /* Browser-only dock: icon-only, evenly centered, original SEYVEO center preserved. */
 footer.dock.seyveo-browser-dock button[data-sv-browser-action] > span{display:none!important}
 footer.dock.seyveo-browser-dock button[data-sv-browser-action]{
