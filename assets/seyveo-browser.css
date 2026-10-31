@@ -820,7 +820,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Extra tabs swipe horizontally; the separate + is always visible. */
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
- height:30px;min-height:30px;margin:0 0 -8px;gap:5px;
+ height:46px;min-height:46px;margin:0 0 -4px;gap:6px;
  position:relative;z-index:2;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
@@ -833,9 +833,9 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab{
  position:relative;display:flex;align-items:stretch;
- width:100%;min-width:0;max-width:none;height:29px;min-height:0;
+ width:100%;min-width:0;max-width:none;height:44px;min-height:0;
  border:1px solid var(--sv-home-outline);
- border-radius:4px 4px 0 0;
+ border-radius:12px 12px 2px 2px;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 75%),var(--sv-home-glass);
  box-shadow:inset 0 1px 0 var(--sv-home-glint);
  overflow:hidden;scroll-snap-align:start;
@@ -845,28 +845,28 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  background:linear-gradient(115deg,var(--seyveo-hdr-active),var(--sv-home-glass) 90%);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{
- content:"";position:absolute;bottom:9px;left:3px;right:3px;height:2px;
+ content:"";position:absolute;bottom:3px;left:6px;right:6px;height:2px;
  background:var(--line,#30cf9d);border-radius:5px;pointer-events:none;
  box-shadow:0 -2px 8px var(--line,#30cf9d);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:flex;align-items:center;gap:5px;flex:1;min-width:0;max-width:none;
- padding:1px 1px 1px 4px;text-align:left;font-size:10px;
+ padding:5px 2px 5px 7px;text-align:left;font-size:12px;
  white-space:nowrap;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark{
  display:grid;place-items:center;flex:none;
- width:15px;height:15px;min-width:15px;min-height:15px;
- border-radius:3px;overflow:hidden;
+ width:23px;height:23px;min-width:23px;min-height:23px;
+ border-radius:5px;overflow:hidden;
 }
 .seyveo-browser.is-site-view .sb-browser-tab-mark svg{display:block;width:100%;height:100%}
 .seyveo-browser.is-site-view .sb-browser-tab-name{
  display:block;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;
- white-space:nowrap;font-size:10px;font-weight:450;
+ white-space:nowrap;font-size:12px;font-weight:450;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
  flex:none;display:grid;place-items:center;width:22px;min-width:22px;
- padding:0 1px;font-size:15px;font-weight:300;opacity:.75;
+ padding:0 3px;font-size:19px;font-weight:300;opacity:.75;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder{opacity:.63}
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-placeholder .sb-browser-tab-select{
@@ -880,17 +880,20 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
- display:grid;place-items:center;flex:none;width:34px;height:29px;min-height:29px;
- padding:0;border-radius:4px 4px 0 0;border:1px solid var(--sv-home-outline);
+ position:relative;z-index:4;display:grid;place-items:center;flex:none;
+ width:45px;height:44px;min-height:44px;
+ padding:0;border-radius:13px;border:1px solid var(--sv-home-outline);
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 77%),var(--sv-home-glass);
- font-size:21px;font-weight:300;
+ font-size:27px;font-weight:300;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
  position:relative;z-index:3;order:4;flex:1;min-height:0;min-width:0;
  width:calc(100% + 2 * var(--sv-browser-gutter));
  margin-inline:calc(-1 * var(--sv-browser-gutter));
- border-radius:9px 9px 0 0;
- border:1px solid var(--sv-home-outline);border-left:0;border-right:0;
+ /* The page continues underneath the floating original SEYVEO dock. */
+ margin-bottom:calc(0px - var(--seyveo-browser-dock-height, 86px) - 8px);
+ border-radius:21px 21px 0 0;
+ border:1px solid var(--sv-home-outline);border-left:0;border-right:0;border-bottom:0;
  background:var(--sv-life-viewport-gradient,var(--bg));
  overflow:hidden;
 }
@@ -899,24 +902,24 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:28px;min-height:28px;gap:4px;margin-bottom:-7px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-bottom:-4px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:4px;grid-auto-columns:calc((100% - 8px) / 3);
  }
- .seyveo-browser.is-site-view .seyveo-browser-tab{height:27px;border-radius:3px 3px 0 0}
+ .seyveo-browser.is-site-view .seyveo-browser-tab{height:42px;border-radius:11px 11px 2px 2px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
-  width:31px;height:27px;min-height:27px;border-radius:3px 3px 0 0;
+  width:42px;height:42px;min-height:42px;border-radius:12px;
  }
  .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
   gap:3px;padding-left:4px;
  }
- .seyveo-browser.is-site-view .sb-browser-tab-mark{width:14px;height:14px;min-width:14px;min-height:14px}
- .seyveo-browser.is-site-view .sb-browser-tab-name{font-size:9.5px}
+ .seyveo-browser.is-site-view .sb-browser-tab-mark{width:20px;height:20px;min-width:20px;min-height:20px}
+ .seyveo-browser.is-site-view .sb-browser-tab-name{font-size:11px}
  .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
-  width:16px;min-width:16px;font-size:14px;padding:0 1px;
+  width:20px;min-width:20px;font-size:17px;padding:0 2px;
  }
  .seyveo-browser.is-site-view .sb-browser-tab-empty-mark{width:13px;height:13px}
- .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{bottom:8px}
+ .seyveo-browser.is-site-view .seyveo-browser-tab.is-active::after{bottom:3px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-site-view .seyveo-browser-tab{transition:none}
@@ -946,7 +949,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 }
 .sb-browser-demo-fill{flex:1}
 .sb-browser-demo-menu,.sb-browser-demo-search{flex:none;display:grid;place-items:center;opacity:.85}
-.sb-browser-demo-article{padding:22px clamp(16px,4vw,24px) 30px}
+.sb-browser-demo-article{padding:22px clamp(16px,4vw,24px) calc(var(--seyveo-browser-dock-height,86px) + 30px)}
 .sb-browser-demo-meta{
  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
  font-size:11px;letter-spacing:.012em;color:var(--secondary);
@@ -983,7 +986,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 @media(max-width:390px){
  .sb-browser-demo-head{height:57px;min-height:57px;padding:0 14px;gap:11px}
  .sb-browser-demo-head>strong{font-size:23px}
- .sb-browser-demo-article{padding:18px 15px 26px}
+ .sb-browser-demo-article{padding:18px 15px calc(var(--seyveo-browser-dock-height,86px) + 26px)}
  .sb-browser-demo-article h1{font-size:25px;margin-top:15px}
  .sb-browser-demo-article p{font-size:15px}
  .sb-browser-demo-article .sb-browser-demo-lead{font-size:16px}
