@@ -1,0 +1,36 @@
+name: SEYVEO Live Search · UI and source safety
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/live-search*'
+      - 'assets/seyveo-live-search-ui.js'
+      - 'assets/living-conversation.js'
+      - 'assets/living-conversation.css'
+      - 'assets/assistant-chat-history.js'
+      - 'tools/test-live-search-ui.cjs'
+      - '.github/workflows/seyveo-live-search.yml'
+  pull_request:
+    paths:
+      - 'server/live-search*'
+      - 'assets/seyveo-live-search-ui.js'
+      - 'assets/living-conversation.js'
+      - 'assets/living-conversation.css'
+      - 'assets/assistant-chat-history.js'
+      - 'tools/test-live-search-ui.cjs'
+      - '.github/workflows/seyveo-live-search.yml'
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check assets/seyveo-live-search-ui.js
+      - run: node --check assets/living-conversation.js
+      - run: node --check assets/assistant-chat-history.js
+      - run: node --test server/live-search.test.mjs tools/test-live-search-ui.cjs
