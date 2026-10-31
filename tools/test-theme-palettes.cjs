@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=44/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=45/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=35/,'Browser touch navigation and icon script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -70,6 +70,9 @@ assert.match(browserJS,/showAllHistory=!showAllHistory;syncHistoryStack\(\)/,'Hi
 assert.match(css.browser,/\.sb-history-slot\.is-folded/,'History cards fold into a single visible card');
 assert.ok(css.browser.includes('scroll-snap-type:x mandatory'),'Recent browser tabs use native horizontal swipe navigation');
 assert.ok(css.browser.includes('min-height:67px;height:67px'),'Recent tabs have compact height');
+assert.ok(!css.browser.includes('>.sb-home-recent-tabs{margin-top:auto'),'Recent tabs flow immediately after Continue Browsing');
+assert.ok(css.browser.includes('@media(max-width:600px)'),'iPhone portrait and Plus layouts share compact rhythm');
+assert.ok(css.browser.includes('.seyveo-browser-home{min-height:70px;max-height:80px}'),'Browser title space shrinks on iPhone');
 assert.ok(browserJS.includes('for(const entry of recentEntries)'),'All recent tabs appear in the swipe rail');
 assert.ok(!browserJS.includes('data-open-tab-manager'),'Swipe rail does not need a show-all button');
 assert.ok(browserJS.includes('function paintSiteMark('),'Browser icons use one shared vector renderer');
