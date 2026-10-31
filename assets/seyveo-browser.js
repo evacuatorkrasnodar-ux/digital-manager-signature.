@@ -75,12 +75,16 @@ homeGrip.setAttribute('aria-label','Вернуться к открытой ст�
 homeGrip.title='Проведите вверх, чтобы вернуться к странице';
 homeGrip.innerHTML='<span aria-hidden="true"></span>';
 $('.seyveo-browser-home').after(homeGrip);
+const magnetAnchor=document.createElement('div');
+magnetAnchor.className='sb-browser-magnet-anchor';magnetAnchor.setAttribute('aria-hidden','true');
+$('.seyveo-browser-content').before(magnetAnchor);
+const magnetSheet=$('.seyveo-browser-content');
 let browserStage='normal'; // normal | immersive | home
 function setBrowserStage(next){
  if(managerOpen)return;
- if(!currentUrl()&&next!=='home')next='home';
- browserStage=['normal','immersive','home'].includes(next)?next:'normal';
- render(); // Never clears the active URL or replaces its iframe merely for snapping.
+ if(!currentUrl())return;
+ const stage=['normal','immersive','home'].includes(next)?next:'normal';
+ snapMagnetTo(stage);
 }
 
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
@@ -301,7 +305,9 @@ function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShow
 function tabManager(value=true){
  managerOpen=Boolean(value);
  if(managerOpen){
-  browserStage='normal';root.classList.remove('is-immersive');
+  cancelMagnetSnap();
+  browserStage='normal';
+  root.classList.remove('is-immersive','is-magnet-page','is-magnet-home','is-magnet-preview-home','is-magnet-dragging','is-magnet-settling');
   document.body.classList.remove('seyveo-browser-immersive');
  }
  if(!managerOpen){allClosedShown=false;showManagerHistory=false;} // Begin with folded Quiet Cinema stacks on re-entry.
@@ -313,6 +319,7 @@ function tabManager(value=true){
  root.classList.toggle('is-site-view',!managerOpen&&!!currentUrl());
  $('.seyveo-browser-home').hidden=false;
  if(managerOpen){manager.scrollTop=0;renderManager();}
+ else if(!root.hidden)render();
 }
 function setTabDetails(card,expanded){
  card.classList.toggle('is-expanded',expanded);
@@ -540,13 +547,16 @@ function syncHistoryStack(){
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url||browserStage==='home';if(managerOpen)renderManager();
+ const hasPage=!!url&&!managerOpen;
  $('.seyveo-browser-home').hidden=false;
- root.classList.toggle('is-site-view',!home&&!managerOpen);
- const immersive=!home&&!managerOpen&&browserStage==='immersive';
+ root.classList.toggle('is-site-view',hasPage);
+ root.classList.toggle('is-magnet-page',hasPage);
+ root.classList.toggle('is-magnet-home',hasPage&&home);
+ const immersive=hasPage&&browserStage==='immersive';
  root.classList.toggle('is-immersive',immersive);
  document.body.classList.toggle('seyveo-browser-immersive',immersive&&!root.hidden);
- homeGrip.hidden=!(home&&!!url&&browserStage==='home'&&!managerOpen);
- $('.seyveo-browser-start').hidden=!home;$('.seyveo-browser-content').hidden=home;$('.seyveo-browser-tabs').hidden=home;
+ homeGrip.hidden=!(home&&hasPage);
+ $('.seyveo-browser-start').hidden=!home;magnetSheet.hidden=!hasPage;$('.seyveo-browser-tabs').hidden=home;
  input.value=home&&browserStage==='home'?'':url||'';
  // A static web demo cannot bypass X-Frame-Options / CSP frame-ancestors.
  // Sites that fail in the user's preview get a compact explanation, never a
@@ -557,13 +567,13 @@ function render(){
  // Never substitute fabricated article text into another live website.
  const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
  const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
- closeSiteMenu();sitebar.hidden=home||(isDemo&&!immersive);
+ closeSiteMenu();sitebar.hidden=!hasPage;
  if(url)$('[data-site-title]').textContent=siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
  $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
  $('.seyveo-browser-content').classList.toggle('is-embed-unavailable',blocked);
- frame.hidden=home||blocked||isDemo;
+ frame.hidden=!hasPage||blocked||isDemo;
  if(isDemo){frame.removeAttribute('src');displayedTab=null}
  else if(blocked){
   embedExplanation.textContent='Сайт '+embedHost+' не открывается внутри веб-демоверсии SEYVEO. Для полноценного встроенного просмотра потребуется нативный браузер приложения.';
@@ -663,6 +673,7 @@ function render(){
   create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
   placeholder.append(create);tabArea.append(placeholder);
  }
+ if(hasPage&&!root.hidden)syncMagnetLayout();
 }
 function navigate(value){const url=secureUrl(value);if(!url)return false;browserStage='normal';const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
 /* One existing Sayvi, one original dock: temporarily hide Browser without
@@ -751,7 +762,7 @@ function browserVoiceUnavailable(message){
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){browserStage='normal';root.classList.remove('is-immersive');document.body.classList.remove('seyveo-browser-immersive');suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){cancelMagnetSnap();browserStage='normal';root.classList.remove('is-immersive','is-magnet-page','is-magnet-home','is-magnet-preview-home','is-magnet-dragging','is-magnet-settling');document.body.classList.remove('seyveo-browser-immersive');suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -760,62 +771,142 @@ function goToSeyveoHome(){
  document.getElementById('navHome')?.click();
  return true;
 }
-/* Three magnetic positions. Drags start on the graphite edge only:
-   normal -> immersive (up), immersive -> normal (short down),
-   any site state -> browser home (long down), retaining the open URL. */
-let magneticPointer=null,ignoreGripClick=false;
-function magneticGestureStart(event,source){
+/* SEYVEO magnetic glass v2: the whole web sheet tracks the finger.
+   The three stop locations are measured from the real responsive layout;
+   the nested iframe keeps its URL, DOM node and scroll history. */
+let magneticPointer=null,magneticTimer=null,magneticCurrentY=0,magneticNormalY=0;
+let ignoreMagnetClickUntil=0;
+const magnetClamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const magnetEaseTime=315;
+function magnetBounds(){
+ const rect=root.getBoundingClientRect();
+ const padding=parseFloat(getComputedStyle(root).paddingTop)||0;
+ const full=Math.max(0,Math.min(padding,rect.height*.08));
+ if(browserStage!=='home'&&!root.classList.contains('is-magnet-preview-home')){
+  const a=magnetAnchor.getBoundingClientRect();
+  if(a.height>=0&&a.top>=rect.top+30){
+   magneticNormalY=magnetClamp(a.top-rect.top,full+80,rect.height*.7);
+  }
+ }
+ if(!magneticNormalY)magneticNormalY=magnetClamp(rect.height*.26,full+100,rect.height*.65);
+ return{full,normal:magneticNormalY,home:rect.height+12};
+}
+function paintMagnet(y,bounds=magnetBounds()){
+ const pos=magnetClamp(y,bounds.full,bounds.home);
+ magneticCurrentY=pos;
+ root.style.setProperty('--sb-magnet-y',pos+'px');
+ const progress=magnetClamp((bounds.normal-pos)/Math.max(1,bounds.normal-bounds.full),0,1);
+ const headerFull=window.matchMedia('(max-width:649px)').matches?62:70;
+ const headerHeight=headerFull-(headerFull-22)*progress;
+ root.style.setProperty('--sb-magnet-header-height',headerHeight+'px');
+ root.style.setProperty('--sb-magnet-tools-opacity',String(1-progress));
+ root.style.setProperty('--sb-magnet-chrome-opacity',String(1-progress));
+ root.style.setProperty('--sb-magnet-full-top',bounds.full+'px');
+}
+function magnetPreviewHome(){
+ if(!currentUrl()||managerOpen)return;
+ const rect=root.getBoundingClientRect(),search=$('.seyveo-browser-bar').getBoundingClientRect();
+ root.style.setProperty('--sb-magnet-home-content-top',
+  Math.max(115,search.bottom-rect.top+18)+'px');
+ root.classList.add('is-magnet-preview-home');
+ $('.seyveo-browser-start').hidden=false;
+}
+function cancelMagnetSnap(){
+ if(magneticTimer!==null){clearTimeout(magneticTimer);magneticTimer=null}
+ magneticPointer=null;
+ root.classList.remove('is-magnet-dragging','is-magnet-settling','is-magnet-preview-home');
+ root.style.removeProperty('--sb-magnet-pull');
+}
+function syncMagnetLayout(){
+ if(root.hidden||managerOpen||!currentUrl()||magneticPointer||magneticTimer!==null)return;
+ const bounds=magnetBounds();
+ paintMagnet(browserStage==='immersive'?bounds.full:browserStage==='home'?bounds.home:bounds.normal,bounds);
+}
+function snapMagnetTo(stage){
+ if(root.hidden||managerOpen||!currentUrl())return;
+ const dest=['immersive','normal','home'].includes(stage)?stage:'normal';
+ if(magneticTimer!==null){clearTimeout(magneticTimer);magneticTimer=null}
+ const bounds=magnetBounds();
+ if(dest==='home'||browserStage==='home')magnetPreviewHome();
+ root.classList.remove('is-magnet-dragging');
+ root.classList.add('is-magnet-settling');
+ paintMagnet(bounds[dest==='immersive'?'full':dest],bounds);
+ magneticTimer=setTimeout(()=>{
+  magneticTimer=null;
+  browserStage=dest;
+  root.classList.remove('is-magnet-settling','is-magnet-preview-home');
+  render(); // Only commit the new stage after the glass has reached its stop.
+ },magnetEaseTime+35);
+}
+function magneticStart(event,source){
  if(root.hidden||managerOpen||!currentUrl()||!event.isPrimary)return;
  if(event.pointerType==='mouse'&&event.button!==0)return;
- const target=event.target;
- const onGrip=Boolean(target.closest?.('[data-magnetic-grip],[data-magnetic-home]'));
- if(target.closest?.('button')&&!onGrip)return;
- magneticPointer={id:event.pointerId,y:event.clientY,x:event.clientX,source,moved:false,onGrip};
+ const onHandle=!!event.target.closest?.('[data-magnetic-grip],[data-magnetic-home]');
+ if(event.target.closest?.('button')&&!onHandle)return;
+ if(magneticTimer!==null){
+  clearTimeout(magneticTimer);magneticTimer=null;
+  root.classList.remove('is-magnet-settling');
+ }
+ const bounds=magnetBounds();
+ const start=magneticCurrentY||bounds[browserStage==='immersive'?'full':browserStage];
+ magneticPointer={id:event.pointerId,source,x:event.clientX,y:event.clientY,
+  start,startStage:browserStage,startTime:performance.now(),moving:false,bounds};
  try{source.setPointerCapture(event.pointerId)}catch{}
 }
 function bindMagneticEdge(source){
- source.addEventListener('pointerdown',event=>magneticGestureStart(event,source));
+ source.addEventListener('pointerdown',event=>magneticStart(event,source));
  source.addEventListener('pointermove',event=>{
-  if(!magneticPointer||magneticPointer.id!==event.pointerId||magneticPointer.source!==source)return;
-  const dy=event.clientY-magneticPointer.y,dx=event.clientX-magneticPointer.x;
-  if(!magneticPointer.moved&&Math.abs(dy)>9&&Math.abs(dy)>Math.abs(dx)*1.2)magneticPointer.moved=true;
-  if(!magneticPointer.moved)return;
+  const g=magneticPointer;
+  if(!g||g.id!==event.pointerId||g.source!==source)return;
+  const dx=event.clientX-g.x,dy=event.clientY-g.y;
+  if(!g.moving){
+   if(Math.abs(dy)<7||Math.abs(dy)<Math.abs(dx)*1.15)return;
+   g.moving=true;
+   closeSiteMenu();
+   root.classList.add('is-magnet-dragging');
+  }
   event.preventDefault();
-  source.style.setProperty('--sb-magnet-pull',Math.max(-11,Math.min(11,dy*.16))+'px');
+  if(dy>10||g.startStage==='home')magnetPreviewHome();
+  paintMagnet(g.start+dy,g.bounds);
  });
  source.addEventListener('pointerup',event=>{
-  if(!magneticPointer||magneticPointer.id!==event.pointerId||magneticPointer.source!==source)return;
-  const gesture=magneticPointer;magneticPointer=null;
-  source.style.removeProperty('--sb-magnet-pull');
-  if(!gesture.moved)return;
-  if(gesture.onGrip){
-   ignoreGripClick=true;
-   setTimeout(()=>{ignoreGripClick=false},0);
+  const g=magneticPointer;
+  if(!g||g.id!==event.pointerId||g.source!==source)return;
+  magneticPointer=null;
+  if(!g.moving)return;
+  ignoreMagnetClickUntil=performance.now()+500;
+  const dy=event.clientY-g.y;
+  const v=dy/Math.max(35,performance.now()-g.startTime);
+  let dest=g.startStage;
+  if(g.startStage==='home'){
+   if(dy< -48||v< -0.35)dest='normal';
+  }else if(g.startStage==='immersive'){
+   if(dy>120||v>0.9&&dy>65)dest='home';
+   else if(dy>34||v>0.24&&dy>18)dest='normal';
+  }else{
+   if(dy< -34||v< -0.25&&dy< -18)dest='immersive';
+   else if(dy>110||v>0.6&&dy>58)dest='home';
   }
-  const dy=event.clientY-gesture.y;
-  const wasHome=browserStage==='home',wasImmersive=browserStage==='immersive';
-  if(wasHome){if(dy< -45)setBrowserStage('normal');return}
-  if(dy< -52){if(!wasImmersive)setBrowserStage('immersive');return}
-  if(dy> (wasImmersive?158:118)){setBrowserStage('home');return}
-  if(dy>52&&wasImmersive)setBrowserStage('normal');
+  snapMagnetTo(dest);
  });
  source.addEventListener('pointercancel',()=>{
-  if(magneticPointer?.source===source)magneticPointer=null;
-  source.style.removeProperty('--sb-magnet-pull');
+  if(magneticPointer?.source!==source)return;
+  const stage=magneticPointer.startStage;
+  magneticPointer=null;
+  snapMagnetTo(stage);
  });
 }
 bindMagneticEdge(sitebar);
 bindMagneticEdge(homeGrip);
 const demoMagneticHead=$('.sb-browser-demo-head');
 if(demoMagneticHead)bindMagneticEdge(demoMagneticHead);
-magneticGrip.addEventListener('click',event=>{
- if(ignoreGripClick){ignoreGripClick=false;event.preventDefault();return}
- setBrowserStage(browserStage==='immersive'?'normal':'immersive');
-});
-homeGrip.addEventListener('click',event=>{
- if(ignoreGripClick){ignoreGripClick=false;event.preventDefault();return}
- setBrowserStage('normal');
-});
+root.addEventListener('click',event=>{
+ if(performance.now()<ignoreMagnetClickUntil&&event.target.closest('.sb-browser-sitebar,.sb-browser-home-grip,.sb-browser-demo-head')){
+  event.preventDefault();event.stopImmediatePropagation();
+ }
+},true);
+magneticGrip.addEventListener('click',()=>setBrowserStage(browserStage==='immersive'?'normal':'immersive'));
+homeGrip.addEventListener('click',()=>setBrowserStage('normal'));
 magneticGrip.addEventListener('keydown',event=>{
  if(event.key==='ArrowUp'){event.preventDefault();setBrowserStage('immersive')}
  if(event.key==='ArrowDown'){event.preventDefault();setBrowserStage(browserStage==='immersive'?'normal':'home')}
@@ -823,6 +914,7 @@ magneticGrip.addEventListener('keydown',event=>{
 homeGrip.addEventListener('keydown',event=>{
  if(event.key==='ArrowUp'){event.preventDefault();setBrowserStage('normal')}
 });
+window.addEventListener('resize',()=>{if(!root.hidden&&!managerOpen&&currentUrl())syncMagnetLayout()});
 /* iOS back gesture from the left screen edge. Respect the two swipe rails and
    vertical scrolling. Embedded cross-origin pages must use native platform Back. */
 let edgeSwipe=null;
@@ -830,6 +922,7 @@ root.addEventListener('touchstart',event=>{
  edgeSwipe=null;
  if(root.hidden||event.touches.length!==1)return;
  const touch=event.touches[0],target=event.target;
+ if(target.closest('.sb-browser-sitebar,.sb-browser-home-grip'))return;
  if(touch.clientX>26||target.closest('input,textarea,select,.sb-home-recent-grid,.seyveo-browser-shortcuts'))return;
  edgeSwipe={x:touch.clientX,y:touch.clientY};
 },{passive:true});
