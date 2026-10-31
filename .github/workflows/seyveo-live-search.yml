@@ -5,6 +5,12 @@ on:
     paths:
       - 'server/live-search*'
       - 'server/real-app-local.mjs'
+      - 'server/intelligence/research-planner.mjs'
+      - 'server/intelligence/research-planner.test.mjs'
+      - 'server/knowledge-engine.mjs'
+      - 'server/knowledge-intake.mjs'
+      - 'server/knowledge-engine.test.mjs'
+      - 'server/knowledge-intake.test.mjs'
       - 'server/tests/image-csp-policy.test.mjs'
       - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
@@ -22,6 +28,12 @@ on:
     paths:
       - 'server/live-search*'
       - 'server/real-app-local.mjs'
+      - 'server/intelligence/research-planner.mjs'
+      - 'server/intelligence/research-planner.test.mjs'
+      - 'server/knowledge-engine.mjs'
+      - 'server/knowledge-intake.mjs'
+      - 'server/knowledge-engine.test.mjs'
+      - 'server/knowledge-intake.test.mjs'
       - 'server/tests/image-csp-policy.test.mjs'
       - 'assets/living-answers.js'
       - 'assets/seyveo-live-search-ui.js'
@@ -51,6 +63,7 @@ jobs:
       - run: node --check assets/seyveo-rich-answer-ui.js
       - run: node --check server/real-app-local.mjs
       - run: node --test server/tests/real-app-local.test.mjs
+      - run: node --test server/intelligence/research-planner.test.mjs server/knowledge-engine.test.mjs server/knowledge-intake.test.mjs
       - run: node --test server/tests/image-csp-policy.test.mjs
       - run: node --check assets/living-conversation.js
       - run: node --check assets/assistant-chat-history.js
