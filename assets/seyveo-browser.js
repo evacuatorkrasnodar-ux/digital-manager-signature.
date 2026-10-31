@@ -50,18 +50,20 @@ function render(){
  const selected=showAllHistory?items:items.slice(0,3);
  if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
  for(const link of selected){
-  const host=new URL(link).hostname;const card=document.createElement('article');card.className='seyveo-browser-history-card';
-  const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-expanded',String(expandedHistory===link));
-  const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.textContent=host[0].toUpperCase();
-  const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=host;const sub=document.createElement('small');sub.textContent=link;words.append(title,sub);
-  const chevron=document.createElement('span');chevron.className='seyveo-browser-history-chevron';chevron.textContent='⌄';head.append(logo,words,chevron);
+  const url=new URL(link),host=url.hostname.replace(/^www\./,'');
+  const name=host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host;
+  const card=document.createElement('article');card.className='seyveo-browser-history-card';
+  const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-label','Открыть '+name);
+  const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.setAttribute('aria-hidden','true');
+  const favicon=document.createElement('img');favicon.alt='';favicon.width=25;favicon.height=25;favicon.loading='lazy';favicon.referrerPolicy='no-referrer';favicon.src=url.origin+'/favicon.ico';favicon.addEventListener('error',()=>{favicon.remove();logo.textContent='◈'},{once:true});logo.append(favicon);
+  const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=name;const sub=document.createElement('small');sub.textContent=host;words.append(title,sub);
+  head.append(logo,words);head.addEventListener('click',()=>navigate(link));
+  const menu=document.createElement('button');menu.type='button';menu.className='seyveo-browser-history-menu';menu.textContent='⋯';menu.setAttribute('aria-label','Действия с '+name);menu.setAttribute('aria-expanded',String(expandedHistory===link));menu.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
   const actions=document.createElement('div');actions.className='seyveo-browser-history-actions';actions.hidden=expandedHistory!==link;
   const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
-  action('Открыть',()=>navigate(link));
-  action(saved().includes(link)?'Убрать закладку':'В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
-  action('Убрать',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
-  head.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
-  card.append(head,actions);contList.append(card);
+  action(saved().includes(link)?'Убрать из закладок':'☆ В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
+  action('Убрать из истории',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
+  const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);contList.append(card);
  }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
