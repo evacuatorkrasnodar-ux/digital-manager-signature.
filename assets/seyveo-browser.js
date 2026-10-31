@@ -34,6 +34,10 @@ let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;
 const key='seyveo-browser-bookmarks-v1';
 const collectionsKey='seyveo-browser-collections-v1';
+const sessionKey='seyveo-browser-session-v1';
+function restoreSession(){try{const s=JSON.parse(localStorage.getItem(sessionKey)||'null');if(!s||!Array.isArray(s.tabs))return;const items=s.tabs.slice(0,20).filter(t=>t&&Number.isInteger(t.id)&&Array.isArray(t.entries)).map(t=>{const entries=t.entries.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,40);return{id:t.id,entries,position:Math.max(-1,Math.min(Number.isInteger(t.position)?t.position:-1,entries.length-1))}});if(items.length){tabs=items;active=tabs.some(t=>t.id===s.active)?s.active:tabs[0].id;nextId=Math.max(...tabs.map(t=>t.id),0)+1}if(Array.isArray(s.closed))recentlyClosed=s.closed.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,25)}catch{}}
+function persistSession(){try{localStorage.setItem(sessionKey,JSON.stringify({tabs,active,closed:recentlyClosed}))}catch{}}
+
 let showAllHistory=false;
 let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
@@ -55,7 +59,7 @@ function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;const u=t.ent
 function tabManager(value=true){managerOpen=value;manager.hidden=!value;if(value)renderManager();}
 function renderManager(){
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
- const tabLabel=switcher.querySelector('[data-section="tabs"] span:last-child');tabLabel.textContent='Вкладки';
+ const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
  const count=switcher.querySelector('[data-section="tabs"] .sb-switch-count')||document.createElement('span');count.className='sb-switch-count';count.textContent=String(tabs.length);switcher.querySelector('[data-section="tabs"]').append(count);
  tabsPanel.hidden=managerSection!=='tabs';secondary.hidden=managerSection==='tabs';
  if(managerSection!=='tabs'){renderSecondary();return}
@@ -111,6 +115,7 @@ function renderSecondary(){
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');icon.textContent=siteSymbol(url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
 function render(){
+ persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
  $('.seyveo-browser-home').hidden=!home;$('.seyveo-browser-start').hidden=!home;$('.seyveo-browser-content').hidden=home;$('.seyveo-browser-tabs').hidden=home;
  input.value=url||'';
@@ -178,5 +183,5 @@ $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(inpu
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!sheet.hidden)sheet.hidden=true;else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:()=> $('[data-home]').click(),tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});render();
+window.SEYVEO_BROWSER=Object.freeze({open,close,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:()=> $('[data-home]').click(),tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
 })();
