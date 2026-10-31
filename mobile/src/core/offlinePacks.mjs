@@ -44,3 +44,18 @@ export async function verifyPackBytes(contents,expected){
  const hex=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
  return hex===p.sha256;
 }
+
+/* Deletion can target only an installed optional pack ID.
+ * Never permit arbitrary paths or the personal vault to enter this plan.
+ * Actual file deletion belongs to a sandboxed native storage manager.
+ */
+export function planPackRemoval(packId,{installedIds=[],activeIds=[]}={}){
+ if(typeof packId!=='string'||!ID.test(packId))throw Error('invalid-pack-id');
+ if(!Array.isArray(installedIds)||!Array.isArray(activeIds)||
+    !installedIds.every(x=>typeof x==='string'&&ID.test(x))||
+    !activeIds.every(x=>typeof x==='string'&&ID.test(x)))
+  throw Error('invalid-pack-state');
+ if(!installedIds.includes(packId))return Object.freeze({canRemove:false,reason:'not-installed',packId});
+ if(activeIds.includes(packId))return Object.freeze({canRemove:false,reason:'pack-in-use',packId});
+ return Object.freeze({canRemove:true,reason:'optional-pack-only',packId});
+}
