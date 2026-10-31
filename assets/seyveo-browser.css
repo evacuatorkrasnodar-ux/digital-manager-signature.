@@ -316,6 +316,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-heading{
  margin:27px 3px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px
 }
+.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:17px}
 .sb-manager-heading strong{font-size:clamp(16px,3.7vw,19px);font-weight:450}
 .sb-manager-heading button{border:0;background:transparent;color:inherit;font-size:12px;opacity:.73}
 .sb-manager-heading-actions{display:flex;align-items:center;gap:12px}
@@ -509,6 +510,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(max-width:600px){
  .seyveo-browser-manager{padding-top:4px}
  .sb-manager-top-heading{margin-bottom:7px}
+ .sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:11px}
  .sb-manager-switcher{min-height:76px}
  .sb-manager-switcher button{min-height:76px;padding:6px 3px;gap:4px}
 }
