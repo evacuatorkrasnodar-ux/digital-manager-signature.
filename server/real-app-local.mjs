@@ -22,7 +22,7 @@ import {analyzeBusinessMail} from './mail-intelligence.mjs';
 import {addApprovedExample,learningStats,findApprovedExamples} from './approved-learning.mjs';
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
-import {makeBraveSearchProvider,searchWithSources} from './live-search.mjs';
+import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
 import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
 import {composeEvidenceBrief} from './intelligence/evidence-brief.mjs';
 
@@ -118,7 +118,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
- const liveSearch=searchProvider===undefined?makeBraveSearchProvider():searchProvider;
+ const liveSearch=searchProvider===undefined?createBraveContextProvider():searchProvider;
  let searchMinute=0,searchCount=0;
  let voiceJob=null,voiceCache=null;
  const memories=memoryStore||createMemoryStore();
