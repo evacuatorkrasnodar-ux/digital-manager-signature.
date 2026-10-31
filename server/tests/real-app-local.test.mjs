@@ -409,6 +409,12 @@ test('live web search endpoint returns real stub sources, keeps owner origin and
   server.listen(PORT,HOST,resolve);
  });
  try{
+  const status=await request('/api/seyveo-live-search-status');
+  assert.equal(status.status,200);
+  const capability=JSON.parse(status.body);
+  assert.equal(capability.configured,true);
+  assert.equal(capability.requiresConsent,true);
+  assert.equal(JSON.stringify(capability).includes('server-test-token'),false);
   const valid=await request('/api/seyveo-live-search',{
    method:'POST',headers:{origin:ORIGIN,'content-type':'application/json'},
    data:{message:'Правда ли Маск сделал летающий автомобиль?'}
