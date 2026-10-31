@@ -861,14 +861,15 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  overflow:hidden;scroll-snap-align:start;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab.is-active{
- border-color:color-mix(in srgb,var(--sb-accent) 79%,var(--line,#3b4c55));
- background:radial-gradient(ellipse 115% 145% at 35% 0%,color-mix(in srgb,var(--sb-accent) 42%,transparent),transparent 80%),
-  linear-gradient(180deg,color-mix(in srgb,var(--sb-accent) 24%,var(--sb-surface)),var(--sb-surface) 94%);
- box-shadow:inset 0 1px 0 color-mix(in srgb,var(--sb-accent) 53%,transparent),
-  inset 0 7px 16px color-mix(in srgb,var(--sb-accent) 21%,transparent),
-  inset 1px 0 0 color-mix(in srgb,var(--sb-accent) 20%,transparent),
-  inset -1px 0 0 color-mix(in srgb,var(--sb-accent) 20%,transparent),
-  0 0 19px color-mix(in srgb,var(--sb-accent) 25%,transparent);
+ border-color:color-mix(in srgb,var(--sb-accent) 76%,var(--line,#3b4c55));
+ background:
+  radial-gradient(ellipse 125% 185% at 52% 2%,color-mix(in srgb,var(--sb-accent) 48%,transparent) 0%,transparent 78%),
+  linear-gradient(180deg,color-mix(in srgb,var(--sb-accent) 22%,var(--sb-surface)),var(--sb-surface) 94%);
+ box-shadow:
+  inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 32%,transparent),
+  inset 0 9px 22px color-mix(in srgb,var(--sb-accent) 29%,transparent),
+  inset 0 0 19px color-mix(in srgb,var(--sb-accent) 18%,transparent),
+  0 0 13px color-mix(in srgb,var(--sb-accent) 20%,transparent);
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab .sb-browser-tab-select{
  display:grid;grid-template-columns:23px minmax(0,1fr);
@@ -1029,4 +1030,17 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .sb-browser-demo-article h1{font-size:25px;margin-top:15px}
  .sb-browser-demo-article p{font-size:15px}
  .sb-browser-demo-article .sb-browser-demo-lead{font-size:16px}
+}
+
+/* Invisible chrome; scrolling itself remains native and functional. */
+.seyveo-browser,
+.seyveo-browser :where(*){
+ scrollbar-width:none;
+ -ms-overflow-style:none;
+}
+.seyveo-browser::-webkit-scrollbar,
+.seyveo-browser :where(*)::-webkit-scrollbar{
+ display:none;
+ width:0;
+ height:0;
 }
