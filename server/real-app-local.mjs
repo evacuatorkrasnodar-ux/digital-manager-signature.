@@ -23,6 +23,7 @@ import {addApprovedExample,learningStats,findApprovedExamples} from './approved-
 import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
 import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
+import {createSeyveoWebProvider} from './seyveo-web.mjs';
 import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
 import {composeEvidenceBrief} from './intelligence/evidence-brief.mjs';
 
@@ -121,7 +122,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
- const liveSearch=searchProvider===undefined?createBraveContextProvider():searchProvider;
+ const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
  let voiceJob=null,voiceCache=null;
  const memories=memoryStore||createMemoryStore();
@@ -134,8 +135,8 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
   if(req.method==='GET'&&path==='/api/seyveo-live-search-status'){
    // Capability only: never reveal the provider credential, even to localhost.
    send(res,200,{configured:typeof liveSearch==='function',
-    provider:'Brave LLM Context',requiresConsent:true,
-    message:typeof liveSearch==='function'?'Поиск доступен.':'Для поиска требуется ключ Brave на сервере.'});
+    provider:process.env.SEYVEO_BRAVE_SEARCH_API_KEY?'Brave LLM Context':'SEYVEO Web · Wikipedia',requiresConsent:true,
+    message:typeof liveSearch==='function'?'Поиск справочных материалов доступен. Без Brave используется Wikipedia, не весь интернет.':'Поиск недоступен.'});
    return;
   }
   if(req.method==='POST'&&path==='/api/seyveo-live-search'){
