@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=54/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=42/,'Browser context-aware Sayvi script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=55/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=43/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -101,10 +101,11 @@ assert.ok(browserJS.includes("root.classList.toggle('is-managing',managerOpen)")
 assert.ok(browserJS.includes("$('.seyveo-browser-home').hidden=!home&&!managerOpen"),'The original logo stays visible even when tabs open from a webpage');
 assert.ok(css.browser.includes('position:relative;inset:auto;z-index:5'),'Tabs manager participates in normal Browser layout');
 assert.ok(!css.browser.includes('.seyveo-browser.is-managing>.seyveo-browser-bar'),'Search bar stays at the same position on both Browser screens');
-assert.ok(css.browser.includes('grid-template-columns:repeat(4,minmax(0,1fr));gap:8px'),'Four tab categories share the quick-access column rhythm');
-assert.ok(css.browser.includes('.sb-manager-switcher button{\n position:relative;display:flex;flex-direction:column'),'Tab categories use individual vertical glass cards');
-assert.ok(css.browser.includes('.sb-manager-switcher button{min-height:76px;padding:6px 3px;gap:4px}'),'Four categories match iPhone quick-access tile heights');
-assert.ok(css.browser.includes('.sb-manager-switcher button{min-height:73px;padding:5px 2px}'),'Four categories match narrow iPhone quick-access tile heights');
+assert.ok(css.browser.includes('.sb-manager-switcher{\n display:grid;grid-template-columns:repeat(4,minmax(0,1fr));'),'Keep the original four-part tab switcher without redesign');
+assert.ok(css.browser.includes('height:40px;min-height:40px;margin-bottom:51px'),'Original tab switcher uses a 91px desktop layout slot');
+assert.ok(css.browser.includes('.sb-manager-switcher{margin-bottom:36px}'),'Original tab switcher occupies same 76px iPhone slot as Quick Access');
+assert.ok(css.browser.includes('.sb-manager-switcher{margin-bottom:33px}'),'Narrow iPhone tab switcher occupies same 73px Quick Access slot');
+assert.ok(!browserJS.includes("['tabs','Вкладки','Страницы']"),'Unrequested second-line labels removed from manager buttons');
 assert.ok(css.browser.includes('.sb-manager-top-heading{margin-bottom:7px}'),'Tabs and quick-access headings share mobile spacing');
 assert.ok(css.browser.includes('.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:11px}'),'Second content group aligns after the tiles on mobile');
 assert.ok(browserJS.includes('if(managerOpen)tabManager(false);navigate(url)'),'Search from Tabs returns to the selected webpage');
