@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=46/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=36/,'Browser touch navigation and icon script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=47/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=37/,'Browser touch navigation and icon script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -79,6 +79,9 @@ assert.ok(browserJS.includes("managerSection='tabs';tabManager(true)"),'Show All
 assert.ok(css.browser.includes('flex:0 0 calc((100% - var(--sb-recent-gap)) / 2)'),'Recent cards fit two across');
 assert.ok(!css.browser.includes('flex-basis:57%'),'Small screens retain exactly two full-width cards');
 assert.ok(browserJS.includes('function paintSiteMark('),'Browser icons use one shared vector renderer');
+assert.ok(css.browser.includes('grid-auto-flow:column;grid-auto-columns:clamp(104px,26vw,128px)'),'Quick Access is horizontally swipeable without tile redesign');
+assert.ok(css.browser.includes('.seyveo-browser-shortcuts.is-expanded'),'Quick Access can reveal all original tiles');
+assert.ok(browserJS.includes('data-quick-toggle'),'Quick Access exposes Show All button');
 for(const brand of ['youtube','wikipedia','yandex','habr'])assert.ok(browserJS.includes(brand+":'<svg"),'Local SVG for '+brand);
 assert.match(html,/const state=\{theme:'graphite',history:\[\]\}/,'Fresh installs default to Classic Graphite');
 assert.match(html,/const effectiveTheme=\(\)=>state\.theme==='auto'\?\(systemThemeQuery\.matches\?'graphite':'light'\):state\.theme/,'Auto uses Graphite for dark, White for light');
