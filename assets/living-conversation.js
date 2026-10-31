@@ -501,8 +501,10 @@ function renderTurns(turns){
 // When the stream completes, showWrittenReply adds the regular actions,
 // including the existing speaker, under the complete message.
 let streamedBody=null;
+let streamDraft='';
 function beginStream(question){
  open();
+ streamDraft='';
  const turns=window.SEYVEO_DEMO_CHAT_TURNS||[];
  renderTurns([...turns,{question:String(question||''),answer:''}]);
  const bodies=text.querySelectorAll('.seyveo-conversation-turn--sayvi .seyveo-conversation-body');
@@ -511,9 +513,15 @@ function beginStream(question){
  scrollToLatest();
 }
 function updateStream(answer){
- if(!streamedBody||!streamedBody.isConnected)return;
+ // Keep the latest received text even if the chat was re-rendered during a stream.
+ streamDraft=String(answer??'');
+ if(!streamedBody||!streamedBody.isConnected){
+  const bodies=text.querySelectorAll('.seyveo-conversation-turn--sayvi .seyveo-conversation-body');
+  streamedBody=bodies[bodies.length-1]||null;
+ }
+ if(!streamedBody)return;
  const nearBottom=text.scrollHeight-text.clientHeight-text.scrollTop<64;
- streamedBody.textContent=displayChatText(answer||'Сэйви думает…').replace(/\n{2,}/g,'\n');
+ streamedBody.textContent=displayChatText(streamDraft)||'Сэйви думает…';
  if(nearBottom)text.scrollTop=text.scrollHeight;
 }
 // Only the chat shell follows iPhone's *visible* viewport.
