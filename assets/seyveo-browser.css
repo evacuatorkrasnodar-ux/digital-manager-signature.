@@ -1256,10 +1256,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 
 /* Magnetic SEYVEO Browser: three discreet snap positions.
    The thin graphite edge owns the drag, never the web page or its scrolling. */
-.seyveo-browser.is-site-view .sb-browser-sitebar{
+.seyveo-browser.is-site-view .sb-browser-sitebar,
+.seyveo-browser.is-site-view .sb-browser-demo-head{
  touch-action:none;
  user-select:none;
  -webkit-user-select:none;
+}
+.seyveo-browser.is-site-view .sb-browser-sitebar{
+ transition:height .26s cubic-bezier(.22,.75,.25,1),
+  min-height .26s cubic-bezier(.22,.75,.25,1),
+  background .22s ease;
 }
 .seyveo-browser.is-site-view .sb-browser-magnetic-grip{
  position:absolute;top:0;left:50%;z-index:7;
