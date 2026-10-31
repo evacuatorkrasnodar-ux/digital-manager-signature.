@@ -451,8 +451,9 @@ function browserVoiceCommand(transcript){
  const search=intent.match(/^(?:найди|поищи|ищи|загугли|поиск(?:ать)?|найти)\s+(.+)$/iu);
  if(search){
   const query=search[1].trim();
-  if(query)navigate(target(query));
-  return true;
+  // Private context must never be silently sent to a public search engine.
+  const privateQuery=/(?:\b(?:парол|паспорт|договор|переписк|зарплат|клиент|сотрудник)\w*\b|(?:^|\s)(?:мой|моя|моё|мои|наши|наш)(?:\s|$))/iu.test(query);
+  if(query&&!privateQuery){navigate(target(query));return true;}
  }
  const open=intent.match(/^(?:открой|открыть|перейди\s+на|зайди\s+на)\s+(.+)$/iu);
  if(open){
