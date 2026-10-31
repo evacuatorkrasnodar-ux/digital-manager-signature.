@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=59/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=60/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=45/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -84,7 +84,8 @@ assert.ok(css.browser.includes('.sb-collection-open{min-width:0;min-height:67px'
 assert.ok(css.browser.includes('.sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:9px}'),'Collections use the first page two-column width and gap');
 assert.ok(css.browser.includes('padding:0 2px 24px;'),'All second-page cards align with first-page left/right inset');
 assert.ok(css.browser.includes('.sb-tab-preview{width:57px;height:56px}'),'iPhone open-tab preview fits its compact card');
-assert.ok(css.browser.includes('.sb-manager-closed-row{min-height:75px}'),'Narrow iPhone recently closed tab uses compact height');
+assert.ok(css.browser.includes('.sb-manager-closed-row{min-height:79px}'),'Narrow iPhone recently closed card retains the same 81px full-width height');
+assert.ok(css.browser.includes('.sb-manager-select{min-height:79px}'),'Narrow iPhone open tab matches the full-width card height');
 assert.ok(css.browser.includes('.sb-collection-open{min-height:63px;gap:6px;padding:5px 0 5px 6px}'),'Narrow iPhone collection cards match paired recent cards');
 assert.ok(css.browser.includes('.sb-manager-heading{margin-top:13px;margin-bottom:9px}'),'Section headings use a compact regular mobile rhythm');
 assert.ok(css.browser.includes('.sb-history-entry{'),'History rows have their own theme-aware Black Velvet style');
