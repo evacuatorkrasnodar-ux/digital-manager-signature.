@@ -133,6 +133,15 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  return createServer(async(req,res)=>{
   if(!safe(req)){send(res,403,{error:'Только этот компьютер.'});return}
   const path=(req.url||'').split('?')[0];
+  if(req.method==='POST'&&path==='/api/seyveo-index-search'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   try{
+    const q=await readQuestion(req);
+    const results=await searchLocalIndex(q,ROOT);
+    send(res,200,{status:results.length?'local':'empty',query:q,results,external:false});
+   }catch{send(res,400,{error:'Локальный поиск недоступен.'})}
+   return;
+  }
   if(req.method==='GET'&&path==='/api/seyveo-index-status'){
    const docs=await searchLocalIndex('управление клиентскими заявками',ROOT);
    send(res,200,{ready:true,exampleMatches:docs.length});return;
