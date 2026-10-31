@@ -596,6 +596,13 @@ function render(){
     :siteHost.includes('habr.com')?'#133c37'
     :null;
    if(siteTint)pill.style.setProperty('--sb-site-tint',siteTint);
+   // Independent LED under the glass: a light source, not a coloured tab fill.
+   const ledColor=siteHost.includes('wikipedia.org')?'#f3f7ff'
+    :siteHost.includes('ya.ru')||siteHost.includes('yandex.')?'#f4d476'
+    :siteHost.includes('youtube.com')||siteHost==='youtu.be'?'#ff4b62'
+    :siteHost.includes('habr.com')?'#23e8ae'
+    :null;
+   if(ledColor)pill.style.setProperty('--sb-led-color',ledColor);
   }
   const choose=document.createElement('button');choose.type='button';choose.className='sb-browser-tab-select';
   const address=item.entries[item.position];
