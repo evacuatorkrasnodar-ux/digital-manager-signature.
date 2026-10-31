@@ -1060,3 +1060,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  width:0;
  height:0;
 }
+
+/* SEYVEO browser: new-tab glass silhouette matched to the compact reference.
+   Only the + tab is changed; neighbouring tabs and the dock keep their geometry. */
+.seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{
+  border-radius:15px 15px 15px 4px;
+  padding:0 0 6px;
+  border-color:color-mix(in srgb,var(--text,#fff) 19%,transparent);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--text,#fff) 7%,var(--sb-surface)) 0%,var(--sb-surface) 75%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 15%,transparent),inset 0 -7px 12px color-mix(in srgb,var(--bg,#11161b) 24%,transparent);
+}
+@media(max-width:649px){
+ .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-new]{border-radius:14px 14px 14px 4px;padding:0 0 6px}
+}
