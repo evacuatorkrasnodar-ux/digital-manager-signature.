@@ -11,7 +11,7 @@ function load(){
   const raw=JSON.parse(localStorage.getItem(KEY)||'[]');
   if(!Array.isArray(raw))return[];
   return raw.filter(row=>row&&typeof row.q==='string'&&typeof row.a==='string'&&Number.isFinite(row.at))
-   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,3500),at:row.at,kind:row.kind==='draft'?'draft':'reply'}));
+   .slice(-LIMIT).map(row=>({q:row.q.slice(0,3500),a:row.a.slice(0,20000),at:row.at,kind:row.kind==='draft'?'draft':'reply'}));
  }catch{return[]}
 }
 function save(items){
@@ -27,7 +27,7 @@ function recent(limit=30){
 function add({question,answer,kind}){
  const q=String(question||'').trim(),a=String(answer||'').trim();
  if(!q)return false;
- const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,3500),at,kind:kind==='draft'?'draft':'reply'};
+ const at=Date.now(),row={q:q.slice(0,3500),a:a.slice(0,20000),at,kind:kind==='draft'?'draft':'reply'};
  const result=save([...load(),row]);
  if(dialog.open)render();
  return result;
