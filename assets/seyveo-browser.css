@@ -938,7 +938,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  font-size:25px;font-weight:300;line-height:1;
 }
 .seyveo-browser.is-site-view>.seyveo-browser-content{
- position:relative;top:19px;z-index:3;order:4;flex:1;min-height:0;min-width:0;
+ position:relative;top:8px;z-index:3;order:4;flex:1;min-height:0;min-width:0;
  width:calc(100% + 2 * var(--sv-browser-gutter));
  margin-inline:calc(-1 * var(--sv-browser-gutter));
  /* The page continues underneath the floating original SEYVEO dock. */
@@ -1063,7 +1063,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 
 /* At compact widths the rail sits 2px higher; maintain the same 1px overlap. */
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-content{top:17px}
+ .seyveo-browser.is-site-view>.seyveo-browser-content{top:6px}
 }
 
 /* SEYVEO browser: compact, narrow new-tab glass shape.
