@@ -61,8 +61,8 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=52/,'Browser theme stylesheet is refreshed');
-assert.match(html,/assets\/seyveo-browser\.js\?v=40/,'Browser context-aware Sayvi script is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=53/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.js\?v=41/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
 assert.match(browserJS,/slot\.inert=folded/,'Collapsed cards cannot receive keyboard focus');
@@ -93,6 +93,16 @@ const conversationJS=read('assets/living-conversation.js');
 assert.ok(browserDockJS.includes("event.target.closest?.('#assistantButton')"),'Original central Sayvi opens Browser assistant');
 assert.ok(!browserJS.includes('<header class="seyveo-browser-top">'),'Browser does not render a redundant top back arrow');
 assert.ok(browserJS.includes('function goToSeyveoHome()'),'Browser uses SEYVEO Home as the dock house destination');
+assert.ok(browserJS.includes("manager.prepend(switcher)"),'Tabs switcher follows the single shared Browser header');
+assert.ok(!browserJS.includes('sb-manager-brand'),'Tabs manager does not create a duplicate brand or typography');
+assert.ok(!browserJS.includes('data-manager-back'),'Tabs have no redundant top back button');
+assert.ok(browserJS.includes("root.classList.toggle('is-managing',managerOpen)"),'Manager swaps content below the same stationary header');
+assert.ok(browserJS.includes("$('.seyveo-browser-home').hidden=!home&&!managerOpen"),'The original logo stays visible even when tabs open from a webpage');
+assert.ok(css.browser.includes('position:relative;inset:auto;z-index:5'),'Tabs manager participates in normal Browser layout');
+assert.ok(css.browser.includes('.seyveo-browser.is-managing>.seyveo-browser-bar'),'Tabs manager hides the address input but leaves the one header');
+assert.ok(css.browser.includes('height:40px;min-height:40px;border-radius:22px'),'Tabs switcher uses identical slim search-pill height');
+assert.ok(css.browser.includes('.seyveo-browser-manager:not([hidden]){background:transparent;background-image:none}'),'Tabs inherit the exact same theme background');
+
 assert.ok(browserJS.includes("document.getElementById('navHome')?.click()"),'House uses existing SEYVEO Home navigation');
 assert.ok(browserJS.includes('home:goToSeyveoHome'),'House no longer resets the current browser tab');
 assert.ok(browserDockJS.includes("setButton(outer[2],'home','Главная SEYVEO')"),'Dock house is labeled for the real Home destination');
