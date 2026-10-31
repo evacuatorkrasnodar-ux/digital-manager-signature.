@@ -61,7 +61,7 @@ assert.match(css.home,/--sv-home-glass:rgba\(40,37,34,.85\)/,'Shared Home Velvet
 assert.match(css.home,/--home-glass:var\(--sv-home-glass\)/,'Home consumes its shared Velvet material');
 assert.match(css.browser,/var\(--sv-home-glass\)/,'Browser uses the same material as Home');
 assert.match(css.browser,/var\(--sv-life-viewport-gradient,var\(--bg\)\)/,'Browser uses the main viewport gradient');
-assert.match(html,/assets\/seyveo-browser\.css\?v=55/,'Browser theme stylesheet is refreshed');
+assert.match(html,/assets\/seyveo-browser\.css\?v=56/,'Browser theme stylesheet is refreshed');
 assert.match(html,/assets\/seyveo-browser\.js\?v=43/,'Browser context-aware Sayvi script is refreshed');
 const browserJS=read('assets/seyveo-browser.js');
 assert.match(browserJS,/function syncHistoryStack\(/,'Continue Browsing uses a shared expand and collapse state');
@@ -100,14 +100,14 @@ assert.ok(browserJS.includes('else if(managerOpen)tabManager(false);else close()
 assert.ok(browserJS.includes("root.classList.toggle('is-managing',managerOpen)"),'Manager swaps content below the same stationary header');
 assert.ok(browserJS.includes("$('.seyveo-browser-home').hidden=!home&&!managerOpen"),'The original logo stays visible even when tabs open from a webpage');
 assert.ok(css.browser.includes('position:relative;inset:auto;z-index:5'),'Tabs manager participates in normal Browser layout');
-assert.ok(!css.browser.includes('.seyveo-browser.is-managing>.seyveo-browser-bar'),'Search bar stays at the same position on both Browser screens');
-assert.ok(css.browser.includes('.sb-manager-switcher{\n display:grid;grid-template-columns:repeat(4,minmax(0,1fr));'),'Keep the original four-part tab switcher without redesign');
-assert.ok(css.browser.includes('height:40px;min-height:40px;margin-bottom:51px'),'Original tab switcher uses a 91px desktop layout slot');
-assert.ok(css.browser.includes('.sb-manager-switcher{margin-bottom:36px}'),'Original tab switcher occupies same 76px iPhone slot as Quick Access');
-assert.ok(css.browser.includes('.sb-manager-switcher{margin-bottom:33px}'),'Narrow iPhone tab switcher occupies same 73px Quick Access slot');
+assert.ok(css.browser.includes('.seyveo-browser.is-managing>.seyveo-browser-bar'),'On Tabs screen the existing tab switcher replaces search in exactly its slot');
+assert.ok(css.browser.includes('.sb-manager-switcher{\n display:grid;grid-template-columns:repeat(4,minmax(0,1fr));'),'Keep the original four-part tabs control untouched');
+assert.ok(css.browser.includes('height:40px;min-height:40px;margin-bottom:0'),'Search and Tabs panels occupy identical 40px heights with no artificial gap');
+assert.ok(css.browser.includes('.sb-manager-top-heading{display:none}'),'Hide mistakenly added section heading, keeping the original navigation unchanged');
+assert.ok(css.browser.includes('padding:0 0 24px;\n color:var(--text,#edf5ef);'),'Tabs panel has no extra inset relative to search');
+assert.ok(css.browser.includes('.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:20px}'),'Desktop first content heading aligns with Browser start heading');
+assert.ok(css.browser.includes('.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:10px}'),'Mobile first content heading aligns with Quick Access heading');
 assert.ok(!browserJS.includes("['tabs','Вкладки','Страницы']"),'Unrequested second-line labels removed from manager buttons');
-assert.ok(css.browser.includes('.sb-manager-top-heading{margin-bottom:7px}'),'Tabs and quick-access headings share mobile spacing');
-assert.ok(css.browser.includes('.sb-manager-tabs-panel>.sb-manager-heading:first-child{margin-top:11px}'),'Second content group aligns after the tiles on mobile');
 assert.ok(browserJS.includes('if(managerOpen)tabManager(false);navigate(url)'),'Search from Tabs returns to the selected webpage');
 assert.ok(css.browser.includes('.seyveo-browser-manager:not([hidden]){background:transparent;background-image:none}'),'Tabs inherit the exact same theme background');
 
