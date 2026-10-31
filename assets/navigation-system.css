@@ -53,3 +53,24 @@ dialog :is(.info-actions,.personal-task-actions,.paper-actions,.note-read-action
 @media(prefers-reduced-motion:reduce){
  button.sv-nav-done,button.sv-nav-back{transition:none!important}
 }
+
+/* Main SEYVEO dock · icon-only alignment. The central voice button is unchanged. */
+footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > span{
+ display:none!important;
+}
+footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage){
+ display:flex!important;
+ flex-direction:row!important;
+ justify-content:center!important;
+ align-items:center!important;
+ gap:0!important;
+ padding:0!important;
+ min-height:48px;
+}
+footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > svg{
+ display:block!important;
+ flex:none!important;
+ width:25px!important;
+ height:25px!important;
+ margin:0 auto!important;
+}
