@@ -1252,3 +1252,86 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   width:38px;min-width:38px;height:40px;
  }
 }
+
+
+/* Magnetic SEYVEO Browser: three discreet snap positions.
+   The thin graphite edge owns the drag, never the web page or its scrolling. */
+.seyveo-browser.is-site-view .sb-browser-sitebar{
+ touch-action:none;
+ user-select:none;
+ -webkit-user-select:none;
+}
+.seyveo-browser.is-site-view .sb-browser-magnetic-grip{
+ position:absolute;top:0;left:50%;z-index:7;
+ transform:translateX(-50%) translateY(var(--sb-magnet-pull,0px));
+ display:grid;place-items:center;
+ width:88px;min-width:88px;height:18px;min-height:18px;
+ padding:0;margin:0;border:0;border-radius:0 0 12px 12px;
+ background:transparent;color:inherit;cursor:ns-resize;touch-action:none;
+ transition:transform .17s ease;
+}
+.seyveo-browser.is-site-view .sb-browser-magnetic-grip span,
+.seyveo-browser .sb-browser-home-grip span{
+ width:45px;height:3px;display:block;
+ background:color-mix(in srgb,var(--text,#e8f0ec) 39%,transparent);
+ border-radius:999px;
+ box-shadow:0 1px 0 rgba(0,0,0,.10);
+}
+.seyveo-browser.is-site-view .sb-browser-magnetic-grip:focus-visible{
+ outline:2px solid var(--sb-accent);outline-offset:-2px;
+}
+.seyveo-browser .sb-browser-home-grip{
+ flex:0 0 19px;align-self:center;
+ display:grid;place-items:center;
+ height:19px;min-height:19px;width:90px;
+ border:0;padding:0;margin:0;
+ background:transparent;border-radius:12px;
+ transform:translateY(var(--sb-magnet-pull,0px));
+ cursor:ns-resize;touch-action:none;transition:transform .17s ease;
+}
+.seyveo-browser .sb-browser-home-grip[hidden]{display:none!important}
+
+/* Immersive: the webpage takes the screen; only a magnetic edge stays accessible.
+   The existing native dock returns automatically in the intermediate position. */
+body.seyveo-browser-open .seyveo-browser.is-immersive{
+ gap:0;padding-top:max(4px,env(safe-area-inset-top,0px));
+ padding-left:0;padding-right:0;
+ padding-bottom:max(0px,env(safe-area-inset-bottom,0px));
+}
+.seyveo-browser.is-immersive::before{display:none}
+.seyveo-browser.is-immersive>.seyveo-browser-home,
+.seyveo-browser.is-immersive>.seyveo-browser-bar,
+.seyveo-browser.is-immersive>.seyveo-browser-tabs{
+ display:none!important;
+}
+.seyveo-browser.is-site-view.is-immersive>.seyveo-browser-content{
+ top:0;margin:0;width:100%;height:auto;min-height:0;
+ flex:1 1 0;border:0;border-radius:0;
+ box-shadow:none;overflow:hidden;
+}
+.seyveo-browser.is-site-view.is-immersive .sb-browser-sitebar{
+ height:22px;min-height:22px;max-height:22px;
+ flex:0 0 22px;padding:0;gap:0;
+ border:0;border-radius:0;box-shadow:none;
+ background:color-mix(in srgb,var(--bg,#11161b) 83%,#303a3e);
+}
+.seyveo-browser.is-site-view.is-immersive .sb-browser-sitebar-menu-button,
+.seyveo-browser.is-site-view.is-immersive .sb-browser-sitebar-search-button,
+.seyveo-browser.is-site-view.is-immersive .sb-browser-sitebar-title{
+ display:none!important;
+}
+.seyveo-browser.is-site-view.is-immersive .sb-browser-magnetic-grip{
+ top:0;height:22px;min-height:22px;
+}
+.seyveo-browser.is-site-view.is-immersive .seyveo-browser-content>iframe{
+ flex:1 1 0;min-height:0;
+}
+body.seyveo-browser-open.seyveo-browser-immersive footer.dock{
+ opacity:0;pointer-events:none;
+ transform:translateY(110%);
+}
+@media(prefers-reduced-motion:reduce){
+ .seyveo-browser .sb-browser-home-grip,
+ .seyveo-browser.is-site-view .sb-browser-magnetic-grip,
+ body.seyveo-browser-open.seyveo-browser-immersive footer.dock{transition:none}
+}
