@@ -24,6 +24,7 @@ import {createLearningQueue} from './learning-queue.mjs';
 import {createVoiceWorker} from './voice-worker.mjs';
 import {createBraveContextProvider,searchWithSources} from './live-search.mjs';
 import {createSeyveoWebProvider} from './seyveo-web.mjs';
+import {searchLocalIndex} from './seyveo-index.mjs';
 import {planPublicResearch,reviewPublicSources} from './intelligence/research-planner.mjs';
 import {composeEvidenceBrief} from './intelligence/evidence-brief.mjs';
 
