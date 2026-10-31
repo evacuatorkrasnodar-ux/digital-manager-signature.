@@ -247,7 +247,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .seyveo-browser-top{min-height:40px}
  .seyveo-browser-home{min-height:70px;max-height:80px}
  .seyveo-browser-start{padding-top:6px;padding-bottom:5px}
- .seyveo-browser-bar{min-height:54px;max-height:58px;margin-top:0;padding-top:4px;padding-bottom:4px}
+ .seyveo-browser-bar{height:54px;min-height:54px;max-height:54px;margin-top:0;padding-top:4px;padding-bottom:4px}
  .seyveo-browser-start-heading{margin-bottom:7px}
  .seyveo-browser-shortcuts{
   gap:8px;display:grid;grid-template-columns:none;
