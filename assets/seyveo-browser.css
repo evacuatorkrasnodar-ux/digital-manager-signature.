@@ -1075,3 +1075,13 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   padding:0;
  }
 }
+
+/* Match every site tab's corner silhouette to the + tab, without changing tab size. */
+.seyveo-browser.is-site-view .seyveo-browser-tab{
+ border-radius:11px 11px 11px 3px;
+}
+@media(max-width:649px){
+ .seyveo-browser.is-site-view .seyveo-browser-tab{
+  border-radius:10px 10px 10px 3px;
+ }
+}
