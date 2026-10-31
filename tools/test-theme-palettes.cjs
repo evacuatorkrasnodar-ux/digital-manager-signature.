@@ -96,6 +96,7 @@ assert.ok(browserJS.includes('function goToSeyveoHome()'),'Browser uses SEYVEO H
 assert.ok(browserJS.includes("manager.prepend(switcher)"),'Tabs switcher follows the single shared Browser header');
 assert.ok(!browserJS.includes('sb-manager-brand'),'Tabs manager does not create a duplicate brand or typography');
 assert.ok(!browserJS.includes('data-manager-back'),'Tabs have no redundant top back button');
+assert.ok(browserJS.includes('else if(managerOpen)tabManager(false);else close()'),'Escape returns from Tabs rather than closing Browser');
 assert.ok(browserJS.includes("root.classList.toggle('is-managing',managerOpen)"),'Manager swaps content below the same stationary header');
 assert.ok(browserJS.includes("$('.seyveo-browser-home').hidden=!home&&!managerOpen"),'The original logo stays visible even when tabs open from a webpage');
 assert.ok(css.browser.includes('position:relative;inset:auto;z-index:5'),'Tabs manager participates in normal Browser layout');
