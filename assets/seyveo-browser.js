@@ -320,10 +320,14 @@ function render(){
  }
  const recentHome=root.querySelector('.sb-home-recent-tabs'),recentGrid=root.querySelector('[data-home-recent-tabs]');
  recentGrid.replaceChildren();
- const openTabs=tabs.filter(tab=>tab.entries[tab.position]).slice(-4).reverse();
- recentHome.hidden=openTabs.length===0;
- for(const tab of openTabs.slice(0,2)){
-  const address=tab.entries[tab.position],host=new URL(address).hostname.replace(/^www[.]/,''),name=siteName(address);
+ const liveTabs=tabs.filter(tab=>tab.entries[tab.position]).slice().reverse();
+ const recentEntries=liveTabs.map(tab=>({url:tab.entries[tab.position],tabId:tab.id}));
+ for(const address of historyItems()){
+  if(!recentEntries.some(entry=>entry.url===address))recentEntries.push({url:address,tabId:null});
+ }
+ recentHome.hidden=recentEntries.length===0;
+ for(const entry of recentEntries.slice(0,2)){
+  const address=entry.url,host=new URL(address).hostname.replace(/^www[.]/,''),name=siteName(address);
   const tile=document.createElement('article');tile.className='sb-home-recent-card';
   const jump=document.createElement('button');jump.type='button';jump.className='sb-home-recent-open';jump.setAttribute('aria-label','Открыть '+name);
   const mark=document.createElement('span');mark.className='sb-home-recent-symbol';mark.textContent=siteSymbol(address);
@@ -333,10 +337,10 @@ function render(){
   const title=document.createElement('strong');title.textContent=name;
   const sub=document.createElement('small');sub.textContent=host;
   info.append(title,sub);jump.append(mark,info);
-  jump.addEventListener('click',()=>{active=tab.id;render()});
+  jump.addEventListener('click',()=>{if(entry.tabId!==null){active=entry.tabId;render()}else navigate(address)});
   const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='sb-home-recent-close';
-  closeButton.textContent='×';closeButton.setAttribute('aria-label','Закрыть '+name);
-  closeButton.addEventListener('click',()=>closeTab(tab.id));
+  closeButton.textContent='×';closeButton.setAttribute('aria-label',entry.tabId!==null?'Закрыть вкладку '+name:'Убрать из недавних '+name);
+  closeButton.addEventListener('click',()=>{if(entry.tabId!==null){closeTab(entry.tabId)}else{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(url=>url!==address)))}catch{}render()}});
   tile.append(jump,closeButton);recentGrid.append(tile);
  }
  tabArea.replaceChildren();
