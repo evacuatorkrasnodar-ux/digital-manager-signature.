@@ -14,7 +14,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <div class="seyveo-browser-sheet" hidden><div class="seyveo-browser-sheet-bar"><strong>Избранное</strong><button type="button" data-dismiss>Готово</button></div><div data-bookmark-list></div></div>`;
 // Embedded websites keep their sandbox; do not add allow-same-origin with allow-scripts.
 document.body.append(root);
-const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading"><strong>Недавно закрытые</strong><button type="button" data-recent-all hidden>Показать все ›</button></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
+const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading sb-manager-recent-heading"><strong>Недавно закрытые</strong><span class="sb-manager-recent-actions"><button type="button" data-recent-all hidden>Показать все ›</button><button type="button" data-recent-clear hidden aria-label="Очистить недавно закрытые">Очистить</button></span></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
 root.append(manager);
 const switcher=document.createElement('nav');switcher.className='sb-manager-switcher';switcher.setAttribute('aria-label','Разделы браузера');
 const sections=[['tabs','Вкладки'],['favorites','Избранное'],['history','История'],['collections','Коллекции']];
@@ -277,11 +277,12 @@ function toggleTabDetails(id){
 }
 /* Reuse Quiet Cinema's animated stacked disclosure for recently closed tabs. */
 function syncClosedStack(){
- const closed=manager.querySelector('[data-manager-closed]'),toggle=manager.querySelector('[data-recent-all]');
+ const closed=manager.querySelector('[data-manager-closed]'),toggle=manager.querySelector('[data-recent-all]'),clear=manager.querySelector('[data-recent-clear]');
  const slots=closed.querySelectorAll('.sb-closed-slot');
  const expandable=slots.length>1,expanded=expandable&&allClosedShown;
  closed.id='seyveoRecentlyClosedList';
  toggle.hidden=!expandable;
+ clear.hidden=!slots.length;
  toggle.textContent=expanded?'Свернуть':'Показать все ›';
  toggle.setAttribute('aria-controls',closed.id);
  toggle.setAttribute('aria-expanded',String(expanded));
@@ -354,7 +355,15 @@ function renderManager(){
   restore.textContent='↶';restore.setAttribute('aria-label','Восстановить '+siteName(url));restore.title='Восстановить страницу';
   const restorePage=()=>{recentlyClosed=recentlyClosed.filter(x=>x.url!==url);const t={id:nextId++,entries:[url],position:0};tabs.push(t);active=t.id;tabManager(false);render()};
   restore.addEventListener('click',restorePage);body.addEventListener('click',restorePage);
-  row.append(icon,body,restore);slot.append(row);closed.append(slot);
+  const remove=document.createElement('button');remove.type='button';remove.className='sb-closed-delete';
+  remove.setAttribute('aria-label','Удалить из недавно закрытых: '+siteName(url));
+  remove.title='Удалить запись';remove.textContent='×';
+  remove.addEventListener('click',()=>{
+   recentlyClosed=recentlyClosed.filter(x=>x.url!==url);
+   if(recentlyClosed.length<2)allClosedShown=false;
+   persistSession();renderManager();
+  });
+  row.append(icon,body,restore,remove);slot.append(row);closed.append(slot);
  }
  syncClosedStack();
  const entries=getCollections();
@@ -634,6 +643,11 @@ root.addEventListener('touchend',event=>{
 root.addEventListener('touchcancel',()=>{edgeSwipe=null},{passive:true});
 function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
 manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;syncClosedStack()});
+manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
+ if(!recentlyClosed.length)return;
+ if(!window.confirm('Очистить список недавно закрытых вкладок? Открытые вкладки, история и избранное останутся.'))return;
+ recentlyClosed=[];allClosedShown=false;persistSession();renderManager();
+});
 manager.querySelector('[data-collection-new]').addEventListener('click',makeCollection);
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClosedShown=false;for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
