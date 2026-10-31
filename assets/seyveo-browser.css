@@ -235,7 +235,27 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .seyveo-browser-continue{margin-top:17px}
 .seyveo-browser-history-top,.seyveo-browser-history-head{min-height:65px}
 @media(min-height:850px){.seyveo-browser-home{min-height:110px;max-height:120px}.seyveo-browser-start{padding-top:16px}}
-@media(max-width:420px){.seyveo-browser-home{min-height:88px;max-height:100px}.seyveo-browser-shortcuts button{min-height:88px}.seyveo-browser-start{padding-top:9px}}
+/* iPhone layout: keep the original scale and interactions, close vertical gaps.
+   One responsive rule in the existing rhythm section, not a second painted layer. */
+@media(max-width:600px){
+ .seyveo-browser{gap:6px;padding-left:clamp(10px,3vw,16px);padding-right:clamp(10px,3vw,16px)}
+ .seyveo-browser-top{min-height:40px}
+ .seyveo-browser-home{min-height:70px;max-height:80px}
+ .seyveo-browser-start{padding-top:6px;padding-bottom:5px}
+ .seyveo-browser-bar{min-height:54px;max-height:58px;margin-top:0;padding-top:4px;padding-bottom:4px}
+ .seyveo-browser-start-heading{margin-bottom:7px}
+ .seyveo-browser-shortcuts{gap:8px}
+ .seyveo-browser-shortcuts button{min-height:76px;padding:6px 3px;gap:4px}
+ .seyveo-browser-continue{margin-top:11px}
+ .seyveo-browser-history-top,.seyveo-browser-history-head{min-height:61px}
+ .seyveo-browser-history-head{padding:7px 10px}
+ .seyveo-browser-history-menu{min-height:61px}
+}
+@media(max-width:380px){
+ .seyveo-browser-home{min-height:66px;max-height:75px}
+ .seyveo-browser-shortcuts{gap:6px}
+ .seyveo-browser-shortcuts button{min-height:73px;padding:5px 2px}
+}
 
 /* SEYVEO Browser · Black Velvet tab overview. One shared native dock. */
 .seyveo-browser-manager[hidden],.sb-manager-tabs-panel[hidden],.sb-manager-secondary[hidden]{display:none!important}
@@ -473,12 +493,11 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 @media(prefers-reduced-motion:reduce){.sb-manager-switcher button,.sb-tab-context{transition:none}}
 
 
-/* Keep the separate Recent Tabs row at the bottom of the home content, above the original dock. */
+/* Recent Tabs follows Continue Browsing naturally, never pinned to the bottom. */
 .seyveo-browser-start:not([hidden]){display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
-.seyveo-browser-start:not([hidden])>.sb-home-recent-tabs{margin-top:auto;padding-top:22px}
 /* Recent tabs: low Quiet-Cinema glass tiles in a native horizontal swipe rail.
    No arrow controls, no artificial scrolling or JS pointer interception. */
-.sb-home-recent-tabs{margin-top:18px;padding-bottom:11px;min-width:0}
+.sb-home-recent-tabs{margin-top:12px;padding-bottom:8px;min-width:0}
 .sb-home-recent-tabs[hidden]{display:none!important}
 .sb-home-recent-tabs>.seyveo-browser-start-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sb-home-recent-grid{
