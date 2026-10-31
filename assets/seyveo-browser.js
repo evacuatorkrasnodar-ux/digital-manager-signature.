@@ -22,6 +22,7 @@ const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 const key='seyveo-browser-bookmarks-v1';
 let showAllHistory=false;
+let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
 function historyItems(){try{const a=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(a)?a.filter(x=>typeof x==='string'&&secureUrl(x)).slice(0,24):[]}catch{return []}}
 function remember(url){try{localStorage.setItem(historyKey,JSON.stringify([url,...historyItems().filter(x=>x!==url)].slice(0,24)))}catch{}}
@@ -45,7 +46,23 @@ function render(){
  $('[data-bookmark]').disabled=!url;$('[data-external]').disabled=!url;
  $('[data-bookmark]').textContent=url&&saved().includes(url)?'★':'☆';
  document.dispatchEvent(new Event('seyveo:browser-state'));
- const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();const toggle=$('[data-history-toggle]');toggle.hidden=items.length<2;toggle.textContent=showAllHistory?'Свернуть':'Показать все ›';const selected=showAllHistory?items:items.slice(0,1);if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Здесь появятся сайты, которые ты откроешь';contList.append(msg)}for(const link of selected){const b=document.createElement('button');b.type='button';b.className='seyveo-browser-continue-card';const icon=document.createElement('span');icon.textContent='↗';const group=document.createElement('span');const title=document.createElement('strong');title.textContent=new URL(link).hostname;const sub=document.createElement('small');sub.textContent=link;group.append(title,sub);b.append(icon,group);b.addEventListener('click',()=>navigate(link));contList.append(b)}
+ const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();const toggle=$('[data-history-toggle]');toggle.hidden=items.length<2;toggle.textContent=showAllHistory?'Свернуть':'Показать все ›';
+ const selected=showAllHistory?items:items.slice(0,3);
+ if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
+ for(const link of selected){
+  const host=new URL(link).hostname;const card=document.createElement('article');card.className='seyveo-browser-history-card';
+  const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-expanded',String(expandedHistory===link));
+  const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.textContent=host[0].toUpperCase();
+  const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=host;const sub=document.createElement('small');sub.textContent=link;words.append(title,sub);
+  const chevron=document.createElement('span');chevron.className='seyveo-browser-history-chevron';chevron.textContent='⌄';head.append(logo,words,chevron);
+  const actions=document.createElement('div');actions.className='seyveo-browser-history-actions';actions.hidden=expandedHistory!==link;
+  const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
+  action('Открыть',()=>navigate(link));
+  action(saved().includes(link)?'Убрать закладку':'В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
+  action('Убрать',()=>{try{localStorage.setItem(historyKey,JSON.stringify(historyItems().filter(x=>x!==link)))}catch{}if(expandedHistory===link)expandedHistory=null;render()});
+  head.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
+  card.append(head,actions);contList.append(card);
+ }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
  const choose=document.createElement('button');choose.type='button';choose.textContent=item.entries[item.position]?new URL(item.entries[item.position]).hostname:'Новая вкладка';choose.addEventListener('click',()=>{active=item.id;render()});
