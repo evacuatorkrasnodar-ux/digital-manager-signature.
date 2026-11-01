@@ -25,3 +25,20 @@ The independent SEYVEO Browser must offer all five existing app themes, with ide
 The pure module `mobile/src/browser/browser-themes.mjs` represents these identities for future native and standalone shells. It is **not yet bound to a settings UI or a native render tree**, and does not duplicate the real color/glass/LED CSS tokens. A native implementation should reuse the design values established by the web prototype, including site-colored active tab LEDs, a grey glass navigation strip, and white readable text where required. Site content itself is not recolored.
 
 No separate browser theme or palette defaults should silently override an explicit choice made by the user. For embedded Browser the theme follows SEYVEO's app settings; for standalone Browser it uses its own locally stored choice, optionally linked with SEYVEO after explicit account sync consent.
+
+## Загрузки · первый этап (01.11.2026)
+
+В отдельной ветке создана **нативная основа**, не выдавать за подключённую функцию действующего веб-прототипа:
+
+- `mobile/src/browser/browser-download-core.mjs` — правила безопасного запроса, имя файла без переходов по каталогам, тип файла, состояния и реальные события прогресса; `*.d.mts` — типы.
+- `mobile/src/browser/expo-browser-download-storage.mjs` — загрузка в собственную папку приложения (`Paths.document`), временный файл до успешного завершения, запись локального каталога, удаление ошибочных/неполных загрузок, список после перезапуска, открытие через системный preview **только по нажатию**.
+- `mobile/src/browser/BrowserDownloadsPanel.tsx` — первый нативный интерфейс списка/ссылки/скачивания/прогресса/предпросмотра/удаления; цвета передаёт существующий тематический shell, чтобы использовать **все пять тем**, без отдельного визуального оформления.
+- Размер одной загрузки для этого раннего этапа ограничен **75 МБ**. При доступных сигналах загрузки запрос прерывается при превышении лимита; после завершения размер проверяется повторно. Это не потоковая антивирусная проверка и не абсолютная защита от трафика при задержанных событиях.
+- Принимаются прямые HTTPS-ссылки на обычные имена хостов. Ссылки `http:`, `file:`, `blob:`, локальные адреса и URL с учётными данными отклоняются. Авторизованные вложения/сайты, cookie-зависимые загрузки, POST, `Content-Disposition` и пересылка из WebView требуют отдельного этапа.
+- Копии файлов хранятся локально в папке приложения, не передаются в облако SEYVEO автоматически. В имени файла и локальных метаданных могут содержаться чувствительные сведения. Перед публичным выпуском проверить модель шифрования, исключение из резервного копирования при необходимости, приватный режим, экспорт в «Файлы» и безопасное удаление.
+- Сэйви **не получает содержимое скачанного автоматически**. Будущий анализ PDF/документа только после явного выбора пользователем, с предупреждением о возможной отправке текста в разрешённый ИИ-сервис.
+- У панели нет собственного окна авторизации и подписки: локальные загрузки **бесплатны** и для гостей. Не запускать автоматически скачивания из WebView-сообщений неизвестных сайтов.
+
+### Ещё НЕ сделано
+
+Нативный браузер `mobile/App.tsx` пока не использует WebView, и панель загрузок пока не подключена к навигации. Текущий красивый встроенный веб-прототип (`assets/seyveo-browser.*`) намеренно **не изменён**. Прямая работа с реальными ссылками, кнопка скачивания в открытом сайте, системное сохранение/экспорт в папки пользователя, загрузки из сайтов с авторизацией и проверки на реальных устройствах остаются в очереди. Модульные smoke-проверки чистой модели **не заменяют** тест на iPhone и Android. Будущая интеграция с `react-native-webview` должна соблюдать ограничения платформ и учитывать, что `onFileDownload` доступен на iOS, а Android требует отдельной реализации.
