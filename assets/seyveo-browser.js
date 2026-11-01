@@ -6,7 +6,7 @@ const root=document.createElement('section');
 root.id='seyveoBrowser';root.className='seyveo-browser';root.hidden=true;
 root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','SEYVEO Browser');
 root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
-<form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><button type="button" class="sb-browser-open-panel" data-browser-menu aria-label="Вкладки, история и избранное" aria-controls="seyveoBrowserManagerPanel" aria-expanded="false" title="Управление браузером"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
+<form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
 <div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-label="Открыть полную историю">Вся история ›</button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Управление браузером" aria-expanded="false" aria-controls="seyveoBrowserManagerPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
@@ -67,7 +67,9 @@ const notice=root.querySelector('.seyveo-browser-blocked');
 // Styling belongs to the Browser stylesheet so all three native themes apply.
 const embedExplanation=notice.querySelector('p');
 const $=s=>root.querySelector(s),input=root.querySelector('input'),frame=root.querySelector('iframe'),tabArea=$('[data-tabs]');
-const sitebar=$('.sb-browser-sitebar'),siteMenuButton=$('[data-site-menu]'),mainMenuButton=$('[data-browser-menu]');
+const sitebar=$('.sb-browser-sitebar'),siteMenuButton=$('[data-site-menu]');
+// Reuse the ONE original grey navigation strip on both the home and web views.
+$('.seyveo-browser-tabs').after(sitebar);
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
@@ -291,7 +293,6 @@ function tabManager(value=true){
  panelScrim.hidden=!managerOpen;
  root.classList.toggle('is-panel-open',managerOpen);
  siteMenuButton.setAttribute('aria-expanded',String(managerOpen));
- mainMenuButton.setAttribute('aria-expanded',String(managerOpen));
  if(managerOpen){manager.scrollTop=0;renderManager();}
  else if(!root.hidden)render();
 }
@@ -565,8 +566,8 @@ function render(){
  // Never substitute fabricated article text into another live website.
  const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
  const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
- sitebar.hidden=home;
- if(url)$('[data-site-title]').textContent=siteBrand(url)==='habr'?'Хабр':siteName(url);
+ sitebar.hidden=false;
+ $('[data-site-title]').textContent=home?'Главная':siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
  $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
@@ -782,7 +783,6 @@ function toggleBrowserPanel(){
  tabManager(!managerOpen);
 }
 siteMenuButton.addEventListener('click',toggleBrowserPanel);
-mainMenuButton.addEventListener('click',toggleBrowserPanel);
 panelHeader.querySelector('[data-manager-dismiss]').addEventListener('click',()=>tabManager(false));
 panelScrim.addEventListener('click',()=>tabManager(false));
 $('[data-site-search]').addEventListener('click',()=>{if(managerOpen)tabManager(false);input.focus();input.select()});
