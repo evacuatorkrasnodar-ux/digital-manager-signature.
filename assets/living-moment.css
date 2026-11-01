@@ -415,17 +415,16 @@
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
 /* Three cards become one MAIN card — keep all three actual task elements.
-   Flat graphite layers, a single thin outline, no cloned glass overlays. */
+   Opaque white paper with thin double optical edges, without gray underlay. */
 #seyveoLivingMoment.lm-preview .lm-field{
-  /* First material test: warm porcelain paper enclosed beneath clear glass.
-     Local ink tokens preserve contrast independently of Black Velvet theme. */
-  --text:#24323a;
-  --secondary:#58676d;
-  --soft-line:rgba(67,90,98,.16);
-  /* v2: lighter paper between panes; lower-glass gradient stays soft. */
-  --lm-paper-glaze:linear-gradient(165deg,rgba(255,255,255,.43) 0%,rgba(255,255,255,.10) 35%,transparent 66%);
-  --lm-paper-sheet:linear-gradient(145deg,rgba(253,254,253,.92) 0%,rgba(249,251,249,.87) 52%,rgba(240,246,243,.82) 100%);
-  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.69),inset 0 0 0 1px rgba(255,255,255,.13),inset 0 -3px 9px -8px rgba(91,112,112,.22),0 4px 13px rgba(0,0,0,.07);
+  /* True paper with its own readable ink in every SEYVEO theme. */
+  --text:#22333c;
+  --secondary:#495c65;
+  --soft-line:rgba(75,99,108,.17);
+  /* v3: opaque paper; glass reflections now live only at the rim. */
+  --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
+  --lm-paper-sheet:linear-gradient(170deg,#fff 0%,#fcfdfd 56%,#f8fbfa 100%);
+  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.98),inset 0 0 0 1px rgba(255,255,255,.58),inset 0 -1px 0 rgba(122,148,155,.14),0 3px 12px rgba(0,12,22,.075);
   color:var(--text);
   border:1px solid transparent;
   border-radius:22px;
@@ -438,7 +437,7 @@
   position:relative;isolation:isolate;
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid rgba(92,111,116,.19);
+  border:1px solid rgba(135,157,165,.34);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
@@ -448,44 +447,41 @@
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid rgba(92,111,116,.19);
+  border:1px solid rgba(135,157,165,.34);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   isolation:isolate;
-  border-color:rgba(92,111,116,.19);
+  border-color:rgba(135,157,165,.34);
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
   padding:7px 9px 5px;
 }
-/* Browser tab optics translated to white porcelain: a second clear pane,
-   then an inner glass-cut outline, not another opaque card or an LED.
-   Both layers are click-through and leave the original motion untouched. */
+/* Browser-style double glass rim: two narrow transparent hairlines,
+   no opaque overlay, fake LED, new card or hit-test interference. */
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::before,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::before,
 #homePage #dynamic .decision-card[data-owner-advice]::before{
-  content:"";position:absolute;
-  top:1px;right:1px;bottom:1px;left:1px;
-  width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
-  border:1px solid rgba(78,107,109,.065);
-  border-radius:inherit;
-  background:
-    radial-gradient(ellipse 95% 100% at 50% -30%,rgba(255,255,255,.30),transparent 78%),
-    linear-gradient(180deg,rgba(255,255,255,.10),transparent 33%,rgba(99,129,125,.037));
-  box-shadow:inset 0 1px 2px rgba(255,255,255,.25),inset 0 -1px 2px rgba(93,118,115,.055);
+   content:"";position:absolute;
+   top:1px;right:1px;bottom:1px;left:1px;
+   width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
+   border:1px solid rgba(255,255,255,.78);
+   border-radius:inherit;
+   background:linear-gradient(180deg,rgba(255,255,255,.10),transparent 12%,transparent 90%,rgba(125,147,153,.012));
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.72),inset 0 -1px 0 rgba(119,146,153,.065);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
 #homePage #dynamic .decision-card[data-owner-advice]::after{
-  content:"";position:absolute;
-  top:3px;right:3px;bottom:3px;left:3px;
-  z-index:0;pointer-events:none;
-  border-radius:15px;
-  border:1px solid rgba(255,255,255,.34);
-  background:linear-gradient(155deg,rgba(255,255,255,.065),transparent 42%);
-  box-shadow:0 0 0 1px rgba(90,113,113,.034),inset 0 1px 0 rgba(255,255,255,.19);
+   content:"";position:absolute;
+   top:3px;right:3px;bottom:3px;left:3px;
+   z-index:0;pointer-events:none;
+   border-radius:15px;
+   border:1px solid rgba(133,160,169,.16);
+   background:none;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.50);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item) > *,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field > *,
@@ -520,10 +516,10 @@
   transition-delay:0ms;
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item){
-  border-color:rgba(59,75,96,.16);
+  border-color:rgba(135,157,165,.28);
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:rgba(59,75,96,.18);
+  border-color:rgba(135,157,165,.28);
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
@@ -564,20 +560,20 @@
 #homePage #dynamic .decision-card[data-owner-advice]{
   /* Real recommendation keeps same white insert, original button handlers. */
   position:relative;isolation:isolate;
-  --text:#24323a;
-  --secondary:#58676d;
-  --soft-line:rgba(67,90,98,.16);
+  --text:#22333c;
+  --secondary:#495c65;
+  --soft-line:rgba(75,99,108,.17);
   animation:lm-owner-arrive 890ms cubic-bezier(.22,1,.36,1) both!important;
   margin:0!important;
   padding:14px 12px 12px!important;
   color:var(--text)!important;
   background:
-    linear-gradient(165deg,rgba(255,255,255,.43),rgba(255,255,255,.10) 35%,transparent 66%),
-    linear-gradient(145deg,rgba(253,254,253,.92),rgba(249,251,249,.87) 52%,rgba(240,246,243,.82))!important;
-  border:1px solid rgba(92,111,116,.19)!important;
+    linear-gradient(180deg,rgba(255,255,255,.16),transparent 16%,transparent 84%,rgba(127,151,157,.016)),
+    linear-gradient(170deg,#fff 0%,#fcfdfd 56%,#f8fbfa 100%)!important;
+  border:1px solid rgba(135,157,165,.34)!important;
   border-radius:22px!important;
   outline:0!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.69),inset 0 0 0 1px rgba(255,255,255,.13),inset 0 -3px 9px -8px rgba(91,112,112,.22),0 4px 13px rgba(0,0,0,.07)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.98),inset 0 0 0 1px rgba(255,255,255,.58),inset 0 -1px 0 rgba(122,148,155,.14),0 3px 12px rgba(0,12,22,.075)!important;
 }
 #homePage #dynamic .decision-card[data-owner-advice] .event-icon{
   display:none!important;
