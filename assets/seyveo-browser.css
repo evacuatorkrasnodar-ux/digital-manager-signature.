@@ -1553,3 +1553,53 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  max-width:52ch;margin:13px 7px 5px;
  font-size:12px;line-height:1.65;white-space:normal;
 }
+
+/* Quiet Favorites folders and recent History entries.
+   Reuse approved Black Velvet palette tokens in all five themes. */
+.seyveo-browser .sb-browser-folder-bar,
+.seyveo-browser .sb-browser-recent-toolbar{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ min-height:33px;margin:7px 2px 4px;
+ color:var(--text);font-size:12px;font-weight:500;
+}
+.seyveo-browser .sb-browser-folder-bar button,
+.seyveo-browser .sb-browser-recent-toolbar button{
+ display:grid;place-items:center;min-height:32px;padding:4px 11px;
+ border:1px solid var(--sv-home-outline);border-radius:11px;
+ color:var(--text);font-size:12px;background:transparent;
+}
+.seyveo-browser .sb-browser-folder-row,
+.seyveo-browser .sb-browser-recent-row{
+ display:flex;align-items:center;gap:10px;min-height:43px;
+ margin:2px 0;padding:5px 9px;
+ border-bottom:1px solid var(--sv-home-outline);
+ background:transparent;color:var(--text);
+}
+.seyveo-browser .sb-browser-folder-row{width:100%;text-align:left}
+.seyveo-browser .sb-browser-folder-icon{
+ width:22px;height:22px;flex:none;display:grid;place-items:center;
+ color:var(--text);opacity:.78;
+}
+.seyveo-browser .sb-browser-folder-icon svg{width:20px;height:20px}
+.seyveo-browser .sb-browser-folder-name{
+ flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;font-size:13px;
+}
+.seyveo-browser .sb-browser-folder-row small{
+ color:var(--text);opacity:.55;font-size:11px;
+}
+.seyveo-browser .sb-browser-favorites-caption{
+ margin:15px 3px 5px;color:var(--text);opacity:.64;font-size:11px;
+}
+.seyveo-browser .sb-browser-recent-open{
+ flex:1;min-width:0;text-align:left;overflow:hidden;
+ text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text);
+}
+.seyveo-browser .sb-browser-recent-remove{
+ display:grid;place-items:center;flex:none;width:34px;height:34px;
+ color:var(--text);opacity:.72;font-size:19px;
+}
+.seyveo-browser .sb-folder-back{margin-right:auto}
+.seyveo-browser :is(.sb-browser-folder-row,.sb-browser-recent-open,.sb-browser-recent-remove,.sb-browser-folder-bar button,.sb-folder-back):focus-visible{
+ outline:2px solid var(--sb-accent);outline-offset:1px;
+}
