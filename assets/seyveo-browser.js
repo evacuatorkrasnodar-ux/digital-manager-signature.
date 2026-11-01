@@ -879,7 +879,7 @@ function askSayvi(){
  root.hidden=true;
  document.body.classList.remove('seyveo-browser-open');
  document.dispatchEvent(new Event('seyveo:browser-close'));
- window.SEYVEO_CONVERSATION.open();
+ window.SEYVEO_CONVERSATION.open({source:'browser'});
  if(!document.documentElement.classList.contains('seyveo-conversation')){
   resumeAfterSayvi();
   return false;
