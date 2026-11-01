@@ -8,7 +8,7 @@
  */
 import * as Crypto from 'expo-crypto';
 import {Directory,File,Paths} from 'expo-file-system';
-import {BROWSER_DOWNLOAD_MAX_BYTES} from './browser-download-core.mjs';
+import {BROWSER_DOWNLOAD_MAX_BYTES,describeBrowserDownload,safeBrowserDownloadName} from './browser-download-core.mjs';
 
 const root = () => new Directory(Paths.document,'seyveo-browser-downloads');
 const validId = value => typeof value==='string' &&
@@ -19,7 +19,8 @@ const info = id => new File(root(),id+'.json');
 const clean = entry => {
   if (!entry || typeof entry !== 'object' || !validId(entry.id) ||
       entry.status !== 'complete' || typeof entry.name!=='string' ||
-      entry.name.length>100 || typeof entry.category!=='string' ||
+      entry.name.length>100 || safeBrowserDownloadName(entry.name)!==entry.name ||
+      typeof entry.category!=='string' ||
       typeof entry.bytes!=='number' || !Number.isFinite(entry.bytes) ||
       entry.bytes<0 || entry.bytes>BROWSER_DOWNLOAD_MAX_BYTES ||
       !Number.isSafeInteger(entry.savedAt)) return null;
@@ -47,6 +48,11 @@ export function createExpoBrowserDownloadStorage(){
     async download(request){
       if (!request || typeof request.url!=='string' ||
           typeof request.name!=='string' || request.maxBytes!==BROWSER_DOWNLOAD_MAX_BYTES) {
+        throw Error('invalid-download-request');
+      }
+      // Repeat request validation here: this adapter may be called without the UI.
+      const checked=describeBrowserDownload(request.url,request.name);
+      if (checked.name!==request.name || checked.category!==request.category) {
         throw Error('invalid-download-request');
       }
       const id=Crypto.randomUUID().toLowerCase();
