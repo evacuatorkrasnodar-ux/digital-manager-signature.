@@ -414,49 +414,44 @@
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
-/* SEYVEO theme-tinted paper: visible satin colors from the current palette.
-   The paper remains opaque and legible; optical double-glass rims are unchanged.
-   One inherited material feeds both preview cards and real recommendations. */
+/* SEYVEO Flow Glass — the same material logic as Browser tabs.
+   A solid, theme-coloured fill is poured beneath two clear glass reflections.
+   Colors come from the active Black Velvet palette; no white-paper layer
+   can mask the dark graphite or emerald tones. This material is shared by
+   preview, gathered and real recommendation cards. */
 #homePage{
-  --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
-  --lm-paper-sheet:linear-gradient(170deg,var(--lm-paper-top),var(--lm-paper-mid) 58%,var(--lm-paper-bottom));
-  --lm-paper-top:#e0eee5;
-  --lm-paper-mid:#d5e5db;
-  --lm-paper-bottom:#cadfd1;
+  --lm-glass-sheen:linear-gradient(180deg,
+    color-mix(in srgb,var(--text) 9%,transparent),
+    transparent 22%,transparent 88%,
+    color-mix(in srgb,var(--bg) 9%,transparent));
+  --lm-glass-fill:
+    radial-gradient(ellipse 115% 83% at 51% -22%,
+      color-mix(in srgb,var(--seyveo-emerald) 13%,transparent),transparent 79%),
+    linear-gradient(172deg,
+      color-mix(in srgb,var(--card2) 82%,var(--card)) 0%,
+      color-mix(in srgb,var(--card2) 72%,var(--bg)) 57%,
+      color-mix(in srgb,var(--card) 80%,var(--bg)) 100%);
+  --lm-glass-outline:color-mix(in srgb,var(--seyveo-emerald) 27%,var(--line));
+  --lm-glass-inner:color-mix(in srgb,var(--text) 17%,transparent);
+  --lm-glass-depth:
+    inset 0 1px 0 color-mix(in srgb,var(--text) 15%,transparent),
+    inset 0 -8px 16px -13px color-mix(in srgb,var(--bg) 44%,transparent),
+    0 3px 11px rgba(0,0,0,.12);
 }
-/* White Velvet: pearlescent paper, with nearly no tint. */
+/* On White Velvet the same glass holds a cool pearl surface and dark ink. */
 :root[data-theme=light] #homePage{
-  --lm-paper-top:#fbfcff;
-  --lm-paper-mid:#f3f6f9;
-  --lm-paper-bottom:#edf1f5;
+  --lm-glass-sheen:linear-gradient(180deg,rgba(255,255,255,.42),transparent 26%,transparent 89%,rgba(79,109,127,.025));
+  --lm-glass-fill:linear-gradient(172deg,#f7fafd 0%,#eef3f6 57%,#e6edf2 100%);
+  --lm-glass-outline:rgba(93,120,138,.28);
+  --lm-glass-inner:rgba(255,255,255,.60);
+  --lm-glass-depth:
+    inset 0 1px 0 rgba(255,255,255,.87),
+    inset 0 -1px 0 rgba(108,136,153,.10),
+    0 3px 10px rgba(28,50,70,.075);
 }
-/* Graphite Velvet: a cool silver wash, not a gray plastic surface. */
-:root[data-theme=dark][data-palette=graphite] #homePage{
-  --lm-paper-top:#e0e7eb;
-  --lm-paper-mid:#d6e0e5;
-  --lm-paper-bottom:#cad6dd;
-}
-/* Sapphire HDR: very faint icy-blue paper. */
-:root[data-theme=dark][data-palette=sapphire] #homePage{
-  --lm-paper-top:#e1eaf8;
-  --lm-paper-mid:#d5e2f3;
-  --lm-paper-bottom:#cad9ed;
-}
-/* Plum / dune graphite: neutral pearl, never beige or brown. */
-:root[data-theme=dark][data-palette=plum] #homePage{
-  --lm-paper-top:#e8e9e7;
-  --lm-paper-mid:#dfe2df;
-  --lm-paper-bottom:#d3d8d5;
-}
-/* Three cards become one MAIN card — keep all three actual task elements.
-   Opaque white paper with thin double optical edges, without gray underlay. */
+/* Three physical cards keep their original rise-and-gather movement. */
 #seyveoLivingMoment.lm-preview .lm-field{
-  /* True paper with its own readable ink in every SEYVEO theme. */
-  --text:#22333c;
-  --secondary:#495c65;
-  --soft-line:rgba(75,99,108,.17);
-  /* The paper material is inherited from #homePage and follows the active theme. */
-  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.36),inset 0 -1px 0 rgba(122,148,155,.10),0 2px 8px rgba(0,12,22,.05);
+  /* Use the active theme's native text and border tokens. */
   color:var(--text);
   border:1px solid transparent;
   border-radius:22px;
@@ -469,26 +464,26 @@
   position:relative;isolation:isolate;
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid rgba(135,157,165,.22);
+  border:1px solid var(--lm-glass-outline);
   border-radius:19px;
-  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
-  box-shadow:var(--lm-paper-depth);
+  background:var(--lm-glass-sheen),var(--lm-glass-fill);
+  box-shadow:var(--lm-glass-depth);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
   position:relative;isolation:isolate;
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid rgba(135,157,165,.22);
+  border:1px solid var(--lm-glass-outline);
   border-radius:19px;
-  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
-  box-shadow:var(--lm-paper-depth);
+  background:var(--lm-glass-sheen),var(--lm-glass-fill);
+  box-shadow:var(--lm-glass-depth);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   isolation:isolate;
-  border-color:rgba(135,157,165,.22);
-  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
-  box-shadow:var(--lm-paper-depth);
+  border-color:var(--lm-glass-outline);
+  background:var(--lm-glass-sheen),var(--lm-glass-fill);
+  box-shadow:var(--lm-glass-depth);
   padding:7px 9px 5px;
 }
 /* Two quiet clear panes around one bright sheet. Paint only a thin
@@ -499,13 +494,13 @@
    content:"";position:absolute;
    top:1px;right:1px;bottom:1px;left:1px;
    width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
-   border:1px solid rgba(255,255,255,.46);
+   border:1px solid var(--lm-glass-inner);
    border-radius:inherit;
    background:
-     radial-gradient(18px 12px at 14px 12px,rgba(255,255,255,.16),transparent 72%),
-     radial-gradient(18px 12px at calc(100% - 14px) 12px,rgba(255,255,255,.12),transparent 72%),
-     linear-gradient(180deg,rgba(255,255,255,.08),transparent 14%,transparent 92%,rgba(125,147,153,.01));
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(119,146,153,.04);
+     radial-gradient(18px 12px at 14px 12px,color-mix(in srgb,var(--text) 10%,transparent),transparent 72%),
+     radial-gradient(18px 12px at calc(100% - 14px) 12px,color-mix(in srgb,var(--text) 7%,transparent),transparent 72%),
+     linear-gradient(180deg,color-mix(in srgb,var(--text) 5%,transparent),transparent 14%,transparent 92%,color-mix(in srgb,var(--bg) 5%,transparent));
+   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 13%,transparent),inset 0 -1px 0 color-mix(in srgb,var(--bg) 12%,transparent);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
@@ -514,9 +509,9 @@
    top:2px;right:2px;bottom:2px;left:2px;
    z-index:0;pointer-events:none;
    border-radius:16px;
-   border:1px solid rgba(133,160,169,.10);
-   background:linear-gradient(145deg,rgba(255,255,255,.045),transparent 34%);
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+   border:1px solid color-mix(in srgb,var(--lm-glass-outline) 50%,transparent);
+   background:linear-gradient(145deg,color-mix(in srgb,var(--text) 3%,transparent),transparent 34%);
+   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 8%,transparent);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item) > *,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field > *,
@@ -551,10 +546,10 @@
   transition-delay:0ms;
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item){
-  border-color:rgba(135,157,165,.22);
+  border-color:var(--lm-glass-outline);
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:rgba(135,157,165,.22);
+  border-color:var(--lm-glass-outline);
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
@@ -593,20 +588,17 @@
 /* Older real-business recommendations use identical inset material.
    Their existing click handlers and permissions remain intact. */
 #homePage #dynamic .decision-card[data-owner-advice]{
-  /* Real recommendation shares the exact theme-tinted paper and original handlers. */
+  /* Same poured glass as the preview; keep all original action handlers. */
   position:relative;isolation:isolate;
-  --text:#22333c;
-  --secondary:#495c65;
-  --soft-line:rgba(75,99,108,.17);
   animation:lm-owner-arrive 890ms cubic-bezier(.22,1,.36,1) both!important;
   margin:0!important;
   padding:14px 12px 12px!important;
   color:var(--text)!important;
-  background:var(--lm-paper-glaze),var(--lm-paper-sheet)!important;
-  border:1px solid rgba(135,157,165,.22)!important;
+  background:var(--lm-glass-sheen),var(--lm-glass-fill)!important;
+  border:1px solid var(--lm-glass-outline)!important;
   border-radius:22px!important;
   outline:0!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.36),inset 0 -1px 0 rgba(122,148,155,.10),0 2px 8px rgba(0,12,22,.05)!important;
+  box-shadow:var(--lm-glass-depth)!important;
 }
 #homePage #dynamic .decision-card[data-owner-advice] .event-icon{
   display:none!important;
