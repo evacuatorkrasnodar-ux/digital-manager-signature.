@@ -68,7 +68,7 @@ export function NativeBrowser(){
    <Pressable onPress={add} accessibilityRole="button" accessibilityLabel="Новая вкладка" style={{padding:10}}><Text style={{color:'white',fontSize:23}}>＋</Text></Pressable>
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
-  <WebView onMessage={event=>{if(!translating)void handleTranslationMessage(event.nativeEvent.data)}} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
+  <WebView onMessage={event=>{if(!translating)void handleTranslationMessage(event.nativeEvent.data)}} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
   {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
   {showDownloads?<View style={{maxHeight:170,backgroundColor:'#263039',padding:12}}>
     <Text style={{color:'#eef4f3',fontSize:14,marginBottom:8}}>Загрузки · текущий сеанс</Text>
