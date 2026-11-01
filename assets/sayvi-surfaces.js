@@ -183,131 +183,252 @@ function demoScenario(kind){
  section.append(hint('Это режим проверки будущего поведения Сэйви. Ни писем, ни подписей, ни медицинских действий он не выполняет.'));
  body.append(section);
 }
-/* SEYVEO Mail — one native inbox shell, with no unconnected fake messages.
-   Drafts live only in this open app session until a secure account store exists.
-   A real provider connection and sending are intentionally NOT implemented here. */
-let mailFolder='inbox',mailEditorOpen=false,mailEditingId=null;
-let mailDrafts=[];
+/* SEYVEO Mail — iPhone-first, private-by-default working prototype.
+ * Real delivery and retrieval are disabled without an authorized provider.
+ * Example messages are clearly marked and never saved or sent externally. */
+let mailFolder='inbox',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
+let mailDrafts=[],mailSearch='',mailShowExamples=true;
+const mailExamples=[
+ {id:'example-andrey',initial:'А',from:'Андрей · клиент',subject:'Стоимость доставки',preview:'Здравствуйте! Подскажите, сколько будет стоить доставка?',body:'Здравствуйте!\n\nПодскажите, пожалуйста, сколько будет стоить доставка и какие сроки возможны?\n\nСпасибо!\nАндрей',when:'10:24',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {id:'example-project',initial:'П',from:'Проектный отдел',subject:'Согласование плана работ',preview:'Подготовили обновлённый план. Посмотрите, пожалуйста.',body:'Добрый день!\n\nПодготовили обновлённый план работ. Будем рады вашим замечаниям.\n\nС уважением,\nПроектный отдел',when:'09:17',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {id:'example-finance',initial:'Ф',from:'Финансовый отдел',subject:'Отчёт за месяц',preview:'Пример отчёта и сводных показателей за месяц.',body:'Добрый день!\n\nНаправляем пример ежемесячного отчёта. В рабочей версии здесь можно будет просматривать настоящие вложения.\n\nФинансовый отдел',when:'Вчера',unread:false,starred:false,attachment:true,archived:false,trashed:false},
+ {id:'example-team',initial:'Р',from:'Руководство',subject:'Совещание в пятницу',preview:'Подтвердите, пожалуйста, удобное время встречи.',body:'Коллеги, добрый день!\n\nПредлагаем провести совещание в пятницу. Подтвердите удобное время.\n\nСпасибо!',when:'Вчера',unread:false,starred:true,attachment:false,archived:false,trashed:false},
+ {id:'example-delivery',initial:'С',from:'Снабжение',subject:'Поставка оборудования',preview:'Условия поставки согласованы. Подробности внутри.',body:'Здравствуйте!\n\nСроки и основные условия поставки оборудования согласованы.\n\nС уважением,\nОтдел снабжения',when:'29 окт',unread:false,starred:false,attachment:false,archived:false,trashed:false}
+];
+const mailIcons=Object.freeze({
+ inbox:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+ sent:'<path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"/>',
+ drafts:'<path d="M7 3h8l5 5v13H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/><path d="M14 3v6h6M8 14h8M8 18h6"/>',
+ starred:'<path d="m12 2 3 6.4 7 .9-5.1 5 .9 7-5.8-3.2-5.8 3.2.9-7-5.1-5 7-.9L12 2Z"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 15H6L5 6M10 10v7m4-7v7"/>',
+ archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 14h4"/>',
+ search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+ pencil:'<path d="M12 20h9M3 17l12-12 4 4L7 21H3v-4ZM14 6l4 4"/>',
+ back:'<path d="m15 5-7 7 7 7"/>',
+ paperclip:'<path d="m8 12 6-6a4 4 0 0 1 6 6l-8 8a6 6 0 0 1-9-9l8-8"/>'
+});
+function mailIcon(name){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+ svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');
+ svg.setAttribute('stroke-width','1.6');svg.setAttribute('stroke-linecap','round');
+ svg.setAttribute('stroke-linejoin','round');
+ svg.innerHTML=mailIcons[name]||mailIcons.inbox;return svg;
+}
 function mailView(){
- const section=shelf();
- section.classList.add('sv-mail-workspace');
- const nav=create('div','sv-mail-toolbar');
- nav.setAttribute('role','group');nav.setAttribute('aria-label','Разделы почты');
- const info=create('div','sv-mail-info');
- info.setAttribute('role','status');info.setAttribute('aria-live','polite');
- const content=create('div','sv-mail-list');
- const actionRow=create('div','sv-mail-top-actions');
- const connect=intent('Подключить ящик',openConnect);
+ const section=shelf();section.classList.add('sv-mail-workspace');
+ const top=create('div','sv-mail-top-actions');
+ const brand=create('div','sv-mail-brand');
+ brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-sub','Mail'));
+ const topButtons=create('div','sv-mail-top-buttons');
+ const compose=intent('Написать',()=>openEditor(),true);
+ compose.classList.add('sv-mail-compose');compose.prepend(mailIcon('pencil'));
+ const connect=intent('Подключить',openConnect);
  connect.classList.add('sv-mail-connect');
- const compose=intent('Написать',()=>{
-  mailEditorOpen=true;mailEditingId=null;paint();
- },true);
- compose.classList.add('sv-mail-compose');
- actionRow.append(compose,connect);
- const tabs=[
-  ['inbox','Входящие'],
-  ['sent','Отправленные'],
-  ['drafts','Черновики']
- ];
+ topButtons.append(connect,compose);top.append(brand,topButtons);
+ const searchLabel=create('label','sv-mail-search');
+ searchLabel.append(mailIcon('search'));
+ const searchInput=create('input','sv-mail-search-input');
+ searchInput.type='search';searchInput.placeholder='Поиск по письмам';
+ searchInput.setAttribute('aria-label','Поиск по письмам и черновикам');
+ searchInput.autocomplete='off';searchInput.value=mailSearch;
+ searchInput.addEventListener('input',()=>{mailSearch=searchInput.value.trim().toLocaleLowerCase('ru');paintList()});
+ searchLabel.append(searchInput);
+ const nav=create('nav','sv-mail-toolbar');nav.setAttribute('aria-label','Папки почты');
+ const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
+ const content=create('div','sv-mail-list');
+ const foot=create('p','sv-mail-foot');
+ foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
+ section.append(top,searchLabel,nav,info,content,foot);body.append(section);
+ const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['trash','Корзина']];
+ function folderCount(key){
+  if(key==='drafts')return mailDrafts.length;
+  if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>!m.trashed&&!m.archived&&m.unread).length;
+  return 0;
+ }
+ function openEditor(id=null,reply=null){
+  mailEditingId=id;mailEditorOpen=true;mailCurrent=null;
+  if(reply)mailEditingId=null;
+  paint();
+  if(reply){
+   const subjectField=content.querySelector('[data-mail-field="subject"]');
+   if(subjectField)subjectField.value='Re: '+reply.subject;
+   info.textContent='Черновик ответа на учебный пример — не отправляется.';
+  }
+  content.querySelector('[data-mail-field="to"]')?.focus();
+ }
  function selectFolder(folder){
-  mailFolder=folder;mailEditorOpen=false;mailEditingId=null;paint();
+  mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
  }
  function editDraft(id){
   if(!mailDrafts.some(d=>d.id===id))return;
-  mailEditingId=id;mailEditorOpen=true;paint();
+  openEditor(id);
  }
  function removeDraft(id){
   mailDrafts=mailDrafts.filter(d=>d.id!==id);
   mailEditingId=null;mailEditorOpen=false;mailFolder='drafts';paint();
  }
+ function viewExample(item){
+  item.unread=false;mailCurrent=item.id;mailEditorOpen=false;paint();
+ }
+ function iconButton(name,label,callback){
+  const button=create('button','sv-mail-icon-button');button.type='button';
+  button.setAttribute('aria-label',label);button.title=label;
+  button.append(mailIcon(name));button.addEventListener('click',callback);return button;
+ }
  function drawEditor(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
-  const title=create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо');
-  form.append(title);
-  function field(titleText,tag,value,mode){
-   const wrapper=create('label','sv-mail-field');
-   wrapper.append(create('span','sv-mail-field-label',titleText));
-   const input=create(tag,'sv-mail-input');
-   if(tag==='textarea')input.rows=5;
-   if(tag==='input'&&mode)input.type=mode;
-   input.value=value||'';
-   input.maxLength=tag==='textarea'?10000:tag==='input'&&mode==='email'?254:240;
-   wrapper.append(input);form.append(wrapper);
-   return input;
-  }
-  const recipient=field('Кому','input',original?.to,'email');
-  const subjectInput=field('Тема','input',original?.subject,'text');
-  const contentInput=field('Текст письма','textarea',original?.body);
-  const status=create('p','sv-mail-feedback');
-  status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
+  const makeField=(labelText,name,tag,value,type)=>{
+   const label=create('label','sv-mail-field');
+   label.append(create('span','sv-mail-field-label',labelText));
+   const input=create(tag,'sv-mail-input');input.dataset.mailField=name;
+   if(type)input.type=type;
+   if(tag==='textarea')input.rows=7;
+   input.maxLength=name==='body'?10000:name==='to'?254:240;input.value=value||'';
+   label.append(input);form.append(label);return input;
+  };
+  const to=makeField('Кому','to','input',original?.to,'email');
+  const subj=makeField('Тема','subject','input',original?.subject,'text');
+  const message=makeField('Сообщение','body','textarea',original?.body);
+  const status=create('p','sv-mail-feedback');status.setAttribute('role','status');
   form.addEventListener('submit',event=>{
    event.preventDefault();
-   const to=recipient.value.trim(),subject=subjectInput.value.trim(),
-    bodyText=contentInput.value.trim();
-   if(!to&&!subject&&!bodyText){
-    status.textContent='Добавьте хотя бы одну строку для черновика.';return;
-   }
+   const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
+   if(!recipient&&!subjectText&&!bodyText){status.textContent='Напишите письмо или укажите тему.';return}
    const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
-    to:to.slice(0,254),subject:subject.slice(0,240),body:bodyText.slice(0,10000)};
+    to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
    if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
    else mailDrafts.unshift(item);
-   mailEditorOpen=false;mailEditingId=null;mailFolder='drafts';paint();
-   info.textContent='Черновик сохранён только на время текущего сеанса SEYVEO. Не отправлен.';
+   mailFolder='drafts';mailEditorOpen=false;mailEditingId=null;paint();
+   info.textContent='Черновик сохранён в текущем сеансе. Ничего не отправлено.';
   });
-  const controls=create('div','sv-mail-editor-actions');
-  const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');
-  save.type='submit';
-  const cancel=intent('Отмена',()=>{
-   mailEditorOpen=false;mailEditingId=null;paint();
-  });
-  const send=create('button','sv-deep-intent','Отправить · недоступно');
-  send.type='button';send.disabled=true;
-  send.setAttribute('aria-label','Отправка недоступна до подключения почтового сервиса');
-  controls.append(save,cancel,send);
-  form.append(controls,status,hint('Черновик хранится только в памяти текущего сеанса. После закрытия приложения он может исчезнуть. Почта не подключена — отправки нет.'));
+  const actions=create('div','sv-mail-editor-actions');
+  const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
+  const cancel=intent('Отмена',()=>{mailEditorOpen=false;mailEditingId=null;paint()});
+  actions.append(save,cancel);
+  form.append(actions,status,create('p','sv-mail-disclaimer','Пока нет подключённого ящика, отправка отключена. Черновик остаётся только в памяти этого сеанса.'));
   content.append(form);
  }
- function paint(){
-  nav.replaceChildren();content.replaceChildren();
-  for(const [key,label] of tabs){
-   const b=create('button','sv-mail-folder',label);
-   b.type='button';b.dataset.mailFolder=key;
-   b.setAttribute('aria-pressed',String(!mailEditorOpen&&key===mailFolder));
-   b.addEventListener('click',()=>selectFolder(key));nav.append(b);
+ function drawDetails(item){
+  const panel=create('article','sv-mail-detail');
+  const heading=create('div','sv-mail-detail-bar');
+  const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
+  const label=create('span','sv-mail-detail-demo','УЧЕБНЫЙ ПРИМЕР');
+  const opts=create('div','sv-mail-detail-tools');
+  opts.append(iconButton('starred',item.starred?'Убрать из важных':'Важное',()=>{
+   item.starred=!item.starred;paint();
+  }),iconButton('archive','В архив · демо',()=>{
+   item.archived=true;mailCurrent=null;paint();
+  }),iconButton('trash','Удалить пример',()=>{
+   item.trashed=true;mailCurrent=null;paint();
+  }));
+  heading.append(backButton,label,opts);
+  panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
+  const person=create('div','sv-mail-detail-person');
+  person.append(create('span','sv-mail-avatar',item.initial));
+  const who=create('div','sv-mail-detail-who');
+  who.append(create('strong','',item.from),create('span','',item.when+' · учебное письмо, не из почты'));
+  person.append(who);panel.append(person);
+  const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
+  if(item.attachment){
+   const example=create('div','sv-mail-attachment');
+   example.append(mailIcon('paperclip'),create('span','','Пример вложения · файла нет'));
+   panel.append(example);
   }
-  compose.hidden=mailEditorOpen;
-  if(mailEditorOpen){
-   info.textContent='Редактор черновика · без реальной отправки';
-   drawEditor();return;
-  }
-  if(mailFolder==='drafts'){
-   info.textContent='Черновики · '+mailDrafts.length+' · только текущий сеанс';
-   if(!mailDrafts.length){
-    content.append(create('p','sv-mail-empty','Черновиков пока нет. Можно написать письмо и сохранить его на время сеанса.'));
-   }else{
-    for(const draft of mailDrafts){
-     const row=create('div','sv-mail-draft-row');
-     const headline=create('div','sv-mail-draft-content');
-     headline.append(create('strong','',draft.subject||'Без темы'));
-     headline.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
-     const controls=create('div','sv-mail-draft-actions');
-     controls.append(intent('Изменить',()=>editDraft(draft.id)),
-      intent('Удалить',()=>removeDraft(draft.id)));
-     row.append(headline,controls);content.append(row);
-    }
-   }
-  }else{
-   info.textContent=mailFolder==='inbox'?'Входящие · ящик не подключён':'Отправленные · ящик не подключён';
-   content.append(create('p','sv-mail-empty',
-    mailFolder==='inbox'?'Пока нет подключённого почтового ящика. Здесь будут ваши настоящие входящие письма.':
-    'Здесь будут действительно отправленные письма после подключения почты.'));
+  const actions=create('div','sv-mail-detail-actions');
+  const reply=intent('Ответить',()=>openEditor(null,item),true);reply.prepend(mailIcon('back'));
+  const help=intent('✧ Сэйви',()=>{
+   note.hidden=!note.hidden;
+  });
+  actions.append(reply,help);panel.append(actions);
+  const note=create('div','sv-mail-sayvi-note','Сэйви поможет подготовить ответ после подключения ИИ. Сейчас вы можете написать и сохранить черновик самостоятельно.');
+  note.hidden=true;panel.append(note);
+  content.append(panel);
+ }
+ function drawExamples(){
+  const banner=create('div','sv-mail-demo-banner');
+  banner.append(create('span','sv-mail-demo-mark','ДЕМО'),create('span','', 'Письма вымышлены — так будет выглядеть ваша почта.'));
+  const toggle=intent(mailShowExamples?'Скрыть':'Показать',()=>{mailShowExamples=!mailShowExamples;paint()});
+  toggle.classList.add('sv-mail-demo-toggle');banner.append(toggle);content.append(banner);
+  if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
+  const inFolder=mailExamples.filter(m=>{
+   if(mailFolder==='trash')return m.trashed;
+   if(m.trashed)return false;
+   if(mailFolder==='starred')return m.starred&&!m.archived;
+   return !m.archived;
+  });
+  const q=mailSearch.trim();
+  const matched=inFolder.filter(m=>!q||[m.from,m.subject,m.preview,m.body].join(' ').toLocaleLowerCase('ru').includes(q));
+  if(!matched.length){content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет учебных писем.'));return}
+  for(const item of matched){
+   const row=create('button','sv-mail-letter');
+   row.type='button';row.classList.toggle('is-unread',item.unread);
+   const avatar=create('span','sv-mail-avatar',item.initial);
+   const detail=create('span','sv-mail-letter-details');
+   const sender=create('span','sv-mail-letter-sender',item.from);
+   const titleText=create('strong','sv-mail-letter-subject',item.subject);
+   const preview=create('span','sv-mail-letter-preview',item.preview);
+   detail.append(sender,titleText,preview);
+   const meta=create('span','sv-mail-letter-meta');
+   meta.append(create('time','',item.when));
+   if(item.attachment)meta.append(mailIcon('paperclip'));
+   if(item.starred)meta.append(mailIcon('starred'));
+   if(item.unread)row.append(create('span','sv-mail-unread-dot'));
+   row.append(avatar,detail,meta);
+   row.setAttribute('aria-label',item.from+', '+item.subject+', пример');
+   row.addEventListener('click',()=>viewExample(item));content.append(row);
   }
  }
- section.append(actionRow,nav,info,content);
- section.append(hint('Это почтовый интерфейс внутри SEYVEO. Реальные входящие, синхронизация и отправка заработают только после официального подключения провайдера.'));
- body.append(section);paint();
+ function drawDrafts(){
+  const list=mailDrafts.filter(d=>!mailSearch||[d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch));
+  if(!list.length){content.append(create('p','sv-mail-empty',mailSearch?'Черновики не найдены.':'Пока нет черновиков. Нажмите «Написать», чтобы создать первый.'));return}
+  for(const draft of list){
+   const row=create('div','sv-mail-draft-row');
+   const edit=create('button','sv-mail-draft-content');
+   edit.type='button';edit.append(create('strong','',draft.subject||'Без темы'));
+   edit.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
+   edit.addEventListener('click',()=>editDraft(draft.id));
+   const remove=iconButton('trash','Удалить черновик',()=>removeDraft(draft.id));
+   row.append(edit,remove);content.append(row);
+  }
+ }
+ function paintList(){
+  content.replaceChildren();
+  if(mailEditorOpen){drawEditor();return}
+  if(mailCurrent){
+   const item=mailExamples.find(m=>m.id===mailCurrent);
+   if(item&&!item.trashed){drawDetails(item);return}
+   mailCurrent=null;
+  }
+  if(mailFolder==='drafts'){drawDrafts();return}
+  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='trash'){drawExamples();return}
+  content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
+ }
+ function paint(){
+  nav.replaceChildren();
+  for(const [key,label] of tabs){
+   const button=create('button','sv-mail-folder');
+   button.type='button';button.dataset.mailFolder=key;
+   button.setAttribute('aria-current',mailFolder===key?'page':'false');
+   button.append(mailIcon(key),create('span','',label));
+   const count=folderCount(key);
+   if(count)button.append(create('small','sv-mail-folder-count',String(count)));
+   button.addEventListener('click',()=>selectFolder(key));nav.append(button);
+  }
+  searchLabel.hidden=mailEditorOpen||!!mailCurrent;
+  compose.hidden=mailEditorOpen;
+  info.textContent=mailEditorOpen?'Черновик · только на этом устройстве':
+   mailCurrent?'Просмотр учебного письма':
+   mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.length:
+   mailFolder==='sent'?'Отправка пока недоступна':
+   mailFolder==='inbox'?'Входящие · предварительный просмотр':
+   mailFolder==='starred'?'Важные · предварительный просмотр':'Корзина · предварительный просмотр';
+  paintList();
+ }
+ paint();
 }
 const extensions=new Set(['pdf','txt','md','png','jpg','jpeg','webp']);
 function renderFile(file,status,preview,link){
