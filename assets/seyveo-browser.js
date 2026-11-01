@@ -944,7 +944,16 @@ function browserVoiceUnavailable(message){
  return true;
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
-function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
+function open(value){
+ if(value&&!secureUrl(value))return false;
+ suspendedForSayvi=false;
+ try{localStorage.setItem('seyveo-browser-discovery-v1','seen')}catch{}
+ root.hidden=false;
+ document.body.classList.add('seyveo-browser-open');
+ if(value)navigate(value);else render();
+ document.dispatchEvent(new Event('seyveo:browser-open'));
+ return true;
+}
 function close(){suspendedForSayvi=false;expandedHistory=null;closeBrowserSearch();tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
