@@ -44,7 +44,10 @@ test('ignores noise and caps large programmatic jumps',()=>{
 
 test('web bridge sends only position numbers through a throttled read-only channel',()=>{
  assert.match(BROWSER_SCROLL_BRIDGE_JS,/requestAnimationFrame/);
- assert.match(BROWSER_SCROLL_BRIDGE_JS,/ReactNativeWebView\.postMessage/);
+ // The bridge is deliberately aliased and checked before sending.
+ assert.match(BROWSER_SCROLL_BRIDGE_JS,/var bridge = window\.ReactNativeWebView/);
+ assert.match(BROWSER_SCROLL_BRIDGE_JS,/typeof bridge\.postMessage/);
+ assert.match(BROWSER_SCROLL_BRIDGE_JS,/bridge\.postMessage\(JSON\.stringify/);
  assert.match(BROWSER_SCROLL_BRIDGE_JS,/document\.scrollingElement/);
  assert.doesNotMatch(BROWSER_SCROLL_BRIDGE_JS,/document\.cookie|localStorage|innerText|textContent|outerHTML/);
 });
