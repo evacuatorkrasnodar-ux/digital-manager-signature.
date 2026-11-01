@@ -57,7 +57,7 @@ function NativeFoundation() {
     setBusy(false);
   }, [busy, state]);
 
-  if (browserOpen) return <NativeBrowser />;
+  if (browserOpen) return <View style={{flex:1}}><Pressable onPress={()=>setBrowserOpen(false)} accessibilityRole="button"><Text>Вернуться в SEYVEO</Text></Pressable><NativeBrowser /></View>;
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
