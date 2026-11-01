@@ -54,7 +54,9 @@ dialog :is(.info-actions,.personal-task-actions,.paper-actions,.note-read-action
  button.sv-nav-done,button.sv-nav-back{transition:none!important}
 }
 
-/* Main SEYVEO dock · icon-only alignment. The central voice button is unchanged. */
+/* SEYVEO · one refined vector system for the four OUTER dock marks.
+   Keep the existing hit targets, original ceramic Sayvi center, 5-column
+   geometry and modes (Home / Music / Browser) intact. */
 footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > span{
  display:none!important;
 }
@@ -70,7 +72,15 @@ footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navMan
 footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > svg{
  display:block!important;
  flex:none!important;
- width:25px!important;
- height:25px!important;
+ width:23px!important;
+ height:23px!important;
  margin:0 auto!important;
+ color:inherit!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.65!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
 }
+/* Don't reduce the 44–48px touch areas to the visual glyph size.
+   Disabled Music transport controls keep their existing muted state. */
