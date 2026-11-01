@@ -7,7 +7,7 @@ root.id='seyveoBrowser';root.className='seyveo-browser';root.hidden=true;
 root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','SEYVEO Browser');
 root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kicker">SEYVEO</div><h2>Browser</h2></div>
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
-<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-controls="seyveoBrowserHistoryList" aria-expanded="false" hidden>Показать все ›</button><button type="button" data-history-clear hidden aria-label="Очистить продолжение просмотра" title="Очистить историю просмотра"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div><section class="sb-home-recent-tabs" hidden><div class="seyveo-browser-start-heading"><span>Недавние вкладки</span><button type="button" data-open-tab-manager aria-label="Показать все вкладки">Показать все ›</button></div><div class="sb-home-recent-grid" data-home-recent-tabs aria-label="Недавние вкладки, листайте влево и вправо"></div></section></div>
+<div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-label="Открыть полную историю">Вся история ›</button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
 <div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Меню браузера" aria-expanded="false" aria-controls="seyveoBrowserSiteMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button><nav id="seyveoBrowserSiteMenu" class="sb-browser-site-menu" data-site-menu-panel aria-label="Меню SEYVEO Browser" hidden><button type="button" data-site-action="tabs">Вкладки</button><button type="button" data-site-action="favorites">Избранное</button><button type="button" data-site-action="history">История</button><button type="button" data-site-action="home">Главная браузера</button></nav></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
  <div class="sb-browser-demo-head"><span class="sb-browser-demo-menu" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><strong>Хабр</strong><span class="sb-browser-demo-fill"></span><span class="sb-browser-demo-search" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span></div>
@@ -82,7 +82,6 @@ const sessionKey='seyveo-browser-session-v1';
 function restoreSession(){try{const s=JSON.parse(localStorage.getItem(sessionKey)||'null');if(!s||!Array.isArray(s.tabs))return;const items=s.tabs.slice(0,20).filter(t=>t&&Number.isInteger(t.id)&&Array.isArray(t.entries)).map(t=>{const entries=t.entries.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,40);return{id:t.id,entries,position:Math.max(-1,Math.min(Number.isInteger(t.position)?t.position:-1,entries.length-1))}});if(items.length){tabs=items;active=tabs.some(t=>t.id===s.active)?s.active:tabs[0].id;nextId=Math.max(...tabs.map(t=>t.id),0)+1}if(Array.isArray(s.closed))recentlyClosed=s.closed.map(normalizeClosed).filter(Boolean).slice(0,25)}catch{}}
 function persistSession(){try{localStorage.setItem(sessionKey,JSON.stringify({tabs,active,closed:recentlyClosed}))}catch{}}
 
-let showAllHistory=false;
 let showManagerHistory=false;
 let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
@@ -519,13 +518,6 @@ function renderSecondary(){
  if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Сохрани страницу в Избранное';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
-/* Identical Quiet Cinema disclosure on the Browser start page. */
-function syncHistoryStack(){
- const list=$('[data-continue-list]'),toggle=$('[data-history-toggle]'),clear=$('[data-history-clear]');
- const count=syncQuietCinemaStack(list,toggle,'.sb-history-slot',showAllHistory);
- if(count<2)showAllHistory=false;
- clear.hidden=!historyItems().length;
-}
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url||browserStage==='home';if(managerOpen)renderManager();
@@ -562,7 +554,7 @@ function render(){
  $('[data-bookmark]').textContent=url&&saved().includes(url)?'★':'☆';
  document.dispatchEvent(new Event('seyveo:browser-state'));
  const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();
- const selected=items;
+ const selected=items.slice(0,1); // Quick resume only; complete history lives in History.
  if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
  for(const [position,link] of selected.entries()){
   const url=new URL(link),host=url.hostname.replace(/^www\./,'');
@@ -580,30 +572,6 @@ function render(){
   action('Убрать из истории',()=>{removeHistory(link);render()});
   const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);
   const slot=document.createElement('div');slot.className='sb-history-slot';slot.style.setProperty('--sb-history-order',String(Math.min(position,6)));slot.append(card);contList.append(slot);
- }
- syncHistoryStack();
- const recentHome=root.querySelector('.sb-home-recent-tabs'),recentGrid=root.querySelector('[data-home-recent-tabs]');
- recentGrid.replaceChildren();
- const liveTabs=tabs.filter(tab=>tab.entries[tab.position]).slice().reverse();
- const recentEntries=liveTabs.map(tab=>({url:tab.entries[tab.position],tabId:tab.id}));
- for(const address of historyItems()){
-  if(!recentEntries.some(entry=>entry.url===address))recentEntries.push({url:address,tabId:null});
- }
- recentHome.hidden=recentEntries.length===0;
- for(const entry of recentEntries){
-  const address=entry.url,host=new URL(address).hostname.replace(/^www[.]/,''),name=siteName(address);
-  const tile=document.createElement('article');tile.className='sb-home-recent-card';
-  const jump=document.createElement('button');jump.type='button';jump.className='sb-home-recent-open';jump.setAttribute('aria-label','Открыть '+name);
-  const mark=document.createElement('span');mark.className='sb-home-recent-symbol';paintSiteMark(mark,address);
-  const info=document.createElement('span');info.className='sb-home-recent-info';
-  const title=document.createElement('strong');title.textContent=name;
-  const sub=document.createElement('small');sub.textContent=host;
-  info.append(title,sub);jump.append(mark,info);
-  jump.addEventListener('click',()=>{if(entry.tabId!==null){active=entry.tabId;browserStage='normal';render()}else navigate(address)});
-  const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='sb-home-recent-close';
-  closeButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>';closeButton.setAttribute('aria-label',entry.tabId!==null?'Закрыть вкладку '+name:'Убрать из недавних '+name);
-  closeButton.addEventListener('click',()=>{if(entry.tabId!==null){closeTab(entry.tabId)}else{removeHistory(address);render()}});
-  tile.append(jump,closeButton);recentGrid.append(tile);
  }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
@@ -738,7 +706,7 @@ function browserVoiceUnavailable(message){
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){browserStage='normal';suspendedForSayvi=false;showAllHistory=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){browserStage='normal';suspendedForSayvi=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -804,14 +772,9 @@ $('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!ur
 
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
-$('[data-history-toggle]').addEventListener('click',()=>{showAllHistory=!showAllHistory;syncHistoryStack()});
-$('[data-history-clear]').addEventListener('click',()=>{
- if(!historyItems().length)return;
- if(!window.confirm('Очистить историю просмотра? Записи исчезнут и из раздела «История». Открытые вкладки и избранное останутся.'))return;
- clearHistory();render();
+$('[data-history-toggle]').addEventListener('click',()=>{
+ managerSection='history';tabManager(true);
 });
-/* Open the existing browser tab manager from the start page. */
-$('[data-open-tab-manager]').addEventListener('click',()=>{managerSection='tabs';tabManager(true)});
 paintQuickSites();
 /* Keep shortcut tiles intact: native swipe in the rail, expand all on request. */
 const quickToggle=root.querySelector('[data-quick-toggle]');
