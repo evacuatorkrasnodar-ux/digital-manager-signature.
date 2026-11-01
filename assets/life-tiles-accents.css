@@ -137,9 +137,9 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  justify-content:stretch!important;
  justify-items:stretch!important;
  width:100%!important;
- height:auto!important;
- min-height:82px!important;
- max-height:none!important;
+ height:67px!important;
+ min-height:67px!important;
+ max-height:67px!important;
  padding:9px 9px!important;
  margin:0!important;
  overflow:hidden!important;
@@ -287,7 +287,7 @@ html.sv-space-active #lifePage .life-footnote{
  html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:8px!important}
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
   grid-template-columns:37px minmax(0,1fr)!important;
-  column-gap:7px!important;min-height:83px!important;
+  column-gap:7px!important;height:68px!important;min-height:68px!important;max-height:68px!important;
   border-radius:18px!important;padding:10px 8px!important;
  }
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
@@ -302,7 +302,7 @@ html.sv-space-active #lifePage .life-footnote{
 @media(max-width:350px){
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
   grid-template-columns:34px minmax(0,1fr)!important;column-gap:6px!important;
-  min-height:88px!important;padding:8px 7px!important;
+  height:73px!important;min-height:73px!important;max-height:73px!important;padding:8px 7px!important;
  }
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
   left:7px!important;width:34px!important;height:34px!important;
