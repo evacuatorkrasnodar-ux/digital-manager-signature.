@@ -1,5 +1,6 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {loadBrowserSession,saveBrowserSession} from './session-store';
+import {browserLibrary,type SavedLink} from './browser-library';
 import {View,Text,TextInput,Pressable,ScrollView,Alert} from 'react-native';
 import {File,Paths} from 'expo-file-system';
 import {translateText,translateEndpoint,usableTranslationEndpoint} from './translate-service';
@@ -28,6 +29,13 @@ export function NativeBrowser(){
  const [translating,setTranslating]=useState(false);
  const [downloads,setDownloads]=useState<{name:string;uri:string}[]>([]);
  const [showDownloads,setShowDownloads]=useState(false);
+ const [links,setLinks]=useState<SavedLink[]>([]);
+ const [libraryMode,setLibraryMode]=useState<'history'|'favorites'|null>(null);
+ async function openLibrary(mode:'history'|'favorites'){
+  setLibraryMode(mode);setLinks(mode==='history'?await browserLibrary.history():await browserLibrary.favorites());
+ }
+ async function saveFavorite(){await browserLibrary.toggleFavorite(current.url);if(libraryMode==='favorites')setLinks(await browserLibrary.favorites())}
+ function openSaved(url:string){setAddress(url);setTabs(old=>old.map(t=>t.id===active?{...t,url}:t));setLibraryMode(null)}
  async function downloadRequested(downloadUrl:string){
   try{
    const u=new URL(downloadUrl);
@@ -100,12 +108,17 @@ export function NativeBrowser(){
    <Pressable onPress={add} accessibilityRole="button" accessibilityLabel="Новая вкладка" style={{padding:10}}><Text style={{color:'white',fontSize:23}}>＋</Text></Pressable>
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
-  <WebView onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}catch{}}}/>
+  <WebView onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));void browserLibrary.visit(event.url)}catch{}}}/>
   {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
     <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
     <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
    </View>:null}
   {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
+  {libraryMode?<View style={{maxHeight:200,backgroundColor:'#263039',padding:12}}>
+   <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{color:'white'}}>{libraryMode==='history'?'История':'Избранное'}</Text><Pressable onPress={()=>setLibraryMode(null)}><Text style={{color:'white'}}>Закрыть ×</Text></Pressable></View>
+   <ScrollView>{links.map((entry,i)=><Pressable key={entry.url+i} onPress={()=>openSaved(entry.url)} style={{paddingVertical:7}}><Text numberOfLines={1} style={{color:'#d9e9eb'}}>{entry.url}</Text></Pressable>)}</ScrollView>
+   {libraryMode==='history'?<Pressable onPress={()=>{void browserLibrary.clearHistory().then(()=>setLinks([]))}}><Text style={{color:'#dfc4c4'}}>Очистить историю</Text></Pressable>:null}
+  </View>:null}
   {showDownloads?<View style={{maxHeight:170,backgroundColor:'#263039',padding:12}}>
     <Text style={{color:'#eef4f3',fontSize:14,marginBottom:8}}>Загрузки · текущий сеанс</Text>
     <ScrollView>{downloads.length?downloads.map(item=><Text key={item.uri} numberOfLines={1} style={{color:'#d7e5e5',paddingVertical:6}}>{item.name}</Text>):<Text style={{color:'#c5d0d2'}}>Скачанных файлов в этом сеансе нет</Text>}</ScrollView>
@@ -120,6 +133,9 @@ export function NativeBrowser(){
    <Pressable onPress={translateInfo}><Text style={{color:'white'}}>Перевод</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={togglePageMedia}><Text style={{color:'white'}}>{mediaPaused?'Продолжить':'Пауза'}</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={()=>setShowDownloads(value=>!value)}><Text style={{color:'white'}}>Файлы</Text></Pressable>
+   <Pressable onPress={()=>void saveFavorite()}><Text style={{color:'white'}}>☆</Text></Pressable>
+   <Pressable onPress={()=>void openLibrary('favorites')}><Text style={{color:'white'}}>Избранное</Text></Pressable>
+   <Pressable onPress={()=>void openLibrary('history')}><Text style={{color:'white'}}>История</Text></Pressable>
   </View>
  </View>
 }
