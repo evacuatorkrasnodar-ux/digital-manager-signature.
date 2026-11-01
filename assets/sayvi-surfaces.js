@@ -228,7 +228,7 @@ function mailView(){
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
  const brand=create('div','sv-mail-brand');
- brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-sub','MAIL'));
+ brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-separator','/'),create('span','sv-mail-brand-sub','MAIL'));
  const topButtons=create('div','sv-mail-top-buttons');
  const searchToggle=create('button','sv-mail-icon-button sv-mail-search-toggle');searchToggle.type='button';
  searchToggle.setAttribute('aria-label','Поиск по почте');searchToggle.append(mailIcon('search'));
