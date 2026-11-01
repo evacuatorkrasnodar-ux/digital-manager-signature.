@@ -159,7 +159,7 @@ export function createExpoBrowserDownloadStorage(){
       if (!Paths.cache.exists) return;
       for(const entry of Paths.cache.list()){
         if(!(entry instanceof File)) continue;
-        if(!/^seyveo-pdf-[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}\\.pdf$/.test(entry.name)) continue;
+        if(!/^seyveo-pdf-[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}\.pdf$/.test(entry.name)) continue;
         try{entry.delete()}catch{}
       }
     },
