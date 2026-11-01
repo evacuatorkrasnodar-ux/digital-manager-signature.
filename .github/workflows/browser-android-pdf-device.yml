@@ -1,0 +1,62 @@
+name: SEYVEO Browser · Android PDF device test APK
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/src/browser/**'
+      - 'mobile/src/auth/**'
+      - 'mobile/App.tsx'
+      - '.github/workflows/browser-android-pdf-device.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seyveo-pdf-apk-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-pdf-device:
+    name: Debug APK for real-device PDF verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Verify runner Android SDK
+        run: |
+          test -d "${ANDROID_HOME:?Android SDK missing}"
+          test -x "$ANDROID_HOME/platform-tools/adb"
+      - name: Install mobile dependencies
+        run: npm install --no-audit --no-fund
+      - name: Check JS tests and strict TypeScript
+        run: |
+          npm test
+          npm run check
+      - name: Generate real Android native project
+        run: npx expo prebuild --platform android --clean --no-install
+      - name: Compile development APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace
+      - name: Publish temporary testing APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: seyveo-browser-pdf-test-android-debug
+          path: mobile/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
