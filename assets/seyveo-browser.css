@@ -580,6 +580,12 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-collections-heading{margin-top:18px;margin-bottom:10px}
 .sb-manager-collections-heading [data-collection-new]{font-size:12px;font-weight:400;letter-spacing:0;opacity:.76}
 .sb-manager-collections-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:9px}
+/* A collection is opened only here, in its own section — no second copy in Tabs. */
+.sb-manager-secondary .sb-manager-collection-tile.is-current{
+ border-color:color-mix(in srgb,var(--line,#69cca5) 46%,var(--sv-home-outline));
+ box-shadow:inset 0 1px 0 var(--sv-home-glint);
+}
+.sb-manager-secondary .sb-collection-group .sb-collection-content{padding-top:8px}
 .sb-manager-collection-tile{
  min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;
  border-radius:17px;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
