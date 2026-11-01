@@ -46,17 +46,16 @@ const sectionPaths={
 };
 let managerSection='tabs';
 for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{if(id==='history')showManagerHistory=false;managerSection=id;renderManager()});switcher.append(button)}
-// Put the ORIGINAL four-part switcher beside the search field in the same
-// root flex slot. Toggling which one is visible guarantees matching geometry.
-manager.prepend(switcher);
+// Keep one four-section switcher directly inside the manager for ALL sections.
 switcher.hidden=true;
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
 while(manager.firstChild)tabsPanel.append(manager.firstChild);
 manager.append(tabsPanel);
+manager.prepend(switcher);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const panelHeader=document.createElement('header');
 panelHeader.className='sb-browser-panel-head';
-panelHeader.innerHTML='<strong>Браузер</strong><button type="button" data-manager-dismiss aria-label="Закрыть управление браузером">Готово</button>';
+panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Вкладки</strong><button type="button" class="sb-browser-sitebar-search-button" data-manager-search aria-label="Поиск или адрес сайта" title="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button>';
 manager.prepend(panelHeader);
 const panelScrim=document.createElement('div');
 panelScrim.className='sb-browser-panel-scrim';panelScrim.hidden=true;
@@ -340,6 +339,9 @@ function syncClosedStack(){
  clear.hidden=!count;
 }
 function renderManager(){
+ const currentLabel=sections.find(([id])=>id===managerSection)?.[1]||'Вкладки';
+ panelHeader.querySelector('[data-panel-section-title]').textContent=currentLabel;
+ manager.setAttribute('aria-label','Управление браузером · '+currentLabel);
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
  const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
  const count=switcher.querySelector('[data-section="tabs"] .sb-switch-count')||document.createElement('span');count.className='sb-switch-count';count.textContent=String(tabs.length);switcher.querySelector('[data-section="tabs"]').append(count);
@@ -414,7 +416,8 @@ function renderManager(){
 function renderSecondary(){
  secondary.replaceChildren();
  secondary.classList.toggle('is-history',managerSection==='history');
- const header=document.createElement('div');header.className='sb-secondary-header';const heading=document.createElement('h3');heading.textContent=managerSection==='favorites'?'Избранное':managerSection==='history'?'История':'Коллекции';header.append(heading);secondary.append(header);
+ const header=document.createElement('div');header.className='sb-secondary-header';header.hidden=managerSection==='favorites';secondary.append(header);
+// Section name already lives on the shared grey Browser strip; no duplicate title.
  if(managerSection==='collections'){
   const add=document.createElement('button');add.type='button';add.textContent='＋ Новая коллекция';add.addEventListener('click',makeCollection);header.append(add);
   if(creatingCollection){
@@ -799,6 +802,9 @@ function toggleBrowserPanel(){
 }
 siteMenuButton.addEventListener('click',toggleBrowserPanel);
 panelHeader.querySelector('[data-manager-dismiss]').addEventListener('click',()=>tabManager(false));
+panelHeader.querySelector('[data-manager-search]').addEventListener('click',()=>{
+ tabManager(false);input.focus();input.select();
+});
 panelScrim.addEventListener('click',()=>tabManager(false));
 $('[data-site-search]').addEventListener('click',()=>{if(managerOpen)tabManager(false);input.focus();input.select()});
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
