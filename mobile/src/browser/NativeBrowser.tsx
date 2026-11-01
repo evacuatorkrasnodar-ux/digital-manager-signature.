@@ -60,6 +60,7 @@ export function NativeBrowser(){
  const [mediaVisible,setMediaVisible]=useState(false);
  const activeMediaId=useRef<string|null>(null);
  useEffect(()=>()=>{sharedMediaSession.clear('browser')},[]);
+ useEffect(()=>sharedMediaSession.registerControls('browser',String(active),command=>{if(command==='pause')pausePageMedia();else togglePageMedia()}),[active,mediaPaused]);
  useEffect(()=>{if(activeMediaId.current!==null&&activeMediaId.current!==String(active)){sharedMediaSession.clear('browser',activeMediaId.current);activeMediaId.current=null}},[active]);
  function handleBrowserMessage(value:string){
   try{const msg=JSON.parse(value);
