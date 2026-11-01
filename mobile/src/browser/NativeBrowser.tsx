@@ -1,6 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {loadBrowserSession,saveBrowserSession} from './session-store';
 import {browserLibrary,type SavedLink} from './browser-library';
+import {checkBrowserAddress} from './address-safety';
 import {View,Text,TextInput,Pressable,ScrollView,Alert} from 'react-native';
 import {File,Paths} from 'expo-file-system';
 import {translateText,translateEndpoint,usableTranslationEndpoint} from './translate-service';
@@ -115,7 +116,7 @@ export function NativeBrowser(){
  function select(tab:Tab){selectedTabId.current=tab.id;setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(privateMode)return;if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){if(privateMode)return;const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
- function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);if(!['https:','http:'].includes(url.protocol)||url.username||url.password)throw Error();setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)}catch{setAddress(current.url)}}
+ function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);const check=checkBrowserAddress(url.href);if(!check.allowed)throw Error();const open=()=>{setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)};if(check.warning)Alert.alert('Проверьте адрес',check.warning,[{text:'Отмена',style:'cancel'},{text:'Открыть',onPress:open}]);else open()}catch{setAddress(current.url)}}
  return <View style={{flex:1,backgroundColor:'#11161b'}}>
   <View style={{flexDirection:'row',justifyContent:'flex-end',paddingHorizontal:12,paddingTop:5}}><Pressable accessibilityRole="button" onPress={togglePrivate}><Text style={{color:privateMode?'#f0d7a4':'#d6e3e5'}}>{privateMode?'Закрыть приватную вкладку':'Приватная вкладка'}</Text></Pressable></View>
   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0,maxHeight:58}} contentContainerStyle={{padding:8,alignItems:'center',gap:6}}>
