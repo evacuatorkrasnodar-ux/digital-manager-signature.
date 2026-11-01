@@ -515,6 +515,27 @@ function renderTurns(turns){
    welcome.append(heading,hint,browser,detail);
    nodes.push(welcome);
  }
+ // Existing users have past messages and never see the welcome screen.
+ // Show one small discovery line, not a permanent Home tile or extra chat.
+ let discovered=false;
+ try{discovered=localStorage.getItem('seyveo-browser-discovery-v1')==='seen'}catch{}
+ if(turns.length&&!discovered){
+  const nudge=document.createElement('div');
+  nudge.className='seyveo-chat-browser-nudge';
+  const globe=document.createElement('span');globe.setAttribute('aria-hidden','true');
+  globe.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/></svg>';
+  const label=document.createElement('span');label.textContent='У Сэйви есть свой браузер';
+  const launch=document.createElement('button');launch.type='button';launch.textContent='Открыть';launch.setAttribute('aria-label','Открыть SEYVEO Browser');
+  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='seyveo-chat-browser-dismiss';
+  dismiss.textContent='×';dismiss.setAttribute('aria-label','Больше не показывать подсказку о браузере');
+  function markSeen(){
+   try{localStorage.setItem('seyveo-browser-discovery-v1','seen')}catch{}
+   nudge.remove();
+  }
+  launch.addEventListener('click',()=>{if(window.SEYVEO_BROWSER?.open?.()===true)markSeen()});
+  dismiss.addEventListener('click',markSeen);
+  nudge.append(globe,label,launch,dismiss);nodes.push(nudge);
+ }
  text.replaceChildren(...nodes);
  if(atBottom||isNewTurn)scrollToLatest();
 }
