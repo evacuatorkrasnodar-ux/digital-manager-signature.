@@ -911,6 +911,12 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  --lm-matte-fill:#eceff3;
  --lm-matte-line:rgba(54,68,89,.20);
 }
+/* Match the dock against the viewport, not the narrower Home content column. */
 #homePage #seyveoLivingMoment{
- width:min(430px,calc(100% - 14px));
+ box-sizing:border-box;
+ width:min(430px,calc(100vw - 14px));
+ max-width:none;
+ margin-left:50%;
+ margin-right:0;
+ translate:-50% 0;
 }
