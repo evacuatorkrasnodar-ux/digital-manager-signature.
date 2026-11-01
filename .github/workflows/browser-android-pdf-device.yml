@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   android-pdf-device:
-    name: Debug APK for real-device PDF verification
+    name: Installable offline APK for real-device PDF verification
     runs-on: ubuntu-latest
     timeout-minutes: 55
     defaults:
@@ -48,15 +48,19 @@ jobs:
           npm run check
       - name: Generate real Android native project
         run: npx expo prebuild --platform android --clean --no-install
-      - name: Compile development APK
+      # The test APK must include its own JS bundle: debug variants
+      # normally require Metro on a developer PC. Expo's prebuild uses
+      # the generated debug keystore to sign this RELEASE-VARIANT TEST ONLY.
+      # Do not distribute it publicly or submit it to app stores.
+      - name: Compile self-contained internal-test APK
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew :app:assembleDebug --no-daemon --stacktrace
-      - name: Publish temporary testing APK
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+      - name: Publish temporary offline PDF-testing APK
         uses: actions/upload-artifact@v4
         with:
-          name: seyveo-browser-pdf-test-android-debug
-          path: mobile/android/app/build/outputs/apk/debug/*.apk
+          name: seyveo-browser-pdf-android-offline-test
+          path: mobile/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 7
