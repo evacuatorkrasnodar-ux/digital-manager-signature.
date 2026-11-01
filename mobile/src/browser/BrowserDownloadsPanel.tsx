@@ -24,6 +24,7 @@ export type BrowserDownloadsColors = {
   accent:string;
 };
 type Props={colors:BrowserDownloadsColors;pdfExtractor?:BrowserPdfExtractor;
+  samplePdfUrl?:string;
   onSayviReview?:(request:BrowserSayviHandoff)=>Promise<SayviDocumentExplanation>};
 
 const labelForCategory:Record<string,string>={
@@ -35,7 +36,7 @@ function sizeLabel(bytes:number){
   return Math.max(1,Math.ceil(bytes/1024))+' КБ';
 }
 
-export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props){
+export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview,samplePdfUrl}:Props){
   const [source,setSource]=useState('');
   const [message,setMessage]=useState('');
   const [review,setReview]=useState<BrowserDocumentReviewPreview|null>(null);
@@ -225,6 +226,15 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
           <Text style={[styles.saveText,{color:colors.accent}]}>Скачать</Text>
         </Pressable>
       </View>
+      {samplePdfUrl?(
+        <Pressable accessibilityRole="button" accessibilityLabel="Подставить тестовый PDF"
+          onPress={()=>{
+            setSource(samplePdfUrl);
+            setMessage('Ссылка на тестовый PDF заполнена. Нажми «Скачать» для проверки на телефоне.');
+          }} style={[styles.sample,{borderColor:colors.line}]}>
+          <Text style={{color:colors.muted,fontSize:12}}>Проверить настоящий PDF · тест</Text>
+        </Pressable>
+      ):null}
       {op?.status==='downloading'?(
         <Text accessibilityRole="text" style={[styles.status,{color:colors.muted}]}>
           {'Скачивается: '+op.name+(progress===null?'':' · '+progress+'%')}
@@ -360,6 +370,7 @@ const styles=StyleSheet.create({
   action:{minHeight:40,justifyContent:'center',paddingHorizontal:2},
   actionText:{fontSize:12},
   foot:{fontSize:10,lineHeight:15,marginTop:5},
+  sample:{alignSelf:'flex-start',borderWidth:1,borderRadius:11,padding:10,minHeight:39},
   reviewShortcut:{alignSelf:'flex-start',borderWidth:1,borderRadius:10,
     paddingVertical:7,paddingHorizontal:12,marginTop:-5,marginBottom:8,minHeight:35,
     justifyContent:'center'},
