@@ -258,7 +258,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 /* SEYVEO Living Ink · readable composer, not another glass capsule.
    The ink is a feathered radial veil without a panel edge. Keep the original
    composer DOM, tap targets, keyboard anchors, geometry and voice controls. */
-#ask.prompt:not(.expanded){
+html:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#eef3ef;
  --sv-ink-input-hint:#bec8bf;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,
@@ -269,7 +269,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-#ask.prompt:not(.expanded):focus-within{
+html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,
    rgba(30,53,43,.62) 0%,rgba(22,39,33,.44) 58%,rgba(12,21,18,0) 100%)!important;
 }
@@ -295,13 +295,13 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 #ask.prompt:not(.expanded) .composer-compact :is(.composer-icon,.composer-expand-manual,.seyveo-conversation-mic) svg{
  color:inherit!important;stroke:currentColor;
 }
-:root[data-theme="light"] #ask.prompt:not(.expanded){
+:root[data-theme="light"]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#202934;
  --sv-ink-input-hint:#5b6673;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,
    rgba(230,234,238,.75) 0%,rgba(238,241,244,.43) 54%,rgba(250,251,251,0) 100%)!important;
 }
-:root[data-theme="light"] #ask.prompt:not(.expanded):focus-within{
+:root[data-theme="light"]:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,
    rgba(223,230,236,.87) 0%,rgba(231,237,242,.55) 58%,rgba(252,253,253,0) 100%)!important;
 }
@@ -388,27 +388,27 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
  border-color:rgba(204,185,164,.19)!important;
  background:linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),rgba(28,27,26,.97)!important;
 }
-:root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded){
+:root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(37,50,59,.55),rgba(26,36,43,.36) 54%,rgba(17,24,30,0) 100%)!important;
 }
-:root[data-theme=dark][data-palette=graphite] #ask.prompt:not(.expanded):focus-within{
+:root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(44,59,70,.62),rgba(32,45,53,.43) 58%,rgba(17,24,30,0) 100%)!important;
 }
-:root[data-theme=dark][data-palette=sapphire] #ask.prompt:not(.expanded){
+:root[data-theme=dark][data-palette=sapphire]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#f0f4ff;--sv-ink-input-hint:#bac9e8;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(33,48,81,.57),rgba(24,36,63,.38) 54%,rgba(14,23,41,0) 100%)!important;
 }
-:root[data-theme=dark][data-palette=sapphire] #ask.prompt:not(.expanded):focus-within{
+:root[data-theme=dark][data-palette=sapphire]:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(43,61,104,.63),rgba(30,45,78,.44) 58%,rgba(14,23,41,0) 100%)!important;
 }
 
 
-:root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded){
+:root[data-theme=dark][data-palette=plum]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#ffffff;--sv-ink-input-hint:#d9dde1;
  background:radial-gradient(ellipse 87% 91% at 47% 50%,rgba(51,47,43,.51),rgba(39,36,33,.34) 54%,rgba(28,27,26,0) 100%)!important;
 }
-:root[data-theme=dark][data-palette=plum] #ask.prompt:not(.expanded):focus-within{
+:root[data-theme=dark][data-palette=plum]:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  background:radial-gradient(ellipse 91% 96% at 47% 50%,rgba(61,55,48,.57),rgba(45,40,36,.40) 58%,rgba(28,27,26,0) 100%)!important;
 }
 
