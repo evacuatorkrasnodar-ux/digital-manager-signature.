@@ -9,13 +9,14 @@ type Tab={id:number;url:string};
 const HOME='https://www.wikipedia.org/';
 export function NativeBrowser(){
  const web=useRef<WebView>(null);
+ const selectedTabId=useRef(1);
  const [tabs,setTabs]=useState<Tab[]>([{id:1,url:HOME}]);
  const [active,setActive]=useState(1);
  const [nextId,setNextId]=useState(2);
  const [sessionReady,setSessionReady]=useState(false);
  useEffect(()=>{let mounted=true;void loadBrowserSession().then(saved=>{
   if(!mounted)return;
-  if(saved){setTabs(saved.tabs);setActive(saved.active);setNextId(Math.max(...saved.tabs.map(t=>t.id))+1);setAddress(saved.tabs.find(t=>t.id===saved.active)?.url||HOME)}
+  if(saved){selectedTabId.current=saved.active;setTabs(saved.tabs);setActive(saved.active);setNextId(Math.max(...saved.tabs.map(t=>t.id))+1);setAddress(saved.tabs.find(t=>t.id===saved.active)?.url||HOME)}
   setSessionReady(true);
  });return()=>{mounted=false}},[]);
  useEffect(()=>{if(sessionReady)void saveBrowserSession(tabs,active)},[tabs,active,sessionReady]);
@@ -86,20 +87,20 @@ export function NativeBrowser(){
   web.current?.injectJavaScript("document.querySelectorAll('audio,video').forEach(function(el){el.pause()});true;");
   setTranslationNotice('Воспроизведение на странице остановлено, если плеер доступен браузеру.');
  }
- function select(tab:Tab){setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
+ function select(tab:Tab){selectedTabId.current=tab.id;setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
  function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);if(!['https:','http:'].includes(url.protocol)||url.username||url.password)throw Error();setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)}catch{setAddress(current.url)}}
  return <View style={{flex:1,backgroundColor:'#11161b'}}>
   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0,maxHeight:58}} contentContainerStyle={{padding:8,alignItems:'center',gap:6}}>
    {tabs.map(t=><View key={t.id} style={{flexDirection:'row',alignItems:'center',borderRadius:15,borderWidth:1,borderColor:t.id===active?'#acc9ce':'#56646b',backgroundColor:t.id===active?'#34434a':'#242e35'}}>
-    <Pressable onPress={()=>select(t)} accessibilityRole="button" style={{padding:10,maxWidth:145}}><Text numberOfLines={1} style={{color:'#f3f6f7',fontSize:12}}>{new URL(t.url).hostname}</Text></Pressable>
+    <Pressable onPress={()=>select(t)} accessibilityRole="button" style={{padding:10,maxWidth:145}}><Text numberOfLines={1} style={{color:'#f3f6f7',fontSize:12}}>{(()=>{try{return new URL(t.url).hostname||'Вкладка'}catch{return 'Вкладка'}})()}</Text></Pressable>
     <Pressable onPress={()=>close(t.id)} accessibilityRole="button" accessibilityLabel="Закрыть вкладку" style={{padding:10}}><Text style={{color:'#d5dfe0'}}>×</Text></Pressable>
    </View>)}
    <Pressable onPress={add} accessibilityRole="button" accessibilityLabel="Новая вкладка" style={{padding:10}}><Text style={{color:'white',fontSize:23}}>＋</Text></Pressable>
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
-  <WebView onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
+  <WebView onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}catch{}}}/>
   {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
     <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
     <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
