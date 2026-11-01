@@ -47,7 +47,9 @@ function init(){
   return '';
  }
  function paint(){
-  if(musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.())return; // Music or Browser owns the existing buttons.
+  // The same original dock is contextually owned by Music, Browser or Sayvi Chat.
+  if(musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.()||
+     document.documentElement.classList.contains('seyveo-conversation'))return;
   const active=activeDestination();
   items.forEach((item,index)=>{
    const button=buttons[index];
@@ -71,7 +73,8 @@ function init(){
  // that can cancel the user's tap and the synthetic repeat may be suppressed.
  buttons.forEach(button=>{
   button.addEventListener('click',event=>{
-   if(!event.isTrusted||musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.())return;
+   if(!event.isTrusted||musicMode()||window.SEYVEO_BROWSER_DOCK?.isActive?.()||
+      document.documentElement.classList.contains('seyveo-conversation'))return;
    showSelectionFeedback(button);
   },{capture:true});
  });
