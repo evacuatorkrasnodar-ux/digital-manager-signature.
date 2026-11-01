@@ -21,6 +21,13 @@
     },
     "plugins": [
       [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
         "expo-sqlite",
         {
           "useSQLCipher": true
