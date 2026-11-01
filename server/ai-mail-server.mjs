@@ -4,6 +4,7 @@ import {explainBrowserDocument,validateBrowserDocumentReview} from './browser-do
 const host='127.0.0.1',port=Number(process.env.PORT||8787);
 const apiKey=process.env.OPENAI_API_KEY,model=process.env.OPENAI_MODEL;
 const token=process.env.SEYVEO_DEV_API_TOKEN;
+let documentMinute=0,documentCount=0;
 if(!apiKey||!model||!token)throw Error('Set OPENAI_API_KEY, OPENAI_MODEL and SEYVEO_DEV_API_TOKEN');
 const safeToken=t=>{const a=Buffer.from(t||''),b=Buffer.from(token);return a.length===b.length&&timingSafeEqual(a,b)};
 const server=http.createServer(async(req,res)=>{
@@ -15,7 +16,11 @@ const server=http.createServer(async(req,res)=>{
  if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(415,{error:'JSON required'});
  let body='';try{for await(const chunk of req){body+=chunk;if(body.length>16000)throw Error('Too large')}}catch{return json(413,{error:'Request too large'})}
  let input;try{input=JSON.parse(body)}catch{return json(400,{error:'Invalid JSON'})}
+ if(!input||typeof input!=='object'||Array.isArray(input))return json(400,{error:'JSON object required'});
  if(req.url==='/api/browser/document-explain'){
+  const minute=Math.floor(Date.now()/60000);
+  if(documentMinute!==minute){documentMinute=minute;documentCount=0;}
+  if(++documentCount>10)return json(429,{error:'Too many document reviews'});
   try{validateBrowserDocumentReview(input)}
   catch{return json(400,{error:'Invalid document or missing consent'})}
   try{
