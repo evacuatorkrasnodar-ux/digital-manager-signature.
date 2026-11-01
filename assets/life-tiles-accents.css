@@ -42,7 +42,7 @@
 /* Only My World receives the new typography and restrained horizon light. */
 html.sv-space-active #lifePage{
  position:relative;
- padding:8px clamp(12px,3.7vw,22px) 28px!important;
+ padding:8px 0 28px!important;
  /* Do not paint a second rectangle above the app's continuous background. */
  background:transparent!important;
  color:var(--text);
