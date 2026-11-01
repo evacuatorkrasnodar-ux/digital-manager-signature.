@@ -731,7 +731,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.disabled=true;execute.disabled=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
-   if(!tiles.contains(field)||mode!=='preview')return;
+   if(!tiles.contains(field)||mode!=='preview'){
+    morphLocked=false;open.disabled=false;execute.disabled=false;
+    scene.classList.remove('lm-scene--changing');
+    return;
+   }
    remaining=remaining.filter(item=>item!==shown);
    if(!remaining.length){
     tip.textContent='ПРИМЕРЫ РАЗОБРАНЫ · ДАННЫЕ НЕ ИЗМЕНЕНЫ';
