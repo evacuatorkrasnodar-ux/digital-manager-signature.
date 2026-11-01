@@ -1245,9 +1245,12 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <button type="button" data-manager-calendar-tab="business" aria-pressed="false"><span class="sv-mini-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span><span>Кабинет</span></button>
 </div>
 <header class="calendar-header">
-<div><h1 id="calendarTitle" tabindex="-1">Календарь</h1></div>
+<div class="calendar-header-main">
+<button id="calendarBack" type="button" class="calendar-back" aria-label="Вернуться к предыдущему разделу" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+<h1 id="calendarTitle" tabindex="-1">Календарь</h1>
+</div>
 <div class="calendar-header-actions">
-<button id="calendarAdd" type="button" class="cal-round calendar-header-add" aria-label="Добавить событие"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+<button id="calendarAdd" type="button" class="cal-round calendar-header-add" aria-label="Добавить событие" title="Новое событие"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </div></header>
 <div class="cal-scope" role="group" aria-label="Какие события показывать">
  <button type="button" data-calendar-scope="all" aria-pressed="true">Все</button>
@@ -1279,7 +1282,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div id="calendarDeadlineList"></div>
 </section>
 <div class="cal-actions" role="group" aria-label="Добавить в календарь">
-<button id="calendarAddInline" type="button" class="cal-day-fab">＋ Событие</button>
+<button id="calendarAddInline" type="button" class="cal-day-fab" hidden aria-hidden="true" tabindex="-1">＋ Событие</button>
 <button id="calendarAddTask" type="button" class="cal-day-fab">＋ Дело со сроком</button>
 </div>
 
