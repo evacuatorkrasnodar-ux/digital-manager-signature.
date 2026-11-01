@@ -1044,6 +1044,13 @@ quickEditor.addEventListener('submit',event=>{
   quickField.focus();
   return;
  }
+ // Prevent accidentally replacing Favorites with a duplicated Yandex/YouTube/Wiki tile.
+ if(Array.from(root.querySelectorAll('.seyveo-browser-shortcuts [data-site]'),button=>secureUrl(button.dataset.site)).includes(url)){
+  quickError.textContent='Этот сайт уже есть в быстром доступе';
+  quickError.hidden=false;
+  quickField.focus();
+  return;
+ }
  try{localStorage.setItem(quickSiteKey,url)}
  catch{
   quickError.textContent='Не удалось сохранить сайт на устройстве';
