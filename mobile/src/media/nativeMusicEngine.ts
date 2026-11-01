@@ -18,19 +18,25 @@ export async function startNativeTrack(sourceUri:string,title:string){
  stopNativeTrack();
  await setAudioModeAsync({playsInSilentMode:true,shouldPlayInBackground:true,interruptionMode:'doNotMix'});
  const next=createAudioPlayer({uri:sourceUri});
- player=next;
- trackId=sourceUri.slice(0,300);
- sharedMediaSession.report('music',trackId,title,'loading');
- removeControls=sharedMediaSession.registerControls('music',trackId,command=>{
-  if(command==='pause')pauseNativeTrack();else resumeNativeTrack();
- });
- statusListener=next.addListener('playbackStatusUpdate',status=>{
-  if(player!==next||!trackId)return;
-  if(status.didJustFinish){stopNativeTrack();return}
-  sharedMediaSession.report('music',trackId,title,status.playing?'playing':status.isLoaded?'paused':'loading');
- });
- next.setActiveForLockScreen(true,{title,artist:'SEYVEO Music'});
- next.play();
+ try{
+  player=next;
+  trackId=sourceUri.slice(0,300);
+  sharedMediaSession.report('music',trackId,title,'loading');
+  removeControls=sharedMediaSession.registerControls('music',trackId,command=>{
+   if(command==='pause')pauseNativeTrack();else resumeNativeTrack();
+  });
+  statusListener=next.addListener('playbackStatusUpdate',status=>{
+   if(player!==next||!trackId)return;
+   if(status.didJustFinish){stopNativeTrack();return}
+   if(!status.isLoaded&&status.error){sharedMediaSession.report('music',trackId,title,'error');return}
+   sharedMediaSession.report('music',trackId,title,status.playing?'playing':status.isLoaded?'paused':'loading');
+  });
+  next.setActiveForLockScreen(true,{title,artist:'SEYVEO Music'});
+  next.play();
+ }catch(error){
+  stopNativeTrack();
+  throw error;
+ }
 }
 
 export function pauseNativeTrack(){player?.pause()}
