@@ -5,6 +5,8 @@ import { StatusBar } from 'expo-status-bar';
 import { MemoryDiagnostic } from './src/core/MemoryDiagnostic';
 import { OfflinePacksPanel } from './src/core/OfflinePacksPanel';
 import { NativeBrowserScreen } from './src/browser/NativeBrowserScreen';
+import {createConfiguredSayviReview,type SayviReviewHandler} from './src/browser/sayvi-native-integration';
+import {hasVerifiedNativeSession} from './src/auth/verifiedSessionStore';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
 
@@ -154,13 +156,27 @@ function NativeFoundation({onOpenBrowser}:{onOpenBrowser:()=>void}) {
 }
 
 export default function App() {
-  // Native browser remains a test screen; the approved SEYVEO UI is unchanged.
+  // The browser remains a development screen; its approved web UI is untouched.
   const [browserOpen,setBrowserOpen]=useState(false);
+  const [sayviReview,setSayviReview]=useState<SayviReviewHandler|null>(null);
+  async function openBrowser(){
+    // No provider/session means local-only documents. No development API token
+    // is included in the app or exposed through browser pages.
+    let review:SayviReviewHandler|null=null;
+    try{
+      if(await hasVerifiedNativeSession())review=createConfiguredSayviReview();
+    }catch{/* login service unavailable: stay offline */}
+    setSayviReview(()=>review);
+    setBrowserOpen(true);
+  }
   return (
     <SafeAreaProvider>
       {browserOpen
-        ? <NativeBrowserScreen onClose={()=>setBrowserOpen(false)}/>
-        : <NativeFoundation onOpenBrowser={()=>setBrowserOpen(true)}/>}
+        ? <NativeBrowserScreen
+            onClose={()=>{setSayviReview(null);setBrowserOpen(false)}}
+            onSayviReview={sayviReview||undefined}
+          />
+        : <NativeFoundation onOpenBrowser={()=>{void openBrowser()}}/>}
     </SafeAreaProvider>
   );
 }
