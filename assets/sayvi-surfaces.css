@@ -312,17 +312,16 @@
  box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;
  position:relative;min-height:43px;padding-left:4px;gap:5px;margin:0 0 4px;
 }
+/* Shared SEYVEO wordmark language: thin, tracked, single-line section identity. */
 #sayviSurfacePage .sv-mail-brand{
- display:inline-flex;align-items:baseline;gap:7px;min-width:0;
+ display:inline-flex;align-items:center;gap:7px;min-width:0;
  color:var(--text);padding:0;white-space:nowrap;
+ font-size:11px;font-weight:590;letter-spacing:.19em;line-height:1.3;
 }
-#sayviSurfacePage .sv-mail-brand-name{
- font-size:15px;font-weight:650;letter-spacing:.065em;line-height:1.15;
- color:var(--text);
-}
-#sayviSurfacePage .sv-mail-brand-sub{
- color:color-mix(in srgb,var(--sm-accent) 62%,var(--secondary));
- font-size:10px;font-weight:560;letter-spacing:.18em;line-height:1.15;
+#sayviSurfacePage .sv-mail-brand-name,
+#sayviSurfacePage .sv-mail-brand-sub,
+#sayviSurfacePage .sv-mail-brand-separator{
+ color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;
 }
 #sayviSurfacePage .sv-mail-top-buttons{display:flex;align-items:center;gap:6px;margin-left:auto}
 #sayviSurfacePage .sv-mail-icon-button{
