@@ -101,8 +101,9 @@ function syncSearchButtons(){
   button.setAttribute('aria-expanded',String(open));
   button.setAttribute('aria-label',open?'Закрыть поиск':'Поиск или адрес сайта');
   button.title=open?'Закрыть поиск':'Поиск';
+  button.classList.toggle('is-search-close',open);
   button.innerHTML=open
-   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg>'
+   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6"/></svg>'
    :'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>';
  });
 }
