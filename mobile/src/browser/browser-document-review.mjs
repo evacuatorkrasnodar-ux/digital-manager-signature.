@@ -56,7 +56,7 @@ export function prepareSayviReviewHandoff(preview,{approved=false}={}) {
       typeof preview.excerpt!=='string' ||
       !preview.excerpt.trim() ||
       preview.excerpt.length>BROWSER_REVIEW_EXCERPT_LIMIT ||
-      !['txt','csv'].includes(preview.extension)) {
+      !['txt','csv','pdf'].includes(preview.extension)) {
     throw Error('document-review-not-authorized');
   }
   return Object.freeze({
