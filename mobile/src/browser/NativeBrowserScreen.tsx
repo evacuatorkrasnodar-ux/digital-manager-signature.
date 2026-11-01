@@ -168,7 +168,9 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
               onPress={()=>setView('page')} style={[styles.downloadBack,{borderColor:colors.line}]}>
               <Text style={{color:colors.text}}>На страницу</Text>
             </Pressable>
-            <BrowserDownloadsPanel colors={colors} onSayviReview={onSayviReview}/>
+            <BrowserDownloadsPanel colors={colors} onSayviReview={onSayviReview}
+              samplePdfUrl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+            />
           </ScrollView>
         ):tab.url?(
           <NativeBrowserViewport
