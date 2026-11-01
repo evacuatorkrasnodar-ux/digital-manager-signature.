@@ -32,7 +32,8 @@ function init(){
   {id:'tasks',title:'Дела',description:'Открыть дела',
    icon:'<path d="M9 6.5h10M9 12h10M9 17.5h10M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>'},
   {id:'life',title:'Мой мир',description:'Открыть Мой мир',
-   icon:'<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/>'},
+   // One shared sprite symbol, same geometry as the first-paint dock markup.
+   viewBox:'0 0 28 24',icon:'<use href="#seyveo-my-mini"/>'},
   {id:'manage',title:'Управление',description:'Открыть управление',
    icon:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4"/>'}
  ];
@@ -56,7 +57,7 @@ function init(){
    button.hidden=false;
    // Do not recreate SVG/labels on every hashchange: avoids label flashes.
    if(button.dataset.svFixedAction!==item.id){
-    button.innerHTML='<svg class="seyveo-dock-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
+    button.innerHTML='<svg class="seyveo-dock-nav-svg'+(item.id==='life'?' seyveo-my-signature':'')+'" viewBox="'+(item.viewBox||'0 0 24 24')+'" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
     button.dataset.svFixedAction=item.id;
     button.setAttribute('aria-label',item.description);
     button.title=item.title;
