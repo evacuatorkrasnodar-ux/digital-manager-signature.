@@ -187,13 +187,20 @@ function demoScenario(kind){
  * Real delivery and retrieval are disabled without an authorized provider.
  * Example messages are clearly marked and never saved or sent externally. */
 let mailFolder='inbox',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
+let mailScope='all',mailComposeScope=null;
 let mailDrafts=[],mailSearch='',mailShowExamples=true;
+const mailAccountName=account=>account==='business'?'Рабочая':'Личная';
+const mailVisible=account=>mailScope==='all'||account===mailScope;
 const mailExamples=[
- {id:'example-andrey',initial:'А',from:'Андрей · клиент',subject:'Стоимость доставки',preview:'Здравствуйте! Подскажите, сколько будет стоить доставка?',body:'Здравствуйте!\n\nПодскажите, пожалуйста, сколько будет стоить доставка и какие сроки возможны?\n\nСпасибо!\nАндрей',when:'10:24',unread:true,starred:false,attachment:false,archived:false,trashed:false},
- {id:'example-project',initial:'П',from:'Проектный отдел',subject:'Согласование плана работ',preview:'Подготовили обновлённый план. Посмотрите, пожалуйста.',body:'Добрый день!\n\nПодготовили обновлённый план работ. Будем рады вашим замечаниям.\n\nС уважением,\nПроектный отдел',when:'09:17',unread:true,starred:false,attachment:false,archived:false,trashed:false},
- {id:'example-finance',initial:'Ф',from:'Финансовый отдел',subject:'Отчёт за месяц',preview:'Пример отчёта и сводных показателей за месяц.',body:'Добрый день!\n\nНаправляем пример ежемесячного отчёта. В рабочей версии здесь можно будет просматривать настоящие вложения.\n\nФинансовый отдел',when:'Вчера',unread:false,starred:false,attachment:true,archived:false,trashed:false},
- {id:'example-team',initial:'Р',from:'Руководство',subject:'Совещание в пятницу',preview:'Подтвердите, пожалуйста, удобное время встречи.',body:'Коллеги, добрый день!\n\nПредлагаем провести совещание в пятницу. Подтвердите удобное время.\n\nСпасибо!',when:'Вчера',unread:false,starred:true,attachment:false,archived:false,trashed:false},
- {id:'example-delivery',initial:'С',from:'Снабжение',subject:'Поставка оборудования',preview:'Условия поставки согласованы. Подробности внутри.',body:'Здравствуйте!\n\nСроки и основные условия поставки оборудования согласованы.\n\nС уважением,\nОтдел снабжения',when:'29 окт',unread:false,starred:false,attachment:false,archived:false,trashed:false}
+ {account:'business',id:'example-andrey',initial:'А',from:'Андрей · клиент',subject:'Стоимость доставки',preview:'Здравствуйте! Подскажите, сколько будет стоить доставка?',body:'Здравствуйте!\n\nПодскажите, пожалуйста, сколько будет стоить доставка и какие сроки возможны?\n\nСпасибо!\nАндрей',when:'10:24',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {account:'business',id:'example-project',initial:'П',from:'Проектный отдел',subject:'Согласование плана работ',preview:'Подготовили обновлённый план. Посмотрите, пожалуйста.',body:'Добрый день!\n\nПодготовили обновлённый план работ. Будем рады вашим замечаниям.\n\nС уважением,\nПроектный отдел',when:'09:17',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {account:'business',id:'example-finance',initial:'Ф',from:'Финансовый отдел',subject:'Отчёт за месяц',preview:'Пример отчёта и сводных показателей за месяц.',body:'Добрый день!\n\nНаправляем пример ежемесячного отчёта. В рабочей версии здесь можно будет просматривать настоящие вложения.\n\nФинансовый отдел',when:'Вчера',unread:false,starred:false,attachment:true,archived:false,trashed:false},
+ {account:'business',id:'example-team',initial:'Р',from:'Руководство',subject:'Совещание в пятницу',preview:'Подтвердите, пожалуйста, удобное время встречи.',body:'Коллеги, добрый день!\n\nПредлагаем провести совещание в пятницу. Подтвердите удобное время.\n\nСпасибо!',when:'Вчера',unread:false,starred:true,attachment:false,archived:false,trashed:false},
+ {account:'business',id:'example-delivery',initial:'С',from:'Снабжение',subject:'Поставка оборудования',preview:'Условия поставки согласованы. Подробности внутри.',body:'Здравствуйте!\n\nСроки и основные условия поставки оборудования согласованы.\n\nС уважением,\nОтдел снабжения',when:'29 окт',unread:false,starred:false,attachment:false,archived:false,trashed:false}
+,
+ {account:'personal',id:'example-family',initial:'М',from:'Мария',subject:'Встреча на выходных',preview:'В субботу в 16:00 всё в силе?',body:'Привет!\n\nВстреча в субботу в 16:00 в силе? Напиши, когда будет удобно.\n\nОбнимаю!',when:'11:32',unread:true,starred:false,attachment:false,archived:false,trashed:false},
+ {account:'personal',id:'example-tickets',initial:'Б',from:'Билеты · пример',subject:'Подтверждение бронирования',preview:'Ваше бронирование подтверждено — учебное письмо.',body:'Здравствуйте!\n\nЭто демонстрационное подтверждение бронирования. Настоящих билетов здесь нет.\n\nХорошего дня!',when:'Вчера',unread:false,starred:true,attachment:false,archived:false,trashed:false},
+ {account:'personal',id:'example-family-photo',initial:'А',from:'Алексей',subject:'Фотографии из поездки',preview:'Собрал фотографии и хотел поделиться.',body:'Привет!\n\nСобрал фотографии из нашей поездки. Вложения в этой демонстрации отсутствуют.\n\nДо встречи!',when:'28 окт',unread:false,starred:false,attachment:true,archived:false,trashed:false}
 ];
 const mailIcons=Object.freeze({
  inbox:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
@@ -234,20 +241,22 @@ function mailView(){
  searchInput.autocomplete='off';searchInput.value=mailSearch;
  searchInput.addEventListener('input',()=>{mailSearch=searchInput.value.trim().toLocaleLowerCase('ru');paintList()});
  searchLabel.append(searchInput);
+ const scopeNav=create('nav','sv-mail-accounts');scopeNav.setAttribute('aria-label','Выбор почты');
  const nav=create('nav','sv-mail-toolbar');nav.setAttribute('aria-label','Папки почты');
  const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
  const content=create('div','sv-mail-list');
  const foot=create('p','sv-mail-foot');
  foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
- section.append(top,searchLabel,nav,info,content,foot);body.append(section);
+ section.append(top,scopeNav,searchLabel,nav,info,content,foot);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
-  if(key==='drafts')return mailDrafts.length;
-  if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>!m.trashed&&!m.archived&&m.unread).length;
+  if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
+  if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>mailVisible(m.account)&&!m.trashed&&!m.archived&&m.unread).length;
   return 0;
  }
  function openEditor(id=null,reply=null){
   mailEditingId=id;mailEditorOpen=true;mailCurrent=null;
+  mailComposeScope=reply?.account||(id?mailDrafts.find(d=>d.id===id)?.account:null)||(mailScope==='all'?null:mailScope);
   if(reply)mailEditingId=null;
   paint();
   if(reply){
@@ -259,6 +268,11 @@ function mailView(){
  }
  function selectFolder(folder){
   mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
+ }
+ function selectScope(account){
+  if(!['all','personal','business'].includes(account)||account===mailScope)return;
+  mailScope=account;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;
+  mailSearch='';searchInput.value='';paint();
  }
  function editDraft(id){
   if(!mailDrafts.some(d=>d.id===id))return;
@@ -280,6 +294,20 @@ function mailView(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
+  const accountField=create('label','sv-mail-field sv-mail-account-field');
+  accountField.append(create('span','sv-mail-field-label','От имени'));
+  const accountSelect=create('select','sv-mail-input sv-mail-account-select');
+  accountSelect.setAttribute('aria-label','Выбрать личную или рабочую почту');
+  for(const [value,name] of [['','Выберите почту'],['personal','Личная почта'],['business','Рабочая почта']]){
+   const option=create('option','',name);option.value=value;accountSelect.append(option);
+  }
+  accountSelect.value=original?.account||mailComposeScope||'';
+  if(original)accountSelect.disabled=true;
+  accountSelect.addEventListener('change',()=>{mailComposeScope=accountSelect.value||null});
+  accountField.append(accountSelect);
+  form.append(accountField);
+  const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения соответствующего ящика.');
+  form.append(accountHelp);
   form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
   const makeField=(labelText,name,tag,value,type)=>{
    const label=create('label','sv-mail-field');
@@ -297,8 +325,12 @@ function mailView(){
   form.addEventListener('submit',event=>{
    event.preventDefault();
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
+   if(!['personal','business'].includes(accountSelect.value)){
+    status.textContent='Сначала выберите личную или рабочую почту.';accountSelect.focus();return;
+   }
    if(!recipient&&!subjectText&&!bodyText){status.textContent='Напишите письмо или укажите тему.';return}
    const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    account:original?.account||accountSelect.value,
     to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
    if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
    else mailDrafts.unshift(item);
@@ -326,7 +358,7 @@ function mailView(){
    item.trashed=!item.trashed;mailCurrent=null;paint();
   }));
   heading.append(backButton,label,opts);
-  panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
+  panel.append(heading,create('span','sv-mail-account-tag',mailAccountName(item.account)),create('h2','sv-mail-detail-title',item.subject));
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
   const who=create('div','sv-mail-detail-who');
@@ -355,6 +387,7 @@ function mailView(){
   toggle.classList.add('sv-mail-demo-toggle');banner.append(toggle);content.append(banner);
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const inFolder=mailExamples.filter(m=>{
+   if(!mailVisible(m.account))return false;
    if(mailFolder==='trash')return m.trashed;
    if(mailFolder==='archive')return m.archived&&!m.trashed;
    if(m.trashed)return false;
@@ -373,6 +406,7 @@ function mailView(){
    const titleText=create('strong','sv-mail-letter-subject',item.subject);
    const preview=create('span','sv-mail-letter-preview',item.preview);
    detail.append(sender,titleText,preview);
+   if(mailScope==='all')detail.append(create('small','sv-mail-account-tag',mailAccountName(item.account)));
    const meta=create('span','sv-mail-letter-meta');
    meta.append(create('time','',item.when));
    if(item.attachment)meta.append(mailIcon('paperclip'));
@@ -384,13 +418,14 @@ function mailView(){
   }
  }
  function drawDrafts(){
-  const list=mailDrafts.filter(d=>!mailSearch||[d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch));
+  const list=mailDrafts.filter(d=>mailVisible(d.account)&&(!mailSearch||[d.to,d.subject,d.body].join(' ').toLocaleLowerCase('ru').includes(mailSearch)));
   if(!list.length){content.append(create('p','sv-mail-empty',mailSearch?'Черновики не найдены.':'Пока нет черновиков. Нажмите «Написать», чтобы создать первый.'));return}
   for(const draft of list){
    const row=create('div','sv-mail-draft-row');
    const edit=create('button','sv-mail-draft-content');
    edit.type='button';edit.append(create('strong','',draft.subject||'Без темы'));
    edit.append(create('small','',draft.to?'Кому: '+draft.to:'Адресат не указан'));
+   edit.append(create('small','sv-mail-account-tag',mailAccountName(draft.account)));
    edit.addEventListener('click',()=>editDraft(draft.id));
    const remove=iconButton('trash','Удалить черновик',()=>removeDraft(draft.id));
    row.append(edit,remove);content.append(row);
@@ -401,7 +436,7 @@ function mailView(){
   if(mailEditorOpen){drawEditor();return}
   if(mailCurrent){
    const item=mailExamples.find(m=>m.id===mailCurrent);
-   if(item&&!item.trashed){drawDetails(item);return}
+   if(item&&mailVisible(item.account)){drawDetails(item);return}
    mailCurrent=null;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
@@ -409,6 +444,16 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
+  scopeNav.replaceChildren();
+  for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
+   const button=create('button','sv-mail-account-switch',label);
+   button.type='button';
+   button.dataset.mailAccount=key;
+   button.setAttribute('aria-pressed',String(mailScope===key));
+   button.addEventListener('click',()=>selectScope(key));
+   scopeNav.append(button);
+  }
+  scopeNav.hidden=mailEditorOpen;
   nav.replaceChildren();
   for(const [key,label] of tabs){
    const button=create('button','sv-mail-folder');
@@ -423,7 +468,7 @@ function mailView(){
   compose.hidden=mailEditorOpen;
   info.textContent=mailEditorOpen?'Черновик · только на этом устройстве':
    mailCurrent?'Просмотр учебного письма':
-   mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.length:
+   mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.filter(d=>mailVisible(d.account)).length:
    mailFolder==='sent'?'Отправка пока недоступна':
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
@@ -547,6 +592,12 @@ function open(kind,context){
  if(location.hash===target){sync();return true}
  // Capture the calling section before changing the hash.
  if(!currentKind())rememberOrigin(context);
+ if(kind==='mail'){
+  if(context==='business')mailScope='business';
+  else if(context==='personal'||location.hash==='#life')mailScope='personal';
+  else if(location.hash==='#tasks')mailScope='business';
+  else if(context==='all')mailScope='all';
+ }
  if(kind==='contract')window.SEYVEO_DOCUMENT_CENTER?.setArea?.(context==='business'?'business':'personal');
  location.hash=target;
  return true;
