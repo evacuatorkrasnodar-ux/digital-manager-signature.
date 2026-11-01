@@ -225,6 +225,91 @@ function paintReturnButton(){
  backIcon.dataset.returnSource=source;
 }
 
+/* The actual shared SEYVEO footer dock serves Feather Chat, too.
+ * No duplicate markup or second imitation sphere: original gestures, glass
+ * and player integrations remain owned by their existing modules. */
+const signatureDock=document.querySelector('footer.dock');
+const chatDockButtons=['navHome','navTasks','navPicture','navManage'].map(id=>$(id));
+const chatDockIcons={
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ browser:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-4.2 4.8-4.2 12.2 0 17M12 3.5c4.2 4.8 4.2 12.2 0 17"/>',
+ send:'<path d="m5 12 14-7-5 14-3-6-6-1ZM11 13l8-8"/>',
+ stop:'<rect x="7" y="7" width="10" height="10" rx="2.3"/>'
+};
+const dockGlyph=(paths,box='0 0 24 24')=>
+ '<svg class="seyveo-dock-nav-svg" viewBox="'+box+'" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';
+const isFeatherDock=()=>root.classList.contains('seyveo-conversation')
+ && !window.SEYVEO_BROWSER?.state?.().open && !signatureDock?.classList.contains('seyveo-music-dock');
+function paintFeatherDock(){
+ if(!signatureDock||chatDockButtons.some(button=>!button)||!isFeatherDock())return;
+ signatureDock.classList.add('seyveo-chat-dock');
+ const origin=contextGlyphs[returnSource]?returnSource:'home';
+ const backArt=origin==='home'
+  ?dockGlyph(contextGlyphs.home)
+  :dockGlyph('<path d="m8 7-5 5 5 5M3 12h8"/>'+contextGlyphs[origin],'0 0 34 24');
+ const busy=Boolean(activeAction);
+ const details=[
+  [backArt,origin==='home'?'На Главную':'Назад в '+contextNames[origin]],
+  [dockGlyph(chatDockIcons.plus),'Вложения и история'],
+  [dockGlyph(chatDockIcons.browser),'Открыть SEYVEO Browser'],
+  [dockGlyph(busy?chatDockIcons.stop:chatDockIcons.send),busy?'Остановить действие':'Отправить Сэйви']
+ ];
+ chatDockButtons.forEach((button,index)=>{
+  const [art,label]=details[index];
+  button.innerHTML=art+'<span>'+label+'</span>';
+  button.title=label;button.setAttribute('aria-label',label);
+  button.removeAttribute('aria-current');
+  button.classList.remove('active','sv-nav-feedback');
+  delete button.dataset.svFixedAction;
+  delete button.dataset.svMusicAction;
+  delete button.dataset.svBrowserAction;
+ });
+ signatureDock.setAttribute('aria-label','Фирменный док Сэйви — возврат, вложения, голос, браузер, отправка');
+}
+function releaseFeatherDock(){
+ if(!signatureDock?.classList.contains('seyveo-chat-dock'))return;
+ signatureDock.classList.remove('seyveo-chat-dock');
+ window.SEYVEO_MAGNETIC_INK?.refresh?.();
+}
+signatureDock?.addEventListener('click',event=>{
+ if(!isFeatherDock())return;
+ const button=event.target.closest?.('button');
+ if(!button||!signatureDock.contains(button))return;
+ const id=button.id;
+ if(id==='assistantButton'){
+  event.preventDefault();event.stopImmediatePropagation();event.stopPropagation();
+  if(window.SEYVEO_DOCK_VOICE_CLICK_SUPPRESSED?.())return;
+  window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.();
+  return;
+ }
+ const index=['navHome','navTasks','navPicture','navManage'].indexOf(id);
+ if(index<0)return;
+ event.preventDefault();event.stopImmediatePropagation();event.stopPropagation();
+ if(index===0){close();return;}
+ if(index===1){$('seyveoChatPlus')?.click();return;}
+ if(index===2){
+  $('seyveoChatPlus')?.setAttribute('aria-expanded','false');
+  $('seyveoChatTools')?.setAttribute('hidden','');
+  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
+  const result=window.SEYVEO_BROWSER?.open?.();
+  if(!result)status('Браузер пока недоступен',2500);
+  return;
+ }
+ if(index===3){
+  // Delegate to the existing real Send/Stop handler, never invent another submit.
+  if(activeAction){cancelAction();return;}
+  if(!$('question')?.value.trim()){
+   $('question')?.focus({preventScroll:true});return;
+  }
+  sendButton?.click();
+ }
+},true);
+document.addEventListener('seyveo:browser-dock-exit',()=>{
+ if(root.classList.contains('seyveo-conversation'))paintFeatherDock();
+});
+document.addEventListener('seyveo:music-dock-exit',()=>{
+ if(root.classList.contains('seyveo-conversation'))paintFeatherDock();
+});
 const sendButton=$('composerCompactSend');
 const sendIcon=sendButton?.innerHTML||'';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
@@ -240,6 +325,7 @@ function syncActionButton(){
  sendButton.title=busy?'Остановить действие':'Отправить Сэйви';
  sendButton.setAttribute('aria-label',busy?'Остановить действие':
    form.dataset.composerMode==='notes'?'Сохранить в Блокнот':'Отправить Сэйви');
+ if(isFeatherDock())paintFeatherDock();
 }
 function finishAction(){
  if(!activeAction)return;
@@ -296,7 +382,13 @@ function revealExisting(){
  stage.classList.add('has-inline-reply');
 }
 function open(options){
- if(root.classList.contains('seyveo-conversation'))return;
+ if(root.classList.contains('seyveo-conversation')){
+  if(options?.source==='browser'){
+   returnSource='browser';paintReturnButton();
+   paintFeatherDock();
+  }
+  return;
+ }
  // Snapshot the caller BEFORE routing to Home; the Back icon is contextual.
  const sourceHint=options&&typeof options==='object'?options.source:'';
  returnRoute=home.hidden?(location.hash||''):'';
@@ -305,6 +397,7 @@ function open(options){
  if(home.hidden)return;
  paintReturnButton();
  root.classList.add('seyveo-conversation');
+ paintFeatherDock();
  // Reuse the original writer and the existing saved thread.
  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
  header.hidden=false;
@@ -323,6 +416,7 @@ function close(){
  // A conversation may be recording: never leave the microphone active on exit.
  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
  root.classList.remove('seyveo-conversation');
+ releaseFeatherDock();
  header.hidden=true;
  syncMic(false);
  if(!form.hidden)$('hideInput')?.click();
@@ -743,6 +837,7 @@ window.addEventListener('hashchange',()=>{
    // Navigation away from chat explicitly cancels a pending return target.
    returnRoute='';
    root.classList.remove('seyveo-conversation');
+   releaseFeatherDock();
    root.style.removeProperty('--sayvi-chat-height');
    root.style.removeProperty('--sayvi-chat-top');
    root.style.removeProperty('--sayvi-composer-space');
