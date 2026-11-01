@@ -646,7 +646,15 @@ function render(){
    const host=new URL(address).hostname.toLowerCase();
    label.textContent=host.includes('habr.com')?'Хабр':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host.includes('youtube.com')?'YouTube':siteName(address);
    choose.append(mark,label);
-  }else choose.textContent='Новая вкладка';
+  }else{
+   // The empty tab uses the same raised label as ordinary tabs, not a bare
+   // text node that the two-column grid pushes out of alignment.
+   pill.classList.add('is-empty');
+   const label=document.createElement('span');
+   label.className='sb-browser-tab-name';
+   label.textContent='Новая вкладка';
+   choose.append(label);
+  }
   choose.addEventListener('click',()=>{active=item.id;render()});
  const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Закрыть вкладку');close.addEventListener('click',()=>closeTab(item.id));
  pill.append(choose,close);tabArea.append(pill)}
