@@ -139,10 +139,10 @@
 
 /* SEYVEO tasks polish v6 — calm proportions; only the Tasks screen.
    Preserve current local tasks, event history, dock and button actions. */
-#tasksPage.tasks-main{padding-top:6px}
+#tasksPage.tasks-main{padding-top:2px}
 #tasksPage .tasks-heading{margin:4px 0 13px}
 #tasksPage .tasks-heading .manage-caption{
- margin-bottom:7px;font-size:10px;line-height:1.3;
+ margin-bottom:5px;font-size:10px;line-height:1.3;
 }
 #tasksPage .tasks-heading h1{
  margin-bottom:7px;font-size:28px;font-weight:590;
@@ -494,8 +494,8 @@
    No second card stack, no duplicate Home recommendations or grey menus. */
 #tasksPage .tasks-heading{margin-bottom:20px}
 #tasksPage .tasks-heading #tasksOverview{
- max-width:36ch;margin:8px 0 0;
- color:var(--secondary);font-size:13px;line-height:1.5;
+ max-width:40ch;margin:5px 0 0;
+ color:var(--secondary);font-size:12.5px;line-height:1.42;
  letter-spacing:-.008em;
 }
 #tasksPage .personal-tasks-head{margin:0 0 9px}
