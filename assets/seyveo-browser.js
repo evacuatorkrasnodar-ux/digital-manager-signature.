@@ -755,26 +755,33 @@ function render(){
  }else if(url){if(displayedTab!==active||frame.getAttribute('src')!==url){frame.src=url;displayedTab=active}}
  else{frame.removeAttribute('src');displayedTab=null}
  document.dispatchEvent(new Event('seyveo:browser-state'));
- const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();
- $('[data-history-toggle]').hidden=!items.length;
- const selected=items.slice(0,1); // Quick resume only; complete history lives in History.
- if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
- for(const [position,link] of selected.entries()){
-  const url=new URL(link),host=url.hostname.replace(/^www\./,'');
-  const name=host.includes('youtube.com')?'YouTube':host.includes('wikipedia.org')?'Wikipedia':host.includes('ya.ru')||host.includes('yandex.')?'Яндекс':host;
-  const card=document.createElement('article');card.className='seyveo-browser-history-card';
-  const head=document.createElement('button');head.type='button';head.className='seyveo-browser-history-head';head.setAttribute('aria-label','Открыть '+name);
-  const logo=document.createElement('span');logo.className='seyveo-browser-history-logo';logo.setAttribute('aria-hidden','true');
-  paintSiteMark(logo,link);
-  const words=document.createElement('span');words.className='seyveo-browser-history-words';const title=document.createElement('strong');title.textContent=name;const sub=document.createElement('small');sub.textContent=host;words.append(title,sub);
-  head.append(logo,words);head.addEventListener('click',()=>navigate(link));
-  const menu=document.createElement('button');menu.type='button';menu.className='seyveo-browser-history-menu';menu.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>';menu.setAttribute('aria-label','Действия с '+name);menu.setAttribute('aria-expanded',String(expandedHistory===link));menu.addEventListener('click',()=>{expandedHistory=expandedHistory===link?null:link;render()});
-  const actions=document.createElement('div');actions.className='seyveo-browser-history-actions';actions.hidden=expandedHistory!==link;
-  const action=(label,handler)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',handler);actions.append(button)};
-  action(saved().includes(link)?'Убрать из закладок':'☆ В закладки',()=>{const list=saved();store(list.includes(link)?list.filter(x=>x!==link):[link,...list]);render()});
-  action('Убрать из истории',()=>{removeHistory(link);render()});
-  const top=document.createElement('div');top.className='seyveo-browser-history-top';top.append(head,menu);card.append(top,actions);
-  const slot=document.createElement('div');slot.className='sb-history-slot';slot.style.setProperty('--sb-history-order',String(Math.min(position,6)));slot.append(card);contList.append(slot);
+ // The home only resumes specific content, not a shortcut's homepage.
+ // The complete chronology stays exclusively under Menu > History.
+ const contList=$('[data-continue-list]');
+ const ignored=new Set([
+  ...Array.from(root.querySelectorAll('.seyveo-browser-shortcuts [data-site]'),button=>secureUrl(button.dataset.site)),
+  configuredQuickSite()
+ ].filter(Boolean));
+ const resume=historyItems().find(link=>resumablePage(link)&&!ignored.has(link));
+ const resumeBlock=$('.seyveo-browser-continue');
+ resumeBlock.hidden=!resume;
+ contList.replaceChildren();
+ if(resume){
+  const u=new URL(resume),card=document.createElement('button');
+  card.type='button';card.className='seyveo-browser-history-card sb-home-resume';
+  card.setAttribute('aria-label','Продолжить просмотр: '+resumableTitle(resume));
+  const mark=document.createElement('span');
+  mark.className='seyveo-browser-history-logo';paintSiteMark(mark,resume);
+  const words=document.createElement('span');words.className='seyveo-browser-history-words';
+  const title=document.createElement('strong');title.textContent=resumableTitle(resume);
+  const subtitle=document.createElement('small');subtitle.textContent=u.hostname.replace(/^www[.]/,'');
+  words.append(title,subtitle);
+  const arrow=document.createElement('span');arrow.className='sb-home-resume-arrow';
+  arrow.setAttribute('aria-hidden','true');
+  arrow.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>';
+  card.append(mark,words,arrow);
+  card.addEventListener('click',()=>navigate(resume));
+  contList.append(card);
  }
  tabArea.replaceChildren();
  for(const item of tabs){const pill=document.createElement('span');pill.className='seyveo-browser-tab'+(item.id===active?' is-active':'');
