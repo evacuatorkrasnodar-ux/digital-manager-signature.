@@ -856,10 +856,11 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-brow
  display:block!important;
  width:var(--seyveo-dock-icon-size,22px)!important;height:var(--seyveo-dock-icon-size,22px)!important;
  margin:0 auto!important;flex:none!important;
+ color:var(--seyveo-engrave-ink,rgba(183,212,205,.75))!important;
  fill:none!important;stroke:currentColor!important;
- stroke-width:var(--seyveo-dock-icon-stroke,1.35)!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.96)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- opacity:.94;
+ opacity:1;
 }
 
 /* Opened website: exactly the same search bar component and geometry as Home.
