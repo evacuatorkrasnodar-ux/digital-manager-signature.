@@ -57,6 +57,7 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
   const [address,setAddress]=useState('');
   const [status,setStatus]=useState('');
   const [view,setView]=useState<'page'|'downloads'>('page');
+  const [menuOpen,setMenuOpen]=useState(false);
   const [canBack,setCanBack]=useState(false);
   const [canForward,setCanForward]=useState(false);
 
@@ -94,9 +95,10 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
     <SafeAreaView style={[styles.root,{backgroundColor:colors.bg}]}>
       <StatusBar style={resolved.contrast==='light'?'dark':'light'}/>
       <View style={styles.brandRow}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Вернуться к мобильной основе"
-          onPress={onClose} style={buttonStyle}>
-          <Text style={buttonTextStyle}>‹</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Меню браузера"
+          accessibilityState={{expanded:menuOpen}}
+          onPress={()=>setMenuOpen(value=>!value)} style={buttonStyle}>
+          <Text style={[styles.menuIcon,{color:colors.text}]}>☰</Text>
         </Pressable>
         <View style={styles.brand}>
           <Text style={[styles.logo,{color:colors.text}]}>SEYVEO</Text>
@@ -110,6 +112,20 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
           <Text style={[styles.themeIcon,{color:colors.accent}]}>◐</Text>
         </Pressable>
       </View>
+      {menuOpen?(
+        <View style={[styles.menuSheet,{backgroundColor:colors.surface,borderColor:colors.line}]}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Загрузки"
+            onPress={()=>{setView('downloads');setMenuOpen(false)}}
+            style={styles.menuAction}>
+            <Text style={[styles.menuText,{color:colors.text}]}>↓  Загрузки</Text>
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="На страницу"
+            onPress={()=>{setView('page');setMenuOpen(false)}}
+            style={styles.menuAction}>
+            <Text style={[styles.menuText,{color:colors.muted}]}>На страницу</Text>
+          </Pressable>
+        </View>
+      ):null}
       <View style={[styles.searchBar,{backgroundColor:colors.surface,borderColor:colors.line}]}>
         <TextInput
           style={[styles.address,{color:colors.text}]}
@@ -225,12 +241,9 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
           <Text style={[styles.dockIcon,{color:colors.text,opacity:tab.url?1:.35}]}>↻</Text>
         </Pressable>
         <Pressable accessibilityRole="button"
-          accessibilityLabel={view==='downloads'?'Вернуться к странице':'Загрузки'}
-          onPress={()=>setView(previous=>previous==='downloads'?'page':'downloads')}
-          style={styles.dockButton}>
-          <Text style={[styles.dockIcon,{color:colors.text}]}>
-            {view==='downloads'?'⌂':'↓'}
-          </Text>
+          accessibilityLabel="Главная SEYVEO"
+          onPress={onClose} style={styles.dockButton}>
+          <Text style={[styles.dockIcon,{color:colors.text}]}>⌂</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -246,6 +259,11 @@ const styles=StyleSheet.create({
   smallButton:{width:38,height:38,borderWidth:1,borderRadius:14,alignItems:'center',justifyContent:'center'},
   smallButtonText:{fontSize:30,fontWeight:'300',lineHeight:34},
   themeIcon:{fontSize:19},
+  menuIcon:{fontSize:21,fontWeight:'300'},
+  menuSheet:{marginHorizontal:12,marginBottom:7,borderWidth:1,borderRadius:15,
+    paddingVertical:4,paddingHorizontal:8},
+  menuAction:{minHeight:42,justifyContent:'center',paddingHorizontal:10},
+  menuText:{fontSize:13},
   searchBar:{marginHorizontal:12,minHeight:51,borderWidth:1,borderRadius:17,
     flexDirection:'row',alignItems:'center',paddingHorizontal:6,paddingLeft:13},
   address:{flex:1,fontSize:13,minHeight:45},
