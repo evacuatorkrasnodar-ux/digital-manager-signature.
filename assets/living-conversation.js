@@ -393,7 +393,18 @@ function open(options){
  const sourceHint=options&&typeof options==='object'?options.source:'';
  returnRoute=home.hidden?(location.hash||''):'';
  returnSource=sourceHint==='browser'?'browser':sourceFromRoute(returnRoute);
- if(home.hidden)document.getElementById('navHome')?.click();
+ if(home.hidden){
+  // A Music/Browser dock replaces navHome with player/navigation controls.
+  // Never synthesize a tap on "Previous track" merely to open the chat.
+  const playerOwnsDock=signatureDock?.classList.contains('seyveo-music-dock')
+    ||window.SEYVEO_BROWSER_DOCK?.isActive?.();
+  if(!playerOwnsDock)document.getElementById('navHome')?.click();
+  if(home.hidden){
+   // Use the existing hashchange router, and retain the caller for Back.
+   if(location.hash)history.pushState(null,'',location.pathname+location.search);
+   window.dispatchEvent(new Event('hashchange'));
+  }
+ }
  if(home.hidden)return;
  paintReturnButton();
  root.classList.add('seyveo-conversation');
