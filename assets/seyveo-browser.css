@@ -1637,6 +1637,18 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  flex:1 1 0;min-width:0;width:100%;
  font-size:16px;line-height:1.3;
 }
+/* Only the complete glass field glows when focused. Suppress the legacy
+   generic green rectangle around the text input itself. Keep the native
+   caret, keyboard navigation and focus visible at the glass-field level. */
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup input:focus,
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup input:focus-visible{
+ outline:none;outline-offset:0;box-shadow:none;
+}
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup:focus-within{
+ border-color:color-mix(in srgb,var(--sb-accent) 35%,var(--line,#3b4c55));
+ box-shadow:inset 0 1px 0 var(--sv-home-glint),
+  0 0 0 1px color-mix(in srgb,var(--sb-accent) 12%,transparent);
+}
 .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup .seyveo-browser-search-icon{
  flex:0 0 19px;
 }
