@@ -44,7 +44,7 @@ const sectionPaths={
  downloads:'<path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/>'
 };
 let managerSection='favorites';
-for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{if(id==='history')showManagerHistory=false;managerSection=id;renderManager()});switcher.append(button)}
+for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{if(id==='history')showManagerHistory=false;managerSection=id;manager.scrollTop=0;renderManager()});switcher.append(button)}
 // Three slim menu sections: open tabs are handled by the top glass carousel.
 switcher.hidden=true;
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
