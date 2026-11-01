@@ -325,6 +325,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 /* Unified Black Velvet - Дела uses Управление surface and typography. */
 #tasksPage[hidden]{display:none!important}
 .tasks-main{flex:1;min-width:0;padding:11px 0 18px}
+/* The Tasks surface follows the fixed dock's exact outer width and center. */
+#tasksPage{box-sizing:border-box;width:min(430px,calc(100vw - 14px));max-width:none;position:relative;left:50%;transform:translateX(-50%);align-self:flex-start}
+@media(max-width:355px){#tasksPage{width:calc(100vw - 8px)}}
 .tasks-heading{margin-bottom:21px}
 .tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-choice);background:var(--card2)}
 .tasks-switch[data-manager="true"],#managerCalendarTabs{grid-template-columns:repeat(3,minmax(0,1fr))}
