@@ -421,10 +421,10 @@
   --text:#22333c;
   --secondary:#495c65;
   --soft-line:rgba(75,99,108,.17);
-  /* v3: opaque paper; glass reflections now live only at the rim. */
+  /* v4: white paper and a restrained two-line glass rim, with a small corner glint. */
   --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
-  --lm-paper-sheet:linear-gradient(170deg,#fff 0%,#fcfdfd 56%,#f8fbfa 100%);
-  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.98),inset 0 0 0 1px rgba(255,255,255,.58),inset 0 -1px 0 rgba(122,148,155,.14),0 3px 12px rgba(0,12,22,.075);
+  --lm-paper-sheet:linear-gradient(170deg,#fff 0%,#fcfdfd 58%,#f8fbfa 100%);
+  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.36),inset 0 -1px 0 rgba(122,148,155,.10),0 2px 8px rgba(0,12,22,.05);
   color:var(--text);
   border:1px solid transparent;
   border-radius:22px;
@@ -437,7 +437,7 @@
   position:relative;isolation:isolate;
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid rgba(135,157,165,.34);
+  border:1px solid rgba(135,157,165,.22);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
@@ -447,41 +447,44 @@
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid rgba(135,157,165,.34);
+  border:1px solid rgba(135,157,165,.22);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   isolation:isolate;
-  border-color:rgba(135,157,165,.34);
+  border-color:rgba(135,157,165,.22);
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
   padding:7px 9px 5px;
 }
-/* Browser-style double glass rim: two narrow transparent hairlines,
-   no opaque overlay, fake LED, new card or hit-test interference. */
+/* Two quiet clear panes around one bright sheet. Paint only a thin
+   perimeter and tiny corner refractions; never dim the legible ink. */
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::before,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::before,
 #homePage #dynamic .decision-card[data-owner-advice]::before{
    content:"";position:absolute;
    top:1px;right:1px;bottom:1px;left:1px;
    width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
-   border:1px solid rgba(255,255,255,.78);
+   border:1px solid rgba(255,255,255,.46);
    border-radius:inherit;
-   background:linear-gradient(180deg,rgba(255,255,255,.10),transparent 12%,transparent 90%,rgba(125,147,153,.012));
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.72),inset 0 -1px 0 rgba(119,146,153,.065);
+   background:
+     radial-gradient(18px 12px at 14px 12px,rgba(255,255,255,.16),transparent 72%),
+     radial-gradient(18px 12px at calc(100% - 14px) 12px,rgba(255,255,255,.12),transparent 72%),
+     linear-gradient(180deg,rgba(255,255,255,.08),transparent 14%,transparent 92%,rgba(125,147,153,.01));
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(119,146,153,.04);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
 #homePage #dynamic .decision-card[data-owner-advice]::after{
    content:"";position:absolute;
-   top:3px;right:3px;bottom:3px;left:3px;
+   top:2px;right:2px;bottom:2px;left:2px;
    z-index:0;pointer-events:none;
-   border-radius:15px;
-   border:1px solid rgba(133,160,169,.16);
-   background:none;
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.50);
+   border-radius:16px;
+   border:1px solid rgba(133,160,169,.10);
+   background:linear-gradient(145deg,rgba(255,255,255,.045),transparent 34%);
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item) > *,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field > *,
@@ -516,10 +519,10 @@
   transition-delay:0ms;
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item){
-  border-color:rgba(135,157,165,.28);
+  border-color:rgba(135,157,165,.22);
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:rgba(135,157,165,.28);
+  border-color:rgba(135,157,165,.22);
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
@@ -570,10 +573,10 @@
   background:
     linear-gradient(180deg,rgba(255,255,255,.16),transparent 16%,transparent 84%,rgba(127,151,157,.016)),
     linear-gradient(170deg,#fff 0%,#fcfdfd 56%,#f8fbfa 100%)!important;
-  border:1px solid rgba(135,157,165,.34)!important;
+  border:1px solid rgba(135,157,165,.22)!important;
   border-radius:22px!important;
   outline:0!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.98),inset 0 0 0 1px rgba(255,255,255,.58),inset 0 -1px 0 rgba(122,148,155,.14),0 3px 12px rgba(0,12,22,.075)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.36),inset 0 -1px 0 rgba(122,148,155,.10),0 2px 8px rgba(0,12,22,.05)!important;
 }
 #homePage #dynamic .decision-card[data-owner-advice] .event-icon{
   display:none!important;
