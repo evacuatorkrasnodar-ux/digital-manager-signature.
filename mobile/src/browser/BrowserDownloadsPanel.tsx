@@ -8,6 +8,7 @@ import {Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-n
 import {createBrowserDownloadController, type BrowserDownloadSnapshot}
   from './browser-download-core.mjs';
 import {createExpoBrowserDownloadStorage} from './expo-browser-download-storage.mjs';
+import {createExpoBrowserPdfExtractor} from './expo-browser-pdf-extractor';
 import {BROWSER_PDF_FILE_LIMIT,inspectBrowserPdf,supportsBrowserPdfExtractor,
   type BrowserPdfExtractor} from './browser-pdf-review.mjs';
 import {inspectBrowserDocument,prepareSayviReviewHandoff,
@@ -43,6 +44,8 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
     items:[],busy:false,loading:false,operation:null
   });
   const [storage]=useState(()=>createExpoBrowserDownloadStorage());
+  const [nativePdfExtractor]=useState(()=>createExpoBrowserPdfExtractor());
+  const activePdfExtractor=pdfExtractor ?? nativePdfExtractor;
   const [downloads]=useState(()=>createBrowserDownloadController(storage,setSnapshot));
 
   useEffect(()=>{
@@ -89,13 +92,13 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
   }
 
   async function readSelectedPdf(id:string) {
-    if(reading || submitting || !supportsBrowserPdfExtractor(pdfExtractor)) return;
+    if(reading || submitting || !supportsBrowserPdfExtractor(activePdfExtractor)) return;
     setReading(true);
     setReview(null);
     setMessage('');
     try{
       // Extract into local memory only. No automatic cloud or AI calls.
-      const preview=await storage.readLocalPdfPreview(id,pdfExtractor);
+      const preview=await storage.readLocalPdfPreview(id,activePdfExtractor);
       setReview(preview);
     }catch(error){
       const code=error instanceof Error?error.message:'';
@@ -114,7 +117,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
           Alert.alert('Сэйви · PDF','Пока можем читать PDF размером до '+Math.floor(BROWSER_PDF_FILE_LIMIT/1024/1024)+' МБ.');
           return;
         }
-        if(supportsBrowserPdfExtractor(pdfExtractor)){
+        if(supportsBrowserPdfExtractor(activePdfExtractor)){
           Alert.alert('Сэйви, посмотри',
             'Прочитать текст PDF прямо на устройстве? Сэйви ничего не получит без отдельного разрешения.',
             [{text:'Отмена',style:'cancel'},
