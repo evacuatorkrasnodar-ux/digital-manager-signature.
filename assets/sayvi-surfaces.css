@@ -640,3 +640,56 @@
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage .sv-mail-letter:active{transform:none}
 }
+
+/* One Mail / two independent inboxes. A calm, thumb-friendly scope switch. */
+#sayviSurfacePage .sv-mail-accounts{
+ box-sizing:border-box;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ width:100%;gap:4px;padding:4px;margin:0 0 14px;
+ border:1px solid var(--sv-mail-stroke);
+ background:var(--sv-mail-soft);
+ border-radius:16px;
+}
+#sayviSurfacePage .sv-mail-accounts[hidden]{display:none!important}
+#sayviSurfacePage .sv-mail-account-switch{
+ min-width:0;min-height:43px;padding:7px 5px;
+ border:1px solid transparent;border-radius:12px;
+ background:transparent;color:var(--secondary);
+ font:inherit;font-size:13px;font-weight:540;
+ text-align:center;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-mail-account-switch[aria-pressed="true"]{
+ background:var(--sv-mail-surface);
+ border-color:var(--sv-mail-stroke);
+ box-shadow:none;color:var(--text);
+}
+#sayviSurfacePage .sv-mail-account-tag{
+ display:inline-flex;align-items:center;align-self:flex-start;
+ max-width:100%;width:max-content;
+ padding:3px 7px;border-radius:7px;
+ background:var(--sv-mail-soft);
+ border:1px solid var(--sv-mail-stroke);
+ color:var(--secondary);font-size:10px;font-weight:530;
+ line-height:1.3;
+}
+#sayviSurfacePage .sv-mail-letter .sv-mail-account-tag{
+ margin-top:2px;
+}
+#sayviSurfacePage .sv-mail-account-help{
+ margin:-4px 0 0;color:var(--secondary);
+ font-size:11.5px;line-height:1.55;
+}
+#sayviSurfacePage .sv-mail-account-select{
+ appearance:auto;-webkit-appearance:menulist;
+}
+#sayviSurfacePage .sv-mail-account-select:disabled{
+ opacity:.76;
+}
+#sayviSurfacePage .sv-mail-account-switch:focus-visible{
+ outline:2px solid var(--seyveo-emerald);
+ outline-offset:2px;
+}
+@media(max-width:355px){
+ #sayviSurfacePage .sv-mail-accounts{gap:3px;padding:3px}
+ #sayviSurfacePage .sv-mail-account-switch{font-size:12px;min-height:43px}
+}
