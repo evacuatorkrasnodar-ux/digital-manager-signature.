@@ -313,14 +313,16 @@
  position:relative;min-height:43px;padding-left:97px;gap:5px;margin:0 0 4px;
 }
 #sayviSurfacePage .sv-mail-brand{
- display:flex;align-items:center;gap:5px;min-width:0;
- color:var(--text);padding:0;
+ display:inline-flex;align-items:baseline;gap:7px;min-width:0;
+ color:var(--text);padding:0;white-space:nowrap;
 }
 #sayviSurfacePage .sv-mail-brand-name{
- font-size:11px;font-weight:630;letter-spacing:.12em;line-height:1.1;
+ font-size:15px;font-weight:650;letter-spacing:.065em;line-height:1.15;
+ color:var(--text);
 }
 #sayviSurfacePage .sv-mail-brand-sub{
- color:var(--sm-accent);font-size:10px;font-weight:570;letter-spacing:.08em;
+ color:color-mix(in srgb,var(--sm-accent) 62%,var(--secondary));
+ font-size:10px;font-weight:560;letter-spacing:.18em;line-height:1.15;
 }
 #sayviSurfacePage .sv-mail-top-buttons{display:flex;align-items:center;gap:6px;margin-left:auto}
 #sayviSurfacePage .sv-mail-icon-button{
