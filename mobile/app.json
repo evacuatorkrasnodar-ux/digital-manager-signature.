@@ -51,7 +51,11 @@
     ],
     "extra": {
       "phase": "M1-security-foundation",
-      "cloudBackupEnabled": false
-    }
+      "cloudBackupEnabled": false,
+      "eas": {
+        "projectId": "6515d9fd-f2ec-4ffc-baba-0a41747d78f5"
+      }
+    },
+    "owner": "seyveo-official"
   }
 }
