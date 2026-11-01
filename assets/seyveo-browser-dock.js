@@ -4,15 +4,17 @@ function init(){
  const dock=document.querySelector('footer.dock');
  const outer=['navHome','navTasks','navPicture','navManage'].map(id=>document.getElementById(id));
  if(!dock||outer.some(x=>!x)||window.SEYVEO_BROWSER_DOCK)return;
+ // Same 24-unit vector language as Home/Music. Identical optical
+ // centering, rounded joins and light strokes; no browser-specific emoji/art.
  const icons={
- back:'<path d="m15 5-7 7 7 7"/>',
- forward:'<path d="m9 5 7 7-7 7"/>',
- home:'<path d="m3.5 11 8.5-7 8.5 7V20H14v-6h-4v6H3.5z"/>',
- reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>'
+ back:'<path d="m14.5 5.5-6.5 6.5 6.5 6.5"/>',
+ forward:'<path d="m9.5 5.5 6.5 6.5-6.5 6.5"/>',
+ home:'<path d="M3.5 10.5 12 3.5l8.5 7V20h-6.5v-6h-4v6H3.5z"/>',
+ reload:'<path d="M20 10.5a8 8 0 1 0-2.35 6"/><path d="M20 4v6.5h-6.5"/>'
  };
  let active=false;
  function setButton(b,action,label){
-  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+icons[action]+'</svg><span>'+label+'</span>';
+  b.innerHTML='<svg class="seyveo-browser-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icons[action]+'</svg><span>'+label+'</span>';
   b.dataset.svBrowserAction=action;
   b.removeAttribute('aria-current');b.classList.remove('active','sv-nav-feedback');
   b.setAttribute('aria-label',label);b.title=label;
