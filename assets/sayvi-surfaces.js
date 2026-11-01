@@ -240,7 +240,7 @@ function mailView(){
  const foot=create('p','sv-mail-foot');
  foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
  section.append(top,searchLabel,nav,info,content,foot);body.append(section);
- const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['trash','Корзина']];
+ const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.length;
   if(key==='inbox'&&mailShowExamples)return mailExamples.filter(m=>!m.trashed&&!m.archived&&m.unread).length;
@@ -320,10 +320,10 @@ function mailView(){
   const opts=create('div','sv-mail-detail-tools');
   opts.append(iconButton('starred',item.starred?'Убрать из важных':'Важное',()=>{
    item.starred=!item.starred;paint();
-  }),iconButton('archive','В архив · демо',()=>{
-   item.archived=true;mailCurrent=null;paint();
-  }),iconButton('trash','Удалить пример',()=>{
-   item.trashed=true;mailCurrent=null;paint();
+  }),iconButton('archive',item.archived?'Вернуть во входящие':'В архив · демо',()=>{
+   item.archived=!item.archived;mailCurrent=null;paint();
+  }),iconButton('trash',item.trashed?'Восстановить из корзины':'Удалить пример',()=>{
+   item.trashed=!item.trashed;mailCurrent=null;paint();
   }));
   heading.append(backButton,label,opts);
   panel.append(heading,create('h2','sv-mail-detail-title',item.subject));
@@ -356,6 +356,7 @@ function mailView(){
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const inFolder=mailExamples.filter(m=>{
    if(mailFolder==='trash')return m.trashed;
+   if(mailFolder==='archive')return m.archived&&!m.trashed;
    if(m.trashed)return false;
    if(mailFolder==='starred')return m.starred&&!m.archived;
    return !m.archived;
@@ -404,7 +405,7 @@ function mailView(){
    mailCurrent=null;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
-  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='trash'){drawExamples();return}
+  if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='archive'||mailFolder==='trash'){drawExamples();return}
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
@@ -425,7 +426,8 @@ function mailView(){
    mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.length:
    mailFolder==='sent'?'Отправка пока недоступна':
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
-   mailFolder==='starred'?'Важные · предварительный просмотр':'Корзина · предварительный просмотр';
+   mailFolder==='starred'?'Важные · предварительный просмотр':
+   mailFolder==='archive'?'Архив · предварительный просмотр':'Корзина · предварительный просмотр';
   paintList();
  }
  paint();
