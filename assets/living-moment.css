@@ -469,7 +469,7 @@
   background:var(--lm-glass-sheen),var(--lm-glass-fill);
   box-shadow:var(--lm-glass-depth);
 }
-#seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
+#homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
   position:relative;isolation:isolate;
   min-height:49px;
   margin-bottom:5px;
