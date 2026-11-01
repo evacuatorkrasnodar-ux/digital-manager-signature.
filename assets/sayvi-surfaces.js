@@ -266,9 +266,7 @@ function mailView(){
  const extraNav=create('div','sv-mail-extra-folders');
  const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
  const content=create('div','sv-mail-list');
- const foot=create('p','sv-mail-foot');
- foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
- section.append(top,greeting,scopeNav,nav,extraNav,info,content,foot);body.append(section);
+ section.append(top,greeting,scopeNav,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -402,10 +400,7 @@ function mailView(){
   content.append(panel);
  }
  function drawExamples(limit=0){
-  const banner=create('div','sv-mail-demo-banner');
-  banner.append(create('span','sv-mail-demo-mark','ДЕМО'),create('span','', 'Письма вымышлены — так будет выглядеть ваша почта.'));
-  const toggle=intent(mailShowExamples?'Скрыть':'Показать',()=>{mailShowExamples=!mailShowExamples;paint()});
-  toggle.classList.add('sv-mail-demo-toggle');banner.append(toggle);content.append(banner);
+
   if(!mailShowExamples){content.append(create('p','sv-mail-empty','Почтовый ящик ещё не подключён. Подключите его, чтобы видеть настоящие письма.'));return}
   const inFolder=mailExamples.filter(m=>{
    if(!mailVisible(m.account))return false;
@@ -464,7 +459,7 @@ function mailView(){
   toggle.addEventListener('click',()=>{mailSayviHints=!mailSayviHints;paint()});
   toggle.append(create('span','sv-mail-sayvi-knob'));
   wrap.append(star,copy,toggle);content.append(wrap);
-  if(mailSayviHints)content.append(create('p','sv-mail-sayvi-caption','Демонстрация интерфейса. ИИ и почтовые аккаунты ещё не подключены.'));
+
  }
  function paintList(){
   content.replaceChildren();
@@ -523,12 +518,13 @@ function mailView(){
   compose.hidden=mailEditorOpen;
   info.textContent=mailEditorOpen?'Черновик · только на этом устройстве':
    mailCurrent?'Просмотр учебного письма':
-   mailFolder==='overview'?'Обзор · учебные письма':
+   mailFolder==='overview'?'':
    mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.filter(d=>mailVisible(d.account)).length:
    mailFolder==='sent'?'Отправка пока недоступна':
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
    mailFolder==='archive'?'Архив · предварительный просмотр':'Корзина · предварительный просмотр';
+  info.hidden=!info.textContent;
   paintList();
  }
  paint();
@@ -613,7 +609,8 @@ function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
  subject.textContent=descriptor.label;title.textContent=kind==='contract'&&returnDestination?.hash==='#life'?'Личные документы':descriptor.title;intro.textContent=descriptor.intro;
- footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':kind==='mail'?'Почтовые аккаунты не подключены. Черновики доступны только в текущем сеансе; отправка и синхронизация отключены.':localOnly;
+ footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':kind==='mail'?'':localOnly;
+ footer.hidden=kind==='mail';
  setArt(kind);body.replaceChildren();
  if(kind==='mail')mailView();
  else if(kind==='contract')documentsView();
