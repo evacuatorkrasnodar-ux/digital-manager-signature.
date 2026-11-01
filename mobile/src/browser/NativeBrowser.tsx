@@ -8,7 +8,7 @@ import {File,Paths} from 'expo-file-system';
 import {translateText,translateEndpoint,usableTranslationEndpoint} from './translate-service';
 import {WebView} from 'react-native-webview';
 import {sharedMediaSession} from '../media/sharedMediaSession';
-type Tab={id:number;url:string};
+type Tab={id:number;url:string;scrollY?:number};
 const HOME='https://www.wikipedia.org/';
 export function NativeBrowser(){
  const web=useRef<WebView>(null);
@@ -27,7 +27,7 @@ export function NativeBrowser(){
  const [sessionReady,setSessionReady]=useState(false);
  useEffect(()=>{let mounted=true;void loadBrowserSession().then(saved=>{
   if(!mounted)return;
-  if(saved){selectedTabId.current=saved.active;setTabs(saved.tabs);setActive(saved.active);setNextId(Math.max(...saved.tabs.map(t=>t.id))+1);setAddress(saved.tabs.find(t=>t.id===saved.active)?.url||HOME)}
+  if(saved){scrollPositions.current=Object.fromEntries(saved.tabs.map(t=>[t.id,{url:t.url,y:t.scrollY||0}]));selectedTabId.current=saved.active;setTabs(saved.tabs);setActive(saved.active);setNextId(Math.max(...saved.tabs.map(t=>t.id))+1);setAddress(saved.tabs.find(t=>t.id===saved.active)?.url||HOME)}
   setSessionReady(true);
  });return()=>{mounted=false}},[]);
  useEffect(()=>{if(sessionReady&&!privateMode)void saveBrowserSession(tabs.filter(t=>t.id!==0),active)},[tabs,active,sessionReady,privateMode]);
@@ -113,7 +113,7 @@ export function NativeBrowser(){
  function handleBrowserMessage(value:string){
   try{const msg=JSON.parse(value);
    if(msg?.type==='seyveo-scroll'&&typeof msg.url==='string'&&typeof msg.y==='number'&&Number.isFinite(msg.y)&&msg.y>=0){
-    if(msg.url===current.url)scrollPositions.current[active]={url:msg.url,y:Math.min(msg.y,2000000)};
+    if(msg.url===current.url){const y=Math.min(Math.round(msg.y),2000000);scrollPositions.current[active]={url:msg.url,y};if(!privateMode)setTabs(old=>old.map(t=>t.id===active&&t.url===msg.url&&t.scrollY!==y?{...t,scrollY:y}:t))}
     return;
    }
    if(msg?.type==='seyveo-media'&&typeof msg.playing==='boolean'){
@@ -167,7 +167,7 @@ export function NativeBrowser(){
     }
    }]);
    return false;
-  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>{const saved=scrollPositions.current[current.id];if(saved?.url===current.url&&saved.y>0)web.current?.injectJavaScript('setTimeout(function(){window.scrollTo(0,'+saved.y+')},350);true;');web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")}} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!privateMode&&(!blockThirdPartyCookies||excepted)} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies&&!excepted?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
+  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>{const saved=scrollPositions.current[current.id];if(saved?.url===current.url&&saved.y>0)web.current?.injectJavaScript('setTimeout(function(){window.scrollTo(0,'+saved.y+')},350);true;');web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();var last=0;window.addEventListener('scroll',function(){var now=Date.now();if(now-last<1500)return;last=now;window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-scroll',url:location.href,y:Math.max(0,Math.round(window.scrollY||0))}));},{passive:true});})();true;")}} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!privateMode&&(!blockThirdPartyCookies||excepted)} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies&&!excepted?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
   {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
     <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
     <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
