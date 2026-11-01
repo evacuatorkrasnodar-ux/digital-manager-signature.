@@ -276,9 +276,8 @@
  box-sizing:border-box;min-width:0;
  position:relative;isolation:isolate;
  padding:4px 0 max(95px,calc(75px + env(safe-area-inset-bottom,0px)))!important;
- /* Match the floating dock's 16px side gutters instead of inset mail gutters. */
- width:calc(100% + 16px);max-width:none;
- margin-inline:-8px;
+ /* Phone: use the same viewport-edge gutter as the fixed dock. */
+ width:100%;max-width:none;margin-inline:0;
  background:transparent!important;color:var(--text);
  overflow-x:clip;
 }
@@ -649,4 +648,17 @@
 }
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage .sv-mail-sayvi-knob{transition:none}
+}
+
+/* Mail-only: align every section with the phone dock's outer edges. */
+@media(max-width:640px){
+ #sayviSurfacePage[data-sv-subject="mail"]{
+  width:calc(100vw - 8px);
+  max-width:none;
+  margin-left:calc(50% - 50vw + 4px);
+  margin-right:0;
+ }
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace{
+  width:100%;max-width:none;margin-inline:0;
+ }
 }
