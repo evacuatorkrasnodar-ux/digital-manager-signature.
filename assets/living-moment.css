@@ -414,39 +414,39 @@
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
-/* SEYVEO theme-tinted paper: a restrained tint from the current palette.
+/* SEYVEO theme-tinted paper: visible satin colors from the current palette.
    The paper remains opaque and legible; optical double-glass rims are unchanged.
    One inherited material feeds both preview cards and real recommendations. */
 #homePage{
   --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
   --lm-paper-sheet:linear-gradient(170deg,var(--lm-paper-top),var(--lm-paper-mid) 58%,var(--lm-paper-bottom));
-  --lm-paper-top:#f1f7f4;
-  --lm-paper-mid:#eff5f1;
-  --lm-paper-bottom:#ebf2ee;
+  --lm-paper-top:#e0eee5;
+  --lm-paper-mid:#d5e5db;
+  --lm-paper-bottom:#cadfd1;
 }
 /* White Velvet: pearlescent paper, with nearly no tint. */
 :root[data-theme=light] #homePage{
-  --lm-paper-top:#ffffff;
-  --lm-paper-mid:#fbfcfd;
-  --lm-paper-bottom:#f7f9fa;
+  --lm-paper-top:#fbfcff;
+  --lm-paper-mid:#f3f6f9;
+  --lm-paper-bottom:#edf1f5;
 }
 /* Graphite Velvet: a cool silver wash, not a gray plastic surface. */
 :root[data-theme=dark][data-palette=graphite] #homePage{
-  --lm-paper-top:#f3f5f6;
-  --lm-paper-mid:#eff2f4;
-  --lm-paper-bottom:#ebf0f2;
+  --lm-paper-top:#e0e7eb;
+  --lm-paper-mid:#d6e0e5;
+  --lm-paper-bottom:#cad6dd;
 }
 /* Sapphire HDR: very faint icy-blue paper. */
 :root[data-theme=dark][data-palette=sapphire] #homePage{
-  --lm-paper-top:#f2f6fb;
-  --lm-paper-mid:#eff4fa;
-  --lm-paper-bottom:#ebf1f8;
+  --lm-paper-top:#e1eaf8;
+  --lm-paper-mid:#d5e2f3;
+  --lm-paper-bottom:#cad9ed;
 }
 /* Plum / dune graphite: neutral pearl, never beige or brown. */
 :root[data-theme=dark][data-palette=plum] #homePage{
-  --lm-paper-top:#f5f5f4;
-  --lm-paper-mid:#f1f2f1;
-  --lm-paper-bottom:#edefee;
+  --lm-paper-top:#e8e9e7;
+  --lm-paper-mid:#dfe2df;
+  --lm-paper-bottom:#d3d8d5;
 }
 /* Three cards become one MAIN card — keep all three actual task elements.
    Opaque white paper with thin double optical edges, without gray underlay. */
