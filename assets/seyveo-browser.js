@@ -551,6 +551,7 @@ function render(){
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
  $('.seyveo-browser-home').hidden=false;
  root.classList.add('is-site-view');
+ root.classList.toggle('is-browser-home',home);
  $('.seyveo-browser-start').hidden=!home;
  $('.seyveo-browser-content').hidden=home;
  $('.seyveo-browser-tabs').hidden=false;
