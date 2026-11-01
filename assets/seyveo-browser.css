@@ -1607,8 +1607,18 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 /* SEYVEO Browser · Search lives INSIDE the existing grey stripe.
    Do not cover Quick Access, don't change the stripe height, tab carousel,
    logo position, dock, or palette. The form is the original QR-ready glass. */
-.seyveo-browser.is-search-open .sb-browser-sitebar>.sb-browser-sitebar-title{
+.seyveo-browser.is-search-open .sb-browser-sitebar>.sb-browser-sitebar-title,
+.seyveo-browser.is-search-open .sb-browser-sitebar>.sb-browser-sitebar-menu-button{
  display:none;
+}
+/* While typing, the original menu icon temporarily yields its space to the
+   full address field. Both return as soon as Search closes. No height changes. */
+.seyveo-browser.is-search-open .sb-browser-sitebar{
+ gap:8px;
+}
+.seyveo-browser.is-search-open .sb-browser-sitebar>.sb-browser-sitebar-search-button{
+ flex:0 0 38px;
+ width:38px;min-width:38px;
 }
 .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup{
  display:flex;
