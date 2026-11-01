@@ -13,8 +13,9 @@ footer.dock.seyveo-music-dock > .nav-item.active{
  font-weight:585!important;
 }
 footer.dock.seyveo-music-dock .seyveo-music-dock-svg{
- display:block;width:23px!important;height:23px!important;flex:none;
- fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ display:block;width:var(--seyveo-dock-icon-size,22px)!important;height:var(--seyveo-dock-icon-size,22px)!important;flex:none;
+ margin:0 auto!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--seyveo-dock-icon-stroke,1.35)!important;
  stroke-linecap:round;stroke-linejoin:round;
  opacity:1;
 }
@@ -95,7 +96,7 @@ html.sv-music-screen #sayviMusicMini{display:none!important}
 @keyframes sv-music-mini-spin{to{transform:rotate(360deg)}}
 #sayviMusicMini .sv-music-mini-play svg{
  width:22px;height:22px;fill:none;stroke:currentColor;
- stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+ stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;
 }
 #sayviMusicMini .sv-music-mini-open{
  touch-action:none;cursor:grab;
