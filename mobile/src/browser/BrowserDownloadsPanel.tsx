@@ -4,10 +4,13 @@
  * Direct HTTPS links only until WebView's native download events are connected.
  */
 import React, {useEffect, useState} from 'react';
-import {Alert,Pressable,StyleSheet,Text,TextInput,View} from 'react-native';
+import {Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {createBrowserDownloadController, type BrowserDownloadSnapshot}
   from './browser-download-core.mjs';
 import {createExpoBrowserDownloadStorage} from './expo-browser-download-storage.mjs';
+import {inspectBrowserDocument,prepareSayviReviewHandoff,
+  type BrowserDocumentReviewPreview,type BrowserSayviHandoff}
+  from './browser-document-review.mjs';
 
 export type BrowserDownloadsColors = {
   surface:string;
@@ -16,7 +19,7 @@ export type BrowserDownloadsColors = {
   line:string;
   accent:string;
 };
-type Props={colors:BrowserDownloadsColors};
+type Props={colors:BrowserDownloadsColors;onSayviReview?:(request:BrowserSayviHandoff)=>Promise<void>};
 
 const labelForCategory:Record<string,string>={
   document:'Документ',image:'Изображение',audio:'Аудио',
@@ -27,9 +30,12 @@ function sizeLabel(bytes:number){
   return Math.max(1,Math.ceil(bytes/1024))+' КБ';
 }
 
-export function BrowserDownloadsPanel({colors}:Props){
+export function BrowserDownloadsPanel({colors,onSayviReview}:Props){
   const [source,setSource]=useState('');
   const [message,setMessage]=useState('');
+  const [review,setReview]=useState<BrowserDocumentReviewPreview|null>(null);
+  const [reading,setReading]=useState(false);
+  const [submitting,setSubmitting]=useState(false);
   const [snapshot,setSnapshot]=useState<BrowserDownloadSnapshot>({
     items:[],busy:false,loading:false,operation:null
   });
@@ -64,10 +70,75 @@ export function BrowserDownloadsPanel({colors}:Props){
     catch{setMessage('На этом устройстве нет доступного просмотра этого файла.');}
   }
 
+  async function readSelectedDocument(id:string) {
+    if(reading || submitting) return;
+    setReading(true);
+    setReview(null);
+    setMessage('');
+    try{
+      // This call never sends document text to a server.
+      const preview=await storage.readLocalTextPreview(id);
+      setReview(preview);
+    }catch{
+      setMessage('Не удалось прочитать текст этого файла на устройстве.');
+    }finally{setReading(false);}
+  }
+
+  function startSayviReview(item:BrowserDownloadSnapshot['items'][number]) {
+    const eligibility=inspectBrowserDocument(item);
+    if(eligibility.kind==='needs-extractor'){
+      Alert.alert('Сэйви · Документы',
+        'Этот документ можно открыть. Автоматическое чтение PDF и Office пока не подключено.',
+        [{text:'Позже',style:'cancel'},
+         {text:'Открыть',onPress:()=>{void previewFile(item.id);}}]);
+      return;
+    }
+    if(eligibility.kind==='too-large'){
+      Alert.alert('Сэйви · Документы',
+        'Пока читаем только небольшие TXT/CSV-файлы (до 128 КБ).',
+        [{text:'Понятно'}]);
+      return;
+    }
+    if(!eligibility.canReadText){
+      Alert.alert('Сэйви · Документы','Для этого формата локальный разбор пока недоступен.');
+      return;
+    }
+    Alert.alert('Сэйви, посмотри',
+      'Показать содержимое этого файла на устройстве? Пока ничего не отправляется в облако.',
+      [{text:'Отмена',style:'cancel'},
+       {text:'Показать',onPress:()=>{void readSelectedDocument(item.id);}}]);
+  }
+
+  function askSayviToExplain() {
+    if (!review || submitting) return;
+    if (!onSayviReview) {
+      Alert.alert('Сэйви · Документы',
+        'Просмотр текста работает локально. ИИ-анализ файлов ещё не подключён; ничего не отправлено.');
+      return;
+    }
+    Alert.alert('Передать текст Сэйви?',
+      'Будет передан только показанный фрагмент. Подключённый ИИ-сервис может обрабатывать его вне телефона. Продолжить?',
+      [{text:'Отмена',style:'cancel'},
+       {text:'Разрешить',onPress:()=>{
+         if(!review) return;
+         let request:BrowserSayviHandoff;
+         try{request=prepareSayviReviewHandoff(review,{approved:true});}
+         catch{setMessage('Не удалось подготовить файл для Сэйви.');return;}
+         setSubmitting(true);
+         void onSayviReview(request).then(()=>{
+           setReview(null);
+           setMessage('Запрос передан подключённой Сэйви.');
+         }).catch(()=>{
+           setMessage('Не удалось передать текст Сэйви. Файл остаётся на телефоне.');
+         }).finally(()=>setSubmitting(false));
+       }}]);
+  }
+
   function confirmRemove(id:string,name:string){
     Alert.alert('Удалить файл?',name,[
       {text:'Отмена',style:'cancel'},
       {text:'Удалить',style:'destructive',onPress:()=>{
+        if(review?.fileId===id) setReview(null);
         void downloads.remove(id).catch(()=>setMessage('Не удалось удалить файл.'));
       }}
     ]);
@@ -112,7 +183,8 @@ export function BrowserDownloadsPanel({colors}:Props){
       ):snapshot.items.length===0?(
         <Text style={[styles.help,{color:colors.muted}]}>Загрузок пока нет.</Text>
       ):snapshot.items.map(item=>(
-        <View key={item.id} style={[styles.item,{borderTopColor:colors.line}]}>
+        <React.Fragment key={item.id}>
+        <View style={[styles.item,{borderTopColor:colors.line}]}>
           <View style={styles.info}>
             <Text numberOfLines={1} style={[styles.name,{color:colors.text}]}>{item.name}</Text>
             <Text style={[styles.detail,{color:colors.muted}]}>
@@ -130,7 +202,52 @@ export function BrowserDownloadsPanel({colors}:Props){
             <Text style={[styles.actionText,{color:colors.muted}]}>×</Text>
           </Pressable>
         </View>
+        {item.category==='document'?(
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={'Сэйви, посмотри '+item.name}
+            disabled={reading||submitting||snapshot.busy}
+            style={[styles.reviewShortcut,{borderColor:colors.line}]}
+            onPress={()=>startSayviReview(item)}>
+            <Text style={[styles.reviewShortcutText,{color:colors.accent}]}>✦ Сэйви, посмотри</Text>
+          </Pressable>
+        ):null}
+        </React.Fragment>
       ))}
+      {review?(
+        <View style={[styles.reviewBox,{borderColor:colors.line}]}>
+          <Text style={[styles.subheading,{color:colors.text}]}>✦ Сэйви · Просмотр файла</Text>
+          <Text numberOfLines={1} style={[styles.detail,{color:colors.muted}]}>{review.fileName}</Text>
+          <Text style={[styles.help,{color:colors.muted}]}>
+            Это локальный фрагмент, не ответ ИИ. Содержимое никому не отправлялось.
+          </Text>
+          <ScrollView nestedScrollEnabled style={[styles.excerpt,{borderColor:colors.line}]}>
+            <Text selectable style={[styles.excerptText,{color:colors.text}]}>{review.excerpt}</Text>
+          </ScrollView>
+          {review.truncated?(
+            <Text style={[styles.help,{color:colors.muted}]}>Показана только часть текста.</Text>
+          ):null}
+          {!onSayviReview?(
+            <Text style={[styles.help,{color:colors.muted}]}>
+              Подключение Сэйви для объяснения документов ещё готовится.
+            </Text>
+          ):null}
+          <View style={styles.reviewActions}>
+            <Pressable accessibilityRole="button" disabled={submitting||!onSayviReview}
+              onPress={askSayviToExplain}
+              style={[styles.reviewAction,{borderColor:colors.line,opacity:onSayviReview?1:0.5}]}>
+              <Text style={[styles.actionText,{color:colors.accent}]}>
+                {submitting?'Передаём…':'Объяснить с Сэйви'}
+              </Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" disabled={submitting}
+              onPress={()=>setReview(null)}
+              style={[styles.reviewAction,{borderColor:colors.line}]}>
+              <Text style={[styles.actionText,{color:colors.muted}]}>Закрыть</Text>
+            </Pressable>
+          </View>
+        </View>
+      ):null}
       <Text style={[styles.foot,{color:colors.muted}]}>
         Просмотр доступен для поддерживаемых форматов. Сэйви не читает файлы без разрешения.
       </Text>
@@ -154,5 +271,15 @@ const styles=StyleSheet.create({
   detail:{fontSize:11},
   action:{minHeight:40,justifyContent:'center',paddingHorizontal:2},
   actionText:{fontSize:12},
-  foot:{fontSize:10,lineHeight:15,marginTop:5}
+  foot:{fontSize:10,lineHeight:15,marginTop:5},
+  reviewShortcut:{alignSelf:'flex-start',borderWidth:1,borderRadius:10,
+    paddingVertical:7,paddingHorizontal:12,marginTop:-5,marginBottom:8,minHeight:35,
+    justifyContent:'center'},
+  reviewShortcutText:{fontSize:12,fontWeight:'500'},
+  reviewBox:{borderWidth:1,borderRadius:14,padding:12,gap:10,marginTop:8},
+  excerpt:{borderWidth:1,borderRadius:9,maxHeight:200,minHeight:80,padding:9},
+  excerptText:{fontSize:12,lineHeight:19},
+  reviewActions:{flexDirection:'row',alignItems:'center',gap:10},
+  reviewAction:{borderWidth:1,borderRadius:10,paddingHorizontal:10,paddingVertical:9,minHeight:41,
+    justifyContent:'center'}
 });
