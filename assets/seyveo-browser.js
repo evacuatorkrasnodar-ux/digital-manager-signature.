@@ -31,8 +31,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
   <p>Продуманная иерархия, свободное пространство и спокойные детали позволяют сосредоточиться на содержании.</p>
  </article>
 </section><iframe title="Веб-страница" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms" hidden></iframe><div class="seyveo-browser-frame-note"><span>Некоторые сайты требуют cookies или запрещают встроенный просмотр.</span><button type="button" data-frame-external aria-label="Открыть сайт в отдельной вкладке">Открыть отдельно ↗</button></div></div>
-<footer class="seyveo-browser-bottom"><button type="button" data-back aria-label="Назад">‹</button><button type="button" data-forward aria-label="Вперёд">›</button><button type="button" data-home aria-label="На стартовую">⌂</button><button type="button" data-bookmark aria-label="Сохранить страницу">☆</button><button type="button" data-bookmarks aria-label="Закладки">☷</button><button type="button" data-external aria-label="Открыть отдельно">↗</button><button type="button" data-close aria-label="Закрыть браузер">Готово</button></footer>
-<div class="seyveo-browser-sheet" hidden><div class="seyveo-browser-sheet-bar"><strong>Избранное</strong><button type="button" data-dismiss>Готово</button></div><div data-bookmark-list></div></div>`;
+`;
 // Embedded websites keep their sandbox; do not add allow-same-origin with allow-scripts.
 document.body.append(root);
 const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading sb-manager-recent-heading"><strong>Недавно закрытые</strong><span class="sb-manager-recent-actions"><button type="button" data-recent-all hidden>Показать все ›</button><button type="button" data-recent-clear hidden aria-label="Очистить недавно закрытые" title="Очистить список"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div class="sb-manager-closed" data-manager-closed></div>';
@@ -58,7 +57,7 @@ const secondary=document.createElement('div');secondary.className='sb-manager-se
 const notice=root.querySelector('.seyveo-browser-blocked');
 // Styling belongs to the Browser stylesheet so all three native themes apply.
 const embedExplanation=notice.querySelector('p');
-const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]'),sheet=$('.seyveo-browser-sheet');
+const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]');
 const sitebar=$('.sb-browser-sitebar'),siteMenu=$('[data-site-menu-panel]'),siteMenuButton=$('[data-site-menu]');
 /* QUIET CINEMA: bound dimensions prevent global button and menu styles from
    inflating this small browser-owned popup in the live app. */
@@ -585,9 +584,6 @@ function render(){
   frame.removeAttribute('src');displayedTab=null;
  }else if(url){if(displayedTab!==active||frame.getAttribute('src')!==url){frame.src=url;displayedTab=active}}
  else{frame.removeAttribute('src');displayedTab=null}
- $('[data-back]').disabled=t.position<=0;$('[data-forward]').disabled=t.position>=t.entries.length-1;
- $('[data-bookmark]').disabled=!url;$('[data-external]').disabled=!url;
- $('[data-bookmark]').textContent=url&&saved().includes(url)?'★':'☆';
  document.dispatchEvent(new Event('seyveo:browser-state'));
  const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();
  const selected=items.slice(0,1); // Quick resume only; complete history lives in History.
@@ -741,8 +737,8 @@ function browserVoiceUnavailable(message){
  return true;
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
-function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');sheet.hidden=true;if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){browserStage='normal';suspendedForSayvi=false;expandedHistory=null;tabManager(false);root.hidden=true;sheet.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
+function close(){browserStage='normal';suspendedForSayvi=false;expandedHistory=null;tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -766,12 +762,16 @@ root.addEventListener('touchend',event=>{
  const start=edgeSwipe;edgeSwipe=null;
  const touch=event.changedTouches[0],dx=touch.clientX-start.x,dy=touch.clientY-start.y;
  if(dx<75||Math.abs(dy)>45||Math.abs(dy)>dx*.5)return;
- if(!sheet.hidden){sheet.hidden=true;return}
  if(managerOpen){tabManager(false);return}
  close();
 },{passive:true});
 root.addEventListener('touchcancel',()=>{edgeSwipe=null},{passive:true});
-function bookmarks(){const list=saved(),holder=$('[data-bookmark-list]');holder.replaceChildren();if(!list.length){holder.textContent='Пока пусто. Открой страницу и нажми ☆.'}for(const url of list){const b=document.createElement('button');b.type='button';b.textContent=new URL(url).hostname;b.addEventListener('click',()=>{sheet.hidden=true;navigate(url)});holder.append(b)}sheet.hidden=false}
+function bookmarks(){
+ managerSection='favorites';
+ tabManager(true); // All favorite entry points share the existing dedicated section.
+}
+function browserBack(){const t=current();if(t.position>0){t.position--;render()}}
+function browserForward(){const t=current();if(t.position<t.entries.length-1){t.position++;render()}}
 manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;syncClosedStack()});
 manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
  if(!recentlyClosed.length)return;
@@ -780,9 +780,7 @@ manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
 });
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClosedShown=false;for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
-root.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
-root.querySelectorAll('[data-bookmarks]').forEach(b=>b.addEventListener('click',bookmarks));
-$('[data-dismiss]').addEventListener('click',()=>sheet.hidden=true);
+root.querySelector('.seyveo-browser-shortcuts [data-bookmarks]').addEventListener('click',bookmarks);
 $('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
 siteMenuButton.addEventListener('click',()=>{
  const opening=siteMenu.hidden;
@@ -798,13 +796,6 @@ siteMenu.querySelectorAll('[data-site-action]').forEach(button=>button.addEventL
 root.addEventListener('click',event=>{
  if(!siteMenu.hidden&&!event.target.closest('.sb-browser-sitebar'))closeSiteMenu();
 });
-$('[data-back]').addEventListener('click',()=>{const t=current();if(t.position>0){t.position--;render()}});
-$('[data-forward]').addEventListener('click',()=>{const t=current();if(t.position<t.entries.length-1){t.position++;render()}});
-$('[data-home]').addEventListener('click',()=>{const t=current();t.entries=[];t.position=-1;render()});
-$('[data-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
-
-$('[data-bookmark]').addEventListener('click',()=>{const url=currentUrl();if(!url)return;const a=saved();store(a.includes(url)?a.filter(x=>x!==url):[url,...a]);render()});
-
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-history-toggle]').addEventListener('click',()=>{
@@ -825,8 +816,8 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
 $('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!siteMenu.hidden)closeSiteMenu();else if(!sheet.hidden)sheet.hidden=true;else if(managerOpen)tabManager(false);else close()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!siteMenu.hidden)closeSiteMenu();else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:()=> $('[data-back]').click(),forward:()=> $('[data-forward]').click(),home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks:()=>bookmarks(),state:()=>({open:!root.hidden,canBack:!$('[data-back]').disabled,canForward:!$('[data-forward]').disabled})});restoreSession();render();
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1})});restoreSession();render();
 })();
