@@ -425,11 +425,14 @@ function renderSecondary(){
  const header=document.createElement('div');header.className='sb-secondary-header';header.hidden=managerSection==='favorites';secondary.append(header);
 // Section name already lives on the shared grey Browser strip; no duplicate title.
  if(managerSection==='collections'){
-  const add=document.createElement('button');add.type='button';add.textContent='＋ Новая коллекция';add.addEventListener('click',makeCollection);header.append(add);
+  const back=document.createElement('button');back.type='button';back.className='sb-folder-back';back.textContent='‹ Избранное';
+  back.setAttribute('aria-label','Назад в Избранное');
+  back.addEventListener('click',()=>{creatingCollection=false;openCollection=null;managerSection='favorites';renderManager()});
+  const add=document.createElement('button');add.type='button';add.textContent='＋ Папка';add.addEventListener('click',makeCollection);header.append(back,add);
   if(creatingCollection){
    const form=document.createElement('form');form.className='sb-collection-create';
    const field=document.createElement('input');field.type='text';field.className='sb-collection-name';
-   field.maxLength=42;field.required=true;field.placeholder='Название коллекции';field.setAttribute('aria-label','Название коллекции');
+   field.maxLength=42;field.required=true;field.placeholder='Название папки';field.setAttribute('aria-label','Название папки');
    const save=document.createElement('button');save.type='submit';save.textContent='Создать';
    const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
    cancel.addEventListener('click',()=>{creatingCollection=false;renderManager()});
@@ -444,9 +447,8 @@ function renderSecondary(){
   }
   const items=getCollections(),cards=document.createElement('div');
   cards.className='sb-manager-collections-list';
-  if(!items.length){
-   cards.append(makeStarterCollectionCard('Вдохновение'),makeStarterCollectionCard('Путешествия'));
-  }else for(const collection of items)cards.append(makeCollectionCard(collection));
+  if(!items.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Пока нет папок';cards.append(hint)}
+  else for(const collection of items)cards.append(makeCollectionCard(collection));
   secondary.append(cards);
   const selected=items.find(item=>item.id===openCollection);
   if(selected){
@@ -552,8 +554,26 @@ function renderSecondary(){
   syncQuietCinemaStack(historyList,toggle,'.sb-history-slot',showManagerHistory);
   return;
  }
+ const folders=getCollections();
+ const folderBar=document.createElement('div');folderBar.className='sb-browser-folder-bar';
+ const folderLabel=document.createElement('span');folderLabel.textContent='Папки';
+ const createFolder=document.createElement('button');createFolder.type='button';createFolder.textContent='＋';
+ createFolder.setAttribute('aria-label','Создать папку в Избранном');createFolder.title='Новая папка';
+ createFolder.addEventListener('click',makeCollection);folderBar.append(folderLabel,createFolder);secondary.append(folderBar);
+ for(const folder of folders){
+  const row=document.createElement('button');row.type='button';row.className='sb-browser-folder-row';
+  row.setAttribute('aria-label','Открыть папку '+folder.name);
+  const mark=document.createElement('span');mark.className='sb-browser-folder-icon';mark.setAttribute('aria-hidden','true');
+  mark.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h7l2 2h9v11H3z"/></svg>';
+  const words=document.createElement('span');words.className='sb-browser-folder-name';words.textContent=folder.name;
+  const num=document.createElement('small');num.textContent=String(folder.urls.length);
+  row.append(mark,words,num);
+  row.addEventListener('click',()=>{openCollection=folder.id;managerSection='collections';renderManager()});
+  secondary.append(row);
+ }
  const links=saved();
- if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Сохрани страницу в Избранное';secondary.append(hint)}
+ if(links.length||!folders.length){const label=document.createElement('div');label.className='sb-browser-favorites-caption';label.textContent='Сохранённые сайты';secondary.append(label)}
+ if(!links.length&&!folders.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Здесь будут твои сохранённые сайты и папки';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
 /* Pixel-balanced Browser rhythm: match Browser→search and search→glass tab.
