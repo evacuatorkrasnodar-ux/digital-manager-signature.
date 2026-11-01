@@ -2,6 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {loadBrowserSession,saveBrowserSession} from './session-store';
 import {browserLibrary,type SavedLink} from './browser-library';
 import {checkBrowserAddress} from './address-safety';
+import {loadCookieExceptions,saveCookieExceptions,hostnameForException} from './cookie-exceptions';
 import {View,Text,TextInput,Pressable,ScrollView,Alert,Platform} from 'react-native';
 import {File,Paths} from 'expo-file-system';
 import {translateText,translateEndpoint,usableTranslationEndpoint} from './translate-service';
@@ -16,6 +17,8 @@ export function NativeBrowser(){
  const [active,setActive]=useState(1);
  const [privateMode,setPrivateMode]=useState(false);
  const [blockThirdPartyCookies,setBlockThirdPartyCookies]=useState(false);
+ const [cookieExceptions,setCookieExceptions]=useState<string[]>([]);
+ useEffect(()=>{let alive=true;void loadCookieExceptions().then(items=>{if(alive)setCookieExceptions(items)});return()=>{alive=false}},[]);
  const approvedNavigation=useRef<string|null>(null);
  const lastNormalId=useRef(1);
  const [nextId,setNextId]=useState(2);
@@ -27,6 +30,15 @@ export function NativeBrowser(){
  });return()=>{mounted=false}},[]);
  useEffect(()=>{if(sessionReady&&!privateMode)void saveBrowserSession(tabs.filter(t=>t.id!==0),active)},[tabs,active,sessionReady,privateMode]);
  const current=tabs.find(t=>t.id===active)||tabs[0];
+ const currentHost=hostnameForException(current.url);
+ const excepted=!!currentHost&&cookieExceptions.includes(currentHost);
+ function toggleCookieException(){
+  if(!currentHost||Platform.OS!=='android')return;
+  const next=excepted?cookieExceptions.filter(host=>host!==currentHost):[...cookieExceptions,currentHost];
+  Alert.alert('Cookies для сайта',excepted?'Снова ограничить сторонние cookies для '+currentHost+'?':'Разрешить сторонние cookies для '+currentHost+'? Сайт перезагрузится.',[
+   {text:'Отмена',style:'cancel'},{text:'Применить',onPress:()=>{void saveCookieExceptions(next).then(ok=>{if(ok)setCookieExceptions(next);else setTranslationNotice('Не удалось сохранить исключение.')})}}
+  ]);
+ }
  function togglePrivate(){
   setLibraryMode(null);setTranslated('');setTranslationNotice('');
   sharedMediaSession.clear('browser');
@@ -121,6 +133,7 @@ export function NativeBrowser(){
  function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);const check=checkBrowserAddress(url.href);if(!check.allowed)throw Error();const open=()=>{setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)};if(check.warning)Alert.alert('Проверьте адрес',check.warning,[{text:'Отмена',style:'cancel'},{text:'Открыть',onPress:open}]);else open()}catch{setAddress(current.url)}}
  return <View style={{flex:1,backgroundColor:'#11161b'}}>
   <View style={{flexDirection:'row',justifyContent:'flex-end',alignItems:'center',gap:16,paddingHorizontal:12,paddingTop:5}}><Pressable accessibilityRole="button" accessibilityLabel="Переключить блокировку сторонних cookies" onPress={()=>{if(Platform.OS==='ios'){Alert.alert('Защита от отслеживания','Этот переключатель управляет сторонними cookies в Android WebView. В iOS действуют правила WebKit, а полноценная блокировка трекеров пока не подключена.');return}Alert.alert('Сторонние cookies',blockThirdPartyCookies?'Разрешить сторонние cookies? Страница перезагрузится.':'Ограничить сторонние cookies? Некоторые сайты могут потребовать повторный вход. Страница перезагрузится.',[{text:'Отмена',style:'cancel'},{text:'Применить',onPress:()=>setBlockThirdPartyCookies(v=>!v)}])}}><Text style={{color:'#d6e3e5',fontSize:12}}>{Platform.OS==='ios'?'Приватность · iOS':blockThirdPartyCookies?'Cookies 3-х сторон: выкл.':'Cookies 3-х сторон: вкл.'}</Text></Pressable><Pressable accessibilityRole="button" onPress={togglePrivate}><Text style={{color:privateMode?'#f0d7a4':'#d6e3e5'}}>{privateMode?'Закрыть приватную вкладку':'Приватная вкладка'}</Text></Pressable></View>
+  {Platform.OS==='android'&&blockThirdPartyCookies?<View style={{alignItems:'flex-end',paddingHorizontal:12}}><Pressable onPress={toggleCookieException} accessibilityRole="button"><Text style={{color:'#b8d3d0',fontSize:12}}>{excepted?'Убрать исключение · '+currentHost:'Разрешить cookies для сайта'}</Text></Pressable></View>:null}
   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0,maxHeight:58}} contentContainerStyle={{padding:8,alignItems:'center',gap:6}}>
    {tabs.filter(t=>privateMode?t.id===0:t.id!==0).map(t=><View key={t.id} style={{flexDirection:'row',alignItems:'center',borderRadius:15,borderWidth:1,borderColor:t.id===active?'#acc9ce':'#56646b',backgroundColor:t.id===active?'#34434a':'#242e35'}}>
     <Pressable onPress={()=>select(t)} accessibilityRole="button" style={{padding:10,maxWidth:145}}><Text numberOfLines={1} style={{color:'#f3f6f7',fontSize:12}}>{(()=>{try{return new URL(t.url).hostname||'Вкладка'}catch{return 'Вкладка'}})()}</Text></Pressable>
@@ -143,7 +156,7 @@ export function NativeBrowser(){
     }
    }]);
    return false;
-  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!blockThirdPartyCookies&&!privateMode} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
+  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!privateMode&&(!blockThirdPartyCookies||excepted)} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies&&!excepted?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
   {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
     <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
     <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
