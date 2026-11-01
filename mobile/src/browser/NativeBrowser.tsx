@@ -13,6 +13,7 @@ const HOME='https://www.wikipedia.org/';
 export function NativeBrowser(){
  const web=useRef<WebView>(null);
  const selectedTabId=useRef(1);
+ const scrollPositions=useRef<Record<number,{url:string;y:number}>>({});
  const [tabs,setTabs]=useState<Tab[]>([{id:1,url:HOME}]);
  const [active,setActive]=useState(1);
  const [privateMode,setPrivateMode]=useState(false);
@@ -106,8 +107,15 @@ export function NativeBrowser(){
  useEffect(()=>()=>{sharedMediaSession.clear('browser')},[]);
  useEffect(()=>sharedMediaSession.registerControls('browser',String(active),command=>{if(command==='pause')pausePageMedia();else togglePageMedia()}),[active,mediaPaused]);
  useEffect(()=>{if(activeMediaId.current!==null&&activeMediaId.current!==String(active)){sharedMediaSession.clear('browser',activeMediaId.current);activeMediaId.current=null}},[active]);
+ function captureScroll(){
+  web.current?.injectJavaScript("window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-scroll',url:location.href,y:Math.max(0,Math.round(window.scrollY||0))}));true;");
+ }
  function handleBrowserMessage(value:string){
   try{const msg=JSON.parse(value);
+   if(msg?.type==='seyveo-scroll'&&typeof msg.url==='string'&&typeof msg.y==='number'&&Number.isFinite(msg.y)&&msg.y>=0){
+    if(msg.url===current.url)scrollPositions.current[active]={url:msg.url,y:Math.min(msg.y,2000000)};
+    return;
+   }
    if(msg?.type==='seyveo-media'&&typeof msg.playing==='boolean'){
     setMediaPaused(!msg.playing);setMediaVisible(msg.playing||msg.present===true);
     const mediaId=String(active);
@@ -130,7 +138,7 @@ export function NativeBrowser(){
   web.current?.injectJavaScript("document.querySelectorAll('audio,video').forEach(function(el){el.pause()});true;");
   setTranslationNotice('Воспроизведение на странице остановлено, если плеер доступен браузеру.');
  }
- function select(tab:Tab){selectedTabId.current=tab.id;setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
+ function select(tab:Tab){captureScroll();selectedTabId.current=tab.id;setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(privateMode)return;if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){if(privateMode)return;const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
  function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);const check=checkBrowserAddress(url.href);if(!check.allowed)throw Error();const open=()=>{setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)};if(check.warning)Alert.alert('Проверьте адрес',check.warning,[{text:'Отмена',style:'cancel'},{text:'Открыть',onPress:open}]);else open()}catch{setAddress(current.url)}}
@@ -159,7 +167,7 @@ export function NativeBrowser(){
     }
    }]);
    return false;
-  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!privateMode&&(!blockThirdPartyCookies||excepted)} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies&&!excepted?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
+  }} onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>{const saved=scrollPositions.current[current.id];if(saved?.url===current.url&&saved.y>0)web.current?.injectJavaScript('setTimeout(function(){window.scrollTo(0,'+saved.y+')},350);true;');web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")}} onFileDownload={({nativeEvent})=>{if(!privateMode)void downloadRequested(nativeEvent.downloadUrl)}} incognito={privateMode} thirdPartyCookiesEnabled={!privateMode&&(!blockThirdPartyCookies||excepted)} key={(privateMode?'private':current.id)+'-'+(blockThirdPartyCookies&&!excepted?'strict':'normal')} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{if(selectedTabId.current!==current.id)return;try{const u=new URL(event.url);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)return;setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t));if(!privateMode)void browserLibrary.visit(event.url)}catch{}}}/>
   {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
     <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
     <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
