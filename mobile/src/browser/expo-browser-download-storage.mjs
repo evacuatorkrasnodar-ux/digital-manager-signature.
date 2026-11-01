@@ -10,6 +10,7 @@ import * as Crypto from 'expo-crypto';
 import {Directory,File,Paths} from 'expo-file-system';
 import {BROWSER_DOWNLOAD_MAX_BYTES,describeBrowserDownload,safeBrowserDownloadName} from './browser-download-core.mjs';
 import {BROWSER_REVIEW_READ_LIMIT,inspectBrowserDocument,makeBrowserReviewPreview} from './browser-document-review.mjs';
+import {BROWSER_PDF_FILE_LIMIT,inspectBrowserPdf,extractBrowserPdfPreview} from './browser-pdf-review.mjs';
 
 // We store opaque .blob names; native preview needs the original safe extension.
 const mimeFor = name => {
@@ -150,6 +151,30 @@ export function createExpoBrowserDownloadStorage(){
       // Small, validated .txt/.csv only: no PDF parsing and no cloud requests.
       const text=await current.text();
       return makeBrowserReviewPreview(item,text);
+    },
+
+    async readLocalPdfPreview(id,extractor){
+      // User must approve locally before reaching this API.
+      // The native library is optional until tested on real iOS and Android.
+      if (!validId(id) || !info(id).exists || !file(id).exists) {
+        throw Error('download-not-found');
+      }
+      const record=clean(await info(id).json());
+      if (!record || record.id!==id ||
+          file(id).size!==record.bytes ||
+          record.bytes>BROWSER_PDF_FILE_LIMIT ||
+          !inspectBrowserPdf(record).canExtract) {
+        throw Error('pdf-review-unavailable');
+      }
+      // The stored file deliberately uses an opaque .blob suffix; create a
+      // short-lived .pdf copy in app cache for native PDFKit/PDFBox readers.
+      const temporary=new File(Paths.cache,'seyveo-pdf-'+Crypto.randomUUID().toLowerCase()+'.pdf');
+      try{
+        await file(id).copy(temporary);
+        return await extractBrowserPdfPreview(record,temporary.uri,extractor);
+      }finally{
+        try{if(temporary.exists)temporary.delete()}catch{}
+      }
     },
 
     async getLocalFileUri(id){
