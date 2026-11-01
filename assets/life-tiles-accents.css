@@ -42,7 +42,7 @@
 /* Only My World receives the new typography and restrained horizon light. */
 html.sv-space-active #lifePage{
  position:relative;
- padding:8px 0 28px!important;
+ padding:2px 0 20px!important;
  /* Do not paint a second rectangle above the app's continuous background. */
  background:transparent!important;
  color:var(--text);
@@ -51,15 +51,15 @@ html.sv-space-active #lifePage > *{position:relative;z-index:1}
 html.sv-space-active #lifePage .life-back{display:none!important}
 html.sv-space-active #lifePage .life-heading{
  box-sizing:border-box;
- margin:0 0 12px!important;
- padding:5px 3px 0!important;
+ margin:0 0 9px!important;
+ padding:2px 3px 0!important;
  border:0!important;
  background:transparent!important;
  box-shadow:none!important;
 }
 html.sv-space-active #lifePage .life-eyebrow{
  display:block;
- margin:0 0 5px!important;
+ margin:0 0 4px!important;
  font-size:10px!important;
  font-weight:560!important;
  line-height:1.2!important;
@@ -95,7 +95,7 @@ html.sv-space-active #lifePage .calendar-spaces{
  background:transparent!important;
 }
 html.sv-space-active #lifePage .calendar-spaces-head{
- margin:0 2px 12px!important;
+ margin:0 2px 8px!important;
  padding:0!important;border:0!important;
 }
 html.sv-space-active #lifePage .calendar-spaces-head h2{
@@ -109,7 +109,7 @@ html.sv-space-active #lifePage .calendar-spaces-head h2{
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
  display:grid!important;
  grid-template-columns:repeat(2,minmax(0,1fr))!important;
- gap:9px!important;
+ gap:7px!important;
  align-items:stretch!important;
  width:100%!important;
  padding:0!important;
@@ -242,7 +242,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visi
  outline-offset:2px!important;
 }
 
-/* The fourteen existing live actions keep their original order and targets. */
+/* Existing live actions keep their order; parked integrations stay hidden. */
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="calendar"]{--sv-world-icon:#efcd80}
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="notes"]{--sv-world-icon:#c9b0f5}
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="health"]{--sv-world-icon:#f4a5ab}
@@ -281,7 +281,7 @@ html.sv-space-active #lifePage .life-footnote{
 
 /* Classic iPhone sizes including narrow 375px and the iPhone X. */
 @media(max-width:390px){
- html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:8px!important}
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:6px!important}
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
   grid-template-columns:37px minmax(0,1fr)!important;
   column-gap:7px!important;height:68px!important;min-height:68px!important;max-height:68px!important;
