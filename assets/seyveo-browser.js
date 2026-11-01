@@ -364,8 +364,24 @@ function paintQuickSites(){
   const mark=button.querySelector('.sb-site-mark');
   if(mark)paintSiteMark(mark,button.dataset.site);
  });
- const savedMark=root.querySelector('.seyveo-browser-shortcuts [data-bookmarks] .sb-saved');
- if(savedMark)savedMark.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 2.6 5.8 6.4.7-4.8 4.3 1.3 6.2-5.5-3.2-5.5 3.2 1.3-6.2L3 9.5l6.4-.7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+}
+function renderQuickSite(){
+ const button=root.querySelector('[data-custom-site]'),url=configuredQuickSite();
+ const mark=button.querySelector('.sb-site-mark');
+ mark.className='sb-site-mark sb-custom-site';
+ mark.replaceChildren();
+ if(url){
+  paintSiteMark(mark,url);
+  const host=new URL(url).hostname.replace(/^www[.]/,'');
+  button.querySelector('[data-custom-label]').textContent=siteName(url);
+  button.querySelector('[data-custom-host]').textContent=host;
+  button.setAttribute('aria-label','Открыть мой сайт: '+host);
+ }else{
+  mark.textContent='＋';
+  button.querySelector('[data-custom-label]').textContent='Мой сайт';
+  button.querySelector('[data-custom-host]').textContent='Добавить';
+  button.setAttribute('aria-label','Добавить свой сайт');
+ }
 }
 function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'▶':brand==='wikipedia'?'W':brand==='yandex'?'Я':brand==='habr'?'H':'•'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShown=false;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
@@ -725,6 +741,7 @@ function balanceBrowserVerticalRhythm(){
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
+ renderQuickSite();
  $('.seyveo-browser-home').hidden=false;
  root.classList.add('is-site-view');
  root.classList.toggle('is-browser-home',home);
