@@ -351,9 +351,13 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
  opacity:.91;transition:color .18s ease,opacity .18s ease;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
- width:19px!important;height:19px!important;
- stroke-width:1.55!important;
+ width:20px!important;height:20px!important;
+ stroke-width:1.1!important;
+ stroke-linecap:round;stroke-linejoin:round;
  fill:none!important;stroke:currentColor;
+ /* Fine white under-glass engraving; preserve readable 44px touch targets. */
+ filter:drop-shadow(0 0 .45px var(--seyveo-etch-core,rgba(255,255,255,.38)))
+        drop-shadow(0 0 1.35px var(--seyveo-etch-halo,rgba(255,255,255,.20)));
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action>span{
  display:none!important;
