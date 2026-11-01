@@ -85,9 +85,19 @@ export function createBrowserDownloadController(storage, onChange=()=>{}) {
       if (busy || loading) throw Error('download-already-in-progress');
       const request=describeBrowserDownload(input,preferredName);
       busy=true;
-      operation={name:request.name,status:'downloading'};publish();
+      operation={name:request.name,status:'downloading',receivedBytes:0,totalBytes:null};publish();
       try {
-        const item=await storage.download(request);
+        const item=await storage.download(request, progress=>{
+          if (!busy || operation?.status!=='downloading' || !progress) return;
+          const received=Number(progress.bytesWritten);
+          const total=Number(progress.totalBytes);
+          if (!Number.isFinite(received) || received<0) return;
+          operation={
+            ...operation,receivedBytes:Math.max(0,received),
+            totalBytes:Number.isFinite(total)&&total>0?total:null
+          };
+          publish();
+        });
         if (!item || item.status!=='complete') throw Error('download-not-committed');
         items=[item,...items.filter(other=>other.id!==item.id)];
         operation={name:item.name,status:'complete'};
