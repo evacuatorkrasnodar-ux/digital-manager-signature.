@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 const KEY='seyveo-browser-session-v1';
+let saveQueue:Promise<void>=Promise.resolve();
 const valid=(s:unknown):s is string=>{
  if(typeof s!=='string'||s.length>2048)return false;
  try{const u=new URL(s);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password}catch{return false}
@@ -27,7 +28,11 @@ export async function saveBrowserSession(tabs:SavedBrowserTab[],active:number){
    if(!t||!Number.isSafeInteger(t.id)||t.id<=0||!valid(t.url)||seen.has(t.id))return false;
    seen.add(t.id);return true;
   }).slice(-10);
-  await SecureStore.setItemAsync(KEY,JSON.stringify({tabs:safe,active:safe.some(t=>t.id===active)?active:safe[0]?.id??1}));
+  if(!safe.length)return false;
+  const data=JSON.stringify({tabs:safe,active:safe.some(t=>t.id===active)?active:safe[0].id});
+  const next=saveQueue.then(()=>SecureStore.setItemAsync(KEY,data));
+  saveQueue=next.catch(()=>{});
+  await next;
   return true;
  }catch{return false}
 }
