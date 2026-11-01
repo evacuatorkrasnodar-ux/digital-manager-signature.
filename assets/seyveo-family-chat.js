@@ -22,6 +22,17 @@ const validPlan=p=>p&&typeof p.text==='string'&&typeof p.id==='string';
 let messages=read(MSG_KEY).filter(validMessage).slice(-MAX_MSG);
 let plans=read(PLAN_KEY).filter(validPlan).slice(-MAX_PLAN);
 let selectedFile=null,previewUrl=null,pendingSuggestion=null;
+/* The same single-line-to-four-line behavior as SEYVEO Input in work chat. */
+const familyDraft=$('svfMessageInput');
+function resizeFamilyDraft(){
+ if(!familyDraft)return;
+ familyDraft.style.height='44px';
+ const h=familyDraft.value?Math.min(112,Math.max(44,familyDraft.scrollHeight)):44;
+ familyDraft.style.height=h+'px';
+ familyDraft.style.overflowY=familyDraft.scrollHeight>112?'auto':'hidden';
+}
+familyDraft?.addEventListener('input',resizeFamilyDraft);
+resizeFamilyDraft();
 const make=(tag,cls,txt)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node};
 const button=(txt,fn,cls)=>{
  const node=make('button',cls,txt);node.type='button';node.addEventListener('click',fn);return node;
@@ -139,7 +150,7 @@ $('svfChatForm').addEventListener('submit',event=>{
  messages.push({text,at:Date.now()});messages=messages.slice(-MAX_MSG);
  persist(MSG_KEY,messages);
  pendingSuggestion=smartSuggestion(value);
- field.value='';fileInput.value='';discardFile();
+ field.value='';resizeFamilyDraft();fileInput.value='';discardFile();
  renderMessages();
  status('Запись только в этой вкладке. Родные её не видят.');
 });
