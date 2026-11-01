@@ -4,6 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { MemoryDiagnostic } from './src/core/MemoryDiagnostic';
 import { NativeBrowser } from './src/browser/NativeBrowser';
+import { SharedMediaStatus } from './src/media/SharedMediaStatus';
 import { OfflinePacksPanel } from './src/core/OfflinePacksPanel';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
@@ -57,7 +58,7 @@ function NativeFoundation() {
     setBusy(false);
   }, [busy, state]);
 
-  if (browserOpen) return <View style={{flex:1}}><Pressable onPress={()=>setBrowserOpen(false)} accessibilityRole="button"><Text>Вернуться в SEYVEO</Text></Pressable><NativeBrowser /></View>;
+  if (browserOpen) return <View style={{flex:1}}><Pressable onPress={()=>setBrowserOpen(false)} accessibilityRole="button"><Text>Вернуться в SEYVEO</Text></Pressable><NativeBrowser /><SharedMediaStatus /></View>;
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
