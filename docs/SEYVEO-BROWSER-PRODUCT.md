@@ -2,7 +2,7 @@
 
 One browser, two distributions: embedded SEYVEO and standalone iOS/Android. Standalone browsing, history, favorites, and tabs must work free, without mandatory registration. A dismissible SEYVEO brand card may appear only on the standalone start page, never on third-party pages or inside embedded browser.
 
-Cloud sync requires a verified entitlement, an account, and separate opt-in. Eligible purchases may include Browser Premium and relevant SEYVEO One/Business subscriptions. No automatic access to accounts on third-party websites.
+Cloud sync requires a verified entitlement, an account, and separate opt-in. Eligible purchases may include SEYVEO Browser+ and relevant SEYVEO One/Business subscriptions. No automatic access to accounts on third-party websites.
 
 CURRENT STATUS: assets/seyveo-browser.js and .css are a web prototype. Native web browsing and standalone app distribution are NOT implemented. mobile/src/browser/product-policy.mjs defines presentation capabilities only. It neither verifies purchases nor provides cloud sync.
 
@@ -99,3 +99,14 @@ No separate browser theme or palette defaults should silently override an explic
 Автоматические проверки: `server/tests/browser-document-ai.test.mjs`, `mobile/tests/sayvi-document-client.test.mjs` и специально выделенный GitHub workflow `seyveo-browser-document-ai.yml` (чистые тестовые данные, **без платных запросов**). В реальности надо провести тест с собственным server-side ключом, устройствами и подтверждённой защищённой аутентификацией. Включать публичную отправку содержимого через тот же разработческий токен **нельзя**.
 
 **Веб-прототип и его пять тем, красивое стекло, LED-подсветка и вкладки не изменялись.**
+
+## Названия версий и знак «+» — утверждено (01.11.2026)
+
+- **SEYVEO Browser** — бесплатная самостоятельная версия: просмотр сайтов, локальные вкладки, история, закладки и коллекции без обязательной регистрации или подписки. Локальная загрузка файлов также бесплатна. Никаких искусственных ограничений основных возможностей браузера.
+- **SEYVEO Browser+** — расширенная версия. В пользовательском интерфейсе **не писать Premium**: только небольшая приподнятая «+» у слова Browser в верхней зоне. Вкладочный большой плюс для создания новой вкладки — другой элемент, его расположение и действие не менять.
+- Текущий встроенный веб-прототип показывает знак Browser+ в верхнем заголовке как **предпросмотр внешнего вида**. Это **не подтверждение оплаченной подписки** и не означает, что облачная синхронизация или ИИ уже доступны. В самостоятельном Free shell знак «+» не отображается.
+- Общая политика `mobile/src/browser/product-policy.mjs` возвращает `editionName` и `hasPlus` только на основе проверенного entitlement; `browser-premium` остаётся внутренним совместимым идентификатором для ранее подготовленного кода и **не отображается человеку**.
+- **Все пять тем доступны в Free и Browser+**: тема не является платным ограничением. Встроенная версия следует теме приложения, отдельная — выбору человека.
+- Знак «+» — статус/брендинг, не новая кнопка. Не создавать лишнего меню/рекламы/навязчивого экрана покупки.
+- `assets/seyveo-browser.js` / `.css` в **main** обновлены отдельно только для маленького надстрочного символа возле заголовка; не изменены вкладки, поиск, док, подсветка, серая полоска, цвета.
+
