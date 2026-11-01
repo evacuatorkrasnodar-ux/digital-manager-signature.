@@ -30,15 +30,15 @@ dialog :is(.info-actions,.personal-task-actions,.paper-actions,.note-read-action
  min-height:44px;
 }
 /* Editing actions are text, not extra dark-filled capsules. */
-:is(#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
+:is(#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
  :is(.info-actions,.personal-task-actions,.paper-actions) > button{
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-weight:470!important;
 }
-:is(#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
+:is(#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
  :is(.info-actions,.personal-task-actions,.paper-actions) > button[type=submit],
-:is(#personalTaskDialog,#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
+:is(#calendarEventDialog,#noteReviewDialog,#notePaperDialog)
  :is(.info-actions,.personal-task-actions,.paper-actions) > button.btn.primary{
  color:var(--text)!important;
  text-decoration:underline;text-underline-offset:5px;
