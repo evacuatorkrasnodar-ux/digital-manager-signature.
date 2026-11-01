@@ -73,6 +73,21 @@ function saveEvents(list){
  catch{return false}
 }
 let focus=new Date(),mode='month',editing=null,scope='all';
+/* Return to the real source page; never use history.back() to leave SEYVEO. */
+let calendarReturnRoute='#life';
+let calendarLastRoute=location.hash||'#home';
+window.addEventListener('hashchange',()=>{
+ const next=location.hash||'#home';
+ if(next==='#calendar'&&calendarLastRoute!=='#calendar'){
+  calendarReturnRoute=['#life','#tasks','#home','#manage','#picture'].includes(calendarLastRoute)
+   ?calendarLastRoute:'#life';
+ }
+ calendarLastRoute=next;
+});
+$('calendarBack')?.addEventListener('click',()=>{
+ const back=calendarReturnRoute;
+ location.hash=back==='#calendar'?'#life':back;
+});
 const managerPreview=()=>window.SEYVEO_PREVIEW?.isManager?.()===true;
 const selectedScope=()=>managerPreview()?scope:'personal';
 const visibleEvents=()=>events().filter(x=>selectedScope()==='all'||x.kind===selectedScope());
@@ -414,7 +429,8 @@ function render(){
  $('calendarView').hidden=deadline;
  $('calendarView').dataset.mode=mode;
  $('calendarDeadlineView').hidden=!deadline;
- $('calendarAddInline').hidden=deadline;
+ // The header '+' is the only event shortcut; keep its duplicate parked.
+ $('calendarAddInline').hidden=true;
  document.querySelector('#calendarPage .cal-actions').dataset.deadlines=String(deadline);
  document.querySelectorAll('[data-calendar-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.calendarMode===mode)));
  $('calendarPeriodTitle').textContent=mode==='month'?niceFirst(fmtMonth.format(focus)):
