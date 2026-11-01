@@ -226,13 +226,17 @@ function mailView(){
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
  const brand=create('div','sv-mail-brand');
- brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-sub','Mail'));
+ brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-sub','MAIL'));
  const topButtons=create('div','sv-mail-top-buttons');
  const compose=intent('Написать',()=>openEditor(),true);
  compose.classList.add('sv-mail-compose');compose.prepend(mailIcon('pencil'));
  const connect=intent('Подключить',openConnect);
  connect.classList.add('sv-mail-connect');
  topButtons.append(connect,compose);top.append(brand,topButtons);
+ const greeting=create('div','sv-mail-introduction');
+ greeting.append(create('p','sv-mail-introduction-kicker','SEYVEO · ONE & BUSINESS'));
+ greeting.append(create('h2','sv-mail-introduction-title','Ваша почта.'));
+ greeting.append(create('p','sv-mail-introduction-copy','Личное и рабочее — рядом, но отдельно.'));
  const searchLabel=create('label','sv-mail-search');
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
@@ -247,7 +251,7 @@ function mailView(){
  const content=create('div','sv-mail-list');
  const foot=create('p','sv-mail-foot');
  foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
- section.append(top,scopeNav,searchLabel,nav,info,content,foot);body.append(section);
+ section.append(top,greeting,scopeNav,searchLabel,nav,info,content,foot);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -589,15 +593,18 @@ function sync(){
 function open(kind,context){
  const target=routes[kind];
  if(!target)return false;
+ // Keep account choice consistent even when mail is already open.
+ // An early return here previously preserved the wrong inbox scope.
+ if(kind==='mail'){
+  if(context==='business')mailScope='business';
+  else if(context==='personal')mailScope='personal';
+  else if(context==='all')mailScope='all';
+  else if(location.hash==='#life')mailScope='personal';
+  else if(location.hash==='#tasks')mailScope='business';
+ }
  if(location.hash===target){sync();return true}
  // Capture the calling section before changing the hash.
  if(!currentKind())rememberOrigin(context);
- if(kind==='mail'){
-  if(context==='business')mailScope='business';
-  else if(context==='personal'||location.hash==='#life')mailScope='personal';
-  else if(location.hash==='#tasks')mailScope='business';
-  else if(context==='all')mailScope='all';
- }
  if(kind==='contract')window.SEYVEO_DOCUMENT_CENTER?.setArea?.(context==='business'?'business':'personal');
  location.hash=target;
  return true;
