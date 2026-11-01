@@ -7,6 +7,7 @@ import {sharedMediaSession} from './sharedMediaSession';
 let player:AudioPlayer|null=null;
 let statusListener:{remove:()=>void}|null=null;
 let trackId:string|null=null;
+let removeControls:(()=>void)|null=null;
 
 export async function startNativeTrack(sourceUri:string,title:string){
  if(typeof sourceUri!=='string'||!sourceUri||typeof title!=='string')throw new Error('invalid-media');
@@ -18,6 +19,9 @@ export async function startNativeTrack(sourceUri:string,title:string){
  player=next;
  trackId=sourceUri.slice(0,300);
  sharedMediaSession.report('music',trackId,title,'loading');
+ removeControls=sharedMediaSession.registerControls('music',trackId,command=>{
+  if(command==='pause')pauseNativeTrack();else resumeNativeTrack();
+ });
  statusListener=next.addListener('playbackStatusUpdate',status=>{
   if(player!==next||!trackId)return;
   sharedMediaSession.report('music',trackId,title,status.playing?'playing':status.isLoaded?'paused':'loading');
@@ -32,6 +36,7 @@ export function stopNativeTrack(){
  const old=player;const id=trackId;
  player=null;trackId=null;
  statusListener?.remove();statusListener=null;
+ removeControls?.();removeControls=null;
  if(old){old.pause();old.setActiveForLockScreen(false);old.release()}
  if(id)sharedMediaSession.clear('music',id);
 }
