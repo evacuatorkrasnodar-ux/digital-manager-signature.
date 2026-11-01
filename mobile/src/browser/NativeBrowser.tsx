@@ -56,6 +56,15 @@ export function NativeBrowser(){
   }catch{setTranslationNotice('Не удалось перевести страницу. Проверьте подключение сервиса.')}finally{setTranslating(false)}
  }
  const [mediaPaused,setMediaPaused]=useState(false);
+ const [mediaVisible,setMediaVisible]=useState(false);
+ function handleBrowserMessage(value:string){
+  try{const msg=JSON.parse(value);
+   if(msg?.type==='seyveo-media'&&typeof msg.playing==='boolean'){
+    setMediaPaused(!msg.playing);setMediaVisible(msg.playing||msg.present===true);return;
+   }
+   if(msg?.type==='seyveo-translate'&&!translating)void handleTranslationMessage(value);
+  }catch{/* Ignore arbitrary website messages */}
+ }
  function togglePageMedia(){
   const action=mediaPaused?'play':'pause';
   web.current?.injectJavaScript("(function(){document.querySelectorAll('audio,video').forEach(function(el){if('"+action+"'==='pause'){el.pause()}else{var p=el.play();if(p&&p.catch)p.catch(function(){})}})})();true;");
@@ -67,7 +76,7 @@ export function NativeBrowser(){
   web.current?.injectJavaScript("document.querySelectorAll('audio,video').forEach(function(el){el.pause()});true;");
   setTranslationNotice('Воспроизведение на странице остановлено, если плеер доступен браузеру.');
  }
- function select(tab:Tab){setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
+ function select(tab:Tab){setMediaVisible(false);setMediaPaused(false);setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
  function navigate(){const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);if(!['https:','http:'].includes(url.protocol)||url.username||url.password)throw Error();setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)}catch{setAddress(current.url)}}
@@ -80,7 +89,11 @@ export function NativeBrowser(){
    <Pressable onPress={add} accessibilityRole="button" accessibilityLabel="Новая вкладка" style={{padding:10}}><Text style={{color:'white',fontSize:23}}>＋</Text></Pressable>
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
-  <WebView onMessage={event=>{if(!translating)void handleTranslationMessage(event.nativeEvent.data)}} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
+  <WebView onMessage={event=>handleBrowserMessage(event.nativeEvent.data)} onLoadEnd={()=>web.current?.injectJavaScript("(function(){if(window.__seyveoMediaWatch)return;window.__seyveoMediaWatch=true;function report(){var nodes=[].slice.call(document.querySelectorAll('audio,video'));var playing=nodes.some(function(n){return !n.paused&&!n.ended});window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo-media',present:nodes.length>0,playing:playing}));}document.addEventListener('play',report,true);document.addEventListener('pause',report,true);document.addEventListener('ended',report,true);report();})();true;")} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} allowsInlineMediaPlayback={true} allowsPictureInPictureMediaPlayback={true} mediaPlaybackRequiresUserAction={true} allowsFullscreenVideo={true} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
+  {mediaVisible?<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginHorizontal:12,marginVertical:5,paddingHorizontal:12,paddingVertical:8,borderRadius:16,borderWidth:1,borderColor:'#526670',backgroundColor:'#25343b'}}>
+    <Text style={{color:'#e5eeed',fontSize:12}}>Медиа · текущая страница</Text>
+    <Pressable accessibilityRole="button" onPress={togglePageMedia} accessibilityLabel={mediaPaused?'Продолжить медиа':'Пауза медиа'}><Text style={{color:'#e5eeed',fontSize:17}}>{mediaPaused?'▶':'Ⅱ'}</Text></Pressable>
+   </View>:null}
   {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
   {showDownloads?<View style={{maxHeight:170,backgroundColor:'#263039',padding:12}}>
     <Text style={{color:'#eef4f3',fontSize:14,marginBottom:8}}>Загрузки · текущий сеанс</Text>
