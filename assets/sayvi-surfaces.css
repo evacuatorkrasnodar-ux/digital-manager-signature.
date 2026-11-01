@@ -650,15 +650,15 @@
  #sayviSurfacePage .sv-mail-sayvi-knob{transition:none}
 }
 
-/* Mail-only: align every section with the phone dock's outer edges. */
+/* Mail aligns to the dock's viewport gutters, not the inner app column. */
 @media(max-width:640px){
  #sayviSurfacePage[data-sv-subject="mail"]{
-  width:calc(100vw - 8px);
-  max-width:none;
-  margin-left:calc(50% - 50vw + 4px);
-  margin-right:0;
+  box-sizing:border-box;
+  width:calc(100vw - 14px)!important;
+  max-width:none!important;
+  margin-inline:calc(50% - 50vw + 7px)!important;
  }
  #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace{
-  width:100%;max-width:none;margin-inline:0;
+  width:100%!important;max-width:none!important;margin-inline:0!important;
  }
 }
