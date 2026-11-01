@@ -367,6 +367,8 @@ function paintQuickSites(){
 }
 function renderQuickSite(){
  const button=root.querySelector('[data-custom-site]'),url=configuredQuickSite();
+ // The empty tile's own plus opens setup; no duplicate Edit action until set.
+ root.querySelector('[data-quick-toggle]').hidden=!url;
  const mark=button.querySelector('.sb-site-mark');
  mark.className='sb-site-mark sb-custom-site';
  mark.replaceChildren();
