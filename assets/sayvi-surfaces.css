@@ -358,16 +358,16 @@
 }
 #sayviSurfacePage .sv-mail-accounts{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
- padding:3px;margin:0 0 10px;min-height:46px;
- border:1px solid var(--sm-line);border-radius:25px;
+ padding:2px;margin:0 0 10px;min-height:34px;
+ border:1px solid var(--sm-line);border-radius:18px;
  background:var(--sm-bg);
 }
 #sayviSurfacePage .sv-mail-accounts[hidden]{display:none!important}
 #sayviSurfacePage .sv-mail-account-switch{
- appearance:none;border:1px solid transparent;border-radius:20px;
- min-height:40px;min-width:0;padding:5px 4px;cursor:pointer;
+ appearance:none;border:1px solid transparent;border-radius:15px;
+ min-height:30px;min-width:0;padding:3px 4px;cursor:pointer;
  color:var(--secondary);background:transparent;
- font:inherit;font-size:13px;font-weight:540;text-align:center;
+ font:inherit;font-size:12px;font-weight:540;text-align:center;
 }
 #sayviSurfacePage .sv-mail-account-switch[aria-pressed="true"]{
  color:var(--text);background:var(--sm-tint);
