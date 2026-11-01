@@ -19,6 +19,8 @@ export function NativeBrowser(){
  const current=tabs.find(t=>t.id===active)||tabs[0];
  const [address,setAddress]=useState(HOME);
  const [back,setBack]=useState(false),[forward,setForward]=useState(false);
+ const [translationNotice,setTranslationNotice]=useState('');
+ function translateInfo(){setTranslationNotice('Перевод всей страницы пока не подключён. Для него потребуется сервис перевода или локальная модель и согласие на обработку текста.')}
  function select(tab:Tab){setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
@@ -33,11 +35,13 @@ export function NativeBrowser(){
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
   <WebView key={current.id} ref={web} source={{uri:current.url}} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===active?{...t,url:event.url}:t))}}/>
+  {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
   <View style={{flexDirection:'row',justifyContent:'space-around',padding:12}}>
    <Pressable disabled={!back} onPress={()=>web.current?.goBack()}><Text style={{color:'white'}}>Назад</Text></Pressable>
    <Pressable disabled={!forward} onPress={()=>web.current?.goForward()}><Text style={{color:'white'}}>Вперёд</Text></Pressable>
    <Pressable onPress={()=>web.current?.reload()}><Text style={{color:'white'}}>Обновить</Text></Pressable>
    <Pressable onPress={navigate}><Text style={{color:'white'}}>Открыть</Text></Pressable>
+   <Pressable onPress={translateInfo}><Text style={{color:'white'}}>Перевод</Text></Pressable>
   </View>
  </View>
 }
