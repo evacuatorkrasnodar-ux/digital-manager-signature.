@@ -920,3 +920,11 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  margin-right:0;
  translate:-50% 0;
 }
+
+/* Readability refinement: type only; card and dock geometry remain unchanged. */
+#homePage #seyveoLivingMoment .lm-primary-title{font-size:18px;line-height:1.27}
+#homePage #seyveoLivingMoment .lm-primary-subtitle{font-size:13px;line-height:1.48}
+#homePage #seyveoLivingMoment .lm-inline-title{font-size:13.5px;line-height:1.42}
+#homePage #seyveoLivingMoment .lm-inline-note{font-size:12px;line-height:1.44}
+#homePage #seyveoLivingMoment .lm-mail-content p{font-size:13px;line-height:1.52}
+#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.8px}
