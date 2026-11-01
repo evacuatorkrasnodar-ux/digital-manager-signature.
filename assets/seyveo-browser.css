@@ -120,9 +120,13 @@
 
 /* Browser uses the actual SEYVEO dock, not a second footer. */
 .seyveo-browser-bottom{display:none!important}
-body.seyveo-browser-open .seyveo-browser{bottom:0;padding-bottom:calc(var(--seyveo-browser-dock-height, 86px) + 8px)}
-body.seyveo-browser-open footer.dock{z-index:2147483001!important;position:fixed!important;bottom:0!important}
-body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
+body.seyveo-browser-open .seyveo-browser{bottom:0;padding-bottom:calc(var(--seyveo-browser-dock-height,58px) + var(--seyveo-dock-bottom,7px) + 8px)}
+/* Browser uses the same iPhone safe-area spacing as Home and Music. */
+body.seyveo-browser-open footer.dock{
+ z-index:2147483001!important;position:fixed!important;
+ bottom:var(--seyveo-dock-bottom,7px)!important;
+}
+body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
 
 /* Browser start · refined native SEYVEO surface */
 .seyveo-browser-top strong{letter-spacing:.13em}
@@ -844,9 +848,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action]{
  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
  gap:0!important;padding:0!important;min-height:48px;
 }
-footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
- display:block!important;width:25px!important;height:25px!important;
+/* Common 24-unit SEYVEO vector language: precise, delicate icons
+   in the identical physical dock used by Home and Music. */
+footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-browser-dock-svg{
+ display:block!important;
+ width:23px!important;height:23px!important;
  margin:0 auto!important;flex:none!important;
+ fill:none!important;stroke:currentColor!important;
+ stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ opacity:.94;
 }
 
 /* Opened website: exactly the same search bar component and geometry as Home.
@@ -1763,3 +1774,14 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   height:64px;min-height:64px;
  }
 }
+
+/* Home viewport and content now share ONE theme gradient, so the area
+   outside the real dock is not an unrelated flat-colored strip. */
+.seyveo-browser.is-unified.is-browser-home{
+ background:var(--sv-life-viewport-gradient,var(--bg,#101719));
+}
+.seyveo-browser.is-unified.is-browser-home>.seyveo-browser-start:not([hidden]){
+ background:transparent;
+}
+footer.dock.seyveo-browser-dock button[data-sv-browser-action]:active:not([aria-disabled="true"]){opacity:.7}
+footer.dock.seyveo-browser-dock button[data-sv-browser-action][aria-disabled="true"]{opacity:.42}
