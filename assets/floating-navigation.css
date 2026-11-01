@@ -5,17 +5,21 @@
  --seyveo-nav-ink:#eff7f2;
  --seyveo-dock-height:58px;
  --seyveo-dock-icon-size:22px;
- --seyveo-dock-icon-stroke:1.08;
- /* Laser-etched iconography: a hairline inside the glass, not neon. */
- --seyveo-etch-core:rgba(232,255,245,.30);
- --seyveo-etch-halo:rgba(140,217,190,.17);
+ --seyveo-dock-icon-stroke:.96;
+ /* Recessed laser engraving: fine graphite-silver line, extremely faint underlight. */
+ --seyveo-engrave-ink:rgba(183,212,205,.75);
+ --seyveo-engrave-active:rgba(218,235,229,.88);
+ --seyveo-etch-core:rgba(210,244,231,.12);
+ --seyveo-etch-halo:rgba(102,188,159,.095);
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
 :root[data-theme="light"]{
  --seyveo-nav-ink:#202b38;
- --seyveo-etch-core:rgba(48,83,77,.19);
- --seyveo-etch-halo:rgba(67,127,109,.13);
+ --seyveo-engrave-ink:rgba(47,70,66,.72);
+ --seyveo-engrave-active:rgba(25,49,45,.9);
+ --seyveo-etch-core:rgba(46,100,82,.11);
+ --seyveo-etch-halo:rgba(54,129,101,.075);
 }
 .dock{
  position:fixed!important;
@@ -64,8 +68,8 @@
  height:var(--seyveo-dock-icon-size)!important;
  stroke-width:var(--seyveo-dock-icon-stroke)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- filter:drop-shadow(0 0 .6px var(--seyveo-etch-core))
-        drop-shadow(0 0 2.1px var(--seyveo-etch-halo));
+ filter:drop-shadow(0 0 .4px var(--seyveo-etch-core))
+        drop-shadow(0 0 1.4px var(--seyveo-etch-halo));
  flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
@@ -125,11 +129,11 @@
  transition:transform .18s ease!important;
 }
 .dock>.assistant-button .button-art .center-face{fill:#242829!important}
-.dock>.assistant-button .button-art .voice-bars{stroke:var(--sv-ceramic-wave,#f5f8fd)!important}
-.dock>.assistant-button .button-art .voice-dot{fill:var(--sv-ceramic-wave,#f5f8fd)!important}
+.dock>.assistant-button .button-art .voice-bars{stroke:var(--seyveo-engrave-active)!important}
+.dock>.assistant-button .button-art .voice-dot{fill:var(--seyveo-engrave-active)!important}
 :root[data-theme="light"] .dock>.assistant-button .button-art .center-face{fill:#e7eae8!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:#283443!important}
-:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:#283443!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-bars{stroke:var(--seyveo-engrave-active)!important}
+:root[data-theme="light"] .dock>.assistant-button .button-art .voice-dot{fill:var(--seyveo-engrave-active)!important}
 .dock>.assistant-button:is(:active,.pressing,.arming) .button-art{
  transform:scale(.945)!important;
 }
@@ -151,12 +155,12 @@
 .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
 :root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-day)}
 .dock>.assistant-button .button-art .voice-bars{
- stroke-width:1.72;stroke-linecap:round;fill:none;
- filter:drop-shadow(0 0 .5px var(--seyveo-etch-core))
-        drop-shadow(0 0 1.9px var(--seyveo-etch-halo));
+ stroke-width:1.5;stroke-linecap:round;fill:none;
+ filter:drop-shadow(0 0 .35px var(--seyveo-etch-core))
+        drop-shadow(0 0 1.3px var(--seyveo-etch-halo));
 }
 .dock>.assistant-button .button-art .voice-dot{
- filter:drop-shadow(0 0 1.5px var(--seyveo-etch-halo));
+ filter:drop-shadow(0 0 1.2px var(--seyveo-etch-halo));
 }
 .dock>.assistant-button.listening .voice-bars{
  animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
