@@ -17,7 +17,7 @@ export async function loadBrowserSession():Promise<SavedBrowserSession|null>{
   const tabs:SavedBrowserTab[]=data.tabs.filter((t:SavedBrowserTab)=>{
    if(!t||!Number.isSafeInteger(t.id)||t.id<=0||!valid(t.url)||seen.has(t.id))return false;
    seen.add(t.id);return true;
-  }).slice(-10).map((t:SavedBrowserTab)=>({...t,scrollY:Number.isSafeInteger(t.scrollY)&&t.scrollY!>=0&&t.scrollY!<=2000000?t.scrollY:0}));
+  }).slice(-10).map((t:SavedBrowserTab)=>({...t,scrollY:typeof t.scrollY==='number'&&Number.isSafeInteger(t.scrollY)&&t.scrollY>=0&&t.scrollY<=2000000?t.scrollY:0}));
   return tabs.length?{tabs,active:tabs.some((t:SavedBrowserTab)=>t.id===data.active)?data.active:tabs[0].id}:null;
  }catch{return null}
 }
@@ -29,7 +29,7 @@ export async function saveBrowserSession(tabs:SavedBrowserTab[],active:number){
    seen.add(t.id);return true;
   }).slice(-10);
   if(!safe.length)return false;
-  const data=JSON.stringify({tabs:safe.map(t=>({...t,scrollY:Number.isSafeInteger(t.scrollY)&&t.scrollY!>=0&&t.scrollY!<=2000000?t.scrollY:0})),active:safe.some(t=>t.id===active)?active:safe[0].id});
+  const data=JSON.stringify({tabs:safe.map(t=>({...t,scrollY:typeof t.scrollY==='number'&&Number.isSafeInteger(t.scrollY)&&t.scrollY>=0&&t.scrollY<=2000000?t.scrollY:0})),active:safe.some(t=>t.id===active)?active:safe[0].id});
   const next=saveQueue.then(()=>SecureStore.setItemAsync(KEY,data));
   saveQueue=next.catch(()=>{});
   await next;
