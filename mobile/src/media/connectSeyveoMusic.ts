@@ -9,13 +9,14 @@ export function connectSeyveoMusic(player:{
  pause:()=>void|Promise<void>;
 }){
  let currentId:string|null=null;
+ let unsubscribeControls=()=>{};
  const unsubscribeStatus=player.onStatus(event=>{
   if(!event||typeof event.trackId!=='string'||!event.trackId)return;
-  if(event.phase==='idle'){if(currentId)sharedMediaSession.clear('music',currentId);currentId=null;return}
-  if(sharedMediaSession.report('music',event.trackId,event.title,event.phase))currentId=event.trackId;
- });
- const unsubscribeControls=sharedMediaSession.registerControls('music',currentId||'unassigned',command=>{
-  void (command==='play'?player.play():player.pause());
+  if(event.phase==='idle'){if(currentId)sharedMediaSession.clear('music',currentId);currentId=null;unsubscribeControls();unsubscribeControls=()=>{};return}
+  if(sharedMediaSession.report('music',event.trackId,event.title,event.phase)){
+   if(currentId!==event.trackId){unsubscribeControls();unsubscribeControls=sharedMediaSession.registerControls('music',event.trackId,command=>{void (command==='play'?player.play():player.pause())})}
+   currentId=event.trackId;
+  }
  });
  return ()=>{unsubscribeControls();unsubscribeStatus();if(currentId)sharedMediaSession.clear('music',currentId)};
 }
