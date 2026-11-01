@@ -4,7 +4,7 @@ export type BrowserDocumentReviewItem = {
   id:string;name:string;bytes:number;status:'complete';
 };
 export type BrowserDocumentReviewPreview = Readonly<{
-  fileId:string;fileName:string;extension:'txt'|'csv';
+  fileId:string;fileName:string;extension:'txt'|'csv'|'pdf';
   excerpt:string;truncated:boolean;lines:number;
 }>;
 export type BrowserSayviHandoff = Readonly<{
