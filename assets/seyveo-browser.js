@@ -52,10 +52,6 @@ while(manager.firstChild)tabsPanel.append(manager.firstChild);
 manager.append(tabsPanel);
 manager.prepend(switcher);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
-const panelHeader=document.createElement('header');
-panelHeader.className='sb-browser-panel-head';
-panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Меню</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
-manager.prepend(panelHeader);
 const panelScrim=document.createElement('div');
 panelScrim.className='sb-browser-panel-scrim';panelScrim.hidden=true;
 panelScrim.setAttribute('aria-hidden','true');
@@ -88,7 +84,7 @@ function makeSearchToggle(){
  button.addEventListener('click',()=>searchForm.hidden?openBrowserSearch():closeBrowserSearch(true));
  return button;
 }
-for(const parent of [sitebar,panelHeader]){
+for(const parent of [sitebar]){
  const spacer=parent.querySelector('.sb-browser-sitebar-spacer');
  if(spacer)spacer.replaceWith(makeSearchToggle());
 }
@@ -347,6 +343,17 @@ function paintQuickSites(){
 }
 function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'▶':brand==='wikipedia'?'W':brand==='yandex'?'Я':brand==='habr'?'H':'•'}
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShown=false;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
+function positionSeamlessMenu(){
+ // The real grey browser bar is our visual anchor. Its position is shared
+ // by Home and opened websites, independent of menu content height.
+ if(root.hidden||!managerOpen)return;
+ const viewport=root.getBoundingClientRect();
+ const bar=sitebar.getBoundingClientRect();
+ if(!bar.width||!bar.height)return;
+ root.style.setProperty('--sb-manager-top',Math.round(bar.bottom-viewport.top-1)+'px');
+ root.style.setProperty('--sb-manager-left',Math.round(bar.left-viewport.left)+'px');
+ root.style.setProperty('--sb-manager-right',Math.round(viewport.right-bar.right)+'px');
+}
 function tabManager(value=true){
  managerOpen=Boolean(value);
  if(managerOpen)closeBrowserSearch();
@@ -356,8 +363,17 @@ function tabManager(value=true){
  panelScrim.hidden=!managerOpen;
  root.classList.toggle('is-panel-open',managerOpen);
  siteMenuButton.setAttribute('aria-expanded',String(managerOpen));
- if(managerOpen){manager.scrollTop=0;renderManager();}
- else if(!root.hidden)render();
+ siteMenuButton.setAttribute('aria-label',managerOpen?'Закрыть меню браузера':'Управление браузером');
+ siteMenuButton.title=managerOpen?'Закрыть меню':'Меню';
+ siteMenuButton.querySelector('svg').innerHTML=managerOpen
+  ?'<path d="M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6"/>'
+  :'<path d="M4 7h16M4 12h16M4 17h16"/>';
+ if(managerOpen){
+  $('[data-site-title]').textContent='Меню';
+  manager.scrollTop=0;
+  positionSeamlessMenu();
+  renderManager();
+ }else if(!root.hidden)render();
 }
 function setTabDetails(card,expanded){
  card.classList.toggle('is-expanded',expanded);
@@ -404,7 +420,6 @@ function syncClosedStack(){
 }
 function renderManager(){
  const currentLabel=managerSection==='collections'?'Избранное':sections.find(([id])=>id===managerSection)?.[1]||'Избранное';
- panelHeader.querySelector('[data-panel-section-title]').textContent='Меню';
  manager.setAttribute('aria-label','Управление браузером · '+currentLabel);
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===(managerSection==='collections'?'favorites':managerSection);button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
  // No duplicate tab overview: the approved carousel already controls tabs.
@@ -701,7 +716,7 @@ function render(){
  const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
  const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
  sitebar.hidden=false;
- $('[data-site-title]').textContent=home?'Главная':siteBrand(url)==='habr'?'Хабр':siteName(url);
+ $('[data-site-title]').textContent=managerOpen?'Меню':home?'Главная':siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
  $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
@@ -936,7 +951,6 @@ function toggleBrowserPanel(){
  tabManager(!managerOpen);
 }
 siteMenuButton.addEventListener('click',toggleBrowserPanel);
-panelHeader.querySelector('[data-manager-dismiss]').addEventListener('click',()=>tabManager(false));
 
 panelScrim.addEventListener('click',()=>tabManager(false));
 
@@ -963,7 +977,7 @@ searchForm.addEventListener('submit',e=>{e.preventDefault();const url=target(inp
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!searchForm.hidden)closeBrowserSearch(true);else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,search:openBrowserSearch,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,search:openBrowserSearch,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',()=>{balanceBrowserVerticalRhythm();positionSeamlessMenu()},{passive:true});
 if(document.fonts?.ready)document.fonts.ready.then(balanceBrowserVerticalRhythm).catch(()=>{});
 restoreSession();render();
 })();
