@@ -11,8 +11,10 @@ let removeControls:(()=>void)|null=null;
 
 export async function startNativeTrack(sourceUri:string,title:string){
  if(typeof sourceUri!=='string'||!sourceUri||typeof title!=='string')throw new Error('invalid-media');
- const allowed=sourceUri.startsWith('file://')||sourceUri.startsWith('https://');
- if(!allowed)throw new Error('unsupported-media-uri');
+ const local=sourceUri.startsWith('file://');
+ let secure=false;
+ try{const u=new URL(sourceUri);secure=u.protocol==='https:'&&!u.username&&!u.password}catch{}
+ if(!local&&!secure)throw new Error('unsupported-media-uri');
  stopNativeTrack();
  await setAudioModeAsync({playsInSilentMode:true,shouldPlayInBackground:true,interruptionMode:'doNotMix'});
  const next=createAudioPlayer({uri:sourceUri});
@@ -24,6 +26,7 @@ export async function startNativeTrack(sourceUri:string,title:string){
  });
  statusListener=next.addListener('playbackStatusUpdate',status=>{
   if(player!==next||!trackId)return;
+  if(status.didJustFinish){stopNativeTrack();return}
   sharedMediaSession.report('music',trackId,title,status.playing?'playing':status.isLoaded?'paused':'loading');
  });
  next.setActiveForLockScreen(true,{title,artist:'SEYVEO Music'});
