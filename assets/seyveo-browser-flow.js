@@ -11,6 +11,7 @@ const icons={
  connect:'<path d="M8 7h-2a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2M12 4h8v8M20 4 10 14"/>',
  translate:'<path d="M3 6h12M9 3v3m4 0c-.5 5-3 9-8 12m1-9c1 3 3 5 7 7M15 14l3-8 3 8m-5-2h4"/>',
  privacy:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>',
+ extra:'<path d="M12 5v14M5 12h14"/>',
  continue:'<path d="M6 3h12v18l-6-4-6 4V3Z"/><path d="M9 10h6m-3-3v6"/>'
 };
 const entries=[
@@ -20,7 +21,8 @@ const entries=[
  ['connect','Мой мир','Перенести ссылку и заметку в Блокнот'],
  ['translate','Перевод','Подготовить запрос на перевод отрывка'],
  ['privacy','Приватность','Управление локальной историей этого сайта'],
- ['continue','Продолжить','Сохранить адрес для возвращения позже']
+ ['continue','Продолжить','Сохранить адрес для возвращения позже'],
+ ['extra','Ещё','Восемь дополнительных инструментов']
 ];
 const SPACE_KEY='seyveo-browser-collections-v1';
 const CONTINUE_KEY='seyveo-browser-flow-continue-v1';
@@ -124,6 +126,48 @@ function chooseMode(id){
   detail.append(node('p','svf-findings','Доступ к содержимому: выключен. Веб-демо не читает страницу без вставленного тобой текста.'));
   detail.append(button('Удалить посещения этого сайта','clear-site-history'));
   detail.append(node('small','svf-hint','Это удаляет только локальные записи истории SEYVEO для домена. Cookies и кэш сайта не затрагиваются.'));
+ }else if(id==='extra'){
+  caption(detail,'Ещё возможности','Дополнительные инструменты без новых кнопок на главном экране браузера.');
+  const modes=[['vision','Vision'],['whisper','Whisper'],['reading','Чтение'],['comparison','Сравнение'],['memory','Память'],['selection','Выделение'],['bridge','Bridge'],['sync','Устройства']];
+  const list=node('div','svf-controls');
+  modes.forEach(([key,label])=>{const b=button(label,'extra-mode');b.dataset.svfExtra=key;list.append(b)});
+  detail.append(list);
+ }else if(['vision','whisper','reading','comparison','memory','selection','bridge','sync'].includes(id)){
+  const texts={
+   vision:['SEYVEO Vision','В веб-прототипе содержимое чужого сайта недоступно. Вставь текст или условия — подготовим анализ для Сэйви.'],
+   whisper:['SEYVEO Whisper','Читает вставленный текст вслух, если устройство поддерживает синтез речи. Это голос устройства, не фирменный голос Сэйви.'],
+   reading:['Чистое чтение','Вставь статью и читай её без лишних элементов. Автоматическое извлечение текста из сторонних сайтов потребует нативного движка.'],
+   comparison:['Сравнение предложений','Вставь два предложения отдельно: подготовим точный запрос Сэйви без выдуманных цен.'],
+   memory:['Память страниц','Локальный поиск по посещённым адресам. Содержимое сайтов и облако не индексируются.'],
+   selection:['Умное выделение','Вставь выделенный текст и выбери действие. Веб-демо не может читать выделение внутри чужого iframe.'],
+   bridge:['SEYVEO Bridge','Передай страницу в Блокнот или подготовь дело. Реальная отправка в другие сервисы пока не подключена.'],
+   sync:['Мои устройства','Синхронизация устройств пока не подключена: история и избранное остаются локальными.']
+  };
+  caption(detail,...texts[id]);
+  if(['vision','whisper','reading','selection'].includes(id)){
+   inputField(detail,'Вставь текст со страницы');
+   const controls=node('div','svf-controls');
+   if(id==='vision')controls.append(button('Разобрать со Сэйви','vision-draft','primary'));
+   if(id==='selection')controls.append(button('Объяснить','explain','primary'),button('Перевести','translation'));
+   if(id==='reading')controls.append(button('Показать чистый текст','reading-show','primary'));
+   if(id==='whisper')controls.append(button('Читать вслух','speak-start','primary'),button('Стоп','speak-stop'));
+   detail.append(controls);
+  }
+  if(id==='comparison'){
+   inputField(detail,'Первый вариант');
+   inputField(detail,'Второй вариант');
+   detail.append(button('Сравнить через Сэйви','comparison-draft','primary'));
+  }
+  if(id==='memory'){
+   const q=inputField(detail,'Поиск по домену или адресу','input');q.dataset.svfMemoryQuery='';
+   detail.append(button('Найти в истории','memory-find','primary'));
+  }
+  if(id==='bridge'){
+   inputField(detail,'Примечание (необязательно)');
+   const controls=node('div','svf-controls');
+   controls.append(button('В Блокнот','note-save','primary'),button('В Дела — черновик','task-draft'));
+   detail.append(controls);
+  }
  }else if(id==='continue'){
   caption(detail,'Продолжить позже','Сохрани страницу локально без облака, регистрации или уведомлений.');
   detail.append(button('Отложить эту страницу','continue-save','primary'));
@@ -232,6 +276,52 @@ function act(event){
  const target=event.target.closest('[data-svf-do]');if(!target)return;
  switch(target.dataset.svfDo){
   case 'close':active=false;panel.remove();break;
+  case 'extra-mode':chooseMode(target.dataset.svfExtra);break;
+  case 'vision-draft':writeDraft('explain');break;
+  case 'comparison-draft':{
+   const fields=[...panel.querySelectorAll('.svf-detail textarea')];
+   const a=fields[0]?.value.trim(),b=fields[1]?.value.trim();
+   if(!a||!b){setNotice('Вставь оба предложения для сравнения.');break}
+   const field=document.getElementById('question');
+   if(!field){setNotice('Редактор Сэйви недоступен.');break}
+   if(field.value.trim()&&!window.confirm('Заменить текст в поле Сэйви?'))break;
+   field.value='Сравни два предложения по фактическим условиям, цене и ограничениям. Не выдумывай отсутствующие данные.\\nПервый вариант:\\n'+a.slice(0,2500)+'\\nВторой вариант:\\n'+b.slice(0,2500);
+   lastPrepared=field.value;field.dispatchEvent(new Event('input',{bubbles:true}));field.focus({preventScroll:true});
+   setNotice('Сравнение подготовлено в чате, отправка только вручную.');break;
+  }
+  case 'speak-start':{
+   const phrase=panel.querySelector('textarea')?.value.trim();
+   if(!phrase){setNotice('Сначала вставь текст.');break}
+   if(!('speechSynthesis' in window)){setNotice('Озвучивание не поддерживается на устройстве.');break}
+   window.speechSynthesis.cancel();
+   const utterance=new SpeechSynthesisUtterance(phrase.slice(0,5000));utterance.lang='ru-RU';utterance.rate=.95;
+   window.speechSynthesis.speak(utterance);setNotice('Читает системный голос устройства.');break;
+  }
+  case 'speak-stop':window.speechSynthesis?.cancel();setNotice('Чтение остановлено.');break;
+  case 'reading-show':{
+   const value=panel.querySelector('textarea')?.value.trim();
+   if(!value){setNotice('Вставь текст для чтения.');break}
+   let output=panel.querySelector('.svf-reading-output');
+   if(!output){output=node('article','svf-findings svf-reading-output');output.style.whiteSpace='pre-wrap';panel.querySelector('.svf-detail').append(output)}
+   output.textContent=value.slice(0,10000);setNotice('Текст показан без оформления исходного сайта.');break;
+  }
+  case 'memory-find':{
+   const q=(panel.querySelector('[data-svf-memory-query]')?.value||'').trim().toLowerCase();
+   if(q.length<2){setNotice('Введи хотя бы два символа.');break}
+   const items=load(HISTORY_KEY,[]);
+   const found=Array.isArray(items)?items.filter(x=>typeof x==='string'&&safe(x)&&x.toLowerCase().includes(q)).slice(0,8):[];
+   let list=panel.querySelector('.svf-memory-results');
+   if(!list){list=node('div','svf-saved svf-memory-results');panel.querySelector('.svf-detail').append(list)}
+   list.replaceChildren();
+   if(!found.length)list.append(node('p','svf-hint','Совпадений в локальной истории нет.'));
+   found.forEach(x=>{const b=button(x,'memory-open');b.dataset.svfUrl=x;list.append(b)});
+   setNotice('Поиск выполнен только в локальной истории ссылок.');break;
+  }
+  case 'memory-open':{
+   const targetUrl=safe(target.dataset.svfUrl);
+   if(targetUrl){window.SEYVEO_CONVERSATION?.close?.();window.SEYVEO_BROWSER?.open?.(targetUrl)}
+   break;
+  }
   case 'explain':case 'compare':case 'terms':writeDraft(target.dataset.svfDo);break;
   case 'translation':writeDraft('translation');break;
   case 'task-draft':writeDraft('task');break;
