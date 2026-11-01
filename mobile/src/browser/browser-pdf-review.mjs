@@ -25,10 +25,12 @@ export function inspectBrowserPdf(item) {
 }
 
 export function supportsBrowserPdfExtractor(extractor) {
-  return !!extractor &&
-    typeof extractor.getPageCount==='function' &&
-    typeof extractor.extractTextFromPage==='function' &&
-    (typeof extractor.isAvailable!=='function' || extractor.isAvailable()===true);
+  try {
+    return !!extractor &&
+      typeof extractor.getPageCount==='function' &&
+      typeof extractor.extractTextFromPage==='function' &&
+      (typeof extractor.isAvailable!=='function' || extractor.isAvailable()===true);
+  }catch{return false;}
 }
 
 /**
