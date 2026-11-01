@@ -1661,6 +1661,32 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 .seyveo-browser .sb-browser-sitebar-search-button[aria-expanded="true"]{
  color:var(--text);opacity:1;
 }
+/* Black Velvet: a lighter, rounded SEYVEO close mark, not a heavy X.
+   Restrict the styling to the active search toggle, preserving the menu,
+   tabs, glass search field, the five themes and the button hit target. */
+.seyveo-browser .sb-browser-sitebar-search-button.is-search-close{
+ display:grid;place-items:center;
+ color:var(--text);opacity:.86;
+ border-radius:13px;
+ transition:background-color .16s ease,opacity .16s ease;
+}
+.seyveo-browser .sb-browser-sitebar-search-button.is-search-close svg{
+ display:block;width:21px;height:21px;
+ stroke:currentColor;stroke-width:1.65;
+ stroke-linecap:round;stroke-linejoin:round;
+ fill:none;
+}
+@media(hover:hover){
+ .seyveo-browser .sb-browser-sitebar-search-button.is-search-close:hover{
+  opacity:1;background:var(--seyveo-hdr-active);
+ }
+}
+.seyveo-browser .sb-browser-sitebar-search-button.is-search-close:active{
+ opacity:1;background:var(--seyveo-hdr-active);
+}
+@media(prefers-reduced-motion:reduce){
+ .seyveo-browser .sb-browser-sitebar-search-button.is-search-close{transition:none}
+}
 @media(max-width:390px){
  .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup{
   padding-left:7px;padding-right:3px;gap:4px;border-radius:14px;
