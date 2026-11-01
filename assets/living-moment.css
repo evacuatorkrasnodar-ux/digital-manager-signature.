@@ -414,6 +414,40 @@
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
+/* SEYVEO theme-tinted paper: a restrained tint from the current palette.
+   The paper remains opaque and legible; optical double-glass rims are unchanged.
+   One inherited material feeds both preview cards and real recommendations. */
+#homePage{
+  --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
+  --lm-paper-sheet:linear-gradient(170deg,var(--lm-paper-top),var(--lm-paper-mid) 58%,var(--lm-paper-bottom));
+  --lm-paper-top:#f1f7f4;
+  --lm-paper-mid:#eff5f1;
+  --lm-paper-bottom:#ebf2ee;
+}
+/* White Velvet: pearlescent paper, with nearly no tint. */
+:root[data-theme=light] #homePage{
+  --lm-paper-top:#ffffff;
+  --lm-paper-mid:#fbfcfd;
+  --lm-paper-bottom:#f7f9fa;
+}
+/* Graphite Velvet: a cool silver wash, not a gray plastic surface. */
+:root[data-theme=dark][data-palette=graphite] #homePage{
+  --lm-paper-top:#f3f5f6;
+  --lm-paper-mid:#eff2f4;
+  --lm-paper-bottom:#ebf0f2;
+}
+/* Sapphire HDR: very faint icy-blue paper. */
+:root[data-theme=dark][data-palette=sapphire] #homePage{
+  --lm-paper-top:#f2f6fb;
+  --lm-paper-mid:#eff4fa;
+  --lm-paper-bottom:#ebf1f8;
+}
+/* Plum / dune graphite: neutral pearl, never beige or brown. */
+:root[data-theme=dark][data-palette=plum] #homePage{
+  --lm-paper-top:#f5f5f4;
+  --lm-paper-mid:#f1f2f1;
+  --lm-paper-bottom:#edefee;
+}
 /* Three cards become one MAIN card — keep all three actual task elements.
    Opaque white paper with thin double optical edges, without gray underlay. */
 #seyveoLivingMoment.lm-preview .lm-field{
@@ -421,9 +455,7 @@
   --text:#22333c;
   --secondary:#495c65;
   --soft-line:rgba(75,99,108,.17);
-  /* v4: white paper and a restrained two-line glass rim, with a small corner glint. */
-  --lm-paper-glaze:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 16%,transparent 84%,rgba(127,151,157,.016) 100%);
-  --lm-paper-sheet:linear-gradient(170deg,#fff 0%,#fcfdfd 58%,#f8fbfa 100%);
+  /* The paper material is inherited from #homePage and follows the active theme. */
   --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.36),inset 0 -1px 0 rgba(122,148,155,.10),0 2px 8px rgba(0,12,22,.05);
   color:var(--text);
   border:1px solid transparent;
@@ -561,7 +593,7 @@
 /* Older real-business recommendations use identical inset material.
    Their existing click handlers and permissions remain intact. */
 #homePage #dynamic .decision-card[data-owner-advice]{
-  /* Real recommendation keeps same white insert, original button handlers. */
+  /* Real recommendation shares the exact theme-tinted paper and original handlers. */
   position:relative;isolation:isolate;
   --text:#22333c;
   --secondary:#495c65;
@@ -570,9 +602,7 @@
   margin:0!important;
   padding:14px 12px 12px!important;
   color:var(--text)!important;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.16),transparent 16%,transparent 84%,rgba(127,151,157,.016)),
-    linear-gradient(170deg,#fff 0%,#fcfdfd 56%,#f8fbfa 100%)!important;
+  background:var(--lm-paper-glaze),var(--lm-paper-sheet)!important;
   border:1px solid rgba(135,157,165,.22)!important;
   border-radius:22px!important;
   outline:0!important;
