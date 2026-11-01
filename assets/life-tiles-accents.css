@@ -1,134 +1,318 @@
-/* Actual SEYVEO / LIFE page tiles, not the Home popover.
-   Preserve all existing backgrounds, tile borders, sphere and dock. */
-#lifePage #calendarSpaces .calendar-space-button {
-  display:grid;
-  grid-template-columns:26px minmax(0,1fr);
-  grid-template-rows:auto auto;
-  align-content:center;
-  align-items:start;
-  justify-content:stretch;
-  column-gap:13px;
-  row-gap:7px;
-  text-align:left;
+/* SEYVEO · My World | iPhone-first "Apple calm" design
+   Single authoritative style sheet for this surface.
+   The existing 14 live tile buttons, route handlers and fixed dock are untouched.
+   Three official themes inherit their own pigment. */
+
+:root{
+ --sv-world-surface:linear-gradient(145deg,rgba(220,255,244,.10),rgba(127,190,166,.055));
+ --sv-world-edge:rgba(182,222,212,.18);
+ --sv-world-icon-surface:rgba(255,255,255,.07);
+ --sv-world-glow:rgba(116,175,161,.16);
+ --sv-world-ink:#edf6f2;
 }
-#lifePage #calendarSpaces .calendar-space-button > svg {
-  grid-column:1;
-  grid-row:1 / 3;
-  width:25px;
-  height:25px;
-  justify-self:center;
-  align-self:start;
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-world-surface:linear-gradient(145deg,rgba(233,243,255,.105),rgba(143,163,188,.055) 64%,rgba(163,184,210,.035));
+ --sv-world-edge:rgba(177,195,213,.20);
+ --sv-world-icon-surface:rgba(232,240,255,.07);
+ --sv-world-glow:rgba(112,151,213,.20);
+ --sv-world-ink:#f2f5fb;
 }
-#lifePage #calendarSpaces .calendar-space-button > span {
-  grid-column:2;
-  grid-row:1;
-  align-self:center;
-  margin:0;
-  min-width:0;
-  line-height:1.3;
-  text-align:left;
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-world-surface:linear-gradient(145deg,rgba(223,237,255,.115),rgba(130,151,212,.06));
+ --sv-world-edge:rgba(155,185,242,.22);
+ --sv-world-icon-surface:rgba(211,228,255,.065);
+ --sv-world-glow:rgba(98,147,232,.24);
+ --sv-world-ink:#f2f6ff;
 }
-#lifePage #calendarSpaces .calendar-space-button > small {
-  grid-column:2;
-  grid-row:2;
-  margin:0;
-  min-width:0;
-  line-height:1.4;
-  text-align:left;
+:root[data-theme=dark][data-palette=plum]{
+ --sv-world-surface:linear-gradient(145deg,rgba(255,245,231,.10),rgba(188,171,153,.055));
+ --sv-world-edge:rgba(204,186,162,.18);
+ --sv-world-icon-surface:rgba(245,232,216,.06);
+ --sv-world-glow:rgba(171,151,128,.14);
+ --sv-world-ink:#faf6f1;
 }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="calendar"] > svg { color:#E7D2A2; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="notes"] > svg { color:#CBBFE9; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="health"] > svg,
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="care"] > svg { color:#E8B8C7; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="family"] > svg { color:#F0C5D0; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="contacts"] > svg { color:#9EDDD1; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="smart-home"] > svg { color:#C2DED1; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="documents"] > svg { color:#B8D4E8; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="mail"] > svg { color:#8FE3C3; }
-#lifePage #calendarSpaces .calendar-space-button[data-calendar-space="pay"] > svg { color:#E7D2A2; }
-/* Telegram/YouTube artwork retains its existing white brand fill. */
-@media(max-width:370px) {
- #lifePage #calendarSpaces .calendar-space-button {column-gap:9px}
+:root[data-theme=light]{
+ --sv-world-surface:linear-gradient(145deg,rgba(255,255,255,.97),rgba(236,242,247,.94));
+ --sv-world-edge:rgba(76,96,120,.17);
+ --sv-world-icon-surface:rgba(96,111,136,.075);
+ --sv-world-glow:rgba(149,179,219,.17);
+ --sv-world-ink:#15232e;
 }
 
-/* The app adds .sv-space-active after boot. Its older !important
-   rules were winning the cascade after the first paint. */
+/* Only My World receives the new typography and restrained horizon light. */
+html.sv-space-active #lifePage{
+ position:relative;
+ isolation:isolate;
+ overflow-x:clip;
+ padding:12px clamp(12px,3.7vw,22px) 28px!important;
+ background:
+  radial-gradient(ellipse 72% 220px at 95% 2%,var(--sv-world-glow),transparent 91%),
+  var(--sv-life-viewport-gradient)!important;
+ color:var(--text);
+}
+html.sv-space-active #lifePage > *{position:relative;z-index:1}
+html.sv-space-active #lifePage .life-back{display:none!important}
+html.sv-space-active #lifePage .life-heading{
+ box-sizing:border-box;
+ margin:0 0 23px!important;
+ padding:22px 3px 0!important;
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+html.sv-space-active #lifePage .life-eyebrow{
+ display:block;
+ margin:0 0 12px!important;
+ font-size:11px!important;
+ font-weight:560!important;
+ line-height:1.2!important;
+ letter-spacing:.13em!important;
+ color:var(--secondary)!important;
+ opacity:1!important;
+}
+html.sv-space-active #lifePage .life-eyebrow::before{display:none!important}
+html.sv-space-active #lifePage .life-heading h1{
+ display:block!important;
+ margin:0 0 11px!important;
+ padding:0!important;
+ color:var(--text)!important;
+ font-size:clamp(34px,9.2vw,47px)!important;
+ line-height:1.06!important;
+ font-weight:650!important;
+ letter-spacing:-.057em!important;
+}
+html.sv-space-active #lifePage .life-heading h1 span{
+ color:inherit!important;font:inherit!important;
+}
+html.sv-space-active #lifePage .life-description{
+ margin:0!important;
+ max-width:46ch!important;
+ color:var(--secondary)!important;
+ font-size:clamp(13px,3.6vw,15px)!important;
+ font-weight:420!important;
+ line-height:1.46!important;
+ letter-spacing:-.01em!important;
+}
+html.sv-space-active #lifePage .calendar-spaces{
+ margin:0!important;padding:0!important;
+ background:transparent!important;
+}
+html.sv-space-active #lifePage .calendar-spaces-head{
+ margin:0 2px 12px!important;
+ padding:0!important;border:0!important;
+}
+html.sv-space-active #lifePage .calendar-spaces-head h2{
+ margin:0!important;
+ color:var(--text)!important;
+ font-size:15.5px!important;
+ line-height:1.3!important;
+ font-weight:520!important;
+ letter-spacing:-.025em!important;
+}
+html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:9px!important;
+ align-items:stretch!important;
+ width:100%!important;
+ padding:0!important;
+ margin:0!important;
+ border:0!important;
+ background:transparent!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+}
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
- grid-template-columns:26px minmax(0,1fr)!important;
+ --sv-world-icon:#c9d3dd;
+ appearance:none;
+ position:relative!important;
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:45px minmax(0,1fr)!important;
  grid-template-rows:auto auto!important;
+ column-gap:9px!important;
+ row-gap:3px!important;
  align-content:center!important;
- column-gap:12px!important;
- row-gap:7px!important;
+ align-items:center!important;
+ justify-content:stretch!important;
+ justify-items:stretch!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:101px!important;
+ max-height:none!important;
+ padding:12px 10px!important;
+ margin:0!important;
+ overflow:hidden!important;
+ border:1px solid var(--sv-world-edge)!important;
+ border-radius:20px!important;
+ background:var(--sv-world-surface)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+ color:var(--text)!important;
+ text-align:left!important;
+ text-decoration:none!important;
+ -webkit-tap-highlight-color:transparent;
+ transition:background-color .16s ease,transform .16s ease!important;
+}
+/* The app's simple strokes sit on soft app-icon plates, not neon buttons. */
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ left:10px!important;
+ top:50%!important;
+ transform:translateY(-50%)!important;
+ box-sizing:border-box;
+ width:45px!important;height:45px!important;
+ border-radius:15px!important;
+ background:
+  linear-gradient(160deg,color-mix(in srgb,var(--sv-world-icon) 23%,transparent),
+   color-mix(in srgb,var(--sv-world-icon) 8%,transparent)),
+  var(--sv-world-icon-surface)!important;
+ border:1px solid color-mix(in srgb,var(--sv-world-icon) 9%,transparent)!important;
+ box-shadow:none!important;
+ pointer-events:none!important;
+ opacity:1!important;
+ z-index:0!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{
+ content:none!important;display:none!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg{
- grid-column:1!important;grid-row:1 / 3!important;
- width:24px!important;height:24px!important;
- max-width:24px!important;max-height:24px!important;
- align-self:start!important;justify-self:center!important;
- margin:0!important;opacity:.94!important;
+ display:block!important;
+ position:relative!important;
+ grid-column:1!important;
+ grid-row:1 / span 2!important;
+ align-self:center!important;
+ justify-self:center!important;
+ flex:none!important;
+ box-sizing:border-box!important;
+ width:26px!important;height:26px!important;
+ min-width:0!important;
+ max-width:26px!important;max-height:26px!important;
+ margin:0!important;
+ color:var(--sv-world-icon)!important;
+ fill:none;
+ stroke:currentColor;
+ stroke-width:1.6!important;
+ opacity:1!important;
+ z-index:1;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span{
+ display:block!important;
+ position:relative;
  grid-column:2!important;grid-row:1!important;
- align-self:center!important;justify-self:start!important;
+ align-self:end!important;justify-self:start!important;
+ width:100%!important;min-width:0!important;
  margin:0!important;
+ padding:0!important;
+ color:var(--text)!important;
+ font-size:clamp(12.5px,3.35vw,15px)!important;
+ font-weight:585!important;
+ line-height:1.18!important;
+ letter-spacing:-.025em!important;
+ text-align:left!important;
+ white-space:normal!important;
+ overflow:visible!important;
+ overflow-wrap:normal!important;
+ word-break:normal!important;
+ z-index:1;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small{
+ display:block!important;
+ position:relative;
  grid-column:2!important;grid-row:2!important;
  align-self:start!important;justify-self:start!important;
+ width:100%!important;min-width:0!important;
  margin:0!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="calendar"] > svg{color:#E7D2A2!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="notes"] > svg{color:#CBBFE9!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="health"] > svg{color:#E8B8C7!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="care"] > svg{color:#E8B8C7!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="family"] > svg{color:#F0C5D0!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="contacts"] > svg{color:#9EDDD1!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="smart-home"] > svg{color:#C2DED1!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="documents"] > svg{color:#B8D4E8!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="mail"] > svg{color:#8FE3C3!important;}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="pay"] > svg{color:#E7D2A2!important;}
-
-/* Finish the remaining My World tiles. Brand silhouettes stay intact. */
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="wallet"] > svg{color:#E7D2A2!important}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="music"] > svg{color:#CBBFE9!important}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="connections"] > svg.seyveo-telegram-white{
- color:#A9D6EE!important;fill:#A9D6EE!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="connections"] > svg.seyveo-telegram-white path{fill:#A9D6EE!important}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button[data-calendar-space="play"] > svg.seyveo-youtube-white path{
- fill:#E5C0C7!important;
-}
-
-/* Responsive LIFE tiles: phone-first, comfortable touch targets.
-   Only sizing/flow here; existing backgrounds and dock stay untouched. */
-html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
- grid-template-columns:repeat(2,minmax(0,1fr))!important;
- align-items:stretch!important;
- gap:9px!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
- height:auto!important;min-height:96px!important;max-height:none!important;
- padding:12px 11px!important;box-sizing:border-box!important;
- overflow:visible!important;
- grid-template-columns:24px minmax(0,1fr)!important;
- grid-template-rows:auto auto!important;
- gap:5px 10px!important;align-content:center!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span,
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small{
- overflow:visible!important;overflow-wrap:break-word!important;
+ padding:0!important;
+ color:var(--secondary)!important;
+ font-size:clamp(10.5px,2.75vw,12.4px)!important;
+ font-weight:430!important;
+ line-height:1.28!important;
+ opacity:.94!important;
+ text-align:left!important;
  white-space:normal!important;
+ overflow:visible!important;
+ overflow-wrap:anywhere!important;
+ z-index:1;
 }
-@media(max-width:700px){
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
-  min-height:104px!important;padding:12px 9px!important;
-  grid-template-columns:22px minmax(0,1fr)!important;gap:6px 8px!important;
- }
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
+ transform:scale(.987)!important;
+ background:var(--sv-world-surface)!important;
 }
-@media(max-width:370px){
- html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:7px!important}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visible{
+ outline:2px solid var(--seyveo-emerald)!important;
+ outline-offset:2px!important;
+}
+
+/* The fourteen existing live actions keep their original order and targets. */
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="calendar"]{--sv-world-icon:#efcd80}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="notes"]{--sv-world-icon:#c9b0f5}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="health"]{--sv-world-icon:#f4a5ab}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="care"]{--sv-world-icon:#f4abbc}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="family"]{--sv-world-icon:#c4a9f9}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="contacts"]{--sv-world-icon:#9cdeb2}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="connections"]{--sv-world-icon:#8fcef0}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="smart-home"]{--sv-world-icon:#a8e6bd}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="documents"]{--sv-world-icon:#97d5f5}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="wallet"]{--sv-world-icon:#f1cf85}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="mail"]{--sv-world-icon:#9ae6bb}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="browser"]{--sv-world-icon:#8ed4fb}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"]{--sv-world-icon:#f19da6}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="music"]{--sv-world-icon:#c7aafa}
+
+/* Preserve official Telegram and YouTube symbols inside their icon plates. */
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="connections"] > svg.seyveo-telegram-white{
+ stroke:none!important;fill:var(--sv-world-icon)!important;
+}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="connections"] > svg.seyveo-telegram-white path{
+ stroke:none!important;fill:var(--sv-world-icon)!important;
+}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > svg.seyveo-youtube-white{
+ stroke:none!important;fill:none!important;
+}
+html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > svg.seyveo-youtube-white path{
+ fill:var(--sv-world-icon)!important;stroke:none!important;
+}
+html.sv-space-active #lifePage .life-footnote{
+ margin:17px 3px 20px!important;
+ padding:0!important;
+ color:var(--secondary)!important;
+ font-size:11.5px!important;
+ line-height:1.5!important;
+}
+
+/* Classic iPhone sizes including narrow 375px and the iPhone X. */
+@media(max-width:390px){
+ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:8px!important}
  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
-  min-height:108px!important;padding:10px 7px!important;
-  grid-template-columns:20px minmax(0,1fr)!important;gap:5px 6px!important;
+  grid-template-columns:40px minmax(0,1fr)!important;
+  column-gap:7px!important;min-height:104px!important;
+  border-radius:18px!important;padding:10px 8px!important;
  }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
+  left:8px!important;width:40px!important;height:40px!important;border-radius:13px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg{
+  width:23px!important;height:23px!important;max-width:23px!important;max-height:23px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span{font-size:12.8px!important}
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small{font-size:10.8px!important}
+}
+@media(max-width:350px){
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
+  grid-template-columns:36px minmax(0,1fr)!important;column-gap:6px!important;
+  min-height:111px!important;padding:10px 7px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
+  left:7px!important;width:36px!important;height:36px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg{
+  width:22px!important;height:22px!important;max-width:22px!important;max-height:22px!important;
+ }
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span{font-size:12px!important}
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small{font-size:10.3px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
 }
