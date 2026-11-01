@@ -57,7 +57,7 @@ const secondary=document.createElement('div');secondary.className='sb-manager-se
 const notice=root.querySelector('.seyveo-browser-blocked');
 // Styling belongs to the Browser stylesheet so all three native themes apply.
 const embedExplanation=notice.querySelector('p');
-const $=s=>root.querySelector(s),input=$('input'),frame=$('iframe'),tabArea=$('[data-tabs]');
+const $=s=>root.querySelector(s),input=root.querySelector('input'),frame=root.querySelector('iframe'),tabArea=$('[data-tabs]');
 const sitebar=$('.sb-browser-sitebar'),siteMenu=$('[data-site-menu-panel]'),siteMenuButton=$('[data-site-menu]');
 /* QUIET CINEMA: bound dimensions prevent global button and menu styles from
    inflating this small browser-owned popup in the live app. */
@@ -816,7 +816,7 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
-$('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
+root.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!siteMenu.hidden)closeSiteMenu();else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
