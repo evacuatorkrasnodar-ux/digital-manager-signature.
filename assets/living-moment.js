@@ -754,7 +754,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   morphLocked=true;open.disabled=true;execute.disabled=true;realLater.disabled=true;
   scene.classList.add('lm-scene--changing');
   later(()=>{
-   if(!tiles.contains(field)||mode!=='task')return;
+   if(!tiles.contains(field)||mode!=='task'){
+    morphLocked=false;open.disabled=false;execute.disabled=false;realLater.disabled=false;
+    scene.classList.remove('lm-scene--changing');
+    return;
+   }
    remaining=dueTasks();
    if(!remaining.length){
     tip.textContent='НА ГЛАВНОЙ НЕТ ОЖИДАЮЩИХ ДЕЛ';
