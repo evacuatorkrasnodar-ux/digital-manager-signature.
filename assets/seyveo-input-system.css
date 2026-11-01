@@ -1,0 +1,83 @@
+/* SEYVEO Input · one canonical input system for ONE, Business, Family and Browser.
+   Shared geometry/material/typography only. Existing editors own their native
+   keyboard, draft, attachments, send handlers and navigation. No cloned inputs. */
+:root{
+ --sv-input-height:54px;
+ --sv-input-radius:22px;
+ --sv-input-padding-x:12px;
+ --sv-input-gap:6px;
+ --sv-input-control:44px;
+ --sv-input-type:16px;
+ --sv-input-leading:24px;
+ --sv-input-icon-size:20px;
+ --sv-input-icon-stroke:1.35;
+ --sv-input-border:var(--soft-line,rgba(184,207,199,.17));
+ --sv-input-ink:var(--text);
+ --sv-input-muted:var(--secondary);
+ --sv-input-surface:linear-gradient(150deg,rgba(176,223,208,.055),transparent 69%),var(--card);
+}
+:root[data-theme="light"]{
+ --sv-input-surface:linear-gradient(150deg,rgba(170,188,207,.075),transparent 69%),var(--card);
+}
+.sv-input-surface{
+ box-sizing:border-box;
+ min-width:0;
+ border-radius:var(--sv-input-radius);
+ border:1px solid var(--sv-input-border);
+ background:var(--sv-input-surface);
+ box-shadow:inset 0 1px 0 rgba(228,255,246,.035);
+}
+.sv-input-field{
+ box-sizing:border-box;
+ min-width:0;
+ font-family:inherit;
+ font-size:var(--sv-input-type);
+ line-height:var(--sv-input-leading);
+ font-weight:400;
+ letter-spacing:normal;
+ color:var(--sv-input-ink);
+ caret-color:var(--sv-input-ink);
+ border:0;
+ outline:0;
+ background:transparent;
+ box-shadow:none;
+ resize:none;
+}
+.sv-input-field::placeholder{color:var(--sv-input-muted);opacity:1}
+.sv-input-action{
+ box-sizing:border-box;
+ display:grid;
+ place-items:center;
+ flex:none;
+ min-width:var(--sv-input-control);
+ min-height:var(--sv-input-control);
+ width:var(--sv-input-control);
+ height:var(--sv-input-control);
+ padding:0;
+ margin:0;
+ border:0;
+ border-radius:50%;
+ background:transparent;
+ color:var(--sv-input-ink);
+ cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+}
+.sv-input-action svg{
+ display:block;
+ width:var(--sv-input-icon-size);
+ height:var(--sv-input-icon-size);
+ fill:none;
+ stroke:currentColor;
+ stroke-width:var(--sv-input-icon-stroke);
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+.sv-input-action:active{opacity:.72}
+.sv-input-action:focus-visible{
+ outline:2px solid var(--sv-input-ink);
+ outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+ .sv-input-action{transition:none!important}
+}
