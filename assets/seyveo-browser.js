@@ -938,6 +938,9 @@ function askSayvi(){
   }
   window.SEYVEO_CONVERSATION.status?.('Браузер · '+host+' · для разбора статьи добавь её текст',8500);
  }else window.SEYVEO_CONVERSATION.status?.('Браузер · Сэйви на связи',2500);
+ // User explicitly tapped the existing Sayvi sphere while browsing:
+ // reveal all seven Flow modules IN Feather Chat, never on the website.
+ document.dispatchEvent(new CustomEvent('seyveo:browser-flow-open',{detail:{url,tabId:active}}));
  return true;
 }
 /* Voice commands reuse the one microphone and existing browser navigation.
