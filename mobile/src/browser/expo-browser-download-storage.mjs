@@ -9,6 +9,7 @@
 import * as Crypto from 'expo-crypto';
 import {Directory,File,Paths} from 'expo-file-system';
 import {BROWSER_DOWNLOAD_MAX_BYTES,describeBrowserDownload,safeBrowserDownloadName} from './browser-download-core.mjs';
+import {BROWSER_REVIEW_READ_LIMIT,inspectBrowserDocument,makeBrowserReviewPreview} from './browser-document-review.mjs';
 
 // We store opaque .blob names; native preview needs the original safe extension.
 const mimeFor = name => {
@@ -132,6 +133,23 @@ export function createExpoBrowserDownloadStorage(){
       const stored=file(id),mimeType=mimeFor(record.name);
       if (!await File.canPreview(stored,{mimeType})) throw Error('download-preview-unavailable');
       await File.preview(stored,{title:record.name,mimeType});
+    },
+
+    async readLocalTextPreview(id){
+      // Called only after user taps "Сэйви, посмотри" and approves a local read.
+      if (!validId(id) || !info(id).exists || !file(id).exists) {
+        throw Error('download-not-found');
+      }
+      const item=clean(await info(id).json());
+      const current=file(id);
+      if (!item || item.id!==id || current.size!==item.bytes ||
+          !inspectBrowserDocument(item).canReadText ||
+          current.size>BROWSER_REVIEW_READ_LIMIT) {
+        throw Error('document-preview-unavailable');
+      }
+      // Small, validated .txt/.csv only: no PDF parsing and no cloud requests.
+      const text=await current.text();
+      return makeBrowserReviewPreview(item,text);
     },
 
     async getLocalFileUri(id){
