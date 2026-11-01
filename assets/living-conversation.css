@@ -121,7 +121,7 @@ html.seyveo-conversation #ask.expanded #seyveoConversationMicLarge{display:grid}
 }
 .seyveo-conversation-reply-action svg{
  display:block;width:16px;height:16px;fill:none;stroke:currentColor;
- stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;
+ stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;flex:none;
 }
 .seyveo-conversation-reply-action:active{background:var(--card2);color:var(--text)}
 .seyveo-conversation-reply-action:focus-visible{outline:2px solid var(--text);outline-offset:2px}
@@ -257,7 +257,7 @@ html.seyveo-conversation .seyveo-reply-more>summary{
 }
 html.seyveo-conversation .seyveo-conversation-reply-action svg,
 html.seyveo-conversation .seyveo-reply-more>summary svg{
- width:19px;height:19px;stroke-width:1.65;display:block;
+ width:20px;height:20px;stroke-width:1.1;display:block;
  fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;
 }
 html.seyveo-conversation .seyveo-conversation-reply-actions>.seyveo-conversation-reply-action>span{
