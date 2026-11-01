@@ -734,3 +734,34 @@ html.seyveo-conversation .seyveo-chat-browser-entry:active{
 html.seyveo-conversation .seyveo-chat-browser-entry:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
+
+/* One-time Browser discovery for established Feather Chat conversations.
+   Deliberately text-like, not another card stack or permanent navigation. */
+html.seyveo-conversation .seyveo-chat-browser-nudge{
+ display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+ width:100%;min-height:42px;margin:12px 0 5px;
+ padding:6px 0;border-top:1px solid var(--soft-line);
+ color:var(--secondary);font-size:11px;line-height:1.35;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge>span:first-child{
+ display:grid;place-items:center;flex:0 0 19px;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge svg{
+ display:block;width:17px;height:17px;stroke:currentColor;fill:none;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge>span:nth-child(2){
+ flex:1 1 auto;min-width:120px;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge button{
+ min-height:38px;padding:4px 9px;border:1px solid var(--soft-line);
+ border-radius:11px;background:transparent;color:var(--text);
+ font:inherit;font-size:11px;cursor:pointer;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge .seyveo-chat-browser-dismiss{
+ display:grid;place-items:center;
+ width:38px;min-width:38px;padding:0;border-color:transparent;
+ color:var(--secondary);font-size:20px;font-weight:300;
+}
+html.seyveo-conversation .seyveo-chat-browser-nudge button:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
