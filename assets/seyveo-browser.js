@@ -69,19 +69,13 @@ const sitebar=$('.sb-browser-sitebar'),siteMenuButton=$('[data-site-menu]');
 // Reuse the ONE original grey navigation strip on both the home and web views.
 $('.seyveo-browser-tabs').after(sitebar);
 
-// The same approved glass address field is now a temporary overlay, not a
-// permanent row between the SEYVEO wordmark and tab carousel.
+// The original glass search field belongs INSIDE the fixed-size grey sitebar
+// while searching. No separate popup may cover Quick Access or the page.
 const searchForm=$('.seyveo-browser-bar');
 searchForm.id='seyveoBrowserSearch';
 searchForm.classList.add('sb-browser-search-popup');
 searchForm.setAttribute('role','search');
 searchForm.hidden=true;
-const searchBackdrop=document.createElement('button');
-searchBackdrop.type='button';
-searchBackdrop.className='sb-browser-search-backdrop';
-searchBackdrop.setAttribute('aria-label','Закрыть поиск');
-searchBackdrop.hidden=true;
-root.append(searchBackdrop);
 function makeSearchToggle(){
  const button=document.createElement('button');
  button.type='button';
@@ -98,22 +92,26 @@ for(const parent of [sitebar,panelHeader]){
  const spacer=parent.querySelector('.sb-browser-sitebar-spacer');
  if(spacer)spacer.replaceWith(makeSearchToggle());
 }
-function positionBrowserSearch(){
- const bounds=sitebar.getBoundingClientRect(),screen=root.getBoundingClientRect();
- if(bounds.height)root.style.setProperty('--sb-search-popup-top',Math.round(bounds.bottom-screen.top+8)+'px');
-}
+// Keep the existing grey bar's menu button, title and search control.
+// Only the title is replaced by the ORIGINAL search form while searching.
+sitebar.insertBefore(searchForm,sitebar.querySelector('[data-browser-search-trigger]'));
 function syncSearchButtons(){
- root.querySelectorAll('[data-browser-search-trigger]').forEach(b=>
-  b.setAttribute('aria-expanded',String(!searchForm.hidden)));
+ const open=!searchForm.hidden;
+ root.querySelectorAll('[data-browser-search-trigger]').forEach(button=>{
+  button.setAttribute('aria-expanded',String(open));
+  button.setAttribute('aria-label',open?'Закрыть поиск':'Поиск или адрес сайта');
+  button.title=open?'Закрыть поиск':'Поиск';
+  button.innerHTML=open
+   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg>'
+   :'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>';
+ });
 }
 function openBrowserSearch(){
  if(root.hidden)return;
  if(managerOpen)tabManager(false);
  input.value=currentUrl()||'';
  searchForm.hidden=false;
- searchBackdrop.hidden=false;
  root.classList.add('is-search-open');
- positionBrowserSearch();
  syncSearchButtons();
  // Focus synchronously in the click gesture so the iPhone keyboard
  // actually opens; deferred focus after requestAnimationFrame may be blocked.
@@ -123,12 +121,16 @@ function openBrowserSearch(){
 function closeBrowserSearch(restoreFocus=false){
  if(searchForm.hidden)return;
  searchForm.hidden=true;
- searchBackdrop.hidden=true;
  root.classList.remove('is-search-open');
  syncSearchButtons();
  if(restoreFocus&&!root.hidden)sitebar.querySelector('[data-browser-search-trigger]')?.focus({preventScroll:true});
 }
-searchBackdrop.addEventListener('click',()=>closeBrowserSearch(true));
+// Clicking the page dismisses the address field without intercepting the
+// click or moving any tile, tab, grey bar or dock.
+root.addEventListener('pointerdown',event=>{
+ if(searchForm.hidden||event.target.closest('.sb-browser-sitebar,.seyveo-browser-manager'))return;
+ closeBrowserSearch();
+});
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
@@ -677,7 +679,6 @@ function renderSecondary(){
    wordmark. No live height compensation, so opening Search never moves tabs. */
 function balanceBrowserVerticalRhythm(){
  root.style.removeProperty('--sb-balanced-tabs-margin');
- if(!searchForm.hidden)positionBrowserSearch();
 }
 function render(){
  persistSession();
