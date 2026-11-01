@@ -837,7 +837,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
    Extra tabs swipe horizontally; the separate + is always visible. */
 .seyveo-browser.is-site-view>.seyveo-browser-tabs{
  display:flex;flex:0 0 auto;order:3;align-items:stretch;
- height:46px;min-height:46px;margin:var(--sb-balanced-tabs-margin,-21px) 0 -4px;gap:6px;
+ height:46px;min-height:46px;margin:var(--sb-balanced-tabs-margin,-21px) 0 -4px;gap:3px;
  /* Whole tab rail is 15px lower: 10px additional layout gap plus 5px
     deeper beneath the page edge. Text and close icons stay readable. */
  position:relative;top:19px;z-index:2;
@@ -955,7 +955,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-overflow-scrolling:touch;
 }
 @media(max-width:390px){
- .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:5px;margin-top:var(--sb-balanced-tabs-margin,-21px);margin-bottom:-4px;top:17px}
+ .seyveo-browser.is-site-view>.seyveo-browser-tabs{height:44px;min-height:44px;gap:2px;margin-top:var(--sb-balanced-tabs-margin,-21px);margin-bottom:-4px;top:17px}
  .seyveo-browser.is-site-view .seyveo-browser-tabs>[data-tabs]{
   gap:2px;grid-auto-columns:calc((100% - 4px) / 3);
  }
