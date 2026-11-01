@@ -223,7 +223,7 @@ function makeCollectionCard(collection){
  if(collectionMenuId!==id)return card;
  const panel=document.createElement('div');panel.className='sb-collection-quick-actions';
  if(renamingCollectionId===id){
-  const form=document.createElement('form');form.className='sb-collection-rename-form';const input=document.createElement('input');input.type='text';input.className='sb-collection-rename-input';input.maxLength=42;input.value=collection.name;input.setAttribute('aria-label','Новое название коллекции');
+  const form=document.createElement('form');form.className='sb-collection-rename-form';const input=document.createElement('input');input.type='text';input.className='sb-collection-rename-input';input.maxLength=42;input.value=collection.name;input.setAttribute('aria-label','Новое название папки');
   const submit=document.createElement('button');submit.type='submit';submit.textContent='Сохранить';
   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';cancel.addEventListener('click',()=>{renamingCollectionId=null;renderManager()});
   form.addEventListener('submit',event=>{event.preventDefault();const name=input.value.trim();if(!name)return;putCollections(getCollections().map(item=>item.id===id?{...item,name:name.slice(0,42)}:item));renamingCollectionId=null;collectionMenuId=null;renderManager()});
@@ -526,13 +526,13 @@ function renderSecondary(){
   const back=document.createElement('button');back.type='button';back.className='sb-folder-back';back.textContent='‹ Избранное';
   back.setAttribute('aria-label','Назад в Избранное');
   back.addEventListener('click',()=>{creatingCollection=false;openCollection=null;managerSection='favorites';renderManager()});
-  const add=document.createElement('button');add.type='button';add.textContent='＋ Папка';add.addEventListener('click',makeCollection);header.append(back,add);
+  const add=document.createElement('button');add.type='button';add.textContent='＋ Папка';add.setAttribute('aria-label','Создать папку');add.hidden=creatingCollection;add.addEventListener('click',makeCollection);header.append(back,add);
   if(creatingCollection){
-   const form=document.createElement('form');form.className='sb-collection-create';
+   const form=document.createElement('form');form.className='sb-collection-create';form.setAttribute('aria-label','Новая папка');
    const field=document.createElement('input');field.type='text';field.className='sb-collection-name';
    field.maxLength=42;field.required=true;field.placeholder='Название папки';field.setAttribute('aria-label','Название папки');
-   const save=document.createElement('button');save.type='submit';save.textContent='Создать';
-   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
+   const save=document.createElement('button');save.type='submit';save.className='sb-collection-create-save';save.textContent='Создать';
+   const cancel=document.createElement('button');cancel.type='button';cancel.className='sb-collection-create-cancel';cancel.textContent='×';cancel.title='Отмена';cancel.setAttribute('aria-label','Отменить создание папки');
    cancel.addEventListener('click',()=>{creatingCollection=false;renderManager()});
    form.addEventListener('submit',event=>{
     event.preventDefault();const name=field.value.trim();if(!name)return;
