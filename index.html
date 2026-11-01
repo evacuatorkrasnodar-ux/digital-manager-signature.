@@ -326,7 +326,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 #tasksPage[hidden]{display:none!important}
 .tasks-main{flex:1;min-width:0;padding:11px 0 18px}
 /* The Tasks surface follows the fixed dock's exact outer width and center. */
-#tasksPage{box-sizing:border-box;width:min(430px,calc(100vw - 14px));max-width:none;position:relative;left:auto;transform:none;align-self:center}
+#tasksPage{box-sizing:border-box;width:min(430px,calc(100vw - 14px));max-width:none;position:relative;left:auto;transform:none;align-self:flex-start;flex-shrink:0;margin-left:0}
 @media(max-width:355px){#tasksPage{width:calc(100vw - 8px)}}
 .tasks-heading{margin-bottom:21px}
 .tasks-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:4px;margin:0 0 23px;border:1px solid var(--soft-line);border-radius:var(--seyveo-radius-choice);background:var(--card2)}
@@ -3175,7 +3175,31 @@ function printNote(note){
   popup.opener=null;popup.document.open();
   popup.document.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>SEYVEO · Запись</title>'
    +'<style>body{font:16px/1.55 system-ui,sans-serif;color:#182033;max-width:740px;margin:40px auto;padding:14px}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}</style>'
-   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre></body></html>');
+   +'</head><body><h1>Моя запись</h1><pre>'+escapeHtml(note.text)+'</pre><script>
+/* Match Tasks to the ACTUAL rendered dock, including app padding and custom dock sizing. */
+(()=>{
+ const tasks=document.getElementById('tasksPage');
+ const app=tasks?.closest('.app');
+ const dock=document.querySelector('footer.dock:not(.seyveo-browser-dock)')||document.querySelector('.dock');
+ if(!tasks||!app||!dock)return;
+ let queued=false;
+ function align(){
+  queued=false;
+  const d=dock.getBoundingClientRect(),a=app.getBoundingClientRect();
+  if(!d.width||!a.width)return;
+  const inset=parseFloat(getComputedStyle(app).paddingLeft)||0;
+  const left=d.left-a.left-inset;
+  tasks.style.width=d.width+'px';
+  tasks.style.marginLeft=left+'px';
+ }
+ function requestAlign(){if(queued)return;queued=true;requestAnimationFrame(align)}
+ requestAlign();window.addEventListener('resize',requestAlign,{passive:true});
+ if(typeof ResizeObserver!=='undefined'){
+  const observer=new ResizeObserver(requestAlign);observer.observe(dock);observer.observe(app);
+ }
+})();
+</script>
+</body></html>');
   popup.document.close();popup.focus();popup.print();
  }catch{
   try{popup.close()}catch{}
