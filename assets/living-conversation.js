@@ -501,7 +501,18 @@ function renderTurns(turns){
    heading.textContent='Сэйви на связи';
    const hint=document.createElement('p');
    hint.textContent='Напиши, что нужно сделать, или просто поговорим.';
-   welcome.append(heading,hint);
+   // A discoverable entry in the existing chat, not another permanent dock
+   // button. The same Browser is also accessible via «Мой мир» and voice.
+   const browser=document.createElement('button');
+   browser.type='button';
+   browser.className='seyveo-chat-browser-entry';
+   browser.setAttribute('aria-label','Открыть SEYVEO Browser');
+   browser.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/></svg><span>Открыть браузер</span>';
+   browser.addEventListener('click',()=>window.SEYVEO_BROWSER?.open?.());
+   const detail=document.createElement('small');
+   detail.className='seyveo-chat-browser-location';
+   detail.textContent='Также доступен в разделе «Мой мир»';
+   welcome.append(heading,hint,browser,detail);
    nodes.push(welcome);
  }
  text.replaceChildren(...nodes);
