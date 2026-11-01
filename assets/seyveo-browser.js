@@ -400,6 +400,7 @@ function positionSeamlessMenu(){
 }
 function tabManager(value=true){
  managerOpen=Boolean(value);
+ if(managerOpen)hideNativeSite();
  if(managerOpen)closeBrowserSearch();
  if(!managerOpen){allClosedShown=false;showManagerHistory=false;}
  manager.hidden=!managerOpen;
@@ -740,6 +741,46 @@ function renderSecondary(){
 function balanceBrowserVerticalRhythm(){
  root.style.removeProperty('--sb-balanced-tabs-margin');
 }
+/* Native browser host adapter. Only trusted SEYVEO app shells may inject
+   window.SEYVEO_NATIVE_BROWSER; third-party sites never receive this object.
+   The approved tabs, history and Black Velvet UI remain shared. */
+let nativeShownTab=null,nativeShownUrl=null;
+function nativeViewer(){
+ const adapter=window.SEYVEO_NATIVE_BROWSER;
+ return adapter&&typeof adapter.show==='function'&&typeof adapter.hide==='function'?adapter:null;
+}
+function hideNativeSite(){
+ if(nativeShownTab===null)return;
+ const adapter=nativeViewer();
+ nativeShownTab=null;nativeShownUrl=null;
+ try{adapter?.hide()}catch{}
+}
+function showNativeSite(url){
+ if(!url||root.hidden||managerOpen){hideNativeSite();return false;}
+ const adapter=nativeViewer();
+ if(!adapter){hideNativeSite();return false;}
+ if(nativeShownTab===active&&nativeShownUrl===url)return true;
+ try{
+  // The host positions the page view only within the site-content pane:
+  // tabs, address bar and original shared dock must remain accessible.
+  const accepted=adapter.show({url,tabId:active,containerId:'seyveoBrowser'});
+  if(accepted!==true){hideNativeSite();return false;}
+  nativeShownTab=active;nativeShownUrl=url;
+  return true;
+ }catch{hideNativeSite();return false;}
+}
+function nativeNavigation({url,tabId,replace=false}={}){
+ if(!nativeViewer()||!Number.isInteger(tabId)||tabId!==active)return false;
+ const safe=secureUrl(url);if(!safe)return false;
+ const t=current(),previous=t.entries[t.position];
+ if(previous===safe)return true;
+ if(replace&&t.position>=0)t.entries[t.position]=safe;
+ else{t.entries=t.entries.slice(0,t.position+1);t.entries.push(safe);t.position++;}
+ remember(safe);
+ // The host is already displaying this URL; do not reload on callback.
+ nativeShownTab=active;nativeShownUrl=safe;
+ render();return true;
+}
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
@@ -755,19 +796,19 @@ function render(){
  // Sites that fail in the user's preview get a compact explanation, never a
  // full-height grey error iframe; a native app will require WebView integration.
  const embedHost=url?new URL(url).hostname.toLowerCase():'';
+ const nativeSite=showNativeSite(url);
  const unsupportedEmbeds=new Set(['youtube.com','www.youtube.com','m.youtube.com','youtu.be','ya.ru','www.ya.ru','yandex.ru','www.yandex.ru']);
- // The provided Habr-style reference is a DEMO only for this exact sample route.
- // Never substitute fabricated article text into another live website.
- const isDemo=!!url&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
- const blocked=!!url&&!isDemo&&unsupportedEmbeds.has(embedHost);
+ // The Habr reference is demo-only on the web; native apps show the live page.
+ const isDemo=!!url&&!nativeSite&&['habr.com','www.habr.com'].includes(embedHost)&&new URL(url).pathname.replace(/\/$/,'')==='/ru/company/design';
+ const blocked=!!url&&!nativeSite&&!isDemo&&unsupportedEmbeds.has(embedHost);
  sitebar.hidden=false;
  $('[data-site-title]').textContent=managerOpen?'Меню':home?'Главная':siteBrand(url)==='habr'?'Хабр':siteName(url);
  $('[data-browser-demo]').hidden=!isDemo;
  notice.hidden=!blocked;
- $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo;
+ $('.seyveo-browser-frame-note').hidden=home||blocked||isDemo||nativeSite;
  $('.seyveo-browser-content').classList.toggle('is-embed-unavailable',blocked);
- frame.hidden=home||blocked||isDemo;
- if(isDemo){frame.removeAttribute('src');displayedTab=null}
+ frame.hidden=home||blocked||isDemo||nativeSite;
+ if(nativeSite||isDemo){frame.removeAttribute('src');displayedTab=null}
  else if(blocked){
   embedExplanation.textContent='Сайт '+embedHost+' не открывается внутри веб-демоверсии SEYVEO. Для полноценного встроенного просмотра потребуется нативный браузер приложения.';
   frame.removeAttribute('src');displayedTab=null;
@@ -867,6 +908,7 @@ function resumeAfterSayvi(){
  if(!root.hidden)return false;
  root.hidden=false;
  document.body.classList.add('seyveo-browser-open');
+ render(); // Restore the native page or web fallback after returning from Sayvi.
  document.dispatchEvent(new Event('seyveo:browser-open'));
  return true;
 }
@@ -876,6 +918,7 @@ function askSayvi(){
  const url=currentUrl();
  if(managerOpen)tabManager(false);
  suspendedForSayvi=true;
+ hideNativeSite();
  root.hidden=true;
  document.body.classList.remove('seyveo-browser-open');
  document.dispatchEvent(new Event('seyveo:browser-close'));
@@ -954,7 +997,7 @@ function open(value){
  document.dispatchEvent(new Event('seyveo:browser-open'));
  return true;
 }
-function close(){suspendedForSayvi=false;expandedHistory=null;closeBrowserSearch();tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){hideNativeSite();suspendedForSayvi=false;expandedHistory=null;closeBrowserSearch();tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -993,7 +1036,10 @@ function browserReload(){
  const url=currentUrl();
  if(root.hidden||!url)return false;
  if(managerOpen)tabManager(false);
- if(!frame.hidden){frame.setAttribute('src',url);displayedTab=active;}
+ if(nativeShownTab===active&&nativeShownUrl===url){
+  try{if(nativeViewer()?.reload?.()===true)return true;}catch{}
+  hideNativeSite();render();
+ }else if(!frame.hidden){frame.setAttribute('src',url);displayedTab=active;}
  else render(); // blocked embeds and demo pages never bypass iframe protections
  return true;
 }
@@ -1076,7 +1122,7 @@ searchForm.addEventListener('submit',e=>{e.preventDefault();const url=target(inp
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!searchForm.hidden)closeBrowserSearch(true);else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,search:openBrowserSearch,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',()=>{balanceBrowserVerticalRhythm();positionSeamlessMenu()},{passive:true});
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,nativeNavigation,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,search:openBrowserSearch,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',()=>{balanceBrowserVerticalRhythm();positionSeamlessMenu()},{passive:true});
 if(document.fonts?.ready)document.fonts.ready.then(balanceBrowserVerticalRhythm).catch(()=>{});
 restoreSession();render();
 })();
