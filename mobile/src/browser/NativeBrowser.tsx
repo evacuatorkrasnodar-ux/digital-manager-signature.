@@ -68,8 +68,8 @@ export function NativeBrowser(){
  function togglePageMedia(){
   const action=mediaPaused?'play':'pause';
   web.current?.injectJavaScript("(function(){document.querySelectorAll('audio,video').forEach(function(el){if('"+action+"'==='pause'){el.pause()}else{var p=el.play();if(p&&p.catch)p.catch(function(){})}})})();true;");
-  setMediaPaused(value=>!value);
-  setTranslationNotice('Команда '+(mediaPaused?'воспроизведения':'паузы')+' отправлена плеерам страницы. Встроенные сторонние плееры могут её не поддерживать.');
+  // State changes only after the page reports a real play/pause event.
+  setTranslationNotice('Команда отправлена странице. Дождитесь подтверждения плеера; сторонние встроенные плееры могут не поддерживаться.');
  }
  function pausePageMedia(){
   // Only pauses media in the current document. Cross-origin frames may not be accessible.
