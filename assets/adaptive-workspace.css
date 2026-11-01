@@ -80,17 +80,18 @@
  }
 }
 
-/* Tasks and My World share the dock's horizontal viewport frame on phones.
-   Home and every other destination keep their approved original gutters. */
+/* Shared mobile dock-width frame for every first-level destination.
+   Home, the fixed dock, full-screen dialogs and chat viewport stay unchanged.
+   The content column matches the dock's 430px cap and 7px side gutters. */
 @media(max-width:699px){
- .app:has(> :is(#tasksPage,#lifePage):not([hidden])){
+ .app:has(> :is(#tasksPage,#lifePage,#calendarPage,#picturePage,#managePage,#sayviSurfacePage,#sayviMusicPage,#sayviVideoPage,#sayviAnswerPage):not([hidden])){
   box-sizing:border-box;
   width:100%!important;
   max-width:100%!important;
   padding-left:7px!important;
   padding-right:7px!important;
  }
- .app > :is(#tasksPage,#lifePage):not([hidden]){
+ .app > :is(#tasksPage,#lifePage,#calendarPage,#picturePage,#managePage,#sayviSurfacePage,#sayviMusicPage,#sayviVideoPage,#sayviAnswerPage):not([hidden]){
   box-sizing:border-box;
   width:min(430px,100%)!important;
   max-width:100%!important;
@@ -99,7 +100,7 @@
  }
 }
 @media(max-width:355px){
- .app:has(> :is(#tasksPage,#lifePage):not([hidden])){
+ .app:has(> :is(#tasksPage,#lifePage,#calendarPage,#picturePage,#managePage,#sayviSurfacePage,#sayviMusicPage,#sayviVideoPage,#sayviAnswerPage):not([hidden])){
   padding-left:4px!important;
   padding-right:4px!important;
  }
