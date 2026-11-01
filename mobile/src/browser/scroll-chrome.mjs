@@ -9,13 +9,12 @@ export const BROWSER_SCROLL_BRIDGE_JS = `(function(){
   var queued = false;
   function report(){
     queued = false;
-    var bridge = window.ReactNativeWebView;
-    if (!bridge || typeof bridge.postMessage !== 'function') return;
+    if (!window.ReactNativeWebView || typeof window.ReactNativeWebView.postMessage !== 'function') return;
     var doc = document.scrollingElement || document.documentElement || document.body;
     var y = Math.max(0, Number(window.scrollY || doc.scrollTop || 0));
     var max = Math.max(0, Number(doc.scrollHeight || 0) - Number(window.innerHeight || 0));
     if (!Number.isFinite(y) || !Number.isFinite(max)) return;
-    bridge.postMessage(JSON.stringify({type:'seyveo:browser-scroll:v1',y:y,max:max}));
+    window.ReactNativeWebView.postMessage(JSON.stringify({type:'seyveo:browser-scroll:v1',y:y,max:max}));
   }
   function schedule(){
     if (queued) return;
