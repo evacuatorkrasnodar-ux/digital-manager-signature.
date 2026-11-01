@@ -14,7 +14,7 @@ function init(){
  };
  let active=false;
  function setButton(b,action,label){
-  b.innerHTML='<svg class="seyveo-browser-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icons[action]+'</svg><span>'+label+'</span>';
+  b.innerHTML='<svg class="seyveo-browser-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icons[action]+'</svg><span>'+label+'</span>';
   b.dataset.svBrowserAction=action;
   b.removeAttribute('aria-current');b.classList.remove('active','sv-nav-feedback');
   b.setAttribute('aria-label',label);b.title=label;
