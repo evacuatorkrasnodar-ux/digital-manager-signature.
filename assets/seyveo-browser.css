@@ -1329,27 +1329,33 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  -webkit-backdrop-filter:blur(3px);
  backdrop-filter:blur(3px);
 }
+/* Seamless sheet: begin exactly at the bottom of the ONE shared grey
+   browser strip. No duplicate header, no independent floating top edge. */
+.seyveo-browser.is-unified.is-panel-open>.sb-browser-sitebar{
+ z-index:24;
+ border-radius:21px 21px 0 0;
+}
 .seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
  display:block;position:absolute;
  z-index:23;
- /* Fix the jump: anchor top, independent of selected section's height. */
- top:max(16px,env(safe-area-inset-top,0px));
+ top:var(--sb-manager-top,205px);
  bottom:auto;
- left:max(12px,var(--sv-browser-gutter,16px));
- right:max(12px,var(--sv-browser-gutter,16px));
+ left:var(--sb-manager-left,0px);
+ right:var(--sb-manager-right,0px);
  width:auto;
  height:auto;
- max-height:min(74dvh,calc(100% - max(16px,env(safe-area-inset-top,0px)) - var(--seyveo-browser-dock-height,86px) - 24px));
+ max-height:min(74dvh,calc(100% - var(--sb-manager-top,205px) - var(--seyveo-browser-dock-height,86px) - 10px));
  flex:none;
- padding:8px 11px 10px;
+ padding:9px 13px 11px;
  margin:0;
  border:1px solid var(--sv-home-outline);
- border-radius:23px;
- background:linear-gradient(170deg,
-  color-mix(in srgb,var(--bg,#141b19) 79%,#354643),
-  color-mix(in srgb,var(--bg,#141b19) 94%,#23322c));
- background-image:linear-gradient(155deg,var(--sv-home-glint),transparent 78%),linear-gradient(170deg,color-mix(in srgb,var(--bg,#141b19) 79%,#354643),color-mix(in srgb,var(--bg,#141b19) 94%,#23322c));
- box-shadow:0 12px 38px rgba(0,0,0,.2),inset 0 1px 0 var(--sv-home-glint);
+ border-top:0;
+ border-radius:0 0 21px 21px;
+ background:linear-gradient(180deg,
+  color-mix(in srgb,var(--bg,#11161b) 70%,#333c42) 0%,
+  color-mix(in srgb,var(--bg,#141b19) 91%,#23322c) 26%,
+  var(--sv-home-glass) 100%);
+ box-shadow:inset 0 1px 0 var(--sv-home-glint),0 14px 27px rgba(0,0,0,.13);
  overflow-x:hidden;overflow-y:auto;
  overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;
@@ -1401,7 +1407,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  min-height:0;
 }
 .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){
- display:grid;position:sticky;top:40px;z-index:4;
+ display:grid;position:sticky;top:0;z-index:4;
  width:100%;min-height:34px;height:34px;
  margin:0 0 2px;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
@@ -1420,8 +1426,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-unified>.seyveo-browser-start{margin-top:23px;padding-top:7px}
  .seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
   height:auto;
-  padding:7px 9px 13px;
-  border-radius:20px;
+  padding:8px 10px 11px;
+  border-radius:0 0 20px 20px;
  }
  .seyveo-browser.is-unified .sb-browser-panel-head{
   top:-7px;
@@ -1436,7 +1442,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button){
   width:38px;min-width:38px;height:40px;min-height:40px;
  }
- .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:39px}
+ .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:0}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-unified .sb-browser-panel-scrim{backdrop-filter:none;-webkit-backdrop-filter:none}
