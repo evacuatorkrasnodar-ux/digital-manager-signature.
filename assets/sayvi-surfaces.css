@@ -693,3 +693,71 @@
  #sayviSurfacePage .sv-mail-accounts{gap:3px;padding:3px}
  #sayviSurfacePage .sv-mail-account-switch{font-size:12px;min-height:43px}
 }
+
+/* SEYVEO Mail signature — the same restrained futuristic language as Browser.
+   A soft theme-coloured horizon, not a photograph or another glass overlay. */
+#sayviSurfacePage[data-sv-subject="mail"]{
+ isolation:isolate;overflow-x:clip;
+}
+#sayviSurfacePage[data-sv-subject="mail"]::before{
+ content:"";position:absolute;top:0;left:50%;
+ width:min(820px,125vw);height:245px;
+ transform:translateX(-50%);z-index:0;pointer-events:none;
+ background:
+  radial-gradient(ellipse 57% 24% at 50% 65%,
+   color-mix(in srgb,var(--seyveo-emerald) 24%,transparent),transparent 90%),
+  radial-gradient(ellipse 54% 54% at 50% 8%,
+   color-mix(in srgb,var(--seyveo-emerald) 10%,transparent),transparent 90%);
+ opacity:.66;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"]::before{
+ opacity:.22;
+}
+#sayviSurfacePage[data-sv-subject="mail"] > *{position:relative;z-index:1}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-deep-back{position:absolute;z-index:3}
+#sayviSurfacePage .sv-mail-introduction{
+ position:relative;box-sizing:border-box;
+ padding:27px 4px 24px;
+ text-align:center;min-height:141px;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+#sayviSurfacePage .sv-mail-introduction::after{
+ content:"";position:absolute;left:50%;bottom:9px;transform:translateX(-50%);
+ width:min(72%,380px);height:1px;pointer-events:none;
+ background:linear-gradient(90deg,transparent,
+  color-mix(in srgb,var(--seyveo-emerald) 45%,transparent),transparent);
+}
+#sayviSurfacePage .sv-mail-introduction-kicker{
+ margin:0 0 9px;color:var(--seyveo-emerald);
+ font-size:10px;font-weight:570;letter-spacing:.18em;
+}
+#sayviSurfacePage .sv-mail-introduction-title{
+ margin:0;color:var(--text);
+ font-size:clamp(25px,7vw,32px);
+ font-weight:530;letter-spacing:-.048em;line-height:1.16;
+}
+#sayviSurfacePage .sv-mail-introduction-copy{
+ margin:9px 0 0;color:var(--secondary);
+ font-size:12.5px;line-height:1.55;
+}
+#sayviSurfacePage .sv-mail-brand-name{
+ font-weight:620;letter-spacing:.15em;
+}
+#sayviSurfacePage .sv-mail-brand-sub{
+ font-weight:590;letter-spacing:.23em;
+}
+#sayviSurfacePage .sv-mail-letter{
+ transition:background-color .18s ease,border-color .18s ease;
+}
+#sayviSurfacePage .sv-mail-letter:focus-visible{
+ border-color:var(--seyveo-emerald);
+}
+@media(max-width:380px){
+ #sayviSurfacePage .sv-mail-introduction{min-height:122px;padding:20px 0 19px}
+ #sayviSurfacePage .sv-mail-introduction-title{font-size:25px}
+ #sayviSurfacePage .sv-mail-introduction-copy{font-size:11.7px}
+ #sayviSurfacePage[data-sv-subject="mail"]::before{height:218px}
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage .sv-mail-letter{transition:none}
+}
