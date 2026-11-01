@@ -55,6 +55,13 @@ export function NativeBrowser(){
    const answer=await translateText(msg.text);setTranslated(answer);setTranslationNotice('Переведённый текст. Оригинальная страница не изменена.');
   }catch{setTranslationNotice('Не удалось перевести страницу. Проверьте подключение сервиса.')}finally{setTranslating(false)}
  }
+ const [mediaPaused,setMediaPaused]=useState(false);
+ function togglePageMedia(){
+  const action=mediaPaused?'play':'pause';
+  web.current?.injectJavaScript("(function(){document.querySelectorAll('audio,video').forEach(function(el){if('"+action+"'==='pause'){el.pause()}else{var p=el.play();if(p&&p.catch)p.catch(function(){})}})})();true;");
+  setMediaPaused(value=>!value);
+  setTranslationNotice('Команда '+(mediaPaused?'воспроизведения':'паузы')+' отправлена плеерам страницы. Встроенные сторонние плееры могут её не поддерживать.');
+ }
  function pausePageMedia(){
   // Only pauses media in the current document. Cross-origin frames may not be accessible.
   web.current?.injectJavaScript("document.querySelectorAll('audio,video').forEach(function(el){el.pause()});true;");
@@ -87,7 +94,7 @@ export function NativeBrowser(){
    <Pressable onPress={()=>web.current?.reload()}><Text style={{color:'white'}}>Обновить</Text></Pressable>
    <Pressable onPress={navigate}><Text style={{color:'white'}}>Открыть</Text></Pressable>
    <Pressable onPress={translateInfo}><Text style={{color:'white'}}>Перевод</Text></Pressable>
-   <Pressable accessibilityRole="button" onPress={pausePageMedia}><Text style={{color:'white'}}>Стоп медиа</Text></Pressable>
+   <Pressable accessibilityRole="button" onPress={togglePageMedia}><Text style={{color:'white'}}>{mediaPaused?'Продолжить':'Пауза'}</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={()=>setShowDownloads(value=>!value)}><Text style={{color:'white'}}>Файлы</Text></Pressable>
   </View>
  </View>
