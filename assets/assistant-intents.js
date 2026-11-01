@@ -8,7 +8,7 @@ const $=id=>document.getElementById(id);
 const labels=Object.freeze({
  home:'Главная',tasks:'Дела',picture:'Картина',manage:'Управление',connections:'Подключения',
  life:'Личное пространство',calendar:'Календарь',notes:'Блокнот',
- health:'Здоровье',care:'Забота',world:'Мой мир',help:'Первая помощь'
+ health:'Здоровье',care:'Забота',world:'Мой мир',help:'Первая помощь',browser:'SEYVEO Browser'
 });
 const aliases=[
  ['home',/^(?:главн(?:ая|ую|ой|ое)|домой|домашн(?:ий экран|юю страницу)|начальн(?:ый|ую) экран)$/],
@@ -21,7 +21,8 @@ const aliases=[
  ['health',/^(?:здоровь(?:е|я)|мое здоровье|показател(?:и|ей) здоровья|давлени(?:е|я)|пульс|шаги)$/],
  ['care',/^(?:забот(?:а|у|е|ы)|заботу о себе)$/],
  ['world',/^(?:мой мир|моего мира|моем мире|контакт(?:ы|ах)|люд(?:и|ей)|мои контакты|мои люди)$/],
- ['help',/^(?:перв(?:ая|ую) помощ(?:ь|и)|инструкци(?:я|ю)|обучени(?:е|я)|как пользоваться приложением)$/]
+ ['help',/^(?:перв(?:ая|ую) помощ(?:ь|и)|инструкци(?:я|ю)|обучени(?:е|я)|как пользоваться приложением)$/],
+ ['browser',/^(?:браузер(?:а|е|у)?|seyveo browser|сейвео браузер|сейви браузер|веб браузер|интернет браузер)$/]
 ];
 function toolFor(target){
  for(const [tool,re] of aliases)if(re.test(target))return tool;
@@ -49,6 +50,17 @@ function understand(input){
   };
   const type=serviceTypes[target]||'';
   if(!target||type)return Object.freeze({kind:'navigate',tool:'connections',label:labels.connections,type});
+ }
+ // Only explicit URLs launch a web page. Generic queries stay with Сэйви's
+ // verified internet search; passwords or private context are never searched here.
+ const site=q.match(/^(?:открой(?:те)?|открыть|зайди(?:те)?|перейди(?:те)?)\s+(?:(?:сайт|страницу)\s+)?(https:\/\/[^\s]+|(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s]*)?)$/i);
+ if(site){
+  const address=site[1].startsWith('https://')?site[1]:'https://'+site[1];
+  try{
+   const u=new URL(address);
+   if(u.protocol==='https:'&&!u.username&&!u.password)
+    return Object.freeze({kind:'navigate',tool:'browser',label:labels.browser,url:u.href});
+  }catch{}
  }
  // The request must consist of a navigation verb and ONE known destination.
  // Questions, long utterances and real-world actions pass to existing parsers.
@@ -102,6 +114,10 @@ function execute(plan){
    $('navManage')?.click();
    window.dispatchEvent(new CustomEvent('seyveo:connection-help',{detail:{type:plan.type||''}}));
    succeeded=!!$('manageConnectionsDialog')?.open;
+   break;
+  }
+  case 'browser':{
+   succeeded=window.SEYVEO_BROWSER?.open?.(plan.url||undefined)===true;
    break;
   }
   case 'life':location.hash='life';succeeded=true;break;
