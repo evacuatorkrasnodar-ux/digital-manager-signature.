@@ -36,7 +36,7 @@
 }
 .seyveo-browser-home p{position:relative;color:#aebcb4;font-size:13px;margin:0}
 .seyveo-browser-bar{display:flex;align-items:center;gap:11px;min-height:56px;padding:5px 7px 5px 20px;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border-radius:var(--sv-input-radius,22px);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);flex-shrink:0}.seyveo-browser-bar>span{font-size:27px;color:var(--text)}.seyveo-browser-bar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:15px}.seyveo-browser-bar input::placeholder{color:var(--secondary)}.seyveo-browser-bar button{height:42px;width:42px;border-radius:16px;background:rgba(125,160,140,.14);color:inherit;font-size:23px}
-.seyveo-browser-start{flex:1;min-height:155px;padding:22px 2px}.seyveo-browser-start-heading{font-size:12px;letter-spacing:.05em;color:var(--secondary);margin-bottom:15px}.seyveo-browser-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.seyveo-browser-shortcuts button{font-size:11px;min-height:70px;word-break:break-word;padding:10px 4px;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}.seyveo-browser-shortcuts button:active{background:var(--seyveo-hdr-active)}.seyveo-browser-hint{font-size:10px;line-height:1.6;color:#8c9f95;margin-top:19px}
+.seyveo-browser-start{flex:1;min-height:155px;padding:22px 2px}.seyveo-browser-start-heading{font-size:12px;letter-spacing:.05em;color:var(--secondary);margin-bottom:15px}.seyveo-browser-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.seyveo-browser-shortcuts button{font-size:11px;min-height:70px;word-break:break-word;padding:10px 4px;border:1px solid var(--sv-home-outline);border-radius:17px;background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass)}.seyveo-browser-shortcuts button:active{background:var(--seyveo-hdr-active)}.seyveo-browser-hint{font-size:10px;line-height:1.6;color:#8c9f95;margin-top:19px}
 .seyveo-browser-tabs{display:flex;align-items:center;min-height:37px;gap:8px;flex-shrink:0}.seyveo-browser-tabs>[data-tabs]{display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:4px}.seyveo-browser-tabs>[data-tabs]::-webkit-scrollbar{display:none}.seyveo-browser-tab{display:flex;align-items:center;flex:none;scroll-snap-align:start;max-width:180px;border:1px solid #bcf3d326;border-radius:13px;background:#ffffff09}.seyveo-browser-tab.is-active{background:var(--seyveo-hdr-active);border-color:var(--line)}.seyveo-browser-tab button:first-child{min-width:0;max-width:140px;padding:9px 8px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seyveo-browser-tab button:last-child{font-size:18px;padding:5px 8px}.seyveo-browser-tabs>[data-new]{font-size:22px;padding:4px 12px;border-radius:12px;background:#ffffff12}
 /* Site view: one stable flex viewport; only the page inside the iframe scrolls. */
 .seyveo-browser-content{
@@ -377,7 +377,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
  .seyveo-browser-start-heading{margin-bottom:7px}
  .seyveo-browser-shortcuts{
   gap:8px;display:grid;grid-template-columns:none;
-  grid-auto-flow:column;grid-auto-columns:calc(25% - 6px);
+  grid-auto-flow:column;grid-auto-columns:calc((100% - 16px) / 3);
   overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
   scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
   scrollbar-width:none;
@@ -385,7 +385,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
  .seyveo-browser-shortcuts::-webkit-scrollbar{display:none}
  .seyveo-browser-shortcuts>button{scroll-snap-align:start}
  .seyveo-browser-shortcuts.is-expanded{
-  grid-auto-flow:row;grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-flow:row;grid-template-columns:repeat(3,minmax(0,1fr));
   grid-auto-columns:auto;overflow-x:visible;scroll-snap-type:none;
  }
  .seyveo-browser-shortcuts button{min-height:76px;padding:6px 3px;gap:4px}
@@ -396,7 +396,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
 }
 @media(max-width:380px){
  
- .seyveo-browser-shortcuts{gap:6px;grid-auto-columns:calc(25% - 4.5px)}
+ .seyveo-browser-shortcuts{gap:6px;grid-auto-columns:calc((100% - 12px) / 3)}
  .seyveo-browser-shortcuts button{min-height:73px;padding:5px 2px}
 }
 
@@ -1458,7 +1458,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-brow
  display:grid;
  grid-template-columns:none;
  grid-auto-flow:column;
- grid-auto-columns:calc((100% - 3 * var(--sb-quick-gap)) / 4);
+ grid-auto-columns:calc((100% - 2 * var(--sb-quick-gap)) / 3);
  align-items:stretch;
  gap:var(--sb-quick-gap);
  min-width:0;
