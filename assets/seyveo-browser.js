@@ -9,7 +9,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <form class="seyveo-browser-bar"><span class="seyveo-browser-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="text" name="address" autocomplete="off" spellcheck="false" placeholder="Поиск или адрес сайта" aria-label="Поиск или адрес сайта"><button type="button" class="seyveo-browser-scan" data-scan aria-label="Сканировать QR-код" title="Сканировать QR-код"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/></svg></button><input type="file" accept="image/*" capture="environment" data-scan-file hidden></form>
 <div class="seyveo-browser-start"><div class="seyveo-browser-start-heading"><span>Быстрый доступ</span><button type="button" data-quick-toggle aria-controls="seyveoBrowserQuickLinks" aria-expanded="false">Показать все ›</button></div><div class="seyveo-browser-shortcuts" id="seyveoBrowserQuickLinks"><button type="button" data-site="https://ya.ru"><span class="sb-site-mark sb-yandex">Я</span><span>Яндекс</span><small>ya.ru</small></button><button type="button" data-site="https://www.youtube.com"><span class="sb-site-mark sb-youtube">▶</span><span>YouTube</span><small>youtube.com</small></button><button type="button" data-site="https://www.wikipedia.org"><span class="sb-site-mark sb-wiki">W</span><span>Wikipedia</span><small>wikipedia.org</small></button><button type="button" data-bookmarks><span class="sb-site-mark sb-saved">☆</span><span>Избранное</span><small>Закладки</small></button></div><div class="seyveo-browser-continue"><div class="seyveo-browser-start-heading"><span>Продолжить просмотр</span><span class="sb-browser-history-heading-actions"><button type="button" data-history-toggle aria-label="Открыть полную историю">Вся история ›</button></span></div><div id="seyveoBrowserHistoryList" class="sb-manager-closed" data-continue-list></div></div></div>
 <nav class="seyveo-browser-tabs" aria-label="Вкладки"><div data-tabs></div><button type="button" data-new aria-label="Новая вкладка">＋</button></nav>
-<div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Управление браузером" aria-expanded="false" aria-controls="seyveoBrowserManagerPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><button type="button" class="sb-browser-sitebar-search-button" data-site-search aria-label="Поиск или адрес сайта"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
+<div class="seyveo-browser-content" hidden><header class="sb-browser-sitebar" hidden aria-label="Панель браузера"><button type="button" class="sb-browser-sitebar-menu-button" data-site-menu aria-label="Управление браузером" aria-expanded="false" aria-controls="seyveoBrowserManagerPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-site-title></strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span></header><div class="seyveo-browser-blocked" hidden role="status"><div class="sb-browser-embed-message"><strong>Встроенный просмотр недоступен</strong><p>Некоторые сайты ограничивают открытие внутри демоверсии браузера.</p><button type="button" data-open-blocked>Открыть отдельно ↗</button></div></div><section class="sb-browser-demo" data-browser-demo hidden aria-label="Демонстрация оформления страницы, не живой сайт">
  <div class="sb-browser-demo-head"><span class="sb-browser-demo-menu" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><strong>Хабр</strong><span class="sb-browser-demo-fill"></span><span class="sb-browser-demo-search" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span></div>
  <article class="sb-browser-demo-article">
   <div class="sb-browser-demo-meta"><span>ДИЗАЙН</span><span>·</span><span>12 мая 2024</span><span>·</span><span>◷ 7 мин</span><small>ДЕМО</small></div>
@@ -55,7 +55,7 @@ manager.prepend(switcher);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const panelHeader=document.createElement('header');
 panelHeader.className='sb-browser-panel-head';
-panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Вкладки</strong><button type="button" class="sb-browser-sitebar-search-button" data-manager-search aria-label="Поиск или адрес сайта" title="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button>';
+panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Вкладки</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
 manager.prepend(panelHeader);
 const panelScrim=document.createElement('div');
 panelScrim.className='sb-browser-panel-scrim';panelScrim.hidden=true;
@@ -794,6 +794,15 @@ function bookmarks(){
 }
 function browserBack(){const t=current();if(t.position>0){t.position--;render()}}
 function browserForward(){const t=current();if(t.position<t.entries.length-1){t.position++;render()}}
+/* Reload a real page without adding duplicate history entries. */
+function browserReload(){
+ const url=currentUrl();
+ if(root.hidden||!url)return false;
+ if(managerOpen)tabManager(false);
+ if(!frame.hidden){frame.setAttribute('src',url);displayedTab=active;}
+ else render(); // blocked embeds and demo pages never bypass iframe protections
+ return true;
+}
 manager.querySelector('[data-recent-all]').addEventListener('click',()=>{allClosedShown=!allClosedShown;syncClosedStack()});
 manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
  if(!recentlyClosed.length)return;
@@ -810,11 +819,9 @@ function toggleBrowserPanel(){
 }
 siteMenuButton.addEventListener('click',toggleBrowserPanel);
 panelHeader.querySelector('[data-manager-dismiss]').addEventListener('click',()=>tabManager(false));
-panelHeader.querySelector('[data-manager-search]').addEventListener('click',()=>{
- tabManager(false);input.focus();input.select();
-});
+
 panelScrim.addEventListener('click',()=>tabManager(false));
-$('[data-site-search]').addEventListener('click',()=>{if(managerOpen)tabManager(false);input.focus();input.select()});
+
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-history-toggle]').addEventListener('click',()=>{
@@ -838,7 +845,7 @@ root.querySelector('form').addEventListener('submit',e=>{e.preventDefault();cons
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
 if(document.fonts?.ready)document.fonts.ready.then(balanceBrowserVerticalRhythm).catch(()=>{});
 restoreSession();render();
 })();
