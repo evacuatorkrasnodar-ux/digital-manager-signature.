@@ -654,9 +654,12 @@
 @media(max-width:640px){
  #sayviSurfacePage[data-sv-subject="mail"]{
   box-sizing:border-box;
+  /* Keep the entire mail surface centered to the same viewport as .dock. */
   width:calc(100vw - 14px)!important;
   max-width:none!important;
-  margin-inline:calc(50% - 50vw + 7px)!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  margin-inline:0!important;
  }
  #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace{
   width:100%!important;max-width:none!important;margin-inline:0!important;
