@@ -854,10 +854,10 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action]{
    in the identical physical dock used by Home and Music. */
 footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-browser-dock-svg{
  display:block!important;
- width:23px!important;height:23px!important;
+ width:var(--seyveo-dock-icon-size,22px)!important;height:var(--seyveo-dock-icon-size,22px)!important;
  margin:0 auto!important;flex:none!important;
  fill:none!important;stroke:currentColor!important;
- stroke-width:1.65!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,1.35)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
  opacity:.94;
 }
