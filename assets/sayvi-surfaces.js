@@ -246,7 +246,7 @@ function mailView(){
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
  introCopy.append(create('p','sv-mail-introduction-copy','Личная и рабочая — в одном месте'));
  greeting.append(introIcon,introCopy);
- const searchLabel=create('label','sv-mail-search');
+ const searchLabel=create('label','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
  searchInput.type='search';searchInput.placeholder='Поиск по письмам';
@@ -254,6 +254,13 @@ function mailView(){
  searchInput.autocomplete='off';searchInput.value=mailSearch;
  searchInput.addEventListener('input',()=>{mailSearch=searchInput.value.trim().toLocaleLowerCase('ru');paintList()});
  searchLabel.append(searchInput);
+ searchInput.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+   mailSearchOpen=false;mailSearch='';searchInput.value='';paint();searchToggle.focus();
+  }
+ });
+ searchLabel.addEventListener('click',event=>event.stopPropagation());
+ top.append(searchLabel);
  const scopeNav=create('nav','sv-mail-accounts');scopeNav.setAttribute('aria-label','Выбор почты');
  const nav=create('nav','sv-mail-toolbar');nav.setAttribute('aria-label','Папки почты');
  const extraNav=create('div','sv-mail-extra-folders');
@@ -261,7 +268,7 @@ function mailView(){
  const content=create('div','sv-mail-list');
  const foot=create('p','sv-mail-foot');
  foot.textContent='Настоящая отправка и получение писем заработают после подключения почтового сервиса.';
- section.append(top,greeting,scopeNav,searchLabel,nav,extraNav,info,content,foot);body.append(section);
+ section.append(top,greeting,scopeNav,nav,extraNav,info,content,foot);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
@@ -511,6 +518,8 @@ function mailView(){
   extraNav.hidden=mailEditorOpen||!!mailCurrent||mailFolder==='overview';
   nav.hidden=mailEditorOpen||!!mailCurrent;
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
+  searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
+  searchToggle.setAttribute('aria-controls','svMailQuickSearch');
   compose.hidden=mailEditorOpen;
   info.textContent=mailEditorOpen?'Черновик · только на этом устройстве':
    mailCurrent?'Просмотр учебного письма':
@@ -644,6 +653,9 @@ function open(kind,context){
   else if(context==='all')mailScope='all';
   else if(location.hash==='#life')mailScope='personal';
   else if(location.hash==='#tasks')mailScope='business';
+  // Opening Mail from the app always starts in the compact overview.
+  mailFolder='overview';mailEditorOpen=false;mailCurrent=null;
+  mailEditingId=null;mailSearchOpen=false;mailSearch='';
  }
  if(location.hash===target){sync();return true}
  // Capture the calling section before changing the hash.
