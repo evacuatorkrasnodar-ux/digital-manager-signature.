@@ -35,7 +35,9 @@ export const NativeBrowserViewport=forwardRef<NativeBrowserViewportRef,NativeBro
    url,privateMode=false,colors,onNavigate,onBlockedNavigation,
    onRequestNewTab,onScrollMessage,scrollBridgeJavaScript
  },ref){
-  const webRef=useRef<WebView>(null);
+  // react-native-webview 14.0.1 defaults P to undefined (upstream TS regression).
+  // Explicit empty props type avoids JSX props collapsing to never.
+  const webRef=useRef<WebView<{}>>(null);
   const safeUrl=useMemo(()=>{
     try{return validateBrowserWebViewUrl(url);}
     catch{return null;}
@@ -67,7 +69,7 @@ export const NativeBrowserViewport=forwardRef<NativeBrowserViewportRef,NativeBro
   }
 
   return (
-    <WebView
+    <WebView<{}>
       ref={webRef}
       key={privateMode?'private':'regular'}
       style={{flex:1,backgroundColor:colors.surface}}
