@@ -430,101 +430,72 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-
  * Reduce only invisible gaps between turns: retain 15px reading text,
  * its 1.55 line height and the existing 40px action hit areas.
  * Do not modify drafts, safe areas, the composer or the Home dock. */
-/* SEYVEO Feather Chat · five stable actions, with the caller's own icon at left.
- * Only ONE input and ONE chat action row. No second page dock. */
+/* SEYVEO · Original signature dock in Feather Chat.
+ * The editor stays a single elegant field ABOVE the existing glass dock.
+ * The dock contains the five actions and the original moving ceramic sphere.
+ * Keyboard mode keeps native typing/Send accessible while hiding the dock. */
 html.seyveo-conversation #seyveoConversationHeader{
  display:none!important;min-height:0!important;height:0!important;
  padding:0!important;margin:0!important;border:0!important;
 }
-#ask #seyveoConversationBack,
-#ask #seyveoChatPlus,
-#ask #seyveoChatBrowser{display:none!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
- display:flex!important;align-items:center!important;
- justify-content:space-between!important;width:100%!important;
- height:52px!important;min-height:52px!important;
- gap:3px!important;flex:0 0 52px!important;
- align-self:stretch;margin:0!important;min-width:0!important;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded)
- :is(#seyveoConversationBack,#seyveoChatPlus,#seyveoConversationMic,
-     #seyveoChatBrowser,#composerCompactSend){
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- width:44px!important;min-width:44px!important;
- height:44px!important;min-height:44px!important;flex:0 0 44px!important;
- margin:0!important;padding:0!important;background:transparent!important;
- border:0!important;border-radius:50%!important;
- box-shadow:none!important;color:var(--text)!important;
- cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationBack{order:1!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{order:2!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{order:3!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatBrowser{order:4!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{order:5!important}
-html.seyveo-conversation #ask.prompt:not(.expanded)
- :is(#seyveoConversationHistory,.seyveo-conversation-heading,
-     #composerExpandManual,#hideInput){display:none!important}
-html.seyveo-conversation #ask.prompt:not(.expanded)
- :is(#seyveoConversationBack,#seyveoChatPlus,#seyveoChatBrowser,#composerCompactSend) svg{
- display:block;width:21px;height:21px;fill:none;stroke:currentColor;
- stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationBack svg{
- width:28px!important;height:24px!important;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded)
- #seyveoConversationBack[data-return-source="home"] svg{
- width:22px!important;height:22px!important;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-chat-core-mark{
- display:grid;place-items:center;width:38px;height:38px;
- border-radius:50%;border:1px solid var(--soft-line);
- background:linear-gradient(145deg,var(--seyveo-specular,rgba(160,210,189,.08)),transparent 72%),var(--card2);
- box-shadow:inset 0 1px 0 rgba(240,255,250,.06);
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) .seyveo-chat-core-mark svg{
- width:23px!important;height:23px!important;fill:none;
- stroke:currentColor;stroke-width:1.35;stroke-linejoin:round;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic[aria-pressed="true"] .seyveo-chat-core-mark{
- border-color:var(--seyveo-hdr-outline,var(--soft-line));
- box-shadow:inset 0 0 0 1px var(--seyveo-hdr-outline,var(--soft-line));
-}
 html.seyveo-conversation #ask.prompt:not(.expanded){
+ box-sizing:border-box;z-index:45;
+ width:min(430px,calc(100% - 18px))!important;
+ min-height:54px!important;height:auto!important;max-height:146px!important;
+ padding:9px 13px!important;
+ gap:0!important;align-items:stretch!important;justify-content:center!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + var(--seyveo-dock-height,58px) + 9px)!important;
  background:var(--sv-chat-composer-gradient)!important;
- border:0!important;border-radius:24px!important;
+ border:0!important;border-radius:22px!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- overflow:visible!important;
+ overflow:visible!important;transition:none!important;animation:none!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded):focus-within{
  background:var(--sv-chat-composer-gradient)!important;
  border:0!important;box-shadow:none!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ display:block!important;width:100%!important;min-width:0!important;
+ min-height:38px!important;height:var(--sayvi-draft-height,38px)!important;
+ max-height:112px!important;flex:1 1 auto!important;
+ margin:0!important;padding:5px 3px 4px!important;
  color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
- caret-color:var(--text);
+ caret-color:var(--text);background:transparent!important;border:0!important;
+ box-shadow:none!important;font-size:16px!important;line-height:24px!important;
+ resize:none!important;overflow-y:auto!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
- color:var(--secondary)!important;-webkit-text-fill-color:var(--secondary)!important;
- opacity:1!important;
+ color:var(--secondary)!important;-webkit-text-fill-color:var(--secondary)!important;opacity:1!important;
 }
-html.seyveo-conversation #ask.prompt:not(.expanded)
- :is(#seyveoConversationBack,#seyveoChatPlus,#seyveoConversationMic,
-     #seyveoChatBrowser,#composerCompactSend):active{opacity:.72!important}
-html.seyveo-conversation #ask.prompt:not(.expanded)
- :is(#seyveoConversationBack,#seyveoChatPlus,#seyveoConversationMic,
-     #seyveoChatBrowser,#composerCompactSend):focus-visible{
- outline:2px solid var(--text)!important;outline-offset:2px;
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
+ display:none!important;
 }
-@media(max-width:350px){
- html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{gap:2px!important}
- html.seyveo-conversation #ask.prompt:not(.expanded)
-  :is(#seyveoConversationBack,#seyveoChatPlus,#seyveoConversationMic,
-      #seyveoChatBrowser,#composerCompactSend){
-  width:40px!important;min-width:40px!important;flex-basis:40px!important;
- }
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
+ bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
+ width:min(430px,calc(100% - 14px))!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded) .composer-compact{
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ width:100%!important;min-height:42px!important;height:42px!important;
+ flex:0 0 42px!important;padding:0!important;gap:0!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded)
+ .composer-compact>*:not(#composerCompactSend){display:none!important}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded) #composerCompactSend{
+ display:grid!important;place-items:center!important;align-self:flex-end!important;
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ flex:0 0 42px!important;margin:0!important;padding:0!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ color:var(--text)!important;border-radius:50%!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend svg{
+ width:20px!important;height:20px!important;
+ stroke:currentColor!important;stroke-width:1.7!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend:focus-visible,
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-item:focus-visible{
+ outline:2px solid var(--seyveo-nav-ink,var(--text))!important;outline-offset:2px;
 }
 @media(prefers-reduced-motion:reduce){
  html.seyveo-conversation #ask.prompt:not(.expanded){transition:none!important}
@@ -576,12 +547,11 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-b
  line-height:1.46;
 }
 
-/* One small attachment/history menu above the existing chat composer.
-   Hidden outside the user action; native buttons, no simulated destinations. */
+/* The existing + menu opens above the field; it is never a second dock. */
 #seyveoChatTools[hidden]{display:none!important}
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools{
- position:absolute;left:10px;bottom:calc(100% - 3px);
- z-index:5;display:flex;flex-direction:column;min-width:172px;
+ position:absolute;left:8px;bottom:calc(100% + 7px);
+ z-index:60;display:flex;flex-direction:column;min-width:172px;
  gap:2px;padding:6px;border-radius:16px;border:1px solid var(--soft-line);
  background:var(--card);box-shadow:0 8px 22px rgba(0,0,0,.12);
 }
