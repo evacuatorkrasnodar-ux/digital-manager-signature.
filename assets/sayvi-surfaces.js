@@ -241,11 +241,10 @@ function mailView(){
  compose.addEventListener('click',()=>openEditor());
  topButtons.append(searchToggle,connect,compose);top.append(brand,topButtons);
  const greeting=create('div','sv-mail-introduction');
- const introIcon=create('span','sv-mail-introduction-icon');introIcon.append(mailIcon('inbox'));
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
  introCopy.append(create('p','sv-mail-introduction-copy','Личная и рабочая — в одном месте'));
- greeting.append(introIcon,introCopy);
+ greeting.append(introCopy);
  const searchLabel=create('label','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
