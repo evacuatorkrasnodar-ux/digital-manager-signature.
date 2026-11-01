@@ -417,6 +417,15 @@
 /* Three cards become one MAIN card — keep all three actual task elements.
    Flat graphite layers, a single thin outline, no cloned glass overlays. */
 #seyveoLivingMoment.lm-preview .lm-field{
+  /* First material test: warm porcelain paper enclosed beneath clear glass.
+     Local ink tokens preserve contrast independently of Black Velvet theme. */
+  --text:#24323a;
+  --secondary:#58676d;
+  --soft-line:rgba(67,90,98,.16);
+  --lm-paper-glaze:linear-gradient(165deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.17) 31%,transparent 64%);
+  --lm-paper-sheet:linear-gradient(145deg,rgba(253,254,253,.94) 0%,rgba(246,249,247,.91) 52%,rgba(232,238,236,.86) 100%);
+  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(108,130,130,.13),0 5px 19px rgba(0,0,0,.095);
+  color:var(--text);
   border:1px solid transparent;
   border-radius:22px;
   background-color:transparent;
@@ -427,21 +436,24 @@
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-primary{
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid var(--seyveo-hdr-outline);
+  border:1px solid rgba(102,120,122,.23);
   border-radius:19px;
-  background-color:var(--seyveo-hdr-active);
+  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
+  box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid var(--seyveo-hdr-outline);
+  border:1px solid rgba(102,120,122,.23);
   border-radius:19px;
-  background-color:var(--seyveo-hdr-active);
+  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
+  box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:var(--seyveo-hdr-outline);
-  background-color:var(--seyveo-hdr-active);
+  border-color:rgba(102,120,122,.24);
+  background:var(--lm-paper-glaze),var(--lm-paper-sheet);
+  box-shadow:var(--lm-paper-depth);
   padding:7px 9px 5px;
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::before{opacity:0}
@@ -470,12 +482,10 @@
   transition-delay:0ms;
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item){
-  border-color:rgba(59,75,96,.14);
-  background-color:rgba(57,75,96,.035);
+  border-color:rgba(59,75,96,.16);
 }
 :root[data-theme=light] #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   border-color:rgba(59,75,96,.18);
-  background-color:rgba(255,255,255,.76);
 }
 /* Morph into one slim line, dissolve, and return the orb to its true size. */
 #seyveoLivingMoment.lm-condense .lm-field{padding:10px 4px 7px}
@@ -514,14 +524,21 @@
 /* Older real-business recommendations use identical inset material.
    Their existing click handlers and permissions remain intact. */
 #homePage #dynamic .decision-card[data-owner-advice]{
+  /* Real recommendation keeps same white insert, original button handlers. */
+  --text:#24323a;
+  --secondary:#58676d;
+  --soft-line:rgba(67,90,98,.16);
   animation:lm-owner-arrive 890ms cubic-bezier(.22,1,.36,1) both!important;
   margin:0!important;
-  padding:14px 7px 12px!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:0!important;
+  padding:14px 12px 12px!important;
+  color:var(--text)!important;
+  background:
+    linear-gradient(165deg,rgba(255,255,255,.78),rgba(255,255,255,.16) 31%,transparent 64%),
+    linear-gradient(145deg,rgba(253,254,253,.94),rgba(246,249,247,.91) 52%,rgba(232,238,236,.86))!important;
+  border:1px solid rgba(102,120,122,.23)!important;
+  border-radius:22px!important;
   outline:0!important;
-  box-shadow:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(108,130,130,.13),0 5px 19px rgba(0,0,0,.095)!important;
 }
 #homePage #dynamic .decision-card[data-owner-advice] .event-icon{
   display:none!important;
