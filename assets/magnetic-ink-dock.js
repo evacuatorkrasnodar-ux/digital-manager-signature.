@@ -28,13 +28,13 @@ function init(){
  if(track)track.tabIndex=-1;
  const items=[
   {id:'home',title:'Главная',description:'Вернуться на Главную',
-   icon:'<path d="M3.5 10.5 12 3.5l8.5 7V20h-6.5v-6h-4v6H3.5z"/>'},
+   icon:'<path d="M4 10.5 12 4l8 6.5v9H14v-6h-4v6H4z"/>'},
   {id:'tasks',title:'Дела',description:'Открыть дела',
-   icon:'<path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/>'},
+   icon:'<path d="M9 6.5h10M9 12h10M9 17.5h10M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>'},
   {id:'life',title:'Мой мир',description:'Открыть Мой мир',
-   icon:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 5.2-5 11.8 0 17M12 3.5c5 5.2 5 11.8 0 17"/>'},
+   icon:'<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/>'},
   {id:'manage',title:'Управление',description:'Открыть управление',
-   icon:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>'}
+   icon:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4"/>'}
  ];
  const musicMode=()=>dock.classList.contains('seyveo-music-dock')||
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
@@ -54,7 +54,7 @@ function init(){
    button.hidden=false;
    // Do not recreate SVG/labels on every hashchange: avoids label flashes.
    if(button.dataset.svFixedAction!==item.id){
-    button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
+    button.innerHTML='<svg class="seyveo-dock-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+item.icon+'</svg><span>'+item.title+'</span>';
     button.dataset.svFixedAction=item.id;
     button.setAttribute('aria-label',item.description);
     button.title=item.title;
