@@ -115,7 +115,10 @@ function openBrowserSearch(){
  root.classList.add('is-search-open');
  positionBrowserSearch();
  syncSearchButtons();
- requestAnimationFrame(()=>{if(!root.hidden&&!searchForm.hidden){input.focus({preventScroll:true});input.select()}});
+ // Focus synchronously in the click gesture so the iPhone keyboard
+ // actually opens; deferred focus after requestAnimationFrame may be blocked.
+ input.focus({preventScroll:true});
+ input.select();
 }
 function closeBrowserSearch(restoreFocus=false){
  if(searchForm.hidden)return;
