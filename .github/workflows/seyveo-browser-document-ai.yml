@@ -1,0 +1,35 @@
+name: SEYVEO Browser · Document AI boundaries
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/src/browser/**'
+      - 'mobile/tests/browser-document-review.test.mjs'
+      - 'mobile/tests/browser-pdf-review.test.mjs'
+      - 'mobile/tests/sayvi-document-client.test.mjs'
+      - 'server/browser-document-ai.mjs'
+      - 'server/ai-mail-server.mjs'
+      - 'server/tests/browser-document-ai.test.mjs'
+      - '.github/workflows/seyveo-browser-document-ai.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  document-review-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test document AI consent, transport and response contracts (no API calls)
+        run: |
+          node --test \
+            server/tests/browser-document-ai.test.mjs \
+            mobile/tests/browser-document-review.test.mjs \
+            mobile/tests/browser-pdf-review.test.mjs \
+            mobile/tests/native-pdf-extractor-core.test.mjs \
+            mobile/tests/sayvi-document-client.test.mjs
