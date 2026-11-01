@@ -9,13 +9,13 @@ function init(){
  const outer=['navHome','navTasks','navPicture','navManage'].map(id=>document.getElementById(id));
  if(!dock||!audio||outer.some(x=>!x)||window.SEYVEO_MUSIC_DOCK)return;
  const icon={
-  prev:'<path d="M6 5v14M18 6 9 12l9 6z"/>',
-  play:'<path d="m8 5.5 10 6.5-10 6.5z"/>',
-  pause:'<path d="M8 5.5v13M16 5.5v13"/>',
-  next:'<path d="M18 5v14M6 6l9 6-9 6z"/>',
-  tracks:'<path d="M8 6h12M8 12h12M8 18h12M3.5 6h.5M3.5 12h.5M3.5 18h.5"/>'
+  prev:'<path d="M6.5 6v12M17.5 6.5 9 12l8.5 5.5z"/>',
+  play:'<path d="m9 6 9 6-9 6z"/>',
+  pause:'<path d="M8.5 6v12M15.5 6v12"/>',
+  next:'<path d="M17.5 6v12M6.5 6.5 15 12l-8.5 5.5z"/>',
+  tracks:'<path d="M8.5 6.5h10.5M8.5 12h10.5M8.5 17.5h10.5M4.5 6.5h1M4.5 12h1M4.5 17.5h1"/>'
  };
- const glyph=d=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+icon[d]+'</svg>';
+ const glyph=d=>'<svg class="seyveo-music-dock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+icon[d]+'</svg>';
  let enabled=false,loaded=false,playing=false;
  const activate=()=>location.hash==='#sayvi-music'&&!document.getElementById('sayviMusicPage')?.hidden;
  const describe=(button,label,svg,action)=>{
