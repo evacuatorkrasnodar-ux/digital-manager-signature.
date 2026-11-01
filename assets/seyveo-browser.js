@@ -140,6 +140,7 @@ let showManagerHistory=false;
 let expandedHistory=null;
 const historyKey='seyveo-browser-history-v1';
 const historyTimesKey='seyveo-browser-history-times-v1';
+const quickSiteKey='seyveo-browser-quick-site-v1';
 function historyItems(){try{const a=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(a)?a.filter(x=>typeof x==='string'&&secureUrl(x)).slice(0,24):[]}catch{return []}}
 function historyTimes(){
  try{
@@ -190,6 +191,31 @@ function saved(){try{const a=JSON.parse(localStorage.getItem(key)||'[]');return 
 function store(a){try{localStorage.setItem(key,JSON.stringify(a.slice(0,60)))}catch{}}
 function getCollections(){try{const data=JSON.parse(localStorage.getItem(collectionsKey)||'[]');return Array.isArray(data)?data.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Array.isArray(x.urls)).slice(0,30).map(x=>({id:x.id,name:x.name.slice(0,42),urls:x.urls.filter(u=>typeof u==='string'&&secureUrl(u)).slice(0,100)})):[]}catch{return []}}
 function putCollections(items){try{localStorage.setItem(collectionsKey,JSON.stringify(items.slice(0,30)))}catch{}}
+
+/* The user chooses one favorite URL; no remote metadata or favicon fetches. */
+function configuredQuickSite(){
+ try{const raw=localStorage.getItem(quickSiteKey);return raw?secureUrl(raw):null}catch{return null}
+}
+function resumablePage(raw){
+ const href=secureUrl(raw);if(!href)return false;
+ const page=new URL(href),segments=page.pathname.split('/').filter(Boolean);
+ if(!segments.length)return false;
+ // Search result pages, home feeds and category directories aren't reading progress.
+ if(['search','results','feed','explore','trending'].includes(segments[segments.length-1].toLowerCase()))return false;
+ if(page.hostname.endsWith('youtube.com')&&page.pathname==='/watch'&&!page.searchParams.has('v'))return false;
+ return true;
+}
+function resumableTitle(raw){
+ const page=new URL(raw),path=page.pathname;
+ if(page.hostname.includes('youtube.com')&&path==='/watch')return 'Видео YouTube';
+ const last=path.split('/').filter(Boolean).pop()||'';
+ let title=last;
+ try{title=decodeURIComponent(last)}catch{}
+ title=title.replace(/[_-]+/g,' ').trim();
+ if(title.length>=3&&!/^\d+$/.test(title)&&!['watch','video','article','articles','wiki','view'].includes(title.toLowerCase()))return title.slice(0,65);
+ return siteName(raw)+' · страница';
+}
+
 
 function collectionCover(collection){
  const cover=document.createElement('span');cover.className='sb-collection-cover';cover.setAttribute('aria-hidden','true');
