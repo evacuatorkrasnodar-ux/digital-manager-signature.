@@ -709,3 +709,28 @@ html:not(.seyveo-conversation) #seyveoChatPlus{display:none!important}
  }
 }
 
+
+/* Browser discovery lives in Feather Chat itself — one small action,
+   no Home tile, no extra dock, no heavy panel. */
+html.seyveo-conversation .seyveo-chat-welcome .seyveo-chat-browser-entry{
+ display:inline-flex;align-items:center;justify-content:center;gap:9px;
+ min-height:40px;margin:18px auto 0;padding:7px 13px;
+ border:1px solid var(--soft-line);border-radius:14px;
+ background:var(--card2);color:var(--text);
+ font:inherit;font-size:13px;font-weight:450;
+ box-shadow:none;cursor:pointer;
+}
+html.seyveo-conversation .seyveo-chat-browser-entry svg{
+ display:block;width:18px;height:18px;flex:none;
+ stroke:currentColor;stroke-width:1.65;fill:none;
+}
+html.seyveo-conversation .seyveo-chat-welcome .seyveo-chat-browser-location{
+ display:block;margin-top:11px;color:var(--secondary);
+ font-size:11px;line-height:1.35;
+}
+html.seyveo-conversation .seyveo-chat-browser-entry:active{
+ opacity:.75;
+}
+html.seyveo-conversation .seyveo-chat-browser-entry:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
