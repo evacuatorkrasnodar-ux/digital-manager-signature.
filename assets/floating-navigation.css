@@ -4,6 +4,8 @@
 :root{
  --seyveo-nav-ink:#eff7f2;
  --seyveo-dock-height:58px;
+ --seyveo-dock-icon-size:22px;
+ --seyveo-dock-icon-stroke:1.35;
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
@@ -52,8 +54,11 @@
  transition:border-color .36s ease,color .22s ease!important;
 }
 .dock>.nav-item svg{
- width:24px!important;height:24px!important;
- stroke-width:1.8!important;flex:none;
+ display:block!important;
+ width:var(--seyveo-dock-icon-size)!important;
+ height:var(--seyveo-dock-icon-size)!important;
+ stroke-width:var(--seyveo-dock-icon-stroke)!important;
+ flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
 /* Keep current route semantics without a permanent frame.
@@ -131,12 +136,13 @@
 .dock>.nav-item{-webkit-appearance:none!important;appearance:none!important}
 .dock>.nav-item svg{
  stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;fill:none;
+ shape-rendering:geometricPrecision;
 }
 .dock>.nav-home svg{fill:none!important}
 .dock>.assistant-button .button-art{display:block!important;overflow:visible!important}
 .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
 :root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-day)}
-.dock>.assistant-button .button-art .voice-bars{stroke-width:2.85;stroke-linecap:round;fill:none}
+.dock>.assistant-button .button-art .voice-bars{stroke-width:2;stroke-linecap:round;fill:none}
 .dock>.assistant-button.listening .voice-bars{
  animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
  transform-origin:37px 37px;
@@ -164,7 +170,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 @media(max-width:355px){
  .dock{width:calc(100% - 8px)!important;padding:4px 4px!important;gap:1px!important}
  .dock>.nav-item{font-size:10.4px!important;letter-spacing:-.038em!important}
- .dock>.nav-item svg{width:22px!important;height:22px!important}
+ .dock>.nav-item svg{width:var(--seyveo-dock-icon-size)!important;height:var(--seyveo-dock-icon-size)!important}
 }
 /* Landscape notch sides: keep the SAME dock, never create a second one. */
 @media(orientation:landscape) and (max-height:650px){
@@ -336,7 +342,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded) #question{
 .dock>#assistantButton .button-art .button-rim{
  display:block!important;
  stroke:url(#rim-night)!important;
- stroke-width:.95!important;
+ stroke-width:.78!important;
  opacity:.96!important;
 }
 .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
