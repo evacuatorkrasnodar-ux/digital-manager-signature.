@@ -22,6 +22,8 @@ jobs:
           node-version: '22'
       - name: Install project dependencies
         run: npm install --no-audit --no-fund
+      - name: Validate Expo configuration
+        run: npx expo config --type public --json > /dev/null
       - name: TypeScript validation
         run: npm run check
       - name: Foundation tests
