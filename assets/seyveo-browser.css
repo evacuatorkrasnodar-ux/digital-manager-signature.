@@ -216,8 +216,8 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
 }
 /* Approved SEYVEO glass search field: no arrow, functional scan glyph. */
 .seyveo-browser-bar{
- height:40px;min-height:40px;max-height:40px;
- padding:2px 7px 2px 12px;gap:9px;border-radius:22px;
+ height:var(--sv-input-height,54px);min-height:var(--sv-input-height,54px);max-height:var(--sv-input-height,54px);
+ padding:3px 7px 3px var(--sv-input-padding-x,12px);gap:var(--sv-input-gap,6px);border-radius:var(--sv-input-radius,22px);
  border:1px solid color-mix(in srgb,var(--sb-accent) 48%,var(--line,#3b4c55));
  background:radial-gradient(ellipse 80% 125% at 24% -25%,color-mix(in srgb,var(--sb-accent) 22%,transparent),transparent 96%),
   linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 9%,var(--sb-surface)),var(--sb-surface));
@@ -228,7 +228,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
 }
 .seyveo-browser-search-icon{background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;flex:0 0 21px;color:var(--text,#eff7f2);opacity:.9}
 .seyveo-browser-search-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
-.seyveo-browser-bar input{font-size:14px;letter-spacing:.005em}
+.seyveo-browser-bar input{font-size:var(--sv-input-type,16px);line-height:var(--sv-input-leading,24px);letter-spacing:0}
 .seyveo-browser-bar .seyveo-browser-scan{display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border-radius:12px;border:0;background:transparent;color:inherit;padding:7px;box-shadow:none}
 .seyveo-browser-scan svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .seyveo-browser-scan:hover{background:var(--seyveo-hdr-active)}
@@ -1169,13 +1169,9 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-brow
 
 /* Browser lighting: restrained search glow, non-illuminated tabs. */
 .seyveo-browser .seyveo-browser-bar{
- border-color:color-mix(in srgb,var(--sb-accent) 17%,var(--line,#3b4c55));
- background:
-  radial-gradient(ellipse 80% 125% at 24% -25%,color-mix(in srgb,var(--sb-accent) 3%,transparent),transparent 96%),
-  linear-gradient(180deg,color-mix(in srgb,var(--text,#fff) 5%,var(--sb-surface)),var(--sb-surface));
- box-shadow:
-  inset 0 1px 0 color-mix(in srgb,var(--text,#fff) 8%,transparent),
-  0 0 5px color-mix(in srgb,var(--sb-accent) 3%,transparent);
+ border-color:var(--sv-input-border);
+ background:var(--sv-input-surface);
+ box-shadow:inset 0 1px 0 rgba(228,255,246,.035);
 }
 .seyveo-browser .seyveo-browser-bar:focus-within{
  border-color:color-mix(in srgb,var(--sb-accent) 26%,var(--line,#3b4c55));
@@ -1617,12 +1613,12 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-brow
  order:0;
  flex:1 1 0;
  min-width:0;width:auto;
- height:43px;min-height:43px;max-height:43px;
- padding:3px 5px 3px 10px;margin:0;
+ height:var(--sv-input-height,54px);min-height:var(--sv-input-height,54px);max-height:var(--sv-input-height,54px);
+ padding:3px 5px 3px var(--sv-input-padding-x,12px);margin:0;
  gap:6px;
  border-radius:var(--sv-input-radius,22px);
- background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
- box-shadow:inset 0 1px 0 var(--sv-home-glint);
+ background:var(--sv-input-surface);
+ box-shadow:inset 0 1px 0 rgba(228,255,246,.035);
 }
 .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup input{
  flex:1 1 0;min-width:0;width:100%;
