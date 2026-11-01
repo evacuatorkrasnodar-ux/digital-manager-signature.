@@ -222,9 +222,13 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
           disabled={!tab.url} onPress={()=>ref.current?.reload()} style={styles.dockButton}>
           <Text style={[styles.dockIcon,{color:colors.text,opacity:tab.url?1:.35}]}>↻</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel="Открыть новую вкладку"
-          onPress={()=>newTab()} style={styles.dockButton}>
-          <Text style={[styles.dockIcon,{color:colors.text}]}>▢</Text>
+        <Pressable accessibilityRole="button"
+          accessibilityLabel={view==='downloads'?'Вернуться к странице':'Загрузки'}
+          onPress={()=>setView(previous=>previous==='downloads'?'page':'downloads')}
+          style={styles.dockButton}>
+          <Text style={[styles.dockIcon,{color:colors.text}]}>
+            {view==='downloads'?'⌂':'↓'}
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -269,5 +273,8 @@ const styles=StyleSheet.create({
     alignItems:'center'},
   dockButton:{width:60,height:50,alignItems:'center',justifyContent:'center'},
   dockIcon:{fontSize:26,fontWeight:'300'},
-  error:{fontSize:11,paddingHorizontal:14,paddingVertical:6}
+  error:{fontSize:11,paddingHorizontal:14,paddingVertical:6},
+  downloads:{paddingHorizontal:12,paddingTop:10,paddingBottom:24,gap:10},
+  downloadBack:{alignSelf:'flex-start',minHeight:40,borderWidth:1,borderRadius:12,
+    paddingHorizontal:13,justifyContent:'center'}
 });
