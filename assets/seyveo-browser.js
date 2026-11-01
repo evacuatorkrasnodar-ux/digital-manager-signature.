@@ -52,6 +52,15 @@ const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-ta
 while(manager.firstChild)tabsPanel.append(manager.firstChild);
 manager.append(tabsPanel);
 manager.prepend(switcher);
+// Keep the four glass segments unchanged; Downloads is one additional row.
+const downloadsShortcut=document.createElement('button');
+downloadsShortcut.type='button';
+downloadsShortcut.className='sb-browser-downloads-shortcut';
+downloadsShortcut.setAttribute('aria-label','Загрузки');
+downloadsShortcut.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></svg><span>Загрузки</span>';
+downloadsShortcut.hidden=true;
+downloadsShortcut.addEventListener('click',()=>{managerSection='downloads';renderManager()});
+switcher.after(downloadsShortcut);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const panelHeader=document.createElement('header');
 panelHeader.className='sb-browser-panel-head';
@@ -290,6 +299,7 @@ function tabManager(value=true){
  manager.hidden=!managerOpen;
  switcher.hidden=!managerOpen;
  panelScrim.hidden=!managerOpen;
+ downloadsShortcut.hidden=!managerOpen;
  root.classList.toggle('is-panel-open',managerOpen);
  siteMenuButton.setAttribute('aria-expanded',String(managerOpen));
  if(managerOpen){manager.scrollTop=0;renderManager();}
@@ -339,10 +349,12 @@ function syncClosedStack(){
  clear.hidden=!count;
 }
 function renderManager(){
- const currentLabel=sections.find(([id])=>id===managerSection)?.[1]||'Вкладки';
+ const currentLabel=managerSection==='downloads'?'Загрузки':sections.find(([id])=>id===managerSection)?.[1]||'Вкладки';
  panelHeader.querySelector('[data-panel-section-title]').textContent=currentLabel;
  manager.setAttribute('aria-label','Управление браузером · '+currentLabel);
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
+ downloadsShortcut.classList.toggle('is-selected',managerSection==='downloads');
+ downloadsShortcut.setAttribute('aria-pressed',String(managerSection==='downloads'));
  const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
  const count=switcher.querySelector('[data-section="tabs"] .sb-switch-count')||document.createElement('span');count.className='sb-switch-count';count.textContent=String(tabs.length);switcher.querySelector('[data-section="tabs"]').append(count);
  tabsPanel.hidden=managerSection!=='tabs';secondary.hidden=managerSection==='tabs';
@@ -416,6 +428,14 @@ function renderManager(){
 function renderSecondary(){
  secondary.replaceChildren();
  secondary.classList.toggle('is-history',managerSection==='history');
+ if(managerSection==='downloads'){
+  // Browser JS cannot inspect files downloaded by the host OS/browser.
+  const notice=document.createElement('p');
+  notice.className='sb-manager-empty sb-browser-downloads-notice';
+  notice.textContent='В веб-версии скачанные файлы находятся в папке «Загрузки» устройства или в списке загрузок обычного браузера. В мобильном приложении SEYVEO здесь будут файлы, скачанные внутри SEYVEO.';
+  secondary.append(notice);
+  return;
+ }
  const header=document.createElement('div');header.className='sb-secondary-header';header.hidden=managerSection==='favorites';secondary.append(header);
 // Section name already lives on the shared grey Browser strip; no duplicate title.
  if(managerSection==='collections'){
