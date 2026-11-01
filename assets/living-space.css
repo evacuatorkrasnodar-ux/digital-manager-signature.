@@ -1250,7 +1250,7 @@ html.sv-space-active:has(#lifePage:not([hidden])) body{
 html.sv-space-active #lifePage{
  background:transparent!important;
  min-height:0!important;
- padding-inline:clamp(10px,3.2vw,20px);
+ padding-inline:0;
 }
 html.sv-space-active #lifePage .life-heading{
  padding:7px 4px 0!important;
