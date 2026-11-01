@@ -1,7 +1,8 @@
+/* Mail has one canonical screen: assets/sayvi-surfaces.js.
+   Retired personal/business mail overlays had document capture handlers that
+   intercepted entry clicks before the real SEYVEO Mail route could run. */
 import './seyveo-developer-flow.mjs';
-import './seyveo-business-mail.mjs';
 import './seyveo-technology-signatures.mjs';
-import './seyveo-mail-cabinet.mjs';
 import './seyveo-action-history.mjs';
 import './seyveo-adaptive-orb.mjs';
 import './seyveo-card-copy-ui.mjs';
