@@ -154,7 +154,7 @@ export function NativeBrowser(){
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
   <WebView onShouldStartLoadWithRequest={request=>{
-   if(!request.isTopFrame)return true;
+   if(request.isTopFrame===false)return true;
    const check=checkBrowserAddress(request.url);
    if(!check.allowed){setTranslationNotice(check.warning);return false}
    if(!check.warning||approvedNavigation.current===request.url)return true;
