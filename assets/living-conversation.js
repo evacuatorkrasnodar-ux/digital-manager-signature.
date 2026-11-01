@@ -53,14 +53,41 @@ header.innerHTML='<button type="button" id="seyveoConversationBack" aria-label="
 home.insertBefore(header,stage);
 function microphone(id){
  const button=document.createElement('button');
+ const isCore=id==='seyveoConversationMic';
  button.id=id;
  button.type='button';
- button.className='seyveo-conversation-mic composer-icon';
+ button.className='seyveo-conversation-mic composer-icon'+(isCore?' seyveo-chat-core':'');
  button.setAttribute('aria-label','Говорить с Сэйви');
  button.setAttribute('aria-pressed','false');
- button.title='Говорить с Сэйви';
- button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg>';
+ button.title=isCore?'Нажать — говорить с Сэйви; удерживать — голосовая команда':'Говорить с Сэйви';
+ button.innerHTML=isCore
+  ?'<span class="seyveo-chat-core-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.6c1.4 5.7 3.7 8 9.4 9.4-5.7 1.4-8 3.7-9.4 9.4-1.4-5.7-3.7-8-9.4-9.4 5.7-1.4 8-3.7 9.4-9.4Z"/></svg></span>'
+  :'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg>';
+ let holdTimer=0,holding=false,lastHold=0;
+ if(isCore){
+  button.addEventListener('pointerdown',event=>{
+   if(event.button!==0||event.isPrimary===false)return;
+   clearTimeout(holdTimer);holding=false;
+   holdTimer=setTimeout(()=>{
+    if(!root.classList.contains('seyveo-conversation'))return;
+    holding=true;
+    window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.();
+   },480);
+  });
+  const finishHold=()=>{
+   clearTimeout(holdTimer);holdTimer=0;
+   if(!holding)return;
+   holding=false;lastHold=Date.now();
+   window.SEYVEO_CONVERSATION_STOP_VOICE?.();
+  };
+  button.addEventListener('pointerup',finishHold);
+  button.addEventListener('pointercancel',finishHold);
+  button.addEventListener('pointerleave',finishHold);
+  button.addEventListener('contextmenu',event=>event.preventDefault());
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)finishHold()});
+ }
  button.addEventListener('click',()=>{
+   if(isCore&&Date.now()-lastHold<650)return;
    if(!root.classList.contains('seyveo-conversation'))open();
    window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.();
  });
@@ -90,70 +117,114 @@ if(compact){
  micObserver.observe(compact,{childList:true});
  window.addEventListener('pagehide',()=>micObserver.disconnect(),{once:true});
 }
-// The existing Back control closes the conversation. There is no secondary
-// keyboard-dismiss arrow; native keyboards can close by their own controls.
+/* One compact five-action chat dock: return · attach · Sayvi · Browser · send.
+   Preserve the original Back, microphone, Send, and History handlers.
+   History is in the + menu, not another permanent sixth icon. */
 if(compact){
- const mic=compact.querySelector('.seyveo-conversation-mic');
- // Reuse the actual original header controls and live assistant status.
- // These nodes remain hidden on Home and in the expanded Notes editor.
- compact.insertBefore($('seyveoConversationBack'),compact.firstChild);
- compact.insertBefore($('seyveoConversationHistory'),mic);
- compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),mic);
-}
-
-/* Leftmost photo picker: no extra app destinations or fake attachment sending. */
-if(compact){
+ const back=$('seyveoConversationBack');
+ compact.insertBefore(back,compact.firstChild);
  const plus=document.createElement('button');
  plus.type='button';plus.id='seyveoChatPlus';
- plus.setAttribute('aria-label','Выбрать фотографию');
- plus.title='Выбрать фотографию';
+ plus.setAttribute('aria-label','Вложения и история');
+ plus.setAttribute('aria-expanded','false');
+ plus.setAttribute('aria-controls','seyveoChatTools');
+ plus.title='Вложения и история';
  plus.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
  const photos=document.createElement('input');
  photos.type='file';photos.id='seyveoChatPhotoFile';
  photos.accept='image/*';photos.hidden=true;
  photos.setAttribute('aria-label','Выбрать фотографию из устройства');
  photos.addEventListener('change',()=>{
-  if(photos.files?.length){
+  if(photos.files?.length)
    window.alert('Фотография выбрана. Отправка изображений Сэйви пока не подключена.');
-  }
   photos.value='';
  });
- plus.addEventListener('click',()=>{
-  if(root.classList.contains('seyveo-conversation'))photos.click();
+ const tools=document.createElement('div');
+ tools.id='seyveoChatTools';tools.className='seyveo-chat-tools';
+ tools.setAttribute('aria-label','Вложения и история бесед');
+ tools.hidden=true;
+ tools.innerHTML='<button type="button" id="seyveoChatChoosePhoto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m5.5 17 4.5-4 3 2 3.2-3 3 3"/></svg>Фотография</button>'+
+  '<button type="button" id="seyveoChatOpenHistory"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/></svg>История бесед</button>';
+ function showTools(show){
+  tools.hidden=!show;
+  plus.setAttribute('aria-expanded',String(show));
+ }
+ plus.addEventListener('click',()=>showTools(tools.hidden));
+ tools.querySelector('#seyveoChatChoosePhoto').addEventListener('click',()=>{
+  showTools(false);photos.click();
  });
- compact.insertBefore(plus,$('seyveoConversationHistory').nextSibling);
+ tools.querySelector('#seyveoChatOpenHistory').addEventListener('click',()=>{
+  showTools(false);window.SEYVEO_CHAT_HISTORY?.open();
+ });
+ document.addEventListener('pointerdown',event=>{
+  if(!tools.hidden&&!tools.contains(event.target)&&!plus.contains(event.target))
+   showTools(false);
+ },true);
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!tools.hidden){showTools(false);plus.focus();event.stopPropagation();}
+ });
+ document.addEventListener('seyveo:conversation-close',()=>showTools(false));
+ compact.insertBefore(plus,compact.querySelector('#seyveoConversationMic'));
+ form.appendChild(tools);
  document.body.append(photos);
-}
-/* One reversible expand control for the existing chat textarea. */
-if(compact){
- const toggle=document.createElement('button');
- toggle.type='button';
- toggle.id='seyveoChatExpand';
- toggle.setAttribute('aria-label','Раскрыть поле ввода');
- toggle.setAttribute('aria-expanded','false');
- toggle.title='Раскрыть поле ввода';
- const draw=()=>{
-  const expanded=root.classList.contains('seyveo-chat-compose-expanded');
-  toggle.innerHTML=expanded
-   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
-   :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>';
-  toggle.setAttribute('aria-label',expanded?'Свернуть поле ввода':'Раскрыть поле ввода');
-  toggle.setAttribute('aria-expanded',String(expanded));
-  toggle.title=expanded?'Свернуть поле ввода':'Раскрыть поле ввода';
- };
- toggle.addEventListener('click',()=>{
-  root.classList.toggle('seyveo-chat-compose-expanded');
-  draw();
-  if(typeof syncChatGeometry==='function')requestAnimationFrame(syncChatGeometry);
-  $('question')?.focus({preventScroll:true});
+ const browser=document.createElement('button');
+ browser.type='button';browser.id='seyveoChatBrowser';
+ browser.title='Открыть SEYVEO Browser';
+ browser.setAttribute('aria-label','Открыть SEYVEO Browser');
+ browser.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.7 12h16.6M12 3.5c-4 4.7-4 12.3 0 17M12 3.5c4 4.7 4 12.3 0 17"/></svg>';
+ browser.addEventListener('click',()=>{
+  showTools(false);
+  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
+  if(!window.SEYVEO_BROWSER?.open?.())status('Браузер пока недоступен',2500);
  });
- compact.insertBefore(toggle,compact.querySelector('#seyveoConversationMic'));
- draw();
+ compact.insertBefore(browser,$('composerCompactSend'));
 }
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
 let statusTimer=0,speakingNow=false;
 let returnRoute=''; // Workspace to restore after this single conversation closes.
+let returnSource='home';
+const backIcon=$('seyveoConversationBack');
+const contextGlyphs={
+ home:'<path d="m12 4-8 6.5V20h6v-6h4v6h6v-9.5L12 4Z"/>',
+ music:'<path d="M23 5v12.5a3 3 0 1 1-2-2.85V8l9-2v9.5a3 3 0 1 1-2-2.85V4z" transform="translate(-3 0) scale(.94)"/>',
+ browser:'<circle cx="23" cy="12" r="8"/><path d="M15 12h16M23 4c-3.5 4.4-3.5 11.6 0 16M23 4c3.5 4.4 3.5 11.6 0 16"/>',
+ calendar:'<rect x="15" y="5" width="16" height="16" rx="2"/><path d="M19 3v4M27 3v4M15 10h16"/>',
+ tasks:'<path d="M16 6h14M16 12h14M16 18h14M12 6h1M12 12h1M12 18h1"/>',
+ life:'<circle cx="23" cy="12" r="8"/><path d="M15 12h16M23 4c-3.5 4.4-3.5 11.6 0 16M23 4c3.5 4.4 3.5 11.6 0 16"/>',
+ manage:'<rect x="15" y="8" width="16" height="13" rx="2"/><path d="M20 8V5h6v3M15 13h16"/>',
+ documents:'<path d="M17 3h10l4 4v14H17zM27 3v5h4M20 12h8M20 16h8"/>',
+ video:'<rect x="15" y="6" width="17" height="12" rx="3"/><path d="m22 9 5 3-5 3z"/>',
+ sayvi:'<path d="M23 3c1.3 5.6 3.4 7.7 9 9-5.6 1.3-7.7 3.4-9 9-1.3-5.6-3.4-7.7-9-9 5.6-1.3 7.7-3.4 9-9z"/>'
+};
+const contextNames={home:'Главную',music:'Музыку',browser:'Браузер',
+ calendar:'Календарь',tasks:'Дела',life:'Мой мир',manage:'Управление',
+ documents:'Документы',video:'Видео',sayvi:'Сэйви'};
+function sourceFromRoute(route){
+ const r=String(route||'');
+ if(r==='#sayvi-music')return 'music';
+ if(r==='#sayvi-video')return 'video';
+ if(r.startsWith('#calendar'))return 'calendar';
+ if(r.startsWith('#sayvi-document'))return 'documents';
+ if(r==='#tasks'||r==='#picture')return 'tasks';
+ if(r.startsWith('#manage'))return 'manage';
+ if(r==='#life')return 'life';
+ if(r.startsWith('#sayvi'))return 'sayvi';
+ return 'home';
+}
+function paintReturnButton(){
+ if(!backIcon)return;
+ const source=contextGlyphs[returnSource]?returnSource:'home';
+ const svg=source==='home'
+  ?'<svg viewBox="0 0 24 24" aria-hidden="true">'+contextGlyphs.home+'</svg>'
+  :'<svg viewBox="0 0 34 24" aria-hidden="true"><path d="m8 7-5 5 5 5M3 12h8"/>'+contextGlyphs[source]+'</svg>';
+ backIcon.innerHTML=svg;
+ const label=source==='home'?'На Главную':'Назад в '+contextNames[source];
+ backIcon.setAttribute('aria-label',label);
+ backIcon.title=label;
+ backIcon.dataset.returnSource=source;
+}
+
 const sendButton=$('composerCompactSend');
 const sendIcon=sendButton?.innerHTML||'';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
@@ -224,15 +295,15 @@ function revealExisting(){
  reply.hidden=false;
  stage.classList.add('has-inline-reply');
 }
-function open(){
+function open(options){
  if(root.classList.contains('seyveo-conversation'))return;
- // Chat reuses the original Home conversation, then restores the caller's
- // workspace on Back. No second chat, no replacement sphere or dock.
- if(home.hidden){
-  returnRoute=location.hash||'';
-  document.getElementById('navHome')?.click();
- }
+ // Snapshot the caller BEFORE routing to Home; the Back icon is contextual.
+ const sourceHint=options&&typeof options==='object'?options.source:'';
+ returnRoute=home.hidden?(location.hash||''):'';
+ returnSource=sourceHint==='browser'?'browser':sourceFromRoute(returnRoute);
+ if(home.hidden)document.getElementById('navHome')?.click();
  if(home.hidden)return;
+ paintReturnButton();
  root.classList.add('seyveo-conversation');
  // Reuse the original writer and the existing saved thread.
  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
@@ -265,7 +336,7 @@ function close(){
    quiet.hidden=$('kicker')?.textContent!=='На связи';
  }
  const destination=returnRoute;
- returnRoute='';
+ returnRoute='';returnSource='home';
  if(destination&&location.hash!==destination)location.hash=destination;
  // Allow a suspended browser caller to return to its exact tab and scroll.
  // Ordinary Feather Chat exits are unchanged when no browser is waiting.
