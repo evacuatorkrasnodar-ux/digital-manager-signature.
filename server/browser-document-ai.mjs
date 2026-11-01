@@ -77,7 +77,6 @@ export async function explainBrowserDocument(payload,{
     body:JSON.stringify({
       model,
       store:false,
-      temperature:0.2,
       response_format:{type:'json_object'},
       messages:[
         {role:'developer',content:
