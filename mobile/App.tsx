@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { MemoryDiagnostic } from './src/core/MemoryDiagnostic';
 import { NativeBrowser } from './src/browser/NativeBrowser';
 import { SharedMediaStatus } from './src/media/SharedMediaStatus';
+import { MusicEngineDiagnostic } from './src/media/MusicEngineDiagnostic';
 import { OfflinePacksPanel } from './src/core/OfflinePacksPanel';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
@@ -142,6 +143,7 @@ function NativeFoundation() {
             </View>)}
           </View>:null}
           <Pressable accessibilityRole="button" style={styles.button} onPress={() => setBrowserOpen(true)}><Text style={styles.buttonText}>Браузер · нативный просмотр</Text></Pressable>
+          <MusicEngineDiagnostic />
           <OfflinePacksPanel />
           <Text style={styles.footnote}>
             Календарь, Блокнот, резервные копии и голос будут подключаться
