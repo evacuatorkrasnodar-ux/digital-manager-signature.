@@ -424,7 +424,7 @@
   --soft-line:rgba(67,90,98,.16);
   --lm-paper-glaze:linear-gradient(165deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.17) 31%,transparent 64%);
   --lm-paper-sheet:linear-gradient(145deg,rgba(253,254,253,.94) 0%,rgba(246,249,247,.91) 52%,rgba(232,238,236,.86) 100%);
-  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(108,130,130,.13),0 5px 19px rgba(0,0,0,.095);
+  --lm-paper-depth:inset 0 1px 0 rgba(255,255,255,.96),inset 0 0 0 1px rgba(255,255,255,.35),inset 0 -6px 12px -9px rgba(91,112,112,.42),0 5px 18px rgba(0,0,0,.10);
   color:var(--text);
   border:1px solid transparent;
   border-radius:22px;
@@ -434,29 +434,66 @@
     padding 940ms ease,border-color 940ms ease,background-color 940ms ease;
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-primary{
+  position:relative;isolation:isolate;
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid rgba(102,120,122,.23);
+  border:1px solid rgba(92,111,116,.37);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
+  position:relative;isolation:isolate;
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid rgba(102,120,122,.23);
+  border:1px solid rgba(92,111,116,.37);
   border-radius:19px;
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
-  border-color:rgba(102,120,122,.24);
+  isolation:isolate;
+  border-color:rgba(92,111,116,.37);
   background:var(--lm-paper-glaze),var(--lm-paper-sheet);
   box-shadow:var(--lm-paper-depth);
   padding:7px 9px 5px;
 }
-#seyveoLivingMoment.lm-preview.lm-gather .lm-field::before{opacity:0}
+/* Browser tab optics translated to white porcelain: a second clear pane,
+   then an inner glass-cut outline, not another opaque card or an LED.
+   Both layers are click-through and leave the original motion untouched. */
+#seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::before,
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field::before,
+#homePage #dynamic .decision-card[data-owner-advice]::before{
+  content:"";position:absolute;
+  top:2px;right:2px;bottom:2px;left:2px;
+  width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
+  border:1px solid rgba(78,107,109,.12);
+  border-radius:inherit;
+  background:
+    radial-gradient(ellipse 95% 100% at 50% -30%,rgba(255,255,255,.57),transparent 78%),
+    linear-gradient(180deg,rgba(255,255,255,.19),transparent 33%,rgba(99,129,125,.085));
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.45),inset 0 -1px 3px rgba(93,118,115,.13);
+}
+#seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
+#homePage #dynamic .decision-card[data-owner-advice]::after{
+  content:"";position:absolute;
+  top:5px;right:5px;bottom:5px;left:5px;
+  z-index:0;pointer-events:none;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.80);
+  background:linear-gradient(155deg,rgba(255,255,255,.16),transparent 42%);
+  box-shadow:0 0 0 1px rgba(90,113,113,.08),inset 0 1px 0 rgba(255,255,255,.47);
+}
+#seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item) > *,
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field > *,
+#homePage #dynamic .decision-card[data-owner-advice] > *{
+  position:relative;z-index:1;
+}
+#seyveoLivingMoment.lm-preview.lm-gather .lm-field::after{
+  border-radius:16px;
+}
 #seyveoLivingMoment.lm-preview.lm-gather .lm-primary{
   margin-bottom:0;
   padding:0 3px 1px;
@@ -525,6 +562,7 @@
    Their existing click handlers and permissions remain intact. */
 #homePage #dynamic .decision-card[data-owner-advice]{
   /* Real recommendation keeps same white insert, original button handlers. */
+  position:relative;isolation:isolate;
   --text:#24323a;
   --secondary:#58676d;
   --soft-line:rgba(67,90,98,.16);
@@ -535,7 +573,7 @@
   background:
     linear-gradient(165deg,rgba(255,255,255,.78),rgba(255,255,255,.16) 31%,transparent 64%),
     linear-gradient(145deg,rgba(253,254,253,.94),rgba(246,249,247,.91) 52%,rgba(232,238,236,.86))!important;
-  border:1px solid rgba(102,120,122,.23)!important;
+  border:1px solid rgba(92,111,116,.37)!important;
   border-radius:22px!important;
   outline:0!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(108,130,130,.13),0 5px 19px rgba(0,0,0,.095)!important;
@@ -576,7 +614,7 @@
   }
 }
 /* White Velvet keeps the same shapes, not a separate visual language. */
-:root[data-theme=light] #seyveoLivingMoment .lm-field::before{
+:root[data-theme=light] #seyveoLivingMoment:not(.lm-gather) .lm-field::before{
   background:linear-gradient(to right,transparent,rgba(56,70,89,.18) 35%,rgba(56,70,89,.18) 65%,transparent);
 }
 :root[data-theme=light] #seyveoLivingMoment .lm-hero-art::before{
