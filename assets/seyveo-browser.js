@@ -68,6 +68,64 @@ const $=s=>root.querySelector(s),input=root.querySelector('input'),frame=root.qu
 const sitebar=$('.sb-browser-sitebar'),siteMenuButton=$('[data-site-menu]');
 // Reuse the ONE original grey navigation strip on both the home and web views.
 $('.seyveo-browser-tabs').after(sitebar);
+
+// The same approved glass address field is now a temporary overlay, not a
+// permanent row between the SEYVEO wordmark and tab carousel.
+const searchForm=$('.seyveo-browser-bar');
+searchForm.id='seyveoBrowserSearch';
+searchForm.classList.add('sb-browser-search-popup');
+searchForm.setAttribute('role','search');
+searchForm.hidden=true;
+const searchBackdrop=document.createElement('button');
+searchBackdrop.type='button';
+searchBackdrop.className='sb-browser-search-backdrop';
+searchBackdrop.setAttribute('aria-label','Закрыть поиск');
+searchBackdrop.hidden=true;
+root.append(searchBackdrop);
+function makeSearchToggle(){
+ const button=document.createElement('button');
+ button.type='button';
+ button.className='sb-browser-sitebar-search-button';
+ button.dataset.browserSearchTrigger='';
+ button.setAttribute('aria-label','Поиск или адрес сайта');
+ button.setAttribute('aria-controls',searchForm.id);
+ button.setAttribute('aria-expanded','false');
+ button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>';
+ button.addEventListener('click',()=>searchForm.hidden?openBrowserSearch():closeBrowserSearch(true));
+ return button;
+}
+for(const parent of [sitebar,panelHeader]){
+ const spacer=parent.querySelector('.sb-browser-sitebar-spacer');
+ if(spacer)spacer.replaceWith(makeSearchToggle());
+}
+function positionBrowserSearch(){
+ const bounds=sitebar.getBoundingClientRect(),screen=root.getBoundingClientRect();
+ if(bounds.height)root.style.setProperty('--sb-search-popup-top',Math.round(bounds.bottom-screen.top+8)+'px');
+}
+function syncSearchButtons(){
+ root.querySelectorAll('[data-browser-search-trigger]').forEach(b=>
+  b.setAttribute('aria-expanded',String(!searchForm.hidden)));
+}
+function openBrowserSearch(){
+ if(root.hidden)return;
+ if(managerOpen)tabManager(false);
+ input.value=currentUrl()||'';
+ searchForm.hidden=false;
+ searchBackdrop.hidden=false;
+ root.classList.add('is-search-open');
+ positionBrowserSearch();
+ syncSearchButtons();
+ requestAnimationFrame(()=>{if(!root.hidden&&!searchForm.hidden){input.focus({preventScroll:true});input.select()}});
+}
+function closeBrowserSearch(restoreFocus=false){
+ if(searchForm.hidden)return;
+ searchForm.hidden=true;
+ searchBackdrop.hidden=true;
+ root.classList.remove('is-search-open');
+ syncSearchButtons();
+ if(restoreFocus&&!root.hidden)sitebar.querySelector('[data-browser-search-trigger]')?.focus({preventScroll:true});
+}
+searchBackdrop.addEventListener('click',()=>closeBrowserSearch(true));
 let tabs=[{id:1,entries:[],position:-1}],active=1,nextId=2,displayedTab=null;
 let managerOpen=false;let recentlyClosed=[];let allClosedShown=false;let openCollection=null;let managerMenuId=null;let creatingCollection=false;let collectionMenuId=null;let renamingCollectionId=null;let confirmCollectionDeleteId=null;let templateMenuName=null;
 const key='seyveo-browser-bookmarks-v1';
@@ -285,6 +343,7 @@ function siteSymbol(url){const brand=siteBrand(url);return brand==='youtube'?'�
 function closeTab(id){const t=tabs.find(x=>x.id===id);if(!t)return;allClosedShown=false;const u=t.entries[t.position];if(u)saveClosed(u);tabs=tabs.filter(x=>x.id!==id);if(!tabs.length)tabs=[{id:nextId++,entries:[],position:-1}];if(active===id)active=tabs[tabs.length-1].id;render()}
 function tabManager(value=true){
  managerOpen=Boolean(value);
+ if(managerOpen)closeBrowserSearch();
  if(!managerOpen){allClosedShown=false;showManagerHistory=false;}
  manager.hidden=!managerOpen;
  switcher.hidden=!managerOpen;
@@ -611,19 +670,11 @@ function renderSecondary(){
  if(!links.length&&!folders.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Здесь будут твои сохранённые сайты и папки';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
-/* Pixel-balanced Browser rhythm: match Browser→search and search→glass tab.
-   Shifts the shared tabs/grey strip/page together; never alters their sizes. */
+/* With Search out of layout, the existing tab rail aligns directly under the
+   wordmark. No live height compensation, so opening Search never moves tabs. */
 function balanceBrowserVerticalRhythm(){
- if(root.hidden)return;
- const word=$('.seyveo-browser-home h2'),search=$('.seyveo-browser-bar');
- const rail=$('.seyveo-browser-tabs'),tab=tabArea.querySelector('.seyveo-browser-tab');
- if(!word||!search||!rail||!tab)return;
- const desired=search.getBoundingClientRect().top-word.getBoundingClientRect().bottom;
- const actual=tab.getBoundingClientRect().top-search.getBoundingClientRect().bottom;
- const currentMargin=parseFloat(window.getComputedStyle(rail).marginTop);
- if(!Number.isFinite(desired)||!Number.isFinite(actual)||!Number.isFinite(currentMargin))return;
- const next=Math.max(-38,Math.min(3,currentMargin+desired-actual));
- if(Math.abs(next-currentMargin)>.4)root.style.setProperty('--sb-balanced-tabs-margin',next.toFixed(2)+'px');
+ root.style.removeProperty('--sb-balanced-tabs-margin');
+ if(!searchForm.hidden)positionBrowserSearch();
 }
 function render(){
  persistSession();
@@ -634,7 +685,7 @@ function render(){
  $('.seyveo-browser-start').hidden=!home;
  $('.seyveo-browser-content').hidden=home;
  $('.seyveo-browser-tabs').hidden=false;
- input.value=home?'':url||'';
+ if(searchForm.hidden)input.value=home?'':url||'';
  // A static web demo cannot bypass X-Frame-Options / CSP frame-ancestors.
  // Sites that fail in the user's preview get a compact explanation, never a
  // full-height grey error iframe; a native app will require WebView integration.
@@ -729,12 +780,12 @@ function render(){
   icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5"/></svg>';
   const label=document.createElement('span');label.className='sb-browser-tab-name';label.textContent='Новая вкладка';
   create.append(icon,label);
-  create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
+  create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();openBrowserSearch()});
   placeholder.append(create);tabArea.append(placeholder);
  }
  balanceBrowserVerticalRhythm();
 }
-function navigate(value){const url=secureUrl(value);if(!url)return false;const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
+function navigate(value){const url=secureUrl(value);if(!url)return false;closeBrowserSearch();const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
 /* One existing Sayvi, one original dock: temporarily hide Browser without
    tearing down the iframe so its current page and scroll can be restored. */
 let suspendedForSayvi=false;
@@ -749,6 +800,7 @@ function resumeAfterSayvi(){
 }
 function askSayvi(){
  if(root.hidden||typeof window.SEYVEO_CONVERSATION?.open!=='function')return false;
+ closeBrowserSearch();
  const url=currentUrl();
  if(managerOpen)tabManager(false);
  suspendedForSayvi=true;
@@ -821,7 +873,7 @@ function browserVoiceUnavailable(message){
 }
 document.addEventListener('seyveo:conversation-close',resumeAfterSayvi);
 function open(value){if(value&&!secureUrl(value))return false;suspendedForSayvi=false;root.hidden=false;document.body.classList.add('seyveo-browser-open');if(value)navigate(value);else render();document.dispatchEvent(new Event('seyveo:browser-open'));return true}
-function close(){suspendedForSayvi=false;expandedHistory=null;tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
+function close(){suspendedForSayvi=false;expandedHistory=null;closeBrowserSearch();tabManager(false);root.hidden=true;document.body.classList.remove('seyveo-browser-open');frame.removeAttribute('src');displayedTab=null;document.dispatchEvent(new Event('seyveo:browser-close'))}
 /* The dock house means SEYVEO Home, not Browser's internal blank tab.
    Keep all tab entries in the existing session for the next Browser visit. */
 function goToSeyveoHome(){
@@ -870,10 +922,10 @@ manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
  if(!window.confirm('Очистить список недавно закрытых вкладок? Открытые вкладки, история и избранное останутся.'))return;
  recentlyClosed=[];allClosedShown=false;persistSession();renderManager();
 });
-manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
+manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();openBrowserSearch()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClosedShown=false;for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
 root.querySelector('.seyveo-browser-shortcuts [data-bookmarks]').addEventListener('click',bookmarks);
-$('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
+$('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();openBrowserSearch()});
 function toggleBrowserPanel(){
  if(!managerOpen)managerSection='favorites';
  tabManager(!managerOpen);
@@ -902,11 +954,11 @@ root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>n
 
 $('[data-scan]').addEventListener('click',()=>{if('BarcodeDetector' in window)$('[data-scan-file]').click();else window.alert('На этом устройстве сканирование QR-кода пока недоступно. Адрес можно ввести вручную.')});
 $('[data-scan-file]').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const detector=new BarcodeDetector({formats:['qr_code']});const image=await createImageBitmap(file);let results;try{results=await detector.detect(image)}finally{image.close?.()}const value=results?.[0]?.rawValue;if(value){const url=target(value);if(url)navigate(url)}else window.alert('QR-код не найден на изображении')}catch{window.alert('Не удалось прочитать QR-код')}finally{e.target.value=''}});
-root.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(managerOpen)tabManager(false);else close()}});
+searchForm.addEventListener('submit',e=>{e.preventDefault();const url=target(input.value);if(!url){input.focus();return}if(managerOpen)tabManager(false);navigate(url)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(!searchForm.hidden)closeBrowserSearch(true);else if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,reload:browserReload,tabs:()=>tabManager(!managerOpen),bookmarks,search:openBrowserSearch,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1,canReload:!!currentUrl()})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
 if(document.fonts?.ready)document.fonts.ready.then(balanceBrowserVerticalRhythm).catch(()=>{});
 restoreSession();render();
 })();
