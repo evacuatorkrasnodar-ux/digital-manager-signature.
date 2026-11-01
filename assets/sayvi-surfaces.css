@@ -275,7 +275,10 @@
  --sm-accent:var(--seyveo-emerald);
  box-sizing:border-box;min-width:0;
  position:relative;isolation:isolate;
- padding:4px clamp(10px,3vw,20px) max(95px,calc(75px + env(safe-area-inset-bottom,0px)))!important;
+ padding:4px 0 max(95px,calc(75px + env(safe-area-inset-bottom,0px)))!important;
+ /* Match the floating dock's 16px side gutters instead of inset mail gutters. */
+ width:calc(100% + 16px);max-width:none;
+ margin-inline:-8px;
  background:transparent!important;color:var(--text);
  overflow-x:clip;
 }
