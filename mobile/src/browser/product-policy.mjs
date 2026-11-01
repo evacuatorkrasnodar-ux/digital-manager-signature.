@@ -14,11 +14,15 @@ export const BROWSER_DISTRIBUTIONS = Object.freeze({
 });
 
 /** Entitlements must be verified by a trusted account / purchase adapter. */
-export const BROWSER_PREMIUM_ENTITLEMENTS = Object.freeze([
+export const BROWSER_PLUS_ENTITLEMENTS = Object.freeze([
+  'browser-plus',
+  // Legacy internal entitlement remains recognized; never display "Premium".
   'browser-premium',
   'seyveo-one',
   'seyveo-business'
 ]);
+// Backward compatible programmatic alias for already prepared modules.
+export const BROWSER_PREMIUM_ENTITLEMENTS = BROWSER_PLUS_ENTITLEMENTS;
 
 /** Build deterministic UI capabilities; local browsing stays free. */
 export function resolveBrowserProductState({
@@ -34,8 +38,8 @@ export function resolveBrowserProductState({
   }
   const standalone = distribution === BROWSER_DISTRIBUTIONS.STANDALONE;
   const signedIn = typeof accountId === 'string' && accountId.trim().length > 0;
-  const premium = signedIn && entitlementVerified === true &&
-    BROWSER_PREMIUM_ENTITLEMENTS.includes(entitlement);
+  const plus = signedIn && entitlementVerified === true &&
+    BROWSER_PLUS_ENTITLEMENTS.includes(entitlement);
   return Object.freeze({
     distribution,
     canBrowseAsGuest: true,
@@ -46,9 +50,13 @@ export function resolveBrowserProductState({
     showSeyveoCard: standalone && promoDismissed !== true,
     canDismissSeyveoCard: standalone,
     signedIn,
-    hasPremium: premium,
-    canOfferCloudSync: premium,
-    cloudSyncEnabled: premium && syncConsent === true,
-    canOfferPremiumAssistant: premium
+    edition: plus ? 'plus' : 'free',
+    editionName: plus ? 'SEYVEO Browser+' : 'SEYVEO Browser',
+    // The "+" is a brand edition mark, not the new-tab button.
+    hasPlus: plus,
+    hasPremium: plus, // Legacy internal consumer; no user-facing Premium label.
+    canOfferCloudSync: plus,
+    cloudSyncEnabled: plus && syncConsent === true,
+    canOfferPremiumAssistant: plus
   });
 }
