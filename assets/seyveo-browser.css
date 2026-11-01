@@ -408,11 +408,10 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 }
 .seyveo-browser-manager::-webkit-scrollbar{display:none}
 /* Management now floats above the active Browser; no main content is hidden. */
-/* Same direct parent, flex order and size as the original Browser search bar.
-   This is the same existing four-button navigation, not four new tiles. */
+/* Three lightweight menu destinations. Tabs remain in the top glass carousel. */
 .sb-manager-switcher{
- display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- width:100%;flex:none;height:40px;min-height:40px;max-height:40px;margin:0;border-radius:22px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ width:100%;flex:none;height:36px;min-height:36px;max-height:36px;margin:0;border-radius:19px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
 }
 .sb-manager-switcher button{
  display:flex;justify-content:center;align-items:center;gap:5px;min-width:0;
@@ -1323,7 +1322,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  left:max(12px,var(--sv-browser-gutter,16px));
  right:max(12px,var(--sv-browser-gutter,16px));
  width:auto;
- height:min(65dvh,555px);
+ height:min(50dvh,420px);
  max-height:calc(100% - max(env(safe-area-inset-top),16px) - var(--seyveo-browser-dock-height,86px) - 28px);
  flex:none;
  padding:8px 11px 16px;
@@ -1348,8 +1347,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:flex;align-items:center;justify-content:space-between;
  flex:none;gap:14px;
  width:calc(100% + 22px);
- height:70px;min-height:70px;
- margin:-8px -11px 9px;
+ height:54px;min-height:54px;
+ margin:-8px -11px 7px;
  padding:7px 16px;
  border-bottom:1px solid color-mix(in srgb,var(--text,#eef3f1) 10%,transparent);
  border-radius:22px 22px 0 0;
@@ -1386,8 +1385,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  min-height:0;
 }
 .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){
- display:grid;position:sticky;top:62px;z-index:4;
- width:100%;min-height:40px;height:40px;
+ display:grid;position:sticky;top:46px;z-index:4;
+ width:100%;min-height:36px;height:36px;
  margin:0 0 5px;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
 }
@@ -1404,13 +1403,13 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  }
  .seyveo-browser.is-unified>.seyveo-browser-start{margin-top:23px;padding-top:7px}
  .seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
-  height:min(64dvh,530px);
+  height:min(55dvh,450px);
   padding:7px 9px 13px;
   border-radius:20px;
  }
  .seyveo-browser.is-unified .sb-browser-panel-head{
   top:-7px;
-  height:62px;min-height:62px;
+  height:52px;min-height:52px;
   width:calc(100% + 18px);
   margin:-7px -9px 8px;
   padding:6px 12px;
@@ -1421,7 +1420,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-spacer){
   width:38px;min-width:38px;height:40px;min-height:40px;
  }
- .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:55px}
+ .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:45px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-unified .sb-browser-panel-scrim{backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -1550,27 +1549,6 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts>button{transition:none}
 }
 
-/* Downloads lives under the existing three-line Browser menu.
-   No fifth glass tile: the four previously approved tabs remain unchanged. */
-.seyveo-browser .sb-browser-downloads-shortcut[hidden]{display:none!important}
-.seyveo-browser .sb-browser-downloads-shortcut{
- display:flex;align-items:center;justify-content:flex-start;gap:10px;
- width:100%;min-height:39px;margin:3px 0 1px;padding:7px 12px;
- border:1px solid var(--sv-home-outline);
- border-radius:13px;
- background:linear-gradient(155deg,var(--sv-home-glint),transparent 76%),var(--sv-home-glass);
- color:var(--text);font:inherit;font-size:12px;font-weight:450;
- text-align:left;
-}
-.seyveo-browser .sb-browser-downloads-shortcut svg{
- display:block;width:17px;height:17px;flex:none;
-}
-.seyveo-browser .sb-browser-downloads-shortcut.is-selected{
- background:var(--seyveo-hdr-active);
-}
-.seyveo-browser .sb-browser-downloads-shortcut:focus-visible{
- outline:2px solid var(--sb-accent);outline-offset:1px;
-}
 .seyveo-browser .sb-browser-downloads-notice{
  max-width:52ch;margin:13px 7px 5px;
  font-size:12px;line-height:1.65;white-space:normal;
