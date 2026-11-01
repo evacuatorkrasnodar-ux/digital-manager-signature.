@@ -1,5 +1,6 @@
 name: SEYVEO mobile validation
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'mobile/**'
