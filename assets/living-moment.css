@@ -889,3 +889,28 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-tiles{
  width:100%;
 }
+
+/* Match the dock's opaque base colour, without its luminous top coating. */
+#homePage{
+ --lm-matte-fill:#131f1d;
+ --lm-matte-line:rgba(171,213,202,.24);
+}
+:root[data-theme=dark][data-palette=graphite] #homePage{
+ --lm-matte-fill:#131a20;
+ --lm-matte-line:rgba(170,194,208,.23);
+}
+:root[data-theme=dark][data-palette=sapphire] #homePage{
+ --lm-matte-fill:#121c30;
+ --lm-matte-line:rgba(159,188,243,.27);
+}
+:root[data-theme=dark][data-palette=plum] #homePage{
+ --lm-matte-fill:#1c1b1a;
+ --lm-matte-line:rgba(204,185,164,.19);
+}
+:root[data-theme=light] #homePage{
+ --lm-matte-fill:#eceff3;
+ --lm-matte-line:rgba(54,68,89,.20);
+}
+#homePage #seyveoLivingMoment{
+ width:min(430px,calc(100% - 14px));
+}
