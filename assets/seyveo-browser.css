@@ -1433,7 +1433,14 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  font-size:13px;font-weight:450;letter-spacing:.015em;opacity:.9;
 }
 .seyveo-browser.is-unified.is-browser-home [data-quick-toggle]{
- display:none!important; /* All four quick sites already fit the carousel. */
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:32px;padding:4px 5px;
+ font-size:11px;font-weight:450;color:var(--text);opacity:.68;
+ border-radius:9px;background:transparent;
+}
+.seyveo-browser.is-unified.is-browser-home [data-quick-toggle]:active,
+.seyveo-browser.is-unified.is-browser-home [data-quick-toggle][aria-expanded="true"]{
+ opacity:1;background:var(--seyveo-hdr-active);
 }
 .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts,
 .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts.is-expanded{
@@ -1661,5 +1668,98 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 @media(max-width:390px){
  .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup{
   padding-left:7px;padding-right:3px;gap:4px;border-radius:14px;
+ }
+}
+
+/* SEYVEO Home: one optional user-chosen HTTPS site, not a duplicate Favorites.
+   Editor appears only on request; the 4 original glass positions never move. */
+.seyveo-browser .sb-quick-site-editor{
+ display:flex;flex-direction:column;gap:6px;min-width:0;
+ margin:8px 0 0;padding:9px 10px;
+ border:1px solid var(--sv-home-outline);border-radius:14px;
+ background:var(--sv-home-glass);
+ box-shadow:inset 0 1px 0 var(--sv-home-glint);
+}
+.seyveo-browser .sb-quick-site-editor>label{
+ font-size:11px;color:var(--secondary);
+}
+.seyveo-browser .sb-quick-site-fields{
+ display:flex;align-items:center;gap:6px;min-width:0;
+}
+.seyveo-browser .sb-quick-site-fields>input{
+ flex:1;min-width:0;height:36px;padding:5px 9px;
+ color:var(--text);background:transparent;
+ border:1px solid var(--sv-home-outline);border-radius:10px;
+ font:inherit;font-size:14px;outline:none;
+}
+.seyveo-browser .sb-quick-site-fields>input:focus,
+.seyveo-browser .sb-quick-site-fields>input:focus-visible{
+ outline:none;border-color:var(--sb-accent);
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--sb-accent) 13%,transparent);
+}
+.seyveo-browser .sb-quick-site-fields>button{
+ flex:none;min-height:36px;padding:5px 9px;border-radius:10px;
+ border:1px solid var(--sv-home-outline);font-size:11px;
+ background:var(--seyveo-hdr-active);
+}
+.seyveo-browser .sb-quick-site-fields>[data-quick-cancel]{
+ width:34px;font-size:20px;font-weight:300;
+ background:transparent;
+}
+.seyveo-browser .sb-quick-site-error{
+ margin:0;font-size:11px;line-height:1.35;color:var(--text);
+}
+.seyveo-browser .seyveo-browser-shortcuts [data-custom-site] .sb-custom-site{
+ display:grid;place-items:center;
+ font-size:25px;font-weight:300;line-height:1;
+ color:var(--text);
+ background:var(--seyveo-hdr-active);border-radius:10px;
+}
+.seyveo-browser.is-unified.is-browser-home .seyveo-browser-continue{
+ margin-top:14px;
+}
+.seyveo-browser.is-unified.is-browser-home .seyveo-browser-continue [data-continue-list]{
+ display:block;min-height:0;padding:0;overflow:visible;
+ background:transparent;border:0;border-radius:0;box-shadow:none;
+}
+.seyveo-browser.is-unified.is-browser-home .seyveo-browser-history-card.sb-home-resume{
+ display:flex;align-items:center;gap:10px;width:100%;
+ min-width:0;height:68px;min-height:68px;
+ padding:9px 11px;text-align:left;
+ border:1px solid var(--sv-home-outline);border-radius:15px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
+ box-shadow:inset 0 1px 0 var(--sv-home-glint);
+ color:var(--text);
+}
+.seyveo-browser.is-unified.is-browser-home .sb-home-resume .seyveo-browser-history-logo.sb-site-logo{
+ width:32px;height:32px;min-width:32px;min-height:32px;
+ border-radius:9px;
+}
+.seyveo-browser.is-unified.is-browser-home .sb-home-resume .seyveo-browser-history-words{
+ flex:1;min-width:0;gap:4px;
+}
+.seyveo-browser.is-unified.is-browser-home .sb-home-resume .seyveo-browser-history-words strong{
+ font-size:13px;font-weight:500;line-height:1.15;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.seyveo-browser.is-unified.is-browser-home .sb-home-resume .seyveo-browser-history-words small{
+ font-size:10.5px;line-height:1.2;opacity:.6;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.seyveo-browser .sb-home-resume-arrow{
+ width:22px;height:22px;flex:none;display:grid;place-items:center;
+ opacity:.7;
+}
+.seyveo-browser .sb-home-resume-arrow svg{
+ display:block;width:17px;height:17px;
+}
+.seyveo-browser.is-unified.is-browser-home .sb-home-resume:active{
+ background:var(--seyveo-hdr-active);
+}
+@media(max-width:380px){
+ .seyveo-browser .sb-quick-site-editor{padding:7px 8px}
+ .seyveo-browser .sb-quick-site-fields>button{padding:5px 7px}
+ .seyveo-browser.is-unified.is-browser-home .seyveo-browser-history-card.sb-home-resume{
+  height:64px;min-height:64px;
  }
 }
