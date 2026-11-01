@@ -1,6 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {loadBrowserSession,saveBrowserSession} from './session-store';
-import {View,Text,TextInput,Pressable,ScrollView} from 'react-native';
+import {View,Text,TextInput,Pressable,ScrollView,Alert} from 'react-native';
+import {File,Paths} from 'expo-file-system';
 import {WebView} from 'react-native-webview';
 type Tab={id:number;url:string};
 const HOME='https://www.wikipedia.org/';
@@ -20,6 +21,20 @@ export function NativeBrowser(){
  const [address,setAddress]=useState(HOME);
  const [back,setBack]=useState(false),[forward,setForward]=useState(false);
  const [translationNotice,setTranslationNotice]=useState('');
+ async function downloadRequested(downloadUrl:string){
+  try{
+   const u=new URL(downloadUrl);
+   if(u.protocol!=='https:'||u.username||u.password){setTranslationNotice('Разрешены только защищённые HTTPS-загрузки.');return}
+   Alert.alert('Загрузить файл?',u.hostname,[{text:'Отмена',style:'cancel'},{text:'Загрузить',onPress:()=>{void (async()=>{
+    try{
+     const basename=(u.pathname.split('/').pop()||'download').replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,72)||'download';
+     const destination=new File(Paths.document,Date.now()+'-'+basename);
+     const file=await File.downloadFileAsync(u.href,destination);
+     setTranslationNotice('Файл сохранён в приватном хранилище приложения: '+file.name);
+    }catch{setTranslationNotice('Не удалось скачать файл. Возможно, сайту нужна авторизация или ссылка устарела.')}
+   })()}}]);
+  }catch{setTranslationNotice('Недопустимый адрес загрузки.')}
+ }
  function translateInfo(){setTranslationNotice('Перевод всей страницы пока не подключён. Для него потребуется сервис перевода или локальная модель и согласие на обработку текста.')}
  function select(tab:Tab){setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
@@ -34,7 +49,7 @@ export function NativeBrowser(){
    <Pressable onPress={add} accessibilityRole="button" accessibilityLabel="Новая вкладка" style={{padding:10}}><Text style={{color:'white',fontSize:23}}>＋</Text></Pressable>
   </ScrollView>
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
-  <WebView key={current.id} ref={web} source={{uri:current.url}} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
+  <WebView onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
   {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
   <View style={{flexDirection:'row',justifyContent:'space-around',padding:12}}>
    <Pressable disabled={!back} onPress={()=>web.current?.goBack()}><Text style={{color:'white'}}>Назад</Text></Pressable>
