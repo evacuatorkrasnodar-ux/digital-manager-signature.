@@ -6,6 +6,7 @@ on:
       - 'mobile/src/browser/**'
       - 'mobile/tests/browser-document-review.test.mjs'
       - 'mobile/tests/browser-pdf-review.test.mjs'
+      - 'mobile/tests/native-webview-policy.test.mjs'
       - 'mobile/tests/sayvi-document-client.test.mjs'
       - 'server/browser-document-ai.mjs'
       - 'server/ai-mail-server.mjs'
@@ -32,4 +33,5 @@ jobs:
             mobile/tests/browser-document-review.test.mjs \
             mobile/tests/browser-pdf-review.test.mjs \
             mobile/tests/native-pdf-extractor-core.test.mjs \
-            mobile/tests/sayvi-document-client.test.mjs
+            mobile/tests/sayvi-document-client.test.mjs \
+            mobile/tests/native-webview-policy.test.mjs
