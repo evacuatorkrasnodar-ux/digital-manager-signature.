@@ -547,6 +547,20 @@ function renderSecondary(){
  if(!links.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Сохрани страницу в Избранное';secondary.append(hint)}
  for(const url of links){const row=document.createElement('button');row.type='button';row.className='sb-manager-secondary-link';const icon=document.createElement('span');paintSiteMark(icon,url);const words=document.createElement('span');const title=document.createElement('strong');title.textContent=siteName(url);const sub=document.createElement('small');sub.textContent=new URL(url).hostname.replace(/^www[.]/,'');words.append(title,sub);row.append(icon,words);row.addEventListener('click',()=>{tabManager(false);navigate(url)});secondary.append(row)}
 }
+/* Pixel-balanced Browser rhythm: match Browser→search and search→glass tab.
+   Shifts the shared tabs/grey strip/page together; never alters their sizes. */
+function balanceBrowserVerticalRhythm(){
+ if(root.hidden)return;
+ const word=$('.seyveo-browser-home h2'),search=$('.seyveo-browser-bar');
+ const rail=$('.seyveo-browser-tabs'),tab=tabArea.querySelector('.seyveo-browser-tab');
+ if(!word||!search||!rail||!tab)return;
+ const desired=search.getBoundingClientRect().top-word.getBoundingClientRect().bottom;
+ const actual=tab.getBoundingClientRect().top-search.getBoundingClientRect().bottom;
+ const currentMargin=parseFloat(window.getComputedStyle(rail).marginTop);
+ if(!Number.isFinite(desired)||!Number.isFinite(actual)||!Number.isFinite(currentMargin))return;
+ const next=Math.max(-38,Math.min(3,currentMargin+desired-actual));
+ if(Math.abs(next-currentMargin)>.4)root.style.setProperty('--sb-balanced-tabs-margin',next.toFixed(2)+'px');
+}
 function render(){
  persistSession();
  const t=current(),url=currentUrl(),home=!url;if(managerOpen)renderManager();
@@ -646,6 +660,7 @@ function render(){
   create.addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
   placeholder.append(create);tabArea.append(placeholder);
  }
+ balanceBrowserVerticalRhythm();
 }
 function navigate(value){const url=secureUrl(value);if(!url)return false;const t=current();t.entries=t.entries.slice(0,t.position+1);t.entries.push(url);t.position++;remember(url);render();return true}
 /* One existing Sayvi, one original dock: temporarily hide Browser without
@@ -809,5 +824,7 @@ root.querySelector('form').addEventListener('submit',e=>{e.preventDefault();cons
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!root.hidden){if(managerOpen)tabManager(false);else close()}});
 document.addEventListener('click',e=>{const tile=e.target.closest?.('[data-calendar-space="browser"],[data-world-space="browser"]');if(tile){e.preventDefault();open()}});
 document.addEventListener('click',e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const a=e.target.closest?.('a[href]');if(!a||root.contains(a)||!a.closest('.seyveo-conversation'))return;const u=secureUrl(a.href);if(u){e.preventDefault();open(u)}});
-window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1})});restoreSession();render();
+window.SEYVEO_BROWSER=Object.freeze({open,close,askSayvi,voiceCommand:browserVoiceCommand,voiceUnavailable:browserVoiceUnavailable,back:browserBack,forward:browserForward,home:goToSeyveoHome,tabs:()=>tabManager(!managerOpen),bookmarks,state:()=>({open:!root.hidden,canBack:current().position>0,canForward:current().position<current().entries.length-1})});window.addEventListener('resize',balanceBrowserVerticalRhythm,{passive:true});
+if(document.fonts?.ready)document.fonts.ready.then(balanceBrowserVerticalRhythm).catch(()=>{});
+restoreSession();render();
 })();
