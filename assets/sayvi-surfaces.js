@@ -411,6 +411,7 @@ function mailView(){
   const q=mailSearch.trim();
   const matched=inFolder.filter(m=>!q||[m.from,m.subject,m.preview,m.body].join(' ').toLocaleLowerCase('ru').includes(q));
   if(!matched.length){content.append(create('p','sv-mail-empty',q?'По этому запросу примеров нет.':'Здесь пока нет учебных писем.'));return}
+  const group=create('div','sv-mail-letter-group');content.append(group);
   for(const item of (limit?matched.slice(0,limit):matched)){
    const row=create('button','sv-mail-letter');
    row.type='button';row.classList.toggle('is-unread',item.unread);
@@ -428,7 +429,7 @@ function mailView(){
    if(item.unread)row.append(create('span','sv-mail-unread-dot'));
    row.append(avatar,detail,meta);
    row.setAttribute('aria-label',item.from+', '+item.subject+', пример');
-   row.addEventListener('click',()=>viewExample(item));content.append(row);
+   row.addEventListener('click',()=>viewExample(item));group.append(row);
   }
  }
  function drawDrafts(){
@@ -477,6 +478,7 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
+  section.dataset.mailFolder=mailFolder;
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-account-switch',label);
@@ -506,7 +508,7 @@ function mailView(){
    if(mailFolder===key)button.setAttribute('aria-current','page');
    extraNav.append(button);
   }
-  extraNav.hidden=mailEditorOpen||!!mailCurrent;
+  extraNav.hidden=mailEditorOpen||!!mailCurrent||mailFolder==='overview';
   nav.hidden=mailEditorOpen||!!mailCurrent;
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
   compose.hidden=mailEditorOpen;
