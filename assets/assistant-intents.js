@@ -22,7 +22,7 @@ const aliases=[
  ['care',/^(?:забот(?:а|у|е|ы)|заботу о себе)$/],
  ['world',/^(?:мой мир|моего мира|моем мире|контакт(?:ы|ах)|люд(?:и|ей)|мои контакты|мои люди)$/],
  ['help',/^(?:перв(?:ая|ую) помощ(?:ь|и)|инструкци(?:я|ю)|обучени(?:е|я)|как пользоваться приложением)$/],
- ['browser',/^(?:браузер(?:а|е|у)?|seyveo browser|сейвео браузер|сейви браузер|веб браузер|интернет браузер)$/]
+ ['browser',/^(?:браузер(?:а|е|у)?|seyveo browser|сейвео браузер|сейви браузер|веб браузер|интернет браузер|интернет|сайт)$/]
 ];
 function toolFor(target){
  for(const [tool,re] of aliases)if(re.test(target))return tool;
@@ -34,6 +34,8 @@ function understand(input){
  q=q.replace(/^(?:(?:сейвео|севео|сейво|сэйви|сейви|сэй|сей|seyveo)[\s,!:.]+)?(?:пожалуйста[,\s]+)?/i,'').trim();
  q=q.replace(/[\s.!?]+$/g,'').replace(/\s+/g,' ');
  q=q.replace(/\s+пожалуйста$/,'').trim();
+ if(q==='браузер'||q==='сейвео браузер')
+  return Object.freeze({kind:'navigate',tool:'browser',label:labels.browser});
  // Voice/text shortcut to the ALREADY EXISTING Management connections.
  // It opens the service guide, not an OAuth authorization or an account login.
  const connect=q.match(/^(?:подключи(?:те)?|подключить|давай подключим|хочу подключить|настрои(?:ть|м)|как подключить|покажи подключения|открой подключения)(?:\s+(.+))?$/);
