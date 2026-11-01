@@ -102,9 +102,15 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
       setReview(preview);
     }catch(error){
       const code=error instanceof Error?error.message:'';
-      setMessage(code==='pdf-text-not-found'
-        ?'В PDF нет распознаваемого текста. Для скана позже потребуется OCR.'
-        :'Не удалось извлечь текст PDF. Файл можно открыть обычным просмотром.');
+      const nativeCode=error && typeof error==='object' && 'code' in error
+        ?String(error.code):'';
+      setMessage(
+        nativeCode==='PASSWORD_REQUIRED'||nativeCode==='INCORRECT_PASSWORD'
+          ?'Этот PDF защищён паролем. Пока открой его обычным просмотром.'
+          :code==='pdf-text-not-found'
+            ?'В PDF нет распознаваемого текста. Для скана позже потребуется OCR.'
+            :'Не удалось извлечь текст PDF. Файл можно открыть обычным просмотром.'
+      );
     }finally{setReading(false);}
   }
 
@@ -266,6 +272,13 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
           <ScrollView nestedScrollEnabled style={[styles.excerpt,{borderColor:colors.line}]}>
             <Text selectable style={[styles.excerptText,{color:colors.text}]}>{review.excerpt}</Text>
           </ScrollView>
+          {review.extension==='pdf'?(
+            <Text style={[styles.help,{color:colors.muted}]}>
+              {'PDF: прочитано '+(review as typeof review & {pagesRead?:number}).pagesRead+
+                ' из '+(review as typeof review & {pageCount?:number}).pageCount+
+                ' страниц. Это предварительный просмотр, а не анализ всего договора.'}
+            </Text>
+          ):null}
           {review.truncated?(
             <Text style={[styles.help,{color:colors.muted}]}>Показана только часть текста.</Text>
           ):null}
