@@ -994,7 +994,12 @@ manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
 });
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();openBrowserSearch()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClosedShown=false;for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
-root.querySelector('.seyveo-browser-shortcuts [data-bookmarks]').addEventListener('click',bookmarks);
+const customShortcut=root.querySelector('[data-custom-site]');
+customShortcut.addEventListener('click',()=>{
+ const url=configuredQuickSite();
+ if(url)navigate(url);
+ else showQuickEditor(true);
+});
 $('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();openBrowserSearch()});
 function toggleBrowserPanel(){
  if(!managerOpen)managerSection='favorites';
@@ -1006,18 +1011,44 @@ panelScrim.addEventListener('click',()=>tabManager(false));
 
 $('[data-open-blocked]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
 $('[data-frame-external]').addEventListener('click',()=>{const url=currentUrl();if(url)window.open(url,'_blank','noopener,noreferrer')});
-$('[data-history-toggle]').addEventListener('click',()=>{
- managerSection='history';tabManager(true);
-});
+
 paintQuickSites();
 /* Keep shortcut tiles intact: native swipe in the rail, expand all on request. */
 const quickToggle=root.querySelector('[data-quick-toggle]');
-const quickLinks=root.querySelector('#seyveoBrowserQuickLinks');
-quickToggle.addEventListener('click',()=>{
- const expanded=quickLinks.classList.toggle('is-expanded');
- quickToggle.textContent=expanded?'Свернуть':'Показать все ›';
- quickToggle.setAttribute('aria-expanded',String(expanded));
- if(!expanded)quickLinks.scrollLeft=0;
+const quickEditor=root.querySelector('[data-quick-editor]');
+const quickField=quickEditor.querySelector('input');
+const quickError=quickEditor.querySelector('.sb-quick-site-error');
+function showQuickEditor(open){
+ quickEditor.hidden=!open;
+ quickToggle.textContent=open?'Готово':'Изменить';
+ quickToggle.setAttribute('aria-expanded',String(open));
+ quickError.hidden=true;
+ quickError.textContent='';
+ if(open){
+  quickField.value=configuredQuickSite()||'';
+  quickField.focus({preventScroll:true});
+ }
+}
+quickToggle.addEventListener('click',()=>showQuickEditor(quickEditor.hidden));
+quickEditor.querySelector('[data-quick-cancel]').addEventListener('click',()=>showQuickEditor(false));
+quickEditor.addEventListener('submit',event=>{
+ event.preventDefault();
+ const raw=quickField.value.trim();
+ const candidate=/^https?:\/\//i.test(raw)?raw:'https://'+raw;
+ const url=raw?secureUrl(candidate):null;
+ if(!url){
+  quickError.textContent='Укажи адрес сайта с защищённым соединением HTTPS';
+  quickError.hidden=false;
+  quickField.focus();
+  return;
+ }
+ try{localStorage.setItem(quickSiteKey,url)}
+ catch{
+  quickError.textContent='Не удалось сохранить сайт на устройстве';
+  quickError.hidden=false;return;
+ }
+ showQuickEditor(false);
+ render();
 });
 root.querySelectorAll('[data-site]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.site)));
 
