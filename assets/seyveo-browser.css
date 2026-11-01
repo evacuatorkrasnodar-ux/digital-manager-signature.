@@ -1549,3 +1549,29 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-unified.is-browser-home .seyveo-browser-shortcuts>button{transition:none}
 }
+
+/* Downloads lives under the existing three-line Browser menu.
+   No fifth glass tile: the four previously approved tabs remain unchanged. */
+.seyveo-browser .sb-browser-downloads-shortcut[hidden]{display:none!important}
+.seyveo-browser .sb-browser-downloads-shortcut{
+ display:flex;align-items:center;justify-content:flex-start;gap:10px;
+ width:100%;min-height:39px;margin:3px 0 1px;padding:7px 12px;
+ border:1px solid var(--sv-home-outline);
+ border-radius:13px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 76%),var(--sv-home-glass);
+ color:var(--text);font:inherit;font-size:12px;font-weight:450;
+ text-align:left;
+}
+.seyveo-browser .sb-browser-downloads-shortcut svg{
+ display:block;width:17px;height:17px;flex:none;
+}
+.seyveo-browser .sb-browser-downloads-shortcut.is-selected{
+ background:var(--seyveo-hdr-active);
+}
+.seyveo-browser .sb-browser-downloads-shortcut:focus-visible{
+ outline:2px solid var(--sb-accent);outline-offset:1px;
+}
+.seyveo-browser .sb-browser-downloads-notice{
+ max-width:52ch;margin:13px 7px 5px;
+ font-size:12px;line-height:1.65;white-space:normal;
+}
