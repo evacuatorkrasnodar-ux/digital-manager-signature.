@@ -153,6 +153,17 @@ export function createExpoBrowserDownloadStorage(){
       return makeBrowserReviewPreview(item,text);
     },
 
+    async clearStalePdfPreviews(){
+      // Only temp copies made by SEYVEO; the original downloads are untouched.
+      // For recovery after app termination during native PDF reading.
+      if (!Paths.cache.exists) return;
+      for(const entry of Paths.cache.list()){
+        if(!(entry instanceof File)) continue;
+        if(!/^seyveo-pdf-[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}\\.pdf$/.test(entry.name)) continue;
+        try{entry.delete()}catch{}
+      }
+    },
+
     async readLocalPdfPreview(id,extractor){
       // User must approve locally before reaching this API.
       // The native library is optional until tested on real iOS and Android.
