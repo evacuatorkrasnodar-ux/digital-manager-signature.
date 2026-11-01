@@ -878,3 +878,14 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #dynamic .decision-card[data-owner-advice]::after{
  content:none;
 }
+
+/* Home cards: dock-aligned width; matte material and animations unchanged. */
+#homePage #seyveoLivingMoment{
+ width:min(100%, 440px);
+ max-width:calc(100vw - 24px);
+ margin-left:auto;
+ margin-right:auto;
+}
+#homePage #seyveoLivingMoment .lm-tiles{
+ width:100%;
+}
