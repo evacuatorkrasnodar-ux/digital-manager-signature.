@@ -10,6 +10,20 @@ import * as Crypto from 'expo-crypto';
 import {Directory,File,Paths} from 'expo-file-system';
 import {BROWSER_DOWNLOAD_MAX_BYTES,describeBrowserDownload,safeBrowserDownloadName} from './browser-download-core.mjs';
 
+// We store opaque .blob names; native preview needs the original safe extension.
+const mimeFor = name => {
+  const ext=name.split('.').pop().toLowerCase();
+  return ({
+    pdf:'application/pdf',txt:'text/plain',csv:'text/csv',
+    jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',
+    mp3:'audio/mpeg',wav:'audio/wav',m4a:'audio/mp4',
+    mp4:'video/mp4',mov:'video/quicktime',webm:'video/webm',
+    zip:'application/zip',
+    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  })[ext] || 'application/octet-stream';
+};
 const root = () => new Directory(Paths.document,'seyveo-browser-downloads');
 const validId = value => typeof value==='string' &&
   /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(value);
@@ -45,7 +59,7 @@ export function createExpoBrowserDownloadStorage(){
       return result.sort((a,b)=>b.savedAt-a.savedAt);
     },
 
-    async download(request){
+    async download(request,onProgress=()=>{}){
       if (!request || typeof request.url!=='string' ||
           typeof request.name!=='string' || request.maxBytes!==BROWSER_DOWNLOAD_MAX_BYTES) {
         throw Error('invalid-download-request');
@@ -59,9 +73,24 @@ export function createExpoBrowserDownloadStorage(){
       if (!validId(id)) throw Error('download-id-unavailable');
       root().create({idempotent:true,intermediates:true});
       const candidate=partial(id), stored=file(id), receipt=info(id);
+      const abort=new AbortController();
+      let tooLarge=false;
       try{
         // A fresh .partial is only committed after a successful transfer.
-        await File.downloadFileAsync(request.url,candidate);
+        await File.downloadFileAsync(request.url,candidate,{
+          signal:abort.signal,
+          onProgress:progress=>{
+            const written=Number(progress?.bytesWritten);
+            const total=Number(progress?.totalBytes);
+            if (written>BROWSER_DOWNLOAD_MAX_BYTES || total>BROWSER_DOWNLOAD_MAX_BYTES) {
+              tooLarge=true;abort.abort();
+            }
+            if (Number.isFinite(written) && written>=0) onProgress({
+              bytesWritten:written,
+              totalBytes:Number.isFinite(total)&&total>0?total:null
+            });
+          }
+        });
         const bytes=candidate.size;
         if (!Number.isFinite(bytes) || bytes<=0 || bytes>BROWSER_DOWNLOAD_MAX_BYTES) {
           throw Error('download-size-not-allowed');
@@ -79,7 +108,7 @@ export function createExpoBrowserDownloadStorage(){
         try{if(candidate.exists)candidate.delete()}catch{}
         try{if(stored.exists)stored.delete()}catch{}
         try{if(receipt.exists)receipt.delete()}catch{}
-        throw Error('download-failed');
+        throw Error(tooLarge?'download-size-not-allowed':'download-failed');
       }
     },
 
@@ -89,6 +118,20 @@ export function createExpoBrowserDownloadStorage(){
       if (info(id).exists) info(id).delete();
       if (file(id).exists) file(id).delete();
       if (partial(id).exists) partial(id).delete();
+    },
+
+    async preview(id){
+      if (!validId(id) || !file(id).exists || !info(id).exists) {
+        throw Error('download-not-found');
+      }
+      const record=clean(await info(id).json());
+      if (!record || record.id!==id || file(id).size!==record.bytes) {
+        throw Error('download-not-found');
+      }
+      // Only a direct user tap should invoke the platform preview.
+      const stored=file(id),mimeType=mimeFor(record.name);
+      if (!await File.canPreview(stored,{mimeType})) throw Error('download-preview-unavailable');
+      await File.preview(stored,{title:record.name,mimeType});
     },
 
     async getLocalFileUri(id){
