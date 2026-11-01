@@ -8,6 +8,7 @@ import {Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-n
 import {createBrowserDownloadController, type BrowserDownloadSnapshot}
   from './browser-download-core.mjs';
 import {createExpoBrowserDownloadStorage} from './expo-browser-download-storage.mjs';
+import type {SayviDocumentExplanation} from './sayvi-document-client.mjs';
 import {createExpoBrowserPdfExtractor} from './expo-browser-pdf-extractor';
 import {BROWSER_PDF_FILE_LIMIT,inspectBrowserPdf,supportsBrowserPdfExtractor,
   type BrowserPdfExtractor} from './browser-pdf-review.mjs';
@@ -23,7 +24,7 @@ export type BrowserDownloadsColors = {
   accent:string;
 };
 type Props={colors:BrowserDownloadsColors;pdfExtractor?:BrowserPdfExtractor;
-  onSayviReview?:(request:BrowserSayviHandoff)=>Promise<void>};
+  onSayviReview?:(request:BrowserSayviHandoff)=>Promise<SayviDocumentExplanation>};
 
 const labelForCategory:Record<string,string>={
   document:'Документ',image:'Изображение',audio:'Аудио',
@@ -38,6 +39,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
   const [source,setSource]=useState('');
   const [message,setMessage]=useState('');
   const [review,setReview]=useState<BrowserDocumentReviewPreview|null>(null);
+  const [explanation,setExplanation]=useState<SayviDocumentExplanation|null>(null);
   const [reading,setReading]=useState(false);
   const [submitting,setSubmitting]=useState(false);
   const [snapshot,setSnapshot]=useState<BrowserDownloadSnapshot>({
@@ -81,6 +83,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
     if(reading || submitting) return;
     setReading(true);
     setReview(null);
+    setExplanation(null);
     setMessage('');
     try{
       // This call never sends document text to a server.
@@ -95,6 +98,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
     if(reading || submitting || !supportsBrowserPdfExtractor(activePdfExtractor)) return;
     setReading(true);
     setReview(null);
+    setExplanation(null);
     setMessage('');
     try{
       // Extract into local memory only. No automatic cloud or AI calls.
@@ -173,9 +177,12 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
          try{request=prepareSayviReviewHandoff(review,{approved:true});}
          catch{setMessage('Не удалось подготовить файл для Сэйви.');return;}
          setSubmitting(true);
-         void onSayviReview(request).then(()=>{
+         void onSayviReview(request).then(answer=>{
+           if(!answer || typeof answer.summary!=='string' || answer.advisory!==true ||
+              answer.executed!==false)throw Error('invalid-review-result');
            setReview(null);
-           setMessage('Запрос передан подключённой Сэйви.');
+           setExplanation(answer);
+           setMessage('');
          }).catch(()=>{
            setMessage('Не удалось передать текст Сэйви. Файл остаётся на телефоне.');
          }).finally(()=>setSubmitting(false));
@@ -187,6 +194,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
       {text:'Отмена',style:'cancel'},
       {text:'Удалить',style:'destructive',onPress:()=>{
         if(review?.fileId===id) setReview(null);
+        setExplanation(null);
         void downloads.remove(id).catch(()=>setMessage('Не удалось удалить файл.'));
       }}
     ]);
@@ -301,6 +309,31 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
               <Text style={[styles.actionText,{color:colors.muted}]}>Закрыть</Text>
             </Pressable>
           </View>
+        </View>
+      ):null}
+      {explanation?(
+        <View style={[styles.reviewBox,{borderColor:colors.line}]}>
+          <Text style={[styles.subheading,{color:colors.text}]}>✦ Сэйви · Объяснение документа</Text>
+          <Text style={[styles.excerptText,{color:colors.text}]}>{explanation.summary}</Text>
+          {explanation.keyPoints.length>0?(
+            <Text style={[styles.help,{color:colors.text}]}>
+              {'Главное:\n'+explanation.keyPoints.map(v=>'• '+v).join('\n')}
+            </Text>
+          ):null}
+          {explanation.cautions.length>0?(
+            <Text style={[styles.help,{color:colors.muted}]}>
+              {'На что обратить внимание:\n'+explanation.cautions.map(v=>'• '+v).join('\n')}
+            </Text>
+          ):null}
+          <Text style={[styles.help,{color:colors.muted}]}>
+            {explanation.incomplete
+              ?'Важно: был прочитан только фрагмент документа, а не весь файл.'
+              :'Это пояснение ИИ, а не подтверждение безопасности или юридическое заключение.'}
+          </Text>
+          <Pressable accessibilityRole="button" onPress={()=>setExplanation(null)}
+            style={[styles.reviewAction,{borderColor:colors.line}]}>
+            <Text style={[styles.actionText,{color:colors.muted}]}>Закрыть объяснение</Text>
+          </Pressable>
         </View>
       ):null}
       <Text style={[styles.foot,{color:colors.muted}]}>
