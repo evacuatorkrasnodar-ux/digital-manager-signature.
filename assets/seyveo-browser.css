@@ -411,18 +411,25 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 /* Three lightweight menu destinations. Tabs remain in the top glass carousel. */
 .sb-manager-switcher{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
- width:100%;flex:none;height:36px;min-height:36px;max-height:36px;margin:0;border-radius:19px;overflow:hidden;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);
+ width:100%;flex:none;height:34px;min-height:34px;max-height:34px;margin:0;border-radius:15px;overflow:hidden;border:1px solid var(--sv-home-outline);background:var(--sv-home-glass);box-shadow:inset 0 1px 0 var(--sv-home-glint);
 }
 .sb-manager-switcher button{
- display:flex;justify-content:center;align-items:center;gap:5px;min-width:0;
- padding:4px 2px;border-radius:21px;
- color:inherit;font-size:clamp(9.5px,2.2vw,11.5px);font-weight:400;white-space:nowrap;
+ position:relative;display:flex;justify-content:center;align-items:center;gap:5px;min-width:0;
+ padding:3px 3px;border-radius:12px;
+ color:inherit;font-size:clamp(10px,2.3vw,11.5px);font-weight:450;white-space:nowrap;
  transition:background .18s;
 }
 .sb-switch-icon{display:flex;align-items:center;justify-content:center;flex:none;line-height:1}
-.sb-switch-icon svg{width:clamp(16px,3.5vw,19px);height:clamp(16px,3.5vw,19px);stroke-width:1.55;display:block}
+.sb-switch-icon svg{width:16px;height:16px;stroke-width:1.5;display:block}
 .sb-switch-count{font-size:10px;min-width:17px;min-height:17px;display:grid;place-items:center;border-radius:50%;background:rgba(135,190,160,.18);font-weight:400}
-.sb-manager-switcher button.is-selected{background:var(--seyveo-hdr-active);box-shadow:inset 0 0 0 1px var(--sv-home-outline)}
+.sb-manager-switcher button.is-selected{
+ background:color-mix(in srgb,var(--sb-accent) 8%,transparent);
+ box-shadow:none;
+}
+.sb-manager-switcher button.is-selected::after{
+ content:"";position:absolute;left:22%;right:22%;bottom:1px;
+ height:1.5px;border-radius:3px;background:var(--sb-accent);opacity:.85;
+}
 .sb-manager-heading{
  margin:18px 3px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px
 }
@@ -634,11 +641,11 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  .sb-collection-summary small{font-size:9.5px}
 }
 @media(prefers-reduced-motion:reduce){.sb-collection-quick-actions{animation:none}}
-.sb-manager-secondary{display:grid;gap:10px;padding:24px 1px 10px}
+.sb-manager-secondary{display:grid;gap:7px;padding:8px 1px 9px}
 /* Browser History matches Recently Closed: one shared glass outline,
    79px rows, thin inset dividers and the SAME Quiet Cinema motion. */
-.sb-manager-secondary.is-history{display:block;padding:12px 1px 10px}
-.sb-manager-secondary.is-history>.sb-secondary-header{margin-bottom:8px;min-height:28px}
+.sb-manager-secondary.is-history{display:block;padding:4px 1px 8px}
+.sb-manager-secondary.is-history>.sb-secondary-header{margin-bottom:3px;min-height:29px}
 .sb-manager-secondary.is-history .sb-secondary-header h3{font-size:18px}
 .sb-history-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex:none}
 .sb-history-show-all{font-size:11px;white-space:nowrap;opacity:.72;padding:5px 2px}
@@ -651,15 +658,15 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-history-clear-all:active,.sb-history-entry-delete:active{opacity:1;color:var(--text);background:var(--seyveo-hdr-active)}
 .sb-manager-history-list{display:block;min-width:0;--sb-quiet-gap:0px}
 .sb-manager-history-list.sb-manager-closed{
- padding:0 14px;border-radius:17px;overflow:hidden;
+ padding:0 10px;border-radius:15px;overflow:hidden;
 }
-.sb-history-day{font-size:11px;letter-spacing:.015em;color:var(--secondary);padding:6px 3px 10px}
+.sb-history-day{font-size:10.5px;letter-spacing:.015em;color:var(--secondary);padding:3px 3px 6px}
 .sb-history-day-inline{
  padding:12px 2px 5px;font-size:10.5px;
  border-top:1px solid var(--sv-home-outline);
 }
 .sb-history-entry{
- display:flex;align-items:center;min-width:0;height:79px;min-height:79px;
+ display:flex;align-items:center;min-width:0;height:64px;min-height:64px;
  border:0;border-bottom:1px solid var(--sv-home-outline);border-radius:0;
  background:transparent;box-shadow:none;overflow:hidden;
 }
@@ -667,15 +674,15 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
 .sb-manager-history-list.is-collapsed .sb-history-slot:first-child .sb-history-entry{border-bottom:0}
 .sb-history-entry-open{
  flex:1;min-width:0;display:flex;align-items:center;
- gap:10px;padding:7px 1px;height:79px;min-height:79px;
+ gap:9px;padding:5px 1px;height:64px;min-height:64px;
  text-align:left;color:inherit;
 }
-.sb-history-entry-icon{flex:none;width:36px;height:36px;display:grid;place-items:center;overflow:hidden}
+.sb-history-entry-icon{flex:none;width:30px;height:30px;display:grid;place-items:center;overflow:hidden}
 .seyveo-browser .sb-manager-secondary.is-history .sb-history-entry-icon.sb-site-logo{
- width:36px;height:36px;min-width:36px;min-height:36px;
+ width:30px;height:30px;min-width:30px;min-height:30px;
 }
 .sb-history-entry-icon svg{display:block;width:100%;height:100%}
-.sb-history-entry-words{min-width:0;flex:1;display:flex;flex-direction:column;gap:6px}
+.sb-history-entry-words{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}
 .sb-history-entry-words strong{
  font-size:13px;font-weight:500;line-height:1.15;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -1322,8 +1329,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  left:max(12px,var(--sv-browser-gutter,16px));
  right:max(12px,var(--sv-browser-gutter,16px));
  width:auto;
- height:min(50dvh,420px);
- max-height:calc(100% - max(env(safe-area-inset-top),16px) - var(--seyveo-browser-dock-height,86px) - 28px);
+ height:auto;
+ max-height:min(64dvh,calc(100% - max(env(safe-area-inset-top),16px) - var(--seyveo-browser-dock-height,86px) - 28px));
  flex:none;
  padding:8px 11px 16px;
  margin:0;
@@ -1347,8 +1354,8 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:flex;align-items:center;justify-content:space-between;
  flex:none;gap:14px;
  width:calc(100% + 22px);
- height:54px;min-height:54px;
- margin:-8px -11px 7px;
+ height:48px;min-height:48px;
+ margin:-8px -11px 5px;
  padding:7px 16px;
  border-bottom:1px solid color-mix(in srgb,var(--text,#eef3f1) 10%,transparent);
  border-radius:22px 22px 0 0;
@@ -1385,16 +1392,16 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  min-height:0;
 }
 .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){
- display:grid;position:sticky;top:46px;z-index:4;
- width:100%;min-height:36px;height:36px;
- margin:0 0 5px;
+ display:grid;position:sticky;top:40px;z-index:4;
+ width:100%;min-height:34px;height:34px;
+ margin:0 0 3px;
  background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
 }
 .seyveo-browser.is-unified .sb-manager-tabs-panel>.sb-manager-heading:first-child{
  margin-top:9px;
 }
 .seyveo-browser.is-unified .sb-manager-secondary{
- padding-top:13px;
+ padding-top:5px;
 }
 @media(max-width:600px){
  .seyveo-browser.is-unified.is-site-view>.sb-browser-sitebar{
@@ -1403,13 +1410,13 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  }
  .seyveo-browser.is-unified>.seyveo-browser-start{margin-top:23px;padding-top:7px}
  .seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
-  height:min(55dvh,450px);
+  height:auto;
   padding:7px 9px 13px;
   border-radius:20px;
  }
  .seyveo-browser.is-unified .sb-browser-panel-head{
   top:-7px;
-  height:52px;min-height:52px;
+  height:46px;min-height:46px;
   width:calc(100% + 18px);
   margin:-7px -9px 8px;
   padding:6px 12px;
@@ -1420,7 +1427,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button){
   width:38px;min-width:38px;height:40px;min-height:40px;
  }
- .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:45px}
+ .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:39px}
 }
 @media(prefers-reduced-motion:reduce){
  .seyveo-browser.is-unified .sb-browser-panel-scrim{backdrop-filter:none;-webkit-backdrop-filter:none}
