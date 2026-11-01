@@ -87,7 +87,9 @@ html.seyveo-conversation #stage .orb-inline-reply-text{
 html.seyveo-conversation #ask.prompt:not(.expanded){
  bottom:calc(16px + env(safe-area-inset-bottom,0px) + var(--keyboard-offset,0px));
 }
-html.seyveo-conversation #voiceHint{bottom:calc(90px + env(safe-area-inset-bottom,0px) + var(--keyboard-offset,0px))}
+html.seyveo-conversation #voiceHint{
+ bottom:calc(var(--seyveo-dock-bottom,8px) + var(--seyveo-dock-height,58px) + 75px + var(--keyboard-offset,0px));
+}
 #ask .seyveo-conversation-mic{display:none}
 html.seyveo-conversation #ask:not(.expanded) #seyveoConversationMic,
 html.seyveo-conversation #ask.expanded #seyveoConversationMicLarge{display:grid}
