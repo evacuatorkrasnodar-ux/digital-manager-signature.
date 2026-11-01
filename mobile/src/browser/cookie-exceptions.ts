@@ -8,3 +8,7 @@ export async function saveCookieExceptions(hosts:string[]):Promise<boolean>{
  try{await SecureStore.setItemAsync(KEY,JSON.stringify([...new Set(hosts.filter(isHost))].slice(0,30)));return true}catch{return false}
 }
 export function hostnameForException(url:string){try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)?u.hostname.toLowerCase():null}catch{return null}}
+
+const PREF_KEY='seyveo-cookie-block-v1';
+export async function loadCookieBlock(){try{return (await SecureStore.getItemAsync(PREF_KEY))==='yes'}catch{return false}}
+export async function saveCookieBlock(value:boolean){try{await SecureStore.setItemAsync(PREF_KEY,value?'yes':'no');return true}catch{return false}}
