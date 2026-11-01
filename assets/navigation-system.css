@@ -69,18 +69,23 @@ footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navMan
  padding:0!important;
  min-height:48px;
 }
+/* Use the ONE dock icon system. Do not overwrite its line thickness
+   or etching with a hard-coded 1.65px stroke (the old conflict). */
 footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage) > svg{
  display:block!important;
  flex:none!important;
- width:23px!important;
- height:23px!important;
+ width:var(--seyveo-dock-icon-size,22px)!important;
+ height:var(--seyveo-dock-icon-size,22px)!important;
  margin:0 auto!important;
- color:inherit!important;
+ color:var(--seyveo-engrave-ink,rgba(178,210,203,.74))!important;
  fill:none!important;
  stroke:currentColor!important;
- stroke-width:1.65!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.96)!important;
  stroke-linecap:round!important;
  stroke-linejoin:round!important;
+}
+footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navManage).active > svg{
+ color:var(--seyveo-engrave-active,rgba(212,236,229,.87))!important;
 }
 /* Don't reduce the 44–48px touch areas to the visual glyph size.
    Disabled Music transport controls keep their existing muted state. */
