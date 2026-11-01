@@ -586,6 +586,7 @@ function render(){
  else{frame.removeAttribute('src');displayedTab=null}
  document.dispatchEvent(new Event('seyveo:browser-state'));
  const items=historyItems();const contList=$('[data-continue-list]');contList.replaceChildren();
+ $('[data-history-toggle]').hidden=!items.length;
  const selected=items.slice(0,1); // Quick resume only; complete history lives in History.
  if(!selected.length){const msg=document.createElement('p');msg.className='seyveo-browser-recent-empty';msg.textContent='Открой любой сайт — здесь появятся карточки для продолжения просмотра';contList.append(msg)}
  for(const [position,link] of selected.entries()){
