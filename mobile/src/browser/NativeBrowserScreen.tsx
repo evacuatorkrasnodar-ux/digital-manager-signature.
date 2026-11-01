@@ -12,6 +12,8 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StatusBar} from 'expo-status-bar';
 import {NativeBrowserViewport,type NativeBrowserViewportRef} from './NativeBrowserViewport';
+import {BrowserDownloadsPanel} from './BrowserDownloadsPanel';
+import type {SayviReviewHandler} from './sayvi-native-integration';
 import {
   initialBrowserTabs,activeBrowserTab,addBrowserTab,selectBrowserTab,
   closeBrowserTab,setBrowserTabUrl,observeBrowserTab,MAX_BROWSER_TABS,
@@ -44,7 +46,7 @@ function addressToUrl(input:string){
   return validateBrowserWebViewUrl(target);
 }
 
-export function NativeBrowserScreen({onClose,plus=false}:{onClose:()=>void;plus?:boolean}){
+export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:()=>void;plus?:boolean;onSayviReview?:SayviReviewHandler}){
   const scheme=useColorScheme();
   const [theme,setTheme]=useState<BrowserThemeSelection>('light');
   const resolved=resolveBrowserTheme(theme,{prefersDark:scheme==='dark'});
@@ -54,6 +56,7 @@ export function NativeBrowserScreen({onClose,plus=false}:{onClose:()=>void;plus?
   const ref=useRef<NativeBrowserViewportRef>(null);
   const [address,setAddress]=useState('');
   const [status,setStatus]=useState('');
+  const [view,setView]=useState<'page'|'downloads'>('page');
   const [canBack,setCanBack]=useState(false);
   const [canForward,setCanForward]=useState(false);
 
