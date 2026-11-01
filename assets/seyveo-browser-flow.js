@@ -25,7 +25,7 @@ const entries=[
 const SPACE_KEY='seyveo-browser-collections-v1';
 const CONTINUE_KEY='seyveo-browser-flow-continue-v1';
 const HISTORY_KEY='seyveo-browser-history-v1',TIMES_KEY='seyveo-browser-history-times-v1';
-let panel=null,active=false,mode='flow',url=null,tabId=null;
+let panel=null,active=false,mode='flow',url=null,tabId=null,lastPrepared='';
 const icon=key=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">'+icons[key]+'</svg>';
 function node(tag,className,text){
  const x=document.createElement(tag);if(className)x.className=className;
@@ -156,8 +156,13 @@ function writeDraft(kind){
  }
  const field=document.getElementById('question');
  if(!field){setNotice('Редактор Сэйви недоступен.');return}
+ const previous=field.value.trim();
+ const browserHint=/^Я открыл сайт [^\n]+\. Помоги мне разобраться:\s*$/u.test(previous);
+ if(previous&&previous!==lastPrepared&&!browserHint&&
+    !window.confirm('В поле Сэйви уже есть твой текст. Заменить его подготовленным запросом Flow?'))return;
  const prefix=requests[kind]||'';
  field.value=prefix+origin+(excerpt?'\nТекст:\n'+excerpt:'');
+ lastPrepared=field.value;
  field.dispatchEvent(new Event('input',{bubbles:true}));
  setNotice('Запрос подготовлен в поле Сэйви. Проверь его и нажми «Отправить».');
  field.focus({preventScroll:true});
@@ -270,7 +275,7 @@ function mount(target=reader){
 function show(detail={}){
  const requested=safe(detail.url);
  url=requested;tabId=Number.isInteger(detail.tabId)?detail.tabId:null;
- active=true;mount();
+ active=true;lastPrepared='';mount();
  chooseMode('flow');
  requestAnimationFrame(()=>{if(active&&panel.isConnected)reader.scrollTop=reader.scrollHeight});
 }
