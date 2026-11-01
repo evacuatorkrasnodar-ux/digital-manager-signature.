@@ -1168,7 +1168,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </main><main class="life-main" id="lifePage" hidden aria-labelledby="lifeTitle">
 <header class="life-heading">
 <button class="life-back" id="lifeBack" type="button" aria-label="Вернуться на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Главная</span></button>
-<p class="life-eyebrow">SEYVEO / LIFE</p><h1 id="lifeTitle" tabindex="-1">Мой мир</h1>
+<p class="life-eyebrow">SEYVEO / LIFE</p><h1 id="lifeTitle" tabindex="-1"><svg class="seyveo-my-signature-heading" viewBox="0 0 130 65" aria-hidden="true" focusable="false"><use href="#seyveo-my-large"/></svg><span>Мой мир</span></h1>
 <p class="life-description">Личное, общение, отдых и домашние устройства — в одном пространстве.</p>
 </header>
 <section class="calendar-spaces" aria-labelledby="calendarSpacesHeading">
@@ -1467,7 +1467,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <div id="svcpWorkChatCanvas"></div>
 </section>
 </main><div id="voiceHint" class="voice-hint" role="status" aria-live="polite">Нажмите — написать · удерживайте — говорить</div>
-<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><footer class="dock" aria-label="Нижняя панель">
+<div id="wakeVoiceStatus" class="wake-voice-status" role="status" aria-live="polite" hidden><span class="wake-voice-dot" aria-hidden="true"></span><span id="wakeVoiceLabel">Ожидаю «SEYVEO»</span><button id="wakeVoiceStop" type="button">Выключить</button></div></div><!-- SEYVEO My Signature · one source for dock and Life heading. -->
+<svg class="seyveo-my-symbols" width="0" height="0" viewBox="0 0 1 1" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
+ <defs>
+  <symbol id="seyveo-my-mini" viewBox="0 0 28 24">
+   <path d="M12 49c8-5 13-32 19-33 4-1 4 28 8 28 5 0 15-28 19-27 4 1-2 31 5 31 7 0 11-18 17-16 4 2-5 17-2 17 5 1 11-18 14-17 2 2-5 25-13 28-8 3-14-2-8-6 6-4 18-5 31-3" transform="translate(-0.76 -1.3) scale(.23 .36)" vector-effect="non-scaling-stroke"/>
+  </symbol>
+  <symbol id="seyveo-my-large" viewBox="0 0 130 65">
+   <path d="M12 49c8-5 13-32 19-33 4-1 4 28 8 28 5 0 15-28 19-27 4 1-2 31 5 31 7 0 11-18 17-16 4 2-5 17-2 17 5 1 11-18 14-17 2 2-5 25-13 28-8 3-14-2-8-6 6-4 18-5 31-3" vector-effect="non-scaling-stroke"/>
+   <path d="M94 51c5 0 11-1 16-3" opacity=".34" vector-effect="non-scaling-stroke"/>
+  </symbol>
+ </defs>
+</svg>
+<footer class="dock" aria-label="Нижняя панель">
 <button type="button" id="navHome" class="nav-item nav-home active" aria-current="page" aria-label="Главная"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21h-7v-7.2h-4V21H3z"/></svg><span>Главная</span></button>
 <button type="button" id="navTasks" class="nav-item nav-tasks" aria-label="Открыть дела"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M4 5h1M4 12h1M4 19h1"/></svg><span>Дела</span></button>
 <button type="button" id="assistantButton" class="assistant-button" aria-label="Сэйви: открыть единый разговор. Удерживайте, чтобы говорить" aria-describedby="voiceHint" aria-pressed="false">
@@ -1492,7 +1504,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
   <circle class="voice-dot" cx="52.8" cy="37" r="1.5"/>
 </g>
 </svg></button>
-<button type="button" id="navPicture" class="nav-item nav-picture" aria-label="Мой мир"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-5 5.2-5 11.8 0 17M12 3.5c5 5.2 5 11.8 0 17"/></svg><span>Мой мир</span></button>
+<button type="button" id="navPicture" class="nav-item nav-picture" aria-label="Мой мир"><svg class="seyveo-my-signature" viewBox="0 0 28 24" aria-hidden="true" focusable="false"><use href="#seyveo-my-mini"/></svg><span>Мой мир</span></button>
 <button type="button" id="navManage" class="nav-item nav-manage" aria-label="Управление"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Управление</span></button>
 </footer><div id="sayviMusicMini" class="sv-music-mini" hidden aria-label="Музыка в SEYVEO" role="group">
  <button id="sayviMusicMiniOpen" class="sv-music-mini-open" type="button" aria-label="Открыть музыкальный плеер"><span class="sv-music-mini-symbol" aria-hidden="true"><span class="sv-music-record-center"></span></span></button>
