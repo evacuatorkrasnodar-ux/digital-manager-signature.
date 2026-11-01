@@ -139,7 +139,7 @@ function restoreTask(id){
  if(typeof id!=='string'||!postponedTaskIds.has(id))return false;
  postponedTaskIds.delete(id);
  for(const eventId of Array.from(quiet)){
-  if(eventId.startsWith('task:'+id+'|'))quiet.delete(eventId);
+  if(eventId.startsWith('task:'+id+'|')||eventId==='mail-review:'+id)quiet.delete(eventId);
  }
  notifyDeferred();
  scheduleRefresh();
