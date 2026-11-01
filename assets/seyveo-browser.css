@@ -399,12 +399,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:21px;height:21px}
  background:transparent;
 }
 .seyveo-browser-manager::-webkit-scrollbar{display:none}
-.seyveo-browser.is-managing>.seyveo-browser-bar,
-.seyveo-browser.is-managing>.seyveo-browser-start,
-.seyveo-browser.is-managing>.seyveo-browser-content,
-.seyveo-browser.is-managing>.seyveo-browser-tabs,
-.seyveo-browser.is-managing>.seyveo-browser-bottom,
-.seyveo-browser.is-managing>.seyveo-browser-sheet{display:none!important}
+/* Management now floats above the active Browser; no main content is hidden. */
 /* Same direct parent, flex order and size as the original Browser search bar.
    This is the same existing four-button navigation, not four new tiles. */
 .sb-manager-switcher{
@@ -1257,4 +1252,108 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  .seyveo-browser.is-site-view .sb-browser-sitebar-search-button{
   width:38px;min-width:38px;height:40px;
  }
+}
+
+/* Unified SEYVEO Browser: one permanent glass-tab canvas and compact management.
+   The approved tab dimensions, LED colors, cross and + rules above are untouched. */
+.seyveo-browser.is-unified>.seyveo-browser-start{
+ order:4;
+ flex:1 1 0;
+ min-height:0;
+ margin-top:24px;
+ padding-top:8px;
+ padding-bottom:calc(var(--seyveo-browser-dock-height,86px) + 12px);
+ overflow-y:auto;
+ overscroll-behavior:contain;
+}
+.seyveo-browser.is-unified>.seyveo-browser-tabs{
+ /* Keep the identical site-view tab glass geometry on blank and opened tabs. */
+ flex-shrink:0;
+}
+.seyveo-browser.is-unified .sb-browser-open-panel{
+ display:grid;place-items:center;flex:0 0 32px;
+ width:32px;height:32px;min-width:32px;min-height:32px;
+ padding:0;margin:0;
+ border:1px solid color-mix(in srgb,var(--text,#fff) 12%,transparent);
+ border-radius:11px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 75%),var(--sv-home-glass);
+ color:var(--text,#edf5f0);opacity:.87;
+}
+.seyveo-browser.is-unified .sb-browser-open-panel svg{
+ display:block;width:18px;height:18px;fill:none;
+ stroke:currentColor;stroke-width:1.6;stroke-linecap:round;
+}
+.seyveo-browser.is-unified .sb-browser-panel-scrim:not([hidden]){
+ position:absolute;inset:0;z-index:22;
+ background:rgba(5,12,12,.27);
+ -webkit-backdrop-filter:blur(3px);
+ backdrop-filter:blur(3px);
+}
+.seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
+ display:block;position:absolute;
+ z-index:23;
+ top:auto;
+ bottom:calc(var(--seyveo-browser-dock-height,86px) + 8px);
+ left:max(12px,var(--sv-browser-gutter,16px));
+ right:max(12px,var(--sv-browser-gutter,16px));
+ width:auto;
+ height:min(65dvh,555px);
+ max-height:calc(100% - max(env(safe-area-inset-top),16px) - var(--seyveo-browser-dock-height,86px) - 28px);
+ flex:none;
+ padding:8px 11px 16px;
+ margin:0;
+ border:1px solid var(--sv-home-outline);
+ border-radius:23px;
+ background:linear-gradient(170deg,
+  color-mix(in srgb,var(--bg,#141b19) 79%,#354643),
+  color-mix(in srgb,var(--bg,#141b19) 94%,#23322c));
+ background-image:linear-gradient(155deg,var(--sv-home-glint),transparent 78%),linear-gradient(170deg,color-mix(in srgb,var(--bg,#141b19) 79%,#354643),color-mix(in srgb,var(--bg,#141b19) 94%,#23322c));
+ box-shadow:0 12px 38px rgba(0,0,0,.2),inset 0 1px 0 var(--sv-home-glint);
+ overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:none;
+}
+.seyveo-browser.is-unified>.seyveo-browser-manager::-webkit-scrollbar{display:none}
+.seyveo-browser.is-unified .sb-browser-panel-head{
+ position:sticky;top:-8px;z-index:5;
+ display:flex;align-items:center;justify-content:space-between;
+ height:41px;min-height:41px;gap:8px;
+ padding:4px 3px 7px;
+ background:var(--bg,#141b19);
+ border-radius:17px 17px 0 0;
+}
+.seyveo-browser.is-unified .sb-browser-panel-head strong{
+ font-size:13px;font-weight:500;letter-spacing:.025em;
+}
+.seyveo-browser.is-unified .sb-browser-panel-head button{
+ border:0;padding:6px 9px;margin:0;
+ border-radius:10px;
+ color:var(--text,#edf5f0);
+ font-size:12px;opacity:.82;
+}
+.seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){
+ display:grid;position:sticky;top:33px;z-index:4;
+ width:100%;min-height:40px;height:40px;
+ margin:0 0 5px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
+}
+.seyveo-browser.is-unified .sb-manager-tabs-panel>.sb-manager-heading:first-child{
+ margin-top:9px;
+}
+.seyveo-browser.is-unified .sb-manager-secondary{
+ padding-top:13px;
+}
+@media(max-width:600px){
+ .seyveo-browser.is-unified>.seyveo-browser-start{margin-top:23px;padding-top:7px}
+ .seyveo-browser.is-unified>.seyveo-browser-manager:not([hidden]){
+  height:min(64dvh,530px);
+  padding:7px 9px 13px;
+  border-radius:20px;
+ }
+ .seyveo-browser.is-unified .sb-browser-panel-head{top:-7px}
+ .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:34px}
+}
+@media(prefers-reduced-motion:reduce){
+ .seyveo-browser.is-unified .sb-browser-panel-scrim{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
