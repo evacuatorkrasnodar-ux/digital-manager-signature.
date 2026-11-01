@@ -411,6 +411,39 @@ function renderManager(){
  }
  syncClosedStack();
 }
+/* One compact recovery list, now living under History instead of Tabs. */
+function renderRecentlyClosedHistory(){
+ if(!recentlyClosed.length)return;
+ const heading=document.createElement('div');heading.className='sb-browser-recent-toolbar';
+ const title=document.createElement('span');title.textContent='Недавно закрытые';heading.append(title);
+ if(recentlyClosed.length>3){
+  const more=document.createElement('button');more.type='button';
+  more.textContent=allClosedShown?'Свернуть':'Показать все ›';
+  more.setAttribute('aria-expanded',String(allClosedShown));
+  more.addEventListener('click',()=>{allClosedShown=!allClosedShown;renderManager()});
+  heading.append(more);
+ }
+ secondary.append(heading);
+ for(const entry of (allClosedShown?recentlyClosed:recentlyClosed.slice(0,3))){
+  const row=document.createElement('div');row.className='sb-browser-recent-row';
+  const open=document.createElement('button');open.type='button';open.className='sb-browser-recent-open';
+  open.textContent=siteName(entry.url);
+  open.setAttribute('aria-label','Восстановить '+siteName(entry.url));
+  open.addEventListener('click',()=>{
+   recentlyClosed=recentlyClosed.filter(item=>item.url!==entry.url);
+   const t={id:nextId++,entries:[entry.url],position:0};tabs.push(t);active=t.id;
+   tabManager(false);render();
+  });
+  const remove=document.createElement('button');remove.type='button';remove.className='sb-browser-recent-remove';
+  remove.textContent='×';remove.setAttribute('aria-label','Убрать из недавно закрытых: '+siteName(entry.url));
+  remove.addEventListener('click',()=>{
+   recentlyClosed=recentlyClosed.filter(item=>item.url!==entry.url);
+   if(recentlyClosed.length<=3)allClosedShown=false;
+   persistSession();renderManager();
+  });
+  row.append(open,remove);secondary.append(row);
+ }
+}
 function renderSecondary(){
  secondary.replaceChildren();
  secondary.classList.toggle('is-history',managerSection==='history');
@@ -513,6 +546,7 @@ function renderSecondary(){
   header.append(controls);
   if(!links.length){
    const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='История пока пуста';secondary.append(hint);
+   renderRecentlyClosedHistory();
    return;
   }
   // Match the existing Recently Closed panel: one shared glass surface,
@@ -552,6 +586,7 @@ function renderSecondary(){
    row.append(open,remove);slot.append(row);historyList.append(slot);
   }
   syncQuietCinemaStack(historyList,toggle,'.sb-history-slot',showManagerHistory);
+  renderRecentlyClosedHistory();
   return;
  }
  const folders=getCollections();
