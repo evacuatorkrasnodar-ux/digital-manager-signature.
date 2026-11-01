@@ -489,16 +489,22 @@ function render(){
   done.slice(0,30).forEach(task=>list.append(row(task)));
  }
  if(!open.length&&!preview.length){
-  list.prepend(element('p','personal-tasks-empty',done.length
-   ?'Сейчас нет незавершённых дел. Решённые поручения сохранены ниже.'
-   :'Пока всё спокойно. Здесь появятся поручения и рекомендации, которые ты отложишь с Главной.'));
+  const empty=element('div','personal-tasks-empty');
+  empty.append(
+   element('strong','personal-tasks-empty-title',done.length?'Все текущие дела завершены':'Пока всё спокойно'),
+   element('p','personal-tasks-empty-copy',done.length
+    ?'Выполненные задачи сохранены ниже.'
+    :'Здесь появятся дела и решения, которые ты отложишь.')
+  );
+  list.prepend(empty);
  }
+ list.classList.toggle('is-empty',!open.length&&!preview.length&&!done.length);
  const overview=$('tasksOverview');
  if(overview){
   const count=postponed.length+preview.length;
   overview.textContent=open.length||preview.length
    ?'Мои дела · '+active.length+(count?'   /   Отложено · '+count:'')
-   :'Сэйви соберёт здесь незавершённое, а ты сможешь добавить своё дело.';
+   :'Задачи и отложенные решения — в одном месте.';
  }
  // A continuation is offered only after a real task has been completed.
  const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
