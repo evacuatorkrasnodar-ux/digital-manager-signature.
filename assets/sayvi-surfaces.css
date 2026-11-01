@@ -651,22 +651,6 @@
  #sayviSurfacePage .sv-mail-sayvi-knob{transition:none}
 }
 
-/* Mail aligns to the dock's viewport gutters, not the inner app column. */
-@media(max-width:640px){
- #sayviSurfacePage[data-sv-subject="mail"]{
-  box-sizing:border-box;
-  /* Keep the entire mail surface centered to the same viewport as .dock. */
-  width:calc(100vw - 14px)!important;
-  max-width:none!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  margin-inline:0!important;
- }
- #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace{
-  width:100%!important;max-width:none!important;margin-inline:0!important;
- }
-}
-
 /* Mail compact rhythm: the overview caption must never reserve an empty row. */
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-info[hidden]{display:none!important}
 @media(max-width:390px){
