@@ -37,34 +37,24 @@ document.body.append(root);
 const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.id='seyveoBrowserManagerPanel';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading sb-manager-recent-heading"><strong>Недавно закрытые</strong><span class="sb-manager-recent-actions"><button type="button" data-recent-all hidden>Показать все ›</button><button type="button" data-recent-clear hidden aria-label="Очистить недавно закрытые" title="Очистить список"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div class="sb-manager-closed" data-manager-closed></div>';
 root.append(manager);
 const switcher=document.createElement('nav');switcher.className='sb-manager-switcher';switcher.setAttribute('aria-label','Разделы браузера');
-const sections=[['tabs','Вкладки'],['favorites','Избранное'],['history','История'],['collections','Коллекции']];
+const sections=[['favorites','Избранное'],['history','История'],['downloads','Загрузки']];
 const sectionPaths={
- tabs:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16H3a1 1 0 0 1-1-1V4a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v1"/>',
  favorites:'<path d="M6 4.5c0-1 .8-1.8 1.8-1.8h8.4c1 0 1.8.8 1.8 1.8V21l-6-4-6 4z"/>',
  history:'<circle cx="12" cy="12" r="9"/><path d="M12 6.5v6l4.2 2.7"/>',
- collections:'<path d="m12 2 9 5-9 5-9-5 9-5zm-9 10 9 5 9-5M3 17l9 5 9-5"/>'
+ downloads:'<path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/>'
 };
-let managerSection='tabs';
+let managerSection='favorites';
 for(const [id,label] of sections){const button=document.createElement('button');button.type='button';button.dataset.section=id;button.innerHTML='<span class="sb-switch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+sectionPaths[id]+'</svg></span><span>'+label+'</span>';button.addEventListener('click',()=>{if(id==='history')showManagerHistory=false;managerSection=id;renderManager()});switcher.append(button)}
-// Keep one four-section switcher directly inside the manager for ALL sections.
+// Three slim menu sections: open tabs are handled by the top glass carousel.
 switcher.hidden=true;
 const tabsPanel=document.createElement('div');tabsPanel.className='sb-manager-tabs-panel';
 while(manager.firstChild)tabsPanel.append(manager.firstChild);
 manager.append(tabsPanel);
 manager.prepend(switcher);
-// Keep the four glass segments unchanged; Downloads is one additional row.
-const downloadsShortcut=document.createElement('button');
-downloadsShortcut.type='button';
-downloadsShortcut.className='sb-browser-downloads-shortcut';
-downloadsShortcut.setAttribute('aria-label','Загрузки');
-downloadsShortcut.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></svg><span>Загрузки</span>';
-downloadsShortcut.hidden=true;
-downloadsShortcut.addEventListener('click',()=>{managerSection='downloads';renderManager()});
-switcher.after(downloadsShortcut);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const panelHeader=document.createElement('header');
 panelHeader.className='sb-browser-panel-head';
-panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Вкладки</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
+panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Избранное</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
 manager.prepend(panelHeader);
 const panelScrim=document.createElement('div');
 panelScrim.className='sb-browser-panel-scrim';panelScrim.hidden=true;
@@ -299,7 +289,6 @@ function tabManager(value=true){
  manager.hidden=!managerOpen;
  switcher.hidden=!managerOpen;
  panelScrim.hidden=!managerOpen;
- downloadsShortcut.hidden=!managerOpen;
  root.classList.toggle('is-panel-open',managerOpen);
  siteMenuButton.setAttribute('aria-expanded',String(managerOpen));
  if(managerOpen){manager.scrollTop=0;renderManager();}
@@ -349,16 +338,13 @@ function syncClosedStack(){
  clear.hidden=!count;
 }
 function renderManager(){
- const currentLabel=managerSection==='downloads'?'Загрузки':sections.find(([id])=>id===managerSection)?.[1]||'Вкладки';
+ const currentLabel=managerSection==='collections'?'Избранное':sections.find(([id])=>id===managerSection)?.[1]||'Избранное';
  panelHeader.querySelector('[data-panel-section-title]').textContent=currentLabel;
  manager.setAttribute('aria-label','Управление браузером · '+currentLabel);
- switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===managerSection;button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
- downloadsShortcut.classList.toggle('is-selected',managerSection==='downloads');
- downloadsShortcut.setAttribute('aria-pressed',String(managerSection==='downloads'));
- const tabLabel=switcher.querySelector('[data-section="tabs"] span:nth-child(2)');tabLabel.textContent='Вкладки';
- const count=switcher.querySelector('[data-section="tabs"] .sb-switch-count')||document.createElement('span');count.className='sb-switch-count';count.textContent=String(tabs.length);switcher.querySelector('[data-section="tabs"]').append(count);
- tabsPanel.hidden=managerSection!=='tabs';secondary.hidden=managerSection==='tabs';
- if(managerSection!=='tabs'){renderSecondary();return}
+ switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===(managerSection==='collections'?'favorites':managerSection);button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
+ // No duplicate tab overview: the approved carousel already controls tabs.
+ tabsPanel.hidden=true;secondary.hidden=false;
+ renderSecondary();return;
  const list=manager.querySelector('[data-manager-list]'),closed=manager.querySelector('[data-manager-closed]');
  list.replaceChildren();closed.replaceChildren();
  for(const t of tabs){
@@ -834,7 +820,7 @@ manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClose
 root.querySelector('.seyveo-browser-shortcuts [data-bookmarks]').addEventListener('click',bookmarks);
 $('[data-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;render();input.focus()});
 function toggleBrowserPanel(){
- if(!managerOpen)managerSection='tabs';
+ if(!managerOpen)managerSection='favorites';
  tabManager(!managerOpen);
 }
 siteMenuButton.addEventListener('click',toggleBrowserPanel);
