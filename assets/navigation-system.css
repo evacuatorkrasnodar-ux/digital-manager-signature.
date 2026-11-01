@@ -89,3 +89,36 @@ footer.dock:not(.seyveo-browser-dock) :is(#navHome,#navTasks,#navPicture,#navMan
 }
 /* Don't reduce the 44–48px touch areas to the visual glyph size.
    Disabled Music transport controls keep their existing muted state. */
+
+
+/* SEYVEO My Signature · approved handwritten mark for Life.
+   Keep the same dock and laser-etched material; only the art changes.
+   The original browser globe remains exclusive to Browser. */
+footer.dock:not(.seyveo-browser-dock) #navPicture>svg.seyveo-my-signature{
+ width:26px!important;
+ height:23px!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
+ overflow:visible;
+}
+#lifePage #lifeTitle{
+ display:flex;
+ flex-wrap:wrap;
+ align-items:center;
+ gap:9px;
+}
+#lifePage #lifeTitle .seyveo-my-signature-heading{
+ display:block;
+ flex:none;
+ width:67px;
+ height:35px;
+ color:var(--seyveo-engrave-active,var(--text));
+ fill:none;
+ stroke:currentColor;
+ stroke-width:1.1;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+ filter:drop-shadow(0 0 1.4px var(--seyveo-etch-halo,rgba(102,188,159,.095)));
+}
+@media(max-width:355px){
+ #lifePage #lifeTitle .seyveo-my-signature-heading{width:60px;height:32px}
+}
