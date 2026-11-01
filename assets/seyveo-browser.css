@@ -24,14 +24,13 @@
  margin:0;color:var(--secondary);opacity:.84;
  text-shadow:none;filter:none;
 }
-/* Browser+ edition mark: a quiet upper index beside Browser.
-   Its absolute placement preserves the approved header geometry;
-   the large tab-creation plus is a separate control. */
+/* Browser+ edition mark: visibly aligned beside "Browser" without
+   changing the wordmark's dimensions or the separate new-tab control. */
 .seyveo-browser-home .sb-browser-plus-mark{
- position:absolute;top:-.35em;right:-.8em;
- font-size:10px;line-height:1;font-weight:500;
+ position:absolute;top:-1px;right:-17px;
+ font-size:15px;line-height:1;font-weight:400;
  letter-spacing:0;color:var(--text);
- opacity:.85;text-shadow:none;pointer-events:none;
+ opacity:.92;text-shadow:none;pointer-events:none;
 }
 .seyveo-browser-home p{position:relative;color:#aebcb4;font-size:13px;margin:0}
 .seyveo-browser-bar{display:flex;align-items:center;gap:11px;min-height:56px;padding:5px 7px 5px 20px;border:1px solid var(--sv-home-outline);background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);border-radius:22px;box-shadow:inset 0 1px 0 var(--sv-home-glint),var(--sv-home-depth);flex-shrink:0}.seyveo-browser-bar>span{font-size:27px;color:var(--text)}.seyveo-browser-bar input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:15px}.seyveo-browser-bar input::placeholder{color:var(--secondary)}.seyveo-browser-bar button{height:42px;width:42px;border-radius:16px;background:rgba(125,160,140,.14);color:inherit;font-size:23px}
@@ -920,6 +919,14 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;
  white-space:nowrap;text-align:center;line-height:1.15;
  font-size:12px;font-weight:450;
+}
+
+/* An actual blank tab has no site icon. Center its title in the same
+   visible area as the other tab labels, keeping the existing raised text
+   position and the unchanged close icon above the glass/page seam. */
+.seyveo-browser.is-site-view .seyveo-browser-tab.is-empty .sb-browser-tab-select{
+ display:flex;align-items:center;justify-content:center;
+ padding-left:5px;padding-right:5px;
 }
 .seyveo-browser.is-site-view .seyveo-browser-tab:not(.is-placeholder)>button:last-child{
  flex:none;display:grid;place-items:center;width:22px;min-width:22px;
