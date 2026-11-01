@@ -8,7 +8,7 @@ function init(){
  back:'<path d="m15 5-7 7 7 7"/>',
  forward:'<path d="m9 5 7 7-7 7"/>',
  home:'<path d="m3.5 11 8.5-7 8.5 7V20H14v-6h-4v6H3.5z"/>',
- tabs:'<rect x="7" y="7" width="13" height="13" rx="2"/><path d="M4 16H3a1 1 0 0 1-1-1V4a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v1"/>'
+ reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>'
  };
  let active=false;
  function setButton(b,action,label){
@@ -22,11 +22,12 @@ function init(){
   setButton(outer[0],'back','Назад');
   setButton(outer[1],'forward','Вперёд');
   setButton(outer[2],'home','Главная SEYVEO');
-  setButton(outer[3],'tabs','Вкладки');
+  setButton(outer[3],'reload','Обновить страницу');
   const s=window.SEYVEO_BROWSER?.state?.();
   outer[0].setAttribute('aria-disabled',String(!s?.canBack));
   outer[1].setAttribute('aria-disabled',String(!s?.canForward));
-  dock.setAttribute('aria-label','SEYVEO Browser · навигация, Сэйви и вкладки');
+  outer[3].setAttribute('aria-disabled',String(!s?.canReload));
+  dock.setAttribute('aria-label','SEYVEO Browser · назад, вперёд, Главная SEYVEO, Сэйви и обновление страницы');
  }
  function syncHeight(){document.body.style.setProperty('--seyveo-browser-dock-height',Math.ceil(dock.getBoundingClientRect().height)+'px')}
  function enter(){
@@ -60,7 +61,7 @@ function init(){
   if(!b||!outer.includes(b))return;
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
   const action=b.dataset.svBrowserAction;
-  if((action==='back'||action==='forward')&&b.getAttribute('aria-disabled')==='true')return;
+  if((action==='back'||action==='forward'||action==='reload')&&b.getAttribute('aria-disabled')==='true')return;
   window.SEYVEO_BROWSER?.[action]?.();
  },true);
  window.addEventListener('resize',()=>{if(active)syncHeight()});
