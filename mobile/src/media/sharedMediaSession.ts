@@ -11,10 +11,23 @@ export type MediaListener=(snapshot:MediaSnapshot)=>void;
 const empty:MediaSnapshot=Object.freeze({origin:null,id:null,title:'',phase:'idle'});
 let current:MediaSnapshot=empty;
 const listeners=new Set<MediaListener>();
+type MediaCommand='play'|'pause';
+type CommandHandler=(command:MediaCommand)=>void;
+let commandTarget:{origin:MediaOrigin;id:string;handler:CommandHandler}|null=null;
 function emit(){for(const listener of listeners){try{listener(current)}catch{/* one subscriber cannot break the bus */}}}
 function validOrigin(v:unknown):v is MediaOrigin{return v==='browser'||v==='music'}
 export const sharedMediaSession={
  getSnapshot:():MediaSnapshot=>current,
+ registerControls(origin:MediaOrigin,id:string,handler:CommandHandler){
+  if(!validOrigin(origin)||!id)return()=>{};
+  const target={origin,id,handler};commandTarget=target;
+  return()=>{if(commandTarget===target)commandTarget=null};
+ },
+ sendCommand(command:MediaCommand){
+  if(command!=='play'&&command!=='pause')return false;
+  if(!commandTarget||current.origin!==commandTarget.origin||current.id!==commandTarget.id)return false;
+  try{commandTarget.handler(command);return true}catch{return false}
+ },
  subscribe(listener:MediaListener){listeners.add(listener);listener(current);return()=>{listeners.delete(listener)}},
  report(source:MediaOrigin,id:string,title:string,phase:MediaPhase){
   if(!validOrigin(source)||typeof id!=='string'||!id||id.length>300||typeof title!=='string')return false;
