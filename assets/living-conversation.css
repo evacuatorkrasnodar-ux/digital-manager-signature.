@@ -23,8 +23,28 @@
    the compact sphere when the user is talking to Sayvi. */
 html.seyveo-conversation #orb :is(#signal,#orbLogoMist){display:none!important}
 html.seyveo-conversation #homeHeader{display:none!important}
+/* Feather Chat uses the SAME original glass footer dock, not an imitation.
+   When the native keyboard opens, only the text field and keyboard Send remain. */
 html.seyveo-conversation .dock{
+ visibility:visible!important;pointer-events:auto!important;opacity:1!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard .dock{
  visibility:hidden!important;pointer-events:none!important;opacity:0!important;
+}
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-item span{
+ display:none!important;
+}
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-item{
+ gap:0!important;
+}
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-home svg{
+ width:28px!important;height:24px!important;
+}
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-item svg{
+ stroke-width:1.7!important;
+}
+html.seyveo-conversation .dock.seyveo-chat-dock>.nav-manage:not(.seyveo-stop-action){
+ color:var(--seyveo-nav-ink)!important;
 }
 html.seyveo-conversation #assistantQuickrail,
 html.seyveo-conversation #homePage :is(#dynamic,#demoReplayAction,#workTimeline,#personalBrief){display:none!important}
