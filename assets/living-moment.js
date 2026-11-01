@@ -516,7 +516,17 @@ function createSurface(primary,other=[],real=false,taskId=''){
    else location.hash='#sayvi-documents';
    return;
   }
-  // Explain why Sayvi surfaced the stored task; never mark it done.
+  if(real){
+   const actualId=shown.taskId||taskId;
+   if(!actualId){explain(field,'Не удалось найти сохранённое дело.',open);return;}
+   if(shown.businessTask){
+    if(!window.SEYVEO_BUSINESS_TASK_DEMO?.openTask?.(actualId))explain(field,'Откройте поручение в разделе «Дела».',open);
+   }else{
+    window.dispatchEvent(new CustomEvent('seyveo:home-task-open',{detail:{id:actualId}}));
+   }
+   return;
+  }
+  // Training cards explain the example; no real task is modified.
   explain(field,shown.reason+' '+shown.detail,open);
  });
  const execute=polymer(real&&primary.businessTask?'Проверить':real?'Продолжить дело':'Исполнить',()=>{
