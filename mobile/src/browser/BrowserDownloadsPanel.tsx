@@ -46,6 +46,7 @@ export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props)
   const [downloads]=useState(()=>createBrowserDownloadController(storage,setSnapshot));
 
   useEffect(()=>{
+    void storage.clearStalePdfPreviews().catch(()=>{});
     void downloads.refresh().catch(()=>{
       setMessage('Не удалось прочитать загрузки. Попробуй снова.');
     });
