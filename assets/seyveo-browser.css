@@ -1604,38 +1604,43 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  outline:2px solid var(--sb-accent);outline-offset:1px;
 }
 
-/* SEYVEO Browser · Search is summoned from the original grey strip.
-   Floating glass never enters the flex layout, preserving logo and tab positions. */
-.seyveo-browser .sb-browser-search-backdrop:not([hidden]){
- position:absolute;inset:0;z-index:24;
- display:block;width:100%;height:100%;
- padding:0;margin:0;border:0;border-radius:0;
- background:color-mix(in srgb,var(--bg,#11161b) 7%,transparent);
- cursor:default;
+/* SEYVEO Browser · Search lives INSIDE the existing grey stripe.
+   Do not cover Quick Access, don't change the stripe height, tab carousel,
+   logo position, dock, or palette. The form is the original QR-ready glass. */
+.seyveo-browser.is-search-open .sb-browser-sitebar>.sb-browser-sitebar-title{
+ display:none;
 }
-.seyveo-browser .seyveo-browser-bar.sb-browser-search-popup{
- position:absolute;z-index:25;
- top:var(--sb-search-popup-top,164px);
- left:var(--sv-browser-gutter,16px);
- right:var(--sv-browser-gutter,16px);
- width:auto;margin:0;
- height:54px;min-height:54px;max-height:54px;
- border-radius:19px;
- padding:3px 7px 3px 14px;
- box-shadow:inset 0 1px 0 var(--sv-home-glint),
-  0 7px 26px color-mix(in srgb,var(--bg,#11161b) 20%,transparent);
- animation:sb-search-gently-appear .16s ease-out both;
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup{
+ display:flex;
+ position:relative;z-index:auto;inset:auto;
+ order:0;
+ flex:1 1 0;
+ min-width:0;width:auto;
+ height:43px;min-height:43px;max-height:43px;
+ padding:3px 5px 3px 10px;margin:0;
+ gap:6px;
+ border-radius:16px;
+ background:linear-gradient(155deg,var(--sv-home-glint),transparent 74%),var(--sv-home-glass);
+ box-shadow:inset 0 1px 0 var(--sv-home-glint);
 }
-.seyveo-browser .seyveo-browser-bar.sb-browser-search-popup input{
- min-width:0;font-size:16px;line-height:1.3;
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup input{
+ flex:1 1 0;min-width:0;width:100%;
+ font-size:16px;line-height:1.3;
+}
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup .seyveo-browser-search-icon{
+ flex:0 0 19px;
+}
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup .seyveo-browser-search-icon svg{
+ width:19px;height:19px;
+}
+.seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup .seyveo-browser-scan{
+ flex:0 0 32px;width:32px;height:34px;padding:6px;
 }
 .seyveo-browser .sb-browser-sitebar-search-button[aria-expanded="true"]{
  color:var(--text);opacity:1;
 }
-@keyframes sb-search-gently-appear{
- from{opacity:0;transform:translateY(-5px)}
- to{opacity:1;transform:translateY(0)}
-}
-@media(prefers-reduced-motion:reduce){
- .seyveo-browser .seyveo-browser-bar.sb-browser-search-popup{animation:none}
+@media(max-width:390px){
+ .seyveo-browser .sb-browser-sitebar>.seyveo-browser-bar.sb-browser-search-popup{
+  padding-left:7px;padding-right:3px;gap:4px;border-radius:14px;
+ }
 }
