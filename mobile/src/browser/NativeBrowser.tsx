@@ -55,6 +55,11 @@ export function NativeBrowser(){
    const answer=await translateText(msg.text);setTranslated(answer);setTranslationNotice('Переведённый текст. Оригинальная страница не изменена.');
   }catch{setTranslationNotice('Не удалось перевести страницу. Проверьте подключение сервиса.')}finally{setTranslating(false)}
  }
+ function pausePageMedia(){
+  // Only pauses media in the current document. Cross-origin frames may not be accessible.
+  web.current?.injectJavaScript("document.querySelectorAll('audio,video').forEach(function(el){el.pause()});true;");
+  setTranslationNotice('Воспроизведение на странице остановлено, если плеер доступен браузеру.');
+ }
  function select(tab:Tab){setActive(tab.id);setAddress(tab.url);setBack(false);setForward(false)}
  function add(){if(tabs.length>=30)return;const t={id:nextId,url:HOME};setTabs(old=>[...old,t]);setNextId(n=>n+1);select(t)}
  function close(id:number){const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
@@ -82,6 +87,7 @@ export function NativeBrowser(){
    <Pressable onPress={()=>web.current?.reload()}><Text style={{color:'white'}}>Обновить</Text></Pressable>
    <Pressable onPress={navigate}><Text style={{color:'white'}}>Открыть</Text></Pressable>
    <Pressable onPress={translateInfo}><Text style={{color:'white'}}>Перевод</Text></Pressable>
+   <Pressable accessibilityRole="button" onPress={pausePageMedia}><Text style={{color:'white'}}>Стоп медиа</Text></Pressable>
    <Pressable accessibilityRole="button" onPress={()=>setShowDownloads(value=>!value)}><Text style={{color:'white'}}>Файлы</Text></Pressable>
   </View>
  </View>
