@@ -713,6 +713,8 @@ function renderTurns(turns){
   nudge.append(globe,label,launch,dismiss);nodes.push(nudge);
  }
  text.replaceChildren(...nodes);
+ // Keep the developer Flow card inside the SAME transcript after re-render.
+ window.SEYVEO_BROWSER_FLOW?.mount?.(text);
  if(atBottom||isNewTurn)scrollToLatest();
 }
 // One live stream inside the real Feather Chat.
