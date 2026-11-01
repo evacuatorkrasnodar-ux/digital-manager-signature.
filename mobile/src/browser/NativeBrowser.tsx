@@ -24,6 +24,8 @@ export function NativeBrowser(){
  const [translationNotice,setTranslationNotice]=useState('');
  const [translated,setTranslated]=useState('');
  const [translating,setTranslating]=useState(false);
+ const [downloads,setDownloads]=useState<{name:string;uri:string}[]>([]);
+ const [showDownloads,setShowDownloads]=useState(false);
  async function downloadRequested(downloadUrl:string){
   try{
    const u=new URL(downloadUrl);
@@ -33,6 +35,7 @@ export function NativeBrowser(){
      const basename=(u.pathname.split('/').pop()||'download').replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,72)||'download';
      const destination=new File(Paths.document,Date.now()+'-'+basename);
      const file=await File.downloadFileAsync(u.href,destination);
+     setDownloads(previous=>[{name:file.name,uri:file.uri},...previous].slice(0,20));
      setTranslationNotice('Файл сохранён в приватном хранилище приложения: '+file.name);
     }catch{setTranslationNotice('Не удалось скачать файл. Возможно, сайту нужна авторизация или ссылка устарела.')}
    })()}}]);
@@ -67,6 +70,11 @@ export function NativeBrowser(){
   <TextInput value={address} onChangeText={setAddress} onSubmitEditing={navigate} keyboardType="url" autoCapitalize="none" autoCorrect={false} style={{color:'white',padding:12}}/>
   <WebView onMessage={event=>{if(!translating)void handleTranslationMessage(event.nativeEvent.data)}} onFileDownload={({nativeEvent})=>{void downloadRequested(nativeEvent.downloadUrl)}} key={current.id} ref={web} source={{uri:current.url}} style={{flex:1}} onNavigationStateChange={event=>{setAddress(event.url);setBack(event.canGoBack);setForward(event.canGoForward);setTabs(old=>old.map(t=>t.id===current.id?{...t,url:event.url}:t))}}/>
   {translationNotice?<Text accessibilityRole="alert" style={{color:'#cfdbdf',paddingHorizontal:12,fontSize:12}}>{translationNotice}</Text>:null}
+  {showDownloads?<View style={{maxHeight:170,backgroundColor:'#263039',padding:12}}>
+    <Text style={{color:'#eef4f3',fontSize:14,marginBottom:8}}>Загрузки · текущий сеанс</Text>
+    <ScrollView>{downloads.length?downloads.map(item=><Text key={item.uri} numberOfLines={1} style={{color:'#d7e5e5',paddingVertical:6}}>{item.name}</Text>):<Text style={{color:'#c5d0d2'}}>Скачанных файлов в этом сеансе нет</Text>}</ScrollView>
+    <Text style={{color:'#aabcc1',fontSize:11}}>Файлы остаются в хранилище приложения. Список после перезапуска пока не восстанавливается.</Text>
+   </View>:null}
   {translated?<ScrollView style={{maxHeight:210,backgroundColor:'#263039',padding:12}}><Pressable onPress={()=>setTranslated('')}><Text style={{color:'white',textAlign:'right'}}>Закрыть ×</Text></Pressable><Text style={{color:'white',fontSize:14,lineHeight:22}}>{translated}</Text></ScrollView>:null}
   <View style={{flexDirection:'row',justifyContent:'space-around',padding:12}}>
    <Pressable disabled={!back} onPress={()=>web.current?.goBack()}><Text style={{color:'white'}}>Назад</Text></Pressable>
@@ -74,6 +82,7 @@ export function NativeBrowser(){
    <Pressable onPress={()=>web.current?.reload()}><Text style={{color:'white'}}>Обновить</Text></Pressable>
    <Pressable onPress={navigate}><Text style={{color:'white'}}>Открыть</Text></Pressable>
    <Pressable onPress={translateInfo}><Text style={{color:'white'}}>Перевод</Text></Pressable>
+   <Pressable accessibilityRole="button" onPress={()=>setShowDownloads(value=>!value)}><Text style={{color:'white'}}>Файлы</Text></Pressable>
   </View>
  </View>
 }
