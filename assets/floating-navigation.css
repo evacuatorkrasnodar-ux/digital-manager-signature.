@@ -5,12 +5,17 @@
  --seyveo-nav-ink:#eff7f2;
  --seyveo-dock-height:58px;
  --seyveo-dock-icon-size:22px;
- --seyveo-dock-icon-stroke:1.35;
+ --seyveo-dock-icon-stroke:1.08;
+ /* Laser-etched iconography: a hairline inside the glass, not neon. */
+ --seyveo-etch-core:rgba(232,255,245,.30);
+ --seyveo-etch-halo:rgba(140,217,190,.17);
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
 :root[data-theme="light"]{
  --seyveo-nav-ink:#202b38;
+ --seyveo-etch-core:rgba(48,83,77,.19);
+ --seyveo-etch-halo:rgba(67,127,109,.13);
 }
 .dock{
  position:fixed!important;
@@ -58,6 +63,9 @@
  width:var(--seyveo-dock-icon-size)!important;
  height:var(--seyveo-dock-icon-size)!important;
  stroke-width:var(--seyveo-dock-icon-stroke)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ filter:drop-shadow(0 0 .6px var(--seyveo-etch-core))
+        drop-shadow(0 0 2.1px var(--seyveo-etch-halo));
  flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
@@ -142,7 +150,14 @@
 .dock>.assistant-button .button-art{display:block!important;overflow:visible!important}
 .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
 :root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-day)}
-.dock>.assistant-button .button-art .voice-bars{stroke-width:2;stroke-linecap:round;fill:none}
+.dock>.assistant-button .button-art .voice-bars{
+ stroke-width:1.72;stroke-linecap:round;fill:none;
+ filter:drop-shadow(0 0 .5px var(--seyveo-etch-core))
+        drop-shadow(0 0 1.9px var(--seyveo-etch-halo));
+}
+.dock>.assistant-button .button-art .voice-dot{
+ filter:drop-shadow(0 0 1.5px var(--seyveo-etch-halo));
+}
 .dock>.assistant-button.listening .voice-bars{
  animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
  transform-origin:37px 37px;
@@ -342,8 +357,9 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 .dock>#assistantButton .button-art .button-rim{
  display:block!important;
  stroke:url(#rim-night)!important;
- stroke-width:.78!important;
- opacity:.96!important;
+ stroke-width:.72!important;
+ opacity:.93!important;
+ filter:drop-shadow(0 0 1.35px var(--seyveo-etch-halo));
 }
 .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
  fill:var(--sv-ceramic-pressed,#30443b)!important;
