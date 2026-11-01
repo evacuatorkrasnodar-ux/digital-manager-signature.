@@ -8,6 +8,8 @@ import {Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-n
 import {createBrowserDownloadController, type BrowserDownloadSnapshot}
   from './browser-download-core.mjs';
 import {createExpoBrowserDownloadStorage} from './expo-browser-download-storage.mjs';
+import {BROWSER_PDF_FILE_LIMIT,inspectBrowserPdf,supportsBrowserPdfExtractor,
+  type BrowserPdfExtractor} from './browser-pdf-review.mjs';
 import {inspectBrowserDocument,prepareSayviReviewHandoff,
   type BrowserDocumentReviewPreview,type BrowserSayviHandoff}
   from './browser-document-review.mjs';
@@ -19,7 +21,8 @@ export type BrowserDownloadsColors = {
   line:string;
   accent:string;
 };
-type Props={colors:BrowserDownloadsColors;onSayviReview?:(request:BrowserSayviHandoff)=>Promise<void>};
+type Props={colors:BrowserDownloadsColors;pdfExtractor?:BrowserPdfExtractor;
+  onSayviReview?:(request:BrowserSayviHandoff)=>Promise<void>};
 
 const labelForCategory:Record<string,string>={
   document:'Документ',image:'Изображение',audio:'Аудио',
@@ -30,7 +33,7 @@ function sizeLabel(bytes:number){
   return Math.max(1,Math.ceil(bytes/1024))+' КБ';
 }
 
-export function BrowserDownloadsPanel({colors,onSayviReview}:Props){
+export function BrowserDownloadsPanel({colors,pdfExtractor,onSayviReview}:Props){
   const [source,setSource]=useState('');
   const [message,setMessage]=useState('');
   const [review,setReview]=useState<BrowserDocumentReviewPreview|null>(null);
@@ -84,11 +87,46 @@ export function BrowserDownloadsPanel({colors,onSayviReview}:Props){
     }finally{setReading(false);}
   }
 
+  async function readSelectedPdf(id:string) {
+    if(reading || submitting || !supportsBrowserPdfExtractor(pdfExtractor)) return;
+    setReading(true);
+    setReview(null);
+    setMessage('');
+    try{
+      // Extract into local memory only. No automatic cloud or AI calls.
+      const preview=await storage.readLocalPdfPreview(id,pdfExtractor);
+      setReview(preview);
+    }catch(error){
+      const code=error instanceof Error?error.message:'';
+      setMessage(code==='pdf-text-not-found'
+        ?'В PDF нет распознаваемого текста. Для скана позже потребуется OCR.'
+        :'Не удалось извлечь текст PDF. Файл можно открыть обычным просмотром.');
+    }finally{setReading(false);}
+  }
+
   function startSayviReview(item:BrowserDownloadSnapshot['items'][number]) {
     const eligibility=inspectBrowserDocument(item);
     if(eligibility.kind==='needs-extractor'){
+      if(item.name.toLowerCase().endsWith('.pdf')){
+        const condition=inspectBrowserPdf(item);
+        if(condition.status==='too-large'){
+          Alert.alert('Сэйви · PDF','Пока можем читать PDF размером до '+Math.floor(BROWSER_PDF_FILE_LIMIT/1024/1024)+' МБ.');
+          return;
+        }
+        if(supportsBrowserPdfExtractor(pdfExtractor)){
+          Alert.alert('Сэйви, посмотри',
+            'Прочитать текст PDF прямо на устройстве? Сэйви ничего не получит без отдельного разрешения.',
+            [{text:'Отмена',style:'cancel'},
+             {text:'Прочитать',onPress:()=>{void readSelectedPdf(item.id);}}]);
+          return;
+        }
+        Alert.alert('Сэйви · PDF',
+          'Чтение PDF требует нативного модуля, которого пока нет в сборке. Можно открыть сам документ.',
+          [{text:'Позже',style:'cancel'},{text:'Открыть',onPress:()=>{void previewFile(item.id);}}]);
+        return;
+      }
       Alert.alert('Сэйви · Документы',
-        'Этот документ можно открыть. Автоматическое чтение PDF и Office пока не подключено.',
+        'Чтение Office-документов ещё не подключено. Можно открыть сам файл.',
         [{text:'Позже',style:'cancel'},
          {text:'Открыть',onPress:()=>{void previewFile(item.id);}}]);
       return;
