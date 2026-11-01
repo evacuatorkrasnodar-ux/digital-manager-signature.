@@ -1207,7 +1207,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text,#eef3f1) 4%,transparent);
 }
 .seyveo-browser.is-site-view .sb-browser-sitebar-menu-button,
-.seyveo-browser.is-site-view .sb-browser-sitebar-search-button{
+.seyveo-browser.is-site-view .sb-browser-sitebar-spacer{
  display:grid;place-items:center;flex:none;
  width:40px;height:42px;min-width:40px;
  padding:8px;border-radius:12px;border:0;
@@ -1215,7 +1215,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  opacity:.87;
 }
 .seyveo-browser.is-site-view .sb-browser-sitebar-menu-button svg,
-.seyveo-browser.is-site-view .sb-browser-sitebar-search-button svg{
+.seyveo-browser.is-site-view .sb-browser-sitebar-spacer svg{
  display:block;width:24px;height:24px;
  fill:none;stroke:currentColor;stroke-width:1.65;
  stroke-linecap:round;stroke-linejoin:round;
@@ -1226,7 +1226,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  font-size:clamp(17px,3.6vw,24px);font-weight:630;letter-spacing:-.02em;
 }
 .seyveo-browser.is-site-view .sb-browser-sitebar-menu-button:focus-visible,
-.seyveo-browser.is-site-view .sb-browser-sitebar-search-button:focus-visible{
+.seyveo-browser.is-site-view .sb-browser-sitebar-spacer:focus-visible{
  outline:2px solid var(--sb-accent);outline-offset:1px;
 }
 /* QUIET CINEMA: compact, matte contextual navigation (no oversized tiles). */
@@ -1265,7 +1265,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  }
  .seyveo-browser.is-site-view .sb-browser-sitebar-title{font-size:18px}
  .seyveo-browser.is-site-view .sb-browser-sitebar-menu-button,
- .seyveo-browser.is-site-view .sb-browser-sitebar-search-button{
+ .seyveo-browser.is-site-view .sb-browser-sitebar-spacer{
   width:38px;min-width:38px;height:40px;
  }
 }
@@ -1366,19 +1366,19 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
  font-size:clamp(17px,3.6vw,24px);
  font-weight:630;letter-spacing:-.02em;
 }
-.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button){
+.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-spacer){
  display:grid;place-items:center;flex:none;
  width:40px;min-width:40px;height:42px;min-height:42px;
  padding:8px;margin:0;
  border:0;border-radius:12px;
  background:transparent;color:inherit;opacity:.87;
 }
-.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button) svg{
+.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-spacer) svg{
  display:block;width:24px;height:24px;
  fill:none;stroke:currentColor;stroke-width:1.65;
  stroke-linecap:round;stroke-linejoin:round;
 }
-.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button):focus-visible{
+.seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-spacer):focus-visible{
  outline:2px solid var(--sb-accent);outline-offset:1px;
 }
 .seyveo-browser.is-unified .sb-manager-secondary .sb-secondary-header{
@@ -1418,7 +1418,7 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg{
   border-radius:19px 19px 0 0;
  }
  .seyveo-browser.is-unified .sb-browser-panel-head>.sb-browser-sitebar-title{font-size:18px}
- .seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-search-button){
+ .seyveo-browser.is-unified .sb-browser-panel-head>:is(.sb-browser-sitebar-menu-button,.sb-browser-sitebar-spacer){
   width:38px;min-width:38px;height:40px;min-height:40px;
  }
  .seyveo-browser.is-unified .seyveo-browser-manager>.sb-manager-switcher:not([hidden]){top:55px}
