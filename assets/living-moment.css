@@ -414,40 +414,39 @@
   72%{opacity:.94;transform:translate3d(0,0,0) scale(1.016)}
   100%{opacity:.9;transform:translate3d(0,0,0) scale(1)}
 }
-/* SEYVEO Flow Glass — the same material logic as Browser tabs.
-   A solid, theme-coloured fill is poured beneath two clear glass reflections.
-   Colors come from the active Black Velvet palette; no white-paper layer
-   can mask the dark graphite or emerald tones. This material is shared by
-   preview, gathered and real recommendation cards. */
+/* SEYVEO Flow Glass — Browser-tab optical material, light edition.
+   A coherent palette-coloured fill beneath thin twin glass contours.
+   The narrower, softer highlight leaves the orb as the visual focal point.
+   Shared by preview, gathered and real recommendation cards. */
 #homePage{
   --lm-glass-sheen:linear-gradient(180deg,
-    color-mix(in srgb,var(--text) 9%,transparent),
-    transparent 22%,transparent 88%,
-    color-mix(in srgb,var(--bg) 9%,transparent));
+    color-mix(in srgb,var(--text) 5%,transparent),
+    transparent 15%,transparent 90%,
+    color-mix(in srgb,var(--bg) 4%,transparent));
   --lm-glass-fill:
-    radial-gradient(ellipse 115% 83% at 51% -22%,
-      color-mix(in srgb,var(--seyveo-emerald) 13%,transparent),transparent 79%),
+    radial-gradient(ellipse 75% 55% at 50% -24%,
+      color-mix(in srgb,var(--seyveo-emerald) 8%,transparent),transparent 79%),
     linear-gradient(172deg,
-      color-mix(in srgb,var(--card2) 82%,var(--card)) 0%,
-      color-mix(in srgb,var(--card2) 72%,var(--bg)) 57%,
-      color-mix(in srgb,var(--card) 80%,var(--bg)) 100%);
-  --lm-glass-outline:color-mix(in srgb,var(--seyveo-emerald) 27%,var(--line));
-  --lm-glass-inner:color-mix(in srgb,var(--text) 17%,transparent);
+      color-mix(in srgb,var(--card2) 84%,var(--card)) 0%,
+      color-mix(in srgb,var(--card2) 92%,var(--card)) 57%,
+      color-mix(in srgb,var(--card) 92%,var(--bg)) 100%);
+  --lm-glass-outline:color-mix(in srgb,var(--seyveo-emerald) 18%,var(--line));
+  --lm-glass-inner:color-mix(in srgb,var(--text) 11%,transparent);
   --lm-glass-depth:
-    inset 0 1px 0 color-mix(in srgb,var(--text) 15%,transparent),
-    inset 0 -8px 16px -13px color-mix(in srgb,var(--bg) 44%,transparent),
-    0 3px 11px rgba(0,0,0,.12);
+    inset 0 1px 0 color-mix(in srgb,var(--text) 9%,transparent),
+    inset 0 -8px 16px -13px color-mix(in srgb,var(--bg) 26%,transparent),
+    0 3px 10px rgba(0,0,0,.085);
 }
 /* On White Velvet the same glass holds a cool pearl surface and dark ink. */
 :root[data-theme=light] #homePage{
-  --lm-glass-sheen:linear-gradient(180deg,rgba(255,255,255,.42),transparent 26%,transparent 89%,rgba(79,109,127,.025));
+  --lm-glass-sheen:linear-gradient(180deg,rgba(255,255,255,.26),transparent 16%,transparent 92%,rgba(79,109,127,.012));
   --lm-glass-fill:linear-gradient(172deg,#f7fafd 0%,#eef3f6 57%,#e6edf2 100%);
-  --lm-glass-outline:rgba(93,120,138,.28);
-  --lm-glass-inner:rgba(255,255,255,.60);
+  --lm-glass-outline:rgba(93,120,138,.19);
+  --lm-glass-inner:rgba(255,255,255,.43);
   --lm-glass-depth:
-    inset 0 1px 0 rgba(255,255,255,.87),
-    inset 0 -1px 0 rgba(108,136,153,.10),
-    0 3px 10px rgba(28,50,70,.075);
+    inset 0 1px 0 rgba(255,255,255,.68),
+    inset 0 -1px 0 rgba(108,136,153,.07),
+    0 3px 9px rgba(28,50,70,.055);
 }
 /* Three physical cards keep their original rise-and-gather movement. */
 #seyveoLivingMoment.lm-preview .lm-field{
@@ -497,10 +496,10 @@
    border:1px solid var(--lm-glass-inner);
    border-radius:inherit;
    background:
-     radial-gradient(18px 12px at 14px 12px,color-mix(in srgb,var(--text) 10%,transparent),transparent 72%),
-     radial-gradient(18px 12px at calc(100% - 14px) 12px,color-mix(in srgb,var(--text) 7%,transparent),transparent 72%),
-     linear-gradient(180deg,color-mix(in srgb,var(--text) 5%,transparent),transparent 14%,transparent 92%,color-mix(in srgb,var(--bg) 5%,transparent));
-   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 13%,transparent),inset 0 -1px 0 color-mix(in srgb,var(--bg) 12%,transparent);
+     radial-gradient(18px 12px at 14px 12px,color-mix(in srgb,var(--text) 6%,transparent),transparent 72%),
+     radial-gradient(18px 12px at calc(100% - 14px) 12px,color-mix(in srgb,var(--text) 4%,transparent),transparent 72%),
+     linear-gradient(180deg,color-mix(in srgb,var(--text) 3%,transparent),transparent 11%,transparent 92%,color-mix(in srgb,var(--bg) 3%,transparent));
+   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 8%,transparent),inset 0 -1px 0 color-mix(in srgb,var(--bg) 8%,transparent);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
@@ -509,9 +508,9 @@
    top:2px;right:2px;bottom:2px;left:2px;
    z-index:0;pointer-events:none;
    border-radius:16px;
-   border:1px solid color-mix(in srgb,var(--lm-glass-outline) 50%,transparent);
-   background:linear-gradient(145deg,color-mix(in srgb,var(--text) 3%,transparent),transparent 34%);
-   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 8%,transparent);
+   border:1px solid color-mix(in srgb,var(--lm-glass-outline) 32%,transparent);
+   background:linear-gradient(145deg,color-mix(in srgb,var(--text) 2%,transparent),transparent 28%);
+   box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 5%,transparent);
 }
 #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item) > *,
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field > *,
