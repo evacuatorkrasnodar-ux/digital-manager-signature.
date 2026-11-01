@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {loadBrowserSession,saveBrowserSession} from './session-store';
 import {browserLibrary,type SavedLink} from './browser-library';
 import {checkBrowserAddress} from './address-safety';
-import {loadCookieExceptions,saveCookieExceptions,hostnameForException} from './cookie-exceptions';
+import {loadCookieExceptions,saveCookieExceptions,hostnameForException,loadCookieBlock,saveCookieBlock} from './cookie-exceptions';
 import {View,Text,TextInput,Pressable,ScrollView,Alert,Platform} from 'react-native';
 import {File,Paths} from 'expo-file-system';
 import {translateText,translateEndpoint,usableTranslationEndpoint} from './translate-service';
@@ -17,6 +17,7 @@ export function NativeBrowser(){
  const [active,setActive]=useState(1);
  const [privateMode,setPrivateMode]=useState(false);
  const [blockThirdPartyCookies,setBlockThirdPartyCookies]=useState(false);
+ useEffect(()=>{let alive=true;void loadCookieBlock().then(v=>{if(alive)setBlockThirdPartyCookies(v)});return()=>{alive=false}},[]);
  const [cookieExceptions,setCookieExceptions]=useState<string[]>([]);
  useEffect(()=>{let alive=true;void loadCookieExceptions().then(items=>{if(alive)setCookieExceptions(items)});return()=>{alive=false}},[]);
  const approvedNavigation=useRef<string|null>(null);
@@ -31,7 +32,7 @@ export function NativeBrowser(){
  useEffect(()=>{if(sessionReady&&!privateMode)void saveBrowserSession(tabs.filter(t=>t.id!==0),active)},[tabs,active,sessionReady,privateMode]);
  const current=tabs.find(t=>t.id===active)||tabs[0];
  const currentHost=hostnameForException(current.url);
- const excepted=!!currentHost&&cookieExceptions.includes(currentHost);
+ const excepted=!privateMode&&!!currentHost&&cookieExceptions.includes(currentHost);
  function toggleCookieException(){
   if(!currentHost||Platform.OS!=='android')return;
   const next=excepted?cookieExceptions.filter(host=>host!==currentHost):[...cookieExceptions,currentHost];
@@ -132,7 +133,7 @@ export function NativeBrowser(){
  function close(id:number){if(privateMode)return;const left=tabs.filter(t=>t.id!==id);if(!left.length){const t={id:nextId,url:HOME};setNextId(n=>n+1);setTabs([t]);select(t);return}setTabs(left);if(active===id)select(left[Math.max(0,tabs.findIndex(t=>t.id===id)-1)])}
  function navigate(){sharedMediaSession.clear('browser',String(active));activeMediaId.current=null;setMediaVisible(false);setMediaPaused(false);const value=address.trim();const raw=value.includes('://')?value:'https://'+value;try{const url=new URL(raw);const check=checkBrowserAddress(url.href);if(!check.allowed)throw Error();const open=()=>{setTabs(old=>old.map(t=>t.id===active?{...t,url:url.href}:t));setAddress(url.href)};if(check.warning)Alert.alert('Проверьте адрес',check.warning,[{text:'Отмена',style:'cancel'},{text:'Открыть',onPress:open}]);else open()}catch{setAddress(current.url)}}
  return <View style={{flex:1,backgroundColor:'#11161b'}}>
-  <View style={{flexDirection:'row',justifyContent:'flex-end',alignItems:'center',gap:16,paddingHorizontal:12,paddingTop:5}}><Pressable accessibilityRole="button" accessibilityLabel="Переключить блокировку сторонних cookies" onPress={()=>{if(Platform.OS==='ios'){Alert.alert('Защита от отслеживания','Этот переключатель управляет сторонними cookies в Android WebView. В iOS действуют правила WebKit, а полноценная блокировка трекеров пока не подключена.');return}Alert.alert('Сторонние cookies',blockThirdPartyCookies?'Разрешить сторонние cookies? Страница перезагрузится.':'Ограничить сторонние cookies? Некоторые сайты могут потребовать повторный вход. Страница перезагрузится.',[{text:'Отмена',style:'cancel'},{text:'Применить',onPress:()=>setBlockThirdPartyCookies(v=>!v)}])}}><Text style={{color:'#d6e3e5',fontSize:12}}>{Platform.OS==='ios'?'Приватность · iOS':blockThirdPartyCookies?'Cookies 3-х сторон: выкл.':'Cookies 3-х сторон: вкл.'}</Text></Pressable><Pressable accessibilityRole="button" onPress={togglePrivate}><Text style={{color:privateMode?'#f0d7a4':'#d6e3e5'}}>{privateMode?'Закрыть приватную вкладку':'Приватная вкладка'}</Text></Pressable></View>
+  <View style={{flexDirection:'row',justifyContent:'flex-end',alignItems:'center',gap:16,paddingHorizontal:12,paddingTop:5}}><Pressable accessibilityRole="button" accessibilityLabel="Переключить блокировку сторонних cookies" onPress={()=>{if(Platform.OS==='ios'){Alert.alert('Защита от отслеживания','Этот переключатель управляет сторонними cookies в Android WebView. В iOS действуют правила WebKit, а полноценная блокировка трекеров пока не подключена.');return}Alert.alert('Сторонние cookies',blockThirdPartyCookies?'Разрешить сторонние cookies? Страница перезагрузится.':'Ограничить сторонние cookies? Некоторые сайты могут потребовать повторный вход. Страница перезагрузится.',[{text:'Отмена',style:'cancel'},{text:'Применить',onPress:()=>{void saveCookieBlock(!blockThirdPartyCookies).then(ok=>{if(ok)setBlockThirdPartyCookies(v=>!v);else setTranslationNotice('Не удалось сохранить настройку cookies.')})}}])}}><Text style={{color:'#d6e3e5',fontSize:12}}>{Platform.OS==='ios'?'Приватность · iOS':blockThirdPartyCookies?'Cookies 3-х сторон: выкл.':'Cookies 3-х сторон: вкл.'}</Text></Pressable><Pressable accessibilityRole="button" onPress={togglePrivate}><Text style={{color:privateMode?'#f0d7a4':'#d6e3e5'}}>{privateMode?'Закрыть приватную вкладку':'Приватная вкладка'}</Text></Pressable></View>
   {Platform.OS==='android'&&blockThirdPartyCookies?<View style={{alignItems:'flex-end',paddingHorizontal:12}}><Pressable onPress={toggleCookieException} accessibilityRole="button"><Text style={{color:'#b8d3d0',fontSize:12}}>{excepted?'Убрать исключение · '+currentHost:'Разрешить cookies для сайта'}</Text></Pressable></View>:null}
   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow:0,maxHeight:58}} contentContainerStyle={{padding:8,alignItems:'center',gap:6}}>
    {tabs.filter(t=>privateMode?t.id===0:t.id!==0).map(t=><View key={t.id} style={{flexDirection:'row',alignItems:'center',borderRadius:15,borderWidth:1,borderColor:t.id===active?'#acc9ce':'#56646b',backgroundColor:t.id===active?'#34434a':'#242e35'}}>
