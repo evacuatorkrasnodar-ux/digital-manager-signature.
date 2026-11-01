@@ -70,7 +70,7 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
       const url=addressToUrl(raw);
       if(!url)return;
       setSession(previous=>setBrowserTabUrl(previous,previous.activeId,url));
-      setAddress(url);setStatus('');
+      setAddress(url);setStatus('');setView('page');
     }catch{
       setStatus('Проверь адрес. Пока разрешены публичные сайты по HTTPS.');
     }
@@ -81,6 +81,7 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
       return;
     }
     setSession(previous=>addBrowserTab(previous,url||null));
+    setView('page');
   }
   function chooseTheme(){
     const index=themeChoices.findIndex(x=>x.id===theme);
@@ -161,7 +162,15 @@ export function NativeBrowserScreen({onClose,plus=false,onSayviReview}:{onClose:
         <Text style={[styles.stripText,{color:colors.muted}]}>{resolved.label}</Text>
       </View>
       <View style={[styles.content,{backgroundColor:colors.surface}]}>
-        {tab.url?(
+        {view==='downloads'?(
+          <ScrollView contentContainerStyle={styles.downloads}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Вернуться к странице"
+              onPress={()=>setView('page')} style={[styles.downloadBack,{borderColor:colors.line}]}>
+              <Text style={{color:colors.text}}>На страницу</Text>
+            </Pressable>
+            <BrowserDownloadsPanel colors={colors} onSayviReview={onSayviReview}/>
+          </ScrollView>
+        ):tab.url?(
           <NativeBrowserViewport
             key={tab.id}
             ref={ref}
