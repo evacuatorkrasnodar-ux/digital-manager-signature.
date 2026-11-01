@@ -1,4 +1,5 @@
-import React,{useRef,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
+import {loadBrowserSession,saveBrowserSession} from './session-store';
 import {View,Text,TextInput,Pressable,ScrollView} from 'react-native';
 import {WebView} from 'react-native-webview';
 type Tab={id:number;url:string};
@@ -8,6 +9,13 @@ export function NativeBrowser(){
  const [tabs,setTabs]=useState<Tab[]>([{id:1,url:HOME}]);
  const [active,setActive]=useState(1);
  const [nextId,setNextId]=useState(2);
+ const [sessionReady,setSessionReady]=useState(false);
+ useEffect(()=>{let mounted=true;void loadBrowserSession().then(saved=>{
+  if(!mounted)return;
+  if(saved){setTabs(saved.tabs);setActive(saved.active);setNextId(Math.max(...saved.tabs.map(t=>t.id))+1);setAddress(saved.tabs.find(t=>t.id===saved.active)?.url||HOME)}
+  setSessionReady(true);
+ });return()=>{mounted=false}},[]);
+ useEffect(()=>{if(sessionReady)void saveBrowserSession(tabs,active)},[tabs,active,sessionReady]);
  const current=tabs.find(t=>t.id===active)||tabs[0];
  const [address,setAddress]=useState(HOME);
  const [back,setBack]=useState(false),[forward,setForward]=useState(false);
