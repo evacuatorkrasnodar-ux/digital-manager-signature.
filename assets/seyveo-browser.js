@@ -35,7 +35,7 @@ root.innerHTML=`<div class="seyveo-browser-home"><div class="seyveo-browser-kick
 <div class="seyveo-browser-sheet" hidden><div class="seyveo-browser-sheet-bar"><strong>Избранное</strong><button type="button" data-dismiss>Готово</button></div><div data-bookmark-list></div></div>`;
 // Embedded websites keep their sandbox; do not add allow-same-origin with allow-scripts.
 document.body.append(root);
-const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading sb-manager-recent-heading"><strong>Недавно закрытые</strong><span class="sb-manager-recent-actions"><button type="button" data-recent-all hidden>Показать все ›</button><button type="button" data-recent-clear hidden aria-label="Очистить недавно закрытые" title="Очистить список"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div class="sb-manager-closed" data-manager-closed></div><div class="sb-manager-heading sb-manager-collections-heading"><strong>Коллекции</strong><button type="button" data-collection-new>Создать коллекцию ＋</button></div><div class="sb-manager-collections-list" data-manager-collections></div>';
+const manager=document.createElement('section');manager.className='seyveo-browser-manager';manager.hidden=true;manager.setAttribute('aria-label','Управление вкладками');manager.innerHTML='<div class="sb-manager-heading"><strong>Открытые вкладки</strong><span class="sb-manager-heading-actions"><button type="button" data-close-all>Закрыть все</button><button type="button" data-manager-new aria-label="Новая вкладка">＋</button></span></div><div class="sb-manager-list" data-manager-list></div><div class="sb-manager-heading sb-manager-recent-heading"><strong>Недавно закрытые</strong><span class="sb-manager-recent-actions"><button type="button" data-recent-all hidden>Показать все ›</button><button type="button" data-recent-clear hidden aria-label="Очистить недавно закрытые" title="Очистить список"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 4h5M7.5 7l.7 13h7.6l.7-13M10 10v7m4-7v7"/></svg></button></span></div><div class="sb-manager-closed" data-manager-closed></div>';
 root.append(manager);
 const switcher=document.createElement('nav');switcher.className='sb-manager-switcher';switcher.setAttribute('aria-label','Разделы браузера');
 const sections=[['tabs','Вкладки'],['favorites','Избранное'],['history','История'],['collections','Коллекции']];
@@ -152,6 +152,7 @@ function collectionCount(n){
 }
 function makeCollectionCard(collection){
  const id=collection.id,card=document.createElement('article');card.className='sb-manager-collection-tile';card.dataset.collectionId=id;
+ if(openCollection===id)card.classList.add('is-current');
  if(collectionMenuId===id)card.classList.add('is-menu-open');
  const open=document.createElement('button');open.type='button';open.className='sb-collection-open';open.setAttribute('aria-label','Открыть коллекцию '+collection.name);
  const cover=collectionCover(collection),words=document.createElement('span');words.className='sb-collection-summary';
@@ -351,8 +352,8 @@ function renderManager(){
  const count=switcher.querySelector('[data-section="tabs"] .sb-switch-count')||document.createElement('span');count.className='sb-switch-count';count.textContent=String(tabs.length);switcher.querySelector('[data-section="tabs"]').append(count);
  tabsPanel.hidden=managerSection!=='tabs';secondary.hidden=managerSection==='tabs';
  if(managerSection!=='tabs'){renderSecondary();return}
- const list=manager.querySelector('[data-manager-list]'),closed=manager.querySelector('[data-manager-closed]'),collections=manager.querySelector('[data-manager-collections]');
- list.replaceChildren();closed.replaceChildren();collections.replaceChildren();
+ const list=manager.querySelector('[data-manager-list]'),closed=manager.querySelector('[data-manager-closed]');
+ list.replaceChildren();closed.replaceChildren();
  for(const t of tabs){
   const url=t.entries[t.position],item=document.createElement('article');item.className='sb-manager-card'+(t.id===active?' is-current':'');
   item.dataset.tabId=String(t.id);
@@ -416,15 +417,6 @@ function renderManager(){
   row.append(icon,body,restore,remove);slot.append(row);closed.append(slot);
  }
  syncClosedStack();
- const entries=getCollections();
- for(const collection of entries)collections.append(makeCollectionCard(collection));
- const starterNames=['Вдохновение','Путешествия'];
- const hasStarter=entries.some(item=>starterNames.includes(item.name));
- if(!entries.length||hasStarter){
-  for(const name of starterNames){
-   if(!entries.some(item=>item.name===name))collections.append(makeStarterCollectionCard(name));
-  }
- }
 }
 function renderSecondary(){
  secondary.replaceChildren();
@@ -432,21 +424,65 @@ function renderSecondary(){
  const header=document.createElement('div');header.className='sb-secondary-header';const heading=document.createElement('h3');heading.textContent=managerSection==='favorites'?'Избранное':managerSection==='history'?'История':'Коллекции';header.append(heading);secondary.append(header);
  if(managerSection==='collections'){
   const add=document.createElement('button');add.type='button';add.textContent='＋ Новая коллекция';add.addEventListener('click',makeCollection);header.append(add);
-  if(creatingCollection){const form=document.createElement('form');form.className='sb-collection-create';const field=document.createElement('input');field.type='text';field.className='sb-collection-name';field.maxLength=42;field.required=true;field.placeholder='Название коллекции';field.setAttribute('aria-label','Название коллекции');const save=document.createElement('button');save.type='submit';save.textContent='Создать';const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';cancel.addEventListener('click',()=>{creatingCollection=false;renderManager()});form.addEventListener('submit',event=>{event.preventDefault();const name=field.value.trim();if(!name)return;const items=getCollections();if(items.length>=30)return;const id=String(Date.now())+'-'+Math.random().toString(36).slice(2,6);items.push({id,name,urls:[]});putCollections(items);creatingCollection=false;openCollection=id;renderManager()});form.append(field,save,cancel);secondary.append(form)}
-  const items=getCollections();
-  if(!items.length){const templates=document.createElement('div');templates.className='sb-manager-collections-list';templates.append(makeStarterCollectionCard('Вдохновение'),makeStarterCollectionCard('Путешествия'));secondary.append(templates)}
-  for(const collection of items){
-   const group=document.createElement('section');group.className='sb-collection-group';
-   const trigger=document.createElement('button');trigger.className='sb-collection-trigger';trigger.type='button';trigger.textContent=collection.name+' · '+collection.urls.length+' стр.';trigger.addEventListener('click',()=>{openCollection=openCollection===collection.id?null:collection.id;renderManager()});group.append(trigger);
-   if(openCollection===collection.id){
-    const content=document.createElement('div');content.className='sb-collection-content';
-    for(const link of collection.urls){const row=document.createElement('div');row.className='sb-collection-link';const jump=document.createElement('button');jump.type='button';jump.textContent=siteName(link);jump.addEventListener('click',()=>{tabManager(false);navigate(link)});const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','Убрать из коллекции');remove.addEventListener('click',()=>{putCollections(getCollections().map(x=>x.id===collection.id?{...x,urls:x.urls.filter(u=>u!==link)}:x));renderManager()});row.append(jump,remove);content.append(row)}
-    const choices=saved().filter(x=>!collection.urls.includes(x));if(choices.length){const addRow=document.createElement('div');addRow.className='sb-collection-add';const select=document.createElement('select');select.setAttribute('aria-label','Добавить закладку');for(const link of choices){const option=document.createElement('option');option.value=link;option.textContent=siteName(link);select.append(option)}const button=document.createElement('button');button.type='button';button.textContent='Добавить';button.addEventListener('click',()=>{putCollections(getCollections().map(x=>x.id===collection.id?{...x,urls:[...x.urls,select.value]}:x));renderManager()});addRow.append(select,button);content.append(addRow)}else if(!collection.urls.length){const p=document.createElement('p');p.className='sb-manager-empty';p.textContent='Сначала сохрани сайт в Избранное, чтобы добавить его сюда';content.append(p)}
-    const del=document.createElement('button');del.type='button';del.className='sb-collection-delete';del.textContent='Удалить коллекцию';del.addEventListener('click',()=>{putCollections(getCollections().filter(x=>x.id!==collection.id));openCollection=null;renderManager()});content.append(del);group.append(content)
-   }
-   secondary.append(group);
+  if(creatingCollection){
+   const form=document.createElement('form');form.className='sb-collection-create';
+   const field=document.createElement('input');field.type='text';field.className='sb-collection-name';
+   field.maxLength=42;field.required=true;field.placeholder='Название коллекции';field.setAttribute('aria-label','Название коллекции');
+   const save=document.createElement('button');save.type='submit';save.textContent='Создать';
+   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Отмена';
+   cancel.addEventListener('click',()=>{creatingCollection=false;renderManager()});
+   form.addEventListener('submit',event=>{
+    event.preventDefault();const name=field.value.trim();if(!name)return;
+    const items=getCollections();if(items.length>=30)return;
+    const id=String(Date.now())+'-'+Math.random().toString(36).slice(2,6);
+    items.push({id,name,urls:[]});putCollections(items);
+    creatingCollection=false;openCollection=id;renderManager();
+   });
+   form.append(field,save,cancel);secondary.append(form);
   }
-  return
+  const items=getCollections(),cards=document.createElement('div');
+  cards.className='sb-manager-collections-list';
+  if(!items.length){
+   cards.append(makeStarterCollectionCard('Вдохновение'),makeStarterCollectionCard('Путешествия'));
+  }else for(const collection of items)cards.append(makeCollectionCard(collection));
+  secondary.append(cards);
+  const selected=items.find(item=>item.id===openCollection);
+  if(selected){
+   const group=document.createElement('section');group.className='sb-collection-group';
+   const content=document.createElement('div');content.className='sb-collection-content';
+   for(const link of selected.urls){
+    const row=document.createElement('div');row.className='sb-collection-link';
+    const jump=document.createElement('button');jump.type='button';jump.textContent=siteName(link);
+    jump.addEventListener('click',()=>{tabManager(false);navigate(link)});
+    const remove=document.createElement('button');remove.type='button';remove.textContent='×';
+    remove.setAttribute('aria-label','Убрать из коллекции');
+    remove.addEventListener('click',()=>{
+     putCollections(getCollections().map(x=>x.id===selected.id?{...x,urls:x.urls.filter(u=>u!==link)}:x));
+     renderManager();
+    });
+    row.append(jump,remove);content.append(row);
+   }
+   const choices=saved().filter(link=>!selected.urls.includes(link));
+   if(choices.length){
+    const addRow=document.createElement('div');addRow.className='sb-collection-add';
+    const select=document.createElement('select');select.setAttribute('aria-label','Добавить закладку');
+    for(const link of choices){
+     const option=document.createElement('option');option.value=link;option.textContent=siteName(link);select.append(option);
+    }
+    const button=document.createElement('button');button.type='button';button.textContent='Добавить';
+    button.addEventListener('click',()=>{
+     putCollections(getCollections().map(x=>x.id===selected.id?{...x,urls:[...x.urls,select.value]}:x));
+     renderManager();
+    });
+    addRow.append(select,button);content.append(addRow);
+   }else if(!selected.urls.length){
+    const p=document.createElement('p');p.className='sb-manager-empty';
+    p.textContent='Сначала сохрани сайт в Избранное, чтобы добавить его сюда';
+    content.append(p);
+   }
+   group.append(content);secondary.append(group);
+  }
+  return;
  }
  if(managerSection==='history'){
   const links=historyItems(),times=historyTimes();
@@ -742,7 +778,6 @@ manager.querySelector('[data-recent-clear]').addEventListener('click',()=>{
  if(!window.confirm('Очистить список недавно закрытых вкладок? Открытые вкладки, история и избранное останутся.'))return;
  recentlyClosed=[];allClosedShown=false;persistSession();renderManager();
 });
-manager.querySelector('[data-collection-new]').addEventListener('click',makeCollection);
 manager.querySelector('[data-manager-new]').addEventListener('click',()=>{const t={id:nextId++,entries:[],position:-1};tabs.push(t);active=t.id;tabManager(false);render();input.focus()});
 manager.querySelector('[data-close-all]').addEventListener('click',()=>{allClosedShown=false;for(const t of tabs){const u=t.entries[t.position];if(u)saveClosed(u)}tabs=[{id:nextId++,entries:[],position:-1}];active=tabs[0].id;render()});
 root.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
