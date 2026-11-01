@@ -54,7 +54,7 @@ manager.prepend(switcher);
 const secondary=document.createElement('div');secondary.className='sb-manager-secondary';manager.append(secondary);
 const panelHeader=document.createElement('header');
 panelHeader.className='sb-browser-panel-head';
-panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Избранное</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
+panelHeader.innerHTML='<button type="button" class="sb-browser-sitebar-menu-button" data-manager-dismiss aria-label="Закрыть меню браузера" aria-expanded="true" title="Закрыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><strong class="sb-browser-sitebar-title" data-panel-section-title>Меню</strong><span class=\"sb-browser-sitebar-spacer\" aria-hidden=\"true\"></span>';
 manager.prepend(panelHeader);
 const panelScrim=document.createElement('div');
 panelScrim.className='sb-browser-panel-scrim';panelScrim.hidden=true;
@@ -148,7 +148,7 @@ function makeCollectionCard(collection){
  const id=collection.id,card=document.createElement('article');card.className='sb-manager-collection-tile';card.dataset.collectionId=id;
  if(openCollection===id)card.classList.add('is-current');
  if(collectionMenuId===id)card.classList.add('is-menu-open');
- const open=document.createElement('button');open.type='button';open.className='sb-collection-open';open.setAttribute('aria-label','Открыть коллекцию '+collection.name);
+ const open=document.createElement('button');open.type='button';open.className='sb-collection-open';open.setAttribute('aria-label','Открыть папку '+collection.name);
  const cover=collectionCover(collection),words=document.createElement('span');words.className='sb-collection-summary';
  const title=document.createElement('strong');title.textContent=collection.name;const count=document.createElement('small');count.textContent=collectionCount(collection.urls.length);
  words.append(title,count);open.append(cover,words);
@@ -165,7 +165,7 @@ function makeCollectionCard(collection){
   form.addEventListener('submit',event=>{event.preventDefault();const name=input.value.trim();if(!name)return;putCollections(getCollections().map(item=>item.id===id?{...item,name:name.slice(0,42)}:item));renamingCollectionId=null;collectionMenuId=null;renderManager()});
   form.append(input,submit,cancel);panel.append(form);
  }else if(confirmCollectionDeleteId===id){
-  const warning=document.createElement('span');warning.className='sb-collection-confirm-label';warning.textContent='Удалить коллекцию?';
+  const warning=document.createElement('span');warning.className='sb-collection-confirm-label';warning.textContent='Удалить папку?';
   const yes=document.createElement('button');yes.type='button';yes.textContent='Удалить';yes.addEventListener('click',()=>{putCollections(getCollections().filter(item=>item.id!==id));collectionMenuId=null;confirmCollectionDeleteId=null;if(openCollection===id)openCollection=null;renderManager()});
   const no=document.createElement('button');no.type='button';no.textContent='Отмена';no.addEventListener('click',()=>{confirmCollectionDeleteId=null;renderManager()});panel.append(warning,yes,no);
  }else{
@@ -339,7 +339,7 @@ function syncClosedStack(){
 }
 function renderManager(){
  const currentLabel=managerSection==='collections'?'Избранное':sections.find(([id])=>id===managerSection)?.[1]||'Избранное';
- panelHeader.querySelector('[data-panel-section-title]').textContent=currentLabel;
+ panelHeader.querySelector('[data-panel-section-title]').textContent='Меню';
  manager.setAttribute('aria-label','Управление браузером · '+currentLabel);
  switcher.querySelectorAll('button').forEach(button=>{const isActive=button.dataset.section===(managerSection==='collections'?'favorites':managerSection);button.classList.toggle('is-selected',isActive);button.setAttribute('aria-pressed',String(isActive))});
  // No duplicate tab overview: the approved carousel already controls tabs.
@@ -481,7 +481,7 @@ function renderSecondary(){
   const items=getCollections(),cards=document.createElement('div');
   cards.className='sb-manager-collections-list';
   if(!items.length){const hint=document.createElement('p');hint.className='sb-manager-empty';hint.textContent='Пока нет папок';cards.append(hint)}
-  else for(const collection of items)cards.append(makeCollectionCard(collection));
+  else for(const collection of items.filter(item=>!openCollection||item.id===openCollection))cards.append(makeCollectionCard(collection));
   secondary.append(cards);
   const selected=items.find(item=>item.id===openCollection);
   if(selected){
@@ -492,7 +492,7 @@ function renderSecondary(){
     const jump=document.createElement('button');jump.type='button';jump.textContent=siteName(link);
     jump.addEventListener('click',()=>{tabManager(false);navigate(link)});
     const remove=document.createElement('button');remove.type='button';remove.textContent='×';
-    remove.setAttribute('aria-label','Убрать из коллекции');
+    remove.setAttribute('aria-label','Убрать из папки');
     remove.addEventListener('click',()=>{
      putCollections(getCollections().map(x=>x.id===selected.id?{...x,urls:x.urls.filter(u=>u!==link)}:x));
      renderManager();
@@ -502,7 +502,7 @@ function renderSecondary(){
    const choices=saved().filter(link=>!selected.urls.includes(link));
    if(choices.length){
     const addRow=document.createElement('div');addRow.className='sb-collection-add';
-    const select=document.createElement('select');select.setAttribute('aria-label','Добавить закладку');
+    const select=document.createElement('select');select.setAttribute('aria-label','Добавить сайт в папку');
     for(const link of choices){
      const option=document.createElement('option');option.value=link;option.textContent=siteName(link);select.append(option);
     }
