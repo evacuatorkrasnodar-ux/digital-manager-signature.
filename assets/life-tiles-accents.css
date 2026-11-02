@@ -42,7 +42,7 @@ html.sv-space-active #lifePage .calendar-spaces {
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid {
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  column-gap:14px!important;
+  column-gap:0!important;
   row-gap:0!important;
   align-items:stretch!important;
   width:100%!important;
@@ -175,7 +175,7 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
 }
 @media(max-width:390px) {
   html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
-    column-gap:9px!important;
+    column-gap:0!important;
     padding:0 4px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
