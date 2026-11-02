@@ -27,7 +27,7 @@
 #homePage.lm-focus #orbCluster{height:clamp(140px,34vw,178px)}
 #homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
 #homePage.lm-focus #stage{min-height:0;padding-top:0;padding-bottom:2px;justify-content:flex-start;flex:0 0 auto}
-#homePage.lm-focus .message{min-height:0;margin-top:5px;max-width:385px}
+#homePage.lm-focus .message{min-height:0;margin-top:14px;max-width:385px}
 @media(max-height:760px){
  #homePage #orbCluster{height:min(70vw,272px)}
  #homePage.lm-focus #orbCluster{height:clamp(132px,33vw,172px)}
@@ -50,7 +50,7 @@
  font-weight:560;
  line-height:1.24;
  letter-spacing:-.03em;
- margin:3px 0 2px;
+ margin:7px 0 6px;
 }
 #homePage.lm-focus #stage .message p{
  font-size:clamp(13px,3.5vw,14px);
@@ -64,7 +64,7 @@
 /* Internal Home preview: the orb already anchors the scene. */
 #homePage.sv-home-preview.lm-focus #stage .message{display:none!important}
 #homePage.lm-focus #seyveoLivingMoment{
- margin-top:0;
+ margin-top:12px;
  margin-bottom:3px;
 }
 @media(max-width:375px){
@@ -88,10 +88,10 @@
  padding-bottom:0;
 }
 #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{
- height:clamp(160px,40vw,192px);
+ height:clamp(190px,46vw,222px);
 }
 @media(max-width:375px){
- #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{height:152px}
+ #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{height:180px}
 }
 
 #homePage .personal-brief{display:none!important}
