@@ -44,10 +44,10 @@
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
  border:0!important;
- background:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.050) 47%,rgba(19,39,32,.016) 100%),rgba(19,31,29,.72)!important;
- -webkit-backdrop-filter:blur(22px) saturate(1.2)!important;
- backdrop-filter:blur(22px) saturate(1.2)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10)!important;
+ background:var(--sv-liquid-nav-material)!important;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ box-shadow:var(--sv-liquid-nav-shadow)!important;
  isolation:isolate;
 }
 .dock::before,.dock::after{content:none!important;display:none!important}
@@ -242,8 +242,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
- background:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68)!important;
- box-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70)!important;
+ background:var(--sv-liquid-nav-material)!important;
+ box-shadow:var(--sv-liquid-nav-shadow)!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
@@ -403,19 +403,19 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  --seyveo-dock-hairline:rgba(226,238,248,.105);
  --seyveo-dock-top-hairline:rgba(244,250,255,.085);
  border-color:transparent!important;
- background:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent 100%),rgba(19,26,32,.70)!important;
+ background:var(--sv-liquid-nav-material)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
  --seyveo-dock-hairline:rgba(228,239,255,.115);
  --seyveo-dock-top-hairline:rgba(244,249,255,.09);
  border-color:transparent!important;
- background:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent 100%),rgba(18,28,48,.71)!important;
+ background:var(--sv-liquid-nav-material)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
  --seyveo-dock-hairline:rgba(246,230,215,.095);
  --seyveo-dock-top-hairline:rgba(255,245,233,.07);
  border-color:transparent!important;
- background:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent 100%),rgba(28,27,26,.72)!important;
+ background:var(--sv-liquid-nav-material)!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
