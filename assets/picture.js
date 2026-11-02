@@ -23,8 +23,9 @@ function row(root,label,value,total,group,index){
  fill.style.setProperty('--split-width',Math.max(0,Math.min(100,total||0))+'%');
  track.append(fill);r.append(head,track);root.append(r);
 }
-/* Demonstration figures are available ONLY after the user enables Demo Mode.
-   No simulated records ever appear in normal business mode. */
+/* Explicitly marked developer presentation figures. The project is a preview:
+   use connected figures first, otherwise show illustrative analytics that
+   are NEVER labeled as real sales, payments, or accounting. */
 const sampleBase=Object.freeze({today:[12,20,16,27,23,34],week:[18,22,28,24,33,40,36],month:[18,25,22,31,28,37],year:[16,20,23,27,32,35]});
 function sampleData(){
  const sequence=sampleBase[period];
@@ -63,15 +64,24 @@ function sampleData(){
 }
 function businessData(){
  const actual=window.SEYVEO_PULSE_DEMO?.picture?.(period);
- return actual||(window.SEYVEO_DEMO_MODE?.isEnabled?.()?sampleData():null);
+ return actual||sampleData();
+}
+function updateKeyNumbers(total){
+ const values={
+  pictureKpiRevenue:rub(total.revenue),
+  pictureKpiCost:rub(total.cost),
+  pictureKpiBalance:rub(total.revenue-total.cost),
+  pictureKpiOrders:num.format(total.sales)
+ };
+ for(const [id,value] of Object.entries(values)){
+  const el=$(id);if(el)el.textContent=value;
+ }
 }
 function render(){
  // This route is explicitly "Pulse of Business", including for life-first profiles.
  // Never hide its opt-in demonstration based on the onboarding preference.
  $('pictureTitle').textContent='Пульс бизнеса';
- $('pictureLead').textContent=window.SEYVEO_DEMO_MODE?.isEnabled?.()
-  ?'Учебные показатели · без реальных операций.'
-  :'Данные бизнеса за выбранный период.';
+ $('pictureLead').textContent='Продажи, расходы и обращения · за выбранный период.';
  body.hidden=false;
  $('pictureBusinessCharts').hidden=false;
  $('pictureLifeNote').hidden=true;
@@ -98,8 +108,18 @@ function render(){
  $('pictureBusinessCharts').hidden=false;
  $('pictureQuickInsight').hidden=false;
  const {total,trend,sources,costs}=result;
+ const isSample=result.demo===true;
  const demoLabel=$('pictureDemoLabel');
- if(demoLabel){demoLabel.hidden=!result.demo;demoLabel.textContent='ДЕМОНСТРАЦИЯ · ПРИМЕРНЫЕ ДАННЫЕ';}
+ if(demoLabel){
+  demoLabel.hidden=!isSample;
+  demoLabel.textContent='ДЕМО · ТЕСТОВЫЕ ЦИФРЫ, НЕ РЕАЛЬНЫЕ ПРОДАЖИ';
+ }
+ const dataStatus=$('pictureDataStatus');
+ if(dataStatus){
+  dataStatus.hidden=!isSample;
+  dataStatus.textContent='Тестовые показатели для разработки · реальные продажи и расходы пока не подключены.';
+ }
+ updateKeyNumbers(total);
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
  const max=Math.max(1,...trend.map(x=>x.revenue));
  for(const bin of trend){
