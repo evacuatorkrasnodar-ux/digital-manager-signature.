@@ -86,17 +86,17 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
  border:0;background:transparent;box-shadow:none;
 }
 #homeHeader .home-world-popover{
- background:var(--sv-pure-surface)!important;
+ background:var(--sv-velvet-panel)!important;
  border-color:transparent!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
 }
 #homeHeader .home-world-choice{
- background:var(--sv-pure-surface-quiet)!important;
+ background:var(--sv-air-control)!important;
  border-color:transparent!important;
  box-shadow:none!important;border-radius:14px!important;
 }
-#homeHeader .home-world-choice:active{background:var(--sv-pure-selected)!important}
+#homeHeader .home-world-choice:active{background:var(--sv-air-selected)!important}
 
 /* SEYVEO · Home Velvet v6 — understated Apple-inspired finish.
    More considered typography, lighter card surfaces, compact content rhythm.
@@ -138,13 +138,13 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
   min-height:34px;padding:6px 12px;
   border:0;
   border-radius:999px;
-  background:var(--sv-pure-surface-quiet);
+  background:var(--sv-air-control);
   color:var(--secondary);
   font-size:11px;
 }
 #homePage .activity-row{min-width:0;gap:10px;padding:10px 0;border-bottom:1px solid var(--soft-line)}
 #homePage .activity-list .activity-row:last-child{border-bottom:0}
-#homePage .activity-icon{width:29px;height:29px;background:var(--sv-pure-surface-quiet)}
+#homePage .activity-icon{width:29px;height:29px;background:var(--sv-air-control)}
 #homePage .activity-title{min-width:0;overflow-wrap:anywhere}
 #homePage .activity-empty{padding:4px 0 7px;font-size:11.5px;line-height:1.4}
 
@@ -165,7 +165,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 #homePage .personal-brief-add{
   min-height:36px;padding:7px 12px;
   border:0;border-radius:999px;
-  background:var(--sv-pure-surface-quiet);font-size:11.5px
+  background:var(--sv-air-control);font-size:11.5px
 }
 #homePage .personal-brief-row{padding:9px 0 8px}
 #homePage .personal-brief-empty{margin:3px 0 6px;font-size:11.5px;line-height:1.4}
@@ -188,7 +188,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 :root[data-theme=light] #homePage .timeline-history,
 :root[data-theme=light] #homePage .personal-brief-add,
 :root[data-theme=light] #homePage .activity-icon{
-  background:rgba(120,137,164,.065);
+  background:var(--sv-air-control);
 }
 
 /* Narrow iPhones: proportional mini-cards without clipped labels. */
@@ -338,8 +338,8 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 }
 
 /* Personal world: lighter nested buttons, same dimensions and routes. */
-#homeHeader .home-world-choice{background:var(--sv-pure-surface-quiet);border-color:var(--sv-pure-line);box-shadow:none;font-weight:500}
-:root[data-theme=light] #homeHeader .home-world-choice{background:var(--sv-pure-surface-quiet);border-color:var(--sv-pure-line)}
+#homeHeader .home-world-choice{background:var(--sv-air-control);border-color:transparent;box-shadow:none;font-weight:500}
+:root[data-theme=light] #homeHeader .home-world-choice{background:var(--sv-air-control);border-color:transparent}
 
 /* Theme palette also reaches Home's small historical/utility surfaces.
    The protected plasma, Living Ink artwork and its animations are untouched. */
