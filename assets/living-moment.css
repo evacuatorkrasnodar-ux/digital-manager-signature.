@@ -60,15 +60,16 @@
   pointer-events:none;
 }
 #seyveoLivingMoment .lm-caption{
-  margin:0 0 9px;
-  padding:0 7px;
+  margin:0 0 5px;
+  padding:0 6px;
   color:var(--secondary);
-  opacity:.64;
-  font-size:9px;
-  font-weight:500;
-  letter-spacing:.105em;
-  line-height:1.5;
+  opacity:.75;
+  font-size:11px;
+  font-weight:450;
+  letter-spacing:0;
+  line-height:1.4;
 }
+#seyveoLivingMoment .lm-caption:empty{display:none!important}
 #seyveoLivingMoment .lm-tiles{width:100%;min-width:0}
 #seyveoLivingMoment .lm-field{
   position:relative;
@@ -116,8 +117,8 @@
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  margin:0 0 4px;
-  padding:0 5px;
+  margin:0 0 6px;
+  padding:0 4px;
   max-height:32px;
   opacity:1;
   overflow:hidden;
@@ -126,12 +127,12 @@
 #seyveoLivingMoment .lm-field-eyebrow,
 #seyveoLivingMoment .lm-field-measure{
   color:var(--secondary);
-  font-size:9.5px;
+  font-size:10px;
   font-weight:500;
-  line-height:1.5;
-  letter-spacing:.105em;
+  line-height:1.4;
+  letter-spacing:.015em;
 }
-#seyveoLivingMoment .lm-field-measure{font-size:9px;opacity:.61}
+#seyveoLivingMoment .lm-field-measure{font-size:10px;opacity:.75}
 #seyveoLivingMoment .lm-primary{
   display:flex;
   flex-direction:column;
@@ -189,7 +190,7 @@
   overflow:visible;
   fill:none;
   stroke:currentColor;
-  stroke-width:2.05;
+  stroke-width:1.65;
   stroke-linecap:round;
   stroke-linejoin:round;
   opacity:.90;
@@ -356,9 +357,9 @@
   color:var(--secondary);
 }
 #seyveoLivingMoment .lm-inline-art svg{
-  width:29px;
-  height:29px;
-  stroke-width:2.5;
+  width:26px;
+  height:26px;
+  stroke-width:1.75;
   opacity:.82;
 }
 #seyveoLivingMoment .lm-inline-copy{
@@ -480,10 +481,10 @@
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   isolation:isolate;
-  border-color:var(--lm-glass-outline);
-  background:var(--lm-glass-sheen),var(--lm-glass-fill);
-  box-shadow:var(--lm-glass-depth);
-  padding:7px 9px 5px;
+  border-color:var(--lm-matte-line);
+  background:var(--lm-matte-fill);
+  box-shadow:none;
+  padding:10px 13px 8px;
 }
 /* Two quiet clear panes around one bright sheet. Paint only a thin
    perimeter and tiny corner refractions; never dim the legible ink. */
@@ -535,7 +536,7 @@
 #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-item{
   min-height:48px;
   margin:0;
-  padding:2px 4px;
+  padding:4px 4px;
   border:0;
   border-top:1px solid var(--soft-line);
   border-radius:0;
@@ -775,9 +776,9 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 /* Work message shares the original Quiet Cinema card, typography and motion. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-art-svg--work{color:#8FE3C3;stroke:#8FE3C3}
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:first-child{
- border-radius:999px;background:#e8fff1;color:#10251d;border:1px solid #baf7d5;
- padding:6px 11px!important;min-height:32px!important;height:auto!important;
- font-size:12px!important;line-height:1.2!important;font-weight:620;
+ border:0;border-radius:0;background:transparent;color:var(--text);
+ padding:8px 2px!important;min-height:44px!important;
+ font-size:12px!important;line-height:1.3!important;font-weight:560;
  box-shadow:none!important;
 }
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content textarea{
@@ -794,7 +795,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-field .lm-hero-art > .lm-art-svg{
  color:var(--lm-soft-glow)!important;
  stroke:currentColor!important;
- filter:drop-shadow(0 0 5px color-mix(in srgb,var(--lm-soft-glow) 36%,transparent));
+ filter:none;
 }
 #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:first-child:not([hidden]){
  font-weight:650;
@@ -903,9 +904,9 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 
 /* Readability refinement: type only; card and dock geometry remain unchanged. */
-#homePage #seyveoLivingMoment .lm-primary-title{font-size:18px;line-height:1.27}
-#homePage #seyveoLivingMoment .lm-primary-subtitle{font-size:13px;line-height:1.48}
-#homePage #seyveoLivingMoment .lm-inline-title{font-size:13.5px;line-height:1.42}
-#homePage #seyveoLivingMoment .lm-inline-note{font-size:12px;line-height:1.44}
-#homePage #seyveoLivingMoment .lm-mail-content p{font-size:13px;line-height:1.52}
-#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.8px}
+#homePage #seyveoLivingMoment .lm-primary-title{font-size:16.5px;line-height:1.3}
+#homePage #seyveoLivingMoment .lm-primary-subtitle{font-size:12.5px;line-height:1.48}
+#homePage #seyveoLivingMoment .lm-inline-title{font-size:13px;line-height:1.42}
+#homePage #seyveoLivingMoment .lm-inline-note{font-size:11.5px;line-height:1.44}
+#homePage #seyveoLivingMoment .lm-mail-content p{font-size:12px;line-height:1.48}
+#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.5px}
