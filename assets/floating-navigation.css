@@ -42,7 +42,7 @@
  width:min(430px,calc(100% - 14px))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:4px 6px!important;
- border-radius:21px!important;
+ border-radius:27px!important;
  border:0!important;
  background:var(--sv-liquid-nav-material)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
