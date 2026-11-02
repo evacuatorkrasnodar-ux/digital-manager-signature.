@@ -88,10 +88,10 @@
  padding-bottom:0;
 }
 #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{
- height:clamp(136px,32vw,172px);
+ height:clamp(160px,40vw,192px);
 }
 @media(max-width:375px){
- #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{height:132px}
+ #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{height:152px}
 }
 
 #homePage .personal-brief{display:none!important}
@@ -837,7 +837,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:first-child{
  border:0;border-radius:0;background:transparent;color:var(--text);
  padding:8px 2px!important;min-height:44px!important;
- font-size:12px!important;line-height:1.3!important;font-weight:560;
+ font-size:12px!important;line-height:1.3!important;font-weight:470;
  box-shadow:none!important;
 }
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content textarea{
@@ -857,7 +857,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  filter:none;
 }
 #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:first-child:not([hidden]){
- font-weight:570;
+ font-weight:470;
 }
 
 /* Reading hierarchy within the original card: source, Sayvi's thought, actions. */
@@ -926,6 +926,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
+}
+/* Breathing space below the original orb; no line above the first card. */
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real):not(.lm-gather){
+ margin-top:clamp(10px,1.6dvh,16px);
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real):not(.lm-gather) .lm-field::before{
+ content:none!important;display:none!important;
 }
 #homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-field{
   background:transparent!important;
@@ -1015,7 +1022,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-inline-title{font-size:13.5px;line-height:1.35}
 #homePage #seyveoLivingMoment .lm-inline-note{font-size:12.5px;line-height:1.4}
 #homePage #seyveoLivingMoment .lm-mail-content p{font-size:12px;line-height:1.48}
-#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.5px}
+#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12px;letter-spacing:-.012em}
 /* Light-mode drawn icons: enough ink to scan, no raised highlight or frame. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-inline-art{
  color:#667785;
