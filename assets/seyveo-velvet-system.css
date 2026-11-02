@@ -1,13 +1,17 @@
-/* SEYVEO AIR · illustrated iPhone-like tonal hierarchy.
- * Three roles: continuous canvas (existing theme gradient), distinct FLAT
- * grouped surfaces, separate dock and minimal flat primary controls.
- * No bevels, strokes, glass reflections or floating elevation.
- * Original material aliases are preserved for all current screens.
+/* SEYVEO AIR · official Apple UI-kit inspired design contract.
+ * Content stays flat on the existing theme canvas; floating navigation and
+ * action surfaces may use restrained translucent Liquid Glass-inspired paint.
+ * SEYVEO's velvet identity is retained. These shared tokens are the single
+ * source for the floating dock AND mini-player; no second material overlay.
  */
 :root{
  --sv-velvet-panel:#273830;
  --sv-velvet-panel-quiet:#202e27;
  --sv-air-dock:#24372f;
+ /* Shared floating navigation material / three approved theme families. */
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72);
+ --sv-liquid-nav-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10);
+ --sv-liquid-nav-blur:blur(22px) saturate(1.18);
  --sv-air-home-surface:#273830;
  --sv-air-control:#354a3f;
  --sv-air-selected:#405b4c;
@@ -28,6 +32,8 @@
  --sv-velvet-panel:#ffffff;
  --sv-velvet-panel-quiet:#eef1f5;
  --sv-air-dock:#e9edf2;
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68);
+ --sv-liquid-nav-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70);
  --sv-air-home-surface:#fbfcfd;
  --sv-air-control:#e8edf2;
  --sv-air-selected:#dce5ee;
@@ -41,6 +47,8 @@
  --sv-velvet-panel:#29343d;
  --sv-velvet-panel-quiet:#222c34;
  --sv-air-dock:#242e37;
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70);
+ --sv-liquid-nav-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,250,255,.075);
  --sv-air-home-surface:#27323b;
  --sv-air-control:#364650;
  --sv-air-selected:#40525e;
@@ -53,6 +61,8 @@
  --sv-velvet-panel:#2a394e;
  --sv-velvet-panel-quiet:#233044;
  --sv-air-dock:#27374e;
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71);
+ --sv-liquid-nav-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,249,255,.08);
  --sv-air-home-surface:#2a394e;
  --sv-air-control:#3b4e68;
  --sv-air-selected:#465e7e;
@@ -65,6 +75,8 @@
  --sv-velvet-panel:#36312d;
  --sv-velvet-panel-quiet:#2e2926;
  --sv-air-dock:#312c29;
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72);
+ --sv-liquid-nav-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,245,233,.07);
  --sv-air-home-surface:#36312d;
  --sv-air-control:#4b433b;
  --sv-air-selected:#594c42;
