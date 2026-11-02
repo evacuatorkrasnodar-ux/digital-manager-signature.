@@ -1456,8 +1456,12 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
   background:rgba(236,239,244,.038)!important;
  }
 }
+/* My World in the light theme: subtle mint atmosphere high in the canvas,
+   as in modern iOS content pages. Never add an image or a colored tile layer. */
 html.sv-space-active:root[data-theme=light]:has(#lifePage:not([hidden])) body{
- background:var(--sv-life-viewport-gradient)!important;
+ background:
+  radial-gradient(ellipse 68% 32% at 91% 5%,rgba(77,225,161,.20),rgba(141,233,204,.085) 48%,transparent 86%),
+  var(--sv-life-viewport-gradient)!important;
 }
 html.sv-space-active:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button:not(:last-child)::after{
  background:rgba(27,40,62,.10);
