@@ -126,7 +126,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  width:100%;padding:0!important;margin:0!important
 }
 #svcpWorkChatScreen .svcp-conversation-bar{
- min-height:60px;flex:0 0 auto;display:flex;align-items:center;gap:9px;
+ min-height:55px;flex:0 0 auto;display:flex;align-items:center;gap:8px;
  margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) max(13px,env(safe-area-inset-right,0px))
   10px max(9px,env(safe-area-inset-left,0px));
  border-bottom:1px solid var(--soft-line);background:var(--bg)
@@ -136,16 +136,16 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border:0!important;background:transparent!important;border-radius:11px
 }
 #svcpWorkChatScreen .svcp-room-avatar{
- flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;border-radius:50%;
+ flex:0 0 39px;width:39px;height:39px;display:grid;place-items:center;border-radius:50%;
  border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2));
  color:var(--seyveo-emerald);font-size:17px;font-weight:590
 }
 #svcpWorkChatScreen .svcp-conversation-info{flex:1 1 auto;min-width:0;display:grid;gap:3px}
 #svcpWorkChatScreen .svcp-conversation-info strong{
- font-size:16px!important;line-height:1.25;font-weight:630;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+ font-size:15px!important;line-height:1.25;font-weight:605;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 #svcpWorkChatScreen .svcp-conversation-info small{
- font-size:12px!important;line-height:1.3;color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+ font-size:11px!important;line-height:1.3;color:var(--secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 #svcpWorkChatScreen :is(.svcp-conversation-search,.svcp-room-info-toggle){
  display:grid;place-items:center;min-width:36px;width:36px;height:40px;flex:0 0 36px;
@@ -172,17 +172,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background:transparent!important;box-shadow:none!important
 }
 #svcpWorkChatScreen .svcp-chat-intro{
- flex:0 0 auto;display:flex;min-height:0;padding:4px 12px!important;margin:0!important;
+ flex:0 0 auto;display:flex;min-height:0;padding:3px 11px!important;margin:0!important;
  background:transparent;border-bottom:1px solid var(--soft-line);overflow-x:auto;overflow-y:hidden;
  scrollbar-width:none
 }
 #svcpWorkChatScreen .svcp-chat-title{display:none!important}
 #svcpWorkChatScreen .svcp-chat-assist{
- display:flex;gap:8px;flex:0 0 auto;align-items:center;flex-wrap:nowrap!important;
+ display:flex;gap:6px;flex:0 0 auto;align-items:center;flex-wrap:nowrap!important;
  width:max-content!important;max-width:none!important;margin:0
 }
 #svcpWorkChatScreen .svcp-chat-assist button{
- flex:none;min-height:35px!important;padding:6px 12px!important;font-size:12px!important;
+ flex:none;min-height:34px!important;padding:5px 11px!important;font-size:12px!important;
  border-radius:999px!important;background:transparent!important;box-shadow:none!important
 }
 #svcpWorkChatScreen #svcpLoadOlder{
@@ -247,7 +247,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-height:42px;font-size:13px;padding:10px 13px;border-bottom:1px solid var(--soft-line)
 }
 #svcpWorkChatScreen .svcp-note{
- margin:auto;padding:18px;color:var(--secondary);font-size:14px;line-height:1.6;text-align:center
+ margin:auto;padding:16px 26px;color:var(--secondary);font-size:13px;line-height:1.5;text-align:center
 }
 #svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpReactionPicker,#svcpChatTaskDraft,#svcpTaskDiscussionQuick,#svcpCameraTray,#svcpComposerEmojiStrip,#svcpVoiceCapture){
  flex:0 0 auto;max-height:28dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain
