@@ -49,7 +49,7 @@ html.sv-music-screen .app{
  line-height:1.16;letter-spacing:.025em;
 }
 #sayviMusicPage .sv-music-technology{
- margin:-3px 0 0;padding:0;color:var(--secondary);
+ margin:0 0 0;padding:0;color:var(--secondary);
  font-size:clamp(9px,2.3vw,10px);font-weight:400;
  line-height:1.22;letter-spacing:.095em;white-space:nowrap;
 }
