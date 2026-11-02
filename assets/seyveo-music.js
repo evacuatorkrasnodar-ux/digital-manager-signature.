@@ -487,11 +487,10 @@ if(stage){
 
 /* Artwork/title keep the full-player action; horizontal swipes switch
  * the current track without opening the full screen or moving the dock. */
-let suppressMiniClick=false;
+let suppressMiniClickUntil=0;
 miniOpen?.addEventListener('click',event=>{
- if(suppressMiniClick){
+ if(Date.now()<suppressMiniClickUntil){
   event.preventDefault();
-  suppressMiniClick=false;
   return;
  }
  open();
@@ -515,7 +514,7 @@ if(miniOpen){
   if(Math.abs(dx)<55||Math.abs(dy)>35||Math.abs(dx)<Math.abs(dy)*1.6)return;
   // The swipe is a deliberate transport gesture, not a click to open.
   event.preventDefault();
-  suppressMiniClick=true;
+  suppressMiniClickUntil=Date.now()+400;
   if(tracks.length>1){
    switchTrack(index+(dx>0?-1:1),true);
   }
