@@ -855,18 +855,18 @@
  padding-top:0;padding-bottom:calc(26px + env(safe-area-inset-bottom,0px));
  --sv-space-heading-gap:9px;
 }
-#tasksPage[data-work-view="business"] .tasks-heading{
+html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading{
  margin:0 0 8px;
 }
 #tasksPage[data-work-view="business"] .svcp-tasks-back{
  min-height:36px;margin:0 0 2px;padding:4px 2px;
  font-size:12px;font-weight:510;color:var(--secondary);
 }
-#tasksPage[data-work-view="business"] .tasks-heading .manage-caption{
+html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading .manage-caption{
  margin:0 0 3px;font-size:10px;line-height:1.28;
  letter-spacing:.11em;color:var(--secondary);
 }
-#tasksPage[data-work-view="business"] .tasks-heading h1{
+html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  margin:0 0 4px;font-size:clamp(25px,6.4vw,29px);
  line-height:1.12;font-weight:600;letter-spacing:-.04em;
  text-wrap:balance;overflow-wrap:normal
