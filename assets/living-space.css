@@ -1046,20 +1046,53 @@ html.sv-space-active #calendarPage .cal-advice{
 }
 /* Business: one analytic surface, no frosted boxes around each metric.
    Charts, time ranges and editable widgets retain their functions. */
+html.sv-space-active #picturePage.picture-main{padding-top:0}
+html.sv-space-active #picturePage .picture-head{margin:0 0 9px}
+html.sv-space-active #picturePage .picture-navline{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:44px;margin:0 0 3px
+}
+html.sv-space-active #picturePage .picture-nav-brand{
+ color:var(--secondary);font-size:9.5px;line-height:1.35;
+ font-weight:500;letter-spacing:.105em;white-space:nowrap;opacity:.82
+}
+html.sv-space-active #picturePage .picture-head h1{
+ margin:0 0 4px;font-size:clamp(23px,5.9vw,27px);
+ font-weight:520;line-height:1.14;letter-spacing:-.038em
+}
+html.sv-space-active #picturePage .picture-head #pictureLead{
+ margin:0!important;max-width:100%;
+ color:var(--secondary);font-size:11.5px!important;
+ line-height:1.38!important;font-weight:410
+}
+html.sv-space-active #picturePage #pictureLifeNote{
+ margin:0 3px 11px;color:var(--secondary);
+ font-size:11.5px;line-height:1.4
+}
+html.sv-space-active #picturePage #pictureWidgetArea .home-widgets-heading{
+ align-items:center;margin:0 0 5px;gap:7px
+}
+html.sv-space-active #picturePage #pictureWidgetArea .home-widgets-heading h2{
+ font-size:13px;line-height:1.3;font-weight:600
+}
+html.sv-space-active #picturePage #pictureWidgetArea .home-widgets-caption{
+ font-size:9px;line-height:1.3;letter-spacing:.045em
+}
+
 html.sv-space-active #picturePage .picture-tabs{
  border:0!important;
  border-bottom:1px solid var(--sv-q-line)!important;
  border-radius:0!important;background:transparent!important;
- box-shadow:none!important;padding:0 0 9px;gap:9px;
+ box-shadow:none!important;padding:0 0 2px;gap:3px;margin:1px 0 9px;
 }
 html.sv-space-active #picturePage #pictureWidgetArea,
 html.sv-space-active #picturePage #pictureBusinessCharts{
  border:1px solid var(--sv-q-outline);
- border-radius:23px;
+ border-radius:21px;
  background:var(--sv-q-surface);
  box-shadow:none;
- padding:16px 13px;
- margin-bottom:15px;
+ padding:11px 12px;
+ margin-bottom:11px;
 }
 html.sv-space-active #picturePage :is(.home-widget-card,.picture-chart-box,
  .picture-breakdown,.picture-insight,.picture-quick-insight,.picture-full-report){
@@ -1068,15 +1101,19 @@ html.sv-space-active #picturePage :is(.home-widget-card,.picture-chart-box,
  box-shadow:none!important;
 }
 html.sv-space-active #picturePage .picture-section{
- padding:14px 0 0;
- margin:13px 0 0;
+ padding:11px 0 0;
+ margin:11px 0 0;
  border-top:1px solid var(--sv-q-line);
 }
 html.sv-space-active #picturePage .picture-section:first-child{
  border-top:0;margin-top:0;padding-top:0;
 }
 html.sv-space-active #picturePage .home-widget-card{
+ border-top:0!important;
  border-bottom:1px solid var(--sv-q-line)!important;
+}
+html.sv-space-active #picturePage .home-widget-card:last-child{
+ border-bottom:0!important;
 }
 html.sv-space-active #picturePage :is(.picture-company-arrow,.manage-chevron){
  display:none!important;
