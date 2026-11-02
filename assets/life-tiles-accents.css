@@ -3,7 +3,7 @@
    No raised cards, extra glass layers, duplicate titles or icon backplates.
    Native routes, theme pigments and the velvet dock are untouched. */
 :root {
-  --sv-world-divider:var(--sv-velvet-divider,var(--soft-line));
+  --sv-world-divider:var(--sv-air-divider,var(--sv-velvet-divider,var(--soft-line)));
 }
 html.sv-space-active #lifePage {
   position:relative;
@@ -69,7 +69,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   justify-content:stretch!important;
   width:100%!important;
   height:auto!important;
-  min-height:70px!important;
+  min-height:var(--sv-air-row-height,70px)!important;
   max-height:none!important;
   margin:0!important;
   padding:10px 6px!important;
@@ -109,7 +109,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
   color:var(--sv-world-icon)!important;
   fill:none;
   stroke:currentColor;
-  stroke-width:1.35!important;
+  stroke-width:var(--sv-air-icon-stroke,1.35)!important;
   opacity:.95!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
