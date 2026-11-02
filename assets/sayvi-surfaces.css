@@ -23,7 +23,7 @@
 }
 #sayviSurfacePage .sv-deep-back-mark{
   display:grid;place-items:center;width:25px;height:25px;
-  border:1px solid var(--soft-line);border-radius:50%;
+  border:0;border-radius:50%;
   font-size:21px;line-height:1;
 }
 #sayviSurfacePage .sv-deep-top{margin:0 4px 14px}
@@ -123,7 +123,7 @@
   max-height:65dvh;object-fit:contain;
 }
 #sayviSurfacePage .sv-deep-file-frame{
-  display:block;border:1px solid var(--soft-line);
+  display:block;border:0;
   background:transparent;width:100%;min-height:46dvh;
   border-radius:8px;
 }
@@ -368,7 +368,7 @@
 }
 #sayviSurfacePage .sv-mail-accounts[hidden]{display:none!important}
 #sayviSurfacePage .sv-mail-account-switch{
- appearance:none;border:1px solid transparent;border-radius:15px;
+ appearance:none;border:0;border-radius:15px;
  min-height:44px;min-width:0;padding:5px 4px;cursor:pointer;
  color:var(--secondary);background:transparent;
  font:inherit;font-size:12px;font-weight:540;text-align:center;
