@@ -36,8 +36,8 @@
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
- border:1px solid var(--sv-pure-line)!important;
- background:var(--sv-pure-surface)!important;
+ border:1px solid rgba(171,213,202,.24)!important;
+ background:linear-gradient(155deg,rgba(236,255,248,.065),rgba(134,186,172,.025) 42%,transparent 76%),rgba(19,31,29,.97)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
  box-shadow:none!important;
@@ -58,7 +58,7 @@
  border:1px solid transparent!important;border-radius:13px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
- letter-spacing:-.025em!important;color:var(--sv-pure-muted)!important;
+ letter-spacing:-.025em!important;color:#e8f1eb!important;
  -webkit-tap-highlight-color:transparent;
  transition:border-color .36s ease,color .22s ease!important;
 }
@@ -68,14 +68,15 @@
  height:var(--seyveo-dock-icon-size)!important;
  stroke-width:var(--seyveo-dock-icon-stroke)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- filter:none!important;
+ filter:drop-shadow(0 0 .6px var(--seyveo-etch-core))
+        drop-shadow(0 0 1.8px var(--seyveo-etch-halo));
  flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
 /* Keep current route semantics without a permanent frame.
    Only a direct tap shows this thin contour; it fades after 1.6 seconds. */
 .dock>.nav-item.active{
- color:var(--text)!important;
+ color:var(--seyveo-nav-ink)!important;
  border-color:transparent!important;
  background:transparent!important;
  box-shadow:none!important;
@@ -87,12 +88,12 @@
  box-shadow:none!important;
 }
 .dock>.nav-item.sv-nav-feedback{
- border-color:var(--sv-pure-line)!important;
+ border-color:rgba(129,192,160,.35)!important;
  background:transparent!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item.sv-nav-feedback{
- border-color:var(--sv-pure-line)!important;
+ border-color:rgba(51,67,88,.31)!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -112,7 +113,7 @@
  width:100%!important;height:50px!important;min-width:0!important;min-height:50px!important;
  margin:0!important;padding:1px!important;
  border:0!important;border-radius:18px!important;
- background:transparent!important;
+ background:radial-gradient(circle,rgba(228,237,250,.095) 0,rgba(228,237,250,.055) 22px,transparent 23px)!important;
  filter:none!important;box-shadow:none!important;
  cursor:pointer;touch-action:none!important;
  transition:background-color .18s ease,transform .18s ease!important;
@@ -151,14 +152,15 @@
 }
 .dock>.nav-home svg{fill:none!important}
 .dock>.assistant-button .button-art{display:block!important;overflow:visible!important}
-.dock>.assistant-button .button-art .button-rim{stroke:var(--sv-pure-line)}
-:root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:var(--sv-pure-line)}
+.dock>.assistant-button .button-art .button-rim{stroke:url(#rim-night)}
+:root[data-theme="light"] .dock>.assistant-button .button-art .button-rim{stroke:url(#rim-day)}
 .dock>.assistant-button .button-art .voice-bars{
  stroke-width:1.34;stroke-linecap:round;fill:none;
- filter:none!important;
+ filter:drop-shadow(0 0 .55px var(--seyveo-etch-core))
+        drop-shadow(0 0 1.7px var(--seyveo-etch-halo));
 }
 .dock>.assistant-button .button-art .voice-dot{
- filter:none!important;
+ filter:drop-shadow(0 0 1.2px var(--seyveo-etch-halo));
 }
 .dock>.assistant-button.listening .voice-bars{
  animation:seyveo-dock-speaking 1.5s ease-in-out infinite alternate;
@@ -233,14 +235,14 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
- border-color:var(--sv-pure-line)!important;
- background:var(--sv-pure-surface)!important;
+ border-color:rgba(54,68,89,.20)!important;
+ background:rgba(236,239,243,.97)!important;
  box-shadow:none!important;
 }
-:root[data-theme="light"] .dock>.nav-item{color:var(--sv-pure-muted)!important}
-:root[data-theme="light"] .dock>.nav-item.active{color:var(--text)!important}
+:root[data-theme="light"] .dock>.nav-item{color:#465466!important}
+:root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
 :root[data-theme="light"] .dock>.assistant-button{
- background:transparent!important;
+ background:radial-gradient(circle,rgba(35,52,73,.09) 0,rgba(35,52,73,.045) 22px,transparent 23px)!important;
 }
 /* The text-first composer gets its final focused contrast after the Living Ink
    dock rules below.  Its outer frame remains invisible by design. */
@@ -351,32 +353,32 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  overflow:visible!important;
 }
 .dock>#assistantButton .button-art .center-face{
- display:block!important;fill:var(--sv-pure-surface-quiet)!important;
+ display:block!important;fill:url(#ceramic-night)!important;
 }
 .dock>#assistantButton:is(:active,.pressing,.arming) .button-art{
  transform:none!important;
 }
 .dock>#assistantButton .button-art .button-rim{
  display:block!important;
- stroke:var(--sv-pure-line)!important;
+ stroke:url(#rim-night)!important;
  stroke-width:.72!important;
  opacity:.93!important;
- filter:none!important;
+ filter:drop-shadow(0 0 1.35px var(--seyveo-etch-halo));
 }
 .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
  fill:var(--sv-ceramic-pressed,#30443b)!important;
 }
 .dock>#assistantButton.listening .button-art .center-face{
- fill:var(--sv-pure-surface-quiet)!important;
+ fill:url(#ceramic-night)!important;
 }
 :root[data-theme="light"] .dock>#assistantButton .button-art .center-face{
- fill:var(--sv-pure-surface-quiet)!important;
+ fill:url(#ceramic-day)!important;
 }
 :root[data-theme="light"] .dock>#assistantButton .button-art .button-rim{
- stroke:var(--sv-pure-line)!important;opacity:1!important;
+ stroke:url(#rim-day)!important;opacity:1!important;
 }
 :root[data-theme="light"] .dock>#assistantButton:is(:active,.pressing,.arming) .button-art .center-face{
- fill:var(--sv-pure-selected)!important;
+ fill:#e1e6ed!important;
 }
 @media(max-width:355px){
  .dock>#assistantButton{
@@ -395,16 +397,16 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 /* SEYVEO palette-aware fixed dock and Feather composer.
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
- border-color:var(--sv-pure-line)!important;
- background:var(--sv-pure-surface)!important;
+ border-color:rgba(170,194,208,.23)!important;
+ background:linear-gradient(155deg,rgba(235,244,249,.052),rgba(131,158,173,.02) 46%,transparent 77%),rgba(19,26,32,.97)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
- border-color:var(--sv-pure-line)!important;
- background:var(--sv-pure-surface)!important;
+ border-color:rgba(159,188,243,.27)!important;
+ background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
- border-color:var(--sv-pure-line)!important;
- background:var(--sv-pure-surface)!important;
+ border-color:rgba(204,185,164,.19)!important;
+ background:linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),rgba(28,27,26,.97)!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
