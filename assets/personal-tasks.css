@@ -81,104 +81,128 @@
  outline:2px solid var(--text);outline-offset:1px;
 }
 .personal-task-content .is-done{text-decoration:line-through;opacity:.6}
-/* SEYVEO Tasks · compact native-feeling editor.
-   A short task form is a focused modal sheet, not an entire second page.
-   The existing form, iOS date input, save/cancel and validation remain intact. */
+/* SEYVEO · New Task: compact glass editor with the ONE real dock.
+   A modal belongs to the browser top layer: the modal shell spans the viewport
+   but only the inner sheet scrolls, so the portaled dock stays pinned on iOS. */
 #personalTaskDialog.personal-task-dialog[open]{
- box-sizing:border-box!important;
- position:fixed!important;
- inset:auto 0 auto 0!important;
- top:calc(18px + env(safe-area-inset-top,0px))!important;
- margin:0 auto!important;
- display:block;
- width:min(410px,calc(100vw - 28px))!important;
- min-width:0!important;
- max-width:calc(100vw - 20px)!important;
- height:auto!important;
- min-height:0!important;
- max-height:calc(100dvh - 95px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
- overflow-x:hidden!important;
- overflow-y:auto!important;
- padding:22px 19px 17px!important;
- border:1px solid var(--soft-line)!important;
- border-radius:23px!important;
- background:var(--bg)!important;
- box-shadow:0 18px 55px rgba(0,0,0,.3)!important;
- color:var(--text);
+ box-sizing:border-box!important;display:block!important;position:fixed!important;
+ inset:0!important;margin:0!important;
+ width:100vw!important;max-width:100vw!important;min-width:0!important;
+ height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+ padding:calc(14px + env(safe-area-inset-top,0px))
+         max(14px,env(safe-area-inset-right,0px))
+         calc(84px + env(safe-area-inset-bottom,0px))
+         max(14px,env(safe-area-inset-left,0px))!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ overflow:hidden!important;overscroll-behavior:none!important;color:var(--text);
 }
-#personalTaskDialog.personal-task-dialog[open] h2{
- margin:0 44px 5px 0!important;
- padding:0!important;
- font-size:clamp(22px,5.4vw,26px);
- font-weight:600;line-height:1.16;letter-spacing:-.045em;
+#personalTaskDialog.personal-task-dialog::backdrop{
+ background:rgba(5,10,14,.46);
+ -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
 }
-#personalTaskDialog.personal-task-dialog[open] > p{
- margin:0 0 18px!important;
- font-size:12px;line-height:1.42;color:var(--secondary);
+#personalTaskDialog .personal-task-sheet{
+ box-sizing:border-box;position:relative;isolation:isolate;
+ width:min(410px,100%);max-height:100%;margin:0 auto;
+ padding:20px 19px 16px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:25px;background:var(--bg);color:var(--text);
+ box-shadow:0 14px 44px rgba(0,0,0,.20);
+ overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+#personalTaskDialog .personal-task-sheet::-webkit-scrollbar{display:none}
+#personalTaskDialog .personal-task-sheet h2{
+ margin:0 0 5px!important;padding:0!important;
+ font-size:clamp(22px,5.5vw,25px);font-weight:580;
+ line-height:1.14;letter-spacing:-.043em;
+}
+#personalTaskDialog .personal-task-sheet>.personal-task-privacy{
+ margin:0 0 18px!important;color:var(--secondary);
+ font-size:11.5px;line-height:1.4;
 }
 #personalTaskDialog.personal-task-dialog form{
- display:flex;flex-direction:column;gap:15px;min-width:0;
+ display:flex;flex-direction:column;gap:14px;min-width:0;
 }
 #personalTaskDialog.personal-task-dialog label{
  display:flex;flex-direction:column;gap:7px;min-width:0;margin:0;
- font-size:12px;font-weight:530;line-height:1.4;color:var(--secondary);
+ font-size:12px;font-weight:540;line-height:1.38;color:var(--secondary);
 }
 #personalTaskDialog.personal-task-dialog input[type=text]{
  display:block;box-sizing:border-box;width:100%;min-width:0;
- height:48px;min-height:48px;margin:0;padding:11px 13px;
+ height:48px;min-height:48px;margin:0;padding:10px 13px;
  font:inherit;font-size:16px;font-weight:450;line-height:1.3;
- border:1px solid var(--soft-line);border-radius:13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:14px;
  background:var(--card2);color:var(--text);color-scheme:inherit;
 }
-#personalTaskDialog.personal-task-dialog input::placeholder{color:var(--secondary);opacity:.65}
+#personalTaskDialog.personal-task-dialog input::placeholder{
+ color:var(--secondary);opacity:.66;
+}
 #personalTaskDialog.personal-task-dialog input:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-date-control{
  position:relative;display:flex;align-items:center;justify-content:flex-start;
- width:100%;min-width:0;min-height:46px;box-sizing:border-box;
- border:1px solid var(--soft-line);border-radius:13px;
+ width:100%;min-width:0;min-height:47px;box-sizing:border-box;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:14px;
  background:var(--card2);overflow:hidden;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-date-control input[type=date]{
- position:absolute;inset:0;z-index:1;box-sizing:border-box;width:100%;
- height:100%;min-height:46px;max-height:none;margin:0;padding:0;
+ position:absolute;inset:0;z-index:2;box-sizing:border-box;width:100%;
+ height:100%;min-height:47px;max-height:none;margin:0;padding:0;
  border:0;opacity:0;cursor:pointer;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-date-display{
  display:flex;align-items:center;justify-content:flex-start;
- width:100%;min-height:46px;box-sizing:border-box;
- padding:10px 13px;text-align:left;
- font-size:15px;font-weight:450;line-height:1.35;
+ width:100%;min-height:47px;box-sizing:border-box;
+ padding:10px 42px 10px 13px;text-align:left;
+ font-size:14px;font-weight:440;line-height:1.35;
  color:var(--secondary);pointer-events:none;
 }
-#personalTaskDialog.personal-task-dialog .personal-task-date-control[data-filled=true] .personal-task-date-display{color:var(--text)}
+#personalTaskDialog.personal-task-dialog .personal-task-calendar-icon{
+ position:absolute;right:13px;top:50%;width:18px;height:18px;
+ transform:translateY(-50%);fill:none;stroke:var(--secondary);
+ stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}
+#personalTaskDialog.personal-task-dialog .personal-task-date-control[data-filled=true] .personal-task-date-display{
+ color:var(--text);
+}
 #personalTaskDialog.personal-task-dialog .personal-task-date-control:focus-within{
- outline:2px solid var(--text);outline-offset:2px;
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-actions{
- display:flex;align-items:center;justify-content:flex-end;
- gap:9px;margin:3px 0 0;padding:12px 0 0;
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:2px 0 0;padding:13px 0 0;
  border-top:1px solid var(--soft-line);
 }
 #personalTaskDialog.personal-task-dialog .personal-task-actions>.btn{
- flex:0 0 auto;min-width:100px;min-height:44px;
- padding:9px 16px;border:0;border-radius:13px;
- background:transparent;box-shadow:none;
- color:var(--secondary);font:inherit;font-size:14px;font-weight:520;
- cursor:pointer;
+ flex:0 1 auto;box-sizing:border-box;min-width:88px;min-height:44px;
+ padding:10px 14px;border:1px solid transparent;border-radius:15px;
+ background:transparent;box-shadow:none;color:var(--secondary);
+ font:inherit;font-size:14px;font-weight:530;cursor:pointer;touch-action:manipulation;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-actions>.btn.primary{
- background:var(--text);color:var(--bg);font-weight:600;
- text-decoration:none;
+ min-width:121px;border-color:var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--card2);color:var(--text);font-weight:600;text-decoration:none;
 }
 #personalTaskDialog.personal-task-dialog .personal-task-actions>.btn:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 #personalTaskDialog.personal-task-dialog small{
  display:block;margin:0;font-size:11px;line-height:1.45;color:var(--secondary);
 }
 #personalTaskDialog.personal-task-dialog small:empty{display:none}
+@media(max-width:350px){
+ #personalTaskDialog.personal-task-dialog[open]{padding-inline:10px!important}
+ #personalTaskDialog .personal-task-sheet{padding:17px 14px 13px}
+ #personalTaskDialog .personal-task-actions>.btn{min-width:0;flex:0 1 auto}
+ .personal-brief{padding:13px}.personal-brief-head strong{font-size:13px}
+ .personal-brief-add{padding:6px 8px}
+}
+@media(prefers-reduced-motion:reduce){
+ #personalTaskDialog.personal-task-dialog::backdrop{
+ -webkit-backdrop-filter:none;backdrop-filter:none}
+}
 :is(.personal-brief-add,.personal-tasks-add,.personal-task-check,.personal-task-delete,.personal-brief-more):focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
