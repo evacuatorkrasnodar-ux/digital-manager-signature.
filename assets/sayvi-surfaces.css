@@ -333,6 +333,7 @@
  box-shadow:none;
  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
+#sayviSurfacePage .sv-mail-icon-button[hidden]{display:none!important}
 #sayviSurfacePage .sv-mail-icon-button svg{width:18px;height:18px;flex:none}
 #sayviSurfacePage .sv-mail-introduction{
  box-sizing:border-box;
