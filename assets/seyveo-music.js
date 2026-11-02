@@ -131,6 +131,8 @@ function updatePlay(){
 }
 function syncResume(){
  const loaded=tracks.length>0&&index>=0;
+ // Empty-state visuals must never resemble a broken, disabled progress bar.
+ page.classList.toggle('sv-music-empty',!loaded);
  const playing=loaded&&!audio.paused&&!audio.ended;
  // One actual audio element. The mini is a small remote, not a second player.
  if(mini){
