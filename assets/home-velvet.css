@@ -87,13 +87,13 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 }
 #homeHeader .home-world-popover{
  background:var(--sv-pure-surface)!important;
- border-color:var(--sv-pure-line)!important;
+ border-color:transparent!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- box-shadow:0 8px 22px rgba(0,0,0,.12)!important;
+ box-shadow:none!important;
 }
 #homeHeader .home-world-choice{
  background:var(--sv-pure-surface-quiet)!important;
- border-color:var(--sv-pure-line)!important;
+ border-color:transparent!important;
  box-shadow:none!important;border-radius:14px!important;
 }
 #homeHeader .home-world-choice:active{background:var(--sv-pure-selected)!important}
@@ -103,7 +103,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
    No edits to protected sphere, Deep Reveal, satellites, navigation or JS. */
 #homePage{
   --home-glass:var(--sv-velvet-panel);
-  --home-outline:var(--sv-velvet-edge);
+  --home-outline:transparent;
   --home-glint:transparent;
   --home-depth:none;
   --home-card-radius:var(--sv-velvet-radius);
@@ -125,7 +125,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 #homePage .timeline{
   margin:0 1px;
   padding:15px 18px 13px;
-  border:1px solid var(--home-outline);
+  border:0;
   border-radius:var(--home-card-radius);
   background:var(--home-glass);
   box-shadow:none;
@@ -136,7 +136,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 #homePage .timeline-history{
   display:inline-flex;align-items:center;justify-content:center;
   min-height:34px;padding:6px 12px;
-  border:1px solid var(--home-outline);
+  border:0;
   border-radius:999px;
   background:var(--sv-pure-surface-quiet);
   color:var(--secondary);
@@ -152,7 +152,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 #homePage .personal-brief{
   margin:11px 1px 3px;
   padding:15px 18px 15px;
-  border:1px solid var(--home-outline);
+  border:0;
   border-radius:var(--home-card-radius);
   background:var(--home-glass);
   box-shadow:none;
@@ -164,7 +164,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 #homePage .personal-brief-head strong{font-size:14.5px;font-weight:640;letter-spacing:-.022em}
 #homePage .personal-brief-add{
   min-height:36px;padding:7px 12px;
-  border:1px solid var(--home-outline);border-radius:999px;
+  border:0;border-radius:999px;
   background:var(--sv-pure-surface-quiet);font-size:11.5px
 }
 #homePage .personal-brief-row{padding:9px 0 8px}
@@ -181,7 +181,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 /* White Velvet: silver-white, still light glass without noisy effects. */
 :root[data-theme=light] #homePage{
   --home-glass:var(--sv-velvet-panel);
-  --home-outline:var(--sv-velvet-edge);
+  --home-outline:transparent;
   --home-glint:transparent;
   --home-depth:none;
 }
@@ -345,7 +345,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
    The protected plasma, Living Ink artwork and its animations are untouched. */
 :root[data-theme=dark][data-palette=graphite] #homePage{
  --home-glass:var(--sv-velvet-panel);
- --home-outline:var(--sv-velvet-edge);
+ --home-outline:transparent;
  --home-glint:transparent;
 }
 :root[data-theme=dark][data-palette=sapphire] #homePage{
