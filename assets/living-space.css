@@ -1007,8 +1007,7 @@ html.sv-space-active #picturePage .picture-tabs button{
  color:var(--secondary);
 }
 html.sv-space-active #calendarPage .cal-periods button{min-height:42px;}
-html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true],
-html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]{
+html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true]{
  color:var(--text);
  border-bottom:1px solid var(--text)!important;
 }
