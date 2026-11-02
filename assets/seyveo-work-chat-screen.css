@@ -724,3 +724,54 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  position:relative;top:-5vh;max-width:290px;margin:auto;
  font-size:12px;line-height:1.5;opacity:.72;
 }
+
+
+/* SEYVEO shared-dock handoff: inbox = the one real dock, room = composer.
+   Identical width, horizontal anchor, corner geometry and glass treatment.
+   No second navigation row and no detached bottom bar. */
+#svcpWorkChatScreen{
+ --svcp-chat-dock-width:min(430px,calc(100% - 14px));
+ --svcp-chat-dock-radius:21px;
+}
+#svcpWorkChatScreen[data-view="inbox"] > footer.dock{
+ display:grid!important;visibility:visible!important;
+}
+#svcpWorkChatScreen[data-view="room"] > footer.dock{
+ display:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+ box-sizing:border-box!important;
+ width:var(--svcp-chat-dock-width)!important;
+ max-width:var(--svcp-chat-dock-width)!important;
+ left:50%!important;right:auto!important;
+ bottom:var(--seyveo-dock-bottom,max(7px,calc(env(safe-area-inset-bottom,0px) - 20px)))!important;
+ transform:translateX(-50%)!important;
+ min-height:var(--seyveo-dock-height,58px)!important;
+ border-radius:var(--svcp-chat-dock-radius)!important;
+ padding:4px 7px!important;
+ background:var(--card2)!important;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line))!important;
+ box-shadow:inset 0 1px 0 var(--seyveo-specular)!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat:has(:is(
+ #svcpCameraTray,#svcpComposerEmojiStrip,#svcpReplyPreview,
+ #svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick
+):not([hidden])) #svcpChatForm{
+ position:relative!important;left:auto!important;right:auto!important;
+ bottom:auto!important;transform:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
+ border-color:var(--seyveo-hdr-outline,var(--soft-line))!important;
+}
+@media(prefers-reduced-motion:no-preference){
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+  animation:svcpDockComposerReveal .19s ease-out both;
+ }
+ @keyframes svcpDockComposerReveal{
+  from{opacity:.74}
+  to{opacity:1}
+ }
+}
