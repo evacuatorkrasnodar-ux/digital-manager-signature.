@@ -927,8 +927,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  background:var(--sv-air-home-surface)!important;
  border:0!important;
  border-radius:var(--sv-velvet-radius)!important;
- padding:13px 14px 11px!important;
- margin:2px 0 7px!important;
+ padding:10px 14px 8px!important;
+ margin:2px 0 6px!important;
  box-shadow:none!important;
 }
 #homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-item{
@@ -983,3 +983,10 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-inline-note{font-size:11.5px;line-height:1.44}
 #homePage #seyveoLivingMoment .lm-mail-content p{font-size:12px;line-height:1.48}
 #homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.5px}
+/* Light-mode drawn icons: enough ink to scan, no raised highlight or frame. */
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-inline-art{
+ color:#667785;
+}
+:root[data-theme="light"] #homePage #seyveoLivingMoment .lm-inline-art svg{
+ opacity:.94;
+}
