@@ -2572,9 +2572,17 @@ function syncHomeVoice(){
     headline=name?name+', есть один полезный шаг':'Есть один полезный шаг';
     subline='Предложение по сведениям, которые вы разрешили сохранить, а не по данным внешних сервисов.';
   }else if(currentHomeRecommendation){
-    kicker=assistant+(currentHomeRecommendation.isDemo?' · учебный пример':' · на контроле');
-    headline=name?name+', есть рекомендация':'Есть рекомендация';
-    subline=currentHomeRecommendation.message;
+    if(currentHomeRecommendation.isDemo){
+      // The demo card already contains the example and its clear DEMO label.
+      // Do not repeat a second description above the card.
+      kicker=assistant+' · демо';
+      headline='Как это работает';
+      subline='';
+    }else{
+      kicker=assistant+' · на контроле';
+      headline=name?name+', есть рекомендация':'Есть рекомендация';
+      subline=currentHomeRecommendation.message;
+    }
   }else if(brief.overdue){
     kicker='Ваш план · требует внимания';
     headline=name?name+', есть дело с прошедшим сроком':'Есть дело с прошедшим сроком';
