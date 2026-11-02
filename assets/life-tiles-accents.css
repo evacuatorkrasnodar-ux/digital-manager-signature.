@@ -5,35 +5,35 @@
 
 :root{
  --sv-world-surface:var(--sv-velvet-panel);
- --sv-world-edge:var(--sv-velvet-edge);
+ --sv-world-edge:transparent;
  --sv-world-icon-surface:rgba(255,255,255,.07);
  --sv-world-glow:rgba(116,175,161,.16);
  --sv-world-ink:#edf6f2;
 }
 :root[data-theme=dark][data-palette=graphite]{
  --sv-world-surface:var(--sv-velvet-panel);
- --sv-world-edge:var(--sv-velvet-edge);
+ --sv-world-edge:transparent;
  --sv-world-icon-surface:rgba(232,240,255,.07);
  --sv-world-glow:rgba(112,151,213,.20);
  --sv-world-ink:#f2f5fb;
 }
 :root[data-theme=dark][data-palette=sapphire]{
  --sv-world-surface:var(--sv-velvet-panel);
- --sv-world-edge:var(--sv-velvet-edge);
+ --sv-world-edge:transparent;
  --sv-world-icon-surface:rgba(211,228,255,.065);
  --sv-world-glow:rgba(98,147,232,.24);
  --sv-world-ink:#f2f6ff;
 }
 :root[data-theme=dark][data-palette=plum]{
  --sv-world-surface:var(--sv-velvet-panel);
- --sv-world-edge:var(--sv-velvet-edge);
+ --sv-world-edge:transparent;
  --sv-world-icon-surface:rgba(245,232,216,.06);
  --sv-world-glow:rgba(171,151,128,.14);
  --sv-world-ink:#faf6f1;
 }
 :root[data-theme=light]{
  --sv-world-surface:var(--sv-velvet-panel);
- --sv-world-edge:var(--sv-velvet-edge);
+ --sv-world-edge:transparent;
  --sv-world-icon-surface:rgba(96,111,136,.075);
  --sv-world-glow:rgba(149,179,219,.17);
  --sv-world-ink:#15232e;
@@ -140,7 +140,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
  padding:9px 9px!important;
  margin:0!important;
  overflow:hidden!important;
- border:1px solid var(--sv-world-edge)!important;
+ border:0!important;
  border-radius:20px!important;
  background:var(--sv-world-surface)!important;
  box-shadow:none!important;
@@ -165,7 +165,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before{
   linear-gradient(160deg,color-mix(in srgb,var(--sv-world-icon) 23%,transparent),
    color-mix(in srgb,var(--sv-world-icon) 8%,transparent)),
   var(--sv-world-icon-surface)!important;
- border:1px solid color-mix(in srgb,var(--sv-world-icon) 9%,transparent)!important;
+ border:0!important;
  box-shadow:none!important;
  pointer-events:none!important;
  opacity:1!important;
