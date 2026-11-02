@@ -62,16 +62,19 @@ function commitDate(d){
  date.dispatchEvent(new Event('change',{bubbles:true}));
  close();dateButton.focus({preventScroll:true});
 }
-function renderMonth(){
- const y=month.getFullYear(),m=month.getMonth(),label=monthFormatter.format(month);
- monthLabel.textContent=label.charAt(0).toUpperCase()+label.slice(1);
+/* One calendar renderer for all SEYVEO task/event date inputs. */
+function renderDateCalendar(forMonth,input,heading,grid){
+ const y=forMonth.getFullYear(),m=forMonth.getMonth();
+ const label=monthFormatter.format(forMonth);
+ heading.textContent=label.charAt(0).toUpperCase()+label.slice(1);
  const start=(new Date(y,m,1).getDay()+6)%7;
- const count=Math.ceil((start+new Date(y,m+1,0).getDate())/7)*7;
- const now=iso(new Date()),selected=date.value;
+ const monthDays=new Date(y,m+1,0).getDate();
+ const count=Math.ceil((start+monthDays)/7)*7;
+ const now=iso(new Date()),selected=input.value;
  const fragment=document.createDocumentFragment();
  for(let i=0;i<count;i++){
   const n=i-start+1;
-  if(n<1||n>new Date(y,m+1,0).getDate()){
+  if(n<1||n>monthDays){
    const blank=document.createElement('span');blank.className='cal-pick-empty';
    blank.setAttribute('aria-hidden','true');fragment.append(blank);continue;
   }
@@ -82,8 +85,9 @@ function renderMonth(){
   if(key===now)b.classList.add('is-today');
   fragment.append(b);
  }
- days.replaceChildren(fragment);
+ grid.replaceChildren(fragment);
 }
+function renderMonth(){renderDateCalendar(month,date,monthLabel,days)}
 function renderWheel(wheel,total,kind){
  const fragment=document.createDocumentFragment();
  for(let i=0;i<total;i++){
@@ -183,4 +187,83 @@ dialog.addEventListener('close',close);
 date.tabIndex=-1;time.tabIndex=-1;
 dateButton.hidden=false;timeButton.hidden=false;
 dialog.classList.add('sv-custom-pickers-ready');
+
+/* Reuse the exact same month grid, cells and calendar renderer for New Task.
+   The form still owns its native date input and existing save/edit handlers.
+   No extra task database, full-screen dialog, or dock is created. */
+const taskDialog=$('personalTaskDialog'),taskDate=$('personalTaskDue');
+const taskControl=taskDate?.closest('.personal-task-date-control');
+if(taskDialog&&taskDate&&taskControl){
+ const dueField=taskControl.closest('.personal-task-field');
+ const picker=document.createElement('section');
+ picker.id='seyveoTaskDuePicker';picker.className='cal-premium-picker';
+ picker.hidden=true;picker.setAttribute('aria-label','Календарь срока дела');
+ const grid=datePanel.cloneNode(true);
+ grid.removeAttribute('id');grid.removeAttribute('hidden');
+ grid.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+ picker.append(grid);
+ if(dueField){
+  dueField.insertAdjacentElement('afterend',picker);
+  const heading=grid.querySelector('.cal-pick-head strong');
+  const gridDays=grid.querySelector('.cal-pick-days');
+  const arrows=grid.querySelectorAll('.cal-pick-arrows button');
+  const today=grid.querySelector('.cal-pick-today');
+  const taskTrigger=makeButton(taskControl,'Выбрать срок дела','seyveoTaskDueTrigger');
+  taskTrigger.setAttribute('aria-controls',picker.id);
+  let taskMonth=new Date();
+  const closeTask=()=>{
+   picker.hidden=true;
+   taskTrigger.setAttribute('aria-expanded','false');
+  };
+  const openTask=()=>{
+   if(!taskDialog.open)return;
+   if(!picker.hidden){closeTask();return}
+   const chosen=parse(taskDate.value)||new Date();
+   taskMonth=new Date(chosen.getFullYear(),chosen.getMonth(),1);
+   renderDateCalendar(taskMonth,taskDate,heading,gridDays);
+   picker.hidden=false;
+   taskTrigger.setAttribute('aria-expanded','true');
+   const sheet=taskDialog.querySelector('.personal-task-sheet');
+   requestAnimationFrame(()=>{
+    if(picker.hidden||!sheet)return;
+    const extra=picker.getBoundingClientRect().bottom-sheet.getBoundingClientRect().bottom+8;
+    if(extra>0)sheet.scrollTop+=extra;
+   });
+  };
+  const pickTask=(d)=>{
+   taskDate.value=iso(d);
+   taskDate.dispatchEvent(new Event('input',{bubbles:true}));
+   taskDate.dispatchEvent(new Event('change',{bubbles:true}));
+   closeTask();
+   taskTrigger.focus({preventScroll:true});
+  };
+  taskTrigger.addEventListener('click',openTask);
+  arrows[0].addEventListener('click',()=>{
+   taskMonth=new Date(taskMonth.getFullYear(),taskMonth.getMonth()-1,1);
+   renderDateCalendar(taskMonth,taskDate,heading,gridDays);
+  });
+  arrows[1].addEventListener('click',()=>{
+   taskMonth=new Date(taskMonth.getFullYear(),taskMonth.getMonth()+1,1);
+   renderDateCalendar(taskMonth,taskDate,heading,gridDays);
+  });
+  today.addEventListener('click',()=>pickTask(new Date()));
+  gridDays.addEventListener('click',event=>{
+   const button=event.target.closest('[data-cal-pick-day]');
+   const selected=button?parse(button.dataset.calPickDay):null;
+   if(selected)pickTask(selected);
+  });
+  taskDialog.addEventListener('click',event=>{
+   if(picker.hidden||picker.contains(event.target)||taskControl.contains(event.target))return;
+   if(event.target.closest?.('.personal-task-sheet'))closeTask();
+  });
+  taskDialog.addEventListener('cancel',event=>{
+   if(picker.hidden)return;
+   event.preventDefault();event.stopImmediatePropagation();closeTask();
+  },true);
+  taskDialog.addEventListener('close',closeTask);
+  taskDate.tabIndex=-1;
+  taskTrigger.hidden=false;
+  taskDialog.classList.add('sv-custom-pickers-ready');
+ }
+}
 })();
