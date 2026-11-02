@@ -386,7 +386,7 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#life
  margin:2px 0 var(--sv-space-heading-gap,22px);padding:0;border:0;background:transparent;box-shadow:none;
 }
 html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#lifePage,#sayviSurfacePage,#sayviMusicPage)
- :is(.tasks-heading h1,.calendar-header h1,.picture-head h1,.manage-heading h1,.life-heading h1,.sv-deep-heading,.sv-music-heading){
+ :is(.tasks-heading h1,.calendar-header h1,.picture-head h1,.manage-heading h1,.life-heading h1,.sv-deep-heading){
  margin:0 0 9px;font-size:clamp(26px,7vw,35px);font-weight:470;
  line-height:1.15;letter-spacing:-.042em;color:var(--text);
 }
