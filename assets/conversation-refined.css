@@ -618,3 +618,54 @@ html.seyveo-conversation .seyveo-chat-browser-nudge .seyveo-chat-browser-dismiss
 html.seyveo-conversation .seyveo-chat-browser-nudge button:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
+
+
+/* Feather Chat single two-row control (90px minimum).
+   The EXISTING five functional dock buttons form its upper row and the SAME
+   textarea is its lower row. No duplicate controls or new handlers. */
+html.seyveo-conversation{
+ --sv-chat-unified-input:46px;
+ --sv-chat-unified-actions:44px;
+}
+html.seyveo-conversation footer.dock.seyveo-chat-dock{
+ height:var(--sv-chat-unified-actions)!important;
+ min-height:var(--sv-chat-unified-actions)!important;
+ padding:1px 6px 0!important;
+ bottom:calc(var(--seyveo-dock-bottom) + var(--sv-chat-unified-input))!important;
+ border-radius:20px 20px 0 0!important;
+ border-bottom:0!important;
+ width:min(430px,calc(100% - 14px))!important;
+ z-index:48!important;
+}
+html.seyveo-conversation footer.dock.seyveo-chat-dock>.nav-item,
+html.seyveo-conversation footer.dock.seyveo-chat-dock>#assistantButton{
+ height:40px!important;min-height:40px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded){
+ width:min(430px,calc(100% - 14px))!important;
+ min-height:var(--sv-chat-unified-input)!important;
+ padding:3px 10px 4px!important;
+ bottom:var(--seyveo-dock-bottom)!important;
+ border-radius:0 0 20px 20px!important;
+ border-top:1px solid var(--soft-line)!important;
+ z-index:47!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ min-height:38px!important;
+ padding:4px 3px!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard footer.dock.seyveo-chat-dock{
+ visibility:visible!important;pointer-events:auto!important;opacity:1!important;
+ bottom:calc(var(--keyboard-offset,0px) + 7px + var(--sv-chat-unified-input))!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
+ bottom:calc(var(--keyboard-offset,0px) + 7px)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
+ display:none!important;
+}
+@media(max-width:700px){
+ html.seyveo-conversation footer.dock.seyveo-chat-dock{
+  width:min(430px,calc(100% - 14px))!important;
+ }
+}
