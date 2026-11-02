@@ -1,31 +1,31 @@
 
 /* Shared Home Velvet material tokens — also consumed by SEYVEO Browser. */
 :root{
- --sv-home-glass:rgba(24,41,35,.67);
- --sv-home-outline:rgba(165,208,190,.19);
- --sv-home-glint:rgba(248,255,252,.066);
- --sv-home-depth:0 3px 12px rgba(0,0,0,.09);
+ --sv-home-glass:var(--sv-velvet-panel);
+ --sv-home-outline:transparent;
+ --sv-home-glint:transparent;
+ --sv-home-depth:none;
 }
 :root[data-theme=light]{
- --sv-home-glass:rgba(255,255,255,.80);
- --sv-home-outline:rgba(64,79,99,.14);
- --sv-home-glint:rgba(255,255,255,.58);
- --sv-home-depth:0 4px 16px rgba(41,59,79,.055);
+ --sv-home-glass:var(--sv-velvet-panel);
+ --sv-home-outline:transparent;
+ --sv-home-glint:transparent;
+ --sv-home-depth:none;
 }
 :root[data-theme=dark][data-palette=graphite]{
- --sv-home-glass:rgba(27,38,46,.72);
- --sv-home-outline:rgba(172,197,208,.20);
- --sv-home-glint:rgba(238,247,252,.060);
+ --sv-home-glass:var(--sv-velvet-panel);
+ --sv-home-outline:transparent;
+ --sv-home-glint:transparent;
 }
 :root[data-theme=dark][data-palette=sapphire]{
- --sv-home-glass:rgba(25,36,66,.73);
- --sv-home-outline:rgba(163,186,241,.23);
- --sv-home-glint:rgba(233,240,255,.065);
+ --sv-home-glass:var(--sv-velvet-panel);
+ --sv-home-outline:transparent;
+ --sv-home-glint:transparent;
 }
 :root[data-theme=dark][data-palette=plum]{
- --sv-home-glass:rgba(40,37,34,.85);
- --sv-home-outline:rgba(204,185,164,.19);
- --sv-home-glint:rgba(255,243,222,.042);
+ --sv-home-glass:var(--sv-velvet-panel);
+ --sv-home-outline:transparent;
+ --sv-home-glint:transparent;
 }
 
 /* SEYVEO PURE · matte material tokens. Shared glass tokens above remain
