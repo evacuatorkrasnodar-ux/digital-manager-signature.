@@ -156,6 +156,14 @@ html.sv-music-screen .app{
 }
 #sayviMusicPage .sv-music-seek::-moz-range-thumb{width:10px;height:10px;border:0;border-radius:50%;background:var(--text)}
 #sayviMusicPage .sv-music-seek:disabled{opacity:.45;cursor:default}
+/* Empty listening view: don't show a dead 0:00 timeline as if playback failed.
+   Once a local track is selected, the original seek bar and timestamps return. */
+#sayviMusicPage.sv-music-empty .sv-music-times,
+#sayviMusicPage.sv-music-empty .sv-music-seek{display:none!important}
+#sayviMusicPage.sv-music-empty .sv-music-cover{margin-bottom:clamp(8px,1.4dvh,16px)}
+#sayviMusicPage.sv-music-empty .sv-music-track-bar{min-height:56px}
+#sayviMusicPage.sv-music-empty .sv-music-phrases{margin-top:clamp(22px,3.5dvh,34px)}
+
 #sayviMusicPage .sv-music-controls,
 #sayviMusicPage .sv-music-controls[hidden]{display:none!important}
 /* One matte control island for the three existing music actions.
