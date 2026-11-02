@@ -402,14 +402,13 @@ html.sv-space-active :is(#tasksPage,#calendarPage,#picturePage,#managePage,#life
 }
 /* Keep the actual monthly calendar compact without changing other screens. */
 html.sv-space-active #calendarPage .calendar-header{
- margin:2px 0 12px;
+ margin:0 0 8px;min-height:44px;
 }
 html.sv-space-active #calendarPage .calendar-header h1{
- font-size:clamp(24px,6.5vw,29px);
- margin-bottom:5px;
+ font-size:clamp(24px,6.2vw,28px);font-weight:610;margin:0;
 }
 html.sv-space-active #calendarPage .cal-nav{
- min-height:30px;
+ min-height:37px;
 }
 /* TIME — no boxed monthly widget. The calendar itself is the object. */
 html.sv-space-active #calendarPage .cal-month,
@@ -422,7 +421,7 @@ html.sv-space-active #calendarPage .cal-deadline-section .cal-agenda{
  border:0;border-radius:0;background:transparent;box-shadow:none;
 }
 html.sv-space-active #calendarPage .cal-month{
- margin:3px 0 10px;padding:2px 0;
+ margin:2px 0 4px;padding:3px 0 4px;
  border-block:1px solid var(--sv-scene-hairline);
  overflow:hidden;
 }
@@ -453,7 +452,7 @@ html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]::after
 }
 html.sv-space-active #calendarPage .cal-day-summary,
 html.sv-space-active #calendarPage .cal-agenda{
- margin:4px 0 2px;padding:0;
+ margin:3px 0 2px;padding:0;
 }
 html.sv-space-active #calendarPage .cal-entry{
  min-height:63px;padding:8px 3px;margin:0;
@@ -471,8 +470,8 @@ html.sv-space-active #calendarPage .cal-advice-action{
  color:var(--text);font:inherit;font-size:12px;font-weight:470;
 }
 html.sv-space-active #calendarPage .cal-actions{
- display:flex;flex-wrap:wrap;justify-content:flex-start;gap:17px;
- margin:6px 0;padding:5px 0;border-top:1px solid var(--sv-scene-hairline);
+ display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;
+ margin:4px 0;padding:6px 0 0;border-top:1px solid var(--sv-scene-hairline);
 }
 html.sv-space-active #calendarPage .calendar-spaces{margin-top:9px}
 html.sv-space-active #calendarPage .calendar-spaces-grid{padding:4px 0;gap:0}
@@ -989,10 +988,9 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
 /* Calendar: preserve the functional grid, periods, dates and live agenda. */
 html.sv-space-active #calendarPage #calendarView,
 html.sv-space-active #calendarPage #calendarDeadlineView{
- padding:17px 13px 15px;
- border:1px solid var(--sv-q-outline);
- border-radius:23px;
- background:var(--sv-q-surface);
+ padding:4px 2px 7px;
+ border:0;border-radius:0;
+ background:transparent;
  box-shadow:none;
 }
 html.sv-space-active #calendarPage .cal-periods{
@@ -1001,12 +999,12 @@ html.sv-space-active #calendarPage .cal-periods{
  border-radius:0!important;
  background:transparent!important;
  box-shadow:none!important;
- padding:0 0 9px;
- gap:9px;
+ margin:0 0 6px;padding:0;
+ gap:5px;
 }
 html.sv-space-active #calendarPage .cal-periods button,
 html.sv-space-active #picturePage .picture-tabs button{
- min-height:44px;
+ min-height:42px;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-weight:465;
@@ -1022,10 +1020,10 @@ html.sv-space-active #calendarPage .cal-agenda{
  border-top:1px solid var(--sv-q-line)!important;
  border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
- padding:9px 0;
+ padding:3px 0;
 }
 html.sv-space-active #calendarPage .cal-day-summary{
- padding:13px 0 8px;
+ padding:7px 0 5px;
 }
 html.sv-space-active #calendarPage :is(.cal-day-fab,.cal-advice-action,.calendar-header-add){
  min-height:44px;
@@ -1033,6 +1031,13 @@ html.sv-space-active #calendarPage :is(.cal-day-fab,.cal-advice-action,.calendar
  background:transparent!important;box-shadow:none!important;
  font-weight:480;color:var(--text);
 }
+html.sv-space-active #calendarPage #calendarAddTask{
+ padding:8px 13px;
+ border:1px solid var(--soft-line)!important;
+ border-radius:13px!important;
+ background:color-mix(in srgb,var(--card2) 38%,transparent)!important;
+}
+html.sv-space-active #calendarPage #calendarAddInline[hidden]{display:none!important;}
 html.sv-space-active #calendarPage .cal-advice{
  border:0!important;border-top:1px solid var(--sv-q-line)!important;
  border-radius:0!important;
