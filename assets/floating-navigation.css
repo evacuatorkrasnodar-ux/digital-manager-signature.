@@ -1,6 +1,5 @@
-/* Velvet restoration: original palette-specific micro-gradient on the dock only.
- * No border, no 3D bevel, no changes to any other SEYVEO screen.
- * Dock shape, touch targets and engraved icon are unchanged. */
+/* Velvet dock: trial 1px inset hairline with no geometry, button or touch changes.
+ * A slightly brighter top edge is optical only; no thick border or glow. */
 /* SEYVEO · Quiet Navigation / 2026.
  * One fixed five-position dock. Four destinations + central Sayvi.
  * Stable safe-area, native scroll, original voice and music controls. */
@@ -14,6 +13,8 @@
  --seyveo-engrave-active:rgba(218,235,229,.88);
  --seyveo-etch-core:rgba(255,255,255,.38);
  --seyveo-etch-halo:rgba(255,255,255,.20);
+ --seyveo-dock-hairline:rgba(231,247,239,.10);
+ --seyveo-dock-top-hairline:rgba(242,255,250,.075);
  /* A single safe-area anchor for Safari and standalone iPhone PWA. */
  --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
 }
@@ -23,6 +24,8 @@
  --seyveo-engrave-active:rgba(25,49,45,.9);
  --seyveo-etch-core:rgba(255,255,255,.54);
  --seyveo-etch-halo:rgba(255,255,255,.30);
+ --seyveo-dock-hairline:rgba(44,61,73,.11);
+ --seyveo-dock-top-hairline:rgba(255,255,255,.35);
 }
 .dock{
  position:fixed!important;
@@ -43,7 +46,8 @@
  background:linear-gradient(155deg,rgba(236,255,248,.065),rgba(134,186,172,.025) 42%,transparent 76%),rgba(19,31,29,.97)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- box-shadow:none!important;
+ box-shadow:inset 0 0 0 1px var(--seyveo-dock-hairline),
+            inset 0 1px 0 var(--seyveo-dock-top-hairline)!important;
  isolation:isolate;
 }
 .dock::before,.dock::after{content:none!important;display:none!important}
@@ -239,7 +243,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
  background:linear-gradient(155deg,rgba(255,255,255,.38),rgba(255,255,255,.11) 47%,rgba(112,132,151,.045) 100%),rgba(233,237,242,.98)!important;
- box-shadow:none!important;
+ box-shadow:inset 0 0 0 1px var(--seyveo-dock-hairline),
+            inset 0 1px 0 var(--seyveo-dock-top-hairline)!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
@@ -396,14 +401,20 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 /* SEYVEO palette-aware fixed dock and Feather composer.
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
+ --seyveo-dock-hairline:rgba(226,238,248,.105);
+ --seyveo-dock-top-hairline:rgba(244,250,255,.085);
  border-color:transparent!important;
  background:linear-gradient(155deg,rgba(235,244,249,.052),rgba(131,158,173,.020) 46%,transparent 77%),rgba(19,26,32,.97)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
+ --seyveo-dock-hairline:rgba(228,239,255,.115);
+ --seyveo-dock-top-hairline:rgba(244,249,255,.09);
  border-color:transparent!important;
  background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
+ --seyveo-dock-hairline:rgba(246,230,215,.095);
+ --seyveo-dock-top-hairline:rgba(255,245,233,.07);
  border-color:transparent!important;
  background:linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),rgba(28,27,26,.97)!important;
 }
