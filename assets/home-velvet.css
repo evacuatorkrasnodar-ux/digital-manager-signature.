@@ -70,12 +70,15 @@
  --sv-pure-muted:#c5c0b8;
  --sv-pure-selected:#3b3530;
 }
-/* Only the active Home is recoloured. Other routes keep their own surfaces. */
+/* Restore Black Velvet's original palette-specific viewport gradient
+   on Home only. Keep PURE matte card tokens and the approved original orb.
+   Leave the app canvas transparent so the backdrop stays seamless. */
 html:not(.seyveo-conversation):has(#homePage:not([hidden])) body{
- background:var(--sv-pure-bg)!important;
+ background:var(--sv-life-viewport-gradient)!important;
+ background-repeat:no-repeat!important;
 }
 html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
- background-color:var(--sv-pure-bg)!important;
+ background-color:transparent!important;
  background-image:none!important;
 }
 #homeHeader{
