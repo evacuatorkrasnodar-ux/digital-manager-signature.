@@ -174,7 +174,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen .svcp-chat-intro{
  flex:0 0 auto;display:flex;min-height:0;padding:3px 11px!important;margin:0!important;
- background:transparent;border-bottom:1px solid var(--soft-line);overflow-x:auto;overflow-y:hidden;
+ background:transparent;border-bottom:0;overflow-x:auto;overflow-y:hidden;
  scrollbar-width:none
 }
 #svcpWorkChatScreen .svcp-chat-title{display:none!important}
@@ -708,4 +708,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen[data-view="room"] > footer.dock{
  display:none!important;
+}
+
+/* A quieter and slightly slimmer composer; controls stay at least 44px tappable. */
+#svcpWorkChatScreen .svcp-chat-assist button{
+ min-height:32px!important;padding:4px 10px!important;
+ border-color:var(--soft-line)!important;color:var(--secondary)!important;
+}
+#svcpWorkChatScreen #svcpChatForm{
+ min-height:51px!important;padding:3px 7px 4px!important;
+ border-color:var(--soft-line)!important;
+ background:var(--card)!important;
+}
+#svcpWorkChatScreen .svcp-note{
+ position:relative;top:-5vh;max-width:290px;margin:auto;
+ font-size:12px;line-height:1.5;opacity:.72;
 }
