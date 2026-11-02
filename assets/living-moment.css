@@ -487,7 +487,7 @@
 #seyveoLivingMoment.lm-preview .lm-field{
   /* Use the active theme's native text and border tokens. */
   color:var(--text);
-  border:1px solid transparent;
+  border:0;
   border-radius:22px;
   background-color:transparent;
   box-shadow:none;
@@ -498,7 +498,7 @@
   position:relative;isolation:isolate;
   margin-bottom:5px;
   padding:7px 9px;
-  border:1px solid var(--lm-glass-outline);
+  border:0;
   border-radius:19px;
   background:var(--lm-glass-sheen),var(--lm-glass-fill);
   box-shadow:var(--lm-glass-depth);
@@ -508,7 +508,7 @@
   min-height:49px;
   margin-bottom:5px;
   padding:3px 9px;
-  border:1px solid var(--lm-glass-outline);
+  border:0;
   border-radius:19px;
   background:var(--lm-glass-sheen),var(--lm-glass-fill);
   box-shadow:var(--lm-glass-depth);
@@ -528,7 +528,7 @@
    content:"";position:absolute;
    top:1px;right:1px;bottom:1px;left:1px;
    width:auto;height:auto;z-index:0;pointer-events:none;opacity:1;
-   border:1px solid var(--lm-glass-inner);
+   border:0;
    border-radius:inherit;
    background:
      radial-gradient(18px 12px at 14px 12px,color-mix(in srgb,var(--text) 6%,transparent),transparent 72%),
@@ -543,7 +543,7 @@
    top:2px;right:2px;bottom:2px;left:2px;
    z-index:0;pointer-events:none;
    border-radius:16px;
-   border:1px solid color-mix(in srgb,var(--lm-glass-outline) 32%,transparent);
+   border:0;
    background:linear-gradient(145deg,color-mix(in srgb,var(--text) 2%,transparent),transparent 28%);
    box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 5%,transparent);
 }
@@ -629,7 +629,7 @@
   padding:14px 12px 12px!important;
   color:var(--text)!important;
   background:var(--lm-glass-sheen),var(--lm-glass-fill)!important;
-  border:1px solid var(--lm-glass-outline)!important;
+  border:0!important;
   border-radius:22px!important;
   outline:0!important;
   box-shadow:var(--lm-glass-depth)!important;
@@ -745,7 +745,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-mail-edit-input{
  box-sizing:border-box;width:100%;min-height:74px;max-height:136px;
  resize:vertical;background:var(--seyveo-hdr-active);
- border:1px solid var(--seyveo-hdr-outline);
+ border:0;
  border-radius:10px;padding:9px 10px;
  color:var(--text);font:inherit;font-size:12.5px;line-height:1.45
 }
