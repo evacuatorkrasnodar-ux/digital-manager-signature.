@@ -1,49 +1,65 @@
-/* SEYVEO AIR · iPhone-inspired flat material system.
- * One solid surface per theme; no chrome, bevel, decorative border or glass.
- * Large groups use spacing and quiet dividers; touch feedback remains visible.
- * Existing --sv-velvet-* names are kept so all sections share ONE source.
+/* SEYVEO AIR · illustrated iPhone-like tonal hierarchy.
+ * Three roles: continuous canvas (existing theme gradient), distinct FLAT
+ * grouped surfaces, separate dock and minimal flat primary controls.
+ * No bevels, strokes, glass reflections or floating elevation.
+ * Original material aliases are preserved for all current screens.
  */
 :root{
- --sv-velvet-panel:#1b2521;
- --sv-velvet-panel-quiet:#17211d;
+ --sv-velvet-panel:#273830;
+ --sv-velvet-panel-quiet:#202e27;
+ --sv-air-dock:#2d4137;
+ --sv-air-control:#354a3f;
+ --sv-air-selected:#405b4c;
  --sv-velvet-edge:transparent;
- --sv-velvet-divider:rgba(196,218,202,.085);
- --sv-velvet-pressed:rgba(205,228,210,.085);
- --sv-velvet-etch:rgba(197,220,205,.82);
+ --sv-velvet-divider:rgba(210,230,218,.13);
+ --sv-velvet-pressed:var(--sv-air-selected);
+ --sv-velvet-etch:rgba(222,238,228,.92);
  --sv-velvet-glow:transparent;
  --sv-velvet-radius:17px;
  --sv-velvet-radius-small:15px;
 }
 :root[data-theme="light"]{
  --sv-velvet-panel:#ffffff;
- --sv-velvet-panel-quiet:#f2f3f6;
+ --sv-velvet-panel-quiet:#eef1f5;
+ --sv-air-dock:#e9edf2;
+ --sv-air-control:#e8edf2;
+ --sv-air-selected:#dce5ee;
  --sv-velvet-edge:transparent;
- --sv-velvet-divider:rgba(53,66,78,.12);
- --sv-velvet-pressed:rgba(60,73,88,.065);
- --sv-velvet-etch:rgba(55,72,82,.80);
+ --sv-velvet-divider:rgba(55,72,85,.13);
+ --sv-velvet-pressed:var(--sv-air-selected);
+ --sv-velvet-etch:rgba(53,71,82,.9);
  --sv-velvet-glow:transparent;
 }
 :root[data-theme=dark][data-palette=graphite]{
- --sv-velvet-panel:#1b2227;
- --sv-velvet-panel-quiet:#181e23;
+ --sv-velvet-panel:#29343d;
+ --sv-velvet-panel-quiet:#222c34;
+ --sv-air-dock:#303e48;
+ --sv-air-control:#364650;
+ --sv-air-selected:#40525e;
  --sv-velvet-edge:transparent;
- --sv-velvet-divider:rgba(188,202,212,.085);
- --sv-velvet-pressed:rgba(190,204,214,.085);
- --sv-velvet-etch:rgba(198,213,219,.84);
+ --sv-velvet-divider:rgba(202,217,228,.12);
+ --sv-velvet-pressed:var(--sv-air-selected);
+ --sv-velvet-etch:rgba(225,233,239,.92);
 }
 :root[data-theme=dark][data-palette=sapphire]{
- --sv-velvet-panel:#20293a;
- --sv-velvet-panel-quiet:#1b2433;
+ --sv-velvet-panel:#2a394e;
+ --sv-velvet-panel-quiet:#233044;
+ --sv-air-dock:#344660;
+ --sv-air-control:#3b4e68;
+ --sv-air-selected:#465e7e;
  --sv-velvet-edge:transparent;
- --sv-velvet-divider:rgba(188,203,235,.095);
- --sv-velvet-pressed:rgba(188,203,235,.09);
- --sv-velvet-etch:rgba(202,215,238,.84);
+ --sv-velvet-divider:rgba(202,220,249,.13);
+ --sv-velvet-pressed:var(--sv-air-selected);
+ --sv-velvet-etch:rgba(228,236,252,.92);
 }
 :root[data-theme=dark][data-palette=plum]{
- --sv-velvet-panel:#282623;
- --sv-velvet-panel-quiet:#22211e;
+ --sv-velvet-panel:#36312d;
+ --sv-velvet-panel-quiet:#2e2926;
+ --sv-air-dock:#413b35;
+ --sv-air-control:#4b433b;
+ --sv-air-selected:#594c42;
  --sv-velvet-edge:transparent;
- --sv-velvet-divider:rgba(216,203,186,.09);
- --sv-velvet-pressed:rgba(216,203,186,.08);
- --sv-velvet-etch:rgba(221,208,195,.84);
+ --sv-velvet-divider:rgba(226,211,193,.12);
+ --sv-velvet-pressed:var(--sv-air-selected);
+ --sv-velvet-etch:rgba(236,227,215,.92);
 }
