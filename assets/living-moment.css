@@ -26,16 +26,50 @@
 #homePage #orb{transform:translate3d(0,0,0) scale(1);transform-origin:center center;transition:transform 1150ms cubic-bezier(.2,.78,.21,1)}
 #homePage.lm-focus #orbCluster{height:clamp(146px,38vw,202px)}
 #homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
-#homePage.lm-focus #stage{min-height:clamp(260px,34vh,330px);padding-top:0;padding-bottom:8px;justify-content:flex-start}
-#homePage.lm-focus .message{min-height:88px;margin-top:12px}
+#homePage.lm-focus #stage{min-height:0;padding-top:0;padding-bottom:4px;justify-content:flex-start}
+#homePage.lm-focus .message{min-height:0;margin-top:5px;max-width:385px}
 @media(max-height:760px){
  #homePage #orbCluster{height:min(70vw,272px)}
  #homePage.lm-focus #orbCluster{height:clamp(132px,33vw,172px)}
  #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.59)}
- #homePage.lm-focus #stage{min-height:230px;padding-top:0}
- #homePage.lm-focus .message{min-height:77px}
+ #homePage.lm-focus #stage{min-height:0;padding-top:0}
+ #homePage.lm-focus .message{min-height:0}
 }
 @media(max-width:350px){#homePage.lm-focus #orbCluster{height:132px}#homePage.lm-focus #orb{transform:scale(.57)}}
+/* SEYVEO PURE · one calm Home introduction directly above the live card.
+   Keep the original orb button and responsive scale untouched; remove only
+   surplus layout height, repeated visual captions and loose heading spacing. */
+#homePage.lm-focus #stage .message .kicker{
+ text-transform:none;
+ letter-spacing:.04em;
+ font-weight:510;
+ opacity:.88;
+}
+#homePage.lm-focus #stage .message h2{
+ font-size:clamp(21px,5.4vw,25px);
+ font-weight:560;
+ line-height:1.24;
+ letter-spacing:-.03em;
+ margin:5px 0 4px;
+}
+#homePage.lm-focus #stage .message p{
+ font-size:clamp(13px,3.5vw,14px);
+ font-weight:425;
+ line-height:1.42;
+ max-width:340px;
+ margin:0 auto;
+}
+#homePage.lm-focus #stage .message p:empty{display:none}
+#homePage.lm-focus #stage .seyveo-quiet-signal{display:none!important}
+#homePage.lm-focus #seyveoLivingMoment{
+ margin-top:5px;
+ margin-bottom:10px;
+}
+@media(max-width:375px){
+ #homePage.lm-focus #stage .message h2{font-size:21px}
+ #homePage.lm-focus #stage .message p{max-width:calc(100vw - 42px)}
+}
+
 /* SEYVEO · Living Surface ATELIER
    One embedded canvas; no widget frames, photos, glowing filters or 3D.
    Hand-drawn symbols and compositor-friendly opacity / transform motion. */
