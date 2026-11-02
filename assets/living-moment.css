@@ -24,9 +24,9 @@
 @media(prefers-reduced-motion:reduce){#homePage #orbCluster::before{transition:none}}
 
 #homePage #orb{transform:translate3d(0,0,0) scale(1);transform-origin:center center;transition:transform 1150ms cubic-bezier(.2,.78,.21,1)}
-#homePage.lm-focus #orbCluster{height:clamp(146px,38vw,202px)}
+#homePage.lm-focus #orbCluster{height:clamp(140px,34vw,178px)}
 #homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
-#homePage.lm-focus #stage{min-height:0;padding-top:0;padding-bottom:4px;justify-content:flex-start}
+#homePage.lm-focus #stage{min-height:0;padding-top:0;padding-bottom:2px;justify-content:flex-start;flex:0 0 auto}
 #homePage.lm-focus .message{min-height:0;margin-top:5px;max-width:385px}
 @media(max-height:760px){
  #homePage #orbCluster{height:min(70vw,272px)}
@@ -65,7 +65,7 @@
 #homePage.sv-home-preview.lm-focus #stage .message{display:none!important}
 #homePage.lm-focus #seyveoLivingMoment{
  margin-top:0;
- margin-bottom:8px;
+ margin-bottom:3px;
 }
 @media(max-width:375px){
  #homePage.lm-focus #stage .message h2{font-size:21px}
@@ -77,6 +77,23 @@
    Hand-drawn symbols and compositor-friendly opacity / transform motion. */
 
 /* "Дела" remain in their own screen; only temporary focus comes home. */
+/* SEYVEO Air · Home with real cards: no giant hero spacer.
+   Applies only while Living Moment is actually on screen.
+   Keeps the original globe, tap target and conversational states intact. */
+#homePage:has(#seyveoLivingMoment:not([hidden])) #stage{
+ min-height:0;
+ justify-content:flex-start;
+ flex:0 0 auto;
+ padding-top:0;
+ padding-bottom:0;
+}
+#homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{
+ height:clamp(136px,32vw,172px);
+}
+@media(max-width:375px){
+ #homePage:has(#seyveoLivingMoment:not([hidden])) #orbCluster{height:132px}
+}
+
 #homePage .personal-brief{display:none!important}
 
 #seyveoLivingMoment[hidden]{display:none!important}
@@ -226,10 +243,10 @@
   overflow:visible;
   fill:none;
   stroke:currentColor;
-  stroke-width:1.65;
+  stroke-width:var(--sv-air-icon-stroke,1.35);
   stroke-linecap:round;
   stroke-linejoin:round;
-  opacity:.90;
+  opacity:.82;
 }
 #seyveoLivingMoment .lm-art-svg .lm-glyph-accent{
   stroke-width:1.7;
@@ -970,9 +987,9 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  min-height:52px;
 }
 #homePage #seyveoLivingMoment .lm-primary-title{
- font-weight:570;letter-spacing:-.018em;
+ font-weight:510;letter-spacing:-.027em;
 }
-#homePage #seyveoLivingMoment .lm-inline-title{font-weight:540}
+#homePage #seyveoLivingMoment .lm-inline-title{font-weight:490}
 #homePage #seyveoLivingMoment :is(.lm-polymer,.lm-polymer--main,.lm-polymer--quiet){
  box-shadow:none!important;
 }
@@ -993,10 +1010,10 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 
 /* Readability refinement: type only; card and dock geometry remain unchanged. */
-#homePage #seyveoLivingMoment .lm-primary-title{font-size:16.5px;line-height:1.3}
-#homePage #seyveoLivingMoment .lm-primary-subtitle{font-size:12.5px;line-height:1.48}
-#homePage #seyveoLivingMoment .lm-inline-title{font-size:13px;line-height:1.42}
-#homePage #seyveoLivingMoment .lm-inline-note{font-size:11.5px;line-height:1.44}
+#homePage #seyveoLivingMoment .lm-primary-title{font-size:15.5px;line-height:1.3}
+#homePage #seyveoLivingMoment .lm-primary-subtitle{font-size:13px;line-height:1.46}
+#homePage #seyveoLivingMoment .lm-inline-title{font-size:13.5px;line-height:1.35}
+#homePage #seyveoLivingMoment .lm-inline-note{font-size:12.5px;line-height:1.4}
 #homePage #seyveoLivingMoment .lm-mail-content p{font-size:12px;line-height:1.48}
 #homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.5px}
 /* Light-mode drawn icons: enough ink to scan, no raised highlight or frame. */
