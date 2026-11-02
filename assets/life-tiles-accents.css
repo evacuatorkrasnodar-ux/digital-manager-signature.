@@ -1,7 +1,7 @@
-/* SEYVEO · My World — flat iPhone-style navigation.
-   One authoritative stylesheet for the existing Life buttons.
-   No raised cards, extra glass layers, duplicate titles or icon backplates.
-   Native routes, theme pigments and the velvet dock are untouched. */
+/* SEYVEO · My World / iOS 26 inspired Air navigation.
+   Use the native iOS hierarchy: confident large title, inset hairline
+   separators and tactile flat rows. Glass belongs to floating navigation,
+   not these content buttons. Keep theme colors and the velvet dock. */
 :root {
   --sv-world-divider:color-mix(in srgb,var(--text) 9%,transparent);
 }
@@ -14,8 +14,8 @@ html.sv-space-active #lifePage {
 html.sv-space-active #lifePage .life-back {display:none!important}
 html.sv-space-active #lifePage .life-heading {
   box-sizing:border-box;
-  margin:0 0 11px!important;
-  padding:6px 8px 0!important;
+  margin:0 0 18px!important;
+  padding:10px 8px 0!important;
   border:0!important;
   background:transparent!important;
   box-shadow:none!important;
@@ -25,10 +25,10 @@ html.sv-space-active #lifePage .life-heading h1 {
   margin:0!important;
   padding:0!important;
   color:var(--text)!important;
-  font-size:clamp(25px,6vw,28px)!important;
-  font-weight:550!important;
-  letter-spacing:-.045em!important;
-  line-height:1.18!important;
+  font-size:clamp(30px,8vw,34px)!important;
+  font-weight:680!important;
+  letter-spacing:-.048em!important;
+  line-height:1.13!important;
 }
 html.sv-space-active #lifePage .life-heading h1 span {
   color:inherit!important;
@@ -42,8 +42,8 @@ html.sv-space-active #lifePage .calendar-spaces {
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid {
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  column-gap:0!important;
-  row-gap:0!important;
+  column-gap:8px!important;
+  row-gap:2px!important;
   align-items:stretch!important;
   width:100%!important;
   margin:0!important;
@@ -59,9 +59,9 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   position:relative!important;
   box-sizing:border-box!important;
   display:grid!important;
-  grid-template-columns:32px minmax(0,1fr)!important;
+  grid-template-columns:30px minmax(0,1fr)!important;
   grid-template-rows:auto!important;
-  column-gap:9px!important;
+  column-gap:10px!important;
   row-gap:0!important;
   align-items:center!important;
   align-content:center!important;
@@ -69,14 +69,14 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   justify-content:stretch!important;
   width:100%!important;
   height:auto!important;
-  min-height:62px!important;
+  min-height:66px!important;
   max-height:none!important;
   margin:0!important;
-  padding:8px 6px!important;
+  padding:9px 7px!important;
   overflow:visible!important;
   border:0!important;
-  border-bottom:1px solid var(--sv-world-divider)!important;
-  border-radius:0!important;
+  border-bottom:0!important;
+  border-radius:14px!important;
   background:transparent!important;
   box-shadow:none!important;
   filter:none!important;
@@ -84,11 +84,23 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   text-align:left!important;
   text-decoration:none!important;
   -webkit-tap-highlight-color:transparent;
-  transition:background-color .18s ease,opacity .18s ease!important;
+  transition:background-color .17s ease,opacity .17s ease,transform .22s cubic-bezier(.2,.7,.2,1)!important;
 }
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before,
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after {
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before {
   content:none!important;
+  display:none!important;
+}
+/* iOS-like inset hairline: never a full-width table grid. */
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after {
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  left:47px!important;right:8px!important;bottom:0!important;
+  height:1px!important;
+  background:var(--sv-world-divider)!important;
+  pointer-events:none!important;
+}
+html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:nth-last-child(-n+2)::after {
   display:none!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
@@ -100,17 +112,17 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
   justify-self:center!important;
   flex:none!important;
   box-sizing:border-box!important;
-  width:27px!important;
-  height:27px!important;
+  width:26px!important;
+  height:26px!important;
   min-width:0!important;
-  max-width:27px!important;
-  max-height:27px!important;
+  max-width:26px!important;
+  max-height:26px!important;
   margin:0!important;
   color:var(--sv-world-icon)!important;
   fill:none;
   stroke:currentColor;
   stroke-width:var(--sv-air-icon-stroke,1.35)!important;
-  opacity:.95!important;
+  opacity:.96!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
   display:block!important;
@@ -123,10 +135,10 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
   width:100%!important;
   margin:0!important;
   padding:0!important;
-  font-size:calc(14.5px * var(--sv-text-scale,1))!important;
-  font-weight:550!important;
-  letter-spacing:-.022em!important;
-  line-height:1.25!important;
+  font-size:calc(15.5px * var(--sv-text-scale,1))!important;
+  font-weight:530!important;
+  letter-spacing:-.025em!important;
+  line-height:1.28!important;
   color:var(--text)!important;
   text-align:left!important;
   white-space:normal!important;
@@ -137,8 +149,9 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small {
   display:none!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active {
-  background:color-mix(in srgb,var(--text) 4%,transparent)!important;
-  opacity:.78;
+  background:color-mix(in srgb,var(--text) 6%,transparent)!important;
+  opacity:1!important;
+  transform:scale(.985);
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visible {
   outline:2px solid var(--seyveo-emerald)!important;
@@ -175,13 +188,13 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
 }
 @media(max-width:390px) {
   html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
-    column-gap:0!important;
-    padding:0 4px!important;
+    column-gap:4px!important;
+    padding:0 2px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
     grid-template-columns:27px minmax(0,1fr)!important;
     column-gap:7px!important;
-    min-height:60px!important;
+    min-height:64px!important;
     padding:8px 4px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
@@ -189,7 +202,7 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
     max-width:24px!important;max-height:24px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
-    font-size:calc(13.5px * var(--sv-text-scale,1))!important;
+    font-size:calc(14px * var(--sv-text-scale,1))!important;
   }
 }
 @media(prefers-reduced-motion:reduce) {
