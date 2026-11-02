@@ -767,7 +767,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  background:transparent;overflow:hidden;
  color:var(--text);font:inherit;line-height:1;cursor:pointer
 }
-/* SEYVEO Walk of Fame — pearl enamel, fine champagne-gold rim.
+/* SEYVEO Walk of Fame — eight-ray jewel, pearl enamel and a champagne-gold rim.
    Outline means available; pearl-white fill means saved. No circular tile. */
 #sayviMusicPage .sv-music-favorite::before{content:none!important;display:none!important}
 #sayviMusicPage .sv-music-favorite:disabled{display:none!important}
@@ -805,7 +805,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 #sayviMusicPage .sv-music-favorite--spark::after{
  content:"";display:block;position:absolute;inset:6px;z-index:2;pointer-events:none;
  background:rgba(246,220,162,.32);
- clip-path:polygon(50% 2%,64% 34%,97% 36%,73% 59%,81% 94%,50% 76%,19% 94%,27% 59%,3% 36%,36% 34%);
+ clip-path:polygon(50% 2%,58% 36%,76% 26%,67% 42%,98% 50%,67% 58%,76% 74%,58% 64%,50% 98%,42% 64%,24% 74%,33% 58%,2% 50%,33% 42%,24% 26%,42% 36%);
  animation:sv-music-star-glint .55s ease-out both;
 }
 #sayviMusicPage .sv-music-favorite--spark .sv-music-favorite-star{
