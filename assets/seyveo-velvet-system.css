@@ -7,7 +7,8 @@
 :root{
  --sv-velvet-panel:#273830;
  --sv-velvet-panel-quiet:#202e27;
- --sv-air-dock:#2d4137;
+ --sv-air-dock:#24372f;
+ --sv-air-home-surface:#273830;
  --sv-air-control:#354a3f;
  --sv-air-selected:#405b4c;
  --sv-velvet-edge:transparent;
@@ -21,7 +22,8 @@
 :root[data-theme="light"]{
  --sv-velvet-panel:#ffffff;
  --sv-velvet-panel-quiet:#eef1f5;
- --sv-air-dock:#e9edf2;
+ --sv-air-dock:#eff1f4;
+ --sv-air-home-surface:#ffffff;
  --sv-air-control:#e8edf2;
  --sv-air-selected:#dce5ee;
  --sv-velvet-edge:transparent;
@@ -33,7 +35,8 @@
 :root[data-theme=dark][data-palette=graphite]{
  --sv-velvet-panel:#29343d;
  --sv-velvet-panel-quiet:#222c34;
- --sv-air-dock:#303e48;
+ --sv-air-dock:#242e37;
+ --sv-air-home-surface:#27323b;
  --sv-air-control:#364650;
  --sv-air-selected:#40525e;
  --sv-velvet-edge:transparent;
@@ -44,7 +47,8 @@
 :root[data-theme=dark][data-palette=sapphire]{
  --sv-velvet-panel:#2a394e;
  --sv-velvet-panel-quiet:#233044;
- --sv-air-dock:#344660;
+ --sv-air-dock:#27374e;
+ --sv-air-home-surface:#2a394e;
  --sv-air-control:#3b4e68;
  --sv-air-selected:#465e7e;
  --sv-velvet-edge:transparent;
@@ -55,7 +59,8 @@
 :root[data-theme=dark][data-palette=plum]{
  --sv-velvet-panel:#36312d;
  --sv-velvet-panel-quiet:#2e2926;
- --sv-air-dock:#413b35;
+ --sv-air-dock:#312c29;
+ --sv-air-home-surface:#36312d;
  --sv-air-control:#4b433b;
  --sv-air-selected:#594c42;
  --sv-velvet-edge:transparent;
