@@ -280,7 +280,7 @@ function open(options){
  if(home.hidden){
   // A Music/Browser dock replaces navHome with player/navigation controls.
   // Never synthesize a tap on "Previous track" merely to open the chat.
-  const playerOwnsDock=signatureDock?.classList.contains('seyveo-music-dock')
+  const playerOwnsDock=document.querySelector('footer.dock')?.classList.contains('seyveo-music-dock')
     ||window.SEYVEO_BROWSER_DOCK?.isActive?.();
   if(!playerOwnsDock)document.getElementById('navHome')?.click();
   if(home.hidden){
