@@ -43,9 +43,9 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 :root[data-theme="light"] footer.dock.seyveo-music-dock>.nav-item.active{color:var(--text)!important;background:var(--seyveo-hdr-active)!important}
 @media(max-width:355px){footer.dock.seyveo-music-dock>.nav-item:not(#assistantButton) span{letter-spacing:-.04em}}
 
-/* SEYVEO Air · Now Playing. One shared audio element, one dock.
-   A thin floating glass mini-player above the navigation pill, inspired by
-   the restrained bottom chrome of iOS 26. No vinyl or secondary player. */
+/* SEYVEO Air · Now Playing / compact oval glass mini-player.
+   One audio session; native-style 48px pill above the 52px split dock.
+   Preserve 44px real button targets, touch gestures, safe area and controls. */
 #sayviMusicMini[hidden],html.sv-music-screen #sayviMusicMini{display:none!important}
 #sayviMusicMini{
  --sv-mini-progress:0%;
@@ -54,9 +54,9 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  box-sizing:border-box;
  left:50%;transform:translateX(-50%);
  bottom:calc(var(--seyveo-dock-bottom,7px) + var(--seyveo-dock-height,58px) + 7px);
- width:min(382px,calc(100vw - 32px));height:54px;min-height:54px;max-height:54px;
- max-width:calc(100vw - 32px);padding:5px 7px 6px 8px;
- border:0;border-radius:20px;
+ width:min(382px,calc(100vw - 32px));height:48px;min-height:48px;max-height:48px;
+ max-width:calc(100vw - 32px);padding:2px 5px 3px 6px;
+ border:0;border-radius:999px;
  background:var(--sv-liquid-nav-material);
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur);
  backdrop-filter:var(--sv-liquid-nav-blur);
@@ -89,13 +89,13 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 }
 #sayviMusicMini .sv-music-mini-open{
  display:flex;align-items:center;justify-content:flex-start;
- flex:1 1 auto;gap:9px;min-width:0;min-height:44px;text-align:left;
+ flex:1 1 auto;gap:7px;min-width:0;min-height:44px;text-align:left;
  touch-action:pan-y;
 }
 #sayviMusicMini .sv-music-mini-symbol{
- display:grid;place-items:center;position:relative;flex:0 0 40px;
- width:40px;height:40px;
- border-radius:9px;
+ display:grid;place-items:center;position:relative;flex:0 0 38px;
+ width:38px;height:38px;
+ border-radius:10px;
  background:linear-gradient(145deg,
   color-mix(in srgb,var(--card2) 85%,var(--seyveo-emerald) 15%),
   color-mix(in srgb,var(--bg) 82%,var(--card2) 18%));
@@ -110,7 +110,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 #sayviMusicMini .sv-music-mini-artwork{
  position:absolute;inset:0;width:100%;height:100%;
  background-position:center;background-size:cover;background-repeat:no-repeat;
- border-radius:9px;
+ border-radius:10px;
 }
 #sayviMusicMini.has-artwork .sv-music-mini-placeholder{display:none}
 #sayviMusicMini .sv-music-mini-meta{
@@ -148,11 +148,11 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
   flex-basis:44px;width:44px;min-width:44px;
  }
  #sayviMusicMini .sv-music-mini-symbol{
-  flex-basis:40px;width:40px;height:40px;
+  flex-basis:38px;width:38px;height:38px;
  }
 }
 #sayviMusicMini .sv-music-mini-progress{
- position:absolute;bottom:0;left:12px;right:12px;height:1.5px;opacity:.55;
+ position:absolute;bottom:0;left:19px;right:19px;height:1px;opacity:.45;
  border-radius:1.5px;
  background:linear-gradient(to right,var(--text) 0 var(--sv-mini-progress),var(--sv-air-divider,var(--soft-line)) var(--sv-mini-progress) 100%);
  pointer-events:none;
