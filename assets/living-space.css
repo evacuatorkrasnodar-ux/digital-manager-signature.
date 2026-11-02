@@ -1277,12 +1277,6 @@ html.sv-space-active #sayviMusicPage :is(.sv-music-intent,.sv-music-panel-close)
  box-shadow:none!important;
  font-weight:465;color:var(--text);
 }
-html.sv-space-active #sayviMusicPage :is(.sv-music-providers,.sv-music-collection){
- border:1px solid var(--sv-q-outline)!important;
- border-radius:23px!important;
- background:var(--sv-q-surface)!important;
- box-shadow:none!important;
-}
 /* Quiet Cinema finishing: existing confirmation dialogs share text-first
    actions, never extra silver button capsules. Native forms, focus, submit
    handlers and permission checks are all left intact. */
