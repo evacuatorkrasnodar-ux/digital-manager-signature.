@@ -37,7 +37,7 @@
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
  border:0!important;
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-air-dock)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
  box-shadow:none!important;
@@ -77,18 +77,18 @@
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
  border-color:transparent!important;
- background:transparent!important;
+ background:var(--sv-air-selected)!important;
  box-shadow:none!important;
  font-weight:515!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
  border-color:transparent!important;
- background:transparent!important;
+ background:var(--sv-air-selected)!important;
  box-shadow:none!important;
 }
 .dock>.nav-item.sv-nav-feedback{
  border-color:transparent!important;
- background:transparent!important;
+ background:var(--sv-air-selected)!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item.sv-nav-feedback{
@@ -235,7 +235,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-air-dock)!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
@@ -394,15 +394,15 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
  border-color:transparent!important;
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-air-dock)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
  border-color:transparent!important;
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-air-dock)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
  border-color:transparent!important;
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-air-dock)!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
