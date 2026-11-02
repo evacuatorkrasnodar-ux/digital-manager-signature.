@@ -1004,12 +1004,13 @@ html.sv-space-active #calendarPage .cal-periods{
 }
 html.sv-space-active #calendarPage .cal-periods button,
 html.sv-space-active #picturePage .picture-tabs button{
- min-height:42px;
+ min-height:44px;
  border:0!important;border-radius:0!important;
  background:transparent!important;box-shadow:none!important;
  font-weight:465;
  color:var(--secondary);
 }
+html.sv-space-active #calendarPage .cal-periods button{min-height:42px;}
 html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true],
 html.sv-space-active #picturePage .picture-tabs button[aria-pressed=true]{
  color:var(--text);
