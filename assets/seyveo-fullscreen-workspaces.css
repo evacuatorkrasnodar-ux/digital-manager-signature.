@@ -61,6 +61,18 @@
    calc(112px + env(safe-area-inset-bottom,0px))
    max(16px,env(safe-area-inset-left,0px))!important;
  }
+ /* The calendar event editor is not a full-height form.
+    The original dock lives in the top layer, below one scrollable sheet. */
+ html body dialog#calendarEventDialog.cal-form-dialog[open]{
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:flex-start!important;
+  overflow:hidden!important;overscroll-behavior:none!important;
+  padding:
+   calc(15px + env(safe-area-inset-top,0px))
+   max(14px,env(safe-area-inset-right,0px))
+   calc(89px + env(safe-area-inset-bottom,0px))
+   max(14px,env(safe-area-inset-left,0px))!important;
+ }
  /* Health and Care share the SAME dialog. Safari can move a fixed
     descendant with a scrolling <dialog> (browser top-layer); the original
     dock is appended directly to the dialog. Therefore the dialog must NOT
