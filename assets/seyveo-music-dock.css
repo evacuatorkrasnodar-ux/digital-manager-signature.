@@ -126,7 +126,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 #sayviMusicMini .sv-music-mini-artist{font-size:10.7px;font-weight:430;color:var(--secondary);line-height:1.18}
 #sayviMusicMini .sv-music-mini-transport{
  display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;
- gap:0;min-width:132px;
+ gap:0;min-width:88px;
 }
 #sayviMusicMini .sv-music-mini-transport button{
  display:grid;place-items:center;flex:0 0 44px;
@@ -134,7 +134,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  padding:0;color:var(--text);
 }
 #sayviMusicMini .sv-music-mini-transport svg{
- display:block;width:20px;height:20px;fill:none;
+ display:block;width:21px;height:21px;fill:none;
  stroke:currentColor;stroke-width:1.45;
  stroke-linecap:round;stroke-linejoin:round;
 }
@@ -142,9 +142,9 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  opacity:.3;cursor:default;
 }
 @media(max-width:355px){
- #sayviMusicMini .sv-music-mini-transport{min-width:120px}
+ #sayviMusicMini .sv-music-mini-transport{min-width:88px}
  #sayviMusicMini .sv-music-mini-transport button{
-  flex-basis:40px;width:40px;min-width:40px;
+  flex-basis:44px;width:44px;min-width:44px;
  }
  #sayviMusicMini .sv-music-mini-symbol{
   flex-basis:40px;width:40px;height:40px;
