@@ -1,28 +1,162 @@
-/* SEYVEO · Pulse developer preview · Black / White Velvet.
-   A compact preview using coherent model events, never bank/CRM claims. */
-.seyveo-pulse-dialog{width:min(450px,calc(100% - 28px));max-height:min(82dvh,800px,calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding:24px 20px 20px}
-.seyveo-pulse-dialog h2{margin:0 45px 7px 0}
-.pulse-eyebrow{font-size:10px;font-weight:650;letter-spacing:.11em;color:var(--secondary);text-transform:uppercase;margin:0 45px 8px}
-.pulse-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:4px;border-radius:var(--seyveo-radius-choice,18px);background:var(--card2);border:1px solid var(--soft-line);margin-bottom:15px}
-.pulse-periods button{min-width:0;min-height:40px;border:0;background:transparent;color:var(--secondary);font-size:12px;border-radius:var(--seyveo-radius-segment,14px)}
-.pulse-periods button[aria-pressed=true]{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--line),0 2px 7px #0002}
-.pulse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 15px}
-.pulse-stat{padding:13px 13px 12px;border:1px solid var(--line);border-radius:20px;background:var(--card2);min-height:89px;display:flex;flex-direction:column;gap:5px;justify-content:space-between}
-.pulse-stat small{font-size:11px;line-height:1.3;color:var(--secondary)}
-.pulse-stat strong{font-size:24px;font-weight:635;line-height:1.1;letter-spacing:-.035em;font-variant-numeric:tabular-nums;color:var(--text);overflow-wrap:anywhere}
-.pulse-chart-box{border:1px solid var(--line);border-radius:22px;background:var(--card2);padding:15px 14px 12px;margin:0 0 14px}
-.pulse-chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:7px;margin-bottom:12px}
-.pulse-chart-head strong{font-size:12px;line-height:1.35;font-weight:650}
-.pulse-chart-head small{font-size:10.5px;line-height:1.3;color:var(--secondary)}
-.pulse-chart{height:103px;display:grid;grid-template-columns:repeat(var(--pulse-columns,7),minmax(0,1fr));align-items:end;gap:5px;overflow:hidden}
-.pulse-chart-col{height:100%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
-.pulse-chart-track{width:100%;height:83px;display:flex;align-items:flex-end;justify-content:center}
-.pulse-chart-bar{width:min(23px,77%);min-height:3px;height:var(--pulse-height,3%);border-radius:6px 6px 2px 2px;background:linear-gradient(160deg,var(--text),var(--secondary));opacity:.80}
-.pulse-chart-col small{height:14px;font-size:9px;line-height:14px;color:var(--secondary);white-space:nowrap;text-align:center}
-.pulse-insight{padding:13px 14px;border:1px solid var(--line);border-radius:18px;background:var(--card);margin:0 0 12px}
-.pulse-insight strong{display:block;font-size:12px;font-weight:640;margin-bottom:5px}
-.pulse-insight p{font-size:12px!important;line-height:1.48!important;white-space:normal!important;color:var(--secondary)}
-.pulse-footnote{margin:0!important;font-size:10.5px!important;color:var(--secondary)!important;line-height:1.5!important}
-.pulse-periods button:focus-visible{outline:2px solid var(--text);outline-offset:-2px}
-@media(max-width:360px){.seyveo-pulse-dialog{padding:21px 14px 16px}.pulse-stat{padding:10px}.pulse-stat strong{font-size:22px}.pulse-chart{gap:3px}.pulse-periods button{font-size:11px}}
-@media(prefers-reduced-motion:reduce){.pulse-chart-bar{transition:none}}
+/* SEYVEO · Business Pulse detail.
+   Same visual grammar as the main Pulse: one baseline, one indicator and
+   grouped hairline rows instead of six oversized independent tiles. */
+.seyveo-pulse-dialog{
+ box-sizing:border-box;
+ width:min(450px,calc(100% - 28px));
+ max-height:min(88dvh,790px);
+ padding:23px 19px 20px;
+}
+.seyveo-pulse-dialog h2{
+ margin:0 65px 8px 0;
+ font-size:clamp(24px,6vw,27px);
+ line-height:1.16;font-weight:570;letter-spacing:-.043em;
+ color:var(--text);
+}
+.seyveo-pulse-dialog .pulse-eyebrow{
+ margin:0 60px 9px 0;
+ font-size:9.5px;line-height:1.35;font-weight:550;
+ letter-spacing:.095em;color:var(--secondary);
+}
+.seyveo-pulse-dialog .pulse-data-status{
+ display:block;width:max-content;max-width:100%;
+ box-sizing:border-box;margin:0 0 12px;
+ padding:6px 10px;border:1px solid var(--soft-line);
+ border-radius:999px;background:var(--card2);
+ color:var(--secondary);font-size:9px;line-height:1.4;
+ font-weight:570;letter-spacing:.045em;
+}
+.seyveo-pulse-dialog .pulse-data-status[hidden]{display:none!important}
+.seyveo-pulse-dialog .pulse-periods{
+ box-sizing:border-box;position:relative;
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:0;margin:0 0 13px;padding:0;border:0;border-radius:0;
+ background:transparent;box-shadow:none;
+}
+.seyveo-pulse-dialog .pulse-periods::before{
+ content:"";position:absolute;left:0;right:0;bottom:0;
+ height:1px;background:var(--soft-line);pointer-events:none;
+}
+.seyveo-pulse-dialog .pulse-periods>button{
+ -webkit-appearance:none;appearance:none;
+ position:relative;display:grid;place-items:center;
+ min-width:0;min-height:44px;margin:0;padding:6px 2px 10px;
+ border:0!important;border-radius:0;background:transparent!important;
+ color:var(--secondary);box-shadow:none!important;
+ font:inherit;font-size:13px;font-weight:475;line-height:1.25;
+ cursor:pointer;touch-action:manipulation;
+}
+.seyveo-pulse-dialog .pulse-periods>button[aria-pressed=true]{
+ color:var(--text);font-weight:555;
+}
+.seyveo-pulse-dialog .pulse-periods>button::after{content:none;display:none}
+.seyveo-pulse-dialog .pulse-periods>button[aria-pressed=true]::after{
+ content:"";display:block;position:absolute;
+ left:17%;right:17%;bottom:0;height:2px;
+ border-radius:99px;background:var(--text);pointer-events:none;
+}
+.seyveo-pulse-dialog .pulse-periods>button:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:-3px;
+ border-radius:8px;
+}
+/* One continuous material, six meaningful figures and quiet dividers. */
+.seyveo-pulse-dialog .pulse-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:0;margin:0 0 13px;padding:0;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:21px;background:var(--sv-q-surface,var(--card));
+ overflow:hidden;box-shadow:none;
+}
+.seyveo-pulse-dialog .pulse-stat{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ justify-content:center;gap:7px;min-width:0;min-height:78px;
+ padding:11px 13px;border:0;border-radius:0;background:transparent;
+ box-shadow:none;
+}
+.seyveo-pulse-dialog .pulse-stat:nth-child(odd){border-right:1px solid var(--soft-line)}
+.seyveo-pulse-dialog .pulse-stat:nth-child(-n+4){border-bottom:1px solid var(--soft-line)}
+.seyveo-pulse-dialog .pulse-stat small{
+ display:block;margin:0;color:var(--secondary);
+ font-size:11px;font-weight:470;line-height:1.3;
+}
+.seyveo-pulse-dialog .pulse-stat strong{
+ display:block;margin:0;color:var(--text);
+ font-size:clamp(17px,4.45vw,21px);font-weight:610;
+ letter-spacing:-.034em;line-height:1.14;
+ font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+.seyveo-pulse-dialog .pulse-chart-box{
+ padding:13px 12px 12px;margin:0 0 11px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:21px;background:var(--sv-q-surface,var(--card));
+ box-shadow:none;
+}
+.seyveo-pulse-dialog .pulse-chart-head{
+ display:flex;justify-content:space-between;
+ align-items:baseline;gap:7px;margin:0 0 9px;
+}
+.seyveo-pulse-dialog .pulse-chart-head strong{
+ color:var(--text);font-size:13px;
+ line-height:1.35;font-weight:600;
+}
+.seyveo-pulse-dialog .pulse-chart-head small{
+ color:var(--secondary);font-size:10.5px;line-height:1.3;
+}
+.seyveo-pulse-dialog .pulse-chart{
+ display:grid;grid-template-columns:repeat(var(--pulse-columns,6),minmax(0,1fr));
+ align-items:end;gap:6px;min-width:0;height:124px;
+ overflow:hidden;
+}
+.seyveo-pulse-dialog .pulse-chart-col{
+ height:100%;min-width:0;
+ display:flex;flex-direction:column;justify-content:flex-end;
+ align-items:center;gap:5px;
+}
+.seyveo-pulse-dialog .pulse-chart-track{
+ display:flex;align-items:flex-end;justify-content:center;
+ width:100%;height:99px;
+ background:repeating-linear-gradient(to top,
+  transparent 0,transparent calc(33.333% - 1px),
+  var(--soft-line) calc(33.333% - 1px),var(--soft-line) 33.333%);
+}
+.seyveo-pulse-dialog .pulse-chart-bar{
+ width:min(17px,52%);min-width:7px;
+ min-height:3px;height:var(--pulse-height,3%);
+ border-radius:8px 8px 3px 3px;
+ background:linear-gradient(180deg,var(--text),var(--secondary));
+ opacity:.88;
+}
+.seyveo-pulse-dialog .pulse-chart-col small{
+ display:block;max-width:100%;
+ height:16px;font-size:10px;line-height:16px;
+ color:var(--secondary);white-space:nowrap;text-align:center;
+}
+.seyveo-pulse-dialog .pulse-insight{
+ padding:13px 14px;margin:0 0 10px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:19px;background:var(--sv-q-surface,var(--card));
+ box-shadow:none;
+}
+.seyveo-pulse-dialog .pulse-insight strong{
+ display:block;margin:0 0 6px;font-size:12.5px;
+ line-height:1.35;font-weight:600;color:var(--text);
+}
+.seyveo-pulse-dialog .pulse-insight p{
+ margin:0;color:var(--secondary);
+ font-size:11.5px!important;line-height:1.48!important;
+ white-space:normal!important;
+}
+.seyveo-pulse-dialog .pulse-footnote{
+ margin:0 2px!important;
+ color:var(--secondary)!important;
+ font-size:10.5px!important;line-height:1.4!important;
+}
+@media(max-width:360px){
+ .seyveo-pulse-dialog{padding:20px 13px 15px}
+ .seyveo-pulse-dialog .pulse-stat{padding:10px;min-height:74px}
+ .seyveo-pulse-dialog .pulse-stat strong{font-size:17px}
+ .seyveo-pulse-dialog .pulse-chart{gap:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ .seyveo-pulse-dialog .pulse-chart-bar{transition:none}
+}
