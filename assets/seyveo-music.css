@@ -741,22 +741,22 @@ html.sv-music-screen[data-theme=dark][data-palette=plum] #sayviMusicPage{
 html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  background:radial-gradient(ellipse at 50% 45%,rgba(208,178,141,.085),transparent 68%)
 }
-#sayviMusicPage>header.sv-music-head{
- grid-template-columns:minmax(0,1fr) auto!important;
- align-items:start
-}
-#sayviMusicPage>header.sv-music-head .sv-music-lockup{grid-column:1;grid-row:1}
-#sayviMusicPage>header.sv-music-head .sv-music-minimize{grid-column:2;grid-row:1}
 /* Walk of Fame favorite lives beside the artist, not in the header.
    The original SVG, gold S and saved-favorite behavior are untouched. */
 #sayviMusicPage .sv-music-artist-row{
- display:flex;align-items:center;justify-content:center;gap:3px;
- width:100%;max-width:100%;min-width:0;min-height:44px;margin:-2px auto 0;
- line-height:1.25;
+ display:flex;align-items:center;justify-content:center;gap:6px;
+ width:100%;max-width:100%;min-width:0;min-height:38px;margin:2px auto 0;
+ line-height:1.35;
 }
 #sayviMusicPage .sv-music-artist-row .sv-music-artist{
  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- text-align:left;margin:0;line-height:1.25;
+ text-align:center;margin:0;line-height:1.35;
+}
+#sayviMusicPage .sv-music-artist-row .sv-music-favorite{order:2}
+@media(min-width:760px) and (min-height:650px){
+ html.sv-music-screen #sayviMusicPage .sv-music-artist-row{
+  justify-content:flex-start;margin:2px 0 0;
+ }
 }
 #sayviMusicPage .sv-music-favorite{
  position:relative;isolation:isolate;flex:0 0 44px;
@@ -767,29 +767,13 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
  background:transparent;overflow:hidden;
  color:var(--text);font:inherit;line-height:1;cursor:pointer
 }
-/* The 44px tap target stays generous; the visible jewel is only 34px. */
-#sayviMusicPage .sv-music-favorite::before{
- content:"";position:absolute;left:50%;top:50%;width:34px;height:34px;
- box-sizing:border-box;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
- border:1px solid rgba(232,189,104,.55);background:#253039;
- box-shadow:inset 0 1px 0 rgba(255,245,217,.07);
- transition:border-color .18s,background .18s,box-shadow .18s
-}
-#sayviMusicPage .sv-music-favorite[aria-pressed=true]::before{
- border-color:#f3d183;background:#30353a;
- box-shadow:0 0 0 1px rgba(230,182,89,.09),inset 0 1px 0 rgba(255,245,217,.10)
-}
-:root[data-theme=light] #sayviMusicPage .sv-music-favorite::before{
- background:#253039;border-color:rgba(199,146,59,.68)
-}
-:root[data-theme=light] #sayviMusicPage .sv-music-favorite[aria-pressed=true]::before{
- background:#30353a;border-color:#c99849
-}
-#sayviMusicPage .sv-music-favorite:disabled{opacity:.9;cursor:default}
+/* The Hall of Fame star stands on the page itself, without a painted badge.
+   Its 44px hit target remains; do not show an inactive star before a track. */
+#sayviMusicPage .sv-music-favorite::before{content:none;display:none}
+#sayviMusicPage .sv-music-favorite:disabled{display:none!important}
 #sayviMusicPage .sv-music-favorite-star{
- display:block;position:relative;z-index:1;width:26px;height:26px;
- overflow:visible;transform:none;
- filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))
+ display:block;position:relative;z-index:1;width:25px;height:25px;
+ overflow:visible;transform:none;filter:none
 }
 #sayviMusicPage .sv-music-favorite-shape{
  fill:url(#svMusicHallRose);stroke:url(#svMusicHallGold);stroke-width:2.7;
@@ -805,7 +789,7 @@ html.sv-music-screen[data-palette=plum] #sayviMusicPage .sv-music-cover{
 #sayviMusicPage .sv-music-favorite[aria-pressed=true] .sv-music-favorite-bevel{stroke:rgba(255,230,163,.58)}
 #sayviMusicPage .sv-music-star-initial{
  fill:url(#svMusicHallGold);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;
- font-size:20px;font-weight:750;dominant-baseline:central;letter-spacing:0;
+ font-size:19px;font-weight:750;dominant-baseline:central;letter-spacing:0;
  paint-order:stroke;stroke:#633c18;stroke-width:.6px
 }
 /* One understated glint only when a track is added; no looping sparkle. */
