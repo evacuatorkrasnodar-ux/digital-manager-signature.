@@ -437,7 +437,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-
 /* SEYVEO · Original signature dock in Feather Chat.
  * The editor stays a single elegant field ABOVE the existing glass dock.
  * The dock contains the five actions and the original moving ceramic sphere.
- * Keyboard mode keeps native typing/Send accessible while hiding the dock. */
+ * Keyboard mode keeps the shared dock under the text field, above the keyboard. */
 html.seyveo-conversation #seyveoConversationHeader{
  display:none!important;min-height:0!important;height:0!important;
  padding:0!important;margin:0!important;border:0!important;
@@ -476,7 +476,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
  display:none!important;
 }
 html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
- bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
+ bottom:calc(var(--keyboard-offset,0px) + var(--seyveo-dock-height,58px) + 15px)!important;
  width:min(430px,calc(100% - 14px))!important;
 }
 html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded) .composer-compact{
