@@ -216,30 +216,29 @@ function updateTime(){
 function clearArtwork(){
  stage?.classList.remove('has-artwork','is-checking-artwork');
  mini?.classList.remove('has-artwork');
- for(const img of [artwork,miniArtwork]){
-  if(!img)continue;
-  img.onload=null;img.onerror=null;
-  img.hidden=true;
-  img.removeAttribute('src');
+ for(const surface of [artwork,miniArtwork]){
+  if(!surface)continue;
+  surface.hidden=true;
+  surface.style.removeProperty('background-image');
  }
 }
 function showArtwork(){
  if(!coverDataURL)return;
- for(const [img,holder] of [[artwork,stage],[miniArtwork,mini]]){
-  if(!img)continue;
-  img.hidden=true;
-  img.onload=()=>{
-   if(!coverDataURL||img.getAttribute('src')!==coverDataURL)return;
-   img.hidden=false;holder?.classList.add('has-artwork');
-   stage?.classList.remove('is-checking-artwork');
-  };
-  img.onerror=()=>{
-   img.hidden=true;img.onload=null;img.onerror=null;
-   img.removeAttribute('src');holder?.classList.remove('has-artwork');
-   stage?.classList.remove('is-checking-artwork');
-  };
-  img.src=coverDataURL;
- }
+ const candidate=coverDataURL;
+ // Decode offscreen before revealing. Failed or CSP-blocked images stay icons.
+ const probe=new Image();
+ probe.onload=()=>{
+  if(coverDataURL!==candidate)return;
+  for(const [surface,holder] of [[artwork,stage],[miniArtwork,mini]]){
+   if(!surface)continue;
+   surface.style.backgroundImage='url("'+candidate+'")';
+   surface.hidden=false;
+   holder?.classList.add('has-artwork');
+  }
+  stage?.classList.remove('is-checking-artwork');
+ };
+ probe.onerror=()=>{if(coverDataURL===candidate)stage?.classList.remove('is-checking-artwork')};
+ probe.src=candidate;
 }
 function loadArtwork(blob,version,file){
  if(!blob||!['image/jpeg','image/png'].includes(blob.type)||blob.size>1800000){
