@@ -1,6 +1,6 @@
-/* SEYVEO floating navigation / iOS 26-inspired glass.
- * Keep the original five destinations, voice button, safe-area geometry and
- * velvet pigment. Only the dock MATERIAL changes, not its interaction. */
+/* SEYVEO iOS 26-inspired split floating dock.
+ * Four destinations in a glass pill and the existing fifth in a glass circle.
+ * ONE set of buttons, routes, music actions and the original voice gesture. */
 /* SEYVEO · Quiet Navigation / 2026.
  * One fixed five-position dock. Four destinations + central Sayvi.
  * Stable safe-area, native scroll, original voice and music controls. */
@@ -35,24 +35,35 @@
  bottom:var(--seyveo-dock-bottom)!important;
  transform:translateX(-50%)!important;
  display:grid!important;
- grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-template-columns:repeat(4,minmax(0,1fr)) 64px!important;
  align-items:center!important;
  justify-items:stretch!important;
- gap:2px!important;
- width:min(430px,calc(100% - 14px))!important;
+ gap:0!important;
+ width:min(430px,calc(100% - 16px))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
- margin:0!important;padding:4px 6px!important;
- border-radius:27px!important;
+ margin:0!important;padding:0!important;
+ border-radius:30px!important;
  border:0!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+ isolation:isolate;
+}
+/* Two floating panes, painted by the dock itself without extra markup. */
+.dock::before,.dock::after{
+ content:""!important;display:block!important;
+ position:absolute!important;top:1px!important;bottom:1px!important;
+ z-index:0!important;pointer-events:none!important;
+ border:0!important;border-radius:999px!important;
  background:var(--sv-liquid-nav-material)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
- isolation:isolate;
 }
-.dock::before,.dock::after{content:none!important;display:none!important}
+.dock::before{left:0!important;right:64px!important}
+.dock::after{right:0!important;width:56px!important}
 .dock>.nav-item{
- position:relative!important;
+ position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;bottom:auto!important;
  transform:none!important;
  box-sizing:border-box;
@@ -62,7 +73,7 @@
  display:flex!important;flex-direction:column!important;
  justify-content:center!important;align-items:center!important;
  gap:3px!important;
- border:0!important;border-radius:13px!important;
+ border:0!important;border-radius:24px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
  letter-spacing:-.025em!important;color:var(--seyveo-engrave-ink)!important;
@@ -79,18 +90,17 @@
  flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
-/* Keep current route semantics without a permanent frame.
-   Only a direct tap shows this thin contour; it fades after 1.6 seconds. */
+/* The active tab receives a quiet light capsule (no hard border). */
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
  border-color:transparent!important;
- background:transparent!important;
+ background:color-mix(in srgb,var(--text) 8%,transparent)!important;
  box-shadow:none!important;
  font-weight:540!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
  border-color:transparent!important;
- background:transparent!important;
+ background:rgba(255,255,255,.45)!important;
  box-shadow:none!important;
 }
 .dock>.nav-item.sv-nav-feedback{
@@ -105,11 +115,16 @@
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
 .dock>.nav-tasks{grid-column:2!important;grid-row:1!important;order:2!important}
 .dock>#navPicture{display:flex!important;grid-column:4!important;grid-row:1!important;order:4!important}
-.dock>.nav-manage{grid-column:5!important;grid-row:1!important;order:5!important}
+.dock>.nav-manage{
+ grid-column:5!important;grid-row:1!important;order:5!important;
+ justify-self:end!important;align-self:center!important;
+ width:56px!important;height:56px!important;min-height:56px!important;
+ border-radius:50%!important;
+}
 /* The assistant occupies true column 3/5; hold-to-speak is unchanged. */
 .dock>.assistant-button{
  grid-column:3!important;grid-row:1!important;order:3!important;
- position:relative!important;
+ position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
  transform:none!important;
  display:flex!important;flex-direction:column!important;
@@ -193,7 +208,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
  display:none!important;
 }
 @media(max-width:355px){
- .dock{width:calc(100% - 8px)!important;padding:4px 4px!important;gap:1px!important}
+ .dock{width:calc(100% - 12px)!important;padding:0!important;gap:0!important}
  .dock>.nav-item{font-size:10.4px!important;letter-spacing:-.038em!important}
  .dock>.nav-item svg{width:var(--seyveo-dock-icon-size)!important;height:var(--seyveo-dock-icon-size)!important}
 }
@@ -242,8 +257,8 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
- background:var(--sv-liquid-nav-material)!important;
- box-shadow:var(--sv-liquid-nav-shadow)!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
@@ -403,19 +418,19 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  --seyveo-dock-hairline:rgba(226,238,248,.105);
  --seyveo-dock-top-hairline:rgba(244,250,255,.085);
  border-color:transparent!important;
- background:var(--sv-liquid-nav-material)!important;
+ background:transparent!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
  --seyveo-dock-hairline:rgba(228,239,255,.115);
  --seyveo-dock-top-hairline:rgba(244,249,255,.09);
  border-color:transparent!important;
- background:var(--sv-liquid-nav-material)!important;
+ background:transparent!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
  --seyveo-dock-hairline:rgba(246,230,215,.095);
  --seyveo-dock-top-hairline:rgba(255,245,233,.07);
  border-color:transparent!important;
- background:var(--sv-liquid-nav-material)!important;
+ background:transparent!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
@@ -489,14 +504,9 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 .dock>#assistantButton #rim-night stop:nth-child(5){stop-color:var(--sv-ceramic-rim-5,#f5faf6)}
 .dock>#assistantButton #rim-night stop:nth-child(6){stop-color:var(--sv-ceramic-rim-6,#a1b6ab)}
 .dock>#assistantButton #rim-night stop:nth-child(7){stop-color:var(--sv-ceramic-rim-7,#7b9587)}
-/* Accessibility: keep readable nontransparent dock materials in every palette.
-   This rule stays AFTER palette colors so earlier theme rules cannot override it. */
+/* Accessibility: retain both nav shapes with opaque glass substitutes. */
 @media(prefers-reduced-transparency:reduce){
- :root .dock,
- :root[data-theme=light] .dock,
- :root[data-theme=dark][data-palette=graphite] .dock,
- :root[data-theme=dark][data-palette=sapphire] .dock,
- :root[data-theme=dark][data-palette=plum] .dock{
+ .dock::before,.dock::after{
   background:var(--sv-air-dock,#24372f)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
