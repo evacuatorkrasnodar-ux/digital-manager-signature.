@@ -312,6 +312,7 @@ function mailView(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
+  form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
   const accountField=create('label','sv-mail-field sv-mail-account-field');
   accountField.append(create('span','sv-mail-field-label','От имени'));
   const accountSelect=create('select','sv-mail-input sv-mail-account-select');
@@ -324,15 +325,14 @@ function mailView(){
   accountSelect.addEventListener('change',()=>{mailComposeScope=accountSelect.value||null});
   accountField.append(accountSelect);
   form.append(accountField);
-  const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения соответствующего ящика.');
+  const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения почты.');
   form.append(accountHelp);
-  form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
   const makeField=(labelText,name,tag,value,type)=>{
    const label=create('label','sv-mail-field');
    label.append(create('span','sv-mail-field-label',labelText));
    const input=create(tag,'sv-mail-input');input.dataset.mailField=name;
    if(type)input.type=type;
-   if(tag==='textarea')input.rows=7;
+   if(tag==='textarea')input.rows=6;
    input.maxLength=name==='body'?10000:name==='to'?254:240;input.value=value||'';
    label.append(input);form.append(label);return input;
   };
@@ -359,7 +359,7 @@ function mailView(){
   const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
   const cancel=intent('Отмена',()=>{mailEditorOpen=false;mailEditingId=null;paint()});
   actions.append(save,cancel);
-  form.append(actions,status,create('p','sv-mail-disclaimer','Пока нет подключённого ящика, отправка отключена. Черновик остаётся только в памяти этого сеанса.'));
+  form.append(actions,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
   content.append(form);
  }
  function drawDetails(item){
@@ -480,6 +480,10 @@ function mailView(){
  }
  function paint(){
   section.dataset.mailFolder=mailFolder;
+  section.classList.toggle('sv-mail-composing',mailEditorOpen);
+  greeting.hidden=mailEditorOpen;
+  searchToggle.hidden=mailEditorOpen;
+  connect.hidden=mailEditorOpen;
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-account-switch',label);
@@ -515,7 +519,7 @@ function mailView(){
   searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
   searchToggle.setAttribute('aria-controls','svMailQuickSearch');
   compose.hidden=mailEditorOpen;
-  info.textContent=mailEditorOpen?'Черновик · только на этом устройстве':
+  info.textContent=mailEditorOpen?'':
    mailCurrent?'Просмотр учебного письма':
    mailFolder==='overview'?'':
    mailFolder==='drafts'?'Ваши черновики · '+mailDrafts.filter(d=>mailVisible(d.account)).length:
