@@ -57,10 +57,10 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  width:min(430px,calc(100vw - 14px));height:54px;min-height:54px;max-height:54px;
  max-width:calc(100vw - 14px);padding:5px 7px 6px 8px;
  border:0;border-radius:19px;
- background:linear-gradient(155deg,rgba(241,255,249,.125),rgba(172,219,201,.049) 50%,transparent 100%),rgba(20,34,30,.68);
- -webkit-backdrop-filter:blur(22px) saturate(1.18);
- backdrop-filter:blur(22px) saturate(1.18);
- box-shadow:0 7px 22px rgba(0,0,0,.10),inset 0 1px 0 rgba(247,255,251,.10);
+ background:var(--sv-liquid-nav-material);
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur);
+ backdrop-filter:var(--sv-liquid-nav-blur);
+ box-shadow:var(--sv-liquid-nav-shadow);
  color:var(--text);
  overflow:hidden;
  -webkit-tap-highlight-color:transparent;
@@ -68,17 +68,17 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
 #sayviMusicMini::before,#sayviMusicMini::after{content:none!important;display:none!important}
 /* Same optical material as the five-button velvet dock; independently themed. */
 :root[data-theme="light"] #sayviMusicMini{
- background:linear-gradient(155deg,rgba(255,255,255,.87),rgba(255,255,255,.53) 50%,rgba(223,237,244,.20)),rgba(235,243,248,.71);
- box-shadow:0 7px 20px rgba(46,75,99,.10),inset 0 1px 0 rgba(255,255,255,.73);
+ background:var(--sv-liquid-nav-material);
+ box-shadow:var(--sv-liquid-nav-shadow);
 }
 :root[data-theme="dark"][data-palette="graphite"] #sayviMusicMini{
- background:linear-gradient(155deg,rgba(235,244,249,.13),rgba(131,158,173,.047) 49%,transparent),rgba(19,26,32,.69);
+ background:var(--sv-liquid-nav-material);
 }
 :root[data-theme="dark"][data-palette="sapphire"] #sayviMusicMini{
- background:linear-gradient(155deg,rgba(228,238,255,.13),rgba(110,141,216,.051) 49%,transparent),rgba(18,28,48,.70);
+ background:var(--sv-liquid-nav-material);
 }
 :root[data-theme="dark"][data-palette="plum"] #sayviMusicMini{
- background:linear-gradient(155deg,rgba(255,243,227,.11),rgba(171,151,128,.046) 49%,transparent),rgba(28,27,26,.71);
+ background:var(--sv-liquid-nav-material);
 }
 #sayviMusicMini button{
  display:grid;place-items:center;appearance:none;-webkit-appearance:none;
