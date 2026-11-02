@@ -1006,7 +1006,7 @@ function renderChat(){
   older.textContent='↑ Ранние сообщения · ещё '+Math.max(0,messages.length-historyWindow);
  }
  if(!visible.length){
-  thread.append(el('p','svcp-note','Пока нет сообщений. Напишите заметку для команды или позовите Сэйви через @Сэйви. Это локальная демонстрация.'));
+  thread.append(el('p','svcp-note','Здесь пока нет сообщений. Начните разговор.'));
  }else{
   let lastDay='';
   for(const {msg,index} of visible){
