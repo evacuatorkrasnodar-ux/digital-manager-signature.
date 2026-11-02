@@ -44,7 +44,7 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
  title:String(file?.name||'Без названия').replace(/\.[^.]+$/,''),
  artist:'',display:String(file?.name||'Без названия')
 };
-let trackDescriptions=new WeakMap(),coverObjectURL=null;
+let trackDescriptions=new WeakMap(),coverDataURL=null,coverReader=null;
 const infoFor=file=>file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
@@ -211,37 +211,68 @@ function updateTime(){
  seek.style.setProperty('--music-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
  mini?.style.setProperty('--sv-mini-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
 }
-/* One short-lived cover URL, shared by full Music and the compact Now Playing bar.
-   Local files never leave the device. */
+/* Data images are already permitted by the app's CSP; blob: images are not.
+   Keep MP3 cover art local, capped, and do not expand the security policy. */
 function clearArtwork(){
- stage?.classList.remove('has-artwork');
+ stage?.classList.remove('has-artwork','is-checking-artwork');
  mini?.classList.remove('has-artwork');
  for(const img of [artwork,miniArtwork]){
   if(!img)continue;
+  img.onload=null;img.onerror=null;
   img.hidden=true;
   img.removeAttribute('src');
  }
 }
 function showArtwork(){
- if(!coverObjectURL)return;
- for(const img of [artwork,miniArtwork]){
+ if(!coverDataURL)return;
+ for(const [img,holder] of [[artwork,stage],[miniArtwork,mini]]){
   if(!img)continue;
-  img.src=coverObjectURL;
-  img.hidden=false;
+  img.hidden=true;
+  img.onload=()=>{
+   if(!coverDataURL||img.getAttribute('src')!==coverDataURL)return;
+   img.hidden=false;holder?.classList.add('has-artwork');
+   stage?.classList.remove('is-checking-artwork');
+  };
+  img.onerror=()=>{
+   img.hidden=true;img.onload=null;img.onerror=null;
+   img.removeAttribute('src');holder?.classList.remove('has-artwork');
+   stage?.classList.remove('is-checking-artwork');
+  };
+  img.src=coverDataURL;
  }
- stage?.classList.add('has-artwork');
- mini?.classList.add('has-artwork');
+}
+function loadArtwork(blob,version,file){
+ if(!blob||!['image/jpeg','image/png'].includes(blob.type)||blob.size>1800000){
+  stage?.classList.remove('is-checking-artwork');return;
+ }
+ const reader=new FileReader();
+ coverReader=reader;
+ reader.onload=()=>{
+  if(coverReader!==reader||version!==selectVersion||tracks[index]!==file)return;
+  coverReader=null;
+  const value=reader.result;
+  if(typeof value!=='string'||!/^data:image\/(?:png|jpeg);base64,/i.test(value)){
+   stage?.classList.remove('is-checking-artwork');return;
+  }
+  coverDataURL=value;
+  showArtwork();
+  mediaSession();
+ };
+ reader.onerror=()=>{
+  if(coverReader!==reader)return;
+  coverReader=null;stage?.classList.remove('is-checking-artwork');
+ };
+ try{reader.readAsDataURL(blob)}
+ catch{if(coverReader===reader)coverReader=null;stage?.classList.remove('is-checking-artwork')}
 }
 function safeRelease(){
+ if(coverReader){
+  try{if(coverReader.readyState===FileReader.LOADING)coverReader.abort()}catch{}
+  coverReader=null;
+ }
  clearArtwork();
- if(url){
-  try{URL.revokeObjectURL(url)}catch{}
-  url=null;
- }
- if(coverObjectURL){
-  try{URL.revokeObjectURL(coverObjectURL)}catch{}
-  coverObjectURL=null;
- }
+ if(url){try{URL.revokeObjectURL(url)}catch{}url=null}
+ coverDataURL=null;
 }
 function mediaSession(){
  if(!('mediaSession' in navigator))return;
@@ -252,8 +283,8 @@ function mediaSession(){
     title:info.title,
     artist:info.artist||'Моя музыка · SEYVEO',
     album:info.album||'SEYVEO SOUND',
-    // Only real embedded cover art is advertised to the operating system.
-    artwork:coverObjectURL&&info.artwork?[{src:coverObjectURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
+    // Only the real embedded cover (CSP-approved data URL) is used by MediaSession.
+    artwork:coverDataURL&&info.artwork?[{src:coverDataURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
    });
   }
   navigator.mediaSession.setActionHandler('play',()=>play());
@@ -339,23 +370,22 @@ function switchTrack(i,autoplay=false){
  updateFavorite();
  const visible=infoFor(file);
  heading.textContent=visible.title;
- artist.textContent=(visible.artist?visible.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
+ artist.textContent=visible.artist||'Моя музыка';
  previous.disabled=next.disabled=tracks.length<2;
  collectionRender();mediaSession();updatePlay();updateTime();
  // Bounded local ID3 read never interrupts or delays the real audio element.
  if(metadata?.describe){
+  stage?.classList.add('is-checking-artwork');
   Promise.resolve(metadata.describe(file)).then(info=>{
    if(version!==selectVersion||tracks[index]!==file||!info)return;
    trackDescriptions.set(file,info);
    updateFavorite();
-   if(info.artwork){
-    try{coverObjectURL=URL.createObjectURL(info.artwork);showArtwork()}
-    catch{coverObjectURL=null;clearArtwork()}
-   }
+   if(info.artwork)loadArtwork(info.artwork,version,file);
+   else stage?.classList.remove('is-checking-artwork');
    heading.textContent=info.title;
-   artist.textContent=(info.artist?info.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
+   artist.textContent=info.artist||'Моя музыка';
    collectionRender();mediaSession();syncResume();
-  }).catch(()=>{});
+  }).catch(()=>{if(version===selectVersion)stage?.classList.remove('is-checking-artwork')});
  }
  if(autoplay){
   const playing=audio.play();
@@ -363,7 +393,7 @@ function switchTrack(i,autoplay=false){
    if(version!==selectVersion)return;
    sayviMessage('Для воспроизведения коснитесь значка Play. Система могла остановить автоматический запуск.');
   });
- }else sayviMessage('Готово. Нажмите Play, чтобы послушать.');
+ }else sayviMessage('');
  return true;
 }
 function play(){
