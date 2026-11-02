@@ -10,7 +10,7 @@ if(!dock||window.SEYVEO_DOCK_CONTINUITY)return;
 const WORKSPACES=new Set([
  'calendarSpaceDialog','seyveoSmartHomeDialog','seyveoContactsDialog','seyveoFamilyDialog',
  'notesDialog','noteReadDialog','noteReviewDialog','noteModeDialog','notePaperDialog',
- 'noteScanDialog','calendarEventDialog','manageRoadmapDialog',
+ 'noteScanDialog','calendarEventDialog','personalTaskDialog','manageRoadmapDialog',
  'manageConnectionsDialog','manageDataDialog','assistantChatHistoryDialog',
  'homeWidgetsManageDialog','seyveoAccountDemo','seyveoPulseDialog','seyveoStudioDialog',
  'seyveoCompanyDialog','seyveoQrCardDialog','seyveoAvatarDialog','homeWidgetDetails',
