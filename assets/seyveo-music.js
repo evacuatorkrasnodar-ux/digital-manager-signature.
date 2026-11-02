@@ -33,7 +33,6 @@ const sourcesClose=$('sayviMusicSourcesClose');
 const mini=$('sayviMusicMini');
 const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
-const miniPrevious=$('sayviMusicMiniPrevious');
 const miniNext=$('sayviMusicMiniNext');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
@@ -150,7 +149,6 @@ function syncResume(){
    }
    miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
    const canSkip=tracks.length>1;
-   if(miniPrevious)miniPrevious.disabled=!canSkip;
    if(miniNext)miniNext.disabled=!canSkip;
   }
  }
@@ -487,9 +485,43 @@ if(stage){
  },{passive:true});
 }
 
-miniOpen?.addEventListener('click',open);
+/* Artwork/title keep the full-player action; horizontal swipes switch
+ * the current track without opening the full screen or moving the dock. */
+let suppressMiniClick=false;
+miniOpen?.addEventListener('click',event=>{
+ if(suppressMiniClick){
+  event.preventDefault();
+  suppressMiniClick=false;
+  return;
+ }
+ open();
+});
+if(miniOpen){
+ let miniTouchStart=null;
+ miniOpen.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1){miniTouchStart=null;return}
+  const p=event.touches[0];
+  miniTouchStart={x:p.clientX,y:p.clientY};
+ },{passive:true});
+ miniOpen.addEventListener('touchcancel',()=>{miniTouchStart=null},{passive:true});
+ miniOpen.addEventListener('touchend',event=>{
+  if(!miniTouchStart||event.changedTouches.length!==1){
+   miniTouchStart=null;return;
+  }
+  const p=event.changedTouches[0];
+  const dx=p.clientX-miniTouchStart.x;
+  const dy=p.clientY-miniTouchStart.y;
+  miniTouchStart=null;
+  if(Math.abs(dx)<55||Math.abs(dy)>35||Math.abs(dx)<Math.abs(dy)*1.6)return;
+  // The swipe is a deliberate transport gesture, not a click to open.
+  event.preventDefault();
+  suppressMiniClick=true;
+  if(tracks.length>1){
+   switchTrack(index+(dx>0?-1:1),true);
+  }
+ },{passive:false});
+}
 miniPlay?.addEventListener('click',play);
-miniPrevious?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index-1,true)});
 miniNext?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index+1,true)});
 // Now Playing stays in one stable position above the dock or chat composer.
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
