@@ -351,13 +351,9 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
  opacity:.91;transition:color .18s ease,opacity .18s ease;
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
- width:20px!important;height:20px!important;
- stroke-width:1.1!important;
- stroke-linecap:round;stroke-linejoin:round;
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
  fill:none!important;stroke:currentColor;
- /* Fine white under-glass engraving; preserve readable 44px touch targets. */
- filter:drop-shadow(0 0 .45px var(--seyveo-etch-core,rgba(255,255,255,.38)))
-        drop-shadow(0 0 1.35px var(--seyveo-etch-halo,rgba(255,255,255,.20)));
 }
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action>span{
  display:none!important;
@@ -644,79 +640,72 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-b
  line-height:1.46;
 }
 
-/* The existing + menu opens above the field; it is never a second dock. */
-#seyveoChatTools[hidden]{display:none!important}
-html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools{
- position:absolute;left:8px;bottom:calc(100% + 7px);
- z-index:60;display:flex;flex-direction:column;min-width:172px;
- gap:2px;padding:6px;border-radius:16px;border:1px solid var(--soft-line);
- background:var(--card);box-shadow:0 8px 22px rgba(0,0,0,.12);
+/* Single chat editor expander, no second input and no dock. */
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatExpand{
+ order:5;display:grid!important;place-items:center;
+ width:44px;min-width:44px;height:44px;min-height:44px;flex:0 0 44px;
+ margin:0;padding:0;border:0!important;border-radius:50%;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary);cursor:pointer;
 }
-#seyveoChatTools button{
- display:flex;align-items:center;gap:10px;width:100%;min-height:42px;
- padding:8px 10px;border:0;border-radius:10px;background:transparent;
- color:var(--text);font:inherit;font-size:13px;text-align:left;cursor:pointer;
+html.seyveo-conversation #seyveoChatExpand svg{
+ display:block;width:20px;height:20px;fill:none;
+ stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
-#seyveoChatTools button svg{
- flex:0 0 19px;width:19px;height:19px;stroke:currentColor;stroke-width:1.65;
- stroke-linecap:round;stroke-linejoin:round;fill:none;
+html.seyveo-conversation #seyveoChatExpand:focus-visible{
+ outline:2px solid var(--text);outline-offset:1px;
 }
-#seyveoChatTools button:hover,#seyveoChatTools button:focus-visible{
- background:var(--card2);outline:none;
+html.seyveo-conversation.seyveo-chat-compose-expanded #ask.prompt:not(.expanded){
+ max-height:min(43dvh,300px)!important;
 }
-
-/* Browser discovery lives in Feather Chat itself — one small action,
-   no Home tile, no extra dock, no heavy panel. */
-html.seyveo-conversation .seyveo-chat-welcome .seyveo-chat-browser-entry{
- display:inline-flex;align-items:center;justify-content:center;gap:9px;
- min-height:40px;margin:18px auto 0;padding:7px 13px;
- border:1px solid var(--soft-line);border-radius:14px;
- background:var(--card2);color:var(--text);
- font:inherit;font-size:13px;font-weight:450;
- box-shadow:none;cursor:pointer;
-}
-html.seyveo-conversation .seyveo-chat-browser-entry svg{
- display:block;width:18px;height:18px;flex:none;
- stroke:currentColor;stroke-width:1.65;fill:none;
-}
-html.seyveo-conversation .seyveo-chat-welcome .seyveo-chat-browser-location{
- display:block;margin-top:11px;color:var(--secondary);
- font-size:11px;line-height:1.35;
-}
-html.seyveo-conversation .seyveo-chat-browser-entry:active{
- opacity:.75;
-}
-html.seyveo-conversation .seyveo-chat-browser-entry:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
+html.seyveo-conversation.seyveo-chat-compose-expanded #ask.prompt:not(.expanded) #question{
+ height:min(28dvh,210px)!important;
+ max-height:min(28dvh,210px)!important;
+ min-height:90px!important;
 }
 
-/* One-time Browser discovery for established Feather Chat conversations.
-   Deliberately text-like, not another card stack or permanent navigation. */
-html.seyveo-conversation .seyveo-chat-browser-nudge{
- display:flex;align-items:center;gap:8px;flex-wrap:wrap;
- width:100%;min-height:42px;margin:12px 0 5px;
- padding:6px 0;border-top:1px solid var(--soft-line);
- color:var(--secondary);font-size:11px;line-height:1.35;
+/* Black Velvet · feather-matte composer.
+   A borderless, low-contrast tonal veil gives the input depth without
+   creating a glass capsule, extra overlay or GPU-intensive blur. */
+html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded),
+html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded):focus-within{
+ background:var(--sv-chat-composer-gradient)!important;
+ border:0!important;
+ border-radius:24px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
 }
-html.seyveo-conversation .seyveo-chat-browser-nudge>span:first-child{
- display:grid;place-items:center;flex:0 0 19px;
+:root[data-theme=light].seyveo-conversation #ask.prompt:not(.expanded),
+:root[data-theme=light].seyveo-conversation #ask.prompt:not(.expanded):focus-within{
+ background:var(--sv-chat-composer-gradient)!important;
+ border:0!important;
+ border-radius:24px!important;
+ box-shadow:none!important;
 }
-html.seyveo-conversation .seyveo-chat-browser-nudge svg{
- display:block;width:17px;height:17px;stroke:currentColor;fill:none;
+
+/* Chat photo picker follows Back and History. */
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
+ order:3!important;display:grid!important;place-items:center;
+ width:44px;min-width:44px;height:44px;min-height:44px;flex:0 0 44px;
+ border:0!important;border-radius:50%;padding:0;margin:0;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text);cursor:pointer;
 }
-html.seyveo-conversation .seyveo-chat-browser-nudge>span:nth-child(2){
- flex:1 1 auto;min-width:120px;
+html:not(.seyveo-conversation) #seyveoChatPlus{display:none!important}
+#seyveoChatPlus svg{
+ width:20px;height:20px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
-html.seyveo-conversation .seyveo-chat-browser-nudge button{
- min-height:38px;padding:4px 9px;border:1px solid var(--soft-line);
- border-radius:11px;background:transparent;color:var(--text);
- font:inherit;font-size:11px;cursor:pointer;
+#seyveoChatPlus:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+/* The composer itself is unchanged. On narrow devices only the six icon hit
+   boxes contract equally, while remaining 44px tall and optically centered. */
+@media(max-width:350px){
+ html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoConversationBack,#seyveoConversationHistory,#seyveoChatPlus,
+     #seyveoChatExpand,#seyveoConversationMic,#composerCompactSend){
+  width:40px!important;min-width:40px!important;height:44px!important;min-height:44px!important;
+  flex:0 0 40px!important;
+ }
 }
-html.seyveo-conversation .seyveo-chat-browser-nudge .seyveo-chat-browser-dismiss{
- display:grid;place-items:center;
- width:38px;min-width:38px;padding:0;border-color:transparent;
- color:var(--secondary);font-size:20px;font-weight:300;
-}
-html.seyveo-conversation .seyveo-chat-browser-nudge button:focus-visible{
- outline:2px solid var(--text);outline-offset:2px;
-}
+
