@@ -20,7 +20,7 @@
 }
 :root[data-sv-text-size="large"]{--sv-text-scale:1.12}
 :root[data-sv-text-size="extra"]{--sv-text-scale:1.23}
-body{font-size:calc(var(--sv-type-regular) * var(--sv-text-scale));line-height:1.45}
+body{font-size:calc(var(--sv-type-regular) * var(--sv-text-scale));line-height:1.45;font-weight:400;font-kerning:normal;text-rendering:optimizeLegibility}
 :is(#managePage,#tasksPage,#lifePage,#calendarPage,#picturePage,#sayviSurfacePage,#sayviAnswerPage,#sayviVideoPage):not([hidden]){
  font-size:calc(var(--sv-type-regular) * var(--sv-text-scale));
  line-height:1.48
@@ -240,10 +240,23 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
  font-size:calc(12px * var(--sv-text-scale))!important;line-height:1.42
 }
 #homePage :is(.timeline-title,.personal-brief-add){font-size:calc(14px * var(--sv-text-scale))!important}
-#homePage #seyveoLivingMoment :is(.lm-inline-title,.lm-primary-subtitle,.lm-inline-note,.lm-explanation,.lm-mail-intro,
+#homePage #seyveoLivingMoment :is(.lm-primary-subtitle,.lm-inline-note,.lm-explanation,.lm-mail-intro,
  .lm-mail-content p,.lm-mail-address,.lm-mail-note){
- font-size:calc(13px * var(--sv-text-scale))!important;line-height:1.48
+ font-size:calc(13px * var(--sv-text-scale))!important;line-height:1.43
 }
+#homePage #seyveoLivingMoment .lm-inline-title{
+ font-size:calc(13.5px * var(--sv-text-scale))!important;
+ line-height:1.34!important;
+ font-weight:490!important;
+ letter-spacing:-.022em;
+}
+#homePage #seyveoLivingMoment .lm-primary-title{
+ font-size:calc(15.5px * var(--sv-text-scale))!important;
+ line-height:1.28!important;
+ font-weight:510!important;
+ letter-spacing:-.031em;
+}
+#homePage #seyveoLivingMoment .lm-primary-subtitle{font-weight:410!important}
 #homePage #seyveoLivingMoment :is(.lm-mail-draft,.lm-mail-edit-input){
  font-size:calc(15px * var(--sv-text-scale))!important;line-height:1.5
 }
