@@ -36,7 +36,7 @@
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
- border:1px solid var(--sv-velvet-edge)!important;
+ border:0!important;
  background:var(--sv-velvet-panel)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
@@ -55,7 +55,7 @@
  display:flex!important;flex-direction:column!important;
  justify-content:center!important;align-items:center!important;
  gap:3px!important;
- border:1px solid transparent!important;border-radius:13px!important;
+ border:0!important;border-radius:13px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
  letter-spacing:-.025em!important;color:#e8f1eb!important;
@@ -68,8 +68,7 @@
  height:var(--seyveo-dock-icon-size)!important;
  stroke-width:var(--seyveo-dock-icon-stroke)!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
- filter:drop-shadow(0 0 .6px var(--seyveo-etch-core))
-        drop-shadow(0 0 1.8px var(--seyveo-etch-halo));
+ filter:none!important;
  flex:none;margin:0 auto!important;
 }
 .dock>.nav-item span{display:block;white-space:nowrap;max-width:100%;letter-spacing:-.02em}
@@ -88,12 +87,12 @@
  box-shadow:none!important;
 }
 .dock>.nav-item.sv-nav-feedback{
- border-color:rgba(129,192,160,.35)!important;
+ border-color:transparent!important;
  background:transparent!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item.sv-nav-feedback{
- border-color:rgba(51,67,88,.31)!important;
+ border-color:transparent!important;
 }
 .dock>.nav-item.active svg{stroke:currentColor!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
@@ -235,7 +234,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
- border-color:var(--sv-velvet-edge)!important;
+ border-color:transparent!important;
  background:var(--sv-velvet-panel)!important;
  box-shadow:none!important;
 }
@@ -394,15 +393,15 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 /* SEYVEO palette-aware fixed dock and Feather composer.
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
- border-color:var(--sv-velvet-edge)!important;
+ border-color:transparent!important;
  background:var(--sv-velvet-panel)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
- border-color:var(--sv-velvet-edge)!important;
+ border-color:transparent!important;
  background:var(--sv-velvet-panel)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
- border-color:var(--sv-velvet-edge)!important;
+ border-color:transparent!important;
  background:var(--sv-velvet-panel)!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
