@@ -14,7 +14,18 @@ function updateSendAccent(){
  form.classList.toggle('seyveo-has-text',
    form.dataset.composerMode!=='notes' && !!$('question')?.value.trim());
 }
+// One native textarea; its height grows within the same single-line toolbar,
+// up to four lines, without ever introducing a second row of controls.
+function syncFeatherDraft(){
+ if(!root.classList.contains('seyveo-conversation'))return;
+ const input=$('question');
+ if(!input)return;
+ form.style.setProperty('--sayvi-draft-height','38px');
+ const height=Math.max(38,Math.min(106,input.scrollHeight||38));
+ form.style.setProperty('--sayvi-draft-height',height+'px');
+}
 $('question')?.addEventListener('input',updateSendAccent);
+$('question')?.addEventListener('input',syncFeatherDraft);
 form.addEventListener('submit',()=>queueMicrotask(updateSendAccent));
 form.addEventListener('click',event=>{
  if(event.target.closest('#composerModeAsk,#composerModeNotes,#clearText'))
@@ -90,65 +101,66 @@ if(compact){
  micObserver.observe(compact,{childList:true});
  window.addEventListener('pagehide',()=>micObserver.disconnect(),{once:true});
 }
-// The existing Back control closes the conversation. There is no secondary
-// keyboard-dismiss arrow; native keyboards can close by their own controls.
-if(compact){
- const mic=compact.querySelector('.seyveo-conversation-mic');
- // Reuse the actual original header controls and live assistant status.
- // These nodes remain hidden on Home and in the expanded Notes editor.
- compact.insertBefore($('seyveoConversationBack'),compact.firstChild);
- compact.insertBefore($('seyveoConversationHistory'),mic);
- compact.insertBefore(header.querySelector('.seyveo-conversation-heading'),mic);
-}
-
-/* Leftmost photo picker: no extra app destinations or fake attachment sending. */
+// Keep Back, the centred assistant title, and History in the real top header.
+// The original single textarea stays in the form; CSS arranges it between
+// attachment and the context-sensitive voice/send button without cloning it.
 if(compact){
  const plus=document.createElement('button');
  plus.type='button';plus.id='seyveoChatPlus';
- plus.setAttribute('aria-label','Выбрать фотографию');
- plus.title='Выбрать фотографию';
+ plus.setAttribute('aria-label','Дополнительные действия');
+ plus.setAttribute('aria-expanded','false');
+ plus.setAttribute('aria-controls','seyveoChatTools');
+ plus.title='Дополнительные действия';
  plus.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+ compact.insertBefore(plus,compact.firstChild);
+
  const photos=document.createElement('input');
- photos.type='file';photos.id='seyveoChatPhotoFile';
- photos.accept='image/*';photos.hidden=true;
- photos.setAttribute('aria-label','Выбрать фотографию из устройства');
+ photos.type='file';photos.id='seyveoChatPhotoFile';photos.accept='image/*';
+ photos.hidden=true;photos.setAttribute('aria-label','Выбрать фотографию');
  photos.addEventListener('change',()=>{
-  if(photos.files?.length){
-   window.alert('Фотография выбрана. Отправка изображений Сэйви пока не подключена.');
-  }
+  if(photos.files?.length)status('Фото выбрано. Отправка вложений пока не подключена.',3600);
   photos.value='';
  });
- plus.addEventListener('click',()=>{
-  if(root.classList.contains('seyveo-conversation'))photos.click();
- });
- compact.insertBefore(plus,$('seyveoConversationHistory').nextSibling);
  document.body.append(photos);
-}
-/* One reversible expand control for the existing chat textarea. */
-if(compact){
- const toggle=document.createElement('button');
- toggle.type='button';
- toggle.id='seyveoChatExpand';
- toggle.setAttribute('aria-label','Раскрыть поле ввода');
- toggle.setAttribute('aria-expanded','false');
- toggle.title='Раскрыть поле ввода';
- const draw=()=>{
-  const expanded=root.classList.contains('seyveo-chat-compose-expanded');
-  toggle.innerHTML=expanded
-   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
-   :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>';
-  toggle.setAttribute('aria-label',expanded?'Свернуть поле ввода':'Раскрыть поле ввода');
-  toggle.setAttribute('aria-expanded',String(expanded));
-  toggle.title=expanded?'Свернуть поле ввода':'Раскрыть поле ввода';
- };
- toggle.addEventListener('click',()=>{
-  root.classList.toggle('seyveo-chat-compose-expanded');
-  draw();
-  if(typeof syncChatGeometry==='function')requestAnimationFrame(syncChatGeometry);
-  $('question')?.focus({preventScroll:true});
+
+ const tools=document.createElement('div');
+ tools.id='seyveoChatTools';tools.className='seyveo-chat-tools';
+ tools.hidden=true;tools.setAttribute('role','group');
+ tools.setAttribute('aria-label','Действия Сэйви');
+ tools.innerHTML=
+  '<button type="button" data-sayvi-tool="photo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.4"/><path d="m5 17 5-4 3 2 3-3 3 3"/></svg>Фотография</button>'+
+  '<button type="button" data-sayvi-tool="browser"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-4 4.5-4 12.5 0 17M12 3.5c4 4.5 4 12.5 0 17"/></svg>Браузер</button>'+
+  '<button type="button" data-sayvi-tool="note"><svg viewBox="0 0 24 24"><path d="M5 3.5h11l3 3V21H5zM16 3.5V7h3M8.5 11h7M8.5 15h7"/></svg>Сохранить в Блокнот</button>';
+ form.appendChild(tools);
+ function showTools(show){
+  tools.hidden=!show;
+  plus.setAttribute('aria-expanded',String(show));
+ }
+ plus.addEventListener('click',()=>showTools(tools.hidden));
+ tools.addEventListener('click',event=>{
+  const action=event.target.closest('button[data-sayvi-tool]')?.dataset.sayviTool;
+  if(!action)return;
+  showTools(false);
+  if(action==='photo')photos.click();
+  else if(action==='browser'){
+   if(!window.SEYVEO_BROWSER?.open?.())status('Браузер пока недоступен',2400);
+  }else if(action==='note'){
+   const draft=$('question')?.value.trim();
+   if(draft)saveReplyToNotes(draft);
+   else status('Сначала напишите текст',2200);
+  }
  });
- compact.insertBefore(toggle,compact.querySelector('#seyveoConversationMic'));
- draw();
+ document.addEventListener('pointerdown',event=>{
+  if(!tools.hidden&&!tools.contains(event.target)&&!plus.contains(event.target))
+   showTools(false);
+ },true);
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!tools.hidden){
+   showTools(false);plus.focus({preventScroll:true});
+   event.stopPropagation();
+  }
+ });
+ document.addEventListener('seyveo:conversation-close',()=>showTools(false));
 }
 if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge'),composerHead.querySelector('#collapseComposer'));
 
@@ -156,6 +168,7 @@ let statusTimer=0,speakingNow=false;
 let returnRoute=''; // Workspace to restore after this single conversation closes.
 const sendButton=$('composerCompactSend');
 const sendIcon=sendButton?.innerHTML||'';
+const chatSendIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
 let activeAction=null;
 // Busy only while there is a real cancelable task or an active spoken reply.
@@ -164,8 +177,9 @@ function syncActionButton(){
  if(!sendButton)return;
  const busy=Boolean(activeAction);
  sendButton.classList.toggle('seyveo-stop-action',busy);
+ form.classList.toggle('seyveo-action-busy',busy);
  sendButton.type=busy?'button':'submit';
- sendButton.innerHTML=busy?stopIcon:sendIcon;
+ sendButton.innerHTML=busy?stopIcon:(root.classList.contains('seyveo-conversation')?chatSendIcon:sendIcon);
  sendButton.title=busy?'Остановить действие':'Отправить Сэйви';
  sendButton.setAttribute('aria-label',busy?'Остановить действие':
    form.dataset.composerMode==='notes'?'Сохранить в Блокнот':'Отправить Сэйви');
@@ -234,6 +248,7 @@ function open(){
  }
  if(home.hidden)return;
  root.classList.add('seyveo-conversation');
+ syncActionButton();updateSendAccent();
  // Reuse the original writer and the existing saved thread.
  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
  header.hidden=false;
@@ -241,7 +256,7 @@ function open(){
  // The orb is still the centre of Home. Full chat is deliberately text-first.
  quiet.hidden=true;
  status('На связи');
- queueChatGeometry();
+ requestAnimationFrame(()=>{syncFeatherDraft();queueChatGeometry()});
  scrollToLatest();
 }
 function close(){
@@ -252,6 +267,10 @@ function close(){
  // A conversation may be recording: never leave the microphone active on exit.
  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
  root.classList.remove('seyveo-conversation');
+ form.style.removeProperty('--sayvi-draft-height');
+ $('seyveoChatTools')?.setAttribute('hidden','');
+ $('seyveoChatPlus')?.setAttribute('aria-expanded','false');
+ syncActionButton();
  header.hidden=true;
  syncMic(false);
  if(!form.hidden)$('hideInput')?.click();
@@ -637,6 +656,10 @@ window.addEventListener('hashchange',()=>{
    // Navigation away from chat explicitly cancels a pending return target.
    returnRoute='';
    root.classList.remove('seyveo-conversation');
+   form.style.removeProperty('--sayvi-draft-height');
+   $('seyveoChatTools')?.setAttribute('hidden','');
+   $('seyveoChatPlus')?.setAttribute('aria-expanded','false');
+   syncActionButton();
    root.style.removeProperty('--sayvi-chat-height');
    root.style.removeProperty('--sayvi-chat-top');
    root.style.removeProperty('--sayvi-composer-space');
