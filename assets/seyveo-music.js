@@ -1,4 +1,4 @@
-/* SEYVEO Music · Listening Room v1 — native-first, PWA test drive.
+/* SEYVEO Air · Music — native-first, PWA test drive.
  * Plays only audio files explicitly selected by the user.
  * Does NOT fetch or stream Spotify/Apple Music/YouTube; does NOT store files.
  * Keep the ORIGINAL Sayvi sphere and routing. Object URLs are ephemeral.
@@ -19,7 +19,11 @@ const heading=$('sayviMusicTrack');
 const artist=$('sayviMusicArtist');
 const status=$('sayviMusicStatus');
 const collection=$('sayviMusicCollection');
-const disk=$('sayviMusicDisk');
+const stage=$('sayviMusicStage');
+const artwork=$('sayviMusicArtwork');
+const miniArtwork=$('sayviMusicMiniArtwork');
+const miniTitle=$('sayviMusicMiniTitle');
+const miniArtist=$('sayviMusicMiniArtist');
 const importBtn=$('sayviMusicImport');
 const options=$('sayviMusicProviders');
 const providerText=$('sayviMusicProviderText');
@@ -43,7 +47,6 @@ const fallbackInfo=file=>metadata?.filenameParts(file?.name)||{
 let trackDescriptions=new WeakMap(),coverObjectURL=null;
 const infoFor=file=>file?(trackDescriptions.get(file)||fallbackInfo(file)):fallbackInfo(null);
 const safeName=file=>infoFor(file).display;
-const coverFallback=new URL('assets/seyveo-music-lockscreen.png',document.baseURI).href;
 const extensions=/\.(mp3|m4a|aac|wav|ogg|opus|flac|alac|aiff|aif|mp4)$/i;
 const MAX_TRACKS=40,MAX_FILE_SIZE=180*1024*1024;
 const providers=Object.freeze({
@@ -122,7 +125,6 @@ function updatePlay(){
  player.setAttribute('aria-label',playing?'Пауза':'Воспроизвести');
  player.setAttribute('aria-pressed',String(playing));
  $('sayviMusicPlayIcon')?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
- disk?.setAttribute('aria-label',playing?'Музыка воспроизводится':'Музыка остановлена');
  syncResume();
 }
 function syncResume(){
@@ -134,6 +136,9 @@ function syncResume(){
   mini.classList.toggle('is-playing',playing);
   if(loaded){
    const file=tracks[index];
+   const info=infoFor(file);
+   if(miniTitle)miniTitle.textContent=info.title||safeName(file);
+   if(miniArtist)miniArtist.textContent=info.artist||'Моя музыка';
    if(miniOpen)miniOpen.setAttribute('aria-label','Открыть плеер: '+safeName(file));
    if(miniPlay){
     miniPlay.setAttribute('aria-label',playing?'Пауза':'Продолжить воспроизведение');
@@ -206,7 +211,29 @@ function updateTime(){
  seek.style.setProperty('--music-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
  mini?.style.setProperty('--sv-mini-progress',(total>0?Math.min(100,now/total*100):0).toFixed(2)+'%');
 }
+/* One short-lived cover URL, shared by full Music and the compact Now Playing bar.
+   Local files never leave the device. */
+function clearArtwork(){
+ stage?.classList.remove('has-artwork');
+ mini?.classList.remove('has-artwork');
+ for(const img of [artwork,miniArtwork]){
+  if(!img)continue;
+  img.hidden=true;
+  img.removeAttribute('src');
+ }
+}
+function showArtwork(){
+ if(!coverObjectURL)return;
+ for(const img of [artwork,miniArtwork]){
+  if(!img)continue;
+  img.src=coverObjectURL;
+  img.hidden=false;
+ }
+ stage?.classList.add('has-artwork');
+ mini?.classList.add('has-artwork');
+}
 function safeRelease(){
+ clearArtwork();
  if(url){
   try{URL.revokeObjectURL(url)}catch{}
   url=null;
@@ -225,10 +252,8 @@ function mediaSession(){
     title:info.title,
     artist:info.artist||'Моя музыка · SEYVEO',
     album:info.album||'SEYVEO SOUND',
-    // MP3 embedded cover when available; otherwise the approved Sayvi sphere.
-    artwork:[coverObjectURL
-     ?{src:coverObjectURL,type:info.artwork.type,sizes:''}
-     :{src:coverFallback,type:'image/png',sizes:'128x128'}]
+    // Only real embedded cover art is advertised to the operating system.
+    artwork:coverObjectURL&&info.artwork?[{src:coverObjectURL,type:info.artwork.type||'image/jpeg',sizes:''}]:[]
    });
   }
   navigator.mediaSession.setActionHandler('play',()=>play());
@@ -324,7 +349,8 @@ function switchTrack(i,autoplay=false){
    trackDescriptions.set(file,info);
    updateFavorite();
    if(info.artwork){
-    try{coverObjectURL=URL.createObjectURL(info.artwork)}catch{coverObjectURL=null}
+    try{coverObjectURL=URL.createObjectURL(info.artwork);showArtwork()}
+    catch{coverObjectURL=null;clearArtwork()}
    }
    heading.textContent=info.title;
    artist.textContent=(info.artist?info.artist+' · ':'Ваш аудиофайл · ')+(index+1)+' из '+tracks.length;
@@ -403,102 +429,7 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
-// Slide the TWO-control remote by dragging its vinyl, without taking over
-// playback taps. A short vinyl tap still opens the full music page.
-let miniDrag=null,miniPosition=null,miniBlockClickUntil=0;
-function miniBounds(){
- const viewport=window.visualViewport;
- const minX=viewport?.offsetLeft||0;
- const minY=viewport?.offsetTop||0;
- const width=viewport?.width||window.innerWidth;
- const height=viewport?.height||window.innerHeight;
- const rect=mini.getBoundingClientRect();
- const outer=9;
- const minTop=minY+(width<=700?Math.min(54,height*.07):12);
- let bottomLimit=minY+height-outer;
- if(document.documentElement.classList.contains('seyveo-conversation')){
-  const writer=$('ask');
-  if(writer&&!writer.hidden){
-   const wr=writer.getBoundingClientRect();
-   if(wr.height>0)bottomLimit=Math.min(bottomLimit,wr.top-9);
-  }
- }else{
-  const dock=document.querySelector('footer.dock');
-  if(dock&&getComputedStyle(dock).visibility!=='hidden'&&getComputedStyle(dock).display!=='none'){
-   const dr=dock.getBoundingClientRect();
-   if(dr.height>0)bottomLimit=Math.min(bottomLimit,dr.top-9);
-  }
- }
- return {
-  left:minX+outer,
-  right:Math.max(minX+outer,minX+width-outer-rect.width),
-  top:Math.min(minTop,Math.max(minY+outer,bottomLimit-rect.height)),
-  bottom:Math.max(minY+outer,bottomLimit-rect.height)
- };
-}
-function setMiniPosition(x,y){
- const b=miniBounds();
- miniPosition={
-  x:Math.max(b.left,Math.min(b.right,x)),
-  y:Math.max(b.top,Math.min(b.bottom,y))
- };
- mini.style.left=miniPosition.x+'px';
- mini.style.top=miniPosition.y+'px';
- mini.style.bottom='auto';
- mini.style.transform='none';
-}
-function keepMiniInView(){
- if(miniPosition&&!mini.hidden)setMiniPosition(miniPosition.x,miniPosition.y);
-}
-if(mini&&miniOpen){
- miniOpen.addEventListener('pointerdown',event=>{
-  if(event.pointerType==='mouse'&&event.button!==0)return;
-  const rect=mini.getBoundingClientRect();
-  miniDrag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,
-   startedAt:performance.now(),x:rect.left,y:rect.top,moved:false};
-  try{miniOpen.setPointerCapture(event.pointerId)}catch{}
- });
- miniOpen.addEventListener('pointermove',event=>{
-  const d=miniDrag;
-  if(!d||d.pointerId!==event.pointerId)return;
-  const dx=event.clientX-d.startX,dy=event.clientY-d.startY;
-  if(!d.moved&&Math.hypot(dx,dy)<7)return;
-  d.moved=true;
-  event.preventDefault();
-  setMiniPosition(d.x+dx,d.y+dy);
- });
- const finishMiniDrag=event=>{
-  const d=miniDrag;
-  if(!d||d.pointerId!==event.pointerId)return;
-  // A quick, mostly vertical downward flick hides the remote, not the music.
-  // Slow drags still reposition it. Cancelled touches never dismiss it.
-  const dx=event.clientX-d.startX,dy=event.clientY-d.startY;
-  const elapsed=performance.now()-d.startedAt;
-  const dismiss=event.type==='pointerup'&&d.moved&&
-   dy>78&&dy>Math.abs(dx)*1.35&&elapsed<650;
-  if(d.moved)miniBlockClickUntil=Date.now()+650;
-  miniDrag=null;
-  try{if(miniOpen.hasPointerCapture(event.pointerId))miniOpen.releasePointerCapture(event.pointerId)}catch{}
-  if(dismiss){
-   miniDismissed=true;
-   miniPosition=null;
-   // Clear free-drag geometry so re-opening starts in its designed position.
-   for(const name of ['left','top','bottom','transform'])mini.style.removeProperty(name);
-   syncResume();
-  }
- };
- miniOpen.addEventListener('pointerup',finishMiniDrag);
- miniOpen.addEventListener('pointercancel',finishMiniDrag);
- mini.addEventListener('click',event=>{
-  if(Date.now()<miniBlockClickUntil){
-   event.preventDefault();
-   event.stopImmediatePropagation();
-  }
- },true);
- window.addEventListener('resize',keepMiniInView,{passive:true});
- window.visualViewport?.addEventListener('resize',keepMiniInView,{passive:true});
- window.addEventListener('seyveo:route-changed',keepMiniInView);
-}
+// Now Playing stays in one stable position above the dock or chat composer.
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
 // ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
 const miniWriter=$('ask');
@@ -507,7 +438,6 @@ if(mini&&miniWriter&&typeof ResizeObserver==='function'){
   const height=Math.ceil(miniWriter.getBoundingClientRect().height);
   if(height>0){
    mini.style.setProperty('--sv-mini-writer-height',height+'px');
-   keepMiniInView();
   }
  };
  new ResizeObserver(measureWriter).observe(miniWriter);
