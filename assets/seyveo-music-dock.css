@@ -65,12 +65,6 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  overflow:hidden;
  -webkit-tap-highlight-color:transparent;
 }
-@media(prefers-reduced-transparency:reduce){
- #sayviMusicMini{
-  background:var(--sv-air-dock,#24372f);
-  -webkit-backdrop-filter:none;backdrop-filter:none;
- }
-}
 #sayviMusicMini::before,#sayviMusicMini::after{content:none!important;display:none!important}
 /* Same optical material as the five-button velvet dock; independently themed. */
 :root[data-theme="light"] #sayviMusicMini{
@@ -176,4 +170,15 @@ html.seyveo-conversation:has(#ask.prompt.expanded) #sayviMusicMini,
 html.seyveo-conversation:has(#question:focus) #sayviMusicMini{display:none!important}
 @media(prefers-reduced-motion:reduce){
  #sayviMusicMini *{animation:none!important;transition:none!important}
+}
+/* Accessibility: opaque mini-player remains legible in any theme. */
+@media(prefers-reduced-transparency:reduce){
+ :root #sayviMusicMini,
+ :root[data-theme=light] #sayviMusicMini,
+ :root[data-theme=dark][data-palette=graphite] #sayviMusicMini,
+ :root[data-theme=dark][data-palette=sapphire] #sayviMusicMini,
+ :root[data-theme=dark][data-palette=plum] #sayviMusicMini{
+  background:var(--sv-air-dock,#24372f);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
 }
