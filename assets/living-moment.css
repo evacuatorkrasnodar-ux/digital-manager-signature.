@@ -61,6 +61,8 @@
 }
 #homePage.lm-focus #stage .message p:empty{display:none}
 #homePage.lm-focus #stage .seyveo-quiet-signal{display:none!important}
+/* Internal Home preview: the orb already anchors the scene. */
+#homePage.sv-home-preview.lm-focus #stage .message{display:none!important}
 #homePage.lm-focus #seyveoLivingMoment{
  margin-top:0;
  margin-bottom:8px;
