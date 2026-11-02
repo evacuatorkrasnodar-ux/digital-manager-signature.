@@ -1,14 +1,25 @@
 /* SEYVEO Calendar — clean time, not an ornate dashboard.
    Shared Black/White Velvet tokens, no standalone theme, no orb changes. */
 #calendarPage[hidden]{display:none!important}
-.calendar-main{min-width:0;flex:1;padding:9px 0 22px}
-.calendar-header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0 16px}
-.calendar-header h1{font-size:27px;line-height:1.14;font-weight:585;letter-spacing:-.035em;margin:0 0 5px}
+.calendar-main{min-width:0;flex:1;padding:3px 0 22px}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;margin:2px 0 9px}
+.calendar-header-main{display:flex;align-items:center;gap:5px;min-width:0}
+.calendar-header h1{font-size:clamp(24px,6.2vw,28px);line-height:1.14;font-weight:615;letter-spacing:-.04em;margin:0}
+#calendarPage .calendar-back{
+ display:grid;place-items:center;flex:0 0 38px;width:38px;height:44px;
+ padding:0;border:0;border-radius:12px;background:transparent;
+ color:var(--secondary);cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#calendarPage .calendar-back svg{
+ display:block;width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+#calendarPage .calendar-back:focus-visible{outline:2px solid var(--text);outline-offset:1px}
 .calendar-header p{font-size:12px;line-height:1.45;color:var(--secondary);margin:0}
 .calendar-kicker{font-size:10px!important;letter-spacing:.12em;font-weight:630;color:var(--secondary);margin-bottom:9px!important}
 .calendar-header-actions{display:flex;align-items:center;gap:7px;flex:none}
 .cal-round{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;color:var(--text);background:transparent;box-shadow:none}
-.cal-round svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cal-round svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .cal-round:focus-visible,.cal-periods button:focus-visible,.cal-day:focus-visible,.cal-entry:focus-visible,.cal-nav button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .calendar-header-add{background:transparent;color:var(--text);border-color:transparent}
 .calendar-header-add svg{stroke-width:1.65}
@@ -17,12 +28,12 @@
 #calendarPage .cal-scope{
  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
  padding:3px;border:1px solid var(--soft-line);border-radius:15px;
- background:var(--card2);margin:0 0 11px
+ background:color-mix(in srgb,var(--card2) 45%,transparent);margin:0 0 6px
 }
 #calendarPage .cal-scope[hidden]{display:none!important}
 #calendarPage .cal-scope button{
- min-width:0;min-height:36px;padding:5px 4px;border:0;border-radius:11px;
- color:var(--secondary);background:transparent;font:inherit;font-size:12px;font-weight:550
+ min-width:0;min-height:38px;padding:6px 4px;border:0;border-radius:11px;
+ color:var(--secondary);background:transparent;font:inherit;font-size:12px;font-weight:530
 }
 #calendarPage .cal-scope button[aria-pressed="true"]{
  color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)
@@ -66,14 +77,14 @@
 .cal-weekdays{margin:0 0 2px}
 .cal-weekdays span{font-size:10px;color:var(--secondary);text-align:center;padding:6px 0;font-weight:530}
 .cal-weekdays span:nth-child(n+6){color:var(--text);opacity:.77}
-.cal-month-grid{grid-auto-rows:minmax(39px,auto);row-gap:1px}
-.cal-day{display:flex;position:relative;flex-direction:column;gap:3px;align-items:center;justify-content:flex-start;min-width:0;min-height:39px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:3px 2px 2px;font-size:12px;line-height:1.1}
+.cal-month-grid{grid-auto-rows:44px;row-gap:1px}
+.cal-day{display:flex;position:relative;flex-direction:column;gap:2px;align-items:center;justify-content:center;min-width:0;min-height:44px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:3px 2px 2px;font-size:12px;line-height:1.1}
 .cal-day[data-outside=true]{color:var(--secondary);opacity:.42}
 .cal-day[data-weekend=true]{color:var(--secondary)}
 /* Delicate selected-day circle instead of a full-height rounded square. */
 .cal-day[data-selected=true]{background:transparent;box-shadow:none}
 .cal-day[data-selected=true]:not([data-today=true]) .cal-day-number{
- background:var(--card2);border-radius:50%;box-shadow:inset 0 0 0 1px var(--line)
+ background:color-mix(in srgb,var(--seyveo-emerald) 13%,transparent);border-radius:50%;box-shadow:inset 0 0 0 1px var(--seyveo-emerald)
 }
 .cal-day[data-holiday=public] .cal-day-number{color:var(--text);font-weight:675}
 .cal-day[data-holiday=rest] .cal-day-number{color:var(--text);font-weight:565}
@@ -91,7 +102,7 @@
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:54px;justify-content:center;gap:4px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
-.cal-day-summary{margin:6px 1px 4px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cal-day-summary{margin:5px 1px 3px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 #calendarView[data-mode=day] .cal-day-summary{margin-top:0}
 .cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
@@ -116,13 +127,13 @@
 .cal-entry-chevron{flex:none;font-size:18px;color:var(--secondary);opacity:.65}
 .cal-entry[data-kind=task] .cal-entry-time{display:flex;justify-content:center}
 .cal-entry-bullet{width:8px;height:8px;border-radius:50%;background:var(--secondary)}
-.cal-empty{padding:24px 15px;text-align:center;color:var(--secondary);line-height:1.6;font-size:12px}
+.cal-empty{padding:10px 3px;text-align:left;color:var(--secondary);line-height:1.45;font-size:12px}
 .cal-empty strong{display:block;color:var(--text);font-size:13px;font-weight:605;margin-bottom:4px}
 .cal-day-fab{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;margin-top:12px;border:0;border-radius:0;background:transparent;color:var(--text);padding:8px 5px;font-size:12px;font-weight:590}
 .cal-day-fab:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Compact paired actions; the original velvet dock retains its geometry. */
-#calendarPage .cal-actions{display:flex;align-items:stretch;gap:9px;margin-top:8px}
-#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:8px 7px;border-radius:0;font-size:clamp(10.5px,2.8vw,12px);font-weight:550;white-space:nowrap}
+#calendarPage .cal-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:6px}
+#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:0 1 auto;min-width:0;min-height:44px;margin:0;padding:8px 13px;border-radius:13px;font-size:12px;font-weight:540;white-space:nowrap}
 #calendarPage .cal-actions .cal-day-fab[hidden]{display:none!important}
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
 /* The app shell already reserves room for the shared fixed dock.
@@ -378,8 +389,8 @@
  .calendar-header h1{font-size:25px}
  .calendar-header-actions{gap:5px}.cal-round{width:37px;height:37px}
  .cal-periods button{font-size:11px}
- .cal-month{padding:5px 4px 4px}.cal-month::before{right:4px;width:calc((100% - 8px) * 2 / 7)}.cal-month-grid{grid-auto-rows:minmax(39px,auto)}
- .cal-day{padding:3px 1px 2px;min-height:39px}.cal-day-number{min-width:23px;height:23px}
+ .cal-month{padding:3px 2px 3px}.cal-month::before{right:4px;width:calc((100% - 8px) * 2 / 7)}.cal-month-grid{grid-auto-rows:44px}
+ .cal-day{padding:3px 1px 2px;min-height:44px}.cal-day-number{min-width:23px;height:23px}
  .cal-nav h2{font-size:15px}
  .cal-agenda{padding:3px 12px}.cal-entry{gap:9px}
  .cal-form-columns{grid-template-columns:minmax(0,1fr)}
