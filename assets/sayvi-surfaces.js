@@ -313,18 +313,69 @@ function mailView(){
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
   form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
-  const accountField=create('label','sv-mail-field sv-mail-account-field');
+  // Two identities deserve one native-feeling decision, not iOS's bright
+  // square <select> popup. Keep account identity local to this editor.
+  let accountValue=original?.account||mailComposeScope||'';
+  const accountName=value=>value==='personal'?'Личная почта':value==='business'?'Рабочая почта':'Выберите почту';
+  const accountField=create('div','sv-mail-field sv-mail-account-field');
   accountField.append(create('span','sv-mail-field-label','От имени'));
-  const accountSelect=create('select','sv-mail-input sv-mail-account-select');
-  accountSelect.setAttribute('aria-label','Выбрать личную или рабочую почту');
-  for(const [value,name] of [['','Выберите почту'],['personal','Личная почта'],['business','Рабочая почта']]){
-   const option=create('option','',name);option.value=value;accountSelect.append(option);
-  }
-  accountSelect.value=original?.account||mailComposeScope||'';
-  if(original)accountSelect.disabled=true;
-  accountSelect.addEventListener('change',()=>{mailComposeScope=accountSelect.value||null});
-  accountField.append(accountSelect);
+  const accountChoice=create('button','sv-mail-account-picker');
+  accountChoice.type='button';accountChoice.disabled=!!original;
+  accountChoice.setAttribute('aria-haspopup','dialog');
+  accountChoice.setAttribute('aria-controls','svMailSenderSheet');
+  const accountChoiceName=create('span','sv-mail-account-picker-name',accountName(accountValue));
+  accountChoice.append(accountChoiceName,create('span','sv-mail-account-picker-chevron',''));
+  accountField.append(accountChoice);
   form.append(accountField);
+
+  const accountSheet=create('dialog','sv-mail-account-sheet');
+  accountSheet.id='svMailSenderSheet';
+  accountSheet.setAttribute('aria-labelledby','svMailSenderSheetTitle');
+  const sheetHandle=create('div','sv-mail-sheet-handle');
+  sheetHandle.setAttribute('aria-hidden','true');
+  const sheetHead=create('div','sv-mail-sheet-head');
+  const sheetTitle=create('h3','sv-mail-sheet-title','От имени');
+  sheetTitle.id='svMailSenderSheetTitle';
+  const sheetCancel=create('button','sv-mail-sheet-cancel','Отмена');
+  sheetCancel.type='button';sheetCancel.addEventListener('click',()=>accountSheet.close());
+  sheetHead.append(sheetTitle,sheetCancel);
+  const sheetOptions=create('div','sv-mail-sheet-options');
+  const sheetButtons=[];
+  const refreshAccount=()=>{
+   accountChoiceName.textContent=accountName(accountValue);
+   accountChoice.setAttribute('aria-label','От имени: '+accountName(accountValue));
+   for(const button of sheetButtons){
+    const checked=button.dataset.mailAccount===accountValue;
+    button.setAttribute('aria-pressed',String(checked));
+    button.querySelector('.sv-mail-sheet-check').textContent=checked?'✓':'';
+   }
+  };
+  for(const [value,label] of [['personal','Личная почта'],['business','Рабочая почта']]){
+   const button=create('button','sv-mail-sheet-option');
+   button.type='button';button.dataset.mailAccount=value;
+   button.append(create('span','sv-mail-sheet-option-name',label),create('span','sv-mail-sheet-check'));
+   button.addEventListener('click',()=>{
+    accountValue=value;mailComposeScope=value;refreshAccount();
+    accountSheet.close();
+   });
+   sheetButtons.push(button);sheetOptions.append(button);
+  }
+  accountSheet.append(sheetHandle,sheetHead,sheetOptions);
+  form.append(accountSheet);
+  accountChoice.addEventListener('click',()=>{
+   if(accountChoice.disabled)return;
+   refreshAccount();
+   accountChoice.setAttribute('aria-expanded','true');
+   accountSheet.showModal();
+  });
+  accountSheet.addEventListener('click',event=>{
+   if(event.target===accountSheet)accountSheet.close();
+  });
+  accountSheet.addEventListener('close',()=>{
+   accountChoice.setAttribute('aria-expanded','false');
+   if(accountChoice.isConnected)accountChoice.focus({preventScroll:true});
+  });
+  refreshAccount();
   const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения почты.');
   form.append(accountHelp);
   const makeField=(labelText,name,tag,value,type)=>{
@@ -343,12 +394,12 @@ function mailView(){
   form.addEventListener('submit',event=>{
    event.preventDefault();
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
-   if(!['personal','business'].includes(accountSelect.value)){
-    status.textContent='Сначала выберите личную или рабочую почту.';accountSelect.focus();return;
+   if(!['personal','business'].includes(accountValue)){
+    status.textContent='Сначала выберите личную или рабочую почту.';accountChoice.focus();accountSheet.showModal();return;
    }
    if(!recipient&&!subjectText&&!bodyText){status.textContent='Напишите письмо или укажите тему.';return}
    const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
-    account:original?.account||accountSelect.value,
+    account:original?.account||accountValue,
     to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
    if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
    else mailDrafts.unshift(item);
