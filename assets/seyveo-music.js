@@ -33,6 +33,8 @@ const sourcesClose=$('sayviMusicSourcesClose');
 const mini=$('sayviMusicMini');
 const miniOpen=$('sayviMusicMiniOpen');
 const miniPlay=$('sayviMusicMiniPlay');
+const miniPrevious=$('sayviMusicMiniPrevious');
+const miniNext=$('sayviMusicMiniNext');
 const miniIcon=$('sayviMusicMiniIcon');
 const minimize=$('sayviMusicMinimize');
 const favoriteButton=$('sayviMusicFavorite');
@@ -145,6 +147,9 @@ function syncResume(){
     miniPlay.setAttribute('aria-pressed',String(playing));
    }
    miniIcon?.setAttribute('d',playing?'M8 6v12M16 6v12':'M8 5.5 18 12 8 18.5z');
+   const canSkip=tracks.length>1;
+   if(miniPrevious)miniPrevious.disabled=!canSkip;
+   if(miniNext)miniNext.disabled=!canSkip;
   }
  }
  document.dispatchEvent(new CustomEvent('seyveo:music-state',{detail:{loaded,playing,hasPlayed}}));
@@ -458,6 +463,8 @@ function minimizeMusic(){
 minimize?.addEventListener('click',minimizeMusic);
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
+miniPrevious?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index-1,true)});
+miniNext?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index+1,true)});
 // Now Playing stays in one stable position above the dock or chat composer.
 // The fixed mini rests ABOVE the native chat writer, including multiline drafts.
 // ResizeObserver reads layout changes instead of adding scroll/keyboard timers.
