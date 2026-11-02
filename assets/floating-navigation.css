@@ -46,8 +46,7 @@
  background:linear-gradient(155deg,rgba(236,255,248,.065),rgba(134,186,172,.025) 42%,transparent 76%),rgba(19,31,29,.97)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- box-shadow:inset 0 0 0 1px var(--seyveo-dock-hairline),
-            inset 0 1px 0 var(--seyveo-dock-top-hairline)!important;
+ box-shadow:none!important;
  isolation:isolate;
 }
 .dock::before,.dock::after{content:none!important;display:none!important}
@@ -243,8 +242,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
  background:linear-gradient(155deg,rgba(255,255,255,.38),rgba(255,255,255,.11) 47%,rgba(112,132,151,.045) 100%),rgba(233,237,242,.98)!important;
- box-shadow:inset 0 0 0 1px var(--seyveo-dock-hairline),
-            inset 0 1px 0 var(--seyveo-dock-top-hairline)!important;
+ box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
 :root[data-theme="light"] .dock>.nav-item.active{color:#182635!important}
