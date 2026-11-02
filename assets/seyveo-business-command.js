@@ -1599,13 +1599,17 @@ function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
  window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  const wasHistoryOpen=!!list.querySelector('.svcp-task-history[open]');
+ const wasDemoOpen=!!list.querySelector('details.svcp-approval-demo-entry[open]');
  list.replaceChildren();
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
- const demo=el('div','svcp-approval-demo-entry');
- const demoTitle=el('strong',null,'Путь поручения · демо');
- const demoHint=el('small',null,'Создай задачу → посмотри глазами Елены → прими результат. Всё на этом устройстве.');
- demo.append(demoTitle,demoHint);
+ // Keep the developer's real demo, but don't flood the manager dashboard.
+ const demo=el('details','svcp-approval-demo-entry');
+ demo.open=wasDemoOpen;
+ const demoSummary=el('summary','svcp-approval-demo-summary');
+ demoSummary.append(el('strong',null,'Путь поручения'),el('small',null,'Демо'),el('span','svcp-approval-demo-chevron','›'));
+ const demoHint=el('p','svcp-approval-demo-hint','Поручи задачу Елене, посмотри результат и прими работу. Данные остаются на этом устройстве.');
+ demo.append(demoSummary,demoHint);
  const demoControls=el('div','svcp-approval-demo-controls');
  demoControls.append(btn('Поручить Елене',()=>{
   if(employeePreviewActive())return;
