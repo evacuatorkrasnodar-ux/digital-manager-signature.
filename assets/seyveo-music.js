@@ -463,6 +463,30 @@ function minimizeMusic(){
  return true;
 }
 minimize?.addEventListener('click',minimizeMusic);
+/* Match the Now Playing dismissal gesture without taking over page scrolling.
+ * Only a downward swipe across the album-art region can dismiss Music;
+ * it never changes playback, seek, lyric gestures, or the fixed dock. */
+if(stage){
+ let start=null;
+ stage.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1||page.classList.contains('sv-music-lyrics-mode')){
+   start=null;return;
+  }
+  const point=event.touches[0];
+  start={x:point.clientX,y:point.clientY};
+ },{passive:true});
+ stage.addEventListener('touchcancel',()=>{start=null},{passive:true});
+ stage.addEventListener('touchend',event=>{
+  if(!start||page.classList.contains('sv-music-lyrics-mode')){
+   start=null;return;
+  }
+  const point=event.changedTouches[0];
+  const dy=point.clientY-start.y,dx=Math.abs(point.clientX-start.x);
+  start=null;
+  if(dy>72&&dx<40&&location.hash==='#sayvi-music')minimizeMusic();
+ },{passive:true});
+}
+
 miniOpen?.addEventListener('click',open);
 miniPlay?.addEventListener('click',play);
 miniPrevious?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index-1,true)});
