@@ -772,8 +772,12 @@ function syncChatGeometry(){
  const composerHeight=Math.ceil(rect.height);
  const visibleBottom=top+height;
  const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
+ // The shared navigation/voice row sits directly ABOVE the writing field.
+ // Reserve both rows to prevent the latest reply from hiding under actions.
+ const actionHeight=signatureDock?.classList.contains('seyveo-chat-dock')
+  ?Math.ceil(signatureDock.getBoundingClientRect().height):0;
  root.style.setProperty('--sayvi-composer-space',
-  (composerHeight+bottomOffset+10)+'px');
+  (composerHeight+actionHeight+bottomOffset+10)+'px');
  if(stickToBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
 function queueChatGeometry(){
