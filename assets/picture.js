@@ -70,19 +70,21 @@ function render(){
  // Never hide its opt-in demonstration based on the onboarding preference.
  $('pictureTitle').textContent='Пульс бизнеса';
  $('pictureLead').textContent=window.SEYVEO_DEMO_MODE?.isEnabled?.()
-  ?'Клиенты, продажи и расходы · учебный сценарий Сэйви.'
-  :'Клиенты, заказы и деньги. Только подтверждённые источниками данные.';
+  ?'Учебные показатели · без реальных операций.'
+  :'Данные бизнеса за выбранный период.';
  body.hidden=false;
  $('pictureBusinessCharts').hidden=false;
  $('pictureLifeNote').hidden=true;
  $('pictureQuickInsight').hidden=false;
  $('pictureWidgetArea').querySelector('.home-widgets-caption').textContent='ВАШ ВЫБОР';
  window.dispatchEvent(new CustomEvent('seyveo:picture-period',{detail:{period}}));
+ // Keep the selected period visible even before external business data is connected.
+ document.querySelectorAll('[data-picture-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.picturePeriod===period)));
  const result=businessData();
  if(!result){
   const note=$('pictureLifeNote');
   note.hidden=false;
-  note.textContent='Показатели появятся здесь после подключения ваших рабочих источников. Пока данные о продажах и расходах не получены.';
+  note.textContent='Продажи и расходы пока не подключены.';
   if($('pictureDemoLabel'))$('pictureDemoLabel').hidden=true;
   $('pictureBusinessCharts').hidden=true;
   $('pictureQuickInsight').hidden=true;
@@ -98,7 +100,6 @@ function render(){
  const {total,trend,sources,costs}=result;
  const demoLabel=$('pictureDemoLabel');
  if(demoLabel){demoLabel.hidden=!result.demo;demoLabel.textContent='ДЕМОНСТРАЦИЯ · ПРИМЕРНЫЕ ДАННЫЕ';}
- document.querySelectorAll('[data-picture-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.picturePeriod===period)));
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
  const max=Math.max(1,...trend.map(x=>x.revenue));
  for(const bin of trend){
