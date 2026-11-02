@@ -102,11 +102,11 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
    More considered typography, lighter card surfaces, compact content rhythm.
    No edits to protected sphere, Deep Reveal, satellites, navigation or JS. */
 #homePage{
-  --home-glass:var(--sv-pure-surface);
-  --home-outline:var(--sv-pure-line);
+  --home-glass:var(--sv-velvet-panel);
+  --home-outline:var(--sv-velvet-edge);
   --home-glint:transparent;
   --home-depth:none;
-  --home-card-radius:19px;
+  --home-card-radius:var(--sv-velvet-radius);
 }
 
 /* Text hierarchy: SF-like restraint, still readable on compact phones.
@@ -180,8 +180,8 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 
 /* White Velvet: silver-white, still light glass without noisy effects. */
 :root[data-theme=light] #homePage{
-  --home-glass:var(--sv-pure-surface);
-  --home-outline:var(--sv-pure-line);
+  --home-glass:var(--sv-velvet-panel);
+  --home-outline:var(--sv-velvet-edge);
   --home-glint:transparent;
   --home-depth:none;
 }
@@ -193,7 +193,7 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 
 /* Narrow iPhones: proportional mini-cards without clipped labels. */
 @media(max-width:375px){
-  #homePage{--home-card-radius:19px}
+  #homePage{--home-card-radius:var(--sv-velvet-radius)}
   #homePage .timeline{padding:14px 16px 12px}
   #homePage .personal-brief{padding:14px 16px 13px}
 }
@@ -344,8 +344,8 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
 /* Theme palette also reaches Home's small historical/utility surfaces.
    The protected plasma, Living Ink artwork and its animations are untouched. */
 :root[data-theme=dark][data-palette=graphite] #homePage{
- --home-glass:var(--sv-pure-surface);
- --home-outline:var(--sv-pure-line);
+ --home-glass:var(--sv-velvet-panel);
+ --home-outline:var(--sv-velvet-edge);
  --home-glint:transparent;
 }
 :root[data-theme=dark][data-palette=sapphire] #homePage{
