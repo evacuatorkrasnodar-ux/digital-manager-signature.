@@ -531,6 +531,11 @@ html.seyveo-conversation .seyveo-conversation-turn--sayvi .seyveo-conversation-b
  line-height:1.46;
 }
 
+/* Chat-only attachment trigger: never leak into Home or the Notes editor. */
+html:not(.seyveo-conversation) #seyveoChatPlus,
+#ask.prompt.expanded #seyveoChatPlus,
+#ask.prompt.expanded #seyveoChatTools{display:none!important}
+
 /* Feather Chat tools menu: real existing app actions, not a second dock. */
 html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools:not([hidden]){
  position:absolute;left:8px;bottom:calc(100% + 10px);z-index:5;
