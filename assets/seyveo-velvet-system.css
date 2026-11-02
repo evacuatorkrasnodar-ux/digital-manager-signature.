@@ -1,0 +1,56 @@
+/* SEYVEO Black Velvet / shared material system
+ * Canonical paint is lifted from the approved five-position dock.
+ * All screens read these theme-aware tokens; no global selectors repaint
+ * unrelated pages, buttons, input fields or dialogs.
+ * Change material here, never by stacking a new override over an old one.
+ */
+:root{
+  --sv-velvet-panel:
+    linear-gradient(155deg,rgba(236,255,248,.065),rgba(134,186,172,.025) 42%,transparent 76%),
+    rgba(19,31,29,.97);
+  --sv-velvet-panel-quiet:rgba(19,31,29,.93);
+  --sv-velvet-edge:rgba(171,213,202,.24);
+  --sv-velvet-divider:rgba(171,213,202,.13);
+  --sv-velvet-pressed:rgba(134,186,172,.095);
+  --sv-velvet-etch:rgba(183,212,205,.75);
+  --sv-velvet-glow:rgba(255,255,255,.20);
+  --sv-velvet-radius:21px;
+  --sv-velvet-radius-small:18px;
+}
+:root[data-theme="light"]{
+  --sv-velvet-panel:rgba(236,239,243,.97);
+  --sv-velvet-panel-quiet:rgba(240,243,246,.94);
+  --sv-velvet-edge:rgba(54,68,89,.20);
+  --sv-velvet-divider:rgba(54,68,89,.13);
+  --sv-velvet-pressed:rgba(54,68,89,.08);
+  --sv-velvet-etch:rgba(47,70,66,.72);
+  --sv-velvet-glow:rgba(255,255,255,.30);
+}
+:root[data-theme=dark][data-palette=graphite]{
+  --sv-velvet-panel:
+    linear-gradient(155deg,rgba(235,244,249,.052),rgba(131,158,173,.02) 46%,transparent 77%),
+    rgba(19,26,32,.97);
+  --sv-velvet-panel-quiet:rgba(21,28,34,.93);
+  --sv-velvet-edge:rgba(170,194,208,.23);
+  --sv-velvet-divider:rgba(170,194,208,.13);
+  --sv-velvet-pressed:rgba(131,158,173,.09);
+  --sv-velvet-etch:rgba(183,212,205,.75);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+  --sv-velvet-panel:
+    linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),
+    rgba(18,28,48,.97);
+  --sv-velvet-panel-quiet:rgba(20,29,49,.93);
+  --sv-velvet-edge:rgba(159,188,243,.27);
+  --sv-velvet-divider:rgba(159,188,243,.15);
+  --sv-velvet-pressed:rgba(110,141,216,.105);
+}
+:root[data-theme=dark][data-palette=plum]{
+  --sv-velvet-panel:
+    linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),
+    rgba(28,27,26,.97);
+  --sv-velvet-panel-quiet:rgba(30,28,26,.93);
+  --sv-velvet-edge:rgba(204,185,164,.19);
+  --sv-velvet-divider:rgba(204,185,164,.12);
+  --sv-velvet-pressed:rgba(171,151,128,.08);
+}
