@@ -26,45 +26,10 @@ function row(root,label,value,total,group,index){
 /* Explicitly marked developer presentation figures. The project is a preview:
    use connected figures first, otherwise show illustrative analytics that
    are NEVER labeled as real sales, payments, or accounting. */
-const sampleBase=Object.freeze({today:[12,20,16,27,23,34],week:[18,22,28,24,33,40,36],month:[18,25,22,31,28,37],year:[16,20,23,27,32,35]});
-function sampleData(){
- const sequence=sampleBase[period];
- const multiplier={today:1,week:5,month:22,year:240}[period];
- const names=period==='today'?['09','10','11','12','13','14']:
-  period==='week'?['Пн','Вт','Ср','Чт','Пт','Сб','Вс']:
-  period==='month'?['1 нед','2 нед','3 нед','4 нед','5 нед','6 нед']:
-  ['Янв','Мар','Май','Июл','Сен','Ноя'];
- const trend=sequence.map((value,i)=>({
-  label:names[i],leads:Math.round(value*.8*multiplier/8),
-  sales:Math.round(value*.46*multiplier/8),
-  revenue:value*1450*multiplier,cost:Math.round(value*480*multiplier)
- }));
- const leads=trend.reduce((a,x)=>a+x.leads,0);
- const sales=trend.reduce((a,x)=>a+x.sales,0);
- const revenue=trend.reduce((a,x)=>a+x.revenue,0);
- const cost=trend.reduce((a,x)=>a+x.cost,0);
- const sources=[
-  {name:'Рекомендации',leads:Math.round(leads*.47)},
-  {name:'Сайт',leads:Math.round(leads*.34)},
-  {name:'Социальные сети',leads:0}
- ];
- sources[2].leads=leads-sources[0].leads-sources[1].leads;
- let accounted=0;
- sources.forEach((x,i)=>{
-  x.sales=i===2?sales-accounted:Math.round(sales*x.leads/Math.max(1,leads));
-  accounted+=x.sales;x.revenue=Math.round(revenue*x.sales/Math.max(1,sales));
- });
- const costs=[
-  {name:'Операционные',value:Math.round(cost*.55)},
-  {name:'Реклама',value:Math.round(cost*.27)},
-  {name:'Прочее',value:0}
- ];
- costs[2].value=cost-costs[0].value-costs[1].value;
- return {total:{leads,sales,revenue,cost},trend,sources,costs,demo:true};
-}
+/* Detailed Pulse and Business Pulse share one audited provider in pulse.js.
+   Each view must resolve the same period to the same data and demo label. */
 function businessData(){
- const actual=window.SEYVEO_PULSE_DEMO?.picture?.(period);
- return actual||sampleData();
+ return window.SEYVEO_PULSE_VIEW?.get?.(period)||null;
 }
 function updateKeyNumbers(total){
  const values={
