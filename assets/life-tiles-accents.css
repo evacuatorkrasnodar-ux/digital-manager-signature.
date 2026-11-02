@@ -109,7 +109,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
   color:var(--sv-world-icon)!important;
   fill:none;
   stroke:currentColor;
-  stroke-width:1.6!important;
+  stroke-width:1.35!important;
   opacity:.95!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
