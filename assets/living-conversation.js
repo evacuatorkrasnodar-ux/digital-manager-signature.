@@ -154,48 +154,6 @@ if(composerHead)composerHead.insertBefore(microphone('seyveoConversationMicLarge
 
 let statusTimer=0,speakingNow=false;
 let returnRoute=''; // Workspace to restore after this single conversation closes.
-let returnSource='home';
-const backIcon=$('seyveoConversationBack');
-const contextGlyphs={
- home:'<path d="m12 4-8 6.5V20h6v-6h4v6h6v-9.5L12 4Z"/>',
- music:'<path d="M23 5v12.5a3 3 0 1 1-2-2.85V8l9-2v9.5a3 3 0 1 1-2-2.85V4z" transform="translate(-3 0) scale(.94)"/>',
- browser:'<circle cx="23" cy="12" r="8"/><path d="M15 12h16M23 4c-3.5 4.4-3.5 11.6 0 16M23 4c3.5 4.4 3.5 11.6 0 16"/>',
- calendar:'<rect x="15" y="5" width="16" height="16" rx="2"/><path d="M19 3v4M27 3v4M15 10h16"/>',
- tasks:'<path d="M16 6h14M16 12h14M16 18h14M12 6h1M12 12h1M12 18h1"/>',
- life:'<circle cx="23" cy="12" r="8"/><path d="M15 12h16M23 4c-3.5 4.4-3.5 11.6 0 16M23 4c3.5 4.4 3.5 11.6 0 16"/>',
- manage:'<rect x="15" y="8" width="16" height="13" rx="2"/><path d="M20 8V5h6v3M15 13h16"/>',
- documents:'<path d="M17 3h10l4 4v14H17zM27 3v5h4M20 12h8M20 16h8"/>',
- video:'<rect x="15" y="6" width="17" height="12" rx="3"/><path d="m22 9 5 3-5 3z"/>',
- sayvi:'<path d="M23 3c1.3 5.6 3.4 7.7 9 9-5.6 1.3-7.7 3.4-9 9-1.3-5.6-3.4-7.7-9-9 5.6-1.3 7.7-3.4 9-9z"/>'
-};
-const contextNames={home:'Главную',music:'Музыку',browser:'Браузер',
- calendar:'Календарь',tasks:'Дела',life:'Мой мир',manage:'Управление',
- documents:'Документы',video:'Видео',sayvi:'Сэйви'};
-function sourceFromRoute(route){
- const r=String(route||'');
- if(r==='#sayvi-music')return 'music';
- if(r==='#sayvi-video')return 'video';
- if(r.startsWith('#calendar'))return 'calendar';
- if(r.startsWith('#sayvi-document'))return 'documents';
- if(r==='#tasks'||r==='#picture')return 'tasks';
- if(r.startsWith('#manage'))return 'manage';
- if(r==='#life')return 'life';
- if(r.startsWith('#sayvi'))return 'sayvi';
- return 'home';
-}
-function paintReturnButton(){
- if(!backIcon)return;
- const source=contextGlyphs[returnSource]?returnSource:'home';
- const svg=source==='home'
-  ?'<svg viewBox="0 0 24 24" aria-hidden="true">'+contextGlyphs.home+'</svg>'
-  :'<svg viewBox="0 0 34 24" aria-hidden="true"><path d="m8 7-5 5 5 5M3 12h8"/>'+contextGlyphs[source]+'</svg>';
- backIcon.innerHTML=svg;
- const label=source==='home'?'На Главную':'Назад в '+contextNames[source];
- backIcon.setAttribute('aria-label',label);
- backIcon.title=label;
- backIcon.dataset.returnSource=source;
-}
-
 const sendButton=$('composerCompactSend');
 const sendIcon=sendButton?.innerHTML||'';
 const stopIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2.4"/></svg>';
@@ -266,31 +224,15 @@ function revealExisting(){
  reply.hidden=false;
  stage.classList.add('has-inline-reply');
 }
-function open(options){
- if(root.classList.contains('seyveo-conversation')){
-  if(options?.source==='browser'){
-   returnSource='browser';paintReturnButton();
-    }
-  return;
- }
- // Snapshot the caller BEFORE routing to Home; the Back icon is contextual.
- const sourceHint=options&&typeof options==='object'?options.source:'';
- returnRoute=home.hidden?(location.hash||''):'';
- returnSource=sourceHint==='browser'?'browser':sourceFromRoute(returnRoute);
+function open(){
+ if(root.classList.contains('seyveo-conversation'))return;
+ // Chat reuses the original Home conversation, then restores the caller's
+ // workspace on Back. No second chat, no replacement sphere or dock.
  if(home.hidden){
-  // A Music/Browser dock replaces navHome with player/navigation controls.
-  // Never synthesize a tap on "Previous track" merely to open the chat.
-  const playerOwnsDock=document.querySelector('footer.dock')?.classList.contains('seyveo-music-dock')
-    ||window.SEYVEO_BROWSER_DOCK?.isActive?.();
-  if(!playerOwnsDock)document.getElementById('navHome')?.click();
-  if(home.hidden){
-   // Use the existing hashchange router, and retain the caller for Back.
-   if(location.hash)history.pushState(null,'',location.pathname+location.search);
-   window.dispatchEvent(new Event('hashchange'));
-  }
+  returnRoute=location.hash||'';
+  document.getElementById('navHome')?.click();
  }
  if(home.hidden)return;
- paintReturnButton();
  root.classList.add('seyveo-conversation');
  // Reuse the original writer and the existing saved thread.
  window.SEYVEO_CONVERSATION_ENSURE_INPUT?.();
@@ -323,11 +265,8 @@ function close(){
    quiet.hidden=$('kicker')?.textContent!=='На связи';
  }
  const destination=returnRoute;
- returnRoute='';returnSource='home';
+ returnRoute='';
  if(destination&&location.hash!==destination)location.hash=destination;
- // Allow a suspended browser caller to return to its exact tab and scroll.
- // Ordinary Feather Chat exits are unchanged when no browser is waiting.
- document.dispatchEvent(new Event('seyveo:conversation-close'));
 }
 async function copyTextValue(value,label='Ответ'){
  try{
@@ -559,44 +498,10 @@ function renderTurns(turns){
    heading.textContent='Сэйви на связи';
    const hint=document.createElement('p');
    hint.textContent='Напиши, что нужно сделать, или просто поговорим.';
-   // A discoverable entry in the existing chat, not another permanent dock
-   // button. The same Browser is also accessible via «Мой мир» and voice.
-   const browser=document.createElement('button');
-   browser.type='button';
-   browser.className='seyveo-chat-browser-entry';
-   browser.setAttribute('aria-label','Открыть SEYVEO Browser');
-   browser.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/></svg><span>Открыть браузер</span>';
-   browser.addEventListener('click',()=>window.SEYVEO_BROWSER?.open?.());
-   const detail=document.createElement('small');
-   detail.className='seyveo-chat-browser-location';
-   detail.textContent='Также доступен в разделе «Мой мир»';
-   welcome.append(heading,hint,browser,detail);
+   welcome.append(heading,hint);
    nodes.push(welcome);
  }
- // Existing users have past messages and never see the welcome screen.
- // Show one small discovery line, not a permanent Home tile or extra chat.
- let discovered=false;
- try{discovered=localStorage.getItem('seyveo-browser-discovery-v1')==='seen'}catch{}
- if(turns.length&&!discovered){
-  const nudge=document.createElement('div');
-  nudge.className='seyveo-chat-browser-nudge';
-  const globe=document.createElement('span');globe.setAttribute('aria-hidden','true');
-  globe.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c-4.6 4.8-4.6 11.2 0 16M12 4c4.6 4.8 4.6 11.2 0 16"/></svg>';
-  const label=document.createElement('span');label.textContent='У Сэйви есть свой браузер';
-  const launch=document.createElement('button');launch.type='button';launch.textContent='Открыть';launch.setAttribute('aria-label','Открыть SEYVEO Browser');
-  const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='seyveo-chat-browser-dismiss';
-  dismiss.textContent='×';dismiss.setAttribute('aria-label','Больше не показывать подсказку о браузере');
-  function markSeen(){
-   try{localStorage.setItem('seyveo-browser-discovery-v1','seen')}catch{}
-   nudge.remove();
-  }
-  launch.addEventListener('click',()=>{if(window.SEYVEO_BROWSER?.open?.()===true)markSeen()});
-  dismiss.addEventListener('click',markSeen);
-  nudge.append(globe,label,launch,dismiss);nodes.push(nudge);
- }
  text.replaceChildren(...nodes);
- // Keep the developer Flow card inside the SAME transcript after re-render.
- window.SEYVEO_BROWSER_FLOW?.mount?.(text);
  if(atBottom||isNewTurn)scrollToLatest();
 }
 // One live stream inside the real Feather Chat.
@@ -654,8 +559,6 @@ function syncChatGeometry(){
  const composerHeight=Math.ceil(rect.height);
  const visibleBottom=top+height;
  const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
- // The shared navigation/voice row sits directly ABOVE the writing field.
- // Reserve both rows to prevent the latest reply from hiding under actions.
  root.style.setProperty('--sayvi-composer-space',
   (composerHeight+bottomOffset+10)+'px');
  if(stickToBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
@@ -734,7 +637,7 @@ window.addEventListener('hashchange',()=>{
    // Navigation away from chat explicitly cancels a pending return target.
    returnRoute='';
    root.classList.remove('seyveo-conversation');
-     root.style.removeProperty('--sayvi-chat-height');
+   root.style.removeProperty('--sayvi-chat-height');
    root.style.removeProperty('--sayvi-chat-top');
    root.style.removeProperty('--sayvi-composer-space');
    header.hidden=true;syncMic(false);
