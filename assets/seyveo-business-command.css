@@ -1001,18 +1001,45 @@
 
 /* One task, two perspectives — local review preview in existing workspaces. */
 #tasksPage .svcp-approval-demo-entry{
- display:grid;gap:4px;padding:11px 0 13px;margin:0 0 4px;
- border-bottom:1px solid var(--soft-line);
+ display:block;margin:7px 0 5px;
+ padding:0;border:0;border-top:1px solid var(--soft-line);
+ background:transparent;
 }
-#tasksPage .svcp-approval-demo-entry>strong{
- color:var(--text);font-weight:600;font-size:13px;
+#tasksPage .svcp-approval-demo-summary{
+ display:flex;align-items:center;gap:8px;min-height:48px;padding:7px 2px;
+ list-style:none;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
 }
-#tasksPage .svcp-approval-demo-entry>small,
+#tasksPage .svcp-approval-demo-summary::-webkit-details-marker{display:none}
+#tasksPage .svcp-approval-demo-summary>strong{
+ flex:1;min-width:0;color:var(--text);
+ font-size:13px;font-weight:550;line-height:1.35;
+}
+#tasksPage .svcp-approval-demo-summary>small{
+ flex:none;font-size:10px;font-weight:500;color:var(--secondary);
+ letter-spacing:.03em;
+}
+#tasksPage .svcp-approval-demo-chevron{
+ flex:none;font-size:20px;line-height:1;color:var(--secondary);
+ transition:transform .2s ease;
+}
+#tasksPage .svcp-approval-demo-entry[open] .svcp-approval-demo-chevron{
+ transform:rotate(90deg);
+}
+#tasksPage .svcp-approval-demo-summary:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:-2px;border-radius:8px;
+}
+#tasksPage .svcp-approval-demo-hint,
 #tasksPage .svcp-approval-demo-note{
- color:var(--secondary);font-size:11px;line-height:1.5;
+ margin:0;padding:0 2px 7px;
+ color:var(--secondary);font-size:11.5px;line-height:1.5;
 }
 #tasksPage .svcp-approval-demo-controls{
- display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:4px;
+ display:flex;align-items:center;gap:14px;
+ flex-wrap:wrap;margin:2px 0 7px;padding:0 2px;
+}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage .svcp-approval-demo-chevron{transition:none}
 }
 #tasksPage .svcp-approval-demo-controls button,
 #tasksPage .svcp-approval-demo-switch,
