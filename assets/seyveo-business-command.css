@@ -9,21 +9,21 @@
 .svcp-panel{min-width:0}
 .svcp-section-title{font-size:16px;font-weight:560;letter-spacing:-.027em;margin:6px 0 4px}
 .svcp-sub{font-size:12px;color:var(--secondary);line-height:1.5;margin:0 0 14px}
-.svcp-chat{border:1px solid var(--soft-line);border-radius:20px;overflow:hidden;background:rgba(24,42,35,.09)}
+.svcp-chat{border:0;border-radius:20px;overflow:hidden;background:rgba(24,42,35,.09)}
 .svcp-rooms{display:flex;align-items:center;gap:5px;overflow-x:auto;padding:10px 10px 9px;border-bottom:1px solid var(--soft-line);scrollbar-width:none}
 .svcp-room{flex:none;border:0;border-radius:999px;padding:9px 13px;background:transparent;color:var(--secondary);font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
 .svcp-room[aria-pressed=true]{background:var(--seyveo-hdr-active);color:var(--text)}
 .svcp-messages{height:auto;min-height:185px;max-height:min(42dvh,420px);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px;padding:16px 13px;scrollbar-width:none}
 .svcp-note{color:var(--secondary);font-size:12px;line-height:1.5;text-align:center;max-width:305px;margin:30px auto}
-.svcp-bubble{align-self:flex-start;max-width:90%;border:1px solid var(--soft-line);background:rgba(115,139,124,.08);border-radius:15px 15px 15px 5px;padding:10px 12px;word-break:break-word;white-space:pre-wrap}
+.svcp-bubble{align-self:flex-start;max-width:90%;border:0;background:rgba(115,139,124,.08);border-radius:15px 15px 15px 5px;padding:10px 12px;word-break:break-word;white-space:pre-wrap}
 .svcp-bubble.is-self{align-self:flex-end;border-radius:15px 15px 5px 15px;border-color:var(--seyveo-hdr-outline);background:var(--seyveo-hdr-active)}
 .svcp-sender{display:block;font-size:10px;color:var(--text);margin-bottom:5px;font-weight:600}
 .svcp-message-text{font-size:13px;line-height:1.48}
 .svcp-attachment-name{display:block;word-break:break-all;margin-top:5px;font-size:11px;color:var(--secondary)}
 .svcp-attach-preview{padding:7px 12px 5px;font-size:11px;display:flex;gap:7px;align-items:center;color:var(--secondary);border-top:1px solid var(--soft-line)}
 .svcp-attach-preview img{object-fit:cover;width:48px;height:42px;border-radius:7px}
-.svcp-composer{display:flex;align-items:center;gap:var(--sv-input-gap,6px);padding:5px 8px;min-height:var(--sv-input-height,54px);border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius,22px);background:var(--sv-input-surface)}
-.svcp-file-label{flex:none;cursor:pointer;min-width:36px;height:38px;display:grid;place-items:center;border-radius:50%;color:var(--text);border:1px solid var(--soft-line);background:transparent}
+.svcp-composer{display:flex;align-items:center;gap:var(--sv-input-gap,6px);padding:5px 8px;min-height:var(--sv-input-height,54px);border:0;border-radius:var(--sv-input-radius,22px);background:var(--sv-input-surface)}
+.svcp-file-label{flex:none;cursor:pointer;min-width:36px;height:38px;display:grid;place-items:center;border-radius:50%;color:var(--text);border:0;background:transparent}
 .svcp-file-label svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .svcp-compose-input{resize:none;min-height:44px;max-height:112px;flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--sv-input-ink,var(--text));font:inherit;font-size:var(--sv-input-type,16px);line-height:var(--sv-input-leading,24px);padding:10px 3px}
 .svcp-compose-input::placeholder{color:var(--sv-input-muted,var(--secondary));opacity:1}
@@ -33,7 +33,7 @@
 .svcp-composer .svcp-chat-send svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35);fill:none}
 .svcp-composer .svcp-chat-send span{display:none}
 
-.svcp-primary{padding:9px 13px;min-height:38px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-emerald-deep);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;flex:none}
+.svcp-primary{padding:9px 13px;min-height:38px;border:0;border-radius:999px;background:var(--seyveo-emerald-deep);color:var(--text);font:inherit;font-size:12px;font-weight:600;cursor:pointer;flex:none}
 .svcp-status{color:var(--secondary);font-size:11px;line-height:1.5;margin:10px 2px 0}
 /* The employees page shows its real empty state, not imagined staff. */
 .svcp-team-empty{padding:28px 12px 24px;display:grid;justify-items:center;gap:10px;text-align:center}
@@ -85,7 +85,7 @@
 
 /* SEYVEO Business · unified people workspace (team + recruiting). */
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-note{margin:0 2px 15px;color:var(--secondary);font-size:12px;line-height:1.6}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 18px;padding:4px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--seyveo-hdr-active,var(--card))}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 18px;padding:4px;border:0;border-radius:17px;background:var(--seyveo-hdr-active,var(--card))}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button{min-height:42px;padding:9px 7px;border:0;border-radius:13px;background:transparent;color:var(--secondary);font:inherit;font-size:13px;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button[aria-pressed=true]{color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-people-switch button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
@@ -95,7 +95,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleShiftHost{margin-top:12px;border-top:1px solid var(--soft-line);padding-top:7px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleHiringHost>.seyveo-hr-intro{margin:2px 8px 12px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) #svcpPeopleHiringHost>.seyveo-hr-fold{margin-inline:0}
-#picturePage .sv-picture-efficiency{margin:10px 0 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:19px;background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 55%,transparent);overflow:hidden}
+#picturePage .sv-picture-efficiency{margin:10px 0 12px;border:0;border-radius:19px;background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 55%,transparent);overflow:hidden}
 #picturePage .sv-picture-efficiency>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:10px 13px;min-height:58px;color:var(--text)}
 #picturePage .sv-picture-efficiency>summary::-webkit-details-marker{display:none}
 #picturePage .sv-picture-efficiency>summary:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-3px}
@@ -129,7 +129,7 @@
 
 /* SEYVEO Feather Work Chat · calm Black Velvet conversation. */
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat{
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border:0;
  background:linear-gradient(145deg,var(--seyveo-specular),var(--seyveo-hdr-active) 80%,transparent);
  border-radius:20px;
  box-shadow:none;
@@ -143,7 +143,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-title small{font-size:11px;line-height:1.45;color:var(--secondary)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-sayvi-call{
  flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;
+ border:0;border-radius:999px;
  padding:8px 11px;min-height:38px;background:var(--seyveo-hdr-active,var(--card2));
  color:var(--text);font:inherit;font-size:12px;font-weight:590;cursor:pointer;
 }
@@ -166,7 +166,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble .svcp-message-text{display:block;font-size:13px;line-height:1.55;white-space:pre-wrap}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-quote{margin:1px 0 8px;padding:7px 9px;border-left:2px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active);border-radius:0 9px 9px 0;font-size:11px;line-height:1.45;color:var(--secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action{min-height:30px;border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:5px 10px;font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action{min-height:30px;border:0;border-radius:999px;background:transparent;color:var(--secondary);padding:5px 10px;font:inherit;font-size:11px;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-message-action:active{background:var(--seyveo-hdr-active);color:var(--text)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-reply-preview{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:9px 12px;border-top:1px solid var(--soft-line);background:var(--seyveo-hdr-active)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-reply-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--secondary)}
@@ -176,7 +176,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft label strong{font-weight:570;font-size:13px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft label small,
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft>small{font-size:11px;color:var(--secondary);line-height:1.4}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft input{width:100%;min-width:0;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;color:var(--text);background:var(--card);font:inherit;font-size:13px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft input{width:100%;min-width:0;min-height:43px;border:0;border-radius:13px;padding:10px 12px;color:var(--text);background:var(--card);font:inherit;font-size:13px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-draft-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-draft-actions .svcp-ghost{padding:9px 11px;min-height:38px}
@@ -193,7 +193,7 @@
 @media(prefers-reduced-motion:reduce){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat *{scroll-behavior:auto;transition:none}}
 
 /* Show a single contextual path to the shared team tasks, only after confirmation. */
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks{display:inline-flex;align-items:center;justify-content:center;margin:9px 2px 2px;padding:9px 14px;min-height:40px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks{display:inline-flex;align-items:center;justify-content:center;margin:9px 2px 2px;padding:9px 14px;min-height:40px;border:0;border-radius:999px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:12px;font-weight:560;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks[hidden]{display:none!important}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-open-tasks:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 
@@ -201,12 +201,12 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head{display:flex;flex-direction:column;gap:4px;margin:3px 3px 14px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head strong{font-size:17px;font-weight:570;letter-spacing:-.025em;color:var(--text)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head small{font-size:11.5px;color:var(--secondary)}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-list{background:linear-gradient(145deg,var(--seyveo-specular),transparent 65%),var(--card);border:1px solid var(--seyveo-hdr-outline);border-radius:19px;overflow:hidden}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-list{background:linear-gradient(145deg,var(--seyveo-specular),transparent 65%),var(--card);border:0;border-radius:19px;overflow:hidden}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item{width:100%;display:flex;align-items:center;gap:11px;padding:9px 12px;min-height:64px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;color:var(--text);text-align:left;cursor:pointer;font:inherit}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:last-child{border-bottom:0}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:active,:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:hover{background:var(--seyveo-hdr-active)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:-3px}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-avatar{display:grid;place-items:center;width:39px;height:39px;flex:none;border:1px solid var(--seyveo-hdr-outline);border-radius:14px;background:var(--seyveo-hdr-active);font-size:17px;font-weight:550;color:var(--seyveo-emerald)}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-avatar{display:grid;place-items:center;width:39px;height:39px;flex:none;border:0;border-radius:14px;background:var(--seyveo-hdr-active);font-size:17px;font-weight:550;color:var(--seyveo-emerald)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-avatar.is-sayvi{border-radius:50%;font-size:21px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item-body{display:grid;gap:4px;flex:1;min-width:0}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item-body strong{font-size:13.5px;font-weight:580;letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -217,24 +217,24 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-role{color:var(--text);font-weight:520}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-chevron{color:var(--secondary);font-size:22px;font-weight:300}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar{display:flex;align-items:center;gap:9px;margin:0 0 12px;min-width:0}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back{width:38px;height:40px;display:grid;place-items:center;flex:none;border:1px solid var(--soft-line);border-radius:50%;background:transparent;color:var(--text);cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back{width:38px;height:40px;display:grid;place-items:center;flex:none;border:0;border-radius:50%;background:transparent;color:var(--text);cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info{display:grid;gap:3px;min-width:0;flex:1}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info strong{font-size:15px;font-weight:590;line-height:1.25}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info small{font-size:10.5px;color:var(--secondary);line-height:1.3}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective{flex:none;max-width:125px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;padding:8px 9px;min-height:38px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective{flex:none;max-width:125px;border:0;border-radius:999px;padding:8px 9px;min-height:38px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:11px;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-quick{border:1px solid var(--soft-line);border-radius:999px;background:transparent;color:var(--secondary);padding:8px 10px;min-height:38px;font:inherit;font-size:11px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-quick{border:0;border-radius:999px;background:transparent;color:var(--secondary);padding:8px 10px;min-height:38px;font:inherit;font-size:11px;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-quick:focus-visible,
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-back:focus-visible,
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-other{align-self:flex-start;border-color:var(--seyveo-hdr-outline);background:var(--card)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-mentioned{border-color:var(--seyveo-emerald)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-mention-notice{display:block;margin-top:8px;font-size:10.5px;color:var(--text);line-height:1.4}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft select{width:100%;min-height:43px;border:1px solid var(--seyveo-hdr-outline);border-radius:13px;padding:10px 12px;background:var(--card);color:var(--text);font:inherit;font-size:13px}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft select{width:100%;min-height:43px;border:0;border-radius:13px;padding:10px 12px;background:var(--card);color:var(--text);font:inherit;font-size:13px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-assignee{display:block;margin-top:4px;color:var(--text);font-size:11px;line-height:1.4}
 #svcpWorkHomePreview[hidden]{display:none!important}
-#svcpWorkHomePreview{margin:9px 0 13px;padding:13px 14px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:18px;background:linear-gradient(150deg,var(--seyveo-specular),transparent 72%),var(--card);color:var(--text);box-shadow:none;display:grid;gap:7px;min-width:0}
+#svcpWorkHomePreview{margin:9px 0 13px;padding:13px 14px 11px;border:0;border-radius:18px;background:linear-gradient(150deg,var(--seyveo-specular),transparent 72%),var(--card);color:var(--text);box-shadow:none;display:grid;gap:7px;min-width:0}
 #svcpWorkHomePreview .svcp-home-preview-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #svcpWorkHomePreview .svcp-home-preview-head span{font-size:11px;color:var(--text);font-weight:560;letter-spacing:.005em}
 #svcpWorkHomePreview .svcp-home-preview-head button{border:0;background:transparent;font:inherit;color:var(--secondary);font-size:19px;cursor:pointer;min-width:32px;min-height:32px}
@@ -262,7 +262,7 @@
 }
 #svcpWorkHomePreview .svcp-home-sayvi-help{
  display:inline-flex;align-items:center;justify-content:center;gap:5px;
- padding:8px 11px;min-height:38px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:8px 11px;min-height:38px;border:0;
  border-radius:999px;background:var(--seyveo-hdr-active,var(--card));
  color:var(--text);font:inherit;font-size:11.5px;font-weight:565;cursor:pointer
 }
@@ -274,7 +274,7 @@
  display:block;flex-basis:100%;font-size:10.5px;line-height:1.4;color:var(--secondary)
 }
 #svcpWorkHomePreview .svcp-home-sayvi-suggestions button{
- padding:7px 10px;min-height:35px;border:1px solid var(--soft-line);
+ padding:7px 10px;min-height:35px;border:0;
  border-radius:999px;background:transparent;color:var(--text);font:inherit;font-size:11px;cursor:pointer
 }
 #svcpWorkHomePreview .svcp-home-composer{
@@ -282,7 +282,7 @@
 }
 #svcpWorkHomePreview .svcp-home-composer textarea{
  display:block;flex:1;min-width:0;width:100%;min-height:75px;max-height:145px;
- padding:11px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:11px 12px;border:0;
  border-radius:15px;background:var(--seyveo-hdr-active,var(--card));
  color:var(--text);font:inherit;font-size:13px;line-height:1.5;resize:vertical
 }
@@ -290,7 +290,7 @@
 #svcpWorkHomePreview .svcp-home-send{
  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
  flex:none;width:73px;min-height:75px;padding:7px 5px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:15px;
+ border:0;border-radius:15px;
  color:var(--text);background:var(--seyveo-hdr-active,var(--card));
  font:inherit;font-size:10.5px;font-weight:570;cursor:pointer
 }
@@ -368,14 +368,14 @@
 /* Task discussion · two calm suggestions, never auto-send. */
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:9px 11px 6px;border-top:1px solid var(--soft-line)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick[hidden]{display:none!important}
-:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick button{min-height:36px;max-width:100%;padding:7px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;background:transparent;color:var(--text);font:inherit;font-size:11.5px;cursor:pointer}
+:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick button{min-height:36px;max-width:100%;padding:7px 11px;border:0;border-radius:999px;background:transparent;color:var(--text);font:inherit;font-size:11.5px;cursor:pointer}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-discussion-quick button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
 
 
 /* SEYVEO Tasks · work conversation entry shares a single existing messenger. */
 #tasksPage .svcp-tasks-chat-shortcut{
  display:flex;align-items:center;gap:12px;width:100%;min-height:64px;margin:0 0 17px;
- padding:11px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:11px 13px;border:0;
  border-radius:18px;background:linear-gradient(135deg,var(--seyveo-specular),var(--seyveo-hdr-active,var(--card)) 72%);
  color:var(--text);text-align:left;font:inherit;cursor:pointer;box-shadow:none
 }
@@ -398,7 +398,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-head{flex-direction:row;align-items:center;justify-content:space-between;gap:9px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-heading{display:grid;gap:4px;min-width:0;flex:1}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-inbox-back-tasks{
- flex:none;min-height:38px;padding:7px 9px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ flex:none;min-height:38px;padding:7px 9px;border:0;
  border-radius:999px;background:var(--seyveo-hdr-active,var(--card));font:inherit;font-size:11.5px;
  color:var(--text);cursor:pointer
 }
@@ -413,7 +413,7 @@
 /* SEYVEO Team · thanks for actions, not social likes. */
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch{
  display:inline-flex;align-items:center;gap:5px;justify-content:center;
- min-height:38px;padding:8px 10px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ min-height:38px;padding:8px 10px;border:0;
  border-radius:999px;background:transparent;color:var(--text);
  font:inherit;font-size:11.5px;font-weight:560;white-space:nowrap;cursor:pointer
 }
@@ -430,7 +430,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form select,
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form textarea{
  display:block;box-sizing:border-box;width:100%;min-width:0;min-height:42px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;
+ border:0;border-radius:12px;
  padding:9px 10px;color:var(--text);background:var(--card);font:inherit;font-size:12px;line-height:1.45
 }
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-form textarea{min-height:76px;max-height:140px;resize:vertical}
@@ -438,7 +438,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-controls .svcp-primary{min-height:40px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-footnote{font-size:10.5px;line-height:1.5;color:var(--secondary)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-bubble.is-recognition{
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card));
+ border:0;background:var(--seyveo-hdr-active,var(--card));
  border-radius:14px;align-self:flex-start;max-width:94%
 }
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch:focus-visible,
@@ -453,20 +453,20 @@
 .svstaff-peer-count{font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
 .svstaff-peer-empty,.svstaff-peer-disclaimer,.svstaff-review-note{margin:5px 0 12px;color:#acbbb0;line-height:1.5;font-size:11.5px}
 .svstaff-peer-row{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(205,218,209,.10)}
-.svstaff-peer-symbol{flex:none;display:grid;place-items:center;width:34px;height:34px;background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline);border-radius:11px;color:var(--seyveo-metal-mid);font-size:21px}
+.svstaff-peer-symbol{flex:none;display:grid;place-items:center;width:34px;height:34px;background:var(--seyveo-hdr-active);border:0;border-radius:11px;color:var(--seyveo-metal-mid);font-size:21px}
 .svstaff-peer-symbol .svcp-star-icon{display:block;width:21px;height:21px;padding:2px;box-sizing:border-box;border-radius:6px;background:#27323c}
 .svstaff-peer-copy{display:grid;gap:5px;min-width:0}
 .svstaff-peer-copy strong{font-size:13px;font-weight:575;color:var(--text)}
 .svstaff-peer-copy p{font-size:12px;line-height:1.5;color:var(--secondary);margin:0;overflow-wrap:anywhere}
 .svstaff-peer-copy small{font-size:10.5px;color:#9eafa3;line-height:1.4}
-.svstaff-review-record{border:1px solid rgba(75,173,112,.25);border-radius:12px;padding:10px 11px;margin:10px 0;color:#b9e6cc;background:rgba(43,129,90,.09);font-size:11.5px;line-height:1.5}
+.svstaff-review-record{border:0;border-radius:12px;padding:10px 11px;margin:10px 0;color:#b9e6cc;background:rgba(43,129,90,.09);font-size:11.5px;line-height:1.5}
 .svstaff-review-form{display:grid;gap:9px}
 .svstaff-review-form select,.svstaff-review-form textarea{
- display:block;box-sizing:border-box;width:100%;min-width:0;border:1px solid var(--seyveo-hdr-outline);
+ display:block;box-sizing:border-box;width:100%;min-width:0;border:0;
  border-radius:13px;padding:11px 12px;background:var(--card);color:var(--text);font:inherit;font-size:12px
 }
 .svstaff-review-form textarea{min-height:73px;resize:vertical}
-.svstaff-review-submit{justify-self:start;min-height:39px;padding:9px 14px;border:1px solid var(--seyveo-hdr-outline);border-radius:999px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:12px;font-weight:550;cursor:pointer}
+.svstaff-review-submit{justify-self:start;min-height:39px;padding:9px 14px;border:0;border-radius:999px;background:var(--seyveo-hdr-active);color:var(--text);font:inherit;font-size:12px;font-weight:550;cursor:pointer}
 .svstaff-review-status{margin:0;font-size:11px;color:#e9c077}
 @media(max-width:370px){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-fields{grid-template-columns:1fr}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{gap:4px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognize-launch{font-size:11px;padding-inline:8px}}
 
@@ -474,7 +474,7 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-recognition-card-link{
  display:inline-flex;align-items:center;justify-content:flex-start;
  min-height:41px;margin:8px 11px 5px;padding:7px 11px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:999px;
+ border:0;border-radius:999px;
  background:transparent;color:var(--text);
  font:inherit;font-size:12px;font-weight:555;cursor:pointer
 }
@@ -514,7 +514,7 @@
 /* CHAT 2026 · Emoji reactions & searchable history */
 #unifiedTasksChatHost .svcp-search-field{
  display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:14px;
+ border:0;border-radius:14px;
  background:var(--seyveo-hdr-active,var(--card));margin:0 0 12px;
 }
 #unifiedTasksChatHost .svcp-search-field svg{
@@ -557,7 +557,7 @@
 }
 #unifiedTasksChatHost .svcp-reaction-options button{
  display:grid;place-items:center;flex:1;min-width:0;min-height:44px;padding:6px 3px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;
+ border:0;border-radius:13px;
  background:var(--card);font:inherit;font-size:22px;line-height:1.1;cursor:pointer
 }
 #unifiedTasksChatHost .svcp-reaction-options button:hover{background:var(--seyveo-hdr-active)}
@@ -589,7 +589,7 @@
 /* Search affordance inside an open work conversation. */
 #unifiedTasksChatHost .svcp-conversation-search{
  display:grid;place-items:center;flex:none;width:38px;height:38px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:50%;
+ border:0;border-radius:50%;
  background:transparent;color:var(--secondary);cursor:pointer;padding:7px
 }
 #unifiedTasksChatHost .svcp-conversation-search svg{
@@ -602,7 +602,7 @@
 /* Chat history: fetch more local messages on demand. */
 #unifiedTasksChatHost .svcp-load-older{
  display:block;width:max-content;max-width:calc(100% - 20px);margin:8px auto 0;
- min-height:36px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ min-height:36px;border:0;
  border-radius:999px;padding:7px 13px;background:var(--seyveo-hdr-active,var(--card));
  color:var(--text);font:inherit;font-size:11px;font-weight:550;cursor:pointer
 }
@@ -628,7 +628,7 @@
 }
 #unifiedTasksChatHost .svcp-message-menu{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
- margin-top:5px;padding:7px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ margin-top:5px;padding:7px;border:0;
  border-radius:14px;background:var(--seyveo-hdr-active,var(--card))
 }
 #unifiedTasksChatHost .svcp-message-menu[hidden],
@@ -636,7 +636,7 @@
 #unifiedTasksChatHost .svcp-emoji-more[hidden]{display:none!important}
 #unifiedTasksChatHost .svcp-message-menu-item{
  display:flex;align-items:center;justify-content:center;text-align:center;min-width:0;min-height:38px;
- padding:7px 9px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:7px 9px;border:0;
  border-radius:10px;background:var(--card);color:var(--text);font:inherit;font-size:11.5px;
  cursor:pointer
 }
@@ -659,12 +659,12 @@
 }
 #unifiedTasksChatHost .svcp-emoji-grid button{
  display:grid;place-items:center;min-width:0;min-height:37px;padding:3px 0;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:9px;
+ border:0;border-radius:9px;
  background:var(--card);font-size:20px;cursor:pointer
 }
 #unifiedTasksChatHost .svcp-emoji-grid button:active{background:var(--seyveo-hdr-active)}
 #unifiedTasksChatHost .svcp-bubble-reaction{
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));cursor:pointer;font:inherit;font-size:12px
+ border:0;cursor:pointer;font:inherit;font-size:12px
 }
 @media(max-width:350px){
  #unifiedTasksChatHost .svcp-quick-emojis{gap:4px}
@@ -741,7 +741,7 @@
 #unifiedTasksChatHost .svcp-composer-direct-task{
  display:inline-flex;align-items:center;justify-content:center;
  flex:none;min-height:43px;border-radius:999px;
- padding:8px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:8px 11px;border:0;
  background:var(--seyveo-hdr-active,var(--card));
  color:var(--text);font:inherit;font-size:11.5px;font-weight:600;
  white-space:nowrap;cursor:pointer
@@ -776,14 +776,14 @@
  display:grid!important;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr) minmax(0,1.08fr);
  gap:3px;min-width:0;padding:4px;margin:0 0 18px;
  background:var(--seyveo-hdr-active,var(--card2));
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border:0;
  border-radius:var(--seyveo-radius-choice,17px)
 }
 #tasksPage #unifiedTasksTabs{
  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));
  gap:3px;min-width:0;padding:3px;margin:0 0 12px;
  background:color-mix(in srgb,var(--card2) 38%,transparent);
- border:1px solid var(--soft-line);border-radius:18px
+ border:0;border-radius:18px
 }
 #picturePage #pulseTasksTabs{margin:9px 0 19px}
 #tasksPage #unifiedTasksTabs button,#picturePage #pulseTasksTabs button{
@@ -894,7 +894,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 }
 #tasksPage .svcp-manager-actions{
  overflow:hidden;margin:0 0 10px;
- border:1px solid var(--soft-line);border-radius:19px;
+ border:0;border-radius:19px;
  background:color-mix(in srgb,var(--card2) 42%,transparent);
  box-shadow:none;
 }
@@ -909,7 +909,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-manager-row:active{background:var(--seyveo-hdr-active)}
 #tasksPage .svcp-manager-art{
  display:grid;place-items:center;flex:none;width:34px;height:34px;
- border:1px solid var(--soft-line);border-radius:11px;
+ border:0;border-radius:11px;
  background:color-mix(in srgb,var(--card2) 66%,transparent);
  color:var(--secondary);
 }
@@ -966,7 +966,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage #unifiedPeopleHost .svcp-people-switch{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;
  padding:3px;margin:0 0 13px;border-radius:13px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border:0;
  background:var(--seyveo-hdr-active,var(--card))
 }
 #tasksPage #unifiedPeopleHost .svcp-people-switch button{
@@ -1062,7 +1062,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 }
 #tasksPage .svcp-approval-demo-proof{
  display:block;max-width:160px;max-height:120px;object-fit:cover;
- border-radius:11px;border:1px solid var(--soft-line);
+ border-radius:11px;border:0;
 }
 #tasksPage #svcpTaskList .svcp-task-actions .svcp-approval-demo-accept{
  color:var(--seyveo-emerald,var(--text));font-weight:600;
@@ -1080,7 +1080,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 }
 #tasksPage .svcp-approval-report-form textarea{
  box-sizing:border-box;width:100%;min-height:64px;max-height:135px;resize:vertical;
- padding:10px 11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:10px 11px;border:0;
  border-radius:12px;background:var(--card);color:var(--text);
  font:inherit;font-size:12px;line-height:1.45;
 }
@@ -1098,7 +1098,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #managePage .svcp-preview-management{margin-bottom:12px}
 #managePage .svcp-preview-panel{
  display:grid;gap:10px;padding:12px 13px;border-radius:17px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card);
+ border:0;background:var(--card);
 }
 #managePage .svcp-preview-panel p{margin:0;color:var(--secondary);font-size:11.5px;line-height:1.45}
 #managePage .svcp-preview-intro{
@@ -1129,7 +1129,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #managePage .svcp-preview-options button,
 #managePage .svcp-preview-role-actions button{
  min-width:0;min-height:40px;padding:5px 4px;border-radius:11px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border:0;
  background:transparent;color:var(--secondary);font:inherit;
  font-size:11.5px;font-weight:500;line-height:1.25;cursor:pointer;
 }
@@ -1164,7 +1164,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  grid-template-columns:repeat(2,minmax(0,1fr))!important
 }
 #tasksPage #unifiedTasksTabs:has(button:nth-child(2)[hidden]):has(button:nth-child(3)[hidden]){grid-template-columns:minmax(0,1fr)!important}
-#tasksPage .svcp-large-note{margin:7px 0 0;padding:10px 12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.5}
+#tasksPage .svcp-large-note{margin:7px 0 0;padding:10px 12px;border:0;border-radius:13px;color:var(--secondary);font-size:11px;line-height:1.5}
 #tasksPage .svcp-large-note[hidden],#tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
 
 /* Black Velvet employee dashboard: all widgets remain original, compact and accessible. */
@@ -1172,7 +1172,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage #unifiedEmployeeTasksView[hidden]{display:none!important}
 #tasksPage .svcp-employee-intro{display:block;margin:0;padding:0 1px}
 #tasksPage .svcp-employee-profile{display:flex;align-items:center;gap:10px;min-width:0}
-#tasksPage .svcp-employee-avatar{display:grid;place-items:center;flex:none;width:45px;height:45px;border-radius:16px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:22px;font-weight:580}
+#tasksPage .svcp-employee-avatar{display:grid;place-items:center;flex:none;width:45px;height:45px;border-radius:16px;border:0;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:22px;font-weight:580}
 #tasksPage .svcp-employee-person{display:grid;gap:3px;flex:1;min-width:0}
 #tasksPage .svcp-employee-kicker{font-size:9px;letter-spacing:.13em;font-weight:620;color:var(--text)}
 #tasksPage .svcp-employee-person h2{margin:0;color:var(--text);font-size:20px;letter-spacing:-.025em;line-height:1.2;font-weight:600}
@@ -1181,7 +1181,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-duty>span{width:6px;height:6px;flex:none;border-radius:50%;background:currentColor;opacity:.55}
 #tasksPage .svcp-employee-duty[data-active="true"]{color:var(--text)}
 #tasksPage .svcp-employee-duty[data-active="true"]>span{opacity:1;box-shadow:0 0 8px currentColor}
-#tasksPage .svcp-employee-shift-card{display:grid;gap:7px;min-width:0;padding:13px 14px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:18px;background:linear-gradient(145deg,var(--seyveo-specular,rgba(57,125,90,.06)),transparent 65%),var(--card)}
+#tasksPage .svcp-employee-shift-card{display:grid;gap:7px;min-width:0;padding:13px 14px;border:0;border-radius:18px;background:linear-gradient(145deg,var(--seyveo-specular,rgba(57,125,90,.06)),transparent 65%),var(--card)}
 #tasksPage .svcp-employee-shift-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #tasksPage .svcp-employee-shift-top strong{font-size:12px;font-weight:570;color:var(--text)}
 #tasksPage .svcp-employee-shift-top time{font-size:11px;color:var(--secondary)}
@@ -1195,7 +1195,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-shift>details.seyveo-hr-fold{margin:4px 0 0;padding:0;border:0;background:transparent}
 #tasksPage .svcp-employee-shift>details.seyveo-hr-fold>summary{display:none!important}
 #tasksPage .svcp-employee-shift .seyveo-shift-demo{display:grid;gap:6px;margin:0;padding:0}
-#tasksPage .svcp-employee-shift #seyveoShiftToggle{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;border-radius:15px;border:1px solid var(--seyveo-emerald);background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:14px;font-weight:620;cursor:pointer}
+#tasksPage .svcp-employee-shift #seyveoShiftToggle{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;border-radius:15px;border:0;background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:14px;font-weight:620;cursor:pointer}
 #tasksPage .svcp-employee-shift #seyveoShiftToggle[aria-pressed="true"]{border-color:var(--soft-line)}
 #tasksPage .svcp-employee-shift #seyveoShiftStatus{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #tasksPage .svcp-employee-hours{display:grid;gap:10px;min-width:0}
@@ -1203,10 +1203,10 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-section-top h3{margin:0;color:var(--text);font-size:14px;font-weight:600}
 #tasksPage .svcp-employee-section-top>span{color:var(--secondary);font-size:11px}
 #tasksPage .svcp-employee-hour-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-#tasksPage .svcp-employee-hour-grid>div{display:grid;gap:6px;min-width:0;padding:11px 10px;border-radius:15px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card)}
+#tasksPage .svcp-employee-hour-grid>div{display:grid;gap:6px;min-width:0;padding:11px 10px;border-radius:15px;border:0;background:var(--card)}
 #tasksPage .svcp-employee-hour-grid small{color:var(--secondary);font-size:10px}
 #tasksPage .svcp-employee-hour-grid strong{font-size:15px;font-weight:620;line-height:1.3;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums}
-#tasksPage .svcp-employee-hour-details{min-width:0;border:1px solid var(--soft-line);border-radius:14px;overflow:hidden}
+#tasksPage .svcp-employee-hour-details{min-width:0;border:0;border-radius:14px;overflow:hidden}
 #tasksPage .svcp-employee-hour-details>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:11px 13px;color:var(--text);font-size:12px}
 #tasksPage .svcp-employee-hour-details>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-employee-hour-details>summary span{font-size:18px;color:var(--secondary);transition:transform .15s}
@@ -1219,7 +1219,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-hours-settings .seyveo-shift-label{font-size:11px;color:var(--secondary)}
 #tasksPage .svcp-employee-hours-settings .seyveo-shift-label input{max-width:100px;min-height:37px}
 #tasksPage .svcp-employee-hours-settings #seyveoShiftSummary{color:var(--secondary);font-size:11px;line-height:1.5}
-#tasksPage .svcp-employee-hours-settings #seyveoShiftExport{min-height:42px;border:1px solid var(--soft-line);border-radius:12px;background:transparent;color:var(--text);font:inherit;font-size:12px}
+#tasksPage .svcp-employee-hours-settings #seyveoShiftExport{min-height:42px;border:0;border-radius:12px;background:transparent;color:var(--text);font:inherit;font-size:12px}
 #tasksPage .svcp-employee-hours-settings .svcp-shift-explanation{font-size:11px;color:var(--secondary)}
 #tasksPage .svcp-employee-hours-settings .svcp-shift-explanation summary{cursor:pointer;color:var(--text)}
 #tasksPage .svcp-employee-hours-settings .svcp-shift-explanation small{display:block;margin-top:8px;line-height:1.5;font-size:10.5px}
@@ -1231,17 +1231,17 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-task.is-done .svcp-employee-task-label span{color:var(--secondary);text-decoration:line-through}
 #tasksPage .svcp-employee-task-chat{border:0;background:none;padding:8px 0;color:var(--text);font:inherit;font-size:11px;cursor:pointer;flex:none}
 #tasksPage .svcp-employee-empty{margin:0;color:var(--secondary);font-size:11px}
-#tasksPage .svcp-employee-recognition{display:flex;align-items:center;gap:13px;min-height:75px;padding:12px 13px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;background:var(--card)}
-#tasksPage .svcp-employee-thanks-symbol{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:13px;border:1px solid rgba(236,245,251,.20);background:#27323c;color:#fff}
+#tasksPage .svcp-employee-recognition{display:flex;align-items:center;gap:13px;min-height:75px;padding:12px 13px;border:0;border-radius:17px;background:var(--card)}
+#tasksPage .svcp-employee-thanks-symbol{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:13px;border:0;background:#27323c;color:#fff}
 #tasksPage .svcp-employee-thanks-symbol svg{display:block;width:26px;height:26px;max-width:100%;max-height:100%}
 #tasksPage .svcp-employee-thanks-copy{display:grid;gap:3px;flex:1;min-width:0}
 #tasksPage .svcp-employee-thanks-copy h3{margin:0;color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-thanks-copy p{margin:0;color:var(--secondary);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tasksPage .svcp-employee-recognition>strong{font-size:22px;font-weight:590;color:var(--text)}
-#tasksPage .svcp-employee-chats{min-width:0;margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:17px;overflow:hidden;background:var(--card)}
+#tasksPage .svcp-employee-chats{min-width:0;margin:0;border:0;border-radius:17px;overflow:hidden;background:var(--card)}
 #tasksPage .svcp-employee-chats>summary{display:flex;align-items:center;gap:10px;min-height:59px;padding:10px 13px;cursor:pointer;list-style:none}
 #tasksPage .svcp-employee-chats>summary::-webkit-details-marker{display:none}
-#tasksPage .svcp-employee-chats-glyph{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:20px}
+#tasksPage .svcp-employee-chats-glyph{display:grid;place-items:center;flex:none;width:36px;height:36px;border:0;border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);font-size:20px}
 #tasksPage .svcp-employee-chats>summary>span:nth-child(2){display:grid;gap:3px;flex:1;min-width:0}
 #tasksPage .svcp-employee-chats>summary strong{color:var(--text);font-size:13px;font-weight:570}
 #tasksPage .svcp-employee-chats>summary small{font-size:11px;color:var(--secondary)}
@@ -1262,7 +1262,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  padding:10px;border-top:1px solid var(--soft-line);background:var(--card);min-width:0}
 #unifiedTasksChatHost .svcp-camera-tray[hidden]{display:none!important}
 #unifiedTasksChatHost .svcp-camera-tray>button{display:flex;align-items:center;justify-content:center;gap:6px;
- min-height:42px;min-width:0;padding:8px 5px;border-radius:12px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ min-height:42px;min-width:0;padding:8px 5px;border-radius:12px;border:0;
  background:var(--seyveo-hdr-active,var(--card2));font:inherit;font-size:11.5px;color:var(--text);
  text-align:center;white-space:normal;cursor:pointer}
 #unifiedTasksChatHost .svcp-camera-tray>button>span{font-size:16px;color:var(--text);flex:none}
@@ -1273,9 +1273,9 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #unifiedTasksChatHost .svcp-barcode-manual>label{color:var(--secondary);font-size:10.5px}
 #unifiedTasksChatHost .svcp-barcode-manual>div{display:flex;gap:7px;align-items:stretch;min-width:0}
 #unifiedTasksChatHost .svcp-barcode-manual input{flex:1;min-width:0;padding:9px 10px;min-height:41px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:11px;
+ border:0;border-radius:11px;
  background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:13px}
-#unifiedTasksChatHost .svcp-barcode-manual button{border:1px solid var(--seyveo-hdr-outline,var(--soft-line));border-radius:11px;
+#unifiedTasksChatHost .svcp-barcode-manual button{border:0;border-radius:11px;
  background:var(--card);color:var(--text);padding:7px 10px;font:inherit;font-size:11px;font-weight:560;cursor:pointer}
 #unifiedTasksChatHost .svcp-attach-preview.svcp-work-media-preview{display:flex;align-items:flex-start;
  flex-wrap:wrap;gap:10px;padding:10px 12px;border-top:1px solid var(--soft-line);
@@ -1283,7 +1283,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #unifiedTasksChatHost .svcp-attach-preview.svcp-work-media-preview[hidden]{display:none!important}
 #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-photo,
 #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-video{object-fit:contain;
- width:84px;max-width:100%;height:82px;border:1px solid var(--soft-line);
+ width:84px;max-width:100%;height:82px;border:0;
  background:var(--seyveo-hdr-active,var(--card2));border-radius:12px;flex:none}
 #unifiedTasksChatHost .svcp-work-media-preview .svcp-selected-info{min-width:120px;flex:1;
  display:grid;gap:5px;color:var(--text)}
@@ -1295,7 +1295,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #unifiedTasksChatHost .svcp-chat-media-image,
 #unifiedTasksChatHost .svcp-chat-media-video{display:block;object-fit:contain;
  width:min(100%,275px);max-width:100%;max-height:280px;height:auto;border-radius:13px;
- border:1px solid var(--soft-line);background:var(--seyveo-hdr-active,var(--card2))}
+ border:0;background:var(--seyveo-hdr-active,var(--card2))}
 #unifiedTasksChatHost .svcp-chat-media-video{max-height:330px}
 #unifiedTasksChatHost .svcp-chat-media-file{color:var(--text);font-size:12px;overflow-wrap:anywhere}
 #unifiedTasksChatHost .svcp-chat-media-local{font-size:10px;color:var(--secondary);line-height:1.35}
@@ -1325,7 +1325,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  display:none;position:absolute;z-index:4;left:var(--svcp-now-left,0%);
  top:50%;width:13px;height:13px;box-sizing:border-box;border-radius:50%;
  border:2px solid var(--bg);background:#ecf8f0;transform:translate(-50%,-50%);
- box-shadow:0 0 0 1px var(--seyveo-emerald);pointer-events:none
+ box-shadow:none;pointer-events:none
 }
 #tasksPage .svcp-employee-progress[data-running="true"] .svcp-schedule-cursor{display:block}
 #tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-schedule-cursor{background:#ffe4a9;box-shadow:0 0 0 1px #d5b775}
@@ -1358,7 +1358,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-work-duty[data-break="true"]{color:#eed6a0}
 #tasksPage .svcp-work-duty[data-break="true"] i{background:#eed6a0;box-shadow:0 0 7px rgba(241,211,151,.38)}
 #tasksPage .svcp-employee-avatar-badge[data-break="true"]::after{background:#eed6a0}
-#tasksPage .svcp-break-setup{margin:8px 0 12px;border:1px solid var(--soft-line);border-radius:14px;overflow:hidden;background:var(--card)}
+#tasksPage .svcp-break-setup{margin:8px 0 12px;border:0;border-radius:14px;overflow:hidden;background:var(--card)}
 #tasksPage .svcp-break-setup>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;
  padding:12px 13px;cursor:pointer;list-style:none;color:var(--text);font-size:12.5px}
 #tasksPage .svcp-break-setup>summary::-webkit-details-marker{display:none}
@@ -1367,10 +1367,10 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-break-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 #tasksPage .svcp-break-controls label{display:grid;gap:7px;min-width:0;font-size:11px;color:var(--secondary)}
 #tasksPage .svcp-break-controls select{display:block;width:100%;min-width:0;min-height:42px;
- border:1px solid var(--soft-line);border-radius:11px;padding:8px;background:var(--card2);color:var(--text);font:inherit;font-size:12px}
+ border:0;border-radius:11px;padding:8px;background:var(--card2);color:var(--text);font:inherit;font-size:12px}
 #tasksPage .svcp-break-paid{display:flex;align-items:center;gap:8px;color:var(--text);font-size:11.5px;line-height:1.4}
 #tasksPage .svcp-break-paid input{width:18px;height:18px;accent-color:var(--seyveo-emerald)}
-#tasksPage .svcp-break-save{min-height:44px;border-radius:11px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+#tasksPage .svcp-break-save{min-height:44px;border-radius:11px;border:0;
  background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:575}
 #tasksPage .svcp-break-status{color:var(--secondary)}
 @media(max-width:350px){#tasksPage .svcp-break-controls{grid-template-columns:minmax(0,1fr)}}
@@ -1397,7 +1397,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-work-shift-slot{min-width:0}
 #tasksPage .svcp-work-shift-slot>.svcp-employee-shift-card{width:100%}
 #tasksPage .svcp-work-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;min-width:0}
-#tasksPage .svcp-work-shortcuts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:88px;padding:10px 3px;border-radius:15px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));background:var(--card);color:var(--text);font:inherit;cursor:pointer;transition:background .15s}
+#tasksPage .svcp-work-shortcuts button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:88px;padding:10px 3px;border-radius:15px;border:0;background:var(--card);color:var(--text);font:inherit;cursor:pointer;transition:background .15s}
 #tasksPage .svcp-work-shortcuts button:active{background:var(--seyveo-hdr-active,var(--card2))}
 #tasksPage .svcp-work-shortcuts button svg{width:24px;height:24px;fill:none;stroke:var(--seyveo-emerald);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #tasksPage .svcp-work-shortcuts button span{font-size:10.5px;line-height:1.24;text-align:center;font-weight:565;overflow-wrap:normal}
@@ -1428,7 +1428,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-employee-avatar-badge[hidden]{display:none!important}
 #tasksPage .svcp-employee-avatar-badge .svcp-employee-avatar{
  display:grid;place-items:center;width:44px;height:44px;border-radius:14px;
- border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border:0;
  background:var(--seyveo-hdr-active,var(--card2));color:var(--seyveo-emerald);
  font-size:21px;font-weight:580
 }
@@ -1438,7 +1438,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 }
 #tasksPage .svcp-employee-avatar-badge[data-active="true"]::after{background:var(--seyveo-emerald)}
 #tasksPage .svcp-employee-results{display:grid;gap:14px;scroll-margin-top:14px;
- padding:14px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ padding:14px;border:0;
  border-radius:17px;background:var(--card)}
 #tasksPage .svcp-employee-results[hidden]{display:none!important}
 #tasksPage .svcp-employee-results>.svcp-employee-hours{min-width:0}
