@@ -122,3 +122,46 @@ footer.dock:not(.seyveo-browser-dock) #navPicture>svg.seyveo-my-signature{
 @media(max-width:355px){
  #lifePage #lifeTitle .seyveo-my-signature-heading{width:60px;height:32px}
 }
+
+/* SEYVEO · shared editable-form action system.
+   Both Calendar and Tasks opt in to this one standard, with a 44px+
+   hit area, matched capsule geometry and theme-derived glass materials. */
+html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions{
+ box-sizing:border-box;display:flex;align-items:center;
+ justify-content:space-between;gap:9px;min-width:0;
+ flex-wrap:nowrap;margin:0;padding:10px 0 0;
+ background:transparent!important;border:0!important;
+ border-top:1px solid var(--soft-line)!important;
+ box-shadow:none!important;
+}
+html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions > button.btn{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;
+ flex:0 1 auto!important;min-width:70px!important;min-height:46px!important;
+ margin:0!important;padding:10px 14px!important;
+ border:1px solid transparent!important;border-radius:999px!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;color:var(--secondary)!important;
+ font:inherit!important;font-size:14px!important;font-weight:530!important;
+ line-height:1.3!important;letter-spacing:-.012em!important;
+ text-decoration:none!important;cursor:pointer;touch-action:manipulation;
+}
+html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions > button.btn.primary{
+ min-width:124px!important;margin-left:auto!important;
+ padding-inline:19px!important;
+ border-color:var(--seyveo-hdr-outline,var(--soft-line))!important;
+ background:var(--seyveo-hdr-active,var(--card2))!important;
+ color:var(--text)!important;font-weight:625!important;
+}
+html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions > button.btn:focus-visible{
+ outline:2px solid var(--seyveo-emerald)!important;outline-offset:2px!important;
+}
+@media(max-width:350px){
+ html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions > button.btn{
+  padding-inline:10px!important;min-width:0!important;
+ }
+ html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-form-actions > button.btn.primary{
+  min-width:112px!important;padding-inline:15px!important;
+ }
+}
