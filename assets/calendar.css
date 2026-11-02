@@ -286,99 +286,227 @@
 @media(prefers-reduced-motion:reduce){.cal-timing>summary::after,.cal-timing-setting>summary::after{transition:none}}
 
 .cal-dialog-actions{display:flex;align-items:center;gap:8px;margin-top:2px}
-/* SEYVEO compact event editor: zero inner scrolling at normal iPhone X height,
-   including the three planner rows. Native pickers and 44px hit targets remain.
-   Smaller screens, large text and expanded notes may still scroll safely. */
-#calendarEventDialog[open]{
- max-height:min(94dvh,calc(100dvh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
+/* SEYVEO Calendar · premium compact event composer.
+   A full-viewport top-layer host preserves our one real dock. The small
+   inner sheet scrolls only for long notes / accessibility text, never
+   stretches action buttons to the bottom of an empty screen. */
+#calendarEventDialog.cal-form-dialog[open]{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ align-items:center;justify-content:flex-start;
+ overflow:hidden;overscroll-behavior:none;
 }
-#calendarEventDialog.cal-form-dialog{padding:18px 18px 14px}
-#calendarEventDialog>h2{margin-bottom:12px}
-#calendarEventDialog .cal-form-primary{padding:0 3px 8px}
+#calendarEventDialog .cal-event-sheet{
+ box-sizing:border-box;flex:0 1 auto;align-self:center;
+ width:min(425px,100%);max-width:100%;max-height:100%;
+ margin:0 auto;padding:20px clamp(15px,4.2vw,21px) 17px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:25px;
+ background:linear-gradient(148deg,var(--seyveo-specular),transparent 68%),var(--bg);
+ box-shadow:0 14px 42px rgba(0,0,0,.14);
+ overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ scrollbar-width:none;
+}
+#calendarEventDialog .cal-event-sheet::-webkit-scrollbar{display:none}
+#calendarEventDialog .cal-event-sheet>h2{
+ margin:0 0 18px;padding:0;
+ font-size:clamp(22px,5.7vw,25px);line-height:1.14;
+ font-weight:590;letter-spacing:-.043em;color:var(--text);
+}
+#calendarEventDialog #calendarEventForm{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ gap:14px;min-width:0;min-height:0;
+ flex:none;margin:0;padding:0;overflow:visible;
+}
+#calendarEventDialog .cal-form-primary{
+ display:block;flex:none;min-width:0;
+ margin:0;padding:0;box-sizing:border-box;
+}
+#calendarEventDialog .cal-form-primary>.cal-field{min-width:0}
 #calendarEventDialog .cal-form-scroll{
- gap:8px;
- padding-top:3px;
- padding-bottom:7px;
- scroll-padding-bottom:12px;
+ box-sizing:border-box;display:flex;flex-direction:column;
+ flex:none;min-width:0;min-height:0;gap:13px;
+ padding:0;margin:0;overflow:visible;
 }
+#calendarEventDialog .cal-form-scroll>*{
+ box-sizing:border-box;min-width:0;max-width:100%;
+}
+#calendarEventDialog .cal-field{
+ gap:6px;color:var(--secondary);font-size:11.5px;
+ font-weight:530;line-height:1.4;letter-spacing:-.008em;
+}
+#calendarEventDialog .cal-form-primary input[type=text]{
+ box-sizing:border-box;display:block;
+ width:100%;max-width:100%;height:49px;min-height:49px;
+ margin:0;padding:10px 13px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:15px;background:var(--card2);color:var(--text);
+ font-size:16px;font-weight:450;line-height:1.3;outline:0;
+}
+#calendarEventDialog .cal-form-primary input::placeholder{color:var(--secondary);opacity:.66}
 #calendarEventDialog .cal-form-columns{
- grid-template-columns:minmax(0,1.58fr) minmax(0,1fr);
- gap:8px;align-items:end;
+ display:grid;grid-template-columns:minmax(0,1.38fr) minmax(0,1fr);
+ align-items:end;gap:9px;min-width:0;
 }
 #calendarEventDialog .cal-form-columns>.cal-field,
 #calendarEventDialog .cal-form-columns>.cal-time-field{min-width:0}
-#calendarEventDialog .cal-date-display{font-size:15px;padding-inline:6px}
-#calendarEventDialog .cal-time-display{font-size:15px;padding:10px 48px 10px 11px}
+#calendarEventDialog .cal-date-control,
+#calendarEventDialog .cal-time-control{
+ position:relative;isolation:isolate;
+ box-sizing:border-box;display:flex;align-items:center;
+ width:100%;height:48px;min-height:48px;min-width:0;
+ margin:0;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:15px;background:var(--card2);overflow:hidden;
+}
+#calendarEventDialog .cal-date-control input[type=date],
+#calendarEventDialog .cal-time-control input[type=time]{
+ position:absolute;inset:0;z-index:2;
+ display:block;box-sizing:border-box;
+ width:100%;height:100%;min-width:0;max-width:100%;
+ min-height:48px;margin:0;padding:0;
+ border:0;opacity:0;cursor:pointer;
+}
+#calendarEventDialog .cal-date-display,
+#calendarEventDialog .cal-time-display{
+ box-sizing:border-box;display:flex;align-items:center;
+ width:100%;min-width:0;height:100%;min-height:0;
+ margin:0;padding:9px 29px 9px 11px;
+ font-size:clamp(12px,3.3vw,14px);line-height:1.3;
+ font-weight:470;color:var(--text);text-align:left;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ pointer-events:none;
+}
+#calendarEventDialog .cal-time-display{color:var(--secondary)}
+#calendarEventDialog .cal-date-control[data-filled=false] .cal-date-display,
+#calendarEventDialog .cal-time-control[data-filled=false] .cal-time-display{
+ color:var(--secondary);
+}
+#calendarEventDialog .cal-picker-glyph{
+ position:absolute;right:10px;top:50%;
+ width:17px;height:17px;transform:translateY(-50%);
+ fill:none;stroke:var(--secondary);stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round;
+ pointer-events:none;opacity:.87;
+}
+#calendarEventDialog .cal-time-field{position:relative;min-width:0}
+#calendarEventDialog .cal-time-field>.cal-field{min-width:0}
+#calendarEventDialog .cal-time-control[data-filled=true] .cal-picker-glyph{
+ opacity:0;
+}
 #calendarEventDialog .cal-time-clear{
- min-width:44px;width:44px;min-height:44px;height:44px;
- right:0;bottom:0;padding:0;
- border-radius:13px;font-size:20px;line-height:1;
+ position:absolute;z-index:3;right:2px;bottom:2px;
+ width:42px;min-width:42px;height:44px;min-height:44px;
+ padding:0;border:0;border-radius:13px;
+ background:var(--card2);color:var(--secondary);
+ font:inherit;font-size:20px;line-height:1;cursor:pointer;
+}
+#calendarEventDialog .cal-time-clear[hidden]{display:none!important}
+#calendarEventDialog .cal-time-control[data-filled=true] .cal-time-display{
+ padding-right:48px;color:var(--text);
+}
+#calendarEventDialog .cal-date-control:focus-within,
+#calendarEventDialog .cal-time-control:focus-within,
+#calendarEventDialog :is(input,textarea):focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 #calendarEventDialog .cal-kind legend{
- position:absolute;width:1px;height:1px;padding:0;margin:-1px;
- overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
+ position:absolute;width:1px;height:1px;
+ margin:-1px;padding:0;overflow:hidden;
+ clip-path:inset(50%);white-space:nowrap;border:0;
 }
-#calendarEventDialog .cal-kind-options{padding:2px}
-#calendarEventDialog .cal-kind-option span{min-height:44px}
+#calendarEventDialog .cal-kind-options{
+ box-sizing:border-box;display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:3px;width:100%;min-width:0;padding:4px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:16px;background:var(--card2);
+}
+#calendarEventDialog .cal-kind-option{min-width:0;position:relative}
+#calendarEventDialog .cal-kind-option span{
+ box-sizing:border-box;display:grid;place-items:center;
+ min-height:42px;padding:0 8px;
+ border:1px solid transparent;border-radius:12px;
+ background:transparent;box-shadow:none;
+ color:var(--secondary);font-size:13px;line-height:1.35;
+ font-weight:530;letter-spacing:-.012em;
+}
+#calendarEventDialog .cal-kind-option input:checked+span{
+ color:var(--text);font-weight:620;
+ border-color:var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--seyveo-hdr-active,var(--card));
+ box-shadow:inset 0 1px 0 var(--seyveo-specular);
+}
+#calendarEventDialog .cal-kind-option input:focus-visible+span{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+}
+#calendarEventDialog .cal-timing[hidden],
+#calendarEventDialog .cal-time-options[hidden]{display:none!important}
 #calendarEventDialog .cal-timing-content{padding-top:6px;padding-bottom:0}
 #calendarEventDialog .cal-timing-setting>summary{min-height:44px;padding-block:8px}
-#calendarEventDialog .cal-dialog-actions{
- margin-bottom:-14px;padding-top:9px;padding-bottom:14px;
-}
-@media(max-width:370px){
- #calendarEventDialog .cal-form-columns{grid-template-columns:minmax(0,1fr)}
- #calendarEventDialog .cal-date-display{font-size:16px}
-}
-@media(max-height:640px){
- #calendarEventDialog[open]{max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
-}
-
-/* Modal body scrolls independently; Save/Cancel never cover event fields.
-   Keep the approved global dock and all other dialogs untouched. */
-#calendarEventDialog[open]{
- display:flex;flex-direction:column;
- max-height:min(94dvh,calc(100dvh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
- overflow:hidden;
-}
-#calendarEventDialog > h2,
-#calendarEventDialog > p{flex:none}
-#calendarEventDialog form{
- display:flex;flex-direction:column;gap:0;
- flex:1 1 auto;min-height:0;
-}
-#calendarEventDialog .cal-form-scroll{
- display:flex;flex-direction:column;gap:8px;
- flex:1 1 auto;min-height:0;min-width:0;
- box-sizing:border-box;
- overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
- -webkit-overflow-scrolling:touch;
- scroll-padding-top:10px;scroll-padding-bottom:12px;
- padding:3px 8px 7px;
- margin:-3px -8px 0;
-}
-#calendarEventDialog .cal-form-scroll > *{
- min-width:0;max-width:100%;box-sizing:border-box;
-}
-#calendarEventDialog .cal-form-scroll input[type=date]{
- display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;
-}
-#calendarEventDialog .cal-dialog-actions{
- display:flex;align-items:center;gap:8px;
- position:relative;z-index:2;flex:none;
- margin:0 -18px -14px;
- padding:9px 18px 14px;
- background:var(--card);
+#calendarEventDialog #calendarEventExtra{margin-top:1px}
+#calendarEventDialog #calendarEventExtra>summary{
+ display:flex;align-items:center;justify-content:space-between;
+ width:100%;max-width:100%;min-height:44px;
+ padding:5px 2px;margin:0;
  border-top:1px solid var(--soft-line);
- box-shadow:0 -9px 18px -18px rgba(0,0,0,.7);
+ color:var(--secondary);font-size:12.5px;font-weight:500;
 }
-#calendarEventDialog .cal-dialog-actions .btn{min-height:44px}
-@media(max-height:540px){
- #calendarEventDialog[open]{
-  max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
- }
+#calendarEventDialog #calendarEventExtra>summary::after{
+ content:"";display:block;flex:none;
+ width:8px;height:8px;margin:0 6px 0 12px;
+ border-right:1.4px solid currentColor;border-bottom:1.4px solid currentColor;
+ transform:rotate(45deg);transition:transform .18s ease;opacity:.72;
 }
-.cal-dialog-actions .btn{flex:1;min-height:44px}
-.cal-dialog-actions #calendarDeleteEvent{flex:0 1 auto;color:var(--secondary)}
+#calendarEventDialog #calendarEventExtra[open]>summary::after{
+ transform:rotate(225deg);
+}
+#calendarEventDialog #calendarEventExtra textarea{
+ box-sizing:border-box;min-height:82px;padding:11px 12px;
+ border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
+ border-radius:14px;background:var(--card2);
+ font-size:15px;line-height:1.4;
+}
+#calendarEventDialog .cal-dialog-actions{
+ display:flex;align-items:center;justify-content:space-between;
+ flex:none;position:static;z-index:auto;gap:10px;
+ box-sizing:border-box;margin:0;padding:0;
+ border:0;background:transparent;box-shadow:none;
+}
+#calendarEventDialog .cal-dialog-actions>.btn{
+ -webkit-appearance:none;appearance:none;
+ box-sizing:border-box;flex:0 1 auto;
+ min-width:90px;min-height:46px;
+ padding:10px 15px;border:1px solid transparent;
+ border-radius:999px;background:transparent;box-shadow:none;
+ font:inherit;font-size:14px;font-weight:520;line-height:1.3;
+ color:var(--secondary);text-decoration:none;
+ cursor:pointer;touch-action:manipulation;
+}
+#calendarEventDialog .cal-dialog-actions>.btn.primary{
+ min-width:134px;
+ border-color:var(--seyveo-hdr-outline,var(--soft-line));
+ background:var(--text);color:var(--bg);
+ font-weight:610;text-decoration:none;
+}
+#calendarEventDialog .cal-dialog-actions #calendarDeleteEvent{
+ min-width:75px;color:var(--secondary);
+}
+#calendarEventDialog .cal-dialog-actions>.btn:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+}
+#calendarEventDialog .cal-form-status{
+ display:block;min-width:0;font-size:11px;line-height:1.45;
+ color:var(--secondary);overflow-wrap:anywhere;
+}
+#calendarEventDialog .cal-form-status:empty{display:none}
+@media(max-width:345px){
+ #calendarEventDialog .cal-form-columns{grid-template-columns:minmax(0,1fr)}
+ #calendarEventDialog .cal-time-display{font-size:15px}
+ #calendarEventDialog .cal-date-display{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarEventDialog #calendarEventExtra>summary::after{transition:none}
+}
 .cal-form-status{font-size:11px;line-height:1.45;color:var(--secondary)}
 .cal-form-status:empty{display:none}
 .cal-event-label{font-size:10px;text-align:center;color:var(--secondary);margin-top:6px}
@@ -393,7 +521,6 @@
  .cal-day{padding:3px 1px 2px;min-height:44px}.cal-day-number{min-width:23px;height:23px}
  .cal-nav h2{font-size:15px}
  .cal-agenda{padding:3px 12px}.cal-entry{gap:9px}
- .cal-form-columns{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.cal-day,.cal-entry,.cal-round,.cal-timing summary,.cal-timing summary::after{transition:none}}
 
