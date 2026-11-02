@@ -3,7 +3,6 @@
  * Requests are single-turn only and never receive local business records.
  */
 import {CLOUD_MODELS,MAX_OUTPUT_TOKENS,safeInstruction} from './hybrid-core.mjs';
-import {coachMessage} from './felix-school/lesson-coach.mjs';
 const CLOUD_TIMEOUT_MS=20000;
 const LOCAL_TIMEOUT_MS=120000;
 const readText=value=>String(value||'').trim().slice(0,14000);
@@ -12,8 +11,7 @@ const configuredCloud=()=>process.env.SEYVEO_ENABLE_CLOUD==='1'&&Boolean(process
 export function availableModels(){
  return Object.freeze({local:configuredLocal(),cloud:configuredCloud()});
 }
-export async function askLocal(message,{name='Феликс'}={}){
- const coaching=coachMessage(message);
+export async function askLocal(message,{name='Сэйви'}={}){
  if(!configuredLocal())throw Error('local-not-configured');
  // Fixed loopback endpoint: no caller-controlled URL, prevents arbitrary SSRF.
  const model=(process.env.SEYVEO_LOCAL_MODEL||'qwen3:4b-instruct').trim();
@@ -25,7 +23,6 @@ export async function askLocal(message,{name='Феликс'}={}){
    model,stream:false,
    messages:[
     {role:'system',content:safeInstruction(name)},
-    ...(coaching?[coaching]:[]),
     {role:'user',content:message}
    ],
    options:{num_predict:MAX_OUTPUT_TOKENS}
@@ -39,7 +36,7 @@ export async function askLocal(message,{name='Феликс'}={}){
  return Object.freeze({text,provider:'local',model});
 }
 const CLOUD_ALLOWED=new Set(Object.values(CLOUD_MODELS));
-export async function askCloud(message,{name='Феликс',model=CLOUD_MODELS.economical}={}){
+export async function askCloud(message,{name='Сэйви',model=CLOUD_MODELS.economical}={}){
  if(!configuredCloud())throw Error('cloud-not-configured');
  if(!CLOUD_ALLOWED.has(model))throw Error('model-not-allowed');
  const response=await fetch('https://api.openai.com/v1/responses',{
