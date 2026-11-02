@@ -252,6 +252,12 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
  overflow:visible;
 }
 #homePage .seyveo-quiet-signal[hidden]{display:none!important}
+/* Home Air: the idle/music divider competes with the actual mini-player.
+   Keep voice activity visible. When moved to the inline reply, the signal
+   retains its original behavior and layout. */
+#homePage #stage > .message > .seyveo-quiet-signal:not(.qsl-listening):not(.qsl-speaking){
+ display:none!important;
+}
 #homePage .quiet-signal-line{
  position:absolute;
  top:7px;
