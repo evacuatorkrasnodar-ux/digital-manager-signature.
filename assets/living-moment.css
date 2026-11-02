@@ -851,24 +851,22 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
   padding-bottom:0;
 }
 
-/* SEYVEO Home — quiet matte cards, no double-glass optics.
-   Preserve the existing card geometry and reveal/gather animations. */
+/* SEYVEO PURE · original live cards, single solid material.
+ * The rise/gather motion and all actions are untouched. Old double-glass
+ * bevels, gradients and palette-by-palette re-paints are retired here. */
 #homePage{
- --lm-matte-fill:color-mix(in srgb,var(--card2) 93%,var(--card));
- --lm-matte-line:color-mix(in srgb,var(--line) 72%,transparent);
-}
-:root[data-theme=light] #homePage{
- --lm-matte-fill:#f1f4f4;
- --lm-matte-line:rgba(80,102,110,.13);
+ --lm-matte-fill:var(--sv-pure-surface);
+ --lm-matte-line:var(--sv-pure-line);
 }
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item),
 #homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-field,
 #homePage #dynamic .decision-card[data-owner-advice]{
- background:var(--lm-matte-fill);
- border-color:var(--lm-matte-line);
- box-shadow:none;
- backdrop-filter:none;
- -webkit-backdrop-filter:none;
+ background:var(--lm-matte-fill)!important;
+ border:1px solid var(--lm-matte-line)!important;
+ border-radius:19px!important;
+ box-shadow:none!important;
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
 }
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::before,
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
@@ -876,41 +874,24 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-field::after,
 #homePage #dynamic .decision-card[data-owner-advice]::before,
 #homePage #dynamic .decision-card[data-owner-advice]::after{
- content:none;
+ content:none!important;display:none!important;
 }
-
-/* Home cards: dock-aligned width; matte material and animations unchanged. */
+#homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
+ min-height:52px;
+}
+#homePage #seyveoLivingMoment .lm-primary-title{
+ font-weight:570;letter-spacing:-.018em;
+}
+#homePage #seyveoLivingMoment .lm-inline-title{font-weight:540}
+#homePage #seyveoLivingMoment :is(.lm-polymer,.lm-polymer--main,.lm-polymer--quiet){
+ box-shadow:none!important;
+}
 #homePage #seyveoLivingMoment{
- width:min(100%, 440px);
- max-width:calc(100vw - 24px);
- margin-left:auto;
- margin-right:auto;
+ width:min(100%,440px);max-width:calc(100vw - 24px);
+ margin-left:auto;margin-right:auto;
 }
-#homePage #seyveoLivingMoment .lm-tiles{
- width:100%;
-}
+#homePage #seyveoLivingMoment .lm-tiles{width:100%}
 
-/* Match the dock's opaque base colour, without its luminous top coating. */
-#homePage{
- --lm-matte-fill:#131f1d;
- --lm-matte-line:rgba(171,213,202,.24);
-}
-:root[data-theme=dark][data-palette=graphite] #homePage{
- --lm-matte-fill:#131a20;
- --lm-matte-line:rgba(170,194,208,.23);
-}
-:root[data-theme=dark][data-palette=sapphire] #homePage{
- --lm-matte-fill:#121c30;
- --lm-matte-line:rgba(159,188,243,.27);
-}
-:root[data-theme=dark][data-palette=plum] #homePage{
- --lm-matte-fill:#1c1b1a;
- --lm-matte-line:rgba(204,185,164,.19);
-}
-:root[data-theme=light] #homePage{
- --lm-matte-fill:#eceff3;
- --lm-matte-line:rgba(54,68,89,.20);
-}
 /* Match the dock against the viewport, not the narrower Home content column. */
 #homePage #seyveoLivingMoment{
  box-sizing:border-box;
