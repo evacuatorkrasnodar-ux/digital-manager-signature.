@@ -1,3 +1,6 @@
+/* Velvet restoration: original palette-specific micro-gradient on the dock only.
+ * No border, no 3D bevel, no changes to any other SEYVEO screen.
+ * Dock shape, touch targets and engraved icon are unchanged. */
 /* SEYVEO · Quiet Navigation / 2026.
  * One fixed five-position dock. Four destinations + central Sayvi.
  * Stable safe-area, native scroll, original voice and music controls. */
@@ -37,7 +40,7 @@
  margin:0!important;padding:4px 6px!important;
  border-radius:21px!important;
  border:0!important;
- background:var(--sv-air-dock)!important;
+ background:linear-gradient(155deg,rgba(236,255,248,.065),rgba(134,186,172,.025) 42%,transparent 76%),rgba(19,31,29,.97)!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
  box-shadow:none!important;
@@ -235,7 +238,7 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):not([data-composer-mod
 /* One surface and one selected state; nothing overwrites the active contrast. */
 :root[data-theme="light"] .dock{
  border-color:transparent!important;
- background:var(--sv-air-dock)!important;
+ background:linear-gradient(155deg,rgba(255,255,255,.38),rgba(255,255,255,.11) 47%,rgba(112,132,151,.045) 100%),rgba(233,237,242,.98)!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item{color:#465466!important}
@@ -394,15 +397,15 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
  border-color:transparent!important;
- background:var(--sv-air-dock)!important;
+ background:linear-gradient(155deg,rgba(235,244,249,.052),rgba(131,158,173,.020) 46%,transparent 77%),rgba(19,26,32,.97)!important;
 }
 :root[data-theme=dark][data-palette=sapphire] .dock{
  border-color:transparent!important;
- background:var(--sv-air-dock)!important;
+ background:linear-gradient(155deg,rgba(228,238,255,.062),rgba(110,141,216,.026) 46%,transparent 77%),rgba(18,28,48,.97)!important;
 }
 :root[data-theme=dark][data-palette=plum] .dock{
  border-color:transparent!important;
- background:var(--sv-air-dock)!important;
+ background:linear-gradient(155deg,rgba(255,243,227,.035),rgba(171,151,128,.013) 46%,transparent 77%),rgba(28,27,26,.97)!important;
 }
 :root[data-theme=dark][data-palette=graphite]:not(.seyveo-conversation) #ask.prompt:not(.expanded){
  --sv-ink-input-text:#edf3f7;--sv-ink-input-hint:#b9c8d2;
