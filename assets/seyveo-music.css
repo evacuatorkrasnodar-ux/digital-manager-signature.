@@ -40,10 +40,15 @@ html.sv-music-screen .app{
 #sayviMusicPage .sv-music-cover{
  position:relative;isolation:isolate;flex:0 0 auto;
  display:grid;place-items:center;overflow:visible;
- width:var(--sv-music-art-size);height:var(--sv-music-art-size);
+ width:clamp(100px,26vw,138px);height:clamp(100px,26vw,138px);
  max-width:100%;aspect-ratio:1;
- margin:clamp(18px,5dvh,50px) auto clamp(15px,2.7dvh,25px);
+ margin:clamp(28px,6dvh,56px) auto clamp(16px,2.6dvh,24px);
  padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
+}
+/* A real album cover receives full visual space; the fallback stays compact. */
+#sayviMusicPage .sv-music-cover:is(.has-artwork,.is-checking-artwork){
+ width:var(--sv-music-art-size);height:var(--sv-music-art-size);
+ margin-top:clamp(18px,4dvh,39px);
 }
 #sayviMusicPage .sv-music-cover::before,
 #sayviMusicPage .sv-music-cover::after{content:none;display:none}
@@ -236,12 +241,14 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
 @media(max-width:759px) and (max-height:760px){
  #sayviMusicPage{--sv-music-art-size:min(49vw,22dvh,165px)}
  #sayviMusicPage .sv-music-cover{margin-top:clamp(12px,3dvh,28px);margin-bottom:12px}
+ #sayviMusicPage .sv-music-cover:is(.has-artwork,.is-checking-artwork){margin-top:clamp(10px,2dvh,18px)}
  #sayviMusicPage .sv-music-times{margin-top:8px}
  #sayviMusicPage .sv-music-phrases{margin-top:2px}
 }
 @media(max-width:759px) and (max-height:590px){
  #sayviMusicPage{--sv-music-art-size:min(37vw,18dvh,115px)}
  #sayviMusicPage .sv-music-cover{margin-top:5px;margin-bottom:8px}
+ #sayviMusicPage .sv-music-cover:is(.has-artwork,.is-checking-artwork){margin-top:5px}
  #sayviMusicPage .sv-music-times{margin-top:4px}
 }
 @media(min-width:760px) and (min-height:650px){
@@ -250,6 +257,7 @@ html.sv-music-screen #sayviMusicPage .sv-music-collection:not([hidden]){
   --sv-music-art-size:min(31vw,30dvh,252px);
  }
  #sayviMusicPage .sv-music-cover{margin-top:clamp(28px,5dvh,58px)}
+ #sayviMusicPage .sv-music-cover:is(.has-artwork,.is-checking-artwork){margin-top:clamp(22px,4dvh,42px)}
 }
 @media(prefers-reduced-motion:reduce){
  #sayviMusicPage *,#sayviMusicPage{transition:none!important;animation:none!important}
