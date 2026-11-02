@@ -37,7 +37,7 @@
 .svcp-status{color:var(--secondary);font-size:11px;line-height:1.5;margin:10px 2px 0}
 /* The employees page shows its real empty state, not imagined staff. */
 .svcp-team-empty{padding:28px 12px 24px;display:grid;justify-items:center;gap:10px;text-align:center}
-.svcp-team-empty-art{display:grid;place-items:center;width:70px;height:70px;border-radius:23px;background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline)}
+.svcp-team-empty-art{display:grid;place-items:center;width:70px;height:70px;border-radius:23px;background:var(--seyveo-hdr-active);border:0}
 .svcp-team-empty-art svg{width:39px;height:39px;stroke:var(--seyveo-emerald)}
 .svcp-team-empty h3{font-size:18px;font-weight:570;letter-spacing:-.035em;margin:7px 0 0;color:var(--text)}
 .svcp-team-empty p{max-width:345px;margin:0;color:var(--secondary);font-size:13px;line-height:1.62}
@@ -381,7 +381,7 @@
 }
 #tasksPage .svcp-tasks-chat-icon{
  display:grid;place-items:center;flex:none;width:39px;height:39px;border-radius:13px;
- background:var(--seyveo-hdr-active,var(--card));border:1px solid var(--seyveo-hdr-outline,var(--soft-line))
+ background:var(--seyveo-hdr-active,var(--card));border:0
 }
 #tasksPage .svcp-tasks-chat-icon svg{
  display:block;width:20px;height:20px;fill:none;stroke:var(--seyveo-emerald);
