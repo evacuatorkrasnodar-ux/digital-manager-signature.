@@ -50,7 +50,7 @@
  font-weight:560;
  line-height:1.24;
  letter-spacing:-.03em;
- margin:5px 0 4px;
+ margin:3px 0 2px;
 }
 #homePage.lm-focus #stage .message p{
  font-size:clamp(13px,3.5vw,14px);
@@ -62,8 +62,8 @@
 #homePage.lm-focus #stage .message p:empty{display:none}
 #homePage.lm-focus #stage .seyveo-quiet-signal{display:none!important}
 #homePage.lm-focus #seyveoLivingMoment{
- margin-top:5px;
- margin-bottom:10px;
+ margin-top:0;
+ margin-bottom:8px;
 }
 @media(max-width:375px){
  #homePage.lm-focus #stage .message h2{font-size:21px}
@@ -309,9 +309,9 @@
 #seyveoLivingMoment .lm-polymer--main,
 #homePage #dynamic .decision-card[data-owner-advice] .actions .btn.primary{
   border:0;
-  border-radius:10px;
-  padding:8px 13px;
-  background:var(--sv-air-control);
+  border-radius:0;
+  padding:8px 2px;
+  background:transparent;
   background-image:none;
   box-shadow:none;
   color:var(--text);
@@ -816,8 +816,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 /* Work message shares the original Quiet Cinema card, typography and motion. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-art-svg--work{color:#8FE3C3;stroke:#8FE3C3}
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:first-child{
- border:0;border-radius:10px;background:var(--sv-air-control);color:var(--text);
- padding:8px 13px!important;min-height:44px!important;
+ border:0;border-radius:0;background:transparent;color:var(--text);
+ padding:8px 2px!important;min-height:44px!important;
  font-size:12px!important;line-height:1.3!important;font-weight:560;
  box-shadow:none!important;
 }
@@ -838,7 +838,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  filter:none;
 }
 #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:first-child:not([hidden]){
- font-weight:650;
+ font-weight:570;
 }
 
 /* Reading hierarchy within the original card: source, Sayvi's thought, actions. */
@@ -892,68 +892,69 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
   padding-bottom:0;
 }
 
-/* SEYVEO PURE · original live cards, single solid material.
- * The rise/gather motion and all actions are untouched. Old double-glass
- * bevels, gradients and palette-by-palette re-paints are retired here. */
+/* SEYVEO PURE · A single quiet, flat Home list. Featured content is
+   emphasized by typography and actions, never by a filled capsule.
+   Real and demo tasks share one geometry; plasma and dock are untouched. */
 #homePage{
- --lm-matte-fill:var(--sv-velvet-panel);
- --lm-matte-line:transparent;
+  --lm-matte-fill:transparent;
+  --lm-matte-line:transparent;
 }
-#homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-primary,
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real):not(.lm-gather) .lm-primary,
 #homePage #dynamic .decision-card[data-owner-advice]{
- background:var(--sv-air-home-surface)!important;
- border:0!important;
- border-radius:var(--sv-velvet-radius)!important;
- box-shadow:none!important;
- backdrop-filter:none!important;
- -webkit-backdrop-filter:none!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-/* Secondary preview items are one clean row list in BOTH animation states.
-   Their independent rise animation, buttons and hit areas remain unchanged. */
-#homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) .lm-inline-item{
- background:transparent!important;
- border:0!important;
- border-top:1px solid var(--sv-velvet-divider)!important;
- border-radius:0!important;
- margin-bottom:0!important;
- padding:8px 10px!important;
- box-shadow:none!important;
- backdrop-filter:none!important;
- -webkit-backdrop-filter:none!important;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-field{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  padding:7px 5px 2px;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-/* Gathered Home: draw one primary message card, but DO NOT paint a
-   single giant rectangle behind all of the follow-up rows. */
-#homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
- background:transparent!important;
- border:0!important;
- border-radius:0!important;
- padding:9px 5px 3px;
- box-shadow:none!important;
- backdrop-filter:none!important;
- -webkit-backdrop-filter:none!important;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-field-top{
+  margin:0 0 3px;
+  padding:0 8px;
 }
-#homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-field-top{
- margin:0 0 5px;
- padding:0 10px;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-primary{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  padding:9px 8px 4px!important;
+  margin:0!important;
+  box-shadow:none!important;
 }
-#homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-primary{
- background:var(--sv-air-home-surface)!important;
- border:0!important;
- border-radius:var(--sv-velvet-radius)!important;
- padding:10px 14px 8px!important;
- margin:2px 0 6px!important;
- box-shadow:none!important;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-hero{
+  grid-template-columns:42px minmax(0,1fr);
+  gap:10px;
 }
-#homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-inline-item{
- background:transparent!important;
- border:0!important;
- border-top:1px solid var(--sv-velvet-divider)!important;
- border-radius:0!important;
- padding:8px 10px!important;
- box-shadow:none!important;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-hero-art{
+  width:42px;height:42px;
 }
-#homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-secondary{
- padding-bottom:0;
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-inline-item{
+  background:transparent!important;
+  border:0!important;
+  border-top:1px solid var(--sv-velvet-divider)!important;
+  border-radius:0!important;
+  min-height:52px;
+  margin:0!important;
+  padding:8px 8px!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#homePage #seyveoLivingMoment:is(.lm-preview,.lm-real) .lm-secondary{
+  padding-bottom:0;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-note{
+  font-size:11.5px!important;
+  line-height:1.4!important;
+  opacity:.76;
 }
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::before,
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item)::after,
