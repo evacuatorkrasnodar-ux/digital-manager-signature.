@@ -442,7 +442,27 @@
  }
  // Reuse the real chat component, message history and camera; never clone a thread.
  let chatReturnFocus=null;
+ // Only one existing dock. Reparent it while the chat directory is visible,
+ // then return it to its exact original location when leaving the screen.
+ const sharedDock=document.querySelector('footer.dock');
+ const dockMarker=sharedDock?document.createComment('SEYVEO work chat dock origin'):null;
+ if(sharedDock&&dockMarker)sharedDock.parentNode.insertBefore(dockMarker,sharedDock);
+ function attachWorkChatDock(){
+  if(!sharedDock||!employeeChatScreen)return;
+  if(sharedDock.parentElement!==employeeChatScreen)employeeChatScreen.appendChild(sharedDock);
+ }
+ function restoreWorkChatDock(){
+  if(sharedDock&&dockMarker?.parentNode)dockMarker.parentNode.insertBefore(sharedDock,dockMarker.nextSibling);
+ }
  const chatTop=$('svcpWorkChatBack');
+ // Dock destination buttons must close the chat shell before the normal
+ // existing route handlers run; no duplicate nav or route implementation.
+ sharedDock?.addEventListener('click',event=>{
+  if(page.dataset.workChatOpen!=='true')return;
+  const button=event.target.closest?.('button');
+  if(!button||!['navHome','navTasks','navPicture','navManage','assistantButton'].includes(button.id))return;
+  closeWorkChat({restoreFocus:false});
+ },true);
  const chatViewport=window.visualViewport;
  const workComposer=$('svcpChatInput');
  const composerMinHeight=46;
@@ -478,6 +498,7 @@
   chatHost.hidden=true;
   page.dataset.workChatOpen='false';
   employeeChatScreen.hidden=true;
+  restoreWorkChatDock();
   document.documentElement.classList.remove('svcp-work-chat-active');
   employeeChatScreen.style.removeProperty('--svcp-visible-height');
   employeeChatScreen.style.removeProperty('--svcp-visible-top');
@@ -496,6 +517,7 @@
   if(!employeeMode&&business.hidden)select('business');
   if(page.dataset.workChatOpen!=='true')chatReturnFocus=document.activeElement;
   employeeChatScreen.hidden=false;
+  attachWorkChatDock();
   page.dataset.workChatOpen='true';
   employeeChatCanvas.appendChild(chatHost);
   chatHost.hidden=false;chats.hidden=false;
