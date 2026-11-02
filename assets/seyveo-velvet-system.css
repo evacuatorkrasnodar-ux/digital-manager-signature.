@@ -18,6 +18,11 @@
  --sv-velvet-glow:transparent;
  --sv-velvet-radius:17px;
  --sv-velvet-radius-small:15px;
+ /* Shared Air contract. No additional CSS overlay. */
+ --sv-air-icon-stroke:1.35;
+ --sv-air-touch-target:44px;
+ --sv-air-row-height:70px;
+ --sv-air-divider:var(--sv-velvet-divider);
 }
 :root[data-theme="light"]{
  --sv-velvet-panel:#ffffff;
