@@ -515,7 +515,7 @@
 }
 #seyveoLivingMoment.lm-preview.lm-gather .lm-field{
   isolation:isolate;
-  border-color:var(--lm-matte-line);
+  border-color:transparent;
   background:var(--lm-matte-fill);
   box-shadow:none;
   padding:10px 13px 8px;
@@ -891,13 +891,13 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  * bevels, gradients and palette-by-palette re-paints are retired here. */
 #homePage{
  --lm-matte-fill:var(--sv-velvet-panel);
- --lm-matte-line:var(--sv-velvet-edge);
+ --lm-matte-line:transparent;
 }
 #homePage #seyveoLivingMoment.lm-preview:not(.lm-gather) :is(.lm-primary,.lm-inline-item),
 #homePage #seyveoLivingMoment.lm-preview.lm-gather .lm-field,
 #homePage #dynamic .decision-card[data-owner-advice]{
  background:var(--lm-matte-fill)!important;
- border:1px solid var(--lm-matte-line)!important;
+ border:0!important;
  border-radius:var(--sv-velvet-radius)!important;
  box-shadow:none!important;
  backdrop-filter:none!important;
