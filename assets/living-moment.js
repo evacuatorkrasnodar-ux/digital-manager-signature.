@@ -152,10 +152,7 @@ const sample=[
  {kind:'work',title:'Елена · рабочий чат',category:'СООБЩЕНИЯ',body:'Я закончила выкладку товаров. Можете проверить?',reason:'Учебное сообщение от Елены, не из реального рабочего чата.',detail:'Сэйви может предложить черновик. Отправка не подключена.'},
  {kind:'mail',title:'Почта',category:'СООБЩЕНИЯ',body:'Есть письмо, которому нужен ответ.',
   reason:'Почта не подключена, настоящих писем Сэйви пока не читала.',
-  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'},
- {kind:'health',title:'Пора передохнуть',category:'ЗАБОТА',body:'Две спокойные минуты для себя.',
-  reason:'Учебный пример заботы о себе, не основан на данных Apple Health или медицинских измерениях.',
-  detail:'Можно сделать короткую передышку. Это демонстрация будущей персональной заботы, а не медицинский совет.'}
+  detail:'После разрешённого подключения почты Сэйви сможет помогать готовить черновики ответов.'}
 ];
 function polymer(label,callback,kind='quiet'){
  const b=create('button','lm-polymer lm-polymer--'+kind,label);
@@ -198,7 +195,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
  const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
- top.append(label,measure);
+ if(real)top.append(label,measure);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
@@ -230,9 +227,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   execute.hidden=active;
   workDetails.replaceChildren();
   if(!active)return;
-  workDetails.append(create('p','lm-mail-intro','РАБОЧИЙ ЧАТ · ЕЛЕНА · ДЕМО'));
-  workDetails.append(create('p','lm-section-label','СООБЩЕНИЕ ЕЛЕНЫ'));
-  workDetails.append(create('p','lm-mail-draft','Я закончила выкладку товаров. Можете проверить?'));
+  // Source message is already visible in the headline; detail is only for composing.
   if(workMode!=='choose'&&workMode!=='done'){
    workDetails.append(create('p','lm-section-label',workMode==='sayvi'?'✧ СЭЙВИ ПОДГОТОВИЛА ОТВЕТ':'ВАШ ОТВЕТ'));
    const label=create('label','lm-mail-edit-label');
@@ -243,8 +238,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
    label.append(input);workDetails.append(label);
    requestAnimationFrame(()=>{if(input.isConnected){input.style.height='auto';input.style.height=Math.min(input.scrollHeight+4,300)+'px'}});
   }
-  workDetails.append(create('p','lm-mail-note',workMode==='done'?'✓ Демо завершено. Реальное сообщение не отправлено.':'Демо · сообщение не будет отправлено Елене.'));
-  if(workMode==='done')workDetails.append(create('p','lm-mail-draft','Ваш ответ: '+workDraft));
+  if(workMode==='sayvi'||workMode==='own')
+   workDetails.append(create('p','lm-mail-note','Черновик · без отправки'));
  }
 
  const mailDetails=create('div','lm-mail-content');
@@ -277,18 +272,17 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.hidden=documentStep==='edit'||documentStep==='summary';
    open.hidden=documentStep==='edit';
    execute.textContent=documentStep==='done'?'Дальше'
-    :documentStep==='review'?'Ознакомлен · демо':'Проверить';
+    :documentStep==='review'?'Ознакомлен':'Проверить';
   }
   documentDetails.replaceChildren();
   if(!active)return;
-  documentDetails.append(create('p','lm-mail-intro','ДОКУМЕНТ · УЧЕБНЫЙ ДОГОВОР · ДЕМО'));
   documentDetails.append(create('p','lm-section-label','✧ СЭЙВИ ЗАМЕТИЛА'));
   if(documentStep!=='summary'){
    documentDetails.append(create('p','lm-document-excerpt',
     'Пункт «Срок поставки»: конкретный срок в учебном договоре не указан.'));
   }
   if(documentStep==='review'){
-   const sourceLabel=create('label','lm-mail-edit-label','ТЕКСТ ПУНКТА ДОГОВОРА · ДЕМО');
+   const sourceLabel=create('label','lm-mail-edit-label','Текст пункта договора');
    const sourceInput=create('textarea','lm-mail-edit-input');sourceInput.rows=5;sourceInput.maxLength=8500;
    sourceInput.value=documentSource;sourceInput.setAttribute('aria-label','Текст пункта договора для проверки');
    sourceInput.addEventListener('input',()=>{documentSource=sourceInput.value;});
@@ -459,7 +453,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    documentDetails.append(create('p','lm-document-note',
     'Сэйви · '+(documentAnalysis&&documentStep==='review'?documentAnalysis:sayviText)));
    if(documentStep==='review')documentDetails.append(create('p','lm-mail-note',
-    'ДЕМО · Согласование не подписывает и не изменяет договор.'));
+    'Документ не изменяется.'));
   }
  }
 
@@ -475,11 +469,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   open.hidden=active&&mailStep==='edit';
   execute.hidden=active&&(mailStep==='edit'||mailStep==='draft');
   execute.textContent=real?'Продолжить дело':active
-    ?(mailStep==='done'?'✓ Завершено · демо':mailStep==='confirm'?'Завершить пример · демо':'Продолжить')
+    ?(mailStep==='done'?'Готово':mailStep==='confirm'?'Завершить пример':'Продолжить')
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
-  mailDetails.append(create('p','lm-mail-intro','ПИСЬМО · АНДРЕЙ · ДЕМО'),create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),create('p','lm-section-label','✧ ОТВЕТ СЭЙВИ'));
+  mailDetails.append(create('p','lm-mail-intro','Письмо Андрея'),create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),create('p','lm-section-label','✧ ОТВЕТ СЭЙВИ'));
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить черновик');
    const input=create('textarea','lm-mail-edit-input');
@@ -495,8 +489,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
    // A real sending confirmation remains explicit and cannot transmit a message.
    if(mailStep!=='draft'){
     mailDetails.append(create('p','lm-mail-note',mailStep==='done'
-     ?'✓ ДЕМО · Ничего не отправлено.'
-     :'ДЕМО · Подтверждение не отправляет письмо.'));
+     ?'Письмо не отправлялось.'
+     :'Черновик · отправка отключена.'));
    }
   }
  }
@@ -595,13 +589,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }catch{
    if(shown===current&&workActive()&&workMode==='sayvi'){
     const note=workDetails.querySelector('.lm-mail-note');
-    if(note)note.textContent='Локальная Сэйви недоступна. Показан безопасный шаблон · демо, без отправки.';
+    if(note)note.textContent='Сэйви недоступна. Показан шаблон ответа · без отправки.';
    }
   }finally{clearTimeout(timeout);button.disabled=false;}
  });
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
- const workSend=polymer('Отправить · демо',()=>{const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}workDraft=typed;workMode='done';updateWork();finishPreviewItem()});
+ const workSend=polymer('Завершить пример',()=>{const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}workDraft=typed;workMode='done';updateWork();finishPreviewItem()});
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
@@ -750,7 +744,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
    remaining=remaining.filter(item=>item!==shown);
    if(!remaining.length){
-    tip.textContent='Демо завершено · данные не изменены';
+    tip.textContent='';
     space.classList.add('lm-disappear');
     later(()=>rest(),reduced()?0:TIMING.close);
     return;
@@ -796,7 +790,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
  explanation.hidden=true;
  open.setAttribute('aria-controls',explanation.id);
  execute.setAttribute('aria-controls',explanation.id);
- scene.append(top,main,secondary,explanation);
+ if(real)scene.append(top);
+ scene.append(main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
  announceRecommendation(primary);
