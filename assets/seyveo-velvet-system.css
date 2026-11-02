@@ -22,8 +22,8 @@
 :root[data-theme="light"]{
  --sv-velvet-panel:#ffffff;
  --sv-velvet-panel-quiet:#eef1f5;
- --sv-air-dock:#eff1f4;
- --sv-air-home-surface:#ffffff;
+ --sv-air-dock:#e9edf2;
+ --sv-air-home-surface:#fbfcfd;
  --sv-air-control:#e8edf2;
  --sv-air-selected:#dce5ee;
  --sv-velvet-edge:transparent;
