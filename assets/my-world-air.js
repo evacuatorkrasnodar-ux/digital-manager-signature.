@@ -3,6 +3,8 @@
 (() => {
   'use strict';
   const input = document.getElementById('lifeAirSearchInput');
+  const toggle = document.getElementById('lifeAirSearchToggle');
+  const box = document.getElementById('lifeAirSearchBox');
   const grid = document.getElementById('calendarSpaces');
   const empty = document.getElementById('lifeAirNoResults');
   if (!input || !grid || !empty) return;
@@ -39,6 +41,19 @@
     empty.hidden = shown !== 0;
   };
 
+  if (toggle && box) {
+    toggle.addEventListener('click', () => {
+      const opening = box.hidden;
+      box.hidden = !opening;
+      toggle.setAttribute('aria-expanded', String(opening));
+      if (opening) {
+        input.focus({ preventScroll: true });
+      } else {
+        input.value = '';
+        refresh();
+      }
+    });
+  }
   input.addEventListener('input', refresh);
   input.addEventListener('search', refresh);
   input.addEventListener('keydown', (event) => {
