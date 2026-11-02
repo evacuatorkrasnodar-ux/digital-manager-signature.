@@ -28,15 +28,82 @@
  --sv-home-glint:rgba(255,243,222,.042);
 }
 
+/* SEYVEO PURE · matte material tokens. Shared glass tokens above remain
+   for legacy Browser screens until their own design migration. */
+:root{
+ --sv-pure-bg:#101916;
+ --sv-pure-surface:#25332d;
+ --sv-pure-surface-quiet:#1c2822;
+ --sv-pure-line:#34443b;
+ --sv-pure-muted:#bac5be;
+ --sv-pure-selected:#31463b;
+}
+:root[data-theme=light]{
+ --sv-pure-bg:#f7f8fa;
+ --sv-pure-surface:#ffffff;
+ --sv-pure-surface-quiet:#eff1f4;
+ --sv-pure-line:#e6e8eb;
+ --sv-pure-muted:#747b82;
+ --sv-pure-selected:#e9edef;
+}
+:root[data-theme=dark][data-palette=graphite]{
+ --sv-pure-bg:#101214;
+ --sv-pure-surface:#252a2e;
+ --sv-pure-surface-quiet:#1a1e22;
+ --sv-pure-line:#34393d;
+ --sv-pure-muted:#b8bec3;
+ --sv-pure-selected:#343c42;
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-pure-bg:#131820;
+ --sv-pure-surface:#252e3c;
+ --sv-pure-surface-quiet:#1b2330;
+ --sv-pure-line:#384452;
+ --sv-pure-muted:#bdc8d7;
+ --sv-pure-selected:#354456;
+}
+:root[data-theme=dark][data-palette=plum]{
+ --sv-pure-bg:#171615;
+ --sv-pure-surface:#2c2a28;
+ --sv-pure-surface-quiet:#23211f;
+ --sv-pure-line:#423e39;
+ --sv-pure-muted:#c5c0b8;
+ --sv-pure-selected:#3b3530;
+}
+/* Only the active Home is recoloured. Other routes keep their own surfaces. */
+html:not(.seyveo-conversation):has(#homePage:not([hidden])) body{
+ background:var(--sv-pure-bg)!important;
+}
+html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
+ background-color:var(--sv-pure-bg)!important;
+ background-image:none!important;
+}
+#homeHeader{
+ color:var(--text);
+ border:0;background:transparent;box-shadow:none;
+}
+#homeHeader .home-world-popover{
+ background:var(--sv-pure-surface)!important;
+ border-color:var(--sv-pure-line)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:0 8px 22px rgba(0,0,0,.12)!important;
+}
+#homeHeader .home-world-choice{
+ background:var(--sv-pure-surface-quiet)!important;
+ border-color:var(--sv-pure-line)!important;
+ box-shadow:none!important;border-radius:14px!important;
+}
+#homeHeader .home-world-choice:active{background:var(--sv-pure-selected)!important}
+
 /* SEYVEO · Home Velvet v6 — understated Apple-inspired finish.
    More considered typography, lighter card surfaces, compact content rhythm.
    No edits to protected sphere, Deep Reveal, satellites, navigation or JS. */
 #homePage{
-  --home-glass:var(--sv-home-glass);
-  --home-outline:var(--sv-home-outline);
-  --home-glint:var(--sv-home-glint);
-  --home-depth:var(--sv-home-depth);
-  --home-card-radius:32px;
+  --home-glass:var(--sv-pure-surface);
+  --home-outline:var(--sv-pure-line);
+  --home-glint:transparent;
+  --home-depth:none;
+  --home-card-radius:19px;
 }
 
 /* Text hierarchy: SF-like restraint, still readable on compact phones.
@@ -44,7 +111,7 @@
 #homePage .message .kicker{font-size:10.5px;font-weight:590;letter-spacing:.12em}
 #homePage .message h2{
   font-size:var(--type-heading);
-  font-weight:645;line-height:1.3;letter-spacing:-.032em;
+  font-weight:570;line-height:1.3;letter-spacing:-.032em;
 }
 #homePage .message p{font-size:14px;line-height:1.5}
 @media(max-width:375px){
@@ -57,8 +124,8 @@
   padding:15px 18px 13px;
   border:1px solid var(--home-outline);
   border-radius:var(--home-card-radius);
-  background:linear-gradient(155deg,var(--home-glint),transparent 74%),var(--home-glass);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),var(--home-depth);
+  background:var(--home-glass);
+  box-shadow:none;
 }
 #homePage .timeline-head{min-height:28px;margin:0 0 2px}
 #homePage .timeline-title{font-size:13px;font-weight:630;letter-spacing:-.012em;margin:0;cursor:default}
@@ -68,13 +135,13 @@
   min-height:34px;padding:6px 12px;
   border:1px solid var(--home-outline);
   border-radius:999px;
-  background:rgba(255,255,255,.04);
+  background:var(--sv-pure-surface-quiet);
   color:var(--secondary);
   font-size:11px;
 }
 #homePage .activity-row{min-width:0;gap:10px;padding:10px 0;border-bottom:1px solid var(--soft-line)}
 #homePage .activity-list .activity-row:last-child{border-bottom:0}
-#homePage .activity-icon{width:29px;height:29px;background:rgba(255,255,255,.045)}
+#homePage .activity-icon{width:29px;height:29px;background:var(--sv-pure-surface-quiet)}
 #homePage .activity-title{min-width:0;overflow-wrap:anywhere}
 #homePage .activity-empty{padding:4px 0 7px;font-size:11.5px;line-height:1.4}
 
@@ -84,8 +151,8 @@
   padding:15px 18px 15px;
   border:1px solid var(--home-outline);
   border-radius:var(--home-card-radius);
-  background:linear-gradient(155deg,var(--home-glint),transparent 75%),var(--home-glass);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),var(--home-depth);
+  background:var(--home-glass);
+  box-shadow:none;
 }
 #homePage .personal-brief-head{margin-bottom:6px}
 #homePage .personal-brief-head small{
@@ -95,7 +162,7 @@
 #homePage .personal-brief-add{
   min-height:36px;padding:7px 12px;
   border:1px solid var(--home-outline);border-radius:999px;
-  background:rgba(255,255,255,.038);font-size:11.5px
+  background:var(--sv-pure-surface-quiet);font-size:11.5px
 }
 #homePage .personal-brief-row{padding:9px 0 8px}
 #homePage .personal-brief-empty{margin:3px 0 6px;font-size:11.5px;line-height:1.4}
@@ -110,10 +177,10 @@
 
 /* White Velvet: silver-white, still light glass without noisy effects. */
 :root[data-theme=light] #homePage{
-  --home-glass:var(--sv-home-glass);
-  --home-outline:var(--sv-home-outline);
-  --home-glint:var(--sv-home-glint);
-  --home-depth:var(--sv-home-depth);
+  --home-glass:var(--sv-pure-surface);
+  --home-outline:var(--sv-pure-line);
+  --home-glint:transparent;
+  --home-depth:none;
 }
 :root[data-theme=light] #homePage .timeline-history,
 :root[data-theme=light] #homePage .personal-brief-add,
@@ -123,7 +190,7 @@
 
 /* Narrow iPhones: proportional mini-cards without clipped labels. */
 @media(max-width:375px){
-  #homePage{--home-card-radius:29px}
+  #homePage{--home-card-radius:19px}
   #homePage .timeline{padding:14px 16px 12px}
   #homePage .personal-brief{padding:14px 16px 13px}
 }
@@ -133,7 +200,7 @@
    :has() supported in modern iOS Safari; older browsers retain readable fallback. */
 #homePage .timeline:has(.activity-empty){
   padding:11px 16px;
-  border-radius:999px;
+  border-radius:17px;
 }
 #homePage .timeline:has(.activity-empty) .timeline-head{
   margin:0;
@@ -145,7 +212,7 @@
 #homePage .personal-brief:has(.personal-brief-empty){
   margin-top:10px;
   padding:12px 16px 11px;
-  border-radius:29px;
+  border-radius:19px;
 }
 #homePage .personal-brief:has(.personal-brief-empty) .personal-brief-head{
   margin-bottom:1px;
@@ -161,7 +228,7 @@
   #homePage .timeline:has(.activity-empty){padding:10px 14px}
   #homePage .personal-brief:has(.personal-brief-empty){
     padding:11px 15px 10px;
-    border-radius:27px;
+    border-radius:19px;
   }
 }
 
@@ -205,13 +272,13 @@
  left:50%;top:7.5px;
  width:4px;height:4px;border-radius:50%;
  background:var(--quiet-pearl);
- box-shadow:0 0 0 1px rgba(230,242,255,.16),0 0 10px rgba(211,233,255,.38);
+ box-shadow:none;
  transform:translate(-50%,-50%);
 }
 #homePage .quiet-signal-pearl::after{
  content:"";position:absolute;
  left:50%;top:50%;width:26px;height:9px;border-radius:50%;
- background:radial-gradient(ellipse,rgba(219,235,251,.31),transparent 72%);
+ background:none;
  transform:translate(-50%,-50%);
  opacity:.23;
 }
@@ -220,10 +287,10 @@
  --quiet-pearl:#526b87;
 }
 :root[data-theme=light] #homePage .quiet-signal-pearl{
- box-shadow:0 0 0 1px rgba(58,82,112,.18),0 0 9px rgba(75,106,146,.17);
+ box-shadow:none;
 }
 :root[data-theme=light] #homePage .quiet-signal-pearl::after{
- background:radial-gradient(ellipse,rgba(90,126,165,.21),transparent 72%);
+ background:none;
 }
 @media(prefers-reduced-motion:no-preference){
  #homePage .seyveo-quiet-signal:not([hidden]) .quiet-signal-line{
@@ -268,15 +335,15 @@
 }
 
 /* Personal world: lighter nested buttons, same dimensions and routes. */
-#homeHeader .home-world-choice{background:rgba(230,236,231,.035);border-color:rgba(217,226,219,.085);box-shadow:none;font-weight:500}
-:root[data-theme=light] #homeHeader .home-world-choice{background:rgba(80,96,84,.04);border-color:rgba(80,96,84,.10)}
+#homeHeader .home-world-choice{background:var(--sv-pure-surface-quiet);border-color:var(--sv-pure-line);box-shadow:none;font-weight:500}
+:root[data-theme=light] #homeHeader .home-world-choice{background:var(--sv-pure-surface-quiet);border-color:var(--sv-pure-line)}
 
 /* Theme palette also reaches Home's small historical/utility surfaces.
    The protected plasma, Living Ink artwork and its animations are untouched. */
 :root[data-theme=dark][data-palette=graphite] #homePage{
- --home-glass:var(--sv-home-glass);
- --home-outline:var(--sv-home-outline);
- --home-glint:var(--sv-home-glint);
+ --home-glass:var(--sv-pure-surface);
+ --home-outline:var(--sv-pure-line);
+ --home-glint:transparent;
 }
 :root[data-theme=dark][data-palette=sapphire] #homePage{
  --home-glass:var(--sv-home-glass);
