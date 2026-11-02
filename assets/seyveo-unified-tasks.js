@@ -73,6 +73,7 @@
   }
  }catch{}
  let exitTarget='home',pending=null,lastWorkView='personal',managerCalendarContext=false;
+ let businessFromPersonal=false;
  const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal'),
   managerCalendarTabs=$('managerCalendarTabs'),
   calendarTab=page.querySelector('[data-unified-tasks-tab="calendar"]');
@@ -557,13 +558,17 @@
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
   if(label)label.textContent=page.dataset.employeeMode==='true'?'К моим делам'
-   :(exitTarget==='manage'?'В бизнес':'На Главную');
+   :(page.dataset.workView==='business'&&businessFromPersonal?'К делам'
+     :(exitTarget==='manage'?'В бизнес':'На Главную'));
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
   // Work is a dedicated page, and Back leads to the personal Tasks selector.
   if(page.dataset.workChatOpen==='true'){closeWorkChat();return}
   if(isEmployee()&&page.dataset.employeeMode==='true'){
    select('personal');resetViewportAtWorkEntry();return;
+  }
+  if(page.dataset.workView==='business'&&businessFromPersonal){
+   businessFromPersonal=false;select('personal');resetViewportAtWorkEntry();return;
   }
   if(exitTarget==='manage'){
    window.SEYVEO_BUSINESS_NAV?.returnToMenu?.();
@@ -593,15 +598,16 @@
   page.dataset.employeeMode=String(chosen==='employee');
   const title=$('tasksTitle');
   if(title)title.textContent=chosen==='employee'?'Моя работа':
-   chosen==='business'?'Кабинет руководителя':'Дела';
+   chosen==='business'?'Кабинет':'Дела';
   page.dataset.workView=chosen;
   if(taskTabs)taskTabs.hidden=false;
   if(managerSignal)managerSignal.hidden=chosen!=='business';
   const caption=page.querySelector('.tasks-heading .manage-caption');
   if(caption){
-   caption.hidden=chosen==='business';
+   caption.hidden=false;
    if(caption.lastChild?.nodeType===3)
-    caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':' НА КОНТРОЛЕ';
+    caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':
+     chosen==='business'?' BUSINESS':' НА КОНТРОЛЕ';
   }
   personal.hidden=chosen!=='personal';business.hidden=chosen!=='business';
   if(employee)employee.hidden=chosen!=='employee';
@@ -654,7 +660,10 @@
  }
  function openBusiness(source='manage'){
   if(!isManager()){navigate(isEmployee()?'employee':'personal');return}
-  if(source!=='preserve')exitTarget=source==='home'?'home':'manage';
+  if(source!=='preserve'){
+   exitTarget=source==='home'?'home':'manage';
+   businessFromPersonal=false;
+  }
   syncBack();navigate('team');
  }
  function openChat(source='tasks',roomId=null,viewpoint='manager',filter='all'){
@@ -663,6 +672,7 @@
   syncBack();navigate('chat',roomId,viewpoint,filter);
  }
  function openPersonal(){
+  businessFromPersonal=false;
   exitTarget='home';syncBack();navigate('personal');
  }
  function resetViewportAtWorkEntry(){
@@ -679,6 +689,9 @@
   button.addEventListener('click',()=>{
    pending=null;
    if(button.dataset.unifiedTasksTab==='calendar'){openManagerCalendar();return}
+   if(button.dataset.unifiedTasksTab==='business'&&page.dataset.workView==='personal')
+    businessFromPersonal=true;
+   else if(button.dataset.unifiedTasksTab==='personal')businessFromPersonal=false;
    select(button.dataset.unifiedTasksTab);
   }));
  managerCalendarTabs?.addEventListener('click',event=>{
