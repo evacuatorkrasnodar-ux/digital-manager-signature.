@@ -1,4 +1,4 @@
-/* SEYVEO iOS 26-inspired split floating dock.
+/* SEYVEO compact iOS 26-inspired split floating dock.
  * Four destinations in a glass pill and the existing fifth in a glass circle.
  * ONE set of buttons, routes, music actions and the original voice gesture. */
 /* SEYVEO · Quiet Navigation / 2026.
@@ -6,7 +6,7 @@
  * Stable safe-area, native scroll, original voice and music controls. */
 :root{
  --seyveo-nav-ink:#eff7f2;
- --seyveo-dock-height:58px;
+ --seyveo-dock-height:52px;
  --seyveo-dock-icon-size:22px;
  --seyveo-dock-icon-stroke:.8;
  /* Recessed laser engraving: thin line lit by a quiet, neutral WHITE backlight in every dock mode. */
@@ -35,21 +35,21 @@
  bottom:var(--seyveo-dock-bottom)!important;
  transform:translateX(-50%)!important;
  display:grid!important;
- grid-template-columns:repeat(4,minmax(0,1fr)) 64px!important;
+ grid-template-columns:repeat(4,minmax(0,1fr)) 58px!important;
  align-items:center!important;
  justify-items:stretch!important;
  gap:0!important;
- width:min(430px,calc(100% - 16px))!important;
+ width:min(390px,calc(100% - 24px))!important;
  height:var(--seyveo-dock-height)!important;min-height:var(--seyveo-dock-height)!important;
  margin:0!important;padding:0!important;
- border-radius:30px!important;
+ border-radius:999px!important;
  border:0!important;
  background:transparent!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
  isolation:isolate;
 }
-/* Two floating panes, painted by the dock itself without extra markup. */
+/* Two low, fully rounded floating panes; no extra markup. */
 .dock::before,.dock::after{
  content:""!important;display:block!important;
  position:absolute!important;top:1px!important;bottom:1px!important;
@@ -60,8 +60,8 @@
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
 }
-.dock::before{left:0!important;right:64px!important}
-.dock::after{right:0!important;width:56px!important}
+.dock::before{left:0!important;right:58px!important}
+.dock::after{right:0!important;width:50px!important}
 .dock>.nav-item{
  position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;bottom:auto!important;
@@ -118,7 +118,7 @@
 .dock>.nav-manage{
  grid-column:5!important;grid-row:1!important;order:5!important;
  justify-self:end!important;align-self:center!important;
- width:56px!important;height:56px!important;min-height:56px!important;
+ width:50px!important;height:50px!important;min-height:50px!important;
  border-radius:50%!important;
 }
 /* The assistant occupies true column 3/5; hold-to-speak is unchanged. */
@@ -193,7 +193,7 @@
 @media(prefers-reduced-motion:reduce){
  .dock>.assistant-button.listening .voice-bars{animation:none!important}
 }
-/* SEYVEO Signature Dock: a 58px five-way navigation surface.
+/* SEYVEO Signature Dock: a compact 52px five-way navigation surface.
  * The central ceramic voice control remains 50px; four side destinations
  * use 48px touch targets. A tap briefly traces a contour, then it fades.
  * The active section remains distinguishable by type and icon only.
