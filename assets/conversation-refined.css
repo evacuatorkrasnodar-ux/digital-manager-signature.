@@ -445,8 +445,8 @@ html.seyveo-conversation #seyveoConversationHeader{
 html.seyveo-conversation #ask.prompt:not(.expanded){
  box-sizing:border-box;z-index:45;
  width:min(430px,calc(100% - 18px))!important;
- min-height:var(--sv-input-height,54px)!important;height:auto!important;max-height:146px!important;
- padding:9px var(--sv-input-padding-x,12px)!important;
+ min-height:48px!important;height:auto!important;max-height:146px!important;
+ padding:5px var(--sv-input-padding-x,12px)!important;
  gap:0!important;align-items:stretch!important;justify-content:center!important;
  bottom:calc(var(--seyveo-dock-bottom,8px) + var(--seyveo-dock-height,58px) + 5px)!important;
  background:var(--sv-input-surface)!important;
