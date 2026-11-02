@@ -58,7 +58,7 @@
  border:0!important;border-radius:13px!important;
  background:transparent!important;box-shadow:none!important;
  font-size:clamp(10.4px,2.9vw,11.4px)!important;line-height:1.12!important;font-weight:480!important;
- letter-spacing:-.025em!important;color:#e8f1eb!important;
+ letter-spacing:-.025em!important;color:var(--seyveo-engrave-ink)!important;
  -webkit-tap-highlight-color:transparent;
  transition:border-color .36s ease,color .22s ease!important;
 }
@@ -77,24 +77,24 @@
 .dock>.nav-item.active{
  color:var(--seyveo-nav-ink)!important;
  border-color:transparent!important;
- background:var(--sv-air-selected)!important;
+ background:transparent!important;
  box-shadow:none!important;
- font-weight:515!important;
+ font-weight:540!important;
 }
 :root[data-theme="light"] .dock>.nav-item.active{
  border-color:transparent!important;
- background:var(--sv-air-selected)!important;
+ background:transparent!important;
  box-shadow:none!important;
 }
 .dock>.nav-item.sv-nav-feedback{
  border-color:transparent!important;
- background:var(--sv-air-selected)!important;
+ background:transparent!important;
  box-shadow:none!important;
 }
 :root[data-theme="light"] .dock>.nav-item.sv-nav-feedback{
  border-color:transparent!important;
 }
-.dock>.nav-item.active svg{stroke:currentColor!important}
+.dock>.nav-item.active svg{stroke:currentColor!important;stroke-width:1.3!important}
 .dock>.nav-home{grid-column:1!important;grid-row:1!important;order:1!important}
 .dock>.nav-tasks{grid-column:2!important;grid-row:1!important;order:2!important}
 .dock>#navPicture{display:flex!important;grid-column:4!important;grid-row:1!important;order:4!important}
