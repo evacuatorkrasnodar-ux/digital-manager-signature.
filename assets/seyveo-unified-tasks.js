@@ -72,7 +72,7 @@
    previewMode=previewModeFor();
   }
  }catch{}
- let exitTarget='home',pending=null,lastWorkView='personal',managerCalendarContext=false;
+ let exitTarget='home',pending=null,lastWorkView='personal',pulseReturnView='business',managerCalendarContext=false;
  let businessFromPersonal=false;
  const taskTabs=$('unifiedTasksTabs'),managerSignal=$('svcpManagerSignal'),
   managerCalendarTabs=$('managerCalendarTabs'),
@@ -549,12 +549,15 @@
   if(location.hash==='#tasks'){
    const active=page.querySelector('[data-unified-tasks-tab="business"][aria-pressed="true"]');
    lastWorkView=active?'business':'personal';
+   pulseReturnView=lastWorkView;
+  }else{
+   pulseReturnView='business';
   }
   if(options?.efficiency)$('pictureEfficiency')?.setAttribute('open','');
   if(location.hash!=='#picture')location.hash='#picture';
   else window.dispatchEvent(new Event('seyveo:picture-open'));
  }
- function returnFromPulse(){navigate('team')}
+ function returnFromPulse(){navigate(pulseReturnView==='business'?'team':'personal')}
  function syncBack(){
   const label=$('unifiedTasksBackLabel');
   if(label)label.textContent=page.dataset.employeeMode==='true'?'К моим делам'
