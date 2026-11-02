@@ -4,7 +4,7 @@
 #picturePage #pictureWidgetArea{margin:0;min-width:0}
 #picturePage .home-widgets-heading{
  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
- margin:0 2px 10px;padding:0;min-width:0;
+ margin:0 1px 5px;padding:0;min-width:0;
 }
 #picturePage .home-widgets-heading h2{
  margin:0;font-size:13.5px;font-weight:490;letter-spacing:-.017em;line-height:1.4;
@@ -19,9 +19,9 @@
  background:transparent;box-shadow:none;overflow:visible;
 }
 #picturePage .home-widget-card.picture-metric{
- display:grid;grid-template-columns:74px minmax(0,1fr) auto;
- align-items:center;gap:15px;width:100%;min-width:0;min-height:122px;height:auto;
- margin:0;padding:18px 3px;
+ display:grid;grid-template-columns:40px minmax(0,1fr) auto;
+ align-items:center;gap:11px;width:100%;min-width:0;min-height:73px;height:auto;
+ margin:0;padding:10px 2px;
  border:0;border-top:1px solid var(--soft-line);
  border-radius:0;background:transparent;color:var(--text);
  box-shadow:none;filter:none;transform:none;
@@ -30,33 +30,33 @@
 }
 #picturePage .home-widget-card.picture-metric:last-child{border-bottom:1px solid var(--soft-line)}
 #picturePage .picture-metric-artwork{
- display:grid;place-items:center;width:74px;height:78px;flex:none;
+ display:grid;place-items:center;width:40px;height:44px;flex:none;
  color:var(--text);opacity:.87;
 }
 #picturePage .picture-metric-artwork svg{
- display:block;width:66px;height:66px;overflow:visible;
+ display:block;width:38px;height:38px;overflow:visible;
  transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .28s ease;
 }
 #picturePage .picture-metric-copy{
- display:flex;flex-direction:column;gap:7px;min-width:0;
+ display:flex;flex-direction:column;gap:3px;min-width:0;
 }
 #picturePage .picture-metric .home-widget-label{
- font-size:clamp(15px,4.2vw,20px);font-weight:475;
+ font-size:clamp(14px,3.8vw,15.5px);font-weight:530;
  line-height:1.28;letter-spacing:-.028em;color:var(--text);
  overflow-wrap:anywhere;
 }
 #picturePage .picture-metric .home-widget-note{
  margin:0;padding:0;display:block;color:var(--secondary);
- font-size:11.5px;font-weight:420;line-height:1.5;overflow-wrap:anywhere;
+ font-size:10.5px;font-weight:420;line-height:1.35;overflow-wrap:anywhere;
 }
 #picturePage .picture-metric .home-widget-value{
- display:block;align-self:center;justify-self:end;min-width:1.2ch;max-width:112px;
- padding:0;font-size:clamp(24px,6vw,33px);font-weight:465;
+ display:block;align-self:center;justify-self:end;min-width:1.2ch;max-width:102px;
+ padding:0;font-size:clamp(22px,5.7vw,27px);font-weight:490;
  line-height:1.15;letter-spacing:-.05em;text-align:right;
  color:var(--text);overflow-wrap:anywhere;font-variant-numeric:tabular-nums;
 }
 #picturePage .picture-metric[data-home-widget=money] .home-widget-value{
- font-size:clamp(14px,3.8vw,20px);letter-spacing:-.03em;
+ font-size:clamp(13px,3.7vw,17px);letter-spacing:-.03em;
 }
 #picturePage .home-widget-card.picture-metric:active{
  background:color-mix(in srgb,var(--text) 3%,transparent);
@@ -69,13 +69,13 @@
 }
 @media(max-width:370px){
  #picturePage .home-widget-card.picture-metric{
-  grid-template-columns:56px minmax(0,1fr) auto;gap:10px;min-height:103px;padding:12px 2px;
+  grid-template-columns:36px minmax(0,1fr) auto;gap:8px;min-height:70px;padding:9px 2px;
  }
- #picturePage .picture-metric-artwork{width:56px;height:64px}
- #picturePage .picture-metric-artwork svg{width:52px;height:52px}
- #picturePage .picture-metric .home-widget-label{font-size:15px}
- #picturePage .picture-metric .home-widget-note{font-size:10.5px}
- #picturePage .picture-metric .home-widget-value{font-size:25px}
+ #picturePage .picture-metric-artwork{width:36px;height:40px}
+ #picturePage .picture-metric-artwork svg{width:34px;height:34px}
+ #picturePage .picture-metric .home-widget-label{font-size:14px}
+ #picturePage .picture-metric .home-widget-note{font-size:10px}
+ #picturePage .picture-metric .home-widget-value{font-size:23px}
 }
 @media(prefers-reduced-motion:reduce){
  #picturePage .home-widget-card.picture-metric,
