@@ -195,7 +195,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
- const measure=create('span','lm-field-measure',real?'ВАШИ ДАННЫЕ':'ПРЕДПРОСМОТР');
+ const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
  top.append(label,measure);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
@@ -673,7 +673,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    measure.textContent=Math.min(3,remaining.length)+' ИЗ '+remaining.length+' · ВАШИ ДЕЛА';
    return;
   }
-  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ПРЕДПРОСМОТР';
+  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ДЕМО';
  }
  function renderSecondary(){
   secondary.replaceChildren();
@@ -704,7 +704,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   field.dataset.lmSubject=item.kind;
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
   artwork.replaceChildren(icon(item.kind));
-  label.textContent=space.classList.contains('lm-gather')?'ГЛАВНОЕ':item.category;
+  label.textContent=item.category;
   headline.textContent=item.title;
   description.textContent=item.body;
   description.hidden=!real&&(item.kind==='contract'||item.kind==='mail');
@@ -748,13 +748,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
    }
    remaining=remaining.filter(item=>item!==shown);
    if(!remaining.length){
-    tip.textContent='ПРИМЕРЫ РАЗОБРАНЫ · ДАННЫЕ НЕ ИЗМЕНЕНЫ';
+    tip.textContent='Демо завершено · данные не изменены';
     space.classList.add('lm-disappear');
     later(()=>rest(),reduced()?0:TIMING.close);
     return;
    }
    setFeatured(remaining[0]);
-   tip.textContent='QUIET CINEMA · ОСТАЛОСЬ '+remaining.length;
+   tip.textContent='';
    scene.classList.remove('lm-scene--changing');
    later(()=>{morphLocked=false;open.disabled=false;execute.disabled=false},reduced()?0:430);
   },reduced()?0:420);
@@ -823,12 +823,12 @@ function gatherPreview(){
  if(field){
   const label=field.querySelector('.lm-field-eyebrow');
   const measure=field.querySelector('.lm-field-measure');
-  if(label)label.textContent='ГЛАВНОЕ';
-  if(measure)measure.textContent=previewCount+' '+(previewCount===1?'ДЕЛО':'ДЕЛА')+' · ПРЕДПРОСМОТР';
+  // Keep the current category; a second heading would repeat the recommendation.
+  if(measure)measure.textContent=previewCount+' '+(previewCount===1?'ДЕЛО':'ДЕЛА')+' · ДЕМО';
  }
  // All three original tasks stay visible in one parent, never cloned.
  space.classList.add('lm-gather');
- tip.textContent='QUIET CINEMA · ВСЁ В ОДНОЙ КАРТОЧКЕ';
+ tip.textContent='';
 }
 function shrink(){
  if(mode==='idle')return;
@@ -838,8 +838,7 @@ function shrink(){
  if(reason)reason.hidden=true;
  const field=tiles.querySelector('.lm-field');
  if(field)field.classList.remove('lm-has-reason');
- tip.textContent=mode==='task'?'СОХРАНЕНО В «ДЕЛАХ»':
-  'ПРИМЕР · ВАЖНОЕ СОХРАНЯЕТСЯ';
+ tip.textContent=mode==='task'?'Сохранено в Делах':'';
 }
 function disappear(){
  if(mode==='idle')return;
@@ -880,7 +879,7 @@ function startPreview(){
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
  if(!buildExamples()){rest();return false}
- tip.textContent='QUIET CINEMA · ПРИМЕРЫ ДЛЯ ПРОСМОТРА';
+ tip.textContent='';
  space.hidden=false;space.classList.add('lm-preview');
  focus(true);
  // Determine the actual entry distance for each screen, including iPhone X.
