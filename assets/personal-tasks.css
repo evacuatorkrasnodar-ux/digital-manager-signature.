@@ -128,6 +128,16 @@
  display:flex;flex-direction:column;gap:7px;min-width:0;margin:0;
  font-size:12px;font-weight:540;line-height:1.38;color:var(--secondary);
 }
+#personalTaskDialog.personal-task-dialog .personal-task-field{
+ display:flex;flex-direction:column;gap:7px;min-width:0;margin:0;
+}
+#personalTaskDialog.personal-task-dialog .personal-task-field-caption{
+ display:block;color:var(--secondary);font-size:12px;
+ font-weight:540;line-height:1.38;
+}
+#personalTaskDialog.sv-custom-pickers-ready .personal-task-date-control input[type=date]{
+ pointer-events:none;
+}
 #personalTaskDialog.personal-task-dialog input[type=text]{
  display:block;box-sizing:border-box;width:100%;min-width:0;
  height:48px;min-height:48px;margin:0;padding:10px 13px;
@@ -170,24 +180,7 @@
 #personalTaskDialog.personal-task-dialog .personal-task-date-control:focus-within{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
-#personalTaskDialog.personal-task-dialog .personal-task-actions{
- display:flex;align-items:center;justify-content:space-between;gap:10px;
- margin:2px 0 0;padding:13px 0 0;
- border-top:1px solid var(--soft-line);
-}
-#personalTaskDialog.personal-task-dialog .personal-task-actions>.btn{
- flex:0 1 auto;box-sizing:border-box;min-width:88px;min-height:44px;
- padding:10px 14px;border:1px solid transparent;border-radius:15px;
- background:transparent;box-shadow:none;color:var(--secondary);
- font:inherit;font-size:14px;font-weight:530;cursor:pointer;touch-action:manipulation;
-}
-#personalTaskDialog.personal-task-dialog .personal-task-actions>.btn.primary{
- min-width:121px;border-color:var(--seyveo-hdr-outline,var(--soft-line));
- background:var(--card2);color:var(--text);font-weight:600;text-decoration:none;
-}
-#personalTaskDialog.personal-task-dialog .personal-task-actions>.btn:focus-visible{
- outline:2px solid var(--seyveo-emerald);outline-offset:2px;
-}
+/* Task actions use the same SEYVEO form controls as Calendar. */
 #personalTaskDialog.personal-task-dialog small{
  display:block;margin:0;font-size:11px;line-height:1.45;color:var(--secondary);
 }
