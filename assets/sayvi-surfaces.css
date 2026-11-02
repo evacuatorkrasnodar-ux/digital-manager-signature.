@@ -619,6 +619,91 @@
  margin:6px 0 7px;padding:0;font-size:11px;line-height:1.4;
  color:var(--secondary);
 }
+/* The sender is a quiet text row; the actual choice is a short bottom
+   action sheet. No square system select, glow, double panel, or new route. */
+#sayviSurfacePage .sv-mail-editor .sv-mail-account-picker{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ width:100%;min-width:0;min-height:44px;margin:0;padding:7px 3px 7px 0;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:16px;font-weight:500;
+ text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-mail-editor .sv-mail-account-picker:disabled{
+ cursor:default;opacity:.75;
+}
+#sayviSurfacePage .sv-mail-account-picker-chevron{
+ display:block;flex:none;width:9px;height:9px;margin-right:5px;
+ border-right:1.6px solid var(--secondary);border-bottom:1.6px solid var(--secondary);
+ transform:translateY(-2px) rotate(45deg);
+}
+#sayviSurfacePage .sv-mail-editor .sv-mail-account-picker:disabled .sv-mail-account-picker-chevron{
+ display:none;
+}
+#sayviSurfacePage .sv-mail-editor .sv-mail-account-picker:focus-visible{
+ outline:2px solid var(--sv-velvet-etch);outline-offset:0;border-radius:6px;
+}
+#sayviSurfacePage .sv-mail-account-sheet:not([open]){display:none!important}
+#sayviSurfacePage .sv-mail-account-sheet[open]{
+ position:fixed!important;
+ inset:auto 12px max(12px,env(safe-area-inset-bottom,0px))!important;
+ display:block;
+ box-sizing:border-box;
+ width:min(430px,calc(100vw - 24px))!important;max-width:none!important;
+ max-height:min(70dvh,430px)!important;overflow:auto;
+ margin:0 auto!important;padding:4px 14px 13px!important;
+ border:1px solid var(--sv-velvet-edge)!important;border-radius:23px!important;
+ background:var(--sv-velvet-panel)!important;color:var(--text)!important;
+ box-shadow:0 18px 48px rgba(0,0,0,.34)!important;
+ overscroll-behavior:contain;
+}
+#sayviSurfacePage .sv-mail-account-sheet::backdrop{
+ background:rgba(4,9,12,.52);
+ -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+:root[data-theme=light] #sayviSurfacePage .sv-mail-account-sheet::backdrop{
+ background:rgba(16,29,39,.26);
+}
+#sayviSurfacePage .sv-mail-sheet-handle{
+ width:31px;height:3px;margin:4px auto 8px;border-radius:999px;
+ background:var(--sv-velvet-etch);opacity:.35;
+}
+#sayviSurfacePage .sv-mail-sheet-head{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:42px;padding:0 2px 6px;
+}
+#sayviSurfacePage .sv-mail-sheet-title{
+ margin:0!important;color:var(--text);font-size:16px;
+ font-weight:575;line-height:1.35;letter-spacing:-.02em;
+}
+#sayviSurfacePage .sv-mail-sheet-cancel{
+ min-height:44px;padding:8px 4px 8px 12px;border:0;background:transparent;
+ color:var(--secondary);font:inherit;font-size:13px;cursor:pointer;
+}
+#sayviSurfacePage .sv-mail-sheet-options{
+ border-top:1px solid var(--sv-velvet-divider);
+}
+#sayviSurfacePage .sv-mail-sheet-option{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ width:100%;min-height:58px;padding:10px 4px;
+ border:0;border-bottom:1px solid var(--sv-velvet-divider);
+ border-radius:0;background:transparent;color:var(--text);
+ text-align:left;font:inherit;font-size:15px;font-weight:495;cursor:pointer;
+}
+#sayviSurfacePage .sv-mail-sheet-option:last-child{border-bottom:0}
+#sayviSurfacePage .sv-mail-sheet-option:active{
+ background:var(--sv-velvet-pressed);
+}
+#sayviSurfacePage .sv-mail-sheet-check{
+ flex:none;min-width:20px;color:var(--sv-velvet-etch);
+ font-size:20px;font-weight:620;text-align:center;line-height:1;
+}
+#sayviSurfacePage .sv-mail-sheet-cancel:focus-visible,
+#sayviSurfacePage .sv-mail-sheet-option:focus-visible{
+ outline:2px solid var(--sv-velvet-etch);outline-offset:-2px;border-radius:8px;
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage .sv-mail-account-sheet[open]{scroll-behavior:auto}
+}
 #sayviSurfacePage .sv-mail-editor-actions,
 #sayviSurfacePage .sv-mail-detail-actions{
  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
