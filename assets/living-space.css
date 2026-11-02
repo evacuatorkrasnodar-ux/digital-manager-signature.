@@ -1602,59 +1602,7 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="mail"] .sv-deep-footer{
  border-bottom-color:rgba(38,54,74,.12)!important;
 }
 
-/* SEYVEO LIFE · one unified mobile design language for My World and its tools.
-   Existing graphite palette preserved. No route, data or action changes. */
-html.sv-space-active #lifePage .life-heading{
- margin:0 0 21px!important;padding:7px 2px 0!important;
-}
-html.sv-space-active #lifePage .life-eyebrow{
- font-size:9px!important;letter-spacing:.18em!important;font-weight:460!important;
-}
-html.sv-space-active #lifePage .life-heading h1{
- margin:9px 0 8px!important;font-size:clamp(30px,8vw,37px)!important;
- font-weight:420!important;line-height:1.1!important;letter-spacing:-.052em!important;
-}
-html.sv-space-active #lifePage .life-description{
- max-width:37ch;font-size:12.5px!important;line-height:1.55!important;
- color:var(--secondary);
-}
-html.sv-space-active #lifePage .calendar-spaces-head{
- margin:0 2px 7px!important;padding:0!important;
-}
-html.sv-space-active #lifePage .calendar-spaces-head h2{
- font-size:11px!important;font-weight:470!important;letter-spacing:.015em!important;
- color:var(--secondary);
-}
-html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- gap:10px!important;margin:0!important;padding:0!important;
- border:0!important;border-radius:0!important;background:transparent!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
- box-sizing:border-box;min-height:126px!important;
- display:flex!important;flex-direction:column!important;align-items:flex-start!important;
- justify-content:flex-end!important;gap:5px!important;
- padding:15px!important;margin:0!important;
- border:1px solid var(--seyveo-hdr-outline)!important;
- border-radius:23px!important;background:var(--sv-life-tile-gradient)!important;
- box-shadow:none!important;text-align:left!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::after{display:none!important}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
- flex:none;align-self:flex-start!important;justify-self:auto!important;
- width:30px!important;height:30px!important;margin:0 auto 9px 0!important;
- opacity:.86!important;stroke-width:1.35!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
- font-size:15px!important;font-weight:480!important;line-height:1.2!important;
- letter-spacing:-.028em!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
- font-size:10.5px!important;line-height:1.35!important;opacity:.85;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active{
- background:var(--seyveo-hdr-active)!important;transform:scale(.985);
-}
+/* SEYVEO Air: My World tile geometry is owned by life-tiles-accents.css. */
 html.sv-space-active #lifePage .life-footnote{
  margin:18px 2px 24px!important;font-size:10px!important;line-height:1.55!important;
 }
@@ -1687,105 +1635,9 @@ html.sv-space-active #lifePage .life-footnote{
 #seyveoSmartHomeDialog .svh-tile{
  border-radius:19px!important;box-shadow:none!important;
 }
-@media(max-width:350px){
- html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:8px!important}
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
-  padding:12px!important;min-height:116px!important;
- }
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{font-size:14px!important}
-}
-:root[data-theme=light] #lifePage #calendarSpaces .calendar-space-button{
- border-color:var(--seyveo-hdr-outline)!important;background:var(--sv-life-tile-gradient)!important;
-}
 :root[data-theme=light] :is(#calendarSpaceDialog,#seyveoContactsDialog,#seyveoSmartHomeDialog){
  background:var(--sv-life-dialog-bg)!important;border-color:var(--seyveo-hdr-outline)!important;
 }
-@media(prefers-reduced-motion:reduce){
- #lifePage #calendarSpaces .calendar-space-button{transition:none!important;transform:none!important}
-}
-
-/* LIFE · readable compact two-column shortcuts.
-   Names and descriptions share one alignment, with larger legible type.
-   Fixed equal-height rows; same approved Black Velvet surfaces/actions. */
-html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
- display:grid!important;
- grid-template-columns:repeat(2,minmax(0,1fr))!important;
- align-items:stretch!important;
- gap:7px!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
- box-sizing:border-box!important;
- display:grid!important;
- grid-template-columns:22px minmax(0,1fr)!important;
- grid-template-rows:34px minmax(0,1fr)!important;
- gap:2px 6px!important;
- align-content:stretch!important;
- align-items:start!important;
- justify-content:stretch!important;
- justify-items:start!important;
- width:100%!important;
- height:92px!important;
- min-height:92px!important;
- max-height:92px!important;
- margin:0!important;
- padding:8px!important;
- border-radius:16px!important;
- text-align:left!important;
- overflow:hidden;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
- grid-column:1!important;grid-row:1 / span 2!important;
- justify-self:center!important;align-self:start!important;
- width:22px!important;height:22px!important;
- max-width:22px!important;max-height:22px!important;
- margin:1px 0 0!important;
- flex:none!important;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
- display:block!important;
- grid-column:2!important;grid-row:1!important;
- justify-self:start!important;align-self:start!important;
- width:100%;min-width:0;
- margin:0!important;
- font-size:14.5px!important;line-height:1.17!important;
- font-weight:570!important;letter-spacing:-.025em!important;
- text-align:left!important;
- overflow-wrap:break-word;
-}
-html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
- display:block!important;
- grid-column:2!important;grid-row:2!important;
- justify-self:start!important;align-self:start!important;
- width:100%;min-width:0;
- margin:0!important;
- font-size:12px!important;line-height:1.2!important;
- font-weight:450!important;
- text-align:left!important;
- overflow-wrap:break-word;
-}
-html.sv-space-active #lifePage .life-heading{margin-bottom:12px!important}
-html.sv-space-active #lifePage .life-footnote{margin-top:12px!important}
-@media(max-width:350px){
- html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{gap:6px!important}
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button{
-  height:94px!important;min-height:94px!important;max-height:94px!important;
-  grid-template-columns:20px minmax(0,1fr)!important;
-  grid-template-rows:34px minmax(0,1fr)!important;
-  gap:2px 5px!important;
-  padding:8px 7px!important;
- }
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button svg{
-  width:20px!important;height:20px!important;
-  max-width:20px!important;max-height:20px!important;
- }
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button span{
-  font-size:13.8px!important;line-height:1.16!important;
- }
- html.sv-space-active #lifePage #calendarSpaces .calendar-space-button small{
-  font-size:11.3px!important;line-height:1.2!important;
- }
-}
-
 /* Shared pigment contract for the whole app and My World subpages.
    Keep the original emerald art and geometry; only color comes from theme. */
 :root{
