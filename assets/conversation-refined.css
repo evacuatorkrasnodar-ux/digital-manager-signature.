@@ -619,53 +619,116 @@ html.seyveo-conversation .seyveo-chat-browser-nudge button:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
 }
 
-
-/* Feather Chat single two-row control (90px minimum).
-   The EXISTING five functional dock buttons form its upper row and the SAME
-   textarea is its lower row. No duplicate controls or new handlers. */
-html.seyveo-conversation{
- --sv-chat-unified-input:46px;
- --sv-chat-unified-actions:44px;
-}
-html.seyveo-conversation footer.dock.seyveo-chat-dock{
- height:var(--sv-chat-unified-actions)!important;
- min-height:var(--sv-chat-unified-actions)!important;
- padding:1px 6px 0!important;
- bottom:calc(var(--seyveo-dock-bottom) + var(--sv-chat-unified-input))!important;
- border-radius:20px 20px 0 0!important;
- border-bottom:0!important;
- width:min(430px,calc(100% - 14px))!important;
- z-index:48!important;
-}
-html.seyveo-conversation footer.dock.seyveo-chat-dock>.nav-item,
-html.seyveo-conversation footer.dock.seyveo-chat-dock>#assistantButton{
- height:40px!important;min-height:40px!important;
-}
+/* Historical genuine Feather Chat composer restored from pre-dock GitHub revision.
+   The single native #ask holds writing and its own five existing controls. */
+html.seyveo-conversation footer.dock.seyveo-chat-dock{display:none!important}
+/* Native keyboard-friendly composer: a tall, stable capsule with TEXT on the
+ * first row and unobtrusive controls on the second, anchored to its bottom.
+ * The existing textarea alone scrolls at four lines; never resize the page
+ * on each keystroke, never bring up a second editor. */
 html.seyveo-conversation #ask.prompt:not(.expanded){
- width:min(430px,calc(100% - 14px))!important;
- min-height:var(--sv-chat-unified-input)!important;
- padding:3px 10px 4px!important;
- bottom:var(--seyveo-dock-bottom)!important;
- border-radius:0 0 20px 20px!important;
- border-top:1px solid var(--soft-line)!important;
- z-index:47!important;
+ box-sizing:border-box;z-index:45;
+ display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;justify-content:center;
+ gap:1px!important;
+ width:min(518px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ min-height:84px!important;height:auto!important;max-height:158px!important;
+ padding:6px 10px 5px!important;
+ /* On iPhone X: env(bottom)=34px -> 22px from the physical edge.
+    Preserve the rounded border and the home-indicator gesture region. */
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
+ border:1px solid var(--line)!important;
+ border-radius:25px!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ transform:translateX(-50%)!important;
+ transition:none!important;animation:none!important;
+ overflow:hidden!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question{
- min-height:38px!important;
- padding:4px 3px!important;
+ box-sizing:border-box;display:block;
+ flex:0 0 auto!important;
+ width:100%!important;min-width:0!important;
+ min-height:33px!important;height:var(--sayvi-draft-height,38px)!important;
+ max-height:103px!important;
+ padding:5px 3px 4px!important;
+ margin:0;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ font-size:16px!important;line-height:24px!important;
+ font-weight:400;letter-spacing:0;
+ overflow-y:auto!important;resize:none!important;
+ -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
 }
-html.seyveo-conversation.seyveo-composer-keyboard footer.dock.seyveo-chat-dock{
- visibility:visible!important;pointer-events:auto!important;opacity:1!important;
- bottom:calc(var(--keyboard-offset,0px) + 7px + var(--sv-chat-unified-input))!important;
+html.seyveo-conversation #ask.prompt:not(.expanded) #question:focus{
+ outline:none!important;
 }
-html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
- bottom:calc(var(--keyboard-offset,0px) + 7px)!important;
+html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
+ color:var(--secondary);opacity:.78;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
- display:none!important;
+ display:flex!important;align-items:center;justify-content:flex-end;
+ width:100%;height:44px;min-height:44px;
+ gap:5px!important;flex:0 0 44px;align-self:stretch;
+ margin:0!important;
 }
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoConversationMic{
+ display:grid!important;place-items:center;
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ background:transparent;border:1px solid transparent;color:var(--text);
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
+ display:grid!important;place-items:center;
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ background:transparent!important;border:0!important;
+ color:var(--secondary)!important;border-radius:50%;
+ box-shadow:none!important;
+}
+html.seyveo-conversation #ask.prompt.seyveo-has-text:not(.expanded) #composerCompactSend{
+ background:var(--text)!important;border-color:var(--text)!important;
+ color:var(--bg)!important;
+ box-shadow:0 2px 10px rgba(0,0,0,.15)!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
+ bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded):focus-within{
+ border-color:var(--line)!important;
+}
+/* On iPhone the transcript shrinks to the visible height, never the composer.
+ * Rotating, scrolling a long response or typing a long message keeps the same
+ * capsule resting on the keyboard rather than pushing the page. */
 @media(max-width:700px){
- html.seyveo-conversation footer.dock.seyveo-chat-dock{
-  width:min(430px,calc(100% - 14px))!important;
+ html.seyveo-conversation #stage .orb-inline-reply-text{
+  max-height:none!important;
+ }
+ html.seyveo-conversation #ask.prompt:not(.expanded){
+  left:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))/2)!important;
  }
 }
+@media(max-height:500px){
+ html.seyveo-conversation .app{
+  padding-top:calc(env(safe-area-inset-top,0px) + 4px)!important;
+ }
+ html.seyveo-conversation #seyveoConversationHeader{margin-bottom:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ html.seyveo-conversation #ask.prompt:not(.expanded){transition:none!important}
+}
+
+
+/* Restore original compact action controls even when iOS keyboard is open. */
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact,
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded) .composer-compact{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ width:100%!important;height:44px!important;min-height:44px!important;
+ flex:0 0 44px!important;gap:3px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact>*{
+ display:grid!important;place-items:center!important;flex:0 0 44px!important;
+ min-width:44px!important;width:44px!important;min-height:44px!important;height:44px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact>*[hidden]{display:none!important}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded) .composer-compact>*:not(#composerCompactSend){display:grid!important}
