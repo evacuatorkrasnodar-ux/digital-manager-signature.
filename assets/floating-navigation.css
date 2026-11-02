@@ -50,13 +50,6 @@
  box-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10)!important;
  isolation:isolate;
 }
-/* An opaque fallback honors accessibility settings without creating a second dock. */
-@media(prefers-reduced-transparency:reduce){
- .dock{
-  background:var(--sv-air-dock,#24372f)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- }
-}
 .dock::before,.dock::after{content:none!important;display:none!important}
 .dock>.nav-item{
  position:relative!important;
@@ -496,3 +489,15 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
 .dock>#assistantButton #rim-night stop:nth-child(5){stop-color:var(--sv-ceramic-rim-5,#f5faf6)}
 .dock>#assistantButton #rim-night stop:nth-child(6){stop-color:var(--sv-ceramic-rim-6,#a1b6ab)}
 .dock>#assistantButton #rim-night stop:nth-child(7){stop-color:var(--sv-ceramic-rim-7,#7b9587)}
+/* Accessibility: keep readable nontransparent dock materials in every palette.
+   This rule stays AFTER palette colors so earlier theme rules cannot override it. */
+@media(prefers-reduced-transparency:reduce){
+ :root .dock,
+ :root[data-theme=light] .dock,
+ :root[data-theme=dark][data-palette=graphite] .dock,
+ :root[data-theme=dark][data-palette=sapphire] .dock,
+ :root[data-theme=dark][data-palette=plum] .dock{
+  background:var(--sv-air-dock,#24372f)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
