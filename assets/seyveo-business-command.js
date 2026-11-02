@@ -696,8 +696,8 @@ function updatePerspective(){
  button.textContent=state.viewpoint==='elena'?'Вернуться к руководителю':'Взгляд Елены';
  button.setAttribute('aria-pressed',String(state.viewpoint==='elena'));
  $('svcpConversationDetail').textContent=state.viewpoint==='elena'
-  ?'Как выглядел бы чат у Елены · учебный пример'
-  :current.hint+' · на одном устройстве';
+  ?'Просмотр от лица Елены · демо'
+  :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
  $('svcpMentionElena').hidden=current.kind!=='groups';
  const chips=chatRoot.querySelector('.svcp-rooms');if(chips)chips.hidden=current.kind!=='groups';
  $('svcpRecognizeOpen').hidden=true; // Awards are offered contextually beside relevant messages.
