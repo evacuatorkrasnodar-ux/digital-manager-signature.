@@ -173,7 +173,8 @@ html.seyveo-conversation :is(#ask,.seyveo-conversation-expand){font-size:calc(va
 #sayviMusicPage :is(.sv-music-status,.sv-music-note,.sv-music-providers-desc,.sv-music-row-num){
  font-size:calc(var(--sv-type-caption) * var(--sv-text-scale))!important;line-height:1.4
 }
-#sayviMusicPage :is(.sv-music-intent,.sv-music-minimize,.sv-music-panel-close){
+/* Music action sizes are owned by its compact player stylesheet. */
+#sayviMusicPage .sv-music-panel-close{
  font-size:calc(var(--sv-type-action) * var(--sv-text-scale))!important
 }
 /* Family messaging and dialogs use the same body size. */
