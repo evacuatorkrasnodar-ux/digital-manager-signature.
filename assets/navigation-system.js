@@ -93,9 +93,12 @@
   cancelIds.forEach(id=>{
    $(id)?.addEventListener('click',confirmLeaving,true);
   });
-  // Some existing forms close when tapping outside the dialog.
+  // Outside taps and dock navigation both honour unsaved changes.
+  // When the real dock is portaled into the task dialog it is inside the
+  // modal top layer; guarding at the dialog capture phase blocks its route.
   dialog.addEventListener('click',event=>{
-   if(event.target===dialog)confirmLeaving(event);
+   if(event.target===dialog || event.target.closest?.('footer.dock > button, footer.dock button'))
+    confirmLeaving(event);
   },true);
  });
  window.SEYVEO_NAVIGATION=Object.freeze({version:1});
