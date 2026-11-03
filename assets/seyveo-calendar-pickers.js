@@ -277,9 +277,14 @@ if(taskDialog&&taskDate&&taskControl){
    taskTrigger.focus({preventScroll:true});
   };
   taskTrigger.addEventListener('click',openTask);
-  back.addEventListener('click',()=>{
-   closeTask();taskTrigger.focus({preventScroll:true});
-  });
+  const taskDateClose=grid.querySelector('.cal-pick-date-close');
+  const returnToTask=()=>{
+   closeTask();
+   taskTrigger.focus({preventScroll:true});
+  };
+  back.addEventListener('click',returnToTask);
+  // The date grid is cloned from Event: its Close button needs the Task handler.
+  if(taskDateClose)taskDateClose.addEventListener('click',returnToTask);
   clear.addEventListener('click',()=>{
    taskDate.value='';
    taskDate.dispatchEvent(new Event('input',{bubbles:true}));
