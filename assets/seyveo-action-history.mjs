@@ -45,18 +45,18 @@ if(personal&&head){
  display:block;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
  stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round
 }
-.sah-history-title{margin:3px 0 9px;font-size:clamp(30px,8vw,36px);font-weight:660;line-height:1.12;letter-spacing:-.045em;color:var(--text)}
+.sah-history-title{margin:4px 0 10px;font-size:clamp(28px,7.3vw,33px);font-weight:650;line-height:1.14;letter-spacing:-.042em;color:var(--text)}
 .sah-history-intro{margin:0 0 17px;color:var(--secondary);font-size:13px;line-height:1.45}
 .sah-inline-panel.is-empty-history .sah-history-intro{display:none}
 .sah-inline-panel.is-empty-history .sah-inline-head{margin-bottom:12px}
 .sah-inline-panel.is-empty-history .sah-inline-note{
  display:flex;flex-direction:column;align-items:center;justify-content:center;
- width:100%;max-width:330px;min-height:clamp(270px,45dvh,530px);
- margin:0 auto;padding:0 16px 25px;box-sizing:border-box;
+ width:100%;max-width:330px;min-height:clamp(245px,40dvh,440px);
+ margin:0 auto;padding:0 16px 20px;box-sizing:border-box;
  background:transparent;border:0;text-align:center;
  color:var(--secondary);font-size:13.5px;line-height:1.55;
 }
-.sah-empty-icon{width:58px;height:58px;display:block;margin:0 0 19px;fill:none;
+.sah-empty-icon{width:52px;height:52px;display:block;margin:0 0 18px;fill:none;
  stroke:var(--secondary);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
 .sah-empty-title{display:block;margin:0 0 7px;color:var(--text);
  font-size:19px;font-weight:620;line-height:1.23;letter-spacing:-.025em}
