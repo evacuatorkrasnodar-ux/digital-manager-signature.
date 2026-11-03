@@ -280,7 +280,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    Barcode manual entry unfolds inside the same surface when requested. */
 #svcpWorkChatScreen #svcpCameraTray:not([hidden]){
  position:absolute;z-index:8;box-sizing:border-box;
- left:12px;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
+ left:12px;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 126px);
  transform:none;
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;align-items:center;
  gap:2px;padding:6px;width:min(250px,calc(100% - 24px));
@@ -874,4 +874,27 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
  #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask span{font-size:11px!important}
  #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){width:40px!important;min-width:40px!important}
+}
+
+/* Emoji-only popover: a detached compact selector ABOVE the tall composer.
+   No duplicated tool menu and no overlap with the writing area. */
+#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"]:not([hidden]){
+ width:min(276px,calc(100% - 24px))!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ padding:7px!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + 128px)!important;
+ max-height:min(244px,34dvh)!important;
+ border-radius:19px!important;
+}
+#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip:not([hidden]){
+ display:grid!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:1px!important;
+}
+#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip>.svcp-composer-emoji-back{
+ font-size:12px!important;height:32px!important;min-height:32px!important;
+}
+#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip :is(.svcp-composer-emoji-choice,.svcp-composer-emoji-expand){
+ width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;
+ font-size:23px!important;line-height:1!important;padding:0!important;
 }
