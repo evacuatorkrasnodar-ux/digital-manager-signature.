@@ -255,8 +255,33 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex:0 0 auto;max-height:28dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain
 }
 #svcpWorkChatScreen :is(#svcpCameraTray,#svcpChatTaskDraft,#svcpVoiceCapture){max-height:38dvh}
-#svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpComposerEmojiStrip,#svcpTaskDiscussionQuick){
+#svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpTaskDiscussionQuick){
  padding:8px 13px;background:var(--card);border-top:1px solid var(--soft-line)
+}
+/* Emoji picker belongs to the composer: one scrollable flat-glass ribbon,
+   never a second full-width toolbar or another row of controls. */
+#svcpWorkChatScreen #svcpComposerEmojiStrip:not([hidden]){
+ position:absolute;z-index:8;flex:0 0 auto;
+ left:50%;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
+ transform:translateX(-50%);box-sizing:border-box;
+ display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:center;
+ width:min(430px,calc(100% - 22px));max-width:calc(100% - 22px);
+ height:52px;min-height:52px;max-height:52px;
+ gap:3px;padding:3px 7px;
+ overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+ border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius);
+ background:var(--sv-input-surface);
+ -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
+ box-shadow:inset 0 1px 0 var(--sv-input-gloss);
+}
+#svcpWorkChatScreen #svcpComposerEmojiStrip::-webkit-scrollbar{display:none}
+#svcpWorkChatScreen #svcpComposerEmojiStrip :is(.svcp-composer-emoji-choice,.svcp-composer-emoji-expand){
+ flex:0 0 44px;min-width:44px;min-height:44px;height:44px;
+ padding:0;border:0;border-radius:12px;background:transparent;box-shadow:none;
+ display:grid;place-items:center;font-size:23px;
+}
+#svcpWorkChatScreen #svcpComposerEmojiStrip :is(.svcp-composer-emoji-choice,.svcp-composer-emoji-expand):active{
+ background:color-mix(in srgb,var(--card2) 45%,transparent)
 }
 /* SEYVEO Input: shared quiet-glass shell with its original work-chat actions. */
 #svcpWorkChatScreen #svcpChatForm{
@@ -273,7 +298,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:5px!important}
 /* When an attachment/reply tray opens, keep it in ordinary layout instead of overlapping controls. */
-#svcpWorkChatScreen .svcp-chat:has(:is(#svcpCameraTray,#svcpComposerEmojiStrip,#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
+#svcpWorkChatScreen .svcp-chat:has(:is(#svcpCameraTray,#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
  position:relative!important;inset:auto!important;flex:0 0 auto!important
 }
 #svcpWorkChatScreen .svcp-chat:has(#svcpVoiceCapture:not([hidden])) #svcpMessages{padding-bottom:12px!important}
@@ -756,7 +781,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(:is(
- #svcpCameraTray,#svcpComposerEmojiStrip,#svcpReplyPreview,
+ #svcpCameraTray,#svcpReplyPreview,
  #svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick
 ):not([hidden])) #svcpChatForm{
  position:relative!important;left:auto!important;right:auto!important;
