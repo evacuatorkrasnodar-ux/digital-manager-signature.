@@ -1,12 +1,14 @@
-/* SEYVEO · My World / Air content, iOS-inspired floating tool.
-   Preserve the user's lightweight two-column list. No raised app icons,
-   heavy tile borders, or duplicate glass backgrounds. */
+/* SEYVEO My World · Air 26 / approved low floating-glass language.
+   Single owner of My World header, inline search and two-column destinations.
+   Flat colored iconography on a continuous theme canvas; glass is for tools.
+   Never wrap each destination in heavy app tiles or gray pressed surfaces. */
 :root {
-  --sv-world-divider:color-mix(in srgb,var(--text) 9%,transparent);
+  --sv-world-control-fill:linear-gradient(148deg,color-mix(in srgb,var(--text) 7%,transparent),color-mix(in srgb,var(--text) 3%,transparent));
+  --sv-world-control-glint:inset 0 1px 0 rgba(255,255,255,.12),0 5px 15px rgba(0,0,0,.075);
 }
 html.sv-space-active #lifePage {
   position:relative;
-  padding:4px 0 20px!important;
+  padding:6px 0 22px!important;
   background:transparent!important;
   color:var(--text);
 }
@@ -17,8 +19,8 @@ html.sv-space-active #lifePage .life-heading {
   align-items:center!important;
   justify-content:space-between!important;
   gap:12px!important;
-  margin:0 0 13px!important;
-  padding:9px 8px 0!important;
+  margin:0 0 17px!important;
+  padding:10px 14px 0!important;
   border:0!important;
   background:transparent!important;
   box-shadow:none!important;
@@ -28,10 +30,10 @@ html.sv-space-active #lifePage .life-heading h1 {
   margin:0!important;
   padding:0!important;
   color:var(--text)!important;
-  font-size:clamp(30px,8vw,34px)!important;
-  font-weight:680!important;
-  letter-spacing:-.048em!important;
-  line-height:1.13!important;
+  font-size:clamp(31px,7.9vw,35px)!important;
+  font-weight:650!important;
+  letter-spacing:-.052em!important;
+  line-height:1.10!important;
 }
 html.sv-space-active #lifePage .life-heading h1 span {
   color:inherit!important;
@@ -40,13 +42,14 @@ html.sv-space-active #lifePage .life-heading h1 span {
 /* Search is a small glass toolbar control, not a permanent oversized field. */
 html.sv-space-active #lifePage .life-air-search-toggle{
   flex:none;display:grid;place-items:center;
-  width:42px;height:42px;min-width:42px;
-  padding:0;border:1px solid color-mix(in srgb,var(--text) 9%,transparent);
+  width:44px;height:44px;min-width:44px;
+  padding:0;border:0;
   border-radius:50%;
-  background:color-mix(in srgb,var(--text) 6%,transparent);
+  background:var(--sv-world-control-fill);
   color:var(--text);
-  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
-  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:var(--sv-world-control-glint);
+  -webkit-backdrop-filter:blur(18px) saturate(1.1);
+  backdrop-filter:blur(18px) saturate(1.1);
   -webkit-tap-highlight-color:transparent;
   transition:background-color .16s ease,transform .16s ease;
 }
@@ -56,7 +59,7 @@ html.sv-space-active #lifePage .life-air-search-toggle svg{
   stroke-linejoin:round;fill:none;
 }
 html.sv-space-active #lifePage .life-air-search-toggle:active{
-  transform:scale(.94);background:color-mix(in srgb,var(--text) 12%,transparent);
+  transform:scale(.96);opacity:.75;
 }
 html.sv-space-active #lifePage .life-air-search-toggle:focus-visible{
   outline:2px solid var(--text);outline-offset:3px;
@@ -64,9 +67,12 @@ html.sv-space-active #lifePage .life-air-search-toggle:focus-visible{
 html.sv-space-active #lifePage .life-air-search{
   display:flex;align-items:center;gap:10px;
   height:44px;min-height:44px;
-  margin:0 6px 12px;padding:0 13px;
-  border-radius:14px;border:1px solid color-mix(in srgb,var(--text) 9%,transparent);
-  background:color-mix(in srgb,var(--text) 6%,transparent);
+  margin:0 10px 14px;padding:0 16px;
+  border-radius:999px;border:0;
+  background:var(--sv-world-control-fill);
+  box-shadow:var(--sv-world-control-glint);
+  -webkit-backdrop-filter:blur(18px) saturate(1.1);
+  backdrop-filter:blur(18px) saturate(1.1);
 }
 html.sv-space-active #lifePage .life-air-search[hidden]{display:none!important}
 html.sv-space-active #lifePage .life-air-search svg{
@@ -96,12 +102,12 @@ html.sv-space-active #lifePage .calendar-spaces {
 html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid {
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  column-gap:8px!important;
-  row-gap:2px!important;
+  column-gap:12px!important;
+  row-gap:5px!important;
   align-items:stretch!important;
   width:100%!important;
   margin:0!important;
-  padding:0 6px!important;
+  padding:0 9px!important;
   border:0!important;
   border-radius:0!important;
   background:transparent!important;
@@ -113,7 +119,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   position:relative!important;
   box-sizing:border-box!important;
   display:grid!important;
-  grid-template-columns:30px minmax(0,1fr)!important;
+  grid-template-columns:32px minmax(0,1fr)!important;
   grid-template-rows:auto!important;
   column-gap:10px!important;
   row-gap:0!important;
@@ -123,14 +129,14 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   justify-content:stretch!important;
   width:100%!important;
   height:auto!important;
-  min-height:72px!important;
+  min-height:69px!important;
   max-height:none!important;
   margin:0!important;
-  padding:9px 7px!important;
+  padding:9px 8px!important;
   overflow:visible!important;
   border:0!important;
   border-bottom:0!important;
-  border-radius:14px!important;
+  border-radius:19px!important;
   background:transparent!important;
   box-shadow:none!important;
   filter:none!important;
@@ -138,7 +144,8 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   text-align:left!important;
   text-decoration:none!important;
   -webkit-tap-highlight-color:transparent;
-  transition:background-color .17s ease,opacity .17s ease,transform .22s cubic-bezier(.2,.7,.2,1)!important;
+  touch-action:manipulation;
+  transition:opacity .16s ease,transform .2s cubic-bezier(.2,.7,.2,1)!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button::before {
   content:none!important;
@@ -158,17 +165,19 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
   justify-self:center!important;
   flex:none!important;
   box-sizing:border-box!important;
-  width:26px!important;
-  height:26px!important;
+  width:27px!important;
+  height:27px!important;
   min-width:0!important;
-  max-width:26px!important;
-  max-height:26px!important;
+  max-width:27px!important;
+  max-height:27px!important;
   margin:0!important;
   color:var(--sv-world-icon)!important;
   fill:none;
   stroke:currentColor;
-  stroke-width:var(--sv-air-icon-stroke,1.35)!important;
-  opacity:.96!important;
+  stroke-width:1.45!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  opacity:.98!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
   display:block!important;
@@ -181,8 +190,8 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
   width:100%!important;
   margin:0!important;
   padding:0!important;
-  font-size:calc(15.5px * var(--sv-text-scale,1))!important;
-  font-weight:530!important;
+  font-size:calc(15.3px * var(--sv-text-scale,1))!important;
+  font-weight:540!important;
   letter-spacing:-.025em!important;
   line-height:1.28!important;
   color:var(--text)!important;
@@ -198,8 +207,8 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > small {
   display:none!important;
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active {
-  background:color-mix(in srgb,var(--text) 6%,transparent)!important;
-  opacity:1!important;
+  background:transparent!important;
+  opacity:.73!important;
   transform:scale(.985);
 }
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visible {
@@ -237,21 +246,32 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
 }
 @media(max-width:390px) {
   html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
-    column-gap:4px!important;
-    padding:0 2px!important;
+    column-gap:5px!important;
+    row-gap:4px!important;
+    padding:0 6px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
     grid-template-columns:27px minmax(0,1fr)!important;
-    column-gap:7px!important;
-    min-height:64px!important;
+    column-gap:8px!important;
+    min-height:66px!important;
     padding:8px 4px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
-    width:24px!important;height:24px!important;
-    max-width:24px!important;max-height:24px!important;
+    width:25px!important;height:25px!important;
+    max-width:25px!important;max-height:25px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > span {
-    font-size:calc(14px * var(--sv-text-scale,1))!important;
+    font-size:calc(14.4px * var(--sv-text-scale,1))!important;
+  }
+}
+/* Accessibility: do not simulate transparency when the user opts out.
+   The content rows themselves remain transparent and uncluttered. */
+@media(prefers-reduced-transparency:reduce){
+  html.sv-space-active #lifePage .life-air-search-toggle,
+  html.sv-space-active #lifePage .life-air-search{
+    background:var(--sv-air-home-surface,var(--card))!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    box-shadow:none!important;
   }
 }
 @media(prefers-reduced-motion:reduce) {
