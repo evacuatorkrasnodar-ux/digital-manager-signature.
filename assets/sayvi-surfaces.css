@@ -285,6 +285,11 @@
 }
 :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"]{
  --sm-light:rgba(42,162,130,.10);
+ /* SEYVEO Air 26: subtle mint only inside selected glass, not colored text. */
+ --sm-tint:rgba(215,236,232,.66);
+ --sm-glass:var(--sv-glass-orb-primary);
+ --sm-glass-edge:var(--sv-glass-orb-edge);
+ --sm-glass-blur:var(--sv-glass-orb-blur);
 }
 /* Share the app's continuous Black Velvet background, no isolated glow rectangle. */
 #sayviSurfacePage[data-sv-subject="mail"]::before{content:none!important;display:none!important;}
@@ -377,6 +382,12 @@
  color:var(--text);background:var(--sm-tint);
  border-color:transparent;
  box-shadow:none;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ background:var(--sm-glass)!important;
+ border:1px solid var(--sm-glass-edge)!important;
+ -webkit-backdrop-filter:var(--sm-glass-blur);backdrop-filter:var(--sm-glass-blur);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.47)!important;
 }
 #sayviSurfacePage .sv-mail-search{
  box-sizing:border-box;display:flex;align-items:center;gap:8px;
@@ -736,6 +747,12 @@
 }
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent--lead{
  background:var(--sm-tint);font-weight:610;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-deep-intent--lead{
+ background:var(--sm-glass)!important;
+ border:1px solid var(--sm-glass-edge)!important;
+ -webkit-backdrop-filter:var(--sm-glass-blur);backdrop-filter:var(--sm-glass-blur);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.45)!important;
 }
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent::after,
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent::after{display:none}
