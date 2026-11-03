@@ -278,22 +278,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    Barcode manual entry unfolds inside the same surface when requested. */
 #svcpWorkChatScreen #svcpCameraTray:not([hidden]){
  position:absolute;z-index:8;box-sizing:border-box;
- left:50%;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
- transform:translateX(-50%);
- display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
- gap:5px;padding:5px 7px;width:min(430px,calc(100% - 22px));
- max-width:calc(100% - 22px);height:54px;min-height:54px;max-height:54px;
- overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
- border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius);
+ left:12px;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
+ transform:none;
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;align-items:center;
+ gap:3px;padding:8px;width:min(310px,calc(100% - 24px));
+ max-width:calc(100% - 24px);height:auto;min-height:0;max-height:min(370px,48dvh);
+ overflow-x:hidden;overflow-y:auto;scrollbar-width:none;
+ border:1px solid var(--sv-input-border);border-radius:22px;
  background:var(--sv-input-surface);
  -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
  box-shadow:inset 0 1px 0 var(--sv-input-gloss);
 }
 #svcpWorkChatScreen #svcpCameraTray::-webkit-scrollbar{display:none}
 #svcpWorkChatScreen #svcpCameraTray>button{
- flex:0 0 auto;min-height:44px;min-width:85px;padding:7px 10px;
+ display:flex;align-items:center;justify-content:flex-start;gap:7px;min-height:44px;min-width:0;padding:8px 9px;
  border:0;border-radius:13px;background:transparent;
- color:var(--text);font:inherit;font-size:11.5px;line-height:1.25;
+ color:var(--text);font:inherit;font-size:12px;line-height:1.25;
  white-space:nowrap;box-shadow:none;
 }
 #svcpWorkChatScreen #svcpCameraTray>button>span{font-size:16px;color:var(--secondary)}
@@ -305,10 +305,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  overflow:hidden;clip-path:inset(50%);white-space:nowrap;
 }
 #svcpWorkChatScreen #svcpCameraTray:has(#svcpBarcodeManual:not([hidden])){
- height:auto;max-height:min(225px,36dvh);flex-wrap:wrap;overflow-y:auto;
+ height:auto;max-height:min(370px,48dvh);overflow-y:auto;
 }
 #svcpWorkChatScreen #svcpCameraTray #svcpBarcodeManual:not([hidden]){
- flex:1 0 100%;min-width:0;max-width:100%;box-sizing:border-box;
+ grid-column:1/-1;min-width:0;max-width:100%;box-sizing:border-box;
  padding:8px 5px 4px;border-top:1px solid var(--sv-input-border);
 }
 #svcpWorkChatScreen #svcpComposerEmojiStrip::-webkit-scrollbar{display:none}
@@ -322,18 +322,18 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 /* SEYVEO Input: shared quiet-glass shell with its original work-chat actions. */
 #svcpWorkChatScreen #svcpChatForm{
- display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;grid-template-rows:auto!important;
- gap:6px!important;align-items:end!important;min-height:var(--sv-input-height,54px)!important;
+ display:grid!important;grid-template-columns:48px minmax(0,1fr)!important;grid-template-rows:auto!important;
+ gap:8px!important;align-items:end!important;min-height:var(--sv-input-height,54px)!important;
  width:min(430px,calc(100% - 16px))!important;max-width:100%!important;
- padding:4px 8px 5px!important;
+ padding:0!important;
  margin:0 auto!important;position:absolute!important;inset:auto 0 0 0!important;
  z-index:5!important;transform:none!important;
- border:1px solid var(--sv-input-border)!important;
- border-radius:var(--sv-input-radius,22px)!important;
- box-shadow:inset 0 1px 0 rgba(228,255,246,.035)!important;
- background:var(--sv-input-surface)!important
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background:transparent!important
 }
-#svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:5px!important}
+#svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:0!important}
 /* When an attachment/reply tray opens, keep it in ordinary layout instead of overlapping controls. */
 #svcpWorkChatScreen .svcp-chat:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
  position:relative!important;inset:auto!important;flex:0 0 auto!important
@@ -346,19 +346,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen #svcpChatForm #svcpAttachFile{
  grid-column:1!important;grid-row:1!important;display:grid!important;place-items:center!important;
- height:44px!important;width:44px!important;min-width:44px!important;min-height:44px!important;
- padding:0!important;margin:0!important;background:transparent!important;border:0!important;
- box-shadow:none!important;color:var(--text)!important
+ height:48px!important;width:48px!important;min-width:48px!important;min-height:48px!important;
+ padding:0!important;margin:0!important;background:var(--sv-input-surface)!important;border:1px solid var(--sv-input-border)!important;border-radius:50%!important;
+ -webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;color:var(--text)!important
 }
 #svcpWorkChatScreen #svcpAttachFile svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);stroke-width:var(--sv-input-icon-stroke,1.35)}
 #svcpWorkChatScreen #svcpChatForm #svcpCameraToggle{display:none!important}
 #svcpWorkChatScreen .svcp-chat-compose-field{
  grid-column:2!important;grid-row:1!important;display:flex!important;align-items:flex-end!important;
- min-width:0!important;min-height:46px!important;max-height:72px!important;
- border:0!important;outline:0!important;border-radius:var(--sv-input-radius,22px)!important;box-shadow:none!important;
- background:transparent!important;overflow:hidden!important
+ min-width:0!important;min-height:50px!important;max-height:80px!important;padding:2px 4px 2px 10px!important;
+ border:1px solid var(--sv-input-border)!important;outline:0!important;border-radius:26px!important;box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
+ background:var(--sv-input-surface)!important;-webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;overflow:hidden!important
 }
-#svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important}
+#svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border-color:var(--sv-input-border)!important;box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important}
 /* These tools live in the existing attachment ribbon, leaving the input text full width. */
 #svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
  display:inline-flex!important;flex:0 0 auto!important;
@@ -393,7 +393,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatInput::-webkit-scrollbar{display:none}
 #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
+ grid-column:auto!important;grid-row:auto!important;align-self:end!important;justify-self:center!important;
  width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
 }
@@ -415,7 +415,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    It floats just above the real composer and never steals typing width.
    The existing button and its handler remain the only assignment action. */
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:48px minmax(0,1fr)!important;
  grid-template-rows:auto!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
@@ -444,7 +444,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  display:inline!important;font-size:12px!important;
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
- grid-column:3!important;grid-row:1!important;
+ grid-column:auto!important;grid-row:1!important;
  width:44px!important;min-width:44px!important;border-radius:50%!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:focus-visible,
@@ -796,11 +796,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  transform:translateX(-50%)!important;
  min-height:54px!important;
  border-radius:var(--sv-input-radius)!important;
- padding:4px 7px!important;
- background:var(--sv-input-surface)!important;
- border:1px solid var(--sv-input-border)!important;
- -webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;
- box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
+ padding:0!important;
+ background:transparent!important;
+ border:0!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(:is(
  #svcpReplyPreview,
