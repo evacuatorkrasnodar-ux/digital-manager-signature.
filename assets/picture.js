@@ -24,12 +24,24 @@ function setOperationForm(open){
    const d=new Date();
    day.value=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   }
-  operationKind.focus({preventScroll:true});
+  kindGroup.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
  }
 }
+const kindGroup=$('pictureOperationForm').querySelector('.picture-operation-kind-options');
+function syncKindButtons(){
+ kindGroup.querySelectorAll('[data-picture-operation-kind]').forEach(button=>
+  button.setAttribute('aria-pressed',String(button.dataset.pictureOperationKind===operationKind.value)));
+}
+kindGroup.addEventListener('click',event=>{
+ const button=event.target.closest('[data-picture-operation-kind]');
+ if(!button)return;
+ operationKind.value=button.dataset.pictureOperationKind;
+ operationKind.dispatchEvent(new Event('change',{bubbles:true}));
+});
 operationOpen.addEventListener('click',()=>setOperationForm(operationForm.hidden));
 $('pictureOperationCancel').addEventListener('click',()=>setOperationForm(false));
 operationKind.addEventListener('change',()=>{
+ syncKindButtons();
  const money=['sale','expense'].includes(operationKind.value);
  $('pictureOperationAmountRow').hidden=!money;
  operationAmount.required=money;
