@@ -546,7 +546,9 @@ function render(){
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
  if(done.length){
-  if(showGroupLabels)list.append(element('h3','personal-list-title','Выполнено'));
+  // Completed tasks must have their own visible status heading,
+  // even when there are no active or deferred items.
+  list.append(element('h3','personal-list-title','Выполнено'));
   done.slice(0,30).forEach(task=>list.append(row(task)));
  }
  if(!open.length&&!preview.length&&!done.length){
@@ -574,7 +576,9 @@ function render(){
   };
   const current=active.length?countLabel(active.length,'дело','дела','дел'):'';
   const deferred=count?countLabel(count,'отложенное дело','отложенных дела','отложенных дел'):'';
-  overview.textContent=[current,deferred].filter(Boolean).join(' · ')||'Пока нет текущих дел';
+  const completed=done.length?countLabel(done.length,'завершённое дело','завершённых дела','завершённых дел'):'';
+  overview.textContent=[current,deferred].filter(Boolean).join(' · ')
+   ||(completed?'Все текущие дела выполнены · '+completed:'Пока нет текущих дел');
  }
  // A continuation is offered only after a real task has been completed.
  const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
