@@ -5,23 +5,78 @@ const head=personal?.querySelector('.personal-tasks-head');
 if(personal&&head){
  const style=document.createElement('style');
  style.textContent=`
-.sah-inline-toggle{margin-left:auto;border:1px solid var(--soft-line,#526b60);background:transparent;color:var(--text,#fff);border-radius:99px;padding:6px 11px;font:inherit;font-size:12px;min-height:38px;cursor:pointer}
-.sah-inline-panel{margin-top:12px;border:1px solid var(--soft-line,#526b60);border-radius:18px;padding:14px;background:var(--card2,transparent);color:var(--text,#fff)}
-.sah-inline-panel[hidden]{display:none!important}.sah-inline-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.sah-inline-head h3{font-size:16px;margin:0}.sah-inline-head button{border:0;background:transparent;color:inherit;font:inherit;padding:8px}
-.sah-search{display:block;width:100%;box-sizing:border-box;margin:9px 0 6px;padding:10px 12px;border:1px solid var(--soft-line,#526b60);border-radius:12px;background:transparent;color:var(--text,#fff);font:inherit;font-size:14px;outline-offset:2px}.sah-inline-note{font-size:12px;opacity:.7;line-height:1.5}.sah-date-heading{margin:14px 0 3px;font-size:11px;font-weight:650;letter-spacing:.045em;color:var(--secondary,#a5b3ab)}.sah-row{padding:11px 0;border-top:1px solid var(--soft-line,#526b60);font-size:13px}
-.sah-row[data-state=failed]{border-left:2px solid #e68a78;padding-left:10px}.sah-row[data-state=pending]{border-left:2px solid #d6af69;padding-left:10px}.sah-state{display:inline-block;border-radius:8px;padding:2px 7px;font-weight:650}.sah-state[data-state=failed]{color:#eda494;background:#a1433026}.sah-state[data-state=pending]{color:#e0be7d;background:#a7782724}.sah-state[data-state=done]{color:#8bd3aa;background:#36745522}.sah-row small{display:block;opacity:.75;margin-top:3px}.sah-studio{font-size:11px;opacity:.75;overflow-wrap:anywhere}
+/* History is a continuation of the Tasks list, never a raised second card. */
+.sah-inline-toggle{
+ display:inline-flex;align-items:center;justify-content:center;
+ margin-left:auto;min-height:44px;padding:8px 12px;
+ border:0;border-radius:12px;background:transparent;
+ color:var(--secondary);font:inherit;font-size:12.5px;font-weight:500;
+ cursor:pointer;touch-action:manipulation;
+}
+.sah-inline-toggle[aria-expanded="true"]{color:var(--text)}
+.sah-inline-toggle:focus-visible,
+.sah-inline-head button:focus-visible,.sah-search:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px
+}
+.sah-inline-panel{
+ margin:17px 0 4px;padding:15px 4px 0;
+ border:0;border-top:1px solid var(--soft-line);
+ border-radius:0;background:transparent;color:var(--text);
+ box-shadow:none;min-width:0;
+}
+.sah-inline-panel[hidden],.sah-search[hidden],.sah-inline-toggle[hidden]{display:none!important}
+.sah-inline-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sah-inline-head h3{
+ margin:0;font-size:17px;font-weight:570;line-height:1.3;
+ letter-spacing:-.02em
+}
+.sah-inline-head button{
+ display:grid;place-items:center;flex:none;width:44px;height:44px;
+ padding:0;border:0;border-radius:50%;background:transparent;
+ color:var(--secondary);cursor:pointer
+}
+.sah-inline-head button:active{background:var(--seyveo-hdr-active)}
+.sah-inline-head button svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round
+}
+.sah-search{
+ display:block;box-sizing:border-box;width:100%;min-height:44px;
+ margin:9px 0 11px;padding:10px 12px;
+ border:0;border-radius:12px;
+ background:color-mix(in srgb,var(--card2) 46%,transparent);
+ color:var(--text);font:inherit;font-size:14px;
+}
+.sah-search::placeholder{color:var(--secondary);opacity:.83}
+.sah-inline-note{margin:13px 0 0;color:var(--secondary);font-size:13px;line-height:1.5}
+.sah-date-heading{margin:15px 0 5px;font-size:12px;font-weight:530;letter-spacing:.015em;color:var(--secondary)}
+.sah-row{
+ padding:12px 0;border-top:1px solid var(--soft-line);
+ font-size:13px;line-height:1.45;overflow-wrap:anywhere
+}
+.sah-row strong{display:block;font-size:14px;font-weight:540;line-height:1.4}
+.sah-row small{display:inline-block;color:var(--secondary);font-size:12px;margin:6px 0 0 10px}
+.sah-state{display:inline-block;margin-top:6px;font-size:12px;font-weight:530;color:var(--secondary)}
+.sah-state[data-state=failed]{color:#e8a18d}
+.sah-state[data-state=pending]{color:var(--secondary)}
+.sah-state[data-state=done]{color:var(--secondary)}
+.sah-studio{display:block!important;margin:6px 0 0!important;font-size:11px;opacity:.75;overflow-wrap:anywhere}
+.sah-inline-panel>.sah-inline-toggle{margin:11px 0 2px;padding-inline:0;color:var(--text)}
 `;
  document.head.append(style);
  const open=document.createElement('button');open.type='button';open.className='sah-inline-toggle';open.textContent='История';open.setAttribute('aria-expanded','false');
- const panel=document.createElement('section');panel.className='sah-inline-panel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
+ const panel=document.createElement('section');panel.className='sah-inline-panel';panel.id='seyveoActionHistoryPanel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
+ open.setAttribute('aria-controls',panel.id);
  const heading=document.createElement('div');heading.className='sah-inline-head';
- const title=document.createElement('h3');title.textContent='История действий';
- const close=document.createElement('button');close.type='button';close.textContent='Закрыть';
+ const title=document.createElement('h3');title.textContent='История действий';title.id='seyveoActionHistoryTitle';
+ panel.setAttribute('aria-labelledby',title.id);
+ const close=document.createElement('button');close.type='button';close.setAttribute('aria-label','Закрыть историю');close.title='Закрыть';
+ const closeSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');closeSvg.setAttribute('viewBox','0 0 24 24');closeSvg.setAttribute('aria-hidden','true');
+ const closePath=document.createElementNS('http://www.w3.org/2000/svg','path');closePath.setAttribute('d','M18 6 6 18M6 6l12 12');closeSvg.append(closePath);close.append(closeSvg);
  heading.append(title,close);
- const note=document.createElement('p');note.className='sah-inline-note';note.textContent='Выполненные и отложенные действия. Сейчас доступны только события демонстрационного движка в этой открытой странице.';
  const search=document.createElement('input');search.type='search';search.className='sah-search';search.placeholder='Поиск по имени, делу или дате';search.setAttribute('aria-label','Поиск в истории действий');
- const list=document.createElement('div');panel.append(heading,note,search,list);
+ search.hidden=true;
+ const list=document.createElement('div');panel.append(heading,search,list);
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
@@ -32,9 +87,14 @@ if(personal&&head){
  function render(){
   list.replaceChildren();
   const api=window.SEYVEO_CARD_LIFECYCLE;
-  const cards=api?.archive?.()||[];
   const events=api?.history?.()||[];
-  if(!cards.length&&!events.length){const p=document.createElement('p');p.className='sah-inline-note';p.textContent='Пока нет действий в истории.';list.append(p);return;}
+  more.hidden=true;
+  search.hidden=events.length<5&&!search.value.trim();
+  if(!events.length){
+   const p=document.createElement('p');p.className='sah-inline-note';
+   p.textContent='Пока нет записанных событий карточек. После подтверждённого действия оно появится здесь.';
+   list.append(p);return;
+  }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
   const base=studio?events:events.filter((e,i,all)=>all.findIndex(x=>x.eventId===e.eventId)===i);
   const q=search.value.trim().toLocaleLowerCase('ru-RU');
@@ -44,7 +104,7 @@ if(personal&&head){
    const parts=[e.title,e.cardType,e.reason,e.eventId,statuses[e.to],date,d?d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):''];
    return parts.some(value=>String(value||'').toLocaleLowerCase('ru-RU').includes(q));
   }):base;
-  if(!selected.length){const empty=document.createElement('p');empty.className='sah-inline-note';empty.textContent='Ничего не найдено';list.append(empty);more.hidden=true;return;}
+  if(!selected.length){const empty=document.createElement('p');empty.className='sah-inline-note';empty.textContent=q?'Совпадений не найдено':'Пока нет записанных действий';list.append(empty);more.hidden=true;return;}
   const dateKey=d=>[d.getFullYear(),d.getMonth(),d.getDate()].join('-');
   const today=new Date(),yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1);
   let lastDay='';
@@ -73,6 +133,9 @@ if(personal&&head){
  more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
  const toggle=show=>{panel.hidden=!show;open.setAttribute('aria-expanded',String(show));if(show){visibleCount=4;render();}};
  open.addEventListener('click',()=>toggle(panel.hidden));
- close.addEventListener('click',()=>toggle(false));
+ close.addEventListener('click',()=>{toggle(false);open.focus({preventScroll:true})});
+ panel.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){event.preventDefault();toggle(false);open.focus({preventScroll:true})}
+ });
  window.addEventListener('seyveo:cards-changed',()=>{if(!panel.hidden)render()});
 }
