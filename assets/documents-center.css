@@ -23,8 +23,13 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
  color:var(--text);
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack .sv-deep-back-mark{
- display:grid;place-items:center;width:44px;height:44px;
- font-size:26px;line-height:1;
+ position:relative;display:grid;place-items:center;width:44px;height:44px;
+ font-size:0;line-height:1;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack .sv-deep-back-mark::after{
+ content:"";display:block;width:10px;height:10px;
+ border-left:1.7px solid currentColor;border-bottom:1.7px solid currentColor;
+ transform:translateX(2px) rotate(45deg);border-radius:1px;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack span:last-child{
  display:none!important;
