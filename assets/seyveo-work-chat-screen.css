@@ -281,8 +281,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  left:12px;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
  transform:none;
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;align-items:center;
- gap:3px;padding:8px;width:min(310px,calc(100% - 24px));
- max-width:calc(100% - 24px);height:auto;min-height:0;max-height:min(370px,48dvh);
+ gap:2px;padding:6px;width:min(250px,calc(100% - 24px));
+ max-width:calc(100% - 24px);height:auto;min-height:0;max-height:min(280px,42dvh);
  overflow-x:hidden;overflow-y:auto;scrollbar-width:none;
  border:1px solid var(--sv-input-border);border-radius:22px;
  background:var(--sv-input-surface);
@@ -291,7 +291,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen #svcpCameraTray::-webkit-scrollbar{display:none}
 #svcpWorkChatScreen #svcpCameraTray>button{
- display:flex;align-items:center;justify-content:flex-start;gap:7px;min-height:44px;min-width:0;padding:8px 9px;
+ display:flex;align-items:center;justify-content:flex-start;gap:5px;min-height:44px;min-width:0;padding:7px 6px;
  border:0;border-radius:13px;background:transparent;
  color:var(--text);font:inherit;font-size:12px;line-height:1.25;
  white-space:nowrap;box-shadow:none;
@@ -305,7 +305,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  overflow:hidden;clip-path:inset(50%);white-space:nowrap;
 }
 #svcpWorkChatScreen #svcpCameraTray:has(#svcpBarcodeManual:not([hidden])){
- height:auto;max-height:min(370px,48dvh);overflow-y:auto;
+ height:auto;max-height:min(310px,45dvh);overflow-y:auto;
+}
+/* The contextual assignment never sits behind the opened tools menu. */
+#svcpWorkChatScreen:has(#svcpCameraTray:not([hidden])) #svcpComposerDirectTask{
+ visibility:hidden!important;pointer-events:none!important;
 }
 #svcpWorkChatScreen #svcpCameraTray #svcpBarcodeManual:not([hidden]){
  grid-column:1/-1;min-width:0;max-width:100%;box-sizing:border-box;
@@ -363,7 +367,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
  display:inline-flex!important;flex:0 0 auto!important;
  align-items:center!important;justify-content:center!important;
- gap:6px!important;min-width:94px!important;width:auto!important;
+ gap:5px!important;min-width:0!important;width:100%!important;
  height:44px!important;min-height:44px!important;
  margin:0!important;padding:7px 10px!important;
  border:0!important;border-radius:13px!important;
@@ -382,7 +386,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  font-size:12px!important;color:var(--text)!important;
 }
 #svcpWorkChatScreen #svcpChatInput{
- order:1!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
+ order:0!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
  height:46px!important;min-height:46px!important;max-height:72px!important;
  padding:11px 3px 10px 4px!important;margin:0!important;box-sizing:border-box!important;
  background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;
@@ -398,10 +402,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;box-shadow:none!important
 }
 #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
- display:grid!important;place-items:center!important;background:transparent!important;color:var(--text)!important
+ order:2!important;flex:0 0 44px!important;display:grid!important;place-items:center!important;background:transparent!important;color:var(--text)!important
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
- display:none!important;place-items:center!important;
+ order:2!important;flex:0 0 44px!important;display:none!important;place-items:center!important;
  width:44px!important;min-width:44px!important;height:44px!important;
  border-radius:50%!important;
  background:transparent!important;
