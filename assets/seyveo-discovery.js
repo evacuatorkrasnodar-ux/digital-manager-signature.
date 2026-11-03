@@ -59,12 +59,14 @@ function update(){
 }
 function enable(value){
  runId++;
+ checking=false;
  state.enabled=value===true;
  persist();update();signal();
  if(state.enabled)maybeCheck();
 }
 function clear(){
  runId++;
+ checking=false;
  state=fresh();
  persist();update();signal();
 }
@@ -138,7 +140,9 @@ async function check({force=false}={}){
   .filter(a=>(force||now-Number(state.checks[a.key]||0)>=DAY)&&
    now-Number(state.attempts[a.key]||0)>=3600*1000)
   .slice(0,2);
- if(!eligible.length){if(force)status('Новинок пока не ищем: сначала послушайте любимого исполнителя три раза.');return false}
+ if(!eligible.length){if(force)status(state.artists.some(a=>a.plays>=3)?
+  'Проверка уже выполнялась недавно. Попробуйте позже.':
+  'Сначала послушайте любимого исполнителя три раза.');return false}
  checking=true;const current=++runId;update();
  let success=0,found=0;
  for(const artist of eligible){
@@ -167,7 +171,7 @@ async function check({force=false}={}){
    if(current===runId)state.checks[artist.key]=Date.now()-DAY+2*3600*1000;
   }finally{clearTimeout(timeout)}
  }
- if(current!==runId)return false;
+ if(current!==runId){checking=false;update();return false;}
  checking=false;persist();update();
  status(success?
   (found?'Найдено подтверждённых релизов: '+found+'. Показываю на Главной.':
