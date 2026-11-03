@@ -351,9 +351,10 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
  input.style.setProperty('height','46px','important');
  // Empty input stays one line: iOS otherwise measures the placeholder as text.
- const height=input.value?Math.min(138,Math.max(46,input.scrollHeight)):46;
+ const maxHeight=112;
+ const height=input.value?Math.min(maxHeight,Math.max(46,input.scrollHeight)):46;
  input.style.setProperty('height',height+'px','important');
- input.style.setProperty('overflow-y',input.value&&input.scrollHeight>138?'auto':'hidden','important');
+ input.style.setProperty('overflow-y',input.value&&input.scrollHeight>maxHeight?'auto':'hidden','important');
 }
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
