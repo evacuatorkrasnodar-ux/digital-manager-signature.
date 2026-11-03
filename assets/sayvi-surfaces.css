@@ -594,8 +594,7 @@
 /* Mail composer: one Black Velvet sheet, native-style field rows.
    The labels remain real accessible labels, not fragile placeholders. */
 #sayviSurfacePage .sv-mail-editor{
- align-items:stretch;gap:0;
- min-height:clamp(440px,calc(100dvh - 150px),680px);
+ align-items:stretch;gap:0;min-height:0;
  padding:5px 15px 12px;
  background:transparent;border-radius:0;
 }
@@ -665,12 +664,12 @@
  border-bottom:1px solid color-mix(in srgb,var(--seyveo-emerald) 38%,transparent);
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-field:has(textarea){
- display:flex;flex:1 1 auto;flex-direction:column;align-items:stretch;gap:5px;
- min-height:140px;padding:9px 0 3px;border-bottom:1px solid transparent;
+ display:flex;flex:0 0 auto;flex-direction:column;align-items:stretch;gap:5px;
+ min-height:0;padding:9px 0 3px;border-bottom:1px solid transparent;
 }
 #sayviSurfacePage .sv-mail-editor textarea.sv-mail-input{
- flex:1 1 auto;height:auto;min-height:140px;max-height:none;
- padding:8px 0;line-height:1.53!important;resize:none;overflow-y:auto;
+ flex:0 0 auto;height:clamp(156px,23dvh,220px);min-height:156px;max-height:260px;
+ padding:8px 0;line-height:1.53!important;resize:vertical;overflow-y:auto;
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-account-help{
  margin:3px 0 5px;padding:0;font-size:11px;line-height:1.4;
