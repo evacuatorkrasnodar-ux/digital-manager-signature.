@@ -719,10 +719,25 @@
  box-shadow:var(--sv-glass-orb-shadow);
 }
 :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-today{
- min-height:44px;margin:6px 0 0;padding:0 10px;
+ min-height:44px;margin:0;padding:0 10px;
  border:0;border-radius:11px;background:transparent;
  color:var(--text);font:inherit;font-size:12.5px;font-weight:550;
  cursor:pointer;
+}
+/* Event date selector: explicit close without changing the chosen date. */
+#calendarEventDialog .cal-pick-date-actions{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin-top:5px;
+}
+#calendarEventDialog .cal-pick-date-close{
+ -webkit-appearance:none;appearance:none;
+ min-height:44px;min-width:84px;padding:7px 10px;
+ border:0;border-radius:11px;background:transparent;
+ color:var(--secondary);font:inherit;font-size:12.5px;font-weight:550;
+ cursor:pointer;
+}
+#calendarEventDialog .cal-pick-date-close:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
 :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-time-head small{
  color:var(--secondary);font-size:11px;line-height:1.3;
