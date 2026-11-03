@@ -735,6 +735,8 @@
  :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-wheel{scroll-behavior:auto}
 }
 
+/* All creation now starts from the header +, no dead second action row. */
+#calendarPage .cal-actions{display:none!important}
 /* Air 26 white calendar: dates float on the shared page, not on a paper card. */
 :root[data-theme="light"] #calendarPage .cal-month,
 :root[data-theme="light"] #calendarPage .cal-month-grid,
