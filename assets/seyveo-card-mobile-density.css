@@ -2,10 +2,11 @@
  * The approved orb and dock retain their geometry. This stylesheet DOES NOT
  * create copy, disclosure controls, card UI or another Home queue.
  * Full sender, fact, proposal and actions remain readable on small screens. */
-@media (max-height:740px), (max-width:380px){
+/* Card density follows device width, not the changing iPhone keyboard viewport height. */
+@media (max-width:380px){
  #homePage.lm-focus #orbCluster{height:clamp(96px,23vw,124px)!important}
  #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
- #homePage.lm-focus #stage{min-height:clamp(178px,25vh,220px)!important;padding-bottom:2px}
+ #homePage.lm-focus #stage{min-height:178px!important;padding-bottom:2px}
  #homePage.lm-focus .message{min-height:52px;margin-top:5px}
  #seyveoLivingMoment .lm-field{padding-top:5px}
  #seyveoLivingMoment .lm-hero-art{width:39px;height:39px}
@@ -45,7 +46,7 @@
 #homePage.lm-focus.sv-orb-level-3 #orbCluster{height:clamp(96px,24vw,128px)!important}
 #homePage.lm-focus.sv-orb-level-3 #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
 #homePage.lm-focus.sv-orb-level-3 #stage{
- min-height:clamp(175px,25vh,220px)!important;padding-bottom:2px;
+ min-height:175px!important;padding-bottom:2px;
 }
 #homePage.lm-focus.sv-orb-level-3 .message{min-height:52px;margin-top:5px}
 @media(prefers-reduced-motion:reduce){
