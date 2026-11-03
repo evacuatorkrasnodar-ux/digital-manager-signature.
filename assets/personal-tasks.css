@@ -180,6 +180,90 @@
 #personalTaskDialog.personal-task-dialog .personal-task-date-control:focus-within{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px;
 }
+/* Date selection is the second, focused stage of the same task sheet.
+   Keep the form mounted, but never stack a second tall pane below its Save. */
+#personalTaskDialog.sv-task-date-open .personal-task-sheet > :not(#seyveoTaskDuePicker){
+ display:none!important;
+}
+#personalTaskDialog.sv-task-date-open > .seyveo-dialog-close{display:none!important}
+#personalTaskDialog.sv-task-date-open .personal-task-sheet{
+ padding-top:14px;padding-bottom:16px;
+}
+#personalTaskDialog #seyveoTaskDuePicker.cal-premium-picker{
+ box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+ margin:0;padding:0;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);
+}
+#personalTaskDialog #seyveoTaskDuePicker[hidden]{display:none!important}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-back{
+ display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;
+ min-width:44px;min-height:44px;padding:8px 2px;
+ border:0;border-radius:10px;background:transparent;box-shadow:none;
+ color:var(--secondary);font:inherit;font-size:12.5px;font-weight:520;
+ cursor:pointer;touch-action:manipulation;
+}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-back svg{
+ display:block;width:16px;height:16px;flex:none;
+ fill:none;stroke:currentColor;stroke-width:1.75;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-title{
+ margin:5px 0 16px!important;padding:0!important;
+ color:var(--text);font-size:clamp(23px,6vw,27px);
+ line-height:1.15;font-weight:540;letter-spacing:-.04em;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-head{
+ min-height:44px;margin:0 0 8px;
+ border:0;border-radius:0;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-head strong{
+ font-size:14px;font-weight:570;line-height:1.4;letter-spacing:-.015em;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows button{
+ min-width:44px;min-height:44px;border-radius:12px;
+ font-size:26px;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-week{margin-bottom:2px}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-week span{
+ min-height:20px;font-size:11px;font-weight:470;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-days,
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-week{
+ column-gap:0;row-gap:1px;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-day{
+ min-height:44px;height:44px;border-radius:12px;font-size:13px;font-weight:470;
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-empty{min-height:44px}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ background:var(--text);color:var(--bg);border-color:var(--text);
+}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:9px 0 0;margin:9px 0 0;
+ border-top:1px solid var(--soft-line);
+}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;min-width:80px;padding:9px 12px;
+ border:0;border-radius:12px;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:13px;font-weight:520;
+ cursor:pointer;touch-action:manipulation;
+}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-clear{color:var(--secondary)!important}
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button:active,
+#personalTaskDialog #seyveoTaskDuePicker .sv-task-date-back:active{
+ background:var(--seyveo-hdr-active,var(--card2));
+}
+#personalTaskDialog #seyveoTaskDuePicker :is(.sv-task-date-back,.sv-task-date-quick button):focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+@media(max-width:350px){
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day,
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-empty{min-height:42px;height:42px}
+ #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-title{margin-bottom:10px!important}
+}
 /* Task actions use the same SEYVEO form controls as Calendar. */
 #personalTaskDialog.personal-task-dialog small{
  display:block;margin:0;font-size:11px;line-height:1.45;color:var(--secondary);
