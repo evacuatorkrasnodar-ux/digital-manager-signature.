@@ -565,10 +565,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-voice-capture .svcp-voice-hint{
  position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)
 }
-#svcpWorkChatScreen .svcp-voice-message{
- display:flex;align-items:center;gap:9px;border:0;background:none;padding:2px 0;
- min-width:206px;width:min(248px,100%);max-width:100%;flex-wrap:nowrap;
- white-space:nowrap
+#svcpWorkChatScreen .svcp-media-slot.svcp-voice-message{
+ display:flex!important;flex-flow:row nowrap!important;align-items:center!important;
+ justify-content:flex-start!important;gap:9px!important;
+ border:0!important;background:none!important;padding:2px 0!important;
+ min-width:206px!important;width:min(248px,100%)!important;max-width:100%!important;
+ white-space:nowrap!important
 }
 #svcpWorkChatScreen .svcp-audio-play{
  display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;padding:0;
