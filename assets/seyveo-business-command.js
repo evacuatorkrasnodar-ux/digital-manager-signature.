@@ -889,6 +889,19 @@ $('svcpRecognizeOpen')?.addEventListener('click',()=>{
  applyPersonReaction(room.person,'help');
 });
 $('svcpReactionCancel')?.addEventListener('click',closeRecognition);
+// A reaction picker belongs to the message: dismiss it on any outside tap.
+document.addEventListener('pointerdown',event=>{
+ const picker=$('svcpReactionPicker');
+ if(!picker||picker.hidden)return;
+ if(picker.contains(event.target)||event.target.closest?.('#svcpRecognizeOpen'))return;
+ closeRecognition();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape')return;
+ closeMessageMenus();
+ closeRecognition();
+ setCameraTray(false);
+});
 /* Compact familiar emojis first, expandable library second. No scrolling tray. */
 const quickEmojis=el('div','svcp-reaction-options svcp-quick-emojis');
 quickEmojis.id='svcpMessageReactionOptions';
@@ -1235,7 +1248,10 @@ function renderChat(){
      if(reply){closeMessageMenus();startReply(msg);if(navigator.vibrate)navigator.vibrate(8)}
     });
     bubble.addEventListener('pointercancel',()=>{clearHold();swipeEligible=false});
-    bubble.addEventListener('contextmenu',event=>{event.preventDefault();clearHold();swipeEligible=false;if(!holdOpened)toggleMessageMenu(menu,moreButton)});
+    bubble.addEventListener('contextmenu',event=>{
+     event.preventDefault();clearHold();swipeEligible=false;
+     if(!holdOpened)toggleMessageMenu(menu,moreButton);
+    });
     bubble.addEventListener('click',event=>{
      if(event.target.closest('button,audio,.svcp-media-slot'))return;
      if(event.target.closest('.svcp-message-menu'))return;
