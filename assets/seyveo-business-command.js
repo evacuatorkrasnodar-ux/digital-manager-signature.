@@ -685,9 +685,7 @@ function openRoom(roomId){
  $('svcpChatDirectory').hidden=true;
  $('svcpConversation').hidden=false;
  $('svcpConversationTitle').textContent=employeePreviewActive()&&selected.id==='dm-elena'
- ?'Руководитель':selected.person&&selected.person!=='sayvi'
- ?selected.label+' · '+(selected.id==='dm-elena'?'кассир':selected.id==='dm-anna'?'старший продавец':'продавец')
- :selected.label;
+ ?'Руководитель':selected.label;
  clearReply();cancelTaskDraft();cleanupPreview();
  const composer=$('svcpChatInput');if(composer)composer.value='';
  syncComposerActions();
