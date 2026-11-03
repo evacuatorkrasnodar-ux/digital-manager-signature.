@@ -638,7 +638,7 @@
   if(caption){
    // On personal Tasks the title already identifies the destination.
    // Keep the brand eyebrow only in business/employee workspaces.
-   caption.hidden=chosen==='personal';
+   caption.hidden=chosen==='personal'||chosen==='business';
    if(caption.lastChild?.nodeType===3)
     caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':
      chosen==='business'?' BUSINESS':' НА КОНТРОЛЕ';
@@ -782,8 +782,8 @@
    const count=Array.isArray(rows)?rows.filter(r=>r&&typeof r.text==='string'&&!r.done).length:0;
    if(signal)signal.dataset.attention=count?'true':'false';
    summary.textContent=count
-    ?('Сэйви · '+count+' '+(count===1?'поручение':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'поручения':'поручений')+' в работе · локально')
-    :'Сэйви · Всё спокойно · локальное демо';
+    ?('Сэйви · '+count+' '+(count===1?'поручение':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'поручения':'поручений')+' в работе')
+    :'Сэйви · Всё спокойно';
   }catch{
    if(signal)signal.dataset.attention='false';
    summary.textContent='Сэйви · Локальные поручения недоступны';
