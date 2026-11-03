@@ -749,30 +749,31 @@
 }
 #tasksPage .personal-task-row{
  position:relative;display:flex;align-items:center;flex-wrap:wrap;
- gap:7px;min-height:54px;padding:3px 0;
+ gap:6px;min-height:54px;padding:2px 0;
  border-top:1px solid var(--soft-line);border-bottom:0;
 }
 #tasksPage .personal-task-row:last-child{border-bottom:1px solid var(--soft-line)}
 #tasksPage .personal-task-art{
- flex:0 0 40px;width:40px;height:44px;min-width:40px;min-height:44px;
+ flex:0 0 36px;width:36px;height:44px;min-width:36px;min-height:44px;
  padding:0;display:grid;place-items:center;
  color:var(--secondary);background:transparent;border:0;border-radius:0;
  -webkit-tap-highlight-color:transparent;
 }
 #tasksPage .personal-task-art svg{
- display:block;width:30px;height:30px;fill:none;stroke:currentColor;
+ display:block;width:25px;height:25px;fill:none;stroke:currentColor;
  stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
 }
 #tasksPage .personal-task-art:is(button):active svg{transform:scale(.96)}
-#tasksPage .personal-task-content{gap:2px;min-width:0;flex:1}
+#tasksPage .personal-task-content{gap:0;min-width:0;flex:1}
 #tasksPage .personal-task-name{
- align-self:flex-start;min-height:44px;display:block;
- max-width:100%;width:100%;margin:0;padding:6px 0;border:0;background:transparent;
+ align-self:flex-start;position:relative;min-height:30px;display:block;
+ max-width:100%;width:100%;margin:0;padding:2px 0;border:0;background:transparent;
  color:var(--text);font:inherit;font-size:14px;font-weight:500;line-height:1.4;
  letter-spacing:-.02em;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
 }
+#tasksPage .personal-task-name::before{content:"";position:absolute;inset:-7px 0;min-height:44px}
 #tasksPage .personal-task-name:disabled{opacity:.55}
-#tasksPage .personal-task-content small{font-size:11px;font-weight:430;line-height:1.45}
+#tasksPage .personal-task-content small{font-size:11px;font-weight:430;line-height:1.3}
 #tasksPage .personal-task-check{
  width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;
  padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;
@@ -837,11 +838,12 @@
  font-size:13.5px;font-weight:420;line-height:1.55;
 }
 #tasksPage .personal-list-title{
- margin:9px 0 1px;padding:4px 1px;
+ margin:5px 0 0;padding:3px 1px;
  color:var(--secondary);font-size:10px;line-height:1.4;
  font-weight:540;letter-spacing:.09em;text-transform:uppercase;
 }
 #tasksPage .personal-list-title:first-child{margin-top:0}
+#tasksPage .personal-task-row + .personal-list-title{margin-top:4px}
 /* Deferred entries: an iOS-like one-line row, details appear on demand. */
 #tasksPage .personal-task-sayvi{
  display:inline-flex;align-items:center;justify-content:center;flex:none;
