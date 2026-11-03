@@ -856,7 +856,7 @@ function disappear(){
  }
  if(mode==='task')quiet.add(key);
  space.classList.add('lm-disappear');
- later(()=>{if(mode==='preview'||mode==='task')rest()},TIMING.close);
+ later(()=>{if(mode==='preview'||mode==='task'||mode==='discovery')rest()},TIMING.close);
 }
 function closeEarly(){
  if(mode==='idle')return;
