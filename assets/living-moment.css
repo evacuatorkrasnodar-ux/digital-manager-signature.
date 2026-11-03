@@ -839,11 +839,34 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 
 /* Work message shares the original Quiet Cinema card, typography and motion. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-art-svg--work{color:#8FE3C3;stroke:#8FE3C3}
-#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:first-child{
- border:0;border-radius:0;background:transparent;color:var(--text);
- padding:8px 2px!important;min-height:44px!important;
- font-size:12px!important;line-height:1.3!important;font-weight:470;
- box-shadow:none!important;
+/* The first visible Work action is the second DOM control: the first
+   ("Сэйви") is hidden in Work mode. Give the ACTUAL response action one
+   small optical lens, without adding a container around the whole row. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(2):not([hidden]){
+ color:var(--text)!important;
+ min-height:44px!important;
+ padding:8px 12px!important;
+ border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ border-radius:999px!important;
+ background:linear-gradient(160deg,
+   color-mix(in srgb,var(--card) 32%,transparent),
+   color-mix(in srgb,var(--card2) 18%,transparent))!important;
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--seyveo-metal-peak) 42%,transparent)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(1.12);
+ backdrop-filter:blur(12px) saturate(1.12);
+ font-size:12.5px!important;line-height:1.3!important;font-weight:540;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{
+ column-gap:8px;row-gap:0;
+}
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:not(:nth-child(2)){
+ padding-left:2px;padding-right:2px;
+}
+@media(prefers-reduced-transparency:reduce){
+ #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(2):not([hidden]){
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--sv-air-control)!important;
+ }
 }
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content textarea{
  box-sizing:border-box;width:100%;max-width:100%;
