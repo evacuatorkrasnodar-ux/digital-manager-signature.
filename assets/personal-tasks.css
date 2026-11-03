@@ -261,8 +261,11 @@
  font-size:14px;font-weight:570;line-height:1.4;letter-spacing:-.015em;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows button{
- min-width:44px;min-height:44px;border-radius:12px;
- font-size:26px;
+ min-width:44px;min-height:44px;border-radius:12px;color:var(--secondary);
+}
+#personalTaskDialog #seyveoTaskDuePicker .cal-pick-arrows svg{
+ width:16px;height:16px;fill:none;stroke:currentColor;
+ stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-week{margin-bottom:2px}
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-week span{
