@@ -92,7 +92,7 @@ if(personal&&head){
   search.hidden=events.length<5&&!search.value.trim();
   if(!events.length){
    const p=document.createElement('p');p.className='sah-inline-note';
-   p.textContent='Пока нет записанных событий карточек. После подтверждённого действия оно появится здесь.';
+   p.textContent='Записанных действий пока нет.';
    list.append(p);return;
   }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
