@@ -111,6 +111,30 @@ let miniDismissed=false;
 // A selected local file is not a playing session. Show the small remote only
 // after the audio element has actually started playback at least once.
 let hasPlayed=false;
+// Discovery counts actual playback only after 30 uninterrupted seconds.
+// This timer is independent of the approved mini-player and MediaSession.
+let discoveryListenTimer=0,discoveryCountedVersion=-1;
+function stopDiscoveryListen(){
+ if(discoveryListenTimer){clearTimeout(discoveryListenTimer);discoveryListenTimer=0;}
+}
+function qualifyDiscoveryListen(){
+ stopDiscoveryListen();
+ if(!window.SEYVEO_DISCOVERY?.enabled?.()||index<0||audio.paused)return;
+ const selectedVersion=selectVersion;
+ if(selectedVersion===discoveryCountedVersion)return;
+ discoveryListenTimer=setTimeout(()=>{
+  discoveryListenTimer=0;
+  if(selectedVersion!==selectVersion||audio.paused||audio.ended||
+   !window.SEYVEO_DISCOVERY?.enabled?.())return;
+  const record=infoFor(tracks[index]);
+  const performer=typeof record?.artist==='string'?record.artist.trim():'';
+  if(!performer||performer==='Моя музыка')return;
+  discoveryCountedVersion=selectedVersion;
+  window.dispatchEvent(new CustomEvent('seyveo:music-qualified-listen',{
+   detail:{artist:performer,title:record.title||safeName(tracks[index])}
+  }));
+ },30000);
+}
 const fmt=time=>{
  if(!Number.isFinite(time)||time<0)return '0:00';
  const t=Math.floor(time);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
@@ -593,10 +617,10 @@ options.addEventListener('click',event=>{
 audio.addEventListener('timeupdate',updateTime);
 audio.addEventListener('durationchange',updateTime);
 audio.addEventListener('loadedmetadata',updateTime);
-audio.addEventListener('playing',()=>{updatePlay();sayviMessage('')});
-audio.addEventListener('pause',updatePlay);
-audio.addEventListener('ended',()=>{if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
-audio.addEventListener('error',()=>{updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
+audio.addEventListener('playing',()=>{updatePlay();sayviMessage('');qualifyDiscoveryListen()});
+audio.addEventListener('pause',()=>{stopDiscoveryListen();updatePlay()});
+audio.addEventListener('ended',()=>{stopDiscoveryListen();if(tracks.length>1)switchTrack(index+1,true);else{updatePlay();sayviMessage('Сэйви: музыка закончилась. Включить ещё раз?')}});
+audio.addEventListener('error',()=>{stopDiscoveryListen();updatePlay();if(index>=0)sayviMessage('Не смогла прочитать эту запись. Возможно, её формат не поддерживается.')});
 /* Screen lock/background can dispatch lifecycle changes.
  * Never stop an actively playing track on pagehide: the OS decides if WebKit
  * can continue. A full browser termination remains outside PWA control. */
