@@ -3,7 +3,7 @@
    intercepted entry clicks before the real SEYVEO Mail route could run. */
 import './seyveo-developer-flow.mjs';
 import './seyveo-technology-signatures.mjs';
-import './seyveo-action-history.mjs?v=6';
+import './seyveo-action-history.mjs?v=7';
 import './seyveo-adaptive-orb.mjs';
 // Content and the single actions row are owned by Living Moment + Card Engine.
 // Old card-copy-ui imported a duplicate reason and a second disclosure button.
