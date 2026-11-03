@@ -45,8 +45,22 @@ if(personal&&head){
  display:block;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
  stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round
 }
-.sah-history-title{margin:0 0 9px;font-size:clamp(27px,7vw,34px);font-weight:490;line-height:1.15;letter-spacing:-.045em;color:var(--text)}
-.sah-history-intro{margin:0 0 17px;color:var(--secondary);font-size:12.5px;line-height:1.45}
+.sah-history-title{margin:3px 0 9px;font-size:clamp(30px,8vw,36px);font-weight:660;line-height:1.12;letter-spacing:-.045em;color:var(--text)}
+.sah-history-intro{margin:0 0 17px;color:var(--secondary);font-size:13px;line-height:1.45}
+.sah-inline-panel.is-empty-history .sah-history-intro{display:none}
+.sah-inline-panel.is-empty-history .sah-inline-head{margin-bottom:12px}
+.sah-inline-panel.is-empty-history .sah-inline-note{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ width:100%;max-width:330px;min-height:clamp(270px,45dvh,530px);
+ margin:0 auto;padding:0 16px 25px;box-sizing:border-box;
+ background:transparent;border:0;text-align:center;
+ color:var(--secondary);font-size:13.5px;line-height:1.55;
+}
+.sah-empty-icon{width:58px;height:58px;display:block;margin:0 0 19px;fill:none;
+ stroke:var(--secondary);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.sah-empty-title{display:block;margin:0 0 7px;color:var(--text);
+ font-size:19px;font-weight:620;line-height:1.23;letter-spacing:-.025em}
+.sah-empty-copy{display:block;max-width:270px}
 .sah-search{
  display:block;box-sizing:border-box;width:100%;min-height:44px;
  margin:9px 0 11px;padding:10px 12px;
@@ -101,12 +115,20 @@ if(personal&&head){
   list.replaceChildren();
   const api=window.SEYVEO_CARD_LIFECYCLE;
   const events=api?.history?.()||[];
+  panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
   search.hidden=events.length<5&&!search.value.trim();
   if(!events.length){
-   const p=document.createElement('p');p.className='sah-inline-note';
-   p.textContent='Записанных действий пока нет.';
-   list.append(p);return;
+   const empty=document.createElement('div');empty.className='sah-inline-note';
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('viewBox','0 0 64 64');svg.setAttribute('class','sah-empty-icon');svg.setAttribute('aria-hidden','true');
+   const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+   ring.setAttribute('cx','32');ring.setAttribute('cy','32');ring.setAttribute('r','22');svg.append(ring);
+   const hands=document.createElementNS('http://www.w3.org/2000/svg','path');
+   hands.setAttribute('d','M32 18v15l10 6');svg.append(hands);
+   const heading=document.createElement('strong');heading.className='sah-empty-title';heading.textContent='Пока нет действий';
+   const copy=document.createElement('span');copy.className='sah-empty-copy';copy.textContent='Здесь появятся сохранённые события карточек и результаты действий.';
+   empty.append(svg,heading,copy);list.append(empty);return;
   }
   // Ordinary users see one latest outcome per card; developer mode shows its full trace.
   const base=studio?events:events.filter((e,i,all)=>all.findIndex(x=>x.eventId===e.eventId)===i);
