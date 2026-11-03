@@ -790,9 +790,9 @@ function insertComposerEmoji(emoji){
 function renderComposerEmojis(){
  if(!composerEmojiStrip)return;
  composerEmojiStrip.replaceChildren();
- const back=el('button','svcp-composer-emoji-back','‹ Все инструменты');
- back.type='button';back.setAttribute('aria-label','Вернуться к инструментам');
- back.addEventListener('click',()=>closeComposerEmoji());
+ const back=el('button','svcp-composer-emoji-back','‹ Закрыть');
+ back.type='button';back.setAttribute('aria-label','Закрыть эмодзи');
+ back.addEventListener('click',()=>setCameraTray(false));
  composerEmojiStrip.append(back);
  const emojis=composerMoreEmojis
   ?[...QUICK_EMOJIS,...MORE_EMOJI_GROUPS.flatMap(group=>group.emojis)]
@@ -820,7 +820,7 @@ composerEmojiButton?.addEventListener('click',()=>{
   $('svcpCameraTray').dataset.mode='emoji';
   composerEmojiStrip.hidden=false;
   renderComposerEmojis();
- }else closeComposerEmoji();
+ }else setCameraTray(false);
  composerEmojiButton.setAttribute('aria-expanded',String(show));
 });
 function toggleMessageMenu(menu,trigger){
