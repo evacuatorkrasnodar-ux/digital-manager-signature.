@@ -41,17 +41,29 @@
     empty.hidden = shown !== 0;
   };
 
+  const closeSearch = (returnFocus = false) => {
+    if (!toggle || !box) return;
+    box.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Открыть поиск по разделам');
+    toggle.setAttribute('title', 'Поиск');
+    input.value = '';
+    input.blur();
+    refresh();
+    if (returnFocus) toggle.focus({ preventScroll: true });
+  };
   if (toggle && box) {
     toggle.addEventListener('click', () => {
       const opening = box.hidden;
-      box.hidden = !opening;
-      toggle.setAttribute('aria-expanded', String(opening));
-      if (opening) {
-        input.focus({ preventScroll: true });
-      } else {
-        input.value = '';
-        refresh();
+      if (!opening) {
+        closeSearch();
+        return;
       }
+      box.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Закрыть поиск по разделам');
+      toggle.setAttribute('title', 'Закрыть поиск');
+      input.focus({ preventScroll: true });
     });
   }
   input.addEventListener('input', refresh);
@@ -61,7 +73,7 @@
       if (input.value) {
         input.value = '';
         refresh();
-      } else input.blur();
+      } else closeSearch(true);
     } else if (event.key === 'Enter') {
       const visible = entries().filter(button =>
         !button.hidden && !button.classList.contains('sv-world-filtered-out') &&
