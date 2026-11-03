@@ -601,7 +601,16 @@ function createSurface(primary,other=[],real=false,taskId=''){
  });
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
  const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
- const workSend=polymer('Завершить пример',()=>{const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}workDraft=typed;workMode='done';updateWork();finishPreviewItem()});
+ const workSend=polymer('Ответить',()=>{
+  const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();
+  if(!typed){explain(field,'Сначала напишите ответ.',workSend);return}
+  const saved=window.SEYVEO_BUSINESS_COMMAND?.sendLocalText?.('elena',typed);
+  if(!saved){
+   explain(field,'Ответ не сохранён в рабочем чате. Попробуйте ещё раз или откройте беседу Елены.',workSend);
+   return;
+  }
+  workDraft=typed;workMode='done';updateWork();finishPreviewItem();
+ });
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
   const value=mailDetails.querySelector('textarea')?.value?.trim();
