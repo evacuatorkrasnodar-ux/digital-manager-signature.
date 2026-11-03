@@ -16,7 +16,7 @@ const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
  .replace(/\s+/g,' ').trim();
 const clean=s=>typeof s==='string'?s.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100):'';
-function fresh(){return {enabled:false,artists:[],releases:[],ignored:[],snoozed:{},checks:{}}}
+function fresh(){return {enabled:false,artists:[],releases:[],ignored:[],snoozed:{},checks:{},attempts:{}}}
 function read(){
  let x;try{x=JSON.parse(localStorage.getItem(STORE)||'null')}catch{}
  if(!x||typeof x!=='object')return fresh();
@@ -30,7 +30,8 @@ function read(){
    typeof r.title==='string'&&typeof r.url==='string'&&typeof r.date==='string'):[],
   ignored:Array.isArray(x.ignored)?x.ignored.slice(-100).filter(x=>typeof x==='string'):[],
   snoozed:x.snoozed&&typeof x.snoozed==='object'&&!Array.isArray(x.snoozed)?x.snoozed:{},
-  checks:x.checks&&typeof x.checks==='object'&&!Array.isArray(x.checks)?x.checks:{}
+  checks:x.checks&&typeof x.checks==='object'&&!Array.isArray(x.checks)?x.checks:{},
+  attempts:x.attempts&&typeof x.attempts==='object'&&!Array.isArray(x.attempts)?x.attempts:{}
  };
 }
 let state=read(),checking=false,runId=0;
@@ -134,13 +135,15 @@ async function check({force=false}={}){
  // Only two qualified artists per check; no full browsing history leaves device.
  const eligible=state.artists.filter(a=>a.plays>=3&&a.last>now-120*DAY)
   .sort((a,b)=>b.plays-a.plays)
-  .filter(a=>force||now-Number(state.checks[a.key]||0)>=DAY)
+  .filter(a=>(force||now-Number(state.checks[a.key]||0)>=DAY)&&
+   now-Number(state.attempts[a.key]||0)>=3600*1000)
   .slice(0,2);
  if(!eligible.length){if(force)status('Новинок пока не ищем: сначала послушайте любимого исполнителя три раза.');return false}
  checking=true;const current=++runId;update();
  let success=0,found=0;
  for(const artist of eligible){
   if(!state.enabled||current!==runId)break;
+  state.attempts[artist.key]=Date.now();persist();
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),8500);
   try{
@@ -222,5 +225,5 @@ window.SEYVEO_DISCOVERY=Object.freeze({
  enabled:()=>state.enabled,artists:()=>state.artists.map(a=>({...a})),
  current,postpone,dismiss,check,listen,chooseReleases
 });
-update();maybeCheck();
+update();signal();maybeCheck();
 })();
