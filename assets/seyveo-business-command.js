@@ -377,6 +377,7 @@ function polishDraftLocally(raw){
 }
 $('svcpPolishMessage')?.addEventListener('click',()=>{
  const input=$('svcpChatInput');if(!input)return;
+ setCameraTray(false);
  const original=input.value;
  if(!original.trim()){setStatus('Сначала напиши сообщение своими словами.');input.focus();return}
  const improved=polishDraftLocally(original);
