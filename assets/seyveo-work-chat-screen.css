@@ -359,15 +359,27 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background:transparent!important;overflow:hidden!important
 }
 #svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important}
-#svcpWorkChatScreen #svcpPolishMessage{
- order:0!important;flex:0 0 42px!important;display:flex!important;
- align-items:center!important;justify-content:center!important;align-self:flex-end!important;
- height:46px!important;width:42px!important;min-width:42px!important;min-height:46px!important;
- margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;
- background:transparent!important;color:var(--seyveo-emerald)!important;line-height:1!important
+/* These tools live in the existing attachment ribbon, leaving the input text full width. */
+#svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ display:inline-flex!important;flex:0 0 auto!important;
+ align-items:center!important;justify-content:center!important;
+ gap:6px!important;min-width:94px!important;width:auto!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:7px 10px!important;
+ border:0!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+ font:inherit!important;font-size:12px!important;line-height:1.2!important;
+ color:var(--text)!important;
 }
-#svcpWorkChatScreen #svcpPolishMessage svg{
- display:block;width:23px;height:23px;flex:0 0 23px;fill:currentColor
+#svcpWorkChatScreen #svcpCameraTray #svcpPolishMessage svg{
+ display:block;width:19px;height:19px;flex:0 0 19px;fill:var(--seyveo-emerald);
+}
+#svcpWorkChatScreen #svcpCameraTray #svcpComposerEmojiToggle svg{
+ display:block;width:19px;height:19px;flex:0 0 19px;
+ fill:none;stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35);
+}
+#svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle) > span{
+ font-size:12px!important;color:var(--text)!important;
 }
 #svcpWorkChatScreen #svcpChatInput{
  order:1!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
@@ -379,13 +391,6 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  scrollbar-width:none!important
 }
 #svcpWorkChatScreen #svcpChatInput::-webkit-scrollbar{display:none}
-#svcpWorkChatScreen #svcpComposerEmojiToggle{
- order:2!important;flex:0 0 30px!important;width:30px!important;min-width:30px!important;
- height:44px!important;min-height:44px!important;display:grid!important;place-items:center!important;
- padding:0!important;margin:0!important;border:0!important;background:transparent!important;
- color:var(--secondary)!important
-}
-#svcpWorkChatScreen #svcpComposerEmojiToggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35)}
 #svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send{
  grid-column:3!important;grid-row:1!important;align-self:end!important;justify-self:center!important;
