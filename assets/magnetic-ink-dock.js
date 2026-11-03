@@ -1,5 +1,5 @@
 /* SEYVEO · One fixed, readable navigation.
- * Four permanent destinations around the original Sayvi center.
+ * Home, Tasks, My World and Search around the original Sayvi center.
  * The same DOM IDs, saved content, routes and Music Dock are preserved.
  * No carousel, swipe pages, second dock or simulated interactions.
  */
@@ -34,8 +34,8 @@ function init(){
   {id:'life',title:'Мой мир',description:'Открыть Мой мир',
    // One shared sprite symbol, same geometry as the first-paint dock markup.
    viewBox:'0 0 28 24',icon:'<use href="#seyveo-my-mini"/>'},
-  {id:'manage',title:'Управление',description:'Открыть управление',
-   icon:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4"/>'}
+  {id:'search',title:'Поиск',description:'Умный поиск SEYVEO',
+   icon:'<circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.7 15.7 5 5"/>'}
  ];
  const musicMode=()=>dock.classList.contains('seyveo-music-dock')||
   window.SEYVEO_MUSIC_DOCK?.isActive?.()===true;
@@ -44,7 +44,7 @@ function init(){
   if(!hash||hash==='#home')return 'home';
   if(hash==='#tasks')return 'tasks';
   if(hash==='#life')return 'life';
-  if(hash==='#manage'||hash==='#manage-theme')return 'manage';
+  if(hash==='#manage'||hash==='#manage-theme')return '';
   return '';
  }
  function paint(){
