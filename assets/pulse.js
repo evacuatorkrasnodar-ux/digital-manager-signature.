@@ -58,13 +58,76 @@ window.SEYVEO_PULSE_DEMO=Object.freeze({
  snapshot(){return EMPTY},
  picture(){return null}
 });
+/* Owner-entered operations: local-only ledger, no invented bank or CRM data. */
+const LEDGER_KEY='seyveo-business-pulse-operations-v1';
+function ledgerRead(){
+ try{
+  const rows=JSON.parse(localStorage.getItem(LEDGER_KEY)||'[]');
+  if(!Array.isArray(rows))return [];
+  return rows.filter(r=>r&&typeof r.id==='string'&&['sale','expense','order','lead'].includes(r.kind)&&
+   Number.isSafeInteger(r.amount)&&r.amount>=0&&r.amount<=100000000&&
+   /^\d{4}-\d{2}-\d{2}$/.test(r.day)&&typeof r.label==='string').slice(-500);
+ }catch{return []}
+}
+function ledgerWrite(items){
+ try{localStorage.setItem(LEDGER_KEY,JSON.stringify(items.slice(-500)));return true}catch{return false}
+}
+function groupData(p){
+ const now=new Date(),dayOf=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ if(p==='week')start.setDate(start.getDate()-6);
+ if(p==='month')start.setDate(start.getDate()-29);
+ if(p==='year')start.setMonth(start.getMonth()-11,1);
+ const from=dayOf(start),to=dayOf(now),rows=ledgerRead().filter(x=>x.day>=from&&x.day<=to);
+ const totals={leads:0,sales:0,revenue:0,cost:0},bySource=new Map(),byCost=new Map(),byBucket=new Map();
+ const bucket=d=>p==='year'?d.slice(0,7):p==='today'?d:d;
+ for(const item of rows){
+  if(item.kind==='lead'){totals.leads++;bySource.set(item.label,(bySource.get(item.label)||0)+1)}
+  if(item.kind==='order')totals.sales++;
+  if(item.kind==='sale')totals.revenue+=item.amount;
+  if(item.kind==='expense'){totals.cost+=item.amount;byCost.set(item.label,(byCost.get(item.label)||0)+item.amount)}
+  const key=bucket(item.day),entry=byBucket.get(key)||{leads:0,sales:0,revenue:0,cost:0};
+  if(item.kind==='lead')entry.leads++;
+  if(item.kind==='order')entry.sales++;
+  if(item.kind==='sale')entry.revenue+=item.amount;
+  if(item.kind==='expense')entry.cost+=item.amount;
+  byBucket.set(key,entry);
+ }
+ const trend=[...byBucket].sort((a,b)=>a[0].localeCompare(b[0])).map(([key,x])=>({label:p==='year'?key.slice(5):key.slice(5).replace('-','.'),...x}));
+ const sources=[...bySource].map(([name,leads])=>({name,leads,sales:0,revenue:0}));
+ const costs=[...byCost].map(([name,value])=>({name,value}));
+ return {total:totals,trend,sources,costs,demo:false,local:true,hasRecords:rows.length>0};
+}
+window.SEYVEO_PULSE_LEDGER=Object.freeze({
+ list:()=>ledgerRead().slice().reverse(),
+ add(input){
+  const kind=String(input?.kind||''),label=String(input?.label||'').trim().slice(0,70);
+  const amount=Number(input?.amount||0),day=String(input?.day||'');
+  if(!['sale','expense','order','lead'].includes(kind)||!label||
+   !Number.isSafeInteger(amount)||amount<0||amount>100000000||
+   !/^\d{4}-\d{2}-\d{2}$/.test(day)||Number.isNaN(new Date(day+'T12:00:00').getTime()))
+   return {ok:false,error:'Проверьте тип, сумму, дату и описание.'};
+  const result=ledgerRead();
+  if(result.length>=500)return {ok:false,error:'Журнал заполнен (500 записей). Удалите старые записи.'};
+  result.push({id:'op-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),kind,label,amount,day,createdAt:new Date().toISOString()});
+  if(!ledgerWrite(result))return {ok:false,error:'Не удалось сохранить на устройстве.'};
+  window.dispatchEvent(new Event('seyveo:pulse-ledger-changed'));
+  return {ok:true};
+ },
+ remove(id){
+  const rows=ledgerRead();if(!rows.some(x=>x.id===id))return false;
+  if(!ledgerWrite(rows.filter(x=>x.id!==id)))return false;
+  window.dispatchEvent(new Event('seyveo:pulse-ledger-changed'));return true;
+ }
+});
 function resolve(p){
  let actual=null;
  try{actual=window.SEYVEO_PULSE_DEMO?.picture?.(p)}catch{}
  if(actual&&actual.total&&Array.isArray(actual.trend)&&
   Array.isArray(actual.sources)&&Array.isArray(actual.costs))return actual;
- // Sample fixtures are opt-in for developers, never default financial reporting.
- return new URLSearchParams(location.search).has('seyveoStudio')?sampleData(p):null;
+ // Developer fixtures are explicitly opt-in and never mixed with owner-entered records.
+ if(new URLSearchParams(location.search).has('seyveoStudio')&&!ledgerRead().length)return sampleData(p);
+ return groupData(p);
 }
 window.SEYVEO_PULSE_VIEW=Object.freeze({get:resolve});
 function readLocalTasks(){
@@ -93,7 +156,7 @@ function drawChart(data){
  }
 }
 function render(){
- const data=resolve(period),total=data.total;
+ const data=resolve(period),total=data?.total||{leads:0,sales:0,revenue:0,cost:0};
  document.querySelectorAll('[data-pulse-period]').forEach(b=>
   b.setAttribute('aria-pressed',String(b.dataset.pulsePeriod===period)));
  const vals={
@@ -114,7 +177,7 @@ function render(){
   demoLabel.textContent='ДЕМО · ТЕСТОВЫЕ ЦИФРЫ, НЕ РЕАЛЬНЫЕ ПРОДАЖИ';
  }
  $('pulseIncomeLabel').textContent='Выручка';
- drawChart(data);
+ drawChart(data||{trend:[]});
  const difference=total.revenue-total.cost;
  $('pulseInsight').textContent=preview
   ?'Учебный пример: '+num.format(total.leads)+' обращений, '+num.format(total.sales)+
@@ -130,6 +193,7 @@ document.querySelectorAll('[data-pulse-period]').forEach(button=>
   period=button.dataset.pulsePeriod;
   document.dispatchEvent(new Event('seyveo:silk-touch'));render();
  }));
+window.addEventListener('seyveo:pulse-ledger-changed',()=>{if(dialog.open)render()});
 window.addEventListener('seyveo:pulse-open',event=>{
  period=periods.includes(event.detail?.period)?event.detail.period:'today';
  render();
