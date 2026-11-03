@@ -108,17 +108,20 @@ function restoreStoredMedia(container,message){
    const wave=el('span','svcp-audio-wave');
    for(let i=0;i<19;i++){const stick=el('i');stick.style.height=(7+((i*17+13)%19))+'px';wave.append(stick)}
    const duration=el('time','svcp-audio-duration',
-    message.audioDuration?voiceDuration(message.audioDuration*1000):'Голосовое');
+    message.audioDuration?voiceDuration(Math.max(1000,message.audioDuration*1000)):'00:01');
    control.addEventListener('click',async()=>{try{
     if(audio.paused){await audio.play()}else audio.pause();
    }catch{setStatus('Аудиозапись не удалось воспроизвести')}});
    audio.addEventListener('play',()=>{control.textContent='Ⅱ';control.setAttribute('aria-label','Приостановить голосовое')});
    audio.addEventListener('pause',()=>{control.textContent='▶';control.setAttribute('aria-label','Воспроизвести голосовое')});
-   audio.addEventListener('ended',()=>{control.textContent='▶'});
+   audio.addEventListener('ended',()=>{
+    control.textContent='▶';
+    duration.textContent=voiceDuration(Math.max(1000,(message.audioDuration||Math.ceil(audio.duration)||1)*1000));
+   });
    audio.addEventListener('timeupdate',()=>{
     if(Number.isFinite(audio.duration)&&audio.duration>0){
      wave.style.setProperty('--svcp-play-progress',Math.min(100,Math.round(audio.currentTime/audio.duration*100))+'%');
-     duration.textContent=voiceDuration((audio.duration-audio.currentTime)*1000);
+     duration.textContent=voiceDuration(Math.max(1000,Math.ceil(audio.duration-audio.currentTime)*1000));
     }
    });
    slot.classList.add('svcp-voice-message');
@@ -172,7 +175,7 @@ function setVoicePanel(open,stateName='recording'){
  if(voicePreviewPlay)voicePreviewPlay.hidden=stateName!=='ready';
  if(voiceLabel)voiceLabel.textContent=stateName==='recording'?'Идёт запись голоса':
   stateName==='processing'?'Подготавливаю запись…':
-  stateName==='error'?'Микрофон недоступен':'Голосовое сообщение';
+  stateName==='error'?'Нет микрофона':'Голосовое';
 }
 function showVoiceError(message){
   setStatus(message);
@@ -293,7 +296,7 @@ async function sendVoice(){
   // The same room history and one recipient context as text messages.
   const entry={room:draft.room,text:'Голосовое сообщение · '+voiceDuration(draft.duration),
    at:Date.now(),role:draft.viewpoint==='elena'?'demo-elena':'self',
-   mediaId,mediaType:mime,mediaPurpose:'voice',audioDuration:Math.round(draft.duration/1000)};
+   mediaId,mediaType:mime,mediaPurpose:'voice',audioDuration:Math.max(1,Math.ceil(draft.duration/1000))};
   const updated=state.chat.concat(entry).slice(-500);
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;
