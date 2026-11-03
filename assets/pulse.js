@@ -58,20 +58,8 @@ window.SEYVEO_PULSE_DEMO=Object.freeze({
  snapshot(){return EMPTY},
  picture(){return null}
 });
-/* Owner-entered operations: local-only ledger, no invented bank or CRM data. */
-const LEDGER_KEY='seyveo-business-pulse-operations-v1';
-function ledgerRead(){
- try{
-  const rows=JSON.parse(localStorage.getItem(LEDGER_KEY)||'[]');
-  if(!Array.isArray(rows))return [];
-  return rows.filter(r=>r&&typeof r.id==='string'&&['sale','expense','order','lead'].includes(r.kind)&&
-   Number.isSafeInteger(r.amount)&&r.amount>=0&&r.amount<=100000000&&
-   /^\d{4}-\d{2}-\d{2}$/.test(r.day)&&typeof r.label==='string').slice(-500);
- }catch{return []}
-}
-function ledgerWrite(items){
- try{localStorage.setItem(LEDGER_KEY,JSON.stringify(items.slice(-500)));return true}catch{return false}
-}
+/* Read only the single canonical owner-entered ledger. */
+function ledgerRead(){return (window.SEYVEO_PULSE_LEDGER?.list?.()||[]).slice().reverse()}
 function groupData(p){
  const now=new Date(),dayOf=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
  const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
@@ -98,35 +86,15 @@ function groupData(p){
  const costs=[...byCost].map(([name,value])=>({name,value}));
  return {total:totals,trend,sources,costs,demo:false,local:true,hasRecords:rows.length>0};
 }
-window.SEYVEO_PULSE_LEDGER=Object.freeze({
- list:()=>ledgerRead().slice().reverse(),
- add(input){
-  const kind=String(input?.kind||''),label=String(input?.label||'').trim().slice(0,70);
-  const amount=Number(input?.amount||0),day=String(input?.day||'');
-  if(!['sale','expense','order','lead'].includes(kind)||!label||
-   !Number.isSafeInteger(amount)||amount<0||amount>100000000||
-   !/^\d{4}-\d{2}-\d{2}$/.test(day)||Number.isNaN(new Date(day+'T12:00:00').getTime()))
-   return {ok:false,error:'Проверьте тип, сумму, дату и описание.'};
-  const result=ledgerRead();
-  if(result.length>=500)return {ok:false,error:'Журнал заполнен (500 записей). Удалите старые записи.'};
-  result.push({id:'op-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),kind,label,amount,day,createdAt:new Date().toISOString()});
-  if(!ledgerWrite(result))return {ok:false,error:'Не удалось сохранить на устройстве.'};
-  window.dispatchEvent(new Event('seyveo:pulse-ledger-changed'));
-  return {ok:true};
- },
- remove(id){
-  const rows=ledgerRead();if(!rows.some(x=>x.id===id))return false;
-  if(!ledgerWrite(rows.filter(x=>x.id!==id)))return false;
-  window.dispatchEvent(new Event('seyveo:pulse-ledger-changed'));return true;
- }
-});
+
 function resolve(p){
  let actual=null;
  try{actual=window.SEYVEO_PULSE_DEMO?.picture?.(p)}catch{}
  if(actual&&actual.total&&Array.isArray(actual.trend)&&
   Array.isArray(actual.sources)&&Array.isArray(actual.costs))return actual;
- // Developer fixtures are explicitly opt-in and never mixed with owner-entered records.
- if(new URLSearchParams(location.search).has('seyveoStudio')&&!ledgerRead().length)return sampleData(p);
+ // Fill an empty prototype with sample figures for developer visual inspection.
+ // As soon as real local records exist, show only the real ledger, never mix figures.
+ if(!ledgerRead().length)return sampleData(p);
  return groupData(p);
 }
 window.SEYVEO_PULSE_VIEW=Object.freeze({get:resolve});
