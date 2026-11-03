@@ -29,11 +29,20 @@
  --sv-air-divider:var(--sv-velvet-divider);
 }
 :root[data-theme="light"]{
+ /* SEYVEO Air 26 · orb-mint optical material, common to all white-theme glass.
+    Translucent stacked highlights + backdrop sampling; no solid mint panels. */
+ --sv-glass-orb-ink:#25383c;
+ --sv-glass-orb-material:linear-gradient(157deg,rgba(255,255,255,.78) 0%,rgba(236,250,247,.48) 24%,rgba(177,217,212,.26) 65%,rgba(246,253,251,.58) 100%),rgba(236,248,247,.42);
+ --sv-glass-orb-primary:linear-gradient(155deg,rgba(255,255,255,.86),rgba(220,243,239,.62) 37%,rgba(176,215,209,.49) 74%,rgba(246,252,251,.76)),rgba(232,247,244,.60);
+ --sv-glass-orb-edge:rgba(96,145,139,.17);
+ --sv-glass-orb-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(97,145,139,.10),0 3px 11px rgba(55,99,95,.075);
+ --sv-glass-orb-blur:blur(18px) saturate(1.24);
  --sv-velvet-panel:#ffffff;
  --sv-velvet-panel-quiet:#eef1f5;
  --sv-air-dock:#e9edf2;
- --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68);
- --sv-liquid-nav-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70);
+ --sv-liquid-nav-material:var(--sv-glass-orb-material);
+ --sv-liquid-nav-shadow:0 7px 21px rgba(53,80,102,.10),inset 0 1px 0 rgba(255,255,255,.86),inset 0 -1px 0 rgba(97,145,139,.08);
+ --sv-liquid-nav-blur:var(--sv-glass-orb-blur);
  --sv-air-home-surface:#fbfcfd;
  --sv-air-control:#e8edf2;
  --sv-air-selected:#dce5ee;
