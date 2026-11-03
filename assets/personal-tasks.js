@@ -781,7 +781,13 @@ list.addEventListener('click',e=>{
    showTaskError(detail.result?.message||'Не удалось открыть исходную заметку.');
  }
 });
-dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+dialog.addEventListener('click',event=>{
+ if(event.target!==dialog)return;
+ if(dialog.classList.contains('sv-task-date-open')){
+  dialog.dispatchEvent(new Event('seyveo:task-date-back'));return;
+ }
+ dialog.close();
+});
 /* Prepared from a Notebook note; the existing task form is the only
    writer and still requires the person's explicit Save action. */
 window.addEventListener('seyveo:task-plan-note',event=>{
