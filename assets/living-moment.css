@@ -839,21 +839,24 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 
 /* Work message shares the original Quiet Cinema card, typography and motion. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-art-svg--work{color:#8FE3C3;stroke:#8FE3C3}
-/* The first visible Work action is the second DOM control: the first
-   ("Сэйви") is hidden in Work mode. Give the ACTUAL response action one
-   small optical lens, without adding a container around the whole row. */
+/* SEYVEO Air 26 · Work reply: a quiet optical edge rather than a gray ring.
+   The second DOM control is the first visible action in choose mode.
+   No changes to the reply flow, touch target, orb or dock. */
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(2):not([hidden]){
  color:var(--text)!important;
  min-height:44px!important;
  padding:8px 12px!important;
- border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ border:1px solid color-mix(in srgb,var(--text) 5%,transparent)!important;
  border-radius:999px!important;
- background:linear-gradient(160deg,
-   color-mix(in srgb,var(--card) 32%,transparent),
-   color-mix(in srgb,var(--card2) 18%,transparent))!important;
- box-shadow:inset 0 1px 0 color-mix(in srgb,var(--seyveo-metal-peak) 42%,transparent)!important;
- -webkit-backdrop-filter:blur(12px) saturate(1.12);
- backdrop-filter:blur(12px) saturate(1.12);
+ background:linear-gradient(155deg,
+   color-mix(in srgb,var(--seyveo-metal-peak) 15%,transparent) 0%,
+   color-mix(in srgb,var(--card) 9%,transparent) 55%,
+   color-mix(in srgb,var(--card2) 13%,transparent) 100%)!important;
+ box-shadow:
+   inset 0 1px 0 color-mix(in srgb,var(--seyveo-metal-peak) 62%,transparent),
+   inset 0 -1px 0 color-mix(in srgb,var(--text) 3%,transparent)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(1.08);
+ backdrop-filter:blur(12px) saturate(1.08);
  font-size:12.5px!important;line-height:1.3!important;font-weight:540;
 }
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{
@@ -861,6 +864,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:not(:nth-child(2)){
  padding-left:2px;padding-right:2px;
+ color:color-mix(in srgb,var(--secondary) 72%,var(--text) 28%);
+ font-weight:500;
 }
 @media(prefers-reduced-transparency:reduce){
  #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(2):not([hidden]){
