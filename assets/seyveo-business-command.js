@@ -309,7 +309,7 @@ async function sendVoice(){
   state.chat=updated;
   cancelVoice();
   renderChat();renderDirectory();
-  setStatus('Голосовое сообщение сохранено в переписке на этом устройстве. Другим людям пока не доставляется.');
+  setStatus('Голосовое сохранено только на этом устройстве');
  }catch{
   const message='Не получилось сохранить голосовое на устройстве. Проверь свободное место и повтори.';
   setStatus(message);if(voiceHint)voiceHint.textContent=message;
@@ -364,7 +364,7 @@ function setStatus(s){
  const screen=$('svcpWorkChatScreen');
  if(screen&&!screen.hidden&&screen.dataset.view==='room'){
   el.dataset.show='true';
-  statusResetTimer=setTimeout(()=>{el.dataset.show='false'},3400);
+  statusResetTimer=setTimeout(()=>{el.dataset.show='false'},s==='Голосовое сохранено только на этом устройстве'?2100:3000);
  }else el.dataset.show='false';
 }
 window.addEventListener('seyveo:work-chat-closing',()=>{
