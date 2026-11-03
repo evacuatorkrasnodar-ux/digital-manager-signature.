@@ -451,7 +451,7 @@ function deferredPreviewRow(item){
  art.setAttribute('aria-hidden','true');
  const copy=element('span','personal-task-content');
  copy.append(element('strong','personal-deferred-title',item.title),
-  element('small','personal-deferred-note','ДЕМО · '+item.note));
+  element('small','personal-deferred-note',item.note));
  const actions=element('span','personal-deferred-actions');
  const open=element('button','','Подробнее');
  open.type='button';open.dataset.deferredOpen=item.kind;
