@@ -876,25 +876,45 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){width:40px!important;min-width:40px!important}
 }
 
-/* Emoji-only popover: a detached compact selector ABOVE the tall composer.
-   No duplicated tool menu and no overlap with the writing area. */
+/* One lightweight horizontal emoji rail above the tall work composer.
+   Swipe left/right to browse; no stacked grid, heading or detached tool menu. */
 #svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"]:not([hidden]){
- width:min(276px,calc(100% - 24px))!important;
- grid-template-columns:minmax(0,1fr)!important;
- padding:7px!important;
- bottom:calc(var(--seyveo-dock-bottom,8px) + 128px)!important;
- max-height:min(244px,34dvh)!important;
- border-radius:19px!important;
+ box-sizing:border-box!important;
+ position:absolute!important;
+ left:50%!important;right:auto!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + 126px)!important;
+ transform:translateX(-50%)!important;
+ width:min(430px,calc(100% - 14px))!important;
+ max-width:calc(100% - 14px)!important;
+ height:54px!important;min-height:54px!important;max-height:54px!important;
+ padding:4px 8px!important;
+ display:block!important;
+ border:1px solid var(--sv-input-border)!important;
+ border-radius:22px!important;
+ background:var(--sv-input-surface)!important;
+ -webkit-backdrop-filter:var(--sv-input-blur)!important;
+ backdrop-filter:var(--sv-input-blur)!important;
+ overflow:hidden!important;
 }
 #svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip:not([hidden]){
- display:grid!important;
- grid-template-columns:repeat(5,minmax(0,1fr))!important;
- gap:1px!important;
+ display:flex!important;flex-flow:row nowrap!important;
+ align-items:center!important;justify-content:flex-start!important;
+ grid-template-columns:none!important;
+ width:100%!important;height:44px!important;max-height:44px!important;
+ gap:5px!important;margin:0!important;padding:0!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ overscroll-behavior-x:contain!important;
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:none!important;
 }
-#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip>.svcp-composer-emoji-back{
- font-size:12px!important;height:32px!important;min-height:32px!important;
+#svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip::-webkit-scrollbar{
+ display:none!important;width:0!important;height:0!important;
 }
 #svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"] #svcpComposerEmojiStrip :is(.svcp-composer-emoji-choice,.svcp-composer-emoji-expand){
- width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 43px!important;width:43px!important;min-width:43px!important;
+ height:43px!important;min-height:43px!important;max-height:43px!important;
  font-size:23px!important;line-height:1!important;padding:0!important;
+ margin:0!important;border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
 }
