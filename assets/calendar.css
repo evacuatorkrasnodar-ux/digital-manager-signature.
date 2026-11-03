@@ -594,7 +594,22 @@
 .cal-form-status:empty{display:none}
 .cal-event-label{font-size:10px;text-align:center;color:var(--secondary);margin-top:6px}
 #calendarView[hidden],#calendarDeadlineView[hidden]{display:none!important}
-:root[data-theme=light] .cal-day[data-today=true] .cal-day-number{color:#fff}
+/* White theme: today's date is the same flat, frosted orb glass as primary actions. */
+:root[data-theme=light] #calendarPage .cal-day[data-today=true] .cal-day-number{
+ color:var(--sv-glass-orb-ink);
+ background:var(--sv-glass-orb-primary);
+ box-shadow:var(--sv-glass-orb-shadow);
+ -webkit-backdrop-filter:var(--sv-glass-orb-blur);
+ backdrop-filter:var(--sv-glass-orb-blur);
+}
+:root[data-theme=light] #calendarPage .cal-day[data-today=true][data-holiday] .cal-day-number{
+ color:var(--sv-glass-orb-ink);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #calendarPage .cal-day[data-today=true] .cal-day-number{
+  background:#e0f0ec;-webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
 :root[data-theme=light] .calendar-header-add{color:var(--text)}
 @media(max-width:370px){
  .calendar-header h1{font-size:25px}
