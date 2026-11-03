@@ -529,16 +529,19 @@ function mailView(){
   );
   const prompt=create('div','sv-mail-assist-prompt');
   const request=create('input','sv-mail-assist-input');
-  request.type='text';request.placeholder='Например: Сэйви, ответь клиенту';
+  request.type='text';request.placeholder='Попросите Сэйви…';
   request.setAttribute('aria-label','Попросить Сэйви помочь с письмом');
   request.maxLength=240;
-  const ask=intent('Выполнить',()=>{
+  const ask=intent('↗',()=>{
    const words=request.value.trim().toLocaleLowerCase('ru-RU');
    if(!words){result.textContent='Напишите, что сделать с письмом.';return}
    if(/ответ|напиши|состав|подготов|грамотн/i.test(words)){makeDraft();return}
    if(/анализ|разбер|объясн|о чем|о чём|суть|проверь/i.test(words)){result.textContent=mailLocalAnalysis(item);return}
    result.textContent='Пока доступны две локальные команды: «разбери письмо» и «подготовь ответ». Для свободного диалога потребуется подключение ИИ.';
   });
+  ask.classList.add('sv-mail-assist-submit');
+  ask.setAttribute('aria-label','Выполнить просьбу Сэйви');
+  ask.title='Выполнить просьбу';
   request.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();ask.click()}});
   prompt.append(request,ask);
   note.append(caption,quick,prompt,result);
