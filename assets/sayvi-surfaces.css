@@ -572,6 +572,11 @@
  padding:16px 12px;border:0;
  border-radius:var(--sv-velvet-radius);background:var(--sm-surface);
 }
+/* Read a letter like a document, not a stacked glass card. */
+#sayviSurfacePage .sv-mail-detail{
+ gap:0;padding:3px 4px 20px;
+ border-radius:0;background:transparent;
+}
 /* Mail composer: one Black Velvet sheet, native-style field rows.
    The labels remain real accessible labels, not fragile placeholders. */
 #sayviSurfacePage .sv-mail-editor{
@@ -719,10 +724,18 @@
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent--lead{
  color:var(--text);font-weight:640;
 }
+#sayviSurfacePage .sv-mail-detail-actions{
+ gap:8px;margin:0 0 13px;
+ padding:11px 0 0;border-top:1px solid var(--sm-line);
+}
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent{
- border:0;border-radius:12px;
- background:var(--sm-tint);min-height:44px;padding:9px 13px;
+ border:0;border-radius:13px;
+ background:var(--sm-surface);min-height:44px;padding:9px 14px;
  text-decoration:none;color:var(--text);
+ font-size:13px;
+}
+#sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent--lead{
+ background:var(--sm-tint);font-weight:610;
 }
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent::after,
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent::after{display:none}
@@ -752,29 +765,59 @@
 #sayviSurfacePage .sv-mail-draft-content small{font-size:11px;color:var(--secondary)}
 #sayviSurfacePage .sv-mail-detail-bar,
 #sayviSurfacePage .sv-mail-detail-tools{
- display:flex;align-items:center;gap:6px;
+ display:flex;align-items:center;gap:3px;
 }
-#sayviSurfacePage .sv-mail-detail-bar{justify-content:space-between}
+#sayviSurfacePage .sv-mail-detail-bar{
+ justify-content:space-between;min-height:48px;
+ padding-bottom:6px;margin-bottom:16px;
+ border-bottom:1px solid var(--sm-line);
+}
 #sayviSurfacePage .sv-mail-detail-tools{margin-left:auto}
-#sayviSurfacePage .sv-mail-detail-bar .sv-mail-icon-button{flex:0 0 44px;width:44px;height:44px}
-#sayviSurfacePage .sv-mail-detail-demo{font-size:9px;font-weight:600;color:var(--sm-accent)}
-#sayviSurfacePage .sv-mail-detail-title{margin:5px 0;font-size:22px;line-height:1.3;color:var(--text)}
-#sayviSurfacePage .sv-mail-detail-person{display:flex;align-items:center;gap:11px}
-#sayviSurfacePage .sv-mail-detail-who{display:flex;flex-direction:column;gap:4px;min-width:0}
-#sayviSurfacePage .sv-mail-detail-who strong{font-size:13px;color:var(--text)}
-#sayviSurfacePage .sv-mail-detail-who span{font-size:11px;color:var(--secondary)}
+#sayviSurfacePage .sv-mail-detail-bar .sv-mail-icon-button{
+ flex:0 0 44px;width:44px;height:44px;
+}
+#sayviSurfacePage .sv-mail-detail-demo{
+ font-size:10px;line-height:1.3;font-weight:540;
+ letter-spacing:.04em;color:var(--secondary);white-space:nowrap;
+}
+#sayviSurfacePage .sv-mail-detail-title{
+ margin:8px 0 16px;font-size:clamp(22px,6vw,27px);
+ font-weight:610;letter-spacing:-.04em;line-height:1.22;color:var(--text);
+}
+#sayviSurfacePage .sv-mail-detail-person{
+ display:flex;align-items:center;gap:10px;
+ padding:0 0 15px;border-bottom:1px solid var(--sm-line);
+}
+#sayviSurfacePage .sv-mail-detail-person .sv-mail-avatar{
+ flex:0 0 39px;width:39px;height:39px;
+ border-radius:14px;
+}
+#sayviSurfacePage .sv-mail-detail-who{
+ display:flex;flex-direction:column;gap:3px;min-width:0;
+}
+#sayviSurfacePage .sv-mail-detail-who strong{
+ font-size:14px;font-weight:600;color:var(--text);
+}
+#sayviSurfacePage .sv-mail-detail-who span{
+ font-size:11.5px;line-height:1.4;color:var(--secondary);
+}
 #sayviSurfacePage .sv-mail-detail-text{
- font-size:14px;line-height:1.65;color:var(--text);
+ margin:20px 1px 22px;
+ font-size:15px;line-height:1.65;color:var(--text);
  white-space:pre-wrap;overflow-wrap:anywhere;
 }
 #sayviSurfacePage .sv-mail-attachment,
 #sayviSurfacePage .sv-mail-sayvi-note{
- display:flex;align-items:center;gap:8px;
- padding:10px;border-radius:12px;border:0;
- font-size:11px;line-height:1.5;color:var(--secondary);
+ display:flex;align-items:center;gap:9px;
+ margin:0 0 14px;padding:10px 11px;
+ border:1px solid color-mix(in srgb,var(--sm-line) 65%,transparent);
+ border-radius:13px;background:var(--sm-surface);
+ font-size:11.5px;line-height:1.4;color:var(--secondary);
 }
-#sayviSurfacePage .sv-mail-sayvi-note[hidden]{display:none}
-#sayviSurfacePage .sv-mail-attachment svg{width:17px;height:17px}
+#sayviSurfacePage .sv-mail-sayvi-note[hidden]{display:none!important}
+#sayviSurfacePage .sv-mail-attachment svg{
+ width:18px;height:18px;flex:0 0 18px;
+}
 #sayviSurfacePage .sv-mail-folder:focus-visible,
 #sayviSurfacePage .sv-mail-account-switch:focus-visible,
 #sayviSurfacePage .sv-mail-icon-button:focus-visible,
