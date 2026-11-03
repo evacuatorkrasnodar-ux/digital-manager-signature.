@@ -26,24 +26,29 @@
 /* One calendar and one event store: personal/work scopes in the manager preview.
    These are event filters, not a second calendar or an employee shift ledger. */
 #calendarPage .cal-scope{
- display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;
- padding:3px;border:1px solid var(--soft-line);border-radius:15px;
- background:color-mix(in srgb,var(--card2) 45%,transparent);margin:0 0 6px
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;
+ padding:3px;border:0;border-radius:17px;
+ background:color-mix(in srgb,var(--card2) 55%,transparent);
+ -webkit-backdrop-filter:blur(16px) saturate(1.08);
+ backdrop-filter:blur(16px) saturate(1.08);
+ margin:0 0 7px
 }
 #calendarPage .cal-scope[hidden]{display:none!important}
 #calendarPage .cal-scope button{
- min-width:0;min-height:38px;padding:6px 4px;border:0;border-radius:11px;
- color:var(--secondary);background:transparent;font:inherit;font-size:12px;font-weight:530
+ min-width:0;min-height:40px;padding:7px 4px;border:0;border-radius:14px;
+ color:var(--secondary);background:transparent;font:inherit;font-size:12px;font-weight:520
 }
 #calendarPage .cal-scope button[aria-pressed="true"]{
- color:var(--text);background:var(--card);box-shadow:inset 0 0 0 1px var(--soft-line)
+ color:var(--text);background:color-mix(in srgb,var(--card) 78%,transparent);
+ box-shadow:0 1px 3px color-mix(in srgb,var(--text) 7%,transparent)
 }
 #calendarPage .cal-scope button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
 }
-.cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:0 0 0;border:0;background:transparent;border-radius:0;}
-.cal-periods button{min-width:0;min-height:38px;padding:0 3px;border:0;border-radius:14px;color:var(--secondary);background:transparent;font-size:12px;font-weight:565}
-.cal-periods button[aria-pressed=true]{background:transparent;color:var(--text);box-shadow:none;}
+.cal-periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:0;margin:0 0 7px;border:0;border-bottom:1px solid var(--soft-line);background:transparent;border-radius:0;}
+.cal-periods button{position:relative;min-width:0;min-height:43px;padding:0 3px;border:0;border-radius:0;color:var(--secondary);background:transparent;font-size:13px;font-weight:510}
+.cal-periods button[aria-pressed=true]{background:transparent;color:var(--text);box-shadow:none;font-weight:600}
+.cal-periods button[aria-pressed=true]::after{content:"";position:absolute;left:20%;right:20%;bottom:-1px;height:1.5px;border-radius:999px;background:var(--text)}
 .cal-nav{display:flex;align-items:center;gap:7px;margin:0 1px 0;min-height:33px}
 .cal-nav h2{margin:0;min-width:0;flex:1;font-size:17px;letter-spacing:-.024em;line-height:1.25;font-weight:610}
 .cal-nav .cal-period-title{display:inline-block;max-width:100%;padding:5px 0;border:0;background:transparent;color:var(--text);font:inherit;letter-spacing:inherit;line-height:inherit;text-align:left;cursor:pointer}
@@ -60,7 +65,7 @@
  #calendarView .cal-swipe-prev{animation:cal-arrive-prev .22s cubic-bezier(.2,.7,.2,1) both}
 }
 /* Velvet weekend rails: continuous and very quiet, never individual tiles. */
-.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(157,225,198,.036);border:0;border-radius:0;background:transparent;overflow:hidden;padding:3px 0 2px;}
+.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(157,225,198,.036);border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;padding:3px 0 2px;}
 .cal-month::before,.cal-week-grid::before{
  content:"";position:absolute;z-index:0;pointer-events:none;
  top:5px;right:6px;bottom:4px;width:calc((100% - 12px) * 2 / 7);
@@ -75,10 +80,10 @@
 :root[data-theme=light] .cal-month,:root[data-theme=light] .cal-week-grid{--cal-weekend-tint:rgba(37,48,64,.03)}
 .cal-weekdays,.cal-month-grid,.cal-week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
 .cal-weekdays{margin:0 0 2px}
-.cal-weekdays span{font-size:10px;color:var(--secondary);text-align:center;padding:6px 0;font-weight:530}
+.cal-weekdays span{font-size:11px;color:var(--secondary);text-align:center;padding:6px 0;font-weight:520}
 .cal-weekdays span:nth-child(n+6){color:var(--text);opacity:.77}
 .cal-month-grid{grid-auto-rows:44px;row-gap:1px}
-.cal-day{display:flex;position:relative;flex-direction:column;gap:2px;align-items:center;justify-content:center;min-width:0;min-height:44px;border:0;border-radius:13px;background:transparent;color:var(--text);padding:3px 2px 2px;font-size:12px;line-height:1.1}
+.cal-day{display:flex;position:relative;flex-direction:column;gap:2px;align-items:center;justify-content:center;min-width:0;min-height:44px;border:0;border-radius:50%;background:transparent;color:var(--text);padding:3px 2px 2px;font-size:13px;font-weight:490;line-height:1.1}
 .cal-day[data-outside=true]{color:var(--secondary);opacity:.42}
 .cal-day[data-weekend=true]{color:var(--secondary)}
 /* Delicate selected-day circle instead of a full-height rounded square. */
@@ -90,8 +95,8 @@
 .cal-day[data-holiday=rest] .cal-day-number{color:var(--text);font-weight:565}
 /* Today's white circle must keep readable contrast on a holiday. */
 .cal-day[data-today=true][data-holiday] .cal-day-number{color:var(--bg);font-weight:675}
-.cal-day[data-today=true] .cal-day-number{color:var(--bg);background:var(--text);border-radius:50%;min-width:26px;height:26px;display:grid;place-items:center;margin:-5px 0 -4px}
-.cal-day-number{display:grid;place-items:center;min-width:26px;height:26px}
+.cal-day[data-today=true] .cal-day-number{color:var(--bg);background:var(--text);border-radius:50%;min-width:30px;height:30px;display:grid;place-items:center;margin:-5px 0 -4px;font-weight:650}
+.cal-day-number{display:grid;place-items:center;min-width:30px;height:30px}
 .cal-day-dots{display:flex;align-items:center;justify-content:center;gap:3px;height:5px}
 .cal-day-dots i{display:block;width:4px;height:4px;border-radius:50%;background:var(--secondary)}
 .cal-day-dots i.cal-dot-task{background:var(--text)}
@@ -102,9 +107,9 @@
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:54px;justify-content:center;gap:4px}
 .cal-week-grid .cal-day small{font-size:10px;color:var(--secondary);margin:0}
-.cal-day-summary{margin:5px 1px 3px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cal-day-summary{margin:8px 1px 3px;padding-top:11px;border-top:1px solid var(--soft-line);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 #calendarView[data-mode=day] .cal-day-summary{margin-top:0}
-.cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:605}
+.cal-day-summary h2{margin:0;font-size:14px;line-height:1.35;font-weight:610;letter-spacing:-.015em}
 .cal-day-summary span{font-size:11px;line-height:1.4;color:var(--secondary)}
 .cal-holiday-note{display:flex;align-items:center;gap:8px;margin:-1px 1px 9px;color:var(--text);font-size:12px;line-height:1.45}
 .cal-holiday-note[hidden]{display:none!important}
@@ -133,7 +138,7 @@
 .cal-day-fab:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 /* Compact paired actions; the original velvet dock retains its geometry. */
 #calendarPage .cal-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:6px}
-#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:0 1 auto;min-width:0;min-height:44px;margin:0;padding:8px 13px;border-radius:13px;font-size:12px;font-weight:540;white-space:nowrap}
+#calendarPage .cal-actions .cal-day-fab{display:inline-flex;flex:0 1 auto;min-width:0;min-height:44px;margin:0;padding:8px 14px;border:0;border-radius:999px;background:color-mix(in srgb,var(--card2) 53%,transparent);color:var(--text);font-size:12.5px;font-weight:550;white-space:nowrap;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 #calendarPage .cal-actions .cal-day-fab[hidden]{display:none!important}
 #calendarPage .cal-actions[data-deadlines="true"] .cal-day-fab{flex:0 1 auto;min-width:min(100%,185px);padding-inline:14px}
 /* The app shell already reserves room for the shared fixed dock.
@@ -687,4 +692,18 @@
 }
 @media(prefers-reduced-motion:reduce){
  :is(#calendarEventDialog,#personalTaskDialog) .cal-pick-wheel{scroll-behavior:auto}
+}
+
+/* Air 26 white calendar: dates float on the shared page, not on a paper card. */
+:root[data-theme="light"] #calendarPage .cal-month,
+:root[data-theme="light"] #calendarPage .cal-month-grid,
+:root[data-theme="light"] #calendarPage .cal-weekdays{
+ background:transparent;box-shadow:none;border:0;
+}
+:root[data-theme="light"] #calendarPage .cal-scope{background:rgba(218,227,233,.35)}
+:root[data-theme="light"] #calendarPage .cal-scope button[aria-pressed="true"]{
+ background:rgba(255,255,255,.82);box-shadow:0 1px 4px rgba(36,45,51,.055);
+}
+:root[data-theme="light"] #calendarPage .cal-day[data-selected=true]:not([data-today=true]) .cal-day-number{
+ background:rgba(35,41,46,.075);box-shadow:inset 0 0 0 1px rgba(35,41,46,.20);
 }
