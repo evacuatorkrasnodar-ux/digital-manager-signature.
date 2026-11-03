@@ -358,7 +358,11 @@ function resizeWorkComposer(){
 }
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
-$('svcpAttachFile')?.addEventListener('click',()=>$('svcpCameraToggle')?.click());
+$('svcpAttachFile')?.addEventListener('click',()=>{
+ setCameraTray(false);
+ const picker=$('svcpFile');if(!picker)return;
+ picker.value='';picker.click();
+});
 
 /* Draft polishing is opt-in and never sends a message. Basic offline demo only. */
 function polishDraftLocally(raw){
@@ -1371,23 +1375,24 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
 });
 /* Camera is a single entry point, with user-initiated system capture on mobile. */
 const fileInput=$('svcpFile');
-const cameraInputs={shelf:$('svcpCameraPhoto'),price:$('svcpCameraPhoto'),
- video:$('svcpCameraVideo'),barcode:$('svcpCameraBarcode'),file:fileInput};
+const cameraInputs={photo:$('svcpCameraPhoto'),file:fileInput};
 const cameraTray=$('svcpCameraTray'),cameraToggle=$('svcpCameraToggle');
-const cameraPurposeNames={shelf:'Фото выкладки',price:'Фото ценника',
- video:'Рабочее видео',barcode:'Штрихкод',file:'Вложение'};
-let cameraBusy=false,photoCapturePurpose='shelf';
+const cameraPurposeNames={photo:'Фото',file:'Вложение'};
+let cameraBusy=false;
 function setCameraTray(open){
  if(!cameraTray||!cameraToggle)return;
  if(open)closeComposerEmoji();
  else{
-  const manual=$('svcpBarcodeManual');if(manual)manual.hidden=true;
   closeComposerEmoji();
  }
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
  $('svcpAttachFile')?.setAttribute('aria-expanded',String(open));
 }
-cameraToggle?.addEventListener('click',()=>setCameraTray(cameraTray.hidden));
+cameraToggle?.addEventListener('click',()=>{
+ setCameraTray(false);
+ const picker=$('svcpCameraPhoto');if(!picker)return;
+ picker.value='';picker.click();
+});
 document.addEventListener('keydown',event=>{if(event.key==='Escape')setCameraTray(false)});
 function cleanupPreview(){
  if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}
@@ -1421,53 +1426,9 @@ function renderCapturePreview(){
  info.append(el('strong',null,cameraPurposeNames[state.filePurpose]||'Вложение'));
  if(state.file)info.append(el('small',null,state.file.name+' · сохранится в этом браузере после отправки'));
  if(state.scanCode)info.append(el('small','svcp-scanned-code','Код: '+state.scanCode+' · товар по базе не проверен'));
- else if(state.filePurpose==='shelf')info.append(el('small',null,'Для проверки выкладки снимите всю полку и отдельно крупно ценники.'));
- else if(state.filePurpose==='price')info.append(el('small',null,'Ценник должен быть читаемым. Сверка с каталогом пока недоступна.'));
- else if(state.filePurpose==='barcode')info.append(el('small',null,'Если код не распознался, введите цифры вручную.'));
+ else if(state.filePurpose==='photo')info.append(el('small',null,'Снимок прикреплён. Автоматический анализ ценников и выкладки пока не подключён.'));
  display.append(info);
  display.append(btn('Убрать',()=>{cleanupPreview();setStatus('Вложение убрано.')},'svcp-ghost svcp-selected-remove'));
-}
-async function detectPhotoBarcode(file){
- if(!file||state.file!==file)return;
- const manual=$('svcpBarcodeManual');
- if(manual)manual.hidden=false;
- if(typeof window.BarcodeDetector!=='function'){
-  setStatus('Сканирование штрихкода не поддерживается этим браузером. Введите код вручную или сохраните фото без кода.');
-  return;
- }
- try{
-  const formats=typeof window.BarcodeDetector.getSupportedFormats==='function'
-   ?await window.BarcodeDetector.getSupportedFormats():[];
-  const wanted=['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'];
-  const allowed=formats.filter(x=>wanted.includes(x));
-  const detector=new window.BarcodeDetector(allowed.length?{formats:allowed}:undefined);
-  // BarcodeDetector accepts an ImageBitmapSource, not a File/Blob.
-  // Decode the camera image first, and release its bitmap after scanning.
-  let bitmap=null;
-  let results=[];
-  try{
-   if(typeof createImageBitmap==='function'){
-    bitmap=await createImageBitmap(file);
-    results=await detector.detect(bitmap);
-   }else{
-    const url=URL.createObjectURL(file);
-    try{
-     const photo=new Image();
-     photo.src=url;
-     await photo.decode();
-     results=await detector.detect(photo);
-    }finally{URL.revokeObjectURL(url)}
-   }
-  }finally{bitmap?.close?.()}
-  if(state.file!==file)return;
-  const recognized=results.find(x=>typeof x.rawValue==='string'&&x.rawValue.trim());
-  if(!recognized){setStatus('Код на фото не распознан. Попробуйте ближе или введите вручную.');return}
-  state.scanCode=recognized.rawValue.trim().slice(0,96);
-  renderCapturePreview();
-  setStatus('Распознан код '+state.scanCode+'. Название товара и цену без базы магазина проверить нельзя.');
- }catch{
-  setStatus('Автоматическое распознавание здесь недоступно. Можно ввести код вручную или прикрепить фото.');
- }
 }
 function pickCaptureFile(file,purpose){
  cleanupPreview();
@@ -1480,42 +1441,16 @@ function pickCaptureFile(file,purpose){
  state.file=file;
  state.filePurpose=purpose;
  renderCapturePreview();
- if(purpose==='barcode'){setCameraTray(true);detectPhotoBarcode(file)}
- else setCameraTray(false);
+ setCameraTray(false);
 }
-// "Выкладка" and "Ценник" use one photo input; register its change
-// listener only once, otherwise the second handler overwrites the purpose.
+// One camera action; the image type will be inferred when vision is connected.
 $('svcpCameraPhoto')?.addEventListener('change',()=>{
  const file=$('svcpCameraPhoto').files?.[0];
- if(file)pickCaptureFile(file,photoCapturePurpose);
+ if(file)pickCaptureFile(file,'photo');
 });
-for(const [kind,id] of [['video','svcpCameraVideo'],['barcode','svcpCameraBarcode'],['file','svcpFile']]){
- const picker=$(id);
- picker?.addEventListener('change',()=>{
-  const file=picker.files?.[0];
-  if(file)pickCaptureFile(file,kind);
- });
-}
-cameraTray?.querySelectorAll('[data-svcp-capture]').forEach(button=>
- button.addEventListener('click',()=>{
-  const type=button.dataset.svcpCapture;
-  const input=cameraInputs[type];if(!input)return;
-  if(type==='shelf'||type==='price')photoCapturePurpose=type;
-  if(type==='barcode'){$('svcpBarcodeManual').hidden=false}
-  else setCameraTray(false);
-  input.value='';input.click();
- }));
-$('svcpBarcodeUse')?.addEventListener('click',()=>{
- const raw=$('svcpBarcodeInput')?.value.trim().replace(/\s+/g,'')||'';
- if(!/^[0-9A-Za-z.-]{4,48}$/.test(raw)){
-  setStatus('Введите штрихкод длиной 4–48 символов, без пробелов и специальных знаков.');
-  return;
- }
- state.scanCode=raw;
- if(!state.file)state.filePurpose='barcode';
- renderCapturePreview();
- setCameraTray(false);
- setStatus('Код '+raw+' добавлен к сообщению. Проверка по товарной базе ещё не подключена.');
+$('svcpFile')?.addEventListener('change',()=>{
+ const file=$('svcpFile').files?.[0];
+ if(file)pickCaptureFile(file,'file');
 });
 function btn(text,action,cls){
  const button=el('button',cls,text);button.type='button';button.addEventListener('click',action);return button;
