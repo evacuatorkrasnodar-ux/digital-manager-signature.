@@ -234,16 +234,46 @@
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-task-draft select{width:100%;min-height:43px;border:0;border-radius:13px;padding:10px 12px;background:var(--card);color:var(--text);font:inherit;font-size:13px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-task-assignee{display:block;margin-top:4px;color:var(--text);font-size:11px;line-height:1.4}
 #svcpWorkHomePreview[hidden]{display:none!important}
-#svcpWorkHomePreview{margin:9px 0 13px;padding:13px 14px 11px;border:0;border-radius:18px;background:linear-gradient(150deg,var(--seyveo-specular),transparent 72%),var(--card);color:var(--text);box-shadow:none;display:grid;gap:7px;min-width:0}
+/* Home speaks one visual language: real cards and training cards share the
+   same unpainted canvas. Only text and deliberate actions carry emphasis. */
+#svcpWorkHomePreview{
+ margin:9px 0 13px;padding:13px 12px 11px;
+ border:0;border-radius:0;background:transparent;
+ color:var(--text);box-shadow:none;
+ display:grid;gap:7px;min-width:0
+}
 #svcpWorkHomePreview .svcp-home-preview-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #svcpWorkHomePreview .svcp-home-preview-head span{font-size:11px;color:var(--text);font-weight:560;letter-spacing:.005em}
-#svcpWorkHomePreview .svcp-home-preview-head button{border:0;background:transparent;font:inherit;color:var(--secondary);font-size:19px;cursor:pointer;min-width:32px;min-height:32px}
+#svcpWorkHomePreview .svcp-home-preview-head button{
+ display:grid;place-items:center;flex:none;
+ border:0;border-radius:50%;background:transparent;
+ font:inherit;color:var(--secondary);font-size:19px;cursor:pointer;
+ min-width:44px;min-height:44px;padding:0;
+ -webkit-tap-highlight-color:transparent
+}
 #svcpWorkHomePreview>strong{font-size:15px;font-weight:570;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 #svcpWorkHomePreview>p{margin:0;font-size:11.5px;color:var(--secondary);line-height:1.45}
-#svcpWorkHomePreview .svcp-home-preview-actions{display:flex;align-items:center;justify-content:flex-start;gap:18px;flex-wrap:wrap;margin-top:3px}
-#svcpWorkHomePreview .svcp-home-preview-actions button{min-height:38px;min-width:0;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;background:none;color:var(--text);font:inherit;font-size:12px;font-weight:560;cursor:pointer;padding:7px 2px;text-align:left}
+#svcpWorkHomePreview .svcp-home-preview-actions{
+ display:flex;align-items:center;justify-content:flex-start;
+ column-gap:13px;row-gap:0;flex-wrap:wrap;margin-top:3px
+}
+#svcpWorkHomePreview .svcp-home-preview-actions button{
+ min-height:44px;min-width:0;padding:8px 2px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:12px;
+ font-weight:510;line-height:1.3;letter-spacing:-.01em;
+ cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent
+}
 #svcpWorkHomePreview>small{font-size:10px;color:var(--secondary);line-height:1.4;opacity:.8}
-#svcpWorkHomePreview button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#svcpWorkHomePreview button:focus-visible{
+ outline:2px solid currentColor;outline-offset:3px;border-radius:8px
+}
+#svcpWorkHomePreview .svcp-home-preview-actions button:active,
+#svcpWorkHomePreview .svcp-home-preview-head button:active,
+#svcpWorkHomePreview .svcp-home-sayvi-help:active,
+#svcpWorkHomePreview .svcp-home-sayvi-suggestions button:active{
+ opacity:.65
+}
 @media(max-width:380px){:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-directory-item{padding-inline:9px;gap:9px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-info strong{font-size:14px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-perspective{padding-inline:7px;font-size:10px}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-intro{flex-wrap:wrap}:is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-chat-assist{width:100%}}
 
 /* Home · single reply composer, Feather Chat, explicit local demo semantics. */
@@ -262,9 +292,10 @@
 }
 #svcpWorkHomePreview .svcp-home-sayvi-help{
  display:inline-flex;align-items:center;justify-content:center;gap:5px;
- padding:8px 11px;min-height:38px;border:0;
- border-radius:999px;background:var(--seyveo-hdr-active,var(--card));
- color:var(--text);font:inherit;font-size:11.5px;font-weight:565;cursor:pointer
+ padding:8px 3px;min-height:44px;border:0;
+ border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;font-size:12px;font-weight:510;cursor:pointer;
+ -webkit-tap-highlight-color:transparent
 }
 #svcpWorkHomePreview .svcp-home-sayvi-help span{font-size:18px;line-height:1}
 #svcpWorkHomePreview .svcp-home-sayvi-suggestions{
@@ -274,8 +305,9 @@
  display:block;flex-basis:100%;font-size:10.5px;line-height:1.4;color:var(--secondary)
 }
 #svcpWorkHomePreview .svcp-home-sayvi-suggestions button{
- padding:7px 10px;min-height:35px;border:0;
- border-radius:999px;background:transparent;color:var(--text);font:inherit;font-size:11px;cursor:pointer
+ padding:8px 7px;min-height:44px;border:0;
+ border-radius:0;background:transparent;color:var(--text);
+ font:inherit;font-size:11.5px;cursor:pointer;-webkit-tap-highlight-color:transparent
 }
 #svcpWorkHomePreview .svcp-home-composer{
  display:flex;align-items:flex-end;gap:9px;min-width:0
@@ -303,8 +335,8 @@
 }
 #svcpWorkHomePreview .svcp-home-reply-footer span{font-size:10.5px;line-height:1.45;flex:1}
 #svcpWorkHomePreview .svcp-home-reply-footer button{
- border:0;background:none;padding:6px 0;min-height:34px;
- color:var(--secondary);font:inherit;font-size:11px;cursor:pointer
+ border:0;background:transparent;padding:8px 2px;min-height:44px;
+ color:var(--secondary);font:inherit;font-size:12px;cursor:pointer
 }
 #svcpWorkHomePreview .svcp-home-reply-result{
  display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;
@@ -314,9 +346,8 @@
  margin:0;flex:1;min-width:0;color:var(--text);font-size:11px;line-height:1.5
 }
 #svcpWorkHomePreview #svcpHomeOpenChat{
- min-height:36px;border:0;border-bottom:1px solid var(--soft-line);border-radius:0;
- background:transparent;color:var(--text);
- font:inherit;font-size:11.5px;font-weight:550;cursor:pointer;padding:6px 1px
+ min-height:44px;border:0;border-radius:0;background:transparent;color:var(--text);
+ font:inherit;font-size:12px;font-weight:540;cursor:pointer;padding:8px 1px
 }
 #svcpWorkHomePreview .svcp-home-reply button:focus-visible,
 #svcpWorkHomePreview .svcp-home-reply textarea:focus-visible,
