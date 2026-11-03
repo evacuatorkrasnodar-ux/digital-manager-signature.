@@ -765,8 +765,7 @@ function closeMessageMenus(){
  chatRoot.querySelectorAll('.svcp-more-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'));
 }
 document.addEventListener('pointerdown',event=>{
- if(!chatRoot?.contains(event.target))return;
- if(event.target.closest('.svcp-message-menu,.svcp-more-trigger'))return;
+ if(event.target.closest?.('.svcp-message-menu,.svcp-more-trigger'))return;
  closeMessageMenus();
 });
 $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
