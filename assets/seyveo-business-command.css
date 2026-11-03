@@ -895,6 +895,19 @@
  background:color-mix(in srgb,var(--card) 72%,transparent);
  box-shadow:none;
 }
+/* In the default white palette the selected tab must remain visible.
+   Keep the same understated geometry as the graphite and emerald themes. */
+:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs{
+ background:rgba(225,232,238,.58);
+}
+:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs button{
+ color:#65717d;
+}
+:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"]{
+ color:#26313a;
+ background:rgba(255,255,255,.93);
+ box-shadow:0 1px 4px rgba(27,45,60,.07);
+}
 #tasksPage[data-work-view="personal"] #unifiedTasksTabs .sv-mini-nav-icon{
  display:none!important;
 }
