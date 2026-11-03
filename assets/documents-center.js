@@ -108,10 +108,8 @@ function renderFile(panel,status,preview,tools){
 function draw(){
  if(!host)return;
  resetPreview();host.replaceChildren();
- const head=el('div','sv-doc-heading');
- head.append(el('strong','','Одно пространство · два раздела'),
-             el('small','','Документы не смешиваются при переключении'));
- host.append(head);
+ // Personal and business are already clearly named by the accessible tabs.
+ // Keep their separate data stores; no redundant decorative introduction.
  const tabs=el('div','sv-doc-switch');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Пространство документов');
  for(const key of ['personal','business']){
   const b=control(tabNames[key],()=>setArea(key),'sv-doc-tab');
