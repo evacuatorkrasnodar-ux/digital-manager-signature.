@@ -22,7 +22,8 @@
   security:make('Безопасность','◇','#B8D4E8',['review-security','later'],['Проверка доступа','Учебное событие входа','Посмотреть устройства']),
   shelf:make('Проверка выкладки','▧','#8FE3C3',['request-photo','open-chat','later'],['Елена закончила выкладку','Фото ещё не получено','Попросить прислать фото полки и ценников']),
   recognition:make('Благодарность','✦','#E7D2A2',['review-recognition','open-team','later'],['Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность без автоматического начисления']),
-  secureFlow:make('Документооборот','▤','#B8D4E8',['review-document','open-document','later'],['Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта'])
+  secureFlow:make('Документооборот','▤','#B8D4E8',['review-document','open-document','later'],['Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта']),
+  music:make('Музыка','♫','#BBA6E4',['open-release','later','not-interested'],['Новый альбом любимого исполнителя','Учебный релиз подтверждён в музыкальном каталоге','Открыть страницу альбома'])
  });
  const eventType=Object.freeze({
   'message.received':'message','mail.received':'mail','document.review_requested':'document',
@@ -30,7 +31,8 @@
   'care.reminder':'care','finance.review_requested':'finance','business.sale_recorded':'business',
   'employee.requested':'employee','home.offline':'home','security.login_review':'security',
   'shelf.photo_requested':'shelf','employee.recognition_proposed':'recognition',
-  'document.signature_review':'secureFlow'
+  'document.signature_review':'secureFlow',
+  'music.release_verified':'music'
  });
  const actionLabels=Object.freeze({
   reply:'Ответить','open-chat':'В чат',later:'Позже',
@@ -40,7 +42,8 @@
   'review-payment':'Проверить платёж','open-business':'В бизнес',
   'open-team':'К сотрудникам','open-home':'В умный дом',
   'review-security':'Проверить доступ','request-photo':'Запросить фото',
-  'review-recognition':'Проверить благодарность','review-document':'Проверить документ'
+  'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
+  'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
  const confirmActions=new Set(['reply','review-payment','request-photo','review-recognition','review-document']);
  const trim=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
