@@ -3,8 +3,10 @@
    Flat colored iconography on a continuous theme canvas; glass is for tools.
    Never wrap each destination in heavy app tiles or gray pressed surfaces. */
 :root {
-  --sv-world-control-fill:linear-gradient(148deg,color-mix(in srgb,var(--text) 7%,transparent),color-mix(in srgb,var(--text) 3%,transparent));
-  --sv-world-control-glint:inset 0 1px 0 rgba(255,255,255,.12),0 5px 15px rgba(0,0,0,.075);
+  /* The same material contract as the approved low dock & mini-player. */
+  --sv-world-control-fill:var(--sv-liquid-nav-material);
+  --sv-world-control-glint:var(--sv-liquid-nav-shadow);
+  --sv-world-control-blur:var(--sv-liquid-nav-blur);
 }
 html.sv-space-active #lifePage {
   position:relative;
@@ -30,8 +32,8 @@ html.sv-space-active #lifePage .life-heading h1 {
   margin:0!important;
   padding:0!important;
   color:var(--text)!important;
-  font-size:clamp(31px,7.9vw,35px)!important;
-  font-weight:650!important;
+  font-size:clamp(32px,8vw,35px)!important;
+  font-weight:680!important;
   letter-spacing:-.052em!important;
   line-height:1.10!important;
 }
@@ -48,10 +50,10 @@ html.sv-space-active #lifePage .life-air-search-toggle{
   background:var(--sv-world-control-fill);
   color:var(--text);
   box-shadow:var(--sv-world-control-glint);
-  -webkit-backdrop-filter:blur(18px) saturate(1.1);
-  backdrop-filter:blur(18px) saturate(1.1);
+  -webkit-backdrop-filter:var(--sv-world-control-blur);
+  backdrop-filter:var(--sv-world-control-blur);
   -webkit-tap-highlight-color:transparent;
-  transition:background-color .16s ease,transform .16s ease;
+  transition:transform .16s ease,opacity .16s ease;
 }
 html.sv-space-active #lifePage .life-air-search-toggle svg{
   display:block;width:18px;height:18px;
@@ -61,6 +63,10 @@ html.sv-space-active #lifePage .life-air-search-toggle svg{
 html.sv-space-active #lifePage .life-air-search-toggle:active{
   transform:scale(.96);opacity:.75;
 }
+/* One button, two states: search / dismiss, without extra toolbar chrome. */
+html.sv-space-active #lifePage .life-air-search-toggle .sv-world-search-close{display:none}
+html.sv-space-active #lifePage .life-air-search-toggle[aria-expanded="true"] .sv-world-search-lens{display:none}
+html.sv-space-active #lifePage .life-air-search-toggle[aria-expanded="true"] .sv-world-search-close{display:block}
 html.sv-space-active #lifePage .life-air-search-toggle:focus-visible{
   outline:2px solid var(--text);outline-offset:3px;
 }
@@ -71,8 +77,8 @@ html.sv-space-active #lifePage .life-air-search{
   border-radius:999px;border:0;
   background:var(--sv-world-control-fill);
   box-shadow:var(--sv-world-control-glint);
-  -webkit-backdrop-filter:blur(18px) saturate(1.1);
-  backdrop-filter:blur(18px) saturate(1.1);
+  -webkit-backdrop-filter:var(--sv-world-control-blur);
+  backdrop-filter:var(--sv-world-control-blur);
 }
 html.sv-space-active #lifePage .life-air-search[hidden]{display:none!important}
 html.sv-space-active #lifePage .life-air-search svg{
@@ -84,7 +90,7 @@ html.sv-space-active #lifePage .life-air-search input{
   appearance:none;-webkit-appearance:none;
   flex:1;min-width:0;width:100%;height:100%;
   padding:0;border:0;outline:none;background:transparent;
-  color:var(--text);font:inherit;font-size:14px;
+  color:var(--text);font:inherit;font-size:calc(15px * var(--sv-text-scale,1));
 }
 html.sv-space-active #lifePage .life-air-search input::placeholder{
   color:var(--secondary);opacity:.8;
