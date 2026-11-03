@@ -210,14 +210,27 @@
     if (dates[0]) highlighted.push({ kind: 'date', title: dates[0].title.slice(0, 110),
       caption: dates[0].kind, route: '#calendar' });
     todayBody.replaceChildren();
+    todayPanel.dataset.empty = String(highlighted.length === 0);
     if (!highlighted.length) {
-      const emptyLine = document.createElement('p');
-      emptyLine.className = 'sv-world-today-empty';
-      emptyLine.textContent = 'Личных записей на сегодня пока нет.';
-      todayBody.append(emptyLine);
-    } else {
-      for (const item of highlighted) todayBody.append(makeTodayRow(item));
+      // A quiet empty state replaces the former two stacked lines.
+      // Its only action opens the real Calendar, without creating mock plans.
+      const emptyRow = document.createElement('button');
+      emptyRow.type = 'button';
+      emptyRow.className = 'sv-world-today-empty';
+      emptyRow.dataset.worldTodayRoute = '#calendar';
+      emptyRow.setAttribute('aria-label',
+        'Личных записей на сегодня нет. Открыть календарь');
+      const info = document.createElement('span');
+      info.className = 'sv-world-today-empty-label';
+      info.textContent = 'На сегодня записей нет';
+      const go = document.createElement('span');
+      go.className = 'sv-world-today-empty-link';
+      go.textContent = 'Календарь ›';
+      emptyRow.append(info, go);
+      todayBody.append(emptyRow);
+      return;
     }
+    for (const item of highlighted) todayBody.append(makeTodayRow(item));
     const more = events.length + tasks.length + dates.length - highlighted.length;
     const action = document.createElement('button');
     action.type = 'button';
