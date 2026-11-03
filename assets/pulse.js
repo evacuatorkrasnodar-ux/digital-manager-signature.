@@ -63,7 +63,8 @@ function resolve(p){
  try{actual=window.SEYVEO_PULSE_DEMO?.picture?.(p)}catch{}
  if(actual&&actual.total&&Array.isArray(actual.trend)&&
   Array.isArray(actual.sources)&&Array.isArray(actual.costs))return actual;
- return sampleData(p);
+ // Sample fixtures are opt-in for developers, never default financial reporting.
+ return new URLSearchParams(location.search).has('seyveoStudio')?sampleData(p):null;
 }
 window.SEYVEO_PULSE_VIEW=Object.freeze({get:resolve});
 function readLocalTasks(){
