@@ -549,13 +549,17 @@ function render(){
   if(showGroupLabels)list.append(element('h3','personal-list-title','Выполнено'));
   done.slice(0,30).forEach(task=>list.append(row(task)));
  }
- if(!open.length&&!preview.length){
+ if(!open.length&&!preview.length&&!done.length){
   const empty=element('div','personal-tasks-empty');
+  const glyph=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  glyph.setAttribute('viewBox','0 0 64 64');
+  glyph.setAttribute('aria-hidden','true');
+  glyph.setAttribute('class','personal-tasks-empty-symbol');
+  glyph.innerHTML='<rect x="15" y="10" width="34" height="44" rx="8"/><path d="m22 24 3 3 6-7M34 24h9M22 39l3 3 6-7M34 39h9"/>';
   empty.append(
-   element('strong','personal-tasks-empty-title',done.length?'Все текущие дела завершены':'Пока всё спокойно'),
-   element('p','personal-tasks-empty-copy',done.length
-    ?'Выполненные задачи сохранены ниже.'
-    :'Здесь появятся дела и решения, которые ты отложишь.')
+   glyph,
+   element('strong','personal-tasks-empty-title','Пока нет дел'),
+   element('p','personal-tasks-empty-copy','Добавь первое дело или отложи решение на Главной.')
   );
   list.prepend(empty);
  }
