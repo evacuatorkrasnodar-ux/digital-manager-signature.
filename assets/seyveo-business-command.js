@@ -759,9 +759,17 @@ const MORE_EMOJI_GROUPS=[
  {name:'Работа',emojis:['✅','📌','🚀','💡','👀','👏','🤩','🙈','☕','🌟','🎯','🤗']}
 ];
 function closeMessageMenus(){
- chatRoot.querySelectorAll('.svcp-message-menu').forEach(menu=>{menu.hidden=true});
+ chatRoot.querySelectorAll('.svcp-message-menu').forEach(menu=>{
+  menu.hidden=true;menu.style.transform='';
+ });
  chatRoot.querySelectorAll('.svcp-more-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'));
 }
+document.addEventListener('pointerdown',event=>{
+ if(!chatRoot?.contains(event.target))return;
+ if(event.target.closest('.svcp-message-menu,.svcp-more-trigger'))return;
+ closeMessageMenus();
+});
+$('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
 /* Emoji composer is separate from message reactions: an inline strip, not a modal. */
 const composerEmojiStrip=$('svcpComposerEmojiStrip');
 const composerEmojiButton=$('svcpComposerEmojiToggle');
@@ -836,8 +844,16 @@ function toggleMessageMenu(menu,trigger){
  const opening=menu.hidden;
  closeRecognition();
  closeMessageMenus();
- menu.hidden=!opening;
- trigger.setAttribute('aria-expanded',String(opening));
+ if(!opening)return;
+ menu.hidden=false;
+ trigger.setAttribute('aria-expanded','true');
+ // Keep the compact action rail inside the iPhone viewport even for edge bubbles.
+ menu.style.transform='';
+ const bounds=menu.getBoundingClientRect();
+ const margin=8,viewportWidth=document.documentElement.clientWidth;
+ const dx=bounds.left<margin?margin-bounds.left:bounds.right>viewportWidth-margin
+  ?viewportWidth-margin-bounds.right:0;
+ if(dx)menu.style.transform='translateX('+Math.round(dx)+'px)';
 }
 const reactionHome=$('svcpReactionPicker')?.parentElement;
 function closeRecognition(){
@@ -1194,28 +1210,33 @@ function renderChat(){
     }
     bubble.tabIndex=0;
     bubble.setAttribute('aria-description','Нажмите, чтобы ответить, выбрать реакцию или создать поручение');
-    let longPressTimer=null,pressStartX=0,pressStartY=0;
+    let longPressTimer=null,pressStartX=0,pressStartY=0,swipeEligible=false,holdOpened=false;
     const clearHold=()=>{clearTimeout(longPressTimer);longPressTimer=null};
     bubble.addEventListener('pointerdown',event=>{
-     if(event.target.closest('button,audio,.svcp-message-menu'))return;
+     swipeEligible=false;holdOpened=false;clearHold();
+     if(event.target.closest('button,audio,video,a,input,textarea,.svcp-media-slot,.svcp-message-menu'))return;
+     if(event.button!==0&&event.pointerType==='mouse')return;
      pressStartX=event.clientX;pressStartY=event.clientY;
-     clearHold();
+     swipeEligible=event.pointerType==='touch'||event.pointerType==='pen';
      longPressTimer=setTimeout(()=>{
-      longPressTimer=null;
+      longPressTimer=null;holdOpened=true;swipeEligible=false;
       toggleMessageMenu(menu,moreButton);
       if(navigator.vibrate)navigator.vibrate(12);
      },480);
     });
     bubble.addEventListener('pointermove',event=>{
-     if(longPressTimer&&Math.hypot(event.clientX-pressStartX,event.clientY-pressStartY)>12)clearHold();
+     if(!longPressTimer&&!swipeEligible)return;
+     if(Math.hypot(event.clientX-pressStartX,event.clientY-pressStartY)>12)clearHold();
+     if(Math.abs(event.clientY-pressStartY)>45)swipeEligible=false;
     });
     bubble.addEventListener('pointerup',event=>{
-     if(longPressTimer&&event.clientX-pressStartX>85&&Math.abs(event.clientY-pressStartY)<65){
-      clearHold();startReply(msg);
-     }else clearHold();
+     const dx=event.clientX-pressStartX,dy=event.clientY-pressStartY;
+     const reply=swipeEligible&&!holdOpened&&dx>65&&Math.abs(dy)<45;
+     clearHold();swipeEligible=false;
+     if(reply){closeMessageMenus();startReply(msg);if(navigator.vibrate)navigator.vibrate(8)}
     });
-    bubble.addEventListener('pointercancel',clearHold);
-    bubble.addEventListener('contextmenu',event=>{event.preventDefault();clearHold();toggleMessageMenu(menu,moreButton)});
+    bubble.addEventListener('pointercancel',()=>{clearHold();swipeEligible=false});
+    bubble.addEventListener('contextmenu',event=>{event.preventDefault();clearHold();swipeEligible=false;if(!holdOpened)toggleMessageMenu(menu,moreButton)});
     bubble.addEventListener('click',event=>{
      if(event.target.closest('button,audio,.svcp-media-slot'))return;
      if(event.target.closest('.svcp-message-menu'))return;
