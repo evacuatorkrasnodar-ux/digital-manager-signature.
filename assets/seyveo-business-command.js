@@ -88,6 +88,38 @@ function clearMediaRenderUrls(){
  for(const url of mediaRenderedUrls)URL.revokeObjectURL(url);
  mediaRenderedUrls=[];
 }
+/* Decode local voice audio only on-device. Bar heights follow the actual
+   recorded amplitude, rather than a decorative repeated pattern. */
+async function localVoiceAmplitudes(blob,count=25){
+ const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+ if(!AudioContextClass||!blob?.size)return null;
+ const context=new AudioContextClass();
+ try{
+  const buffer=await blob.arrayBuffer();
+  const decoded=await context.decodeAudioData(buffer);
+  if(!decoded?.length)return null;
+  const data=decoded.getChannelData(0),samples=data.length;
+  const peaks=[];
+  for(let i=0;i<count;i++){
+   const begin=Math.floor(i*samples/count),end=Math.min(samples,Math.floor((i+1)*samples/count));
+   const step=Math.max(1,Math.floor((end-begin)/350));
+   let power=0,maximum=0,n=0;
+   for(let j=begin;j<end;j+=step){
+    const a=Math.abs(data[j]);power+=a*a;
+    if(a>maximum)maximum=a;
+    n++;
+   }
+   peaks.push(Math.max(Math.sqrt(power/Math.max(1,n)),maximum*.35));
+  }
+  const top=Math.max(.001,...peaks);
+  return peaks.map(value=>Math.round(4+26*Math.pow(value/top,.72)));
+ }catch{
+  // Safari cannot decode every recorded codec; keep playback working.
+  return null;
+ }finally{
+  try{await context.close()}catch{}
+ }
+}
 function restoreStoredMedia(container,message){
  if(!message.mediaId)return;
  const slot=el('div','svcp-media-slot','Открываю вложение…');
@@ -108,7 +140,26 @@ function restoreStoredMedia(container,message){
    const control=el('button','svcp-audio-play','▶');control.type='button';
    control.setAttribute('aria-label','Воспроизвести голосовое сообщение');
    const wave=el('span','svcp-audio-wave');
-   for(let i=0;i<19;i++){const stick=el('i');stick.style.height=(7+((i*17+13)%19))+'px';wave.append(stick)}
+   const sticks=[];
+   for(let i=0;i<25;i++){
+    const stick=el('i');
+    stick.style.height='4px';
+    stick.classList.add('svcp-wave-pending');
+    wave.append(stick);sticks.push(stick);
+   }
+   // Analysis is asynchronous and must not delay playback or chat rendering.
+   localVoiceAmplitudes(record.blob,sticks.length).then(heights=>{
+    if(!wave.isConnected)return;
+    sticks.forEach((stick,i)=>{
+     stick.style.height=(heights?heights[i]:4)+'px';
+     stick.classList.remove('svcp-wave-pending');
+    });
+   });
+   const updateWaveProgress=()=>{
+    const ratio=Number.isFinite(audio.duration)&&audio.duration>0
+     ?Math.min(1,Math.max(0,audio.currentTime/audio.duration)):0;
+    sticks.forEach((stick,i)=>stick.classList.toggle('svcp-wave-heard',(i+.5)/sticks.length<=ratio));
+   };
    const duration=el('time','svcp-audio-duration',
     message.audioDuration?voiceDuration(Math.max(1000,message.audioDuration*1000)):'00:01');
    control.addEventListener('click',async()=>{try{
@@ -118,11 +169,12 @@ function restoreStoredMedia(container,message){
    audio.addEventListener('pause',()=>{control.textContent='▶';control.setAttribute('aria-label','Воспроизвести голосовое')});
    audio.addEventListener('ended',()=>{
     control.textContent='▶';
+    updateWaveProgress();
     duration.textContent=voiceDuration(Math.max(1000,(message.audioDuration||Math.ceil(audio.duration)||1)*1000));
    });
    audio.addEventListener('timeupdate',()=>{
     if(Number.isFinite(audio.duration)&&audio.duration>0){
-     wave.style.setProperty('--svcp-play-progress',Math.min(100,Math.round(audio.currentTime/audio.duration*100))+'%');
+     updateWaveProgress();
      duration.textContent=voiceDuration(Math.max(1000,Math.ceil(audio.duration-audio.currentTime)*1000));
     }
    });
