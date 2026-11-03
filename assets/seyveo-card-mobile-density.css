@@ -46,17 +46,21 @@
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content:not([hidden]){
  max-height:none;overflow:visible;mask-image:none;
 }
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-intro,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-source-line,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-note,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content > .lm-mail-address{display:none}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content .lm-mail-draft{
- display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+/* The message origin must remain visible in the Home demo; privacy
+   context and the "not sent" status must not be hidden by compact mode. */
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-intro,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-source-line,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-note,
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-address{
+ display:block;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content .lm-mail-draft{
+ display:block;overflow:visible;max-height:none;-webkit-line-clamp:unset;
 }
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content .lm-section-label{font-size:10px}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-secondary .lm-inline-item{min-height:40px}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:3px}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .sv-card-expand{min-height:38px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .sv-card-expand{display:none!important}
 #seyveoLivingMoment .lm-field[data-lm-subject="mail"].sv-card-expanded .lm-mail-content .lm-mail-draft{display:block;overflow-wrap:anywhere}
 
 /* Phone readability: reserve a real gap below the original sphere. */
