@@ -263,7 +263,7 @@ function draw(){
   sheetTop.append($('strong','','Выберите документ'));
   const close=button('Готово',()=>sheet.close(),'svdf-sheet-close');
   sheetTop.append(close);
-  const choices=$('div','svdf-sheet-options');
+  const choices=$('div','svdf-sheet-options');choices.setAttribute('role','radiogroup');choices.setAttribute('aria-label','Учебные документы');
   for(const [key,type] of Object.entries(TYPES)){
    const option=button(type.title,()=>{
     kind=key;
