@@ -869,7 +869,7 @@
 #tasksPage #unifiedTasksTabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 #tasksPage #unifiedTasksTabs[data-manager="true"]{
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
- margin:0 0 9px;padding:3px;border-radius:17px;
+ margin:0 0 10px;padding:3px;border-radius:17px;
  background:color-mix(in srgb,var(--card2) 22%,transparent);
 }
 /* Personal Tasks uses a single quiet segmented navigation surface.
@@ -960,7 +960,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading{
  font-size:12px;font-weight:510;color:var(--secondary);
 }
 html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading .manage-caption{
- margin:0 0 3px;font-size:10px;line-height:1.28;
+ margin:0 0 3px;font-size:9px;line-height:1.28;
  letter-spacing:.11em;color:var(--secondary);
 }
 html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
@@ -969,7 +969,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  text-wrap:balance;overflow-wrap:normal
 }
 #tasksPage[data-work-view="business"] #unifiedTasksTabs button{
- min-height:49px;gap:2px;padding:4px 2px;
+ min-height:46px;gap:2px;padding:3px 2px;
  font-size:11.5px;line-height:1.2;font-weight:515;
 }
 #tasksPage[data-work-view="business"] #unifiedTasksTabs .sv-mini-nav-icon{
@@ -990,7 +990,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  color:var(--seyveo-emerald)
 }
 #tasksPage .svcp-manager-actions{
- overflow:hidden;margin:0 0 10px;
+ overflow:hidden;margin:0 0 12px;
  border:0;border-radius:19px;
  background:color-mix(in srgb,var(--card2) 42%,transparent);
  box-shadow:none;
