@@ -1,12 +1,37 @@
 /* SEYVEO / Document Center — one refined workspace, no fake archive cards. */
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-hero{display:none!important}
-#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{margin:4px 4px 17px}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
+ margin:0 5px 12px;padding:0 0 0 43px;min-height:48px;
+ display:flex;align-items:center;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-kicker,
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-intro{display:none!important}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-heading{
+ margin:0;font-size:clamp(22px,5.7vw,27px);
+ font-weight:600;line-height:1.2;letter-spacing:-.04em;
+}
+/* The existing back handler returns to the originating section. */
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack{
+ display:inline-flex!important;position:absolute;
+ top:3px;left:3px;z-index:5;
+ width:44px;min-height:44px;justify-content:center;
+ padding:0;margin:0;border:0;background:transparent;
+}
+#sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack .sv-deep-back-mark{
+ width:44px;height:44px;font-size:26px;
+}
+#sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack span:last-child{display:none!important}
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-content{padding:0 5px}
 #sayviSurfacePage .sv-doc-center{max-width:620px;width:100%;min-width:0;margin:0 auto;box-sizing:border-box}
 #sayviSurfacePage .sv-doc-heading{display:flex;flex-direction:column;gap:4px;margin:0 0 17px}
 #sayviSurfacePage .sv-doc-heading strong{font-size:13px;font-weight:500;line-height:1.4;letter-spacing:-.012em}
 #sayviSurfacePage .sv-doc-heading small{font-size:11px;line-height:1.45;color:var(--secondary)}
-#sayviSurfacePage .sv-doc-switch{display:flex;gap:23px;border-bottom:1px solid var(--soft-line)}
+#sayviSurfacePage .sv-doc-switch{
+ display:flex;gap:4px;padding:3px;border:0;
+ border-radius:18px;background:color-mix(in srgb,var(--card) 45%,transparent);
+ -webkit-backdrop-filter:blur(16px) saturate(108%);
+ backdrop-filter:blur(16px) saturate(108%);
+}
 #sayviSurfacePage .sv-doc-action{
  appearance:none;-webkit-appearance:none;
  border:0;border-radius:0;box-shadow:none;
@@ -16,15 +41,29 @@
  min-width:0;min-height:44px;padding:11px 1px;
  text-align:left;-webkit-tap-highlight-color:transparent;
 }
-#sayviSurfacePage .sv-doc-tab{position:relative;font-size:14px;min-width:77px}
-#sayviSurfacePage .sv-doc-tab[aria-pressed="true"]{color:var(--text);font-weight:560}
-#sayviSurfacePage .sv-doc-tab[aria-pressed="true"]::after{
- content:"";position:absolute;height:2px;bottom:-1px;left:0;right:0;
- background:var(--text);border-radius:2px;
+#sayviSurfacePage .sv-doc-tab{
+ position:relative;flex:1 1 50%;font-size:13px;min-width:0;
+ text-align:center;border-radius:15px;min-height:40px;padding:9px 10px;
 }
-#sayviSurfacePage .sv-doc-commands{display:flex;align-items:center;flex-wrap:wrap;gap:4px 22px;padding:12px 0 11px}
+#sayviSurfacePage .sv-doc-tab[aria-pressed="true"]{
+ color:var(--text);font-weight:590;
+ background:color-mix(in srgb,var(--card) 82%,transparent);
+ box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--text) 8%,transparent);
+}
+#sayviSurfacePage .sv-doc-commands{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:nowrap;gap:4px;padding:8px 0;
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line) 60%,transparent);
+}
+#sayviSurfacePage .sv-doc-command{
+ flex:0 1 auto;text-align:center;padding:8px 3px;
+ font-size:clamp(11px,3.3vw,13px);white-space:nowrap;
+}
+#sayviSurfacePage .sv-doc-command[aria-pressed="true"]{
+ color:var(--text);font-weight:600;
+}
 #sayviSurfacePage .sv-doc-command[aria-pressed="true"]{color:var(--text);font-weight:540}
-#sayviSurfacePage .sv-doc-workspace{box-sizing:border-box;min-width:0;padding:12px 0 0}
+#sayviSurfacePage .sv-doc-workspace{box-sizing:border-box;min-width:0;padding:13px 0 0}
 #sayviSurfacePage .sv-doc-subtitle{font-size:17px;line-height:1.36;letter-spacing:-.022em;font-weight:495;margin:0 0 12px}
 #sayviSurfacePage .sv-doc-file-actions{display:flex;align-items:center;gap:7px 22px;flex-wrap:wrap;margin:8px 0}
 #sayviSurfacePage .sv-doc-file-actions .sv-doc-action,
@@ -40,11 +79,16 @@
 #sayviSurfacePage .sv-doc-editor,
 #sayviSurfacePage .sv-doc-search{
  display:block;box-sizing:border-box;min-width:0;width:100%;
- border:1px solid var(--soft-line);border-radius:13px;background:transparent;
- color:var(--text);font:inherit;font-size:14px;line-height:1.55;
+ border:1px solid color-mix(in srgb,var(--soft-line) 68%,transparent);
+ border-radius:15px;background:color-mix(in srgb,var(--card) 22%,transparent);
+ color:var(--text);font:inherit;font-size:16px;line-height:1.5;
  padding:11px 12px;margin:0 0 10px;
 }
-#sayviSurfacePage .sv-doc-editor{min-height:176px;resize:vertical}
+#sayviSurfacePage :is(.sv-doc-input,.sv-doc-editor,.sv-doc-search):focus-visible{
+ outline:none;border-color:color-mix(in srgb,var(--seyveo-emerald) 50%,var(--soft-line));
+ box-shadow:0 1px 0 color-mix(in srgb,var(--seyveo-emerald) 24%,transparent);
+}
+#sayviSurfacePage .sv-doc-editor{min-height:185px;resize:vertical}
 #sayviSurfacePage .sv-doc-input::placeholder,
 #sayviSurfacePage .sv-doc-editor::placeholder,
 #sayviSurfacePage .sv-doc-search::placeholder{color:var(--secondary)}
