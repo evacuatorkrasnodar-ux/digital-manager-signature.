@@ -532,9 +532,9 @@ function mailView(){
  function paint(){
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
-  greeting.hidden=mailEditorOpen;
-  searchToggle.hidden=mailEditorOpen;
-  connect.hidden=mailEditorOpen;
+  greeting.hidden=mailEditorOpen||!!mailCurrent;
+  searchToggle.hidden=mailEditorOpen||!!mailCurrent;
+  connect.hidden=mailEditorOpen||!!mailCurrent;
   scopeNav.replaceChildren();
   for(const [key,label] of [['all','Все'],['personal','Личная'],['business','Рабочая']]){
    const button=create('button','sv-mail-account-switch',label);
@@ -544,7 +544,7 @@ function mailView(){
    button.addEventListener('click',()=>selectScope(key));
    scopeNav.append(button);
   }
-  scopeNav.hidden=mailEditorOpen;
+  scopeNav.hidden=mailEditorOpen||!!mailCurrent;
   nav.replaceChildren();extraNav.replaceChildren();
   for(const [key,label] of tabs.slice(0,4)){
    const button=create('button','sv-mail-folder');
@@ -569,7 +569,7 @@ function mailView(){
   searchLabel.hidden=mailEditorOpen||!!mailCurrent||!mailSearchOpen;
   searchToggle.setAttribute('aria-expanded',String(!searchLabel.hidden));
   searchToggle.setAttribute('aria-controls','svMailQuickSearch');
-  compose.hidden=mailEditorOpen;
+  compose.hidden=mailEditorOpen||!!mailCurrent;
   info.textContent=mailEditorOpen?'':
    mailCurrent?'Просмотр учебного письма':
    mailFolder==='overview'?'':
@@ -578,7 +578,7 @@ function mailView(){
    mailFolder==='inbox'?'Входящие · предварительный просмотр':
    mailFolder==='starred'?'Важные · предварительный просмотр':
    mailFolder==='archive'?'Архив · предварительный просмотр':'Корзина · предварительный просмотр';
-  info.hidden=!info.textContent;
+  info.hidden=!!mailCurrent||!info.textContent;
   paintList();
  }
  paint();
