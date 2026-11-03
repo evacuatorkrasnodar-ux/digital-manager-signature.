@@ -871,6 +871,36 @@
  margin:0 0 9px;padding:3px;border-radius:17px;
  background:color-mix(in srgb,var(--card2) 22%,transparent);
 }
+/* Personal Tasks uses a single quiet segmented navigation surface.
+   Never stack a second row of icons above a separate dock navigation. */
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs{
+ display:flex!important;align-items:center;gap:3px;
+ min-width:0;margin:0 0 9px;padding:3px;
+ border:0;border-radius:17px;
+ background:color-mix(in srgb,var(--card2) 35%,transparent);
+ box-shadow:none;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs button{
+ box-sizing:border-box;display:flex;flex:1 1 0;flex-direction:row;
+ align-items:center;justify-content:center;
+ min-width:0;min-height:44px;padding:7px 5px;gap:0;
+ border:0;border-radius:14px;
+ background:transparent;box-shadow:none;
+ color:var(--secondary);font:inherit;font-size:13px;font-weight:540;
+ letter-spacing:-.01em;line-height:1.25;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"]{
+ color:var(--text);font-weight:610;
+ background:color-mix(in srgb,var(--card) 72%,transparent);
+ box-shadow:none;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs .sv-mini-nav-icon{
+ display:none!important;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs button:focus-visible{
+ outline:2px solid var(--text);outline-offset:-2px;
+}
+
 /* The manager and calendar share one compact, legible navigation pattern.
    Keep the emerald calendar symbol even when another destination is active. */
 #managerCalendarTabs button{
