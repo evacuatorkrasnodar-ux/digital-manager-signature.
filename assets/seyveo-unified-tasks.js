@@ -581,10 +581,16 @@
  }
  function returnFromPulse(){navigate(pulseReturnView==='business'?'team':'personal')}
  function syncBack(){
+  const button=$('unifiedTasksBack');
+  const employeeSubpage=page.dataset.employeeMode==='true';
+  const businessSubpage=page.dataset.workView==='business'&&businessFromPersonal;
+  // Home is a permanent dock destination: do not duplicate it in the root
+  // personal Tasks screen. Keep Back for genuine nested work routes.
+  const nested=employeeSubpage||businessSubpage||exitTarget==='manage';
+  if(button)button.hidden=!nested;
   const label=$('unifiedTasksBackLabel');
-  if(label)label.textContent=page.dataset.employeeMode==='true'?'К моим делам'
-   :(page.dataset.workView==='business'&&businessFromPersonal?'К делам'
-     :(exitTarget==='manage'?'В бизнес':'Главная'));
+  if(label)label.textContent=employeeSubpage?'К моим делам'
+   :(businessSubpage?'К делам':(exitTarget==='manage'?'В бизнес':'Главная'));
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
   // Work is a dedicated page, and Back leads to the personal Tasks selector.
@@ -625,6 +631,7 @@
   if(title)title.textContent=chosen==='employee'?'Моя работа':
    chosen==='business'?'Кабинет':'Дела';
   page.dataset.workView=chosen;
+  syncBack();
   if(taskTabs)taskTabs.hidden=false;
   if(managerSignal)managerSignal.hidden=chosen!=='business';
   const caption=page.querySelector('.tasks-heading .manage-caption');
