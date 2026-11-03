@@ -1145,6 +1145,20 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
  font-weight:560!important;
 }
+/* A chat link is navigation, not a third pill: keep Work's "В чат"
+   visually tertiary without changing its original click action. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(10):not([hidden]){
+ padding:8px 4px!important;
+ min-height:44px!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--sv-action-secondary-ink)!important;
+ font-weight:550!important;
+}
 /* Postpone and cancellation stay text-only. */
 #homePage #seyveoLivingMoment .lm-actions :is(
  .lm-polymer:nth-child(11),
