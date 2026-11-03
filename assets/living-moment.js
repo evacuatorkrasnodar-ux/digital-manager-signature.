@@ -538,7 +538,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    if(mailStep==='confirm'){
     // This is only a local scripted demo: there is no external mail acknowledgement.
     // Close the preview after the simulated confirmation, never claim a real send.
-    mailStep='done';updateMail();finishPreviewItem();return;
+    mailStep='done';finishPreviewItem();return;
    }
    if(mailStep==='done'){finishPreviewItem();return}
   }
@@ -609,7 +609,9 @@ function createSurface(primary,other=[],real=false,taskId=''){
    explain(field,'Ответ не сохранён в рабочем чате. Попробуйте ещё раз или откройте беседу Елены.',workSend);
    return;
   }
-  workDraft=typed;workMode='done';updateWork();finishPreviewItem();
+  /* Keep the focused editor mounted through the outgoing-card animation.
+     Removing it before the transition collapses the iPhone keyboard and shifts Home. */
+  workDraft=typed;workMode='done';finishPreviewItem();
  });
  const mailEdit=polymer('Исправить',()=>{mailStep='edit';updateMail()});
  const mailSave=polymer('Сохранить',()=>{
