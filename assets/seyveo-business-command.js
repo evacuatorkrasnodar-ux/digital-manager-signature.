@@ -808,16 +808,29 @@ function renderComposerEmojis(){
  });
  composerEmojiStrip.append(more);
 }
-composerEmojiButton?.addEventListener('click',()=>{
- const show=composerEmojiStrip.hidden;
+composerEmojiButton?.addEventListener('click',event=>{
+ event.preventDefault();
+ const tray=$('svcpCameraTray');
+ // Use the parent panel's state: hidden emoji strip may be stale after a rerender.
+ const isOpen=!!(tray&&!tray.hidden&&tray.dataset.mode==='emoji');
  closeRecognition();closeMessageMenus();
- if(show){
-  setCameraTray(true);
-  $('svcpCameraTray').dataset.mode='emoji';
-  composerEmojiStrip.hidden=false;
-  renderComposerEmojis();
- }else setCameraTray(false);
- composerEmojiButton.setAttribute('aria-expanded',String(show));
+ if(isOpen){
+  setCameraTray(false);
+  return;
+ }
+ setCameraTray(true);
+ if(!tray)return;
+ tray.dataset.mode='emoji';
+ composerEmojiStrip.hidden=false;
+ renderComposerEmojis();
+ composerEmojiButton.setAttribute('aria-expanded','true');
+});
+// Tapping the conversation (or another tool) dismisses the emoji rail.
+document.addEventListener('pointerdown',event=>{
+ const tray=$('svcpCameraTray');
+ if(!tray||tray.hidden||tray.dataset.mode!=='emoji')return;
+ if(tray.contains(event.target)||composerEmojiButton?.contains(event.target))return;
+ setCameraTray(false);
 });
 function toggleMessageMenu(menu,trigger){
  const opening=menu.hidden;
