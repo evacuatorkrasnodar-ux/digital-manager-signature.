@@ -33,7 +33,8 @@ panel.innerHTML=[
  '<button type="button" id="seyveoPickNext" aria-label="Следующий месяц">›</button></div></div>',
  '<div class="cal-pick-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>',
  '<div id="seyveoPickDays" class="cal-pick-days" role="group" aria-label="Числа месяца"></div>',
- '<button type="button" class="cal-pick-today" id="seyveoPickToday">Сегодня</button></section>',
+ '<div class="cal-pick-date-actions"><button type="button" class="cal-pick-today" id="seyveoPickToday">Сегодня</button>',
+ '<button type="button" class="cal-pick-date-close" id="seyveoPickDateClose">Закрыть</button></div></section>',
  '<section id="seyveoPickTime" class="cal-pick-time" aria-label="Выбор времени" hidden>',
  '<div class="cal-pick-time-head"><strong>Время</strong><small>Часы и минуты</small></div>',
  '<div class="cal-pick-wheels">',
@@ -132,6 +133,9 @@ for(const [wheel,kind] of [[hourWheel,'hour'],[minuteWheel,'minute']]){
 function open(which){
  if(!dialog.open)return;
  if(isOpen()&&panel.dataset.mode===which){close();return}
+ // A date/time picker must not compete with the software keyboard on iPhone.
+ const focused=document.activeElement;
+ if(focused&&dialog.contains(focused)&&focused.matches('input,textarea'))focused.blur();
  panel.hidden=false;panel.dataset.mode=which;
  datePanel.hidden=which!=='date';timePanel.hidden=which!=='time';
  dateButton.setAttribute('aria-expanded',String(which==='date'));
@@ -160,6 +164,9 @@ timeButton.addEventListener('click',()=>open('time'));
 $('seyveoPickPrev').addEventListener('click',()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1);renderMonth()});
 $('seyveoPickNext').addEventListener('click',()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);renderMonth()});
 $('seyveoPickToday').addEventListener('click',()=>commitDate(new Date()));
+$('seyveoPickDateClose').addEventListener('click',()=>{
+ close();dateButton.focus({preventScroll:true});
+});
 days.addEventListener('click',event=>{
  const b=event.target.closest('[data-cal-pick-day]');
  const d=b?parse(b.dataset.calPickDay):null;
