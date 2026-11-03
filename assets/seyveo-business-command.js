@@ -1666,6 +1666,27 @@ function renderTasks(){
    }
   }
   const actions=el('div','svcp-task-actions');
+  const extra=el('div','svcp-task-extra');
+  extra.hidden=!(approval&&t.reviewStatus==='review'&&!t.done);
+  const assist=btn('✧ Сэйви',()=>{
+   const person=t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId)?STAFF[t.assigneeId]:'';
+   const stateText=approval
+    ?({assigned:'Ожидает выполнения',review:'Результат на проверке',rework:'На доработке',approved:'Принято'}[t.reviewStatus]||'Рабочее поручение')
+    :'Рабочее поручение';
+   const opened=window.SEYVEO_TASK_ASSIST?.open?.({
+    title:t.text,kind:'work',assignee:person,
+    note:stateText+(t.reportText?' · Отчёт: '+String(t.reportText).slice(0,180):'')
+   });
+   if(!opened)setStatus('Не удалось открыть Сэйви. Поручение осталось без изменений.');
+  },'svcp-task-sayvi');
+  assist.setAttribute('aria-label','Обсудить с Сэйви поручение: '+t.text);
+  const more=btn('⋯',()=>{
+   extra.hidden=!extra.hidden;
+   more.setAttribute('aria-expanded',String(!extra.hidden));
+  },'svcp-task-more');
+  more.setAttribute('aria-label','Дополнительные действия с поручением: '+t.text);
+  more.setAttribute('aria-expanded',String(!extra.hidden));
+  actions.append(assist,more);
   if(approval&&t.reviewStatus==='review'&&!t.done){
    const resolve=(accepted)=>{
     if(employeePreviewActive())return;
@@ -1678,17 +1699,17 @@ function renderTasks(){
     if(!save(TASK_KEY,updated))return;
     state.tasks=updated;renderTasks();
    };
-   actions.append(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'));
-   actions.append(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'));
+   extra.append(btn('Принять',()=>resolve(true),'svcp-approval-demo-accept'));
+   extra.append(btn('Доработать',()=>resolve(false),'svcp-approval-demo-switch'));
   }
-  actions.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
-  actions.append(btn('Удалить',()=>{
+  extra.append(btn('Обсудить',()=>openTaskDiscussion(t),'svcp-task-discuss'));
+  extra.append(btn('Удалить',()=>{
    const updated=state.tasks.filter((_,index)=>index!==i);
    if(!save(TASK_KEY,updated))return;
    state.tasks=updated;renderTasks();syncPreviewAfterTaskEdit();
   },'svcp-ghost'));
   if(checkbox)row.append(checkbox);
-  row.append(copy,actions);
+  row.append(copy,actions,extra);
   return row;
  }
  const openSeen=new Set(),dups=[];
