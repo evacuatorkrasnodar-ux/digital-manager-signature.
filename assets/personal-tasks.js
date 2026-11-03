@@ -502,9 +502,14 @@ function render(){
  const overview=$('tasksOverview');
  if(overview){
   const count=postponed.length+preview.length;
-  overview.textContent=open.length||preview.length
-   ?'Мои дела · '+active.length+(count?'   /   Отложено · '+count:'')
-   :'Задачи и отложенные решения — в одном месте.';
+  const countLabel=(n,one,few,many)=>{
+   const rem10=n%10,rem100=n%100;
+   return n+' '+(rem10===1&&rem100!==11?one:
+    rem10>=2&&rem10<=4&&(rem100<12||rem100>14)?few:many);
+  };
+  const current=active.length?countLabel(active.length,'дело','дела','дел'):'';
+  const deferred=count?countLabel(count,'отложенное дело','отложенных дела','отложенных дел'):'';
+  overview.textContent=[current,deferred].filter(Boolean).join(' · ')||'Пока нет текущих дел';
  }
  // A continuation is offered only after a real task has been completed.
  const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
