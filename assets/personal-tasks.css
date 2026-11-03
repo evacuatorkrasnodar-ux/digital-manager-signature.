@@ -97,6 +97,32 @@
  background:rgba(5,10,14,.35);
  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
 }
+/* The light material needs separation from the underlying screen, not a
+   gray-on-gray wash. This is scoped to the task editor and its date stage. */
+:root[data-theme=light] #personalTaskDialog.personal-task-dialog::backdrop{
+ background:rgba(27,38,50,.18);
+ -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+}
+:root[data-theme=light] #personalTaskDialog .personal-task-sheet{
+ background:rgba(255,255,255,.93);
+ border-color:rgba(54,73,87,.10);
+ box-shadow:0 16px 42px rgba(29,44,57,.13),inset 0 1px 0 rgba(255,255,255,.92);
+}
+:root[data-theme=light] #personalTaskDialog.personal-task-dialog form{
+ background:rgba(239,243,247,.9);
+}
+:root[data-theme=light] #personalTaskDialog .sv-task-topbar .sv-task-save{
+ background:rgba(246,249,251,.94);
+ border-color:rgba(48,68,83,.10);
+ color:var(--text);
+}
+:root[data-theme=light] #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ background:#29343e;color:#fff;border-color:transparent;
+}
+:root[data-theme=light] #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-today:not(.is-selected){
+ border-color:rgba(42,61,76,.26);
+}
+
 #personalTaskDialog .personal-task-sheet{
  box-sizing:border-box;position:absolute;isolation:isolate;
  left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));
