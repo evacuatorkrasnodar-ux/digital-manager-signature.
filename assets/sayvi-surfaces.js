@@ -227,8 +227,6 @@ function mailIcon(name){
 function mailView(){
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
- const brand=create('div','sv-mail-brand');
- brand.append(create('span','sv-mail-brand-name','SEYVEO'),create('span','sv-mail-brand-separator','/'),create('span','sv-mail-brand-sub','MAIL'));
  const topButtons=create('div','sv-mail-top-buttons');
  const searchToggle=create('button','sv-mail-icon-button sv-mail-search-toggle');searchToggle.type='button';
  searchToggle.setAttribute('aria-label','Поиск по почте');searchToggle.append(mailIcon('search'));
@@ -239,12 +237,10 @@ function mailView(){
  const compose=create('button','sv-mail-icon-button sv-mail-compose');compose.type='button';
  compose.setAttribute('aria-label','Написать письмо');compose.append(mailIcon('pencil'));
  compose.addEventListener('click',()=>openEditor());
- topButtons.append(searchToggle,connect,compose);top.append(brand,topButtons);
- const greeting=create('div','sv-mail-introduction');
+ topButtons.append(searchToggle,connect,compose);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
- introCopy.append(create('p','sv-mail-introduction-copy','Личная и рабочая — в одном месте'));
- greeting.append(introCopy);
+ top.append(introCopy,topButtons);
  const searchLabel=create('label','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
@@ -265,7 +261,7 @@ function mailView(){
  const extraNav=create('div','sv-mail-extra-folders');
  const info=create('div','sv-mail-info');info.setAttribute('role','status');info.setAttribute('aria-live','polite');
  const content=create('div','sv-mail-list');
- section.append(top,greeting,scopeNav,nav,extraNav,info,content);body.append(section);
+ section.append(top,scopeNav,nav,extraNav,info,content);body.append(section);
  const tabs=[['inbox','Входящие'],['sent','Отправленные'],['drafts','Черновики'],['starred','Важные'],['archive','Архив'],['trash','Корзина']];
  function folderCount(key){
   if(key==='drafts')return mailDrafts.filter(d=>mailVisible(d.account)).length;
