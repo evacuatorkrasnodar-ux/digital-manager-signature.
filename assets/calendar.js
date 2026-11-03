@@ -622,7 +622,39 @@ function addTask(){
   field.dispatchEvent(new Event('input',{bubbles:true}));
  }
 }
-$('calendarAdd').addEventListener('click',()=>openEvent());
+/* Air 26: one familiar + menu; retain the original event and task editors.
+   A task can have a date or no date: the existing task form decides. */
+const createToggle=$('calendarAdd'),createMenu=$('calendarCreateMenu');
+function closeCreateMenu(){
+ if(!createMenu)return;
+ createMenu.hidden=true;
+ createToggle?.setAttribute('aria-expanded','false');
+}
+function toggleCreateMenu(){
+ if(!createMenu)return;
+ const next=createMenu.hidden;
+ createMenu.hidden=!next;
+ createToggle?.setAttribute('aria-expanded',String(next));
+}
+createToggle?.addEventListener('click',event=>{
+ event.stopPropagation();
+ toggleCreateMenu();
+});
+$('calendarCreateEvent')?.addEventListener('click',()=>{
+ closeCreateMenu();
+ openEvent();
+});
+$('calendarCreateTask')?.addEventListener('click',()=>{
+ closeCreateMenu();
+ addTask();
+});
+document.addEventListener('click',event=>{
+ if(!createMenu?.hidden&&!createMenu.contains(event.target)&&!createToggle.contains(event.target))closeCreateMenu();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!createMenu?.hidden){event.preventDefault();closeCreateMenu();createToggle.focus();}
+});
+window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
 $('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
