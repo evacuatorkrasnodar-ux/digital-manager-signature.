@@ -545,7 +545,7 @@ function render(){
   postponed.forEach(task=>list.append(row(task,false,true)));
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
- if(!open.length&&!preview.length&&!done.length){
+ if(!open.length&&!preview.length){
   const empty=element('div','personal-tasks-empty');
   const glyph=document.createElementNS('http://www.w3.org/2000/svg','svg');
   glyph.setAttribute('viewBox','0 0 64 64');
@@ -554,12 +554,12 @@ function render(){
   glyph.innerHTML='<rect x="15" y="10" width="34" height="44" rx="8"/><path d="m22 24 3 3 6-7M34 24h9M22 39l3 3 6-7M34 39h9"/>';
   empty.append(
    glyph,
-   element('strong','personal-tasks-empty-title','Пока нет дел'),
-   element('p','personal-tasks-empty-copy','Добавь первое дело или отложи решение на Главной.')
+   element('strong','personal-tasks-empty-title',done.length?'Все дела выполнены':'Пока нет дел'),
+   element('p','personal-tasks-empty-copy',done.length?'Завершённые дела сохранены в Истории.':'Добавь первое дело или отложи решение на Главной.')
   );
   list.prepend(empty);
  }
- list.classList.toggle('is-empty',!open.length&&!preview.length&&!done.length);
+ list.classList.toggle('is-empty',!open.length&&!preview.length);
  const overview=$('tasksOverview');
  if(overview){
   const count=postponed.length+preview.length;
