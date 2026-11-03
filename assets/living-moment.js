@@ -473,7 +473,13 @@ function createSurface(primary,other=[],real=false,taskId=''){
     :'Исполнить';
   mailDetails.replaceChildren();
   if(!active)return;
-  mailDetails.append(create('p','lm-mail-intro','Письмо Андрея'),create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),create('p','lm-section-label','✧ ОТВЕТ СЭЙВИ'));
+  // Source -> Sayvi draft -> actions. This message is explicitly a local
+  // training example, never an unread real message or a sent email.
+  mailDetails.append(
+   create('p','lm-mail-intro','Учебный пример · письмо Андрея'),
+   create('p','lm-source-line','Вопрос клиента: сколько стоит доставка?'),
+   create('p','lm-section-label','✧ Сэйви предлагает черновик')
+  );
   if(mailStep==='edit'){
    const field=create('label','lm-mail-edit-label','Исправить черновик');
    const input=create('textarea','lm-mail-edit-input');
