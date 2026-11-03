@@ -803,7 +803,7 @@ function renderComposerEmojis(){
 composerEmojiButton?.addEventListener('click',()=>{
  const show=composerEmojiStrip.hidden;
  closeRecognition();closeMessageMenus();
- if(show){composerEmojiStrip.hidden=false;renderComposerEmojis();}
+ if(show){setCameraTray(false);composerEmojiStrip.hidden=false;renderComposerEmojis();}
  else closeComposerEmoji();
  composerEmojiButton.setAttribute('aria-expanded',String(show));
 });
@@ -1367,6 +1367,7 @@ const cameraPurposeNames={shelf:'Фото выкладки',price:'Фото це
 let cameraBusy=false,photoCapturePurpose='shelf';
 function setCameraTray(open){
  if(!cameraTray||!cameraToggle)return;
+ if(open)closeComposerEmoji();
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
 }
 cameraToggle?.addEventListener('click',()=>setCameraTray(cameraTray.hidden));
