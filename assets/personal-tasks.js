@@ -531,18 +531,22 @@ function render(){
  const active=open.filter(item=>!deferredIds.has(item.id));
  const featuredTaskId=renderContext(active);
  const visibleActive=active.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
+ const hasDeferred=postponed.length>0||preview.length>0;
+ // One category needs no second caption beneath the Tasks header.
+ // When categories coexist, short section names restore scannability.
+ const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)+Number(done.length>0)>1;
  list.replaceChildren();
  if(visibleActive.length){
-  list.append(element('h3','personal-list-title','Сейчас'));
+  if(showGroupLabels)list.append(element('h3','personal-list-title','Сейчас'));
   visibleActive.forEach(task=>list.append(row(task)));
  }
- if(postponed.length||preview.length){
-  list.append(element('h3','personal-list-title','Отложено'));
+ if(hasDeferred){
+  if(showGroupLabels)list.append(element('h3','personal-list-title','Отложено'));
   postponed.forEach(task=>list.append(row(task,false,true)));
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
  if(done.length){
-  list.append(element('h3','personal-list-title','Выполнено'));
+  if(showGroupLabels)list.append(element('h3','personal-list-title','Выполнено'));
   done.slice(0,30).forEach(task=>list.append(row(task)));
  }
  if(!open.length&&!preview.length){
@@ -710,9 +714,10 @@ list.addEventListener('click',e=>{
   if(item)askSayviForTask({title:item.title,kind:kind==='mail'?'mail':'contract',note:item.note});
  }
  else if(btn.dataset.taskSayvi){
-  const task=read().find(entry=>entry.id===btn.dataset.taskSayvi&&!entry.done);
+  const task=read().find(entry=>entry.id===btn.dataset.taskSayvi);
   if(task)askSayviForTask({title:task.title,kind:'task',due:task.due,
-   note:task.sourceNoteId?'Дело создано из Блокнота. Для анализа исходного текста откройте запись.':''});
+   note:[task.done?'Дело уже отмечено выполненным. Помоги проверить результат или следующий шаг.':'',
+    task.sourceNoteId?'Дело создано из Блокнота. Для анализа исходного текста откройте запись.':''].filter(Boolean).join(' ')});
  }
  else if(btn.dataset.deferredExpand){
   const toggle=btn,detail=toggle.closest('.personal-deferred-row')?.querySelector('.personal-deferred-details');
