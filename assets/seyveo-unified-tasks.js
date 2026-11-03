@@ -584,7 +584,7 @@
   const label=$('unifiedTasksBackLabel');
   if(label)label.textContent=page.dataset.employeeMode==='true'?'К моим делам'
    :(page.dataset.workView==='business'&&businessFromPersonal?'К делам'
-     :(exitTarget==='manage'?'В бизнес':'На Главную'));
+     :(exitTarget==='manage'?'В бизнес':'Главная'));
  }
  $('unifiedTasksBack')?.addEventListener('click',()=>{
   // Work is a dedicated page, and Back leads to the personal Tasks selector.
