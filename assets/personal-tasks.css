@@ -187,8 +187,15 @@
 #personalTaskDialog.personal-task-dialog .personal-task-date-control[data-filled=true] .personal-task-date-display{
  color:var(--text);
 }
+/* The invisible date input retains focus after choosing a date.
+   Do not paint a rectangular focus ring around the whole grouped row.
+   For keyboard users show a quiet, rounded focus inside the date row. */
 #personalTaskDialog.personal-task-dialog .personal-task-date-control:focus-within{
- outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+ outline:none;box-shadow:none;
+}
+#personalTaskDialog.personal-task-dialog .personal-task-date-control:has(.cal-picker-trigger:focus-visible){
+ border-radius:10px;
+ box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--text) 52%,transparent);
 }
 /* The only editor toolbar; no duplicate Save/Cancel row beneath content. */
 #personalTaskDialog .sv-task-topbar{
@@ -256,12 +263,12 @@
  stroke-linecap:round;stroke-linejoin:round;
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-title{
- margin:10px 2px 14px!important;padding:0!important;
+ margin:8px 2px 11px!important;padding:0!important;
  color:var(--text);font-size:clamp(27px,7.1vw,31px);
  line-height:1.13;font-weight:620;letter-spacing:-.045em;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-head{
- min-height:44px;margin:0 0 5px;
+ min-height:44px;margin:0 0 3px;
  border:0;border-radius:0;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-head strong{
@@ -293,7 +300,7 @@
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
- padding:6px 0 0;margin:7px 0 0;
+ padding:5px 0 0;margin:5px 0 0;
  border-top:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent);
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick > button{
