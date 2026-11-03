@@ -757,6 +757,13 @@ function healthView(){
 function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
+ // Documents use one real navigation row, with Back beside the title.
+ // Keep the same Back element and click handler across every surface.
+ const header=title.closest('.sv-deep-top');
+ if(header){
+  if(kind==='contract'&&back.parentElement!==header)header.prepend(back);
+  else if(kind!=='contract'&&back.parentElement!==page)page.prepend(back);
+ }
  subject.textContent=descriptor.label;title.textContent=kind==='contract'&&returnDestination?.hash==='#life'?'Личные документы':descriptor.title;intro.textContent=descriptor.intro;
  footer.textContent=kind==='contract'?'Архив с локальным шифрованием — экспериментальная функция. Без облачного восстановления, биометрии и подключённого ИИ. Для особо важных документов используйте проверенное хранилище.':kind==='mail'?'':localOnly;
  footer.hidden=kind==='mail';
