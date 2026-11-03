@@ -14,6 +14,10 @@ if(personal&&head){
  cursor:pointer;touch-action:manipulation;
 }
 .sah-inline-toggle[aria-expanded="true"]{color:var(--text)}
+.sah-inline-toggle svg{
+ display:block;flex:none;width:16px;height:16px;fill:none;
+ stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
 .sah-inline-toggle:focus-visible,
 .sah-inline-head button:focus-visible,.sah-search:focus-visible{
  outline:2px solid var(--text);outline-offset:2px
@@ -67,7 +71,12 @@ if(personal&&head){
 .sah-inline-panel>.sah-inline-toggle{margin:11px 0 2px;padding-inline:0;color:var(--text)}
 `;
  document.head.append(style);
- const open=document.createElement('button');open.type='button';open.className='sah-inline-toggle';open.textContent='История';open.setAttribute('aria-expanded','false');
+ const open=document.createElement('button');open.type='button';open.className='sah-inline-toggle';open.setAttribute('aria-label','Открыть историю действий');open.setAttribute('aria-expanded','false');
+ const openSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ openSvg.setAttribute('viewBox','0 0 24 24');openSvg.setAttribute('aria-hidden','true');openSvg.setAttribute('focusable','false');
+ const outline=document.createElementNS('http://www.w3.org/2000/svg','path');
+ outline.setAttribute('d','M12 3.5a8.5 8.5 0 1 1-8.5 8.5M3.5 4v5h5M12 7.5V12l3 2');
+ openSvg.append(outline);open.append(openSvg,document.createTextNode('История'));
  const panel=document.createElement('section');panel.className='sah-inline-panel';panel.id='seyveoActionHistoryPanel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
  open.setAttribute('aria-controls',panel.id);
  const heading=document.createElement('div');heading.className='sah-inline-head';
