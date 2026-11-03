@@ -546,6 +546,14 @@
  -webkit-backdrop-filter:var(--sv-glass-orb-blur);
  backdrop-filter:var(--sv-glass-orb-blur);
 }
+:root[data-theme=light] #calendarEventDialog .cal-dialog-actions>.btn.primary:active{
+ filter:var(--sv-glass-orb-pressed);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #calendarEventDialog .cal-dialog-actions>.btn.primary{
+  background:#e0f0ec;-webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
 #calendarEventDialog .cal-dialog-actions #calendarDeleteEvent{
  min-width:75px;color:var(--secondary);
 }
