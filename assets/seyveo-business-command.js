@@ -1221,7 +1221,7 @@ function renderChat(){
      },'svcp-message-menu-item'));
     }
     bubble.tabIndex=0;
-    bubble.setAttribute('aria-description','Нажмите, чтобы ответить, выбрать реакцию или создать поручение');
+    bubble.setAttribute('aria-description','Свайп вправо — ответ. Долгое нажатие или Enter — действия и реакции.');
     let longPressTimer=null,pressStartX=0,pressStartY=0,swipeEligible=false,holdOpened=false;
     const clearHold=()=>{clearTimeout(longPressTimer);longPressTimer=null};
     bubble.addEventListener('pointerdown',event=>{
