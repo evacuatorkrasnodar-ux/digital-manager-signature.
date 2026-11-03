@@ -3,7 +3,7 @@
    keyboard, draft, attachments, send handlers and navigation. No cloned inputs. */
 :root{
  --sv-input-height:54px;
- --sv-input-radius:22px;
+ --sv-input-radius:24px;
  --sv-input-padding-x:12px;
  --sv-input-gap:6px;
  --sv-input-control:44px;
@@ -11,13 +11,16 @@
  --sv-input-leading:24px;
  --sv-input-icon-size:20px;
  --sv-input-icon-stroke:1.35;
- --sv-input-border:var(--soft-line,rgba(184,207,199,.17));
+ --sv-input-border:color-mix(in srgb,var(--soft-line,rgba(184,207,199,.17)) 52%,transparent);
  --sv-input-ink:var(--text);
  --sv-input-muted:var(--secondary);
- --sv-input-surface:linear-gradient(150deg,rgba(176,223,208,.055),transparent 69%),var(--card);
+ --sv-input-surface:color-mix(in srgb,var(--card2) 50%,transparent);
+ --sv-input-gloss:color-mix(in srgb,var(--card) 38%,transparent);
+ --sv-input-blur:blur(18px) saturate(118%);
 }
 :root[data-theme="light"]{
- --sv-input-surface:linear-gradient(150deg,rgba(170,188,207,.075),transparent 69%),var(--card);
+ --sv-input-surface:rgba(236,241,244,.52);
+ --sv-input-gloss:rgba(255,255,255,.67);
 }
 .sv-input-surface{
  box-sizing:border-box;
@@ -25,7 +28,9 @@
  border-radius:var(--sv-input-radius);
  border:1px solid var(--sv-input-border);
  background:var(--sv-input-surface);
- box-shadow:inset 0 1px 0 rgba(228,255,246,.035);
+ box-shadow:inset 0 1px 0 var(--sv-input-gloss);
+ -webkit-backdrop-filter:var(--sv-input-blur);
+ backdrop-filter:var(--sv-input-blur);
 }
 .sv-input-field{
  box-sizing:border-box;
