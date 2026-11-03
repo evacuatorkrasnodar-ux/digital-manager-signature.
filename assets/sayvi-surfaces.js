@@ -407,11 +407,45 @@ function mailView(){
    info.textContent='Черновик сохранён в текущем сеансе. Ничего не отправлено.';
   });
   const actions=create('div','sv-mail-editor-actions');
+  const polish=intent('✧ Сэйви · улучшить текст',()=>{
+   const cleaned=polishMailLocally(message.value);
+   if(!cleaned){status.textContent='Сначала напишите текст письма.';return}
+   message.value=cleaned;message.dispatchEvent(new Event('input',{bubbles:true}));
+   status.textContent='Исправлены пробелы и оформление. Смысл и факты не проверены; для полноценной редакции нужен ИИ.';
+  });
+  actions.append(polish);
   const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
   const cancel=intent('Отмена',()=>{mailEditorOpen=false;mailEditingId=null;paint()});
   actions.append(save,cancel);
   form.append(actions,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
   content.append(form);
+ }
+ /* Local, explainable mail assistance for the development prototype.
+    No remote AI, no sending, no invented prices or commitments. */
+ function mailLocalAnalysis(item){
+  const body=String(item.body||'');
+  const topic=/достав|срок|стоим|цен/i.test(body)?'Стоимость и сроки доставки':
+   /план|согласован|совещан|встреч/i.test(body)?'Согласование и планирование':
+   /отч[её]т|сч[её]т|оплат|договор/i.test(body)?'Документы и отчётность':'Обращение по теме письма';
+  const question=body.split(/[\n.!?]+/).map(x=>x.trim()).find(x=>x.length>12&&/подскаж|просим|можно|сколько|когда|какие|подтверд|соглас/i.test(x));
+  return 'Тема: '+topic+'.\n'+(question?'Запрос: '+question.slice(0,180)+'.\n':'')+
+   'Перед ответом проверьте факты и доступные условия. Это локальный разбор по правилам, без подключения ИИ.';
+ }
+ function mailLocalReply(item){
+  const body=String(item.body||'');
+  if(/достав|срок|стоим|цен/i.test(body))
+   return 'Здравствуйте!\n\nСпасибо за обращение. Уточним стоимость и возможные сроки доставки и вернёмся к вам с подтверждённой информацией.\n\nС уважением,';
+  if(/согласован|план|совещан|встреч/i.test(body))
+   return 'Здравствуйте!\n\nСпасибо за письмо. Ознакомимся с предложением и сообщим о согласовании после проверки деталей.\n\nС уважением,';
+  return 'Здравствуйте!\n\nСпасибо за ваше письмо. Мы рассмотрим вопрос и подготовим ответ после уточнения необходимых деталей.\n\nС уважением,';
+ }
+ function polishMailLocally(text){
+  const value=String(text||'').replace(/\r\n?/g,'\n').trim();
+  if(!value)return '';
+  return value.split(/\n{2,}/).map(block=>block.split('\n').map(line=>{
+   const normalized=line.trim().replace(/ {2,}/g,' ').replace(/\s+([,.!?;:])/g,'$1');
+   return normalized.replace(/^([а-яёa-z])/i,c=>c.toLocaleUpperCase('ru-RU'));
+  }).join('\n')).join('\n\n');
  }
  function drawDetails(item){
   const panel=create('article','sv-mail-detail');
@@ -443,10 +477,42 @@ function mailView(){
   const reply=intent('Ответить',()=>openEditor(null,item),true);reply.prepend(mailIcon('back'));
   const help=intent('✧ Сэйви',()=>{
    note.hidden=!note.hidden;
+   help.setAttribute('aria-expanded',String(!note.hidden));
+   if(!note.hidden)request.focus({preventScroll:true});
   });
+  help.setAttribute('aria-expanded','false');
   actions.append(reply,help);panel.append(actions);
-  const note=create('div','sv-mail-sayvi-note','Сэйви поможет подготовить ответ после подключения ИИ. Сейчас вы можете написать и сохранить черновик самостоятельно.');
-  note.hidden=true;panel.append(note);
+  const note=create('section','sv-mail-sayvi-note');
+  note.hidden=true;note.setAttribute('aria-label','Помощь Сэйви с письмом');
+  const caption=create('p','sv-mail-assist-caption','Сэйви · локальные подсказки без ИИ');
+  const quick=create('div','sv-mail-assist-quick');
+  const result=create('p','sv-mail-assist-result');
+  result.setAttribute('role','status');
+  const makeDraft=()=>{
+   openEditor(null,item);
+   const field=content.querySelector('[data-mail-field="body"]');
+   if(field){field.value=mailLocalReply(item);field.dispatchEvent(new Event('input',{bubbles:true}))}
+  };
+  quick.append(
+   intent('Разобрать письмо',()=>{result.textContent=mailLocalAnalysis(item)}),
+   intent('Подготовить ответ',makeDraft)
+  );
+  const prompt=create('div','sv-mail-assist-prompt');
+  const request=create('input','sv-mail-assist-input');
+  request.type='text';request.placeholder='Например: Сэйви, ответь клиенту';
+  request.setAttribute('aria-label','Попросить Сэйви помочь с письмом');
+  request.maxLength=240;
+  const ask=intent('Выполнить',()=>{
+   const words=request.value.trim().toLocaleLowerCase('ru-RU');
+   if(!words){result.textContent='Напишите, что сделать с письмом.';return}
+   if(/ответ|напиши|состав|подготов|грамотн/i.test(words)){makeDraft();return}
+   if(/анализ|разбер|объясн|о чем|о чём|суть|проверь/i.test(words)){result.textContent=mailLocalAnalysis(item);return}
+   result.textContent='Пока доступны две локальные команды: «разбери письмо» и «подготовь ответ». Для свободного диалога потребуется подключение ИИ.';
+  });
+  request.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();ask.click()}});
+  prompt.append(request,ask);
+  note.append(caption,quick,prompt,result);
+  panel.append(note);
   content.append(panel);
  }
  function drawExamples(limit=0){
