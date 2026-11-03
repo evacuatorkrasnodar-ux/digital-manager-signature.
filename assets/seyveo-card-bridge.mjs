@@ -5,7 +5,8 @@ import './seyveo-developer-flow.mjs';
 import './seyveo-technology-signatures.mjs';
 import './seyveo-action-history.mjs';
 import './seyveo-adaptive-orb.mjs';
-import './seyveo-card-copy-ui.mjs';
+// Content and the single actions row are owned by Living Moment + Card Engine.
+// Old card-copy-ui imported a duplicate reason and a second disclosure button.
 import {createCard,transition,visible,ingest} from './seyveo-card-engine.mjs';
 import {validateMailReceipt} from './seyveo-mail-receipt.mjs';
 // Main UI integration layer. Opt-in event API; legacy home rendering is untouched.
