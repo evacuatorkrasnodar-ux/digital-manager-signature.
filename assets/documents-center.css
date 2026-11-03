@@ -1,29 +1,34 @@
 /* SEYVEO / Document Center — one refined workspace, no fake archive cards. */
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-hero{display:none!important}
-/* Keep the title on the same optical line as Back, not beneath it.
-   The shared space layout resets header padding, so scope this intentionally. */
+/* A single structural header row: existing Back button beside its title.
+   The same Back handler continues to work on every route. */
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top{
- box-sizing:border-box;display:flex;align-items:center;
- margin:0 5px 13px!important;padding:0 0 0 48px!important;
- min-height:48px;
+ box-sizing:border-box;display:flex;align-items:center;gap:3px;
+ margin:0 5px 13px!important;padding:0!important;
+ min-height:50px;min-width:0;
 }
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-kicker,
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-intro{display:none!important}
 html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-heading{
- margin:0!important;font-size:clamp(22px,5.7vw,27px);
- font-weight:600;line-height:1.2;letter-spacing:-.04em;
+ flex:1;min-width:0;margin:0!important;
+ font-size:clamp(22px,5.7vw,27px);font-weight:600;
+ line-height:1.2;letter-spacing:-.04em;
 }
-/* The existing back handler returns to the originating section. */
-html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack{
- display:inline-flex!important;position:absolute;
- top:4px;left:7px;z-index:5;
- width:44px;min-height:44px;justify-content:center;align-items:center;
- padding:0;margin:0;border:0;background:transparent;
+html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack{
+ position:static!important;display:inline-flex!important;
+ flex:0 0 44px;align-items:center;justify-content:center;
+ width:44px;height:44px;min-height:44px;
+ padding:0!important;margin:0!important;
+ background:transparent;border:0;box-shadow:none;
+ color:var(--text);
 }
-#sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack .sv-deep-back-mark{
- width:44px;height:44px;font-size:26px;
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack .sv-deep-back-mark{
+ display:grid;place-items:center;width:44px;height:44px;
+ font-size:26px;line-height:1;
 }
-#sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfaceBack span:last-child{display:none!important}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top > #sayviSurfaceBack span:last-child{
+ display:none!important;
+}
 #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-content{padding:0 5px}
 #sayviSurfacePage .sv-doc-center{max-width:620px;width:100%;min-width:0;margin:0 auto;box-sizing:border-box}
 #sayviSurfacePage .sv-doc-heading{display:flex;flex-direction:column;gap:4px;margin:0 0 17px}
@@ -101,7 +106,17 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] > #sayviSurfa
  outline:none;border-color:color-mix(in srgb,var(--seyveo-emerald) 50%,var(--soft-line));
  box-shadow:0 1px 0 color-mix(in srgb,var(--seyveo-emerald) 24%,transparent);
 }
-#sayviSurfacePage .sv-doc-editor{min-height:185px;resize:vertical}
+#sayviSurfacePage .sv-doc-editor{
+ min-height:200px;resize:vertical;
+ background:color-mix(in srgb,var(--card) 14%,transparent);
+ border-color:color-mix(in srgb,var(--soft-line) 48%,transparent);
+}
+#sayviSurfacePage .sv-doc-workspace:has(.sv-doc-editor) .sv-doc-subtitle{
+ margin-bottom:9px;
+}
+#sayviSurfacePage .sv-doc-workspace:has(.sv-doc-editor) .sv-doc-file-actions{
+ gap:8px;margin:8px 0 4px;
+}
 #sayviSurfacePage .sv-doc-input::placeholder,
 #sayviSurfacePage .sv-doc-editor::placeholder,
 #sayviSurfacePage .sv-doc-search::placeholder{color:var(--secondary)}
