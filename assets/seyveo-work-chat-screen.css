@@ -218,12 +218,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-bubble.is-sayvi{
  border-color:var(--seyveo-hdr-outline,var(--soft-line))!important
 }
-/* A task stays a message, with one subtle leading accent rather than a card. */
+/* Tasks remain in the chat flow; a tiny semantic label replaces the pin emoji. */
 #svcpWorkChatScreen .svcp-bubble.is-task{
- border-left:2px solid var(--seyveo-emerald)!important;
+ border-left:1px solid color-mix(in srgb,var(--seyveo-emerald) 48%,transparent)!important;
+}
+#svcpWorkChatScreen .svcp-task-message-label{
+ display:block;margin:1px 0 5px;
+ font-size:10px;line-height:1.1;font-weight:600;letter-spacing:.045em;
+ color:var(--secondary);
 }
 #svcpWorkChatScreen .svcp-bubble.is-task .svcp-message-text{
- font-weight:450;
+ display:block;font-weight:450;
 }
 #svcpWorkChatScreen .svcp-bubble-meta{
  display:flex;align-items:baseline;gap:7px;margin:0 0 3px
