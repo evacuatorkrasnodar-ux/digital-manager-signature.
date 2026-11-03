@@ -974,6 +974,29 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  min-height:46px;gap:2px;padding:3px 2px;
  font-size:11.5px;line-height:1.2;font-weight:515;
 }
+/* Business navigation: the active surface is visibly selected, but remains
+   flat optical glass rather than a raised button. */
+#tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="true"]{
+ color:var(--text);font-weight:610;
+ background:color-mix(in srgb,var(--card) 48%,transparent);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 35%,transparent),
+            inset 0 -1px 0 color-mix(in srgb,var(--text) 13%,transparent);
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="false"]{
+ color:var(--secondary);
+ background:transparent;box-shadow:none;
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs [data-unified-tasks-tab="calendar"][aria-pressed="false"] .sv-mini-nav-icon{
+ color:inherit;
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs [aria-pressed="true"] .sv-mini-nav-icon{
+ color:var(--text);
+}
+:root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="true"]{
+ background:rgba(255,255,255,.66);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.86),
+            0 1px 3px rgba(34,55,63,.045);
+}
 #tasksPage[data-work-view="business"] #unifiedTasksTabs .sv-mini-nav-icon{
  width:22px;height:22px;
 }
