@@ -1041,6 +1041,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    </div>
    <div id="svcpAttachmentPreview" class="svcp-attach-preview" hidden></div>
    <div id="svcpCameraTray" class="svcp-camera-tray" role="group" aria-label="Камера и рабочие файлы" hidden>
+    <button id="svcpPolishMessage" class="svcp-polish-message" type="button" aria-label="Сэйви: сделать сообщение грамотнее" title="Сэйви · Улучшить текст"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M15.5 1.6C17.8 10.1 21.2 13.5 29.5 15.5 21.2 17.8 17.8 21.2 15.5 29.5 13.2 21.2 9.8 17.8 1.5 15.5 9.8 13.5 13.2 10.1 15.5 1.6Z"/></svg><span>Сэйви</span></button>
+    <button id="svcpComposerEmojiToggle" class="svcp-composer-emoji-toggle" type="button" aria-label="Выбрать эмодзи" title="Эмодзи (по желанию)" aria-expanded="false" aria-controls="svcpComposerEmojiStrip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2"/><path d="M8.8 9.3h.1m6.2 0h.1" stroke-width="2.2"/></svg><span>Эмодзи</span></button>
     <button type="button" data-svcp-capture="shelf"><span aria-hidden="true">▦</span> Выкладка</button>
     <button type="button" data-svcp-capture="price"><span aria-hidden="true">▤</span> Ценник</button>
     <button type="button" data-svcp-capture="video"><span aria-hidden="true">▣</span> Видео</button>
@@ -1069,7 +1071,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <small id="svcpVoiceHint" role="status" class="svcp-voice-hint">Нажмите квадрат, чтобы прослушать</small>
    </section>
    <form id="svcpChatForm" class="svcp-composer sv-input-surface">
-    <button id="svcpAttachFile" class="svcp-attach-file" type="button" aria-label="Прикрепить файл" title="Прикрепить файл"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5 11 20.5a6 6 0 0 1-8.5-8.5L12.8 1.7a4.1 4.1 0 0 1 5.8 5.8L8.9 17.2a2.2 2.2 0 0 1-3.1-3.1l9.1-9.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <button id="svcpAttachFile" class="svcp-attach-file" type="button" aria-label="Вложения и инструменты" title="Вложения и инструменты"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5 11 20.5a6 6 0 0 1-8.5-8.5L12.8 1.7a4.1 4.1 0 0 1 5.8 5.8L8.9 17.2a2.2 2.2 0 0 1-3.1-3.1l9.1-9.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
     <button id="svcpCameraToggle" type="button" class="svcp-file-label svcp-camera-toggle" aria-label="Снять фото, видео, проверить штрихкод или прикрепить файл" aria-expanded="false" aria-controls="svcpCameraTray" title="Камера и файлы"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h4l2-3h5l2 3h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
 
 
@@ -1079,10 +1081,10 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
     <input id="svcpCameraVideo" type="file" accept="video/*" capture="environment" hidden>
     <input id="svcpCameraBarcode" type="file" accept="image/*" capture="environment" hidden>
     <div class="svcp-chat-compose-field">
-     <button id="svcpPolishMessage" class="svcp-polish-message" type="button" aria-label="Сэйви: сделать сообщение грамотнее" title="Сэйви · Улучшить текст"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M15.5 1.6C17.8 10.1 21.2 13.5 29.5 15.5 21.2 17.8 17.8 21.2 15.5 29.5 13.2 21.2 9.8 17.8 1.5 15.5 9.8 13.5 13.2 10.1 15.5 1.6Z"/></svg></button>
+     
     <textarea id="svcpChatInput" class="svcp-compose-input sv-input-field" rows="1" maxlength="1000" aria-label="Текст для демонстрационного чата" placeholder="Написать сообщение…" spellcheck="true"></textarea>
     
-    <button id="svcpComposerEmojiToggle" class="svcp-composer-emoji-toggle" type="button" aria-label="Выбрать эмодзи" title="Эмодзи (по желанию)" aria-expanded="false" aria-controls="svcpComposerEmojiStrip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2"/><path d="M8.8 9.3h.1m6.2 0h.1" stroke-width="2.2"/></svg></button>
+    
     </div>
     <button id="svcpVoiceRecord" type="button" class="svcp-voice-record" aria-label="Записать голосовое сообщение" aria-controls="svcpVoiceCapture" aria-expanded="false" title="Голосовое сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 18v3M8.5 21h7"/></svg></button>
     <button type="submit" class="svcp-primary svcp-chat-send" aria-label="Записать сообщение в учебный чат"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7.2 18-4-7.3L2.5 10.2 21 3Z"/></svg><span>В чат</span></button>
