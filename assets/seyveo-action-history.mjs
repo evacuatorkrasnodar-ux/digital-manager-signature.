@@ -76,6 +76,8 @@ if(personal&&head){
  font-size:13px;line-height:1.45;overflow-wrap:anywhere
 }
 .sah-row strong{display:block;font-size:14px;font-weight:540;line-height:1.4}
+.sah-restore-task{display:inline-flex;align-items:center;min-height:44px;margin:4px 0 0 12px;padding:8px 4px;border:0;background:transparent;color:var(--text);font:inherit;font-size:12px;font-weight:530;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.sah-restore-task:focus-visible{outline:2px solid var(--text);outline-offset:2px}
 .sah-row small{display:inline-block;color:var(--secondary);font-size:12px;margin:6px 0 0 10px}
 .sah-state{display:inline-block;margin-top:6px;font-size:12px;font-weight:530;color:var(--secondary)}
 .sah-state[data-state=failed]{color:#e8a18d}
@@ -114,7 +116,10 @@ if(personal&&head){
  function render(){
   list.replaceChildren();
   const api=window.SEYVEO_CARD_LIFECYCLE;
-  const events=api?.history?.()||[];
+  const cardEvents=api?.history?.()||[];
+  const tasks=window.SEYVEO_PERSONAL_TASK_HISTORY?.completed?.()||[];
+  const taskEvents=tasks.map(task=>({eventId:task.id,title:task.title,cardType:'personal-task',to:'succeeded',at:task.doneAt||task.createdAt,taskId:task.id}));
+  const events=[...cardEvents,...taskEvents].sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
   panel.classList.toggle('is-empty-history',events.length===0);
   more.hidden=true;
   search.hidden=events.length<5&&!search.value.trim();
@@ -158,6 +163,15 @@ if(personal&&head){
    const status=document.createElement('span');status.className='sah-state';status.dataset.state=stateOf(e.to);status.textContent=statuses[e.to]||e.to||'Событие';
    line.textContent=valid?date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'время не указано';
    item.append(name,status,line);
+   if(e.taskId){
+    const recover=document.createElement('button');recover.type='button';recover.className='sah-restore-task';recover.textContent='Вернуть в дела';
+    recover.setAttribute('aria-label','Вернуть в дела: '+e.title);
+    recover.addEventListener('click',()=>{
+     const ok=window.SEYVEO_PERSONAL_TASK_HISTORY?.restore?.(e.taskId);
+     if(ok)render();else recover.textContent='Не удалось восстановить';
+    });
+    item.append(recover);
+   }
    if(studio){const tech=document.createElement('small');tech.className='sah-studio';tech.textContent=(e.from||'—')+' → '+(e.to||'—')+' · '+e.eventId+(e.reason?' · '+e.reason:'');item.append(tech);}
    list.append(item);
   }
@@ -200,4 +214,5 @@ if(personal&&head){
   if(page.hidden&&!panel.hidden)toggle(false,{restoreFocus:false,restoreScroll:false});
  }).observe(page,{attributes:true,attributeFilter:['hidden']});
  window.addEventListener('seyveo:cards-changed',()=>{if(!panel.hidden)render()});
+ window.addEventListener('seyveo:personal-tasks-changed',()=>{if(!panel.hidden)render()});
 }
