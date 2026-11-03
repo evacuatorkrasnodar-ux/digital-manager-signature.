@@ -33,10 +33,22 @@
     Translucent stacked highlights + backdrop sampling; no solid mint panels. */
  --sv-glass-orb-ink:#25383c;
  --sv-glass-orb-material:linear-gradient(157deg,rgba(255,255,255,.78) 0%,rgba(236,250,247,.48) 24%,rgba(177,217,212,.26) 65%,rgba(246,253,251,.58) 100%),rgba(236,248,247,.42);
- --sv-glass-orb-primary:linear-gradient(155deg,rgba(255,255,255,.86),rgba(220,243,239,.62) 37%,rgba(176,215,209,.49) 74%,rgba(246,252,251,.76)),rgba(232,247,244,.60);
- --sv-glass-orb-edge:rgba(96,145,139,.17);
- --sv-glass-orb-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(97,145,139,.10),0 3px 11px rgba(55,99,95,.075);
- --sv-glass-orb-blur:blur(18px) saturate(1.24);
+ /* Thin optical highlights suggest a lens rather than a painted green surface.
+    All layers remain translucent and use the real backdrop in Safari. */
+ --sv-glass-orb-primary:
+   radial-gradient(ellipse 85% 90% at 16% -28%,rgba(255,255,255,.91),transparent 78%),
+   radial-gradient(ellipse 48% 100% at 93% 120%,rgba(132,198,187,.21),transparent 88%),
+   linear-gradient(161deg,rgba(255,255,255,.63) 0%,rgba(232,249,246,.38) 34%,rgba(182,221,215,.37) 76%,rgba(250,255,254,.60) 100%),
+   rgba(226,245,242,.43);
+ --sv-glass-orb-edge:rgba(99,156,147,.19);
+ --sv-glass-orb-shadow:
+   inset 0 1px 0 rgba(255,255,255,.94),
+   inset 0 -1px 0 rgba(81,138,129,.13),
+   inset 1px 0 0 rgba(255,255,255,.38),
+   inset -1px 0 0 rgba(82,141,132,.075),
+   0 3px 10px rgba(49,91,86,.07);
+ --sv-glass-orb-blur:blur(21px) saturate(1.32) brightness(1.035);
+ --sv-glass-orb-pressed:brightness(.97) saturate(1.07);
  --sv-velvet-panel:#ffffff;
  --sv-velvet-panel-quiet:#eef1f5;
  --sv-air-dock:#e9edf2;
