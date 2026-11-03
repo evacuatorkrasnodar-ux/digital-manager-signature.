@@ -183,15 +183,15 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  padding:5px 7px!important;
  bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
  transform:translateX(-50%)!important;
- border:1px solid var(--soft-line)!important;border-radius:27px!important;
- background:var(--sv-chat-composer-gradient)!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border:1px solid var(--sv-input-border)!important;border-radius:var(--sv-input-radius)!important;
+ background:var(--sv-input-surface)!important;
+ box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
+ -webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;
  transition:none!important;animation:none!important;
  overflow:visible!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded):focus-within{
- border-color:var(--line)!important;
+ border-color:var(--sv-input-border)!important;
 }
 html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded){
  bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
