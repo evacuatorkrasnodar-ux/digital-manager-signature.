@@ -269,12 +269,11 @@
 
 /* Pulse of Business · calm responsive demo presentation. */
 #picturePage .picture-demo-label{
- display:inline-flex;align-items:center;min-height:25px;
- margin:4px 0 10px!important;padding:5px 10px;
- font-size:9px!important;font-weight:520!important;
- letter-spacing:.10em;line-height:1.35!important;
- border:1px solid rgba(230,235,243,.17);border-radius:999px;
- background:rgba(231,236,244,.055);color:var(--secondary);
+ display:inline-flex;align-items:center;min-height:20px;
+ margin:2px 0 7px!important;padding:2px 0;
+ font-size:9px!important;font-weight:540!important;
+ letter-spacing:.08em;line-height:1.3!important;
+ border:0;border-radius:0;background:transparent;color:var(--secondary);
 }
 #picturePage .picture-demo-label[hidden]{display:none!important}
 #picturePage .picture-head h1{
