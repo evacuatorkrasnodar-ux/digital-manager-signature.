@@ -254,8 +254,10 @@
  color:#25383c;
 }
 :root[data-theme=light] #personalTaskDialog .sv-task-topbar .sv-task-save::before{
- background:linear-gradient(145deg,rgba(243,252,250,.98),rgba(207,232,227,.93) 62%,rgba(237,247,247,.97));
- box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(88,135,131,.12),0 1px 5px rgba(64,105,102,.075);
+ background:var(--sv-glass-orb-primary);
+ box-shadow:var(--sv-glass-orb-shadow);
+ -webkit-backdrop-filter:var(--sv-glass-orb-blur);
+ backdrop-filter:var(--sv-glass-orb-blur);
 }
 #personalTaskDialog .sv-task-topbar button:active{
  background:var(--seyveo-hdr-active,var(--card2));
