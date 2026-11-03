@@ -1096,7 +1096,11 @@ function renderChat(){
    if(msg.replyTo&&typeof msg.replyTo.text==='string'){
     bubble.append(el('div','svcp-quote',(msg.replyTo.sender||'Сообщение')+' · '+msg.replyTo.text.slice(0,160)));
    }
-   if(msg.mediaPurpose!=='voice')bubble.append(el('span','svcp-message-text',msg.text));
+   if(msg.mediaPurpose!=='voice'){
+    const taskText=msg.taskId?String(msg.text||'').replace(/^\s*📌\s*Поручение:\s*/u,''):msg.text;
+    if(msg.taskId)bubble.append(el('small','svcp-task-message-label','Поручение'));
+    bubble.append(el('span','svcp-message-text',taskText));
+   }
    if(msg.documentFlowId&&window.SEYVEO_DOCUMENT_FLOW?.get?.(msg.documentFlowId)){
     const doc=window.SEYVEO_DOCUMENT_FLOW.get(msg.documentFlowId);
     const action=btn('▤ Открыть документ · демо',()=>{
