@@ -775,26 +775,29 @@
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent{
  appearance:none;-webkit-appearance:none;
  display:inline-flex;align-items:center;justify-content:center;
- min-height:44px;padding:9px 15px;
- border:1px solid color-mix(in srgb,var(--sm-line) 30%,transparent)!important;
- border-radius:999px!important;
- background:color-mix(in srgb,var(--sm-surface) 43%,transparent);
- box-shadow:none!important;
+ box-sizing:border-box;min-height:42px;padding:9px 17px;
+ border:1px solid var(--sm-line)!important;border-radius:999px!important;
+ background:var(--sm-surface)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(112%);backdrop-filter:blur(18px) saturate(112%);
  text-decoration:none;color:var(--text);
- font-size:13px;font-weight:540;line-height:1.2;
+ font-size:13px;font-weight:540;line-height:1.2;white-space:nowrap;
 }
 #sayviSurfacePage .sv-mail-detail-actions .sv-deep-intent--lead{
- background:color-mix(in srgb,var(--sm-tint) 54%,transparent);font-weight:590;
+ background:var(--sm-tint)!important;font-weight:590;
 }
 :root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-deep-intent--lead{
- background:color-mix(in srgb,var(--sm-tint) 42%,rgba(255,255,255,.58))!important;
- border-color:color-mix(in srgb,var(--sm-line) 36%,transparent)!important;
- -webkit-backdrop-filter:blur(18px) saturate(108%);backdrop-filter:blur(18px) saturate(108%);
- box-shadow:inset 0 .5px 0 rgba(255,255,255,.65)!important;
+ background:rgba(223,241,235,.88)!important;
+ border-color:rgba(63,113,96,.14)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.78)!important;
 }
 #sayviSurfacePage .sv-mail-detail-actions .sv-mail-assist-action{
- display:inline-flex;align-items:center;justify-content:center;gap:6px;
- background:color-mix(in srgb,var(--sm-surface) 35%,transparent);
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ background:var(--sm-surface)!important;
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-detail-actions .sv-mail-assist-action{
+ background:rgba(250,252,251,.92)!important;
+ border-color:rgba(63,113,96,.11)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.82)!important;
 }
 #sayviSurfacePage .sv-mail-assist-symbol{
  color:var(--seyveo-emerald);font-size:18px;line-height:1;
