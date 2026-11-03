@@ -351,7 +351,7 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
  input.style.setProperty('height','46px','important');
  // Empty input stays one line: iOS otherwise measures the placeholder as text.
- const maxHeight=112;
+ const maxHeight=72;
  const height=input.value?Math.min(maxHeight,Math.max(46,input.scrollHeight)):46;
  input.style.setProperty('height',height+'px','important');
  input.style.setProperty('overflow-y',input.value&&input.scrollHeight>maxHeight?'auto':'hidden','important');
@@ -447,9 +447,9 @@ function employeePreviewActive(){return window.SEYVEO_PREVIEW?.isEmployee?.()===
 function employeeAllowedRoom(roomId){return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)}
 function senderName(msg){
  if(msg.role==='recognition')return '✦ Знак признания · демо';
- if(msg.role==='sayvi')return 'Сэйви · демо';
+ if(msg.role==='sayvi')return 'Сэйви';
  if(msg.role==='demo-elena')return 'Елена · учебный пример';
- return roomDetails().kind==='personal'?'Руководитель · демо':'Вы · демо';
+ return roomDetails().kind==='personal'?'Руководитель':'Вы';
 }
 function renderDirectory(){
  const list=$('svcpConversationList');if(!list)return;
