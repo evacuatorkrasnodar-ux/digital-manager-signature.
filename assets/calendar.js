@@ -715,6 +715,13 @@ $('calendarEventDialog').addEventListener('click',event=>{
  if(event.target===$('calendarEventDialog'))$('calendarEventDialog').close();
 });
 window.SEYVEO_CALENDAR_DATE=iso;
+window.addEventListener('seyveo:calendar-focus-date',event=>{
+ const day=at(event.detail?.date);
+ if(!day)return;
+ if(mode==='deadlines')mode='month';
+ updateFocus(day);
+ revealSelectedDay();
+});
 window.addEventListener('seyveo:calendar-open',()=>{render()});
 window.addEventListener('seyveo:calendar-manager-context',event=>{
  if(event.detail?.active!==true||!managerPreview())return;
