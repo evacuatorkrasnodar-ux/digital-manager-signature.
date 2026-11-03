@@ -37,7 +37,7 @@
 .svf-suggestion p{font-size:11px;line-height:1.48;color:var(--secondary);margin:0}
 .svf-action{font:inherit;font-size:12px;color:var(--text);background:none;border:0;min-height:38px;cursor:pointer;text-align:left;padding:6px 0;font-weight:550}
 .svf-action.is-strong{color:var(--text)}
-.svf-compose{display:flex;align-items:center;gap:var(--sv-input-gap,6px);min-height:var(--sv-input-height,54px);padding:4px 6px;border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius,22px);background:var(--sv-input-surface)}
+.svf-compose{display:flex;align-items:center;gap:var(--sv-input-gap,6px);min-height:var(--sv-input-height,54px);padding:4px 6px;border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius);background:var(--sv-input-surface);box-shadow:inset 0 1px 0 var(--sv-input-gloss);-webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur)}
 .svf-upload{display:grid;place-items:center;min-width:var(--sv-input-control,44px);width:var(--sv-input-control,44px);height:var(--sv-input-control,44px);flex:none;border:0;background:transparent;border-radius:50%;cursor:pointer;color:var(--text)}
 .svf-upload svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);stroke:currentColor;fill:none;stroke-width:var(--sv-input-icon-stroke,1.35);stroke-linecap:round}
 .svf-compose textarea{flex:1;min-height:44px;max-height:112px;resize:none;min-width:0;font:inherit;font-size:var(--sv-input-type,16px);color:var(--sv-input-ink,var(--text));background:transparent;border:0;outline:0;padding:10px 3px;line-height:var(--sv-input-leading,24px);scrollbar-width:none}
