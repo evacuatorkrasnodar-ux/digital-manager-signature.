@@ -847,6 +847,7 @@ function shrink(){
 }
 function disappear(){
  if(mode==='idle')return;
+ if(mode==='discovery'&&key)window.SEYVEO_DISCOVERY?.postpone?.(key);
  if(mode==='preview'&&tiles.querySelector('.lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) textarea'))return;
  if(mode==='advice'){
   quiet.add(key);dynamic.classList.add('lm-real-out');
@@ -859,6 +860,7 @@ function disappear(){
 }
 function closeEarly(){
  if(mode==='idle')return;
+ if(mode==='discovery'&&key)window.SEYVEO_DISCOVERY?.postpone?.(key);
  cancel();
  if(mode==='task'||mode==='advice')quiet.add(key);
  space.classList.add('lm-condense','lm-disappear');
@@ -923,6 +925,36 @@ function dueTasks(){
     detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
    };
   })).filter(item=>!quiet.has(item.eventId));
+}
+/* Verified personal discoveries share the SINGLE Home card surface.
+ * Scheduled/real tasks and owner recommendations always take precedence.
+ * A public catalog release is not a playable local file or real chat.
+ */
+function showDiscovery(card){
+ if(!card||!available())return false;
+ const engine=window.SEYVEO_CARD_ENGINE;
+ const surface=engine?.renderCard?.(card,{onAction:id=>{
+  if(id==='later')window.SEYVEO_DISCOVERY?.postpone?.(card.releaseId);
+  else if(id==='not-interested')window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
+  else if(id==='open-release'){
+   const opened=window.SEYVEO_BROWSER?.open?.(card.releaseUrl);
+   if(opened)window.SEYVEO_DISCOVERY?.dismiss?.(card.releaseId);
+   return;
+  }
+  rest();
+ }});
+ if(!surface)return false;
+ mode='discovery';key=card.releaseId;
+ dynamic.hidden=true;tiles.replaceChildren();
+ const field=create('div','lm-field sv-card-system sv-card-system--home');
+ field.dataset.lmMode='real';
+ field.dataset.lmSubject='music';
+ field.dataset.svCardFamily='music';
+ field.append(surface);tiles.append(field);
+ space.hidden=false;
+ space.classList.add('lm-preview','lm-real','lm-reveal','lm-gather');
+ focus(true);tip.textContent='';
+ return true;
 }
 function showTasks(items){
  if(!items.length)return false;
@@ -997,12 +1029,21 @@ function refresh(){
   if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
+ if(mode==='discovery'){
+  const fresh=window.SEYVEO_DISCOVERY?.current?.();
+  if(!fresh||fresh.releaseId!==key){rest();return}
+  // A real due task or owner decision supersedes a quiet recommendation.
+  if(dueTasks().length||pending){rest();return}
+  return;
+ }
  // Do not resize the sphere beneath a working mobile keyboard.
  if(editing())return;
  const tasks=dueTasks();
  if(tasks.length&&showTasks(tasks))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
+ const discovery=window.SEYVEO_DISCOVERY?.current?.();
+ if(!pending&&discovery&&available()&&showDiscovery(discovery))return;
  if(mode==='idle'){
   focus(false);
   if(previewArmed&&!previewSeen&&!tasks.length&&!pending&&available())startPreview();
@@ -1017,6 +1058,7 @@ const viewObserver=new MutationObserver(()=>{
 });
 viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
+window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
