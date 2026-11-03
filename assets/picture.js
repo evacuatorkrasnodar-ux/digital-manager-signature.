@@ -67,7 +67,7 @@ operationForm.addEventListener('submit',event=>{
   day:$('pictureOperationDay').value
  });
  if(!result?.ok){
-  operationNote.textContent=result?.error||'Не удалось сохранить запись.';
+  operationNote.textContent=result?.error||'Журнал операций не загрузился. Обновите страницу.';
   operationNote.hidden=false;return;
  }
  operationForm.reset();operationKind.dispatchEvent(new Event('change'));
@@ -143,12 +143,12 @@ function render(){
  const demoLabel=$('pictureDemoLabel');
  if(demoLabel){
   demoLabel.hidden=!isSample;
-  demoLabel.textContent='ДЕМО · ТЕСТОВЫЕ ЦИФРЫ, НЕ РЕАЛЬНЫЕ ПРОДАЖИ';
+  demoLabel.textContent='ПРИМЕР ДАННЫХ';
  }
  const dataStatus=$('pictureDataStatus');
  if(dataStatus){
   dataStatus.hidden=!isSample;
-  dataStatus.textContent='Тестовые показатели для разработки · реальные продажи и расходы пока не подключены.';
+  dataStatus.textContent='Примерные цифры для проверки интерфейса. После первой записи показываем только ваши операции.';
  }
  updateKeyNumbers(total);
  const plot=$('pictureBars');plot.replaceChildren();plot.style.setProperty('--picture-bars',trend.length);
