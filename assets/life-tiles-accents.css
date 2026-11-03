@@ -109,7 +109,7 @@ html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid {
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   column-gap:12px!important;
-  row-gap:5px!important;
+  row-gap:4px!important;
   align-items:stretch!important;
   width:100%!important;
   margin:0!important;
@@ -135,7 +135,7 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
   justify-content:stretch!important;
   width:100%!important;
   height:auto!important;
-  min-height:69px!important;
+  min-height:64px!important;
   max-height:none!important;
   margin:0!important;
   padding:9px 8px!important;
@@ -276,13 +276,13 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"] > sv
 @media(max-width:390px) {
   html.sv-space-active #lifePage #calendarSpaces.calendar-spaces-grid{
     column-gap:5px!important;
-    row-gap:4px!important;
+    row-gap:3px!important;
     padding:0 6px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button {
     grid-template-columns:27px minmax(0,1fr)!important;
     column-gap:8px!important;
-    min-height:66px!important;
+    min-height:62px!important;
     padding:8px 4px!important;
   }
   html.sv-space-active #lifePage #calendarSpaces .calendar-space-button > svg {
@@ -321,6 +321,12 @@ html.sv-space-active #lifePage .sv-world-today{
   box-shadow:none;
 }
 html.sv-space-active #lifePage .sv-world-today[hidden]{display:none!important}
+html.sv-space-active #lifePage .sv-world-today[data-empty="true"]{
+  margin-bottom:7px;padding-bottom:5px;
+}
+html.sv-space-active #lifePage .sv-world-today[data-empty="true"] .sv-world-today-heading{
+  margin-bottom:3px;
+}
 html.sv-space-active #lifePage .sv-world-today-heading{
   display:flex;align-items:baseline;justify-content:space-between;gap:10px;
   margin:0 0 6px;padding:0 1px;
@@ -390,9 +396,24 @@ html.sv-space-active #lifePage .sv-world-today-chevron{
   font-weight:350;justify-self:end;opacity:.7;
 }
 html.sv-space-active #lifePage .sv-world-today-empty{
-  margin:9px 0 4px;padding:0 1px;
-  color:var(--secondary);font-size:calc(13px * var(--sv-text-scale,1));
-  line-height:1.45;
+  appearance:none;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;min-width:0;width:100%;min-height:44px;
+  margin:0;padding:1px;border:0;border-radius:0;
+  background:transparent!important;box-shadow:none!important;
+  color:var(--secondary);font:inherit;font-size:calc(12.5px * var(--sv-text-scale,1));
+  line-height:1.4;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+html.sv-space-active #lifePage .sv-world-today-empty:active{opacity:.68}
+html.sv-space-active #lifePage .sv-world-today-empty:focus-visible{
+  outline:2px solid var(--text);outline-offset:2px;border-radius:8px;
+}
+html.sv-space-active #lifePage .sv-world-today-empty-label{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html.sv-space-active #lifePage .sv-world-today-empty-link{
+  flex:none;white-space:nowrap;color:var(--text);font-weight:510;
 }
 html.sv-space-active #lifePage .sv-world-today-more{
   align-self:flex-start;min-height:44px;margin:0;padding:8px 1px;
