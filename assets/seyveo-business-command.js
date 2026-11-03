@@ -1370,6 +1370,7 @@ function setCameraTray(open){
  if(open)closeComposerEmoji();
  else{const manual=$('svcpBarcodeManual');if(manual)manual.hidden=true;}
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
+ $('svcpAttachFile')?.setAttribute('aria-expanded',String(open));
 }
 cameraToggle?.addEventListener('click',()=>setCameraTray(cameraTray.hidden));
 document.addEventListener('keydown',event=>{if(event.key==='Escape')setCameraTray(false)});
