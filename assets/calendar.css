@@ -2,6 +2,8 @@
    Shared Black/White Velvet tokens, no standalone theme, no orb changes. */
 #calendarPage[hidden]{display:none!important}
 .calendar-main{min-width:0;flex:1;padding:3px 0 22px}
+/* The + popover must paint ABOVE the blurred scope tabs (their backdrop creates a stacking context). */
+#calendarPage .calendar-header{position:relative;z-index:40;overflow:visible}
 .calendar-header{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;margin:2px 0 9px}
 .calendar-header-main{display:flex;align-items:center;gap:5px;min-width:0}
 .calendar-header h1{font-size:clamp(24px,6.2vw,28px);line-height:1.14;font-weight:615;letter-spacing:-.04em;margin:0}
