@@ -1,22 +1,14 @@
 (()=>{
 'use strict';
-const entries=[
-['Сообщения','Елена написала','Проверить выкладку товаров','Запросить фотографию','#8FE3C3','◎'],
-['Почта','Письмо Андрея','Клиент спрашивает о доставке','Уточнить адрес доставки','#8FE3C3','✉'],
-['Документы','Договор поставки','В учебном договоре нет срока','Предложить конкретный срок','#B8D4E8','▤'],
-['Дела','Срок поручения','Учебное поручение ожидает','Проверить исполнение','#B8D4E8','☑'],
-['Календарь','Скоро встреча','Запланировано событие','Подготовить материалы','#E7D2A2','▦'],
-['Здоровье','Время передышки','Учебное напоминание об отдыхе','Сделать короткую паузу','#E8B8C7','♡'],
-['Забота','Личное напоминание','Запланированное личное дело','Проверить расписание','#E8B8C7','♥'],
-['Финансы','Проверка платежа','Учебный платёж ожидает','Проверить реквизиты','#E7D2A2','▱'],
-['Бизнес','Новая продажа','Учебная запись о продаже','Посмотреть показатели','#A5D8BB','▥'],
-['Сотрудники','Запрос сотрудника','Елена оставила запрос','Открыть обращение','#CBBFE9','♧'],
-['Умный дом','Нет связи с устройством','Учебный датчик недоступен','Проверить соединение','#C2DED1','⌂'],
-['Безопасность','Проверка доступа','Учебное событие входа','Посмотреть устройства','#B8D4E8','◇'],
-['Проверка выкладки','Елена закончила выкладку','Фото ещё не получено','Попросить Елену прислать фото полки и ценников','#8FE3C3','▧'],
-['Благодарность','Предложена звезда сотруднику','Коллега отметил помощь Елены','Проверить благодарность, не начисляя премию автоматически','#E7D2A2','✦'],
-['Документооборот','Документ ожидает проверки','Учебный договор подготовлен','Проверить содержание и полномочия подписанта','#B8D4E8','▤']
-];
+// The Studio contains NO independent card catalog or renderer. Every new
+// registered event type appears here automatically from the Card Engine.
+const engine=window.SEYVEO_CARD_ENGINE;
+if(!engine)return;
+const entries=Object.entries(engine.eventType).map(([eventKey,family])=>{
+ const config=engine.catalog[family],example=config.example;
+ return [config.family,example[0],example[1],example[2],
+  config.accent,config.icon,eventKey];
+});
 // Keep the developer tools off production hosts; no query parameter is needed locally.
 const localDeveloper=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
 if(!localDeveloper)return;
@@ -48,9 +40,10 @@ const queueResult=queuePanel.querySelector('[data-queue-result]');
 function demoQueue(){
  const engine=window.SEYVEO_CARD_ENGINE;
  if(!engine){queueResult.textContent='Движок недоступен';return}
- const types=Object.keys(engine.eventType);
- const importance=['normal','urgent','important','normal','important','normal','normal','important','normal','normal','urgent','normal','important','normal','important'];
- const events=entries.map((e,i)=>({id:'example-'+i,type:types[i],title:e[1],fact:e[2],suggestion:e[3],priority:importance[i],demo:true,source:'Студия'}));
+ const importance=['normal','urgent','important'];
+ const events=engine.demoEvents().map((item,i)=>({
+  ...item,priority:importance[i%importance.length]
+ }));
  events.push({...events[0]});
  const cards=engine.fromEvents(events);
  queueResult.replaceChildren();
@@ -65,14 +58,32 @@ labels.forEach((label,i)=>{const b=document.createElement('button');b.type='butt
 function render(){
  const e=entries[Number(select.value)];
  const engine=window.SEYVEO_CARD_ENGINE;
- const eventKey=Object.keys(engine?.eventType||{})[Number(select.value)];
- const card=engine?.buildCard({id:'studio-'+select.value,type:eventKey,title:fields.title.value,fact:fields.fact.value,suggestion:fields.suggestion.value,priority:fields.priority.value,source:'Студия разработчика',demo:true});
-
+ const eventKey=e[6];
+ const card=engine.buildCard({
+  id:'studio-'+select.value,type:eventKey,title:fields.title.value,
+  fact:fields.fact.value,suggestion:fields.suggestion.value,
+  priority:fields.priority.value,source:'Студия разработчика',demo:true
+ });
  preview.replaceChildren();
- const art=document.createElement('div');art.className='scs-icon';art.textContent=card?.icon||e[5];art.style.color=card?.accent||e[4];preview.append(art);
- for(const [cls,txt] of [['scs-label',e[0]+' · ДЕМО'],['',card?.title||'Заполните заголовок'],['scs-label','ЧТО ПРОИЗОШЛО'],['',card?.fact||'Добавьте событие'],['scs-label','✧ СЭЙВИ ПРЕДЛАГАЕТ'],['',card?.suggestion||'Предложение не задано'],['scs-note','Состояние: '+labels[stage]],['scs-note','Действия по правилам: '+(card?.actions.join(' · ')||'нет')],['scs-note',card?'Карточка автоматически собрана из события':'Нет зарегистрированного типа события']]){
-  const p=document.createElement('p');p.className='scs-block '+cls;p.textContent=txt;preview.append(p);
+ if(card){
+  const surface=engine.renderCard(card,{onAction:id=>{
+   // Studio actions only preview the intended action. No real send/payment/
+   // signature/task resolution, even if a developer taps "Подтвердить".
+   studioAction.textContent='Выбрано действие: '+(engine.actionLabels[id]||id)+
+    ' · Только демонстрация, ничего не выполнено.';
+  }});
+  preview.append(surface);
+ }else{
+  const missing=document.createElement('p');missing.className='scs-note';
+  missing.textContent='Заполните заголовок и описание события.';
+  preview.append(missing);
  }
+ const stateText=document.createElement('p');stateText.className='scs-note';
+ stateText.textContent='Состояние: '+labels[stage];
+ preview.append(stateText);
+ const studioAction=document.createElement('p');studioAction.className='scs-note';
+ studioAction.setAttribute('aria-live','polite');
+ preview.append(studioAction);
  [...states.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===stage)));
 }
 button.addEventListener('click',()=>{page.hidden=false;render()});
@@ -87,7 +98,7 @@ if(home&&dock){
  const live=document.createElement('section');
  live.id='seyveoStudioHomeDemo';live.hidden=true;
  live.setAttribute('aria-label','Учебная карточка разработчика');
- live.style.cssText='box-sizing:border-box;max-width:680px;width:calc(100% - 20px);margin:12px auto 22px;padding:17px;border:1px solid var(--soft-line);border-radius:22px;color:var(--text);background:var(--card2);';
+ live.className='sv-card-studio-home-preview';
  dock.insertAdjacentElement('afterend',live);
  const launch=document.createElement('button');launch.type='button';launch.textContent='Показать событие на Главной · демо';launch.style.cssText='min-height:44px;margin:12px 0;padding:6px 12px;border:1px solid var(--soft-line);border-radius:99px;background:transparent;color:var(--text);font:inherit;cursor:pointer;';
  page.querySelector('.scs-wrap').append(launch);
@@ -96,22 +107,36 @@ if(home&&dock){
  function record(type,card){history.unshift(type+' · '+card.title+' · '+new Date().toLocaleTimeString('ru-RU'));audit.textContent=history.slice(0,7).join(' | ');}
  function show(card){
   live.replaceChildren();live.hidden=false;
-  const title=document.createElement('strong');title.textContent=card.icon+'  '+card.title;title.style.cssText='display:block;font-size:18px;line-height:1.4;';
-  const flag=document.createElement('p');flag.textContent=card.family+' · УЧЕБНОЕ СОБЫТИЕ';flag.style.cssText='color:var(--secondary);font-size:11px;letter-spacing:.08em;';
-  const fact=document.createElement('p');fact.textContent=card.fact;fact.style.cssText='line-height:1.5;white-space:pre-wrap;';
-  const advise=document.createElement('p');advise.textContent='✧ СЭЙВИ ПРЕДЛАГАЕТ\n'+(card.suggestion||'Изучить событие');advise.style.cssText='white-space:pre-wrap;line-height:1.5;color:var(--text);';
-  const actions=document.createElement('div');actions.style.cssText='display:flex;flex-wrap:wrap;gap:16px;';
-  const make=(name,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=name;b.style.cssText='border:0;background:transparent;color:var(--text);font:inherit;cursor:pointer;min-height:44px;padding:5px 0;';b.addEventListener('click',fn);actions.append(b);};
-  make('Подтвердить · демо',()=>{record('Учебное подтверждение',card);live.hidden=true;live.replaceChildren();});
-  make('Позже',()=>{record('Отложено',card);live.hidden=true;live.replaceChildren();});
-  make('В студию',()=>{page.hidden=false;record('Открыта студия',card);});
-  live.append(title,flag,fact,advise,actions);
+  const surface=engine.renderCard(card,{onAction:id=>{
+   record('Нажато '+(engine.actionLabels[id]||id)+' · демо без выполнения',card);
+   if(id==='later'){live.hidden=true;live.replaceChildren();}
+   else{
+    const status=live.querySelector('[data-studio-action-status]');
+    if(status)status.textContent='Действие показано как пример. Реальное выполнение не подключено.';
+   }
+  }});
+  if(!surface)return;
+  live.append(surface);
+  const status=document.createElement('p');
+  status.className='scs-note';status.dataset.studioActionStatus='true';
+  status.setAttribute('role','status');live.append(status);
+  const reopen=document.createElement('button');reopen.type='button';
+  reopen.className='sv-card-studio-back';
+  reopen.textContent='В мастерскую';
+  reopen.addEventListener('click',()=>{
+   page.hidden=false;record('Открыта мастерская',card);
+  });
+  live.append(reopen);
   record('Показано на Главной',card);
  }
  launch.addEventListener('click',()=>{
   const engine=window.SEYVEO_CARD_ENGINE;
-  const eventKey=Object.keys(engine?.eventType||{})[Number(select.value)];
-  const card=engine?.buildCard({id:'studio-home-'+(++counter),type:eventKey,title:fields.title.value,fact:fields.fact.value,suggestion:fields.suggestion.value,priority:fields.priority.value,source:'Студия разработчика',demo:true});
+  const eventKey=entries[Number(select.value)][6];
+  const card=engine.buildCard({
+   id:'studio-home-'+(++counter),type:eventKey,title:fields.title.value,
+   fact:fields.fact.value,suggestion:fields.suggestion.value,
+   priority:fields.priority.value,source:'Студия разработчика',demo:true
+  });
   if(!card){audit.textContent='Заполни заголовок и описание события.';return;}
   page.hidden=true;
   const main=document.getElementById('homePage');if(main)main.hidden=false;
