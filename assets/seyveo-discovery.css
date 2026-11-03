@@ -1,0 +1,41 @@
+/* SEYVEO MUSIC · Discovery controls.
+   One quiet opt-in row. No glass stack, no duplicate mini-player. */
+#sayviDiscoveryPanel[hidden]{display:none!important}
+.sv-discovery-panel{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ width:100%;max-width:640px;margin:13px auto 6px;padding:13px 3px 14px;
+ border:0;border-top:1px solid var(--sv-velvet-divider,var(--soft-line));
+ background:transparent;color:var(--text);box-shadow:none;
+}
+.sv-discovery-head{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:0 0 7px;
+}
+.sv-discovery-title{
+ color:var(--text);margin:0;font-size:16px;line-height:1.35;
+ font-weight:560;letter-spacing:-.03em;
+}
+.sv-discovery-description{
+ margin:0 0 12px;color:var(--secondary);font-size:12.2px;
+ line-height:1.55;font-weight:440;
+}
+.sv-discovery-actions{
+ display:flex;flex-wrap:wrap;align-items:center;column-gap:15px;row-gap:0;
+}
+.sv-discovery-actions button{
+ appearance:none;min-height:44px;min-width:0;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ padding:9px 2px;color:var(--text);
+ font:inherit;font-size:12.5px;font-weight:520;line-height:1.3;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.sv-discovery-actions button:active{opacity:.68}
+.sv-discovery-actions button[hidden]{display:none!important}
+.sv-discovery-actions button:focus-visible{
+ outline:2px solid currentColor;border-radius:7px;outline-offset:2px
+}
+.sv-discovery-status{
+ margin:8px 0 0;padding:0;color:var(--secondary);
+ font-size:11.8px;line-height:1.5;
+}
+.sv-discovery-status[hidden]{display:none!important}
