@@ -211,6 +211,13 @@ html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:active {
   opacity:.73!important;
   transform:scale(.985);
 }
+/* Hover and touch indicate interaction through ink, never gray tile paint. */
+@media(hover:hover){
+  html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:hover{
+    background:transparent!important;
+    opacity:.86!important;
+  }
+}
 html.sv-space-active #lifePage #calendarSpaces .calendar-space-button:focus-visible {
   outline:2px solid var(--seyveo-emerald)!important;
   outline-offset:-3px!important;
