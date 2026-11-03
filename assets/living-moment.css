@@ -1200,6 +1200,15 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:var(--sv-action-secondary-ink)!important;
  font-weight:550!important;
 }
+/* The Work chat link is text-only: remove the secondary lens itself,
+   not merely its button background. Keep a full 44px tap target. */
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(10)::before,
+#homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions .lm-polymer:nth-child(10)::after{
+ content:none!important;
+ display:none!important;
+ background:none!important;
+ box-shadow:none!important;
+}
 /* Postpone and cancellation stay text-only. */
 #homePage #seyveoLivingMoment .lm-actions :is(
  .lm-polymer:nth-child(11),
