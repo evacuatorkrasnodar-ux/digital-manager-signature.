@@ -474,7 +474,6 @@ function mailView(){
   const panel=create('article','sv-mail-detail');
   const heading=create('div','sv-mail-detail-bar');
   const backButton=iconButton('back','Вернуться к списку',()=>{mailCurrent=null;paint()});
-  const label=create('span','sv-mail-detail-demo','УЧЕБНЫЙ ПРИМЕР');
   const opts=create('div','sv-mail-detail-tools');
   opts.append(iconButton('starred',item.starred?'Убрать из важных':'Важное',()=>{
    item.starred=!item.starred;paint();
@@ -483,7 +482,7 @@ function mailView(){
   }),iconButton('trash',item.trashed?'Восстановить из корзины':'Удалить пример',()=>{
    item.trashed=!item.trashed;mailCurrent=null;paint();
   }));
-  heading.append(backButton,label,opts);
+  heading.append(backButton,opts);
   panel.append(heading,create('span','sv-mail-account-tag',mailAccountName(item.account)),create('h2','sv-mail-detail-title',item.subject));
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
@@ -497,15 +496,20 @@ function mailView(){
    panel.append(example);
   }
   const actions=create('div','sv-mail-detail-actions');
-  const reply=intent('Ответить',()=>openEditor(null,item),true);reply.prepend(mailIcon('back'));
-  const help=intent('✧ Сэйви',()=>{
+  const reply=intent('Ответить',()=>openEditor(null,item),true);
+  reply.classList.add('sv-mail-reply-action');
+  const help=intent('Сэйви',()=>{
    note.hidden=!note.hidden;
    help.setAttribute('aria-expanded',String(!note.hidden));
    if(!note.hidden)request.focus({preventScroll:true});
   });
+  help.classList.add('sv-mail-assist-action');
+  help.prepend(create('span','sv-mail-assist-symbol','✦'));
   help.setAttribute('aria-expanded','false');
+  help.setAttribute('aria-controls','svMailSayviAssist');
   actions.append(reply,help);panel.append(actions);
   const note=create('section','sv-mail-sayvi-note');
+  note.id='svMailSayviAssist';
   note.hidden=true;note.setAttribute('aria-label','Помощь Сэйви с письмом');
   const caption=create('p','sv-mail-assist-caption','Сэйви · локальные подсказки без ИИ');
   const quick=create('div','sv-mail-assist-quick');
