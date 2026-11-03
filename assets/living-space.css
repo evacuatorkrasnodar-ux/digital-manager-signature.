@@ -430,7 +430,7 @@ html.sv-space-active #calendarPage .cal-week-grid::before{opacity:.44}
 html.sv-space-active #calendarPage .cal-periods{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
  gap:0;margin:2px 0 10px;padding:0;
- border:0;border-bottom:1px solid var(--sv-scene-hairline);
+ border:0;
  border-radius:0;background:transparent;box-shadow:none;
 }
 html.sv-space-active #calendarPage .cal-periods button{
@@ -441,10 +441,6 @@ html.sv-space-active #calendarPage .cal-periods button{
 }
 html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true]{
  background:transparent;box-shadow:none;color:var(--text);
-}
-html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true]::after{
- content:"";position:absolute;left:26%;right:26%;bottom:-1px;height:1px;
- background:var(--text);opacity:.7;pointer-events:none;
 }
 html.sv-space-active #calendarPage .cal-day-summary,
 html.sv-space-active #calendarPage .cal-agenda{
@@ -1006,7 +1002,6 @@ html.sv-space-active #calendarPage #calendarDeadlineView{
 }
 html.sv-space-active #calendarPage .cal-periods{
  border:0!important;
- border-bottom:1px solid var(--sv-q-line)!important;
  border-radius:0!important;
  background:transparent!important;
  box-shadow:none!important;
@@ -1024,7 +1019,7 @@ html.sv-space-active #picturePage .picture-tabs button{
 html.sv-space-active #calendarPage .cal-periods button{min-height:42px;}
 html.sv-space-active #calendarPage .cal-periods button[aria-pressed=true]{
  color:var(--text);
- border-bottom:1px solid var(--text)!important;
+ border-bottom:0!important;
 }
 html.sv-space-active #calendarPage .cal-agenda{
  border:0!important;
