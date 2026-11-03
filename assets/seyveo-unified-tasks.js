@@ -633,7 +633,7 @@
   page.dataset.workView=chosen;
   syncBack();
   if(taskTabs)taskTabs.hidden=false;
-  if(managerSignal)managerSignal.hidden=chosen!=='business';
+  if(managerSignal)managerSignal.hidden=true;
   const caption=page.querySelector('.tasks-heading .manage-caption');
   if(caption){
    // On personal Tasks the title already identifies the destination.
