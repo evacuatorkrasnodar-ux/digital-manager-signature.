@@ -44,7 +44,9 @@ function mount(slot,api){
  }
  function lockedForm(initialized){
   if(!valid())return;
-  slot.replaceChildren(header);
+  // The parent disclosure already names the archive. Keep its inner view
+  // focused on the password operation rather than repeating another heading.
+  slot.replaceChildren();
   const notice=message(initialized
    ?'Архив заблокирован. Введите пароль, чтобы открыть личные и деловые документы.'
    :'Создайте пароль архива. При утере пароля восстановить сохранённые документы нельзя.');
