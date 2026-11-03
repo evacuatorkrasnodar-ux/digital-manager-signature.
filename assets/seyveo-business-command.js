@@ -317,7 +317,6 @@ function commitChatMessages(entries){
  const updated=state.chat.concat(entries).slice(-500);
  if(!save(CHAT_KEY,updated))return false;
  state.chat=updated;
- window.dispatchEvent(new Event('seyveo:work-chat-sent'));
  return true;
 }
 let statusResetTimer=null;
@@ -1588,6 +1587,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   if(!commitChatMessages(messages))return;
   closeComposerEmoji();setCameraTray(false);
   input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();
+  window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
   setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
    barcode?'Код записан локально, но не проверен по каталогу магазина.':
@@ -1926,6 +1926,7 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
   const message=String(text||'').trim();
   if(!ROOMS.some(item=>item.id===room&&item.person)||!message||message.length>1200)return false;
   if(!commitChatMessages([{room,text:message,at:Date.now(),role:'self'}]))return false;
+  window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderDirectory();
   if(state.room===room&&$('svcpConversation')&&!$('svcpConversation').hidden)renderChat();
   setStatus('Ответ сохранён в переписке на этом устройстве. Доставка другому человеку пока не подключена.');
