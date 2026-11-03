@@ -390,6 +390,48 @@ window.addEventListener('storage',event=>{
   contactsChanged();
  }
 });
+/* One real conversation for all task sources. Never auto-send or mark work done. */
+function askSayviForTask({title,kind='task',note='',due='',assignee='' }={}){
+ const subject=String(title||'').trim().slice(0,140);
+ if(!subject)return false;
+ const chat=window.SEYVEO_CONVERSATION;
+ const editor=$('question'),composer=$('ask');
+ if(typeof chat?.open!=='function'||!editor||!composer){
+  showTaskError('Чат Сэйви сейчас недоступен. Дело осталось на месте.');return false;
+ }
+ const notesMode=composer.dataset.composerMode==='notes';
+ const current=editor.value.trim();
+ if(notesMode&&current){
+  showTaskError('Сначала сохраните заметку в Блокноте. Её текст не будет заменён.');return false;
+ }
+ const lead=kind==='mail'
+  ?'Помоги подготовить ответ на отложенное письмо.'
+  :kind==='contract'
+   ?'Помоги проверить отложенный документ. Если файл не прикреплён, сначала попроси его; не утверждай, что проверка уже выполнена.'
+   :kind==='work'
+    ?'Помоги разобраться с рабочим поручением, предложи следующий шаг и варианты решения.'
+    :'Помоги мне выполнить это дело: предложи конкретные шаги.';
+ const context=[lead,'Дело: '+subject,
+  assignee?'Ответственный: '+String(assignee).slice(0,80):'',
+  due?'Срок: '+String(due).slice(0,40):'',
+  note?'Контекст: '+String(note).slice(0,350):'',
+  'Не отправляй сообщения и не отмечай дело выполненным без моего подтверждения.'].filter(Boolean).join('\n');
+ if(notesMode)$('composerModeAsk')?.click();
+ chat.open();
+ if(!document.documentElement.classList.contains('seyveo-conversation')){
+  showTaskError('Не удалось открыть разговор с Сэйви.');return false;
+ }
+ if(current&&current!==context){
+  chat.status?.('Сохранила ваш текущий черновик. Отправьте или очистите его, затем снова откройте дело через Сэйви.',6000);
+  return true;
+ }
+ editor.value=context;
+ editor.dispatchEvent(new Event('input',{bubbles:true}));
+ editor.focus({preventScroll:true});
+ editor.setSelectionRange?.(context.length,context.length);
+ return true;
+}
+window.SEYVEO_TASK_ASSIST=Object.freeze({open:askSayviForTask});
 function row(item,compact=false,deferred=false){
  const section=element('div',compact?'personal-brief-row':'personal-task-row');
  section.dataset.taskId=item.id;
@@ -439,7 +481,10 @@ function row(item,compact=false,deferred=false){
    resume.type='button';resume.dataset.taskResume=item.id;
    menu.prepend(resume);
   }
-  section.append(art,label,checkbox,menu);
+  const sayvi=element('button','personal-task-sayvi','✧ Сэйви');
+  sayvi.type='button';sayvi.dataset.taskSayvi=item.id;
+  sayvi.setAttribute('aria-label','Обсудить с Сэйви дело: '+item.title);
+  section.append(art,label,sayvi,checkbox,menu);
  }else section.append(label);
  return section;
 }
@@ -451,16 +496,27 @@ function deferredPreviewRow(item){
  const art=element('span','personal-task-art');art.append(taskIcon(item.kind==='mail'?'mail':'note'));
  art.setAttribute('aria-hidden','true');
  const copy=element('span','personal-task-content');
- copy.append(element('strong','personal-deferred-title',item.title),
-  element('small','personal-deferred-note',item.note));
- const actions=element('span','personal-deferred-actions');
+ const header=element('button','personal-deferred-toggle',item.title);
+ header.type='button';header.dataset.deferredExpand=item.kind;
+ header.setAttribute('aria-expanded','false');
+ const detailsId='sv-deferred-details-'+(item.kind==='mail'?'mail':'contract');
+ header.setAttribute('aria-controls',detailsId);
+ const compact=element('small','personal-deferred-kind',item.kind==='mail'?'Письмо · отложено':'Документ · отложено');
+ copy.append(header,compact);
+ const sayvi=element('button','personal-task-sayvi','✧ Сэйви');
+ sayvi.type='button';sayvi.dataset.deferredSayvi=item.kind;
+ sayvi.setAttribute('aria-label','Обсудить с Сэйви: '+item.title);
+ const details=element('div','personal-deferred-details');details.id=detailsId;details.hidden=true;
+ const note=element('p','personal-deferred-note',item.note);
+ const actions=element('div','personal-deferred-actions');
  const open=element('button','','Подробнее');
  open.type='button';open.dataset.deferredOpen=item.kind;
- open.setAttribute('aria-label','Открыть учебный источник: '+item.title);
- const restore=element('button','','Вернуть');
+ open.setAttribute('aria-label','Открыть источник: '+item.title);
+ const restore=element('button','','Вернуть на Главную');
  restore.type='button';restore.dataset.deferredRestore=item.kind;
- restore.setAttribute('aria-label','Вернуть учебную карточку на Главную: '+item.title);
- actions.append(open,restore);section.append(art,copy,actions);
+ restore.setAttribute('aria-label','Вернуть карточку на Главную: '+item.title);
+ actions.append(open,restore);details.append(note,actions);
+ section.append(art,copy,sayvi,details);
  return section;
 }
 function render(){
@@ -477,16 +533,16 @@ function render(){
  const visibleActive=active.filter(item=>item.id!==featuredTaskId||focusPanel?.dataset.focusKind!=='call');
  list.replaceChildren();
  if(visibleActive.length){
-  list.append(element('h3','personal-list-title','Нужно сделать · '+visibleActive.length));
+  list.append(element('h3','personal-list-title','Сейчас'));
   visibleActive.forEach(task=>list.append(row(task)));
  }
  if(postponed.length||preview.length){
-  list.append(element('h3','personal-list-title','Отложено · '+(postponed.length+preview.length)));
+  list.append(element('h3','personal-list-title','Отложено'));
   postponed.forEach(task=>list.append(row(task,false,true)));
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
  }
  if(done.length){
-  list.append(element('h3','personal-list-title','Выполнено · '+done.length));
+  list.append(element('h3','personal-list-title','Выполнено'));
   done.slice(0,30).forEach(task=>list.append(row(task)));
  }
  if(!open.length&&!preview.length){
@@ -648,7 +704,26 @@ $('personalAddTasks').addEventListener('click',openDialog);
 $('personalTaskCancel').addEventListener('click',()=>dialog.close());
 list.addEventListener('click',e=>{
  const btn=e.target.closest('button');if(!btn)return;
- if(btn.dataset.deferredOpen){
+ if(btn.dataset.deferredSayvi){
+  const kind=btn.dataset.deferredSayvi;
+  const item=(window.SEYVEO_LIVING_MOMENT?.deferred?.()||[]).find(entry=>entry.kind===kind);
+  if(item)askSayviForTask({title:item.title,kind:kind==='mail'?'mail':'contract',note:item.note});
+ }
+ else if(btn.dataset.taskSayvi){
+  const task=read().find(entry=>entry.id===btn.dataset.taskSayvi&&!entry.done);
+  if(task)askSayviForTask({title:task.title,kind:'task',due:task.due,
+   note:task.sourceNoteId?'Дело создано из Блокнота. Для анализа исходного текста откройте запись.':''});
+ }
+ else if(btn.dataset.deferredExpand){
+  const toggle=btn,detail=toggle.closest('.personal-deferred-row')?.querySelector('.personal-deferred-details');
+  if(detail){
+   const expanded=toggle.getAttribute('aria-expanded')==='true';
+   list.querySelectorAll('.personal-deferred-details').forEach(node=>node.hidden=true);
+   list.querySelectorAll('[data-deferred-expand]').forEach(node=>node.setAttribute('aria-expanded','false'));
+   detail.hidden=expanded;toggle.setAttribute('aria-expanded',String(!expanded));
+  }
+ }
+ else if(btn.dataset.deferredOpen){
   const kind=btn.dataset.deferredOpen==='mail'?'mail':'contract';
   const api=window.SEYVEO_SAYVI_SURFACES;
   if(api?.open)api.open(kind);
