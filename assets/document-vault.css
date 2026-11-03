@@ -1,13 +1,13 @@
 /* Encrypted archive entry belongs to Document Center, never a second screen. */
 #sayviSurfacePage .sv-doc-vault-shell{
- margin:25px 0 0;
- border-top:1px solid var(--soft-line);
- border-bottom:1px solid var(--soft-line);
+ margin:19px 0 0;
+ border-top:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent);
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent);
  background:transparent;
 }
 #sayviSurfacePage .sv-doc-vault-summary{
  display:flex;flex-direction:column;justify-content:center;
- min-height:66px;box-sizing:border-box;padding:13px 26px 13px 1px;
+ min-height:59px;box-sizing:border-box;padding:9px 26px 9px 1px;
  gap:4px;list-style:none;position:relative;cursor:pointer;
  color:var(--text);
 }
@@ -20,16 +20,20 @@
 }
 #sayviSurfacePage .sv-doc-vault-shell[open] .sv-doc-vault-summary:after{transform:rotate(225deg);top:calc(50% - 1px)}
 #sayviSurfacePage .sv-doc-vault-summary:focus-visible{outline:2px solid var(--text);outline-offset:3px}
-#sayviSurfacePage .sv-doc-vault-title{font-size:15px;font-weight:520;letter-spacing:-.015em;line-height:1.35}
+#sayviSurfacePage .sv-doc-vault-title{font-size:14px;font-weight:580;letter-spacing:-.015em;line-height:1.35}
 #sayviSurfacePage .sv-doc-vault-summary small{font-size:11px;font-weight:410;line-height:1.4;color:var(--secondary)}
-#sayviSurfacePage .sv-doc-vault{padding:4px 0 17px}
+#sayviSurfacePage .sv-doc-vault{padding:2px 0 13px}
 #sayviSurfacePage .sv-vault-head{display:flex;flex-direction:column;gap:5px;margin:6px 0 15px}
 #sayviSurfacePage .sv-vault-head strong{font-size:13px;font-weight:520;line-height:1.4}
 #sayviSurfacePage .sv-vault-head small{font-size:11px;line-height:1.5;color:var(--secondary)}
 #sayviSurfacePage .sv-vault-status{font-size:12px;line-height:1.55;color:var(--secondary);margin:10px 0;overflow-wrap:anywhere}
 #sayviSurfacePage .sv-vault-error{color:var(--text)}
-#sayviSurfacePage .sv-vault-form{margin:8px 0 0}
-#sayviSurfacePage .sv-vault-form .sv-doc-input{width:100%;margin:9px 0}
+#sayviSurfacePage .sv-vault-form{margin:6px 0 0}
+#sayviSurfacePage .sv-vault-form .sv-doc-input{
+ width:100%;margin:7px 0;min-height:44px;
+ background:color-mix(in srgb,var(--card) 30%,transparent);
+ border-radius:15px;
+}
 #sayviSurfacePage .sv-vault-controls{
  display:flex;align-items:center;justify-content:space-between;
  flex-wrap:wrap;gap:8px;margin:0 0 11px;
