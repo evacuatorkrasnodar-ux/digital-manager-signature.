@@ -764,6 +764,8 @@ const composerEmojiButton=$('svcpComposerEmojiToggle');
 let composerMoreEmojis=false;
 function closeComposerEmoji(){
  if(composerEmojiStrip)composerEmojiStrip.hidden=true;
+ const tray=$('svcpCameraTray');
+ if(tray)delete tray.dataset.mode;
  if(composerEmojiButton)composerEmojiButton.setAttribute('aria-expanded','false');
  composerMoreEmojis=false;
 }
@@ -778,10 +780,16 @@ function insertComposerEmoji(emoji){
  input.focus({preventScroll:true});
  input.setSelectionRange(from+emoji.length,from+emoji.length);
  input.dispatchEvent(new Event('input',{bubbles:true}));
+ closeComposerEmoji();
+ setCameraTray(false);
 }
 function renderComposerEmojis(){
  if(!composerEmojiStrip)return;
  composerEmojiStrip.replaceChildren();
+ const back=el('button','svcp-composer-emoji-back','‹ Все инструменты');
+ back.type='button';back.setAttribute('aria-label','Вернуться к инструментам');
+ back.addEventListener('click',()=>closeComposerEmoji());
+ composerEmojiStrip.append(back);
  const emojis=composerMoreEmojis
   ?[...QUICK_EMOJIS,...MORE_EMOJI_GROUPS.flatMap(group=>group.emojis)]
   :QUICK_EMOJIS;
@@ -803,8 +811,12 @@ function renderComposerEmojis(){
 composerEmojiButton?.addEventListener('click',()=>{
  const show=composerEmojiStrip.hidden;
  closeRecognition();closeMessageMenus();
- if(show){setCameraTray(false);composerEmojiStrip.hidden=false;renderComposerEmojis();}
- else closeComposerEmoji();
+ if(show){
+  setCameraTray(true);
+  $('svcpCameraTray').dataset.mode='emoji';
+  composerEmojiStrip.hidden=false;
+  renderComposerEmojis();
+ }else closeComposerEmoji();
  composerEmojiButton.setAttribute('aria-expanded',String(show));
 });
 function toggleMessageMenu(menu,trigger){
@@ -1368,7 +1380,10 @@ let cameraBusy=false,photoCapturePurpose='shelf';
 function setCameraTray(open){
  if(!cameraTray||!cameraToggle)return;
  if(open)closeComposerEmoji();
- else{const manual=$('svcpBarcodeManual');if(manual)manual.hidden=true;}
+ else{
+  const manual=$('svcpBarcodeManual');if(manual)manual.hidden=true;
+  closeComposerEmoji();
+ }
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
  $('svcpAttachFile')?.setAttribute('aria-expanded',String(open));
 }
