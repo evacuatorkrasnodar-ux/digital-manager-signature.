@@ -7,9 +7,10 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
+const showSettings=$('sayviMusicDiscoveryToggle'),panel=$('sayviDiscoveryPanel');
 const consent=$('sayviDiscoveryToggle'),checkButton=$('sayviDiscoveryCheck'),
  clearButton=$('sayviDiscoveryForget'),info=$('sayviDiscoveryStatus');
-if(!consent||!checkButton||!clearButton||!info)return;
+if(!showSettings||!panel||!consent||!checkButton||!clearButton||!info)return;
 const STORE='seyveo-discovery-music-v1';
 const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
@@ -203,6 +204,11 @@ function dismiss(id){
  state.releases=state.releases.filter(r=>r.id!==id);
  persist();update();signal();
 }
+showSettings.addEventListener('click',()=>{
+ const next=!panel.hidden;
+ panel.hidden=next;
+ showSettings.setAttribute('aria-expanded',String(!next));
+});
 consent.addEventListener('click',()=>enable(!state.enabled));
 checkButton.addEventListener('click',()=>{if(state.enabled)void check({force:true})});
 clearButton.addEventListener('click',clear);
