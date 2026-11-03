@@ -803,7 +803,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
  <div id="sayviSurfaceBody" aria-label="Содержимое пространства"></div>
  <p id="sayviSurfaceFootnote" class="sv-deep-footer"></p>
 </main><main class="picture-main" id="picturePage" hidden aria-labelledby="pictureTitle">
-<header class="picture-head"><div class="picture-navline"><button type="button" id="pictureBackToBusiness" class="seyveo-picture-back" aria-label="Назад в Дела"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg><span>Дела</span></button><span class="picture-nav-brand">SEYVEO · BUSINESS</span></div><h1 id="pictureTitle">Пульс бизнеса</h1><p id="pictureDemoLabel" class="picture-demo-label" hidden>ДЕМОНСТРАЦИЯ · ПРИМЕРНЫЕ ДАННЫЕ</p><button id="pictureDemoExit" type="button" class="sv-demo-exit" hidden>Выключить демо</button><p id="pictureLead">Понятно о клиентах, заказах и деньгах.</p></header>
+<header class="picture-head"><div class="picture-navline"><button type="button" id="pictureBackToBusiness" class="seyveo-picture-back" aria-label="Назад в Дела"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg><span>Дела</span></button><span class="picture-nav-brand">SEYVEO · BUSINESS</span></div><h1 id="pictureTitle">Пульс бизнеса</h1><p id="pictureDemoLabel" class="picture-demo-label" hidden>ПРИМЕР ДАННЫХ</p><button id="pictureDemoExit" type="button" class="sv-demo-exit" hidden>Выключить демо</button><p id="pictureLead">Понятно о клиентах, заказах и деньгах.</p></header>
 <section id="pictureDemoWorkspace" class="sv-demo-workspace" hidden aria-label="Учебные сценарии Пульса бизнеса">
 <p class="sv-demo-workspace-kicker">SEYVEO · ДЕМО-РЕЖИМ</p>
 <p class="sv-demo-workspace-intro">Это настоящий экран Пульса бизнеса с учебными обращениями. Клиенты и действия вымышлены; никаких сообщений, оплат или CRM-подключений нет.</p>
@@ -861,19 +861,6 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 <div class="picture-tabs" role="group" aria-label="За какой период"><button type="button" data-picture-period="today" aria-pressed="true">Сегодня</button><button type="button" data-picture-period="week" aria-pressed="false">Неделя</button><button type="button" data-picture-period="month" aria-pressed="false">Месяц</button><button type="button" data-picture-period="year" aria-pressed="false">Год</button></div>
 </div>
-<section id="pictureOperations" class="picture-operations" aria-label="Учёт операций">
- <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm">+ Добавить</button></div>
- <p class="picture-operations-note">Записи сохраняются на этом устройстве. Это ручной учёт, не банковская выписка.</p>
- <form id="pictureOperationForm" class="picture-operation-form" hidden>
-  <label>Что произошло<select id="pictureOperationKind" required><option value="sale">Продажа</option><option value="expense">Расход</option><option value="order">Заказ</option><option value="lead">Обращение</option></select></label>
-  <label id="pictureOperationAmountRow">Сумма, ₽<input id="pictureOperationAmount" type="number" min="0" max="100000000" step="1" inputmode="numeric" required></label>
-  <label>Описание или источник<input id="pictureOperationLabel" type="text" maxlength="70" required placeholder="Например, заказ клиента"></label>
-  <label>Дата<input id="pictureOperationDay" type="date" required></label>
-  <div class="picture-operation-actions"><button type="submit">Сохранить</button><button id="pictureOperationCancel" type="button">Отмена</button></div>
-  <p id="pictureOperationStatus" role="status" aria-live="polite" hidden></p>
- </form>
- <div id="pictureOperationsList" class="picture-operations-list"></div>
-</section>
 <section id="pictureWidgetArea" class="home-widgets" aria-labelledby="homeWidgetTitle">
 <div class="home-widgets-heading"><h2 id="homeWidgetTitle">Самое важное</h2><span class="home-widgets-caption">ВАШ ВЫБОР</span></div>
 <div id="homeWidgetGrid" class="home-widgets-grid" aria-label="Выбранные показатели"></div>
@@ -897,6 +884,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <section class="picture-section" aria-labelledby="pictureExpensesTitle"><h2 id="pictureExpensesTitle">На что уходят деньги</h2><div id="pictureExpenses" class="picture-breakdown"></div><p id="pictureMoneyDifference" class="picture-subnote"></p></section>
 </div>
 
+<section id="pictureOperations" class="picture-operations" aria-label="Учёт операций">
+ <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm">+ Добавить</button></div>
+ <p class="picture-operations-note">Записи сохраняются на этом устройстве. Это ручной учёт, не банковская выписка.</p>
+ <form id="pictureOperationForm" class="picture-operation-form" hidden>
+  <label>Что произошло<select id="pictureOperationKind" required><option value="sale">Продажа</option><option value="expense">Расход</option><option value="order">Заказ</option><option value="lead">Обращение</option></select></label>
+  <label id="pictureOperationAmountRow">Сумма, ₽<input id="pictureOperationAmount" type="number" min="0" max="100000000" step="1" inputmode="numeric" required></label>
+  <label>Описание или источник<input id="pictureOperationLabel" type="text" maxlength="70" required placeholder="Например, заказ клиента"></label>
+  <label>Дата<input id="pictureOperationDay" type="date" required></label>
+  <div class="picture-operation-actions"><button type="submit">Сохранить</button><button id="pictureOperationCancel" type="button">Отмена</button></div>
+  <p id="pictureOperationStatus" role="status" aria-live="polite" hidden></p>
+ </form>
+ <div id="pictureOperationsList" class="picture-operations-list"></div>
+</section>
 <details id="pictureEfficiency" class="sv-picture-efficiency" hidden>
  <summary aria-label="Расчёт эффективности бизнеса">
   <svg class="sv-picture-efficiency-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 26h26M4 22l8-9 6 5 10-13M22 5h6v6"/></svg>
