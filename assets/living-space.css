@@ -854,22 +854,30 @@ html.sv-space-active #tasksPage{
  --sv-space-heading-gap:11px;
 }
 html.sv-space-active #tasksPage .personal-tasks-head{
- display:flex;align-items:center;gap:8px;margin:0 0 9px;
+ display:flex;align-items:center;justify-content:flex-end;
+ gap:7px;margin:2px 0 8px;
 }
 html.sv-space-active #tasksPage .personal-tasks-head > h2{
  flex:1;min-width:0;margin:0;color:var(--text);font-weight:565;
 }
+/* "Дела" already provides the large navigation title; keep a semantic
+   list heading for screen readers without repeating it visually. */
+html.sv-space-active #tasksPage[data-work-view="personal"] .personal-tasks-head > h2{
+ position:absolute;width:1px;height:1px;overflow:hidden;
+ white-space:nowrap;clip-path:inset(50%);padding:0;margin:0;
+}
 html.sv-space-active #tasksPage .personal-tasks-head > :not(h2):not(#personalAddTasks){
- order:2;flex:none;min-height:44px;padding:8px 10px;
- background:transparent;border:1px solid color-mix(in srgb,var(--soft-line) 45%,transparent);
+ order:2;flex:none;min-height:44px;padding:8px 12px;
+ background:transparent;border:0;
  border-radius:999px;box-shadow:none;color:var(--secondary);
- font-size:12px;font-weight:480;
+ font-size:13px;font-weight:520;
 }
 html.sv-space-active #tasksPage .personal-tasks-head > #personalAddTasks{
  order:3;flex:0 0 44px;width:44px;height:44px;min-height:44px;
- padding:0!important;border:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent)!important;
+ padding:0!important;border:1px solid color-mix(in srgb,var(--soft-line) 42%,transparent)!important;
  border-radius:50%!important;
- background:color-mix(in srgb,var(--card2) 22%,transparent)!important;
+ background:color-mix(in srgb,var(--card2) 45%,transparent)!important;
+ -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
  box-shadow:none!important;color:var(--text);
 }
 html.sv-space-active #tasksPage #personalAddTasks svg{
@@ -890,20 +898,24 @@ html.sv-space-active #tasksPage .personal-tasks-list{
  overflow:visible;
 }
 html.sv-space-active #tasksPage .personal-tasks-list.is-empty{
- min-height:0!important;border:0!important;border-radius:0!important;
- padding:0!important;background:transparent!important;overflow:visible!important;
+ display:flex!important;align-items:center;justify-content:center;
+ min-height:clamp(280px,44dvh,530px)!important;
+ border:0!important;border-radius:0!important;
+ padding:0 10px 24px!important;
+ background:transparent!important;overflow:visible!important;
 }
 html.sv-space-active #tasksPage .personal-tasks-empty{
- display:flex;flex-direction:column;justify-content:center;
- box-sizing:border-box;min-height:80px;margin:0!important;
- padding:16px 6px!important;border:0;border-top:1px solid var(--sv-q-line);
- border-radius:0;background:transparent;box-shadow:none;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+ box-sizing:border-box;width:100%;max-width:345px;min-height:0;
+ margin:0 auto!important;padding:14px 6px!important;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ text-align:center;
 }
 html.sv-space-active #tasksPage .personal-tasks-empty-title{
- display:block;font-size:14px;font-weight:570;line-height:1.28;color:var(--text);
+ display:block;font-size:19px;font-weight:620;line-height:1.23;color:var(--text);
 }
 html.sv-space-active #tasksPage .personal-tasks-empty-copy{
- margin:5px 0 0;font-size:12px;line-height:1.46;color:var(--secondary);
+ margin:7px 0 0;font-size:13.5px;line-height:1.55;color:var(--secondary);
 }
 html.sv-space-active #tasksPage .personal-task-row{
  background:transparent!important;
@@ -925,7 +937,7 @@ html.sv-space-active #tasksPage .personal-task-content small{
 html.sv-space-active #tasksPage .personal-tasks-head h2{
  font-size:13px;font-weight:480;letter-spacing:-.015em;
 }
-html.sv-space-active #tasksPage :is(.personal-tasks-add,.tasks-context-complete){
+html.sv-space-active #tasksPage .tasks-context-complete{
  min-height:44px;
  padding:9px 4px;
  border:0!important;border-radius:0!important;
