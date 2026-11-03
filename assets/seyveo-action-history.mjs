@@ -5,7 +5,7 @@ const head=personal?.querySelector('.personal-tasks-head');
 if(personal&&head){
  const style=document.createElement('style');
  style.textContent=`
-/* History is a continuation of the Tasks list, never a raised second card. */
+/* History is a dedicated Tasks subview, not content appended beneath active work. */
 .sah-inline-toggle{
  display:inline-flex;align-items:center;justify-content:center;
  margin-left:auto;min-height:44px;padding:8px 12px;
@@ -18,28 +18,31 @@ if(personal&&head){
 .sah-inline-head button:focus-visible,.sah-search:focus-visible{
  outline:2px solid var(--text);outline-offset:2px
 }
+/* When history is open, only its dedicated view occupies Tasks.
+   The original task list stays mounted, preserving its data and handlers. */
+#tasksPage.sah-history-open > :not(#unifiedPersonalTasksView){display:none!important}
+#tasksPage.sah-history-open > #unifiedPersonalTasksView > :not(#seyveoActionHistoryPanel){display:none!important}
+#tasksPage.sah-history-open > #unifiedPersonalTasksView{display:block!important}
 .sah-inline-panel{
- margin:17px 0 4px;padding:15px 4px 0;
- border:0;border-top:1px solid var(--soft-line);
- border-radius:0;background:transparent;color:var(--text);
+ margin:0;padding:3px 5px calc(90px + env(safe-area-inset-bottom,0px));
+ border:0;border-radius:0;background:transparent;color:var(--text);
  box-shadow:none;min-width:0;
 }
 .sah-inline-panel[hidden],.sah-search[hidden],.sah-inline-toggle[hidden]{display:none!important}
-.sah-inline-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.sah-inline-head h3{
- margin:0;font-size:17px;font-weight:570;line-height:1.3;
- letter-spacing:-.02em
-}
+.sah-inline-head{display:flex;align-items:center;justify-content:flex-start;min-height:44px;margin:0 0 12px}
 .sah-inline-head button{
- display:grid;place-items:center;flex:none;width:44px;height:44px;
- padding:0;border:0;border-radius:50%;background:transparent;
- color:var(--secondary);cursor:pointer
+ display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;
+ min-height:44px;padding:8px 1px;border:0;border-radius:10px;
+ background:transparent;color:var(--secondary);font:inherit;
+ font-size:12.5px;font-weight:530;cursor:pointer
 }
 .sah-inline-head button:active{background:var(--seyveo-hdr-active)}
 .sah-inline-head button svg{
- display:block;width:18px;height:18px;fill:none;stroke:currentColor;
- stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round
+ display:block;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
+ stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round
 }
+.sah-history-title{margin:0 0 9px;font-size:clamp(27px,7vw,34px);font-weight:490;line-height:1.15;letter-spacing:-.045em;color:var(--text)}
+.sah-history-intro{margin:0 0 17px;color:var(--secondary);font-size:12.5px;line-height:1.45}
 .sah-search{
  display:block;box-sizing:border-box;width:100%;min-height:44px;
  margin:9px 0 11px;padding:10px 12px;
@@ -68,15 +71,16 @@ if(personal&&head){
  const panel=document.createElement('section');panel.className='sah-inline-panel';panel.id='seyveoActionHistoryPanel';panel.hidden=true;panel.setAttribute('aria-label','История действий Сэйви');
  open.setAttribute('aria-controls',panel.id);
  const heading=document.createElement('div');heading.className='sah-inline-head';
- const title=document.createElement('h3');title.textContent='История действий';title.id='seyveoActionHistoryTitle';
+ const title=document.createElement('h2');title.className='sah-history-title';title.textContent='История действий';title.id='seyveoActionHistoryTitle';
  panel.setAttribute('aria-labelledby',title.id);
- const close=document.createElement('button');close.type='button';close.setAttribute('aria-label','Закрыть историю');close.title='Закрыть';
- const closeSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');closeSvg.setAttribute('viewBox','0 0 24 24');closeSvg.setAttribute('aria-hidden','true');
- const closePath=document.createElementNS('http://www.w3.org/2000/svg','path');closePath.setAttribute('d','M18 6 6 18M6 6l12 12');closeSvg.append(closePath);close.append(closeSvg);
- heading.append(title,close);
+ const back=document.createElement('button');back.type='button';back.setAttribute('aria-label','Вернуться к моим делам');back.title='Назад к делам';
+ const backSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');backSvg.setAttribute('viewBox','0 0 24 24');backSvg.setAttribute('aria-hidden','true');
+ const backPath=document.createElementNS('http://www.w3.org/2000/svg','path');backPath.setAttribute('d','m14 5-7 7 7 7');backSvg.append(backPath);back.append(backSvg,document.createTextNode('Дела'));
+ heading.append(back);
+ const intro=document.createElement('p');intro.className='sah-history-intro';intro.textContent='Сохранённые события и результаты действий';
  const search=document.createElement('input');search.type='search';search.className='sah-search';search.placeholder='Поиск по имени, делу или дате';search.setAttribute('aria-label','Поиск в истории действий');
  search.hidden=true;
- const list=document.createElement('div');panel.append(heading,search,list);
+ const list=document.createElement('div');panel.append(heading,title,intro,search,list);
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
@@ -131,11 +135,38 @@ if(personal&&head){
  }
  search.addEventListener('input',()=>{visibleCount=4;render();});
  more.addEventListener('click',()=>{visibleCount=Math.min(visibleCount+4,40);render();});
- const toggle=show=>{panel.hidden=!show;open.setAttribute('aria-expanded',String(show));if(show){visibleCount=4;render();}};
- open.addEventListener('click',()=>toggle(panel.hidden));
- close.addEventListener('click',()=>{toggle(false);open.focus({preventScroll:true})});
+ const page=document.getElementById('tasksPage');
+ const scroller=document.querySelector('.app');
+ let previousScroll=0;
+ const toggle=(show,{restoreFocus=true,restoreScroll=true}={})=>{
+  if(show===!panel.hidden)return;
+  if(show&&(page?.hidden||location.hash!=='#tasks'))return;
+  if(show)previousScroll=scroller?.scrollTop||0;
+  panel.hidden=!show;
+  page?.classList.toggle('sah-history-open',show);
+  open.setAttribute('aria-expanded',String(show));
+  if(show){
+   visibleCount=4;render();
+   if(scroller)scroller.scrollTop=0;
+   requestAnimationFrame(()=>back.focus({preventScroll:true}));
+  }else{
+   requestAnimationFrame(()=>{
+    if(restoreScroll&&scroller)scroller.scrollTop=previousScroll;
+    if(restoreFocus&&open.isConnected&&!open.closest('[hidden]'))open.focus({preventScroll:true});
+   });
+  }
+ };
+ open.addEventListener('click',()=>toggle(true));
+ back.addEventListener('click',()=>toggle(false));
  panel.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){event.preventDefault();toggle(false);open.focus({preventScroll:true})}
+  if(event.key==='Escape'){event.preventDefault();toggle(false)}
  });
+ // Routing away must never leave the Tasks screen stuck in History mode.
+ window.addEventListener('hashchange',()=>{
+  if(location.hash!=='#tasks'&&!panel.hidden)toggle(false,{restoreFocus:false,restoreScroll:false});
+ });
+ if(page)new MutationObserver(()=>{
+  if(page.hidden&&!panel.hidden)toggle(false,{restoreFocus:false,restoreScroll:false});
+ }).observe(page,{attributes:true,attributeFilter:['hidden']});
  window.addEventListener('seyveo:cards-changed',()=>{if(!panel.hidden)render()});
 }
