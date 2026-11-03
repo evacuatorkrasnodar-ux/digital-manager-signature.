@@ -66,6 +66,23 @@
       input.focus({ preventScroll: true });
     });
   }
+  // A destination tap dismisses the temporary search; returning to My World
+  // shows the full familiar grid, not stale filtered results.
+  grid.addEventListener('click', (event) => {
+    if (event.target.closest('.calendar-space-button')) closeSearch();
+  });
+  const closeWhenLeavingWorld = () => {
+    if (location.hash !== '#life' && box && !box.hidden) closeSearch();
+  };
+  window.addEventListener('hashchange', closeWhenLeavingWorld);
+  window.addEventListener('popstate', closeWhenLeavingWorld);
+  document.addEventListener('pointerdown', (event) => {
+    if (box && !box.hidden && !box.contains(event.target) &&
+        !toggle?.contains(event.target) && !grid.contains(event.target)) {
+      closeSearch();
+    }
+  });
+
   input.addEventListener('input', refresh);
   input.addEventListener('search', refresh);
   input.addEventListener('keydown', (event) => {
@@ -78,8 +95,10 @@
       const visible = entries().filter(button =>
         !button.hidden && !button.classList.contains('sv-world-filtered-out') &&
         getComputedStyle(button).display !== 'none');
-      input.blur();
-      if (visible.length === 1) visible[0].click();
+      if (visible.length === 1) {
+        input.blur();
+        visible[0].click();
+      }
     }
   });
 
