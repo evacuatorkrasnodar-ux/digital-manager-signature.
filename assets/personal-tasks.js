@@ -534,7 +534,7 @@ function render(){
  const hasDeferred=postponed.length>0||preview.length>0;
  // One category needs no second caption beneath the Tasks header.
  // When categories coexist, short section names restore scannability.
- const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)+Number(done.length>0)>1;
+ const showGroupLabels=Number(visibleActive.length>0)+Number(hasDeferred)>1;
  list.replaceChildren();
  if(visibleActive.length){
   if(showGroupLabels)list.append(element('h3','personal-list-title','Сейчас'));
@@ -544,12 +544,6 @@ function render(){
   if(showGroupLabels)list.append(element('h3','personal-list-title','Отложено'));
   postponed.forEach(task=>list.append(row(task,false,true)));
   preview.forEach(item=>list.append(deferredPreviewRow(item)));
- }
- if(done.length){
-  // Completed tasks must have their own visible status heading,
-  // even when there are no active or deferred items.
-  list.append(element('h3','personal-list-title','Выполнено'));
-  done.slice(0,30).forEach(task=>list.append(row(task)));
  }
  if(!open.length&&!preview.length&&!done.length){
   const empty=element('div','personal-tasks-empty');
@@ -576,9 +570,8 @@ function render(){
   };
   const current=active.length?countLabel(active.length,'дело','дела','дел'):'';
   const deferred=count?countLabel(count,'отложенное дело','отложенных дела','отложенных дел'):'';
-  const completed=done.length?countLabel(done.length,'завершённое дело','завершённых дела','завершённых дел'):'';
   overview.textContent=[current,deferred].filter(Boolean).join(' · ')
-   ||(completed?'Все текущие дела выполнены · '+completed:'Пока нет текущих дел');
+   ||(done.length?'Все текущие дела выполнены':'Пока нет текущих дел');
  }
  // A continuation is offered only after a real task has been completed.
  const completed=all.find(item=>item.id===justCompletedTaskId&&item.done);
@@ -652,8 +645,23 @@ function change(id,del=false){
  }
  justCompletedTaskId=!del&&target.done?target.id:'';
  render();
+ window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
 }
+/* Completed personal tasks remain in the original local store for History. */
+window.SEYVEO_PERSONAL_TASK_HISTORY=Object.freeze({
+ completed:()=>read().filter(item=>item.done).sort((a,b)=>(b.doneAt||b.createdAt).localeCompare(a.doneAt||a.createdAt)),
+ restore:id=>{
+  const all=read(),task=all.find(item=>item.id===id&&item.done);
+  if(!task)return false;
+  task.done=false;task.doneAt='';
+  if(!save(all))return false;
+  justCompletedTaskId='';render();
+  window.dispatchEvent(new Event('seyveo:personal-tasks-changed'));
+  window.dispatchEvent(new CustomEvent('seyveo:future-committed',{detail:{area:'tasks'}}));
+  return true;
+ }
+});
 /* Task edits from the Center of Decisions use the existing local editor.
    This is not a second store; edits require explicit confirmation. */
 window.addEventListener('seyveo:home-task-edit',event=>{
