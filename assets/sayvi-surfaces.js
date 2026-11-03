@@ -581,7 +581,7 @@ function mailView(){
  function paint(){
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
-  greeting.hidden=mailEditorOpen||!!mailCurrent;
+  introCopy.hidden=mailEditorOpen||!!mailCurrent;
   searchToggle.hidden=mailEditorOpen||!!mailCurrent;
   connect.hidden=mailEditorOpen||!!mailCurrent;
   scopeNav.replaceChildren();
