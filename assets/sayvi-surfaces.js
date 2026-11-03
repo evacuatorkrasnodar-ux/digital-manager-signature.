@@ -498,12 +498,15 @@ function mailView(){
   const actions=create('div','sv-mail-detail-actions');
   const reply=intent('Ответить',()=>openEditor(null,item),true);
   reply.classList.add('sv-mail-reply-action');
+  // Respect the approved capsule shape even if a legacy button reset has !important.
+  reply.style.setProperty('border-radius','999px','important');
   const help=intent('Сэйви',()=>{
    note.hidden=!note.hidden;
    help.setAttribute('aria-expanded',String(!note.hidden));
    if(!note.hidden)request.focus({preventScroll:true});
   });
   help.classList.add('sv-mail-assist-action');
+  help.style.setProperty('border-radius','999px','important');
   help.prepend(create('span','sv-mail-assist-symbol','✦'));
   help.setAttribute('aria-expanded','false');
   help.setAttribute('aria-controls','svMailSayviAssist');
