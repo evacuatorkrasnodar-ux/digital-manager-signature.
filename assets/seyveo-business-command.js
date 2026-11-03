@@ -1606,28 +1606,20 @@ function renderTasks(){
  const list=$('svcpTaskList');if(!list)return;
  window.dispatchEvent(new Event('seyveo:manager-tasks-updated'));
  const wasHistoryOpen=!!list.querySelector('.svcp-task-history[open]');
- const wasDemoOpen=!!list.querySelector('details.svcp-approval-demo-entry[open]');
+ // Only actual saved tasks are displayed in the manager workspace.
+ // The action opens the existing working chat and its assignment composer.
  list.replaceChildren();
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
- // Keep the developer's real demo, but don't flood the manager dashboard.
- const demo=el('details','svcp-approval-demo-entry');
- demo.open=wasDemoOpen;
- const demoSummary=el('summary','svcp-approval-demo-summary');
- demoSummary.append(el('strong',null,'Путь поручения'),el('small',null,'Демо'),el('span','svcp-approval-demo-chevron','›'));
- const demoHint=el('p','svcp-approval-demo-hint','Поручи задачу Елене, посмотри результат и прими работу. Данные остаются на этом устройстве.');
- demo.append(demoSummary,demoHint);
- const demoControls=el('div','svcp-approval-demo-controls');
- demoControls.append(btn('Поручить Елене',()=>{
-  if(employeePreviewActive())return;
-  const text='Проверить выкладку на витрине и передать результат';
-  const existing=state.tasks.findIndex(t=>t?.approvalFlow&&t.assigneeId==='elena'&&!t.done);
-  if(existing>=0){focusTask(existing);return}
-  const created=storeTask(text,{assigneeId:'elena',approvalFlow:true});
-  if(created)window.SEYVEO_UNIFIED_TASKS?.previewRole?.('employee');
- },'svcp-approval-demo-button'));
- demoControls.append(btn('Взгляд Елены',()=>window.SEYVEO_UNIFIED_TASKS?.previewRole?.('employee'),'svcp-approval-demo-switch'));
- demo.append(demoControls);list.append(demo);
+ const create=el('button','svcp-manager-task-create','+ Новое поручение');
+ create.type='button';
+ create.setAttribute('aria-label','Создать поручение в рабочем чате');
+ create.addEventListener('click',()=>{
+  const openChat=window.SEYVEO_UNIFIED_TASKS?.openChat;
+  if(typeof openChat==='function')openChat('tasks');
+  else setStatus('Рабочий чат недоступен. Поручение не создано.');
+ });
+ list.append(create);
  const heading=el('div','svcp-task-section-head');
  heading.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
  list.append(heading);
