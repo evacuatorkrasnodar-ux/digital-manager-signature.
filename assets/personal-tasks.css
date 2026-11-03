@@ -259,6 +259,14 @@
  -webkit-backdrop-filter:var(--sv-glass-orb-blur);
  backdrop-filter:var(--sv-glass-orb-blur);
 }
+:root[data-theme=light] #personalTaskDialog .sv-task-topbar .sv-task-save:active::before{
+ filter:var(--sv-glass-orb-pressed);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #personalTaskDialog .sv-task-topbar .sv-task-save::before{
+  background:#e0f0ec;-webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
 #personalTaskDialog .sv-task-topbar button:active{
  background:var(--seyveo-hdr-active,var(--card2));
 }
