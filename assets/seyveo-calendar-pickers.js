@@ -224,6 +224,13 @@ if(taskDialog&&taskDate&&taskControl){
   const heading=grid.querySelector('.cal-pick-head strong');
   const gridDays=grid.querySelector('.cal-pick-days');
   const arrows=grid.querySelectorAll('.cal-pick-arrows button');
+  // The task editor uses the same thin navigation icon language as the dock.
+  for(const [button,d] of [[arrows[0],'m14 5-7 7 7 7'],[arrows[1],'m10 5 7 7-7 7']]){
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+   const line=document.createElementNS('http://www.w3.org/2000/svg','path');
+   line.setAttribute('d',d);svg.append(line);button.replaceChildren(svg);
+  }
   const today=grid.querySelector('.cal-pick-today');
   const clear=document.createElement('button');
   clear.type='button';clear.className='sv-task-date-clear';clear.textContent='Без даты';
