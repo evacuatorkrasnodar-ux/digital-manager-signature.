@@ -618,7 +618,10 @@
 }
 
 /* Living Continuity · task rows are objects, not boxed lists. */
-#tasksPage .tasks-heading h1{font-size:clamp(28px,7vw,34px);font-weight:470;letter-spacing:-.04em}
+#tasksPage[data-work-view="personal"] .tasks-heading h1{
+ font-size:clamp(32px,8.6vw,38px);font-weight:670;
+ letter-spacing:-.045em;line-height:1.09;
+}
 #tasksPage .personal-tasks-panel{margin-bottom:22px}
 #tasksPage .personal-tasks-head{margin-bottom:7px;gap:9px}
 #tasksPage .personal-tasks-head h2{font-size:14px;font-weight:490;letter-spacing:-.018em}
@@ -694,20 +697,38 @@
 
 /* SEYVEO · Дела: one editorial list for saved and deferred decisions.
    No second card stack, no duplicate Home recommendations or grey menus. */
-#tasksPage .tasks-heading{margin-bottom:20px}
+#tasksPage[data-work-view="personal"] .tasks-heading{margin-bottom:14px}
 #tasksPage .tasks-heading #tasksOverview{
  max-width:40ch;margin:5px 0 0;
- color:var(--secondary);font-size:12.5px;line-height:1.42;
+ color:var(--secondary);font-size:13px;line-height:1.45;
  letter-spacing:-.008em;
+}
+#tasksPage[data-work-view="personal"]:has(#personalTaskList.is-empty) #tasksOverview{
+ display:none!important;
 }
 #tasksPage .personal-tasks-head{margin:0 0 9px}
 #tasksPage .personal-tasks-head h2{font-size:13px;font-weight:500;color:var(--secondary)}
 #tasksPage .personal-tasks-list{padding:0 5px;background:transparent;border:0;box-shadow:none}
 #tasksPage .personal-tasks-empty{
- box-sizing:border-box;display:block;margin:9px 0 0;padding:17px 0 15px;
- border-top:1px solid var(--soft-line);border-radius:0;
+ box-sizing:border-box;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ width:100%;max-width:345px;min-width:0;margin:0 auto;
+ padding:16px 10px;border:0;border-radius:0;
  background:transparent;box-shadow:none;
- color:var(--secondary);font-size:13px;line-height:1.6;
+ color:var(--secondary);text-align:center;
+}
+#tasksPage .personal-tasks-empty-symbol{
+ display:block;width:56px;height:56px;margin:0 0 19px;
+ fill:none;stroke:color-mix(in srgb,var(--secondary) 88%,transparent);
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+#tasksPage .personal-tasks-empty-title{
+ display:block;margin:0 0 7px;color:var(--text);
+ font-size:19px;font-weight:620;line-height:1.23;letter-spacing:-.028em;
+}
+#tasksPage .personal-tasks-empty-copy{
+ display:block;max-width:280px;margin:0;color:var(--secondary);
+ font-size:13.5px;font-weight:420;line-height:1.55;
 }
 #tasksPage .personal-list-title{
  margin:19px 0 2px;padding:6px 1px;
