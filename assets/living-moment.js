@@ -704,6 +704,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   shown=item;
   if(real)key=item.eventId;
   field.dataset.lmSubject=item.kind;
+  window.SEYVEO_CARD_ENGINE?.decorateHome?.(field,item.kind,real);
   artwork.className='lm-hero-art lm-hero-art--'+item.kind;
   artwork.replaceChildren(icon(item.kind));
   label.textContent=item.category;
@@ -786,6 +787,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   },reduced()?0:420);
  }
  field.dataset.lmSubject=primary.kind;
+ window.SEYVEO_CARD_ENGINE?.decorateHome?.(field,primary.kind,real);
  description.hidden=!real&&(primary.kind==='contract'||primary.kind==='mail');
  updateMail();
  updateDocument();updateWork();
@@ -955,6 +957,9 @@ function showExistingAdvice(){
  const kind=/почт|письм|e-mail|email/i.test(heading)?'mail':
   /здоров|сердц|пульс/i.test(heading)?'health':'task';
  const row=card.querySelector('.card-main');
+ // Real recommendations use the same card identity and ink grammar,
+ // but their original verified-approval handlers stay untouched.
+ window.SEYVEO_CARD_ENGINE?.decorateHome?.(card,kind,true);
  if(row&&!row.querySelector('.lm-owner-art')){
   const art=create('span','lm-owner-art');
   art.setAttribute('aria-hidden','true');
