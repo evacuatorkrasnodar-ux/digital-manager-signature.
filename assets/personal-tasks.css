@@ -347,6 +347,18 @@
  background:color-mix(in srgb,var(--text) 89%,transparent);
  color:var(--bg);border-color:transparent;
 }
+/* White task due date uses the same quiet, flat selected-date material as events. */
+:root[data-theme=light] #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+ background:var(--sv-glass-orb-primary);
+ color:var(--sv-glass-orb-ink);
+ border-color:var(--sv-glass-orb-edge);
+ box-shadow:var(--sv-glass-orb-shadow);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
+  background:#e0f0ec;
+ }
+}
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
  padding:5px 0 0;margin:5px 0 0;
