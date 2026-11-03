@@ -241,6 +241,11 @@
       if (location.hash === '#life') renderToday();
     });
   }
+  // Direct deep-links can render before the other deferred personal modules
+  // are ready; re-read once their scripts have finished executing.
+  document.addEventListener('DOMContentLoaded', () => {
+    if (location.hash === '#life') renderToday();
+  });
   window.addEventListener('hashchange', scheduleToday);
   window.addEventListener('seyveo:route-changed', () => {
     if (location.hash === '#life') renderToday();
