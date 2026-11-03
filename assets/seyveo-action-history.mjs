@@ -7,10 +7,10 @@ if(personal&&head){
  style.textContent=`
 /* History is a dedicated Tasks subview, not content appended beneath active work. */
 .sah-inline-toggle{
- display:inline-flex;align-items:center;justify-content:center;
- margin-left:auto;min-height:44px;padding:8px 12px;
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ margin-left:auto;min-height:44px;padding:8px 9px;
  border:0;border-radius:12px;background:transparent;
- color:var(--secondary);font:inherit;font-size:12.5px;font-weight:500;
+ color:var(--secondary);font:inherit;font-size:12.5px;font-weight:520;
  cursor:pointer;touch-action:manipulation;
 }
 .sah-inline-toggle[aria-expanded="true"]{color:var(--text)}
