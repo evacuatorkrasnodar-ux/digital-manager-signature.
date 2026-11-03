@@ -250,10 +250,43 @@ function draw(){
  if(role==='manager'){
   const form=$('section','svdf-create');
   form.append($('strong','','Подготовить запрос'));
-  const picker=$('select','svdf-select');picker.setAttribute('aria-label','Выберите учебный документ');
-  for(const [key,type] of Object.entries(TYPES)){const o=$('option','',type.title);o.value=key;picker.append(o);}
-  picker.value=kind;picker.addEventListener('change',()=>{if(TYPES[picker.value])kind=picker.value;});
-  form.append(picker,$('small','','Получатель: Елена · учебный сотрудник'));
+  const picker=button(TYPES[kind].title,()=>{if(!sheet.open)sheet.showModal();},'svdf-picker');
+  picker.setAttribute('aria-label','Выбрать учебный документ');
+  picker.setAttribute('aria-haspopup','dialog');
+  picker.setAttribute('aria-controls','svdfDocumentPicker');
+  picker.append($('span','svdf-picker-chevron'));
+  const sheet=$('dialog','svdf-picker-sheet');
+  sheet.id='svdfDocumentPicker';
+  sheet.setAttribute('aria-label','Выбор учебного документа');
+  const handle=$('div','svdf-sheet-handle');handle.setAttribute('aria-hidden','true');
+  const sheetTop=$('div','svdf-sheet-head');
+  sheetTop.append($('strong','','Выберите документ'));
+  const close=button('Готово',()=>sheet.close(),'svdf-sheet-close');
+  sheetTop.append(close);
+  const choices=$('div','svdf-sheet-options');
+  for(const [key,type] of Object.entries(TYPES)){
+   const option=button(type.title,()=>{
+    kind=key;
+    picker.firstChild.textContent=type.title;
+    for(const child of choices.children)child.setAttribute('aria-checked',String(child.dataset.kind===key));
+    sheet.close();
+    picker.focus({preventScroll:true});
+   },'svdf-sheet-option');
+   option.dataset.kind=key;
+   option.setAttribute('role','radio');
+   option.setAttribute('aria-checked',String(key===kind));
+   option.append($('span','svdf-sheet-check',key===kind?'✓':''));
+   choices.append(option);
+  }
+  sheet.addEventListener('close',()=>{
+   for(const option of choices.children){
+    option.setAttribute('aria-checked',String(option.dataset.kind===kind));
+    option.lastChild.textContent=option.dataset.kind===kind?'✓':'';
+   }
+  });
+  sheet.addEventListener('click',event=>{if(event.target===sheet)sheet.close();});
+  sheet.append(handle,sheetTop,choices);
+  form.append(picker,sheet,$('small','','Получатель: Елена · учебный сотрудник'));
   form.append(button('Передать Елене · демо',create,'svdf-primary'));
   host.append(form);
  }else host.append($('p','svdf-hint','Ты видишь учебную роль Елены. Открой запрос, прочитай содержание и выбери действие.'));
