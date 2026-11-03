@@ -195,7 +195,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  const top=create('div','lm-field-top');
  const label=create('span','lm-field-eyebrow',primary.category);
  const measure=create('span','lm-field-measure',real?'ВАШИ ДЕЛА':'ДЕМО');
- if(real)top.append(label,measure); else top.append(measure);
+ if(real)top.append(label,measure);
  const main=create('section','lm-primary');
  const hero=create('div','lm-hero');
  const artwork=create('div','lm-hero-art lm-hero-art--'+primary.kind);
@@ -675,7 +675,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    measure.textContent=Math.min(3,remaining.length)+' ИЗ '+remaining.length+' · ВАШИ ДЕЛА';
    return;
   }
-  measure.textContent='ДЕМО · '+remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА');
+  measure.textContent=remaining.length+' '+(remaining.length===1?'ДЕЛО':'ДЕЛА')+' · ДЕМО';
  }
  function renderSecondary(){
   secondary.replaceChildren();
@@ -798,7 +798,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
  explanation.hidden=true;
  open.setAttribute('aria-controls',explanation.id);
  execute.setAttribute('aria-controls',explanation.id);
- scene.append(top);
+ if(real)scene.append(top);
  scene.append(main,secondary,explanation);
  field.append(scene);
  tiles.append(field);
