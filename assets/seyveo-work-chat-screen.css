@@ -566,8 +566,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)
 }
 #svcpWorkChatScreen .svcp-voice-message{
- display:flex;align-items:center;gap:7px;border:0;background:none;padding:2px 0;
- min-width:185px;width:min(248px,100%);max-width:100%;flex-wrap:nowrap;
+ display:flex;align-items:center;gap:9px;border:0;background:none;padding:2px 0;
+ min-width:206px;width:min(248px,100%);max-width:100%;flex-wrap:nowrap;
  white-space:nowrap
 }
 #svcpWorkChatScreen .svcp-audio-play{
@@ -576,12 +576,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  color:var(--text);font-size:16px
 }
 #svcpWorkChatScreen .svcp-audio-wave{
- display:flex;align-items:center;gap:2px;flex:1 1 0;min-width:0;
- height:28px;overflow:hidden
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;flex:1 1 auto!important;min-width:65px!important;
+ height:30px!important;overflow:hidden!important
 }
 #svcpWorkChatScreen .svcp-audio-wave i{
- flex:1 1 2px;max-width:3px;display:block;border-radius:4px;
- background:var(--seyveo-emerald);opacity:.7
+ display:block!important;flex:0 0 2px!important;width:2px!important;min-width:2px!important;
+ border-radius:4px!important;background:var(--seyveo-emerald)!important;
+ opacity:.72!important
 }
 #svcpWorkChatScreen .svcp-audio-duration{
  display:block;flex:0 0 43px;width:43px;min-width:43px;
