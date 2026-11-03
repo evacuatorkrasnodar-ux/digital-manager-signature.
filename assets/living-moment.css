@@ -1104,9 +1104,9 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-actions{
  /* Orb-tinted optical glass: readable dark ink without a heavy black fill. */
- --sv-action-primary:linear-gradient(145deg,rgba(243,252,250,.98),rgba(207,232,227,.93) 62%,rgba(237,247,247,.97));
- --sv-action-ink:#25383c;
- --sv-action-lens-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(88,135,131,.12),0 1px 5px rgba(64,105,102,.075);
+ --sv-action-primary:var(--sv-glass-orb-primary);
+ --sv-action-ink:var(--sv-glass-orb-ink);
+ --sv-action-lens-shadow:var(--sv-glass-orb-shadow);
  --sv-action-secondary-ink:#30343a;
  --sv-action-secondary-edge:rgba(28,28,30,.10);
 }
@@ -1147,6 +1147,8 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  border-radius:999px!important;
  background:var(--sv-action-primary)!important;
  box-shadow:var(--sv-action-lens-shadow,none)!important;
+ -webkit-backdrop-filter:var(--sv-glass-orb-blur,none)!important;
+ backdrop-filter:var(--sv-glass-orb-blur,none)!important;
  pointer-events:none;
  z-index:-1;
 }
