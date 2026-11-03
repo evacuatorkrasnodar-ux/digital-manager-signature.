@@ -310,6 +310,16 @@ window.addEventListener('seyveo:work-chat-closing',cancelVoice);
 
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v.slice(-(key===CHAT_KEY?500:100)):[]}catch{return []}}
 function save(key,list){try{localStorage.setItem(key,JSON.stringify(list));return true}catch{setStatus('Не удалось сохранить на этом устройстве. Проверьте свободное место и разрешения браузера.');return false}}
+// Shared local commit for chat composer and Home quick replies.
+// Successful persistence is NOT external delivery.
+function commitChatMessages(entries){
+ if(!Array.isArray(entries)||!entries.length)return false;
+ const updated=state.chat.concat(entries).slice(-500);
+ if(!save(CHAT_KEY,updated))return false;
+ state.chat=updated;
+ window.dispatchEvent(new Event('seyveo:work-chat-sent'));
+ return true;
+}
 let statusResetTimer=null;
 function setStatus(s){
  const el=$('svcpChatStatus');if(!el)return;
@@ -1575,12 +1585,9 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
     messages.push({room:state.room,role:'sayvi',text:advice.text,at:Date.now(),...(advice.task?{suggestTask:advice.task}:{})});
    }
   }
-  const updated=state.chat.concat(messages).slice(-500);
-  if(!save(CHAT_KEY,updated))return;
-  state.chat=updated;
+  if(!commitChatMessages(messages))return;
   closeComposerEmoji();setCameraTray(false);
   input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();
-  window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
   setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
    barcode?'Код записан локально, но не проверен по каталогу магазина.':
@@ -1913,6 +1920,17 @@ window.SEYVEO_BUSINESS_COMMAND=Object.freeze({
   }else showInbox();
  },
  openPeopleView:peopleView,
+ // Home replies use the existing local chat store; not a network send.
+ sendLocalText:(person,text)=>{
+  const room='dm-'+String(person||'').toLowerCase();
+  const message=String(text||'').trim();
+  if(!ROOMS.some(item=>item.id===room&&item.person)||!message||message.length>1200)return false;
+  if(!commitChatMessages([{room,text:message,at:Date.now(),role:'self'}]))return false;
+  renderDirectory();
+  if(state.room===room&&$('svcpConversation')&&!$('svcpConversation').hidden)renderChat();
+  setStatus('Ответ сохранён в переписке на этом устройстве. Доставка другому человеку пока не подключена.');
+  return true;
+ },
  openPrivateChat:(person,view='manager')=>{
   const id='dm-'+String(person||'').toLowerCase();
   if(!ROOMS.some(x=>x.id===id&&x.person))return false;
