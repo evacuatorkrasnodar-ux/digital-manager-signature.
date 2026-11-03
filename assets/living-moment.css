@@ -816,7 +816,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 }
 #seyveoLivingMoment.lm-condense .lm-document-content{display:none!important}
 #seyveoLivingMoment .lm-document-content{
- display:grid;gap:2px;padding:0;margin:0;
+ display:grid;gap:5px;padding:0;margin:0;
  min-width:0;max-width:100%;color:var(--text)
 }
 #seyveoLivingMoment .lm-document-content p{
@@ -828,7 +828,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  color:var(--secondary);font-size:11px
 }
 #seyveoLivingMoment .lm-document-content .lm-mail-intro{font-size:9.5px;letter-spacing:.025em}
-#seyveoLivingMoment .lm-document-content .lm-document-note{font-size:11.7px;line-height:1.44}
+#seyveoLivingMoment .lm-document-content .lm-document-note{font-size:13px;line-height:1.48}
 #seyveoLivingMoment .lm-document-content .lm-document-excerpt{
  color:var(--text);font-size:11.5px
 }
@@ -1058,7 +1058,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #homePage #seyveoLivingMoment .lm-inline-title{font-size:13.5px;line-height:1.35}
 #homePage #seyveoLivingMoment .lm-inline-note{font-size:12.5px;line-height:1.4}
 #homePage #seyveoLivingMoment .lm-mail-content p{font-size:12px;line-height:1.48}
-#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12px;letter-spacing:-.012em}
+#homePage #seyveoLivingMoment .lm-actions .lm-polymer{font-size:12.5px;letter-spacing:-.012em}
 /* Light-mode drawn icons: enough ink to scan, no raised highlight or frame. */
 :root[data-theme="light"] #homePage #seyveoLivingMoment .lm-inline-art{
  color:#667785;
