@@ -110,18 +110,10 @@
 
   /* Today reads the already approved local sources. It never creates records,
      guesses health information or merges business data into the personal world. */
-  const TODAY_EVENTS = 'seyveo-calendar-events-v1';
-  const TODAY_TASKS = 'seyveo-personal-tasks-v1';
+  // The canonical hub reads Calendar, Tasks and private dates.
+  // My World only presents them; it owns no duplicate records.
   const dateKey = (date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0')].join('-');
-  const localRows = (key, max) => {
-    try {
-      const rows = JSON.parse(localStorage.getItem(key) || '[]');
-      return Array.isArray(rows) ? rows.slice(-max) : [];
-    } catch {
-      return [];
-    }
-  };
   const todaySvg = (kind) => {
     const ns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(ns, 'svg');
@@ -174,7 +166,6 @@
   const todayDateLabel = new Intl.DateTimeFormat('ru-RU', {
     weekday: 'long', day: 'numeric', month: 'long'
   });
-  const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/;
   function renderToday() {
     if (!todayPanel || !todayDate || !todayBody) return;
     const now = new Date();
@@ -182,25 +173,11 @@
     const label = todayDateLabel.format(now);
     todayDate.dateTime = today;
     todayDate.textContent = label.charAt(0).toLocaleUpperCase('ru-RU') + label.slice(1);
-    const events = localRows(TODAY_EVENTS, 300)
-      .filter((item) => item && item.date === today && item.kind !== 'business' &&
-        typeof item.title === 'string' && item.title.trim())
-      .map((item) => ({
-        title: item.title.trim().slice(0, 140),
-        time: validTime.test(item.time || '') ? item.time : ''
-      }))
-      .sort((a, b) => (a.time || '00:00').localeCompare(b.time || '00:00') ||
-        a.title.localeCompare(b.title, 'ru'));
-    const tasks = localRows(TODAY_TASKS, 150)
-      .filter((item) => item && item.due === today && item.done !== true &&
-        typeof item.title === 'string' && item.title.trim())
-      .map((item) => ({ title: item.title.trim().slice(0, 140) }));
-    // Only important personal dates. Health records are never surfaced here.
-    const fromSpaces = window.SEYVEO_SPACES?.calendarItems?.(today);
-    const dates = (Array.isArray(fromSpaces) ? fromSpaces : [])
-      .filter((item) => item?.space === 'world' &&
-        ['День рождения', 'Важная дата'].includes(item.kind) &&
-        typeof item.title === 'string' && item.title.trim());
+    const snapshot = window.SEYVEO_LIFE_EVENTS?.day(today);
+    const events = snapshot?.events || [];
+    const tasks = snapshot?.tasks || [];
+    // These private dates stay inside My World, never in public Home alerts.
+    const dates = snapshot?.dates || [];
     const highlighted = [];
     if (events[0]) highlighted.push({ kind: 'event', title: events[0].title,
       caption: events[0].time ? events[0].time + ' · Календарь' : 'Событие · Календарь',
@@ -248,8 +225,7 @@
     const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     dayTimer = setTimeout(scheduleToday, Math.max(1000, midnight.getTime() - now.getTime() + 100));
   }
-  for (const name of ['seyveo:calendar-changed', 'seyveo:tasks-changed',
-    'seyveo:spaces-changed', 'storage', 'pageshow', 'focus']) {
+  for (const name of ['seyveo:life-events-changed', 'pageshow', 'focus']) {
     window.addEventListener(name, () => {
       if (location.hash === '#life') renderToday();
     });
