@@ -406,43 +406,45 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm[data-has-content="true"] .svcp-chat-send{display:grid!important}
 #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{width:var(--sv-input-icon-size,20px);height:var(--sv-input-icon-size,20px);fill:none;stroke:currentColor;stroke-width:var(--sv-input-icon-stroke,1.35)}
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send span{display:none!important}
-/* Inline manager-only command, NEVER a second row or a floating duplicate.
-   No task button in Elena's view, empty composer, or during editing. */
+/* The manager's assignment action is contextual, not a fourth input column.
+   It floats just above the real composer and never steals typing width.
+   The existing button and its handler remain the only assignment action. */
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
- grid-template-columns:44px minmax(0,1fr) 44px 44px!important;
- grid-template-rows:auto!important
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:auto!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
- grid-column:3!important;grid-row:1!important;align-self:end!important;
+ position:absolute!important;z-index:3!important;
+ top:-52px!important;right:7px!important;left:auto!important;bottom:auto!important;
+ grid-column:auto!important;grid-row:auto!important;
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
- gap:0!important;width:44px!important;min-width:44px!important;max-width:44px!important;
- min-height:44px!important;height:44px!important;margin:0!important;
- padding:0!important;border:0!important;
- border-radius:50%!important;background:transparent!important;
- color:var(--text)!important;font-size:11px!important;font-weight:590!important;
- box-shadow:none!important;white-space:nowrap!important;touch-action:manipulation
+ gap:6px!important;width:auto!important;min-width:112px!important;max-width:145px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:7px 13px!important;
+ border:1px solid var(--sv-input-border)!important;
+ border-radius:17px!important;
+ background:var(--sv-input-surface)!important;
+ -webkit-backdrop-filter:var(--sv-input-blur)!important;backdrop-filter:var(--sv-input-blur)!important;
+ color:var(--text)!important;font:inherit!important;
+ font-size:12px!important;font-weight:575!important;line-height:1.2!important;
+ box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
+ white-space:nowrap!important;touch-action:manipulation!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask svg{
- display:block!important;flex:0 0 21px!important;width:21px!important;height:21px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
- stroke-linecap:round!important;stroke-linejoin:round!important
+ display:block!important;flex:0 0 19px!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask span{
+ display:inline!important;font-size:12px!important;
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign .svcp-chat-send{
- grid-column:4!important;grid-row:1!important;
- width:44px!important;min-width:44px!important;border-radius:50%!important
+ grid-column:3!important;grid-row:1!important;
+ width:44px!important;min-width:44px!important;border-radius:50%!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:focus-visible,
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-send:focus-visible{
- outline:2px solid var(--seyveo-emerald)!important;outline-offset:2px!important
-}
-/* Keep the action discoverable by its accessible label; the compact
-   checklist icon leaves the typed message readable on every iPhone. */
-#svcpWorkChatScreen #svcpComposerDirectTask span{display:none!important}
-@media(max-width:390px){
- #svcpWorkChatScreen #svcpChatForm.svcp-can-assign{
-  grid-template-columns:44px minmax(0,1fr) 44px 44px!important;gap:3px!important;
-  padding-inline:5px!important
- }
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
 }
 /* Voice note uses the composer strip, not an old modal/audio form. */
 #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]){
