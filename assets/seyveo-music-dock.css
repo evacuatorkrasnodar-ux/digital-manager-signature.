@@ -160,7 +160,7 @@ footer.dock.seyveo-music-dock > .nav-item:not(#assistantButton):active{
  pointer-events:none;
 }
 :root[data-theme="light"] #sayviMusicMini .sv-music-mini-progress{
- bottom:2px;
+ bottom:0;
  opacity:1;
  background:linear-gradient(to right,#25272b 0 var(--sv-mini-progress),rgba(37,39,43,.12) var(--sv-mini-progress) 100%);
 }
