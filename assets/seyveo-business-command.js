@@ -94,6 +94,8 @@ function restoreStoredMedia(container,message){
  container.append(slot);
  loadMediaLocally(message.mediaId).then(record=>{
   if(!slot.isConnected)return;
+  const thread=$('svcpMessages');
+  const followLatest=!!thread&&(thread.scrollHeight-thread.scrollTop-thread.clientHeight<160);
   slot.replaceChildren();
   if(!record?.blob){slot.textContent='Вложение недоступно на этом устройстве';return}
   const url=URL.createObjectURL(record.blob);mediaRenderedUrls.push(url);
@@ -138,6 +140,11 @@ function restoreStoredMedia(container,message){
    const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
    slot.append(note);
   }
+  // Media is inserted asynchronously after renderChat scrolled to the latest.
+  // Preserve the reading position unless the user was already near the bottom.
+  if(followLatest&&thread)requestAnimationFrame(()=>{
+   if(slot.isConnected)thread.scrollTop=thread.scrollHeight;
+  });
  }).catch(()=>{if(slot.isConnected)slot.textContent='Вложение недоступно в этом браузере'});
 }
 
