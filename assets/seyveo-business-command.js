@@ -131,8 +131,10 @@ function restoreStoredMedia(container,message){
    const link=el('a','svcp-chat-media-file','Открыть файл · '+(record.name||'вложение'));
    link.href=url;link.download=record.name||'seyveo-file';slot.append(link);
   }
-  const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
-  slot.append(note);
+  if(!slot.classList.contains('svcp-voice-message')){
+   const note=el('small','svcp-chat-media-local','Только на этом устройстве · без отправки');
+   slot.append(note);
+  }
  }).catch(()=>{if(slot.isConnected)slot.textContent='Вложение недоступно в этом браузере'});
 }
 
@@ -143,7 +145,7 @@ function restoreStoredMedia(container,message){
 const voiceRecordButton=$('svcpVoiceRecord'),voicePanel=$('svcpVoiceCapture');
 const voiceStopButton=$('svcpVoiceStop'),voiceSendButton=$('svcpVoiceSend'),voiceCancelButton=$('svcpVoiceCancel');
 const voicePreview=$('svcpVoicePreview'),voiceClock=$('svcpVoiceClock'),voiceLabel=$('svcpVoiceLabel');
-const voiceHint=$('svcpVoiceHint');
+const voiceHint=$('svcpVoiceHint'),voicePreviewPlay=$('svcpVoicePreviewPlay');
 let voiceSession=null,voiceDraft=null,voicePreviewUrl=null,voiceRequestId=0,voiceSaving=false;
 function voiceDuration(ms){
  const seconds=Math.max(0,Math.floor(ms/1000));
@@ -158,6 +160,7 @@ function clearVoiceDraft(){
   voicePreview.pause();voicePreview.removeAttribute('src');voicePreview.load();
   voicePreview.hidden=true;
  }
+ if(voicePreviewPlay){voicePreviewPlay.hidden=true;voicePreviewPlay.textContent='▶'}
  if(voicePreviewUrl){URL.revokeObjectURL(voicePreviewUrl);voicePreviewUrl=null}
 }
 function setVoicePanel(open,stateName='recording'){
@@ -166,6 +169,7 @@ function setVoicePanel(open,stateName='recording'){
  voiceRecordButton?.setAttribute('aria-expanded',String(open));
  if(voiceStopButton)voiceStopButton.hidden=stateName!=='recording';
  if(voiceSendButton)voiceSendButton.hidden=stateName!=='ready';
+ if(voicePreviewPlay)voicePreviewPlay.hidden=stateName!=='ready';
  if(voiceLabel)voiceLabel.textContent=stateName==='recording'?'Идёт запись голоса':
   stateName==='processing'?'Подготавливаю запись…':
   stateName==='error'?'Микрофон недоступен':'Голосовое сообщение';
@@ -246,7 +250,9 @@ async function startVoice(){
    if(voicePreview){
     voicePreviewUrl=URL.createObjectURL(audio);
     voicePreview.src=voicePreviewUrl;voicePreview.hidden=false;
+    voicePreview.load();
    }
+   if(voiceClock)voiceClock.textContent=voiceDuration(duration);
    if(voiceHint)voiceHint.textContent='Прослушай запись и отправь, либо удали.';
    setVoicePanel(true,'ready');
   };
@@ -302,6 +308,27 @@ async function sendVoice(){
   if(voiceSendButton)voiceSendButton.disabled=false;
  }
 }
+voicePreviewPlay?.addEventListener('click',async()=>{
+ if(!voicePreview||!voiceDraft)return;
+ try{
+  if(voicePreview.paused)await voicePreview.play();
+  else voicePreview.pause();
+ }catch{setStatus('Не удалось воспроизвести запись. Попробуй ещё раз.')}
+});
+voicePreview?.addEventListener('play',()=>{
+ if(voicePreviewPlay){voicePreviewPlay.textContent='Ⅱ';voicePreviewPlay.setAttribute('aria-label','Пауза')}
+});
+voicePreview?.addEventListener('pause',()=>{
+ if(voicePreviewPlay){voicePreviewPlay.textContent='▶';voicePreviewPlay.setAttribute('aria-label','Прослушать запись')}
+});
+voicePreview?.addEventListener('ended',()=>{
+ if(voicePreviewPlay)voicePreviewPlay.textContent='▶';
+ if(voiceClock&&voiceDraft)voiceClock.textContent=voiceDuration(voiceDraft.duration);
+});
+voicePreview?.addEventListener('timeupdate',()=>{
+ if(!voicePreview.paused&&voiceClock&&voiceDraft)
+  voiceClock.textContent=voiceDuration(Math.max(0,voiceDraft.duration-voicePreview.currentTime*1000));
+});
 voiceRecordButton?.addEventListener('click',startVoice);
 voiceStopButton?.addEventListener('click',stopVoice);
 voiceCancelButton?.addEventListener('click',cancelVoice);
