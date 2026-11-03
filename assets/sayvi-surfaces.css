@@ -599,6 +599,23 @@
  padding:5px 15px 12px;
  background:transparent;border-radius:0;
 }
+/* While typing on iPhone, keep draft actions above the native keyboard.
+   Do not force a full-screen editor height inside the reduced viewport. */
+#sayviSurfacePage .sv-mail-editor:has(.sv-mail-input:focus){
+ min-height:0;
+}
+#sayviSurfacePage .sv-mail-editor:has(.sv-mail-input:focus) .sv-mail-field:has(textarea){
+ flex:0 0 auto;
+}
+#sayviSurfacePage .sv-mail-editor:has(.sv-mail-input:focus) textarea.sv-mail-input{
+ flex:0 0 auto;height:clamp(110px,24dvh,180px);min-height:110px;
+}
+#sayviSurfacePage[data-sv-subject="mail"]{
+ scroll-padding-top:max(65px,env(safe-area-inset-top,0px));
+}
+#sayviSurfacePage .sv-mail-assist-input{
+ scroll-margin-top:max(78px,env(safe-area-inset-top,0px));
+}
 #sayviSurfacePage .sv-mail-editor-header{
  display:flex;align-items:center;gap:7px;min-height:49px;
  margin:0 0 7px;
