@@ -1152,6 +1152,22 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  pointer-events:none;
  z-index:-1;
 }
+/* Only the primary lens responds optically; preserve button position and hit area. */
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-actions :is(
+ .lm-polymer--main,.lm-polymer:nth-child(2),
+ .lm-polymer:nth-child(4),.lm-polymer:nth-child(8)
+):not([hidden]):active::before{
+ filter:var(--sv-glass-orb-pressed);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #homePage #seyveoLivingMoment .lm-actions :is(
+  .lm-polymer--main,.lm-polymer:nth-child(2),
+  .lm-polymer:nth-child(4),.lm-polymer:nth-child(8)
+ ):not([hidden])::before{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:#e0f0ec!important;
+ }
+}
 /* Secondary: same 34px visible capsule, same 44px hit target.
    Keep the light material on the inset lens only, not the button's entire box. */
 #homePage #seyveoLivingMoment .lm-actions :is(
