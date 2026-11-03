@@ -362,6 +362,7 @@
 
 /* SEYVEO Tasks · quiet active list, collapsed completed history, direct conversation. */
 #tasksPage .svcp-tasks-back{display:inline-flex;align-items:center;gap:5px;margin:0 0 2px;padding:8px 2px;min-height:44px;border:0;background:none;color:var(--secondary);font:inherit;font-size:12.5px;font-weight:520;cursor:pointer}
+#tasksPage .svcp-tasks-back[hidden]{display:none!important}
 #tasksPage .svcp-tasks-back:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px;border-radius:4px}
 #tasksPage .svcp-tasks-back span{font-size:12px}
 #tasksPage .svcp-tasks-back .svcp-back-chevron{display:block;flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
