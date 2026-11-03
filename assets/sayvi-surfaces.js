@@ -187,7 +187,7 @@ function demoScenario(kind){
  * Real delivery and retrieval are disabled without an authorized provider.
  * Example messages are clearly marked and never saved or sent externally. */
 let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
-let mailSayviHints=true,mailSearchOpen=false;
+let mailSearchOpen=false;
 let mailScope='all',mailComposeScope=null;
 let mailDrafts=[],mailSearch='',mailShowExamples=true;
 const mailAccountName=account=>account==='business'?'Рабочая':'Личная';
@@ -560,19 +560,6 @@ function mailView(){
    row.append(edit,remove);content.append(row);
   }
  }
- function drawSayvi(){
-  const wrap=create('section','sv-mail-sayvi');
-  const star=create('span','sv-mail-sayvi-symbol','✦');
-  const copy=create('div','sv-mail-sayvi-copy');
-  copy.append(create('strong','','Сэйви в почте'),create('span','','Сортировка, ответы и грамотные письма'));
-  const toggle=create('button','sv-mail-sayvi-toggle');toggle.type='button';
-  toggle.setAttribute('role','switch');toggle.setAttribute('aria-checked',String(mailSayviHints));
-  toggle.setAttribute('aria-label','Показывать подсказки о возможностях Сэйви');
-  toggle.addEventListener('click',()=>{mailSayviHints=!mailSayviHints;paint()});
-  toggle.append(create('span','sv-mail-sayvi-knob'));
-  wrap.append(star,copy,toggle);content.append(wrap);
-
- }
  function paintList(){
   content.replaceChildren();
   if(mailEditorOpen){drawEditor();return}
@@ -585,7 +572,7 @@ function mailView(){
    const recent=create('div','sv-mail-recent-head');
    recent.append(create('h3','','Последние письма'));
    recent.append(intent('См. все ›',()=>selectFolder('inbox')));
-   content.append(recent);drawExamples(3);drawSayvi();return;
+   content.append(recent);drawExamples(3);return;
   }
   if(mailFolder==='drafts'){drawDrafts();return}
   if(mailFolder==='inbox'||mailFolder==='starred'||mailFolder==='archive'||mailFolder==='trash'){drawExamples();return}
