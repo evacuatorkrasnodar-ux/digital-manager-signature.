@@ -1,0 +1,131 @@
+/* SEYVEO Card Standard · the canonical component owner for all families.
+ * The 15 event types share source, fact, suggestion, then explicit actions.
+ * Studio and its Home demo use the SAME markup from seyveo-card-engine.js.
+ * Legacy Home cards use the same type/ink/interaction contract while retaining
+ * their existing, working action editors and original reveal animation. */
+.sv-card-system{
+ --sv-card-ink:var(--text);
+ --sv-card-subtle:var(--secondary);
+ --sv-card-rule:var(--sv-velvet-divider,var(--soft-line));
+ --sv-card-hit:44px;
+ --sv-card-copy:13.5px;
+ --sv-card-action-size:12.5px;
+ color:var(--sv-card-ink);
+ font-family:inherit;
+}
+.sv-card-system--rendered{
+ box-sizing:border-box;width:100%;min-width:0;
+ display:flex;flex-direction:column;gap:0;
+ margin:0;padding:11px 4px 8px;
+ border:0;border-radius:0;
+ background:transparent;box-shadow:none;
+}
+.sv-card-system--rendered .sv-card-header{
+ display:grid;grid-template-columns:43px minmax(0,1fr);
+ gap:9px;align-items:center;margin:0 0 10px;
+}
+.sv-card-system--rendered .sv-card-mark{
+ display:grid;place-items:center;box-sizing:border-box;
+ width:38px;height:38px;border:0;border-radius:0;
+ color:var(--sv-card-accent,var(--text));
+ font:inherit;font-size:29px;font-weight:360;line-height:1;
+ background:transparent;box-shadow:none;
+}
+.sv-card-system--rendered .sv-card-header-copy{min-width:0;display:flex;flex-direction:column;gap:2px}
+.sv-card-system--rendered .sv-card-source{
+ color:var(--sv-card-subtle);font-size:11.5px;line-height:1.3;
+ letter-spacing:0;font-weight:460;
+ overflow-wrap:anywhere;
+}
+.sv-card-system--rendered .sv-card-title{
+ color:var(--sv-card-ink);font-size:16px;line-height:1.3;
+ font-weight:560;letter-spacing:-.025em;overflow-wrap:anywhere;
+}
+.sv-card-system--rendered .sv-card-fact,
+.sv-card-system--rendered .sv-card-proposal{
+ margin:0;padding:9px 2px 5px;
+ border:0;border-top:1px solid var(--sv-card-rule);
+ background:transparent;box-shadow:none;
+}
+.sv-card-system--rendered .sv-card-proposal{margin-top:4px}
+.sv-card-system--rendered .sv-card-label{
+ display:block;margin:0 0 4px;padding:0;
+ color:var(--sv-card-subtle);font-size:11px;
+ font-weight:560;line-height:1.4;letter-spacing:.008em;
+}
+.sv-card-system--rendered .sv-card-value{
+ margin:0;padding:0;
+ color:var(--sv-card-ink);font-size:var(--sv-card-copy);
+ line-height:1.5;font-weight:440;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.sv-card-system--rendered .sv-card-training{
+ margin:7px 2px 2px;padding:0;
+ color:var(--sv-card-subtle);font-size:10.5px;line-height:1.45;
+ font-weight:430;letter-spacing:0;
+}
+.sv-card-system--rendered .sv-card-actions{
+ display:flex;align-items:center;flex-wrap:wrap;
+ column-gap:15px;row-gap:0;
+ margin:8px 0 0;padding:0;
+}
+.sv-card-system--rendered .sv-card-action{
+ appearance:none;display:inline-flex;align-items:center;justify-content:center;
+ box-sizing:border-box;flex:0 0 auto;
+ min-height:var(--sv-card-hit);min-width:0;
+ padding:8px 2px;margin:0;
+ border:0;border-radius:0;outline-offset:3px;
+ background:transparent;box-shadow:none;
+ color:var(--sv-card-ink);font:inherit;
+ font-size:var(--sv-card-action-size);font-weight:520;
+ line-height:1.3;letter-spacing:-.01em;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+.sv-card-system--rendered .sv-card-action:last-child{color:var(--sv-card-subtle)}
+.sv-card-system--rendered .sv-card-action:active{opacity:.65}
+.sv-card-system--rendered .sv-card-action:disabled{opacity:.5;cursor:default}
+.sv-card-system--rendered .sv-card-action:focus-visible{
+ outline:2px solid currentColor;border-radius:8px;
+}
+.sv-card-system--home .lm-primary-title{
+ font-size:15.5px;line-height:1.3;letter-spacing:-.025em;font-weight:550;
+}
+.sv-card-system--home .lm-primary-subtitle{
+ font-size:13px;line-height:1.45;
+}
+.sv-card-system--home .lm-inline-title{
+ font-size:13.5px;line-height:1.35;font-weight:515;
+}
+.sv-card-system--home .lm-inline-note{
+ font-size:12.5px;line-height:1.42;
+}
+.sv-card-system--home .lm-actions .lm-polymer{
+ min-height:var(--sv-card-hit);
+ font-size:var(--sv-card-action-size);
+ font-weight:500;
+}
+.sv-card-system--home .lm-actions .lm-polymer:focus-visible{
+ outline:2px solid currentColor;outline-offset:3px;border-radius:8px;
+}
+#seyveoStudioHomeDemo[hidden]{display:none!important}
+#seyveoStudioHomeDemo.sv-card-studio-home-preview{
+ box-sizing:border-box;width:min(430px,calc(100vw - 26px));
+ max-width:100%;margin:8px auto 18px;padding:0 3px;
+ border:0;background:transparent;box-shadow:none;color:var(--text);
+}
+#seyveoStudioHomeDemo .sv-card-studio-back{
+ appearance:none;border:0;background:transparent;
+ color:var(--secondary);font:inherit;
+ font-size:12px;font-weight:530;min-height:44px;
+ padding:8px 3px;cursor:pointer;
+}
+#seyveoStudioHomeDemo .sv-card-studio-back:focus-visible{
+ outline:2px solid currentColor;outline-offset:2px;border-radius:7px;
+}
+@media(max-width:375px){
+ .sv-card-system--rendered{--sv-card-copy:13px;--sv-card-action-size:12px}
+ .sv-card-system--rendered .sv-card-actions{column-gap:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .sv-card-system--rendered .sv-card-action{transition:none}
+}
