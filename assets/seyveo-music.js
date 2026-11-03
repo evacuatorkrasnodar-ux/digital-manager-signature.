@@ -497,6 +497,19 @@ function minimizeMusic(){
  return true;
 }
 minimize?.addEventListener('click',minimizeMusic);
+/* An explicit close lives in the full Music screen, not on Home.
+   Pause the real audio session and hide the small remote; preserve
+   the selected local tracks so the user can return to Music later. */
+const stopAndHide=$('sayviMusicStopAndHide');
+stopAndHide?.addEventListener('click',()=>{
+ stopDiscoveryListen();
+ miniDismissed=true;
+ audio.pause();
+ updatePlay();
+ minimizeMusic();
+ syncResume();
+});
+
 /* Match the Now Playing dismissal gesture without taking over page scrolling.
  * Only a downward swipe across the album-art region can dismiss Music;
  * it never changes playback, seek, lyric gestures, or the fixed dock. */
@@ -555,37 +568,6 @@ if(miniOpen){
    switchTrack(index+(dx>0?-1:1),true);
   }
  },{passive:false});
-}
-/* Air 26 · swipe the small Now Playing surface DOWN to stop and dismiss.
-   Keep horizontal transport swipes and normal tap-to-open unchanged.
-   No extra cross, panel or duplicate audio session. */
-if(mini){
- let dismissTouch=null;
- mini.addEventListener('touchstart',event=>{
-  if(event.touches.length!==1){dismissTouch=null;return}
-  const t=event.touches[0];
-  dismissTouch={x:t.clientX,y:t.clientY};
- },{passive:true});
- mini.addEventListener('touchcancel',()=>{dismissTouch=null},{passive:true});
- mini.addEventListener('touchend',event=>{
-  if(!dismissTouch||event.changedTouches.length!==1){dismissTouch=null;return}
-  const t=event.changedTouches[0];
-  const dx=t.clientX-dismissTouch.x,dy=t.clientY-dismissTouch.y;
-  dismissTouch=null;
-  if(dy<55||Math.abs(dx)>Math.abs(dy)*.65)return;
-  event.preventDefault();
-  suppressMiniClickUntil=Date.now()+450;
-  miniDismissed=true;
-  stopDiscoveryListen();
-  audio.pause();
-  updatePlay();
-  syncResume();
- },{passive:false});
- mini.addEventListener('click',event=>{
-  if(Date.now()<suppressMiniClickUntil){
-   event.preventDefault();event.stopPropagation();
-  }
- },true);
 }
 miniPlay?.addEventListener('click',play);
 miniNext?.addEventListener('click',()=>{if(tracks.length>1)switchTrack(index+1,true)});
