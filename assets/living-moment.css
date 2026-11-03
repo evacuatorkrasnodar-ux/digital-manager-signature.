@@ -25,13 +25,16 @@
 
 #homePage #orb{transform:translate3d(0,0,0) scale(1);transform-origin:center center;transition:transform 1150ms cubic-bezier(.2,.78,.21,1)}
 #homePage.lm-focus #orbCluster{height:clamp(140px,34vw,178px)}
-#homePage.lm-focus #orb{transform:translate3d(0,-3px,0) scale(.63)}
+/* Keep the physical orb size fixed while Home actions or the keyboard change viewport height. */
+#homePage.lm-focus #orb{
+ width:min(81vw,342px);height:min(81vw,342px);
+ min-width:0;min-height:0;
+ transform:translate3d(0,-3px,0) scale(.63);
+}
 #homePage.lm-focus #stage{min-height:0;padding-top:0;padding-bottom:2px;justify-content:flex-start;flex:0 0 auto}
 #homePage.lm-focus .message{min-height:0;margin-top:14px;max-width:385px}
 @media(max-height:760px){
  #homePage #orbCluster{height:min(70vw,272px)}
- #homePage.lm-focus #orbCluster{height:clamp(132px,33vw,172px)}
- #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.59)}
  #homePage.lm-focus #stage{min-height:0;padding-top:0}
  #homePage.lm-focus .message{min-height:0}
 }
@@ -125,6 +128,7 @@
 #seyveoLivingMoment .lm-caption:empty{display:none!important}
 #seyveoLivingMoment .lm-tiles{width:100%;min-width:0}
 #seyveoLivingMoment .lm-field{
+  overflow-anchor:none;
   position:relative;
   box-sizing:border-box;
   width:100%;
@@ -162,7 +166,7 @@
 }
 #seyveoLivingMoment .lm-scene--changing{
   opacity:.16;
-  transform:translate3d(0,5px,0) scale(.997);
+  transform:translate3d(0,0,0) scale(1);
   transition:opacity 455ms cubic-bezier(.4,0,.6,1),transform 540ms ease;
 }
 #seyveoLivingMoment .lm-field-top{
