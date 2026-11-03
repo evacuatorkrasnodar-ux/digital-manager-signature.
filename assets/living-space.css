@@ -860,16 +860,16 @@ html.sv-space-active #tasksPage .personal-tasks-head > h2{
  flex:1;min-width:0;margin:0;color:var(--text);font-weight:565;
 }
 html.sv-space-active #tasksPage .personal-tasks-head > :not(h2):not(#personalAddTasks){
- order:2;flex:none;min-height:38px;padding:7px 11px;
- background:transparent;border:1px solid var(--soft-line);
+ order:2;flex:none;min-height:44px;padding:8px 10px;
+ background:transparent;border:1px solid color-mix(in srgb,var(--soft-line) 45%,transparent);
  border-radius:999px;box-shadow:none;color:var(--secondary);
- font-size:11.5px;font-weight:480;
+ font-size:12px;font-weight:480;
 }
 html.sv-space-active #tasksPage .personal-tasks-head > #personalAddTasks{
- order:3;flex:0 0 40px;width:40px;height:40px;min-height:40px;
- padding:0!important;border:1px solid var(--soft-line)!important;
+ order:3;flex:0 0 44px;width:44px;height:44px;min-height:44px;
+ padding:0!important;border:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent)!important;
  border-radius:50%!important;
- background:color-mix(in srgb,var(--card2) 45%,transparent)!important;
+ background:color-mix(in srgb,var(--card2) 22%,transparent)!important;
  box-shadow:none!important;color:var(--text);
 }
 html.sv-space-active #tasksPage #personalAddTasks svg{
@@ -881,12 +881,13 @@ html.sv-space-active #tasksPage #personalAddTasks span{
 }
 html.sv-space-active #tasksPage .personal-tasks-panel{margin-bottom:14px}
 html.sv-space-active #tasksPage .personal-tasks-list{
- border:1px solid var(--sv-q-outline)!important;
- border-radius:20px!important;
- background:var(--sv-q-surface)!important;
+ /* A single readable list, not a second raised card beneath the navigation. */
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
  box-shadow:none!important;
- padding:5px 13px!important;
- overflow:hidden;
+ padding:0 4px!important;
+ overflow:visible;
 }
 html.sv-space-active #tasksPage .personal-tasks-list.is-empty{
  min-height:0!important;border:0!important;border-radius:0!important;
@@ -894,9 +895,9 @@ html.sv-space-active #tasksPage .personal-tasks-list.is-empty{
 }
 html.sv-space-active #tasksPage .personal-tasks-empty{
  display:flex;flex-direction:column;justify-content:center;
- box-sizing:border-box;min-height:88px;margin:0!important;
- padding:16px 17px!important;border:1px solid var(--sv-q-outline);
- border-radius:19px;background:var(--sv-q-surface);box-shadow:none;
+ box-sizing:border-box;min-height:80px;margin:0!important;
+ padding:16px 6px!important;border:0;border-top:1px solid var(--sv-q-line);
+ border-radius:0;background:transparent;box-shadow:none;
 }
 html.sv-space-active #tasksPage .personal-tasks-empty-title{
  display:block;font-size:14px;font-weight:570;line-height:1.28;color:var(--text);
@@ -907,7 +908,9 @@ html.sv-space-active #tasksPage .personal-tasks-empty-copy{
 html.sv-space-active #tasksPage .personal-task-row{
  background:transparent!important;
  box-shadow:none!important;
- border-bottom:1px solid var(--sv-q-line)!important;
+ border-top:1px solid var(--sv-q-line)!important;
+ border-bottom:0!important;
+ border-radius:0!important;
  min-height:65px;
 }
 html.sv-space-active #tasksPage .personal-task-row:last-child{
@@ -930,9 +933,9 @@ html.sv-space-active #tasksPage :is(.personal-tasks-add,.tasks-context-complete)
  color:var(--text);font-weight:480;
 }
 html.sv-space-active #tasksPage :is(.tasks-context-focus,.personal-task-continuation){
- border:1px solid var(--sv-q-outline)!important;
- border-radius:23px!important;
- background:var(--sv-q-surface)!important;
+ border:0!important;border-top:1px solid var(--sv-q-line)!important;
+ border-radius:0!important;
+ background:transparent!important;
  box-shadow:none!important;
 }
 /* My World: five spacious illustrated choices on one continuous surface. */
