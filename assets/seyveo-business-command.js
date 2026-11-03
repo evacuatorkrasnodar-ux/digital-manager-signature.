@@ -1368,6 +1368,7 @@ let cameraBusy=false,photoCapturePurpose='shelf';
 function setCameraTray(open){
  if(!cameraTray||!cameraToggle)return;
  if(open)closeComposerEmoji();
+ else{const manual=$('svcpBarcodeManual');if(manual)manual.hidden=true;}
  cameraTray.hidden=!open;cameraToggle.setAttribute('aria-expanded',String(open));
 }
 cameraToggle?.addEventListener('click',()=>setCameraTray(cameraTray.hidden));
