@@ -354,7 +354,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm #svcpCameraToggle{display:none!important}
 #svcpWorkChatScreen .svcp-chat-compose-field{
  grid-column:2!important;grid-row:1!important;display:flex!important;align-items:flex-end!important;
- min-width:0!important;min-height:46px!important;max-height:112px!important;
+ min-width:0!important;min-height:46px!important;max-height:72px!important;
  border:0!important;outline:0!important;border-radius:var(--sv-input-radius,22px)!important;box-shadow:none!important;
  background:transparent!important;overflow:hidden!important
 }
@@ -371,7 +371,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen #svcpChatInput{
  order:1!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;
- height:46px!important;min-height:46px!important;max-height:112px!important;
+ height:46px!important;min-height:46px!important;max-height:72px!important;
  padding:11px 3px 10px 4px!important;margin:0!important;box-sizing:border-box!important;
  background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;
  color:var(--sv-input-ink)!important;font-size:var(--sv-input-type,16px)!important;line-height:var(--sv-input-leading,24px)!important;
