@@ -79,6 +79,7 @@ function taskIcon(kind){
  path.setAttribute('d',kind==='phone'
   ?'M7.2 3.8 10 6.6 8.4 8.7a13 13 0 0 0 6.9 6.9l2.1-1.6 2.8 2.8-1.8 3c-.4.7-1.2 1.1-2 1C9 20 4 15 3.2 7.6c-.1-.8.3-1.6 1-2l3-1.8Z'
   :kind==='more'?'M5 12h.1M12 12h.1M19 12h.1'
+  :kind==='mail'?'M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6'
   :kind==='note'?'M7 3.5h8l4 4v13H7zM15 3.5v4h4M10 12h6M10 16h5'
   :'m8 16 8-8M9 8h7v7');
  svg.append(path);return svg;
@@ -447,7 +448,7 @@ function row(item,compact=false,deferred=false){
 function deferredPreviewRow(item){
  const section=element('div','personal-task-row personal-deferred-row');
  section.dataset.deferredKind=item.kind;
- const art=element('span','personal-task-art');art.append(taskIcon('note'));
+ const art=element('span','personal-task-art');art.append(taskIcon(item.kind==='mail'?'mail':'note'));
  art.setAttribute('aria-hidden','true');
  const copy=element('span','personal-task-content');
  copy.append(element('strong','personal-deferred-title',item.title),
