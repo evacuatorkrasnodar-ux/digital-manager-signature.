@@ -342,6 +342,22 @@
 /* SEYVEO tasks polish v6 — calm proportions; only the Tasks screen.
    Preserve current local tasks, event history, dock and button actions. */
 #tasksPage.tasks-main{padding-top:2px}
+#tasksPage[data-work-view="personal"]{
+ box-sizing:border-box;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));
+ padding-bottom:calc(90px + env(safe-area-inset-bottom,0px));
+}
+#tasksPage[data-work-view="personal"] .tasks-heading{
+ margin:3px 0 15px;
+}
+#tasksPage[data-work-view="personal"] .svcp-tasks-back{
+ margin:0 0 12px;padding-inline:0;
+}
+#tasksPage[data-work-view="personal"] .personal-tasks-panel{
+ margin:0;
+}
+#tasksPage[data-work-view="personal"] .personal-tasks-list{
+ padding-inline:0!important;
+}
 #tasksPage .tasks-heading{margin:4px 0 13px}
 #tasksPage .tasks-heading .manage-caption{
  margin-bottom:5px;font-size:10px;line-height:1.3;
