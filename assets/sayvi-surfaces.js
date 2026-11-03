@@ -187,6 +187,7 @@ function demoScenario(kind){
  * Real delivery and retrieval are disabled without an authorized provider.
  * Example messages are clearly marked and never saved or sent externally. */
 let mailFolder='overview',mailEditorOpen=false,mailEditingId=null,mailCurrent=null;
+let mailEditorReturnId=null,mailEditorExitHandler=null;
 let mailSearchOpen=false;
 let mailScope='all',mailComposeScope=null;
 let mailDrafts=[],mailSearch='',mailShowExamples=true;
@@ -225,6 +226,7 @@ function mailIcon(name){
  svg.innerHTML=mailIcons[name]||mailIcons.inbox;return svg;
 }
 function mailView(){
+ mailEditorExitHandler=null;
  const section=shelf();section.classList.add('sv-mail-workspace');
  const top=create('div','sv-mail-top-actions');
  const topButtons=create('div','sv-mail-top-buttons');
@@ -269,6 +271,7 @@ function mailView(){
   return 0;
  }
  function openEditor(id=null,reply=null){
+  mailEditorReturnId=reply?.id||mailCurrent||null;
   mailEditingId=id;mailEditorOpen=true;mailCurrent=null;
   mailComposeScope=reply?.account||(id?mailDrafts.find(d=>d.id===id)?.account:null)||(mailScope==='all'?null:mailScope);
   if(reply)mailEditingId=null;
@@ -308,7 +311,11 @@ function mailView(){
   const original=mailDrafts.find(d=>d.id===mailEditingId);
   const form=create('form','sv-mail-editor');
   form.setAttribute('aria-label','Черновик письма SEYVEO');
-  form.append(create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
+  const heading=create('header','sv-mail-editor-header');
+  const editorBack=iconButton('back','Назад к письмам',()=>mailEditorExitHandler?.());
+  editorBack.classList.add('sv-mail-editor-back');
+  heading.append(editorBack,create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
+  form.append(heading);
   // Two identities deserve one native-feeling decision, not iOS's bright
   // square <select> popup. Keep account identity local to this editor.
   let accountValue=original?.account||mailComposeScope||'';
@@ -387,6 +394,27 @@ function mailView(){
   const subj=makeField('Тема','subject','input',original?.subject,'text');
   const message=makeField('Сообщение','body','textarea',original?.body);
   const status=create('p','sv-mail-feedback');status.setAttribute('role','status');
+  const before={to:original?.to||'',subject:original?.subject||'',body:original?.body||'',account:original?.account||mailComposeScope||''};
+  const leaveSheet=create('dialog','sv-mail-account-sheet sv-mail-leave-sheet');
+  leaveSheet.setAttribute('aria-label','Выйти из письма');
+  const leaveHandle=create('div','sv-mail-sheet-handle');leaveHandle.setAttribute('aria-hidden','true');
+  const leaveHead=create('div','sv-mail-sheet-head');
+  const stay=create('button','sv-mail-sheet-cancel','Остаться');stay.type='button';stay.addEventListener('click',()=>leaveSheet.close());
+  leaveHead.append(create('h3','sv-mail-sheet-title','Сохранить письмо?'),stay);
+  const leaveChoices=create('div','sv-mail-sheet-options');
+  const exitWithoutSave=create('button','sv-mail-sheet-option','Выйти без сохранения');exitWithoutSave.type='button';
+  const saveBeforeExit=create('button','sv-mail-sheet-option','Сохранить черновик');saveBeforeExit.type='button';
+  const leaveEditor=()=>{mailEditorOpen=false;mailEditingId=null;mailCurrent=mailEditorReturnId;mailEditorReturnId=null;mailEditorExitHandler=null;paint()};
+  exitWithoutSave.addEventListener('click',()=>{leaveSheet.close();leaveEditor()});
+  saveBeforeExit.addEventListener('click',()=>{leaveSheet.close();form.requestSubmit()});
+  leaveChoices.append(saveBeforeExit,exitWithoutSave);leaveSheet.append(leaveHandle,leaveHead,leaveChoices);
+  leaveSheet.addEventListener('click',event=>{if(event.target===leaveSheet)leaveSheet.close()});
+  form.append(leaveSheet);
+  mailEditorExitHandler=()=>{
+   const changed=to.value!==before.to||subj.value!==before.subject||message.value!==before.body||accountValue!==before.account;
+   if(!changed){leaveEditor();return}
+   if(!leaveSheet.open)leaveSheet.showModal();
+  };
   form.addEventListener('submit',event=>{
    event.preventDefault();
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
@@ -399,7 +427,7 @@ function mailView(){
     to:recipient.slice(0,254),subject:subjectText.slice(0,240),body:bodyText.slice(0,10000)};
    if(original)mailDrafts=mailDrafts.map(d=>d.id===item.id?item:d);
    else mailDrafts.unshift(item);
-   mailFolder='drafts';mailEditorOpen=false;mailEditingId=null;paint();
+   mailFolder='drafts';mailEditorOpen=false;mailEditingId=null;mailEditorReturnId=null;mailEditorExitHandler=null;paint();
    info.textContent='Черновик сохранён в текущем сеансе. Ничего не отправлено.';
   });
   const actions=create('div','sv-mail-editor-actions');
@@ -411,8 +439,7 @@ function mailView(){
   });
   actions.append(polish);
   const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
-  const cancel=intent('Отмена',()=>{mailEditorOpen=false;mailEditingId=null;paint()});
-  actions.append(save,cancel);
+  actions.append(save);
   form.append(actions,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
   content.append(form);
  }
@@ -563,6 +590,7 @@ function mailView(){
  function paintList(){
   content.replaceChildren();
   if(mailEditorOpen){drawEditor();return}
+  mailEditorExitHandler=null;
   if(mailCurrent){
    const item=mailExamples.find(m=>m.id===mailCurrent);
    if(item&&mailVisible(item.account)){drawDetails(item);return}
@@ -582,6 +610,7 @@ function mailView(){
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
+  top.hidden=mailEditorOpen||!!mailCurrent;
   searchToggle.hidden=mailEditorOpen||!!mailCurrent;
   connect.hidden=mailEditorOpen||!!mailCurrent;
   scopeNav.replaceChildren();
@@ -770,6 +799,7 @@ function openPersonal(kind){
  return false;
 }
 back.addEventListener('click',()=>{
+ if(currentKind()==='mail'&&typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
  const destination=returnDestination?.hash;
  if(destination)location.hash=destination;
  else $('navHome')?.click();
