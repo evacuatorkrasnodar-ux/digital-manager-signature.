@@ -70,7 +70,7 @@ function setArt(kind){
 }
 function openConnect(){
  // Use the existing Management → Connections page, not a fake inbox.
- $('navManage')?.click();
+ location.hash='#manage';
  const row=document.querySelector('#seyveoCleanManageMenu [data-clean-section="connections"]');
  if(row)row.click();
  else $('openManageConnections')?.click();
