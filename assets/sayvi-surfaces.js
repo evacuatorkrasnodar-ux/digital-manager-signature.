@@ -281,7 +281,10 @@ function mailView(){
    if(subjectField)subjectField.value='Re: '+reply.subject;
    info.textContent='Черновик ответа на учебный пример — не отправляется.';
   }
-  content.querySelector('[data-mail-field="to"]')?.focus();
+  // Generated replies should open as a readable draft, without forcing the
+  // iOS keyboard over the suggested text and bottom actions.
+  // A real recipient address is not present in example mail, so leave it blank.
+  if(!reply)content.querySelector('[data-mail-field="to"]')?.focus();
  }
  function selectFolder(folder){
   mailFolder=folder;mailCurrent=null;mailEditorOpen=false;mailEditingId=null;paint();
