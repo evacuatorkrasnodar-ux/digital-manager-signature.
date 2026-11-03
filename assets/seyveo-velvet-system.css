@@ -36,7 +36,9 @@
  /* Thin optical highlights suggest a lens rather than a painted green surface.
     All layers remain translucent and use the real backdrop in Safari. */
  --sv-glass-orb-primary:
-   radial-gradient(ellipse 85% 90% at 16% -28%,rgba(255,255,255,.91),transparent 78%),
+   /* Narrow upper-surface glint: visible on white without a bright rim. */
+   radial-gradient(ellipse 88% 38% at 28% -7%,rgba(255,255,255,.99) 0%,rgba(255,255,255,.50) 44%,transparent 91%),
+   radial-gradient(ellipse 85% 90% at 16% -28%,rgba(255,255,255,.76),transparent 78%),
    radial-gradient(ellipse 48% 100% at 93% 120%,rgba(132,198,187,.21),transparent 88%),
    linear-gradient(161deg,rgba(255,255,255,.63) 0%,rgba(232,249,246,.38) 34%,rgba(182,221,215,.37) 76%,rgba(250,255,254,.60) 100%),
    rgba(226,245,242,.43);
