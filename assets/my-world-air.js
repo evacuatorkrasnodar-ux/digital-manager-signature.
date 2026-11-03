@@ -7,6 +7,9 @@
   const box = document.getElementById('lifeAirSearchBox');
   const grid = document.getElementById('calendarSpaces');
   const empty = document.getElementById('lifeAirNoResults');
+  const todayPanel = document.getElementById('lifeToday');
+  const todayDate = document.getElementById('lifeTodayDate');
+  const todayBody = document.getElementById('lifeTodayBody');
   if (!input || !grid || !empty) return;
 
   const normalize = (value) => String(value || '')
@@ -49,6 +52,7 @@
     toggle.setAttribute('title', 'Поиск');
     input.value = '';
     input.blur();
+    if (todayPanel) todayPanel.hidden = false;
     refresh();
     if (returnFocus) toggle.focus({ preventScroll: true });
   };
@@ -60,6 +64,7 @@
         return;
       }
       box.hidden = false;
+      if (todayPanel) todayPanel.hidden = true;
       toggle.setAttribute('aria-expanded', 'true');
       toggle.setAttribute('aria-label', 'Закрыть поиск по разделам');
       toggle.setAttribute('title', 'Закрыть поиск');
@@ -101,6 +106,149 @@
       }
     }
   });
+
+
+  /* Today reads the already approved local sources. It never creates records,
+     guesses health information or merges business data into the personal world. */
+  const TODAY_EVENTS = 'seyveo-calendar-events-v1';
+  const TODAY_TASKS = 'seyveo-personal-tasks-v1';
+  const dateKey = (date) => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0')].join('-');
+  const localRows = (key, max) => {
+    try {
+      const rows = JSON.parse(localStorage.getItem(key) || '[]');
+      return Array.isArray(rows) ? rows.slice(-max) : [];
+    } catch {
+      return [];
+    }
+  };
+  const todaySvg = (kind) => {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('class', 'sv-world-today-icon');
+    svg.setAttribute('aria-hidden', 'true');
+    const shape = kind === 'event'
+      ? ['M5 6h14v14H5z', 'M8 3v6M16 3v6M5 11h14']
+      : kind === 'task'
+        ? ['M4 12.2l5.2 5.1L20 6.5']
+        : ['M4 10h16v11H4z', 'M3 7h18v3H3z', 'M12 7v14', 'M12 7c-5.8 0-6.1-6.2-2.4-4.4C11.1 3.3 12 7 12 7ZM12 7s.9-3.7 2.4-4.4C18.1.8 17.8 7 12 7Z'];
+    for (const d of shape) {
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d);
+      svg.append(path);
+    }
+    return svg;
+  };
+  const makeTodayRow = ({ kind, title, caption, route }) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sv-world-today-item';
+    btn.dataset.worldTodayRoute = route;
+    btn.dataset.worldTodayKind = kind;
+    btn.setAttribute('aria-label', title + '. ' + caption);
+    const content = document.createElement('span');
+    content.className = 'sv-world-today-copy';
+    const name = document.createElement('strong');
+    name.textContent = title;
+    const detail = document.createElement('small');
+    detail.textContent = caption;
+    content.append(name, detail);
+    const chevron = document.createElement('span');
+    chevron.className = 'sv-world-today-chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.textContent = '›';
+    btn.append(todaySvg(kind), content, chevron);
+    return btn;
+  };
+  const openTodayRoute = (route) => {
+    if (route === '#calendar') document.getElementById('calendarToday')?.click();
+    if (location.hash !== route) location.hash = route;
+  };
+  if (todayPanel) todayPanel.addEventListener('click', (event) => {
+    const target = event.target.closest('[data-world-today-route]');
+    if (!target || !todayPanel.contains(target)) return;
+    const route = target.dataset.worldTodayRoute;
+    if (route === '#calendar' || route === '#tasks') openTodayRoute(route);
+  });
+  const todayDateLabel = new Intl.DateTimeFormat('ru-RU', {
+    weekday: 'long', day: 'numeric', month: 'long'
+  });
+  const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/;
+  function renderToday() {
+    if (!todayPanel || !todayDate || !todayBody) return;
+    const now = new Date();
+    const today = dateKey(now);
+    const label = todayDateLabel.format(now);
+    todayDate.dateTime = today;
+    todayDate.textContent = label.charAt(0).toLocaleUpperCase('ru-RU') + label.slice(1);
+    const events = localRows(TODAY_EVENTS, 300)
+      .filter((item) => item && item.date === today && item.kind !== 'business' &&
+        typeof item.title === 'string' && item.title.trim())
+      .map((item) => ({
+        title: item.title.trim().slice(0, 140),
+        time: validTime.test(item.time || '') ? item.time : ''
+      }))
+      .sort((a, b) => (a.time || '00:00').localeCompare(b.time || '00:00') ||
+        a.title.localeCompare(b.title, 'ru'));
+    const tasks = localRows(TODAY_TASKS, 150)
+      .filter((item) => item && item.due === today && item.done !== true &&
+        typeof item.title === 'string' && item.title.trim())
+      .map((item) => ({ title: item.title.trim().slice(0, 140) }));
+    // Only important personal dates. Health records are never surfaced here.
+    const fromSpaces = window.SEYVEO_SPACES?.calendarItems?.(today);
+    const dates = (Array.isArray(fromSpaces) ? fromSpaces : [])
+      .filter((item) => item?.space === 'world' &&
+        ['День рождения', 'Важная дата'].includes(item.kind) &&
+        typeof item.title === 'string' && item.title.trim());
+    const highlighted = [];
+    if (events[0]) highlighted.push({ kind: 'event', title: events[0].title,
+      caption: events[0].time ? events[0].time + ' · Календарь' : 'Событие · Календарь',
+      route: '#calendar' });
+    if (tasks[0]) highlighted.push({ kind: 'task', title: tasks[0].title,
+      caption: 'Личное дело · Сегодня', route: '#tasks' });
+    if (dates[0]) highlighted.push({ kind: 'date', title: dates[0].title.slice(0, 110),
+      caption: dates[0].kind, route: '#calendar' });
+    todayBody.replaceChildren();
+    if (!highlighted.length) {
+      const emptyLine = document.createElement('p');
+      emptyLine.className = 'sv-world-today-empty';
+      emptyLine.textContent = 'Личных записей на сегодня пока нет.';
+      todayBody.append(emptyLine);
+    } else {
+      for (const item of highlighted) todayBody.append(makeTodayRow(item));
+    }
+    const more = events.length + tasks.length + dates.length - highlighted.length;
+    const action = document.createElement('button');
+    action.type = 'button';
+    action.className = 'sv-world-today-more';
+    action.dataset.worldTodayRoute = '#calendar';
+    action.textContent = more > 0 ? 'Ещё записи · В календаре ›' : 'Открыть календарь ›';
+    todayBody.append(action);
+  }
+  let dayTimer = 0;
+  function scheduleToday() {
+    clearTimeout(dayTimer);
+    if (location.hash !== '#life') return;
+    renderToday();
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    dayTimer = setTimeout(scheduleToday, Math.max(1000, midnight.getTime() - now.getTime() + 100));
+  }
+  for (const name of ['seyveo:calendar-changed', 'seyveo:tasks-changed',
+    'seyveo:spaces-changed', 'storage', 'pageshow', 'focus']) {
+    window.addEventListener(name, () => {
+      if (location.hash === '#life') renderToday();
+    });
+  }
+  window.addEventListener('hashchange', scheduleToday);
+  window.addEventListener('seyveo:route-changed', () => {
+    if (location.hash === '#life') renderToday();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && location.hash === '#life') scheduleToday();
+  });
+  scheduleToday();
 
   refresh();
 })();
