@@ -861,6 +861,19 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 <div class="picture-tabs" role="group" aria-label="За какой период"><button type="button" data-picture-period="today" aria-pressed="true">Сегодня</button><button type="button" data-picture-period="week" aria-pressed="false">Неделя</button><button type="button" data-picture-period="month" aria-pressed="false">Месяц</button><button type="button" data-picture-period="year" aria-pressed="false">Год</button></div>
 </div>
+<section id="pictureOperations" class="picture-operations" aria-label="Учёт операций">
+ <div class="picture-operations-head"><h2>Операции</h2><button type="button" id="pictureOperationOpen" aria-expanded="false" aria-controls="pictureOperationForm">+ Добавить</button></div>
+ <p class="picture-operations-note">Записи сохраняются на этом устройстве. Это ручной учёт, не банковская выписка.</p>
+ <form id="pictureOperationForm" class="picture-operation-form" hidden>
+  <label>Что произошло<select id="pictureOperationKind" required><option value="sale">Продажа</option><option value="expense">Расход</option><option value="order">Заказ</option><option value="lead">Обращение</option></select></label>
+  <label id="pictureOperationAmountRow">Сумма, ₽<input id="pictureOperationAmount" type="number" min="0" max="100000000" step="1" inputmode="numeric" required></label>
+  <label>Описание или источник<input id="pictureOperationLabel" type="text" maxlength="70" required placeholder="Например, заказ клиента"></label>
+  <label>Дата<input id="pictureOperationDay" type="date" required></label>
+  <div class="picture-operation-actions"><button type="submit">Сохранить</button><button id="pictureOperationCancel" type="button">Отмена</button></div>
+  <p id="pictureOperationStatus" role="status" aria-live="polite" hidden></p>
+ </form>
+ <div id="pictureOperationsList" class="picture-operations-list"></div>
+</section>
 <section id="pictureWidgetArea" class="home-widgets" aria-labelledby="homeWidgetTitle">
 <div class="home-widgets-heading"><h2 id="homeWidgetTitle">Самое важное</h2><span class="home-widgets-caption">ВАШ ВЫБОР</span></div>
 <div id="homeWidgetGrid" class="home-widgets-grid" aria-label="Выбранные показатели"></div>
