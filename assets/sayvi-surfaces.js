@@ -431,7 +431,7 @@ function mailView(){
   const person=create('div','sv-mail-detail-person');
   person.append(create('span','sv-mail-avatar',item.initial));
   const who=create('div','sv-mail-detail-who');
-  who.append(create('strong','',item.from),create('span','',item.when+' · учебное письмо, не из почты'));
+  who.append(create('strong','',item.from),create('span','',item.when+' · пример, не получено из почты'));
   person.append(who);panel.append(person);
   const message=create('p','sv-mail-detail-text',item.body);panel.append(message);
   if(item.attachment){
