@@ -15,7 +15,7 @@ const DAY=24*3600*1000,LOOKBACK=21*DAY,MAX_ARTISTS=30;
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru-RU')
  .replace(/\s+/g,' ').trim();
 const clean=s=>typeof s==='string'?s.replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100):'';
-function fresh(){return {enabled:false,artists:[],releases:[],ignored:[],checks:{}}}
+function fresh(){return {enabled:false,artists:[],releases:[],ignored:[],snoozed:{},checks:{}}}
 function read(){
  let x;try{x=JSON.parse(localStorage.getItem(STORE)||'null')}catch{}
  if(!x||typeof x!=='object')return fresh();
@@ -28,6 +28,7 @@ function read(){
    r&&typeof r.id==='string'&&typeof r.artist==='string'&&
    typeof r.title==='string'&&typeof r.url==='string'&&typeof r.date==='string'):[],
   ignored:Array.isArray(x.ignored)?x.ignored.slice(-100).filter(x=>typeof x==='string'):[],
+  snoozed:x.snoozed&&typeof x.snoozed==='object'&&!Array.isArray(x.snoozed)?x.snoozed:{},
   checks:x.checks&&typeof x.checks==='object'&&!Array.isArray(x.checks)?x.checks:{}
  };
 }
@@ -186,8 +187,14 @@ function asCard(release){
 }
 function current(){
  if(!state.enabled)return null;
- const top=state.releases.find(r=>!state.ignored.includes(r.id)&&safeUrl(r.url));
+ const top=state.releases.find(r=>!state.ignored.includes(r.id)&&
+  Date.now()>=Number(state.snoozed[r.id]||0)&&safeUrl(r.url));
  return top?asCard(top):null;
+}
+function postpone(id){
+ if(typeof id!=='string'||!id)return;
+ state.snoozed[id]=Date.now()+DAY;
+ persist();signal();
 }
 function dismiss(id){
  if(typeof id!=='string'||!id)return;
@@ -207,7 +214,7 @@ window.addEventListener('storage',event=>{
 });
 window.SEYVEO_DISCOVERY=Object.freeze({
  enabled:()=>state.enabled,artists:()=>state.artists.map(a=>({...a})),
- current,dismiss,check,listen,chooseReleases
+ current,postpone,dismiss,check,listen,chooseReleases
 });
 update();maybeCheck();
 })();
