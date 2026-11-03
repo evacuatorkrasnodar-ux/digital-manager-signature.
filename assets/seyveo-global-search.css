@@ -90,3 +90,8 @@ html.sv-global-search-open .dock>#navManage svg{
 @media(prefers-reduced-motion:reduce){
  #svGlobalSearch .sv-search-result{transition:none}
 }
+/* One mini-player is already owned by SEYVEO Music. Avoid overlapping two
+   bottom surfaces while the global search keyboard is open. */
+html.sv-global-search-open #sayviMusicMini{
+ visibility:hidden!important;pointer-events:none!important;
+}
