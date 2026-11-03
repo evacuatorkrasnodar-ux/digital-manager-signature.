@@ -594,7 +594,8 @@
 /* Mail composer: one Black Velvet sheet, native-style field rows.
    The labels remain real accessible labels, not fragile placeholders. */
 #sayviSurfacePage .sv-mail-editor{
- align-items:stretch;gap:0;min-height:0;
+ align-items:stretch;gap:0;
+ min-height:clamp(440px,calc(100dvh - 150px),680px);
  padding:5px 15px 12px;
  background:transparent;border-radius:0;
 }
@@ -638,15 +639,21 @@
  line-height:1.45;
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-input:focus-visible{
- outline:1px solid var(--sm-line);outline-offset:2px;border-radius:5px;
+ outline:none;border-radius:0;box-shadow:none;
+}
+#sayviSurfacePage .sv-mail-editor .sv-mail-field:focus-within{
+ border-bottom-color:color-mix(in srgb,var(--seyveo-emerald) 54%,var(--sv-velvet-divider));
+}
+#sayviSurfacePage .sv-mail-editor .sv-mail-field:has(textarea):focus-within{
+ border-bottom:1px solid color-mix(in srgb,var(--seyveo-emerald) 38%,transparent);
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-field:has(textarea){
- display:flex;flex-direction:column;align-items:stretch;gap:5px;
- min-height:0;padding:9px 0 3px;border-bottom:0;
+ display:flex;flex:1 1 auto;flex-direction:column;align-items:stretch;gap:5px;
+ min-height:140px;padding:9px 0 3px;border-bottom:1px solid transparent;
 }
 #sayviSurfacePage .sv-mail-editor textarea.sv-mail-input{
- height:clamp(140px,21dvh,188px);min-height:140px;max-height:260px;
- padding:8px 0;line-height:1.53!important;resize:vertical;overflow-y:auto;
+ flex:1 1 auto;height:auto;min-height:140px;max-height:none;
+ padding:8px 0;line-height:1.53!important;resize:none;overflow-y:auto;
 }
 #sayviSurfacePage .sv-mail-editor .sv-mail-account-help{
  margin:3px 0 5px;padding:0;font-size:11px;line-height:1.4;
@@ -750,12 +757,13 @@
  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
 }
 #sayviSurfacePage .sv-mail-editor-actions{
- gap:6px;margin-top:7px;padding-top:8px;border-top:1px solid var(--sv-velvet-divider);
+ gap:5px;justify-content:space-between;margin-top:5px;padding-top:7px;
+ border-top:1px solid color-mix(in srgb,var(--sv-velvet-divider) 58%,transparent);
 }
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent{
  border:0;border-radius:9px;background:transparent;
- min-height:44px;padding:8px 10px;
- text-decoration:none;color:var(--text);font-weight:510;
+ min-height:44px;padding:8px 6px;
+ font-size:12.5px;text-decoration:none;color:var(--text);font-weight:510;
 }
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent--lead{
  color:var(--text);font-weight:640;
