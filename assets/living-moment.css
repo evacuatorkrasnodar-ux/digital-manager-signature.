@@ -1097,10 +1097,12 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
    White theme: graphite primary, light glass secondary, clear tertiary.
    Dark themes invert the primary contrast. No extra panel or fake actions. */
 #homePage #seyveoLivingMoment .lm-actions{
- --sv-action-primary:#f6f8fa;
- --sv-action-ink:#171a1e;
+ /* In Black Velvet the active action is a soft mineral glass lens, not white paint. */
+ --sv-action-primary:rgba(117,159,144,.22);
+ --sv-action-ink:#e5f1ed;
+ --sv-action-lens-shadow:inset 0 1px 0 rgba(231,255,244,.07);
  --sv-action-secondary-ink:var(--text);
- --sv-action-secondary-edge:color-mix(in srgb,var(--text) 14%,transparent);
+ --sv-action-secondary-edge:rgba(190,219,208,.18);
 }
 :root[data-theme=light] #homePage #seyveoLivingMoment .lm-actions{
  /* Orb-tinted optical glass: readable dark ink without a heavy black fill. */
