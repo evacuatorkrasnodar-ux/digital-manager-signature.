@@ -749,7 +749,7 @@
 }
 #tasksPage .personal-task-row{
  position:relative;display:flex;align-items:center;flex-wrap:wrap;
- gap:8px;min-height:64px;padding:7px 0;
+ gap:7px;min-height:54px;padding:3px 0;
  border-top:1px solid var(--soft-line);border-bottom:0;
 }
 #tasksPage .personal-task-row:last-child{border-bottom:1px solid var(--soft-line)}
@@ -767,7 +767,7 @@
 #tasksPage .personal-task-content{gap:2px;min-width:0;flex:1}
 #tasksPage .personal-task-name{
  align-self:flex-start;min-height:44px;display:block;
- max-width:100%;width:100%;margin:0;padding:11px 0;border:0;background:transparent;
+ max-width:100%;width:100%;margin:0;padding:6px 0;border:0;background:transparent;
  color:var(--text);font:inherit;font-size:14px;font-weight:500;line-height:1.4;
  letter-spacing:-.02em;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
 }
@@ -837,7 +837,7 @@
  font-size:13.5px;font-weight:420;line-height:1.55;
 }
 #tasksPage .personal-list-title{
- margin:19px 0 2px;padding:6px 1px;
+ margin:9px 0 1px;padding:4px 1px;
  color:var(--secondary);font-size:10px;line-height:1.4;
  font-weight:540;letter-spacing:.09em;text-transform:uppercase;
 }
