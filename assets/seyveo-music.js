@@ -449,15 +449,27 @@ function understand(raw){
  const direct=/^(?:(?:сэйви|сейви)[,!\s]+)?(?:музыка|музыкальный плеер|сэйви музыка|seyveo music|se y veo music)[.!?\s]*$/i;
  return command.test(value)||direct.test(value)?'music':null;
 }
+// The Now Playing surface returns to its actual source, not unconditionally
+// Home.  A remembered route is an in-memory hint only: no new navigation
+// history, persistent store or duplicate music session.
+const MUSIC_RETURN_ROUTES=new Set(['#home','#life','#tasks','#calendar','#manage','#picture']);
+let musicPreviousRoute=location.hash||'#home';
+let musicReturnRoute='#home';
 function open(){
  if(location.hash==='#sayvi-music')return true;
+ // Remember synchronously as well as from hashchange so an immediate
+ // minimize/open cycle on iPhone cannot inherit an older origin.
+ const origin=location.hash||'#home';
+ if(MUSIC_RETURN_ROUTES.has(origin))musicReturnRoute=origin;
+ else musicReturnRoute='#home';
  location.hash='#sayvi-music';
  return true;
 }
 function minimizeMusic(){
  hidePanels();
- // Switching screen never pauses the one audio element.
- location.hash='#home';
+ // Returning from Music does not stop the single audio element. Its existing
+ // mini-player remains available above the original navigation dock.
+ location.hash=MUSIC_RETURN_ROUTES.has(musicReturnRoute)?musicReturnRoute:'#home';
  return true;
 }
 minimize?.addEventListener('click',minimizeMusic);
@@ -546,7 +558,15 @@ document.addEventListener('keydown',e=>{
  }else minimizeMusic();
 });
 function syncMusicRoute(){
- const inside=location.hash==='#sayvi-music';
+ const current=location.hash||'#home';
+ const inside=current==='#sayvi-music';
+ if(inside&&musicPreviousRoute!=='#sayvi-music'){
+  // Direct #hash navigation from the library, calendar or a saved task
+  // reaches Music without calling open(). Preserve that valid origin too.
+  musicReturnRoute=MUSIC_RETURN_ROUTES.has(musicPreviousRoute)
+   ?musicPreviousRoute:'#home';
+ }
+ musicPreviousRoute=current;
  if(inside)miniDismissed=false;
  document.documentElement.classList.toggle('sv-music-screen',inside);
  if(!inside)hidePanels();
