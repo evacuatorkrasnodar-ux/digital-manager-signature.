@@ -12,6 +12,71 @@ const clean=(tag,klass,value)=>{
  if(value!==undefined)el.textContent=value;
  return el;
 };
+const operationForm=$('pictureOperationForm'),operationKind=$('pictureOperationKind'),operationAmount=$('pictureOperationAmount');
+const operationNote=$('pictureOperationStatus'),operationOpen=$('pictureOperationOpen'),operationsList=$('pictureOperationsList');
+const operationTypes={sale:'Продажа',expense:'Расход',order:'Заказ',lead:'Обращение'};
+function setOperationForm(open){
+ operationForm.hidden=!open;
+ operationOpen.setAttribute('aria-expanded',String(open));
+ if(open){
+  const day=$('pictureOperationDay');
+  if(!day.value){
+   const d=new Date();
+   day.value=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  }
+  operationKind.focus({preventScroll:true});
+ }
+}
+operationOpen.addEventListener('click',()=>setOperationForm(operationForm.hidden));
+$('pictureOperationCancel').addEventListener('click',()=>setOperationForm(false));
+operationKind.addEventListener('change',()=>{
+ const money=['sale','expense'].includes(operationKind.value);
+ $('pictureOperationAmountRow').hidden=!money;
+ operationAmount.required=money;
+ if(!money)operationAmount.value='';
+});
+function renderOperations(){
+ operationsList.replaceChildren();
+ const rows=window.SEYVEO_PULSE_LEDGER?.list?.()||[];
+ if(!rows.length){
+  operationsList.append(clean('p','picture-operation-empty','Операций пока нет. Добавь первую запись.'));
+  return;
+ }
+ for(const item of rows.slice(0,20)){
+  const record=clean('div','picture-operation-row');
+  const detail=clean('span','picture-operation-detail');
+  detail.append(clean('strong','',item.label),clean('small','',(operationTypes[item.kind]||item.kind)+' · '+item.day.split('-').reverse().join('.')));
+  const number=clean('span','picture-operation-value',['sale','expense'].includes(item.kind)?rub(item.amount):'1');
+  const remove=clean('button','picture-operation-remove','×');
+  remove.type='button';remove.setAttribute('aria-label','Удалить запись: '+item.label);
+  remove.addEventListener('click',()=>{
+   if(!window.confirm('Удалить запись «'+item.label+'»?'))return;
+   const ok=window.SEYVEO_PULSE_LEDGER?.remove?.(item.id);
+   if(!ok){operationNote.hidden=false;operationNote.textContent='Не удалось удалить запись.';}
+  });
+  record.append(detail,number,remove);operationsList.append(record);
+ }
+ if(rows.length>20)operationsList.append(clean('p','picture-operation-empty','Показаны последние 20 из '+rows.length+' записей.'));
+}
+operationForm.addEventListener('submit',event=>{
+ event.preventDefault();
+ const kind=operationKind.value,money=['sale','expense'].includes(kind);
+ const result=window.SEYVEO_PULSE_LEDGER?.add?.({
+  kind,label:$('pictureOperationLabel').value,
+  amount:money?Number(operationAmount.value):0,
+  day:$('pictureOperationDay').value
+ });
+ if(!result?.ok){
+  operationNote.textContent=result?.error||'Не удалось сохранить запись.';
+  operationNote.hidden=false;return;
+ }
+ operationForm.reset();operationKind.dispatchEvent(new Event('change'));
+ operationNote.hidden=true;setOperationForm(false);
+});
+window.addEventListener('seyveo:pulse-ledger-changed',()=>{
+ renderOperations();
+ if(location.hash==='#picture')render();
+});
 function row(root,label,value,total,group,index){
  const r=clean('button','picture-split-row');
  r.type='button';r.dataset.pictureGroup=group;r.dataset.pictureIndex=String(index);
@@ -46,6 +111,7 @@ function render(){
  // This route is explicitly "Pulse of Business", including for life-first profiles.
  // Never hide its opt-in demonstration based on the onboarding preference.
  $('pictureTitle').textContent='Пульс бизнеса';
+ renderOperations();
  $('pictureLead').textContent='Продажи, расходы и обращения · за выбранный период.';
  body.hidden=false;
  $('pictureBusinessCharts').hidden=false;
@@ -59,7 +125,7 @@ function render(){
  if(!result){
   const note=$('pictureLifeNote');
   note.hidden=false;
-  note.textContent='Продажи и расходы пока не подключены.';
+  note.textContent='Операций пока нет. Добавь продажу, расход, заказ или обращение выше.';
   if($('pictureDemoLabel'))$('pictureDemoLabel').hidden=true;
   $('pictureBusinessCharts').hidden=true;
   $('pictureQuickInsight').hidden=true;
