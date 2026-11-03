@@ -579,13 +579,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen .svcp-audio-wave{
  display:flex!important;align-items:center!important;justify-content:center!important;
- gap:3px!important;flex:1 1 auto!important;min-width:65px!important;
- height:30px!important;overflow:hidden!important
+ gap:2px!important;flex:1 1 auto!important;min-width:85px!important;
+ height:32px!important;overflow:hidden!important
 }
 #svcpWorkChatScreen .svcp-audio-wave i{
  display:block!important;flex:0 0 2px!important;width:2px!important;min-width:2px!important;
  border-radius:4px!important;background:var(--seyveo-emerald)!important;
- opacity:.72!important
+ opacity:.40!important;transition:height .16s ease-out,opacity .15s ease!important
+}
+#svcpWorkChatScreen .svcp-audio-wave i.svcp-wave-heard{
+ opacity:1!important
+}
+#svcpWorkChatScreen .svcp-audio-wave i.svcp-wave-pending{
+ opacity:.25!important
 }
 #svcpWorkChatScreen .svcp-audio-duration{
  display:block;flex:0 0 43px;width:43px;min-width:43px;
