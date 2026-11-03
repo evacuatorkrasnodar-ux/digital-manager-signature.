@@ -203,17 +203,40 @@ if(taskDialog&&taskDate&&taskControl){
  grid.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
  picker.append(grid);
  if(dueField){
-  dueField.insertAdjacentElement('afterend',picker);
+  // The date selection is a second stage of the SAME editor, not a panel
+  // stacked beneath the Save/Cancel buttons. The form remains mounted.
+  const taskSheet=taskDialog.querySelector('.personal-task-sheet');
+  if(!taskSheet)return;
+  const back=document.createElement('button');
+  back.type='button';back.className='sv-task-date-back';
+  back.setAttribute('aria-label','Вернуться к редактированию дела');
+  const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  chevron.setAttribute('viewBox','0 0 24 24');chevron.setAttribute('aria-hidden','true');
+  const arrow=document.createElementNS('http://www.w3.org/2000/svg','path');
+  arrow.setAttribute('d','m14 5-7 7 7 7');chevron.append(arrow);
+  back.append(chevron,document.createTextNode('Новое дело'));
+  const stageTitle=document.createElement('h2');
+  stageTitle.className='sv-task-date-title';stageTitle.textContent='Выбрать срок';
+  stageTitle.id='svTaskDateHeading';
+  picker.setAttribute('aria-labelledby',stageTitle.id);
+  picker.prepend(back,stageTitle);
+  taskSheet.append(picker);
   const heading=grid.querySelector('.cal-pick-head strong');
   const gridDays=grid.querySelector('.cal-pick-days');
   const arrows=grid.querySelectorAll('.cal-pick-arrows button');
   const today=grid.querySelector('.cal-pick-today');
+  const clear=document.createElement('button');
+  clear.type='button';clear.className='sv-task-date-clear';clear.textContent='Без даты';
+  const quick=document.createElement('div');quick.className='sv-task-date-quick';
+  today.replaceWith(quick);quick.append(today,clear);
   const taskTrigger=makeButton(taskControl,'Выбрать срок дела','seyveoTaskDueTrigger');
   taskTrigger.setAttribute('aria-controls',picker.id);
   let taskMonth=new Date();
   const closeTask=()=>{
    picker.hidden=true;
+   taskDialog.classList.remove('sv-task-date-open');
    taskTrigger.setAttribute('aria-expanded','false');
+   back.textContent='';back.append(chevron,document.createTextNode('Новое дело'));
   };
   const openTask=()=>{
    if(!taskDialog.open)return;
@@ -221,14 +244,16 @@ if(taskDialog&&taskDate&&taskControl){
    const chosen=parse(taskDate.value)||new Date();
    taskMonth=new Date(chosen.getFullYear(),chosen.getMonth(),1);
    renderDateCalendar(taskMonth,taskDate,heading,gridDays);
+   // Dismiss the keyboard before entering the date stage.
+   if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+   const editorTitle=$('personalTaskDialogTitle')?.textContent?.trim()||'Новое дело';
+   back.textContent='';back.append(chevron,document.createTextNode(editorTitle));
    picker.hidden=false;
+   taskDialog.classList.add('sv-task-date-open');
    taskTrigger.setAttribute('aria-expanded','true');
    const sheet=taskDialog.querySelector('.personal-task-sheet');
-   requestAnimationFrame(()=>{
-    if(picker.hidden||!sheet)return;
-    const extra=picker.getBoundingClientRect().bottom-sheet.getBoundingClientRect().bottom+8;
-    if(extra>0)sheet.scrollTop+=extra;
-   });
+   if(sheet)sheet.scrollTop=0;
+   requestAnimationFrame(()=>{if(!picker.hidden)back.focus({preventScroll:true})});
   };
   const pickTask=(d)=>{
    taskDate.value=iso(d);
@@ -238,6 +263,19 @@ if(taskDialog&&taskDate&&taskControl){
    taskTrigger.focus({preventScroll:true});
   };
   taskTrigger.addEventListener('click',openTask);
+  back.addEventListener('click',()=>{
+   closeTask();taskTrigger.focus({preventScroll:true});
+  });
+  clear.addEventListener('click',()=>{
+   taskDate.value='';
+   taskDate.dispatchEvent(new Event('input',{bubbles:true}));
+   taskDate.dispatchEvent(new Event('change',{bubbles:true}));
+   closeTask();taskTrigger.focus({preventScroll:true});
+  });
+  taskDialog.addEventListener('seyveo:task-date-back',()=>{
+   if(picker.hidden)return;
+   closeTask();taskTrigger.focus({preventScroll:true});
+  });
   arrows[0].addEventListener('click',()=>{
    taskMonth=new Date(taskMonth.getFullYear(),taskMonth.getMonth()-1,1);
    renderDateCalendar(taskMonth,taskDate,heading,gridDays);
