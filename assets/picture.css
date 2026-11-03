@@ -330,3 +330,26 @@
 #picturePage #pictureDemoExit:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:3px}
 #picturePage .sv-pulse-inbox .sv-pulse-inbox-panel{background:transparent}
 #picturePage .sv-pulse-demo, #picturePage .sv-pulse-inbox{max-width:100%}
+
+/* Business Pulse · real local operations, one restrained glass surface. */
+#picturePage .picture-operations{margin:8px 0 16px;padding:11px 13px 12px;border:1px solid color-mix(in srgb,var(--soft-line) 30%,transparent);border-radius:19px;background:color-mix(in srgb,var(--card2) 17%,transparent);-webkit-backdrop-filter:blur(16px) saturate(110%);backdrop-filter:blur(16px) saturate(110%)}
+#picturePage .picture-operations-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#picturePage .picture-operations-head h2{margin:0;font-size:15px;font-weight:610;letter-spacing:-.02em}
+#picturePage .picture-operations-head button{min-height:44px;border:0;padding:7px 1px;background:transparent;color:var(--text);font:inherit;font-size:12.5px;font-weight:575}
+#picturePage .picture-operations-note{margin:0 0 8px;color:var(--secondary);font-size:10.5px;line-height:1.42}
+#picturePage .picture-operation-form[hidden],#picturePage .picture-operations [hidden]{display:none!important}
+#picturePage .picture-operation-form{display:grid;gap:10px;padding:12px 0;border-top:1px solid var(--soft-line)}
+#picturePage .picture-operation-form label{display:grid;gap:5px;color:var(--secondary);font-size:11.5px}
+#picturePage .picture-operation-form input,#picturePage .picture-operation-form select{box-sizing:border-box;width:100%;min-height:44px;padding:9px 11px;border:1px solid color-mix(in srgb,var(--soft-line) 54%,transparent);border-radius:12px;background:color-mix(in srgb,var(--card) 42%,transparent);color:var(--text);font:inherit;font-size:14px}
+#picturePage .picture-operation-actions{display:flex;gap:14px}
+#picturePage .picture-operation-actions button{min-height:44px;padding:7px 12px;border:0;border-radius:12px;background:color-mix(in srgb,var(--card2) 58%,transparent);color:var(--text);font:inherit;font-size:12.5px;font-weight:575}
+#picturePage .picture-operation-actions button+button{background:transparent;color:var(--secondary)}
+#picturePage .picture-operations-list{display:grid;gap:0}
+#picturePage .picture-operation-empty{margin:5px 0 0;font-size:11.5px;line-height:1.4;color:var(--secondary)}
+#picturePage .picture-operation-row{display:flex;gap:9px;align-items:center;min-height:52px;border-top:1px solid color-mix(in srgb,var(--soft-line) 35%,transparent)}
+#picturePage .picture-operation-detail{display:grid;gap:2px;flex:1;min-width:0}
+#picturePage .picture-operation-detail strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;font-weight:575}
+#picturePage .picture-operation-detail small{font-size:10.5px;color:var(--secondary)}
+#picturePage .picture-operation-value{flex:none;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+#picturePage .picture-operation-remove{flex:none;width:44px;height:44px;border:0;background:transparent;color:var(--secondary);font:inherit;font-size:21px}
+#picturePage .picture-operation-form :is(button,input,select):focus-visible,#picturePage .picture-operations-head button:focus-visible,#picturePage .picture-operation-remove:focus-visible{outline:2px solid var(--text);outline-offset:2px}
