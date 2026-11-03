@@ -901,15 +901,12 @@ function dueTasks(){
    tasks=reviews.slice(0,3).map(t=>({eventId:'mail-review:'+t.id,taskId:t.id,businessTask:true,kind:'task',title:'Проверить результат поручения',body:(people[t.assigneeId]||'Сотрудник')+' передал результат. Требуется решение руководителя.',category:'SEYVEO · BUSINESS MAIL',reason:'Поручение ожидает решения руководителя.',detail:'Откройте поручение, чтобы принять результат или вернуть на доработку.'}));
   }catch{}
  }
- let personal=[];
- try{const data=JSON.parse(localStorage.getItem('seyveo-personal-tasks-v1')||'[]');if(Array.isArray(data))personal=data}catch{}
- const d=new Date(),today=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
- return tasks.concat(personal.filter(t=>t&&t.done!==true&&typeof t.title==='string'&&t.title.trim()
-  &&typeof t.due==='string'&&/^\d{4}-\d\d-\d\d$/.test(t.due)&&t.due<=today)
-  .sort((a,b)=>a.due.localeCompare(b.due))
-  .map(item=>{
-   const eventId='task:'+(item.id||item.title)+'|'+item.due;
-   const when=new Date(item.due+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+ // The shared reader owns selection of personal deadlines. The existing
+ // Living Moment remains the one-and-only Home presentation/decision surface.
+ const personal=window.SEYVEO_LIFE_EVENTS?.attentionTasks?.()||[];
+ return tasks.concat(personal.map(item=>{
+   const eventId='task:'+item.id+'|'+item.date;
+   const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
    return {
     eventId,taskId:item.id||'',kind:'task',title:item.title,
     body:'Срок наступил · '+when+'. Дело сохранено в вашем списке.',
@@ -1008,7 +1005,7 @@ const viewObserver=new MutationObserver(()=>{
  }else scheduleRefresh();
 });
 viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
-window.addEventListener('seyveo:tasks-changed',scheduleRefresh);
+window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
