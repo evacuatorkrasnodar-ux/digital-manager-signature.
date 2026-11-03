@@ -629,7 +629,9 @@
   if(managerSignal)managerSignal.hidden=chosen!=='business';
   const caption=page.querySelector('.tasks-heading .manage-caption');
   if(caption){
-   caption.hidden=false;
+   // On personal Tasks the title already identifies the destination.
+   // Keep the brand eyebrow only in business/employee workspaces.
+   caption.hidden=chosen==='personal';
    if(caption.lastChild?.nodeType===3)
     caption.lastChild.textContent=chosen==='employee'?' РАБОЧИЙ ДЕНЬ':
      chosen==='business'?' BUSINESS':' НА КОНТРОЛЕ';
