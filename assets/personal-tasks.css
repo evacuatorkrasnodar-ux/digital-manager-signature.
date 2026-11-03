@@ -104,11 +104,12 @@
  width:min(430px,calc(100% - 20px));
  max-height:calc(100dvh - 102px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
  margin:0;padding:16px 19px 15px;
- border:0;border-top:1px solid color-mix(in srgb,var(--soft-line) 40%,transparent);
- border-radius:29px;
- background:color-mix(in srgb,var(--bg) 88%,var(--card2) 12%);
- -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
- color:var(--text);box-shadow:0 8px 36px rgba(0,0,0,.15);
+ border:1px solid color-mix(in srgb,var(--soft-line) 42%,transparent);
+ border-radius:30px;
+ background:color-mix(in srgb,var(--bg) 80%,transparent);
+ -webkit-backdrop-filter:blur(26px) saturate(125%);
+ backdrop-filter:blur(26px) saturate(125%);
+ color:var(--text);box-shadow:0 8px 36px rgba(0,0,0,.12),inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
  -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
@@ -124,8 +125,8 @@
 }
 #personalTaskDialog.personal-task-dialog form{
  display:flex;flex-direction:column;gap:0;min-width:0;
- margin:0;background:color-mix(in srgb,var(--card2) 65%,transparent);
- border:0;border-radius:18px;overflow:hidden;
+ margin:0;background:color-mix(in srgb,var(--card2) 54%,transparent);
+ border:0;border-radius:17px;overflow:hidden;
 }
 #personalTaskDialog.personal-task-dialog label{
  display:flex;flex-direction:column;gap:3px;min-width:0;margin:0;
@@ -154,8 +155,12 @@
 #personalTaskDialog.personal-task-dialog input::placeholder{
  color:var(--secondary);opacity:.66;
 }
-#personalTaskDialog.personal-task-dialog input:focus-visible{
- outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+#personalTaskDialog.personal-task-dialog input[type=text]:focus,
+#personalTaskDialog.personal-task-dialog input[type=text]:focus-visible{
+ outline:0!important;box-shadow:none!important;
+}
+#personalTaskDialog.personal-task-dialog label:focus-within{
+ background:color-mix(in srgb,var(--text) 3%,transparent);
 }
 #personalTaskDialog.personal-task-dialog .personal-task-date-control{
  position:relative;display:flex;align-items:center;justify-content:flex-start;
@@ -199,10 +204,12 @@
 }
 #personalTaskDialog .sv-task-topbar .sv-task-save{
  min-width:94px;padding-inline:18px;
- background:color-mix(in srgb,var(--card2) 78%,transparent);
- border:1px solid color-mix(in srgb,var(--soft-line) 48%,transparent);
+ background:color-mix(in srgb,var(--card2) 55%,transparent);
+ border:1px solid color-mix(in srgb,var(--soft-line) 54%,transparent);
  color:var(--text);font-weight:620;
- -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(18px) saturate(130%);
+ backdrop-filter:blur(18px) saturate(130%);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
 }
 #personalTaskDialog .sv-task-topbar button:active{
  background:var(--seyveo-hdr-active,var(--card2));
@@ -249,12 +256,12 @@
  stroke-linecap:round;stroke-linejoin:round;
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-title{
- margin:13px 2px 17px!important;padding:0!important;
+ margin:10px 2px 14px!important;padding:0!important;
  color:var(--text);font-size:clamp(27px,7.1vw,31px);
  line-height:1.13;font-weight:620;letter-spacing:-.045em;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-head{
- min-height:44px;margin:0 0 8px;
+ min-height:44px;margin:0 0 5px;
  border:0;border-radius:0;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-head strong{
@@ -276,12 +283,13 @@
  column-gap:0;row-gap:1px;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day{
- width:min(42px,100%);height:42px;min-height:42px;margin:1px auto;
+ width:min(44px,100%);height:44px;min-height:44px;margin:0 auto;
  border-radius:50%;font-size:13px;font-weight:500;
 }
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-empty{min-height:44px}
 #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
- background:var(--text);color:var(--bg);border-color:var(--text);
+ background:color-mix(in srgb,var(--text) 89%,transparent);
+ color:var(--bg);border-color:transparent;
 }
 #personalTaskDialog #seyveoTaskDuePicker .sv-task-date-quick{
  display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -302,6 +310,19 @@
 }
 #personalTaskDialog #seyveoTaskDuePicker :is(.sv-task-date-back,.sv-task-date-quick button):focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
+}
+@media(prefers-reduced-transparency:reduce){
+ #personalTaskDialog .personal-task-sheet{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--bg);border-color:var(--soft-line);
+ }
+ #personalTaskDialog .sv-task-topbar .sv-task-save{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--card2);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #personalTaskDialog .personal-task-sheet{scroll-behavior:auto}
 }
 @media(max-width:350px){
  #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day,
