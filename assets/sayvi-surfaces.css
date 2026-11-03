@@ -316,7 +316,7 @@
 }
 #sayviSurfacePage .sv-mail-top-actions{
  box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;
- position:relative;min-height:44px;padding-left:4px;gap:5px;margin:0 0 3px;
+ position:relative;min-height:48px;padding:0 2px;gap:7px;margin:0 0 7px;
 }
 /* Shared SEYVEO wordmark language: thin, tracked, single-line section identity. */
 #sayviSurfacePage .sv-mail-brand{
@@ -356,10 +356,10 @@
  box-shadow:none;
 }
 #sayviSurfacePage .sv-mail-introduction-icon svg{width:25px;height:25px}
-#sayviSurfacePage .sv-mail-introduction-text{min-width:0}
+#sayviSurfacePage .sv-mail-introduction-text{min-width:0;flex:1 1 auto}
 #sayviSurfacePage .sv-mail-introduction-title{
- font-size:clamp(23px,6.4vw,29px);line-height:1.12;font-weight:580;
- letter-spacing:-.05em;color:var(--text);margin:0 0 2px;
+ font-size:clamp(23px,6.4vw,27px);line-height:1.14;font-weight:580;
+ letter-spacing:-.05em;color:var(--text);margin:0;
 }
 #sayviSurfacePage .sv-mail-introduction-copy{
  font-size:clamp(11.5px,3vw,14px);line-height:1.4;
@@ -488,19 +488,19 @@
 #sayviSurfacePage .sv-mail-letter-group{
  display:flex;flex-direction:column;
  border:0;border-radius:var(--sv-velvet-radius);
- background:var(--sm-surface);overflow:hidden;
+ background:color-mix(in srgb,var(--sm-surface) 72%,transparent);overflow:hidden;
 }
 #sayviSurfacePage .sv-mail-letter{
  display:flex;align-items:center;gap:10px;
  width:100%;min-width:0;min-height:66px;box-sizing:border-box;
  padding:8px 10px;
- border:0;border-bottom:1px solid color-mix(in srgb,var(--sm-line) 60%,transparent);
+ border:0;border-bottom:1px solid color-mix(in srgb,var(--sm-line) 34%,transparent);
  border-radius:0;background:transparent;
  color:var(--text);text-align:left;font:inherit;cursor:pointer;
 }
 #sayviSurfacePage .sv-mail-letter:last-child{border-bottom:0}
 #sayviSurfacePage .sv-mail-letter:active{background:var(--sm-tint)}
-#sayviSurfacePage .sv-mail-letter.is-unread{background:color-mix(in srgb,var(--sm-accent) 5%,transparent)}
+#sayviSurfacePage .sv-mail-letter.is-unread{background:color-mix(in srgb,var(--sm-accent) 3%,transparent)}
 #sayviSurfacePage .sv-mail-unread-dot{
  width:6px;height:6px;flex:none;border-radius:50%;
  background:var(--sm-accent);margin-right:-3px;
