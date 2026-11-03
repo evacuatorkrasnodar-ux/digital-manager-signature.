@@ -607,6 +607,7 @@ function mailView(){
   content.append(create('p','sv-mail-empty','Отправленные письма появятся после подключения почтового сервиса. Учебные примеры ничего не отправляют.'));
  }
  function paint(){
+  page.dataset.svMailMode=mailEditorOpen?'editor':mailCurrent?'detail':'overview';
   section.dataset.mailFolder=mailFolder;
   section.classList.toggle('sv-mail-composing',mailEditorOpen);
   introCopy.hidden=mailEditorOpen||!!mailCurrent;
