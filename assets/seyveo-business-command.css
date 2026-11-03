@@ -371,13 +371,34 @@
 #tasksPage #svcpTaskList .svcp-task-section-head small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums}
 #tasksPage #svcpTaskList .svcp-task-active{display:grid;gap:0}
 #tasksPage #svcpTaskList .svcp-task-zero{font-size:12px;line-height:1.55;padding:8px 0;color:var(--secondary);margin:0}
-#tasksPage #svcpTaskList .svcp-task{min-height:60px;gap:10px;align-items:center;display:flex;padding:7px 0}
+#tasksPage #svcpTaskList .svcp-task{min-height:64px;gap:7px;align-items:center;display:flex;flex-wrap:wrap;padding:7px 0}
 #tasksPage #svcpTaskList .svcp-task input[type=checkbox]{width:20px;height:20px;min-width:20px;min-height:20px;flex:none;accent-color:var(--seyveo-emerald)}
 #tasksPage #svcpTaskList .svcp-task-copy{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-#tasksPage #svcpTaskList .svcp-task-title{display:block;font-size:13px;line-height:1.42}
+#tasksPage #svcpTaskList .svcp-task-title{display:block;max-width:100%;font-size:13px;line-height:1.42;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #tasksPage #svcpTaskList .svcp-task-assignee{display:block;font-size:11px;line-height:1.4}
-#tasksPage #svcpTaskList .svcp-task-actions{display:flex;align-items:flex-end;flex-direction:column;gap:2px;flex:none;min-width:76px}
-#tasksPage #svcpTaskList .svcp-task-actions button{font:inherit;font-size:11.5px;min-height:31px;border:0;border-radius:0;background:none;padding:5px 2px;cursor:pointer;white-space:nowrap}
+#tasksPage #svcpTaskList .svcp-task-actions{display:flex;align-items:center;flex-direction:row;gap:0;flex:none;min-width:0}
+#tasksPage #svcpTaskList .svcp-task-actions button{
+ font:inherit;font-size:12px;min-height:44px;border:0;border-radius:12px;
+ background:transparent;padding:8px 4px;cursor:pointer;white-space:nowrap
+}
+#tasksPage #svcpTaskList .svcp-task-actions .svcp-task-sayvi{font-weight:570;color:var(--text);min-width:66px}
+#tasksPage #svcpTaskList .svcp-task-actions .svcp-task-more{
+ display:grid;place-items:center;min-width:44px;width:44px;
+ font-size:21px;line-height:1;color:var(--secondary)
+}
+#tasksPage #svcpTaskList .svcp-task-actions button:active{background:var(--seyveo-hdr-active,var(--card2))}
+#tasksPage #svcpTaskList .svcp-task-extra[hidden]{display:none!important}
+#tasksPage #svcpTaskList .svcp-task-extra{
+ display:flex;flex:1 0 100%;align-items:center;justify-content:flex-end;
+ flex-wrap:wrap;gap:0 14px;padding:2px 2px 4px 29px
+}
+#tasksPage #svcpTaskList .svcp-task-extra button{
+ min-height:44px;padding:7px 2px;border:0;border-radius:0;background:transparent;
+ color:var(--text);font:inherit;font-size:12px;font-weight:500;cursor:pointer
+}
+#tasksPage #svcpTaskList .svcp-task-extra .svcp-ghost{color:var(--secondary)}
+#tasksPage #svcpTaskList .svcp-task-extra button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
 #tasksPage #svcpTaskList .svcp-task-discuss{color:var(--text);font-weight:560}
 #tasksPage #svcpTaskList .svcp-task-actions .svcp-ghost{color:var(--secondary);font-weight:400}
 #tasksPage #svcpTaskList .svcp-task-actions button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
@@ -394,7 +415,7 @@
 #tasksPage #svcpTaskList .svcp-duplicate-summary{padding:9px 1px}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar #svcpReturnToTasks{color:var(--text);border-color:var(--seyveo-hdr-outline)}
 :is(#seyveoBusinessCommandPage,#unifiedTasksChatHost) .svcp-conversation-bar #svcpReturnToTasks[hidden]{display:none!important}
-@media(max-width:365px){#tasksPage #svcpTaskList .svcp-task{gap:7px}#tasksPage #svcpTaskList .svcp-task-actions{min-width:67px}#tasksPage #svcpTaskList .svcp-task-actions button{font-size:11px;padding-inline:0}}
+@media(max-width:365px){#tasksPage #svcpTaskList .svcp-task{gap:5px}#tasksPage #svcpTaskList .svcp-task-actions .svcp-task-sayvi{min-width:61px}#tasksPage #svcpTaskList .svcp-task-extra{gap:0 9px}}
 @media(prefers-reduced-motion:reduce){#tasksPage #svcpTaskList .svcp-history-chevron{transition:none}}
 
 /* Task discussion · two calm suggestions, never auto-send. */
