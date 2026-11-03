@@ -605,6 +605,7 @@ for(const eventName of ['input','change','blur'])date.addEventListener(eventName
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';
  $('personalTaskDialogTitle').textContent='Новое дело';
+ $('personalTaskSave').textContent='Добавить';
  form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
@@ -658,6 +659,7 @@ window.addEventListener('seyveo:home-task-edit',event=>{
  openDialog();
  editingTaskId=id;
  $('personalTaskDialogTitle').textContent='Изменить дело';
+ $('personalTaskSave').textContent='Сохранить';
  input.value=task.title;
  date.value=task.due;
  syncDueDateDisplay();
