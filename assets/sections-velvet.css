@@ -209,7 +209,7 @@
 }
 
 /* WHITE VELVET — quiet white paper surfaces, graphite text. */
-:root[data-theme=light] #calendarPage :is(.cal-month,.cal-agenda,.calendar-spaces-grid),
+:root[data-theme=light] #calendarPage :is(.cal-agenda,.calendar-spaces-grid),
 :root[data-theme=light] #calendarSpaceDialog .cal-space-list,
 :root[data-theme=light] #managePage .manage-card,
 :root[data-theme=light] .seyveo-pulse-dialog :is(.pulse-stat,.pulse-chart-box),
