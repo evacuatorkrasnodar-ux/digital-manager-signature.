@@ -139,7 +139,7 @@
 .cal-day[data-holiday=rest] .cal-day-number{color:var(--text);font-weight:565}
 /* Today's white circle must keep readable contrast on a holiday. */
 .cal-day[data-today=true][data-holiday] .cal-day-number{color:var(--bg);font-weight:675}
-.cal-day[data-today=true] .cal-day-number{color:var(--bg);background:var(--text);border-radius:50%;min-width:30px;height:30px;display:grid;place-items:center;margin:-5px 0 -4px;font-weight:650}
+.cal-day[data-today=true] .cal-day-number{color:var(--bg);background:var(--text);border-radius:50%;min-width:30px;height:30px;display:grid;place-items:center;margin:0;font-weight:650}
 .cal-day-number{display:grid;place-items:center;min-width:30px;height:30px}
 .cal-day-dots{display:flex;align-items:center;justify-content:center;gap:3px;height:5px}
 .cal-day-dots i{display:block;width:4px;height:4px;border-radius:50%;background:var(--secondary)}
