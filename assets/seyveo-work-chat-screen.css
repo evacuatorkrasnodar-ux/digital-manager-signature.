@@ -274,6 +274,43 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
  box-shadow:inset 0 1px 0 var(--sv-input-gloss);
 }
+/* The file chooser is one compact ribbon like emoji, not a second menu floor.
+   Barcode manual entry unfolds inside the same surface when requested. */
+#svcpWorkChatScreen #svcpCameraTray:not([hidden]){
+ position:absolute;z-index:8;box-sizing:border-box;
+ left:50%;right:auto;bottom:calc(var(--seyveo-dock-bottom,8px) + 65px);
+ transform:translateX(-50%);
+ display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
+ gap:5px;padding:5px 7px;width:min(430px,calc(100% - 22px));
+ max-width:calc(100% - 22px);height:54px;min-height:54px;max-height:54px;
+ overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+ border:1px solid var(--sv-input-border);border-radius:var(--sv-input-radius);
+ background:var(--sv-input-surface);
+ -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
+ box-shadow:inset 0 1px 0 var(--sv-input-gloss);
+}
+#svcpWorkChatScreen #svcpCameraTray::-webkit-scrollbar{display:none}
+#svcpWorkChatScreen #svcpCameraTray>button{
+ flex:0 0 auto;min-height:44px;min-width:85px;padding:7px 10px;
+ border:0;border-radius:13px;background:transparent;
+ color:var(--text);font:inherit;font-size:11.5px;line-height:1.25;
+ white-space:nowrap;box-shadow:none;
+}
+#svcpWorkChatScreen #svcpCameraTray>button>span{font-size:16px;color:var(--secondary)}
+#svcpWorkChatScreen #svcpCameraTray>button:active{
+ background:color-mix(in srgb,var(--card2) 48%,transparent)
+}
+#svcpWorkChatScreen #svcpCameraTray>small{
+ position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip-path:inset(50%);white-space:nowrap;
+}
+#svcpWorkChatScreen #svcpCameraTray:has(#svcpBarcodeManual:not([hidden])){
+ height:auto;max-height:min(225px,36dvh);flex-wrap:wrap;overflow-y:auto;
+}
+#svcpWorkChatScreen #svcpCameraTray #svcpBarcodeManual:not([hidden]){
+ flex:1 0 100%;min-width:0;max-width:100%;box-sizing:border-box;
+ padding:8px 5px 4px;border-top:1px solid var(--sv-input-border);
+}
 #svcpWorkChatScreen #svcpComposerEmojiStrip::-webkit-scrollbar{display:none}
 #svcpWorkChatScreen #svcpComposerEmojiStrip :is(.svcp-composer-emoji-choice,.svcp-composer-emoji-expand){
  flex:0 0 44px;min-width:44px;min-height:44px;height:44px;
@@ -298,7 +335,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen:focus-within #svcpChatForm{padding-bottom:5px!important}
 /* When an attachment/reply tray opens, keep it in ordinary layout instead of overlapping controls. */
-#svcpWorkChatScreen .svcp-chat:has(:is(#svcpCameraTray,#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
+#svcpWorkChatScreen .svcp-chat:has(:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden])) #svcpChatForm{
  position:relative!important;inset:auto!important;flex:0 0 auto!important
 }
 #svcpWorkChatScreen .svcp-chat:has(#svcpVoiceCapture:not([hidden])) #svcpMessages{padding-bottom:12px!important}
@@ -781,7 +818,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
 }
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(:is(
- #svcpCameraTray,#svcpReplyPreview,
+ #svcpReplyPreview,
  #svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick
 ):not([hidden])) #svcpChatForm{
  position:relative!important;left:auto!important;right:auto!important;
