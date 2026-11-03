@@ -1,5 +1,8 @@
-/* SEYVEO mobile density level 3: only compact Quiet Cinema; plasma SVG unchanged. */
-@media(max-height:740px), (max-width:380px){
+/* SEYVEO Card System v2 · layout-only compact Home rules.
+ * The approved orb and dock retain their geometry. This stylesheet DOES NOT
+ * create copy, disclosure controls, card UI or another Home queue.
+ * Full sender, fact, proposal and actions remain readable on small screens. */
+@media (max-height:740px), (max-width:380px){
  #homePage.lm-focus #orbCluster{height:clamp(96px,23vw,124px)!important}
  #homePage.lm-focus #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
  #homePage.lm-focus #stage{min-height:clamp(178px,25vh,220px)!important;padding-bottom:2px}
@@ -7,71 +10,45 @@
  #seyveoLivingMoment .lm-field{padding-top:5px}
  #seyveoLivingMoment .lm-hero-art{width:39px;height:39px}
  #seyveoLivingMoment .lm-hero{grid-template-columns:39px minmax(0,1fr);gap:6px}
- #seyveoLivingMoment .lm-secondary{max-height:110px}
+ #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-note{
+  font-size:11px;line-height:1.4
+ }
 }
-/* Compact first view. Expanded content still uses the original action flow. */
-#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .lm-mail-content:not([hidden]),
-#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .lm-document-content:not([hidden]){
- max-height:92px;overflow:hidden;mask-image:linear-gradient(#000 76%,transparent);
+#seyveoLivingMoment .lm-field[data-lm-mode="preview"]
+ :is(.lm-mail-content,.lm-document-content):not([hidden]){
+ max-height:none;overflow:visible;mask-image:none;-webkit-mask-image:none;
 }
-#seyveoLivingMoment .lm-field[data-lm-mode=preview]:not(.sv-card-expanded) .sv-copy-guide{max-height:48px;overflow:hidden}
-#seyveoLivingMoment .sv-card-expand{align-self:flex-start;border:0;background:none;color:var(--seyveo-emerald,var(--text));padding:4px 2px;min-height:44px;font:inherit;font-size:12px;cursor:pointer}
-#seyveoLivingMoment .sv-card-expand[hidden]{display:none!important}
-#seyveoLivingMoment .lm-field.sv-card-expanded .lm-mail-content,
-#seyveoLivingMoment .lm-field.sv-card-expanded .lm-document-content{max-height:none;mask-image:none}
-
-/* Elena's message is already in the hero. Never repeat the same message below. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-intro:first-child,
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-section-label:nth-child(2),
-#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-draft:nth-child(3){display:none!important}
-#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-note{font-size:10px;line-height:1.3;opacity:.72}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-mail-content:not([hidden]) > .lm-mail-draft:nth-child(3){
+ display:none!important;
+}
+/* Work message is already in the hero; never show it twice. */
 #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-primary{gap:3px}
-#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{gap:7px}
-#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-secondary .lm-inline-item{min-height:42px}
-/* The explanatory paragraph remains available when expanding mail/document. */
-#seyveoLivingMoment .lm-field[data-lm-mode="preview"]:not(.sv-card-expanded) .sv-copy-guide{display:none}
-
-/* Dynamic third level: expanded content or active editor needs vertical room.
-   Scope only to Home with Quiet Cinema focus; keep orb SVG untouched. */
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions{column-gap:12px;row-gap:0}
+#seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-secondary .lm-inline-item{min-height:44px}
+/* Full mail source, question and Sayvi draft are useful without expanding. */
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content:not([hidden]){
+ max-height:none;overflow:visible;mask-image:none;-webkit-mask-image:none;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content .lm-mail-draft{
+ display:block;overflow:visible;max-height:none;white-space:pre-wrap;
+ -webkit-line-clamp:unset;
+}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-secondary .lm-inline-item{min-height:44px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:3px}
+#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions{margin-bottom:0;row-gap:0}
+/* More breathing room below the sphere, without shifting the approved dock. */
+#homePage.lm-focus #orbCluster{margin-bottom:14px}
+#homePage.lm-focus .message{margin-top:10px}
+#homePage.lm-focus.sv-orb-level-3 #orbCluster{margin-bottom:17px}
 #homePage.lm-focus.sv-orb-level-3 #orbCluster{height:clamp(96px,24vw,128px)!important}
 #homePage.lm-focus.sv-orb-level-3 #orb{transform:translate3d(0,-2px,0) scale(.45)!important}
-#homePage.lm-focus.sv-orb-level-3 #stage{min-height:clamp(175px,25vh,220px)!important;padding-bottom:2px}
+#homePage.lm-focus.sv-orb-level-3 #stage{
+ min-height:clamp(175px,25vh,220px)!important;padding-bottom:2px;
+}
 #homePage.lm-focus.sv-orb-level-3 .message{min-height:52px;margin-top:5px}
 @media(prefers-reduced-motion:reduce){
  #homePage.lm-focus.sv-orb-level-3 #orb,
  #homePage.lm-focus.sv-orb-level-3 #orbCluster{transition:none}
 }
-
-/* Compact mail summary: no fade-mask that slices sentences or controls. */
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content:not([hidden]){
- max-height:none;overflow:visible;mask-image:none;
-}
-/* The message origin must remain visible in the Home demo; privacy
-   context and the "not sent" status must not be hidden by compact mode. */
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-intro,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-source-line,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-note,
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content > .lm-mail-address{
- display:block;
-}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-mail-content .lm-mail-draft{
- display:block;overflow:visible;max-height:none;-webkit-line-clamp:unset;
-}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"]:not(.sv-card-expanded) .lm-mail-content .lm-section-label{font-size:10px}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-secondary .lm-inline-item{min-height:40px}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:3px}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .sv-card-expand{display:none!important}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"].sv-card-expanded .lm-mail-content .lm-mail-draft{display:block;overflow-wrap:anywhere}
-
-/* Phone readability: reserve a real gap below the original sphere. */
-#homePage.lm-focus #orbCluster{margin-bottom:14px}
-#homePage.lm-focus .message{margin-top:10px}
-#homePage.lm-focus.sv-orb-level-3 #orbCluster{margin-bottom:17px}
-/* Expansion control lives immediately below the actions, never after a spacer. */
-#seyveoLivingMoment .lm-field .sv-card-expand{
- display:inline-flex;align-items:center;justify-content:flex-start;
- margin:0 0 2px 4px;padding:0 2px;min-height:32px;
- font:inherit;font-size:12px;line-height:1.25;
-}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-primary{gap:2px}
-#seyveoLivingMoment .lm-field[data-lm-subject="mail"] .lm-actions{margin-bottom:0;row-gap:0}
