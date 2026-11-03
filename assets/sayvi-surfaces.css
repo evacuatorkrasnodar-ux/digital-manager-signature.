@@ -785,6 +785,24 @@
 #sayviSurfacePage .sv-mail-editor-actions .sv-deep-intent--lead{
  color:var(--text);font-weight:640;
 }
+#sayviSurfacePage .sv-mail-polish-preview{
+ margin:8px 0;padding:12px 13px;
+ border:1px solid color-mix(in srgb,var(--sm-line) 52%,transparent);
+ border-radius:16px;background:color-mix(in srgb,var(--sm-surface) 54%,transparent);
+ color:var(--text);
+}
+#sayviSurfacePage .sv-mail-polish-preview[hidden]{display:none!important}
+#sayviSurfacePage .sv-mail-polish-preview strong{font-size:12px;font-weight:590}
+#sayviSurfacePage .sv-mail-polish-text{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ font-size:13px;line-height:1.55;margin:9px 0;
+}
+#sayviSurfacePage .sv-mail-polish-actions{display:flex;gap:10px;flex-wrap:wrap}
+#sayviSurfacePage .sv-mail-polish-actions .sv-deep-intent{
+ min-height:44px;padding:8px 10px;border-radius:999px;
+ background:color-mix(in srgb,var(--sm-tint) 55%,transparent);
+ font-size:12px;text-decoration:none;
+}
 #sayviSurfacePage .sv-mail-detail-actions{
  gap:8px;margin:0 0 12px;
  padding:9px 0 0;border-top:1px solid color-mix(in srgb,var(--sm-line) 65%,transparent);
