@@ -434,36 +434,9 @@ function mailView(){
    info.textContent='Черновик сохранён в текущем сеансе. Ничего не отправлено.';
   });
   const actions=create('div','sv-mail-editor-actions');
-  // Local formatting is only a suggestion. Never silently replace someone's draft.
-  const preview=create('section','sv-mail-polish-preview');
-  preview.hidden=true;preview.setAttribute('aria-label','Предложение Сэйви');
-  const previewTitle=create('strong','','Сэйви предлагает оформление');
-  const previewText=create('p','sv-mail-polish-text');
-  const previewActions=create('div','sv-mail-polish-actions');
-  const apply=intent('Применить',()=>{
-   if(!preview.hidden){
-    message.value=previewText.textContent;
-    message.dispatchEvent(new Event('input',{bubbles:true}));
-    preview.hidden=true;
-    status.textContent='Оформление применено. Проверьте текст перед сохранением.';
-   }
-  });
-  const decline=intent('Оставить как было',()=>{preview.hidden=true});
-  previewActions.append(apply,decline);
-  preview.append(previewTitle,previewText,previewActions);
-  const polish=intent('✦ Сэйви · улучшить текст',()=>{
-   const cleaned=polishMailLocally(message.value);
-   if(!cleaned){status.textContent='Сначала напишите текст письма.';return}
-   if(cleaned===message.value){preview.hidden=true;status.textContent='Пробелы и оформление уже в порядке. Для полноценной редакции нужен подключённый ИИ.';return}
-   previewText.textContent=cleaned;
-   preview.hidden=false;
-   status.textContent='Это локальная правка пробелов и оформления, не проверка смысла или фактов.';
-  });
-  message.addEventListener('input',()=>{preview.hidden=true});
-  actions.append(polish);
   const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
   actions.append(save);
-  form.append(actions,preview,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
+  form.append(actions,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
   content.append(form);
  }
  /* Local, explainable mail assistance for the development prototype.
