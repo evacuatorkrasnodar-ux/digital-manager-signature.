@@ -247,6 +247,22 @@ html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="mail"]{--sv
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="browser"]{--sv-world-icon:#8ed4fb}
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="play"]{--sv-world-icon:#f19da6}
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="music"]{--sv-world-icon:#c7aafa}
+/* White theme: readable but still delicate colored ink, never colored text
+   or colored tile backgrounds. Graphite and Emerald keep their existing hues. */
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="calendar"]{--sv-world-icon:#a37a2e}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="notes"]{--sv-world-icon:#7d5bac}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="health"]{--sv-world-icon:#ae596b}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="care"]{--sv-world-icon:#af5b79}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="family"]{--sv-world-icon:#7860ae}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="contacts"]{--sv-world-icon:#328663}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="connections"]{--sv-world-icon:#327eae}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="smart-home"]{--sv-world-icon:#358b6a}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="documents"]{--sv-world-icon:#357ca8}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="wallet"]{--sv-world-icon:#997528}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="mail"]{--sv-world-icon:#31876b}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="browser"]{--sv-world-icon:#287fab}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="play"]{--sv-world-icon:#ad5665}
+html.sv-space-active[data-theme="light"] #lifePage #calendarSpaces [data-calendar-space="music"]{--sv-world-icon:#7e5aaf}
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="connections"] > svg.seyveo-telegram-white,
 html.sv-space-active #lifePage #calendarSpaces [data-calendar-space="connections"] > svg.seyveo-telegram-white path {
   stroke:none!important;fill:var(--sv-world-icon)!important;
