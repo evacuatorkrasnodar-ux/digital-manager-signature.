@@ -1112,13 +1112,6 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
  font-weight:550!important;font-size:12.5px!important;
  letter-spacing:-.014em;
 }
-#homePage #seyveoLivingMoment .lm-actions :is(
- .lm-polymer--main,
- .lm-polymer:nth-child(2),
- .lm-polymer:nth-child(4)
-):not([hidden]):is(.lm-polymer--main,.lm-polymer:nth-child(2),.lm-polymer:nth-child(4)){
- transition:transform 180ms ease,opacity 180ms ease;
-}
 /* Main execution, employee Sayvi reply, employee Send, contract analysis. */
 #homePage #seyveoLivingMoment .lm-actions :is(
  .lm-polymer--main,
@@ -1188,7 +1181,7 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 @media(prefers-reduced-transparency:reduce){
  #homePage #seyveoLivingMoment .lm-actions .lm-polymer--main{
   -webkit-backdrop-filter:none;backdrop-filter:none;
-  background:var(--sv-air-control)!important;
+  background:var(--sv-action-primary)!important;
  }
 }
 @media(prefers-reduced-motion:reduce){
