@@ -1,0 +1,92 @@
+/* SEYVEO global Search — one transient canvas above existing content.
+   Shared velvet material belongs to the fixed dock, not to result rows. */
+#svGlobalSearch[hidden]{display:none!important}
+#svGlobalSearch{
+ position:fixed;inset:0;z-index:29;
+ box-sizing:border-box;display:flex;flex-direction:column;
+ width:100%;min-width:0;height:100dvh;
+ padding:calc(env(safe-area-inset-top,0px) + 45px) max(16px,calc((100vw - 520px)/2))
+  calc(env(safe-area-inset-bottom,0px) + 108px);
+ background:var(--bg,#111917);color:var(--text);
+ overflow:hidden;
+}
+#svGlobalSearch .sv-search-header{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;min-height:44px;margin-bottom:15px;
+}
+#svGlobalSearch .sv-search-header h2{
+ margin:0;padding:0;font-size:clamp(30px,7vw,35px);
+ font-weight:650;letter-spacing:-.045em;line-height:1.1;
+ color:var(--text);
+}
+#svGlobalSearch .sv-search-close{
+ padding:6px 1px;min-width:54px;min-height:44px;
+ border:0;border-radius:0;background:transparent;color:var(--secondary);
+ font:inherit;font-weight:500;font-size:14px;text-align:right;
+ -webkit-tap-highlight-color:transparent;
+}
+#svGlobalSearch .sv-search-input-shell{
+ display:flex;align-items:center;gap:10px;box-sizing:border-box;
+ height:46px;min-height:46px;padding:0 15px;
+ border:0;border-radius:15px;background:var(--sv-air-control,var(--card2));
+}
+#svGlobalSearch .sv-search-input-shell svg{
+ display:block;flex:none;width:20px;height:20px;fill:none;stroke:var(--secondary);
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+#svGlobalSearch input[type=search]{
+ min-width:0;flex:1;width:100%;height:100%;padding:0;outline:none;
+ border:0;background:transparent;box-shadow:none;color:var(--text);
+ font:inherit;font-size:16px;letter-spacing:-.01em;
+ -webkit-appearance:none;appearance:none;
+}
+#svGlobalSearch input::placeholder{color:var(--secondary);opacity:.8}
+#svGlobalSearch .sv-search-results{
+ min-height:0;flex:1;overflow-y:auto;overflow-x:hidden;
+ margin-top:12px;padding:0 0 8px;overscroll-behavior:contain;
+ scrollbar-width:none;
+}
+#svGlobalSearch .sv-search-results::-webkit-scrollbar{display:none}
+#svGlobalSearch .sv-search-results-heading{
+ margin:18px 0 8px;padding:0 7px;
+ font-size:11px;font-weight:580;letter-spacing:.045em;color:var(--secondary);
+}
+#svGlobalSearch .sv-search-result{
+ appearance:none;display:grid;grid-template-columns:28px minmax(0,1fr) 15px;
+ align-items:center;gap:11px;box-sizing:border-box;
+ width:100%;min-height:56px;margin:0;padding:7px 7px;
+ border:0;border-radius:0;background:transparent;box-shadow:none;
+ color:var(--text);font:inherit;text-align:left;cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+}
+#svGlobalSearch .sv-search-result:active{opacity:.67}
+#svGlobalSearch .sv-search-result-symbol{
+ width:26px;height:26px;display:grid;place-items:center;
+ font-size:22px;font-weight:300;color:var(--secondary);opacity:.88;
+}
+#svGlobalSearch .sv-search-result-copy{display:flex;min-width:0;flex-direction:column;gap:2px}
+#svGlobalSearch .sv-search-result-copy strong{
+ overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+ font-size:14.5px;font-weight:540;line-height:1.3;letter-spacing:-.02em;
+}
+#svGlobalSearch .sv-search-result-copy small{
+ color:var(--secondary);font-size:11.4px;font-weight:450;line-height:1.3;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#svGlobalSearch .sv-search-result-arrow{
+ color:var(--secondary);font-size:18px;opacity:.6;font-weight:300;
+}
+#svGlobalSearch .sv-search-caption,#svGlobalSearch .sv-search-empty{
+ margin:22px 6px 0;line-height:1.5;color:var(--secondary);font-size:12.5px;
+}
+#svGlobalSearch button:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:8px}
+html.sv-global-search-open .dock>#navManage svg{
+ stroke:var(--seyveo-nav-ink)!important;
+}
+@media(max-width:370px){
+ #svGlobalSearch{padding-left:12px;padding-right:12px}
+ #svGlobalSearch .sv-search-result{min-height:52px}
+}
+@media(prefers-reduced-motion:reduce){
+ #svGlobalSearch .sv-search-result{transition:none}
+}
