@@ -1065,9 +1065,18 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  // A short idle interval prevents navigating in the middle of keystrokes.
  const homeNameInput=$('svSmartStartHomeName');
  let nameIdleTimer=null,nameComposing=false;
+ const homeTitle=$('svSmartStartHomeTitle');
+ const homeMessage=$('svSmartStartHomeMessage');
+ const homeHint=$('svSmartStartHomeHint');
  function clearNameIdle(){
   if(nameIdleTimer!==null)clearTimeout(nameIdleTimer);
   nameIdleTimer=null;
+ }
+ function resetNameGreeting(){
+  home?.classList.remove('is-greeting');
+  if(homeTitle)homeTitle.textContent='Привет, я Сэйви';
+  if(homeMessage)homeMessage.textContent='Как тебя зовут? После знакомства помогу настроить SEYVEO под твою жизнь и бизнес.';
+  if(homeHint)homeHint.textContent='Напиши имя — дальше я всё покажу.';
  }
  function enterChatAfterName(){
   clearNameIdle();
@@ -1077,28 +1086,37 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   home.hidden=true;
   begin({name,resume:!!get(DRAFT_KEY)});
  }
- function scheduleNameTransition(){
+ function greetBeforeChat(){
   clearNameIdle();
-  if(nameComposing||!home||home.hidden||session)return;
-  const name=String(homeNameInput?.value||'').trim();
+  if(!home||home.hidden||session||document.visibilityState==='hidden'||nameComposing)return;
+  const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(name.length<2)return;
-  nameIdleTimer=setTimeout(enterChatAfterName,1800);
+  home.classList.add('is-greeting');
+  if(homeTitle)homeTitle.textContent='Рада знакомству, '+name+'!';
+  if(homeMessage)homeMessage.textContent='Ну что, настроим твой бизнес? Я помогу всё сделать по шагам.';
+  if(homeHint)homeHint.textContent='Открываю чат Сэйви…';
+  // Give the greeting a moment to be read. No "Continue" control.
+  nameIdleTimer=setTimeout(enterChatAfterName,1450);
+ }
+ function scheduleNameTransition(){
+  clearNameIdle();resetNameGreeting();
+  if(nameComposing||!home||home.hidden||session)return;
+  if(String(homeNameInput?.value||'').trim().length<2)return;
+  // Avoid navigating in the middle of typing a name.
+  nameIdleTimer=setTimeout(greetBeforeChat,1600);
  }
  homeNameInput?.addEventListener('input',scheduleNameTransition);
  homeNameInput?.addEventListener('change',scheduleNameTransition);
- homeNameInput?.addEventListener('compositionstart',()=>{
-  nameComposing=true;clearNameIdle();
- });
- homeNameInput?.addEventListener('compositionend',()=>{
-  nameComposing=false;scheduleNameTransition();
- });
+ homeNameInput?.addEventListener('compositionstart',()=>{nameComposing=true;clearNameIdle()});
+ homeNameInput?.addEventListener('compositionend',()=>{nameComposing=false;scheduleNameTransition()});
  homeNameInput?.addEventListener('keydown',event=>{
   if(event.key!=='Enter'||event.isComposing||nameComposing)return;
-  event.preventDefault();
-  enterChatAfterName();
+  event.preventDefault();greetBeforeChat();
  });
- homeForm?.addEventListener('submit',event=>{
-  event.preventDefault();enterChatAfterName();
+ homeForm?.addEventListener('submit',event=>{event.preventDefault();greetBeforeChat()});
+ document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')clearNameIdle();
+  else if(home&&!home.hidden&&!session)scheduleNameTransition();
  });
  $('svSmartStartHomeLater')?.addEventListener('click',()=>{
   clearNameIdle();
