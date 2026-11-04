@@ -1213,7 +1213,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   homeNameInput?.blur(); // Close the iPhone keyboard so Sayvi's greeting is visible.
   home.classList.add('is-greeting');
   if(homeTitle)homeTitle.textContent='Рада знакомству, '+name+'!';
-  if(homeMessage)homeMessage.textContent='Ну что, настроим твой бизнес? Я помогу всё сделать по шагам.';
+  if(homeMessage)homeMessage.textContent='Ну что, настроим SEYVEO под тебя? Для бизнеса или для себя — решим вместе.';
   if(homeHint)homeHint.textContent='Открываю чат Сэйви…';
   // Give the greeting a moment to be read. No "Continue" control.
   nameIdleTimer=setTimeout(enterChatAfterName,1450);
