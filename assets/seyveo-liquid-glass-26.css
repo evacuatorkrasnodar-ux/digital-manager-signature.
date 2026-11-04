@@ -77,45 +77,11 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  /* Clear optical glass, not a solid graphite pill. */
  background:linear-gradient(155deg,rgba(239,248,255,.19) 0%,rgba(214,234,246,.085) 47%,rgba(220,237,249,.055) 100%)!important;
  /* A diffused glow within the glass, not a bright edge or raised bezel. */
- box-shadow:inset 0 3px 13px rgba(226,245,255,.105),inset 0 -4px 13px rgba(181,219,241,.055)!important;
+ box-shadow:inset 0 3px 12px rgba(226,245,255,.065),inset 0 -4px 12px rgba(181,219,241,.03)!important;
  -webkit-backdrop-filter:blur(24px) saturate(150%)!important;
  backdrop-filter:blur(24px) saturate(150%)!important;
  pointer-events:none!important;
  z-index:-1!important;
-}
-/* A tiny optical echo of lettering BEHIND the translucent lens:
- * softly diffused rather than drawn as a bright rim. Pure decoration only. */
-html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::after{
- content:"Сэйви  ·  ответ"!important;
- position:absolute!important;
- display:flex!important;
- align-items:center!important;
- justify-content:center!important;
- inset:5px 0!important;
- overflow:hidden!important;
- border:0!important;
- border-radius:999px!important;
- color:rgba(238,248,255,.38)!important;
- font-size:12px!important;
- font-weight:460!important;
- letter-spacing:.015em!important;
- white-space:nowrap!important;
- filter:blur(4px)!important;
- opacity:.39!important;
- transform:translate(4px,2px)!important;
- background:none!important;
- box-shadow:none!important;
- pointer-events:none!important;
- z-index:-2!important;
-}
-:root[data-theme=light] body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::after{
- color:rgba(66,119,113,.32)!important;
-}
-@media(prefers-reduced-transparency:reduce){
- html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3))::after{display:none!important}
 }
 :root[data-theme=light] body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
