@@ -495,7 +495,7 @@ function renderTurns(turns){
        nodes.push(group);
        continue;
      }
-     if(String(value||'').trim()){
+     if(String(value||'').trim()&&!turn.smartStart){
        const actions=document.createElement('div');
        actions.className='seyveo-conversation-reply-actions';
        const answer=String(value);
