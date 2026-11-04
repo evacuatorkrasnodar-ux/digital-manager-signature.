@@ -73,7 +73,7 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
  <section class="chat-space" aria-label="Сообщения">
   <div class="chat-thread" id="chatThread" role="log" aria-label="Переписка с Сэйви" aria-live="polite" aria-relevant="additions text">
    <div class="chat-turns" id="chatTurns">
-    <p class="chat-empty" id="chatEmpty">Сэйви на связи</p>
+    <p class="chat-empty" id="chatEmpty" hidden></p>
    </div>
   </div>
  </section>
@@ -136,7 +136,7 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
   appendMessage,
   clear(){
    for(const entry of messages.values())entry.node.remove();
-   messages.clear();empty.hidden=false;
+   messages.clear();empty.hidden=true;
   }
  });
 
