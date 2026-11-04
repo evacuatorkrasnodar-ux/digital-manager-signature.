@@ -234,7 +234,7 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #question{
  border:0!important;border-radius:0!important;box-shadow:none!important;
  color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
  caret-color:var(--text)!important;outline:0!important;resize:none!important;
- font:400 16px/24px inherit;line-height:24px!important;font-size:16px!important;
+ font-family:inherit!important;font-weight:400!important;line-height:24px!important;font-size:16px!important;
  overflow-y:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
@@ -296,7 +296,7 @@ html.seyveo-conversation #seyveoChatTools:not([hidden]){
 html.seyveo-conversation #seyveoChatTools button{
  min-height:42px;border:0;border-radius:12px;
  background:transparent;color:var(--text);text-align:left;
- padding:8px 11px;font:450 13px/1.4 inherit;
+ padding:8px 11px;font-family:inherit;font-weight:450;font-size:13px;line-height:1.4;
 }
 html.seyveo-conversation #seyveoChatTools button:active{
  background:color-mix(in srgb,var(--card2) 45%,transparent);
@@ -321,7 +321,7 @@ html.seyveo-conversation .sv-smart-start-chips{display:flex;flex-wrap:wrap;gap:7
 html.seyveo-conversation .sv-smart-start-btn{
  min-height:40px;padding:8px 13px;border-radius:20px;
  border:1px solid var(--soft-line);background:var(--sv-liquid-nav-material,var(--card2));
- color:var(--text);font:480 13px/1.4 inherit;
+ color:var(--text);font-family:inherit;font-weight:480;font-size:13px;line-height:1.4;
 }
 html.seyveo-conversation .sv-smart-start-btn.is-primary{background:var(--text);color:var(--bg)}
 html.seyveo-conversation .sv-smart-start-answer,
@@ -329,7 +329,7 @@ html.seyveo-conversation .sv-smart-start-footer{display:flex;flex-wrap:wrap;gap:
 html.seyveo-conversation .sv-smart-start-answer input{
  min-width:0;flex:1 1 130px;min-height:42px;padding:9px 11px;
  background:var(--card2);color:var(--text);border:1px solid var(--soft-line);border-radius:12px;
- font:400 15px/1.5 inherit;
+ font-family:inherit;font-weight:400;font-size:15px;line-height:1.5;
 }
 html.seyveo-conversation .sv-smart-start-summary p{
  font-size:12.5px;line-height:1.5;margin:6px 0;color:var(--text);
