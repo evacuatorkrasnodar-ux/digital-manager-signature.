@@ -212,3 +212,66 @@
   padding-right:12px!important;
  }
 }
+
+
+/* Company Passport: use the same light geometry in Black Velvet as in iOS 26.
+   Scope to this existing full-screen dialog; no changes to data or QR actions. */
+@media(max-width:720px){
+ html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open]{
+  padding:
+   calc(18px + env(safe-area-inset-top,0px))
+   max(16px,env(safe-area-inset-right,0px))
+   calc(108px + env(safe-area-inset-bottom,0px))
+   max(16px,env(safe-area-inset-left,0px))!important;
+ }
+ html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close{
+  position:absolute!important;
+  top:calc(18px + env(safe-area-inset-top,0px))!important;
+  right:max(16px,env(safe-area-inset-right,0px))!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-width:72px!important;width:auto!important;height:44px!important;
+  padding:0 8px!important;margin:0!important;
+  background:transparent!important;border:0!important;
+  border-radius:999px!important;box-shadow:none!important;
+  color:var(--text)!important;font-size:14px!important;
+ }
+ html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close::before,
+ html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close::after{
+  content:none!important;display:none!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
+  min-height:44px!important;
+  padding-right:87px!important;margin-bottom:5px!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-section{
+  margin:0 0 13px!important;font-size:13px!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind{
+  margin:0 0 16px!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form > label,
+ html body #seyveoCompanyDialog[open] .sv-company-extra-body label,
+ html body #seyveoCompanyDialog[open] .sv-company-extra > label{
+  display:block!important;margin:0 0 11px!important;
+  font-size:12px!important;line-height:1.3!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form input:not([type=radio]):not([type=hidden]){
+  box-sizing:border-box!important;width:100%!important;
+  min-height:41px!important;height:41px!important;
+  margin:2px 0 0!important;padding:8px 1px!important;
+  border:0!important;border-bottom:1px solid color-mix(in srgb,var(--soft-line) 62%,transparent)!important;
+  border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+  color:var(--text)!important;font-size:16px!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form input:focus-visible{
+  outline:none!important;border-bottom-color:var(--seyveo-emerald)!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-company-extra{
+  margin:0 0 12px!important;
+ }
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary{
+  min-height:44px!important;border-radius:999px!important;
+  box-shadow:none!important;
+ }
+}
