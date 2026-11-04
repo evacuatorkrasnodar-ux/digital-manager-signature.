@@ -417,25 +417,17 @@ function displayChatText(value){
 let lastRenderedTurnCount=0;
 let latestScrollRequest=0;
 function scrollToLatest(){
- // The transcript and the native iOS writer are sized in separate frames.
- // Scroll after both settle; one final guarded read avoids a half-visible
- // last message that can look like a rectangular panel behind the composer.
+ // The last message must be scrolled into view AFTER the fixed writer's
+ // real size and iOS visible viewport have been committed to the layout.
  const request=++latestScrollRequest;
- const reachEnd=()=>{
-  if(request!==latestScrollRequest||!root.classList.contains('seyveo-conversation'))return;
-  text.scrollTop=Math.max(0,text.scrollHeight-text.clientHeight);
- };
  requestAnimationFrame(()=>{
-  if(request!==latestScrollRequest||!root.classList.contains('seyveo-conversation'))return;
+  if(request!==latestScrollRequest||
+     !root.classList.contains('seyveo-conversation'))return;
   syncChatGeometry();
   requestAnimationFrame(()=>{
-   reachEnd();
-   // Safari can update its scroll range after visualViewport settles.
-   setTimeout(()=>{
-    if(request!==latestScrollRequest)return;
-    const unread=text.scrollHeight-text.clientHeight-text.scrollTop;
-    if(unread<100)reachEnd();
-   },140);
+   if(request!==latestScrollRequest||
+      !root.classList.contains('seyveo-conversation'))return;
+   text.scrollTop=Math.max(0,text.scrollHeight-text.clientHeight);
   });
  });
 }
