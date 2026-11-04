@@ -755,26 +755,64 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* Keep the pre-send audio control visually restrained until native player replacement. */
 #svcpWorkChatScreen #svcpVoiceCapture[data-state="recording"] #svcpVoicePreview{display:none!important}
 
-/* Compact SEYVEO actions — premium gold only for the favorite star. */
+/* SEYVEO Air 26 · one thin Liquid Glass action rail; no thick rim or inflated buttons.
+   Keep every original action and its accessible 44px touch area. */
+#svcpWorkChatScreen .svcp-bubble:has(> .svcp-message-menu:not([hidden])){z-index:12}
 #svcpWorkChatScreen .svcp-message-menu:not([hidden]){
- display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center;
- gap:3px!important;position:absolute!important;right:0!important;top:calc(100% + 6px)!important;
- width:max-content!important;max-width:min(96vw,390px)!important;
- padding:5px!important;border-radius:16px!important;z-index:30!important;
- background:var(--card)!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ flex-wrap:nowrap!important;gap:0!important;
+ position:absolute!important;z-index:30!important;
+ top:calc(100% + 8px)!important;
+ left:0!important;right:auto!important;
+ box-sizing:border-box!important;width:max-content!important;
+ max-width:min(360px,calc(100vw - 32px))!important;
+ min-height:46px!important;max-height:52px!important;
+ margin:0!important;padding:1px 4px!important;
+ border:1px solid color-mix(in srgb,var(--soft-line) 23%,transparent)!important;
+ border-radius:17px!important;
+ background:color-mix(in srgb,var(--sv-input-surface) 86%,transparent)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(115%)!important;
+ backdrop-filter:blur(24px) saturate(115%)!important;
+ box-shadow:0 8px 24px color-mix(in srgb,var(--bg) 34%,transparent),
+  inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 37%,transparent)!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch
 }
-/* Work chat: compact action rail, reliable touch targets, no heavy stacked cards. */
-#svcpWorkChatScreen .svcp-message-menu:not([hidden]){
- max-width:calc(100vw - 16px)!important;
- padding:4px!important;gap:2px!important;
- border:1px solid color-mix(in srgb,var(--soft-line) 70%,transparent)!important;
- background:var(--sv-input-surface)!important;
- -webkit-backdrop-filter:var(--sv-input-blur)!important;
- backdrop-filter:var(--sv-input-blur)!important;
- box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important;
+#svcpWorkChatScreen .svcp-message-menu::-webkit-scrollbar{display:none!important}
+#svcpWorkChatScreen .svcp-bubble.is-self>.svcp-message-menu:not([hidden]){
+ left:auto!important;right:0!important
 }
-#svcpWorkChatScreen .svcp-bubble:focus-visible{
- outline:2px solid var(--seyveo-emerald);outline-offset:2px;
+#svcpWorkChatScreen .svcp-message-menu .svcp-icon-action{
+ display:grid!important;place-items:center!important;flex:0 0 44px!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ margin:0!important;padding:11px!important;border:0!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;cursor:pointer
+}
+#svcpWorkChatScreen .svcp-message-menu .svcp-icon-action svg{
+ display:block;width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round
+}
+#svcpWorkChatScreen .svcp-message-menu .svcp-icon-action:active,
+#svcpWorkChatScreen .svcp-message-menu .svcp-icon-action:focus-visible{
+ background:color-mix(in srgb,var(--seyveo-hdr-active,var(--card2)) 58%,transparent)!important;
+ outline-offset:-3px
+}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-star,
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-star.is-saved svg{
+ color:var(--text)!important;stroke:currentColor!important
+}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-star.is-saved svg{fill:var(--text)}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-award{color:#D7AE62!important}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-award svg{
+ stroke:#D7AE62!important;fill:rgba(215,174,98,.12)!important
+}
+#svcpWorkChatScreen .svcp-bubble-saved{color:var(--secondary)!important;font-size:11px}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-delete{color:var(--secondary)!important}
+#svcpWorkChatScreen .svcp-message-menu .svcp-action-delete:active{color:#C88D89!important}
+:root[data-theme="light"] #svcpWorkChatScreen .svcp-message-menu:not([hidden]){
+ background:color-mix(in srgb,var(--sv-input-surface) 76%,rgba(255,255,255,.72))!important;
+ border-color:color-mix(in srgb,var(--soft-line) 25%,transparent)!important
 }
 #svcpWorkChatScreen .svcp-bubble-reaction{
  display:inline-flex;align-items:center;justify-content:center;
