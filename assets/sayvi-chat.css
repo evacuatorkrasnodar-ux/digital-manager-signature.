@@ -65,7 +65,9 @@ html.seyveo-conversation #orbInlineReply > :not(#orbInlineReplyText){
 }
 html.seyveo-conversation #orbInlineReplyText{
  box-sizing:border-box!important;
- display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
+ /* A chat transcript must be a block scrollport. A flex column makes
+    every message a shrinkable flex item and collapses long conversations. */
+ display:block!important;flex:1 1 0px!important;
  width:100%!important;max-width:none!important;height:0!important;min-height:0!important;
  margin:0!important;padding:8px clamp(13px,3.3vw,22px) 20px!important;
  overflow-y:auto!important;overflow-x:hidden!important;
