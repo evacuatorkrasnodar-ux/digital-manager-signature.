@@ -718,12 +718,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 #svcpWorkChatScreen .svcp-message-actions{
- position:absolute;right:6px;top:6px;display:flex;align-items:center;gap:4px;
- opacity:1;pointer-events:auto;z-index:3
+ position:absolute;right:6px;top:6px;display:flex!important;align-items:center;gap:4px;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;z-index:3
 }
-#svcpWorkChatScreen .svcp-bubble:focus-within .svcp-message-actions{
- opacity:1;pointer-events:auto
-}
+/* No focus/hover requirement on touch: the three-dot control is always discoverable. */
 /* A discoverable ellipsis, instead of a hidden hover-only action. */
 #svcpWorkChatScreen .svcp-more-trigger{
  display:grid!important;place-items:center!important;flex:0 0 32px;
