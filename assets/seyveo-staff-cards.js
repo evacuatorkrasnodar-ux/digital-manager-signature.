@@ -57,9 +57,11 @@ style.textContent=[
 '.svstaff-modal::backdrop{background:rgba(0,0,0,.76)}',
 '.svstaff-modal [hidden]{display:none!important}',
 '.svstaff-modal *{box-sizing:border-box}',
-'.svstaff-modal-top{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;background:var(--card);border-bottom:1px solid rgba(180,190,180,.12)}',
+'.svstaff-modal-top{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 13px;background:color-mix(in srgb,var(--card) 92%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid color-mix(in srgb,var(--soft-line) 38%,transparent)}',
 '.svstaff-modal-top span{font-size:11px;letter-spacing:.1em;color:var(--secondary);font-weight:700}',
-'.svstaff-close{display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(171,191,179,.19);border-radius:50%;background:rgba(255,255,255,.04);color:#f0f4f1;font-size:21px;cursor:pointer}',
+'.svstaff-close{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--card2) 53%,transparent);color:var(--text);cursor:pointer;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}',
+'.svstaff-close svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}',
+'.svstaff-close:active{background:var(--seyveo-hdr-active)}',
 '.svstaff-content{padding:15px 19px max(20px,env(safe-area-inset-bottom))}',
 '.svstaff-hero{display:flex;align-items:center;gap:17px;margin:0 0 21px}',
 '.svstaff-photo{width:94px;height:111px;border-radius:20px;object-fit:cover;object-position:center 10%;background:#233328;flex:none;border:1px solid rgba(255,255,255,.09)}',
@@ -95,7 +97,17 @@ style.textContent=[
 '.svstaff-plan strong{display:block;margin-bottom:5px;color:var(--text);font-size:13px}',
 '.svstaff-plan ol{padding-left:19px;margin:7px 0}',
 '.svstaff-demo-note{padding:13px 0 2px;border-top:1px solid rgba(205,218,209,.12);font-size:10px;line-height:1.55;color:var(--secondary)}',
-'.svstaff-modal button:focus-visible{outline:2px solid #80dcb0;outline-offset:3px}',
+'.svstaff-modal button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}',
+'.svstaff-review-choice{position:relative;min-width:0}',
+'.svstaff-review-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:46px;padding:11px 13px;border:1px solid color-mix(in srgb,var(--soft-line) 32%,transparent);border-radius:17px;background:color-mix(in srgb,var(--card2) 57%,transparent);color:var(--text);font:inherit;font-size:12px;text-align:left;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);cursor:pointer}',
+'.svstaff-review-trigger svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .16s ease}',
+'.svstaff-review-trigger[aria-expanded=true] svg{transform:rotate(180deg)}',
+'.svstaff-review-options{display:grid;gap:3px;position:absolute;z-index:6;top:calc(100% + 6px);left:0;right:0;padding:5px;border:1px solid color-mix(in srgb,var(--soft-line) 28%,transparent);border-radius:17px;background:color-mix(in srgb,var(--card2) 93%,var(--bg));-webkit-backdrop-filter:blur(24px) saturate(1.1);backdrop-filter:blur(24px) saturate(1.1);box-shadow:0 12px 24px rgba(0,0,0,.12),inset 0 .5px 0 color-mix(in srgb,var(--seyveo-specular) 50%,transparent)}',
+'.svstaff-review-option{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;padding:9px 11px;border:0;border-radius:12px;background:transparent;color:var(--text);font:inherit;font-size:12px;text-align:left;cursor:pointer}',
+'.svstaff-review-option[aria-selected=true]{background:color-mix(in srgb,var(--seyveo-hdr-active) 64%,transparent)}',
+'.svstaff-review-option svg{width:16px;height:16px;flex:none;fill:none;stroke:var(--seyveo-emerald);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}',
+'.svstaff-review-option:active{background:var(--seyveo-hdr-active)}',
+'@media(prefers-reduced-motion:reduce){.svstaff-review-trigger svg{transition:none}}',
 '@media(max-width:365px){.svstaff-content{padding-inline:13px}.svstaff-hero{gap:12px}.svstaff-photo{width:78px;height:96px}.svstaff-person-name{font-size:21px}.svstaff-metric strong{font-size:22px}}',
 '@media(prefers-reduced-motion:no-preference){.svstaff-modal[open]{animation:svstaffReveal .16s ease-out}@keyframes svstaffReveal{from{opacity:.65;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}'
 ].join('\n');
@@ -124,7 +136,11 @@ const intro=el('div','svstaff-intro');intro.append(el('strong',null,'ЛЮДИ К
 const directory=el('div','svstaff-directory-list');shell.append(directory);
 const note=el('p','svstaff-footnote','Учебные примеры: данные, истории и иллюстрированные портреты вымышлены. Настоящие кадровые данные пока не подключены.');shell.append(note);
 const modal=el('dialog','svstaff-modal');modal.setAttribute('aria-label','Профессиональная история сотрудника');document.body.append(modal);
-const top=el('div','svstaff-modal-top');top.append(el('span',null,'SEYVEO · КАДРЫ'),button('×','svstaff-close',()=>modal.close()));modal.append(top);
+const top=el('div','svstaff-modal-top');
+const close=button('','svstaff-close',()=>modal.close());
+close.setAttribute('aria-label','Закрыть карточку сотрудника');
+close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/></svg>';
+top.append(el('span',null,'SEYVEO · КАДРЫ'),close);modal.append(top);
 const body=el('div','svstaff-content');modal.append(body);
 let chosen=null,showPlan=false,lastTrigger=null,leavingForChat=false;
 function summaryStats(target,p){
@@ -191,19 +207,57 @@ function renderProfile(){
  const prior=savedReview(p.id);
  if(prior)review.append(el('p','svstaff-review-record',(prior.kind==='bonus'?'На рассмотрении: поощрение':'На рассмотрении: обсуждение')+' · '+prior.note));
  review.append(el('p','svstaff-review-note','Руководитель может предложить поощрение или обсудить рабочую ситуацию. Никакой автоматической премии или взыскания.'));
- const form=el('form','svstaff-review-form'),selector=el('select');
- selector.setAttribute('aria-label','Действие руководителя');
- for(const [key,label] of [['bonus','Рассмотреть поощрение'],['discuss','Обсудить развитие или обстоятельства']]){
-  const opt=el('option',null,label);opt.value=key;selector.append(opt);
+ const form=el('form','svstaff-review-form');
+ // Custom accessible Liquid Glass choice: avoid square native OS select popups.
+ const choices=[['bonus','Рассмотреть поощрение'],['discuss','Обсудить развитие или обстоятельства']];
+ let selectedKind='bonus';
+ const choiceHost=el('div','svstaff-review-choice');
+ const trigger=button('','svstaff-review-trigger',()=>setOpen(options.hidden));
+ const triggerLabel=el('span',null,choices[0][1]);
+ trigger.append(triggerLabel);
+ trigger.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>');
+ trigger.setAttribute('aria-label','Действие руководителя');
+ trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+ const options=el('div','svstaff-review-options');options.hidden=true;
+ options.setAttribute('role','listbox');options.setAttribute('aria-label','Действие руководителя');
+ const optionButtons=[];
+ function setOpen(open){
+  options.hidden=!open;trigger.setAttribute('aria-expanded',String(open));
+  if(open)optionButtons.find(x=>x.dataset.kind===selectedKind)?.focus();
+  else trigger.focus({preventScroll:true});
  }
+ for(const [kind,label] of choices){
+  const option=button('','svstaff-review-option',()=>{
+   selectedKind=kind;triggerLabel.textContent=label;
+   optionButtons.forEach(x=>x.setAttribute('aria-selected',String(x===option)));
+   setOpen(false);
+  });
+  option.dataset.kind=kind;option.setAttribute('role','option');
+  option.setAttribute('aria-selected',String(kind===selectedKind));
+  option.append(el('span',null,label));
+  option.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg>');
+  option.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){event.preventDefault();setOpen(false)}
+   if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+    event.preventDefault();
+    optionButtons[(optionButtons.indexOf(option)+(event.key==='ArrowDown'?1:-1)+optionButtons.length)%optionButtons.length].focus();
+   }
+  });
+  optionButtons.push(option);options.append(option);
+ }
+ trigger.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();setOpen(true)}});
+ choiceHost.addEventListener('focusout',event=>{
+  if(!choiceHost.contains(event.relatedTarget)){options.hidden=true;trigger.setAttribute('aria-expanded','false')}
+ });
+ choiceHost.append(trigger,options);
  const note=el('textarea');note.rows=2;note.maxLength=240;note.minLength=8;note.required=true;
  note.placeholder='Укажите основание для рассмотрения…';note.setAttribute('aria-label','Основание решения руководителя');
  const feedback=el('p','svstaff-review-status');feedback.setAttribute('role','status');
  const submit=el('button','svstaff-review-submit','Сохранить для рассмотрения');submit.type='submit';
- form.append(selector,note,submit,feedback);
+ form.append(choiceHost,note,submit,feedback);
  form.addEventListener('submit',event=>{
   event.preventDefault();
-  if(!saveReview(p.id,selector.value,note.value)){feedback.textContent='Напишите конкретное основание (минимум 8 символов).';return}
+  if(!saveReview(p.id,selectedKind,note.value)){feedback.textContent='Напишите конкретное основание (минимум 8 символов).';return}
   renderProfile();
  });
  review.append(form);body.append(review);
