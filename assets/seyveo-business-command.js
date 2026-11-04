@@ -1220,9 +1220,15 @@ function renderChat(){
     const actions=el('div','svcp-message-actions');
     const menu=el('div','svcp-message-menu');menu.hidden=true;
     menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
-    const moreButton=btn('···',()=>toggleMessageMenu(menu,moreButton),'svcp-message-action svcp-more-trigger');
+    const moreButton=btn('',()=>toggleMessageMenu(menu,moreButton),'svcp-message-action svcp-more-trigger');
     moreButton.setAttribute('aria-label','Действия с сообщением');
     moreButton.setAttribute('aria-expanded','false');
+    moreButton.title='Действия с сообщением';
+    const dots=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    dots.setAttribute('viewBox','0 0 24 24');
+    dots.setAttribute('aria-hidden','true');
+    dots.innerHTML='<circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>';
+    moreButton.append(dots);
     actions.append(moreButton);
     // A single visible tap awards a staff member directly from their message.
     // Ordinary chat emojis and saved-message bookmarks remain unrelated.
@@ -1296,14 +1302,20 @@ function renderChat(){
       setStatus('Редактирование · измени текст и нажми «Отправить».');
      },'svcp-message-menu-item'));
     }
-    if(isOwn){
-     menu.append(svcpActionIcon('Удалить у себя','delete',()=>{
+    // Local prototype only. Employees may remove their own messages;
+    // manager preview can moderate this device's copy of team messages.
+    // Neither operation means "delete for everyone" across devices.
+    if(isOwn||state.viewpoint==='manager'){
+     const moderating=!isOwn;
+     menu.append(svcpActionIcon(moderating?'Убрать из локального чата':'Удалить у себя','delete',()=>{
       closeMessageMenus();
-      if(!window.confirm('Удалить это сообщение из локальной истории?'))return;
+      if(!window.confirm(moderating
+       ?'Убрать сообщение из локального рабочего чата на этом устройстве? У других участников оно не удалится.'
+       :'Удалить это сообщение из локальной истории на этом устройстве?'))return;
       const updated=state.chat.filter((_,i)=>i!==index);
       if(!save(CHAT_KEY,updated))return;
       state.chat=updated;renderChat();renderDirectory();
-      setStatus('Сообщение удалено из этого браузера.');
+      setStatus('Сообщение убрано только на этом устройстве.');
      },'svcp-message-menu-item'));
     }
     if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
