@@ -9,15 +9,23 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-html.seyveo-conversation:not([data-theme=light]) body{
- overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-chat-canvas);
- background-repeat:no-repeat;
+/* Same canvas as Home. In chat the only .app is position:fixed,
+   therefore body has no flow height; on iOS PWA the previous body-owned
+   gradient ended above the home-indicator safe area, revealing black.
+   Paint the root canvas once and explicitly cover the device safe area. */
+html.seyveo-conversation{
+ height:100%!important;
+ min-height:calc(100svh + env(safe-area-inset-bottom,0px))!important;
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
 }
-html.seyveo-conversation[data-theme=light] body{
+html.seyveo-conversation body{
+ height:100%!important;
+ min-height:calc(100svh + env(safe-area-inset-bottom,0px))!important;
  overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-chat-canvas);
- background-repeat:no-repeat;
+ background:transparent!important;
+ background-image:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
