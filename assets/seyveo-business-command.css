@@ -878,11 +878,9 @@
    layout just because the fourth, employee-only tab is hidden. */
 #tasksPage #unifiedTasksTabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 #tasksPage #unifiedTasksTabs[data-manager="true"]{
- grid-template-columns:repeat(3,minmax(0,1fr))!important;
- margin:0 0 13px;padding:3px;border-radius:18px;
- border:1px solid color-mix(in srgb,var(--soft-line) 24%,transparent);
- -webkit-backdrop-filter:blur(20px) saturate(118%);backdrop-filter:blur(20px) saturate(118%);
- background:color-mix(in srgb,var(--card2) 22%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 30%,transparent);
+grid-template-columns:repeat(3,minmax(0,1fr))!important;margin:0 0 13px;padding:3px;border-radius:17px;border:0;
+-webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(20px));backdrop-filter:var(--sv-liquid-nav-blur,blur(20px));
+background:var(--sv-liquid-nav-material,var(--card2));box-shadow:none;
 }
 /* Personal Tasks uses a single quiet segmented navigation surface.
    Never stack a second row of icons above a separate dock navigation. */
@@ -987,10 +985,8 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 /* Business navigation: the active surface is visibly selected, but remains
    flat optical glass rather than a raised button. */
 #tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="true"]{
- color:var(--text);font-weight:610;
- background:color-mix(in srgb,var(--card) 48%,transparent);
- box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 35%,transparent),
-            inset 0 -1px 0 color-mix(in srgb,var(--text) 13%,transparent);
+color:var(--text);font-weight:610;border-radius:14px;background:color-mix(in srgb,var(--text) 11%,transparent);
+box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
 }
 #tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="false"]{
  color:var(--secondary);
@@ -1003,9 +999,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  color:var(--text);
 }
 :root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="true"]{
- background:rgba(255,255,255,.66);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.86),
-            0 1px 3px rgba(34,55,63,.045);
+background:color-mix(in srgb,var(--seyveo-emerald) 12%,white);box-shadow:inset 0 1px 0 rgba(255,255,255,.64);
 }
 #tasksPage[data-work-view="business"] #unifiedTasksTabs .sv-mini-nav-icon{
  width:22px;height:22px;
@@ -1025,33 +1019,26 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  color:var(--seyveo-emerald)
 }
 #tasksPage .svcp-manager-actions{
- overflow:hidden;margin:0 0 12px;
- border:1px solid color-mix(in srgb,var(--soft-line) 22%,transparent);border-radius:20px;
- background:linear-gradient(155deg,color-mix(in srgb,var(--card) 21%,transparent),color-mix(in srgb,var(--card2) 11%,transparent) 65%);
- box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 28%,transparent);
- -webkit-backdrop-filter:blur(16px) saturate(115%);backdrop-filter:blur(16px) saturate(115%);
+overflow:visible;margin:0 0 9px;border:0;border-radius:0;background:transparent;box-shadow:none;
+-webkit-backdrop-filter:none;backdrop-filter:none;
 }
 #tasksPage .svcp-manager-row{
- display:flex;align-items:center;width:100%;min-height:52px;
- gap:10px;padding:6px 11px;
- border:0;border-bottom:1px solid color-mix(in srgb,var(--soft-line) 42%,transparent);
- background:transparent;color:var(--text);text-align:left;
- font:inherit;cursor:pointer;touch-action:manipulation;
+display:flex;align-items:center;width:100%;min-height:55px;gap:10px;padding:7px 5px;
+border:0;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
+border-radius:0;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer;touch-action:manipulation;
 }
 #tasksPage .svcp-manager-row:last-child{border-bottom:0}
 #tasksPage .svcp-manager-row:active{background:var(--seyveo-hdr-active)}
 #tasksPage .svcp-manager-art{
- display:grid;place-items:center;flex:none;width:30px;height:30px;
- border:0;border-radius:11px;
- background:transparent;
- color:var(--secondary);
+display:grid;place-items:center;flex:none;width:30px;height:30px;border:0;border-radius:0;background:transparent;color:var(--secondary);
 }
 #tasksPage .svcp-manager-art svg{
- width:19px;height:19px;stroke:currentColor;stroke-width:1.55;
- stroke-linecap:round;stroke-linejoin:round;fill:none;
+width:19px;height:19px;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;fill:none;
 }
 #tasksPage .svcp-manager-row-text{display:grid;flex:1;min-width:0;gap:3px}
-#tasksPage .svcp-manager-row-text strong{font-size:13px;font-weight:570;letter-spacing:-.018em;line-height:1.3}
+#tasksPage .svcp-manager-row-text strong{
+font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
+}
 #tasksPage .svcp-manager-row-text small{
  display:block;min-width:0;
  color:var(--secondary);font-size:11px;line-height:1.32;
@@ -1067,22 +1054,26 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
  margin:0;border:0;border-radius:0;background:transparent;overflow:hidden
 }
 #tasksPage .svcp-manager-staff>summary{
- display:flex;align-items:center;gap:10px;min-height:52px;padding:6px 11px;
- cursor:pointer;list-style:none;border:0;background:transparent;
- touch-action:manipulation;
+display:flex;align-items:center;gap:10px;min-height:55px;padding:7px 5px;cursor:pointer;list-style:none;border:0;background:transparent;touch-action:manipulation;
 }
 #tasksPage .svcp-manager-staff>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-manager-staff>summary:active{background:var(--seyveo-hdr-active)}
 #tasksPage .svcp-manager-staff-symbol{border-color:var(--seyveo-hdr-outline,var(--soft-line))}
 #tasksPage .svcp-manager-staff>summary>span:nth-child(2){display:grid;gap:3px;flex:1;min-width:0}
-#tasksPage .svcp-manager-staff>summary strong{color:var(--text);font-size:13px;font-weight:570;letter-spacing:-.018em;line-height:1.3}
+#tasksPage .svcp-manager-staff>summary strong{
+color:var(--text);font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
+}
 #tasksPage .svcp-manager-staff>summary small{
  display:block;min-width:0;font-size:11px;line-height:1.32;
  color:var(--secondary);white-space:normal;overflow-wrap:break-word;
 }
-#tasksPage .svcp-manager-staff[open]>summary{border-bottom:1px solid var(--soft-line)}
+#tasksPage .svcp-manager-staff[open]>summary{
+border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
+}
 #tasksPage .svcp-manager-staff[open]>summary .svcp-manager-chevron{transform:rotate(90deg)}
-#tasksPage .svcp-manager-people-content{padding:0 10px 12px;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-manager-people-content{
+padding:4px 3px 9px;border:0;background:transparent;
+}
 #tasksPage #unifiedPeopleHost #svcpTeam[hidden]{display:none!important}
 #tasksPage #unifiedPeopleHost #svcpTeam{display:block;width:100%;min-width:0}
 #tasksPage #unifiedPeopleHost .svcp-panel{background:transparent;padding-top:10px}
@@ -1095,21 +1086,24 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 }
 
 /* Manager-people workspace: reparented from Management with the original staff listeners. */
-#tasksPage #unifiedPeopleHost .svcp-people-note{margin:0 2px 12px;color:var(--secondary);font-size:11px;line-height:1.5}
+#tasksPage #unifiedPeopleHost .svcp-people-note{
+margin:2px 2px 10px;color:var(--secondary);font-size:10.5px;line-height:1.45;
+}
 #tasksPage #unifiedPeopleHost .svcp-people-switch{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;
- padding:3px;margin:0 0 13px;border-radius:13px;
- border:0;
- background:var(--seyveo-hdr-active,var(--card))
+display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:3px;margin:0 0 11px;border-radius:16px;border:0;
+background:var(--sv-liquid-nav-material,var(--card2));
+-webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));box-shadow:none;
 }
 #tasksPage #unifiedPeopleHost .svcp-people-switch button{
- border:0;min-height:40px;border-radius:10px;
- background:transparent;color:var(--secondary);
- font:inherit;font-size:12px;font-weight:550;cursor:pointer
+border:0;min-height:42px;border-radius:13px;background:transparent;color:var(--secondary);
+font:inherit;font-size:12px;font-weight:550;cursor:pointer;
 }
 #tasksPage #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
- color:var(--text);background:var(--card);
- box-shadow:inset 0 0 0 1px var(--soft-line)
+color:var(--text);background:color-mix(in srgb,var(--text) 11%,transparent);
+box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
+}
+:root[data-theme=light] #tasksPage #unifiedPeopleHost .svcp-people-switch button[aria-pressed="true"]{
+background:color-mix(in srgb,var(--seyveo-emerald) 12%,white);
 }
 #tasksPage #unifiedPeopleHost .svcp-people-switch button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:1px
@@ -1117,8 +1111,7 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage #unifiedPeopleHost .svcp-people-view{min-width:0}
 #tasksPage #unifiedPeopleHost .svcp-people-view[hidden]{display:none!important}
 #tasksPage #unifiedPeopleHost .svcp-people-heading{
- font-size:13px;font-weight:570;letter-spacing:-.015em;
- margin:3px 2px 9px;color:var(--text)
+font-size:12px;font-weight:575;letter-spacing:-.015em;margin:3px 2px 6px;color:var(--secondary);
 }
 #tasksPage #unifiedPeopleHost #svcpPeopleCardsHost{min-width:0}
 #tasksPage #unifiedPeopleHost #svcpPeopleShiftHost{margin-top:12px;padding-top:9px;border-top:1px solid var(--soft-line)}
@@ -1491,9 +1484,14 @@ html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading h1{
 #tasksPage .svcp-work-duty[data-break="true"]{color:#eed6a0}
 #tasksPage .svcp-work-duty[data-break="true"] i{background:#eed6a0;box-shadow:0 0 7px rgba(241,211,151,.38)}
 #tasksPage .svcp-employee-avatar-badge[data-break="true"]::after{background:#eed6a0}
-#tasksPage .svcp-break-setup{margin:8px 0 12px;border:0;border-radius:14px;overflow:hidden;background:var(--card)}
-#tasksPage .svcp-break-setup>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;
- padding:12px 13px;cursor:pointer;list-style:none;color:var(--text);font-size:12.5px}
+#tasksPage .svcp-break-setup{
+margin:0 0 9px;border:0;border-top:1px solid var(--sv-velvet-divider,var(--soft-line));
+border-radius:0;overflow:visible;background:transparent;
+}
+#tasksPage .svcp-break-setup>summary{
+display:flex;align-items:center;justify-content:space-between;gap:8px;
+min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text);font-size:12px;
+}
 #tasksPage .svcp-break-setup>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-break-setup-inner{display:grid;gap:11px;padding:1px 12px 14px}
 #tasksPage .svcp-break-setup-inner>p{margin:0;color:var(--secondary);font-size:11px;line-height:1.5}
