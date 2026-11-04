@@ -9,11 +9,19 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* Match Home's exact viewport pigment instead of a separate chat paint. */
+/* The Home background must be painted ON THE VIEWPORT.
+   A gradient on body scales to the document's scroll height in iOS Safari,
+   so the fixed-height chat shows only its nearly solid upper edge. */
+html.seyveo-conversation{
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
+ background-attachment:fixed!important;
+}
 html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-size:100% 100%!important;background-repeat:no-repeat!important;
+ background:transparent!important;
+ background-image:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
