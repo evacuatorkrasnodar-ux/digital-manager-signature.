@@ -2,169 +2,21 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Сэйви · SEYVEO</title>
 <style>
-:root{color-scheme:dark;--bg:#000;--text:#f5f7fa;--muted:#a0aab2}
+:root{color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text)}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
-button,textarea{font:inherit}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.page{height:100vh;height:100dvh;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
-header{flex:none;height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:590;letter-spacing:-.02em}
-.content{flex:1 1 0;min-height:0}
-.writer{position:relative;flex:none;width:100%;margin:0;padding:6px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border:0;background:none;box-shadow:none;outline:none}
-.writer-row{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:end;gap:8px;width:100%;max-width:720px;margin:0 auto}
-.writer-button{width:42px;height:42px;min-width:42px;border:0;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(42,50,57,.72);color:var(--text);box-shadow:none}
-.writer-button svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
-.writer-button:active{opacity:.72}
-.writer-button:focus-visible{outline:2px solid #bfcbd3;outline-offset:2px}
-.writer-field{display:block;width:100%;height:42px;min-height:42px;max-height:116px;resize:none;padding:10px 14px 9px;overflow-y:auto;border:0;border-radius:21px;outline:0;background:#263039;color:var(--text);font:400 16px/23px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;box-shadow:none;scrollbar-width:none}
-.writer-field::placeholder{color:var(--muted);opacity:1}
-.writer-field::-webkit-scrollbar{display:none}
-.writer-button[hidden]{display:none!important}
-.writer-menu[hidden]{display:none!important}
-.writer-menu{position:absolute;left:max(12px,env(safe-area-inset-left));bottom:calc(100% + 6px);padding:5px;border-radius:16px;background:#263039;min-width:190px}
-.writer-menu button{display:block;width:100%;padding:11px 13px;border:0;border-radius:11px;background:transparent;color:var(--text);text-align:left}
-.writer-menu button:active{background:rgba(255,255,255,.08)}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-
-.content{display:flex;flex-direction:column;overflow:hidden;min-height:0}
-.chat-log{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:12px max(17px,env(safe-area-inset-right)) 22px max(17px,env(safe-area-inset-left))}
-.chat-log::-webkit-scrollbar{display:none}
-.chat-list{display:flex;flex-direction:column;gap:19px;max-width:720px;margin:0 auto}
-.chat-turn{display:flex;flex-direction:column;flex-shrink:0;gap:6px;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.chat-turn[data-role="user"]{align-items:flex-end}
-.chat-turn[data-role="assistant"]{align-items:flex-start}
-.chat-text{max-width:100%}
-.chat-turn[data-role="user"] .chat-text{max-width:86%;padding:9px 13px;border-radius:18px;background:#263039}
-.chat-speaker{font-size:11px;color:var(--muted);padding-left:3px}
-.writer-state{max-width:720px;margin:3px auto 0;color:var(--muted);font-size:12px;padding:0 2px}
-.writer-state:empty{display:none}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+main{min-height:100vh;min-height:100dvh;background:#000}
+header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:590;letter-spacing:-.02em}
 </style>
 </head>
 <body>
-<main class="page">
+<main>
 <header>Сэйви</header>
-<section class="content" aria-label="Переписка с Сэйви"><div class="chat-log" id="chatLog" role="log" aria-label="Сообщения" aria-live="polite"><div class="chat-list" id="chatList"></div></div></section>
-<form class="writer" id="writer" autocomplete="off">
- <div class="writer-menu" id="writerMenu" hidden>
-  <button type="button" id="clearDraft">Очистить текст</button>
-  <button type="button" id="pasteDraft">Вставить из буфера</button>
- </div>
- <div class="writer-row">
-  <button class="writer-button" type="button" id="plus" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="writerMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-  <textarea class="writer-field" id="messageInput" rows="1" maxlength="4000" placeholder="Сообщение Сэйви" aria-label="Сообщение Сэйви"></textarea>
-  <button class="writer-button" type="button" id="mic" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
-  <button class="writer-button" type="submit" id="send" aria-label="Отправить" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
-  <button class="writer-button" type="button" id="stop" aria-label="Остановить ответ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/></svg></button>
- </div>
- <div class="writer-state" id="writerState" role="status"></div>
-</form>
 </main>
-<script>
-(()=>{
- 'use strict';
- const input=document.getElementById('messageInput');
- const mic=document.getElementById('mic'),send=document.getElementById('send'),stop=document.getElementById('stop');
- const plus=document.getElementById('plus'),menu=document.getElementById('writerMenu');
- const form=document.getElementById('writer'),status=document.getElementById('writerState');
- const log=document.getElementById('chatLog'),list=document.getElementById('chatList');
- const historyTurns=[];
- let pending=null,seq=0;
- const messages=new Map();
- function sync(){
-  input.style.height='42px';
-  input.style.height=Math.min(116,Math.max(42,input.scrollHeight))+'px';
-  mic.hidden=!!pending||!!input.value.trim();
-  send.hidden=!!pending||!input.value.trim();
-  stop.hidden=!pending;
-  input.disabled=!!pending;
- }
- function append(role,id,text){
-  const nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<100;
-  let item=messages.get(id);
-  if(!item){
-   const box=document.createElement('article');
-   box.className='chat-turn';box.dataset.role=role;
-   if(role==='assistant'){
-    const name=document.createElement('span');name.className='chat-speaker';name.textContent='Сэйви';box.append(name);
-   }
-   const content=document.createElement('div');content.className='chat-text';
-   box.append(content);list.append(box);item=content;messages.set(id,item);
-  }
-  item.textContent=text;
-  if(nearBottom)requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight});
- }
- async function ask(question){
-  const controller=new AbortController();pending=controller;sync();status.textContent='';
-  const id=++seq,reply='sayvi-'+id;
-  append('user','you-'+id,question);
-  let answer='',done=false;
-  try{
-   const response=await fetch('/api/seyveo-stream',{
-    method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:question,history:historyTurns.slice(-6)}),signal:controller.signal
-   });
-   if(!response.ok){
-    const data=await response.json().catch(()=>({}));
-    throw Error(data.error||'Не удалось получить ответ.');
-   }
-   if(!response.body)throw Error('Потоковый ответ недоступен.');
-   const reader=response.body.getReader(),decoder=new TextDecoder();
-   let buffer='';
-   function consume(line){
-    if(!line.trim())return;
-    const part=JSON.parse(line);
-    if(part.type==='delta'&&typeof part.text==='string'){
-     answer+=part.text;append('assistant',reply,answer);
-    }else if(part.type==='done')done=true;
-    else if(part.type==='error')throw Error(part.text||'Ошибка ответа.');
-   }
-   while(true){
-    const chunk=await reader.read();if(chunk.done)break;
-    buffer+=decoder.decode(chunk.value,{stream:true});
-    let n;
-    while((n=buffer.indexOf('\n'))!==-1){
-     consume(buffer.slice(0,n));buffer=buffer.slice(n+1);
-    }
-   }
-   buffer+=decoder.decode();if(buffer.trim())consume(buffer);
-   if(!done)throw Error('Соединение прервалось.');
-   if(!answer.trim())throw Error('Сэйви не прислала ответ.');
-   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
-   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
-  }catch(error){
-   const cancelled=controller.signal.aborted;
-   append('assistant',reply,answer||(cancelled?'Ответ остановлен.':'Не удалось получить ответ.'));
-   if(!cancelled)status.textContent=String(error?.message||'Ошибка соединения.');
-  }finally{if(pending===controller){pending=null;sync();}}
- }
- form.addEventListener('submit',e=>{
-  e.preventDefault();const message=input.value.trim();
-  if(!message||pending)return;
-  input.value='';sync();ask(message);
- });
- stop.addEventListener('click',()=>pending?.abort());
- input.addEventListener('input',sync);
- input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();form.requestSubmit();}});
- function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
- plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
- document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!e.target.closest('#writerMenu')&&!e.target.closest('#plus'))closeMenu()});
- document.getElementById('clearDraft').addEventListener('click',()=>{input.value='';sync();closeMenu();input.focus()});
- document.getElementById('pasteDraft').addEventListener('click',async()=>{try{input.value+=(await navigator.clipboard.readText())}catch{status.textContent='Вставь текст обычной командой браузера.'}sync();closeMenu();input.focus()});
- const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
- mic.addEventListener('click',()=>{
-  if(!Recognition){status.textContent='Голосовой ввод недоступен в этом браузере.';return;}
-  const recognition=new Recognition();recognition.lang='ru-RU';recognition.interimResults=false;
-  recognition.onresult=e=>{input.value=[input.value,e.results[0][0].transcript].filter(Boolean).join(' ');sync();input.focus()};
-  recognition.onerror=()=>{status.textContent='Не удалось распознать речь.'};
-  try{recognition.start()}catch{status.textContent='Микрофон недоступен.'}
- });
- sync();
-})();
-</script>
 </body>
 </html>
