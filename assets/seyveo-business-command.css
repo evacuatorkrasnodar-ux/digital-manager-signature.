@@ -1889,6 +1889,33 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  .sv-cabinet-guide{animation:none}
 }
 
+/* A single resumable onboarding affordance at the top of the manager cabinet.
+   Hidden after the user saves a real cabinet layout; the + editor stays available. */
+#tasksPage #svCabinetContinueWithSayvi[hidden]{display:none!important}
+#tasksPage .sv-cabinet-resume{
+ display:flex;align-items:center;gap:11px;box-sizing:border-box;width:100%;
+ min-height:58px;margin:10px 0 14px;padding:10px 13px;
+ border:1px solid color-mix(in srgb,var(--soft-line) 24%,transparent);
+ border-radius:19px;
+ background:var(--sv-liquid-nav-material,var(--card2));
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
+ box-shadow:none;color:var(--text);text-align:left;cursor:pointer
+}
+#tasksPage .sv-cabinet-resume-spark{
+ flex:0 0 27px;width:27px;display:grid;place-items:center;
+ font-size:22px;font-weight:400;color:var(--seyveo-emerald)
+}
+#tasksPage .sv-cabinet-resume-copy{display:grid;gap:3px;min-width:0;flex:1}
+#tasksPage .sv-cabinet-resume-copy strong{font:inherit;font-size:12.5px;font-weight:610;line-height:1.3}
+#tasksPage .sv-cabinet-resume-copy small{font:inherit;font-size:10.5px;line-height:1.35;color:var(--secondary)}
+#tasksPage .sv-cabinet-resume svg{
+ width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
+ stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;color:var(--secondary)
+}
+#tasksPage .sv-cabinet-resume:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#tasksPage .sv-cabinet-resume:active{background:color-mix(in srgb,var(--seyveo-hdr-active) 55%,var(--card2))}
+
 /* SEYVEO Smart Cabinet · first guided arrival from Sayvi.
    A single lightweight explanation, not another heavyweight dashboard. */
 #tasksPage #svCabinetArrival[hidden],
