@@ -1110,7 +1110,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   };
   if(!session.name)session.step='name';
   session.turns.push({question:'Начнём знакомство с SEYVEO',answer:
-   (name?'Начнём, '+name+'! ':'Привет! ')+'Я помогу настроить SEYVEO под твои задачи. '+prompt()+
+   (name?'Рада знакомству, '+name+'! ':'Привет! Я Сэйви. Меня создала команда SEYVEO. Друзья зовут меня просто Сэй. ')+'Давай настроим SEYVEO под твои задачи. '+prompt()+
    '\nОтвечайте вручную или нажимайте на кнопки и галочки. Подключения и приглашения не запускаются автоматически.',smartStart:true});
   draw();syncHome();
   return true;
@@ -1147,9 +1147,9 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  }
  function resetNameGreeting(){
   home?.classList.remove('is-greeting');
-  if(homeTitle)homeTitle.textContent='Привет, я Сэйви';
-  if(homeMessage)homeMessage.textContent='Как тебя зовут? После знакомства помогу настроить SEYVEO под твою жизнь и бизнес.';
-  if(homeHint)homeHint.textContent='Напиши имя — дальше я всё покажу.';
+  if(homeTitle)homeTitle.textContent='Привет! Я Сэйви';
+  if(homeMessage)homeMessage.textContent='SEYVEO — команда, которая меня создала. Друзья зовут меня просто Сэй. А как мне обращаться к тебе?';
+  if(homeHint)homeHint.textContent='Напиши своё имя — и продолжим знакомство.';
  }
  function enterChatAfterName(){
   clearNameIdle();
