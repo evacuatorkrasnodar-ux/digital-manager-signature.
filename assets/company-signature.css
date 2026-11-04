@@ -53,7 +53,7 @@
  min-height:44px;padding-right:88px!important;margin:0 0 12px!important;
 }
 #seyveoCompanyDialog #seyveoCompanyTitle{
- margin:0;font-size:21px;font-weight:520;letter-spacing:-.035em;line-height:1.22;
+ margin:0;font-size:21px;font-weight:615;letter-spacing:-.035em;line-height:1.22;
 }
 #seyveoCompanyDialog .seyveo-passport-subtitle{
  max-width:360px;margin:0 0 12px!important;
@@ -186,41 +186,44 @@
 }
 #seyveoCompanyDialog .sv-company-editor{padding-top:2px}
 #seyveoCompanyDialog .seyveo-passport-section{
- margin:2px 0 22px;font-size:13px;font-weight:500;
- color:var(--secondary);letter-spacing:.01em;
+ margin:2px 0 15px;font-size:13px;font-weight:575;
+ color:var(--secondary);letter-spacing:0;
 }
 #seyveoCompanyDialog .seyveo-passport-form{
  display:flex;flex-direction:column;gap:0;
  border:0!important;padding:0!important;margin:0;
 }
 #seyveoCompanyDialog .seyveo-passport-form > label,
+#seyveoCompanyDialog .seyveo-passport-form > [data-passport-type] > label,
 #seyveoCompanyDialog .sv-company-extra-body label,
 #seyveoCompanyDialog .sv-company-extra > label{
- display:block;margin:0 0 17px;
- color:var(--secondary);font-size:12px;font-weight:430;line-height:1.4;
+ display:block;margin:0 0 12px;
+ color:var(--secondary);font-size:12px;font-weight:460;line-height:1.35;
 }
 #seyveoCompanyDialog .seyveo-passport-form input:not([type=radio]):not([type=hidden]){
  box-sizing:border-box;display:block;width:100%;
- min-height:46px;height:46px;margin:4px 0 0;padding:9px 0;
- border:0;border-bottom:1px solid rgba(220,229,236,.20);
+ min-height:40px;height:40px;margin:3px 0 0;padding:6px 0;
+ border:0;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
  border-radius:0;background:transparent!important;
- box-shadow:none;color:var(--text);font:inherit;font-size:14px;font-weight:430;
+ box-shadow:none;color:var(--text);font:inherit;font-size:16px;font-weight:450;
  outline:0;
 }
 #seyveoCompanyDialog .seyveo-passport-form input:not([type=radio]):not([type=hidden]):focus{
  border-bottom-color:rgba(237,242,248,.65);
 }
 #seyveoCompanyDialog .sv-kind{
- min-width:0;margin:0 0 22px;padding:0;border:0;
+ min-width:0;margin:0 0 16px;padding:0;border:0;
 }
 #seyveoCompanyDialog .sv-kind legend{
- margin:0 0 11px;color:var(--secondary);font-size:12px;font-weight:430;
+ margin:0 0 8px;color:var(--secondary);font-size:12px;font-weight:460;
 }
 #seyveoCompanyDialog .sv-kind-options{
- display:grid;grid-template-columns:1.3fr .6fr 1fr;
+ display:grid;grid-template-columns:1.25fr .62fr .95fr;
  gap:2px;padding:3px;
- border:1px solid rgba(224,230,237,.15);border-radius:15px;
- background:rgba(236,241,247,.035);
+ border:0;border-radius:16px;
+ background:color-mix(in srgb,var(--card2) 68%,transparent);
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
 }
 #seyveoCompanyDialog .sv-kind-options label{
  display:flex;position:relative;min-width:0;min-height:44px;margin:0;cursor:pointer;
@@ -246,26 +249,27 @@
 #seyveoCompanyDialog .sv-kind-change[hidden]{display:none!important}
 #seyveoCompanyDialog .sv-kind-options span{
  display:grid;place-items:center;width:100%;
- border-radius:11px;color:var(--secondary);font-size:11px;font-weight:480;
+ border-radius:12px;color:var(--secondary);font-size:12px;font-weight:500;
  transition:background .18s,color .18s;
 }
 #seyveoCompanyDialog .sv-kind-options input:checked+span{
- color:var(--text);background:rgba(232,238,246,.12);
- box-shadow:none;
+ color:var(--text);
+ background:color-mix(in srgb,var(--text) 12%,transparent);
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent);
 }
 #seyveoCompanyDialog .sv-kind-options input:focus-visible+span{
  outline:2px solid var(--text);outline-offset:-2px;
 }
 #seyveoCompanyDialog .sv-company-extra{
- display:block;margin:1px 0 19px;padding:0!important;
- border:0!important;border-top:1px solid rgba(222,230,237,.14)!important;
- border-bottom:1px solid rgba(222,230,237,.14)!important;
+ display:block;margin:2px 0 12px;padding:0!important;
+ border:0!important;border-top:1px solid var(--sv-velvet-divider,var(--soft-line))!important;
+ border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))!important;
  border-radius:0!important;background:transparent!important;
 }
 #seyveoCompanyDialog .sv-company-extra>summary{
  display:flex;align-items:center;justify-content:space-between;
- min-height:48px;padding:0;cursor:pointer;list-style:none;
- color:var(--text);font-size:12px;font-weight:490;
+ min-height:44px;padding:0;cursor:pointer;list-style:none;
+ color:var(--text);font-size:12px;font-weight:560;
 }
 #seyveoCompanyDialog .sv-company-extra>summary::-webkit-details-marker{display:none}
 #seyveoCompanyDialog .sv-company-extra>summary span{
@@ -274,10 +278,12 @@
 #seyveoCompanyDialog .sv-company-extra[open]>summary span{transform:rotate(90deg)}
 #seyveoCompanyDialog .sv-company-extra-body{padding:8px 0 0}
 #seyveoCompanyDialog .seyveo-passport-form .btn.primary{
- display:block;width:100%;min-height:48px;margin-top:8px;
+ display:block;width:100%;min-height:46px;margin-top:12px;
  border:0;border-radius:999px;
- background:var(--card2);color:var(--text);
- box-shadow:none;font:inherit;font-size:13px;font-weight:510;
+ background:var(--sv-liquid-nav-material,var(--card2));color:var(--text);
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+ box-shadow:none;font:inherit;font-size:13px;font-weight:585;
 }
 #seyveoCompanyDialog [data-passport-type][hidden]{display:none!important}
 #seyveoCompanyDialog [data-passport-status]:empty{display:none!important}
@@ -295,13 +301,14 @@
  color:var(--text)!important;background:var(--card)!important;
 }
 :root[data-theme=light] #seyveoCompanyDialog .sv-kind-options{
- background:rgba(60,78,99,.035);
+ background:color-mix(in srgb,var(--card2) 70%,transparent);
 }
 :root[data-theme=light] #seyveoCompanyDialog .sv-kind-options input:checked+span{
- background:rgba(60,78,99,.10);color:#273546;
+ background:color-mix(in srgb,var(--seyveo-emerald) 14%,white);
+ color:var(--text);
 }
 :root[data-theme=light] #seyveoCompanyDialog .seyveo-passport-form .btn.primary{
- background:#263545;color:#fff;
+ background:var(--sv-liquid-nav-material,var(--card2));color:var(--text);
 }
 @media(max-width:375px){
  #seyveoCompanyDialog.seyveo-passport-modal{padding:18px 16px 16px!important}
