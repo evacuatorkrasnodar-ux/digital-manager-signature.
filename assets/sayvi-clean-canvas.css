@@ -2,17 +2,17 @@
    User-requested zero visual backgrounds and zero overlay panes.
    Scope is restricted to html.seyveo-conversation; Home, Life and Business
    preserve their own surfaces. One solid theme base, no backdrop layers. */
+/* One neutral canvas extends across the ENTIRE viewport, including under
+   plus, writer and microphone. No second background on the body. */
 html.seyveo-conversation{
- /* A neutral fixed canvas, NEVER the green theme --bg token. */
- --sv-sayvi-clean-base:#111214;
- background:#111214!important;background-image:none!important;
- background-color:#111214!important;
+ background:#171c21!important;background-image:none!important;
+ background-color:#171c21!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:hidden!important;
 }
 html.seyveo-conversation body{
- background:#111214!important;background-image:none!important;
- background-color:#111214!important;
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:hidden!important;
@@ -98,11 +98,13 @@ html.seyveo-conversation .seyveo-conversation-turn{
 
 /* Reset any theme-painted canvas and background pseudo-plates.
    Do not touch actual message glyphs/icons or other app screens. */
-html.seyveo-conversation[data-theme="light"],
-html.seyveo-conversation[data-theme="light"] body{
- --sv-sayvi-clean-base:#f8f9fa;
+html.seyveo-conversation[data-theme="light"]{
  background:#f8f9fa!important;background-image:none!important;
  background-color:#f8f9fa!important;
+}
+html.seyveo-conversation[data-theme="light"] body{
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
 }
 html.seyveo-conversation::before,
 html.seyveo-conversation::after,
