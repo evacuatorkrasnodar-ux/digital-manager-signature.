@@ -688,11 +688,11 @@ html.sv-space-active #seyveoCompanion .sv-presence-caption{
    Use My World's exact muted graphite-green gradient on every destination;
    never add an orb-shaped background or a new GPU-hungry effect. */
 #homePage{background:none;}
-:root:not([data-theme=light]) body{
+:root:not(.seyveo-conversation):not([data-theme=light]) body{
  background:var(--sv-life-viewport-gradient);
  background-repeat:no-repeat;
 }
-:root[data-theme=light] body{
+:root:not(.seyveo-conversation)[data-theme=light] body{
  background:var(--sv-life-viewport-gradient);
  background-repeat:no-repeat;
 }
