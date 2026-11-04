@@ -89,3 +89,68 @@
  #seyveoCardStudio .scs-gallery-grid{grid-template-columns:minmax(0,1fr)}
  #seyveoCardStudio .scs-gallery-item{padding:12px}
 }
+
+/* Card Studio v3 — shared typography, genuine matte-glass action material,
+   and state-specific content behavior. No status-colored pills or new frames. */
+#seyveoCardStudio .scs-gallery-item,
+#seyveoCardStudio #scsPreview{--sv-card-copy:13.5px;--sv-card-action-size:12px}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-system--rendered{
+ padding:10px 0 6px;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-header{gap:10px;margin-bottom:9px}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-title{
+ font-size:15px;font-weight:550;letter-spacing:-.025em;line-height:1.32;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-source{
+ font-size:11px;line-height:1.35;font-weight:450;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-fact,
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-proposal{
+ padding:9px 0 4px;border-top:1px solid var(--sv-velvet-divider,var(--soft-line));
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-label{
+ font-size:10.5px;font-weight:530;letter-spacing:.01em;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-value{
+ line-height:1.5;font-weight:430;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-actions{
+ column-gap:8px;row-gap:3px;margin-top:9px;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action{
+ box-sizing:border-box;min-height:44px!important;border:0!important;
+ border-radius:999px!important;padding:8px 12px!important;
+ background:var(--sv-lg26-control,rgba(230,241,249,.10))!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
+ backdrop-filter:blur(18px) saturate(145%)!important;
+ font-size:12px!important;font-weight:550!important;line-height:1.25;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-action="later"],
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-action="not-interested"]{
+ background:transparent!important;-webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;color:var(--secondary)!important;
+}
+#seyveoCardStudio .scs-state-line{
+ display:flex;flex-wrap:wrap;gap:7px 12px;align-items:baseline;
+ padding:8px 0 3px;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
+}
+#seyveoCardStudio .scs-state-name{font-size:12px;font-weight:600;color:var(--text)}
+#seyveoCardStudio .scs-state-detail{font-size:11px;color:var(--secondary)}
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="deferred"]{opacity:.68}
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="done"]{opacity:.65}
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="done"] .sv-card-actions,
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="deferred"] .sv-card-actions{display:none}
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="in-progress"] .sv-card-action:first-child{
+ background:var(--sv-lg26-pressed,rgba(218,235,245,.20))!important;
+}
+#seyveoCardStudio #scsPreview .sv-card-system--rendered[data-card-state="failed"] .sv-card-actions::before{
+ content:"Не выполнено";font-size:11px;color:var(--secondary);align-self:center;
+}
+@media(prefers-reduced-transparency:reduce){
+ #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action{
+  background:var(--sv-velvet-panel,var(--card2))!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
