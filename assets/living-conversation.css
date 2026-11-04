@@ -491,20 +491,19 @@ html.seyveo-conversation[data-theme=light]{
 .sv-smart-start-home p:not(.sv-smart-start-home-kicker){
  margin:0 0 13px;color:var(--secondary);font-size:11.5px;line-height:1.47
 }
-.sv-smart-start-home form{display:flex;flex-wrap:wrap;align-items:end;gap:8px}
+.sv-smart-start-home form{display:grid;gap:7px}
 .sv-smart-start-home-label{
  width:100%;color:var(--secondary);font-size:11px;font-weight:530
 }
 .sv-smart-start-home input{
- box-sizing:border-box;flex:1;min-width:130px;min-height:44px;padding:8px 12px;
+ box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:8px 12px;
  border:1px solid color-mix(in srgb,var(--soft-line) 60%,transparent);
  border-radius:13px;background:color-mix(in srgb,var(--card2) 60%,transparent);
  color:var(--text);font:inherit;font-size:16px;
 }
-.sv-smart-start-home form button{
- flex:none;min-height:44px;padding:10px 14px;border:0;border-radius:999px;
- background:var(--text);color:var(--bg);font:inherit;
- font-size:11.5px;font-weight:615;cursor:pointer
+.sv-smart-start-home-hint{
+ display:block;min-height:16px;color:var(--secondary);
+ font-size:10.5px;line-height:1.4;opacity:.8
 }
 .sv-smart-start-home-later{
  min-height:38px;padding:6px 3px;margin-top:7px;
@@ -574,14 +573,13 @@ html.seyveo-conversation[data-theme=light]{
 }
 @media(max-width:390px){
  .sv-smart-start-home{margin-top:7px;padding:11px 12px}
- .sv-smart-start-home form button{width:100%}
  .sv-smart-start-answer .sv-smart-start-btn{width:100%}
 }
 @media(prefers-reduced-transparency:reduce){
  .sv-smart-start-home,.sv-smart-start-btn{
   -webkit-backdrop-filter:none;backdrop-filter:none;background:var(--card2)
  }
- .sv-smart-start-btn.is-primary,.sv-smart-start-home form button{
+ .sv-smart-start-btn.is-primary{
   background:var(--text);color:var(--bg)
  }
 }
