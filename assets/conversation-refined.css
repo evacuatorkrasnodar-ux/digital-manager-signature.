@@ -31,9 +31,9 @@ html.seyveo-conversation .app{
  min-height:0!important;
  margin:0 auto;
  box-sizing:border-box;
- padding:calc(env(safe-area-inset-top,0px) + 8px)
+ padding:env(safe-area-inset-top,0px)
    max(8px,env(safe-area-inset-right,0px))
-   var(--sayvi-composer-space,154px)
+   env(safe-area-inset-bottom,0px)
    max(8px,env(safe-area-inset-left,0px))!important;
  display:flex;flex-direction:column;
  overflow:hidden!important;
@@ -55,7 +55,7 @@ html.seyveo-conversation #stage{
     Percentage/auto basis can grow to the transcript's full content height
     and be CLIPPED by the stage rather than scroll inside its reader. */
  flex:1 1 0px!important;min-height:0!important;height:0!important;
- width:100%;min-width:0;padding:0!important;margin:0;
+ width:100%;min-width:0;padding:44px 0 0!important;margin:0;
  overflow:hidden!important;display:flex;flex-direction:column;
  justify-content:flex-start!important;align-items:stretch!important;
 }
@@ -465,16 +465,28 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend.seyveo-
 /* Real navigation and assistant status stay in the fixed top header.
  * No extra keyboard arrow or secondary action strip in the composer. */
 html.seyveo-conversation #seyveoConversationHeader{
+ position:absolute!important;
+ top:env(safe-area-inset-top,0px)!important;
+ left:max(8px,env(safe-area-inset-left,0px))!important;
+ right:max(8px,env(safe-area-inset-right,0px))!important;
+ z-index:48!important;
  display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
- align-items:center!important;min-height:50px!important;height:auto!important;
- padding:0 6px!important;margin:0 auto 7px!important;
- border:0!important;background:transparent!important;box-shadow:none!important;
+ align-items:center!important;
+ height:44px!important;min-height:44px!important;
+ width:auto!important;max-width:none!important;
+ gap:0!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:none!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
 }
 html.seyveo-conversation #seyveoConversationHeader>button{
  display:grid!important;place-items:center!important;
  width:44px!important;height:44px!important;min-height:44px!important;
  margin:0!important;padding:0!important;border:0!important;
- border-radius:50%!important;background:transparent!important;box-shadow:none!important;
+ border-radius:50%!important;background:transparent!important;
+ background-image:none!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  color:var(--text)!important;
 }
 html.seyveo-conversation #seyveoConversationHeader>.seyveo-conversation-heading{
@@ -653,9 +665,6 @@ html.seyveo-conversation .app::before,
 html.seyveo-conversation .app::after{
  content:none!important;
  display:none!important;
-}
-html.seyveo-conversation .app{
- padding-bottom:env(safe-area-inset-bottom,0px)!important;
 }
 html.seyveo-conversation #stage .orb-inline-reply-text{
  scroll-padding-bottom:24px!important;
