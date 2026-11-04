@@ -9,21 +9,30 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* One real palette canvas for Home and Sayvi. On iOS Safari the
-   viewport canvas belongs to html; a second gradient on body can end
-   at the visual viewport edge and make a rectangular seam. */
-html.seyveo-conversation{
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-size:100% 100svh!important;
- background-repeat:no-repeat!important;
- background-attachment:fixed!important;
+/* Bare conversation canvas: no page-painted background or overlay.
+   The only remaining filled floating surface is the real #ask form.
+   Browser/PWA default canvas color is controlled by the user agent. */
+html.seyveo-conversation,
+html.seyveo-conversation body{
+ background:transparent!important;
+ background-color:transparent!important;
+ background-image:none!important;
+ background-attachment:scroll!important;
+ box-shadow:none!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;
  overscroll-behavior:none;
+}
+html.seyveo-conversation :is(.app,#homePage,#stage,#stage>.orb-inline-reply,#stage .orb-inline-reply-text){
  background:transparent!important;
  background-image:none!important;
  box-shadow:none!important;
+}
+html.seyveo-conversation :is(body,.app,#homePage,#stage)::before,
+html.seyveo-conversation :is(body,.app,#homePage,#stage)::after{
+ content:none!important;
+ display:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
