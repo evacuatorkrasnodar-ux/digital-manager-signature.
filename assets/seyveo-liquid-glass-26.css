@@ -1,0 +1,54 @@
+/* SEYVEO Liquid Glass 26 · approved Sayvi chat material, shared selectively.
+ * This sheet is intentionally opt-in by component: no global button/dialog/card
+ * paint, no dock override, no extra overlays, frames, or pseudo-elements.
+ * The original chat uses the same optical gradients directly in its HTML. */
+:root{
+ --sv-lg26-surface:linear-gradient(150deg,rgba(230,241,249,.14),rgba(175,204,222,.075) 65%,rgba(205,224,238,.095));
+ --sv-lg26-control:linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));
+ --sv-lg26-pressed:rgba(218,235,245,.20);
+ --sv-lg26-blur:blur(18px) saturate(145%);
+ --sv-lg26-text:#f7fafc;
+ --sv-lg26-muted:rgba(228,235,241,.70);
+}
+:root[data-theme=light]{
+ --sv-lg26-surface:linear-gradient(150deg,rgba(255,255,255,.76),rgba(218,244,238,.48) 65%,rgba(248,255,253,.65));
+ --sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.78),rgba(220,246,239,.46) 65%,rgba(248,255,253,.67));
+ --sv-lg26-pressed:rgba(205,236,225,.67);
+ --sv-lg26-text:#26383b;
+ --sv-lg26-muted:#637778;
+}
+/* Input systems already share one semantic class. Their geometry and handlers
+ * remain owned by their respective components, so only material changes. */
+html body .sv-input-surface{
+ border:0;
+ background:var(--sv-lg26-surface);
+ box-shadow:none;
+ -webkit-backdrop-filter:var(--sv-lg26-blur);
+ backdrop-filter:var(--sv-lg26-blur);
+}
+html body :is(#svcpChatForm,#svfChatForm) .sv-input-action{
+ border:0;
+ background:var(--sv-lg26-control);
+ box-shadow:none;
+ -webkit-backdrop-filter:var(--sv-lg26-blur);
+ backdrop-filter:var(--sv-lg26-blur);
+ color:var(--sv-lg26-text);
+}
+html body :is(#svcpChatForm,#svfChatForm) .sv-input-action:active{background:var(--sv-lg26-pressed)}
+/* Home's small world switch, not the orb or the approved floating dock. */
+html body #homeHeader .home-world-choice{
+ border:0;
+ background:var(--sv-lg26-control);
+ box-shadow:none;
+ -webkit-backdrop-filter:var(--sv-lg26-blur);
+ backdrop-filter:var(--sv-lg26-blur);
+ color:var(--sv-lg26-text);
+}
+html body #homeHeader .home-world-choice:active{background:var(--sv-lg26-pressed)}
+@media(prefers-reduced-transparency:reduce){
+ :root{--sv-lg26-blur:none}
+ html body .sv-input-surface,html body :is(#svcpChatForm,#svfChatForm) .sv-input-action{
+  background:var(--sv-velvet-panel,var(--card2));
+ }
+ html body #homeHeader .home-world-choice{background:var(--sv-velvet-panel,var(--card2))}
+}
