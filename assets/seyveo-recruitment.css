@@ -17,9 +17,10 @@
 #seyveoRecruitment .svrec-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 #seyveoRecruitment .svrec-field{display:grid;gap:5px;min-width:0;font-size:11px;color:var(--secondary)}
 #seyveoRecruitment .svrec-field.wide{grid-column:1/-1}
-#seyveoRecruitment :is(input,textarea){width:100%;min-width:0;box-sizing:border-box;border:1px solid color-mix(in srgb,var(--soft-line) 34%,transparent);border-radius:13px;background:color-mix(in srgb,var(--card2) 56%,transparent);padding:10px 11px;color:var(--text);font:inherit;font-size:13px;outline-offset:2px}
+#seyveoRecruitment :is(input,textarea,select){width:100%;min-width:0;box-sizing:border-box;border:1px solid color-mix(in srgb,var(--soft-line) 34%,transparent);border-radius:13px;background:color-mix(in srgb,var(--card2) 56%,transparent);padding:10px 11px;color:var(--text);font:inherit;font-size:13px;outline-offset:2px}
 #seyveoRecruitment textarea{min-height:70px;resize:vertical;line-height:1.45}
-#seyveoRecruitment :is(input,textarea):focus-visible{outline:2px solid var(--seyveo-emerald)}
+#seyveoRecruitment select{appearance:none;-webkit-appearance:none;border-radius:13px;background:color-mix(in srgb,var(--card2) 56%,transparent);background-image:none;color:var(--text);min-height:43px}
+#seyveoRecruitment :is(input,textarea,select):focus-visible{outline:2px solid var(--seyveo-emerald)}
 #seyveoRecruitment .svrec-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 #seyveoRecruitment .svrec-button{min-height:41px;padding:9px 13px;border:0;border-radius:13px;background:color-mix(in srgb,var(--card2) 78%,transparent);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
 #seyveoRecruitment .svrec-button.primary{background:var(--seyveo-hdr-active);color:var(--text)}
