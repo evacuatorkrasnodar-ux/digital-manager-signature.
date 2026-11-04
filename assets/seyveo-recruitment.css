@@ -1,0 +1,42 @@
+/* SEYVEO Recruiting · Air 26. One quiet workspace on the Home pigment. */
+#seyveoRecruitment{display:grid;gap:14px;min-width:0;color:var(--text);font:inherit}
+#seyveoRecruitment [hidden]{display:none!important}
+#seyveoRecruitment .svrec-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+#seyveoRecruitment .svrec-eyebrow{font-size:10px;letter-spacing:.09em;font-weight:650;color:var(--secondary)}
+#seyveoRecruitment .svrec-title{margin:4px 0;font-size:18px;font-weight:620;letter-spacing:-.03em}
+#seyveoRecruitment .svrec-desc{margin:3px 0 0;font-size:12px;color:var(--secondary);line-height:1.55}
+#seyveoRecruitment .svrec-state{flex:none;font-size:10px;color:var(--secondary)}
+#seyveoRecruitment .svrec-status{margin:0;padding:10px 12px;font-size:12px;line-height:1.5;color:var(--text);border-radius:15px;background:color-mix(in srgb,var(--card2) 60%,transparent)}
+#seyveoRecruitment .svrec-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#seyveoRecruitment .svrec-stat{padding:11px 9px;min-width:0;border-radius:15px;background:color-mix(in srgb,var(--card2) 53%,transparent)}
+#seyveoRecruitment .svrec-stat strong{display:block;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+#seyveoRecruitment .svrec-stat small{font-size:10px;color:var(--secondary);line-height:1.35}
+#seyveoRecruitment .svrec-section{display:grid;gap:9px;padding:13px 0 0;border-top:1px solid color-mix(in srgb,var(--soft-line) 44%,transparent)}
+#seyveoRecruitment .svrec-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#seyveoRecruitment .svrec-section-title{margin:0;font-size:14px;font-weight:610}
+#seyveoRecruitment .svrec-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#seyveoRecruitment .svrec-field{display:grid;gap:5px;min-width:0;font-size:11px;color:var(--secondary)}
+#seyveoRecruitment .svrec-field.wide{grid-column:1/-1}
+#seyveoRecruitment :is(input,textarea){width:100%;min-width:0;box-sizing:border-box;border:1px solid color-mix(in srgb,var(--soft-line) 34%,transparent);border-radius:13px;background:color-mix(in srgb,var(--card2) 56%,transparent);padding:10px 11px;color:var(--text);font:inherit;font-size:13px;outline-offset:2px}
+#seyveoRecruitment textarea{min-height:70px;resize:vertical;line-height:1.45}
+#seyveoRecruitment :is(input,textarea):focus-visible{outline:2px solid var(--seyveo-emerald)}
+#seyveoRecruitment .svrec-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#seyveoRecruitment .svrec-button{min-height:41px;padding:9px 13px;border:0;border-radius:13px;background:color-mix(in srgb,var(--card2) 78%,transparent);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+#seyveoRecruitment .svrec-button.primary{background:var(--seyveo-hdr-active);color:var(--text)}
+#seyveoRecruitment .svrec-button:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:2px}
+#seyveoRecruitment .svrec-small{color:var(--secondary);font-size:11px;line-height:1.5}
+#seyveoRecruitment .svrec-consent{display:flex;align-items:flex-start;gap:8px;font-size:11px;line-height:1.45;color:var(--secondary)}
+#seyveoRecruitment .svrec-consent input{width:17px;height:17px;flex:none;margin:1px 0 0;accent-color:var(--seyveo-emerald)}
+#seyveoRecruitment .svrec-card{display:grid;gap:9px;padding:12px 13px;border:1px solid color-mix(in srgb,var(--soft-line) 23%,transparent);border-radius:17px;background:color-mix(in srgb,var(--card) 63%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+#seyveoRecruitment .svrec-cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+#seyveoRecruitment .svrec-cardhead strong{font-size:13px;font-weight:610}
+#seyveoRecruitment .svrec-cardhead small{display:block;color:var(--secondary);font-size:10px;margin-top:3px}
+#seyveoRecruitment .svrec-tag{padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--card2) 60%,transparent);font-size:10px;white-space:nowrap}
+#seyveoRecruitment .svrec-analysis{font-size:12px;line-height:1.55;color:var(--text);white-space:pre-line}
+#seyveoRecruitment .svrec-candidates{display:grid;gap:8px}
+#seyveoRecruitment .svrec-pipeline{display:flex;gap:5px;flex-wrap:wrap}
+#seyveoRecruitment .svrec-stage{min-height:35px;padding:7px 10px;background:transparent;border:1px solid color-mix(in srgb,var(--soft-line) 28%,transparent);border-radius:999px;color:var(--secondary);font:inherit;font-size:10.5px}
+#seyveoRecruitment .svrec-stage[aria-pressed=true]{background:var(--seyveo-hdr-active);color:var(--text);border-color:color-mix(in srgb,var(--seyveo-emerald) 26%,transparent)}
+#seyveoRecruitment a{font-size:11px;color:var(--text);text-underline-offset:3px}
+#seyveoRecruitment .svrec-empty{padding:12px 2px;color:var(--secondary);font-size:12px;line-height:1.5}
+@media(max-width:365px){#seyveoRecruitment .svrec-grid{grid-template-columns:1fr}#seyveoRecruitment .svrec-field.wide{grid-column:auto}}
