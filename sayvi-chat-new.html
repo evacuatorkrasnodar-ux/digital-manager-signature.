@@ -20,7 +20,20 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
 .chat-head button:focus-visible,.sheet-close:focus-visible{outline:2px solid rgba(210,229,237,.65);outline-offset:2px}
 .chat-head svg,.sheet-close svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
 .chat-title{min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;font-weight:590;letter-spacing:-.025em}
-.chat-space{flex:1;min-height:0}
+.chat-space{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;overflow:hidden}
+.chat-thread{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:12px max(16px,env(safe-area-inset-right)) 28px max(16px,env(safe-area-inset-left))}
+.chat-thread::-webkit-scrollbar{display:none}
+.chat-turns{display:flex;flex-direction:column;gap:21px;width:100%;max-width:720px;margin:0 auto;min-height:100%}
+.chat-turn{display:flex;flex-direction:column;gap:7px;min-width:0;max-width:100%;font-size:15px;line-height:1.55;letter-spacing:-.008em}
+.chat-turn[data-role="assistant"]{align-items:flex-start}
+.chat-turn[data-role="user"]{align-items:flex-end}
+.chat-speaker{font-size:11px;font-weight:550;letter-spacing:.01em;color:var(--muted);padding:0 3px}
+.chat-turn[data-role="user"] .chat-speaker{display:none}
+.chat-message{max-width:min(100%,620px);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.chat-turn[data-role="user"] .chat-message{max-width:min(86%,460px);padding:10px 14px;border-radius:18px;background:#263039;color:#f5f7f9}
+.chat-turn[data-role="assistant"] .chat-message{padding:0 3px;background:transparent;border:0;box-shadow:none}
+.chat-empty{margin:auto;align-self:center;color:#89969e;font-size:14px;font-weight:450;text-align:center;letter-spacing:-.01em}
+@media(max-width:420px){.chat-thread{padding-top:8px;padding-bottom:22px}.chat-turns{gap:18px}}
 .sheet[hidden]{display:none}
 .sheet{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.38)}
 .sheet-panel{width:100%;max-width:600px;min-height:230px;max-height:80dvh;overflow:auto;padding:12px 20px calc(30px + env(safe-area-inset-bottom));border-radius:25px 25px 0 0;background:rgba(37,48,56,.93);-webkit-backdrop-filter:blur(22px) saturate(1.15);backdrop-filter:blur(22px) saturate(1.15);box-shadow:0 -8px 36px rgba(0,0,0,.12)}
@@ -39,7 +52,13 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
   <div class="chat-title">Сэйви</div>
   <button type="button" id="history" aria-label="История бесед" title="История"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5v5h5M5 10a7.5 7.5 0 1 1 .4 5.1M12 8v4.2l2.7 1.8"/></svg></button>
  </header>
- <section class="chat-space" aria-label="Область будущего чата"></section>
+ <section class="chat-space" aria-label="Сообщения">
+  <div class="chat-thread" id="chatThread" role="log" aria-label="Переписка с Сэйви" aria-live="polite" aria-relevant="additions text">
+   <div class="chat-turns" id="chatTurns">
+    <p class="chat-empty" id="chatEmpty">Сэйви на связи</p>
+   </div>
+  </div>
+ </section>
 </main>
 <div class="sheet" id="historySheet" hidden>
  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="historyHeading">
@@ -50,6 +69,42 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
 </div>
 <script>
 (()=>{
+ const thread=document.getElementById('chatThread');
+ const turns=document.getElementById('chatTurns');
+ const empty=document.getElementById('chatEmpty');
+ // A new message renderer owned only by this page. No old chat DOM/CSS is reused.
+ const messages=new Map();
+ function appendMessage({id,role,text}={}){
+  if(role!=='user'&&role!=='assistant')return null;
+  const key=String(id||('msg-'+(messages.size+1)));
+  let entry=messages.get(key);
+  if(!entry){
+   const node=document.createElement('article');
+   node.className='chat-turn';
+   node.dataset.role=role;
+   const speaker=document.createElement('span');
+   speaker.className='chat-speaker';speaker.textContent='Сэйви';
+   const content=document.createElement('div');
+   content.className='chat-message';
+   node.append(speaker,content);
+   entry={node,content,role};
+   messages.set(key,entry);
+   turns.appendChild(node);
+  }
+  if(entry.role!==role)return null;
+  const nearBottom=thread.scrollHeight-thread.scrollTop-thread.clientHeight<120;
+  entry.content.textContent=String(text??'');
+  empty.hidden=messages.size>0;
+  if(nearBottom)requestAnimationFrame(()=>{thread.scrollTop=thread.scrollHeight});
+  return key;
+ }
+ window.SEYVEO_NEW_CHAT_UI=Object.freeze({
+  appendMessage,
+  clear(){
+   for(const entry of messages.values())entry.node.remove();
+   messages.clear();empty.hidden=false;
+  }
+ });
  const sheet=document.getElementById('historySheet');
  const trigger=document.getElementById('history');
  const close=document.getElementById('closeHistory');
