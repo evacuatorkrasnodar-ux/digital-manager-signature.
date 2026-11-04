@@ -1,7 +1,7 @@
 /* SEYVEO: old Sayvi chat removed. Fresh chat lives in sayvi-chat-new.html. */
 (()=>{
 'use strict';
-const destination='sayvi-chat-new.html';
+const destination='sayvi-chat-new.html?v=f6d249c6';
 function open(){window.location.assign(destination);return true}
 function close(){if(window.location.pathname.endsWith('/sayvi-chat-new.html'))window.history.back()}
 window.SEYVEO_CONVERSATION={
