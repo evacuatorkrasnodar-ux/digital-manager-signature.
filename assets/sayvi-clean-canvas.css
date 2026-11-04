@@ -1,0 +1,95 @@
+/* SEYVEO · personal Sayvi chat CLEAN CANVAS reset.
+   User-requested zero visual backgrounds and zero overlay panes.
+   Scope is restricted to html.seyveo-conversation; Home, Life and Business
+   preserve their own surfaces. One solid theme base, no backdrop layers. */
+html.seyveo-conversation{
+ background:var(--bg)!important;background-image:none!important;
+ background-color:var(--bg)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:hidden!important;
+}
+html.seyveo-conversation body{
+ background:var(--bg)!important;background-image:none!important;
+ background-color:var(--bg)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ overflow:hidden!important;
+}
+html.seyveo-conversation :is(.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText){
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ border-color:transparent!important;
+}
+html.seyveo-conversation :is(.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText)::before,
+html.seyveo-conversation :is(.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText)::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
+html.seyveo-conversation #seyveoConversationHeader,
+html.seyveo-conversation #seyveoConversationHeader>button,
+html.seyveo-conversation #seyveoConversationHeader .seyveo-conversation-heading{
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded){
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
+ border:0!important;outline:0!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ isolation:auto!important;clip-path:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)::before,
+html.seyveo-conversation #ask.prompt:not(.expanded)::after,
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact::before,
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact::after{
+ content:none!important;display:none!important;
+ background:none!important;box-shadow:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact,
+html.seyveo-conversation #ask.prompt:not(.expanded) :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend),
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
+ border:0!important;box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ caret-color:var(--text)!important;
+ border-bottom:1px solid var(--soft-line)!important;
+ border-radius:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question::placeholder{
+ color:var(--secondary)!important;-webkit-text-fill-color:var(--secondary)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools:not([hidden]),
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools button{
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation :is(.seyveo-conversation-turn,.seyveo-conversation-turn--you,.seyveo-conversation-turn--sayvi,
+ .seyveo-conversation-user-group,.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions,
+ .seyveo-conversation-reply-action,.seyveo-chat-welcome){
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation .seyveo-conversation-turn--you{
+ border:0!important;border-left:1px solid var(--soft-line)!important;border-radius:0!important;
+}
+html.seyveo-conversation #stage .orb-inline-reply-text{
+ max-height:none!important;overflow-y:auto!important;
+}
+html.seyveo-conversation #stage.has-inline-reply .orb-inline-reply-text{
+ max-height:none!important;
+}
+html.seyveo-conversation .seyveo-conversation-turn{
+ flex-shrink:0!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html.seyveo-conversation #ask.prompt:not(.expanded){background:none!important}
+}
