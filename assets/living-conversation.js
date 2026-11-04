@@ -788,3 +788,258 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
 };
 })();
+
+
+/* SEYVEO Smart Start · guided steps in the original conversation.
+ * All controls are local DOM elements inside existing Sayvi turns.
+ * Explicit consent before saving. No artificial chat history, integrations
+ * or server roles are created by this walkthrough.
+ */
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const chat=window.SEYVEO_CONVERSATION,composer=$('ask'),thread=$('orbInlineReplyText');
+ const home=$('svSmartStartHome'),homeForm=$('svSmartStartHomeForm');
+ if(!chat||!composer||!thread)return;
+ const PLAN_KEY='seyveo-smart-start-v1',DRAFT_KEY='seyveo-smart-start-draft-v1',SKIP_KEY='seyveo-smart-start-home-later-v1';
+ const ROLES=['Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Кадровик','Другая должность'];
+ const SOURCES=['1С','Битрикс24','Кассовая система','Excel / CSV','Другая программа','Пока ничем'];
+ const FEATURES=[
+  {id:'team',title:'Команда и поручения',detail:'Личные и групповые чаты, задачи и контроль после подключения защищённых аккаунтов'},
+  {id:'docs',title:'Документы',detail:'Рабочие файлы и согласования с ограничением доступа'},
+  {id:'sales',title:'Продажи и товары',detail:'Реальные показатели после подключения 1С, CRM или кассовой системы'},
+  {id:'finance',title:'Финансы',detail:'Данные из банка после разрешения; переводы подтверждаются отдельно'}
+ ];
+ let session=null;
+ function get(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
+ function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
+ function el(tag,cls,value){
+  const e=document.createElement(tag);
+  if(cls)e.className=cls;if(value!==undefined)e.textContent=value;return e;
+ }
+ function btn(label,fn,cls=''){
+  const b=el('button','sv-smart-start-btn'+(cls?' '+cls:''),label);
+  b.type='button';b.addEventListener('click',fn);return b;
+ }
+ function prompt(){
+  if(!session)return '';
+  switch(session.step){
+   case 'name':return 'Как к вам обращаться? Для знакомства достаточно имени.';
+   case 'business':return 'Чем занимается ваша компания? Выберите пример или напишите своими словами.';
+   case 'employees':return 'Сколько человек работает в компании, включая вас? Это поможет предложить подходящие возможности для команды.';
+   case 'roles':return 'Какие должности есть в команде? Отметьте нужные. В будущем вы сможете назначать поручения прямо из защищённого чата и обмениваться рабочими документами.';
+   case 'systems':return 'Какими программами вы пользуетесь? Подключённые 1С, Битрикс24 или касса помогут показывать реальные показатели — когда соответствующие интеграции заработают.';
+   case 'features':return 'Что вам хотелось бы настроить? Выберите нужные направления.';
+   case 'confirm':return 'Посмотрите план. Ничего не подключится автоматически. Сохранить ответы на этом устройстве?';
+   default:return '';
+  }
+ }
+ function choices(container,property,entries,notes={}){
+  const list=el('div','sv-smart-start-checklist');
+  for(const [id,label] of entries){
+   const row=el('label','sv-smart-start-checkrow'),check=el('input'),body=el('span');
+   check.type='checkbox';check.value=id;check.checked=session[property].includes(id);
+   body.append(el('strong',null,label));
+   if(notes[id])body.append(el('small',null,notes[id]));
+   check.addEventListener('change',()=>{
+    const next=new Set(session[property]);
+    if(property==='sources'&&check.checked){
+     if(id==='Пока ничем')next.clear();else next.delete('Пока ничем');
+    }
+    if(check.checked)next.add(id);else next.delete(id);
+    session[property]=[...next];
+    if(property==='sources')list.querySelectorAll('input').forEach(input=>{input.checked=next.has(input.value)});
+   });
+   row.append(check,body);list.append(row);
+  }
+  container.append(list);
+ }
+ function draw(){
+  if(!session)return;
+  chat.open();
+  chat.renderTurns([...(window.SEYVEO_DEMO_CHAT_TURNS||[]),...session.turns]);
+  const bubbles=thread.querySelectorAll('.seyveo-conversation-turn--sayvi');
+  const last=bubbles[bubbles.length-1];if(!last)return;
+  const wrap=el('div','sv-smart-start-controls'),step=session.step;
+  if(step==='name'||step==='employees'){
+   const row=el('div','sv-smart-start-answer'),input=el('input');
+   input.type=step==='employees'?'number':'text';input.inputMode=step==='employees'?'numeric':'text';
+   input.placeholder=step==='name'?'Например, Роман':'Например, 12';
+   if(step==='employees'){input.min='1';input.max='100000'}else input.maxLength=60;
+   input.setAttribute('aria-label',step==='name'?'Имя':'Количество сотрудников');
+   input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();advance(input.value)}});
+   row.append(input,btn('Продолжить',()=>advance(input.value),'is-primary'));wrap.append(row);
+  }else if(step==='business'){
+   const chips=el('div','sv-smart-start-chips');
+   for(const option of ['Продуктовые магазины','Ресторан или кафе','Строительство','Услуги','Для себя'])
+    chips.append(btn(option,()=>advance(option),'is-chip'));
+   wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
+  }else if(['roles','sources','features'].includes(step)){
+   const data=step==='roles'?ROLES.map(x=>[x,x]):
+    step==='sources'?SOURCES.map(x=>[x,x]):FEATURES.map(x=>[x.id,x.title]);
+   const notes=step==='features'?Object.fromEntries(FEATURES.map(x=>[x.id,x.detail])):{};
+   choices(wrap,step,data,notes);
+   if(step==='sources')wrap.append(el('small','sv-smart-start-note',
+    'Сейчас это выбор для плана, а не вход в 1С или Битрикс24. Пароли и токены не нужны.'));
+   wrap.append(btn('Продолжить',()=>advance('Отмечено: '+session[step].length),'is-primary'));
+  }else if(step==='confirm'){
+   const summary=el('div','sv-smart-start-summary');
+   for(const [label,value] of [
+    ['Имя',session.name||'Не указано'],['Деятельность',session.business||'Не указана'],
+    ['Сотрудников',String(session.employees||'—')],['Должности',session.roles.join(', ')||'Позже'],
+    ['Программы',session.sources.join(', ')||'Позже'],
+    ['Направления',session.features.map(id=>FEATURES.find(x=>x.id===id)?.title).filter(Boolean).join(', ')||'Позже']
+   ]){
+    const p=el('p');p.append(el('strong',null,label+': '),document.createTextNode(value));summary.append(p);
+   }
+   wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
+  }else if(step==='done'){
+   wrap.append(btn('Открыть кабинет',()=>{
+    if(window.SEYVEO_PREVIEW?.isManager?.())window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('home');
+    else chat.status('В предпросмотре выберите режим руководителя',3200);
+   },'is-primary'));
+  }
+  if(step!=='done'){
+   const foot=el('div','sv-smart-start-footer');
+   if(step!=='name')foot.append(btn('Назад',back));
+   foot.append(btn('Продолжить позже',()=>pause(false)));
+   wrap.append(foot);
+  }
+  last.append(wrap);
+  chat.status('Знакомство · настройка SEYVEO');
+  requestAnimationFrame(()=>{thread.scrollTop=thread.scrollHeight});
+ }
+ function advance(value){
+  if(!session)return;
+  const text=String(value||'').trim().slice(0,400);
+  if(!text){chat.status('Укажите ответ',2000);return}
+  if(/^(отмена|выйти)$/i.test(text)){pause(false);return}
+  if(session.step==='name'){session.name=text.slice(0,60);session.step='business'}
+  else if(session.step==='business'){
+   session.business=text.slice(0,160);
+   session.step=text==='Для себя'?'confirm':'employees';
+   if(text==='Для себя')session.employees=1;
+  }else if(session.step==='employees'){
+   const n=Number(text);
+   if(!Number.isInteger(n)||n<1||n>100000){chat.status('Укажите целое число от 1 до 100000',2400);return}
+   session.employees=n;session.step='roles';
+  }else if(session.step==='roles')session.step='sources';
+  else if(session.step==='sources')session.step='features';
+  else if(session.step==='features')session.step='confirm';
+  else if(session.step==='confirm'){
+   if(/^(сохранить|готово)$/i.test(text)){finish();return}
+   chat.status('Подтвердите кнопкой «Сохранить план»',2400);return;
+  }else return;
+  session.turns.push({question:text,answer:prompt(),smartStart:true});
+  draw();
+ }
+ function back(){
+  if(!session)return;
+  const steps=['name','business','employees','roles','sources','features','confirm'];
+  const n=steps.indexOf(session.step);
+  if(n<1)return;
+  session.step=steps[n-1];
+  if(session.business==='Для себя'&&session.step==='features')session.step='business';
+  session.turns.push({question:'Вернуться',answer:prompt(),smartStart:true});
+  draw();
+ }
+ function pause(silent){
+  if(!session)return;
+  if(session.step!=='done'){
+   const {name,business,employees,roles,sources,features,step}=session;
+   if(!save(DRAFT_KEY,{name,business,employees,roles,sources,features,step})){
+    if(!silent){chat.status('Не удалось сохранить черновик',2800);return}
+   }
+  }
+  session=null;chat.renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[]);
+  if(!silent)chat.status('Сохранила ответы. Продолжим, когда удобно.',3000);
+ }
+ function finish(){
+  if(!session)return;
+  const {name,business,employees,roles,sources,features}=session;
+  const record={version:1,name,business,employees,roles:roles.slice(),sources:sources.slice(),
+   features:features.slice(),connected:false,updatedAt:new Date().toISOString()};
+  if(!save(PLAN_KEY,record)){chat.status('Не удалось сохранить на устройстве',3000);return}
+  try{localStorage.removeItem(DRAFT_KEY)}catch{}
+  if(name){
+   try{
+    const key='seyveo-first-acquaintance-v1',prev=get(key)||{};
+    const focus=['life','start','pro','max'].includes(prev.focus)?prev.focus:(business==='Для себя'?'life':'pro');
+    save(key,{...prev,schemaVersion:1,name,focus,assistantName:'Сэйви',
+     assistantVoice:'female',assistantAliases:['Сэйви','Сэй','SEYVEO'],lifeIncluded:true,
+     createdAt:prev.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()});
+    window.dispatchEvent(new Event('seyveo:profile-changed'));
+   }catch{}
+  }
+  session.step='done';
+  session.turns.push({question:'Сохранить мой план',answer:
+   'План сохранён на этом устройстве. Защищённые аккаунты сотрудников, 1С, Битрикс24 и банковские операции пока НЕ подключены.'+
+   '\nКогда интеграции станут доступны, продолжим настройку с вашего согласия. Пароли и банковские коды здесь не нужны.',smartStart:true});
+  draw();
+  syncHome();
+  window.dispatchEvent(new Event('seyveo:smart-start-complete'));
+ }
+ function begin(opts={}){
+  const draft=opts.resume?get(DRAFT_KEY):null,old=get(PLAN_KEY);
+  let name=String(opts.name||draft?.name||old?.name||get('seyveo-first-acquaintance-v1')?.name||'').trim().slice(0,60);
+  session={
+   name,business:String(draft?.business||'').slice(0,160),employees:Number(draft?.employees)||null,
+   roles:Array.isArray(draft?.roles)?draft.roles.filter(v=>ROLES.includes(v)):[],
+   sources:Array.isArray(draft?.sources)?draft.sources.filter(v=>SOURCES.includes(v)):[],
+   features:Array.isArray(draft?.features)?draft.features.filter(v=>FEATURES.some(x=>x.id===v)):[],
+   step:['name','business','employees','roles','sources','features','confirm'].includes(draft?.step)?draft.step:(name?'business':'name'),
+   turns:[]
+  };
+  if(!session.name)session.step='name';
+  session.turns.push({question:'Начнём знакомство с SEYVEO',answer:
+   (name?'Рада знакомству, '+name+'! ':'Привет! ')+'Я помогу настроить SEYVEO под ваши задачи. '+prompt()+
+   '\nОтвечайте вручную или нажимайте на кнопки и галочки. Подключения и приглашения не запускаются автоматически.',smartStart:true});
+  draw();syncHome();
+  return true;
+ }
+ composer.addEventListener('submit',event=>{
+  if(!session||session.step==='done')return;
+  event.preventDefault();event.stopImmediatePropagation();
+  const input=$('question'),value=String(input?.value||'').trim();
+  if(!value)return;
+  input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
+  advance(value);
+ },true);
+ function syncHome(){
+  if(!home)return;
+  let suppressed=false;
+  try{suppressed=localStorage.getItem(SKIP_KEY)==='1'}catch{}
+  home.hidden=!!(session||get('seyveo-first-acquaintance-v1')||get(PLAN_KEY)||suppressed);
+  if(!home.hidden)$('seyveoNameTip')?.setAttribute('hidden','');
+ }
+ homeForm?.addEventListener('submit',event=>{
+  event.preventDefault();
+  const input=$('svSmartStartHomeName'),name=String(input?.value||'').trim().slice(0,60);
+  if(!name){input?.focus();return}
+  home.hidden=true;begin({name,resume:!!get(DRAFT_KEY)});
+ });
+ $('svSmartStartHomeLater')?.addEventListener('click',()=>{
+  try{localStorage.setItem(SKIP_KEY,'1')}catch{}
+  syncHome();
+ });
+ $('svCabinetStartWithSayvi')?.addEventListener('click',()=>{
+  $('svCabinetDialog')?.close?.();
+  begin({resume:!!get(DRAFT_KEY)});
+ });
+ // Reuse the existing "Tell Sayvi about my business" entry. Capture before
+ // the legacy handler so it does not open two competing introductions.
+ $('openSayviBusinessIntro')?.addEventListener('click',event=>{
+  event.preventDefault();event.stopImmediatePropagation();
+  begin({resume:!!get(DRAFT_KEY)});
+ },true);
+ $('seyveoConversationBack')?.addEventListener('click',()=>pause(true),true);
+ window.addEventListener('hashchange',()=>{
+  if(session&&location.hash&&!['#home','#'].includes(location.hash))pause(true);
+ });
+ window.addEventListener('seyveo:profile-changed',syncHome);
+ window.addEventListener('storage',event=>{
+  if([PLAN_KEY,'seyveo-first-acquaintance-v1',SKIP_KEY].includes(event.key))syncHome();
+ });
+ syncHome();
+ window.SEYVEO_SMART_START=Object.freeze({begin,resume:()=>begin({resume:true}),getPlan:()=>get(PLAN_KEY)});
+})();
