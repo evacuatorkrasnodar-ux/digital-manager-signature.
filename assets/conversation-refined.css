@@ -12,18 +12,25 @@
 /* The Home background must be painted ON THE VIEWPORT.
    A gradient on body scales to the document's scroll height in iOS Safari,
    so the fixed-height chat shows only its nearly solid upper edge. */
-html.seyveo-conversation,
-html.seyveo-conversation body{
- /* Both viewport and body have the SAME Home pigment. No black fallback strip
-    under the fixed iOS composer when Safari changes the visual viewport. */
+/* One real, fixed Home pigment layer. Two separately-sized CSS gradients
+   (on html and body) caused a dark rectangular seam below the fixed composer
+   in iOS Safari when the visual viewport and layout viewport diverged. */
+html.seyveo-conversation{
  background:var(--sv-life-viewport-gradient,var(--bg))!important;
  background-repeat:no-repeat!important;
- background-size:100% 100dvh!important;
- background-attachment:fixed!important;
- min-height:100dvh;
+ background-size:100% 100%!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
+ background:transparent!important;background-image:none!important;
+}
+html.seyveo-conversation body::before{
+ content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+ background:var(--sv-life-viewport-gradient,var(--bg));
+ background-size:100% 100%;background-repeat:no-repeat;
+}
+html.seyveo-conversation .app{
+ z-index:1!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
@@ -727,4 +734,35 @@ html.seyveo-conversation #stage{
 }
 @media(max-height:500px){
  html.seyveo-conversation .app{padding-top:env(safe-area-inset-top,0px)!important}
+}
+
+/* Two quiet round Liquid Glass controls; 44px hit boxes do not enlarge header. */
+html.seyveo-conversation #seyveoConversationHeader>button{
+ position:relative!important;isolation:isolate;
+ display:grid!important;place-items:center!important;
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ border-radius:50%!important;
+ border:1px solid color-mix(in srgb,var(--sv-input-border) 23%,transparent)!important;
+ background:color-mix(in srgb,var(--sv-input-surface) 54%,transparent)!important;
+ -webkit-backdrop-filter:blur(19px) saturate(112%)!important;
+ backdrop-filter:blur(19px) saturate(112%)!important;
+ box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 35%,transparent)!important;
+ color:var(--text)!important;flex:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+html.seyveo-conversation #seyveoConversationHeader>button svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.55!important;
+}
+html.seyveo-conversation #seyveoConversationHeader>button:active{
+ background:color-mix(in srgb,var(--seyveo-hdr-active,var(--card2)) 65%,transparent)!important;
+}
+html.seyveo-conversation #seyveoConversationHeader>button:focus-visible{
+ outline:2px solid var(--seyveo-emerald)!important;outline-offset:2px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html.seyveo-conversation #seyveoConversationHeader>button{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:var(--card2)!important;
+ }
 }
