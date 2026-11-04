@@ -1,0 +1,179 @@
+/* SEYVEO · Sayvi Page 3.0 · completely independent chat surface.
+   NO .app containers, NO Home canvas, NO layered CSS, NO visual frame.
+   User approved solid black. Single owner for all new chat visual rules. */
+#sayviPage[hidden]{display:none!important}
+html.seyveo-conversation #sayviPage{
+ position:fixed!important;
+ inset:0!important;
+ z-index:900!important;
+ box-sizing:border-box!important;
+ display:flex!important;
+ flex-direction:column!important;
+ width:100vw!important;max-width:none!important;
+ height:100dvh!important;min-height:0!important;
+ margin:0!important;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
+ background:#08090b!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ outline:0!important;box-shadow:none!important;
+ overflow:hidden!important;isolation:isolate!important;
+ color:#f6f7f8!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+html.seyveo-conversation #sayviPage::before,
+html.seyveo-conversation #sayviPage::after{
+ content:none!important;display:none!important;
+}
+html.seyveo-conversation body{overflow:hidden!important}
+html.seyveo-conversation .app{visibility:hidden!important;pointer-events:none!important}
+html.seyveo-conversation #sayviPage,
+html.seyveo-conversation #sayviPage *{
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ text-shadow:none!important;filter:none!important;
+}
+#sayviPage .sayvi3-head{
+ display:grid;grid-template-columns:44px minmax(0,1fr) 44px;
+ align-items:center;flex:0 0 56px;gap:6px;
+ box-sizing:border-box;width:100%;max-width:740px;
+ padding:0 12px;margin:0 auto;
+ background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+#sayviPage .sayvi3-head>button{
+ display:grid;place-items:center;width:44px;height:44px;
+ padding:0;margin:0;border:0;border-radius:0;
+ background:none!important;color:#f6f7f8;box-shadow:none!important;
+}
+#sayviPage svg{
+ width:20px;height:20px;stroke:currentColor;stroke-width:1.6;
+ stroke-linecap:round;stroke-linejoin:round;fill:none;
+}
+#sayviPage .sayvi3-title{
+ display:flex;flex-direction:column;align-items:center;
+ min-width:0;gap:3px;text-align:center;
+}
+#sayviPage .sayvi3-title strong{font-size:15px;font-weight:600;letter-spacing:-.015em}
+#sayviPage .sayvi3-title small{font-size:10px;line-height:1.2;color:#969da5}
+#sayviPage .sayvi3-transcript{
+ flex:1 1 0px;min-height:0;display:flex;flex-direction:column;
+ width:100%;max-width:740px;margin:0 auto;padding:0;
+ background:none!important;border:0!important;overflow:hidden;
+}
+#sayviPage #orbInlineReplyText{
+ display:block!important;position:static!important;
+ flex:1 1 0px!important;min-height:0!important;height:0!important;
+ max-height:none!important;width:100%!important;max-width:none!important;
+ box-sizing:border-box!important;margin:0!important;
+ padding:12px 18px 20px!important;
+ background:none!important;background-image:none!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ color:#f6f7f8!important;overflow-y:auto!important;overflow-x:hidden!important;
+ -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+ scrollbar-width:none;
+}
+#sayviPage #orbInlineReplyText::-webkit-scrollbar{display:none}
+#sayviPage .seyveo-conversation-turn{
+ display:flex!important;flex-direction:column;flex-shrink:0!important;
+ gap:5px;max-width:100%;min-width:0;
+ margin:0 0 19px!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;color:#f6f7f8!important;
+}
+#sayviPage .seyveo-conversation-turn--you{align-items:flex-end}
+#sayviPage .seyveo-conversation-turn--sayvi{align-items:flex-start}
+#sayviPage .seyveo-conversation-speaker{
+ color:#9da5ad;font-size:11px;letter-spacing:.01em;font-weight:450;
+}
+#sayviPage .seyveo-conversation-turn--you .seyveo-conversation-speaker{display:none}
+#sayviPage .seyveo-conversation-body{
+ font-size:15px;font-weight:400;line-height:1.62;
+ white-space:pre-wrap;overflow-wrap:anywhere;color:#f6f7f8;
+}
+#sayviPage .seyveo-conversation-turn--you .seyveo-conversation-body{
+ max-width:min(86%,460px);align-self:flex-end;
+ padding:9px 13px;border:0;border-radius:16px;
+ background:#22262c!important;color:#f6f7f8;
+}
+#sayviPage .seyveo-conversation-reply-actions,
+#sayviPage .seyveo-conversation-user-actions{
+ display:flex;align-items:center;gap:7px;margin:2px 0 0;
+ background:none!important;border:0!important;box-shadow:none!important;
+}
+#sayviPage .sayvi3-turn-action{
+ display:grid;place-items:center;
+ width:38px;height:38px;min-width:38px;padding:0;
+ background:none!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;color:#a9b1b9;
+}
+#sayviPage .sayvi3-turn-action svg{width:18px;height:18px}
+#sayviPage .sayvi3-empty{
+ color:#a9b1b9;font-size:14px;text-align:center;margin:auto 12px;
+}
+#sayviPage .sayvi3-writer{
+ position:relative;flex:0 0 auto;display:flex;flex-direction:column;
+ box-sizing:border-box;width:100%;max-width:740px;
+ margin:0 auto;padding:8px 10px 10px;
+ background:#08090b!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+}
+#sayviPage #ask.prompt:not(.expanded){
+ position:relative!important;inset:auto!important;
+ transform:none!important;left:auto!important;right:auto!important;bottom:auto!important;
+ z-index:1!important;box-sizing:border-box!important;
+ display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-rows:auto!important;align-items:end!important;column-gap:5px!important;
+ width:100%!important;max-width:none!important;
+ height:auto!important;min-height:44px!important;max-height:130px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ background:none!important;background-image:none!important;
+ overflow:visible!important;filter:none!important;
+}
+#sayviPage #ask.prompt:not(.expanded)::before,
+#sayviPage #ask.prompt:not(.expanded)::after{content:none!important;display:none!important}
+#sayviPage #ask.prompt:not(.expanded)>:not(#question):not(.composer-compact){display:none!important}
+#sayviPage #ask.prompt:not(.expanded) .composer-compact{
+ display:contents!important;background:none!important;border:0!important;
+}
+#sayviPage #ask.prompt:not(.expanded) .composer-compact>:not(#seyveoChatPlus):not(#seyveoConversationMic):not(#composerCompactSend){display:none!important}
+#sayviPage #ask.prompt:not(.expanded) #question{
+ position:static!important;grid-area:1/2/2/3!important;
+ transform:none!important;align-self:end!important;
+ display:block!important;box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;
+ height:42px;min-height:42px!important;max-height:112px!important;
+ padding:9px 12px!important;margin:0!important;
+ background:#242830!important;background-image:none!important;
+ border:0!important;border-radius:15px!important;box-shadow:none!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ font-family:inherit!important;font-size:16px!important;line-height:24px!important;
+ resize:none!important;overflow-y:auto!important;outline:0!important;
+}
+#sayviPage #question::placeholder{color:#a9b1b9!important;-webkit-text-fill-color:#a9b1b9!important;opacity:1!important}
+#sayviPage #ask.prompt:not(.expanded) :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend){
+ position:static!important;align-self:end!important;justify-self:center!important;
+ display:grid!important;place-items:center!important;
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;color:#e1e5e8!important;
+}
+#sayviPage #seyveoChatPlus{grid-area:1/1/2/2!important}
+#sayviPage :is(#seyveoConversationMic,#composerCompactSend){grid-area:1/3/2/4!important}
+#sayviPage #composerCompactSend[hidden],#sayviPage #seyveoConversationMic[hidden]{display:none!important}
+#sayviPage #seyveoChatTools{
+ position:absolute;bottom:calc(100% + 5px);left:10px;z-index:4;
+ display:flex;flex-direction:column;gap:0;
+ padding:6px;min-width:150px;
+ border:0;border-radius:15px;background:#242830!important;
+ box-shadow:none!important;
+}
+#sayviPage #seyveoChatTools[hidden]{display:none!important}
+#sayviPage #seyveoChatTools button{
+ min-height:42px;padding:8px;border:0;background:none!important;
+ color:#fff;font-size:13px;text-align:left;
+}
+#sayviPage :is(button,textarea):focus-visible{outline:2px solid #a6b4c1!important;outline-offset:2px!important}
+#sayviPage .sv-smart-start-controls{max-width:100%}
+@media(max-width:420px){
+ #sayviPage #orbInlineReplyText{padding:10px 13px 20px!important}
+ #sayviPage .sayvi3-head{padding:0 7px}
+ #sayviPage .sayvi3-writer{padding:7px 6px 8px}
+}
