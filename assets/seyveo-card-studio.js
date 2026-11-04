@@ -11,7 +11,9 @@ const entries=Object.entries(engine.eventType).map(([eventKey,family])=>{
 });
 // Keep the developer tools off production hosts; no query parameter is needed locally.
 const localDeveloper=['localhost','127.0.0.1','[::1]'].includes(location.hostname);
-if(!localDeveloper)return;
+const studioRequested=new URLSearchParams(location.search).get('studio')==='1';
+const githubPreview=location.hostname==='evacuatorkrasnodar-ux.github.io';
+if(!localDeveloper&&!(githubPreview&&studioRequested))return;
 const button=document.createElement('button');button.id='seyveoCardStudioLaunch';button.type='button';button.textContent='✧ Студия карточек';
 const management=document.querySelector('#manageOverview #seyveoCleanManageMenu')||document.querySelector('#manageOverview');
 if(management){
@@ -36,6 +38,34 @@ editor.addEventListener('input',render);editor.addEventListener('change',render)
 const queuePanel=document.createElement('div');queuePanel.className='scs-panel scs-queue';
 queuePanel.innerHTML='<h3>Автоматическая очередь · демо</h3><p class="scs-note">Несколько событий → карточки по важности, без дублей.</p><button type="button" data-generate>Создать учебные события</button><div data-queue-result aria-live="polite"></div>';
 page.querySelector('.scs-wrap').append(queuePanel);
+// The canonical catalog is rendered together so designers see ALL card families,
+// rather than approving a single example and accidentally leaving others behind.
+const gallery=document.createElement('section');
+gallery.className='scs-panel scs-gallery';
+gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Один мастер-компонент · '+entries.length+' типов · учебные данные</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
+page.querySelector('.scs-wrap').append(gallery);
+const galleryGrid=gallery.querySelector('[data-card-gallery]');
+function renderGallery(){
+ galleryGrid.replaceChildren();
+ for(const [index,event] of entries.entries()){
+  const card=engine.buildCard({id:'studio-gallery-'+index,type:event[6],
+   title:event[1],fact:event[2],suggestion:event[3],source:'Мастерская карточек',
+   priority:'normal',demo:true});
+  if(!card)continue;
+  const sample=document.createElement('div');
+  sample.className='scs-gallery-item';
+  const surface=engine.renderCard(card,{onAction:id=>{
+   const note=sample.querySelector('.scs-gallery-feedback');
+   if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
+  }});
+  const label=document.createElement('p');label.className='scs-gallery-name';
+  label.textContent=(index+1)+' / '+entries.length+' · '+event[0];
+  const feedback=document.createElement('p');feedback.className='scs-gallery-feedback';
+  feedback.setAttribute('aria-live','polite');
+  sample.append(label,surface,feedback);galleryGrid.append(sample);
+ }
+}
+renderGallery();
 const queueResult=queuePanel.querySelector('[data-queue-result]');
 function demoQueue(){
  const engine=window.SEYVEO_CARD_ENGINE;
@@ -86,7 +116,9 @@ function render(){
  preview.append(studioAction);
  [...states.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===stage)));
 }
-button.addEventListener('click',()=>{page.hidden=false;render()});
+function openStudio(){page.hidden=false;render()}
+button.addEventListener('click',openStudio);
+if(githubPreview&&studioRequested){openStudio();}
 page.querySelector('[data-close]').addEventListener('click',()=>{page.hidden=true});
 select.addEventListener('change',()=>{stage=0;fillEditor();render()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')page.hidden=true});
