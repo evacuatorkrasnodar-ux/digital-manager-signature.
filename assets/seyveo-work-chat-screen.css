@@ -16,8 +16,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:var(--svcp-visible-height,100dvh)!important;max-height:var(--svcp-visible-height,100dvh)!important;
  padding:0!important;margin:0!important;overflow:hidden!important;
  display:flex!important;flex-direction:column!important;isolation:isolate;
- font-family:inherit;color:var(--text);background:var(--bg);
- background-image:radial-gradient(ellipse at 50% 108%,var(--seyveo-specular),transparent 62%);
+ /* The Home viewport is the sole backdrop reference across SEYVEO themes.
+    No chat-specific glow or second pigment layer. */
+ font-family:inherit;color:var(--text);
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-repeat:no-repeat!important;background-size:100% 100%!important;
 }
 #svcpWorkChatScreen [hidden]{display:none!important}
 #svcpWorkChatScreen button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -26,7 +29,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex:0 0 auto;min-height:51px;display:flex;align-items:center;gap:6px;
  padding:calc(3px + env(safe-area-inset-top,0px)) max(15px,env(safe-area-inset-right,0px))
   5px max(7px,env(safe-area-inset-left,0px));
- border-bottom:1px solid color-mix(in srgb,var(--soft-line) 40%,transparent);background:var(--bg)
+ border-bottom:1px solid color-mix(in srgb,var(--soft-line) 24%,transparent);background:transparent
 }
 #svcpWorkChatScreen[data-view="room"]>.svcp-work-chat-header{display:none!important}
 #svcpWorkChatScreen .svcp-work-chat-back{
@@ -132,8 +135,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  margin:0!important;padding:calc(4px + env(safe-area-inset-top,0px)) max(13px,env(safe-area-inset-right,0px))
  6px max(9px,env(safe-area-inset-left,0px));
  border-bottom:1px solid color-mix(in srgb,var(--soft-line) 23%,transparent);
- background:color-mix(in srgb,var(--bg) 94%,transparent);
- -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)
+ background:transparent;
+ -webkit-backdrop-filter:none;backdrop-filter:none
 }
 #svcpWorkChatScreen .svcp-conversation-back{
  flex:0 0 36px;width:36px;min-width:36px;height:44px;padding:0;
