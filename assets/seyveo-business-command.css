@@ -1713,42 +1713,6 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  flex:none;white-space:nowrap;color:var(--secondary);font-size:10px
 }
 .sv-cabinet-muted{margin:14px 2px;color:var(--secondary);font-size:12px;line-height:1.4}
-.sv-cabinet-order{
- margin:7px 0 3px;border:0;background:transparent
-}
-.sv-cabinet-order>summary{
- display:flex;align-items:center;justify-content:space-between;gap:8px;
- min-height:44px;padding:8px 2px;list-style:none;cursor:pointer;
- color:var(--secondary);font-size:12px;font-weight:560
-}
-.sv-cabinet-order>summary::-webkit-details-marker{display:none}
-.sv-cabinet-order>summary svg{
- width:17px;height:17px;fill:none;stroke:currentColor;
- stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
- transition:transform .18s
-}
-.sv-cabinet-order[open]>summary svg{transform:rotate(90deg)}
-.sv-cabinet-section-title{
- display:flex;align-items:center;gap:8px;
- margin:9px 1px 4px;font-size:12px;font-weight:570;color:var(--secondary)
-}
-.sv-cabinet-section-title small{font-size:10.5px;font-weight:480}
-.sv-cabinet-selected-list{border-top:1px solid var(--sv-velvet-divider,var(--soft-line))}
-.sv-cabinet-picked-row{
- display:flex;align-items:center;justify-content:space-between;gap:8px;
- min-height:47px;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))
-}
-.sv-cabinet-picked-label{min-width:0;flex:1;color:var(--text);font-size:12px;font-weight:550}
-.sv-cabinet-picked-actions{display:flex;align-items:center;gap:1px;flex:none}
-.sv-cabinet-action{
- min-height:40px;min-width:40px;padding:6px 8px;border:0;border-radius:12px;
- color:var(--text);background:transparent;font:inherit;font-size:17px;cursor:pointer
-}
-.sv-cabinet-action:disabled{opacity:.22;cursor:default}
-.sv-cabinet-action.is-remove{color:var(--secondary);font-size:21px}
-.sv-cabinet-disclaimer{
- margin:4px 2px 8px;color:var(--secondary);font-size:10px;line-height:1.4
-}
 .sv-cabinet-status{min-height:0;margin:0 2px;color:var(--secondary);font-size:11px}
 .sv-cabinet-status:empty{display:none}
 .sv-cabinet-footer{
@@ -1771,8 +1735,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 :root[data-theme=light] .sv-cabinet-dialog{background:rgba(248,250,251,.97)}
 .sv-cabinet-dialog button:focus-visible,
 #tasksPage .sv-cabinet-plus:focus-visible,
-#tasksPage .sv-cabinet-empty button:focus-visible,
-.sv-cabinet-order>summary:focus-visible{
+#tasksPage .sv-cabinet-empty button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px
 }
 @media(max-width:720px){
@@ -1788,7 +1751,6 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  }
  .sv-cabinet-footer{bottom:calc(-15px - env(safe-area-inset-bottom,0px))}
 }
-@media(prefers-reduced-motion:reduce){.sv-cabinet-order>summary svg{transition:none}}
 @media(prefers-reduced-transparency:reduce){
  .sv-cabinet-dialog{background:var(--card)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
  .sv-cabinet-choice-mark,.sv-cabinet-save,#tasksPage .sv-cabinet-plus{background:var(--card2)}
@@ -1830,7 +1792,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 /* SEYVEO Cabinet · goal-first manual setup. One human-readable task per row.
    + / check adds it without a wizard; the title opens brief contextual help. */
 .sv-cabinet-catalog[hidden],.sv-cabinet-guide[hidden],
-.sv-cabinet-search[hidden],.sv-cabinet-order[hidden]{display:none!important}
+.sv-cabinet-search[hidden]{display:none!important}
 .sv-cabinet-goal-row{
  display:flex;align-items:stretch;justify-content:space-between;gap:4px;
  min-height:60px;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))
