@@ -196,7 +196,9 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  width:min(518px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
  height:auto!important;min-height:54px!important;max-height:138px!important;
  padding:5px 7px!important;
- bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
+ /* No artificial 8px painted strip below the capsule in iPhone Safari.
+    Respect a real PWA home-indicator inset where the browser supplies it. */
+ bottom:max(0px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
  transform:translateX(-50%)!important;
  border:1px solid var(--sv-input-border)!important;border-radius:var(--sv-input-radius)!important;
  background:var(--sv-input-surface)!important;
