@@ -22,10 +22,11 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .speaker{font-size:11px;color:#a5b0b7}
 /* Только поле ввода — без контейнера, подложки и размытия. */
-#sayviInput{position:fixed;left:calc(max(12px,env(safe-area-inset-left)) + 52px);bottom:calc(10px + env(safe-area-inset-bottom));width:calc(100% - max(12px,env(safe-area-inset-left)) - max(60px,env(safe-area-inset-right)) - 52px);height:44px;min-height:44px;max-height:44px;box-sizing:border-box;display:block;margin:0;padding:10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
+#sayviInput{position:fixed;left:calc(max(12px,env(safe-area-inset-left)) + 52px);bottom:calc(10px + env(safe-area-inset-bottom));width:calc(100% - max(12px,env(safe-area-inset-left)) - max(12px,env(safe-area-inset-right)) - 52px);height:44px;min-height:44px;max-height:44px;box-sizing:border-box;display:block;margin:0;padding:10px 53px 10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
 #sayviInput::placeholder{color:#a5b0b7;opacity:1}
-#sayviSend{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:#263039;color:#fff;padding:0}
-#sayviSend svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#sayviSend,#sayviMic{position:fixed;right:calc(max(12px,env(safe-area-inset-right)) + 2px);bottom:calc(12px + env(safe-area-inset-bottom));width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:#fff;padding:0}
+#sayviSend[hidden],#sayviMic[hidden]{display:none!important}
+#sayviSend svg,#sayviMic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
 #sayviPlus{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:#263039;color:#fff}
 #sayviPlus svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
@@ -44,11 +45,15 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
 <textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea>
-<button id="sayviSend" type="button" aria-label="Отправить сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
+<button id="sayviMic" type="button" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
+<button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </main>
 <script>
 (()=>{
  const input=document.getElementById('sayviInput'),list=document.getElementById('sayviMessages');
+ const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
+ function updateControls(){const typed=!!input.value.trim();mic.hidden=typed;sendButton.hidden=!typed}
+ input.addEventListener('input',updateControls);
  function append(role,message){
   const turn=document.createElement('div');turn.className='turn';turn.dataset.role=role;
   if(role==='assistant'){const title=document.createElement('span');title.className='speaker';title.textContent='Сэйви';turn.append(title);}
@@ -57,16 +62,26 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  }
  function send(){
   const value=input.value.trim();if(!value)return;
-  input.value='';
+  input.value='';updateControls();
   append('user',value);
   append('assistant','Вижу твоё сообщение. Это локальная проверка: сейчас мы смотрим, не появляется ли фон за нижним полем, когда переписка становится длиннее. Можно написать ещё несколько сообщений и прокрутить чат вверх.');
  }
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
  function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
- document.getElementById('sayviNewChat').addEventListener('click',()=>{list.replaceChildren();input.value='';closeMenu();input.focus()});
+ document.getElementById('sayviNewChat').addEventListener('click',()=>{list.replaceChildren();input.value='';updateControls();closeMenu();input.focus()});
  document.addEventListener('pointerdown',event=>{if(!menu.hidden&&!event.target.closest('#sayviPlus,#sayviMenu'))closeMenu()});
- document.getElementById('sayviSend').addEventListener('click',send);
+ sendButton.addEventListener('click',send);
+ mic.addEventListener('click',()=>{
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition)return;
+  try{
+   const session=new Recognition();session.lang='ru-RU';session.interimResults=false;
+   session.onresult=e=>{input.value=[input.value,e.results[0][0].transcript].filter(Boolean).join(' ');updateControls();input.focus()};
+   session.start();
+  }catch{}
+ });
+ updateControls();
  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 })();
 </script>
