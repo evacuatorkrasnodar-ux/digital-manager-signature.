@@ -75,3 +75,23 @@ html.seyveo-conversation :is(#ask,#homePage,#stage,#orbInlineReply,#orbInlineRep
  content:none!important;display:none!important;
 }
 
+
+/* Perimeter cleanup: the shell and chat surfaces have no visible outlines.
+   The input, plus and microphone retain their existing hit targets. */
+html.seyveo-conversation :is(body,.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText,#seyveoConversationHeader,#ask.prompt:not(.expanded)){
+ border:0!important;border-width:0!important;border-style:none!important;
+ border-radius:0!important;outline:0!important;
+ outline-offset:0!important;
+ box-shadow:none!important;
+ -webkit-box-shadow:none!important;
+ filter:none!important;
+}
+html.seyveo-conversation :is(body,.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText,#seyveoConversationHeader,#ask.prompt:not(.expanded))::before,
+html.seyveo-conversation :is(body,.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText,#seyveoConversationHeader,#ask.prompt:not(.expanded))::after{
+ content:none!important;display:none!important;
+ border:0!important;box-shadow:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) :is(#question,#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend){
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;
+}
