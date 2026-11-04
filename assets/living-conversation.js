@@ -1166,7 +1166,15 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   document.documentElement.classList.remove('sv-smart-start-home-active');
  }
  function exploreApp(){
-  if(session)pause(true);
+  if(session){
+   const started=Boolean(session.business||session.employees||session.roles.length||
+    session.sources.length||session.features.length);
+   if(started)pause(true);
+   else{
+    session=null;
+    chat.renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[]);
+   }
+  }
   dismissHome('later');
   chat.close();
  }
