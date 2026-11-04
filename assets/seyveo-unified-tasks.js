@@ -892,13 +892,12 @@
  const $=id=>document.getElementById(id);
  const root=$('unifiedBusinessTasksView'),list=root?.querySelector('.svcp-manager-actions');
  const dialog=$('svCabinetDialog'),launch=$('svCabinetConfigure');
- const empty=$('svCabinetEmpty'),chosenHost=$('svCabinetSelected');
+ const empty=$('svCabinetEmpty');
  const catalogHost=$('svCabinetCatalog'),search=$('svCabinetSearch');
  const guideHost=$('svCabinetGuide'),searchWrap=search?.closest('.sv-cabinet-search');
- const orderPanel=$('svCabinetOrder');
  const saveButton=$('svCabinetSave'),cancelButton=$('svCabinetCancel');
  const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
- if(!root||!list||!dialog||!launch||!empty||!chosenHost||!catalogHost||!search||!guideHost)return;
+ if(!root||!list||!dialog||!launch||!empty||!catalogHost||!search||!guideHost)return;
  const KEY='seyveo-cabinet-layout-v1';
  const ready=[
   {id:'pulse',name:'Пульс бизнеса',category:'Управление',description:'Клиенты, продажи, показатели',tags:'директор аналитика руководитель результаты выручка'},
@@ -968,34 +967,6 @@
   if(id)b.dataset.cabinetId=id;
   return b;
  };
- function heading(parent,text,count){
-  const el=node('h3','sv-cabinet-section-title');
-  el.append(node('span',null,text));
-  if(count!==undefined)el.append(node('small',null,String(count)));
-  parent.append(el);
- }
- function renderChosen(){
-  chosenHost.replaceChildren();
-  heading(chosenHost,'Порядок в кабинете',draft.length);
-  if(!draft.length){
-   chosenHost.append(node('p','sv-cabinet-muted','Пока пусто — добавьте инструмент из каталога ниже.'));
-   return;
-  }
-  const group=node('div','sv-cabinet-selected-list');
-  draft.forEach((id,index)=>{
-   const info=itemById.get(id),row=node('div','sv-cabinet-picked-row');
-   const label=node('span','sv-cabinet-picked-label',info.name);
-   const controls=node('span','sv-cabinet-picked-actions');
-   const up=button('↑','up',id),down=button('↓','down',id),remove=button('−','remove',id);
-   up.disabled=index===0;down.disabled=index===draft.length-1;
-   up.setAttribute('aria-label','Поднять '+info.name);
-   down.setAttribute('aria-label','Опустить '+info.name);
-   remove.setAttribute('aria-label','Убрать '+info.name+' из кабинета');
-   remove.classList.add('is-remove');
-   controls.append(up,down,remove);row.append(label,controls);group.append(row);
-  });
-  chosenHost.append(group);
- }
  function matches(item,query){
   return !query||normalize([GOALS[item.id]?.title,item.name,item.category,item.description,item.tags].join(' ')).includes(query);
  }
@@ -1034,15 +1005,12 @@
   if(!found.length&&!future.length){
    catalogHost.append(node('p','sv-cabinet-muted','Пока такого инструмента нет. Попробуйте описать задачу другими словами.'));
   }
-  const summary=dialog.querySelector('#svCabinetOrder summary span');
-  if(summary)summary.textContent='Изменить порядок · '+draft.length;
  }
  function showGoal(id){
   if(!itemById.has(id)||!draft)return;
   activeGoal=id;sourceChoice=null;
   catalogHost.hidden=true;
   if(searchWrap)searchWrap.hidden=true;
-  if(orderPanel)orderPanel.hidden=true;
   guideHost.hidden=false;
   renderGuide();
  }
@@ -1051,7 +1019,6 @@
   guideHost.hidden=true;guideHost.replaceChildren();
   catalogHost.hidden=false;
   if(searchWrap)searchWrap.hidden=false;
-  if(orderPanel)orderPanel.hidden=false;
   renderCatalog();
  }
  function renderGuide(){
@@ -1085,13 +1052,12 @@
   guideHost.append(action);
   if(status)status.textContent='';
  }
- function render(){if(!draft)return;renderChosen();renderCatalog();if(activeGoal)renderGuide();if(status)status.textContent=''}
+ function render(){if(!draft)return;renderCatalog();if(activeGoal)renderGuide();if(status)status.textContent=''}
  function open(){
   // This client check is for demo UI only. It is NOT a security boundary.
   if(!window.SEYVEO_PREVIEW?.isManager?.())return;
   returnFocus=document.activeElement;
   draft=selected.slice();search.value='';hideGoal();
-  const order=dialog.querySelector('#svCabinetOrder');if(order)order.open=false;
   render();
   if(typeof dialog.showModal==='function')dialog.showModal();
   else dialog.setAttribute('open','');
@@ -1113,17 +1079,6 @@
  saveButton?.addEventListener('click',save);
  resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';render()});
  search.addEventListener('input',renderCatalog);
- chosenHost.addEventListener('click',event=>{
-  const b=event.target.closest('[data-cabinet-action]');if(!b||!draft)return;
-  const id=b.dataset.cabinetId,index=draft.indexOf(id);
-  if(index<0)return;
-  if(b.dataset.cabinetAction==='remove')draft.splice(index,1);
-  if(b.dataset.cabinetAction==='up'&&index>0)[draft[index-1],draft[index]]=[draft[index],draft[index-1]];
-  if(b.dataset.cabinetAction==='down'&&index<draft.length-1)[draft[index],draft[index+1]]=[draft[index+1],draft[index]];
-  render();
-  const action=b.dataset.cabinetAction;
-  chosenHost.querySelector('[data-cabinet-id="'+id+'"][data-cabinet-action="'+action+'"]:not(:disabled)')?.focus({preventScroll:true});
- });
  catalogHost.addEventListener('click',event=>{
   const b=event.target.closest('[data-cabinet-action]');
   if(!b||!draft)return;
@@ -1145,7 +1100,7 @@
    if(!itemById.has(id))return;
    const index=draft.indexOf(id);
    if(index<0)draft.push(id);else draft.splice(index,1);
-   renderChosen();renderGuide();
+   renderGuide();
   }
  });
  dialog.addEventListener('click',event=>{if(event.target===dialog)cancel()});
