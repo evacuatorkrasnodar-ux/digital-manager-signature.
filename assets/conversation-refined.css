@@ -632,3 +632,31 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  background:color-mix(in srgb,var(--card2) 67%,rgba(255,255,255,.35))!important;
  border-color:color-mix(in srgb,var(--soft-line) 26%,transparent)!important;
 }
+
+/* Sayvi chat: full composer removal for clean rebuild.
+   Only inside the dedicated conversation: keep the real #ask form and
+   listeners for Home/Notes, but do not paint or position any chat writer
+   until its replacement is deliberately implemented. */
+html.seyveo-conversation body #ask.prompt,
+html.seyveo-conversation body #ask.prompt.expanded,
+html.seyveo-conversation body #seyveoChatTools{
+ display:none!important;
+ visibility:hidden!important;
+ opacity:0!important;
+ pointer-events:none!important;
+}
+html.seyveo-conversation body #ask.prompt::before,
+html.seyveo-conversation body #ask.prompt::after,
+html.seyveo-conversation body::before,
+html.seyveo-conversation body::after,
+html.seyveo-conversation .app::before,
+html.seyveo-conversation .app::after{
+ content:none!important;
+ display:none!important;
+}
+html.seyveo-conversation .app{
+ padding-bottom:env(safe-area-inset-bottom,0px)!important;
+}
+html.seyveo-conversation #stage .orb-inline-reply-text{
+ scroll-padding-bottom:24px!important;
+}
