@@ -57,7 +57,7 @@ html.seyveo-conversation #stage > :is(#orbCluster,.message,#seyveoNameTip,
 html.seyveo-conversation #orbInlineReply{
  display:flex!important;flex:1 1 0px!important;flex-direction:column!important;
  box-sizing:border-box!important;width:100%!important;max-width:none!important;
- min-height:0!important;height:0!important;margin:0!important;padding:0!important;
+ min-height:0!important;height:0!important;max-height:none!important;margin:0!important;padding:0!important;
  border:0!important;overflow:hidden!important;
 }
 html.seyveo-conversation #orbInlineReply > :not(#orbInlineReplyText){
@@ -69,6 +69,7 @@ html.seyveo-conversation #orbInlineReplyText{
     every message a shrinkable flex item and collapses long conversations. */
  display:block!important;flex:1 1 0px!important;
  width:100%!important;max-width:none!important;height:0!important;min-height:0!important;
+ max-height:none!important;/* override old Home inline-reply 34svh/40svh limit */
  margin:0!important;padding:8px clamp(13px,3.3vw,22px) 20px!important;
  overflow-y:auto!important;overflow-x:hidden!important;
  -webkit-overflow-scrolling:touch;scrollbar-width:none;
