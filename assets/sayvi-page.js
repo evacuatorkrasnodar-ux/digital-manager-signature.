@@ -9,6 +9,10 @@ const $=id=>document.getElementById(id),root=document.documentElement;
 const home=$('homePage'),nativeForm=$('ask'),nativeInput=$('question');
 const oldThread=$('orbInlineReplyText'),oldReply=$('orbInlineReply');
 if(!home||!nativeForm||!nativeInput||!oldThread||!oldReply)return;
+if(!Array.isArray(window.SEYVEO_DEMO_CHAT_TURNS)||!window.SEYVEO_DEMO_CHAT_TURNS.length){
+ const saved=window.SEYVEO_CHAT_HISTORY?.recent?.(30);
+ window.SEYVEO_DEMO_CHAT_TURNS=Array.isArray(saved)?saved:[];
+}
 const originFormParent=nativeForm.parentNode,originFormNext=nativeForm.nextSibling;
 const originThreadParent=oldThread.parentNode,originThreadNext=oldThread.nextSibling;
 const page=document.createElement('section');
