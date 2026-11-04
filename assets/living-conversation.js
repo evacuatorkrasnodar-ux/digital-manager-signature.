@@ -480,6 +480,7 @@ function renderTurns(turns){
          });
          item.append(expand);
        }
+       if(turn.smartStart){nodes.push(item);continue}
        // The message bubble and its quiet actions are separate siblings:
        // copy/edit must sit BELOW the owner's bubble, never inside it.
        const group=document.createElement('div');
@@ -802,7 +803,8 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  const home=$('svSmartStartHome'),homeForm=$('svSmartStartHomeForm');
  if(!chat||!composer||!thread)return;
  const PLAN_KEY='seyveo-smart-start-v1',DRAFT_KEY='seyveo-smart-start-draft-v1',SKIP_KEY='seyveo-smart-start-home-later-v1';
- const ROLES=['Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Кадровик','Другая должность'];
+ const ROLES=['Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Кадровик','Директор магазина','Администратор','Повар','Официант','Бариста','Курьер','Прораб','Строитель','Мастер','Менеджер','Другая должность'];
+ const roleSuggestions=business=>/магазин|торгов|продукт/i.test(business)?['Директор магазина','Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Другая должность']:/ресторан|кафе|общепит/i.test(business)?['Управляющий','Администратор','Повар','Официант','Бариста','Кассир','Курьер','Бухгалтер','Другая должность']:/строит|ремонт|монтаж/i.test(business)?['Прораб','Строитель','Мастер','Водитель','Менеджер','Бухгалтер','Другая должность']:['Управляющий','Менеджер','Администратор','Кассир','Водитель','Бухгалтер','Кадровик','Другая должность'];
  const SOURCES=['1С','Битрикс24','Кассовая система','Excel / CSV','Другая программа','Пока ничем'];
  const FEATURES=[
   {id:'team',title:'Команда и поручения',detail:'Личные и групповые чаты, задачи и контроль после подключения защищённых аккаунтов'},
@@ -875,7 +877,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
     chips.append(btn(option,()=>advance(option),'is-chip'));
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
   }else if(['roles','sources','features'].includes(step)){
-   const data=step==='roles'?ROLES.map(x=>[x,x]):
+   const data=step==='roles'?roleSuggestions(session.business).map(x=>[x,x]):
     step==='sources'?SOURCES.map(x=>[x,x]):FEATURES.map(x=>[x.id,x.title]);
    const notes=step==='features'?Object.fromEntries(FEATURES.map(x=>[x.id,x.detail])):{};
    choices(wrap,step,data,notes);
@@ -1009,7 +1011,9 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   if(!home)return;
   let suppressed=false;
   try{suppressed=localStorage.getItem(SKIP_KEY)==='1'}catch{}
-  home.hidden=!!(session||get('seyveo-first-acquaintance-v1')||get(PLAN_KEY)||suppressed);
+  home.hidden=!!(session||get('seyveo-first-acquaintance-v1')||get(PLAN_KEY)||get(DRAFT_KEY)||suppressed);
+  const entry=$('svCabinetStartWithSayvi')?.querySelector('span');
+  if(entry)entry.textContent=get(DRAFT_KEY)?'Продолжить настройку с Сэйви':'Настроить компанию с Сэйви';
   if(!home.hidden)$('seyveoNameTip')?.setAttribute('hidden','');
  }
  homeForm?.addEventListener('submit',event=>{
