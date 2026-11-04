@@ -877,8 +877,9 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
     chips.append(btn(option,()=>advance(option),'is-chip'));
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
   }else if(['roles','sources','features'].includes(step)){
-   const data=step==='roles'?roleSuggestions(session.business).map(x=>[x,x]):
-    step==='sources'?SOURCES.map(x=>[x,x]):FEATURES.map(x=>[x.id,x.title]);
+   const suggested=roleSuggestions(session.business);
+   const data=step==='roles'?[...new Set([...suggested,...session.roles])].map(x=>[x,x]):
+    step==='sources'?[...new Set([...SOURCES,...session.sources])].map(x=>[x,x]):FEATURES.map(x=>[x.id,x.title]);
    const notes=step==='features'?Object.fromEntries(FEATURES.map(x=>[x.id,x.detail])):{};
    choices(wrap,step,data,notes);
    if(step==='sources')wrap.append(el('small','sv-smart-start-note',
@@ -1091,15 +1092,15 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   let name=String(opts.name||draft?.name||old?.name||get('seyveo-first-acquaintance-v1')?.name||'').trim().slice(0,60);
   session={
    name,business:String(draft?.business||'').slice(0,160),employees:Number(draft?.employees)||null,
-   roles:Array.isArray(draft?.roles)?draft.roles.filter(v=>ROLES.includes(v)):[],
-   sources:Array.isArray(draft?.sources)?draft.sources.filter(v=>SOURCES.includes(v)):[],
+   roles:Array.isArray(draft?.roles)?draft.roles.filter(v=>typeof v==='string'&&v.length<=60).slice(0,30):[],
+   sources:Array.isArray(draft?.sources)?draft.sources.filter(v=>typeof v==='string'&&v.length<=85).slice(0,15):[],
    features:Array.isArray(draft?.features)?draft.features.filter(v=>FEATURES.some(x=>x.id===v)):[],
    step:['name','business','employees','roles','sources','features','confirm'].includes(draft?.step)?draft.step:(name?'business':'name'),
    turns:[]
   };
   if(!session.name)session.step='name';
   session.turns.push({question:'Начнём знакомство с SEYVEO',answer:
-   (name?'Рада знакомству, '+name+'! ':'Привет! ')+'Я помогу настроить SEYVEO под ваши задачи. '+prompt()+
+   (name?'Начнём, '+name+'! ':'Привет! ')+'Я помогу настроить SEYVEO под твои задачи. '+prompt()+
    '\nОтвечайте вручную или нажимайте на кнопки и галочки. Подключения и приглашения не запускаются автоматически.',smartStart:true});
   draw();syncHome();
   return true;
@@ -1117,6 +1118,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   let suppressed=false;
   try{suppressed=localStorage.getItem(SKIP_KEY)==='1'}catch{}
   home.hidden=!!(session||get('seyveo-first-acquaintance-v1')||get(PLAN_KEY)||get(DRAFT_KEY)||suppressed);
+  document.documentElement.classList.toggle('sv-smart-start-home-active',!home.hidden);
   const entry=$('svCabinetStartWithSayvi')?.querySelector('span');
   if(entry)entry.textContent=get(DRAFT_KEY)?'Продолжить настройку с Сэйви':'Настроить компанию с Сэйви';
   if(!home.hidden)$('seyveoNameTip')?.setAttribute('hidden','');
@@ -1145,6 +1147,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(!name)return;
   home.hidden=true;
+  document.documentElement.classList.remove('sv-smart-start-home-active');
   begin({name,resume:!!get(DRAFT_KEY)});
  }
  function greetBeforeChat(){
