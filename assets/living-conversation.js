@@ -1072,7 +1072,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  function enterChatAfterName(){
   clearNameIdle();
   if(!home||home.hidden||session||document.visibilityState==='hidden')return;
-  const name=String(homeNameInput?.value||'').trim().replace(/\\s+/g,' ').slice(0,60);
+  const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(!name)return;
   home.hidden=true;
   begin({name,resume:!!get(DRAFT_KEY)});
