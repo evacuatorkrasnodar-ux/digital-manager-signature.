@@ -1926,3 +1926,71 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 @media(prefers-reduced-motion:reduce){
  .sv-cabinet-guide{animation:none}
 }
+
+/* SEYVEO Smart Cabinet · first guided arrival from Sayvi.
+   A single lightweight explanation, not another heavyweight dashboard. */
+#tasksPage #svCabinetArrival[hidden],
+#tasksPage #svCabinetArrivalApply[hidden],
+#tasksPage #svCabinetArrivalSource[hidden]{display:none!important}
+#tasksPage .sv-cabinet-arrival{
+ display:grid;gap:9px;box-sizing:border-box;
+ padding:15px 15px 12px;margin:10px 0 16px;
+ border:0;border-radius:19px;
+ background:var(--sv-liquid-nav-material,var(--card2));
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
+ box-shadow:none;color:var(--text);
+}
+#tasksPage .sv-cabinet-arrival-head{
+ display:flex;align-items:start;justify-content:space-between;gap:10px;
+}
+#tasksPage .sv-cabinet-arrival-eyebrow{
+ display:block;margin:0 0 5px;
+ color:var(--secondary);font-size:10px;font-weight:560;
+}
+#tasksPage .sv-cabinet-arrival h3{
+ margin:0;font-size:16px;font-weight:625;letter-spacing:-.025em;
+ line-height:1.23;color:var(--text)
+}
+#tasksPage .sv-cabinet-arrival-close{
+ flex:none;min-height:44px;border:0;background:transparent;
+ padding:5px 0 5px 8px;
+ font:inherit;font-size:11px;font-weight:560;color:var(--secondary);cursor:pointer
+}
+#tasksPage .sv-cabinet-arrival>p{
+ margin:0;font-size:11.5px;line-height:1.53;color:var(--text)
+}
+#tasksPage .sv-cabinet-arrival-source{
+ color:var(--secondary)!important;font-size:10.5px!important
+}
+#tasksPage .sv-cabinet-arrival-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:3px 0 2px
+}
+#tasksPage .sv-cabinet-arrival-actions button{
+ min-height:42px;padding:8px 12px;
+ border:0;border-radius:999px;cursor:pointer;
+ color:var(--text);background:color-mix(in srgb,var(--card2) 79%,transparent);
+ font:inherit;font-size:11px;font-weight:570;line-height:1.3
+}
+#tasksPage #svCabinetArrivalEdit{
+ background:var(--text);color:var(--bg)
+}
+#tasksPage .sv-cabinet-arrival-foot{
+ font-size:10.5px!important;color:var(--secondary)!important
+}
+#tasksPage .sv-cabinet-arrival button:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:2px
+}
+:root[data-theme=light] #tasksPage .sv-cabinet-arrival{
+ background:color-mix(in srgb,var(--sv-liquid-nav-material,var(--card2)) 88%,white)
+}
+@media(max-width:390px){
+ #tasksPage .sv-cabinet-arrival{padding:12px 12px 11px}
+ #tasksPage .sv-cabinet-arrival-actions{gap:5px}
+ #tasksPage .sv-cabinet-arrival-actions button{font-size:10.5px;padding:7px 10px}
+}
+@media(prefers-reduced-transparency:reduce){
+ #tasksPage .sv-cabinet-arrival{
+  -webkit-backdrop-filter:none;backdrop-filter:none;background:var(--card2)
+ }
+}
