@@ -22,16 +22,27 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .speaker{font-size:11px;color:#a5b0b7}
 /* Только поле ввода — без контейнера, подложки и размытия. */
-#sayviInput{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:calc(100% - max(12px,env(safe-area-inset-left)) - max(60px,env(safe-area-inset-right)));height:44px;min-height:44px;max-height:44px;box-sizing:border-box;display:block;margin:0;padding:10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
+#sayviInput{position:fixed;left:calc(max(12px,env(safe-area-inset-left)) + 52px);bottom:calc(10px + env(safe-area-inset-bottom));width:calc(100% - max(12px,env(safe-area-inset-left)) - max(60px,env(safe-area-inset-right)) - 52px);height:44px;min-height:44px;max-height:44px;box-sizing:border-box;display:block;margin:0;padding:10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
 #sayviInput::placeholder{color:#a5b0b7;opacity:1}
 #sayviSend{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:#263039;color:#fff;padding:0}
 #sayviSend svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+#sayviPlus{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:#263039;color:#fff}
+#sayviPlus svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+#sayviPlus:active{opacity:.72}
+#sayviPlus:focus-visible{outline:2px solid #bfcbd3;outline-offset:2px}
+#sayviMenu[hidden]{display:none}
+#sayviMenu{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(62px + env(safe-area-inset-bottom));min-width:175px;padding:5px;border-radius:15px;background:#263039}
+#sayviMenu button{display:block;width:100%;border:0;border-radius:10px;background:transparent;color:#fff;padding:11px 12px;text-align:left;font:inherit}
+#sayviMenu button:active{background:rgba(255,255,255,.08)}
 </style>
 </head>
 <body>
 <main>
 <header>Сэйви</header>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
+<button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
 <textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </main>
@@ -50,6 +61,11 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
   append('user',value);
   append('assistant','Вижу твоё сообщение. Это локальная проверка: сейчас мы смотрим, не появляется ли фон за нижним полем, когда переписка становится длиннее. Можно написать ещё несколько сообщений и прокрутить чат вверх.');
  }
+ const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
+ function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
+ plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
+ document.getElementById('sayviNewChat').addEventListener('click',()=>{list.replaceChildren();input.value='';closeMenu();input.focus()});
+ document.addEventListener('pointerdown',event=>{if(!menu.hidden&&!event.target.closest('#sayviPlus,#sayviMenu'))closeMenu()});
  document.getElementById('sayviSend').addEventListener('click',send);
  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 })();
