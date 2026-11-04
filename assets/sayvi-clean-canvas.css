@@ -55,3 +55,23 @@ html.seyveo-conversation #stage .orb-inline-reply-text{
  max-height:none!important;overflow-y:auto!important;
 }
 html.seyveo-conversation .seyveo-conversation-turn{flex-shrink:0!important}
+/* No panel rims, glass edges, or decorative rectangles. */
+html.seyveo-conversation :is(.app,#homePage,#stage,#orbInlineReply,#orbInlineReplyText,#ask,
+ .composer-compact,#seyveoConversationHeader,#seyveoConversationHeader button,
+ #seyveoChatPlus,#seyveoConversationMic,#composerCompactSend,#question,
+ .seyveo-conversation-turn,.seyveo-conversation-turn--you,.seyveo-conversation-turn--sayvi){
+ border:0!important;border-image:none!important;
+ outline:0!important;box-shadow:none!important;
+ background-color:transparent!important;background-image:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ border:0!important;border-bottom:0!important;border-radius:0!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend){
+ border:0!important;outline:0!important;border-radius:0!important;
+}
+html.seyveo-conversation :is(#ask,#homePage,#stage,#orbInlineReply,#orbInlineReplyText)::before,
+html.seyveo-conversation :is(#ask,#homePage,#stage,#orbInlineReply,#orbInlineReplyText)::after{
+ content:none!important;display:none!important;
+}
+
