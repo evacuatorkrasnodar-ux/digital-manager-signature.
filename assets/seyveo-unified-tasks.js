@@ -894,9 +894,11 @@
  const dialog=$('svCabinetDialog'),launch=$('svCabinetConfigure');
  const empty=$('svCabinetEmpty'),chosenHost=$('svCabinetSelected');
  const catalogHost=$('svCabinetCatalog'),search=$('svCabinetSearch');
+ const guideHost=$('svCabinetGuide'),searchWrap=search?.closest('.sv-cabinet-search');
+ const orderPanel=$('svCabinetOrder');
  const saveButton=$('svCabinetSave'),cancelButton=$('svCabinetCancel');
  const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
- if(!root||!list||!dialog||!launch||!empty||!chosenHost||!catalogHost||!search)return;
+ if(!root||!list||!dialog||!launch||!empty||!chosenHost||!catalogHost||!search||!guideHost)return;
  const KEY='seyveo-cabinet-layout-v1';
  const ready=[
   {id:'pulse',name:'Пульс бизнеса',category:'Управление',description:'Клиенты, продажи, показатели',tags:'директор аналитика руководитель результаты выручка'},
@@ -914,11 +916,27 @@
   {name:'Производство',category:'Производство',description:'Задания, материалы, качество',tags:'цех мастер инженер'},
   {name:'Продажи и заказы',category:'Продажи',description:'Сделки, товары и заказы',tags:'менеджер торговля магазин'}
  ];
+ // Goal-first labels are intentionally ordinary language, not internal module names.
+ const GOALS={
+  pulse:{title:'Следить за продажами',description:'Выручка, клиенты и результаты',benefit:'SEYVEO соберёт показатели в разделе «Пульс бизнеса». Для реальных цифр понадобится источник данных.',hint:'В текущем прототипе показатели могут быть учебными. Добавление инструмента не подключает 1С или CRM.',sources:true},
+  chats:{title:'Общаться с командой',description:'Рабочие и групповые переписки',benefit:'Открывайте существующие рабочие чаты из кабинета.',hint:'Сейчас часть переписок работает локально на устройстве. Между сотрудниками потребуется защищённая серверная связь.'},
+  mail:{title:'Работать с письмами',description:'Почта и черновики',benefit:'Открывайте рабочую почту из кабинета.',hint:'Для реальной переписки потребуется подключить почтовый ящик с отдельным разрешением.'},
+  documents:{title:'Готовить документы',description:'Договоры и согласования',benefit:'Быстрый доступ к документам и подготовке договоров.',hint:'Реальные корпоративные документы потребуют подключённого хранилища и настроенных прав доступа.'},
+  company:{title:'Хранить реквизиты компании',description:'Контакты и QR-визитка',benefit:'Открывайте карточку организации, реквизиты и QR-визитку.',hint:'Данные карточки в текущем прототипе сохраняются локально на устройстве.'},
+  people:{title:'Управлять сотрудниками',description:'Карточки, смены и подбор',benefit:'Рабочий раздел с сотрудниками, сменами и поручениями.',hint:'Пока учебные сотрудники и графики находятся в локальном прототипе; права реальных людей будут назначаться отдельно.'}
+ };
+ const SOURCES=[
+  {id:'1c',name:'1С',note:'Интеграция с 1С ещё не готова. Для реальных данных потребуется определить конфигурацию базы и согласовать подключение с администратором.'},
+  {id:'bitrix',name:'Битрикс24',note:'Прямое подключение Битрикс24 пока не реализовано. В рабочей версии потребуется авторизация владельца и разрешение на чтение нужных данных.'},
+  {id:'file',name:'Excel / CSV',note:'Импорт таблиц в показатели пока не реализован. Не загружайте конфиденциальные рабочие файлы в неподготовленные формы.'},
+  {id:'manual',name:'Вручную',note:'Ввод реальных продаж вручную пока не реализован. Сейчас доступен только существующий локальный прототип раздела.'},
+  {id:'later',name:'Подключить позже',note:'Можно добавить «Пульс бизнеса» в кабинет сейчас. Это не означает, что реальный источник данных уже подключён.'}
+ ];
  const DEFAULT=ready.map(item=>item.id);
  const itemById=new Map(ready.map(item=>[item.id,item]));
  const tools=new Map(DEFAULT.map(id=>[id,list.querySelector('[data-cabinet-tool="'+id+'"]')]));
  if([...tools.values()].some(node=>!node))return;
- let selected=read(),draft=null,returnFocus=null;
+ let selected=read(),draft=null,returnFocus=null,activeGoal=null,sourceChoice=null;
  const normalize=value=>String(value||'').toLocaleLowerCase('ru').replace(/ё/g,'е').trim();
  function read(){
   try{
@@ -979,28 +997,32 @@
   chosenHost.append(group);
  }
  function matches(item,query){
-  return !query||normalize([item.name,item.category,item.description,item.tags].join(' ')).includes(query);
+  return !query||normalize([GOALS[item.id]?.title,item.name,item.category,item.description,item.tags].join(' ')).includes(query);
  }
  function renderCatalog(){
   catalogHost.replaceChildren();
   const q=normalize(search.value);
   const found=ready.filter(item=>matches(item,q));
   for(const item of found){
-   // One row per tool, regardless of selection. No duplicate "added" catalog.
-   const checked=draft.includes(item.id);
-   const row=button('','toggle',item.id);
-   row.className='sv-cabinet-choice'+(checked?' is-selected':'');
-   row.setAttribute('aria-pressed',String(checked));
-   row.setAttribute('aria-label',(checked?'Убрать из кабинета: ':'Добавить в кабинет: ')+item.name);
+   const goal=GOALS[item.id],checked=draft.includes(item.id);
+   // Tap the task for a human explanation; plus/check changes the layout.
+   const row=node('div','sv-cabinet-goal-row');
+   const detail=button('','guide',item.id);
+   detail.className='sv-cabinet-goal-detail';
+   detail.setAttribute('aria-label','Как работает: '+goal.title);
    const copy=node('span','sv-cabinet-choice-copy');
-   copy.append(node('strong',null,item.name),node('small',null,item.description));
-   const mark=node('span','sv-cabinet-choice-mark',checked?'✓':'+');
-   mark.setAttribute('aria-hidden','true');
-   row.append(copy,mark);
+   copy.append(node('strong',null,goal.title),node('small',null,goal.description));
+   const arrow=node('span','sv-cabinet-goal-chevron','›');
+   arrow.setAttribute('aria-hidden','true');
+   detail.append(copy,arrow);
+   const toggle=button(checked?'✓':'+','toggle',item.id);
+   toggle.className='sv-cabinet-goal-mark'+(checked?' is-selected':'');
+   toggle.setAttribute('aria-pressed',String(checked));
+   toggle.setAttribute('aria-label',(checked?'Убрать из кабинета: ':'Добавить в кабинет: ')+goal.title);
+   row.append(detail,toggle);
    catalogHost.append(row);
   }
-  // Show not-yet-built modules only for a matching search, never as a long
-  // nonfunctional catalogue that buries the actual controls.
+  // Future features never pretend to be connected.
   const future=q?upcoming.filter(item=>matches(item,q)):[];
   for(const item of future){
    const row=node('div','sv-cabinet-future');
@@ -1010,17 +1032,65 @@
    catalogHost.append(row);
   }
   if(!found.length&&!future.length){
-   catalogHost.append(node('p','sv-cabinet-muted','Пока нет такого инструмента. Попробуйте другую задачу.'));
+   catalogHost.append(node('p','sv-cabinet-muted','Пока такого инструмента нет. Попробуйте описать задачу другими словами.'));
   }
   const summary=dialog.querySelector('#svCabinetOrder summary span');
   if(summary)summary.textContent='Изменить порядок · '+draft.length;
  }
- function render(){if(!draft)return;renderChosen();renderCatalog();if(status)status.textContent=''}
+ function showGoal(id){
+  if(!itemById.has(id)||!draft)return;
+  activeGoal=id;sourceChoice=null;
+  catalogHost.hidden=true;
+  if(searchWrap)searchWrap.hidden=true;
+  if(orderPanel)orderPanel.hidden=true;
+  guideHost.hidden=false;
+  renderGuide();
+ }
+ function hideGoal(){
+  activeGoal=null;sourceChoice=null;
+  guideHost.hidden=true;guideHost.replaceChildren();
+  catalogHost.hidden=false;
+  if(searchWrap)searchWrap.hidden=false;
+  if(orderPanel)orderPanel.hidden=false;
+  renderCatalog();
+ }
+ function renderGuide(){
+  if(!activeGoal||!draft)return;
+  const info=itemById.get(activeGoal),goal=GOALS[activeGoal];
+  guideHost.replaceChildren();
+  const back=button('‹  К задачам','back');
+  back.className='sv-cabinet-guide-back';
+  const title=node('h3','sv-cabinet-guide-title',goal.title);
+  const benefit=node('p','sv-cabinet-guide-benefit',goal.benefit);
+  const module=node('p','sv-cabinet-guide-module','Инструмент: '+info.name);
+  guideHost.append(back,title,benefit,module);
+  if(goal.sources){
+   const label=node('h4','sv-cabinet-guide-subtitle','Где вы ведёте продажи?');
+   const sourceList=node('div','sv-cabinet-sources');
+   for(const source of SOURCES){
+    const chosen=source.id===sourceChoice;
+    const option=button(source.name,'source',source.id);
+    option.className='sv-cabinet-source'+(chosen?' is-current':'');
+    option.setAttribute('aria-pressed',String(chosen));
+    sourceList.append(option);
+   }
+   const instruction=node('p','sv-cabinet-source-note',
+    sourceChoice?SOURCES.find(x=>x.id===sourceChoice).note:
+    'Выберите программу, чтобы узнать следующий шаг. Добавить инструмент можно и без подключения.');
+   guideHost.append(label,sourceList,instruction);
+  }else guideHost.append(node('p','sv-cabinet-source-note',goal.hint));
+  const checked=draft.includes(activeGoal);
+  const action=button(checked?'Убрать из кабинета':'Добавить в кабинет','goal-toggle',activeGoal);
+  action.className='sv-cabinet-guide-action';
+  guideHost.append(action);
+  if(status)status.textContent='';
+ }
+ function render(){if(!draft)return;renderChosen();renderCatalog();if(activeGoal)renderGuide();if(status)status.textContent=''}
  function open(){
   // This client check is for demo UI only. It is NOT a security boundary.
   if(!window.SEYVEO_PREVIEW?.isManager?.())return;
   returnFocus=document.activeElement;
-  draft=selected.slice();search.value='';
+  draft=selected.slice();search.value='';hideGoal();
   const order=dialog.querySelector('#svCabinetOrder');if(order)order.open=false;
   render();
   if(typeof dialog.showModal==='function')dialog.showModal();
@@ -1029,7 +1099,7 @@
  function cancel(){
   if(dialog.open)dialog.close();
   else dialog.removeAttribute('open');
-  draft=null;
+  draft=null;activeGoal=null;sourceChoice=null;
  }
  function save(){
   if(!draft)return;
@@ -1055,11 +1125,28 @@
   chosenHost.querySelector('[data-cabinet-id="'+id+'"][data-cabinet-action="'+action+'"]:not(:disabled)')?.focus({preventScroll:true});
  });
  catalogHost.addEventListener('click',event=>{
-  const b=event.target.closest('[data-cabinet-action="toggle"]');if(!b||!draft)return;
+  const b=event.target.closest('[data-cabinet-action]');
+  if(!b||!draft)return;
   const id=b.dataset.cabinetId;if(!itemById.has(id))return;
+  if(b.dataset.cabinetAction==='guide'){showGoal(id);return}
+  if(b.dataset.cabinetAction!=='toggle')return;
   const i=draft.indexOf(id);if(i<0)draft.push(id);else draft.splice(i,1);
   render();
-  catalogHost.querySelector('[data-cabinet-id="'+id+'"]')?.focus({preventScroll:true});
+  catalogHost.querySelector('[data-cabinet-id="'+id+'"][data-cabinet-action="toggle"]')?.focus({preventScroll:true});
+ });
+ guideHost.addEventListener('click',event=>{
+  const b=event.target.closest('[data-cabinet-action]');
+  if(!b||!draft)return;
+  const action=b.dataset.cabinetAction;
+  if(action==='back'){hideGoal();return}
+  if(action==='source'){sourceChoice=b.dataset.cabinetId;renderGuide();return}
+  if(action==='goal-toggle'){
+   const id=b.dataset.cabinetId;
+   if(!itemById.has(id))return;
+   const index=draft.indexOf(id);
+   if(index<0)draft.push(id);else draft.splice(index,1);
+   renderChosen();renderGuide();
+  }
  });
  dialog.addEventListener('click',event=>{if(event.target===dialog)cancel()});
  dialog.addEventListener('close',()=>{
