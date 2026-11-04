@@ -1704,7 +1704,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  color:var(--text);font-size:19px;font-weight:390;line-height:1
 }
 .sv-cabinet-choice.is-selected .sv-cabinet-choice-mark{
- background:var(--seyveo-emerald);color:#0b2920;font-size:14px;font-weight:730
+ background:var(--text);color:var(--bg);font-size:14px;font-weight:730
 }
 :root[data-theme=light] .sv-cabinet-choice.is-selected .sv-cabinet-choice-mark{
  color:white;background:var(--seyveo-emerald)
