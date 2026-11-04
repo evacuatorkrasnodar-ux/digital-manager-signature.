@@ -899,6 +899,22 @@
  const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
  if(!root||!list||!dialog||!launch||!empty||!catalogHost||!search||!guideHost)return;
  const KEY='seyveo-cabinet-layout-v1';
+ // A prominent, single-purpose continuation above cabinet tools while setup is unfinished.
+ const resume=$('svCabinetContinueWithSayvi');
+ function syncResume(){
+  if(!resume)return;
+  let complete=false;
+  try{complete=localStorage.getItem(KEY)!==null}catch{}
+  resume.hidden=complete;
+ }
+ resume?.addEventListener('click',()=>{
+  // Reuse the existing Sayvi onboarding route; never create a parallel questionnaire.
+  const existing=$('svCabinetStartWithSayvi');
+  if(existing)existing.click();
+  else launch.click();
+ });
+ window.addEventListener('storage',event=>{if(event.key===KEY)syncResume()});
+ syncResume();
  const ready=[
   {id:'pulse',name:'Пульс бизнеса',category:'Управление',description:'Клиенты, продажи, показатели',tags:'директор аналитика руководитель результаты выручка'},
   {id:'chats',name:'Чаты команды',category:'Общение',description:'Рабочие переписки',tags:'мессенджер сообщения коллектив связь персонал'},
@@ -1071,7 +1087,7 @@
   if(!draft)return;
   try{localStorage.setItem(KEY,JSON.stringify({version:1,order:draft.slice()}))}
   catch{if(status)status.textContent='Не получилось сохранить настройку на этом устройстве.';return}
-  selected=draft.slice();apply();cancel();
+  selected=draft.slice();apply();syncResume();cancel();
  }
  launch.addEventListener('click',open);
  empty.querySelector('[data-sv-cabinet-open]')?.addEventListener('click',open);
@@ -1286,7 +1302,7 @@
   if(existing&&!options.force)return {applied:false,reason:'existing-layout',tools:suggested};
   try{
    localStorage.setItem(KEY,JSON.stringify({version:1,order:suggested}));
-   selected=suggested.slice();apply();
+   selected=suggested.slice();apply();syncResume();
    return {applied:true,reason:'prepared',tools:suggested};
   }catch{
    return {applied:false,reason:'storage-unavailable',tools:suggested};
