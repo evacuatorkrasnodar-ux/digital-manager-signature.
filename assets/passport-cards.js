@@ -85,6 +85,17 @@ function canCreateCompanyQr(card){
   return url.protocol==='http:'||url.protocol==='https:';
  }catch{return false}
 }
+function updateTypeChoice(compact){
+ const choices=form.querySelector('.sv-kind-options');
+ const switcher=$('seyveoCompanyChangeType');
+ if(!choices||!switcher)return;
+ choices.classList.toggle('sv-kind-options--chosen',compact);
+ switcher.hidden=!compact;
+ for(const label of choices.querySelectorAll('label')){
+  const control=label.querySelector('input[name="companyTypeChoice"]');
+  label.hidden=compact&&!control?.checked;
+ }
+}
 function toggleType(){
  const type=$('seyveoCompanyType').value;
  form.querySelectorAll('[data-passport-type]').forEach(w=>{
@@ -123,6 +134,7 @@ function setCompanyMode(mode){
  dialog.dataset.svCompanyMode=editing?'edit':'view';
  companyView.hidden=editing;
  companyEditor.hidden=!editing;
+ if(editing)updateTypeChoice(Boolean(clean(load().name)));
  if(companyDone){
   companyDone.textContent=editing?'Отмена':'Готово';
   companyDone.setAttribute('aria-label',editing?'Отменить редактирование и вернуться к карточке':'Готово — закрыть карточку компании');
@@ -135,6 +147,7 @@ function restoreCompanyForm(){
  const chosen=form.querySelector('input[name="companyTypeChoice"][value="'+$('seyveoCompanyType').value+'"]');
  if(chosen)chosen.checked=true;
  toggleType();
+ updateTypeChoice(Boolean(clean(record.name)));
  companyFormSnapshot=companyFormSignature();
 }
 function discardCompanyEditing(){
@@ -328,6 +341,7 @@ form.addEventListener('submit',save);
 form.querySelectorAll('input[name="companyTypeChoice"]').forEach(input=>input.addEventListener('change',()=>{
  $('seyveoCompanyType').value=input.value;toggleType();
 }));
+$('seyveoCompanyChangeType')?.addEventListener('click',()=>updateTypeChoice(false));
 $('seyveoStudioClose').addEventListener('click',()=>studio.close());
 $('seyveoCompanyClose').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('cancel',confirmCompanyExit);
