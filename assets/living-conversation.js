@@ -1122,9 +1122,18 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   return true;
  }
  composer.addEventListener('submit',event=>{
-  if(!session||session.step==='done')return;
-  event.preventDefault();event.stopImmediatePropagation();
   const input=$('question'),value=String(input?.value||'').trim();
+  if(!session){
+   // An explicit request should start setup from ordinary Sayvi chat.
+   const wantsSetup=/^(?:с[эе]йви[!,\\s]*)?(?:помоги\\s+(?:мне\\s+)?настроить\\s+(?:seyveo|сейвео|мой\\s+бизнес|кабинет|приложение)|давай\\s+познакомимся|начн[её]м\\s+настройку|настроим\\s+(?:мой\\s+)?бизнес)/iu.test(value);
+   if(!wantsSetup)return;
+   event.preventDefault();event.stopImmediatePropagation();
+   if(input){input.value='';input.dispatchEvent(new Event('input',{bubbles:true}))}
+   begin({resume:!!get(DRAFT_KEY)});
+   return;
+  }
+  if(session.step==='done')return;
+  event.preventDefault();event.stopImmediatePropagation();
   if(!value)return;
   input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
   advance(value);
