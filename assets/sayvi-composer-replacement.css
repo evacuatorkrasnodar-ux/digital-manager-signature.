@@ -155,3 +155,80 @@ html.seyveo-conversation[data-theme=light] #ask.prompt:not(.expanded) #question{
 html.seyveo-conversation:not([data-theme=light]) #ask.prompt:not(.expanded) #question{
  background:var(--sv-velvet-panel-quiet,#202e2d)!important;
 }
+
+/* SAYVI WRITER v2 — no container, literally.
+   Root cause: #ask is the panel surface behind both icons. Remove its box from
+   layout entirely, rather than trying to paint it transparent. Child controls
+   are fixed independently; the existing form, native textarea and JS remain. */
+html.seyveo-conversation #ask.prompt:not(.expanded):not([hidden]){
+ display:contents!important;
+ position:static!important;
+ width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+ padding:0!important;margin:0!important;
+ background:none!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;filter:none!important;isolation:auto!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)[hidden]{
+ display:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact{
+ display:contents!important;
+ background:none!important;background-image:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact::before,
+html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact::after{
+ content:none!important;display:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ position:fixed!important;
+ z-index:146!important;
+ left:50%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
+ width:min(390px,calc(100vw - 118px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ height:var(--sayvi-draft-height,42px)!important;
+ min-height:42px!important;max-height:106px!important;
+ padding:9px 14px!important;
+ box-sizing:border-box!important;
+ background:var(--sv-velvet-panel-quiet,var(--card2))!important;
+ border:1px solid color-mix(in srgb,var(--soft-line) 55%,transparent)!important;
+ border-radius:22px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend){
+ position:fixed!important;
+ z-index:146!important;
+ transform:none!important;
+ bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 12px))!important;
+ width:42px!important;height:42px!important;
+ margin:0!important;
+ border:0!important;background:none!important;background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatPlus{
+ left:calc(50% - min(255px,(100vw - 18px)/2) + 2px)!important;
+ right:auto!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) :is(#seyveoConversationMic,#composerCompactSend){
+ left:auto!important;
+ right:calc(50% - min(255px,(100vw - 18px)/2) + 2px)!important;
+}
+html.seyveo-conversation.seyveo-composer-keyboard #ask.prompt:not(.expanded)
+ :is(#question,#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend){
+ bottom:calc(var(--keyboard-offset,0px) + 8px)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools:not([hidden]){
+ position:fixed!important;
+ z-index:156!important;
+ bottom:calc(65px + env(safe-area-inset-bottom,0px))!important;
+ left:calc(50% - min(255px,(100vw - 18px)/2))!important;
+}
+@media(max-width:350px){
+ html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+  width:calc(100vw - 108px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))!important;
+ }
+}
