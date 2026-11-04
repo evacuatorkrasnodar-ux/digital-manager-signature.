@@ -958,7 +958,7 @@
  }
  function renderChosen(){
   chosenHost.replaceChildren();
-  heading(chosenHost,'В моём кабинете',draft.length);
+  heading(chosenHost,'Порядок в кабинете',draft.length);
   if(!draft.length){
    chosenHost.append(node('p','sv-cabinet-muted','Пока пусто — добавьте инструмент из каталога ниже.'));
    return;
@@ -983,42 +983,46 @@
  }
  function renderCatalog(){
   catalogHost.replaceChildren();
-  heading(catalogHost,'Каталог инструментов');
   const q=normalize(search.value);
-  const candidates=[...ready.map(item=>({...item,available:true})),...upcoming.map(item=>({...item,available:false}))].filter(item=>matches(item,q));
-  if(!candidates.length){
-   catalogHost.append(node('p','sv-cabinet-muted','Ничего не найдено. Попробуйте название задачи или профессии.'));
-   return;
+  const found=ready.filter(item=>matches(item,q));
+  for(const item of found){
+   // One row per tool, regardless of selection. No duplicate "added" catalog.
+   const checked=draft.includes(item.id);
+   const row=button('','toggle',item.id);
+   row.className='sv-cabinet-choice'+(checked?' is-selected':'');
+   row.setAttribute('aria-pressed',String(checked));
+   row.setAttribute('aria-label',(checked?'Убрать из кабинета: ':'Добавить в кабинет: ')+item.name);
+   const copy=node('span','sv-cabinet-choice-copy');
+   copy.append(node('strong',null,item.name),node('small',null,item.description));
+   const mark=node('span','sv-cabinet-choice-mark',checked?'✓':'+');
+   mark.setAttribute('aria-hidden','true');
+   row.append(copy,mark);
+   catalogHost.append(row);
   }
-  const categories=[...new Set(candidates.map(item=>item.category))];
-  for(const category of categories){
-   const section=node('section','sv-cabinet-category');
-   section.append(node('h4',null,category));
-   for(const item of candidates.filter(x=>x.category===category)){
-    const row=node('div','sv-cabinet-catalog-row'),detail=node('div','sv-cabinet-catalog-info');
-    detail.append(node('strong',null,item.name),node('small',null,item.description));
-    if(item.available){
-     const active=draft.includes(item.id),toggle=button(active?'Добавлено':'Добавить','toggle',item.id);
-     toggle.setAttribute('aria-pressed',String(active));
-     toggle.setAttribute('aria-label',(active?'Убрать из кабинета: ':'Добавить в кабинет: ')+item.name);
-     if(active)toggle.classList.add('is-added');
-     row.append(detail,toggle);
-    }else{
-     const pill=node('span','sv-cabinet-soon','Позже');
-     pill.setAttribute('aria-label','Ещё не реализовано: '+item.name);
-     row.append(detail,pill);
-    }
-    section.append(row);
-   }
-   catalogHost.append(section);
+  // Show not-yet-built modules only for a matching search, never as a long
+  // nonfunctional catalogue that buries the actual controls.
+  const future=q?upcoming.filter(item=>matches(item,q)):[];
+  for(const item of future){
+   const row=node('div','sv-cabinet-future');
+   const copy=node('span','sv-cabinet-choice-copy');
+   copy.append(node('strong',null,item.name),node('small',null,item.description));
+   row.append(copy,node('span','sv-cabinet-soon','В планах'));
+   catalogHost.append(row);
   }
+  if(!found.length&&!future.length){
+   catalogHost.append(node('p','sv-cabinet-muted','Пока нет такого инструмента. Попробуйте другую задачу.'));
+  }
+  const summary=dialog.querySelector('#svCabinetOrder summary span');
+  if(summary)summary.textContent='Изменить порядок · '+draft.length;
  }
  function render(){if(!draft)return;renderChosen();renderCatalog();if(status)status.textContent=''}
  function open(){
   // This client check is for demo UI only. It is NOT a security boundary.
   if(!window.SEYVEO_PREVIEW?.isManager?.())return;
   returnFocus=document.activeElement;
-  draft=selected.slice();search.value='';render();
+  draft=selected.slice();search.value='';
+  const order=dialog.querySelector('#svCabinetOrder');if(order)order.open=false;
+  render();
   if(typeof dialog.showModal==='function')dialog.showModal();
   else dialog.setAttribute('open','');
  }
@@ -1039,11 +1043,6 @@
  saveButton?.addEventListener('click',save);
  resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';render()});
  search.addEventListener('input',renderCatalog);
- dialog.querySelectorAll('[data-cabinet-preset]').forEach(b=>b.addEventListener('click',()=>{
-  if(!draft)return;
-  const presets={all:DEFAULT,office:['chats','mail','documents','company'],team:['pulse','chats','people']};
-  draft=(presets[b.dataset.cabinetPreset]||DEFAULT).slice();search.value='';render();
- }));
  chosenHost.addEventListener('click',event=>{
   const b=event.target.closest('[data-cabinet-action]');if(!b||!draft)return;
   const id=b.dataset.cabinetId,index=draft.indexOf(id);
