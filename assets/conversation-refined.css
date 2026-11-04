@@ -9,19 +9,20 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* Sayvi uses Home's exact palette-aware viewport canvas.
-   One paint on body, the same as assets/home-velvet.css on Home.
-   No additional fixed layer, tile, pseudo-element or toolbar backdrop. */
+/* One real palette canvas for Home and Sayvi. On iOS Safari the
+   viewport canvas belongs to html; a second gradient on body can end
+   at the visual viewport edge and make a rectangular seam. */
 html.seyveo-conversation{
- background:var(--bg)!important;
- background-image:none!important;
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-size:100% 100svh!important;
+ background-repeat:no-repeat!important;
+ background-attachment:fixed!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;
  overscroll-behavior:none;
- background:var(--sv-life-viewport-gradient)!important;
- background-repeat:no-repeat!important;
- background-attachment:scroll!important;
+ background:transparent!important;
+ background-image:none!important;
  box-shadow:none!important;
 }
 html.seyveo-conversation .app{
@@ -642,8 +643,11 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  border:1px solid color-mix(in srgb,var(--sv-input-border) 32%,transparent)!important;
  border-radius:26px!important;
  background:var(--sv-liquid-nav-material,var(--sv-input-surface))!important;
- -webkit-backdrop-filter:blur(18px) saturate(115%)!important;
- backdrop-filter:blur(18px) saturate(115%)!important;
+ /* WebKit gives a non-clipped rectangular compositor surface when
+    backdrop-filter and overflow:visible coexist on this fixed form.
+    Keep the tinted optical glass but no full-form sampling layer. */
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
  box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 35%,transparent)!important;
  isolation:auto;
 }
