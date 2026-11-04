@@ -9,15 +9,11 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-html.seyveo-conversation:not([data-theme=light]) body{
+/* The legacy green gradient has been retired.
+   One black canvas belongs to html; body must not paint a second layer. */
+html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-chat-canvas);
- background-repeat:no-repeat;
-}
-html.seyveo-conversation[data-theme=light] body{
- overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-chat-canvas);
- background-repeat:no-repeat;
+ background:transparent!important;background-image:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
