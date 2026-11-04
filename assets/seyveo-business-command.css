@@ -1793,3 +1793,36 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  .sv-cabinet-dialog{background:var(--card)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
  .sv-cabinet-choice-mark,.sv-cabinet-save,#tasksPage .sv-cabinet-plus{background:var(--card2)}
 }
+
+/* SEYVEO Smart Cabinet · touch rearrangement: a single floating row,
+   calm placeholder and no permanent grips/jiggling or extra cards. */
+#tasksPage .svcp-manager-actions.sv-cabinet-reordering{position:relative}
+#tasksPage .svcp-manager-actions .sv-cabinet-dragging,
+#tasksPage .svcp-manager-actions .svcp-manager-staff.sv-cabinet-dragging{
+ box-sizing:border-box;min-height:55px;
+ background:color-mix(in srgb,var(--card2) 88%,transparent);
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(16px));
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(16px));
+ border:0;border-radius:14px;
+ box-shadow:0 12px 28px color-mix(in srgb,var(--bg) 45%,transparent);
+ will-change:transform;
+ -webkit-user-select:none;user-select:none;
+}
+#tasksPage .svcp-manager-actions .svcp-manager-staff.sv-cabinet-dragging>summary{
+ border:0;border-radius:14px;
+}
+#tasksPage .svcp-manager-actions .sv-cabinet-drop-placeholder{
+ box-sizing:border-box;display:block;margin:2px 0;
+ border:0;border-radius:13px;
+ background:color-mix(in srgb,var(--text) 6%,transparent);
+}
+#tasksPage .svcp-manager-actions .svcp-manager-row,
+#tasksPage .svcp-manager-actions .svcp-manager-staff>summary{
+ -webkit-touch-callout:none;
+ -webkit-user-select:none;user-select:none;
+}
+@media(prefers-reduced-transparency:reduce){
+ #tasksPage .svcp-manager-actions .sv-cabinet-dragging{
+  -webkit-backdrop-filter:none;backdrop-filter:none;background:var(--card2)
+ }
+}
