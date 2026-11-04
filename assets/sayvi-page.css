@@ -4,13 +4,14 @@
 #sayviPage[hidden]{display:none!important}
 html.seyveo-conversation #sayviPage{
  position:fixed!important;
- inset:0!important;
+ inset:auto 0 auto 0!important;
+ top:var(--sayvi3-top,0px)!important;
  z-index:900!important;
  box-sizing:border-box!important;
  display:flex!important;
  flex-direction:column!important;
  width:100vw!important;max-width:none!important;
- height:100dvh!important;min-height:0!important;
+ height:var(--sayvi3-height,100dvh)!important;min-height:0!important;
  margin:0!important;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
  background:#08090b!important;background-image:none!important;
  border:0!important;border-radius:0!important;
@@ -176,4 +177,16 @@ html.seyveo-conversation #sayviPage *{
  #sayviPage #orbInlineReplyText{padding:10px 13px 20px!important}
  #sayviPage .sayvi3-head{padding:0 7px}
  #sayviPage .sayvi3-writer{padding:7px 6px 8px}
+}
+
+/* Legacy form controls live inside the native Home editor while on other
+   pages. Hide Chat 3.0 injections everywhere outside the new page. */
+html:not(.seyveo-conversation) #seyveoChatPlus,
+html:not(.seyveo-conversation) #seyveoConversationMic,
+html:not(.seyveo-conversation) #seyveoChatTools{
+ display:none!important;
+}
+#sayviPage #ask.prompt:not(.expanded) .composer-compact #composerCompactSend[hidden],
+#sayviPage #ask.prompt:not(.expanded) .composer-compact #seyveoConversationMic[hidden]{
+ display:none!important;
 }
