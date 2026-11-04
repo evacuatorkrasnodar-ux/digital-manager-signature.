@@ -75,7 +75,7 @@ test('Actual app with private Ollama is served on loopback and refuses foreign r
   const home=await request('/');
   assert.equal(home.status,200);
   const csp=home.headers['content-security-policy'];
-  assert.match(csp,/img-src 'self' data: https:\/\/upload\.wikimedia\.org https:\/\/planetary\.s3\.amazonaws\.com;/);
+  assert.match(csp,/img-src 'self' data: blob: https:\/\/upload\.wikimedia\.org https:\/\/planetary\.s3\.amazonaws\.com;/);
   assert.match(csp,/connect-src 'self';/);
   assert.match(csp,/object-src 'none';/);
   assert.doesNotMatch(csp,/img-src[^;]*\*/);
