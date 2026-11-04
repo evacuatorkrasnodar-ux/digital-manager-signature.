@@ -46,7 +46,7 @@ const menu=document.createElement('div');menu.id='seyveoChatTools';menu.classNam
 menu.hidden=true;menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия Сэйви');
 const menuItems=[['photo','Фотография'],['browser','Браузер'],['note','В Блокнот']];
 for(const [id,label] of menuItems){const b=document.createElement('button');b.type='button';b.dataset.sayviTool=id;b.textContent=label;menu.append(b)}
-form.append(menu);
+document.body.append(menu);
 const photo=document.createElement('input');photo.type='file';photo.accept='image/*';photo.hidden=true;
 photo.id='seyveoChatPhotoFile';document.body.append(photo);
 photo.addEventListener('change',()=>{
