@@ -29,6 +29,9 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 #sayviMic{display:grid!important;visibility:visible!important;opacity:1!important}
 #sayviSend{right:calc(max(12px,env(safe-area-inset-right)) + 42px)}
 #sayviSend svg,#sayviMic svg{display:block;width:22px;height:22px;fill:none;stroke:#f5f7fa;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;opacity:1}
+#micVersion{font-size:10px;color:#a5b0b7;font-weight:400;padding-left:6px}
+#sayviMic{background:#36434d!important;z-index:99!important}
+#sayviMic svg{width:24px!important;height:24px!important;stroke:#fff!important;opacity:1!important}
 
 #sayviPlus{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:#263039;color:#fff}
 #sayviPlus svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
@@ -42,7 +45,7 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 </head>
 <body>
 <main>
-<header>Сэйви</header>
+<header>Сэйви <span id="micVersion" aria-label="Версия проверки микрофона">· М4</span></header>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
