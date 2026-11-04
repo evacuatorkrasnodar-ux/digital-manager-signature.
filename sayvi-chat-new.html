@@ -31,7 +31,7 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 #sayviSend svg,#sayviMic svg{display:block;width:22px;height:22px;fill:none;stroke:#f5f7fa;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;opacity:1}
 #micVersion{font-size:10px;color:#a5b0b7;font-weight:400;padding-left:6px}
 #sayviMic{background:#36434d!important;z-index:99!important}
-#sayviMic svg{width:24px!important;height:24px!important;stroke:#fff!important;opacity:1!important}
+#sayviMic{font-size:24px!important;line-height:1!important;text-align:center!important;-webkit-text-fill-color:initial!important}
 
 #sayviPlus{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:#263039;color:#fff}
 #sayviPlus svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
@@ -50,7 +50,7 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
 <textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea>
-<button id="sayviMic" type="button" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
+<button id="sayviMic" type="button" aria-label="Голосовой ввод">🎙️</button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </main>
 <script>
