@@ -116,11 +116,9 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
    const node=document.createElement('article');
    node.className='chat-turn';
    node.dataset.role=role;
-   const speaker=document.createElement('span');
-   speaker.className='chat-speaker';speaker.textContent='Сэйви';
    const content=document.createElement('div');
    content.className='chat-message';
-   node.append(speaker,content);
+   node.append(content);
    entry={node,content,role};
    messages.set(key,entry);
    turns.appendChild(node);
