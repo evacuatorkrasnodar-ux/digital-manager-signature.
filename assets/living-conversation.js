@@ -1060,13 +1060,48 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   if(entry)entry.textContent=get(DRAFT_KEY)?'Продолжить настройку с Сэйви':'Настроить компанию с Сэйви';
   if(!home.hidden)$('seyveoNameTip')?.setAttribute('hidden','');
  }
- homeForm?.addEventListener('submit',event=>{
+ // First acquaintance should flow into the existing large chat as soon
+ // as the person finishes typing, without another "Continue" button.
+ // A short idle interval prevents navigating in the middle of keystrokes.
+ const homeNameInput=$('svSmartStartHomeName');
+ let nameIdleTimer=null,nameComposing=false;
+ function clearNameIdle(){
+  if(nameIdleTimer!==null)clearTimeout(nameIdleTimer);
+  nameIdleTimer=null;
+ }
+ function enterChatAfterName(){
+  clearNameIdle();
+  if(!home||home.hidden||session||document.visibilityState==='hidden')return;
+  const name=String(homeNameInput?.value||'').trim().replace(/\\s+/g,' ').slice(0,60);
+  if(!name)return;
+  home.hidden=true;
+  begin({name,resume:!!get(DRAFT_KEY)});
+ }
+ function scheduleNameTransition(){
+  clearNameIdle();
+  if(nameComposing||!home||home.hidden||session)return;
+  const name=String(homeNameInput?.value||'').trim();
+  if(name.length<2)return;
+  nameIdleTimer=setTimeout(enterChatAfterName,1800);
+ }
+ homeNameInput?.addEventListener('input',scheduleNameTransition);
+ homeNameInput?.addEventListener('change',scheduleNameTransition);
+ homeNameInput?.addEventListener('compositionstart',()=>{
+  nameComposing=true;clearNameIdle();
+ });
+ homeNameInput?.addEventListener('compositionend',()=>{
+  nameComposing=false;scheduleNameTransition();
+ });
+ homeNameInput?.addEventListener('keydown',event=>{
+  if(event.key!=='Enter'||event.isComposing||nameComposing)return;
   event.preventDefault();
-  const input=$('svSmartStartHomeName'),name=String(input?.value||'').trim().slice(0,60);
-  if(!name){input?.focus();return}
-  home.hidden=true;begin({name,resume:!!get(DRAFT_KEY)});
+  enterChatAfterName();
+ });
+ homeForm?.addEventListener('submit',event=>{
+  event.preventDefault();enterChatAfterName();
  });
  $('svSmartStartHomeLater')?.addEventListener('click',()=>{
+  clearNameIdle();
   try{localStorage.setItem(SKIP_KEY,'1')}catch{}
   syncHome();
  });
