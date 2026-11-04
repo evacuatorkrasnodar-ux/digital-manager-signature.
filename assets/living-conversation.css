@@ -583,3 +583,19 @@ html.seyveo-conversation[data-theme=light]{
   background:var(--text);color:var(--bg)
  }
 }
+
+/* SEYVEO first greeting · one calm task. Existing demo/action cards
+   return as soon as the user reaches the real Sayvi conversation. */
+html.sv-smart-start-home-active #homePage :is(
+ #dynamic,#svcpWorkHomePreview,#workTimeline,#personalBrief,
+ #assistantQuickrail,#seyveoSmartHomeHome
+){display:none!important}
+.sv-smart-start-home.is-greeting h3{
+ letter-spacing:-.03em;
+}
+.sv-smart-start-home.is-greeting #svSmartStartHomeHint{
+ opacity:.85;
+}
+.sv-smart-start-home.is-greeting form{
+ opacity:.7;
+}
