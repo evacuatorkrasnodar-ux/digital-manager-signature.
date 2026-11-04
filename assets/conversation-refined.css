@@ -621,3 +621,67 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  background:color-mix(in srgb,var(--card2) 67%,rgba(255,255,255,.35))!important;
  border-color:color-mix(in srgb,var(--soft-line) 26%,transparent)!important;
 }
+
+/* SEYVEO Sayvi chat · iOS 26 compact shell.
+   The notch-safe inset stays; reclaim unused space, not the status bar. */
+html.seyveo-conversation .app{
+ padding-top:calc(env(safe-area-inset-top,0px) + 3px)!important;
+}
+html.seyveo-conversation #seyveoConversationHeader{
+ min-height:46px!important;height:46px!important;
+ margin:0 auto 3px!important;padding:0 6px!important;
+}
+html.seyveo-conversation #seyveoConversationHeader>button{
+ width:44px!important;height:44px!important;
+}
+html.seyveo-conversation #seyveoConversationHeader button svg{
+ width:19px!important;height:19px!important;stroke-width:1.6!important;
+}
+html.seyveo-conversation #stage .orb-inline-reply-text{
+ padding-top:3px!important;
+}
+/* Composer: a single light, low-profile matte glass surface, not the heavy dock gradient. */
+html.seyveo-conversation #ask.prompt:not(.expanded){
+ width:min(510px,calc(100vw - 22px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ min-height:50px!important;max-height:132px!important;
+ padding:3px 6px!important;column-gap:4px!important;
+ border:1px solid color-mix(in srgb,var(--sv-input-border) 33%,transparent)!important;
+ border-radius:25px!important;
+ background:color-mix(in srgb,var(--sv-input-surface) 90%,transparent)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(108%)!important;
+ backdrop-filter:blur(22px) saturate(108%)!important;
+ box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 38%,transparent)!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #question{
+ padding:7px 2px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)
+ :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend) svg{
+ width:20px!important;height:20px!important;stroke-width:1.55!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
+ width:38px!important;min-width:38px!important;
+ height:38px!important;min-height:38px!important;
+ margin:3px!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) #seyveoChatTools:not([hidden]){
+ left:3px!important;bottom:calc(100% + 9px)!important;
+ width:min(225px,calc(100vw - 32px))!important;
+ gap:2px!important;padding:5px!important;
+ border-radius:17px!important;
+ border:1px solid color-mix(in srgb,var(--sv-input-border) 30%,transparent)!important;
+ background:color-mix(in srgb,var(--sv-input-surface) 94%,var(--bg))!important;
+ -webkit-backdrop-filter:blur(24px) saturate(110%)!important;
+ backdrop-filter:blur(24px) saturate(110%)!important;
+ box-shadow:0 10px 25px rgba(0,0,0,.10),
+  inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 37%,transparent)!important;
+}
+html.seyveo-conversation #seyveoChatTools button{
+ border-radius:12px!important;font-size:12.5px!important;min-height:44px!important;
+}
+html.seyveo-conversation #seyveoChatTools button:active{
+ background:color-mix(in srgb,var(--seyveo-hdr-active) 60%,transparent)!important;
+}
+@media(max-height:500px){
+ html.seyveo-conversation .app{padding-top:calc(env(safe-area-inset-top,0px) + 2px)!important}
+}
