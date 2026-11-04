@@ -37,16 +37,14 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 #sayviMenu button{display:block;width:100%;border:0;border-radius:10px;background:transparent;color:#fff;padding:11px 12px;text-align:left;font:inherit}
 #sayviMenu button:active{background:rgba(255,255,255,.08)}
 
-/* Temporary mic diagnostics. Text only; no full-width surface, no overlay. */
-#micDiagnostic{flex:none;align-self:center;text-align:center;padding:5px 8px 8px;color:#d9e5eb;font-size:12px;line-height:1.45;background:transparent}
-#micDiagnostic strong{font-weight:650;color:#d7f6e3}
-#micDiagnostic button{margin-left:8px;padding:5px 9px;border:1px solid #5b7580;border-radius:12px;background:transparent;color:#fff;font:inherit}
+#sayviStatus{position:fixed;z-index:6;left:64px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));font-size:12px;line-height:1.4;color:#a5b0b7;pointer-events:none;background:transparent}
+#sayviStatus:empty{display:none}
+#sayviInput:disabled{opacity:.75}
 </style>
 </head>
 <body>
 <main>
-<header>Сэйви · ТЕСТ 05</header>
-<div id="micDiagnostic" aria-live="polite"><strong>ТЕСТ 05</strong> · Проверка микрофона… <button type="button" id="micDiagnosticButton">🎙 Проверить</button></div>
+<header>Сэйви</header>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -55,60 +53,123 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </div>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
+<div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
 <script>
 (()=>{
+ 'use strict';
  const input=document.getElementById('sayviInput'),list=document.getElementById('sayviMessages');
  const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
- function updateControls(){const typed=!!input.value.trim();sendButton.hidden=!typed;mic.hidden=typed}
- input.addEventListener('input',updateControls);
- const micDiagnostic=document.getElementById('micDiagnostic');
- function reportMic(){
-  const node=document.getElementById('sayviMic');
-  const rect=node.getBoundingClientRect(),style=getComputedStyle(node);
-  const centreX=rect.left+rect.width/2,centreY=rect.top+rect.height/2;
-  const hit=document.elementFromPoint(centreX,centreY);
-  const visible=rect.width>0&&rect.height>0&&style.display!=='none'&&style.visibility!=='hidden'&&rect.top>=0&&rect.bottom<=window.innerHeight+2;
-  const exposed=hit===node||node.contains(hit);
-  const label='ТЕСТ 05 · кнопка: '+(visible?'есть':'скрыта')+' · место: '+Math.round(rect.left)+','+Math.round(rect.top)+' · касание: '+(exposed?'да':'нет');
-  micDiagnostic.firstChild.textContent=label+' ';
- }
- document.getElementById('micDiagnosticButton').addEventListener('click',()=>{
-  reportMic();
-  const btn=document.getElementById('micDiagnosticButton');
-  btn.textContent='✓ Нажато';
- });
- window.addEventListener('resize',reportMic);
- requestAnimationFrame(reportMic);
- function append(role,message){
-  const turn=document.createElement('div');turn.className='turn';turn.dataset.role=role;
-  if(role==='assistant'){const title=document.createElement('span');title.className='speaker';title.textContent='Сэйви';turn.append(title);}
-  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=message;turn.append(bubble);list.append(turn);
-  list.scrollTop=list.scrollHeight;
- }
- function send(){
-  const value=input.value.trim();if(!value)return;
-  input.value='';updateControls();
-  append('user',value);
-  append('assistant','Вижу твоё сообщение. Это локальная проверка: сейчас мы смотрим, не появляется ли фон за нижним полем, когда переписка становится длиннее. Можно написать ещё несколько сообщений и прокрутить чат вверх.');
- }
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
+ const status=document.getElementById('sayviStatus');
+ let active=null,sequence=0,recognition=null;
+ const historyTurns=[];
+ const answers=new Map();
+ function updateControls(){
+  const typed=!!input.value.trim();
+  input.disabled=!!active;
+  sendButton.hidden=!!active||!typed;
+  mic.hidden=!!active||typed;
+ }
+ function append(role,id,message){
+  const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
+  let bubble=answers.get(id);
+  if(!bubble){
+   const turn=document.createElement('div');
+   turn.className='turn';turn.dataset.role=role;
+   if(role==='assistant'){
+    const title=document.createElement('span');
+    title.className='speaker';title.textContent='Сэйви';turn.append(title);
+   }
+   bubble=document.createElement('div');bubble.className='bubble';
+   turn.append(bubble);list.append(turn);answers.set(id,bubble);
+  }
+  bubble.textContent=message;
+  if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight});
+ }
  function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
- document.getElementById('sayviNewChat').addEventListener('click',()=>{list.replaceChildren();input.value='';updateControls();closeMenu();input.focus()});
- document.addEventListener('pointerdown',event=>{if(!menu.hidden&&!event.target.closest('#sayviPlus,#sayviMenu'))closeMenu()});
+ document.getElementById('sayviNewChat').addEventListener('click',()=>{
+  active?.abort();active=null;historyTurns.length=0;answers.clear();
+  list.replaceChildren();input.value='';status.textContent='';closeMenu();updateControls();input.focus();
+ });
+ document.addEventListener('pointerdown',e=>{
+  if(!menu.hidden&&!e.target.closest('#sayviPlus,#sayviMenu'))closeMenu();
+ });
+ async function ask(question){
+  const controller=new AbortController();active=controller;updateControls();
+  status.textContent='';
+  const id=++sequence,replyId='reply-'+id;
+  append('user','user-'+id,question);
+  let answer='',done=false;
+  try{
+   const response=await fetch('/api/seyveo-stream',{
+    method:'POST',credentials:'same-origin',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:question,history:historyTurns.slice(-6)}),
+    signal:controller.signal
+   });
+   if(!response.ok){
+    if(response.status===404||response.status===405)throw Error('Для живых ответов Сэйви нужно подключение сервера ИИ. На GitHub Pages он недоступен.');
+    const body=await response.json().catch(()=>({}));
+    throw Error(body.error||'Не удалось получить ответ Сэйви.');
+   }
+   if(!response.body)throw Error('Браузер не поддерживает потоковые ответы.');
+   const reader=response.body.getReader(),decoder=new TextDecoder();
+   let buffer='';
+   function consume(line){
+    if(!line.trim())return;
+    const part=JSON.parse(line);
+    if(part.type==='delta'&&typeof part.text==='string'){
+     answer+=part.text;append('assistant',replyId,answer);
+    }else if(part.type==='done')done=true;
+    else if(part.type==='error')throw Error(part.text||'Ошибка ответа Сэйви.');
+   }
+   while(true){
+    const chunk=await reader.read();
+    if(chunk.done)break;
+    buffer+=decoder.decode(chunk.value,{stream:true});
+    let n;
+    while((n=buffer.indexOf('\n'))!==-1){
+     consume(buffer.slice(0,n));buffer=buffer.slice(n+1);
+    }
+   }
+   buffer+=decoder.decode();
+   if(buffer.trim())consume(buffer);
+   if(!done)throw Error('Соединение прервалось.');
+   if(!answer.trim())throw Error('Сэйви не прислала ответ.');
+   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
+   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+  }catch(error){
+   if(controller.signal.aborted)return;
+   status.textContent=String(error?.message||'Ошибка соединения.');
+   if(answer)append('assistant',replyId,answer);
+  }finally{if(active===controller){active=null;updateControls()}}
+ }
+ function send(){
+  const value=input.value.trim();if(!value||active)return;
+  input.value='';updateControls();ask(value);
+ }
  sendButton.addEventListener('click',send);
+ input.addEventListener('input',updateControls);
+ input.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){
+   event.preventDefault();send();
+  }
+ });
  mic.addEventListener('click',()=>{
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!Recognition)return;
+  if(!Recognition){status.textContent='Голосовой ввод недоступен в этом браузере.';return;}
+  if(recognition){recognition.stop();return;}
   try{
-   const session=new Recognition();session.lang='ru-RU';session.interimResults=false;
+   const session=new Recognition();recognition=session;session.lang='ru-RU';session.interimResults=false;
    session.onresult=e=>{input.value=[input.value,e.results[0][0].transcript].filter(Boolean).join(' ');updateControls();input.focus()};
+   session.onerror=()=>{status.textContent='Не удалось распознать речь.'};
+   session.onend=()=>{recognition=null};
    session.start();
-  }catch{}
+  }catch{recognition=null;status.textContent='Микрофон недоступен.'}
  });
  updateControls();
- input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 })();
 </script>
 </body>
