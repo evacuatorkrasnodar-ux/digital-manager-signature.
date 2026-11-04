@@ -1102,19 +1102,22 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
   cabinetHandoffTimer=null;
   const draft=opts.resume?get(DRAFT_KEY):null,old=get(PLAN_KEY);
-  let name=String(opts.name||draft?.name||old?.name||get('seyveo-first-acquaintance-v1')?.name||'').trim().slice(0,60);
+  // Revisiting the setup must show previous answers instead of restarting.
+  const seed=draft||old||{};
+  let name=String(opts.name||seed.name||get('seyveo-first-acquaintance-v1')?.name||'').trim().slice(0,60);
   session={
-   name,business:String(draft?.business||'').slice(0,160),employees:Number(draft?.employees)||null,
-   roles:Array.isArray(draft?.roles)?draft.roles.filter(v=>typeof v==='string'&&v.length<=60).slice(0,30):[],
-   sources:Array.isArray(draft?.sources)?draft.sources.filter(v=>typeof v==='string'&&v.length<=85).slice(0,15):[],
-   features:Array.isArray(draft?.features)?draft.features.filter(v=>FEATURES.some(x=>x.id===v)):[],
-   step:['name','business','employees','roles','sources','features','confirm'].includes(draft?.step)?draft.step:(name?'business':'name'),
+   name,business:String(seed.business||'').slice(0,160),employees:Number(seed.employees)||null,
+   roles:Array.isArray(seed.roles)?seed.roles.filter(v=>typeof v==='string'&&v.length<=60).slice(0,30):[],
+   sources:Array.isArray(seed.sources)?seed.sources.filter(v=>typeof v==='string'&&v.length<=85).slice(0,15):[],
+   features:Array.isArray(seed.features)?seed.features.filter(v=>FEATURES.some(x=>x.id===v)):[],
+   step:['name','business','employees','roles','sources','features','confirm'].includes(draft?.step)?draft.step:old?'confirm':name?'business':'name',
    turns:[]
   };
   if(!session.name)session.step='name';
-  session.turns.push({question:'Начнём знакомство с SEYVEO',answer:
-   (name?'Рада знакомству, '+name+'! ':'Привет! Я Сэйви. Меня создала команда SEYVEO. Друзья зовут меня просто Сэй. ')+'Давай настроим SEYVEO под твои задачи. '+prompt()+
-   '\nОтвечайте вручную или нажимайте на кнопки и галочки. Подключения и приглашения не запускаются автоматически.',smartStart:true});
+  session.turns.push({question:old&&!draft?'Вернуться к настройкам SEYVEO':'Начнём знакомство с SEYVEO',answer:
+   (name?'Рада видеть тебя, '+name+'! ':'Привет! Я Сэйви. Меня создала команда SEYVEO. Друзья зовут меня просто Сэй. ')+
+   (old&&!draft?'Вот твои сохранённые ответы. Можешь вернуться назад и изменить любой шаг. ':'Давай настроим SEYVEO под твои задачи. ')+prompt()+
+   '\nМожно отвечать вручную или отмечать галочки. Подключения и приглашения не запускаются автоматически.',smartStart:true});
   draw();syncHome();
   return true;
  }
