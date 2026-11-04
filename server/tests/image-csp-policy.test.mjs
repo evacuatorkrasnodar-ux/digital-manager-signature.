@@ -6,6 +6,8 @@ const media=await readFile(new URL('../../assets/living-answers.js',import.meta.
 test('local CSP accepts only explicitly approved external image hosts',()=>{
  const policy=server.match(/img-src ([^;]+);/)?.[1];
  assert.ok(policy);
+ assert.match(policy,/^'self' data: blob: https:\/\/upload\.wikimedia\.org https:\/\/planetary\.s3\.amazonaws\.com$/);
+ // Blob URLs belong to this page's local previews; do not allow arbitrary network image hosts.
  const hosts=[...policy.matchAll(/https:\/\/[^\s]+/g)].map(m=>new URL(m[0]).hostname);
  assert.deepEqual(hosts,['upload.wikimedia.org','planetary.s3.amazonaws.com']);
  assert.match(server,/connect-src 'self';/);
