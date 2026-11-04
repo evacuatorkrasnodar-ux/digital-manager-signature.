@@ -575,9 +575,12 @@ function syncChatGeometry(){
  const rect=form.getBoundingClientRect();
  const composerHeight=Math.ceil(rect.height);
  const visibleBottom=top+height;
- const bottomOffset=Math.max(8,Math.min(96,Math.round(visibleBottom-rect.bottom)));
+ // iPhone Safari may leave a larger bottom safe-area below the writer.
+ // Reserve the real measured space, not the old 96px cap: long messages
+ // must scroll fully above the composer and never disappear behind it.
+ const bottomOffset=Math.max(8,Math.min(220,Math.round(visibleBottom-rect.bottom)));
  root.style.setProperty('--sayvi-composer-space',
-  (composerHeight+bottomOffset+10)+'px');
+  (composerHeight+bottomOffset+12)+'px');
  if(stickToBottom)requestAnimationFrame(()=>{text.scrollTop=text.scrollHeight});
 }
 function queueChatGeometry(){
