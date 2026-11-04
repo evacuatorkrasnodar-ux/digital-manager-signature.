@@ -214,64 +214,117 @@
 }
 
 
-/* Company Passport: use the same light geometry in Black Velvet as in iOS 26.
-   Scope to this existing full-screen dialog; no changes to data or QR actions. */
+/* Company Passport · SEYVEO Air 26.
+   Full-bleed canvas and the ONE existing dock are provided above.
+   Keep content flat, use quiet Liquid Glass for controls only, and
+   never move the native fullscreen sheet below the safe-area edge. */
 @media(max-width:720px){
  html body dialog#seyveoCompanyDialog.seyveo-passport-modal[open]{
   padding:
-   calc(18px + env(safe-area-inset-top,0px))
+   calc(16px + env(safe-area-inset-top,0px))
    max(16px,env(safe-area-inset-right,0px))
-   calc(108px + env(safe-area-inset-bottom,0px))
+   calc(100px + env(safe-area-inset-bottom,0px))
    max(16px,env(safe-area-inset-left,0px))!important;
  }
  html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close{
   position:absolute!important;
-  top:calc(18px + env(safe-area-inset-top,0px))!important;
+  top:calc(16px + env(safe-area-inset-top,0px))!important;
   right:max(16px,env(safe-area-inset-right,0px))!important;
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  min-width:72px!important;width:auto!important;height:44px!important;
+  min-width:68px!important;width:auto!important;height:44px!important;
   padding:0 8px!important;margin:0!important;
   background:transparent!important;border:0!important;
   border-radius:999px!important;box-shadow:none!important;
-  color:var(--text)!important;font-size:14px!important;
+  color:var(--text)!important;font-size:14px!important;font-weight:550!important;
  }
  html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close::before,
  html body #seyveoCompanyDialog[open] > button.seyveo-dialog-close::after{
   content:none!important;display:none!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-dialog-head{
-  min-height:44px!important;
-  padding-right:87px!important;margin-bottom:5px!important;
+  min-height:44px!important;align-items:center!important;
+  padding-right:81px!important;margin-bottom:9px!important;
+ }
+ html body #seyveoCompanyDialog[open] #seyveoCompanyTitle{
+  font-size:21px!important;font-weight:615!important;
+  letter-spacing:-.035em!important;line-height:1.22!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-company-editor{
+  padding-top:1px!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-section{
-  margin:0 0 13px!important;font-size:13px!important;
+  margin:1px 0 13px!important;
+  font-size:13px!important;font-weight:575!important;
+  line-height:1.3!important;
  }
  html body #seyveoCompanyDialog[open] .sv-kind{
-  margin:0 0 16px!important;
+  margin:0 0 14px!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind legend{
+  margin-bottom:8px!important;
+  color:var(--secondary)!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind-options{
+  min-height:48px!important;
+  border:0!important;border-radius:16px!important;
+  background:color-mix(in srgb,var(--card2) 68%,transparent)!important;
+  -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+  backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+  box-shadow:none!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind-options label{
+  min-height:42px!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind-options span{
+  border-radius:12px!important;font-size:12px!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-kind-options input:checked+span{
+  background:color-mix(in srgb,var(--text) 11%,transparent)!important;
+  color:var(--text)!important;
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 7%,transparent)!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-form > label,
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form > [data-passport-type] > label,
  html body #seyveoCompanyDialog[open] .sv-company-extra-body label,
  html body #seyveoCompanyDialog[open] .sv-company-extra > label{
-  display:block!important;margin:0 0 11px!important;
-  font-size:12px!important;line-height:1.3!important;
+  display:block!important;margin:0 0 8px!important;
+  color:var(--secondary)!important;
+  font-size:12px!important;font-weight:465!important;line-height:1.32!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-form input:not([type=radio]):not([type=hidden]){
   box-sizing:border-box!important;width:100%!important;
-  min-height:41px!important;height:41px!important;
-  margin:2px 0 0!important;padding:8px 1px!important;
-  border:0!important;border-bottom:1px solid color-mix(in srgb,var(--soft-line) 62%,transparent)!important;
+  min-height:38px!important;height:38px!important;
+  margin:2px 0 0!important;padding:5px 1px 7px!important;
+  border:0!important;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))!important;
   border-radius:0!important;background:transparent!important;
   box-shadow:none!important;
-  color:var(--text)!important;font-size:16px!important;
+  color:var(--text)!important;font-size:16px!important;font-weight:450!important;
  }
- html body #seyveoCompanyDialog[open] .seyveo-passport-form input:focus-visible{
+ html body #seyveoCompanyDialog[open] .seyveo-passport-form input:not([type=radio]):not([type=hidden]):focus{
   outline:none!important;border-bottom-color:var(--seyveo-emerald)!important;
  }
  html body #seyveoCompanyDialog[open] .sv-company-extra{
-  margin:0 0 12px!important;
+  margin:3px 0 11px!important;
+  border-top-color:var(--sv-velvet-divider,var(--soft-line))!important;
+  border-bottom-color:var(--sv-velvet-divider,var(--soft-line))!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-company-extra>summary{
+  min-height:44px!important;font-size:12px!important;font-weight:560!important;
+ }
+ html body #seyveoCompanyDialog[open] .sv-company-extra-body{
+  padding-top:3px!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary{
-  min-height:44px!important;border-radius:999px!important;
+  min-height:46px!important;
+  margin-top:12px!important;border:0!important;
+  border-radius:999px!important;
+  background:var(--sv-liquid-nav-material,var(--card2))!important;
+  -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+  backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
   box-shadow:none!important;
+  color:var(--text)!important;font-size:13px!important;font-weight:585!important;
+ }
+ :root[data-theme=light] body #seyveoCompanyDialog[open] .sv-kind-options input:checked+span{
+  background:color-mix(in srgb,var(--seyveo-emerald) 13%,white)!important;
  }
 }
