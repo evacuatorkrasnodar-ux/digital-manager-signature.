@@ -9,18 +9,20 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* Bare Sayvi conversation: remove all page backgrounds entirely.
-   Neither root nor body paints a chat pigment, image, gradient or overlay. */
-html.seyveo-conversation,
-html.seyveo-conversation body{
- background:transparent!important;
- background-color:transparent!important;
+/* Sayvi uses Home's exact palette-aware viewport canvas.
+   One paint on body, the same as assets/home-velvet.css on Home.
+   No additional fixed layer, tile, pseudo-element or toolbar backdrop. */
+html.seyveo-conversation{
+ background:var(--bg)!important;
  background-image:none!important;
- box-shadow:none!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;
  overscroll-behavior:none;
+ background:var(--sv-life-viewport-gradient)!important;
+ background-repeat:no-repeat!important;
+ background-attachment:scroll!important;
+ box-shadow:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
