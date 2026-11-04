@@ -880,3 +880,199 @@
  window.SEYVEO_PREVIEW=Object.freeze({getMode:()=>previewMode,isManager,isEmployee});
  syncBack();updatePulseAccess();select(isEmployee()?'employee':'personal');
 })();
+
+
+/* SEYVEO Smart Cabinet · manual tool layout, phase 1.
+ * This saves visual preferences on ONE device. It never grants authority,
+ * adds accounts, duplicates data or impersonates unfinished integrations.
+ * The manager permission shown elsewhere is only a local preview role.
+ */
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const root=$('unifiedBusinessTasksView'),list=root?.querySelector('.svcp-manager-actions');
+ const dialog=$('svCabinetDialog'),launch=$('svCabinetConfigure');
+ const empty=$('svCabinetEmpty'),chosenHost=$('svCabinetSelected');
+ const catalogHost=$('svCabinetCatalog'),search=$('svCabinetSearch');
+ const saveButton=$('svCabinetSave'),cancelButton=$('svCabinetCancel');
+ const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
+ if(!root||!list||!dialog||!launch||!empty||!chosenHost||!catalogHost||!search)return;
+ const KEY='seyveo-cabinet-layout-v1';
+ const ready=[
+  {id:'pulse',name:'Пульс бизнеса',category:'Управление',description:'Клиенты, продажи, показатели',tags:'директор аналитика руководитель результаты выручка'},
+  {id:'chats',name:'Чаты команды',category:'Общение',description:'Рабочие переписки',tags:'мессенджер сообщения коллектив связь персонал'},
+  {id:'mail',name:'Рабочая почта',category:'Общение',description:'Письма и черновики',tags:'помощник секретарь сообщения'},
+  {id:'documents',name:'Документы бизнеса',category:'Документы',description:'Договоры и согласования',tags:'юрист бухгалтер договор акты счета документы подписи'},
+  {id:'company',name:'Моя компания',category:'Управление',description:'Контакты и QR-визитка',tags:'организация реквизиты ип визитка'},
+  {id:'people',name:'Сотрудники и кадры',category:'Команда и кадры',description:'Карточки, смены, подбор',tags:'кадровик отдел кадров персонал график отпуска найм кассир'}
+ ];
+ const upcoming=[
+  {name:'Склад',category:'Склад и торговля',description:'Остатки, приёмка, инвентаризация',tags:'кладовщик товары штрихкод учет склад'},
+  {name:'Логистика',category:'Логистика',description:'Маршруты, транспорт, доставка',tags:'логист водитель отгрузка перевозка'},
+  {name:'Бухгалтерия',category:'Бухгалтерия и финансы',description:'Учёт, отчёты и платежи',tags:'бухгалтер кассир налоги зарплата'},
+  {name:'Юридические процессы',category:'Юридический отдел',description:'Согласование и контроль сроков',tags:'юрист претензии договоры'},
+  {name:'Производство',category:'Производство',description:'Задания, материалы, качество',tags:'цех мастер инженер'},
+  {name:'Продажи и заказы',category:'Продажи',description:'Сделки, товары и заказы',tags:'менеджер торговля магазин'}
+ ];
+ const DEFAULT=ready.map(item=>item.id);
+ const itemById=new Map(ready.map(item=>[item.id,item]));
+ const tools=new Map(DEFAULT.map(id=>[id,list.querySelector('[data-cabinet-tool="'+id+'"]')]));
+ if([...tools.values()].some(node=>!node))return;
+ let selected=read(),draft=null,returnFocus=null;
+ const normalize=value=>String(value||'').toLocaleLowerCase('ru').replace(/ё/g,'е').trim();
+ function read(){
+  try{
+   const record=JSON.parse(localStorage.getItem(KEY)||'null');
+   if(!record||!Array.isArray(record.order))return DEFAULT.slice();
+   // Whitelist known module IDs. Future versions will safely ignore old IDs.
+   return [...new Set(record.order.filter(id=>typeof id==='string'&&itemById.has(id)))];
+  }catch{return DEFAULT.slice()}
+ }
+ function apply(){
+  const order=[...selected,...DEFAULT.filter(id=>!selected.includes(id))];
+  for(const id of order){
+   const node=tools.get(id);
+   list.appendChild(node); // Move, never clone: existing listeners and content survive.
+   node.hidden=!selected.includes(id);
+  }
+  empty.hidden=selected.length!==0;
+  launch.setAttribute('aria-label','Настроить кабинет, выбрано '+selected.length+' инструментов');
+ }
+ const node=(tag,className,label)=>{
+  const el=document.createElement(tag);
+  if(className)el.className=className;
+  if(label!==undefined)el.textContent=label;
+  return el;
+ };
+ const button=(label,action,id)=>{
+  const b=node('button','sv-cabinet-action',label);
+  b.type='button';b.dataset.cabinetAction=action;
+  if(id)b.dataset.cabinetId=id;
+  return b;
+ };
+ function heading(parent,text,count){
+  const el=node('h3','sv-cabinet-section-title');
+  el.append(node('span',null,text));
+  if(count!==undefined)el.append(node('small',null,String(count)));
+  parent.append(el);
+ }
+ function renderChosen(){
+  chosenHost.replaceChildren();
+  heading(chosenHost,'В моём кабинете',draft.length);
+  if(!draft.length){
+   chosenHost.append(node('p','sv-cabinet-muted','Пока пусто — добавьте инструмент из каталога ниже.'));
+   return;
+  }
+  const group=node('div','sv-cabinet-selected-list');
+  draft.forEach((id,index)=>{
+   const info=itemById.get(id),row=node('div','sv-cabinet-picked-row');
+   const label=node('span','sv-cabinet-picked-label',info.name);
+   const controls=node('span','sv-cabinet-picked-actions');
+   const up=button('↑','up',id),down=button('↓','down',id),remove=button('−','remove',id);
+   up.disabled=index===0;down.disabled=index===draft.length-1;
+   up.setAttribute('aria-label','Поднять '+info.name);
+   down.setAttribute('aria-label','Опустить '+info.name);
+   remove.setAttribute('aria-label','Убрать '+info.name+' из кабинета');
+   remove.classList.add('is-remove');
+   controls.append(up,down,remove);row.append(label,controls);group.append(row);
+  });
+  chosenHost.append(group);
+ }
+ function matches(item,query){
+  return !query||normalize([item.name,item.category,item.description,item.tags].join(' ')).includes(query);
+ }
+ function renderCatalog(){
+  catalogHost.replaceChildren();
+  heading(catalogHost,'Каталог инструментов');
+  const q=normalize(search.value);
+  const candidates=[...ready.map(item=>({...item,available:true})),...upcoming.map(item=>({...item,available:false}))].filter(item=>matches(item,q));
+  if(!candidates.length){
+   catalogHost.append(node('p','sv-cabinet-muted','Ничего не найдено. Попробуйте название задачи или профессии.'));
+   return;
+  }
+  const categories=[...new Set(candidates.map(item=>item.category))];
+  for(const category of categories){
+   const section=node('section','sv-cabinet-category');
+   section.append(node('h4',null,category));
+   for(const item of candidates.filter(x=>x.category===category)){
+    const row=node('div','sv-cabinet-catalog-row'),detail=node('div','sv-cabinet-catalog-info');
+    detail.append(node('strong',null,item.name),node('small',null,item.description));
+    if(item.available){
+     const active=draft.includes(item.id),toggle=button(active?'Добавлено':'Добавить','toggle',item.id);
+     toggle.setAttribute('aria-pressed',String(active));
+     toggle.setAttribute('aria-label',(active?'Убрать из кабинета: ':'Добавить в кабинет: ')+item.name);
+     if(active)toggle.classList.add('is-added');
+     row.append(detail,toggle);
+    }else{
+     const pill=node('span','sv-cabinet-soon','Позже');
+     pill.setAttribute('aria-label','Ещё не реализовано: '+item.name);
+     row.append(detail,pill);
+    }
+    section.append(row);
+   }
+   catalogHost.append(section);
+  }
+ }
+ function render(){if(!draft)return;renderChosen();renderCatalog();if(status)status.textContent=''}
+ function open(){
+  // This client check is for demo UI only. It is NOT a security boundary.
+  if(!window.SEYVEO_PREVIEW?.isManager?.())return;
+  returnFocus=document.activeElement;
+  draft=selected.slice();search.value='';render();
+  if(typeof dialog.showModal==='function')dialog.showModal();
+  else dialog.setAttribute('open','');
+ }
+ function cancel(){
+  if(dialog.open)dialog.close();
+  else dialog.removeAttribute('open');
+  draft=null;
+ }
+ function save(){
+  if(!draft)return;
+  try{localStorage.setItem(KEY,JSON.stringify({version:1,order:draft.slice()}))}
+  catch{if(status)status.textContent='Не получилось сохранить настройку на этом устройстве.';return}
+  selected=draft.slice();apply();cancel();
+ }
+ launch.addEventListener('click',open);
+ empty.querySelector('[data-sv-cabinet-open]')?.addEventListener('click',open);
+ cancelButton?.addEventListener('click',cancel);
+ saveButton?.addEventListener('click',save);
+ resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';render()});
+ search.addEventListener('input',renderCatalog);
+ dialog.querySelectorAll('[data-cabinet-preset]').forEach(b=>b.addEventListener('click',()=>{
+  if(!draft)return;
+  const presets={all:DEFAULT,office:['chats','mail','documents','company'],team:['pulse','chats','people']};
+  draft=(presets[b.dataset.cabinetPreset]||DEFAULT).slice();search.value='';render();
+ }));
+ chosenHost.addEventListener('click',event=>{
+  const b=event.target.closest('[data-cabinet-action]');if(!b||!draft)return;
+  const id=b.dataset.cabinetId,index=draft.indexOf(id);
+  if(index<0)return;
+  if(b.dataset.cabinetAction==='remove')draft.splice(index,1);
+  if(b.dataset.cabinetAction==='up'&&index>0)[draft[index-1],draft[index]]=[draft[index],draft[index-1]];
+  if(b.dataset.cabinetAction==='down'&&index<draft.length-1)[draft[index],draft[index+1]]=[draft[index+1],draft[index]];
+  render();
+  const action=b.dataset.cabinetAction;
+  chosenHost.querySelector('[data-cabinet-id="'+id+'"][data-cabinet-action="'+action+'"]:not(:disabled)')?.focus({preventScroll:true});
+ });
+ catalogHost.addEventListener('click',event=>{
+  const b=event.target.closest('[data-cabinet-action="toggle"]');if(!b||!draft)return;
+  const id=b.dataset.cabinetId;if(!itemById.has(id))return;
+  const i=draft.indexOf(id);if(i<0)draft.push(id);else draft.splice(i,1);
+  render();
+  catalogHost.querySelector('[data-cabinet-id="'+id+'"]')?.focus({preventScroll:true});
+ });
+ dialog.addEventListener('click',event=>{if(event.target===dialog)cancel()});
+ dialog.addEventListener('close',()=>{
+  draft=null;search.value='';
+  if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});
+  returnFocus=null;
+ });
+ window.addEventListener('hashchange',()=>{if(dialog.open&&location.hash!=='#tasks')cancel()});
+ window.addEventListener('storage',event=>{
+  if(event.key!==KEY)return;
+  selected=read();apply();
+ });
+ apply();
+ window.SEYVEO_SMART_CABINET=Object.freeze({open,refresh:apply});
+})();
