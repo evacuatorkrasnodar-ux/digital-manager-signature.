@@ -4,18 +4,62 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#11161b">
-<title>SEYVEO · Новый чат</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Сэйви · SEYVEO</title>
 <style>
-:root{color-scheme:dark}
+:root{color-scheme:dark;--canvas:#11161b;--ink:#f5f7f9;--muted:#a5b0b7}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;background:#11161b;color:#fff}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif}
-main{min-height:100vh;min-height:100dvh;background:#11161b;display:flex;flex-direction:column}
-header{height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 20px 0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;letter-spacing:.12em}
-section{flex:1}
+html,body{margin:0;width:100%;min-height:100%;background:var(--canvas);color:var(--ink)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;flex-direction:column}
+.chat-head{height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:4px;flex:none}
+.chat-head button{display:grid;place-items:center;width:44px;height:44px;padding:0;margin:0;border:0;border-radius:16px;color:var(--ink);background:transparent;cursor:pointer;transition:background-color .16s ease}
+.chat-head button:hover{background:rgba(227,237,244,.065)}
+.chat-head button:active{background:rgba(227,237,244,.11)}
+.chat-head button:focus-visible,.sheet-close:focus-visible{outline:2px solid rgba(210,229,237,.65);outline-offset:2px}
+.chat-head svg,.sheet-close svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.chat-title{min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;font-weight:590;letter-spacing:-.025em}
+.chat-space{flex:1;min-height:0}
+.sheet[hidden]{display:none}
+.sheet{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.38)}
+.sheet-panel{width:100%;max-width:600px;min-height:230px;max-height:80dvh;overflow:auto;padding:12px 20px calc(30px + env(safe-area-inset-bottom));border-radius:25px 25px 0 0;background:rgba(37,48,56,.93);-webkit-backdrop-filter:blur(22px) saturate(1.15);backdrop-filter:blur(22px) saturate(1.15);box-shadow:0 -8px 36px rgba(0,0,0,.12)}
+.sheet-handle{width:35px;height:4px;border-radius:8px;margin:0 auto 13px;background:rgba(226,236,241,.3)}
+.sheet-top{display:grid;grid-template-columns:44px 1fr 44px;align-items:center}
+.sheet-top h2{font-size:16px;font-weight:600;letter-spacing:-.02em;margin:0;text-align:center}
+.sheet-close{grid-column:3;grid-row:1;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:14px;background:transparent;color:var(--ink)}
+.sheet p{text-align:center;color:var(--muted);font-size:14px;margin:42px 0 24px}
+@media(prefers-reduced-motion:reduce){.chat-head button{transition:none}}
 </style>
 </head>
 <body>
-<main><header>SEYVEO</header><section aria-label="Пустая страница нового чата"></section></main>
+<main>
+ <header class="chat-head" aria-label="Панель чата">
+  <button type="button" id="back" aria-label="Вернуться на Главную" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+  <div class="chat-title">Сэйви</div>
+  <button type="button" id="history" aria-label="История бесед" title="История"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5v5h5M5 10a7.5 7.5 0 1 1 .4 5.1M12 8v4.2l2.7 1.8"/></svg></button>
+ </header>
+ <section class="chat-space" aria-label="Область будущего чата"></section>
+</main>
+<div class="sheet" id="historySheet" hidden>
+ <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="historyHeading">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-top"><h2 id="historyHeading">История</h2><button type="button" class="sheet-close" id="closeHistory" aria-label="Закрыть историю"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <p>Здесь появятся ваши беседы с Сэйви.</p>
+ </div>
+</div>
+<script>
+(()=>{
+ const sheet=document.getElementById('historySheet');
+ const trigger=document.getElementById('history');
+ const close=document.getElementById('closeHistory');
+ document.getElementById('back').addEventListener('click',()=>{window.location.assign('./')});
+ function hide(){sheet.hidden=true;trigger.focus()}
+ trigger.addEventListener('click',()=>{sheet.hidden=false;close.focus()});
+ close.addEventListener('click',hide);
+ sheet.addEventListener('click',e=>{if(e.target===sheet)hide()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)hide()});
+})();
+</script>
 </body>
 </html>
