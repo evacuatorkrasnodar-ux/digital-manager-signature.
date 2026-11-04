@@ -21,20 +21,16 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 .turn[data-role="user"] .bubble{padding:9px 13px;border-radius:18px;background:#263039;max-width:85%}
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .speaker{font-size:11px;color:#a5b0b7}
-/* Только поле ввода — без контейнера, подложки и размытия. */
-/* Поле и обе кнопки находятся в одном позиционном блоке без фона. */
-#sayviField{position:fixed;left:calc(max(12px,env(safe-area-inset-left)) + 52px);right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));height:44px;background:none;border:0;box-shadow:none}
-#sayviInput{position:relative;display:block;width:100%;height:44px;min-height:44px;max-height:44px;box-sizing:border-box;margin:0;padding:10px 87px 10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
+/* Независимые элементы в одной строке: никакой общей подложки. */
+#sayviComposer{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none;z-index:5}
+#sayviField{display:block;position:relative;min-width:0;height:44px;background:transparent;border:0;box-shadow:none}
+#sayviInput{display:block;width:100%;height:44px;min-height:44px;max-height:44px;box-sizing:border-box;margin:0;padding:10px 15px;border:0;border-radius:22px;background:#263039;color:#fff;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
 #sayviInput::placeholder{color:#a5b0b7;opacity:1}
-#sayviMic,#sayviSend{position:absolute;z-index:2;top:2px;right:3px;width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:#fff;padding:0;cursor:pointer}
-#sayviSend{right:43px}
+#sayviMic,#sayviSend,#sayviPlus{position:static;display:grid;place-items:center;width:44px;height:44px;min-width:44px;margin:0;padding:0;border:0;border-radius:50%;background:#263039;color:#fff;box-shadow:none;outline:0;-webkit-appearance:none;appearance:none}
+#sayviMic{font-size:24px;line-height:1}
 #sayviSend[hidden]{display:none!important}
-#sayviMic{font-size:23px;line-height:1}
-#sayviSend svg{display:block;width:21px;height:21px;fill:none;stroke:#fff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-#sayviPlus{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:#263039;color:#fff}
-#sayviPlus svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
-#sayviPlus:active{opacity:.72}
-#sayviPlus:focus-visible{outline:2px solid #bfcbd3;outline-offset:2px}
+#sayviSend svg,#sayviPlus svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#sayviMenu{z-index:6}
 #sayviMenu[hidden]{display:none}
 #sayviMenu{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(62px + env(safe-area-inset-bottom));min-width:175px;padding:5px;border-radius:15px;background:#263039}
 #sayviMenu button{display:block;width:100%;border:0;border-radius:10px;background:transparent;color:#fff;padding:11px 12px;text-align:left;font:inherit}
@@ -45,19 +41,19 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 <main>
 <header>Сэйви</header>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
+<div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
-<div id="sayviField">
-<textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea>
+<div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
 <button id="sayviMic" type="button" aria-label="Голосовой ввод">🎙️</button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </div>
+<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
 </main>
 <script>
 (()=>{
  const input=document.getElementById('sayviInput'),list=document.getElementById('sayviMessages');
  const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
- function updateControls(){const typed=!!input.value.trim();sendButton.hidden=!typed}
+ function updateControls(){const typed=!!input.value.trim();sendButton.hidden=!typed;mic.hidden=typed}
  input.addEventListener('input',updateControls);
  function append(role,message){
   const turn=document.createElement('div');turn.className='turn';turn.dataset.role=role;
