@@ -20,6 +20,15 @@ page.innerHTML='<header class="sayvi3-head">'+
  '<button type="button" id="seyveoConversationHistory" aria-label="История бесед"><svg viewBox="0 0 24 24"><path d="M5 5v5h5M5.5 10A7.5 7.5 0 1 1 5 15M12 7.8V12l3 2"/></svg></button>'+
  '</header><div id="sayvi3Transcript" class="sayvi3-transcript"></div><div id="sayvi3Writer" class="sayvi3-writer"></div>';
 document.body.appendChild(page);
+function syncViewport(){
+ if(page.hidden)return;
+ const vv=window.visualViewport;
+ page.style.setProperty('--sayvi3-top',Math.round(vv?.offsetTop||0)+'px');
+ page.style.setProperty('--sayvi3-height',Math.round(vv?.height||window.innerHeight)+'px');
+}
+window.visualViewport?.addEventListener('resize',syncViewport);
+window.visualViewport?.addEventListener('scroll',syncViewport);
+window.addEventListener('resize',syncViewport);
 const transcript=$('sayvi3Transcript'),writer=$('sayvi3Writer'),statusNode=$('seyveoConversationStatus');
 let returnRoute='',streamNode=null,activeAction=null,speaking=false,noticeTimer=0;
 let intro=null,processing=false;
@@ -112,14 +121,17 @@ function sync(){
  nativeInput.style.height=Math.max(42,Math.min(112,nativeInput.scrollHeight))+'px';
 }
 function open(){
- if(active())return;
+ if(active()){
+  nativeForm.hidden=false;sync();return;
+ }
  if(home.hidden){returnRoute=location.hash||'';$('navHome')?.click()}
  if(home.hidden)return;
  root.classList.add('seyveo-conversation');
- page.hidden=false;
+ page.hidden=false;syncViewport();
  const parent=oldThread.parentElement;
  if(parent!==transcript)transcript.appendChild(oldThread);
  writer.prepend(nativeForm);nativeForm.classList.remove('expanded');
+ $('composerModeAsk')?.click();
  nativeForm.hidden=false;nativeForm.dataset.composerMode='ask';
  window.SEYVEO_DEMO_CHAT_ACTIVE=true;
  renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||window.SEYVEO_CHAT_HISTORY?.recent?.(30)||[]);
@@ -131,6 +143,7 @@ function close(){
  window.SEYVEO_CONVERSATION_STOP_VOICE?.();
  if(activeAction){try{activeAction.cancel?.()}catch{}activeAction=null}
  page.hidden=true;root.classList.remove('seyveo-conversation');
+ page.style.removeProperty('--sayvi3-top');page.style.removeProperty('--sayvi3-height');
  tools.hidden=true;intro=null;window.SEYVEO_DEMO_CHAT_ACTIVE=false;
  if(originThreadNext?.parentNode===originThreadParent)originThreadParent.insertBefore(oldThread,originThreadNext);
  else originThreadParent.appendChild(oldThread);
@@ -138,6 +151,8 @@ function close(){
  else originFormParent.appendChild(nativeForm);
  nativeForm.style.removeProperty('--sayvi-draft-height');
  nativeForm.hidden=true;
+ oldReply.hidden=true;
+ $('stage')?.classList.remove('has-inline-reply');
  const route=returnRoute;returnRoute='';
  if(route&&location.hash!==route)location.hash=route;
 }
@@ -154,7 +169,12 @@ mic.addEventListener('click',()=>window.SEYVEO_CONVERSATION_TOGGLE_VOICE?.());
 send.addEventListener('click',e=>{if(!activeAction)return;e.preventDefault();e.stopImmediatePropagation();try{activeAction.cancel?.()}catch{}activeAction=null;sync();status('Остановлено',1200)});
 nativeInput.addEventListener('input',sync);
 nativeInput.addEventListener('keydown',e=>{if(active()&&e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();nativeForm.requestSubmit()}});
-nativeForm.addEventListener('submit',()=>queueMicrotask(()=>{sync();if(!intro)renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[])}));
+nativeForm.addEventListener('submit',()=>{
+ queueMicrotask(()=>{sync();if(!intro)renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[])});
+ // Native locally handled actions can close the composer; the separate chat
+ // always retains its input after a response if the user stays here.
+ setTimeout(()=>{if(active()){nativeForm.hidden=false;sync()}},340);
+});
 window.addEventListener('seyveo:chat-history-cleared',()=>{window.SEYVEO_DEMO_CHAT_TURNS=[];if(active())renderTurns([])});
 window.addEventListener('hashchange',()=>{if(active()&&(home.hidden||(location.hash&&!['','#home'].includes(location.hash)))){returnRoute='';close()}});
 document.addEventListener('seyveo:assistant-presence',e=>{
