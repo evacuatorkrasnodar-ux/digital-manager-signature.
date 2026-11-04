@@ -3,12 +3,12 @@
    backdrop blur, masks and box shadows are forbidden in the personal chat.
    This applies ONLY while html has .seyveo-conversation. */
 html.seyveo-conversation{
- background:#171c21!important;background-image:none!important;
- background-color:#171c21!important;overflow:hidden!important;
+ background:#000000!important;background-image:none!important;
+ background-color:#000000!important;overflow:hidden!important;
 }
 html.seyveo-conversation[data-theme="light"]{
- background:#f8f9fa!important;background-image:none!important;
- background-color:#f8f9fa!important;
+ background:#000000!important;background-image:none!important;
+ background-color:#000000!important;
 }
 html.seyveo-conversation body{
  background:transparent!important;background-image:none!important;
