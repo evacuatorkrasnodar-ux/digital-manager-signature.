@@ -157,7 +157,8 @@ function nearEnd(){return thread.scrollHeight-thread.scrollTop-thread.clientHeig
 function scrollBottom(){requestAnimationFrame(()=>{if(active())thread.scrollTop=thread.scrollHeight})}
 function renderTurns(turns=[]){
  if(!Array.isArray(turns))turns=[];
- const follow=nearEnd(),nodes=[];
+ const previousScroll=thread.scrollTop,wasEmpty=!thread.childElementCount;
+ const follow=nearEnd()||wasEmpty,nodes=[];
  turns.forEach(turn=>{
   if(!turn||typeof turn!=='object')return;
   for(const [who,raw] of [['you',turn.question],['sayvi',turn.answer]]){
@@ -203,7 +204,8 @@ function renderTurns(turns=[]){
   welcome.innerHTML='<strong>Сэйви на связи</strong><p>Напиши, что нужно сделать, или просто поговорим.</p>';nodes.push(welcome);
  }
  thread.replaceChildren(...nodes);
- if(follow||active())scrollBottom();
+ if(follow)scrollBottom();
+ else thread.scrollTop=previousScroll; // reading older messages must not jump away
 }
 function beginStream(question,cancel){
  open();if(activity?.kind==='stream')finishAction();
