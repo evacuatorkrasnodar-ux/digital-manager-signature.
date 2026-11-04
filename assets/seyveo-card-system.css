@@ -198,29 +198,29 @@
  box-shadow:none;
  color:var(--text);
 }
-#homePage #seyveoLivingMoment.sv-card-system .lm-primary-title{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-primary-title{
  font-size:var(--sv-master-title-size);
  font-weight:var(--sv-master-title-weight);
  line-height:var(--sv-master-title-leading);
 }
-#homePage #seyveoLivingMoment.sv-card-system .lm-primary-subtitle{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-primary-subtitle{
  font-size:var(--sv-master-description-size);
  line-height:var(--sv-master-description-leading);
 }
-#homePage #seyveoLivingMoment.sv-card-system .lm-inline-title{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-inline-title{
  font-size:var(--sv-master-queue-title-size);
 }
-#homePage #seyveoLivingMoment.sv-card-system .lm-inline-note{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-inline-note{
  font-size:var(--sv-master-queue-description-size);
  line-height:var(--sv-master-queue-leading);
 }
-#homePage #seyveoLivingMoment.sv-card-system .lm-actions .lm-polymer{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer{
  font-size:var(--sv-master-action-size);
  min-height:var(--sv-master-touch-target);
 }
 /* Keep Home's approved 34px optical lens with 44px touch zone.
    These remain under the approved material, not a whole-row backdrop. */
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer::before{
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions{
  --sv-action-primary:var(--sv-master-glass);
 }
 @media(prefers-reduced-transparency:reduce){
