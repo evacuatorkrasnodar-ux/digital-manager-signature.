@@ -9,19 +9,17 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* iOS standalone PWA, black-translucent and viewport-fit=cover:
-   100% on html/body can resolve to a shorter containing block and reveal a
-   black bar below the web view. Size the root to the viewport itself.
-   The only pigment is the same palette gradient used by Home. */
+/* iPhone PWA safe area follows the BODY canvas.
+   Use exactly the Home background on body, not on a transparent body with a
+   root-only gradient. The root only supplies a solid matching fallback. */
 html.seyveo-conversation{
- height:100vh!important;min-height:100vh!important;
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-repeat:no-repeat!important;background-size:100% 100%!important;
+ background:var(--bg)!important;
 }
 html.seyveo-conversation body{
- height:100vh!important;min-height:100vh!important;
  overflow:hidden!important;overscroll-behavior:none;
- background:transparent!important;background-image:none!important;
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-color:var(--bg)!important;
+ background-repeat:no-repeat!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
