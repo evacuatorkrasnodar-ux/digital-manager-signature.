@@ -34,6 +34,22 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
 .chat-turn[data-role="assistant"] .chat-message{padding:0 3px;background:transparent;border:0;box-shadow:none}
 .chat-empty{margin:auto;align-self:center;color:#89969e;font-size:14px;font-weight:450;text-align:center;letter-spacing:-.01em}
 @media(max-width:420px){.chat-thread{padding-top:8px;padding-bottom:22px}.chat-turns{gap:18px}}
+
+.composer{position:relative;flex:none;width:100%;padding:7px max(10px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));background:var(--canvas)}
+.composer-inner{width:100%;max-width:720px;margin:auto;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:end;gap:7px}
+.composer-btn{width:42px;height:42px;display:grid;place-items:center;align-self:end;appearance:none;border:0;border-radius:50%;background:transparent;color:var(--ink);padding:0;cursor:pointer}
+.composer-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.composer-btn:hover{background:rgba(230,240,245,.065)}
+.composer-btn:focus-visible,.composer-text:focus-visible{outline:2px solid rgba(208,226,236,.65);outline-offset:2px}
+.composer-btn[disabled]{opacity:.35;cursor:not-allowed}
+.composer-text{width:100%;min-width:0;max-height:132px;min-height:42px;resize:none;display:block;overflow-y:auto;scrollbar-width:none;padding:10px 15px;border:0;border-radius:21px;background:linear-gradient(165deg,rgba(230,243,248,.10),rgba(160,189,200,.045)),rgba(31,43,51,.72);-webkit-backdrop-filter:blur(18px) saturate(1.13);backdrop-filter:blur(18px) saturate(1.13);box-shadow:none;color:var(--ink);font:400 16px/22px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;outline:0}
+.composer-text::placeholder{color:var(--muted);opacity:1}
+.composer-send[hidden],.composer-mic[hidden],.composer-stop[hidden],.composer-menu[hidden]{display:none!important}
+.composer-menu{position:absolute;bottom:calc(100% + 3px);left:max(14px,env(safe-area-inset-left));width:200px;padding:5px;border-radius:18px;background:rgba(39,52,60,.95);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.composer-menu button{display:block;width:100%;padding:12px 14px;border:0;background:transparent;color:var(--ink);text-align:left;font:inherit;font-size:14px;border-radius:12px}
+.composer-menu button:focus-visible,.composer-menu button:hover{background:rgba(255,255,255,.085)}
+.composer-status{max-width:720px;margin:3px auto 0;padding:0 6px;color:var(--muted);font-size:12px;min-height:0}
+.composer-status:empty{display:none}
 .sheet[hidden]{display:none}
 .sheet{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.38)}
 .sheet-panel{width:100%;max-width:600px;min-height:230px;max-height:80dvh;overflow:auto;padding:12px 20px calc(30px + env(safe-area-inset-bottom));border-radius:25px 25px 0 0;background:rgba(37,48,56,.93);-webkit-backdrop-filter:blur(22px) saturate(1.15);backdrop-filter:blur(22px) saturate(1.15);box-shadow:0 -8px 36px rgba(0,0,0,.12)}
@@ -59,6 +75,20 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
    </div>
   </div>
  </section>
+ <form class="composer" id="composer" autocomplete="off">
+  <div class="composer-menu" id="composerMenu" hidden>
+   <button type="button" id="newConversation">Новый разговор</button>
+   <button type="button" id="pasteText">Вставить текст</button>
+  </div>
+  <div class="composer-inner">
+   <button class="composer-btn" id="plus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="composerMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+   <textarea class="composer-text" id="messageInput" rows="1" maxlength="4000" placeholder="Сообщение Сэйви" aria-label="Написать Сэйви"></textarea>
+   <button class="composer-btn composer-mic" id="microphone" type="button" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
+   <button class="composer-btn composer-send" id="sendMessage" type="submit" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
+   <button class="composer-btn composer-stop" id="stopMessage" type="button" aria-label="Остановить ответ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/></svg></button>
+  </div>
+  <div class="composer-status" id="composerStatus" role="status" aria-live="polite"></div>
+ </form>
 </main>
 <div class="sheet" id="historySheet" hidden>
  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="historyHeading">
@@ -105,6 +135,127 @@ main{min-height:100vh;min-height:100dvh;background:var(--canvas);display:flex;fl
    messages.clear();empty.hidden=false;
   }
  });
+
+ const composer=document.getElementById('composer');
+ const input=document.getElementById('messageInput');
+ const plus=document.getElementById('plus');
+ const menu=document.getElementById('composerMenu');
+ const mic=document.getElementById('microphone');
+ const send=document.getElementById('sendMessage');
+ const stop=document.getElementById('stopMessage');
+ const info=document.getElementById('composerStatus');
+ const historyTurns=[];
+ let pending=null,sequence=0,recognition=null;
+ function syncComposer(){
+  input.style.height='42px';
+  input.style.height=Math.min(132,Math.max(42,input.scrollHeight))+'px';
+  mic.hidden=!!pending||!!input.value.trim();
+  send.hidden=!!pending||!input.value.trim();
+  stop.hidden=!pending;
+ }
+ function toggleMenu(force){
+  menu.hidden=typeof force==='boolean'?!force:!menu.hidden;
+  plus.setAttribute('aria-expanded',String(!menu.hidden));
+ }
+ plus.addEventListener('click',()=>toggleMenu());
+ document.getElementById('newConversation').addEventListener('click',()=>{
+  if(pending){pending.abort();pending=null}
+  window.SEYVEO_NEW_CHAT_UI.clear();historyTurns.length=0;input.value='';info.textContent='';
+  toggleMenu(false);syncComposer();input.focus();
+ });
+ document.getElementById('pasteText').addEventListener('click',async()=>{
+  toggleMenu(false);
+  try{
+   const value=await navigator.clipboard.readText();
+   input.value=(input.value+value).slice(0,4000);
+   syncComposer();input.focus();
+  }catch{info.textContent='Вставь текст обычной командой Ctrl+V.'}
+ });
+ input.addEventListener('input',syncComposer);
+ input.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){
+   event.preventDefault();composer.requestSubmit();
+  }
+ });
+ function setBusy(controller){pending=controller;input.disabled=!!controller;syncComposer()}
+ stop.addEventListener('click',()=>{pending?.abort()});
+ async function ask(question){
+  const controller=new AbortController();
+  const id=++sequence;
+  const replyId='sayvi-'+id;
+  appendMessage({id:'you-'+id,role:'user',text:question});
+  appendMessage({id:replyId,role:'assistant',text:'Сэйви печатает…'});
+  setBusy(controller);info.textContent='';
+  let answer='',done=false;
+  try{
+   const response=await fetch('/api/seyveo-stream',{
+    method:'POST',credentials:'same-origin',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:question,history:historyTurns.slice(-6)}),
+    signal:controller.signal
+   });
+   if(!response.ok){
+    const payload=await response.json().catch(()=>({}));
+    throw Error(payload.error||'Не удалось получить ответ Сэйви.');
+   }
+   if(!response.body)throw Error('Этот браузер не поддерживает потоковый ответ.');
+   const reader=response.body.getReader();
+   const decoder=new TextDecoder();
+   let buffer='';
+   const consume=line=>{
+    if(!line.trim())return;
+    const part=JSON.parse(line);
+    if(part.type==='delta'&&typeof part.text==='string'){
+     answer+=part.text;appendMessage({id:replyId,role:'assistant',text:answer});
+    }else if(part.type==='done'){done=true}
+    else if(part.type==='error')throw Error(part.text||'Ответ прервался.');
+   };
+   while(true){
+    const chunk=await reader.read();if(chunk.done)break;
+    buffer+=decoder.decode(chunk.value,{stream:true});
+    let index;
+    while((index=buffer.indexOf('\n'))!==-1){
+     consume(buffer.slice(0,index));buffer=buffer.slice(index+1);
+    }
+   }
+   buffer+=decoder.decode();
+   if(buffer.trim())consume(buffer);
+   if(!done)throw Error('Соединение прервалось.');
+   if(!answer.trim())throw Error('Сэйви не прислала ответ.');
+   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
+   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+  }catch(error){
+   const cancelled=controller.signal.aborted;
+   appendMessage({id:replyId,role:'assistant',text:answer||(cancelled?'Ответ остановлен.':'Не удалось получить ответ.')});
+   if(!cancelled)info.textContent=String(error?.message||'Ошибка соединения.');
+  }finally{
+   if(pending===controller){setBusy(null);input.focus({preventScroll:true})}
+  }
+ }
+ composer.addEventListener('submit',event=>{
+  event.preventDefault();
+  const value=input.value.trim();
+  if(!value||pending)return;
+  input.value='';syncComposer();ask(value);
+ });
+ mic.addEventListener('click',()=>{
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition){info.textContent='Голосовой ввод недоступен в этом браузере.';return}
+  if(recognition){recognition.stop();return}
+  const instance=new Recognition();
+  recognition=instance;instance.lang='ru-RU';instance.interimResults=false;instance.maxAlternatives=1;
+  instance.onresult=event=>{
+   const said=event.results?.[0]?.[0]?.transcript||'';
+   input.value=(input.value+' '+said).trim().slice(0,4000);syncComposer();
+  };
+  instance.onerror=event=>{info.textContent=event.error==='not-allowed'?'Разреши доступ к микрофону.':'Не удалось распознать речь.'};
+  instance.onend=()=>{recognition=null;mic.setAttribute('aria-pressed','false')};
+  try{instance.start();mic.setAttribute('aria-pressed','true');info.textContent='Слушаю…'}catch{recognition=null;info.textContent='Микрофон недоступен.'}
+ });
+ document.addEventListener('click',event=>{
+  if(!menu.hidden&&!event.target.closest('#composerMenu,#plus'))toggleMenu(false);
+ });
+ syncComposer();
  const sheet=document.getElementById('historySheet');
  const trigger=document.getElementById('history');
  const close=document.getElementById('closeHistory');
