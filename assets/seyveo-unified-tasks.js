@@ -1304,6 +1304,74 @@
  });
  window.addEventListener('hashchange',()=>{clearHold();finishDrag(false)});
 
+ // First-run handoff from Sayvi: arrange only real, existing modules.
+ // Never touch role permissions, external services or previously saved layouts
+ // unless the user explicitly chooses "Применить предложение Сэйви".
+ const arrival=$('svCabinetArrival'),arrivalText=$('svCabinetArrivalText');
+ const arrivalSource=$('svCabinetArrivalSource'),arrivalApply=$('svCabinetArrivalApply');
+ let lastArrivalPlan=null;
+ function suggestFromPlan(plan){
+  const features=Array.isArray(plan?.features)?plan.features:[];
+  const systems=Array.isArray(plan?.sources)?plan.sources:[];
+  const business=String(plan?.business||'');
+  if(business==='Для себя')return [];
+  const want=new Set(['company','mail']);
+  if(features.includes('team')||(Number(plan?.employees)||0)>1){
+   want.add('chats');want.add('people');
+  }
+  if(features.includes('sales')||systems.some(x=>['1С','Битрикс24','Кассовая система'].includes(x)))want.add('pulse');
+  if(features.includes('docs')||features.includes('finance'))want.add('documents');
+  return ['pulse','chats','people','documents','mail','company'].filter(id=>want.has(id)&&tools.has(id));
+ }
+ function prepareFromPlan(plan,options={}){
+  const suggested=suggestFromPlan(plan);
+  if(!suggested.length)return {applied:false,reason:'personal',tools:[]};
+  let existing=false;
+  try{existing=localStorage.getItem(KEY)!==null}catch{existing=true}
+  if(existing&&!options.force)return {applied:false,reason:'existing-layout',tools:suggested};
+  try{
+   localStorage.setItem(KEY,JSON.stringify({version:1,order:suggested}));
+   selected=suggested.slice();apply();
+   return {applied:true,reason:'prepared',tools:suggested};
+  }catch{
+   return {applied:false,reason:'storage-unavailable',tools:suggested};
+  }
+ }
+ function showArrival(plan,outcome){
+  if(!arrival||!plan||String(plan.business)==='Для себя')return false;
+  lastArrivalPlan=plan;
+  const current=outcome||prepareFromPlan(plan);
+  const name=String(plan.name||'').trim().split(/\s+/)[0].slice(0,30);
+  const greeting=name?name+', ':'';
+  if(arrivalText){
+   arrivalText.textContent=current.applied?
+    greeting+'я собрала кабинет из доступных инструментов для вашей работы. Проверьте его: нажмите «+», чтобы добавить или убрать раздел, или удерживайте строку пальцем для изменения порядка.':
+    current.reason==='existing-layout'?
+    greeting+'я учла ваши ответы, но сохранила прежнее расположение инструментов. Его можно изменить через «+» или применить мой предложенный набор.':
+    greeting+'ваш план сохранён. Я покажу доступные инструменты, а порядок вы сможете настроить через «+».';
+  }
+  if(arrivalSource){
+   const systems=Array.isArray(plan.sources)?plan.sources.filter(s=>s!=='Пока ничем'):[];
+   arrivalSource.hidden=systems.length===0;
+   if(systems.length)arrivalSource.textContent='Следующий шаг: подключение '+systems.join(', ')+
+    '. Сейчас это план: реальные данные и синхронизация ещё недоступны.';
+  }
+  if(arrivalApply)arrivalApply.hidden=current.reason!=='existing-layout';
+  arrival.hidden=false;
+  return true;
+ }
+ $('svCabinetArrivalClose')?.addEventListener('click',()=>{if(arrival)arrival.hidden=true});
+ $('svCabinetArrivalEdit')?.addEventListener('click',()=>launch.click());
+ $('svCabinetArrivalWorld')?.addEventListener('click',()=>{
+  if(arrival)arrival.hidden=true;
+  $('navPicture')?.click();
+ });
+ arrivalApply?.addEventListener('click',()=>{
+  if(!lastArrivalPlan)return;
+  const result=prepareFromPlan(lastArrivalPlan,{force:true});
+  showArrival(lastArrivalPlan,result);
+ });
+
  apply();
- window.SEYVEO_SMART_CABINET=Object.freeze({open,refresh:apply});
+ window.SEYVEO_SMART_CABINET=Object.freeze({open,refresh:apply,prepareFromPlan,showArrival});
 })();
