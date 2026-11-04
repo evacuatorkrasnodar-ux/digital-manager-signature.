@@ -987,8 +987,8 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   let shown=raw;
   if(oldStep==='name'){session.name=raw.slice(0,60);session.step='business'}
   else if(oldStep==='business'){
-   session.business=raw.slice(0,160);
-   const personal=/^для себя$|^личн(?:ое|ый|ая)\s/i.test(raw);
+   const personal=/^для себя$|^личн(?:ое|ый|ая)(?:\s|$)/i.test(raw);
+   session.business=personal?'Для себя':raw.slice(0,160);
    session.step=personal?'confirm':'employees';
    if(personal)session.employees=1;
   }else if(oldStep==='employees'){
