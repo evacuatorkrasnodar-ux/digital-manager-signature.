@@ -12,16 +12,18 @@
 /* The Home background must be painted ON THE VIEWPORT.
    A gradient on body scales to the document's scroll height in iOS Safari,
    so the fixed-height chat shows only its nearly solid upper edge. */
-html.seyveo-conversation{
+html.seyveo-conversation,
+html.seyveo-conversation body{
+ /* Both viewport and body have the SAME Home pigment. No black fallback strip
+    under the fixed iOS composer when Safari changes the visual viewport. */
  background:var(--sv-life-viewport-gradient,var(--bg))!important;
  background-repeat:no-repeat!important;
- background-size:100% 100%!important;
+ background-size:100% 100dvh!important;
  background-attachment:fixed!important;
+ min-height:100dvh;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
- background:transparent!important;
- background-image:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
@@ -692,4 +694,37 @@ html.seyveo-conversation #seyveoChatTools button:active{
 }
 @media(max-height:500px){
  html.seyveo-conversation .app{padding-top:calc(env(safe-area-inset-top,0px) + 2px)!important}
+}
+
+/* Sayvi top rail: one line instead of a two-line title. No icon or notch overlap. */
+html.seyveo-conversation .app{
+ padding-top:env(safe-area-inset-top,0px)!important;
+}
+html.seyveo-conversation #seyveoConversationHeader{
+ min-height:42px!important;height:42px!important;
+ margin:0 auto 2px!important;
+}
+html.seyveo-conversation #seyveoConversationHeader>.seyveo-conversation-heading{
+ flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;min-width:0!important;width:100%;white-space:nowrap;
+}
+html.seyveo-conversation #seyveoConversationHeader .seyveo-conversation-name{
+ flex:0 0 auto;font-size:14px!important;line-height:20px!important;
+}
+html.seyveo-conversation #seyveoConversationHeader #seyveoConversationStatus{
+ display:inline-block!important;width:auto!important;max-width:45%!important;
+ min-width:0!important;min-height:0!important;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:10px!important;line-height:20px!important;text-align:left!important;
+}
+html.seyveo-conversation #seyveoConversationHeader #seyveoConversationStatus::before{
+ content:"·";margin-right:6px;color:var(--secondary)
+}
+/* Keep the same background behind iOS's lower safe area and the chat writer. */
+html.seyveo-conversation #homePage,
+html.seyveo-conversation #stage{
+ background-color:transparent!important;background-image:none!important;
+}
+@media(max-height:500px){
+ html.seyveo-conversation .app{padding-top:env(safe-area-inset-top,0px)!important}
 }
