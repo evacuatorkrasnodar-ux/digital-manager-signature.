@@ -9,18 +9,17 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* iOS Safari paints its bottom home-indicator safe area from the root
-   canvas, not the shorter visualViewport-sized chat shell. Home and Sayvi use
-   exactly the same palette gradient; no extra bottom panel or overlay. */
+/* Sayvi uses exactly one full-viewport Home canvas, not a separate
+   rectangular chat backdrop or an extra safe-area overlay. The root's
+   solid color is the PWA home-indicator fallback on iPhone. */
 html.seyveo-conversation{
- background-color:var(--bg)!important;
- background-image:var(--sv-life-viewport-gradient,none)!important;
- background-size:100% 100%!important;
- background-repeat:no-repeat!important;
+ background:var(--bg)!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;overscroll-behavior:none;
- background:transparent!important;
+ background:var(--sv-life-viewport-gradient,var(--bg))!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
@@ -614,30 +613,16 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
  width:18px!important;height:18px!important;stroke-width:1.55!important;
 }
-/* One precisely clipped Liquid Glass pane. The form itself stays
-   unfiltered and overflow:visible so the real + tools menu can open above it.
-   The blur is confined to the rounded pane: no square iOS compositor tile. */
+/* Single compositor surface: the original form IS the capsule. No
+   ::before glass panel, no full-width backdrop layer, no square GPU tile.
+   Menu + remains in normal overflow outside the capsule. */
 html.seyveo-conversation #ask.prompt:not(.expanded){
  border-color:color-mix(in srgb,var(--sv-input-border) 28%,transparent)!important;
- background:transparent!important;
+ background:var(--sv-liquid-nav-material,var(--sv-input-surface))!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- box-shadow:none!important;
- isolation:isolate;
-}
-html.seyveo-conversation #ask.prompt:not(.expanded)::before{
- content:"";
- position:absolute;inset:0;z-index:0;pointer-events:none;
- border-radius:inherit;
- background:var(--sv-liquid-nav-material,var(--sv-input-surface));
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
- backdrop-filter:var(--sv-liquid-nav-blur,blur(22px));
- clip-path:inset(0 round var(--sv-input-radius,24px));
- box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 40%,transparent);
-}
-html.seyveo-conversation #ask.prompt:not(.expanded) #question,
-html.seyveo-conversation #ask.prompt:not(.expanded) .composer-compact > button{
- position:relative!important;z-index:1;
+ box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 40%,transparent)!important;
+ isolation:auto;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  background:var(--text)!important;color:var(--bg)!important;
