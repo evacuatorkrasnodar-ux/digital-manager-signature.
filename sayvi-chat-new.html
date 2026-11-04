@@ -40,6 +40,13 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 
 #sayviStatus{position:fixed;z-index:6;left:64px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));font-size:12px;line-height:1.4;color:#a5b0b7;pointer-events:none;background:transparent}
 #sayviStatus:empty{display:none}
+#sayviHistory[hidden]{display:none!important}
+#sayviHistory{position:fixed;z-index:8;inset:0;overflow-y:auto;background:#11161b;padding:calc(14px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));color:#fff}
+.history-head{height:46px;display:flex;align-items:center;justify-content:space-between;font-size:18px}
+.history-head button{background:transparent;color:#dbe5eb;border:0;padding:10px;font:inherit;font-size:14px}
+#sayviHistoryList{display:flex;flex-direction:column;gap:5px;margin:18px auto 0;max-width:720px}
+.history-item{border:0;border-radius:14px;background:#263039;color:#fff;padding:14px;text-align:left;font:inherit;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-empty{color:#a5b0b7;font-size:14px;text-align:center;margin-top:60px}
 #sayviInput:disabled{opacity:.75}
 </style>
 </head>
@@ -53,7 +60,8 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 <button id="sayviMic" type="button" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </div>
-<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button></div>
+<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
+<section id="sayviHistory" aria-label="История разговоров" hidden><div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div><div id="sayviHistoryList"></div></section>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
 <script>
@@ -66,13 +74,70 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  let active=null,sequence=0,recognition=null;
  const historyTurns=[];
  const answers=new Map();
+ const storageKey='seyveo.sayvi.conversations.v1';
+ let archive=[],currentId='conversation-'+Date.now(),savedTurns=[];
+ function persist(){
+  try{localStorage.setItem(storageKey,JSON.stringify({archive:archive.slice(0,40),currentId,turns:savedTurns.slice(-120)}));}
+  catch(error){status.textContent='Историю не удалось сохранить на этом устройстве.';}
+ }
+ function snapshot(){
+  return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
+ }
+ function renderTurns(turns){
+  answers.clear();list.replaceChildren();savedTurns=[];
+  for(const turn of turns){
+   if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false);
+  }
+  historyTurns.length=0;
+  for(const turn of savedTurns.slice(-12)){
+   if(turn.role==='user'||turn.role==='assistant')historyTurns.push({role:turn.role,content:turn.text.slice(0,450)});
+  }
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight});
+ }
+ function restore(){
+  try{
+   const data=JSON.parse(localStorage.getItem(storageKey)||'null');
+   if(!data||typeof data!=='object')return;
+   archive=Array.isArray(data.archive)?data.archive.filter(item=>item&&Array.isArray(item.turns)).slice(0,40):[];
+   currentId=typeof data.currentId==='string'?data.currentId:currentId;
+   if(Array.isArray(data.turns))renderTurns(data.turns);
+  }catch{status.textContent='Не удалось прочитать сохранённую историю.'}
+ }
+ const historyPanel=document.getElementById('sayviHistory');
+ const historyList=document.getElementById('sayviHistoryList');
+ function closeHistory(){historyPanel.hidden=true}
+ function openHistory(){
+  closeMenu();historyList.replaceChildren();
+  const conversations=[snapshot(),...archive].filter(item=>item.turns.length);
+  for(const item of conversations){
+   const first=item.turns.find(turn=>turn.role==='user')?.text||'Разговор с Сэйви';
+   const button=document.createElement('button');
+   button.className='history-item';button.type='button';button.textContent=first.slice(0,90);
+   button.addEventListener('click',()=>{
+    if(active)return;
+    if(item.id!==currentId){
+     if(savedTurns.length)archive.unshift(snapshot());
+     archive=archive.filter(entry=>entry.id!==item.id).slice(0,40);
+     currentId=item.id;renderTurns(item.turns);persist();
+    }
+    closeHistory();
+   });
+   historyList.append(button);
+  }
+  if(!conversations.length){const empty=document.createElement('p');empty.className='history-empty';empty.textContent='История разговоров пока пуста';historyList.append(empty)}
+  historyPanel.hidden=false;
+ }
+ document.getElementById('sayviHistoryOpen').addEventListener('click',openHistory);
+ document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!historyPanel.hidden)closeHistory()});
  function updateControls(){
   const typed=!!input.value.trim();
   input.disabled=!!active;
   sendButton.hidden=!!active||!typed;
   mic.hidden=!!active||typed;
  }
- function append(role,id,message){
+ function append(role,id,message,save=true){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
@@ -86,13 +151,22 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
    turn.append(bubble);list.append(turn);answers.set(id,bubble);
   }
   bubble.textContent=message;
+  if(save){
+   const index=Number(bubble.dataset.savedIndex);
+   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){savedTurns[index].text=message;}
+   else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
+   persist();
+  }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight});
  }
  function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
  document.getElementById('sayviNewChat').addEventListener('click',()=>{
-  active?.abort();active=null;historyTurns.length=0;answers.clear();
-  list.replaceChildren();input.value='';status.textContent='';closeMenu();updateControls();input.focus();
+  active?.abort();active=null;
+  if(savedTurns.length)archive.unshift(snapshot());
+  archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
+  historyTurns.length=0;answers.clear();
+  list.replaceChildren();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
  });
  document.addEventListener('pointerdown',e=>{
   if(!menu.hidden&&!e.target.closest('#sayviPlus,#sayviMenu'))closeMenu();
@@ -170,6 +244,7 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
    session.start();
   }catch{recognition=null;status.textContent='Микрофон недоступен.'}
  });
+ restore();
  updateControls();
 })();
 </script>
