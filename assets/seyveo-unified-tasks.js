@@ -1072,6 +1072,151 @@
   if(event.key!==KEY)return;
   selected=read();apply();
  });
+ // iPhone-style arrangement: hold a real tool row, move and release.
+ // The same nodes move in the DOM; regular taps, scroll and existing routes stay.
+ const hint=launch.closest('.sv-cabinet-toolbar')?.querySelector('.sv-cabinet-toolbar-text small');
+ const normalHint='Удерживайте инструмент, чтобы переместить';
+ if(hint)hint.textContent=normalHint;
+ let hold=null,drag=null,clickGuardUntil=0,hintTimer=null;
+ const HOLD_MS=440,SCROLL_THRESHOLD=10;
+ const visibleRows=()=>[...list.children].filter(x=>x.matches('[data-cabinet-tool]')&&!x.hidden);
+ function clearHold(){
+  if(hold?.timer)clearTimeout(hold.timer);
+  hold=null;
+ }
+ function feedback(message){
+  if(!hint)return;
+  clearTimeout(hintTimer);hint.textContent=message;
+  hintTimer=setTimeout(()=>{hint.textContent=normalHint},1700);
+ }
+ function beginDrag(){
+  const pending=hold;
+  if(!pending||drag||dialog.open||!window.SEYVEO_PREVIEW?.isManager?.())return;
+  const item=pending.item;
+  if(!item.isConnected||item.hidden)return;
+  if(item.matches('details')&&item.open)item.open=false;
+  const rect=item.getBoundingClientRect(),parent=list.getBoundingClientRect();
+  const spacer=document.createElement('div');
+  spacer.className='sv-cabinet-drop-placeholder';
+  spacer.style.height=rect.height+'px';
+  list.insertBefore(spacer,item);
+  const originalStyle=item.getAttribute('style');
+  drag={item,spacer,originalStyle,startY:pending.y,oldOrder:selected.slice(),
+   touchId:pending.kind==='touch'?pending.id:null,
+   pointerId:pending.kind==='pointer'?pending.id:null};
+  item.classList.add('sv-cabinet-dragging');
+  item.style.position='absolute';
+  item.style.left=(rect.left-parent.left)+'px';
+  item.style.top=(rect.top-parent.top)+'px';
+  item.style.width=rect.width+'px';
+  item.style.height=rect.height+'px';
+  item.style.margin='0';
+  item.style.zIndex='70';
+  item.style.pointerEvents='none';
+  item.style.transform='translate3d(0,0,0)';
+  list.classList.add('sv-cabinet-reordering');
+  clickGuardUntil=Date.now()+1000;
+  clearHold();
+ }
+ function moveDrag(clientY){
+  if(!drag)return;
+  const bound=list.getBoundingClientRect();
+  const y=Math.max(bound.top+8,Math.min(bound.bottom-8,clientY));
+  drag.item.style.transform='translate3d(0,'+(y-drag.startY)+'px,0)';
+  const other=visibleRows().filter(x=>x!==drag.item);
+  const before=other.find(x=>y<x.getBoundingClientRect().top+x.getBoundingClientRect().height/2);
+  if(before)list.insertBefore(drag.spacer,before);
+  else{
+   const hidden=[...list.children].find(x=>x.matches('[data-cabinet-tool]')&&x.hidden);
+   list.insertBefore(drag.spacer,hidden||null);
+  }
+ }
+ function finishDrag(commit){
+  if(!drag)return;
+  const d=drag;drag=null;
+  list.insertBefore(d.item,d.spacer);d.spacer.remove();
+  if(d.originalStyle===null)d.item.removeAttribute('style');
+  else d.item.setAttribute('style',d.originalStyle);
+  d.item.classList.remove('sv-cabinet-dragging');
+  list.classList.remove('sv-cabinet-reordering');
+  clickGuardUntil=Date.now()+700;
+  if(!commit){selected=d.oldOrder;apply();return}
+  const reordered=visibleRows().map(x=>x.dataset.cabinetTool);
+  if(reordered.join('|')===d.oldOrder.join('|'))return;
+  selected=reordered;apply();
+  try{
+   localStorage.setItem(KEY,JSON.stringify({version:1,order:selected.slice()}));
+   feedback('Порядок сохранён');
+  }catch{feedback('Порядок изменён только на этом экране')}
+ }
+ function pickRow(target){
+  if(!(target instanceof Element))return null;
+  const head=target.closest('.svcp-manager-row, .svcp-manager-staff > summary');
+  if(!head||!list.contains(head))return null;
+  const item=head.closest('[data-cabinet-tool]');
+  return item?.parentElement===list&&!item.hidden?item:null;
+ }
+ function planHold(item,x,y,kind,id){
+  clearHold();
+  const state={item,x,y,kind,id,timer:null};
+  state.timer=setTimeout(()=>{if(hold===state)beginDrag()},HOLD_MS);
+  hold=state;
+ }
+ // Nonpassive touchmove allows native scroll before the long press and
+ // stops scrolling only after the deliberate rearrangement starts.
+ list.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1||drag)return;
+  const item=pickRow(event.target);
+  if(!item)return;
+  const t=event.changedTouches[0];
+  planHold(item,t.clientX,t.clientY,'touch',t.identifier);
+ },{passive:true});
+ document.addEventListener('touchmove',event=>{
+  if(drag?.touchId!==null&&drag?.touchId!==undefined){
+   const t=[...event.touches].find(t=>t.identifier===drag.touchId);
+   if(!t)return;
+   event.preventDefault();moveDrag(t.clientY);return;
+  }
+  if(hold?.kind!=='touch')return;
+  const t=[...event.touches].find(t=>t.identifier===hold.id);
+  if(!t||Math.hypot(t.clientX-hold.x,t.clientY-hold.y)>SCROLL_THRESHOLD)clearHold();
+ },{passive:false});
+ document.addEventListener('touchend',event=>{
+  if(drag?.touchId!==null&&drag?.touchId!==undefined){
+   if(![...event.changedTouches].some(t=>t.identifier===drag.touchId))return;
+   event.preventDefault();finishDrag(true);
+  }else if(hold?.kind==='touch'&&[...event.changedTouches].some(t=>t.identifier===hold.id))clearHold();
+ },{passive:false});
+ document.addEventListener('touchcancel',()=>{clearHold();finishDrag(false)},{passive:true});
+ list.addEventListener('pointerdown',event=>{
+  if(event.pointerType==='touch'||event.button!==0||drag)return;
+  const item=pickRow(event.target);
+  if(item)planHold(item,event.clientX,event.clientY,'pointer',event.pointerId);
+ });
+ document.addEventListener('pointermove',event=>{
+  if(event.pointerType==='touch')return;
+  if(drag?.pointerId===event.pointerId){event.preventDefault();moveDrag(event.clientY);return}
+  if(hold?.kind==='pointer'&&hold.id===event.pointerId&&
+   Math.hypot(event.clientX-hold.x,event.clientY-hold.y)>SCROLL_THRESHOLD)clearHold();
+ },{passive:false});
+ document.addEventListener('pointerup',event=>{
+  if(event.pointerType==='touch')return;
+  if(drag?.pointerId===event.pointerId)finishDrag(true);
+  else if(hold?.kind==='pointer'&&hold.id===event.pointerId)clearHold();
+ });
+ document.addEventListener('pointercancel',event=>{
+  if(hold?.kind==='pointer'&&hold.id===event.pointerId)clearHold();
+  if(drag?.pointerId===event.pointerId)finishDrag(false);
+ });
+ // Swallow synthesized click or <summary> toggle after a long-press release.
+ list.addEventListener('click',event=>{
+  if(Date.now()<clickGuardUntil){event.preventDefault();event.stopImmediatePropagation()}
+ },true);
+ list.addEventListener('contextmenu',event=>{
+  if(drag||hold)event.preventDefault();
+ });
+ window.addEventListener('hashchange',()=>{clearHold();finishDrag(false)});
+
  apply();
  window.SEYVEO_SMART_CABINET=Object.freeze({open,refresh:apply});
 })();
