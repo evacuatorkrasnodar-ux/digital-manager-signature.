@@ -267,6 +267,18 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    }
    return;
   }
+  // Explicitly serve the new blank Sayvi page, without exposing other root files.
+  if(req.method==='GET'&&path==='/sayvi-chat-new.html'){
+   try{
+    const html=await readFile(resolve(ROOT,'sayvi-chat-new.html'),'utf8');
+    res.writeHead(200,{...HEADERS,'content-type':'text/html; charset=utf-8'});
+    res.end(html);
+   }catch(error){
+    console.error('[SEYVEO Sayvi] Could not serve clean chat:',error?.message||error);
+    send(res,404,{error:'Новая страница чата не найдена.'});
+   }
+   return;
+  }
   if(req.method==='GET'&&(path==='/'||path==='/index.html')){
    try{
     const html=adaptOriginalHome(await readFile(resolve(ROOT,'index.html'),'utf8'));
