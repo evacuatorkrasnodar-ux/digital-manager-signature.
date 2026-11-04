@@ -9,19 +9,18 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* No separate dark conversation canvas. Share Home's viewport background;
-   the body and chat layers are transparent and cannot create a lower slab. */
-html.seyveo-conversation{
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-size:100% 100%!important;
- background-repeat:no-repeat!important;
+/* Bare Sayvi conversation: remove all page backgrounds entirely.
+   Neither root nor body paints a chat pigment, image, gradient or overlay. */
+html.seyveo-conversation,
+html.seyveo-conversation body{
+ background:transparent!important;
+ background-color:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
 }
 html.seyveo-conversation body{
  overflow:hidden!important;
  overscroll-behavior:none;
- background:transparent!important;
- background-image:none!important;
- box-shadow:none!important;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
