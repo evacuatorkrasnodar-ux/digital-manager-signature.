@@ -883,7 +883,11 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    choices(wrap,step,data,notes);
    if(step==='sources')wrap.append(el('small','sv-smart-start-note',
     'Сейчас это выбор для плана, а не вход в 1С или Битрикс24. Пароли и токены не нужны.'));
-   wrap.append(btn('Продолжить',()=>advance('Отмечено: '+session[step].length),'is-primary'));
+   if(step==='roles')wrap.append(el('small','sv-smart-start-note',
+    'Нет нужной должности? Напишите её название в поле чата — я добавлю в план.'));
+   if(step==='sources')wrap.append(el('small','sv-smart-start-note',
+    'Можно написать название другой программы прямо в чате.'));
+   wrap.append(btn('Продолжить',()=>advance('__selected__'),'is-primary'));
   }else if(step==='confirm'){
    const summary=el('div','sv-smart-start-summary');
    for(const [label,value] of [
@@ -913,28 +917,85 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   chat.status('Знакомство · настройка SEYVEO');
   requestAnimationFrame(()=>{thread.scrollTop=thread.scrollHeight});
  }
+ // Make free-text answers equivalent to the same checkboxes. Never discard them
+ // while moving to the next step. Unknown professions are allowed as labels,
+ // NOT as permission templates. They grant no access.
+ function acceptFreeText(step,value){
+  if(value==='__selected__')return true;
+  if(/^(?:позже|пропустить|пока не знаю)$/i.test(value)){
+   session[step]=[];return true;
+  }
+  if(step==='roles'){
+   const parts=value.split(/[,;\n]+|\s+и\s+(?=[А-ЯЁа-яё])/i)
+    .map(x=>x.trim().replace(/\s+/g,' ').slice(0,60)).filter(Boolean);
+   if(!parts.length)return false;
+   session.roles=[...new Set([...session.roles,...parts])].slice(0,30);
+   return true;
+  }
+  if(step==='sources'){
+   const names=[];
+   if(/(?:^|\W)1\s*[cс](?:$|\W)/iu.test(value))names.push('1С');
+   if(/битр[ие]кс|bitrix/iu.test(value))names.push('Битрикс24');
+   if(/касс|эвотор|атол|штрих[- ]?м/iu.test(value))names.push('Кассовая система');
+   if(/excel|эксел|csv|таблиц/iu.test(value))names.push('Excel / CSV');
+   if(/^(?:нет|ничего|не пользуюсь|пока ничем)$/iu.test(value))names.push('Пока ничем');
+   if(!names.length){
+    const typed=value.slice(0,65);
+    names.push('Другая программа: '+typed);
+   }
+   if(names.includes('Пока ничем'))session.sources=['Пока ничем'];
+   else session.sources=[...new Set([...session.sources.filter(x=>x!=='Пока ничем'),...names])].slice(0,15);
+   return true;
+  }
+  if(step==='features'){
+   const found=[];
+   if(/сотрудник|поручени|команд|чат|смен|персонал|кадр/i.test(value))found.push('team');
+   if(/документ|договор|акт|согласован|письм|эдо/i.test(value))found.push('docs');
+   if(/продаж|выручк|товар|склад|остатк|клиент|заказ/i.test(value))found.push('sales');
+   if(/банк|ден[ье]г|финанс|плат[её]ж|сч[её]т/i.test(value))found.push('finance');
+   if(!found.length)return false;
+   session.features=[...new Set([...session.features,...found])];
+   return true;
+  }
+  return false;
+ }
+ function choiceSummary(step){
+  const entries=session[step]||[];
+  if(!entries.length)return 'Выберу позже';
+  return step==='features'?entries.map(id=>FEATURES.find(x=>x.id===id)?.title||id).join(', '):entries.join(', ');
+ }
  function advance(value){
   if(!session)return;
-  const text=String(value||'').trim().slice(0,400);
-  if(!text){chat.status('Укажите ответ',2000);return}
-  if(/^(отмена|выйти)$/i.test(text)){pause(false);return}
-  if(session.step==='name'){session.name=text.slice(0,60);session.step='business'}
-  else if(session.step==='business'){
-   session.business=text.slice(0,160);
-   session.step=text==='Для себя'?'confirm':'employees';
-   if(text==='Для себя')session.employees=1;
-  }else if(session.step==='employees'){
-   const n=Number(text);
-   if(!Number.isInteger(n)||n<1||n>100000){chat.status('Укажите целое число от 1 до 100000',2400);return}
+  const raw=String(value||'').trim().slice(0,400);
+  if(!raw){chat.status('Укажите ответ',2500);return}
+  if(/^(отмена|выйти)$/i.test(raw)){pause(false);return}
+  if(/парол[ья]|api[_ -]?key|access[_ -]?token|client[_ -]?secret|bearer\s|банковск.{0,8}код/i.test(raw)){
+   chat.status('Пароли, коды и ключи доступа здесь вводить не нужно',4200);return;
+  }
+  const oldStep=session.step;
+  let shown=raw;
+  if(oldStep==='name'){session.name=raw.slice(0,60);session.step='business'}
+  else if(oldStep==='business'){
+   session.business=raw.slice(0,160);
+   const personal=/^для себя$|^личн(?:ое|ый|ая)\s/i.test(raw);
+   session.step=personal?'confirm':'employees';
+   if(personal)session.employees=1;
+  }else if(oldStep==='employees'){
+   const n=Number(raw.replace(/\s/g,''));
+   if(!Number.isInteger(n)||n<1||n>100000){chat.status('Укажите целое число от 1 до 100000',2900);return}
    session.employees=n;session.step='roles';
-  }else if(session.step==='roles')session.step='sources';
-  else if(session.step==='sources')session.step='features';
-  else if(session.step==='features')session.step='confirm';
-  else if(session.step==='confirm'){
-   if(/^(сохранить|готово)$/i.test(text)){finish();return}
+  }else if(oldStep==='roles'||oldStep==='sources'||oldStep==='features'){
+   if(!acceptFreeText(oldStep,raw)){
+    chat.status('Отметьте нужные пункты или напишите, что хотите настроить',3600);
+    return;
+   }
+   shown=choiceSummary(oldStep);
+   session.step=oldStep==='roles'?'sources':oldStep==='sources'?'features':'confirm';
+  }else if(oldStep==='confirm'){
+   if(/^(сохранить|готово)$/i.test(raw)){finish();return}
    chat.status('Подтвердите кнопкой «Сохранить план»',2400);return;
   }else return;
-  session.turns.push({question:text,answer:prompt(),smartStart:true});
+  session.turns.push({question:shown,answer:prompt(),smartStart:true});
   draw();
  }
  function back(){
