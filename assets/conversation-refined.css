@@ -35,7 +35,7 @@ html.seyveo-conversation .app{
  box-sizing:border-box;
  padding:env(safe-area-inset-top,0px)
    max(1px,env(safe-area-inset-right,0px))
-   env(safe-area-inset-bottom,0px)
+   var(--sayvi-composer-space,90px)
    max(1px,env(safe-area-inset-left,0px))!important;
  display:flex;flex-direction:column;
  overflow:hidden!important;
@@ -628,16 +628,29 @@ html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversat
 html.seyveo-conversation :is(.seyveo-conversation-user-actions,.seyveo-conversation-reply-actions) .seyveo-conversation-reply-action svg{
  width:18px!important;height:18px!important;stroke-width:1.55!important;
 }
-/* Single compositor surface: the original form IS the capsule. No
-   ::before glass panel, no full-width backdrop layer, no square GPU tile.
-   Menu + remains in normal overflow outside the capsule. */
+/* Sayvi · Air 26 native single-pane composer.
+   The REAL form is the entire glass capsule: no ::before, ::after,
+   backdrop slab, colored bottom overlay or duplicate input. */
 html.seyveo-conversation #ask.prompt:not(.expanded){
- border-color:color-mix(in srgb,var(--sv-input-border) 28%,transparent)!important;
+ display:grid!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+ width:min(510px,calc(100vw - 14px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+ min-height:52px!important;
+ padding:3px 5px!important;
+ border:1px solid color-mix(in srgb,var(--sv-input-border) 32%,transparent)!important;
+ border-radius:26px!important;
  background:var(--sv-liquid-nav-material,var(--sv-input-surface))!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
- box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 40%,transparent)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(115%)!important;
+ backdrop-filter:blur(18px) saturate(115%)!important;
+ box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 35%,transparent)!important;
  isolation:auto;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded)::before,
+html.seyveo-conversation #ask.prompt:not(.expanded)::after{
+ content:none!important;
+ display:none!important;
 }
 html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  background:var(--text)!important;color:var(--bg)!important;
@@ -647,27 +660,4 @@ html.seyveo-conversation #ask.prompt:not(.expanded) #composerCompactSend{
  border-color:color-mix(in srgb,var(--soft-line) 26%,transparent)!important;
 }
 
-/* Sayvi chat: full composer removal for clean rebuild.
-   Only inside the dedicated conversation: keep the real #ask form and
-   listeners for Home/Notes, but do not paint or position any chat writer
-   until its replacement is deliberately implemented. */
-html.seyveo-conversation body #ask.prompt,
-html.seyveo-conversation body #ask.prompt.expanded,
-html.seyveo-conversation body #seyveoChatTools{
- display:none!important;
- visibility:hidden!important;
- opacity:0!important;
- pointer-events:none!important;
-}
-html.seyveo-conversation body #ask.prompt::before,
-html.seyveo-conversation body #ask.prompt::after,
-html.seyveo-conversation body::before,
-html.seyveo-conversation body::after,
-html.seyveo-conversation .app::before,
-html.seyveo-conversation .app::after{
- content:none!important;
- display:none!important;
-}
-html.seyveo-conversation #stage .orb-inline-reply-text{
- scroll-padding-bottom:24px!important;
-}
+
