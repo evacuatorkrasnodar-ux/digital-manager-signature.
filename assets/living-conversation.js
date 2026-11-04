@@ -260,6 +260,7 @@ function open(){
  scrollToLatest();
 }
 function close(){
+ if(businessIntroduction){businessIntroduction=null;renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[])}
  if(activeAction)cancelAction();
  root.style.removeProperty('--sayvi-chat-height');
  root.style.removeProperty('--sayvi-chat-top');
@@ -714,7 +715,75 @@ function showRichAnswer(payload){
 window.addEventListener('seyveo:rich-answer',event=>{
  if(event.detail)showRichAnswer(event.detail);
 });
-window.SEYVEO_CONVERSATION={open,close,renderTurns,beginStream,updateStream,status,showSearchResults,showRichAnswer,
+// Owner-confirmed business introduction inside the existing chat, not a second
+// form or a simulated AI. Answers are private, transient until Save, and never
+// added to the general chat-history store.
+let businessIntroduction=null;
+function showBusinessIntroduction(){
+ if(!businessIntroduction)return;
+ const turns=window.SEYVEO_DEMO_CHAT_TURNS||[];
+ renderTurns([...turns,...businessIntroduction.turns]);
+}
+function beginBusinessIntroduction(){
+ if(businessIntroduction)return showBusinessIntroduction();
+ const saved=window.SEYVEO_BUSINESS_MAP?.getState?.()||{};
+ businessIntroduction={
+  step:'about',about:String(saved.description||''),goal:String(saved.goal||''),turns:[{
+   question:'Хочу познакомить Сэйви с моим делом',
+   answer:'Расскажи, чем занимается твой бизнес. Можно своими словами или голосом. Это останется приватным и сохранится только с твоего согласия.'+
+    (saved.description?'\nУ меня уже есть описание. Напиши «оставить», чтобы не менять его.':'')
+  }]
+ };
+ open();showBusinessIntroduction();
+ status('Знакомство с бизнесом');
+ return true;
+}
+form.addEventListener('submit',event=>{
+ if(!businessIntroduction)return;
+ // Intercept before ordinary assistant sending: private onboarding must not
+ // silently go to a remote AI or the regular conversation history.
+ event.preventDefault();event.stopImmediatePropagation();
+ const input=$('question');const value=String(input?.value||'').trim();
+ if(!value)return;
+ input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
+ const intro=businessIntroduction;
+ if(/^(отмена|отменить|выйти)$/i.test(value)){
+  businessIntroduction=null;
+  renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[]);
+  status('Знакомство отменено — ничего не сохранено',3500);
+  return;
+ }
+ if(intro.step==='about'){
+  if(value.toLowerCase()==='оставить'&&!intro.about){
+   intro.turns.push({question:value,answer:'Пока нет описания. Расскажи о своём бизнесе несколькими словами.'});
+  }else{
+   if(value.toLowerCase()!=='оставить')intro.about=value.slice(0,1000);
+   intro.step='goal';
+   intro.turns.push({question:value,answer:'Какая сейчас главная цель твоего бизнеса? Можно ответить своими словами. Если цель уже сохранена, напиши «оставить».'});
+  }
+ }else if(intro.step==='goal'){
+  if(value.toLowerCase()==='оставить'&&!intro.goal){
+   intro.turns.push({question:value,answer:'Цель пока не сохранена. Напиши, к чему хочешь прийти.'});
+  }else{
+   if(value.toLowerCase()!=='оставить')intro.goal=value.slice(0,320);
+   intro.step='confirm';
+   intro.turns.push({question:value,answer:'Я предлагаю запомнить:\nДело: '+intro.about+'\nЦель: '+intro.goal+'\nНапиши «сохранить» для подтверждения или «отмена», чтобы ничего не менять. Эти сведения не войдут в QR-визитку.'});
+  }
+ }else if(intro.step==='confirm'){
+  if(value.toLowerCase()==='сохранить'){
+   const result=window.SEYVEO_BUSINESS_MAP?.savePrivateBusinessContext?.(intro.about,intro.goal);
+   intro.turns.push({question:value,answer:result?.message||'Не удалось сохранить. Попробуй ещё раз.'});
+   if(result?.ok)businessIntroduction=null;
+  }else{
+   intro.turns.push({question:value,answer:'Для сохранения напиши «сохранить». Для отмены — «отмена». Другие сообщения пока не записываются в память бизнеса.'});
+  }
+ }
+ renderTurns([...(window.SEYVEO_DEMO_CHAT_TURNS||[]),...intro.turns]);
+ if(businessIntroduction)status('Знакомство с бизнесом');
+ else status('На связи');
+},true);
+
+window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beginStream,updateStream,status,showSearchResults,showRichAnswer,
  endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
 };
 })();
