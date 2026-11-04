@@ -213,6 +213,22 @@
 #seyveoCompanyDialog .sv-kind-options input{
  position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;
 }
+#seyveoCompanyDialog .sv-kind-options label[hidden]{display:none!important}
+#seyveoCompanyDialog .sv-kind-options.sv-kind-options--chosen{
+ display:flex;align-items:stretch;justify-content:stretch;
+ width:100%;box-sizing:border-box;
+}
+#seyveoCompanyDialog .sv-kind-options.sv-kind-options--chosen label{
+ flex:1;min-width:0;cursor:default;
+}
+#seyveoCompanyDialog .sv-kind-options.sv-kind-options--chosen label input{pointer-events:none}
+#seyveoCompanyDialog .sv-kind-change{
+ display:inline-flex;align-items:center;justify-content:flex-start;
+ min-height:44px;padding:6px 1px;margin:4px 0 0;
+ border:0;background:transparent;color:var(--secondary);
+ font:inherit;font-size:12px;font-weight:500;
+}
+#seyveoCompanyDialog .sv-kind-change[hidden]{display:none!important}
 #seyveoCompanyDialog .sv-kind-options span{
  display:grid;place-items:center;width:100%;
  border-radius:11px;color:var(--secondary);font-size:11px;font-weight:480;
