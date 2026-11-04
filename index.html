@@ -1941,7 +1941,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <section class="sv-company-editor" id="seyveoCompanyEditor" hidden>
 <h3 class="seyveo-passport-section">Сведения и реквизиты</h3>
 <form id="seyveoCompanyForm" class="seyveo-passport-form">
-<fieldset class="sv-kind"><legend>Форма работы</legend><input id="seyveoCompanyType" name="type" type="hidden" value="npd"><div class="sv-kind-options" role="radiogroup" aria-label="Форма работы"><label><input type="radio" name="companyTypeChoice" value="npd" checked><span>Самозанятый</span></label><label><input type="radio" name="companyTypeChoice" value="ip"><span>ИП</span></label><label><input type="radio" name="companyTypeChoice" value="org"><span>Компания</span></label></div></fieldset>
+<fieldset class="sv-kind"><legend>Форма работы</legend><input id="seyveoCompanyType" name="type" type="hidden" value="npd"><div class="sv-kind-options" role="radiogroup" aria-label="Форма работы"><label><input type="radio" name="companyTypeChoice" value="npd" checked><span>Самозанятый</span></label><label><input type="radio" name="companyTypeChoice" value="ip"><span>ИП</span></label><label><input type="radio" name="companyTypeChoice" value="org"><span>Компания</span></label></div><button type="button" id="seyveoCompanyChangeType" class="sv-kind-change" hidden>Изменить форму работы</button></fieldset>
 <label>Название для клиентов<input name="name" type="text" maxlength="80" required autocomplete="organization"></label>
 <label>ФИО / полное юридическое наименование<input name="legalName" type="text" maxlength="160"></label>
 <div data-passport-type="org"><label>Руководитель / представитель<input name="owner" type="text" maxlength="100"></label></div>
