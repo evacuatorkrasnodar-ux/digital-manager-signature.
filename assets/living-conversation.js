@@ -878,7 +878,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
   }else if(['roles','sources','features'].includes(step)){
    const suggested=roleSuggestions(session.business);
-   const data=step==='roles'?[...new Set([...suggested,...session.roles])].map(x=>[x,x]):
+   const data=step==='roles'?[...new Set([...suggested,...session.roles].filter(x=>x!=='Другая должность'))].map(x=>[x,x]):
     step==='sources'?[...new Set([...SOURCES,...session.sources])].map(x=>[x,x]):FEATURES.map(x=>[x.id,x.title]);
    const notes=step==='features'?Object.fromEntries(FEATURES.map(x=>[x.id,x.detail])):{};
    choices(wrap,step,data,notes);
@@ -927,8 +927,18 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    session[step]=[];return true;
   }
   if(step==='roles'){
+   const normalizeRole=raw=>{
+    const label=raw.trim().replace(/\s+/g,' ').slice(0,60);
+    if(/^кассир[ыа-я]*$/iu.test(label))return 'Кассир';
+    if(/^водител[ьиуяе]*$/iu.test(label))return 'Водитель';
+    if(/^продавц[ыа-я]*|^продавец$/iu.test(label))return 'Продавец';
+    if(/^кладовщик[иа-я]*$/iu.test(label))return 'Кладовщик';
+    if(/^бухгалтер[ыа-я]*$/iu.test(label))return 'Бухгалтер';
+    if(/^грузчик[иа-я]*$/iu.test(label))return 'Грузчик';
+    return label;
+   };
    const parts=value.split(/[,;\n]+|\s+и\s+(?=[А-ЯЁа-яё])/i)
-    .map(x=>x.trim().replace(/\s+/g,' ').slice(0,60)).filter(Boolean);
+    .map(normalizeRole).filter(Boolean);
    if(!parts.length)return false;
    session.roles=[...new Set([...session.roles,...parts])].slice(0,30);
    return true;
