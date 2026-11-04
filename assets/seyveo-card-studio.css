@@ -65,3 +65,27 @@
 #seyveoCardStudio .sv-card-system--rendered .sv-card-action:last-child{color:var(--secondary)}
 
 @media(max-width:600px){#seyveoCardStudio .scs-grid{grid-template-columns:1fr}}
+
+/* Master gallery: the EXACT cards from Card Engine, without duplicated markup. */
+#seyveoCardStudio .scs-gallery{margin-top:18px}
+#seyveoCardStudio .scs-gallery-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+#seyveoCardStudio .scs-gallery-head h3{font-size:18px;font-weight:560;margin:0}
+#seyveoCardStudio .scs-gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
+#seyveoCardStudio .scs-gallery-item{min-width:0;padding:14px;border:0;border-radius:20px;background:var(--sv-velvet-panel-quiet,var(--card2))}
+#seyveoCardStudio .scs-gallery-name{font-size:11px;color:var(--secondary);margin:0 0 8px}
+#seyveoCardStudio .scs-gallery-feedback{font-size:11px;color:var(--secondary);min-height:0;margin:4px 0 0}
+#seyveoCardStudio .scs-gallery-item .sv-card-training{font-size:10px}
+#seyveoCardStudio .scs-gallery-item .sv-card-actions{gap:7px}
+#seyveoCardStudio .scs-gallery-item .sv-card-action{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:36px;padding:6px 11px;border:0!important;border-radius:999px!important;
+ background:var(--sv-lg26-control,rgba(230,241,249,.10))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(145%);
+ backdrop-filter:blur(18px) saturate(145%);
+ box-shadow:none!important;color:var(--text)!important;
+}
+#seyveoCardStudio .scs-gallery-item .sv-card-action:active{opacity:.75}
+@media(max-width:680px){
+ #seyveoCardStudio .scs-gallery-grid{grid-template-columns:minmax(0,1fr)}
+ #seyveoCardStudio .scs-gallery-item{padding:12px}
+}
