@@ -3,14 +3,16 @@
    Scope is restricted to html.seyveo-conversation; Home, Life and Business
    preserve their own surfaces. One solid theme base, no backdrop layers. */
 html.seyveo-conversation{
- background:var(--bg)!important;background-image:none!important;
- background-color:var(--bg)!important;
+ /* A neutral fixed canvas, NEVER the green theme --bg token. */
+ --sv-sayvi-clean-base:#111214;
+ background:#111214!important;background-image:none!important;
+ background-color:#111214!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:hidden!important;
 }
 html.seyveo-conversation body{
- background:var(--bg)!important;background-image:none!important;
- background-color:var(--bg)!important;
+ background:#111214!important;background-image:none!important;
+ background-color:#111214!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  overflow:hidden!important;
@@ -92,4 +94,36 @@ html.seyveo-conversation .seyveo-conversation-turn{
 }
 @media(prefers-reduced-transparency:reduce){
  html.seyveo-conversation #ask.prompt:not(.expanded){background:none!important}
+}
+
+/* Reset any theme-painted canvas and background pseudo-plates.
+   Do not touch actual message glyphs/icons or other app screens. */
+html.seyveo-conversation[data-theme="light"],
+html.seyveo-conversation[data-theme="light"] body{
+ --sv-sayvi-clean-base:#f8f9fa;
+ background:#f8f9fa!important;background-image:none!important;
+ background-color:#f8f9fa!important;
+}
+html.seyveo-conversation::before,
+html.seyveo-conversation::after,
+html.seyveo-conversation body::before,
+html.seyveo-conversation body::after,
+html.seyveo-conversation .app::before,
+html.seyveo-conversation .app::after,
+html.seyveo-conversation #homePage::before,
+html.seyveo-conversation #homePage::after,
+html.seyveo-conversation #stage::before,
+html.seyveo-conversation #stage::after{
+ content:none!important;display:none!important;
+ background:none!important;background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+}
+html.seyveo-conversation :is(#homePage,#stage,#orbInlineReply,#orbInlineReplyText,#ask,#seyveoConversationHeader){
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
+}
+html.seyveo-conversation #ask.prompt:not(.expanded) :is(#seyveoChatPlus,#seyveoConversationMic,#composerCompactSend,#question){
+ background:transparent!important;background-image:none!important;
+ background-color:transparent!important;
+ box-shadow:none!important;
 }
