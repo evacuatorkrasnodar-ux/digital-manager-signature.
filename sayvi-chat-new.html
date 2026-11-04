@@ -6,16 +6,75 @@
 <meta name="theme-color" content="#000000">
 <title>Сэйви · SEYVEO</title>
 <style>
-:root{color-scheme:dark}
+:root{color-scheme:dark;--bg:#000;--text:#f5f7fa;--muted:#a0aab2}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;background:#000000;color:#fff}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif}
-main{min-height:100vh;min-height:100dvh;background:#000000;display:flex;flex-direction:column}
-header{height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 20px 0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;letter-spacing:.12em}
-section{flex:1}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;-webkit-font-smoothing:antialiased}
+button,textarea{font:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.page{height:100vh;height:100dvh;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+header{flex:none;height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:590;letter-spacing:-.02em}
+.content{flex:1 1 0;min-height:0}
+.writer{position:relative;flex:none;width:100%;margin:0;padding:6px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border:0;background:none;box-shadow:none;outline:none}
+.writer-row{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:end;gap:8px;width:100%;max-width:720px;margin:0 auto}
+.writer-button{width:42px;height:42px;min-width:42px;border:0;border-radius:50%;padding:0;display:grid;place-items:center;background:rgba(42,50,57,.72);color:var(--text);box-shadow:none}
+.writer-button svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+.writer-button:active{opacity:.72}
+.writer-button:focus-visible{outline:2px solid #bfcbd3;outline-offset:2px}
+.writer-field{display:block;width:100%;height:42px;min-height:42px;max-height:116px;resize:none;padding:10px 14px 9px;overflow-y:auto;border:0;border-radius:21px;outline:0;background:#263039;color:var(--text);font:400 16px/23px -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;box-shadow:none;scrollbar-width:none}
+.writer-field::placeholder{color:var(--muted);opacity:1}
+.writer-field::-webkit-scrollbar{display:none}
+.writer-button[hidden]{display:none!important}
+.writer-menu[hidden]{display:none!important}
+.writer-menu{position:absolute;left:max(12px,env(safe-area-inset-left));bottom:calc(100% + 6px);padding:5px;border-radius:16px;background:#263039;min-width:190px}
+.writer-menu button{display:block;width:100%;padding:11px 13px;border:0;border-radius:11px;background:transparent;color:var(--text);text-align:left}
+.writer-menu button:active{background:rgba(255,255,255,.08)}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<main><header>Сэйви</header><section aria-label="Пустая страница нового чата"></section></main>
+<main class="page">
+<header>Сэйви</header>
+<section class="content" aria-label="Область нового чата"></section>
+<form class="writer" id="writer" autocomplete="off">
+ <div class="writer-menu" id="writerMenu" hidden>
+  <button type="button" id="clearDraft">Очистить текст</button>
+  <button type="button" id="pasteDraft">Вставить из буфера</button>
+ </div>
+ <div class="writer-row">
+  <button class="writer-button" type="button" id="plus" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="writerMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  <textarea class="writer-field" id="messageInput" rows="1" maxlength="4000" placeholder="Сообщение Сэйви" aria-label="Сообщение Сэйви"></textarea>
+  <button class="writer-button" type="button" id="mic" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M8.5 21h7"/></svg></button>
+  <button class="writer-button" type="submit" id="send" aria-label="Отправить" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
+ </div>
+</form>
+</main>
+<script>
+(()=>{
+ 'use strict';
+ const input=document.getElementById('messageInput'),mic=document.getElementById('mic'),send=document.getElementById('send'),plus=document.getElementById('plus'),menu=document.getElementById('writerMenu');
+ function sync(){
+  input.style.height='42px';
+  input.style.height=Math.min(116,Math.max(42,input.scrollHeight))+'px';
+  const hasText=!!input.value.trim();
+  mic.hidden=hasText;send.hidden=!hasText;
+ }
+ input.addEventListener('input',sync);
+ input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('writer').requestSubmit();}});
+ plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden));});
+ document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!e.target.closest('#writerMenu')&&!e.target.closest('#plus')){menu.hidden=true;plus.setAttribute('aria-expanded','false');}});
+ document.getElementById('clearDraft').addEventListener('click',()=>{input.value='';sync();menu.hidden=true;plus.setAttribute('aria-expanded','false');input.focus();});
+ document.getElementById('pasteDraft').addEventListener('click',async()=>{try{input.value+=await navigator.clipboard.readText()}catch{}sync();menu.hidden=true;plus.setAttribute('aria-expanded','false');input.focus();});
+ const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ mic.addEventListener('click',()=>{
+  if(!Recognition){return;}
+  const recognition=new Recognition();recognition.lang='ru-RU';recognition.interimResults=false;
+  recognition.onresult=e=>{input.value=[input.value,e.results[0][0].transcript].filter(Boolean).join(' ');sync();input.focus();};
+  recognition.start();
+ });
+ document.getElementById('writer').addEventListener('submit',e=>{e.preventDefault();/* Отправку подключаем вместе с областью сообщений, не создавая сейчас скрытых слоёв. */});
+ sync();
+})();
+</script>
 </body>
 </html>
