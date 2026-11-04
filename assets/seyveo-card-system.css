@@ -3,6 +3,24 @@
  * Studio and its Home demo use the SAME markup from seyveo-card-engine.js.
  * Legacy Home cards use the same type/ink/interaction contract while retaining
  * their existing, working action editors and original reveal animation. */
+/* Master Card contract: editing these values updates Studio cards AND
+ * the existing Home living-card scene without changing its event handlers.
+ * All card families share geometry, text rhythm and material references. */
+:root{
+ --sv-master-title-size:15.5px;
+ --sv-master-title-weight:550;
+ --sv-master-title-leading:1.34;
+ --sv-master-description-size:13px;
+ --sv-master-description-leading:1.48;
+ --sv-master-queue-title-size:13.5px;
+ --sv-master-queue-description-size:12.5px;
+ --sv-master-queue-leading:1.48;
+ --sv-master-action-size:12px;
+ --sv-master-touch-target:44px;
+ --sv-master-glass:var(--sv-lg26-control,linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09)));
+ --sv-master-glass-blur:blur(18px) saturate(145%);
+ --sv-master-card-radius:20px;
+}
 .sv-card-system{
  --sv-card-ink:var(--text);
  --sv-card-subtle:var(--secondary);
@@ -154,4 +172,60 @@
 }
 @media(prefers-reduced-motion:reduce){
  .sv-card-system--rendered .sv-card-action{transition:none}
+}
+
+/* Shared master controls: same CSS contract for canonical cards and Home.
+   Live Home layout, queue gestures, actions and visual hierarchy stay owned
+   by living-moment.js; this only centralizes optical/text parameters. */
+.sv-card-system--rendered{
+ --sv-card-hit:var(--sv-master-touch-target);
+ --sv-card-action-size:var(--sv-master-action-size);
+}
+.sv-card-system--rendered .sv-card-title{
+ font-size:var(--sv-master-title-size);
+ font-weight:var(--sv-master-title-weight);
+ line-height:var(--sv-master-title-leading);
+}
+.sv-card-system--rendered .sv-card-value{
+ font-size:var(--sv-master-description-size);
+ line-height:var(--sv-master-description-leading);
+}
+.sv-card-system--rendered .sv-card-action:is(:first-child,:nth-child(2)){
+ border:0;
+ background:var(--sv-master-glass);
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+ box-shadow:none;
+ color:var(--text);
+}
+#homePage #seyveoLivingMoment.sv-card-system .lm-primary-title{
+ font-size:var(--sv-master-title-size);
+ font-weight:var(--sv-master-title-weight);
+ line-height:var(--sv-master-title-leading);
+}
+#homePage #seyveoLivingMoment.sv-card-system .lm-primary-subtitle{
+ font-size:var(--sv-master-description-size);
+ line-height:var(--sv-master-description-leading);
+}
+#homePage #seyveoLivingMoment.sv-card-system .lm-inline-title{
+ font-size:var(--sv-master-queue-title-size);
+}
+#homePage #seyveoLivingMoment.sv-card-system .lm-inline-note{
+ font-size:var(--sv-master-queue-description-size);
+ line-height:var(--sv-master-queue-leading);
+}
+#homePage #seyveoLivingMoment.sv-card-system .lm-actions .lm-polymer{
+ font-size:var(--sv-master-action-size);
+ min-height:var(--sv-master-touch-target);
+}
+/* Keep Home's approved 34px optical lens with 44px touch zone.
+   These remain under the approved material, not a whole-row backdrop. */
+#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer::before{
+ --sv-action-primary:var(--sv-master-glass);
+}
+@media(prefers-reduced-transparency:reduce){
+ .sv-card-system--rendered .sv-card-action:is(:first-child,:nth-child(2)){
+  background:var(--sv-velvet-panel,var(--card2));
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
 }
