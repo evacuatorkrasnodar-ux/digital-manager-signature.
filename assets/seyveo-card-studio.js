@@ -54,6 +54,7 @@ function renderGallery(){
   if(!card)continue;
   const sample=document.createElement('div');
   sample.className='scs-gallery-item';
+  sample.dataset.cardState='new';
   const surface=engine.renderCard(card,{onAction:id=>{
    const note=sample.querySelector('.scs-gallery-feedback');
    if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
@@ -83,7 +84,7 @@ function demoQueue(){
  queueResult.append(list);
 }
 queuePanel.querySelector('[data-generate]').addEventListener('click',demoQueue);
-const labels=['Новое','В работе','Позже','Завершено · демо','Ошибка · демо'];let stage=0;
+const labels=['Новая','В работе','Позже','Завершена','Ошибка'];const statesMap=['new','in-progress','deferred','done','failed'];let stage=0;
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
  const e=entries[Number(select.value)];
@@ -102,15 +103,28 @@ function render(){
    studioAction.textContent='Выбрано действие: '+(engine.actionLabels[id]||id)+
     ' · Только демонстрация, ничего не выполнено.';
   }});
-  preview.append(surface);
+  surface.dataset.cardState=statesMap[stage];
+  const stateInfo=document.createElement('div');
+  stateInfo.className='scs-state-line';
+  const stateName=document.createElement('span');
+  stateName.className='scs-state-name';
+  stateName.textContent=labels[stage];
+  const stateDetail=document.createElement('span');
+  stateDetail.className='scs-state-detail';
+  stateDetail.textContent=[
+   'Карточка ожидает решения',
+   'Сэйви помогает выполнить действие',
+   'Не требует внимания прямо сейчас',
+   'Действие завершено в учебном сценарии',
+   'Действие не выполнено, нужен повтор'
+  ][stage];
+  stateInfo.append(stateName,stateDetail);
+  preview.append(stateInfo,surface);
  }else{
   const missing=document.createElement('p');missing.className='scs-note';
   missing.textContent='Заполните заголовок и описание события.';
   preview.append(missing);
  }
- const stateText=document.createElement('p');stateText.className='scs-note';
- stateText.textContent='Состояние: '+labels[stage];
- preview.append(stateText);
  const studioAction=document.createElement('p');studioAction.className='scs-note';
  studioAction.setAttribute('aria-live','polite');
  preview.append(studioAction);
