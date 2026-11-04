@@ -71,7 +71,7 @@
 #seyveoCardStudio .scs-gallery-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
 #seyveoCardStudio .scs-gallery-head h3{font-size:18px;font-weight:560;margin:0}
 #seyveoCardStudio .scs-gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
-#seyveoCardStudio .scs-gallery-item{min-width:0;padding:14px;border:0;border-radius:20px;background:var(--sv-velvet-panel-quiet,var(--card2))}
+#seyveoCardStudio .scs-gallery-item{min-width:0;padding:14px;border:0;border-radius:var(--sv-master-card-radius,20px);background:var(--sv-velvet-panel-quiet,var(--card2))}
 #seyveoCardStudio .scs-gallery-name{font-size:11px;color:var(--secondary);margin:0 0 8px}
 #seyveoCardStudio .scs-gallery-feedback{font-size:11px;color:var(--secondary);min-height:0;margin:4px 0 0}
 #seyveoCardStudio .scs-gallery-item .sv-card-training{font-size:10px}
@@ -100,7 +100,7 @@
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-header{gap:10px;margin-bottom:9px}
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-title{
- font-size:15px;font-weight:550;letter-spacing:-.025em;line-height:1.32;
+ font-size:var(--sv-master-title-size,15.5px);font-weight:var(--sv-master-title-weight,550);letter-spacing:-.025em;line-height:var(--sv-master-title-leading,1.34);
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-source{
  font-size:11px;line-height:1.35;font-weight:450;
@@ -113,19 +113,19 @@
  font-size:10.5px;font-weight:530;letter-spacing:.01em;
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-value{
- line-height:1.5;font-weight:430;
+ line-height:var(--sv-master-description-leading,1.48);font-weight:430;
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-actions{
  column-gap:8px;row-gap:3px;margin-top:9px;
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action{
- box-sizing:border-box;min-height:44px!important;border:0!important;
+ box-sizing:border-box;min-height:var(--sv-master-touch-target,44px)!important;border:0!important;
  border-radius:999px!important;padding:8px 12px!important;
- background:var(--sv-lg26-control,rgba(230,241,249,.10))!important;
+ background:var(--sv-master-glass)!important;
  color:var(--text)!important;box-shadow:none!important;
- -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
- backdrop-filter:blur(18px) saturate(145%)!important;
- font-size:12px!important;font-weight:550!important;line-height:1.25;
+ -webkit-backdrop-filter:var(--sv-master-glass-blur)!important;
+ backdrop-filter:var(--sv-master-glass-blur)!important;
+ font-size:var(--sv-master-action-size,12px)!important;font-weight:550!important;line-height:1.25;
 }
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-action="later"],
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-action="not-interested"]{
