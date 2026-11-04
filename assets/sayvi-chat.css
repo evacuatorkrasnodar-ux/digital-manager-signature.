@@ -9,9 +9,8 @@ html.seyveo-conversation{
 }
 html.seyveo-conversation body{
  width:100%;height:100%;margin:0!important;overflow:hidden!important;
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-repeat:no-repeat!important;
- background-attachment:fixed!important;
+ /* The root alone owns the Home canvas; double painting makes a seam. */
+ background:transparent!important;background-image:none!important;
  overscroll-behavior:none;
 }
 html.seyveo-conversation .app{
@@ -204,8 +203,10 @@ html.seyveo-conversation #ask.prompt:not(.expanded){
  border-radius:28px!important;
  background:var(--sv-liquid-nav-material,var(--sv-input-surface))!important;
  background-clip:padding-box!important;
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(20px))!important;
- backdrop-filter:var(--sv-liquid-nav-blur,blur(20px))!important;
+ /* No square GPU backdrop plane behind the rounded composer on Chrome/Safari.
+    Translucent official material stays; blur can be re-enabled when verified. */
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ clip-path:inset(0 round 28px)!important;
  box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 35%,transparent)!important;
  overflow:hidden!important;isolation:auto!important;
  transition:none!important;animation:none!important;
