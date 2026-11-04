@@ -783,6 +783,7 @@ form.addEventListener('submit',event=>{
  else status('На связи');
 },true);
 
+document.getElementById('openSayviBusinessIntro')?.addEventListener('click',beginBusinessIntroduction);
 window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beginStream,updateStream,status,showSearchResults,showRichAnswer,
  endStream:()=>{if(activeAction?.kind==='stream')finishAction();else status('На связи');streamedBody=null;}
 };
