@@ -1165,6 +1165,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   if(!home||home.hidden||session||document.visibilityState==='hidden'||nameComposing)return;
   const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(name.length<2)return;
+  homeNameInput?.blur(); // Close the iPhone keyboard so Sayvi's greeting is visible.
   home.classList.add('is-greeting');
   if(homeTitle)homeTitle.textContent='Рада знакомству, '+name+'!';
   if(homeMessage)homeMessage.textContent='Ну что, настроим твой бизнес? Я помогу всё сделать по шагам.';
@@ -1180,7 +1181,6 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   nameIdleTimer=setTimeout(greetBeforeChat,1600);
  }
  homeNameInput?.addEventListener('input',scheduleNameTransition);
- homeNameInput?.addEventListener('change',scheduleNameTransition);
  homeNameInput?.addEventListener('compositionstart',()=>{nameComposing=true;clearNameIdle()});
  homeNameInput?.addEventListener('compositionend',()=>{nameComposing=false;scheduleNameTransition()});
  homeNameInput?.addEventListener('keydown',event=>{
