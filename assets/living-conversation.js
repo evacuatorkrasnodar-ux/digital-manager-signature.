@@ -260,6 +260,7 @@ function open(){
  scrollToLatest();
 }
 function close(){
+ window.dispatchEvent(new Event('seyveo:conversation-closed'));
  if(businessIntroduction){businessIntroduction=null;renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[])}
  if(activeAction)cancelAction();
  root.style.removeProperty('--sayvi-chat-height');
@@ -1213,14 +1214,24 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  });
  homeForm?.addEventListener('submit',event=>{event.preventDefault();greetBeforeChat()});
  document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden')clearNameIdle();
-  else if(home&&!home.hidden&&!session)scheduleNameTransition();
+  if(document.visibilityState==='hidden'){
+   clearNameIdle();
+  }else if(home&&!home.hidden&&!session){
+   // Returning from another app must not trigger an unexpected redirect.
+   resetNameGreeting();
+  }
  });
- $('svSmartStartHomeLater')?.addEventListener('click',()=>{
-  clearNameIdle();
-  try{localStorage.setItem(SKIP_KEY,'1')}catch{}
-  syncHome();
- });
+ $('svSmartStartHomeLater')?.addEventListener('click',()=>dismissHome('later'));
+ $('svSmartStartHomeOptOut')?.addEventListener('click',()=>dismissHome('opt-out'));
+ // Give normal app navigation precedence over the onboarding timer.
+ // Capturing the click BEFORE route handlers prevents a late automatic jump.
+ document.addEventListener('click',event=>{
+  if(!home||home.hidden)return;
+  const target=event.target;
+  if(!(target instanceof Element)||home.contains(target))return;
+  if(!target.closest('button,a,summary,[role="button"]'))return;
+  dismissHome('exploring');
+ },true);
  $('svCabinetStartWithSayvi')?.addEventListener('click',()=>{
   $('svCabinetDialog')?.close?.();
   begin({resume:!!get(DRAFT_KEY)});
@@ -1232,12 +1243,14 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   begin({resume:!!get(DRAFT_KEY)});
  },true);
  $('seyveoConversationBack')?.addEventListener('click',()=>pause(true),true);
+ window.addEventListener('seyveo:conversation-closed',()=>{if(session)pause(true)});
  window.addEventListener('hashchange',()=>{
+  if(home&&!home.hidden&&!isHomeRoute())dismissHome('exploring');
   if(session&&location.hash&&!['#home','#'].includes(location.hash))pause(true);
  });
  window.addEventListener('seyveo:profile-changed',syncHome);
  window.addEventListener('storage',event=>{
-  if([PLAN_KEY,'seyveo-first-acquaintance-v1',SKIP_KEY].includes(event.key))syncHome();
+  if([PLAN_KEY,DRAFT_KEY,'seyveo-first-acquaintance-v1',SKIP_KEY,OPT_OUT_KEY].includes(event.key))syncHome();
  });
  syncHome();
  window.SEYVEO_SMART_START=Object.freeze({begin,resume:()=>begin({resume:true}),getPlan:()=>get(PLAN_KEY)});
