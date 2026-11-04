@@ -812,7 +812,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   {id:'sales',title:'Продажи и товары',detail:'Реальные показатели после подключения 1С, CRM или кассовой системы'},
   {id:'finance',title:'Финансы',detail:'Данные из банка после разрешения; переводы подтверждаются отдельно'}
  ];
- let session=null;
+ let session=null,cabinetHandoffTimer=null;
  function get(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
  function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
  function el(tag,cls,value){
@@ -896,10 +896,12 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    }
    wrap.append(summary,btn('Сохранить план',finish,'is-primary'));
   }else if(step==='done'){
-   wrap.append(btn('Открыть кабинет',()=>{
-    if(window.SEYVEO_PREVIEW?.isManager?.())window.SEYVEO_UNIFIED_TASKS?.openBusiness?.('home');
-    else chat.status('В предпросмотре выберите режим руководителя',3200);
-   },'is-primary'));
+   wrap.append(btn('Посмотреть мой кабинет',revealCabinet,'is-primary'));
+   wrap.append(btn('Пока останусь в чате',()=>{
+    if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
+    cabinetHandoffTimer=null;
+    chat.status('Конечно. Кабинет готов, когда захочешь его посмотреть.',3400);
+   }));
   }
   if(step!=='done'){
    const foot=el('div','sv-smart-start-footer');
@@ -946,6 +948,8 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   draw();
  }
  function pause(silent){
+  if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
+  cabinetHandoffTimer=null;
   if(!session)return;
   if(session.step!=='done'){
    const {name,business,employees,roles,sources,features,step}=session;
@@ -956,12 +960,37 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   session=null;chat.renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[]);
   if(!silent)chat.status('Сохранила ответы. Продолжим, когда удобно.',3000);
  }
+ function revealCabinet(){
+  if(!session||session.step!=='done')return;
+  if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
+  cabinetHandoffTimer=null;
+  const plan=get(PLAN_KEY);
+  if(!plan)return;
+  const result=session.cabinetLayoutResult;
+  // Leave the private setup and navigate through existing destinations only.
+  session=null;
+  chat.close();
+  if(plan.business==='Для себя'){
+   $('navPicture')?.click();
+   return;
+  }
+  const work=window.SEYVEO_UNIFIED_TASKS;
+  if(typeof work?.openBusiness!=='function')return;
+  if(!window.SEYVEO_PREVIEW?.isManager?.()){
+   // An intentional Business VIEW switch in the local prototype, not server access.
+   work.previewRole?.('manager');
+  }
+  work.openBusiness('home');
+  window.SEYVEO_SMART_CABINET?.showArrival?.(plan,result);
+ }
  function finish(){
   if(!session)return;
   const {name,business,employees,roles,sources,features}=session;
   const record={version:1,name,business,employees,roles:roles.slice(),sources:sources.slice(),
    features:features.slice(),connected:false,updatedAt:new Date().toISOString()};
   if(!save(PLAN_KEY,record)){chat.status('Не удалось сохранить на устройстве',3000);return}
+  const layoutResult=window.SEYVEO_SMART_CABINET?.prepareFromPlan?.(record);
+  session.cabinetLayoutResult=layoutResult;
   try{localStorage.removeItem(DRAFT_KEY)}catch{}
   if(name){
    try{
@@ -974,14 +1003,29 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    }catch{}
   }
   session.step='done';
-  session.turns.push({question:'Сохранить мой план',answer:
-   'План сохранён на этом устройстве. Защищённые аккаунты сотрудников, 1С, Битрикс24 и банковские операции пока НЕ подключены.'+
-   '\nКогда интеграции станут доступны, продолжим настройку с вашего согласия. Пароли и банковские коды здесь не нужны.',smartStart:true});
+  const note=business==='Для себя'?
+   'Готово! Я сохранила твои пожелания. Сейчас покажу «Мой мир» — там есть музыка, браузер, личная почта и другие возможности.':
+   (layoutResult?.reason==='existing-layout'?
+    'Готово! Я учла твои ответы, а прежний порядок кабинета сохранила. Сейчас покажу его — вместе сможем изменить всё, что захочешь.':
+    'Готово! Я подготовила тебе кабинет из доступных инструментов для твоей работы. Сейчас покажу его — можем добавить нужное, убрать лишнее и передвинуть карточки пальцем.')+
+   '\nА ещё в «Моём мире» есть музыка, собственный браузер и личная почта.';
+  session.turns.push({question:'Сохранить мой план',answer:note+
+   '\nУчётные программы, банки и защищённые аккаунты сотрудников ещё не подключены — их настроим отдельно, когда функции станут доступны.',smartStart:true});
   draw();
   syncHome();
   window.dispatchEvent(new Event('seyveo:smart-start-complete'));
+  // A short reading pause, or tap "Посмотреть мой кабинет" to go immediately.
+  // Do not navigate away while writing or while app is hidden.
+  if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
+  cabinetHandoffTimer=setTimeout(()=>{
+   if(session?.step==='done'&&document.visibilityState==='visible'&&
+    document.documentElement.classList.contains('seyveo-conversation')&&
+    !String($('question')?.value||'').trim())revealCabinet();
+  },6000);
  }
  function begin(opts={}){
+  if(cabinetHandoffTimer)clearTimeout(cabinetHandoffTimer);
+  cabinetHandoffTimer=null;
   const draft=opts.resume?get(DRAFT_KEY):null,old=get(PLAN_KEY);
   let name=String(opts.name||draft?.name||old?.name||get('seyveo-first-acquaintance-v1')?.name||'').trim().slice(0,60);
   session={
