@@ -9,17 +9,18 @@
  */
 /* Chat uses a consistent, slightly lifted graphite canvas. It occupies the
    original body, not a floating or blurred panel over the fixed composer. */
-/* Sayvi uses exactly one full-viewport Home canvas, not a separate
-   rectangular chat backdrop or an extra safe-area overlay. The root's
-   solid color is the PWA home-indicator fallback on iPhone. */
-html.seyveo-conversation{
+/* Sayvi: no secondary canvas, gradient, glow or bottom backdrop.
+   Root and body use the identical flat palette pigment all the way to Safari. */
+html.seyveo-conversation,
+html.seyveo-conversation body{
  background:var(--bg)!important;
+ background-image:none!important;
+ background-repeat:no-repeat!important;
+ box-shadow:none!important;
 }
 html.seyveo-conversation body{
- overflow:hidden!important;overscroll-behavior:none;
- background:var(--sv-life-viewport-gradient,var(--bg))!important;
- background-repeat:no-repeat!important;
- background-size:100% 100%!important;
+ overflow:hidden!important;
+ overscroll-behavior:none;
 }
 html.seyveo-conversation .app{
  position:fixed!important;
