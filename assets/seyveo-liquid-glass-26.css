@@ -74,12 +74,17 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  inset:5px 0!important;
  border:0!important;
  border-radius:999px!important;
- background:var(--sv-lg26-control)!important;
+ /* Clear optical glass, not a solid graphite pill. */
+ background:linear-gradient(155deg,rgba(239,248,255,.19) 0%,rgba(214,234,246,.085) 47%,rgba(220,237,249,.055) 100%)!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:var(--sv-lg26-blur)!important;
- backdrop-filter:var(--sv-lg26-blur)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(150%)!important;
+ backdrop-filter:blur(24px) saturate(150%)!important;
  pointer-events:none!important;
  z-index:-1!important;
+}
+:root[data-theme=light] body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
+ background:var(--sv-lg26-control)!important;
 }
 html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden]):active::before{
