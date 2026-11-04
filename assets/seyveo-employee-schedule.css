@@ -63,22 +63,24 @@
 #tasksPage .svcp-schedule-actions button:focus-visible,#tasksPage .svcp-schedule-day:focus-visible,
 #tasksPage .svcp-schedule-request-actions button:focus-visible,#tasksPage .svcp-manager-schedule button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:2px}
-#tasksPage .svcp-manager-schedule{margin:10px 0;border-top:1px solid var(--soft-line)}
+#tasksPage .svcp-manager-schedule{margin:2px 0 0;border-top:1px solid var(--sv-velvet-divider,var(--soft-line))}
 #tasksPage .svcp-manager-schedule>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;
- min-height:46px;list-style:none;cursor:pointer;padding:9px 2px;color:var(--text);font-size:12px}
+ min-height:44px;list-style:none;cursor:pointer;padding:8px 3px;color:var(--text);font-size:12px}
 #tasksPage .svcp-manager-schedule>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-manager-schedule-inner{display:grid;gap:12px;padding:6px 2px 13px}
 #tasksPage .svcp-manager-schedule-inner>small{color:var(--secondary);font-size:10.5px;line-height:1.45}
 #tasksPage .svcp-manager-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-#tasksPage .svcp-manager-weekdays button{min-width:0;min-height:36px;padding:4px 0;
- border:1px solid var(--soft-line);border-radius:10px;color:var(--secondary);background:transparent;font:inherit;font-size:10px}
+#tasksPage .svcp-manager-weekdays button{min-width:0;min-height:44px;padding:5px 0;
+ border:0;border-radius:11px;color:var(--secondary);background:color-mix(in srgb,var(--card2) 40%,transparent);font:inherit;font-size:10px}
 #tasksPage .svcp-manager-weekdays button[aria-pressed="true"]{border-color:var(--seyveo-emerald);color:var(--text);background:var(--seyveo-hdr-active,var(--card2))}
 #tasksPage .svcp-manager-time{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #tasksPage .svcp-manager-time label{display:grid;gap:6px;min-width:0;color:var(--secondary);font-size:10.5px}
 #tasksPage .svcp-manager-time input{min-width:0;width:100%;height:42px;padding:8px;border-radius:11px;
  border:1px solid var(--soft-line);background:var(--card2);color:var(--text);font:inherit;font-size:13px}
-#tasksPage .svcp-manager-schedule-save{min-height:42px;padding:7px;border:1px solid var(--seyveo-hdr-outline,var(--soft-line));
- border-radius:12px;background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:575}
+#tasksPage .svcp-manager-schedule-save{min-height:44px;padding:8px 14px;border:0;
+ border-radius:999px;background:var(--sv-liquid-nav-material,var(--card2));
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+ color:var(--text);font:inherit;font-size:12px;font-weight:575}
 #tasksPage .svcp-manager-request-list{display:grid;gap:8px}
 #tasksPage .svcp-manager-request{display:grid;gap:8px;padding:9px 0;border-top:1px solid var(--soft-line)}
 #tasksPage .svcp-manager-request-copy{display:grid;gap:4px}
