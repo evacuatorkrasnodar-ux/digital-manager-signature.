@@ -802,7 +802,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  const chat=window.SEYVEO_CONVERSATION,composer=$('ask'),thread=$('orbInlineReplyText');
  const home=$('svSmartStartHome'),homeForm=$('svSmartStartHomeForm');
  if(!chat||!composer||!thread)return;
- const PLAN_KEY='seyveo-smart-start-v1',DRAFT_KEY='seyveo-smart-start-draft-v1',SKIP_KEY='seyveo-smart-start-home-later-v1';
+ const PLAN_KEY='seyveo-smart-start-v1',DRAFT_KEY='seyveo-smart-start-draft-v1',SKIP_KEY='seyveo-smart-start-home-later-v1',OPT_OUT_KEY='seyveo-smart-start-opt-out-v1';
  const ROLES=['Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Кадровик','Директор магазина','Администратор','Повар','Официант','Бариста','Курьер','Прораб','Строитель','Мастер','Менеджер','Другая должность'];
  const roleSuggestions=business=>/магазин|торгов|продукт/i.test(business)?['Директор магазина','Управляющий','Кассир','Продавец','Кладовщик','Завхоз','Водитель','Грузчик','Бухгалтер','Другая должность']:/ресторан|кафе|общепит/i.test(business)?['Управляющий','Администратор','Повар','Официант','Бариста','Кассир','Курьер','Бухгалтер','Другая должность']:/строит|ремонт|монтаж/i.test(business)?['Прораб','Строитель','Мастер','Водитель','Менеджер','Бухгалтер','Другая должность']:['Управляющий','Менеджер','Администратор','Кассир','Водитель','Бухгалтер','Кадровик','Другая должность'];
  const SOURCES=['1С','Битрикс24','Кассовая система','Excel / CSV','Другая программа','Пока ничем'];
@@ -812,7 +812,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   {id:'sales',title:'Продажи и товары',detail:'Реальные показатели после подключения 1С, CRM или кассовой системы'},
   {id:'finance',title:'Финансы',detail:'Данные из банка после разрешения; переводы подтверждаются отдельно'}
  ];
- let session=null,cabinetHandoffTimer=null;
+ let session=null,cabinetHandoffTimer=null,greetingDismissedInSession=false;
  function get(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
  function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
  function el(tag,cls,value){
@@ -873,8 +873,8 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    row.append(input,btn('Продолжить',()=>advance(input.value),'is-primary'));wrap.append(row);
   }else if(step==='business'){
    const chips=el('div','sv-smart-start-chips');
-   for(const option of ['Продуктовые магазины','Ресторан или кафе','Строительство','Услуги','Для себя'])
-    chips.append(btn(option,()=>advance(option),'is-chip'));
+   for(const option of ['Продуктовые магазины','Ресторан или кафе','Строительство','Услуги','Для себя','Просто посмотреть'])
+    chips.append(btn(option,()=>option==='Просто посмотреть'?exploreApp():advance(option),'is-chip'));
    wrap.append(chips,el('small','sv-smart-start-note','Свой вариант можно написать в обычном поле чата.'));
   }else if(['roles','sources','features'].includes(step)){
    const suggested=roleSuggestions(session.business);
@@ -987,6 +987,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   let shown=raw;
   if(oldStep==='name'){session.name=raw.slice(0,60);session.step='business'}
   else if(oldStep==='business'){
+   if(/^(?:просто посмотреть|посмотреть|пока без настройки)$/i.test(raw)){exploreApp();return}
    const personal=/^для себя$|^личн(?:ое|ый|ая)(?:\s|$)/i.test(raw);
    session.business=personal?'Для себя':raw.slice(0,160);
    session.step=personal?'confirm':'employees';
@@ -1030,6 +1031,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
    }
   }
   session=null;chat.renderTurns(window.SEYVEO_DEMO_CHAT_TURNS||[]);
+  syncHome();
   if(!silent)chat.status('Сохранила ответы. Продолжим, когда удобно.',3000);
  }
  function revealCabinet(){
@@ -1123,15 +1125,37 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
   input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
   advance(value);
  },true);
+ function isHomeRoute(){
+  const route=location.hash;
+  return !route||route==='#'||route==='#home';
+ }
  function syncHome(){
   if(!home)return;
-  let suppressed=false;
-  try{suppressed=localStorage.getItem(SKIP_KEY)==='1'}catch{}
-  home.hidden=!!(session||get('seyveo-first-acquaintance-v1')||get(PLAN_KEY)||get(DRAFT_KEY)||suppressed);
-  document.documentElement.classList.toggle('sv-smart-start-home-active',!home.hidden);
+  let skipped=false,optedOut=false;
+  try{
+   skipped=localStorage.getItem(SKIP_KEY)==='1';
+   optedOut=localStorage.getItem(OPT_OUT_KEY)==='1';
+  }catch{}
+  const visible=isHomeRoute()&&!greetingDismissedInSession&&!skipped&&!optedOut&&
+   !session&&!get('seyveo-first-acquaintance-v1')&&!get(PLAN_KEY)&&!get(DRAFT_KEY);
+  home.hidden=!visible;
+  if(!visible)home.classList.remove('is-greeting');
+  document.documentElement.classList.toggle('sv-smart-start-home-active',visible);
   const entry=$('svCabinetStartWithSayvi')?.querySelector('span');
   if(entry)entry.textContent=get(DRAFT_KEY)?'Продолжить настройку с Сэйви':'Настроить компанию с Сэйви';
-  if(!home.hidden)$('seyveoNameTip')?.setAttribute('hidden','');
+  if(visible)$('seyveoNameTip')?.setAttribute('hidden','');
+ }
+ function dismissHome(mode='later'){
+  clearNameIdle();
+  greetingDismissedInSession=true;
+  try{localStorage.setItem(mode==='opt-out'?OPT_OUT_KEY:SKIP_KEY,'1')}catch{}
+  if(home){home.hidden=true;home.classList.remove('is-greeting')}
+  document.documentElement.classList.remove('sv-smart-start-home-active');
+ }
+ function exploreApp(){
+  if(session)pause(true);
+  dismissHome('later');
+  chat.close();
  }
  // First acquaintance should flow into the existing large chat as soon
  // as the person finishes typing, without another "Continue" button.
@@ -1153,7 +1177,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  }
  function enterChatAfterName(){
   clearNameIdle();
-  if(!home||home.hidden||session||document.visibilityState==='hidden')return;
+  if(!home||home.hidden||session||document.visibilityState==='hidden'||!isHomeRoute())return;
   const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(!name)return;
   home.hidden=true;
@@ -1162,7 +1186,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  }
  function greetBeforeChat(){
   clearNameIdle();
-  if(!home||home.hidden||session||document.visibilityState==='hidden'||nameComposing)return;
+  if(!home||home.hidden||session||document.visibilityState==='hidden'||nameComposing||!isHomeRoute())return;
   const name=String(homeNameInput?.value||'').trim().replace(/\s+/g,' ').slice(0,60);
   if(name.length<2)return;
   homeNameInput?.blur(); // Close the iPhone keyboard so Sayvi's greeting is visible.
@@ -1175,7 +1199,7 @@ window.SEYVEO_CONVERSATION={beginBusinessIntroduction,open,close,renderTurns,beg
  }
  function scheduleNameTransition(){
   clearNameIdle();resetNameGreeting();
-  if(nameComposing||!home||home.hidden||session)return;
+  if(nameComposing||!home||home.hidden||session||!isHomeRoute())return;
   if(String(homeNameInput?.value||'').trim().length<2)return;
   // Avoid navigating in the middle of typing a name.
   nameIdleTimer=setTimeout(greetBeforeChat,1600);
