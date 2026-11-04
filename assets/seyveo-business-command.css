@@ -959,7 +959,8 @@ background:var(--sv-liquid-nav-material,var(--card2));box-shadow:none;
 #tasksPage #unifiedTasksTabs[hidden],#tasksPage .tasks-heading .manage-caption[hidden],
 #tasksPage .svcp-manager-signal[hidden]{display:none!important}
 #tasksPage[data-work-view="business"]{
- padding-top:0;padding-bottom:calc(26px + env(safe-area-inset-bottom,0px));
+ padding-top:0;padding-bottom:calc(136px + env(safe-area-inset-bottom,0px));
+ scroll-padding-bottom:calc(128px + env(safe-area-inset-bottom,0px));
  --sv-space-heading-gap:9px;
 }
 html.sv-space-active #tasksPage[data-work-view="business"] .tasks-heading{
@@ -1056,6 +1057,7 @@ font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
 #tasksPage .svcp-manager-staff>summary{
 display:flex;align-items:center;gap:10px;min-height:55px;padding:7px 5px;cursor:pointer;list-style:none;border:0;background:transparent;touch-action:manipulation;
 }
+#tasksPage #svcpManagerSchedule,#tasksPage #svcpBreakSetup{margin-left:7px;margin-right:7px}
 #tasksPage .svcp-manager-staff>summary::-webkit-details-marker{display:none}
 #tasksPage .svcp-manager-staff>summary:active{background:var(--seyveo-hdr-active)}
 #tasksPage .svcp-manager-staff-symbol{border-color:var(--seyveo-hdr-outline,var(--soft-line))}
@@ -1072,7 +1074,7 @@ border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
 }
 #tasksPage .svcp-manager-staff[open]>summary .svcp-manager-chevron{transform:rotate(90deg)}
 #tasksPage .svcp-manager-people-content{
-padding:4px 3px 9px;border:0;background:transparent;
+padding:5px 8px 9px;border:0;background:transparent;
 }
 #tasksPage #unifiedPeopleHost #svcpTeam[hidden]{display:none!important}
 #tasksPage #unifiedPeopleHost #svcpTeam{display:block;width:100%;min-width:0}
@@ -1493,16 +1495,24 @@ display:flex;align-items:center;justify-content:space-between;gap:8px;
 min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text);font-size:12px;
 }
 #tasksPage .svcp-break-setup>summary::-webkit-details-marker{display:none}
-#tasksPage .svcp-break-setup-inner{display:grid;gap:11px;padding:1px 12px 14px}
+#tasksPage .svcp-break-setup-inner{display:grid;gap:10px;padding:4px 7px 12px;min-width:0}
 #tasksPage .svcp-break-setup-inner>p{margin:0;color:var(--secondary);font-size:11px;line-height:1.5}
-#tasksPage .svcp-break-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-#tasksPage .svcp-break-controls label{display:grid;gap:7px;min-width:0;font-size:11px;color:var(--secondary)}
-#tasksPage .svcp-break-controls select{display:block;width:100%;min-width:0;min-height:42px;
- border:0;border-radius:11px;padding:8px;background:var(--card2);color:var(--text);font:inherit;font-size:12px}
-#tasksPage .svcp-break-paid{display:flex;align-items:center;gap:8px;color:var(--text);font-size:11.5px;line-height:1.4}
-#tasksPage .svcp-break-paid input{width:18px;height:18px;accent-color:var(--seyveo-emerald)}
-#tasksPage .svcp-break-save{min-height:44px;border-radius:11px;border:0;
- background:var(--seyveo-hdr-active,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:575}
+#tasksPage .svcp-break-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+#tasksPage .svcp-break-controls label{display:flex;flex-direction:column;justify-content:flex-end;position:relative;gap:7px;min-width:0;font-size:10.5px;line-height:1.35;color:var(--secondary)}
+#tasksPage .svcp-break-controls label::after{content:"";position:absolute;right:15px;bottom:19px;width:7px;height:7px;border:solid currentColor;border-width:0 1.4px 1.4px 0;transform:rotate(45deg);pointer-events:none;opacity:.75}
+#tasksPage .svcp-break-controls select{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:44px;height:44px;
+ border:0;border-radius:14px;padding:8px 30px 8px 12px;appearance:none;-webkit-appearance:none;
+ background:var(--sv-liquid-nav-material,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:530;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));box-shadow:none;cursor:pointer}
+#tasksPage .svcp-break-paid{display:flex;align-items:center;gap:10px;min-height:44px;color:var(--text);font-size:11.5px;line-height:1.4;cursor:pointer}
+#tasksPage .svcp-break-paid input{appearance:none;-webkit-appearance:none;display:grid;place-items:center;flex:none;width:20px;height:20px;min-width:20px;margin:0;
+ border:1px solid color-mix(in srgb,var(--text) 33%,transparent);border-radius:6px;background:color-mix(in srgb,var(--card2) 42%,transparent);cursor:pointer}
+#tasksPage .svcp-break-paid input:checked{background:var(--seyveo-emerald);border-color:var(--seyveo-emerald)}
+#tasksPage .svcp-break-paid input:checked::after{content:"";display:block;width:9px;height:5px;border:solid var(--bg);border-width:0 0 2px 2px;transform:translateY(-1px) rotate(-45deg)}
+#tasksPage .svcp-break-paid input:focus-visible{outline:2px solid var(--seyveo-emerald);outline-offset:3px}
+#tasksPage .svcp-break-save{min-height:44px;border-radius:999px;border:0;
+ background:var(--sv-liquid-nav-material,var(--card2));color:var(--text);font:inherit;font-size:12px;font-weight:585;box-shadow:none;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));cursor:pointer}
 #tasksPage .svcp-break-status{color:var(--secondary)}
 @media(max-width:350px){#tasksPage .svcp-break-controls{grid-template-columns:minmax(0,1fr)}}
 :root[data-theme="light"] #tasksPage .svcp-employee-shift-card[data-break="true"] .svcp-employee-break-info,
