@@ -129,8 +129,7 @@ if(compact){
  tools.setAttribute('aria-label','Действия Сэйви');
  tools.innerHTML=
   '<button type="button" data-sayvi-tool="photo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.4"/><path d="m5 17 5-4 3 2 3-3 3 3"/></svg>Фотография</button>'+
-  '<button type="button" data-sayvi-tool="browser"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-4 4.5-4 12.5 0 17M12 3.5c4 4.5 4 12.5 0 17"/></svg>Браузер</button>'+
-  '<button type="button" data-sayvi-tool="note"><svg viewBox="0 0 24 24"><path d="M5 3.5h11l3 3V21H5zM16 3.5V7h3M8.5 11h7M8.5 15h7"/></svg>Сохранить в Блокнот</button>';
+  '<button type="button" data-sayvi-tool="browser"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-4 4.5-4 12.5 0 17M12 3.5c4 4.5 4 12.5 0 17"/></svg>Браузер</button>';
  form.appendChild(tools);
  function showTools(show){
   tools.hidden=!show;
@@ -144,10 +143,6 @@ if(compact){
   if(action==='photo')photos.click();
   else if(action==='browser'){
    if(!window.SEYVEO_BROWSER?.open?.())status('Браузер пока недоступен',2400);
-  }else if(action==='note'){
-   const draft=$('question')?.value.trim();
-   if(draft)saveReplyToNotes(draft);
-   else status('Сначала напишите текст',2200);
   }
  });
  document.addEventListener('pointerdown',event=>{
