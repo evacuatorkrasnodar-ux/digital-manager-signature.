@@ -84,7 +84,8 @@ function demoQueue(){
  queueResult.append(list);
 }
 queuePanel.querySelector('[data-generate]').addEventListener('click',demoQueue);
-const labels=['Новая','В работе','Позже','Завершена','Ошибка'];const statesMap=['new','in-progress','deferred','done','failed'];let stage=0;
+const labels=['Новая','В работе','Позже','Завершена','Ошибка'];const statesMap=['new','in-progress','deferred','done','failed'];
+let stage=0,previewTheme='dark';
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
  const e=entries[Number(select.value)];
@@ -96,6 +97,23 @@ function render(){
   priority:fields.priority.value,source:'Студия разработчика',demo:true
  });
  preview.replaceChildren();
+ const toolbar=document.createElement('div');
+ toolbar.className='scs-preview-toolbar';
+ const caption=document.createElement('strong');caption.textContent='Эталон · экран iPhone';
+ const toggles=document.createElement('div');toggles.className='scs-theme-switch';toggles.setAttribute('role','group');toggles.setAttribute('aria-label','Тема эталонной карточки');
+ for(const [theme,label] of [['dark','Black Velvet'],['light','Белая тема']]){
+  const choice=document.createElement('button');choice.type='button';choice.textContent=label;
+  choice.setAttribute('aria-pressed',String(previewTheme===theme));
+  choice.addEventListener('click',()=>{previewTheme=theme;render()});
+  toggles.append(choice);
+ }
+ toolbar.append(caption,toggles);preview.append(toolbar);
+ const phone=document.createElement('div');
+ phone.className='scs-phone';phone.dataset.previewTheme=previewTheme;
+ phone.setAttribute('aria-label','Карточка на экране iPhone, '+(previewTheme==='light'?'светлая':'тёмная')+' тема');
+ const phoneTitle=document.createElement('p');
+ phoneTitle.className='scs-phone-label';phoneTitle.textContent='SEYVEO · СЭЙВИ';
+ phone.append(phoneTitle);preview.append(phone);
  if(card){
   const surface=engine.renderCard(card,{onAction:id=>{
    // Studio actions only preview the intended action. No real send/payment/
@@ -119,11 +137,11 @@ function render(){
    'Действие не выполнено, нужен повтор'
   ][stage];
   stateInfo.append(stateName,stateDetail);
-  preview.append(stateInfo,surface);
+  phone.append(stateInfo,surface);
  }else{
   const missing=document.createElement('p');missing.className='scs-note';
   missing.textContent='Заполните заголовок и описание события.';
-  preview.append(missing);
+  phone.append(missing);
  }
  const studioAction=document.createElement('p');studioAction.className='scs-note';
  studioAction.setAttribute('aria-live','polite');
