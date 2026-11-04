@@ -55,6 +55,11 @@ photo.addEventListener('change',()=>{
 });
 let statusTimeout=0,returnRoute='',activity=null,streamNode=null,streamReply='',geometryFrame=0;
 let intro=null;
+// Reuse the existing saved thread; never create a parallel history store.
+if(!Array.isArray(window.SEYVEO_DEMO_CHAT_TURNS)||!window.SEYVEO_DEMO_CHAT_TURNS.length){
+ const recent=window.SEYVEO_CHAT_HISTORY?.recent?.(30);
+ window.SEYVEO_DEMO_CHAT_TURNS=Array.isArray(recent)?recent:[];
+}
 const originalSend=send?.innerHTML||'';
 const active=()=>root.classList.contains('seyveo-conversation');
 function status(value='На связи',timeout=0){
@@ -289,8 +294,16 @@ document.addEventListener('seyveo:assistant-presence',e=>{
  if(phase==='listening'){mic.setAttribute('aria-pressed','true');if(active())status('Сэйви слушает…')}
  if(phase==='listening-end'||phase==='stop'){mic.setAttribute('aria-pressed','false');if(active())status()}
  if(phase==='thinking'){open();status('Сэйви думает…')}
- if(phase==='speaking'){if(active())status('Сэйви отвечает…')}
- if(phase==='end'||phase==='text'){if(active()&&!activity)status()}
+ if(phase==='speaking'){
+ if(active()){
+  if(!activity){activity={kind:'speech',cancel:()=>window.SEYVEO_CONVERSATION_STOP_SPEECH?.()};syncSend()}
+  status('Сэйви отвечает…');
+ }
+}
+ if(phase==='end'||phase==='text'){
+ if(phase==='end'&&activity?.kind==='speech')finishAction();
+ if(active()&&!activity)status();
+}
 });
 function showSearchResults(payload){
  const question=String(payload?.query||'').trim().slice(0,1000);if(!question)return false;
