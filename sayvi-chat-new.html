@@ -111,7 +111,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  bottom:calc(64px + env(safe-area-inset-bottom));
  z-index:7;
  border:0;
- border-radius:18px;
+ border-radius:999px;
  background:var(--sayvi-glass);
  color:var(--sayvi-text);
  -webkit-backdrop-filter:blur(16px) saturate(105%);
@@ -128,10 +128,16 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 @keyframes sv-rec-pulse{from{opacity:1}to{opacity:.4}}
 /* Quiet Cinema voice controls: audio is native, controls are our own
    lightweight iOS-inspired UI. No dark rectangular native player inside glass. */
-#sayviVoicePreview{display:flex;flex-direction:column;gap:9px;padding:12px 14px}
+/* One quiet mini-player pill, matching the compact SEYVEO dock.
+   Playback, scrubber, time and actions stay on a single line. */
+#sayviVoicePreview{
+ display:flex;flex-direction:row;align-items:center;gap:5px;
+ min-width:0;min-height:54px;padding:7px 10px 7px 9px;
+ border-radius:999px;
+}
 .sv-voice-player{
  --voice-progress:0%;
- display:flex;align-items:center;gap:11px;width:100%;
+ display:flex;flex:1 1 auto;align-items:center;gap:6px;width:100%;
  min-width:0;min-height:38px;color:var(--sayvi-text);
 }
 .sv-voice-player audio,
@@ -142,16 +148,16 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  opacity:0!important;pointer-events:none!important;
 }
 .sv-voice-play{
- flex:0 0 34px;width:34px;height:34px;padding:0;
+ flex:0 0 32px;width:32px;height:32px;padding:0;
  display:grid;place-items:center;background:transparent;border:0;border-radius:50%;
  color:var(--sayvi-control-text);-webkit-tap-highlight-color:transparent;
 }
-.sv-voice-play svg{width:19px;height:19px;fill:currentColor}
+.sv-voice-play svg{width:17px;height:17px;fill:currentColor}
 .sv-voice-play .sv-icon-pause{display:none}
 .sv-voice-player.is-playing .sv-icon-play{display:none}
 .sv-voice-player.is-playing .sv-icon-pause{display:block}
 .sv-voice-range{
- flex:1;min-width:52px;width:100%;height:32px;margin:0;padding:0;
+ flex:1 1 auto;min-width:32px;width:100%;height:32px;margin:0;padding:0;
  background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;
 }
 .sv-voice-range::-webkit-slider-runnable-track{
@@ -165,15 +171,25 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  border:0;border-radius:50%;background:var(--sayvi-control-text);box-shadow:none;
 }
 .sv-voice-range::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:var(--sayvi-control-text)}
-.sv-voice-time{flex:0 0 auto;min-width:32px;text-align:right;font:400 12px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;color:var(--sayvi-secondary);font-variant-numeric:tabular-nums}
-.sv-voice-actions{display:flex;justify-content:flex-end;gap:8px}
+.sv-voice-time{flex:0 0 auto;min-width:30px;text-align:right;font:400 11px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;color:var(--sayvi-secondary);font-variant-numeric:tabular-nums}
+.sv-voice-actions{display:flex;flex:0 0 auto;align-items:center;gap:3px;margin-left:3px}
 .sv-voice-actions button{
- border:0;border-radius:999px;min-height:34px;padding:6px 15px;
- font:500 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
- background:var(--sayvi-action);color:var(--sayvi-control-text);
+ display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;
+ min-height:34px;padding:0;border:0;border-radius:50%;
+ font:inherit;background:transparent;color:var(--sayvi-control-text);
  -webkit-tap-highlight-color:transparent;
 }
-.sv-voice-actions button:last-child{font-weight:630}
+.sv-voice-actions button svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;
+}
+.sv-voice-actions button:active{background:var(--sayvi-pressed)}
+.sv-voice-actions button:last-child{background:var(--sayvi-action)}
+@media(max-width:360px){
+ #sayviVoicePreview{gap:3px;padding-inline:7px}
+ .sv-voice-actions{gap:0;margin-left:0}
+ .sv-voice-actions button{flex-basis:32px;width:32px;height:32px}
+}
 .sv-voice-bubble{display:flex;flex-direction:column;gap:2px;min-width:205px;padding:8px 13px!important}
 .sv-voice-bubble .sv-voice-player{max-width:280px}
 .sv-voice-bubble small{font-size:10px;color:var(--sayvi-secondary);line-height:1.35;padding:0 2px 2px}
@@ -358,8 +374,8 @@ main{background:var(--sayvi-scene)}
 <div id="sayviVoicePreview" hidden aria-label="Предпрослушивание голосового">
  <audio id="sayviVoicePlayer" preload="metadata" aria-label="Прослушать голосовое" hidden></audio>
  <div class="sv-voice-actions">
-  <button type="button" id="sayviVoiceDelete">Удалить</button>
-  <button type="button" id="sayviVoiceSubmit">Отправить</button>
+  <button type="button" id="sayviVoiceDelete" aria-label="Удалить запись" title="Удалить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7.5 7l.8 12h7.4l.8-12M10 10.5v5M14 10.5v5"/></svg></button>
+  <button type="button" id="sayviVoiceSubmit" aria-label="Отправить голосовое" title="Отправить"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-5.5 5.5M12 5l5.5 5.5"/></svg></button>
  </div>
 </div>
 <div id="sayviComposer">
