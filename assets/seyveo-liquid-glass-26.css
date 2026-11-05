@@ -65,15 +65,19 @@ html body #homeHeader .home-world-choice:active{background:var(--sv-lg26-pressed
    inset 0 .5px 0 rgba(255,255,255,.075);
  --sv-home-glass-pressed:rgba(218,235,245,.20);
 }
-/* White theme: a restrained optical boundary against near-white Home.
- * Keep the original transparent one-lens construction and no added layers. */
+/* Light Home buttons: borrow the sphere's quiet pearl/turquoise optical
+ * depth, not its decorative paths or spherical highlights. Two translucent
+ * gradients on the existing single lens; subtle inset edge for white ground.
+ * No new pseudo elements, frames, animations or changes to dark theme. */
 :root[data-theme=light]{
  --sv-home-glass-fill:
-   linear-gradient(155deg,rgba(255,255,255,.77) 0%,rgba(222,233,237,.37) 54%,rgba(215,231,234,.43) 100%);
+   radial-gradient(ellipse 100% 130% at 92% 90%,rgba(139,192,189,.24) 0%,rgba(193,222,221,.12) 48%,transparent 83%),
+   linear-gradient(155deg,rgba(255,255,255,.83) 0%,rgba(222,237,238,.50) 52%,rgba(191,218,220,.48) 100%);
  --sv-home-glass-reflection:
-   0 3px 10px rgba(42,85,87,.035),
-   inset 0 .7px 0 rgba(255,255,255,.68),
-   inset 0 -.7px 0 rgba(74,132,130,.095);
+   0 3px 9px rgba(42,85,87,.035),
+   inset 0 0 0 .75px rgba(91,146,147,.20),
+   inset 0 .8px 0 rgba(255,255,255,.78),
+   inset 0 -1px 0 rgba(85,150,150,.12);
  --sv-home-glass-pressed:rgba(211,226,229,.62);
 }
 html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
