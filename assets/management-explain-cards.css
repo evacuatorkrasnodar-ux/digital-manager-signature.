@@ -42,12 +42,12 @@
  flex:1;min-width:0;gap:5px;padding:1px 0;
 }
 #seyveoCleanManageMenu .manage-text strong{
- font-size:16px;font-weight:475;line-height:1.25;letter-spacing:-.026em;
+ font-size:var(--sv-master-menu-title-size,16px);font-weight:475;line-height:1.25;letter-spacing:-.026em;
  color:var(--text);text-align:left;
 }
 #seyveoCleanManageMenu .manage-text small{
  display:block;color:var(--secondary);
- font-size:12px;font-weight:410;line-height:1.48;letter-spacing:0;
+ font-size:var(--sv-master-menu-description-size,12px);font-weight:410;line-height:var(--sv-master-menu-description-leading,1.48);letter-spacing:0;
  text-align:left;max-width:34em;
 }
 #seyveoCleanManageMenu .manage-chevron{
@@ -77,8 +77,8 @@
   width:48px;min-width:48px;height:55px;
  }
  #seyveoCleanManageMenu .smc-illustration svg{width:41px;height:41px}
- #seyveoCleanManageMenu .manage-text strong{font-size:15px}
- #seyveoCleanManageMenu .manage-text small{font-size:11.5px}
+ #seyveoCleanManageMenu .manage-text strong{font-size:calc(var(--sv-master-menu-title-size,16px) - 1px)}
+ #seyveoCleanManageMenu .manage-text small{font-size:calc(var(--sv-master-menu-description-size,12px) - .5px)}
  #seyveoCleanManageMenu .manage-row.seyveo-clean-link + .manage-row::before{left:57px}
 }
 @media(prefers-reduced-motion:reduce){
