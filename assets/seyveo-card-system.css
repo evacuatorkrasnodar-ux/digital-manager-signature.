@@ -13,6 +13,9 @@
  --sv-master-description-size:13px;
  --sv-master-description-leading:1.48;
  --sv-master-queue-title-size:13.5px;
+ --sv-master-task-title-size:13px;
+ --sv-master-task-title-leading:1.42;
+ --sv-master-action-quiet-size:12px;
  --sv-master-queue-description-size:12.5px;
  --sv-master-queue-leading:1.48;
  --sv-master-action-size:12px;
@@ -271,6 +274,36 @@
 }
 @media(prefers-reduced-transparency:reduce){
  #homePage #dynamic .decision-card[data-owner-advice].sv-card-system .actions .btn:is(.primary,:not(.primary):not(#resolve)){
+  background:var(--sv-velvet-panel,var(--card2));
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
+
+/* Business task list is a ROW, not an event notification card. It shares
+ * master typography/hit-area tokens but retains its checkbox, history,
+ * layout and all task handlers. */
+#tasksPage #svcpTaskList .svcp-task .svcp-task-title{
+ font-size:var(--sv-master-task-title-size);
+ line-height:var(--sv-master-task-title-leading);
+}
+#tasksPage #svcpTaskList .svcp-task .svcp-task-actions button,
+#tasksPage #svcpTaskList .svcp-task .svcp-task-extra button{
+ min-height:var(--sv-master-touch-target);
+ font-size:var(--sv-master-action-quiet-size);
+}
+/* Glass only on the existing assistant help action; the ellipsis,
+ * assignment and completed-history actions remain plain controls. */
+#tasksPage #svcpTaskList .svcp-task .svcp-task-actions .svcp-task-sayvi{
+ background:var(--sv-master-glass);
+ border:0;
+ border-radius:999px;
+ padding-inline:12px;
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+ box-shadow:none;
+}
+@media(prefers-reduced-transparency:reduce){
+ #tasksPage #svcpTaskList .svcp-task .svcp-task-actions .svcp-task-sayvi{
   background:var(--sv-velvet-panel,var(--card2));
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
