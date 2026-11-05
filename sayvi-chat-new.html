@@ -1268,6 +1268,26 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!menu.hidden){closeMenu();plus.focus()}
  });
+ // The local server accepts only alternating, complete user/assistant pairs.
+ // Restored conversations can include consecutive user turns and edited/deleted
+ // messages. Build a clean bounded context without changing visible history.
+ function validStreamHistory(){
+  const pairs=[];
+  let waiting=null;
+  for(const turn of historyTurns){
+   if(!turn||typeof turn.content!=='string')continue;
+   const text=turn.content.trim().slice(0,650);
+   if(!text)continue;
+   if(turn.role==='user'){waiting={role:'user',content:text}}
+   else if(turn.role==='assistant'&&waiting){
+    pairs.push(waiting,{role:'assistant',content:text});
+    waiting=null;
+   }
+  }
+  let selected=pairs.slice(-6);
+  while(selected.length&&selected.reduce((sum,t)=>sum+t.content.length,0)>2400)selected=selected.slice(2);
+  return selected;
+ }
  async function ask(question,options={}){
   const controller=new AbortController();active=controller;updateControls();
   status.textContent='';
@@ -1296,7 +1316,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const response=await fetch('/api/seyveo-stream',{
     method:'POST',credentials:'same-origin',
     headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:question,history:historyTurns.slice(-6),...(options.attachments?.length?{attachments:options.attachments}:{})}),
+    body:JSON.stringify({message:question,history:validStreamHistory(),...(options.attachments?.length?{attachments:options.attachments}:{})}),
     signal:controller.signal
    });
    if(!response.ok){
