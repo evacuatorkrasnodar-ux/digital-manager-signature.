@@ -59,7 +59,19 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 }
 .turn{display:flex;flex-direction:column;gap:5px;margin:0 0 18px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .turn[data-role="user"]{align-items:flex-end}
-.turn[data-role="user"] .bubble{padding:9px 13px;border-radius:18px;background:#263039;max-width:85%}
+/* User messages: same flat Smoke Glass as the composer, with a soft
+   conversational silhouette instead of a rectangular card. */
+.turn[data-role="user"] .bubble{
+ padding:10px 14px;
+ border-radius:21px 21px 8px 21px;
+ background:var(--sayvi-glass);
+ color:var(--sayvi-text);
+ max-width:min(85%,520px);
+ border:0;
+ box-shadow:none;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+}
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .speaker{font-size:11px;color:#a5b0b7}
 /* A soft left-to-right sheen across Sayvi's name only while a reply is
@@ -174,7 +186,20 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 }
 html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
 main{background:var(--sayvi-scene)}
-.turn[data-role="user"] .bubble{background:var(--sayvi-bubble);color:var(--sayvi-text)}
+.turn[data-role="user"] .bubble{background:var(--sayvi-glass);color:var(--sayvi-text)}
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=light] .turn[data-role="user"] .bubble{
+  -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+  backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ .turn[data-role="user"] .bubble{
+  background:var(--sayvi-fallback);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+ }
+}
 .turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
 .speaker,#sayviStatus,.history-empty{color:var(--sayvi-secondary)}
 #sayviInput{background:var(--sayvi-glass);color:var(--sayvi-control-text)}
