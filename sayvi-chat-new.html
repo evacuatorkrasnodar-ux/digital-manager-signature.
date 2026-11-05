@@ -108,7 +108,9 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 :root[data-theme=light]{
  color-scheme:light;
  --sayvi-bg:#f9fafb;
- --sayvi-scene:linear-gradient(180deg,#f9fafb 0%,#f4f7f8 50%,#eef3f5 100%);
+ --sayvi-scene:
+   radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.56) 0%,rgba(255,255,255,0) 78%),
+   linear-gradient(180deg,#f7f9fa 0%,#eff3f5 39%,#e6edf0 78%,#e0e9ed 100%);
  --sayvi-text:#242a31;
  --sayvi-secondary:#637178;
  --sayvi-bubble:rgba(219,230,232,.78);
