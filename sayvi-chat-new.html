@@ -418,14 +418,15 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
 
 /* Own-message actions: long press, unobtrusive Smoke Glass sheet. */
 .sv-own-sheet[hidden]{display:none!important}
-.sv-own-sheet{position:absolute;inset:0;z-index:12;background:rgba(0,0,0,.18);display:flex;justify-content:center;align-items:flex-end;padding:14px max(12px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
-.sv-own-panel{width:100%;max-width:440px;background:var(--sayvi-menu);-webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);border:0;border-radius:24px;padding:9px;color:var(--sayvi-text)}
+.sv-own-sheet{position:absolute;inset:0;z-index:12;background:transparent;display:block;padding:0}
+.sv-own-panel{position:absolute;top:var(--sv-own-top,70px);left:var(--sv-own-left,12px);width:min(218px,calc(100% - 24px));max-width:none;background:var(--sayvi-menu);-webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);border:0;border-radius:19px;padding:6px;color:var(--sayvi-text);box-shadow:0 7px 28px rgba(0,0,0,.12)}
+.sv-own-sheet:has(.sv-own-edit:not([hidden])) .sv-own-panel{width:min(342px,calc(100% - 24px))}
 .sv-own-actions{display:grid;gap:2px}
-.sv-own-actions button{width:100%;min-height:46px;padding:8px 14px;display:flex;align-items:center;gap:12px;border:0;border-radius:15px;background:transparent;color:var(--sayvi-text);text-align:left;font:450 15px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-actions button{width:100%;min-height:39px;padding:7px 10px;display:flex;align-items:center;gap:10px;border:0;border-radius:13px;background:transparent;color:var(--sayvi-text);text-align:left;font:450 14px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
 .sv-own-actions button:active{background:var(--sayvi-pressed)}
 .sv-own-actions button[data-own="delete"]{color:#d45f63}
 .sv-own-actions button svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
-.sv-own-cancel{margin-top:5px!important;justify-content:center;background:var(--sayvi-glass)!important}
+.sv-own-cancel{display:none!important}
 .sv-own-edit[hidden],.sv-own-actions[hidden]{display:none!important}
 .sv-own-edit{padding:8px 5px 4px}
 .sv-own-edit label{font-size:15px;font-weight:600;display:block;margin:0 6px 10px}
@@ -795,9 +796,24 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   clearTimeout(ownHoldTimer);ownHoldTimer=null;ownBubble=null;
   ownSheet.hidden=true;ownEdit.hidden=true;ownActions.hidden=false;
  }
+ function positionOwnPanel(){
+  if(!ownBubble||ownSheet.hidden)return;
+  const panel=ownSheet.querySelector('.sv-own-panel');
+  const host=ownSheet.getBoundingClientRect();
+  const anchor=ownBubble.getBoundingClientRect();
+  const width=panel.offsetWidth,height=panel.offsetHeight;
+  const left=Math.min(Math.max(12,anchor.right-host.left-width),Math.max(12,host.width-width-12));
+  const roomAbove=anchor.top-host.top-10;
+  const below=anchor.bottom-host.top+8;
+  const top=roomAbove>=height+52?roomAbove-height:
+   (below+height<=host.height-100?below:Math.max(55,Math.min(roomAbove-height,host.height-height-100)));
+  panel.style.left=Math.round(left)+'px';
+  panel.style.top=Math.round(Math.max(55,top))+'px';
+ }
  function showOwnActions(bubble){
   if(active)return;
   ownBubble=bubble;ownActions.hidden=false;ownEdit.hidden=true;ownSheet.hidden=false;
+  positionOwnPanel();
  }
  function reindexSavedBubbles(){
   let idx=0;
@@ -819,7 +835,7 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   const i=Number(bubble.dataset.savedIndex);
   if(!turn||!Number.isInteger(i)||i<0||i>=savedTurns.length||savedTurns[i].role!=='user')return;
   if(mode==='edit'){
-   ownActions.hidden=true;ownEdit.hidden=false;ownText.value=bubble.textContent;ownText.focus();return;
+   ownActions.hidden=true;ownEdit.hidden=false;ownText.value=bubble.textContent;positionOwnPanel();ownText.focus();return;
   }
   if(mode==='copy'){
    const value=bubble.textContent;
