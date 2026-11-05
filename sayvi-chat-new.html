@@ -870,58 +870,77 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }
   speakingTurn=null;speechButton=null;
  }
+ function voicePhrases(text){
+  // Keep sentences complete. The private voice endpoint accepts <=450 chars.
+  const source=String(text||'').replace(/\s+/gu,' ').trim();
+  const units=source.match(/[^.!?…]+(?:[.!?…]+(?=\s|$)|$)/gu)||[source];
+  const chunks=[];
+  let current='';
+  function add(part){
+   const p=part.trim();if(!p)return;
+   if(current&&current.length+1+p.length>420){chunks.push(current);current=''}
+   if(p.length<=420){current=current?current+' '+p:p;return}
+   // Rare extra-long sentence: split at word boundaries only.
+   for(const word of p.split(/\s+/u)){
+    if(!word)continue;
+    if(current&&current.length+1+word.length>420){chunks.push(current);current=''}
+    if(word.length>420){
+     if(current){chunks.push(current);current=''}
+     for(let n=0;n<word.length;n+=420)chunks.push(word.slice(n,n+420));
+    }else current=current?current+' '+word:word;
+   }
+  }
+  for(const unit of units)add(unit);
+  if(current)chunks.push(current);
+  return chunks;
+ }
  async function toggleReplySpeech(turn,bubble,button,feedback){
   if(speakingTurn===turn){stopReplySpeech();return}
   stopReplySpeech();
   const text=bubble.textContent.trim();
   if(!text)return;
+  const parts=voicePhrases(text);
+  if(!parts.length)return;
   const generation=voiceGeneration;
   speakingTurn=turn;speechButton=button;
   button.setAttribute('aria-pressed','true');
   button.setAttribute('aria-label','Остановить озвучивание');
   button.title='Остановить озвучивание';
   feedback.textContent='Готовлю голос Сэйви…';
-  // Private voice works on localhost only and accepts at most 450 characters.
-  // Prefer a whole sentence instead of cutting through a word.
-  let excerpt=text.slice(0,450);
-  if(text.length>450){
-   const lastEnd=Math.max(excerpt.lastIndexOf('. '),excerpt.lastIndexOf('! '),excerpt.lastIndexOf('? '));
-   if(lastEnd>180)excerpt=excerpt.slice(0,lastEnd+1);
-   else excerpt=excerpt.slice(0,excerpt.lastIndexOf(' ')>180?excerpt.lastIndexOf(' '):450);
-  }
   const controller=new AbortController();voiceController=controller;
   try{
-   const response=await fetch('/api/seyveo-private-tts',{
-    method:'POST',credentials:'same-origin',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify({text:excerpt}),
-    signal:controller.signal
-   });
-   if(generation!==voiceGeneration)return;
-   if(!response.ok)throw Error('voice-unavailable');
-   const type=response.headers.get('content-type')||'';
-   if(!type.includes('audio/wav'))throw Error('voice-invalid-format');
-   const blob=await response.blob();
-   if(generation!==voiceGeneration)return;
-   if(blob.size<44||blob.size>15000000)throw Error('voice-invalid-audio');
-   const url=URL.createObjectURL(blob);voiceBlobUrl=url;
-   const audio=new Audio(url);voiceAudio=audio;
-   audio.onended=()=>{if(generation===voiceGeneration)stopReplySpeech()};
-   audio.onerror=()=>{if(generation===voiceGeneration){stopReplySpeech();feedback.textContent='Не удалось воспроизвести голос'}};
-   try{
-    await audio.play();
-    if(generation===voiceGeneration)feedback.textContent=text.length>excerpt.length?'Озвучиваю начало ответа нашим голосом':'';
-   }catch(error){
-    if(generation===voiceGeneration){
-     stopReplySpeech();
-     feedback.textContent='Браузер заблокировал воспроизведение. Нажми на значок ещё раз.';
-    }
+   for(let n=0;n<parts.length;n++){
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    const response=await fetch('/api/seyveo-private-tts',{
+     method:'POST',credentials:'same-origin',
+     headers:{'content-type':'application/json'},
+     body:JSON.stringify({text:parts[n]}),signal:controller.signal
+    });
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    if(!response.ok||!(response.headers.get('content-type')||'').includes('audio/wav'))
+     throw Error('voice-unavailable');
+    const blob=await response.blob();
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    if(blob.size<44||blob.size>15000000)throw Error('voice-invalid-audio');
+    const url=URL.createObjectURL(blob);voiceBlobUrl=url;
+    const audio=new Audio(url);voiceAudio=audio;
+    feedback.textContent=parts.length>1?'Сэйви говорит · '+(n+1)+'/'+parts.length:'';
+    await new Promise((resolve,reject)=>{
+     audio.onended=resolve;
+     audio.onerror=()=>reject(Error('voice-playback-error'));
+     const playback=audio.play();
+     if(playback&&typeof playback.catch==='function')playback.catch(reject);
+     controller.signal.addEventListener('abort',()=>resolve(),{once:true});
+    });
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    audio.pause();audio.removeAttribute('src');
+    voiceAudio=null;URL.revokeObjectURL(url);voiceBlobUrl=null;
    }
+   if(generation===voiceGeneration){stopReplySpeech();feedback.textContent=''}
   }catch(error){
    if(generation!==voiceGeneration||controller.signal.aborted)return;
-   voiceController=null;
    stopReplySpeech();
-   feedback.textContent='Наш голос Сэйви сейчас недоступен. Ответ можно прочитать в чате.';
+   feedback.textContent='Наш голос Сэйви временно недоступен. Ответ целиком остался в чате.';
   }
  }
  function browserSearchForReply(turn,bubble,feedback){
