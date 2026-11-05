@@ -4,6 +4,8 @@
 
 ## Реальный официальный эталон
 
+- **Оригинальный iOS and iPadOS 26 UI Kit (Apple, Figma):** https://www.figma.com/community/file/1527721578857867021 — точная публичная ссылка из [статьи Хабра от 21.07.2025](https://habr.com/ru/news/929744/); официальный [анонс Apple от 18.07.2025](https://developer.apple.com/news/?id=pnfbj8je). Используем именно этот комплект для визуальной сверки, не заменяя его произвольными градиентами и не копируя проприетарные ассеты в проект.
+- **Кнопки белой темы:** нейтральный Regular Liquid Glass, без фирменного зелёного пигмента в стекле, без толстых рамок и декоративного объёма; акцент SEYVEO — отдельно в иконках и состоянии действия. Проверять на белом фоне реального iPhone. Веб-CSS только визуально приближает материал, не воспроизводит системную оптику полностью.
 - [Apple Design Resources](https://developer.apple.com/design/resources/) — первичный каталог UI-китов, шрифтов и шаблонов; версии на сайте могут меняться. Для нашего проекта визуальный ориентир утверждён по **iOS 26**, не надо автоматически перепрыгивать на следующую версию без решения владельца.
 - [Apple Human Interface Guidelines — Materials](https://developer.apple.com/design/human-interface-guidelines/materials) — принципы системных материалов и приоритет удобочитаемости.
 - [Apple Human Interface Guidelines — Navigation](https://developer.apple.com/design/human-interface-guidelines/navigation-and-search) — смысл кнопок, переходы, навигация.
