@@ -23,21 +23,25 @@ textarea:focus,select:focus{border-color:#85bfa3}textarea{min-height:86px}button
 <textarea id="plain" maxlength="450" spellcheck="false"></textarea>
 <label for="marked">Б. Эксперимент со знаком ударения (может искажать звук)</label>
 <textarea id="marked" maxlength="450" spellcheck="false"></textarea>
-<label for="context">В. Подсказка смыслом (без знаков ударения)</label>
+<label for="context">В. Контекст (уже проверили: не всегда помогает)</label>
 <textarea id="context" maxlength="450" spellcheck="false"></textarea>
-<div class="buttons"><button id="a">▶ Обычный</button><button id="c" class="primary">▶ С контекстом</button></div>
-<div class="buttons"><button id="b">▶ Со знаком (риск)</button><button id="stop">Стоп</button></div>
+<label for="paraphrase">Г. Другими словами (без трудного слова)</label>
+<textarea id="paraphrase" maxlength="450" spellcheck="false"></textarea>
+<div class="buttons"><button id="a">▶ Обычный</button><button id="d" class="primary">▶ Другими словами</button></div>
+<div class="buttons"><button id="c">▶ С контекстом</button><button id="stop">Стоп</button></div>
+<details style="margin-top:14px"><summary style="font-size:12px;color:#aebeb7;cursor:pointer">Ненадёжный эксперимент со знаком ударения</summary><div class="buttons"><button id="b">▶ Со знаком (риск)</button></div></details>
 <div id="status" role="status" aria-live="polite"></div>
-<small>Знак ударения не включён в обычное озвучивание Сэйви. Он может вызвать ошибки вроде «залмок». Если вариант с контекстом звучит лучше, сообщи нам пример; без проверки ничего не меняем глобально.</small>
+<small>Мы уже обнаружили, что знак ударения может превратить «замок» в «залмок», а контекст не всегда исправляет ударение. Проверяем, насколько естественно модель читает безопасную перефразировку. Никаких автоматических замен в обычном чате нет.</small>
 </section>
 <p><a href="/sayvi-chat-new.html">Вернуться в чат Сэйви</a></p>
 </main>
 <script>
-const samples=[{"plain":"Старинный замок стоял на холме.","marked":"Старинный за́мок стоял на холме.","context":"На холме стояла старинная крепость. Этот замок был построен много веков назад."},{"plain":"Дверной замок сломался.","marked":"Дверной замо́к сломался.","context":"На входной двери установлен запор. Дверной замок сломался."},{"plain":"Пшеничная мука закончилась.","marked":"Пшеничная мука́ закончилась.","context":"Для выпечки нужна пшеничная мука. Я купил муку в магазине."},{"plain":"Сильная мука не давала ему спать.","marked":"Сильная му́ка не давала ему спать.","context":"Он страдал от сильной боли. Эта душевная мука не давала ему спать."},{"plain":"Географический атлас лежал на столе.","marked":"Географический а́тлас лежал на столе.","context":"Нужны географические карты мира. Открой школьный атлас."},{"plain":"Шёлковый атлас блестит на свету.","marked":"Шёлковый атла́с блестит на свету.","context":"Эта ткань сделана из шёлка. Красивый шёлковый атлас блестит на свету."},{"plain":"Он звонит и читает каталог.","marked":"Он звони́т и читает катало́г.","context":"Он звонит каждый день. Потом читает каталог товаров."},{"plain":"Подпиши договор и открой каталог.","marked":"Подпиши догово́р и открой катало́г.","context":"Нужно подписать договор. Затем открой каталог продукции."}];
+const samples=[{"plain":"Старинный замок стоял на холме.","marked":"Старинный за́мок стоял на холме.","context":"На холме стояла старинная крепость. Этот замок был построен много веков назад.","paraphrase":"Старинная крепость стояла на холме."},{"plain":"Дверной замок сломался.","marked":"Дверной замо́к сломался.","context":"На входной двери установлен запор. Дверной замок сломался.","paraphrase":"Запирающий механизм на двери сломался."},{"plain":"Пшеничная мука закончилась.","marked":"Пшеничная мука́ закончилась.","context":"Для выпечки нужна пшеничная мука. Я купил муку в магазине.","paraphrase":"Для выпечки закончилась пшеничная мука."},{"plain":"Сильная мука не давала ему спать.","marked":"Сильная му́ка не давала ему спать.","context":"Он страдал от сильной боли. Эта душевная мука не давала ему спать.","paraphrase":"Сильное страдание не давало ему спать."},{"plain":"Географический атлас лежал на столе.","marked":"Географический а́тлас лежал на столе.","context":"Нужны географические карты мира. Открой школьный атлас.","paraphrase":"Сборник географических карт лежал на столе."},{"plain":"Шёлковый атлас блестит на свету.","marked":"Шёлковый атла́с блестит на свету.","context":"Эта ткань сделана из шёлка. Красивый шёлковый атлас блестит на свету.","paraphrase":"Шёлковая ткань блестит на свету."},{"plain":"Он звонит и читает каталог.","marked":"Он звони́т и читает катало́г.","context":"Он звонит каждый день. Потом читает каталог товаров.","paraphrase":"Он звонит и просматривает список товаров."},{"plain":"Подпиши договор и открой каталог.","marked":"Подпиши догово́р и открой катало́г.","context":"Нужно подписать договор. Затем открой каталог продукции.","paraphrase":"Подпиши договор и открой список продукции."}];
 const sample=document.getElementById('sample');
 const plain=document.getElementById('plain');
 const marked=document.getElementById('marked');
 const context=document.getElementById('context');
+const paraphrase=document.getElementById('paraphrase');
 const status=document.getElementById('status');
 let controller=null,audio=null,blobUrl=null,serial=0;
 for(let i=0;i<samples.length;i++){
@@ -47,7 +51,7 @@ for(let i=0;i<samples.length;i++){
 function choose(){
  const item=samples[Number(sample.value)]||samples[0];
  stop();
- plain.value=item.plain;marked.value=item.marked;context.value=item.context||item.plain;status.textContent='';
+ plain.value=item.plain;marked.value=item.marked;context.value=item.context||item.plain;paraphrase.value=item.paraphrase||item.plain;status.textContent='';
 }
 sample.addEventListener('change',choose);
 function stop(){
@@ -55,16 +59,16 @@ function stop(){
  if(controller){controller.abort();controller=null}
  if(audio){audio.pause();audio.removeAttribute('src');audio.load();audio=null}
  if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null}
- for(const id of ['a','b','c'])document.getElementById(id).disabled=false;
+ for(const id of ['a','b','c','d'])document.getElementById(id).disabled=false;
 }
 document.getElementById('stop').addEventListener('click',()=>{stop();status.textContent='Остановлено';});
 async function play(id){
  stop();
- const text=(id==='a'?plain:id==='c'?context:marked).value.trim();
+ const text=(id==='a'?plain:id==='c'?context:id==='d'?paraphrase:marked).value.trim();
  if(text.length<2||text.length>450){status.textContent='Введите от 2 до 450 символов';return}
  const n=serial;
  controller=new AbortController();
- for(const el of ['a','b','c'])document.getElementById(el).disabled=true;
+ for(const el of ['a','b','c','d'])document.getElementById(el).disabled=true;
  status.textContent='Создаётся выбранное аудио…';
  try{
   const response=await fetch('/api/seyveo-private-tts',{
@@ -80,7 +84,7 @@ async function play(id){
   audio=new Audio(blobUrl);
   audio.onended=()=>{if(n===serial){stop();status.textContent='Готово. Теперь сравни второй вариант.'}};
   audio.onerror=()=>{if(n===serial){stop();status.textContent='Ошибка воспроизведения'}};
-  status.textContent=id==='a'?'Слушаем обычный текст':id==='c'?'Слушаем текст с контекстом':'Слушаем экспериментальный текст со знаком ударения';
+  status.textContent=id==='a'?'Слушаем обычный текст':id==='c'?'Слушаем текст с контекстом':id==='d'?'Слушаем фразу другими словами':'Слушаем экспериментальный текст со знаком ударения';
   await audio.play();
  }catch(error){
   if(n===serial){stop();status.textContent='Не удалось озвучить. Проверь локальный сервер и голосовой движок.'}
@@ -89,5 +93,6 @@ async function play(id){
 document.getElementById('a').addEventListener('click',()=>play('a'));
 document.getElementById('b').addEventListener('click',()=>play('b'));
 document.getElementById('c').addEventListener('click',()=>play('c'));
+document.getElementById('d').addEventListener('click',()=>play('d'));
 choose();
 </script></body></html>
