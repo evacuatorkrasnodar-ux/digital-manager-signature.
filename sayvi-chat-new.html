@@ -335,7 +335,7 @@ main{background:var(--sayvi-scene)}
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
-<button id="sayviMic" type="button" aria-label="Удерживайте для записи голосового сообщения"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
+<button id="sayviMic" type="button" aria-label="Начать голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </div>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
@@ -574,12 +574,15 @@ main{background:var(--sayvi-scene)}
  const SpeechApi=window.SpeechRecognition||window.webkitSpeechRecognition;
  let speechSession=null,spokenFinal='',spokenInterim='',speechStart=0,speechTimer=null;
  let speechGeneration=0,speechAborted=false,speechStopping=false,speechSendRequested=false;
+ let speechWatchdog=null,speechHasResult=false;
  function updateSpeechClock(){
   const seconds=Math.floor((performance.now()-speechStart)/1000);
   speechTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
  }
  function clearSpeech(){
-  clearInterval(speechTimer);speechTimer=null;speechBar.hidden=true;
+  clearInterval(speechTimer);speechTimer=null;
+  clearTimeout(speechWatchdog);speechWatchdog=null;
+  speechBar.hidden=true;
   speechBar.removeAttribute('data-state');mic.classList.remove('is-recording');
   mic.setAttribute('aria-label','Начать голосовой ввод');
   spokenFinal='';spokenInterim='';speechStopping=false;
@@ -639,12 +642,13 @@ main{background:var(--sayvi-scene)}
    return;
   }
   let r;try{r=new SpeechApi()}catch{status.textContent='Голосовой ввод недоступен.';return}
-  speechAborted=false;speechStopping=false;speechSendRequested=false;
+  speechAborted=false;speechStopping=false;speechSendRequested=false;speechHasResult=false;
   const generation=++speechGeneration;
   speechSession=r;spokenFinal='';spokenInterim='';
   r.lang='ru-RU';r.continuous=false;r.interimResults=true;r.maxAlternatives=1;
   r.onresult=event=>{
    if(generation!==speechGeneration)return;
+   speechHasResult=true;
    let final='',interim='';
    for(let i=0;i<event.results.length;i++){
     const transcript=event.results[i][0]?.transcript||'';
@@ -669,6 +673,17 @@ main{background:var(--sayvi-scene)}
   speechBar.hidden=false;mic.classList.add('is-recording');
   mic.setAttribute('aria-label','Завершить голосовой ввод');
   speechTimer=setInterval(updateSpeechClock,250);
+  // WebKit sometimes leaves recognition silently active without callbacks.
+  // Recover instead of holding the microphone indefinitely.
+  speechWatchdog=setTimeout(()=>{
+   if(generation!==speechGeneration||!speechSession||speechStopping)return;
+   if(speechHasResult){stopSpeech();return}
+   speechAborted=true;++speechGeneration;
+   const stuck=speechSession;speechSession=null;
+   try{stuck.abort()}catch{}
+   clearSpeech();
+   status.textContent='Safari не ответил на голосовой ввод. Попробуйте ещё раз или диктовку клавиатуры.';
+  },30000);
   try{r.start()}catch{
    ++speechGeneration;try{r.abort()}catch{}
    speechSession=null;clearSpeech();
@@ -687,9 +702,9 @@ main{background:var(--sayvi-scene)}
   clearSpeech();
  }
  window.addEventListener('pagehide',releaseSpeechOnLeave);
- document.addEventListener('visibilitychange',()=>{
-  if(document.hidden)releaseSpeechOnLeave();
- });
+ // iOS can briefly hide the document while asking permission to use speech.
+ // Do not abort on visibilitychange: that cancels the initial permission flow.
+ // pagehide above handles actual navigation away from this chat.
  restore();
  updateControls();
 })();
