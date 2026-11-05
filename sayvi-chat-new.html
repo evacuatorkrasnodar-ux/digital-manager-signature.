@@ -46,12 +46,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-s
 main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(--sayvi-viewport-height,100dvh);background:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);display:flex;flex-direction:column;overflow:hidden}
 
 /* Тестовые сообщения: никакой поверхности и фона у области переписки. */
-#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:calc(env(safe-area-inset-top) + 8px) 16px 112px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
+#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:calc(env(safe-area-inset-top) + 62px) 16px calc(112px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
 #sayviMessages::-webkit-scrollbar{display:none}
 /* A gentle top fade hides visually abrupt clipping of long older turns.
    Messages remain fully scrollable; no forced scrolling or data changes. */
 #sayviMessages{
- scroll-padding-top:calc(env(safe-area-inset-top) + 8px);
+ scroll-padding-top:calc(env(safe-area-inset-top) + 62px);
 }
 #sayviMessages.is-scrolled{
  -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
