@@ -587,7 +587,12 @@ main{background:var(--sayvi-scene)}
   const text=(spokenFinal||spokenInterim).trim();
   const shouldSend=speechSendRequested;
   speechSendRequested=false;
-  speechSession=null;clearSpeech();
+  const finished=speechSession;
+  speechSession=null;
+  // Force-release any WebKit speech capture session even when onend is late.
+  ++speechGeneration;
+  try{finished?.abort()}catch{}
+  clearSpeech();
   if(text){
    if(shouldSend)ask(text);
    else{
@@ -603,7 +608,13 @@ main{background:var(--sayvi-scene)}
   speechStopping=true;speechBar.dataset.state='processing';
   const generation=speechGeneration;
   try{speechSession.stop()}catch{}
-  setTimeout(()=>{if(generation===speechGeneration&&speechSession)completeSpeech(generation)},1400);
+  setTimeout(()=>{
+   if(generation===speechGeneration&&speechSession){
+    // Safari may not fire onend after stop. Abort the underlying capture
+    // before returning to the idle UI, to release the microphone indicator.
+    completeSpeech(generation);
+   }
+  },1000);
  }
  function sendSpeech(){
   if(speechSession){
@@ -637,7 +648,9 @@ main{background:var(--sayvi-scene)}
   r.onerror=event=>{
    if(generation!==speechGeneration)return;
    const code=event.error||'unknown';
-   speechAborted=true;++speechGeneration;speechSession=null;clearSpeech();
+   speechAborted=true;++speechGeneration;
+   try{speechSession?.abort()}catch{}
+   speechSession=null;clearSpeech();
    status.textContent=code==='not-allowed'||code==='service-not-allowed'
     ?'Разрешите доступ к микрофону и распознаванию речи в Safari.'
     :code==='no-speech'?'Речь не распознана. Попробуйте ещё раз.'
@@ -649,16 +662,25 @@ main{background:var(--sayvi-scene)}
   mic.setAttribute('aria-label','Завершить голосовой ввод');
   speechTimer=setInterval(updateSpeechClock,250);
   try{r.start()}catch{
-   ++speechGeneration;speechSession=null;clearSpeech();
+   ++speechGeneration;try{r.abort()}catch{}
+   speechSession=null;clearSpeech();
    status.textContent='Не удалось запустить распознавание речи в Safari.';
   }
  }
  mic.addEventListener('click',startSpeech);
  document.getElementById('sayviSpeechStop').addEventListener('click',stopSpeech);
  document.getElementById('sayviSpeechSend').addEventListener('click',sendSpeech);
- window.addEventListener('pagehide',()=>{
-  ++speechGeneration;try{speechSession?.abort()}catch{}
-  speechSession=null;clearSpeech();
+ // A hidden page should never keep the phone's microphone active.
+ function releaseSpeechOnLeave(){
+  if(!speechSession)return;
+  ++speechGeneration;speechAborted=true;speechSendRequested=false;
+  const old=speechSession;speechSession=null;
+  try{old.abort()}catch{}
+  clearSpeech();
+ }
+ window.addEventListener('pagehide',releaseSpeechOnLeave);
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)releaseSpeechOnLeave();
  });
  restore();
  updateControls();
