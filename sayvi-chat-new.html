@@ -1129,7 +1129,10 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     let response;
     try{response=await fetch('/api/seyveo-attachments',{method:'POST',credentials:'same-origin',body})}
     catch{throw Error('Сервер загрузки файлов сейчас недоступен. Вложение не отправлено.')}
-    if(!response.ok)throw Error(response.status===404?'Загрузка фото и документов на сервере пока не подключена. Файл остался здесь.':'Сервер не принял вложение (код '+response.status+'). Файл остался здесь.');
+    if(!response.ok){
+     const errorData=await response.json().catch(()=>null);
+     throw Error((typeof errorData?.error==='string'?errorData.error:'Не удалось загрузить файл (код '+response.status+').')+' Вложение осталось здесь.');
+    }
     const info=await response.json().catch(()=>null);
     if(!info||typeof info.id!=='string'||!info.id.trim())throw Error('Сервер не подтвердил загрузку '+file.name+'. Вложение не отправлено.');
     uploaded.push({id:info.id,name:file.name,type:file.type||'application/octet-stream',size:file.size});
