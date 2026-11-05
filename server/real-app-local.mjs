@@ -111,7 +111,7 @@ async function readQuestion(req,{withHistory=false}={}){
  if(!data||typeof data!=='object'||Array.isArray(data)||typeof data.message!=='string'||!data.message.trim()||data.message.length>4000)throw Error('invalid');
  if(withHistory){
   const entries=data.attachments===undefined?[]:data.attachments;
-  if(!Array.isArray(entries)||entries.length>4||entries.some(a=>!a||typeof a.id!=='string'))throw Error('invalid-attachments');
+  if(!Array.isArray(entries)||entries.length>6||entries.some(a=>!a||typeof a.id!=='string'))throw Error('invalid-attachments');
   return {message:data.message,history:validateHistory(data.history),attachmentIds:entries.map(a=>a.id)};
  }
  return data.message;
