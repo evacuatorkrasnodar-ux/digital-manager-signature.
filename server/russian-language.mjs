@@ -32,10 +32,12 @@ export function russianLanguageContext(text){
   if(found.length>=6)break;
  }
  const seen=new Set(found.map(([term])=>term));
+ // Don't repeat single-word meanings already explained by an exact idiom.
+ const phraseWords=new Set(found.filter(([term])=>term.includes(' ')).flatMap(([term])=>term.toLowerCase().match(/[а-яёa-z]+/giu)||[]));
  for(const word of words){
   const key=FORMS.get(word)||word;
   const meaning=GLOSSARY.get(key);
-  if(meaning&&!seen.has(key)){found.push([key,meaning]);seen.add(key)}
+  if(meaning&&!seen.has(key)&&!phraseWords.has(word)){found.push([key,meaning]);seen.add(key)}
   if(found.length>=6)break;
  }
  // A nearby negation changes slang sentiment: "не имба" is not praise.
