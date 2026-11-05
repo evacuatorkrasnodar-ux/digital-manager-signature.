@@ -482,6 +482,19 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 .sv-attach-caption{min-width:0;max-width:125px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv-attach-remove{border:0;border-radius:50%;background:var(--sayvi-pressed);color:var(--sayvi-text);width:23px;height:23px;display:grid;place-items:center;flex:none;padding:0;font-size:16px;line-height:1}
 #sayviMenu button svg{flex:none}
+
+/* Drag files or images directly into the existing input — no extra surface. */
+main.sv-file-drag #sayviField{isolation:isolate}
+main.sv-file-drag #sayviField::after{
+ content:'Отпустите фото или файл';
+ position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;
+ padding:0 10px;border-radius:999px;
+ background:var(--sayvi-glass);color:var(--sayvi-text);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ font:500 12px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ text-align:center;pointer-events:none;
+}
+main.sv-file-drag #sayviField textarea{opacity:.25}
 </style>
 </head>
 <body>
@@ -1026,6 +1039,51 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   }
   renderAttachments();updateControls();
  }
+
+ // Desktop drag-and-drop and clipboard images join the exact same draft tray
+ // as files picked through +. Do not navigate away on an accidental drop.
+ function eventHasFiles(event){
+  return Array.from(event.dataTransfer?.types||[]).includes('Files');
+ }
+ let fileDragDepth=0;
+ function finishFileDrag(){fileDragDepth=0;scene.classList.remove('sv-file-drag')}
+ scene.addEventListener('dragenter',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();fileDragDepth++;
+  scene.classList.add('sv-file-drag');
+ });
+ scene.addEventListener('dragover',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();
+  if(event.dataTransfer)event.dataTransfer.dropEffect=active?'none':'copy';
+  if(!active)scene.classList.add('sv-file-drag');
+ });
+ scene.addEventListener('dragleave',event=>{
+  if(!eventHasFiles(event))return;
+  fileDragDepth=Math.max(0,fileDragDepth-1);
+  if(fileDragDepth===0)scene.classList.remove('sv-file-drag');
+ });
+ scene.addEventListener('drop',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();
+  finishFileDrag();
+  if(active){status.textContent='Сначала дождитесь окончания ответа Сэйви.';return}
+  closeMenu();
+  const files=event.dataTransfer?.files;
+  if(files?.length)addAttachments(files);
+ });
+ window.addEventListener('dragend',finishFileDrag);
+ window.addEventListener('blur',finishFileDrag);
+ // Paste screenshots from the clipboard (Ctrl+V / Cmd+V).
+ input.addEventListener('paste',event=>{
+  if(active)return;
+  const images=Array.from(event.clipboardData?.items||[])
+   .filter(item=>item.kind==='file'&&item.type.startsWith('image/'))
+   .map(item=>item.getAsFile()).filter(Boolean);
+  if(!images.length)return;
+  event.preventDefault();
+  addAttachments(images);
+ });
  document.getElementById('sayviAttachPhoto').addEventListener('click',()=>{closeMenu();photoPicker.click()});
  document.getElementById('sayviAttachFile').addEventListener('click',()=>{closeMenu();filePicker.click()});
  photoPicker.addEventListener('change',()=>{addAttachments(photoPicker.files);photoPicker.value=''});
