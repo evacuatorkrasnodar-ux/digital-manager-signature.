@@ -44,7 +44,7 @@ export function createImageAttachments(){
  }
  function resolve(ids){
   purge();
-  if(!Array.isArray(ids)||ids.length>4)throw Error('invalid');
+  if(!Array.isArray(ids)||ids.length>6)throw Error('invalid');
   const images=[];
   for(const id of ids){
    if(typeof id!=='string'||!/^[a-f0-9-]{36}$/i.test(id))throw Error('invalid');
