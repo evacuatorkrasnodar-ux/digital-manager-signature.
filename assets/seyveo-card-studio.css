@@ -188,3 +188,47 @@
 #seyveoCardStudio :is(.scs-phone,.scs-gallery-item) .sv-card-action[data-card-action="not-interested"]{
  color:var(--secondary)!important;
 }
+
+/* iPhone audit: safe areas, one-column cards, readable actions and no sideways
+ * scrolling. No changes to the real Home page or business screens. */
+#seyveoCardStudio{
+ padding-top:max(16px,env(safe-area-inset-top,0px));
+ padding-bottom:max(24px,env(safe-area-inset-bottom,0px));
+ padding-left:max(14px,env(safe-area-inset-left,0px));
+ padding-right:max(14px,env(safe-area-inset-right,0px));
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+}
+#seyveoCardStudio .scs-wrap,
+#seyveoCardStudio .scs-grid,
+#seyveoCardStudio .scs-panel,
+#seyveoCardStudio .scs-gallery-grid,
+#seyveoCardStudio .scs-gallery-item{min-width:0}
+#seyveoCardStudio .scs-gallery-item .sv-card-actions,
+#seyveoCardStudio .scs-phone .sv-card-actions{
+ display:flex;flex-wrap:wrap;max-width:100%;
+}
+#seyveoCardStudio :is(.scs-gallery-item,.scs-phone) .sv-card-action{
+ max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;
+}
+@media(max-width:600px){
+ #seyveoCardStudio{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+ #seyveoCardStudio .scs-wrap{width:100%}
+ #seyveoCardStudio header{align-items:center;gap:8px}
+ #seyveoCardStudio h2{min-width:0;font-size:clamp(18px,5vw,22px);line-height:1.25;overflow-wrap:anywhere}
+ #seyveoCardStudio header [data-close]{flex:none;min-height:44px}
+ #seyveoCardStudio .scs-grid{grid-template-columns:minmax(0,1fr);gap:8px}
+ #seyveoCardStudio .scs-states{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #seyveoCardStudio .scs-preview-toolbar{align-items:flex-start}
+ #seyveoCardStudio .scs-theme-switch{width:100%}
+ #seyveoCardStudio .scs-theme-switch button{min-height:44px}
+ #seyveoCardStudio .scs-gallery-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+ #seyveoCardStudio .scs-gallery-item{width:100%}
+ #seyveoCardStudio .scs-phone{width:100%;min-height:0}
+}
+@media(max-width:360px){
+ #seyveoCardStudio .scs-states{gap:6px}
+ #seyveoCardStudio .scs-states button{padding:8px 6px;font-size:12px}
+ #seyveoCardStudio .scs-gallery-item{padding:11px}
+ #seyveoCardStudio .scs-phone{padding:17px 11px 21px}
+}
