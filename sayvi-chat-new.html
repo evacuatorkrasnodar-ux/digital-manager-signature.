@@ -121,41 +121,14 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  --sayvi-text:#242a31;
  --sayvi-secondary:#637178;
  --sayvi-bubble:rgba(219,230,232,.78);
- --sayvi-glass:linear-gradient(150deg,rgba(255,255,255,.68),rgba(229,233,238,.38) 65%,rgba(249,250,252,.56));
- --sayvi-action:linear-gradient(155deg,rgba(255,255,255,.65),rgba(232,235,240,.30) 58%,rgba(255,255,255,.45));
  --sayvi-control-text:#26383b;
  --sayvi-placeholder:#637778;
- --sayvi-pressed:rgba(221,227,234,.62);
  --sayvi-menu:rgba(239,244,246,.96);
  --sayvi-menu-pressed:rgba(56,109,91,.09);
  --sayvi-fallback:#e6eef0;
 }
-/* White Velvet optical definition: a single translucent lens with a barely
-   visible neutral edge. Keep composer geometry and all dark themes intact. */
-:root[data-theme=light]{
- --sayvi-glass:linear-gradient(150deg,rgba(255,255,255,.76),rgba(223,232,236,.43) 65%,rgba(247,249,250,.61));
- --sayvi-action:linear-gradient(155deg,rgba(255,255,255,.77),rgba(221,232,235,.42) 65%,rgba(248,250,251,.55));
-}
-:root[data-theme=light] #sayviInput,
-:root[data-theme=light] #sayviMic,
-:root[data-theme=light] #sayviSend,
-:root[data-theme=light] #sayviPlus{
- box-shadow:0 1px 4px rgba(47,72,79,.025),
-   inset 0 .7px 0 rgba(255,255,255,.76),
-   inset 0 -.45px 0 rgba(74,112,119,.065);
-}
-/* All three controls read as one White Velvet material, not raised discs. */
-:root[data-theme=light] #sayviMic,
-:root[data-theme=light] #sayviSend,
-:root[data-theme=light] #sayviPlus{
- background:var(--sayvi-glass);
-}
-@media(prefers-reduced-transparency:reduce){
- :root[data-theme=light] #sayviInput,
- :root[data-theme=light] #sayviMic,
- :root[data-theme=light] #sayviSend,
- :root[data-theme=light] #sayviPlus{box-shadow:none}
-}
+/* White Velvet inherits the exact original dark-chat glass gradients,
+   blur and shadow:none. Only background, text and placeholders adapt. */
 :root[data-theme=dark][data-palette=emerald]{
  --sayvi-bg:#111917;
  --sayvi-scene:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%);
