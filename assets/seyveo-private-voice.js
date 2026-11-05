@@ -13,9 +13,16 @@
   // Short natural utterances synthesize much more reliably on local CPU.
   // Emoji and formatting never change the displayed reply, only spoken text.
   let left=String(value||'')
-   .replace(/[\u200b-\u200d\uFE0E\uFE0F]/g,'')
+   // Keep the visible message untouched; only prepare the spoken copy.
+   .replace(/\r\n?/g,'\n')
+   .replace(/!\[([^\]]*)\]\((?:https?:\/\/[^\s)]+|[^\s)]+)\)/giu,'$1')
+   .replace(/\[([^\]]+)\]\((?:https?:\/\/[^\s)]+|[^\s)]+)\)/giu,'$1')
+   .replace(/https?:\/\/[^\s]+/giu,'')
+   .replace(/^\s*>\s?/gm,'')
+   .replace(/^\s*(?:[-*+•◦▪▫]|\d+[.)])\s+/gm,'')
+   .replace(/[\u200b-\u200d\uFE0E\uFE0F\u20e3]/g,'')
    .replace(/\p{Extended_Pictographic}/gu,'')
-   .replace(/[*#_]/g,'')
+   .replace(/[`*_#~|]/g,'')
    .replace(/\s+/g,' ').trim().slice(0,3000);
   const parts=[];
   const MAX_PHRASE=170;
