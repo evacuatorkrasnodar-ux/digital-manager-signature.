@@ -1124,7 +1124,13 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     const content=await file.text();
     segments.push('Файл: '+file.name+'\n--- НАЧАЛО ФАЙЛА ---\n'+content.slice(0,100000)+'\n--- КОНЕЦ ФАЙЛА ---');
    }else{
-    // Never imply that an image/PDF is understood unless upload succeeded.
+    // The temporary vision endpoint accepts images only. Reject unsupported
+    // documents before a network call, retaining the selected draft.
+    const supportedImage=/^image\/(?:png|jpeg|webp)$/i.test(file.type);
+    if(!supportedImage){
+     const ext=(file.name.split('.').pop()||'').toUpperCase();
+     throw Error('Формат '+(ext||'файла')+' пока не поддерживается для анализа. Сохрани страницу как PNG/JPG или отправь скриншот. Выбранный файл остался здесь.');
+    }
     const body=new FormData();body.append('file',file,file.name);
     let response;
     try{response=await fetch('/api/seyveo-attachments',{method:'POST',credentials:'same-origin',body})}
