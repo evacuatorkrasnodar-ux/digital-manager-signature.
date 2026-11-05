@@ -42,7 +42,7 @@ page.querySelector('.scs-wrap').append(queuePanel);
 // rather than approving a single example and accidentally leaving others behind.
 const gallery=document.createElement('section');
 gallery.className='scs-panel scs-gallery';
-gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Один мастер-компонент · '+entries.length+' типов · учебные данные</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
+gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Один мастер-компонент · '+entries.length+' типов · обе темы переключаются вместе</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
 page.querySelector('.scs-wrap').append(gallery);
 const galleryGrid=gallery.querySelector('[data-card-gallery]');
 function renderGallery(){
@@ -55,6 +55,7 @@ function renderGallery(){
   const sample=document.createElement('div');
   sample.className='scs-gallery-item';
   sample.dataset.cardState='new';
+  sample.dataset.previewTheme=previewTheme;
   const surface=engine.renderCard(card,{onAction:id=>{
    const note=sample.querySelector('.scs-gallery-feedback');
    if(note)note.textContent='Действие «'+(engine.actionLabels[id]||id)+'» показано только в мастерской.';
@@ -104,7 +105,7 @@ function render(){
  for(const [theme,label] of [['dark','Black Velvet'],['light','Белая тема']]){
   const choice=document.createElement('button');choice.type='button';choice.textContent=label;
   choice.setAttribute('aria-pressed',String(previewTheme===theme));
-  choice.addEventListener('click',()=>{previewTheme=theme;render()});
+  choice.addEventListener('click',()=>{previewTheme=theme;renderGallery();render()});
   toggles.append(choice);
  }
  toolbar.append(caption,toggles);preview.append(toolbar);
