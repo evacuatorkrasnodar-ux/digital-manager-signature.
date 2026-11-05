@@ -143,7 +143,7 @@ def run(inputs: list[str], engine) -> list[dict]:
                 raise TypeError("Ожидался текст ударений")
             expected = EXPECTED.get(phrase)
             tokens = stress_on_word(stressed, expected[0]) if expected else []
-            correct = expected[1] in tokens if expected else None
+            correct = (expected[1] in tokens or ("+ё" in expected[1] and expected[1].replace("+", "") in tokens)) if expected else None
             report.append({
                 "text": phrase,
                 "stressed": stressed,
