@@ -116,12 +116,13 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  color-scheme:light;
  --sayvi-bg:#f9fafb;
  --sayvi-scene:
-   /* Diffuse silver illumination in the background behind the fixed composer.
-      No separate backdrop element, hard rectangle, or changes to glass. */
-   radial-gradient(ellipse 72% 12% at 50% 97%,rgba(105,129,142,.17) 0%,rgba(155,178,189,.085) 47%,transparent 100%),
-   radial-gradient(ellipse 53% 6% at 50% 96%,rgba(255,255,255,.56) 0%,transparent 100%),
-   radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.40) 0%,rgba(255,255,255,0) 78%),
-   linear-gradient(180deg,#f4f7f8 0%,#eaf0f2 39%,#dfe8ec 78%,#d8e3e8 100%);
+   /* Clean pearl base and three diffuse graphite strokes near the composer.
+      These are painted in the scene itself, not an overlay or backing plate. */
+   radial-gradient(ellipse 9% 1.6% at 29% 96%,rgba(56,75,85,.20),transparent 100%),
+   radial-gradient(ellipse 12% 1.4% at 53% 96.5%,rgba(72,89,98,.16),transparent 100%),
+   radial-gradient(ellipse 8% 1.7% at 76% 95.8%,rgba(56,76,88,.19),transparent 100%),
+   radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.34) 0%,transparent 78%),
+   linear-gradient(180deg,#f7f9fa 0%,#f0f4f6 39%,#e8eff2 78%,#e2ebef 100%);
  --sayvi-text:#242a31;
  --sayvi-secondary:#637178;
  --sayvi-bubble:rgba(219,230,232,.78);
@@ -151,30 +152,6 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 }
 html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
 main{background:var(--sayvi-scene)}
-/* White Velvet: quiet graphite variations physically BEHIND the glass.
-   A background light-field, not a second composer or a visible backing plate.
-   This provides contrast even when no message is beneath the input. */
-:root[data-theme=light] main::before{
- content:"";
- position:fixed;
- left:15%;
- width:70%;
- height:62px;
- bottom:calc(2px + env(safe-area-inset-bottom));
- z-index:0;
- pointer-events:none;
- border:0;
- border-radius:0;
- background:
-  radial-gradient(ellipse 19% 33% at 25% 43%,rgba(65,87,100,.21),transparent 100%),
-  radial-gradient(ellipse 28% 31% at 53% 60%,rgba(70,93,105,.15),transparent 100%),
-  radial-gradient(ellipse 17% 43% at 76% 41%,rgba(63,89,103,.18),transparent 100%);
- -webkit-mask-image:radial-gradient(ellipse 95% 90% at 50% 50%,#000 20%,transparent 100%);
- mask-image:radial-gradient(ellipse 95% 90% at 50% 50%,#000 20%,transparent 100%);
-}
-@media(prefers-reduced-transparency:reduce){
- :root[data-theme=light] main::before{display:none}
-}
 header{color:var(--sayvi-text)}
 .turn[data-role="user"] .bubble{background:var(--sayvi-bubble);color:var(--sayvi-text)}
 .turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
