@@ -1,0 +1,43 @@
+name: Russian language checks
+
+on:
+  push:
+    paths:
+      - 'server/russian-language.mjs'
+      - 'server/russian-writing.mjs'
+      - 'server/russian-language.test.mjs'
+      - 'server/russian-stress.mjs'
+      - 'server/russian-stress.test.mjs'
+      - 'server/russian-stress-batch.py'
+      - 'server/test_russian_stress_batch.py'
+      - '.github/workflows/russian-language-tests.yml'
+  pull_request:
+    paths:
+      - 'server/russian-language.mjs'
+      - 'server/russian-writing.mjs'
+      - 'server/russian-language.test.mjs'
+      - 'server/russian-stress.mjs'
+      - 'server/russian-stress.test.mjs'
+      - 'server/russian-stress-batch.py'
+      - 'server/test_russian_stress_batch.py'
+      - '.github/workflows/russian-language-tests.yml'
+
+jobs:
+  test-language:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: JavaScript language tests
+        run: node --test server/russian-language.test.mjs server/russian-stress.test.mjs
+      - name: Offline Python batch tests
+        run: python -m unittest discover -s server -p 'test_russian_stress_batch.py'
+      - name: Validate report generation without model downloads
+        run: python server/russian-stress-batch.py --dry-run --output /tmp/seyveo-stress-dry-run.jsonl
