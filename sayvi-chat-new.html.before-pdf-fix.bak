@@ -1,0 +1,2071 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#11161b">
+<script>
+/* Read the same persisted theme as the SEYVEO Home before first paint. */
+(function(){
+ const key='dm-signature-living-v2';
+ const previous='dm-signature-living-v1';
+ const allowed=['auto','graphite','light','dark','sapphire','plum'];
+ const browserTheme=window.matchMedia('(prefers-color-scheme: dark)');
+ function chosen(){
+  let value='graphite';
+  try{
+   const saved=JSON.parse(localStorage.getItem(key)||'null')
+    ||JSON.parse(localStorage.getItem(previous)||'null');
+   if(saved&&allowed.includes(saved.theme))value=saved.theme;
+  }catch{}
+  return value==='auto'?(browserTheme.matches?'graphite':'light'):value;
+ }
+ function sync(){
+  const selected=chosen(),isLight=selected==='light';
+  const palette=isLight?'white':selected==='graphite'?'graphite':selected==='sapphire'?'sapphire':selected==='plum'?'plum':'emerald';
+  document.documentElement.dataset.theme=isLight?'light':'dark';
+  document.documentElement.dataset.palette=palette;
+  document.querySelector('meta[name="theme-color"]').content=
+   isLight?'#f9fafb':palette==='graphite'?'#11161b':palette==='sapphire'?'#101724':palette==='plum'?'#1c1b1a':'#111917';
+ }
+ sync();
+ window.addEventListener('storage',e=>{if(!e.key||e.key===key||e.key===previous)sync()});
+ window.addEventListener('pageshow',sync);
+ window.addEventListener('focus',sync);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
+ if(browserTheme.addEventListener)browserTheme.addEventListener('change',sync);
+ else if(browserTheme.addListener)browserTheme.addListener(sync);
+})();
+</script>
+<title>Сэйви · SEYVEO</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#11161b;color:#fff}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(--sayvi-viewport-height,100dvh);background:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);display:flex;flex-direction:column;overflow:hidden}
+
+/* Тестовые сообщения: никакой поверхности и фона у области переписки. */
+#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:calc(env(safe-area-inset-top) + 8px) 16px 112px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
+#sayviMessages::-webkit-scrollbar{display:none}
+/* A gentle top fade hides visually abrupt clipping of long older turns.
+   Messages remain fully scrollable; no forced scrolling or data changes. */
+#sayviMessages{
+ scroll-padding-top:calc(env(safe-area-inset-top) + 8px);
+}
+#sayviMessages.is-scrolled{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
+ mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
+}
+.turn{display:flex;flex-direction:column;gap:5px;margin:0 0 18px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.turn[data-role="user"]{align-items:flex-end}
+/* User messages: same flat Smoke Glass as the composer, with a soft
+   conversational silhouette instead of a rectangular card. */
+.turn[data-role="user"] .bubble{
+ padding:10px 14px;
+ border-radius:21px 21px 8px 21px;
+ background:var(--sayvi-glass);
+ color:var(--sayvi-text);
+ max-width:min(85%,520px);
+ border:0;
+ box-shadow:none;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+}
+.turn[data-role="assistant"] .bubble{max-width:100%}
+.turn[data-role="assistant"] .bubble strong{font-weight:650;color:inherit}
+/* Calm, clear speaker label: completed answers never animate. */
+.speaker{
+ display:inline-block;
+ align-self:flex-start;
+ font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:0;
+ color:var(--sayvi-secondary);
+ background:none;
+ -webkit-text-fill-color:currentColor;
+ animation:none;
+}
+/* The only live Sayvi label: one subtle silver light moving inside the letters. */
+.sayvi-thinking{align-items:flex-start}
+.sayvi-thinking .sayvi-thinking-label,
+.turn[data-role="assistant"].is-streaming .speaker{
+ display:inline-block;
+ align-self:flex-start;
+ font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:0;
+ color:var(--sayvi-secondary);
+ background:linear-gradient(105deg,
+  var(--sayvi-secondary) 0%,
+  var(--sayvi-secondary) 40%,
+  color-mix(in srgb,var(--sayvi-secondary) 65%,var(--sayvi-text)) 50%,
+  var(--sayvi-secondary) 60%,
+  var(--sayvi-secondary) 100%);
+ background-size:260% 100%;
+ background-position:100% 50%;
+ -webkit-background-clip:text;background-clip:text;
+ -webkit-text-fill-color:transparent;
+ animation:sayvi-active-name-light 3.2s ease-in-out infinite alternate;
+}
+@keyframes sayvi-active-name-light{
+ from{background-position:100% 50%}
+ to{background-position:0% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+ .sayvi-thinking .sayvi-thinking-label,
+ .turn[data-role="assistant"].is-streaming .speaker{
+  animation:none;background:none;-webkit-text-fill-color:currentColor
+ }
+}
+/* Независимые элементы в одной строке: никакой общей подложки. */
+#sayviComposer{position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none;z-index:5}
+#sayviField{display:block;position:relative;min-width:0;height:44px;background:transparent;border:0;box-shadow:none}
+/* iOS 26-inspired matte Liquid Glass: material belongs to each control only.
+   The composer itself stays fully transparent, with no surrounding panel. */
+#sayviInput{display:block;width:100%;height:44px;min-height:44px;max-height:44px;box-sizing:border-box;margin:0;padding:10px 15px;border:0;border-radius:22px;background:linear-gradient(150deg,rgba(230,241,249,.14),rgba(175,204,222,.075) 65%,rgba(205,224,238,.095));-webkit-backdrop-filter:blur(18px) saturate(145%);backdrop-filter:blur(18px) saturate(145%);color:#f7fafc;box-shadow:none;outline:none;resize:none;font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-appearance:none;appearance:none}
+#sayviInput::placeholder{color:rgba(228,235,241,.70);opacity:1}
+#sayviMic,#sayviSend,#sayviPlus{position:static;display:grid;place-items:center;width:44px;height:44px;min-width:44px;margin:0;padding:0;border:0;border-radius:50%;background:linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));-webkit-backdrop-filter:blur(18px) saturate(145%);backdrop-filter:blur(18px) saturate(145%);color:#f7fafc;box-shadow:none;outline:0;-webkit-appearance:none;appearance:none}
+#sayviMic:active,#sayviSend:active,#sayviPlus:active{background:rgba(218,235,245,.20)}
+@media(prefers-reduced-transparency:reduce){
+ #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:#2a353d;-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+#sayviMic{font-size:0;line-height:1}
+/* Dictation material: a single light pill with an iOS-inspired animated waveform. */
+#sayviMic{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#sayviMic.is-recording{background:var(--sayvi-pressed)}
+#sayviSpeechBar{
+ position:absolute;z-index:7;
+ left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));
+ bottom:calc(64px + env(safe-area-inset-bottom));height:46px;padding:4px 6px 4px 12px;
+ display:flex;align-items:center;gap:7px;min-width:0;border:0;border-radius:999px;
+ background:var(--sayvi-glass);color:var(--sayvi-control-text);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;
+}
+#sayviSpeechBar[hidden]{display:none!important}
+.sv-speech-dot{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:#cb5656}
+.sv-speech-wave{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:2.5px;height:24px;min-width:10px;overflow:hidden}
+.sv-speech-wave i{display:block;width:1.5px;height:5px;flex:0 0 1.5px;border-radius:99px;background:currentColor;opacity:.55;animation:sv-wave 950ms ease-in-out infinite alternate}
+.sv-speech-wave i:nth-child(4n+1){animation-delay:-550ms}
+.sv-speech-wave i:nth-child(4n+2){animation-delay:-200ms}
+.sv-speech-wave i:nth-child(4n+3){animation-delay:-720ms}
+.sv-speech-wave i:nth-child(5n){animation-duration:670ms}
+#sayviSpeechBar[data-state="processing"] .sv-speech-wave i{animation:none;height:4px;opacity:.35}
+@keyframes sv-wave{0%,100%{height:3px;opacity:.35}50%{height:17px;opacity:.85}}
+.sv-speech-time{min-width:32px;flex:none;font:400 12px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--sayvi-secondary)}
+#sayviSpeechBar button{flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;padding:0;background:transparent;color:var(--sayvi-control-text)}
+#sayviSpeechBar button:last-child{background:var(--sayvi-action)}
+/* A delicate outlined stop ring, with a soft square centered inside. */
+#sayviSpeechStop{
+ border:1.25px solid currentColor!important;
+ background:transparent;
+}
+#sayviSpeechStop .sv-stop-square{
+ width:9px;height:9px;border-radius:2px;
+ background:currentColor;display:block;
+}
+#sayviSpeechBar button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+#sayviSpeechBar button:active{background:var(--sayvi-pressed)}
+@media(prefers-reduced-motion:reduce){.sv-speech-wave i{animation:none;height:7px}}
+@media(prefers-reduced-transparency:reduce){#sayviSpeechBar{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}}
+#sayviMic svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+#sayviMic,#sayviSend{grid-column:3;grid-row:1}
+#sayviMic[hidden],#sayviSend[hidden]{display:none!important}
+#sayviSend svg,#sayviPlus svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+#sayviMenu{z-index:6}
+#sayviMenu[hidden]{display:none}
+#sayviMenu{position:absolute;left:max(12px,env(safe-area-inset-left));bottom:calc(62px + env(safe-area-inset-bottom));min-width:175px;padding:5px;border-radius:15px;background:#263039}
+#sayviMenu button{display:block;width:100%;border:0;border-radius:10px;background:transparent;color:#fff;padding:11px 12px;text-align:left;font:inherit}
+#sayviMenu button:active{background:rgba(255,255,255,.08)}
+
+#sayviStatus{position:absolute;z-index:6;left:64px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));font-size:12px;line-height:1.4;color:#a5b0b7;pointer-events:none;background:transparent}
+#sayviStatus:empty{display:none}
+/* Conversation history: native-feeling, light, independent modal; no duplicate dock. */
+#sayviHistory[hidden]{display:none!important}
+#sayviHistory{position:fixed;z-index:8;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--sayvi-scene);color:var(--sayvi-text);padding:calc(env(safe-area-inset-top) + 13px) max(16px,env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#sayviHistory::-webkit-scrollbar{display:none}
+.history-shell{width:100%;max-width:650px;margin:0 auto}
+.history-head{display:flex;align-items:center;justify-content:space-between;height:42px;gap:12px}
+.history-head strong{font:650 19px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:-.035em}
+.history-head button{min-width:44px;min-height:40px;border:0;border-radius:22px;background:transparent;color:var(--sayvi-control-text);font:500 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;padding:0 4px}
+.history-head button:active{opacity:.65}
+.history-search{height:40px;margin:18px 0 19px;padding:0 12px;display:flex;align-items:center;gap:9px;border:0;border-radius:13px;background:var(--sayvi-glass);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
+.history-search svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--sayvi-secondary);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.history-search input{flex:1;min-width:0;height:100%;background:transparent;border:0;outline:0;color:var(--sayvi-text);font:400 15px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.history-search input::placeholder{color:var(--sayvi-secondary);opacity:1}
+#sayviHistoryList{display:flex;flex-direction:column;gap:0}
+.history-group-title{padding:14px 4px 7px;color:var(--sayvi-secondary);font:600 12px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;letter-spacing:.005em}
+.history-row{display:flex;align-items:center;min-height:66px;gap:6px;border-bottom:1px solid color-mix(in srgb,var(--sayvi-secondary) 16%,transparent)}
+.history-row:last-child{border-bottom:0}
+.history-item{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px;justify-content:center;min-height:63px;text-align:left;border:0;border-radius:12px;padding:8px 4px;background:transparent;color:var(--sayvi-text);font:inherit}
+.history-item:active{background:var(--sayvi-pressed)}
+.history-item-title{display:block;font-size:15px;font-weight:530;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item-subtitle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sayvi-secondary);line-height:1.3}
+.history-item-subtitle span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item-time{flex:none;min-width:50px;text-align:right;font-variant-numeric:tabular-nums}
+.history-more{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;margin:0 0 0 1px;padding:0;border:0;border-radius:18px;background:transparent;color:var(--sayvi-secondary)}
+.history-more svg{width:18px;height:18px;fill:currentColor}
+.history-more:active{background:var(--sayvi-pressed)}
+.history-empty{display:flex;flex-direction:column;align-items:center;text-align:center;margin:clamp(65px,18vh,165px) auto 0;max-width:290px;color:var(--sayvi-secondary)}
+.history-empty svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.history-empty strong{color:var(--sayvi-text);font-size:16px;font-weight:550}
+.history-empty span{font-size:13px;line-height:1.5;margin-top:7px}
+.history-action-sheet[hidden]{display:none!important}
+.history-action-sheet{position:fixed;z-index:10;inset:0;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.25);padding:16px max(16px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.history-action-inner{width:100%;max-width:450px;display:flex;flex-direction:column;gap:8px}
+.history-action-inner button{width:100%;min-height:52px;border:0;border-radius:15px;font:500 16px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;background:var(--sayvi-fallback);color:var(--sayvi-text)}
+.history-action-inner button[data-action="delete"]{color:#da5b5b}
+.history-action-inner button:active{opacity:.78}
+@media(prefers-reduced-transparency:reduce){.history-search{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* Floating navigation only: no full-width header, glass in the existing
+   SEYVEO palette. The conversation scrolls independently behind these controls. */
+#sayviTopActions{
+ position:absolute;z-index:7;
+ top:calc(env(safe-area-inset-top) + 7px);
+ left:max(12px,env(safe-area-inset-left));
+ right:max(12px,env(safe-area-inset-right));
+ display:flex;justify-content:space-between;align-items:center;
+ pointer-events:none;
+}
+#sayviTopActions .sv-top-name{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ max-width:calc(100% - 104px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font:500 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:-.02em;color:var(--sayvi-text);pointer-events:none;
+}
+#sayviTopActions .sv-top-action{
+ pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
+ width:42px;height:42px;min-width:42px;min-height:42px;padding:0;
+ border:0;border-radius:999px;
+ background:var(--sayvi-glass);color:var(--sayvi-control-text);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;outline-offset:3px;font:500 13px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ text-decoration:none;-webkit-tap-highlight-color:transparent;
+}
+#sayviTopActions .sv-top-action svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+#sayviTopActions .sv-top-action:active{background:var(--sayvi-pressed)}
+:root[data-theme=light] #sayviTopActions .sv-top-action{
+ -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviTopActions .sv-top-action{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+#sayviInput:disabled{opacity:.75}
+
+/* Same SEYVEO theme system as Home; only colors/materials change.
+   No alterations to composer dimensions, behavior or message scrolling. */
+:root{
+ --sayvi-bg:#11161b;
+ --sayvi-scene:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);
+ --sayvi-text:#fff;
+ --sayvi-secondary:#a5b0b7;
+ --sayvi-bubble:#263039;
+ /* Flat neutral smoke on all dark palettes, not a blue/green gradient.
+    The blurred background remains visible through the material. */
+ --sayvi-glass:rgba(184,195,201,.19);
+ --sayvi-action:rgba(184,195,201,.19);
+ --sayvi-control-text:#f7fafc;
+ --sayvi-placeholder:rgba(228,235,241,.70);
+ --sayvi-pressed:rgba(218,235,245,.20);
+ --sayvi-menu:#263039;
+ --sayvi-menu-pressed:rgba(255,255,255,.08);
+ --sayvi-fallback:#2a353d;
+}
+:root[data-theme=light]{
+ color-scheme:light;
+ --sayvi-bg:#ffffff;
+ --sayvi-scene:#ffffff;
+ --sayvi-text:#242a31;
+ --sayvi-secondary:#637178;
+ --sayvi-bubble:rgba(219,230,232,.69);
+ /* Consistently smoke-gray translucent glass, including over empty pearl
+    background. Keep the native blur, no border, glow or raised shadows. */
+ --sayvi-glass:rgba(99,121,133,.22);
+ --sayvi-action:rgba(99,121,133,.205);
+ --sayvi-pressed:rgba(99,121,133,.31);
+ --sayvi-control-text:#26383b;
+ --sayvi-placeholder:#637778;
+ --sayvi-menu:rgba(239,244,246,.96);
+ --sayvi-menu-pressed:rgba(56,109,91,.09);
+ --sayvi-fallback:#e6eef0;
+}
+/* Both contrast modes share the same flat smoke-glass principle.
+   White Velvet retains its approved material and blur settings. */
+:root[data-theme=dark][data-palette=emerald]{
+ --sayvi-bg:#111917;
+ --sayvi-scene:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%);
+ --sayvi-glass:rgba(184,195,201,.20);
+ --sayvi-action:rgba(184,195,201,.20);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sayvi-bg:#101724;
+ --sayvi-scene:linear-gradient(180deg,#0e1522 0%,#172239 50%,#202e48 78%,#101724 100%);
+ --sayvi-bubble:#222f47;
+ --sayvi-menu:#222f47;
+ --sayvi-glass:rgba(184,195,201,.22);
+ --sayvi-action:rgba(184,195,201,.22);
+}
+:root[data-theme=dark][data-palette=plum]{
+ --sayvi-bg:#1c1b1a;
+ --sayvi-scene:linear-gradient(180deg,#1b1a19 0%,#252320 50%,#302c28 78%,#1c1b1a 100%);
+ --sayvi-bubble:#302c28;
+ --sayvi-menu:#302c28;
+ --sayvi-glass:rgba(184,195,201,.19);
+ --sayvi-action:rgba(184,195,201,.19);
+}
+html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
+main{background:var(--sayvi-scene)}
+.turn[data-role="user"] .bubble{background:var(--sayvi-glass);color:var(--sayvi-text)}
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=light] .turn[data-role="user"] .bubble{
+  -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+  backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ }
+}
+@media(prefers-reduced-transparency:reduce){
+ .turn[data-role="user"] .bubble{
+  background:var(--sayvi-fallback);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+ }
+}
+.turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
+.speaker,#sayviStatus,.history-empty{color:var(--sayvi-secondary)}
+#sayviInput{background:var(--sayvi-glass);color:var(--sayvi-control-text)}
+#sayviInput::placeholder{color:var(--sayvi-placeholder)}
+#sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-action);color:var(--sayvi-control-text)}
+/* White Velvet: tune backdrop pixels, not the glass fill or edge.
+   Preserve original geometry, gradient, shadows:none and dark materials. */
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=light] #sayviInput,
+ :root[data-theme=light] #sayviMic,
+ :root[data-theme=light] #sayviSend,
+ :root[data-theme=light] #sayviPlus{
+  -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+  backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ }
+}
+/* The bottom of the dark scene is deeper than the recording preview.
+   Lift only the input pill slightly so its perceived smoke tone matches. */
+:root[data-theme=dark] #sayviInput{
+ background:rgba(184,195,201,.25);
+}
+/* On dark palettes suppress color amplification: matte, not glossy.
+   No strokes, highlights or outer shadows; original shape and sizing stay. */
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=dark] #sayviInput,
+ :root[data-theme=dark] #sayviMic,
+ :root[data-theme=dark] #sayviSend,
+ :root[data-theme=dark] #sayviPlus{
+  -webkit-backdrop-filter:blur(16px) saturate(105%);
+  backdrop-filter:blur(16px) saturate(105%);
+ }
+}
+#sayviMic:active,#sayviSend:active,#sayviPlus:active{background:var(--sayvi-pressed)}
+#sayviMenu{background:var(--sayvi-menu);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#sayviMenu button{color:var(--sayvi-text)}
+#sayviMenu button:active{background:var(--sayvi-menu-pressed)}
+#sayviHistory{background:var(--sayvi-bg);color:var(--sayvi-text)}
+.history-head button{color:var(--sayvi-control-text)}
+.history-item{background:var(--sayvi-bubble);color:var(--sayvi-text)}
+@media(prefers-reduced-transparency:reduce){
+ #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}
+ #sayviMenu{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+
+/* Reply control uses the same matte material, 44px geometry, and column as mic. */
+#sayviStopReply{grid-column:3;grid-row:1;display:grid;place-items:center;width:44px;height:44px;min-width:44px;margin:0;padding:0;border:0;border-radius:50%;background:var(--sayvi-action);color:var(--sayvi-control-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#sayviStopReply[hidden]{display:none!important}
+#sayviStopReply .sv-stop-symbol{display:block;width:11px;height:11px;border-radius:2.5px;background:currentColor}
+#sayviStopReply:active{background:var(--sayvi-pressed)}
+.turn[data-role="assistant"].is-streaming .bubble::after{
+ content:"";display:inline-block;width:2px;height:1em;vertical-align:-.16em;margin-left:3px;border-radius:3px;
+ background:var(--sayvi-secondary);animation:sayvi-caret 1s steps(2,end) infinite;
+}
+.turn[data-role="assistant"].is-fresh .bubble{animation:sayvi-answer-in .28s ease-out both}
+@keyframes sayvi-answer-in{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sayvi-caret{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ .turn[data-role="assistant"].is-streaming .bubble::after{animation:none}
+ .turn[data-role="assistant"].is-fresh .bubble{animation:none}
+}
+
+/* Floating plus menu: slim iOS 26 Smoke Glass. No solid panel or bleed-through. */
+#sayviMenu{
+ z-index:9;position:absolute;
+ left:max(12px,env(safe-area-inset-left));
+ bottom:calc(68px + env(safe-area-inset-bottom));
+ width:min(205px,calc(100vw - 24px));min-width:0;
+ padding:5px;border:0;border-radius:20px;
+ background:var(--sayvi-menu);
+ -webkit-backdrop-filter:blur(24px) saturate(110%);
+ backdrop-filter:blur(24px) saturate(110%);
+ box-shadow:0 5px 24px rgba(0,0,0,.12);
+ overflow:hidden;
+}
+:root[data-theme=light] #sayviMenu{background:rgba(241,245,246,.97);box-shadow:0 5px 20px rgba(34,55,56,.10)}
+:root[data-theme=dark] #sayviMenu{background:rgba(44,53,60,.97)}
+#sayviMenu button{
+ display:flex;align-items:center;gap:11px;
+ width:100%;min-height:45px;
+ border:0;border-radius:15px;background:transparent;
+ color:var(--sayvi-text);padding:8px 10px;
+ text-align:left;font:450 14px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviMenu button svg{
+ display:block;flex:0 0 19px;width:19px;height:19px;
+ fill:none;stroke:currentColor;stroke-width:1.35;
+ stroke-linecap:round;stroke-linejoin:round;opacity:.9;
+}
+#sayviMenu button:active{background:var(--sayvi-pressed)}
+/* Status is temporarily hidden while the menu is expanded, preventing
+   text from showing directly through the floating glass surface. */
+main.sayvi-menu-open #sayviStatus{visibility:hidden}
+@media(prefers-reduced-transparency:reduce){
+ #sayviMenu,:root[data-theme=light] #sayviMenu,:root[data-theme=dark] #sayviMenu{
+  background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none
+ }
+}
+
+.sv-reply-actions{display:flex;gap:1px;align-items:center;flex-wrap:nowrap;margin-top:1px;margin-left:-5px}
+.sv-reply-action{border:0;background:transparent;color:var(--sayvi-text);opacity:.72;min-width:30px;width:30px;height:30px;padding:0 5px;border-radius:9px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.sv-reply-action:active{background:var(--sayvi-pressed);color:var(--sayvi-text);opacity:1}
+.sv-reply-action svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
+.sv-action-feedback{font-size:11px;color:var(--sayvi-secondary);padding:0 5px}
+.sv-action-feedback:empty{display:none}
+
+/* Own-message actions: long press, unobtrusive Smoke Glass sheet. */
+.sv-own-sheet[hidden]{display:none!important}
+.sv-own-sheet{position:absolute;inset:0;z-index:12;background:transparent;display:block;padding:0}
+.sv-own-panel{position:absolute;top:var(--sv-own-top,70px);left:var(--sv-own-left,12px);width:min(218px,calc(100% - 24px));max-width:none;background:var(--sayvi-menu);-webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);border:0;border-radius:19px;padding:6px;color:var(--sayvi-text);box-shadow:0 7px 28px rgba(0,0,0,.12)}
+.sv-own-sheet:has(.sv-own-edit:not([hidden])) .sv-own-panel{width:min(342px,calc(100% - 24px))}
+.sv-own-actions{display:grid;gap:2px}
+.sv-own-actions button{width:100%;min-height:39px;padding:7px 10px;display:flex;align-items:center;gap:10px;border:0;border-radius:13px;background:transparent;color:var(--sayvi-text);text-align:left;font:450 14px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-actions button:active{background:var(--sayvi-pressed)}
+.sv-own-actions button[data-own="delete"]{color:#d45f63}
+.sv-own-actions button svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.sv-own-cancel{display:none!important}
+.sv-own-edit[hidden],.sv-own-actions[hidden]{display:none!important}
+.sv-own-edit{padding:8px 5px 4px}
+.sv-own-edit label{font-size:15px;font-weight:600;display:block;margin:0 6px 10px}
+.sv-own-edit textarea{width:100%;min-height:105px;max-height:40dvh;resize:vertical;padding:12px 14px;border:0;border-radius:16px;background:var(--sayvi-glass);color:var(--sayvi-text);outline:none;font:400 16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-edit-buttons{display:flex;gap:8px;margin-top:10px}
+.sv-own-edit-buttons button{flex:1;min-height:42px;border:0;border-radius:14px;background:var(--sayvi-glass);color:var(--sayvi-text);font:500 14px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-edit-buttons button:last-child{background:var(--sayvi-action)}
+.turn[data-role="user"] .bubble{touch-action:pan-y;-webkit-touch-callout:none}
+@media(prefers-reduced-transparency:reduce){.sv-own-panel{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* Attachments are local drafts until Send. No bulky dock, one thin glass rail. */
+#sayviAttachmentTray[hidden]{display:none!important}
+#sayviAttachmentTray{position:absolute;z-index:6;bottom:calc(66px + env(safe-area-inset-bottom));left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));display:flex;gap:5px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;align-items:center;padding:4px 1px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+#sayviAttachmentTray::-webkit-scrollbar{display:none}
+/* Keep error/status messages above the attachment rail, never through it. */
+main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
+ bottom:calc(124px + env(safe-area-inset-bottom));
+ left:max(16px,env(safe-area-inset-left));
+ right:max(16px,env(safe-area-inset-right));
+ width:auto;
+ max-width:420px;
+ padding:8px 11px;
+ border-radius:12px;
+ background:var(--sayvi-menu);
+ color:var(--sayvi-text);
+ -webkit-backdrop-filter:blur(16px);
+ backdrop-filter:blur(16px);
+ font-size:12px;
+ line-height:1.4;
+}
+
+.sv-attach-chip{position:relative;display:block;width:50px;height:50px;flex:0 0 50px;scroll-snap-align:start;overflow:hidden;border-radius:12px;background:var(--sayvi-glass);color:var(--sayvi-text);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font:450 9px -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.sv-attach-thumb{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;object-fit:cover;background:var(--sayvi-pressed)}
+.sv-attach-fileicon{position:absolute;inset:0;display:grid;place-items:center;background:var(--sayvi-pressed)}
+.sv-attach-fileicon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+/* Recognizable document thumbnails without external icon assets. */
+.sv-attach-fileicon{background:transparent}
+.sv-file-sheet{position:relative;display:grid;place-items:center;width:29px;height:35px;margin-top:-5px;border-radius:3px 6px 3px 3px;background:#fafcff;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.sv-file-sheet::after{content:"";position:absolute;right:0;top:0;border-left:8px solid transparent;border-bottom:8px solid #dbe2ea}
+.sv-file-mark{position:relative;z-index:1;display:grid;place-items:center;min-width:26px;max-width:30px;height:17px;padding:0 2px;border-radius:2px;background:var(--sv-file-color,#718096);color:#fff;font:750 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.02em}
+.sv-file-mark[data-long="true"]{font-size:8px}
+.sv-attach-chip:has(.sv-file-sheet) .sv-attach-caption{font-size:8px;padding:5px 2px 2px}
+
+.sv-attach-caption{position:absolute;bottom:0;left:0;right:0;display:block;padding:7px 3px 3px;color:#fff;background:linear-gradient(transparent,rgba(10,15,19,.76));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.4);pointer-events:none}
+.sv-attach-remove{position:absolute;top:2px;right:2px;z-index:2;border:0;border-radius:50%;background:rgba(22,28,32,.78);color:#fff;width:18px;height:18px;display:grid;place-items:center;padding:0;font:400 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+#sayviMenu button svg{flex:none}
+
+/* Drag files or images directly into the existing input — no extra surface. */
+main.sv-file-drag #sayviField{isolation:isolate}
+main.sv-file-drag #sayviField::after{
+ content:'Отпустите фото или файл';
+ position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;
+ padding:0 10px;border-radius:999px;
+ background:var(--sayvi-glass);color:var(--sayvi-text);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ font:500 12px/1.15 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+ text-align:center;pointer-events:none;
+}
+main.sv-file-drag #sayviField textarea{opacity:.25}
+
+/* Quiet drawing canvas: the pen operates on actual pointer events. */
+#sayviDrawing[hidden]{display:none!important}
+#sayviDrawing{position:absolute;z-index:20;inset:0;background:var(--sayvi-scene);color:var(--sayvi-text);overflow:hidden}
+.sv-draw-shell{width:100%;height:100%;max-width:900px;margin:auto;display:flex;flex-direction:column;gap:12px;padding:calc(12px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.sv-draw-header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.sv-draw-header strong{font-size:16px;font-weight:560;letter-spacing:-.02em}
+.sv-draw-header button{border:0;background:transparent;color:var(--sayvi-text);font:500 14px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;min-height:40px;padding:0 7px}
+#sayviDrawAttach{color:var(--sayvi-control-text);font-weight:600}
+.sv-draw-tools{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.sv-draw-tools button{border:0;background:var(--sayvi-glass);color:var(--sayvi-text);border-radius:999px;min-height:35px;padding:0 12px;font:450 13px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;white-space:nowrap}
+.sv-draw-tools button[aria-pressed="true"]{background:var(--sayvi-pressed);font-weight:650}
+.sv-draw-board{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:18px;background:#f8f9f9}
+#sayviDrawCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.sv-draw-hint{margin:0;color:var(--sayvi-secondary);font:400 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center}
+
+
+/* Sent documents use the same file-type artwork as the attachment tray. */
+.sv-sent-files{display:flex;flex-direction:column;gap:5px;max-width:min(85%,520px);align-self:flex-end;margin-top:1px}
+.sv-sent-file{display:flex;align-items:center;gap:10px;min-height:57px;padding:6px 10px;border-radius:15px;background:var(--sayvi-glass);color:var(--sayvi-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
+.sv-sent-file .sv-attach-fileicon{position:relative;inset:auto;display:grid;place-items:center;flex:0 0 40px;width:40px;height:43px}
+.sv-sent-file .sv-file-sheet{margin:0}
+.sv-sent-file[role="button"]{cursor:pointer;width:100%;text-align:left;border:0;font-family:inherit}
+.sv-sent-file[role="button"]:focus-visible{outline:2px solid var(--sayvi-text);outline-offset:2px}
+.sv-sent-file[role="button"]:active{background:var(--sayvi-pressed)}
+.sv-sent-file-name{min-width:0;font-size:12px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word}
+.turn[data-role="user"].sv-has-files .bubble:empty{display:none}
+
+/* Image previews inside sent chat turns, not filename placeholders. */
+.turn[data-role="user"].sv-has-photos .bubble:empty{display:none}
+.sv-sent-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:min(270px,75vw);max-width:100%;margin-top:1px}
+.sv-sent-photo{position:relative;min-width:0;border-radius:13px;overflow:hidden;background:var(--sayvi-glass)}
+.sv-sent-photo img{display:block;width:100%;aspect-ratio:1;object-fit:cover;cursor:zoom-in}
+.sv-sent-photo span{position:absolute;bottom:0;left:0;right:0;padding:10px 4px 4px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:white;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;pointer-events:none}
+/* Compact sent-image previews scaled to the phone viewport; full size on tap. */
+.sv-sent-images:has(> :only-child){width:min(150px,40vw);display:block}
+.sv-sent-images:has(> :only-child) img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover}
+@media(max-width:599px){
+ .sv-sent-images:has(> :only-child){width:132px;max-width:40vw}
+ .sv-sent-photo{border-radius:14px}
+}
+@media(max-width:390px){
+ .sv-sent-images:has(> :only-child){width:120px;max-width:40vw}
+}
+@media(min-width:600px) and (max-width:899px){
+ .sv-sent-images:has(> :only-child){width:140px}
+}
+.sv-sent-images:has(> :only-child) span{display:none}
+.sv-sent-images:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr));width:min(210px,62vw)}
+#sayviImageViewer[hidden]{display:none!important}
+#sayviImageViewer{position:absolute;inset:0;z-index:21;display:flex;align-items:center;justify-content:center;padding:65px 12px 25px;background:rgba(8,12,16,.97)}
+#sayviImageViewer img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+#sayviImageViewer button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:16px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.15);color:white;font-size:26px}
+.sv-web-results{display:flex;flex-direction:column;gap:6px;width:min(100%,470px);margin-top:6px}
+.sv-web-result{display:flex;gap:9px;align-items:center;text-align:left;padding:9px 10px;width:100%;border:0;border-radius:13px;background:var(--sayvi-glass);color:var(--sayvi-text);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer}
+.sv-web-result-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.sv-web-result-title{font-size:13px;font-weight:580;line-height:1.35}
+.sv-web-result-desc{font-size:11px;line-height:1.4;color:var(--sayvi-secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.sv-web-result-domain{font-size:10px;color:var(--sayvi-secondary)}
+.sv-web-result-img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none}
+.sv-web-result{min-height:65px;transition:background .15s ease}
+.sv-web-result:active{background:color-mix(in srgb,var(--sayvi-glass) 80%,var(--sayvi-text) 7%)}
+.sv-web-result:focus-visible{outline:2px solid var(--sayvi-text);outline-offset:2px}
+.sv-web-result-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.sv-web-results-label{font-size:11px;color:var(--sayvi-secondary);padding:1px 2px 3px}
+.sv-web-result-domain{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:390px){.sv-web-result{padding:8px;gap:8px}.sv-web-result-img{width:46px;height:46px}}
+</style>
+</head>
+<body>
+<main>
+<nav id="sayviTopActions" aria-label="Навигация чата">
+ <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></a>
+ <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-label="История разговоров" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg></button>
+</nav>
+<div id="sayviMessages" role="log" aria-label="Переписка"></div>
+<div id="sayviSpeechBar" role="group" aria-label="Голосовой ввод" hidden>
+ <span class="sv-speech-dot" aria-hidden="true"></span>
+ <div class="sv-speech-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+ <time id="sayviSpeechTime" class="sv-speech-time">0:00</time>
+ <button type="button" id="sayviSpeechStop" aria-label="Остановить диктовку"><span class="sv-stop-square" aria-hidden="true"></span></button>
+ <button type="button" id="sayviSpeechSend" aria-label="Отправить распознанный текст"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-5.5 5.5M12 5l5.5 5.5"/></svg></button>
+</div>
+<section id="sayviDrawing" hidden aria-label="Нарисовать мысль" role="dialog" aria-modal="true">
+ <div class="sv-draw-shell">
+  <header class="sv-draw-header"><button id="sayviDrawCancel" type="button">Назад</button><strong>Нарисовать мысль</strong><button id="sayviDrawAttach" type="button">Прикрепить</button></header>
+  <div class="sv-draw-tools" aria-label="Инструменты рисования"><button type="button" data-draw-tool="pen" aria-pressed="true">Перо</button><button type="button" data-draw-tool="eraser" aria-pressed="false">Ластик</button><button type="button" id="sayviDrawUndo">Отменить</button><button type="button" id="sayviDrawClear">Очистить</button></div>
+  <div class="sv-draw-board"><canvas id="sayviDrawCanvas" aria-label="Область рисования пальцем или стилусом"></canvas></div>
+  <p class="sv-draw-hint">Рисуй пальцем или стилусом. На Samsung S Pen учитывается сила нажатия.</p>
+ </div>
+</section>
+<div id="sayviAttachmentTray" aria-label="Выбранные вложения" hidden></div>
+<input type="file" id="sayviPickPhoto" accept="image/jpeg,image/png,image/webp" multiple hidden aria-label="Выбрать фото">
+<input type="file" id="sayviPickFile" accept=".txt,.md,.markdown,.csv,.json,.xml,.log,.html,.css,.js,.pdf,.docx,.xlsx,.pptx,image/png,image/jpeg,image/webp,text/plain,application/pdf" multiple hidden aria-label="Выбрать файлы">
+<div id="sayviComposer">
+<button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+<div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
+<button id="sayviMic" type="button" aria-label="Начать голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
+<button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
+<button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button>
+</div>
+<div id="sayviMenu" role="group" aria-label="Действия чата" hidden>
+ <button type="button" id="sayviNewChat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><span>Новый разговор</span></button>
+ <button type="button" id="sayviAttachFile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.8 13.5 7a3.4 3.4 0 0 1 4.8 4.8l-7.2 7.3a5.2 5.2 0 0 1-7.4-7.3l7.7-7.7"/></svg><span>Добавить фото или файл</span></button>
+ <button type="button" id="sayviDrawIdea"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10.4-10.4a2.2 2.2 0 0 0-3.1-3.1L5.4 15.9 4 20zM14.3 7l3.3 3.3M4 6.5h5"/></svg><span>Нарисовать мысль</span></button>
+</div>
+<section id="sayviHistory" aria-label="История разговоров" hidden>
+ <div class="history-shell">
+  <div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div>
+  <label class="history-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.3 4.3"/></svg><input id="sayviHistorySearch" type="search" placeholder="Поиск разговоров" aria-label="Поиск по истории" autocomplete="off"></label>
+  <div id="sayviHistoryList"></div>
+ </div>
+ <div id="sayviHistoryActions" class="history-action-sheet" hidden>
+  <div class="history-action-inner" role="group" aria-label="Действия с разговором">
+   <button type="button" id="sayviHistoryDelete" data-action="delete">Удалить разговор</button>
+   <button type="button" id="sayviHistoryActionCancel">Отмена</button>
+  </div>
+ </div>
+</section>
+<div id="sayviOwnSheet" class="sv-own-sheet" hidden aria-label="Действия с сообщением">
+ <div class="sv-own-panel">
+  <div id="sayviOwnActions" class="sv-own-actions">
+   <button type="button" data-own="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.7-1 10-10a2.2 2.2 0 0 0-3.1-3.1l-10 10L4 20zM14.5 7.5l3 3"/></svg>Редактировать</button>
+   <button type="button" data-own="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Копировать</button>
+   <button type="button" data-own="delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7.5 7l.8 12h7.4l.8-12M10 10.5v5M14 10.5v5"/></svg>Удалить</button>
+   <button type="button" class="sv-own-cancel" data-own="cancel">Отмена</button>
+  </div>
+  <div id="sayviOwnEdit" class="sv-own-edit" hidden>
+   <label for="sayviOwnText">Редактировать сообщение</label>
+   <textarea id="sayviOwnText" maxlength="8000" rows="4"></textarea>
+   <div class="sv-own-edit-buttons"><button type="button" id="sayviOwnEditCancel">Отмена</button><button type="button" id="sayviOwnEditSave">Сохранить</button></div>
+  </div>
+ </div>
+</div>
+<div id="sayviImageViewer" hidden role="dialog" aria-modal="true" aria-label="Изображение"><button id="sayviImageViewerClose" type="button" aria-label="Закрыть">×</button><img id="sayviImageViewerImg" alt="Фото из разговора"></div>
+<div id="sayviStatus" role="status" aria-live="polite"></div>
+</main>
+<script>
+(()=>{
+ 'use strict';
+ const input=document.getElementById('sayviInput'),list=document.getElementById('sayviMessages');
+ // Keep the full-screen scene aligned to the visible viewport on iOS Safari.
+ // Only the messages scroll; composer/menu remain anchored to the scene.
+ const scene=document.querySelector('main');
+ let viewportFrame=0;
+ function fitVisibleViewport(){
+  if(viewportFrame)return;
+  viewportFrame=requestAnimationFrame(()=>{
+   viewportFrame=0;
+   const vv=window.visualViewport;
+   if(vv){
+    scene.style.setProperty('--sayvi-viewport-top',vv.offsetTop+'px');
+    scene.style.setProperty('--sayvi-viewport-height',vv.height+'px');
+   }else{
+    scene.style.setProperty('--sayvi-viewport-top','0px');
+    scene.style.setProperty('--sayvi-viewport-height',window.innerHeight+'px');
+   }
+  });
+ }
+ fitVisibleViewport();
+ window.visualViewport?.addEventListener('resize',fitVisibleViewport,{passive:true});
+ window.visualViewport?.addEventListener('scroll',fitVisibleViewport,{passive:true});
+ window.addEventListener('resize',fitVisibleViewport,{passive:true});
+ // Fade older messages only after scrolling; the first visible line stays crisp.
+ const updateScrollEdge=()=>list.classList.toggle('is-scrolled',list.scrollTop>2);
+ list.addEventListener('scroll',updateScrollEdge,{passive:true});
+ const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
+ const stopReplyButton=document.getElementById('sayviStopReply');
+ const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
+ const status=document.getElementById('sayviStatus');
+ let active=null,sequence=0;
+ const historyTurns=[];
+ const answers=new Map();
+ const storageKey='seyveo.sayvi.conversations.v1';
+ let archive=[],currentId='conversation-'+Date.now(),savedTurns=[];
+ // In-memory reference for a recent photo in this conversation; never persisted.
+ let recentVisual=null;
+ function persist(){
+  try{localStorage.setItem(storageKey,JSON.stringify({archive:archive.slice(0,40),currentId,turns:savedTurns.slice(-120)}));}
+  catch(error){status.textContent='Историю не удалось сохранить на этом устройстве.';}
+ }
+ function snapshot(){
+  return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
+ }
+ function renderTurns(turns){
+  recentVisual=null;
+  answers.clear();list.replaceChildren();savedTurns=[];
+  for(const turn of turns){
+   if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files);
+   if(turn.role==='assistant'&&turn.sources?.length){
+    const index=savedTurns.length-1;
+    savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
+    renderWebResults('loaded-'+index,turn.sources);
+   }
+  }
+  historyTurns.length=0;
+  for(const turn of savedTurns.slice(-12)){
+   if(turn.role==='user'||turn.role==='assistant')historyTurns.push({role:turn.role,content:turn.text.slice(0,450)});
+  }
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+ }
+ function restore(){
+  try{
+   const data=JSON.parse(localStorage.getItem(storageKey)||'null');
+   if(!data||typeof data!=='object')return;
+   archive=Array.isArray(data.archive)?data.archive.filter(item=>item&&Array.isArray(item.turns)).slice(0,40):[];
+   currentId=typeof data.currentId==='string'?data.currentId:currentId;
+   if(Array.isArray(data.turns))renderTurns(data.turns);
+  }catch{status.textContent='Не удалось прочитать сохранённую историю.'}
+ }
+ const historyTop=document.getElementById('sayviHistoryTop');
+ const historyPanel=document.getElementById('sayviHistory');
+ const historyList=document.getElementById('sayviHistoryList');
+ const historySearch=document.getElementById('sayviHistorySearch');
+ const historyActions=document.getElementById('sayviHistoryActions');
+ let historySelected=null;
+ const historyTime=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'});
+ const historyDate=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'});
+ function convoDate(item){
+  const n=Number(item.updated)||Number(item.id?.replace('conversation-',''))||0;
+  return n>0?new Date(n):new Date();
+ }
+ function dateGroup(date){
+  const today=new Date();today.setHours(0,0,0,0);
+  const day=new Date(date);day.setHours(0,0,0,0);
+  const delta=Math.round((today-day)/86400000);
+  if(delta===0)return 'Сегодня';
+  if(delta===1)return 'Вчера';
+  if(delta>=0&&delta<7)return 'Последние 7 дней';
+  return historyDate.format(date);
+ }
+ function conversationsForHistory(){
+  const seen=new Set();
+  return [snapshot(),...archive].filter(item=>{
+   if(!item||!Array.isArray(item.turns)||!item.turns.length||seen.has(item.id))return false;
+   seen.add(item.id);return true;
+  }).sort((a,b)=>convoDate(b)-convoDate(a));
+ }
+ function emptyHistory(text,detail){
+  const el=document.createElement('div');el.className='history-empty';
+  el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 10h8M8 14h5"/></svg>';
+  const title=document.createElement('strong');title.textContent=text;
+  const subtitle=document.createElement('span');subtitle.textContent=detail;
+  el.append(title,subtitle);historyList.append(el);
+ }
+ function closeHistoryActions(){historySelected=null;historyActions.hidden=true}
+ function renderHistory(){
+  historyList.replaceChildren();
+  const query=historySearch.value.trim().toLocaleLowerCase('ru');
+  const items=conversationsForHistory().filter(item=>!query||item.turns.some(t=>typeof t.text==='string'&&t.text.toLocaleLowerCase('ru').includes(query)));
+  if(!items.length){
+   emptyHistory(query?'Ничего не найдено':'Пока нет разговоров',query?'Попробуйте другой запрос.':'Ваши беседы с Сэйви будут появляться здесь.');
+   return;
+  }
+  let lastGroup='';
+  for(const item of items){
+   const date=convoDate(item),group=dateGroup(date);
+   if(group!==lastGroup){
+    const heading=document.createElement('div');heading.className='history-group-title';
+    heading.textContent=group;historyList.append(heading);lastGroup=group;
+   }
+   const first=item.turns.find(t=>t.role==='user')?.text?.trim()||'Разговор с Сэйви';
+   const last=item.turns[item.turns.length-1]?.text?.trim()||'';
+   const row=document.createElement('div');row.className='history-row';
+   const open=document.createElement('button');open.className='history-item';open.type='button';
+   const name=document.createElement('span');name.className='history-item-title';name.textContent=first.replace(/\s+/g,' ').slice(0,120);
+   const sub=document.createElement('div');sub.className='history-item-subtitle';
+   const detail=document.createElement('span');detail.textContent=last.replace(/\s+/g,' ').slice(0,125);
+   const time=document.createElement('time');time.className='history-item-time';time.textContent=historyTime.format(date);
+   sub.append(detail,time);open.append(name,sub);
+   open.setAttribute('aria-label','Открыть разговор: '+name.textContent);
+   open.addEventListener('click',()=>{
+    if(active)return;
+    if(item.id!==currentId){
+     if(savedTurns.length)archive.unshift(snapshot());
+     archive=archive.filter(entry=>entry.id!==item.id).slice(0,40);
+     currentId=item.id;renderTurns(item.turns);persist();
+    }
+    closeHistory();
+   });
+   const more=document.createElement('button');more.type='button';more.className='history-more';more.setAttribute('aria-label','Действия с разговором');
+   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+   more.addEventListener('click',()=>{historySelected=item.id;historyActions.hidden=false});
+   row.append(open,more);historyList.append(row);
+  }
+ }
+ function closeHistory(){closeHistoryActions();historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
+ function openHistory(){
+  closeMenu();historySearch.value='';renderHistory();
+  historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
+ }
+ historyTop.addEventListener('click',openHistory);
+ document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
+ historySearch.addEventListener('input',renderHistory);
+ document.getElementById('sayviHistoryActionCancel').addEventListener('click',closeHistoryActions);
+ historyActions.addEventListener('click',event=>{if(event.target===historyActions)closeHistoryActions()});
+ document.getElementById('sayviHistoryDelete').addEventListener('click',()=>{
+  const id=historySelected;if(!id)return;
+  // Destructive action requires explicit confirmation.
+  if(!window.confirm('Удалить этот разговор без возможности восстановления?'))return;
+  if(id===currentId){
+   if(active){active.abort();active=null;updateControls()}
+   currentId='conversation-'+Date.now();savedTurns=[];historyTurns.length=0;
+   answers.clear();list.replaceChildren();list.scrollTop=0;updateScrollEdge();
+   input.value='';updateControls();status.textContent='';
+  }
+  archive=archive.filter(item=>item.id!==id);
+  persist();closeHistoryActions();renderHistory();
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape'||historyPanel.hidden)return;
+  if(!historyActions.hidden)closeHistoryActions();else closeHistory();
+ });
+  function updateControls(){
+  const typed=!!input.value.trim();
+  input.disabled=!!active;
+  const canSend=typed||pendingAttachments.length>0;
+  sendButton.hidden=!!active||!canSend;
+  mic.hidden=!!active||canSend;
+  stopReplyButton.hidden=!active;
+ }
+
+ const replyIcons={
+  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  retry:'<path d="M3.8 11a8.3 8.3 0 1 1 2.4 6M3.8 6.5V11h4.5"/>',
+  note:'<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-4.4 6-4.4 9s1.4 6 4.4 9M12 3c3 3 4.4 6 4.4 9s-1.4 6-4.4 9"/>',
+  speak:'<path d="M4 9v6h4l5 4V5L8 9H4zM16 9a5 5 0 0 1 0 6M18.5 6a9 9 0 0 1 0 12"/>',
+  share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>'
+ };
+ function miniAction(icon,label,callback){
+  const b=document.createElement('button');b.type='button';b.className='sv-reply-action';
+  b.title=label;b.setAttribute('aria-label',label);
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+replyIcons[icon]+'</svg>';
+  b.addEventListener('click',callback);return b;
+ }
+ async function copyReply(value,feedback){
+  try{
+   if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(value);
+   else{
+    const t=document.createElement('textarea');t.value=value;t.style.cssText='position:fixed;opacity:0';
+    document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();
+    if(!ok)throw Error('copy');
+   }
+   feedback.textContent='Скопировано';
+  }catch{feedback.textContent='Не удалось скопировать'}
+ }
+ function saveReplyNote(value,feedback){
+  try{
+   const key='seyveo-notes-v1',data=JSON.parse(localStorage.getItem(key)||'[]');
+   const notes=Array.isArray(data)?data.filter(n=>n&&typeof n.id==='string'&&typeof n.text==='string'):[];
+   const text=value.slice(0,8000);
+   if(!text.trim())return;
+   const note={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now(),preserveLines:true};
+   localStorage.setItem(key,JSON.stringify([note,...notes].slice(0,100)));
+   window.dispatchEvent(new Event('seyveo:notes-changed'));
+   feedback.textContent='Сохранено в Блокнот';
+  }catch{feedback.textContent='Не удалось сохранить заметку'}
+ }
+ function findReplyQuestion(turn){
+  let previous=turn.previousElementSibling;
+  while(previous){
+   if(previous.dataset.role==='user')return previous.querySelector('.bubble')?.textContent?.trim()||'';
+   previous=previous.previousElementSibling;
+  }
+  return '';
+ }
+ let speakingTurn=null,speechButton=null;
+ let voiceAudio=null,voiceBlobUrl=null,voiceController=null,voiceGeneration=0;
+ function stopReplySpeech(){
+  ++voiceGeneration;
+  try{voiceController?.abort()}catch{}
+  voiceController=null;
+  if(voiceAudio){try{voiceAudio.pause();voiceAudio.removeAttribute('src');voiceAudio.load()}catch{}}
+  voiceAudio=null;
+  if(voiceBlobUrl){URL.revokeObjectURL(voiceBlobUrl);voiceBlobUrl=null}
+  try{window.speechSynthesis?.cancel()}catch{}
+  if(speechButton){
+   speechButton.setAttribute('aria-pressed','false');
+   speechButton.setAttribute('aria-label','Озвучить ответ');
+   speechButton.title='Озвучить ответ';
+  }
+  speakingTurn=null;speechButton=null;
+ }
+ function voicePhrases(text){
+  // Keep sentences complete. The private voice endpoint accepts <=450 chars.
+  const source=String(text||'').replace(/\s+/gu,' ').trim();
+  const units=source.match(/[^.!?…]+(?:[.!?…]+(?=\s|$)|$)/gu)||[source];
+  const chunks=[];
+  let current='';
+  function add(part){
+   const p=part.trim();if(!p)return;
+   if(current&&current.length+1+p.length>420){chunks.push(current);current=''}
+   if(p.length<=420){current=current?current+' '+p:p;return}
+   // Rare extra-long sentence: split at word boundaries only.
+   for(const word of p.split(/\s+/u)){
+    if(!word)continue;
+    if(current&&current.length+1+word.length>420){chunks.push(current);current=''}
+    if(word.length>420){
+     if(current){chunks.push(current);current=''}
+     for(let n=0;n<word.length;n+=420)chunks.push(word.slice(n,n+420));
+    }else current=current?current+' '+word:word;
+   }
+  }
+  for(const unit of units)add(unit);
+  if(current)chunks.push(current);
+  return chunks;
+ }
+ async function toggleReplySpeech(turn,bubble,button,feedback){
+  if(speakingTurn===turn){stopReplySpeech();return}
+  stopReplySpeech();
+  const parts=voicePhrases(bubble.textContent.trim());
+  if(!parts.length)return;
+  const generation=voiceGeneration;
+  speakingTurn=turn;speechButton=button;
+  button.setAttribute('aria-pressed','true');
+  button.setAttribute('aria-label','Остановить озвучивание');
+  button.title='Остановить озвучивание';
+  feedback.textContent='';
+  const controller=new AbortController();voiceController=controller;
+  // Fetch only one phrase ahead while the current phrase is playing.
+  // Backend serializes CPU synthesis, so this never runs multiple models.
+  const prepared=new Map();
+  async function prepare(index){
+   if(index>=parts.length)return null;
+   if(prepared.has(index))return prepared.get(index);
+   const task=(async()=>{
+    const response=await fetch('/api/seyveo-private-tts',{
+     method:'POST',credentials:'same-origin',
+     headers:{'content-type':'application/json'},
+     body:JSON.stringify({text:parts[index]}),signal:controller.signal
+    });
+    if(!response.ok||!(response.headers.get('content-type')||'').includes('audio/wav'))
+     throw Error('voice-unavailable');
+    const blob=await response.blob();
+    if(blob.size<44||blob.size>15000000)throw Error('voice-invalid-audio');
+    return blob;
+   })();
+   // A prefetched request may fail while an earlier clip plays.
+   // Attach a handler right away to avoid an unhandled rejection.
+   task.catch(()=>{});
+   prepared.set(index,task);
+   return task;
+  }
+  try{
+   for(let n=0;n<parts.length;n++){
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    const blob=await prepare(n);
+    prepared.delete(n);
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    const url=URL.createObjectURL(blob);voiceBlobUrl=url;
+    const audio=new Audio(url);voiceAudio=audio;
+    // Trigger synthesis of the next phrase before playing this clip.
+    // No user-facing loading or "part 1/3" text.
+    if(n+1<parts.length)prepare(n+1).catch(()=>{});
+    await new Promise((resolve,reject)=>{
+     const aborted=()=>resolve();
+     controller.signal.addEventListener('abort',aborted,{once:true});
+     audio.onended=resolve;
+     audio.onerror=()=>reject(Error('voice-playback-error'));
+     const playback=audio.play();
+     if(playback&&typeof playback.catch==='function')playback.catch(reject);
+    });
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    audio.pause();audio.removeAttribute('src');
+    voiceAudio=null;URL.revokeObjectURL(url);voiceBlobUrl=null;
+   }
+   if(generation===voiceGeneration){stopReplySpeech();feedback.textContent=''}
+  }catch(error){
+   if(generation!==voiceGeneration||controller.signal.aborted)return;
+   stopReplySpeech();
+   feedback.textContent='Наш голос Сэйви временно недоступен. Ответ целиком остался в чате.';
+  }
+ }
+ function browserSearchForReply(turn,bubble,feedback){
+  const question=findReplyQuestion(turn);
+  const answer=bubble.textContent.trim();
+  const q=(question||answer.slice(0,160)).slice(0,240);
+  if(!q){feedback.textContent='Не удалось определить тему поиска';return}
+  stopReplySpeech();
+  // Home owns the existing Browser. Pass only the search phrase, never
+  // the whole conversation, and do not open an external browser.
+  window.location.assign('./index.html?seyveoBrowserSearch='+encodeURIComponent(q));
+ }
+ function addReplyActions(turn,bubble){
+  const row=document.createElement('div');row.className='sv-reply-actions';
+  row.setAttribute('aria-label','Действия с ответом Сэйви');
+  const feedback=document.createElement('div');feedback.className='sv-action-feedback';
+  feedback.setAttribute('role','status');
+  const play=miniAction('speak','Озвучить ответ',()=>toggleReplySpeech(turn,bubble,play,feedback));
+  play.setAttribute('aria-pressed','false');
+  row.append(
+   miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback)),
+   miniAction('retry','Повторить ответ',()=>{
+    if(active){feedback.textContent='Ответ ещё идёт';return}
+    const question=findReplyQuestion(turn);
+    if(!question){feedback.textContent='Не найден исходный вопрос';return}
+    stopReplySpeech();
+    ask(question,{skipUser:true});
+   }),
+   miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
+   miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
+   play,
+   miniAction('share','Поделиться',async()=>{
+    if(navigator.share){
+     try{await navigator.share({text:bubble.textContent})}
+     catch(error){if(error?.name!=='AbortError')copyReply(bubble.textContent,feedback)}
+    }else copyReply(bubble.textContent,feedback);
+   })
+  );
+  turn.append(row,feedback);
+ }
+ window.addEventListener('pagehide',stopReplySpeech);
+
+ const ownSheet=document.getElementById('sayviOwnSheet');
+ const ownActions=document.getElementById('sayviOwnActions');
+ const ownEdit=document.getElementById('sayviOwnEdit');
+ const ownText=document.getElementById('sayviOwnText');
+ let ownBubble=null,ownHoldTimer=null,ownPressPoint=null,ownIgnoreClick=false;
+ function closeOwnActions(){
+  clearTimeout(ownHoldTimer);ownHoldTimer=null;ownBubble=null;
+  ownSheet.hidden=true;ownEdit.hidden=true;ownActions.hidden=false;
+ }
+ function positionOwnPanel(){
+  if(!ownBubble||ownSheet.hidden)return;
+  const panel=ownSheet.querySelector('.sv-own-panel');
+  const host=ownSheet.getBoundingClientRect();
+  const anchor=ownBubble.getBoundingClientRect();
+  const width=panel.offsetWidth,height=panel.offsetHeight;
+  const left=Math.min(Math.max(12,anchor.right-host.left-width),Math.max(12,host.width-width-12));
+  const roomAbove=anchor.top-host.top-10;
+  const below=anchor.bottom-host.top+8;
+  const top=roomAbove>=height+52?roomAbove-height:
+   (below+height<=host.height-100?below:Math.max(55,Math.min(roomAbove-height,host.height-height-100)));
+  panel.style.left=Math.round(left)+'px';
+  panel.style.top=Math.round(Math.max(55,top))+'px';
+ }
+ function showOwnActions(bubble){
+  if(active)return;
+  ownBubble=bubble;ownActions.hidden=false;ownEdit.hidden=true;ownSheet.hidden=false;
+  positionOwnPanel();
+ }
+ function reindexSavedBubbles(){
+  let idx=0;
+  for(const turn of list.querySelectorAll('.turn[data-role="user"],.turn[data-role="assistant"]')){
+   const bubble=turn.querySelector('.bubble');
+   if(bubble)bubble.dataset.savedIndex=String(idx++);
+  }
+ }
+ function rebuildHistoryContext(){
+  historyTurns.length=0;
+  for(const entry of savedTurns.slice(-12)){
+   if(entry.role==='user'||entry.role==='assistant')
+    historyTurns.push({role:entry.role,content:entry.text.slice(0,450)});
+  }
+ }
+ function modifyOwnMessage(mode){
+  if(!ownBubble)return;
+  const bubble=ownBubble,turn=bubble.closest('.turn');
+  const i=Number(bubble.dataset.savedIndex);
+  if(!turn||!Number.isInteger(i)||i<0||i>=savedTurns.length||savedTurns[i].role!=='user')return;
+  if(mode==='edit'){
+   ownActions.hidden=true;ownEdit.hidden=false;ownText.value=bubble.textContent;positionOwnPanel();ownText.focus();return;
+  }
+  if(mode==='copy'){
+   const value=bubble.textContent;
+   closeOwnActions();copyReply(value,status);return;
+  }
+  if(mode==='delete'){
+   if(!window.confirm('Удалить это сообщение?'))return;
+   savedTurns.splice(i,1);
+   turn.remove();
+   reindexSavedBubbles();rebuildHistoryContext();persist();
+   closeOwnActions();status.textContent='Сообщение удалено';
+  }
+ }
+ ownActions.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-own]');if(!button)return;
+  const mode=button.dataset.own;
+  if(mode==='cancel')closeOwnActions();
+  else modifyOwnMessage(mode);
+ });
+ document.getElementById('sayviOwnEditCancel').addEventListener('click',closeOwnActions);
+ document.getElementById('sayviOwnEditSave').addEventListener('click',()=>{
+  if(!ownBubble)return;
+  const value=ownText.value.trim();
+  if(!value){status.textContent='Сообщение не может быть пустым';return}
+  const i=Number(ownBubble.dataset.savedIndex);
+  if(!Number.isInteger(i)||i<0||i>=savedTurns.length||savedTurns[i].role!=='user')return;
+  savedTurns[i].text=value;
+  ownBubble.textContent=value;
+  rebuildHistoryContext();persist();closeOwnActions();
+  status.textContent='Сообщение изменено. Предыдущий ответ Сэйви не пересчитывается.';
+ });
+ ownSheet.addEventListener('click',event=>{if(event.target===ownSheet)closeOwnActions()});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!ownSheet.hidden)closeOwnActions()});
+ function attachOwnGesture(bubble){
+  bubble.addEventListener('contextmenu',event=>{
+   event.preventDefault();clearTimeout(ownHoldTimer);
+   ownIgnoreClick=true;showOwnActions(bubble);
+  });
+  bubble.addEventListener('pointerdown',event=>{
+   if(event.pointerType==='mouse'&&event.button!==0)return;
+   clearTimeout(ownHoldTimer);
+   ownPressPoint={x:event.clientX,y:event.clientY,pointerId:event.pointerId};
+   ownHoldTimer=setTimeout(()=>{
+    ownHoldTimer=null;ownIgnoreClick=true;
+    showOwnActions(bubble);
+   },500);
+  });
+  bubble.addEventListener('pointermove',event=>{
+   if(!ownPressPoint||ownPressPoint.pointerId!==event.pointerId)return;
+   if(Math.abs(event.clientX-ownPressPoint.x)>10||Math.abs(event.clientY-ownPressPoint.y)>10){
+    clearTimeout(ownHoldTimer);ownHoldTimer=null;
+   }
+  });
+  for(const type of ['pointerup','pointercancel','pointerleave']){
+   bubble.addEventListener(type,()=>{clearTimeout(ownHoldTimer);ownHoldTimer=null;ownPressPoint=null});
+  }
+  bubble.addEventListener('click',event=>{
+   if(ownIgnoreClick){event.preventDefault();ownIgnoreClick=false}
+  });
+ }
+
+ const imageViewer=document.getElementById('sayviImageViewer');
+ const imageViewerImg=document.getElementById('sayviImageViewerImg');
+ function closeSentPhoto(){imageViewer.hidden=true;imageViewerImg.removeAttribute('src')}
+ document.getElementById('sayviImageViewerClose').addEventListener('click',closeSentPhoto);
+ imageViewer.addEventListener('click',e=>{if(e.target===imageViewer)closeSentPhoto()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!imageViewer.hidden)closeSentPhoto()});
+ function safeSentPhotos(value){
+  if(!Array.isArray(value))return [];
+  return value.slice(0,6).filter(a=>a&&typeof a.name==='string'&&typeof a.thumb==='string'
+   &&a.thumb.length<110000&&a.thumb.startsWith('data:image/jpeg;base64,'))
+   .map(a=>({name:a.name.slice(0,120),thumb:a.thumb}));
+ }
+ // Only live browser-session file objects are kept. No private binary data
+ // is placed into localStorage or sent to another provider.
+ const sentDocumentBlobs=new Map();
+ function openSentDocument(file){
+  if(!file){status.textContent='Файл недоступен после обновления страницы. Прикрепи его ещё раз.';return}
+  const url=URL.createObjectURL(file);
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(ext==='pdf'){
+   const tab=window.open(url,'_blank','noopener');
+   if(!tab){URL.revokeObjectURL(url);status.textContent='Разреши открытие вкладки для просмотра PDF.';return}
+   // The new tab may still be reading the blob: release later.
+   setTimeout(()=>URL.revokeObjectURL(url),120000);
+  }else{
+   const link=document.createElement('a');
+   link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),10000);
+  }
+ }
+ function showSentFiles(turn,files){
+  turn.querySelector('.sv-sent-files')?.remove();
+  const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
+  turn.classList.toggle('sv-has-files',names.length>0);
+  if(!names.length)return;
+  const group=document.createElement('div');group.className='sv-sent-files';
+  for(const name of names){
+   const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
+   tile.setAttribute('aria-label','Открыть файл '+name);
+   const original=(sentDocumentBlobs.get(turn)||[]).find(f=>f.name===name);
+   tile.addEventListener('click',()=>openSentDocument(original));
+   tile.append(makeDocumentIcon({name}));
+   const label=document.createElement('span');label.className='sv-sent-file-name';
+   label.textContent=name;label.title=name;tile.append(label);group.append(tile);
+  }
+  turn.append(group);
+ }
+ function showSentPhotos(turn,photos){
+  const valid=safeSentPhotos(photos);
+  turn.querySelector('.sv-sent-images')?.remove();
+  turn.classList.toggle('sv-has-photos',valid.length>0);
+  if(!valid.length)return;
+  const gallery=document.createElement('div');gallery.className='sv-sent-images';
+  for(const item of valid){
+   const tile=document.createElement('div');tile.className='sv-sent-photo';
+   const image=document.createElement('img');image.src=item.thumb;image.alt=item.name;image.loading='lazy';
+   image.addEventListener('click',()=>{
+    imageViewerImg.src=item.thumb;imageViewer.hidden=false;
+   });
+   const label=document.createElement('span');label.textContent=item.name;
+   tile.append(image,label);gallery.append(tile);
+  }
+  turn.append(gallery);
+ }
+ async function makeSentPhoto(file){
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type))return null;
+  const url=URL.createObjectURL(file);
+  try{
+   const img=await new Promise((resolve,reject)=>{
+    const image=new Image();image.onload=()=>resolve(image);
+    image.onerror=()=>reject(Error('decode'));image.src=url;
+   });
+   if(!img.naturalWidth||!img.naturalHeight)return null;
+   const scale=Math.min(1,280/Math.max(img.naturalWidth,img.naturalHeight));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+   canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+   const ctx=canvas.getContext('2d');if(!ctx)return null;
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+   ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   const thumb=canvas.toDataURL('image/jpeg',.65);
+   return thumb.length<=110000?{name:file.name,thumb}:null;
+  }finally{URL.revokeObjectURL(url)}
+ }
+ // Render a safe Markdown subset in replies, not raw HTML.
+ // Keep the original source intact for saved history and copying.
+ function renderAssistantText(bubble,source){
+  const fragment=document.createDocumentFragment();
+  const lines=String(source).split('\n');
+  lines.forEach((raw,index)=>{
+   if(index)fragment.append(document.createTextNode('\n'));
+   const line=raw.replace(/^(\s{0,3})#{1,4}\s+/u,'$1')
+    .replace(/^(\s{0,3})[-*+]\s+(?=\S)/u,'$1• ');
+   const pattern=/\*\*([^*\n]+)\*\*/gu;
+   let cursor=0,match;
+   while((match=pattern.exec(line))){
+    if(match.index>cursor)fragment.append(document.createTextNode(line.slice(cursor,match.index)));
+    const strong=document.createElement('strong');
+    strong.textContent=match[1];fragment.append(strong);
+    cursor=pattern.lastIndex;
+   }
+   if(cursor<line.length)fragment.append(document.createTextNode(line.slice(cursor)));
+  });
+  bubble.replaceChildren(fragment);
+ }
+
+ function append(role,id,message,save=true,photos=null,files=null){
+  const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
+  let bubble=answers.get(id);
+  if(!bubble){
+   const turn=document.createElement('div');turn.className='turn';turn.dataset.role=role;
+   if(role==='assistant'){
+    const title=document.createElement('span');title.className='speaker';title.textContent='Сэйви';turn.append(title);
+   }
+   bubble=document.createElement('div');bubble.className='bubble';turn.append(bubble);
+   if(role==='assistant')addReplyActions(turn,bubble);
+   else attachOwnGesture(bubble);
+   list.append(turn);answers.set(id,bubble);
+  }
+  if(role==='assistant')renderAssistantText(bubble,message);
+  else bubble.textContent=message;
+  if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
+  if(role==='user')showSentFiles(bubble.closest('.turn'),files);
+  if(save){
+   const index=Number(bubble.dataset.savedIndex);
+   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){
+    savedTurns[index].text=message;
+    if(role==='user'&&photos?.length)savedTurns[index].photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)savedTurns[index].files=files.slice(0,6);
+   }else{
+    bubble.dataset.savedIndex=String(savedTurns.length);
+    const entry={role,text:message};
+    if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)entry.files=files.slice(0,6);
+    savedTurns.push(entry);
+   }
+   persist();
+  }else{
+   bubble.dataset.savedIndex=String(savedTurns.length);
+   const entry={role,text:message};
+   if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)entry.files=files.slice(0,6);
+   savedTurns.push(entry);
+  }
+  if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+ }
+ function showThinking(){
+  const turn=document.createElement('div');
+  turn.className='turn sayvi-thinking';
+  turn.setAttribute('role','status');
+  turn.setAttribute('aria-label','Сэйви думает');
+  const label=document.createElement('span');
+  label.className='sayvi-thinking-label';
+  label.textContent='Сэйви';
+  turn.append(label);
+  list.append(turn);
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+  return ()=>turn.remove();
+ }
+
+ // Local attachment drafts. Text documents can travel over the existing
+ // streaming message protocol; binary uploads require an acknowledged server.
+ const attachmentTray=document.getElementById('sayviAttachmentTray');
+ const photoPicker=document.getElementById('sayviPickPhoto');
+ const filePicker=document.getElementById('sayviPickFile');
+ let pendingAttachments=[];
+ const readableTextTypes=/^(text\/|application\/(?:json|xml|javascript))/i;
+ const readableExtensions=/\.(?:txt|md|markdown|csv|json|xml|log|html|css|js)$/i;
+ const documentBadges={
+  pdf:['PDF','#df3344'],docx:['W','#2875db'],doc:['W','#2875db'],
+  xlsx:['X','#21865b'],xls:['X','#21865b'],pptx:['P','#dd7139'],
+  txt:['TXT','#64748b'],md:['MD','#64748b'],markdown:['MD','#64748b'],
+  csv:['CSV','#21865b'],json:['JSON','#8666b5'],xml:['XML','#8666b5'],
+  log:['LOG','#64748b'],html:['HTML','#d56a32'],css:['CSS','#2875db'],js:['JS','#c49b21']
+ };
+ function makeDocumentIcon(file){
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  const [label,color]=documentBadges[ext]||['FILE','#64748b'];
+  const wrapper=document.createElement('span');wrapper.className='sv-attach-fileicon';
+  const paper=document.createElement('span');paper.className='sv-file-sheet';
+  const badge=document.createElement('span');badge.className='sv-file-mark';
+  badge.dataset.long=String(label.length>3);
+  badge.style.setProperty('--sv-file-color',color);
+  badge.textContent=label;paper.append(badge);wrapper.append(paper);
+  wrapper.setAttribute('aria-label',ext.toUpperCase()+' файл');
+  return wrapper;
+ }
+ function clearAttachments(){
+  for(const a of pendingAttachments){if(a.preview)URL.revokeObjectURL(a.preview)}
+  pendingAttachments=[];
+  photoPicker.value='';filePicker.value='';renderAttachments();
+ }
+ function renderAttachments(){
+  attachmentTray.replaceChildren();
+  attachmentTray.hidden=pendingAttachments.length===0;
+  for(const entry of pendingAttachments){
+   const chip=document.createElement('div');chip.className='sv-attach-chip';
+   const visual=entry.preview?document.createElement('img'):makeDocumentIcon(entry.file);
+   if(entry.preview){visual.className='sv-attach-thumb';visual.src=entry.preview;visual.alt=''}
+   const label=document.createElement('span');label.className='sv-attach-caption';label.textContent=entry.file.name;label.title=entry.file.name;
+   const remove=document.createElement('button');remove.type='button';remove.className='sv-attach-remove';
+   remove.textContent='×';remove.setAttribute('aria-label','Убрать '+entry.file.name);
+   remove.addEventListener('click',()=>{
+    if(active)return;
+    if(entry.preview)URL.revokeObjectURL(entry.preview);
+    pendingAttachments=pendingAttachments.filter(a=>a!==entry);
+    renderAttachments();updateControls();
+   });
+   chip.append(visual,label,remove);attachmentTray.append(chip);
+  }
+ }
+ function addAttachments(files){
+  for(const file of Array.from(files||[])){
+   if(pendingAttachments.length>=6){status.textContent='Можно выбрать до 6 файлов за раз.';break}
+   if(file.size>8*1024*1024){status.textContent='Файл '+file.name+' больше 8 МБ.';continue}
+   if(pendingAttachments.some(a=>a.file.name===file.name&&a.file.size===file.size&&a.file.lastModified===file.lastModified))continue;
+   const preview=/^image\//i.test(file.type)?URL.createObjectURL(file):null;
+   pendingAttachments.push({file,preview});
+  }
+  renderAttachments();updateControls();
+ }
+
+ // Desktop drag-and-drop and clipboard images join the exact same draft tray
+ // as files picked through +. Do not navigate away on an accidental drop.
+ function eventHasFiles(event){
+  return Array.from(event.dataTransfer?.types||[]).includes('Files');
+ }
+ let fileDragDepth=0;
+ function finishFileDrag(){fileDragDepth=0;scene.classList.remove('sv-file-drag')}
+ scene.addEventListener('dragenter',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();fileDragDepth++;
+  scene.classList.add('sv-file-drag');
+ });
+ scene.addEventListener('dragover',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();
+  if(event.dataTransfer)event.dataTransfer.dropEffect=active?'none':'copy';
+  if(!active)scene.classList.add('sv-file-drag');
+ });
+ scene.addEventListener('dragleave',event=>{
+  if(!eventHasFiles(event))return;
+  fileDragDepth=Math.max(0,fileDragDepth-1);
+  if(fileDragDepth===0)scene.classList.remove('sv-file-drag');
+ });
+ scene.addEventListener('drop',event=>{
+  if(!eventHasFiles(event))return;
+  event.preventDefault();
+  finishFileDrag();
+  if(active){status.textContent='Сначала дождитесь окончания ответа Сэйви.';return}
+  closeMenu();
+  const files=event.dataTransfer?.files;
+  if(files?.length)addAttachments(files);
+ });
+ window.addEventListener('dragend',finishFileDrag);
+ window.addEventListener('blur',finishFileDrag);
+ // Paste screenshots from the clipboard (Ctrl+V / Cmd+V).
+ input.addEventListener('paste',event=>{
+  if(active)return;
+  const images=Array.from(event.clipboardData?.items||[])
+   .filter(item=>item.kind==='file'&&item.type.startsWith('image/'))
+   .map(item=>item.getAsFile()).filter(Boolean);
+  if(!images.length)return;
+  event.preventDefault();
+  addAttachments(images);
+ });
+ document.getElementById('sayviAttachFile').addEventListener('click',()=>{closeMenu();filePicker.click()});
+ photoPicker.addEventListener('change',()=>{addAttachments(photoPicker.files);photoPicker.value=''});
+ filePicker.addEventListener('change',()=>{addAttachments(filePicker.files);filePicker.value=''});
+ window.addEventListener('pagehide',clearAttachments);
+ function isReadableText(file){return readableTextTypes.test(file.type)||readableExtensions.test(file.name)}
+ async function prepareAttachments(items,textBudget=3200){
+  const segments=[],uploaded=[];
+  let remaining=Math.max(0,textBudget);
+  const documentType=/\.(?:pdf|docx|xlsx|pptx)$/iu;
+  for(const entry of items){
+   const file=entry.file;
+   if(isReadableText(file)||documentType.test(file.name)){
+    if(remaining<180)throw Error('Слишком много вложений для одного вопроса. Пришли файлы по одному.');
+    let content='',alreadyTruncated=false;
+    if(isReadableText(file)){
+     if(file.size>100000)throw Error('Текстовый файл '+file.name+' слишком большой (максимум 100 КБ).');
+     content=await file.text();
+    }else{
+     const form=new FormData();form.append('file',file,file.name);
+     let response;
+     try{response=await fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})}
+     catch{throw Error('Локальный обработчик документов недоступен.')}
+     if(!response.ok){
+      const detail=await response.json().catch(()=>null);
+      throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
+     }
+     const result=await response.json().catch(()=>null);
+     if(typeof result?.text!=='string'||!result.text.trim())throw Error('В документе не найден текст.');
+     content=result.text;alreadyTruncated=result.truncated===true;
+    }
+    const header='Файл: '+file.name+'\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\n';
+    const available=remaining-header.length-90;
+    if(available<100)throw Error('Недостаточно места для документа. Пришли его отдельно.');
+    const excerpt=content.slice(0,available);
+    const limited=alreadyTruncated||content.length>available;
+    const segment=header+excerpt+(limited?'\n[Текст документа показан не полностью.]':'')+'\n--- КОНЕЦ ВЫДЕРЖКИ ---';
+    segments.push(segment);
+    remaining-=segment.length;
+   }else{
+    // Images use their original temporary visual route.
+    const supportedImage=/^image\/(?:png|jpeg|webp)$/i.test(file.type);
+    if(!supportedImage){
+     const ext=(file.name.split('.').pop()||'').toUpperCase();
+     throw Error('Формат '+(ext||'файла')+' пока не поддерживается. Выбери PDF, DOCX, XLSX, PPTX, текст или PNG/JPG/WebP.');
+    }
+    const body=new FormData();body.append('file',file,file.name);
+    let response;
+    try{response=await fetch('/api/seyveo-attachments',{method:'POST',credentials:'same-origin',body})}
+    catch{throw Error('Сервер загрузки файлов сейчас недоступен. Вложение не отправлено.')}
+    if(!response.ok){
+     const errorData=await response.json().catch(()=>null);
+     throw Error((typeof errorData?.error==='string'?errorData.error:'Не удалось загрузить файл (код '+response.status+').')+' Вложение осталось здесь.');
+    }
+    const info=await response.json().catch(()=>null);
+    if(!info||typeof info.id!=='string'||!info.id.trim())throw Error('Сервер не подтвердил загрузку '+file.name+'. Вложение не отправлено.');
+    uploaded.push({id:info.id,name:file.name,type:file.type||'application/octet-stream',size:file.size});
+   }
+  }
+  return {segments,uploaded};
+ }
+
+ // A real 2D sketch board: pressure-sensitive Pointer Events for Samsung S Pen
+ // with finger/mouse fallback. Strokes are rasterized only when attached.
+ const drawPanel=document.getElementById('sayviDrawing');
+ const drawCanvas=document.getElementById('sayviDrawCanvas');
+ const drawBoard=drawCanvas.parentElement;
+ const drawCtx=drawCanvas.getContext('2d');
+ const drawUndo=document.getElementById('sayviDrawUndo');
+ const drawAttach=document.getElementById('sayviDrawAttach');
+ let drawTool='pen',drawStrokes=[],drawCurrent=null,drawActivePointer=null,drawSize={w:0,h:0};
+ function drawPoint(event){
+  const r=drawCanvas.getBoundingClientRect();
+  return {x:Math.max(0,Math.min(1,(event.clientX-r.left)/Math.max(1,r.width))),
+          y:Math.max(0,Math.min(1,(event.clientY-r.top)/Math.max(1,r.height))),
+          p:event.pointerType==='pen'&&event.pressure>0?event.pressure:.5};
+ }
+ function drawRepaint(){
+  if(!drawCtx)return;
+  const {w,h}=drawSize;if(!w||!h)return;
+  drawCtx.clearRect(0,0,w,h);
+  drawCtx.fillStyle='#f8f9f9';drawCtx.fillRect(0,0,w,h);
+  for(const stroke of [...drawStrokes,...(drawCurrent?[drawCurrent]:[])]){
+   const points=stroke.points;if(!points.length)continue;
+   drawCtx.lineCap='round';drawCtx.lineJoin='round';
+   drawCtx.strokeStyle=stroke.tool==='eraser'?'#f8f9f9':'#27343c';
+   drawCtx.fillStyle=drawCtx.strokeStyle;
+   if(points.length===1){
+    const p=points[0],rad=(stroke.tool==='eraser'?12:1.6)*(.5+p.p)/2;
+    drawCtx.beginPath();drawCtx.arc(p.x*w,p.y*h,rad,0,Math.PI*2);drawCtx.fill();continue;
+   }
+   for(let i=1;i<points.length;i++){
+    const a=points[i-1],b=points[i];
+    drawCtx.lineWidth=stroke.tool==='eraser'?24:Math.max(1.1,1.2+3*b.p);
+    drawCtx.beginPath();drawCtx.moveTo(a.x*w,a.y*h);drawCtx.lineTo(b.x*w,b.y*h);drawCtx.stroke();
+   }
+  }
+  drawUndo.disabled=drawStrokes.length===0;
+  drawAttach.disabled=drawStrokes.length===0;
+ }
+ function drawResize(){
+  if(drawPanel.hidden)return;
+  const r=drawBoard.getBoundingClientRect();
+  const w=Math.max(1,Math.round(r.width)),h=Math.max(1,Math.round(r.height));
+  if(!w||!h)return;
+  drawSize={w,h};
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  drawCanvas.width=Math.round(w*dpr);drawCanvas.height=Math.round(h*dpr);
+  drawCtx.setTransform(dpr,0,0,dpr,0,0);
+  drawRepaint();
+ }
+ function drawOpen(){
+  closeMenu();drawPanel.hidden=false;drawStrokes=[];drawCurrent=null;drawActivePointer=null;
+  drawTool='pen';document.querySelectorAll('[data-draw-tool]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.drawTool==='pen')));
+  drawResize();
+ }
+ function drawClose(){drawPanel.hidden=true;drawCurrent=null;drawActivePointer=null}
+ document.getElementById('sayviDrawIdea').addEventListener('click',drawOpen);
+ document.getElementById('sayviDrawCancel').addEventListener('click',drawClose);
+ document.querySelectorAll('[data-draw-tool]').forEach(b=>b.addEventListener('click',()=>{
+  drawTool=b.dataset.drawTool;
+  document.querySelectorAll('[data-draw-tool]').forEach(item=>item.setAttribute('aria-pressed',String(item===b)));
+ }));
+ drawCanvas.addEventListener('pointerdown',event=>{
+  if(drawActivePointer!==null||!event.isPrimary&&event.pointerType!=='mouse')return;
+  event.preventDefault();
+  drawActivePointer=event.pointerId;drawCurrent={tool:drawTool,points:[drawPoint(event)]};
+  try{drawCanvas.setPointerCapture(event.pointerId)}catch{}
+  drawRepaint();
+ });
+ drawCanvas.addEventListener('pointermove',event=>{
+  if(drawActivePointer!==event.pointerId||!drawCurrent)return;
+  event.preventDefault();
+  const coalesced=typeof event.getCoalescedEvents==='function'?event.getCoalescedEvents():[];
+  for(const e of coalesced.length?coalesced:[event])drawCurrent.points.push(drawPoint(e));
+  drawRepaint();
+ });
+ function drawEnd(event){
+  if(drawActivePointer!==event.pointerId)return;
+  if(drawCurrent){drawCurrent.points.push(drawPoint(event));drawStrokes.push(drawCurrent)}
+  drawCurrent=null;drawActivePointer=null;drawRepaint();
+ }
+ drawCanvas.addEventListener('pointerup',drawEnd);
+ drawCanvas.addEventListener('pointercancel',event=>{
+  if(drawActivePointer!==event.pointerId)return;
+  drawCurrent=null;drawActivePointer=null;drawRepaint();
+ });
+ drawUndo.addEventListener('click',()=>{drawStrokes.pop();drawRepaint()});
+ document.getElementById('sayviDrawClear').addEventListener('click',()=>{drawStrokes=[];drawRepaint()});
+ window.addEventListener('resize',drawResize,{passive:true});
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!drawPanel.hidden){event.preventDefault();drawClose()}
+ });
+ drawAttach.addEventListener('click',()=>{
+  if(!drawStrokes.length)return;
+  if(pendingAttachments.length>=6){status.textContent='Можно прикрепить не более 6 файлов.';drawClose();return}
+  drawCanvas.toBlob(blob=>{
+   if(!blob){status.textContent='Не удалось сохранить рисунок';return}
+   const file=new File([blob],'Моя мысль '+new Date().toLocaleDateString('ru-RU')+'.png',{type:'image/png'});
+   addAttachments([file]);drawClose();
+  },'image/png');
+ });
+ function closeMenu(){
+  menu.hidden=true;scene.classList.remove('sayvi-menu-open');
+  plus.setAttribute('aria-expanded','false');
+ }
+ plus.addEventListener('click',()=>{
+  const show=menu.hidden;
+  menu.hidden=!show;
+  scene.classList.toggle('sayvi-menu-open',show);
+  plus.setAttribute('aria-expanded',String(show));
+ });
+ document.getElementById('sayviNewChat').addEventListener('click',()=>{
+  active?.abort();active=null;
+  ++speechGeneration;speechAborted=true;
+  try{speechSession?.abort()}catch{}
+  speechSession=null;clearSpeech();
+  if(savedTurns.length)archive.unshift(snapshot());
+  clearAttachments();recentVisual=null;
+  archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
+  historyTurns.length=0;answers.clear();
+  list.replaceChildren();list.scrollTop=0;updateScrollEdge();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
+ });
+ document.addEventListener('pointerdown',e=>{
+  if(!menu.hidden&&!e.target.closest('#sayviPlus,#sayviMenu'))closeMenu();
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!menu.hidden){closeMenu();plus.focus()}
+ });
+ // The local server accepts only alternating, complete user/assistant pairs.
+ // Restored conversations can include consecutive user turns and edited/deleted
+ // messages. Build a clean bounded context without changing visible history.
+ function validStreamHistory(){
+  const pairs=[];
+  let waiting=null;
+  for(const turn of historyTurns){
+   if(!turn||typeof turn.content!=='string')continue;
+   const text=turn.content.trim().slice(0,650);
+   if(!text)continue;
+   if(turn.role==='user'){waiting={role:'user',content:text}}
+   else if(turn.role==='assistant'&&waiting){
+    pairs.push(waiting,{role:'assistant',content:text});
+    waiting=null;
+   }
+  }
+  let selected=pairs.slice(-6);
+  while(selected.length&&selected.reduce((sum,t)=>sum+t.content.length,0)>2400)selected=selected.slice(2);
+  return selected;
+ }
+ function asksAboutPicture(value){
+  return /(?:фот|картин|изображен|рисун|логотип|снимк|скриншот|на\s+(?:н[её]м|ней|этом|этой)|что\s+(?:ты\s+)?видишь|что\s+там|что\s+изображен)/iu.test(value);
+ }
+ function contextImagesFor(question,options){
+  if(Array.isArray(options.attachments)&&options.attachments.length)return options.attachments;
+  if(!asksAboutPicture(question)||!recentVisual)return [];
+  if(recentVisual.conversation!==currentId||Date.now()-recentVisual.at>8*60*1000){recentVisual=null;return []}
+  return recentVisual.items;
+ }
+
+ // Explicit public lookup: do not submit ordinary/private chat messages.
+ function webRequest(text){
+  const m=/^(?:(?:сэй|сэйви)[,! ]+)?(?:найди|поищи|поиск\s*:|покажи\s+в\s+интернете)\s+(.+)$/iu.exec(text.trim());
+  return m?m[1].trim().replace(/^(?:в интернете|в сети)\s+/iu,'').slice(0,550):'';
+ }
+ function vettedWebResults(rows){
+  if(!Array.isArray(rows))return [];
+  return rows.slice(0,5).flatMap(item=>{
+   if(typeof item?.url!=='string'||typeof item.title!=='string'||typeof item.snippet!=='string')return [];
+   let u;try{u=new URL(item.url)}catch{return []}
+   if(u.protocol!=='https:'||u.username||u.password||!u.hostname)return [];
+   let image='';
+   if(item.imageApproved===true&&typeof item.imageCredit==='string'&&item.imageCredit.trim()){
+    try{const p=new URL(item.imageUrl);if(p.protocol==='https:'&&!p.username&&!p.password)image=p.href}catch{}
+   }
+   return [{url:u.href,domain:u.hostname,title:item.title.slice(0,180),
+    snippet:item.snippet.slice(0,450),image,imageCredit:String(item.imageCredit||'').slice(0,100)}];
+  });
+ }
+ function renderWebResults(id,rows){
+  const bubble=answers.get(id);if(!bubble)return;
+  const turn=bubble.closest('.turn');
+  turn.querySelector('.sv-web-results')?.remove();
+  const items=vettedWebResults(rows);
+  if(!items.length)return;
+  const group=document.createElement('div');group.className='sv-web-results';
+  const label=document.createElement('span');label.className='sv-web-results-label';
+  label.textContent='Источники · открыть в SEYVEO Browser';group.append(label);
+  for(const item of items){
+   const button=document.createElement('button');button.type='button';button.className='sv-web-result';
+   button.setAttribute('aria-label','Открыть '+item.title+' в SEYVEO Browser');
+   if(item.image){
+    const img=document.createElement('img');img.className='sv-web-result-img';
+    img.src=item.image;img.loading='lazy';img.alt='Фото: '+item.imageCredit;
+    img.referrerPolicy='no-referrer';button.append(img);
+   }
+   const info=document.createElement('span');info.className='sv-web-result-text';
+   const title=document.createElement('span');title.className='sv-web-result-title';title.textContent=item.title;
+   const snippet=document.createElement('span');snippet.className='sv-web-result-desc';snippet.textContent=item.snippet;
+   const domain=document.createElement('span');domain.className='sv-web-result-domain';domain.textContent=item.domain+(item.image?' · '+item.imageCredit:'');
+   info.append(title,snippet,domain);button.append(info);
+   button.addEventListener('click',()=>window.location.assign('./index.html?seyveoBrowserUrl='+encodeURIComponent(item.url)));
+   group.append(button);
+  }
+  turn.append(group);
+ }
+ async function searchInChat(question,query){
+  const ctrl=new AbortController();active=ctrl;updateControls();status.textContent='';
+  const id='web-'+(++sequence);
+  append('user','user-'+sequence,question);
+  const stop=showThinking();
+  try{
+   const response=await fetch('/api/seyveo-live-search',{
+    method:'POST',credentials:'same-origin',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:query}),signal:ctrl.signal
+   });
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok)throw Error(data.error||'Поиск временно недоступен.');
+   const sources=vettedWebResults(data.results);
+   const answer=sources.length?
+    (typeof data.answer==='string'&&data.answer.trim()?data.answer.trim().slice(0,1800):'Нашла несколько источников — посмотри, какие пригодятся.'):
+    (typeof data.message==='string'?data.message:'Пока нет проверенных источников.');
+   stop();append('assistant',id,answer);
+   renderWebResults(id,sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit})));
+   const idx=Number(answers.get(id)?.dataset.savedIndex);
+   if(Number.isInteger(idx)&&idx>=0&&idx<savedTurns.length){
+    savedTurns[idx].sources=sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
+    persist();
+   }
+   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
+   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+   requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+  }catch(error){
+   if(!ctrl.signal.aborted){stop();append('assistant',id,String(error?.message||'Не удалось найти источники.'))}
+  }finally{
+   stop();if(active===ctrl){active=null;updateControls()}
+  }
+ }
+
+ // Existing local memory and reviewed-example lab; never auto-train on conversations.
+ function knowledgeIntent(message){
+  const text=String(message).trim().replace(/^(?:сэй|сэйви)[,\s!]+/iu,'');
+  if(/^(?:память|покажи память|что ты помнишь|моя память)\??$/iu.test(text))return {type:'list-memory'};
+  let m=/^(?:забудь|удали из памяти)\s+(\d{1,2})\s*[.!]?$/iu.exec(text);
+  if(m)return {type:'delete-memory',index:Number(m[1])-1};
+  if(/^(?:очисти память|удали всю память)\s*[.!]?$/iu.test(text))return {type:'clear-memory'};
+  if(/^(?:обучение|покажи обучение|лаборатория обучения)\??$/iu.test(text))return {type:'list-learning'};
+  m=/^(?:научи(?:сь)?|предложи обучение)\s*[:：]\s*([\s\S]+?)\s*(?:=>|⇒|\|)\s*([\s\S]+)$/iu.exec(text);
+  if(m)return {type:'propose',question:m[1].trim(),answer:m[2].trim()};
+  m=/^(?:одобри|подтверди|отклони)\s+(?:пример\s+)?(\d{1,2})\s*[.!]?$/iu.exec(text);
+  if(m)return {type:/^отклони/iu.test(text)?'reject':'approve',index:Number(m[1])-1};
+  return null;
+ }
+ async function localKnowledgeApi(url,data,signal){
+  const r=await fetch(url,{method:data?'POST':'GET',credentials:'same-origin',
+   ...(data?{headers:{'content-type':'application/json'},body:JSON.stringify(data)}:{}),signal});
+  const result=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(result.error||'Локальная память недоступна.');
+  return result;
+ }
+ async function runKnowledgeCommand(question,cmd){
+  const controller=new AbortController();active=controller;updateControls();status.textContent='';
+  const id=++sequence,replyId='memory-'+id;
+  append('user','user-'+id,question);
+  const stop=showThinking();let message='';
+  try{
+   if(['list-memory','delete-memory','clear-memory'].includes(cmd.type)){
+    const data=await localKnowledgeApi('/api/seyveo-memory',null,controller.signal);
+    const items=Array.isArray(data.items)?data.items:[];
+    if(cmd.type==='list-memory'){
+     message=items.length?'Вот что я помню только на этом компьютере:\n\n'+items.map((x,i)=>(i+1)+'. '+x.text).join('\n')+
+      '\n\nЧтобы удалить запись, напиши «Забудь 1».':
+      'Локальная память пока пуста. Если хочешь, скажи: «Сэйви, запомни: ...».';
+    }else if(cmd.type==='delete-memory'){
+     const row=items[cmd.index];
+     if(!row)message='Не нашла запись с таким номером. Напиши «Память».';
+     else if(!window.confirm('Удалить из локальной памяти:\n\n'+row.text+'?'))message='Хорошо, память не меняла.';
+     else{
+      await localKnowledgeApi('/api/seyveo-memory',{action:'remove',id:row.id},controller.signal);
+      message='Запись удалена из локальной памяти.';
+     }
+    }else if(!items.length)message='Локальная память уже пуста.';
+    else if(!window.confirm('Удалить все записи локальной памяти ('+items.length+') без возможности восстановления?'))message='Память не меняла.';
+    else{
+     await localKnowledgeApi('/api/seyveo-memory',{action:'clear'},controller.signal);
+     message='Все записи локальной памяти удалены по твоему подтверждению.';
+    }
+   }else{
+    const dashboard=await localKnowledgeApi('/api/seyveo-learning-dashboard',null,controller.signal);
+    const pending=Array.isArray(dashboard.proposals)?dashboard.proposals.filter(x=>x.status==='pending'):[];
+    if(cmd.type==='list-learning'){
+     message='Лаборатория Сэйви. Одобренных примеров: '+(dashboard.approvedCount||0)+
+      '. На проверке: '+pending.length+'.\n\n'+
+      (pending.length?pending.slice(0,12).map((x,i)=>(i+1)+'. '+x.question+'\nОтвет: '+x.answer).join('\n\n')+
+       '\n\nНапиши «Одобри пример 1» или «Отклони пример 1».':
+       'Чтобы предложить пример, напиши: «Научи: вопрос | правильный ответ».');
+    }else if(cmd.type==='propose'){
+     if(cmd.question.length<4||cmd.question.length>600||cmd.answer.length<4||cmd.answer.length>1800){
+      message='Укажи вопрос (4–600 символов) и правильный ответ (4–1800 символов).';
+     }else if(!window.confirm('Предложить обезличенный пример в локальную очередь?\n\nВопрос: '+cmd.question+
+       '\n\nОтвет: '+cmd.answer+'\n\nОн не будет использоваться до отдельного одобрения.')){
+      message='Не добавляла пример.';
+     }else{
+      await localKnowledgeApi('/api/seyveo-learning-proposal',{
+       action:'propose',confirmed:true,question:cmd.question,answer:cmd.answer
+      },controller.signal);
+      message='Пример добавлен в очередь, но ещё не одобрен. Напиши «Обучение», чтобы проверить его.';
+     }
+    }else{
+     const row=pending[cmd.index];
+     if(!row)message='Такого примера нет. Напиши «Обучение» для актуальной очереди.';
+     else if(!window.confirm((cmd.type==='approve'?'Одобрить':'Отклонить')+' пример?\n\n'+row.question+'\n'+row.answer)){
+      message='Не меняла статус примера.';
+     }else{
+      await localKnowledgeApi('/api/seyveo-learning-proposal',{
+       action:cmd.type==='approve'?'approve':'reject',id:row.id
+      },controller.signal);
+      message=cmd.type==='approve'?'Одобрила пример. Буду учитывать его в похожих вопросах.':
+       'Отклонила пример, в ответы он не попадёт.';
+     }
+    }
+   }
+  }catch(error){
+   if(!controller.signal.aborted)message=String(error?.message||'Не удалось открыть локальную память.');
+  }finally{
+   stop();
+   if(!controller.signal.aborted){
+    append('assistant',replyId,message||'Локальная память не ответила.');
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:message.slice(0,450)});
+    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+   }
+   if(active===controller){active=null;updateControls()}
+  }
+ }
+ async function ask(question,options={}){
+  const intent=options.skipUser?null:knowledgeIntent(question);
+  if(intent&&!options.attachments?.length)return runKnowledgeCommand(question,intent);
+  const query=options.skipUser?'':webRequest(question);
+  if(query&&!options.attachments?.length)return searchInChat(question,query);
+  const controller=new AbortController();active=controller;updateControls();
+  status.textContent='';
+  const id=++sequence,replyId='reply-'+id;
+  const linkedPhotos=contextImagesFor(question,options);
+  if(!options.skipUser){
+   append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles);
+   const sentTurn=answers.get('user-'+id)?.closest('.turn');
+   if(sentTurn&&Array.isArray(options.documentFiles)){
+    sentDocumentBlobs.set(sentTurn,options.documentFiles);
+    showSentFiles(sentTurn,options.previewFiles);
+   }
+  }
+  let answer='',done=false,wasTruncated=false,streamingTurn=null;
+  const thinkingStarted=performance.now();
+  const stopThinking=showThinking();
+  async function finishThinking(){
+   const remaining=900-(performance.now()-thinkingStarted);
+   if(remaining>0&&!controller.signal.aborted)await new Promise(resolve=>setTimeout(resolve,remaining));
+   stopThinking();
+  }
+  function revealAnswer(text){
+   if(!streamingTurn){
+    stopThinking();
+    append('assistant',replyId,text);
+    streamingTurn=answers.get(replyId)?.closest('.turn');
+    if(streamingTurn){
+     streamingTurn.classList.add('is-streaming','is-fresh');
+     setTimeout(()=>streamingTurn?.classList.remove('is-fresh'),320);
+    }
+   }else append('assistant',replyId,text);
+  }
+  try{
+   const response=await fetch('/api/seyveo-stream',{
+    method:'POST',credentials:'same-origin',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:question,history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
+    signal:controller.signal
+   });
+   if(!response.ok){
+    if(response.status===404||response.status===405)throw Error('Для живых ответов Сэйви нужно подключение сервера ИИ. На GitHub Pages он недоступен.');
+    const body=await response.json().catch(()=>({}));
+    throw Error(body.error||'Не удалось получить ответ Сэйви.');
+   }
+   if(!response.body)throw Error('Браузер не поддерживает потоковые ответы.');
+   const reader=response.body.getReader(),decoder=new TextDecoder();
+   let buffer='';
+   function consume(line){
+    if(!line.trim())return;
+    const part=JSON.parse(line);
+    if(part.type==='delta'&&typeof part.text==='string'){
+     answer+=part.text;revealAnswer(answer);
+    }else if(part.type==='done'){done=true;wasTruncated=part.truncated===true;}
+    else if(part.type==='error')throw Error(part.text||'Ошибка ответа Сэйви.');
+   }
+   while(true){
+    const chunk=await reader.read();
+    if(chunk.done)break;
+    buffer+=decoder.decode(chunk.value,{stream:true});
+    let n;
+    while((n=buffer.indexOf('\n'))!==-1){
+     consume(buffer.slice(0,n));buffer=buffer.slice(n+1);
+    }
+   }
+   buffer+=decoder.decode();
+   if(buffer.trim())consume(buffer);
+   if(!done)throw Error('Соединение прервалось.');
+   if(!answer.trim())throw Error('Сэйви не прислала ответ.');
+   if(wasTruncated)status.textContent='Ответ ограничен моделью. Напиши «продолжи», чтобы Сэйви закончила мысль.';
+   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
+   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+  }catch(error){
+   if(!controller.signal.aborted){
+    status.textContent=String(error?.message||'Ошибка соединения.');
+    if(answer)revealAnswer(answer);
+   }
+  }finally{
+   streamingTurn?.classList.remove('is-streaming','is-fresh');
+   await finishThinking();
+   if(active===controller){active=null;updateControls()}
+  }
+ }
+ stopReplyButton.addEventListener('click',()=>{
+  if(!active)return;
+  active.abort();
+  status.textContent='Ответ остановлен.';
+  active=null;updateControls();
+ });
+ async function send(){
+  const value=input.value.trim();if((!value&&!pendingAttachments.length)||active)return;
+  if(!pendingAttachments.length){
+   input.value='';updateControls();ask(value);return;
+  }
+  const selected=pendingAttachments.slice();
+  // Lock controls before upload; don't add a fake sent message.
+  const lock=new AbortController();active=lock;updateControls();
+  status.textContent='Подготавливаю вложения…';
+  try{
+   const files=await prepareAttachments(selected,Math.max(0,3550-value.length));
+   if(active!==lock)return;
+   const thumbs=(await Promise.all(selected.map(async item=>{
+    try{return await makeSentPhoto(item.file)}catch{return null}
+   }))).filter(Boolean);
+   const otherFiles=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file.name);
+   const display=value;
+   const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
+   active=null;input.value='';clearAttachments();
+   // The user can ask follow-up questions about this picture without
+   // attaching it again, while the temporary server still holds its bytes.
+   recentVisual=files.uploaded.length?
+    {conversation:currentId,at:Date.now(),items:files.uploaded}:null;
+   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,documentFiles:selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file),attachments:files.uploaded});
+  }catch(error){
+   if(active===lock){active=null;updateControls()}
+   status.textContent=String(error?.message||'Не удалось отправить файл.');
+  }
+ }
+ sendButton.addEventListener('click',send);
+ input.addEventListener('input',updateControls);
+ input.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){
+   event.preventDefault();send();
+  }
+ });
+ // Hold to record using the browser's real microphone.
+ // This static prototype has no server-side audio delivery yet.
+ // Speech-to-text: no recorded audio bubble appears in the conversation.
+ const speechBar=document.getElementById('sayviSpeechBar');
+ const speechTime=document.getElementById('sayviSpeechTime');
+ const SpeechApi=window.SpeechRecognition||window.webkitSpeechRecognition;
+ let speechSession=null,spokenFinal='',spokenInterim='',speechStart=0,speechTimer=null;
+ let speechGeneration=0,speechAborted=false,speechStopping=false,speechSendRequested=false;
+ let speechWatchdog=null,speechHasResult=false;
+ function updateSpeechClock(){
+  const seconds=Math.floor((performance.now()-speechStart)/1000);
+  speechTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
+ }
+ function clearSpeech(){
+  clearInterval(speechTimer);speechTimer=null;
+  clearTimeout(speechWatchdog);speechWatchdog=null;
+  speechBar.hidden=true;
+  speechBar.removeAttribute('data-state');mic.classList.remove('is-recording');
+  mic.setAttribute('aria-label','Начать голосовой ввод');
+  spokenFinal='';spokenInterim='';speechStopping=false;
+ }
+ function cancelSpeech(){
+  speechAborted=true;++speechGeneration;
+  const old=speechSession;speechSession=null;
+  try{old?.abort()}catch{}
+  clearSpeech();status.textContent='Голосовой ввод отменён.';
+ }
+ function completeSpeech(generation){
+  if(generation!==speechGeneration||speechAborted)return;
+  const text=(spokenFinal||spokenInterim).trim();
+  const shouldSend=speechSendRequested;
+  speechSendRequested=false;
+  const finished=speechSession;
+  speechSession=null;
+  // Force-release any WebKit speech capture session even when onend is late.
+  ++speechGeneration;
+  try{finished?.abort()}catch{}
+  clearSpeech();
+  if(text){
+   if(shouldSend)ask(text);
+   else{
+    input.value=text;updateControls();
+    status.textContent='Речь распознана. Нажмите стрелку отправки.';
+   }
+  }else{
+   status.textContent='Не удалось распознать речь. Можно попробовать ещё раз.';
+  }
+ }
+ function stopSpeech(){
+  if(!speechSession||speechStopping)return;
+  speechStopping=true;speechBar.dataset.state='processing';
+  const generation=speechGeneration;
+  try{speechSession.stop()}catch{}
+  setTimeout(()=>{
+   if(generation===speechGeneration&&speechSession){
+    // Safari may not fire onend after stop. Abort the underlying capture
+    // before returning to the idle UI, to release the microphone indicator.
+    completeSpeech(generation);
+   }
+  },1000);
+ }
+ function sendSpeech(){
+  if(speechSession){
+   speechSendRequested=true;stopSpeech();return;
+  }
+  if(input.value.trim())send();
+ }
+ function startSpeech(){
+  if(speechSession){stopSpeech();return}
+  if(active||input.value.trim())return;
+  status.textContent='';
+  if(!SpeechApi){
+   status.textContent='В этом браузере нет распознавания речи. Можно использовать микрофон клавиатуры iPhone.';
+   return;
+  }
+  let r;try{r=new SpeechApi()}catch{status.textContent='Голосовой ввод недоступен.';return}
+  speechAborted=false;speechStopping=false;speechSendRequested=false;speechHasResult=false;
+  const generation=++speechGeneration;
+  speechSession=r;spokenFinal='';spokenInterim='';
+  r.lang='ru-RU';r.continuous=false;r.interimResults=true;r.maxAlternatives=1;
+  r.onresult=event=>{
+   if(generation!==speechGeneration)return;
+   speechHasResult=true;
+   let final='',interim='';
+   for(let i=0;i<event.results.length;i++){
+    const transcript=event.results[i][0]?.transcript||'';
+    if(event.results[i].isFinal)final+=transcript+' ';
+    else interim+=transcript+' ';
+   }
+   spokenFinal=final.trim();spokenInterim=interim.trim();
+  };
+  r.onerror=event=>{
+   if(generation!==speechGeneration)return;
+   const code=event.error||'unknown';
+   speechAborted=true;++speechGeneration;
+   try{speechSession?.abort()}catch{}
+   speechSession=null;clearSpeech();
+   // Permission to the mic and permission/availability of a speech service
+   // are not the same thing. Avoid falsely blaming iOS microphone settings.
+   status.textContent=code==='not-allowed'
+    ?'Safari отказал в голосовом вводе. Проверьте разрешение микрофона для этого сайта.'
+    :code==='service-not-allowed'
+    ?'Служба распознавания речи Safari недоступна. Микрофон может быть разрешён. Используйте диктовку клавиатуры iPhone.'
+    :code==='audio-capture'
+    ?'Safari не смог открыть микрофон. Проверьте, не использует ли его другое приложение.'
+    :code==='no-speech'?'Речь не распознана. Попробуйте ещё раз.'
+    :'Ошибка распознавания ('+code+'). Можно использовать диктовку клавиатуры iPhone.';
+  };
+  r.onend=()=>completeSpeech(generation);
+  speechStart=performance.now();updateSpeechClock();
+  speechBar.hidden=false;mic.classList.add('is-recording');
+  mic.setAttribute('aria-label','Завершить голосовой ввод');
+  speechTimer=setInterval(updateSpeechClock,250);
+  // WebKit sometimes leaves recognition silently active without callbacks.
+  // Recover instead of holding the microphone indefinitely.
+  speechWatchdog=setTimeout(()=>{
+   if(generation!==speechGeneration||!speechSession||speechStopping)return;
+   if(speechHasResult){stopSpeech();return}
+   speechAborted=true;++speechGeneration;
+   const stuck=speechSession;speechSession=null;
+   try{stuck.abort()}catch{}
+   clearSpeech();
+   status.textContent='Safari не ответил на голосовой ввод. Попробуйте ещё раз или диктовку клавиатуры.';
+  },30000);
+  try{r.start()}catch{
+   ++speechGeneration;try{r.abort()}catch{}
+   speechSession=null;clearSpeech();
+   status.textContent='Не удалось запустить распознавание речи в Safari.';
+  }
+ }
+ mic.addEventListener('click',startSpeech);
+ document.getElementById('sayviSpeechStop').addEventListener('click',stopSpeech);
+ document.getElementById('sayviSpeechSend').addEventListener('click',sendSpeech);
+ // A hidden page should never keep the phone's microphone active.
+ function releaseSpeechOnLeave(){
+  if(!speechSession)return;
+  ++speechGeneration;speechAborted=true;speechSendRequested=false;
+  const old=speechSession;speechSession=null;
+  try{old.abort()}catch{}
+  clearSpeech();
+ }
+ window.addEventListener('pagehide',releaseSpeechOnLeave);
+ // iOS can briefly hide the document while asking permission to use speech.
+ // Do not abort on visibilitychange: that cancels the initial permission flow.
+ // pagehide above handles actual navigation away from this chat.
+ restore();
+ updateControls();
+})();
+</script>
+</body>
+</html>

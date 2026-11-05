@@ -1146,21 +1146,46 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  // Only live browser-session file objects are kept. No private binary data
  // is placed into localStorage or sent to another provider.
  const sentDocumentBlobs=new Map();
+ let sentPdfViewer=null;
+ function closeSentPdf(){
+  if(!sentPdfViewer)return;
+  const viewer=sentPdfViewer;sentPdfViewer=null;
+  viewer.overlay.remove();
+  setTimeout(()=>URL.revokeObjectURL(viewer.url),10000);
+ }
  function openSentDocument(file){
   if(!file){status.textContent='Файл недоступен после обновления страницы. Прикрепи его ещё раз.';return}
-  const url=URL.createObjectURL(file);
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   if(ext==='pdf'){
-   const tab=window.open(url,'_blank','noopener');
-   if(!tab){URL.revokeObjectURL(url);status.textContent='Разреши открытие вкладки для просмотра PDF.';return}
-   // The new tab may still be reading the blob: release later.
-   setTimeout(()=>URL.revokeObjectURL(url),120000);
+   closeSentPdf();
+   const pdf=new Blob([file],{type:'application/pdf'});
+   const url=URL.createObjectURL(pdf);
+   const overlay=document.createElement('div');
+   overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+   overlay.setAttribute('aria-label','Просмотр PDF: '+file.name);
+   overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:#151515;color:white;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';
+   const bar=document.createElement('div');
+   bar.style.cssText='display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 16px;background:rgba(100,100,100,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)';
+   const back=document.createElement('button');back.type='button';back.textContent='‹ Назад';
+   back.style.cssText='border:0;background:transparent;color:inherit;font:inherit;padding:10px 4px;cursor:pointer';
+   const name=document.createElement('span');name.textContent=file.name;
+   name.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px';
+   const external=document.createElement('button');external.type='button';external.textContent='Открыть отдельно';
+   external.style.cssText='border:0;background:transparent;color:inherit;font:inherit;font-size:12px;padding:10px 4px;cursor:pointer';
+   external.addEventListener('click',()=>window.open(url,'_blank'));
+   back.addEventListener('click',closeSentPdf);bar.append(back,name,external);
+   const frame=document.createElement('iframe');frame.title='PDF: '+file.name;frame.src=url;
+   frame.style.cssText='border:0;width:100%;flex:1;min-height:0;background:white';
+   overlay.append(bar,frame);document.body.append(overlay);
+   sentPdfViewer={overlay,url};back.focus({preventScroll:true});
   }else{
-   const link=document.createElement('a');
-   link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
+   const url=URL.createObjectURL(file);
+   const link=document.createElement('a');link.href=url;link.download=file.name;
+   document.body.append(link);link.click();link.remove();
    setTimeout(()=>URL.revokeObjectURL(url),10000);
   }
  }
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sentPdfViewer)closeSentPdf()});
  function showSentFiles(turn,files){
   turn.querySelector('.sv-sent-files')?.remove();
   const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
