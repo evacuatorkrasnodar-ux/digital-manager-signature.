@@ -1351,12 +1351,12 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
      if(typeof result?.text!=='string'||!result.text.trim())throw Error('В документе не найден текст.');
      content=result.text;alreadyTruncated=result.truncated===true;
     }
-    const header='Файл: '+file.name+'\\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\\n';
+    const header='Файл: '+file.name+'\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\n';
     const available=remaining-header.length-90;
     if(available<100)throw Error('Недостаточно места для документа. Пришли его отдельно.');
     const excerpt=content.slice(0,available);
     const limited=alreadyTruncated||content.length>available;
-    const segment=header+excerpt+(limited?'\\n[Текст документа показан не полностью.]':'')+'\\n--- КОНЕЦ ВЫДЕРЖКИ ---';
+    const segment=header+excerpt+(limited?'\n[Текст документа показан не полностью.]':'')+'\n--- КОНЕЦ ВЫДЕРЖКИ ---';
     segments.push(segment);
     remaining-=segment.length;
    }else{
