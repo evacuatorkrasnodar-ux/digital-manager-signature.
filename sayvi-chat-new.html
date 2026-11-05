@@ -73,38 +73,47 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  backdrop-filter:blur(16px) saturate(105%);
 }
 .turn[data-role="assistant"] .bubble{max-width:100%}
-/* The Sayvi name has a quiet silver highlight, not a glowing border. */
+/* Calm, clear speaker label: completed answers never animate. */
 .speaker{
- font-size:12px;font-weight:450;line-height:1.45;
+ display:inline-block;
+ align-self:flex-start;
+ font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:0;
  color:var(--sayvi-secondary);
- background:linear-gradient(110deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 39%,var(--sayvi-text) 50%,var(--sayvi-secondary) 61%,var(--sayvi-secondary) 100%);
+ background:none;
+ -webkit-text-fill-color:currentColor;
+ animation:none;
+}
+/* The only live Sayvi label: one subtle silver light moving inside the letters. */
+.sayvi-thinking{align-items:flex-start}
+.sayvi-thinking .sayvi-thinking-label,
+.turn[data-role="assistant"].is-streaming .speaker{
+ display:inline-block;
+ align-self:flex-start;
+ font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:0;
+ color:var(--sayvi-secondary);
+ background:linear-gradient(105deg,
+  var(--sayvi-secondary) 0%,
+  var(--sayvi-secondary) 40%,
+  color-mix(in srgb,var(--sayvi-secondary) 65%,var(--sayvi-text)) 50%,
+  var(--sayvi-secondary) 60%,
+  var(--sayvi-secondary) 100%);
  background-size:260% 100%;
  background-position:100% 50%;
  -webkit-background-clip:text;background-clip:text;
  -webkit-text-fill-color:transparent;
- animation:sayvi-soft-name-sheen 7.5s ease-in-out infinite;
+ animation:sayvi-active-name-light 3.2s ease-in-out infinite alternate;
 }
-@keyframes sayvi-soft-name-sheen{
- 0%,22%{background-position:100% 50%}
- 57%,100%{background-position:0% 50%}
+@keyframes sayvi-active-name-light{
+ from{background-position:100% 50%}
+ to{background-position:0% 50%}
 }
 @media(prefers-reduced-motion:reduce){
- .speaker{animation:none;background:none;-webkit-text-fill-color:currentColor}
-}
-/* A soft left-to-right sheen across Sayvi's name only while a reply is
-   pending. It is not a message bubble, spinner or persistent decoration. */
-.sayvi-thinking{align-items:flex-start}
-.sayvi-thinking .sayvi-thinking-label{
- font-size:15px;font-weight:590;line-height:1.45;letter-spacing:-.012em;
- color:var(--sayvi-secondary);
- background:linear-gradient(105deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 34%,var(--sayvi-text) 49%,var(--sayvi-secondary) 64%,var(--sayvi-secondary) 100%);
- background-size:230% 100%;background-position:100% 50%;
- -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
- animation:sayvi-name-sheen 2.1s ease-in-out infinite;
-}
-@keyframes sayvi-name-sheen{from{background-position:100% 50%}to{background-position:0% 50%}}
-@media(prefers-reduced-motion:reduce){
- .sayvi-thinking .sayvi-thinking-label{animation:none;background:none;-webkit-text-fill-color:currentColor}
+ .sayvi-thinking .sayvi-thinking-label,
+ .turn[data-role="assistant"].is-streaming .speaker{
+  animation:none;background:none;-webkit-text-fill-color:currentColor
+ }
 }
 /* Независимые элементы в одной строке: никакой общей подложки. */
 #sayviComposer{position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none;z-index:5}
@@ -369,12 +378,6 @@ main{background:var(--sayvi-scene)}
 #sayviStopReply[hidden]{display:none!important}
 #sayviStopReply .sv-stop-symbol{display:block;width:11px;height:11px;border-radius:2.5px;background:currentColor}
 #sayviStopReply:active{background:var(--sayvi-pressed)}
-.turn[data-role="assistant"].is-streaming .speaker{
- font-weight:590;background:linear-gradient(105deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 33%,var(--sayvi-text) 50%,var(--sayvi-secondary) 67%,var(--sayvi-secondary) 100%);
- background-size:230% 100%;background-position:100% 50%;
- -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
- animation:sayvi-name-sheen 2.1s ease-in-out infinite;
-}
 .turn[data-role="assistant"].is-streaming .bubble::after{
  content:"";display:inline-block;width:2px;height:1em;vertical-align:-.16em;margin-left:3px;border-radius:3px;
  background:var(--sayvi-secondary);animation:sayvi-caret 1s steps(2,end) infinite;
@@ -383,7 +386,6 @@ main{background:var(--sayvi-scene)}
 @keyframes sayvi-answer-in{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @keyframes sayvi-caret{50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){
- .turn[data-role="assistant"].is-streaming .speaker{animation:none;background:none;-webkit-text-fill-color:currentColor}
  .turn[data-role="assistant"].is-streaming .bubble::after{animation:none}
  .turn[data-role="assistant"].is-fresh .bubble{animation:none}
 }
