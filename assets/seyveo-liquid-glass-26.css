@@ -108,14 +108,13 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
  background:linear-gradient(162deg,
-   rgba(255,255,255,.82) 0%,
-   rgba(212,220,229,.59) 49%,
-   rgba(231,236,241,.64) 100%)!important;
- border:1px solid rgba(117,131,144,.14)!important;
+   rgba(255,255,255,.76) 0%,
+   rgba(225,231,236,.43) 52%,
+   rgba(240,243,246,.48) 100%)!important;
+ border:1px solid rgba(117,131,144,.075)!important;
  box-shadow:
-   0 2px 8px rgba(54,68,82,.065),
-   inset 0 1px 0 rgba(255,255,255,.98),
-   inset 0 -1px 0 rgba(170,181,193,.14)!important;
+   0 1px 3px rgba(54,68,82,.028),
+   inset 0 .5px 0 rgba(255,255,255,.52)!important;
  -webkit-backdrop-filter:blur(20px) saturate(115%)!important;
  backdrop-filter:blur(20px) saturate(115%)!important;
 }
