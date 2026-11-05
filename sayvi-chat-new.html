@@ -116,6 +116,10 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  color-scheme:light;
  --sayvi-bg:#f9fafb;
  --sayvi-scene:
+   /* Diffuse silver illumination in the background behind the fixed composer.
+      No separate backdrop element, hard rectangle, or changes to glass. */
+   radial-gradient(ellipse 72% 12% at 50% 97%,rgba(105,129,142,.17) 0%,rgba(155,178,189,.085) 47%,transparent 100%),
+   radial-gradient(ellipse 53% 6% at 50% 96%,rgba(255,255,255,.56) 0%,transparent 100%),
    radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.40) 0%,rgba(255,255,255,0) 78%),
    linear-gradient(180deg,#f4f7f8 0%,#eaf0f2 39%,#dfe8ec 78%,#d8e3e8 100%);
  --sayvi-text:#242a31;
