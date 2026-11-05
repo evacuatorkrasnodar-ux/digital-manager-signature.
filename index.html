@@ -4310,12 +4310,22 @@ window.addEventListener('load',()=>{
  try{
   const url=new URL(window.location.href);
   const q=(url.searchParams.get('seyveoBrowserSearch')||'').trim().slice(0,240);
-  if(!q)return;
+  const rawLink=(url.searchParams.get('seyveoBrowserUrl')||'').trim().slice(0,1800);
+  if(!q&&!rawLink)return;
   url.searchParams.delete('seyveoBrowserSearch');
+  url.searchParams.delete('seyveoBrowserUrl');
   window.history.replaceState(window.history.state,'',url.pathname+url.search+url.hash);
+  let safeLink='';
+  if(rawLink){
+   try{
+    const parsed=new URL(rawLink);
+    if(parsed.protocol==='https:'&&!parsed.username&&!parsed.password&&parsed.hostname)safeLink=parsed.href;
+   }catch{}
+  }
   const browser=window.SEYVEO_BROWSER;
   if(browser&&typeof browser.open==='function'){
-   browser.open('https://yandex.ru/search/?text='+encodeURIComponent(q));
+   if(safeLink)browser.open(safeLink);
+   else if(q)browser.open('https://yandex.ru/search/?text='+encodeURIComponent(q));
   }else{
    console.warn('SEYVEO Browser is not ready for the requested search.');
   }
