@@ -40,6 +40,7 @@ queuePanel.innerHTML='<h3>Автоматическая очередь · дем�
 page.querySelector('.scs-wrap').append(queuePanel);
 // The canonical catalog is rendered together so designers see ALL card families,
 // rather than approving a single example and accidentally leaving others behind.
+let stage=0,previewTheme='dark';
 const gallery=document.createElement('section');
 gallery.className='scs-panel scs-gallery';
 gallery.innerHTML='<div class="scs-gallery-head"><h3>Все карточки SEYVEO</h3><p class="scs-note">Один мастер-компонент · '+entries.length+' типов · обе темы переключаются вместе</p></div><div class="scs-gallery-grid" data-card-gallery></div>';
@@ -86,7 +87,6 @@ function demoQueue(){
 }
 queuePanel.querySelector('[data-generate]').addEventListener('click',demoQueue);
 const labels=['Новая','В работе','Позже','Завершена','Ошибка'];const statesMap=['new','in-progress','deferred','done','failed'];
-let stage=0,previewTheme='dark';
 labels.forEach((label,i)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',()=>{stage=i;render()});states.append(b)});
 function render(){
  const e=entries[Number(select.value)];
