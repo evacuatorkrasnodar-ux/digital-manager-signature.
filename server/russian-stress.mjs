@@ -2,12 +2,12 @@
 /* Stress mark U+0301; legacy Qwen3-TTS may ignore it. OFF by default. */
 const ACUTE='\u0301';
 const CONTEXTS = [
- {pattern:/\b(старинный|древний|средневековый)\s+замок\b/giu,stressed:'за'+ACUTE+'мок'},
- {pattern:/\b(дверной|навесной|электронный)\s+замок\b/giu,stressed:'замо'+ACUTE+'к'},
- {pattern:/\b(пшеничная|ржаная|рисовая)\s+мука\b/giu,stressed:'мука'+ACUTE},
- {pattern:/\b(сильная|невыносимая|душевная)\s+мука\b/giu,stressed:'му'+ACUTE+'ка'},
- {pattern:/\b(географический|школьный|исторический)\s+атлас\b/giu,stressed:'а'+ACUTE+'тлас'},
- {pattern:/\b(шёлковый|шелковый|гладкий)\s+атлас\b/giu,stressed:'атла'+ACUTE+'с'},
+ {pattern:/(?<![\p{L}])(старинный|древний|средневековый)\s+замок(?![\p{L}])/giu,stressed:'за'+ACUTE+'мок'},
+ {pattern:/(?<![\p{L}])(дверной|навесной|электронный)\s+замок(?![\p{L}])/giu,stressed:'замо'+ACUTE+'к'},
+ {pattern:/(?<![\p{L}])(пшеничная|ржаная|рисовая)\s+мука(?![\p{L}])/giu,stressed:'мука'+ACUTE},
+ {pattern:/(?<![\p{L}])(сильная|невыносимая|душевная)\s+мука(?![\p{L}])/giu,stressed:'му'+ACUTE+'ка'},
+ {pattern:/(?<![\p{L}])(географический|школьный|исторический)\s+атлас(?![\p{L}])/giu,stressed:'а'+ACUTE+'тлас'},
+ {pattern:/(?<![\p{L}])(шёлковый|шелковый|гладкий)\s+атлас(?![\p{L}])/giu,stressed:'атла'+ACUTE+'с'},
 ];
 const SINGLE=new Map([
  ['каталог','катало'+ACUTE+'г'],['договор','догово'+ACUTE+'р'],
