@@ -897,9 +897,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  async function toggleReplySpeech(turn,bubble,button,feedback){
   if(speakingTurn===turn){stopReplySpeech();return}
   stopReplySpeech();
-  const text=bubble.textContent.trim();
-  if(!text)return;
-  const parts=voicePhrases(text);
+  const parts=voicePhrases(bubble.textContent.trim());
   if(!parts.length)return;
   const generation=voiceGeneration;
   speakingTurn=turn;speechButton=button;
@@ -908,29 +906,48 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   button.title='Остановить озвучивание';
   feedback.textContent='';
   const controller=new AbortController();voiceController=controller;
-  try{
-   for(let n=0;n<parts.length;n++){
-    if(controller.signal.aborted||generation!==voiceGeneration)return;
+  // Fetch only one phrase ahead while the current phrase is playing.
+  // Backend serializes CPU synthesis, so this never runs multiple models.
+  const prepared=new Map();
+  async function prepare(index){
+   if(index>=parts.length)return null;
+   if(prepared.has(index))return prepared.get(index);
+   const task=(async()=>{
     const response=await fetch('/api/seyveo-private-tts',{
      method:'POST',credentials:'same-origin',
      headers:{'content-type':'application/json'},
-     body:JSON.stringify({text:parts[n]}),signal:controller.signal
+     body:JSON.stringify({text:parts[index]}),signal:controller.signal
     });
-    if(controller.signal.aborted||generation!==voiceGeneration)return;
     if(!response.ok||!(response.headers.get('content-type')||'').includes('audio/wav'))
      throw Error('voice-unavailable');
     const blob=await response.blob();
-    if(controller.signal.aborted||generation!==voiceGeneration)return;
     if(blob.size<44||blob.size>15000000)throw Error('voice-invalid-audio');
+    return blob;
+   })();
+   // A prefetched request may fail while an earlier clip plays.
+   // Attach a handler right away to avoid an unhandled rejection.
+   task.catch(()=>{});
+   prepared.set(index,task);
+   return task;
+  }
+  try{
+   for(let n=0;n<parts.length;n++){
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
+    const blob=await prepare(n);
+    prepared.delete(n);
+    if(controller.signal.aborted||generation!==voiceGeneration)return;
     const url=URL.createObjectURL(blob);voiceBlobUrl=url;
     const audio=new Audio(url);voiceAudio=audio;
-
+    // Trigger synthesis of the next phrase before playing this clip.
+    // No user-facing loading or "part 1/3" text.
+    if(n+1<parts.length)prepare(n+1).catch(()=>{});
     await new Promise((resolve,reject)=>{
+     const aborted=()=>resolve();
+     controller.signal.addEventListener('abort',aborted,{once:true});
      audio.onended=resolve;
      audio.onerror=()=>reject(Error('voice-playback-error'));
      const playback=audio.play();
      if(playback&&typeof playback.catch==='function')playback.catch(reject);
-     controller.signal.addEventListener('abort',()=>resolve(),{once:true});
     });
     if(controller.signal.aborted||generation!==voiceGeneration)return;
     audio.pause();audio.removeAttribute('src');
