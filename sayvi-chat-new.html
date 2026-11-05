@@ -519,8 +519,19 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-sent-photo{position:relative;min-width:0;border-radius:13px;overflow:hidden;background:var(--sayvi-glass)}
 .sv-sent-photo img{display:block;width:100%;aspect-ratio:1;object-fit:cover;cursor:zoom-in}
 .sv-sent-photo span{position:absolute;bottom:0;left:0;right:0;padding:10px 4px 4px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:white;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;pointer-events:none}
-.sv-sent-images:has(> :only-child){width:min(154px,42vw);display:block}
-.sv-sent-images:has(> :only-child) img{width:100%;height:154px;max-height:42vw;aspect-ratio:1;object-fit:cover}
+/* Compact sent-image previews scaled to the phone viewport; full size on tap. */
+.sv-sent-images:has(> :only-child){width:min(150px,40vw);display:block}
+.sv-sent-images:has(> :only-child) img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover}
+@media(max-width:599px){
+ .sv-sent-images:has(> :only-child){width:132px;max-width:40vw}
+ .sv-sent-photo{border-radius:14px}
+}
+@media(max-width:390px){
+ .sv-sent-images:has(> :only-child){width:120px;max-width:40vw}
+}
+@media(min-width:600px) and (max-width:899px){
+ .sv-sent-images:has(> :only-child){width:140px}
+}
 .sv-sent-images:has(> :only-child) span{display:none}
 .sv-sent-images:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr));width:min(210px,62vw)}
 #sayviImageViewer[hidden]{display:none!important}
