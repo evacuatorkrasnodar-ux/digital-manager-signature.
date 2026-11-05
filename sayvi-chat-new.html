@@ -605,7 +605,7 @@ main{background:var(--sayvi-scene)}
  const player=document.getElementById('sayviVoicePlayer');
  // Local playback is real HTMLAudioElement audio, but its visible chrome
  // follows SEYVEO rather than Safari's opaque rectangular player.
- function makeVoicePlayer(audio){
+ function makeVoicePlayer(audio,durationHint=0){
   audio.controls=false;
   audio.hidden=true;
   audio.setAttribute('aria-hidden','true');
@@ -620,7 +620,7 @@ main{background:var(--sayvi-scene)}
   shell.append(play,range,time,audio);
   const formatTime=value=>{const n=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
   const refresh=()=>{
-   const duration=Number.isFinite(audio.duration)?audio.duration:0;
+   const duration=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:durationHint;
    const current=Math.min(audio.currentTime||0,duration||0);
    const fraction=duration?Math.max(0,Math.min(1,current/duration)):0;
    range.value=String(Math.round(fraction*1000));
@@ -648,7 +648,7 @@ main{background:var(--sayvi-scene)}
  const deleteVoice=document.getElementById('sayviVoiceDelete');
  const submitVoice=document.getElementById('sayviVoiceSubmit');
  let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
- let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0;
+ let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0,voiceDuration=0;
  const voiceUrls=new Set();
  function recordingClock(){
   const seconds=Math.floor((performance.now()-recordStart)/1000);
@@ -656,7 +656,7 @@ main{background:var(--sayvi-scene)}
  }
  function closePreview(){
   if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}
-  voiceBlob=null;player.removeAttribute('src');player.load();preview.hidden=true;
+  voiceBlob=null;voiceDuration=0;player.pause();player.removeAttribute('src');player.load();preview.hidden=true;
  }
  function stopTracks(){
   if(stream){stream.getTracks().forEach(track=>track.stop());stream=null}
@@ -678,11 +678,19 @@ main{background:var(--sayvi-scene)}
   }
   hold=true;starting=true;
   const generation=++voiceGeneration;
-  recTime.textContent='0:00';recView.hidden=false;
+  recTime.textContent='Разрешение…';recView.hidden=false;
   try{mic.setPointerCapture(event.pointerId)}catch{}
   try{
    const media=await navigator.mediaDevices.getUserMedia({audio:true});
    if(generation!==voiceGeneration){media.getTracks().forEach(track=>track.stop());return}
+   // A permission prompt on iOS may outlive the finger hold. Do not create
+   // a phantom 0-second recording when permission is granted after release.
+   if(!hold){
+    media.getTracks().forEach(track=>track.stop());
+    recView.hidden=true;starting=false;
+    status.textContent='Доступ к микрофону разрешён. Удерживайте кнопку ещё раз для записи.';
+    return;
+   }
    stream=media;
    // Safari chooses a supported container (normally MP4/AAC).
    const recording=new MediaRecorder(media);
@@ -702,8 +710,14 @@ main{background:var(--sayvi-scene)}
     const blob=new Blob(chunks,{type:recording.mimeType||chunks[0]?.type||'audio/mp4'});
     chunks=[];
     if(blob.size<150){status.textContent='Запись слишком короткая. Удерживайте микрофон подольше.';return}
+    const elapsed=Math.max(1,Math.round((performance.now()-recordStart)/1000));
     closePreview();
-    voiceBlob=blob;previewUrl=URL.createObjectURL(blob);
+    voiceDuration=elapsed;voiceBlob=blob;previewUrl=URL.createObjectURL(blob);
+    const voiceUI=player.closest('.sv-voice-player');
+    if(voiceUI){
+     const time=voiceUI.querySelector('.sv-voice-time');
+     if(time)time.textContent=Math.floor(elapsed/60)+':'+String(elapsed%60).padStart(2,'0');
+    }
     player.src=previewUrl;preview.hidden=false;
     status.textContent='Прослушайте голосовое и выберите действие.';
    },{once:true});
@@ -713,7 +727,7 @@ main{background:var(--sayvi-scene)}
    timerId=setInterval(recordingClock,250);
    maxTimer=setTimeout(finishCapture,120000);
    starting=false;
-   if(!hold) setTimeout(finishCapture,260);
+   if(!hold)finishCapture();
   }catch(error){
    if(generation!==voiceGeneration)return;
    hold=false;starting=false;recorder=null;recView.hidden=true;
@@ -734,6 +748,7 @@ main{background:var(--sayvi-scene)}
   if(!voiceBlob)return;
   // Preserve audio locally for playback. This is NOT a remote upload to Sayvi.
   const url=URL.createObjectURL(voiceBlob);voiceUrls.add(url);
+  const clipDuration=voiceDuration;
   const turn=document.createElement('div');turn.className='turn';
   turn.dataset.role='user';
   const bubble=document.createElement('div');
@@ -741,7 +756,7 @@ main{background:var(--sayvi-scene)}
   const audio=document.createElement('audio');audio.preload='metadata';audio.src=url;audio.hidden=true;
   const note=document.createElement('small');note.textContent='Голосовое · только на этом устройстве';
   bubble.append(audio,note);turn.append(bubble);list.append(turn);
-  makeVoicePlayer(audio);
+  makeVoicePlayer(audio,clipDuration);
   closePreview();status.textContent='Голосовое добавлено локально. Отправка Сэйви заработает после подключения сервера.';
   requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  });
