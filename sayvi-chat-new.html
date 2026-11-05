@@ -409,10 +409,10 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
  }
 }
 
-.sv-reply-actions{display:flex;gap:3px;align-items:center;flex-wrap:wrap;margin-top:2px}
-.sv-reply-action{border:0;background:transparent;color:var(--sayvi-secondary);min-width:31px;height:30px;padding:0 6px;border-radius:10px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
-.sv-reply-action:active{background:var(--sayvi-pressed);color:var(--sayvi-text)}
-.sv-reply-action svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.sv-reply-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap;margin-top:3px}
+.sv-reply-action{border:0;background:transparent;color:var(--sayvi-text);opacity:.72;min-width:35px;height:34px;padding:0 8px;border-radius:11px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.sv-reply-action:active{background:var(--sayvi-pressed);color:var(--sayvi-text);opacity:1}
+.sv-reply-action svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 .sv-action-feedback{font-size:11px;color:var(--sayvi-secondary);padding:0 5px}
 .sv-action-feedback:empty{display:none}
 </style>
