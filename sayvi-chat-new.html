@@ -544,7 +544,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-web-result-title{font-size:13px;font-weight:580;line-height:1.35}
 .sv-web-result-desc{font-size:11px;line-height:1.4;color:var(--sayvi-secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .sv-web-result-domain{font-size:10px;color:var(--sayvi-secondary)}
-.sv-web-result-img{width:50px;height:50px;object-fit:cover;border-radius:10px;flex:none}
+.sv-web-result-img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none}
+.sv-web-result{min-height:65px;transition:background .15s ease}
+.sv-web-result:active{background:color-mix(in srgb,var(--sayvi-glass) 80%,var(--sayvi-text) 7%)}
+.sv-web-result:focus-visible{outline:2px solid var(--sayvi-text);outline-offset:2px}
+.sv-web-result-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.sv-web-results-label{font-size:11px;color:var(--sayvi-secondary);padding:1px 2px 3px}
+.sv-web-result-domain{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:390px){.sv-web-result{padding:8px;gap:8px}.sv-web-result-img{width:46px;height:46px}}
 </style>
 </head>
 <body>
@@ -668,7 +675,11 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
    append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos);
-   if(turn.role==='assistant'&&turn.sources?.length)renderWebResults('loaded-'+(savedTurns.length-1),turn.sources);
+   if(turn.role==='assistant'&&turn.sources?.length){
+    const index=savedTurns.length-1;
+    savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
+    renderWebResults('loaded-'+index,turn.sources);
+   }
   }
   historyTurns.length=0;
   for(const turn of savedTurns.slice(-12)){
@@ -1448,7 +1459,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  // Explicit public lookup: do not submit ordinary/private chat messages.
  function webRequest(text){
   const m=/^(?:(?:сэй|сэйви)[,! ]+)?(?:найди|поищи|поиск\s*:|покажи\s+в\s+интернете)\s+(.+)$/iu.exec(text.trim());
-  return m?m[1].trim().slice(0,550):'';
+  return m?m[1].trim().replace(/^(?:в интернете|в сети)\s+/iu,'').slice(0,550):'';
  }
  function vettedWebResults(rows){
   if(!Array.isArray(rows))return [];
@@ -1471,6 +1482,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const items=vettedWebResults(rows);
   if(!items.length)return;
   const group=document.createElement('div');group.className='sv-web-results';
+  const label=document.createElement('span');label.className='sv-web-results-label';
+  label.textContent='Источники · открыть в SEYVEO Browser';group.append(label);
   for(const item of items){
    const button=document.createElement('button');button.type='button';button.className='sv-web-result';
    button.setAttribute('aria-label','Открыть '+item.title+' в SEYVEO Browser');
