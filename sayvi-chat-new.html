@@ -161,6 +161,12 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  display:flex;justify-content:space-between;align-items:center;
  pointer-events:none;
 }
+#sayviTopActions .sv-top-name{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ max-width:calc(100% - 104px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font:500 15px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:-.02em;color:var(--sayvi-text);pointer-events:none;
+}
 #sayviTopActions .sv-top-action{
  pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
  width:42px;height:42px;min-width:42px;min-height:42px;padding:0;
@@ -308,6 +314,7 @@ main{background:var(--sayvi-scene)}
 <main>
 <nav id="sayviTopActions" aria-label="Навигация чата">
  <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></a>
+ <span class="sv-top-name">Сэйви</span>
  <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-label="История разговоров" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg></button>
 </nav>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
