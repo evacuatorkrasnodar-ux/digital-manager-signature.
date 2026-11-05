@@ -31,8 +31,16 @@ textarea:focus,select:focus{border-color:#85bfa3}textarea{min-height:86px}button
 <div class="buttons"><button id="c">▶ С контекстом</button><button id="stop">Стоп</button></div>
 <details style="margin-top:14px"><summary style="font-size:12px;color:#aebeb7;cursor:pointer">Ненадёжный эксперимент со знаком ударения</summary><div class="buttons"><button id="b">▶ Со знаком (риск)</button></div></details>
 <div id="status" role="status" aria-live="polite"></div>
+<div id="timing" style="font-size:12px;color:#aebeb7;margin-top:5px"></div>
 <div id="evaluation" hidden><p style="margin:13px 0 4px">Как Сэйви произнесла только что прослушанную фразу?</p><div class="buttons"><button id="correct" class="primary">✓ Правильно</button><button id="incorrect">✕ Ошибка</button></div><label for="heard">Что произнесла неправильно? (необязательно)</label><textarea id="heard" rows="2" placeholder="Например: за́мок вместо замо́к"></textarea></div>
 <small>Мы уже обнаружили, что знак ударения может превратить «замок» в «залмок», а контекст не всегда исправляет ударение. Проверяем, насколько естественно модель читает безопасную перефразировку. Никаких автоматических замен в обычном чате нет.</small>
+</section>
+<section>
+<div class="eyebrow">ОТДЕЛЬНЫЙ ЭКСПЕРИМЕНТ</div>
+<p>Пробуем указать ударение <strong>без специальных знаков</strong>. Это не гарантированное исправление: необычные заглавные буквы тоже могут искажать речь. В обычном чате эти варианты не используются.</p>
+<label for="custom">Тестовое предложение</label>
+<textarea id="custom" maxlength="450" spellcheck="false">Дверной замОк сломался.</textarea>
+<div class="buttons"><button id="customPlay" class="primary">▶ Проверить вариант</button></div>
 </section>
 <section><div class="eyebrow">НАШИ НАБЛЮДЕНИЯ</div><p>Результаты сохраняются только в этом браузере. Их можно скопировать и прислать в чат для разбора.</p><div id="journal" style="font-size:13px;line-height:1.6;color:#c9dbd1"></div><div class="buttons"><button id="copy-log">Скопировать результаты</button><button id="clear-log">Очистить</button></div></section>
 <p><a href="/sayvi-chat-new.html">Вернуться в чат Сэйви</a></p>
@@ -45,6 +53,8 @@ const marked=document.getElementById('marked');
 const context=document.getElementById('context');
 const paraphrase=document.getElementById('paraphrase');
 const status=document.getElementById('status');
+const timing=document.getElementById('timing');
+const custom=document.getElementById('custom');
 const evaluation=document.getElementById('evaluation');
 const heard=document.getElementById('heard');
 const journal=document.getElementById('journal');
@@ -73,17 +83,19 @@ function stop(){
  if(controller){controller.abort();controller=null}
  if(audio){audio.pause();audio.removeAttribute('src');audio.load();audio=null}
  if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null}
- for(const id of ['a','b','c','d'])document.getElementById(id).disabled=false;
+ for(const id of ['a','b','c','d','customPlay'])document.getElementById(id).disabled=false;
 }
 document.getElementById('stop').addEventListener('click',()=>{stop();status.textContent='Остановлено';});
 async function play(id){
  stop();lastCompleted=null;evaluation.hidden=true;
- const text=(id==='a'?plain:id==='c'?context:id==='d'?paraphrase:marked).value.trim();
+ const text=(id==='a'?plain:id==='c'?context:id==='d'?paraphrase:id==='e'?custom:marked).value.trim();
  if(text.length<2||text.length>450){status.textContent='Введите от 2 до 450 символов';return}
  const n=serial;
  controller=new AbortController();
- for(const el of ['a','b','c','d'])document.getElementById(el).disabled=true;
+ for(const el of ['a','b','c','d','customPlay'])document.getElementById(el).disabled=true;
  status.textContent='Создаётся выбранное аудио…';
+ timing.textContent='';
+ const started=performance.now();
  try{
   const response=await fetch('/api/seyveo-private-tts',{
    method:'POST',credentials:'same-origin',
@@ -92,13 +104,14 @@ async function play(id){
   });
   if(!response.ok||!(response.headers.get('content-type')||'').includes('audio/wav'))throw Error('Не удалось получить аудио');
   const blob=await response.blob();
+  if(n===serial)timing.textContent='Создание аудио: '+((performance.now()-started)/1000).toFixed(1)+' с (включая ожидание очереди и передачу).';
   if(n!==serial)return;
   if(blob.size<44||blob.size>15000000)throw Error('Неверное аудио');
   blobUrl=URL.createObjectURL(blob);
   audio=new Audio(blobUrl);
-  audio.onended=()=>{if(n===serial){lastCompleted={variant:({a:'Обычный',b:'Со знаком',c:'С контекстом',d:'Другими словами'})[id],text,sample:Number(sample.value)};stop();evaluation.hidden=false;status.textContent='Прослушано. Отметь, правильно ли Сэйви произнесла фразу.'}};
+  audio.onended=()=>{if(n===serial){lastCompleted={variant:({a:'Обычный',b:'Со знаком',c:'С контекстом',d:'Другими словами',e:'Заглавная гласная (эксперимент)'})[id],text,sample:Number(sample.value)};stop();evaluation.hidden=false;status.textContent='Прослушано. Отметь, правильно ли Сэйви произнесла фразу.'}};
   audio.onerror=()=>{if(n===serial){stop();status.textContent='Ошибка воспроизведения'}};
-  status.textContent=id==='a'?'Слушаем обычный текст':id==='c'?'Слушаем текст с контекстом':id==='d'?'Слушаем фразу другими словами':'Слушаем экспериментальный текст со знаком ударения';
+  status.textContent=id==='a'?'Слушаем обычный текст':id==='c'?'Слушаем текст с контекстом':id==='d'?'Слушаем фразу другими словами':id==='e'?'Слушаем вариант с заглавной гласной':'Слушаем экспериментальный текст со знаком ударения';
   await audio.play();
  }catch(error){
   if(n===serial){stop();status.textContent='Не удалось озвучить. Проверь локальный сервер и голосовой движок.'}
@@ -108,5 +121,6 @@ document.getElementById('a').addEventListener('click',()=>play('a'));
 document.getElementById('b').addEventListener('click',()=>play('b'));
 document.getElementById('c').addEventListener('click',()=>play('c'));
 document.getElementById('d').addEventListener('click',()=>play('d'));
+document.getElementById('customPlay').addEventListener('click',()=>play('e'));
 choose();renderJournal();
 </script></body></html>
