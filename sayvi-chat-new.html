@@ -102,6 +102,44 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:#2a353d;-webkit-backdrop-filter:none;backdrop-filter:none}
 }
 #sayviMic{font-size:0;line-height:1}
+#sayviMic{touch-action:none;-webkit-user-select:none;user-select:none}
+#sayviMic.is-recording{background:rgba(182,72,75,.27);color:var(--sayvi-control-text)}
+#sayviVoiceRecord,#sayviVoicePreview{
+ position:absolute;
+ left:max(12px,env(safe-area-inset-left));
+ right:max(12px,env(safe-area-inset-right));
+ bottom:calc(64px + env(safe-area-inset-bottom));
+ z-index:7;
+ border:0;
+ border-radius:18px;
+ background:var(--sayvi-glass);
+ color:var(--sayvi-text);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;
+}
+#sayviVoiceRecord[hidden],#sayviVoicePreview[hidden]{display:none!important}
+#sayviVoiceRecord{
+ min-height:44px;display:flex;align-items:center;gap:9px;
+ padding:9px 13px;font-size:13px;
+}
+.sv-record-dot{width:8px;height:8px;flex:none;border-radius:50%;background:#cf4e52;animation:sv-rec-pulse 1.2s infinite alternate}
+.sv-record-hint{margin-left:auto;color:var(--sayvi-secondary);font-size:11px}
+@keyframes sv-rec-pulse{from{opacity:1}to{opacity:.4}}
+#sayviVoicePreview{display:flex;flex-direction:column;gap:7px;padding:10px 12px}
+#sayviVoicePlayer{display:block;width:100%;height:36px}
+.sv-voice-actions{display:flex;justify-content:flex-end;gap:8px}
+.sv-voice-actions button{
+ border:0;border-radius:999px;min-height:38px;padding:7px 15px;
+ font:500 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ background:var(--sayvi-action);color:var(--sayvi-control-text);
+}
+.sv-voice-actions button:last-child{font-weight:630}
+.sv-voice-bubble{display:flex;flex-direction:column;gap:5px;min-width:205px}
+.sv-voice-bubble audio{width:100%;max-width:265px;height:36px}
+.sv-voice-bubble small{font-size:11px;color:var(--sayvi-secondary)}
+@media(prefers-reduced-motion:reduce){.sv-record-dot{animation:none}}
+
 #sayviMic svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 #sayviMic,#sayviSend{grid-column:3;grid-row:1}
 #sayviMic[hidden],#sayviSend[hidden]{display:none!important}
@@ -243,10 +281,18 @@ main{background:var(--sayvi-scene)}
 <body>
 <main>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
+<div id="sayviVoiceRecord" role="status" aria-live="polite" hidden><span class="sv-record-dot" aria-hidden="true"></span><span>Запись</span><time id="sayviVoiceTimer">0:00</time><span class="sv-record-hint">Отпустите для завершения</span></div>
+<div id="sayviVoicePreview" hidden aria-label="Предпрослушивание голосового">
+ <audio id="sayviVoicePlayer" controls preload="metadata" aria-label="Прослушать голосовое"></audio>
+ <div class="sv-voice-actions">
+  <button type="button" id="sayviVoiceDelete">Удалить</button>
+  <button type="button" id="sayviVoiceSubmit">Отправить</button>
+ </div>
+</div>
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
-<button id="sayviMic" type="button" aria-label="Голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
+<button id="sayviMic" type="button" aria-label="Удерживайте для записи голосового сообщения"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 </div>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
@@ -285,7 +331,7 @@ main{background:var(--sayvi-scene)}
  const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
  const status=document.getElementById('sayviStatus');
- let active=null,sequence=0,recognition=null;
+ let active=null,sequence=0;
  const historyTurns=[];
  const answers=new Map();
  const storageKey='seyveo.sayvi.conversations.v1';
@@ -390,6 +436,10 @@ main{background:var(--sayvi-scene)}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
  document.getElementById('sayviNewChat').addEventListener('click',()=>{
   active?.abort();active=null;
+  ++voiceGeneration;hold=false;starting=false;
+  if(recorder&&recorder.state==='recording')recorder.stop();
+  stopTracks();clearRecordTimers();recView.hidden=true;closePreview();
+  voiceUrls.forEach(url=>URL.revokeObjectURL(url));voiceUrls.clear();
   if(savedTurns.length)archive.unshift(snapshot());
   archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
   historyTurns.length=0;answers.clear();
@@ -472,17 +522,117 @@ main{background:var(--sayvi-scene)}
    event.preventDefault();send();
   }
  });
- mic.addEventListener('click',()=>{
-  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!Recognition){status.textContent='Голосовой ввод недоступен в этом браузере.';return;}
-  if(recognition){recognition.stop();return;}
+ // Hold to record using the browser's real microphone.
+ // This static prototype has no server-side audio delivery yet.
+ const recView=document.getElementById('sayviVoiceRecord');
+ const recTime=document.getElementById('sayviVoiceTimer');
+ const preview=document.getElementById('sayviVoicePreview');
+ const player=document.getElementById('sayviVoicePlayer');
+ const deleteVoice=document.getElementById('sayviVoiceDelete');
+ const submitVoice=document.getElementById('sayviVoiceSubmit');
+ let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
+ let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0;
+ const voiceUrls=new Set();
+ function recordingClock(){
+  const seconds=Math.floor((performance.now()-recordStart)/1000);
+  recTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
+ }
+ function closePreview(){
+  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}
+  voiceBlob=null;player.removeAttribute('src');player.load();preview.hidden=true;
+ }
+ function stopTracks(){
+  if(stream){stream.getTracks().forEach(track=>track.stop());stream=null}
+ }
+ function clearRecordTimers(){
+  clearInterval(timerId);clearTimeout(maxTimer);timerId=null;maxTimer=null;
+ }
+ function finishCapture(){
+  hold=false;mic.classList.remove('is-recording');
+  if(recorder&&recorder.state==='recording')recorder.stop();
+ }
+ async function beginCapture(event){
+  if(event.button!==0&&event.pointerType==='mouse')return;
+  if(active||starting||recorder||!preview.hidden||input.value.trim())return;
+  event.preventDefault();
+  status.textContent='';
+  if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){
+   status.textContent='Запись голосовых недоступна в этом браузере.';return;
+  }
+  hold=true;starting=true;
+  const generation=++voiceGeneration;
+  recTime.textContent='0:00';recView.hidden=false;
+  try{mic.setPointerCapture(event.pointerId)}catch{}
   try{
-   const session=new Recognition();recognition=session;session.lang='ru-RU';session.interimResults=false;
-   session.onresult=e=>{input.value=[input.value,e.results[0][0].transcript].filter(Boolean).join(' ');updateControls();input.focus()};
-   session.onerror=()=>{status.textContent='Не удалось распознать речь.'};
-   session.onend=()=>{recognition=null};
-   session.start();
-  }catch{recognition=null;status.textContent='Микрофон недоступен.'}
+   const media=await navigator.mediaDevices.getUserMedia({audio:true});
+   if(generation!==voiceGeneration){media.getTracks().forEach(track=>track.stop());return}
+   stream=media;
+   // Safari chooses a supported container (normally MP4/AAC).
+   const recording=new MediaRecorder(media);
+   recorder=recording;
+   let chunks=[];
+   recording.addEventListener('dataavailable',event=>{
+    if(event.data&&event.data.size)chunks.push(event.data);
+   });
+   recording.addEventListener('error',()=>{
+    status.textContent='Не удалось записать голосовое.';
+    recView.hidden=true;
+    clearRecordTimers();stopTracks();recorder=null;starting=false;
+   });
+   recording.addEventListener('stop',()=>{
+    clearRecordTimers();stopTracks();recorder=null;starting=false;recView.hidden=true;
+    mic.classList.remove('is-recording');
+    const blob=new Blob(chunks,{type:recording.mimeType||chunks[0]?.type||'audio/mp4'});
+    chunks=[];
+    if(blob.size<150){status.textContent='Запись слишком короткая. Удерживайте микрофон подольше.';return}
+    closePreview();
+    voiceBlob=blob;previewUrl=URL.createObjectURL(blob);
+    player.src=previewUrl;preview.hidden=false;
+    status.textContent='Прослушайте голосовое и выберите действие.';
+   },{once:true});
+   recording.start();
+   recordStart=performance.now();recordingClock();
+   mic.classList.add('is-recording');
+   timerId=setInterval(recordingClock,250);
+   maxTimer=setTimeout(finishCapture,120000);
+   starting=false;
+   if(!hold) setTimeout(finishCapture,260);
+  }catch(error){
+   if(generation!==voiceGeneration)return;
+   hold=false;starting=false;recorder=null;recView.hidden=true;
+   clearRecordTimers();stopTracks();mic.classList.remove('is-recording');
+   status.textContent=error?.name==='NotAllowedError'
+    ?'Разрешите доступ к микрофону в Safari.'
+    :'Не удалось начать запись. Проверьте микрофон и разрешения.';
+  }
+ }
+ mic.addEventListener('pointerdown',beginCapture);
+ mic.addEventListener('pointerup',()=>{hold=false;if(!starting)finishCapture()});
+ mic.addEventListener('pointercancel',()=>{hold=false;if(!starting)finishCapture()});
+ mic.addEventListener('lostpointercapture',()=>{hold=false;if(!starting)finishCapture()});
+ mic.addEventListener('contextmenu',event=>event.preventDefault());
+ mic.addEventListener('click',event=>event.preventDefault());
+ deleteVoice.addEventListener('click',()=>{closePreview();status.textContent='Запись удалена.'});
+ submitVoice.addEventListener('click',()=>{
+  if(!voiceBlob)return;
+  // Preserve audio locally for playback. This is NOT a remote upload to Sayvi.
+  const url=URL.createObjectURL(voiceBlob);voiceUrls.add(url);
+  const turn=document.createElement('div');turn.className='turn';
+  turn.dataset.role='user';
+  const bubble=document.createElement('div');
+  bubble.className='bubble sv-voice-bubble';
+  const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=url;
+  const note=document.createElement('small');note.textContent='Голосовое · только на этом устройстве';
+  bubble.append(audio,note);turn.append(bubble);list.append(turn);
+  closePreview();status.textContent='Голосовое добавлено локально. Отправка Сэйви заработает после подключения сервера.';
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+ });
+ // Clean memory when the user leaves the page.
+ window.addEventListener('pagehide',()=>{
+  ++voiceGeneration;
+  if(recorder&&recorder.state==='recording')recorder.stop();
+  stopTracks();clearRecordTimers();
+  voiceUrls.forEach(url=>URL.revokeObjectURL(url));voiceUrls.clear();
  });
  restore();
  updateControls();
