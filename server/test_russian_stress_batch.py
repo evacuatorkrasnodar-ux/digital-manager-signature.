@@ -57,6 +57,9 @@ class RussianStressBatchTests(unittest.TestCase):
         report = mod.run([text], NoAccent())
         self.assertEqual(report[0]["status"], "needs_review")
 
+    def test_yo_is_stressed_without_plus(self):
+        self.assertTrue(mod.run(["У меня закончилась свёкла."], type("A", (), {"process_all": lambda self, x: x})())[0]["matches_expected"])
+
     def test_unknown_phrase_needs_review(self):
         result = mod.run(["Это тест без эталона."], FakeAccentizer())
         self.assertEqual(result[0]["status"], "review")
