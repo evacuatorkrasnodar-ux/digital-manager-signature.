@@ -39,6 +39,24 @@ class RussianStressBatchTests(unittest.TestCase):
         self.assertEqual([row["status"] for row in report],
                          ["pass", "pass", "needs_review"])
 
+    def test_large_benchmark_has_complete_expected_labels(self):
+        self.assertGreaterEqual(len(mod.SAMPLES), 36)
+        self.assertEqual(len(mod.SAMPLES), len(set(mod.SAMPLES)))
+        self.assertEqual(set(mod.SAMPLES), set(mod.EXPECTED))
+        for sentence, (word, marked) in mod.EXPECTED.items():
+            self.assertEqual(marked.replace("+", ""), word, sentence)
+            self.assertEqual(marked.count("+"), 1, sentence)
+
+    def test_unaccented_word_does_not_pass_by_accident(self):
+        text = "Дверной замок сломался."
+        report = mod.run([text], FakeAccentizer())
+        self.assertEqual(report[0]["status"], "pass")
+        class NoAccent:
+            def process_all(self, phrase):
+                return phrase
+        report = mod.run([text], NoAccent())
+        self.assertEqual(report[0]["status"], "needs_review")
+
     def test_unknown_phrase_needs_review(self):
         result = mod.run(["Это тест без эталона."], FakeAccentizer())
         self.assertEqual(result[0]["status"], "review")
