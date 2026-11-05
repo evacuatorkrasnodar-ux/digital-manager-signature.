@@ -316,6 +316,30 @@ main{background:var(--sayvi-scene)}
  #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}
  #sayviMenu{-webkit-backdrop-filter:none;backdrop-filter:none}
 }
+
+/* Reply control uses the same matte material, 44px geometry, and column as mic. */
+#sayviStopReply{grid-column:3;grid-row:1;display:grid;place-items:center;width:44px;height:44px;min-width:44px;margin:0;padding:0;border:0;border-radius:50%;background:var(--sayvi-action);color:var(--sayvi-control-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#sayviStopReply[hidden]{display:none!important}
+#sayviStopReply .sv-stop-symbol{display:block;width:11px;height:11px;border-radius:2.5px;background:currentColor}
+#sayviStopReply:active{background:var(--sayvi-pressed)}
+.turn[data-role="assistant"].is-streaming .speaker{
+ font-weight:590;background:linear-gradient(105deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 33%,var(--sayvi-text) 50%,var(--sayvi-secondary) 67%,var(--sayvi-secondary) 100%);
+ background-size:230% 100%;background-position:100% 50%;
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+ animation:sayvi-name-sheen 2.1s ease-in-out infinite;
+}
+.turn[data-role="assistant"].is-streaming .bubble::after{
+ content:"";display:inline-block;width:2px;height:1em;vertical-align:-.16em;margin-left:3px;border-radius:3px;
+ background:var(--sayvi-secondary);animation:sayvi-caret 1s steps(2,end) infinite;
+}
+.turn[data-role="assistant"].is-fresh .bubble{animation:sayvi-answer-in .28s ease-out both}
+@keyframes sayvi-answer-in{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sayvi-caret{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ .turn[data-role="assistant"].is-streaming .speaker{animation:none;background:none;-webkit-text-fill-color:currentColor}
+ .turn[data-role="assistant"].is-streaming .bubble::after{animation:none}
+ .turn[data-role="assistant"].is-fresh .bubble{animation:none}
+}
 </style>
 </head>
 <body>
@@ -337,6 +361,7 @@ main{background:var(--sayvi-scene)}
 <div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
 <button id="sayviMic" type="button" aria-label="Начать голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
+<button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button>
 </div>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
 <section id="sayviHistory" aria-label="История разговоров" hidden><div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div><div id="sayviHistoryList"></div></section>
@@ -372,6 +397,7 @@ main{background:var(--sayvi-scene)}
  const updateScrollEdge=()=>list.classList.toggle('is-scrolled',list.scrollTop>2);
  list.addEventListener('scroll',updateScrollEdge,{passive:true});
  const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
+ const stopReplyButton=document.getElementById('sayviStopReply');
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
  const status=document.getElementById('sayviStatus');
  let active=null,sequence=0;
@@ -441,6 +467,7 @@ main{background:var(--sayvi-scene)}
   input.disabled=!!active;
   sendButton.hidden=!!active||!typed;
   mic.hidden=!!active||typed;
+  stopReplyButton.hidden=!active;
  }
  function append(role,id,message,save=true){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
@@ -497,15 +524,24 @@ main{background:var(--sayvi-scene)}
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
   append('user','user-'+id,question);
-  let answer='',done=false;
+  let answer='',done=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
-  // A network error on static GitHub Pages can arrive in a few milliseconds.
-  // Give the animation one visible pass, without implying a real AI reply.
   async function finishThinking(){
-   const remaining=1300-(performance.now()-thinkingStarted);
-   if(remaining>0)await new Promise(resolve=>setTimeout(resolve,remaining));
+   const remaining=900-(performance.now()-thinkingStarted);
+   if(remaining>0&&!controller.signal.aborted)await new Promise(resolve=>setTimeout(resolve,remaining));
    stopThinking();
+  }
+  function revealAnswer(text){
+   if(!streamingTurn){
+    stopThinking();
+    append('assistant',replyId,text);
+    streamingTurn=answers.get(replyId)?.closest('.turn');
+    if(streamingTurn){
+     streamingTurn.classList.add('is-streaming','is-fresh');
+     setTimeout(()=>streamingTurn?.classList.remove('is-fresh'),320);
+    }
+   }else append('assistant',replyId,text);
   }
   try{
    const response=await fetch('/api/seyveo-stream',{
@@ -526,8 +562,7 @@ main{background:var(--sayvi-scene)}
     if(!line.trim())return;
     const part=JSON.parse(line);
     if(part.type==='delta'&&typeof part.text==='string'){
-     if(!answer)stopThinking();
-     answer+=part.text;append('assistant',replyId,answer);
+     answer+=part.text;revealAnswer(answer);
     }else if(part.type==='done')done=true;
     else if(part.type==='error')throw Error(part.text||'Ошибка ответа Сэйви.');
    }
@@ -547,14 +582,22 @@ main{background:var(--sayvi-scene)}
    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
   }catch(error){
-   if(controller.signal.aborted)return;
-   status.textContent=String(error?.message||'Ошибка соединения.');
-   if(answer)append('assistant',replyId,answer);
+   if(!controller.signal.aborted){
+    status.textContent=String(error?.message||'Ошибка соединения.');
+    if(answer)revealAnswer(answer);
+   }
   }finally{
+   streamingTurn?.classList.remove('is-streaming','is-fresh');
    await finishThinking();
    if(active===controller){active=null;updateControls()}
   }
  }
+ stopReplyButton.addEventListener('click',()=>{
+  if(!active)return;
+  active.abort();
+  status.textContent='Ответ остановлен.';
+  active=null;updateControls();
+ });
  function send(){
   const value=input.value.trim();if(!value||active)return;
   input.value='';updateControls();ask(value);
