@@ -1402,7 +1402,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const id=++sequence,replyId='reply-'+id;
   const linkedPhotos=contextImagesFor(question,options);
   if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos);
-  let answer='',done=false,streamingTurn=null;
+  let answer='',done=false,wasTruncated=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
   async function finishThinking(){
@@ -1441,7 +1441,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     const part=JSON.parse(line);
     if(part.type==='delta'&&typeof part.text==='string'){
      answer+=part.text;revealAnswer(answer);
-    }else if(part.type==='done')done=true;
+    }else if(part.type==='done'){done=true;wasTruncated=part.truncated===true;}
     else if(part.type==='error')throw Error(part.text||'Ошибка ответа Сэйви.');
    }
    while(true){
@@ -1457,6 +1457,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    if(buffer.trim())consume(buffer);
    if(!done)throw Error('Соединение прервалось.');
    if(!answer.trim())throw Error('Сэйви не прислала ответ.');
+   if(wasTruncated)status.textContent='Ответ ограничен моделью. Напиши «продолжи», чтобы Сэйви закончила мысль.';
    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
   }catch(error){
