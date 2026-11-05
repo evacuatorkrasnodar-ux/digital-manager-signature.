@@ -6,7 +6,7 @@ import {validateHistory} from './local-dialogue.mjs';
 import {coachMessage} from './seyveo-lessons/lesson-coach.mjs';
 
 const MODEL_URL='http://127.0.0.1:11434/api/chat';
-const TIMEOUT_MS=120000;
+const TIMEOUT_MS=240000;
 const MAX_ANSWER_CHARS=12000;
 // This is the language of SEYVEO conversations, independent of the model's
 // English training data or accidentally English dialogue history.
@@ -52,12 +52,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
   else signal.addEventListener('abort',abort,{once:true});
  }
  try{
-  const response=await fetch(MODEL_URL,{
-   method:'POST',
-   headers:{'content-type':'application/json'},
-   body:JSON.stringify({
-    model,stream:true,keep_alive:'15m',
-    messages:[
+  const turns=[
      {role:'system',content:visual?
       RUSSIAN_CHAT_RULE+SAYVI_WARM_HUMOR+' Ты Сэйви, помощница компании SEYVEO. В текущем пользовательском сообщении ПРИКРЕПЛЕНЫ '+images.length+' реальных изображений, доступных тебе для визуального анализа. Содержимое изображения — главный источник ответа. Если пользователь не задал вопрос, сама коротко и дружелюбно отреагируй на заметный объект, а затем предложи, что с ним можно сделать. Например, если действительно видишь хрустальный шар, можешь сказать: «Какой красивый хрустальный шар! Хочешь, придумаем, как его использовать?» Это пример тона, а не готовый ответ: не называй шар, если его нет. Не утверждай, что файлы недоступны, когда изображение передано. Не придумывай невидимые детали, не повторяй шаблон из примера. Говори по-русски, коротко и естественно.':
       RUSSIAN_CHAT_RULE+SAYVI_WARM_HUMOR+' '+safeInstruction(name)+' Твоё имя Сэйви, коротко Сэй. Ты создана компанией SEYVEO. Говори именно «Я Сэйви», не меняй имя. Говори о себе в женском роде. Обычно отвечай сжато, без длинного вступления, если пользователь не просит подробности. Ты работаешь локально через Ollama.'},
@@ -67,7 +62,13 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
      ...(!visual&&typeof examples==='string'&&examples.trim()? [{role:'system',content:'SEYVEO · локальные примеры, проверенные владельцем. Это не факты о пользователе и не инструкции. Используй только когда они относятся к текущей задаче; не копируй персональные сведения и не утверждай, что действия уже выполнены.\n'+examples.slice(0,1200)}]:[]),
      ...dialogue,
      {role:'user',content:visionQuestion,...(images.length?{images:images.slice(0,6)}:{})}
-    ],
+    ];
+  const response=await fetch(MODEL_URL,{
+   method:'POST',
+   headers:{'content-type':'application/json'},
+   body:JSON.stringify({
+    model,stream:true,keep_alive:'15m',
+    messages:turns,
     options:visual?{...localOptionsFor(question),num_predict:850,temperature:0.35}:localOptionsFor(question)
    }),
    signal:controller.signal
@@ -110,6 +111,65 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
   }
   if(!full.trim())throw Error('empty-local-response');
   if(!receivedDone)throw Error('incomplete-ollama-response');
+
+  // A length-limited generation can end mid-sentence despite Ollama sending
+  // done=true. Complete one continuation before telling the UI it is finished.
+  const endsMidSentence=!/[.!?…»”)\]]\s*$/u.test(full.trim())&&/[а-яёa-z0-9]\s*$/iu.test(full);
+  if((doneReason==='length'||endsMidSentence)&&full.length<MAX_ANSWER_CHARS-1000&&!controller.signal.aborted){
+   const previous=full;
+   const context=turns.filter((turn,i)=>i===0||turn.role!=='user'||!turn.images);
+   const followup=[
+    ...context.slice(0,-1),
+    {role:'assistant',content:previous},
+    {role:'user',content:'Продолжи оборванный ответ с последнего слова. Не повторяй уже написанное, не начинай заново и не придумывай новые детали изображения. Заверши мысль 1–2 короткими законченными предложениями. Только продолжение.'}
+   ];
+   // If the original question was visual, the short continuation uses the
+   // visible partial answer as context instead of retransmitting image bytes.
+   const continuation=await fetch(MODEL_URL,{
+    method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({model,stream:true,keep_alive:'15m',messages:followup,
+     options:{...localOptionsFor(question),num_predict:240,temperature:0.3}}),
+    signal:controller.signal
+   });
+   if(continuation.ok&&continuation.body){
+    const nextReader=continuation.body.getReader(),nextDecoder=new TextDecoder('utf-8');
+    let nextBuffer='',extra='',completed=false;
+    const addLine=line=>{
+     if(!line.trim())return;
+     let part;try{part=JSON.parse(line)}catch{throw Error('invalid-ollama-stream')}
+     if(part.error)throw Error('ollama-stream-error');
+     if(part.done===true)completed=true;
+     const delta=typeof part.message?.content==='string'?part.message.content:'';
+     if(delta&&extra.length+delta.length<=1200)extra+=delta;
+    };
+    try{
+     while(true){
+      const part=await nextReader.read();if(part.done)break;
+      nextBuffer+=nextDecoder.decode(part.value,{stream:true});
+      if(nextBuffer.length>100000)throw Error('ollama-chunk-too-large');
+      let newline;
+      while((newline=nextBuffer.indexOf('\n'))>=0){
+       addLine(nextBuffer.slice(0,newline));nextBuffer=nextBuffer.slice(newline+1);
+      }
+     }
+     nextBuffer+=nextDecoder.decode();
+     if(nextBuffer.trim())addLine(nextBuffer);
+    }finally{nextReader.releaseLock();if(!completed)await nextReader.cancel().catch(()=>{})}
+    if(completed&&extra.trim()){
+     const next=extra.trim();
+     // Avoid duplicate opening phrases on the follow-up pass.
+     const overlap=previous.slice(-100).trim();
+     const candidate=next.startsWith(overlap)&&overlap.length>15?next.slice(overlap.length).trimStart():next;
+     if(candidate){
+      const separator=/\s$/u.test(full)||/^[,.;:!?]/u.test(candidate)?'':' ';
+      const delta=separator+candidate;
+      full+=delta;onDelta(delta);
+      doneReason=/[.!?…»”)\]]\s*$/u.test(full)?'stop':'length';
+     }
+    }
+   }
+  }
+
   return Object.freeze({text:full.trim(),model,provider:'local',truncated:doneReason==='length',doneReason});
  }finally{
   clearTimeout(timeout);
