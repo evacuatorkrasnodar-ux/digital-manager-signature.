@@ -109,33 +109,29 @@
  line-height:1.3;letter-spacing:-.01em;cursor:pointer;
  -webkit-tap-highlight-color:transparent;
 }
-/* Air 26: canonical card actions inherit the same visual hierarchy as
-   the live Home queue, without changing their action IDs or behavior. */
+/* Canonical action hierarchy. One material definition — no obsolete
+ * opaque white primary or outline secondary hiding below Liquid Glass. */
 .sv-card-system--rendered .sv-card-actions{
- --sv-card-primary:#f6f8fa;--sv-card-primary-ink:#1c1c1e;
  column-gap:9px;row-gap:0;
-}
-:root[data-theme=light] .sv-card-system--rendered .sv-card-actions{
- --sv-card-primary:#1c1c1e;--sv-card-primary-ink:#fff;
 }
 .sv-card-system--rendered .sv-card-action{
  font-weight:560;
 }
-.sv-card-system--rendered .sv-card-action:first-child{
- padding:8px 14px;border-radius:999px;
- background:var(--sv-card-primary);color:var(--sv-card-primary-ink);
- font-weight:630;
+.sv-card-system--rendered .sv-card-action:is(:first-child,:nth-child(2)){
+ border:0;border-radius:999px;
+ padding:8px 12px;
+ background:var(--sv-master-glass);
+ color:var(--sv-card-ink);
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+ box-shadow:none;
 }
-.sv-card-system--rendered .sv-card-action:nth-child(2){
- padding:8px 12px;border-radius:999px;
- border:1px solid color-mix(in srgb,var(--text) 12%,transparent);
- background:color-mix(in srgb,var(--card) 25%,transparent);
- -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+.sv-card-system--rendered .sv-card-action:first-child{
+ padding-inline:14px;font-weight:630;
 }
 .sv-card-system--rendered .sv-card-action:nth-child(n+3){
  padding:8px 4px;color:var(--sv-card-subtle);
 }
-
 .sv-card-system--rendered .sv-card-action:active{opacity:.65}
 .sv-card-system--rendered .sv-card-action:disabled{opacity:.5;cursor:default}
 .sv-card-system--rendered .sv-card-action:focus-visible{
@@ -199,14 +195,6 @@
 .sv-card-system--rendered .sv-card-value{
  font-size:var(--sv-master-description-size);
  line-height:var(--sv-master-description-leading);
-}
-.sv-card-system--rendered .sv-card-action:is(:first-child,:nth-child(2)){
- border:0;
- background:var(--sv-master-glass);
- -webkit-backdrop-filter:var(--sv-master-glass-blur);
- backdrop-filter:var(--sv-master-glass-blur);
- box-shadow:none;
- color:var(--text);
 }
 #homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-primary-title{
  font-size:var(--sv-master-title-size);
