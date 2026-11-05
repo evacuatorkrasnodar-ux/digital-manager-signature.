@@ -1482,7 +1482,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    }))).filter(Boolean);
    const otherFiles=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file.name);
    const display=[value,...(otherFiles.length?['📎 '+otherFiles.join(', ')]:[])].filter(Boolean).join('\n');
-   const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Изучи прикреплённые файлы и объясни содержимое.';
+   const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
    active=null;input.value='';clearAttachments();
    // The user can ask follow-up questions about this picture without
    // attaching it again, while the temporary server still holds its bytes.
