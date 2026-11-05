@@ -134,7 +134,13 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  display:flex;align-items:center;gap:11px;width:100%;
  min-width:0;min-height:38px;color:var(--sayvi-text);
 }
-.sv-voice-player audio{display:none}
+.sv-voice-player audio,
+#sayviVoicePlayer{
+ display:none!important;
+ width:0!important;height:0!important;
+ position:absolute!important;
+ opacity:0!important;pointer-events:none!important;
+}
 .sv-voice-play{
  flex:0 0 34px;width:34px;height:34px;padding:0;
  display:grid;place-items:center;background:transparent;border:0;border-radius:50%;
@@ -350,7 +356,7 @@ main{background:var(--sayvi-scene)}
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <div id="sayviVoiceRecord" role="status" aria-live="polite" hidden><span class="sv-record-dot" aria-hidden="true"></span><span>Запись</span><time id="sayviVoiceTimer">0:00</time><span class="sv-record-hint">Отпустите для завершения</span></div>
 <div id="sayviVoicePreview" hidden aria-label="Предпрослушивание голосового">
- <audio id="sayviVoicePlayer" controls preload="metadata" aria-label="Прослушать голосовое"></audio>
+ <audio id="sayviVoicePlayer" preload="metadata" aria-label="Прослушать голосовое" hidden></audio>
  <div class="sv-voice-actions">
   <button type="button" id="sayviVoiceDelete">Удалить</button>
   <button type="button" id="sayviVoiceSubmit">Отправить</button>
@@ -601,6 +607,8 @@ main{background:var(--sayvi-scene)}
  // follows SEYVEO rather than Safari's opaque rectangular player.
  function makeVoicePlayer(audio){
   audio.controls=false;
+  audio.hidden=true;
+  audio.setAttribute('aria-hidden','true');
   const shell=document.createElement('div');shell.className='sv-voice-player';
   const play=document.createElement('button');play.type='button';
   play.className='sv-voice-play';play.setAttribute('aria-label','Воспроизвести голосовое');
@@ -730,7 +738,7 @@ main{background:var(--sayvi-scene)}
   turn.dataset.role='user';
   const bubble=document.createElement('div');
   bubble.className='bubble sv-voice-bubble';
-  const audio=document.createElement('audio');audio.preload='metadata';audio.src=url;
+  const audio=document.createElement('audio');audio.preload='metadata';audio.src=url;audio.hidden=true;
   const note=document.createElement('small');note.textContent='Голосовое · только на этом устройстве';
   bubble.append(audio,note);turn.append(bubble);list.append(turn);
   makeVoicePlayer(audio);
