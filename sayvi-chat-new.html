@@ -1963,7 +1963,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const lock=new AbortController();active=lock;updateControls();
   status.textContent='Подготавливаю вложения…';
   try{
-   const files=await prepareAttachments(selected,Math.max(0,3550-value.length));
+   const files=await prepareAttachments(selected,Math.max(0,3000-value.length));
    if(active!==lock)return;
    const thumbs=(await Promise.all(selected.map(async item=>{
     try{return await makeSentPhoto(item.file)}catch{return null}
