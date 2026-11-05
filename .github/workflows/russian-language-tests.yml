@@ -13,6 +13,10 @@ on:
       - 'server/test_russian_stress_batch.py'
       - 'server/voice-protection.test.mjs'
       - 'server/spoken-text.test.mjs'
+      - 'server/document-reader.py'
+      - 'server/document-attachments.mjs'
+      - 'server/test_document_reader.py'
+      - 'sayvi-chat-new.html'
       - 'assets/seyveo-private-voice.js'
       - 'server/real-app-local.mjs'
       - 'server/seyveo-voice-school/voice_worker.py'
@@ -29,6 +33,10 @@ on:
       - 'server/test_russian_stress_batch.py'
       - 'server/voice-protection.test.mjs'
       - 'server/spoken-text.test.mjs'
+      - 'server/document-reader.py'
+      - 'server/document-attachments.mjs'
+      - 'server/test_document_reader.py'
+      - 'sayvi-chat-new.html'
       - 'assets/seyveo-private-voice.js'
       - 'server/real-app-local.mjs'
       - 'server/seyveo-voice-school/voice_worker.py'
@@ -51,5 +59,7 @@ jobs:
         run: node --test server/russian-language.test.mjs server/russian-stress.test.mjs server/voice-protection.test.mjs server/spoken-text.test.mjs
       - name: Offline Python batch tests
         run: python -m unittest discover -s server -p 'test_russian_stress_batch.py'
+      - name: Offline Office document extraction tests
+        run: python -m unittest discover -s server -p 'test_document_reader.py'
       - name: Validate report generation without model downloads
         run: python server/russian-stress-batch.py --dry-run --output /tmp/seyveo-stress-dry-run.jsonl
