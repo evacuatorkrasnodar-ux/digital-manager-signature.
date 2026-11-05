@@ -1535,7 +1535,105 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    stop();if(active===ctrl){active=null;updateControls()}
   }
  }
+
+ // Existing local memory and reviewed-example lab; never auto-train on conversations.
+ function knowledgeIntent(message){
+  const text=String(message).trim().replace(/^(?:сэй|сэйви)[,\s!]+/iu,'');
+  if(/^(?:память|покажи память|что ты помнишь|моя память)\??$/iu.test(text))return {type:'list-memory'};
+  let m=/^(?:забудь|удали из памяти)\s+(\d{1,2})\s*[.!]?$/iu.exec(text);
+  if(m)return {type:'delete-memory',index:Number(m[1])-1};
+  if(/^(?:очисти память|удали всю память)\s*[.!]?$/iu.test(text))return {type:'clear-memory'};
+  if(/^(?:обучение|покажи обучение|лаборатория обучения)\??$/iu.test(text))return {type:'list-learning'};
+  m=/^(?:научи(?:сь)?|предложи обучение)\s*[:：]\s*([\s\S]+?)\s*(?:=>|⇒|\|)\s*([\s\S]+)$/iu.exec(text);
+  if(m)return {type:'propose',question:m[1].trim(),answer:m[2].trim()};
+  m=/^(?:одобри|подтверди|отклони)\s+(?:пример\s+)?(\d{1,2})\s*[.!]?$/iu.exec(text);
+  if(m)return {type:/^отклони/iu.test(text)?'reject':'approve',index:Number(m[1])-1};
+  return null;
+ }
+ async function localKnowledgeApi(url,data,signal){
+  const r=await fetch(url,{method:data?'POST':'GET',credentials:'same-origin',
+   ...(data?{headers:{'content-type':'application/json'},body:JSON.stringify(data)}:{}),signal});
+  const result=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(result.error||'Локальная память недоступна.');
+  return result;
+ }
+ async function runKnowledgeCommand(question,cmd){
+  const controller=new AbortController();active=controller;updateControls();status.textContent='';
+  const id=++sequence,replyId='memory-'+id;
+  append('user','user-'+id,question);
+  const stop=showThinking();let message='';
+  try{
+   if(['list-memory','delete-memory','clear-memory'].includes(cmd.type)){
+    const data=await localKnowledgeApi('/api/seyveo-memory',null,controller.signal);
+    const items=Array.isArray(data.items)?data.items:[];
+    if(cmd.type==='list-memory'){
+     message=items.length?'Вот что я помню только на этом компьютере:\n\n'+items.map((x,i)=>(i+1)+'. '+x.text).join('\n')+
+      '\n\nЧтобы удалить запись, напиши «Забудь 1».':
+      'Локальная память пока пуста. Если хочешь, скажи: «Сэйви, запомни: ...».';
+    }else if(cmd.type==='delete-memory'){
+     const row=items[cmd.index];
+     if(!row)message='Не нашла запись с таким номером. Напиши «Память».';
+     else if(!window.confirm('Удалить из локальной памяти:\n\n'+row.text+'?'))message='Хорошо, память не меняла.';
+     else{
+      await localKnowledgeApi('/api/seyveo-memory',{action:'remove',id:row.id},controller.signal);
+      message='Запись удалена из локальной памяти.';
+     }
+    }else if(!items.length)message='Локальная память уже пуста.';
+    else if(!window.confirm('Удалить все записи локальной памяти ('+items.length+') без возможности восстановления?'))message='Память не меняла.';
+    else{
+     await localKnowledgeApi('/api/seyveo-memory',{action:'clear'},controller.signal);
+     message='Все записи локальной памяти удалены по твоему подтверждению.';
+    }
+   }else{
+    const dashboard=await localKnowledgeApi('/api/seyveo-learning-dashboard',null,controller.signal);
+    const pending=Array.isArray(dashboard.proposals)?dashboard.proposals.filter(x=>x.status==='pending'):[];
+    if(cmd.type==='list-learning'){
+     message='Лаборатория Сэйви. Одобренных примеров: '+(dashboard.approvedCount||0)+
+      '. На проверке: '+pending.length+'.\n\n'+
+      (pending.length?pending.slice(0,12).map((x,i)=>(i+1)+'. '+x.question+'\nОтвет: '+x.answer).join('\n\n')+
+       '\n\nНапиши «Одобри пример 1» или «Отклони пример 1».':
+       'Чтобы предложить пример, напиши: «Научи: вопрос | правильный ответ».');
+    }else if(cmd.type==='propose'){
+     if(cmd.question.length<4||cmd.question.length>600||cmd.answer.length<4||cmd.answer.length>1800){
+      message='Укажи вопрос (4–600 символов) и правильный ответ (4–1800 символов).';
+     }else if(!window.confirm('Предложить обезличенный пример в локальную очередь?\n\nВопрос: '+cmd.question+
+       '\n\nОтвет: '+cmd.answer+'\n\nОн не будет использоваться до отдельного одобрения.')){
+      message='Не добавляла пример.';
+     }else{
+      await localKnowledgeApi('/api/seyveo-learning-proposal',{
+       action:'propose',confirmed:true,question:cmd.question,answer:cmd.answer
+      },controller.signal);
+      message='Пример добавлен в очередь, но ещё не одобрен. Напиши «Обучение», чтобы проверить его.';
+     }
+    }else{
+     const row=pending[cmd.index];
+     if(!row)message='Такого примера нет. Напиши «Обучение» для актуальной очереди.';
+     else if(!window.confirm((cmd.type==='approve'?'Одобрить':'Отклонить')+' пример?\n\n'+row.question+'\n'+row.answer)){
+      message='Не меняла статус примера.';
+     }else{
+      await localKnowledgeApi('/api/seyveo-learning-proposal',{
+       action:cmd.type==='approve'?'approve':'reject',id:row.id
+      },controller.signal);
+      message=cmd.type==='approve'?'Одобрила пример. Буду учитывать его в похожих вопросах.':
+       'Отклонила пример, в ответы он не попадёт.';
+     }
+    }
+   }
+  }catch(error){
+   if(!controller.signal.aborted)message=String(error?.message||'Не удалось открыть локальную память.');
+  }finally{
+   stop();
+   if(!controller.signal.aborted){
+    append('assistant',replyId,message||'Локальная память не ответила.');
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:message.slice(0,450)});
+    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+   }
+   if(active===controller){active=null;updateControls()}
+  }
+ }
  async function ask(question,options={}){
+  const intent=options.skipUser?null:knowledgeIntent(question);
+  if(intent&&!options.attachments?.length)return runKnowledgeCommand(question,intent);
   const query=options.skipUser?'':webRequest(question);
   if(query&&!options.attachments?.length)return searchInChat(question,query);
   const controller=new AbortController();active=controller;updateControls();
