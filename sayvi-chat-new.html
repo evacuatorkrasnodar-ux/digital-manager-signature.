@@ -458,6 +458,23 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
 #sayviAttachmentTray[hidden]{display:none!important}
 #sayviAttachmentTray{position:absolute;z-index:6;bottom:calc(66px + env(safe-area-inset-bottom));left:max(64px,env(safe-area-inset-left));right:max(56px,env(safe-area-inset-right));display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;align-items:center;padding:4px 0}
 #sayviAttachmentTray::-webkit-scrollbar{display:none}
+/* Keep error/status messages above the attachment rail, never through it. */
+main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
+ bottom:calc(124px + env(safe-area-inset-bottom));
+ left:max(16px,env(safe-area-inset-left));
+ right:max(16px,env(safe-area-inset-right));
+ width:auto;
+ max-width:420px;
+ padding:8px 11px;
+ border-radius:12px;
+ background:var(--sayvi-menu);
+ color:var(--sayvi-text);
+ -webkit-backdrop-filter:blur(16px);
+ backdrop-filter:blur(16px);
+ font-size:12px;
+ line-height:1.4;
+}
+
 .sv-attach-chip{display:flex;align-items:center;gap:7px;min-width:0;max-width:220px;flex:0 0 auto;padding:5px 6px;border-radius:13px;background:var(--sayvi-glass);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:var(--sayvi-text);font:450 12px -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 .sv-attach-thumb{width:31px;height:31px;border-radius:8px;object-fit:cover;flex:none;background:var(--sayvi-pressed)}
 .sv-attach-fileicon{display:grid;place-items:center;width:31px;height:31px;border-radius:8px;background:var(--sayvi-pressed);flex:none}
@@ -1032,7 +1049,7 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
     let response;
     try{response=await fetch('/api/seyveo-attachments',{method:'POST',credentials:'same-origin',body})}
     catch{throw Error('Сервер загрузки файлов сейчас недоступен. Вложение не отправлено.')}
-    if(!response.ok)throw Error('Сервер пока не принимает фото или документы (код '+response.status+'). Вложение не отправлено.');
+    if(!response.ok)throw Error(response.status===404?'Загрузка фото и документов на сервере пока не подключена. Файл остался здесь.':'Сервер не принял вложение (код '+response.status+'). Файл остался здесь.');
     const info=await response.json().catch(()=>null);
     if(!info||typeof info.id!=='string'||!info.id.trim())throw Error('Сервер не подтвердил загрузку '+file.name+'. Вложение не отправлено.');
     uploaded.push({id:info.id,name:file.name,type:file.type||'application/octet-stream',size:file.size});
