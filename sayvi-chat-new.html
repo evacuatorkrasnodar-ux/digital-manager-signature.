@@ -666,13 +666,14 @@ main{background:var(--sayvi-scene)}
   refresh();
   return shell;
  }
- makeVoicePlayer(player);
  const deleteVoice=document.getElementById('sayviVoiceDelete');
  const submitVoice=document.getElementById('sayviVoiceSubmit');
  let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
  let pressPointer=null,releaseWhileStarting=false,tapStopMode=false;
  let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0,voiceDuration=0;
  const voiceUrls=new Set();
+ // Initialize the player only after its duration state exists (avoid TDZ crash).
+ makeVoicePlayer(player);
  function recordingClock(){
   const seconds=Math.floor((performance.now()-recordStart)/1000);
   recTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
