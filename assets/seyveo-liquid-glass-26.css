@@ -102,33 +102,28 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
 :root[data-theme=light] body #homePage #seyveoLivingMoment
  .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
- /* One neutral, translucent regular-style material: no green,
-    no hard 1px border, no embossed lower rim. */
- background:linear-gradient(162deg,
-   rgba(255,255,255,.79) 0%,
-   rgba(225,231,237,.52) 57%,
-   rgba(245,248,251,.59) 100%)!important;
+ /* Matched to Apple iOS 26 UI Kit > Buttons > Bordered (40:59292):
+    tertiary neutral fill rgba(118,118,128,.12), no decorative outer
+    shadow/rim. Material Light Regular (510:78333) blurs behind content.
+    CSS is a restrained PWA adaptation, not Apple's system renderer. */
+ background:rgba(118,118,128,.12)!important;
  border:0!important;
- box-shadow:
-   0 1.5px 5px rgba(48,63,78,.048),
-   inset 0 0 0 .6px rgba(83,102,120,.105),
-   inset 0 .7px 0 rgba(255,255,255,.72)!important;
- -webkit-backdrop-filter:blur(20px) saturate(110%)!important;
- backdrop-filter:blur(20px) saturate(110%)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(24px) saturate(108%)!important;
+ backdrop-filter:blur(24px) saturate(108%)!important;
 }
 :root[data-theme=light] body #homePage #seyveoLivingMoment
  .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden]):active::before{
- background:linear-gradient(162deg,
-   rgba(248,250,252,.79),rgba(216,225,233,.57))!important;
- box-shadow:inset 0 0 0 .6px rgba(83,102,120,.11)!important;
+ background:rgba(118,118,128,.18)!important;
+ box-shadow:none!important;
 }
 /* Preserve visible neutral glass when iOS reduces transparency. */
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme=light] body #homePage #seyveoLivingMoment
   .lm-field[data-lm-subject="work"] .lm-actions
   :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
-  background:linear-gradient(160deg,#f7f8fa,#e8edf2)!important;
+  background:rgba(118,118,128,.12)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
