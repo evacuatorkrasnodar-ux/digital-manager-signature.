@@ -151,6 +151,30 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 }
 html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
 main{background:var(--sayvi-scene)}
+/* White Velvet: quiet graphite variations physically BEHIND the glass.
+   A background light-field, not a second composer or a visible backing plate.
+   This provides contrast even when no message is beneath the input. */
+:root[data-theme=light] main::before{
+ content:"";
+ position:fixed;
+ left:15%;
+ width:70%;
+ height:62px;
+ bottom:calc(2px + env(safe-area-inset-bottom));
+ z-index:0;
+ pointer-events:none;
+ border:0;
+ border-radius:0;
+ background:
+  radial-gradient(ellipse 19% 33% at 25% 43%,rgba(65,87,100,.21),transparent 100%),
+  radial-gradient(ellipse 28% 31% at 53% 60%,rgba(70,93,105,.15),transparent 100%),
+  radial-gradient(ellipse 17% 43% at 76% 41%,rgba(63,89,103,.18),transparent 100%);
+ -webkit-mask-image:radial-gradient(ellipse 95% 90% at 50% 50%,#000 20%,transparent 100%);
+ mask-image:radial-gradient(ellipse 95% 90% at 50% 50%,#000 20%,transparent 100%);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] main::before{display:none}
+}
 header{color:var(--sayvi-text)}
 .turn[data-role="user"] .bubble{background:var(--sayvi-bubble);color:var(--sayvi-text)}
 .turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
