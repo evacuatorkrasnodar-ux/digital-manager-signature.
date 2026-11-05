@@ -132,6 +132,18 @@
 .sv-card-system--rendered .sv-card-action:nth-child(n+3){
  padding:8px 4px;color:var(--sv-card-subtle);
 }
+/* Action hierarchy follows meaning, not array position: some families
+ * have only two actions, where the second is "Позже". */
+.sv-card-system--rendered .sv-card-action[data-card-action="later"],
+.sv-card-system--rendered .sv-card-action[data-card-action="not-interested"]{
+ border:0;
+ padding:8px 4px;
+ background:transparent;
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+ box-shadow:none;
+ color:var(--sv-card-subtle);
+}
 .sv-card-system--rendered .sv-card-action:active{opacity:.65}
 .sv-card-system--rendered .sv-card-action:disabled{opacity:.5;cursor:default}
 .sv-card-system--rendered .sv-card-action:focus-visible{
