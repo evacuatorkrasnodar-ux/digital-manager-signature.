@@ -532,7 +532,7 @@ main{background:var(--sayvi-scene)}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
  document.getElementById('sayviNewChat').addEventListener('click',()=>{
   active?.abort();active=null;
-  ++voiceGeneration;hold=false;starting=false;
+  ++voiceGeneration;hold=false;starting=false;tapStopMode=false;pressPointer=null;releaseWhileStarting=false;
   if(recorder&&recorder.state==='recording')recorder.stop();
   stopTracks();clearRecordTimers();recView.hidden=true;closePreview();
   voiceUrls.forEach(url=>URL.revokeObjectURL(url));voiceUrls.clear();
@@ -670,6 +670,7 @@ main{background:var(--sayvi-scene)}
  const deleteVoice=document.getElementById('sayviVoiceDelete');
  const submitVoice=document.getElementById('sayviVoiceSubmit');
  let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
+ let pressPointer=null,releaseWhileStarting=false,tapStopMode=false;
  let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0,voiceDuration=0;
  const voiceUrls=new Set();
  function recordingClock(){
@@ -687,8 +688,14 @@ main{background:var(--sayvi-scene)}
   clearInterval(timerId);clearTimeout(maxTimer);timerId=null;maxTimer=null;
  }
  function finishCapture(){
-  hold=false;mic.classList.remove('is-recording');
-  if(recorder&&recorder.state==='recording')recorder.stop();
+  hold=false;tapStopMode=false;pressPointer=null;
+  mic.classList.remove('is-recording');
+  mic.setAttribute('aria-label','Удерживайте для записи голосового сообщения');
+  if(recorder&&recorder.state==='recording'){
+   recorder.stop();
+  }else if(!starting){
+   recView.hidden=true;
+  }
  }
  async function beginCapture(event){
   if(event.button!==0&&event.pointerType==='mouse')return;
@@ -698,21 +705,18 @@ main{background:var(--sayvi-scene)}
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){
    status.textContent='Запись голосовых недоступна в этом браузере.';return;
   }
-  hold=true;starting=true;
+  hold=true;starting=true;releaseWhileStarting=false;tapStopMode=false;
+  pressPointer=event.pointerId;
   const generation=++voiceGeneration;
-  recTime.textContent='Разрешение…';recView.hidden=false;
-  try{mic.setPointerCapture(event.pointerId)}catch{}
+  recTime.textContent='Подключаем микрофон…';recView.hidden=false;
+  // Do not capture the pointer while the iOS permission dialog is showing:
+  // Safari may dispatch lostpointercapture and cancel an otherwise valid hold.
   try{
    const media=await navigator.mediaDevices.getUserMedia({audio:true});
    if(generation!==voiceGeneration){media.getTracks().forEach(track=>track.stop());return}
-   // A permission prompt on iOS may outlive the finger hold. Do not create
-   // a phantom 0-second recording when permission is granted after release.
-   if(!hold){
-    media.getTracks().forEach(track=>track.stop());
-    recView.hidden=true;starting=false;
-    status.textContent='Доступ к микрофону разрешён. Удерживайте кнопку ещё раз для записи.';
-    return;
-   }
+   // iOS may interrupt pointer events while asking for microphone access.
+   // Finish the permission step, then allow a second tap to stop recording.
+   if(releaseWhileStarting){hold=true;tapStopMode=true;}
    stream=media;
    // Safari chooses a supported container (normally MP4/AAC).
    const recording=new MediaRecorder(media);
@@ -728,7 +732,9 @@ main{background:var(--sayvi-scene)}
    });
    recording.addEventListener('stop',()=>{
     clearRecordTimers();stopTracks();recorder=null;starting=false;recView.hidden=true;
+    tapStopMode=false;pressPointer=null;hold=false;
     mic.classList.remove('is-recording');
+    mic.setAttribute('aria-label','Удерживайте для записи голосового сообщения');
     const blob=new Blob(chunks,{type:recording.mimeType||chunks[0]?.type||'audio/mp4'});
     chunks=[];
     if(blob.size<150){status.textContent='Запись слишком короткая. Удерживайте микрофон подольше.';return}
@@ -746,23 +752,41 @@ main{background:var(--sayvi-scene)}
    recording.start();
    recordStart=performance.now();recordingClock();
    mic.classList.add('is-recording');
+   if(tapStopMode){
+    status.textContent='Запись идёт. Нажмите микрофон ещё раз, чтобы закончить.';
+    mic.setAttribute('aria-label','Остановить запись');
+   }else{
+    status.textContent='';
+   }
    timerId=setInterval(recordingClock,250);
    maxTimer=setTimeout(finishCapture,120000);
    starting=false;
-   if(!hold)finishCapture();
+   // Normal case: release stops. Permission-interrupted mode: tap stops.
   }catch(error){
    if(generation!==voiceGeneration)return;
-   hold=false;starting=false;recorder=null;recView.hidden=true;
+   hold=false;starting=false;tapStopMode=false;pressPointer=null;recorder=null;recView.hidden=true;
    clearRecordTimers();stopTracks();mic.classList.remove('is-recording');
    status.textContent=error?.name==='NotAllowedError'
     ?'Разрешите доступ к микрофону в Safari.'
     :'Не удалось начать запись. Проверьте микрофон и разрешения.';
   }
  }
- mic.addEventListener('pointerdown',beginCapture);
- mic.addEventListener('pointerup',()=>{hold=false;if(!starting)finishCapture()});
- mic.addEventListener('pointercancel',()=>{hold=false;if(!starting)finishCapture()});
- mic.addEventListener('lostpointercapture',()=>{hold=false;if(!starting)finishCapture()});
+ mic.addEventListener('pointerdown',event=>{
+  if(tapStopMode&&recorder?.state==='recording'){
+   event.preventDefault();finishCapture();return;
+  }
+  beginCapture(event);
+ });
+ mic.addEventListener('pointerup',event=>{
+  if(event.pointerId!==pressPointer)return;
+  if(starting){releaseWhileStarting=true;return}
+  if(!tapStopMode)finishCapture();
+ });
+ mic.addEventListener('pointercancel',event=>{
+  if(event.pointerId!==pressPointer)return;
+  if(starting){releaseWhileStarting=true;return}
+  if(!tapStopMode)finishCapture();
+ });
  mic.addEventListener('contextmenu',event=>event.preventDefault());
  mic.addEventListener('click',event=>event.preventDefault());
  deleteVoice.addEventListener('click',()=>{closePreview();status.textContent='Запись удалена.'});
