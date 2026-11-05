@@ -127,7 +127,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 .sv-speech-time{min-width:32px;flex:none;font:400 12px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--sayvi-secondary)}
 #sayviSpeechBar button{flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;padding:0;background:transparent;color:var(--sayvi-control-text)}
 #sayviSpeechBar button:last-child{background:var(--sayvi-action)}
-#sayviSpeechDone .sv-stop-square{width:10px;height:10px;border-radius:2.5px;background:currentColor;display:block}
+#sayviSpeechStop .sv-stop-square{width:10px;height:10px;border-radius:2.5px;background:currentColor;display:block}
 #sayviSpeechBar button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 #sayviSpeechBar button:active{background:var(--sayvi-pressed)}
 @media(prefers-reduced-motion:reduce){.sv-speech-wave i{animation:none;height:7px}}
@@ -314,7 +314,6 @@ main{background:var(--sayvi-scene)}
 <main>
 <nav id="sayviTopActions" aria-label="Навигация чата">
  <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></a>
- <span class="sv-top-name">Сэйви</span>
  <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-label="История разговоров" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg></button>
 </nav>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
@@ -322,8 +321,8 @@ main{background:var(--sayvi-scene)}
  <span class="sv-speech-dot" aria-hidden="true"></span>
  <div class="sv-speech-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
  <time id="sayviSpeechTime" class="sv-speech-time">0:00</time>
- <button type="button" id="sayviSpeechCancel" aria-label="Отменить диктовку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
- <button type="button" id="sayviSpeechDone" aria-label="Остановить диктовку и отправить текст"><span class="sv-stop-square" aria-hidden="true"></span></button>
+ <button type="button" id="sayviSpeechStop" aria-label="Остановить диктовку"><span class="sv-stop-square" aria-hidden="true"></span></button>
+ <button type="button" id="sayviSpeechSend" aria-label="Отправить распознанный текст"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-5.5 5.5M12 5l5.5 5.5"/></svg></button>
 </div>
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -566,7 +565,7 @@ main{background:var(--sayvi-scene)}
  const speechTime=document.getElementById('sayviSpeechTime');
  const SpeechApi=window.SpeechRecognition||window.webkitSpeechRecognition;
  let speechSession=null,spokenFinal='',spokenInterim='',speechStart=0,speechTimer=null;
- let speechGeneration=0,speechAborted=false,speechStopping=false;
+ let speechGeneration=0,speechAborted=false,speechStopping=false,speechReady=false;
  function updateSpeechClock(){
   const seconds=Math.floor((performance.now()-speechStart)/1000);
   speechTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
@@ -575,7 +574,7 @@ main{background:var(--sayvi-scene)}
   clearInterval(speechTimer);speechTimer=null;speechBar.hidden=true;
   speechBar.removeAttribute('data-state');mic.classList.remove('is-recording');
   mic.setAttribute('aria-label','Начать голосовой ввод');
-  spokenFinal='';spokenInterim='';speechStopping=false;
+  spokenFinal='';spokenInterim='';speechStopping=false;speechReady=false;
  }
  function cancelSpeech(){
   speechAborted=true;++speechGeneration;
@@ -587,8 +586,12 @@ main{background:var(--sayvi-scene)}
   if(generation!==speechGeneration||speechAborted)return;
   const text=(spokenFinal||spokenInterim).trim();
   speechSession=null;clearSpeech();
-  if(text)ask(text);
-  else status.textContent='Не удалось распознать речь. Попробуйте ещё раз или используйте диктовку клавиатуры iPhone.';
+  if(text){
+   input.value=text;updateControls();
+   status.textContent='Речь распознана. Нажмите стрелку отправки.';
+  }else{
+   status.textContent='Не удалось распознать речь. Можно попробовать ещё раз.';
+  }
  }
  function stopSpeech(){
   if(!speechSession||speechStopping)return;
@@ -596,6 +599,13 @@ main{background:var(--sayvi-scene)}
   const generation=speechGeneration;
   try{speechSession.stop()}catch{}
   setTimeout(()=>{if(generation===speechGeneration&&speechSession)completeSpeech(generation)},1400);
+ }
+ function sendSpeech(){
+  if(speechSession){
+   // Stop and review the transcript first: no automatic send while listening.
+   stopSpeech();return;
+  }
+  if(input.value.trim())send();
  }
  function startSpeech(){
   if(speechSession){stopSpeech();return}
@@ -640,8 +650,8 @@ main{background:var(--sayvi-scene)}
   }
  }
  mic.addEventListener('click',startSpeech);
- document.getElementById('sayviSpeechDone').addEventListener('click',stopSpeech);
- document.getElementById('sayviSpeechCancel').addEventListener('click',cancelSpeech);
+ document.getElementById('sayviSpeechStop').addEventListener('click',stopSpeech);
+ document.getElementById('sayviSpeechSend').addEventListener('click',sendSpeech);
  window.addEventListener('pagehide',()=>{
   ++speechGeneration;try{speechSession?.abort()}catch{}
   speechSession=null;clearSpeech();
