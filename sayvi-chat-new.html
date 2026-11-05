@@ -116,9 +116,6 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  color-scheme:light;
  --sayvi-bg:#f9fafb;
  --sayvi-scene:
-   /* Two fine quiet waves painted IN the pearl background, directly beneath
-      the composer. No duplicated lettering, extra DOM or glass overlays. */
-   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 105'%3E%3Cpath d='M65 77 C110 59 135 94 186 77 S264 61 331 78' stroke='%23506b76' stroke-opacity='.42' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M72 88 C121 104 151 67 201 86 S275 102 328 85' stroke='%23768e98' stroke-opacity='.32' stroke-width='1.1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center bottom / 100% 105px no-repeat,
    radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.34) 0%,transparent 78%),
    linear-gradient(180deg,#f7f9fa 0%,#f0f4f6 39%,#e8eff2 78%,#e2ebef 100%);
  --sayvi-text:#242a31;
@@ -157,6 +154,17 @@ header{color:var(--sayvi-text)}
 #sayviInput{background:var(--sayvi-glass);color:var(--sayvi-control-text)}
 #sayviInput::placeholder{color:var(--sayvi-placeholder)}
 #sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-action);color:var(--sayvi-control-text)}
+/* White Velvet: tune backdrop pixels, not the glass fill or edge.
+   Preserve original geometry, gradient, shadows:none and dark materials. */
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=light] #sayviInput,
+ :root[data-theme=light] #sayviMic,
+ :root[data-theme=light] #sayviSend,
+ :root[data-theme=light] #sayviPlus{
+  -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+  backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ }
+}
 #sayviMic:active,#sayviSend:active,#sayviPlus:active{background:var(--sayvi-pressed)}
 #sayviMenu{background:var(--sayvi-menu);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 #sayviMenu button{color:var(--sayvi-text)}
