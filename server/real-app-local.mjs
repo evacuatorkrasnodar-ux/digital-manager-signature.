@@ -132,7 +132,20 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  const imageAttachments=createImageAttachments();
  const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
- let voiceJob=null,voiceCache=null;
+ // Serial CPU synthesis queue. Up to three in-flight phrases, small reusable WAV cache.
+ let voiceQueue=Promise.resolve(),voicePending=0;
+ const voiceJobs=new Map(),voiceCache=new Map();
+ const VOICE_CACHE_LIMIT=3,VOICE_CACHE_BYTES=28000000;
+ function rememberWav(phrase,wav){
+  if(voiceCache.has(phrase))voiceCache.delete(phrase);
+  voiceCache.set(phrase,wav);
+  let total=[...voiceCache.values()].reduce((sum,part)=>sum+part.length,0);
+  while(voiceCache.size>VOICE_CACHE_LIMIT||total>VOICE_CACHE_BYTES){
+   const key=voiceCache.keys().next().value;
+   if(key===undefined)break;
+   total-=voiceCache.get(key).length;voiceCache.delete(key);
+  }
+ }
  const memories=memoryStore||createMemoryStore();
  const proposals=learningQueue||createLearningQueue({approveExample:addApprovedExample});
  const voiceRunner=createVoiceWorker();
@@ -223,40 +236,41 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     const data=JSON.parse(Buffer.concat(parts).toString('utf8'));
     const phrase=typeof data?.text==='string'?data.text.trim():'';
     if(phrase.length<2||phrase.length>450)throw Error('Допустимая длина текста — от 2 до 450 символов.');
-    // On CPU, one generation may continue even after a browser request is cancelled.
-    // If the same answer is requested again, share the running job, not a 429 error.
-    // Store only the latest short generated WAV in memory, never the personal source.
-    let wav;
-    if(voiceCache?.text===phrase){
-     console.log('[SEYVEO Voice] Воспроизвожу ранее созданное аудио.');
-     wav=voiceCache.wav;
+    // Request order is preserved: never run two CPU syntheses concurrently.
+    // A cancelled browser may leave an in-flight synthesis; a retry can reuse it.
+    let wav=voiceCache.get(phrase);
+    if(wav){
+     voiceCache.delete(phrase);voiceCache.set(phrase,wav);
+     console.log('[SEYVEO Voice] Использую готовое локальное аудио.');
     }else{
-     if(voiceJob&&voiceJob.text!==phrase){
-      send(res,409,{error:'Сэйви ещё озвучивает другую фразу. Повтори после завершения.'});return;
-     }
-     if(!voiceJob){
-      console.log('[SEYVEO Voice] Начинаю локальную генерацию, символов:',phrase.length);
-      const job={text:phrase,promise:null};
-      job.promise=(async()=>{
+     let promise=voiceJobs.get(phrase);
+     if(!promise){
+      if(voicePending>=3){
+       send(res,429,{error:'Очередь озвучивания занята. Повтори чуть позже.'});return;
+      }
+      voicePending++;
+      const task=voiceQueue.then(async()=>{
        const folder=await mkdtemp(join(tmpdir(),'seyveo-private-voice-'));
        try{
         const output=join(folder,'reply.wav');
-        // Keep the same model and approved voice in memory between requests.
-        // CPU still synthesizes audio, but does not reload Qwen3-TTS every click.
+        // Same approved Qwen3-TTS voice and reference recording, unchanged.
         await voiceRunner.generate(phrase,output);
         const bytes=await readFile(output);
         if(bytes.length<44||bytes.length>15000000)throw Error('Неподдерживаемый размер аудио.');
-        voiceCache={text:phrase,wav:bytes};
-        console.log('[SEYVEO Voice] Аудио готово, размер:',bytes.length,'байт.');
+        rememberWav(phrase,bytes);
         return bytes;
        }finally{
         await rm(folder,{recursive:true,force:true}).catch(()=>{});
-        if(voiceJob===job)voiceJob=null;
        }
-      })();
-      voiceJob=job;
+      });
+      promise=task.finally(()=>{
+       voicePending--;
+       voiceJobs.delete(phrase);
+      });
+      voiceJobs.set(phrase,promise);
+      voiceQueue=promise.catch(()=>{});
      }
-     wav=await voiceJob.promise;
+     wav=await promise;
     }
     if(!res.destroyed&&!res.headersSent){
      res.writeHead(200,{...HEADERS,'content-type':'audio/wav','content-length':String(wav.length)});
