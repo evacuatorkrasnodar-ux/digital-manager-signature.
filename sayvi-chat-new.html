@@ -44,15 +44,14 @@
 html,body{margin:0;width:100%;height:100%;background:#11161b;color:#fff}
 body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
 main{height:100vh;height:100dvh;background:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);display:flex;flex-direction:column;overflow:hidden}
-header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:590;letter-spacing:-.02em}
 
 /* Тестовые сообщения: никакой поверхности и фона у области переписки. */
-#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 16px 112px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
+#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:calc(env(safe-area-inset-top) + 8px) 16px 112px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
 #sayviMessages::-webkit-scrollbar{display:none}
 /* A gentle top fade hides visually abrupt clipping of long older turns.
    Messages remain fully scrollable; no forced scrolling or data changes. */
 #sayviMessages{
- scroll-padding-top:28px;
+ scroll-padding-top:calc(env(safe-area-inset-top) + 8px);
 }
 #sayviMessages.is-scrolled{
  -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
@@ -63,6 +62,21 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 .turn[data-role="user"] .bubble{padding:9px 13px;border-radius:18px;background:#263039;max-width:85%}
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .speaker{font-size:11px;color:#a5b0b7}
+/* A soft left-to-right sheen across Sayvi's name only while a reply is
+   pending. It is not a message bubble, spinner or persistent decoration. */
+.sayvi-thinking{align-items:flex-start}
+.sayvi-thinking .sayvi-thinking-label{
+ font-size:15px;font-weight:590;line-height:1.45;letter-spacing:-.012em;
+ color:var(--sayvi-secondary);
+ background:linear-gradient(105deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 34%,var(--sayvi-text) 49%,var(--sayvi-secondary) 64%,var(--sayvi-secondary) 100%);
+ background-size:230% 100%;background-position:100% 50%;
+ -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+ animation:sayvi-name-sheen 2.1s ease-in-out infinite;
+}
+@keyframes sayvi-name-sheen{from{background-position:100% 50%}to{background-position:0% 50%}}
+@media(prefers-reduced-motion:reduce){
+ .sayvi-thinking .sayvi-thinking-label{animation:none;background:none;-webkit-text-fill-color:currentColor}
+}
 /* Независимые элементы в одной строке: никакой общей подложки. */
 #sayviComposer{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:transparent;border:0;box-shadow:none;z-index:5}
 #sayviField{display:block;position:relative;min-width:0;height:44px;background:transparent;border:0;box-shadow:none}
@@ -160,7 +174,6 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 }
 html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
 main{background:var(--sayvi-scene)}
-header{color:var(--sayvi-text)}
 .turn[data-role="user"] .bubble{background:var(--sayvi-bubble);color:var(--sayvi-text)}
 .turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
 .speaker,#sayviStatus,.history-empty{color:var(--sayvi-secondary)}
@@ -204,7 +217,6 @@ header{color:var(--sayvi-text)}
 </head>
 <body>
 <main>
-<header>Сэйви</header>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -314,6 +326,19 @@ header{color:var(--sayvi-text)}
   }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
+ function showThinking(){
+  const turn=document.createElement('div');
+  turn.className='turn sayvi-thinking';
+  turn.setAttribute('role','status');
+  turn.setAttribute('aria-label','Сэйви думает');
+  const label=document.createElement('span');
+  label.className='sayvi-thinking-label';
+  label.textContent='Сэйви';
+  turn.append(label);
+  list.append(turn);
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+  return ()=>turn.remove();
+ }
  function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
  document.getElementById('sayviNewChat').addEventListener('click',()=>{
@@ -332,6 +357,7 @@ header{color:var(--sayvi-text)}
   const id=++sequence,replyId='reply-'+id;
   append('user','user-'+id,question);
   let answer='',done=false;
+  const stopThinking=showThinking();
   try{
    const response=await fetch('/api/seyveo-stream',{
     method:'POST',credentials:'same-origin',
@@ -351,6 +377,7 @@ header{color:var(--sayvi-text)}
     if(!line.trim())return;
     const part=JSON.parse(line);
     if(part.type==='delta'&&typeof part.text==='string'){
+     if(!answer)stopThinking();
      answer+=part.text;append('assistant',replyId,answer);
     }else if(part.type==='done')done=true;
     else if(part.type==='error')throw Error(part.text||'Ошибка ответа Сэйви.');
@@ -374,7 +401,10 @@ header{color:var(--sayvi-text)}
    if(controller.signal.aborted)return;
    status.textContent=String(error?.message||'Ошибка соединения.');
    if(answer)append('assistant',replyId,answer);
-  }finally{if(active===controller){active=null;updateControls()}}
+  }finally{
+   stopThinking();
+   if(active===controller){active=null;updateControls()}
+  }
  }
  function send(){
   const value=input.value.trim();if(!value||active)return;
