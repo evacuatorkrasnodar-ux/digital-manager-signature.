@@ -447,6 +447,11 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    if(images.length&&!await imageAttachments.visionReady()){
     send(res,503,{error:'Для анализа изображений установи модель: ollama pull qwen2.5vl:3b'});return;
    }
+   if(images.length){
+    // Diagnostic metadata only. Never log image bytes or the user's question.
+    console.log('[SEYVEO Vision] Images supplied:',images.length,
+     'model:',process.env.SEYVEO_VISION_MODEL||'qwen2.5vl:3b');
+   }
    // Only a direct, explicit user command can save a local memory note.
    // Reuse the existing validated memory store and its sensitive-data filter.
    const remember=memoryCommand(message.message);
