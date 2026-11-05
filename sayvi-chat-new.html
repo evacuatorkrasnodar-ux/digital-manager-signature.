@@ -639,8 +639,9 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   retry:'<path d="M3.8 11a8.3 8.3 0 1 1 2.4 6M3.8 6.5V11h4.5"/>',
   note:'<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/>',
-  share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>',
-  select:'<path d="M5 5h14M5 19h14M12 5v14M9.5 8h5M9.5 16h5"/>'
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-4.4 6-4.4 9s1.4 6 4.4 9M12 3c3 3 4.4 6 4.4 9s-1.4 6-4.4 9"/>',
+  speak:'<path d="M4 9v6h4l5 4V5L8 9H4zM16 9a5 5 0 0 1 0 6M18.5 6a9 9 0 0 1 0 12"/>',
+  share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>'
  };
  function miniAction(icon,label,callback){
   const b=document.createElement('button');b.type='button';b.className='sv-reply-action';
@@ -679,34 +680,76 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   }
   return '';
  }
+ let speakingTurn=null,speechUtterance=null,speechButton=null;
+ function stopReplySpeech(){
+  try{window.speechSynthesis?.cancel()}catch{}
+  if(speechButton){speechButton.setAttribute('aria-pressed','false');speechButton.setAttribute('aria-label','Озвучить ответ');speechButton.title='Озвучить ответ'}
+  speakingTurn=null;speechUtterance=null;speechButton=null;
+ }
+ function toggleReplySpeech(turn,bubble,button,feedback){
+  if(speakingTurn===turn){stopReplySpeech();return}
+  stopReplySpeech();
+  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){
+   feedback.textContent='На этом устройстве озвучивание недоступно';return;
+  }
+  const text=bubble.textContent.trim();
+  if(!text)return;
+  const utterance=new SpeechSynthesisUtterance(text.slice(0,10000));
+  utterance.lang='ru-RU';utterance.rate=.97;
+  const voices=window.speechSynthesis.getVoices();
+  utterance.voice=voices.find(v=>/^ru(?:[-_]|$)/i.test(v.lang)&&/milena|милена|tatyana|татьяна|irina|ирина|olga|ольга|anna|анна/i.test(v.name))
+   ||voices.find(v=>/^ru(?:[-_]|$)/i.test(v.lang))||null;
+  speakingTurn=turn;speechUtterance=utterance;speechButton=button;
+  button.setAttribute('aria-pressed','true');
+  button.setAttribute('aria-label','Остановить озвучивание');button.title='Остановить озвучивание';
+  utterance.onend=()=>{if(speechUtterance===utterance)stopReplySpeech()};
+  utterance.onerror=event=>{
+   if(speechUtterance!==utterance)return;
+   stopReplySpeech();
+   if(event.error!=='canceled'&&event.error!=='interrupted')feedback.textContent='Не удалось озвучить ответ';
+  };
+  try{window.speechSynthesis.speak(utterance)}
+  catch{stopReplySpeech();feedback.textContent='Не удалось включить голос'}
+ }
+ function browserSearchForReply(turn,bubble,feedback){
+  const question=findReplyQuestion(turn);
+  const answer=bubble.textContent.trim();
+  const q=(question||answer.slice(0,160)).slice(0,240);
+  if(!q){feedback.textContent='Не удалось определить тему поиска';return}
+  stopReplySpeech();
+  // Home owns the existing Browser. Pass only the search phrase, never
+  // the whole conversation, and do not open an external browser.
+  window.location.assign('./index.html?seyveoBrowserSearch='+encodeURIComponent(q));
+ }
  function addReplyActions(turn,bubble){
   const row=document.createElement('div');row.className='sv-reply-actions';
   row.setAttribute('aria-label','Действия с ответом Сэйви');
   const feedback=document.createElement('div');feedback.className='sv-action-feedback';
   feedback.setAttribute('role','status');
+  const play=miniAction('speak','Озвучить ответ',()=>toggleReplySpeech(turn,bubble,play,feedback));
+  play.setAttribute('aria-pressed','false');
   row.append(
    miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback)),
    miniAction('retry','Повторить ответ',()=>{
     if(active){feedback.textContent='Ответ ещё идёт';return}
     const question=findReplyQuestion(turn);
     if(!question){feedback.textContent='Не найден исходный вопрос';return}
+    stopReplySpeech();
     ask(question,{skipUser:true});
    }),
    miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
+   miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
+   play,
    miniAction('share','Поделиться',async()=>{
     if(navigator.share){
      try{await navigator.share({text:bubble.textContent})}
      catch(error){if(error?.name!=='AbortError')copyReply(bubble.textContent,feedback)}
     }else copyReply(bubble.textContent,feedback);
-   }),
-   miniAction('select','Выделить текст',()=>{
-    const range=document.createRange();range.selectNodeContents(bubble);
-    const selection=window.getSelection();
-    if(selection){selection.removeAllRanges();selection.addRange(range)}
    })
   );
   turn.append(row,feedback);
  }
+ window.addEventListener('pagehide',stopReplySpeech);
  function append(role,id,message,save=true){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
