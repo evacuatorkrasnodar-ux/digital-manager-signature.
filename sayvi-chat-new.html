@@ -103,8 +103,10 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  --sayvi-text:#fff;
  --sayvi-secondary:#a5b0b7;
  --sayvi-bubble:#263039;
- --sayvi-glass:linear-gradient(150deg,rgba(230,241,249,.14),rgba(175,204,222,.075) 65%,rgba(205,224,238,.095));
- --sayvi-action:linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));
+ /* Flat neutral smoke on all dark palettes, not a blue/green gradient.
+    The blurred background remains visible through the material. */
+ --sayvi-glass:rgba(184,195,201,.19);
+ --sayvi-action:rgba(184,195,201,.19);
  --sayvi-control-text:#f7fafc;
  --sayvi-placeholder:rgba(228,235,241,.70);
  --sayvi-pressed:rgba(218,235,245,.20);
@@ -132,23 +134,29 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  --sayvi-menu-pressed:rgba(56,109,91,.09);
  --sayvi-fallback:#e6eef0;
 }
-/* White Velvet inherits the exact original dark-chat glass gradients,
-   blur and shadow:none. Only background, text and placeholders adapt. */
+/* Both contrast modes share the same flat smoke-glass principle.
+   White Velvet retains its approved material and blur settings. */
 :root[data-theme=dark][data-palette=emerald]{
  --sayvi-bg:#111917;
  --sayvi-scene:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%);
+ --sayvi-glass:rgba(184,195,201,.20);
+ --sayvi-action:rgba(184,195,201,.20);
 }
 :root[data-theme=dark][data-palette=sapphire]{
  --sayvi-bg:#101724;
  --sayvi-scene:linear-gradient(180deg,#0e1522 0%,#172239 50%,#202e48 78%,#101724 100%);
  --sayvi-bubble:#222f47;
  --sayvi-menu:#222f47;
+ --sayvi-glass:rgba(184,195,201,.22);
+ --sayvi-action:rgba(184,195,201,.22);
 }
 :root[data-theme=dark][data-palette=plum]{
  --sayvi-bg:#1c1b1a;
  --sayvi-scene:linear-gradient(180deg,#1b1a19 0%,#252320 50%,#302c28 78%,#1c1b1a 100%);
  --sayvi-bubble:#302c28;
  --sayvi-menu:#302c28;
+ --sayvi-glass:rgba(184,195,201,.19);
+ --sayvi-action:rgba(184,195,201,.19);
 }
 html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
 main{background:var(--sayvi-scene)}
@@ -168,6 +176,17 @@ header{color:var(--sayvi-text)}
  :root[data-theme=light] #sayviPlus{
   -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
   backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ }
+}
+/* On dark palettes suppress color amplification: matte, not glossy.
+   No strokes, highlights or outer shadows; original shape and sizing stay. */
+@media(prefers-reduced-transparency:no-preference){
+ :root[data-theme=dark] #sayviInput,
+ :root[data-theme=dark] #sayviMic,
+ :root[data-theme=dark] #sayviSend,
+ :root[data-theme=dark] #sayviPlus{
+  -webkit-backdrop-filter:blur(16px) saturate(105%);
+  backdrop-filter:blur(16px) saturate(105%);
  }
 }
 #sayviMic:active,#sayviSend:active,#sayviPlus:active{background:var(--sayvi-pressed)}
