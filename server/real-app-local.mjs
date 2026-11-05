@@ -3,6 +3,7 @@
    production index.html, plasma, layouts, local data or public app.
  */
 import {createServer} from 'node:http';
+import {createImageAttachments} from './image-attachments.mjs';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -108,7 +109,12 @@ async function readQuestion(req,{withHistory=false}={}){
  }
  const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
  if(!data||typeof data!=='object'||Array.isArray(data)||typeof data.message!=='string'||!data.message.trim()||data.message.length>4000)throw Error('invalid');
- return withHistory?{message:data.message,history:validateHistory(data.history)}:data.message;
+ if(withHistory){
+  const entries=data.attachments===undefined?[]:data.attachments;
+  if(!Array.isArray(entries)||entries.length>4||entries.some(a=>!a||typeof a.id!=='string'))throw Error('invalid-attachments');
+  return {message:data.message,history:validateHistory(data.history),attachmentIds:entries.map(a=>a.id)};
+ }
+ return data.message;
 }
 function localFile(path){
  if(path==='/manifest.webmanifest')return resolve(ROOT,'manifest.webmanifest');
@@ -123,6 +129,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
  process.env.SEYVEO_ENABLE_CLOUD='0';
  process.env.SEYVEO_LOCAL_MODEL='qwen3:4b-instruct';
  let busy=false,minute=0,count=0;
+ const imageAttachments=createImageAttachments();
  const liveSearch=searchProvider===undefined?(createBraveContextProvider()||createSeyveoWebProvider()):searchProvider;
  let searchMinute=0,searchCount=0;
  let voiceJob=null,voiceCache=null;
@@ -401,6 +408,19 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    }
    return;
   }
+  if(req.method==='POST'&&path==='/api/seyveo-attachments'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   try{send(res,200,await imageAttachments.upload(req))}
+   catch(err){
+    const reason=String(err?.message||'');
+    const code=reason==='vision-offline'?503:reason==='unsupported'?415:reason==='large'?413:reason==='limit'?429:400;
+    send(res,code,{error:code===503?'Для анализа картинок установи локальную модель: ollama pull qwen2.5vl:3b':
+      code===415?'Поддерживаются PNG, JPEG и WebP. PDF и Office пока недоступны.':
+      code===413?'Максимальный размер изображения — 8 МБ.':
+      code===429?'Слишком много временных вложений.':'Не удалось прочитать вложение.'});
+   }
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-stream'){
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
    if(!String(req.headers['content-type']||'').startsWith('application/json')){
@@ -413,10 +433,16 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    let message;
    try{message=await readQuestion(req,{withHistory:true})}
    catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   let images=[];
+   try{images=imageAttachments.resolve(message.attachmentIds)}
+   catch{send(res,410,{error:'Изображение устарело. Добавь его заново.'});return}
+   if(images.length&&!await imageAttachments.visionReady()){
+    send(res,503,{error:'Для анализа изображений установи модель: ollama pull qwen2.5vl:3b'});return;
+   }
    // Only a direct, explicit user command can save a local memory note.
    // Reuse the existing validated memory store and its sensitive-data filter.
    const remember=memoryCommand(message.message);
-   if(remember){
+   if(remember&&!images.length){
     try{
      const result=await memories.add(remember.text);
      const response=memoryResultText({duplicate:result.duplicate});
@@ -431,7 +457,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     return;
    }
    // Stable application identity: do not ask a language model to guess its name.
-   if(/^(?:как тебя зовут|кто ты|представься|представь себя|как твое имя|как твоё имя)[?.!\s]*$/iu.test(message.message.trim())){
+   if(!images.length&&/^(?:как тебя зовут|кто ты|представься|представь себя|как твое имя|как твоё имя)[?.!\s]*$/iu.test(message.message.trim())){
     res.writeHead(200,{...HEADERS,'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
     res.end(JSON.stringify({type:'delta',text:'Меня зовут Сэйви, коротко Сэй. Я голосовая помощница, созданная компанией SEYVEO.'})+'\n'+JSON.stringify({type:'done',source:'identity',cloud:false,executed:false})+'\n');
     return;
@@ -439,7 +465,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    // Explicit closed-form numeric commands are resolved locally without Ollama.
    // Never parse unlabeled values from free-form conversation.
    const math=businessChatAnswer(message.message);
-   if(math){
+   if(math&&!images.length){
     count++;
     res.writeHead(200,{...HEADERS,
      'content-type':'application/x-ndjson; charset=utf-8','x-accel-buffering':'no'});
@@ -467,7 +493,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     ]);
     const knowledge=knowledgeContext(retrieveKnowledge(message.message,knowledgeDocs));
     const result=await askLocalStream(message.message,{
-     name:'SEYVEO',memory:memoryContext(facts),examples,knowledge,history:message.history,signal:controller.signal,
+     name:'SEYVEO',memory:memoryContext(facts),examples,knowledge,history:message.history,images,signal:controller.signal,
      onDelta:token=>{
       if(firstTextMs===null)firstTextMs=Date.now()-startedAt;
       if(!res.destroyed)res.write(JSON.stringify({type:'delta',text:token})+'\n');
