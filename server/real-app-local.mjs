@@ -288,6 +288,18 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    }
    return;
   }
+  // Local-only, explicit A/B pronunciation test. Uses the existing private TTS.
+  if(req.method==='GET'&&path==='/seyveo-stress-test.html'){
+   try{
+    const html=await readFile(resolve(ROOT,'seyveo-stress-test.html'),'utf8');
+    res.writeHead(200,{...HEADERS,'content-type':'text/html; charset=utf-8'});
+    res.end(html);
+   }catch(error){
+    console.error('[SEYVEO Voice QA] Не удалось открыть тест ударений:',error?.message||error);
+    send(res,404,{error:'Тест ударений не найден.'});
+   }
+   return;
+  }
   // Explicitly serve the new blank Sayvi page, without exposing other root files.
   if(req.method==='GET'&&path==='/sayvi-chat-new.html'){
    try{
