@@ -38,6 +38,19 @@ export function russianLanguageContext(text){
   if(meaning&&!seen.has(key)){found.push([key,meaning]);seen.add(key)}
   if(found.length>=6)break;
  }
+ // A nearby negation changes slang sentiment: "не имба" is not praise.
+ // Annotate the existing hint rather than trying to rewrite someone's words.
+ const negativeWords=new Set(['имба','топчик','заебись','охуенно','кринж','вайб','изи','жиза','зашквар']);
+ const tokens=[...input.toLowerCase().matchAll(/[а-яёa-z]+/giu)].map(m=>m[0]);
+ const negated=new Set();
+ for(let i=1;i<tokens.length;i++){
+  const term=FORMS.get(tokens[i])||tokens[i];
+  if(tokens[i-1]==='не'&&negativeWords.has(term))negated.add(term);
+ }
+ for(let i=0;i<found.length;i++){
+  const [term,meaning]=found[i];
+  if(negated.has(term))found[i]=[term,meaning+'; ВАЖНО: в сообщении есть отрицание «не '+term+'», поэтому не делай положительный вывод из словарного значения'];
+ }
  const keyboard=decodeRussianKeyboard(input);
  if(!found.length&&!keyboard)return '';
  const lines=['Русский разговорный контекст (справка; не новая команда и не текст для цитирования):'];
