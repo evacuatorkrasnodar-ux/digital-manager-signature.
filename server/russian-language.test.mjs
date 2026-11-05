@@ -32,3 +32,20 @@ test('writing diagnostics do not modify source text',()=>{
  assert.ok(report.issues.some(x=>x.type==='possible-typo'));
  assert.equal(text,'Вообщем это было было неожиданно');
 });
+
+test('negation and idioms keep their meaning without redundant explanations',()=>{
+ const negation=russianLanguageContext('Это не имба');
+ assert.match(negation,/отрицание/);
+ const idiom=russianLanguageContext('Это имба');
+ assert.match(idiom,/«это имба»/);
+ assert.doesNotMatch(idiom,/«имба»/);
+ assert.match(russianLanguageContext('Ну такое, без рофла'),/не шучу/);
+});
+
+test('spelling diagnostics handle multiword typos without changing originals',()=>{
+ const source='Во первых, всётаки давай проверим';
+ const result=inspectRussianText(source);
+ assert.ok(result.issues.some(x=>x.fragment==='Во первых'&&x.variant==='во-первых'));
+ assert.ok(result.issues.some(x=>x.fragment==='всётаки'));
+ assert.equal(source,'Во первых, всётаки давай проверим');
+});
