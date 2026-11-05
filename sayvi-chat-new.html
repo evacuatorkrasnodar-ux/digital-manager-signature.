@@ -415,6 +415,26 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
 .sv-reply-action svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 .sv-action-feedback{font-size:11px;color:var(--sayvi-secondary);padding:0 5px}
 .sv-action-feedback:empty{display:none}
+
+/* Own-message actions: long press, unobtrusive Smoke Glass sheet. */
+.sv-own-sheet[hidden]{display:none!important}
+.sv-own-sheet{position:absolute;inset:0;z-index:12;background:rgba(0,0,0,.18);display:flex;justify-content:center;align-items:flex-end;padding:14px max(12px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+.sv-own-panel{width:100%;max-width:440px;background:var(--sayvi-menu);-webkit-backdrop-filter:blur(24px) saturate(110%);backdrop-filter:blur(24px) saturate(110%);border:0;border-radius:24px;padding:9px;color:var(--sayvi-text)}
+.sv-own-actions{display:grid;gap:2px}
+.sv-own-actions button{width:100%;min-height:46px;padding:8px 14px;display:flex;align-items:center;gap:12px;border:0;border-radius:15px;background:transparent;color:var(--sayvi-text);text-align:left;font:450 15px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-actions button:active{background:var(--sayvi-pressed)}
+.sv-own-actions button[data-own="delete"]{color:#d45f63}
+.sv-own-actions button svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.sv-own-cancel{margin-top:5px!important;justify-content:center;background:var(--sayvi-glass)!important}
+.sv-own-edit[hidden],.sv-own-actions[hidden]{display:none!important}
+.sv-own-edit{padding:8px 5px 4px}
+.sv-own-edit label{font-size:15px;font-weight:600;display:block;margin:0 6px 10px}
+.sv-own-edit textarea{width:100%;min-height:105px;max-height:40dvh;resize:vertical;padding:12px 14px;border:0;border-radius:16px;background:var(--sayvi-glass);color:var(--sayvi-text);outline:none;font:400 16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-edit-buttons{display:flex;gap:8px;margin-top:10px}
+.sv-own-edit-buttons button{flex:1;min-height:42px;border:0;border-radius:14px;background:var(--sayvi-glass);color:var(--sayvi-text);font:500 14px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-own-edit-buttons button:last-child{background:var(--sayvi-action)}
+.turn[data-role="user"] .bubble{touch-action:pan-y;-webkit-touch-callout:none}
+@media(prefers-reduced-transparency:reduce){.sv-own-panel{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}}
 </style>
 </head>
 <body>
@@ -455,6 +475,21 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   </div>
  </div>
 </section>
+<div id="sayviOwnSheet" class="sv-own-sheet" hidden aria-label="Действия с сообщением">
+ <div class="sv-own-panel">
+  <div id="sayviOwnActions" class="sv-own-actions">
+   <button type="button" data-own="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.7-1 10-10a2.2 2.2 0 0 0-3.1-3.1l-10 10L4 20zM14.5 7.5l3 3"/></svg>Редактировать</button>
+   <button type="button" data-own="copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Копировать</button>
+   <button type="button" data-own="delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V5h6v2M7.5 7l.8 12h7.4l.8-12M10 10.5v5M14 10.5v5"/></svg>Удалить</button>
+   <button type="button" class="sv-own-cancel" data-own="cancel">Отмена</button>
+  </div>
+  <div id="sayviOwnEdit" class="sv-own-edit" hidden>
+   <label for="sayviOwnText">Редактировать сообщение</label>
+   <textarea id="sayviOwnText" maxlength="8000" rows="4"></textarea>
+   <div class="sv-own-edit-buttons"><button type="button" id="sayviOwnEditCancel">Отмена</button><button type="button" id="sayviOwnEditSave">Сохранить</button></div>
+  </div>
+ </div>
+</div>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
 <script>
@@ -750,6 +785,101 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   turn.append(row,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
+
+ const ownSheet=document.getElementById('sayviOwnSheet');
+ const ownActions=document.getElementById('sayviOwnActions');
+ const ownEdit=document.getElementById('sayviOwnEdit');
+ const ownText=document.getElementById('sayviOwnText');
+ let ownBubble=null,ownHoldTimer=null,ownPressPoint=null,ownIgnoreClick=false;
+ function closeOwnActions(){
+  clearTimeout(ownHoldTimer);ownHoldTimer=null;ownBubble=null;
+  ownSheet.hidden=true;ownEdit.hidden=true;ownActions.hidden=false;
+ }
+ function showOwnActions(bubble){
+  if(active)return;
+  ownBubble=bubble;ownActions.hidden=false;ownEdit.hidden=true;ownSheet.hidden=false;
+ }
+ function reindexSavedBubbles(){
+  let idx=0;
+  for(const turn of list.querySelectorAll('.turn[data-role="user"],.turn[data-role="assistant"]')){
+   const bubble=turn.querySelector('.bubble');
+   if(bubble)bubble.dataset.savedIndex=String(idx++);
+  }
+ }
+ function rebuildHistoryContext(){
+  historyTurns.length=0;
+  for(const entry of savedTurns.slice(-12)){
+   if(entry.role==='user'||entry.role==='assistant')
+    historyTurns.push({role:entry.role,content:entry.text.slice(0,450)});
+  }
+ }
+ function modifyOwnMessage(mode){
+  if(!ownBubble)return;
+  const bubble=ownBubble,turn=bubble.closest('.turn');
+  const i=Number(bubble.dataset.savedIndex);
+  if(!turn||!Number.isInteger(i)||i<0||i>=savedTurns.length||savedTurns[i].role!=='user')return;
+  if(mode==='edit'){
+   ownActions.hidden=true;ownEdit.hidden=false;ownText.value=bubble.textContent;ownText.focus();return;
+  }
+  if(mode==='copy'){
+   const value=bubble.textContent;
+   closeOwnActions();copyReply(value,status);return;
+  }
+  if(mode==='delete'){
+   if(!window.confirm('Удалить это сообщение?'))return;
+   savedTurns.splice(i,1);
+   turn.remove();
+   reindexSavedBubbles();rebuildHistoryContext();persist();
+   closeOwnActions();status.textContent='Сообщение удалено';
+  }
+ }
+ ownActions.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-own]');if(!button)return;
+  const mode=button.dataset.own;
+  if(mode==='cancel')closeOwnActions();
+  else modifyOwnMessage(mode);
+ });
+ document.getElementById('sayviOwnEditCancel').addEventListener('click',closeOwnActions);
+ document.getElementById('sayviOwnEditSave').addEventListener('click',()=>{
+  if(!ownBubble)return;
+  const value=ownText.value.trim();
+  if(!value){status.textContent='Сообщение не может быть пустым';return}
+  const i=Number(ownBubble.dataset.savedIndex);
+  if(!Number.isInteger(i)||i<0||i>=savedTurns.length||savedTurns[i].role!=='user')return;
+  savedTurns[i].text=value;
+  ownBubble.textContent=value;
+  rebuildHistoryContext();persist();closeOwnActions();
+  status.textContent='Сообщение изменено. Предыдущий ответ Сэйви не пересчитывается.';
+ });
+ ownSheet.addEventListener('click',event=>{if(event.target===ownSheet)closeOwnActions()});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!ownSheet.hidden)closeOwnActions()});
+ function attachOwnGesture(bubble){
+  bubble.addEventListener('contextmenu',event=>{
+   event.preventDefault();clearTimeout(ownHoldTimer);
+   ownIgnoreClick=true;showOwnActions(bubble);
+  });
+  bubble.addEventListener('pointerdown',event=>{
+   if(event.pointerType==='mouse'&&event.button!==0)return;
+   clearTimeout(ownHoldTimer);
+   ownPressPoint={x:event.clientX,y:event.clientY,pointerId:event.pointerId};
+   ownHoldTimer=setTimeout(()=>{
+    ownHoldTimer=null;ownIgnoreClick=true;
+    showOwnActions(bubble);
+   },500);
+  });
+  bubble.addEventListener('pointermove',event=>{
+   if(!ownPressPoint||ownPressPoint.pointerId!==event.pointerId)return;
+   if(Math.abs(event.clientX-ownPressPoint.x)>10||Math.abs(event.clientY-ownPressPoint.y)>10){
+    clearTimeout(ownHoldTimer);ownHoldTimer=null;
+   }
+  });
+  for(const type of ['pointerup','pointercancel','pointerleave']){
+   bubble.addEventListener(type,()=>{clearTimeout(ownHoldTimer);ownHoldTimer=null;ownPressPoint=null});
+  }
+  bubble.addEventListener('click',event=>{
+   if(ownIgnoreClick){event.preventDefault();ownIgnoreClick=false}
+  });
+ }
  function append(role,id,message,save=true){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
@@ -760,6 +890,7 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
    }
    bubble=document.createElement('div');bubble.className='bubble';turn.append(bubble);
    if(role==='assistant')addReplyActions(turn,bubble);
+   else attachOwnGesture(bubble);
    list.append(turn);answers.set(id,bubble);
   }
   bubble.textContent=message;
