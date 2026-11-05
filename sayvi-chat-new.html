@@ -512,6 +512,21 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-draw-board{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:18px;background:#f8f9f9}
 #sayviDrawCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 .sv-draw-hint{margin:0;color:var(--sayvi-secondary);font:400 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center}
+
+/* Image previews inside sent chat turns, not filename placeholders. */
+.turn[data-role="user"].sv-has-photos .bubble:empty{display:none}
+.sv-sent-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:min(270px,75vw);max-width:100%;margin-top:1px}
+.sv-sent-photo{position:relative;min-width:0;border-radius:13px;overflow:hidden;background:var(--sayvi-glass)}
+.sv-sent-photo img{display:block;width:100%;aspect-ratio:1;object-fit:cover;cursor:zoom-in}
+.sv-sent-photo span{position:absolute;bottom:0;left:0;right:0;padding:10px 4px 4px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:white;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;pointer-events:none}
+.sv-sent-images:has(> :only-child){width:min(235px,70vw);display:block}
+.sv-sent-images:has(> :only-child) img{aspect-ratio:auto;max-height:310px;object-fit:contain}
+.sv-sent-images:has(> :only-child) span{display:none}
+.sv-sent-images:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr));width:min(235px,70vw)}
+#sayviImageViewer[hidden]{display:none!important}
+#sayviImageViewer{position:absolute;inset:0;z-index:21;display:flex;align-items:center;justify-content:center;padding:65px 12px 25px;background:rgba(8,12,16,.97)}
+#sayviImageViewer img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+#sayviImageViewer button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:16px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.15);color:white;font-size:26px}
 </style>
 </head>
 <body>
@@ -579,6 +594,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   </div>
  </div>
 </div>
+<div id="sayviImageViewer" hidden role="dialog" aria-modal="true" aria-label="Изображение"><button id="sayviImageViewerClose" type="button" aria-label="Закрыть">×</button><img id="sayviImageViewerImg" alt="Фото из разговора"></div>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
 <script>
@@ -630,7 +646,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
-   append(turn.role,'loaded-'+savedTurns.length,turn.text,false);
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos);
   }
   historyTurns.length=0;
   for(const turn of savedTurns.slice(-12)){
@@ -984,7 +1000,57 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    if(ownIgnoreClick){event.preventDefault();ownIgnoreClick=false}
   });
  }
- function append(role,id,message,save=true){
+
+ const imageViewer=document.getElementById('sayviImageViewer');
+ const imageViewerImg=document.getElementById('sayviImageViewerImg');
+ function closeSentPhoto(){imageViewer.hidden=true;imageViewerImg.removeAttribute('src')}
+ document.getElementById('sayviImageViewerClose').addEventListener('click',closeSentPhoto);
+ imageViewer.addEventListener('click',e=>{if(e.target===imageViewer)closeSentPhoto()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!imageViewer.hidden)closeSentPhoto()});
+ function safeSentPhotos(value){
+  if(!Array.isArray(value))return [];
+  return value.slice(0,6).filter(a=>a&&typeof a.name==='string'&&typeof a.thumb==='string'
+   &&a.thumb.length<110000&&a.thumb.startsWith('data:image/jpeg;base64,'))
+   .map(a=>({name:a.name.slice(0,120),thumb:a.thumb}));
+ }
+ function showSentPhotos(turn,photos){
+  const valid=safeSentPhotos(photos);
+  turn.querySelector('.sv-sent-images')?.remove();
+  turn.classList.toggle('sv-has-photos',valid.length>0);
+  if(!valid.length)return;
+  const gallery=document.createElement('div');gallery.className='sv-sent-images';
+  for(const item of valid){
+   const tile=document.createElement('div');tile.className='sv-sent-photo';
+   const image=document.createElement('img');image.src=item.thumb;image.alt=item.name;image.loading='lazy';
+   image.addEventListener('click',()=>{
+    imageViewerImg.src=item.thumb;imageViewer.hidden=false;
+   });
+   const label=document.createElement('span');label.textContent=item.name;
+   tile.append(image,label);gallery.append(tile);
+  }
+  turn.append(gallery);
+ }
+ async function makeSentPhoto(file){
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type))return null;
+  const url=URL.createObjectURL(file);
+  try{
+   const img=await new Promise((resolve,reject)=>{
+    const image=new Image();image.onload=()=>resolve(image);
+    image.onerror=()=>reject(Error('decode'));image.src=url;
+   });
+   if(!img.naturalWidth||!img.naturalHeight)return null;
+   const scale=Math.min(1,280/Math.max(img.naturalWidth,img.naturalHeight));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+   canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+   const ctx=canvas.getContext('2d');if(!ctx)return null;
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+   ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   const thumb=canvas.toDataURL('image/jpeg',.65);
+   return thumb.length<=110000?{name:file.name,thumb}:null;
+  }finally{URL.revokeObjectURL(url)}
+ }
+ function append(role,id,message,save=true,photos=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
@@ -998,12 +1064,25 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    list.append(turn);answers.set(id,bubble);
   }
   bubble.textContent=message;
+  if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
   if(save){
    const index=Number(bubble.dataset.savedIndex);
-   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length)savedTurns[index].text=message;
-   else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message})}
+   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){
+    savedTurns[index].text=message;
+    if(role==='user'&&photos?.length)savedTurns[index].photos=safeSentPhotos(photos);
+   }else{
+    bubble.dataset.savedIndex=String(savedTurns.length);
+    const entry={role,text:message};
+    if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+    savedTurns.push(entry);
+   }
    persist();
-  }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message})}
+  }else{
+   bubble.dataset.savedIndex=String(savedTurns.length);
+   const entry={role,text:message};
+   if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+   savedTurns.push(entry);
+  }
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
  function showThinking(){
@@ -1298,7 +1377,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const controller=new AbortController();active=controller;updateControls();
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
-  if(!options.skipUser)append('user','user-'+id,options.displayMessage||question);
+  if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos);
   let answer='',done=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
@@ -1385,11 +1464,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   try{
    const files=await prepareAttachments(selected);
    if(active!==lock)return;
-   const description=selected.map(x=>x.file.name).join(', ');
-   const display=(value?value+'\n':'')+'📎 '+description;
+   const thumbs=(await Promise.all(selected.map(async item=>{
+    try{return await makeSentPhoto(item.file)}catch{return null}
+   }))).filter(Boolean);
+   const otherFiles=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file.name);
+   const display=[value,...(otherFiles.length?['📎 '+otherFiles.join(', ')]:[])].filter(Boolean).join('\n');
    const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Изучи прикреплённые файлы и объясни содержимое.';
    active=null;input.value='';clearAttachments();
-   await ask(message,{displayMessage:display,attachments:files.uploaded});
+   await ask(message,{displayMessage:display,previewPhotos:thumbs,attachments:files.uploaded});
   }catch(error){
    if(active===lock){active=null;updateControls()}
    status.textContent=String(error?.message||'Не удалось отправить файл.');
