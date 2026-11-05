@@ -408,6 +408,16 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none
  }
 }
+
+.sv-reply-actions{display:flex;gap:3px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.sv-reply-action{border:0;background:transparent;color:var(--sayvi-secondary);min-width:31px;height:30px;padding:0 6px;border-radius:10px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
+.sv-reply-action:active{background:var(--sayvi-pressed);color:var(--sayvi-text)}
+.sv-reply-action svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.sv-reply-more[hidden]{display:none!important}
+.sv-reply-more{display:flex;gap:6px;flex-wrap:wrap}
+.sv-reply-more button{min-height:34px;border:0;border-radius:999px;background:var(--sayvi-glass);color:var(--sayvi-text);padding:0 12px;font:400 12px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.sv-action-feedback{font-size:11px;color:var(--sayvi-secondary);padding:0 5px}
+.sv-action-feedback:empty{display:none}
 </style>
 </head>
 <body>
@@ -627,26 +637,104 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
   mic.hidden=!!active||typed;
   stopReplyButton.hidden=!active;
  }
+
+ const replyIcons={
+  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  retry:'<path d="M3.8 11a8.3 8.3 0 1 1 2.4 6M3.8 6.5V11h4.5"/>',
+  note:'<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/>',
+  more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>'
+ };
+ function miniAction(icon,label,callback){
+  const b=document.createElement('button');b.type='button';b.className='sv-reply-action';
+  b.title=label;b.setAttribute('aria-label',label);
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+replyIcons[icon]+'</svg>';
+  b.addEventListener('click',callback);return b;
+ }
+ async function copyReply(value,feedback){
+  try{
+   if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(value);
+   else{
+    const t=document.createElement('textarea');t.value=value;t.style.cssText='position:fixed;opacity:0';
+    document.body.append(t);t.select();const ok=document.execCommand('copy');t.remove();
+    if(!ok)throw Error('copy');
+   }
+   feedback.textContent='Скопировано';
+  }catch{feedback.textContent='Не удалось скопировать'}
+ }
+ function saveReplyNote(value,feedback){
+  try{
+   const key='seyveo-notes-v1',data=JSON.parse(localStorage.getItem(key)||'[]');
+   const notes=Array.isArray(data)?data.filter(n=>n&&typeof n.id==='string'&&typeof n.text==='string'):[];
+   const text=value.slice(0,8000);
+   if(!text.trim())return;
+   const note={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),text,createdAt:Date.now(),preserveLines:true};
+   localStorage.setItem(key,JSON.stringify([note,...notes].slice(0,100)));
+   window.dispatchEvent(new Event('seyveo:notes-changed'));
+   feedback.textContent='Сохранено в Блокнот';
+  }catch{feedback.textContent='Не удалось сохранить заметку'}
+ }
+ function findReplyQuestion(turn){
+  let previous=turn.previousElementSibling;
+  while(previous){
+   if(previous.dataset.role==='user')return previous.querySelector('.bubble')?.textContent?.trim()||'';
+   previous=previous.previousElementSibling;
+  }
+  return '';
+ }
+ function addReplyActions(turn,bubble){
+  const row=document.createElement('div');row.className='sv-reply-actions';
+  row.setAttribute('aria-label','Действия с ответом Сэйви');
+  const feedback=document.createElement('div');feedback.className='sv-action-feedback';
+  feedback.setAttribute('role','status');
+  const extra=document.createElement('div');extra.className='sv-reply-more';extra.hidden=true;
+  row.append(
+   miniAction('copy','Копировать',()=>copyReply(bubble.textContent,feedback)),
+   miniAction('retry','Повторить ответ',()=>{
+    if(active){feedback.textContent='Ответ ещё идёт';return}
+    const question=findReplyQuestion(turn);
+    if(!question){feedback.textContent='Не найден исходный вопрос';return}
+    extra.hidden=true;ask(question,{skipUser:true});
+   }),
+   miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback))
+  );
+  const more=miniAction('more','Ещё',()=>{extra.hidden=!extra.hidden;more.setAttribute('aria-expanded',String(!extra.hidden))});
+  more.setAttribute('aria-expanded','false');row.append(more);
+  const share=document.createElement('button');share.type='button';share.textContent='Поделиться';
+  share.addEventListener('click',async()=>{
+   extra.hidden=true;more.setAttribute('aria-expanded','false');
+   if(navigator.share){
+    try{await navigator.share({text:bubble.textContent})}
+    catch(error){if(error?.name!=='AbortError')copyReply(bubble.textContent,feedback)}
+   }else copyReply(bubble.textContent,feedback);
+  });
+  const select=document.createElement('button');select.type='button';select.textContent='Выделить текст';
+  select.addEventListener('click',()=>{
+   extra.hidden=true;more.setAttribute('aria-expanded','false');
+   const range=document.createRange();range.selectNodeContents(bubble);
+   const selection=window.getSelection();
+   if(selection){selection.removeAllRanges();selection.addRange(range)}
+  });
+  extra.append(share,select);turn.append(row,extra,feedback);
+ }
  function append(role,id,message,save=true){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
-   const turn=document.createElement('div');
-   turn.className='turn';turn.dataset.role=role;
+   const turn=document.createElement('div');turn.className='turn';turn.dataset.role=role;
    if(role==='assistant'){
-    const title=document.createElement('span');
-    title.className='speaker';title.textContent='Сэйви';turn.append(title);
+    const title=document.createElement('span');title.className='speaker';title.textContent='Сэйви';turn.append(title);
    }
-   bubble=document.createElement('div');bubble.className='bubble';
-   turn.append(bubble);list.append(turn);answers.set(id,bubble);
+   bubble=document.createElement('div');bubble.className='bubble';turn.append(bubble);
+   if(role==='assistant')addReplyActions(turn,bubble);
+   list.append(turn);answers.set(id,bubble);
   }
   bubble.textContent=message;
   if(save){
    const index=Number(bubble.dataset.savedIndex);
-   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){savedTurns[index].text=message;}
-   else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
+   if(Number.isInteger(index)&&index>=0&&index<savedTurns.length)savedTurns[index].text=message;
+   else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message})}
    persist();
-  }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
+  }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message})}
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
  function showThinking(){
@@ -688,11 +776,11 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
  document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!menu.hidden){closeMenu();plus.focus()}
  });
- async function ask(question){
+ async function ask(question,options={}){
   const controller=new AbortController();active=controller;updateControls();
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
-  append('user','user-'+id,question);
+  if(!options.skipUser)append('user','user-'+id,question);
   let answer='',done=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
