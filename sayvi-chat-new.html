@@ -834,7 +834,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }
   return '';
  }
- let speakingTurn=null,speechUtterance=null,speechButton=null;
+ let speakingTurn=null,speechButton=null;
  let voiceAudio=null,voiceBlobUrl=null,voiceController=null,voiceGeneration=0;
  function stopReplySpeech(){
   ++voiceGeneration;
@@ -849,28 +849,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    speechButton.setAttribute('aria-label','Озвучить ответ');
    speechButton.title='Озвучить ответ';
   }
-  speakingTurn=null;speechUtterance=null;speechButton=null;
- }
- function fallbackReplySpeech(text,feedback,generation){
-  if(generation!==voiceGeneration)return;
-  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){
-   stopReplySpeech();feedback.textContent='Наш голос временно недоступен. Проверь локальный сервер.';return;
-  }
-  const utterance=new SpeechSynthesisUtterance(text.slice(0,10000));
-  utterance.lang='ru-RU';utterance.rate=.97;
-  const voices=window.speechSynthesis.getVoices();
-  utterance.voice=voices.find(v=>/^ru(?:[-_]|$)/i.test(v.lang)&&/milena|милена|tatyana|татьяна|irina|ирина|olga|ольга|anna|анна/i.test(v.name))
-   ||voices.find(v=>/^ru(?:[-_]|$)/i.test(v.lang))||null;
-  speechUtterance=utterance;
-  feedback.textContent='Наш голос недоступен — включён системный.';
-  utterance.onend=()=>{if(speechUtterance===utterance)stopReplySpeech()};
-  utterance.onerror=event=>{
-   if(speechUtterance!==utterance)return;
-   stopReplySpeech();
-   if(event.error!=='canceled'&&event.error!=='interrupted')feedback.textContent='Не удалось озвучить ответ';
-  };
-  try{window.speechSynthesis.speak(utterance)}
-  catch{stopReplySpeech();feedback.textContent='Не удалось включить голос'}
+  speakingTurn=null;speechButton=null;
  }
  async function toggleReplySpeech(turn,bubble,button,feedback){
   if(speakingTurn===turn){stopReplySpeech();return}
@@ -922,7 +901,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }catch(error){
    if(generation!==voiceGeneration||controller.signal.aborted)return;
    voiceController=null;
-   fallbackReplySpeech(text,feedback,generation);
+   stopReplySpeech();
+   feedback.textContent='Наш голос Сэйви сейчас недоступен. Ответ можно прочитать в чате.';
   }
  }
  function browserSearchForReply(turn,bubble,feedback){
