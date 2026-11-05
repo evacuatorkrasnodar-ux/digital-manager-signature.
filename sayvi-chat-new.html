@@ -120,24 +120,58 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 }
 #sayviVoiceRecord[hidden],#sayviVoicePreview[hidden]{display:none!important}
 #sayviVoiceRecord{
- min-height:44px;display:flex;align-items:center;gap:9px;
- padding:9px 13px;font-size:13px;
+ min-height:42px;display:flex;align-items:center;gap:9px;
+ padding:9px 15px;font-size:13px;letter-spacing:.005em;
 }
 .sv-record-dot{width:8px;height:8px;flex:none;border-radius:50%;background:#cf4e52;animation:sv-rec-pulse 1.2s infinite alternate}
 .sv-record-hint{margin-left:auto;color:var(--sayvi-secondary);font-size:11px}
 @keyframes sv-rec-pulse{from{opacity:1}to{opacity:.4}}
-#sayviVoicePreview{display:flex;flex-direction:column;gap:7px;padding:10px 12px}
-#sayviVoicePlayer{display:block;width:100%;height:36px}
+/* Quiet Cinema voice controls: audio is native, controls are our own
+   lightweight iOS-inspired UI. No dark rectangular native player inside glass. */
+#sayviVoicePreview{display:flex;flex-direction:column;gap:9px;padding:12px 14px}
+.sv-voice-player{
+ --voice-progress:0%;
+ display:flex;align-items:center;gap:11px;width:100%;
+ min-width:0;min-height:38px;color:var(--sayvi-text);
+}
+.sv-voice-player audio{display:none}
+.sv-voice-play{
+ flex:0 0 34px;width:34px;height:34px;padding:0;
+ display:grid;place-items:center;background:transparent;border:0;border-radius:50%;
+ color:var(--sayvi-control-text);-webkit-tap-highlight-color:transparent;
+}
+.sv-voice-play svg{width:19px;height:19px;fill:currentColor}
+.sv-voice-play .sv-icon-pause{display:none}
+.sv-voice-player.is-playing .sv-icon-play{display:none}
+.sv-voice-player.is-playing .sv-icon-pause{display:block}
+.sv-voice-range{
+ flex:1;min-width:52px;width:100%;height:32px;margin:0;padding:0;
+ background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;
+}
+.sv-voice-range::-webkit-slider-runnable-track{
+ height:3px;border-radius:99px;border:0;
+ background:linear-gradient(to right,var(--sayvi-control-text) 0 var(--voice-progress),rgba(150,162,170,.34) var(--voice-progress) 100%);
+}
+.sv-voice-range::-moz-range-track{height:3px;border-radius:99px;background:rgba(150,162,170,.34)}
+.sv-voice-range::-moz-range-progress{height:3px;border-radius:99px;background:var(--sayvi-control-text)}
+.sv-voice-range::-webkit-slider-thumb{
+ -webkit-appearance:none;appearance:none;margin-top:-5px;width:13px;height:13px;
+ border:0;border-radius:50%;background:var(--sayvi-control-text);box-shadow:none;
+}
+.sv-voice-range::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:var(--sayvi-control-text)}
+.sv-voice-time{flex:0 0 auto;min-width:32px;text-align:right;font:400 12px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;color:var(--sayvi-secondary);font-variant-numeric:tabular-nums}
 .sv-voice-actions{display:flex;justify-content:flex-end;gap:8px}
 .sv-voice-actions button{
- border:0;border-radius:999px;min-height:38px;padding:7px 15px;
+ border:0;border-radius:999px;min-height:34px;padding:6px 15px;
  font:500 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
  background:var(--sayvi-action);color:var(--sayvi-control-text);
+ -webkit-tap-highlight-color:transparent;
 }
 .sv-voice-actions button:last-child{font-weight:630}
-.sv-voice-bubble{display:flex;flex-direction:column;gap:5px;min-width:205px}
-.sv-voice-bubble audio{width:100%;max-width:265px;height:36px}
-.sv-voice-bubble small{font-size:11px;color:var(--sayvi-secondary)}
+.sv-voice-bubble{display:flex;flex-direction:column;gap:2px;min-width:205px;padding:8px 13px!important}
+.sv-voice-bubble .sv-voice-player{max-width:280px}
+.sv-voice-bubble small{font-size:10px;color:var(--sayvi-secondary);line-height:1.35;padding:0 2px 2px}
+@media(prefers-reduced-transparency:reduce){#sayviVoicePreview{background:var(--sayvi-fallback)}}
 @media(prefers-reduced-motion:reduce){.sv-record-dot{animation:none}}
 
 #sayviMic svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
@@ -563,6 +597,46 @@ main{background:var(--sayvi-scene)}
  const recTime=document.getElementById('sayviVoiceTimer');
  const preview=document.getElementById('sayviVoicePreview');
  const player=document.getElementById('sayviVoicePlayer');
+ // Local playback is real HTMLAudioElement audio, but its visible chrome
+ // follows SEYVEO rather than Safari's opaque rectangular player.
+ function makeVoicePlayer(audio){
+  audio.controls=false;
+  const shell=document.createElement('div');shell.className='sv-voice-player';
+  const play=document.createElement('button');play.type='button';
+  play.className='sv-voice-play';play.setAttribute('aria-label','Воспроизвести голосовое');
+  play.innerHTML='<svg class="sv-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.7a1 1 0 0 1 1.5-.85l9 6a1.38 1.38 0 0 1 0 2.3l-9 6A1 1 0 0 1 8 18.3Z"/></svg><svg class="sv-icon-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.4"/><rect x="13.5" y="5" width="4" height="14" rx="1.4"/></svg>';
+  const range=document.createElement('input');range.type='range';range.className='sv-voice-range';
+  range.min='0';range.max='1000';range.value='0';range.step='1';range.setAttribute('aria-label','Перемотать голосовое');
+  const time=document.createElement('span');time.className='sv-voice-time';time.textContent='0:00';
+  audio.parentNode.insertBefore(shell,audio);
+  shell.append(play,range,time,audio);
+  const formatTime=value=>{const n=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
+  const refresh=()=>{
+   const duration=Number.isFinite(audio.duration)?audio.duration:0;
+   const current=Math.min(audio.currentTime||0,duration||0);
+   const fraction=duration?Math.max(0,Math.min(1,current/duration)):0;
+   range.value=String(Math.round(fraction*1000));
+   shell.style.setProperty('--voice-progress',(fraction*100)+'%');
+   time.textContent=formatTime(duration?(audio.paused&&current===0?duration:current):0);
+   shell.classList.toggle('is-playing',!audio.paused&&!audio.ended);
+   play.setAttribute('aria-label',audio.paused?'Воспроизвести голосовое':'Пауза');
+  };
+  play.addEventListener('click',()=>{
+   if(audio.paused){
+    document.querySelectorAll('.sv-voice-player audio').forEach(other=>{if(other!==audio)other.pause()});
+    audio.play().catch(()=>{});
+   }else audio.pause();
+  });
+  range.addEventListener('input',()=>{
+   if(Number.isFinite(audio.duration)&&audio.duration>0)
+    audio.currentTime=(Number(range.value)/1000)*audio.duration;
+   refresh();
+  });
+  for(const name of ['loadedmetadata','durationchange','timeupdate','seeked','play','pause','ended','emptied'])audio.addEventListener(name,refresh);
+  refresh();
+  return shell;
+ }
+ makeVoicePlayer(player);
  const deleteVoice=document.getElementById('sayviVoiceDelete');
  const submitVoice=document.getElementById('sayviVoiceSubmit');
  let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
@@ -656,9 +730,10 @@ main{background:var(--sayvi-scene)}
   turn.dataset.role='user';
   const bubble=document.createElement('div');
   bubble.className='bubble sv-voice-bubble';
-  const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=url;
+  const audio=document.createElement('audio');audio.preload='metadata';audio.src=url;
   const note=document.createElement('small');note.textContent='Голосовое · только на этом устройстве';
   bubble.append(audio,note);turn.append(bubble);list.append(turn);
+  makeVoicePlayer(audio);
   closePreview();status.textContent='Голосовое добавлено локально. Отправка Сэйви заработает после подключения сервера.';
   requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  });
