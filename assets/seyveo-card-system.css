@@ -229,3 +229,49 @@
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
 }
+
+/* Live owner-advice cards already receive sv-card-system from Card Engine.
+ * Share the SAME master tokens without replacing their DOM or handlers.
+ * Other dashboard components are deliberately untouched. */
+#homePage #dynamic .decision-card[data-owner-advice].sv-card-system .event-copy strong{
+ font-size:var(--sv-master-title-size);
+ line-height:var(--sv-master-title-leading);
+ font-weight:var(--sv-master-title-weight);
+ letter-spacing:-.025em;
+}
+#homePage #dynamic .decision-card[data-owner-advice].sv-card-system .event-copy{
+ font-size:var(--sv-master-description-size);
+ line-height:var(--sv-master-description-leading);
+}
+#homePage #dynamic .decision-card[data-owner-advice].sv-card-system .actions .btn{
+ min-height:var(--sv-master-touch-target);
+ font-size:var(--sv-master-action-size);
+}
+/* Only actionable primary and secondary controls are poured glass;
+ * resolve/dismiss remains quiet text rather than another capsule. */
+#homePage #dynamic .decision-card[data-owner-advice].sv-card-system .actions .btn.primary{
+ border:0;
+ border-radius:999px;
+ padding:8px 14px;
+ background:var(--sv-master-glass);
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+ box-shadow:none;
+ color:var(--text);
+}
+#homePage #dynamic .decision-card[data-owner-advice].sv-card-system .actions .btn:not(.primary):not(#resolve){
+ border:0;
+ border-radius:999px;
+ padding:8px 12px;
+ background:var(--sv-master-glass);
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+ box-shadow:none;
+ color:var(--text);
+}
+@media(prefers-reduced-transparency:reduce){
+ #homePage #dynamic .decision-card[data-owner-advice].sv-card-system .actions .btn:is(.primary,:not(.primary):not(#resolve)){
+  background:var(--sv-velvet-panel,var(--card2));
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
