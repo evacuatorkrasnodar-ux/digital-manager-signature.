@@ -121,6 +121,26 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  --sayvi-menu-pressed:rgba(56,109,91,.09);
  --sayvi-fallback:#e6eef0;
 }
+/* White Velvet optical definition: a single translucent lens with a barely
+   visible neutral edge. Keep composer geometry and all dark themes intact. */
+:root[data-theme=light]{
+ --sayvi-glass:linear-gradient(150deg,rgba(255,255,255,.76),rgba(223,232,236,.43) 65%,rgba(247,249,250,.61));
+ --sayvi-action:linear-gradient(155deg,rgba(255,255,255,.77),rgba(221,232,235,.42) 65%,rgba(248,250,251,.55));
+}
+:root[data-theme=light] #sayviInput,
+:root[data-theme=light] #sayviMic,
+:root[data-theme=light] #sayviSend,
+:root[data-theme=light] #sayviPlus{
+ box-shadow:0 2px 7px rgba(47,72,79,.045),
+   inset 0 .7px 0 rgba(255,255,255,.76),
+   inset 0 -.65px 0 rgba(74,112,119,.11);
+}
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] #sayviInput,
+ :root[data-theme=light] #sayviMic,
+ :root[data-theme=light] #sayviSend,
+ :root[data-theme=light] #sayviPlus{box-shadow:none}
+}
 :root[data-theme=dark][data-palette=emerald]{
  --sayvi-bg:#111917;
  --sayvi-scene:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%);
