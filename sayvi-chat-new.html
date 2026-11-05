@@ -538,6 +538,13 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 #sayviImageViewer{position:absolute;inset:0;z-index:21;display:flex;align-items:center;justify-content:center;padding:65px 12px 25px;background:rgba(8,12,16,.97)}
 #sayviImageViewer img{display:block;max-width:100%;max-height:100%;object-fit:contain}
 #sayviImageViewer button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:16px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.15);color:white;font-size:26px}
+.sv-web-results{display:flex;flex-direction:column;gap:6px;width:min(100%,470px);margin-top:6px}
+.sv-web-result{display:flex;gap:9px;align-items:center;text-align:left;padding:9px 10px;width:100%;border:0;border-radius:13px;background:var(--sayvi-glass);color:var(--sayvi-text);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer}
+.sv-web-result-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.sv-web-result-title{font-size:13px;font-weight:580;line-height:1.35}
+.sv-web-result-desc{font-size:11px;line-height:1.4;color:var(--sayvi-secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.sv-web-result-domain{font-size:10px;color:var(--sayvi-secondary)}
+.sv-web-result-img{width:50px;height:50px;object-fit:cover;border-radius:10px;flex:none}
 </style>
 </head>
 <body>
@@ -661,6 +668,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
    append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos);
+   if(turn.role==='assistant'&&turn.sources?.length)renderWebResults('loaded-'+(savedTurns.length-1),turn.sources);
   }
   historyTurns.length=0;
   for(const turn of savedTurns.slice(-12)){
@@ -1436,7 +1444,87 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   if(recentVisual.conversation!==currentId||Date.now()-recentVisual.at>8*60*1000){recentVisual=null;return []}
   return recentVisual.items;
  }
+
+ // Explicit public lookup: do not submit ordinary/private chat messages.
+ function webRequest(text){
+  const m=/^(?:(?:сэй|сэйви)[,! ]+)?(?:найди|поищи|поиск\s*:|покажи\s+в\s+интернете)\s+(.+)$/iu.exec(text.trim());
+  return m?m[1].trim().slice(0,550):'';
+ }
+ function vettedWebResults(rows){
+  if(!Array.isArray(rows))return [];
+  return rows.slice(0,5).flatMap(item=>{
+   if(typeof item?.url!=='string'||typeof item.title!=='string'||typeof item.snippet!=='string')return [];
+   let u;try{u=new URL(item.url)}catch{return []}
+   if(u.protocol!=='https:'||u.username||u.password||!u.hostname)return [];
+   let image='';
+   if(item.imageApproved===true&&typeof item.imageCredit==='string'&&item.imageCredit.trim()){
+    try{const p=new URL(item.imageUrl);if(p.protocol==='https:'&&!p.username&&!p.password)image=p.href}catch{}
+   }
+   return [{url:u.href,domain:u.hostname,title:item.title.slice(0,180),
+    snippet:item.snippet.slice(0,450),image,imageCredit:String(item.imageCredit||'').slice(0,100)}];
+  });
+ }
+ function renderWebResults(id,rows){
+  const bubble=answers.get(id);if(!bubble)return;
+  const turn=bubble.closest('.turn');
+  turn.querySelector('.sv-web-results')?.remove();
+  const items=vettedWebResults(rows);
+  if(!items.length)return;
+  const group=document.createElement('div');group.className='sv-web-results';
+  for(const item of items){
+   const button=document.createElement('button');button.type='button';button.className='sv-web-result';
+   button.setAttribute('aria-label','Открыть '+item.title+' в SEYVEO Browser');
+   if(item.image){
+    const img=document.createElement('img');img.className='sv-web-result-img';
+    img.src=item.image;img.loading='lazy';img.alt='Фото: '+item.imageCredit;
+    img.referrerPolicy='no-referrer';button.append(img);
+   }
+   const info=document.createElement('span');info.className='sv-web-result-text';
+   const title=document.createElement('span');title.className='sv-web-result-title';title.textContent=item.title;
+   const snippet=document.createElement('span');snippet.className='sv-web-result-desc';snippet.textContent=item.snippet;
+   const domain=document.createElement('span');domain.className='sv-web-result-domain';domain.textContent=item.domain+(item.image?' · '+item.imageCredit:'');
+   info.append(title,snippet,domain);button.append(info);
+   button.addEventListener('click',()=>window.location.assign('./index.html?seyveoBrowserUrl='+encodeURIComponent(item.url)));
+   group.append(button);
+  }
+  turn.append(group);
+ }
+ async function searchInChat(question,query){
+  const ctrl=new AbortController();active=ctrl;updateControls();status.textContent='';
+  const id='web-'+(++sequence);
+  append('user','user-'+sequence,question);
+  const stop=showThinking();
+  try{
+   const response=await fetch('/api/seyveo-live-search',{
+    method:'POST',credentials:'same-origin',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({message:query}),signal:ctrl.signal
+   });
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok)throw Error(data.error||'Поиск временно недоступен.');
+   const sources=vettedWebResults(data.results);
+   const answer=sources.length?
+    (typeof data.answer==='string'&&data.answer.trim()?data.answer.trim().slice(0,1800):'Нашла несколько источников — посмотри, какие пригодятся.'):
+    (typeof data.message==='string'?data.message:'Пока нет проверенных источников.');
+   stop();append('assistant',id,answer);
+   renderWebResults(id,sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit})));
+   const idx=Number(answers.get(id)?.dataset.savedIndex);
+   if(Number.isInteger(idx)&&idx>=0&&idx<savedTurns.length){
+    savedTurns[idx].sources=sources.map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
+    persist();
+   }
+   historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
+   if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+   requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
+  }catch(error){
+   if(!ctrl.signal.aborted){stop();append('assistant',id,String(error?.message||'Не удалось найти источники.'))}
+  }finally{
+   stop();if(active===ctrl){active=null;updateControls()}
+  }
+ }
  async function ask(question,options={}){
+  const query=options.skipUser?'':webRequest(question);
+  if(query&&!options.attachments?.length)return searchInChat(question,query);
   const controller=new AbortController();active=controller;updateControls();
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
