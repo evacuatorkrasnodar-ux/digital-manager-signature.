@@ -512,7 +512,6 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  <button type="button" id="sayviNewChat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><span>Новый разговор</span></button>
  <button type="button" id="sayviAttachPhoto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.5"/><path d="m4.5 17 5-5 3.5 3 2.5-2 4 4"/></svg><span>Фото</span></button>
  <button type="button" id="sayviAttachFile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V21H7zM14 3.5V8h4M10 12h5M10 16h5"/></svg><span>Файл</span></button>
- <button type="button" id="sayviHistoryOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg><span>История</span></button>
 </div>
 <section id="sayviHistory" aria-label="История разговоров" hidden>
  <div class="history-shell">
@@ -692,7 +691,6 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
  }
  historyTop.addEventListener('click',openHistory);
- document.getElementById('sayviHistoryOpen').addEventListener('click',openHistory);
  document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
  historySearch.addEventListener('input',renderHistory);
  document.getElementById('sayviHistoryActionCancel').addEventListener('click',closeHistoryActions);
