@@ -102,7 +102,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:#2a353d;-webkit-backdrop-filter:none;backdrop-filter:none}
 }
 #sayviMic{font-size:0;line-height:1}
-#sayviMic{touch-action:none;-webkit-user-select:none;user-select:none}
+#sayviMic{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #sayviMic.is-recording{background:rgba(182,72,75,.27);color:var(--sayvi-control-text)}
 #sayviVoiceRecord,#sayviVoicePreview{
  position:absolute;
@@ -670,6 +670,7 @@ main{background:var(--sayvi-scene)}
  const submitVoice=document.getElementById('sayviVoiceSubmit');
  let hold=false,starting=false,recorder=null,stream=null,recordStart=0;
  let pressPointer=null,releaseWhileStarting=false,tapStopMode=false;
+ let touchActive=false,releaseQueued=false;
  let timerId=null,maxTimer=null,voiceBlob=null,previewUrl=null,voiceGeneration=0,voiceDuration=0;
  const voiceUrls=new Set();
  // Initialize the player only after its duration state exists (avoid TDZ crash).
@@ -706,8 +707,8 @@ main{background:var(--sayvi-scene)}
   if(!navigator.mediaDevices?.getUserMedia||typeof MediaRecorder==='undefined'){
    status.textContent='Запись голосовых недоступна в этом браузере.';return;
   }
-  hold=true;starting=true;releaseWhileStarting=false;tapStopMode=false;
-  pressPointer=event.pointerId;
+  hold=true;starting=true;releaseWhileStarting=false;tapStopMode=false;releaseQueued=false;
+  pressPointer=event.pointerId??null;
   const generation=++voiceGeneration;
   recTime.textContent='Подключаем микрофон…';recView.hidden=false;
   // Do not capture the pointer while the iOS permission dialog is showing:
@@ -717,7 +718,9 @@ main{background:var(--sayvi-scene)}
    if(generation!==voiceGeneration){media.getTracks().forEach(track=>track.stop());return}
    // iOS may interrupt pointer events while asking for microphone access.
    // Finish the permission step, then allow a second tap to stop recording.
-   if(releaseWhileStarting){hold=true;tapStopMode=true;}
+   if(releaseWhileStarting||releaseQueued){
+    hold=true;tapStopMode=true;releaseQueued=false;
+   }
    stream=media;
    // Safari chooses a supported container (normally MP4/AAC).
    const recording=new MediaRecorder(media);
@@ -772,21 +775,52 @@ main{background:var(--sayvi-scene)}
     :'Не удалось начать запись. Проверьте микрофон и разрешения.';
   }
  }
- mic.addEventListener('pointerdown',event=>{
+ // Native touch events are more reliable for press-and-hold on iOS Safari.
+ // A permission prompt may interrupt touchend; then a second tap ends recording.
+ function micPress(event){
   if(tapStopMode&&recorder?.state==='recording'){
    event.preventDefault();finishCapture();return;
   }
-  beginCapture(event);
+  if(!starting&&!recorder)beginCapture(event);
+ }
+ function micRelease(){
+  hold=false;
+  if(starting){releaseQueued=true;releaseWhileStarting=true;return}
+  if(recorder?.state==='recording'&&!tapStopMode)finishCapture();
+ }
+ mic.addEventListener('touchstart',event=>{
+  if(event.cancelable)event.preventDefault();
+  if(event.touches.length!==1)return;
+  touchActive=true;
+  micPress(event);
+ },{passive:false});
+ mic.addEventListener('touchend',event=>{
+  if(event.cancelable)event.preventDefault();
+  if(!touchActive)return;
+  touchActive=false;
+  micRelease();
+ },{passive:false});
+ mic.addEventListener('touchcancel',()=>{
+  if(!touchActive)return;
+  touchActive=false;
+  // Safari can cancel the touch due to OS prompts; keep recording until
+  // a deliberate second tap rather than silently discarding a voice note.
+  if(starting){releaseQueued=true;releaseWhileStarting=true;return}
+  if(recorder?.state==='recording'){tapStopMode=true;mic.setAttribute('aria-label','Остановить запись');status.textContent='Запись идёт. Нажмите микрофон ещё раз, чтобы закончить.'}
+ });
+ // Mouse and pen input for desktop testing. Touch pointers are handled above.
+ mic.addEventListener('pointerdown',event=>{
+  if(event.pointerType==='touch')return;
+  if(event.button!==0)return;
+  micPress(event);
  });
  mic.addEventListener('pointerup',event=>{
-  if(event.pointerId!==pressPointer)return;
-  if(starting){releaseWhileStarting=true;return}
-  if(!tapStopMode)finishCapture();
+  if(event.pointerType==='touch')return;
+  micRelease();
  });
  mic.addEventListener('pointercancel',event=>{
-  if(event.pointerId!==pressPointer)return;
-  if(starting){releaseWhileStarting=true;return}
-  if(!tapStopMode)finishCapture();
+  if(event.pointerType==='touch')return;
+  micRelease();
  });
  mic.addEventListener('contextmenu',event=>event.preventDefault());
  mic.addEventListener('click',event=>event.preventDefault());
