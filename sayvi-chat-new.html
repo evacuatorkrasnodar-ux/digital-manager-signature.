@@ -49,6 +49,13 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 /* Тестовые сообщения: никакой поверхности и фона у области переписки. */
 #sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 16px 82px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 #sayviMessages::-webkit-scrollbar{display:none}
+/* A gentle top fade hides visually abrupt clipping of long older turns.
+   Messages remain fully scrollable; no forced scrolling or data changes. */
+#sayviMessages{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 27px,black 100%);
+ mask-image:linear-gradient(to bottom,transparent 0,black 27px,black 100%);
+ scroll-padding-top:28px;
+}
 .turn{display:flex;flex-direction:column;gap:5px;margin:0 0 18px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .turn[data-role="user"]{align-items:flex-end}
 .turn[data-role="user"] .bubble{padding:9px 13px;border-radius:18px;background:#263039;max-width:85%}
@@ -133,9 +140,15 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 :root[data-theme=light] #sayviMic,
 :root[data-theme=light] #sayviSend,
 :root[data-theme=light] #sayviPlus{
- box-shadow:0 2px 7px rgba(47,72,79,.045),
+ box-shadow:0 1px 4px rgba(47,72,79,.025),
    inset 0 .7px 0 rgba(255,255,255,.76),
-   inset 0 -.65px 0 rgba(74,112,119,.11);
+   inset 0 -.45px 0 rgba(74,112,119,.065);
+}
+/* All three controls read as one White Velvet material, not raised discs. */
+:root[data-theme=light] #sayviMic,
+:root[data-theme=light] #sayviSend,
+:root[data-theme=light] #sayviPlus{
+ background:var(--sayvi-glass);
 }
 @media(prefers-reduced-transparency:reduce){
  :root[data-theme=light] #sayviInput,
