@@ -31,8 +31,10 @@ textarea:focus,select:focus{border-color:#85bfa3}textarea{min-height:86px}button
 <div class="buttons"><button id="c">▶ С контекстом</button><button id="stop">Стоп</button></div>
 <details style="margin-top:14px"><summary style="font-size:12px;color:#aebeb7;cursor:pointer">Ненадёжный эксперимент со знаком ударения</summary><div class="buttons"><button id="b">▶ Со знаком (риск)</button></div></details>
 <div id="status" role="status" aria-live="polite"></div>
+<div id="evaluation" hidden><p style="margin:13px 0 4px">Как Сэйви произнесла только что прослушанную фразу?</p><div class="buttons"><button id="correct" class="primary">✓ Правильно</button><button id="incorrect">✕ Ошибка</button></div><label for="heard">Что произнесла неправильно? (необязательно)</label><textarea id="heard" rows="2" placeholder="Например: за́мок вместо замо́к"></textarea></div>
 <small>Мы уже обнаружили, что знак ударения может превратить «замок» в «залмок», а контекст не всегда исправляет ударение. Проверяем, насколько естественно модель читает безопасную перефразировку. Никаких автоматических замен в обычном чате нет.</small>
 </section>
+<section><div class="eyebrow">НАШИ НАБЛЮДЕНИЯ</div><p>Результаты сохраняются только в этом браузере. Их можно скопировать и прислать в чат для разбора.</p><div id="journal" style="font-size:13px;line-height:1.6;color:#c9dbd1"></div><div class="buttons"><button id="copy-log">Скопировать результаты</button><button id="clear-log">Очистить</button></div></section>
 <p><a href="/sayvi-chat-new.html">Вернуться в чат Сэйви</a></p>
 </main>
 <script>
@@ -43,6 +45,18 @@ const marked=document.getElementById('marked');
 const context=document.getElementById('context');
 const paraphrase=document.getElementById('paraphrase');
 const status=document.getElementById('status');
+const evaluation=document.getElementById('evaluation');
+const heard=document.getElementById('heard');
+const journal=document.getElementById('journal');
+const LOG_KEY='seyveo-ru-pronunciation-qa-v1';
+let lastCompleted=null;
+function loadJournal(){try{const data=JSON.parse(localStorage.getItem(LOG_KEY)||'[]');return Array.isArray(data)?data.slice(-100):[]}catch{return []}}
+function renderJournal(){const entries=loadJournal();journal.textContent=entries.length?entries.slice(-12).reverse().map(x=>(x.correct?'✓ ':'✕ ')+x.variant+': «'+x.text+'»'+(x.heard?' — '+x.heard:'')).join('\n'):'Пока нет записей.';journal.style.whiteSpace='pre-wrap'}
+function saveJudgment(correct){if(!lastCompleted)return;const note=heard.value.trim().slice(0,250);const entries=loadJournal();entries.push({...lastCompleted,correct,heard:note,time:new Date().toISOString()});try{localStorage.setItem(LOG_KEY,JSON.stringify(entries.slice(-100)))}catch{}evaluation.hidden=true;lastCompleted=null;heard.value='';renderJournal();status.textContent=correct?'Отмечено: произнесено правильно.':'Отмечено: ошибка произношения.'}
+document.getElementById('correct').addEventListener('click',()=>saveJudgment(true));
+document.getElementById('incorrect').addEventListener('click',()=>saveJudgment(false));
+document.getElementById('copy-log').addEventListener('click',async()=>{const entries=loadJournal();const result=entries.map(x=>x.time+' | '+(x.correct?'Правильно':'Ошибка')+' | '+x.variant+' | '+x.text+(x.heard?' | '+x.heard:'')).join('\n');if(!result){status.textContent='Сначала отметь хотя бы одно прослушивание.';return}try{await navigator.clipboard.writeText(result);status.textContent='Результаты скопированы.'}catch{status.textContent='Не удалось скопировать автоматически.'}});
+document.getElementById('clear-log').addEventListener('click',()=>{if(!window.confirm('Очистить сохранённые результаты тестов?'))return;localStorage.removeItem(LOG_KEY);renderJournal()});
 let controller=null,audio=null,blobUrl=null,serial=0;
 for(let i=0;i<samples.length;i++){
  const option=document.createElement('option');
@@ -50,7 +64,7 @@ for(let i=0;i<samples.length;i++){
 }
 function choose(){
  const item=samples[Number(sample.value)]||samples[0];
- stop();
+ stop();lastCompleted=null;evaluation.hidden=true;heard.value='';
  plain.value=item.plain;marked.value=item.marked;context.value=item.context||item.plain;paraphrase.value=item.paraphrase||item.plain;status.textContent='';
 }
 sample.addEventListener('change',choose);
@@ -63,7 +77,7 @@ function stop(){
 }
 document.getElementById('stop').addEventListener('click',()=>{stop();status.textContent='Остановлено';});
 async function play(id){
- stop();
+ stop();lastCompleted=null;evaluation.hidden=true;
  const text=(id==='a'?plain:id==='c'?context:id==='d'?paraphrase:marked).value.trim();
  if(text.length<2||text.length>450){status.textContent='Введите от 2 до 450 символов';return}
  const n=serial;
@@ -82,7 +96,7 @@ async function play(id){
   if(blob.size<44||blob.size>15000000)throw Error('Неверное аудио');
   blobUrl=URL.createObjectURL(blob);
   audio=new Audio(blobUrl);
-  audio.onended=()=>{if(n===serial){stop();status.textContent='Готово. Теперь сравни второй вариант.'}};
+  audio.onended=()=>{if(n===serial){lastCompleted={variant:({a:'Обычный',b:'Со знаком',c:'С контекстом',d:'Другими словами'})[id],text,sample:Number(sample.value)};stop();evaluation.hidden=false;status.textContent='Прослушано. Отметь, правильно ли Сэйви произнесла фразу.'}};
   audio.onerror=()=>{if(n===serial){stop();status.textContent='Ошибка воспроизведения'}};
   status.textContent=id==='a'?'Слушаем обычный текст':id==='c'?'Слушаем текст с контекстом':id==='d'?'Слушаем фразу другими словами':'Слушаем экспериментальный текст со знаком ударения';
   await audio.play();
@@ -94,5 +108,5 @@ document.getElementById('a').addEventListener('click',()=>play('a'));
 document.getElementById('b').addEventListener('click',()=>play('b'));
 document.getElementById('c').addEventListener('click',()=>play('c'));
 document.getElementById('d').addEventListener('click',()=>play('d'));
-choose();
+choose();renderJournal();
 </script></body></html>
