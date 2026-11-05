@@ -60,18 +60,18 @@ html body #homeHeader .home-world-choice:active{background:var(--sv-lg26-pressed
  * PWA CSS is a visual approximation, not Apple's native renderer. */
 :root{
  --sv-home-glass-fill:
-   linear-gradient(155deg,rgba(255,255,255,.13),rgba(255,255,255,.055) 56%,rgba(255,255,255,.045));
+   linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));
  --sv-home-glass-reflection:
-   inset 0 .5px 0 rgba(255,255,255,.065);
- --sv-home-glass-pressed:rgba(255,255,255,.15);
+   inset 0 .5px 0 rgba(255,255,255,.075);
+ --sv-home-glass-pressed:rgba(218,235,245,.20);
 }
 :root[data-theme=light]{
  --sv-home-glass-fill:
-   linear-gradient(155deg,rgba(255,255,255,.87),rgba(237,241,245,.64) 57%,rgba(227,233,239,.50));
+   linear-gradient(155deg,rgba(255,255,255,.65),rgba(232,235,240,.30) 58%,rgba(255,255,255,.45));
  --sv-home-glass-reflection:
-   0 1px 3px rgba(58,73,89,.035),
-   inset 0 .5px 0 rgba(255,255,255,.60);
- --sv-home-glass-pressed:rgba(223,230,237,.72);
+   0 1px 3px rgba(58,73,89,.025),
+   inset 0 .5px 0 rgba(255,255,255,.32);
+ --sv-home-glass-pressed:rgba(221,227,234,.62);
 }
 html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden]){
@@ -94,8 +94,8 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  border-radius:999px!important;
  background:var(--sv-home-glass-fill)!important;
  box-shadow:var(--sv-home-glass-reflection)!important;
- -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
- backdrop-filter:blur(22px) saturate(115%)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
+ backdrop-filter:blur(18px) saturate(145%)!important;
  pointer-events:none!important;
  z-index:-1!important;
 }
