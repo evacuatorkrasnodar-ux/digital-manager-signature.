@@ -528,6 +528,9 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-sent-file{display:flex;align-items:center;gap:10px;min-height:57px;padding:6px 10px;border-radius:15px;background:var(--sayvi-glass);color:var(--sayvi-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
 .sv-sent-file .sv-attach-fileicon{position:relative;inset:auto;display:grid;place-items:center;flex:0 0 40px;width:40px;height:43px}
 .sv-sent-file .sv-file-sheet{margin:0}
+.sv-sent-file[role="button"]{cursor:pointer;width:100%;text-align:left;border:0;font-family:inherit}
+.sv-sent-file[role="button"]:focus-visible{outline:2px solid var(--sayvi-text);outline-offset:2px}
+.sv-sent-file[role="button"]:active{background:var(--sayvi-pressed)}
 .sv-sent-file-name{min-width:0;font-size:12px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word}
 .turn[data-role="user"].sv-has-files .bubble:empty{display:none}
 
@@ -1140,6 +1143,24 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    &&a.thumb.length<110000&&a.thumb.startsWith('data:image/jpeg;base64,'))
    .map(a=>({name:a.name.slice(0,120),thumb:a.thumb}));
  }
+ // Only live browser-session file objects are kept. No private binary data
+ // is placed into localStorage or sent to another provider.
+ const sentDocumentBlobs=new Map();
+ function openSentDocument(file){
+  if(!file){status.textContent='Файл недоступен после обновления страницы. Прикрепи его ещё раз.';return}
+  const url=URL.createObjectURL(file);
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(ext==='pdf'){
+   const tab=window.open(url,'_blank','noopener');
+   if(!tab){URL.revokeObjectURL(url);status.textContent='Разреши открытие вкладки для просмотра PDF.';return}
+   // The new tab may still be reading the blob: release later.
+   setTimeout(()=>URL.revokeObjectURL(url),120000);
+  }else{
+   const link=document.createElement('a');
+   link.href=url;link.download=file.name;document.body.append(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),10000);
+  }
+ }
  function showSentFiles(turn,files){
   turn.querySelector('.sv-sent-files')?.remove();
   const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
@@ -1147,7 +1168,10 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   if(!names.length)return;
   const group=document.createElement('div');group.className='sv-sent-files';
   for(const name of names){
-   const tile=document.createElement('div');tile.className='sv-sent-file';
+   const tile=document.createElement('button');tile.type='button';tile.className='sv-sent-file';
+   tile.setAttribute('aria-label','Открыть файл '+name);
+   const original=(sentDocumentBlobs.get(turn)||[]).find(f=>f.name===name);
+   tile.addEventListener('click',()=>openSentDocument(original));
    tile.append(makeDocumentIcon({name}));
    const label=document.createElement('span');label.className='sv-sent-file-name';
    label.textContent=name;label.title=name;tile.append(label);group.append(tile);
@@ -1775,7 +1799,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
   const linkedPhotos=contextImagesFor(question,options);
-  if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles);
+  if(!options.skipUser){
+   append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles);
+   const sentTurn=answers.get('user-'+id)?.closest('.turn');
+   if(sentTurn&&Array.isArray(options.documentFiles)){
+    sentDocumentBlobs.set(sentTurn,options.documentFiles);
+    showSentFiles(sentTurn,options.previewFiles);
+   }
+  }
   let answer='',done=false,wasTruncated=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
@@ -1874,7 +1905,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    // attaching it again, while the temporary server still holds its bytes.
    recentVisual=files.uploaded.length?
     {conversation:currentId,at:Date.now(),items:files.uploaded}:null;
-   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,attachments:files.uploaded});
+   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,documentFiles:selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file),attachments:files.uploaded});
   }catch(error){
    if(active===lock){active=null;updateControls()}
    status.textContent=String(error?.message||'Не удалось отправить файл.');
