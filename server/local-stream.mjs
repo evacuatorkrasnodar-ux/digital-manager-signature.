@@ -38,7 +38,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
  // contaminate the image model's understanding of what it can see.
  const visionQuestion=visual?
   'Рассмотри '+(images.length===1?'прикреплённое изображение':'прикреплённые изображения')+
-  '. Ответь естественно, без технических вступлений: начни с самого заметного предмета или впечатления, только если действительно различаешь его на изображении. Не выдумывай детали. Если вопроса нет, коротко и тепло прокомментируй изображение и предложи один осмысленный следующий шаг. Вопрос или просьба пользователя: '+question:
+  '. Ответь естественно, без технических вступлений, всего 2–4 короткими законченными предложениями. Назови главное из действительно видимого, не перечисляй все мелкие детали и не начинай длинный список. Если вопроса нет, коротко отреагируй и предложи один уместный следующий шаг. Обязательно закончи мысль, не начинай новое предложение в конце ответа. Вопрос пользователя: '+question:
   question;
  if(process.env.SEYVEO_ENABLE_LOCAL!=='1')throw Error('local-not-configured');
  const model=(images.length?process.env.SEYVEO_VISION_MODEL||'qwen2.5vl:3b':process.env.SEYVEO_LOCAL_MODEL||'qwen3:4b-instruct').trim();
@@ -67,14 +67,14 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
      ...dialogue,
      {role:'user',content:visionQuestion,...(images.length?{images:images.slice(0,6)}:{})}
     ],
-    options:localOptionsFor(question)
+    options:visual?{...localOptionsFor(question),num_predict:850,temperature:0.35}:localOptionsFor(question)
    }),
    signal:controller.signal
   });
   if(!response.ok||!response.body)throw Error(images.length?'vision-model-unavailable':'local-stream-unavailable');
   const reader=response.body.getReader();
   const decoder=new TextDecoder('utf-8');
-  let buffer='',full='',receivedDone=false;
+  let buffer='',full='',receivedDone=false,doneReason='';
   const accept=(line)=>{
    if(!line.trim())return;
    let data;
@@ -86,7 +86,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
     full+=token;
     onDelta(token);
    }
-   if(data.done===true)receivedDone=true;
+   if(data.done===true){receivedDone=true;doneReason=String(data.done_reason||'')}
   };
   try{
    while(true){
@@ -109,7 +109,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
   }
   if(!full.trim())throw Error('empty-local-response');
   if(!receivedDone)throw Error('incomplete-ollama-response');
-  return Object.freeze({text:full.trim(),model,provider:'local'});
+  return Object.freeze({text:full.trim(),model,provider:'local',truncated:doneReason==='length',doneReason});
  }finally{
   clearTimeout(timeout);
   if(signal)signal.removeEventListener('abort',abort);
