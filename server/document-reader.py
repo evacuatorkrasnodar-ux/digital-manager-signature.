@@ -25,7 +25,7 @@ class InvalidDocument(Exception):
 
 
 def clean(value):
-    return re.sub(r"\\s+", " ", value).strip()
+    return re.sub(r"\s+", " ", value).strip()
 
 
 def read_zip(data):
@@ -68,8 +68,8 @@ def office_text(data, ext):
             if value:
                 paragraphs.append(value)
     elif ext == ".pptx":
-        slides = sorted((name for name in names if re.fullmatch(r"ppt/slides/slide\\d+\\.xml", name)),
-                        key=lambda x: int(re.search(r"slide(\\d+)", x).group(1)))
+        slides = sorted((name for name in names if re.fullmatch(r"ppt/slides/slide\d+\.xml", name)),
+                        key=lambda x: int(re.search(r"slide(\d+)", x).group(1)))
         if not slides:
             raise InvalidDocument("Слайды не найдены.")
         for idx, name in enumerate(slides, 1):
@@ -87,8 +87,8 @@ def office_text(data, ext):
         if shared_root is not None:
             for si in shared_root.findall(".//x:si", NS):
                 shared.append("".join(t.text or "" for t in si.findall(".//x:t", NS)))
-        sheets = sorted((name for name in names if re.fullmatch(r"xl/worksheets/sheet\\d+\\.xml", name)),
-                        key=lambda x: int(re.search(r"sheet(\\d+)", x).group(1)))
+        sheets = sorted((name for name in names if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name)),
+                        key=lambda x: int(re.search(r"sheet(\d+)", x).group(1)))
         if not sheets:
             raise InvalidDocument("Листы Excel не найдены.")
         for index, name in enumerate(sheets, 1):
@@ -117,7 +117,7 @@ def office_text(data, ext):
                     break
     else:
         raise InvalidDocument("Неподдерживаемый формат.")
-    return "\\n".join(paragraphs)
+    return "\n".join(paragraphs)
 
 
 def pdf_text(data):
@@ -138,7 +138,7 @@ def pdf_text(data):
             text = clean(page.extract_text() or "")
             if text:
                 out.append("Страница " + str(index + 1) + ": " + text)
-        return "\\n".join(out)
+        return "\n".join(out)
     except InvalidDocument:
         raise
     except Exception as exc:
