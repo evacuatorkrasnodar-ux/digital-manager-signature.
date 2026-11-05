@@ -11,7 +11,11 @@ const TYPOS=new Map([
 ]);
 export function russianWritingMode(request){
  const s=String(request||'').slice(0,1200);
- if(WORK.test(s))return 'business';
+ // Talking *about* a client or colleague is not automatically a formal letter.
+ // Writing a document and correcting a document are distinct intents.
+ const explicitDocument=/(?:напиши|составь|подготовь|оформи|создай|сформируй|ответь|сделай|редактируй|перепиши|исправь|проверь)[^.!?\\n]{0,110}(?:письм[оаеиу]|документ|приказ|заявлени|договор|резюме|отч[её]т|уведомлени|претензи|клиенту|сотруднику)/iu.test(s);
+ const formalRequest=/(?:официальным|деловым|формальным|для клиента|для сотрудника|от имени компании)/iu.test(s);
+ if(explicitDocument||formalRequest)return 'business';
  if(EDIT.test(s))return 'editing';
  return 'conversation';
 }
