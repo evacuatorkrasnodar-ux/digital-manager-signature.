@@ -514,7 +514,7 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
     });
     console.log('[SEYVEO Timing] First text:',firstTextMs,'ms; complete:',Date.now()-startedAt,'ms');
     if(!res.destroyed)res.end(JSON.stringify({
-     type:'done',model:result.model,cloud:false,executed:false
+     type:'done',model:result.model,cloud:false,executed:false,truncated:result.truncated===true
     })+'\n');
    }catch{
     if(!res.destroyed)res.end(JSON.stringify({
