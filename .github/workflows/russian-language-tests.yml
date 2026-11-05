@@ -9,6 +9,7 @@ on:
       - 'server/russian-stress.mjs'
       - 'server/russian-stress.test.mjs'
       - 'server/russian-stress-batch.py'
+      - 'server/russian-stress-review.py'
       - 'server/test_russian_stress_batch.py'
       - '.github/workflows/russian-language-tests.yml'
   pull_request:
@@ -19,6 +20,7 @@ on:
       - 'server/russian-stress.mjs'
       - 'server/russian-stress.test.mjs'
       - 'server/russian-stress-batch.py'
+      - 'server/russian-stress-review.py'
       - 'server/test_russian_stress_batch.py'
       - '.github/workflows/russian-language-tests.yml'
 
