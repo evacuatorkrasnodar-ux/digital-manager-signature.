@@ -339,6 +339,11 @@ main{background:var(--sayvi-scene)}
   backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
  }
 }
+/* The bottom of the dark scene is deeper than the recording preview.
+   Lift only the input pill slightly so its perceived smoke tone matches. */
+:root[data-theme=dark] #sayviInput{
+ background:rgba(184,195,201,.25);
+}
 /* On dark palettes suppress color amplification: matte, not glossy.
    No strokes, highlights or outer shadows; original shape and sizing stay. */
 @media(prefers-reduced-transparency:no-preference){
