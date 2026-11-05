@@ -4,6 +4,7 @@
  */
 import {createServer} from 'node:http';
 import {createImageAttachments} from './image-attachments.mjs';
+import {readDocumentUpload} from './document-attachments.mjs';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -431,6 +432,25 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
      'invalid-id':'Неверный номер записи.',
      'unknown-id':'Запись уже удалена.'
     }[error]):'Не удалось изменить память. Существующие записи сохранены.'});
+   }
+   return;
+  }
+  // Local document-to-text only: no storage, macros, OCR or voice changes.
+  if(req.method==='POST'&&path==='/api/seyveo-document-text'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   try{send(res,200,await readDocumentUpload(req))}
+   catch(err){
+    const reason=String(err?.message||'');
+    const code=reason==='large'?413:reason==='unsupported'?415:reason==='timeout'?504:reason==='format'?400:422;
+    const safe=reason==='python-unavailable'?'Нужен Python 3.11 для чтения документов.':
+     reason==='large'?'Максимальный размер документа — 8 МБ.':
+     reason==='unsupported'?'Поддерживаются текстовые PDF, DOCX, XLSX и PPTX.':
+     reason==='timeout'?'Документ обрабатывается слишком долго.':
+     reason.startsWith('Для PDF')||reason.startsWith('Это не PDF')||reason.startsWith('Не удалось')||
+     reason.startsWith('Текст не найден')||reason.startsWith('PDF с паролем')||
+     reason.startsWith('Повреждена')||reason.startsWith('Слишком большой')||
+     reason.startsWith('Зашифрованные')?reason:'Не удалось прочитать документ.';
+    send(res,code,{error:safe});
    }
    return;
   }
