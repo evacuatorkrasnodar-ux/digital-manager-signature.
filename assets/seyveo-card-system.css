@@ -15,6 +15,10 @@
  --sv-master-queue-title-size:13.5px;
  --sv-master-task-title-size:13px;
  --sv-master-task-title-leading:1.42;
+ --sv-master-person-title-size:13.5px;
+ --sv-master-person-title-leading:1.3;
+ --sv-master-person-meta-size:11px;
+ --sv-master-person-note-size:10.5px;
  --sv-master-action-quiet-size:12px;
  --sv-master-queue-description-size:12.5px;
  --sv-master-queue-leading:1.48;
