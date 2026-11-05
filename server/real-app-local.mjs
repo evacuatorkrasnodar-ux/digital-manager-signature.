@@ -432,7 +432,15 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    if(busy){send(res,429,{error:'SEYVEO ещё отвечает.'});return}
    let message;
    try{message=await readQuestion(req,{withHistory:true})}
-   catch{send(res,400,{error:'Нужен вопрос до 4000 символов.'});return}
+   catch(error){
+    const reason=String(error?.message||'');
+    const invalidHistory=reason==='invalid-history';
+    send(res,400,{error:invalidHistory?'История переписки содержит несовместимые сообщения. Обнови чат и попробуй ещё раз.':
+     reason==='invalid-attachments'?'Неверные данные вложений. Прикрепи файл ещё раз.':
+     reason==='large'?'Слишком большой запрос. Сократи текст или историю.':
+     'Нужен вопрос до 4000 символов.'});
+    return;
+   }
    let images=[];
    try{images=imageAttachments.resolve(message.attachmentIds)}
    catch{send(res,410,{error:'Изображение устарело. Добавь его заново.'});return}
