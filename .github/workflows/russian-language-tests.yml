@@ -12,6 +12,8 @@ on:
       - 'server/russian-stress-review.py'
       - 'server/test_russian_stress_batch.py'
       - 'server/voice-protection.test.mjs'
+      - 'server/spoken-text.test.mjs'
+      - 'assets/seyveo-private-voice.js'
       - 'server/real-app-local.mjs'
       - 'server/seyveo-voice-school/voice_worker.py'
       - '.github/workflows/russian-language-tests.yml'
@@ -26,6 +28,8 @@ on:
       - 'server/russian-stress-review.py'
       - 'server/test_russian_stress_batch.py'
       - 'server/voice-protection.test.mjs'
+      - 'server/spoken-text.test.mjs'
+      - 'assets/seyveo-private-voice.js'
       - 'server/real-app-local.mjs'
       - 'server/seyveo-voice-school/voice_worker.py'
       - '.github/workflows/russian-language-tests.yml'
@@ -44,7 +48,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: JavaScript language tests
-        run: node --test server/russian-language.test.mjs server/russian-stress.test.mjs server/voice-protection.test.mjs
+        run: node --test server/russian-language.test.mjs server/russian-stress.test.mjs server/voice-protection.test.mjs server/spoken-text.test.mjs
       - name: Offline Python batch tests
         run: python -m unittest discover -s server -p 'test_russian_stress_batch.py'
       - name: Validate report generation without model downloads
