@@ -38,6 +38,16 @@ export function inspectRussianText(text){
    if(words[i].length>=3&&words[i].toLowerCase()===words[i-1].toLowerCase())
     issues.push({type:'repeat',fragment:words[i],message:'Возможный повтор слова'});
   }
+  // Multiword typos need phrase matching, not token matching.
+  for(const [phrase,variant] of TYPOS){
+   if(!phrase.includes(' ')||issues.length>=8)continue;
+   const position=input.toLowerCase().indexOf(phrase);
+   if(position<0)continue;
+   const before=position>0?input[position-1]:' ';
+   const after=input[position+phrase.length]||' ';
+   if(!/[а-яё]/iu.test(before)&&!/[а-яё]/iu.test(after))
+    issues.push({type:'possible-typo',fragment:input.slice(position,position+phrase.length),variant});
+  }
   for(const word of words){
    const variant=TYPOS.get(word.toLowerCase());
    if(variant&&issues.length<8)issues.push({type:'possible-typo',fragment:word,variant});
