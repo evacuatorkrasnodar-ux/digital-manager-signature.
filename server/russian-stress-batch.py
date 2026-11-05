@@ -16,6 +16,14 @@ import json
 import re
 import sys
 from pathlib import Path
+import importlib.util
+
+REVIEW_PATH = Path(__file__).with_name('russian-stress-review.py')
+REVIEW_SPEC = importlib.util.spec_from_file_location('seyveo_stress_review', REVIEW_PATH)
+assert REVIEW_SPEC and REVIEW_SPEC.loader
+REVIEW_MODULE = importlib.util.module_from_spec(REVIEW_SPEC)
+REVIEW_SPEC.loader.exec_module(REVIEW_MODULE)
+suggest_stress = REVIEW_MODULE.suggest_stress
 
 SAMPLES = [
     "Дверной замок сломался.",
@@ -144,12 +152,15 @@ def run(inputs: list[str], engine) -> list[dict]:
             expected = EXPECTED.get(phrase)
             tokens = stress_on_word(stressed, expected[0]) if expected else []
             correct = (expected[1] in tokens or ("+ё" in expected[1] and expected[1].replace("+", "") in tokens)) if expected else None
+            suggestion = suggest_stress(phrase, expected[0]) if expected and not correct else None
             report.append({
                 "text": phrase,
                 "stressed": stressed,
                 "expected_word": expected[0] if expected else None,
                 "expected_marked": expected[1] if expected else None,
                 "matches_expected": correct,
+                "review_suggestion": suggestion,
+                "suggestion_matches_expected": (suggestion["marked"] == expected[1]) if suggestion and expected else None,
                 "status": "review" if not expected else ("pass" if correct else "needs_review"),
             })
         except Exception as error:
