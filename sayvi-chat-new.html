@@ -565,7 +565,7 @@ main{background:var(--sayvi-scene)}
  const speechTime=document.getElementById('sayviSpeechTime');
  const SpeechApi=window.SpeechRecognition||window.webkitSpeechRecognition;
  let speechSession=null,spokenFinal='',spokenInterim='',speechStart=0,speechTimer=null;
- let speechGeneration=0,speechAborted=false,speechStopping=false,speechReady=false;
+ let speechGeneration=0,speechAborted=false,speechStopping=false,speechSendRequested=false;
  function updateSpeechClock(){
   const seconds=Math.floor((performance.now()-speechStart)/1000);
   speechTime.textContent=Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
@@ -574,7 +574,7 @@ main{background:var(--sayvi-scene)}
   clearInterval(speechTimer);speechTimer=null;speechBar.hidden=true;
   speechBar.removeAttribute('data-state');mic.classList.remove('is-recording');
   mic.setAttribute('aria-label','Начать голосовой ввод');
-  spokenFinal='';spokenInterim='';speechStopping=false;speechReady=false;
+  spokenFinal='';spokenInterim='';speechStopping=false;
  }
  function cancelSpeech(){
   speechAborted=true;++speechGeneration;
@@ -585,10 +585,15 @@ main{background:var(--sayvi-scene)}
  function completeSpeech(generation){
   if(generation!==speechGeneration||speechAborted)return;
   const text=(spokenFinal||spokenInterim).trim();
+  const shouldSend=speechSendRequested;
+  speechSendRequested=false;
   speechSession=null;clearSpeech();
   if(text){
-   input.value=text;updateControls();
-   status.textContent='Речь распознана. Нажмите стрелку отправки.';
+   if(shouldSend)ask(text);
+   else{
+    input.value=text;updateControls();
+    status.textContent='Речь распознана. Нажмите стрелку отправки.';
+   }
   }else{
    status.textContent='Не удалось распознать речь. Можно попробовать ещё раз.';
   }
@@ -602,8 +607,7 @@ main{background:var(--sayvi-scene)}
  }
  function sendSpeech(){
   if(speechSession){
-   // Stop and review the transcript first: no automatic send while listening.
-   stopSpeech();return;
+   speechSendRequested=true;stopSpeech();return;
   }
   if(input.value.trim())send();
  }
@@ -616,7 +620,7 @@ main{background:var(--sayvi-scene)}
    return;
   }
   let r;try{r=new SpeechApi()}catch{status.textContent='Голосовой ввод недоступен.';return}
-  speechAborted=false;speechStopping=false;
+  speechAborted=false;speechStopping=false;speechSendRequested=false;
   const generation=++speechGeneration;
   speechSession=r;spokenFinal='';spokenInterim='';
   r.lang='ru-RU';r.continuous=false;r.interimResults=true;r.maxAlternatives=1;
