@@ -171,7 +171,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 }
 #sayviTopActions .sv-top-action{
  pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
- gap:5px;min-height:38px;min-width:42px;padding:0 11px;
+ width:42px;height:42px;min-width:42px;min-height:42px;padding:0;
  border:0;border-radius:999px;
  background:var(--sayvi-glass);color:var(--sayvi-control-text);
  -webkit-backdrop-filter:blur(16px) saturate(105%);
@@ -310,8 +310,8 @@ main{background:var(--sayvi-scene)}
 <body>
 <main>
 <nav id="sayviTopActions" aria-label="Навигация чата">
- <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Назад</span></a>
- <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h11"/></svg><span>История</span></button>
+ <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></a>
+ <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-label="История разговоров" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg></button>
 </nav>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <div id="sayviVoiceRecord" role="status" aria-live="polite" hidden><span class="sv-record-dot" aria-hidden="true"></span><span>Запись</span><time id="sayviVoiceTimer">0:00</time><span class="sv-record-hint">Отпустите для завершения</span></div>
