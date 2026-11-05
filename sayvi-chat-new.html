@@ -1326,22 +1326,45 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  filePicker.addEventListener('change',()=>{addAttachments(filePicker.files);filePicker.value=''});
  window.addEventListener('pagehide',clearAttachments);
  function isReadableText(file){return readableTextTypes.test(file.type)||readableExtensions.test(file.name)}
- async function prepareAttachments(items){
+ async function prepareAttachments(items,textBudget=3200){
   const segments=[],uploaded=[];
+  let remaining=Math.max(0,textBudget);
+  const documentType=/\.(?:pdf|docx|xlsx|pptx)$/iu;
   for(const entry of items){
    const file=entry.file;
-   if(isReadableText(file)){
-    // Existing endpoint already accepts plain message text.
-    if(file.size>100000)throw Error('Текстовый файл '+file.name+' слишком большой (максимум 100 КБ).');
-    const content=await file.text();
-    segments.push('Файл: '+file.name+'\n--- НАЧАЛО ФАЙЛА ---\n'+content.slice(0,100000)+'\n--- КОНЕЦ ФАЙЛА ---');
+   if(isReadableText(file)||documentType.test(file.name)){
+    if(remaining<180)throw Error('Слишком много вложений для одного вопроса. Пришли файлы по одному.');
+    let content='',alreadyTruncated=false;
+    if(isReadableText(file)){
+     if(file.size>100000)throw Error('Текстовый файл '+file.name+' слишком большой (максимум 100 КБ).');
+     content=await file.text();
+    }else{
+     const form=new FormData();form.append('file',file,file.name);
+     let response;
+     try{response=await fetch('/api/seyveo-document-text',{method:'POST',credentials:'same-origin',body:form})}
+     catch{throw Error('Локальный обработчик документов недоступен.')}
+     if(!response.ok){
+      const detail=await response.json().catch(()=>null);
+      throw Error((typeof detail?.error==='string'?detail.error:'Не удалось прочитать документ.')+' Файл остался выбранным.');
+     }
+     const result=await response.json().catch(()=>null);
+     if(typeof result?.text!=='string'||!result.text.trim())throw Error('В документе не найден текст.');
+     content=result.text;alreadyTruncated=result.truncated===true;
+    }
+    const header='Файл: '+file.name+'\\n--- ВЫДЕРЖКА ИЗ ДОКУМЕНТА ---\\n';
+    const available=remaining-header.length-90;
+    if(available<100)throw Error('Недостаточно места для документа. Пришли его отдельно.');
+    const excerpt=content.slice(0,available);
+    const limited=alreadyTruncated||content.length>available;
+    const segment=header+excerpt+(limited?'\\n[Текст документа показан не полностью.]':'')+'\\n--- КОНЕЦ ВЫДЕРЖКИ ---';
+    segments.push(segment);
+    remaining-=segment.length;
    }else{
-    // The temporary vision endpoint accepts images only. Reject unsupported
-    // documents before a network call, retaining the selected draft.
+    // Images use their original temporary visual route.
     const supportedImage=/^image\/(?:png|jpeg|webp)$/i.test(file.type);
     if(!supportedImage){
      const ext=(file.name.split('.').pop()||'').toUpperCase();
-     throw Error('Формат '+(ext||'файла')+' пока не поддерживается для анализа. Сохрани страницу как PNG/JPG или отправь скриншот. Выбранный файл остался здесь.');
+     throw Error('Формат '+(ext||'файла')+' пока не поддерживается. Выбери PDF, DOCX, XLSX, PPTX, текст или PNG/JPG/WebP.');
     }
     const body=new FormData();body.append('file',file,file.name);
     let response;
@@ -1786,7 +1809,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const lock=new AbortController();active=lock;updateControls();
   status.textContent='Подготавливаю вложения…';
   try{
-   const files=await prepareAttachments(selected);
+   const files=await prepareAttachments(selected,Math.max(0,3550-value.length));
    if(active!==lock)return;
    const thumbs=(await Promise.all(selected.map(async item=>{
     try{return await makeSentPhoto(item.file)}catch{return null}
