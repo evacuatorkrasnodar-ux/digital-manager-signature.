@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SEYVEO · Проверка ударений</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b1014;color:#eef4f1}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:env(safe-area-inset-top) max(18px,env(safe-area-inset-right)) calc(30px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));background:radial-gradient(ellipse at 50% -10%,#244137 0,transparent 58%),#0b1014}
+main{max-width:650px;margin:32px auto}h1{font-size:27px;letter-spacing:-.7px;font-weight:650;margin:9px 0}p{line-height:1.6;color:#aebeb7;font-size:14px}.eyebrow{font-size:11px;letter-spacing:2px;color:#83c7a5;font-weight:700}
+section{background:rgba(236,255,245,.055);border:1px solid rgba(232,255,243,.13);border-radius:23px;padding:18px;margin-top:18px;backdrop-filter:blur(20px)}
+label{display:block;font-size:12px;color:#bbcdc4;margin:12px 0 6px}textarea,select{width:100%;resize:vertical;background:rgba(1,7,6,.25);color:#ecf4ed;border:1px solid rgba(239,255,246,.14);border-radius:14px;padding:12px;font:15px/1.5 inherit;outline:none}
+textarea:focus,select:focus{border-color:#85bfa3}textarea{min-height:86px}button{appearance:none;border:none;cursor:pointer;background:rgba(244,255,248,.11);color:#e7f6ed;border-radius:999px;padding:14px 16px;font:600 14px inherit;min-width:0;flex:1}button.primary{background:#b7dfc5;color:#10241b}button:disabled{opacity:.48;cursor:default}.buttons{display:flex;gap:10px;margin-top:16px}#status{min-height:20px;color:#b9cfc1;font-size:13px;margin-top:12px}small{display:block;color:#8da199;line-height:1.55;margin-top:16px}a{color:#b4eacb;text-decoration:none}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">SEYVEO · ЛОКАЛЬНАЯ ПРОВЕРКА</div>
+<h1>Ударения голоса Сэйви</h1>
+<p>Сравни два варианта одной фразы. Синтезатор и эталонный голос остаются прежними — меняется только текст конкретного тестового запроса.</p>
+<section>
+<label for="sample">Пример</label>
+<select id="sample"></select>
+<label for="plain">А. Обычный текст</label>
+<textarea id="plain" maxlength="450" spellcheck="false"></textarea>
+<label for="marked">Б. Текст с подсказками ударений</label>
+<textarea id="marked" maxlength="450" spellcheck="false"></textarea>
+<div class="buttons"><button id="a">▶ Обычный</button><button id="b" class="primary">▶ С ударениями</button><button id="stop">Стоп</button></div>
+<div id="status" role="status" aria-live="polite"></div>
+<small>Важно: Qwen3-TTS может проигнорировать знак ударения. Сравни результат на слух. Не запускай оба варианта одновременно — генерация локально использует процессор.</small>
+</section>
+<p><a href="/sayvi-chat-new.html">Вернуться в чат Сэйви</a></p>
+</main>
+<script>
+const samples=[{"plain":"Старинный замок стоял на холме.","marked":"Старинный за́мок стоял на холме."},{"plain":"Дверной замок сломался.","marked":"Дверной замо́к сломался."},{"plain":"Пшеничная мука закончилась.","marked":"Пшеничная мука́ закончилась."},{"plain":"Сильная мука не давала ему спать.","marked":"Сильная му́ка не давала ему спать."},{"plain":"Географический атлас лежал на столе.","marked":"Географический а́тлас лежал на столе."},{"plain":"Шёлковый атлас блестит на свету.","marked":"Шёлковый атла́с блестит на свету."},{"plain":"Он звонит и читает каталог.","marked":"Он звони́т и читает катало́г."},{"plain":"Подпиши договор и открой каталог.","marked":"Подпиши догово́р и открой катало́г."}];
+const sample=document.getElementById('sample');
+const plain=document.getElementById('plain');
+const marked=document.getElementById('marked');
+const status=document.getElementById('status');
+let controller=null,audio=null,blobUrl=null,serial=0;
+for(let i=0;i<samples.length;i++){
+ const option=document.createElement('option');
+ option.value=String(i);option.textContent=samples[i].plain;sample.append(option);
+}
+function choose(){
+ const item=samples[Number(sample.value)]||samples[0];
+ stop();
+ plain.value=item.plain;marked.value=item.marked;status.textContent='';
+}
+sample.addEventListener('change',choose);
+function stop(){
+ ++serial;
+ if(controller){controller.abort();controller=null}
+ if(audio){audio.pause();audio.removeAttribute('src');audio.load();audio=null}
+ if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null}
+ for(const id of ['a','b'])document.getElementById(id).disabled=false;
+}
+document.getElementById('stop').addEventListener('click',()=>{stop();status.textContent='Остановлено';});
+async function play(id){
+ stop();
+ const text=(id==='a'?plain:marked).value.trim();
+ if(text.length<2||text.length>450){status.textContent='Введите от 2 до 450 символов';return}
+ const n=serial;
+ controller=new AbortController();
+ for(const el of ['a','b'])document.getElementById(el).disabled=true;
+ status.textContent='Создаётся выбранное аудио…';
+ try{
+  const response=await fetch('/api/seyveo-private-tts',{
+   method:'POST',credentials:'same-origin',
+   headers:{'content-type':'application/json'},
+   body:JSON.stringify({text}),signal:controller.signal
+  });
+  if(!response.ok||!(response.headers.get('content-type')||'').includes('audio/wav'))throw Error('Не удалось получить аудио');
+  const blob=await response.blob();
+  if(n!==serial)return;
+  if(blob.size<44||blob.size>15000000)throw Error('Неверное аудио');
+  blobUrl=URL.createObjectURL(blob);
+  audio=new Audio(blobUrl);
+  audio.onended=()=>{if(n===serial){stop();status.textContent='Готово. Теперь сравни второй вариант.'}};
+  audio.onerror=()=>{if(n===serial){stop();status.textContent='Ошибка воспроизведения'}};
+  status.textContent=id==='a'?'Слушаем обычный текст':'Слушаем текст с ударениями';
+  await audio.play();
+ }catch(error){
+  if(n===serial){stop();status.textContent='Не удалось озвучить. Проверь локальный сервер и голосовой движок.'}
+ }
+}
+document.getElementById('a').addEventListener('click',()=>play('a'));
+document.getElementById('b').addEventListener('click',()=>play('b'));
+choose();
+</script></body></html>
