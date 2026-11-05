@@ -482,6 +482,14 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 .sv-attach-thumb{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;object-fit:cover;background:var(--sayvi-pressed)}
 .sv-attach-fileicon{position:absolute;inset:0;display:grid;place-items:center;background:var(--sayvi-pressed)}
 .sv-attach-fileicon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+/* Recognizable document thumbnails without external icon assets. */
+.sv-attach-fileicon{background:transparent}
+.sv-file-sheet{position:relative;display:grid;place-items:center;width:29px;height:35px;margin-top:-5px;border-radius:3px 6px 3px 3px;background:#fafcff;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.sv-file-sheet::after{content:"";position:absolute;right:0;top:0;border-left:8px solid transparent;border-bottom:8px solid #dbe2ea}
+.sv-file-mark{position:relative;z-index:1;display:grid;place-items:center;min-width:26px;max-width:30px;height:17px;padding:0 2px;border-radius:2px;background:var(--sv-file-color,#718096);color:#fff;font:750 10px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;letter-spacing:-.02em}
+.sv-file-mark[data-long="true"]{font-size:8px}
+.sv-attach-chip:has(.sv-file-sheet) .sv-attach-caption{font-size:8px;padding:5px 2px 2px}
+
 .sv-attach-caption{position:absolute;bottom:0;left:0;right:0;display:block;padding:7px 3px 3px;color:#fff;background:linear-gradient(transparent,rgba(10,15,19,.76));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.4);pointer-events:none}
 .sv-attach-remove{position:absolute;top:2px;right:2px;z-index:2;border:0;border-radius:50%;background:rgba(22,28,32,.78);color:#fff;width:18px;height:18px;display:grid;place-items:center;padding:0;font:400 15px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 #sayviMenu button svg{flex:none}
@@ -513,6 +521,15 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-draw-board{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:18px;background:#f8f9f9}
 #sayviDrawCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 .sv-draw-hint{margin:0;color:var(--sayvi-secondary);font:400 11px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:center}
+
+
+/* Sent documents use the same file-type artwork as the attachment tray. */
+.sv-sent-files{display:flex;flex-direction:column;gap:5px;max-width:min(85%,520px);align-self:flex-end;margin-top:1px}
+.sv-sent-file{display:flex;align-items:center;gap:10px;min-height:57px;padding:6px 10px;border-radius:15px;background:var(--sayvi-glass);color:var(--sayvi-text);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
+.sv-sent-file .sv-attach-fileicon{position:relative;inset:auto;display:grid;place-items:center;flex:0 0 40px;width:40px;height:43px}
+.sv-sent-file .sv-file-sheet{margin:0}
+.sv-sent-file-name{min-width:0;font-size:12px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word}
+.turn[data-role="user"].sv-has-files .bubble:empty{display:none}
 
 /* Image previews inside sent chat turns, not filename placeholders. */
 .turn[data-role="user"].sv-has-photos .bubble:empty{display:none}
@@ -675,7 +692,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
-   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos);
+   append(turn.role,'loaded-'+savedTurns.length,turn.text,false,turn.photos,turn.files);
    if(turn.role==='assistant'&&turn.sources?.length){
     const index=savedTurns.length-1;
     savedTurns[index].sources=vettedWebResults(turn.sources).map(x=>({url:x.url,title:x.title,snippet:x.snippet,imageUrl:x.image,imageApproved:!!x.image,imageCredit:x.imageCredit}));
@@ -1123,6 +1140,20 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    &&a.thumb.length<110000&&a.thumb.startsWith('data:image/jpeg;base64,'))
    .map(a=>({name:a.name.slice(0,120),thumb:a.thumb}));
  }
+ function showSentFiles(turn,files){
+  turn.querySelector('.sv-sent-files')?.remove();
+  const names=Array.isArray(files)?files.filter(x=>typeof x==='string'&&x.length<=200).slice(0,6):[];
+  turn.classList.toggle('sv-has-files',names.length>0);
+  if(!names.length)return;
+  const group=document.createElement('div');group.className='sv-sent-files';
+  for(const name of names){
+   const tile=document.createElement('div');tile.className='sv-sent-file';
+   tile.append(makeDocumentIcon({name}));
+   const label=document.createElement('span');label.className='sv-sent-file-name';
+   label.textContent=name;label.title=name;tile.append(label);group.append(tile);
+  }
+  turn.append(group);
+ }
  function showSentPhotos(turn,photos){
   const valid=safeSentPhotos(photos);
   turn.querySelector('.sv-sent-images')?.remove();
@@ -1182,7 +1213,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   bubble.replaceChildren(fragment);
  }
 
- function append(role,id,message,save=true,photos=null){
+ function append(role,id,message,save=true,photos=null,files=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
   if(!bubble){
@@ -1198,15 +1229,18 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   if(role==='assistant')renderAssistantText(bubble,message);
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
+  if(role==='user')showSentFiles(bubble.closest('.turn'),files);
   if(save){
    const index=Number(bubble.dataset.savedIndex);
    if(Number.isInteger(index)&&index>=0&&index<savedTurns.length){
     savedTurns[index].text=message;
     if(role==='user'&&photos?.length)savedTurns[index].photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)savedTurns[index].files=files.slice(0,6);
    }else{
     bubble.dataset.savedIndex=String(savedTurns.length);
     const entry={role,text:message};
     if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)entry.files=files.slice(0,6);
     savedTurns.push(entry);
    }
    persist();
@@ -1214,6 +1248,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    bubble.dataset.savedIndex=String(savedTurns.length);
    const entry={role,text:message};
    if(role==='user'&&photos?.length)entry.photos=safeSentPhotos(photos);
+    if(role==='user'&&files?.length)entry.files=files.slice(0,6);
    savedTurns.push(entry);
   }
   if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
@@ -1240,7 +1275,25 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  let pendingAttachments=[];
  const readableTextTypes=/^(text\/|application\/(?:json|xml|javascript))/i;
  const readableExtensions=/\.(?:txt|md|markdown|csv|json|xml|log|html|css|js)$/i;
- const fileIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V21H7zM14 3.5V8h4M10 12h5M10 16h5"/></svg>';
+ const documentBadges={
+  pdf:['PDF','#df3344'],docx:['W','#2875db'],doc:['W','#2875db'],
+  xlsx:['X','#21865b'],xls:['X','#21865b'],pptx:['P','#dd7139'],
+  txt:['TXT','#64748b'],md:['MD','#64748b'],markdown:['MD','#64748b'],
+  csv:['CSV','#21865b'],json:['JSON','#8666b5'],xml:['XML','#8666b5'],
+  log:['LOG','#64748b'],html:['HTML','#d56a32'],css:['CSS','#2875db'],js:['JS','#c49b21']
+ };
+ function makeDocumentIcon(file){
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  const [label,color]=documentBadges[ext]||['FILE','#64748b'];
+  const wrapper=document.createElement('span');wrapper.className='sv-attach-fileicon';
+  const paper=document.createElement('span');paper.className='sv-file-sheet';
+  const badge=document.createElement('span');badge.className='sv-file-mark';
+  badge.dataset.long=String(label.length>3);
+  badge.style.setProperty('--sv-file-color',color);
+  badge.textContent=label;paper.append(badge);wrapper.append(paper);
+  wrapper.setAttribute('aria-label',ext.toUpperCase()+' файл');
+  return wrapper;
+ }
  function clearAttachments(){
   for(const a of pendingAttachments){if(a.preview)URL.revokeObjectURL(a.preview)}
   pendingAttachments=[];
@@ -1251,9 +1304,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   attachmentTray.hidden=pendingAttachments.length===0;
   for(const entry of pendingAttachments){
    const chip=document.createElement('div');chip.className='sv-attach-chip';
-   const visual=document.createElement(entry.preview?'img':'span');
+   const visual=entry.preview?document.createElement('img'):makeDocumentIcon(entry.file);
    if(entry.preview){visual.className='sv-attach-thumb';visual.src=entry.preview;visual.alt=''}
-   else{visual.className='sv-attach-fileicon';visual.innerHTML=fileIcon}
    const label=document.createElement('span');label.className='sv-attach-caption';label.textContent=entry.file.name;label.title=entry.file.name;
    const remove=document.createElement('button');remove.type='button';remove.className='sv-attach-remove';
    remove.textContent='×';remove.setAttribute('aria-label','Убрать '+entry.file.name);
@@ -1723,7 +1775,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
   const linkedPhotos=contextImagesFor(question,options);
-  if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos);
+  if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos,options.previewFiles);
   let answer='',done=false,wasTruncated=false,streamingTurn=null;
   const thinkingStarted=performance.now();
   const stopThinking=showThinking();
@@ -1815,14 +1867,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     try{return await makeSentPhoto(item.file)}catch{return null}
    }))).filter(Boolean);
    const otherFiles=selected.filter(x=>!['image/png','image/jpeg','image/webp'].includes(x.file.type)).map(x=>x.file.name);
-   const display=[value,...(otherFiles.length?['📎 '+otherFiles.join(', ')]:[])].filter(Boolean).join('\n');
+   const display=value;
    const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
    active=null;input.value='';clearAttachments();
    // The user can ask follow-up questions about this picture without
    // attaching it again, while the temporary server still holds its bytes.
    recentVisual=files.uploaded.length?
     {conversation:currentId,at:Date.now(),items:files.uploaded}:null;
-   await ask(message,{displayMessage:display,previewPhotos:thumbs,attachments:files.uploaded});
+   await ask(message,{displayMessage:display,previewPhotos:thumbs,previewFiles:otherFiles,attachments:files.uploaded});
   }catch(error){
    if(active===lock){active=null;updateControls()}
    status.textContent=String(error?.message||'Не удалось отправить файл.');
