@@ -4,6 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#11161b">
+<script>
+/* Read the same persisted theme as the SEYVEO Home before first paint. */
+(function(){
+ const key='dm-signature-living-v2';
+ const previous='dm-signature-living-v1';
+ const allowed=['auto','graphite','light','dark','sapphire','plum'];
+ const browserTheme=window.matchMedia('(prefers-color-scheme: dark)');
+ function chosen(){
+  let value='graphite';
+  try{
+   const saved=JSON.parse(localStorage.getItem(key)||'null')
+    ||JSON.parse(localStorage.getItem(previous)||'null');
+   if(saved&&allowed.includes(saved.theme))value=saved.theme;
+  }catch{}
+  return value==='auto'?(browserTheme.matches?'graphite':'light'):value;
+ }
+ function sync(){
+  const selected=chosen(),isLight=selected==='light';
+  const palette=isLight?'white':selected==='graphite'?'graphite':selected==='sapphire'?'sapphire':selected==='plum'?'plum':'emerald';
+  document.documentElement.dataset.theme=isLight?'light':'dark';
+  document.documentElement.dataset.palette=palette;
+  document.querySelector('meta[name="theme-color"]').content=
+   isLight?'#f9fafb':palette==='graphite'?'#11161b':palette==='sapphire'?'#101724':palette==='plum'?'#1c1b1a':'#111917';
+ }
+ sync();
+ window.addEventListener('storage',e=>{if(!e.key||e.key===key||e.key===previous)sync()});
+ window.addEventListener('pageshow',sync);
+ window.addEventListener('focus',sync);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
+ if(browserTheme.addEventListener)browserTheme.addEventListener('change',sync);
+ else if(browserTheme.addListener)browserTheme.addListener(sync);
+})();
+</script>
 <title>Сэйви · SEYVEO</title>
 <style>
 :root{color-scheme:dark}
@@ -54,6 +87,76 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
 .history-item{border:0;border-radius:14px;background:#263039;color:#fff;padding:14px;text-align:left;font:inherit;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .history-empty{color:#a5b0b7;font-size:14px;text-align:center;margin-top:60px}
 #sayviInput:disabled{opacity:.75}
+
+/* Same SEYVEO theme system as Home; only colors/materials change.
+   No alterations to composer dimensions, behavior or message scrolling. */
+:root{
+ --sayvi-bg:#11161b;
+ --sayvi-scene:linear-gradient(180deg,#0e1419 0%,#141b21 28%,#1b252d 55%,#212d36 78%,#10161b 100%);
+ --sayvi-text:#fff;
+ --sayvi-secondary:#a5b0b7;
+ --sayvi-bubble:#263039;
+ --sayvi-glass:linear-gradient(150deg,rgba(230,241,249,.14),rgba(175,204,222,.075) 65%,rgba(205,224,238,.095));
+ --sayvi-action:linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09));
+ --sayvi-control-text:#f7fafc;
+ --sayvi-placeholder:rgba(228,235,241,.70);
+ --sayvi-pressed:rgba(218,235,245,.20);
+ --sayvi-menu:#263039;
+ --sayvi-menu-pressed:rgba(255,255,255,.08);
+ --sayvi-fallback:#2a353d;
+}
+:root[data-theme=light]{
+ color-scheme:light;
+ --sayvi-bg:#f9fafb;
+ --sayvi-scene:linear-gradient(180deg,#f9fafb 0%,#f4f7f8 50%,#eef3f5 100%);
+ --sayvi-text:#242a31;
+ --sayvi-secondary:#637178;
+ --sayvi-bubble:rgba(219,230,232,.78);
+ --sayvi-glass:linear-gradient(150deg,rgba(255,255,255,.68),rgba(229,233,238,.38) 65%,rgba(249,250,252,.56));
+ --sayvi-action:linear-gradient(155deg,rgba(255,255,255,.65),rgba(232,235,240,.30) 58%,rgba(255,255,255,.45));
+ --sayvi-control-text:#26383b;
+ --sayvi-placeholder:#637778;
+ --sayvi-pressed:rgba(221,227,234,.62);
+ --sayvi-menu:rgba(239,244,246,.96);
+ --sayvi-menu-pressed:rgba(56,109,91,.09);
+ --sayvi-fallback:#e6eef0;
+}
+:root[data-theme=dark][data-palette=emerald]{
+ --sayvi-bg:#111917;
+ --sayvi-scene:linear-gradient(180deg,#101714 0%,#16231e 50%,#202f29 78%,#111917 100%);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sayvi-bg:#101724;
+ --sayvi-scene:linear-gradient(180deg,#0e1522 0%,#172239 50%,#202e48 78%,#101724 100%);
+ --sayvi-bubble:#222f47;
+ --sayvi-menu:#222f47;
+}
+:root[data-theme=dark][data-palette=plum]{
+ --sayvi-bg:#1c1b1a;
+ --sayvi-scene:linear-gradient(180deg,#1b1a19 0%,#252320 50%,#302c28 78%,#1c1b1a 100%);
+ --sayvi-bubble:#302c28;
+ --sayvi-menu:#302c28;
+}
+html,body{background:var(--sayvi-bg);color:var(--sayvi-text)}
+main{background:var(--sayvi-scene)}
+header{color:var(--sayvi-text)}
+.turn[data-role="user"] .bubble{background:var(--sayvi-bubble);color:var(--sayvi-text)}
+.turn[data-role="assistant"] .bubble{color:var(--sayvi-text)}
+.speaker,#sayviStatus,.history-empty{color:var(--sayvi-secondary)}
+#sayviInput{background:var(--sayvi-glass);color:var(--sayvi-control-text)}
+#sayviInput::placeholder{color:var(--sayvi-placeholder)}
+#sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-action);color:var(--sayvi-control-text)}
+#sayviMic:active,#sayviSend:active,#sayviPlus:active{background:var(--sayvi-pressed)}
+#sayviMenu{background:var(--sayvi-menu);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#sayviMenu button{color:var(--sayvi-text)}
+#sayviMenu button:active{background:var(--sayvi-menu-pressed)}
+#sayviHistory{background:var(--sayvi-bg);color:var(--sayvi-text)}
+.history-head button{color:var(--sayvi-control-text)}
+.history-item{background:var(--sayvi-bubble);color:var(--sayvi-text)}
+@media(prefers-reduced-transparency:reduce){
+ #sayviInput,#sayviMic,#sayviSend,#sayviPlus{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}
+ #sayviMenu{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
 </style>
 </head>
 <body>
