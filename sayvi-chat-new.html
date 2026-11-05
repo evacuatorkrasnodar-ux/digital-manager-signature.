@@ -663,10 +663,16 @@ main{background:var(--sayvi-scene)}
    speechAborted=true;++speechGeneration;
    try{speechSession?.abort()}catch{}
    speechSession=null;clearSpeech();
-   status.textContent=code==='not-allowed'||code==='service-not-allowed'
-    ?'Разрешите доступ к микрофону и распознаванию речи в Safari.'
+   // Permission to the mic and permission/availability of a speech service
+   // are not the same thing. Avoid falsely blaming iOS microphone settings.
+   status.textContent=code==='not-allowed'
+    ?'Safari отказал в голосовом вводе. Проверьте разрешение микрофона для этого сайта.'
+    :code==='service-not-allowed'
+    ?'Служба распознавания речи Safari недоступна. Микрофон может быть разрешён. Используйте диктовку клавиатуры iPhone.'
+    :code==='audio-capture'
+    ?'Safari не смог открыть микрофон. Проверьте, не использует ли его другое приложение.'
     :code==='no-speech'?'Речь не распознана. Попробуйте ещё раз.'
-    :'Не удалось распознать речь ('+code+'). Можно воспользоваться диктовкой клавиатуры iPhone.';
+    :'Ошибка распознавания ('+code+'). Можно использовать диктовку клавиатуры iPhone.';
   };
   r.onend=()=>completeSpeech(generation);
   speechStart=performance.now();updateSpeechClock();
