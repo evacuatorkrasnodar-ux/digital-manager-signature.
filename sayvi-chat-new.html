@@ -159,6 +159,35 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 #sayviHistoryList{display:flex;flex-direction:column;gap:5px;margin:18px auto 0;max-width:720px}
 .history-item{border:0;border-radius:14px;background:#263039;color:#fff;padding:14px;text-align:left;font:inherit;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .history-empty{color:#a5b0b7;font-size:14px;text-align:center;margin-top:60px}
+/* Floating navigation only: no full-width header, glass in the existing
+   SEYVEO palette. The conversation scrolls independently behind these controls. */
+#sayviTopActions{
+ position:absolute;z-index:7;
+ top:calc(env(safe-area-inset-top) + 7px);
+ left:max(12px,env(safe-area-inset-left));
+ right:max(12px,env(safe-area-inset-right));
+ display:flex;justify-content:space-between;align-items:center;
+ pointer-events:none;
+}
+#sayviTopActions .sv-top-action{
+ pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
+ gap:5px;min-height:38px;min-width:42px;padding:0 11px;
+ border:0;border-radius:999px;
+ background:var(--sayvi-glass);color:var(--sayvi-control-text);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;outline-offset:3px;font:500 13px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ text-decoration:none;-webkit-tap-highlight-color:transparent;
+}
+#sayviTopActions .sv-top-action svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#sayviTopActions .sv-top-action:active{background:var(--sayvi-pressed)}
+:root[data-theme=light] #sayviTopActions .sv-top-action{
+ -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviTopActions .sv-top-action{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
 #sayviInput:disabled{opacity:.75}
 
 /* Same SEYVEO theme system as Home; only colors/materials change.
@@ -280,6 +309,10 @@ main{background:var(--sayvi-scene)}
 </head>
 <body>
 <main>
+<nav id="sayviTopActions" aria-label="Навигация чата">
+ <a class="sv-top-action" id="sayviBack" href="./index.html" aria-label="Назад на Главную"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Назад</span></a>
+ <button class="sv-top-action" id="sayviHistoryTop" type="button" aria-controls="sayviHistory" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h11"/></svg><span>История</span></button>
+</nav>
 <div id="sayviMessages" role="log" aria-label="Переписка"></div>
 <div id="sayviVoiceRecord" role="status" aria-live="polite" hidden><span class="sv-record-dot" aria-hidden="true"></span><span>Запись</span><time id="sayviVoiceTimer">0:00</time><span class="sv-record-hint">Отпустите для завершения</span></div>
 <div id="sayviVoicePreview" hidden aria-label="Предпрослушивание голосового">
@@ -364,9 +397,10 @@ main{background:var(--sayvi-scene)}
    if(Array.isArray(data.turns))renderTurns(data.turns);
   }catch{status.textContent='Не удалось прочитать сохранённую историю.'}
  }
+ const historyTop=document.getElementById('sayviHistoryTop');
  const historyPanel=document.getElementById('sayviHistory');
  const historyList=document.getElementById('sayviHistoryList');
- function closeHistory(){historyPanel.hidden=true}
+ function closeHistory(){historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
  function openHistory(){
   closeMenu();historyList.replaceChildren();
   const conversations=[snapshot(),...archive].filter(item=>item.turns.length);
@@ -386,8 +420,9 @@ main{background:var(--sayvi-scene)}
    historyList.append(button);
   }
   if(!conversations.length){const empty=document.createElement('p');empty.className='history-empty';empty.textContent='История разговоров пока пуста';historyList.append(empty)}
-  historyPanel.hidden=false;
+  historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
  }
+ historyTop.addEventListener('click',openHistory);
  document.getElementById('sayviHistoryOpen').addEventListener('click',openHistory);
  document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!historyPanel.hidden)closeHistory()});
