@@ -116,11 +116,9 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  color-scheme:light;
  --sayvi-bg:#f9fafb;
  --sayvi-scene:
-   /* Clean pearl base and three diffuse graphite strokes near the composer.
-      These are painted in the scene itself, not an overlay or backing plate. */
-   radial-gradient(ellipse 9% 1.6% at 29% 96%,rgba(56,75,85,.20),transparent 100%),
-   radial-gradient(ellipse 12% 1.4% at 53% 96.5%,rgba(72,89,98,.16),transparent 100%),
-   radial-gradient(ellipse 8% 1.7% at 76% 95.8%,rgba(56,76,88,.19),transparent 100%),
+   /* Two fine quiet waves painted IN the pearl background, directly beneath
+      the composer. No duplicated lettering, extra DOM or glass overlays. */
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 105'%3E%3Cpath d='M65 77 C110 59 135 94 186 77 S264 61 331 78' stroke='%23506b76' stroke-opacity='.42' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M72 88 C121 104 151 67 201 86 S275 102 328 85' stroke='%23768e98' stroke-opacity='.32' stroke-width='1.1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center bottom / 100% 105px no-repeat,
    radial-gradient(ellipse 100% 54% at 51% 44%,rgba(255,255,255,.34) 0%,transparent 78%),
    linear-gradient(180deg,#f7f9fa 0%,#f0f4f6 39%,#e8eff2 78%,#e2ebef 100%);
  --sayvi-text:#242a31;
