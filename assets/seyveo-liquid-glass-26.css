@@ -12,7 +12,7 @@
 }
 :root[data-theme=light]{
  --sv-lg26-surface:linear-gradient(150deg,rgba(255,255,255,.76),rgba(218,244,238,.48) 65%,rgba(248,255,253,.65));
- --sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.78),rgba(220,246,239,.46) 65%,rgba(248,255,253,.67));
+ --sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.65) 0%,rgba(232,235,240,.30) 58%,rgba(255,255,255,.45) 100%);
  --sv-lg26-pressed:rgba(205,236,225,.67);
  --sv-lg26-text:#26383b;
  --sv-lg26-muted:#637778;
