@@ -620,7 +620,8 @@ main{background:var(--sayvi-scene)}
   shell.append(play,range,time,audio);
   const formatTime=value=>{const n=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')};
   const refresh=()=>{
-   const duration=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:durationHint;
+   const fallback=audio===player?voiceDuration:durationHint;
+   const duration=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:fallback;
    const current=Math.min(audio.currentTime||0,duration||0);
    const fraction=duration?Math.max(0,Math.min(1,current/duration)):0;
    range.value=String(Math.round(fraction*1000));
