@@ -1,0 +1,6 @@
+# Local SEYVEO language lab: generated model environments and reports
+.venv-ru-stress/
+stress-report.jsonl
+server/stress-report.jsonl
+__pycache__/
+*.pyc
