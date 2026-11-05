@@ -370,6 +370,44 @@ main{background:var(--sayvi-scene)}
  .turn[data-role="assistant"].is-streaming .bubble::after{animation:none}
  .turn[data-role="assistant"].is-fresh .bubble{animation:none}
 }
+
+/* Floating plus menu: slim iOS 26 Smoke Glass. No solid panel or bleed-through. */
+#sayviMenu{
+ z-index:9;position:absolute;
+ left:max(12px,env(safe-area-inset-left));
+ bottom:calc(68px + env(safe-area-inset-bottom));
+ width:min(205px,calc(100vw - 24px));min-width:0;
+ padding:5px;border:0;border-radius:20px;
+ background:var(--sayvi-menu);
+ -webkit-backdrop-filter:blur(24px) saturate(110%);
+ backdrop-filter:blur(24px) saturate(110%);
+ box-shadow:0 5px 24px rgba(0,0,0,.12);
+ overflow:hidden;
+}
+:root[data-theme=light] #sayviMenu{background:rgba(241,245,246,.97);box-shadow:0 5px 20px rgba(34,55,56,.10)}
+:root[data-theme=dark] #sayviMenu{background:rgba(44,53,60,.97)}
+#sayviMenu button{
+ display:flex;align-items:center;gap:11px;
+ width:100%;min-height:45px;
+ border:0;border-radius:15px;background:transparent;
+ color:var(--sayvi-text);padding:8px 10px;
+ text-align:left;font:450 14px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviMenu button svg{
+ display:block;flex:0 0 19px;width:19px;height:19px;
+ fill:none;stroke:currentColor;stroke-width:1.35;
+ stroke-linecap:round;stroke-linejoin:round;opacity:.9;
+}
+#sayviMenu button:active{background:var(--sayvi-pressed)}
+/* Status is temporarily hidden while the menu is expanded, preventing
+   text from showing directly through the floating glass surface. */
+main.sayvi-menu-open #sayviStatus{visibility:hidden}
+@media(prefers-reduced-transparency:reduce){
+ #sayviMenu,:root[data-theme=light] #sayviMenu,:root[data-theme=dark] #sayviMenu{
+  background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none
+ }
+}
 </style>
 </head>
 <body>
@@ -393,7 +431,10 @@ main{background:var(--sayvi-scene)}
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
 <button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button>
 </div>
-<div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
+<div id="sayviMenu" role="group" aria-label="Действия чата" hidden>
+ <button type="button" id="sayviNewChat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><span>Новый разговор</span></button>
+ <button type="button" id="sayviHistoryOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 11.4a8.2 8.2 0 1 1 2.4 6M3.8 6.6v4.8h4.8M12 7.3V12l3.2 2"/></svg><span>История</span></button>
+</div>
 <section id="sayviHistory" aria-label="История разговоров" hidden>
  <div class="history-shell">
   <div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div>
@@ -621,8 +662,16 @@ main{background:var(--sayvi-scene)}
   requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
   return ()=>turn.remove();
  }
- function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
- plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
+ function closeMenu(){
+  menu.hidden=true;scene.classList.remove('sayvi-menu-open');
+  plus.setAttribute('aria-expanded','false');
+ }
+ plus.addEventListener('click',()=>{
+  const show=menu.hidden;
+  menu.hidden=!show;
+  scene.classList.toggle('sayvi-menu-open',show);
+  plus.setAttribute('aria-expanded',String(show));
+ });
  document.getElementById('sayviNewChat').addEventListener('click',()=>{
   active?.abort();active=null;
   ++speechGeneration;speechAborted=true;
@@ -635,6 +684,9 @@ main{background:var(--sayvi-scene)}
  });
  document.addEventListener('pointerdown',e=>{
   if(!menu.hidden&&!e.target.closest('#sayviPlus,#sayviMenu'))closeMenu();
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!menu.hidden){closeMenu();plus.focus()}
  });
  async function ask(question){
   const controller=new AbortController();active=controller;updateControls();
