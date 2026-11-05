@@ -635,6 +635,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  const answers=new Map();
  const storageKey='seyveo.sayvi.conversations.v1';
  let archive=[],currentId='conversation-'+Date.now(),savedTurns=[];
+ // In-memory reference for a recent photo in this conversation; never persisted.
+ let recentVisual=null;
  function persist(){
   try{localStorage.setItem(storageKey,JSON.stringify({archive:archive.slice(0,40),currentId,turns:savedTurns.slice(-120)}));}
   catch(error){status.textContent='Историю не удалось сохранить на этом устройстве.';}
@@ -643,6 +645,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
  }
  function renderTurns(turns){
+  recentVisual=null;
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
@@ -1342,7 +1345,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   try{speechSession?.abort()}catch{}
   speechSession=null;clearSpeech();
   if(savedTurns.length)archive.unshift(snapshot());
-  clearAttachments();
+  clearAttachments();recentVisual=null;
   archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
   historyTurns.length=0;answers.clear();
   list.replaceChildren();list.scrollTop=0;updateScrollEdge();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
@@ -1373,10 +1376,20 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   while(selected.length&&selected.reduce((sum,t)=>sum+t.content.length,0)>2400)selected=selected.slice(2);
   return selected;
  }
+ function asksAboutPicture(value){
+  return /(?:фот|картин|изображен|рисун|логотип|снимк|скриншот|на\s+(?:н[её]м|ней|этом|этой)|что\s+(?:ты\s+)?видишь|что\s+там|что\s+изображен)/iu.test(value);
+ }
+ function contextImagesFor(question,options){
+  if(Array.isArray(options.attachments)&&options.attachments.length)return options.attachments;
+  if(!asksAboutPicture(question)||!recentVisual)return [];
+  if(recentVisual.conversation!==currentId||Date.now()-recentVisual.at>8*60*1000){recentVisual=null;return []}
+  return recentVisual.items;
+ }
  async function ask(question,options={}){
   const controller=new AbortController();active=controller;updateControls();
   status.textContent='';
   const id=++sequence,replyId='reply-'+id;
+  const linkedPhotos=contextImagesFor(question,options);
   if(!options.skipUser)append('user','user-'+id,options.displayMessage??question,true,options.previewPhotos);
   let answer='',done=false,streamingTurn=null;
   const thinkingStarted=performance.now();
@@ -1401,7 +1414,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const response=await fetch('/api/seyveo-stream',{
     method:'POST',credentials:'same-origin',
     headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:question,history:validStreamHistory(),...(options.attachments?.length?{attachments:options.attachments}:{})}),
+    body:JSON.stringify({message:question,history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
     signal:controller.signal
    });
    if(!response.ok){
@@ -1471,6 +1484,10 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const display=[value,...(otherFiles.length?['📎 '+otherFiles.join(', ')]:[])].filter(Boolean).join('\n');
    const message=[value,...files.segments].filter(Boolean).join('\n\n')||'Изучи прикреплённые файлы и объясни содержимое.';
    active=null;input.value='';clearAttachments();
+   // The user can ask follow-up questions about this picture without
+   // attaching it again, while the temporary server still holds its bytes.
+   recentVisual=files.uploaded.length?
+    {conversation:currentId,at:Date.now(),items:files.uploaded}:null;
    await ask(message,{displayMessage:display,previewPhotos:thumbs,attachments:files.uploaded});
   }catch(error){
    if(active===lock){active=null;updateControls()}
