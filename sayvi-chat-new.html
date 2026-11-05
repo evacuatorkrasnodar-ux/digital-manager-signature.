@@ -906,7 +906,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   button.setAttribute('aria-pressed','true');
   button.setAttribute('aria-label','Остановить озвучивание');
   button.title='Остановить озвучивание';
-  feedback.textContent='Готовлю голос Сэйви…';
+  feedback.textContent='';
   const controller=new AbortController();voiceController=controller;
   try{
    for(let n=0;n<parts.length;n++){
@@ -924,7 +924,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     if(blob.size<44||blob.size>15000000)throw Error('voice-invalid-audio');
     const url=URL.createObjectURL(blob);voiceBlobUrl=url;
     const audio=new Audio(url);voiceAudio=audio;
-    feedback.textContent=parts.length>1?'Сэйви говорит · '+(n+1)+'/'+parts.length:'';
+
     await new Promise((resolve,reject)=>{
      audio.onended=resolve;
      audio.onerror=()=>reject(Error('voice-playback-error'));
