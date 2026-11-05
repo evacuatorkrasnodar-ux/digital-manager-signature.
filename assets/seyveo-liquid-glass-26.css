@@ -99,3 +99,32 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* WHITE HOME · actual Elena reply controls (not Studio mockup).
+ * White-on-white blurred transparency is invisible; a neutral optical
+ * difference and a hairline reflection make glass perceivable in Safari.
+ * Keep the 34px visual lens, 44px hit zone, original DOM and handlers. */
+:root[data-theme=light] body #homePage #seyveoLivingMoment
+ .lm-field[data-lm-subject="work"] .lm-actions
+ :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
+ background:linear-gradient(162deg,
+   rgba(255,255,255,.82) 0%,
+   rgba(212,220,229,.59) 49%,
+   rgba(231,236,241,.64) 100%)!important;
+ border:1px solid rgba(117,131,144,.14)!important;
+ box-shadow:
+   0 2px 8px rgba(54,68,82,.065),
+   inset 0 1px 0 rgba(255,255,255,.98),
+   inset 0 -1px 0 rgba(170,181,193,.14)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(115%)!important;
+ backdrop-filter:blur(20px) saturate(115%)!important;
+}
+/* Preserve visible neutral glass when iOS reduces transparency. */
+@media(prefers-reduced-transparency:reduce){
+ :root[data-theme=light] body #homePage #seyveoLivingMoment
+  .lm-field[data-lm-subject="work"] .lm-actions
+  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
+  background:linear-gradient(160deg,#f7f8fa,#e3e8ed)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
