@@ -73,7 +73,24 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  backdrop-filter:blur(16px) saturate(105%);
 }
 .turn[data-role="assistant"] .bubble{max-width:100%}
-.speaker{font-size:11px;color:#a5b0b7}
+/* The Sayvi name has a quiet silver highlight, not a glowing border. */
+.speaker{
+ font-size:12px;font-weight:450;line-height:1.45;
+ color:var(--sayvi-secondary);
+ background:linear-gradient(110deg,var(--sayvi-secondary) 0%,var(--sayvi-secondary) 39%,var(--sayvi-text) 50%,var(--sayvi-secondary) 61%,var(--sayvi-secondary) 100%);
+ background-size:260% 100%;
+ background-position:100% 50%;
+ -webkit-background-clip:text;background-clip:text;
+ -webkit-text-fill-color:transparent;
+ animation:sayvi-soft-name-sheen 7.5s ease-in-out infinite;
+}
+@keyframes sayvi-soft-name-sheen{
+ 0%,22%{background-position:100% 50%}
+ 57%,100%{background-position:0% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+ .speaker{animation:none;background:none;-webkit-text-fill-color:currentColor}
+}
 /* A soft left-to-right sheen across Sayvi's name only while a reply is
    pending. It is not a message bubble, spinner or persistent decoration. */
 .sayvi-thinking{align-items:flex-start}
