@@ -53,26 +53,25 @@ html body #homeHeader .home-world-choice:active{background:var(--sv-lg26-pressed
  html body #homeHeader .home-world-choice{background:var(--sv-velvet-panel,var(--card2))}
 }
 
-/* SEYVEO Home optical glass — work-chat actions only.
- * Apple iOS/iPadOS 26 Figma Materials/Regular: light-transmission layers
- * plus backdrop blur, not a gray button fill. This is a CSS approximation.
- * Exactly one ::before transmission surface + one ::after optical reflection.
- * Keep all button layouts, event handlers, and "В чат" link unchanged. */
+/* SEYVEO Home / work-chat controls.
+ * One neutral, quiet optical lens, informed by the existing SEYVEO dock
+ * and Apple iOS 26 Regular materials. No pseudo-element highlight overlay:
+ * the former ::after caused the bright stripe on Black Velvet.
+ * PWA CSS is a visual approximation, not Apple's native renderer. */
 :root{
- --sv-home-glass-transmission:
-   linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.055) 55%,rgba(255,255,255,.09));
- --sv-home-glass-light:
-   linear-gradient(180deg,rgba(255,255,255,.19) 0%,rgba(255,255,255,0) 19%,rgba(255,255,255,0) 74%,rgba(255,255,255,.025) 100%);
- --sv-home-glass-pressed:rgba(255,255,255,.16);
+ --sv-home-glass-fill:
+   linear-gradient(155deg,rgba(255,255,255,.13),rgba(255,255,255,.055) 56%,rgba(255,255,255,.045));
+ --sv-home-glass-reflection:
+   inset 0 .5px 0 rgba(255,255,255,.065);
+ --sv-home-glass-pressed:rgba(255,255,255,.15);
 }
 :root[data-theme=light]{
- /* A quiet contrast boundary is essential on an almost uniform white page.
-    The light is neutral — not emerald, cyan, or gray paint. */
- --sv-home-glass-transmission:
-   linear-gradient(158deg,rgba(255,255,255,.68) 0%,rgba(232,237,242,.36) 59%,rgba(227,234,240,.32) 100%);
- --sv-home-glass-light:
-   linear-gradient(180deg,rgba(255,255,255,.85) 0%,rgba(255,255,255,.18) 19%,rgba(255,255,255,0) 62%,rgba(112,127,143,.048) 100%);
- --sv-home-glass-pressed:rgba(215,224,233,.42);
+ --sv-home-glass-fill:
+   linear-gradient(155deg,rgba(255,255,255,.87),rgba(237,241,245,.64) 57%,rgba(227,233,239,.50));
+ --sv-home-glass-reflection:
+   0 1px 3px rgba(58,73,89,.035),
+   inset 0 .5px 0 rgba(255,255,255,.60);
+ --sv-home-glass-pressed:rgba(223,230,237,.72);
 }
 html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden]){
@@ -93,35 +92,27 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  inset:5px 0!important;
  border:0!important;
  border-radius:999px!important;
- background:var(--sv-home-glass-transmission)!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:blur(36px) saturate(115%)!important;
- backdrop-filter:blur(36px) saturate(115%)!important;
- pointer-events:none!important;
- z-index:-2!important;
-}
-/* Deliberate second *optical* layer, not a second button, border, or raised
-   frame. On iOS Safari the inner highlight reads without a perimeter stroke. */
-html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
- :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::after{
- content:""!important;
- display:block!important;
- position:absolute!important;
- inset:5px 0!important;
- border:0!important;
- border-radius:999px!important;
- background:var(--sv-home-glass-light)!important;
- box-shadow:none!important;
+ background:var(--sv-home-glass-fill)!important;
+ box-shadow:var(--sv-home-glass-reflection)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(115%)!important;
+ backdrop-filter:blur(22px) saturate(115%)!important;
  pointer-events:none!important;
  z-index:-1!important;
+}
+/* Ensure the retired second optical paint cannot make a glowing top edge.
+ * The other action families retain their original behavior. */
+html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
+ :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::after{
+ content:none!important;
+ display:none!important;
 }
 html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden]):active::before{
  background:var(--sv-home-glass-pressed)!important;
 }
 @media(prefers-reduced-transparency:reduce){
- :root{--sv-home-glass-transmission:rgba(255,255,255,.17)}
- :root[data-theme=light]{--sv-home-glass-transmission:rgba(224,230,236,.75)}
+ :root{--sv-home-glass-fill:rgba(255,255,255,.16)}
+ :root[data-theme=light]{--sv-home-glass-fill:rgba(229,234,240,.84)}
  html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-actions
  :is(.lm-polymer:nth-child(2),.lm-polymer:nth-child(3)):not([hidden])::before{
   -webkit-backdrop-filter:none!important;
