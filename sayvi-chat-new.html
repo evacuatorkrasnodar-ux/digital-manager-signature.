@@ -152,13 +152,43 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 
 #sayviStatus{position:absolute;z-index:6;left:64px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));font-size:12px;line-height:1.4;color:#a5b0b7;pointer-events:none;background:transparent}
 #sayviStatus:empty{display:none}
+/* Conversation history: native-feeling, light, independent modal; no duplicate dock. */
 #sayviHistory[hidden]{display:none!important}
-#sayviHistory{position:fixed;z-index:8;inset:0;overflow-y:auto;background:#11161b;padding:calc(14px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));color:#fff}
-.history-head{height:46px;display:flex;align-items:center;justify-content:space-between;font-size:18px}
-.history-head button{background:transparent;color:#dbe5eb;border:0;padding:10px;font:inherit;font-size:14px}
-#sayviHistoryList{display:flex;flex-direction:column;gap:5px;margin:18px auto 0;max-width:720px}
-.history-item{border:0;border-radius:14px;background:#263039;color:#fff;padding:14px;text-align:left;font:inherit;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.history-empty{color:#a5b0b7;font-size:14px;text-align:center;margin-top:60px}
+#sayviHistory{position:fixed;z-index:8;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;background:var(--sayvi-scene);color:var(--sayvi-text);padding:calc(env(safe-area-inset-top) + 13px) max(16px,env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#sayviHistory::-webkit-scrollbar{display:none}
+.history-shell{width:100%;max-width:650px;margin:0 auto}
+.history-head{display:flex;align-items:center;justify-content:space-between;height:42px;gap:12px}
+.history-head strong{font:650 19px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;letter-spacing:-.035em}
+.history-head button{min-width:44px;min-height:40px;border:0;border-radius:22px;background:transparent;color:var(--sayvi-control-text);font:500 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;padding:0 4px}
+.history-head button:active{opacity:.65}
+.history-search{height:40px;margin:18px 0 19px;padding:0 12px;display:flex;align-items:center;gap:9px;border:0;border-radius:13px;background:var(--sayvi-glass);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%)}
+.history-search svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--sayvi-secondary);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.history-search input{flex:1;min-width:0;height:100%;background:transparent;border:0;outline:0;color:var(--sayvi-text);font:400 15px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.history-search input::placeholder{color:var(--sayvi-secondary);opacity:1}
+#sayviHistoryList{display:flex;flex-direction:column;gap:0}
+.history-group-title{padding:14px 4px 7px;color:var(--sayvi-secondary);font:600 12px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;letter-spacing:.005em}
+.history-row{display:flex;align-items:center;min-height:66px;gap:6px;border-bottom:1px solid color-mix(in srgb,var(--sayvi-secondary) 16%,transparent)}
+.history-row:last-child{border-bottom:0}
+.history-item{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px;justify-content:center;min-height:63px;text-align:left;border:0;border-radius:12px;padding:8px 4px;background:transparent;color:var(--sayvi-text);font:inherit}
+.history-item:active{background:var(--sayvi-pressed)}
+.history-item-title{display:block;font-size:15px;font-weight:530;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item-subtitle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sayvi-secondary);line-height:1.3}
+.history-item-subtitle span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item-time{flex:none;min-width:50px;text-align:right;font-variant-numeric:tabular-nums}
+.history-more{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;margin:0 0 0 1px;padding:0;border:0;border-radius:18px;background:transparent;color:var(--sayvi-secondary)}
+.history-more svg{width:18px;height:18px;fill:currentColor}
+.history-more:active{background:var(--sayvi-pressed)}
+.history-empty{display:flex;flex-direction:column;align-items:center;text-align:center;margin:clamp(65px,18vh,165px) auto 0;max-width:290px;color:var(--sayvi-secondary)}
+.history-empty svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.history-empty strong{color:var(--sayvi-text);font-size:16px;font-weight:550}
+.history-empty span{font-size:13px;line-height:1.5;margin-top:7px}
+.history-action-sheet[hidden]{display:none!important}
+.history-action-sheet{position:fixed;z-index:10;inset:0;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.25);padding:16px max(16px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.history-action-inner{width:100%;max-width:450px;display:flex;flex-direction:column;gap:8px}
+.history-action-inner button{width:100%;min-height:52px;border:0;border-radius:15px;font:500 16px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;background:var(--sayvi-fallback);color:var(--sayvi-text)}
+.history-action-inner button[data-action="delete"]{color:#da5b5b}
+.history-action-inner button:active{opacity:.78}
+@media(prefers-reduced-transparency:reduce){.history-search{background:var(--sayvi-fallback);-webkit-backdrop-filter:none;backdrop-filter:none}}
 /* Floating navigation only: no full-width header, glass in the existing
    SEYVEO palette. The conversation scrolls independently behind these controls. */
 #sayviTopActions{
@@ -364,7 +394,19 @@ main{background:var(--sayvi-scene)}
 <button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button>
 </div>
 <div id="sayviMenu" hidden><button type="button" id="sayviNewChat">Новый разговор</button><button type="button" id="sayviHistoryOpen">История разговоров</button></div>
-<section id="sayviHistory" aria-label="История разговоров" hidden><div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div><div id="sayviHistoryList"></div></section>
+<section id="sayviHistory" aria-label="История разговоров" hidden>
+ <div class="history-shell">
+  <div class="history-head"><strong>История</strong><button id="sayviHistoryClose" type="button" aria-label="Закрыть историю">Готово</button></div>
+  <label class="history-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.3 4.3"/></svg><input id="sayviHistorySearch" type="search" placeholder="Поиск разговоров" aria-label="Поиск по истории" autocomplete="off"></label>
+  <div id="sayviHistoryList"></div>
+ </div>
+ <div id="sayviHistoryActions" class="history-action-sheet" hidden>
+  <div class="history-action-inner" role="group" aria-label="Действия с разговором">
+   <button type="button" id="sayviHistoryDelete" data-action="delete">Удалить разговор</button>
+   <button type="button" id="sayviHistoryActionCancel">Отмена</button>
+  </div>
+ </div>
+</section>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
 <script>
@@ -436,15 +478,65 @@ main{background:var(--sayvi-scene)}
  const historyTop=document.getElementById('sayviHistoryTop');
  const historyPanel=document.getElementById('sayviHistory');
  const historyList=document.getElementById('sayviHistoryList');
- function closeHistory(){historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
- function openHistory(){
-  closeMenu();historyList.replaceChildren();
-  const conversations=[snapshot(),...archive].filter(item=>item.turns.length);
-  for(const item of conversations){
-   const first=item.turns.find(turn=>turn.role==='user')?.text||'Разговор с Сэйви';
-   const button=document.createElement('button');
-   button.className='history-item';button.type='button';button.textContent=first.slice(0,90);
-   button.addEventListener('click',()=>{
+ const historySearch=document.getElementById('sayviHistorySearch');
+ const historyActions=document.getElementById('sayviHistoryActions');
+ let historySelected=null;
+ const historyTime=new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit'});
+ const historyDate=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'});
+ function convoDate(item){
+  const n=Number(item.updated)||Number(item.id?.replace('conversation-',''))||0;
+  return n>0?new Date(n):new Date();
+ }
+ function dateGroup(date){
+  const today=new Date();today.setHours(0,0,0,0);
+  const day=new Date(date);day.setHours(0,0,0,0);
+  const delta=Math.round((today-day)/86400000);
+  if(delta===0)return 'Сегодня';
+  if(delta===1)return 'Вчера';
+  if(delta>=0&&delta<7)return 'Последние 7 дней';
+  return historyDate.format(date);
+ }
+ function conversationsForHistory(){
+  const seen=new Set();
+  return [snapshot(),...archive].filter(item=>{
+   if(!item||!Array.isArray(item.turns)||!item.turns.length||seen.has(item.id))return false;
+   seen.add(item.id);return true;
+  }).sort((a,b)=>convoDate(b)-convoDate(a));
+ }
+ function emptyHistory(text,detail){
+  const el=document.createElement('div');el.className='history-empty';
+  el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 10h8M8 14h5"/></svg>';
+  const title=document.createElement('strong');title.textContent=text;
+  const subtitle=document.createElement('span');subtitle.textContent=detail;
+  el.append(title,subtitle);historyList.append(el);
+ }
+ function closeHistoryActions(){historySelected=null;historyActions.hidden=true}
+ function renderHistory(){
+  historyList.replaceChildren();
+  const query=historySearch.value.trim().toLocaleLowerCase('ru');
+  const items=conversationsForHistory().filter(item=>!query||item.turns.some(t=>typeof t.text==='string'&&t.text.toLocaleLowerCase('ru').includes(query)));
+  if(!items.length){
+   emptyHistory(query?'Ничего не найдено':'Пока нет разговоров',query?'Попробуйте другой запрос.':'Ваши беседы с Сэйви будут появляться здесь.');
+   return;
+  }
+  let lastGroup='';
+  for(const item of items){
+   const date=convoDate(item),group=dateGroup(date);
+   if(group!==lastGroup){
+    const heading=document.createElement('div');heading.className='history-group-title';
+    heading.textContent=group;historyList.append(heading);lastGroup=group;
+   }
+   const first=item.turns.find(t=>t.role==='user')?.text?.trim()||'Разговор с Сэйви';
+   const last=item.turns[item.turns.length-1]?.text?.trim()||'';
+   const row=document.createElement('div');row.className='history-row';
+   const open=document.createElement('button');open.className='history-item';open.type='button';
+   const name=document.createElement('span');name.className='history-item-title';name.textContent=first.replace(/\s+/g,' ').slice(0,120);
+   const sub=document.createElement('div');sub.className='history-item-subtitle';
+   const detail=document.createElement('span');detail.textContent=last.replace(/\s+/g,' ').slice(0,125);
+   const time=document.createElement('time');time.className='history-item-time';time.textContent=historyTime.format(date);
+   sub.append(detail,time);open.append(name,sub);
+   open.setAttribute('aria-label','Открыть разговор: '+name.textContent);
+   open.addEventListener('click',()=>{
     if(active)return;
     if(item.id!==currentId){
      if(savedTurns.length)archive.unshift(snapshot());
@@ -453,16 +545,41 @@ main{background:var(--sayvi-scene)}
     }
     closeHistory();
    });
-   historyList.append(button);
+   const more=document.createElement('button');more.type='button';more.className='history-more';more.setAttribute('aria-label','Действия с разговором');
+   more.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>';
+   more.addEventListener('click',()=>{historySelected=item.id;historyActions.hidden=false});
+   row.append(open,more);historyList.append(row);
   }
-  if(!conversations.length){const empty=document.createElement('p');empty.className='history-empty';empty.textContent='История разговоров пока пуста';historyList.append(empty)}
+ }
+ function closeHistory(){closeHistoryActions();historyPanel.hidden=true;historyTop.setAttribute('aria-expanded','false')}
+ function openHistory(){
+  closeMenu();historySearch.value='';renderHistory();
   historyPanel.hidden=false;historyTop.setAttribute('aria-expanded','true');
  }
  historyTop.addEventListener('click',openHistory);
  document.getElementById('sayviHistoryOpen').addEventListener('click',openHistory);
  document.getElementById('sayviHistoryClose').addEventListener('click',closeHistory);
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!historyPanel.hidden)closeHistory()});
- function updateControls(){
+ historySearch.addEventListener('input',renderHistory);
+ document.getElementById('sayviHistoryActionCancel').addEventListener('click',closeHistoryActions);
+ historyActions.addEventListener('click',event=>{if(event.target===historyActions)closeHistoryActions()});
+ document.getElementById('sayviHistoryDelete').addEventListener('click',()=>{
+  const id=historySelected;if(!id)return;
+  // Destructive action requires explicit confirmation.
+  if(!window.confirm('Удалить этот разговор без возможности восстановления?'))return;
+  if(id===currentId){
+   if(active){active.abort();active=null;updateControls()}
+   currentId='conversation-'+Date.now();savedTurns=[];historyTurns.length=0;
+   answers.clear();list.replaceChildren();list.scrollTop=0;updateScrollEdge();
+   input.value='';updateControls();status.textContent='';
+  }
+  archive=archive.filter(item=>item.id!==id);
+  persist();closeHistoryActions();renderHistory();
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape'||historyPanel.hidden)return;
+  if(!historyActions.hidden)closeHistoryActions();else closeHistory();
+ });
+  function updateControls(){
   const typed=!!input.value.trim();
   input.disabled=!!active;
   sendButton.hidden=!!active||!typed;
