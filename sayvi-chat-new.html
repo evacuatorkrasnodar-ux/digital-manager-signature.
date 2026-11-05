@@ -73,6 +73,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  backdrop-filter:blur(16px) saturate(105%);
 }
 .turn[data-role="assistant"] .bubble{max-width:100%}
+.turn[data-role="assistant"] .bubble strong{font-weight:650;color:inherit}
 /* Calm, clear speaker label: completed answers never animate. */
 .speaker{
  display:inline-block;
@@ -1159,6 +1160,28 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    return thumb.length<=110000?{name:file.name,thumb}:null;
   }finally{URL.revokeObjectURL(url)}
  }
+ // Render a safe Markdown subset in replies, not raw HTML.
+ // Keep the original source intact for saved history and copying.
+ function renderAssistantText(bubble,source){
+  const fragment=document.createDocumentFragment();
+  const lines=String(source).split('\n');
+  lines.forEach((raw,index)=>{
+   if(index)fragment.append(document.createTextNode('\n'));
+   const line=raw.replace(/^(\s{0,3})#{1,4}\s+/u,'$1')
+    .replace(/^(\s{0,3})[-*+]\s+(?=\S)/u,'$1• ');
+   const pattern=/\*\*([^*\n]+)\*\*/gu;
+   let cursor=0,match;
+   while((match=pattern.exec(line))){
+    if(match.index>cursor)fragment.append(document.createTextNode(line.slice(cursor,match.index)));
+    const strong=document.createElement('strong');
+    strong.textContent=match[1];fragment.append(strong);
+    cursor=pattern.lastIndex;
+   }
+   if(cursor<line.length)fragment.append(document.createTextNode(line.slice(cursor)));
+  });
+  bubble.replaceChildren(fragment);
+ }
+
  function append(role,id,message,save=true,photos=null){
   const nearBottom=list.scrollHeight-list.scrollTop-list.clientHeight<100;
   let bubble=answers.get(id);
@@ -1172,7 +1195,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    else attachOwnGesture(bubble);
    list.append(turn);answers.set(id,bubble);
   }
-  bubble.textContent=message;
+  if(role==='assistant')renderAssistantText(bubble,message);
+  else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
   if(save){
    const index=Number(bubble.dataset.savedIndex);
