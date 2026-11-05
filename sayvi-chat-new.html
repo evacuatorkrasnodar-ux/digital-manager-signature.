@@ -47,14 +47,16 @@ main{height:100vh;height:100dvh;background:linear-gradient(180deg,#0e1419 0%,#14
 header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:590;letter-spacing:-.02em}
 
 /* Тестовые сообщения: никакой поверхности и фона у области переписки. */
-#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 16px 82px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#sayviMessages{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 16px 112px;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain}
 #sayviMessages::-webkit-scrollbar{display:none}
 /* A gentle top fade hides visually abrupt clipping of long older turns.
    Messages remain fully scrollable; no forced scrolling or data changes. */
 #sayviMessages{
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 27px,black 100%);
- mask-image:linear-gradient(to bottom,transparent 0,black 27px,black 100%);
  scroll-padding-top:28px;
+}
+#sayviMessages.is-scrolled{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
+ mask-image:linear-gradient(to bottom,transparent 0,black 23px,black 100%);
 }
 .turn{display:flex;flex-direction:column;gap:5px;margin:0 0 18px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .turn[data-role="user"]{align-items:flex-end}
@@ -120,11 +122,11 @@ header{height:calc(52px + env(safe-area-inset-top));padding:env(safe-area-inset-
  --sayvi-scene:#ffffff;
  --sayvi-text:#242a31;
  --sayvi-secondary:#637178;
- --sayvi-bubble:rgba(219,230,232,.78);
+ --sayvi-bubble:rgba(219,230,232,.69);
  /* Consistently smoke-gray translucent glass, including over empty pearl
     background. Keep the native blur, no border, glow or raised shadows. */
  --sayvi-glass:rgba(99,121,133,.22);
- --sayvi-action:rgba(99,121,133,.22);
+ --sayvi-action:rgba(99,121,133,.205);
  --sayvi-pressed:rgba(99,121,133,.31);
  --sayvi-control-text:#26383b;
  --sayvi-placeholder:#637778;
@@ -218,6 +220,9 @@ header{color:var(--sayvi-text)}
 (()=>{
  'use strict';
  const input=document.getElementById('sayviInput'),list=document.getElementById('sayviMessages');
+ // Fade older messages only after scrolling; the first visible line stays crisp.
+ const updateScrollEdge=()=>list.classList.toggle('is-scrolled',list.scrollTop>2);
+ list.addEventListener('scroll',updateScrollEdge,{passive:true});
  const mic=document.getElementById('sayviMic'),sendButton=document.getElementById('sayviSend');
  const plus=document.getElementById('sayviPlus'),menu=document.getElementById('sayviMenu');
  const status=document.getElementById('sayviStatus');
@@ -243,7 +248,7 @@ header{color:var(--sayvi-text)}
   for(const turn of savedTurns.slice(-12)){
    if(turn.role==='user'||turn.role==='assistant')historyTurns.push({role:turn.role,content:turn.text.slice(0,450)});
   }
-  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight});
+  requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
  function restore(){
   try{
@@ -307,7 +312,7 @@ header{color:var(--sayvi-text)}
    else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
    persist();
   }else{bubble.dataset.savedIndex=String(savedTurns.length);savedTurns.push({role,text:message});}
-  if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight});
+  if(nearBottom)requestAnimationFrame(()=>{list.scrollTop=list.scrollHeight;updateScrollEdge()});
  }
  function closeMenu(){menu.hidden=true;plus.setAttribute('aria-expanded','false')}
  plus.addEventListener('click',()=>{menu.hidden=!menu.hidden;plus.setAttribute('aria-expanded',String(!menu.hidden))});
@@ -316,7 +321,7 @@ header{color:var(--sayvi-text)}
   if(savedTurns.length)archive.unshift(snapshot());
   archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
   historyTurns.length=0;answers.clear();
-  list.replaceChildren();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
+  list.replaceChildren();list.scrollTop=0;updateScrollEdge();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
  });
  document.addEventListener('pointerdown',e=>{
   if(!menu.hidden&&!e.target.closest('#sayviPlus,#sayviMenu'))closeMenu();
