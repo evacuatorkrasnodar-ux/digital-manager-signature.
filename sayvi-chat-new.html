@@ -1124,6 +1124,35 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }
   return warnings;
  }
+ // Calendar-only suggestion. Public holidays and employment-law rules need separate review.
+ function suggestDocumentEndDate(value){
+  const text=String(value||'');
+  if(!/отпуск/iu.test(text))return null;
+  const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const matches=[...text.matchAll(/(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+(20\d{2})\s*(?:года|г\.)?/giu)];
+  if(matches.length!==2)return null;
+  const claimed=/(?:^|[^\p{L}\p{N}])(\d{1,3})\s+календарн(?:ых|ого|ые)\s+дн(?:ей|я|и)(?![\p{L}\p{N}])/iu.exec(text);
+  if(!claimed)return null;
+  const duration=Number(claimed[1]);
+  if(duration<1||duration>365)return null;
+  const parse=match=>{
+   const day=Number(match[1]),month=months.indexOf(match[2].toLowerCase()),year=Number(match[3]);
+   const date=new Date(Date.UTC(year,month,day));
+   return date.getUTCFullYear()===year&&date.getUTCMonth()===month&&date.getUTCDate()===day?date:null;
+  };
+  const start=parse(matches[0]),end=parse(matches[1]);
+  if(!start||!end)return null;
+  const connector=text.slice(matches[0].index+matches[0][0].length,matches[1].index);
+  if(!/^\s*(?:года?\s*)?(?:по|до)\s*$/iu.test(connector))return null;
+  const expected=new Date(start.getTime()+(duration-1)*86400000);
+  if(expected.getTime()===end.getTime())return null;
+  const corrected=expected.getUTCDate()+' '+months[expected.getUTCMonth()]+' '+expected.getUTCFullYear()+' года';
+  const original=matches[1][0];
+  const replacement=original.replace(/\s*(?:года|г\.)?\s*$/iu,'')===original.trim()&&!/год/iu.test(original)?corrected.replace(/ года$/u,''):corrected;
+  const offset=matches[1].index;
+  return {original:original.trim(),replacement,corrected,
+   apply:()=>text.slice(0,offset)+replacement+text.slice(offset+original.length)};
+ }
  function previewSayviDocument(value,feedback){
   const initialDraft=documentDraftOnly(value);
   if(!initialDraft){feedback.textContent='Сэйви пока не подготовила текст документа. Попроси её написать полный документ.';return}
@@ -1141,7 +1170,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const scroll=document.createElement('div');
   scroll.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:20px 14px 28px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch';
   const page=document.createElement('article');
-  page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:70%;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
+  page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:0;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
   let draft=initialDraft,editing=false;
   workingDocument={conversation:currentId,text:draft};
   page.textContent=draft;scroll.append(page);
@@ -1159,11 +1188,30 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const notice=document.createElement('div');
   notice.setAttribute('role','status');
   notice.style.cssText='padding:9px 16px;color:#ffdfad;background:rgba(164,98,38,.16);font:13px/1.45 system-ui,sans-serif;white-space:pre-wrap';
+  const warningText=document.createElement('span');
+  const fixDate=document.createElement('button');fixDate.type='button';
+  fixDate.style.cssText='display:block;margin-top:8px;padding:8px 12px;border:0;border-radius:12px;background:rgba(255,215,164,.16);color:#ffe4bf;font:600 13px system-ui;cursor:pointer;text-align:left';
+  notice.append(warningText,fixDate);
   const updateWarnings=()=>{
-   const warnings=documentDateWarnings(editing?editor.value:draft);
+   const current=editing?editor.value:draft;
+   const warnings=documentDateWarnings(current);
+   const suggestion=suggestDocumentEndDate(current);
    notice.hidden=!warnings.length;
-   notice.textContent=warnings.length?'Проверь документ перед скачиванием: '+warnings.join(' '):'';
+   warningText.textContent=warnings.length?'Проверь документ перед скачиванием: '+warnings.join(' '):'';
+   fixDate.hidden=!warnings.length||!suggestion;
+   if(suggestion)fixDate.textContent='Предложение: '+suggestion.corrected+' · Исправить дату';
   };
+  fixDate.addEventListener('click',()=>{
+   const source=editing?editor.value:draft;
+   const suggestion=suggestDocumentEndDate(source);
+   if(!suggestion)return;
+   if(!window.confirm('Заменить «'+suggestion.original+'» на «'+suggestion.replacement+'»?\n\nЭто календарный расчёт. Для ежегодного оплачиваемого отпуска проверь нерабочие праздничные дни и правила трудового законодательства.'))return;
+   const revised=suggestion.apply();
+   if(editing){editor.value=revised}
+   else {draft=revised;page.textContent=draft}
+   workingDocument={conversation:currentId,text:revised};
+   updateWarnings();
+  });
   const actions=document.createElement('div');
   actions.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(145,162,181,.10);flex-wrap:wrap';
   const makeAction=(label,callback)=>{
