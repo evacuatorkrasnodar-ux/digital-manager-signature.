@@ -1405,7 +1405,18 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Посмотреть</span>';
   preview.addEventListener('click',()=>previewSayviDocument(bubble.textContent,feedback));
-  downloads.append(preview,word,pdf);
+  const print=document.createElement('button');print.type='button';print.className='sv-download-print';
+  print.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/></svg><span>Распечатать</span>';
+  print.addEventListener('click',()=>{
+   const draft=documentDraftOnly(bubble.textContent);
+   if(!draft){feedback.textContent='Нет готового документа для печати';return}
+   const warnings=documentDateWarnings(draft),missing=documentMissingFields(draft);
+   if((warnings.length||missing.length)&&!window.confirm('Проверь документ перед печатью:\\n'+[
+    ...warnings,...(missing.length?['Не заполнены поля: '+missing.join(', ')]:[])
+   ].join('\\n')+'\\n\\nВсё равно распечатать?'))return;
+   printSayviDocument(draft,feedback);
+  });
+  downloads.append(preview,word,pdf,print);
   turn.append(row,downloads,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
