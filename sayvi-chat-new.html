@@ -588,7 +588,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-doc-back{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;flex:none;width:38px;height:38px;min-width:38px;min-height:38px;padding:0;border:0;border-radius:50%;background:var(--sayvi-glass);color:var(--sayvi-control-text,var(--sayvi-text));-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);font:500 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sv-doc-back svg{height:20px;width:20px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 .sv-doc-title{flex:1;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;font:600 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
-.sv-doc-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:calc(56px + env(safe-area-inset-top,0px)) 10px 18px}
+.sv-doc-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:calc(56px + env(safe-area-inset-top,0px)) 10px 6px}
 .sv-doc-scroll::-webkit-scrollbar{display:none}
 .sv-doc-content{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:9px}
 .sv-doc-notice{border:0;border-radius:15px;padding:12px 14px;background:rgba(190,119,54,.14);color:#f9d4a2;font:13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -606,7 +606,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-doc-fix{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border:0;border-radius:12px;background:rgba(229,166,98,.18);color:inherit;font:600 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:left;cursor:pointer}
 .sv-doc-paper,.sv-doc-editor{display:block;width:100%;margin:0;box-sizing:border-box;padding:clamp(22px,5vw,54px);border:0;border-radius:8px;background:#fff;color:#1b1b1b;box-shadow:0 5px 24px rgba(0,0,0,.10);font:15px/1.7 Georgia,"Times New Roman",serif;white-space:pre-wrap;overflow-wrap:anywhere;min-height:clamp(310px,61vh,780px)}
 .sv-doc-editor{resize:vertical;outline:none;max-height:none}
-.sv-doc-footer{flex:none;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:nowrap;padding:7px max(10px,env(safe-area-inset-right,0px)) calc(9px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
+.sv-doc-footer{position:sticky;bottom:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:nowrap;margin-top:1px;padding:8px 6px calc(7px + env(safe-area-inset-bottom,0px));background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
 .sv-doc-footer button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:42px;height:42px;min-width:42px;min-height:42px;padding:0;border:0;border-radius:50%;background:var(--sayvi-glass);color:var(--sayvi-control-text,var(--sayvi-text));-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);box-shadow:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sv-doc-footer button:active,.sv-doc-back:active,.sv-doc-fix:active{background:var(--sayvi-pressed,rgba(170,190,210,.24))}
 .sv-doc-footer button svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
@@ -622,7 +622,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  .sv-doc-title{font-size:13px}
  .sv-doc-scroll{padding:calc(50px + env(safe-area-inset-top,0px)) 8px 12px}
  .sv-doc-paper,.sv-doc-editor{padding:20px 18px;min-height:clamp(280px,56vh,680px);font-size:14px;line-height:1.6}
- .sv-doc-footer{gap:10px;padding:7px 8px calc(9px + env(safe-area-inset-bottom,0px))}
+ .sv-doc-footer{gap:10px;padding:8px 5px calc(7px + env(safe-area-inset-bottom,0px))}
  .sv-doc-footer button{width:42px;height:42px;min-width:42px;min-height:42px;padding:0}
  .sv-doc-footer button svg{width:19px;height:19px}
 }
@@ -1320,7 +1320,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const actions=make('div','sv-doc-footer');
   actions.setAttribute('role','toolbar');
   actions.setAttribute('aria-label','Действия с документом');
-  content.append(dateCheck,fieldsCheck,page,editor);scroll.append(content);
+  content.append(dateCheck,fieldsCheck,page,editor,actions);scroll.append(content);
   const button=(label,callback)=>{
    const b=make('button','',label);b.type='button';b.addEventListener('click',callback);return b;
   };
@@ -1406,7 +1406,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   back.addEventListener('click',dismiss);
   editor.addEventListener('input',updateWarnings);
   updateWarnings();
-  overlay.append(header,scroll,actions);
+  overlay.append(header,scroll);
   document.body.append(overlay);
   document.addEventListener('keydown',onKey);
   back.focus({preventScroll:true});
