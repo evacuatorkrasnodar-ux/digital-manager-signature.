@@ -2766,6 +2766,9 @@ window.addEventListener('seyveo:home-recommendation-changed',event=>{
   syncHomeVoice();
 });
 window.addEventListener('seyveo:tasks-changed',syncHomeVoice);
+window.addEventListener('seyveo:life-events-changed',syncHomeVoice);
+window.addEventListener('seyveo:calendar-changed',syncHomeVoice);
+window.addEventListener('seyveo:personal-tasks-changed',syncHomeVoice);
 window.addEventListener('seyveo:home-weather-updated',syncHomeVoice);
 window.addEventListener('seyveo:fan-workshop-changed',syncHomeVoice);
 window.addEventListener('seyveo:profile-changed',syncHomeVoice);
