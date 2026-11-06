@@ -22,18 +22,10 @@
  font-family:inherit;font-size:13px;font-weight:550;line-height:1.25;cursor:pointer;
 }
 #managePage .sv-permission-panel button[hidden]{display:none!important}
-#managePage .sv-permission-panel .sv-permission-allow{background:var(--sv-air-selected,var(--card));margin-right:8px}
 #managePage .sv-permission-panel button:focus-visible,
 #managePage .sv-permissions-entry:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 
-/* Choosing a city is simpler than a platform permission prompt. */
-#managePage .sv-weather-city-setup{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 12px}
-#managePage .sv-weather-city-setup input{min-width:140px;flex:1;max-width:100%;min-height:42px;box-sizing:border-box;padding:9px 13px;border:0;border-radius:13px;background:var(--sv-air-control,var(--card));color:var(--text);font:inherit;font-size:13px}
-#managePage .sv-weather-city-setup input[hidden]{display:none!important}
-#managePage .sv-weather-city-setup input:focus-visible{outline:2px solid currentColor;outline-offset:2px}
-#managePage .sv-permission-panel .sv-permission-off{background:transparent;color:var(--secondary)}
-
-/* GPS is opt-in, never needed for approximate weather. */
+/* The location permission remains opt-in and separate from the Home. */
 #managePage .sv-gps-section{padding:15px 0 3px;margin:15px 0 0;border-top:1px solid color-mix(in srgb,var(--secondary) 16%,transparent)}
 #managePage .sv-gps-section[hidden]{display:none!important}
 #managePage .sv-gps-section h3{margin:0 0 7px;font-size:14px;font-weight:610}
