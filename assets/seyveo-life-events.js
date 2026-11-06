@@ -65,6 +65,17 @@ function upcomingEvents(now=new Date()){
   return [{id:r.id,title:cleanTitle(r.title),date:r.date,time,startsAt:at,kind:'event'}];
  }).sort((a,b)=>a.startsAt-b.startsAt).slice(0,3);
 }
+/* A quiet, grounded evening heads-up for unfinished tasks due tomorrow.
+ * Date-only task records have no hour, so we do not invent one.
+ * No auto-created task, push alert, or unsolicited personal-data transmission. */
+function upcomingTasks(now=new Date()){
+ if(now.getHours()<18)return [];
+ const tomorrow=key(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
+ return readRows(TASK_KEY,150)
+  .filter(r=>r&&typeof r.id==='string'&&r.done!==true&&r.due===tomorrow&&cleanTitle(r.title))
+  .sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||'')))
+  .slice(0,3).map(r=>({id:r.id,title:cleanTitle(r.title),date:tomorrow,kind:'task'}));
+}
 /* Only confirmed personal task deadlines are pushed onto Home.
  * Calendar reminders keep their existing separate opt-in alert UI. */
 function attentionTasks(now=new Date()){
@@ -115,5 +126,5 @@ function notify(){
 for(const eventName of ['seyveo:calendar-changed','seyveo:tasks-changed','seyveo:spaces-changed'])
  window.addEventListener(eventName,notify);
 window.addEventListener('storage',event=>{if(!event.key||KEYS.has(event.key))notify()});
-window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,upcomingEvents,answer});
+window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,upcomingTasks,upcomingEvents,answer});
 })();
