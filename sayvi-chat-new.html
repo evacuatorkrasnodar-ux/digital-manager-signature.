@@ -750,6 +750,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     renderWebResults('loaded-'+index,turn.sources);
    }
   }
+  for(const turn of savedTurns){if(turn.role==='assistant')rememberWorkingDocument(turn.text)}
   historyTurns.length=0;
   for(const turn of savedTurns.slice(-12)){
    if(turn.role==='user'||turn.role==='assistant')historyTurns.push({role:turn.role,content:turn.text.slice(0,450)});
@@ -1125,6 +1126,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const page=document.createElement('article');
   page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:70%;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
   let draft=initialDraft,editing=false;
+  workingDocument={conversation:currentId,text:draft};
   page.textContent=draft;scroll.append(page);
   const editor=document.createElement('textarea');
   editor.setAttribute('aria-label','Редактирование документа');
