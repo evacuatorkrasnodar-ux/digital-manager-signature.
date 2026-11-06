@@ -270,7 +270,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentAnalyze.disabled=documentAnalyzing;
   documentAnalyze.textContent=documentAnalyzing?'Сэйви анализирует…':'✧ Разобрать текст с Сэйви';
   if(active){
-   execute.hidden=documentStep==='edit'||documentStep==='summary';
+   // The first card must show its working Verify action immediately.
+   execute.hidden=documentStep==='edit';
    open.hidden=documentStep==='edit';
    execute.textContent=documentStep==='done'?'Дальше'
     :documentStep==='review'?'Ознакомлен':'Проверить';
