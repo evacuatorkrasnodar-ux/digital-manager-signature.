@@ -100,4 +100,5 @@ $('svFanForm').addEventListener('submit',e=>{
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;cards=read();render();window.dispatchEvent(new Event('seyveo:fan-workshop-changed'))});
 window.SEYVEO_FAN_WORKSHOP=Object.freeze({open,homeNote,list:()=>cards.map(c=>({...c}))});
 render();
+window.dispatchEvent(new Event('seyveo:fan-workshop-changed'));
 })();
