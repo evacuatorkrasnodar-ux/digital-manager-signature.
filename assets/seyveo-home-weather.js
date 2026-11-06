@@ -8,7 +8,7 @@ const CACHE='seyveo-home-weather-daily-v1';
 const $=id=>document.getElementById(id);
 const button=$('svHomeWeatherToggle');
 const day=()=>{const now=new Date();return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')};
-let enabled=false,forecast=null,loading=false;
+let enabled=false,forecast=null,loading=false,lastError='';
 try{enabled=localStorage.getItem(PREF)==='yes'}catch{}
 function readCache(){
  try{
@@ -24,8 +24,11 @@ function announce(){
 function updateButton(){
  if(!button)return;
  button.hidden=false;
- button.textContent=enabled?'Погода · выключить':'Добавить погоду';
- button.setAttribute('aria-label',enabled?'Отключить подсказки о погоде':'Включить подсказку о погоде на главной');
+ if(!enabled){button.textContent='Добавить погоду';button.setAttribute('aria-label','Включить подсказку о погоде на главной')}
+ else if(loading){button.textContent='Получаю погоду…';button.setAttribute('aria-label','Получаю прогноз погоды')}
+ else if(!forecast){button.textContent=lastError||'Погода · повторить';button.setAttribute('aria-label','Не удалось получить погоду. Нажмите, чтобы попробовать снова')}
+ else{button.textContent='Погода · включена';button.setAttribute('aria-label','Погодные советы включены. Нажмите, чтобы выключить')}
+ button.disabled=loading;
 }
 function currentWeather(response){
  const current=response?.current,daily=response?.daily;
@@ -49,8 +52,8 @@ async function refresh(){
  if(!enabled||loading||document.hidden)return;
  const cached=readCache();
  if(cached){forecast=cached;announce();return}
- if(!navigator.geolocation){forecast=null;announce();return}
- loading=true;updateButton();
+ if(!navigator.geolocation||!window.isSecureContext){forecast=null;lastError='Погоде нужен HTTPS';announce();return}
+ loading=true;lastError='';updateButton();
  try{
   const position=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{
    enableHighAccuracy:false,maximumAge:3600000,timeout:12000
@@ -74,17 +77,19 @@ async function refresh(){
   const result=currentWeather(await response.json());
   if(!result)throw Error('invalid weather');
   if(!enabled)return;
-  forecast=result;
+  forecast=result;lastError='';
   try{localStorage.setItem(CACHE,JSON.stringify(result))}catch{}
  }catch(error){
   forecast=null;
-  // Silent failure: the calm Home is always usable without weather.
+  lastError=error?.code===1?'Разреши геолокацию':error?.code===2?'Нет местоположения · повторить':error?.code===3?'Погода · повторить':'Погода · повторить';
+  // Never show an invented temperature when the network or permissions fail.
   console.info('SEYVEO weather unavailable',error?.name||'offline');
  }finally{loading=false;announce()}
 }
 if(button)button.addEventListener('click',()=>{
+ if(enabled&&(!forecast||lastError)){refresh();return}
  if(enabled){
-  enabled=false;forecast=null;
+  enabled=false;forecast=null;lastError='';
   try{localStorage.removeItem(PREF);localStorage.removeItem(CACHE)}catch{}
   announce();return;
  }
