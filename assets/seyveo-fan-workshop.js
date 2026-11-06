@@ -196,6 +196,7 @@ $('svFanForm').addEventListener('submit',e=>{
  $('svFanStatus').textContent='Готово! Дополнение появилось в «Моём мире». Карточка на Главной будет показана по выбранным условиям.';
 });
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;cards=read();render();window.dispatchEvent(new Event('seyveo:fan-workshop-changed'))});
+window.addEventListener('seyveo:fan-card-created',()=>{cards=read();render();window.dispatchEvent(new Event('seyveo:fan-workshop-changed'))});
 window.SEYVEO_FAN_WORKSHOP=Object.freeze({open,homeNote,list:()=>cards.map(c=>({...c}))});
 render();
 window.dispatchEvent(new Event('seyveo:fan-workshop-changed'));
