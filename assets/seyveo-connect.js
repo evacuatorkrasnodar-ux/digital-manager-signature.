@@ -28,11 +28,52 @@ dialog.innerHTML=[
 '<section class="sv-connect-instructions" aria-live="polite"><h3 id="svConnectKindHeading"></h3><p id="svConnectKindDescription"></p><ol id="svConnectSteps"></ol></section>',
 '<div class="sv-connect-test"><div><strong>Проверить звук</strong><p>Короткий сигнал прозвучит через выбранный телефоном аудиовыход.</p></div><button id="svConnectTest" type="button">Проиграть</button></div>',
 '<p id="svConnectStatus" class="sv-connect-status" aria-live="polite"></p>',
+'<section class="sv-connect-save"><h3>Мои устройства</h3><p>Сохрани название после подключения в настройках телефона. Это личный список, не автоматическое обнаружение.</p>',
+'<form id="svConnectSaveForm"><label for="svConnectDeviceName">Название устройства</label><div class="sv-connect-save-row"><input id="svConnectDeviceName" maxlength="52" placeholder="Например, колонка в спальне" required autocomplete="off"><button type="submit">Сохранить</button></div></form>',
+'<div id="svConnectDevices" class="sv-connect-devices" aria-live="polite"></div></section>',
 '<p class="sv-connect-disclaimer">Подключение Bluetooth и выбор аудиовыхода выполняются средствами iOS или Android. Веб-версия SEYVEO не может сама сопрягать любую колонку, управлять чужими Wi-Fi-устройствами или слушать голос через выключенный телефон.</p>',
 '</div>'
 ].join('');
 document.body.append(dialog);
 const $=id=>dialog.querySelector('#'+id);
+const KEY='seyveo-connect-devices-v1';
+const kinds={speaker:'Колонка',headphones:'Наушники',phone:'Телефон или планшет',home:'Умный дом'};
+let currentKind='speaker',lastTest=false;
+function loadDevices(){
+ try{
+  const value=JSON.parse(localStorage.getItem(KEY)||'[]');
+  return Array.isArray(value)?value.filter(v=>v&&typeof v.name==='string'&&kinds[v.kind]).slice(0,20).map(v=>({id:String(v.id||''),name:v.name.slice(0,52),kind:v.kind})): [];
+ }catch{return []}
+}
+let devices=loadDevices();
+function persistDevices(){
+ try{localStorage.setItem(KEY,JSON.stringify(devices));return true}catch{return false}
+}
+function renderDevices(){
+ const target=$('svConnectDevices');target.replaceChildren();
+ if(!devices.length){const empty=document.createElement('p');empty.textContent='Пока ничего не сохранено.';target.append(empty);return}
+ devices.forEach(item=>{
+  const row=document.createElement('div');row.className='sv-connect-device-row';
+  const details=document.createElement('div'),name=document.createElement('strong'),caption=document.createElement('small');
+  name.textContent=item.name;caption.textContent=kinds[item.kind]+' · добавлено вручную';
+  details.append(name,caption);
+  const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';remove.setAttribute('aria-label','Удалить '+item.name);
+  remove.addEventListener('click',()=>{devices=devices.filter(v=>v.id!==item.id);persistDevices();renderDevices()});
+  row.append(details,remove);target.append(row);
+ });
+}
+$('svConnectSaveForm').addEventListener('submit',event=>{
+ event.preventDefault();
+ const value=$('svConnectDeviceName').value.trim();
+ if(!value){$('svConnectStatus').textContent='Укажи название устройства.';return}
+ if(devices.length>=20){$('svConnectStatus').textContent='Можно сохранить до 20 устройств.';return}
+ const item={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),name:value.slice(0,52),kind:currentKind};
+ devices.unshift(item);
+ if(!persistDevices()){devices.shift();$('svConnectStatus').textContent='Браузер не разрешает сохранить список на этом устройстве.';return}
+ $('svConnectDeviceName').value='';renderDevices();
+ $('svConnectStatus').textContent='Сохранено в личном списке. SEYVEO не проверяет состояние соединения автоматически.';
+});
+renderDevices();
 const content={
  speaker:{heading:'Bluetooth-колонка',description:'Телефон остаётся мозгом Сэйви, а колонка воспроизводит звук. Обычная колонка без микрофона не слышит команды.',steps:['Включи колонку и переведи её в режим сопряжения.','Подключи колонку в настройках Bluetooth телефона.','Вернись сюда и нажми «Проиграть».']},
  headphones:{heading:'Bluetooth-наушники',description:'Сэйви может разговаривать через выбранный системой аудиовыход. Использование микрофона гарнитуры зависит от телефона и способа запуска приложения.',steps:['Подключи наушники в настройках Bluetooth.','Убедись, что телефон выводит звук в наушники.','Нажми «Проиграть» для проверки.']},
@@ -40,6 +81,7 @@ const content={
  home:{heading:'Wi-Fi и умный дом',description:'Лампы, розетки, датчики и другие устройства требуют совместимой системы или отдельной интеграции. Случайное Wi-Fi-устройство нельзя превратить в умное одним нажатием.',steps:['Узнай производителя и приложение устройства.','Проверь, поддерживает ли оно Matter или совместимое управление.','Когда интеграция появится в SEYVEO, подключи её через отдельное подтверждение.']}
 };
 function select(kind){
+ currentKind=kinds[kind]?kind:'speaker';lastTest=false;
  const info=content[kind]||content.speaker;
  dialog.querySelectorAll('[data-sv-connect-kind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.svConnectKind===kind)));
  $('svConnectKindHeading').textContent=info.heading;
@@ -79,7 +121,8 @@ $('svConnectTest').addEventListener('click',async()=>{
    osc.connect(gain);gain.connect(context.destination);
    osc.start(start);osc.stop(start+0.17);
   }
-  status.textContent='Сигнал отправлен в аудиовыход телефона. Если колонка подключена и выбрана в системе, звук должен быть слышен через неё.';
+  lastTest=true;
+  status.textContent='Сигнал воспроизведён через системный аудиовыход. Услышал на колонке или в наушниках? Теперь можешь сохранить устройство в личном списке. Это не подтверждение Bluetooth-сопряжения.';
  }catch{
   status.textContent='Не получилось воспроизвести сигнал. Проверь громкость, подключение и настройки вывода звука.';
  }finally{
