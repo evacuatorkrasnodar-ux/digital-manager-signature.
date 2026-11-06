@@ -112,14 +112,14 @@
  color:var(--text)!important;
  font-size:var(--sv-master-action-size,12px)!important;font-weight:550!important;line-height:1.25;
 }
-#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action:is(:first-child,:nth-child(2)):not([data-card-action="later"]):not([data-card-action="not-interested"])::before{
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action:is([data-card-role="primary"],[data-card-role="secondary"])::before{
  content:""!important;display:block!important;inset:5px 0;
  background:var(--sv-master-glass);
  border-radius:999px;
  -webkit-backdrop-filter:var(--sv-master-glass-blur)!important;
  backdrop-filter:var(--sv-master-glass-blur)!important;
 }
-#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action:nth-child(2):not([data-card-action="later"]):not([data-card-action="not-interested"])::before{
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-role="secondary"]::before{
  background:color-mix(in srgb,var(--sv-master-glass) 38%,transparent);
  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 18%,transparent);
 }
@@ -127,6 +127,16 @@
 #seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action[data-card-action="not-interested"]{
  background:transparent!important;-webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;color:var(--secondary)!important;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action:is([data-card-role="navigation"],[data-card-role="quiet"]){
+ padding:8px 4px!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#seyveoCardStudio :is(.scs-gallery-item,#scsPreview) .sv-card-action:is([data-card-role="navigation"],[data-card-role="quiet"])::before{
+ content:none!important;display:none!important;
 }
 #seyveoCardStudio .scs-state-line{
  display:flex;flex-wrap:wrap;gap:7px 12px;align-items:baseline;
