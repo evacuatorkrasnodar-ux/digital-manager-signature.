@@ -57,3 +57,48 @@
 .sv-fan-personal-actions{display:flex;justify-content:flex-end;margin-top:20px}
 .sv-fan-personal-actions button{border:0;border-radius:999px;padding:11px 16px;min-height:43px;background:var(--sv-air-selected,var(--card));color:var(--text);font:inherit;font-size:13px;cursor:pointer}
 .sv-fan-personal-dialog button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+/* LAB composer and community presentation */
+#managePage .sv-fan-hero{position:relative;overflow:hidden;padding:26px 22px 22px;border-radius:24px;background:var(--sv-velvet-panel-quiet,var(--card2));margin-bottom:22px}
+#managePage .sv-fan-hero-orb{position:absolute;right:22px;top:12px;font-size:65px;line-height:1.2;opacity:.19;pointer-events:none}
+#managePage .sv-fan-eyebrow{font-size:10px;letter-spacing:.12em;font-weight:650;color:var(--secondary)}
+#managePage .sv-fan-hero h1{position:relative;max-width:90%;font-size:clamp(25px,5vw,32px)}
+#managePage .sv-fan-hero .sv-fan-intro{position:relative;max-width:380px;margin-bottom:18px}
+#managePage .sv-fan-hero-meta{display:flex;gap:7px;flex-wrap:wrap;color:var(--secondary);font-size:11px}
+#managePage .sv-fan-hero-meta span{border-radius:99px;background:color-mix(in srgb,var(--card) 45%,transparent);padding:7px 9px}
+#managePage .sv-fan-subheading{margin:22px 0 12px}
+#managePage .sv-fan-templates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#managePage .sv-fan-template{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;text-align:left;min-width:0;min-height:118px;padding:13px;border:0;border-radius:18px;background:var(--sv-velvet-panel-quiet,var(--card2));color:var(--text);font:inherit;cursor:pointer}
+#managePage .sv-fan-template-symbol{font-size:25px;line-height:1}
+#managePage .sv-fan-template strong{font-size:12px;font-weight:600}
+#managePage .sv-fan-template small{font-size:10px;color:var(--secondary)}
+#managePage .sv-fan-customize{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#managePage .sv-fan-palette{min-width:0;border:0;margin:0;padding:0}
+#managePage .sv-fan-palette legend{font-size:12px;padding:0 0 8px}
+#managePage .sv-fan-choices{display:flex;flex-wrap:wrap;gap:7px}
+#managePage .sv-fan-mark-choice,#managePage .sv-fan-tone-choice{display:grid;place-items:center;width:35px;height:35px;border:0;border-radius:11px;background:color-mix(in srgb,var(--card) 64%,transparent);color:var(--text);font:inherit;font-size:18px;cursor:pointer}
+#managePage .sv-fan-choices button[aria-pressed=true]{outline:2px solid var(--text);outline-offset:2px}
+[data-tone=mint]{--sv-lab-tone:#80bda5}[data-tone=sky]{--sv-lab-tone:#91b6d7}[data-tone=lilac]{--sv-lab-tone:#baa2d5}[data-tone=pearl]{--sv-lab-tone:#c5c5bb}
+#managePage .sv-fan-tone-choice[data-fan-tone=mint]{--sv-lab-tone:#80bda5}
+#managePage .sv-fan-tone-choice[data-fan-tone=sky]{--sv-lab-tone:#91b6d7}
+#managePage .sv-fan-tone-choice[data-fan-tone=lilac]{--sv-lab-tone:#baa2d5}
+#managePage .sv-fan-tone-choice[data-fan-tone=pearl]{--sv-lab-tone:#c5c5bb}
+#managePage .sv-fan-tone-choice:before{content:'';display:block;width:20px;height:20px;border-radius:50%;background:var(--sv-lab-tone)}
+#managePage .sv-fan-preview-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:600}
+#managePage .sv-fan-preview-label span{color:var(--secondary);font-size:10px;font-weight:400}
+#managePage .sv-fan-live-preview{display:flex;align-items:center;gap:15px;padding:14px;border-radius:18px;background:color-mix(in srgb,var(--card) 52%,transparent)}
+#managePage .sv-fan-preview-tile{display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;gap:7px;box-sizing:border-box;width:85px;min-height:80px;padding:8px;border-radius:18px;background:color-mix(in srgb,var(--sv-lab-tone) 16%,var(--card))}
+#managePage .sv-fan-preview-tile span:last-child{font-size:10px;text-align:center;overflow-wrap:anywhere}
+#managePage .sv-fan-preview-icon{font-size:24px}
+#managePage .sv-fan-preview-summary{min-width:0}
+#managePage .sv-fan-preview-summary strong{font-size:13px}
+#managePage .sv-fan-preview-summary p{font-size:11px;line-height:1.5;color:var(--secondary);overflow-wrap:anywhere}
+#managePage .sv-fan-submit-row{display:flex;gap:9px}
+#managePage .sv-fan-submit-row .sv-fan-primary{flex:1}
+#managePage .sv-fan-secondary{padding:10px 13px;border:0;border-radius:99px;background:transparent;color:var(--secondary);font:inherit;font-size:12px}
+#managePage .sv-fan-secondary[hidden]{display:none}
+#managePage .sv-fan-card{position:relative;padding-left:55px}
+#managePage .sv-fan-card-emblem{position:absolute;left:12px;top:15px;display:grid;place-items:center;width:32px;height:32px;border-radius:12px;background:color-mix(in srgb,var(--sv-lab-tone) 20%,var(--card));font-size:20px}
+#lifePage .sv-fan-personal-tile{background:color-mix(in srgb,var(--sv-lab-tone) 12%,var(--card));border:0}
+.sv-fan-personal-emblem{display:grid;place-items:center;width:70px;height:70px;border-radius:22px;background:color-mix(in srgb,var(--sv-lab-tone) 19%,var(--card));font-size:36px}
+@media(max-width:400px){#managePage .sv-fan-hero{padding:21px 16px}#managePage .sv-fan-template{padding:10px;min-height:108px}#managePage .sv-fan-template strong{font-size:11px}#managePage .sv-fan-customize{grid-template-columns:1fr}}
