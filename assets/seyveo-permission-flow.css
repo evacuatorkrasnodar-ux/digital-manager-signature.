@@ -1,0 +1,27 @@
+/* Permissions: compact iOS-inspired SEYVEO glass, not a duplicate settings page */
+#managePage .sv-permissions-entry-wrap{margin:4px 0 16px;padding:0 4px}
+#managePage .sv-permissions-entry{
+ appearance:none;display:flex;justify-content:space-between;align-items:center;
+ width:100%;min-height:44px;padding:10px 14px;border:0;border-radius:16px;
+ background:var(--sv-air-control,var(--card2));color:var(--text);font:550 13px/1.4 inherit;
+ text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#managePage .sv-permissions-entry span{font-size:19px;font-weight:400;opacity:.65}
+#managePage .sv-permission-panel[hidden]{display:none!important}
+#managePage .sv-permission-panel{
+ margin:8px 4px 22px;padding:18px 16px;border:0;border-radius:22px;
+ background:var(--sv-velvet-panel-quiet,var(--card2));color:var(--text);
+ scroll-margin-top:24px;
+}
+#managePage .sv-permission-panel h2{font-size:17px;letter-spacing:-.02em;font-weight:620;margin:0 0 8px}
+#managePage .sv-permission-panel p{font-size:13px;line-height:1.5;color:var(--secondary);margin:0 0 13px}
+#managePage .sv-permission-panel .sv-permission-status{min-height:0;margin:8px 0;font-size:12px}
+#managePage .sv-permission-panel button{
+ appearance:none;border:0;border-radius:999px;min-height:42px;
+ padding:9px 17px;background:var(--sv-air-control,var(--card));color:var(--text);
+ font:550 13px/1.25 inherit;cursor:pointer;
+}
+#managePage .sv-permission-panel button[hidden]{display:none!important}
+#managePage .sv-permission-panel .sv-permission-allow{background:var(--sv-air-selected,var(--card));margin-right:8px}
+#managePage .sv-permission-panel button:focus-visible,
+#managePage .sv-permissions-entry:focus-visible{outline:2px solid currentColor;outline-offset:3px}
