@@ -1002,6 +1002,21 @@ function installLivingCardSwipe(field,onLater){
   if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
  },{passive:true});
  field.addEventListener('touchcancel',()=>{start=null},{passive:true});
+ // Desktop preview: mouse drag is equivalent to a finger swipe.
+ let mouseStart=null;
+ field.addEventListener('pointerdown',event=>{
+  if(event.pointerType!=='mouse'||event.button!==0||event.target.closest('button,input,textarea,a')){
+   mouseStart=null;return;
+  }
+  mouseStart={x:event.clientX,y:event.clientY};
+ });
+ field.addEventListener('pointerup',event=>{
+  if(!mouseStart)return;
+  const dx=event.clientX-mouseStart.x,dy=event.clientY-mouseStart.y;
+  mouseStart=null;
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
+ });
+ field.addEventListener('pointercancel',()=>{mouseStart=null});
 }
 
 /* Real upcoming Calendar reminders share the existing Home living plane.
