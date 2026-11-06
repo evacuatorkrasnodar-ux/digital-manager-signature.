@@ -1062,6 +1062,22 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   // the whole conversation, and do not open an external browser.
   window.location.assign('./index.html?seyveoBrowserSearch='+encodeURIComponent(q));
  }
+ // Extract only the document draft, leaving Sayvi's conversational framing in chat.
+ function documentDraftOnly(value){
+  const original=String(value||'').replace(/\r\n?/g,'\n').trim();
+  const lines=original.split('\n');
+  const dividers=[];
+  for(let i=0;i<lines.length;i++)if(/^\s*(?:---+|___+|\*\*\*+)\s*$/.test(lines[i]))dividers.push(i);
+  if(dividers.length>=2){
+   const between=lines.slice(dividers[0]+1,dividers[1]).join('\n').trim();
+   if(between.length>30)return between;
+  }
+  // Fallback for replies without explicit dividers: remove only recognizable
+  // prefatory chatter and the clearly separated offer of more assistance.
+  let text=original.replace(/^(?:(?:Конечно[,!]?|Разумеется[,!]?|Хорошо[,!]?)[^\n]{0,190}\n+)(?=\S)/iu,'');
+  text=text.replace(/\n{2,}(?:Если хочешь[,!]?|Могу (?:также|ещ[её])|Хочешь[,!]?)[^\n]*(?:\n[^\n]*)*$/iu,'');
+  return text.trim()||original;
+ }
  function previewSayviDocument(value,feedback){
   if(!value.trim()){feedback.textContent='Нет текста для просмотра';return}
   const overlay=document.createElement('section');
@@ -1079,7 +1095,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   scroll.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:20px 14px 28px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch';
   const page=document.createElement('article');
   page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:70%;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
-  page.textContent=value;scroll.append(page);
+  const draft=documentDraftOnly(value);
+  page.textContent=draft;scroll.append(page);
   const actions=document.createElement('div');
   actions.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(145,162,181,.10);flex-wrap:wrap';
   const makeAction=(label,callback)=>{
@@ -1093,7 +1110,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   };
   const onKey=e=>{if(e.key==='Escape')dismiss()};
   back.addEventListener('click',dismiss);
-  actions.append(makeAction('Скачать Word',()=>exportWordReply(value,feedback)),makeAction('Скачать PDF',()=>exportPdfReply(value,feedback)));
+  actions.append(makeAction('Скачать Word',()=>exportWordReply(draft,feedback)),makeAction('Скачать PDF',()=>exportPdfReply(draft,feedback)));
   overlay.append(bar,scroll,actions);
   document.body.append(overlay);
   document.addEventListener('keydown',onKey);
@@ -1131,10 +1148,10 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
   const word=document.createElement('button');word.type='button';word.className='sv-download-word';
   word.innerHTML=wordIcon+'<span>Скачать Word</span>';
-  word.addEventListener('click',()=>exportWordReply(bubble.textContent,feedback));
+  word.addEventListener('click',()=>exportWordReply(documentDraftOnly(bubble.textContent),feedback));
   const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
   pdf.innerHTML=pdfIcon+'<span>Скачать PDF</span>';
-  pdf.addEventListener('click',()=>exportPdfReply(bubble.textContent,feedback));
+  pdf.addEventListener('click',()=>exportPdfReply(documentDraftOnly(bubble.textContent),feedback));
   const preview=document.createElement('button');preview.type='button';
   preview.className='sv-download-preview';
   preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Посмотреть</span>';
