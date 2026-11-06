@@ -616,6 +616,11 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-doc-footer button:nth-child(3) .sv-file-label{fill:#df3344;stroke:none}
 .sv-doc-footer .sv-file-pdf-text{fill:white;stroke:none;font:800 6.5px/1 system-ui,sans-serif}
 .sv-doc-viewer button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media(max-width:650px){
+ .sv-doc-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:7px max(10px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+ .sv-doc-footer button{width:100%;min-width:0;max-width:none;min-height:40px;padding:8px 9px}
+ .sv-doc-scroll{padding-bottom:10px}
+}
 @media(max-width:410px){
  .sv-doc-header{gap:7px;padding:calc(5px + env(safe-area-inset-top,0px)) 10px 2px}.sv-doc-back{width:36px;height:36px;min-width:36px;min-height:36px}
  .sv-doc-title{font-size:13px}
