@@ -36,3 +36,8 @@
 #managePage .sv-fan-community a{display:flex;align-items:center;min-height:46px;justify-content:space-between;text-decoration:none;color:var(--text);font-size:13px;border-bottom:1px solid color-mix(in srgb,var(--secondary) 12%,transparent);padding:8px 2px}
 #managePage .sv-fan-workshop button:focus-visible,#managePage .sv-fan-workshop a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 @media(max-width:390px){#managePage .sv-fan-form{padding:15px 12px}#managePage .sv-fan-workshop{padding-inline:2px}}
+
+/* A compact editorial identity for the SEYVEO LAB tile in My World. */
+#lifePage .sv-fan-tile > span{font-size:10px;font-weight:650;letter-spacing:-.025em;white-space:nowrap}
+#lifePage .sv-fan-tile svg{stroke-width:1.45}
+#managePage .sv-fan-workshop .sv-fan-intro strong{font-weight:590;color:var(--text)}
