@@ -2691,6 +2691,7 @@ function syncHomeVoice(){
   }
   const weatherActive=!!window.SEYVEO_HOME_WEATHER?.today?.()&&!advice&&!currentHomeRecommendation&&!brief.overdue&&!brief.dueToday;
   $('orbCluster')?.classList.toggle('sv-home-weather-glint',weatherActive);
+  $('orbCluster')?.classList.toggle('sv-home-attention-glint',!weatherActive&&(brief.overdue>0||brief.dueToday>0||!!currentHomeRecommendation?.message));
   if(!String(kicker).startsWith(assistant))kicker=assistant+' · '+kicker;
   $('kicker').textContent=kicker;
   $('headline').textContent=headline;
