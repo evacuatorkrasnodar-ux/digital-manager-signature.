@@ -683,6 +683,19 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  let archive=[],currentId='conversation-'+Date.now(),savedTurns=[];
  // In-memory reference for a recent photo in this conversation; never persisted.
  let recentVisual=null;
+ // SEYVEO session-only document context v1. No file text in localStorage.
+ let recentDocument=null;
+ function documentContextFor(question,options){
+  if(options.documentFiles?.length||!recentDocument||recentDocument.conversation!==currentId)return question;
+  const entry=recentDocument;
+  const prefix='Документ ранее прикреплён в этой беседе: '+entry.names.join(', ')+'. '+
+   'Ниже только доступная выдержка; если она неполная, не утверждай, что изучила весь документ. '+
+   'Отвечай на вопрос пользователя, не копируй текст целиком.\n\n';
+  const suffix='\n\nВопрос пользователя: '+question;
+  const budget=3990-prefix.length-suffix.length;
+  if(budget<200)return question;
+  return prefix+entry.text.slice(0,budget)+suffix;
+ }
  function persist(){
   try{localStorage.setItem(storageKey,JSON.stringify({archive:archive.slice(0,40),currentId,turns:savedTurns.slice(-120)}));}
   catch(error){status.textContent='Историю не удалось сохранить на этом устройстве.';}
@@ -691,7 +704,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
  }
  function renderTurns(turns){
-  recentVisual=null;
+  recentVisual=null;recentDocument=null;
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
@@ -809,7 +822,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   if(!window.confirm('Удалить этот разговор без возможности восстановления?'))return;
   if(id===currentId){
    if(active){active.abort();active=null;updateControls()}
-   currentId='conversation-'+Date.now();savedTurns=[];historyTurns.length=0;
+   currentId='conversation-'+Date.now();savedTurns=[];historyTurns.length=0;recentDocument=null;
    answers.clear();list.replaceChildren();list.scrollTop=0;updateScrollEdge();
    input.value='';updateControls();status.textContent='';
   }
@@ -1645,7 +1658,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   try{speechSession?.abort()}catch{}
   speechSession=null;clearSpeech();
   if(savedTurns.length)archive.unshift(snapshot());
-  clearAttachments();recentVisual=null;
+  clearAttachments();recentVisual=null;recentDocument=null;
   archive=archive.slice(0,40);currentId='conversation-'+Date.now();savedTurns=[];
   historyTurns.length=0;answers.clear();
   list.replaceChildren();list.scrollTop=0;updateScrollEdge();input.value='';status.textContent='';closeMenu();persist();updateControls();input.focus();
@@ -1901,7 +1914,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const response=await fetch('/api/seyveo-stream',{
     method:'POST',credentials:'same-origin',
     headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:question,history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
+    body:JSON.stringify({message:documentContextFor(question,options),history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
     signal:controller.signal
    });
    if(!response.ok){
@@ -1982,6 +1995,9 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const message=hasDocument
     ? [instruction,documentQuestion,...files.segments].join('\n\n')
     : value||'Посмотри на прикреплённое изображение и естественно, по-дружески отреагируй на то, что действительно видишь. Кратко назови самое интересное и предложи, что можно с этим сделать. Не задавай формальный вопрос об анализе файла.';
+   if(hasDocument){
+    recentDocument={conversation:currentId,names:otherFiles.slice(0,6),text:files.segments.join('\n\n').slice(0,3000)};
+   }
    active=null;input.value='';clearAttachments();
    // The user can ask follow-up questions about this picture without
    // attaching it again, while the temporary server still holds its bytes.
