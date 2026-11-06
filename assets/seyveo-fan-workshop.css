@@ -41,3 +41,19 @@
 #lifePage .sv-fan-tile > span{font-size:10px;font-weight:650;letter-spacing:-.025em;white-space:nowrap}
 #lifePage .sv-fan-tile svg{stroke-width:1.45}
 #managePage .sv-fan-workshop .sv-fan-intro strong{font-weight:590;color:var(--text)}
+
+/* User-created additions in My World: same flat, matte tile language. */
+#lifePage .sv-fan-personal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:10px;margin:10px 0 16px}
+#lifePage .sv-fan-personal-grid[hidden]{display:none!important}
+#lifePage .sv-fan-personal-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:84px;overflow:hidden}
+#lifePage .sv-fan-personal-tile>span:last-child{max-width:100%;font-size:11px;line-height:1.25;font-weight:590;text-align:center;overflow-wrap:anywhere}
+#lifePage .sv-fan-personal-symbol{font-size:22px;line-height:1;color:var(--text);font-weight:350}
+.sv-fan-personal-dialog{box-sizing:border-box;width:min(460px,calc(100% - 18px));max-height:90dvh;border:0;border-radius:24px;background:var(--sv-velvet-panel-quiet,var(--card2));color:var(--text);padding:0;box-shadow:0 18px 60px rgba(0,0,0,.18)}
+.sv-fan-personal-dialog::backdrop{background:rgba(4,8,12,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.sv-fan-personal-sheet{padding:18px 18px 22px}
+.sv-fan-personal-back{border:0;background:none;color:var(--text);font:inherit;font-size:13px;min-height:42px;padding:6px 0;cursor:pointer}
+.sv-fan-personal-sheet h2{font-size:23px;letter-spacing:-.03em;font-weight:610;margin:13px 0}
+.sv-fan-personal-sheet p{font-size:14px;color:var(--secondary);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.sv-fan-personal-actions{display:flex;justify-content:flex-end;margin-top:20px}
+.sv-fan-personal-actions button{border:0;border-radius:999px;padding:11px 16px;min-height:43px;background:var(--sv-air-selected,var(--card));color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+.sv-fan-personal-dialog button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
