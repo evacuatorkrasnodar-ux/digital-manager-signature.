@@ -873,7 +873,7 @@ function closeEarly(){
  if(mode==='idle')return;
  if(mode==='discovery'&&key)window.SEYVEO_DISCOVERY?.postpone?.(key);
  cancel();
- if(mode==='task'||mode==='advice')quiet.add(key);
+ if(mode==='task'||mode==='advice'||mode==='workshop')quiet.add(key);
  space.classList.add('lm-condense','lm-disappear');
  later(()=>rest(),TIMING.close);
 }
@@ -985,6 +985,64 @@ function showTasks(items){
  // Opening or snoozing is never treated as proof that the task is completed.
  return true;
 }
+
+/* Workshop cards use the same Quiet Cinema plane as actual tasks.
+   Personal content only; no invented notifications or automatic execution. */
+function workshopItems(){
+ const entries=window.SEYVEO_FAN_WORKSHOP?.list?.()||[];
+ const hour=new Date().getHours();
+ const period=hour>=5&&hour<12?'morning':hour>=12&&hour<18?'day':'evening';
+ return entries.filter(item=>item.onHome&&
+  (item.period==='any'||item.period===period)&&
+  typeof item.title==='string'&&typeof item.message==='string'&&
+  !quiet.has('workshop:'+item.id));
+}
+function showWorkshop(item){
+ if(!item||!available())return false;
+ mode='workshop';key='workshop:'+item.id;
+ dynamic.hidden=true;tiles.replaceChildren();
+ const field=create('div','lm-field');
+ field.dataset.lmMode='real';field.dataset.lmSubject='task';
+ const scene=create('div','lm-scene');
+ const top=create('div','lm-field-top');
+ top.append(create('span','lm-field-eyebrow','МАСТЕРСКАЯ СЭЙВИ'),create('span','lm-field-measure','ВАШЕ ДОПОЛНЕНИЕ'));
+ const main=create('section','lm-primary'),hero=create('div','lm-hero');
+ const art=create('div','lm-hero-art lm-hero-art--task');
+ art.append(icon('task'));
+ const copy=create('div','lm-primary-copy');
+ copy.append(create('strong','lm-primary-title',item.title),create('p','lm-primary-subtitle',item.message));
+ hero.append(art,copy);
+ const controls=create('div','lm-actions');
+ const explainButton=polymer('Подробнее',()=>{
+  const detail=field.querySelector('.lm-explanation');
+  if(!detail)return;
+  detail.hidden=!detail.hidden;
+  explainButton.setAttribute('aria-expanded',String(!detail.hidden));
+ });
+ explainButton.setAttribute('aria-expanded','false');
+ const openButton=polymer('В Мастерскую',()=>{
+  quiet.add(key);
+  window.SEYVEO_FAN_WORKSHOP?.open?.();
+ });
+ const laterButton=polymer('Позже',()=>{
+  quiet.add(key);
+  space.classList.add('lm-disappear');
+  later(()=>rest(),reduced()?0:TIMING.close);
+ });
+ controls.append(explainButton,openButton,laterButton);
+ main.append(hero,controls);
+ const explanation=create('p','lm-explanation','Это ваша собственная карточка из Мастерской. Она показана по выбранному времени. Других действий Сэйви без вашего подтверждения не выполняет.');
+ explanation.hidden=true;
+ scene.append(top,main,explanation);field.append(scene);tiles.append(field);
+ space.hidden=false;space.classList.add('lm-preview','lm-real');
+ focus(true);tip.textContent='';
+ const relativeTop=space.getBoundingClientRect().top;
+ const viewport=window.visualViewport?.height||window.innerHeight;
+ space.style.setProperty('--lm-rise-distance',Math.max(320,Math.min(1100,viewport-relativeTop+100))+'px');
+ later(()=>{if(mode==='workshop')space.classList.add('lm-reveal')},TIMING.open);
+ return true;
+}
+
 function adviceIdentity(card){
  if(!card)return '';
  const title=card.querySelector('.event-copy strong')?.textContent||'';
@@ -1040,6 +1098,11 @@ function refresh(){
   if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
+ if(mode==='workshop'){
+  if(!workshopItems().some(item=>'workshop:'+item.id===key)){rest();return}
+  if(dueTasks().length||pending){rest();return}
+  return;
+ }
  if(mode==='discovery'){
   const fresh=window.SEYVEO_DISCOVERY?.current?.();
   if(!fresh||fresh.releaseId!==key){rest();return}
@@ -1055,6 +1118,8 @@ function refresh(){
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
  const discovery=window.SEYVEO_DISCOVERY?.current?.();
  if(!pending&&discovery&&available()&&showDiscovery(discovery))return;
+ const personal=workshopItems()[0];
+ if(!pending&&personal&&showWorkshop(personal))return;
  if(mode==='idle'){
   focus(false);
   // The quiet Home greeting is the default; preview scenes require a user action.
@@ -1069,6 +1134,7 @@ const viewObserver=new MutationObserver(()=>{
 });
 viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
+window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
