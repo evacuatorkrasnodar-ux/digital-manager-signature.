@@ -51,6 +51,20 @@ function worldDatesFor(date){
 function day(date){
  return {date,events:calendarFor(date),tasks:tasksFor(date),dates:worldDatesFor(date)};
 }
+/* Upcoming genuine personal Calendar entries may surface as quiet Home cards.
+ * Only the next 36 hours; never invent a meeting or change its reminder setting.
+ * No business events or private family calendar are exposed on Home. */
+function upcomingEvents(now=new Date()){
+ const start=now.getTime(),end=start+36*60*60*1000;
+ return readRows(EVENT_KEY,300).flatMap(r=>{
+  if(!r||typeof r.id!=='string'||r.kind==='business'||!validDate(r.date)||!cleanTitle(r.title))return [];
+  const time=clock(r.time);
+  if(!time)return [];
+  const at=new Date(r.date+'T'+time+':00').getTime();
+  if(!Number.isFinite(at)||at<start-15*60*1000||at>end)return [];
+  return [{id:r.id,title:cleanTitle(r.title),date:r.date,time,startsAt:at,kind:'event'}];
+ }).sort((a,b)=>a.startsAt-b.startsAt).slice(0,3);
+}
 /* Only confirmed personal task deadlines are pushed onto Home.
  * Calendar reminders keep their existing separate opt-in alert UI. */
 function attentionTasks(now=new Date()){
@@ -101,5 +115,5 @@ function notify(){
 for(const eventName of ['seyveo:calendar-changed','seyveo:tasks-changed','seyveo:spaces-changed'])
  window.addEventListener(eventName,notify);
 window.addEventListener('storage',event=>{if(!event.key||KEYS.has(event.key))notify()});
-window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,answer});
+window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,upcomingEvents,answer});
 })();
