@@ -13,7 +13,7 @@ const reduced=()=>!!MOTION?.matches;
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
-// A missed startup presentation can start when Home becomes visible again.
+// Training scenes are opened deliberately from Card Studio, never on Home startup.
 let previewArmed=false,previewSeen=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -1057,7 +1057,7 @@ function refresh(){
  if(!pending&&discovery&&available()&&showDiscovery(discovery))return;
  if(mode==='idle'){
   focus(false);
-  if(previewArmed&&!previewSeen&&!tasks.length&&!pending&&available())startPreview();
+  // The quiet Home greeting is the default; preview scenes require a user action.
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
@@ -1073,8 +1073,7 @@ window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
- // Revisiting Home may replay the approved scene, never an actual task.
- if(!location.hash||location.hash==='#home')previewSeen=false;
+ // Revisiting Home must not replay training cards over the live greeting.
  if(mode!=='idle')rest();
  else focus(false);
  // Sync after the main router updates Home visibility.
@@ -1117,8 +1116,5 @@ window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
 window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
 window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
 scheduleRefresh();
-// Bring back the original rising three-card introduction after opening.
-// If a dialog/navigation blocks it, refreshing Home retries instead of
-// silently discarding the animation forever.
-window.setTimeout(()=>{previewArmed=true;scheduleRefresh()},7800);
+// Card Studio may still call SEYVEO_LIVING_MOMENT.preview() explicitly.
 })();
