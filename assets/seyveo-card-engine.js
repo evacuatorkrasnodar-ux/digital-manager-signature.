@@ -45,7 +45,16 @@
   'review-recognition':'Проверить благодарность','review-document':'Проверить документ',
   'open-release':'Открыть альбом','not-interested':'Неинтересно'
  });
- const confirmActions=new Set(['reply','review-payment','request-photo','review-recognition','review-document']);
+ // Semantic action roles are the single Studio/Home visual contract.
+ // Only a meaningful alternative is secondary. Navigation and defer stay text.
+ const quietActions=new Set(['later','not-interested']);
+ function actionRole(id,index){
+  if(quietActions.has(id))return 'quiet';
+  if(index===0)return 'primary';
+  if(id.startsWith('open-'))return 'navigation';
+  return 'secondary';
+ }
+  const confirmActions=new Set(['reply','review-payment','request-photo','review-recognition','review-document']);
  const trim=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
  const owns=(obj,key)=>Object.prototype.hasOwnProperty.call(obj,key);
  const safety=Object.freeze({
@@ -61,8 +70,8 @@
    source:card.source||'Источник не указан',title:card.title,fact:card.fact,
    suggestion:card.suggestion,priority:card.priority,demo:card.demo===true,
    sections:safety.sections,
-   actions:Object.freeze(card.actions.map(id=>Object.freeze({
-    id,label:actionLabels[id]||id,requiresConfirmation:confirmActions.has(id)
+   actions:Object.freeze(card.actions.map((id,index)=>Object.freeze({
+    id,label:actionLabels[id]||id,role:actionRole(id,index),requiresConfirmation:confirmActions.has(id)
    })))
   });
  }
@@ -153,7 +162,7 @@
   actions.setAttribute('aria-label','Действия с карточкой');
   for(const action of p.actions){
    const button=el('button','sv-card-action',action.label);
-   button.type='button';button.dataset.cardAction=action.id;
+   button.type='button';button.dataset.cardAction=action.id;button.dataset.cardRole=action.role;
    button.disabled=typeof onAction!=='function';
    if(!button.disabled)button.addEventListener('click',()=>onAction(action.id,card));
    actions.append(button);
@@ -162,7 +171,7 @@
   return article;
  }
  root.SEYVEO_CARD_ENGINE=Object.freeze({
-  version:2,catalog,eventType,actionLabels,safety,
+  version:3,catalog,eventType,actionLabels,safety,actionRole,
   presentation,buildCard,fromEvents,demoEvents,renderCard,decorateHome
  });
 })(window);
