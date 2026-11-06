@@ -2126,3 +2126,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
   backdrop-filter:none;
  }
 }
+
+/* This shortcut duplicates the Cabinet setup entry. Keep its hidden DOM
+   endpoint for existing workflow bindings, never show it in the chooser. */
+#svCabinetStartWithSayvi[hidden]{display:none!important}
