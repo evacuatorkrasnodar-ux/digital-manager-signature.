@@ -1090,7 +1090,7 @@ function workshopItems(){
  const entries=window.SEYVEO_FAN_WORKSHOP?.list?.()||[];
  const hour=new Date().getHours();
  const period=hour>=5&&hour<12?'morning':hour>=12&&hour<18?'day':'evening';
- return entries.filter(item=>item.onHome&&
+ return entries.filter(item=>item.onHome&&!item.done&&
   (item.period==='any'||item.period===period)&&
   typeof item.title==='string'&&typeof item.message==='string'&&
   !quiet.has('workshop:'+item.id));
