@@ -74,45 +74,51 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
 }
 .turn[data-role="assistant"] .bubble{max-width:100%}
 .turn[data-role="assistant"] .bubble strong{font-weight:650;color:inherit}
-/* Calm, clear speaker label: completed answers never animate. */
+/* SEYVEO signature: clear name and a restrained silver shimmer, including after replies. */
 .speaker{
  display:inline-block;
  align-self:flex-start;
- font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
- letter-spacing:0;
- color:var(--sayvi-secondary);
- background:none;
- -webkit-text-fill-color:currentColor;
- animation:none;
-}
-/* The only live Sayvi label: one subtle silver light moving inside the letters. */
-.sayvi-thinking{align-items:flex-start}
-.sayvi-thinking .sayvi-thinking-label,
-.turn[data-role="assistant"].is-streaming .speaker{
- display:inline-block;
- align-self:flex-start;
- font:500 12px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
- letter-spacing:0;
+ font:550 14px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:.05px;
  color:var(--sayvi-secondary);
  background:linear-gradient(105deg,
   var(--sayvi-secondary) 0%,
-  var(--sayvi-secondary) 40%,
-  color-mix(in srgb,var(--sayvi-secondary) 65%,var(--sayvi-text)) 50%,
-  var(--sayvi-secondary) 60%,
+  var(--sayvi-secondary) 37%,
+  color-mix(in srgb,var(--sayvi-secondary) 35%,var(--sayvi-text)) 49%,
+  var(--sayvi-secondary) 61%,
+  var(--sayvi-secondary) 100%);
+ background-size:250% 100%;
+ background-position:100% 50%;
+ -webkit-background-clip:text;background-clip:text;
+ -webkit-text-fill-color:transparent;
+ animation:sayvi-active-name-light 7s ease-in-out infinite;
+}
+.sayvi-thinking{align-items:flex-start}
+.sayvi-thinking .sayvi-thinking-label{
+ display:inline-block;
+ align-self:flex-start;
+ font:550 14px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+ letter-spacing:.05px;
+ color:var(--sayvi-secondary);
+ background:linear-gradient(105deg,
+  var(--sayvi-secondary) 0%,
+  var(--sayvi-secondary) 34%,
+  color-mix(in srgb,var(--sayvi-secondary) 25%,var(--sayvi-text)) 49%,
+  var(--sayvi-secondary) 64%,
   var(--sayvi-secondary) 100%);
  background-size:260% 100%;
  background-position:100% 50%;
  -webkit-background-clip:text;background-clip:text;
  -webkit-text-fill-color:transparent;
- animation:sayvi-active-name-light 3.2s ease-in-out infinite alternate;
+ animation:sayvi-active-name-light 3.2s ease-in-out infinite;
 }
+.turn[data-role="assistant"].is-streaming .speaker{animation-duration:3.2s}
 @keyframes sayvi-active-name-light{
  from{background-position:100% 50%}
  to{background-position:0% 50%}
 }
 @media(prefers-reduced-motion:reduce){
- .sayvi-thinking .sayvi-thinking-label,
- .turn[data-role="assistant"].is-streaming .speaker{
+ .speaker,.sayvi-thinking .sayvi-thinking-label{
   animation:none;background:none;-webkit-text-fill-color:currentColor
  }
 }
