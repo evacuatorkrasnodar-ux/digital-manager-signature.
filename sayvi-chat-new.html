@@ -2393,6 +2393,17 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }
  }
  async function ask(question,options={}){
+  if(!options.skipUser&&!options.attachments?.length){
+   const cardAction=window.SEYVEO_CARD_VOICE?.handle(question);
+   if(cardAction){
+    const id=++sequence;
+    append('user','user-'+id,options.displayMessage??question,true);
+    append('assistant','reply-'+id,cardAction.message);
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:cardAction.message.slice(0,450)});
+    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
+    return;
+   }
+  }
   const intent=options.skipUser?null:knowledgeIntent(question);
   if(intent&&!options.attachments?.length)return runKnowledgeCommand(question,intent);
   const query=options.skipUser?'':webRequest(question);
@@ -2686,5 +2697,6 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  updateControls();
 })();
 </script>
+<script src="assets/seyveo-card-voice.js?v=1"></script>
 </body>
 </html>
