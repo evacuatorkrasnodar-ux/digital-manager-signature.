@@ -35,9 +35,7 @@
  max-width:100%;
  overflow-wrap:break-word;
 }
-#homePage.sv-home-presence-calm #stage>.message{
- display:none!important;
-}
+/* The full welcome and contextual description are never hidden. */
 /* Keep the approved orb geometry and 3-card composition untouched.
    The line has no separate panel and remains compact on small phones. */
 @media(max-width:375px){
