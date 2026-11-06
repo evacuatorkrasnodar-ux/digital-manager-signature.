@@ -35,7 +35,7 @@
  function verifiedWeather(){
   const value=window.SEYVEO_HOME_WEATHER?.today?.();
   if(!value||value.day!==localDay()||typeof value.message!=='string'||!value.message.trim()||typeof value.city!=='string'||!value.city.trim())return '';
-  return value.message.trim().slice(0,180);
+  return ('Погода для '+value.city.trim()+': '+value.message.trim()).slice(0,180);
  }
  function maybeShowDailyWeather(){
   if(!ready||!homeVisible()||weatherWord||weatherUntil||voicePhase)return;
@@ -53,19 +53,21 @@
  function update(){
   const visible=ready&&homeVisible();
   // The quiet line supplements the original greeting, it never replaces it.
-  home.classList.remove('sv-home-presence-calm');
   if(visible)maybeShowDailyWeather();
   const status=voicePhase==='listening'?'Слушаю…'
    :voicePhase==='speaking'?'Сэйви отвечает…'
    :voicePhase==='thinking'?'Сэйви думает…'
    :weatherWord&&Date.now()<weatherUntil?weatherWord:'';
   if(!visible||!status){
-   line.hidden=true;return;
+   if(!line.hidden)line.hidden=true;
+   return;
   }
-  line.hidden=false;
   if(content.textContent!==status)content.textContent=status;
-  line.dataset.svPresence=voicePhase||'quiet';
-  line.dataset.svWord=weatherWord&&!voicePhase?'weather':'status';
+  if(line.hidden)line.hidden=false;
+  const phase=voicePhase||'quiet';
+  const word=weatherWord&&!voicePhase?'weather':'status';
+  if(line.dataset.svPresence!==phase)line.dataset.svPresence=phase;
+  if(line.dataset.svWord!==word)line.dataset.svWord=word;
  }
  function clearVoice(){
   if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null}
