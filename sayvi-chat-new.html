@@ -623,6 +623,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  .sv-doc-paper,.sv-doc-editor{padding:22px 20px;min-height:clamp(320px,67vh,720px);font-size:14px;line-height:1.65}
  .sv-doc-footer{gap:6px;padding-left:8px;padding-right:8px;flex-wrap:nowrap}
  .sv-doc-footer button{flex:1 1 0;min-width:0;padding:8px 5px;font-size:11.5px;gap:5px}
+ .sv-doc-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .sv-doc-footer button{width:100%;font-size:12px;padding:9px 5px}
 }
 @media(prefers-reduced-transparency:reduce){.sv-doc-header,.sv-doc-footer{background:var(--sayvi-fallback,#27313b);-webkit-backdrop-filter:none;backdrop-filter:none}}
 
@@ -1205,6 +1207,31 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return {original:original.trim(),replacement,corrected,
    apply:()=>text.slice(0,offset)+replacement+text.slice(offset+original.length)};
  }
+ function printSayviDocument(value,feedback){
+  const plain=String(value||'').trim();
+  if(!plain){feedback.textContent='Нет текста для печати';return}
+  // A blank tab opened directly from the tap also works in most iOS Safari versions.
+  const printWindow=window.open('','_blank');
+  if(!printWindow){feedback.textContent='Разреши открытие окна для печати';return}
+  try{
+   const doc=printWindow.document;
+   doc.title='SEYVEO — печать документа';
+   const meta=doc.createElement('meta');meta.setAttribute('charset','utf-8');doc.head.append(meta);
+   const viewport=doc.createElement('meta');viewport.name='viewport';viewport.content='width=device-width, initial-scale=1';doc.head.append(viewport);
+   const style=doc.createElement('style');
+   style.textContent='@page{size:A4;margin:20mm 18mm}html,body{margin:0;padding:0;background:white;color:#1b1b1b}main{white-space:pre-wrap;overflow-wrap:anywhere;font:12pt/1.55 Georgia,"Times New Roman",serif}@media screen{body{padding:24px;max-width:780px;margin:auto}}@media print{html{-webkit-print-color-adjust:exact;print-color-adjust:exact}main{break-inside:auto}}';
+   doc.head.append(style);
+   const main=doc.createElement('main');main.textContent=plain;doc.body.append(main);
+   printWindow.focus();
+   // Run only after the print document has been laid out.
+   printWindow.requestAnimationFrame(()=>printWindow.requestAnimationFrame(()=>{
+    try{printWindow.print()}catch{feedback.textContent='Не удалось открыть печать. Попробуй снова.'}
+   }));
+  }catch(error){
+   feedback.textContent='Не удалось подготовить печать';
+   try{printWindow.close()}catch{}
+  }
+ }
  function previewSayviDocument(value,feedback){
   const initialDraft=documentDraftOnly(value);
   if(!initialDraft){feedback.textContent='Сэйви пока не подготовила полный текст документа.';return}
@@ -1314,13 +1341,16 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   };
   const wordAction=button('Скачать Word',()=>{const text=confirmDownload();if(text)exportWordReply(text,feedback)});
   const pdfAction=button('Скачать PDF',()=>{const text=confirmDownload();if(text)exportPdfReply(text,feedback)});
+  const printAction=button('Распечатать',()=>{const text=confirmDownload();if(text)printSayviDocument(text,feedback)});
+  const printIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7zM17 11h1"/></svg>';
   const editIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16.5l10-10 3 3-10 10-4 1zM14 8.5l3 3"/></svg>';
   const wordIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="3" y="10" width="12.5" height="8.5" rx="2.2" class="sv-file-label"/><path d="m5.6 12.3 1 3.7 1.1-2.6 1.1 2.6 1-3.7" class="sv-file-letter"/></svg>';
   const pdfIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2.5h8l4 4V21H7zM15 2.5V7h4" class="sv-file-outline"/><rect x="2" y="10" width="19" height="8.5" rx="2.2" class="sv-file-label"/><text x="11.5" y="16" text-anchor="middle" class="sv-file-pdf-text">PDF</text></svg>';
   edit.innerHTML=editIcon+'<span>Редактировать</span>';
   wordAction.innerHTML=wordIcon+'<span>Скачать Word</span>';
   pdfAction.innerHTML=pdfIcon+'<span>Скачать PDF</span>';
-  actions.append(edit,wordAction,pdfAction);
+  printAction.innerHTML=printIcon+'<span>Распечатать</span>';
+  actions.append(edit,wordAction,pdfAction,printAction);
   const dismiss=()=>{
    if(editing&&editor.value!==draft&&!window.confirm('Закрыть без сохранения изменений?'))return;
    document.removeEventListener('keydown',onKey);
