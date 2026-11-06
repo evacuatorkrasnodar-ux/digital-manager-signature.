@@ -3,7 +3,7 @@
 #managePage .sv-permissions-entry{
  appearance:none;display:flex;justify-content:space-between;align-items:center;
  width:100%;min-height:44px;padding:10px 14px;border:0;border-radius:16px;
- background:var(--sv-air-control,var(--card2));color:var(--text);font:550 13px/1.4 inherit;
+ background:var(--sv-air-control,var(--card2));color:var(--text);font-family:inherit;font-size:13px;font-weight:550;line-height:1.4;
  text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #managePage .sv-permissions-entry span{font-size:19px;font-weight:400;opacity:.65}
@@ -19,7 +19,7 @@
 #managePage .sv-permission-panel button{
  appearance:none;border:0;border-radius:999px;min-height:42px;
  padding:9px 17px;background:var(--sv-air-control,var(--card));color:var(--text);
- font:550 13px/1.25 inherit;cursor:pointer;
+ font-family:inherit;font-size:13px;font-weight:550;line-height:1.25;cursor:pointer;
 }
 #managePage .sv-permission-panel button[hidden]{display:none!important}
 #managePage .sv-permission-panel .sv-permission-allow{background:var(--sv-air-selected,var(--card));margin-right:8px}
