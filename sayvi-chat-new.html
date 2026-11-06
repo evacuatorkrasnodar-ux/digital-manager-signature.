@@ -743,6 +743,56 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  let recentDocument=null;
  // Latest finished draft for the active chat only. Nothing stored remotely.
  let workingDocument=null;
+ // Guided fill is a local, explicit Q&A: no guessed private values.
+ let documentFill=null;
+ function fillQuestion(label,index,total){
+  const clean=String(label||'').trim();
+  const prompt=/фамил|имя|отчеств|фио/iu.test(clean)?'Как указать ФИО в документе?':
+   /компан|организац|назван/iu.test(clean)?'Как называется компания или организация?':
+   /должност/iu.test(clean)?'Какую должность указать?':
+   /дат/iu.test(clean)?'Какую дату указать в документе?':
+   'Что вписать вместо «'+clean+'»?';
+  return 'Заполним документ. Поле '+(index+1)+' из '+total+'.\n'+prompt+
+   '\n\nНапиши точное значение. Если оставляем пустым — «Пропустить», если прекращаем — «Отмена».';
+ }
+ function startDocumentFill(text){
+  const source=String(text||'');
+  const fields=documentMissingFields(source);
+  if(!fields.length){status.textContent='В этом документе нет незаполненных полей.';return}
+  documentFill={conversation:currentId,text:source,fields,index:0};
+  workingDocument={conversation:currentId,text:source};
+  append('assistant','fill-'+(++sequence),fillQuestion(fields[0],0,fields.length));
+ }
+ function handleDocumentFillAnswer(value){
+  const state=documentFill;
+  if(!state||state.conversation!==currentId)return false;
+  const answer=String(value||'').trim();
+  if(!answer)return true;
+  append('user','fill-user-'+(++sequence),answer);
+  if(/^(?:отмена|отмени|стоп|прекрати)$/iu.test(answer)){
+   documentFill=null;
+   append('assistant','fill-'+(++sequence),'Заполнение остановлено. Исходный документ не изменён.');
+   return true;
+  }
+  if(!/^(?:пропустить|пропусти)$/iu.test(answer)){
+   if(answer.length>180||/[\r\n<>\[\]]/u.test(answer)){
+    append('assistant','fill-'+(++sequence),'Укажи, пожалуйста, одно короткое значение без переносов строк и скобок. Или напиши «Пропустить».');
+    return true;
+   }
+   const label=state.fields[state.index];
+   state.text=state.text.split('['+label+']').join(answer);
+  }
+  state.index++;
+  if(state.index<state.fields.length){
+   append('assistant','fill-'+(++sequence),fillQuestion(state.fields[state.index],state.index,state.fields.length));
+  }else{
+   const result=state.text;
+   documentFill=null;
+   workingDocument={conversation:currentId,text:result};
+   append('assistant','fill-done-'+(++sequence),'Подготовила заполненную версию документа. Проверь текст и даты перед сохранением:\n\n---\n'+result+'\n---');
+  }
+  return true;
+ }
  function documentRevisionIntent(question){
   return /(?:исправ|измени|замени|поменя|отредактир|перепиши|добавь|удали|убери|вставь|укажи|поставь|скорректир|переделай|обнови|заполн|подстав|дату|фамилию|имя|отчество|подпись|срок|формулировк)/iu.test(String(question||''));
  }
@@ -780,7 +830,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
  }
  function renderTurns(turns){
-  recentVisual=null;recentDocument=null;workingDocument=null;
+  recentVisual=null;recentDocument=null;workingDocument=null;documentFill=null;
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
@@ -1312,10 +1362,9 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   askSayvi.addEventListener('click',()=>{
    const text=currentDraft();
    if(!text.trim())return;
-   workingDocument={conversation:currentId,text};
    document.removeEventListener('keydown',onKey);
    overlay.remove();
-   ask('Сэйви, помоги заполнить пустые поля в нашем документе. Используй только данные, которые я подтвердил в этой беседе, а недостающие данные сначала уточни у меня. Не придумывай ФИО, компанию, должность и дату.');
+   startDocumentFill(text);
   });
   fixDate.addEventListener('click',()=>{
    const suggestion=suggestDocumentEndDate(currentDraft());
@@ -2370,7 +2419,9 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  async function send(){
   const value=input.value.trim();if((!value&&!pendingAttachments.length)||active)return;
   if(!pendingAttachments.length){
-   input.value='';updateControls();ask(value);return;
+   input.value='';updateControls();
+   if(documentFill&&documentFill.conversation===currentId){handleDocumentFillAnswer(value);return}
+   ask(value);return;
   }
   const selected=pendingAttachments.slice();
   // Lock controls before upload; don't add a fake sent message.
