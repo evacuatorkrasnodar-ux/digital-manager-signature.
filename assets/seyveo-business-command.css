@@ -1984,111 +1984,15 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  }
 }
 
-/* SEYVEO · unified Tasks / Cabinet top navigation.
-   Match the approved personal "Дела" outer inset and segmented geometry.
-   No changes to cards, content, dock or click handlers. */
-#tasksPage[data-work-view="business"]{
+/* SEYVEO · one fixed Liquid Glass navigation geometry for Tasks, Cabinet
+   and the linked Calendar page. Based on Sayvi's matte composer material.
+   These are the same existing click targets; view switching changes only state. */
+#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]){
  box-sizing:border-box;
+ padding-top:2px;
  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));
 }
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
- box-sizing:border-box;
- display:flex!important;
- align-items:center;
- width:100%;
- min-width:0;
- gap:3px;
- margin:0 0 9px;
- padding:3px;
- border:0;
- border-radius:17px;
- background:color-mix(in srgb,var(--card2) 35%,transparent);
- box-shadow:none;
-}
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button:not([hidden]){
- box-sizing:border-box;
- display:flex;
- flex:1 1 0;
- flex-direction:row;
- align-items:center;
- justify-content:center;
- min-width:0;
- min-height:44px;
- gap:0;
- padding:7px 5px;
- border:0;
- border-radius:14px;
- font-size:13px;
- font-weight:540;
- letter-spacing:-.01em;
- line-height:1.25;
-}
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] .sv-mini-nav-icon{
- display:none!important;
-}
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="true"]{
- background:color-mix(in srgb,var(--card) 72%,transparent);
- box-shadow:none;
-}
-
-/* SEYVEO Liquid Glass · approved Sayvi composer material for the
-   single Tasks / Cabinet selector. One geometry across both views.
-   Matte translucent surface, no raised bevel, rim or drop shadow. */
-#tasksPage[data-work-view="personal"] #unifiedTasksTabs,
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
- background:rgba(184,195,201,.19);
- -webkit-backdrop-filter:blur(16px) saturate(105%);
- backdrop-filter:blur(16px) saturate(105%);
- border:0;
- box-shadow:none;
- isolation:isolate;
-}
-#tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"],
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="true"]{
- background:rgba(184,195,201,.13);
- border:0;
- box-shadow:none;
- color:var(--text);
- font-weight:590;
-}
-#tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="false"],
-#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="false"]{
- background:transparent;
- box-shadow:none;
- color:var(--secondary);
-}
-:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs,
-:root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
- background:rgba(99,121,133,.18);
- -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
- backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
-}
-:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"],
-:root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="true"]{
- background:rgba(255,255,255,.45);
- color:var(--text);
- box-shadow:none;
-}
-@media(prefers-reduced-transparency:reduce){
- #tasksPage[data-work-view="personal"] #unifiedTasksTabs,
- #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
-  background:var(--card2);
-  -webkit-backdrop-filter:none;backdrop-filter:none;
- }
-}
-
-/* SEYVEO: one physical DOM navigation, one immutable geometry.
-   Former personal/business selectors changed the heading size, top spacing,
-   padding and tab height on each click. Only the aria-pressed state may change. */
-#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]){
- box-sizing:border-box!important;
- padding-top:2px!important;
- padding-left:max(16px,env(safe-area-inset-left,0px))!important;
- padding-right:max(16px,env(safe-area-inset-right,0px))!important;
-}
 #tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) .tasks-heading{
- box-sizing:border-box;
- min-height:0;
  margin:3px 0 14px!important;
 }
 #tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) .tasks-heading h1{
@@ -2098,26 +2002,35 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  font-weight:670!important;
  margin:0 0 7px!important;
 }
-#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs{
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs){
  box-sizing:border-box!important;
  display:flex!important;
  align-items:center!important;
- width:100%!important;
+ flex-shrink:0!important;
  height:50px!important;
  min-height:50px!important;
  max-height:50px!important;
- flex-shrink:0!important;
- margin:0 0 9px!important;
- padding:3px!important;
  gap:3px!important;
+ padding:3px!important;
  border:0!important;
  border-radius:17px!important;
  box-shadow:none!important;
- background:rgba(184,195,201,.19);
- -webkit-backdrop-filter:blur(16px) saturate(105%);
- backdrop-filter:blur(16px) saturate(105%);
+ background:rgba(184,195,201,.19)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
 }
-#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs>button:not([hidden]){
+#tasksPage #unifiedTasksTabs{
+ width:100%!important;
+ margin:0 0 9px!important;
+}
+#calendarPage #managerCalendarTabs{
+ width:calc(100% - 32px)!important;
+ margin:0 16px 9px!important;
+}
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)[hidden]{
+ display:none!important;
+}
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button:not([hidden]){
  box-sizing:border-box!important;
  display:flex!important;
  flex:1 1 0!important;
@@ -2135,34 +2048,81 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  border:0!important;
  border-radius:14px!important;
  box-shadow:none!important;
- background:transparent;
- color:var(--secondary);
+ background:transparent!important;
+ color:var(--secondary)!important;
  font-size:13px!important;
  font-weight:540!important;
  line-height:1.25!important;
  letter-spacing:-.01em!important;
  white-space:nowrap!important;
 }
-#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs>button .sv-mini-nav-icon{
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button>.sv-mini-nav-icon{
  display:none!important;
 }
-#tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs>button[aria-pressed="true"]{
- background:rgba(184,195,201,.13)!important;
+/* Legacy .tasks-switch span overrides button typography with 11px;
+   explicitly inherit text from the shared tab surface. */
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button>span:not(.sv-mini-nav-icon){
+ font-size:13px!important;
+ font-weight:inherit!important;
+ color:inherit!important;
+ line-height:1.25!important;
+ letter-spacing:-.01em!important;
+}
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button[aria-pressed="true"]{
+ background:rgba(184,195,201,.15)!important;
  color:var(--text)!important;
  font-weight:590!important;
  box-shadow:none!important;
 }
-:root[data-theme="light"] #tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs{
- background:rgba(99,121,133,.18);
- -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
- backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+:is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button:focus-visible{
+ outline:2px solid var(--text)!important;
+ outline-offset:-2px;
 }
-:root[data-theme="light"] #tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs>button[aria-pressed="true"]{
+:root[data-theme=light] :is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs){
+ background:rgba(99,121,133,.18)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12)!important;
+ backdrop-filter:blur(14px) saturate(115%) contrast(1.12)!important;
+}
+:root[data-theme=light] :is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs)>button[aria-pressed="true"]{
  background:rgba(255,255,255,.45)!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #tasksPage:is([data-work-view="personal"],[data-work-view="business"]):not([data-employee-mode="true"]) #unifiedTasksTabs{
-  background:var(--card2);
-  -webkit-backdrop-filter:none;backdrop-filter:none;
+ :is(#tasksPage #unifiedTasksTabs,#calendarPage #managerCalendarTabs){
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
+/* Existing task-add and history actions use the same quiet input glass;
+   touch targets stay 44px, without borders or convex shadows. */
+#tasksPage .personal-tasks-add,
+#tasksPage .tasks-history-actions button,
+#calendarPage #calendarAdd{
+ box-shadow:none!important;
+ border:0!important;
+ background:rgba(184,195,201,.19)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ color:var(--text)!important;
+}
+#tasksPage .personal-tasks-add{
+ border-radius:22px!important;
+ min-height:44px;
+ padding:8px 12px!important;
+}
+#tasksPage .personal-tasks-head{
+ align-items:center;
+ gap:12px;
+}
+#tasksPage .tasks-history-actions button{border-radius:22px!important;}
+#calendarPage #calendarAdd{border-radius:50%!important;}
+:root[data-theme=light] :is(#tasksPage .personal-tasks-add,#tasksPage .tasks-history-actions button,#calendarPage #calendarAdd){
+ background:rgba(99,121,133,.18)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ :is(#tasksPage .personal-tasks-add,#tasksPage .tasks-history-actions button,#calendarPage #calendarAdd){
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
  }
 }
