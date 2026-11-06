@@ -27,6 +27,14 @@ function handle(raw){
   }
   // An unrelated question must not be consumed by a pending confirmation.
  }
+ // A timed reminder belongs to the existing Calendar/Tasks workflow, not LAB.
+ // Preserve the normal reminder grammar and its follow-up questions.
+ const timed=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:создай|сделай|добавь|поставь|подготовь)\\s+(?:мне\\s+)?(?:(?:новую\\s+)?карточку[-\\s]+)?напоминани[ея](?:\\s*[:—–-]\\s*|\\s+)?(.*)$/iu.exec(text);
+ if(timed){
+  const reminder='Напомни мне'+(timed[1]?.trim()?' '+timed[1].trim():'');
+  const action=window.SEYVEO_LOCAL_ACTIONS?.handle?.(reminder);
+  return {message:action?.message||'Напоминание относится к календарю. Уточни, пожалуйста: о чём и когда напомнить?'};
+ }
  const m=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:создай|сделай|добавь|подготовь|хочу создать)\s+(?:мне\s+)?(?:новую\s+)?(?:карточку|дополнение)(?:\s+(?:в мастерской|для главной|на главной))?(?:(?:\s*[:—–-]\s*|\s+(?:с названием|про|чтобы|напоминание|с текстом)\s+)(.+))?$/iu.exec(text);
  if(!m)return null;
  const subject=(m[1]||'').trim().replace(/[.!]+$/,'').trim();
