@@ -987,6 +987,23 @@ function showTasks(items){
 }
 
 
+/* Horizontal swipe on the card = Later; no additional button.
+   Do not intercept vertical page scrolling or taps on the action controls. */
+function installLivingCardSwipe(field,onLater){
+ let start=null;
+ field.addEventListener('touchstart',event=>{
+  if(event.touches.length!==1||event.target.closest('button,input,textarea,a')){start=null;return}
+  const finger=event.touches[0];start={x:finger.clientX,y:finger.clientY};
+ },{passive:true});
+ field.addEventListener('touchend',event=>{
+  if(!start||event.changedTouches.length!==1)return;
+  const last=event.changedTouches[0],dx=last.clientX-start.x,dy=last.clientY-start.y;
+  start=null;
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6)onLater();
+ },{passive:true});
+ field.addEventListener('touchcancel',()=>{start=null},{passive:true});
+}
+
 /* Real upcoming Calendar reminders share the existing Home living plane.
  * They do not become an extra calendar, a push alert, or a fake completed task. */
 function upcomingCalendar(){
@@ -997,7 +1014,7 @@ function showCalendar(item){
  if(!item||!available())return false;
  mode='calendar';key='calendar:'+item.id+'|'+item.date+'|'+item.time;
  dynamic.hidden=true;tiles.replaceChildren();
- const field=create('div','lm-field');
+ const field=create('div','lm-field sv-card-system sv-card-system--home sv-living-card-26');
  field.dataset.lmMode='real';field.dataset.lmSubject='task';
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
@@ -1029,8 +1046,10 @@ function showCalendar(item){
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
  };
- const laterButton=polymer('Позже',postpone);
- controls.append(why,open,laterButton);
+ why.classList.add('sv-living-card-action');
+ open.classList.add('sv-living-card-action','sv-living-card-action--primary');
+ controls.append(why,open);
+ installLivingCardSwipe(field,postpone);
  main.append(hero,controls);
  const explanation=create('p','lm-explanation',
   'Сэйви показывает вашу ближайшую запись за 36 часов до начала. Ничего не переносит и не выполняет автоматически. Само напоминание останется в календаре.');
@@ -1060,7 +1079,7 @@ function showWorkshop(item){
  if(!item||!available())return false;
  mode='workshop';key='workshop:'+item.id;
  dynamic.hidden=true;tiles.replaceChildren();
- const field=create('div','lm-field');
+ const field=create('div','lm-field sv-card-system sv-card-system--home sv-living-card-26');
  field.dataset.lmMode='real';field.dataset.lmSubject='task';
  const scene=create('div','lm-scene');
  const top=create('div','lm-field-top');
@@ -1083,12 +1102,15 @@ function showWorkshop(item){
   quiet.add(key);
   window.SEYVEO_FAN_WORKSHOP?.open?.();
  });
- const laterButton=polymer('Позже',()=>{
+ const postpone=()=>{
   quiet.add(key);
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
- });
- controls.append(explainButton,openButton,laterButton);
+ };
+ explainButton.classList.add('sv-living-card-action');
+ openButton.classList.add('sv-living-card-action','sv-living-card-action--primary');
+ controls.append(explainButton,openButton);
+ installLivingCardSwipe(field,postpone);
  main.append(hero,controls);
  const explanation=create('p','lm-explanation','Это ваша собственная карточка из Мастерской. Она показана по выбранному времени. Других действий Сэйви без вашего подтверждения не выполняет.');
  explanation.hidden=true;
