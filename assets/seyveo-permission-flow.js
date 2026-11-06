@@ -10,7 +10,7 @@ if(!panel||!link||!action||!done||!status)return;
 let returnRoute='',activeKind='',pending=false;
 function navigate(route){
  if((location.hash||'')===route){window.dispatchEvent(new Event('hashchange'));return}
- if(!route){history.pushState(null,'',location.pathname+location.search);window.dispatchEvent(new Event('popstate'))}
+ if(!route){history.pushState(null,'',location.pathname+location.search);window.dispatchEvent(new Event('hashchange'))}
  else location.hash=route;
 }
 function present(kind,from){
