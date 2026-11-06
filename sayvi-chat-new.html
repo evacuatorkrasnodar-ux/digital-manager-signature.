@@ -1095,8 +1095,19 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   scroll.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:20px 14px 28px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch';
   const page=document.createElement('article');
   page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:70%;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
-  const draft=documentDraftOnly(value);
+  let draft=documentDraftOnly(value),editing=false;
   page.textContent=draft;scroll.append(page);
+  const editor=document.createElement('textarea');
+  editor.setAttribute('aria-label','Редактирование документа');
+  editor.value=draft;editor.hidden=true;
+  editor.maxLength=15000;
+  editor.style.cssText=page.style.cssText+';display:none;width:100%;resize:none;border:0;outline:0;min-height:60vh';
+  scroll.append(editor);
+  const editorVisible=show=>{
+   editing=show;page.hidden=show;editor.hidden=!show;
+   editor.style.display=show?'block':'none';
+   if(show){editor.style.height=Math.max(550,page.offsetHeight)+'px';editor.focus({preventScroll:true})}
+  };
   const actions=document.createElement('div');
   actions.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(145,162,181,.10);flex-wrap:wrap';
   const makeAction=(label,callback)=>{
@@ -1105,12 +1116,35 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    b.addEventListener('click',callback);return b;
   };
   const dismiss=()=>{
+   if(editing&&editor.value!==draft&&!window.confirm('Закрыть без сохранения изменений?'))return;
    document.removeEventListener('keydown',onKey);
    overlay.remove();
   };
   const onKey=e=>{if(e.key==='Escape')dismiss()};
   back.addEventListener('click',dismiss);
-  actions.append(makeAction('Скачать Word',()=>exportWordReply(draft,feedback)),makeAction('Скачать PDF',()=>exportPdfReply(draft,feedback)));
+  const edit=makeAction('Редактировать',()=>{
+   if(!editing){editor.value=draft;editorVisible(true);edit.textContent='Готово';return}
+   if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
+   draft=editor.value;
+   page.textContent=draft;
+   editorVisible(false);
+   edit.textContent='Редактировать';
+  });
+  const currentDraft=()=>{
+   const text=editing?editor.value:draft;
+   return text.trim()?text:null;
+  };
+  actions.append(
+   edit,
+   makeAction('Скачать Word',()=>{
+    const text=currentDraft();if(text)exportWordReply(text,feedback);
+    else window.alert('Документ не может быть пустым');
+   }),
+   makeAction('Скачать PDF',()=>{
+    const text=currentDraft();if(text)exportPdfReply(text,feedback);
+    else window.alert('Документ не может быть пустым');
+   })
+  );
   overlay.append(bar,scroll,actions);
   document.body.append(overlay);
   document.addEventListener('keydown',onKey);
