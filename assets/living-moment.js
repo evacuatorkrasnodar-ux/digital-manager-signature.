@@ -601,6 +601,8 @@ function createSurface(primary,other=[],real=false,taskId=''){
   }finally{clearTimeout(timeout);button.disabled=false;}
  });
  const workOwn=polymer('Ответить самому',()=>{workMode='own';workDraft='';updateWork()});
+ workSayvi.classList.add('sv-work-assistant');
+ workOwn.classList.add('sv-work-own');
  const workBack=polymer('Изменить',()=>{if(workMode==='sayvi'){workMode='own';}else{workMode='choose';}updateWork()});
  const workSend=polymer('Ответить',()=>{
   const typed=workDetails.querySelector('textarea')?.value?.trim()||workDraft.trim();
