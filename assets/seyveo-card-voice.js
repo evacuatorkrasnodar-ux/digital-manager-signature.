@@ -27,6 +27,26 @@ function handle(raw){
   }
   // An unrelated question must not be consumed by a pending confirmation.
  }
+ // A direct completion request changes only a saved, exactly matched LAB card.
+ // It does NOT complete calendar events, tasks, or perform work for the user.
+ const completion=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:отметь|пометь|считай)\s+карточку\s+(.+?)\s+(?:как\s+)?(?:выполненной|завершённой|завершенной|сделанной)$/iu.exec(text);
+ const restore=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:верни|восстанови|возобнови)\s+карточку\s+(.+)$/iu.exec(text);
+ if(completion||restore){
+  const wantDone=!!completion;
+  const title=normalize((completion||restore)[1]).replace(/[.!]+$/,'').replace(/^[«"]|[»"]$/g,'').toLocaleLowerCase('ru-RU');
+  let cards;
+  try{const parsed=JSON.parse(localStorage.getItem(KEY)||'[]');cards=Array.isArray(parsed)?parsed:[]}
+  catch{return {message:'Не удалось прочитать карточки Мастерской.'}}
+  const matches=cards.filter(c=>c&&String(c.title||'').trim().toLocaleLowerCase('ru-RU')===title);
+  if(matches.length!==1)return {message:matches.length>1?'В Мастерской несколько карточек с таким названием. Уточни их там.':'Не нашла карточку с таким точным названием в Мастерской.'};
+  const item=matches[0];
+  if(item.done===wantDone)return {message:wantDone?'Карточка «'+item.title+'» уже отмечена выполненной.':'Карточка «'+item.title+'» уже активна.'};
+  item.done=wantDone;item.doneAt=wantDone?new Date().toISOString():'';
+  try{localStorage.setItem(KEY,JSON.stringify(cards))}
+  catch{return {message:'Не удалось сохранить изменение карточки.'}}
+  window.dispatchEvent(new Event('seyveo:fan-card-created'));
+  return {message:wantDone?'Отметила карточку «'+item.title+'» выполненной. Она больше не будет появляться на Главной, но останется в Мастерской.':'Вернула карточку «'+item.title+'» в активные. Она снова сможет появляться на Главной.'};
+ }
  // A timed reminder belongs to the existing Calendar/Tasks workflow, not LAB.
  // Preserve the normal reminder grammar and its follow-up questions.
  const timed=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:создай|сделай|добавь|поставь|подготовь)\s+(?:мне\s+)?(?:(?:новую\s+)?карточку[-\s]+)?напоминани[ея](?:\s*[:—–-]\s*|\s+)?(.*)$/iu.exec(text);
