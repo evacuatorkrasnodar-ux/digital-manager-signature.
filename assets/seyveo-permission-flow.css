@@ -32,3 +32,13 @@
 #managePage .sv-weather-city-setup input[hidden]{display:none!important}
 #managePage .sv-weather-city-setup input:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 #managePage .sv-permission-panel .sv-permission-off{background:transparent;color:var(--secondary)}
+
+/* GPS is opt-in, never needed for approximate weather. */
+#managePage .sv-gps-section{padding:15px 0 3px;margin:15px 0 0;border-top:1px solid color-mix(in srgb,var(--secondary) 16%,transparent)}
+#managePage .sv-gps-section[hidden]{display:none!important}
+#managePage .sv-gps-section h3{margin:0 0 7px;font-size:14px;font-weight:610}
+#managePage .sv-gps-section>p{font-size:12px;line-height:1.5;color:var(--secondary)}
+#managePage .sv-gps-section .sv-gps-result{margin:12px 0 4px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#managePage .sv-gps-section button{margin:0 7px 7px 0}
+#managePage .sv-gps-section button[hidden]{display:none!important}
+#managePage .sv-gps-section button:disabled{opacity:.55}
