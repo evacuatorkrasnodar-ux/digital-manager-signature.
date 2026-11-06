@@ -436,3 +436,19 @@
 #homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26)[data-lm-subject="work"] .lm-actions .lm-polymer.sv-ref-card-details::before{
  content:none!important;display:none!important;
 }
+
+/* Approved designer accent: only “Ответит Сэйви” in the work-chat card.
+   Black Velvet: light silver smoke, never opaque white or a new glow.
+   The 34px inset lens and 44px hit target remain unchanged.
+   Light theme keeps its existing slightly darker neutral smoke. */
+:root:not([data-theme="light"]) #homePage #seyveoLivingMoment
+ .lm-field:not(.sv-living-card-26)[data-lm-subject="work"]
+ .lm-actions .lm-polymer.sv-work-assistant:not([hidden]){
+ color:#f7fafc!important;
+}
+:root:not([data-theme="light"]) #homePage #seyveoLivingMoment
+ .lm-field:not(.sv-living-card-26)[data-lm-subject="work"]
+ .lm-actions .lm-polymer.sv-work-assistant:not([hidden])::before{
+ background:rgba(222,232,239,.31)!important;
+ box-shadow:none!important;
+}
