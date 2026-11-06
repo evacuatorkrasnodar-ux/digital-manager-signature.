@@ -657,6 +657,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 <div id="sayviImageViewer" hidden role="dialog" aria-modal="true" aria-label="Изображение"><button id="sayviImageViewerClose" type="button" aria-label="Закрыть">×</button><img id="sayviImageViewerImg" alt="Фото из разговора"></div>
 <div id="sayviStatus" role="status" aria-live="polite"></div>
 </main>
+<script src="./assets/seyveo-pdf-export.js"></script>
 <script>
 (()=>{
  'use strict';
@@ -911,19 +912,18 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    feedback.textContent='Word сохранён';
   }catch(error){feedback.textContent=String(error?.message||'Ошибка сохранения Word')}
  }
- function exportPdfReply(value,feedback){
+ async function exportPdfReply(value,feedback){
   if(!value.trim()){feedback.textContent='Нет текста для PDF';return}
-  const preview=window.open('','_blank');
-  if(!preview){feedback.textContent='Разреши открытие окна для PDF';return}
-  const doc=preview.document;doc.title='SEYVEO — документ';
-  const meta=doc.createElement('meta');meta.setAttribute('charset','UTF-8');doc.head.append(meta);
-  const style=doc.createElement('style');
-  style.textContent='@page{size:A4;margin:20mm 18mm}body{font:12pt/1.55 Arial,Helvetica,sans-serif;color:#171717;background:white;margin:0}main{white-space:pre-wrap;overflow-wrap:anywhere}';
-  doc.head.append(style);
-  const main=doc.createElement('main');main.textContent=value.slice(0,15000);doc.body.append(main);
-  feedback.textContent='Выбери «Сохранить как PDF» в окне печати';
-  preview.focus();
-  setTimeout(()=>{try{preview.print()}catch{feedback.textContent='Не удалось открыть печать PDF'}},250);
+  if(typeof window.SEYVEO_CREATE_PDF!=='function'){feedback.textContent='PDF-модуль не загрузился. Обнови страницу.';return}
+  feedback.textContent='Готовлю PDF…';
+  try{
+   const blob=await window.SEYVEO_CREATE_PDF(value);
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');a.href=url;a.download='SEYVEO-document.pdf';
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   feedback.textContent='PDF сохранён';
+  }catch(error){feedback.textContent=String(error?.message||'Не удалось подготовить PDF')}
  }
  function saveReplyNote(value,feedback){
   try{
