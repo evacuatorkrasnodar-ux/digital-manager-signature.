@@ -23,9 +23,9 @@ function announce(){
 }
 function updateButton(){
  if(!button)return;
- button.hidden=enabled&&!!forecast;
- button.textContent=enabled?'Погода · обновить':'Добавить погоду';
- button.setAttribute('aria-label',enabled?'Обновить погоду или отключить подсказки о погоде':'Включить подсказку о погоде на главной');
+ button.hidden=false;
+ button.textContent=enabled?'Погода · выключить':'Добавить погоду';
+ button.setAttribute('aria-label',enabled?'Отключить подсказки о погоде':'Включить подсказку о погоде на главной');
 }
 function currentWeather(response){
  const current=response?.current,daily=response?.daily;
@@ -84,16 +84,14 @@ async function refresh(){
 }
 if(button)button.addEventListener('click',()=>{
  if(enabled){
-  const disable=window.confirm('Выключить погоду на Главной?');
-  if(disable){
-   enabled=false;forecast=null;
-   try{localStorage.removeItem(PREF);localStorage.removeItem(CACHE)}catch{}
-   announce();return;
-  }
- }else{
-  enabled=true;
-  try{localStorage.setItem(PREF,'yes')}catch{}
+  enabled=false;forecast=null;
+  try{localStorage.removeItem(PREF);localStorage.removeItem(CACHE)}catch{}
+  announce();return;
  }
+ const consent=window.confirm('Сэйви может раз в день показывать погоду и полезный совет. Для этого нужно разрешить примерное местоположение. Оно будет использовано для запроса прогноза, но не сохранится. Включить?');
+ if(!consent)return;
+ enabled=true;
+ try{localStorage.setItem(PREF,'yes')}catch{}
  refresh();
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&enabled)refresh()});
