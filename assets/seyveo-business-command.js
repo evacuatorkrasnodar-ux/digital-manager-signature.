@@ -1714,7 +1714,8 @@ function renderTasks(){
  list.replaceChildren();
  const open=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&!x.task.done);
  const done=state.tasks.map((task,index)=>({task,index})).filter(x=>x.task&&typeof x.task.text==='string'&&x.task.done);
- const create=el('button','svcp-manager-task-create','+ Новое поручение');
+ const create=el('button','svcp-manager-task-create');
+ create.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>Поручить</span>';
  create.type='button';
  create.setAttribute('aria-label','Создать поручение в рабочем чате');
  create.addEventListener('click',()=>{
@@ -1722,9 +1723,10 @@ function renderTasks(){
   if(typeof openChat==='function')openChat('tasks');
   else setStatus('Рабочий чат недоступен. Поручение не создано.');
  });
- list.append(create);
  const heading=el('div','svcp-task-section-head');
- heading.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
+ const headingText=el('div','svcp-task-section-heading');
+ headingText.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
+ heading.append(headingText,create);
  list.append(heading);
  function taskRow(t,i){
   const row=el('div','svcp-task'+(t.done?' is-done':''));
