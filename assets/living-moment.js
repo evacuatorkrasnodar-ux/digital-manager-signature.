@@ -676,6 +676,21 @@ function createSurface(primary,other=[],real=false,taskId=''){
  });
  // Existing SEYVEO action hierarchy: one filled primary, one outlined
  // secondary, quiet textual Sayvi/Later. The original sizing stays in CSS.
+ // Shared roles from the Card Studio contract, independent of button position.
+ // Sayvi leads, the direct manual action follows, destinations are text-only.
+ sayviAction.dataset.cardRole='primary';
+ sayviAction.dataset.cardAssistant='true';
+ workSayvi.dataset.cardRole='primary';
+ workSayvi.dataset.cardAssistant='true';
+ workOwn.dataset.cardRole='secondary';
+ execute.dataset.cardRole='secondary';
+ open.dataset.cardRole='navigation';
+ for(const button of [workSend,mailSave,documentSave,documentAnalyze,mailEdit,documentEdit]){
+  button.dataset.cardRole='primary';
+ }
+ for(const button of [workBack,mailCancel,documentCancel,mailLater,documentLater]){
+  button.dataset.cardRole='quiet';
+ }
  sayviAction.classList.add('sv-ref-card-sayvi');
  execute.classList.add('sv-ref-card-primary');
  open.classList.add('sv-ref-card-details');
@@ -687,6 +702,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
+ realLater.dataset.cardRole='quiet';
  controls.append(sayviAction,workSayvi,workOwn,workSend,workBack,execute,mailEdit,documentAnalyze,documentEdit,open,mailLater,documentLater,realLater,mailSave,mailCancel,documentSave,documentCancel);
  main.append(hero,workDetails,mailDetails,documentDetails,controls);
  const secondary=create('div','lm-secondary');
