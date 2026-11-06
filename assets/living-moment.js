@@ -13,7 +13,7 @@ const reduced=()=>!!MOTION?.matches;
 const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:reduced()?0:920});
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
-// Training scenes are opened deliberately from Card Studio, never on Home startup.
+// Restore the original rising three-card introduction when no real item needs attention.
 let previewArmed=false,previewSeen=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
@@ -892,7 +892,7 @@ function startPreview(){
   console.warn('SEYVEO Quiet Cinema: CSS missing; preserving normal Home.');
   return false;
  }
- if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
+ if(!available()||editing()||dueTasks().length||upcomingCalendar().length||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
@@ -1224,7 +1224,8 @@ function refresh(){
  if(!pending&&personal&&showWorkshop(personal))return;
  if(mode==='idle'){
   focus(false);
-  // The quiet Home greeting is the default; preview scenes require a user action.
+  // Original three-card training introduction returns as a clearly marked demo.
+  if(previewArmed&&!previewSeen&&!tasks.length&&!pending&&!upcomingCalendar().length&&available())startPreview();
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
@@ -1241,7 +1242,8 @@ window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
 window.addEventListener('seyveo:business-map-changed',scheduleRefresh);
 window.addEventListener('seyveo:connection-followup-changed',scheduleRefresh);
 window.addEventListener('hashchange',()=>{
- // Revisiting Home must not replay training cards over the live greeting.
+ // The original intro can be replayed on revisiting Home, but real cards take priority.
+ if(!location.hash||location.hash==='#home')previewSeen=false;
  if(mode!=='idle')rest();
  else focus(false);
  // Sync after the main router updates Home visibility.
@@ -1284,5 +1286,8 @@ window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
 window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
 window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
 scheduleRefresh();
+// Restore the original rising three-card introduction after opening.
+// Navigation/dialog interruption postpones it until Home is available.
+window.setTimeout(()=>{previewArmed=true;scheduleRefresh()},7800);
 // Card Studio may still call SEYVEO_LIVING_MOMENT.preview() explicitly.
 })();
