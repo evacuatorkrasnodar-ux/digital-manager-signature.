@@ -13,7 +13,7 @@ function clean(item){
  return {id:String(item.id||'').slice(0,60),title,message,period:periods[item.period]?item.period:'any',onHome:item.onHome!==false};
 }
 function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v.map(clean).filter(Boolean).slice(0,MAX):[]}catch{return []}}
-let cards=read();
+let cards=read(),returnRoute='#manage';
 function store(){
  try{localStorage.setItem(KEY,JSON.stringify(cards))}catch{}
  window.dispatchEvent(new Event('seyveo:fan-workshop-changed'));
@@ -80,14 +80,21 @@ function render(){
  }
 }
 function open(){
+ returnRoute=location.hash||'';
  if(location.hash!=='#manage')location.hash='#manage';
  root.classList.add('sv-fan-open');panel.hidden=false;render();
  requestAnimationFrame(()=>panel.scrollIntoView({block:'start',behavior:'instant'}));
 }
-function close(){panel.hidden=true;root.classList.remove('sv-fan-open')}
+function close(navigateBack=false){
+ panel.hidden=true;root.classList.remove('sv-fan-open');
+ if(navigateBack&&returnRoute!=='#manage'){
+  if(returnRoute)location.hash=returnRoute;
+  else{history.pushState(null,'',location.pathname+location.search);window.dispatchEvent(new Event('hashchange'))}
+ }
+}
 entryButton.addEventListener('click',open);
-$('svFanBack').addEventListener('click',close);
-window.addEventListener('hashchange',()=>{if(location.hash!=='#manage')close()});
+$('svFanBack').addEventListener('click',()=>close(true));
+window.addEventListener('hashchange',()=>{if(location.hash!=='#manage')close(false)});
 $('svFanForm').addEventListener('submit',e=>{
  e.preventDefault();const title=$('svFanTitle').value.trim(),message=$('svFanMessage').value.trim();
  if(!title||!message){$('svFanStatus').textContent='Заполни название и текст.';return}
