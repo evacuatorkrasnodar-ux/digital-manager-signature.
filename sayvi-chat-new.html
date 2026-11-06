@@ -747,13 +747,16 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  let documentFill=null;
  function fillQuestion(label,index,total){
   const clean=String(label||'').trim();
-  const prompt=/фамил|имя|отчеств|фио/iu.test(clean)?'Как указать ФИО в документе?':
-   /компан|организац|назван/iu.test(clean)?'Как называется компания или организация?':
-   /должност/iu.test(clean)?'Какую должность указать?':
-   /дат/iu.test(clean)?'Какую дату указать в документе?':
-   'Что вписать вместо «'+clean+'»?';
-  return 'Заполним документ. Поле '+(index+1)+' из '+total+'.\n'+prompt+
-   '\n\nНапиши точное значение. Если оставляем пустым — «Пропустить», если прекращаем — «Отмена».';
+  const prompt=/фамил|имя|отчеств|фио/iu.test(clean)
+   ?'Как тебя зовут? Напиши фамилию, имя и отчество — как должно быть в заявлении.'
+   :/компан|организац|назван/iu.test(clean)
+   ?'Где ты работаешь? Напиши название организации.'
+   :/должност/iu.test(clean)
+   ?'Какая у тебя должность?'
+   :/дат/iu.test(clean)
+   ?'Какую дату поставить в заявлении?'
+   :'Что написать в документе вместо «'+clean+'»?';
+  return (index===0?'Давай я помогу заполнить заявление.\n':'')+prompt;
  }
  function startDocumentFill(text){
   const source=String(text||'');
@@ -776,7 +779,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   }
   if(!/^(?:пропустить|пропусти)$/iu.test(answer)){
    if(answer.length>180||/[\r\n<>\[\]]/u.test(answer)){
-    append('assistant','fill-'+(++sequence),'Укажи, пожалуйста, одно короткое значение без переносов строк и скобок. Или напиши «Пропустить».');
+    append('assistant','fill-'+(++sequence),'Напиши, пожалуйста, покороче, одной строкой. Если не знаешь, можешь ответить «Пропустить».');
     return true;
    }
    const label=state.fields[state.index];
@@ -789,7 +792,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const result=state.text;
    documentFill=null;
    workingDocument={conversation:currentId,text:result};
-   append('assistant','fill-done-'+(++sequence),'Подготовила заполненную версию документа. Проверь текст и даты перед сохранением:\n\n---\n'+result+'\n---');
+   append('assistant','fill-done-'+(++sequence),'Готово! Я заполнила заявление. Посмотри, всё ли правильно:\n\n---\n'+result+'\n---');
   }
   return true;
  }
