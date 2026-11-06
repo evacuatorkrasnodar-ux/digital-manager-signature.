@@ -368,18 +368,26 @@
 #tasksPage .svcp-tasks-back .svcp-back-chevron{display:block;flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 #tasksPage #svcpTaskList{display:block}
 #tasksPage .svcp-manager-task-create{
- display:inline-flex;align-items:center;justify-content:flex-start;
- min-height:44px;margin:2px 0 7px;padding:8px 2px;
- border:0;background:transparent;color:var(--text);box-shadow:none;
- font:inherit;font-size:12.5px;font-weight:550;
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ flex:none;min-height:44px;margin:0;padding:8px 12px;
+ border:0;border-radius:22px;
+ background:rgba(184,195,201,.14);color:var(--text);box-shadow:none;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ font:inherit;font-size:12.5px;font-weight:560;
  letter-spacing:-.01em;cursor:pointer;touch-action:manipulation;
+}
+#tasksPage .svcp-manager-task-create svg{
+ display:block;width:17px;height:17px;fill:none;stroke:currentColor;
+ stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
 }
 #tasksPage .svcp-manager-task-create:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;border-radius:8px;
 }
-#tasksPage #svcpTaskList .svcp-task-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 2px}
-#tasksPage #svcpTaskList .svcp-task-section-head strong{font-size:14px;font-weight:580;color:var(--text)}
-#tasksPage #svcpTaskList .svcp-task-section-head small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums}
+#tasksPage #svcpTaskList .svcp-task-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0 7px}
+#tasksPage #svcpTaskList .svcp-task-section-heading{display:grid;gap:4px;min-width:0}
+#tasksPage #svcpTaskList .svcp-task-section-head strong{font-size:15px;font-weight:610;color:var(--text);line-height:1.25}
+#tasksPage #svcpTaskList .svcp-task-section-head small{font-size:12px;color:var(--secondary);font-variant-numeric:tabular-nums;line-height:1.3}
 #tasksPage #svcpTaskList .svcp-task-active{display:grid;gap:0}
 #tasksPage #svcpTaskList .svcp-task-zero{font-size:12px;line-height:1.55;padding:8px 0;color:var(--secondary);margin:0}
 #tasksPage #svcpTaskList .svcp-task{min-height:64px;gap:7px;align-items:center;display:flex;flex-wrap:wrap;padding:7px 0}
@@ -1024,8 +1032,8 @@ overflow:visible;margin:0 0 9px;border:0;border-radius:0;background:transparent;
 -webkit-backdrop-filter:none;backdrop-filter:none;
 }
 #tasksPage .svcp-manager-row{
-display:flex;align-items:center;width:100%;min-height:55px;gap:10px;padding:7px 5px;
-border:0;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line));
+display:flex;align-items:center;width:100%;min-height:61px;gap:11px;padding:9px 3px;
+border:0;border-bottom:1px solid color-mix(in srgb,var(--secondary) 10%,transparent);
 border-radius:0;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer;touch-action:manipulation;
 }
 #tasksPage .svcp-manager-row:last-child{border-bottom:0}
@@ -1034,20 +1042,24 @@ border-radius:0;background:transparent;color:var(--text);text-align:left;font:in
 display:grid;place-items:center;flex:none;width:30px;height:30px;border:0;border-radius:0;background:transparent;color:var(--secondary);
 }
 #tasksPage .svcp-manager-art svg{
-width:19px;height:19px;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;fill:none;
+width:20px;height:20px;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;fill:none;
 }
 #tasksPage .svcp-manager-row-text{display:grid;flex:1;min-width:0;gap:3px}
 #tasksPage .svcp-manager-row-text strong{
-font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
+font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.30;
 }
 #tasksPage .svcp-manager-row-text small{
  display:block;min-width:0;
- color:var(--secondary);font-size:11px;line-height:1.32;
+ color:var(--secondary);font-size:12px;line-height:1.35;
  white-space:normal;overflow-wrap:break-word;
 }
 #tasksPage .svcp-manager-chevron{
- flex:none;color:var(--secondary);font-size:20px;
- font-weight:300;line-height:1;opacity:.75;transition:transform .16s;
+ display:grid;place-items:center;flex:none;width:24px;height:24px;
+ color:var(--secondary);opacity:.8;transition:transform .16s;
+}
+#tasksPage .svcp-manager-chevron svg{
+ display:block;width:17px;height:17px;fill:none;stroke:currentColor;
+ stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
 }
 #tasksPage .svcp-manager-row:focus-visible,#tasksPage .svcp-manager-staff summary:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:-2px}
@@ -1055,7 +1067,7 @@ font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
  margin:0;border:0;border-radius:0;background:transparent;overflow:hidden
 }
 #tasksPage .svcp-manager-staff>summary{
-display:flex;align-items:center;gap:10px;min-height:55px;padding:7px 5px;cursor:pointer;list-style:none;border:0;background:transparent;touch-action:manipulation;
+display:flex;align-items:center;gap:11px;min-height:61px;padding:9px 3px;cursor:pointer;list-style:none;border:0;background:transparent;touch-action:manipulation;
 }
 #tasksPage #svcpManagerSchedule,#tasksPage #svcpBreakSetup{margin-left:7px;margin-right:7px}
 #tasksPage .svcp-manager-staff>summary::-webkit-details-marker{display:none}
@@ -1066,7 +1078,7 @@ display:flex;align-items:center;gap:10px;min-height:55px;padding:7px 5px;cursor:
 color:var(--text);font-size:14px;font-weight:600;letter-spacing:-.018em;line-height:1.28;
 }
 #tasksPage .svcp-manager-staff>summary small{
- display:block;min-width:0;font-size:11px;line-height:1.32;
+ display:block;min-width:0;font-size:12px;line-height:1.35;
  color:var(--secondary);white-space:normal;overflow-wrap:break-word;
 }
 #tasksPage .svcp-manager-staff[open]>summary{
@@ -1599,20 +1611,20 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 #tasksPage #svCabinetEmpty[hidden]{display:none!important}
 #tasksPage .sv-cabinet-toolbar{
  display:flex;align-items:center;justify-content:space-between;gap:14px;
- min-height:56px;padding:1px 3px 9px;margin:0;
- border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))
+ min-height:65px;padding:4px 2px 10px;margin:0;
+ border-bottom:1px solid color-mix(in srgb,var(--secondary) 10%,transparent);
 }
 #tasksPage .sv-cabinet-toolbar-text{display:grid;gap:4px;min-width:0}
 #tasksPage .sv-cabinet-toolbar-text strong{
- font-size:14px;font-weight:610;line-height:1.25;letter-spacing:-.02em;color:var(--text)
+ font-size:15px;font-weight:610;line-height:1.25;letter-spacing:-.02em;color:var(--text)
 }
-#tasksPage .sv-cabinet-toolbar-text small{font-size:10.5px;line-height:1.35;color:var(--secondary)}
+#tasksPage .sv-cabinet-toolbar-text small{font-size:12px;line-height:1.4;color:var(--secondary)}
 #tasksPage .sv-cabinet-plus{
  display:grid;place-items:center;flex:none;width:44px;height:44px;
  padding:0;border:0;border-radius:50%;
- background:var(--sv-liquid-nav-material,var(--card2));
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(20px));
- backdrop-filter:var(--sv-liquid-nav-blur,blur(20px));
+ background:rgba(184,195,201,.19);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
  box-shadow:none;color:var(--text);cursor:pointer
 }
 #tasksPage .sv-cabinet-plus svg{
@@ -2139,3 +2151,13 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 /* This shortcut duplicates the Cabinet setup entry. Keep its hidden DOM
    endpoint for existing workflow bindings, never show it in the chooser. */
 #svCabinetStartWithSayvi[hidden]{display:none!important}
+/* Business home uses the same tactile matte as Sayvi's composer. */
+:root[data-theme=light] #tasksPage :is(.sv-cabinet-plus,.svcp-manager-task-create){
+ background:rgba(99,121,133,.18);
+}
+@media(prefers-reduced-transparency:reduce){
+ #tasksPage :is(.sv-cabinet-plus,.svcp-manager-task-create){
+  background:var(--card2);-webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
+
