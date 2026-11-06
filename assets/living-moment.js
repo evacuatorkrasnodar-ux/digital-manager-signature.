@@ -671,6 +671,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
   setDocumentDeferred(true);
   finishPreviewItem();
  });
+ // Existing SEYVEO action hierarchy: one filled primary, one outlined
+ // secondary, quiet textual Sayvi/Later. The original sizing stays in CSS.
+ sayviAction.classList.add('sv-ref-card-sayvi');
+ execute.classList.add('sv-ref-card-primary');
+ open.classList.add('sv-ref-card-details');
  const realLater=polymer('Позже',()=>{
   if(!real||!shown.eventId||morphLocked)return;
   // Snooze only this Home session. The real item remains in its original Tasks list.
