@@ -46,7 +46,7 @@ function select(kind){
  $('svConnectKindDescription').textContent=info.description;
  $('svConnectSteps').replaceChildren();
  for(const line of info.steps){const li=document.createElement('li');li.textContent=line;$('svConnectSteps').append(li)}
- $('svConnectTest').hidden=kind==='phone'||kind==='home';
+ dialog.querySelector('.sv-connect-test').hidden=kind==='phone'||kind==='home';
  $('svConnectStatus').textContent='';
 }
 dialog.querySelectorAll('[data-sv-connect-kind]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.svConnectKind)));
