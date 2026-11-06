@@ -187,7 +187,7 @@
  --text:#26313b;--secondary:#626e74;
  --sv-velvet-divider:rgba(55,72,85,.13);
  --sv-lg26-control:linear-gradient(155deg,rgba(255,255,255,.65) 0%,rgba(232,235,240,.30) 58%,rgba(255,255,255,.45) 100%);
- --sv-master-glass:rgba(184,195,201,.19);
+ --sv-master-glass:rgba(99,121,133,.26);
 }
 /* Gallery and iPhone preview share exactly the same local theme variables.
    Theme selection never modifies the live app theme or its stored preference. */
