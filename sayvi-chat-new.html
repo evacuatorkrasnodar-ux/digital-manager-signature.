@@ -2395,11 +2395,13 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  async function ask(question,options={}){
   if(!options.skipUser&&!options.attachments?.length){
    const cardAction=window.SEYVEO_CARD_VOICE?.handle(question);
-   if(cardAction){
+   const localAction=cardAction?null:window.SEYVEO_LOCAL_ACTIONS?.handle(question);
+   const action=cardAction||localAction;
+   if(action){
     const id=++sequence;
     append('user','user-'+id,options.displayMessage??question,true);
-    append('assistant','reply-'+id,cardAction.message);
-    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:cardAction.message.slice(0,450)});
+    append('assistant','reply-'+id,action.message);
+    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:action.message.slice(0,450)});
     if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
     return;
    }
@@ -2697,6 +2699,9 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  updateControls();
 })();
 </script>
+<script src="assets/seyveo-chat-calendar-bridge.js?v=1"></script>
+<script src="assets/reminder-dialogue.js?v=1"></script>
+<script src="assets/assistant-local-actions.js?v=4"></script>
 <script src="assets/seyveo-card-voice.js?v=2"></script>
 </body>
 </html>
