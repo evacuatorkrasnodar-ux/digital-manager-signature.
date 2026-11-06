@@ -231,64 +231,47 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
  }
 }
 
-/* SEYVEO canonical Home actions — material taken from the Sayvi composer.
-   The reference card typography, icon, geometry, queue and interactions remain
-   unchanged. Override the retired glossy work-card pseudo lens. */
-:root{
- --sv-home-sayvi-smoke:rgba(184,195,201,.19);
- --sv-home-sayvi-smoke-pressed:rgba(218,235,245,.20);
- --sv-home-sayvi-ink:#f7fafc;
+/* Restore the approved hierarchy of the original SEYVEO Home card.
+   No new measurements: 12px/44px touch sizes, action gap and placement
+   remain owned by the existing card component styles. */
+:root{--sv-card-sayvi-fill:rgba(184,195,201,.19);--sv-card-sayvi-ink:#f7fafc}
+:root[data-theme=light]{--sv-card-sayvi-fill:rgba(99,121,133,.26);--sv-card-sayvi-ink:#26383b}
+:root[data-theme=dark][data-palette=emerald]{--sv-card-sayvi-fill:rgba(184,195,201,.20)}
+:root[data-theme=dark][data-palette=sapphire]{--sv-card-sayvi-fill:rgba(184,195,201,.22)}
+/* Retired oversized glossy lens must not render behind existing actions. */
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer::before,
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer::after{
+ content:none!important;display:none!important;
 }
-:root[data-theme=light]{
- --sv-home-sayvi-smoke:rgba(99,121,133,.26);
- --sv-home-sayvi-smoke-pressed:rgba(99,121,133,.31);
- --sv-home-sayvi-ink:#26383b;
-}
-html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]){
- -webkit-appearance:none!important;
- appearance:none!important;
- position:relative!important;
- isolation:auto!important;
- border:0!important;
- border-radius:999px!important;
- background:var(--sv-home-sayvi-smoke)!important;
- background-image:none!important;
- box-shadow:none!important;
- text-shadow:none!important;
- filter:none!important;
- color:var(--sv-home-sayvi-ink)!important;
+/* Primary ONLY: Sayvi smoke material, without modifying dimensions. */
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]){
+ border:0!important;border-radius:999px!important;
+ background:var(--sv-card-sayvi-fill)!important;
+ background-image:none!important;box-shadow:none!important;
+ color:var(--sv-card-sayvi-ink)!important;
  -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
  backdrop-filter:blur(18px) saturate(145%)!important;
- padding-inline:12px!important;
- padding-block:7px!important;
- font-weight:530!important;
- min-height:44px!important;
 }
-html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden])::before,
-html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden])::after{
- content:none!important;
- display:none!important;
- background:none!important;
- box-shadow:none!important;
+/* Details ONLY: subtle outline, no painted pill. */
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-ref-card-details:not([hidden]){
+ border:1px solid rgba(184,195,201,.23)!important;
+ border-radius:999px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]):active{
- background:var(--sv-home-sayvi-smoke-pressed)!important;
- transform:scale(.985);
+:root[data-theme=light] #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-ref-card-details:not([hidden]){
+ border-color:rgba(99,121,133,.25)!important;
 }
-html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]):focus-visible{
- outline:2px solid currentColor!important;
- outline-offset:2px!important;
+/* Sayvi / Later: original quiet text, never four identical capsules. */
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-ref-card-sayvi:not([hidden]),
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not(.sv-ref-card-primary):not(.sv-ref-card-details):not([hidden]){
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
- html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]){
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+ html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
-}
-/* Match the actual full-screen Sayvi dark palette overrides, too. */
-:root[data-theme=dark][data-palette=emerald]{
- --sv-home-sayvi-smoke:rgba(184,195,201,.20);
-}
-:root[data-theme=dark][data-palette=sapphire]{
- --sv-home-sayvi-smoke:rgba(184,195,201,.22);
 }
