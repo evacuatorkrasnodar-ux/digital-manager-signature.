@@ -274,7 +274,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
    execute.hidden=documentStep==='edit';
    open.hidden=documentStep==='edit';
    execute.textContent=documentStep==='done'?'Дальше'
-    :documentStep==='review'?'Ознакомлен':'Проверить';
+    :documentStep==='review'?'Ознакомлен':'К проверке';
   }
   documentDetails.replaceChildren();
   if(!active)return;
@@ -569,7 +569,11 @@ function createSurface(primary,other=[],real=false,taskId=''){
  execute.setAttribute('aria-label',(real?'Продолжить дело: ':'Исполнить: ')+shown.title);
  const sayviAction=polymer('✧ Сэйви',()=>{
   if(mailActive()){mailStep='confirm';updateMail();return}
-  if(documentActive()){documentStep='review';updateDocument();return}
+  if(documentActive()){
+   // Advice is not the same action as opening the manual review.
+   explain(field,'Это учебный пример. Сэйви предлагает уточнить срок поставки и действия при задержке. «К проверке» откроет текст пункта для разбора.',sayviAction);
+   return;
+  }
   explain(field,(shown.reason||'')+' '+(shown.detail||'Сэйви поможет разобраться с этой карточкой.'),sayviAction);
  });
  const workSayvi=polymer('✧ Ответит Сэйви',async()=>{
