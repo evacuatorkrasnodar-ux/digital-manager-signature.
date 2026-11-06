@@ -865,15 +865,15 @@ function disappear(){
   later(()=>{if(mode==='advice'){dynamic.hidden=true;rest()}},TIMING.close);
   return;
  }
- if(mode==='task')quiet.add(key);
+ if(mode==='task'||mode==='calendar')quiet.add(key);
  space.classList.add('lm-disappear');
- later(()=>{if(mode==='preview'||mode==='task'||mode==='discovery')rest()},TIMING.close);
+ later(()=>{if(mode==='preview'||mode==='task'||mode==='discovery'||mode==='calendar'||mode==='workshop')rest()},TIMING.close);
 }
 function closeEarly(){
  if(mode==='idle')return;
  if(mode==='discovery'&&key)window.SEYVEO_DISCOVERY?.postpone?.(key);
  cancel();
- if(mode==='task'||mode==='advice'||mode==='workshop')quiet.add(key);
+ if(mode==='task'||mode==='advice'||mode==='workshop'||mode==='calendar')quiet.add(key);
  space.classList.add('lm-condense','lm-disappear');
  later(()=>rest(),TIMING.close);
 }
@@ -983,6 +983,65 @@ function showTasks(items){
  if(items.length>1)hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
  // Up to three current tasks rise together; the rest stay in the existing Tasks store.
  // Opening or snoozing is never treated as proof that the task is completed.
+ return true;
+}
+
+
+/* Real upcoming Calendar reminders share the existing Home living plane.
+ * They do not become an extra calendar, a push alert, or a fake completed task. */
+function upcomingCalendar(){
+ return (window.SEYVEO_LIFE_EVENTS?.upcomingEvents?.()||[])
+  .filter(item=>!quiet.has('calendar:'+item.id+'|'+item.date+'|'+item.time));
+}
+function showCalendar(item){
+ if(!item||!available())return false;
+ mode='calendar';key='calendar:'+item.id+'|'+item.date+'|'+item.time;
+ dynamic.hidden=true;tiles.replaceChildren();
+ const field=create('div','lm-field');
+ field.dataset.lmMode='real';field.dataset.lmSubject='task';
+ const scene=create('div','lm-scene');
+ const top=create('div','lm-field-top');
+ top.append(create('span','lm-field-eyebrow','СЭЙВИ · ВАШ КАЛЕНДАРЬ'),
+   create('span','lm-field-measure','БЛИЖАЙШЕЕ СОБЫТИЕ'));
+ const main=create('section','lm-primary'),hero=create('div','lm-hero');
+ const art=create('div','lm-hero-art lm-hero-art--task');
+ art.append(icon('task'));
+ const copy=create('div','lm-primary-copy');
+ const when=new Date(item.date+'T'+item.time+':00')
+  .toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+ copy.append(create('strong','lm-primary-title',item.title),
+  create('p','lm-primary-subtitle',when+' · '+item.time+'. Записано в вашем календаре.'));
+ hero.append(art,copy);
+ const controls=create('div','lm-actions');
+ const why=polymer('Подробнее',()=>{
+  const explanation=field.querySelector('.lm-explanation');
+  if(!explanation)return;
+  explanation.hidden=!explanation.hidden;
+  why.setAttribute('aria-expanded',String(!explanation.hidden));
+ });
+ why.setAttribute('aria-expanded','false');
+ const open=polymer('Открыть календарь',()=>{
+  quiet.add(key);
+  location.hash='#calendar';
+ });
+ const postpone=()=>{
+  quiet.add(key);
+  space.classList.add('lm-disappear');
+  later(()=>rest(),reduced()?0:TIMING.close);
+ };
+ const laterButton=polymer('Позже',postpone);
+ controls.append(why,open,laterButton);
+ main.append(hero,controls);
+ const explanation=create('p','lm-explanation',
+  'Сэйви показывает вашу ближайшую запись за 36 часов до начала. Ничего не переносит и не выполняет автоматически. Само напоминание останется в календаре.');
+ explanation.hidden=true;
+ scene.append(top,main,explanation);field.append(scene);tiles.append(field);
+ space.hidden=false;space.classList.add('lm-preview','lm-real');
+ focus(true);tip.textContent='';
+ const targetBottom=window.visualViewport?.height||window.innerHeight;
+ const relativeTop=space.getBoundingClientRect().top;
+ space.style.setProperty('--lm-rise-distance',Math.max(320,Math.min(1100,targetBottom-relativeTop+100))+'px');
+ later(()=>{if(mode==='calendar')space.classList.add('lm-reveal')},TIMING.open);
  return true;
 }
 
@@ -1098,6 +1157,10 @@ function refresh(){
   if(quiet.has(key)&&!dynamic.hidden)dynamic.hidden=true;
   return;
  }
+ if(mode==='calendar'){
+  if(!upcomingCalendar().some(item=>'calendar:'+item.id+'|'+item.date+'|'+item.time===key)||dueTasks().length||pending){rest();return}
+  return;
+ }
  if(mode==='workshop'){
   if(!workshopItems().some(item=>'workshop:'+item.id===key)){rest();return}
   if(dueTasks().length||pending){rest();return}
@@ -1116,6 +1179,8 @@ function refresh(){
  if(tasks.length&&showTasks(tasks))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
+ const nextEvent=upcomingCalendar()[0];
+ if(!pending&&nextEvent&&available()&&showCalendar(nextEvent))return;
  const discovery=window.SEYVEO_DISCOVERY?.current?.();
  if(!pending&&discovery&&available()&&showDiscovery(discovery))return;
  const personal=workshopItems()[0];
