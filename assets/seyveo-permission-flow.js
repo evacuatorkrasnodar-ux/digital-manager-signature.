@@ -39,7 +39,8 @@ function present(kind,from){
 }
 function close(){
  panel.hidden=true;pending=false;
- gpsRevision++;lastPosition=null;
+ gpsRevision++;lastPosition=null;gpsBusy=false;
+ if(gpsLocate)gpsLocate.disabled=false;
  if(gpsResult)gpsResult.textContent='';
  if(gpsCopy)gpsCopy.hidden=true;
  const target=returnRoute;
