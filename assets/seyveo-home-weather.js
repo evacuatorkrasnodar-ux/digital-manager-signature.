@@ -25,7 +25,7 @@ function readCache(){
  try{
   const value=JSON.parse(localStorage.getItem(CACHE)||'null');
   const city=savedCity();
-  if(value?.day!==day()||typeof value.message!=='string'||typeof value.kind!=='string')return null;
+  if(value?.day!==day()||typeof value.message!=='string'||typeof value.kind!=='string'||typeof value.city!=='string'||!value.city)return null;
   if(city&&value.city!==city.name)return null;
   return value;
  }catch{return null}
