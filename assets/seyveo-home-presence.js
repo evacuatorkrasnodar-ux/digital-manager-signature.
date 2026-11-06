@@ -27,8 +27,7 @@
  const WEATHER_HOLD_MS=6500;
  const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
  let weatherWord='',weatherUntil=0,weatherTimer=null;
- const greeting=/^(?:Доброе утро|Добрый день|Добрый вечер|Доброй ночи)/iu;
- let ready=false,voicePhase='',voiceUntil=0,voiceTimer=null,last='';
+ let ready=false,voicePhase='',voiceTimer=null;
  const homeVisible=()=>!home.hidden&&!document.hidden&&
   (!location.hash||location.hash==='#home')&&
   !document.documentElement.classList.contains('seyveo-conversation');
@@ -49,38 +48,28 @@
   if(weatherTimer)clearTimeout(weatherTimer);
   weatherTimer=window.setTimeout(()=>{weatherWord='';weatherUntil=0;weatherTimer=null;update()},WEATHER_HOLD_MS);
  }
- function realStatus(){
-  if(voicePhase==='listening')return 'Слушаю…';
-  if(voicePhase==='speaking')return 'Сэйви отвечает…';
-  if(voicePhase==='thinking')return 'Сэйви думает…';
-  if(weatherWord&&Date.now()<weatherUntil)return weatherWord;
-  const life=window.SEYVEO_LIFE_EVENTS;
-  const due=life?.attentionTasks?.()||[];
-  if(due.length)return due.length===1?'Есть дело, которое ждёт внимания.':'Есть дела, которые ждут внимания.';
-  const upcoming=life?.upcomingEvents?.()||[];
-  if(upcoming.length)return upcoming.length===1?'Впереди событие в календаре.':'Впереди события в календаре.';
-  const tomorrow=life?.upcomingTasks?.()||[];
-  if(tomorrow.length)return tomorrow.length===1?'На завтра есть одно дело.':'На завтра есть несколько дел.';
-  return 'Всё спокойно. Я рядом.';
- }
+/* The original full greeting and context under the sphere ALWAYS stay visible.
+  * "Слово Сэйви" is only an internal nickname for an optional brief line. */
  function update(){
   const visible=ready&&homeVisible();
-  const isGreeting=greeting.test(headline.textContent?.trim()||'');
-  const isDemo=home.classList.contains('sv-home-preview');
-  // A real owner recommendation or onboarding keeps its original informative heading.
-  const canReplace=isGreeting||isDemo;
-  if(visible&&canReplace)maybeShowDailyWeather();
-  home.classList.toggle('sv-home-presence-calm',visible&&canReplace);
-  if(!visible||!canReplace){line.hidden=true;return}
+  // The quiet line supplements the original greeting, it never replaces it.
+  home.classList.remove('sv-home-presence-calm');
+  if(visible)maybeShowDailyWeather();
+  const status=voicePhase==='listening'?'Слушаю…'
+   :voicePhase==='speaking'?'Сэйви отвечает…'
+   :voicePhase==='thinking'?'Сэйви думает…'
+   :weatherWord&&Date.now()<weatherUntil?weatherWord:'';
+  if(!visible||!status){
+   line.hidden=true;return;
+  }
   line.hidden=false;
-  const msg=realStatus();
-  if(last!==msg){content.textContent=msg;last=msg}
+  if(content.textContent!==status)content.textContent=status;
   line.dataset.svPresence=voicePhase||'quiet';
   line.dataset.svWord=weatherWord&&!voicePhase?'weather':'status';
  }
  function clearVoice(){
   if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null}
-  voicePhase='';voiceUntil=0;update();
+  voicePhase='';update();
  }
  function onPresence(event){
   const phase=event.detail?.phase;
