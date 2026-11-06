@@ -86,6 +86,29 @@ function attentionTasks(now=new Date()){
   .sort((a,b)=>a.due.localeCompare(b.due))
   .map(r=>({id:r.id,title:cleanTitle(r.title),date:r.due,kind:'task'}));
 }
+/* Read-only relationship hint. A title match is only a possible connection:
+ * Sayvi never claims a task belongs to a meeting without confirmation. */
+function relatedPreparation(now=new Date()){
+ const events=upcomingEvents(now).filter(e=>e.startsAt>=now.getTime()&&e.startsAt-now.getTime()<=24*60*60*1000);
+ if(!events.length)return null;
+ const cutoff=key(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
+ const pending=readRows(TASK_KEY,150).filter(t=>t&&t.done!==true&&
+  t.kind!=='business'&&validDate(t.due)&&t.due<=cutoff&&cleanTitle(t.title));
+ const common=new Set(['сегодня','завтра','проверить','подготовить','сделать','встреча','встречу','задача','документ','документы','дело','работа','план','важное','нужно','перед','после','для']);
+ const tokens=title=>new Set(String(title).toLocaleLowerCase('ru-RU').replace(/ё/g,'е')
+  .match(/[а-яa-z0-9]{5,}/gu)?.filter(w=>!common.has(w))||[]);
+ for(const event of events){
+  const words=tokens(event.title);
+  if(!words.size)continue;
+  for(const task of pending){
+   const shared=[...tokens(task.title)].filter(w=>words.has(w));
+   // Require a distinctive shared term; no speculative semantic inference.
+   if(!shared.some(w=>w.length>=7))continue;
+   return {event:{title:event.title,date:event.date,time:event.time},task:{title:cleanTitle(task.title),due:task.due},possible:true};
+  }
+ }
+ return null;
+}
 function understand(query){
  if(typeof query!=='string'||query.length>220)return null;
  const q=query.toLocaleLowerCase('ru-RU').replace(/ё/g,'е').trim()
@@ -126,5 +149,5 @@ function notify(){
 for(const eventName of ['seyveo:calendar-changed','seyveo:tasks-changed','seyveo:spaces-changed'])
  window.addEventListener(eventName,notify);
 window.addEventListener('storage',event=>{if(!event.key||KEYS.has(event.key))notify()});
-window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,upcomingTasks,upcomingEvents,answer});
+window.SEYVEO_LIFE_EVENTS=Object.freeze({day,attentionTasks,upcomingTasks,upcomingEvents,relatedPreparation,answer});
 })();
