@@ -786,6 +786,60 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    }
    return true;
   }
+  // Natural-language correction of a *previously answered* field, without
+  // consuming the current question or guessing any unspecified details.
+  const correction=/^(?:нет[,!. ]*|ой[,!. ]*|исправь[,!. ]*|поправь[,!. ]*|я ошибся[,!. ]*)/iu.test(answer)
+   || /^(?:фамили[яю]|фио|имя|отчество|организаци[яю]|компани[яю]|название организации|должност[ьи]|дат[ауеы])\s*[:—-]?\s+/iu.test(answer);
+  if(correction){
+   let kind=null;
+   if(/фамили[яю]/iu.test(answer))kind='surname';
+   else if(/\bфио\b|имя|отчество/iu.test(answer))kind='fio';
+   else if(/организаци|компани|название организации/iu.test(answer))kind='company';
+   else if(/должност/iu.test(answer))kind='job';
+   else if(/дат[ауеы]/iu.test(answer))kind='date';
+   const fieldIndex=state.fields.findIndex((field,i)=>{
+    if(!Object.prototype.hasOwnProperty.call(state.answers,field))return false;
+    if(kind==='surname'||kind==='fio')return /фамил|имя|отчеств|фио/iu.test(field);
+    if(kind==='company')return /компан|организац|назван/iu.test(field);
+    if(kind==='job')return /должност/iu.test(field);
+    if(kind==='date')return /дат/iu.test(field);
+    return false;
+   });
+   if(fieldIndex>=0){
+    const field=state.fields[fieldIndex];
+    const previous=state.answers[field];
+    const stripped=answer.replace(/^(?:нет[,!. ]*|ой[,!. ]*|исправь[,!. ]*|поправь[,!. ]*|я ошибся[,!. ]*)/iu,'').trim();
+    const detail=stripped.replace(/^(?:фамили[яю]|фио|имя|отчество|организаци[яю]|компани[яю]|название организации|должност[ьи]|дат[ауеы])\s*[:—-]?\s*/iu,'')
+     .replace(/\s*,?\s+а\s+не\s+.+$/iu,'').replace(/[.!]\s*$/u,'').trim();
+    if(!detail||detail.length>180||/[\r\n<>\[\]]/u.test(detail)){
+     append('assistant','fill-'+(++sequence),'Что именно нужно исправить? Напиши новое значение.');
+     return true;
+    }
+    let updated=detail;
+    if(kind==='surname'){
+     const words=String(previous||'').trim().split(/\s+/u).filter(Boolean);
+     if(words.length>=2){
+      words[0]=detail;updated=words.join(' ');
+     }else if(words.length===1){updated=detail}
+     else{
+      append('assistant','fill-'+(++sequence),'Я ещё не знаю полное ФИО. Напиши фамилию, имя и отчество целиком.');
+      return true;
+     }
+    }
+    state.answers[field]=updated;
+    state.text=state.original;
+    for(const [key,entry] of Object.entries(state.answers)){
+     if(entry!==null)state.text=state.text.split('['+key+']').join(entry);
+    }
+    workingDocument={conversation:currentId,text:state.text};
+    append('assistant','fill-'+(++sequence),'Исправила: '+updated+'.\n'+fillQuestion(state.fields[state.index],state.index,state.fields.length));
+    return true;
+   }
+   if(/^(?:нет|ой|я ошибся|исправь|поправь)/iu.test(answer)){
+    append('assistant','fill-'+(++sequence),'Что хочешь исправить? Например, напиши: «Фамилия Петров» или «Назад».');
+    return true;
+   }
+  }
   const skipped=/^(?:пропустить|пропусти|не знаю|пока не знаю)$/iu.test(answer);
   if(!skipped&&(answer.length>180||/[\r\n<>\[\]]/u.test(answer))){
    append('assistant','fill-'+(++sequence),'Напиши, пожалуйста, покороче, одной строкой. Или ответь «Пропустить».');
