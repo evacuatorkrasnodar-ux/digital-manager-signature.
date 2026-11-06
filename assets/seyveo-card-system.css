@@ -343,34 +343,32 @@
 .sv-card-system--rendered .sv-card-action:is([data-card-role="navigation"],[data-card-role="quiet"])::after{
  content:none!important;display:none!important;
 }
-/* THE single Home action standard from SEYVEO Card Studio.
- * Roles are assigned in living-moment.js and in Card Engine:
- * assistant/primary = silver smoke; secondary = softer flat smoke;
- * navigation/quiet = text. Never use positional selectors or embossed edges.
- * Keep the existing 44px hit area and a 34px inset optical lens. */
+/* SEYVEO Card Studio · single thin action material standard.
+ * Keep 44px finger targets, but draw 30px optically thin glass lenses.
+ * Do NOT fill the entire button height or draw a second glass layer.
+ * Independent of optional Card Engine decoration classes. */
 :root{
- --sv-master-assistant-glass:rgba(222,232,239,.31);
- --sv-master-secondary-glass:rgba(184,195,201,.095);
+ --sv-master-assistant-glass:rgba(214,225,234,.17);
+ --sv-master-secondary-glass:rgba(184,195,201,.075);
 }
-:root[data-theme="light"]{
- --sv-master-assistant-glass:rgba(99,121,133,.26);
- --sv-master-secondary-glass:rgba(99,121,133,.13);
+:root[data-theme=light]{
+ --sv-master-assistant-glass:rgba(99,121,133,.22);
+ --sv-master-secondary-glass:rgba(99,121,133,.10);
 }
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer{
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer{
  box-sizing:border-box;
- min-height:var(--sv-master-touch-target,44px);
+ min-height:44px;
  font-size:var(--sv-master-action-size,12px);
  font-weight:540;
  letter-spacing:-.01em;
  line-height:1.25;
 }
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]),
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer[data-card-role="secondary"]:not([hidden]){
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden]){
  position:relative!important;
  isolation:isolate!important;
  border:0!important;
  border-radius:999px!important;
- padding:8px 12px!important;
+ padding:8px 11px!important;
  background:transparent!important;
  background-image:none!important;
  box-shadow:none!important;
@@ -378,84 +376,43 @@
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
- font-weight:620!important;
- padding-inline:14px!important;
-}
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden])::before{
+/* The silver lens is inside the hit area, not the whole 44px capsule. */
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden])::before{
  content:""!important;
  display:block!important;
  position:absolute!important;
- inset:5px 0!important;
+ inset:7px 0!important;
  border:0!important;
  border-radius:999px!important;
- background:var(--sv-master-glass)!important;
- background-image:none!important;
- box-shadow:none!important;
- -webkit-backdrop-filter:var(--sv-master-glass-blur)!important;
- backdrop-filter:var(--sv-master-glass-blur)!important;
- pointer-events:none;
- z-index:-1;
-}
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer[data-card-role="primary"][data-card-assistant="true"]:not([hidden])::before{
- background:var(--sv-master-assistant-glass)!important;
-}
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer[data-card-role="secondary"]:not([hidden])::before{
  background:var(--sv-master-secondary-glass)!important;
  box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+ pointer-events:none!important;
+ z-index:-1!important;
 }
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer:is([data-card-role="quiet"],[data-card-role="navigation"]):not([hidden]){
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
+ font-weight:590!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden])::before{
+ background:var(--sv-master-assistant-glass)!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="quiet"],[data-card-role="navigation"]):not([hidden]){
  border:0!important;
  border-radius:0!important;
  padding:8px 2px!important;
  background:transparent!important;
- background-image:none!important;
  box-shadow:none!important;
  color:var(--secondary)!important;
- -webkit-backdrop-filter:none!important;
- backdrop-filter:none!important;
 }
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer:is([data-card-role="quiet"],[data-card-role="navigation"])::before,
-#homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer::after{
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="quiet"],[data-card-role="navigation"])::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer::after{
  content:none!important;
  display:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #homePage #seyveoLivingMoment .lm-field.sv-card-system .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"])::before{
+ #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden])::before{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
- }
-}
-
-/* Safari: action material must not depend on an optional Card Engine
-   decoration class or a ::before lens (hidden by legacy Quiet Cinema).
-   Paint the existing buttons directly; no new controls or wrappers. */
-#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
- background:var(--sv-master-assistant-glass,rgba(222,232,239,.31))!important;
- border:0!important;
- border-radius:999px!important;
- box-shadow:none!important;
- padding:8px 14px!important;
- color:var(--text)!important;
- -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
- backdrop-filter:blur(16px) saturate(105%)!important;
-}
-#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="secondary"]:not([hidden]){
- background:var(--sv-master-secondary-glass,rgba(184,195,201,.095))!important;
- border:0!important;
- border-radius:999px!important;
- box-shadow:none!important;
- padding:8px 12px!important;
- color:var(--text)!important;
- -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
- backdrop-filter:blur(16px) saturate(105%)!important;
-}
-#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"])::before{
- content:none!important;
- display:none!important;
-}
-@media(prefers-reduced-transparency:reduce){
- #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden]){
   background:var(--card2)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
