@@ -756,7 +756,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    :/дат/iu.test(clean)
    ?'Какую дату поставить в заявлении?'
    :'Что написать в документе вместо «'+clean+'»?';
-  return (index===0?'Давай я помогу заполнить заявление.\n':'')+prompt;
+  return 'Заполним документ. Поле '+(index+1)+' из '+total+'.\n'+prompt;
  }
  function startDocumentFill(text){
   const source=String(text||'');
