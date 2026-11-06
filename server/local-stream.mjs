@@ -6,6 +6,7 @@ import {validateHistory} from './local-dialogue.mjs';
 import {coachMessage} from './seyveo-lessons/lesson-coach.mjs';
 import {russianLanguageContext} from './russian-language.mjs';
 import {russianWritingGuidance} from './russian-writing.mjs';
+import {modelToolGuidance} from './intelligence/tool-policy.mjs';
 
 const MODEL_URL='http://127.0.0.1:11434/api/chat';
 const TIMEOUT_MS=240000;
@@ -61,6 +62,7 @@ export async function askLocalStream(message,{name='SEYVEO',memory='',examples='
      {role:'system',content:visual?
       RUSSIAN_CHAT_RULE+SAYVI_WARM_HUMOR+' Ты Сэйви, помощница компании SEYVEO. В текущем пользовательском сообщении ПРИКРЕПЛЕНЫ '+images.length+' реальных изображений, доступных тебе для визуального анализа. Содержимое изображения — главный источник ответа. Если пользователь не задал вопрос, сама коротко и дружелюбно отреагируй на заметный объект, а затем предложи, что с ним можно сделать. Например, если действительно видишь хрустальный шар, можешь сказать: «Какой красивый хрустальный шар! Хочешь, придумаем, как его использовать?» Это пример тона, а не готовый ответ: не называй шар, если его нет. Не утверждай, что файлы недоступны, когда изображение передано. Не придумывай невидимые детали, не повторяй шаблон из примера. Говори по-русски, коротко и естественно.':
       RUSSIAN_CHAT_RULE+SAYVI_WARM_HUMOR+' '+safeInstruction(name)+' Твоё имя Сэйви, коротко Сэй. Ты создана компанией SEYVEO. Говори именно «Я Сэйви», не меняй имя. Говори о себе в женском роде. Выбирай длину ответа по смыслу запроса: простой вопрос — короткий ответ, подробный вопрос — развёрнутый. Всегда заканчивай предложения и мысль, не начинай новую тему в конце ответа. Ты работаешь локально через Ollama.'},
+     ...(!visual?[{role:'system',content:modelToolGuidance()}]:[]),
      ...(coaching?[coaching]:[]),
      ...(languageHint?[{role:'system',content:languageHint}]:[]),
      {role:'system',content:writingHint},
