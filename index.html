@@ -2775,6 +2775,17 @@ window.addEventListener('seyveo:profile-changed',syncHomeVoice);
 window.addEventListener('storage',event=>{
   if(['seyveo-personal-tasks-v1','seyveo-first-acquaintance-v1'].includes(event.key))syncHomeVoice();
 });
+/* Refresh the real greeting at daypart/date boundaries without DOM observers.
+   One low-frequency check, only while Home is visible in the foreground. */
+let svWelcomeMinute='';
+window.setInterval(()=>{
+  if(document.hidden||$('homePage').hidden)return;
+  const now=new Date();
+  const minute=[now.getFullYear(),now.getMonth(),now.getDate(),now.getHours(),now.getMinutes()].join('-');
+  if(minute===svWelcomeMinute)return;
+  svWelcomeMinute=minute;
+  syncHomeVoice();
+},60000);
 function render(){
   applyTheme();
   const advice=homeBusinessAdvice();
@@ -4410,4 +4421,4 @@ window.addEventListener('load',()=>{
   }
  }catch(error){console.warn('SEYVEO Browser search handoff failed.',error)}
 },{once:true});
-</script><script src="assets/seyveo-home-presence.js?v=4"></script></body></html>
+</script><script src="assets/seyveo-home-presence.js?v=5"></script></body></html>
