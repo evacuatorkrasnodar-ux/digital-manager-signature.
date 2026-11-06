@@ -2,8 +2,8 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const home=$('homePage'),root=$('manageOverview'),menu=$('seyveoCleanManageMenu');
-if(!root||!menu)return;
+const home=$('homePage'),root=$('manageOverview');
+if(!root)return;
 const KEY='seyveo-fan-cards-v1',MAX=24;
 const periods={any:'В любое время',morning:'Утром',day:'Днём',evening:'Вечером'};
 function clean(item){
@@ -24,22 +24,18 @@ function homeNote(){
  return item?{title:item.title,message:item.message,period:item.period}:null;
 }
 function el(tag,klass,value){const n=document.createElement(tag);if(klass)n.className=klass;if(value!==undefined)n.textContent=value;return n}
-const entry=el('section','manage-group sv-fan-entry');
-entry.append(el('h2','','Мастерская и сообщество'),el('p','','Свои карточки, идеи и сценарии Сэйви.'));
-const entryButton=el('button','sv-fan-launch','Открыть Мастерскую Сэйви');
-entryButton.type='button';entry.append(entryButton);menu.prepend(entry);
 const grid=document.querySelector('#lifePage .sv-life-category[aria-labelledby="svLifeServicesTitle"] .sv-life-category-grid');
 if(grid){
  const tile=el('button','calendar-space-button sv-fan-tile');
- tile.type='button';tile.setAttribute('aria-label','Открыть Мастерскую Сэйви');
- tile.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/><path d="M19 16v5M16.5 18.5h5"/></svg><span>Мастерская</span>';
+ tile.type='button';tile.setAttribute('aria-label','Открыть SEYVEO LAB — Мастерскую Сэйви');
+ tile.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/><path d="M19 16v5M16.5 18.5h5"/></svg><span>SEYVEO LAB</span>';
  tile.addEventListener('click',open);grid.append(tile);
 }
 const panel=el('section','sv-fan-workshop');panel.id='svFanWorkshopPanel';panel.hidden=true;
 panel.innerHTML=[
-'<header class="sv-fan-top"><button id="svFanBack" type="button" class="sv-fan-back">‹ Назад</button><small>SEYVEO · COMMUNITY</small></header>',
+'<header class="sv-fan-top"><button id="svFanBack" type="button" class="sv-fan-back">‹ Назад</button><small>SEYVEO LAB</small></header>',
 '<h1>Мастерская Сэйви</h1>',
-'<p class="sv-fan-intro">Создавай свои подсказки и карточки. Они сохраняются только на этом устройстве. Выполнение команд и установка чужого кода пока не поддерживаются.</p>',
+'<p class="sv-fan-intro"><strong>Придумай. Создай с Сэйви. Поделись.</strong> Создавай свои подсказки и карточки. Они сохраняются только на этом устройстве. Выполнение команд и установка чужого кода пока не поддерживаются.</p>',
 '<form id="svFanForm" class="sv-fan-form">',
 '<label>Название<input id="svFanTitle" maxlength="72" required placeholder="Например: Перед выходом"></label>',
 '<label>Что должна напомнить Сэйви<textarea id="svFanMessage" maxlength="280" rows="3" required placeholder="Проверь ключи и заряд телефона"></textarea></label>',
@@ -92,7 +88,6 @@ function close(navigateBack=false){
   else{history.pushState(null,'',location.pathname+location.search);window.dispatchEvent(new Event('hashchange'))}
  }
 }
-entryButton.addEventListener('click',open);
 $('svFanBack').addEventListener('click',()=>close(true));
 window.addEventListener('hashchange',()=>{if(location.hash!=='#manage')close(false)});
 $('svFanForm').addEventListener('submit',e=>{
