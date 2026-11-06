@@ -25,3 +25,10 @@
 #managePage .sv-permission-panel .sv-permission-allow{background:var(--sv-air-selected,var(--card));margin-right:8px}
 #managePage .sv-permission-panel button:focus-visible,
 #managePage .sv-permissions-entry:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+/* Choosing a city is simpler than a platform permission prompt. */
+#managePage .sv-weather-city-setup{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 12px}
+#managePage .sv-weather-city-setup input{min-width:140px;flex:1;max-width:100%;min-height:42px;box-sizing:border-box;padding:9px 13px;border:0;border-radius:13px;background:var(--sv-air-control,var(--card));color:var(--text);font:inherit;font-size:13px}
+#managePage .sv-weather-city-setup input[hidden]{display:none!important}
+#managePage .sv-weather-city-setup input:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+#managePage .sv-permission-panel .sv-permission-off{background:transparent;color:var(--secondary)}
