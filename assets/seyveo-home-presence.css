@@ -1,0 +1,52 @@
+/* SEYVEO Quiet Presence. The Home greeting uses its existing component.
+   After the short introduction, one line remains under the original sphere.
+   No surface, border, glass capsule, new color theme, or moving text. */
+#homePage #svHomeLivingLine{
+ display:flex;
+ width:min(100%,385px);
+ min-height:25px;
+ box-sizing:border-box;
+ margin:7px auto 8px;
+ padding:0 12px;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ color:var(--secondary);
+ text-align:center;
+ font-family:inherit;
+ font-size:12.5px;
+ font-weight:460;
+ line-height:1.45;
+ letter-spacing:.002em;
+ background:transparent;
+ border:0;
+ box-shadow:none;
+}
+#homePage #svHomeLivingLine[hidden]{display:none!important}
+#homePage #svHomeLivingLine .sv-home-living-mark{
+ flex:none;
+ color:var(--secondary);
+ font-size:12px;
+ font-weight:500;
+ line-height:1;
+ opacity:.75;
+}
+#homePage #svHomeLivingLine .sv-home-living-copy{
+ max-width:100%;
+ overflow-wrap:break-word;
+}
+#homePage.sv-home-presence-calm #stage>.message{
+ display:none!important;
+}
+/* Keep the approved orb geometry and 3-card composition untouched.
+   The line has no separate panel and remains compact on small phones. */
+@media(max-width:375px){
+ #homePage #svHomeLivingLine{font-size:12px;padding:0 9px;margin-top:5px;margin-bottom:6px}
+}
+@media(prefers-reduced-motion:no-preference){
+ #homePage #svHomeLivingLine:not([hidden]){animation:svHomeLivingAppear .45s ease-out both}
+ @keyframes svHomeLivingAppear{
+  from{opacity:0;transform:translateY(3px)}
+  to{opacity:1;transform:translateY(0)}
+ }
+}
