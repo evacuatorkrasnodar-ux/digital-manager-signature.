@@ -98,9 +98,9 @@
   if(document.hidden)clearVoice();
   else update();
  });
- const watcher=new MutationObserver(update);
- watcher.observe(headline,{childList:true,characterData:true,subtree:true});
- watcher.observe(home,{attributes:true,attributeFilter:['hidden','class']});
+ // Safari safety: do not observe Home mutations while update() itself
+ // modifies Home classes. That feedback loop can freeze all tap handlers.
+ // Existing app events, navigation, visibility and timed refresh are sufficient.
  window.setInterval(()=>{if(homeVisible())update()},5*60*1000);
  window.setTimeout(()=>{ready=true;update()},HELLO_MS);
 })();
