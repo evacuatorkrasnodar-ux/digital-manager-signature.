@@ -2683,6 +2683,20 @@ function openHomeAdvice(advice){
 let currentHomeRecommendation=null;
 /* The original welcome should contain real, useful context — not an
  * unconditional “everything is calm”, which concealed Calendar events. */
+/* One concrete, safe offer from an actual saved event.
+ * This only suggests a chat task; it does not create files, send mail or act. */
+function sayviPreparationOffer(title){
+ const q=String(title||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
+ if(/встреч|созвон|переговор|собеседован|совещан|звонок/.test(q))
+  return 'Хочешь, я помогу составить вопросы к встрече?';
+ if(/договор|контракт|документ|подписан|заявлен|отчет/.test(q))
+  return 'Хочешь, я помогу составить список того, что проверить в документе?';
+ if(/поездк|дорог|путешеств|вылет|рейс|поезд/.test(q))
+  return 'Хочешь, я помогу составить список вещей и дел перед поездкой?';
+ if(/врач|прием|клиник|больниц|анализ/.test(q))
+  return 'Хочешь, я помогу подготовить вопросы для приёма?';
+ return 'Хочешь, я помогу составить короткий план подготовки?';
+}
 function sayviHomeContext(brief){
  // Sayvi's initiative is a single grounded thought, not a new notification feed.
  // Only local, non-business personal tasks/calendar and approved LAB notes.
@@ -2692,13 +2706,13 @@ function sayviHomeContext(brief){
  const now=new Date();
  const connection=life?.relatedPreparation?.(now);
  if(connection){
-  return 'В календаре «'+connection.event.title+'», а в делах «'+connection.task.title+'». Возможно, они связаны. Проверим?';
+  return 'К событию «'+connection.event.title+'» есть дело «'+connection.task.title+'». Возможно, они связаны. Хочешь, помогу проверить подготовку?';
  }
  const soon=upcoming.find(item=>Number.isFinite(item.startsAt)&&item.startsAt>=now.getTime()&&item.startsAt-now.getTime()<=2*60*60*1000);
  if(soon){
   const minutes=Math.max(1,Math.ceil((soon.startsAt-now.getTime())/60000));
   const when=minutes<=59?'через '+minutes+' мин.':'в '+soon.time;
-  return 'Скоро событие — '+when+' «'+soon.title+'». Хочешь подготовиться?';
+  return 'Скоро событие — '+when+' «'+soon.title+'». '+sayviPreparationOffer(soon.title);
  }
  if(tasks.length){
   return tasks.length===1
@@ -2709,7 +2723,7 @@ function sayviHomeContext(brief){
   const item=upcoming[0],date=new Date(item.date+'T12:00:00');
   const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
   const when=item.date===today?'Сегодня':Number.isNaN(date.getTime())?'Скоро':date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
-  return when+' в '+item.time+' — «'+item.title+'». Хочешь что-нибудь подготовить?';
+  return when+' в '+item.time+' — «'+item.title+'». '+sayviPreparationOffer(item.title);
  }
  const future=life?.upcomingTasks?.()||[];
  if(future.length)return 'На завтра запланировано «'+future[0].title+'». Можем подготовиться заранее.';
