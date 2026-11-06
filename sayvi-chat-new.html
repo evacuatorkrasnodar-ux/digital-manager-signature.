@@ -592,7 +592,17 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-doc-scroll::-webkit-scrollbar{display:none}
 .sv-doc-content{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:12px}
 .sv-doc-notice{border:0;border-radius:15px;padding:12px 14px;background:rgba(190,119,54,.14);color:#f9d4a2;font:13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
-.sv-doc-notice[hidden],.sv-doc-fix[hidden],.sv-doc-paper[hidden],.sv-doc-editor[hidden]{display:none!important}
+.sv-doc-notice[hidden],.sv-doc-fix[hidden],.sv-doc-paper[hidden],.sv-doc-editor[hidden],.sv-doc-check[hidden]{display:none!important}
+.sv-doc-check{padding:12px 14px;border-radius:16px;background:rgba(154,167,178,.095);-webkit-backdrop-filter:blur(16px) saturate(105%);backdrop-filter:blur(16px) saturate(105%);color:var(--sayvi-text);font:13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.sv-doc-check--date{background:rgba(190,119,54,.13)}
+.sv-doc-check-title{display:flex;align-items:center;gap:8px;font:600 14px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;margin-bottom:5px}
+.sv-doc-check--date .sv-doc-check-title{color:#f4cc93}
+.sv-doc-check-body{color:var(--sayvi-secondary);white-space:pre-wrap;overflow-wrap:anywhere}
+.sv-doc-check--date .sv-doc-check-body{color:#edcda5}
+.sv-doc-check-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.sv-doc-check-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border:0;border-radius:13px;background:var(--sayvi-glass);color:var(--sayvi-text);font:550 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer}
+.sv-doc-check--date .sv-doc-check-actions button{background:rgba(218,163,101,.16);color:#f9d6a5}
+.sv-doc-check-actions button[hidden]{display:none!important}
 .sv-doc-fix{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border:0;border-radius:12px;background:rgba(229,166,98,.18);color:inherit;font:600 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:left;cursor:pointer}
 .sv-doc-paper,.sv-doc-editor{display:block;width:100%;margin:0;box-sizing:border-box;padding:clamp(22px,5vw,54px);border:0;border-radius:8px;background:#fff;color:#1b1b1b;box-shadow:0 5px 24px rgba(0,0,0,.10);font:15px/1.7 Georgia,"Times New Roman",serif;white-space:pre-wrap;overflow-wrap:anywhere;min-height:clamp(380px,72vh,920px)}
 .sv-doc-editor{resize:vertical;outline:none;max-height:none}
@@ -732,7 +742,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  // Latest finished draft for the active chat only. Nothing stored remotely.
  let workingDocument=null;
  function documentRevisionIntent(question){
-  return /(?:исправ|измени|замени|поменя|отредактир|перепиши|добавь|удали|убери|вставь|укажи|поставь|скорректир|переделай|обнови|дату|фамилию|имя|отчество|подпись|срок|формулировк)/iu.test(String(question||''));
+  return /(?:исправ|измени|замени|поменя|отредактир|перепиши|добавь|удали|убери|вставь|укажи|поставь|скорректир|переделай|обнови|заполн|подстав|дату|фамилию|имя|отчество|подпись|срок|формулировк)/iu.test(String(question||''));
  }
  function outgoingQuestionWithDocument(question,options){
   if(options.documentFiles?.length||options.attachments?.length)return documentContextFor(question,options);
@@ -1214,15 +1224,24 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   header.append(back,make('span','sv-doc-title','Документ'));
   const scroll=make('div','sv-doc-scroll');
   const content=make('div','sv-doc-content');
-  const notice=make('div','sv-doc-notice');notice.setAttribute('role','status');
-  const warningText=make('div','sv-doc-warning-text');
-  const fixDate=make('button','sv-doc-fix');fixDate.type='button';
-  const fillFields=make('button','sv-doc-fix','Заполнить поля');fillFields.type='button';
-  notice.append(warningText,fixDate,fillFields);
+  const dateCheck=make('section','sv-doc-check sv-doc-check--date');
+  const dateTitle=make('div','sv-doc-check-title','Проверить даты');
+  const dateText=make('div','sv-doc-check-body');
+  const dateActions=make('div','sv-doc-check-actions');
+  const fixDate=make('button','','Исправить дату');fixDate.type='button';
+  dateActions.append(fixDate);dateCheck.append(dateTitle,dateText,dateActions);
+  const fieldsCheck=make('section','sv-doc-check sv-doc-check--fields');
+  const fieldsTitle=make('div','sv-doc-check-title','Заполнить данные');
+  const fieldsText=make('div','sv-doc-check-body');
+  const fieldsActions=make('div','sv-doc-check-actions');
+  const fillFields=make('button','','Заполнить вручную');fillFields.type='button';
+  const askSayvi=make('button','','Заполнить с Сэйви');askSayvi.type='button';
+  fieldsActions.append(fillFields,askSayvi);
+  fieldsCheck.append(fieldsTitle,fieldsText,fieldsActions);
   const page=make('article','sv-doc-paper',draft);
   const editor=make('textarea','sv-doc-editor');editor.value=draft;editor.hidden=true;
   editor.maxLength=15000;editor.setAttribute('aria-label','Изменить текст документа');
-  content.append(notice,page,editor);scroll.append(content);
+  content.append(dateCheck,fieldsCheck,page,editor);scroll.append(content);
   const actions=make('footer','sv-doc-footer');
   const button=(label,callback)=>{
    const b=make('button','',label);b.type='button';b.addEventListener('click',callback);return b;
@@ -1233,14 +1252,12 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const warnings=documentDateWarnings(value);
    const fields=documentMissingFields(value);
    const suggestion=suggestDocumentEndDate(value);
-   notice.hidden=!warnings.length&&!fields.length;
-   warningText.textContent=[
-    ...(warnings.length?['Проверь документ: '+warnings.join(' ')]:[]),
-    ...(fields.length?['Не заполнены поля ('+fields.length+'): '+fields.join(', ')]:[])
-   ].join('\n');
-   fixDate.hidden=!warnings.length||!suggestion;
-   if(suggestion)fixDate.textContent='Исправить дату окончания на '+suggestion.corrected;
-   fillFields.hidden=!fields.length;
+   dateCheck.hidden=!warnings.length;
+   dateText.textContent=warnings.join(' ');
+   fixDate.hidden=!suggestion;
+   if(suggestion)fixDate.textContent='Исправить дату: '+suggestion.corrected;
+   fieldsCheck.hidden=!fields.length;
+   fieldsText.textContent=fields.length?'Не заполнено '+fields.length+' полей: '+fields.join(', '):'';
   };
   const editorVisible=show=>{
    editing=show;page.hidden=show;editor.hidden=!show;
@@ -1264,6 +1281,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     editor.focus();
     editor.setSelectionRange(match.index,match.index+match[0].length);
    }
+  });
+  askSayvi.addEventListener('click',()=>{
+   const text=currentDraft();
+   if(!text.trim())return;
+   workingDocument={conversation:currentId,text};
+   document.removeEventListener('keydown',onKey);
+   overlay.remove();
+   ask('Сэйви, помоги заполнить пустые поля в нашем документе. Используй только данные, которые я подтвердил в этой беседе, а недостающие данные сначала уточни у меня. Не придумывай ФИО, компанию, должность и дату.');
   });
   fixDate.addEventListener('click',()=>{
    const suggestion=suggestDocumentEndDate(currentDraft());
