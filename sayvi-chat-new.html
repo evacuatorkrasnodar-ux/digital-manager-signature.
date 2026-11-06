@@ -1197,12 +1197,12 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   actions.append(
    edit,
    makeAction('Скачать Word',()=>{
-    const text=currentDraft();if(text&&confirmIfWarnings())exportWordReply(text,feedback);
-    else window.alert('Документ не может быть пустым');
+    const text=currentDraft();if(!text){window.alert('Документ не может быть пустым');return}
+    if(confirmIfWarnings())exportWordReply(text,feedback);
    }),
    makeAction('Скачать PDF',()=>{
-    const text=currentDraft();if(text&&confirmIfWarnings())exportPdfReply(text,feedback);
-    else window.alert('Документ не может быть пустым');
+    const text=currentDraft();if(!text){window.alert('Документ не может быть пустым');return}
+    if(confirmIfWarnings())exportPdfReply(text,feedback);
    })
   );
   overlay.append(bar,notice,scroll,actions);
