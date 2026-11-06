@@ -1199,6 +1199,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    notice.hidden=!warnings.length;
    warningText.textContent=warnings.length?'Проверь документ перед скачиванием: '+warnings.join(' '):'';
    fixDate.hidden=!warnings.length||!suggestion;
+   fixDate.style.display=fixDate.hidden?'none':'block';
    if(suggestion)fixDate.textContent='Предложение: '+suggestion.corrected+' · Исправить дату';
   };
   fixDate.addEventListener('click',()=>{
