@@ -138,6 +138,7 @@ function restorePreview(kind){
 function restoreTask(id){
  if(typeof id!=='string'||!postponedTaskIds.has(id))return false;
  postponedTaskIds.delete(id);
+ restorePreparation(id);
  for(const eventId of Array.from(quiet)){
   if(eventId.startsWith('task:'+id+'|')||eventId==='mail-review:'+id)quiet.delete(eventId);
  }
@@ -680,6 +681,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   if(!real||!shown.eventId||morphLocked)return;
   // Snooze only this Home session. The real item remains in its original Tasks list.
   quiet.add(shown.eventId);
+  deferPreparation(shown);
   if(shown.taskId)postponedTaskIds.add(shown.taskId);
   finishRealItem();
  });
@@ -917,6 +919,27 @@ function startPreview(){
  hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
  return true;
 }
+/* Defer an evening heads-up for this calendar day only.
+ * Tomorrow's ACTUAL due task must still appear on its due date. */
+const PREPARATION_DEFER_KEY='seyveo-home-preparation-deferred-v1';
+const localDay=()=>new Date().toLocaleDateString('sv-SE');
+function preparationDeferred(){
+ try{
+  const x=JSON.parse(localStorage.getItem(PREPARATION_DEFER_KEY)||'null');
+  return x&&x.day===localDay()&&Array.isArray(x.ids)?x.ids.filter(id=>typeof id==='string').slice(-40):[];
+ }catch{return []}
+}
+function deferPreparation(item){
+ if(!item?.upcoming)return;
+ const id=String(item.eventId||'');if(!id)return;
+ const ids=Array.from(new Set([...preparationDeferred(),id])).slice(-40);
+ try{localStorage.setItem(PREPARATION_DEFER_KEY,JSON.stringify({day:localDay(),ids}))}catch{}
+}
+function restorePreparation(id){
+ const prefix='task:'+id+'|';
+ const ids=preparationDeferred().filter(entry=>!entry.startsWith(prefix));
+ try{localStorage.setItem(PREPARATION_DEFER_KEY,JSON.stringify({day:localDay(),ids}))}catch{}
+}
 function dueTasks(includeUpcoming=false){
  let tasks=[];
  if(window.SEYVEO_PREVIEW?.isEmployee?.()!==true){
@@ -932,7 +955,7 @@ function dueTasks(includeUpcoming=false){
  const personal=window.SEYVEO_LIFE_EVENTS?.attentionTasks?.()||[];
  // Evening preparation is optional and comes AFTER genuine due tasks.
  // No duplicate stored task, no invented due hour.
- const future=includeUpcoming?(window.SEYVEO_LIFE_EVENTS?.upcomingTasks?.()||[]):[];
+ const future=includeUpcoming?(window.SEYVEO_LIFE_EVENTS?.upcomingTasks?.()||[]).filter(item=>!preparationDeferred().includes('task:'+item.id+'|'+item.date)):[];
  return tasks.concat(personal.map(item=>{
    const eventId='task:'+item.id+'|'+item.date;
    const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
