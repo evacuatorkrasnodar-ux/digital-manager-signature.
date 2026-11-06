@@ -1283,6 +1283,11 @@ const viewObserver=new MutationObserver(()=>{
  }else scheduleRefresh();
 });
 viewObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+// Keep date-based suggestions current even if the app remains open across 18:00
+// or midnight. No network or background service is started.
+window.setInterval(()=>{
+ if(!document.hidden&&!home.hidden) scheduleRefresh();
+},5*60*1000);
 window.addEventListener('seyveo:life-events-changed',scheduleRefresh);
 window.addEventListener('seyveo:fan-workshop-changed',scheduleRefresh);
 window.addEventListener('seyveo:discovery-updated',scheduleRefresh);
