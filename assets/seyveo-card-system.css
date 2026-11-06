@@ -27,10 +27,13 @@
  --sv-master-queue-leading:1.48;
  --sv-master-action-size:12px;
  --sv-master-touch-target:44px;
- --sv-master-glass:var(--sv-lg26-control,linear-gradient(155deg,rgba(230,241,249,.15),rgba(175,204,222,.075) 65%,rgba(205,224,238,.09)));
+ --sv-master-glass:rgba(184,195,201,.19);
  --sv-master-glass-blur:blur(18px) saturate(145%);
  --sv-master-card-radius:20px;
 }
+:root[data-theme=light]{--sv-master-glass:rgba(99,121,133,.26)}
+:root[data-theme=dark][data-palette=emerald]{--sv-master-glass:rgba(184,195,201,.20)}
+:root[data-theme=dark][data-palette=sapphire]{--sv-master-glass:rgba(184,195,201,.22)}
 .sv-card-system{
  --sv-card-ink:var(--text);
  --sv-card-subtle:var(--secondary);
@@ -311,6 +314,57 @@
 }
 @media(prefers-reduced-transparency:reduce){
  #tasksPage #svcpTaskList .svcp-task .svcp-task-actions .svcp-task-sayvi{
+  background:var(--sv-velvet-panel,var(--card2));
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
+
+/* Living Moment/Home legacy cards: action material and sizing are governed
+ * by the SAME master values as Studio and Card Engine. No extra styling layer.
+ * The approved Home preview layout, content, actions and 3-card queue remain. */
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions{
+ column-gap:9px;
+ row-gap:0;
+}
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer{
+ box-sizing:border-box;
+ min-height:var(--sv-master-touch-target);
+ font-size:var(--sv-master-action-size);
+ font-weight:550;
+ line-height:1.25;
+}
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer:is(.sv-ref-card-primary,.sv-ref-card-details):not([hidden]){
+ padding:8px 12px;
+ border:0;
+ border-radius:999px;
+ background:var(--sv-master-glass);
+ background-image:none;
+ box-shadow:none;
+ color:var(--text);
+ -webkit-backdrop-filter:var(--sv-master-glass-blur);
+ backdrop-filter:var(--sv-master-glass-blur);
+}
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer.sv-ref-card-primary:not([hidden]){
+ padding-inline:14px;
+ font-weight:630;
+}
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer:not(.sv-ref-card-primary):not(.sv-ref-card-details){
+ padding:8px 2px;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ background-image:none;
+ box-shadow:none;
+ color:var(--secondary);
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+}
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer::before,
+#homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer::after{
+ content:none!important;display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #homePage #seyveoLivingMoment .lm-field:not(.sv-living-card-26) .lm-actions .lm-polymer:is(.sv-ref-card-primary,.sv-ref-card-details):not([hidden]){
   background:var(--sv-velvet-panel,var(--card2));
   -webkit-backdrop-filter:none;backdrop-filter:none;
  }
