@@ -1725,7 +1725,7 @@ function renderTasks(){
  });
  const heading=el('div','svcp-task-section-head');
  const headingText=el('div','svcp-task-section-heading');
- headingText.append(el('strong',null,'Сегодня'),el('small',null,'В работе · '+open.length));
+ headingText.append(el('strong',null,'Поручения'),el('small',null,open.length?'В работе · '+open.length:'Нет активных'));
  heading.append(headingText,create);
  list.append(heading);
  function taskRow(t,i){
@@ -1817,8 +1817,8 @@ function renderTasks(){
   if(key)openSeen.add(key);
   activeBox.append(taskRow(task,index));
  }
- if(!activeBox.childElementCount)activeBox.append(el('p','svcp-task-zero','Новых поручений нет.'));
- list.append(activeBox);
+ // The header already states the empty condition; do not repeat it below.
+ if(activeBox.childElementCount)list.append(activeBox);
  if(dups.length){
   const info=el('div','svcp-duplicate-summary');
   info.append(el('span',null,'Одинаковых активных задач скрыто: '+dups.length));
