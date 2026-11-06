@@ -2030,3 +2030,49 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  background:color-mix(in srgb,var(--card) 72%,transparent);
  box-shadow:none;
 }
+
+/* SEYVEO Liquid Glass · approved Sayvi composer material for the
+   single Tasks / Cabinet selector. One geometry across both views.
+   Matte translucent surface, no raised bevel, rim or drop shadow. */
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs,
+#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
+ background:rgba(184,195,201,.19);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ border:0;
+ box-shadow:none;
+ isolation:isolate;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"],
+#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="true"]{
+ background:rgba(184,195,201,.13);
+ border:0;
+ box-shadow:none;
+ color:var(--text);
+ font-weight:590;
+}
+#tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="false"],
+#tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="false"]{
+ background:transparent;
+ box-shadow:none;
+ color:var(--secondary);
+}
+:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs,
+:root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
+ background:rgba(99,121,133,.18);
+ -webkit-backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+ backdrop-filter:blur(14px) saturate(115%) contrast(1.12);
+}
+:root[data-theme=light] #tasksPage[data-work-view="personal"] #unifiedTasksTabs button[aria-pressed="true"],
+:root[data-theme=light] #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"] button[aria-pressed="true"]{
+ background:rgba(255,255,255,.45);
+ color:var(--text);
+ box-shadow:none;
+}
+@media(prefers-reduced-transparency:reduce){
+ #tasksPage[data-work-view="personal"] #unifiedTasksTabs,
+ #tasksPage[data-work-view="business"] #unifiedTasksTabs[data-manager="true"]{
+  background:var(--card2);
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
