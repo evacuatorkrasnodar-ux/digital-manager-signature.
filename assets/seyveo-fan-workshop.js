@@ -25,6 +25,37 @@ function homeNote(){
 }
 function el(tag,klass,value){const n=document.createElement(tag);if(klass)n.className=klass;if(value!==undefined)n.textContent=value;return n}
 const grid=document.querySelector('#lifePage .sv-life-category[aria-labelledby="svLifeServicesTitle"] .sv-life-category-grid');
+let personalGrid=null;
+function renderMyWorld(){
+ if(!grid)return;
+ if(!personalGrid){personalGrid=el('div','sv-fan-personal-grid');personalGrid.setAttribute('aria-label','Мои дополнения');grid.after(personalGrid)}
+ personalGrid.replaceChildren();personalGrid.hidden=cards.length===0;
+ for(const item of cards){
+  const tile=el('button','calendar-space-button sv-fan-personal-tile');tile.type='button';
+  tile.setAttribute('aria-label','Открыть моё дополнение '+item.title);
+  const symbol=el('span','sv-fan-personal-symbol','✦');symbol.setAttribute('aria-hidden','true');
+  tile.append(symbol,el('span','',item.title));
+  tile.addEventListener('click',()=>showPersonal(item));personalGrid.append(tile);
+ }
+}
+function showPersonal(item){
+ let dialog=$('svFanPersonalDialog');
+ if(!dialog){
+  dialog=el('dialog','sv-fan-personal-dialog');dialog.id='svFanPersonalDialog';
+  const sheet=el('div','sv-fan-personal-sheet');
+  const back=el('button','sv-fan-personal-back','‹ Мой мир');back.type='button';back.addEventListener('click',()=>dialog.close());
+  const title=el('h2','');title.id='svFanPersonalTitle';
+  const description=el('p','');description.id='svFanPersonalDescription';
+  const actions=el('div','sv-fan-personal-actions');
+  const edit=el('button','','Открыть в Мастерской');edit.type='button';edit.addEventListener('click',()=>{dialog.close();open()});
+  actions.append(edit);sheet.append(back,title,description,actions);dialog.append(sheet);document.body.append(dialog);
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+ }
+ $('svFanPersonalTitle').textContent=item.title;
+ $('svFanPersonalDescription').textContent=item.message;
+ if(!dialog.open)dialog.showModal();
+}
+
 if(grid){
  const tile=el('button','calendar-space-button sv-fan-tile');
  tile.type='button';tile.setAttribute('aria-label','Открыть SEYVEO LAB — Мастерскую Сэйви');
@@ -53,6 +84,7 @@ panel.innerHTML=[
 ].join('');
 root.append(panel);
 function render(){
+ renderMyWorld();
  const holder=$('svFanCards');holder.replaceChildren();$('svFanCount').textContent='· '+cards.length+'/'+MAX;
  if(!cards.length){holder.append(el('p','sv-fan-caption','Здесь появятся твои карточки.'));return}
  for(const item of cards){
@@ -97,7 +129,7 @@ $('svFanForm').addEventListener('submit',e=>{
  const item=clean({id:String(Date.now())+Math.random().toString(36).slice(2),title,message,period:$('svFanPeriod').value,onHome:$('svFanShow').checked});
  if(!item)return;
  cards.unshift(item);store();render();e.target.reset();
- $('svFanStatus').textContent='Готово! Карточка сохранена и появится на Главной в выбранное время.';
+ $('svFanStatus').textContent='Готово! Дополнение появилось в «Моём мире». Карточка на Главной будет показана по выбранным условиям.';
 });
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;cards=read();render();window.dispatchEvent(new Event('seyveo:fan-workshop-changed'))});
 window.SEYVEO_FAN_WORKSHOP=Object.freeze({open,homeNote,list:()=>cards.map(c=>({...c}))});
