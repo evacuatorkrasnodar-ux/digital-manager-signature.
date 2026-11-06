@@ -10,7 +10,7 @@ const TIME=/^([01]\d|2[0-3]):([0-5]\d)$/;
 const validDate=text=>{
  const m=DATE.exec(String(text||''));if(!m)return false;
  const y=+m[1],mo=+m[2],d=+m[3],value=new Date(y,mo-1,d);
- return value.getFullYear()===y&&value.getMonth()+1===mo-1&&value.getDate()===d;
+ return value.getFullYear()===y&&value.getMonth()+1===mo&&value.getDate()===d;
 };
 const cleanTitle=text=>String(text||'').trim().replace(/\s+/g,' ').slice(0,140);
 const normalized=text=>cleanTitle(text).toLocaleLowerCase('ru-RU');
