@@ -581,6 +581,35 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 .sv-web-results-label{font-size:11px;color:var(--sayvi-secondary);padding:1px 2px 3px}
 .sv-web-result-domain{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:390px){.sv-web-result{padding:8px;gap:8px}.sv-web-result-img{width:46px;height:46px}}
+
+/* SEYVEO document workspace — responsive glass chrome with an A4-like paper sheet. */
+.sv-doc-viewer{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;width:100%;height:100vh;height:100dvh;min-height:0;overflow:hidden;background:var(--sayvi-scene,#15191e);color:var(--sayvi-text,#f8fafc);isolation:isolate}
+.sv-doc-header{flex:none;min-height:54px;padding:calc(8px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:12px;background:var(--sayvi-glass,rgba(150,160,177,.13));-webkit-backdrop-filter:blur(20px) saturate(120%);backdrop-filter:blur(20px) saturate(120%)}
+.sv-doc-back{display:inline-flex;align-items:center;gap:5px;flex:none;min-height:38px;padding:5px 10px 5px 3px;border:0;border-radius:13px;background:transparent;color:inherit;font:500 14px/1.2 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;cursor:pointer}
+.sv-doc-back svg{height:20px;width:20px;fill:none;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round}
+.sv-doc-title{flex:1;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;font:600 14px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.sv-doc-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:clamp(12px,3vw,30px) 12px 35px}
+.sv-doc-scroll::-webkit-scrollbar{display:none}
+.sv-doc-content{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:12px}
+.sv-doc-notice{border:0;border-radius:15px;padding:12px 14px;background:rgba(190,119,54,.14);color:#f9d4a2;font:13px/1.5 -apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.sv-doc-notice[hidden],.sv-doc-fix[hidden],.sv-doc-paper[hidden],.sv-doc-editor[hidden]{display:none!important}
+.sv-doc-fix{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border:0;border-radius:12px;background:rgba(229,166,98,.18);color:inherit;font:600 13px/1.35 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;text-align:left;cursor:pointer}
+.sv-doc-paper,.sv-doc-editor{display:block;width:100%;margin:0;box-sizing:border-box;padding:clamp(22px,5vw,54px);border:0;border-radius:8px;background:#fff;color:#1b1b1b;box-shadow:0 5px 24px rgba(0,0,0,.10);font:15px/1.7 Georgia,"Times New Roman",serif;white-space:pre-wrap;overflow-wrap:anywhere;min-height:clamp(380px,72vh,920px)}
+.sv-doc-editor{resize:vertical;outline:none;max-height:none}
+.sv-doc-footer{flex:none;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;padding:11px max(12px,env(safe-area-inset-right,0px)) calc(11px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:var(--sayvi-glass,rgba(150,160,177,.13));-webkit-backdrop-filter:blur(24px) saturate(130%);backdrop-filter:blur(24px) saturate(130%)}
+.sv-doc-footer button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;max-width:100%;padding:8px 13px;border:0;border-radius:14px;background:rgba(150,164,180,.19);color:inherit;font:550 13px/1.25 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.sv-doc-footer button:active,.sv-doc-back:active,.sv-doc-fix:active{background:var(--sayvi-pressed,rgba(170,190,210,.24))}
+.sv-doc-viewer button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media(max-width:410px){
+ .sv-doc-header{gap:6px}.sv-doc-back{padding-right:2px}
+ .sv-doc-title{font-size:13px}
+ .sv-doc-scroll{padding:12px 10px 24px}
+ .sv-doc-paper,.sv-doc-editor{padding:22px 20px;min-height:clamp(320px,67vh,720px);font-size:14px;line-height:1.65}
+ .sv-doc-footer{gap:6px;padding-left:8px;padding-right:8px}
+ .sv-doc-footer button{flex:1 1 0;min-width:0;padding:8px 5px;font-size:11.5px}
+}
+@media(prefers-reduced-transparency:reduce){.sv-doc-header,.sv-doc-footer{background:var(--sayvi-fallback,#27313b);-webkit-backdrop-filter:none;backdrop-filter:none}}
+
 </style>
 </head>
 <body>
@@ -1155,107 +1184,92 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  }
  function previewSayviDocument(value,feedback){
   const initialDraft=documentDraftOnly(value);
-  if(!initialDraft){feedback.textContent='Сэйви пока не подготовила текст документа. Попроси её написать полный документ.';return}
-  const overlay=document.createElement('section');
-  overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
-  overlay.setAttribute('aria-label','Предпросмотр документа');
-  overlay.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;background:#15191e;color:#f6f7f9;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';
-  const bar=document.createElement('div');
-  bar.style.cssText='min-height:54px;display:flex;align-items:center;gap:12px;padding:7px 16px;background:rgba(145,162,181,.12);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)';
-  const back=document.createElement('button');back.type='button';back.textContent='‹ Назад';
-  back.style.cssText='background:transparent;color:inherit;border:0;font:500 15px system-ui;padding:9px 4px;cursor:pointer';
-  const name=document.createElement('span');name.textContent='Предпросмотр документа';
-  name.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 14px system-ui';
-  bar.append(back,name);
-  const scroll=document.createElement('div');
-  scroll.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:20px 14px 28px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch';
-  const page=document.createElement('article');
-  page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:0;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
+  if(!initialDraft){feedback.textContent='Сэйви пока не подготовила полный текст документа.';return}
   let draft=initialDraft,editing=false;
   workingDocument={conversation:currentId,text:draft};
-  page.textContent=draft;scroll.append(page);
-  const editor=document.createElement('textarea');
-  editor.setAttribute('aria-label','Редактирование документа');
-  editor.value=draft;editor.hidden=true;
-  editor.maxLength=15000;
-  editor.style.cssText=page.style.cssText+';display:none;width:100%;resize:none;border:0;outline:0;min-height:60vh';
-  scroll.append(editor);
+  const make=(tag,className,textValue)=>{
+   const el=document.createElement(tag);if(className)el.className=className;
+   if(textValue!==undefined)el.textContent=textValue;
+   return el;
+  };
+  const overlay=make('section','sv-doc-viewer');
+  overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+  overlay.setAttribute('aria-label','Предпросмотр документа');
+  const header=make('header','sv-doc-header');
+  const back=make('button','sv-doc-back');back.type='button';back.setAttribute('aria-label','Назад к чату');
+  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span>Назад</span>';
+  header.append(back,make('span','sv-doc-title','Документ'));
+  const scroll=make('div','sv-doc-scroll');
+  const content=make('div','sv-doc-content');
+  const notice=make('div','sv-doc-notice');notice.setAttribute('role','status');
+  const warningText=make('div','sv-doc-warning-text');
+  const fixDate=make('button','sv-doc-fix');fixDate.type='button';
+  notice.append(warningText,fixDate);
+  const page=make('article','sv-doc-paper',draft);
+  const editor=make('textarea','sv-doc-editor');editor.value=draft;editor.hidden=true;
+  editor.maxLength=15000;editor.setAttribute('aria-label','Изменить текст документа');
+  content.append(notice,page,editor);scroll.append(content);
+  const actions=make('footer','sv-doc-footer');
+  const button=(label,callback)=>{
+   const b=make('button','',label);b.type='button';b.addEventListener('click',callback);return b;
+  };
+  const currentDraft=()=>editing?editor.value:draft;
+  const updateWarnings=()=>{
+   const value=currentDraft();
+   const warnings=documentDateWarnings(value);
+   const suggestion=suggestDocumentEndDate(value);
+   notice.hidden=!warnings.length;
+   warningText.textContent=warnings.length?'Проверь документ: '+warnings.join(' '):'';
+   fixDate.hidden=!warnings.length||!suggestion;
+   if(suggestion)fixDate.textContent='Исправить дату окончания на '+suggestion.corrected;
+  };
   const editorVisible=show=>{
    editing=show;page.hidden=show;editor.hidden=!show;
-   editor.style.display=show?'block':'none';
-   if(show){editor.style.height=Math.max(550,page.offsetHeight)+'px';editor.focus({preventScroll:true})}
+   if(show){
+    editor.style.height=Math.max(400,page.getBoundingClientRect().height)+'px';
+    editor.focus({preventScroll:true});
+   }
+   updateWarnings();
   };
-  const notice=document.createElement('div');
-  notice.setAttribute('role','status');
-  notice.style.cssText='padding:9px 16px;color:#ffdfad;background:rgba(164,98,38,.16);font:13px/1.45 system-ui,sans-serif;white-space:pre-wrap';
-  const warningText=document.createElement('span');
-  const fixDate=document.createElement('button');fixDate.type='button';
-  fixDate.style.cssText='display:block;margin-top:8px;padding:8px 12px;border:0;border-radius:12px;background:rgba(255,215,164,.16);color:#ffe4bf;font:600 13px system-ui;cursor:pointer;text-align:left';
-  notice.append(warningText,fixDate);
-  const updateWarnings=()=>{
-   const current=editing?editor.value:draft;
-   const warnings=documentDateWarnings(current);
-   const suggestion=suggestDocumentEndDate(current);
-   notice.hidden=!warnings.length;
-   warningText.textContent=warnings.length?'Проверь документ перед скачиванием: '+warnings.join(' '):'';
-   fixDate.hidden=!warnings.length||!suggestion;
-   fixDate.style.display=fixDate.hidden?'none':'block';
-   if(suggestion)fixDate.textContent='Предложение: '+suggestion.corrected+' · Исправить дату';
-  };
+  const edit=button('Редактировать',()=>{
+   if(!editing){editor.value=draft;editorVisible(true);edit.textContent='Готово';return}
+   if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
+   draft=editor.value;page.textContent=draft;
+   workingDocument={conversation:currentId,text:draft};
+   editorVisible(false);edit.textContent='Редактировать';
+  });
   fixDate.addEventListener('click',()=>{
-   const source=editing?editor.value:draft;
-   const suggestion=suggestDocumentEndDate(source);
+   const suggestion=suggestDocumentEndDate(currentDraft());
    if(!suggestion)return;
-   if(!window.confirm('Заменить «'+suggestion.original+'» на «'+suggestion.replacement+'»?\n\nЭто календарный расчёт. Для ежегодного оплачиваемого отпуска проверь нерабочие праздничные дни и правила трудового законодательства.'))return;
+   const message='Заменить «'+suggestion.original+'» на «'+suggestion.replacement+'»?\n\nЭто только календарный расчёт. Для ежегодного оплачиваемого отпуска в России учитывай нерабочие праздничные дни.';
+   if(!window.confirm(message))return;
    const revised=suggestion.apply();
-   if(editing){editor.value=revised}
-   else {draft=revised;page.textContent=draft}
+   if(editing)editor.value=revised;
+   else{draft=revised;page.textContent=draft}
    workingDocument={conversation:currentId,text:revised};
    updateWarnings();
   });
-  const actions=document.createElement('div');
-  actions.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(145,162,181,.10);flex-wrap:wrap';
-  const makeAction=(label,callback)=>{
-   const b=document.createElement('button');b.type='button';b.textContent=label;
-   b.style.cssText='padding:10px 15px;min-height:40px;border:0;border-radius:14px;color:#f8fafc;background:rgba(166,190,207,.18);font:500 13px system-ui;cursor:pointer';
-   b.addEventListener('click',callback);return b;
+  const confirmDownload=()=>{
+   const value=currentDraft();
+   if(!value.trim()){window.alert('Документ не может быть пустым');return null}
+   const warnings=documentDateWarnings(value);
+   if(warnings.length&&!window.confirm('В документе возможная ошибка:\n'+warnings.join('\n')+'\n\nВсё равно скачать?'))return null;
+   return value;
   };
+  actions.append(edit,
+   button('Скачать Word',()=>{const text=confirmDownload();if(text)exportWordReply(text,feedback)}),
+   button('Скачать PDF',()=>{const text=confirmDownload();if(text)exportPdfReply(text,feedback)})
+  );
   const dismiss=()=>{
    if(editing&&editor.value!==draft&&!window.confirm('Закрыть без сохранения изменений?'))return;
    document.removeEventListener('keydown',onKey);
    overlay.remove();
   };
-  const onKey=e=>{if(e.key==='Escape')dismiss()};
+  const onKey=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}};
   back.addEventListener('click',dismiss);
-  const edit=makeAction('Редактировать',()=>{
-   if(!editing){editor.value=draft;editorVisible(true);edit.textContent='Готово';return}
-   if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
-   draft=editor.value;
-   updateWarnings();
-   workingDocument={conversation:currentId,text:draft};
-   page.textContent=draft;
-   editorVisible(false);
-   edit.textContent='Редактировать';
-  });
-  const currentDraft=()=>{
-   const text=editing?editor.value:draft;
-   return text.trim()?text:null;
-  };
   editor.addEventListener('input',updateWarnings);
   updateWarnings();
-  const confirmIfWarnings=()=>{const w=documentDateWarnings(currentDraft());return !w.length||window.confirm('Возможная ошибка в документе:\n'+w.join('\n')+'\n\nВсё равно скачать?')};
-  actions.append(
-   edit,
-   makeAction('Скачать Word',()=>{
-    const text=currentDraft();if(!text){window.alert('Документ не может быть пустым');return}
-    if(confirmIfWarnings())exportWordReply(text,feedback);
-   }),
-   makeAction('Скачать PDF',()=>{
-    const text=currentDraft();if(!text){window.alert('Документ не может быть пустым');return}
-    if(confirmIfWarnings())exportPdfReply(text,feedback);
-   })
-  );
-  overlay.append(bar,notice,scroll,actions);
+  overlay.append(header,scroll,actions);
   document.body.append(overlay);
   document.addEventListener('keydown',onKey);
   back.focus({preventScroll:true});
