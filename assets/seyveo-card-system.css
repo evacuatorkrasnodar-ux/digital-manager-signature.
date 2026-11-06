@@ -425,3 +425,37 @@
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Safari: action material must not depend on an optional Card Engine
+   decoration class or a ::before lens (hidden by legacy Quiet Cinema).
+   Paint the existing buttons directly; no new controls or wrappers. */
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="primary"]:not([hidden]){
+ background:var(--sv-master-assistant-glass,rgba(222,232,239,.31))!important;
+ border:0!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+ padding:8px 14px!important;
+ color:var(--text)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer[data-card-role="secondary"]:not([hidden]){
+ background:var(--sv-master-secondary-glass,rgba(184,195,201,.095))!important;
+ border:0!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+ padding:8px 12px!important;
+ color:var(--text)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+}
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"])::before{
+ content:none!important;
+ display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:is([data-card-role="primary"],[data-card-role="secondary"]):not([hidden]){
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
