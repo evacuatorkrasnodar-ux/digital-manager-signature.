@@ -230,3 +230,58 @@ html body #homePage #seyveoLivingMoment .lm-field[data-lm-subject="work"] .lm-ac
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO canonical Home actions — material taken from the Sayvi composer.
+   The reference card typography, icon, geometry, queue and interactions remain
+   unchanged. Override the retired glossy work-card pseudo lens. */
+:root{
+ --sv-home-sayvi-smoke:rgba(184,195,201,.19);
+ --sv-home-sayvi-smoke-pressed:rgba(218,235,245,.20);
+ --sv-home-sayvi-ink:#f7fafc;
+}
+:root[data-theme=light]{
+ --sv-home-sayvi-smoke:rgba(99,121,133,.26);
+ --sv-home-sayvi-smoke-pressed:rgba(99,121,133,.31);
+ --sv-home-sayvi-ink:#26383b;
+}
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]){
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ position:relative!important;
+ isolation:auto!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:var(--sv-home-sayvi-smoke)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ text-shadow:none!important;
+ filter:none!important;
+ color:var(--sv-home-sayvi-ink)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
+ backdrop-filter:blur(18px) saturate(105%)!important;
+ padding-inline:12px!important;
+ padding-block:7px!important;
+ font-weight:530!important;
+ min-height:44px!important;
+}
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden])::before,
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden])::after{
+ content:none!important;
+ display:none!important;
+ background:none!important;
+ box-shadow:none!important;
+}
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]):active{
+ background:var(--sv-home-sayvi-smoke-pressed)!important;
+ transform:scale(.985);
+}
+html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]):focus-visible{
+ outline:2px solid currentColor!important;
+ outline-offset:2px!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([hidden]){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
