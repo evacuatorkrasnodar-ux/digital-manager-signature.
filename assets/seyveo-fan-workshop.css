@@ -119,3 +119,54 @@
 #managePage .sv-fan-release-note{display:grid;gap:6px;padding:14px 13px;border-radius:15px;background:color-mix(in srgb,var(--card) 64%,transparent)}
 #managePage .sv-fan-release-note strong{font-size:12.5px}
 #managePage .sv-fan-release-note span{font-size:11.5px;line-height:1.5;color:var(--secondary)}
+
+/* SEYVEO LAB · unified iOS 26 Liquid Glass control material.
+   Reuse the approved optical tokens; never create a raised second lens. */
+#managePage #svFanWorkshopPanel :is(.sv-fan-actions button,.sv-fan-primary,.sv-fan-template,.sv-fan-mark-choice,.sv-fan-tone-choice,.sv-fan-secondary){
+ -webkit-appearance:none;appearance:none;
+ border:0;
+ background:var(--sv-lg26-control,var(--sv-air-control,var(--card)));
+ box-shadow:none;
+ -webkit-backdrop-filter:var(--sv-lg26-blur,blur(18px) saturate(145%));
+ backdrop-filter:var(--sv-lg26-blur,blur(18px) saturate(145%));
+ color:var(--text);
+ transition:background-color .2s ease,opacity .2s ease,transform .2s ease;
+ -webkit-tap-highlight-color:transparent;
+}
+#managePage #svFanWorkshopPanel :is(.sv-fan-actions button,.sv-fan-primary,.sv-fan-secondary):active{
+ background:var(--sv-lg26-pressed,var(--sv-air-selected,var(--card)));
+ transform:scale(.985);
+}
+#managePage #svFanWorkshopPanel .sv-fan-actions button{
+ min-height:42px;
+ border-radius:999px;
+ padding:10px 13px;
+ font-size:12px;
+ font-weight:540;
+}
+#managePage #svFanWorkshopPanel .sv-fan-actions .sv-fan-remove{
+ background:transparent;
+ color:var(--secondary);
+}
+#managePage #svFanWorkshopPanel .sv-fan-actions .sv-fan-remove:active{
+ background:var(--sv-lg26-pressed,transparent);
+}
+#managePage #svFanWorkshopPanel .sv-fan-primary{
+ min-height:46px;
+ border-radius:999px;
+ font-weight:620;
+ background:var(--sv-home-glass-fill,var(--sv-lg26-control));
+ box-shadow:var(--sv-home-glass-reflection,none);
+}
+#managePage #svFanWorkshopPanel .sv-fan-secondary{border-radius:999px}
+#managePage #svFanWorkshopPanel .sv-fan-template{border-radius:18px}
+#managePage #svFanWorkshopPanel .sv-fan-choices button[aria-pressed=true]{
+ outline:1.5px solid color-mix(in srgb,var(--text) 68%,transparent);
+ outline-offset:2px;
+}
+@media(prefers-reduced-transparency:reduce){
+ #managePage #svFanWorkshopPanel :is(.sv-fan-actions button,.sv-fan-primary,.sv-fan-template,.sv-fan-mark-choice,.sv-fan-tone-choice,.sv-fan-secondary){
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--card2);
+ }
+}
