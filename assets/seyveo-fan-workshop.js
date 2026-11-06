@@ -13,7 +13,7 @@ function clean(item){
  if(!item||typeof item!=='object')return null;
  const title=String(item.title||'').trim().slice(0,72),message=String(item.message||'').trim().slice(0,280);
  if(!title||!message)return null;
- return {id:String(item.id||'').slice(0,60),title,message,period:periods[item.period]?item.period:'any',onHome:item.onHome!==false,mark:marks[item.mark]?item.mark:'spark',tone:tones[item.tone]?item.tone:'mint'};
+ return {id:String(item.id||'').slice(0,60),title,message,period:periods[item.period]?item.period:'any',onHome:item.onHome!==false,done:item.done===true,doneAt:item.done===true&&typeof item.doneAt==='string'?item.doneAt:'',mark:marks[item.mark]?item.mark:'spark',tone:tones[item.tone]?item.tone:'mint'};
 }
 function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v.map(clean).filter(Boolean).slice(0,MAX):[]}catch{return []}}
 let cards=read(),returnRoute='#manage';
@@ -24,7 +24,7 @@ function store(){
 }
 function homeNote(){
  const hour=new Date().getHours(),period=hour>=5&&hour<12?'morning':hour>=12&&hour<18?'day':'evening';
- const item=cards.find(c=>c.onHome&&(c.period==='any'||c.period===period));
+ const item=cards.find(c=>c.onHome&&!c.done&&(c.period==='any'||c.period===period));
  return item?{title:item.title,message:item.message,period:item.period}:null;
 }
 function el(tag,klass,value){const n=document.createElement(tag);if(klass)n.className=klass;if(value!==undefined)n.textContent=value;return n}
@@ -151,10 +151,18 @@ function render(){
   const card=el('article','sv-fan-card');
   card.dataset.tone=item.tone;
   const badge=el('span','sv-fan-card-emblem',marks[item.mark]);
-  const title=el('strong','',item.title),time=el('small','',periods[item.period]);
+  const title=el('strong','',item.title),time=el('small','',item.done?'Выполнено':periods[item.period]);
   const desc=el('p','',item.message),buttons=el('div','sv-fan-actions');
   const toggle=el('button','',item.onHome?'На Главной ✓':'На Главную');
   toggle.type='button';toggle.addEventListener('click',()=>{item.onHome=!item.onHome;store();render()});
+  const finish=el('button','',item.done?'Вернуть':'Выполнено');finish.type='button';
+  finish.setAttribute('aria-label',item.done?'Вернуть карточку на Главную: '+item.title:'Отметить карточку выполненной: '+item.title);
+  finish.addEventListener('click',()=>{
+   item.done=!item.done;
+   item.doneAt=item.done?new Date().toISOString():'';
+   store();render();
+   $('svFanStatus').textContent=item.done?'Карточка отмечена выполненной и больше не показывается на Главной.':'Карточка возвращена в активные.';
+  });
   const edit=el('button','','Изменить');edit.type='button';edit.addEventListener('click',()=>editItem(item));
   const share=el('button','','Поделиться');share.type='button';
   share.addEventListener('click',async()=>{
@@ -167,7 +175,7 @@ function render(){
   });
   const remove=el('button','sv-fan-remove','Удалить');remove.type='button';
   remove.addEventListener('click',()=>{cards=cards.filter(c=>c.id!==item.id);store();render()});
-  buttons.append(edit,toggle,share,remove);card.append(badge,title,time,desc,buttons);holder.append(card);
+  buttons.append(finish,edit,toggle,share,remove);card.append(badge,title,time,desc,buttons);holder.append(card);
  }
 }
 function open(){
@@ -191,7 +199,7 @@ $('svFanForm').addEventListener('submit',e=>{
  if(!editingId&&cards.length>=MAX){$('svFanStatus').textContent='Достигнут лимит 24 карточки.';return}
  const item=clean({id:editingId||String(Date.now())+Math.random().toString(36).slice(2),title,message,period:$('svFanPeriod').value,onHome:$('svFanShow').checked,mark:chosenMark,tone:chosenTone});
  if(!item)return;
- if(editingId){cards=cards.map(c=>c.id===editingId?item:c)}else cards.unshift(item);
+ if(editingId){const prev=cards.find(c=>c.id===editingId);if(prev){item.done=prev.done;item.doneAt=prev.doneAt}cards=cards.map(c=>c.id===editingId?item:c)}else cards.unshift(item);
  store();render();resetEdit();
  $('svFanStatus').textContent='Готово! Дополнение появилось в «Моём мире». Карточка на Главной будет показана по выбранным условиям.';
 });
