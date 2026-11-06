@@ -17,8 +17,6 @@
  mark.className='sv-home-living-mark';
  mark.setAttribute('aria-hidden','true');
  mark.textContent='✧';
- mark.title='Слово Сэйви';
- line.setAttribute('aria-label','Слово Сэйви');
  const content=document.createElement('span');
  content.className='sv-home-living-copy';
  line.append(mark,content);
