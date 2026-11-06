@@ -2697,10 +2697,12 @@ function syncHomeVoice(){
     subline='Предложение по сведениям, которые вы разрешили сохранить, а не по данным внешних сервисов.';
   }else if(currentHomeRecommendation){
     if(currentHomeRecommendation.isDemo){
-      // Internal preview needs no extra introduction.
-      kicker='';
-      headline='';
-      subline='';
+      // The example card does not remove Sayvi's normal greeting.
+      kicker=assistant+' · на связи';
+      headline=daypartGreeting()+(name?', '+name:'');
+      subline=brief.count
+        ?'У нас в планах '+brief.count+' дел. Я помогу с ними, когда скажете.'
+        :'Сейчас всё спокойно. Я рядом, если понадоблюсь.';
     }else{
       kicker=assistant+' · на контроле';
       headline=name?name+', есть рекомендация':'Есть рекомендация';
@@ -2717,9 +2719,11 @@ function syncHomeVoice(){
   }else{
     const weather=window.SEYVEO_HOME_WEATHER?.today?.();
     const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
-    kicker=personal?assistant+' · ваша мастерская':weather?assistant+' · погода рядом':assistant+' · на связи';
+    kicker=personal?assistant+' · ваша мастерская':assistant+' · на связи';
     headline=daypartGreeting()+(name?', '+name:'');
-    subline=personal?.message||weather?.message||(brief.count
+    // A verified forecast can appear only briefly in Sayvi Word, not here
+    // throughout the day instead of the original greeting information.
+    subline=personal?.message||(brief.count
       ?'У нас в планах '+brief.count+' дел. Я помогу с ними, когда скажете.'
       :'Сейчас всё спокойно. Я рядом, если понадоблюсь.');
   }
