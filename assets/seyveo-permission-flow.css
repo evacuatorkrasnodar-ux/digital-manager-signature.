@@ -42,3 +42,18 @@
 #managePage .sv-gps-section button{margin:0 7px 7px 0}
 #managePage .sv-gps-section button[hidden]{display:none!important}
 #managePage .sv-gps-section button:disabled{opacity:.55}
+
+/* Waypoint: private local place records, not map routing. */
+#managePage .sv-waypoint{margin-top:18px;padding:16px 13px;border-radius:19px;background:color-mix(in srgb,var(--card) 45%,transparent)}
+#managePage .sv-waypoint h3{font-size:15px;font-weight:610;margin:0 0 7px}
+#managePage .sv-waypoint>p{font-size:12px;line-height:1.55;color:var(--secondary);margin:0 0 13px}
+#managePage .sv-waypoint label{display:block;font-size:12px;margin:0 0 7px}
+#managePage .sv-waypoint input{box-sizing:border-box;display:block;width:100%;min-height:42px;border:0;border-radius:13px;padding:10px 12px;background:var(--sv-air-control,var(--card2));color:var(--text);font:inherit;font-size:13px;outline-offset:2px}
+#managePage .sv-waypoint-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+#managePage .sv-waypoint-actions button{margin:0;flex:1;min-width:145px}
+#managePage .sv-waypoint-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 9px;border-radius:13px;background:color-mix(in srgb,var(--card2) 40%,transparent);margin-top:7px}
+#managePage .sv-waypoint-row strong{display:block;font-size:12px;font-weight:600}
+#managePage .sv-waypoint-row small{display:block;font-size:11px;color:var(--secondary);margin-top:3px;font-variant-numeric:tabular-nums}
+#managePage .sv-waypoint-row button{flex:none;background:transparent;font-size:11px;color:var(--secondary);padding:5px;margin:0}
+#managePage .sv-waypoint-empty{font-size:12px;color:var(--secondary);margin:12px 0}
+#managePage .sv-waypoint .sv-waypoint-warning{font-size:10.5px;line-height:1.5;margin:12px 0 0;color:var(--secondary)}
