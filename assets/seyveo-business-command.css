@@ -1631,22 +1631,22 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  box-sizing:border-box;width:min(480px,calc(100vw - 20px));max-width:none;
  max-height:min(82dvh,730px);padding:0;margin:auto;
  border:0;border-radius:24px;
- background:color-mix(in srgb,var(--card) 96%,transparent);
+ background:rgba(31,42,49,.86);
  color:var(--text);font-family:inherit;
- box-shadow:0 16px 55px rgba(0,0,0,.26);
- -webkit-backdrop-filter:blur(28px) saturate(1.12);
- backdrop-filter:blur(28px) saturate(1.12);
+ box-shadow:none;
+ -webkit-backdrop-filter:blur(24px) saturate(105%);
+ backdrop-filter:blur(24px) saturate(105%);
  overflow:auto;overscroll-behavior:contain;scrollbar-width:none
 }
 .sv-cabinet-dialog::-webkit-scrollbar{display:none}
 .sv-cabinet-dialog::backdrop{
- background:rgba(0,0,0,.52);
+ background:rgba(6,12,16,.46);
  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)
 }
 .sv-cabinet-dialog *{box-sizing:border-box}
 .sv-cabinet-dialog-body{padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px))}
 .sv-cabinet-grabber{
- width:34px;height:4px;margin:0 auto 13px;border-radius:999px;
+ width:36px;height:4px;margin:0 auto 14px;border-radius:999px;
  background:var(--secondary);opacity:.3
 }
 .sv-cabinet-dialog-head{
@@ -1666,13 +1666,15 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  color:var(--text);font:inherit;font-size:12px;font-weight:570;cursor:pointer
 }
 .sv-cabinet-search{
- display:flex;align-items:center;gap:9px;min-height:44px;
- padding:0 13px;margin:0 0 8px;border:0;border-radius:14px;
- background:color-mix(in srgb,var(--card2) 74%,transparent)
+ display:flex;align-items:center;gap:10px;min-height:46px;
+ padding:0 13px;margin:0 0 8px;border:0;border-radius:16px;
+ background:rgba(184,195,201,.15);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%)
 }
 .sv-cabinet-search svg{
- width:17px;height:17px;flex:none;fill:none;stroke:var(--secondary);
- stroke-width:1.55;stroke-linecap:round
+ width:18px;height:18px;flex:none;fill:none;stroke:var(--secondary);
+ stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
 }
 .sv-cabinet-search input{
  width:100%;flex:1;min-width:0;min-height:44px;padding:0;
@@ -1693,10 +1695,10 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 .sv-cabinet-choice:active{background:color-mix(in srgb,var(--text) 5%,transparent)}
 .sv-cabinet-choice-copy{display:grid;gap:4px;min-width:0;flex:1}
 .sv-cabinet-choice-copy strong{
- font-size:13px;line-height:1.28;font-weight:590;color:var(--text)
+ font-size:13.5px;line-height:1.28;font-weight:580;color:var(--text)
 }
 .sv-cabinet-choice-copy small{
- font-size:10.5px;line-height:1.35;font-weight:430;color:var(--secondary)
+ font-size:11.5px;line-height:1.38;font-weight:430;color:var(--secondary)
 }
 .sv-cabinet-choice-mark{
  display:grid;place-items:center;flex:none;width:27px;height:27px;
@@ -1719,8 +1721,10 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  position:sticky;bottom:calc(-14px - env(safe-area-inset-bottom,0px));
  display:flex;justify-content:space-between;align-items:center;gap:12px;
  padding:9px 0 calc(7px + env(safe-area-inset-bottom,0px));
- border-top:1px solid var(--sv-velvet-divider,var(--soft-line));
- background:var(--card);z-index:2
+ border-top:1px solid color-mix(in srgb,var(--secondary) 10%,transparent);
+ background:rgba(31,42,49,.90);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);z-index:2
 }
 .sv-cabinet-footer button{
  min-height:44px;border:0;border-radius:999px;padding:9px 14px;
@@ -1728,11 +1732,14 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 }
 .sv-cabinet-reset{background:transparent}
 .sv-cabinet-save{
- min-width:112px;background:var(--sv-liquid-nav-material,var(--card2));
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
- backdrop-filter:var(--sv-liquid-nav-blur,blur(18px))
+ min-width:112px;background:rgba(184,195,201,.19);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%)
 }
-:root[data-theme=light] .sv-cabinet-dialog{background:rgba(248,250,251,.97)}
+:root[data-theme=light] .sv-cabinet-dialog{background:rgba(245,249,251,.86)}
+:root[data-theme=light] .sv-cabinet-search,
+:root[data-theme=light] .sv-cabinet-save{background:rgba(99,121,133,.18)}
+:root[data-theme=light] .sv-cabinet-footer{background:rgba(245,249,251,.92)}
 .sv-cabinet-dialog button:focus-visible,
 #tasksPage .sv-cabinet-plus:focus-visible,
 #tasksPage .sv-cabinet-empty button:focus-visible{
@@ -1752,7 +1759,8 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  .sv-cabinet-footer{bottom:calc(-15px - env(safe-area-inset-bottom,0px))}
 }
 @media(prefers-reduced-transparency:reduce){
- .sv-cabinet-dialog{background:var(--card)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+ .sv-cabinet-dialog,.sv-cabinet-footer{background:var(--card)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+ .sv-cabinet-search,.sv-cabinet-save{background:var(--card2)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
  .sv-cabinet-choice-mark,.sv-cabinet-save,#tasksPage .sv-cabinet-plus{background:var(--card2)}
 }
 
@@ -1795,7 +1803,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 .sv-cabinet-search[hidden]{display:none!important}
 .sv-cabinet-goal-row{
  display:flex;align-items:stretch;justify-content:space-between;gap:4px;
- min-height:60px;border-bottom:1px solid var(--sv-velvet-divider,var(--soft-line))
+ min-height:62px;border-bottom:1px solid color-mix(in srgb,var(--secondary) 10%,transparent)
 }
 .sv-cabinet-goal-detail{
  display:flex;align-items:center;gap:9px;min-width:0;flex:1;
@@ -1805,9 +1813,10 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 }
 .sv-cabinet-goal-detail:active{background:color-mix(in srgb,var(--text) 4%,transparent)}
 .sv-cabinet-goal-chevron{
- flex:none;color:var(--secondary);font-size:21px;font-weight:300;line-height:1;
- opacity:.72
+ display:flex;align-items:center;justify-content:center;
+ flex:none;width:19px;height:24px;color:var(--secondary);opacity:.72
 }
+.sv-cabinet-goal-chevron svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 .sv-cabinet-goal-mark{
  display:grid;place-items:center;align-self:center;flex:none;
  width:44px;height:44px;padding:0;
