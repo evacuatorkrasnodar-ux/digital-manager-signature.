@@ -438,6 +438,12 @@ main.sayvi-menu-open #sayviStatus{visibility:hidden}
 .sv-reply-action svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 .sv-action-feedback{font-size:11px;color:var(--sayvi-secondary);padding:0 5px}
 .sv-action-feedback:empty{display:none}
+.sv-document-downloads{display:flex;gap:9px;flex-wrap:wrap;margin:7px 0 2px}
+.sv-document-downloads[hidden]{display:none!important}
+.sv-document-downloads button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 14px;border:0;border-radius:14px;background:var(--sayvi-glass);color:var(--sayvi-text);font:500 13px/1.25 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;-webkit-backdrop-filter:blur(15px) saturate(125%);backdrop-filter:blur(15px) saturate(125%);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sv-document-downloads button:active{background:var(--sayvi-pressed)}
+.sv-document-downloads button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.sv-document-downloads svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
 /* Own-message actions: long press, unobtrusive Smoke Glass sheet. */
 .sv-own-sheet[hidden]{display:none!important}
@@ -900,6 +906,20 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    feedback.textContent='Word сохранён';
   }catch(error){feedback.textContent=String(error?.message||'Ошибка сохранения Word')}
  }
+ function exportPdfReply(value,feedback){
+  if(!value.trim()){feedback.textContent='Нет текста для PDF';return}
+  const preview=window.open('','_blank');
+  if(!preview){feedback.textContent='Разреши открытие окна для PDF';return}
+  const doc=preview.document;doc.title='SEYVEO — документ';
+  const meta=doc.createElement('meta');meta.setAttribute('charset','UTF-8');doc.head.append(meta);
+  const style=doc.createElement('style');
+  style.textContent='@page{size:A4;margin:20mm 18mm}body{font:12pt/1.55 Arial,Helvetica,sans-serif;color:#171717;background:white;margin:0}main{white-space:pre-wrap;overflow-wrap:anywhere}';
+  doc.head.append(style);
+  const main=doc.createElement('main');main.textContent=value.slice(0,15000);doc.body.append(main);
+  feedback.textContent='Выбери «Сохранить как PDF» в окне печати';
+  preview.focus();
+  setTimeout(()=>{try{preview.print()}catch{feedback.textContent='Не удалось открыть печать PDF'}},250);
+ }
  function saveReplyNote(value,feedback){
   try{
    const key='seyveo-notes-v1',data=JSON.parse(localStorage.getItem(key)||'[]');
@@ -1054,7 +1074,6 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     ask(question,{skipUser:true});
    }),
    miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
-   miniAction('docx','Сохранить Word',()=>exportWordReply(bubble.textContent,feedback)),
    miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
    play,
    miniAction('share','Поделиться',async()=>{
@@ -1064,7 +1083,17 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     }else copyReply(bubble.textContent,feedback);
    })
   );
-  turn.append(row,feedback);
+  const downloads=document.createElement('div');
+  downloads.className='sv-document-downloads';downloads.hidden=true;
+  const fileIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h4M10 13h5M10 17h5"/></svg>';
+  const word=document.createElement('button');word.type='button';
+  word.innerHTML=fileIcon+'<span>Скачать Word</span>';
+  word.addEventListener('click',()=>exportWordReply(bubble.textContent,feedback));
+  const pdf=document.createElement('button');pdf.type='button';
+  pdf.innerHTML=fileIcon+'<span>Скачать PDF</span>';
+  pdf.addEventListener('click',()=>exportPdfReply(bubble.textContent,feedback));
+  downloads.append(word,pdf);
+  turn.append(row,downloads,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
 
@@ -1368,7 +1397,16 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    else attachOwnGesture(bubble);
    list.append(turn);answers.set(id,bubble);
   }
-  if(role==='assistant')renderAssistantText(bubble,message);
+  if(role==='assistant'){
+    renderAssistantText(bubble,message);
+    const turn=bubble.closest('.turn');
+    const downloadRow=turn?.querySelector('.sv-document-downloads');
+    if(downloadRow){
+     const preceding=turn?.previousElementSibling;
+     const request=preceding?.dataset.role==='user'?preceding.textContent:'';
+     downloadRow.hidden=!/(?:заявлени|приказ|договор|документ|письм|акт\\b|справк|резюме|отч[её]т|предложени|претензи|инструкци|составь|подготовь|оформ[ьи])/iu.test((request||'')+' '+String(message).slice(0,280));
+    }
+   }
   else bubble.textContent=message;
   if(role==='user'&&photos?.length)showSentPhotos(bubble.closest('.turn'),photos);
   if(role==='user')showSentFiles(bubble.closest('.turn'),files);
