@@ -1,5 +1,5 @@
 /* SEYVEO Intelligence Architecture v1 · immutable capability blueprint.
- * Describes the WHOLE future Felix without pretending planned tools are connected.
+ * Describes planned Sayvi capabilities without pretending unfinished tools are connected.
  * Pure module: no model calls, network, storage, secrets, tool execution or side effects.
  */
 import {decide,normalizeMessage,classify} from '../hybrid-core.mjs';
@@ -13,12 +13,12 @@ const blueprint=(id,title,description,readiness='blueprint',privacy='standard')=
  Object.freeze({id,title,description,readiness,privacy,
   executionEnabled:false,automaticAccess:false});
 
-export const FELIX_CAPABILITIES=Object.freeze([
+export const SAYVI_CAPABILITIES=Object.freeze([
  blueprint('intelligence','Интеллект','Выбор локальной модели и GPT по разрешениям','server-adapter'),
  blueprint('dialogue','Диалог','Память контекста одной беседы','prototype'),
  blueprint('memory','Память','Только добровольно подтверждённые локальные факты','prototype','private'),
  blueprint('knowledge','Знания','Прототип чтения двух разрешённых открытых источников; без автоматической памяти','prototype'),
- blueprint('learning','Обучение','Школа Феликса, тесты, будущая настройка модели','prototype'),
+ blueprint('learning','Обучение','Мастерская Сэйви, тесты, будущая настройка модели','prototype'),
  blueprint('business','Бизнес','Девять проверяемых показателей; восемь строгих команд локального чата без доступа к реальным счетам','prototype'),
  blueprint('development','Разработка','Чтение ограниченного кода и предложения изменений','prototype'),
  blueprint('documents','Документы','Просмотр и обработка только выбранных файлов','blueprint','private'),
@@ -45,10 +45,10 @@ const TOOL_TO_CAPABILITY=Object.freeze({
 export function intelligenceCatalog(){
  return Object.freeze({
   product:'SEYVEO · Цифровой управляющий',
-  assistant:'Феликс',
+  assistant:'Сэйви',
   version:INTELLIGENCE_VERSION,
   mode:'architecture-preview',
-  capabilities:FELIX_CAPABILITIES,
+  capabilities:SAYVI_CAPABILITIES,
   limits:Object.freeze({
    localModel:'Only when self-hosted Ollama is running',
    cloud:'Requires explicit per-request consent and a configured backend',
