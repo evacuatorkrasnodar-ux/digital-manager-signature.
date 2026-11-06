@@ -14,7 +14,7 @@ const TIMING=Object.freeze({open:reduced()?0:960,beat:6100,quiet:4800,close:redu
 let mode='idle',key='',quiet=new Set(),timers=[],readingUntil=0;
 let pendingUpdate=false;
 // Restore the original rising three-card introduction when no real item needs attention.
-let previewArmed=false,previewSeen=false;
+let previewArmed=true,previewSeen=false;
 function later(callback,ms){
  const id=window.setTimeout(callback,ms);
  timers.push(id);return id;
@@ -892,7 +892,7 @@ function startPreview(){
   console.warn('SEYVEO Quiet Cinema: CSS missing; preserving normal Home.');
   return false;
  }
- if(!available()||editing()||dueTasks().length||upcomingCalendar().length||dynamic.querySelector('[data-owner-advice]'))return false;
+ if(!available()||editing()||dueTasks().length||dynamic.querySelector('[data-owner-advice]'))return false;
  if(mode!=='idle')rest();
  mode='preview';key='preview';previewSeen=true;
  dynamic.hidden=true;
@@ -1216,6 +1216,9 @@ function refresh(){
  if(tasks.length&&showTasks(tasks))return;
  if(pending&&showExistingAdvice())return;
  if(pending&&quiet.has(pendingKey)&&!dynamic.hidden)dynamic.hidden=true;
+ // Restore the owner's approved three-card introduction before optional calendar previews.
+ // Active personal deadlines and manager decisions above always retain priority.
+ if(previewArmed&&!previewSeen&&!pending&&available()&&startPreview())return;
  const nextEvent=upcomingCalendar()[0];
  if(!pending&&nextEvent&&available()&&showCalendar(nextEvent))return;
  const discovery=window.SEYVEO_DISCOVERY?.current?.();
@@ -1224,8 +1227,7 @@ function refresh(){
  if(!pending&&personal&&showWorkshop(personal))return;
  if(mode==='idle'){
   focus(false);
-  // Original three-card training introduction returns as a clearly marked demo.
-  if(previewArmed&&!previewSeen&&!tasks.length&&!pending&&!upcomingCalendar().length&&available())startPreview();
+  // The original intro is attempted above before background event cards.
  }
 }
 const observer=new MutationObserver(scheduleRefresh);
@@ -1286,8 +1288,7 @@ window.addEventListener('seyveo:manager-tasks-updated',scheduleRefresh);
 window.addEventListener('seyveo:employee-task-updated',scheduleRefresh);
 window.addEventListener('storage',event=>{if(event.key==='seyveo-business-command-tasks-demo-v1')scheduleRefresh();});
 scheduleRefresh();
-// Restore the original rising three-card introduction after opening.
-// Navigation/dialog interruption postpones it until Home is available.
-window.setTimeout(()=>{previewArmed=true;scheduleRefresh()},7800);
+// The original rising three-card introduction is armed at startup.
+// Delayed activation had allowed a calendar card to block it for the session.
 // Card Studio may still call SEYVEO_LIVING_MOMENT.preview() explicitly.
 })();
