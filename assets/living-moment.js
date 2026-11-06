@@ -788,7 +788,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
     scene.classList.remove('lm-scene--changing');
     return;
    }
-   remaining=dueTasks();
+   remaining=dueTasks(true);
    if(!remaining.length){
     tip.textContent='НА ГЛАВНОЙ НЕТ ОЖИДАЮЩИХ ДЕЛ';
     space.classList.add('lm-disappear');
@@ -917,7 +917,7 @@ function startPreview(){
  hold(()=>gatherPreview(),(reduced()?0:4700)+TIMING.open);
  return true;
 }
-function dueTasks(){
+function dueTasks(includeUpcoming=false){
  let tasks=[];
  if(window.SEYVEO_PREVIEW?.isEmployee?.()!==true){
   try{
@@ -930,6 +930,9 @@ function dueTasks(){
  // The shared reader owns selection of personal deadlines. The existing
  // Living Moment remains the one-and-only Home presentation/decision surface.
  const personal=window.SEYVEO_LIFE_EVENTS?.attentionTasks?.()||[];
+ // Evening preparation is optional and comes AFTER genuine due tasks.
+ // No duplicate stored task, no invented due hour.
+ const future=includeUpcoming?(window.SEYVEO_LIFE_EVENTS?.upcomingTasks?.()||[]):[];
  return tasks.concat(personal.map(item=>{
    const eventId='task:'+item.id+'|'+item.date;
    const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
@@ -940,6 +943,16 @@ function dueTasks(){
     reason:'Вы сами добавили это дело. Сэйви показывает его, потому что наступил указанный срок.',
     detail:'Откройте «Дела», чтобы увидеть детали и завершить поручение.'
    };
+  }),future.map(item=>{
+    const when=new Date(item.date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+    return {
+      eventId:'task:'+item.id+'|'+item.date,taskId:item.id||'',kind:'task',
+      upcoming:true,title:item.title,
+      body:'Запланировано на завтра · '+when+'. Можно подготовиться заранее.',
+      category:'СЭЙВИ · ЗАВТРА В ПЛАНАХ',
+      reason:'Это ваше незавершённое дело со сроком на завтра. Сэйви показывает его вечером накануне, не назначая время самостоятельно.',
+      detail:'Откройте «Дела», чтобы подготовиться или изменить запись.'
+    };
   })).filter(item=>!quiet.has(item.eventId));
 }
 /* Verified personal discoveries share the SINGLE Home card surface.
@@ -1191,7 +1204,7 @@ function refresh(){
  }
  if(mode==='task'){
   if(!dynamic.hidden)dynamic.hidden=true;
-  if(!dueTasks().some(item=>item.eventId===key))rest();
+  if(!dueTasks(true).some(item=>item.eventId===key))rest();
   return;
  }
  if(mode==='advice'){
@@ -1228,6 +1241,10 @@ function refresh(){
  if(!pending&&nextEvent&&available()&&showCalendar(nextEvent))return;
  const discovery=window.SEYVEO_DISCOVERY?.current?.();
  if(!pending&&discovery&&available()&&showDiscovery(discovery))return;
+ // Real, unfinished due-tomorrow tasks become a non-intrusive evening suggestion,
+ // only AFTER the owner's original Home introduction and calendar alerts.
+ const futureTasks=dueTasks(true).filter(item=>item.upcoming);
+ if(!pending&&futureTasks.length&&available()&&showTasks(futureTasks))return;
  const personal=workshopItems()[0];
  if(!pending&&personal&&showWorkshop(personal))return;
  if(mode==='idle'){
