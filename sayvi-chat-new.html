@@ -1197,22 +1197,27 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   if(!original)return '';
   const lines=original.split('\n');
   const dividers=[];
-  for(let i=0;i<lines.length;i++)if(/^\s*(?:---+|___+|\*\*\*+)\s*$/.test(lines[i]))dividers.push(i);
+  for(let i=0;i<lines.length;i++)
+   if(/^\s*(?:---+|___+|\*\*\*+)\s*$/.test(lines[i]))dividers.push(i);
   let text='';
-  if(dividers.length>=2)text=lines.slice(dividers[0]+1,dividers[1]).join('\n').trim();
+  if(dividers.length>=2){
+   const section=lines.slice(dividers[0]+1,dividers[1]).join('\n').trim();
+   if(section.length>=75)text=section;
+  }
   if(!text){
-   // Prefer the actual title or document header over Sayvi's introduction.
+   // A genuine document must have a document heading, not merely mention a document
+   // in a conversational prompt such as "Давай я помогу заполнить заявление".
    const title=/^(?:#{1,4}\s*)?(?:\*\*)?(?:Заявление|Договор|Приказ|Акт|Справка|Претензия|Доверенность|Служебная записка|Объяснительная записка|Коммерческое предложение|Уведомление|Письмо|Резюме|Отч[её]т)(?:\*\*)?(?:\s|$|[№:.])/iu;
    const titleIndex=lines.findIndex(line=>title.test(line.trim()));
-   if(titleIndex>=0)text=lines.slice(titleIndex).join('\n');
+   if(titleIndex>=0){
+    const candidate=lines.slice(titleIndex).join('\n').trim();
+    if(candidate.length>=75&&candidate.split('\n').length>=3)text=candidate;
+   }
   }
-  if(!text){
-   text=original.replace(/^(?:Конечно|Разумеется|Хорошо|Готово)[^\n]*\n+/iu,'');
-  }
+  if(!text)return '';
   text=text.replace(/\n(?:---+|___+)\s*$/u,'').trim();
   text=text.replace(/\n{2,}(?:Если хочешь|Могу (?:также|ещ[её])|Хочешь|При необходимости)[^\n]*(?:\n[^\n]*)*$/iu,'').trim();
-  // Short conversational claims are not a document: never export a false draft.
-  if(text.length<75||/^(?:Конечно|Вот (?:готовое|пример)|Я (?:подготовила|составила)|Готово!|Заполним документ|Укажи, пожалуйста|Заполнение остановлено)/iu.test(text))return '';
+  if(text.length<75)return '';
   return text;
  }
  // Cautious calendar sanity check: flag inconsistent stated leave periods.
