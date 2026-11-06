@@ -31,3 +31,19 @@
 @media(prefers-reduced-transparency:reduce){.sv-connect-sheet{backdrop-filter:none;-webkit-backdrop-filter:none}}
 
 .sv-connect-test[hidden]{display:none!important}
+
+/* Locally saved device profiles: no misleading pairing status. */
+.sv-connect-save{margin:10px 0 18px;padding:16px 14px;border-radius:19px;background:color-mix(in srgb,var(--card) 55%,transparent)}
+.sv-connect-save h3{font-size:15px;font-weight:610;margin:0 0 5px}
+.sv-connect-save>p{font-size:12px;line-height:1.5;color:var(--secondary);margin:0 0 14px}
+.sv-connect-save label{display:block;color:var(--text);font-size:12px;margin-bottom:7px}
+.sv-connect-save-row{display:flex;gap:8px;align-items:center}
+.sv-connect-save-row input{box-sizing:border-box;min-width:0;flex:1;min-height:43px;border:0;border-radius:13px;background:var(--sv-air-control,var(--card2));color:var(--text);padding:10px 12px;font:inherit;font-size:13px}
+.sv-connect-save-row button{flex-shrink:0;min-height:43px;padding:9px 12px;border:0;border-radius:999px;background:var(--sv-air-selected,var(--card));color:var(--text);font:inherit;font-size:12px;font-weight:600}
+.sv-connect-devices{margin-top:13px;display:grid;gap:8px}
+.sv-connect-devices>p{margin:0;font-size:12px;color:var(--secondary)}
+.sv-connect-device-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:14px;background:color-mix(in srgb,var(--card2) 50%,transparent)}
+.sv-connect-device-row strong{display:block;font-size:13px;font-weight:570}
+.sv-connect-device-row small{display:block;margin-top:4px;color:var(--secondary);font-size:11px}
+.sv-connect-device-row button{border:0;background:transparent;color:var(--secondary);font:inherit;font-size:11px;min-height:34px;padding:7px}
+@media(max-width:360px){.sv-connect-save-row{flex-wrap:wrap}.sv-connect-save-row button{width:100%}}
