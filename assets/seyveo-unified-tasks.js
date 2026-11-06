@@ -999,8 +999,9 @@
    detail.setAttribute('aria-label','Как работает: '+goal.title);
    const copy=node('span','sv-cabinet-choice-copy');
    copy.append(node('strong',null,goal.title),node('small',null,goal.description));
-   const arrow=node('span','sv-cabinet-goal-chevron','›');
+   const arrow=node('span','sv-cabinet-goal-chevron');
    arrow.setAttribute('aria-hidden','true');
+   arrow.innerHTML='<svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg>';
    detail.append(copy,arrow);
    const toggle=button(checked?'✓':'+','toggle',item.id);
    toggle.className='sv-cabinet-goal-mark'+(checked?' is-selected':'');
