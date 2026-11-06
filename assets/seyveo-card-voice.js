@@ -29,7 +29,7 @@ function handle(raw){
  }
  // A timed reminder belongs to the existing Calendar/Tasks workflow, not LAB.
  // Preserve the normal reminder grammar and its follow-up questions.
- const timed=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:создай|сделай|добавь|поставь|подготовь)\\s+(?:мне\\s+)?(?:(?:новую\\s+)?карточку[-\\s]+)?напоминани[ея](?:\\s*[:—–-]\\s*|\\s+)?(.*)$/iu.exec(text);
+ const timed=/^(?:(?:сэйви|сейви|сэй)[,!. ]+)?(?:создай|сделай|добавь|поставь|подготовь)\s+(?:мне\s+)?(?:(?:новую\s+)?карточку[-\s]+)?напоминани[ея](?:\s*[:—–-]\s*|\s+)?(.*)$/iu.exec(text);
  if(timed){
   const reminder='Напомни мне'+(timed[1]?.trim()?' '+timed[1].trim():'');
   const action=window.SEYVEO_LOCAL_ACTIONS?.handle?.(reminder);
