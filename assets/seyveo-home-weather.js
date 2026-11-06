@@ -86,18 +86,22 @@ async function refresh(){
   console.info('SEYVEO weather unavailable',error?.name||'offline');
  }finally{loading=false;announce()}
 }
+async function enable(){
+ enabled=true;lastError='';
+ try{localStorage.setItem(PREF,'yes')}catch{}
+ updateButton();
+ await refresh();
+ return !!forecast;
+}
 if(button)button.addEventListener('click',()=>{
- if(enabled&&(!forecast||lastError)){refresh();return}
+ if(enabled&&(!forecast||lastError)){window.SEYVEO_PERMISSION_FLOW?.open?.('weather');return}
  if(enabled){
   enabled=false;forecast=null;lastError='';
   try{localStorage.removeItem(PREF);localStorage.removeItem(CACHE)}catch{}
   announce();return;
  }
- const consent=window.confirm('Сэйви может раз в день показывать погоду и полезный совет. Для этого нужно разрешить примерное местоположение. Оно будет использовано для запроса прогноза, но не сохранится. Включить?');
- if(!consent)return;
- enabled=true;
- try{localStorage.setItem(PREF,'yes')}catch{}
- refresh();
+ if(typeof window.SEYVEO_PERMISSION_FLOW?.open==='function')window.SEYVEO_PERMISSION_FLOW.open('weather');
+ else enable();
 });
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&enabled)refresh()});
 window.addEventListener('storage',e=>{
@@ -108,8 +112,17 @@ window.addEventListener('storage',e=>{
  if(enabled&&!forecast)refresh();
 });
 forecast=enabled?readCache():null;
-window.SEYVEO_HOME_WEATHER=Object.freeze({today:()=>enabled?forecast:null,hasConsent:()=>enabled});
+window.SEYVEO_HOME_WEATHER=Object.freeze({today:()=>enabled?forecast:null,hasConsent:()=>enabled,enable});
 updateButton();
+// A permission already granted by the OS can be used with no second SEYVEO consent dialog.
+if(!enabled&&navigator.permissions?.query){
+ navigator.permissions.query({name:'geolocation'}).then(result=>{
+  if(result.state!=='granted'||enabled)return;
+  enabled=true;
+  try{localStorage.setItem(PREF,'yes')}catch{}
+  refresh();
+ }).catch(()=>{});
+}
 if(enabled&&!forecast)refresh();
 else if(forecast)announce();
 })();
