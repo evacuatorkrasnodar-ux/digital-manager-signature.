@@ -700,6 +700,26 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
  let recentVisual=null;
  // SEYVEO session-only document context v1. No file text in localStorage.
  let recentDocument=null;
+ // Latest finished draft for the active chat only. Nothing stored remotely.
+ let workingDocument=null;
+ function documentRevisionIntent(question){
+  return /(?:исправ|измени|замени|поменя|отредактир|перепиши|добавь|удали|убери|вставь|укажи|поставь|скорректир|переделай|обнови|дату|фамилию|имя|отчество|подпись|срок|формулировк)/iu.test(String(question||''));
+ }
+ function outgoingQuestionWithDocument(question,options){
+  if(options.documentFiles?.length||options.attachments?.length)return documentContextFor(question,options);
+  if(!workingDocument||workingDocument.conversation!==currentId||!documentRevisionIntent(question))return documentContextFor(question,options);
+  const instruction='Ты Сэйви, помощник SEYVEO. Пользователь просит исправить ранее подготовленный документ. Измени только то, что он попросил, сохрани остальные сведения и структуру, не придумывай отсутствующие данные. Выдай ПОЛНУЮ обновлённую версию документа между строками --- и ---, без комментариев в документе. Если изменение непонятно, уточни вопрос.\n\n';
+  const tail='\n\nЗапрошенное изменение: '+question;
+  const header='Текущий документ:\n---\n',footer='\n---';
+  const budget=3900-instruction.length-tail.length-header.length-footer.length;
+  if(budget<300)return question;
+  if(workingDocument.text.length>budget)return 'Документ слишком длинный для надёжной автоматической правки. Сообщи пользователю, что нужно воспользоваться кнопкой «Посмотреть» → «Редактировать», чтобы ничего не потерять. Запрос: '+question;
+  return instruction+header+workingDocument.text+footer+tail;
+ }
+ function rememberWorkingDocument(text){
+  const draft=documentDraftOnly(text);
+  if(draft)workingDocument={conversation:currentId,text:draft};
+ }
  function documentContextFor(question,options){
   if(options.documentFiles?.length||!recentDocument||recentDocument.conversation!==currentId)return question;
   const entry=recentDocument;
@@ -719,7 +739,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return {id:currentId,updated:Date.now(),turns:savedTurns.slice(-120)};
  }
  function renderTurns(turns){
-  recentVisual=null;recentDocument=null;
+  recentVisual=null;recentDocument=null;workingDocument=null;
   answers.clear();list.replaceChildren();savedTurns=[];
   for(const turn of turns){
    if(!turn||!['user','assistant'].includes(turn.role)||typeof turn.text!=='string')continue;
@@ -1135,6 +1155,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    if(!editing){editor.value=draft;editorVisible(true);edit.textContent='Готово';return}
    if(!editor.value.trim()){window.alert('Документ не может быть пустым');return}
    draft=editor.value;
+   workingDocument={conversation:currentId,text:draft};
    page.textContent=draft;
    editorVisible(false);
    edit.textContent='Редактировать';
@@ -2093,7 +2114,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const response=await fetch('/api/seyveo-stream',{
     method:'POST',credentials:'same-origin',
     headers:{'content-type':'application/json'},
-    body:JSON.stringify({message:documentContextFor(question,options),history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
+    body:JSON.stringify({message:outgoingQuestionWithDocument(question,options),history:validStreamHistory(),...(linkedPhotos.length?{attachments:linkedPhotos}:{})}),
     signal:controller.signal
    });
    if(!response.ok){
@@ -2126,6 +2147,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    if(!done)throw Error('Соединение прервалось.');
    if(!answer.trim())throw Error('Сэйви не прислала ответ.');
    if(wasTruncated)status.textContent='Ответ ограничен моделью. Напиши «продолжи», чтобы Сэйви закончила мысль.';
+   else rememberWorkingDocument(answer);
    historyTurns.push({role:'user',content:question.slice(0,250)},{role:'assistant',content:answer.slice(0,450)});
    if(historyTurns.length>12)historyTurns.splice(0,historyTurns.length-12);
   }catch(error){
