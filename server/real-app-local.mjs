@@ -5,6 +5,7 @@
 import {createServer} from 'node:http';
 import {createImageAttachments} from './image-attachments.mjs';
 import {readDocumentUpload} from './document-attachments.mjs';
+import {createDocx} from './document-export.mjs';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -436,6 +437,21 @@ export function createRealLocalServer({memoryStore,learningQueue,searchProvider}
    return;
   }
   // Local document-to-text only: no storage, macros, OCR or voice changes.
+  if(req.method==='POST'&&path==='/api/seyveo-export-docx'){
+   if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
+   if(!/^application\/json(?:\s*;|$)/i.test(String(req.headers['content-type']||''))){send(res,415,{error:'Ожидается JSON.'});return}
+   try{
+    let size=0;const chunks=[];
+    for await(const part of req){size+=part.length;if(size>60000)throw Error('large');chunks.push(part)}
+    const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    if(!data||typeof data.text!=='string'||!data.text.trim()||data.text.length>15000)throw Error('invalid');
+    const output=createDocx(data.text);
+    res.writeHead(200,{...HEADERS,'content-type':'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+     'content-disposition':'attachment; filename="SEYVEO-document.docx"','content-length':output.length});
+    res.end(output);
+   }catch{send(res,400,{error:'Нужен текст документа до 15000 символов.'})}
+   return;
+  }
   if(req.method==='POST'&&path==='/api/seyveo-document-text'){
    if(req.headers.origin!==ORIGIN){send(res,403,{error:'Недоверенная страница.'});return}
    try{send(res,200,await readDocumentUpload(req))}

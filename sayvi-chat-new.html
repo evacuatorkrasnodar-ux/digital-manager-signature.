@@ -846,6 +846,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   retry:'<path d="M3.8 11a8.3 8.3 0 1 1 2.4 6M3.8 6.5V11h4.5"/>',
   note:'<path d="M6 3.5h9l3 3V21H6zM15 3.5V7h3M9 11h6M9 15h6M9 19h4"/>',
+   docx:'<path d="M6 2.5h9l4 4V21H6zM15 2.5V7h4M8.5 11l1.8 6 1.7-4 1.7 4 1.8-6"/>',
   globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-4.4 6-4.4 9s1.4 6 4.4 9M12 3c3 3 4.4 6 4.4 9s-1.4 6-4.4 9"/>',
   speak:'<path d="M4 9v6h4l5 4V5L8 9H4zM16 9a5 5 0 0 1 0 6M18.5 6a9 9 0 0 1 0 12"/>',
   share:'<path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13.5v5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5v-5"/>'
@@ -866,6 +867,23 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    }
    feedback.textContent='Скопировано';
   }catch{feedback.textContent='Не удалось скопировать'}
+ }
+ async function exportWordReply(value,feedback){
+  if(!value.trim()){feedback.textContent='Нет текста для сохранения';return}
+  feedback.textContent='Готовлю Word…';
+  try{
+   const response=await fetch('/api/seyveo-export-docx',{
+    method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},
+    body:JSON.stringify({text:value.slice(0,15000)})
+   });
+   if(!response.ok){const error=await response.json().catch(()=>({}));throw Error(error.error||'Экспорт Word недоступен')}
+   const blob=await response.blob();
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');a.href=url;a.download='SEYVEO-document.docx';
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   feedback.textContent='Word сохранён';
+  }catch(error){feedback.textContent=String(error?.message||'Ошибка сохранения Word')}
  }
  function saveReplyNote(value,feedback){
   try{
@@ -1021,6 +1039,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
     ask(question,{skipUser:true});
    }),
    miniAction('note','В Блокнот',()=>saveReplyNote(bubble.textContent,feedback)),
+   miniAction('docx','Сохранить Word',()=>exportWordReply(bubble.textContent,feedback)),
    miniAction('globe','Найти в браузере',()=>browserSearchForReply(turn,bubble,feedback)),
    play,
    miniAction('share','Поделиться',async()=>{
