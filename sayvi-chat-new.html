@@ -1062,6 +1062,43 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   // the whole conversation, and do not open an external browser.
   window.location.assign('./index.html?seyveoBrowserSearch='+encodeURIComponent(q));
  }
+ function previewSayviDocument(value,feedback){
+  if(!value.trim()){feedback.textContent='Нет текста для просмотра';return}
+  const overlay=document.createElement('section');
+  overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
+  overlay.setAttribute('aria-label','Предпросмотр документа');
+  overlay.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;background:#15191e;color:#f6f7f9;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';
+  const bar=document.createElement('div');
+  bar.style.cssText='min-height:54px;display:flex;align-items:center;gap:12px;padding:7px 16px;background:rgba(145,162,181,.12);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)';
+  const back=document.createElement('button');back.type='button';back.textContent='‹ Назад';
+  back.style.cssText='background:transparent;color:inherit;border:0;font:500 15px system-ui;padding:9px 4px;cursor:pointer';
+  const name=document.createElement('span');name.textContent='Предпросмотр документа';
+  name.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 14px system-ui';
+  bar.append(back,name);
+  const scroll=document.createElement('div');
+  scroll.style.cssText='flex:1;min-height:0;overflow-y:auto;padding:20px 14px 28px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch';
+  const page=document.createElement('article');
+  page.style.cssText='background:white;color:#1b1b1b;max-width:720px;min-height:70%;margin:0 auto;padding:clamp(20px,5vw,55px);box-sizing:border-box;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.65 Georgia,serif;box-shadow:0 7px 28px rgba(0,0,0,.14)';
+  page.textContent=value;scroll.append(page);
+  const actions=document.createElement('div');
+  actions.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(145,162,181,.10);flex-wrap:wrap';
+  const makeAction=(label,callback)=>{
+   const b=document.createElement('button');b.type='button';b.textContent=label;
+   b.style.cssText='padding:10px 15px;min-height:40px;border:0;border-radius:14px;color:#f8fafc;background:rgba(166,190,207,.18);font:500 13px system-ui;cursor:pointer';
+   b.addEventListener('click',callback);return b;
+  };
+  const dismiss=()=>{
+   document.removeEventListener('keydown',onKey);
+   overlay.remove();
+  };
+  const onKey=e=>{if(e.key==='Escape')dismiss()};
+  back.addEventListener('click',dismiss);
+  actions.append(makeAction('Скачать Word',()=>exportWordReply(value,feedback)),makeAction('Скачать PDF',()=>exportPdfReply(value,feedback)));
+  overlay.append(bar,scroll,actions);
+  document.body.append(overlay);
+  document.addEventListener('keydown',onKey);
+  back.focus({preventScroll:true});
+ }
  function addReplyActions(turn,bubble){
   const row=document.createElement('div');row.className='sv-reply-actions';
   row.setAttribute('aria-label','Действия с ответом Сэйви');
@@ -1098,7 +1135,11 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const pdf=document.createElement('button');pdf.type='button';pdf.className='sv-download-pdf';
   pdf.innerHTML=pdfIcon+'<span>Скачать PDF</span>';
   pdf.addEventListener('click',()=>exportPdfReply(bubble.textContent,feedback));
-  downloads.append(word,pdf);
+  const preview=document.createElement('button');preview.type='button';
+  preview.className='sv-download-preview';
+  preview.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Посмотреть</span>';
+  preview.addEventListener('click',()=>previewSayviDocument(bubble.textContent,feedback));
+  downloads.append(preview,word,pdf);
   turn.append(row,downloads,feedback);
  }
  window.addEventListener('pagehide',stopReplySpeech);
