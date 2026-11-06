@@ -1137,6 +1137,13 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   return text;
  }
  // Cautious calendar sanity check: flag inconsistent stated leave periods.
+ function documentMissingFields(value){
+  const text=String(value||'');
+  const fields=[...text.matchAll(/\[([^\]\n]{2,80})\]/gu)]
+   .map(m=>m[1].trim())
+   .filter(label=>/(?:указать|вписать|заполнить|вставить|Фамилия|Имя|Отчество|назван|организац|компан|должност|дат|адрес|подпис|телефон|реквизит|номер|ФИО)/iu.test(label));
+  return [...new Set(fields)].slice(0,8);
+ }
  function documentDateWarnings(value){
   const text=String(value||'');
   if(!/отпуск/iu.test(text))return [];
@@ -1210,7 +1217,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const notice=make('div','sv-doc-notice');notice.setAttribute('role','status');
   const warningText=make('div','sv-doc-warning-text');
   const fixDate=make('button','sv-doc-fix');fixDate.type='button';
-  notice.append(warningText,fixDate);
+  const fillFields=make('button','sv-doc-fix','Заполнить поля');fillFields.type='button';
+  notice.append(warningText,fixDate,fillFields);
   const page=make('article','sv-doc-paper',draft);
   const editor=make('textarea','sv-doc-editor');editor.value=draft;editor.hidden=true;
   editor.maxLength=15000;editor.setAttribute('aria-label','Изменить текст документа');
@@ -1223,11 +1231,16 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const updateWarnings=()=>{
    const value=currentDraft();
    const warnings=documentDateWarnings(value);
+   const fields=documentMissingFields(value);
    const suggestion=suggestDocumentEndDate(value);
-   notice.hidden=!warnings.length;
-   warningText.textContent=warnings.length?'Проверь документ: '+warnings.join(' '):'';
+   notice.hidden=!warnings.length&&!fields.length;
+   warningText.textContent=[
+    ...(warnings.length?['Проверь документ: '+warnings.join(' ')]:[]),
+    ...(fields.length?['Не заполнены поля ('+fields.length+'): '+fields.join(', ')]:[])
+   ].join('\n');
    fixDate.hidden=!warnings.length||!suggestion;
    if(suggestion)fixDate.textContent='Исправить дату окончания на '+suggestion.corrected;
+   fillFields.hidden=!fields.length;
   };
   const editorVisible=show=>{
    editing=show;page.hidden=show;editor.hidden=!show;
@@ -1244,6 +1257,14 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    workingDocument={conversation:currentId,text:draft};
    editorVisible(false);edit.querySelector('span').textContent='Редактировать';
   });
+  fillFields.addEventListener('click',()=>{
+   if(!editing){editor.value=draft;editorVisible(true);edit.querySelector('span').textContent='Готово'}
+   const match=/\[[^\]\n]{2,80}\]/gu.exec(editor.value);
+   if(match){
+    editor.focus();
+    editor.setSelectionRange(match.index,match.index+match[0].length);
+   }
+  });
   fixDate.addEventListener('click',()=>{
    const suggestion=suggestDocumentEndDate(currentDraft());
    if(!suggestion)return;
@@ -1259,7 +1280,11 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const value=currentDraft();
    if(!value.trim()){window.alert('Документ не может быть пустым');return null}
    const warnings=documentDateWarnings(value);
-   if(warnings.length&&!window.confirm('В документе возможная ошибка:\n'+warnings.join('\n')+'\n\nВсё равно скачать?'))return null;
+   const missing=documentMissingFields(value);
+   if((warnings.length||missing.length)&&!window.confirm('Перед скачиванием проверь документ:\n'+[
+    ...warnings,
+    ...(missing.length?['Не заполнены: '+missing.join(', ')]:[])
+   ].join('\n')+'\n\nВсё равно скачать?'))return null;
    return value;
   };
   const wordAction=button('Скачать Word',()=>{const text=confirmDownload();if(text)exportWordReply(text,feedback)});
