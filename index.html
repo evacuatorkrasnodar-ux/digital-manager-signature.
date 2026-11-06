@@ -2701,8 +2701,13 @@ function sayviHomeContext(brief){
  if(future.length)return 'На завтра записано дело: «'+future[0].title+'». Можно подготовиться заранее.';
  const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
  if(personal?.message)return personal.message;
- if(brief.count)return 'У нас в планах '+brief.count+' дел. Я помогу разобраться с ними.';
- return 'Могу помочь с документами, письмами или делами. Просто скажи, с чего начнём.';
+ if(brief.count)return 'В твоём списке '+brief.count+' незавершённых дел. Можем выбрать, с какого начать.';
+ // No invented activities or cycling slogans: a calm, contextual daypart thought.
+ const hour=new Date().getHours();
+ if(hour<5)return 'Если не спится, я рядом. Можем спокойно разобрать мысли или записать важное.';
+ if(hour<12)return 'Можем посмотреть планы на день или сразу заняться тем, что для тебя важно.';
+ if(hour<18)return 'Я рядом. Помогу разобраться с документом, письмом или новым делом.';
+ return 'Можем подвести итоги дня или подготовить то, что важно на завтра.';
 }
 function syncHomeVoice(){
   const name=ownerDisplayName(),assistant=chosenAssistantName();
