@@ -1311,9 +1311,8 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   const fieldsTitle=make('div','sv-doc-check-title','Заполнить данные');
   const fieldsText=make('div','sv-doc-check-body');
   const fieldsActions=make('div','sv-doc-check-actions');
-  const fillFields=make('button','','Заполнить вручную');fillFields.type='button';
   const askSayvi=make('button','','Заполнить с Сэйви');askSayvi.type='button';
-  fieldsActions.append(fillFields,askSayvi);
+  fieldsActions.append(askSayvi);
   fieldsCheck.append(fieldsTitle,fieldsText,fieldsActions);
   const page=make('article','sv-doc-paper',draft);
   const editor=make('textarea','sv-doc-editor');editor.value=draft;editor.hidden=true;
@@ -1350,14 +1349,6 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    draft=editor.value;page.textContent=draft;
    workingDocument={conversation:currentId,text:draft};
    editorVisible(false);edit.querySelector('span').textContent='Редактировать';
-  });
-  fillFields.addEventListener('click',()=>{
-   if(!editing){editor.value=draft;editorVisible(true);edit.querySelector('span').textContent='Готово'}
-   const match=/\[[^\]\n]{2,80}\]/gu.exec(editor.value);
-   if(match){
-    editor.focus();
-    editor.setSelectionRange(match.index,match.index+match[0].length);
-   }
   });
   askSayvi.addEventListener('click',()=>{
    const text=currentDraft();
