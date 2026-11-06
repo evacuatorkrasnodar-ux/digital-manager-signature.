@@ -2681,6 +2681,29 @@ function openHomeAdvice(advice){
  if($('manageConnectionsDialog')?.open)playFeedback('select');
 }
 let currentHomeRecommendation=null;
+/* The original welcome should contain real, useful context — not an
+ * unconditional “everything is calm”, which concealed Calendar events. */
+function sayviHomeContext(brief){
+ const life=window.SEYVEO_LIFE_EVENTS;
+ const tasks=life?.attentionTasks?.()||[];
+ if(tasks.length){
+  return tasks.length===1
+   ?'В «Делах» ждёт внимания: «'+tasks[0].title+'».'
+   :'В «Делах» есть '+tasks.length+' записей, требующих внимания.';
+ }
+ const upcoming=life?.upcomingEvents?.()||[];
+ if(upcoming.length){
+  const item=upcoming[0],date=new Date(item.date+'T12:00:00');
+  const when=Number.isNaN(date.getTime())?'скоро':date.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+  return when+' в '+item.time+' — «'+item.title+'». Я напомню о событии в календаре.';
+ }
+ const future=life?.upcomingTasks?.()||[];
+ if(future.length)return 'На завтра записано дело: «'+future[0].title+'». Можно подготовиться заранее.';
+ const personal=window.SEYVEO_FAN_WORKSHOP?.homeNote?.();
+ if(personal?.message)return personal.message;
+ if(brief.count)return 'У нас в планах '+brief.count+' дел. Я помогу разобраться с ними.';
+ return 'Могу помочь с документами, письмами или делами. Просто скажи, с чего начнём.';
+}
 function syncHomeVoice(){
   const name=ownerDisplayName(),assistant=chosenAssistantName();
   const brief=localTaskBrief(),advice=homeBusinessAdvice();
@@ -2700,9 +2723,7 @@ function syncHomeVoice(){
       // The example card does not remove Sayvi's normal greeting.
       kicker=assistant+' · на связи';
       headline=daypartGreeting()+(name?', '+name:'');
-      subline=brief.count
-        ?'У нас в планах '+brief.count+' дел. Я помогу с ними, когда скажете.'
-        :'Сейчас всё спокойно. Я рядом, если понадоблюсь.';
+      subline=sayviHomeContext(brief);
     }else{
       kicker=assistant+' · на контроле';
       headline=name?name+', есть рекомендация':'Есть рекомендация';
@@ -2723,9 +2744,7 @@ function syncHomeVoice(){
     headline=daypartGreeting()+(name?', '+name:'');
     // A verified forecast can appear only briefly in Sayvi Word, not here
     // throughout the day instead of the original greeting information.
-    subline=personal?.message||(brief.count
-      ?'У нас в планах '+brief.count+' дел. Я помогу с ними, когда скажете.'
-      :'Сейчас всё спокойно. Я рядом, если понадоблюсь.');
+    subline=sayviHomeContext(brief);
   }
   const weatherActive=!window.SEYVEO_FAN_WORKSHOP?.homeNote?.()&&!!window.SEYVEO_HOME_WEATHER?.today?.()&&!advice&&!currentHomeRecommendation&&!brief.overdue&&!brief.dueToday;
   $('orbCluster')?.classList.toggle('sv-home-weather-glint',weatherActive);
