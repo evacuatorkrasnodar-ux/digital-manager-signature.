@@ -38,7 +38,7 @@ function normalize(text){
 // Read the name at the moment of activation. Never turn microphone on just
 // because a saved preference changed. No audio or transcripts are persisted.
 const PROFILE='seyveo-first-acquaintance-v1';
-const BRAND_WAKE=Object.freeze(['сейвео','сэйвео','сейвио','сейвеу','сей вео','сей-вео','сейв ео','сейв-ео','seyveo']);
+const BRAND_WAKE=Object.freeze(['сэйви','сейви','сэй','сей','сейвео','сэйвео','сейвио','сейвеу','сей вео','сей-вео','сейв ео','сейв-ео','seyveo']);
 function assistantNames(){
  let preferred='',aliases=[];
  try{
@@ -55,7 +55,7 @@ function assistantNames(){
 }
 function wakeLabel(){
  const names=assistantNames().slice(0,2);
- return names.length?'Ожидаю «'+names.join('» или «')+'»':'Ожидаю «SEYVEO»';
+ return names.length?'Ожидаю «'+[...new Set(['Сэйви','Сэй',...names])].slice(0,3).join('» или «')+'»':'Ожидаю «Сэйви» или «Сэй»';
 }
 function wakeTail(text){
  // Word-boundary search without a dynamic regular expression: custom names
