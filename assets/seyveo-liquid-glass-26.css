@@ -257,8 +257,8 @@ html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([h
  text-shadow:none!important;
  filter:none!important;
  color:var(--sv-home-sayvi-ink)!important;
- -webkit-backdrop-filter:blur(18px) saturate(105%)!important;
- backdrop-filter:blur(18px) saturate(105%)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
+ backdrop-filter:blur(18px) saturate(145%)!important;
  padding-inline:12px!important;
  padding-block:7px!important;
  font-weight:530!important;
@@ -284,4 +284,11 @@ html body #homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer:not([h
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
  }
+}
+/* Match the actual full-screen Sayvi dark palette overrides, too. */
+:root[data-theme=dark][data-palette=emerald]{
+ --sv-home-sayvi-smoke:rgba(184,195,201,.20);
+}
+:root[data-theme=dark][data-palette=sapphire]{
+ --sv-home-sayvi-smoke:rgba(184,195,201,.22);
 }
