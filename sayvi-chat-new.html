@@ -1195,7 +1195,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
   text=text.replace(/\n(?:---+|___+)\s*$/u,'').trim();
   text=text.replace(/\n{2,}(?:Если хочешь|Могу (?:также|ещ[её])|Хочешь|При необходимости)[^\n]*(?:\n[^\n]*)*$/iu,'').trim();
   // Short conversational claims are not a document: never export a false draft.
-  if(text.length<75||/^(?:Конечно|Вот (?:готовое|пример)|Я (?:подготовила|составила)|Готово!)/iu.test(text))return '';
+  if(text.length<75||/^(?:Конечно|Вот (?:готовое|пример)|Я (?:подготовила|составила)|Готово!|Заполним документ|Укажи, пожалуйста|Заполнение остановлено)/iu.test(text))return '';
   return text;
  }
  // Cautious calendar sanity check: flag inconsistent stated leave periods.
