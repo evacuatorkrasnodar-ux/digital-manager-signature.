@@ -14,8 +14,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  --svcp-dock-glass:radial-gradient(ellipse 96% 82% at 35% -36%,rgba(249,252,255,.17),transparent 77%),linear-gradient(180deg,rgba(85,93,108,.72) 0%,rgba(61,67,81,.70) 47%,rgba(42,47,61,.78) 100%);
  --svcp-dock-edge:rgba(241,249,252,.19);
  --svcp-dock-topline:rgba(254,255,255,.37);
- --svcp-dock-action:linear-gradient(155deg,rgba(227,239,247,.14),rgba(121,144,159,.09) 53%,rgba(34,44,53,.11));
- --svcp-dock-input:linear-gradient(152deg,rgba(199,215,227,.13),rgba(124,145,163,.11) 60%,rgba(177,193,208,.09));
+ --svcp-dock-action:rgba(204,222,235,.095);
+ --svcp-dock-input:rgba(188,207,225,.105);
  --svcp-smoke-glass:rgba(184,195,201,.19);
  --svcp-smoke-input:rgba(184,195,201,.25);
  --svcp-smoke-pressed:rgba(218,235,245,.20);
@@ -36,8 +36,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  --svcp-dock-glass:radial-gradient(ellipse 105% 85% at 18% -28%,rgba(255,255,255,.24),transparent 78%),linear-gradient(155deg,rgba(250,252,255,.39) 0%,rgba(234,239,248,.30) 55%,rgba(224,232,243,.33) 100%);
  --svcp-dock-edge:rgba(255,255,255,.56);
  --svcp-dock-topline:rgba(255,255,255,.68);
- --svcp-dock-action:linear-gradient(158deg,rgba(255,255,255,.79) 0%,rgba(247,249,253,.62) 54%,rgba(226,234,244,.52) 100%);
- --svcp-dock-input:linear-gradient(155deg,rgba(255,255,255,.84),rgba(249,250,255,.69) 62%,rgba(237,243,250,.64));
+ --svcp-dock-action:rgba(251,253,255,.49);
+ --svcp-dock-input:rgba(248,251,255,.63);
  --svcp-smoke-glass:rgba(99,121,133,.22);
  --svcp-smoke-input:rgba(99,121,133,.22);
  --svcp-smoke-pressed:rgba(99,121,133,.31);
@@ -617,7 +617,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-chat-compose-field{
  display:contents!important
 }
-#svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border-color:var(--sv-input-border)!important;box-shadow:inset 0 1px 0 var(--sv-input-gloss)!important}
+#svcpWorkChatScreen .svcp-chat-compose-field:focus-within{border:0!important;box-shadow:none!important;}
 /* These tools live in the existing attachment ribbon, leaving the input text full width. */
 #svcpWorkChatScreen #svcpCameraTray > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
  display:inline-flex!important;flex:0 0 auto!important;
@@ -1290,7 +1290,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-height:68px!important;
  padding:11px 8px!important;
  margin:0 auto!important;
- border:0!important;
+ border:0!important;outline:0!important;
  border-radius:36px!important;
  background:var(--svcp-dock-glass)!important;
  box-shadow:0 11px 24px rgba(7,12,22,.21)!important;
@@ -1330,7 +1330,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-radius:50%!important;
  border:0!important;
  background:var(--svcp-dock-action)!important;
- box-shadow:0 1px 3px rgba(33,58,70,.035)!important;
+ outline:0!important;box-shadow:none!important;
  -webkit-backdrop-filter:blur(16px) saturate(110%)!important;
  backdrop-filter:blur(16px) saturate(110%)!important;
 }
@@ -1357,7 +1357,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:44px!important;min-height:44px!important;max-height:144px!important;
  padding:10px 49px 10px 13px!important;margin:0!important;
  background:var(--svcp-dock-input)!important;
- border:0!important;
+ border:0!important;outline:0!important;
  border-radius:24px!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:blur(10px) saturate(108%)!important;
@@ -1404,9 +1404,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 /* 4 — Sayvi is the single restrained accent. */
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage::before{
- background:radial-gradient(circle at 50% 75%,rgba(102,224,159,.14),transparent 72%),
+ background:radial-gradient(circle at 50% 75%,rgba(102,224,159,.10),transparent 72%),
  var(--svcp-dock-action)!important;
- box-shadow:0 0 8px rgba(86,214,154,.10)!important;
+ box-shadow:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-core-mark{
  display:block!important;
