@@ -1377,7 +1377,7 @@ function renderChat(){
     }
    }
    const isSayvi=msg.role==='sayvi',isRecognition=msg.role==='recognition';
-   const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':!isSayvi&&msg.role!=='demo-elena';
+   const isOwn=state.viewpoint==='elena'?msg.role==='demo-elena':msg.role==='self';
    const mentioned=state.viewpoint==='elena'&&roomDetails().kind==='groups'&&msg.text.toLocaleLowerCase('ru-RU').includes('@елена');
    const bubble=el('article','svcp-bubble '+(isRecognition?'is-recognition':isSayvi?'is-sayvi':isOwn?'is-self':'is-other')+(msg.taskId?' is-task':'')+(mentioned?' is-mentioned':'')+(index===focusSearchIndex?' is-search-hit':''));
    bubble.dataset.chatIndex=String(index);
@@ -1433,17 +1433,6 @@ function renderChat(){
     dots.innerHTML='<circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>';
     moreButton.append(dots);
     actions.append(moreButton);
-    // A single visible tap awards a staff member directly from their message.
-    // Ordinary chat emojis and saved-message bookmarks remain unrelated.
-    const awardSuggestion=state.viewpoint==='manager'&&roomDetails().kind==='personal'
-     ?suggestedRecognition(msg,roomDetails().person):null;
-    if(awardSuggestion){
-     const awardPerson=roomDetails().person;
-     const awardButton=btn('★',()=>applyPersonReaction(awardPerson,'help',awardSuggestion.reason),'svcp-message-action svcp-inline-award');
-     awardButton.setAttribute('aria-label','Благодарность для '+STAFF[awardPerson]+' · в личное дело');
-     awardButton.title='Предложение Сэйви: '+awardSuggestion.reason+'. Поблагодарить '+STAFF[awardPerson];
-     actions.prepend(awardButton);
-    }
     function svcpActionIcon(title,kind,callback,className){
      const control=btn('',callback,className+' svcp-icon-action svcp-action-'+kind);
      control.setAttribute('aria-label',title);
@@ -1467,7 +1456,14 @@ function renderChat(){
      return control;
     }
     menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    menu.append(svcpActionIcon('Реакция','reaction',()=>showReactions({type:'message',index},bubble),'svcp-message-menu-item'));
+    const employee=roomDetails().kind==='personal'?roomDetails().person:null;
+     if(state.viewpoint==='manager'&&employee&&STAFF[employee]&&!isOwn&&!isSayvi){
+      menu.append(svcpActionIcon('Поощрить сотрудника','award',()=>{
+       closeMessageMenus();
+       if(!window.confirm('Подтвердить золотую звезду для '+STAFF[employee]+'? Награда сохранится в личном деле сотрудника (демо).'))return;
+       applyPersonReaction(employee,'help',suggestedRecognition(msg,employee)?.reason||'Благодарность за работу');
+      },'svcp-message-menu-item'));
+     }
     // HR appreciation is NOT a bookmark. Only an identifiable colleague earns
     // a golden recognition event, recorded by the existing staff-card ledger.
     const starControl=svcpActionIcon(msg.starred?'Убрать из избранного':'В избранное','star',()=>{
@@ -1491,7 +1487,7 @@ function renderChat(){
      try{await navigator.clipboard.writeText(msg.text);setStatus('Сообщение скопировано')}
      catch{setStatus('Не удалось скопировать. Выдели текст сообщения вручную.')}
     },'svcp-message-menu-item'));
-    if(isOwn&&!msg.mediaId&&!msg.taskId){
+    if(isOwn&&!msg.mediaId&&!msg.taskId&&Date.now()-Number(msg.at)>=0&&Date.now()-Number(msg.at)<=15*60*1000){
      menu.append(svcpActionIcon('Изменить','edit',()=>{
       closeMessageMenus();clearReply();
       editingMessageIndex=index;
@@ -1524,12 +1520,11 @@ function renderChat(){
     if(!msg.taskId&&(!isSayvi||typeof msg.suggestTask==='string'&&msg.suggestTask.trim())&&state.viewpoint!=='elena'){
      menu.append(svcpActionIcon('Поручить','task',()=>{
       closeMessageMenus();
-      if(privateAssignmentRecipient())assignExistingMessage(msg,index);
-      else prepareTask(msg);
+      prepareTask(msg,index);
      },'svcp-message-menu-item'));
     }
     bubble.tabIndex=0;
-    bubble.setAttribute('aria-description','Свайп вправо — ответ. Долгое нажатие или Enter — действия и реакции.');
+    bubble.setAttribute('aria-description','Свайп вправо — ответ. Долгое нажатие или Enter — доступные действия.');
     let longPressTimer=null,pressStartX=0,pressStartY=0,swipeEligible=false,holdOpened=false;
     const clearHold=()=>{clearTimeout(longPressTimer);longPressTimer=null};
     bubble.addEventListener('pointerdown',event=>{
@@ -1622,13 +1617,13 @@ function suggestFromChat(message){
   task:''
  };
 }
-function prepareTask(msg){
+function prepareTask(msg,index=null){
  const proposed=typeof msg.suggestTask==='string'&&msg.suggestTask.trim()?msg.suggestTask:msg.text;
  // Images and file names are never promoted to tasks automatically.
  const clean=String(proposed||'').replace(/@(?:сэйви|сэй|seyveo|sayvi)(?=\s|[,:.!?]|$)\s*[,—:-]?\s*/gi,'').replace(/\[Выбран файл:[\s\S]*$/,'').trim().slice(0,140);
  if(!clean){setStatus('В этом сообщении нет текста для поручения.');return}
  const room=ROOMS.find(x=>x.id===msg.room);
- state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:''};
+ state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:'',...(Number.isInteger(index)?{messageIndex:index}:{})};
  $('svcpChatTaskAssignee').value=state.draftSource.assigneeId;
  $('svcpChatTaskTitle').value=clean;
  $('svcpChatTaskDraft').hidden=false;
@@ -1714,7 +1709,15 @@ $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
  event.preventDefault();
  const title=$('svcpChatTaskTitle').value;
  const source={...(state.draftSource||{}),assigneeId:$('svcpChatTaskAssignee').value};
- if(!storeTask(title,source))return;
+ const created=storeTask(title,source);
+ if(!created)return;
+ if(Number.isInteger(source.messageIndex)){
+  const message=state.chat[source.messageIndex];
+  if(message&&!message.taskId&&message.room===source.room){
+   const updated=state.chat.map((item,i)=>i===source.messageIndex?{...item,taskId:created[0].id}:item);
+   if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
+  }
+ }
  cancelTaskDraft();
  $('svcpOpenTasks').hidden=false;
 });
@@ -1824,32 +1827,13 @@ $('svcpComposerDirectTask')?.addEventListener('click',()=>{
  const text=input?.value.trim()||'';
  if(!person){setStatus('Поручение напрямую доступно в личном чате сотрудника.');return}
  if(!text){setStatus('Напишите поручение и нажмите «Поручить».');input?.focus({preventScroll:true});return}
- if(text.length>140){
-  setStatus('Для поручения можно написать до 140 символов. Сократите текст или отправьте как сообщение.');
-  input?.focus({preventScroll:true});return;
- }
- if(state.file){
-  setStatus('Прикрепление файлов к поручениям пока не подключено. Уберите файл или отправьте обычное сообщение.');
-  return;
- }
- const created=storeTask(text,{assigneeId:person,room:state.room});
- if(!created)return;
- const message={
-  room:state.room,role:'self',text:'📌 Поручение: '+text,at:Date.now(),
-  taskId:created[0].id,
-  ...(state.replyTo?{replyTo:state.replyTo}:{})
- };
- const updated=state.chat.concat(message).slice(-500);
- if(save(CHAT_KEY,updated)){
-  state.chat=updated;
-  input.value='';
-  closeComposerEmoji();clearReply();cancelTaskDraft();
-  syncComposerActions();resizeWorkComposer();
-  renderChat();
-  setStatus('Поручение для '+STAFF[person]+' сохранено в делах и переписке. Демо, без отправки на другой телефон.');
- }else{
-  setStatus('Поручение для '+STAFF[person]+' создано в делах, но сообщение в чате не сохранилось.');
- }
+ if(text.length>140){setStatus('Для поручения нужно не более 140 символов.');return}
+ if(state.file||state.scanCode){setStatus('Для поручения нужен только текст без вложений.');return}
+ state.draftSource={room:state.room,assigneeId:person};
+ $('svcpChatTaskAssignee').value=person;
+ $('svcpChatTaskTitle').value=text;
+ $('svcpChatTaskDraft').hidden=false;
+ $('svcpChatTaskTitle').focus({preventScroll:true});
 });
 $('svcpChatForm')?.addEventListener('submit',async event=>{
  event.preventDefault();
@@ -1857,7 +1841,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
  const input=$('svcpChatInput'),txt=input?.value.trim()||'';
  if(editingMessageIndex!==null){
   const index=editingMessageIndex,msg=state.chat[index];
-  if(!msg||msg.room!==state.room||!txt){setStatus('Напиши новый текст или выйди из редактирования.');return}
+  if(!msg||msg.room!==state.room||!txt||Date.now()-Number(msg.at)>15*60*1000){setStatus('Напиши новый текст или выйди из редактирования.');return}
   const updated=state.chat.map((item,i)=>i===index?{...item,text:txt,editedAt:Date.now()}:item);
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;editingMessageIndex=null;input.value='';
