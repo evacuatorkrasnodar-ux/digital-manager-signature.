@@ -1369,3 +1369,30 @@
 #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{
  visibility:visible!important;opacity:1!important;
 }
+
+
+/* Composer: keep Send at the end of the form and all actions reachable on iPhone. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:9px!important;flex-wrap:wrap!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-primary-actions{
+ display:flex;align-items:center;justify-content:flex-end;
+ gap:7px;flex:1 1 auto;min-width:0;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-primary-actions > button{
+ min-height:44px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions .sv-mail-send-trigger{
+ font-weight:630!important;
+ background:var(--mail-26-picked)!important;
+}
+@media(max-width:385px){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-editor-actions{
+  flex-direction:column;align-items:stretch!important;
+ }
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-primary-actions{
+  justify-content:space-between;
+ }
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-polish-trigger{align-self:flex-start}
+}
