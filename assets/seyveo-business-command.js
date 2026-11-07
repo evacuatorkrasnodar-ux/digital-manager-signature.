@@ -496,6 +496,18 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
  const value=input.value;
+ // Explicit idle reset: no stale expanded height or wrap state after sending.
+ if(!value&&!state.file&&!state.scanCode){
+  form.classList.remove('svcp-compose-multiline');
+  form.style.setProperty('--svcp-editor-height','40px');
+  form.style.setProperty('--svcp-compose-height','56px');
+  form.style.setProperty('height','56px','important');
+  input.style.setProperty('height','40px','important');
+  input.style.setProperty('overflow-y','hidden','important');
+  const host=form.closest('.svcp-chat');
+  host?.style.setProperty('--svcp-current-compose-height','56px');
+  return;
+ }
  const compact=window.matchMedia('(max-width:390px)').matches;
  const base=compact?38:40;
  const formWidth=form.getBoundingClientRect().width||Math.max(240,window.innerWidth-12);
@@ -1857,7 +1869,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   const updated=state.chat.map((item,i)=>i===index?{...item,text:txt,editedAt:Date.now()}:item);
   if(!save(CHAT_KEY,updated))return;
   state.chat=updated;editingMessageIndex=null;input.value='';
-  clearReply();syncComposerActions();
+  clearReply();syncComposerActions();resizeWorkComposer();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();renderDirectory();setStatus('Изменение сохранено на этом устройстве.');
   return;
@@ -1897,7 +1909,7 @@ $('svcpChatForm')?.addEventListener('submit',async event=>{
   }
   if(!commitChatMessages(messages))return;
   closeComposerEmoji();setCameraTray(false);
-  input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();
+  input.value='';cleanupPreview();clearReply();cancelTaskDraft();syncComposerActions();resizeWorkComposer();
   window.dispatchEvent(new Event('seyveo:work-chat-sent'));
   renderChat();
   setStatus(mediaId?'Фото/видео или файл сохранены только в этом браузере. Доставки другим людям и анализа ИИ пока нет.':
