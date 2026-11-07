@@ -2021,18 +2021,23 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:none!important;
 }
 
-/* TEMP A/B: remove the extra silver highlight from the plus button only.
-   Keep its circular footprint, icon, click behavior and quiet glass surface. */
+/* SEYVEO plus hotspot isolation test.
+   The left Home-dock pane already supplies the glass: painting a second
+   translucent circle on the Plus stacks highlights in Mobile Safari. */
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:focus-visible,:active),
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
- background:rgba(182,202,214,.075)!important;
+ background:transparent!important;
  background-image:none!important;
+ border-color:transparent!important;
  box-shadow:none!important;
  filter:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- border-color:rgba(215,233,242,.10)!important;
+ outline:0!important;
 }
-#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:active{
- filter:none!important;
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile::before,
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile::after{
+ content:none!important;
+ display:none!important;
 }
