@@ -33,34 +33,44 @@ if(personal&&head){
  box-shadow:none;min-width:0;
 }
 .sah-inline-panel[hidden],.sah-search[hidden],.sah-inline-toggle[hidden]{display:none!important}
-.sah-inline-head{display:flex;align-items:center;justify-content:flex-start;min-height:44px;margin:0 0 12px}
+.sah-inline-head{display:flex;align-items:center;justify-content:flex-start;gap:3px;min-height:48px;margin:0 0 6px}
 .sah-inline-head button{
  display:inline-flex;align-items:center;justify-content:flex-start;gap:5px;
  min-height:44px;padding:8px 1px;border:0;border-radius:10px;
  background:transparent;color:var(--secondary);font:inherit;
  font-size:12.5px;font-weight:530;cursor:pointer
 }
-.sah-inline-head button:active{background:var(--seyveo-hdr-active)}
+.sah-inline-head button:active{background:var(--sv-ui-quiet-surface)}
 .sah-inline-head button svg{
- display:block;width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
- stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round
+ display:block;width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);
+ flex:none;fill:none;stroke:currentColor;
+ stroke-width:var(--sv-ui-stroke,1.55);stroke-linecap:round;stroke-linejoin:round
 }
-.sah-history-title{margin:4px 0 10px;font-size:clamp(28px,7.3vw,33px);font-weight:650;line-height:1.14;letter-spacing:-.042em;color:var(--text)}
+#seyveoActionHistoryPanel .sah-history-back{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;flex:0 0 44px!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;border:0!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;
+}
+.sah-history-title{margin:0!important;font-size:clamp(22px,5.6vw,26px);font-weight:600;line-height:1.18;letter-spacing:-.038em;color:var(--text)}
 .sah-history-intro{margin:0 0 17px;color:var(--secondary);font-size:13px;line-height:1.45}
 .sah-inline-panel.is-empty-history .sah-history-intro{display:none}
 .sah-inline-panel.is-empty-history .sah-inline-head{margin-bottom:12px}
 .sah-inline-panel.is-empty-history .sah-inline-note{
  display:flex;flex-direction:column;align-items:center;justify-content:center;
- width:100%;max-width:330px;min-height:clamp(245px,40dvh,440px);
- margin:0 auto;padding:0 16px 20px;box-sizing:border-box;
+ width:100%;max-width:330px;min-height:0;
+ margin:clamp(48px,9dvh,90px) auto 0;padding:0 16px 12px;box-sizing:border-box;
  background:transparent;border:0;text-align:center;
  color:var(--secondary);font-size:13.5px;line-height:1.55;
 }
-.sah-empty-icon{width:52px;height:52px;display:block;margin:0 0 18px;fill:none;
+.sah-empty-icon{width:42px;height:42px;display:block;margin:0 0 15px;fill:none;
  stroke:var(--secondary);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
 .sah-empty-title{display:block;margin:0 0 7px;color:var(--text);
- font-size:19px;font-weight:620;line-height:1.23;letter-spacing:-.025em}
-.sah-empty-copy{display:block;max-width:270px}
+ font-size:17px;font-weight:600;line-height:1.25;letter-spacing:-.025em}
+.sah-empty-copy{display:block;max-width:265px;font-size:12.5px;line-height:1.5}
 .sah-search{
  display:block;box-sizing:border-box;width:100%;min-height:44px;
  margin:9px 0 11px;padding:10px 12px;
@@ -100,12 +110,13 @@ if(personal&&head){
  panel.setAttribute('aria-labelledby',title.id);
  const back=document.createElement('button');back.type='button';back.setAttribute('aria-label','Вернуться к моим делам');back.title='Назад к делам';
  const backSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');backSvg.setAttribute('viewBox','0 0 24 24');backSvg.setAttribute('aria-hidden','true');
- const backPath=document.createElementNS('http://www.w3.org/2000/svg','path');backPath.setAttribute('d','m14 5-7 7 7 7');backSvg.append(backPath);back.append(backSvg,document.createTextNode('Дела'));
- heading.append(back);
+ const backPath=document.createElementNS('http://www.w3.org/2000/svg','path');backPath.setAttribute('d','m14 5-7 7 7 7');backSvg.append(backPath);back.classList.add('sv-nav-back','sah-history-back');
+ back.append(backSvg);
+ heading.append(back,title);
  const intro=document.createElement('p');intro.className='sah-history-intro';intro.textContent='Сохранённые события и результаты действий';
  const search=document.createElement('input');search.type='search';search.className='sah-search';search.placeholder='Поиск по имени, делу или дате';search.setAttribute('aria-label','Поиск в истории действий');
  search.hidden=true;
- const list=document.createElement('div');panel.append(heading,title,intro,search,list);
+ const list=document.createElement('div');panel.append(heading,intro,search,list);
  head.append(open);
  personal.append(panel);
  const studio=new URLSearchParams(location.search).has('seyveoStudio');
