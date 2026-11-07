@@ -40,7 +40,9 @@
  linear-gradient(160deg,var(--seyveo-specular),transparent 42%),var(--bg);
  color:var(--text);font:inherit;
 }
-.syp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.syp-top{display:flex;align-items:flex-start;justify-content:flex-start;gap:9px}
+.syp-top > .syp-x.sv-nav-arrow{order:-1;flex:0 0 44px!important;align-self:flex-start;margin-left:-6px!important}
+.syp-top > div{flex:1;min-width:0}
 .syp-top>div{min-width:0}
 .syp-kicker{margin:1px 0 8px;font-size:10px;letter-spacing:.20em;color:var(--text);font-weight:600}
 .syp-title{margin:0 0 5px;font-size:28px;letter-spacing:-.045em;font-weight:660;line-height:1.15;color:var(--text)}
