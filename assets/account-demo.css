@@ -5,11 +5,13 @@
 .seyveo-account-modal{
  box-sizing:border-box;width:min(515px,calc(100vw - 20px));
  max-width:calc(100vw - 20px);max-height:min(90dvh,850px);
- padding:0;margin:auto;border:1px solid rgba(211,222,217,.22);
- border-radius:27px;overflow:hidden;background:var(--card);color:var(--text);
- box-shadow:0 24px 80px rgba(0,0,0,.62),inset 0 1px rgba(255,255,255,.07);
+ padding:0;margin:auto;border:1px solid var(--sv-ui-sheet-border);
+ border-radius:var(--sv-ui-radius-sheet,22px);overflow:hidden;
+ background:var(--sv-ui-sheet);color:var(--text);
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);
+ box-shadow:var(--sv-ui-sheet-shadow);
 }
-.seyveo-account-modal::backdrop{background:rgba(0,0,0,.68);backdrop-filter:blur(8px)}
+.seyveo-account-modal::backdrop{background:rgba(6,10,15,.46);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .seyveo-account-shell{
  box-sizing:border-box;padding:21px 20px calc(22px + env(safe-area-inset-bottom,0px));
  max-height:min(90dvh,850px);overflow-y:auto;overscroll-behavior:contain;
@@ -202,7 +204,7 @@
  .seyveo-account-switch span{transition:none}
 }
 :root[data-theme="light"] .seyveo-account-modal{
- color:var(--text);background:var(--card);border-color:var(--line);
+ color:var(--text);background:var(--sv-ui-sheet);border-color:var(--sv-ui-sheet-border);
 }
 :root[data-theme="light"] .seyveo-account-modal :is(h2,h3,strong){color:var(--text)}
 :root[data-theme="light"] .seyveo-account-modal :is(p,small,.seyveo-account-disclosure){color:var(--secondary)}
