@@ -64,8 +64,8 @@
   const destination=inSharedHeader?heading:menuHome;
   if(createMenu.parentElement!==destination)destination.append(createMenu);
   if(!inSharedHeader){
-   createMenu.hidden=true;
-   calendarAdd?.setAttribute('aria-expanded','false');
+   if(!createMenu.hidden)createMenu.hidden=true;
+   if(calendarAdd?.getAttribute('aria-expanded')!=='false')calendarAdd?.setAttribute('aria-expanded','false');
    add.setAttribute('aria-expanded','false');
   }
  }
@@ -113,8 +113,8 @@
   const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='calendar'||history){
-   if(createMenu)createMenu.hidden=true;
-   calendarAdd?.setAttribute('aria-expanded','false');
+   if(createMenu&&!createMenu.hidden)createMenu.hidden=true;
+   if(calendarAdd?.getAttribute('aria-expanded')!=='false')calendarAdd?.setAttribute('aria-expanded','false');
   }
   nav.hidden=!visible||history;
   heading.hidden=!visible;
