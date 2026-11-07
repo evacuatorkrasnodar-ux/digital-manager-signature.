@@ -106,52 +106,24 @@
 }
 
 
-/* Keep the real Calendar + and its menu in the calendar DOM.
-   Overlay only that original action at the common header's end.
-   Its existing click and popover positioning remain fully functional. */
+/* The permanent header owns exactly ONE plus across all work tabs.
+   The legacy calendar plus stays in its page for existing listeners only. */
 #svWorkShell{position:relative}
-#svWorkShell[data-shared-work="true"] .calendar-header{
- display:contents!important;
-}
-#svWorkShell[data-shared-work="true"] .calendar-header-main{
+#svWorkShell[data-shared-work="true"] .calendar-header{display:none!important}
+#svWorkShell[data-shared-work="true"] #calendarPage .calendar-header-actions{
  display:none!important;
 }
-#svWorkShell[data-shared-work="true"] .calendar-header-actions{
- position:absolute!important;top:7px!important;right:0!important;
- z-index:210!important;display:flex!important;
- margin:0!important;padding:0!important;
+#svWorkShell[data-shared-work="true"] #svWorkHeader{
+ grid-template-columns:minmax(0,1fr) 44px!important;
 }
-/* The calendar action was being stretched by conflicting 38/40/44px rules.
-   Fixed geometry on the actual work-shell control (not the My World tile). */
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarAdd.calendar-header-add{
- -webkit-appearance:none!important;appearance:none!important;
- box-sizing:border-box!important;display:grid!important;place-items:center!important;
- flex:0 0 var(--sv-ui-touch,44px)!important;flex-grow:0!important;flex-shrink:0!important;
- width:var(--sv-ui-touch,44px)!important;height:var(--sv-ui-touch,44px)!important;
- min-width:var(--sv-ui-touch,44px)!important;max-width:var(--sv-ui-touch,44px)!important;
- min-height:var(--sv-ui-touch,44px)!important;max-height:var(--sv-ui-touch,44px)!important;
- aspect-ratio:1/1!important;
- margin:0!important;padding:0!important;
- border:0!important;border-radius:50%!important;
- background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075))!important;
- box-shadow:none!important;filter:none!important;transform:none!important;
- -webkit-backdrop-filter:blur(20px) saturate(118%)!important;
- backdrop-filter:blur(20px) saturate(118%)!important;
+#svWorkShell[data-shared-work="true"] #svWorkAdd:not([hidden]){
+ grid-column:2!important;justify-self:end!important;
+ flex:none!important;box-sizing:border-box!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ aspect-ratio:1!important;transform:none!important;
+ border-radius:50%!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarAdd svg{
- box-sizing:border-box!important;width:19px!important;height:19px!important;
- min-width:19px!important;max-width:19px!important;min-height:19px!important;max-height:19px!important;
- stroke-width:1.65!important;fill:none!important;
-}
-#svWorkShell #svWorkAdd:not([hidden]){
- box-sizing:border-box!important;flex:0 0 42px!important;
- min-width:42px!important;max-width:42px!important;
- min-height:42px!important;max-height:42px!important;
- aspect-ratio:1/1!important;
- margin:0!important;padding:0!important;
-}
-
-
 /* SEYVEO navigation hierarchy: title + one action, no duplicate Back on roots.
    Real original buttons are still mounted for delegated clicks. */
 #svWorkShell[data-shared-work="true"] #svWorkHeader{
@@ -220,63 +192,59 @@
 }
 
 
-/* SEYVEO work calendar: use the same attached glass menu as the calendar itself.
-   Do not push the popover below the tabs: its anchor is the original + button,
-   held within the shared header. This stylesheet is loaded after calendar.css. */
-#svWorkShell[data-shared-work="true"] #calendarPage .calendar-header-actions{
- overflow:visible!important;isolation:isolate!important;
-}
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
- position:absolute!important;
- top:calc(100% + 5px)!important;
- bottom:auto!important;right:0!important;left:auto!important;
- display:block!important;z-index:450!important;
- box-sizing:border-box!important;
- width:min(252px,calc(100vw - 30px))!important;
- height:auto!important;margin:0!important;padding:5px!important;
- border:1px solid var(--sv-ui-glass-border)!important;
- border-radius:var(--sv-ui-radius-menu,18px)!important;
- background:var(--sv-ui-glass)!important;
- -webkit-backdrop-filter:var(--sv-ui-glass-filter)!important;
- backdrop-filter:var(--sv-ui-glass-filter)!important;
- box-shadow:var(--sv-ui-glass-shadow)!important;
+/* The real calendar menu is portaled only while the work-calendar tab
+   is active. Anchor it to the permanent header, not the hidden old page.
+   Optical material matches Sayvi chat's smoke glass: 19% neutral wash,
+   blur(16px) saturate(105%), no border, no convex rim, no hard shadow. */
+#svWorkHeader{position:relative!important;isolation:isolate;overflow:visible!important;z-index:230}
+#svWorkHeader #calendarCreateMenu[hidden]{display:none!important}
+#svWorkHeader #calendarCreateMenu:not([hidden]){
+ position:absolute!important;top:calc(100% + 2px)!important;
+ right:0!important;left:auto!important;bottom:auto!important;
+ z-index:450!important;display:block!important;
+ box-sizing:border-box!important;width:min(254px,calc(100vw - 30px))!important;
+ height:auto!important;max-height:none!important;
+ padding:4px!important;margin:0!important;
+ border:0!important;border-radius:18px!important;
+ background:rgba(184,195,201,.19)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
+ box-shadow:none!important;filter:none!important;
  transform:none!important;animation:none!important;
- overflow:hidden!important;isolation:isolate!important;
+ isolation:isolate!important;overflow:hidden!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu[hidden]{
- display:none!important;
-}
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button{
- display:flex!important;flex-direction:column!important;align-items:flex-start!important;
- justify-content:center!important;min-height:47px!important;
- padding:7px 11px!important;
+#svWorkHeader #calendarCreateMenu button{
+ box-sizing:border-box!important;display:flex!important;
+ flex-direction:column!important;align-items:flex-start!important;
+ justify-content:center!important;min-height:49px!important;
+ width:100%!important;margin:0!important;padding:7px 12px!important;
  border:0!important;border-radius:12px!important;
  background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;font:inherit!important;text-align:left!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button+button{
- border-top:1px solid rgba(210,231,229,.12)!important;
+#svWorkHeader #calendarCreateMenu button+button{
+ border-top:1px solid rgba(204,219,225,.10)!important;
  border-radius:0 0 12px 12px!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button span{
- font-size:13px!important;font-weight:580!important;
+#svWorkHeader #calendarCreateMenu button span{
+ font-size:13px!important;font-weight:590!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button small{
- font-size:10.5px!important;line-height:1.3!important;
+#svWorkHeader #calendarCreateMenu button small{
+ margin-top:2px!important;font-size:10.5px!important;
+ line-height:1.3!important;color:var(--secondary)!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button:active{
- background:rgba(206,226,228,.10)!important;
+#svWorkHeader #calendarCreateMenu button:active{
+ background:rgba(218,235,245,.12)!important;
 }
-:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
- background:var(--sv-ui-glass)!important;
- border-color:var(--sv-ui-glass-border)!important;
- box-shadow:var(--sv-ui-glass-shadow)!important;
+:root[data-theme=light] #svWorkHeader #calendarCreateMenu:not([hidden]){
+ background:rgba(99,121,133,.22)!important;
 }
-:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button+button{
- border-top-color:rgba(56,110,87,.10)!important;
+:root[data-theme=light] #svWorkHeader #calendarCreateMenu button+button{
+ border-top-color:rgba(50,87,80,.10)!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
-  background:var(--card)!important;
+ #svWorkHeader #calendarCreateMenu:not([hidden]){
+  background:var(--card2)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
