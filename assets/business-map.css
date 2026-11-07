@@ -409,7 +409,8 @@
  font-size:10.5px;line-height:1.56;color:var(--secondary);margin:9px 0 0;
 }
 #businessMapDialog #businessMapStorefrontAuditSave{
- margin:12px 0 0;width:100%;
+ display:block;margin:12px 0 0 auto;width:auto;max-width:100%;min-height:44px;
+ padding:0 10px;border:0;background:transparent;box-shadow:none;color:var(--text);
 }
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit,
 :root[data-theme=light] #businessMapDialog .business-map-storefront-audit-item{
