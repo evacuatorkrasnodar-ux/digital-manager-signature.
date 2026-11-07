@@ -1552,7 +1552,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex-direction:column!important;
  justify-content:flex-end!important;
  box-sizing:border-box!important;
- width:calc(100% - 5px)!important;
+ width:100%!important;
  min-width:0!important;
  min-height:40px!important;
  height:auto!important;
