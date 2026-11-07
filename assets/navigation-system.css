@@ -17,13 +17,25 @@ dialog > button.sv-nav-done.seyveo-close-control::before{content:none!important;
 /* Reserve title space for the word Done, not the former 44px close glyph. */
 dialog > button.sv-nav-done ~ h2:first-of-type{padding-right:84px!important}
 button.sv-nav-redundant{display:none!important}
+/* SEYVEO back navigation: one unobtrusive tap target and thin glyph. */
 button.sv-nav-back{
  -webkit-appearance:none;appearance:none;
- box-sizing:border-box;min-width:44px;min-height:44px;
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+ width:var(--sv-ui-touch,44px);height:var(--sv-ui-touch,44px);
+ min-width:var(--sv-ui-touch,44px);min-height:var(--sv-ui-touch,44px);
+ padding:0;border:0;border-radius:50%;
+ background:transparent;box-shadow:none;color:var(--text);
  touch-action:manipulation;
 }
 button.sv-nav-back.seyveo-close-control{
- width:44px;height:44px;border-radius:50%;
+ width:var(--sv-ui-touch,44px);height:var(--sv-ui-touch,44px);
+ border-radius:50%;background:transparent;box-shadow:none;
+}
+button.sv-nav-back.seyveo-close-control::before{display:none!important;content:none!important}
+button.sv-nav-back svg{
+ width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);
+ fill:none;stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);
+ stroke-linecap:round;stroke-linejoin:round;
 }
 dialog :is(.info-actions,.personal-task-actions,.paper-actions,.note-read-actions)
  > :is(button,.btn){
