@@ -1417,9 +1417,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:4!important}
-#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpComposerEmojiToggle) svg{
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle) svg{
  position:relative!important;z-index:1!important;
  width:21px!important;height:21px!important;
+ stroke-width:1.5!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg{
+ position:relative!important;z-index:1!important;
+ width:26px!important;height:26px!important;
  stroke-width:1.5!important;
 }
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle):active{
