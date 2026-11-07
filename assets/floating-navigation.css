@@ -6,7 +6,7 @@
  * Stable safe-area, native scroll, original voice and music controls. */
 :root{
  --seyveo-nav-ink:#eff7f2;
- --seyveo-dock-height:52px;
+ --seyveo-dock-height:56px;
  --seyveo-dock-icon-size:22px;
  --seyveo-dock-icon-stroke:.8;
  /* Recessed laser engraving: thin line lit by a quiet, neutral WHITE backlight in every dock mode. */
@@ -196,7 +196,7 @@
 @media(prefers-reduced-motion:reduce){
  .dock>.assistant-button.listening .voice-bars{animation:none!important}
 }
-/* SEYVEO Signature Dock: a compact 52px five-way navigation surface.
+/* SEYVEO Signature Dock: a compact 56px five-way navigation surface.
  * The central ceramic voice control remains 50px; four side destinations
  * use 48px touch targets. A tap briefly traces a contour, then it fades.
  * The active section remains distinguishable by type and icon only.
