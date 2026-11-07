@@ -2021,20 +2021,24 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:none!important;
 }
 
-/* SEYVEO plus hotspot isolation test.
-   The left Home-dock pane already supplies the glass: painting a second
-   translucent circle on the Plus stacks highlights in Mobile Safari. */
+/* SEYVEO plus: restore the proper round button WITHOUT silver glow.
+   Only a quiet flat circle sits on the Home dock copy. The actual button,
+   SVG, dimensions, alignment and handlers remain unchanged. */
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
-#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:focus-visible,:active),
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:active),
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
- background:transparent!important;
+ background:rgba(182,202,214,.075)!important;
  background-image:none!important;
- border-color:transparent!important;
+ border:1px solid rgba(215,233,242,.10)!important;
+ border-radius:50%!important;
  box-shadow:none!important;
  filter:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
- outline:0!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ background:rgba(116,133,145,.10)!important;
+ border-color:rgba(116,134,145,.13)!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile::before,
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile::after{
