@@ -1732,11 +1732,10 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 .sv-cabinet-footer{
  position:sticky;bottom:calc(-14px - env(safe-area-inset-bottom,0px));
  display:flex;justify-content:space-between;align-items:center;gap:12px;
- padding:9px 0 calc(7px + env(safe-area-inset-bottom,0px));
+ padding:10px 0 calc(8px + env(safe-area-inset-bottom,0px));
  border-top:1px solid color-mix(in srgb,var(--secondary) 10%,transparent);
- background:rgba(31,42,49,.90);
- -webkit-backdrop-filter:blur(16px) saturate(105%);
- backdrop-filter:blur(16px) saturate(105%);z-index:2
+ background:rgba(31,42,49,.97);
+ -webkit-backdrop-filter:none;backdrop-filter:none;z-index:2
 }
 .sv-cabinet-footer button{
  min-height:44px;border:0;border-radius:999px;padding:9px 14px;
@@ -1751,7 +1750,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 :root[data-theme=light] .sv-cabinet-dialog{background:rgba(245,249,251,.86)}
 :root[data-theme=light] .sv-cabinet-search,
 :root[data-theme=light] .sv-cabinet-save{background:rgba(99,121,133,.18)}
-:root[data-theme=light] .sv-cabinet-footer{background:rgba(245,249,251,.92)}
+:root[data-theme=light] .sv-cabinet-footer{background:rgba(245,249,251,.97)}
 .sv-cabinet-dialog button:focus-visible,
 #tasksPage .sv-cabinet-plus:focus-visible,
 #tasksPage .sv-cabinet-empty button:focus-visible{
@@ -1836,6 +1835,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  color:var(--text);font:inherit;font-size:23px;font-weight:350;
  cursor:pointer;touch-action:manipulation
 }
+.sv-cabinet-goal-mark svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 .sv-cabinet-goal-mark::first-letter{line-height:1}
 .sv-cabinet-goal-mark.is-selected{font-size:18px;font-weight:590}
 .sv-cabinet-goal-mark.is-selected:not(:focus-visible){color:var(--text)}
@@ -1846,60 +1846,69 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  outline:2px solid var(--seyveo-emerald);outline-offset:1px
 }
 .sv-cabinet-guide{
- min-width:0;padding:3px 0 9px;
+ min-width:0;padding:2px 0 8px;
  animation:svCabinetGuideReveal .16s ease-out both
 }
 .sv-cabinet-guide-back{
- min-height:44px;padding:3px 2px 8px;
+ display:inline-flex;align-items:center;gap:8px;
+ min-height:44px;padding:2px 3px 8px;
  border:0;background:transparent;color:var(--secondary);
- font:inherit;font-size:12px;font-weight:575;cursor:pointer
+ font:inherit;font-size:12.5px;font-weight:540;cursor:pointer
+}
+.sv-cabinet-guide-back svg{
+ flex:none;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
 }
 .sv-cabinet-guide-title{
- margin:4px 2px 9px;color:var(--text);
- font-size:18px;font-weight:635;letter-spacing:-.03em;line-height:1.22
+ margin:7px 2px 11px;color:var(--text);
+ font-size:20px;font-weight:620;letter-spacing:-.035em;line-height:1.24
 }
 .sv-cabinet-guide-benefit{
- margin:0 2px 10px;color:var(--text);font-size:12.5px;line-height:1.5
+ margin:0 2px 10px;color:var(--text);font-size:13px;line-height:1.52
 }
 .sv-cabinet-guide-module{
- margin:0 2px 16px;color:var(--secondary);
- font-size:11px;line-height:1.42
+ margin:0 2px 18px;color:var(--secondary);
+ font-size:11.5px;line-height:1.45
 }
 .sv-cabinet-guide-subtitle{
- margin:7px 2px 10px;color:var(--text);
- font-size:13px;font-weight:590;line-height:1.35
+ margin:7px 2px 12px;color:var(--text);
+ font-size:14px;font-weight:590;line-height:1.35
 }
 .sv-cabinet-sources{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
- gap:8px;min-width:0
+ gap:8px;min-width:0;margin:0 0 10px
 }
 .sv-cabinet-source{
- min-width:0;min-height:44px;padding:8px 10px;
- border:0;border-radius:13px;
- background:var(--sv-liquid-nav-material,var(--card2));
- color:var(--text);font:inherit;font-size:12px;font-weight:540;
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(16px));
- backdrop-filter:var(--sv-liquid-nav-blur,blur(16px));
- cursor:pointer;text-align:center
+ min-width:0;min-height:46px;padding:10px 12px;
+ border:0;border-radius:15px;
+ background:rgba(184,195,201,.12);
+ color:var(--text);font:inherit;font-size:12.5px;font-weight:550;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;cursor:pointer;text-align:center;
+ touch-action:manipulation
 }
 .sv-cabinet-source.is-current{
- background:color-mix(in srgb,var(--text) 13%,transparent);
- box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 18%,transparent)
+ background:rgba(184,195,201,.28);
+ box-shadow:none;
+ color:var(--text);
+ font-weight:620
 }
+:root[data-theme=light] .sv-cabinet-source{background:rgba(99,121,133,.12)}
 :root[data-theme=light] .sv-cabinet-source.is-current{
- background:color-mix(in srgb,var(--seyveo-emerald) 12%,white)
+ background:rgba(62,122,99,.18)
 }
 .sv-cabinet-source-note{
- min-height:44px;margin:12px 2px 13px;
- font-size:11px;line-height:1.5;color:var(--secondary)
+ min-height:0;margin:10px 2px 20px;
+ font-size:12px;line-height:1.55;color:var(--secondary)
 }
 .sv-cabinet-guide-action{
  display:block;width:100%;min-height:46px;
- border:0;border-radius:999px;
- background:var(--sv-liquid-nav-material,var(--card2));
- -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
- backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
- color:var(--text);font:inherit;font-size:13px;font-weight:590;
+ border:0;border-radius:16px;
+ background:rgba(184,195,201,.13);
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none;color:var(--text);font:inherit;font-size:13px;font-weight:570;
  cursor:pointer
 }
 @keyframes svCabinetGuideReveal{
@@ -2151,6 +2160,15 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 /* This shortcut duplicates the Cabinet setup entry. Keep its hidden DOM
    endpoint for existing workflow bindings, never show it in the chooser. */
 #svCabinetStartWithSayvi[hidden]{display:none!important}
+/* The sheet's two states share a matte surface and stable typography. */
+.sv-cabinet-dialog .sv-cabinet-guide,.sv-cabinet-dialog .sv-cabinet-catalog{min-width:0}
+.sv-cabinet-dialog .sv-cabinet-guide-action:active,
+.sv-cabinet-dialog .sv-cabinet-source:active{background:rgba(184,195,201,.22)}
+:root[data-theme=light] .sv-cabinet-dialog .sv-cabinet-guide-action{background:rgba(99,121,133,.14)}
+@media(prefers-reduced-transparency:reduce){
+ .sv-cabinet-dialog :is(.sv-cabinet-source,.sv-cabinet-guide-action){background:var(--card2);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+
 /* Business home uses the same tactile matte as Sayvi's composer. */
 :root[data-theme=light] #tasksPage :is(.sv-cabinet-plus,.svcp-manager-task-create){
  background:rgba(99,121,133,.18);
