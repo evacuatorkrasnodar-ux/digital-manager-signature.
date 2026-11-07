@@ -2822,3 +2822,83 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  top:3px!important;
  transform:none!important;
 }
+
+/* v186 · Compact voice strip aligned to the Home/Work dock baseline.
+   The whole conversation stays still; the strip replaces, not pushes, composer. */
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture:not([hidden]){
+ box-sizing:border-box!important;
+ position:absolute!important;
+ z-index:8!important;
+ left:50%!important;
+ right:auto!important;
+ bottom:var(--seyveo-dock-bottom,max(7px,calc(env(safe-area-inset-bottom,0px) - 20px)))!important;
+ transform:translateX(-50%)!important;
+ width:min(430px,calc(100% - 12px))!important;
+ max-width:calc(100% - 12px)!important;
+ height:56px!important;
+ min-height:56px!important;
+ max-height:56px!important;
+ margin:0!important;
+ padding:3px 9px!important;
+ display:flex!important;
+ align-items:center!important;
+ gap:5px!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:var(--svcp-smoke-glass)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+ box-shadow:none!important;
+ overflow:hidden!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-live{
+ display:flex!important;
+ flex:1 1 auto!important;
+ min-width:0!important;
+ height:46px!important;
+ gap:7px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-live strong{
+ max-width:76px!important;
+ font-size:12px!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-wave{
+ flex:1 1 auto!important;
+ max-width:none!important;
+ min-width:22px!important;
+ height:26px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-live time{
+ margin-left:0!important;
+ font-size:12px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-controls{
+ display:flex!important;
+ flex:0 0 auto!important;
+ gap:0!important;
+ align-items:center!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-controls button{
+ width:40px!important;
+ min-width:40px!important;
+ height:44px!important;
+ min-height:44px!important;
+ border-radius:50%!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord{
+ touch-action:none!important;
+ -webkit-user-select:none!important;
+ user-select:none!important;
+ -webkit-touch-callout:none!important;
+}
+@media(max-width:370px){
+ #svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-live strong{
+  max-width:54px!important;
+ }
+ #svcpWorkChatScreen[data-view="room"] #svcpVoiceCapture .svcp-voice-live{
+  gap:4px!important;
+ }
+}
