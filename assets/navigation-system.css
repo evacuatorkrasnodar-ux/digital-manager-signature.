@@ -18,7 +18,7 @@ dialog > button.sv-nav-done.seyveo-close-control::before{content:none!important;
 dialog > button.sv-nav-done ~ h2:first-of-type{padding-right:84px!important}
 button.sv-nav-redundant{display:none!important}
 /* SEYVEO back navigation: one unobtrusive tap target and thin glyph. */
-button.sv-nav-back{
+button:is(.sv-nav-back,.sv-nav-arrow){
  -webkit-appearance:none;appearance:none;
  box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
  width:var(--sv-ui-touch,44px);height:var(--sv-ui-touch,44px);
@@ -27,15 +27,46 @@ button.sv-nav-back{
  background:transparent;box-shadow:none;color:var(--text);
  touch-action:manipulation;
 }
-button.sv-nav-back.seyveo-close-control{
+button:is(.sv-nav-back,.sv-nav-arrow).seyveo-close-control{
  width:var(--sv-ui-touch,44px);height:var(--sv-ui-touch,44px);
  border-radius:50%;background:transparent;box-shadow:none;
 }
-button.sv-nav-back.seyveo-close-control::before{display:none!important;content:none!important}
-button.sv-nav-back svg{
+button:is(.sv-nav-back,.sv-nav-arrow).seyveo-close-control::before{display:none!important;content:none!important}
+button:is(.sv-nav-back,.sv-nav-arrow) svg{
  width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);
  fill:none;stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);
  stroke-linecap:round;stroke-linejoin:round;
+}
+/* No JavaScript-injected button styles: this is the sole owner of the glyph. */
+button:is(.sv-nav-back,.sv-nav-arrow){
+ flex:0 0 auto!important;
+ width:var(--sv-ui-touch,44px)!important;min-width:var(--sv-ui-touch,44px)!important;
+ height:var(--sv-ui-touch,44px)!important;min-height:var(--sv-ui-touch,44px)!important;
+ padding:0!important;border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+button:is(.sv-nav-back,.sv-nav-arrow) svg{
+ display:block!important;width:var(--sv-ui-icon,19px)!important;height:var(--sv-ui-icon,19px)!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:var(--sv-ui-stroke,1.55)!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+button:is(.sv-nav-back,.sv-nav-arrow):active{
+ opacity:.7;transform:none!important;
+}
+button:is(.sv-nav-back,.sv-nav-arrow):focus-visible{
+ outline:2px solid var(--text)!important;outline-offset:2px!important;
+}
+/* Only dialogs whose close control is the first direct child are aligned as nested sheets.
+   Keep special header controls in their own modules. */
+dialog > button.seyveo-dialog-close.sv-nav-arrow{
+ top:12px!important;left:12px!important;right:auto!important;
+}
+dialog > button.seyveo-dialog-close.sv-nav-arrow ~ h2:first-of-type{
+ padding-left:50px!important;padding-right:0!important;
+}
+@media(prefers-reduced-motion:reduce){
+ button:is(.sv-nav-back,.sv-nav-arrow){transition:none!important}
 }
 dialog :is(.info-actions,.personal-task-actions,.paper-actions,.note-read-actions)
  > :is(button,.btn){
