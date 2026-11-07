@@ -951,8 +951,7 @@
   {id:'1c',name:'1С',note:'Интеграция с 1С ещё не готова. Для реальных данных потребуется определить конфигурацию базы и согласовать подключение с администратором.'},
   {id:'bitrix',name:'Битрикс24',note:'Прямое подключение Битрикс24 пока не реализовано. В рабочей версии потребуется авторизация владельца и разрешение на чтение нужных данных.'},
   {id:'file',name:'Excel / CSV',note:'Импорт таблиц в показатели пока не реализован. Не загружайте конфиденциальные рабочие файлы в неподготовленные формы.'},
-  {id:'manual',name:'Вручную',note:'Ввод реальных продаж вручную пока не реализован. Сейчас доступен только существующий локальный прототип раздела.'},
-  {id:'later',name:'Подключить позже',note:'Можно добавить «Пульс бизнеса» в кабинет сейчас. Это не означает, что реальный источник данных уже подключён.'}
+  {id:'manual',name:'Вручную',note:'Ввод реальных продаж вручную пока не реализован. Сейчас доступен только существующий локальный прототип раздела.'}
  ];
  const DEFAULT=ready.map(item=>item.id);
  const itemById=new Map(ready.map(item=>[item.id,item]));
@@ -1058,12 +1057,14 @@
   guideHost.replaceChildren();
   const back=button('','back');
   back.className='sv-cabinet-guide-back';
-  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>К инструментам</span>';
+  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
   back.setAttribute('aria-label','Вернуться к списку инструментов');
   const title=node('h3','sv-cabinet-guide-title',goal.title);
   const benefit=node('p','sv-cabinet-guide-benefit',goal.benefit);
   const module=node('p','sv-cabinet-guide-module','Инструмент: '+info.name);
-  guideHost.append(back,title,benefit,module);
+  const nav=node('div','sv-cabinet-guide-nav');
+  nav.append(back,title);
+  guideHost.append(nav,benefit,module);
   if(goal.sources){
    const label=node('h4','sv-cabinet-guide-subtitle','Где вы ведёте продажи?');
    const sourceList=node('div','sv-cabinet-sources');
