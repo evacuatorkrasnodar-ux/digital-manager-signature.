@@ -74,6 +74,16 @@
    svg.replaceWith(createArrow());
   }
  });
+ // Four standalone icon-only close controls used legacy X marks.
+ // Keep the ORIGINAL button and its event handler, only unify its glyph.
+ [
+  'svfClose','seyveoQrClose','seyveoOfflineClose'
+ ].map($).concat(document.querySelector('#seyveoPayDialog .syp-x'))
+  .filter(Boolean).forEach(button=>{
+   button.replaceChildren(createArrow());
+   button.classList.add('sv-nav-arrow');
+   button.removeAttribute('title');
+  });
  // On editable forms, cancel / Escape must not silently discard entered data.
  // We snapshot only fields after a dialog actually opens; saving uses the
  // original app submit handler untouched.
@@ -125,5 +135,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:4});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:5});
 })();
