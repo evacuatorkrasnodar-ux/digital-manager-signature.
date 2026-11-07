@@ -13,7 +13,7 @@ if(!page||!subject||!title||!intro||!body||!back||!symbol)return;
 const routes=Object.freeze({mail:'#sayvi-mail',contract:'#sayvi-documents',task:'#tasks',health:'#sayvi-health'});
 const subjects=Object.freeze({
  mail:{label:'SEYVEO / ПОЧТА',title:'Почта',intro:'Письма и черновики внутри SEYVEO. Подключение ящика — отдельно.',symbol:'mail'},
- contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Центр документов',intro:'Открывайте файлы, создавайте черновики и готовьте их к передаче. Интеллект Сэйви будет подключён отдельно.',symbol:'contract'},
+ contract:{label:'ДОКУМЕНТЫ · SEYVEO',title:'Документы',intro:'Защищённый архив и работа с документами через чат Сэйви.',symbol:'contract'},
  health:{label:'ЗАБОТА',title:'Ваше здоровье',intro:'Ваши показатели и спокойная забота о себе.',symbol:'health'}
 });
 let fileUrl=null;
