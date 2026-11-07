@@ -1868,3 +1868,46 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   -webkit-text-fill-color:currentColor!important;
  }
 }
+
+/* SEYVEO unified dock baseline · 56px Home / Work / Chat */
+/* The existing Home dock owns this bottom offset. Always anchor the
+   messenger composer to the identical viewport baseline even when
+   a reply, file, or assignment is open; no relative-layout jump. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat #svcpChatForm,
+#svcpWorkChatScreen[data-view="room"] .svcp-chat:has(:is(
+ #svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick
+):not([hidden])) #svcpChatForm{
+ position:absolute!important;
+ top:auto!important;left:50%!important;right:auto!important;
+ bottom:var(--seyveo-dock-bottom,max(7px,calc(env(safe-area-inset-bottom,0px) - 20px)))!important;
+ transform:translateX(-50%)!important;
+ margin:0!important;
+ animation:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline){
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+}
+/* Keep optional preview surfaces ABOVE the same composer instead of
+   pushing its whole row up. Size changes only affect scroll clearance. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat >
+:is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpChatTaskDraft,#svcpTaskDiscussionQuick):not([hidden]){
+ position:absolute!important;z-index:8!important;
+ left:50%!important;right:auto!important;
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--svcp-current-compose-height,56px) + 8px)!important;
+ transform:translateX(-50%)!important;
+ width:min(430px,calc(100% - 14px))!important;max-width:calc(100% - 14px)!important;
+ margin:0!important;
+}
+/* When both reply and attachment previews exist, stack them instead of overlap. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpAttachmentPreview:not([hidden]))
+ > #svcpReplyPreview:not([hidden]){
+ bottom:calc(var(--seyveo-dock-bottom,7px) + var(--svcp-current-compose-height,56px) + 108px)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ padding-bottom:calc(var(--svcp-current-compose-height,56px) + var(--seyveo-dock-bottom,7px) + 32px)!important;
+}
+/* No active-state animation on geometry. Multiline height remains content-driven. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
+ transition:none!important;
+}
