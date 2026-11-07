@@ -947,6 +947,21 @@
   company:{title:'Хранить реквизиты компании',description:'Контакты и QR-визитка',benefit:'Открывайте карточку организации, реквизиты и QR-визитку.',hint:'Данные карточки в текущем прототипе сохраняются локально на устройстве.'},
   people:{title:'Управлять сотрудниками',description:'Карточки, смены и подбор',benefit:'Рабочий раздел с сотрудниками, сменами и поручениями.',hint:'Пока учебные сотрудники и графики находятся в локальном прототипе; права реальных людей будут назначаться отдельно.'}
  };
+ /* Quiet line icons explain each cabinet tool without adding another button. */
+ const GOAL_ICONS={
+  pulse:'<path d="M4 4v16h16M7 16l4-4 3 2 5-7"/>',
+  chats:'<path d="M4 5h16v12H9l-5 3V5Z"/>',
+  mail:'<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 8 7.5 5.5L19.5 8"/>',
+  documents:'<path d="M7 3h8l4 4v14H7zM15 3v5h4M10 12h6M10 16h6"/>',
+  company:'<path d="M4 20V7l8-4 8 4v13M4 20h16M9 20v-6h6v6M8 10h1M15 10h1"/>',
+  people:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 8a3 3 0 0 1 0 6M18 16a4 4 0 0 1 3 4"/>'
+ };
+ const goalIcon=id=>{
+  const span=node('span','sv-cabinet-goal-icon');
+  span.setAttribute('aria-hidden','true');
+  span.innerHTML='<svg viewBox="0 0 24 24" focusable="false">'+(GOAL_ICONS[id]||GOAL_ICONS.documents)+'</svg>';
+  return span;
+ };
  const SOURCES=[
   {id:'1c',name:'1С',note:'Интеграция с 1С ещё не готова. Для реальных данных потребуется определить конфигурацию базы и согласовать подключение с администратором.'},
   {id:'bitrix',name:'Битрикс24',note:'Прямое подключение Битрикс24 пока не реализовано. В рабочей версии потребуется авторизация владельца и разрешение на чтение нужных данных.'},
@@ -1008,7 +1023,7 @@
    const arrow=node('span','sv-cabinet-goal-chevron');
    arrow.setAttribute('aria-hidden','true');
    arrow.innerHTML='<svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg>';
-   detail.append(copy,arrow);
+   detail.append(goalIcon(item.id),copy,arrow);
    const toggle=button('','toggle',item.id);
    toggle.innerHTML=checked
     ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>'
@@ -1067,7 +1082,7 @@
   const benefit=node('p','sv-cabinet-guide-benefit',goal.benefit);
   const module=node('p','sv-cabinet-guide-module','Инструмент: '+info.name);
   const nav=node('div','sv-cabinet-guide-nav');
-  nav.append(back,title);
+  nav.append(back,goalIcon(activeGoal),title);
   guideHost.append(nav,benefit,module);
   if(goal.sources){
    const label=node('h4','sv-cabinet-guide-subtitle','Где вы ведёте продажи?');
