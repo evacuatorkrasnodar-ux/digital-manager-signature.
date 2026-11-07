@@ -1013,17 +1013,19 @@
   const found=ready.filter(item=>matches(item,q));
   for(const item of found){
    const goal=GOALS[item.id],checked=draft.includes(item.id);
-   // Tap the task for a human explanation; plus/check changes the layout.
+   // Tap the description or information glyph for the guide; the checkmark changes selection.
    const row=node('div','sv-cabinet-goal-row');
    const detail=button('','guide',item.id);
    detail.className='sv-cabinet-goal-detail';
-   detail.setAttribute('aria-label','Как работает: '+goal.title);
+   detail.setAttribute('aria-label','Подробнее об инструменте: '+goal.title);
+   detail.title='Подробнее: '+goal.title;
    const copy=node('span','sv-cabinet-choice-copy');
    copy.append(node('strong',null,goal.title),node('small',null,goal.description));
-   const arrow=node('span','sv-cabinet-goal-chevron');
-   arrow.setAttribute('aria-hidden','true');
-   arrow.innerHTML='<svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg>';
-   detail.append(goalIcon(item.id),copy,arrow);
+   // ⓘ describes a same-sheet explanation, not navigation to another page.
+   const info=node('span','sv-cabinet-goal-info');
+   info.setAttribute('aria-hidden','true');
+   info.innerHTML='<svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
+   detail.append(goalIcon(item.id),copy,info);
    const toggle=button('','toggle',item.id);
    toggle.innerHTML=checked
     ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>'
