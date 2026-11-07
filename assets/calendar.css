@@ -1019,3 +1019,78 @@
  background:rgba(83,141,117,.17)!important;
  color:var(--seyveo-emerald,#386d5b)!important;
 }
+
+
+/* SEYVEO 26 | quiet, compact time wheel: keep 44px rows and snap geometry. */
+#calendarEventDialog #seyveoPickTime.cal-pick-time{
+ box-sizing:border-box!important;
+ padding:10px 11px 12px!important;
+ margin:4px 0 8px!important;
+ border:0!important;border-radius:18px!important;
+ background:rgba(143,166,176,.075)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-head{
+ min-height:29px!important;margin:0 2px 7px!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-head strong{
+ font-size:13.5px!important;font-weight:590!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-head small{
+ font-size:10.5px!important;font-weight:450!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheels{
+ grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr)!important;
+ gap:5px!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel-title{
+ margin-bottom:2px!important;font-size:10.5px!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel{
+ height:156px!important;min-height:156px!important;
+ padding:56px 0!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 24%,#000 76%,transparent)!important;
+ mask-image:linear-gradient(to bottom,transparent,#000 24%,#000 76%,transparent)!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel-option{
+ height:44px!important;min-height:44px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ font-size:17px!important;font-weight:470!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected{
+ background:rgba(165,186,196,.12)!important;
+ color:var(--text)!important;font-weight:620!important;
+ border:0!important;box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-colon{
+ font-size:20px!important;font-weight:450!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-actions{
+ gap:6px!important;margin-top:9px!important;padding-top:9px!important;
+ border-top:1px solid color-mix(in srgb,var(--text) 7%,transparent)!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-actions button{
+ min-height:40px!important;border:0!important;
+ border-radius:999px!important;box-shadow:none!important;
+ font-size:12px!important;font-weight:550!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-done{
+ min-width:121px!important;
+ background:rgba(165,186,196,.16)!important;
+ color:var(--text)!important;
+}
+:root[data-theme=light] #calendarEventDialog #seyveoPickTime{
+ background:rgba(72,99,108,.065)!important;
+}
+:root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected{
+ background:rgba(67,121,99,.13)!important;
+ color:var(--seyveo-emerald,#386d5b)!important;
+}
+:root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-time-done{
+ background:rgba(67,121,99,.14)!important;
+ color:var(--seyveo-emerald,#386d5b)!important;
+}
