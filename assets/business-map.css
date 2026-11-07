@@ -84,7 +84,7 @@
 #businessMapDialog .business-map-form textarea{
  width:100%;height:132px;min-height:85px;max-height:220px;resize:vertical;
  border:1px solid rgba(228,236,247,.24);border-radius:16px;padding:13px;
- background:var(--card);color:var(--text);font-size:16px;line-height:1.5;outline:0;
+ background:var(--sv-ui-field);color:var(--text);font-size:16px;line-height:1.5;outline:0;
 }
 #businessMapDialog .business-map-form textarea:focus-visible{
  border-color:var(--text);box-shadow:0 0 0 2px var(--seyveo-hdr-active);
@@ -98,25 +98,25 @@
 }
 #businessMapDialog .business-map-primary{
  display:inline-flex;align-items:center;justify-content:center;
- flex:1 1 auto;min-width:0;min-height:48px;
- padding:10px 15px;
- border:1px solid rgba(230,237,245,.33);border-radius:16px;
- background:linear-gradient(180deg,var(--seyveo-hdr-active),transparent);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.065);
- color:var(--text);font-size:13px;font-weight:490;line-height:1.3;
+ flex:1 1 auto;min-width:0;min-height:44px;
+ padding:8px 10px;
+ border:0;border-radius:var(--sv-ui-radius-control,12px);
+ background:transparent;
+ box-shadow:none;
+ color:var(--text);font-size:12.5px;font-weight:590;line-height:1.3;
  letter-spacing:-.012em;text-align:center;cursor:pointer;
 }
 #businessMapDialog .business-map-secondary{
  display:inline-flex;align-items:center;justify-content:center;
- flex:0 0 auto;min-height:48px;
- padding:10px 13px;
- border:1px solid rgba(230,237,245,.20);border-radius:16px;
+ flex:0 0 auto;min-height:44px;
+ padding:8px 10px;
+ border:0;border-radius:var(--sv-ui-radius-control,12px);
  background:transparent;box-shadow:none;
  color:var(--secondary);font-size:12.5px;font-weight:465;line-height:1.3;
  cursor:pointer;
 }
 #businessMapDialog :is(.business-map-primary,.business-map-secondary):active{
- background:var(--seyveo-hdr-active);
+ background:var(--sv-ui-selected-surface);
 }
 #businessMapDialog :is(#businessMapBack,#businessMapIndustryBack){
  display:inline-grid;place-items:center;
