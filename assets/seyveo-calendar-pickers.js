@@ -34,7 +34,7 @@ panel.innerHTML=[
  '<div class="cal-pick-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>',
  '<div id="seyveoPickDays" class="cal-pick-days" role="group" aria-label="Числа месяца"></div>',
  '<div class="cal-pick-date-actions"><button type="button" class="cal-pick-today" id="seyveoPickToday">Сегодня</button>',
- '<button type="button" class="cal-pick-date-close" id="seyveoPickDateClose">Закрыть</button></div></section>',
+ '<button type="button" class="cal-pick-date-close" id="seyveoPickDateClose" aria-label="Свернуть календарь"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5L18.5 9"/></svg></button></div></section>',
  '<section id="seyveoPickTime" class="cal-pick-time" aria-label="Выбор времени" hidden>',
  '<div class="cal-pick-time-head"><strong>Время</strong><small>Часы и минуты</small></div>',
  '<div class="cal-pick-wheels">',
