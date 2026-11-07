@@ -5,7 +5,8 @@
 .sv-connect-dialog::backdrop{background:rgba(4,8,12,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .sv-connect-sheet{box-sizing:border-box;min-height:100%;padding:15px 18px 24px;border-radius:var(--sv-ui-radius-sheet,22px);background:var(--sv-ui-sheet);-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter)}
 .sv-connect-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 22px}
-.sv-connect-back{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:7px 2px;min-height:39px;cursor:pointer}
+.sv-connect-back{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;box-sizing:border-box;width:44px;height:44px;min-width:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;color:var(--text);font:inherit;cursor:pointer}
+.sv-connect-back span{display:none}
 .sv-connect-back svg{width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);fill:none;stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);stroke-linecap:round;stroke-linejoin:round}
 .sv-connect-mark{color:var(--secondary);font-size:10px;letter-spacing:.12em;font-weight:560}
 .sv-connect-dialog h2{font-size:25px;font-weight:610;letter-spacing:-.035em;line-height:1.15;margin:0 0 10px}
