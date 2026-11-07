@@ -707,9 +707,10 @@
  width:min(430px,calc(100vw - 24px))!important;max-width:none!important;
  max-height:min(62dvh,320px)!important;overflow:auto;
  margin:0 auto!important;padding:4px 14px 11px!important;
- border:0!important;border-radius:24px!important;
- background:var(--sv-velvet-panel)!important;color:var(--text)!important;
- box-shadow:none!important;
+ border:0!important;border-radius:var(--sv-ui-radius-sheet,22px)!important;
+ background:var(--sv-ui-sheet)!important;color:var(--text)!important;
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter)!important;backdrop-filter:var(--sv-ui-sheet-filter)!important;
+ box-shadow:var(--sv-ui-sheet-shadow)!important;
  overscroll-behavior:contain;
 }
 #sayviSurfacePage .sv-mail-account-sheet::backdrop{
@@ -721,11 +722,11 @@
  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
 }
 :root[data-theme=light] #sayviSurfacePage .sv-mail-account-sheet[open]{
- background:rgba(250,253,253,.87)!important;
- border:1px solid rgba(255,255,255,.76)!important;
- -webkit-backdrop-filter:blur(26px) saturate(112%);
- backdrop-filter:blur(26px) saturate(112%);
- box-shadow:0 8px 28px rgba(45,65,72,.09)!important;
+ background:var(--sv-ui-sheet)!important;
+ border:1px solid var(--sv-ui-sheet-border)!important;
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter);
+ backdrop-filter:var(--sv-ui-sheet-filter);
+ box-shadow:var(--sv-ui-sheet-shadow)!important;
 }
 #sayviSurfacePage .sv-mail-sheet-handle{
  width:31px;height:3px;margin:4px auto 8px;border-radius:999px;
