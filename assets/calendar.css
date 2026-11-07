@@ -917,3 +917,105 @@
 @media(prefers-reduced-motion:reduce){
  #calendarPage .calendar-header-add{transition:none}
 }
+
+
+/* SEYVEO Calendar editor · common navigation and smoke-glass material.
+   The actual Cancel handler is the single top-left back chevron.
+   Editing, reminders, dates, delete and submit retain their original nodes. */
+#calendarEventDialog .cal-event-sheet{
+ position:relative!important;
+ border:0!important;
+ border-radius:24px!important;
+ background:rgba(39,53,63,.94)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(108%)!important;
+ backdrop-filter:blur(24px) saturate(108%)!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.11)!important;
+ padding:17px clamp(15px,4.2vw,21px) 16px!important;
+}
+#calendarEventDialog .cal-event-sheet>h2{
+ margin:0 0 18px!important;
+ padding:0 0 0 43px!important;
+ min-height:39px;display:flex;align-items:center;
+ font-size:clamp(21px,5.6vw,25px)!important;
+ font-weight:630!important;line-height:1.18!important;
+ letter-spacing:-.04em!important;
+}
+#calendarEventDialog .cal-event-sheet .cal-dialog-actions #calendarEventCancel{
+ position:absolute!important;left:16px!important;top:16px!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:color-mix(in srgb,var(--text) 8%,transparent)!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-appearance:none;appearance:none;
+}
+#calendarEventDialog #calendarEventCancel svg{
+ display:block;width:19px;height:19px;fill:none;
+ stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;
+}
+#calendarEventDialog>.seyveo-dialog-close{display:none!important}
+#calendarEventDialog .cal-form-primary input[type=text],
+#calendarEventDialog .cal-date-control,
+#calendarEventDialog .cal-time-control,
+#calendarEventDialog textarea{
+ border:0!important;
+ border-radius:14px!important;
+ background:rgba(155,177,188,.12)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog .cal-kind-options{
+ border:0!important;border-radius:14px!important;
+ background:rgba(155,177,188,.10)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog .cal-kind-option span{
+ border-radius:12px!important;box-shadow:none!important;
+}
+#calendarEventDialog .cal-dialog-actions{
+ justify-content:space-between!important;
+ gap:8px!important;
+ padding-top:10px!important;
+ border-top:1px solid color-mix(in srgb,var(--text) 8%,transparent)!important;
+}
+#calendarEventDialog .cal-dialog-actions>.btn.primary{
+ margin-left:auto!important;
+ min-width:112px!important;min-height:40px!important;
+ border:0!important;border-radius:999px!important;
+ background:rgba(181,200,208,.18)!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(108%)!important;
+ backdrop-filter:blur(16px) saturate(108%)!important;
+ font-size:13px!important;font-weight:590!important;
+}
+#calendarEventDialog .cal-dialog-actions #calendarDeleteEvent:not([hidden]){
+ min-width:64px!important;min-height:40px!important;
+ padding:8px 5px!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;
+ color:var(--secondary)!important;font-size:12.5px!important;
+}
+#calendarEventDialog .cal-dialog-actions #calendarDeleteEvent[hidden]{
+ display:none!important;
+}
+#calendarEventDialog .cal-timing-setting>summary,
+#calendarEventDialog .cal-extra>summary{
+ background:transparent!important;
+ box-shadow:none!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-event-sheet{
+ background:rgba(250,252,252,.96)!important;
+ box-shadow:0 10px 30px rgba(30,54,62,.08)!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-form-primary input[type=text],
+:root[data-theme=light] #calendarEventDialog .cal-date-control,
+:root[data-theme=light] #calendarEventDialog .cal-time-control,
+:root[data-theme=light] #calendarEventDialog textarea{
+ background:rgba(99,121,133,.11)!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-kind-options{
+ background:rgba(99,121,133,.09)!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-dialog-actions>.btn.primary{
+ background:rgba(83,141,117,.17)!important;
+ color:var(--seyveo-emerald,#386d5b)!important;
+}
