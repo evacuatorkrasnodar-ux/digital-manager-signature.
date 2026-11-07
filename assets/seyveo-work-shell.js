@@ -59,10 +59,11 @@
  const createMenu=document.getElementById('calendarCreateMenu');
  const menuHome=createMenu?.parentElement;
  // Keep one visible + in the permanent work header. The original
- // calendar button remains the logic controller; only its popover moves.
+ // calendar button remains the logic controller; its chooser sits in flow
+ // between the header and tabs rather than covering the screen.
  function parkCalendarMenu(inSharedHeader){
   if(!createMenu||!menuHome)return;
-  const destination=inSharedHeader?heading:menuHome;
+  const destination=inSharedHeader?shell:menuHome;
   if(createMenu.parentElement!==destination)destination.append(createMenu);
   if(!inSharedHeader){
    if(!createMenu.hidden)createMenu.hidden=true;
@@ -164,5 +165,5 @@
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:7,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:8,sync});
 })();
