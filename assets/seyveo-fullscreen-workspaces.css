@@ -362,7 +362,7 @@
   overscroll-behavior:contain!important;
  }
  html body #personalTaskDialog[open].personal-task-dialog form{
-  background:var(--card2)!important;
+  background:var(--sv-ui-field)!important;
   border:0!important;
   box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
@@ -391,13 +391,14 @@
           max(16px,env(safe-area-inset-left,0px))!important;
  }
  html body #svCabinetDialog[open] .sv-cabinet-footer{
+  position:relative!important;bottom:auto!important;z-index:auto!important;
   border-top-color:var(--soft-line)!important;
-  background:var(--bg)!important;
+  background:transparent!important;
   box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
  html body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){
-  background:var(--card2)!important;
+  background:var(--sv-ui-field)!important;
   box-shadow:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
