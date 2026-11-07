@@ -2696,3 +2696,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   left:71px!important;
  }
 }
+
+/* SEYVEO Work Chat · exact laser glyph optical spacing, no dock movement.
+   Velvet begins at grid x=66; inner capsule begins at x=140.
+   Available icon row: 74px. Two 22px symbols leave 30px ->
+   THREE identical 10px clear gaps: edge / Sayvi / Emoji / capsule.
+   The 36px hit targets remain unchanged and fully clickable. */
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
+ position:relative!important;
+ left:3px!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{
+ position:relative!important;
+ left:-3px!important;
+}
