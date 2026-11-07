@@ -114,8 +114,8 @@
  font-size:12px;border-radius:11px;
 }
 #calendarSpaceDialog .cal-velvet-days button[aria-pressed=true]{
- background:var(--seyveo-hdr-active);
- box-shadow:inset 0 0 0 1px var(--seyveo-emerald);
+ background:var(--sv-ui-selected-surface);
+ box-shadow:inset 0 0 0 1px var(--sv-ui-divider);
 }
 #calendarSpaceDialog .cal-velvet-days button.is-today:not([aria-pressed=true]){
  color:var(--text);font-weight:700;
