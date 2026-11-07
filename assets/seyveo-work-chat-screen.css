@@ -11,7 +11,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[hidden]{display:none!important}
 #svcpWorkChatScreen{
  /* One shared palette: the dock is translucent, inner controls are lighter. */
- --svcp-dock-glass:radial-gradient(ellipse 92% 88% at 50% -28%,rgba(248,251,255,.34) 0%,rgba(229,239,251,.12) 48%,transparent 83%),radial-gradient(ellipse 63% 100% at 1% 5%,rgba(224,237,252,.16) 0%,transparent 78%),radial-gradient(ellipse 72% 72% at 96% 7%,rgba(212,228,244,.12) 0%,transparent 78%),linear-gradient(180deg,rgba(90,99,114,.75) 0%,rgba(60,68,82,.74) 48%,rgba(39,45,57,.82) 100%);
+ --svcp-dock-glass:radial-gradient(ellipse 92% 88% at 50% -28%,rgba(248,251,255,.23) 0%,rgba(229,239,251,.07) 48%,transparent 83%),radial-gradient(ellipse 63% 100% at 1% 5%,rgba(224,237,252,.10) 0%,transparent 78%),radial-gradient(ellipse 72% 72% at 96% 7%,rgba(212,228,244,.075) 0%,transparent 78%),linear-gradient(180deg,rgba(89,99,116,.43) 0%,rgba(60,69,84,.39) 48%,rgba(37,45,58,.53) 100%);
  --svcp-dock-edge:rgba(241,249,252,.19);
  --svcp-dock-topline:rgba(254,255,255,.37);
  --svcp-dock-action:rgba(204,222,235,.095);
@@ -1294,8 +1294,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-radius:36px!important;
  background:var(--svcp-dock-glass)!important;
  box-shadow:0 11px 25px rgba(5,11,22,.19),0 -5px 17px rgba(215,229,246,.075)!important;
- -webkit-backdrop-filter:blur(21px) saturate(110%)!important;
- backdrop-filter:blur(21px) saturate(110%)!important;
+ -webkit-backdrop-filter:blur(27px) saturate(103%)!important;
+ backdrop-filter:blur(27px) saturate(103%)!important;
  transition:min-height .18s ease-out!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm{
