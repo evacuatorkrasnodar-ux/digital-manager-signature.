@@ -1726,13 +1726,55 @@ function prepareTask(msg,index=null){
  if(!clean){setStatus('В этом сообщении нет текста для поручения.');return}
  const room=ROOMS.find(x=>x.id===msg.room);
  state.draftSource={room:msg.room,assigneeId:room?.person&&room.person!=='sayvi'?room.person:'',...(Number.isInteger(index)?{messageIndex:index}:{})};
- $('svcpChatTaskAssignee').value=state.draftSource.assigneeId;
+ setTaskRecipient(state.draftSource.assigneeId);
+ closeTaskRecipientPicker();
  $('svcpChatTaskTitle').value=clean;
  $('svcpChatTaskDraft').hidden=false;
  // Leave the task review visible before opening the iPhone keyboard.
  document.activeElement?.blur?.();
 }
-function cancelTaskDraft(){state.draftSource=null;$('svcpChatTaskDraft').hidden=true}
+function setTaskRecipient(id){
+ const select=$('svcpChatTaskAssignee');
+ if(!select)return;
+ select.value=id||'';
+ const option=select.options[select.selectedIndex];
+ $('svcpRecipientValue').textContent=option?.textContent||'Выберите получателя';
+ $('svcpRecipientChoices')?.querySelectorAll('[data-recipient-id]').forEach(button=>{
+  const selected=button.dataset.recipientId===select.value;
+  button.setAttribute('aria-pressed',String(selected));
+ });
+}
+function closeTaskRecipientPicker(){
+ const choices=$('svcpRecipientChoices'),toggle=$('svcpRecipientToggle');
+ if(choices)choices.hidden=true;
+ toggle?.setAttribute('aria-expanded','false');
+}
+$('svcpRecipientToggle')?.addEventListener('click',()=>{
+ const choices=$('svcpRecipientChoices');if(!choices)return;
+ const open=choices.hidden;
+ choices.hidden=!open;
+ $('svcpRecipientToggle').setAttribute('aria-expanded',String(open));
+});
+$('svcpRecipientChoices')?.querySelectorAll('[data-recipient-id]').forEach(button=>
+ button.addEventListener('click',()=>{
+  setTaskRecipient(button.dataset.recipientId);
+  closeTaskRecipientPicker();
+  $('svcpRecipientToggle')?.focus({preventScroll:true});
+ }));
+document.addEventListener('pointerdown',event=>{
+ if(!event.target.closest?.('.svcp-task-recipient-picker'))closeTaskRecipientPicker();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&$('svcpRecipientToggle')?.getAttribute('aria-expanded')==='true'){
+  closeTaskRecipientPicker();
+  $('svcpRecipientToggle')?.focus({preventScroll:true});
+ }
+});
+function cancelTaskDraft(){
+ state.draftSource=null;
+ $('svcpChatTaskDraft').hidden=true;
+ closeTaskRecipientPicker();
+}
 $('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
 $('svcpOpenTasks')?.addEventListener('click',()=>window.SEYVEO_UNIFIED_TASKS?.openBusiness?.());
 function taskDuplicateKey(task){
@@ -1942,7 +1984,8 @@ $('svcpComposerDirectTask')?.addEventListener('click',()=>{
  if(text.length>140){setStatus('Для поручения нужно не более 140 символов.');return}
  if(state.file||state.scanCode){setStatus('Для поручения нужен только текст без вложений.');return}
  state.draftSource={room:state.room,assigneeId:person};
- $('svcpChatTaskAssignee').value=person;
+ setTaskRecipient(person);
+ closeTaskRecipientPicker();
  $('svcpChatTaskTitle').value=text;
  $('svcpChatTaskDraft').hidden=false;
  // Leave the task review visible before opening the iPhone keyboard.
