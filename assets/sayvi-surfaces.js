@@ -450,7 +450,7 @@ function mailView(){
   const decline=intent('Оставить как было',()=>{preview.hidden=true});
   previewActions.append(apply,decline);
   preview.append(previewTitle,previewText,previewActions);
-  const polish=intent('✦ Сэйви · улучшить текст',()=>{
+  const polish=intent('Сэйви · улучшить текст',()=>{
    const cleaned=polishMailLocally(message.value);
    if(!cleaned){status.textContent='Сначала напишите текст письма.';return}
    if(cleaned===message.value){preview.hidden=true;status.textContent='Оформление уже в порядке. Для полноценной редакции нужен подключённый ИИ.';return}
@@ -530,7 +530,7 @@ function mailView(){
   });
   help.classList.add('sv-mail-assist-action');
   help.style.setProperty('border-radius','999px','important');
-  help.prepend(create('span','sv-mail-assist-symbol','✦'));
+  help.prepend(create('span','sv-mail-assist-symbol sv-sayvi-symbol',''));
   help.setAttribute('aria-expanded','false');
   help.setAttribute('aria-controls','svMailSayviAssist');
   actions.append(reply,help);panel.append(actions);
