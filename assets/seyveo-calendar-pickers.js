@@ -221,7 +221,7 @@ if(taskDialog&&taskDate&&taskControl){
   chevron.setAttribute('viewBox','0 0 24 24');chevron.setAttribute('aria-hidden','true');
   const arrow=document.createElementNS('http://www.w3.org/2000/svg','path');
   arrow.setAttribute('d','m14 5-7 7 7 7');chevron.append(arrow);
-  back.append(chevron,document.createTextNode('Новое дело'));
+  back.append(chevron);
   const stageTitle=document.createElement('h2');
   stageTitle.className='sv-task-date-title';stageTitle.textContent='Выбрать срок';
   stageTitle.id='svTaskDateHeading';
@@ -238,6 +238,9 @@ if(taskDialog&&taskDate&&taskControl){
    const line=document.createElementNS('http://www.w3.org/2000/svg','path');
    line.setAttribute('d',d);svg.append(line);button.replaceChildren(svg);
   }
+  // Task date is a nested stage: the single top chevron returns to the editor.
+  // Drop the Event picker's duplicate "Закрыть" control from this clone.
+  grid.querySelector('.cal-pick-date-close')?.remove();
   const today=grid.querySelector('.cal-pick-today');
   const clear=document.createElement('button');
   clear.type='button';clear.className='sv-task-date-clear';clear.textContent='Без даты';
@@ -250,7 +253,7 @@ if(taskDialog&&taskDate&&taskControl){
    picker.hidden=true;
    taskDialog.classList.remove('sv-task-date-open');
    taskTrigger.setAttribute('aria-expanded','false');
-   back.textContent='';back.append(chevron,document.createTextNode('Новое дело'));
+   back.replaceChildren(chevron);
   };
   const openTask=()=>{
    if(!taskDialog.open)return;
@@ -260,8 +263,7 @@ if(taskDialog&&taskDate&&taskControl){
    renderDateCalendar(taskMonth,taskDate,heading,gridDays);
    // Dismiss the keyboard before entering the date stage.
    if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
-   const editorTitle=$('personalTaskDialogTitle')?.textContent?.trim()||'Новое дело';
-   back.textContent='';back.append(chevron,document.createTextNode(editorTitle));
+   back.replaceChildren(chevron);
    picker.hidden=false;
    taskDialog.classList.add('sv-task-date-open');
    taskTrigger.setAttribute('aria-expanded','true');
