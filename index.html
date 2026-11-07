@@ -651,6 +651,46 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){
  #svCabinetDialog .sv-cabinet-save{transition:none!important}
 }
+</style><style id="sv-seamless-work-tabs">
+/* One shared navigation control, same geometry in all three work sections. */
+#tasksPage[data-work-view="business"] .tasks-heading,
+#tasksPage[data-work-view="personal"] .tasks-heading{
+ box-sizing:border-box;min-height:60px!important;
+ margin:0 0 8px!important;
+}
+#calendarPage .calendar-header{
+ box-sizing:border-box!important;min-height:60px!important;
+ height:60px!important;margin:0 0 8px!important;
+}
+#calendarPage #unifiedTasksTabs,
+#tasksPage #unifiedTasksTabs{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ box-sizing:border-box!important;min-height:44px!important;height:44px!important;
+ gap:2px!important;padding:3px!important;margin:0 0 13px!important;
+ border:0!important;border-radius:16px!important;
+ background:color-mix(in srgb,var(--text,#f4f6f7) 10%,transparent)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+}
+#calendarPage #unifiedTasksTabs button,
+#tasksPage #unifiedTasksTabs button{
+ box-sizing:border-box!important;height:38px!important;min-height:38px!important;
+ border:0!important;border-radius:13px!important;padding:0 3px!important;
+ font-size:12px!important;font-weight:580!important;
+ background:transparent!important;box-shadow:none!important;
+ transform:none!important;
+}
+#calendarPage #unifiedTasksTabs button[aria-pressed="true"],
+#tasksPage #unifiedTasksTabs button[aria-pressed="true"]{
+ background:color-mix(in srgb,var(--text,#f4f6f7) 13%,transparent)!important;
+ color:var(--text,#f4f6f7)!important;box-shadow:none!important;
+}
+#calendarPage #managerCalendarTabs{display:none!important}
+#calendarPage .calendar-header h1{font-size:clamp(29px,8vw,36px)!important;line-height:1.12!important;font-weight:650!important}
+#calendarPage .cal-scope{margin-top:0!important}
+#tasksPage #unifiedTasksTabs[hidden]{display:none!important}
+#calendarPage #unifiedTasksTabs .sv-mini-nav-icon,
+#tasksPage #unifiedTasksTabs .sv-mini-nav-icon{display:none!important}
 </style><style id="sv-cabinet-screen-polish">
 /* SEYVEO 26 — quiet, flat actions; shared proportions across the cabinet. */
 #tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:14px!important}
@@ -4544,7 +4584,7 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="scan" hidden><div class="syp-panel"><h3>QR · сканирование</h3><p>Распознаём текст QR на устройстве. Платежи не выполняются и не отправляются в банк.</p><video id="sypCamera" class="syp-video" autoplay playsinline muted hidden></video><div id="sypScanStatus" class="syp-status" aria-live="polite"></div><button type="button" class="syp-btn" data-syp="camera">Включить камеру</button></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="cards" hidden><div class="syp-list"><div class="syp-listrow">✦ SEYVEO · демонстрационная карта •••• 4582</div><div class="syp-panel"><h3>Добавление банковской карты</h3><p>Появится только после подключения сертифицированного платёжного партнёра. Банковские реквизиты в демо не запрашиваются.</p></div></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
-</div></dialog><script src="assets/seyveo-pay.js?v=2"></script><script src="assets/seyveo-connections.js?v=4"></script><script src="assets/seyveo-family-chat.js?v=2"></script><script src="assets/seyveo-business-command.js?v=98"></script><script src="assets/seyveo-unified-tasks.js?v=56"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=3"></script><script src="assets/seyveo-global-search.js?v=5"></script><script src="assets/seyveo-card-engine.js?v=4"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=13"></script><script src="assets/seyveo-fan-workshop.js?v=8"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=3"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=11"></script>
+</div></dialog><script src="assets/seyveo-pay.js?v=2"></script><script src="assets/seyveo-connections.js?v=4"></script><script src="assets/seyveo-family-chat.js?v=2"></script><script src="assets/seyveo-business-command.js?v=98"></script><script src="assets/seyveo-unified-tasks.js?v=57"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=3"></script><script src="assets/seyveo-global-search.js?v=5"></script><script src="assets/seyveo-card-engine.js?v=4"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=13"></script><script src="assets/seyveo-fan-workshop.js?v=8"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=3"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=11"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=2"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
