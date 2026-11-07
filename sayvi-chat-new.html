@@ -677,6 +677,174 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   max-width:none!important;
  }
 }
+
+/* SEYVEO Sayvi Chat v1 · mirrored Work Chat dock, without Sayvi/emoji buttons.
+   6px outside, 50px Plus, 8px groove and one continuous 56px glass capsule.
+   The input and mic live in the glass, not in extra grid tracks. */
+#sayviComposer{
+ left:calc(6px + env(safe-area-inset-left,0px))!important;
+ right:calc(6px + env(safe-area-inset-right,0px))!important;
+ width:auto!important;
+ max-width:none!important;
+ min-height:56px!important;
+ height:auto!important;
+ padding:0!important;
+ display:grid!important;
+ grid-template-columns:50px 8px minmax(0,1fr)!important;
+ grid-template-rows:auto!important;
+ align-items:end!important;
+ column-gap:0!important;
+ row-gap:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ isolation:isolate!important;
+}
+#sayviComposer::before{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ z-index:-1!important;
+ top:0!important;
+ left:58px!important;
+ right:0!important;
+ bottom:0!important;
+ pointer-events:none!important;
+ border:1px solid rgba(217,226,232,.085)!important;
+ border-radius:29px!important;
+ background:linear-gradient(155deg,rgba(203,211,218,.16),rgba(165,174,184,.145) 58%,rgba(148,160,170,.13)),rgba(142,152,162,.075)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+ box-shadow:none!important;
+}
+#sayviPlus{
+ position:relative!important;
+ z-index:1!important;
+ grid-column:1!important;
+ grid-row:1!important;
+ justify-self:start!important;
+ align-self:end!important;
+ width:50px!important;
+ min-width:50px!important;
+ max-width:50px!important;
+ height:50px!important;
+ min-height:50px!important;
+ max-height:50px!important;
+ margin:0 0 3px!important;
+ padding:0!important;
+ display:grid!important;
+ place-items:center!important;
+ border:0!important;
+ border-radius:50%!important;
+ background:linear-gradient(155deg,rgba(203,211,218,.16),rgba(165,174,184,.145)),rgba(142,152,162,.075)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.12)!important;
+ backdrop-filter:blur(18px) saturate(1.12)!important;
+ color:var(--sayvi-control-text)!important;
+}
+#sayviPlus svg{
+ width:21px!important;
+ height:21px!important;
+ stroke-width:1.35!important;
+}
+#sayviField{
+ position:relative!important;
+ z-index:1!important;
+ grid-column:3!important;
+ grid-row:1!important;
+ box-sizing:border-box!important;
+ display:block!important;
+ align-self:end!important;
+ min-width:0!important;
+ width:auto!important;
+ height:auto!important;
+ min-height:44px!important;
+ margin:6px 8px 6px 7px!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:23px!important;
+ background:linear-gradient(155deg,rgba(203,211,218,.135),rgba(165,174,184,.12) 58%,rgba(148,160,170,.105)),rgba(142,152,162,.055)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.12)!important;
+ backdrop-filter:blur(18px) saturate(1.12)!important;
+}
+#sayviInput,#sayviInput:focus{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:44px!important;
+ height:44px;
+ max-height:min(160px,35dvh)!important;
+ margin:0!important;
+ padding:10px 54px 10px 15px!important;
+ border:0!important;
+ border-radius:23px!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--sayvi-control-text)!important;
+ font:400 16px/24px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif!important;
+ outline:0!important;
+ resize:none!important;
+}
+#sayviInput::placeholder{
+ color:rgba(228,235,241,.70)!important;
+ opacity:1!important;
+}
+#sayviField > :is(#sayviMic,#sayviSend,#sayviStopReply){
+ position:absolute!important;
+ z-index:3!important;
+ top:auto!important;
+ right:4px!important;
+ bottom:1px!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+ display:grid!important;
+ place-items:center!important;
+ width:42px!important;
+ min-width:42px!important;
+ height:42px!important;
+ min-height:42px!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:50%!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--sayvi-control-text)!important;
+}
+#sayviField > :is(#sayviMic,#sayviSend,#sayviStopReply)[hidden]{display:none!important}
+#sayviField > :is(#sayviMic,#sayviSend,#sayviStopReply) svg{
+ width:21px!important;
+ height:21px!important;
+ stroke-width:1.35!important;
+}
+:root[data-theme="light"] #sayviComposer::before{
+ border-color:rgba(226,233,238,.13)!important;
+ background:linear-gradient(155deg,rgba(239,242,246,.29),rgba(206,213,219,.23) 58%,rgba(189,198,206,.19)),rgba(190,199,208,.09)!important;
+}
+:root[data-theme="light"] #sayviPlus{
+ background:linear-gradient(155deg,rgba(239,242,246,.29),rgba(206,213,219,.23)),rgba(190,199,208,.09)!important;
+}
+:root[data-theme="light"] #sayviField{
+ background:linear-gradient(155deg,rgba(239,242,246,.26),rgba(206,213,219,.195) 58%,rgba(189,198,206,.155)),rgba(190,199,208,.065)!important;
+}
+:root[data-theme="light"] #sayviInput::placeholder{color:rgba(79,91,105,.70)!important}
+@media(prefers-reduced-transparency:reduce){
+ #sayviComposer::before,#sayviPlus,#sayviField{
+  background:var(--sayvi-fallback)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
 </style>
 </head>
 <body>
@@ -706,10 +874,10 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 <input type="file" id="sayviPickFile" accept=".txt,.md,.markdown,.csv,.json,.xml,.log,.html,.css,.js,.pdf,.docx,.xlsx,.pptx,image/png,image/jpeg,image/webp,text/plain,application/pdf" multiple hidden aria-label="Выбрать файлы">
 <div id="sayviComposer">
 <button id="sayviPlus" type="button" aria-label="Дополнительные действия" aria-expanded="false" aria-controls="sayviMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-<div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение Сэйви"></textarea></div>
+<div id="sayviField"><textarea id="sayviInput" rows="1" aria-label="Сообщение Сэйви" placeholder="Сообщение..."></textarea>
 <button id="sayviMic" type="button" aria-label="Начать голосовой ввод"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.25" y="2.75" width="5.5" height="12.5" rx="2.75"/><path d="M5.75 11.4v.95a6.25 6.25 0 0 0 12.5 0v-.95M12 18.6v2.55M9.15 21.25h5.7"/></svg></button>
 <button id="sayviSend" type="button" aria-label="Отправить сообщение" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg></button>
-<button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button>
+<button id="sayviStopReply" type="button" aria-label="Остановить ответ Сэйви" hidden><span class="sv-stop-symbol" aria-hidden="true"></span></button></div>
 </div>
 <div id="sayviMenu" role="group" aria-label="Действия чата" hidden>
  <button type="button" id="sayviNewChat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><span>Новый разговор</span></button>
