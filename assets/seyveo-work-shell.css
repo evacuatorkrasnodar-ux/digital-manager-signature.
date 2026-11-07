@@ -206,9 +206,9 @@
  height:auto!important;max-height:none!important;
  padding:4px!important;margin:0!important;
  border:0!important;border-radius:18px!important;
- background:rgba(184,195,201,.19)!important;
- -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
- backdrop-filter:blur(16px) saturate(105%)!important;
+ background:var(--sv-ui-glass)!important;
+ -webkit-backdrop-filter:var(--sv-ui-glass-filter)!important;
+ backdrop-filter:var(--sv-ui-glass-filter)!important;
  box-shadow:none!important;filter:none!important;
  transform:none!important;animation:none!important;
  isolation:isolate!important;overflow:hidden!important;
@@ -237,7 +237,7 @@
  background:rgba(218,235,245,.12)!important;
 }
 :root[data-theme=light] #svWorkHeader #calendarCreateMenu:not([hidden]){
- background:rgba(99,121,133,.22)!important;
+ background:var(--sv-ui-glass)!important;
 }
 :root[data-theme=light] #svWorkHeader #calendarCreateMenu button+button{
  border-top-color:rgba(50,87,80,.10)!important;
