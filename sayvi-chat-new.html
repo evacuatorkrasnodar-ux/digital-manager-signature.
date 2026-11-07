@@ -265,7 +265,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  --sayvi-control-text:#f7fafc;
  --sayvi-placeholder:rgba(228,235,241,.70);
  --sayvi-pressed:rgba(218,235,245,.20);
- --sayvi-menu:#263039;
+ --sayvi-menu:var(--sayvi-glass);
  --sayvi-menu-pressed:rgba(255,255,255,.08);
  --sayvi-fallback:#2a353d;
 }
@@ -283,7 +283,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  --sayvi-pressed:rgba(99,121,133,.31);
  --sayvi-control-text:#26383b;
  --sayvi-placeholder:#637778;
- --sayvi-menu:rgba(239,244,246,.96);
+ --sayvi-menu:var(--sayvi-glass);
  --sayvi-menu-pressed:rgba(56,109,91,.09);
  --sayvi-fallback:#e6eef0;
 }
@@ -299,7 +299,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  --sayvi-bg:#101724;
  --sayvi-scene:linear-gradient(180deg,#0e1522 0%,#172239 50%,#202e48 78%,#101724 100%);
  --sayvi-bubble:#222f47;
- --sayvi-menu:#222f47;
+ --sayvi-menu:var(--sayvi-glass);
  --sayvi-glass:rgba(184,195,201,.22);
  --sayvi-action:rgba(184,195,201,.22);
 }
@@ -307,7 +307,7 @@ main{position:fixed;left:0;right:0;top:var(--sayvi-viewport-top,0px);height:var(
  --sayvi-bg:#1c1b1a;
  --sayvi-scene:linear-gradient(180deg,#1b1a19 0%,#252320 50%,#302c28 78%,#1c1b1a 100%);
  --sayvi-bubble:#302c28;
- --sayvi-menu:#302c28;
+ --sayvi-menu:var(--sayvi-glass);
  --sayvi-glass:rgba(184,195,201,.19);
  --sayvi-action:rgba(184,195,201,.19);
 }
@@ -398,11 +398,14 @@ main{background:var(--sayvi-scene)}
  background:var(--sayvi-menu);
  -webkit-backdrop-filter:blur(24px) saturate(110%);
  backdrop-filter:blur(24px) saturate(110%);
- box-shadow:0 5px 24px rgba(0,0,0,.12);
+ box-shadow:none;
  overflow:hidden;
 }
-:root[data-theme=light] #sayviMenu{background:rgba(241,245,246,.97);box-shadow:0 5px 20px rgba(34,55,56,.10)}
-:root[data-theme=dark] #sayviMenu{background:rgba(44,53,60,.97)}
+:root[data-theme=light] #sayviMenu,
+:root[data-theme=dark] #sayviMenu{
+ background:var(--sayvi-glass);
+ box-shadow:none;
+}
 #sayviMenu button{
  display:flex;align-items:center;gap:11px;
  width:100%;min-height:45px;
