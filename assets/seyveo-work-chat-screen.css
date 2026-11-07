@@ -2433,3 +2433,88 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
  padding-right:12px!important;
 }
+
+/* SEYVEO split Plus layout, patterned after Home's separate magnifier.
+   Camera is now accessed through the Plus menu, freeing its grid column.
+   The message capsule extends into that space; no icons overlap. */
+#svcpWorkChatScreen #svcpChatForm,
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+ grid-template-columns:38px 40px 38px minmax(0,1fr)!important;
+ column-gap:6px!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpCameraToggle{
+ display:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ grid-column:1!important;
+ grid-row:1!important;
+ z-index:3!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
+ grid-column:2!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{
+ grid-column:3!important;
+}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ grid-column:4!important;
+ grid-row:1!important;
+ min-width:0!important;
+}
+/* The stand-alone Plus uses exactly its own round silver face. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ border-radius:50%!important;
+}
+#svcpWorkChatScreen #svcpAttachMenu[hidden]{display:none!important}
+#svcpWorkChatScreen #svcpAttachMenu{
+ position:absolute!important;
+ display:grid!important;
+ grid-template-columns:1fr!important;
+ gap:3px!important;
+ left:2px!important;
+ bottom:calc(100% + 9px)!important;
+ z-index:50!important;
+ width:145px!important;
+ padding:6px!important;
+ border:0!important;
+ border-radius:18px!important;
+ background:var(--svcp-home-copy-material)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+ box-shadow:var(--svcp-home-copy-shadow)!important;
+}
+#svcpWorkChatScreen #svcpAttachMenu > button{
+ display:flex!important;
+ align-items:center!important;
+ gap:9px!important;
+ width:100%!important;
+ min-height:40px!important;
+ padding:7px 11px!important;
+ border:0!important;
+ border-radius:12px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:inherit!important;
+ font-size:13px!important;
+ text-align:left!important;
+}
+#svcpWorkChatScreen #svcpAttachMenu > button:active{
+ background:rgba(170,187,200,.14)!important;
+}
+#svcpWorkChatScreen #svcpAttachMenu > button > span{
+ width:20px!important;
+ text-align:center!important;
+ font-size:20px!important;
+ font-weight:400!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm,
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+  grid-template-columns:35px 38px 35px minmax(0,1fr)!important;
+  column-gap:6px!important;
+ }
+}
