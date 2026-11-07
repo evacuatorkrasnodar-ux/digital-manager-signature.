@@ -2236,3 +2236,49 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  }
 }
 
+
+
+/* SEYVEO cabinet chooser · consistent five theme lens 2026-11-07 */
+.sv-cabinet-dialog[open]{
+ border:0!important;
+ background:var(--sv-ui-sheet,rgba(37,47,53,.76))!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(26px) saturate(125%)!important;
+ backdrop-filter:blur(26px) saturate(125%)!important;
+}
+.sv-cabinet-dialog[open] .sv-cabinet-footer{
+ border-top:1px solid var(--sv-ui-divider,var(--soft-line))!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+.sv-cabinet-dialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){
+ background:rgba(177,198,206,.13)!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(110%)!important;
+ backdrop-filter:blur(16px) saturate(110%)!important;
+}
+.sv-cabinet-dialog[open] .sv-cabinet-source.is-current{
+ background:var(--sv-ui-selected-surface,rgba(184,195,201,.23))!important;
+ outline:1px solid var(--sv-ui-divider,var(--soft-line));
+ outline-offset:-1px;
+}
+.sv-cabinet-dialog[open] .sv-cabinet-save{
+ min-height:44px!important;width:auto!important;min-width:88px!important;
+ padding:0 10px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;font-weight:600!important;
+}
+.sv-cabinet-dialog[open] .sv-cabinet-reset{background:transparent!important;box-shadow:none!important}
+:root[data-theme=light] .sv-cabinet-dialog[open]{
+ background:rgba(247,251,252,.76)!important;
+}
+:root[data-theme=light] .sv-cabinet-dialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){
+ background:rgba(172,195,201,.19)!important;
+}
+:root[data-theme=light] .sv-cabinet-dialog[open] .sv-cabinet-save{color:var(--seyveo-emerald,#386d5b)!important}
+@media(prefers-reduced-transparency:reduce){
+ .sv-cabinet-dialog[open]{background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ .sv-cabinet-dialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){background:var(--card2)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
