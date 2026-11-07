@@ -2045,3 +2045,23 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  content:none!important;
  display:none!important;
 }
+
+/* SEYVEO unified Work Chat: one long velvet base extends beneath the input
+   capsule and mic. Retain all existing controls and their geometry. */
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+ top:1px!important;
+ right:0!important;
+ bottom:1px!important;
+ left:0!important;
+ border-radius:999px!important;
+}
+#svcpWorkChatScreen #svcpChatForm::after,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::after{
+ content:none!important;
+ display:none!important;
+}
+/* Remove the room-header magnifier only, not the chat search data or handlers. */
+#svcpWorkChatScreen #svcpConversationSearch.svcp-conversation-search{
+ display:none!important;
+}
