@@ -1094,3 +1094,159 @@
  background:rgba(67,121,99,.14)!important;
  color:var(--seyveo-emerald,#386d5b)!important;
 }
+
+
+/* SEYVEO 26 · calendar form and nested pickers · final cohesive control scale.
+   Scoped to the event editor; preserving form fields, radio states, and handlers. */
+#calendarEventDialog .cal-event-sheet{
+ background:rgba(37,51,60,.92)!important;
+ border:0!important;
+ box-shadow:0 9px 28px rgba(0,0,0,.10)!important;
+}
+#calendarEventDialog #calendarEventForm{
+ gap:9px!important;
+}
+#calendarEventDialog .cal-form-scroll{gap:8px!important}
+#calendarEventDialog .cal-form-primary input[type=text],
+#calendarEventDialog .cal-date-control,
+#calendarEventDialog .cal-time-control,
+#calendarEventDialog #calendarEventNote{
+ background:rgba(147,169,179,.105)!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog #calendarClearTime:not([hidden]){
+ display:grid!important;place-items:center!important;
+ position:absolute!important;right:5px!important;bottom:7px!important;
+ width:30px!important;height:30px!important;
+ min-width:30px!important;min-height:30px!important;
+ border:0!important;border-radius:50%!important;
+ background:color-mix(in srgb,var(--text) 7%,transparent)!important;
+ box-shadow:none!important;
+ font-size:17px!important;
+}
+#calendarEventDialog #seyveoEventPicker.cal-premium-picker{
+ box-sizing:border-box!important;
+ padding:10px 11px 9px!important;
+ margin:1px 0 2px!important;
+ border:0!important;border-radius:17px!important;
+ background:rgba(143,166,176,.07)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-head{
+ min-height:34px!important;margin:0 0 3px!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-head strong{
+ font-size:13px!important;font-weight:600!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-arrows button{
+ width:36px!important;height:36px!important;
+ min-width:36px!important;min-height:36px!important;
+ border-radius:50%!important;
+ font-size:23px!important;font-weight:350!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-week span{
+ min-height:18px!important;font-size:10px!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-days{
+ gap:1px!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-days .cal-pick-empty,
+#calendarEventDialog #seyveoPickDate .cal-pick-day{
+ height:39px!important;min-height:39px!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-day{
+ width:39px!important;min-width:0!important;
+ max-width:100%!important;
+ margin:0 auto!important;
+ border-radius:50%!important;
+ border:1px solid transparent!important;
+ font-size:12px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-day.is-today:not(.is-selected){
+ border-color:color-mix(in srgb,var(--text) 24%,transparent)!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
+ background:rgba(167,190,200,.17)!important;
+ color:var(--text)!important;
+ border:1px solid color-mix(in srgb,var(--text) 16%,transparent)!important;
+ box-shadow:none!important;
+ font-weight:620!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-date-actions{
+ display:flex!important;align-items:center!important;
+ margin-top:5px!important;padding-top:5px!important;
+ border-top:1px solid color-mix(in srgb,var(--text) 6%,transparent)!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-today{
+ min-height:38px!important;
+ font-size:12px!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-date-close{
+ display:inline-grid!important;place-items:center!important;
+ width:38px!important;height:38px!important;
+ min-width:38px!important;min-height:38px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ color:var(--text)!important;
+ background:color-mix(in srgb,var(--text) 6%,transparent)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog #seyveoPickDate .cal-pick-date-close svg{
+ width:18px;height:18px;fill:none;
+ stroke:currentColor;stroke-width:1.4;
+ stroke-linecap:round;stroke-linejoin:round;
+}
+#calendarEventDialog #seyveoPickTime.cal-pick-time{
+ padding:9px 10px!important;
+ margin:0!important;
+ background:transparent!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel{
+ height:154px!important;min-height:154px!important;
+ padding:55px 0!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected{
+ background:rgba(162,185,196,.14)!important;
+ box-shadow:none!important;border:0!important;
+}
+#calendarEventDialog #seyveoPickTime .cal-pick-time-done{
+ min-width:114px!important;
+}
+#calendarEventDialog .cal-kind-options{
+ background:rgba(143,166,176,.075)!important;
+ border-radius:14px!important;
+}
+#calendarEventDialog .cal-kind-option input:checked+span{
+ background:rgba(164,185,195,.14)!important;
+ border-color:transparent!important;box-shadow:none!important;
+}
+#calendarEventDialog .cal-dialog-actions>.btn.primary{
+ background:rgba(163,185,195,.16)!important;
+ border:0!important;box-shadow:none!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-event-sheet{
+ background:rgba(250,252,252,.96)!important;
+}
+:root[data-theme=light] #calendarEventDialog #seyveoEventPicker.cal-premium-picker{
+ background:rgba(92,120,131,.07)!important;
+}
+:root[data-theme=light] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
+ background:rgba(65,128,103,.14)!important;
+ color:var(--seyveo-emerald,#386d5b)!important;
+ border-color:transparent!important;
+}
+:root[data-theme=light] #calendarEventDialog .cal-kind-option input:checked+span{
+ background:rgba(65,128,103,.12)!important;
+}
+@media(max-width:360px){
+ #calendarEventDialog #seyveoPickDate .cal-pick-day{
+  width:35px!important;height:37px!important;min-height:37px!important;
+ }
+ #calendarEventDialog #seyveoPickDate .cal-pick-days .cal-pick-empty{
+  height:37px!important;min-height:37px!important;
+ }
+}
