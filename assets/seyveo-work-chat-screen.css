@@ -2738,3 +2738,13 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   padding-right:0!important;
  }
 }
+
+/* iPhone optical correction: the inherited room layout keeps the Plus
+   7px inward even with zero form padding. Shift ONLY the standalone circle,
+   leaving the long pane and all icons precisely where they are. */
+@media(max-width:699px){
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm > #svcpAttachFile{
+  position:relative!important;
+  left:-7px!important;
+ }
+}
