@@ -2710,3 +2710,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  position:relative!important;
  left:-3px!important;
 }
+
+/* SEYVEO capsule quiet edge v178 · soften raised rim while keeping approved size and position. */
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ border:0.5px solid rgba(220,228,235,.065)!important;
+ outline:0!important;
+ box-shadow:none!important;
+ background:linear-gradient(155deg,rgba(203,211,218,.16),rgba(165,174,184,.145) 58%,rgba(148,160,170,.13)),rgba(142,152,162,.075)!important;
+ filter:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ border-color:rgba(226,233,238,.13)!important;
+ background:linear-gradient(155deg,rgba(239,242,246,.29),rgba(206,213,219,.23) 58%,rgba(189,198,206,.19)),rgba(190,199,208,.09)!important;
+ box-shadow:none!important;
+}
