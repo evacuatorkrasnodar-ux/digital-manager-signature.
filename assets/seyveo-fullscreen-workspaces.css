@@ -517,3 +517,113 @@ html:not(.seyveo-conversation) body .app :is(
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+
+/* SEYVEO · native full-page navigation, not bottom-sheet gestures · 2026-11-07 */
+/* One back arrow and one content action. Keep the original handler IDs.
+   The dock continues to be portaled and controlled by existing JavaScript. */
+#personalTaskDialog.personal-task-dialog[open] .sv-task-topbar{
+ display:flex!important;
+ justify-content:flex-start!important;align-items:center!important;
+ position:relative!important;
+ height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+}
+#personalTaskDialog.personal-task-dialog[open] #personalTaskCancel{
+ position:static!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;
+}
+#personalTaskDialog.personal-task-dialog[open] #personalTaskCancel svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#personalTaskDialog.personal-task-dialog[open] .personal-task-submit-row{
+ box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;
+ width:100%!important;min-height:44px!important;
+ margin:10px 0 0!important;padding:0!important;
+ background:transparent!important;
+}
+#personalTaskDialog.personal-task-dialog[open] .personal-task-submit-row #personalTaskSave{
+ position:static!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:auto!important;min-width:88px!important;max-width:100%!important;
+ height:44px!important;min-height:44px!important;
+ margin:0!important;padding:0 10px!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:13px!important;font-weight:580!important;
+}
+#personalTaskDialog.personal-task-dialog[open] .personal-task-submit-row #personalTaskSave::before{
+ display:none!important;content:none!important;
+}
+/* Inline old sheet rule used important margin:auto and forced the cabinet
+   chevron into the center. The full-page header now owns its back arrow. */
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ gap:9px!important;min-height:48px!important;
+ margin:0 0 13px!important;padding:0!important;
+}
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head #svCabinetCancel.sv-cabinet-dismiss{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ position:static!important;inset:auto!important;top:auto!important;right:auto!important;
+ margin:0!important;padding:0!important;
+ flex:0 0 44px!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ opacity:1!important;color:var(--text)!important;
+}
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head #svCabinetCancel svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > div{
+ flex:1 1 auto!important;min-width:0!important;
+}
+/* Read-only full-screen destinations keep a quiet top-left return control,
+   not a 'Done' pill in the top right. Event editors have their own actions. */
+@media(max-width:720px){
+ html body dialog:is(
+ #calendarSpaceDialog,#seyveoSmartHomeDialog,#seyveoContactsDialog,
+ #notesDialog,#noteModeDialog
+ )[open] > button.seyveo-dialog-close.sv-nav-arrow{
+  position:absolute!important;
+  top:calc(15px + env(safe-area-inset-top,0px))!important;
+  left:12px!important;right:auto!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;
+  background:transparent!important;box-shadow:none!important;
+  color:var(--text)!important;
+ }
+ html body dialog:is(
+ #calendarSpaceDialog,#seyveoSmartHomeDialog,#seyveoContactsDialog,
+ #notesDialog,#noteModeDialog
+ )[open] > button.seyveo-dialog-close.sv-nav-arrow svg{
+  width:19px!important;height:19px!important;fill:none!important;
+  stroke:currentColor!important;stroke-width:1.5!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+ }
+ html body dialog:is(
+ #calendarSpaceDialog,#seyveoSmartHomeDialog,#seyveoContactsDialog,
+ #noteModeDialog
+ )[open] > h2:first-of-type{
+  padding-left:44px!important;
+  min-height:44px!important;
+ }
+ html body #notesDialog[open] .notes-head{
+  padding-left:44px!important;
+ }
+}
