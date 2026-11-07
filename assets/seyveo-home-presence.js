@@ -16,7 +16,7 @@
  const mark=document.createElement('span');
  mark.className='sv-home-living-mark';
  mark.setAttribute('aria-hidden','true');
- mark.textContent='✧';
+ mark.classList.add('sv-sayvi-symbol');
  const content=document.createElement('span');
  content.className='sv-home-living-copy';
  line.append(mark,content);
