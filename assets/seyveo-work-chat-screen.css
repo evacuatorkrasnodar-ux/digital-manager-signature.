@@ -2380,3 +2380,28 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline[data-has-content="false"] .svcp-chat-compose-field > .svcp-chat-send{
  display:none!important;
 }
+
+/* SEYVEO detachable Plus · visual split when idle, seamless join when typing.
+   The button remains in the same grid cell; only the velvet backdrop moves.
+   This avoids layout jumps, broken hit areas and changes to the inner capsule. */
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+ transition:left .25s cubic-bezier(.22,.8,.22,1),border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
+ left:52px!important;
+ right:0!important;
+ border-radius:999px!important;
+}
+#svcpWorkChatScreen #svcpChatForm[data-has-content="true"]::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm[data-has-content="true"]::before,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline::before{
+ left:0!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svcpWorkChatScreen #svcpChatForm::before,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+  transition:none!important;
+ }
+}
