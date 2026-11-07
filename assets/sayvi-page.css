@@ -12,7 +12,7 @@ html.seyveo-conversation #sayviPage{
  flex-direction:column!important;
  width:100vw!important;max-width:none!important;
  height:var(--sayvi3-height,100dvh)!important;min-height:0!important;
- margin:0!important;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
+ margin:0!important;padding:env(safe-area-inset-top,0px) 0 var(--seyveo-dock-bottom,max(7px,calc(env(safe-area-inset-bottom,0px) - 20px)))!important;
  background:#08090b!important;background-image:none!important;
  border:0!important;border-radius:0!important;
  outline:0!important;box-shadow:none!important;
@@ -110,7 +110,7 @@ html.seyveo-conversation #sayviPage *{
 #sayviPage .sayvi3-writer{
  position:relative;flex:0 0 auto;display:flex;flex-direction:column;
  box-sizing:border-box;width:100%;max-width:740px;
- margin:0 auto;padding:8px 10px 10px;
+ margin:0 auto;padding:6px 10px 6px;
  background:#08090b!important;border:0!important;border-radius:0!important;
  box-shadow:none!important;
 }
@@ -176,7 +176,7 @@ html.seyveo-conversation #sayviPage *{
 @media(max-width:420px){
  #sayviPage #orbInlineReplyText{padding:10px 13px 20px!important}
  #sayviPage .sayvi3-head{padding:0 7px}
- #sayviPage .sayvi3-writer{padding:7px 6px 8px}
+ #sayviPage .sayvi3-writer{padding:6px 6px 6px}
 }
 
 /* Legacy form controls live inside the native Home editor while on other
