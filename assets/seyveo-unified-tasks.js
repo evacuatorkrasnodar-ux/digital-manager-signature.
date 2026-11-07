@@ -1029,6 +1029,8 @@
  function showGoal(id){
   if(!itemById.has(id)||!draft)return;
   activeGoal=id;sourceChoice=null;
+  if($('svCabinetTitle'))$('svCabinetTitle').textContent='Настройка инструмента';
+  if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите нужные возможности кабинета.';
   catalogHost.hidden=true;
   if(searchWrap)searchWrap.hidden=true;
   guideHost.hidden=false;
@@ -1036,6 +1038,8 @@
  }
  function hideGoal(){
   activeGoal=null;sourceChoice=null;
+  if($('svCabinetTitle'))$('svCabinetTitle').textContent='Что хотите делать?';
+  if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите задачу — подскажем нужный инструмент.';
   guideHost.hidden=true;guideHost.replaceChildren();
   catalogHost.hidden=false;
   if(searchWrap)searchWrap.hidden=false;
