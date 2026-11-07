@@ -56,6 +56,10 @@
  const personalAdd=document.getElementById('personalAddTasks');
  const cabinetAdd=document.getElementById('svCabinetConfigure');
  back.addEventListener('click',()=>{
+  if(tasks.classList.contains('sah-history-open')){
+   document.querySelector('#seyveoActionHistoryPanel .sah-inline-head button')?.click();
+   return;
+  }
   if(!calendar.hidden){legacyCalendarBack?.click();return}
   if(legacyTasksBack&&!legacyTasksBack.hidden){legacyTasksBack.click();return}
   document.getElementById('navHome')?.click();
@@ -85,14 +89,17 @@
   const managerTasks=!tasks.hidden&&oldTasks.dataset.manager==='true';
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
   const visible=managerTasks||managerCal;
-  nav.hidden=!visible;
+  const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
+  nav.hidden=!visible||history;
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
-  title.textContent=active==='calendar'?'Календарь':active==='business'?'Кабинет':'Мои дела';
+  shell.dataset.history=String(history);
+  title.textContent=history?'История действий':active==='calendar'?'Календарь':active==='business'?'Кабинет':'Мои дела';
   // Root destinations are already navigable through the bottom dock.
   // Do not show a redundant Back control beside each top-level title.
-  back.hidden=true;
-  add.hidden=active==='calendar';
+  back.hidden=!history;
+  back.setAttribute('aria-label',history?'Вернуться к моим делам':'Вернуться назад');
+  add.hidden=history||active==='calendar';
   add.setAttribute('aria-label',active==='personal'?'Добавить дело':'Настроить инструменты кабинета');
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('button')){
@@ -115,12 +122,12 @@
   }
  });
  const observer=new MutationObserver(sync);
- observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view']});
+ observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view','class']});
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
  observer.observe(oldTasks,{attributes:true,attributeFilter:['data-manager']});
  observer.observe(oldCalendar,{attributes:true,attributeFilter:['hidden']});
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:3,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:5,sync});
 })();
