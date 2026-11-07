@@ -80,6 +80,32 @@
  const businessTab=page.querySelector('[data-unified-tasks-tab="business"]');
  const employeeTab=page.querySelector('[data-unified-tasks-tab="employee"]');
  const managerLabel=page.querySelector('.svcp-manager-kicker');
+ // One persistent segment control for Tasks, Calendar and Cabinet.
+ // Move the same DOM node, instead of rendering two visually different controls.
+ const calendarPage=$('calendarPage');
+ const taskTabsHome=taskTabs?.parentNode;
+ const taskTabsAnchor=taskTabs?document.createComment('SEYVEO shared tabs position'):null;
+ if(taskTabsAnchor&&taskTabsHome)taskTabsHome.insertBefore(taskTabsAnchor,taskTabs);
+ function placeSharedWorkTabs(inCalendar){
+  if(!taskTabs||!taskTabsAnchor)return;
+  if(inCalendar){
+   if(calendarPage&&taskTabs.parentNode!==calendarPage){
+    const scope=calendarPage.querySelector('.cal-scope');
+    if(scope)calendarPage.insertBefore(taskTabs,scope);
+    else calendarPage.querySelector('.calendar-header')?.after(taskTabs);
+   }
+  }else if(taskTabs.parentNode!==taskTabsHome){
+   taskTabsHome.insertBefore(taskTabs,taskTabsAnchor.nextSibling);
+  }
+  taskTabs.querySelectorAll('[data-unified-tasks-tab]').forEach(button=>{
+   button.setAttribute('aria-pressed',String(
+    inCalendar?button.dataset.unifiedTasksTab==='calendar':
+    button.dataset.unifiedTasksTab===lastWorkView
+   ));
+  });
+  taskTabs.dataset.manager=String(isManager());
+  if(managerCalendarTabs)managerCalendarTabs.hidden=true;
+ }
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
  const isEmployee=()=>previewMode==='employee';
  const isManager=()=>['rise','autonom','large'].includes(previewMode);
@@ -90,7 +116,7 @@
   if(taskTabs)taskTabs.dataset.manager=String(isManager());
   if(managerCalendarContext&&!isManager()){
    managerCalendarContext=false;
-   if(managerCalendarTabs)managerCalendarTabs.hidden=true;
+   placeSharedWorkTabs(false);
   }
   if(employeeTab)employeeTab.hidden=!isEmployee();
   if(managerLabel)managerLabel.textContent=previewTier==='autonom'&&previewOptions.autonom==='enterprise'
@@ -665,7 +691,7 @@
   if(!isManager())return;
   if(page.dataset.workChatOpen==='true')closeWorkChat({restoreFocus:false});
   managerCalendarContext=true;
-  if(managerCalendarTabs)managerCalendarTabs.hidden=false;
+  placeSharedWorkTabs(true);
   // Reuse the ONE existing Calendar page, never clone it into a work panel.
   // A preview-role check is still required; native server roles come later.
   if(location.hash!=='#calendar')location.hash='#calendar';
@@ -858,7 +884,9 @@
  window.addEventListener('hashchange',()=>{
   if(location.hash!=='#calendar'){
    managerCalendarContext=false;
-   if(managerCalendarTabs)managerCalendarTabs.hidden=true;
+   placeSharedWorkTabs(false);
+  }else if(managerCalendarContext&&isManager()){
+   placeSharedWorkTabs(true);
   }
   if(location.hash==='#tasks')routePending();
   else{
