@@ -991,6 +991,29 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   backdrop-filter:none!important;
  }
 }
+
+/* Sayvi v4 · Circular send button; hold-to-talk voice keeps same hit area. */
+#sayviField > #sayviSend:not([hidden]){
+ box-sizing:border-box!important;
+ width:42px!important;
+ min-width:42px!important;
+ max-width:42px!important;
+ height:42px!important;
+ min-height:42px!important;
+ max-height:42px!important;
+ border:0!important;
+ border-radius:50%!important;
+ background:rgba(149,164,177,.14)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(14px) saturate(1.08)!important;
+ backdrop-filter:blur(14px) saturate(1.08)!important;
+}
+:root[data-theme="light"] #sayviField > #sayviSend:not([hidden]){
+ background:rgba(121,142,158,.13)!important;
+}
+#sayviField > #sayviSend:not([hidden]):active{background:rgba(170,187,200,.24)!important}
+#sayviField > #sayviMic{touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
+#sayviField > #sayviMic.is-recording{background:rgba(168,189,201,.17)!important}
 </style>
 </head>
 <body>
@@ -3068,7 +3091,41 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    status.textContent='Не удалось запустить распознавание речи в Safari.';
   }
  }
- mic.addEventListener('click',startSpeech);
+ // Hold to speak; release to send the recognized text to Sayvi.
+ // Capture the pointer so releasing beyond the mic still completes the turn.
+ let holdSpeechPointer=null,suppressMicClick=false;
+ mic.style.touchAction='none';
+ mic.setAttribute('aria-label','Удерживайте для голосового сообщения');
+ mic.addEventListener('pointerdown',event=>{
+  if(!event.isPrimary||event.button!==0||holdSpeechPointer!==null)return;
+  if(active||input.value.trim())return;
+  event.preventDefault();
+  holdSpeechPointer=event.pointerId;suppressMicClick=true;
+  try{mic.setPointerCapture(event.pointerId)}catch{}
+  startSpeech();
+ });
+ function releaseHeldSpeech(event,cancelled=false){
+  if(holdSpeechPointer===null||event.pointerId!==holdSpeechPointer)return;
+  holdSpeechPointer=null;
+  event.preventDefault();
+  try{if(mic.hasPointerCapture(event.pointerId))mic.releasePointerCapture(event.pointerId)}catch{}
+  if(cancelled){if(speechSession)cancelSpeech();return}
+  if(speechSession){speechSendRequested=true;stopSpeech()}
+ }
+ mic.addEventListener('pointerup',event=>releaseHeldSpeech(event));
+ mic.addEventListener('pointercancel',event=>releaseHeldSpeech(event,true));
+ mic.addEventListener('lostpointercapture',event=>{
+  if(holdSpeechPointer===event.pointerId)releaseHeldSpeech(event,true);
+ });
+ mic.addEventListener('click',event=>{
+  if(suppressMicClick){event.preventDefault();suppressMicClick=false;return}
+  // For keyboard accessibility, Enter/Space starts and then sends on next press.
+  if(event.detail===0){
+   if(speechSession){speechSendRequested=true;stopSpeech()}
+   else startSpeech();
+  }
+ });
+
  document.getElementById('sayviSpeechStop').addEventListener('click',stopSpeech);
  document.getElementById('sayviSpeechSend').addEventListener('click',sendSpeech);
  // A hidden page should never keep the phone's microphone active.
