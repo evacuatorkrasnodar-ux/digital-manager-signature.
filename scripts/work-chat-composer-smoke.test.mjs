@@ -86,7 +86,14 @@ test('task is contextual to typed personal chat with an employee, not a permanen
   assert.match(script,/if\(save\(CHAT_KEY,updated\)\)/);
   assert.match(script,/Демо, без отправки на другой телефон/);
   assert.match(html,/seyveo-work-chat-screen\.css\?v=71/);
-  assert.match(html,/seyveo-business-command\.js\?v=98/);
+  assert.match(html,/seyveo-business-command\.js\?v=99/);
+});
+
+test('one-to-one chat hides redundant author captions but keeps group names and accessible authors',()=>{
+ assert.match(script,/conversation\.dataset\.roomKind=selected\.kind/);
+ assert.match(css,/#svcpWorkChatScreen #svcpConversation\[data-room-kind="personal"\] \.svcp-bubble:not\(\.is-sayvi\) \.svcp-sender\{\s*display:none!important/);
+ assert.match(script,/bubble\.setAttribute\('aria-label'/);
+ assert.match(html,/seyveo-business-command\.js\?v=99/);
 });
 
 test('existing Sayvi assistant remains attached to the employee message, without duplicate helper',()=>{
