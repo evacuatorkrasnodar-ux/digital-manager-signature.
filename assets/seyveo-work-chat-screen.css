@@ -2343,3 +2343,24 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   max-width:calc(100% - 3px)!important;
  }
 }
+
+/* SEYVEO flat soft circles — expanded Work Chat ONLY.
+   Gentle neutral grey, no rings, gradients, extruded edge or glow. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send),
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send):is(:hover,:focus,:active){
+ background:rgba(214,222,229,.17)!important;
+ background-image:none!important;
+ border:0!important;
+ outline:0!important;
+ border-radius:50%!important;
+ box-shadow:none!important;
+ text-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ background:rgba(106,123,138,.12)!important;
+ border:0!important;
+ box-shadow:none!important;
+}
