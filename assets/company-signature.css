@@ -51,7 +51,7 @@
 }
 #seyveoCompanyDialog .seyveo-passport-dialog-head{
  box-sizing:border-box;display:flex;align-items:center;
- min-height:44px;padding-right:88px!important;margin:0 0 12px!important;
+ min-height:44px;padding-left:52px!important;padding-right:0!important;margin:0 0 12px!important;
 }
 #seyveoCompanyDialog #seyveoCompanyTitle{
  margin:0;font-size:21px;font-weight:615;letter-spacing:-.035em;line-height:1.22;
@@ -322,7 +322,9 @@
 }
 #seyveoQrCardDialog.sv-qr-dialog{box-sizing:border-box;width:min(375px,calc(100vw - 20px));max-width:calc(100vw - 20px);max-height:88dvh;overflow-y:auto;padding:19px;border:1px solid var(--sv-ui-sheet-border);border-radius:var(--sv-ui-radius-sheet,22px);background:var(--sv-ui-sheet);color:var(--text);box-shadow:var(--sv-ui-sheet-shadow);-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter)}
 #seyveoQrCardDialog::backdrop{background:rgba(6,10,15,.46);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-#seyveoQrCardDialog header{display:flex;justify-content:space-between;gap:12px;align-items:start}
+#seyveoQrCardDialog header{display:flex;justify-content:flex-start;gap:8px;align-items:center}
+#seyveoQrCardDialog header #seyveoQrClose.sv-nav-arrow{order:-1;align-self:flex-start;flex:0 0 44px!important;margin-left:-8px!important}
+#seyveoQrCardDialog header>div{min-width:0;flex:1}
 #seyveoQrCardDialog h2{font-size:20px;font-weight:510;letter-spacing:-.03em;margin:6px 0 16px}
 #seyveoQrCardDialog .sv-qr-overline{font-size:9px;letter-spacing:.12em;color:var(--secondary)}
 #seyveoQrClose{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;color:var(--text)}
