@@ -264,6 +264,83 @@ html body :is(
 /* No universal button/card rules: preserve sphere, velvet dock,
    actual media tiles, page-specific positive/negative states. */
 
+/* Remaining first-level and nested content controls found during the
+   complete 83-stylesheet source audit. Native content (white paper, QR images,
+   maps, photographs, charts) must NOT inherit glass paint. */
+html body :is(
+ #notesDialog[open] .note-item-actions>.note-more-button,
+ #notesDialog[open] .note-empty-mark,
+ #noteReviewDialog[open] textarea,
+ #noteScanDialog[open] textarea,
+ #noteScanDialog[open] .paper-scan-preview,
+ #noteScanDialog[open] .paper-scan-consent,
+ #noteScanDialog[open] .paper-scan-line-mode input,
+ #seyveoQrCardDialog[open] .sv-qr-actions button,
+ #seyveoCompanyDialog[open] .sv-company-actions button,
+ #seyveoCompanyDialog[open] .sv-company-private-form textarea,
+ #manageConnectionsDialog[open] .manage-connection-advice,
+ #manageConnectionsDialog[open] .sv-connect-tile,
+ #onboardDialog[open] .onboard-options-list,
+ #onboardDialog[open] .onboard-field input,
+ #calendarSpaceDialog[open] .cal-bp-grid input,
+ #calendarSpaceDialog[open] .world-person-call,
+ #seyveoAccountDemo[open] .seyveo-account-picker-label
+){
+ background:var(--sv-sayvi-field)!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+ color:var(--text);
+}
+html body #manageConnectionsDialog[open] .sv-connect-tile.is-expanded{
+ background:var(--sv-sayvi-selected)!important;
+ border-color:var(--sv-sayvi-separator)!important;
+ box-shadow:none!important;
+}
+html body #noteReadDialog[open] .note-read-content{
+ background:transparent!important;
+ box-shadow:none!important;
+ border-color:transparent!important;
+}
+html body #seyveoCompanyDialog[open] > button.sv-nav-done{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+}
+/* Keep list-action buttons restrained, in line with the chat composer. */
+html body #notesDialog[open] .note-item-actions>.note-more-button{
+ border-radius:50%!important;
+}
+html body :is(
+ #notePaperDialog .paper-pattern-menu:not([hidden]),
+ #notePaperDialog .paper-color-menu:not([hidden])
+) button:active{
+ background:var(--sv-sayvi-selected)!important;
+}
+/* Mobile full-screen routes are pages, not floating cards.
+   Under the app's existing glass controls their canvas stays transparent
+   to the common theme, instead of a separate saturated rectangle. */
+@media(max-width:720px){
+ :root[data-theme=light] body :is(
+  #managePage,#lifePage,#tasksPage,#calendarPage,
+  #sayviSurfacePage,#sayviAnswerPage
+ ):not([hidden]){
+  background:transparent!important;
+ }
+}
+/* At iPhone X width (375px) the cabinet footer remains text-only and the
+   two time-wheel columns keep the original 44px touch sizes. */
+@media(max-width:390px){
+ html body #svCabinetDialog[open] .sv-cabinet-footer{
+  gap:7px!important;
+ }
+ html body #svCabinetDialog[open] .sv-cabinet-footer button{
+  flex:0 0 auto!important;
+  min-height:44px!important;
+  width:auto!important;
+ }
+}
+
 /* Accessibility settings take priority over decorative transparency. */
 @media(prefers-reduced-transparency:reduce){
  html body :is(
