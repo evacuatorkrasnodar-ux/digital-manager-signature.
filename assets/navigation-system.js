@@ -64,7 +64,7 @@
   'lifeBack','calendarMeasureBack','seyveoCleanBack','sayviVideoBack',
   'sayviAnswerBack','sayviSurfaceBack','pictureBackToBusiness',
   'svcpConversationBack','svcpWorkChatBack',
-  'calendarBack','unifiedTasksBack'
+  'calendarBack','unifiedTasksBack','sayviSurfaceBack'
  ].forEach(id=>{
   const button=$(id);
   if(!button)return;
