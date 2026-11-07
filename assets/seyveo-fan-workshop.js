@@ -48,7 +48,7 @@ function showPersonal(item){
  if(!dialog){
   dialog=el('dialog','sv-fan-personal-dialog');dialog.id='svFanPersonalDialog';
   const sheet=el('div','sv-fan-personal-sheet');
-  const back=el('button','sv-fan-personal-back','‹ Мой мир');back.type='button';back.addEventListener('click',()=>dialog.close());
+  const back=el('button','sv-fan-personal-back');back.type='button';back.setAttribute('aria-label','Вернуться в Мой мир');back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';back.addEventListener('click',()=>dialog.close());
   const title=el('h2','');title.id='svFanPersonalTitle';
   const description=el('p','');description.id='svFanPersonalDescription';
   const emblem=el('div','sv-fan-personal-emblem');emblem.id='svFanPersonalEmblem';
