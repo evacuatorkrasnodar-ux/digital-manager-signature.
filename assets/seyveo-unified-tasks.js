@@ -1057,38 +1057,36 @@
   activeGoal=id;sourceChoice=null;
   dialog.dataset.cabinetView='guide';
   dialog.scrollTop=0;
-  if($('svCabinetTitle'))$('svCabinetTitle').textContent='Настройка инструмента';
-  if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите нужные возможности кабинета.';
+  // A guide replaces the catalog CONTENT, not the page header.
+  // Reuse the existing top Back arrow; no duplicate navigation row.
+  if($('svCabinetTitle'))$('svCabinetTitle').textContent=GOALS[id].title;
+  if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent=GOALS[id].description;
+  cancelButton?.setAttribute('aria-label','Назад к выбору инструментов');
   catalogHost.hidden=true;
   if(searchWrap)searchWrap.hidden=true;
   guideHost.hidden=false;
   renderGuide();
  }
  function hideGoal(){
+  const previousGoal=activeGoal;
   activeGoal=null;sourceChoice=null;
   dialog.dataset.cabinetView='catalog';
   dialog.scrollTop=0;
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Что хотите делать?';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите задачу — подскажем нужный инструмент.';
+  cancelButton?.setAttribute('aria-label','Назад к моим делам');
   guideHost.hidden=true;guideHost.replaceChildren();
   catalogHost.hidden=false;
   if(searchWrap)searchWrap.hidden=false;
   renderCatalog();
+  return previousGoal;
  }
  function renderGuide(){
   if(!activeGoal||!draft)return;
-  const info=itemById.get(activeGoal),goal=GOALS[activeGoal];
+  const goal=GOALS[activeGoal];
   guideHost.replaceChildren();
-  const back=button('','back');
-  back.className='sv-cabinet-guide-back sv-nav-back';
-  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
-  back.setAttribute('aria-label','Вернуться к списку инструментов');
-  const title=node('h3','sv-cabinet-guide-title',goal.title);
   const benefit=node('p','sv-cabinet-guide-benefit',goal.benefit);
-  const module=node('p','sv-cabinet-guide-module','Инструмент: '+info.name);
-  const nav=node('div','sv-cabinet-guide-nav');
-  nav.append(back,goalIcon(activeGoal),title);
-  guideHost.append(nav,benefit,module);
+  guideHost.append(benefit);
   if(goal.sources){
    const label=node('h4','sv-cabinet-guide-subtitle','Где вы ведёте продажи?');
    const sourceList=node('div','sv-cabinet-sources');
@@ -1133,7 +1131,19 @@
  }
  launch.addEventListener('click',open);
  empty.querySelector('[data-sv-cabinet-open]')?.addEventListener('click',open);
- cancelButton?.addEventListener('click',cancel);
+ cancelButton?.addEventListener('click',()=>{
+  if(activeGoal){
+   const id=hideGoal();
+   catalogHost.querySelector('[data-cabinet-action="guide"][data-cabinet-id="'+id+'"]')?.focus({preventScroll:true});
+  }else cancel();
+ });
+ // Escape backs out of the guide first, without discarding draft selections.
+ dialog.addEventListener('cancel',event=>{
+  if(!activeGoal)return;
+  event.preventDefault();
+  const id=hideGoal();
+  catalogHost.querySelector('[data-cabinet-action="guide"][data-cabinet-id="'+id+'"]')?.focus({preventScroll:true});
+ });
  saveButton?.addEventListener('click',save);
  resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';hideGoal();render()});
  search.addEventListener('input',renderCatalog);
@@ -1151,7 +1161,6 @@
   const b=event.target.closest('[data-cabinet-action]');
   if(!b||!draft)return;
   const action=b.dataset.cabinetAction;
-  if(action==='back'){hideGoal();return}
   if(action==='source'){sourceChoice=b.dataset.cabinetId;renderGuide();return}
   if(action==='goal-toggle'){
    const id=b.dataset.cabinetId;
