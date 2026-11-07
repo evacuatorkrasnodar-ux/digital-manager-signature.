@@ -2640,89 +2640,61 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
 }
 
-/* SEYVEO optical spacing v173: extend the message capsule LEFT without
-   touching its right edge, the 50px detached Plus or dock material.
-   Sayvi and Emoji use IDENTICAL tracks / hit targets and are centered.
-   Small gaps reclaim 10px for the message capsule on iPhone. */
+/* SEYVEO Work Chat · mirrored Home dock geometry (canonical).
+   Plus is the left 50px twin of Home's right magnifier.
+   Keep the same 8px REAL gap between the two glass surfaces.
+   The text capsule moves left within the bar; do not pull the bar left.
+   Sayvi and Emoji have equal 38px tracks and a 3px space between them. */
 #svcpWorkChatScreen #svcpChatForm,
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
- grid-template-columns:50px 40px 40px minmax(0,1fr)!important;
- column-gap:2px!important;
+ grid-template-columns:50px 8px 38px 3px 38px 3px minmax(0,1fr)!important;
+ column-gap:0!important;
 }
-#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
- box-sizing:border-box!important;
- width:40px!important;
- min-width:40px!important;
- max-width:40px!important;
- height:40px!important;
- min-height:40px!important;
- max-height:40px!important;
- justify-self:center!important;
- align-self:center!important;
- margin:0!important;
- padding:0!important;
-}
-#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
-#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
- grid-column:4!important;
- justify-self:stretch!important;
- min-width:0!important;
-}
-@media(max-width:390px){
- #svcpWorkChatScreen #svcpChatForm,
- #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
- #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
-  grid-template-columns:50px 38px 38px minmax(0,1fr)!important;
-  column-gap:3px!important;
- }
- #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
-  width:38px!important;
-  min-width:38px!important;
-  max-width:38px!important;
-  height:38px!important;
-  min-height:38px!important;
-  max-height:38px!important;
- }
-}
-
-/* SEYVEO optical balance · equal spacing for Sayvi and Emoji */
-#svcpWorkChatScreen #svcpChatForm,
-#svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
-#svcpWorkChatScreen[data-view="room"] #svcpChatForm{
- grid-template-columns:50px 38px 38px minmax(0,1fr)!important;
- column-gap:3px!important;
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ grid-column:1!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage,
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{
  box-sizing:border-box!important;
  width:38px!important;min-width:38px!important;max-width:38px!important;
  height:38px!important;min-height:38px!important;max-height:38px!important;
- padding:0!important;
- margin:0!important;
- justify-self:center!important;
- align-self:center!important;
+ margin:0!important;padding:0!important;
+ justify-self:center!important;align-self:center!important;
 }
-#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{grid-column:2!important}
-#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:3!important}
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{grid-column:3!important}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:5!important}
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
- grid-column:4!important;
+ grid-column:7!important;
+ grid-row:1!important;
+ min-width:0!important;
  width:100%!important;
  max-width:100%!important;
- min-width:0!important;
  margin:0!important;
+}
+/* The glass starts precisely 8px after the 50px Plus (including form padding).
+   On iPhone <=390px the approved form padding is 5px, otherwise 7px. */
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
+ left:65px!important;
+}
+/* Keep the existing typing-joins-the-dock behavior and upward expansion.
+   Explicit bottom-row placement prevents controls moving into the editor. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpComposerEmojiToggle{
+ grid-row:2!important;
 }
 @media(max-width:390px){
  #svcpWorkChatScreen #svcpChatForm,
  #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
-  grid-template-columns:50px 38px 38px minmax(0,1fr)!important;
-  column-gap:3px!important;
+  grid-template-columns:50px 8px 38px 3px 38px 3px minmax(0,1fr)!important;
+  column-gap:0!important;
  }
- #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
- #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
-  width:100%!important;
-  max-width:100%!important;
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
+  left:63px!important;
  }
 }
