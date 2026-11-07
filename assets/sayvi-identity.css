@@ -1,0 +1,21 @@
+/* SEYVEO / Sayvi single brand identity. The symbol is not a new button or layer. */
+.sv-sayvi-identity-glyph{
+  display:inline-block;flex:0 0 auto;width:1.25em;height:1.25em;
+  vertical-align:-.27em;background:url("./seyveo-pearl-light-mark.svg?v=1") center / contain no-repeat;
+  pointer-events:none;user-select:none;-webkit-user-select:none;
+  filter:drop-shadow(0 0 .5px rgba(250,255,255,.28));
+}
+button .sv-sayvi-identity-glyph{font-size:1.12em;margin-inline-end:.14em}
+:root[data-theme="light"] .sv-sayvi-identity-glyph{
+  filter:drop-shadow(0 1px .65px rgba(37,66,60,.18));
+}
+.svcp-manager-signal-mark .sv-sayvi-identity-glyph,
+.sv-cabinet-resume-spark .sv-sayvi-identity-glyph,
+.sv-home-living-mark .sv-sayvi-identity-glyph,
+.sv-mail-assist-symbol .sv-sayvi-identity-glyph,
+.syp-spark .sv-sayvi-identity-glyph,
+.cal-bp-report-icon .sv-sayvi-identity-glyph,
+.note-smart-symbol .sv-sayvi-identity-glyph{
+  font-size:1.15em;vertical-align:middle;
+}
+@media(prefers-reduced-motion:reduce){.sv-sayvi-identity-glyph{animation:none!important;transition:none!important}}
