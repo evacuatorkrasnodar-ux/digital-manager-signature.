@@ -1110,7 +1110,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* Directory layout ends above the five-button dock, never underneath it.
    The room switches to the original full-height chat composer. */
 #svcpWorkChatScreen:has(#svcpChatDirectory:not([hidden])){
- padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+ /* Full-bleed inbox backdrop: do not reserve a 72px screen-wide footer strip.
+    Scroll clearance is already inside #svcpConversationList. */
+ padding-bottom:0!important;
 }
 #svcpWorkChatScreen:has(#svcpConversation:not([hidden])){
  padding-bottom:0!important;
