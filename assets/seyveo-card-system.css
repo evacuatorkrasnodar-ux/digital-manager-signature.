@@ -416,3 +416,17 @@
   background:var(--card2)!important;
  }
 }
+
+/* v15 · Do not draw the legacy masked Sayvi mark AND the approved inline SVG.
+   Card-action ::before was re-enabled as a glass lens by the shared style,
+   and inherited the old .sv-sayvi-label mask, creating a faint second star.
+   Preserve the real SVG; other glass buttons, recognition stars and icons stay. */
+#homePage #seyveoLivingMoment .sv-sayvi-label:has(>svg.lm-sayvi-mark)::before,
+#homePage #seyveoLivingMoment .lm-field .lm-actions .lm-polymer.sv-sayvi-label:has(>svg.lm-sayvi-mark):not([hidden])::before{
+ content:none!important;
+ display:none!important;
+ -webkit-mask:none!important;
+ mask:none!important;
+ background:none!important;
+ box-shadow:none!important;
+}
