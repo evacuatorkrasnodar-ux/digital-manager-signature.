@@ -67,9 +67,11 @@ function renderPreview(parent,file){
  const status=el('p','sv-doc-status','Выбран файл: '+file.name);
  parent.append(status);
  const object=URL.createObjectURL(file);previewUrl=object;
- const link=el('a','sv-doc-file-link','Открыть оригинал');
+ const fileActions=el('div','sv-doc-file-actions');
+ const link=el('a','sv-doc-file-link','Открыть / сохранить копию');
  link.href=object;link.target='_blank';link.rel='noopener noreferrer';
- parent.append(link);
+ const edit=button('Редактировать с Сэйви',()=>goSayvi('edit'),'sv-doc-edit-in-chat');
+ fileActions.append(link,edit);parent.append(fileActions);
  if(/^(?:png|jpg|jpeg|webp)$/.test(ext)){
   const img=el('img','sv-deep-file-image');img.src=object;img.alt='Просмотр документа';preview.append(img);
  }else if(ext==='pdf'){
