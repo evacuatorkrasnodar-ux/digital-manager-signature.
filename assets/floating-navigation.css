@@ -61,7 +61,9 @@
  box-shadow:var(--sv-liquid-nav-shadow)!important;
 }
 .dock::before{left:0!important;right:58px!important}
-.dock::after{right:0!important;width:50px!important}
+/* Search: its glass backdrop must match the 50x50 button exactly.
+   The older 1px top/bottom inset made a 50x54 oval. */
+.dock::after{right:0!important;width:50px!important;top:3px!important;bottom:3px!important}
 .dock>.nav-item{
  position:relative!important;z-index:1!important;
  left:auto!important;top:auto!important;bottom:auto!important;
