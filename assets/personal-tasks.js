@@ -114,7 +114,7 @@ function findContinuation(item,all){
 function continuationPrompt(item,action){
  const card=element('section','personal-task-continuation');
  card.setAttribute('aria-label','SEYVEO предлагает следующий шаг');
- const head=element('strong','personal-task-continuation-title','✧ SEYVEO · Продолжение дела');
+ const head=element('strong','personal-task-continuation-title','SEYVEO · Продолжение дела');
  const description=element('p','','После выполнения «'+item.title+'» в исходной заметке осталось ещё одно поручение:');
  const suggestion=element('p','personal-task-continuation-next',action.title);
  const buttons=element('div','personal-task-continuation-actions');
@@ -481,7 +481,7 @@ function row(item,compact=false,deferred=false){
    resume.type='button';resume.dataset.taskResume=item.id;
    menu.prepend(resume);
   }
-  const sayvi=element('button','personal-task-sayvi','✧ Сэйви');
+  const sayvi=element('button','personal-task-sayvi','Сэйви');
   sayvi.type='button';sayvi.dataset.taskSayvi=item.id;
   sayvi.setAttribute('aria-label','Обсудить с Сэйви дело: '+item.title);
   section.append(art,label,sayvi,checkbox,menu);
@@ -503,7 +503,7 @@ function deferredPreviewRow(item){
  header.setAttribute('aria-controls',detailsId);
  const compact=element('small','personal-deferred-kind',item.kind==='mail'?'Письмо · отложено':'Документ · отложено');
  copy.append(header,compact);
- const sayvi=element('button','personal-task-sayvi','✧ Сэйви');
+ const sayvi=element('button','personal-task-sayvi','Сэйви');
  sayvi.type='button';sayvi.dataset.deferredSayvi=item.kind;
  sayvi.setAttribute('aria-label','Обсудить с Сэйви: '+item.title);
  const details=element('div','personal-deferred-details');details.id=detailsId;details.hidden=true;
