@@ -242,7 +242,10 @@ function mailView(){
  topButtons.append(searchToggle,connect,compose);
  const introCopy=create('div','sv-mail-introduction-text');
  introCopy.append(create('h2','sv-mail-introduction-title','Почта'));
- top.append(introCopy,topButtons);
+ // Reuse the original navigation button inside the visible Mail titlebar.
+ // The legacy .sv-deep-top is hidden for Mail; leaving Back outside it
+ // made navigation disappear or float independently of the title.
+ top.append(back,introCopy,topButtons);
  const searchLabel=create('label','sv-mail-search');searchLabel.id='svMailQuickSearch';
  searchLabel.append(mailIcon('search'));
  const searchInput=create('input','sv-mail-search-input');
