@@ -113,11 +113,8 @@
 #svWorkShell[data-shared-work="true"] #calendarPage .calendar-header-actions{
  display:none!important;
 }
-#svWorkShell[data-shared-work="true"] #svWorkHeader{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
-}
 #svWorkShell[data-shared-work="true"] #svWorkAdd:not([hidden]){
- grid-column:3!important;justify-self:end!important;
+ grid-column:2!important;justify-self:end!important;
  flex:none!important;box-sizing:border-box!important;
  width:44px!important;min-width:44px!important;max-width:44px!important;
  height:44px!important;min-height:44px!important;max-height:44px!important;
@@ -127,7 +124,7 @@
 /* SEYVEO navigation hierarchy: title + one action, no duplicate Back on roots.
    Real original buttons are still mounted for delegated clicks. */
 #svWorkShell[data-shared-work="true"] #svWorkHeader{
- grid-template-columns:44px minmax(0,1fr) 44px!important;
+ grid-template-columns:minmax(0,1fr) 44px!important;
  column-gap:6px!important;
 }
 #svWorkShell #svWorkBack[hidden]{display:none!important}
@@ -135,10 +132,10 @@
  display:block!important;visibility:hidden!important;pointer-events:none!important;
 }
 #svWorkShell[data-shared-work="true"] #svWorkTitle{
- grid-column:2!important;
+ grid-column:1!important;
 }
 #svWorkShell[data-shared-work="true"] #svWorkAdd:not([hidden]){
- grid-column:3!important;visibility:visible!important;pointer-events:auto!important;
+ grid-column:2!important;visibility:visible!important;pointer-events:auto!important;
 }
 #svWorkShell[data-shared-work="true"] #personalAddTasks,
 #svWorkShell[data-shared-work="true"] #svCabinetConfigure{
@@ -264,6 +261,18 @@
  line-height:1.12!important;letter-spacing:-.042em!important;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
+
+/* Only root destinations omit Back; they do not reserve an empty arrow slot.
+   Nested destinations keep the same 54px vertical alignment, with a real Back. */
+.sv-continuity-titlebar.sv-continuity-root{
+ grid-template-columns:minmax(0,1fr) var(--sv-page-slot)!important
+}
+.sv-continuity-titlebar.sv-continuity-root > :is(h1,h2){
+ grid-column:1!important
+}
+.sv-continuity-titlebar.sv-continuity-root > .sv-continuity-space{
+ display:none!important
+}
 .sv-continuity-titlebar > .sv-continuity-space{display:block;width:var(--sv-page-slot);height:var(--sv-page-slot);pointer-events:none}
 .sv-continuity-titlebar > .sv-continuity-space:first-child{grid-column:1}
 .sv-continuity-titlebar > .sv-continuity-space:last-child{grid-column:3}
@@ -316,7 +325,7 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 }
 #managePage #manageOverview > .manage-heading .sv-continuity-titlebar{margin-bottom:4px!important}
 #managePage #manageOverview > .manage-heading > p{
- margin-left:50px!important;max-width:calc(100% - 50px)
+ margin-left:0!important;max-width:100%
 }
 #managePage #manageOverview > .manage-heading .manage-caption{
  font-size:9px!important;letter-spacing:.08em!important;margin-bottom:4px!important
