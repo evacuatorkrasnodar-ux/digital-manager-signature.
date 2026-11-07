@@ -563,6 +563,103 @@ function privateAssignmentRecipient(){
 }
 function employeePreviewActive(){return window.SEYVEO_PREVIEW?.isEmployee?.()===true}
 function employeeAllowedRoom(roomId){return ['general','team','docs','dm-elena','dm-sayvi'].includes(roomId)}
+/* SEYVEO Work Chat typing presence: actual local typing, never simulated activity. */
+const workTypingPeers=new Map();
+const workTypingSource='work-'+Math.random().toString(36).slice(2);
+let workTypingChannel=null;
+try{
+ if(typeof BroadcastChannel==='function')workTypingChannel=new BroadcastChannel('seyveo-workchat-typing-demo-v1');
+}catch(_error){workTypingChannel=null}
+let workTypingIdleTimer=null,workTypingExpiryTimer=null;
+let workTypingOwnContext=null,workTypingLastSentAt=0;
+function workTypingIdentity(){
+ return state.viewpoint==='elena'
+  ?{userId:'elena',name:'Елена'}
+  :{userId:'manager-demo',name:'Руководитель'};
+}
+function workTypingBaseDetail(){
+ const current=roomDetails();
+ return state.viewpoint==='elena'?'Просмотр от лица Елены · демо'
+  :current.kind==='personal'?(current.hint.split(' · ')[0]||'Личный чат'):'Рабочая группа';
+}
+function updateWorkTypingIndicator(){
+ const now=Date.now();
+ for(const [key,peer] of workTypingPeers){
+  if(peer.expires<=now)workTypingPeers.delete(key);
+ }
+ if(workTypingExpiryTimer!==null)clearTimeout(workTypingExpiryTimer);
+ workTypingExpiryTimer=null;
+ const upcoming=[...workTypingPeers.values()].map(peer=>peer.expires).filter(time=>time>now);
+ if(upcoming.length){
+  workTypingExpiryTimer=setTimeout(updateWorkTypingIndicator,Math.max(50,Math.min(...upcoming)-now+30));
+ }
+ const title=$('svcpConversationTitle'),detail=$('svcpConversationDetail');
+ if(!title||!detail||$('svcpConversation')?.hidden)return;
+ const room=roomDetails(),own=workTypingIdentity();
+ const peer=[...workTypingPeers.values()].find(item=>
+  item.roomId===room.id && item.userId!==own.userId &&
+  (room.kind!=='personal'||item.userId==='manager-demo'||item.userId===room.person));
+ const shownName=state.viewpoint==='elena'&&room.id==='dm-elena'?'Руководитель':room.label;
+ title.textContent=shownName;
+ title.classList.toggle('svcp-peer-typing',!!peer&&room.kind==='personal');
+ detail.textContent=peer
+  ?(room.kind==='personal'?'печатает…':peer.name+' печатает…')
+  :workTypingBaseDetail();
+ detail.classList.toggle('svcp-peer-typing',!!peer&&room.kind!=='personal');
+}
+function receiveWorkTyping(raw){
+ if(!raw||typeof raw!=='object'||raw.source===workTypingSource)return;
+ const roomId=typeof raw.roomId==='string'?raw.roomId:'';
+ const userId=typeof raw.userId==='string'?raw.userId:'';
+ const name=typeof raw.name==='string'?raw.name.trim().slice(0,40):'';
+ if(!ROOMS.some(room=>room.id===roomId)||!userId||userId.length>64||!name)return;
+ const key=roomId+'::'+userId;
+ if(raw.active===true)workTypingPeers.set(key,{roomId,userId,name,expires:Date.now()+3700});
+ else if(raw.active===false)workTypingPeers.delete(key);
+ else return;
+ updateWorkTypingIndicator();
+}
+if(workTypingChannel)workTypingChannel.addEventListener('message',event=>receiveWorkTyping(event.data));
+/* Future authorized chat transport may dispatch this event when a genuine
+   remote user begins/stops typing. No remote presence is invented locally. */
+window.addEventListener('seyveo:workchat-typing',event=>receiveWorkTyping(event.detail));
+function broadcastWorkTyping(active,context){
+ const detail={kind:'typing',roomId:context.roomId,userId:context.userId,name:context.name,
+  active,source:workTypingSource};
+ try{workTypingChannel?.postMessage(detail)}catch(_error){}
+ window.dispatchEvent(new CustomEvent('seyveo:workchat-typing-outbound',{detail}));
+}
+function stopWorkTypingLocal(){
+ if(workTypingIdleTimer!==null)clearTimeout(workTypingIdleTimer);
+ workTypingIdleTimer=null;
+ if(workTypingOwnContext)broadcastWorkTyping(false,workTypingOwnContext);
+ workTypingOwnContext=null;
+ workTypingLastSentAt=0;
+}
+function onWorkTypingInput(){
+ const input=$('svcpChatInput');
+ if(!input||!input.value.trim()||$('svcpConversation')?.hidden){stopWorkTypingLocal();return}
+ const sender=workTypingIdentity();
+ const context={roomId:state.room,userId:sender.userId,name:sender.name};
+ if(workTypingOwnContext && 
+  (workTypingOwnContext.roomId!==context.roomId||workTypingOwnContext.userId!==context.userId)){
+  stopWorkTypingLocal();
+ }
+ const now=Date.now();
+ if(!workTypingOwnContext||now-workTypingLastSentAt>=950){
+  broadcastWorkTyping(true,context);
+  workTypingLastSentAt=now;
+ }
+ workTypingOwnContext=context;
+ if(workTypingIdleTimer!==null)clearTimeout(workTypingIdleTimer);
+ workTypingIdleTimer=setTimeout(stopWorkTypingLocal,2600);
+}
+$('svcpChatInput')?.addEventListener('input',onWorkTypingInput);
+$('svcpChatInput')?.addEventListener('blur',stopWorkTypingLocal);
+window.addEventListener('seyveo:work-chat-sent',stopWorkTypingLocal);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopWorkTypingLocal()});
+window.addEventListener('pagehide',stopWorkTypingLocal);
+
 function senderName(msg){
  if(msg.role==='recognition')return '✦ Знак признания · демо';
  if(msg.role==='sayvi')return 'Сэйви';
@@ -758,6 +855,7 @@ function syncChatAccount(){
  editingMessageIndex=null;
 }
 function showInbox(){
+ stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
@@ -780,6 +878,7 @@ function showInbox(){
  renderDirectory();
 }
 function openRoom(roomId){
+ stopWorkTypingLocal();
  syncChatAccount();
  cancelVoice();editingMessageIndex=null;
  const container=$('svcpWorkChatScreen');
@@ -841,6 +940,7 @@ function updatePerspective(){
  syncComposerActions();
  resizeWorkComposer();
  window.dispatchEvent(new CustomEvent('seyveo:work-role-preview',{detail:{role:state.viewpoint==='elena'?'employee':'manager'}}));
+ updateWorkTypingIndicator();
 }
 $('svcpRoomInfoToggle')?.addEventListener('click',()=>{
  const panel=$('svcpRoomInfo'),button=$('svcpRoomInfoToggle');if(!panel)return;
@@ -853,6 +953,7 @@ $('svcpConversationSearch')?.addEventListener('click',()=>{
 });
 $('svcpElenaPerspective')?.addEventListener('click',()=>{
  if(employeePreviewActive())return;
+ stopWorkTypingLocal();
  state.viewpoint=state.viewpoint==='elena'?'manager':'elena';
  clearReply();cancelTaskDraft();updatePerspective();renderChat();
 });
