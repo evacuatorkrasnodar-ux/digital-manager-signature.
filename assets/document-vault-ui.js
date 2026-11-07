@@ -101,6 +101,7 @@ function mount(slot,api){
     run(async()=>{
      const name=selected.name;
      await vault.addFile(area,selected);
+     if(valid())api.savedFile?.(selected);
      if(valid())await unlockedView();
      if(valid())slot.append(message('«'+name+'» зашифрован и сохранён в архиве.'));
     });
