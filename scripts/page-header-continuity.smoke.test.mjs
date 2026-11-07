@@ -9,11 +9,13 @@ import {readFile} from 'node:fs/promises';
 import {Script} from 'node:vm';
 
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
-const [html,css,shell,cabinet]=await Promise.all([
+const [html,css,shell,cabinet,taskCss,taskPicker]=await Promise.all([
  read('index.html'),
  read('assets/seyveo-work-shell.css'),
  read('assets/seyveo-work-shell.js'),
- read('assets/seyveo-unified-tasks.js')
+ read('assets/seyveo-unified-tasks.js'),
+ read('assets/personal-tasks.css'),
+ read('assets/seyveo-calendar-pickers.js')
 ]);
 
 test('primary routes use the shared top-row header contract',()=>{
@@ -51,6 +53,18 @@ test('Sayvi continuation is independent from saving Cabinet tool choices',()=>{
  assert.match(css,/sv-continuity-root/);
  assert.match(cabinet,/resume\.hidden=false/);
  assert.match(cabinet,/Продолжить с Сэйви/);
+});
+
+
+test('New Task and Choose Deadline use one horizontal 54px Back-and-title header',()=>{
+ assert.match(html,/<header class="sv-task-page-header">[\s\S]*?id="personalTaskCancel"[\s\S]*?<h2 id="personalTaskDialogTitle">Новое дело<\/h2>/);
+ assert.match(taskPicker,/stageHeader\.append\(back,stageTitle,headerSpacer\)/);
+ assert.match(taskPicker,/picker\.prepend\(stageHeader\)/);
+ assert.match(taskCss,/#personalTaskDialog \.sv-task-page-header\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px!important/);
+ assert.match(taskCss,/#personalTaskDialog\.sv-task-date-open \.personal-task-sheet > :not\(#seyveoTaskDuePicker\)/);
+ assert.match(html,/assets\/personal-tasks\.css\?v=52/);
+ assert.match(html,/assets\/seyveo-calendar-pickers\.js\?v=11/);
+ assert.doesNotThrow(()=>new Script(taskPicker));
 });
 
 test('Safari requests current assets and work shell syntax is valid',()=>{
