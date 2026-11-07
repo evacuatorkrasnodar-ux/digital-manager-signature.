@@ -458,7 +458,7 @@ function resizeWorkComposer(){
  form.classList.remove('svcp-compose-multiline');
  input.style.setProperty('height',base+'px','important');
  input.style.setProperty('overflow-y','hidden','important');
- const wraps=!!input.value&&(input.value.includes('\\n')||input.scrollHeight>base+2);
+ const wraps=!!input.value&&(input.value.includes('\n')||input.scrollHeight>base+2);
  form.classList.toggle('svcp-compose-multiline',wraps);
  // The large writing area is still part of the SAME dock. Keep the
  // action row and microphone in place, and grow only upward.
