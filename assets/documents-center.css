@@ -224,3 +224,129 @@ html.sv-space-active #sayviSurfacePage[data-sv-subject="contract"] .sv-deep-top 
   transition:none!important;animation:none!important;
  }
 }
+
+
+/* SEYVEO Docs · secure archive actions and future integration readiness.
+   The same Liquid Glass surface extends existing controls; no floating dock. */
+#sayviSurfacePage .sv-vault-row{
+ display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;
+ padding:14px 0;border-top:1px solid var(--sv-doc-line,var(--soft-line));
+}
+#sayviSurfacePage .sv-vault-row-actions{
+ display:flex;align-items:center;gap:7px;flex:0 0 auto;
+}
+#sayviSurfacePage .sv-vault-row-actions>.sv-doc-action{
+ min-height:42px;padding:7px 8px;font-size:12px;
+ border-radius:16px;background:transparent;
+}
+#sayviSurfacePage .sv-vault-row-menu{
+ position:relative;min-width:0;
+}
+#sayviSurfacePage .sv-vault-row-more{
+ display:flex;align-items:center;justify-content:center;
+ min-height:42px;padding:8px 12px;border:1px solid var(--sv-doc-line);
+ border-radius:17px;background:var(--sv-doc-wash);
+ color:var(--text);font-size:12px;font-weight:570;list-style:none;
+ cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage .sv-vault-row-more::-webkit-details-marker{display:none}
+#sayviSurfacePage .sv-vault-row-menu[open]{
+ flex:1 1 100%;width:100%;max-width:100%;
+}
+#sayviSurfacePage .sv-vault-row-menu[open]>.sv-vault-row-more{
+ justify-content:flex-start;border-color:var(--sv-doc-line);
+}
+#sayviSurfacePage .sv-vault-row-options{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:5px;margin-top:8px;padding:8px;
+ border:1px solid var(--sv-doc-line);border-radius:19px;
+ background:var(--sv-doc-wash);
+ -webkit-backdrop-filter:blur(18px) saturate(1.1);
+ backdrop-filter:blur(18px) saturate(1.1);
+}
+#sayviSurfacePage .sv-vault-option{
+ min-height:44px;padding:8px 10px;text-align:center;white-space:normal;
+ font-size:12px;line-height:1.32;color:var(--text);
+ border-radius:14px;background:transparent;border:0;box-shadow:none;
+}
+#sayviSurfacePage .sv-vault-option:active{
+ background:var(--sv-doc-picked);
+}
+#sayviSurfacePage .sv-vault-row-menu .sv-vault-status{
+ margin:7px 2px 0;font-size:11px;line-height:1.4;
+}
+#sayviSurfacePage .sv-vault-status:empty{display:none}
+#sayviSurfacePage .sv-doc-integrations{
+ margin:13px 0 18px;min-width:0;
+ border-top:1px solid var(--sv-doc-line);
+ border-bottom:1px solid var(--sv-doc-line);
+}
+#sayviSurfacePage .sv-doc-integrations-title{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ justify-content:center;gap:5px;position:relative;
+ min-height:68px;padding:12px 34px 12px 2px;list-style:none;
+ cursor:pointer;color:var(--text);
+}
+#sayviSurfacePage .sv-doc-integrations-title::-webkit-details-marker{display:none}
+#sayviSurfacePage .sv-doc-integrations-title:after{
+ content:"";width:8px;height:8px;position:absolute;top:27px;right:10px;
+ border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+ transform:rotate(45deg);
+}
+#sayviSurfacePage .sv-doc-integrations[open] .sv-doc-integrations-title:after{
+ transform:rotate(225deg);top:30px;
+}
+#sayviSurfacePage .sv-doc-integrations-title span{
+ font-size:16px;line-height:1.25;font-weight:600;letter-spacing:-.023em;
+}
+#sayviSurfacePage .sv-doc-integrations-title small{
+ font-size:11px;line-height:1.45;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-integrations-body{
+ padding:0 0 16px;
+}
+#sayviSurfacePage .sv-doc-connectors{
+ display:flex;flex-direction:column;
+ border:1px solid var(--sv-doc-line);border-radius:19px;
+ background:var(--sv-doc-wash);overflow:hidden;
+ -webkit-backdrop-filter:blur(18px) saturate(1.08);
+ backdrop-filter:blur(18px) saturate(1.08);
+}
+#sayviSurfacePage .sv-doc-connector-row{
+ box-sizing:border-box;display:flex;align-items:center;gap:7px 12px;
+ justify-content:space-between;flex-wrap:wrap;
+ padding:12px 13px;border-bottom:1px solid var(--sv-doc-line);
+}
+#sayviSurfacePage .sv-doc-connector-row:last-child{border-bottom:0}
+#sayviSurfacePage .sv-doc-connector-copy{
+ flex:1 1 180px;display:flex;flex-direction:column;gap:5px;min-width:0;
+}
+#sayviSurfacePage .sv-doc-connector-copy strong{
+ font-size:13px;line-height:1.3;font-weight:600;color:var(--text);
+}
+#sayviSurfacePage .sv-doc-connector-copy small{
+ font-size:11px;line-height:1.42;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-connector-state{
+ flex:0 0 auto;padding:5px 7px;border-radius:999px;
+ font-size:10px;line-height:1.2;color:var(--secondary);
+ background:color-mix(in srgb,var(--text) 7%,transparent);
+}
+#sayviSurfacePage .sv-doc-connector-link{
+ display:inline-flex;min-height:35px;align-items:center;
+ color:var(--text);font-size:11px;text-decoration:underline;
+ text-underline-offset:3px;
+}
+#sayviSurfacePage .sv-doc-workflow-demo{
+ margin:10px 0 0;padding:8px 3px;
+ background:transparent;border:0;text-decoration:underline;
+ text-underline-offset:3px;font-size:12px;color:var(--secondary);
+}
+@media(max-width:390px){
+ #sayviSurfacePage .sv-vault-row-actions{width:100%}
+ #sayviSurfacePage .sv-vault-row-menu{flex:1 1 auto}
+ #sayviSurfacePage .sv-vault-row-more{width:100%}
+ #sayviSurfacePage .sv-vault-row-menu[open]{flex-basis:100%}
+ #sayviSurfacePage .sv-vault-row-options{grid-template-columns:1fr 1fr;gap:3px}
+ #sayviSurfacePage .sv-vault-option{font-size:11.5px;padding:8px 6px}
+}
