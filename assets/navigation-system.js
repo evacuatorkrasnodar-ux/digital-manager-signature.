@@ -63,7 +63,7 @@
   'seyveoConversationBack','noteScanBack','manageThemeBack',
   'lifeBack','calendarMeasureBack','seyveoCleanBack','sayviVideoBack',
   'sayviAnswerBack','sayviSurfaceBack','pictureBackToBusiness',
-  'svcpConversationBack','svcpWorkChatBack','businessMapClose',
+  'svcpConversationBack','svcpWorkChatBack',
   'calendarBack','unifiedTasksBack'
  ].forEach(id=>{
   const button=$(id);
