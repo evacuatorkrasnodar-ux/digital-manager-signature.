@@ -5,7 +5,7 @@
 const MAX_FILE=20*1024*1024;
 const names={personal:'Личное',business:'Бизнес'};
 const allowed=/\.(?:pdf|txt|md|docx|xlsx|pptx|png|jpe?g|webp)$/i;
-let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null;
+let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null,integrationsOpen=false;
 let files={personal:null,business:null},stored={personal:false,business:false},showPreview=false;
 const el=(tag,cls,value)=>{
  const n=document.createElement(tag);
@@ -25,7 +25,7 @@ function clearPreview(){
 function reset(){
  clearPreview();
  files={personal:null,business:null};stored={personal:false,business:false};
- view='archive';showPreview=false;archiveExpanded=false;
+ view='archive';showPreview=false;archiveExpanded=false;integrationsOpen=false;
 }
 function setArea(next){
  if(!names[next])return false;
@@ -59,6 +59,49 @@ function chatAction(label,subtitle,intent,primary=false){
  copy.append(el('strong','',label),el('small','',subtitle));
  const chevron=el('span','sv-doc-chat-chevron','›');chevron.setAttribute('aria-hidden','true');
  action.append(copy,chevron);return action;
+}
+function connectorRow(label,description,link){
+ const row=el('div','sv-doc-connector-row');
+ const copy=el('div','sv-doc-connector-copy');
+ copy.append(el('strong','',label),el('small','',description));
+ const badge=el('span','sv-doc-connector-state','Не подключено');
+ row.append(copy,badge);
+ if(link){
+  const a=el('a','sv-doc-connector-link','Открыть справку ↗');
+  a.href=link;a.target='_blank';a.rel='noopener noreferrer';
+  row.append(a);
+ }
+ return row;
+}
+function connectorsPanel(){
+ const panel=el('details','sv-doc-integrations');
+ panel.open=integrationsOpen;
+ const title=el('summary','sv-doc-integrations-title');
+ title.append(el('span','','ЭДО и электронная подпись'),
+  el('small','','Подключения для юридически значимого обмена'));
+ panel.append(title);
+ const body=el('div','sv-doc-integrations-body');
+ body.append(note('SEYVEO Docs сможет вести внутренние согласования самостоятельно. Для обмена с контрагентами, ФНС и подписания КЭП понадобятся официальные сервисы, сертификаты и отдельное подключение. Сейчас ничего не подключено.'));
+ const list=el('div','sv-doc-connectors');
+ list.append(
+  connectorRow('Электронная подпись и МЧД','Сертификаты, полномочия, подтверждение подписанта',
+   'https://www.nalog.gov.ru/rn77/related_activities/el_doc/use_electronic_sign/'),
+  connectorRow('ЭДО с контрагентами','Диадок или другой оператор из реестра ФНС',
+   'https://www.nalog.gov.ru/rn77/oedo/search_edo/'),
+  connectorRow('Интеграция Диадок API','Юридически значимые документы через API оператора',
+   'https://developer.kontur.ru/doc/diadoc-api/index.html'),
+  connectorRow('ФНС и отчётность','Передача отчётности через поддерживаемые официальные каналы',
+   'https://www.nalog.gov.ru/rn77/related_activities/el_doc/ed_interaction/'),
+  connectorRow('1С и бухгалтерия','Сверка реквизитов, учёт, обмен документами и статусами',null)
+ );
+ body.append(list,note('Важное ограничение: учебные согласования в прототипе пока не являются защищённым юридически значимым ЭДО.'));
+ if(area==='business'){
+  const demo=button('Согласования · учебный режим',()=>{view='flow';draw();},'sv-doc-workflow-demo');
+  body.append(demo);
+ }
+ panel.append(body);
+ panel.addEventListener('toggle',()=>{if(panel.isConnected)integrationsOpen=panel.open});
+ return panel;
 }
 function renderPreview(parent,file){
  clearPreview();
@@ -148,6 +191,12 @@ function draw(){
    area,currentArea:()=>area,
    selectedFile:()=>stored[area]?null:files[area],
    savedFile(file){if(files[area]===file)stored[area]=true;},
+   toSayvi:intent=>goSayvi(intent),
+   showIntegrations(){
+    integrationsOpen=true;
+    const integration=host?.querySelector('.sv-doc-integrations');
+    if(integration){integration.open=true;integration.scrollIntoView({block:'nearest',behavior:'smooth'});}
+   },
    draft:()=>({title:'',text:''}),
    openFile(file,target){
     if(!names[target])return;
@@ -180,7 +229,8 @@ function draw(){
   chatAction('Создать с Сэйви','Подготовить новый документ в чате','create',true),
   chatAction('Проверить или исправить','Откройте чат и приложите документ','review'));
  host.append(assistant);
- host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат — только по вашему действию.'));
+ if(area==='business')host.append(connectorsPanel());
+ host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат, печать и системная отправка — только по вашему действию.'));
 }
 function openApprovals(recordId){
  area='business';view='flow';
