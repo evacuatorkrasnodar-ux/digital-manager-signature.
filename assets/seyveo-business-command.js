@@ -440,6 +440,7 @@ function commitChatMessages(entries){
  const updated=state.chat.concat(entries).slice(-500);
  if(!save(CHAT_KEY,updated))return false;
  state.chat=updated;
+ notifyRecognitionSuggestions();
  return true;
 }
 let statusResetTimer=null;
@@ -1246,31 +1247,94 @@ for(const group of MORE_EMOJI_GROUPS){
  group.emojis.forEach(emoji=>addEmojiButton(choices,emoji));
  section.append(choices);moreEmojis.append(section);
 }
-// Conservative, local-only demo signals. No silent awards or employee scoring.
-function suggestedRecognition(msg,person){
- if(!person||!STAFF[person]||msg.role!=='demo-elena'||person!=='elena')return null;
- const words=String(msg.text||'').toLocaleLowerCase('ru-RU');
- if(!words||msg.mediaId)return null;
- const completed=/(помогла|помог|выручила|выручил|исправила|исправил|разобралась|разобрался|готово|сделала|сделал|решила|решил|устранила|устранил)/u.test(words);
- if(!completed)return null;
- const context=state.chat.filter(x=>x.room===msg.room&&x.at<msg.at&&x.role!=='recognition').slice(-8);
- const requested=context.some(x=>/помоги|помочь|помощь|проверь|исправь|разберись|нужно|поручаю|проблем|ошибк|ценник|возврат/ui.test(x.text||''));
- const initiative=/сама|самостоятельно|заметила|обнаружила|предложила|инициатив/ui.test(words);
- if(!requested&&!initiative)return null;
- return {reason:requested?'Помощь в рабочей ситуации':'Инициатива в работе'};
+/* An opt-in, evidence-based LOCAL demo prompt. A quick "готово" alone
+ * is never sufficient for a workplace award. No personnel scoring. */
+const RECOGNITION_SNOOZE_KEY='seyveo-recognition-suggestions-v1';
+function recognitionSourceKey(msg){
+ return String(msg.room||'')+':'+String(msg.at||'')+':'+String(msg.role||'');
 }
-function applyPersonReaction(person,kind,reason){
+function readRecognitionSnoozes(){
+ try{
+  const value=JSON.parse(localStorage.getItem(RECOGNITION_SNOOZE_KEY)||'{}');
+  return value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+ }catch{return {}}
+}
+function suggestedRecognition(msg,person){
+ if(!person||!STAFF[person]||msg.role!=='demo-elena'||person!=='elena'||msg.mediaId)return null;
+ const words=String(msg.text||'').toLocaleLowerCase('ru-RU').replace(/ё/g,'е');
+ if(words.length<18)return null;
+ const initiative=/(?:сама|самостоятельно|по своей инициативе|заметила|обнаружила|предложила)/u.test(words);
+ const outcome=/(?:исправила|устранила|решила|проверила|помогла|выручила|разобралась|подготовила|сделала|закончила|выполнила)/u.test(words);
+ const work=/(?:ценник|товар|выкладк|остатк|касс|покупател|коллег|смен|проблем|ошибк|документ|заказ|отчет|поручени)/u.test(words);
+ if(!(work&&outcome))return null;
+ const context=state.chat.filter(x=>x.room===msg.room&&x.at<msg.at&&x.role!=='recognition').slice(-8);
+ const request=context.some(x=>/(?:помоги|помочь|проверь|исправь|разберись|нужно|поручаю|проблем|ошибк|ценник|возврат)/iu.test(x.text||''));
+ const colleague=/(?:помогла|выручила|коллег)/u.test(words);
+ if(!initiative&&!request&&!colleague)return null;
+ const reason=colleague?'Помощь коллегам':initiative?'Инициатива и результат':'Выполнение важной рабочей задачи';
+ return {reason,person,sourceKey:recognitionSourceKey(msg),at:Number(msg.at)};
+}
+function pendingRecognitionSuggestions(){
+ const dismissed=readRecognitionSnoozes(),awarded=read(RECOGNITION_KEY);
+ const seen=new Set(),out=[];
+ for(let i=state.chat.length-1;i>=0&&out.length<5;i--){
+  const msg=state.chat[i];
+  if(!msg||msg.role!=='demo-elena')continue;
+  const suggestion=suggestedRecognition(msg,'elena');
+  if(!suggestion||seen.has(suggestion.sourceKey))continue;
+  seen.add(suggestion.sourceKey);
+  if(dismissed[suggestion.sourceKey]||awarded.some(x=>x?.sourceKey===suggestion.sourceKey))continue;
+  // Once a manager awards this colleague today, do not ask again today.
+  const day=new Date().toISOString().slice(0,10);
+  if(awarded.some(x=>x?.from==='manager-demo'&&x.to==='elena'&&x.kind==='help'&&String(x.at||'').slice(0,10)===day))continue;
+  out.push({...suggestion,text:String(msg.text||'').slice(0,150)});
+ }
+ return out;
+}
+function notifyRecognitionSuggestions(){
+ window.dispatchEvent(new Event('seyveo:recognition-suggestions-changed'));
+}
+function dismissRecognitionSuggestion(sourceKey){
+ if(!sourceKey)return;
+ try{
+  const all=readRecognitionSnoozes();
+  all[sourceKey]=Date.now();
+  const rows=Object.entries(all).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,100);
+  localStorage.setItem(RECOGNITION_SNOOZE_KEY,JSON.stringify(Object.fromEntries(rows)));
+ }catch{setStatus('Не удалось сохранить отметку «Позже» на устройстве.')}
+ notifyRecognitionSuggestions();
+}
+function awardRecognitionSuggestion(sourceKey){
+ const proposal=pendingRecognitionSuggestions().find(x=>x.sourceKey===sourceKey);
+ if(!proposal)return false;
+ if(!window.confirm('⭐ Отметить '+STAFF[proposal.person]+' за «'+proposal.reason+'»? Награда попадёт в учебную карточку сотрудника.'))return false;
+ return applyPersonReaction(proposal.person,'help',proposal.reason,proposal.sourceKey);
+}
+window.SEYVEO_RECOGNITION_COACH=Object.freeze({
+ homeSuggestion(){
+  const proposal=pendingRecognitionSuggestions()[0];
+  return proposal?{kind:'recognition',sourceKey:proposal.sourceKey,
+   title:'⭐ Есть повод поблагодарить коллегу',
+   message:'Сэйви заметила возможную заслугу '+STAFF[proposal.person]+': '+proposal.reason.toLowerCase()+'. Проверьте поступок перед награждением.',
+   why:'Предложение по учебной переписке, решение принимает руководитель.',
+   detail:proposal.text}:null;
+ },
+ award:awardRecognitionSuggestion,
+ later:dismissRecognitionSuggestion,
+ pending:pendingRecognitionSuggestions
+});
+function applyPersonReaction(person,kind,reason,sourceKey=''){
  const reward=RECOGNITION_TYPES[kind];
  if(!STAFF[person]||!reward)return;
  const entries=read(RECOGNITION_KEY);
  const day=new Date().toISOString().slice(0,10);
  if(entries.some(x=>x&&x.from==='manager-demo'&&x.to===person&&x.kind===kind&&String(x.at||'').slice(0,10)===day)){
   setStatus('Такой знак уже поставлен сегодня. Можешь выбрать другую эмоцию.');
-  return;
+  return false;
  }
  const item={id:'reaction-'+Date.now().toString(36),from:'manager-demo',to:person,kind,
-  reason:reason||'Быстрая благодарность в личном рабочем чате',at:new Date().toISOString(),demo:true};
- if(!save(RECOGNITION_KEY,entries.concat(item).slice(-100)))return;
+  reason:reason||'Быстрая благодарность в личном рабочем чате',at:new Date().toISOString(),demo:true,...(sourceKey?{sourceKey}:{})};
+ if(!save(RECOGNITION_KEY,entries.concat(item).slice(-100)))return false;
  const entry={room:'dm-'+person,role:'recognition',at:Date.now(),
   text:reward.symbol+' '+RECOGNITION_NAMES['manager-demo']+' отметили '+STAFF[person]+' · '+reward.name,
   recognitionId:item.id};
@@ -1281,6 +1345,8 @@ function applyPersonReaction(person,kind,reason){
  $('svcpRecognizeOpenCard').hidden=false;
  setStatus('Знак '+reward.symbol+' сохранён в учебной карточке '+STAFF[person]+'. Это не проверенная оценка работы.');
  window.dispatchEvent(new CustomEvent('seyveo:recognition-changed',{detail:{personId:person}}));
+ notifyRecognitionSuggestions();
+ return true;
 }
 function applyMessageEmoji(index,emoji){
  const msg=state.chat[index];
