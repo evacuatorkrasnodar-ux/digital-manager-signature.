@@ -47,7 +47,7 @@
 #sayviSurfacePage .svdf-sheet-head strong{font-size:14px;font-weight:600}
 #sayviSurfacePage .svdf-sheet-close{min-height:44px;padding:8px 10px!important;color:var(--secondary);font-size:13px}
 #sayviSurfacePage .svdf-sheet-option{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;padding:10px 5px!important;border-top:1px solid var(--soft-line);text-align:left;font-size:14px}
-#sayviSurfacePage .svdf-sheet-check{font-size:18px;color:var(--seyveo-emerald)}
+#sayviSurfacePage .svdf-sheet-check{font-size:18px;color:var(--text)}
 :root[data-theme="light"] #sayviSurfacePage .svdf-picker-sheet[open]{background:var(--sv-ui-sheet)!important}
 #sayviSurfacePage .svdf-primary{
  justify-self:start;min-height:44px;padding:9px 15px!important;
