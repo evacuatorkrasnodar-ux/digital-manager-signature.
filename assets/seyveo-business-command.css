@@ -1192,7 +1192,7 @@ font-size:12px;font-weight:575;letter-spacing:-.015em;margin:3px 2px 6px;color:v
 }
 #tasksPage .svcp-approval-demo-button,
 #tasksPage .svcp-approval-submit{
- color:var(--seyveo-emerald,var(--text))!important;
+ color:var(--text)!important;
 }
 #tasksPage .svcp-approval-demo-state{
  display:inline-block;color:var(--seyveo-emerald,var(--secondary));
@@ -1603,7 +1603,7 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 }
 #tasksPage .svcp-employee-results .svcp-employee-thanks-symbol{width:44px;height:44px}
 #tasksPage .svcp-work-shortcuts button[aria-expanded="true"]{
- border-color:var(--seyveo-emerald);background:var(--seyveo-hdr-active,var(--card2))
+ border-color:var(--sv-ui-divider);background:var(--sv-ui-selected-surface)
 }
 
 
