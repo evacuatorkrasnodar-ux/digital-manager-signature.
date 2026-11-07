@@ -1741,8 +1741,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 </section>
 <dialog id="svCabinetDialog" class="sv-cabinet-dialog" aria-labelledby="svCabinetTitle" aria-describedby="svCabinetDisclosure">
  <div class="sv-cabinet-dialog-body">
-  <button type="button" id="svCabinetCancel" class="sv-cabinet-dismiss" aria-label="Закрыть настройку инструментов" title="Свернуть"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5L18.5 9"/></svg></button>
   <header class="sv-cabinet-dialog-head">
+   <button type="button" id="svCabinetCancel" class="sv-cabinet-dismiss sv-nav-back" aria-label="Назад к моим делам" title="Назад"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
    <div><h2 id="svCabinetTitle">Что хотите делать?</h2><p id="svCabinetDisclosure">Выберите задачу — подскажем нужный инструмент.</p></div>
    
   </header>
@@ -1837,11 +1837,11 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <footer class="assistant-quick-settings-footer"><button type="button" id="assistantQuickSettingsDefault">По умолчанию</button><button type="button" id="assistantQuickSettingsDone">Готово</button></footer>
 <p id="assistantQuickSettingsStatus" class="assistant-quick-settings-status" role="status" aria-live="polite"></p>
 </dialog><dialog id="seyveoSmartHomeDialog" class="cal-form-dialog seyveo-smart-home-dialog" aria-labelledby="seyveoSmartHomeDialogTitle">
-<button id="seyveoSmartHomeDialogClose" class="seyveo-close-control seyveo-dialog-close seyveo-text-close" type="button" aria-label="Закрыть Умный дом">Готово</button>
+<button id="seyveoSmartHomeDialogClose" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" type="button" aria-label="Вернуться из Умного дома"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <h2 id="seyveoSmartHomeDialogTitle">Умный дом</h2>
 <section id="seyveoSmartHomeStandalone" class="svh-remote" aria-label="Управление демонстрационным умным домом"></section>
 </dialog><dialog id="calendarSpaceDialog" class="cal-space-dialog" aria-labelledby="calendarSpaceTitleHeading">
-<button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close" aria-label="Закрыть личный раздел">Готово</button>
+<button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из личного раздела"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <h2 id="calendarSpaceTitleHeading">Личное пространство</h2>
 <button id="calendarMeasureBack" type="button" class="pw-tool-back" hidden aria-label="Вернуться ко всем показателям здоровья"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>Все показатели</span></button>
 <div id="svCareScroll" class="sv-care-scroll" tabindex="0" role="region" aria-label="Содержимое личного раздела">
@@ -1983,7 +1983,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <button id="calendarEventCancel" type="button" class="btn" aria-label="Вернуться к календарю"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <button type="submit" class="btn primary">Сохранить</button></div>
 </form></div></dialog><dialog id="personalTaskDialog" class="cal-form-dialog personal-task-dialog" aria-labelledby="personalTaskDialogTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть окно нового дела"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
-<div class="personal-task-sheet"><div class="personal-task-actions sv-task-topbar" role="group" aria-label="Действия с делом"><button id="personalTaskCancel" type="button" aria-label="Закрыть создание дела"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5L18.5 9"/></svg></button><button id="personalTaskSave" class="sv-task-save" type="submit" form="personalTaskForm">Добавить</button></div><h2 id="personalTaskDialogTitle">Новое дело</h2>
+<div class="personal-task-sheet"><div class="personal-task-actions sv-task-topbar" role="group" aria-label="Навигация"><button id="personalTaskCancel" class="sv-nav-back" type="button" aria-label="Назад к моим делам"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button></div><h2 id="personalTaskDialogTitle">Новое дело</h2>
 <form id="personalTaskForm">
 <label>Что сделать?<input id="personalTaskTitle" type="text" maxlength="140" autocomplete="off" required placeholder="Например, позвонить маме"></label>
 <div class="personal-task-field"><span class="personal-task-field-caption">Срок · необязательно</span>
@@ -1993,9 +1993,9 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <svg class="personal-task-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17"/></svg>
 </span></div>
 <small id="personalTaskStatus" role="status" aria-live="polite"></small>
-</form><p class="personal-task-privacy">Сохраняется на этом устройстве</p></div></dialog>
+</form><p class="personal-task-privacy">Сохраняется на этом устройстве</p><div class="personal-task-submit-row"><button id="personalTaskSave" class="sv-task-save" type="submit" form="personalTaskForm">Сохранить</button></div></div></dialog>
 <dialog id="seyveoContactsDialog" class="cal-form-dialog personal-contacts-dialog" aria-labelledby="seyveoContactsTitle">
- <button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close" id="seyveoContactsClose" aria-label="Закрыть контакты">Готово</button>
+ <button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" id="seyveoContactsClose" aria-label="Вернуться из контактов"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
  <h2 id="seyveoContactsTitle">Приватные контакты</h2>
  <p class="personal-contacts-intro">Ваш личный справочник SEYVEO. Эти номера не добавляются в телефонную книгу устройства. Нажмите на номер, чтобы открыть системный вызов.</p>
  <div class="personal-contacts-privacy">Номера хранятся в браузере на этом устройстве <strong>без шифрования</strong>. Добавляйте контакты только с согласия их владельцев. Вы можете удалить их в любое время.</div>
@@ -2376,7 +2376,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <p>В открытом приложении SEYVEO попробует распознавать ваше обращение по имени. Это пробный режим: браузер может прервать прослушивание, а звук для распознавания может передаваться внешнему сервису браузера.</p>
 <p>Фразы до обращения по имени наше приложение не сохраняет. Микрофон включится после вашего согласия, и его можно выключить в любой момент.</p>
 <div class="info-actions"><button id="wakeVoiceCancel" type="button" class="btn">Отмена</button><button id="wakeVoiceConfirm" type="button" class="btn primary">Включить</button></div>
-</dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close" aria-label="Закрыть блокнот">Готово</button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
+</dialog><dialog id="notesDialog" class="notes-dialog" aria-labelledby="notesTitle"><button type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться из блокнота"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div class="notes-head"><h2 id="notesTitle">Блокнот</h2><p id="notesCount" class="notes-count" aria-live="polite"></p><button id="notesNew" type="button" class="notes-new" aria-label="Создать новую заметку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Новая заметка</span></button></div><div id="notesList" class="notes-list"></div><p id="notesStatus" role="status" aria-live="polite" hidden></p></dialog><dialog id="noteReviewDialog" class="notes-dialog note-review-dialog" aria-labelledby="noteReviewTitle">
 <button id="noteReviewBack" type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Отменить запись"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.75 6.75-5.25 5.25 5.25 5.25M8.5 12H19"/></svg></button>
 <h2 id="noteReviewTitle">Новая заметка</h2>
 <form id="noteReviewForm">
@@ -2404,7 +2404,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div class="note-read-actions"><button id="noteReadEdit" class="btn" type="button">Изменить</button><button id="noteReadDone" class="btn primary" type="button">Готово</button></div>
 </dialog>
 <dialog id="noteModeDialog" class="notes-dialog paper-choice-dialog" aria-labelledby="noteModeTitle">
-<button id="noteModeBack" type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close" aria-label="Закрыть выбор записи">Готово</button>
+<button id="noteModeBack" type="button" class="seyveo-close-control seyveo-dialog-close seyveo-text-close sv-nav-arrow" aria-label="Вернуться к записям"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <h2 id="noteModeTitle">Новая запись</h2>
 <p>Выберите способ записи</p>
 <div class="paper-choice-list">
