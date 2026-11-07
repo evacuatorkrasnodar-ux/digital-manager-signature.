@@ -2685,3 +2685,44 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   max-height:38px!important;
  }
 }
+
+/* SEYVEO optical balance · equal spacing for Sayvi and Emoji */
+#svcpWorkChatScreen #svcpChatForm,
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+ grid-template-columns:50px 38px 38px minmax(0,1fr)!important;
+ column-gap:3px!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage,
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{
+ box-sizing:border-box!important;
+ width:38px!important;min-width:38px!important;max-width:38px!important;
+ height:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;
+ margin:0!important;
+ justify-self:center!important;
+ align-self:center!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{grid-column:2!important}
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:3!important}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ grid-column:4!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ margin:0!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm,
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+  grid-template-columns:50px 38px 38px minmax(0,1fr)!important;
+  column-gap:3px!important;
+ }
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+  width:100%!important;
+  max-width:100%!important;
+ }
+}
