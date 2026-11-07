@@ -1030,3 +1030,215 @@
 @media(max-width:390px){
  #sayviSurfacePage .sv-mail-folder{font-size:10px;overflow-wrap:normal;word-break:normal}
 }
+
+/* SEYVEO MAIL · iOS 26 Glass / approved Quiet Cinema navigation v46.
+   Only the Mail workspace. The global Home dock, other pages and
+   keyboard handling remain untouched. */
+#sayviSurfacePage[data-sv-subject="mail"]{
+ --mail-26-pane:linear-gradient(150deg,rgba(225,237,242,.10),rgba(159,187,194,.045) 55%,rgba(111,134,141,.025)),rgba(165,186,197,.065);
+ --mail-26-lens:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72);
+ --mail-26-line:rgba(222,237,243,.075);
+ --mail-26-picked:rgba(190,208,218,.125);
+ --mail-26-shadow:0 8px 24px rgba(0,0,0,.065),inset 0 1px 0 rgba(237,249,252,.07);
+}
+:root[data-theme="dark"][data-palette="graphite"] #sayviSurfacePage[data-sv-subject="mail"]{
+ --mail-26-lens:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70);
+}
+:root[data-theme="dark"][data-palette="sapphire"] #sayviSurfacePage[data-sv-subject="mail"]{
+ --mail-26-lens:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71);
+}
+:root[data-theme="dark"][data-palette="plum"] #sayviSurfacePage[data-sv-subject="mail"]{
+ --mail-26-lens:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72);
+}
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"]{
+ --mail-26-pane:linear-gradient(145deg,rgba(255,255,255,.72),rgba(230,237,241,.40) 57%,rgba(213,224,231,.23)),rgba(235,242,247,.45);
+ --mail-26-lens:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68);
+ --mail-26-line:rgba(116,145,157,.11);
+ --mail-26-picked:rgba(109,151,137,.12);
+ --mail-26-shadow:0 8px 20px rgba(53,80,102,.055),inset 0 1px 0 rgba(255,255,255,.65);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-workspace{
+ width:100%!important;max-width:740px!important;
+ min-width:0!important;box-sizing:border-box!important;
+ padding:0 1px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions{
+ min-height:48px!important;gap:8px!important;
+ margin:0 0 9px!important;padding:0 3px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-introduction-title{
+ font-size:clamp(25px,6.6vw,29px)!important;
+ line-height:1.16!important;font-weight:580!important;
+ letter-spacing:-.045em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-buttons{
+ gap:3px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ max-width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;
+ -webkit-tap-highlight-color:transparent;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button svg{
+ width:19px!important;height:19px!important;
+ stroke-width:1.45!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-icon-button:active{
+ background:var(--mail-26-picked)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-accounts{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:3px!important;box-sizing:border-box!important;
+ min-height:47px!important;padding:3px!important;
+ margin:0 0 9px!important;border:1px solid var(--mail-26-line)!important;
+ border-radius:23px!important;
+ background:var(--mail-26-pane)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch{
+ min-width:0!important;min-height:40px!important;
+ border:0!important;border-radius:20px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--secondary)!important;
+ font-size:12px!important;font-weight:510!important;
+ letter-spacing:0!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"],
+:root[data-theme="light"] #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-account-switch[aria-pressed="true"]{
+ color:var(--text)!important;border:0!important;
+ border-radius:20px!important;background:var(--mail-26-picked)!important;
+ box-shadow:inset 0 1px 0 rgba(245,252,255,.09)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(1.06)!important;
+ backdrop-filter:blur(12px) saturate(1.06)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{
+ gap:6px!important;margin:0 0 15px!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
+ box-sizing:border-box!important;
+ min-width:0!important;min-height:68px!important;
+ padding:10px 8px 9px!important;gap:6px!important;
+ border:1px solid var(--mail-26-line)!important;
+ border-radius:20px!important;
+ background:var(--mail-26-pane)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.10)!important;
+ backdrop-filter:blur(18px) saturate(1.10)!important;
+ font-size:10.8px!important;font-weight:525!important;
+ line-height:1.18!important;letter-spacing:-.01em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder[aria-current="page"]{
+ background:var(--mail-26-picked)!important;
+ border-color:var(--mail-26-line)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder svg{
+ width:20px!important;height:20px!important;
+ stroke-width:1.45!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder-count{
+ top:7px!important;right:7px!important;
+ background:var(--mail-26-picked)!important;
+ border:1px solid var(--mail-26-line)!important;
+ color:var(--text)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head{
+ margin:0 3px 9px!important;gap:7px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head h3{
+ font-size:19px!important;font-weight:590!important;
+ letter-spacing:-.03em!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-recent-head .sv-deep-intent{
+ color:var(--secondary)!important;
+ font-size:12px!important;min-height:44px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-group{
+ overflow:hidden!important;border:1px solid var(--mail-26-line)!important;
+ border-radius:22px!important;
+ background:var(--mail-26-pane)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:blur(20px) saturate(1.12)!important;
+ backdrop-filter:blur(20px) saturate(1.12)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter{
+ min-height:68px!important;gap:9px!important;
+ padding:9px 11px!important;
+ border-bottom:1px solid var(--mail-26-line)!important;
+ background:transparent!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter.is-unread{
+ background:rgba(159,192,200,.045)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter:active{
+ background:var(--mail-26-picked)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-avatar{
+ flex:0 0 34px!important;width:34px!important;height:34px!important;
+ border-radius:50%!important;
+ background:var(--mail-26-picked)!important;
+ font-weight:540!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-details{
+ gap:2px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-sender{
+ font-size:13px!important;font-weight:580!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-subject{
+ font-size:12px!important;font-weight:530!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-preview{
+ font-size:11px!important;line-height:1.3!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter-meta{
+ gap:5px!important;font-size:10px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders{
+ min-height:44px!important;gap:10px!important;
+ margin:0 2px 5px!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders .sv-mail-home-link{
+ display:grid!important;place-items:center!important;
+ width:44px!important;height:44px!important;min-height:44px!important;
+ padding:0!important;margin-right:auto!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-extra-folders .sv-mail-home-link svg{
+ display:block!important;width:19px!important;height:19px!important;
+ stroke-width:1.5!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search{
+ border:1px solid var(--mail-26-line)!important;border-radius:20px!important;
+ background:var(--mail-26-lens)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+ box-shadow:var(--mail-26-shadow)!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-search-input{
+ font-size:16px!important;
+}
+@media(max-width:390px){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-folder{
+  min-height:66px!important;padding:9px 6px 8px!important;
+  font-size:10px!important;border-radius:18px!important;
+ }
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-toolbar{gap:5px!important}
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-letter{padding:9px 8px!important;gap:7px!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviSurfacePage[data-sv-subject="mail"] :is(.sv-mail-accounts,.sv-mail-folder,.sv-mail-letter-group,.sv-mail-search){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:var(--sm-surface)!important;
+ }
+}
