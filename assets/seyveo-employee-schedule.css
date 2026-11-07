@@ -90,7 +90,7 @@
 #tasksPage .svcp-manager-request-actions{display:flex;align-items:center;gap:10px}
 #tasksPage .svcp-manager-request-actions button{min-height:36px;border:0;background:transparent;
  color:var(--text);font:inherit;font-size:11px;padding:3px 4px}
-#tasksPage .svcp-manager-request-actions button:first-child{color:var(--seyveo-emerald)}
+#tasksPage .svcp-manager-request-actions button:first-child{color:var(--text)}
 #tasksPage .svcp-schedule-empty{margin:0;color:var(--secondary);font-size:10.5px;line-height:1.45}
 #tasksPage .svcp-manager-schedule-status{font-size:10.5px;color:var(--secondary);line-height:1.45;margin:0}
 #tasksPage .svcp-results-extras{display:grid;gap:10px;margin-top:3px;border-top:1px solid var(--soft-line);padding-top:12px}
