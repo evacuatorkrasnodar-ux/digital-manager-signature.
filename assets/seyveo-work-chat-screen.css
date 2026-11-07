@@ -2065,3 +2065,26 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpConversationSearch.svcp-conversation-search{
  display:none!important;
 }
+
+/* SEYVEO subtle silver tint — inner Work Chat message capsule only.
+   More silver pigment, not more glow; maintain matte flat glass and geometry. */
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
+ background:linear-gradient(155deg,rgba(221,226,232,.24),rgba(176,185,195,.19) 56%,rgba(143,153,164,.16)),rgba(142,152,162,.09)!important;
+ border-color:rgba(220,228,235,.16)!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
+ background:linear-gradient(155deg,rgba(239,242,246,.43),rgba(193,201,210,.30) 55%,rgba(159,170,182,.21)),rgba(190,199,208,.12)!important;
+ border-color:rgba(245,248,250,.25)!important;
+ box-shadow:none!important;
+}
+/* Multiline mode keeps its original transparent, borderless text area. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within{
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ box-shadow:none!important;
+}
