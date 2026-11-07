@@ -26,7 +26,7 @@ const ROOMS=[
  {id:'dm-mikhail',label:'Михаил',kind:'personal',hint:'Продавец · личный рабочий чат',mark:'М',person:'mikhail',section:'people',roleGroup:'Торговый зал'},
  {id:'team',label:'Смена и команда',kind:'groups',hint:'Обсуждение смен и задач · дополнительная группа',mark:'▦',section:'extra'},
  {id:'docs',label:'Обсуждение документов',kind:'groups',hint:'Вопросы по рабочим файлам, не хранилище документов',mark:'▤',section:'extra'},
- {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'✧',person:'sayvi',section:'assistant'}
+ {id:'dm-sayvi',label:'Сэйви',kind:'personal',hint:'Рабочие подсказки · пока шаблонное демо',mark:'',person:'sayvi',section:'assistant'}
 ];
 const state={tab:'chats',room:'general',viewpoint:'manager',file:null,objectUrl:null,filePurpose:'file',scanCode:'',replyTo:null,draftSource:null,chat:read(CHAT_KEY),tasks:read(TASK_KEY)};
 let chatsFromTasks=false,lastRecognizedPerson=null,quickReactionTarget=null,focusSearchIndex=null,historyQuery='',historyWindow=35;
@@ -1144,7 +1144,7 @@ function openGuide(bubble,msg){
  const steps=guideSteps(msg.text);let step=0;
  const panel=el('section','svcp-guide-panel');
  panel.setAttribute('aria-label','SEYVEO GUIDE — помощь с рабочим заданием');
- const title=el('strong','svcp-guide-title','✦ Сэйви поможет');
+ const title=el('strong','svcp-guide-title','Сэйви поможет');
  const description=el('p','svcp-guide-description','Разберём задачу по шагам. Это подсказки, а не автоматическое выполнение.');
  const progress=el('small','svcp-guide-progress');
  const instruction=el('p','svcp-guide-instruction');
@@ -1241,7 +1241,7 @@ function renderChat(){
    if(mentioned)bubble.append(el('small','svcp-mention-notice','Упоминание Елены · уведомление не отправлено'));
    if(!isRecognition){
     if(state.viewpoint==='elena'&&!isOwn&&isGuideRequest(msg)){
-     const helper=btn('✦ Сэйви, помоги',()=>openGuide(bubble,msg),'svcp-guide-launch');
+     const helper=btn('Сэйви, помоги',()=>openGuide(bubble,msg),'svcp-guide-launch');
      helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
      bubble.append(helper);
     }
@@ -1793,7 +1793,7 @@ function renderTasks(){
   const actions=el('div','svcp-task-actions');
   const extra=el('div','svcp-task-extra');
   extra.hidden=!(approval&&t.reviewStatus==='review'&&!t.done);
-  const assist=btn('✧ Сэйви',()=>{
+  const assist=btn('Сэйви',()=>{
    const person=t.assigneeId&&Object.prototype.hasOwnProperty.call(STAFF,t.assigneeId)?STAFF[t.assigneeId]:'';
    const stateText=approval
     ?({assigned:'Ожидает выполнения',review:'Результат на проверке',rework:'На доработке',approved:'Принято'}[t.reviewStatus]||'Рабочее поручение')
