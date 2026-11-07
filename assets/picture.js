@@ -15,6 +15,118 @@ const clean=(tag,klass,value)=>{
 const operationForm=$('pictureOperationForm'),operationKind=$('pictureOperationKind'),operationAmount=$('pictureOperationAmount');
 const operationNote=$('pictureOperationStatus'),operationOpen=$('pictureOperationOpen'),operationsList=$('pictureOperationsList');
 const operationTypes={sale:'Продажа',expense:'Расход',order:'Заказ',lead:'Обращение'};
+
+/* One SEYVEO date picker for manual Pulse operations.
+   Keep the existing date input as the submitted value; never summon the
+   browser's rectangular native date popup on the visible control. */
+let syncOperationDate=()=>{};
+function installOperationDatePicker(){
+ const input=$('pictureOperationDay'),oldLabel=input?.closest('label');
+ if(!input||!oldLabel)return;
+ const pad=n=>String(n).padStart(2,'0');
+ const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+ const parse=value=>{
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(value))return null;
+  const [year,month,day]=value.split('-').map(Number);
+  const date=new Date(year,month-1,day);
+  return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?date:null;
+ };
+ const dateLong=new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+ const monthLong=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'});
+ const field=clean('div','picture-operation-day-field');
+ const heading=clean('span','picture-operation-field-label','Дата');
+ const trigger=clean('button','picture-operation-date-trigger');
+ trigger.type='button';trigger.id='pictureOperationDateTrigger';
+ trigger.setAttribute('aria-label','Выбрать дату операции');
+ trigger.setAttribute('aria-haspopup','dialog');
+ trigger.setAttribute('aria-controls','pictureOperationDateDialog');
+ const triggerValue=clean('span','picture-operation-date-value');
+ const triggerIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ triggerIcon.setAttribute('viewBox','0 0 24 24');triggerIcon.setAttribute('aria-hidden','true');
+ triggerIcon.innerHTML='<rect x="3.5" y="5" width="17" height="15.5" rx="2.8"/><path d="M7.5 3.5v3.5M16.5 3.5v3.5M3.5 10h17M7.5 13.5h.01M12 13.5h.01M16.5 13.5h.01M7.5 17h.01M12 17h.01"/>';
+ trigger.append(triggerValue,triggerIcon);
+ input.classList.add('picture-operation-native-date');
+ input.tabIndex=-1;
+ input.setAttribute('aria-label','Дата операции');
+ oldLabel.replaceWith(field);
+ field.append(heading,input,trigger);
+ const dialog=document.createElement('dialog');
+ dialog.id='pictureOperationDateDialog';
+ dialog.className='picture-date-dialog';
+ dialog.setAttribute('aria-labelledby','pictureDateTitle');
+ dialog.innerHTML=[
+  '<div class="picture-date-head"><div><span class="picture-date-eyebrow">Дата операции</span><h2 id="pictureDateTitle">Выбрать дату</h2></div><button type="button" class="picture-date-close" aria-label="Закрыть календарь"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>',
+  '<div class="picture-date-month"><button type="button" data-move="-1" aria-label="Предыдущий месяц"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><strong id="pictureDateMonth" aria-live="polite"></strong><button type="button" data-move="1" aria-label="Следующий месяц"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7"/></svg></button></div>',
+  '<div class="picture-date-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>',
+  '<div class="picture-date-days" role="group" aria-label="Дни месяца"></div>',
+  '<div class="picture-date-footer"><button type="button" data-today>Сегодня</button><button type="button" data-cancel>Отмена</button></div>'
+ ].join('');
+ document.body.append(dialog);
+ const days=dialog.querySelector('.picture-date-days');
+ const title=dialog.querySelector('#pictureDateMonth');
+ let viewed=new Date();
+ const sync=()=>{
+  const date=parse(input.value);
+  triggerValue.textContent=date?dateLong.format(date):'Выбрать дату';
+ };
+ syncOperationDate=sync;
+ function draw(){
+  const y=viewed.getFullYear(),m=viewed.getMonth();
+  const monthTitle=monthLong.format(viewed);
+  title.textContent=monthTitle.charAt(0).toUpperCase()+monthTitle.slice(1);
+  const start=(new Date(y,m,1).getDay()+6)%7;
+  const last=new Date(y,m+1,0).getDate();
+  const cells=Math.ceil((start+last)/7)*7;
+  const selected=input.value,today=iso(new Date());
+  const frag=document.createDocumentFragment();
+  for(let cell=0;cell<cells;cell++){
+   const day=cell-start+1;
+   if(day<1||day>last){const blank=clean('span','picture-date-blank');blank.setAttribute('aria-hidden','true');frag.append(blank);continue;}
+   const date=new Date(y,m,day),key=iso(date);
+   const button=clean('button','picture-date-day',String(day));
+   button.type='button';button.dataset.date=key;
+   button.setAttribute('aria-label',dateLong.format(date));
+   button.setAttribute('aria-pressed',String(key===selected));
+   if(key===selected)button.classList.add('is-selected');
+   if(key===today)button.classList.add('is-today');
+   frag.append(button);
+  }
+  days.replaceChildren(frag);
+ }
+ function choose(date){
+  input.value=iso(date);
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  input.dispatchEvent(new Event('change',{bubbles:true}));
+  dialog.close();
+ }
+ trigger.addEventListener('click',()=>{
+  const chosen=parse(input.value)||new Date();
+  viewed=new Date(chosen.getFullYear(),chosen.getMonth(),1);
+  draw();
+  if(typeof dialog.showModal==='function')dialog.showModal();
+ });
+ dialog.querySelectorAll('[data-move]').forEach(button=>button.addEventListener('click',()=>{
+  viewed=new Date(viewed.getFullYear(),viewed.getMonth()+Number(button.dataset.move),1);
+  draw();
+ }));
+ days.addEventListener('click',event=>{
+  const button=event.target.closest('[data-date]');if(!button)return;
+  const date=parse(button.dataset.date);if(date)choose(date);
+ });
+ dialog.querySelector('[data-today]').addEventListener('click',()=>choose(new Date()));
+ dialog.querySelectorAll('.picture-date-close,[data-cancel]').forEach(button=>button.addEventListener('click',()=>dialog.close()));
+ dialog.addEventListener('click',event=>{
+  if(event.target!==dialog)return;
+  const box=dialog.getBoundingClientRect();
+  if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();
+ });
+ dialog.addEventListener('close',()=>{if(!operationForm.hidden)trigger.focus({preventScroll:true})});
+ input.addEventListener('input',sync);
+ input.addEventListener('change',sync);
+ operationForm.addEventListener('reset',()=>requestAnimationFrame(sync));
+ sync();
+}
+installOperationDatePicker();
 function setOperationForm(open){
  operationForm.hidden=!open;
  operationOpen.setAttribute('aria-expanded',String(open));
@@ -24,6 +136,7 @@ function setOperationForm(open){
    const d=new Date();
    day.value=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   }
+  syncOperationDate();
   kindGroup.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
  }
 }
