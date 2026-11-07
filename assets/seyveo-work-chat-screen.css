@@ -277,6 +277,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-bubble .svcp-sender{
  display:block;font-size:11px!important;font-weight:590;margin:0;color:var(--text)
 }
+/* The title already identifies each participant in a one-to-one chat.
+   Keep names in group chats and all message aria-labels for accessibility. */
+#svcpWorkChatScreen #svcpConversation[data-room-kind="personal"] .svcp-bubble:not(.is-sayvi) .svcp-sender{
+ display:none!important
+}
 #svcpWorkChatScreen .svcp-bubble .svcp-time{
  font-size:10px!important;color:var(--secondary);margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap
 }
