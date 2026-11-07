@@ -1626,12 +1626,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  bottom:3px!important;
  width:calc(100% - 188px)!important;
  max-width:calc(100% - 24px)!important;
- height:33px!important;
+ height:28px!important;
  border:0!important;
  border-radius:999px!important;
- background:radial-gradient(ellipse 80% 72% at 50% 78%,rgba(226,237,244,.29) 0%,rgba(194,213,227,.17) 43%,rgba(169,191,208,0) 100%)!important;
- filter:blur(9px)!important;
- opacity:.76!important;
+ background:radial-gradient(ellipse 80% 72% at 50% 75%,rgba(226,237,244,.19) 0%,rgba(194,213,227,.10) 43%,rgba(169,191,208,0) 100%)!important;
+ filter:blur(10px)!important;
+ opacity:.53!important;
  box-shadow:none!important;
  transform:none!important;
 }
@@ -1639,9 +1639,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  z-index:1!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::after{
- background:radial-gradient(ellipse 80% 72% at 50% 78%,rgba(156,174,190,.23) 0%,rgba(146,169,186,.11) 43%,rgba(166,182,196,0) 100%)!important;
- opacity:.64!important;
+ background:radial-gradient(ellipse 80% 72% at 50% 75%,rgba(156,174,190,.16) 0%,rgba(146,169,186,.07) 43%,rgba(166,182,196,0) 100%)!important;
+ opacity:.44!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen #svcpChatForm::after{opacity:.25!important;filter:blur(11px)!important}
+ #svcpWorkChatScreen #svcpChatForm::after{opacity:.15!important;filter:blur(11px)!important}
 }
