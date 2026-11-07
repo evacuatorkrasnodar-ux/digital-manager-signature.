@@ -1318,9 +1318,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-color:rgba(245,248,250,.25)!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
- background:rgba(76,173,113,.15)!important;
- border-color:rgba(79,181,113,.21)!important;
- box-shadow:0 0 10px rgba(51,166,104,.10)!important;
+ background:rgba(116,133,145,.13)!important;
+ border-color:rgba(116,134,145,.15)!important;
+ box-shadow:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle){
@@ -1411,9 +1411,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  grid-column:3!important;
  width:40px!important;min-width:40px!important;max-width:40px!important;
  height:40px!important;min-height:40px!important;max-height:40px!important;
- background:rgba(40,147,84,.12)!important;
- border-color:rgba(85,214,132,.20)!important;
- box-shadow:0 0 12px rgba(34,216,105,.13)!important;
+ /* The approved pearl mark glows internally; no external green disc or halo. */
+ background:rgba(182,202,214,.075)!important;
+ border-color:rgba(215,233,242,.10)!important;
+ box-shadow:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{grid-column:4!important}
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpComposerEmojiToggle) svg{
@@ -1473,15 +1474,27 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{
  width:21px!important;height:21px!important;stroke-width:1.5!important;
 }
-#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-core-mark{
- position:relative!important;z-index:1!important;
- display:block!important;width:36px!important;height:36px!important;
- max-width:none!important;flex:0 0 36px!important;
- filter:drop-shadow(0 0 6px rgba(65,238,133,.48))!important;
+/* Approved frosted-pearl asset: 96px source, shown at 36px for HiDPI sharpness. */
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ width:36px!important;
+ height:36px!important;
+ max-width:none!important;
+ flex:0 0 36px!important;
+ object-fit:contain!important;
+ background:none!important;
+ box-shadow:none!important;
+ filter:none!important;
+ transition:filter .35s ease!important;
 }
-/* Sayvi's original animated mark gains a restrained green disc and soft aura. */
-#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{
- opacity:.48!important;filter:blur(.5px)!important;
+/* Warm amber is only for explicit good-news moments, never the default. */
+#svcpWorkChatScreen.svcp-sayvi-good-news #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{
+ filter:sepia(.7) saturate(1.6) hue-rotate(349deg) brightness(1.02)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{transition:none!important}
 }
 /* Task action retains its original behavior, floating ABOVE the bar. */
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
