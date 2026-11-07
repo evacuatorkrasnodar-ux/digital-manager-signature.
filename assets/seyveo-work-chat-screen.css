@@ -1265,6 +1265,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    Keep the original blur and shadow from --sv-liquid-nav-blur/shadow. */
 #svcpWorkChatScreen{
  --sv-liquid-nav-material:linear-gradient(155deg,rgba(243,255,250,.085),rgba(173,222,203,.035) 47%,rgba(19,39,32,.012)),rgba(19,31,29,.14);
+ /* Preserve frosted glass while allowing the actual backdrop to show through. */
+ --sv-liquid-nav-blur:blur(13px) saturate(1.10);
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
  --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,255,255,.43),rgba(255,255,255,.24) 55%,rgba(218,234,241,.11)),rgba(235,242,247,.16);
