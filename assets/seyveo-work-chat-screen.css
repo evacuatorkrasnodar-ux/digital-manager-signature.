@@ -2193,3 +2193,65 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   transition:none!important;will-change:auto!important;
  }
 }
+
+/* SEYVEO manager action stays INSIDE the message capsule, not as a
+   floating pill above the dock. Ordinary send stays a separate up arrow.
+   The action still only appears when the existing permission logic allows. */
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]),
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+ position:absolute!important;
+ z-index:8!important;
+ top:auto!important;
+ left:auto!important;
+ right:54px!important;
+ bottom:12px!important;
+ height:30px!important;
+ min-height:30px!important;
+ max-height:30px!important;
+ width:auto!important;
+ padding:0 10px!important;
+ margin:0!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:4px!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:rgba(178,192,202,.14)!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ color:var(--text)!important;
+ font-size:12px!important;
+ line-height:1!important;
+ white-space:nowrap!important;
+ transform:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]) svg{
+ width:14px!important;
+ height:14px!important;
+ flex:0 0 14px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput{
+ padding-right:138px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]){
+ right:15px!important;
+ bottom:54px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
+ padding-right:108px!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+  right:49px!important;
+  padding:0 7px!important;
+  font-size:11px!important;
+ }
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput{
+  padding-right:126px!important;
+ }
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
+ background:rgba(116,133,145,.14)!important;
+}
