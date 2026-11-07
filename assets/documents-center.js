@@ -6,6 +6,9 @@ const MAX_FILE=20*1024*1024;
 const names={personal:'Личное',business:'Бизнес'};
 const allowed=/\.(?:pdf|txt|md|docx|xlsx|pptx|png|jpe?g|webp)$/i;
 let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null,integrationsOpen=false;
+const previewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':window.SEYVEO_PREVIEW?.isManager?.()===true?'manager':'personal';
+const employeePreview=()=>previewRole()==='employee';
+let lastPreviewRole=null;
 let files={personal:null,business:null},stored={personal:false,business:false},showPreview=false;
 const el=(tag,cls,value)=>{
  const n=document.createElement(tag);
@@ -29,7 +32,12 @@ function reset(){
 }
 function setArea(next){
  if(!names[next])return false;
- area=next;view='archive';showPreview=false;
+ area=next;view=next==='business'&&employeePreview()?'flow':'archive';
+ showPreview=false;
+ if(next==='business'&&employeePreview()){
+  archiveExpanded=false;
+  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
+ }
  if(host)draw();
  return true;
 }
@@ -131,6 +139,11 @@ function renderPreview(parent,file){
 }
 function draw(){
  if(!host)return;
+ // Employee perspective is inherited from the business cabinet.
+ // The demo role is NOT authentication; do not render business vault controls.
+ if(area==='business'&&employeePreview()){
+  view='flow';showPreview=false;archiveExpanded=false;
+ }
  clearPreview();host.replaceChildren();
  const switcher=el('div','sv-doc-switch');
  switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
@@ -139,7 +152,7 @@ function draw(){
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
  host.append(switcher);
- if(area==='business'){
+ if(area==='business'&&!employeePreview()){
   // Prominent business approval entry, not buried inside integrations.
   // Status counts refer only to the local training scenario.
   const records=window.SEYVEO_DOCUMENT_FLOW?.getRecords?.()||[];
@@ -157,9 +170,16 @@ function draw(){
   host.append(flowCard);
  }
  if(view==='flow'){
-  const back=button('Вернуться в хранилище',()=>{view='archive';draw();},'sv-doc-flow-back');
+  if(employeePreview()){
+   const limit=el('div','sv-doc-role-info');
+   limit.append(el('strong','','Елена · сотрудник'),
+    el('small','','Учебный доступ: мои входящие, ознакомление, согласование и возврат с замечанием. Архив компании и настройки КЭП доступны руководителю.'));
+   host.append(limit);
+  }else{
+   host.append(button('Вернуться в хранилище',()=>{view='archive';draw();},'sv-doc-flow-back'));
+  }
   const flow=el('section','sv-doc-workspace');
-  host.append(back,flow);
+  host.append(flow);
   if(!window.SEYVEO_DOCUMENT_FLOW?.mount?.(flow))flow.append(note('Согласования пока недоступны.'));
   return;
  }
@@ -255,8 +275,23 @@ function openApprovals(recordId){
  if(typeof recordId==='string')window.SEYVEO_DOCUMENT_FLOW?.select?.(recordId);
  return true;
 }
+function syncPreviewRole(){
+ const current=previewRole();
+ if(current===lastPreviewRole)return;
+ lastPreviewRole=current;
+ // Clear unlocked keys and any decrypted file preview on perspective changes.
+ // This is hygiene on a shared demo browser, not security enforcement.
+ window.SEYVEO_DOCUMENT_VAULT?.lock?.();
+ clearPreview();
+ archiveExpanded=false;showPreview=false;
+ files.business=null;stored.business=false;
+ if(area==='business')view=current==='employee'?'flow':'archive';
+ if(host?.isConnected)draw();
+}
+window.addEventListener('seyveo:preview-role-changed',syncPreviewRole);
 function mount(parent){
- reset();host=el('div','sv-doc-center');parent.append(host);draw();return true;
+ reset();lastPreviewRole=previewRole();
+ host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
 function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
