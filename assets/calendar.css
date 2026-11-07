@@ -948,7 +948,7 @@
  position:relative!important;
  border:0!important;
  border-radius:24px!important;
- background:rgba(39,53,63,.94)!important;
+ background:rgba(34,40,47,.82)!important;
  -webkit-backdrop-filter:blur(24px) saturate(108%)!important;
  backdrop-filter:blur(24px) saturate(108%)!important;
  box-shadow:0 10px 30px rgba(0,0,0,.11)!important;
@@ -983,7 +983,7 @@
 #calendarEventDialog textarea{
  border:0!important;
  border-radius:14px!important;
- background:rgba(155,177,188,.12)!important;
+ background:rgba(184,195,201,.085)!important;
  box-shadow:none!important;
 }
 #calendarEventDialog .cal-kind-options{
@@ -1025,7 +1025,7 @@
  box-shadow:none!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-event-sheet{
- background:rgba(250,252,252,.96)!important;
+ background:rgba(250,252,253,.88)!important;
  box-shadow:0 10px 30px rgba(30,54,62,.08)!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-form-primary input[type=text],
@@ -1049,7 +1049,7 @@
  padding:10px 11px 12px!important;
  margin:4px 0 8px!important;
  border:0!important;border-radius:18px!important;
- background:rgba(143,166,176,.075)!important;
+ background:rgba(184,195,201,.065)!important;
  box-shadow:none!important;
 }
 #calendarEventDialog #seyveoPickTime .cal-pick-time-head{
@@ -1121,7 +1121,7 @@
 /* SEYVEO 26 · calendar form and nested pickers · final cohesive control scale.
    Scoped to the event editor; preserving form fields, radio states, and handlers. */
 #calendarEventDialog .cal-event-sheet{
- background:rgba(36,51,60,.72)!important;
+ background:rgba(34,40,47,.82)!important;
  -webkit-backdrop-filter:blur(30px) saturate(122%)!important;
  backdrop-filter:blur(30px) saturate(122%)!important;
  border:0!important;
@@ -1242,11 +1242,11 @@
  min-width:114px!important;
 }
 #calendarEventDialog .cal-kind-options{
- background:rgba(155,185,193,.055)!important;
+ background:rgba(184,195,201,.065)!important;
  border-radius:14px!important;
 }
 #calendarEventDialog .cal-kind-option input:checked+span{
- background:rgba(165,192,201,.10)!important;
+ background:rgba(184,195,201,.12)!important;
  border-color:transparent!important;box-shadow:none!important;
 }
 #calendarEventDialog .cal-dialog-actions>.btn.primary{
@@ -1257,7 +1257,7 @@
  width:auto!important;min-width:100px!important;
  margin:0 0 0 auto!important;padding:0 15px!important;
  border:0!important;border-radius:999px!important;
- background:rgba(156,183,192,.17)!important;
+ background:transparent!important;
  color:var(--text)!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
@@ -1268,7 +1268,7 @@
  -webkit-appearance:none!important;appearance:none!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-event-sheet{
- background:rgba(247,251,250,.79)!important;
+ background:rgba(250,252,253,.88)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoEventPicker.cal-premium-picker{
  background:transparent!important;
