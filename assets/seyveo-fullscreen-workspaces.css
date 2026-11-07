@@ -783,3 +783,19 @@ html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > p{
   transition:none!important;
  }
 }
+
+/* SEYVEO family chat: compose dock replaces navigation while composing. */
+/* The one global navigation dock is moved into this fullscreen dialog by
+   dock-continuity. It must not cover the family chat's aligned 56px writer.
+   Keep it available on the Plans tab, where the composer is absent. */
+@media(max-width:720px) and (min-height:511px){
+ html body dialog#seyveoFamilyDialog.svf-dialog[open]:has(#svfChatPanel:not([hidden])) > footer.dock{
+  display:none!important;
+ }
+ html body dialog#seyveoFamilyDialog.svf-dialog[open]:has(#svfPlansPanel:not([hidden])) > footer.dock{
+  display:grid!important;
+ }
+ html body #seyveoFamilyDialog.svf-dialog[open] #svfPlansPanel .svf-plans{
+  padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
