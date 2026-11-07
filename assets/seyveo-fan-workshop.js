@@ -73,7 +73,7 @@ if(grid){
 const panel=el('section','sv-fan-workshop');panel.id='svFanWorkshopPanel';panel.hidden=true;
 panel.innerHTML=[
 '<header class="sv-fan-top"><button id="svFanBack" type="button" class="sv-fan-back">‹ Назад</button><small>SEYVEO LAB</small></header>',
-'<section class="sv-fan-hero"><div class="sv-fan-hero-orb" aria-hidden="true">✦</div><p class="sv-fan-eyebrow">ТВОЙ МИР · ТВОИ ПРАВИЛА</p><h1>Мастерская Сэйви</h1><p class="sv-fan-intro">Придумай свою возможность. Настрой её вместе с Сэйви — и она появится в твоём «Моём мире».</p><div class="sv-fan-hero-meta"><span>✦ Личные дополнения</span><span>◎ Без программирования</span></div></section>',
+'<section class="sv-fan-hero"><div class="sv-fan-hero-orb" aria-hidden="true"></div><p class="sv-fan-eyebrow">ТВОЙ МИР · ТВОИ ПРАВИЛА</p><h1>Мастерская Сэйви</h1><p class="sv-fan-intro">Придумай свою возможность. Настрой её вместе с Сэйви — и она появится в твоём «Моём мире».</p><div class="sv-fan-hero-meta"><span>✦ Личные дополнения</span><span>◎ Без программирования</span></div></section>',
 '<h2 class="sv-fan-subheading">Попробуй готовую идею</h2><div id="svFanTemplates" class="sv-fan-templates" aria-label="Примеры дополнений"></div>',
 '<h2 class="sv-fan-subheading">Создай своё</h2>',
 '<form id="svFanForm" class="sv-fan-form">',
