@@ -7,6 +7,9 @@ import { NativeBrowser } from './src/browser/NativeBrowser';
 import { SharedMediaStatus } from './src/media/SharedMediaStatus';
 import { MusicEngineDiagnostic } from './src/media/MusicEngineDiagnostic';
 import { OfflinePacksPanel } from './src/core/OfflinePacksPanel';
+import { NativeBrowserScreen } from './src/browser/NativeBrowserScreen';
+import {createConfiguredSayviReview,type SayviReviewHandler} from './src/browser/sayvi-native-integration';
+import {hasVerifiedNativeSession} from './src/auth/verifiedSessionStore';
 import { initializeVault, inspectVault, type VaultStatus } from './src/core/secureVault';
 import { saveNote, listNotes, removeNote, type PersonalNote } from './src/core/notesRepository';
 
@@ -18,7 +21,7 @@ const C = {
   text: '#f3faf7', secondary: '#b0cfc5', accent: '#94e0c4'
 };
 
-function NativeFoundation() {
+function NativeFoundation({onOpenBrowser}:{onOpenBrowser:()=>void}) {
   const [state, setState] = useState<ScreenState>('checking');
   const [busy, setBusy] = useState(false);
   const [draft,setDraft] = useState('');
@@ -66,6 +69,10 @@ function NativeFoundation() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.brand}>seyveo</Text>
         <Text style={styles.subtitle}>ai automation</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Открыть SEYVEO Browser"
+          onPress={onOpenBrowser} style={styles.browserLauncher}>
+          <Text style={styles.browserLauncherText}>Открыть браузер SEYVEO</Text>
+        </Pressable>
         <View style={styles.section}>
           <Text style={styles.eyebrow}>M1 · МОБИЛЬНАЯ ОСНОВА</Text>
           <Text style={styles.headline}>Личный интеллект. Ваши данные.</Text>
@@ -156,7 +163,29 @@ function NativeFoundation() {
 }
 
 export default function App() {
-  return <SafeAreaProvider><NativeFoundation /></SafeAreaProvider>;
+  // The browser remains a development screen; its approved web UI is untouched.
+  const [browserOpen,setBrowserOpen]=useState(false);
+  const [sayviReview,setSayviReview]=useState<SayviReviewHandler|null>(null);
+  async function openBrowser(){
+    // No provider/session means local-only documents. No development API token
+    // is included in the app or exposed through browser pages.
+    let review:SayviReviewHandler|null=null;
+    try{
+      if(await hasVerifiedNativeSession())review=createConfiguredSayviReview();
+    }catch{/* login service unavailable: stay offline */}
+    setSayviReview(()=>review);
+    setBrowserOpen(true);
+  }
+  return (
+    <SafeAreaProvider>
+      {browserOpen
+        ? <NativeBrowserScreen
+            onClose={()=>{setSayviReview(null);setBrowserOpen(false)}}
+            onSayviReview={sayviReview||undefined}
+          />
+        : <NativeFoundation onOpenBrowser={()=>{void openBrowser()}}/>}
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -164,6 +193,9 @@ const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 44 },
   brand: { marginTop: 26, color: C.text, fontSize: 31, letterSpacing: 4, textAlign: 'center', fontWeight: '300' },
   subtitle: { marginTop: 4, color: C.secondary, fontSize: 10, letterSpacing: 3, textAlign: 'center' },
+  browserLauncher: { alignSelf:'center',marginTop:22,paddingHorizontal:20,paddingVertical:12,
+    borderWidth:1,borderColor:C.border,borderRadius:15,backgroundColor:C.card },
+  browserLauncherText: { color:C.text,fontSize:13 },
   section: { paddingTop: 70, maxWidth: 500, alignSelf: 'center', width: '100%' },
   eyebrow: { color: C.secondary, fontSize: 11, letterSpacing: 2.2, marginBottom: 22 },
   headline: { color: C.text, fontSize: 33, fontWeight: '300', lineHeight: 42 },
