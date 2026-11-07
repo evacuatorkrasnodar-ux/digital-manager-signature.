@@ -55,7 +55,11 @@ function scheduleRefresh(){
 }
 function create(tag,klass,words){
  const el=document.createElement(tag);if(klass)el.className=klass;
- if(words!==undefined)el.textContent=words;
+ if(words!==undefined){
+  const sayviMark=typeof words==='string'&&/^✧\s/u.test(words)&&/Сэйви/i.test(words);
+  el.textContent=sayviMark?words.replace(/^✧\s*/u,''):words;
+  if(sayviMark)el.classList.add('sv-sayvi-label');
+ }
  return el;
 }
 /* One hand-drawn monochrome symbol language, shared by the hero and its
@@ -268,7 +272,7 @@ function createSurface(primary,other=[],real=false,taskId=''){
   documentCancel.hidden=!active||documentStep!=='edit';
   documentAnalyze.hidden=!active||documentStep!=='review';
   documentAnalyze.disabled=documentAnalyzing;
-  documentAnalyze.textContent=documentAnalyzing?'Сэйви анализирует…':'✧ Разобрать текст с Сэйви';
+  documentAnalyze.textContent=documentAnalyzing?'Сэйви анализирует…':'Разобрать текст с Сэйви';
   if(active){
    // The first card must show its working Verify action immediately.
    execute.hidden=documentStep==='edit';
