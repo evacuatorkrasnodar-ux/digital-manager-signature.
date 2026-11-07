@@ -2286,3 +2286,10 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 #svCabinetDialog .sv-cabinet-goal-mark.is-selected{
  color:var(--text)!important;
 }
+
+/* Visibility semantics win over the shared compact-action display. */
+#svCabinetDialog[open][data-cabinet-view="guide"] .sv-cabinet-footer .sv-cabinet-reset,
+#svCabinetDialog[open] .sv-cabinet-footer button[hidden],
+#svCabinetDialog[open] .sv-cabinet-guide-action[hidden]{
+ display:none!important;
+}
