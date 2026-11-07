@@ -268,15 +268,6 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  font-size:10px;line-height:1.1;font-weight:600;letter-spacing:.045em;
  color:var(--secondary);
 }
-@media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen .svcp-bubble,
- #svcpWorkChatScreen .svcp-chat-day,
- #svcpWorkChatScreen #svcpChatInput,
- #svcpWorkChatScreen #svcpChatForm :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle,#svcpVoiceRecord,.svcp-chat-send){
-  background:var(--svcp-smoke-fallback)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
- }
-}
 #svcpWorkChatScreen .svcp-bubble.is-task .svcp-message-text{
  display:block;font-weight:450;
 }
@@ -1158,4 +1149,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  font-size:23px!important;line-height:1!important;padding:0!important;
  margin:0!important;border:0!important;border-radius:12px!important;
  background:transparent!important;box-shadow:none!important;
+}
+
+/* Accessibility: opaque smoke instead of translucency, after ordinary rules. */
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen .svcp-bubble,
+ #svcpWorkChatScreen .svcp-chat-day,
+ #svcpWorkChatScreen #svcpChatInput,
+ #svcpWorkChatScreen #svcpChatForm :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle,#svcpVoiceRecord,.svcp-chat-send){
+  background:var(--svcp-smoke-fallback)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+ }
 }
