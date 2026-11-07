@@ -438,10 +438,11 @@ function syncComposerActions(){
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
- input.style.setProperty('height','44px','important');
- // Empty input stays one line: iOS otherwise measures the placeholder as text.
+ // Only the INTERNAL text-and-mic capsule is slimmer; outer work dock is unchanged.
+ const minHeight=28;
  const maxHeight=144;
- const height=input.value?Math.min(maxHeight,Math.max(44,input.scrollHeight)):44;
+ input.style.setProperty('height',minHeight+'px','important');
+ const height=input.value?Math.min(maxHeight,Math.max(minHeight,input.scrollHeight)):minHeight;
  input.style.setProperty('height',height+'px','important');
  input.style.setProperty('overflow-y',input.value&&input.scrollHeight>maxHeight?'auto':'hidden','important');
 }
