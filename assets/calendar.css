@@ -23,22 +23,21 @@
 .calendar-header-actions{position:relative;display:flex;align-items:center;gap:7px;flex:none;z-index:2}
 /* One + entry, with a light native-like choice surface rather than extra buttons. */
 #calendarPage .cal-create-menu[hidden]{display:none!important}
-/* A choice menu must be readable, not a translucent lens over live tabs.
-   Keep the matte family, but use an opaque panel to avoid iOS Safari bleed. */
+/* Anchored SEYVEO Liquid Glass menu: stays immediately beside the add control. */
 #calendarPage .cal-create-menu{
- position:absolute;right:0;top:calc(100% + 8px);z-index:200;
- box-sizing:border-box;width:min(295px,calc(100vw - 34px));
- padding:6px;border:0;border-radius:19px;
- background:#25313a;
- -webkit-backdrop-filter:none;
- backdrop-filter:none;
- box-shadow:0 10px 30px rgba(0,0,0,.17);
- isolation:isolate;overflow:hidden;
+ position:absolute;right:0;top:calc(100% + 5px);bottom:auto;z-index:200;
+ box-sizing:border-box;width:min(272px,calc(100vw - 30px));
+ margin:0;padding:5px;border:1px solid rgba(210,230,231,.13);border-radius:17px;
+ background:rgba(39,53,63,.93);
+ -webkit-backdrop-filter:blur(26px) saturate(125%);
+ backdrop-filter:blur(26px) saturate(125%);
+ box-shadow:0 9px 25px rgba(0,0,0,.13);
+ isolation:isolate;overflow:hidden;transform:none;animation:none;
 }
 #calendarPage .cal-create-menu button{
  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
- width:100%;min-height:57px;padding:9px 13px;
- border:0;border-radius:13px;background:transparent;box-shadow:none;
+ width:100%;min-height:51px;padding:8px 12px;
+ border:0;border-radius:12px;background:transparent;box-shadow:none;
  color:var(--text);font:inherit;text-align:left;
  cursor:pointer;touch-action:manipulation;
 }
@@ -58,7 +57,8 @@
  outline:2px solid var(--text);outline-offset:-2px;
 }
 :root[data-theme="light"] #calendarPage .cal-create-menu{
- background:#f5f8f9;border:0;box-shadow:0 10px 28px rgba(22,37,48,.10);
+ background:rgba(247,251,250,.94);border-color:rgba(55,110,89,.12);
+ box-shadow:0 9px 24px rgba(22,37,48,.09);
 }
 
 .cal-round{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;color:var(--text);background:transparent;box-shadow:none}
@@ -877,10 +877,16 @@
  width:19px;height:19px;stroke-width:1.85;
 }
 #calendarPage .calendar-header-add{
- width:38px;height:38px;min-width:38px;min-height:38px;
- border:0;border-radius:50%;
- background:color-mix(in srgb,var(--text) 9%,transparent)!important;
- box-shadow:none!important;filter:none;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 38px!important;width:38px!important;height:38px!important;
+ min-width:38px!important;max-width:38px!important;min-height:38px!important;max-height:38px!important;
+ padding:0!important;aspect-ratio:1/1!important;
+ border:0!important;border-radius:50%!important;
+ background:rgba(158,181,192,.13)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(120%)!important;
+ backdrop-filter:blur(20px) saturate(120%)!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-appearance:none!important;appearance:none!important;
 }
 #calendarPage .calendar-header-add svg{
  width:18px;height:18px;stroke-width:1.7;
@@ -1225,13 +1231,14 @@
  border-color:transparent!important;box-shadow:none!important;
 }
 #calendarEventDialog .cal-dialog-actions>.btn.primary{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
  box-sizing:border-box!important;
  flex:0 0 auto!important;
  height:36px!important;min-height:36px!important;
  width:auto!important;min-width:100px!important;
  margin:0 0 0 auto!important;padding:0 15px!important;
  border:0!important;border-radius:999px!important;
- background:rgba(160,186,197,.105)!important;
+ background:rgba(156,183,192,.17)!important;
  color:var(--text)!important;
  box-shadow:none!important;filter:none!important;
  -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
