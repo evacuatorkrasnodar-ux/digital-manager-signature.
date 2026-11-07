@@ -363,3 +363,36 @@ html body #sayviSurfacePage .sv-vault-row-menu[open]{
 html body #sayviSurfacePage .sv-vault-row-options{
  box-sizing:border-box;width:100%;max-width:100%;
 }
+
+
+/* SEYVEO Business Documents · approval route entry, same compact glass. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-flow-card{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ box-sizing:border-box!important;gap:9px;min-width:0;width:100%;min-height:64px;
+ padding:11px 13px!important;margin:0 0 17px!important;
+ text-align:left!important;
+ border:1px solid var(--sv-doc-line,var(--soft-line))!important;
+ border-radius:22px!important;background:var(--sv-doc-wash,var(--card))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.1);
+ backdrop-filter:blur(18px) saturate(1.1);
+ box-shadow:none!important;
+}
+#sayviSurfacePage .sv-doc-flow-copy{
+ display:flex;flex:1 1 auto;flex-direction:column;gap:4px;min-width:0;
+}
+#sayviSurfacePage .sv-doc-flow-copy strong{
+ font-size:14px;line-height:1.35;color:var(--text);font-weight:610;
+}
+#sayviSurfacePage .sv-doc-flow-copy small{
+ font-size:11px;line-height:1.4;color:var(--secondary);font-weight:430;
+}
+#sayviSurfacePage .sv-doc-flow-stats{
+ flex:0 0 auto;white-space:nowrap;max-width:38%;
+ color:var(--secondary);font-size:10px;line-height:1.35;
+}
+#sayviSurfacePage .sv-doc-flow-chevron{
+ flex:0 0 auto;color:var(--secondary);font-size:23px;font-weight:280;
+}
+@media(max-width:375px){
+ #sayviSurfacePage .sv-doc-flow-stats{max-width:33%;white-space:normal;text-align:right}
+}
