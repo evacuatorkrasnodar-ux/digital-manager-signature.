@@ -1331,3 +1331,41 @@
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{transition:none!important}
 }
+
+
+/* Mail composer: one native-feeling sender choice, with no second sheet. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-switch{
+ display:flex;align-items:center;gap:12px;justify-content:space-between;
+ min-height:48px;padding:4px 0;margin:0 0 8px;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-caption{
+ color:var(--secondary);font-size:13px;white-space:nowrap;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-options{
+ display:grid;grid-template-columns:1fr 1fr;gap:3px;
+ width:min(265px,72%);min-height:43px;padding:3px;
+ box-sizing:border-box;border:1px solid var(--mail-26-line,rgba(190,208,218,.10));
+ border-radius:22px;background:var(--mail-26-pane,rgba(156,175,185,.09));
+ -webkit-backdrop-filter:blur(18px) saturate(1.12);
+ backdrop-filter:blur(18px) saturate(1.12);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option{
+ appearance:none;display:grid;place-items:center;
+ min-width:0;min-height:35px;padding:3px 9px;border:0;border-radius:19px;
+ background:transparent;color:var(--secondary);box-shadow:none;
+ font:inherit;font-size:13px;font-weight:520;cursor:pointer;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option[aria-pressed="true"]{
+ color:var(--text);background:var(--mail-26-picked,rgba(190,208,218,.13));
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option:disabled{opacity:.7}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-sender-option:focus-visible{
+ outline:2px solid var(--seyveo-emerald);outline-offset:1px;
+}
+/* The editor is a separate stage: no legacy account navigation behind it. */
+#sayviSurfacePage[data-sv-subject="mail"][data-sv-mail-mode="editor"] .sv-mail-accounts{
+ display:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{
+ visibility:visible!important;opacity:1!important;
+}
