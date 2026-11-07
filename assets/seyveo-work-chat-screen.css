@@ -11,11 +11,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[hidden]{display:none!important}
 #svcpWorkChatScreen{
  /* One shared palette: the dock is translucent, inner controls are lighter. */
- --svcp-dock-glass:rgba(168,187,197,.14);
- --svcp-dock-edge:rgba(236,246,250,.14);
- --svcp-dock-topline:rgba(255,255,255,.18);
- --svcp-dock-action:rgba(206,224,232,.13);
- --svcp-dock-input:rgba(195,217,225,.16);
+ --svcp-dock-glass:radial-gradient(ellipse 90% 130% at 18% -35%,rgba(237,249,253,.22),transparent 72%),linear-gradient(145deg,rgba(61,76,87,.83) 0%,rgba(25,36,43,.79) 52%,rgba(43,50,63,.82) 100%);
+ --svcp-dock-edge:rgba(227,240,247,.27);
+ --svcp-dock-topline:rgba(253,255,255,.42);
+ --svcp-dock-action:linear-gradient(150deg,rgba(233,246,253,.22),rgba(137,166,181,.13) 52%,rgba(29,44,53,.19));
+ --svcp-dock-input:linear-gradient(150deg,rgba(186,212,223,.17),rgba(133,160,177,.18) 65%,rgba(191,207,224,.13));
  --svcp-smoke-glass:rgba(184,195,201,.19);
  --svcp-smoke-input:rgba(184,195,201,.25);
  --svcp-smoke-pressed:rgba(218,235,245,.20);
@@ -33,11 +33,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background-repeat:no-repeat!important;background-size:100% 100%!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
- --svcp-dock-glass:rgba(248,251,252,.68);
- --svcp-dock-edge:rgba(255,255,255,.82);
- --svcp-dock-topline:rgba(255,255,255,.88);
- --svcp-dock-action:rgba(255,255,255,.50);
- --svcp-dock-input:rgba(255,255,255,.55);
+ --svcp-dock-glass:radial-gradient(ellipse 100% 145% at 15% -40%,rgba(255,255,255,.96),transparent 75%),linear-gradient(145deg,rgba(252,255,255,.78) 0%,rgba(232,242,247,.69) 53%,rgba(210,226,235,.66) 100%);
+ --svcp-dock-edge:rgba(255,255,255,.92);
+ --svcp-dock-topline:rgba(255,255,255,.96);
+ --svcp-dock-action:linear-gradient(155deg,rgba(255,255,255,.68),rgba(236,245,250,.46) 55%,rgba(201,220,231,.34));
+ --svcp-dock-input:linear-gradient(150deg,rgba(255,255,255,.79),rgba(244,250,252,.58) 70%,rgba(226,239,246,.57));
  --svcp-smoke-glass:rgba(99,121,133,.22);
  --svcp-smoke-input:rgba(99,121,133,.22);
  --svcp-smoke-pressed:rgba(99,121,133,.31);
@@ -1278,7 +1278,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-radius:34px!important;
  background:var(--svcp-dock-glass)!important;
  border:1px solid var(--svcp-dock-edge)!important;
- box-shadow:0 9px 25px rgba(12,25,30,.10),inset 0 1px 0 var(--svcp-dock-topline)!important;
+ box-shadow:0 15px 34px rgba(8,25,33,.21),0 3px 9px rgba(18,40,45,.09),inset 0 1.3px 0 var(--svcp-dock-topline),inset 0 -1.4px 0 rgba(15,37,48,.15),inset 1px 0 0 rgba(255,255,255,.16)!important;
  -webkit-backdrop-filter:blur(25px) saturate(125%)!important;
  backdrop-filter:blur(25px) saturate(125%)!important;
  transition:min-height .18s ease-out!important;
@@ -1298,7 +1298,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  padding:0!important;margin:0!important;
  border-radius:50%!important;
  background:var(--svcp-dock-action)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.09)!important;
+ border:1px solid rgba(242,250,252,.19)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(27,49,61,.12),0 1px 4px rgba(14,37,47,.06)!important;
+ -webkit-backdrop-filter:blur(17px) saturate(128%)!important;
+ backdrop-filter:blur(17px) saturate(128%)!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{grid-column:1!important}
 #svcpWorkChatScreen #svcpChatForm > #svcpCameraToggle{grid-column:2!important}
@@ -1312,7 +1315,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:44px!important;min-height:44px!important;max-height:144px!important;
  padding:10px 9px!important;
  background:var(--svcp-dock-input)!important;
- border:0!important;border-radius:24px!important;
+ border:1px solid rgba(227,244,249,.14)!important;border-radius:24px!important;
+ box-shadow:inset 0 1px 2px rgba(23,47,60,.09),inset 0 1px 0 rgba(255,255,255,.16)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(115%)!important;
+ backdrop-filter:blur(12px) saturate(115%)!important;
  line-height:24px!important;
  transition:height .18s ease-out!important;
 }
@@ -1325,6 +1331,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:44px!important;min-height:44px!important;
  border-radius:50%!important;
  margin:0!important;padding:0!important;
+ background:var(--svcp-dock-action)!important;
+ border:1px solid rgba(242,250,252,.19)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.27)!important;
+ -webkit-backdrop-filter:blur(17px) saturate(128%)!important;
+ backdrop-filter:blur(17px) saturate(128%)!important;
 }
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
  position:absolute!important;z-index:7!important;
@@ -1358,4 +1369,33 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 @media(prefers-reduced-motion:reduce){
  #svcpWorkChatScreen #svcpChatForm,
  #svcpWorkChatScreen #svcpChatInput{transition:none!important}
+}
+
+/* Same optical design in both palettes, without hard white/green plates. */
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm{
+ box-shadow:0 14px 30px rgba(58,92,112,.15),0 2px 8px rgba(56,89,104,.05),
+ inset 0 1.5px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(116,158,181,.17),
+ inset 1px 0 0 rgba(255,255,255,.65)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle),
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
+ border-color:rgba(255,255,255,.66)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.90),inset 0 -1px 0 rgba(138,178,196,.12),
+ 0 2px 6px rgba(66,94,117,.08)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatInput{
+ border-color:rgba(255,255,255,.73)!important;
+ box-shadow:inset 0 1px 2px rgba(82,116,134,.075),inset 0 1px 0 rgba(255,255,255,.83)!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle):active{
+ filter:brightness(1.08);
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpChatForm,
+ #svcpWorkChatScreen #svcpChatInput,
+ #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle),
+ #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send){
+  background:var(--svcp-smoke-fallback)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
 }
