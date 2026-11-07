@@ -414,14 +414,24 @@ function setStatus(s){
  el.textContent=s;
  clearTimeout(statusResetTimer);
  const screen=$('svcpWorkChatScreen');
+ // Golden Sayvi only for a real positive announcement, not regular actions.
+ const goodNews=/(?:поздравляю|хорошая новость|отличные новости|награда|поощрение|успешно завершен)/iu.test(String(s));
+ screen?.classList.toggle('svcp-sayvi-good-news',goodNews);
  if(screen&&!screen.hidden&&screen.dataset.view==='room'){
   el.dataset.show='true';
-  statusResetTimer=setTimeout(()=>{el.dataset.show='false'},s==='Голосовое сохранено только на этом устройстве'?2100:3000);
- }else el.dataset.show='false';
+  statusResetTimer=setTimeout(()=>{
+   el.dataset.show='false';
+   screen.classList.remove('svcp-sayvi-good-news');
+  },s==='Голосовое сохранено только на этом устройстве'?2100:3000);
+ }else{
+  el.dataset.show='false';
+  screen?.classList.remove('svcp-sayvi-good-news');
+ }
 }
 window.addEventListener('seyveo:work-chat-closing',()=>{
  clearTimeout(statusResetTimer);
  const el=$('svcpChatStatus');if(el)el.dataset.show='false';
+ $('svcpWorkChatScreen')?.classList.remove('svcp-sayvi-good-news');
 });
 function syncComposerActions(){
  const form=$('svcpChatForm');if(!form)return;
