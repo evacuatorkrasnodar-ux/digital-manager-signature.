@@ -1247,14 +1247,23 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    <form id="svcpChatTaskDraft" class="svcp-chat-task-draft" hidden>
     <label for="svcpChatTaskTitle"><strong>Новое поручение</strong><small>Проверьте текст перед добавлением</small></label>
     <input id="svcpChatTaskTitle" maxlength="140" placeholder="Что нужно сделать?" required>
-    <label for="svcpChatTaskAssignee"><small>Для кого</small></label>
-    <select id="svcpChatTaskAssignee" aria-label="Кому поручить" required>
+    <span class="svcp-task-recipient-caption" id="svcpTaskRecipientCaption">Для кого</span>
+    <select id="svcpChatTaskAssignee" aria-label="Кому поручить" required tabindex="-1" class="svcp-task-assignee-native">
      <option value="">Выберите получателя</option>
      <option value="elena">Елена · кассир</option>
      <option value="anna">Анна · старший продавец</option>
      <option value="mikhail">Михаил · продавец</option>
      <option value="all">Всем сотрудникам · каждому отдельно</option>
     </select>
+    <div class="svcp-task-recipient-picker">
+     <button id="svcpRecipientToggle" class="svcp-task-recipient-toggle" type="button" aria-expanded="false" aria-controls="svcpRecipientChoices" aria-labelledby="svcpTaskRecipientCaption svcpRecipientValue"><span id="svcpRecipientValue">Выберите получателя</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button>
+     <div id="svcpRecipientChoices" class="svcp-task-recipient-choices" role="group" aria-label="Выберите сотрудника" hidden>
+      <button type="button" data-recipient-id="elena">Елена <small>кассир</small></button>
+      <button type="button" data-recipient-id="anna">Анна <small>старший продавец</small></button>
+      <button type="button" data-recipient-id="mikhail">Михаил <small>продавец</small></button>
+      <button type="button" data-recipient-id="all">Всем сотрудникам <small>каждому отдельно</small></button>
+     </div>
+    </div>
     <div class="svcp-task-draft-actions"><button class="svcp-primary" type="submit">Добавить в поручения</button><button class="svcp-ghost" type="button" id="svcpChatTaskCancel">Отмена</button></div>
     <small>Демо · остаётся на устройстве, сотрудникам не отправляется</small>
    </form>
