@@ -1506,7 +1506,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background:linear-gradient(155deg,rgba(199,203,207,.16),rgba(145,152,160,.12) 56%,rgba(124,133,142,.10)),rgba(110,116,124,.06)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
- box-shadow:var(--sv-liquid-nav-shadow),0 5px 13px rgba(218,229,238,.18),0 12px 23px rgba(183,200,214,.09),inset 0 -1px 0 rgba(239,244,247,.12)!important;
+ box-shadow:var(--sv-liquid-nav-shadow),0 5px 11px rgba(218,229,238,.09),0 12px 21px rgba(183,200,214,.06)!important;
  overflow:hidden!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
@@ -1516,12 +1516,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
  border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
- box-shadow:var(--sv-liquid-nav-shadow),0 5px 13px rgba(218,229,238,.18),0 12px 23px rgba(183,200,214,.09),inset 0 -1px 0 rgba(239,244,247,.12)!important;
+ box-shadow:var(--sv-liquid-nav-shadow),0 5px 11px rgba(218,229,238,.09),0 12px 21px rgba(183,200,214,.06)!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{border-color:rgba(245,248,250,.25)!important;}
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
- box-shadow:var(--sv-liquid-nav-shadow),0 5px 13px rgba(139,152,164,.12),0 12px 23px rgba(145,160,176,.06),inset 0 -1px 0 rgba(255,255,255,.24)!important;
+ box-shadow:var(--sv-liquid-nav-shadow),0 5px 11px rgba(139,152,164,.07),0 12px 21px rgba(145,160,176,.04)!important;
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field #svcpChatInput{
  display:block!important;
@@ -1551,4 +1551,38 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
  }
+}
+
+/* Diffuse silver pool below the message capsule.
+   This is painted behind the capsule on the right half of the APPROVED dock;
+   do not change the dock's size, background, controls or spacing. */
+#svcpWorkChatScreen #svcpChatForm::after,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::after{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ pointer-events:none!important;
+ z-index:0!important;
+ right:12px!important;
+ bottom:-2px!important;
+ width:calc(100% - 188px)!important;
+ max-width:calc(100% - 24px)!important;
+ height:27px!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:radial-gradient(ellipse 72% 66% at 50% 35%,rgba(225,235,243,.36) 0%,rgba(187,202,216,.19) 50%,rgba(165,187,204,0) 100%)!important;
+ filter:blur(9px)!important;
+ opacity:.82!important;
+ box-shadow:none!important;
+ transform:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
+ z-index:1!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::after{
+ background:radial-gradient(ellipse 72% 66% at 50% 35%,rgba(174,190,204,.24) 0%,rgba(166,182,196,.12) 52%,rgba(166,182,196,0) 100%)!important;
+ opacity:.67!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpChatForm::after{opacity:.25!important;filter:blur(11px)!important}
 }
