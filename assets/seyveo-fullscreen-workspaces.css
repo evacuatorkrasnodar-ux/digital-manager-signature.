@@ -681,3 +681,59 @@ html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > div
   display:none!important;
  }
 }
+
+/* Complete the consistent return position in nested company, avatar and profile pages. */
+@media(max-width:720px){
+ html body #seyveoCompanyDialog.seyveo-passport-modal[open] > button.seyveo-dialog-close.sv-nav-arrow{
+  position:absolute!important;
+  top:calc(16px + env(safe-area-inset-top,0px))!important;
+  left:max(14px,env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;
+  background:transparent!important;box-shadow:none!important;
+  color:var(--text)!important;
+ }
+ html body #seyveoCompanyDialog.seyveo-passport-modal[open] .seyveo-passport-dialog-head{
+  padding-left:44px!important;padding-right:0!important;
+ }
+ html body #seyveoAvatarDialog.seyveo-avatar-dialog[open] #seyveoAvatarClose.sv-avatar-back{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  position:absolute!important;
+  top:calc(19px + env(safe-area-inset-top,0px))!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+  border:0!important;border-radius:50%!important;
+  padding:0!important;margin:0!important;
+  color:var(--text)!important;background:transparent!important;
+  box-shadow:none!important;
+ }
+ html body #seyveoAvatarDialog.seyveo-avatar-dialog[open] .seyveo-avatar-dialog-heading{
+  padding-left:44px!important;
+  min-height:44px!important;
+ }
+ html body #onboardDialog.onboard-dialog[open] .onboard-top{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:8px!important;
+ }
+ html body #onboardDialog.onboard-dialog[open] .onboard-top > div{
+  flex:1 1 auto!important;min-width:0!important;
+ }
+ html body #onboardDialog.onboard-dialog[open] #onboardClose.sv-nav-back{
+  order:-1!important;
+  flex:0 0 44px!important;
+  margin:0!important;padding:0!important;
+  width:44px!important;height:44px!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:var(--text)!important;
+ }
+ html body #seyveoFamilyDialog.svf-dialog[open] #svfClose.sv-nav-arrow{
+  order:-1!important;
+  flex:0 0 44px!important;
+  width:44px!important;height:44px!important;
+  border:0!important;border-radius:50%!important;
+  background:transparent!important;box-shadow:none!important;
+ }
+}
