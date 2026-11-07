@@ -2677,7 +2677,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    On input, the existing animation still rejoins the bar. */
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
- left:65px!important;
+ left:58px!important;
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage,
@@ -2693,7 +2693,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
  #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
-  left:65px!important;
+  left:58px!important;
  }
 }
 
@@ -2725,4 +2725,16 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-color:rgba(226,233,238,.13)!important;
  background:linear-gradient(155deg,rgba(239,242,246,.29),rgba(206,213,219,.23) 58%,rgba(189,198,206,.19)),rgba(190,199,208,.09)!important;
  box-shadow:none!important;
+}
+
+/* Work Chat = Home dock edge geometry. The 50px Plus is flush with the
+   6px outer viewport inset, not pushed 7px inward by form padding.
+   The companion pane begins at 50 + 8 = 58px from the same outer edge.
+   Preserve vertical padding, established material and action positions. */
+@media(max-width:699px){
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
+  padding-left:0!important;
+  padding-right:0!important;
+ }
 }
