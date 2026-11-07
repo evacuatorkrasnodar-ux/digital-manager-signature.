@@ -2163,3 +2163,33 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  grid-row:2!important;
  align-self:center!important;
 }
+
+/* SEYVEO capsule-to-chat morph: a single dock unfolds upward on multiline.
+   Only shape + height animate; the input, plus, mic and dock material stay
+   unchanged. This overrides the former transition:none used for jump fixes. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within,
+#svcpWorkChatScreen #svcpChatForm,
+#svcpWorkChatScreen #svcpChatForm:focus-within{
+ transition:height .24s cubic-bezier(.22,.8,.22,1),border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+ will-change:height;
+}
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+ transition:border-radius .24s cubic-bezier(.22,.8,.22,1)!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline{
+ border-radius:23px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline::before{
+ border-radius:23px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #svcpWorkChatScreen #svcpChatForm,
+ #svcpWorkChatScreen #svcpChatForm:focus-within,
+ #svcpWorkChatScreen #svcpChatForm::before{
+  transition:none!important;will-change:auto!important;
+ }
+}
