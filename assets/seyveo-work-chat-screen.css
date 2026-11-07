@@ -1809,3 +1809,62 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   padding:7px 46px 7px 12px!important;
  }
 }
+
+/* SEYVEO · exact-circle header search and real typing-name shimmer. */
+/* Only the magnifier, not the info button: one true circle in both themes. */
+#svcpWorkChatScreen #svcpConversationSearch.svcp-conversation-search{
+ box-sizing:border-box!important;
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 40px!important;
+ width:40px!important;
+ min-width:40px!important;
+ max-width:40px!important;
+ height:40px!important;
+ min-height:40px!important;
+ max-height:40px!important;
+ aspect-ratio:1 / 1!important;
+ padding:0!important;
+ margin:0!important;
+ border-radius:50%!important;
+ align-self:center!important;
+ transform:none!important;
+}
+#svcpWorkChatScreen #svcpConversationSearch.svcp-conversation-search svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+ flex:0 0 20px!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpConversationSearch.svcp-conversation-search{
+  flex-basis:38px!important;
+  width:38px!important;min-width:38px!important;max-width:38px!important;
+  height:38px!important;min-height:38px!important;max-height:38px!important;
+ }
+}
+/* Only a confirmed incoming typing signal animates the actual person's name.
+   A group retains its title, and the typing person's name appears below it. */
+#svcpWorkChatScreen .svcp-conversation-info .svcp-peer-typing{
+ color:var(--text)!important;
+ background:linear-gradient(100deg, currentColor 0%, currentColor 35%, rgba(232,246,247,.96) 51%, currentColor 67%, currentColor 100%);
+ background-size:250% 100%;
+ -webkit-background-clip:text;
+ background-clip:text;
+ -webkit-text-fill-color:transparent;
+ animation:svcpPeerNameShimmer 2.4s ease-in-out infinite;
+}
+:root[data-theme="light"] #svcpWorkChatScreen .svcp-conversation-info .svcp-peer-typing{
+ background-image:linear-gradient(100deg,#42535a 0%,#42535a 35%,#70888a 51%,#42535a 67%,#42535a 100%);
+}
+@keyframes svcpPeerNameShimmer{
+ 0%{background-position:110% 0}
+ 100%{background-position:-110% 0}
+}
+@media(prefers-reduced-motion:reduce){
+ #svcpWorkChatScreen .svcp-conversation-info .svcp-peer-typing{
+  animation:none!important;
+  background:none!important;
+  -webkit-text-fill-color:currentColor!important;
+ }
+}
