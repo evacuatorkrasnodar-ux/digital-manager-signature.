@@ -1427,3 +1427,12 @@
  outline:2px solid var(--secondary)!important;
  outline-offset:1px!important;
 }
+
+/* Calendar controls must respect DOM hidden states after material polish. */
+#calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-time-done,
+ .cal-dialog-actions>.btn.primary,
+ .sv-form-actions>button.btn.primary
+)[hidden]{
+ display:none!important;
+}
