@@ -3368,3 +3368,122 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  color:#946b24!important;
  background:rgba(186,145,59,.10)!important;
 }
+
+/* v193 · SEYVEO in-card recipient selector. No native iOS pop-up menu.
+   Staff entries share the same matte-glass material as the task review sheet. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > .svcp-task-assignee-native{
+ position:absolute!important;
+ width:1px!important;
+ height:1px!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ opacity:0!important;
+ pointer-events:none!important;
+ clip-path:inset(50%)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > .svcp-task-recipient-caption{
+ font-size:12px!important;
+ line-height:16px!important;
+ color:var(--secondary)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-picker{
+ width:100%!important;
+ min-width:0!important;
+ display:grid!important;
+ gap:5px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
+ width:100%!important;
+ min-width:0!important;
+ min-height:43px!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:10px!important;
+ box-sizing:border-box!important;
+ padding:9px 12px!important;
+ border:1px solid rgba(133,151,162,.18)!important;
+ border-radius:13px!important;
+ background:rgba(213,225,235,.075)!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:400 15px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle > span{
+ flex:1 1 auto!important;
+ min-width:0!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ white-space:nowrap!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle svg{
+ flex:0 0 17px!important;
+ width:17px!important;
+ height:17px!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.45!important;
+ stroke-linejoin:round!important;
+ stroke-linecap:round!important;
+ transition:transform .16s ease;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle[aria-expanded="true"] svg{
+ transform:rotate(180deg);
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices[hidden]{
+ display:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices:not([hidden]){
+ display:grid!important;
+ grid-template-columns:1fr!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:4px!important;
+ border:1px solid rgba(133,151,162,.14)!important;
+ border-radius:15px!important;
+ background:rgba(168,182,193,.10)!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:8px!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:43px!important;
+ padding:7px 10px!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:11px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:500 14px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ text-align:left!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button > small{
+ font-size:11px!important;
+ font-weight:400!important;
+ color:var(--secondary)!important;
+ text-align:right!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button[aria-pressed="true"]{
+ background:rgba(148,164,176,.17)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices > button:active{
+ background:rgba(148,164,176,.23)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
+ background:rgba(255,255,255,.68)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-choices:not([hidden]){
+ background:rgba(223,230,236,.75)!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]):has(#svcpRecipientChoices:not([hidden])){
+ max-height:min(420px,calc(100% - 142px))!important;
+}
