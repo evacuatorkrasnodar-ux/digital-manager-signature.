@@ -1003,7 +1003,10 @@
    arrow.setAttribute('aria-hidden','true');
    arrow.innerHTML='<svg viewBox="0 0 24 24" focusable="false"><path d="m9 5 7 7-7 7"/></svg>';
    detail.append(copy,arrow);
-   const toggle=button(checked?'✓':'+','toggle',item.id);
+   const toggle=button('','toggle',item.id);
+   toggle.innerHTML=checked
+    ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>'
+    :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
    toggle.className='sv-cabinet-goal-mark'+(checked?' is-selected':'');
    toggle.setAttribute('aria-pressed',String(checked));
    toggle.setAttribute('aria-label',(checked?'Убрать из кабинета: ':'Добавить в кабинет: ')+goal.title);
@@ -1042,8 +1045,10 @@
   if(!activeGoal||!draft)return;
   const info=itemById.get(activeGoal),goal=GOALS[activeGoal];
   guideHost.replaceChildren();
-  const back=button('‹  К задачам','back');
+  const back=button('','back');
   back.className='sv-cabinet-guide-back';
+  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg><span>К инструментам</span>';
+  back.setAttribute('aria-label','Вернуться к списку инструментов');
   const title=node('h3','sv-cabinet-guide-title',goal.title);
   const benefit=node('p','sv-cabinet-guide-benefit',goal.benefit);
   const module=node('p','sv-cabinet-guide-module','Инструмент: '+info.name);
@@ -1094,7 +1099,7 @@
  empty.querySelector('[data-sv-cabinet-open]')?.addEventListener('click',open);
  cancelButton?.addEventListener('click',cancel);
  saveButton?.addEventListener('click',save);
- resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';render()});
+ resetButton?.addEventListener('click',()=>{if(!draft)return;draft=DEFAULT.slice();search.value='';hideGoal();render()});
  search.addEventListener('input',renderCatalog);
  catalogHost.addEventListener('click',event=>{
   const b=event.target.closest('[data-cabinet-action]');
