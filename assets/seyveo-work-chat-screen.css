@@ -491,59 +491,94 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle) svg{
  width:21px!important;height:21px!important;display:block!important;
 }
-/* Sayvi Core · first live mark. Matte ribbons stay still; the seed breathes.
-   Shape is intentionally clean enough to hold its silhouette at 20px. */
+/* Sayvi Core v2 — drawn for a true 44px button, not scaled down 3D art.
+   Two broad silver ribbons form an asymmetric S around a luminous pearl.
+   Only the pearl breathes: the logo itself never rotates or bounces. */
 #svcpWorkChatScreen{
- --sv-sayvi-core-upper:#ebf1f1;
- --sv-sayvi-core-lower:#88969d;
- --sv-sayvi-core-neutral:#d3e0df;
- --sv-sayvi-core-awake:#95c7b2;
- --sv-sayvi-core-halo:rgba(88,170,129,.22);
+ --sv-sayvi-upper-from:#71868d;
+ --sv-sayvi-upper-mid:#c2d0d2;
+ --sv-sayvi-upper-to:#f0f6f5;
+ --sv-sayvi-lower-from:#b7c8c9;
+ --sv-sayvi-lower-mid:#718b8b;
+ --sv-sayvi-lower-to:#51666c;
+ --sv-sayvi-pearl-light:#f9fffc;
+ --sv-sayvi-pearl-mid:#bbdacf;
+ --sv-sayvi-pearl-deep:#587d76;
+ --sv-sayvi-awake-color:#59b58a;
+ --sv-sayvi-halo:rgba(87,171,134,.23);
+ --sv-sayvi-glint:rgba(255,255,255,.68);
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
- --sv-sayvi-core-upper:#596970;
- --sv-sayvi-core-lower:#a1afb4;
- --sv-sayvi-core-neutral:#80969c;
- --sv-sayvi-core-awake:#3e886e;
- --sv-sayvi-core-halo:rgba(60,134,102,.18);
+ --sv-sayvi-upper-from:#465963;
+ --sv-sayvi-upper-mid:#778e96;
+ --sv-sayvi-upper-to:#d3dfe1;
+ --sv-sayvi-lower-from:#507968;
+ --sv-sayvi-lower-mid:#91a7a8;
+ --sv-sayvi-lower-to:#40565f;
+ --sv-sayvi-pearl-light:#f7fffc;
+ --sv-sayvi-pearl-mid:#bad8cd;
+ --sv-sayvi-pearl-deep:#447d6e;
+ --sv-sayvi-awake-color:#51ae85;
+ --sv-sayvi-halo:rgba(77,156,116,.23);
+ --sv-sayvi-glint:rgba(255,255,255,.55);
 }
 #svcpWorkChatScreen #svcpPolishMessage svg.sv-sayvi-core-mark{
- display:block!important;width:22px!important;height:22px!important;
- flex:none!important;overflow:visible;
- fill:none!important;stroke:none!important;
+ display:block!important;width:31px!important;height:31px!important;
+ flex:0 0 31px!important;max-width:none!important;
+ overflow:visible;fill:none!important;stroke:none!important;
+ filter:drop-shadow(0 1px 1px rgba(18,39,40,.15));
 }
 #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper{
- fill:var(--sv-sayvi-core-upper)!important;stroke:none!important;
+ fill:url(#svcpSayviCoreUpperGradient)!important;stroke:none!important;
 }
 #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower{
- fill:var(--sv-sayvi-core-lower)!important;stroke:none!important;
+ fill:url(#svcpSayviCoreLowerGradient)!important;stroke:none!important;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-from{stop-color:var(--sv-sayvi-upper-from)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-mid{stop-color:var(--sv-sayvi-upper-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-upper-to{stop-color:var(--sv-sayvi-upper-to)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-from{stop-color:var(--sv-sayvi-lower-from)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-mid{stop-color:var(--sv-sayvi-lower-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-lower-to{stop-color:var(--sv-sayvi-lower-to)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-light{stop-color:var(--sv-sayvi-pearl-light)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-mid{stop-color:var(--sv-sayvi-pearl-mid)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-pearl-deep{stop-color:var(--sv-sayvi-pearl-deep)}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-glint{
+ fill:none!important;stroke:var(--sv-sayvi-glint)!important;
+ stroke-width:.7!important;stroke-linecap:round;opacity:.65;
 }
 #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{
- fill:var(--sv-sayvi-core-halo)!important;stroke:none!important;
- opacity:0;transform-box:fill-box;transform-origin:center;
- animation:sv-sayvi-core-halo 5.2s ease-in-out infinite;
+ fill:var(--sv-sayvi-halo)!important;stroke:none!important;opacity:.12;
+ transform-box:fill-box;transform-origin:center;
+ animation:sv-sayvi-core-halo 5.6s ease-in-out infinite;
 }
 #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-seed{
- /* Not !important: the fill must remain animatable in Safari. */
- fill:var(--sv-sayvi-core-neutral);stroke:none!important;
- animation:sv-sayvi-core-breathe 5.2s ease-in-out infinite;
+ fill:url(#svcpSayviCorePearlGradient)!important;stroke:none!important;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-awake{
+ fill:var(--sv-sayvi-awake-color)!important;stroke:none!important;
+ opacity:0;animation:sv-sayvi-core-breathe 5.6s ease-in-out infinite;
+}
+#svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-shine{
+ fill:rgba(255,255,255,.68)!important;stroke:none!important;opacity:.8;
 }
 @keyframes sv-sayvi-core-breathe{
- 0%,100%{fill:var(--sv-sayvi-core-neutral);opacity:1}
- 45%,55%{fill:var(--sv-sayvi-core-awake);opacity:1}
+ 0%,15%,100%{opacity:0}
+ 48%,56%{opacity:.30}
 }
 @keyframes sv-sayvi-core-halo{
- 0%,12%,100%{opacity:0;transform:scale(.8)}
- 45%,55%{opacity:.7;transform:scale(1.28)}
+ 0%,12%,100%{opacity:.12;transform:scale(.91)}
+ 48%,56%{opacity:.56;transform:scale(1.18)}
 }
 @media(prefers-reduced-motion:reduce){
- #svcpWorkChatScreen #svcpPolishMessage :is(.sv-sayvi-core-halo,.sv-sayvi-core-seed){
+ #svcpWorkChatScreen #svcpPolishMessage :is(.sv-sayvi-core-halo,.sv-sayvi-core-awake){
   animation:none!important
  }
- #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:0!important}
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-awake{opacity:0!important}
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:.12!important;transform:none!important}
 }
 @media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:0!important}
+ #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-halo{opacity:0!important;animation:none!important}
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg{
  fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
