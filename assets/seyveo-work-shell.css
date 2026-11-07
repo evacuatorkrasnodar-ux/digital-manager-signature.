@@ -209,7 +209,7 @@
 /* Work shell calendar creation: one in-flow, quiet surface beneath the 54px header.
    The original event and task buttons still handle the actual actions. */
 #svWorkShell{--sv-page-title-size:clamp(25px,7vw,28px)}
-#svWorkHeader{position:relative!important;isolation:visible;overflow:visible!important}
+#svWorkHeader{position:relative!important;isolation:isolate;overflow:visible!important}
 #svWorkShell > #calendarCreateMenu[hidden]{display:none!important}
 #svWorkShell > #calendarCreateMenu:not([hidden]){
  order:0!important;position:relative!important;inset:auto!important;
@@ -321,6 +321,7 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 #managePage #manageOverview > .manage-heading .manage-caption{
  font-size:9px!important;letter-spacing:.08em!important;margin-bottom:4px!important
 }
+#sayviSurfacePage{padding-top:0!important;padding-left:0!important;padding-right:0!important}
 #sayviSurfacePage .sv-deep-top{margin:0 0 12px!important}
 #sayviSurfacePage .sv-deep-top .sv-continuity-titlebar{margin:0 0 6px!important}
 #sayviSurfacePage .sv-deep-top :is(.sv-deep-kicker,.sv-deep-intro){
@@ -338,4 +339,23 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
  :root{--sv-page-title-size:25px}
  .sv-continuity-titlebar,
  #svWorkShell[data-shared-work="true"] #svWorkHeader{gap:4px!important}
+}
+
+/* Legacy Back controls are still used in non-manager routes.
+   Match the shared 44px slot and one 19px chevron. */
+#svWorkShell #calendarPage #calendarBack,
+#svWorkShell #tasksPage #unifiedTasksBack:not([hidden]){
+ box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;flex:0 0 44px!important;
+ width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;
+ max-width:44px!important;max-height:44px!important;
+ margin:0 6px 0 0!important;padding:0!important;border:0!important;
+ border-radius:50%!important;background:transparent!important;
+ color:var(--text)!important;box-shadow:none!important
+}
+#svWorkShell #calendarPage #calendarBack svg,
+#svWorkShell #tasksPage #unifiedTasksBack svg{
+ display:block!important;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important
 }
