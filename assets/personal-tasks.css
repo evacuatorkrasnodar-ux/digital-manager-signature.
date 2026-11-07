@@ -936,8 +936,8 @@
    Preserve the original submit/cancel controls, form and date picker. */
 #personalTaskDialog .personal-task-sheet{
  border:0!important;border-radius:25px!important;
- background:color-mix(in srgb,var(--bg) 88%,transparent)!important;
- box-shadow:0 10px 28px rgba(0,0,0,.08)!important;
+ background:rgba(40,54,63,.90)!important;
+ box-shadow:0 8px 28px rgba(0,0,0,.10),inset 0 1px 0 rgba(240,248,250,.07)!important;
  padding:11px 18px 15px!important;
 }
 #personalTaskDialog .sv-task-topbar{
@@ -966,7 +966,7 @@
 }
 #personalTaskDialog #personalTaskSave::before{
  inset:2px 0!important;border-radius:999px!important;
- background:var(--sv-master-glass,rgba(184,195,201,.19))!important;
+ background:rgba(165,188,199,.21)!important;
  box-shadow:none!important;
 }
 #personalTaskDialog .personal-task-sheet h2{
@@ -974,10 +974,13 @@
  font-weight:620!important;
 }
 #personalTaskDialog.personal-task-dialog form{
- background:color-mix(in srgb,var(--card2) 43%,transparent)!important;
+ background:rgba(130,155,166,.13)!important;
 }
 :root[data-theme=light] #personalTaskDialog .personal-task-sheet{
  background:rgba(250,252,252,.94)!important;
+}
+:root[data-theme=light] #personalTaskDialog.personal-task-dialog form{
+ background:rgba(104,130,142,.12)!important;
 }
 :root[data-theme=light] #personalTaskDialog #personalTaskSave::before{
  background:var(--sv-master-glass,rgba(99,121,133,.20))!important;
