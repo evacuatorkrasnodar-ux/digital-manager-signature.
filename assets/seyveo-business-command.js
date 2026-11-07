@@ -438,8 +438,8 @@ function syncComposerActions(){
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
- // Resize the inner text capsule to 44px together with the slimmer 60px work dock; button sizes are unchanged.
- const minHeight=44;
+ // The inner message capsule follows the adjacent button diameter (38px narrow, 40px otherwise). Actual button hit targets stay unchanged.
+ const minHeight=window.matchMedia('(max-width:390px)').matches?38:40;
  const maxHeight=144;
  input.style.setProperty('height',minHeight+'px','important');
  const height=input.value?Math.min(maxHeight,Math.max(minHeight,input.scrollHeight)):minHeight;
