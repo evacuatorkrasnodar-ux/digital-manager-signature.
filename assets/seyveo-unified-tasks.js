@@ -135,6 +135,11 @@
     +' Только демо: тариф и реальные права не меняются.';
   }
   if(location.hash==='#picture'&&!isManager())navigate(isEmployee()?'employee':'personal');
+  // Consumers such as SEYVEO DOCS use this existing preview role.
+  // It is a UI-only context notification, never authorization.
+  window.dispatchEvent(new CustomEvent('seyveo:preview-role-changed',{
+   detail:{role:isEmployee()?'employee':isManager()?'manager':'personal',demo:true}
+  }));
  }
 
  const SHIFT_KEY='seyveo-demo-shift-history-v1';
