@@ -3077,3 +3077,119 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  fill:currentColor!important;
  stroke:none!important;
 }
+
+/* v190 · iPhone keyboard / multiline stabilizer.
+   Measured height is provided by JS without resetting the live composer.
+   Keep the approved Liquid Glass material, 50px Plus and two laser marks. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline:focus-within{
+ box-sizing:border-box!important;
+ height:var(--svcp-compose-height,111px)!important;
+ min-height:var(--svcp-compose-height,111px)!important;
+ max-height:var(--svcp-compose-height,199px)!important;
+ grid-template-columns:50px 8px 36px 2px 36px 0px minmax(0,1fr)!important;
+ grid-template-rows:var(--svcp-editor-height,56px) 42px!important;
+ align-content:start!important;
+ align-items:center!important;
+ column-gap:0!important;
+ row-gap:0!important;
+ padding:8px 7px 5px!important;
+ border-radius:24px!important;
+ transition:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within{
+ display:block!important;
+ position:static!important;
+ grid-column:1/-1!important;
+ grid-row:1!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ height:var(--svcp-editor-height,56px)!important;
+ min-height:var(--svcp-editor-height,56px)!important;
+ max-height:144px!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:visible!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput:focus{
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ height:var(--svcp-editor-height,56px)!important;
+ min-height:var(--svcp-editor-height,56px)!important;
+ max-height:144px!important;
+ margin:0!important;
+ padding:8px 12px!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ line-height:24px!important;
+ text-align:left!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+ overflow-x:hidden!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:2!important;
+ align-self:center!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]){
+ position:absolute!important;
+ left:auto!important;
+ top:auto!important;
+ right:61px!important;
+ bottom:9px!important;
+ height:30px!important;
+ min-height:30px!important;
+ max-height:30px!important;
+ margin:0!important;
+ padding:0 9px!important;
+ z-index:8!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ position:absolute!important;
+ right:8px!important;
+ bottom:6px!important;
+ top:auto!important;
+ margin:0!important;
+ z-index:9!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline[data-has-content="true"] #svcpVoiceRecord,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign #svcpVoiceRecord{
+ display:none!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline[data-has-content="true"] .svcp-chat-send{
+ display:grid!important;
+ visibility:visible!important;
+ pointer-events:auto!important;
+}
+/* Short single-line mode reserves actual text space for both action buttons.
+   The textarea scrolls its one line only until it needs the upper writing row. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign:not(.svcp-compose-multiline) .svcp-chat-compose-field #svcpChatInput:focus{
+ padding-left:15px!important;
+ padding-right:154px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign:not(.svcp-compose-multiline) #svcpComposerDirectTask:not([hidden]){
+ position:absolute!important;
+ top:auto!important;
+ left:auto!important;
+ right:61px!important;
+ bottom:12px!important;
+ z-index:8!important;
+ height:30px!important;
+ min-height:30px!important;
+ max-height:30px!important;
+}
