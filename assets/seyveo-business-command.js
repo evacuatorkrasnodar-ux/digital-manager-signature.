@@ -1074,75 +1074,62 @@ document.addEventListener('pointerdown',event=>{
  closeMessageMenus();
 });
 $('svcpMessages')?.addEventListener('scroll',closeMessageMenus,{passive:true});
-/* Emoji composer is separate from message reactions: an inline strip, not a modal. */
+/* Five essential emoji choices live inside the existing message capsule.
+ * No popover, no camera tray, no second composer row. */
 const composerEmojiStrip=$('svcpComposerEmojiStrip');
 const composerEmojiButton=$('svcpComposerEmojiToggle');
-let composerMoreEmojis=false;
+const inlineEmojiField=$('svcpChatForm')?.querySelector('.svcp-chat-compose-field');
+const inlineEmojiChoices=['👍','❤️','😂','🙏','✅'];
+if(composerEmojiStrip&&inlineEmojiField)inlineEmojiField.appendChild(composerEmojiStrip);
 function closeComposerEmoji(){
  if(composerEmojiStrip)composerEmojiStrip.hidden=true;
- const tray=$('svcpCameraTray');
- if(tray)delete tray.dataset.mode;
- if(composerEmojiButton)composerEmojiButton.setAttribute('aria-expanded','false');
- composerMoreEmojis=false;
+ $('svcpChatForm')?.classList.remove('svcp-emoji-inline-open');
+ composerEmojiButton?.setAttribute('aria-expanded','false');
 }
 function insertComposerEmoji(emoji){
- const input=$('svcpChatInput');
- if(!input)return;
+ const input=$('svcpChatInput');if(!input)return;
  const from=typeof input.selectionStart==='number'?input.selectionStart:input.value.length;
  const to=typeof input.selectionEnd==='number'?input.selectionEnd:from;
  const value=input.value.slice(0,from)+emoji+input.value.slice(to);
  if(input.maxLength>0&&value.length>input.maxLength)return;
  input.value=value;
+ closeComposerEmoji();
  input.focus({preventScroll:true});
  input.setSelectionRange(from+emoji.length,from+emoji.length);
  input.dispatchEvent(new Event('input',{bubbles:true}));
- closeComposerEmoji();
- setCameraTray(false);
 }
 function renderComposerEmojis(){
  if(!composerEmojiStrip)return;
  composerEmojiStrip.replaceChildren();
- const emojis=composerMoreEmojis
-  ?[...QUICK_EMOJIS,...MORE_EMOJI_GROUPS.flatMap(group=>group.emojis)]
-  :QUICK_EMOJIS;
- for(const emoji of emojis){
+ for(const emoji of inlineEmojiChoices){
   const option=el('button','svcp-composer-emoji-choice',emoji);
-  option.type='button';option.setAttribute('aria-label','Вставить '+emoji);
+  option.type='button';
+  option.setAttribute('aria-label','Вставить '+emoji);
   option.addEventListener('click',()=>insertComposerEmoji(emoji));
-  composerEmojiStrip.append(option);
+  composerEmojiStrip.appendChild(option);
  }
- const more=el('button','svcp-composer-emoji-expand',composerMoreEmojis?'Меньше':'＋');
- more.type='button';more.setAttribute('aria-expanded',String(composerMoreEmojis));
- more.setAttribute('aria-label',composerMoreEmojis?'Скрыть дополнительные эмодзи':'Показать другие эмодзи');
- more.addEventListener('click',()=>{
-  composerMoreEmojis=!composerMoreEmojis;
-  renderComposerEmojis();
- });
- composerEmojiStrip.append(more);
 }
 composerEmojiButton?.addEventListener('click',event=>{
  event.preventDefault();
- const tray=$('svcpCameraTray');
- // Use the parent panel's state: hidden emoji strip may be stale after a rerender.
- const isOpen=!!(tray&&!tray.hidden&&tray.dataset.mode==='emoji');
+ const form=$('svcpChatForm');
+ if(!form||!composerEmojiStrip)return;
+ const opening=!form.classList.contains('svcp-emoji-inline-open');
  closeRecognition();closeMessageMenus();
- if(isOpen){
-  setCameraTray(false);
-  return;
- }
- setCameraTray(true);
- if(!tray)return;
- tray.dataset.mode='emoji';
- composerEmojiStrip.hidden=false;
+ closeComposerEmoji();
+ if(!opening)return;
+ // The inline row is intended for the compact single-line composer only.
+ // Preserve the typed draft, restoring it when a reaction is selected.
+ if(form.classList.contains('svcp-compose-multiline'))return;
  renderComposerEmojis();
+ form.classList.add('svcp-emoji-inline-open');
+ composerEmojiStrip.hidden=false;
  composerEmojiButton.setAttribute('aria-expanded','true');
 });
-// Tapping the conversation (or another tool) dismisses the emoji rail.
 document.addEventListener('pointerdown',event=>{
- const tray=$('svcpCameraTray');
- if(!tray||tray.hidden||tray.dataset.mode!=='emoji')return;
- if(tray.contains(event.target)||composerEmojiButton?.contains(event.target))return;
- setCameraTray(false);
+ const form=$('svcpChatForm');
+ if(!form?.classList.contains('svcp-emoji-inline-open'))return;
+ if(composerEmojiStrip?.contains(event.target)||composerEmojiButton?.contains(event.target))return;
+ closeComposerEmoji();
 });
 function toggleMessageMenu(menu,trigger){
  const opening=menu.hidden;
