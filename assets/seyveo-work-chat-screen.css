@@ -1343,7 +1343,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  grid-template-columns:repeat(4,38px) minmax(0,1fr)!important;
  grid-template-rows:minmax(48px,auto)!important;
  align-items:center!important;
- column-gap:3.5px!important;
+ column-gap:12px!important;
  row-gap:0!important;
  width:min(430px,calc(100% - 12px))!important;
  max-width:calc(100% - 12px)!important;
@@ -1508,7 +1508,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
   grid-template-columns:repeat(4,35px) minmax(0,1fr)!important;
-  column-gap:2.75px!important;
+  column-gap:10px!important;
   row-gap:0!important;
   min-height:60px!important;
   padding:6px 5px!important;
