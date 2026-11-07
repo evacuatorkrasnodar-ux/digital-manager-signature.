@@ -1499,26 +1499,26 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:auto!important;
  padding:0!important;
  margin:0!important;
- border:1px solid rgba(222,229,233,.28)!important;
+ border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
  border-radius:999px!important;
  /* Sayvi-inspired muted silver Smoke Glass: only the inner capsule. */
- background:linear-gradient(155deg,rgba(199,203,207,.27),rgba(145,152,160,.22) 56%,rgba(124,133,142,.19)),rgba(110,116,124,.12)!important;
+ background:linear-gradient(155deg,rgba(199,203,207,.16),rgba(145,152,160,.12) 56%,rgba(124,133,142,.10)),rgba(110,116,124,.06)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
  overflow:hidden!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
- background:linear-gradient(155deg,rgba(236,239,242,.58),rgba(180,186,193,.42) 55%,rgba(147,154,163,.31)),rgba(199,205,210,.18)!important;
- border-color:rgba(245,248,250,.53)!important;
+ background:linear-gradient(155deg,rgba(236,239,242,.37),rgba(180,186,193,.26) 55%,rgba(147,154,163,.18)),rgba(199,205,210,.09)!important;
+ border-color:rgba(245,248,250,.25)!important;
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
- border:1px solid rgba(222,229,233,.28)!important;
+ border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
 }
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{border-color:rgba(245,248,250,.53)!important;}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{border-color:rgba(245,248,250,.25)!important;}
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field #svcpChatInput{
  display:block!important;
  grid-column:auto!important;
