@@ -73,7 +73,7 @@ host.innerHTML=`
     <div class="pw-actions"><button type="button" class="pw-primary" data-pw-water="250">+ 250 мл</button><button type="button" data-pw-water="150">+ 150 мл</button><button type="button" data-pw-water="500">+ 500 мл</button><button type="button" id="pwWaterUndo" disabled>Отменить</button></div>
     <div class="pw-inline"><label>Моя цель, мл / день<input id="pwWaterGoalInput" type="number" inputmode="numeric" min="250" max="6000" step="50" placeholder="Необязательно"></label><button type="button" id="pwWaterSaveGoal">Сохранить</button></div>
     <section class="pw-water-insight" aria-labelledby="pwWaterInsightHeading">
-     <div class="pw-insight-head"><span class="pw-insight-mark" aria-hidden="true">✧</span><h4 id="pwWaterInsightHeading">SEYVEO · Умная забота</h4><small>По вашим записям</small></div>
+     <div class="pw-insight-head"><span class="pw-insight-mark sv-sayvi-symbol" aria-hidden="true"></span><h4 id="pwWaterInsightHeading">SEYVEO · Умная забота</h4><small>По вашим записям</small></div>
      <p id="pwWaterAdvice" class="pw-insight-advice" aria-live="polite"></p>
      <p id="pwWaterWeek" class="pw-insight-week"></p>
      <details class="pw-insight-explain"><summary>Почему такая подсказка?</summary>
