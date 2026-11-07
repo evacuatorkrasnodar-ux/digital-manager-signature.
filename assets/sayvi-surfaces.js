@@ -322,69 +322,21 @@ function mailView(){
   editorBack.classList.add('sv-mail-editor-back');
   heading.append(editorBack,create('h2','sv-mail-editor-title',original?'Изменить черновик':'Новое письмо'));
   form.append(heading);
-  // Two identities deserve one native-feeling decision, not iOS's bright
-  // square <select> popup. Keep account identity local to this editor.
+  // One inline sender selection, no duplicate bottom dialog.
   let accountValue=original?.account||mailComposeScope||'';
-  const accountName=value=>value==='personal'?'Личная почта':value==='business'?'Рабочая почта':'Выберите почту';
-  const accountField=create('div','sv-mail-field sv-mail-account-field');
-  accountField.append(create('span','sv-mail-field-label','От имени'));
-  const accountChoice=create('button','sv-mail-account-picker');
-  accountChoice.type='button';accountChoice.disabled=!!original;
-  accountChoice.setAttribute('aria-haspopup','dialog');
-  accountChoice.setAttribute('aria-controls','svMailSenderSheet');
-  const accountChoiceName=create('span','sv-mail-account-picker-name',accountName(accountValue));
-  accountChoice.append(accountChoiceName,create('span','sv-mail-account-picker-chevron',''));
-  accountField.append(accountChoice);
-  form.append(accountField);
-
-  const accountSheet=create('dialog','sv-mail-account-sheet');
-  accountSheet.id='svMailSenderSheet';
-  accountSheet.setAttribute('aria-labelledby','svMailSenderSheetTitle');
-  const sheetHandle=create('div','sv-mail-sheet-handle');
-  sheetHandle.setAttribute('aria-hidden','true');
-  const sheetHead=create('div','sv-mail-sheet-head');
-  const sheetTitle=create('h3','sv-mail-sheet-title','От имени');
-  sheetTitle.id='svMailSenderSheetTitle';
-  const sheetCancel=create('button','sv-mail-sheet-cancel','Отмена');
-  sheetCancel.type='button';sheetCancel.addEventListener('click',()=>accountSheet.close());
-  sheetHead.append(sheetTitle,sheetCancel);
-  const sheetOptions=create('div','sv-mail-sheet-options');
-  const sheetButtons=[];
-  const refreshAccount=()=>{
-   accountChoiceName.textContent=accountName(accountValue);
-   accountChoice.setAttribute('aria-label','От имени: '+accountName(accountValue));
-   for(const button of sheetButtons){
-    const checked=button.dataset.mailAccount===accountValue;
-    button.setAttribute('aria-pressed',String(checked));
-    button.querySelector('.sv-mail-sheet-check').textContent=checked?'✓':'';
-   }
-  };
-  for(const [value,label] of [['personal','Личная почта'],['business','Рабочая почта']]){
-   const button=create('button','sv-mail-sheet-option');
-   button.type='button';button.dataset.mailAccount=value;
-   button.append(create('span','sv-mail-sheet-option-name',label),create('span','sv-mail-sheet-check'));
-   button.addEventListener('click',()=>{
-    accountValue=value;mailComposeScope=value;refreshAccount();
-    accountSheet.close();
-   });
-   sheetButtons.push(button);sheetOptions.append(button);
+  const accountField=create('div','sv-mail-sender-switch');
+  accountField.setAttribute('role','group');accountField.setAttribute('aria-label','От имени');
+  const senderCaption=create('span','sv-mail-sender-caption','От имени');
+  const senderOptions=create('div','sv-mail-sender-options');
+  const senderButtons=[];
+  const refreshAccount=()=>senderButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mailAccount===accountValue)));
+  for(const [value,label] of [['personal','Личная'],['business','Рабочая']]){
+   const button=create('button','sv-mail-sender-option',label);
+   button.type='button';button.dataset.mailAccount=value;button.disabled=!!original;
+   button.addEventListener('click',()=>{if(button.disabled)return;accountValue=value;mailComposeScope=value;refreshAccount()});
+   senderButtons.push(button);senderOptions.append(button);
   }
-  accountSheet.append(sheetHandle,sheetHead,sheetOptions);
-  form.append(accountSheet);
-  accountChoice.addEventListener('click',()=>{
-   if(accountChoice.disabled)return;
-   refreshAccount();
-   accountChoice.setAttribute('aria-expanded','true');
-   accountSheet.showModal();
-  });
-  accountSheet.addEventListener('click',event=>{
-   if(event.target===accountSheet)accountSheet.close();
-  });
-  accountSheet.addEventListener('close',()=>{
-   accountChoice.setAttribute('aria-expanded','false');
-   if(accountChoice.isConnected)accountChoice.focus({preventScroll:true});
-  });
-  refreshAccount();
+  accountField.append(senderCaption,senderOptions);form.append(accountField);refreshAccount();
   const accountHelp=create('p','sv-mail-account-help','Адрес отправителя появится после подключения почты.');
   form.append(accountHelp);
   const makeField=(labelText,name,tag,value,type)=>{
@@ -425,7 +377,7 @@ function mailView(){
    event.preventDefault();
    const recipient=to.value.trim(),subjectText=subj.value.trim(),bodyText=message.value.trim();
    if(!['personal','business'].includes(accountValue)){
-    status.textContent='Сначала выберите личную или рабочую почту.';accountChoice.focus();accountSheet.showModal();return;
+    status.textContent='Сначала выберите личную или рабочую почту.';senderButtons[0]?.focus();return;
    }
    if(!recipient&&!subjectText&&!bodyText){status.textContent='Напишите письмо или укажите тему.';return}
    const item={id:original?.id||'mail-draft-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
@@ -653,15 +605,7 @@ function mailView(){
    if(count)button.append(create('small','sv-mail-folder-count',String(count)));
    button.addEventListener('click',()=>selectFolder(key));nav.append(button);
   }
-  if(mailFolder!=='overview'){
-   // Unified SEYVEO navigation: one etched back arrow, no textual
-   // "‹ Обзор" and no second dock inside Mail.
-   const home=create('button','sv-mail-icon-button sv-mail-home-link');
-   home.type='button';home.setAttribute('aria-label','Назад к обзору почты');
-   home.append(mailIcon('back'));
-   home.addEventListener('click',()=>selectFolder('overview'));
-   extraNav.append(home);
-  }
+  // A single Back in the stable titlebar replaces the extra folder arrow.
   for(const [key,label] of tabs.slice(4)){
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
    if(mailFolder===key)button.setAttribute('aria-current','page');
@@ -831,7 +775,11 @@ function openPersonal(kind){
  return false;
 }
 back.addEventListener('click',()=>{
- if(currentKind()==='mail'&&typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
+ if(currentKind()==='mail'){
+  if(typeof mailEditorExitHandler==='function'){mailEditorExitHandler();return}
+  if(mailCurrent){mailCurrent=null;sync();return}
+  if(mailFolder!=='overview'){mailFolder='overview';sync();return}
+ }
  const destination=returnDestination?.hash;
  if(destination)location.hash=destination;
  else $('navHome')?.click();
