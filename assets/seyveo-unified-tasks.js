@@ -906,16 +906,19 @@
  const resetButton=$('svCabinetReset'),status=$('svCabinetStatus');
  if(!root||!list||!dialog||!launch||!empty||!catalogHost||!search||!guideHost)return;
  const KEY='seyveo-cabinet-layout-v1';
- // A prominent, single-purpose continuation above cabinet tools while setup is unfinished.
+ // This is a voluntary Sayvi conversation, NOT the status of the saved tool layout.
+ // Saving the layout must never remove the user's way back into Sayvi setup.
  const resume=$('svCabinetContinueWithSayvi');
  function syncResume(){
   if(!resume)return;
-  let complete=false;
-  try{complete=localStorage.getItem(KEY)!==null}catch{}
-  resume.hidden=complete;
+  resume.hidden=false;
+  const label=resume.querySelector('.sv-cabinet-resume-copy strong');
+  if(label)label.textContent='Продолжить с Сэйви';
+  const note=resume.querySelector('.sv-cabinet-resume-copy small');
+  if(note)note.textContent='Вместе настроим или улучшим кабинет';
  }
  resume?.addEventListener('click',()=>{
-  // Reuse the existing Sayvi onboarding route; never create a parallel questionnaire.
+  // The existing onboarding controller handles resume and saved answers.
   const existing=$('svCabinetStartWithSayvi');
   if(existing)existing.click();
   else launch.click();
