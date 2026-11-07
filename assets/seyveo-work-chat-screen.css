@@ -2255,3 +2255,21 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
  background:rgba(116,133,145,.14)!important;
 }
+
+/* SEYVEO assignment: ALWAYS anchor to the bottom action row.
+   Multiline text unfolds ABOVE controls; the task never floats alongside text. */
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]),
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]){
+ top:auto!important;
+ bottom:12px!important;
+ right:54px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
+ padding-right:12px!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]),
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-can-assign.svcp-compose-multiline #svcpComposerDirectTask:not([hidden]){
+  right:49px!important;
+ }
+}
