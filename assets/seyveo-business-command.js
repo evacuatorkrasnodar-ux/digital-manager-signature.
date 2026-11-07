@@ -438,8 +438,8 @@ function syncComposerActions(){
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
- // Only the INTERNAL text-and-mic capsule is slimmer; outer work dock is unchanged.
- const minHeight=28;
+ // Keep INNER text-and-mic capsule at 48px; approved outer work dock stays unchanged.
+ const minHeight=48;
  const maxHeight=144;
  input.style.setProperty('height',minHeight+'px','important');
  const height=input.value?Math.min(maxHeight,Math.max(minHeight,input.scrollHeight)):minHeight;
