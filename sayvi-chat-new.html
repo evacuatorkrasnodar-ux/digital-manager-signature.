@@ -2983,6 +2983,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   spokenFinal='';spokenInterim='';speechStopping=false;
  }
  function cancelSpeech(){
+  heldSpeechReadyText='';
   speechAborted=true;++speechGeneration;
   const old=speechSession;speechSession=null;
   try{old?.abort()}catch{}
@@ -2991,6 +2992,16 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  function completeSpeech(generation){
   if(generation!==speechGeneration||speechAborted)return;
   const text=(spokenFinal||spokenInterim).trim();
+  // Safari may finish recognition while a finger is still down. Wait for
+  // release, then dispatch the text: never send on an early onend event.
+  if(holdSpeechPointer!==null&&!speechSendRequested){
+   heldSpeechReadyText=text;
+   const completed=speechSession;speechSession=null;
+   ++speechGeneration;
+   try{completed?.abort()}catch{}
+   clearSpeech();
+   return;
+  }
   const shouldSend=speechSendRequested;
   speechSendRequested=false;
   const finished=speechSession;
@@ -3037,6 +3048,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
    return;
   }
   let r;try{r=new SpeechApi()}catch{status.textContent='Голосовой ввод недоступен.';return}
+  heldSpeechReadyText='';
   speechAborted=false;speechStopping=false;speechSendRequested=false;speechHasResult=false;
   const generation=++speechGeneration;
   speechSession=r;spokenFinal='';spokenInterim='';
@@ -3093,7 +3105,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  }
  // Hold to speak; release to send the recognized text to Sayvi.
  // Capture the pointer so releasing beyond the mic still completes the turn.
- let holdSpeechPointer=null,suppressMicClick=false;
+ let holdSpeechPointer=null,suppressMicClick=false,heldSpeechReadyText='';
  mic.style.touchAction='none';
  mic.setAttribute('aria-label','Удерживайте для голосового сообщения');
  mic.addEventListener('pointerdown',event=>{
@@ -3109,8 +3121,18 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   holdSpeechPointer=null;
   event.preventDefault();
   try{if(mic.hasPointerCapture(event.pointerId))mic.releasePointerCapture(event.pointerId)}catch{}
-  if(cancelled){if(speechSession)cancelSpeech();return}
+  if(cancelled){
+   heldSpeechReadyText='';
+   if(speechSession)cancelSpeech();
+   return;
+  }
   if(speechSession){speechSendRequested=true;stopSpeech()}
+  else if(heldSpeechReadyText){
+   const transcript=heldSpeechReadyText;
+   heldSpeechReadyText='';
+   ask(transcript);
+  }
+  window.setTimeout(()=>{suppressMicClick=false},350);
  }
  mic.addEventListener('pointerup',event=>releaseHeldSpeech(event));
  mic.addEventListener('pointercancel',event=>releaseHeldSpeech(event,true));
@@ -3130,6 +3152,7 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  document.getElementById('sayviSpeechSend').addEventListener('click',sendSpeech);
  // A hidden page should never keep the phone's microphone active.
  function releaseSpeechOnLeave(){
+  heldSpeechReadyText='';holdSpeechPointer=null;
   if(!speechSession)return;
   ++speechGeneration;speechAborted=true;speechSendRequested=false;
   const old=speechSession;speechSession=null;
