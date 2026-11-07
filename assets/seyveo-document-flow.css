@@ -217,3 +217,19 @@
 @media(prefers-reduced-motion:reduce){
  #sayviSurfacePage .svdf-pulse-tile{animation:none;transition:none}
 }
+
+
+/* SEYVEO DOCS uses the existing cabinet role, not an independent demo switch. */
+#sayviSurfacePage .svdf-role-current{
+ box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;
+ justify-content:space-between;gap:5px 10px;min-height:45px;
+ margin:0 0 14px;padding:9px 11px;
+ border:1px solid color-mix(in srgb,var(--soft-line) 48%,transparent);
+ border-radius:16px;background:color-mix(in srgb,var(--card) 24%,transparent);
+}
+#sayviSurfacePage .svdf-role-current span{
+ color:var(--secondary);font-size:11px;line-height:1.38;
+}
+#sayviSurfacePage .svdf-role-current strong{
+ color:var(--text);font-size:12px;font-weight:590;line-height:1.38;
+}
