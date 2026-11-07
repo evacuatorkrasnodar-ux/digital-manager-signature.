@@ -126,14 +126,14 @@
 #svWorkShell[data-shared-work="true"] #calendarPage #calendarAdd.calendar-header-add{
  -webkit-appearance:none!important;appearance:none!important;
  box-sizing:border-box!important;display:grid!important;place-items:center!important;
- flex:0 0 40px!important;flex-grow:0!important;flex-shrink:0!important;
- width:40px!important;height:40px!important;
- min-width:40px!important;max-width:40px!important;
- min-height:40px!important;max-height:40px!important;
+ flex:0 0 var(--sv-ui-touch,44px)!important;flex-grow:0!important;flex-shrink:0!important;
+ width:var(--sv-ui-touch,44px)!important;height:var(--sv-ui-touch,44px)!important;
+ min-width:var(--sv-ui-touch,44px)!important;max-width:var(--sv-ui-touch,44px)!important;
+ min-height:var(--sv-ui-touch,44px)!important;max-height:var(--sv-ui-touch,44px)!important;
  aspect-ratio:1/1!important;
  margin:0!important;padding:0!important;
  border:0!important;border-radius:50%!important;
- background:rgba(151,180,189,.14)!important;
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075))!important;
  box-shadow:none!important;filter:none!important;transform:none!important;
  -webkit-backdrop-filter:blur(20px) saturate(118%)!important;
  backdrop-filter:blur(20px) saturate(118%)!important;
@@ -183,8 +183,10 @@
 }
 #svWorkShell #svWorkAdd:not([hidden]){
  border-radius:50%!important;
- width:42px!important;height:42px!important;
- background:color-mix(in srgb,var(--text) 9%,transparent)!important;
+ width:var(--sv-ui-touch,44px)!important;height:var(--sv-ui-touch,44px)!important;
+ min-width:var(--sv-ui-touch,44px)!important;max-width:var(--sv-ui-touch,44px)!important;
+ min-height:var(--sv-ui-touch,44px)!important;max-height:var(--sv-ui-touch,44px)!important;
+ background:var(--sv-ui-quiet-surface,rgba(160,184,193,.075))!important;
  box-shadow:none!important;
 }
 
