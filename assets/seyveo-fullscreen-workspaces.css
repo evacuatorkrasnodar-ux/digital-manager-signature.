@@ -569,9 +569,10 @@ html:not(.seyveo-conversation) body .app :is(
 /* Inline old sheet rule used important margin:auto and forced the cabinet
    chevron into the center. The full-page header now owns its back arrow. */
 html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head{
- display:flex!important;align-items:center!important;justify-content:flex-start!important;
- gap:9px!important;min-height:48px!important;
- margin:0 0 13px!important;padding:0!important;
+ display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
+ grid-template-rows:54px auto!important;
+ align-items:center!important;column-gap:6px!important;row-gap:0!important;
+ min-height:54px!important;margin:0 0 14px!important;padding:0!important;
 }
 html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head #svCabinetCancel.sv-cabinet-dismiss{
  display:inline-flex!important;align-items:center!important;justify-content:center!important;
@@ -588,8 +589,13 @@ html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head #svCa
  fill:none!important;stroke:currentColor!important;stroke-width:1.5!important;
  stroke-linecap:round!important;stroke-linejoin:round!important;
 }
-html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > div{
- flex:1 1 auto!important;min-width:0!important;
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > h2{
+ grid-column:2!important;grid-row:1!important;align-self:center!important;
+ margin:0!important;min-width:0!important;
+}
+html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > p{
+ grid-column:2!important;grid-row:2!important;min-width:0!important;
+ margin:0!important;
 }
 /* Read-only full-screen destinations keep a quiet top-left return control,
    not a 'Done' pill in the top right. Event editors have their own actions. */
