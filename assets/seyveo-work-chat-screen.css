@@ -1922,117 +1922,90 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
 }
 
-/* SEYVEO material try-on: outer Work Chat panel uses the EXACT Home dock paint.
-   Do not alter the local material tokens: the inner capsule, buttons and task
-   controls still use their existing lighter paint. No geometry changes. */
-#svcpWorkChatScreen #svcpChatForm{
- background:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10)!important;
- -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
- backdrop-filter:blur(22px) saturate(1.18)!important;
-}
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm{
- background:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68)!important;
- box-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70)!important;
-}
-:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen #svcpChatForm{
- background:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,250,255,.075)!important;
-}
-:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen #svcpChatForm{
- background:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,249,255,.08)!important;
-}
-:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen #svcpChatForm{
- background:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,245,233,.07)!important;
-}
-@media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen #svcpChatForm{
-  background:var(--sv-air-dock,#24372f)!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
- }
-}
-
-/* SEYVEO Work Chat · Home-style velvet glass composition.
-   Home paints glass on a separate ::before layer; the parent stays transparent.
-   Scoped ONLY to the Work Chat outer panel, preserving the existing ::after
-   capsule glow, all buttons, message lens, sizing and touch handlers. */
+/* SEYVEO TEMP DOCK CLONE — literal Home dock structure/material on work chat.
+   Home .dock has a transparent frame and TWO glass panes (::before and ::after).
+   Its chat buttons, message capsule, behaviors and the 56px alignment stay untouched.
+   Remove this block to return to previous Work Chat surface. */
 #svcpWorkChatScreen #svcpChatForm,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
  background:transparent!important;
  background-image:none!important;
+ border:0!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
+ --svcp-home-copy-material:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72);
+ --svcp-home-copy-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10);
 }
 #svcpWorkChatScreen #svcpChatForm::before,
-#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+#svcpWorkChatScreen #svcpChatForm::after,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::after{
  content:""!important;
  display:block!important;
  position:absolute!important;
- inset:0!important;
- width:auto!important;
+ top:1px!important;
+ bottom:1px!important;
+ left:auto!important;
  height:auto!important;
+ width:auto!important;
+ max-width:none!important;
  z-index:0!important;
  pointer-events:none!important;
  border:0!important;
- border-radius:inherit!important;
- background:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10)!important;
- -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
- backdrop-filter:blur(22px) saturate(1.18)!important;
- transform:none!important;
+ border-radius:999px!important;
+ background:var(--svcp-home-copy-material)!important;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(22px) saturate(1.18))!important;
+ backdrop-filter:var(--sv-liquid-nav-blur,blur(22px) saturate(1.18))!important;
+ box-shadow:var(--svcp-home-copy-shadow)!important;
  filter:none!important;
+ transform:none!important;
  opacity:1!important;
 }
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68)!important;
- box-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70)!important;
+/* Same pane geometry as Home dock, including the 50 × 50 right circle. */
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+ left:0!important;
+ right:58px!important;
 }
-:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,250,255,.075)!important;
+#svcpWorkChatScreen #svcpChatForm::after,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::after{
+ left:auto!important;
+ right:0!important;
+ width:50px!important;
+ top:3px!important;
+ bottom:3px!important;
 }
-:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,249,255,.08)!important;
+/* Use precise Home theme materials; do not change the Work Chat control tokens. */
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm{
+ --svcp-home-copy-material:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68);
+ --svcp-home-copy-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70);
 }
-:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,245,233,.07)!important;
+:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen #svcpChatForm{
+ --svcp-home-copy-material:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70);
+ --svcp-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,250,255,.075);
+}
+:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen #svcpChatForm{
+ --svcp-home-copy-material:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71);
+ --svcp-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,249,255,.08);
+}
+:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen #svcpChatForm{
+ --svcp-home-copy-material:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72);
+ --svcp-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,245,233,.07);
+}
+/* Home's 22px blur, not Work Chat's locally reduced 13px blur. */
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen #svcpChatForm::after,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::after{
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen #svcpChatForm::before{
+ #svcpWorkChatScreen #svcpChatForm::before,
+ #svcpWorkChatScreen #svcpChatForm::after{
   background:var(--sv-air-dock,#24372f)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
- }
-}
-
-/* SEYVEO velvet transparency refinement — outer work dock only.
-   The previous test copied Home's opaque dark backing (.70–.72), hiding the
-   conversation beneath it. Keep the exact Home glass highlight and blur,
-   but let the separate backdrop layer remain visibly translucent. */
-#svcpWorkChatScreen #svcpChatForm::before,
-#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.28)!important;
-}
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(255,255,255,.36),rgba(255,255,255,.20) 55%,rgba(218,234,241,.10)),rgba(235,242,247,.26)!important;
-}
-:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.28)!important;
-}
-:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.28)!important;
-}
-:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen #svcpChatForm::before{
- background:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.28)!important;
-}
-@media(prefers-reduced-transparency:reduce){
- #svcpWorkChatScreen #svcpChatForm::before{
-  background:var(--sv-air-dock,#24372f)!important;
  }
 }
