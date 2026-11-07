@@ -54,6 +54,31 @@ for (const file of [
  'assets/sayvi-surfaces.css'
 ]) assert.match(read(file),/--sv-ui-(sheet|glass)/, file + ' uses canonical materials');
 
+
+/* Cabinet chooser and nested tool detail must share the same accessible
+ * material and navigation. No fake secondary "Выбрать все" action inside
+ * a single instrument's configuration screen. */
+const cabinetCss=read('assets/seyveo-business-command.css');
+const cabinetJs=read('assets/seyveo-unified-tasks.js');
+assert.match(cabinetCss,/\.sv-cabinet-dialog\s*\{[\s\S]*?background:var\(--sv-ui-sheet\)/);
+assert.match(cabinetCss,/\.sv-cabinet-footer\s*\{[\s\S]*?background:var\(--sv-ui-sheet\)/);
+assert.match(cabinetCss,/#svCabinetDialog\[data-cabinet-view="guide"\] \.sv-cabinet-reset/);
+assert.match(cabinetCss,/\.sv-cabinet-guide-back\s*\{[\s\S]*?background:transparent/);
+assert.match(cabinetCss,/\.sv-cabinet-source\s*\{[\s\S]*?background:var\(--sv-ui-field\)/);
+assert.match(cabinetJs,/dialog\.dataset\.cabinetView='guide'/);
+assert.match(cabinetJs,/dialog\.dataset\.cabinetView='catalog'/);
+assert.match(cabinetJs,/saveButton\?\.addEventListener\('click',save\)/);
+assert.match(cabinetJs,/cancelButton\?\.addEventListener\('click',cancel\)/);
+
+for(const file of [
+ 'assets/seyveo-browser.css','assets/seyveo-connect.css',
+ 'assets/seyveo-connections.css','assets/seyveo-fan-workshop.css',
+ 'assets/personal-wellness.css','assets/seyveo-smart-home.css',
+ 'assets/account-demo.css','assets/connection-coach.css'
+]){
+ assert.match(read(file),/var\(--sv-ui-(?:sheet|glass|field|selected-surface)\)/,
+  file+' shares a canonical SEYVEO surface token');
+}
 const dialogs = [...html.matchAll(/<dialog\b[^>]*\bid="([^"]+)"/g)].map(x=>x[1]);
 assert.ok(dialogs.length>=30,'The main app retains all existing dialog destinations');
 assert.equal(new Set(dialogs).size,dialogs.length,'Each existing dialog has a unique ID');
