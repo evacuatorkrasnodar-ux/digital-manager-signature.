@@ -2602,3 +2602,40 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO dock-search twin · 50px Plus, aligned to the Home magnifier.
+   Expand its grid track as well: a 50px control must never spill onto
+   Sayvi or the input. Leave all actions, materials and handlers intact. */
+#svcpWorkChatScreen #svcpChatForm,
+#svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+ grid-template-columns:50px 40px 38px minmax(0,1fr)!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:active,:focus){
+ box-sizing:border-box!important;
+ grid-column:1!important;
+ width:50px!important;
+ min-width:50px!important;
+ max-width:50px!important;
+ height:50px!important;
+ min-height:50px!important;
+ max-height:50px!important;
+ aspect-ratio:1/1!important;
+ justify-self:center!important;
+ align-self:center!important;
+ margin:0!important;
+ padding:0!important;
+ border-radius:50%!important;
+}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
+ left:60px!important; /* 50px Plus + 3px actual separation */
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm,
+ #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
+ #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
+  grid-template-columns:50px 38px 35px minmax(0,1fr)!important;
+ }
+}
