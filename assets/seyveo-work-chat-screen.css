@@ -1725,3 +1725,46 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   padding:7px 12px!important;
  }
 }
+
+/* SEYVEO · fixed compact composer geometry on focus (mouse and touch). */
+/* A click must never promote the one-line composer or grow its backdrop.
+   Only svcp-compose-multiline (set by actual text wrapping) unlocks height. */
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline),
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline),
+#svcpWorkChatScreen:focus-within #svcpChatForm:not(.svcp-compose-multiline),
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):focus-within{
+ box-sizing:border-box!important;
+ height:60px!important;
+ min-height:60px!important;
+ max-height:60px!important;
+ grid-template-rows:48px!important;
+ padding:6px 7px!important;
+ transition:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ box-sizing:border-box!important;
+ width:calc(100% - 3px)!important;
+ min-width:0!important;
+ max-width:calc(100% - 3px)!important;
+ height:40px!important;
+ min-height:40px!important;
+ max-height:40px!important;
+ transition:none!important;
+ transform:none!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline),
+ #svcpWorkChatScreen:focus-within #svcpChatForm:not(.svcp-compose-multiline){
+  padding:6px 5px!important;
+ }
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+  width:calc(100% - 6px)!important;
+  max-width:calc(100% - 6px)!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+ }
+}
+/* Text-area sizing is still JS-driven so a real line break grows upwards. */
