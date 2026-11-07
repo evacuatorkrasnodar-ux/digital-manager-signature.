@@ -1265,14 +1265,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    dark rgba(184,195,201,.25) + blur(16px) saturate(105%);
    light rgba(99,121,133,.22) + blur(14px) saturate(115%) contrast(1.12).
    This local override does not alter the approved dock on Home.
-   No secondary input capsule, edge, rim or raised shadow. */
+   No secondary text capsule, border, rim or embossed shadow. A soft exterior shadow defines the single surface. */
 #svcpWorkChatScreen{
- --sv-liquid-nav-material:rgba(184,195,201,.25);
+ --sv-liquid-nav-material:linear-gradient(165deg,rgba(243,250,253,.11) 0%,rgba(184,195,201,.025) 58%,rgba(98,116,126,.045) 100%),rgba(184,195,201,.25);
  --sv-liquid-nav-blur:blur(16px) saturate(105%);
- --sv-liquid-nav-shadow:none;
+ --sv-liquid-nav-shadow:0 6px 16px rgba(4,10,18,.17);
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
- --sv-liquid-nav-material:rgba(99,121,133,.22);
+ --sv-liquid-nav-material:linear-gradient(165deg,rgba(255,255,255,.19) 0%,rgba(99,121,133,.02) 60%,rgba(99,121,133,.035) 100%),rgba(99,121,133,.22);
+ --sv-liquid-nav-shadow:0 5px 15px rgba(39,56,68,.09);
  --sv-liquid-nav-blur:blur(14px) saturate(115%) contrast(1.12);
 }
 
