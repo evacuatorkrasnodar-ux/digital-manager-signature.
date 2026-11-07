@@ -1314,8 +1314,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-shadow:none!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
- background:linear-gradient(145deg,rgba(173,185,194,.32),rgba(132,151,162,.22)),rgba(142,157,169,.09)!important;
- border-color:rgba(132,150,162,.21)!important;
+ background:linear-gradient(155deg,rgba(236,239,242,.37),rgba(180,186,193,.26) 55%,rgba(147,154,163,.18)),rgba(199,205,210,.09)!important;
+ border-color:rgba(245,248,250,.25)!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
  background:rgba(76,173,113,.15)!important;
@@ -1396,12 +1396,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
  grid-column:1!important;
- /* Flat grey smoke glass: deliberately more legible than the other tools. */
- background:linear-gradient(145deg,rgba(211,221,228,.26),rgba(156,173,184,.17) 68%,rgba(124,141,153,.15)),rgba(139,154,166,.11)!important;
- border-color:rgba(224,236,243,.15)!important;
+ /* The plus shares the message capsule's flat silver smoke-glass material. */
+ background:linear-gradient(155deg,rgba(199,203,207,.16),rgba(145,152,160,.12) 56%,rgba(124,133,142,.10)),rgba(110,116,124,.06)!important;
+ border-color:rgba(222,229,233,.13)!important;
  box-shadow:none!important;
- -webkit-backdrop-filter:blur(14px) saturate(108%)!important;
- backdrop-filter:blur(14px) saturate(108%)!important;
+ -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
+ backdrop-filter:var(--sv-liquid-nav-blur)!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpCameraToggle{grid-column:2!important}
 #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
