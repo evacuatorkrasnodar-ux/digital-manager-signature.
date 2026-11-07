@@ -1553,13 +1553,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex-direction:column!important;
  justify-content:flex-end!important;
  box-sizing:border-box!important;
- /* 7px shell padding + 3px inner inset = 10px, matching top/bottom. */
- width:calc(100% - 3px)!important;
+ /* Keep the approved right gap: move the capsule's left edge 7px right. */
+ width:calc(100% - 10px)!important;
  min-width:0!important;
  min-height:40px!important;
  height:auto!important;
  padding:0!important;
  margin:0!important;
+ margin-left:7px!important;
  border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
  border-radius:999px!important;
@@ -1617,8 +1618,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* Match the compact Sayvi button diameter on narrow iPhones. */
 @media(max-width:390px){
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
-  /* 5px shell padding + 6px inner inset = 11px, matching top/bottom. */
-  width:calc(100% - 6px)!important;
+  /* Keep the approved 6px right inset; add 6px air beside emoji. */
+  width:calc(100% - 12px)!important;
+  margin-left:6px!important;
   min-height:38px!important;
  }
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field #svcpChatInput{
