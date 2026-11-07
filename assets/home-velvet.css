@@ -85,18 +85,20 @@ html:not(.seyveo-conversation):has(#homePage:not([hidden])) .app{
  color:var(--text);
  border:0;background:transparent;box-shadow:none;
 }
+/* Home chooser is a floating Sayvi-glass menu, not a green Velvet slab. */
 #homeHeader .home-world-popover{
- background:var(--sv-velvet-panel)!important;
+ background:var(--sv-ui-glass)!important;
  border-color:transparent!important;
- -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ -webkit-backdrop-filter:var(--sv-ui-glass-filter)!important;
+ backdrop-filter:var(--sv-ui-glass-filter)!important;
  box-shadow:none!important;
 }
 #homeHeader .home-world-choice{
- background:var(--sv-air-control)!important;
+ background:transparent!important;
  border-color:transparent!important;
- box-shadow:none!important;border-radius:14px!important;
+ box-shadow:none!important;border-radius:var(--sv-ui-radius-control,12px)!important;
 }
-#homeHeader .home-world-choice:active{background:var(--sv-air-selected)!important}
+#homeHeader .home-world-choice:active{background:var(--sv-ui-selected-surface)!important}
 
 /* SEYVEO · Home Velvet v6 — understated Apple-inspired finish.
    More considered typography, lighter card surfaces, compact content rhythm.
