@@ -328,3 +328,106 @@
   background:color-mix(in srgb,var(--seyveo-emerald) 13%,white)!important;
  }
 }
+
+
+/* SEYVEO flat page restoration · user approved 2026-11-07 */
+/* Large destinations are PAGES, not separate glass cards.
+   Existing compact popovers and the Sayvi composer retain their own material.
+   Do not replace any DOM, events, dock handlers or data bindings.
+   This corrects the old state that survived the earlier file rollback. */
+@media(max-width:720px){
+ /* New Task: the top-layer shell already occupies the whole viewport.
+    Give its scrollable content the actual page canvas, not a floating lens. */
+ html body dialog#personalTaskDialog.personal-task-dialog[open]{
+  background:var(--bg)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:none!important;
+ }
+ html body #personalTaskDialog[open] .personal-task-sheet{
+  box-sizing:border-box!important;
+  position:absolute!important;
+  top:0!important;
+  right:0!important;left:0!important;
+  bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+  width:100%!important;max-width:100%!important;
+  height:auto!important;max-height:none!important;
+  transform:none!important;
+  margin:0!important;
+  padding:calc(21px + env(safe-area-inset-top,0px)) 18px 16px!important;
+  border:0!important;border-radius:0!important;
+  background:var(--bg)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+ }
+ html body #personalTaskDialog[open].personal-task-dialog form{
+  background:var(--card2)!important;
+  border:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ /* Cabinet chooser and its nested tool view use the SAME full-screen canvas.
+    One visible layer, not a rounded modal inside a page. */
+ html body dialog#svCabinetDialog.sv-cabinet-dialog[open]{
+  position:fixed!important;inset:0!important;
+  width:100vw!important;min-width:0!important;max-width:100vw!important;
+  height:100vh!important;height:100dvh!important;
+  min-height:100dvh!important;max-height:100dvh!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:var(--bg)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+ }
+ html body #svCabinetDialog[open] .sv-cabinet-dialog-body{
+  box-sizing:border-box!important;
+  min-height:100%!important;
+  padding:calc(18px + env(safe-area-inset-top,0px))
+          max(16px,env(safe-area-inset-right,0px))
+          calc(18px + env(safe-area-inset-bottom,0px))
+          max(16px,env(safe-area-inset-left,0px))!important;
+ }
+ html body #svCabinetDialog[open] .sv-cabinet-footer{
+  border-top-color:var(--soft-line)!important;
+  background:var(--bg)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){
+  background:var(--card2)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ /* Event editor uses a dock-backed full-screen dialog already. Flatten only
+    its redundant inner panel so its time wheel remains scrollable. */
+ html body dialog#calendarEventDialog.cal-form-dialog[open]{
+  background:var(--bg)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html body #calendarEventDialog[open] .cal-event-sheet{
+  flex:1 1 auto!important;
+  box-sizing:border-box!important;
+  align-self:stretch!important;
+  width:100%!important;max-width:none!important;
+  height:100%!important;max-height:100%!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+/* Desktop retains the earlier compact dialog geometry, but big panels are
+   solid thematic surfaces rather than blurred glass. */
+@media(min-width:721px){
+ html body #personalTaskDialog[open] .personal-task-sheet,
+ html body #svCabinetDialog[open].sv-cabinet-dialog,
+ html body #calendarEventDialog[open] .cal-event-sheet{
+  background:var(--bg)!important;
+  border-color:var(--soft-line)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
