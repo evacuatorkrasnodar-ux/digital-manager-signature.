@@ -415,6 +415,13 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
  .dock>#assistantButton,.dock>#assistantButton .button-art{transition:none!important}
 }
 
+/* Reuse the approved Home sphere as the compact Sayvi dock identity. */
+.dock>#assistantButton .sayvi-dock-orb{
+ display:block;width:48px;height:48px;max-width:48px;max-height:48px;
+ flex:0 0 48px;object-fit:contain;pointer-events:none;
+ user-select:none;-webkit-user-select:none;filter:none;
+}
+
 /* SEYVEO palette-aware fixed dock and Feather composer.
    Only paint changes. No layout, touch-size, sphere, animation or waveform edits. */
 :root[data-theme=dark][data-palette=graphite] .dock{
