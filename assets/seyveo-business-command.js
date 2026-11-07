@@ -1279,7 +1279,7 @@ function pendingRecognitionSuggestions(){
  const seen=new Set(),out=[];
  for(let i=state.chat.length-1;i>=0&&out.length<5;i--){
   const msg=state.chat[i];
-  if(!msg||msg.role!=='demo-elena')continue;
+  if(!msg||msg.role!=='demo-elena'||!Number.isFinite(Number(msg.at))||Date.now()-Number(msg.at)>7*86400000)continue;
   const suggestion=suggestedRecognition(msg,'elena');
   if(!suggestion||seen.has(suggestion.sourceKey))continue;
   seen.add(suggestion.sourceKey);
@@ -1312,6 +1312,7 @@ function awardRecognitionSuggestion(sourceKey){
 }
 window.SEYVEO_RECOGNITION_COACH=Object.freeze({
  homeSuggestion(){
+  if(state.viewpoint!=='manager'||employeePreviewActive())return null;
   const proposal=pendingRecognitionSuggestions()[0];
   return proposal?{kind:'recognition',sourceKey:proposal.sourceKey,
    title:'⭐ Есть повод поблагодарить коллегу',
