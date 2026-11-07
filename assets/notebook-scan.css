@@ -64,10 +64,10 @@
 /* SEYVEO scanner Black/White Velvet v5: consistent touch targets.
    No changes to OCR, photo processing, or original poem line breaks. */
 #noteScanDialog.paper-scan-dialog{
- border-radius:22px;border-color:var(--seyveo-hdr-outline,var(--line));background:var(--sv-life-dialog-bg,var(--card));box-shadow:none;
+ border-radius:var(--sv-ui-radius-sheet,22px);border-color:var(--sv-ui-sheet-border);background:var(--sv-ui-sheet);-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);box-shadow:var(--sv-ui-sheet-shadow);
 }
 #noteScanDialog .paper-scan-inputs label{
- min-height:44px;border-radius:13px;background:var(--card);border:1px solid var(--seyveo-hdr-outline,var(--line));color:var(--text);font-weight:525;font-size:12.5px;-webkit-tap-highlight-color:transparent;
+ min-height:44px;border-radius:13px;background:var(--sv-ui-field);border:1px solid transparent;color:var(--text);font-weight:525;font-size:12.5px;-webkit-tap-highlight-color:transparent;
 }
 #noteScanDialog .paper-scan-inputs label:active{background:transparent;opacity:.67}
 #noteScanDialog .paper-scan-line-mode{
@@ -94,7 +94,7 @@
  outline:2px solid var(--text);outline-offset:3px;
 }
 #noteScanDialog .paper-scan-recognize{
- border-radius:13px;min-height:45px;background:var(--seyveo-hdr-active);border:1px solid var(--seyveo-hdr-outline,var(--line));color:var(--text);font-size:13px;font-weight:560;box-shadow:none;
+ border-radius:var(--sv-ui-radius-control,12px);min-height:44px;background:transparent;border:0;color:var(--text);font-size:12.5px;font-weight:590;box-shadow:none;
 }
 #noteScanDialog .paper-scan-recognize:disabled{
  opacity:.48;cursor:default;
