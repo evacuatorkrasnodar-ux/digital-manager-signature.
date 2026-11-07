@@ -77,6 +77,52 @@ function mount(slot,api){
   slot.append(form,$('p','sv-doc-note',
    'В браузерной версии пароль не восстанавливается. Данные могут пропасть при очистке браузера или удалении приложения. Для важных документов пока необходима отдельная резервная копия.'));
  }
+ function downloadLocal(file){
+  // Decrypt only after the user requests an action. The copied file leaves
+  // the encrypted browser vault, so never download as a background task.
+  const url=URL.createObjectURL(file),a=document.createElement('a');
+  a.href=url;a.download=file.name||'Документ';document.body.append(a);
+  a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),90000);
+ }
+ async function printOriginal(item,status){
+  const ext=String(item.name||'').split('.').pop().toLowerCase();
+  if(!['pdf','png','jpg','jpeg','webp'].includes(ext)){
+   status.textContent='Для печати Word или другого формата откройте скачанный оригинал в подходящем приложении либо подготовьте PDF с Сэйви.';
+   return;
+  }
+  // Open a blank tab in the direct tap event; WebKit may otherwise block it.
+  const tab=window.open('about:blank','_blank');
+  if(!tab){status.textContent='Safari заблокировал новую вкладку. Откройте оригинал и выберите «Печать» в меню браузера.';return}
+  try{
+   const file=await vault.getFile(area,item.id);
+   if(!valid()){tab.close();return}
+   const url=URL.createObjectURL(file);
+   tab.location.replace(url);
+   setTimeout(()=>URL.revokeObjectURL(url),180000);
+   status.textContent='Открыт оригинал. Для печати выберите «Поделиться» → «Печать» в Safari.';
+  }catch(error){
+   tab.close();
+   status.textContent=error?.message||'Не удалось подготовить документ к печати.';
+  }
+ }
+ async function shareOriginal(item,status){
+  if(typeof navigator.share!=='function'){
+   status.textContent='На этом устройстве системная отправка недоступна. Скачайте оригинал и прикрепите его в почте вручную.';
+   return;
+  }
+  const file=await vault.getFile(area,item.id);
+  if(!valid())return;
+  if(navigator.canShare&&!navigator.canShare({files:[file]})){
+   status.textContent='Safari не поддерживает отправку этого вложения. Скачайте оригинал и приложите к письму вручную.';
+   return;
+  }
+  try{
+   await navigator.share({files:[file],title:file.name});
+   if(valid())status.textContent='Открыто системное меню отправки. Факт доставки проверяйте в выбранном приложении.';
+  }catch(error){
+   if(valid()&&error?.name!=='AbortError')status.textContent='Не удалось открыть отправку. Можно скачать файл и передать вручную.';
+  }
+ }
  async function unlockedView(){
   if(!valid())return;
   let items;
@@ -132,10 +178,31 @@ function mount(slot,api){
      if(valid())api.openFile(file,area);
     });
    }));
-   actions.append(btn('Удалить',()=>{
+   const details=$('details','sv-vault-row-menu');
+   const summary=$('summary','sv-vault-row-more','Действия');
+   summary.setAttribute('aria-label','Действия с документом '+item.name);
+   const options=$('div','sv-vault-row-options');
+   const actionStatus=message('');
+   const action=(label,fn)=>{
+    const b=btn(label,fn,'sv-vault-option');
+    options.append(b);return b;
+   };
+   action('Скачать оригинал',()=>run(async()=>{
+    const file=await vault.getFile(area,item.id);
+    if(valid()){downloadLocal(file);actionStatus.textContent='Оригинал подготовлен для скачивания.'}
+   }));
+   action('Печать',()=>{printOriginal(item,actionStatus)});
+   action('Поделиться / почта',()=>run(()=>shareOriginal(item,actionStatus)));
+   action('PDF / Word с Сэйви',()=>api.toSayvi?.('export'));
+   action('Подписать КЭП',()=>{
+    actionStatus.textContent='Квалифицированная электронная подпись ещё не подключена. Нужны сертификат, проверка полномочий и разрешённый сервис подписания.';
+    api.showIntegrations?.();
+   });
+   action('Удалить из архива',()=>{
     if(!window.confirm('Удалить документ «'+item.name+'» из архива без возможности отмены?'))return;
     run(async()=>{await vault.remove(area,item.id);if(valid())await unlockedView()});
-   }));
+   });
+   details.append(summary,options,actionStatus);actions.append(details);
    entry.append(text,actions);list.append(entry);
   }
   slot.append(list,$('p','sv-doc-note',
