@@ -3709,3 +3709,29 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft{
  scroll-padding-bottom:12px!important;
 }
+
+/* v198 · Message bubbles must never shrink to fit a flex-column viewport.
+   Long and historical messages grow to their natural content height;
+   only the conversation list scrolls. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ align-items:stretch!important;
+ overflow-y:auto!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > :is(.svcp-bubble,.svcp-chat-day,.svcp-note,.svcp-chat-load-older){
+ flex-shrink:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages > .svcp-bubble{
+ flex:0 0 auto!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ overflow:visible!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpMessages .svcp-bubble .svcp-message-text{
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ overflow:visible!important;
+ overflow-wrap:anywhere!important;
+ white-space:pre-wrap!important;
+}
