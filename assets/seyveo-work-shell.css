@@ -164,20 +164,34 @@
 
 /* Action History is a nested destination, not a fourth root tab.
    Keep exactly one visible title and one functional SEYVEO back control. */
+/* History is a calm nested workspace, not a new inflated dialog.
+   One flat 44px back hit target and one compact heading on either theme. */
 #svWorkShell[data-history="true"] #svWorkHeader{
- grid-template-columns:42px minmax(0,1fr)!important;
- column-gap:6px!important;
+ grid-template-columns:44px minmax(0,1fr)!important;
+ column-gap:3px!important;
+ height:48px!important;min-height:48px!important;
+ margin:0 0 6px!important;
 }
 #svWorkShell[data-history="true"] #svWorkBack{
- grid-column:1!important;
- display:inline-flex!important;
- border-radius:50%!important;
- background:color-mix(in srgb,var(--text) 8%,transparent)!important;
- box-shadow:none!important;
+ grid-column:1!important;justify-self:start!important;
+ display:inline-flex!important;place-items:center!important;
+ width:44px!important;height:44px!important;
+ min-width:44px!important;min-height:44px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ filter:none!important;transform:none!important;
+}
+#svWorkShell[data-history="true"] #svWorkBack svg{
+ width:19px!important;height:19px!important;
+ stroke-width:var(--sv-ui-stroke,1.55)!important;
 }
 #svWorkShell[data-history="true"] #svWorkTitle{
  grid-column:2!important;
- font-size:clamp(24px,6.8vw,30px)!important;
+ font-size:clamp(22px,5.6vw,26px)!important;
+ font-weight:600!important;line-height:1.18!important;
+ letter-spacing:-.038em!important;
 }
 #svWorkShell[data-history="true"] #svWorkAdd[hidden],
 #svWorkShell[data-history="true"] #svWorkTabs[hidden]{
