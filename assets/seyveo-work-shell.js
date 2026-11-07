@@ -39,6 +39,7 @@
  const back=document.createElement('button');
  back.type='button';
  back.id='svWorkBack';
+ back.classList.add('sv-nav-back');
  back.setAttribute('aria-label','Вернуться назад');
  back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
  const title=document.createElement('h1');
@@ -163,5 +164,5 @@
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:6,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:7,sync});
 })();
