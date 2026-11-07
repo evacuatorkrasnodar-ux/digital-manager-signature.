@@ -1364,3 +1364,66 @@
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheels::before{
  background:rgba(63,119,99,.055)!important;border-color:rgba(63,119,99,.10)!important;
 }
+
+/* SEYVEO Calendar | flat neutral controls | 2026-11-07 */
+/* Full-page event editor keeps calendar logic; only the paint changes. */
+#calendarEventDialog[open] :is(
+ .cal-form-primary input[type=text],.cal-date-control,.cal-time-control,
+ .cal-kind-options,#seyveoPickTime.cal-pick-time,textarea
+){
+ background:var(--sv-ui-field)!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog[open] #seyveoPickTime.cal-pick-time{
+ background:transparent!important;
+ border-radius:0!important;
+ padding:2px 0!important;
+}
+#calendarEventDialog[open] #seyveoPickTime .cal-pick-wheels::before{
+ background:var(--sv-ui-quiet-surface)!important;
+ border-color:var(--sv-ui-divider)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-wheel-option.is-selected,
+ #seyveoPickDate .cal-pick-day.is-selected,
+ .cal-kind-option input:checked+span
+){
+ background:var(--sv-ui-selected-surface)!important;
+ border-color:transparent!important;
+ color:var(--text)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-time-done,
+ .cal-dialog-actions>.btn.primary,
+ .sv-form-actions>button.btn.primary
+){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;
+ width:auto!important;min-width:0!important;
+ min-height:44px!important;height:44px!important;
+ padding:0 10px!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ color:var(--text)!important;
+ font-size:12.5px!important;font-weight:550!important;
+}
+#calendarEventDialog[open] .cal-pick-time-actions,
+#calendarEventDialog[open] .cal-dialog-actions{
+ background:transparent!important;
+ border-top-color:var(--sv-ui-divider)!important;
+ box-shadow:none!important;
+}
+#calendarEventDialog[open] :is(
+ .cal-picker-trigger:focus-visible,
+ .cal-date-control:focus-within,
+ .cal-time-control:focus-within,
+ .cal-kind-option input:focus-visible+span
+){
+ outline:2px solid var(--secondary)!important;
+ outline-offset:1px!important;
+}
