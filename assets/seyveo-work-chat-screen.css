@@ -1495,7 +1495,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-sizing:border-box!important;
  width:100%!important;
  min-width:0!important;
- min-height:38px!important;
+ min-height:32px!important;
  height:auto!important;
  padding:0!important;
  margin:0!important;
@@ -1518,22 +1518,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  grid-column:auto!important;
  grid-row:auto!important;
  flex:0 0 auto!important;
- height:38px!important;
- min-height:38px!important;
+ height:32px!important;
+ min-height:32px!important;
  max-height:144px!important;
- padding:7px 36px 7px 10px!important;
+ padding:4px 36px 4px 10px!important;
  border-radius:999px!important;
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field :is(#svcpVoiceRecord,.svcp-chat-send){
  position:absolute!important;
  right:2px!important;
- bottom:2px!important;
+ bottom:0!important;
  width:34px!important;
  min-width:34px!important;
  max-width:34px!important;
- height:34px!important;
- min-height:34px!important;
- max-height:34px!important;
+ height:32px!important;
+ min-height:32px!important;
+ max-height:32px!important;
 }
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
