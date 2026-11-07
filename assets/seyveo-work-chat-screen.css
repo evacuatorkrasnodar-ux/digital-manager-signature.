@@ -2088,3 +2088,20 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border:0!important;
  box-shadow:none!important;
 }
+
+/* SEYVEO: Plus uses the SAME quiet matte-silver pigment as the message capsule.
+   One smooth circle, no highlight halo, drop shadow or extra backdrop layer. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:active){
+ background:linear-gradient(155deg,rgba(221,226,232,.24),rgba(176,185,195,.19) 56%,rgba(143,153,164,.16)),rgba(142,152,162,.09)!important;
+ border-color:rgba(220,228,235,.16)!important;
+ box-shadow:none!important;
+ filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:active){
+ background:linear-gradient(155deg,rgba(239,242,246,.43),rgba(193,201,210,.30) 55%,rgba(159,170,182,.21)),rgba(190,199,208,.12)!important;
+ border-color:rgba(245,248,250,.25)!important;
+}
