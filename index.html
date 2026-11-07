@@ -2863,7 +2863,8 @@ function homeBusinessAdvice(){
  // The separate Business Map interview is retired. Never create
  // an unclickable Home recommendation that opens the old questionnaire.
  // Approved connection follow-ups alone may appear here.
- return window.SEYVEO_CONNECTION_COACH?.homeSuggestion?.()||null;
+ return window.SEYVEO_CONNECTION_COACH?.homeSuggestion?.()
+  ||window.SEYVEO_RECOGNITION_COACH?.homeSuggestion?.()||null;
 }
 function openHomeAdvice(advice){
  if(!advice||advice.kind!=='connect')return;
@@ -3022,9 +3023,17 @@ function render(){
     // silently send messages or sign documents.
     // The Living Surface decorates this real recommendation with its
     // own large artwork. Do not reintroduce the former mini card icon.
-    $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true" data-explanation="'+escapeHtml(advice.detail||advice.why)+'"><div class="card-main"><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>'+escapeHtml(origin)+'</small></div></div><div class="card-tag">'+escapeHtml(advice.why)+'</div><div class="actions"><button class="btn primary" id="inspect" type="button" aria-expanded="false">Подробнее</button><button class="btn primary" id="resolve" type="button">Исполнить</button></div></article>';
-    // The Living Surface reveals the original action only after «Подробнее».
-    $('resolve')?.addEventListener('click',()=>openHomeAdvice(advice));
+    const isRecognition=advice.kind==='recognition';
+    $('dynamic').innerHTML='<article class="decision-card" data-owner-advice="true" data-explanation="'+escapeHtml(advice.detail||advice.why)+'"><div class="card-main"><div class="event-copy"><strong>'+escapeHtml(advice.title)+'</strong><small>'+escapeHtml(origin)+'</small></div></div><div class="card-tag">'+escapeHtml(isRecognition?advice.message:advice.why)+'</div><div class="actions"><button class="btn primary" id="inspect" type="button" aria-expanded="false">Подробнее</button><button class="btn primary" id="resolve" type="button">'+(isRecognition?'⭐ Поощрить':'Исполнить')+'</button>'+(isRecognition?'<button class="btn" id="recognitionLater" type="button">Позже</button>':'')+'</div></article>';
+    $('resolve')?.addEventListener('click',()=>{
+     if(isRecognition){
+      if(window.SEYVEO_RECOGNITION_COACH?.award?.(advice.sourceKey))render();
+     }else openHomeAdvice(advice);
+    });
+    if(isRecognition)$('recognitionLater')?.addEventListener('click',()=>{
+      window.SEYVEO_RECOGNITION_COACH?.later?.(advice.sourceKey);
+      render();
+    });
   }else $('dynamic').replaceChildren();
   $('activityList').replaceChildren();
   $('workTimeline').hidden=true;
@@ -3033,6 +3042,7 @@ function render(){
 }
 window.addEventListener('seyveo:business-map-changed',render);
 window.addEventListener('seyveo:connection-followup-changed',render);
+window.addEventListener('seyveo:recognition-suggestions-changed',render);
 // The local Business Map module loads after the main script.
 window.addEventListener('load',render,{once:true});
 document.querySelectorAll('[data-theme-choice]').forEach(button=>{
@@ -4610,7 +4620,7 @@ syncManager();render();
 <section class="syp-screen" data-syp-screen="scan" hidden><div class="syp-panel"><h3>QR · сканирование</h3><p>Распознаём текст QR на устройстве. Платежи не выполняются и не отправляются в банк.</p><video id="sypCamera" class="syp-video" autoplay playsinline muted hidden></video><div id="sypScanStatus" class="syp-status" aria-live="polite"></div><button type="button" class="syp-btn" data-syp="camera">Включить камеру</button></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="cards" hidden><div class="syp-list"><div class="syp-listrow">✦ SEYVEO · демонстрационная карта •••• 4582</div><div class="syp-panel"><h3>Добавление банковской карты</h3><p>Появится только после подключения сертифицированного платёжного партнёра. Банковские реквизиты в демо не запрашиваются.</p></div></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
 <section class="syp-screen" data-syp-screen="history" hidden><div class="syp-panel"><h3>История покупок</h3><p>Здесь появятся подтверждённые операции и доступные чеки после официального подключения банков. Сейчас операций нет.</p></div><button type="button" class="syp-btn syp-secondary" data-syp="home">Назад в кошелёк</button></section>
-</div></dialog><script src="assets/seyveo-pay.js?v=2"></script><script src="assets/seyveo-connections.js?v=4"></script><script src="assets/seyveo-family-chat.js?v=2"></script><script src="assets/seyveo-business-command.js?v=125"></script><script src="assets/seyveo-unified-tasks.js?v=65"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=3"></script><script src="assets/seyveo-global-search.js?v=5"></script><script src="assets/seyveo-card-engine.js?v=4"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=13"></script><script src="assets/seyveo-fan-workshop.js?v=10"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=3"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=12"></script>
+</div></dialog><script src="assets/seyveo-pay.js?v=2"></script><script src="assets/seyveo-connections.js?v=4"></script><script src="assets/seyveo-family-chat.js?v=2"></script><script src="assets/seyveo-business-command.js?v=126"></script><script src="assets/seyveo-unified-tasks.js?v=65"></script><script src="assets/seyveo-employee-schedule.js?v=2"></script><script src="assets/seyveo-dock-continuity.js?v=3"></script><script src="assets/seyveo-global-search.js?v=5"></script><script src="assets/seyveo-card-engine.js?v=4"></script><script src="assets/seyveo-discovery.js?v=2"></script><script src="assets/seyveo-card-studio.js?v=13"></script><script src="assets/seyveo-fan-workshop.js?v=10"></script><script src="assets/seyveo-card-voice.js?v=3"></script><script src="assets/seyveo-connect.js?v=3"></script><script type="module" src="assets/seyveo-card-bridge.mjs?v=12"></script>
 <script src="assets/seyveo-learning-lab.js?v=1" defer></script>
 <dialog id="seyveoOfflineDialog" class="seyveo-offline-dialog" aria-labelledby="seyveoOfflineHeading"><div class="seyveo-offline-shell"><header class="seyveo-offline-head"><div><span class="seyveo-offline-kicker">SEYVEO ONE · УПРАВЛЕНИЕ</span><h2 id="seyveoOfflineHeading">Сэйви офлайн</h2><p>Сэйви рядом, даже когда нет интернета</p></div><button type="button" id="seyveoOfflineClose" aria-label="Закрыть">×</button></header><div id="seyveoOfflineChoices" class="seyveo-offline-choices"></div><div class="seyveo-offline-summary"><span>Полный офлайн-комплект</span><strong id="seyveoOfflineSize">0 МБ</strong><small id="seyveoOfflineNotice">Предварительная оценка. Готовые пакеты ещё не опубликованы.</small></div><button type="button" id="seyveoOfflineConfirm" class="seyveo-offline-save">Понятно</button><p class="seyveo-offline-foot">Офлайн-комплект будет доступен для отдельной установки после публикации проверенных файлов. Личная память хранится отдельно.</p></div></dialog><link rel="stylesheet" href="assets/seyveo-offline-manager.css?v=5"><script src="assets/seyveo-offline-manager.js?v=2" defer></script>
 
