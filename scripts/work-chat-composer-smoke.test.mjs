@@ -7,11 +7,12 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
-const [html,css,script,base]=await Promise.all([
+const [html,css,script,base,sayvi]=await Promise.all([
   read('index.html'),
   read('assets/seyveo-work-chat-screen.css'),
   read('assets/seyveo-business-command.js'),
-  read('assets/seyveo-business-command.css')
+  read('assets/seyveo-business-command.css'),
+  read('sayvi-chat-new.html')
 ]);
 
 test('Messenger directory uses the same neutral title/back navigation as SEYVEO pages',()=>{
@@ -25,6 +26,22 @@ test('Messenger directory uses the same neutral title/back navigation as SEYVEO 
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-back svg\{[\s\S]*?width:19px;height:19px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-directory-avatar\{[\s\S]*?color:var\(--secondary\)/);
  assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=74/);
+});
+
+test('Sayvi chat keeps an actual single-row pearl glass dock with intact actions',()=>{
+ assert.match(sayvi,/#sayviComposer\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px;[\s\S]*?background:var\(--sayvi-dock-glass/);
+ assert.match(sayvi,/--sayvi-dock-glass:rgba\(168,187,197,\.14\)/);
+ assert.match(sayvi,/:root\[data-theme=light\]\{[\s\S]*?--sayvi-dock-glass:rgba\(248,251,252,\.68\)/);
+ assert.match(sayvi,/#sayviComposer\{[\s\S]*?border-radius:32px/);
+ assert.match(sayvi,/id="sayviPlus"/);
+ assert.match(sayvi,/id="sayviField"/);
+ assert.match(sayvi,/id="sayviMic"/);
+ assert.match(sayvi,/id="sayviSend"/);
+ assert.match(sayvi,/id="sayviStopReply"/);
+ assert.match(sayvi,/bottom:calc\(79px \+ env\(safe-area-inset-bottom\)\)/);
+ assert.match(sayvi,/bottom:calc\(78px \+ env\(safe-area-inset-bottom\)\);height:46px/);
+ assert.match(sayvi,/@media\(prefers-reduced-transparency:reduce\)\{[\s\S]*?#sayviComposer\{background:var\(--sayvi-fallback\)/);
+ assert.equal((sayvi.match(/id="sayviComposer"/g)||[]).length,1);
 });
 
 test('manager task and send are distinct, keyboard-accessible actions in one composer',()=>{
