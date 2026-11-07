@@ -845,6 +845,82 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO Sayvi · Work Chat large writing mode. The first line stays a
+   small 56px dock; on wrap, the writing area stretches edge-to-edge ABOVE
+   the actions. This is one fluid panel, never two overlapping capsules. */
+#sayviComposer.sayvi-compose-expanded{
+ box-sizing:border-box!important;
+ height:var(--sayvi-composer-height,122px)!important;
+ min-height:var(--sayvi-composer-height,122px)!important;
+ max-height:calc(36dvh + 60px)!important;
+ display:grid!important;
+ grid-template-columns:50px 8px minmax(0,1fr)!important;
+ grid-template-rows:var(--sayvi-editor-height,62px) 50px!important;
+ align-items:end!important;
+ align-content:start!important;
+ padding:7px 0 3px!important;
+ gap:0!important;
+ transition:none!important;
+}
+#sayviComposer.sayvi-compose-expanded::before{
+ left:0!important;
+ top:0!important;
+ bottom:0!important;
+ border-radius:25px!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviField{
+ grid-column:1/-1!important;
+ grid-row:1!important;
+ width:calc(100% - 18px)!important;
+ max-width:calc(100% - 18px)!important;
+ height:var(--sayvi-editor-height,62px)!important;
+ min-height:var(--sayvi-editor-height,62px)!important;
+ margin:0 9px!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ overflow:visible!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviInput,
+#sayviComposer.sayvi-compose-expanded #sayviInput:focus{
+ width:100%!important;
+ height:var(--sayvi-editor-height,62px)!important;
+ min-height:var(--sayvi-editor-height,62px)!important;
+ max-height:156px!important;
+ padding:8px 12px!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ box-shadow:none!important;
+ overflow-x:hidden!important;
+ overflow-wrap:anywhere!important;
+ white-space:pre-wrap!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviPlus{
+ grid-column:1!important;
+ grid-row:2!important;
+ align-self:center!important;
+ justify-self:start!important;
+ width:50px!important;
+ height:50px!important;
+ margin:0!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviField > :is(#sayviMic,#sayviSend,#sayviStopReply){
+ right:-3px!important;
+ bottom:-48px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviComposer.sayvi-compose-expanded{transition:none!important}
+}
 </style>
 </head>
 <body>
@@ -1248,15 +1324,39 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   if(e.key!=='Escape'||historyPanel.hidden)return;
   if(!historyActions.hidden)closeHistoryActions();else closeHistory();
  });
+  /* Work Chat sizing behaviour: measure with an invisible mirror. Do not
+     temporarily collapse the live textarea during Safari keyboard animations. */
+  const composer=document.getElementById('sayviComposer');
+  const field=document.getElementById('sayviField');
+  const sayviMeasure=document.createElement('div');
+  sayviMeasure.setAttribute('aria-hidden','true');
+  sayviMeasure.style.cssText='position:fixed;left:-10000px;top:0;display:block;visibility:hidden;pointer-events:none;box-sizing:border-box;margin:0;padding:0;border:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:400 16px/24px -apple-system,BlinkMacSystemFont,system-ui,sans-serif;';
+  document.body.appendChild(sayviMeasure);
+  function sayviMeasuredTextHeight(value,width){
+   sayviMeasure.style.width=Math.max(24,Math.floor(width))+'px';
+   sayviMeasure.textContent=(value||'')+'\u200b';
+   return Math.ceil(sayviMeasure.getBoundingClientRect().height);
+  }
   function resizeComposerInput(){
-   const field=document.getElementById('sayviField');
-   const cap=Math.max(44,Math.min(160,Math.floor((window.visualViewport?.height||window.innerHeight)*.35)));
-   input.style.height='44px';
-   const next=Math.max(44,Math.min(cap,input.scrollHeight));
-   input.style.height=next+'px';
-   field.style.height=next+'px';
-   scene.style.setProperty('--sayvi-composer-height',(next+12)+'px');
-   input.style.overflowY=input.scrollHeight>cap?'auto':'hidden';
+   if(!composer||!field)return;
+   const text=input.value;
+   const compactWidth=field.clientWidth||Math.max(160,window.innerWidth-82);
+   const shortHeight=sayviMeasuredTextHeight(text,compactWidth-69);
+   const expand=!!text&&(text.includes('\n')||shortHeight>24);
+   const availableWidth=(composer.clientWidth||window.innerWidth-12)-26;
+   const fullTextHeight=expand?sayviMeasuredTextHeight(text,availableWidth):24;
+   const cap=Math.min(156,Math.max(84,Math.floor((window.visualViewport?.height||window.innerHeight)*.32)));
+   const editorHeight=expand?Math.min(cap,Math.max(62,fullTextHeight+18)):44;
+   const fullHeight=expand?editorHeight+60:56;
+   composer.classList.toggle('sayvi-compose-expanded',expand);
+   composer.style.setProperty('--sayvi-editor-height',editorHeight+'px');
+   composer.style.setProperty('--sayvi-composer-height',fullHeight+'px');
+   field.style.height=editorHeight+'px';
+   input.style.height=editorHeight+'px';
+   input.style.overflowY=expand&&fullTextHeight+18>cap?'auto':'hidden';
+   // Only the message history scrolls; never let its bubbles get compressed.
+   const list=document.getElementById('sayviMessages');
+   if(list)list.style.scrollPaddingBottom=fullHeight+18+'px';
   }
   window.addEventListener('resize',resizeComposerInput,{passive:true});
   window.visualViewport?.addEventListener('resize',resizeComposerInput,{passive:true});
