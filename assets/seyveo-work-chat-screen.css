@@ -2328,3 +2328,18 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   bottom:-42px!important;
  }
 }
+
+/* SEYVEO capsule optical alignment — extend its right edge by 3px only.
+   Preserve the left edge, input, buttons, height, material and multiline form. */
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ width:100%!important;
+ max-width:100%!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+ #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+  width:calc(100% - 3px)!important;
+  max-width:calc(100% - 3px)!important;
+ }
+}
