@@ -1130,3 +1130,24 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 #seyveoLivingMoment .lm-polymer.sv-sayvi-label::before{
  content:none!important;display:none!important;
 }
+
+/* Fix: Sayvi mark is also inserted in section labels, not only action pills.
+   A missing intrinsic SVG size previously allowed a giant second glyph on Home. */
+#seyveoLivingMoment .sv-sayvi-label > svg.lm-sayvi-mark{
+ display:inline-block!important;
+ box-sizing:border-box!important;
+ flex:0 0 18px!important;
+ width:18px!important;
+ min-width:18px!important;
+ max-width:18px!important;
+ height:18px!important;
+ min-height:18px!important;
+ max-height:18px!important;
+ margin:0 5px 0 0!important;
+ vertical-align:middle!important;
+ overflow:visible!important;
+}
+#seyveoLivingMoment .sv-sayvi-label::before{
+ content:none!important;
+ display:none!important;
+}
