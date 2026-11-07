@@ -1341,15 +1341,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  inset:auto 0 0 0!important;
  z-index:5!important;
  grid-template-columns:38px 38px 40px 38px minmax(0,1fr)!important;
- grid-template-rows:minmax(56px,auto)!important;
+ grid-template-rows:minmax(52px,auto)!important;
  align-items:center!important;
  column-gap:3px!important;
  row-gap:0!important;
  width:min(430px,calc(100% - 12px))!important;
  max-width:calc(100% - 12px)!important;
- min-height:72px!important;
+ min-height:64px!important;
  height:auto!important;
- padding:8px 7px!important;
+ padding:6px 7px!important;
  margin:0 auto!important;
  border:0!important;
  outline:0!important;
@@ -1366,7 +1366,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen:focus-within #svcpChatForm,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
- padding:8px 7px!important;
+ padding:6px 7px!important;
  border:0!important;outline:0!important;
 }
 /* The inner message capsule stays the only text lens.
@@ -1495,10 +1495,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
 }
 #svcpWorkChatScreen[data-view="room"] #svcpMessages{
- padding-bottom:calc(106px + env(safe-area-inset-bottom,0px))!important;
+ padding-bottom:calc(98px + env(safe-area-inset-bottom,0px))!important;
 }
 #svcpWorkChatScreen #svcpCameraTray[data-mode="emoji"]:not([hidden]){
- bottom:calc(var(--seyveo-dock-bottom,8px) + 82px)!important;
+ bottom:calc(var(--seyveo-dock-bottom,8px) + 74px)!important;
 }
 @media(max-width:390px){
  #svcpWorkChatScreen #svcpChatForm,
@@ -1506,11 +1506,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
   grid-template-columns:35px 35px 38px 35px minmax(0,1fr)!important;
   gap:2px!important;
-  min-height:72px!important;
-  padding:8px 5px!important;
+  min-height:64px!important;
+  padding:6px 5px!important;
   border-radius:999px!important;
  }
- #svcpWorkChatScreen:focus-within #svcpChatForm{padding:8px 5px!important}
+ #svcpWorkChatScreen:focus-within #svcpChatForm{padding:6px 5px!important}
  #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpCameraToggle,#svcpComposerEmojiToggle){
   width:35px!important;min-width:35px!important;max-width:35px!important;
   height:35px!important;min-height:35px!important;max-height:35px!important;
