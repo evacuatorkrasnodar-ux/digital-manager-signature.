@@ -2236,3 +2236,53 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  }
 }
 
+/* SEYVEO cabinet | flat footer and quiet actions | 2026-11-07 */
+/* No white sticky bar in catalog/guide. Keep the existing save and bulk handlers. */
+#svCabinetDialog[open] .sv-cabinet-footer{
+ position:relative!important;
+ bottom:auto!important;
+ z-index:auto!important;
+ padding:7px 0 calc(8px + env(safe-area-inset-bottom,0px))!important;
+ border:0!important;
+ border-top:1px solid var(--soft-line)!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#svCabinetDialog[open] .sv-cabinet-footer button,
+#svCabinetDialog[open] .sv-cabinet-guide-action{
+ box-sizing:border-box!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;
+ width:auto!important;min-width:0!important;max-width:100%!important;
+ min-height:44px!important;height:44px!important;
+ padding:0 9px!important;margin:0!important;
+ border:0!important;border-radius:10px!important;
+ background:transparent!important;box-shadow:none!important;
+ color:var(--text)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ font-size:12.5px!important;font-weight:550!important;
+}
+#svCabinetDialog[open] .sv-cabinet-guide-action{
+ margin:4px auto 2px!important;
+}
+#svCabinetDialog[open] .sv-cabinet-source{
+ min-height:44px!important;
+ padding:7px 10px!important;
+ border:0!important;border-radius:11px!important;
+ background:var(--sv-ui-field)!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font-size:12px!important;font-weight:525!important;
+}
+#svCabinetDialog[open] .sv-cabinet-source.is-current{
+ background:var(--sv-ui-selected-surface)!important;
+ outline:1px solid var(--soft-line);
+ outline-offset:-1px;
+}
+:root[data-theme=light] #svCabinetDialog .sv-cabinet-choice.is-selected .sv-cabinet-choice-mark{
+ color:var(--bg)!important;background:var(--text)!important;
+}
+#svCabinetDialog .sv-cabinet-goal-mark.is-selected{
+ color:var(--text)!important;
+}
