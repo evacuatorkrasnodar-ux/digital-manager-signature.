@@ -165,7 +165,7 @@
  box-shadow:none;text-align:left;font:inherit;font-size:13px;font-weight:470;
 }
 #notePaperDialog .paper-pattern-menu button[aria-pressed=true]{
- background:var(--seyveo-hdr-active);font-weight:590;color:var(--seyveo-emerald);
+ background:var(--sv-ui-selected-surface);font-weight:590;color:var(--text);
 }
 #notePaperDialog .paper-pattern-menu button:focus-visible{
  outline:2px solid var(--seyveo-emerald);outline-offset:1px;
