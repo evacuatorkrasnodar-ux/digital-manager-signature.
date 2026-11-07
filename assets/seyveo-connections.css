@@ -4,20 +4,21 @@
 .svc-dialog{
  box-sizing:border-box;display:block;visibility:visible;margin:auto;padding:0;border:0;
  width:min(514px,calc(100vw - 12px));max-height:min(91dvh,900px);
- background:var(--bg);color:var(--text);border-radius:26px;
- box-shadow:0 15px 46px rgba(0,0,0,.30);overflow:hidden;
+ background:var(--sv-ui-sheet);color:var(--text);border-radius:var(--sv-ui-radius-sheet,22px);
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);
+ box-shadow:var(--sv-ui-sheet-shadow);overflow:hidden;
  font:inherit;-webkit-font-smoothing:antialiased;
 }
 .svc-dialog:not([open]){display:none}
-.svc-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.svc-dialog::backdrop{background:rgba(6,10,15,.46);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .svc-shell{
  --svc-glow:var(--seyveo-emerald);--svc-tint:var(--seyveo-hdr-active);
  position:relative;box-sizing:border-box;width:100%;
  height:min(91dvh,900px);min-height:min(600px,calc(100dvh - 12px));
  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
  padding:0 16px calc(18px + env(safe-area-inset-bottom,0px));
- background:radial-gradient(ellipse 78% 25% at 68% 0%,var(--svc-tint),transparent 95%),var(--bg);
- border:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:26px;
+ background:transparent;
+ border:0;border-radius:var(--sv-ui-radius-sheet,22px);
  scrollbar-color:var(--line) transparent;scrollbar-width:thin;
 }
 .svc-shell *{box-sizing:border-box}
