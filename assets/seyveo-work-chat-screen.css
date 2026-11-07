@@ -3687,3 +3687,25 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex:0 0 40px!important;
  border-radius:50%!important;
 }
+
+/* v197 · iPhone Safari task-editor focus fix.
+   Textareas below 16px trigger automatic page zoom, pushing the entire chat
+   header and fixed composer beyond the viewport. Never use 15px on editable
+   fields. Keep the review sheet and the approved dock dimensions intact. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle,
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle:focus,
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle,
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle:focus{
+ font-size:16px!important;
+ line-height:22px!important;
+ outline:none!important;
+ border-width:1px!important;
+ box-shadow:none!important;
+ -webkit-text-size-adjust:100%!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle:focus-visible{
+ border-color:rgba(96,143,116,.43)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft{
+ scroll-padding-bottom:12px!important;
+}
