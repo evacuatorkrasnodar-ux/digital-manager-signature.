@@ -1038,8 +1038,8 @@
  background:rgba(99,121,133,.09)!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-dialog-actions>.btn.primary{
- background:rgba(83,141,117,.17)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:transparent!important;
+ color:var(--text)!important;
 }
 
 
@@ -1109,12 +1109,12 @@
  background:rgba(72,99,108,.065)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected{
- background:rgba(67,121,99,.13)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:var(--sv-ui-selected-surface)!important;
+ color:var(--text)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-time-done{
- background:rgba(67,121,99,.14)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:transparent!important;
+ color:var(--text)!important;
 }
 
 
@@ -1274,12 +1274,12 @@
  background:transparent!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
- background:rgba(65,128,103,.10)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:var(--sv-ui-selected-surface)!important;
+ color:var(--text)!important;
  border-color:transparent!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-kind-option input:checked+span{
- background:rgba(65,128,103,.10)!important;
+ background:var(--sv-ui-selected-surface)!important;
 }
 @media(max-width:360px){
  #calendarEventDialog #seyveoPickDate .cal-pick-day{
@@ -1362,7 +1362,7 @@
  border-color:rgba(47,98,80,.075)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheels::before{
- background:rgba(63,119,99,.055)!important;border-color:rgba(63,119,99,.10)!important;
+ background:var(--sv-ui-quiet-surface)!important;border-color:var(--sv-ui-divider)!important;
 }
 
 /* SEYVEO Calendar | flat neutral controls | 2026-11-07 */
