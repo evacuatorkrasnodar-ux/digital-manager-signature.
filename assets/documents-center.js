@@ -139,6 +139,23 @@ function draw(){
   b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
  host.append(switcher);
+ if(area==='business'){
+  // Prominent business approval entry, not buried inside integrations.
+  // Status counts refer only to the local training scenario.
+  const records=window.SEYVEO_DOCUMENT_FLOW?.getRecords?.()||[];
+  const working=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
+  const onSignature=records.filter(x=>x.state==='signing').length;
+  const flowCard=button('',()=>{view='flow';draw()},'sv-doc-flow-card');
+  flowCard.setAttribute('aria-label','Согласования документов, учебный режим');
+  const flowCopy=el('span','sv-doc-flow-copy');
+  flowCopy.append(el('strong','','Согласования'),
+   el('small','','Руководитель и сотрудник · учебный маршрут'));
+  const flowStats=el('span','sv-doc-flow-stats',
+   working+' в работе'+(onSignature?' · '+onSignature+' на подпись':''));
+  const arrow=el('span','sv-doc-flow-chevron','›');arrow.setAttribute('aria-hidden','true');
+  flowCard.append(flowCopy,flowStats,arrow);
+  host.append(flowCard);
+ }
  if(view==='flow'){
   const back=button('Вернуться в хранилище',()=>{view='archive';draw();},'sv-doc-flow-back');
   const flow=el('section','sv-doc-workspace');
