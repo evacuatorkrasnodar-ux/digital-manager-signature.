@@ -1913,3 +1913,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
  transition:none!important;
 }
+
+/* SEYVEO unified iPhone dock width; do not modify work composer height/material. */
+@media (max-width:699px){
+ #svcpWorkChatScreen #svcpChatForm{
+  width:min(430px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+  max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))!important;
+ }
+}
