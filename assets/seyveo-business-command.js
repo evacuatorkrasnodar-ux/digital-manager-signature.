@@ -447,15 +447,28 @@ function syncComposerActions(){
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
 function resizeWorkComposer(){
- const input=$('svcpChatInput');if(!input)return;
- // The inner message capsule follows the adjacent button diameter (38px narrow, 40px otherwise). Actual button hit targets stay unchanged.
- const minHeight=window.matchMedia('(max-width:390px)').matches?38:40;
- const maxHeight=144;
- input.style.setProperty('height',minHeight+'px','important');
- const height=input.value?Math.min(maxHeight,Math.max(minHeight,input.scrollHeight)):minHeight;
+ const input=$('svcpChatInput');
+ const form=$('svcpChatForm');
+ if(!input||!form)return;
+ const compact=window.matchMedia('(max-width:390px)').matches;
+ const base=compact?38:40;
+ const max=144;
+ // Measure the original narrow single-line field first. No expansion
+ // until text wraps to a second line or contains a deliberate newline.
+ form.classList.remove('svcp-compose-multiline');
+ input.style.setProperty('height',base+'px','important');
+ input.style.setProperty('overflow-y','hidden','important');
+ const wraps=!!input.value&&(input.value.includes('\\n')||input.scrollHeight>base+2);
+ form.classList.toggle('svcp-compose-multiline',wraps);
+ // The large writing area is still part of the SAME dock. Keep the
+ // action row and microphone in place, and grow only upward.
+ input.style.setProperty('height',base+'px','important');
+ const wanted=wraps?Math.max(base+24,input.scrollHeight):base;
+ const height=Math.min(max,wanted);
  input.style.setProperty('height',height+'px','important');
- input.style.setProperty('overflow-y',input.value&&input.scrollHeight>maxHeight?'auto':'hidden','important');
+ input.style.setProperty('overflow-y',wraps&&wanted>max?'auto':'hidden','important');
 }
+
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
 $('svcpAttachFile')?.addEventListener('click',()=>{
