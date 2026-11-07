@@ -162,3 +162,32 @@
  background:color-mix(in srgb,var(--text) 9%,transparent)!important;
  box-shadow:none!important;
 }
+
+/* Action History is a nested destination, not a fourth root tab.
+   Keep exactly one visible title and one functional SEYVEO back control. */
+#svWorkShell[data-history="true"] #svWorkHeader{
+ grid-template-columns:42px minmax(0,1fr)!important;
+ column-gap:6px!important;
+}
+#svWorkShell[data-history="true"] #svWorkBack{
+ grid-column:1!important;
+ display:inline-flex!important;
+ border-radius:50%!important;
+ background:color-mix(in srgb,var(--text) 8%,transparent)!important;
+ box-shadow:none!important;
+}
+#svWorkShell[data-history="true"] #svWorkTitle{
+ grid-column:2!important;
+ font-size:clamp(24px,6.8vw,30px)!important;
+}
+#svWorkShell[data-history="true"] #svWorkAdd[hidden],
+#svWorkShell[data-history="true"] #svWorkTabs[hidden]{
+ display:none!important;
+}
+#svWorkShell[data-history="true"] #seyveoActionHistoryPanel .sah-inline-head,
+#svWorkShell[data-history="true"] #seyveoActionHistoryPanel .sah-history-title{
+ display:none!important;
+}
+#svWorkShell[data-history="true"] #seyveoActionHistoryPanel{
+ padding-top:0!important;
+}
