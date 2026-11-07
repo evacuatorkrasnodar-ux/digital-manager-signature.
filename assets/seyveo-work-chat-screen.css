@@ -2902,3 +2902,50 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   gap:4px!important;
  }
 }
+
+/* v187: one compact conversation header. Sayvi now shares the title row,
+   instead of occupying a separate 50px strip above chat messages. */
+#svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi{
+ display:grid!important;
+ place-items:center!important;
+ flex:0 0 36px!important;
+ box-sizing:border-box!important;
+ width:36px!important;
+ min-width:36px!important;
+ max-width:36px!important;
+ height:40px!important;
+ min-height:40px!important;
+ max-height:40px!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:50%!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--secondary)!important;
+ font-size:0!important;
+ line-height:0!important;
+ overflow:hidden!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-conversation-bar > #svcpCallSayvi .sv-sayvi-symbol{
+ display:block!important;
+ flex:none!important;
+ width:23px!important;
+ height:23px!important;
+ font-size:23px!important;
+ line-height:1!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat-intro:has(#svcpMentionElena[hidden]){
+ display:none!important;
+ padding:0!important;
+ margin:0!important;
+ height:0!important;
+ min-height:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat-intro:not(:has(#svcpMentionElena[hidden])){
+ padding:0 12px 2px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat-intro:not(:has(#svcpMentionElena[hidden])) .svcp-chat-assist button{
+ min-height:30px!important;
+ padding:2px 8px!important;
+}
