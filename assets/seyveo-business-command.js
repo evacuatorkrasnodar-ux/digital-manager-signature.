@@ -440,7 +440,7 @@ function resizeWorkComposer(){
  const input=$('svcpChatInput');if(!input)return;
  input.style.setProperty('height','44px','important');
  // Empty input stays one line: iOS otherwise measures the placeholder as text.
- const maxHeight=72;
+ const maxHeight=144;
  const height=input.value?Math.min(maxHeight,Math.max(44,input.scrollHeight)):44;
  input.style.setProperty('height',height+'px','important');
  input.style.setProperty('overflow-y',input.value&&input.scrollHeight>maxHeight?'auto':'hidden','important');
