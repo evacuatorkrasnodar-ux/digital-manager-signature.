@@ -2796,3 +2796,20 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  fill:none!important;
  stroke-width:1.35!important;
 }
+
+/* v184 · Sayvi-inspired final optical polish, idle one-line input only.
+   No changes to the dock dimensions, Plus, glass pane or left icons. */
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ background:linear-gradient(155deg,rgba(203,211,218,.135),rgba(165,174,184,.12) 58%,rgba(148,160,170,.105)),rgba(142,152,162,.055)!important;
+ border-color:rgba(220,228,235,.045)!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
+ background:linear-gradient(155deg,rgba(239,242,246,.26),rgba(206,213,219,.195) 58%,rgba(189,198,206,.155)),rgba(190,199,208,.065)!important;
+ border-color:rgba(226,233,238,.10)!important;
+}
+#svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > #svcpVoiceRecord{
+ bottom:4px!important;
+}
