@@ -396,3 +396,21 @@ html body #sayviSurfacePage .sv-vault-row-options{
 @media(max-width:375px){
  #sayviSurfacePage .sv-doc-flow-stats{max-width:33%;white-space:normal;text-align:right}
 }
+
+
+/* Employee preview inherits the business cabinet's single role selection.
+   This notice explains the demo surface; it does not grant server rights. */
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-role-info{
+ display:flex;flex-direction:column;gap:4px;
+ padding:11px 13px;margin:0 0 12px;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:18px;background:var(--sv-doc-wash,var(--card));
+ -webkit-backdrop-filter:blur(16px) saturate(1.08);
+ backdrop-filter:blur(16px) saturate(1.08);
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-role-info strong{
+ color:var(--text);font-size:13px;font-weight:610;line-height:1.32;
+}
+#sayviSurfacePage[data-sv-subject="contract"] .sv-doc-role-info small{
+ color:var(--secondary);font-size:11px;line-height:1.5;
+}
