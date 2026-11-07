@@ -193,50 +193,62 @@
 }
 
 
-/* Calendar "+" choices: below the persistent tabs, never covering navigation.
-   Keep the existing menu element and Calendar click handlers intact. */
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
- position:absolute!important;
- top:calc(100% + 70px)!important;
- right:0!important;
- z-index:450!important;
- box-sizing:border-box!important;
- width:min(276px,calc(100vw - 34px))!important;
- padding:4px!important;
- border:0!important;
- border-radius:18px!important;
- background:rgba(40,54,63,.96)!important;
- -webkit-backdrop-filter:blur(22px) saturate(110%)!important;
- backdrop-filter:blur(22px) saturate(110%)!important;
- box-shadow:0 9px 24px rgba(0,0,0,.16)!important;
+/* SEYVEO work calendar: use the same attached glass menu as the calendar itself.
+   Do not push the popover below the tabs: its anchor is the original + button,
+   held within the shared header. This stylesheet is loaded after calendar.css. */
+#svWorkShell[data-shared-work="true"] #calendarPage .calendar-header-actions{
+ overflow:visible!important;isolation:isolate!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu[hidden]{
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
+ position:absolute!important;
+ top:calc(100% + 5px)!important;
+ bottom:auto!important;right:0!important;left:auto!important;
+ display:block!important;z-index:450!important;
+ box-sizing:border-box!important;
+ width:min(252px,calc(100vw - 30px))!important;
+ height:auto!important;margin:0!important;padding:5px!important;
+ border:1px solid rgba(225,242,239,.14)!important;
+ border-radius:18px!important;
+ background:rgba(81,104,109,.40)!important;
+ -webkit-backdrop-filter:blur(32px) saturate(145%)!important;
+ backdrop-filter:blur(32px) saturate(145%)!important;
+ box-shadow:0 9px 25px rgba(0,0,0,.10)!important;
+ transform:none!important;animation:none!important;
+ overflow:hidden!important;isolation:isolate!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu[hidden]{
  display:none!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button{
- min-height:53px!important;
- padding:9px 12px!important;
- border:0!important;
- border-radius:13px!important;
- background:transparent!important;
- box-shadow:none!important;
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:center!important;min-height:47px!important;
+ padding:7px 11px!important;
+ border:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button+button{
- border-top:1px solid color-mix(in srgb,var(--text) 7%,transparent)!important;
- border-radius:0 0 13px 13px!important;
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button+button{
+ border-top:1px solid rgba(210,231,229,.12)!important;
+ border-radius:0 0 12px 12px!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button span{
- font-size:13.5px!important;font-weight:580!important;
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button span{
+ font-size:13px!important;font-weight:580!important;
 }
-#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button small{
- font-size:11px!important;line-height:1.35!important;
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button small{
+ font-size:10.5px!important;line-height:1.3!important;
 }
-:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
- background:rgba(248,251,251,.97)!important;
- box-shadow:0 9px 24px rgba(24,45,56,.11)!important;
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button:active{
+ background:rgba(206,226,228,.10)!important;
+}
+:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
+ background:rgba(247,252,249,.63)!important;
+ border-color:rgba(56,110,87,.14)!important;
+ box-shadow:0 9px 25px rgba(24,62,47,.08)!important;
+}
+:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu button+button{
+ border-top-color:rgba(56,110,87,.10)!important;
 }
 @media(prefers-reduced-transparency:reduce){
- #svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
+ #svWorkShell[data-shared-work="true"] #calendarPage #calendarCreateMenu:not([hidden]){
   background:var(--card)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
