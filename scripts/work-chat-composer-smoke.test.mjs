@@ -14,6 +14,19 @@ const [html,css,script,base]=await Promise.all([
   read('assets/seyveo-business-command.css')
 ]);
 
+test('Messenger directory uses the same neutral title/back navigation as SEYVEO pages',()=>{
+ const header=html.split('<header class="svcp-work-chat-header">')[1]?.split('</header>')[0];
+ assert.ok(header,'Messenger directory header exists');
+ assert.match(header,/id="svcpWorkChatBack"/);
+ assert.match(header,/<h1 id="svcpWorkChatTitle">Сообщения<\/h1>/);
+ assert.match(header,/class="svcp-work-chat-trailing"/);
+ assert.doesNotMatch(header,/svcp-work-chat-mark/);
+ assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-header\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px/);
+ assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-back svg\{[\s\S]*?width:19px;height:19px/);
+ assert.match(css,/#svcpWorkChatScreen \.svcp-directory-avatar\{[\s\S]*?color:var\(--secondary\)/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=70/);
+});
+
 test('manager task and send are distinct, keyboard-accessible actions in one composer',()=>{
   const form=html.split('<form id="svcpChatForm"')[1]?.split('</form>')[0];
   assert.ok(form);
