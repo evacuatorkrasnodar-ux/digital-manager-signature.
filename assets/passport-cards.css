@@ -572,13 +572,13 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 }
 .seyveo-avatar-dialog-actions button{
  min-width:0;min-height:44px;flex:auto;
- border:1px solid var(--line);border-radius:999px;
- background:var(--card2);box-shadow:none;color:var(--text);
- font:inherit;font-size:12px;font-weight:500;padding:9px 12px;
+ border:0;border-radius:var(--sv-ui-radius-control,12px);
+ background:var(--sv-ui-field);box-shadow:none;color:var(--text);
+ font:inherit;font-size:12.5px;font-weight:540;padding:8px 10px;
 }
 .seyveo-avatar-dialog-actions #seyveoAvatarClose{
- grid-column:1/-1;background:var(--text);color:var(--bg);
- border-color:var(--text);font-weight:540;
+ grid-column:1/-1;background:transparent;color:var(--text);
+ border-color:transparent;font-weight:590;
 }
 .seyveo-avatar-dialog-actions button:focus-visible{
  outline:2px solid var(--text);outline-offset:2px;
@@ -930,7 +930,7 @@ button.mark.home-brand-trigger img{width:100%;height:100%;object-fit:contain}
 }
 #seyveoStudioDialog .info-actions{display:none!important}
 :root[data-theme=light] #seyveoStudioDialog.seyveo-passport-modal{
- background:var(--card);border-color:var(--line);
+ background:var(--sv-ui-sheet);border-color:var(--sv-ui-sheet-border);
 }
 @media(max-width:380px){
  #seyveoStudioDialog.seyveo-passport-modal{padding:19px 15px}
