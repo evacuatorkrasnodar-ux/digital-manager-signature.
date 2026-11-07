@@ -1038,8 +1038,8 @@
  background:rgba(99,121,133,.09)!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-dialog-actions>.btn.primary{
- background:rgba(83,141,117,.17)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:transparent!important;
+ color:var(--text)!important;
 }
 
 
@@ -1109,12 +1109,12 @@
  background:rgba(72,99,108,.065)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected{
- background:rgba(67,121,99,.13)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:rgba(99,121,133,.13)!important;
+ color:var(--text)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-time-done{
- background:rgba(67,121,99,.14)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:rgba(99,121,133,.15)!important;
+ color:var(--text)!important;
 }
 
 
@@ -1274,12 +1274,12 @@
  background:transparent!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected{
- background:rgba(65,128,103,.10)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:rgba(99,121,133,.15)!important;
+ color:var(--text)!important;
  border-color:transparent!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-kind-option input:checked+span{
- background:rgba(65,128,103,.10)!important;
+ background:rgba(99,121,133,.13)!important;
 }
 @media(max-width:360px){
  #calendarEventDialog #seyveoPickDate .cal-pick-day{
@@ -1362,5 +1362,77 @@
  border-color:rgba(47,98,80,.075)!important;
 }
 :root[data-theme=light] #calendarEventDialog #seyveoPickTime .cal-pick-wheels::before{
- background:rgba(63,119,99,.055)!important;border-color:rgba(63,119,99,.10)!important;
+ background:rgba(99,121,133,.055)!important;border-color:rgba(99,121,133,.10)!important;
+}
+
+/* SEYVEO event editor · true Sayvi composer glass.
+   Keep the current date, time-wheel, event-type and save DOM / touch geometry.
+   Neutral smoke and blur are the exact shared tokens of the chat input. */
+html body #calendarEventDialog[open] .cal-event-sheet{
+ background:var(--sv-sayvi-lens,rgba(184,195,201,.19))!important;
+ border:0!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:var(--sv-sayvi-filter,blur(16px) saturate(105%))!important;
+ backdrop-filter:var(--sv-sayvi-filter,blur(16px) saturate(105%))!important;
+}
+html body #calendarEventDialog[open] :is(
+ .cal-form-primary input[type=text],.cal-date-control,
+ .cal-time-control,.cal-kind-options,textarea
+){
+ background:var(--sv-sayvi-field,rgba(184,195,201,.10))!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #calendarEventDialog[open] #seyveoPickTime.cal-pick-time{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+html body #calendarEventDialog[open] #seyveoPickTime .cal-pick-wheels::before{
+ background:var(--sv-sayvi-field,rgba(184,195,201,.10))!important;
+ border-top:1px solid var(--sv-sayvi-separator,rgba(204,220,226,.10))!important;
+ border-bottom:1px solid var(--sv-sayvi-separator,rgba(204,220,226,.10))!important;
+ box-shadow:none!important;
+}
+html body #calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-wheel-option.is-selected,
+ #seyveoPickTime .cal-pick-time-done,
+ #seyveoPickDate .cal-pick-day.is-selected,
+ .cal-dialog-actions>.btn.primary,
+ .sv-form-actions>button.btn.primary,
+ .cal-kind-option input:checked+span
+){
+ color:var(--text)!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+}
+html body #calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-wheel-option.is-selected,
+ #seyveoPickDate .cal-pick-day.is-selected,
+ .cal-kind-option input:checked+span
+){
+ background:var(--sv-sayvi-selected,rgba(184,195,201,.16))!important;
+}
+html body #calendarEventDialog[open] :is(
+ #seyveoPickTime .cal-pick-time-done,
+ .cal-dialog-actions>.btn.primary,
+ .sv-form-actions>button.btn.primary
+){
+ background:transparent!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #calendarEventDialog[open] .cal-dialog-actions{
+ background:transparent!important;
+ border-top-color:var(--sv-sayvi-separator,rgba(204,220,226,.10))!important;
+}
+html body #calendarEventDialog[open] .cal-kind-option input:checked+span{
+ color:var(--text)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html body #calendarEventDialog[open] .cal-event-sheet{
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
 }
