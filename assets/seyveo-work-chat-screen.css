@@ -1674,3 +1674,54 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm::after{opacity:.15!important;filter:blur(11px)!important}
 }
+
+/* SEYVEO work composer: compact first line, then one continuous two-level dock.
+   The existing glass bar expands UP; the four actions remain in its bottom
+   row. There is NO second writing board and no change to button dimensions. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline{
+ grid-template-rows:auto 42px!important;
+ height:auto!important;
+ min-height:0!important;
+ border-radius:29px!important;
+ row-gap:0!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:2!important;
+ align-self:center!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field{
+ grid-column:1/-1!important;
+ grid-row:1!important;
+ align-self:stretch!important;
+ width:100%!important;max-width:100%!important;
+ min-height:0!important;
+ margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within{
+ border:0!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
+ width:100%!important;max-width:100%!important;
+ min-height:0!important;
+ padding:8px 12px!important;
+ border-radius:0!important;
+ transition:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field :is(#svcpVoiceRecord,.svcp-chat-send){
+ bottom:-43px!important;
+ right:2px!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field{
+  width:100%!important;
+ }
+ #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
+  padding:7px 12px!important;
+ }
+}
