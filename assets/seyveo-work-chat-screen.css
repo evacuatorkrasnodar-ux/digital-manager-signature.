@@ -2009,3 +2009,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   backdrop-filter:none!important;
  }
 }
+
+/* TEMP A/B: no added illumination inside the Work Chat dock.
+   The old silver pool was replaced by the Home dock pane above. Remove only
+   the remaining capsule light spill, retaining the capsule glass, mark,
+   buttons, full dock geometry and the Home velvet materials. */
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
+ box-shadow:none!important;
+}
