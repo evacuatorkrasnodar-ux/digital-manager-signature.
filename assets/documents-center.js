@@ -126,11 +126,7 @@ function draw(){
  });
  const storeActions=el('div','sv-doc-store-actions');
  storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
- const openArchive=button('Открыть архив',()=>{
-  const fold=host.querySelector('.sv-doc-vault-shell');
-  if(fold){fold.open=!fold.open;archiveExpanded=fold.open;}
- },'sv-doc-open-archive');
- storeActions.append(openArchive,picker);
+ storeActions.append(picker);
  host.append(storeActions);
  const feedback=el('p','sv-doc-selection-status');
  feedback.setAttribute('role','status');
@@ -144,11 +140,11 @@ function draw(){
  archive.append(summary,contents);
  archive.addEventListener('toggle',()=>{
   archiveExpanded=archive.open;
-  openArchive.textContent=archive.open?'Свернуть архив':'Открыть архив';
   if(!archive.open)return;
   window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(contents,{
    area,currentArea:()=>area,
    selectedFile:()=>stored[area]?null:files[area],
+   savedFile(file){if(files[area]===file)stored[area]=true;},
    draft:()=>({title:'',text:''}),
    openFile(file,target){
     if(!names[target])return;
