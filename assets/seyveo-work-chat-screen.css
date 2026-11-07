@@ -3487,3 +3487,67 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]):has(#svcpRecipientChoices:not([hidden])){
  max-height:min(420px,calc(100% - 142px))!important;
 }
+
+/* v194 · Reduce task review bulk and let the proposed text wrap naturally.
+   This is a review card, not a second fullscreen editor. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
+ width:min(396px,calc(100% - 28px))!important;
+ max-width:calc(100% - 28px)!important;
+ max-height:min(360px,calc(100% - 145px))!important;
+ padding:13px 14px 12px!important;
+ gap:7px!important;
+ border-radius:20px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label strong{
+ font-size:15px!important;
+ line-height:19px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label small{
+ font-size:11px!important;
+ line-height:16px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle,
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle:focus{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:62px!important;
+ min-height:62px!important;
+ max-height:84px!important;
+ padding:10px 12px!important;
+ margin:0!important;
+ border:1px solid rgba(133,151,162,.15)!important;
+ border-radius:13px!important;
+ background:rgba(255,255,255,.095)!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:400 15px/20px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ line-height:20px!important;
+ text-align:left!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ resize:none!important;
+ -webkit-appearance:none!important;
+ appearance:none!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle,
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft #svcpChatTaskTitle:focus{
+ background:rgba(255,255,255,.79)!important;
+ color:#283039!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-recipient-toggle{
+ min-height:40px!important;
+ padding:7px 11px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions button{
+ height:39px!important;
+ min-height:39px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > small{
+ font-size:10px!important;
+ line-height:13px!important;
+}
