@@ -1501,6 +1501,26 @@ function renderChat(){
      helper.setAttribute('aria-label','Сэйви поможет выполнить это задание');
      bubble.append(helper);
     }
+    // One unobtrusive, dismissible suggestion next to evidence in the chat.
+    // Never award automatically and never show this to an employee.
+    if(state.viewpoint==='manager'&&msg.role==='demo-elena'){
+     const proposal=pendingRecognitionSuggestions().find(x=>x.sourceKey===recognitionSourceKey(msg));
+     if(proposal){
+      const prompt=el('div','svcp-smart-award-suggestion');
+      const label=el('small','svcp-smart-award-label','⭐ Сэйви: '+proposal.reason+'. Можно поблагодарить Елену.');
+      const controls=el('div','svcp-smart-award-actions');
+      const award=btn('Поощрить',()=>{
+       if(awardRecognitionSuggestion(proposal.sourceKey))renderChat();
+      },'svcp-smart-award-confirm');
+      const later=btn('Позже',()=>{
+       dismissRecognitionSuggestion(proposal.sourceKey);
+       prompt.remove();
+      },'svcp-smart-award-later');
+      controls.append(award,later);
+      prompt.append(label,controls);
+      bubble.append(prompt);
+     }
+    }
     const actions=el('div','svcp-message-actions');
     const menu=el('div','svcp-message-menu');menu.hidden=true;
     menu.setAttribute('role','group');menu.setAttribute('aria-label','Действия с сообщением');
