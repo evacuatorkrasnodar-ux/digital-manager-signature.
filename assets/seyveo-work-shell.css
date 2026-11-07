@@ -121,9 +121,34 @@
  z-index:210!important;display:flex!important;
  margin:0!important;padding:0!important;
 }
-#svWorkShell[data-shared-work="true"] .calendar-header-add{
- width:40px!important;height:40px!important;min-height:40px!important;
- border-radius:50%!important;
+/* The calendar action was being stretched by conflicting 38/40/44px rules.
+   Fixed geometry on the actual work-shell control (not the My World tile). */
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarAdd.calendar-header-add{
+ -webkit-appearance:none!important;appearance:none!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;
+ flex:0 0 40px!important;flex-grow:0!important;flex-shrink:0!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;max-width:40px!important;
+ min-height:40px!important;max-height:40px!important;
+ aspect-ratio:1/1!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:rgba(151,180,189,.14)!important;
+ box-shadow:none!important;filter:none!important;transform:none!important;
+ -webkit-backdrop-filter:blur(20px) saturate(118%)!important;
+ backdrop-filter:blur(20px) saturate(118%)!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage #calendarAdd svg{
+ box-sizing:border-box!important;width:19px!important;height:19px!important;
+ min-width:19px!important;max-width:19px!important;min-height:19px!important;max-height:19px!important;
+ stroke-width:1.65!important;fill:none!important;
+}
+#svWorkShell #svWorkAdd:not([hidden]){
+ box-sizing:border-box!important;flex:0 0 42px!important;
+ min-width:42px!important;max-width:42px!important;
+ min-height:42px!important;max-height:42px!important;
+ aspect-ratio:1/1!important;
+ margin:0!important;padding:0!important;
 }
 
 
