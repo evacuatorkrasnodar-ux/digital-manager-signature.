@@ -606,7 +606,7 @@ for(const eventName of ['input','change','blur'])date.addEventListener(eventName
 function openDialog(){
  pendingSourceNoteId='';editingTaskId='';
  $('personalTaskDialogTitle').textContent='Новое дело';
- $('personalTaskSave').textContent='Добавить';
+ $('personalTaskSave').textContent='Сохранить';
  form.reset();syncDueDateDisplay();$('personalTaskStatus').textContent='';
  if(!dialog.open)dialog.showModal();
  window.requestAnimationFrame(syncDueDateDisplay);
