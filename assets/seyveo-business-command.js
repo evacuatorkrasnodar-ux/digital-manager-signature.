@@ -770,6 +770,10 @@ function openRoom(roomId){
  const selected=ROOMS.find(x=>x.id===roomId);if(!selected)return;
  if(employeePreviewActive()&&!employeeAllowedRoom(selected.id))return;
  state.room=selected.id;
+ // Single-person chats do not repeat sender names inside every bubble.
+ // Group author labels remain visible. Aria labels still retain identity.
+ const conversation=$('svcpConversation');
+ if(conversation)conversation.dataset.roomKind=selected.kind;
  state.viewpoint=employeePreviewActive()?'elena':'manager';
  const avatar=$('svcpRoomAvatar');if(avatar)avatar.textContent=state.viewpoint==='elena'&&selected.id==='dm-elena'?'Р':selected.mark;
  const roomName=$('svcpRoomInfoName');if(roomName)roomName.textContent=
