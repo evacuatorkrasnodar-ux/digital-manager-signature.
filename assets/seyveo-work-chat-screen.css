@@ -1313,6 +1313,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-color:rgba(116,134,145,.15)!important;
  box-shadow:none!important;
 }
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ background:linear-gradient(145deg,rgba(173,185,194,.32),rgba(132,151,162,.22)),rgba(142,157,169,.09)!important;
+ border-color:rgba(132,150,162,.21)!important;
+}
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
  background:rgba(76,173,113,.15)!important;
  border-color:rgba(79,181,113,.21)!important;
@@ -1392,9 +1396,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
  grid-column:1!important;
- background:rgba(182,202,214,.09)!important;
- border-color:rgba(215,233,242,.12)!important;
+ /* Flat grey smoke glass: deliberately more legible than the other tools. */
+ background:linear-gradient(145deg,rgba(211,221,228,.26),rgba(156,173,184,.17) 68%,rgba(124,141,153,.15)),rgba(139,154,166,.11)!important;
+ border-color:rgba(224,236,243,.15)!important;
  box-shadow:none!important;
+ -webkit-backdrop-filter:blur(14px) saturate(108%)!important;
+ backdrop-filter:blur(14px) saturate(108%)!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpCameraToggle{grid-column:2!important}
 #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{
@@ -1558,7 +1565,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background:linear-gradient(155deg,rgba(199,203,207,.16),rgba(145,152,160,.12) 56%,rgba(124,133,142,.10)),rgba(110,116,124,.06)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
- box-shadow:0 6px 16px rgba(189,208,223,.075)!important;
+ box-shadow:0 10px 18px rgba(184,203,217,.055)!important;
  overflow:hidden!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
@@ -1568,12 +1575,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
  border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
- box-shadow:0 6px 16px rgba(189,208,223,.075)!important;
+ box-shadow:0 10px 18px rgba(184,203,217,.055)!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{border-color:rgba(245,248,250,.25)!important;}
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field,
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field:focus-within{
- box-shadow:0 6px 16px rgba(126,143,157,.055)!important;
+ box-shadow:0 10px 18px rgba(127,145,158,.045)!important;
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field #svcpChatInput{
  display:block!important;
@@ -1616,15 +1623,15 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  pointer-events:none!important;
  z-index:0!important;
  right:12px!important;
- bottom:1px!important;
+ bottom:3px!important;
  width:calc(100% - 188px)!important;
  max-width:calc(100% - 24px)!important;
- height:37px!important;
+ height:33px!important;
  border:0!important;
  border-radius:999px!important;
- background:radial-gradient(ellipse 78% 68% at 50% 72%,rgba(225,237,245,.36) 0%,rgba(199,217,230,.19) 46%,rgba(175,194,208,0) 100%)!important;
- filter:blur(10px)!important;
- opacity:.88!important;
+ background:radial-gradient(ellipse 80% 72% at 50% 78%,rgba(226,237,244,.29) 0%,rgba(194,213,227,.17) 43%,rgba(169,191,208,0) 100%)!important;
+ filter:blur(9px)!important;
+ opacity:.76!important;
  box-shadow:none!important;
  transform:none!important;
 }
@@ -1632,8 +1639,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  z-index:1!important;
 }
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::after{
- background:radial-gradient(ellipse 78% 68% at 50% 72%,rgba(168,188,205,.27) 0%,rgba(161,181,196,.14) 46%,rgba(166,182,196,0) 100%)!important;
- opacity:.74!important;
+ background:radial-gradient(ellipse 80% 72% at 50% 78%,rgba(156,174,190,.23) 0%,rgba(146,169,186,.11) 43%,rgba(166,182,196,0) 100%)!important;
+ opacity:.64!important;
 }
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm::after{opacity:.25!important;filter:blur(11px)!important}
