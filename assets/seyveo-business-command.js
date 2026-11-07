@@ -497,10 +497,37 @@ if(svcpComposerFrame&&typeof ResizeObserver==='function'){
  svcpComposerSizer.observe(svcpComposerFrame);
 }
 
-$('svcpAttachFile')?.addEventListener('click',()=>{
+/* A separate Plus like Home's search circle: file and camera are
+   offered in its small menu, preserving the original input handlers. */
+const svcpAttachMenu=$('svcpAttachMenu');
+function closeWorkAttachMenu(){
+ if(svcpAttachMenu)svcpAttachMenu.hidden=true;
+ $('svcpAttachFile')?.setAttribute('aria-expanded','false');
+}
+$('svcpAttachFile')?.addEventListener('click',event=>{
+ event.stopPropagation();
+ const open=!!svcpAttachMenu?.hidden;
  setCameraTray(false);
+ if(!svcpAttachMenu)return;
+ svcpAttachMenu.hidden=!open;
+ $('svcpAttachFile')?.setAttribute('aria-expanded',String(open));
+});
+$('svcpAttachChooseFile')?.addEventListener('click',()=>{
+ closeWorkAttachMenu();
  const picker=$('svcpFile');if(!picker)return;
  picker.value='';picker.click();
+});
+$('svcpAttachChooseCamera')?.addEventListener('click',()=>{
+ closeWorkAttachMenu();
+ $('svcpCameraToggle')?.click();
+});
+document.addEventListener('pointerdown',event=>{
+ if(svcpAttachMenu?.hidden)return;
+ if(svcpAttachMenu?.contains(event.target)||$('svcpAttachFile')?.contains(event.target))return;
+ closeWorkAttachMenu();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape')closeWorkAttachMenu();
 });
 
 /* Draft polishing is opt-in and never sends a message. Basic offline demo only. */
