@@ -2105,3 +2105,61 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  background:linear-gradient(155deg,rgba(239,242,246,.43),rgba(193,201,210,.30) 55%,rgba(159,170,182,.21)),rgba(190,199,208,.12)!important;
  border-color:rgba(245,248,250,.25)!important;
 }
+
+/* SEYVEO multiline composer repair: expand into a wide, readable sheet,
+   never a balloon-shaped pill. Only the wrapped-text state is changed. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline{
+ border-radius:23px!important;
+ grid-template-rows:minmax(0,auto) 42px!important;
+ align-content:end!important;
+ padding:8px 7px 5px!important;
+ row-gap:2px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline::before{
+ border-radius:23px!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within{
+ box-sizing:border-box!important;
+ display:flex!important;
+ justify-content:flex-start!important;
+ align-items:stretch!important;
+ grid-column:1/-1!important;
+ grid-row:1!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ height:auto!important;
+ max-height:min(156px,30dvh)!important;
+ border-radius:15px!important;
+ overflow:visible!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput:focus{
+ box-sizing:border-box!important;
+ display:block!important;
+ flex:0 1 auto!important;
+ align-self:stretch!important;
+ width:100%!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:40px!important;
+ max-height:min(150px,29dvh)!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ padding:9px 12px!important;
+ margin:0!important;
+ border:0!important;
+ line-height:22px!important;
+ text-align:left!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+ word-break:break-word!important;
+ resize:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > :is(#svcpAttachFile,#svcpCameraToggle,#svcpPolishMessage,#svcpComposerEmojiToggle){
+ grid-row:2!important;
+ align-self:center!important;
+}
