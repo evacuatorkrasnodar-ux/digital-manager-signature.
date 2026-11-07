@@ -21,7 +21,7 @@ const $=(tag,cls,label)=>{
 const button=(label,action,cls='')=>{const e=$('button','svdf-button '+cls,label);e.type='button';e.addEventListener('click',action);return e;};
 let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
 let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
-const isActive=x=>x.state==='sent'||x.state==='read'||(role==='manager'&&x.state==='returned');
+const isActive=x=>x.state==='sent'||x.state==='read'||x.state==='signing'||(role==='manager'&&x.state==='returned');
 function safeRevisions(x){
  const fallback={number:1,body:TYPES[x.kind].body,at:Number.isFinite(x.created)?x.created:Date.now(),note:'Исходный учебный текст'};
  if(!Array.isArray(x.revisions)||!x.revisions.length)return [fallback];
@@ -40,7 +40,7 @@ function read(){
   const parsed=JSON.parse(localStorage.getItem(KEY)||'[]');
   if(!Array.isArray(parsed))return [];
   return parsed.filter(x=>x&&typeof x.id==='string'&&TYPES[x.kind]&&x.recipient==='elena'
-   &&['sent','read','approved','returned','revoked'].includes(x.state)
+   &&['sent','read','approved','signing','returned','revoked'].includes(x.state)
    &&Array.isArray(x.log))
    .slice(-MAX).map(x=>({id:x.id.slice(0,70),kind:x.kind,recipient:'elena',state:x.state,
     created:Number.isFinite(x.created)?x.created:Date.now(),
@@ -57,7 +57,8 @@ function stamp(t){return new Date(t).toLocaleString('ru-RU',{day:'numeric',month
 function status(x){
  if(x.state==='sent')return 'Ожидает Елену';
  if(x.state==='read')return 'Елена просмотрела · ждём подтверждения';
- if(x.state==='approved')return TYPES[x.kind].type==='Ознакомление'?'Ознакомление подтверждено':'Согласовано · демо';
+ if(x.state==='approved')return TYPES[x.kind].type==='Ознакомление'?'Ознакомление подтверждено · демо':'Согласовано · ожидает оформления подписи';
+ if(x.state==='signing')return 'Ожидает КЭП · подпись не выполнена';
  if(x.state==='returned')return 'Нужна новая редакция · замечание Елены';
  return 'Отозвано';
 }
@@ -69,7 +70,7 @@ function updateRecord(id,next,reason=''){
  if(!x)return false;
  const allowed=role==='employee'
   ?{sent:['read'],read:['approved','returned']}
-  :{sent:['revoked'],read:['revoked']};
+  :{sent:['revoked'],read:['revoked'],approved:['signing'],signing:['revoked']};
  if(!(allowed[x.state]||[]).includes(next)){
   info='Сначала нужно открыть документ и отметить прочтение. Недоступные действия не выполняются.';
   draw();return false;
@@ -85,12 +86,15 @@ function updateRecord(id,next,reason=''){
   read:'Елена отметила прочтение · учебный режим',
   approved:'Елена подтвердила '+(TYPES[x.kind].type==='Ознакомление'?'ознакомление':'согласование')+' · учебный режим',
   returned:'Елена вернула с замечанием: '+remark+' · учебный режим',
+  signing:'Руководитель направил согласованный документ на этап КЭП · подпись ещё не выполнена',
   revoked:'Руководитель отозвал документ · учебный режим'
  }[next];
  x.log=x.log.concat({at:Date.now(),text:label||next}).slice(-12);
  if(!persist()){x.state=oldState;x.log=oldLog;draw();return false;}
  returnDraft={id:'',text:''};
- info=next==='approved'?'Подтверждено в учебном режиме. Это не электронная подпись.':'Статус обновлён только в браузере.';
+ info=next==='approved'?'Учебное согласование подтверждено. Юридическая подпись ещё не выполнена.'
+  :next==='signing'?'Подготовлено к КЭП. Сертификат и сервис подписания пока не подключены.'
+  :'Статус обновлён только в браузере.';
  emit('status',x);draw();return true;
 }
 function resubmit(id,newBody,changeNote){
@@ -173,6 +177,12 @@ function renderRecord(node,x){
    }
   }else if(x.state==='sent'||x.state==='read'){
    actions.append(button('Отозвать',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
+  }else if(x.state==='approved'&&TYPES[x.kind].type==='Согласование'){
+   actions.append(button('Подготовить к КЭП · демо',()=>updateRecord(x.id,'signing'),'svdf-primary'));
+  }else if(x.state==='signing'){
+   detail.append($('p','svdf-signing-notice',
+    'Документ согласован, но не подписан. Для реальной КЭП потребуется подключить сервис подписания, проверить сертификат и полномочия подписанта.'));
+   actions.append(button('Отозвать запрос · демо',()=>updateRecord(x.id,'revoked'),'svdf-quiet'));
   }else if(x.state==='returned'){
    actions.append(button('Исправить и отправить повторно',()=>{
     revisionDraft={id:x.id,body:latestRevision(x).body,note:''};draw();
@@ -241,7 +251,7 @@ function draw(){
   $('h2','','Согласования'),
   $('p','','Документ → сотрудник → ознакомление или согласование → история действий.'));
  host.append(lead);
- host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Редакции и замечания хранятся без шифрования в этом браузере. Не вводите личные, коммерческие или конфиденциальные данные. Переключение ролей не является авторизацией. Нет реальной доставки и юридически значимой подписи.'));
+ host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Все данные этого экрана хранятся без шифрования только в браузере. Не используйте реальные документы, личные данные и секреты. Переключение ролей не является авторизацией, подтверждение — не подписью, а запрос не доставляется сотруднику на другое устройство.'));
  const roleSwitch=$('div','svdf-role-switch');roleSwitch.setAttribute('role','group');roleSwitch.setAttribute('aria-label','Учебная роль');
  for(const [key,label] of [['manager','Руководитель'],['employee','Елена · сотрудник']]){
   const b=button(label,()=>setRole(key),'svdf-role');b.setAttribute('aria-pressed',String(key===role));roleSwitch.append(b);
@@ -291,6 +301,14 @@ function draw(){
   host.append(form);
  }else host.append($('p','svdf-hint','Ты видишь учебную роль Елены. Открой запрос, прочитай содержание и выбери действие.'));
  const active=records.filter(isActive).length,completed=records.length-active;
+ const signing=records.filter(x=>x.state==='signing').length;
+ const inReview=records.filter(x=>['sent','read','returned'].includes(x.state)).length;
+ const pulse=$('div','svdf-pulse');
+ for(const [name,count] of [['На согласовании',inReview],['На подписи',signing],['Завершено',completed]]){
+  const tile=$('div','svdf-pulse-tile');
+  tile.append($('strong','',String(count)),$('small','',name));pulse.append(tile);
+ }
+ host.append(pulse);
  const title=$('div','svdf-list-header');
  title.append($('strong','',role==='employee'?'Мои входящие':'Отправленные документы'),
   $('span','',active+' в работе · '+completed+' завершены'));
