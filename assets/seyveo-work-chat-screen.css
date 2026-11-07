@@ -2010,3 +2010,29 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO velvet transparency refinement — outer work dock only.
+   The previous test copied Home's opaque dark backing (.70–.72), hiding the
+   conversation beneath it. Keep the exact Home glass highlight and blur,
+   but let the separate backdrop layer remain visibly translucent. */
+#svcpWorkChatScreen #svcpChatForm::before,
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.28)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(255,255,255,.36),rgba(255,255,255,.20) 55%,rgba(218,234,241,.10)),rgba(235,242,247,.26)!important;
+}
+:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.28)!important;
+}
+:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.28)!important;
+}
+:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen #svcpChatForm::before{
+ background:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.28)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpChatForm::before{
+  background:var(--sv-air-dock,#24372f)!important;
+ }
+}
