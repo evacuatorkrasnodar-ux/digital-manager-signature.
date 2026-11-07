@@ -1740,7 +1740,12 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
  const sayviButton=$('svcpCallSayvi');
  const header=$('svcpConversation')?.querySelector('.svcp-conversation-bar');
  const info=$('svcpRoomInfoToggle');
- if(sayviButton&&header&&info)header.insertBefore(sayviButton,info);
+ if(sayviButton&&header&&info){
+  header.insertBefore(sayviButton,info);
+  // Reuse the approved etched Sayvi mark instead of the legacy decorative span.
+  // Keep the existing button, label, and mention handler untouched.
+  sayviButton.innerHTML='<svg class="svcp-header-sayvi-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5C13.65 2.5 14.25 7 16.4 8.6 18 10.05 21.5 10.4 21.5 12S18 13.95 16.4 15.4C14.25 17 13.65 21.5 12 21.5S9.75 17 7.6 15.4C6 13.95 2.5 13.6 2.5 12S6 10.05 7.6 8.6C9.75 7 10.35 2.5 12 2.5Z"/><circle cx="12" cy="12" r="1.7"/></svg>';
+ }
 }
 /* Camera is a single entry point, with user-initiated system capture on mobile. */
 const fileInput=$('svcpFile');
