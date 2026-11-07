@@ -31,9 +31,9 @@ test('primary routes put their title and back arrow on one stable row',()=>{
 
 test('persistent work header retains a reserved back slot and constant title column',()=>{
  assert.match(shell,/heading\.append\(back,title,add\)/);
- assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkHeader\{\s*grid-template-columns:44px minmax\(0,1fr\) 44px!important/);
- assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkTitle\{\s*grid-column:2!important/);
- assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkAdd:not\(\[hidden\]\)\{\s*grid-column:3/);
+ assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkHeader\{\s*grid-template-columns:minmax\(0,1fr\) 44px!important/);
+ assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkTitle\{\s*grid-column:1!important/);
+ assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkAdd:not\(\[hidden\]\)\{\s*grid-column:2/);
  assert.match(css,/#svWorkShell\[data-history="true"\] #svWorkTitle\{\s*grid-column:2!important/);
 });
 
@@ -45,8 +45,13 @@ test('Calendar creation choices no longer cover the title bar or work tabs',()=>
  assert.match(shell,/calendarAdd\?\.click\(\)/);
 });
 
+test('Sayvi continuation is independent from saving Cabinet tool choices',()=>{
+ assert.match(html,/id="svCabinetContinueWithSayvi"/);
+ assert.match(css,/sv-continuity-root/);
+});
+
 test('Safari requests current assets and work shell syntax is valid',()=>{
- assert.match(html,/assets\/seyveo-work-shell\.css\?v=14/);
+ assert.match(html,/assets\/seyveo-work-shell\.css\?v=15/);
  assert.match(html,/assets\/seyveo-work-shell\.js\?v=9/);
  assert.doesNotThrow(()=>new Script(shell));
 });
