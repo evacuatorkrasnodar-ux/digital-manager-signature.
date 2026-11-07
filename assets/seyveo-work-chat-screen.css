@@ -2949,3 +2949,69 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-height:30px!important;
  padding:2px 8px!important;
 }
+
+/* v188 · Five inline emoji, replacing placeholder text INSIDE the capsule.
+   Do not alter the approved pane, mic position, or outer dock. */
+#svcpWorkChatScreen #svcpChatForm.svcp-emoji-inline-open:not(.svcp-compose-multiline) .svcp-chat-compose-field{
+ position:relative!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-emoji-inline-open:not(.svcp-compose-multiline) #svcpChatInput{
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpComposerEmojiStrip[hidden]{
+ display:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-emoji-inline-open:not(.svcp-compose-multiline) .svcp-chat-compose-field > #svcpComposerEmojiStrip:not([hidden]){
+ position:absolute!important;
+ z-index:7!important;
+ inset:0 51px 0 8px!important;
+ box-sizing:border-box!important;
+ width:auto!important;
+ max-width:none!important;
+ min-width:0!important;
+ height:100%!important;
+ max-height:100%!important;
+ min-height:0!important;
+ display:flex!important;
+ flex-flow:row nowrap!important;
+ justify-content:space-evenly!important;
+ align-items:center!important;
+ gap:0!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ overflow:hidden!important;
+}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice{
+ flex:0 1 34px!important;
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:34px!important;
+ min-width:0!important;
+ max-width:34px!important;
+ height:38px!important;
+ min-height:38px!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:10px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ font:400 22px/1 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer!important;
+}
+#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice:active{
+ background:rgba(180,190,205,.14)!important;
+}
+@media(max-width:355px){
+ #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > #svcpComposerEmojiStrip .svcp-composer-emoji-choice{
+  font-size:19px!important;
+ }
+}
