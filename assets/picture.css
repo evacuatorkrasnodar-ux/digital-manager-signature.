@@ -203,7 +203,7 @@
  }
  #picturePage .picture-section{margin-top:10px}
  #picturePage .picture-section h2{
-   font-size:13.5px;font-weight:605;line-height:1.35;margin-bottom:7px
+   font-size:14px;font-weight:605;line-height:1.35;margin-bottom:7px
  }
  #picturePage .picture-chart-box{
    padding:8px 6px 10px;border-radius:0
@@ -211,7 +211,7 @@
  #picturePage .picture-bars{height:91px;gap:5px}
  #picturePage .picture-bin{gap:5px}
  #picturePage .picture-bin-track{height:69px}
- #picturePage .picture-bin small{height:16px;line-height:16px;font-size:10px}
+ #picturePage .picture-bin small{height:17px;line-height:17px;font-size:11px}
  #picturePage .picture-breakdown{
    padding:2px 6px;border-radius:0
  }
@@ -219,10 +219,10 @@
    gap:6px;min-height:49px;padding:9px 0
  }
  #picturePage .picture-split-label{
-   font-size:12px;line-height:1.35;gap:7px
+   font-size:12.5px;line-height:1.35;gap:7px
  }
  #picturePage .picture-split-label strong{
-   padding-right:13px;font-size:11.5px
+   padding-right:13px;font-size:12px
  }
  #picturePage .picture-split-row::after{top:9px}
  #picturePage .picture-subnote{
@@ -291,7 +291,10 @@
  background:transparent;border:0;box-shadow:none;
 }
 #picturePage .picture-bin-bar{
- background:linear-gradient(180deg,var(--text),var(--seyveo-emerald));
+ background:color-mix(in srgb,var(--secondary) 82%,var(--seyveo-emerald) 18%);
+}
+#picturePage .picture-bin:is(:active,:focus-visible) .picture-bin-bar{
+ background:var(--seyveo-emerald);
 }
 @media(max-width:390px){
  #picturePage .picture-demo-label{font-size:8.5px!important}
