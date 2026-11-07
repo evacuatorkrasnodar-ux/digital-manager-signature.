@@ -2673,11 +2673,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-width:0!important;margin:0!important;
 }
 /* Prior 63/65px left visually merged the circles on iPhone Safari.
-   Start velvet 16px after Plus's right edge, preserving a clear groove.
+   Start velvet 8px after Plus's right edge, preserving a clear groove.
    On input, the existing animation still rejoins the bar. */
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
- left:65px!important;
+ left:58px!important;
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage,
@@ -2693,7 +2693,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
  #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
-  left:65px!important;
+  left:58px!important;
  }
 }
 
