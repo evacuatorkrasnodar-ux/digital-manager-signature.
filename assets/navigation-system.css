@@ -247,5 +247,7 @@ html body dialog#calendarEventDialog[open] .sv-form-actions > button.btn.primary
  background:rgba(161,188,196,.09)!important;
 }
 :root[data-theme=light] html body dialog#calendarEventDialog[open] .sv-form-actions > button.btn.primary{
- color:var(--seyveo-emerald,#386d5b)!important;
+ color:var(--text)!important;
+ background:transparent!important;
+ box-shadow:none!important;
 }
