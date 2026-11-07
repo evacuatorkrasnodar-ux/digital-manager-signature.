@@ -1297,3 +1297,39 @@
  background:transparent!important;
  border-bottom:1px solid var(--mail-26-line)!important;
 }
+
+
+/* SEYVEO Mail · canonical, stable navigation row (personal + business).
+   Back is the EXISTING #sayviSurfaceBack moved into .sv-mail-top-actions
+   by sayvi-surfaces.js; no duplicate button or extra navigation handler. */
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{
+ position:static!important;inset:auto!important;z-index:auto!important;
+ box-sizing:border-box!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;
+ flex:0 0 44px!important;width:44px!important;min-width:44px!important;
+ height:44px!important;min-height:44px!important;
+ margin:0 4px 0 0!important;padding:0!important;
+ border:1px solid var(--mail-26-line,rgba(190,208,218,.12))!important;
+ border-radius:50%!important;
+ background:var(--mail-26-lens,rgba(180,196,204,.08))!important;
+ color:var(--text)!important;box-shadow:none!important;
+ -webkit-backdrop-filter:blur(16px) saturate(1.12);
+ backdrop-filter:blur(16px) saturate(1.12);
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack svg{
+ display:block!important;flex:none;width:19px!important;height:19px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.55!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack span{
+ display:none!important;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > .sv-mail-introduction-text{
+ min-width:0;flex:1 1 auto;
+}
+#sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions{
+ min-height:48px!important;align-items:center!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #sayviSurfacePage[data-sv-subject="mail"] .sv-mail-top-actions > #sayviSurfaceBack{transition:none!important}
+}
