@@ -172,7 +172,7 @@ function draw(){
  if(view==='flow'){
   if(employeePreview()){
    const limit=el('div','sv-doc-role-info');
-   limit.append(el('strong','','Елена · сотрудник'),
+   limit.append(el('strong','','Доступ сотрудника · учебный режим'),
     el('small','','Учебный доступ: мои входящие, ознакомление, согласование и возврат с замечанием. Архив компании и настройки КЭП доступны руководителю.'));
    host.append(limit);
   }else{
@@ -284,7 +284,8 @@ function syncPreviewRole(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
  clearPreview();
  archiveExpanded=false;showPreview=false;
- files.business=null;stored.business=false;
+ // A previously decrypted File must not remain in JS memory after a role change.
+ files={personal:null,business:null};stored={personal:false,business:false};
  if(area==='business')view=current==='employee'?'flow':'archive';
  if(host?.isConnected)draw();
 }
