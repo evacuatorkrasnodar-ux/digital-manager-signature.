@@ -157,7 +157,7 @@ function renderDirectory(){
   tile.setAttribute('aria-label','Открыть профессиональную историю: '+p.name);
   const photo=el('img','svstaff-thumb');photo.src=photoFor(p);photo.alt='';photo.loading='lazy';
   const copy=el('span','svstaff-tile-copy');
-  copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','✦ Сэйви: '+p.hint));
+  copy.append(el('strong',null,p.name),el('small',null,p.role+' · '+tenure(p.since)),el('span','svstaff-tile-trend','Сэйви: '+p.hint));
   const count=el('span','svstaff-tile-count');count.append(icon('star','svstaff-gold'),el('b',null,String(peerRecognition(p.id).length)));
   const arrow=el('span','svstaff-tile-arrow','›');arrow.setAttribute('aria-hidden','true');
   const newMarks=peerRecognition(p.id).length;
