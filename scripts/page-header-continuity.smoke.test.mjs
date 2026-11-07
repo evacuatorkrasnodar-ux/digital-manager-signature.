@@ -9,13 +9,16 @@ import {readFile} from 'node:fs/promises';
 import {Script} from 'node:vm';
 
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
-const [html,css,shell,cabinet,taskCss,taskPicker]=await Promise.all([
+const [html,css,shell,cabinet,taskCss,taskPicker,cabinetCss,fullscreenCss,calendarCss]=await Promise.all([
  read('index.html'),
  read('assets/seyveo-work-shell.css'),
  read('assets/seyveo-work-shell.js'),
  read('assets/seyveo-unified-tasks.js'),
  read('assets/personal-tasks.css'),
- read('assets/seyveo-calendar-pickers.js')
+ read('assets/seyveo-calendar-pickers.js'),
+ read('assets/seyveo-business-command.css'),
+ read('assets/seyveo-fullscreen-workspaces.css'),
+ read('assets/calendar.css')
 ]);
 
 test('primary routes use the shared top-row header contract',()=>{
@@ -65,6 +68,29 @@ test('New Task and Choose Deadline use one horizontal 54px Back-and-title header
  assert.match(html,/assets\/personal-tasks\.css\?v=52/);
  assert.match(html,/assets\/seyveo-calendar-pickers\.js\?v=11/);
  assert.doesNotThrow(()=>new Script(taskPicker));
+});
+
+test('Cabinet guide has only the persistent header and its Back returns to the catalog',()=>{
+ assert.match(html,/<header class="sv-cabinet-dialog-head">[\s\S]*?<h2 id="svCabinetTitle">/);
+ assert.match(cabinet,/textContent=GOALS\[id\]\.title/);
+ assert.match(cabinet,/if\(activeGoal\)\{[\s\S]*?const id=hideGoal\(\)/);
+ assert.match(cabinet,/dialog\.addEventListener\('cancel',event=>\{/);
+ assert.match(fullscreenCss,/#svCabinetDialog\.sv-cabinet-dialog\[open\] \.sv-cabinet-dialog-head\{[\s\S]*?display:grid!important/);
+ assert.doesNotThrow(()=>{if(cabinet.includes("sv-cabinet-guide-nav"))throw Error('Duplicate guide row exists')});
+ assert.doesNotThrow(()=>{if(cabinetCss.includes('data-cabinet-view="guide"] .sv-cabinet-dialog-head'))throw Error('Guide still hides header')});
+ assert.match(html,/assets\/seyveo-unified-tasks\.js\?v=65/);
+ assert.match(html,/assets\/seyveo-business-command\.css\?v=115/);
+ assert.match(html,/assets\/seyveo-fullscreen-workspaces\.css\?v=15/);
+});
+
+test('Calendar quick-create uses one light in-flow strip for both routes',()=>{
+ assert.match(html,/id="calendarCreateEvent"[\s\S]*?cal-create-choice-icon/);
+ assert.match(html,/id="calendarCreateTask"[\s\S]*?cal-create-choice-icon/);
+ assert.match(calendarCss,/:is\(#calendarPage #calendarCreateMenu,#svWorkShell > #calendarCreateMenu\):not\(\[hidden\]\)/);
+ assert.match(calendarCss,/border-bottom:1px solid var\(--soft-line\)!important/);
+ assert.match(css,/#svWorkShell > #calendarCreateMenu\{order:0!important\}/);
+ assert.match(html,/assets\/calendar\.css\?v=77/);
+ assert.match(html,/assets\/seyveo-work-shell\.css\?v=16/);
 });
 
 test('Safari requests current assets and work shell syntax is valid',()=>{
