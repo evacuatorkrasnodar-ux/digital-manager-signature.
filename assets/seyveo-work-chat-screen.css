@@ -3551,3 +3551,50 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  font-size:10px!important;
  line-height:13px!important;
 }
+
+/* v195 · Approved SEYVEO pill actions in task review; no squared
+   primary/secondary buttons, no raised heavy surfaces. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions{
+ gap:8px!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > button{
+ appearance:none!important;
+ -webkit-appearance:none!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex:1 1 0!important;
+ width:auto!important;
+ min-width:0!important;
+ height:40px!important;
+ min-height:40px!important;
+ padding:5px 10px!important;
+ border:1px solid transparent!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ font:500 12px/17px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ letter-spacing:0!important;
+ text-align:center!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-primary{
+ background:rgba(117,161,137,.15)!important;
+ border-color:rgba(105,145,122,.16)!important;
+ color:var(--text)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-ghost{
+ background:rgba(154,168,181,.07)!important;
+ border-color:rgba(154,168,181,.09)!important;
+ color:var(--secondary)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-primary{
+ background:rgba(42,130,87,.11)!important;
+ border-color:rgba(42,130,87,.13)!important;
+ color:#266f4d!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions > .svcp-ghost{
+ background:rgba(118,135,149,.065)!important;
+ border-color:rgba(118,135,149,.075)!important;
+ color:#68727e!important;
+}
