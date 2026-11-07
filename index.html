@@ -1107,7 +1107,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 </main>
 <dialog id="pictureBreakdownDialog" class="manage-dialog picture-detail-dialog" aria-labelledby="pictureBreakdownTitle">
-<button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть сведения"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+<button type="button" class="seyveo-close-control seyveo-dialog-close sv-nav-arrow" aria-label="Назад к картине бизнеса"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <p class="manage-caption">SEYVEO</p>
 <h2 id="pictureBreakdownTitle">Подробности</h2>
 <p id="pictureBreakdownSub" class="picture-detail-sub"></p>
@@ -2151,8 +2151,8 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 
 <dialog id="seyveoAccountDemo" class="seyveo-account-modal seyveo-subscription-v2" aria-labelledby="seyveoAccountTitle">
 <div class="seyveo-account-shell">
-<header class="seyveo-account-head"><div><span class="seyveo-account-eyebrow">SEYVEO / ПОДПИСКА</span><h2 id="seyveoAccountTitle"><span class="smc-dialog-art" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="10" width="30" height="28" rx="4"/><path d="M9 19h30M16 29h9M32 26l1.3 2.6 2.9.5-2.1 2 .5 2.8L32 32.5l-2.6 1.4.5-2.8-2.1-2 2.9-.5Z"/></svg></span>Подписка</h2><p>Выберите, где Сэйви будет вам помогать.</p></div>
-<button id="seyveoAccountClose" class="seyveo-account-finish" type="button">Готово</button></header>
+<header class="seyveo-account-head"><button id="seyveoAccountClose" class="seyveo-account-finish sv-nav-back" type="button" aria-label="Назад из подписки"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div><span class="seyveo-account-eyebrow">SEYVEO / ПОДПИСКА</span><h2 id="seyveoAccountTitle"><span class="smc-dialog-art" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="10" width="30" height="28" rx="4"/><path d="M9 19h30M16 29h9M32 26l1.3 2.6 2.9.5-2.1 2 .5 2.8L32 32.5l-2.6 1.4.5-2.8-2.1-2 2.9-.5Z"/></svg></span>Подписка</h2><p>Выберите, где Сэйви будет вам помогать.</p></div>
+</header>
 <div class="seyveo-subscription-status"><span>Ваш доступ</span><strong>Подписка не подключена</strong><small>Тарифы и оплата пока не активированы. Списаний нет.</small></div>
 <div class="seyveo-subscription-options" aria-label="Направления SEYVEO">
 <article class="seyveo-subscription-card">
@@ -2229,7 +2229,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <p class="seyveo-passport-notice">Данные хранятся только на этом устройстве и не проверяются по ФНС. Перед отправкой проверьте получателя и содержимое.</p>
 <div class="info-actions" hidden><button type="button" class="btn primary" id="seyveoCompanyClose">Закрыть</button></div>
 </dialog>
-<dialog id="seyveoQrCardDialog" class="sv-qr-dialog" aria-labelledby="seyveoQrTitle"><header><div><span class="sv-qr-overline">SEYVEO · DIGITAL CARD</span><h2 id="seyveoQrTitle">Визитка компании</h2></div><button type="button" id="seyveoQrClose" aria-label="Закрыть визитку">×</button></header><section class="sv-qr-body"><h3 id="seyveoQrCompanyName">Компания</h3><p id="seyveoQrCompanySubtitle"></p><div id="seyveoQrImage" class="sv-qr-image" role="img" aria-label="QR-код с контактами компании"></div><p id="seyveoQrCompanyContacts"></p><p class="sv-qr-note">QR сохраняет контакт в телефон. Реквизиты и банковские данные не включаются.</p></section><div class="sv-qr-actions"><button type="button" id="seyveoQrSave">Сохранить QR</button><button type="button" id="seyveoQrShare">Поделиться контактом</button></div><p id="seyveoQrStatus" role="status" aria-live="polite"></p></dialog>
+<dialog id="seyveoQrCardDialog" class="sv-qr-dialog" aria-labelledby="seyveoQrTitle"><header><button type="button" id="seyveoQrClose" class="sv-nav-back" aria-label="Назад из визитки"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button><div><span class="sv-qr-overline">SEYVEO · DIGITAL CARD</span><h2 id="seyveoQrTitle">Визитка компании</h2></div></header><section class="sv-qr-body"><h3 id="seyveoQrCompanyName">Компания</h3><p id="seyveoQrCompanySubtitle"></p><div id="seyveoQrImage" class="sv-qr-image" role="img" aria-label="QR-код с контактами компании"></div><p id="seyveoQrCompanyContacts"></p><p class="sv-qr-note">QR сохраняет контакт в телефон. Реквизиты и банковские данные не включаются.</p></section><div class="sv-qr-actions"><button type="button" id="seyveoQrSave">Сохранить QR</button><button type="button" id="seyveoQrShare">Поделиться контактом</button></div><p id="seyveoQrStatus" role="status" aria-live="polite"></p></dialog>
 <dialog id="seyveoAvatarDialog" class="seyveo-passport-modal seyveo-avatar-dialog" aria-labelledby="seyveoAvatarTitle" aria-describedby="seyveoAvatarIntro">
 <div class="seyveo-avatar-dialog-heading">
 <span class="seyveo-avatar-eyebrow">SEYVEO · SIGNATURE</span>
@@ -2266,7 +2266,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 <div class="info-actions"><button type="button" id="homeWidgetsClose" class="btn primary">Готово</button></div>
 </dialog>
 <dialog id="homeWidgetDetails" aria-labelledby="homeWidgetDetailTitle">
-<button type="button" class="seyveo-close-control seyveo-dialog-close" aria-label="Закрыть подробности"><svg class="seyveo-close-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+<button type="button" class="seyveo-close-control seyveo-dialog-close sv-nav-arrow" aria-label="Назад к Главной"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 <p class="pulse-eyebrow">SEYVEO · ПОКАЗАТЕЛИ</p>
 <h2 id="homeWidgetDetailTitle">Как идут дела</h2><p id="homeWidgetDetailSub" class="home-widget-detail-sub"></p>
 <div id="homeWidgetDetailRows" class="home-widget-detail-rows"></div>
@@ -4564,7 +4564,7 @@ syncManager();render();
 <div class="syp-shell">
 <header class="syp-top">
 <div><p class="syp-kicker">SEYVEO / PRIVATE WALLET</p><h2 class="syp-title">Мой кошелёк</h2><p class="syp-desc">Все твои карты. Один умный помощник.</p></div>
-<button type="button" class="syp-x" data-syp="close" aria-label="Закрыть кошелёк"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5 19 19M19 5 5 19"/></svg></button>
+<button type="button" class="syp-x sv-nav-arrow" data-syp="close" aria-label="Назад из кошелька"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></button>
 </header>
 <section class="syp-screen" data-syp-screen="home">
 <div class="syp-card" aria-label="Демонстрационная карта SEYVEO PAY. Не является платёжной картой.">
