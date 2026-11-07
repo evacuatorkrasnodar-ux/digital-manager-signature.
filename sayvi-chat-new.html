@@ -667,6 +667,16 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  bottom:calc(var(--seyveo-dock-bottom) + var(--sayvi-composer-height,56px) + 68px)!important;
 }
 
+
+/* SEYVEO unified iPhone width: same 6px side inset as Home and Work docks. */
+@media(max-width:699px){
+ #sayviComposer{
+  left:calc(6px + env(safe-area-inset-left,0px))!important;
+  right:calc(6px + env(safe-area-inset-right,0px))!important;
+  width:auto!important;
+  max-width:none!important;
+ }
+}
 </style>
 </head>
 <body>
