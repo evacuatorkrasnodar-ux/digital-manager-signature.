@@ -33,10 +33,17 @@
  --sv-ui-space:8px;
  --sv-ui-quiet-surface:rgba(160,184,193,.075);
  --sv-ui-selected-surface:rgba(162,189,198,.12);
- --sv-ui-glass:rgba(81,104,109,.40);
- --sv-ui-glass-border:rgba(225,242,239,.14);
- --sv-ui-glass-shadow:0 9px 25px rgba(0,0,0,.10);
- --sv-ui-glass-filter:blur(32px) saturate(145%);
+ /* Sayvi's approved smoke-glass optical behavior. */
+ --sv-ui-glass:rgba(184,195,201,.19);
+ --sv-ui-glass-border:transparent;
+ --sv-ui-glass-shadow:none;
+ --sv-ui-glass-filter:blur(16px) saturate(105%);
+ /* A content sheet is calmer and more opaque than a floating action popover. */
+ --sv-ui-sheet:rgba(33,39,46,.88);
+ --sv-ui-sheet-border:rgba(184,195,201,.07);
+ --sv-ui-sheet-shadow:0 8px 24px rgba(0,0,0,.10);
+ --sv-ui-sheet-filter:blur(22px) saturate(105%);
+ --sv-ui-field:rgba(184,195,201,.08);
  --sv-ui-action-ink:var(--text);
  --sv-ui-divider:rgba(203,225,223,.12);
  /* Shared Air contract. No additional CSS overlay. */
@@ -77,9 +84,13 @@
 :root[data-theme="light"]{
  --sv-ui-quiet-surface:rgba(69,120,102,.055);
  --sv-ui-selected-surface:rgba(65,128,103,.10);
- --sv-ui-glass:rgba(247,252,249,.63);
- --sv-ui-glass-border:rgba(56,110,87,.14);
- --sv-ui-glass-shadow:0 9px 25px rgba(24,62,47,.08);
+ --sv-ui-glass:rgba(99,121,133,.22);
+ --sv-ui-glass-border:transparent;
+ --sv-ui-glass-shadow:none;
+ --sv-ui-sheet:rgba(250,252,253,.90);
+ --sv-ui-sheet-border:rgba(70,117,101,.08);
+ --sv-ui-sheet-shadow:0 8px 24px rgba(25,53,46,.06);
+ --sv-ui-field:rgba(99,121,133,.08);
  --sv-ui-action-ink:var(--seyveo-emerald,#386d5b);
  --sv-ui-divider:rgba(56,110,87,.10);
 }
