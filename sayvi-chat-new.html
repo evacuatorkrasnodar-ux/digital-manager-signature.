@@ -921,6 +921,76 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 @media(prefers-reduced-motion:reduce){
  #sayviComposer.sayvi-compose-expanded{transition:none!important}
 }
+
+/* SEYVEO materials sync v3 · values copied from the approved Work Chat Home
+   dock material tokens for each theme. Geometry and input logic unchanged. */
+#sayviComposer{
+ --sayvi-home-copy-material:linear-gradient(155deg,rgba(243,255,250,.125),rgba(173,222,203,.05) 47%,rgba(19,39,32,.016)),rgba(19,31,29,.72);
+ --sayvi-home-copy-shadow:0 8px 24px rgba(0,0,0,.11),inset 0 1px 0 rgba(240,255,248,.10);
+}
+:root[data-theme="light"] #sayviComposer{
+ --sayvi-home-copy-material:linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.48) 55%,rgba(218,234,241,.18)),rgba(235,242,247,.68);
+ --sayvi-home-copy-shadow:0 8px 22px rgba(53,80,102,.12),inset 0 1px 0 rgba(255,255,255,.70);
+}
+:root[data-theme="dark"][data-palette="graphite"] #sayviComposer{
+ --sayvi-home-copy-material:linear-gradient(155deg,rgba(235,244,249,.12),rgba(131,158,173,.042) 48%,transparent),rgba(19,26,32,.70);
+ --sayvi-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,250,255,.075);
+}
+:root[data-theme="dark"][data-palette="sapphire"] #sayviComposer{
+ --sayvi-home-copy-material:linear-gradient(155deg,rgba(228,238,255,.125),rgba(110,141,216,.046) 48%,transparent),rgba(18,28,48,.71);
+ --sayvi-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(244,249,255,.08);
+}
+:root[data-theme="dark"][data-palette="plum"] #sayviComposer{
+ --sayvi-home-copy-material:linear-gradient(155deg,rgba(255,243,227,.105),rgba(171,151,128,.041) 48%,transparent),rgba(28,27,26,.72);
+ --sayvi-home-copy-shadow:0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,245,233,.07);
+}
+#sayviComposer::before,
+:root[data-theme="light"] #sayviComposer::before{
+ border:0!important;
+ background:var(--sayvi-home-copy-material)!important;
+ box-shadow:var(--sayvi-home-copy-shadow)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+}
+#sayviPlus,
+:root[data-theme="light"] #sayviPlus{
+ border:0!important;
+ background:var(--sayvi-home-copy-material)!important;
+ box-shadow:var(--sayvi-home-copy-shadow)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+}
+#sayviField{
+ border:0.5px solid rgba(220,228,235,.045)!important;
+ background:linear-gradient(155deg,rgba(203,211,218,.135),rgba(165,174,184,.12) 58%,rgba(148,160,170,.105)),rgba(142,152,162,.055)!important;
+ box-shadow:none!important;
+}
+:root[data-theme="light"] #sayviField{
+ border-color:rgba(226,233,238,.10)!important;
+ background:linear-gradient(155deg,rgba(239,242,246,.26),rgba(206,213,219,.195) 58%,rgba(189,198,206,.155)),rgba(190,199,208,.065)!important;
+ box-shadow:none!important;
+}
+#sayviComposer.sayvi-compose-expanded::before{
+ background:var(--sayvi-home-copy-material)!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviPlus{
+ background:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviField{
+ border:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #sayviComposer::before,#sayviPlus{
+  background:var(--sayvi-fallback)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
 </style>
 </head>
 <body>
