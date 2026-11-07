@@ -431,3 +431,28 @@
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+
+/* SEYVEO large destination canvas · remove remaining lens from full-screen roots */
+/* Respect the existing full-screen routes in this very file.
+   No extra glass sampling on a whole screen; small popovers are untouched. */
+@media(max-width:720px){
+ html body dialog:is(
+  #calendarSpaceDialog,#seyveoSmartHomeDialog,#seyveoContactsDialog,
+  #seyveoFamilyDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,
+  #noteModeDialog,#notePaperDialog,#noteScanDialog,#calendarEventDialog,
+  #manageRoadmapDialog,#manageConnectionsDialog,#manageDataDialog,
+  #assistantChatHistoryDialog,#homeWidgetsManageDialog,#seyveoAccountDemo,
+  #seyveoPulseDialog,#seyveoStudioDialog,#seyveoCompanyDialog,
+  #seyveoQrCardDialog,#seyveoAvatarDialog,#homeWidgetDetails,
+  #pictureBreakdownDialog,#assistantQuickSettings,#onboardDialog,
+  #seyveoPayDialog
+ )[open]{
+  background:var(--bg)!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
