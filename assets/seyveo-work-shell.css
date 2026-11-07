@@ -125,3 +125,40 @@
  width:40px!important;height:40px!important;min-height:40px!important;
  border-radius:50%!important;
 }
+
+
+/* SEYVEO navigation hierarchy: title + one action, no duplicate Back on roots.
+   Real original buttons are still mounted for delegated clicks. */
+#svWorkShell[data-shared-work="true"] #svWorkHeader{
+ grid-template-columns:minmax(0,1fr) 42px!important;
+ column-gap:12px!important;
+}
+#svWorkShell #svWorkBack[hidden]{display:none!important}
+#svWorkShell #svWorkAdd[hidden]{
+ display:block!important;visibility:hidden!important;pointer-events:none!important;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTitle{
+ grid-column:1;
+}
+#svWorkShell[data-shared-work="true"] #svWorkAdd:not([hidden]){
+ grid-column:2;visibility:visible!important;pointer-events:auto!important;
+}
+#svWorkShell[data-shared-work="true"] #personalAddTasks,
+#svWorkShell[data-shared-work="true"] #svCabinetConfigure{
+ display:none!important;
+}
+#svWorkShell[data-active="personal"] #personalTasksTitle{
+ display:none!important;
+}
+#svWorkShell[data-active="personal"] .personal-tasks-head{
+ min-height:0!important;margin:0!important;padding:0!important;
+}
+#svWorkShell[data-active="personal"] .personal-tasks-head:empty{
+ display:none!important;
+}
+#svWorkShell #svWorkAdd:not([hidden]){
+ border-radius:50%!important;
+ width:42px!important;height:42px!important;
+ background:color-mix(in srgb,var(--text) 9%,transparent)!important;
+ box-shadow:none!important;
+}
