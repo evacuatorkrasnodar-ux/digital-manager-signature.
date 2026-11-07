@@ -12,37 +12,8 @@
   'seyveoAvatarDialog'
  ]);
  const nestedBack=new Set(['noteScanBack']);
- // A single lightweight matte-glass navigation material. No raised pills.
- const navStyle=document.createElement('style');
- navStyle.id='seyveo-navigation-standard';
- navStyle.textContent=`
-  button.sv-nav-arrow,button.sv-nav-back {
-   -webkit-appearance:none;appearance:none;
-   display:inline-flex;align-items:center;justify-content:center;
-   flex:0 0 auto;min-width:40px;min-height:40px;
-   padding:0!important;border:0!important;border-radius:14px!important;
-   background:transparent!important;box-shadow:none!important;
-   color:var(--text,#f6f7f8)!important;
-   -webkit-tap-highlight-color:transparent;
-   transition:background-color .18s ease,opacity .18s ease;
-  }
-  button.sv-nav-arrow svg,button.sv-nav-back svg {
-   width:19px;height:19px;flex:none;fill:none;
-   stroke:currentColor;stroke-width:1.85;
-   stroke-linecap:round;stroke-linejoin:round;
-  }
-  button.sv-nav-arrow:hover,button.sv-nav-back:hover {
-   background:color-mix(in srgb,currentColor 7%,transparent)!important;
-  }
-  button.sv-nav-arrow:focus-visible,button.sv-nav-back:focus-visible {
-   outline:2px solid var(--text,#f6f7f8);outline-offset:2px;
-  }
-  button.sv-nav-arrow:active,button.sv-nav-back:active {opacity:.62}
-  @media(prefers-reduced-motion:reduce){
-   button.sv-nav-arrow,button.sv-nav-back{transition:none}
-  }
- `;
- document.head.appendChild(navStyle);
+ // Visual navigation belongs to assets/navigation-system.css only.
+ // Do not inject a conflicting late <style> into the document.
  function createArrow(){
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('viewBox','0 0 24 24');
@@ -91,7 +62,9 @@
  [
   'seyveoConversationBack','noteScanBack','manageThemeBack',
   'lifeBack','calendarMeasureBack','seyveoCleanBack','sayviVideoBack',
-  'sayviAnswerBack','sayviSurfaceBack'
+  'sayviAnswerBack','sayviSurfaceBack','pictureBackToBusiness',
+  'svcpConversationBack','svcpWorkChatBack','businessMapClose',
+  'calendarBack','unifiedTasksBack'
  ].forEach(id=>{
   const button=$(id);
   if(!button)return;
@@ -152,5 +125,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:3});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:4});
 })();
