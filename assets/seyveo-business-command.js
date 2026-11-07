@@ -1642,7 +1642,8 @@ function prepareTask(msg,index=null){
  $('svcpChatTaskAssignee').value=state.draftSource.assigneeId;
  $('svcpChatTaskTitle').value=clean;
  $('svcpChatTaskDraft').hidden=false;
- $('svcpChatTaskTitle').focus({preventScroll:true});
+ // Leave the task review visible before opening the iPhone keyboard.
+ document.activeElement?.blur?.();
 }
 function cancelTaskDraft(){state.draftSource=null;$('svcpChatTaskDraft').hidden=true}
 $('svcpChatTaskCancel')?.addEventListener('click',cancelTaskDraft);
@@ -1857,7 +1858,8 @@ $('svcpComposerDirectTask')?.addEventListener('click',()=>{
  $('svcpChatTaskAssignee').value=person;
  $('svcpChatTaskTitle').value=text;
  $('svcpChatTaskDraft').hidden=false;
- $('svcpChatTaskTitle').focus({preventScroll:true});
+ // Leave the task review visible before opening the iPhone keyboard.
+ document.activeElement?.blur?.();
 });
 $('svcpChatForm')?.addEventListener('submit',async event=>{
  event.preventDefault();
