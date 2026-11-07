@@ -315,12 +315,12 @@
   padding-top:3px!important;
  }
  html body #seyveoCompanyDialog[open] .seyveo-passport-form .btn.primary{
-  min-height:46px!important;
-  margin-top:12px!important;border:0!important;
-  border-radius:999px!important;
-  background:var(--sv-liquid-nav-material,var(--card2))!important;
-  -webkit-backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
-  backdrop-filter:var(--sv-liquid-nav-blur,blur(18px));
+  min-height:44px!important;height:44px!important;
+  margin-top:12px!important;padding:0 10px!important;border:0!important;
+  border-radius:var(--sv-ui-radius-control,12px)!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
   box-shadow:none!important;
   color:var(--text)!important;font-size:13px!important;font-weight:585!important;
  }
