@@ -516,3 +516,12 @@ html:not(.seyveo-conversation) #ask.prompt:not(.expanded):focus-within{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO unified iPhone horizontal geometry: 6px per safe viewport side.
+   Width only; preserve approved materials, button spacing and heights. */
+@media (max-width:699px){
+ .dock{
+  width:min(430px,calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))!important;
+  max-width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))!important;
+ }
+}
