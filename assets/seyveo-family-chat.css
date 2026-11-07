@@ -5,7 +5,8 @@
 .svf-dialog::backdrop{background:rgba(0,8,5,.77);backdrop-filter:blur(6px)}
 .svf-shell{box-sizing:border-box;height:100%;min-height:0;max-height:100%;display:flex;flex-direction:column;overflow:hidden}
 .svf-head{flex:none;padding:16px 16px 12px;background:linear-gradient(135deg,color-mix(in srgb,var(--seyveo-emerald) 10%,var(--bg)),var(--bg) 75%);border-bottom:1px solid var(--soft-line)}
-.svf-overline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.svf-overline{display:flex;align-items:center;justify-content:flex-start;gap:9px}
+.svf-overline #svfClose.sv-nav-arrow{order:-1;flex:0 0 44px!important;margin-left:-6px!important}
 .svf-overline small{color:var(--secondary);font-size:9px;letter-spacing:.16em;font-weight:620}
 .svf-iconbutton{width:42px;height:42px;border:1px solid var(--soft-line);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--text);cursor:pointer;flex:none}
 .svf-iconbutton svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
