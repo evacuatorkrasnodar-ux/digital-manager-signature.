@@ -33,6 +33,39 @@
   nav.append(button);
  }
  shell.prepend(nav);
+ // The header is also ONE persistent node; old headers retain their listeners.
+ const heading=document.createElement('header');
+ heading.id='svWorkHeader';
+ const back=document.createElement('button');
+ back.type='button';
+ back.id='svWorkBack';
+ back.setAttribute('aria-label','Вернуться назад');
+ back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
+ const title=document.createElement('h1');
+ title.id='svWorkTitle';
+ const add=document.createElement('button');
+ add.type='button';
+ add.id='svWorkAdd';
+ add.setAttribute('aria-label','Создать событие или дело');
+ add.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>';
+ heading.append(back,title,add);
+ shell.prepend(heading);
+ const legacyTasksBack=document.getElementById('unifiedTasksBack');
+ const legacyCalendarBack=document.getElementById('calendarBack');
+ const calendarAdd=document.getElementById('calendarAdd');
+ back.addEventListener('click',()=>{
+  if(!calendar.hidden){legacyCalendarBack?.click();return}
+  if(legacyTasksBack&&!legacyTasksBack.hidden){legacyTasksBack.click();return}
+  document.getElementById('navHome')?.click();
+ });
+ add.addEventListener('click',()=>{if(!calendar.hidden)calendarAdd?.click()});
+ // Route switches always start at the same stable viewport origin.
+ // Never scroll on routine data refreshes.
+ function resetWorkScroll(){
+  if(document.scrollingElement)document.scrollingElement.scrollTop=0;
+  const viewport=document.querySelector('.app');
+  if(viewport&&viewport.scrollTop>0)viewport.scrollTop=0;
+ }
  const oldTab=(parent,attribute,name)=>parent.querySelector('['+attribute+'="'+name+'"]');
  function activeSection(){
   if(!calendar.hidden)return 'calendar';
@@ -44,6 +77,11 @@
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
   const visible=managerTasks||managerCal;
   nav.hidden=!visible;
+  heading.hidden=!visible;
+  shell.dataset.sharedWork=String(visible);
+  title.textContent=active==='calendar'?'Календарь':active==='business'?'Кабинет':'Мои дела';
+  back.setAttribute('aria-label',active==='calendar'?'Назад из календаря':'Назад');
+  add.hidden=active!=='calendar';
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('button')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
@@ -58,8 +96,11 @@
   const original=fromCalendar
    ?oldTab(oldCalendar,'data-manager-calendar-tab',target)
    :oldTab(oldTasks,'data-unified-tasks-tab',target);
-  if(original&&!original.disabled)original.click();
-  requestAnimationFrame(sync);
+  if(original&&!original.disabled){
+   original.click();
+   resetWorkScroll();
+   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+  }
  });
  const observer=new MutationObserver(sync);
  observer.observe(tasks,{attributes:true,attributeFilter:['hidden','data-work-view']});
@@ -69,5 +110,5 @@
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:1,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:3,sync});
 })();
