@@ -165,3 +165,44 @@ html body :is(dialog#calendarEventDialog,dialog#personalTaskDialog)[open] .sv-fo
   min-width:112px!important;padding-inline:15px!important;
  }
 }
+
+/* Canonical SEYVEO event-editor navigation: controls are actions, not raised pills.
+   Keep the existing Cancel and submit handlers, 44px targets and form layout. */
+html body dialog#calendarEventDialog[open] .sv-form-actions{
+ border-top:1px solid rgba(189,215,217,.10)!important;
+ padding:8px 0 0!important;
+ min-height:53px!important;
+}
+html body dialog#calendarEventDialog[open] .sv-form-actions > #calendarEventCancel{
+ position:absolute!important;left:16px!important;top:16px!important;
+ display:inline-grid!important;place-items:center!important;
+ width:40px!important;height:40px!important;
+ min-width:40px!important;min-height:40px!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:50%!important;
+ background:transparent!important;background-image:none!important;
+ color:var(--text)!important;box-shadow:none!important;
+}
+html body dialog#calendarEventDialog[open] .sv-form-actions > #calendarEventCancel svg{
+ display:block!important;width:20px!important;height:20px!important;
+ stroke:currentColor!important;stroke-width:1.65!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;fill:none!important;
+}
+html body dialog#calendarEventDialog[open] .sv-form-actions > button.btn.primary{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 auto!important;
+ width:auto!important;min-width:93px!important;height:44px!important;min-height:44px!important;
+ margin:0 0 0 auto!important;padding:0 12px!important;
+ border:0!important;border-radius:11px!important;
+ background:transparent!important;background-image:none!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:none!important;filter:none!important;
+ color:var(--text)!important;font-size:14px!important;font-weight:620!important;
+ letter-spacing:-.015em!important;line-height:1!important;
+}
+html body dialog#calendarEventDialog[open] .sv-form-actions > button.btn.primary:active{
+ background:rgba(161,188,196,.09)!important;
+}
+:root[data-theme=light] html body dialog#calendarEventDialog[open] .sv-form-actions > button.btn.primary{
+ color:var(--seyveo-emerald,#386d5b)!important;
+}
