@@ -1355,7 +1355,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  outline:0!important;
  border-radius:999px!important;
  /* Home dock material family, made more translucent only within Work Chat. */
- background:var(--sv-liquid-nav-material)!important;
+ /* An extremely subtle Home-dock mint hue, scoped to the outer bar only. */
+ background:linear-gradient(150deg,rgba(144,207,164,.045),rgba(90,163,126,.027) 55%,rgba(44,108,78,.015)),var(--sv-liquid-nav-material)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
  backdrop-filter:var(--sv-liquid-nav-blur)!important;
