@@ -3193,3 +3193,128 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  min-height:30px!important;
  max-height:30px!important;
 }
+
+/* v191 · Task review is a real self-contained glass sheet, never a transparent
+   layer through which chat messages or their controls can be seen. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
+ position:absolute!important;
+ z-index:30!important;
+ box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ gap:9px!important;
+ align-content:start!important;
+ left:50%!important;
+ right:auto!important;
+ top:auto!important;
+ bottom:calc(var(--seyveo-dock-bottom,7px) + 56px + 12px)!important;
+ transform:translateX(-50%)!important;
+ width:min(410px,calc(100% - 24px))!important;
+ max-width:calc(100% - 24px)!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:min(350px,calc(100% - 142px))!important;
+ margin:0!important;
+ padding:17px 16px 15px!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ border:1px solid rgba(225,235,241,.12)!important;
+ border-radius:22px!important;
+ background:#25313b!important;
+ background-image:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;
+ -webkit-backdrop-filter:blur(22px) saturate(110%)!important;
+ backdrop-filter:blur(22px) saturate(110%)!important;
+ box-shadow:0 12px 32px rgba(0,0,0,.24)!important;
+ color:var(--text)!important;
+ isolation:isolate!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpChatTaskDraft:not([hidden]){
+ background:#f2f5f7!important;
+ background-image:linear-gradient(145deg,rgba(255,255,255,.84),rgba(227,233,239,.55))!important;
+ border-color:rgba(126,146,159,.18)!important;
+ box-shadow:0 14px 34px rgba(63,76,89,.15)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label{
+ display:block!important;
+ margin:0!important;
+ padding:0!important;
+ background:transparent!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label strong{
+ display:block!important;
+ font-size:16px!important;
+ line-height:21px!important;
+ font-weight:620!important;
+ color:var(--text)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > label small{
+ display:block!important;
+ font-size:12px!important;
+ line-height:18px!important;
+ color:var(--secondary)!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft :is(input,select){
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ min-height:43px!important;
+ margin:0!important;
+ padding:9px 12px!important;
+ border:1px solid rgba(132,151,164,.13)!important;
+ border-radius:13px!important;
+ background:rgba(255,255,255,.09)!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ font:400 16px/22px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft :is(input,select){
+ background:#fff!important;
+ border-color:rgba(133,151,162,.17)!important;
+ color:#283039!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions{
+ display:flex!important;
+ flex-wrap:nowrap!important;
+ align-items:center!important;
+ gap:8px!important;
+ min-width:0!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions button{
+ flex:1 1 0!important;
+ min-width:0!important;
+ box-sizing:border-box!important;
+ height:42px!important;
+ min-height:42px!important;
+ margin:0!important;
+ padding:6px 9px!important;
+ border-radius:13px!important;
+ font-size:12px!important;
+ line-height:16px!important;
+ font-weight:570!important;
+ white-space:normal!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions .svcp-primary{
+ background:rgba(96,137,119,.22)!important;
+ color:var(--text)!important;
+ border:1px solid rgba(98,144,122,.2)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft .svcp-task-draft-actions .svcp-primary{
+ background:rgba(46,122,83,.13)!important;
+ color:#246d49!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpChatTaskDraft > small{
+ display:block!important;
+ margin:0!important;
+ padding:0!important;
+ line-height:15px!important;
+ font-size:10px!important;
+ color:var(--secondary)!important;
+}
+/* Keep the sheet clear of the iPhone keyboard when the text input is focused:
+   its own scrolling remains available on shorter viewports. */
+#svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpChatTaskDraft:not([hidden])) #svcpMessages{
+ overflow-y:auto!important;
+}
