@@ -2364,3 +2364,19 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border:0!important;
  box-shadow:none!important;
 }
+
+/* SEYVEO expanded composer send/mic visibility fix.
+   The expanded circular-button rule must not force the microphone to display
+   over the send arrow when the user has typed text. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline[data-has-content="true"] .svcp-chat-compose-field > #svcpVoiceRecord{
+ display:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline[data-has-content="true"] .svcp-chat-compose-field > .svcp-chat-send{
+ display:grid!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline[data-has-content="false"] .svcp-chat-compose-field > #svcpVoiceRecord{
+ display:grid!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline[data-has-content="false"] .svcp-chat-compose-field > .svcp-chat-send{
+ display:none!important;
+}
