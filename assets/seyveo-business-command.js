@@ -323,7 +323,7 @@ async function startVoice(){
   clearVoiceDraft();
   setVoicePanel(true,'recording');
   if(voiceClock)voiceClock.textContent='00:00';
-  if(voiceHint)voiceHint.textContent='Нажми «Остановить», чтобы прослушать голосовое перед отправкой.';
+  if(voiceHint)voiceHint.textContent='Отпусти микрофон, чтобы закончить запись.';
   session.timer=setInterval(()=>{
    if(voiceSession!==session)return;
    const duration=Date.now()-session.started;
@@ -391,7 +391,41 @@ voicePreview?.addEventListener('timeupdate',()=>{
  if(!voicePreview.paused&&voiceClock&&voiceDraft)
   voiceClock.textContent=voiceDuration(Math.max(0,voiceDraft.duration-voicePreview.currentTime*1000));
 });
-voiceRecordButton?.addEventListener('click',startVoice);
+/* Hold-to-record on touch / mouse / pen. The release is tracked on window
+ * because the composer is hidden while the voice strip is showing. */
+let voiceHold=null;
+voiceRecordButton?.addEventListener('pointerdown',event=>{
+ if(event.button!==0||voiceHold||voiceSaving)return;
+ if(voiceSession||voiceDraft){event.preventDefault();return}
+ event.preventDefault(); // prevent a synthetic click from starting a second recording
+ const hold={pointerId:event.pointerId,released:false};
+ voiceHold=hold;
+ startVoice().then(()=>{
+  if(voiceHold!==hold)return;
+  if(hold.released){
+   voiceHold=null;
+   if(voiceSession&&!voiceSession.finished)stopVoice();
+  }
+ });
+});
+function endVoiceHold(event){
+ const hold=voiceHold;
+ if(!hold||event.pointerId!==hold.pointerId)return;
+ hold.released=true;
+ if(voiceSession&&!voiceSession.finished){
+  voiceHold=null;
+  stopVoice();
+ }
+}
+window.addEventListener('pointerup',endVoiceHold,true);
+window.addEventListener('pointercancel',endVoiceHold,true);
+// Preserve keyboard/switch accessibility; suppress physical tap/click toggling.
+voiceRecordButton?.addEventListener('click',event=>{
+ if(event.detail!==0){event.preventDefault();return}
+ startVoice();
+});
+voiceRecordButton?.addEventListener('contextmenu',event=>event.preventDefault());
+
 voiceStopButton?.addEventListener('click',stopVoice);
 voiceCancelButton?.addEventListener('click',cancelVoice);
 voiceSendButton?.addEventListener('click',sendVoice);
