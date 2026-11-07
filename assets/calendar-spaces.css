@@ -54,7 +54,8 @@
  border-bottom:1.6px solid var(--seyveo-emerald);transform:translateY(-2px) rotate(45deg);
 }
 #calendarSpaceDialog .calendar-space-edit .cal-velvet-trigger[aria-expanded=true]{
- border-color:var(--seyveo-emerald);
+ border-color:var(--soft-line);
+ color:var(--text);
 }
 #calendarSpaceDialog .cal-velvet-picker[hidden]{display:none!important}
 #calendarSpaceDialog .cal-velvet-picker{
