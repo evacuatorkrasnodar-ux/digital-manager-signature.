@@ -771,13 +771,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  max-width:min(360px,calc(100vw - 32px))!important;
  min-height:46px!important;max-height:52px!important;
  margin:0!important;padding:1px 4px!important;
- border:1px solid color-mix(in srgb,var(--soft-line) 23%,transparent)!important;
- border-radius:17px!important;
- background:color-mix(in srgb,var(--sv-input-surface) 86%,transparent)!important;
- -webkit-backdrop-filter:blur(24px) saturate(115%)!important;
- backdrop-filter:blur(24px) saturate(115%)!important;
- box-shadow:0 8px 24px color-mix(in srgb,var(--bg) 34%,transparent),
-  inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 37%,transparent)!important;
+ border:0!important;
+ border-radius:var(--sv-ui-radius-menu,18px)!important;
+ background:var(--sv-ui-glass)!important;
+ -webkit-backdrop-filter:var(--sv-ui-glass-filter)!important;
+ backdrop-filter:var(--sv-ui-glass-filter)!important;
+ box-shadow:none!important;
  overflow-x:auto!important;overflow-y:hidden!important;
  overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch
 }
@@ -814,8 +813,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-delete{color:var(--secondary)!important}
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-delete:active{color:#C88D89!important}
 :root[data-theme="light"] #svcpWorkChatScreen .svcp-message-menu:not([hidden]){
- background:color-mix(in srgb,var(--sv-input-surface) 76%,rgba(255,255,255,.72))!important;
- border-color:color-mix(in srgb,var(--soft-line) 25%,transparent)!important
+ background:var(--sv-ui-glass)!important;
+ border-color:transparent!important
 }
 #svcpWorkChatScreen .svcp-bubble-reaction{
  display:inline-flex;align-items:center;justify-content:center;
