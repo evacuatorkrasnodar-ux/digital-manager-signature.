@@ -86,4 +86,32 @@ for(const name of ['assets/navigation-system.css','assets/seyveo-velvet-system.c
  'assets/dialog-velvet.css','assets/seyveo-work-shell.css','assets/seyveo-work-shell.js']){
  assert.ok(html.includes(name+'?v='),name+' is loaded with a Safari cache version');
 }
+
+/* Prevent a late inline style from resurrecting the oversized cabinet Save pill.
+ * The 44px hit target stays; only the visual capsule disappears. */
+assert.doesNotMatch(html,/id="seyveo-action-design-standard"/,
+ 'No independent inline Cabinet Save styles may override its module');
+const tasksCss=read('assets/personal-tasks.css');
+const calendarCss=read('assets/calendar.css');
+const fullscreenCss=read('assets/seyveo-fullscreen-workspaces.css');
+const docFlowCss=read('assets/seyveo-document-flow.css');
+assert.match(tasksCss,/#personalTaskDialog #personalTaskSave::before\{\s*display:none!important/,
+ 'Task Save cannot draw a pseudo-element pill');
+assert.match(tasksCss,/#personalTaskDialog #personalTaskSave\{[\s\S]*?min-height:44px!important/,
+ 'Task Save must retain an accessible 44px target');
+assert.match(calendarCss,/#calendarEventDialog \.cal-dialog-actions>\.btn\.primary\{[\s\S]*?height:44px!important/,
+ 'Event Save must retain an accessible 44px target');
+assert.match(cabinetCss,/\.sv-cabinet-save\{\s*min-width:0;background:transparent/,
+ 'Cabinet Save must be a flat action');
+assert.match(fullscreenCss,/\.seyveo-passport-form \.btn\.primary\{[\s\S]*?background:transparent!important/,
+ 'Company Save should not be a raised capsule');
+assert.match(docFlowCss,/#sayviSurfacePage \.svdf-picker-sheet\[open\]\{[^\n]*background:var\(--sv-ui-sheet\)/,
+ 'Document picker must use the approved sheet material');
+for(const file of [
+ 'assets/onboarding.css','assets/seyveo-offline-manager.css',
+ 'assets/seyveo-pay.css','assets/seyveo-family-chat.css'
+]){
+ assert.match(read(file),/background:var\(--sv-ui-sheet\)/,
+  file+' must use shared modal material');
+}
 console.log('SEYVEO UI contract: tokens, dialogs, shared navigation and popovers verified.');
