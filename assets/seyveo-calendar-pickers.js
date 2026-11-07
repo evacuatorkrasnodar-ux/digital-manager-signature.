@@ -42,7 +42,7 @@ panel.innerHTML=[
  '<span class="cal-pick-colon" aria-hidden="true">:</span>',
  '<div class="cal-pick-wheel-column"><span class="cal-pick-wheel-title">Минуты</span><div class="cal-pick-wheel" id="seyveoPickMinutes" role="group" aria-label="Минуты"></div></div></div>',
  '<div class="cal-pick-time-actions"><button type="button" class="cal-pick-time-clear" id="seyveoPickNoTime">Без времени</button>',
- '<button type="button" class="cal-pick-time-done" id="seyveoPickDone">Готово</button></div></section>'
+ '<button type="button" class="cal-pick-time-done" id="seyveoPickDone">Выбрать время</button></div></section>'
 ].join('');
 row.insertAdjacentElement('afterend',panel);
 const datePanel=$('seyveoPickDate'),timePanel=$('seyveoPickTime'),days=$('seyveoPickDays');
