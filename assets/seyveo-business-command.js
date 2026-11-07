@@ -467,6 +467,18 @@ function resizeWorkComposer(){
  const height=Math.min(max,wanted);
  input.style.setProperty('height',height+'px','important');
  input.style.setProperty('overflow-y',wraps&&wanted>max?'auto':'hidden','important');
+ // Animate the existing dock's real height instead of switching to a
+ // separate editor. The lower edge is fixed, so it unfolds upward.
+ // 42px action row + 8px/5px padding + 2px row gap = 57px.
+ const targetHeight=wraps?height+57:56;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!form.style.getPropertyValue('height')){
+  const current=Math.round(form.getBoundingClientRect().height);
+  form.style.setProperty('height',(current>=56?current:56)+'px','important');
+ }
+ if(reduced)form.style.setProperty('transition','none','important');
+ else form.style.removeProperty('transition');
+ form.style.setProperty('height',targetHeight+'px','important');
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
