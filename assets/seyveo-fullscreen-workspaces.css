@@ -503,3 +503,17 @@ html:not(.seyveo-conversation) body .app :is(
  background-color:transparent!important;
  background-image:none!important;
 }
+
+/* Stronger root rule for the three editor backgrounds (older owners use !important). */
+@media(max-width:720px){
+ html body dialog#svCabinetDialog.sv-cabinet-dialog[open],
+ html body dialog#personalTaskDialog.personal-task-dialog[open],
+ html body dialog#calendarEventDialog.cal-form-dialog[open]{
+  background-color:var(--bg)!important;
+  background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%,100% 100%!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
