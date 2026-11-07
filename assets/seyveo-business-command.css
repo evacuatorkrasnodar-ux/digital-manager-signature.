@@ -1832,23 +1832,31 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
 .sv-cabinet-goal-chevron svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 .sv-cabinet-goal-mark{
  -webkit-appearance:none;appearance:none;
+ position:relative;isolation:isolate;
  display:grid;place-items:center;align-self:center;flex:none;
- width:40px;height:40px;min-width:40px;min-height:40px;padding:0;
- margin:0 0 0 2px;
- border:0;border-radius:50%;
- background:color-mix(in srgb,var(--text) 8%,transparent);
+ width:44px;height:44px;min-width:44px;min-height:44px;padding:0;
+ margin:0;
+ border:0;border-radius:50%;background:transparent;
  box-shadow:none;color:var(--text);font:inherit;
  cursor:pointer;touch-action:manipulation;
  -webkit-tap-highlight-color:transparent;
- transition:background-color .17s ease,opacity .17s ease
+ transition:opacity .17s ease
+}
+/* 44px touch target, only a 29px optical glass mark. */
+.sv-cabinet-goal-mark::before{
+ content:"";position:absolute;z-index:-1;
+ width:29px;height:29px;border-radius:50%;
+ background:color-mix(in srgb,var(--text) 5%,transparent);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+ pointer-events:none;
 }
 .sv-cabinet-goal-mark svg{
- display:block;width:18px;height:18px;fill:none;stroke:currentColor;
- stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round
+ display:block;width:16px;height:16px;fill:none;stroke:currentColor;
+ stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round
 }
-.sv-cabinet-goal-mark.is-selected{
- background:color-mix(in srgb,var(--text) 15%,transparent);
- color:var(--text)
+.sv-cabinet-goal-mark.is-selected{color:var(--text)}
+.sv-cabinet-goal-mark.is-selected::before{
+ background:color-mix(in srgb,var(--text) 9%,transparent);
 }
 .sv-cabinet-goal-mark:active{opacity:.64}
 :root[data-theme=light] .sv-cabinet-goal-mark.is-selected{
