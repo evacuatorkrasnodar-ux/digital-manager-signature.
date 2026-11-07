@@ -319,11 +319,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen :is(#svcpCameraTray,#svcpChatTaskDraft,#svcpVoiceCapture){max-height:38dvh}
 #svcpWorkChatScreen :is(#svcpReplyPreview,#svcpAttachmentPreview,#svcpTaskDiscussionQuick){
  box-sizing:border-box;padding:8px 12px;
- background:color-mix(in srgb,var(--sv-input-surface) 94%,transparent);
- border:1px solid color-mix(in srgb,var(--sv-input-border) 30%,transparent);
- border-radius:20px;
- -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
- box-shadow:inset 0 .5px 0 color-mix(in srgb,var(--sv-input-gloss) 35%,transparent)
+ background:var(--svcp-smoke-glass);
+ border:0;border-radius:20px;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ box-shadow:none
 }
 /* Separate stacked reply, attachment and input surfaces without losing any action. */
 #svcpWorkChatScreen #svcpReplyPreview:not([hidden]){
@@ -409,10 +409,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  gap:2px;padding:6px;width:min(250px,calc(100% - 24px));
  max-width:calc(100% - 24px);height:auto;min-height:0;max-height:min(280px,42dvh);
  overflow-x:hidden;overflow-y:auto;scrollbar-width:none;
- border:1px solid var(--sv-input-border);border-radius:22px;
- background:var(--sv-input-surface);
+ border:0;border-radius:22px;
+ background:var(--svcp-smoke-glass);
  -webkit-backdrop-filter:var(--sv-input-blur);backdrop-filter:var(--sv-input-blur);
- box-shadow:inset 0 1px 0 var(--sv-input-gloss);
+ box-shadow:none;
 }
 #svcpWorkChatScreen #svcpCameraTray::-webkit-scrollbar{display:none}
 #svcpWorkChatScreen #svcpCameraTray>button{
@@ -624,7 +624,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:56px;
  align-items:center;column-gap:7px;row-gap:0;flex:0 0 auto;
  padding:4px 12px calc(5px + env(safe-area-inset-bottom,0px))!important;
- background:var(--sv-input-surface);border-top:1px solid var(--sv-input-border);
+ background:var(--svcp-smoke-glass);border:0;
+ border-radius:22px;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
  max-height:82px!important;overflow:hidden!important
 }
 #svcpWorkChatScreen #svcpVoiceCapture:not([hidden]) + #svcpChatForm{display:none!important}
@@ -664,7 +667,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  display:grid;place-items:center;flex:0 0 32px;
  width:32px;min-width:32px;height:32px;min-height:32px;
  padding:0;border:0;border-radius:50%;
- background:color-mix(in srgb,var(--seyveo-hdr-active,var(--card2)) 72%,transparent);
+ background:var(--svcp-smoke-glass);
  color:var(--text);font:inherit;font-size:18px;cursor:pointer
 }
 #svcpWorkChatScreen .svcp-voice-preview-play[hidden]{display:none!important}
@@ -823,9 +826,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  margin:0!important;padding:1px 4px!important;
  border:0!important;
  border-radius:var(--sv-ui-radius-menu,18px)!important;
- background:var(--sv-ui-glass)!important;
- -webkit-backdrop-filter:var(--sv-ui-glass-filter)!important;
- backdrop-filter:var(--sv-ui-glass-filter)!important;
+ background:var(--svcp-smoke-glass)!important;
+ -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
+ backdrop-filter:blur(16px) saturate(105%)!important;
  box-shadow:none!important;
  overflow-x:auto!important;overflow-y:hidden!important;
  overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch
@@ -863,7 +866,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-delete{color:var(--secondary)!important}
 #svcpWorkChatScreen .svcp-message-menu .svcp-action-delete:active{color:#C88D89!important}
 :root[data-theme="light"] #svcpWorkChatScreen .svcp-message-menu:not([hidden]){
- background:var(--sv-ui-glass)!important;
+ background:var(--svcp-smoke-glass)!important;
  border-color:transparent!important
 }
 #svcpWorkChatScreen .svcp-bubble-reaction{
@@ -1129,7 +1132,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  display:block!important;
  border:1px solid var(--sv-input-border)!important;
  border-radius:22px!important;
- background:var(--sv-input-surface)!important;
+ background:var(--svcp-smoke-glass)!important;
  -webkit-backdrop-filter:var(--sv-input-blur)!important;
  backdrop-filter:var(--sv-input-blur)!important;
  overflow:hidden!important;
