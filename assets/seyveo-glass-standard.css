@@ -1,32 +1,74 @@
-/* SEYVEO 26 · restrained system materials.
-   The source of truth is Sayvi chat's actual composer:
-   light  rgba(99,121,133,.22), blur(14px) saturate(115%) contrast(1.12)
-   dark   rgba(184,195,201,.19), blur(16px) saturate(105%)
-   This file paints transient surfaces only. It does NOT reset layout,
-   scene backgrounds, the dock, the sphere or the dark dialog system.
-   The previous broad all-dialog override was removed on 2026-11-07. */
+/* SEYVEO · THEME MATERIAL CONTRACT · 07 Nov 2026
+   The reference is the REAL #sayviInput in sayvi-chat-new.html.
+   Dark: smoke rgba(184,195,201,.25) over a dark scene, blur(16px) saturate(105%).
+   Light: smoke rgba(99,121,133,.22) over the light scene,
+          blur(14px) saturate(115%) contrast(1.12).
+   Therefore dark controls are VISUALLY LIGHTER on the dark scene,
+   while light controls look COOLER/DARKER against white. Do not swap them.
+   Keep root canvases, the sphere, dock, media art and all routing untouched.
+   Styles here are deliberately restricted to transient/material-bearing nodes.
+*/
 :root{
- --sv-sayvi-lens:rgba(184,195,201,.19);
- --sv-sayvi-lens-strong:rgba(184,195,201,.25);
- --sv-sayvi-field:rgba(184,195,201,.10);
- --sv-sayvi-selected:rgba(184,195,201,.16);
- --sv-sayvi-separator:rgba(204,220,226,.10);
+ --sv-sayvi-lens:rgba(184,195,201,.25);
+ --sv-sayvi-menu:rgba(184,195,201,.25);
+ --sv-sayvi-field:rgba(184,195,201,.11);
+ --sv-sayvi-selected:rgba(184,195,201,.17);
+ --sv-sayvi-separator:rgba(200,216,222,.11);
  --sv-sayvi-filter:blur(16px) saturate(105%);
+ --sv-sayvi-control-ink:var(--text);
 }
 :root[data-theme=light]{
  --sv-sayvi-lens:rgba(99,121,133,.22);
- --sv-sayvi-lens-strong:rgba(99,121,133,.24);
- --sv-sayvi-field:rgba(99,121,133,.10);
+ --sv-sayvi-menu:rgba(99,121,133,.22);
+ --sv-sayvi-field:rgba(99,121,133,.11);
  --sv-sayvi-selected:rgba(99,121,133,.18);
- --sv-sayvi-separator:rgba(67,88,99,.095);
+ --sv-sayvi-separator:rgba(71,97,106,.10);
  --sv-sayvi-filter:blur(14px) saturate(115%) contrast(1.12);
+ --sv-sayvi-control-ink:var(--text);
 }
-/* White Velvet alone was the problem across unrelated pages.
-   Apply the chat's smoke-glass rather than an opaque white/green card.
-   Specialized editors with inner sheets are handled below. */
-:root[data-theme=light] body dialog[open]:not(
- #calendarEventDialog,#personalTaskDialog,#businessMapDialog,
- .sv-connect-dialog,.seyveo-dock-host
+/* The four dark palettes use the same NEUTRAL smoke. Their colors come from
+   the scene beneath the glass, not green/blue/brown painted rectangles. */
+:root[data-theme=dark]:is(
+ [data-palette=graphite],[data-palette=emerald],
+ [data-palette=sapphire],[data-palette=plum]
+){
+ --sv-sayvi-lens:rgba(184,195,201,.25);
+ --sv-sayvi-menu:rgba(184,195,201,.25);
+}
+
+/* White Velvet pages have one continuous background, like the main screen.
+   Do not force an opaque nested card behind each page. */
+:root[data-theme=light] body :is(
+ #tasksPage,#calendarPage,#managePage,#lifePage,#sayviSurfacePage,#sayviAnswerPage,
+ .tasks-main,.calendar-main,.manage-main,.life-main
+):not([hidden]){
+ background-color:transparent!important;
+ background-image:none!important;
+}
+
+/* Modal geometry is still owned by its module. On small screens these
+   full-height destinations must remain readable and keep their dock. */
+@media(min-width:721px){
+ html body dialog[open]:not(
+  #personalTaskDialog,#calendarEventDialog,#businessMapDialog,
+  .sv-connect-dialog,.seyveo-dock-host,#seyveoFamilyDialog,
+  #seyveoPayDialog
+ ){
+  background:var(--sv-sayvi-lens)!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
+  backdrop-filter:var(--sv-sayvi-filter)!important;
+ }
+}
+
+/* Dedicated small dialogs and overlays use a glass surface on all screens. */
+html body :is(
+ #svCabinetDialog.sv-cabinet-dialog[open],
+ dialog#info[open],
+ dialog#wakeVoiceConsent[open],
+ dialog#seyveoOfflineDialog[open],
+ dialog.sv-fan-personal-dialog[open]
 ){
  background:var(--sv-sayvi-lens)!important;
  border-color:transparent!important;
@@ -34,87 +76,221 @@
  -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
  backdrop-filter:var(--sv-sayvi-filter)!important;
 }
-/* A modal must have exactly one material-bearing surface. */
-:root[data-theme=light] body :is(#personalTaskDialog,#calendarEventDialog)[open]{
+
+/* Nested-sheet editors: transparent host + exactly ONE actual glass sheet.
+   NO pseudo-element highlights, frames or secondary painted backgrounds. */
+html body :is(#personalTaskDialog,#calendarEventDialog)[open]{
  background:transparent!important;
  border:0!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-:root[data-theme=light] body #personalTaskDialog[open] .personal-task-sheet,
-html body #calendarEventDialog[open] .cal-event-sheet{
+html body :is(
+ #personalTaskDialog[open] .personal-task-sheet,
+ #calendarEventDialog[open] .cal-event-sheet,
+ .sv-connect-dialog[open] .sv-connect-sheet
+){
  background:var(--sv-sayvi-lens)!important;
  border-color:transparent!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
  backdrop-filter:var(--sv-sayvi-filter)!important;
 }
-/* The cabinet, tasks and calendar use smoke in White Velvet only.
-   Dark Velvet retains its prior semantic materials and geometry. */
-:root[data-theme=light] body #svCabinetDialog[open]{
- background:var(--sv-sayvi-lens)!important;
- border:0!important;
- box-shadow:none!important;
-}
-:root[data-theme=light] body #svCabinetDialog[open] .sv-cabinet-footer{
+
+/* Cabinet chooser / tools / sub-tools. Preserve scroll and sticky footer. */
+html body #svCabinetDialog[open] .sv-cabinet-footer{
  background:transparent!important;
- border-top-color:var(--sv-sayvi-separator)!important;
+ border-top:1px solid var(--sv-sayvi-separator)!important;
  box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
 }
-:root[data-theme=light] body #svCabinetDialog[open] :is(.sv-cabinet-search,.sv-cabinet-source){
+html body #svCabinetDialog[open] :is(
+ .sv-cabinet-search,.sv-cabinet-source
+){
  background:var(--sv-sayvi-field)!important;
- border:0!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
  -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
  backdrop-filter:var(--sv-sayvi-filter)!important;
+}
+html body #svCabinetDialog[open] .sv-cabinet-source.is-current{
+ background:var(--sv-sayvi-selected)!important;
+ outline:1px solid var(--sv-sayvi-separator);
+ outline-offset:-1px;
+}
+html body #svCabinetDialog[open] :is(
+ .sv-cabinet-save,.sv-cabinet-reset,.sv-cabinet-guide-action
+){
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+html body #svCabinetDialog[open] .sv-cabinet-footer button{
+ width:auto!important;
+ min-width:0!important;
+ min-height:44px!important;
+ padding:0 10px!important;
+ border-radius:11px!important;
+ font-size:12px!important;
+}
+
+/* Task composer + event editor field recesses. Flat, not embossed. */
+html body #personalTaskDialog[open].personal-task-dialog form,
+html body #calendarEventDialog[open] :is(
+ .cal-form-primary input[type=text],.cal-date-control,
+ .cal-time-control,.cal-kind-options,textarea
+){
+ background:var(--sv-sayvi-field)!important;
+ border-color:transparent!important;
  box-shadow:none!important;
 }
-:root[data-theme=light] body #personalTaskDialog[open] form{
- background:var(--sv-sayvi-field)!important;
- border:0!important;box-shadow:none!important;
-}
-html body #svCabinetDialog[open] .sv-cabinet-save{
+html body #personalTaskDialog[open] :is(
+ #personalTaskSave,#personalTaskCancel
+){
  background:transparent!important;
- border:0!important;box-shadow:none!important;
+ border:0!important;
+ box-shadow:none!important;
  color:var(--text)!important;
 }
-/* Floating menus, not their page or surrounding content. */
-:root[data-theme=light] body :is(
+/* The note's "white paper" itself is deliberately not targeted; drawing
+   canvas and QR code must remain white for contrast and export quality. */
+
+/* Home, Calendar, Work, Browser, Mail, Docs, Notebook, and personal wellness
+   dropdowns, sheets, popovers, nested menus: one optical material.
+   The :not([hidden]) guards preserve existing JS open/close behavior. */
+html body :is(
  #homeHeader .home-world-popover:not([hidden]),
  #calendarCreateMenu:not([hidden]),
+ #calendarPage #calendarCreateMenu:not([hidden]),
  #calendarSpaceDialog .cal-velvet-picker:not([hidden]),
  #calendarSpaceDialog .pw-date-popup:not([hidden]),
  #calendarSpaceDialog .pw-time-popup:not([hidden]),
  .seyveo-browser-sheet:not([hidden]),
  .seyveo-browser.is-site-view .sb-browser-site-menu:not([hidden]),
- .seyveo-browser .sb-browser-demo-menu:not([hidden]),
  #unifiedTasksChatHost .svcp-message-menu:not([hidden]),
  #unifiedTasksChatHost .svcp-reaction-picker:not([hidden]),
- #notesDialog .note-more-options:not([hidden])
+ #svcpWorkChatScreen .svcp-message-menu:not([hidden]),
+ #notesDialog .note-more-options:not([hidden]),
+ #notePaperDialog .paper-pattern-menu:not([hidden]),
+ #notePaperDialog .paper-color-menu:not([hidden]),
+ #sayviSurfacePage .sv-mail-account-sheet[open],
+ #sayviSurfacePage .svdf-picker-sheet[open]
 ){
- background:var(--sv-sayvi-lens)!important;
+ background:var(--sv-sayvi-menu)!important;
  border-color:transparent!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
  backdrop-filter:var(--sv-sayvi-filter)!important;
+ color:var(--text)!important;
 }
-:root[data-theme=light] body #sayviSurfacePage :is(
- .sv-mail-account-sheet[open],.svdf-picker-sheet[open]
+/* Keep the same smoke on the actual control faces; these are not green
+   cards. Selected states receive a neutral highlight only. */
+html body :is(
+ #unifiedTasksChatHost .svcp-reaction-options button,
+ #sayviSurfacePage .svdf-picker,
+ #sayviSurfacePage .sv-mail-account-picker,
+ #calendarSpaceDialog .cal-velvet-trigger,
+ .seyveo-browser-sheet [data-bookmark-list] button,
+ #seyveoCompanyDialog .sv-kind-options,
+ #calendarSpaceDialog .pw-time-fields input
 ){
- background:var(--sv-sayvi-lens)!important;
- border:0!important;box-shadow:none!important;
- -webkit-backdrop-filter:var(--sv-sayvi-filter)!important;
- backdrop-filter:var(--sv-sayvi-filter)!important;
-}
-:root[data-theme=light] body #unifiedTasksChatHost .svcp-reaction-options button{
  background:var(--sv-sayvi-field)!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+}
+html body :is(
+ #calendarSpaceDialog .cal-velvet-days button[aria-pressed=true],
+ #calendarSpaceDialog .pw-date-days button[aria-selected=true],
+ #calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected,
+ #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
+ #calendarEventDialog .cal-kind-option input:checked+span,
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected,
+ #svCabinetDialog .sv-cabinet-goal-mark.is-selected::before
+){
+ background:var(--sv-sayvi-selected)!important;
+ color:var(--text)!important;
+ border-color:transparent!important;
  box-shadow:none!important;
 }
-/* Never replace the intentional accessible opaque surfaces. */
+html body #calendarSpaceDialog :is(
+ .cal-velvet-trigger[aria-expanded=true],
+ .pw-date-open[aria-expanded=true],
+ .pw-time-open[aria-expanded=true]
+){
+ color:var(--text)!important;
+ border-color:var(--sv-sayvi-separator)!important;
+}
+/* Neutral text actions. Green is a deliberate accent elsewhere,
+   not a mandatory foreground for Save/Done/Choose on a neutral lens. */
+html body :is(
+ #calendarEventDialog .cal-dialog-actions>.btn.primary,
+ #calendarEventDialog .sv-form-actions>button.btn.primary,
+ #calendarEventDialog #seyveoPickTime .cal-pick-time-done,
+ #personalTaskDialog #personalTaskSave,
+ #svCabinetDialog .sv-cabinet-save
+){
+ color:var(--text)!important;
+ background:transparent!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+/* Work chat menu icons/buttons keep their original touch geometry. */
+html body #svcpWorkChatScreen .svcp-message-menu-item,
+html body #unifiedTasksChatHost .svcp-message-menu-item{
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--text)!important;
+}
+html body :is(
+ #svcpWorkChatScreen .svcp-message-menu-item:active,
+ #unifiedTasksChatHost .svcp-message-menu-item:active,
+ #calendarCreateMenu button:active,
+ #homeHeader .home-world-choice:active,
+ #svCabinetDialog .sv-cabinet-source:active
+){
+ background:var(--sv-sayvi-selected)!important;
+}
+/* No universal button/card rules: preserve sphere, velvet dock,
+   actual media tiles, page-specific positive/negative states. */
+
+/* Accessibility settings take priority over decorative transparency. */
 @media(prefers-reduced-transparency:reduce){
- :root[data-theme=light] body dialog[open]:not(#calendarEventDialog,#personalTaskDialog,#businessMapDialog,.sv-connect-dialog,.seyveo-dock-host),
- html body :is(#personalTaskDialog[open] .personal-task-sheet,#calendarEventDialog[open] .cal-event-sheet),
- :root[data-theme=light] body :is(#svCabinetDialog[open],#homeHeader .home-world-popover:not([hidden]),#calendarCreateMenu:not([hidden])){
+ html body :is(
+  #svCabinetDialog.sv-cabinet-dialog[open],
+  #personalTaskDialog[open] .personal-task-sheet,
+  #calendarEventDialog[open] .cal-event-sheet,
+  .sv-connect-dialog[open] .sv-connect-sheet,
+  #homeHeader .home-world-popover:not([hidden]),
+  #calendarCreateMenu:not([hidden]),
+  #calendarSpaceDialog .cal-velvet-picker:not([hidden]),
+  #calendarSpaceDialog .pw-date-popup:not([hidden]),
+  #calendarSpaceDialog .pw-time-popup:not([hidden]),
+  .seyveo-browser-sheet:not([hidden]),
+  .seyveo-browser.is-site-view .sb-browser-site-menu:not([hidden]),
+  #unifiedTasksChatHost .svcp-message-menu:not([hidden]),
+  #svcpWorkChatScreen .svcp-message-menu:not([hidden]),
+  #notePaperDialog .paper-pattern-menu:not([hidden]),
+  #notePaperDialog .paper-color-menu:not([hidden]),
+  #sayviSurfacePage .sv-mail-account-sheet[open],
+  #sayviSurfacePage .svdf-picker-sheet[open]
+ ){
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+ html body :is(
+  #svCabinetDialog[open] .sv-cabinet-search,
+  #svCabinetDialog[open] .sv-cabinet-source,
+  #personalTaskDialog[open].personal-task-dialog form
+ ){
   background:var(--card2)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
