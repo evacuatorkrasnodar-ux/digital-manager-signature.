@@ -82,8 +82,8 @@
  --sv-velvet-glow:transparent;
 }
 :root[data-theme="light"]{
- --sv-ui-quiet-surface:rgba(69,120,102,.055);
- --sv-ui-selected-surface:rgba(65,128,103,.10);
+ --sv-ui-quiet-surface:rgba(99,121,133,.055);
+ --sv-ui-selected-surface:rgba(99,121,133,.12);
  --sv-ui-glass:rgba(99,121,133,.22);
  --sv-ui-glass-border:transparent;
  --sv-ui-glass-shadow:none;
@@ -91,8 +91,8 @@
  --sv-ui-sheet-border:rgba(84,112,123,.08);
  --sv-ui-sheet-shadow:0 9px 24px rgba(31,54,65,.065);
  --sv-ui-field:rgba(99,121,133,.075);
- --sv-ui-action-ink:var(--seyveo-emerald,#386d5b);
- --sv-ui-divider:rgba(56,110,87,.10);
+ --sv-ui-action-ink:var(--text);
+ --sv-ui-divider:rgba(99,121,133,.10);
 }
 :root[data-theme=dark][data-palette=graphite]{
  --sv-velvet-panel:#29343d;
