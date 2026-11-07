@@ -2276,8 +2276,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 
 /* SEYVEO Work Chat — Sayvi-style round mic and send controls.
    Same flat silver family as the inner capsule, no extra luminous halo.
-   Applies to the active mic or send button, including multiline mode. */
-#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+   Applies ONLY while the composer is expanded into multiline mode. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
  box-sizing:border-box!important;
  display:grid!important;
  place-items:center!important;
@@ -2300,7 +2300,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  backdrop-filter:none!important;
  color:var(--text)!important;
 }
-#svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send) svg{
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send) svg{
  display:block!important;
  width:19px!important;
  height:19px!important;
@@ -2310,7 +2310,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  stroke-linejoin:round!important;
  fill:none!important;
 }
-:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
  background:linear-gradient(155deg,rgba(239,242,246,.43),rgba(193,201,210,.30) 55%,rgba(159,170,182,.21)),rgba(190,199,208,.12)!important;
  border-color:rgba(245,248,250,.25)!important;
 }
@@ -2319,7 +2319,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  right:3px!important;
 }
 @media(max-width:390px){
- #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
   width:36px!important;min-width:36px!important;max-width:36px!important;
   height:36px!important;min-height:36px!important;max-height:36px!important;
   right:3px!important;bottom:1px!important;
