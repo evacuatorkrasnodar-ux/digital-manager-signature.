@@ -1,5 +1,5 @@
 /**
- * Guardrails for SEYVEO Black Velvet work-chat composer.
+ * Guardrails for SEYVEO work chat across all matte smoke themes.
  * Static assertions do not replace real iPhone X/Android visual tests.
  */
 import test from 'node:test';
@@ -24,7 +24,7 @@ test('Messenger directory uses the same neutral title/back navigation as SEYVEO 
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-header\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-back svg\{[\s\S]*?width:19px;height:19px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-directory-avatar\{[\s\S]*?color:var\(--secondary\)/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=70/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=71/);
 });
 
 test('manager task and send are distinct, keyboard-accessible actions in one composer',()=>{
@@ -44,18 +44,32 @@ test('manager task and send are distinct, keyboard-accessible actions in one com
   assert.equal((form.match(/id="svcpComposerDirectTask"/g)||[]).length,1);
 });
 
-test('composer uses a single row, oval paper plane, and inline assignment at all widths',()=>{
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm\.svcp-can-assign\{[\s\S]*?grid-template-columns:38px minmax\(0,1fr\) 87px 58px!important/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not\(\[hidden\]\)\{[\s\S]*?grid-column:3!important;grid-row:1!important/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm\.svcp-can-assign \.svcp-chat-send\{[\s\S]*?grid-column:4!important;grid-row:1!important/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?width:58px!important;min-width:58px!important;height:46px!important;[\s\S]*?border-radius:999px!important/);
-  assert.match(css,/@media\(max-width:390px\)\{[\s\S]*?grid-template-columns:33px minmax\(0,1fr\) 72px 52px!important/);
-  assert.match(css,/@media\(max-width:340px\)\{[\s\S]*?grid-template-columns:32px minmax\(0,1fr\) 40px 52px!important/);
-  assert.doesNotMatch(css,/#svcpComposerDirectTask:not\(\[hidden\]\)\{grid-column:2 \/ -1!important;grid-row:2!important/);
-  assert.doesNotMatch(css,/#svcpChatForm :is\(#svcpVoiceRecord,\.svcp-chat-send\)\{/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,/);
-  assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{/);
-  assert.match(css,/border-radius:50%!important/); // microphone stays round
+test('work composer keeps the deliberate two-row layout while using Sayvi separate smoke glass',()=>{
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm\{\s*display:grid!important;grid-template-columns:44px 44px 44px 44px minmax\(0,1fr\) auto 44px!important;grid-template-rows:minmax\(44px,auto\) 44px!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatInput\{\s*grid-column:1\/-1!important;grid-row:1!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpAttachFile\{\s*grid-column:1!important;grid-row:2!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpCameraToggle\{\s*grid-column:2!important;grid-row:2!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage\{grid-column:3!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle\{grid-column:4!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not\(\[hidden\]\)\{[\s\S]*?grid-column:6!important;grid-row:2!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord,[\s\S]*?grid-column:7!important;grid-row:2!important/);
+ assert.match(css,/@media\(max-width:390px\)\{[\s\S]*?grid-template-columns:40px 40px 40px 40px minmax\(0,1fr\) auto 40px!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm\[data-has-content="true"\] #svcpVoiceRecord\{display:none!important\}/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm\[data-has-content="true"\] \.svcp-chat-send\{display:grid!important\}/);
+});
+
+test('chat bubble, input and independent tool controls use the same neutral smoke material as Sayvi',()=>{
+ assert.match(css,/--svcp-smoke-glass:rgba\(184,195,201,\.19\)/);
+ assert.match(css,/--svcp-smoke-input:rgba\(184,195,201,\.25\)/);
+ assert.match(css,/:root\[data-theme="light"\] #svcpWorkChatScreen\{[\s\S]*?--svcp-smoke-glass:rgba\(99,121,133,\.22\)/);
+ assert.match(css,/#svcpWorkChatScreen \.svcp-bubble\{[\s\S]*?border:0!important;[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatInput\{[\s\S]*?background:var\(--svcp-smoke-input\)!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm\{\s*background:transparent!important;background-image:none!important;[\s\S]*?border:0!important;box-shadow:none!important/);
+ assert.match(css,/#svcpWorkChatScreen\[data-view="room"\] #svcpChatForm\{[\s\S]*?background:transparent!important;[\s\S]*?border:0!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
+ assert.match(css,/#svcpWorkChatScreen \.svcp-message-menu:not\(\[hidden\]\)\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
+ assert.match(css,/@media\(prefers-reduced-transparency:reduce\)/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=71/);
 });
 
 test('task is contextual to typed personal chat with an employee, not a permanent second line',()=>{
@@ -71,8 +85,8 @@ test('task is contextual to typed personal chat with an employee, not a permanen
   assert.match(script,/role:'self',text:'📌 Поручение: '\+text/);
   assert.match(script,/if\(save\(CHAT_KEY,updated\)\)/);
   assert.match(script,/Демо, без отправки на другой телефон/);
-  assert.match(html,/seyveo-work-chat-screen\.css\?v=30/);
-  assert.match(html,/seyveo-business-command\.js\?v=67/);
+  assert.match(html,/seyveo-work-chat-screen\.css\?v=71/);
+  assert.match(html,/seyveo-business-command\.js\?v=98/);
 });
 
 test('existing Sayvi assistant remains attached to the employee message, without duplicate helper',()=>{
