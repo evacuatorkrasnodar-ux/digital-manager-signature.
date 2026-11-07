@@ -24,7 +24,7 @@ test('Messenger directory uses the same neutral title/back navigation as SEYVEO 
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-header\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-back svg\{[\s\S]*?width:19px;height:19px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-directory-avatar\{[\s\S]*?color:var\(--secondary\)/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=71/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=72/);
 });
 
 test('manager task and send are distinct, keyboard-accessible actions in one composer',()=>{
@@ -69,7 +69,7 @@ test('chat bubble, input and independent tool controls use the same neutral smok
  assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-message-menu:not\(\[hidden\]\)\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
  assert.match(css,/@media\(prefers-reduced-transparency:reduce\)/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=71/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=72/);
 });
 
 test('task is contextual to typed personal chat with an employee, not a permanent second line',()=>{
@@ -85,7 +85,7 @@ test('task is contextual to typed personal chat with an employee, not a permanen
   assert.match(script,/role:'self',text:'📌 Поручение: '\+text/);
   assert.match(script,/if\(save\(CHAT_KEY,updated\)\)/);
   assert.match(script,/Демо, без отправки на другой телефон/);
-  assert.match(html,/seyveo-work-chat-screen\.css\?v=71/);
+  assert.match(html,/seyveo-work-chat-screen\.css\?v=72/);
   assert.match(html,/seyveo-business-command\.js\?v=99/);
 });
 
@@ -94,6 +94,29 @@ test('one-to-one chat hides redundant author captions but keeps group names and 
  assert.match(css,/#svcpWorkChatScreen #svcpConversation\[data-room-kind="personal"\] \.svcp-bubble:not\(\.is-sayvi\) \.svcp-sender\{\s*display:none!important/);
  assert.match(script,/bubble\.setAttribute\('aria-label'/);
  assert.match(html,/seyveo-business-command\.js\?v=99/);
+});
+
+test('Sayvi Core is the only intelligence icon in the work-chat polish button',()=>{
+ const btn=html.split('id="svcpPolishMessage"')[1]?.split('</button>')[0];
+ assert.ok(btn,'polish button must remain available');
+ assert.match(btn,/class="sv-sayvi-core-mark"/);
+ assert.match(btn,/class="sv-sayvi-core-upper"/);
+ assert.match(btn,/class="sv-sayvi-core-lower"/);
+ assert.match(btn,/class="sv-sayvi-core-seed"/);
+ assert.match(btn,/aria-label="Сэйви: сделать сообщение грамотнее"/);
+ assert.doesNotMatch(btn,/M15\.5 1\.6C17\.8/);
+ assert.doesNotMatch(html,/svcp-seyveo-light-icon-color/);
+});
+
+test('Sayvi Core breathes slowly, stays still, and honors reduced motion',()=>{
+ assert.match(css,/@keyframes sv-sayvi-core-breathe/);
+ assert.match(css,/@keyframes sv-sayvi-core-halo/);
+ assert.match(css,/animation:sv-sayvi-core-breathe 5\.2s ease-in-out infinite/);
+ assert.match(css,/#svcpWorkChatScreen #svcpPolishMessage \.sv-sayvi-core-seed\{[\s\S]*?fill:var\(--sv-sayvi-core-neutral\);/);
+ assert.doesNotMatch(css,/fill:var\(--sv-sayvi-core-neutral\)!important/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{[\s\S]*?sv-sayvi-core-halo/);
+ assert.match(css,/:root\[data-theme="light"\] #svcpWorkChatScreen\{[\s\S]*?--sv-sayvi-core-awake:/);
+ assert.match(html,/seyveo-work-chat-screen\.css\?v=72/);
 });
 
 test('existing Sayvi assistant remains attached to the employee message, without duplicate helper',()=>{
