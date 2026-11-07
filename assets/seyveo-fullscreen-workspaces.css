@@ -743,3 +743,43 @@ html body #svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-head > p{
   background:transparent!important;box-shadow:none!important;
  }
 }
+
+/* SEYVEO Family: dock-aligned chat composer, help remains accessible above. */
+@media(max-width:720px) and (min-height:511px){
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-head{order:0}
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-tabs{order:1}
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-join{
+  order:2!important;
+  padding:0 12px 4px!important;
+  margin:0!important;
+  flex:0 0 auto!important;
+ }
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-panel{
+  order:3!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+ }
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-composer-wrap{
+  display:flex!important;
+  flex-direction:column!important;
+  flex:0 0 auto!important;
+  min-width:0!important;
+  padding:7px 12px var(--seyveo-dock-bottom,7px)!important;
+  margin:0!important;
+  transition:none!important;
+ }
+ /* Description is kept, but it no longer sits below the input and
+    pushes the glass capsule up away from the common bottom baseline. */
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-privacy{
+  order:0!important;
+  margin:0 0 6px!important;
+ }
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-suggestion{order:1!important}
+ html body #seyveoFamilyDialog.svf-dialog[open] .svf-attachment{order:2!important}
+ html body #seyveoFamilyDialog.svf-dialog[open] #svfChatForm{
+  order:3!important;
+  min-height:56px!important;
+  margin:0!important;
+  transition:none!important;
+ }
+}
