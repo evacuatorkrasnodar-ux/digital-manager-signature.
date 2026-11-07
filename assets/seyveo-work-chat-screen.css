@@ -2519,9 +2519,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
 }
 
-/* SEYVEO dock-language controls: the detached Plus is the one glass circle
-   (like Home's search pane), and inline tools are FLAT dock icons on the
-   existing velvet surface. No second rim, silver bubble or raised buttons. */
+/* SEYVEO dock-language controls · TRUE HOME LASER ENGRAVING.
+   Reuse the same --seyveo-engrave-ink / .8px strokes / geometricPrecision as
+   floating-navigation.css. Plus remains the separate Home-search-style pane;
+   Sayvi and Emoji are etched directly into the continuous velvet pill.
+   No extra disk, embossing, glow, hard ring or geometry changes. */
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:focus-visible,:active),
 :root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
@@ -2529,10 +2531,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  outline:0!important;
  border-radius:50%!important;
  background:var(--svcp-home-copy-material)!important;
- background-image:none!important;
  box-shadow:var(--svcp-home-copy-shadow)!important;
  -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
  backdrop-filter:blur(22px) saturate(1.18)!important;
+ color:var(--seyveo-engrave-ink,rgba(183,212,205,.75))!important;
  filter:none!important;
 }
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle),
@@ -2541,23 +2543,57 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border:0!important;
  outline:0!important;
  background:transparent!important;
- background-image:none!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
  filter:none!important;
  border-radius:50%!important;
+ color:var(--seyveo-engrave-ink,rgba(183,212,205,.75))!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle):active{
+ opacity:.79!important;
 }
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle)::before,
 #svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle)::after{
  content:none!important;
  display:none!important;
 }
-#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpComposerEmojiToggle) svg{
- stroke-width:1.45!important;
+/* One consistent laser-etched glyph weight, same as Home navigation icons. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg,
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg,
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
+ display:block!important;
+ width:22px!important;
+ height:22px!important;
+ min-width:0!important;
+ color:var(--seyveo-engrave-ink,rgba(183,212,205,.75))!important;
+ stroke:currentColor!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
  stroke-linecap:round!important;
  stroke-linejoin:round!important;
+ shape-rendering:geometricPrecision;
  filter:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
+ flex:0 0 22px!important;
+ fill:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile svg path,
+#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle svg :is(circle,path),
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark path{
+ stroke:currentColor!important;
+ stroke-width:var(--seyveo-dock-icon-stroke,.8)!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+}
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark circle{
+ fill:currentColor!important;
+ stroke:none!important;
+}
+/* Keep form functionality and accessible focus indication intact. */
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle):focus-visible{
+ outline:2px solid var(--seyveo-engrave-active,rgba(218,235,229,.88))!important;
+ outline-offset:2px!important;
 }
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
