@@ -2648,7 +2648,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm,
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
- grid-template-columns:50px 16px 36px 2px 36px 0px minmax(0,1fr)!important;
+ grid-template-columns:50px 8px 36px 2px 36px 0px minmax(0,1fr)!important;
  column-gap:0!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
@@ -2677,7 +2677,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    On input, the existing animation still rejoins the bar. */
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
- left:73px!important;
+ left:65px!important;
 }
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage,
@@ -2688,12 +2688,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen #svcpChatForm,
  #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
-  grid-template-columns:50px 16px 36px 2px 36px 0px minmax(0,1fr)!important;
+  grid-template-columns:50px 8px 36px 2px 36px 0px minmax(0,1fr)!important;
   column-gap:0!important;
  }
  #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
-  left:71px!important;
+  left:65px!important;
  }
 }
 
