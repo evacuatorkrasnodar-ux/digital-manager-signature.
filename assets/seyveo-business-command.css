@@ -1664,15 +1664,17 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  background:var(--secondary);opacity:.3
 }
 .sv-cabinet-dialog-head{
- display:flex;justify-content:space-between;align-items:center;gap:10px;
- margin:0 0 13px
+ display:grid;grid-template-columns:44px minmax(0,1fr);
+ grid-template-rows:54px auto;align-items:center;column-gap:6px;row-gap:0;
+ margin:0 0 14px;padding:0;min-width:0;
 }
-.sv-cabinet-dialog-head>div{min-width:0;flex:1}
 .sv-cabinet-dialog-head h2{
- font-size:20px;font-weight:610;letter-spacing:-.035em;line-height:1.2;
- color:var(--text);margin:0 0 5px
+ grid-column:2;grid-row:1;min-width:0;
+ font-size:clamp(22px,6vw,25px);font-weight:620;letter-spacing:-.038em;line-height:1.12;
+ color:var(--text);margin:0
 }
 .sv-cabinet-dialog-head p{
+ grid-column:2;grid-row:2;min-width:0;
  font-size:11.5px;line-height:1.4;color:var(--secondary);margin:0
 }
 .sv-cabinet-cancel{
@@ -1782,11 +1784,9 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  .sv-cabinet-choice-mark,#tasksPage .sv-cabinet-plus{background:var(--card2)}
 }
 
-/* Cabinet-specific presentation states: no second page header or unrelated bulk action
-   when explaining a single tool. Keep the same accessible save controller. */
-#svCabinetDialog[data-cabinet-view="guide"] .sv-cabinet-dialog-head,
+/* The same persistent header shows catalog or guide: the Back button
+   returns one level at a time. Only the unrelated bulk-reset action hides. */
 #svCabinetDialog[data-cabinet-view="guide"] .sv-cabinet-reset{display:none!important}
-#svCabinetDialog[data-cabinet-view="guide"] .sv-cabinet-guide-nav{margin-top:4px}
 #svCabinetDialog[data-cabinet-view="guide"] .sv-cabinet-footer{justify-content:flex-end}
 #svCabinetDialog .sv-cabinet-goal-mark.is-selected::before{background:var(--sv-ui-selected-surface)}
 #svCabinetDialog .sv-cabinet-goal-mark:focus-visible,
@@ -1908,33 +1908,8 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  outline:2px solid var(--seyveo-emerald);outline-offset:1px
 }
 .sv-cabinet-guide{
- min-width:0;padding:2px 0 8px;
+ min-width:0;padding:8px 0 8px;
  animation:svCabinetGuideReveal .16s ease-out both
-}
-/* One nested navigation row, aligned with the SEYVEO system arrow. */
-.sv-cabinet-guide-nav{
- display:flex;align-items:center;gap:9px;
- min-height:44px;margin:0 0 11px;
-}
-.sv-cabinet-guide-back{
- display:inline-flex;align-items:center;justify-content:center;
- flex:0 0 var(--sv-ui-touch,44px);width:var(--sv-ui-touch,44px);height:var(--sv-ui-touch,44px);
- min-width:var(--sv-ui-touch,44px);min-height:var(--sv-ui-touch,44px);
- margin:0;padding:0;border:0;border-radius:50%;
- background:transparent;
- box-shadow:none;color:var(--text);
- -webkit-appearance:none;appearance:none;
- -webkit-tap-highlight-color:transparent;cursor:pointer;
-}
-.sv-cabinet-guide-back svg{
- display:block;width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);flex:none;fill:none;
- stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);
- stroke-linecap:round;stroke-linejoin:round;
-}
-.sv-cabinet-guide-back:active{opacity:.68}
-.sv-cabinet-guide-title{
- margin:0;color:var(--text);
- font-size:19px;font-weight:600;letter-spacing:-.035em;line-height:1.24;
 }
 .sv-cabinet-guide-benefit{
  margin:0 2px 10px;color:var(--text);font-size:13px;line-height:1.52
@@ -2319,10 +2294,4 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  display:block;width:19px;height:19px;
  fill:none;stroke:currentColor;
  stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;
-}
-#svCabinetDialog .sv-cabinet-guide-nav .sv-cabinet-goal-icon{
- flex:0 0 19px;width:19px;height:22px;
-}
-#svCabinetDialog .sv-cabinet-guide-nav .sv-cabinet-goal-icon svg{
- width:18px;height:18px;
 }
