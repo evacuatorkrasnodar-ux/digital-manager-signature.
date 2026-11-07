@@ -1456,7 +1456,7 @@ function renderChat(){
      return control;
     }
     menu.append(svcpActionIcon('Ответить','reply',()=>{closeMessageMenus();startReply(msg)},'svcp-message-menu-item'));
-    const employee=roomDetails().kind==='personal'?roomDetails().person:null;
+    const employee=roomDetails().kind==='personal'?roomDetails().person:(msg.role==='demo-elena'?'elena':null);
      if(state.viewpoint==='manager'&&employee&&STAFF[employee]&&!isOwn&&!isSayvi){
       menu.append(svcpActionIcon('Поощрить сотрудника','award',()=>{
        closeMessageMenus();
@@ -1717,6 +1717,10 @@ $('svcpChatTaskDraft')?.addEventListener('submit',event=>{
    const updated=state.chat.map((item,i)=>i===source.messageIndex?{...item,taskId:created[0].id}:item);
    if(save(CHAT_KEY,updated)){state.chat=updated;renderChat()}
   }
+ }
+ if(!Number.isInteger(source.messageIndex)&&$('svcpChatInput')?.value.trim()===String(title).trim()){
+  $('svcpChatInput').value='';
+  syncComposerActions();resizeWorkComposer();
  }
  cancelTaskDraft();
  $('svcpOpenTasks').hidden=false;
