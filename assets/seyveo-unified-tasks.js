@@ -1036,6 +1036,7 @@
   if(!itemById.has(id)||!draft)return;
   activeGoal=id;sourceChoice=null;
   dialog.dataset.cabinetView='guide';
+  dialog.scrollTop=0;
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Настройка инструмента';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите нужные возможности кабинета.';
   catalogHost.hidden=true;
@@ -1046,6 +1047,7 @@
  function hideGoal(){
   activeGoal=null;sourceChoice=null;
   dialog.dataset.cabinetView='catalog';
+  dialog.scrollTop=0;
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Что хотите делать?';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите задачу — подскажем нужный инструмент.';
   guideHost.hidden=true;guideHost.replaceChildren();
@@ -1058,7 +1060,7 @@
   const info=itemById.get(activeGoal),goal=GOALS[activeGoal];
   guideHost.replaceChildren();
   const back=button('','back');
-  back.className='sv-cabinet-guide-back';
+  back.className='sv-cabinet-guide-back sv-nav-back';
   back.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg>';
   back.setAttribute('aria-label','Вернуться к списку инструментов');
   const title=node('h3','sv-cabinet-guide-title',goal.title);
