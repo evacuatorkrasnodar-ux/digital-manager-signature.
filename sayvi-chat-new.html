@@ -644,6 +644,29 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
 }
 @media(prefers-reduced-transparency:reduce){.sv-doc-header,.sv-doc-footer{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}}
 
+
+/* SEYVEO shared 56px bottom rhythm — independent Sayvi chat. */
+:root{
+ --seyveo-dock-bottom:max(7px,calc(env(safe-area-inset-bottom,0px) - 20px));
+}
+#sayviComposer{
+ bottom:var(--seyveo-dock-bottom)!important;
+ min-height:56px!important;
+ padding:5px 7px!important;
+ transition:none!important;
+}
+#sayviSpeechBar,
+#sayviMenu{
+ bottom:calc(var(--seyveo-dock-bottom) + var(--sayvi-composer-height,56px) + 12px)!important;
+}
+#sayviStatus,
+#sayviAttachmentTray{
+ bottom:calc(var(--seyveo-dock-bottom) + var(--sayvi-composer-height,56px) + 8px)!important;
+}
+main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
+ bottom:calc(var(--seyveo-dock-bottom) + var(--sayvi-composer-height,56px) + 68px)!important;
+}
+
 </style>
 </head>
 <body>
@@ -1054,6 +1077,7 @@ main.sv-file-drag #sayviField textarea{opacity:.25}
    const next=Math.max(44,Math.min(cap,input.scrollHeight));
    input.style.height=next+'px';
    field.style.height=next+'px';
+   scene.style.setProperty('--sayvi-composer-height',(next+12)+'px');
    input.style.overflowY=input.scrollHeight>cap?'auto':'hidden';
   }
   window.addEventListener('resize',resizeComposerInput,{passive:true});
