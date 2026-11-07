@@ -3208,6 +3208,30 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
  // Do not abort on visibilitychange: that cancels the initial permission flow.
  // pagehide above handles actual navigation away from this chat.
  restore();
+ // One-time handoff from Documents: text-only task, never a decrypted file.
+ // Do not auto-send; the user decides whether to attach a document and send.
+ try{
+  const handoffKey='seyveo.sayvi.document-handoff.v1';
+  const raw=sessionStorage.getItem(handoffKey);
+  if(raw){
+   sessionStorage.removeItem(handoffKey);
+   const message=JSON.parse(raw);
+   const valid=message&&Date.now()-Number(message.at)<3*60*1000
+     &&Date.now()>=Number(message.at);
+   const prompts={
+    create:'Сэйви, помоги создать новый документ. Сначала спроси, какой документ нужен, для кого и с какой целью. Затем уточни данные и подготовь черновик, который я смогу проверить и скачать.',
+    review:'Сэйви, проверь документ, который я прикреплю через плюс. Найди неточности, спорные формулировки, пропущенные важные условия и предложи исправления. Если файла не будет, сначала попроси его приложить.',
+    edit:'Сэйви, помоги отредактировать документ, который я прикреплю через плюс. Сначала уточни, что нужно изменить, затем подготовь новую редакцию. Если файла не будет, попроси его приложить.'
+   };
+   const prompt=valid?prompts[message.intent]:null;
+   if(prompt&&input&&!input.value.trim()){
+    input.value=prompt;
+    status.textContent=message.intent==='create'
+     ?'Задача для Сэйви подготовлена. Нажмите отправку, когда будете готовы.'
+     :'Задача подготовлена. Прикрепите документ кнопкой «+», затем отправьте сообщение.';
+   }
+  }
+ }catch{}
  updateControls();
 })();
 </script>
