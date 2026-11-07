@@ -226,7 +226,14 @@ if(taskDialog&&taskDate&&taskControl){
   stageTitle.className='sv-task-date-title';stageTitle.textContent='Выбрать срок';
   stageTitle.id='svTaskDateHeading';
   picker.setAttribute('aria-labelledby',stageTitle.id);
-  picker.prepend(back,stageTitle);
+  // The date stage and the editor use the same one-line 54px header.
+  const stageHeader=document.createElement('header');
+  stageHeader.className='sv-task-page-header sv-task-date-header';
+  const headerSpacer=document.createElement('span');
+  headerSpacer.className='sv-task-header-spacer';
+  headerSpacer.setAttribute('aria-hidden','true');
+  stageHeader.append(back,stageTitle,headerSpacer);
+  picker.prepend(stageHeader);
   taskSheet.append(picker);
   const heading=grid.querySelector('.cal-pick-head strong');
   const gridDays=grid.querySelector('.cal-pick-days');
