@@ -9,17 +9,18 @@ import {readFile} from 'node:fs/promises';
 import {Script} from 'node:vm';
 
 const read=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
-const [html,css,shell]=await Promise.all([
+const [html,css,shell,cabinet]=await Promise.all([
  read('index.html'),
  read('assets/seyveo-work-shell.css'),
- read('assets/seyveo-work-shell.js')
+ read('assets/seyveo-work-shell.js'),
+ read('assets/seyveo-unified-tasks.js')
 ]);
 
-test('primary routes put their title and back arrow on one stable row',()=>{
+test('primary routes use the shared top-row header contract',()=>{
  const layouts=[
   /<header class="picture-head"><div class="sv-continuity-titlebar">[\s\S]*?<h1 id="pictureTitle"/,
   /<header class="life-heading">\s*<div class="sv-continuity-titlebar">[\s\S]*?<h1 id="lifeTitle"/,
-  /<header class="manage-heading"><div class="sv-continuity-titlebar">[\s\S]*?<h1 id="manageTitle"/,
+  /<header class="manage-heading"><div class="sv-continuity-titlebar sv-continuity-root">[\s\S]*?<h1 id="manageTitle"/,
   /<header class="manage-theme-head sv-continuity-titlebar">[\s\S]*?<h2 id="manageThemeTitle"/,
   /<header class="sv-deep-top">\s*<div class="sv-continuity-titlebar">[\s\S]*?<h1 id="sayviSurfaceTitle"/
  ];
@@ -29,7 +30,7 @@ test('primary routes put their title and back arrow on one stable row',()=>{
  assert.match(css,/\.sv-continuity-titlebar\s*>\s*:is\(h1,h2\)/);
 });
 
-test('persistent work header retains a reserved back slot and constant title column',()=>{
+test('persistent work header keeps root titles left while preserving Back in history',()=>{
  assert.match(shell,/heading\.append\(back,title,add\)/);
  assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkHeader\{\s*grid-template-columns:minmax\(0,1fr\) 44px!important/);
  assert.match(css,/#svWorkShell\[data-shared-work="true"\] #svWorkTitle\{\s*grid-column:1!important/);
@@ -48,6 +49,8 @@ test('Calendar creation choices no longer cover the title bar or work tabs',()=>
 test('Sayvi continuation is independent from saving Cabinet tool choices',()=>{
  assert.match(html,/id="svCabinetContinueWithSayvi"/);
  assert.match(css,/sv-continuity-root/);
+ assert.match(cabinet,/resume\.hidden=false/);
+ assert.match(cabinet,/Продолжить с Сэйви/);
 });
 
 test('Safari requests current assets and work shell syntax is valid',()=>{
