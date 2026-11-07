@@ -6,13 +6,14 @@
  transform:translate(-50%,-50%);margin:0;padding:0;
  width:min(610px,calc(100vw - 24px));max-width:calc(100vw - 24px);
  height:auto;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
- border:1px solid rgba(228,236,247,.17);border-radius:24px;
- overflow:hidden;background:var(--bg);color:var(--text);color-scheme:inherit;
- box-shadow:0 22px 76px rgba(0,0,0,.3);box-sizing:border-box;
+ border:1px solid var(--sv-ui-sheet-border);border-radius:var(--sv-ui-radius-sheet,22px);
+ overflow:hidden;background:var(--sv-ui-sheet);color:var(--text);color-scheme:inherit;
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);
+ box-shadow:var(--sv-ui-sheet-shadow);box-sizing:border-box;
 }
 #businessMapDialog:not([open]){display:none}
 #businessMapDialog[open]{display:block}
-#businessMapDialog::backdrop{background:rgba(2,10,12,.80)}
+#businessMapDialog::backdrop{background:rgba(6,10,15,.46)}
 #businessMapDialog *{box-sizing:border-box}
 #businessMapDialog .business-map-shell{
  width:100%;min-height:0;height:auto;
@@ -69,8 +70,8 @@
 #businessMapDialog .business-map-source-choice{
  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
  gap:5px;min-height:64px;width:100%;padding:12px 15px;text-align:left;
- border:1px solid var(--seyveo-hdr-outline);border-radius:16px;
- color:inherit;background:linear-gradient(154deg,var(--seyveo-specular),var(--seyveo-hdr-active));cursor:pointer;
+ border:1px solid var(--sv-ui-sheet-border);border-radius:var(--sv-ui-radius-control,12px);
+ color:inherit;background:var(--sv-ui-field);cursor:pointer;
 }
 #businessMapDialog .business-map-mode+.business-map-mode{margin-top:9px}
 #businessMapDialog .business-map-mode strong,
@@ -177,7 +178,7 @@
  font-size:10px;color:var(--secondary);text-align:center;line-height:1.45;margin:1px 0 0;
 }
 #businessMapDialog :is(button,textarea):focus-visible{outline:2px solid #dee9f6;outline-offset:2px}
-:root[data-theme=light] #businessMapDialog{background:var(--bg);color:var(--text);color-scheme:light}
+:root[data-theme=light] #businessMapDialog{background:var(--sv-ui-sheet);color:var(--text);color-scheme:light}
 :root[data-theme=light] #businessMapDialog::backdrop{background:rgba(10,17,28,.45)}
 :root[data-theme=light] #businessMapDialog .business-map-head,
 :root[data-theme=light] #businessMapDialog .business-map-overview-block,
