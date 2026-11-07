@@ -1474,27 +1474,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm :is(#svcpVoiceRecord,.svcp-chat-send) svg{
  width:21px!important;height:21px!important;stroke-width:1.5!important;
 }
-/* Approved frosted-pearl asset: 96px source, shown at 36px for HiDPI sharpness. */
-#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{
- position:relative!important;
- z-index:1!important;
- display:block!important;
- width:36px!important;
- height:36px!important;
- max-width:none!important;
- flex:0 0 36px!important;
- object-fit:contain!important;
- background:none!important;
- box-shadow:none!important;
- filter:none!important;
- transition:filter .35s ease!important;
-}
-/* Warm amber is only for explicit good-news moments, never the default. */
-#svcpWorkChatScreen.svcp-sayvi-good-news #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{
- filter:sepia(.7) saturate(1.6) hue-rotate(349deg) brightness(1.02)!important;
-}
-@media(prefers-reduced-motion:reduce){
- #svcpWorkChatScreen #svcpChatForm #svcpPolishMessage img.sv-sayvi-pearl-mark{transition:none!important}
+/* The Sayvi symbol is drawn like other system icons, on the existing
+   approved 44px round button: no separate background, glow or motion. */
+#svcpWorkChatScreen #svcpChatForm #svcpPolishMessage svg.sv-sayvi-minimal-mark{
+ display:block!important;width:24px!important;height:24px!important;
+ min-width:24px!important;flex:0 0 24px!important;
+ fill:none;stroke:none;color:var(--text)!important;
+ overflow:visible!important;filter:none!important;
+ animation:none!important;transition:none!important;
 }
 /* Task action retains its original behavior, floating ABOVE the bar. */
 #svcpWorkChatScreen #svcpChatForm #svcpComposerDirectTask:not([hidden]){
