@@ -383,10 +383,12 @@ dialog > button.seyveo-dialog-close ~ h2:first-of-type{padding-right:43px}
  height:auto;min-height:0;
  max-height:min(78svh,calc(100svh - 36px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));
  padding:17px 15px 12px;
- border:1px solid var(--soft-line)!important;
- border-radius:21px!important;
- background:var(--bg)!important;
- box-shadow:none!important;
+ border:1px solid var(--sv-ui-sheet-border)!important;
+ border-radius:var(--sv-ui-radius-sheet,22px)!important;
+ background:var(--sv-ui-sheet)!important;
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter)!important;
+ backdrop-filter:var(--sv-ui-sheet-filter)!important;
+ box-shadow:var(--sv-ui-sheet-shadow)!important;
  overflow:hidden;
 }
 #assistantChatHistoryDialog .assistant-chat-head{
