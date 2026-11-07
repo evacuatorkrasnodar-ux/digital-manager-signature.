@@ -45,7 +45,8 @@ test('persistent work header keeps root titles left while preserving Back in his
 
 test('Calendar creation choices no longer cover the title bar or work tabs',()=>{
  assert.match(shell,/const destination=inSharedHeader\?shell:menuHome/);
- assert.match(css,/#svWorkShell > #calendarCreateMenu:not\(\[hidden\]\)\{\s*order:0!important;position:relative!important/);
+ assert.match(css,/#svWorkShell > #calendarCreateMenu\{order:0!important\}/);
+ assert.match(calendarCss,/:is\(#calendarPage #calendarCreateMenu,#svWorkShell > #calendarCreateMenu\):not\(\[hidden\]\)/);
  assert.match(html,/id="calendarCreateEvent"/);
  assert.match(html,/id="calendarCreateTask"/);
  assert.match(shell,/calendarAdd\?\.click\(\)/);
@@ -94,7 +95,7 @@ test('Calendar quick-create uses one light in-flow strip for both routes',()=>{
 });
 
 test('Safari requests current assets and work shell syntax is valid',()=>{
- assert.match(html,/assets\/seyveo-work-shell\.css\?v=15/);
+ assert.match(html,/assets\/seyveo-work-shell\.css\?v=16/);
  assert.match(html,/assets\/seyveo-work-shell\.js\?v=9/);
  assert.doesNotThrow(()=>new Script(shell));
 });
