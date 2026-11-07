@@ -630,7 +630,7 @@ body.seyveo-browser-open footer.dock .nav-item svg{width:23px;height:23px}
  animation:sb-collection-appear .18s ease-out;
 }
 .sb-collection-quick-actions>button,.sb-collection-rename-form button{font-size:11px;line-height:1.2;padding:7px 2px;background:transparent;color:inherit;border:0;opacity:.85}
-.sb-collection-quick-actions button:hover{opacity:1;color:#94dbb5}
+.sb-collection-quick-actions button:hover{opacity:1;color:var(--text)}
 .sb-collection-confirm-label{font-size:11px;opacity:.78}
 .sb-collection-rename-form{display:flex;align-items:center;flex-wrap:wrap;gap:7px;width:100%}
 .sb-collection-rename-form input{flex:1;min-width:90px;max-width:100%;height:34px;padding:5px 8px;background:var(--sv-home-glass);color:inherit;border:0;border-radius:10px;font:inherit;font-size:12px}
