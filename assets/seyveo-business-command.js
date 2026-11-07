@@ -1739,6 +1739,15 @@ $('svcpCallSayvi')?.addEventListener('click',()=>{
  input.setSelectionRange(input.value.length,input.value.length);
  input.dispatchEvent(new Event('input',{bubbles:true}));
 });
+/* Keep Sayvi reachable in the actual conversation header, without a second
+ * full-height row taking space away from messages. Moving the existing button
+ * retains its original click handler and accessible label. */
+{
+ const sayviButton=$('svcpCallSayvi');
+ const header=$('svcpConversation')?.querySelector('.svcp-conversation-bar');
+ const info=$('svcpRoomInfoToggle');
+ if(sayviButton&&header&&info)header.insertBefore(sayviButton,info);
+}
 /* Camera is a single entry point, with user-initiated system capture on mobile. */
 const fileInput=$('svcpFile');
 const cameraInputs={photo:$('svcpCameraPhoto'),file:fileInput};
