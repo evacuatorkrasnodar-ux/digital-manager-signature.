@@ -457,3 +457,49 @@
   backdrop-filter:none!important;
  }
 }
+
+/* SEYVEO · Home scene continuity for five themes · 2026-11-07 */
+/* Use the exact two-layer background of Home: app-stage highlight over
+   the same per-palette viewport gradient from living-space.css.
+   Never turn long pages into translucent panels. */
+@media(max-width:720px){
+ html body dialog:is(
+  #calendarSpaceDialog,#seyveoSmartHomeDialog,#seyveoContactsDialog,
+  #seyveoFamilyDialog,#notesDialog,#noteReadDialog,#noteReviewDialog,
+  #noteModeDialog,#notePaperDialog,#noteScanDialog,#calendarEventDialog,
+  #manageRoadmapDialog,#manageConnectionsDialog,#manageDataDialog,
+  #assistantChatHistoryDialog,#homeWidgetsManageDialog,#seyveoAccountDemo,
+  #seyveoPulseDialog,#seyveoStudioDialog,#seyveoCompanyDialog,
+  #seyveoQrCardDialog,#seyveoAvatarDialog,#homeWidgetDetails,
+  #pictureBreakdownDialog,#assistantQuickSettings,#onboardDialog,
+  #seyveoPayDialog,#personalTaskDialog,#svCabinetDialog
+ )[open]{
+  background-color:var(--bg)!important;
+  background-image:var(--seyveo-hdr-stage),var(--sv-life-viewport-gradient)!important;
+  background-size:100% 100%,100% 100%!important;
+  background-repeat:no-repeat!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+ html body dialog#personalTaskDialog.personal-task-dialog[open] .personal-task-sheet,
+ :root[data-theme=light] body dialog#personalTaskDialog.personal-task-dialog[open] .personal-task-sheet,
+ :root[data-theme=light] body dialog#personalTaskDialog.sv-task-date-open[open] .personal-task-sheet,
+ html body dialog#calendarEventDialog.cal-form-dialog[open] .cal-event-sheet{
+  background:transparent!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:none!important;
+ }
+ html body dialog#svCabinetDialog.sv-cabinet-dialog[open] .sv-cabinet-dialog-body{
+  background:transparent!important;
+  box-shadow:none!important;
+ }
+}
+/* Desktop's full-view page routes inherit the Home canvas. Do not apply
+   this to embedded music art, card content, maps or actual document pages. */
+html:not(.seyveo-conversation) body .app :is(
+ #homePage,#tasksPage,#calendarPage,#managePage,#lifePage,
+ #picturePage,#sayviSurfacePage,#sayviAnswerPage
+):not([hidden]){
+ background-color:transparent!important;
+ background-image:none!important;
+}
