@@ -80,6 +80,13 @@
  const businessTab=page.querySelector('[data-unified-tasks-tab="business"]');
  const employeeTab=page.querySelector('[data-unified-tasks-tab="employee"]');
  const managerLabel=page.querySelector('.svcp-manager-kicker');
+ // Keep the personal overview visible without changing shared header height.
+ // Moving the existing node preserves its text, state and listeners.
+ if(taskTabs&&overview&&overview.closest('.tasks-heading')){
+  taskTabs.after(overview);
+  overview.classList.add('sv-work-overview-under-tabs');
+ }
+
  const TASK_KEY='seyveo-business-command-tasks-demo-v1';
  const isEmployee=()=>previewMode==='employee';
  const isManager=()=>['rise','autonom','large'].includes(previewMode);
