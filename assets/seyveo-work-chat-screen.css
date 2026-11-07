@@ -1340,10 +1340,10 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  position:absolute!important;
  inset:auto 0 0 0!important;
  z-index:5!important;
- grid-template-columns:repeat(4,38px) minmax(0,1fr)!important;
+ grid-template-columns:38px 38px 40px 38px minmax(0,1fr)!important;
  grid-template-rows:minmax(48px,auto)!important;
  align-items:center!important;
- column-gap:12px!important;
+ column-gap:3px!important;
  row-gap:0!important;
  width:min(430px,calc(100% - 12px))!important;
  max-width:calc(100% - 12px)!important;
@@ -1507,8 +1507,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen #svcpChatForm,
  #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
-  grid-template-columns:repeat(4,35px) minmax(0,1fr)!important;
-  column-gap:10px!important;
+  grid-template-columns:35px 35px 38px 35px minmax(0,1fr)!important;
+  column-gap:3px!important;
   row-gap:0!important;
   min-height:60px!important;
   padding:6px 5px!important;
@@ -1556,14 +1556,14 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  flex-direction:column!important;
  justify-content:flex-end!important;
  box-sizing:border-box!important;
- /* Keep the approved right gap: move the capsule's left edge 7px right. */
- width:calc(100% - 10px)!important;
+ /* Exactly 3px after the emoji; approved right inset is unchanged. */
+ width:calc(100% - 3px)!important;
  min-width:0!important;
  min-height:40px!important;
  height:auto!important;
  padding:0!important;
  margin:0!important;
- margin-left:7px!important;
+ margin-left:0!important;
  border:1px solid rgba(222,229,233,.13)!important;
  outline:0!important;
  border-radius:999px!important;
@@ -1621,9 +1621,9 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 /* Match the compact Sayvi button diameter on narrow iPhones. */
 @media(max-width:390px){
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
-  /* Keep the approved 6px right inset; add 6px air beside emoji. */
-  width:calc(100% - 12px)!important;
-  margin-left:6px!important;
+  /* 3px gap after emoji; keep 6px right inset on narrow iPhones. */
+  width:calc(100% - 6px)!important;
+  margin-left:0!important;
   min-height:38px!important;
  }
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field #svcpChatInput{
