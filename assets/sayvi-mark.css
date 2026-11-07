@@ -3,6 +3,13 @@
    Recognition stars, favorite/bookmark stars and other symbols are separate. */
 .sv-sayvi-symbol,
 .sv-sayvi-label::before,
+.svcp-task-sayvi::before,
+.svcp-guide-launch::before,
+.svcp-guide-title::before,
+.personal-task-sayvi::before,
+.personal-task-continuation-title::before,
+.sv-mail-polish-trigger::before,
+.svstaff-tile-trend::before,
 .svcp-directory-avatar.is-sayvi::before,
 .sv-fan-hero-orb::before {
   display:inline-block;
@@ -16,7 +23,14 @@
   width:1.22em;height:1.22em;
   vertical-align:-.22em;
 }
-.sv-sayvi-label::before {
+.sv-sayvi-label::before,
+.svcp-task-sayvi::before,
+.svcp-guide-launch::before,
+.svcp-guide-title::before,
+.personal-task-sayvi::before,
+.personal-task-continuation-title::before,
+.sv-mail-polish-trigger::before,
+.svstaff-tile-trend::before {
   content:"";
   width:1.18em;height:1.18em;
   margin-right:.34em;
