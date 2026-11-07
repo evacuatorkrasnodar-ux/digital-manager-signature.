@@ -2405,3 +2405,31 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   transition:none!important;
  }
 }
+
+/* SEYVEO expanded composer: anchor the mic/send to the DOCK, not to
+   the growing textarea. This prevents the glyph from covering typed text
+   or slipping outside the bottom row as the capsule expands. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field,
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field:focus-within{
+ position:static!important;
+}
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send),
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+ position:absolute!important;
+ top:auto!important;
+ bottom:7px!important;
+ right:9px!important;
+ z-index:9!important;
+ transform:none!important;
+}
+@media(max-width:390px){
+ #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field > :is(#svcpVoiceRecord,.svcp-chat-send){
+  bottom:8px!important;
+  right:8px!important;
+ }
+}
+/* Explicitly keep the text in the upper editor and the action icons
+   on a separate lower row, while the Plus stays in its existing cell. */
+#svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline .svcp-chat-compose-field #svcpChatInput{
+ padding-right:12px!important;
+}
