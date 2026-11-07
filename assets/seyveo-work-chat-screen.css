@@ -2813,3 +2813,12 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field > #svcpVoiceRecord{
  bottom:4px!important;
 }
+
+/* v185 · Shift the microphone GLYPH, not its touch target.
+   The preceding bottom:4px duplicated an older declaration and changed
+   nothing visually. Keep the 38px tappable area and composer geometry. */
+#svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline) #svcpVoiceRecord svg{
+ position:relative!important;
+ top:3px!important;
+ transform:none!important;
+}
