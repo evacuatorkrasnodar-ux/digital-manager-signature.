@@ -35,17 +35,15 @@
  backdrop-filter:var(--sv-sayvi-filter)!important;
 }
 /* A modal must have exactly one material-bearing surface. */
-html body :is(#personalTaskDialog,#calendarEventDialog)[open]{
+:root[data-theme=light] body :is(#personalTaskDialog,#calendarEventDialog)[open]{
  background:transparent!important;
  border:0!important;
  box-shadow:none!important;
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
-html body :is(
- #personalTaskDialog[open] .personal-task-sheet,
- #calendarEventDialog[open] .cal-event-sheet
-){
+:root[data-theme=light] body #personalTaskDialog[open] .personal-task-sheet,
+html body #calendarEventDialog[open] .cal-event-sheet{
  background:var(--sv-sayvi-lens)!important;
  border-color:transparent!important;
  box-shadow:none!important;
@@ -59,7 +57,7 @@ html body :is(
  border:0!important;
  box-shadow:none!important;
 }
-html body #svCabinetDialog[open] .sv-cabinet-footer{
+:root[data-theme=light] body #svCabinetDialog[open] .sv-cabinet-footer{
  background:transparent!important;
  border-top-color:var(--sv-sayvi-separator)!important;
  box-shadow:none!important;
