@@ -27,17 +27,17 @@
 .syp-dialog{
  box-sizing:border-box;width:min(440px,calc(100vw - 16px));max-height:calc(100dvh - 24px);
  margin:auto;overflow:auto;overscroll-behavior:contain;padding:0;border:0;
- border-radius:26px;background:var(--bg);color:var(--text);
- box-shadow:0 16px 54px rgba(0,0,0,.29);
+ border-radius:var(--sv-ui-radius-sheet,22px);background:var(--sv-ui-sheet);color:var(--text);
+ -webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter);
+ box-shadow:var(--sv-ui-sheet-shadow);
  scrollbar-width:thin;scrollbar-color:var(--line) transparent;
  -webkit-font-smoothing:antialiased;
 }
-.syp-dialog::backdrop{background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.syp-dialog::backdrop{background:rgba(6,10,15,.46);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 .syp-shell{
  box-sizing:border-box;min-height:0;padding:20px 20px 17px;
- border:1px solid var(--seyveo-hdr-outline,var(--line));border-radius:26px;
- background:radial-gradient(ellipse 90% 42% at 65% -5%,var(--seyveo-hdr-active),transparent 80%),
- linear-gradient(160deg,var(--seyveo-specular),transparent 42%),var(--bg);
+ border:0;border-radius:var(--sv-ui-radius-sheet,22px);
+ background:transparent;
  color:var(--text);font:inherit;
 }
 .syp-top{display:flex;align-items:flex-start;justify-content:flex-start;gap:9px}
