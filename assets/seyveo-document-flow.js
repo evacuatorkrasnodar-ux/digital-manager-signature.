@@ -20,6 +20,7 @@ const $=(tag,cls,label)=>{
 };
 const button=(label,action,cls='')=>{const e=$('button','svdf-button '+cls,label);e.type='button';e.addEventListener('click',action);return e;};
 let host=null,role='manager',selected='',kind='schedule',info='',listFilter='active';
+const centralPreviewRole=()=>window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
 let returnDraft={id:'',text:''},revisionDraft={id:'',body:'',note:''};
 const isActive=x=>x.state==='sent'||x.state==='read'||x.state==='signing'||(role==='manager'&&x.state==='returned');
 function safeRevisions(x){
@@ -145,7 +146,21 @@ function reset(){
 }
 function get(id){return records.find(r=>r.id===id)||null;}
 function select(id){if(!get(id))return false;selected=id;listFilter='all';revisionDraft={id:'',body:'',note:''};draw();return true;}
-function setRole(which){if(which!=='manager'&&which!=='employee')return;role=which;info='';selected='';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};listFilter='active';draw();}
+// There is only ONE role preview in SEYVEO: owned by the working cabinet.
+function setRole(which){
+ if(which!=='manager'&&which!=='employee')return false;
+ const change=window.SEYVEO_UNIFIED_TASKS?.previewRole;
+ if(typeof change!=='function')return false;
+ change(which);return true;
+}
+function syncRole(){
+ const next=centralPreviewRole();
+ if(next===role)return;
+ role=next;selected='';info='';
+ returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};
+ listFilter='active';
+ if(host?.isConnected)draw();
+}
 function renderRecord(node,x){
  const card=$('article','svdf-record');
  if(x.id===selected)card.classList.add('is-current');
@@ -252,11 +267,10 @@ function draw(){
   $('p','','Документ → сотрудник → ознакомление или согласование → история действий.'));
  host.append(lead);
  host.append($('p','svdf-warning','УЧЕБНЫЙ РЕЖИМ · Все данные этого экрана хранятся без шифрования только в браузере. Не используйте реальные документы, личные данные и секреты. Переключение ролей не является авторизацией, подтверждение — не подписью, а запрос не доставляется сотруднику на другое устройство.'));
- const roleSwitch=$('div','svdf-role-switch');roleSwitch.setAttribute('role','group');roleSwitch.setAttribute('aria-label','Учебная роль');
- for(const [key,label] of [['manager','Руководитель'],['employee','Елена · сотрудник']]){
-  const b=button(label,()=>setRole(key),'svdf-role');b.setAttribute('aria-pressed',String(key===role));roleSwitch.append(b);
- }
- host.append(roleSwitch);
+ const roleCaption=$('div','svdf-role-current');
+ roleCaption.append($('span','','Роль из рабочего кабинета'),
+  $('strong','',role==='employee'?'Елена · сотрудник':'Руководитель'));
+ host.append(roleCaption);
  if(role==='manager'){
   const form=$('section','svdf-create');
   form.append($('strong','','Подготовить запрос'));
@@ -342,11 +356,12 @@ function mount(parent){
  if(host&&host.parentNode)host.remove();
  // The current app preview determines the initial document inbox, not any
  // previous unverified role toggled inside this training screen.
- role=window.SEYVEO_PREVIEW?.isEmployee?.()===true?'employee':'manager';
+ role=centralPreviewRole();
  selected='';listFilter='active';returnDraft={id:'',text:''};revisionDraft={id:'',body:'',note:''};info='';
  host=$('div','svdf-root');parent.append(host);draw();return true;
 }
 function unmount(){host=null;}
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;records=read();draw();});
+window.addEventListener('seyveo:preview-role-changed',syncRole);
 window.SEYVEO_DOCUMENT_FLOW=Object.freeze({mount,unmount,select,get:get,getRecords:()=>records.slice(),setRole,reset});
 })();
