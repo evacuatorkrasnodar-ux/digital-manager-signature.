@@ -1125,8 +1125,10 @@ function showCalendar(item){
   space.classList.add('lm-disappear');
   later(()=>rest(),reduced()?0:TIMING.close);
  };
- why.classList.add('sv-living-card-action');
- open.classList.add('sv-living-card-action','sv-living-card-action--primary');
+ // Use the Card Studio action roles and shared Home master material.
+ // "Подробнее" is a quiet disclosure; the calendar route is the sole primary action.
+ why.dataset.cardRole='navigation';
+ open.dataset.cardRole='primary';
  controls.append(why,open);
  installLivingCardSwipe(field,postpone);
  main.append(hero,controls);
