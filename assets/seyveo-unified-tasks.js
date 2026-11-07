@@ -1035,6 +1035,7 @@
  function showGoal(id){
   if(!itemById.has(id)||!draft)return;
   activeGoal=id;sourceChoice=null;
+  dialog.dataset.cabinetView='guide';
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Настройка инструмента';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите нужные возможности кабинета.';
   catalogHost.hidden=true;
@@ -1044,6 +1045,7 @@
  }
  function hideGoal(){
   activeGoal=null;sourceChoice=null;
+  dialog.dataset.cabinetView='catalog';
   if($('svCabinetTitle'))$('svCabinetTitle').textContent='Что хотите делать?';
   if($('svCabinetDisclosure'))$('svCabinetDisclosure').textContent='Выберите задачу — подскажем нужный инструмент.';
   guideHost.hidden=true;guideHost.replaceChildren();
