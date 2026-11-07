@@ -104,3 +104,24 @@
 #svWorkShell[data-shared-work="true"] .tasks-main:not([hidden]){
  animation:none!important;transition:none!important;
 }
+
+
+/* Keep the real Calendar + and its menu in the calendar DOM.
+   Overlay only that original action at the common header's end.
+   Its existing click and popover positioning remain fully functional. */
+#svWorkShell{position:relative}
+#svWorkShell[data-shared-work="true"] .calendar-header{
+ display:contents!important;
+}
+#svWorkShell[data-shared-work="true"] .calendar-header-main{
+ display:none!important;
+}
+#svWorkShell[data-shared-work="true"] .calendar-header-actions{
+ position:absolute!important;top:7px!important;right:0!important;
+ z-index:210!important;display:flex!important;
+ margin:0!important;padding:0!important;
+}
+#svWorkShell[data-shared-work="true"] .calendar-header-add{
+ width:40px!important;height:40px!important;min-height:40px!important;
+ border-radius:50%!important;
+}
