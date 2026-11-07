@@ -69,10 +69,11 @@
   const button=$(id);
   if(!button)return;
   button.classList.add('sv-nav-back');
-  const svg=button.querySelector('svg');
-  if(svg){
-   svg.replaceWith(createArrow());
-  }
+  // These are navigation buttons, never content or submit actions.
+  // Use one icon-only visual rather than a cramped 44px button plus
+  // a second "Назад/Главная/Управление" text label.
+  button.replaceChildren(createArrow());
+  if(!button.getAttribute('aria-label'))button.setAttribute('aria-label','Вернуться назад');
  });
  // Four standalone icon-only close controls used legacy X marks.
  // Keep the ORIGINAL button and its event handler, only unify its glyph.
@@ -135,5 +136,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:5});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:6});
 })();
