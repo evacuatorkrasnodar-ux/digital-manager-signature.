@@ -1,0 +1,51 @@
+/* SEYVEO Sayvi — one quiet monochrome pearl-light mark for assistant only.
+   This is an icon drawn with the same geometry as the approved chat button.
+   Recognition stars, favorite/bookmark stars and other symbols are separate. */
+.sv-sayvi-symbol,
+.sv-sayvi-label::before,
+.svcp-directory-avatar.is-sayvi::before,
+.sv-fan-hero-orb::before {
+  display:inline-block;
+  flex:0 0 auto;
+  background-color:currentColor;
+  -webkit-mask:url("./sayvi-mark.svg?v=1") center / contain no-repeat;
+  mask:url("./sayvi-mark.svg?v=1") center / contain no-repeat;
+  pointer-events:none;
+}
+.sv-sayvi-symbol {
+  width:1.22em;height:1.22em;
+  vertical-align:-.22em;
+}
+.sv-sayvi-label::before {
+  content:"";
+  width:1.18em;height:1.18em;
+  margin-right:.34em;
+  vertical-align:-.23em;
+}
+.svcp-directory-avatar.is-sayvi::before {
+  content:"";
+  width:24px;height:24px;
+}
+.sv-fan-hero-orb::before {
+  content:"";
+  width:54%;height:54%;
+  color:inherit;
+}
+/* Existing spans were only glyph holders; keep their original spacing. */
+.svcp-manager-signal-mark.sv-sayvi-symbol,
+.sv-cabinet-resume-spark.sv-sayvi-symbol,
+.cal-bp-report-icon.sv-sayvi-symbol,
+.note-smart-symbol.sv-sayvi-symbol,
+.syp-spark.sv-sayvi-symbol,
+.pw-insight-mark.sv-sayvi-symbol,
+.sv-home-living-mark.sv-sayvi-symbol {
+  width:1.12em;height:1.12em;
+  font-size:inherit;
+}
+:root[data-theme="light"] .sv-sayvi-symbol,
+:root[data-theme="light"] .sv-sayvi-label::before{
+  color:var(--text);
+}
+@media(prefers-reduced-motion:reduce){
+  .sv-sayvi-symbol,.sv-sayvi-label::before{animation:none!important}
+}
