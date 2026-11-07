@@ -1779,3 +1779,28 @@ footer.dock.seyveo-browser-dock button[data-sv-browser-action] > svg.seyveo-brow
 }
 footer.dock.seyveo-browser-dock button[data-sv-browser-action]:active:not([aria-disabled="true"]){opacity:.7}
 footer.dock.seyveo-browser-dock button[data-sv-browser-action][aria-disabled="true"]{opacity:.42}
+
+/* SEYVEO · browser magnifier is geometrically circular (not 40x42 oval). */
+.seyveo-browser .sb-browser-sitebar-search-button,
+.seyveo-browser.is-site-view .sb-browser-sitebar-search-button,
+.seyveo-browser .sb-browser-sitebar-search-button.is-search-close{
+ box-sizing:border-box!important;
+ display:grid!important;place-items:center!important;
+ flex:0 0 40px!important;
+ width:40px!important;min-width:40px!important;max-width:40px!important;
+ height:40px!important;min-height:40px!important;max-height:40px!important;
+ aspect-ratio:1 / 1!important;
+ margin:0!important;padding:0!important;
+ border-radius:50%!important;
+ align-self:center!important;
+ transform:none!important;
+}
+@media(max-width:390px){
+ .seyveo-browser .sb-browser-sitebar-search-button,
+ .seyveo-browser.is-site-view .sb-browser-sitebar-search-button,
+ .seyveo-browser .sb-browser-sitebar-search-button.is-search-close{
+  flex:0 0 38px!important;
+  width:38px!important;min-width:38px!important;max-width:38px!important;
+  height:38px!important;min-height:38px!important;max-height:38px!important;
+ }
+}
