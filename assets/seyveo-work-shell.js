@@ -156,6 +156,10 @@
  observer.observe(calendar,{attributes:true,attributeFilter:['hidden']});
  observer.observe(oldTasks,{attributes:true,attributeFilter:['data-manager']});
  observer.observe(oldCalendar,{attributes:true,attributeFilter:['hidden']});
+ // Keep the visible + accessible state in sync when the original
+ // calendar handlers close their menu (choice, outside tap or Escape).
+ if(calendarAdd)observer.observe(calendarAdd,{attributes:true,attributeFilter:['aria-expanded']});
+ if(createMenu)observer.observe(createMenu,{attributes:true,attributeFilter:['hidden']});
  window.addEventListener('hashchange',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  sync();
