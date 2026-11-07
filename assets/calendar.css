@@ -21,60 +21,56 @@
 .calendar-header p{font-size:12px;line-height:1.45;color:var(--secondary);margin:0}
 .calendar-kicker{font-size:10px!important;letter-spacing:.12em;font-weight:630;color:var(--secondary);margin-bottom:9px!important}
 .calendar-header-actions{position:relative;display:flex;align-items:center;gap:7px;flex:none;z-index:2}
-/* One + entry, with a light native-like choice surface rather than extra buttons. */
-#calendarPage .cal-create-menu[hidden]{display:none!important}
-/* SEYVEO Calendar · transparent composer-glass quick menu.
-   Explicit ID prevents generic dialog / task menu rules from turning this into a heavy opaque card. */
-#calendarPage .calendar-header-actions{position:relative!important;overflow:visible!important;isolation:isolate}
+/* Calendar + is a neutral in-flow choice sheet, never an overlay over tabs. */
 #calendarPage #calendarCreateMenu[hidden]{display:none!important}
 #calendarPage #calendarCreateMenu:not([hidden]){
- position:absolute!important;
- inset:auto 0 auto auto!important;
- top:calc(100% + 4px)!important;
- right:0!important;left:auto!important;bottom:auto!important;
- display:block!important;z-index:1000!important;
- box-sizing:border-box!important;width:min(252px,calc(100vw - 30px))!important;
- height:auto!important;max-height:none!important;
- margin:0!important;padding:5px!important;
- border:1px solid rgba(226,245,242,.16)!important;border-radius:18px!important;
- background:rgba(57,73,79,.66)!important;
- -webkit-backdrop-filter:blur(30px) saturate(135%)!important;
- backdrop-filter:blur(30px) saturate(135%)!important;
- box-shadow:0 8px 24px rgba(0,0,0,.12)!important;
+ position:relative!important;inset:auto!important;z-index:auto!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:5px!important;box-sizing:border-box!important;width:100%!important;
+ height:auto!important;max-height:none!important;margin:0 0 11px!important;
+ padding:5px!important;border:1px solid color-mix(in srgb,var(--text) 10%,transparent)!important;
+ border-radius:18px!important;background:rgba(55,59,64,.76)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(110%)!important;
+ backdrop-filter:blur(22px) saturate(110%)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
  opacity:1!important;transform:none!important;animation:none!important;
- overflow:hidden!important;isolation:isolate!important;
+ overflow:visible!important;isolation:auto!important
 }
 #calendarPage #calendarCreateMenu button{
- display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
- box-sizing:border-box!important;width:100%!important;min-height:48px!important;
- margin:0!important;padding:7px 11px!important;
- border:0!important;border-radius:12px!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+ justify-content:center!important;box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;min-height:70px!important;
+ margin:0!important;padding:10px 12px!important;
+ border:0!important;border-radius:13px!important;
  background:transparent!important;box-shadow:none!important;
  color:var(--text)!important;font:inherit!important;text-align:left!important;
- cursor:pointer;touch-action:manipulation;
+ cursor:pointer;touch-action:manipulation
 }
-#calendarPage #calendarCreateMenu button+button{
- border-top:1px solid rgba(210,229,227,.11)!important;border-radius:0 0 12px 12px!important;
-}
+#calendarPage #calendarCreateMenu button+button{border:0!important;border-radius:13px!important}
 #calendarPage #calendarCreateMenu button span{
- font-size:13px!important;font-weight:600!important;letter-spacing:-.015em;
+ font-size:13px!important;font-weight:590!important;letter-spacing:-.015em
 }
 #calendarPage #calendarCreateMenu button small{
- margin-top:2px!important;font-size:10.5px!important;line-height:1.25!important;color:var(--secondary)!important;
+ margin-top:4px!important;font-size:10.5px!important;
+ line-height:1.35!important;color:var(--secondary)!important
 }
 #calendarPage #calendarCreateMenu button:is(:active,:focus-visible){
- background:rgba(178,204,204,.11)!important;
+ background:color-mix(in srgb,var(--text) 9%,transparent)!important
+}
+#calendarPage #calendarCreateMenu button:focus-visible{
+ outline:2px solid var(--secondary)!important;outline-offset:-2px!important
 }
 :root[data-theme="light"] #calendarPage #calendarCreateMenu:not([hidden]){
- background:rgba(244,250,248,.74)!important;
- border-color:rgba(59,112,92,.14)!important;
- box-shadow:0 8px 24px rgba(25,54,42,.09)!important;
-}
-:root[data-theme="light"] #calendarPage #calendarCreateMenu button+button{
- border-top-color:rgba(55,104,88,.11)!important;
+ background:rgba(236,240,243,.88)!important;
+ border-color:rgba(56,66,76,.09)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.64)!important
 }
 @media(prefers-reduced-transparency:reduce){
- #calendarPage #calendarCreateMenu:not([hidden]){background:var(--card2)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ #calendarPage #calendarCreateMenu:not([hidden]){
+  background:rgb(55,59,64)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+ }
+ :root[data-theme="light"] #calendarPage #calendarCreateMenu:not([hidden]){background:#eceff1!important}
 }
 
 .cal-round{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;color:var(--text);background:transparent;box-shadow:none}
@@ -127,7 +123,7 @@
  #calendarView .cal-swipe-prev{animation:cal-arrive-prev .22s cubic-bezier(.2,.7,.2,1) both}
 }
 /* Velvet weekend rails: continuous and very quiet, never individual tiles. */
-.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(157,225,198,.036);border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;padding:3px 0 2px;}
+.cal-month{position:relative;isolation:isolate;--cal-weekend-tint:rgba(145,151,159,.038);border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;padding:3px 0 2px;}
 .cal-month::before,.cal-week-grid::before{
  content:"";position:absolute;z-index:0;pointer-events:none;
  top:5px;right:6px;bottom:4px;width:calc((100% - 12px) * 2 / 7);
@@ -151,20 +147,29 @@
 /* Delicate selected-day circle instead of a full-height rounded square. */
 .cal-day[data-selected=true]{background:transparent;box-shadow:none}
 .cal-day[data-selected=true]:not([data-today=true]) .cal-day-number{
- background:color-mix(in srgb,var(--seyveo-emerald) 13%,transparent);border-radius:50%;box-shadow:inset 0 0 0 1px var(--seyveo-emerald)
+ background:color-mix(in srgb,var(--text) 11%,transparent);border-radius:50%;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 21%,transparent)
 }
 .cal-day[data-holiday=public] .cal-day-number{color:var(--text);font-weight:675}
 .cal-day[data-holiday=rest] .cal-day-number{color:var(--text);font-weight:565}
 /* Today's white circle must keep readable contrast on a holiday. */
-.cal-day[data-today=true][data-holiday] .cal-day-number{color:var(--bg);font-weight:675}
-.cal-day[data-today=true] .cal-day-number{color:var(--bg);background:var(--text);border-radius:50%;min-width:30px;height:30px;display:grid;place-items:center;margin:0;font-weight:650}
+.cal-day[data-today=true][data-holiday] .cal-day-number{color:var(--text);font-weight:675}
+.cal-day[data-today=true] .cal-day-number{
+ color:var(--text);background:color-mix(in srgb,var(--text) 7%,transparent);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 21%,transparent);
+ border-radius:50%;min-width:30px;height:30px;display:grid;place-items:center;margin:0;font-weight:610
+}
+.cal-day[data-today=true][data-selected=true] .cal-day-number{
+ color:var(--text);background:color-mix(in srgb,var(--text) 14%,transparent);
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--text) 25%,transparent)
+}
 .cal-day-number{display:grid;place-items:center;min-width:30px;height:30px}
 .cal-day-dots{display:flex;align-items:center;justify-content:center;gap:3px;height:5px}
 .cal-day-dots i{display:block;width:4px;height:4px;border-radius:50%;background:var(--secondary)}
 .cal-day-dots i.cal-dot-task{background:var(--text)}
 .cal-day-dots i.cal-dot-holiday{width:6px;height:6px;flex:none;border-radius:1.4px;background:var(--text);transform:rotate(45deg);opacity:.85}
 .cal-day[data-holiday=rest] .cal-day-dots i.cal-dot-holiday{background:transparent;border:1px solid var(--text);opacity:.8}
-.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(157,225,198,.036);border:0;border-radius:0;padding:4px 0;background:transparent;}
+.cal-week-grid{position:relative;isolation:isolate;--cal-weekend-tint:rgba(145,151,159,.038);border:0;border-radius:0;padding:4px 0;background:transparent;}
 .cal-week-grid::before{top:7px;right:4px;bottom:7px;width:calc((100% - 8px) * 2 / 7)}
 .cal-week-grid>.cal-day{z-index:1}
 .cal-week-grid .cal-day{min-height:54px;justify-content:center;gap:4px}
@@ -612,22 +617,6 @@
 .cal-form-status:empty{display:none}
 .cal-event-label{font-size:10px;text-align:center;color:var(--secondary);margin-top:6px}
 #calendarView[hidden],#calendarDeadlineView[hidden]{display:none!important}
-/* White theme: today's date is the same flat, frosted orb glass as primary actions. */
-:root[data-theme=light] #calendarPage .cal-day[data-today=true] .cal-day-number{
- color:var(--sv-glass-orb-ink);
- background:var(--sv-glass-orb-primary);
- box-shadow:var(--sv-glass-orb-shadow);
- -webkit-backdrop-filter:var(--sv-glass-orb-blur);
- backdrop-filter:var(--sv-glass-orb-blur);
-}
-:root[data-theme=light] #calendarPage .cal-day[data-today=true][data-holiday] .cal-day-number{
- color:var(--sv-glass-orb-ink);
-}
-@media(prefers-reduced-transparency:reduce){
- :root[data-theme=light] #calendarPage .cal-day[data-today=true] .cal-day-number{
-  background:#e0f0ec;-webkit-backdrop-filter:none;backdrop-filter:none;
- }
-}
 :root[data-theme=light] .calendar-header-add{color:var(--text)}
 @media(max-width:370px){
  .calendar-header h1{font-size:25px}
@@ -858,9 +847,6 @@
 @media(prefers-reduced-transparency:reduce){
  #calendarPage .cal-scope{background:var(--card2);-webkit-backdrop-filter:none;backdrop-filter:none}
  :root[data-theme="light"] #calendarPage .cal-scope button[aria-pressed="true"]{background:var(--card)}
-}
-:root[data-theme="light"] #calendarPage .cal-day[data-selected=true]:not([data-today=true]) .cal-day-number{
- background:rgba(35,41,46,.075);box-shadow:inset 0 0 0 1px rgba(35,41,46,.20);
 }
 
 /* Branded 44px Add control, with the same surface as the scoped selector.
