@@ -54,3 +54,53 @@
  letter-spacing:-.045em!important;line-height:1.12!important;
 }
 @media(prefers-reduced-motion:reduce){#svWorkTabs::before{transition:none}}
+
+/* Unified work header: unlike the two legacy page headers, this node
+   remains mounted and stationary across Tasks / Calendar / Cabinet. */
+#svWorkShell[data-shared-work="true"] .tasks-heading,
+#svWorkShell[data-shared-work="true"] .calendar-header{
+ display:none!important;
+}
+#svWorkHeader{
+ box-sizing:border-box;order:0;flex:none;width:100%;height:54px;min-height:54px;
+ display:grid;grid-template-columns:42px minmax(0,1fr) 42px;
+ align-items:center;column-gap:6px;margin:0 0 8px;padding:0;
+}
+#svWorkHeader[hidden]{display:none!important}
+#svWorkTitle{
+ margin:0!important;padding:0!important;min-width:0;
+ font-size:clamp(26px,7.25vw,32px)!important;line-height:1.12!important;
+ font-weight:650!important;letter-spacing:-.045em!important;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ color:var(--text);
+}
+#svWorkBack,#svWorkAdd{
+ appearance:none;-webkit-appearance:none;
+ display:inline-flex;align-items:center;justify-content:center;
+ width:42px;height:42px;min-height:42px;min-width:42px;
+ box-sizing:border-box;margin:0;padding:0;border:0;border-radius:50%;
+ background:color-mix(in srgb,var(--text) 9%,transparent);
+ color:var(--text);box-shadow:none;
+ -webkit-backdrop-filter:blur(16px) saturate(105%);
+ backdrop-filter:blur(16px) saturate(105%);
+ -webkit-tap-highlight-color:transparent;
+}
+#svWorkBack svg,#svWorkAdd svg{
+ width:19px;height:19px;fill:none;stroke:currentColor;
+ stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round;
+}
+#svWorkAdd[hidden]{
+ display:block!important;visibility:hidden!important;
+ pointer-events:none!important;
+}
+#svWorkBack:active,#svWorkAdd:active{opacity:.7}
+#svWorkBack:focus-visible,#svWorkAdd:focus-visible{
+ outline:2px solid var(--text);outline-offset:2px;
+}
+#svWorkShell[data-shared-work="true"] #svWorkTabs{
+ margin:0 0 12px!important;align-self:stretch;
+ transform:none!important;
+}
+#svWorkShell[data-shared-work="true"] .tasks-main:not([hidden]){
+ animation:none!important;transition:none!important;
+}
