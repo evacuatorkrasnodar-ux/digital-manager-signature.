@@ -53,12 +53,21 @@
  const legacyTasksBack=document.getElementById('unifiedTasksBack');
  const legacyCalendarBack=document.getElementById('calendarBack');
  const calendarAdd=document.getElementById('calendarAdd');
+ const personalAdd=document.getElementById('personalAddTasks');
+ const cabinetAdd=document.getElementById('svCabinetConfigure');
  back.addEventListener('click',()=>{
   if(!calendar.hidden){legacyCalendarBack?.click();return}
   if(legacyTasksBack&&!legacyTasksBack.hidden){legacyTasksBack.click();return}
   document.getElementById('navHome')?.click();
  });
- add.addEventListener('click',()=>{if(!calendar.hidden)calendarAdd?.click()});
+ // One contextual add action. Delegate to the ORIGINAL controls to retain
+ // creation dialogs, validation, and existing click listeners.
+ add.addEventListener('click',()=>{
+  const section=activeSection();
+  if(section==='personal')personalAdd?.click();
+  else if(section==='business')cabinetAdd?.click();
+ });
+
  // Route switches always start at the same stable viewport origin.
  // Never scroll on routine data refreshes.
  function resetWorkScroll(){
@@ -80,8 +89,11 @@
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
   title.textContent=active==='calendar'?'Календарь':active==='business'?'Кабинет':'Мои дела';
-  back.setAttribute('aria-label',active==='calendar'?'Назад из календаря':'Назад');
-  add.hidden=active!=='calendar';
+  // Root destinations are already navigable through the bottom dock.
+  // Do not show a redundant Back control beside each top-level title.
+  back.hidden=true;
+  add.hidden=active==='calendar';
+  add.setAttribute('aria-label',active==='personal'?'Добавить дело':'Настроить инструменты кабинета');
   shell.dataset.active=active;
   for(const button of nav.querySelectorAll('button')){
    button.setAttribute('aria-pressed',String(button.dataset.svWorkTab===active));
