@@ -12,6 +12,48 @@
   'seyveoAvatarDialog'
  ]);
  const nestedBack=new Set(['noteScanBack']);
+ // A single lightweight matte-glass navigation material. No raised pills.
+ const navStyle=document.createElement('style');
+ navStyle.id='seyveo-navigation-standard';
+ navStyle.textContent=`
+  button.sv-nav-arrow,button.sv-nav-back {
+   -webkit-appearance:none;appearance:none;
+   display:inline-flex;align-items:center;justify-content:center;
+   flex:0 0 auto;min-width:40px;min-height:40px;
+   padding:0!important;border:0!important;border-radius:14px!important;
+   background:transparent!important;box-shadow:none!important;
+   color:var(--text,#f6f7f8)!important;
+   -webkit-tap-highlight-color:transparent;
+   transition:background-color .18s ease,opacity .18s ease;
+  }
+  button.sv-nav-arrow svg,button.sv-nav-back svg {
+   width:19px;height:19px;flex:none;fill:none;
+   stroke:currentColor;stroke-width:1.85;
+   stroke-linecap:round;stroke-linejoin:round;
+  }
+  button.sv-nav-arrow:hover,button.sv-nav-back:hover {
+   background:color-mix(in srgb,currentColor 7%,transparent)!important;
+  }
+  button.sv-nav-arrow:focus-visible,button.sv-nav-back:focus-visible {
+   outline:2px solid var(--text,#f6f7f8);outline-offset:2px;
+  }
+  button.sv-nav-arrow:active,button.sv-nav-back:active {opacity:.62}
+  @media(prefers-reduced-motion:reduce){
+   button.sv-nav-arrow,button.sv-nav-back{transition:none}
+  }
+ `;
+ document.head.appendChild(navStyle);
+ function createArrow(){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');
+  svg.setAttribute('focusable','false');
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d','M14.5 5.5 8 12l6.5 6.5');
+  svg.appendChild(path);
+  return svg;
+ }
+
  document.querySelectorAll('dialog > button.seyveo-dialog-close').forEach(button=>{
   const dialog=button.parentElement;
   if(!dialog)return;
@@ -26,14 +68,15 @@
    return;
   }
   // Reuse the exact same closing button and handler; only its glyph changes.
-  if(!button.classList.contains('seyveo-text-close')){
-   button.replaceChildren(document.createTextNode('Готово'));
-   button.classList.add('seyveo-text-close');
-  }
-  button.classList.add('sv-nav-done');
+  // One visual system: the back chevron closes the current surface.
+  // Keep the original button node, listeners, focus and dialog behavior.
+  button.replaceChildren(createArrow());
+  button.classList.remove('seyveo-text-close','sv-nav-done');
+  button.classList.add('sv-nav-arrow');
   const destination=dialog.getAttribute('aria-labelledby');
   const title=destination?$(destination)?.textContent.trim():'';
-  button.setAttribute('aria-label',title?'Готово — закрыть '+title:'Готово — закрыть окно');
+  button.setAttribute('aria-label',title?'Вернуться из раздела «'+title+'»':'Вернуться назад');
+  button.removeAttribute('title');
  });
  // These custom close buttons have their own, already-tested handlers.
  // The visible footer action serves the same purpose, so hide the duplicate.
@@ -49,7 +92,15 @@
   'seyveoConversationBack','noteScanBack','manageThemeBack',
   'lifeBack','calendarMeasureBack','seyveoCleanBack','sayviVideoBack',
   'sayviAnswerBack','sayviSurfaceBack'
- ].forEach(id=>$(id)?.classList.add('sv-nav-back'));
+ ].forEach(id=>{
+  const button=$(id);
+  if(!button)return;
+  button.classList.add('sv-nav-back');
+  const svg=button.querySelector('svg');
+  if(svg){
+   svg.replaceWith(createArrow());
+  }
+ });
  // On editable forms, cancel / Escape must not silently discard entered data.
  // We snapshot only fields after a dialog actually opens; saving uses the
  // original app submit handler untouched.
@@ -101,5 +152,5 @@
     confirmLeaving(event);
   },true);
  });
- window.SEYVEO_NAVIGATION=Object.freeze({version:1});
+ window.SEYVEO_NAVIGATION=Object.freeze({version:3});
 })();
