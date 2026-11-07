@@ -1221,12 +1221,25 @@
  border-radius:14px!important;
 }
 #calendarEventDialog .cal-kind-option input:checked+span{
- background:rgba(164,185,195,.14)!important;
+ background:rgba(164,185,195,.09)!important;
  border-color:transparent!important;box-shadow:none!important;
 }
 #calendarEventDialog .cal-dialog-actions>.btn.primary{
- background:rgba(163,185,195,.16)!important;
- border:0!important;box-shadow:none!important;
+ box-sizing:border-box!important;
+ flex:0 0 auto!important;
+ height:36px!important;min-height:36px!important;
+ width:auto!important;min-width:100px!important;
+ margin:0 0 0 auto!important;padding:0 15px!important;
+ border:0!important;border-radius:999px!important;
+ background:rgba(160,186,197,.105)!important;
+ color:var(--text)!important;
+ box-shadow:none!important;filter:none!important;
+ -webkit-backdrop-filter:blur(18px) saturate(110%)!important;
+ backdrop-filter:blur(18px) saturate(110%)!important;
+ font-size:12px!important;font-weight:580!important;
+ line-height:1!important;
+ transform:none!important;
+ -webkit-appearance:none!important;appearance:none!important;
 }
 :root[data-theme=light] #calendarEventDialog .cal-event-sheet{
  background:rgba(250,252,252,.96)!important;
