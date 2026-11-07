@@ -1265,15 +1265,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
    dark rgba(184,195,201,.25) + blur(16px) saturate(105%);
    light rgba(99,121,133,.22) + blur(14px) saturate(115%) contrast(1.12).
    This local override does not alter the approved dock on Home.
-   No secondary text capsule, border, rim or embossed shadow. A soft exterior shadow defines the single surface. */
+   No secondary text capsule or embossed rim. A delicate outer hairline defines the single continuous surface. */
 #svcpWorkChatScreen{
  --sv-liquid-nav-material:linear-gradient(165deg,rgba(243,250,253,.11) 0%,rgba(184,195,201,.025) 58%,rgba(98,116,126,.045) 100%),rgba(184,195,201,.25);
  --sv-liquid-nav-blur:blur(16px) saturate(105%);
  --sv-liquid-nav-shadow:0 6px 16px rgba(4,10,18,.17);
+ --sv-work-chat-hairline:rgba(232,244,250,.22);
 }
 :root[data-theme="light"] #svcpWorkChatScreen{
  --sv-liquid-nav-material:linear-gradient(165deg,rgba(255,255,255,.19) 0%,rgba(99,121,133,.02) 60%,rgba(99,121,133,.035) 100%),rgba(99,121,133,.22);
  --sv-liquid-nav-shadow:0 5px 15px rgba(39,56,68,.09);
+ --sv-work-chat-hairline:rgba(255,255,255,.48);
  --sv-liquid-nav-blur:blur(14px) saturate(115%) contrast(1.12);
 }
 
@@ -1301,7 +1303,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  height:auto!important;
  padding:4px 7px!important;
  margin:0 auto!important;
- border:0!important;
+ border:1px solid var(--sv-work-chat-hairline)!important;
  outline:0!important;
  border-radius:999px!important;
  /* Exact Sayvi chat input smoke-glass material, used once across the whole capsule. */
@@ -1317,7 +1319,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen:focus-within #svcpChatForm,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:focus-within{
  padding:4px 7px!important;
- border:0!important;outline:0!important;
+ border:1px solid var(--sv-work-chat-hairline)!important;outline:0!important;
 }
 /* No other capsule, painted rim or embossed lens. Home dock's icons
    are flat, so Work chat's tools follow that same visual hierarchy. */
