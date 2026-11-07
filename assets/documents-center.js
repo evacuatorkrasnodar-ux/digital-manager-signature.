@@ -1,191 +1,186 @@
-/* SEYVEO Document Center — local workspace, no network, no simulated AI.
-   Session-only tools. The personal/business switch is organizational, not
-   a cryptographic security boundary: encrypted native vault is future work. */
+/* SEYVEO · Documents is a private archive; document creation lives in Sayvi chat.
+   Existing browser-local AES-GCM vault is preserved. No silent transfer of files. */
 (()=>{
 'use strict';
 const MAX_FILE=20*1024*1024;
-const extensions=new Set(['pdf','txt','md','png','jpg','jpeg','webp']);
-const tabNames={personal:'Личное',business:'Бизнес'};
-let area='personal',view='file',host=null,previewUrl=null,readerToken=0;
-let files={personal:null,business:null};
-let drafts={personal:{title:'',text:''},business:{title:'',text:''}};
-const el=(tag,cls,text)=>{
+const names={personal:'Личное',business:'Бизнес'};
+const allowed=/\.(?:pdf|txt|md|docx|xlsx|pptx|png|jpe?g|webp)$/i;
+let area='personal',host=null,view='archive',archiveExpanded=false,readerToken=0,previewUrl=null;
+let files={personal:null,business:null},stored={personal:false,business:false},showPreview=false;
+const el=(tag,cls,value)=>{
  const n=document.createElement(tag);
  if(cls)n.className=cls;
- if(text!==undefined)n.textContent=text;
+ if(value!==undefined)n.textContent=value;
  return n;
 };
-function control(label,callback,cls=''){
+const button=(label,fn,cls='')=>{
  const b=el('button','sv-doc-action'+(cls?' '+cls:''),label);
- b.type='button';b.addEventListener('click',callback);return b;
-}
-function resetPreview(){
+ b.type='button';b.addEventListener('click',fn);return b;
+};
+const note=value=>el('p','sv-doc-note',value);
+function clearPreview(){
  ++readerToken;
  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
 }
 function reset(){
- resetPreview();
- files={personal:null,business:null};
- drafts={personal:{title:'',text:''},business:{title:'',text:''}};
- view='file';
+ clearPreview();
+ files={personal:null,business:null};stored={personal:false,business:false};
+ view='archive';showPreview=false;archiveExpanded=false;
 }
 function setArea(next){
- if(!tabNames[next])return false;
- area=next;view='file';
+ if(!names[next])return false;
+ area=next;view='archive';showPreview=false;
  if(host)draw();
  return true;
 }
-function note(text){
- return el('p','sv-doc-note',text);
+function goSayvi(intent){
+ // Only a generic intent crosses pages. Never place file bytes, names,
+ // decrypted content or vault keys into URL, storage or chat history.
+ try{sessionStorage.setItem('seyveo.sayvi.document-handoff.v1',
+  JSON.stringify({intent,at:Date.now()}));}catch{}
+ if(window.SEYVEO_CONVERSATION?.open)window.SEYVEO_CONVERSATION.open();
+ else location.assign('sayvi-chat-new.html');
 }
-function announce(node,text){
- node.textContent=text;
+function makeIcon(kind){
+ const wrap=el('span','sv-doc-symbol');wrap.setAttribute('aria-hidden','true');
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+ p.setAttribute('d',kind==='lock'
+  ? 'M5.5 10V7.5a6.5 6.5 0 0 1 13 0V10M5 10h14v11H5zM12 14v3'
+  : 'M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4');
+ svg.append(p);wrap.append(svg);return wrap;
 }
-function downloadDraft(status){
- const draft=drafts[area];
- if(!draft.text.trim()){announce(status,'Сначала введите текст документа.');return;}
- const safeName=(draft.title.trim()||'Документ-SEYVEO').replace(/[\\/:*?"<>|\x00-\x1f]/g,'-').slice(0,80);
- const blob=new Blob([draft.text],{type:'text/plain;charset=utf-8'});
- const url=URL.createObjectURL(blob);
- const a=el('a');a.href=url;a.download=safeName+'.txt';document.body.append(a);a.click();a.remove();
- // The generated URL belongs only to this download, not to the preview.
- setTimeout(()=>URL.revokeObjectURL(url),30000);
- announce(status,'Текстовый документ подготовлен для скачивания. В архиве SEYVEO копия не сохраняется.');
+function chatAction(label,subtitle,intent,primary=false){
+ const action=button('',()=>goSayvi(intent),'sv-doc-chat-action'+(primary?' sv-doc-chat-main':''));
+ action.append(makeIcon(primary?'sayvi':'lock'));
+ const copy=el('span','sv-doc-chat-copy');
+ copy.append(el('strong','',label),el('small','',subtitle));
+ const chevron=el('span','sv-doc-chat-chevron','›');chevron.setAttribute('aria-hidden','true');
+ action.append(copy,chevron);return action;
 }
-async function shareDraft(status){
- const draft=drafts[area];
- if(!draft.text.trim()){announce(status,'Сначала введите текст документа.');return;}
- if(typeof navigator.share!=='function'){announce(status,'Системная отправка недоступна в этом браузере. Используйте «Скачать TXT».');return;}
- try{
-  const name=(draft.title.trim()||'Документ-SEYVEO').replace(/[\\/:*?"<>|\x00-\x1f]/g,'-').slice(0,80);
-  const f=new File([draft.text],name+'.txt',{type:'text/plain;charset=utf-8'});
-  if(navigator.canShare?.({files:[f]}))await navigator.share({title:name,files:[f]});
-  else await navigator.share({title:name,text:draft.text});
-  announce(status,'Передано в системное меню отправки. Доставку получателю проверяйте в выбранном приложении.');
- }catch(error){
-  if(error?.name!=='AbortError')announce(status,'Не удалось открыть отправку. Можно скачать документ и передать вручную.');
- }
-}
-function renderFile(panel,status,preview,tools){
- const file=files[area];resetPreview();preview.replaceChildren();tools.replaceChildren();
- if(!file){announce(status,'Документ пока не выбран.');return;}
- const extension=String(file.name.split('.').pop()||'').toLowerCase();
- if(!extensions.has(extension)||file.size>MAX_FILE){
-  announce(status,'Поддерживаются PDF, TXT, MD и изображения до 20 МБ.');return;
- }
- announce(status,'Открыт: '+file.name);
- previewUrl=URL.createObjectURL(file);
- const activeUrl=previewUrl;
- const original=el('a','sv-doc-file-link','Открыть оригинал');
- original.href=activeUrl;original.target='_blank';original.rel='noopener noreferrer';
- tools.append(original);
- if(['png','jpg','jpeg','webp'].includes(extension)){
-  const img=el('img','sv-deep-file-image');img.src=activeUrl;img.alt='Просмотр выбранного документа';preview.append(img);
- }else if(extension==='pdf'){
-  const pdf=el('iframe','sv-deep-file-frame');pdf.title='Просмотр выбранного PDF';pdf.src=activeUrl;preview.append(pdf);
-  preview.append(note('Поиск внутри PDF будет доступен после подключения отдельного движка распознавания.'));
- }else{
+function renderPreview(parent,file){
+ clearPreview();
+ const preview=el('div','sv-doc-preview');
+ const ext=(file.name.split('.').pop()||'').toLowerCase();
+ const status=el('p','sv-doc-status','Выбран файл: '+file.name);
+ parent.append(status);
+ const object=URL.createObjectURL(file);previewUrl=object;
+ const link=el('a','sv-doc-file-link','Открыть оригинал');
+ link.href=object;link.target='_blank';link.rel='noopener noreferrer';
+ parent.append(link);
+ if(/^(?:png|jpg|jpeg|webp)$/.test(ext)){
+  const img=el('img','sv-deep-file-image');img.src=object;img.alt='Просмотр документа';preview.append(img);
+ }else if(ext==='pdf'){
+  const frame=el('iframe','sv-deep-file-frame');frame.src=object;frame.title='Просмотр PDF';preview.append(frame);
+ }else if(/^(?:txt|md)$/.test(ext)){
   const token=readerToken;
-  file.text().then(content=>{
+  file.text().then(text=>{
    if(token!==readerToken||!preview.isConnected)return;
-   const pre=el('pre','sv-deep-file-text',content.slice(0,120000));
-   preview.replaceChildren(pre);
-   if(content.length>120000)preview.append(note('Показано начало файла — первые 120 000 символов.'));
-   const search=el('input','sv-doc-search');search.type='search';search.placeholder='Найти в тексте';search.setAttribute('aria-label','Поиск в открытом тексте');
-   const result=note('');
-   search.addEventListener('input',()=>{
-    const q=search.value.trim().toLocaleLowerCase();
-    if(!q){result.textContent='';return;}
-    const source=content.toLocaleLowerCase();
-    let count=0,position=0;
-    while((position=source.indexOf(q,position))!==-1){count++;position+=Math.max(1,q.length);if(count>=9999)break;}
-    result.textContent=count?'Совпадений: '+count:'Не найдено';
-   });
-   tools.append(search,result);
-  }).catch(()=>announce(status,'Не удалось прочитать текст файла.'));
- }
+   preview.replaceChildren(el('pre','sv-deep-file-text',text.slice(0,120000)));
+   if(text.length>120000)preview.append(note('Показано начало документа.'));
+  }).catch(()=>preview.replaceChildren(note('Не удалось открыть текст.')));
+ }else preview.append(note('Предварительный просмотр этого формата не поддерживается браузером. Откройте оригинал.'));
+ parent.append(preview);
 }
 function draw(){
  if(!host)return;
- resetPreview();host.replaceChildren();
- // Personal and business are already clearly named by the accessible tabs.
- // Keep their separate data stores; no redundant decorative introduction.
- const tabs=el('div','sv-doc-switch');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Пространство документов');
+ clearPreview();host.replaceChildren();
+ const switcher=el('div','sv-doc-switch');
+ switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Пространство документов');
  for(const key of ['personal','business']){
-  const b=control(tabNames[key],()=>setArea(key),'sv-doc-tab');
-  b.setAttribute('aria-pressed',String(area===key));tabs.append(b);
+  const b=button(names[key],()=>setArea(key),'sv-doc-tab');
+  b.setAttribute('aria-pressed',String(area===key));switcher.append(b);
  }
- host.append(tabs);
- const nav=el('div','sv-doc-commands');nav.setAttribute('role','group');nav.setAttribute('aria-label','Инструменты документов');
- for(const [kind,label] of [...[['file','Открыть файл'],['draft','Создать документ']],...(area==='business'?[['flow','Согласования']]:[])]){
-  const b=control(label,()=>{view=kind;draw();},'sv-doc-command');
-  b.setAttribute('aria-pressed',String(view===kind));nav.append(b);
+ host.append(switcher);
+ if(view==='flow'){
+  const back=button('Вернуться в хранилище',()=>{view='archive';draw();},'sv-doc-flow-back');
+  const flow=el('section','sv-doc-workspace');
+  host.append(back,flow);
+  if(!window.SEYVEO_DOCUMENT_FLOW?.mount?.(flow))flow.append(note('Согласования пока недоступны.'));
+  return;
  }
- host.append(nav);
- const panel=el('section','sv-doc-workspace');
- const live=el('p','sv-doc-status');live.setAttribute('role','status');
- if(view==='flow'&&area==='business'){
-  const mounted=window.SEYVEO_DOCUMENT_FLOW?.mount?.(panel);
-  if(!mounted)panel.append(note('Демонстрация согласований временно недоступна.'));
- }else if(view==='file'){
-  panel.append(el('h2','sv-doc-subtitle',area==='personal'?'Личные документы':'Документы бизнеса'));
-  const select=el('input');select.type='file';select.hidden=true;
-  select.accept='.pdf,.txt,.md,.png,.jpg,.jpeg,.webp,application/pdf,text/plain,image/png,image/jpeg,image/webp';
-  select.addEventListener('change',()=>{
-   const file=select.files?.[0];
-   if(!file)return;
-   const extension=String(file.name.split('.').pop()||'').toLowerCase();
-   if(!extensions.has(extension)||file.size>MAX_FILE){
-    live.textContent='Поддерживаются PDF, TXT, MD и изображения до 20 МБ.';
-    select.value='';return;
-   }
-   files[area]=file;draw();select.value='';
-  });
-  const browse=control(files[area]?'Выбрать другой файл':'Выбрать файл',()=>select.click(),'sv-doc-primary');
-  panel.append(select,browse,live);
-  const tools=el('div','sv-doc-file-actions'),preview=el('div','sv-doc-preview');
-  panel.append(tools,preview);
-  renderFile(panel,live,preview,tools);
- }else{
-  panel.append(el('h2','sv-doc-subtitle','Новый документ'));
-  const name=el('input','sv-doc-input');name.type='text';name.maxLength=90;
-  name.placeholder='Название документа';name.setAttribute('aria-label','Название документа');
-  name.value=drafts[area].title;
-  name.addEventListener('input',()=>drafts[area].title=name.value);
-  const editor=el('textarea','sv-doc-editor');editor.placeholder='Текст документа…';
-  editor.setAttribute('aria-label','Содержание документа');editor.rows=8;
-  editor.value=drafts[area].text;
-  editor.addEventListener('input',()=>drafts[area].text=editor.value);
-  const buttons=el('div','sv-doc-file-actions');
-  buttons.append(control('Скачать TXT',()=>downloadDraft(live),'sv-doc-primary'));
-  buttons.append(control('Поделиться',()=>shareDraft(live)));
-  panel.append(name,editor,buttons,live);
-  panel.append(note('Это ручной редактор черновиков. Сэйви пока не генерирует и не проверяет содержание.'));
- }
- host.append(panel);
- if(view==='flow'&&area==='business')return;
+ const intro=el('section','sv-doc-intro');
+ intro.append(makeIcon('lock'));
+ const introCopy=el('div','sv-doc-intro-copy');
+ introCopy.append(el('strong','','Защищённые документы'),
+  el('small','','Личные и деловые файлы раздельно. Шифрование на этом устройстве.'));
+ intro.append(introCopy);
+ host.append(intro);
+ const selected=files[area];
+ const picker=document.createElement('input');
+ picker.type='file';picker.hidden=true;
+ picker.accept='.pdf,.txt,.md,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.webp';
+ picker.setAttribute('aria-label','Добавить документ в архив');
+ picker.addEventListener('change',()=>{
+  const file=picker.files?.[0];
+  if(!file)return;
+  if(file.size>MAX_FILE||file.size===0||!allowed.test(file.name)){
+   const feedback=host?.querySelector('.sv-doc-selection-status');
+   if(feedback)feedback.textContent='Выберите PDF, Word, Excel, PowerPoint, текст или изображение до 20 МБ.';
+   picker.value='';return;
+  }
+  files[area]=file;stored[area]=false;archiveExpanded=true;showPreview=false;
+  draw();
+ });
+ const storeActions=el('div','sv-doc-store-actions');
+ storeActions.append(button('Добавить документ',()=>picker.click(),'sv-doc-primary'));
+ const openArchive=button('Открыть архив',()=>{
+  const fold=host.querySelector('.sv-doc-vault-shell');
+  if(fold){fold.open=!fold.open;archiveExpanded=fold.open;}
+ },'sv-doc-open-archive');
+ storeActions.append(openArchive,picker);
+ host.append(storeActions);
+ const feedback=el('p','sv-doc-selection-status');
+ feedback.setAttribute('role','status');
+ if(selected&&!stored[area])feedback.textContent='Выбран «'+selected.name+'». Откройте архив и подтвердите сохранение.';
+ host.append(feedback);
  const archive=el('details','sv-doc-vault-shell');
  const summary=el('summary','sv-doc-vault-summary');
- summary.append(el('span','sv-doc-vault-title','Защищённый архив'),
-                el('small','','Сохранение с шифрованием · по паролю'));
- const archiveContents=el('div','sv-doc-vault');
- archive.append(summary,archiveContents);
+ summary.append(el('span','sv-doc-vault-title','Мой защищённый архив'),
+  el('small','','Доступ по паролю · файлы зашифрованы'));
+ const contents=el('div','sv-doc-vault');
+ archive.append(summary,contents);
  archive.addEventListener('toggle',()=>{
+  archiveExpanded=archive.open;
+  openArchive.textContent=archive.open?'Свернуть архив':'Открыть архив';
   if(!archive.open)return;
-  window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(archiveContents,{
-   area,
-   currentArea:()=>area,
-   selectedFile:()=>files[area],
-   draft:()=>({...drafts[area]}),
+  window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(contents,{
+   area,currentArea:()=>area,
+   selectedFile:()=>stored[area]?null:files[area],
+   draft:()=>({title:'',text:''}),
    openFile(file,target){
-    if(!tabNames[target])return;
-    area=target;files[target]=file;view='file';draw();
+    if(!names[target])return;
+    files[target]=file;stored[target]=true;area=target;
+    showPreview=true;archiveExpanded=true;draw();
    },
    clearSession(){reset();draw();}
   });
  });
  host.append(archive);
- host.append(note('Документы и черновики в редакторе остаются только до выхода из раздела. Для хранения откройте «Защищённый архив». В прототипе нет облачной резервной копии.'));
+ archive.open=archiveExpanded;
+ if(selected){
+  const preview=el('details','sv-doc-file-review');
+  preview.open=showPreview;
+  const sum=el('summary','','Посмотреть выбранный файл');
+  preview.append(sum);
+  const holder=el('div','sv-doc-file-review-body');
+  preview.append(holder);
+  if(showPreview)renderPreview(holder,selected);
+  preview.addEventListener('toggle',()=>{
+   showPreview=preview.open;
+   if(preview.open){holder.replaceChildren();renderPreview(holder,selected);}
+   else{holder.replaceChildren();clearPreview();}
+  });
+  host.append(preview);
+ }
+ const assistant=el('section','sv-doc-assistant');
+ assistant.append(el('h2','sv-doc-assistant-title','Работа с документами — с Сэйви'));
+ assistant.append(
+  chatAction('Создать с Сэйви','Подготовить новый документ в чате','create',true),
+  chatAction('Проверить или исправить','Откройте чат и приложите документ','review'));
+ host.append(assistant);
+ host.append(note('Архив хранится только в браузере на этом устройстве. При удалении данных браузера документы могут исчезнуть. Передача файлов в чат — только по вашему действию.'));
 }
 function openApprovals(recordId){
  area='business';view='flow';
@@ -194,8 +189,7 @@ function openApprovals(recordId){
  return true;
 }
 function mount(parent){
- reset();
- host=el('div','sv-doc-center');parent.append(host);draw();return true;
+ reset();host=el('div','sv-doc-center');parent.append(host);draw();return true;
 }
 function destroy(){
  window.SEYVEO_DOCUMENT_VAULT?.lock?.();
