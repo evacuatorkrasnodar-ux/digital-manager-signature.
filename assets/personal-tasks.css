@@ -936,7 +936,7 @@
    Preserve the original submit/cancel controls, form and date picker. */
 #personalTaskDialog .personal-task-sheet{
  border:0!important;border-radius:25px!important;
- background:rgba(33,38,45,.87)!important;
+ background:var(--sv-ui-sheet)!important;
  -webkit-backdrop-filter:blur(22px) saturate(105%)!important;
  backdrop-filter:blur(22px) saturate(105%)!important;
  box-shadow:0 9px 27px rgba(0,0,0,.09)!important;
@@ -976,7 +976,7 @@
  font-weight:620!important;
 }
 #personalTaskDialog.personal-task-dialog form{
- background:rgba(184,195,201,.075)!important;
+ background:var(--sv-ui-field)!important;
 }
 :root[data-theme=light] #personalTaskDialog .personal-task-sheet{
  background:rgba(250,252,252,.94)!important;
@@ -996,7 +996,7 @@
 /* SEYVEO date stage: one back arrow, one clear title, quiet calendar actions. */
 #personalTaskDialog.sv-task-date-open .personal-task-sheet{
  padding:12px 18px 15px!important;
- background:rgba(33,38,45,.87)!important;
+ background:var(--sv-ui-sheet)!important;
  -webkit-backdrop-filter:blur(22px) saturate(105%)!important;
  backdrop-filter:blur(22px) saturate(105%)!important;
  border:0!important;border-radius:25px!important;
@@ -1076,13 +1076,13 @@
 }
 :root[data-theme=light] #personalTaskDialog .personal-task-sheet,
 :root[data-theme=light] #personalTaskDialog.sv-task-date-open .personal-task-sheet{
- background:rgba(249,251,252,.88)!important;
+ background:var(--sv-ui-sheet)!important;
  border:0!important;
  -webkit-backdrop-filter:blur(22px) saturate(105%)!important;
  backdrop-filter:blur(22px) saturate(105%)!important;
 }
 :root[data-theme=light] #personalTaskDialog.personal-task-dialog form{
- background:rgba(99,121,133,.075)!important;
+ background:var(--sv-ui-field)!important;
 }
 :root[data-theme=light] #personalTaskDialog #personalTaskSave::before{
  background:rgba(99,121,133,.16)!important;
