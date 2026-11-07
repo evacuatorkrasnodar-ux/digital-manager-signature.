@@ -1014,6 +1014,50 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
 #sayviField > #sayviSend:not([hidden]):active{background:rgba(170,187,200,.24)!important}
 #sayviField > #sayviMic{touch-action:none!important;user-select:none!important;-webkit-user-select:none!important}
 #sayviField > #sayviMic.is-recording{background:rgba(168,189,201,.17)!important}
+
+/* Sayvi v5 · Send has the SAME visible circular key in compact and expanded
+   input. Use stronger rules than the legacy transparent icon style. */
+#sayviComposer:not(.sayvi-compose-expanded) #sayviField > button#sayviSend:not([hidden]),
+#sayviComposer.sayvi-compose-expanded #sayviField > button#sayviSend:not([hidden]){
+ display:grid!important;
+ place-items:center!important;
+ position:absolute!important;
+ z-index:5!important;
+ right:4px!important;
+ box-sizing:border-box!important;
+ width:42px!important;
+ height:42px!important;
+ min-width:42px!important;
+ min-height:42px!important;
+ max-width:42px!important;
+ max-height:42px!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:999px!important;
+ background:rgba(141,157,170,.24)!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ color:var(--sayvi-control-text)!important;
+ -webkit-backdrop-filter:blur(14px) saturate(1.08)!important;
+ backdrop-filter:blur(14px) saturate(1.08)!important;
+}
+#sayviComposer:not(.sayvi-compose-expanded) #sayviField > button#sayviSend:not([hidden]){
+ bottom:1px!important;
+}
+#sayviComposer.sayvi-compose-expanded #sayviField > button#sayviSend:not([hidden]){
+ bottom:-48px!important;
+}
+:root[data-theme="light"] #sayviComposer #sayviField > button#sayviSend:not([hidden]){
+ background:rgba(141,157,170,.20)!important;
+}
+#sayviComposer #sayviField > button#sayviSend:not([hidden]) svg{
+ display:block!important;
+ width:21px!important;
+ height:21px!important;
+ fill:none!important;
+ stroke:currentColor!important;
+ stroke-width:1.5!important;
+}
 </style>
 </head>
 <body>
