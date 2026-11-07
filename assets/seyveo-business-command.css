@@ -1846,13 +1846,29 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  font:inherit;cursor:pointer;touch-action:manipulation
 }
 .sv-cabinet-goal-detail:active{background:color-mix(in srgb,var(--text) 4%,transparent)}
-/* Cabinet selection controls share our round matte SEYVEO navigation family.
-   The element remains the original 44px click target and aria-pressed owner. */
-.sv-cabinet-goal-chevron{
- display:flex;align-items:center;justify-content:center;
- flex:none;width:20px;height:24px;color:var(--secondary);opacity:.80
+/* The information glyph opens the row's existing explanatory guide.
+   The whole text/ⓘ area is one tap target, distinct from the selection check. */
+.sv-cabinet-goal-info{
+ display:grid;place-items:center;flex:0 0 30px;
+ width:30px;height:36px;margin-left:auto;
+ color:var(--secondary);opacity:.86;border-radius:14px;
+ background:transparent;transition:background-color .15s ease,color .15s ease
 }
-.sv-cabinet-goal-chevron svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.sv-cabinet-goal-info svg{
+ display:block;width:19px;height:19px;fill:none;
+ stroke:currentColor;stroke-width:1.55;
+ stroke-linecap:round;stroke-linejoin:round
+}
+@media(hover:hover){
+ .sv-cabinet-goal-detail:hover .sv-cabinet-goal-info{
+  color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)
+ }
+}
+.sv-cabinet-goal-detail:focus-visible .sv-cabinet-goal-info{
+ color:var(--text);background:color-mix(in srgb,var(--text) 8%,transparent)
+}
+/* Cabinet selection controls share our round matte SEYVEO navigation family.
+   The selection itself remains the original 44px click target and aria-pressed owner. */
 .sv-cabinet-goal-mark{
  -webkit-appearance:none;appearance:none;
  position:relative;isolation:isolate;
