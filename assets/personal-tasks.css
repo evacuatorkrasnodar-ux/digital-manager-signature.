@@ -1048,8 +1048,8 @@
  background:rgba(249,251,251,.96)!important;
 }
 :root[data-theme=light] #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected{
- background:rgba(65,116,96,.18)!important;
- color:var(--seyveo-emerald,#386d5b)!important;
+ background:var(--sv-ui-selected-surface)!important;
+ color:var(--text)!important;
 }
 
 /* SEYVEO Task & Due picker: neutral charcoal smoke, no green-tinted cards.
