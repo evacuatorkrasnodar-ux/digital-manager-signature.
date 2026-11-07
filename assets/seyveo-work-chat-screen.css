@@ -3318,3 +3318,53 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen[data-view="room"] .svcp-chat:has(#svcpChatTaskDraft:not([hidden])) #svcpMessages{
  overflow-y:auto!important;
 }
+
+/* v192 · Contextual Sayvi recognition suggestion: compact, opt-in, not a
+   modal or extra message toolbar. Never change the approved chat dock. */
+#svcpWorkChatScreen .svcp-bubble .svcp-smart-award-suggestion{
+ display:flex!important;
+ flex-direction:column!important;
+ gap:7px!important;
+ box-sizing:border-box!important;
+ max-width:100%!important;
+ margin:10px 0 2px!important;
+ padding:9px 10px!important;
+ border:1px solid rgba(211,171,89,.20)!important;
+ border-radius:14px!important;
+ background:rgba(202,164,88,.065)!important;
+ box-shadow:none!important;
+}
+#svcpWorkChatScreen .svcp-smart-award-label{
+ display:block!important;
+ font-size:12px!important;
+ font-weight:450!important;
+ line-height:1.45!important;
+ color:var(--text)!important;
+ overflow-wrap:anywhere!important;
+}
+#svcpWorkChatScreen .svcp-smart-award-actions{
+ display:flex!important;
+ align-items:center!important;
+ gap:8px!important;
+}
+#svcpWorkChatScreen .svcp-smart-award-actions button{
+ flex:0 0 auto!important;
+ box-sizing:border-box!important;
+ min-height:38px!important;
+ padding:6px 11px!important;
+ border:0!important;
+ border-radius:11px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ color:var(--secondary)!important;
+ font:500 12px/18px -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
+ cursor:pointer!important;
+}
+#svcpWorkChatScreen .svcp-smart-award-actions .svcp-smart-award-confirm{
+ color:#c7a064!important;
+ background:rgba(211,171,89,.10)!important;
+}
+:root[data-theme="light"] #svcpWorkChatScreen .svcp-smart-award-actions .svcp-smart-award-confirm{
+ color:#946b24!important;
+ background:rgba(186,145,59,.10)!important;
+}
