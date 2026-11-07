@@ -1117,3 +1117,16 @@ html.seyveo-conversation #seyveoLivingMoment{display:none!important}
 @media(prefers-reduced-motion:reduce){
  #homePage #seyveoLivingMoment .lm-actions .lm-polymer--main{transition:none}
 }
+
+/* SEYVEO · approved Sayvi system mark in living moment action. */
+#seyveoLivingMoment .lm-polymer .lm-sayvi-mark{
+ display:block!important;flex:0 0 18px!important;
+ width:18px!important;height:18px!important;
+ margin:0 5px 0 0!important;
+ padding:0!important;overflow:visible!important;
+ color:var(--text)!important;opacity:1!important;
+ filter:none!important;transform:none!important;
+}
+#seyveoLivingMoment .lm-polymer.sv-sayvi-label::before{
+ content:none!important;display:none!important;
+}
