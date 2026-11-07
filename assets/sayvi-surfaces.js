@@ -651,8 +651,13 @@ function mailView(){
    button.addEventListener('click',()=>selectFolder(key));nav.append(button);
   }
   if(mailFolder!=='overview'){
-   const home=intent('‹ Обзор',()=>selectFolder('overview'));
-   home.classList.add('sv-mail-home-link');extraNav.append(home);
+   // Unified SEYVEO navigation: one etched back arrow, no textual
+   // "‹ Обзор" and no second dock inside Mail.
+   const home=create('button','sv-mail-icon-button sv-mail-home-link');
+   home.type='button';home.setAttribute('aria-label','Назад к обзору почты');
+   home.append(mailIcon('back'));
+   home.addEventListener('click',()=>selectFolder('overview'));
+   extraNav.append(home);
   }
   for(const [key,label] of tabs.slice(4)){
    const button=intent(label,()=>selectFolder(key));button.classList.add('sv-mail-extra-link');
