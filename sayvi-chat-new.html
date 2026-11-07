@@ -1340,8 +1340,8 @@ main:has(#sayviAttachmentTray:not([hidden])) #sayviStatus:not(:empty){
   function resizeComposerInput(){
    if(!composer||!field)return;
    const text=input.value;
-   const compactWidth=field.clientWidth||Math.max(160,window.innerWidth-82);
-   const shortHeight=sayviMeasuredTextHeight(text,compactWidth-69);
+   const compactTextWidth=Math.max(48,(composer.clientWidth||window.innerWidth-12)-142);
+   const shortHeight=sayviMeasuredTextHeight(text,compactTextWidth);
    const expand=!!text&&(text.includes('\n')||shortHeight>24);
    const availableWidth=(composer.clientWidth||window.innerWidth-12)-26;
    const fullTextHeight=expand?sayviMeasuredTextHeight(text,availableWidth):24;
