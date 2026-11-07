@@ -43,6 +43,7 @@ function goSayvi(intent){
 }
 function makeIcon(kind){
  const wrap=el('span','sv-doc-symbol');wrap.setAttribute('aria-hidden','true');
+ if(kind==='sayvi'){wrap.classList.add('sv-sayvi-symbol');return wrap;}
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');
  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
