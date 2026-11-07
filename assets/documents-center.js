@@ -141,6 +141,7 @@ function draw(){
  const contents=el('div','sv-doc-vault');
  archive.append(summary,contents);
  archive.addEventListener('toggle',()=>{
+  if(!archive.isConnected)return;
   archiveExpanded=archive.open;
   if(!archive.open)return;
   window.SEYVEO_DOCUMENT_VAULT_UI?.mount?.(contents,{
