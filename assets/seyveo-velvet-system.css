@@ -39,7 +39,7 @@
  --sv-ui-glass-shadow:none;
  --sv-ui-glass-filter:blur(16px) saturate(105%);
  /* A content sheet is calmer and more opaque than a floating action popover. */
- --sv-ui-sheet:rgba(32,39,46,.81);
+ --sv-ui-sheet:rgba(32,39,46,.66);
  --sv-ui-sheet-border:rgba(184,195,201,.075);
  --sv-ui-sheet-shadow:0 8px 24px rgba(0,0,0,.10);
  --sv-ui-sheet-filter:blur(28px) saturate(112%);
@@ -87,14 +87,15 @@
  --sv-ui-glass:rgba(99,121,133,.22);
  --sv-ui-glass-border:transparent;
  --sv-ui-glass-shadow:none;
- --sv-ui-sheet:rgba(249,252,253,.80);
+ --sv-ui-sheet:rgba(243,249,250,.56);
  --sv-ui-sheet-border:rgba(84,112,123,.08);
  --sv-ui-sheet-shadow:0 9px 24px rgba(31,54,65,.065);
- --sv-ui-field:rgba(99,121,133,.075);
+ --sv-ui-field:rgba(173,196,201,.14);
  --sv-ui-action-ink:var(--seyveo-emerald,#386d5b);
  --sv-ui-divider:rgba(56,110,87,.10);
 }
 :root[data-theme=dark][data-palette=graphite]{
+ --sv-ui-sheet:rgba(31,40,47,.66);
  --sv-velvet-panel:#29343d;
  --sv-velvet-panel-quiet:#222c34;
  --sv-air-dock:#242e37;
@@ -109,6 +110,7 @@
  --sv-velvet-etch:rgba(225,233,239,.92);
 }
 :root[data-theme=dark][data-palette=sapphire]{
+ --sv-ui-sheet:rgba(27,36,54,.65);
  --sv-velvet-panel:#2a394e;
  --sv-velvet-panel-quiet:#233044;
  --sv-air-dock:#27374e;
@@ -123,6 +125,7 @@
  --sv-velvet-etch:rgba(228,236,252,.92);
 }
 :root[data-theme=dark][data-palette=plum]{
+ --sv-ui-sheet:rgba(42,37,34,.65);
  --sv-velvet-panel:#36312d;
  --sv-velvet-panel-quiet:#2e2926;
  --sv-air-dock:#312c29;
