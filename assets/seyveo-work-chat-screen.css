@@ -2518,3 +2518,51 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
   column-gap:6px!important;
  }
 }
+
+/* SEYVEO dock-language controls: the detached Plus is the one glass circle
+   (like Home's search pane), and inline tools are FLAT dock icons on the
+   existing velvet surface. No second rim, silver bubble or raised buttons. */
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile,
+#svcpWorkChatScreen #svcpChatForm > #svcpAttachFile:is(:hover,:focus,:focus-visible,:active),
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+ border:0!important;
+ outline:0!important;
+ border-radius:50%!important;
+ background:var(--svcp-home-copy-material)!important;
+ background-image:none!important;
+ box-shadow:var(--svcp-home-copy-shadow)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.18)!important;
+ backdrop-filter:blur(22px) saturate(1.18)!important;
+ filter:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle),
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle):is(:hover,:focus,:focus-visible,:active),
+:root[data-theme="light"] #svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
+ border:0!important;
+ outline:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+ filter:none!important;
+ border-radius:50%!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle)::before,
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpPolishMessage,#svcpComposerEmojiToggle)::after{
+ content:none!important;
+ display:none!important;
+}
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpAttachFile,#svcpComposerEmojiToggle) svg{
+ stroke-width:1.45!important;
+ stroke-linecap:round!important;
+ stroke-linejoin:round!important;
+ filter:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
+  background:var(--sv-air-dock,#24372f)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
