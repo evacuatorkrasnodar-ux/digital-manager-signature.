@@ -210,12 +210,15 @@ html body :is(
  #calendarEventDialog #seyveoPickTime .cal-pick-wheel-option.is-selected,
  #calendarEventDialog #seyveoPickDate .cal-pick-day.is-selected,
  #calendarEventDialog .cal-kind-option input:checked+span,
- #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected,
- #svCabinetDialog .sv-cabinet-goal-mark.is-selected::before
+ #personalTaskDialog #seyveoTaskDuePicker .cal-pick-day.is-selected
 ){
  background:var(--sv-sayvi-selected)!important;
  color:var(--text)!important;
  border-color:transparent!important;
+ box-shadow:none!important;
+}
+html body #svCabinetDialog .sv-cabinet-goal-mark.is-selected::before{
+ background:var(--sv-sayvi-selected)!important;
  box-shadow:none!important;
 }
 html body #calendarSpaceDialog :is(
