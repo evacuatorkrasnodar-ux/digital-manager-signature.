@@ -24,7 +24,7 @@ test('Messenger directory uses the same neutral title/back navigation as SEYVEO 
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-header\{[\s\S]*?grid-template-columns:44px minmax\(0,1fr\) 44px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-work-chat-back svg\{[\s\S]*?width:19px;height:19px/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-directory-avatar\{[\s\S]*?color:var\(--secondary\)/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=73/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=74/);
 });
 
 test('manager task and send are distinct, keyboard-accessible actions in one composer',()=>{
@@ -58,18 +58,20 @@ test('work composer keeps the deliberate two-row layout while using Sayvi separa
  assert.match(css,/#svcpWorkChatScreen #svcpChatForm\[data-has-content="true"\] \.svcp-chat-send\{display:grid!important\}/);
 });
 
-test('chat bubble, input and independent tool controls use the same neutral smoke material as Sayvi',()=>{
+test('work chat bubbles stay neutral while the shared glass dock owns the composer backing',()=>{
  assert.match(css,/--svcp-smoke-glass:rgba\(184,195,201,\.19\)/);
- assert.match(css,/--svcp-smoke-input:rgba\(184,195,201,\.25\)/);
- assert.match(css,/:root\[data-theme="light"\] #svcpWorkChatScreen\{[\s\S]*?--svcp-smoke-glass:rgba\(99,121,133,\.22\)/);
+ assert.match(css,/--svcp-dock-glass:rgba\(168,187,197,\.14\)/);
+ assert.match(css,/--svcp-dock-input:rgba\(195,217,225,\.16\)/);
+ assert.match(css,/:root\[data-theme="light"\] #svcpWorkChatScreen\{[\s\S]*?--svcp-dock-glass:rgba\(248,251,252,\.68\)/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-bubble\{[\s\S]*?border:0!important;[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
- assert.match(css,/#svcpWorkChatScreen #svcpChatInput\{[\s\S]*?background:var\(--svcp-smoke-input\)!important/);
- assert.match(css,/#svcpWorkChatScreen #svcpChatForm\{\s*background:transparent!important;background-image:none!important;[\s\S]*?border:0!important;box-shadow:none!important/);
- assert.match(css,/#svcpWorkChatScreen\[data-view="room"\] #svcpChatForm\{[\s\S]*?background:transparent!important;[\s\S]*?border:0!important/);
- assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatInput\{[\s\S]*?background:var\(--svcp-dock-input\)!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm\{[\s\S]*?border:1px solid var\(--svcp-dock-edge\)!important;[\s\S]*?background:var\(--svcp-dock-glass\)!important/);
+ assert.match(css,/#svcpWorkChatScreen\[data-view="room"\] #svcpChatForm\{[\s\S]*?border-radius:30px!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm \.svcp-chat-send\{[\s\S]*?background:var\(--svcp-dock-action\)!important/);
+ assert.match(css,/#svcpWorkChatScreen #svcpChatForm #svcpVoiceRecord\{[\s\S]*?background:var\(--svcp-dock-action\)!important/);
  assert.match(css,/#svcpWorkChatScreen \.svcp-message-menu:not\(\[hidden\]\)\{[\s\S]*?background:var\(--svcp-smoke-glass\)!important/);
- assert.match(css,/@media\(prefers-reduced-transparency:reduce\)/);
- assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=73/);
+ assert.match(css,/@media\(prefers-reduced-transparency:reduce\)\{[\s\S]*?#svcpWorkChatScreen #svcpChatForm\{/);
+ assert.match(html,/assets\/seyveo-work-chat-screen\.css\?v=74/);
 });
 
 test('task is contextual to typed personal chat with an employee, not a permanent second line',()=>{
@@ -85,7 +87,7 @@ test('task is contextual to typed personal chat with an employee, not a permanen
   assert.match(script,/role:'self',text:'📌 Поручение: '\+text/);
   assert.match(script,/if\(save\(CHAT_KEY,updated\)\)/);
   assert.match(script,/Демо, без отправки на другой телефон/);
-  assert.match(html,/seyveo-work-chat-screen\.css\?v=73/);
+  assert.match(html,/seyveo-work-chat-screen\.css\?v=74/);
   assert.match(html,/seyveo-business-command\.js\?v=99/);
 });
 
@@ -123,7 +125,7 @@ test('Sayvi Core is legible at 31px and breathes slowly without moving the ribbo
  assert.match(css,/#svcpWorkChatScreen #svcpPolishMessage \.sv-sayvi-core-awake\{[\s\S]*?opacity:0;animation:/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{[\s\S]*?sv-sayvi-core-awake/);
  assert.match(css,/:root\[data-theme="light"\] #svcpWorkChatScreen\{[\s\S]*?--sv-sayvi-awake-color:/);
- assert.match(html,/seyveo-work-chat-screen\.css\?v=73/);
+ assert.match(html,/seyveo-work-chat-screen\.css\?v=74/);
 });
 
 test('existing Sayvi assistant remains attached to the employee message, without duplicate helper',()=>{
