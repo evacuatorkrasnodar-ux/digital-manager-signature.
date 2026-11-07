@@ -524,7 +524,8 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  animation:sv-sayvi-core-halo 5.2s ease-in-out infinite;
 }
 #svcpWorkChatScreen #svcpPolishMessage .sv-sayvi-core-seed{
- fill:var(--sv-sayvi-core-neutral)!important;stroke:none!important;
+ /* Not !important: the fill must remain animatable in Safari. */
+ fill:var(--sv-sayvi-core-neutral);stroke:none!important;
  animation:sv-sayvi-core-breathe 5.2s ease-in-out infinite;
 }
 @keyframes sv-sayvi-core-breathe{
