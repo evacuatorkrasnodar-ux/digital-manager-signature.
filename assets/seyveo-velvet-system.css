@@ -22,6 +22,23 @@
  --sv-velvet-glow:transparent;
  --sv-velvet-radius:17px;
  --sv-velvet-radius-small:15px;
+ /* SEYVEO unified design primitives. Keep semantic ownership in this file. */
+ --sv-ui-touch:44px;
+ --sv-ui-round-control:40px;
+ --sv-ui-icon:19px;
+ --sv-ui-stroke:1.55;
+ --sv-ui-radius-control:12px;
+ --sv-ui-radius-menu:18px;
+ --sv-ui-radius-sheet:22px;
+ --sv-ui-space:8px;
+ --sv-ui-quiet-surface:rgba(160,184,193,.075);
+ --sv-ui-selected-surface:rgba(162,189,198,.12);
+ --sv-ui-glass:rgba(81,104,109,.40);
+ --sv-ui-glass-border:rgba(225,242,239,.14);
+ --sv-ui-glass-shadow:0 9px 25px rgba(0,0,0,.10);
+ --sv-ui-glass-filter:blur(32px) saturate(145%);
+ --sv-ui-action-ink:var(--text);
+ --sv-ui-divider:rgba(203,225,223,.12);
  /* Shared Air contract. No additional CSS overlay. */
  --sv-air-icon-stroke:1.35;
  --sv-air-touch-target:44px;
@@ -56,6 +73,15 @@
  --sv-velvet-pressed:var(--sv-air-selected);
  --sv-velvet-etch:rgba(53,71,82,.9);
  --sv-velvet-glow:transparent;
+}
+:root[data-theme="light"]{
+ --sv-ui-quiet-surface:rgba(69,120,102,.055);
+ --sv-ui-selected-surface:rgba(65,128,103,.10);
+ --sv-ui-glass:rgba(247,252,249,.63);
+ --sv-ui-glass-border:rgba(56,110,87,.14);
+ --sv-ui-glass-shadow:0 9px 25px rgba(24,62,47,.08);
+ --sv-ui-action-ink:var(--seyveo-emerald,#386d5b);
+ --sv-ui-divider:rgba(56,110,87,.10);
 }
 :root[data-theme=dark][data-palette=graphite]{
  --sv-velvet-panel:#29343d;
