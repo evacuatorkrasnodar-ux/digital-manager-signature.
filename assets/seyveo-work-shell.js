@@ -8,6 +8,11 @@
  const oldTasks=document.getElementById('unifiedTasksTabs');
  const oldCalendar=document.getElementById('managerCalendarTabs');
  if(!tasks||!calendar||!oldTasks||!oldCalendar||document.getElementById('svWorkShell'))return;
+ // The legacy controls remain functional delegates, never visual rows.
+ // Inline !important wins over older calendar specificity while leaving
+ // hidden/aria state untouched for existing navigation logic.
+ oldTasks.style.setProperty('display','none','important');
+ oldCalendar.style.setProperty('display','none','important');
  const app=calendar.parentElement;
  if(!app||tasks.parentElement!==app)return;
  const shell=document.createElement('section');
