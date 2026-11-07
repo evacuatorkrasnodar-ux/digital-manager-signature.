@@ -480,39 +480,42 @@ function syncComposerActions(){
  form.classList.toggle('svcp-can-assign',ready);
 }
 $('svcpChatInput')?.addEventListener('input',syncComposerActions);
+/* The single-line input must never be temporarily resized to measure its text:
+ * Safari draws that temporary state during keyboard animation. A detached,
+ * invisible mirror measures both available widths without touching the dock. */
+const svcpComposeMeasure=document.createElement('div');
+svcpComposeMeasure.setAttribute('aria-hidden','true');
+svcpComposeMeasure.style.cssText='position:fixed;left:-10000px;top:0;display:block;visibility:hidden;pointer-events:none;box-sizing:border-box;padding:0;margin:0;border:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:24px;font-size:16px;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;';
+document.body.appendChild(svcpComposeMeasure);
+function measuredComposeHeight(value,width){
+ svcpComposeMeasure.style.width=Math.max(20,width)+'px';
+ svcpComposeMeasure.textContent=(value||'')+'\u200b';
+ return Math.ceil(svcpComposeMeasure.getBoundingClientRect().height);
+}
 function resizeWorkComposer(){
- const input=$('svcpChatInput');
- const form=$('svcpChatForm');
+ const input=$('svcpChatInput'),form=$('svcpChatForm');
  if(!input||!form)return;
+ const value=input.value;
  const compact=window.matchMedia('(max-width:390px)').matches;
  const base=compact?38:40;
- const max=144;
- // Measure the original narrow single-line field first. No expansion
- // until text wraps to a second line or contains a deliberate newline.
- form.classList.remove('svcp-compose-multiline');
- input.style.setProperty('height',base+'px','important');
- input.style.setProperty('overflow-y','hidden','important');
- const wraps=!!input.value&&(input.value.includes('\n')||input.scrollHeight>base+2);
+ const formWidth=form.getBoundingClientRect().width||Math.max(240,window.innerWidth-12);
+ // 132px are the approved Plus / Sayvi / emoji grid tracks.
+ // In the short form 15px left and 154px right remain for the task and send.
+ const shortWidth=formWidth-132-15-(form.classList.contains('svcp-can-assign')?154:54);
+ const hasNewline=value.includes('\n');
+ const textHeight=measuredComposeHeight(value,shortWidth);
+ const wraps=!!value&&(hasNewline||textHeight>24);
+ // In multiline the text occupies the full width. Tool buttons use the
+ // separate 42px bottom row. No second background/capsule is introduced.
+ const expandedHeight=measuredComposeHeight(value,formWidth-32);
+ const editorHeight=wraps?Math.min(144,Math.max(44,expandedHeight+16)):base;
+ const targetHeight=wraps?editorHeight+55:56;
  form.classList.toggle('svcp-compose-multiline',wraps);
- // The large writing area is still part of the SAME dock. Keep the
- // action row and microphone in place, and grow only upward.
- input.style.setProperty('height',base+'px','important');
- const wanted=wraps?Math.max(base+24,input.scrollHeight):base;
- const height=Math.min(max,wanted);
- input.style.setProperty('height',height+'px','important');
- input.style.setProperty('overflow-y',wraps&&wanted>max?'auto':'hidden','important');
- // Animate the existing dock's real height instead of switching to a
- // separate editor. The lower edge is fixed, so it unfolds upward.
- // 42px action row + 8px/5px padding + 2px row gap = 57px.
- const targetHeight=wraps?height+57:56;
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- if(!form.style.getPropertyValue('height')){
-  const current=Math.round(form.getBoundingClientRect().height);
-  form.style.setProperty('height',(current>=56?current:56)+'px','important');
- }
- if(reduced)form.style.setProperty('transition','none','important');
- else form.style.removeProperty('transition');
+ form.style.setProperty('--svcp-editor-height',editorHeight+'px');
+ form.style.setProperty('--svcp-compose-height',targetHeight+'px');
  form.style.setProperty('height',targetHeight+'px','important');
+ input.style.setProperty('height',editorHeight+'px','important');
+ input.style.setProperty('overflow-y',wraps&&expandedHeight+16>144?'auto':'hidden','important');
 }
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
