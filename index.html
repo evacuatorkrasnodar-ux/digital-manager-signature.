@@ -1246,7 +1246,7 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
    </div>
    <form id="svcpChatTaskDraft" class="svcp-chat-task-draft" hidden>
     <label for="svcpChatTaskTitle"><strong>Новое поручение</strong><small>Проверьте текст перед добавлением</small></label>
-    <input id="svcpChatTaskTitle" maxlength="140" placeholder="Что нужно сделать?" required>
+    <textarea id="svcpChatTaskTitle" rows="2" maxlength="140" placeholder="Что нужно сделать?" required></textarea>
     <span class="svcp-task-recipient-caption" id="svcpTaskRecipientCaption">Для кого</span>
     <select id="svcpChatTaskAssignee" aria-label="Кому поручить" tabindex="-1" class="svcp-task-assignee-native">
      <option value="">Выберите получателя</option>
