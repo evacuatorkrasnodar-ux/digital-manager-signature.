@@ -863,3 +863,57 @@
 @media(prefers-reduced-transparency:reduce){
  #calendarPage #calendarAdd{background:var(--card2);-webkit-backdrop-filter:none;backdrop-filter:none}
 }
+
+
+/* SEYVEO calendar polish · 2026-11-07
+   Primary work tabs remain shared; these are secondary controls only. */
+#calendarPage .calendar-header-main{gap:3px}
+#calendarPage .calendar-back{
+ flex:0 0 36px;width:36px;height:44px;
+ border-radius:12px;background:transparent!important;
+ border:0!important;box-shadow:none!important;
+}
+#calendarPage .calendar-back svg{
+ width:19px;height:19px;stroke-width:1.85;
+}
+#calendarPage .calendar-header-add{
+ width:38px;height:38px;min-width:38px;min-height:38px;
+ border:0;border-radius:13px;
+ background:color-mix(in srgb,var(--text) 9%,transparent)!important;
+ box-shadow:none!important;filter:none;
+}
+#calendarPage .calendar-header-add svg{
+ width:18px;height:18px;stroke-width:1.7;
+}
+#calendarPage .calendar-header-add:active{
+ background:color-mix(in srgb,var(--text) 15%,transparent)!important;
+ transform:none;opacity:.75;
+}
+#calendarPage .cal-scope{
+ box-sizing:border-box;height:40px;min-height:40px;padding:2px;
+ margin:0 0 7px;gap:2px;border-radius:13px;
+ background:color-mix(in srgb,var(--text) 5.5%,transparent);
+ -webkit-backdrop-filter:blur(14px) saturate(105%);
+ backdrop-filter:blur(14px) saturate(105%);
+}
+#calendarPage .cal-scope button{
+ box-sizing:border-box;height:36px;min-height:36px;
+ padding:0 3px;border-radius:11px;
+ background:transparent;font-size:12px;font-weight:530;
+}
+#calendarPage .cal-scope button[aria-pressed="true"]{
+ background:color-mix(in srgb,var(--text) 9%,transparent);
+ font-weight:580;box-shadow:none;
+}
+#calendarPage .cal-periods{
+ margin-bottom:5px;gap:2px;
+}
+#calendarPage .cal-periods button{
+ min-height:39px;font-size:13px;font-weight:510;
+}
+#calendarPage .cal-periods button[aria-pressed="true"]::after{
+ height:1px;width:42px;max-width:60%;
+}
+@media(prefers-reduced-motion:reduce){
+ #calendarPage .calendar-header-add{transition:none}
+}
