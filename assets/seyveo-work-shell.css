@@ -262,3 +262,50 @@
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+
+/* SEYVEO five-theme surface continuity · 2026-11-07 */
+/* The scene belongs to the application, not to every nested screen.
+   Preserve the dock, sphere, bespoke media screens and interaction geometry. */
+:root{
+ --sv-unified-glass:rgba(189,203,210,.155);
+ --sv-unified-popover:rgba(39,49,56,.66);
+ --sv-unified-glass-press:rgba(196,211,218,.18);
+ --sv-unified-blur:blur(22px) saturate(125%);
+}
+:root[data-theme=light]{
+ --sv-unified-glass:rgba(242,249,249,.52);
+ --sv-unified-popover:rgba(244,249,249,.74);
+ --sv-unified-glass-press:rgba(180,208,205,.31);
+}
+:root[data-theme=dark][data-palette=graphite]{--sv-unified-popover:rgba(31,40,47,.72)}
+:root[data-theme=dark][data-palette=emerald]{--sv-unified-popover:rgba(29,43,38,.72)}
+:root[data-theme=dark][data-palette=sapphire]{--sv-unified-popover:rgba(29,39,60,.72)}
+:root[data-theme=dark][data-palette=plum]{--sv-unified-popover:rgba(47,42,39,.72)}
+/* Pages should allow the single app backdrop to show through. */
+html body :is(.manage-main,.life-main,.calendar-main,.tasks-main,.picture-main,#sayviSurfacePage,#sayviAnswerPage,#managePage,#lifePage,#calendarPage,#tasksPage):not([hidden]){
+ background-color:transparent!important;
+ background-image:none!important;
+}
+/* Common transient menus: thin lens, not opaque green cards or heavy blocks. */
+html body :is(
+ #calendarCreateMenu:not([hidden]),
+ #homeHeader .home-world-popover:not([hidden]),
+ #sayviSurfacePage .sv-mail-account-sheet[open]
+ ){
+ background:var(--sv-unified-popover)!important;
+ border:0!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.07)!important;
+ -webkit-backdrop-filter:var(--sv-unified-blur)!important;
+ backdrop-filter:var(--sv-unified-blur)!important;
+ color:var(--text)!important;
+}
+html body :is(#calendarCreateMenu button,#homeHeader .home-world-choice):active{
+ background:var(--sv-unified-glass-press)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ html body :is(#calendarCreateMenu:not([hidden]),#homeHeader .home-world-popover:not([hidden]),#sayviSurfacePage .sv-mail-account-sheet[open]){
+  background:var(--card2)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
