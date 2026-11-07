@@ -651,6 +651,75 @@ dialog p{font-size:var(--type-body);color:var(--secondary);white-space:pre-line;
 @media(prefers-reduced-motion:reduce){
  #svCabinetDialog .sv-cabinet-save{transition:none!important}
 }
+</style><style id="sv-cabinet-screen-polish">
+/* SEYVEO 26 — quiet, flat actions; shared proportions across the cabinet. */
+#tasksPage[data-work-view="business"] .tasks-heading{margin-bottom:14px!important}
+#tasksPage[data-work-view="business"] .tasks-heading h1{
+ font-size:clamp(29px,8vw,36px)!important;font-weight:650!important;
+ letter-spacing:-.048em!important;line-height:1.12!important;
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs,
+#managerCalendarTabs:not([hidden]){
+ box-sizing:border-box!important;min-height:44px!important;
+ gap:2px!important;padding:3px!important;margin-bottom:16px!important;
+ border:0!important;border-radius:16px!important;
+ background:color-mix(in srgb,var(--text,#f4f6f7) 10%,transparent)!important;
+ box-shadow:none!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs button,
+#managerCalendarTabs:not([hidden]) button{
+ box-sizing:border-box!important;min-height:38px!important;height:38px!important;
+ padding:0 3px!important;border:0!important;border-radius:13px!important;
+ background:transparent!important;box-shadow:none!important;
+ font-size:12px!important;font-weight:580!important;
+ transition:background-color .18s ease,color .18s ease!important;
+}
+#tasksPage[data-work-view="business"] #unifiedTasksTabs button[aria-pressed="true"],
+#managerCalendarTabs:not([hidden]) button[aria-pressed="true"]{
+ background:color-mix(in srgb,var(--text,#f4f6f7) 13%,transparent)!important;
+ color:var(--text,#f4f6f7)!important;
+ box-shadow:none!important;
+}
+#tasksPage #svCabinetConfigure{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;width:36px!important;height:36px!important;
+ min-width:36px!important;min-height:36px!important;padding:0!important;
+ border:0!important;border-radius:12px!important;
+ background:color-mix(in srgb,var(--text,#f4f6f7) 9%,transparent)!important;
+ color:var(--text,#f4f6f7)!important;box-shadow:none!important;
+ -webkit-appearance:none;appearance:none;
+}
+#tasksPage #svCabinetConfigure svg{
+ width:18px!important;height:18px!important;stroke:currentColor!important;
+ stroke-width:1.6!important;fill:none!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#tasksPage .svcp-manager-task-create{
+ box-sizing:border-box!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;gap:7px!important;
+ width:auto!important;height:36px!important;min-height:36px!important;
+ padding:0 12px!important;border:0!important;border-radius:12px!important;
+ background:color-mix(in srgb,var(--text,#f4f6f7) 10%,transparent)!important;
+ color:var(--text,#f4f6f7)!important;box-shadow:none!important;
+ font-size:12px!important;font-weight:590!important;
+ -webkit-appearance:none;appearance:none;
+}
+#tasksPage .svcp-manager-task-create svg{
+ width:16px!important;height:16px!important;fill:none!important;
+ stroke:currentColor!important;stroke-width:1.7!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+#tasksPage #svCabinetConfigure:active,#tasksPage .svcp-manager-task-create:active{
+ opacity:.67!important;transform:none!important;
+}
+#tasksPage #svCabinetConfigure:focus-visible,
+#tasksPage .svcp-manager-task-create:focus-visible{
+ outline:2px solid var(--text,#f4f6f7);outline-offset:2px;
+}
+#tasksPage .svcp-manager-chevron svg{stroke-width:1.65!important}
+@media(prefers-reduced-motion:reduce){
+ #tasksPage #unifiedTasksTabs button,#managerCalendarTabs button{transition:none!important}
+}
 </style><style id="sv-cabinet-chevron-standard">
 /* SEYVEO: the sheet's existing cancel handler now lives in the single down-chevron. */
 #svCabinetDialog .sv-cabinet-dismiss{
