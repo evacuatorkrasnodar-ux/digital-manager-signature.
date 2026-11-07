@@ -471,6 +471,20 @@ function resizeWorkComposer(){
 
 $('svcpChatInput')?.addEventListener('input',resizeWorkComposer);
 
+/* Read-only size observer: the floating preview knows the composer height.
+   It never changes the composer itself and cannot create a layout feedback loop. */
+const svcpComposerFrame=$('svcpChatForm');
+if(svcpComposerFrame&&typeof ResizeObserver==='function'){
+ const svcpComposerSizer=new ResizeObserver(entries=>{
+  const host=svcpComposerFrame.closest('.svcp-chat');
+  if(!host)return;
+  const h=Math.max(56,Math.ceil(entries[0]?.target.getBoundingClientRect().height||56));
+  if(host.style.getPropertyValue('--svcp-current-compose-height')!==h+'px')
+   host.style.setProperty('--svcp-current-compose-height',h+'px');
+ });
+ svcpComposerSizer.observe(svcpComposerFrame);
+}
+
 $('svcpAttachFile')?.addEventListener('click',()=>{
  setCameraTray(false);
  const picker=$('svcpFile');if(!picker)return;
