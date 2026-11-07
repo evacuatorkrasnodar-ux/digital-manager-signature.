@@ -658,6 +658,9 @@ window.addEventListener('hashchange',closeCreateMenu);
 $('calendarAddInline').addEventListener('click',()=>openEvent());
 $('calendarAddTask').addEventListener('click',addTask);
 $('calendarToday').addEventListener('click',()=>updateFocus(new Date()));
+document.querySelectorAll('#calendarPage [data-calendar-step]').forEach(button=>{
+ button.addEventListener('click',()=>move(Number(button.dataset.calendarStep)));
+});
 document.querySelectorAll('#calendarPage [data-calendar-scope]').forEach(btn=>btn.addEventListener('click',()=>{
  const next=btn.dataset.calendarScope;
  if(!managerPreview()||!['all','personal','business'].includes(next))return;
