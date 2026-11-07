@@ -3,7 +3,7 @@
 #calendarPage[hidden]{display:none!important}
 .calendar-main{min-width:0;flex:1;padding:3px 0 22px}
 /* The + popover must paint ABOVE the blurred scope tabs (their backdrop creates a stacking context). */
-#calendarPage .calendar-header{position:relative;z-index:40;overflow:visible}
+#calendarPage .calendar-header{position:relative;z-index:100;overflow:visible;isolation:isolate}
 .calendar-header{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;margin:2px 0 9px}
 .calendar-header-main{display:flex;align-items:center;gap:5px;min-width:0}
 .calendar-header h1{font-size:clamp(24px,6.2vw,28px);line-height:1.14;font-weight:615;letter-spacing:-.04em;margin:0}
@@ -20,17 +20,20 @@
 #calendarPage .calendar-back:focus-visible{outline:2px solid var(--text);outline-offset:1px}
 .calendar-header p{font-size:12px;line-height:1.45;color:var(--secondary);margin:0}
 .calendar-kicker{font-size:10px!important;letter-spacing:.12em;font-weight:630;color:var(--secondary);margin-bottom:9px!important}
-.calendar-header-actions{position:relative;display:flex;align-items:center;gap:7px;flex:none;z-index:5}
+.calendar-header-actions{position:relative;display:flex;align-items:center;gap:7px;flex:none;z-index:2}
 /* One + entry, with a light native-like choice surface rather than extra buttons. */
 #calendarPage .cal-create-menu[hidden]{display:none!important}
+/* A choice menu must be readable, not a translucent lens over live tabs.
+   Keep the matte family, but use an opaque panel to avoid iOS Safari bleed. */
 #calendarPage .cal-create-menu{
- position:absolute;right:0;top:calc(100% + 6px);z-index:30;
+ position:absolute;right:0;top:calc(100% + 8px);z-index:200;
  box-sizing:border-box;width:min(295px,calc(100vw - 34px));
- padding:5px;border:0;border-radius:20px;
- background:rgba(37,46,53,.94);
- -webkit-backdrop-filter:blur(16px) saturate(105%);
- backdrop-filter:blur(16px) saturate(105%);
- box-shadow:none;overflow:hidden;
+ padding:6px;border:0;border-radius:19px;
+ background:#25313a;
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+ box-shadow:0 10px 30px rgba(0,0,0,.17);
+ isolation:isolate;overflow:hidden;
 }
 #calendarPage .cal-create-menu button{
  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
@@ -55,7 +58,7 @@
  outline:2px solid var(--text);outline-offset:-2px;
 }
 :root[data-theme="light"] #calendarPage .cal-create-menu{
- background:rgba(249,251,252,.96);border:0;box-shadow:none;
+ background:#f5f8f9;border:0;box-shadow:0 10px 28px rgba(22,37,48,.10);
 }
 
 .cal-round{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;color:var(--text);background:transparent;box-shadow:none}
