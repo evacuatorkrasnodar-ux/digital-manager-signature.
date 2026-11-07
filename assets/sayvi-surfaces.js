@@ -415,10 +415,21 @@ function mailView(){
   });
   polish.classList.add('sv-mail-polish-trigger');
   message.addEventListener('input',()=>{preview.hidden=true});
-  const save=create('button','sv-deep-intent sv-deep-intent--lead','Сохранить черновик');save.type='submit';
+  const save=create('button','sv-deep-intent','Сохранить черновик');save.type='submit';
   save.classList.add('sv-mail-save-trigger');
-  actions.append(polish,save);
-  form.append(actions,preview,status,create('p','sv-mail-disclaimer','Отправка пока недоступна. Черновик хранится только в этом сеансе.'));
+  const send=create('button','sv-deep-intent sv-deep-intent--lead','Отправить');
+  send.type='button';send.classList.add('sv-mail-send-trigger');
+  send.setAttribute('aria-describedby','svMailSendUnavailable');
+  send.addEventListener('click',()=>{
+   status.textContent='Для отправки нужно подключить почтовый ящик. Письмо не отправлено. Можно сохранить его как черновик.';
+   status.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
+  const primaryActions=create('div','sv-mail-primary-actions');
+  primaryActions.append(save,send);
+  actions.append(polish,primaryActions);
+  const mailDisclaimer=create('p','sv-mail-disclaimer','Отправка пока недоступна: почтовый сервис не подключён.');
+  mailDisclaimer.id='svMailSendUnavailable';
+  form.append(actions,preview,status,mailDisclaimer);
   content.append(form);
  }
  /* Local, explainable mail assistance for the development prototype.
