@@ -3,16 +3,16 @@
 #lifePage .sv-connect-tile svg{stroke-width:1.45}
 .sv-connect-dialog{box-sizing:border-box;inset:0;margin:auto;max-height:min(90dvh,780px);width:min(calc(100% - 20px),520px);max-width:none;padding:0;border:0;border-radius:26px;background:transparent;color:var(--text);overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.26);-webkit-overflow-scrolling:touch}
 .sv-connect-dialog::backdrop{background:rgba(4,8,12,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-.sv-connect-sheet{box-sizing:border-box;min-height:100%;padding:15px 18px 24px;border-radius:26px;background:var(--sv-velvet-panel-quiet,var(--card2));-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px)}
+.sv-connect-sheet{box-sizing:border-box;min-height:100%;padding:15px 18px 24px;border-radius:var(--sv-ui-radius-sheet,22px);background:var(--sv-ui-sheet);-webkit-backdrop-filter:var(--sv-ui-sheet-filter);backdrop-filter:var(--sv-ui-sheet-filter)}
 .sv-connect-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 22px}
 .sv-connect-back{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:7px 2px;min-height:39px;cursor:pointer}
-.sv-connect-back svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sv-connect-back svg{width:var(--sv-ui-icon,19px);height:var(--sv-ui-icon,19px);fill:none;stroke:currentColor;stroke-width:var(--sv-ui-stroke,1.55);stroke-linecap:round;stroke-linejoin:round}
 .sv-connect-mark{color:var(--secondary);font-size:10px;letter-spacing:.12em;font-weight:560}
 .sv-connect-dialog h2{font-size:25px;font-weight:610;letter-spacing:-.035em;line-height:1.15;margin:0 0 10px}
 .sv-connect-intro{color:var(--secondary);font-size:13px;line-height:1.55;margin:0 0 20px}
 .sv-connect-category{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
-.sv-connect-category button{border:0;border-radius:999px;min-height:38px;padding:9px 12px;background:var(--sv-air-control,var(--card));color:var(--text);font:inherit;font-size:12px;cursor:pointer}
-.sv-connect-category button[aria-pressed=true]{background:var(--sv-air-selected,var(--card));font-weight:640;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--secondary) 18%,transparent)}
+.sv-connect-category button{border:0;border-radius:var(--sv-ui-radius-control,12px);min-height:44px;padding:9px 12px;background:var(--sv-ui-field);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+.sv-connect-category button[aria-pressed=true]{background:var(--sv-ui-selected-surface);font-weight:600;box-shadow:none}
 .sv-connect-instructions{border-radius:20px;padding:17px 15px;background:color-mix(in srgb,var(--card) 55%,transparent)}
 .sv-connect-instructions h3{font-size:15px;font-weight:610;margin:0 0 7px}
 .sv-connect-instructions p{font-size:12.5px;line-height:1.5;color:var(--secondary);margin:0 0 11px}
