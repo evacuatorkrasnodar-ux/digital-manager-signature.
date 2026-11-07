@@ -959,17 +959,20 @@
  display:block;width:20px;height:20px;fill:none;
  stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;
 }
+/* Save is a quiet text action with a 44px touch target, never a pill. */
 #personalTaskDialog #personalTaskSave{
  position:absolute!important;right:0!important;top:0!important;
- min-height:38px!important;height:38px!important;
- min-width:94px!important;border-radius:999px!important;
+ box-sizing:border-box!important;height:44px!important;min-height:44px!important;
+ min-width:0!important;padding:0 8px!important;
+ border:0!important;border-radius:var(--sv-ui-radius-control,12px)!important;
+ font-size:12.5px!important;font-weight:590!important;
  color:var(--text)!important;background:transparent!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  box-shadow:none!important;
 }
 #personalTaskDialog #personalTaskSave::before{
- inset:2px 0!important;border-radius:999px!important;
- background:rgba(165,188,199,.21)!important;
- box-shadow:none!important;
+ display:none!important;content:none!important;
+ background:none!important;box-shadow:none!important;
 }
 #personalTaskDialog .personal-task-sheet h2{
  margin:14px 2px 13px!important;
@@ -984,10 +987,7 @@
 :root[data-theme=light] #personalTaskDialog.personal-task-dialog form{
  background:rgba(104,130,142,.12)!important;
 }
-:root[data-theme=light] #personalTaskDialog #personalTaskSave::before{
- background:var(--sv-master-glass,rgba(99,121,133,.20))!important;
- box-shadow:none!important;
-}
+
 @media(prefers-reduced-motion:reduce){
  #personalTaskDialog #personalTaskCancel,#personalTaskDialog #personalTaskSave{transition:none!important}
 }
@@ -1062,11 +1062,7 @@
  border:0!important;border-radius:15px!important;
  box-shadow:none!important;
 }
-#personalTaskDialog #personalTaskSave::before{
- background:rgba(184,195,201,.13)!important;
- -webkit-backdrop-filter:blur(16px) saturate(105%)!important;
- backdrop-filter:blur(16px) saturate(105%)!important;
-}
+/* Save intentionally has no pseudo-element glass capsule. */
 #personalTaskDialog .sv-task-topbar .sv-task-save{
  border:0!important;color:var(--text)!important;
  box-shadow:none!important;
@@ -1084,9 +1080,7 @@
 :root[data-theme=light] #personalTaskDialog.personal-task-dialog form{
  background:var(--sv-ui-field)!important;
 }
-:root[data-theme=light] #personalTaskDialog #personalTaskSave::before{
- background:rgba(99,121,133,.16)!important;
-}
+:root[data-theme=light] #personalTaskDialog #personalTaskSave{color:var(--sv-ui-action-ink)!important}
 @media(prefers-reduced-transparency:reduce){
  #personalTaskDialog .personal-task-sheet,
  #personalTaskDialog.sv-task-date-open .personal-task-sheet{
