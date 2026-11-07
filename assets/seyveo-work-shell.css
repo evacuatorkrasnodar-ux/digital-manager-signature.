@@ -191,3 +191,53 @@
 #svWorkShell[data-history="true"] #seyveoActionHistoryPanel{
  padding-top:0!important;
 }
+
+
+/* Calendar "+" choices: below the persistent tabs, never covering navigation.
+   Keep the existing menu element and Calendar click handlers intact. */
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
+ position:absolute!important;
+ top:calc(100% + 70px)!important;
+ right:0!important;
+ z-index:450!important;
+ box-sizing:border-box!important;
+ width:min(276px,calc(100vw - 34px))!important;
+ padding:4px!important;
+ border:0!important;
+ border-radius:18px!important;
+ background:rgba(40,54,63,.96)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(110%)!important;
+ backdrop-filter:blur(22px) saturate(110%)!important;
+ box-shadow:0 9px 24px rgba(0,0,0,.16)!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu[hidden]{
+ display:none!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button{
+ min-height:53px!important;
+ padding:9px 12px!important;
+ border:0!important;
+ border-radius:13px!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button+button{
+ border-top:1px solid color-mix(in srgb,var(--text) 7%,transparent)!important;
+ border-radius:0 0 13px 13px!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button span{
+ font-size:13.5px!important;font-weight:580!important;
+}
+#svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu button small{
+ font-size:11px!important;line-height:1.35!important;
+}
+:root[data-theme=light] #svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
+ background:rgba(248,251,251,.97)!important;
+ box-shadow:0 9px 24px rgba(24,45,56,.11)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ #svWorkShell[data-shared-work="true"] #calendarPage .cal-create-menu{
+  background:var(--card)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
