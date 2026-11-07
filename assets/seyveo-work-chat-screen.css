@@ -1482,7 +1482,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 /* SEYVEO Work Chat · scaled-down twin of the APPROVED outer dock.
-   Only this internal text+mic capsule changes; all v95 outer CSS above is untouched.
+   Only this internal text+mic capsule changes; the approved outer panel above is untouched.
    Exactly the same material, blur, shadow and lack of border as the outer panel. */
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
  display:flex!important;
@@ -1495,7 +1495,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  box-sizing:border-box!important;
  width:100%!important;
  min-width:0!important;
- min-height:28px!important;
+ min-height:48px!important;
  height:auto!important;
  padding:0!important;
  margin:0!important;
@@ -1518,22 +1518,22 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  grid-column:auto!important;
  grid-row:auto!important;
  flex:0 0 auto!important;
- height:28px!important;
- min-height:28px!important;
+ height:48px!important;
+ min-height:48px!important;
  max-height:144px!important;
- padding:2px 34px 2px 10px!important;
+ padding:12px 46px 12px 12px!important;
  border-radius:999px!important;
 }
 #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field :is(#svcpVoiceRecord,.svcp-chat-send){
  position:absolute!important;
  right:2px!important;
- bottom:0!important;
- width:30px!important;
- min-width:30px!important;
- max-width:30px!important;
- height:28px!important;
- min-height:28px!important;
- max-height:28px!important;
+ bottom:2px!important;
+ width:42px!important;
+ min-width:42px!important;
+ max-width:42px!important;
+ height:44px!important;
+ min-height:44px!important;
+ max-height:44px!important;
 }
 @media(prefers-reduced-transparency:reduce){
  #svcpWorkChatScreen #svcpChatForm .svcp-chat-compose-field{
