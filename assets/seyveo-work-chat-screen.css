@@ -3598,3 +3598,92 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border-color:rgba(118,135,149,.075)!important;
  color:#68727e!important;
 }
+
+/* v196 · Dense Work Chat conversation rhythm.
+   Keep 44px touch targets, approved materials, and fixed dock unaffected. */
+#svcpWorkChatScreen[data-view="room"] #svcpMessages{
+ gap:5px!important;
+ padding-top:10px!important;
+ padding-left:max(12px,env(safe-area-inset-left,0px))!important;
+ padding-right:max(12px,env(safe-area-inset-right,0px))!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat-day{
+ margin:4px 0 3px!important;
+ padding:3px 10px!important;
+ font-size:11px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble:not(.is-recognition){
+ box-sizing:border-box!important;
+ width:fit-content!important;
+ max-width:min(90%,410px)!important;
+ min-width:0!important;
+ min-height:0!important;
+ padding:8px 12px 9px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble-meta{
+ box-sizing:border-box!important;
+ min-height:19px!important;
+ margin:0 0 2px!important;
+ padding-right:32px!important;
+ align-items:center!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-time{
+ font-size:10px!important;
+ line-height:16px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-message-text{
+ display:block!important;
+ margin:0!important;
+ padding:0!important;
+ line-height:1.38!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-quote{
+ box-sizing:border-box!important;
+ margin:2px 0 6px!important;
+ padding:5px 8px!important;
+ font-size:11px!important;
+ line-height:1.35!important;
+ border-radius:0 9px 9px 0!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-task-message-label{
+ margin:0 0 3px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble :is(.svcp-message-edited,.svcp-bubble-saved){
+ margin-top:4px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-bubble .svcp-smart-award-suggestion{
+ margin-top:7px!important;
+ padding:7px 9px!important;
+ gap:5px!important;
+}
+#svcpWorkChatScreen[data-view="room"] .svcp-chat > #svcpReplyPreview:not([hidden]){
+ box-sizing:border-box!important;
+ width:min(355px,calc(100% - 28px))!important;
+ max-width:calc(100% - 28px)!important;
+ height:42px!important;
+ min-height:42px!important;
+ max-height:42px!important;
+ padding:2px 5px 2px 12px!important;
+ margin:0!important;
+ border-radius:999px!important;
+ gap:6px!important;
+ overflow:hidden!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpReplyPreview .svcp-reply-text{
+ font-size:11px!important;
+ line-height:16px!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+#svcpWorkChatScreen[data-view="room"] #svcpReplyPreview .svcp-preview-close{
+ width:40px!important;
+ min-width:40px!important;
+ max-width:40px!important;
+ height:40px!important;
+ min-height:40px!important;
+ margin:0!important;
+ padding:0!important;
+ flex:0 0 40px!important;
+ border-radius:50%!important;
+}
