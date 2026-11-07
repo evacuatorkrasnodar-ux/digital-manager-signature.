@@ -2640,26 +2640,26 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  }
 }
 
-/* SEYVEO Work Chat · mirrored Home dock geometry (canonical).
-   Plus is the left 50px twin of Home's right magnifier.
-   Keep the same 8px REAL gap between the two glass surfaces.
-   The text capsule moves left within the bar; do not pull the bar left.
-   Sayvi and Emoji have equal 38px tracks and a 3px space between them. */
+/* SEYVEO mirrored Home dock · corrected optical geometry.
+   Keep the LEFT Plus circle 50px; the right velvet pane is its mirrored
+   independent companion. Ensure a visibly open gutter between surfaces.
+   Balance the two 22px laser icons with equal optical edge spacing.
+   Reclaim horizontal room from icon tracks for the silver text capsule. */
 #svcpWorkChatScreen #svcpChatForm,
 #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
- grid-template-columns:50px 8px 38px 3px 38px 3px minmax(0,1fr)!important;
+ grid-template-columns:50px 16px 36px 2px 36px 0px minmax(0,1fr)!important;
  column-gap:0!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpAttachFile{
  grid-column:1!important;
+ grid-row:1!important;
 }
-#svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage,
-#svcpWorkChatScreen #svcpChatForm > #svcpComposerEmojiToggle{
+#svcpWorkChatScreen #svcpChatForm > :is(#svcpPolishMessage,#svcpComposerEmojiToggle){
  box-sizing:border-box!important;
- width:38px!important;min-width:38px!important;max-width:38px!important;
- height:38px!important;min-height:38px!important;max-height:38px!important;
- margin:0!important;padding:0!important;
+ width:36px!important;min-width:36px!important;max-width:36px!important;
+ height:36px!important;min-height:36px!important;max-height:36px!important;
+ padding:0!important;margin:0!important;
  justify-self:center!important;align-self:center!important;
 }
 #svcpWorkChatScreen #svcpChatForm > #svcpPolishMessage{grid-column:3!important}
@@ -2668,19 +2668,17 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline) .svcp-chat-compose-field:focus-within{
  grid-column:7!important;
  grid-row:1!important;
- min-width:0!important;
- width:100%!important;
- max-width:100%!important;
- margin:0!important;
+ box-sizing:border-box!important;
+ width:100%!important;max-width:100%!important;
+ min-width:0!important;margin:0!important;
 }
-/* The glass starts precisely 8px after the 50px Plus (including form padding).
-   On iPhone <=390px the approved form padding is 5px, otherwise 7px. */
+/* Prior 63/65px left visually merged the circles on iPhone Safari.
+   Start velvet 16px after Plus's right edge, preserving a clear groove.
+   On input, the existing animation still rejoins the bar. */
 #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
 #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
- left:65px!important;
+ left:73px!important;
 }
-/* Keep the existing typing-joins-the-dock behavior and upward expansion.
-   Explicit bottom-row placement prevents controls moving into the editor. */
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpAttachFile,
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpPolishMessage,
 #svcpWorkChatScreen #svcpChatForm.svcp-compose-multiline > #svcpComposerEmojiToggle{
@@ -2690,11 +2688,11 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  #svcpWorkChatScreen #svcpChatForm,
  #svcpWorkChatScreen #svcpChatForm.svcp-can-assign,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm{
-  grid-template-columns:50px 8px 38px 3px 38px 3px minmax(0,1fr)!important;
+  grid-template-columns:50px 16px 36px 2px 36px 0px minmax(0,1fr)!important;
   column-gap:0!important;
  }
  #svcpWorkChatScreen #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before,
  #svcpWorkChatScreen[data-view="room"] #svcpChatForm:not(.svcp-compose-multiline):not([data-has-content="true"])::before{
-  left:63px!important;
+  left:71px!important;
  }
 }
