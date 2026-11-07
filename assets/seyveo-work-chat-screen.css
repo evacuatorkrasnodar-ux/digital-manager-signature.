@@ -1260,6 +1260,25 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
 }
 
 
+/* Same Home dock palette with ONLY reduced material opacity in Work Chat.
+   Scoped to the work screen: Home dock and its tokens remain completely unchanged.
+   Keep the original blur and shadow from --sv-liquid-nav-blur/shadow. */
+#svcpWorkChatScreen{
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(243,255,250,.085),rgba(173,222,203,.035) 47%,rgba(19,39,32,.012)),rgba(19,31,29,.43);
+}
+:root[data-theme="light"] #svcpWorkChatScreen{
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,255,255,.61),rgba(255,255,255,.30) 55%,rgba(218,234,241,.11)),rgba(235,242,247,.45);
+}
+:root[data-theme="dark"][data-palette="graphite"] #svcpWorkChatScreen{
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(235,244,249,.085),rgba(131,158,173,.030) 48%,transparent),rgba(19,26,32,.42);
+}
+:root[data-theme="dark"][data-palette="sapphire"] #svcpWorkChatScreen{
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(228,238,255,.088),rgba(110,141,216,.033) 48%,transparent),rgba(18,28,48,.43);
+}
+:root[data-theme="dark"][data-palette="plum"] #svcpWorkChatScreen{
+ --sv-liquid-nav-material:linear-gradient(155deg,rgba(255,243,227,.074),rgba(171,151,128,.029) 48%,transparent),rgba(28,27,26,.43);
+}
+
 /* SEYVEO Work Chat · same actual material as the approved Home dock.
    The Home dock is untouched: these are scoped to Work Chat.
    One continuous frosted bar; no inner text lens or button bubbles.
@@ -1287,7 +1306,7 @@ html.svcp-work-chat-active #svcpWorkChatScreen[data-view="room"] footer.dock{dis
  border:0!important;
  outline:0!important;
  border-radius:999px!important;
- /* EXACT shared material, blur and shadow of SEYVEO's Home dock. */
+ /* Home dock material family, made more translucent only within Work Chat. */
  background:var(--sv-liquid-nav-material)!important;
  box-shadow:var(--sv-liquid-nav-shadow)!important;
  -webkit-backdrop-filter:var(--sv-liquid-nav-blur)!important;
