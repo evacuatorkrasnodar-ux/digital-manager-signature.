@@ -1823,23 +1823,38 @@ min-height:45px;padding:9px 3px;cursor:pointer;list-style:none;color:var(--text)
  font:inherit;cursor:pointer;touch-action:manipulation
 }
 .sv-cabinet-goal-detail:active{background:color-mix(in srgb,var(--text) 4%,transparent)}
+/* Cabinet selection controls share our round matte SEYVEO navigation family.
+   The element remains the original 44px click target and aria-pressed owner. */
 .sv-cabinet-goal-chevron{
  display:flex;align-items:center;justify-content:center;
- flex:none;width:19px;height:24px;color:var(--secondary);opacity:.72
+ flex:none;width:20px;height:24px;color:var(--secondary);opacity:.80
 }
-.sv-cabinet-goal-chevron svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.sv-cabinet-goal-chevron svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 .sv-cabinet-goal-mark{
+ -webkit-appearance:none;appearance:none;
  display:grid;place-items:center;align-self:center;flex:none;
- width:44px;height:44px;padding:0;
- border:0;border-radius:50%;background:transparent;
- color:var(--text);font:inherit;font-size:23px;font-weight:350;
- cursor:pointer;touch-action:manipulation
+ width:40px;height:40px;min-width:40px;min-height:40px;padding:0;
+ margin:0 0 0 2px;
+ border:0;border-radius:50%;
+ background:color-mix(in srgb,var(--text) 8%,transparent);
+ box-shadow:none;color:var(--text);font:inherit;
+ cursor:pointer;touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+ transition:background-color .17s ease,opacity .17s ease
 }
-.sv-cabinet-goal-mark svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-.sv-cabinet-goal-mark::first-letter{line-height:1}
-.sv-cabinet-goal-mark.is-selected{font-size:18px;font-weight:590}
-.sv-cabinet-goal-mark.is-selected:not(:focus-visible){color:var(--text)}
-:root[data-theme=light] .sv-cabinet-goal-mark.is-selected{color:var(--seyveo-emerald)}
+.sv-cabinet-goal-mark svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round
+}
+.sv-cabinet-goal-mark.is-selected{
+ background:color-mix(in srgb,var(--text) 15%,transparent);
+ color:var(--text)
+}
+.sv-cabinet-goal-mark:active{opacity:.64}
+:root[data-theme=light] .sv-cabinet-goal-mark.is-selected{
+ color:var(--seyveo-emerald)
+}
+@media(prefers-reduced-motion:reduce){.sv-cabinet-goal-mark{transition:none}}
 .sv-cabinet-goal-detail:focus-visible,
 .sv-cabinet-goal-mark:focus-visible,
 .sv-cabinet-guide button:focus-visible{
