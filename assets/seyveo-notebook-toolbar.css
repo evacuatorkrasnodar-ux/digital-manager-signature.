@@ -245,3 +245,90 @@
 :is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]{
  color:var(--sv-ink-icons-active)!important;
 }
+
+/* v7 · premium SEYVEO ink, six hand-drawn large silver emblems.
+   Prior SVG 20px rules were too small and made the panel look like
+   generic system icons. Use a shared 28-unit shape grid at 25px. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+ --sv-paper-signature-ink:#e7edf3;
+ --sv-paper-signature-pressed:#fafcff;
+ --sv-paper-tool-size:37px;
+ gap:2px!important;
+ height:47px!important;
+ border-color:rgba(235,243,252,.18)!important;
+ background:linear-gradient(160deg,rgba(226,237,248,.11),rgba(204,219,236,.035))!important;
+ box-shadow:inset 0 1px rgba(251,253,255,.10),0 1px 2px rgba(0,0,0,.08)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi){
+ color:var(--sv-paper-signature-ink)!important;
+ height:39px!important;min-height:39px!important;max-height:39px!important;
+ background:transparent!important;
+ border:1px solid transparent!important;
+ border-radius:999px!important;
+ box-shadow:none!important;
+ -webkit-tap-highlight-color:transparent!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)>svg.sv-paper-signature{
+ box-sizing:content-box!important;
+ display:block!important;
+ width:25px!important;height:25px!important;
+ min-width:25px!important;min-height:25px!important;
+ max-width:25px!important;max-height:25px!important;
+ stroke:currentColor!important;stroke-width:1.85!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;opacity:1!important;
+ filter:none!important;transform:none!important;
+ pointer-events:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+svg.sv-paper-signature .sv-paper-icon-shade{
+ stroke:none!important;fill:currentColor!important;opacity:.13!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+svg.sv-paper-signature .sv-paper-icon-knob{
+ stroke:currentColor!important;fill:rgba(230,239,248,.14)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+svg.sv-paper-signature .sv-paper-icon-core{
+ stroke:none!important;fill:currentColor!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"])[aria-pressed="true"],
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is(#notePaperSettings,#notePaperPatternTrigger)[aria-expanded="true"]{
+ color:var(--sv-paper-signature-pressed)!important;
+ background:linear-gradient(160deg,rgba(242,248,253,.19),rgba(194,214,232,.09))!important;
+ border-color:rgba(242,248,253,.14)!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+:is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi):active{
+ color:#fff!important;
+ background:rgba(235,245,253,.17)!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-pattern-control,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .sv-paper-settings{
+ width:37px!important;min-width:37px!important;max-width:37px!important;
+ flex:0 0 37px!important;height:39px!important;
+}
+@media(max-width:370px){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary{
+   --sv-paper-tool-size:clamp(30px,8.7vw,35px);
+   gap:1px!important;padding:2px!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-pattern-control,
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .sv-paper-settings{
+   width:var(--sv-paper-tool-size)!important;
+   min-width:var(--sv-paper-tool-size)!important;
+   max-width:var(--sv-paper-tool-size)!important;
+   flex:0 0 var(--sv-paper-tool-size)!important;
+ }
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar-primary
+ :is([data-paper-tool="pen"],[data-paper-tool="eraser"],#notePaperSettings,#notePaperPatternTrigger,#notePaperAddPhoto,#notePaperSayvi)>svg.sv-paper-signature{
+   width:23px!important;height:23px!important;
+   min-width:23px!important;min-height:23px!important;
+   max-width:23px!important;max-height:23px!important;
+ }
+}
