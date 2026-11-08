@@ -258,6 +258,7 @@ function open(note=null){
  syncColorMenu();
  $('notePaperTitle').textContent=editID?'Мой лист':'Чистый лист';selectTool('pen');report('');
  if(!dialog.open)dialog.showModal();
+ document.documentElement.classList.add('sv-paper-drawing');
  requestAnimationFrame(()=>{fitPaper();render()});
 }
 function discard(){
@@ -266,7 +267,7 @@ function discard(){
 }
 $('notePaperCancel').addEventListener('click',discard);$('notePaperBack').addEventListener('click',discard);
 dialog.addEventListener('cancel',e=>{if(changed&&!window.confirm('Закрыть лист без сохранения?'))e.preventDefault()});
-dialog.addEventListener('close',()=>{closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
+dialog.addEventListener('close',()=>{document.documentElement.classList.remove('sv-paper-drawing');closeExtras();closePatternMenu();closeColorMenu();pending=null;pointerID=null;if(returnToList){returnToList=false;window.SEYVEO_NOTES_API?.openNotes()}});
 $('notePaperSave').addEventListener('click',()=>{
  if(pending)return;
  if(!data.strokes.length&&!data.photo){report('Напишите, нарисуйте или добавьте фотографию.');return}
