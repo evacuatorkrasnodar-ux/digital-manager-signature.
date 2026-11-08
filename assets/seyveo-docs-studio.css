@@ -435,20 +435,107 @@
  display:block;background:#fff;touch-action:none;cursor:crosshair;
 }
 
-#sayviSurfacePage .sv-doc-tool-print-file{
- display:grid;gap:9px;min-width:0;
- font-size:12px;overflow-wrap:anywhere;
+/* Paper-first printing: one actual preview and an unmistakable printer
+   illustration. No counterfeit printer discovery, progress or completion. */
+#sayviSurfacePage .sv-doc-print-stage{
+ box-sizing:border-box;display:grid;gap:14px;min-width:0;
+ padding:15px 13px 12px;border-radius:23px;
+ background:color-mix(in srgb,var(--text) 4%,transparent);
 }
-#sayviSurfacePage .sv-doc-tool-print-file strong{
- color:var(--text);font-weight:590;
+#sayviSurfacePage .sv-doc-print-device{
+ display:flex;align-items:center;gap:11px;min-width:0;
+ padding:0 4px;
+}
+#sayviSurfacePage .sv-doc-print-device>.sv-doc-art{
+ flex:0 0 73px;width:73px;height:66px;color:var(--text);
+}
+#sayviSurfacePage .sv-doc-print-device-copy{
+ display:flex;flex:1 1 auto;flex-direction:column;
+ justify-content:center;gap:5px;min-width:0;
+}
+#sayviSurfacePage .sv-doc-print-device-copy strong{
+ font-size:14px;line-height:1.35;font-weight:610;
+ letter-spacing:-.02em;color:var(--text);
+}
+#sayviSurfacePage .sv-doc-print-device-copy small{
+ font-size:11px;line-height:1.45;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-print-paper-frame{
+ display:grid;place-items:center;min-width:0;min-height:300px;
+ padding:10px 6px 13px;border-radius:17px;
+ background:color-mix(in srgb,var(--text) 3%,transparent);
+}
+#sayviSurfacePage .sv-doc-print-paper{
+ box-sizing:border-box;display:block;position:relative;
+ width:min(78%,248px);aspect-ratio:210 / 297;
+ overflow:hidden;min-width:0;
+ border-radius:3px;background:#fff;
+ box-shadow:0 7px 23px rgba(0,0,0,.14);
+}
+#sayviSurfacePage .sv-doc-print-pdf{
+ box-sizing:border-box;display:block;width:100%;height:100%;
+ padding:0;margin:0;border:0;background:#fff;
+}
+#sayviSurfacePage .sv-doc-print-image{
+ box-sizing:border-box;display:block;width:100%;height:100%;
+ object-fit:contain;background:#fff;
+}
+#sayviSurfacePage .sv-doc-print-paper-example{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ gap:12px;position:absolute;inset:0;
+ padding:26px 23px 20px;background:#fff;
+}
+#sayviSurfacePage .sv-doc-print-paper-example strong{
+ font-size:10px;font-weight:700;letter-spacing:.14em;
+ color:#56656c;margin-bottom:12px;
+}
+#sayviSurfacePage .sv-doc-print-faux-line{
+ display:block;width:100%;height:4px;flex:none;
+ background:#dfe5e7;border-radius:999px;
+}
+#sayviSurfacePage .sv-doc-print-faux-medium{width:77%}
+#sayviSurfacePage .sv-doc-print-faux-short{width:49%}
+#sayviSurfacePage .sv-doc-print-faux-sign{
+ display:block;align-self:flex-end;margin-top:auto;
+ width:62px;height:17px;opacity:.58;
+ border-bottom:2px solid #809099;
+ border-radius:50%;transform:rotate(-7deg);
+}
+#sayviSurfacePage .sv-doc-print-paper-meta{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:10px;min-width:0;
+ padding:0 3px;
+}
+#sayviSurfacePage .sv-doc-print-paper-meta strong{
+ display:block;min-width:0;flex:1 1 auto;
+ font-size:12px;font-weight:580;
+ color:var(--text);line-height:1.4;
+ overflow-wrap:anywhere;
+}
+#sayviSurfacePage .sv-doc-print-paper-meta small{
+ flex:0 0 auto;font-size:10.5px;
+ line-height:1.4;text-align:right;color:var(--secondary);
+}
+#sayviSurfacePage .sv-doc-print-controls{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);
+ gap:9px;min-width:0;
+}
+#sayviSurfacePage .sv-doc-print-controls>.sv-doc-tool-button{
+ width:100%;min-height:48px;padding:10px 9px;
+ font-size:12px;font-weight:550;
+ border:1px solid var(--sv-doc-line,var(--soft-line));
+ border-radius:17px;
+ background:var(--sv-doc-wash,var(--card));
 }
 #sayviSurfacePage .sv-doc-tool-print-link{
- display:flex;align-items:center;justify-content:center;
- min-height:44px;padding:9px 13px;border-radius:16px;
- color:var(--text);text-decoration:underline;text-underline-offset:4px;
- background:var(--sv-doc-picked,var(--card2));
- font-size:13px;
+ box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ width:100%;min-height:48px;padding:9px 11px;
+ border:0;border-radius:17px;
+ color:var(--text);text-align:center;
+ text-decoration:none;line-height:1.4;font-weight:620;
+ background:var(--sv-doc-picked,var(--card2));font-size:12px;
 }
+#sayviSurfacePage .sv-doc-print-open[hidden]{display:none!important}
 @media(max-width:355px){
  #sayviSurfacePage .sv-doc-sign-document{width:min(73%,192px)}
  #sayviSurfacePage .sv-doc-sign-stage{padding:10px 9px 12px}
@@ -457,6 +544,11 @@
  #sayviSurfacePage .sv-doc-scan-stage{padding:13px 11px 9px}
  #sayviSurfacePage .sv-doc-tool-grid{gap:6px}
  #sayviSurfacePage .sv-doc-tool-grid .sv-doc-tool-button{padding:10px 11px;font-size:12px;min-height:105px}
+ #sayviSurfacePage .sv-doc-print-stage{padding:12px 9px 10px}
+ #sayviSurfacePage .sv-doc-print-paper-frame{min-height:265px}
+ #sayviSurfacePage .sv-doc-print-paper{width:min(82%,218px)}
+ #sayviSurfacePage .sv-doc-print-device>.sv-doc-art{width:62px;height:59px;flex-basis:62px}
+ #sayviSurfacePage .sv-doc-print-controls{gap:6px}
  #sayviSurfacePage .sv-doc-tool-panel{padding:12px 10px}
 }
 @media(prefers-reduced-motion:reduce){
