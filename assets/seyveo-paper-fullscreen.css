@@ -354,3 +354,37 @@
 @media(prefers-reduced-motion:reduce){
  #notePaperDialog .paper-toolbar-primary > button{transition:none!important}
 }
+
+
+/* v2 · modal drawing owns the bottom edge.
+   Hide only the app's global dock while the Ink Studio is open:
+   it previously floated above and obscured the palette and Save action.
+   Other pages, dialogs and their dock behavior are untouched. */
+html:has(#notePaperDialog.sv-paper-studio[open]) .dock,
+html.sv-paper-drawing .dock{
+ display:none!important;visibility:hidden!important;
+ opacity:0!important;pointer-events:none!important;
+}
+html:has(#notePaperDialog.sv-paper-studio[open]) .dock::before,
+html:has(#notePaperDialog.sv-paper-studio[open]) .dock::after{
+ display:none!important;
+}
+/* Safari / iPhone: let the studio use its own bottom controls without
+   any inherited floating bottom inset or dock clearance. */
+html body #notePaperDialog.sv-paper-studio[open]{
+ height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+ padding-bottom:0!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom{
+ box-sizing:border-box!important;flex:0 0 calc(70px + env(safe-area-inset-bottom,0px))!important;
+ height:calc(70px + env(safe-area-inset-bottom,0px))!important;
+ min-height:calc(70px + env(safe-area-inset-bottom,0px))!important;
+ align-self:stretch!important;
+ margin-top:auto!important;margin-bottom:0!important;
+ padding-top:6px!important;
+ padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important;
+ overflow:visible!important;
+}
+html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-stage{
+ min-height:0!important;flex:1 1 0!important;
+}
