@@ -173,6 +173,11 @@
    const selected=current===key;
    button.classList.toggle('sv-paper-tool-selected',selected);
    button.setAttribute('data-sv-selected',String(selected));
+   // iOS Safari: enforce the active circle on the element itself, above
+   // legacy !important background styles. Never draw a pseudo circle.
+   button.style.setProperty('background',selected?'rgba(212,223,237,.24)':'transparent','important');
+   button.style.setProperty('border-radius','50%','important');
+   button.style.setProperty('box-shadow','none','important');
   }
   sheetTrigger?.classList.toggle('sv-paper-shape-selected',shape);
   const chosen=shapeTools.find(b=>b.dataset.paperTool===kind);
