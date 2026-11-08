@@ -134,14 +134,16 @@ test('approved glass and core mark are scoped: no dock edits, no duplicate conne
  assert.doesNotMatch(css,/#(?:navHome|navTasks|navManage)|footer\.dock/);
  assert.doesNotMatch(code,/function connectorsPanel\(|function connectorRow\(|integrationsOpen/);
  assert.match(code,/hub\.open\('services'\)/);
- assert.match(html,/assets\/documents-center\.css\?v=15/);
- assert.match(html,/assets\/documents-center\.js\?v=18/);
+ assert.match(html,/assets\/documents-center\.css\?v=16/);
+ assert.match(html,/assets\/documents-center\.js\?v=19/);
  assert.match(html,/assets\/seyveo-document-flow\.css\?v=11/);
  assert.match(html,/assets\/seyveo-document-flow\.js\?v=8/);
  assert.match(html,/assets\/sayvi-surfaces\.js\?v=44/);
  assert.match(html,/assets\/seyveo-docs-studio\.css\?v=5/);
  assert.match(html,/assets\/seyveo-docs-export\.js\?v=1/);
- assert.match(html,/assets\/seyveo-docs-studio\.js\?v=7/);
+ assert.match(html,/assets\/seyveo-docs-studio\.js\?v=8/);
+ assert.match(html,/assets\/seyveo-docs-viewer\.js\?v=1/);
+ assert.match(html,/assets\/seyveo-docs-viewer\.css\?v=1/);
  assert.match(html,/assets\/seyveo-smart-connections\.js/);
 });
 
@@ -205,4 +207,13 @@ test('compact Documents home has one locked archive row, no duplicate protection
  assert.match(code,/sv-doc-vault-copy/);
  assert.doesNotMatch(code,/introCopy\.append\(el\('strong','','Защищённые документы'\)/);
  assert.match(code,/safety\.append\(el\('summary','','О хранении документов'\)/);
+});
+
+test('new local file viewer takes priority over legacy fallback and self-revokes on unmount',()=>{
+ assert.match(code,/SEYVEO_DOCS_VIEWER\?\.mount\?\.\(parent,file/);
+ assert.match(code,/viewerSession\.destroy\(\)/);
+ assert.match(code,/onSignImage:image=>window\.SEYVEO_DOCS_STUDIO\?\.openImageForSignature\?\.\(image\)/);
+ assert.match(code,/const opened=window\.SEYVEO_DOCS_VIEWER/);
+ assert.match(code,/archive\.open=archiveExpanded;[\s\S]*host\.append\(preview\);[\s\S]*host\.append\(archive\)/);
+ assert.match(code,/const sum=el\('summary','','Просмотр документа'\)/);
 });
