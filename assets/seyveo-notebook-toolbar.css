@@ -492,3 +492,109 @@ svg.sv-paper-signature .sv-paper-icon-core{
   transition:none!important;
  }
 }
+
+
+/* SEYVEO Paper v11 · truly seamless fullscreen canvas.
+   Header and palette are overlays, not dedicated top/bottom strips:
+   fading the controls reveals the actual page underneath, edge to edge.
+   Keep the compact glass TOOL capsule and bottom controls themselves. */
+#notePaperDialog.sv-paper-studio[open]{
+ position:fixed!important;
+ inset:0!important;
+ display:flex!important;
+ flex-direction:column!important;
+ gap:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-top{
+ position:absolute!important;
+ top:0!important;
+ bottom:auto!important;
+ left:0!important;
+ right:0!important;
+ width:100%!important;
+ height:auto!important;
+ margin:0!important;
+ z-index:20!important;
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom{
+ position:absolute!important;
+ bottom:0!important;
+ top:auto!important;
+ left:0!important;
+ right:0!important;
+ width:100%!important;
+ margin:0!important;
+ z-index:20!important;
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ background:transparent!important;
+ background-image:none!important;
+ box-shadow:none!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-top::before,
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-top::after,
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom::before,
+#notePaperDialog.sv-paper-studio[open] > .sv-paper-bottom::after{
+ content:none!important;
+ display:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] > #notePaperStage.sv-paper-stage{
+ flex:1 1 100%!important;
+ align-self:stretch!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:100%!important;
+ width:100%!important;
+ min-width:100%!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ outline:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:hidden!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage > #notePaperSheet.paper-sheet{
+ flex:1 1 100%!important;
+ align-self:stretch!important;
+ width:100%!important;
+ height:100%!important;
+ min-width:100%!important;
+ min-height:100%!important;
+ max-width:100%!important;
+ max-height:100%!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ outline:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+}
+#notePaperDialog.sv-paper-studio[open] #notePaperStage > #notePaperSheet > #notePaperCanvas{
+ width:100%!important;
+ height:100%!important;
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+}
+/* On a white sheet, keep the standalone Back and Undo glyphs legible
+   without reintroducing dark header or footer bands. */
+#notePaperDialog.sv-paper-studio[open]:has(#notePaperSheet[data-ink-background="light"]) > .sv-paper-top > button{
+ color:#202936!important;
+}
