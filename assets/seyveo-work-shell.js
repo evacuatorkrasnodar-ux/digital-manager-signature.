@@ -113,9 +113,11 @@
   const managerCal=!calendar.hidden&&!oldCalendar.hidden;
   // The employee's existing workspace is a top-level Tasks view.
   // Old tabs are deliberately hidden, so this shared bar must show it.
-  const employeeTasks=!tasks.hidden&&
-   (tasks.dataset.employeeMode==='true'||window.SEYVEO_PREVIEW?.isEmployee?.()===true);
-  const visible=managerTasks||managerCal||employeeTasks;
+  const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  const employeeTasks=!tasks.hidden&&(tasks.dataset.employeeMode==='true'||employeePreview);
+  const employeeCalendar=!calendar.hidden&&employeePreview;
+  const employeeMode=employeeTasks||employeeCalendar;
+  const visible=managerTasks||managerCal||employeeMode;
   const history=visible&&!tasks.hidden&&tasks.classList.contains('sah-history-open');
   parkCalendarMenu(visible&&!history&&active==='calendar');
   if(active!=='calendar'||history){
@@ -123,11 +125,15 @@
    if(calendarAdd?.getAttribute('aria-expanded')!=='false')calendarAdd?.setAttribute('aria-expanded','false');
   }
   nav.hidden=!visible||history;
-  nav.dataset.employee=String(employeeTasks);
+  nav.dataset.employee=String(employeeMode);
   for(const tab of nav.querySelectorAll('[data-sv-work-tab]')){
-   tab.hidden=employeeTasks
-    ? !['personal','employee'].includes(tab.dataset.svWorkTab)
-    : tab.dataset.svWorkTab==='employee';
+   const name=tab.dataset.svWorkTab;
+   tab.hidden=employeeMode
+    ? name==='business'
+    : name==='employee';
+   tab.textContent=employeeMode
+    ? (name==='personal'?'Дела':name==='employee'?'Работа':name==='calendar'?'Календарь':'Кабинет')
+    : (name==='personal'?'Мои дела':name==='business'?'Кабинет':name==='calendar'?'Календарь':'Моя работа');
   }
   heading.hidden=!visible;
   shell.dataset.sharedWork=String(visible);
@@ -156,10 +162,20 @@
   if(target===activeSection())return;
   if(createMenu){createMenu.hidden=true;calendarAdd?.setAttribute('aria-expanded','false');add.setAttribute('aria-expanded','false');}
   const fromCalendar=!calendar.hidden;
+  const employeePreview=window.SEYVEO_PREVIEW?.isEmployee?.()===true;
+  if(employeePreview&&fromCalendar&&target!=='calendar'){
+   // Manager calendar tabs cannot navigate to an employee workspace.
+   // Use the existing unified Tasks controller instead of a second route.
+   if(target==='personal')window.SEYVEO_UNIFIED_TASKS?.openPersonal?.();
+   else if(target==='employee')window.SEYVEO_UNIFIED_TASKS?.openEmployee?.();
+   resetWorkScroll();
+   requestAnimationFrame(()=>{resetWorkScroll();sync()});
+   return;
+  }
   const original=fromCalendar
    ?oldTab(oldCalendar,'data-manager-calendar-tab',target)
    :oldTab(oldTasks,'data-unified-tasks-tab',target);
-  if(original&&!original.disabled){
+  if(original&&!original.disabled&&!original.hidden){
    original.click();
    resetWorkScroll();
    requestAnimationFrame(()=>{resetWorkScroll();sync()});
@@ -178,5 +194,5 @@
  window.addEventListener('seyveo:route-changed',()=>requestAnimationFrame(sync));
  window.addEventListener('seyveo:preview-role-changed',()=>requestAnimationFrame(sync));
  sync();
- window.SEYVEO_WORK_SHELL=Object.freeze({version:9,sync});
+ window.SEYVEO_WORK_SHELL=Object.freeze({version:10,sync});
 })();
