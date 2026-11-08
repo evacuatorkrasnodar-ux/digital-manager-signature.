@@ -337,17 +337,17 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 
 
 /* Employee workspace: restore the existing Elena dashboard within the same
-   permanent navigation. Two calm tabs, no duplicate cabinet or calendar. */
+   permanent navigation. Three equal tabs, no duplicate cabinet. */
 #svWorkTabs button[hidden]{display:none!important}
 #svWorkShell[data-shared-work="true"] #svWorkTabs[data-employee="true"]{
- grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
 }
 #svWorkTabs[data-employee="true"]::before{
- width:calc((100% - 6px)/2);
+ width:calc((100% - 6px)/3);
  transform:translateX(0);
 }
 #svWorkShell[data-active="employee"] #svWorkTabs[data-employee="true"]::before{
- transform:translateX(100%);
+ transform:translateX(200%);
 }
 #svWorkShell[data-active="employee"] #svWorkTitle{
  color:var(--text);
