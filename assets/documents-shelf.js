@@ -103,8 +103,7 @@ function paint(state){
    card.type='button';
    card.setAttribute('aria-label','Добавить '+example.format);
    card.append(documentArt(example.type,example.format),
-    el('strong','sv-doc-recent-name',example.name),
-    el('small','sv-doc-recent-date','Добавить файл'));
+    el('strong','sv-doc-recent-name',example.name));
    card.addEventListener('click',()=>state.options.onPick?.());
    state.recentGrid.append(card);
   }
@@ -114,8 +113,7 @@ function paint(state){
    const card=el('button','sv-doc-recent-card sv-doc-example-card');
    card.type='button';card.setAttribute('aria-label','Открыть архив для '+example.format);
    card.append(documentArt(example.type,example.format),
-    el('strong','sv-doc-recent-name',example.name),
-    el('small','sv-doc-recent-date','Пример · открыть'));
+    el('strong','sv-doc-recent-name',example.name));
    card.addEventListener('click',()=>openArchive(state));
    state.recentGrid.append(card);
   }
