@@ -1888,3 +1888,49 @@ svg.sv-paper-signature .sv-paper-icon-core{
 #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > button.sv-inkbar-tool[data-sv-selected="false"]{
  background:transparent!important;
 }
+
+/* v26 — Actual DOM selection plate inside the button: always a perfect circle.
+   The plate is not a pseudo element and cannot inherit a button background. */
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool {
+ position:relative!important;
+ overflow:hidden!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool > .sv-inkbar-selection{
+ display:block!important;
+ position:absolute!important;
+ box-sizing:border-box!important;
+ width:var(--sv-ink-size)!important;
+ height:var(--sv-ink-size)!important;
+ min-width:var(--sv-ink-size)!important;
+ min-height:var(--sv-ink-size)!important;
+ max-width:var(--sv-ink-size)!important;
+ max-height:var(--sv-ink-size)!important;
+ aspect-ratio:1/1!important;
+ left:50%!important;top:50%!important;
+ margin:0!important;padding:0!important;
+ transform:translate3d(-50%,-50%,0)!important;
+ border:0!important;outline:0!important;
+ border-radius:50%!important;
+ background:rgba(215,225,240,.26)!important;
+ background-image:none!important;
+ box-shadow:none!important;filter:none!important;
+ opacity:0!important;visibility:hidden!important;
+ pointer-events:none!important;
+ z-index:0!important;
+ transition:opacity .14s ease!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool > .sv-inkbar-selection.is-selected,
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool[data-sv-selected="true"] > .sv-inkbar-selection{
+ opacity:1!important;visibility:visible!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool > svg.sv-paper-signature{
+ position:relative!important;z-index:1!important;
+}
+#notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool[data-sv-selected="true"]{
+ background:transparent!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #notePaperDialog.sv-paper-studio[open] .sv-paper-top .paper-toolbar .sv-inkbar > .sv-inkbar-tool > .sv-inkbar-selection{
+  transition:none!important;
+ }
+}
