@@ -375,3 +375,49 @@ html.sv-space-active #lifePage .life-heading .sv-continuity-titlebar h1{
 #tasksPage .svcp-invite-explanation small{
  font-size:10.5px;font-weight:430;line-height:1.5;color:var(--secondary);
 }
+
+/* SEYVEO · ONE / Business shared work navigation.
+   The same native 3-slot capsule in both modes. Notes are opened through
+   the existing Notebook controller; no second route, dock or note store. */
+#svWorkTabs[data-one="true"]{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#svWorkTabs[data-one="true"] button[hidden],
+#svWorkTabs button[hidden]{
+ display:none!important;
+}
+/* ONE and Business share the one header +. Business alone has an action
+   chooser so cabinet configuration and personal notes remain reachable. */
+#svWorkShell #svWorkCreateChoices{
+ position:absolute;z-index:120;top:calc(54px + 4px);right:0;
+ box-sizing:border-box;width:min(260px,calc(100vw - 28px));
+ display:flex;flex-direction:column;gap:2px;
+ padding:6px;
+ border:1px solid color-mix(in srgb,var(--text) 13%,transparent);
+ border-radius:18px;
+ background:var(--sv-ui-sheet,var(--card));
+ color:var(--text);
+ -webkit-backdrop-filter:blur(24px) saturate(1.08);
+ backdrop-filter:blur(24px) saturate(1.08);
+ box-shadow:0 9px 26px rgba(0,0,0,.14);
+}
+#svWorkShell #svWorkCreateChoices[hidden]{display:none!important}
+#svWorkShell #svWorkCreateChoices > button{
+ box-sizing:border-box;display:flex;align-items:center;
+ width:100%;min-height:44px;padding:10px 13px;
+ border:0;border-radius:12px;
+ background:transparent;color:var(--text);
+ font:inherit;font-size:12.5px;font-weight:530;
+ text-align:left;cursor:pointer;
+}
+#svWorkShell #svWorkCreateChoices > button:active{
+ background:var(--sv-ui-selected-surface,var(--card2));
+}
+#svWorkShell #svWorkCreateChoices > button:focus-visible{
+ outline:2px solid var(--text);outline-offset:-2px;
+}
+@media(prefers-reduced-transparency:reduce){
+ #svWorkShell #svWorkCreateChoices{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+ }
+}
