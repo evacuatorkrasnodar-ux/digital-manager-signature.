@@ -717,6 +717,45 @@ function healthView(){
  section.append(hint('Показатели здоровья остаются в существующем локальном разделе SEYVEO. Подключения Apple Health пока нет.'));
  body.append(section);
 }
+/* Documents local search: one header action reuses the existing encrypted-shelf filter. */
+function installDocumentsSearch(){
+ const header=title.closest('.sv-deep-top');
+ if(!header)return;
+ header.querySelector('.sv-doc-head-tools')?.remove();
+ if(page.dataset.svSubject!=='contract')return;
+ const tools=create('div','sv-doc-head-tools');
+ const toggle=create('button','sv-doc-head-icon sv-doc-search-toggle');
+ toggle.type='button';
+ toggle.setAttribute('aria-label','Поиск по документам');
+ toggle.setAttribute('aria-expanded','false');
+ toggle.setAttribute('aria-controls','svDocQuickSearch');
+ toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/></svg>';
+ tools.append(toggle);
+ header.append(tools);
+ const row=create('label','sv-doc-search-row');
+ row.id='svDocQuickSearch';row.hidden=true;
+ const glassIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ glassIcon.setAttribute('viewBox','0 0 24 24');glassIcon.setAttribute('aria-hidden','true');
+ glassIcon.innerHTML='<circle cx="10.8" cy="10.8" r="6.4"/><path d="m16 16 5 5"/>';
+ const field=create('input','sv-doc-search-field');
+ field.type='search';field.placeholder='Поиск по названию документа';
+ field.autocomplete='off';field.setAttribute('aria-label','Поиск по файлам в выбранном архиве');
+ row.append(glassIcon,field);body.prepend(row);
+ const setOpen=open=>{
+  row.hidden=!open;
+  toggle.setAttribute('aria-expanded',String(open));
+  toggle.setAttribute('aria-label',open?'Закрыть поиск документов':'Поиск по документам');
+  if(open)field.focus({preventScroll:true});
+  else{field.value='';window.SEYVEO_DOCUMENT_SHELF?.search?.('');}
+ };
+ toggle.addEventListener('click',()=>setOpen(row.hidden));
+ field.addEventListener('input',()=>window.SEYVEO_DOCUMENT_SHELF?.search?.(field.value));
+ field.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+   event.preventDefault();setOpen(false);toggle.focus({preventScroll:true});
+  }
+ });
+}
 function render(kind){
  const descriptor=subjects[kind];if(!descriptor)return false;
  releaseFile();page.dataset.svSubject=kind;
@@ -734,6 +773,7 @@ function render(kind){
  if(kind==='mail')mailView();
  else if(kind==='contract')documentsView();
  else healthView();
+ installDocumentsSearch();
  page.classList.remove('sv-deep-enter');
  void page.offsetWidth;page.classList.add('sv-deep-enter');
  return true;
