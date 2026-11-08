@@ -554,3 +554,8 @@ html body #notePaperDialog.sv-paper-studio[open] > .sv-paper-stage{
  min-width:0!important;min-height:0!important;
  touch-action:none!important;
 }
+
+/* Saved legacy white sheets still retain their correct white paper material. */
+#notePaperDialog.sv-paper-studio[open] #notePaperStage > #notePaperSheet.paper-sheet[data-ink-background="light"]{
+ background:#fff!important;
+}
