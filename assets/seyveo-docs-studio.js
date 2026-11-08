@@ -336,7 +336,7 @@ function mount(target,{
    ));
   }else counter.append($('small','','Сфотографируйте лист или выберите фото.'));
   const info=$('details','sv-doc-tool-help');
-  info.append($('summary','','О сканировании'),warn('Фото остаются на устройстве. Автоматическая обрезка и распознавание текста ещё не подключены.'));
+  info.append($('summary','','О сканировании'),warn('Фото остаются на устройстве, без отправки в интернет. Автоматическая обрезка и OCR пока не подключены.'));
   panel.append(counter,info,status(''));
  }
  function renderCreate(){
